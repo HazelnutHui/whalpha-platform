@@ -40,8 +40,9 @@ Status date: 2026-08-13
 - Backend dependencies installed in the project virtualenv.
 - Backend tests verified: `1 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
-- Frontend dependency installation status: not installed; Node.js and npm were unavailable at scaffold creation.
-- Frontend build status: not verified; Node.js and npm were unavailable at scaffold creation.
+- Node.js 24 provisioning script prepared but not applied because passwordless sudo is unavailable.
+- Frontend dependency installation status: not installed; Node.js and npm are not installed yet.
+- Frontend build status: not verified; Node.js and npm are not installed yet.
 - No provider implementation.
 - No production data ingestion.
 - No analytics pipeline.
@@ -54,4 +55,4 @@ Status date: 2026-08-13
 
 ## Next Proposed Step
 
-Provision and verify the local development toolchain required to run both the accepted backend and frontend scaffold, if any prerequisite remains unavailable.
+Manually run and return the Node.js 24 provisioning dry-run and apply output, then verify frontend dependencies and build.

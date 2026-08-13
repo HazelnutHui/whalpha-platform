@@ -18,6 +18,8 @@
 - Installed backend dependencies in the project virtualenv and verified backend tests.
 - Verified the Health API locally on `127.0.0.1:8000`.
 - Frontend dependency installation and build were not verified because Node.js and npm were unavailable.
+- Prepared guarded Node.js 24 LTS provisioning script and operations document.
+- Node.js provisioning was not applied because passwordless sudo is unavailable.
 - No market data provider, database, production deployment, or Dashboard V1 implementation was introduced.
 
 ## 2026-08-12

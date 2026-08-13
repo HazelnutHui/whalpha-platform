@@ -9,13 +9,13 @@ The minimal application scaffold exists:
 - Versioned Health API contract: `GET /api/v1/health`
 - Local development scripts: `scripts/dev/run-api.sh` and `scripts/dev/run-web.sh`
 
-Backend dependency installation, backend tests, and the Health API localhost check were verified during scaffold creation. Frontend dependency installation and build were not verified because Node.js and npm were unavailable on the workstation at that time.
+Backend dependency installation, backend tests, and the Health API localhost check were verified during scaffold creation. Frontend dependency installation and build are not yet verified because Node.js and npm are not installed. A guarded Node.js 24 provisioning procedure is prepared in [Node Toolchain Provisioning](../operations/node-toolchain-provisioning.md).
 
 ## Prerequisites
 
 - Python 3.12
 - Python `venv` support
-- Node.js and npm for frontend development
+- Node.js 24 LTS and npm for frontend development
 - No sudo is required for project-local setup
 
 ## Repository Layout
@@ -106,7 +106,7 @@ Run this only after `npm install` succeeds.
 ## Troubleshooting
 
 - If `scripts/dev/run-api.sh` reports a missing virtualenv, run the backend setup commands.
-- If `scripts/dev/run-web.sh` reports missing `node` or `npm`, install the frontend toolchain outside this repository before running frontend development.
+- If `scripts/dev/run-web.sh` reports missing `node` or `npm`, complete the prepared Node.js 24 provisioning procedure before running frontend development.
 - If `scripts/dev/run-web.sh` reports missing `node_modules`, run `npm install` in `apps/web`.
 - If the frontend shows API unavailable, start the backend and confirm the health check succeeds.
 

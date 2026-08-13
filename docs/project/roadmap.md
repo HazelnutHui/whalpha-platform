@@ -27,7 +27,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Provision and verify the local development toolchain required to run both the accepted backend and frontend scaffold, if any prerequisite remains unavailable.
+Manually run and return the Node.js 24 provisioning dry-run and apply output, then verify frontend dependencies and build.
 
 ## Phase 2 — Intraday and Options
 
