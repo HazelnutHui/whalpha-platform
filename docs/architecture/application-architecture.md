@@ -14,6 +14,7 @@ Confirmed current state:
 - Versioned Health API contract exists at `GET /api/v1/health`.
 - Local development scripts exist under `scripts/dev`.
 - Local backend tests, direct Health API, frontend production build, Vite server, and Vite-to-FastAPI proxy have been verified.
+- Initial EOD Universe, classification boundary, and normalized EOD logical contracts are accepted and documented.
 - Complete market data flow is not implemented.
 - No data provider is configured.
 - No production API is deployed.
@@ -129,6 +130,15 @@ Initial storage approach:
 - Parquet files for early raw, normalized, and derived datasets where appropriate
 - project data root at `/data/trading-intelligence-platform`
 
+Accepted logical data-contract boundary:
+
+- [Initial EOD Universe](../product/initial-eod-universe.md)
+- [Classification Boundary](classification-boundary.md)
+- [Normalized Market Data Contracts](normalized-market-data-contracts.md)
+- [Data Contracts](../data-contracts/README.md)
+
+These contracts remain unimplemented. No provider adapter, ingestion job, physical Parquet schema, or database table exists yet.
+
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 
 ## Provider Boundary
@@ -214,8 +224,8 @@ Before closing material work, check whether these documents need updates:
 - API route structure and versioning beyond the Health API
 - exact deployment mechanism to OCI
 - database introduction threshold and database choice
-- initial market universe construction
-- sector and industry taxonomy source
+- Candidate Discovery threshold calibration
+- exact canonical traditional taxonomy source or mapping methodology
 - exact Massive plan and entitlement
 - options data source
 - public/private access boundary

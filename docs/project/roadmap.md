@@ -15,7 +15,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 - [x] Minimal application scaffold
 - [x] Local frontend/backend development toolchain
-- [ ] Provider boundary
+- [x] Define Initial EOD Universe
+- [x] Define Sector/Industry, Theme, and Analytical Group boundary
+- [x] Define normalized EOD logical contracts
+- [ ] Provider-neutral Python contract models and validation tests
+- [ ] Provider boundary implementation
 - [ ] EOD development dataset
 - [ ] Core market calculations
 - [ ] Dashboard shell
@@ -28,7 +32,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Define and document the Initial EOD Universe, Sector/Industry Taxonomy Boundary, and Normalized Market Data Contracts before implementing any market data provider adapter.
+Design and implement provider-neutral Python contract models and validation tests for Instrument Master V1 and EOD Price Bar V1 only, without implementing a provider adapter or ingesting real market data.
 
 ## Phase 2 — Intraday and Options
 

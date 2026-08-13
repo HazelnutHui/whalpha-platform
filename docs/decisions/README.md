@@ -28,3 +28,4 @@ Each ADR should include:
 - [0003: Introduce a Market Data Provider Boundary](0003-market-data-provider-boundary.md)
 - [0004: Start with a Lightweight Event Layer](0004-lightweight-event-layer-first.md)
 - [0005: Application Technology Stack](0005-application-technology-stack.md)
+- [0006: Initial EOD Data Model and Universe Boundaries](0006-initial-eod-data-model-and-universe-boundaries.md)

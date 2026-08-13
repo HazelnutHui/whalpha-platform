@@ -26,6 +26,11 @@
 - Verified local Vite server and Vite-to-FastAPI proxy.
 - Revalidated backend tests and the direct Health API endpoint.
 - No market data provider, database, production deployment, or Dashboard V1 implementation was introduced.
+- Accepted the Initial EOD Universe boundary.
+- Accepted the three-layer classification model for Sector/Industry, Theme, and Analytical Groups.
+- Accepted five normalized EOD logical contracts.
+- Documented point-in-time membership and revision principles.
+- No provider, data ingestion, physical schema, database, or Dashboard implementation was introduced.
 
 ## 2026-08-12
 

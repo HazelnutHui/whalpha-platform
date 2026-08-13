@@ -15,6 +15,18 @@ The Market Data Provider boundary should cover:
 
 Raw, normalized, and derived data must remain conceptually distinct.
 
+
+## Accepted Logical Contracts
+
+The Initial EOD data boundary is now documented as accepted logical contracts:
+
+- [Initial EOD Universe](../product/initial-eod-universe.md)
+- [Classification Boundary](classification-boundary.md)
+- [Normalized Market Data Contracts](normalized-market-data-contracts.md)
+- [Data Contracts](../data-contracts/README.md)
+
+These are logical contracts only. They are not implemented as Python models, Pydantic schemas, Parquet schemas, provider adapters, or database tables.
+
 ## Proposed Providers
 
 - Massive: proposed primary stock/ETF/market-structure backbone.

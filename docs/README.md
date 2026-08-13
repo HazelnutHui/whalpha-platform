@@ -7,13 +7,25 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Vision](product/vision.md): Product principles and UI language.
 - [Scope](product/scope.md): Phase 1 scope, deferred work, and explicit non-goals.
 - [Dashboard V1](product/dashboard-v1.md): Confirmed first dashboard structure and target behavior.
+- [Initial EOD Universe](product/initial-eod-universe.md): Accepted V1 universe layers and Candidate Discovery thresholds.
 
 ## Architecture
 
 - [System Context](architecture/system-context.md): Logical system flow and infrastructure responsibilities.
 - [Application Architecture](architecture/application-architecture.md): Accepted target application architecture and runtime boundaries.
+- [Classification Boundary](architecture/classification-boundary.md): Accepted Sector/Industry, Theme, and Analytical Group boundary.
+- [Normalized Market Data Contracts](architecture/normalized-market-data-contracts.md): Accepted V1 logical market-data contract boundary.
 - [Data Boundaries](architecture/data-boundaries.md): Market Data Provider boundary and data authorization rules.
 - [Event Layer](architecture/event-layer.md): Lightweight event positioning and deferred long-term model.
+
+## Data Contracts
+
+- [Data Contracts Index](data-contracts/README.md)
+- [Instrument Master V1](data-contracts/instrument-master-v1.md)
+- [EOD Price Bar V1](data-contracts/eod-price-bar-v1.md)
+- [Corporate Action V1](data-contracts/corporate-action-v1.md)
+- [Classification V1](data-contracts/classification-v1.md)
+- [Universe Membership V1](data-contracts/universe-membership-v1.md)
 
 ## Operations
 
@@ -34,6 +46,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0003: Market Data Provider Boundary](decisions/0003-market-data-provider-boundary.md)
 - [ADR 0004: Lightweight Event Layer First](decisions/0004-lightweight-event-layer-first.md)
 - [ADR 0005: Application Technology Stack](decisions/0005-application-technology-stack.md)
+- [ADR 0006: Initial EOD Data Model and Universe Boundaries](decisions/0006-initial-eod-data-model-and-universe-boundaries.md)
 
 ## Project
 

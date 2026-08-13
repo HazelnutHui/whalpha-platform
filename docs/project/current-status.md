@@ -35,6 +35,11 @@ Status date: 2026-08-13
 - Local Vite development server verified.
 - Local Vite-to-FastAPI proxy verified.
 - Node provisioning script GPG non-interactive behavior corrected.
+- Initial EOD Universe boundary accepted.
+- Three-layer classification boundary accepted.
+- Five normalized EOD logical contracts accepted.
+- Point-in-time universe membership semantics accepted.
+- Provider-neutral boundary clarified for EOD contracts.
 
 ## Current
 
@@ -50,8 +55,14 @@ Status date: 2026-08-13
 - Frontend dependencies are installed and locked by npm.
 - Frontend production build is verified.
 - Local Vite development server and Vite-to-FastAPI proxy are verified.
+- Initial EOD Universe, classification boundary, and normalized EOD logical contracts are documented.
+- No physical schemas.
+- No Python/Pydantic market-data models.
+- No Parquet writers.
 - No provider implementation.
-- No production data ingestion.
+- No market data ingestion.
+- No actual Universe evaluation.
+- No actual taxonomy dataset.
 - No analytics pipeline.
 - No Dashboard V1 implementation.
 - No database.
@@ -62,4 +73,4 @@ Status date: 2026-08-13
 
 ## Next Proposed Step
 
-Define and document the Initial EOD Universe, Sector/Industry Taxonomy Boundary, and Normalized Market Data Contracts before implementing any market data provider adapter.
+Design and implement provider-neutral Python contract models and validation tests for Instrument Master V1 and EOD Price Bar V1 only, without implementing a provider adapter or ingesting real market data.

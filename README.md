@@ -13,7 +13,7 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. No production data ingestion, database, deployment pipeline, production application, or real market-data provider integration has been created for the new project.
+Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. No production data ingestion, database, deployment pipeline, production application, or real market-data provider integration has been created for the new project.
 
 ## Application Entry Points
 
@@ -28,6 +28,7 @@ Documentation, infrastructure, storage foundation, application stack decision, t
 - Analytics: Pandas and NumPy.
 - Initial storage path: EOD-first Parquet datasets under `/data/trading-intelligence-platform`.
 - Data access: MarketDataProvider / adapter boundary before domain calculations.
+- Initial EOD data foundation: accepted universe, classification, and normalized logical contract boundaries.
 
 See [ADR 0005](docs/decisions/0005-application-technology-stack.md) and [Application Architecture](docs/architecture/application-architecture.md) for the authoritative decision details.
 
@@ -75,6 +76,10 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Current status](docs/project/current-status.md)
 - [Dashboard V1](docs/product/dashboard-v1.md)
 - [Application architecture](docs/architecture/application-architecture.md)
+- [Initial EOD Universe](docs/product/initial-eod-universe.md)
+- [Classification Boundary](docs/architecture/classification-boundary.md)
+- [Normalized Market Data Contracts](docs/architecture/normalized-market-data-contracts.md)
+- [Data Contracts](docs/data-contracts/README.md)
 - [System context](docs/architecture/system-context.md)
 - [Deployment boundary](docs/operations/deployment-boundary.md)
 - [Architecture decisions](docs/decisions/README.md)
