@@ -38,6 +38,8 @@ Confirmed by final interactive sudo verification:
 - Project data root: `/data/trading-intelligence-platform`
 - `/data` owner/mode: `root:root`, `755`
 - Project data root owner/mode: `hui:hui`, `750`
+- Preflight minimum VG free before changes: at least 850 GiB
+- Required retained VG free after changes: at least 100 GiB
 - Expected retained VG free: approximately 100.82G
 
 ## Why Separate Code and Data
@@ -52,7 +54,7 @@ This keeps Git history, application code, and operational data separate. It also
 scripts/admin/provision-workstation-storage.sh
 ```
 
-The script defaults to dry-run. It only modifies storage when `--apply` is explicitly provided.
+The script defaults to dry-run. It only modifies storage when `--apply` is explicitly provided. Invalid or extra arguments are rejected before apply preflight.
 
 ## Dry-Run Command
 
@@ -68,7 +70,7 @@ Dry-run prints the proposed plan and performs only non-mutating checks. It must 
 sudo scripts/admin/provision-workstation-storage.sh --apply
 ```
 
-Apply mode must run as root. It performs strict preflight checks before any modification.
+Apply mode must run as root. It performs strict preflight checks before any modification, including at least 850 GiB free before changes so at least 100 GiB remains afterward.
 
 ## Expected Final Layout
 
@@ -92,7 +94,7 @@ After successful apply:
 
 - If `lvextend` succeeds but `resize2fs` fails, stop immediately. Do not shrink the LV. Inspect the filesystem manually before continuing.
 - If `lvcreate` succeeds but `mkfs.ext4` fails, stop immediately. The data LV may exist and is not automatically removed.
-- If `/etc/fstab` verification fails, the script restores the pre-change fstab backup and stops.
+- If `/etc/fstab` verification fails, the script restores the pre-change fstab backup with a same-directory temporary file and atomic rename, then stops.
 - If mounting `/data` fails, the LV, filesystem, and fstab state are preserved for manual inspection. No automatic LVM rollback is attempted.
 - Re-running `--apply` after a partial implementation must stop during preflight rather than guessing how to continue.
 

@@ -11,14 +11,19 @@ DATA_MOUNT="/data"
 PROJECT_DATA="/data/trading-intelligence-platform"
 PROJECT_REPO="/home/hui/projects/trading-intelligence-platform"
 DATA_LABEL="TIP_DATA"
-ROOT_SIZE_BEFORE_BYTES="107374182400"
-ROOT_SIZE_AFTER_BYTES="161061273600"
-DATA_SIZE_BYTES="751619276800"
-MIN_VG_FREE_BEFORE_BYTES="805306368000"
-MIN_ROOT_FREE_BYTES="1073741824"
+GIB_BYTES=$((1024 * 1024 * 1024))
+ROOT_INITIAL_BYTES=$((100 * GIB_BYTES))
+ROOT_FINAL_BYTES=$((150 * GIB_BYTES))
+ROOT_GROWTH_BYTES=$((50 * GIB_BYTES))
+DATA_SIZE_BYTES=$((700 * GIB_BYTES))
+RESERVED_VG_FREE_AFTER_BYTES=$((100 * GIB_BYTES))
+REQUIRED_VG_FREE_BEFORE_BYTES=$((ROOT_GROWTH_BYTES + DATA_SIZE_BYTES + RESERVED_VG_FREE_AFTER_BYTES))
+MIN_ROOT_FREE_BYTES=$((1 * GIB_BYTES))
+export LC_ALL=C
 
 MODE="dry-run"
 CURRENT_PHASE="startup"
+TEMP_FILES=()
 
 usage() {
   cat <<USAGE
@@ -61,7 +66,21 @@ on_error() {
   printf 'ERROR [%s]: command failed near line %s with exit code %s. No automatic LVM rollback was attempted.\n' \
     "$CURRENT_PHASE" "${BASH_LINENO[0]}" "$exit_code" >&2
 }
+
+register_temp_file() {
+  TEMP_FILES+=("$1")
+}
+
+cleanup_temp_files() {
+  local file
+  for file in "${TEMP_FILES[@]:-}"; do
+    if [[ -n "$file" && "$file" == /etc/fstab.tip-storage.* && -e "$file" ]]; then
+      rm -f -- "$file"
+    fi
+  done
+}
 trap on_error ERR
+trap cleanup_temp_files EXIT
 
 trim() {
   awk '{$1=$1; print}'
@@ -73,6 +92,10 @@ require_command() {
 
 lvm_bytes() {
   awk '{gsub(/[^0-9.]/, "", $1); printf "%.0f\n", $1}'
+}
+
+format_gib() {
+  awk -v bytes="$1" 'BEGIN { printf "%.2f GiB", bytes / 1024 / 1024 / 1024 }'
 }
 
 single_value() {
@@ -136,7 +159,7 @@ preflight_apply() {
   [[ "$lv_name" == "ubuntu-lv" ]] || fail "unexpected root LV name: $lv_name"
 
   root_size_bytes=$(lvs --noheadings --units b --nosuffix -o lv_size "$ROOT_LV" | lvm_bytes)
-  [[ "$root_size_bytes" == "$ROOT_SIZE_BEFORE_BYTES" ]] || fail "root LV must be exactly 100.00G before apply; got ${root_size_bytes} bytes"
+  [[ "$root_size_bytes" == "$ROOT_INITIAL_BYTES" ]] || fail "root LV must be exactly 100.00G before apply; got ${root_size_bytes} bytes"
 
   root_segtype=$(single_value lvs --noheadings -o segtype "$ROOT_LV")
   [[ "$root_segtype" == "linear" ]] || fail "root LV segtype must be linear; got $root_segtype"
@@ -157,7 +180,7 @@ preflight_apply() {
   [[ "$snap_count" == "0" ]] || fail "VG snapshot count must be 0; got $snap_count"
 
   vg_free_bytes=$(vgs --noheadings --units b --nosuffix -o vg_free "$EXPECTED_VG" | lvm_bytes)
-  (( vg_free_bytes >= MIN_VG_FREE_BEFORE_BYTES )) || fail "VG free ${vg_free_bytes} bytes is below required preflight minimum ${MIN_VG_FREE_BEFORE_BYTES} bytes"
+  (( vg_free_bytes >= REQUIRED_VG_FREE_BEFORE_BYTES )) || fail "VG free ${vg_free_bytes} bytes ($(format_gib "$vg_free_bytes")) is below required preflight minimum ${REQUIRED_VG_FREE_BEFORE_BYTES} bytes ($(format_gib "$REQUIRED_VG_FREE_BEFORE_BYTES"))"
 
   [[ ! -e "$DATA_LV" ]] || fail "$DATA_LV already exists"
   if lvs --noheadings -o lv_name "$EXPECTED_VG" | trim | grep -Fxq "$DATA_LV_NAME"; then
@@ -182,16 +205,17 @@ preflight_apply() {
   root_avail=$(df -B1 --output=avail / | awk 'NR==2 {print $1}')
   (( root_avail >= MIN_ROOT_FREE_BYTES )) || fail "root filesystem has less than 1GiB available"
 
-  info "Preflight passed. VG free before apply: ${vg_free_bytes} bytes."
+  info "Preflight passed. VG free before apply: ${vg_free_bytes} bytes ($(format_gib "$vg_free_bytes"))."
+  info "Required VG free before apply: ${REQUIRED_VG_FREE_BEFORE_BYTES} bytes ($(format_gib "$REQUIRED_VG_FREE_BEFORE_BYTES"))."
 }
 
 verify_root_after_resize() {
   CURRENT_PHASE="verify-root-after-resize"
   local root_size_bytes fs_size_bytes source
   root_size_bytes=$(lvs --noheadings --units b --nosuffix -o lv_size "$ROOT_LV" | lvm_bytes)
-  [[ "$root_size_bytes" == "$ROOT_SIZE_AFTER_BYTES" ]] || fail "root LV is not 150G after extension; got ${root_size_bytes} bytes"
+  [[ "$root_size_bytes" == "$ROOT_FINAL_BYTES" ]] || fail "root LV is not 150G after extension; got ${root_size_bytes} bytes"
   fs_size_bytes=$(df -B1 --output=size / | awk 'NR==2 {print $1}')
-  (( fs_size_bytes > ROOT_SIZE_BEFORE_BYTES )) || fail "root filesystem size did not grow; df size=${fs_size_bytes} bytes"
+  (( fs_size_bytes > ROOT_INITIAL_BYTES )) || fail "root filesystem size did not grow; df size=${fs_size_bytes} bytes"
   source=$(findmnt -n -o SOURCE --target /)
   [[ "$(readlink -f "$source")" == "$(readlink -f "$ROOT_LV")" ]] || fail "/ is not mounted from $ROOT_LV after resize"
   local write_probe
@@ -229,9 +253,11 @@ verify_data_filesystem() {
 update_fstab() {
   CURRENT_PHASE="update-fstab"
   local data_uuid="$1"
-  local backup tmp mode
+  local backup tmp restore_tmp mode
   backup="/etc/fstab.tip-storage.$(date -u +%Y%m%dT%H%M%SZ).bak"
   tmp=$(mktemp /etc/fstab.tip-storage.XXXXXX)
+  register_temp_file "$tmp"
+  restore_tmp=""
   mode=$(stat -c '%a' /etc/fstab)
   cp /etc/fstab "$backup"
   chmod 600 "$backup"
@@ -240,16 +266,27 @@ update_fstab() {
   chown root:root "$tmp"
   chmod "$mode" "$tmp"
   mv "$tmp" /etc/fstab
+  tmp=""
   chown root:root /etc/fstab
   chmod "$mode" /etc/fstab
   info "fstab_backup=$backup"
   if ! findmnt --verify --verbose; then
-    cp "$backup" /etc/fstab
+    restore_tmp=$(mktemp /etc/fstab.tip-storage.restore.XXXXXX)
+    register_temp_file "$restore_tmp"
+    cp "$backup" "$restore_tmp"
+    chown root:root "$restore_tmp"
+    chmod "$mode" "$restore_tmp"
+    mv "$restore_tmp" /etc/fstab
+    restore_tmp=""
     chown root:root /etc/fstab
     chmod "$mode" /etc/fstab
-    findmnt --verify --verbose || true
-    fail "new fstab failed verification; restored $backup"
+    if findmnt --verify --verbose; then
+      fail "new fstab failed verification; restored atomically from $backup"
+    fi
+    printf 'CRITICAL [%s]: restored fstab from %s, but findmnt verification still fails. Inspect /etc/fstab manually.\n' "$CURRENT_PHASE" "$backup" >&2
+    exit 1
   fi
+  rm -f -- "$tmp" "$restore_tmp"
 }
 
 verify_data_mount() {
@@ -264,6 +301,19 @@ verify_data_mount() {
   [[ "$fstype" == "ext4" ]] || fail "/data fstype must be ext4; got $fstype"
   [[ ",$options," == *",nodev,"* ]] || fail "/data mount options missing nodev: $options"
   [[ ",$options," == *",nosuid,"* ]] || fail "/data mount options missing nosuid: $options"
+}
+
+verify_final_capacity() {
+  CURRENT_PHASE="phase-7-final-verification"
+  local root_size_bytes data_size_bytes vg_free_bytes
+  root_size_bytes=$(lvs --noheadings --units b --nosuffix -o lv_size "$ROOT_LV" | lvm_bytes)
+  data_size_bytes=$(lvs --noheadings --units b --nosuffix -o lv_size "$DATA_LV" | lvm_bytes)
+  vg_free_bytes=$(vgs --noheadings --units b --nosuffix -o vg_free "$EXPECTED_VG" | lvm_bytes)
+  [[ "$root_size_bytes" == "$ROOT_FINAL_BYTES" ]] || fail "root LV is not 150G in final verification; got ${root_size_bytes} bytes"
+  [[ "$data_size_bytes" == "$DATA_SIZE_BYTES" ]] || fail "data LV is not 700G in final verification; got ${data_size_bytes} bytes"
+  (( vg_free_bytes >= RESERVED_VG_FREE_AFTER_BYTES )) || fail "VG free after apply ${vg_free_bytes} bytes ($(format_gib "$vg_free_bytes")) is below required reserve ${RESERVED_VG_FREE_AFTER_BYTES} bytes ($(format_gib "$RESERVED_VG_FREE_AFTER_BYTES"))"
+  info "Final VG free: ${vg_free_bytes} bytes ($(format_gib "$vg_free_bytes"))."
+  info "Required final VG reserve: ${RESERVED_VG_FREE_AFTER_BYTES} bytes ($(format_gib "$RESERVED_VG_FREE_AFTER_BYTES"))."
 }
 
 apply_changes() {
@@ -322,6 +372,7 @@ apply_changes() {
   blkid "$DATA_LV"
   stat -c '%n|%F|%U|%G|%a|%s|%y' "$DATA_MOUNT" "$PROJECT_DATA"
   awk '$2 == "/data" {print}' /etc/fstab
+  verify_final_capacity
   [[ -d "$PROJECT_REPO/.git" ]] || fail "project Git repository is missing or moved"
 
   log "Apply complete"
@@ -377,12 +428,18 @@ PLAN
 }
 
 main() {
-  case "${1:-}" in
-    "") MODE="dry-run" ;;
-    --apply) MODE="apply" ;;
-    --help|-h) usage; exit 0 ;;
-    *) usage >&2; exit 2 ;;
-  esac
+  if (( $# == 0 )); then
+    MODE="dry-run"
+  elif (( $# == 1 )); then
+    case "$1" in
+      --apply) MODE="apply" ;;
+      --help) usage; exit 0 ;;
+      *) printf 'ERROR: invalid argument: %s. Use --help for usage.\n' "$1" >&2; exit 2 ;;
+    esac
+  else
+    printf 'ERROR: invalid arguments. Use --help for usage.\n' >&2
+    exit 2
+  fi
 
   if [[ "$MODE" == "apply" ]]; then
     apply_changes
