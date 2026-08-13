@@ -8,6 +8,10 @@
 - Retained approximately 100.82 GiB VG free.
 - Verified `/data` persisted across a controlled reboot.
 - Confirmed zero failed systemd units after reboot.
+- Documented the accepted application technology stack.
+- Documented the target application architecture.
+- Added the documentation checkpoint policy for future material changes.
+- No application code or deployment was created.
 
 ## 2026-08-12
 

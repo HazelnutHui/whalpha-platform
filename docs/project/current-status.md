@@ -22,20 +22,24 @@ Status date: 2026-08-13
 - Independent 700 GiB `/data` LV created.
 - Project data root created at `/data/trading-intelligence-platform`.
 - Approximately 100.82 GiB VG free retained.
+- Application technology stack decision accepted.
+- Target application architecture documented.
 
 ## Current
 
 - Documentation and infrastructure foundation complete.
-- No application code.
+- Application stack and target architecture documented.
+- No application scaffold.
+- No frontend implementation.
+- No backend implementation.
+- No provider implementation.
 - No production data ingestion.
 - No database.
-- No selected Web framework.
-- No selected deployment workflow.
+- No deployment pipeline.
+- No production application.
 - No API credentials configured.
 - Project data root exists but contains no project datasets yet.
 
 ## Next Proposed Step
 
-- Decide and document the minimal application architecture and technology stack.
-- Then create the minimal application scaffold.
-- Start with an EOD development path and provider boundary.
+Create the minimal application scaffold on `dell5820` using the accepted React/TypeScript/Vite frontend and Python/FastAPI backend boundaries, without yet implementing the full Dashboard or production deployment.

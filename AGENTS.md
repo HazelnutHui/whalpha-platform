@@ -67,8 +67,25 @@ Do not independently expand this project into:
 - Avoid duplicating the same authoritative fact across many files.
 - Link to the authoritative document instead.
 
-## 7. Current Phase
+## 7. Documentation Checkpoints
 
-Infrastructure and storage foundation is complete. There is no application code yet.
+Before completing work that materially changes architecture, infrastructure, runtime behavior, data contracts, deployment, security boundaries, or project status, check whether these documents need updates:
 
-Current proposed activity: decide the minimal application architecture and create the first scaffold.
+- ADRs
+- architecture documents
+- operations documents
+- current-status
+- roadmap
+- open-questions
+- changelog
+- README and docs index
+
+A task that materially changes architecture, infrastructure, runtime behavior, data contracts, deployment, security boundaries, or project status is not complete until the relevant documentation has been checked and updated.
+
+Do not create an ADR for every small code edit, formatting change, or local implementation detail. Use ADRs for material decisions that affect project direction, architecture, operations, or long-term maintenance.
+
+## 8. Current Phase
+
+Infrastructure and storage foundation is complete. The application stack and target architecture are documented. There is no application code yet.
+
+Current proposed activity: create the minimal application scaffold using the accepted frontend, backend, analytics, and provider-boundary decisions.

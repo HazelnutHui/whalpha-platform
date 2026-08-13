@@ -16,6 +16,6 @@ The first usable product should favor a clean dashboard with clear visual hierar
 
 Narrative explanation, richer event workflows, and AI-assisted interpretation are deferred until core data and dashboard behavior are reliable.
 
-## Unknown
+## Accepted Direction
 
-The final frontend framework, charting library, and production interaction model are not yet selected.
+The application stack is documented in [ADR 0005](../decisions/0005-application-technology-stack.md). React, TypeScript, Vite, and Apache ECharts are the accepted frontend and visualization direction. Production interaction details remain to be refined during scaffold and dashboard implementation.

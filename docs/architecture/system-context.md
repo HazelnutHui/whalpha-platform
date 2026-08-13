@@ -39,6 +39,10 @@ The browser provides the visual dashboard and calls the Web/API boundary. It mus
 
 The current architecture is not a microservice architecture.
 
+## Accepted Application Stack
+
+The accepted application stack is documented in [ADR 0005](../decisions/0005-application-technology-stack.md) and [Application Architecture](application-architecture.md). The backend and frontend frameworks are selected for the target scaffold.
+
 ## Unknown
 
-The exact backend framework, frontend framework, database, and deployment mechanism are not yet selected.
+The exact database introduction threshold and deployment mechanism are not yet selected.

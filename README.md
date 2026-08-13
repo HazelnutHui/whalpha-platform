@@ -13,7 +13,17 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation and infrastructure foundation. No application code, production data ingestion, database, or deployment workflow has been created for the new project.
+Documentation, infrastructure, storage foundation, application stack decision, and target architecture are complete. No application scaffold, production data ingestion, database, deployment pipeline, or production application has been created for the new project.
+
+## Accepted Application Stack
+
+- Frontend: React, TypeScript, Vite, Apache ECharts, and lightweight CSS.
+- Backend/API boundary: Python 3.12, FastAPI, and Pydantic.
+- Analytics: Pandas and NumPy.
+- Initial storage path: EOD-first Parquet datasets under `/data/trading-intelligence-platform`.
+- Data access: MarketDataProvider / adapter boundary before domain calculations.
+
+See [ADR 0005](docs/decisions/0005-application-technology-stack.md) and [Application Architecture](docs/architecture/application-architecture.md) for the authoritative decision details.
 
 ## Phase 1 Success Criteria
 
@@ -58,6 +68,7 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Documentation index](docs/README.md)
 - [Current status](docs/project/current-status.md)
 - [Dashboard V1](docs/product/dashboard-v1.md)
+- [Application architecture](docs/architecture/application-architecture.md)
 - [System context](docs/architecture/system-context.md)
 - [Deployment boundary](docs/operations/deployment-boundary.md)
 - [Architecture decisions](docs/decisions/README.md)

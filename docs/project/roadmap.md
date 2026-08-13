@@ -8,9 +8,12 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Access normalization
 - [x] Documentation bootstrap
 - [x] Storage preparation
+- [x] Application technology stack decision
+- [x] Target application architecture documentation
 
 ## Phase 1 — Market Dashboard MVP
 
+- [ ] Minimal application scaffold
 - [ ] Provider boundary
 - [ ] EOD development dataset
 - [ ] Core market calculations
