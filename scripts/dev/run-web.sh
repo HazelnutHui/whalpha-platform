@@ -26,5 +26,11 @@ MSG
   exit 1
 fi
 
+vite_bin="${web_dir}/node_modules/.bin/vite"
+if [[ ! -x "${vite_bin}" ]]; then
+  echo "Vite executable was not found under node_modules. Run npm install in apps/web." >&2
+  exit 1
+fi
+
 cd "${web_dir}"
-exec npm run dev -- --host 127.0.0.1
+exec "${vite_bin}" --host 127.0.0.1

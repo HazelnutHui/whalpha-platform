@@ -9,7 +9,7 @@ The minimal application scaffold exists:
 - Versioned Health API contract: `GET /api/v1/health`
 - Local development scripts: `scripts/dev/run-api.sh` and `scripts/dev/run-web.sh`
 
-Backend dependency installation, backend tests, and the Health API localhost check were verified during scaffold creation. Frontend dependency installation and build are not yet verified because Node.js and npm are not installed. A guarded Node.js 24 provisioning procedure is prepared in [Node Toolchain Provisioning](../operations/node-toolchain-provisioning.md).
+Backend dependency installation, backend tests, the Health API localhost check, frontend dependency installation, frontend production build, Vite local server, and Vite-to-FastAPI proxy were verified on `dell5820`. Node.js 24 LTS and npm are installed; see [Node Toolchain Provisioning](../operations/node-toolchain-provisioning.md).
 
 ## Prerequisites
 
@@ -45,7 +45,7 @@ cd /home/hui/projects/trading-intelligence-platform/apps/web
 npm install
 ```
 
-This creates `node_modules` locally under `apps/web`. Do not use global npm installs for project dependencies.
+This creates `node_modules` locally under `apps/web` and maintains `package-lock.json`. Do not use global npm installs for project dependencies.
 
 ## Start Backend
 
@@ -91,7 +91,7 @@ cd /home/hui/projects/trading-intelligence-platform/apps/web
 npm run build
 ```
 
-Run this only after `npm install` succeeds.
+This build has been verified after `npm install` succeeded.
 
 ## Development Boundaries
 

@@ -26,8 +26,9 @@ Confirmed:
 - project data root owner/mode: `hui:hui`, `750`
 - reboot persistence verified on 2026-08-13
 - systemd failed units after verification: 0
-- Docker and Node were not installed at last verification
+- Docker was not installed at last verification
 - Python 3.12.3 and Git 2.43.0 were available
+- Node.js 24 LTS and npm are available for frontend development
 
 ## OCI
 

@@ -20,7 +20,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.
-- [Node Toolchain Provisioning](operations/node-toolchain-provisioning.md): Prepared Node.js 24 LTS system toolchain procedure.
+- [Node Toolchain Provisioning](operations/node-toolchain-provisioning.md): Completed Node.js 24 LTS system toolchain record and historical procedure.
 
 ## Development
 

@@ -2,18 +2,18 @@
 
 ## Purpose
 
-This document records the prepared Node.js toolchain provisioning procedure for `dell5820`. The goal is to install the system Node.js and npm toolchain required to verify the React/TypeScript/Vite frontend scaffold.
+This document records the completed Node.js toolchain provisioning procedure for `dell5820`. The installed toolchain supports the React/TypeScript/Vite frontend scaffold.
 
 ## Status
 
-Prepared, Not Applied
+Completed and Verified
 
-Codex prepared and validated the guarded provisioning script, but did not apply it because passwordless sudo is not available in the current session.
+Node.js 24 LTS and npm are installed and verified. The provisioning script is retained as a historical/admin tool and should not be reapplied without a specific reviewed reason.
 
 ## Approved Version
 
 - Node.js 24 LTS
-- npm version provided by the Node.js 24 package
+- npm provided by the Node.js 24 package
 
 ## Why Node.js 24 LTS
 
@@ -25,7 +25,7 @@ Node.js 26 Current is not selected because this project should use an LTS runtim
 
 ## Installation Source
 
-The prepared script uses the NodeSource `node_24.x` DEB repository with a dedicated APT source list and dedicated keyring.
+The completed installation uses the NodeSource `node_24.x` DEB repository with a dedicated APT source list and dedicated keyring.
 
 It does not use the NodeSource setup script pipe pattern.
 
@@ -48,56 +48,60 @@ The script:
 - does not modify shell profiles
 - does not install project dependencies
 
+## GPG Non-Interactive Correction
+
+During the first manual apply, GPG prompted before overwriting an output path because the script used `mktemp` to pre-create the `gpg --dearmor --output` file. GPG treats an existing output file as an overwrite target.
+
+The retained script now uses a private temporary directory and a not-yet-existing keyring output path for `gpg --batch --yes --dearmor`. The `--yes` flag applies only to the private temporary output path. Formal system keyring and source-list conflict checks remain in place and are not weakened.
+
 ## Dry-Run
 
 ```bash
 cd /home/hui/projects/trading-intelligence-platform
-sudo scripts/admin/provision-node-toolchain.sh
+scripts/admin/provision-node-toolchain.sh
 ```
 
-Dry-run does not require root behavior from the script itself, but running it with sudo is acceptable for matching the final operator workflow. It must not create repository files, run `apt-get update`, or install packages.
+Dry-run must not create repository files, run `apt-get update`, or install packages. On the completed host, dry-run safely recognizes the existing Node.js 24 installation and expected NodeSource files.
 
 ## Apply
+
+Historical command:
 
 ```bash
 cd /home/hui/projects/trading-intelligence-platform
 sudo scripts/admin/provision-node-toolchain.sh --apply
 ```
 
-Apply mode installs the NodeSource repository and `nodejs` package after preflight passes.
+Do not rerun apply on the completed host without a specific reviewed reason.
 
 ## Verification
 
-After apply, verify:
+Verified after provisioning:
 
-```bash
-node --version
-npm --version
-command -v node
-command -v npm
-dpkg-query -W -f='${Package}|${Version}|${Architecture}|${Status}
-' nodejs
-apt-cache policy nodejs
-npm config get prefix
-npm config get registry
-```
-
-Node major version must be 24.
+- Node.js major version is 24
+- npm is available
+- nodejs package is installed for `amd64`
+- NodeSource `node_24.x` repository is configured
+- npm registry connectivity works
+- frontend dependencies install successfully
+- frontend production build passes
+- local Vite-to-FastAPI proxy works
 
 ## Re-run Behavior
 
-The script should tolerate an already completed expected Node.js 24 installation, but it must stop on unknown Node versions, unknown package ownership, or unexpected repository/keyring files.
+The script should tolerate an already completed expected Node.js 24 installation during dry-run, but it must stop on unknown Node versions, unknown package ownership, or unexpected repository/keyring files.
 
 ## Failure Handling
 
-The script does not uninstall packages, delete existing repository files, or perform rollback. If installation partially succeeds, inspect the system state manually before continuing.
+The script does not uninstall packages, delete existing repository files, or perform rollback. If future maintenance partially succeeds, inspect the system state manually before continuing.
 
 ## Files Added to the System
 
-When applied successfully, the script may add:
+The completed provisioning added:
 
 - `/etc/apt/keyrings/nodesource-node24.gpg`
 - `/etc/apt/sources.list.d/nodesource-node24.list`
+- the `nodejs` package
 
 No key contents are stored in Git.
 
@@ -107,16 +111,8 @@ Removal of Node.js or the NodeSource repository is intentionally not automated b
 
 ## Project Dependency Installation
 
-After Node.js 24 and npm are verified, install frontend dependencies from the project directory:
-
-```bash
-cd /home/hui/projects/trading-intelligence-platform/apps/web
-npm install --save-exact=false
-npm run build
-```
-
-This step has not been executed yet.
+Frontend dependencies were installed with npm in `apps/web`, and `package-lock.json` was generated by npm. `node_modules` remains local and ignored by Git.
 
 ## Documentation Checkpoint
 
-After successful apply and frontend verification, update current status, infrastructure, local development instructions, roadmap, open questions, and changelog.
+Current status, infrastructure, local development instructions, roadmap, and changelog were updated after successful toolchain and scaffold verification.

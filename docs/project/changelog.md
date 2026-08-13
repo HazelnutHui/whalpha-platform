@@ -19,7 +19,12 @@
 - Verified the Health API locally on `127.0.0.1:8000`.
 - Frontend dependency installation and build were not verified because Node.js and npm were unavailable.
 - Prepared guarded Node.js 24 LTS provisioning script and operations document.
-- Node.js provisioning was not applied because passwordless sudo is unavailable.
+- Completed Node.js 24 LTS provisioning and verified npm.
+- Corrected provisioning script GPG behavior to avoid interactive overwrite prompts.
+- Locked frontend dependencies with npm-generated `package-lock.json`.
+- Verified frontend production build.
+- Verified local Vite server and Vite-to-FastAPI proxy.
+- Revalidated backend tests and the direct Health API endpoint.
 - No market data provider, database, production deployment, or Dashboard V1 implementation was introduced.
 
 ## 2026-08-12

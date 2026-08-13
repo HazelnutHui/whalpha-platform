@@ -86,6 +86,6 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 ## 8. Current Phase
 
-Infrastructure and storage foundation is complete. The application stack and target architecture are documented. There is no application code yet.
+Infrastructure, storage, application scaffold, and local frontend/backend development toolchain are complete and verified. Dashboard V1, market-data providers, analytics pipelines, database, and production deployment are not implemented yet.
 
-Current proposed activity: create the minimal application scaffold using the accepted frontend, backend, analytics, and provider-boundary decisions.
+Current proposed activity: define the Initial EOD Universe, Sector/Industry Taxonomy Boundary, and Normalized Market Data Contracts before implementing any provider adapter.

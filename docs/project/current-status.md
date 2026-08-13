@@ -29,6 +29,12 @@ Status date: 2026-08-13
 - Versioned Health API contract introduced.
 - Local development scripts added.
 - Scaffold development documentation added.
+- Node.js 24 LTS and npm toolchain installed and verified.
+- Frontend dependencies installed and locked with `package-lock.json`.
+- Frontend production build verified.
+- Local Vite development server verified.
+- Local Vite-to-FastAPI proxy verified.
+- Node provisioning script GPG non-interactive behavior corrected.
 
 ## Current
 
@@ -40,9 +46,10 @@ Status date: 2026-08-13
 - Backend dependencies installed in the project virtualenv.
 - Backend tests verified: `1 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
-- Node.js 24 provisioning script prepared but not applied because passwordless sudo is unavailable.
-- Frontend dependency installation status: not installed; Node.js and npm are not installed yet.
-- Frontend build status: not verified; Node.js and npm are not installed yet.
+- Node.js 24 LTS and npm are installed and verified.
+- Frontend dependencies are installed and locked by npm.
+- Frontend production build is verified.
+- Local Vite development server and Vite-to-FastAPI proxy are verified.
 - No provider implementation.
 - No production data ingestion.
 - No analytics pipeline.
@@ -55,4 +62,4 @@ Status date: 2026-08-13
 
 ## Next Proposed Step
 
-Manually run and return the Node.js 24 provisioning dry-run and apply output, then verify frontend dependencies and build.
+Define and document the Initial EOD Universe, Sector/Industry Taxonomy Boundary, and Normalized Market Data Contracts before implementing any market data provider adapter.

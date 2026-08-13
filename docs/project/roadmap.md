@@ -14,6 +14,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 ## Phase 1 — Market Dashboard MVP
 
 - [x] Minimal application scaffold
+- [x] Local frontend/backend development toolchain
 - [ ] Provider boundary
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -27,7 +28,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Manually run and return the Node.js 24 provisioning dry-run and apply output, then verify frontend dependencies and build.
+Define and document the Initial EOD Universe, Sector/Industry Taxonomy Boundary, and Normalized Market Data Contracts before implementing any market data provider adapter.
 
 ## Phase 2 — Intraday and Options
 

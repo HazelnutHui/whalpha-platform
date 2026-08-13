@@ -34,3 +34,6 @@ Thumbs.db
 .vscode/
 htmlcov/
 .vite/
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts

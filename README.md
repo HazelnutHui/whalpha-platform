@@ -13,7 +13,7 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack decision, target architecture, and minimal application scaffold are complete. No production data ingestion, database, deployment pipeline, production application, or real market-data provider integration has been created for the new project.
+Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. No production data ingestion, database, deployment pipeline, production application, or real market-data provider integration has been created for the new project.
 
 ## Application Entry Points
 

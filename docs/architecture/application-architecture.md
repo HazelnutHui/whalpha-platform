@@ -13,6 +13,7 @@ Confirmed current state:
 - Target frontend/backend boundaries are represented in the repository structure.
 - Versioned Health API contract exists at `GET /api/v1/health`.
 - Local development scripts exist under `scripts/dev`.
+- Local backend tests, direct Health API, frontend production build, Vite server, and Vite-to-FastAPI proxy have been verified.
 - Complete market data flow is not implemented.
 - No data provider is configured.
 - No production API is deployed.

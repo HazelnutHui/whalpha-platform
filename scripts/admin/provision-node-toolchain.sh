@@ -52,7 +52,12 @@ cleanup_temp_files() {
     if [[ -n "$file" && -e "$file" ]]; then
       case "$file" in
         /tmp/tip-node-toolchain.*|/etc/apt/keyrings/.nodesource-node24.*|/etc/apt/sources.list.d/.nodesource-node24.*)
-          rm -f -- "$file"
+          if [[ -d "$file" ]]; then
+            rm -f -- "$file/nodesource-repo.gpg.key" "$file/nodesource-node24.gpg"
+            rmdir -- "$file" 2>/dev/null || true
+          else
+            rm -f -- "$file"
+          fi
           ;;
       esac
     fi
@@ -175,16 +180,17 @@ preflight() {
 }
 
 download_and_install_keyring() {
-  local key_tmp keyring_tmp
-  key_tmp=$(mktemp /tmp/tip-node-toolchain.key.XXXXXX)
-  keyring_tmp=$(mktemp /etc/apt/keyrings/.nodesource-node24.gpg.XXXXXX)
-  register_temp "$key_tmp"
-  register_temp "$keyring_tmp"
+  local temp_dir key_tmp keyring_tmp
+  temp_dir=$(mktemp -d /tmp/tip-node-toolchain.keyring.XXXXXX)
+  register_temp "$temp_dir"
+  key_tmp="${temp_dir}/nodesource-repo.gpg.key"
+  keyring_tmp="${temp_dir}/nodesource-node24.gpg"
 
   curl --fail --show-error --location --output "$key_tmp" "$NODESOURCE_KEY_URL"
   [[ -s "$key_tmp" ]] || fail "downloaded NodeSource key is empty"
   gpg --show-keys "$key_tmp" >/dev/null 2>&1 || fail "downloaded NodeSource key is not a valid GPG public key"
-  gpg --dearmor --output "$keyring_tmp" "$key_tmp"
+  [[ ! -e "$keyring_tmp" ]] || fail "internal keyring output path unexpectedly exists: $keyring_tmp"
+  gpg --batch --yes --dearmor --output "$keyring_tmp" "$key_tmp"
   [[ -s "$keyring_tmp" ]] || fail "dearmored NodeSource keyring is empty"
   chown root:root "$keyring_tmp"
   chmod 0644 "$keyring_tmp"
