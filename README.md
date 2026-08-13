@@ -1,0 +1,63 @@
+# Trading Intelligence Platform
+
+Trading Intelligence Platform is a personal single-user prototype for U.S. equity market intelligence. It is designed to help the user understand market structure, sector and theme rotation, stock strength, breadth, options structure, relationship shifts, and significant market developments quickly enough to support discretionary research and trading decisions.
+
+The platform should help answer:
+
+- What is the market structure today?
+- Which sectors and themes are strengthening or weakening?
+- Is risk appetite expanding or contracting?
+- Which stocks show genuine relative strength?
+- What relationships or rotations deserve further investigation?
+- What developments are significant enough for human review?
+
+## Current Phase
+
+Documentation and infrastructure foundation. No application code, production data ingestion, database, or deployment workflow has been created for the new project.
+
+## Phase 1 Success Criteria
+
+Phase 1 succeeds when the project delivers a usable Market Dashboard MVP that can show:
+
+- Market Structure Summary
+- Market Risk Regime
+- Standard Market Heatmap / Treemap
+- Market Breadth
+- Index & Style Strength
+- Sector / Theme Rotation
+- Dynamic Relationship & Rotation Monitor
+- Key Market Developments
+
+## Core Modules
+
+- Market Structure
+- Sector / Theme Rotation
+- Stock Strength
+- Market Breadth
+- Options Structure
+- Dynamic Relationship & Rotation Monitor
+- Lightweight Event Layer
+
+## Explicitly Not Doing Now
+
+- Automated trading
+- Order execution
+- HFT
+- Complex ML or deep learning
+- Large microservice systems
+- Kubernetes
+- Large Event Knowledge Base
+
+## Public and Data-Licensing Boundary
+
+This project is a personal single-user prototype. It may be reachable over the public internet, but it is not currently a commercial market-data redistribution product. Public access and data licensing must be reassessed before broader promotion or commercial use.
+
+## Documentation Entry Points
+
+- [Agent instructions](AGENTS.md)
+- [Documentation index](docs/README.md)
+- [Current status](docs/project/current-status.md)
+- [Dashboard V1](docs/product/dashboard-v1.md)
+- [System context](docs/architecture/system-context.md)
+- [Deployment boundary](docs/operations/deployment-boundary.md)
+- [Architecture decisions](docs/decisions/README.md)
