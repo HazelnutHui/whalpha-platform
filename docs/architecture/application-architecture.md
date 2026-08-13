@@ -2,18 +2,20 @@
 
 ## Purpose
 
-This document records the approved target application architecture for Trading Intelligence Platform. It describes how the first application scaffold should be organized conceptually; it is not evidence that the runtime already exists.
+This document records the approved target application architecture for Trading Intelligence Platform. It describes how the first application scaffold should be organized conceptually; it is not evidence that the full runtime already exists.
 
 ## Current Status
 
 Confirmed current state:
 
-- The repository contains documentation and operational scripts only.
-- No application scaffold exists yet.
-- No frontend runtime exists yet.
-- No backend runtime exists yet.
+- Minimal backend scaffold exists under `apps/api`.
+- Minimal frontend scaffold exists under `apps/web`.
+- Target frontend/backend boundaries are represented in the repository structure.
+- Versioned Health API contract exists at `GET /api/v1/health`.
+- Local development scripts exist under `scripts/dev`.
+- Complete market data flow is not implemented.
 - No data provider is configured.
-- No production API exists.
+- No production API is deployed.
 - No database exists.
 - OCI currently serves only a static development placeholder.
 
@@ -68,7 +70,7 @@ React Dashboard
 Published through OCI
 ```
 
-This is the approved target architecture, not the current implemented runtime.
+The scaffold represents the FastAPI contract and React dashboard boundaries. Provider adapters, normalization, analytics, derived datasets, event generation, and deployment publishing are still future work.
 
 ## Data Flow
 
@@ -80,13 +82,22 @@ This is the approved target architecture, not the current implemented runtime.
 6. React renders the dashboard using typed data contracts and Apache ECharts.
 7. OCI serves the public boundary after a deployment mechanism is selected.
 
+Only the Health API and development status page exist now.
+
 ## Repository / Application Boundaries
 
 The code repository remains under `/home/hui/projects/trading-intelligence-platform`.
 
 Application data belongs under `/data/trading-intelligence-platform` and must not be committed to Git. Secrets, provider credentials, account credentials, and private configuration must stay outside the repository.
 
-The first scaffold should keep these responsibilities distinct:
+Current scaffold boundaries:
+
+- `apps/api`: FastAPI backend and API contract tests
+- `apps/web`: React/Vite frontend status page
+- `scripts/dev`: local development launch scripts
+- `docs/development`: local development instructions
+
+Future implementation should keep these responsibilities distinct:
 
 - frontend dashboard
 - backend API contracts
@@ -199,8 +210,7 @@ Before closing material work, check whether these documents need updates:
 
 ## Deferred Decisions
 
-- exact frontend and backend scaffold layout
-- API route structure and versioning
+- API route structure and versioning beyond the Health API
 - exact deployment mechanism to OCI
 - database introduction threshold and database choice
 - initial market universe construction

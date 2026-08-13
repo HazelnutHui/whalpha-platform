@@ -13,7 +13,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Phase 1 — Market Dashboard MVP
 
-- [ ] Minimal application scaffold
+- [x] Minimal application scaffold
 - [ ] Provider boundary
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -24,6 +24,10 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [ ] Relationship monitor
 - [ ] Lightweight developments
 - [ ] First usable deployment
+
+## Next Small Target
+
+Provision and verify the local development toolchain required to run both the accepted backend and frontend scaffold, if any prerequisite remains unavailable.
 
 ## Phase 2 — Intraday and Options
 

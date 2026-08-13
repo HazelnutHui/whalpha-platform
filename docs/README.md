@@ -21,6 +21,10 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.
 
+## Development
+
+- [Local Development](development/local-development.md): Project-local backend and frontend setup, run, and verification instructions.
+
 ## Decisions
 
 - [ADR Index](decisions/README.md)

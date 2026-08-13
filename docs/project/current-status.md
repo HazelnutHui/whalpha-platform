@@ -24,16 +24,28 @@ Status date: 2026-08-13
 - Approximately 100.82 GiB VG free retained.
 - Application technology stack decision accepted.
 - Target application architecture documented.
+- Minimal backend scaffold created.
+- Minimal frontend scaffold created.
+- Versioned Health API contract introduced.
+- Local development scripts added.
+- Scaffold development documentation added.
 
 ## Current
 
 - Documentation and infrastructure foundation complete.
 - Application stack and target architecture documented.
-- No application scaffold.
-- No frontend implementation.
-- No backend implementation.
+- Backend scaffold exists under `apps/api`.
+- Frontend scaffold exists under `apps/web`.
+- Python virtualenv created at the project root and ignored by Git.
+- Backend dependencies installed in the project virtualenv.
+- Backend tests verified: `1 passed`.
+- Health endpoint verified locally on `127.0.0.1:8000`.
+- Frontend dependency installation status: not installed; Node.js and npm were unavailable at scaffold creation.
+- Frontend build status: not verified; Node.js and npm were unavailable at scaffold creation.
 - No provider implementation.
 - No production data ingestion.
+- No analytics pipeline.
+- No Dashboard V1 implementation.
 - No database.
 - No deployment pipeline.
 - No production application.
@@ -42,4 +54,4 @@ Status date: 2026-08-13
 
 ## Next Proposed Step
 
-Create the minimal application scaffold on `dell5820` using the accepted React/TypeScript/Vite frontend and Python/FastAPI backend boundaries, without yet implementing the full Dashboard or production deployment.
+Provision and verify the local development toolchain required to run both the accepted backend and frontend scaffold, if any prerequisite remains unavailable.

@@ -1,6 +1,6 @@
 # Open Questions
 
-The following decisions remain open. Final workstation storage layout, frontend framework, backend framework, charting library, and initial storage format are no longer open; see [Infrastructure](../operations/infrastructure.md), [Storage Provisioning](../operations/storage-provisioning.md), and [ADR 0005](../decisions/0005-application-technology-stack.md).
+The following decisions remain open. Final workstation storage layout, frontend framework, backend framework, charting library, initial storage format, and initial repository application layout are no longer open; see [Infrastructure](../operations/infrastructure.md), [Storage Provisioning](../operations/storage-provisioning.md), [ADR 0005](../decisions/0005-application-technology-stack.md), and [Application Architecture](../architecture/application-architecture.md).
 
 - Exact Massive plan and actual entitlement
 - Initial market universe construction
