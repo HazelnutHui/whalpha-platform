@@ -18,7 +18,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
-- [Storage Provisioning](operations/storage-provisioning.md): Approved workstation storage implementation procedure.
+- [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.
 
 ## Decisions
 

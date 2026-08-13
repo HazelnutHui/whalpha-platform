@@ -1,8 +1,7 @@
 # Open Questions
 
-The following decisions remain open:
+The following decisions remain open. Final workstation storage layout is no longer open; see [Infrastructure](../operations/infrastructure.md) and [Storage Provisioning](../operations/storage-provisioning.md).
 
-- Final storage layout
 - Backend framework
 - Frontend framework and charting library
 - Initial universe construction
@@ -15,3 +14,4 @@ The following decisions remain open:
 - Whether Cloudflare proxying should be enabled
 - Cleanup of obsolete network allowance for port 8000
 - Swap strategy for OCI
+- Long-term backup/retention policy for `/data`

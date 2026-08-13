@@ -1,30 +1,34 @@
 # Workstation Storage Provisioning
 
-Status: Approved, Not Yet Executed
+Status: Completed and Reboot-Verified
 
-This document describes the approved storage implementation for the workstation. It records the operator workflow and the safety boundaries for `scripts/admin/provision-workstation-storage.sh`.
+Execution date: 2026-08-13
 
-Do not store or paste passwords in this repository, shell commands, files, environment variables, or chat. Run this procedure only directly on `dell5820`.
+This document records the completed workstation storage implementation and the safety boundaries for `scripts/admin/provision-workstation-storage.sh`.
+
+The provisioning script is a one-time guarded procedure. Do not run `--apply` again on the completed host. The current-state preflight should intentionally reject reapplication because the root LV has already been expanded, the data LV exists, `/data` exists, and `/etc/fstab` contains the completed mount entry.
+
+The script remains in the repository as an auditable operational record. Future storage changes require a new reviewed procedure, not modification or blind rerun of this completed operation.
+
+Do not store or paste passwords in this repository, shell commands, files, environment variables, or chat. Run any storage procedure only directly on `dell5820`.
 
 ## Verified Pre-Change Storage Facts
 
-Confirmed by final interactive sudo verification:
+Confirmed before the completed implementation:
 
 - PV: `/dev/nvme0n1p3`
 - VG: `ubuntu-vg`
-- VG size: less than 950.82G
-- VG free: less than 850.82G
 - Only LV: `ubuntu-lv`
-- Root LV size: 100.00G
+- Root LV size before change: 100.00G
 - Root LV type: linear
 - Root filesystem: ext4
 - Snapshot count: 0
 - No thin pool, cache LV, or other LV
-- `/data` does not exist
-- `/etc/fstab` has no `/data` entry
+- `/data` did not exist
+- `/etc/fstab` had no `/data` entry
 - `findmnt` verification reported 0 parse errors and 0 errors
-- Existing swap-file warning is known and not part of this change
-- LVM metadata backup/archive exists
+- Existing swap-file warning was known and not part of this change
+- LVM metadata backup/archive existed
 
 ## Target Layout
 
@@ -40,7 +44,22 @@ Confirmed by final interactive sudo verification:
 - Project data root owner/mode: `hui:hui`, `750`
 - Preflight minimum VG free before changes: at least 850 GiB
 - Required retained VG free after changes: at least 100 GiB
-- Expected retained VG free: approximately 100.82G
+
+## Completed Result
+
+- Preflight passed.
+- LVM metadata backup completed.
+- Root LV extended online from 100 GiB to 150 GiB.
+- Root ext4 filesystem resized successfully.
+- `trading-data` LV created at 700 GiB.
+- ext4 filesystem created with label `TIP_DATA` and 1% reserved blocks.
+- UUID-based `/etc/fstab` entry installed.
+- Mount options include `nodev,nosuid`.
+- `/data` mounted successfully.
+- Project data root created at `/data/trading-intelligence-platform`.
+- Final VG free is approximately 100.82 GiB.
+- Controlled reboot verified persistent `/data` mount.
+- No failed systemd units were present after reboot verification.
 
 ## Why Separate Code and Data
 
@@ -56,32 +75,35 @@ scripts/admin/provision-workstation-storage.sh
 
 The script defaults to dry-run. It only modifies storage when `--apply` is explicitly provided. Invalid or extra arguments are rejected before apply preflight.
 
-## Dry-Run Command
+## Historical Execution Commands — Do Not Rerun on the Provisioned Host
+
+These commands are retained only to document how the completed procedure was designed to run.
+
+Dry-run command:
 
 ```bash
 sudo scripts/admin/provision-workstation-storage.sh
 ```
 
-Dry-run prints the proposed plan and performs only non-mutating checks. It must not create LVM metadata backups, create `/data`, modify filesystems, or edit `/etc/fstab`.
-
-## Apply Command
+Apply command:
 
 ```bash
 sudo scripts/admin/provision-workstation-storage.sh --apply
 ```
 
-Apply mode must run as root. It performs strict preflight checks before any modification, including at least 850 GiB free before changes so at least 100 GiB remains afterward.
+Do not run the apply command again on `dell5820`. Reapplication should fail preflight on the completed host, and future storage changes must use a new reviewed procedure.
 
-## Expected Final Layout
+## Final Layout
 
-After successful apply:
+After successful implementation:
 
 - `/dev/ubuntu-vg/ubuntu-lv` is 150G and remains mounted at `/`
 - `/dev/ubuntu-vg/trading-data` is 700G
 - `/dev/ubuntu-vg/trading-data` has ext4 label `TIP_DATA`
-- `/data` is mounted from the new data filesystem
+- `/data` is mounted from the data filesystem
 - `/data/trading-intelligence-platform` exists and is owned by `hui:hui`
 - The project Git repository remains at `/home/hui/projects/trading-intelligence-platform`
+- Approximately 100.82 GiB VG free remains available for future expansion
 
 ## Irreversible Boundaries
 
@@ -98,39 +120,34 @@ After successful apply:
 - If mounting `/data` fails, the LV, filesystem, and fstab state are preserved for manual inspection. No automatic LVM rollback is attempted.
 - Re-running `--apply` after a partial implementation must stop during preflight rather than guessing how to continue.
 
-## Post-Apply Verification
+## Post-Apply Verification Record
 
-The script prints and verifies:
+The completed procedure verified:
 
-- `pvs`
-- `vgs`
-- `lvs`
-- `lsblk`
-- `findmnt /data`
-- `df -hT / /data`
-- `blkid` for the data LV
+- LVM and filesystem layout
+- `/data` mount state
+- root LV size
+- data LV size
+- retained VG free
 - `/data` owner/mode
 - project data root owner/mode
-- `/etc/fstab` new `/data` entry
-- root LV is 150G
-- data LV is 700G
-- root mount remains normal
-- `/data` mount is normal
-- project Git repository was not moved
+- `/etc/fstab` mount entry presence
+- project Git repository location
 
 ## Reboot Persistence Verification
 
-The script does not reboot. After a successful apply, schedule a separate controlled reboot verification:
+A separate controlled reboot verification was completed on 2026-08-13:
 
-1. Confirm active SSH access before reboot.
-2. Reboot only when no active work depends on the workstation.
-3. After reboot, reconnect to `dell5820`.
-4. Verify `/` and `/data` mounts with `findmnt --real` and `df -hT / /data`.
-5. Verify the project repository and `/data/trading-intelligence-platform` both exist.
+1. SSH access remained healthy.
+2. `/data` mounted automatically after reboot.
+3. The project repository remained under `/home/hui/projects/trading-intelligence-platform`.
+4. `/data/trading-intelligence-platform` remained available.
+5. No failed systemd units were present after reboot.
 
 ## Operational Boundaries
 
 - Do not run this script on any host except `dell5820`.
+- Do not rerun `--apply` on the completed host.
 - Do not modify `/etc/fstab` by hand unless recovering from a documented failure.
 - Do not add extra data subdirectories until the application design requires them.
 - Do not store secrets, credentials, API keys, or provider tokens under Git.

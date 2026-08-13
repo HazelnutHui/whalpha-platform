@@ -1,6 +1,6 @@
 # Infrastructure
 
-This document records non-sensitive infrastructure facts. Do not add literal server IPs, OCIDs, key paths, credentials, fingerprints, or authorized key contents.
+This document records non-sensitive infrastructure facts. Do not add literal server IPs, OCIDs, key paths, credentials, fingerprints, filesystem UUIDs, or authorized key contents.
 
 ## Workstation
 
@@ -14,10 +14,18 @@ Confirmed:
 - 8 physical cores / 16 threads
 - approximately 62 GiB RAM
 - approximately 1 TB NVMe
-- LVM
-- current root LV: 100G
-- approximately 850G VG free as last verified
-- `/home/hui/projects` is currently the code parent directory
+- LVM volume group: `ubuntu-vg`
+- root LV: `ubuntu-lv`, 150 GiB, ext4, mounted at `/`
+- data LV: `trading-data`, 700 GiB, ext4, mounted at `/data`
+- data filesystem label: `TIP_DATA`
+- persistent `/data` mount configured by UUID
+- `/data` mount options include `nodev,nosuid`
+- approximately 100.82 GiB VG free retained
+- `/home/hui/projects` is the code parent directory
+- project data root: `/data/trading-intelligence-platform`
+- project data root owner/mode: `hui:hui`, `750`
+- reboot persistence verified on 2026-08-13
+- systemd failed units after verification: 0
 - Docker and Node were not installed at last verification
 - Python 3.12.3 and Git 2.43.0 were available
 

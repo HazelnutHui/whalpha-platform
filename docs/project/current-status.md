@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-12
+Status date: 2026-08-13
 
 ## Completed
 
@@ -17,26 +17,25 @@ Status date: 2026-08-12
 - Dedicated SSH identities and aliases created for both servers.
 - Obsolete shared RSA access removed and local old RSA files deleted.
 - Product direction and Dashboard V1 scope confirmed.
+- Workstation storage layout implemented and reboot-verified.
+- Root LV expanded to 150 GiB.
+- Independent 700 GiB `/data` LV created.
+- Project data root created at `/data/trading-intelligence-platform`.
+- Approximately 100.82 GiB VG free retained.
 
 ## Current
 
-- Project documentation bootstrap.
+- Documentation and infrastructure foundation complete.
 - No application code.
 - No production data ingestion.
 - No database.
 - No selected Web framework.
 - No selected deployment workflow.
 - No API credentials configured.
-- No data LV created yet.
+- Project data root exists but contains no project datasets yet.
 
 ## Next Proposed Step
 
-Validate and implement workstation storage layout:
-
-- root LV proposed to expand from 100G to 150G
-- proposed `/data` LV of 700G
-- retain approximately 100G VG free
-
-Then create the minimal application scaffold.
-
-This storage work is proposed and has not yet been executed.
+- Decide and document the minimal application architecture and technology stack.
+- Then create the minimal application scaffold.
+- Start with an EOD development path and provider boundary.

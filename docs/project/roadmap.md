@@ -4,30 +4,30 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Phase 0 — Foundation
 
-- Infrastructure audit and cleanup
-- Access normalization
-- Documentation bootstrap
-- Storage preparation
+- [x] Infrastructure audit and cleanup
+- [x] Access normalization
+- [x] Documentation bootstrap
+- [x] Storage preparation
 
 ## Phase 1 — Market Dashboard MVP
 
-- Provider boundary
-- EOD development dataset
-- Core market calculations
-- Dashboard shell
-- Heatmap
-- Breadth
-- Rotation
-- Relationship monitor
-- Lightweight developments
-- Deploy first usable version
+- [ ] Provider boundary
+- [ ] EOD development dataset
+- [ ] Core market calculations
+- [ ] Dashboard shell
+- [ ] Heatmap
+- [ ] Breadth
+- [ ] Rotation
+- [ ] Relationship monitor
+- [ ] Lightweight developments
+- [ ] First usable deployment
 
 ## Phase 2 — Intraday and Options
 
-- Delayed/intraday upgrades
-- Selected Options structure
-- Scheduling and reliability
-- Stronger monitoring
+- [ ] Delayed/intraday upgrades
+- [ ] Selected Options structure
+- [ ] Scheduling and reliability
+- [ ] Stronger monitoring
 
 ## Later
 

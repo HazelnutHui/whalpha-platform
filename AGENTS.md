@@ -69,6 +69,6 @@ Do not independently expand this project into:
 
 ## 7. Current Phase
 
-The project is in the documentation and infrastructure foundation phase. There is no application code yet.
+Infrastructure and storage foundation is complete. There is no application code yet.
 
-Next proposed activity: workstation storage setup, followed by project scaffold. This proposal is not yet executed.
+Current proposed activity: decide the minimal application architecture and create the first scaffold.
