@@ -21,7 +21,10 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Instrument Master V1 model and validation tests
 - [x] EOD Price Bar V1 model and validation tests
 - [ ] Remaining logical contract models
-- [ ] Provider boundary implementation
+- [x] Minimal provider boundary Protocol
+- [x] Deterministic in-memory provider contract tests
+- [ ] First real EOD provider evaluation
+- [ ] Real provider adapter implementation
 - [ ] EOD development dataset
 - [ ] Core market calculations
 - [ ] Dashboard shell
@@ -34,7 +37,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and implement a minimal provider boundary protocol plus deterministic in-memory adapter contract tests, without selecting or connecting to Massive, IBKR, or any real provider.
+Evaluate and document the first real EOD market data provider against the accepted capabilities, licensing, entitlement, coverage, revision, and redistribution requirements before implementing any real adapter.
 
 ## Phase 2 — Intraday and Options
 

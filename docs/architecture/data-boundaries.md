@@ -27,6 +27,13 @@ The Initial EOD data boundary is now documented as accepted logical contracts:
 
 Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. The remaining contracts are logical-only. None of the contracts are implemented as Parquet schemas, provider adapters, or database tables.
 
+
+## Implemented Provider Boundary
+
+The minimal synchronous provider boundary is implemented in `tip_api.providers.market_data` and documented in [Market Data Provider Boundary](market-data-provider-boundary.md). It currently supports only Instrument Master and EOD Price Bar retrieval through canonical contracts.
+
+No real provider adapter, credential handling, network integration, ingestion, persistence, or entitlement verification is implemented.
+
 ## Proposed Providers
 
 - Massive: proposed primary stock/ETF/market-structure backbone.

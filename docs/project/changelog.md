@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-08-14
+
+- Implemented the synchronous provider-neutral MarketDataProvider Protocol.
+- Added provider capabilities and query models for Instrument Master and EOD Price Bars.
+- Added explicit provider error taxonomy.
+- Added deterministic in-memory provider contract test fake.
+- No real provider, network access, credentials, ingestion, persistence, database, or Dashboard implementation was introduced.
+
 ## 2026-08-13
 
 - Expanded workstation root LV from 100 GiB to 150 GiB.

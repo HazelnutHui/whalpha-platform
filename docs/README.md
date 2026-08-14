@@ -15,6 +15,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Application Architecture](architecture/application-architecture.md): Accepted target application architecture and runtime boundaries.
 - [Classification Boundary](architecture/classification-boundary.md): Accepted Sector/Industry, Theme, and Analytical Group boundary.
 - [Normalized Market Data Contracts](architecture/normalized-market-data-contracts.md): Accepted V1 logical market-data contract boundary.
+- [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
 - [Data Boundaries](architecture/data-boundaries.md): Market Data Provider boundary and data authorization rules.
 - [Event Layer](architecture/event-layer.md): Lightweight event positioning and deferred long-term model.
 

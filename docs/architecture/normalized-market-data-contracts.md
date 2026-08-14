@@ -8,7 +8,7 @@ This document defines the accepted V1 logical contract boundary for normalized E
 
 Partially Implemented
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. No SQL tables, Parquet schemas, provider adapters, ingestion jobs, or market-data files exist for these contracts yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous provider boundary can return these canonical contracts. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. No SQL tables, Parquet schemas, real provider adapters, ingestion jobs, or market-data files exist for these contracts yet.
 
 ## Shared Contract Principles
 

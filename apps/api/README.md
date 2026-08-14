@@ -42,6 +42,23 @@ Implemented contracts:
 
 These are validation models only. They do not implement provider adapters, persistence, Parquet writing, market-data ingestion, analytics, or new API endpoints.
 
+
+## Implemented Provider Boundary
+
+Provider-neutral market-data provider types are available from:
+
+```python
+from tip_api.providers.market_data import (
+    EodBarQuery,
+    InstrumentQuery,
+    MarketDataProvider,
+    ProviderCapability,
+    RevisionSelection,
+)
+```
+
+The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, but no production provider adapter, network access, credentials, ingestion, persistence, or API endpoint.
+
 ## Local Setup
 
 Use the repository-level instructions in [Local Development](../../docs/development/local-development.md).

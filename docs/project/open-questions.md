@@ -2,6 +2,8 @@
 
 The following decisions remain open. Final workstation storage layout, frontend framework, backend framework, charting library, initial storage format, initial repository application layout, local frontend toolchain availability, Initial EOD Universe structure, classification boundary, and normalized EOD logical contract boundary are no longer open. See [Infrastructure](../operations/infrastructure.md), [Storage Provisioning](../operations/storage-provisioning.md), [ADR 0005](../decisions/0005-application-technology-stack.md), [ADR 0006](../decisions/0006-initial-eod-data-model-and-universe-boundaries.md), [Application Architecture](../architecture/application-architecture.md), [Initial EOD Universe](../product/initial-eod-universe.md), [Classification Boundary](../architecture/classification-boundary.md), and [Normalized Market Data Contracts](../architecture/normalized-market-data-contracts.md).
 
+The shape of the minimal provider Protocol, synchronous EOD V1 boundary, and minimal provider error taxonomy are no longer open; see [Market Data Provider Boundary](../architecture/market-data-provider-boundary.md).
+
 - Candidate Discovery thresholds after real coverage evaluation
 - Exact S&P 500/index constituent source
 - Exact canonical traditional taxonomy source or mapping methodology
@@ -23,3 +25,5 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Whether public contract identifiers remain UUID-based across persistence
 - Physical Decimal representation in Parquet
 - Exact provider revision reconciliation behavior
+- Exact first real EOD provider
+- Licensing and redistribution boundary for the first real EOD provider

@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-13
+Status date: 2026-08-14
 
 ## Completed
 
@@ -43,6 +43,12 @@ Status date: 2026-08-13
 - Instrument Master V1 Python contract implemented.
 - EOD Price Bar V1 Python contract implemented.
 - Contract validation test suite added for Instrument Master V1 and EOD Price Bar V1.
+- Minimal synchronous MarketDataProvider Protocol implemented.
+- ProviderCapability declarations implemented for Instrument Master and EOD Price Bars.
+- InstrumentQuery and EodBarQuery implemented.
+- Revision-selection semantics implemented for EOD bars.
+- Provider exception taxonomy implemented.
+- Deterministic in-memory provider boundary tests added.
 
 ## Current
 
@@ -63,7 +69,11 @@ Status date: 2026-08-13
 - No physical schemas.
 - Corporate Action V1, Classification V1, and Universe Membership V1 Python models are not implemented.
 - No Parquet writers.
-- No provider implementation.
+- Minimal provider boundary Protocol is implemented.
+- No real provider selection.
+- No Massive entitlement verification.
+- No real provider adapter.
+- No authentication or provider configuration.
 - No market data ingestion.
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
@@ -77,4 +87,4 @@ Status date: 2026-08-13
 
 ## Next Proposed Step
 
-Design and implement a minimal provider boundary protocol plus deterministic in-memory adapter contract tests, without selecting or connecting to Massive, IBKR, or any real provider.
+Evaluate and document the first real EOD market data provider against the accepted capabilities, licensing, entitlement, coverage, revision, and redistribution requirements before implementing any real adapter.

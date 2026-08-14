@@ -16,6 +16,7 @@ Confirmed current state:
 - Local backend tests, direct Health API, frontend production build, Vite server, and Vite-to-FastAPI proxy have been verified.
 - Initial EOD Universe, classification boundary, and normalized EOD logical contracts are accepted and documented.
 - Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests.
+- Minimal synchronous MarketDataProvider boundary, query models, capability declarations, provider errors, and deterministic in-memory contract tests are implemented.
 - Complete market data flow is not implemented.
 - No data provider is configured.
 - No production API is deployed.
@@ -73,7 +74,7 @@ React Dashboard
 Published through OCI
 ```
 
-The scaffold represents the FastAPI contract and React dashboard boundaries. Provider adapters, normalization, analytics, derived datasets, event generation, and deployment publishing are still future work.
+The scaffold represents the FastAPI contract, React dashboard boundary, canonical data contracts, and minimal provider Protocol boundary. Real provider adapters, normalization pipelines, analytics, derived datasets, event generation, and deployment publishing are still future work.
 
 ## Data Flow
 
@@ -144,7 +145,7 @@ A database is not selected yet. Database introduction should be driven by real r
 
 ## Provider Boundary
 
-The application must not let vendor response schemas leak into domain calculations. Use MarketDataProvider or adapter boundaries and normalize vendor data before analysis.
+The application must not let vendor response schemas leak into domain calculations. Use the implemented [Market Data Provider Boundary](market-data-provider-boundary.md) and future provider adapters to return canonical contracts before analysis.
 
 Provider direction:
 
