@@ -2,6 +2,10 @@
 
 ## 2026-08-14
 
+- Implemented the Massive Stocks configuration and credential boundary.
+- Added a mocked-only Massive adapter skeleton for Instrument Master and EOD Price Bars.
+- Added deterministic mocked HTTP response tests for Massive mapping, error handling, pagination, and credential redaction.
+- No real API key, Massive API call, market-data download, persistence, provider-backed deployment, or access-control change was introduced.
 - Evaluated Massive Stocks Basic using official public documentation.
 - Accepted Massive Stocks Basic as the first private EOD development provider.
 - Documented public-display and Derived Works restrictions for provider-backed data.

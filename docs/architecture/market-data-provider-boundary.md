@@ -8,7 +8,7 @@ This document records the implemented minimal provider-neutral market-data provi
 
 Implemented Minimal Boundary — First Provider Candidate Evaluated
 
-The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is accepted as the first private EOD development provider candidate, but no real provider adapter, account entitlement, credential, API request, ingestion, or persistence is implemented.
+The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is accepted as the first private EOD development provider candidate. A mocked-only Massive adapter skeleton now implements configuration, credential redaction, injected transport, and canonical mapping tests, but no real account entitlement, credential, production HTTP transport, API request, ingestion, or persistence is implemented.
 
 ## Synchronous V1 Boundary
 
@@ -126,9 +126,9 @@ The provider boundary has no credential fields, does not read environment secret
 
 ## Deferred Concerns
 
-- Massive adapter implementation
+- production Massive HTTP transport
 - Massive entitlement verification
-- authentication and configuration
+- real credential provisioning
 - HTTP client behavior
 - async support
 - pagination

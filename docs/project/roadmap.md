@@ -24,7 +24,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Minimal provider boundary Protocol
 - [x] Deterministic in-memory provider contract tests
 - [x] First real EOD provider evaluation
-- [ ] Massive adapter configuration and credential boundary with mocked HTTP responses
+- [x] Massive adapter configuration and credential boundary with mocked HTTP responses
+- [ ] Massive account entitlement and secure credential provisioning
 - [ ] Real provider adapter implementation
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -38,7 +39,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and implement the Massive adapter's configuration and credential boundary using a placeholder environment-variable contract and mocked HTTP responses only, without creating an API key or making a real network request.
+Create and verify the user's Massive account entitlement and provision the real API credential securely on dell5820, without placing the credential in Git, documentation, chat, command history, process arguments, or logs; then perform one minimal read-only API smoke test.
 
 ## Phase 2 — Intraday and Options
 

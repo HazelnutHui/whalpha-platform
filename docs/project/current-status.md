@@ -53,6 +53,10 @@ Status date: 2026-08-14
 - Massive Stocks Basic selected for private EOD development.
 - Licensing and access boundary documented for provider-backed data and derived works.
 - Public placeholder, public data-free demo, and private real-data dashboard separation documented.
+- Massive configuration and credential boundary implemented.
+- Massive mocked HTTP transport boundary implemented.
+- Massive mocked adapter skeleton implemented for Instrument Master and EOD Price Bars.
+- Massive adapter tests added with deterministic mocked responses and no network access.
 
 ## Current
 
@@ -75,12 +79,14 @@ Status date: 2026-08-14
 - No Parquet writers.
 - Minimal provider boundary Protocol is implemented.
 - Massive Stocks Basic is selected for private EOD development only.
+- Massive mocked adapter skeleton exists, but only with injected fake transport tests.
 - No account signup.
 - No Massive entitlement verification.
 - No API key.
 - No credential storage mechanism selected.
-- No real provider adapter.
-- No authentication or provider configuration.
+- No production HTTP transport.
+- No real provider adapter activation.
+- No real authentication or provider runtime configuration.
 - No API calls.
 - No private access-control mechanism selected.
 - No private access-control implementation.
@@ -97,4 +103,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Design and implement the Massive adapter's configuration and credential boundary using a placeholder environment-variable contract and mocked HTTP responses only, without creating an API key or making a real network request.
+Create and verify the user's Massive account entitlement and provision the real API credential securely on dell5820, without placing the credential in Git, documentation, chat, command history, process arguments, or logs; then perform one minimal read-only API smoke test.

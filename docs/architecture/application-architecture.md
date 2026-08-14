@@ -18,8 +18,9 @@ Confirmed current state:
 - Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests.
 - Minimal synchronous MarketDataProvider boundary, query models, capability declarations, provider errors, and deterministic in-memory contract tests are implemented.
 - Massive Stocks Basic is accepted as the first private EOD development provider.
+- Massive configuration, credential redaction, transport Protocol, and mocked adapter mapping skeleton are implemented.
 - Complete market data flow is not implemented.
-- No real provider adapter, account entitlement, API key, API request, ingestion, or persistence exists.
+- No real provider account entitlement, API key, production HTTP transport, API request, ingestion, or persistence exists.
 - No production API is deployed.
 - No database exists.
 - OCI currently serves only a static development placeholder.
@@ -158,7 +159,7 @@ Provider direction:
 - IBKR is best positioned for portfolio, account-aware information, selected instrument checks, and brokerage-related integration.
 - Options data source remains an open question.
 
-No provider credentials, account entitlement, adapter, API calls, ingestion, persistence, or provider-backed deployment are configured by this architecture document.
+No provider credentials, account entitlement, production HTTP transport, API calls, ingestion, persistence, or provider-backed deployment are configured by this architecture document. The current Massive adapter is tested only with mocked HTTP responses.
 
 ## Dashboard V1 Functional Areas
 

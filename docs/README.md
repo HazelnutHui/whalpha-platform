@@ -31,7 +31,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 ## Providers
 
 - [Provider Evaluations](providers/README.md)
-- [Massive Stocks Basic Evaluation](providers/massive-stocks-basic-evaluation.md): Accepted first private EOD development provider; adapter not implemented.
+- [Massive Stocks Basic Evaluation](providers/massive-stocks-basic-evaluation.md): Accepted first private EOD development provider.
+- [Massive Adapter Boundary](providers/massive-adapter-boundary.md): Mocked-only configuration, credential, transport, and mapping boundary.
 
 ## Operations
 

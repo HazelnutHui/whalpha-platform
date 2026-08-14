@@ -32,7 +32,7 @@ Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic val
 
 The minimal synchronous provider boundary is implemented in `tip_api.providers.market_data` and documented in [Market Data Provider Boundary](market-data-provider-boundary.md). It currently supports only Instrument Master and EOD Price Bar retrieval through canonical contracts.
 
-No real provider adapter, credential handling, network integration, ingestion, persistence, or entitlement verification is implemented.
+A mocked-only Massive adapter skeleton now implements configuration validation, credential redaction, injected transport, and local response mapping tests. No real credential, production HTTP transport, network integration, ingestion, persistence, or entitlement verification is implemented.
 
 ## Provider Selection Status
 

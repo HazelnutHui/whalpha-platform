@@ -57,7 +57,18 @@ from tip_api.providers.market_data import (
 )
 ```
 
-The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, but no production provider adapter, network access, credentials, ingestion, persistence, or API endpoint.
+The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests and a Massive mocked adapter skeleton. No real provider credential, production HTTP transport, network access, ingestion, persistence, or API endpoint exists.
+
+
+## Massive Mocked Adapter Boundary
+
+The Massive package is available from:
+
+```python
+from tip_api.providers.massive import MassiveMarketDataProvider, MassiveProviderConfig
+```
+
+It implements configuration validation, credential redaction, injected transport, mocked response mapping, and deterministic tests only. It must not be used with a real API key or real network transport until entitlement, credential storage, and access-control prerequisites are documented and approved.
 
 ## Local Setup
 
