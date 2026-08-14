@@ -152,4 +152,4 @@ The provider-neutral boundary has no credential fields and does not require raw 
 
 ## Implementation Status
 
-Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. The Massive credential loader and minimal HTTPS transport exist, and one reference smoke test has succeeded. No ingestion, persistence, analytics, dashboard endpoint, or provider-backed deployment exists.
+Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. The Massive credential loader and minimal HTTPS transport exist, and one reference smoke test has succeeded. A mocked-fixture EOD Price Bar ingestion and Parquet persistence slice now exists outside the provider package. No real provider ingestion, analytics, dashboard endpoint, or provider-backed deployment exists.

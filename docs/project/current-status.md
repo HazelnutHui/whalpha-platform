@@ -61,6 +61,11 @@ Status date: 2026-08-14
 - Massive credential loader implemented with strict file and parser validation.
 - Massive standard-library HTTPS transport implemented.
 - One read-only Massive Stocks reference smoke test verified authentication and reference entitlement.
+- One-session provider-neutral EOD ingestion service implemented for mocked fixtures.
+- EOD Price Bar V1 Parquet repository implemented with explicit PyArrow schema.
+- Deterministic content fingerprint and manifest metadata implemented.
+- Atomic partition publishing, idempotent rerun detection, conflict rejection, and corruption checks implemented.
+- Mocked-fixture ingestion and Parquet persistence tests added.
 
 ## Current
 
@@ -80,7 +85,7 @@ Status date: 2026-08-14
 - Instrument Master V1 and EOD Price Bar V1 Python/Pydantic contracts are implemented and tested.
 - No physical schemas.
 - Corporate Action V1, Classification V1, and Universe Membership V1 Python models are not implemented.
-- No Parquet writers.
+- No Parquet writers beyond the mocked-fixture EOD Price Bar V1 repository.
 - Minimal provider boundary Protocol is implemented.
 - Massive Stocks Basic is selected for private EOD development only.
 - Massive mocked adapter skeleton exists with injected fake transport tests.
@@ -88,8 +93,10 @@ Status date: 2026-08-14
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
 - No ingestion API calls beyond the one reference smoke test.
 - No Grouped Daily production download.
+- No production `/data` writes.
 - No historical backfill.
-- No persistence or market-data files.
+- No production persistence or market-data files.
+- Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
 - No private access-control mechanism selected.
 - No private access-control implementation.
 - No market data ingestion.
@@ -105,4 +112,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Design and implement the first bounded EOD ingestion slice using one trading session of mocked fixtures first, followed by a separately authorized one-session Grouped Daily retrieval only after persistence and validation boundaries are reviewed.
+Review the completed persistence boundary, then perform one separately authorized Massive Grouped Daily retrieval for one completed U.S. trading session, validate it without publishing first, and only publish to the production data root after coverage and quality checks pass.

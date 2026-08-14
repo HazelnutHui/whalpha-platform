@@ -8,7 +8,7 @@ This document defines the accepted V1 logical contract boundary for normalized E
 
 Partially Implemented
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous provider boundary can return these canonical contracts, and a mocked-only Massive adapter skeleton maps local fixture responses into them. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. No SQL tables, Parquet schemas, production HTTP transport, real API requests, ingestion jobs, or market-data files exist for these contracts yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous provider boundary can return these canonical contracts, and a mocked-only Massive adapter skeleton maps local fixture responses into them. EOD Price Bar V1 now has an explicit PyArrow Parquet schema and mocked-fixture one-session repository tests. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. No SQL tables, real API requests, production `/data` writes, historical ingestion jobs, or production market-data files exist for these contracts yet.
 
 ## Shared Contract Principles
 
@@ -62,8 +62,8 @@ Partially implemented. Instrument Master V1 and EOD Price Bar V1 have Python/Pyd
 
 ## Deferred Decisions
 
-- Python/Pydantic model implementation
-- physical Parquet layout
+- Python/Pydantic model implementation for remaining logical contracts
+- physical Parquet layout for contracts beyond EOD Price Bar V1
 - source-specific provider mapping details
 - source revision reconciliation policy
 - validation test implementation

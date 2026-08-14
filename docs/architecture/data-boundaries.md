@@ -25,14 +25,14 @@ The Initial EOD data boundary is now documented as accepted logical contracts:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. The remaining contracts are logical-only. None of the contracts are implemented as Parquet schemas, provider adapters, or database tables.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. The remaining contracts are logical-only. EOD Price Bar V1 now has an explicit PyArrow Parquet schema and mocked-fixture persistence tests. The remaining contracts are not implemented as Parquet schemas, provider adapters, or database tables.
 
 
 ## Implemented Provider Boundary
 
 The minimal synchronous provider boundary is implemented in `tip_api.providers.market_data` and documented in [Market Data Provider Boundary](market-data-provider-boundary.md). It currently supports only Instrument Master and EOD Price Bar retrieval through canonical contracts.
 
-The Massive adapter boundary now implements configuration validation, credential redaction, secure credential-file loading, a minimal standard-library HTTPS transport, injected fake transport tests, and local response mapping tests. One read-only Stocks reference smoke test has verified authentication and reference entitlement. No ingestion, persistence, Grouped Daily retrieval, analytics, Dashboard data flow, or provider-backed deployment is implemented.
+The Massive adapter boundary now implements configuration validation, credential redaction, secure credential-file loading, a minimal standard-library HTTPS transport, injected fake transport tests, and local response mapping tests. One read-only Stocks reference smoke test has verified authentication and reference entitlement. A mocked-fixture EOD Price Bar ingestion and Parquet persistence slice exists for temporary test roots. No Grouped Daily retrieval, production `/data` persistence, analytics, Dashboard data flow, or provider-backed deployment is implemented.
 
 ## Provider Selection Status
 

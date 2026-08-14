@@ -95,7 +95,7 @@ Provider bar records map into this contract. Analytics should consume canonical 
 
 ## Storage Direction
 
-Parquet-first. Partition by practical date boundaries such as year/month. Avoid one-file-per-ticker small-file proliferation. Raw, normalized, and derived datasets remain separate.
+Parquet-first. EOD Price Bar V1 now has an explicit PyArrow schema and a bounded one-session partition layout documented in [EOD Parquet Persistence](../architecture/eod-parquet-persistence.md). Current implementation writes only mocked-fixture test partitions under pytest temporary directories. Production `/data` publishing remains deferred.
 
 ## Deferred Fields
 
@@ -107,7 +107,7 @@ Parquet-first. Partition by practical date boundaries such as year/month. Avoid 
 
 - intraday data
 - total-return index construction
-- physical Parquet schema implementation
+- production Parquet publishing
 - provider adapter implementation
 
 ## Python Implementation
@@ -126,8 +126,10 @@ Validation tests cover valid bars, nullable fields, zero volume, revision bounds
 
 - Provider-neutral Pydantic model implemented.
 - Validation and serialization tests implemented.
+- Mocked-fixture one-session ingestion service implemented.
+- Explicit PyArrow Parquet repository implemented for EOD Price Bar V1.
+- Manifest, deterministic content fingerprint, idempotency, conflict rejection, and corruption checks implemented.
 - No corporate-action adjustment calculation implemented.
-- No provider mapping implemented.
-- No ingestion implemented.
-- No Parquet writer implemented.
-- No persistence implemented.
+- No real provider ingestion implemented.
+- No production `/data` publishing implemented.
+- No historical backfill, scheduler, analytics, or Dashboard data API implemented.

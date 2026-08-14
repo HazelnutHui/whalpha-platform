@@ -16,6 +16,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Classification Boundary](architecture/classification-boundary.md): Accepted Sector/Industry, Theme, and Analytical Group boundary.
 - [Normalized Market Data Contracts](architecture/normalized-market-data-contracts.md): Accepted V1 logical market-data contract boundary.
 - [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
+- [EOD Parquet Persistence](architecture/eod-parquet-persistence.md): Implemented mocked-fixture one-session EOD Price Bar Parquet persistence boundary.
 - [Data Boundaries](architecture/data-boundaries.md): Market Data Provider boundary and data authorization rules.
 - [Event Layer](architecture/event-layer.md): Lightweight event positioning and deferred long-term model.
 
@@ -57,6 +58,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0005: Application Technology Stack](decisions/0005-application-technology-stack.md)
 - [ADR 0006: Initial EOD Data Model and Universe Boundaries](decisions/0006-initial-eod-data-model-and-universe-boundaries.md)
 - [ADR 0007: Use Massive for Private EOD Development](decisions/0007-use-massive-for-private-eod-development.md)
+- [ADR 0008: Use Partitioned Parquet for Initial Canonical EOD Persistence](decisions/0008-use-partitioned-parquet-for-initial-canonical-eod-persistence.md)
 
 ## Project
 

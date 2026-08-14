@@ -19,8 +19,10 @@ Confirmed current state:
 - Minimal synchronous MarketDataProvider boundary, query models, capability declarations, provider errors, and deterministic in-memory contract tests are implemented.
 - Massive Stocks Basic is accepted as the first private EOD development provider.
 - Massive configuration, credential redaction, transport Protocol, and mocked adapter mapping skeleton are implemented.
+- One-session mocked-fixture EOD Price Bar ingestion and Parquet persistence are implemented under temporary test roots.
 - Complete market data flow is not implemented.
-- No real provider account entitlement, API key, production HTTP transport, API request, ingestion, or persistence exists.
+- Massive credential provisioning, production HTTPS transport, and one reference smoke test are complete.
+- No real Grouped Daily retrieval, production ingestion, or production persistence exists.
 - No production API is deployed.
 - No database exists.
 - OCI currently serves only a static development placeholder.
@@ -141,7 +143,7 @@ Accepted logical data-contract boundary:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. No provider adapter, ingestion job, physical Parquet schema, or database table exists yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. EOD Price Bar V1 has a mocked-fixture one-session ingestion service and explicit Parquet repository. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. No real provider ingestion job, production `/data` publish, or database table exists yet.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 
@@ -159,7 +161,7 @@ Provider direction:
 - IBKR is best positioned for portfolio, account-aware information, selected instrument checks, and brokerage-related integration.
 - Options data source remains an open question.
 
-No provider credentials, account entitlement, production HTTP transport, API calls, ingestion, persistence, or provider-backed deployment are configured by this architecture document. The current Massive adapter is tested only with mocked HTTP responses.
+No production Grouped Daily retrieval, historical backfill, production `/data` publish, analytics, Dashboard data API, or provider-backed deployment is configured by this architecture document. The current Massive adapter has mocked mapping tests and one controlled reference smoke test only.
 
 ## Dashboard V1 Functional Areas
 

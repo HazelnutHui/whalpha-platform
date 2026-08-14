@@ -88,4 +88,4 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, and secure Massive smoke-test transport are complete and verified. Dashboard V1, ingestion, analytics pipelines, database, private access control, and production deployment are not implemented yet.
 
-Current proposed activity: design the first bounded EOD ingestion slice with mocked fixtures before any separately authorized one-session real retrieval.
+Current proposed activity: review the completed mocked-fixture EOD persistence boundary before any separately authorized one-session real retrieval.

@@ -26,7 +26,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] First real EOD provider evaluation
 - [x] Massive adapter configuration and credential boundary with mocked HTTP responses
 - [x] Massive account entitlement and secure credential provisioning smoke test
-- [ ] First bounded EOD ingestion slice with mocked fixtures
+- [x] First bounded EOD ingestion slice with mocked fixtures
 - [ ] Separately authorized one-session Grouped Daily retrieval
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
@@ -41,7 +41,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and implement the first bounded EOD ingestion slice using one trading session of mocked fixtures first, followed by a separately authorized one-session Grouped Daily retrieval only after persistence and validation boundaries are reviewed.
+Review the completed persistence boundary, then perform one separately authorized Massive Grouped Daily retrieval for one completed U.S. trading session, validate it without publishing first, and only publish to the production data root after coverage and quality checks pass.
 
 ## Phase 2 — Intraday and Options
 

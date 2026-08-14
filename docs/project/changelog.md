@@ -2,6 +2,11 @@
 
 ## 2026-08-14
 
+- Accepted partitioned Parquet as the initial canonical EOD Price Bar persistence format.
+- Implemented a one-session provider-neutral EOD ingestion service for mocked fixtures.
+- Implemented an explicit PyArrow EOD Price Bar V1 Parquet repository, manifest, deterministic content fingerprint, atomic publish, idempotency, and conflict/corruption checks.
+- Added mocked-fixture ingestion and Parquet persistence tests.
+- No Massive API call, credential access, production `/data` write, scheduler, historical backfill, analytics, database, Dashboard API, or OCI deployment was introduced.
 - Implemented the protected Massive credential-file loader.
 - Implemented a minimal standard-library HTTPS transport using Authorization bearer headers.
 - Added local security tests for credential parsing, transport behavior, error mapping, redirect handling, and network prohibition.

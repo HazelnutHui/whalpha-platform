@@ -30,3 +30,4 @@ Each ADR should include:
 - [0005: Application Technology Stack](0005-application-technology-stack.md)
 - [0006: Initial EOD Data Model and Universe Boundaries](0006-initial-eod-data-model-and-universe-boundaries.md)
 - [0007: Use Massive for Private EOD Development](0007-use-massive-for-private-eod-development.md)
+- [0008: Use Partitioned Parquet for Initial Canonical EOD Persistence](0008-use-partitioned-parquet-for-initial-canonical-eod-persistence.md)

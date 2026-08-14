@@ -13,7 +13,7 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous MarketDataProvider boundary is implemented with deterministic in-memory contract tests. Massive Stocks Basic is accepted as the first private EOD development provider. Its secure credential-file loader, standard-library HTTPS transport, and mocked adapter skeleton are implemented. A single read-only Stocks reference smoke test has verified authentication and reference entitlement, but no ingestion, persistence, database, deployment pipeline, production application, or public real-data authorization has been created for the new project.
+Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous MarketDataProvider boundary is implemented with deterministic in-memory contract tests. Massive Stocks Basic is accepted as the first private EOD development provider. Its secure credential-file loader, standard-library HTTPS transport, and mocked adapter skeleton are implemented. A single read-only Stocks reference smoke test has verified authentication and reference entitlement. The first bounded mocked-fixture EOD ingestion slice now validates canonical EOD Price Bars and writes deterministic temporary Parquet partitions with manifests in tests, but no real market-data ingestion, production `/data` write, database, deployment pipeline, production application, or public real-data authorization has been created for the new project.
 
 ## Application Entry Points
 
@@ -32,6 +32,7 @@ Documentation, infrastructure, storage foundation, application stack decision, t
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
 - First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential loader, HTTPS transport, and one-request reference smoke test verified.
+- Initial persistence: mocked-fixture one-session EOD Price Bar V1 Parquet writer with manifest, deterministic fingerprint, idempotency, and conflict checks.
 - Access boundary: provider-backed data and derived analytics must not be publicly exposed without an accepted authorization and access-control gate.
 
 See [ADR 0005](docs/decisions/0005-application-technology-stack.md) and [Application Architecture](docs/architecture/application-architecture.md) for the authoritative decision details.
@@ -87,6 +88,7 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Massive Stocks Basic Evaluation](docs/providers/massive-stocks-basic-evaluation.md)
 - [Massive Adapter Boundary](docs/providers/massive-adapter-boundary.md)
 - [Massive Credential Provisioning](docs/operations/massive-credential-provisioning.md)
+- [EOD Parquet Persistence](docs/architecture/eod-parquet-persistence.md)
 - [Data Access Boundary](docs/operations/data-access-boundary.md)
 - [Data Contracts](docs/data-contracts/README.md)
 - [System context](docs/architecture/system-context.md)

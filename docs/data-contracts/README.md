@@ -15,7 +15,7 @@ Accepted logical contracts only:
 - [Classification V1](classification-v1.md)
 - [Universe Membership V1](universe-membership-v1.md)
 
-These documents are not JSON Schema, SQL DDL, Parquet schemas, sample data, provider adapters, or persistence implementations.
+These documents are not JSON Schema, SQL DDL, sample production data, or provider adapters. EOD Price Bar V1 now has an implemented PyArrow Parquet persistence boundary for mocked one-session fixtures only; the other contracts remain logical-only for physical storage.
 
 ## Public Python Import Path
 
