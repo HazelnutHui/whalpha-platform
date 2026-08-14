@@ -49,6 +49,10 @@ Status date: 2026-08-14
 - Revision-selection semantics implemented for EOD bars.
 - Provider exception taxonomy implemented.
 - Deterministic in-memory provider boundary tests added.
+- First real EOD provider evaluation completed.
+- Massive Stocks Basic selected for private EOD development.
+- Licensing and access boundary documented for provider-backed data and derived works.
+- Public placeholder, public data-free demo, and private real-data dashboard separation documented.
 
 ## Current
 
@@ -58,7 +62,7 @@ Status date: 2026-08-14
 - Frontend scaffold exists under `apps/web`.
 - Python virtualenv created at the project root and ignored by Git.
 - Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `1 passed`.
+- Backend tests verified: `123 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
 - Node.js 24 LTS and npm are installed and verified.
 - Frontend dependencies are installed and locked by npm.
@@ -70,10 +74,16 @@ Status date: 2026-08-14
 - Corporate Action V1, Classification V1, and Universe Membership V1 Python models are not implemented.
 - No Parquet writers.
 - Minimal provider boundary Protocol is implemented.
-- No real provider selection.
+- Massive Stocks Basic is selected for private EOD development only.
+- No account signup.
 - No Massive entitlement verification.
+- No API key.
+- No credential storage mechanism selected.
 - No real provider adapter.
 - No authentication or provider configuration.
+- No API calls.
+- No private access-control mechanism selected.
+- No private access-control implementation.
 - No market data ingestion.
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
@@ -87,4 +97,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Evaluate and document the first real EOD market data provider against the accepted capabilities, licensing, entitlement, coverage, revision, and redistribution requirements before implementing any real adapter.
+Design and implement the Massive adapter's configuration and credential boundary using a placeholder environment-variable contract and mocked HTTP responses only, without creating an API key or making a real network request.

@@ -12,6 +12,12 @@ Application data should not be committed to Git. Secrets must use environment/co
 
 Deployment should be reproducible, simple, and compatible with the OCI memory constraint.
 
+## Provider-Backed Data Boundary
+
+The public placeholder may remain data-free. Any provider-backed content, including derived heatmaps, analytics, research, API responses, or static exports based on restricted provider data, requires the [Data Access Boundary](data-access-boundary.md) pre-deployment gate before deployment.
+
+No deployment, whalpha.com, OCI, Nginx, Cloudflare, or access-control change is performed by this documentation update.
+
 ## Unknown
 
-No deployment approach has yet been selected.
+No deployment approach has yet been selected. The exact private access-control mechanism for provider-backed data remains undecided.

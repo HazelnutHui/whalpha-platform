@@ -6,9 +6,9 @@ This document records the implemented minimal provider-neutral market-data provi
 
 ## Status
 
-Implemented Minimal Boundary — No Real Provider
+Implemented Minimal Boundary — First Provider Candidate Evaluated
 
-The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. No real provider is selected, connected, authenticated, or evaluated by this implementation.
+The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is accepted as the first private EOD development provider candidate, but no real provider adapter, account entitlement, credential, API request, ingestion, or persistence is implemented.
 
 ## Synchronous V1 Boundary
 
@@ -122,11 +122,11 @@ The fake verifies provider behavior for:
 
 ## Security Boundary
 
-The provider boundary has no credential fields, does not read environment secrets, does not perform network access, and does not touch the filesystem. Real providers must handle credentials outside Git and must be reviewed for entitlement and redistribution constraints before implementation.
+The provider boundary has no credential fields, does not read environment secrets, does not perform network access, and does not touch the filesystem. Real providers must handle credentials outside Git and must be reviewed for entitlement, licensing, redistribution, and access-control constraints before implementation. Massive-specific fields must not enter canonical contracts.
 
 ## Deferred Concerns
 
-- real provider selection
+- Massive adapter implementation
 - Massive entitlement verification
 - authentication and configuration
 - HTTP client behavior

@@ -13,7 +13,7 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous MarketDataProvider boundary is implemented with deterministic in-memory contract tests. No production data ingestion, database, deployment pipeline, production application, or real market-data provider integration has been created for the new project.
+Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous MarketDataProvider boundary is implemented with deterministic in-memory contract tests. Massive Stocks Basic is accepted as the first private EOD development provider, but no account entitlement, API key, adapter, API request, ingestion, database, deployment pipeline, production application, or public real-data authorization has been created for the new project.
 
 ## Application Entry Points
 
@@ -31,6 +31,8 @@ Documentation, infrastructure, storage foundation, application stack decision, t
 - Initial EOD data foundation: accepted universe, classification, and normalized logical contract boundaries.
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
+- First EOD development provider: Massive Stocks Basic for private, personal EOD development only; no adapter or credentials yet.
+- Access boundary: provider-backed data and derived analytics must not be publicly exposed without an accepted authorization and access-control gate.
 
 See [ADR 0005](docs/decisions/0005-application-technology-stack.md) and [Application Architecture](docs/architecture/application-architecture.md) for the authoritative decision details.
 
@@ -82,6 +84,8 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Classification Boundary](docs/architecture/classification-boundary.md)
 - [Normalized Market Data Contracts](docs/architecture/normalized-market-data-contracts.md)
 - [Market Data Provider Boundary](docs/architecture/market-data-provider-boundary.md)
+- [Massive Stocks Basic Evaluation](docs/providers/massive-stocks-basic-evaluation.md)
+- [Data Access Boundary](docs/operations/data-access-boundary.md)
 - [Data Contracts](docs/data-contracts/README.md)
 - [System context](docs/architecture/system-context.md)
 - [Deployment boundary](docs/operations/deployment-boundary.md)

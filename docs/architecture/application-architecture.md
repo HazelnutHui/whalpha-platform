@@ -17,8 +17,9 @@ Confirmed current state:
 - Initial EOD Universe, classification boundary, and normalized EOD logical contracts are accepted and documented.
 - Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests.
 - Minimal synchronous MarketDataProvider boundary, query models, capability declarations, provider errors, and deterministic in-memory contract tests are implemented.
+- Massive Stocks Basic is accepted as the first private EOD development provider.
 - Complete market data flow is not implemented.
-- No data provider is configured.
+- No real provider adapter, account entitlement, API key, API request, ingestion, or persistence exists.
 - No production API is deployed.
 - No database exists.
 - OCI currently serves only a static development placeholder.
@@ -149,11 +150,15 @@ The application must not let vendor response schemas leak into domain calculatio
 
 Provider direction:
 
-- Massive is a candidate broad-market EOD data source for private development and prototype validation.
+- Massive Stocks Basic is accepted as the first broad-market EOD provider for private, personal development.
+- A future Massive adapter should run on the workstation and map responses into canonical contracts before analysis.
+- Provider credentials must remain server-side and outside Git.
+- Provider-backed outputs remain private unless public-display or redistribution authorization is separately documented.
+- OCI public placeholder content remains data-free.
 - IBKR is best positioned for portfolio, account-aware information, selected instrument checks, and brokerage-related integration.
 - Options data source remains an open question.
 
-No provider credentials or subscriptions are configured by this architecture document.
+No provider credentials, account entitlement, adapter, API calls, ingestion, persistence, or provider-backed deployment are configured by this architecture document.
 
 ## Dashboard V1 Functional Areas
 
@@ -228,9 +233,9 @@ Before closing material work, check whether these documents need updates:
 - database introduction threshold and database choice
 - Candidate Discovery threshold calibration
 - exact canonical traditional taxonomy source or mapping methodology
-- exact Massive plan and entitlement
+- Massive account entitlement verification
+- exact private access-control mechanism
 - options data source
-- public/private access boundary
 - Cloudflare proxy state
 - obsolete OCI port rule cleanup
 - OCI swap strategy

@@ -34,19 +34,23 @@ The minimal synchronous provider boundary is implemented in `tip_api.providers.m
 
 No real provider adapter, credential handling, network integration, ingestion, persistence, or entitlement verification is implemented.
 
-## Proposed Providers
+## Provider Selection Status
 
-- Massive: proposed primary stock/ETF/market-structure backbone.
+Massive Stocks Basic is accepted as the first private EOD development provider. This is an adapter candidate and private development source, not a permanent exclusive provider, public display authorization, redistribution authorization, or options provider decision.
+
+- Massive: first broad-market EOD development provider candidate for private use.
 - IBKR: portfolio, positions, selected instruments, and selected options.
 - Options provider: may be selected separately later.
 
-Provider choice must remain replaceable.
+Provider choice must remain replaceable. Provider response fields must not become canonical contracts.
 
 ## Data Authorization Boundary
 
-The prototype is for personal use. Public accessibility does not automatically grant redistribution rights. Delayed/EOD or derived displays should be used until entitlements are confirmed.
+See [Data Access Boundary](../operations/data-access-boundary.md) for the accepted public placeholder, public data-free demo, and private provider-backed dashboard boundary.
 
-Licensing must be reviewed before broader distribution or commercial use.
+Massive-backed Market Data and derived works must remain private-owner only unless explicit public-display or redistribution authorization, a suitable business/display agreement, or an alternative public-display data source is documented. Public accessibility does not grant redistribution rights.
+
+Licensing and entitlement must be reviewed before broader distribution, commercial use, or public provider-backed content.
 
 ## Prohibited in Repository
 

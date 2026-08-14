@@ -2,6 +2,11 @@
 
 ## 2026-08-14
 
+- Evaluated Massive Stocks Basic using official public documentation.
+- Accepted Massive Stocks Basic as the first private EOD development provider.
+- Documented public-display and Derived Works restrictions for provider-backed data.
+- Accepted the public placeholder, public data-free demo, and private real-data dashboard boundary.
+- No account, credential, adapter, API request, data ingestion, deployment, or access-control change was introduced.
 - Implemented the synchronous provider-neutral MarketDataProvider Protocol.
 - Added provider capabilities and query models for Instrument Master and EOD Price Bars.
 - Added explicit provider error taxonomy.

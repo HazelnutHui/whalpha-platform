@@ -23,7 +23,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [ ] Remaining logical contract models
 - [x] Minimal provider boundary Protocol
 - [x] Deterministic in-memory provider contract tests
-- [ ] First real EOD provider evaluation
+- [x] First real EOD provider evaluation
+- [ ] Massive adapter configuration and credential boundary with mocked HTTP responses
 - [ ] Real provider adapter implementation
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -37,7 +38,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Evaluate and document the first real EOD market data provider against the accepted capabilities, licensing, entitlement, coverage, revision, and redistribution requirements before implementing any real adapter.
+Design and implement the Massive adapter's configuration and credential boundary using a placeholder environment-variable contract and mocked HTTP responses only, without creating an API key or making a real network request.
 
 ## Phase 2 — Intraday and Options
 

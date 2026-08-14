@@ -28,10 +28,16 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Classification V1](data-contracts/classification-v1.md)
 - [Universe Membership V1](data-contracts/universe-membership-v1.md)
 
+## Providers
+
+- [Provider Evaluations](providers/README.md)
+- [Massive Stocks Basic Evaluation](providers/massive-stocks-basic-evaluation.md): Accepted first private EOD development provider; adapter not implemented.
+
 ## Operations
 
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
+- [Data Access Boundary](operations/data-access-boundary.md): Public placeholder, data-free demo, and private provider-backed dashboard boundary.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.
 - [Node Toolchain Provisioning](operations/node-toolchain-provisioning.md): Completed Node.js 24 LTS system toolchain record and historical procedure.
 
@@ -48,6 +54,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0004: Lightweight Event Layer First](decisions/0004-lightweight-event-layer-first.md)
 - [ADR 0005: Application Technology Stack](decisions/0005-application-technology-stack.md)
 - [ADR 0006: Initial EOD Data Model and Universe Boundaries](decisions/0006-initial-eod-data-model-and-universe-boundaries.md)
+- [ADR 0007: Use Massive for Private EOD Development](decisions/0007-use-massive-for-private-eod-development.md)
 
 ## Project
 
