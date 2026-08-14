@@ -17,6 +17,7 @@ class MassiveTransportCall:
     params: tuple[tuple[str, MassiveParamValue], ...]
     credential_supplied: bool
     timeout_seconds: Decimal
+    base_url: str
 
 
 class FakeMassiveTransport:
@@ -33,6 +34,7 @@ class FakeMassiveTransport:
         params: MassiveParams,
         api_key: SecretStr,
         timeout_seconds: Decimal,
+        base_url: str,
     ) -> MassiveJson:
         sanitized_params = tuple(sorted(params.items()))
         self.calls.append(
@@ -41,6 +43,7 @@ class FakeMassiveTransport:
                 params=sanitized_params,
                 credential_supplied=bool(api_key.get_secret_value()),
                 timeout_seconds=timeout_seconds,
+                base_url=base_url,
             )
         )
         try:

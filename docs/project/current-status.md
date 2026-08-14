@@ -57,6 +57,10 @@ Status date: 2026-08-14
 - Massive mocked HTTP transport boundary implemented.
 - Massive mocked adapter skeleton implemented for Instrument Master and EOD Price Bars.
 - Massive adapter tests added with deterministic mocked responses and no network access.
+- Massive credential file manually provisioned outside Git with protected owner and mode.
+- Massive credential loader implemented with strict file and parser validation.
+- Massive standard-library HTTPS transport implemented.
+- One read-only Massive Stocks reference smoke test verified authentication and reference entitlement.
 
 ## Current
 
@@ -66,7 +70,7 @@ Status date: 2026-08-14
 - Frontend scaffold exists under `apps/web`.
 - Python virtualenv created at the project root and ignored by Git.
 - Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `123 passed`.
+- Backend tests verified: `185 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
 - Node.js 24 LTS and npm are installed and verified.
 - Frontend dependencies are installed and locked by npm.
@@ -79,15 +83,13 @@ Status date: 2026-08-14
 - No Parquet writers.
 - Minimal provider boundary Protocol is implemented.
 - Massive Stocks Basic is selected for private EOD development only.
-- Massive mocked adapter skeleton exists, but only with injected fake transport tests.
-- No account signup.
-- No Massive entitlement verification.
-- No API key.
-- No credential storage mechanism selected.
-- No production HTTP transport.
-- No real provider adapter activation.
-- No real authentication or provider runtime configuration.
-- No API calls.
+- Massive mocked adapter skeleton exists with injected fake transport tests.
+- Massive credential exists outside Git in the protected workstation credential file.
+- Massive Stocks reference authentication and entitlement have been smoke-test verified once.
+- No ingestion API calls beyond the one reference smoke test.
+- No Grouped Daily production download.
+- No historical backfill.
+- No persistence or market-data files.
 - No private access-control mechanism selected.
 - No private access-control implementation.
 - No market data ingestion.
@@ -98,9 +100,9 @@ Status date: 2026-08-14
 - No database.
 - No deployment pipeline.
 - No production application.
-- No API credentials configured.
+- No API credentials stored in Git, documentation, frontend code, logs, or command arguments.
 - Project data root exists but contains no project datasets yet.
 
 ## Next Proposed Step
 
-Create and verify the user's Massive account entitlement and provision the real API credential securely on dell5820, without placing the credential in Git, documentation, chat, command history, process arguments, or logs; then perform one minimal read-only API smoke test.
+Design and implement the first bounded EOD ingestion slice using one trading session of mocked fixtures first, followed by a separately authorized one-session Grouped Daily retrieval only after persistence and validation boundaries are reviewed.

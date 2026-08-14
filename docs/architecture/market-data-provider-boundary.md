@@ -8,7 +8,7 @@ This document records the implemented minimal provider-neutral market-data provi
 
 Implemented Minimal Boundary — First Provider Candidate Evaluated
 
-The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is accepted as the first private EOD development provider candidate. A mocked-only Massive adapter skeleton now implements configuration, credential redaction, injected transport, and canonical mapping tests, but no real account entitlement, credential, production HTTP transport, API request, ingestion, or persistence is implemented.
+The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is accepted as the first private EOD development provider candidate. The Massive adapter boundary now includes secure credential-file loading, standard-library HTTPS transport, and one successful read-only Stocks reference smoke test. It still has no ingestion, persistence, dashboard endpoint, rate-limit scheduler, Grouped Daily production download, or public provider-backed deployment.
 
 ## Synchronous V1 Boundary
 
@@ -122,14 +122,13 @@ The fake verifies provider behavior for:
 
 ## Security Boundary
 
-The provider boundary has no credential fields, does not read environment secrets, does not perform network access, and does not touch the filesystem. Real providers must handle credentials outside Git and must be reviewed for entitlement, licensing, redistribution, and access-control constraints before implementation. Massive-specific fields must not enter canonical contracts.
+The provider-neutral boundary has no credential fields and does not require raw provider schemas. Massive credential loading and HTTPS transport live in the Massive-specific adapter package, keep credentials outside Git, and do not expose Massive-specific fields to canonical contracts. Additional provider-backed workflows must be reviewed for entitlement, licensing, redistribution, and access-control constraints before use.
 
 ## Deferred Concerns
 
-- production Massive HTTP transport
-- Massive entitlement verification
-- real credential provisioning
-- HTTP client behavior
+- bounded EOD ingestion workflow
+- Grouped Daily production retrieval
+- rate limiter implementation
 - async support
 - pagination
 - retry and rate-limit handling beyond exception semantics
@@ -153,4 +152,4 @@ The provider boundary has no credential fields, does not read environment secret
 
 ## Implementation Status
 
-Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. No real provider, network integration, credential handling, ingestion, or persistence exists.
+Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. The Massive credential loader and minimal HTTPS transport exist, and one reference smoke test has succeeded. No ingestion, persistence, analytics, dashboard endpoint, or provider-backed deployment exists.

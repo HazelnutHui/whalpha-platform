@@ -2,17 +2,20 @@
 
 ## Purpose
 
-This document records the implemented Massive Stocks adapter skeleton boundary. The adapter exists to validate configuration, credential handling, transport injection, and provider response mapping against canonical contracts without making real network requests.
+This document records the implemented Massive Stocks adapter skeleton boundary. The adapter exists to validate configuration, credential handling, transport injection, provider response mapping, and a controlled one-request reference smoke test against canonical boundaries.
 
 ## Status
 
-Implemented Mocked Boundary — No Real Network
+Implemented Credential and Transport Boundary — Smoke-Test Verified
 
 Implemented:
 
 - configuration contract
 - credential safety boundary
 - mocked HTTP transport boundary
+- credential-file loader with ownership and permission checks
+- standard-library HTTPS transport
+- one-request read-only Stocks reference smoke test
 - Massive All Tickers mapping to Instrument Master V1
 - Massive Grouped Daily and Custom Bars mapping to EOD Price Bar V1
 - deterministic internal UUID strategy for mocked mapping
@@ -20,10 +23,7 @@ Implemented:
 
 Not implemented:
 
-- real API key
-- real account entitlement verification
-- production HTTP transport
-- real network request
+- storing a real API key in Git
 - real data ingestion
 - Parquet persistence
 - scheduling
@@ -41,17 +41,17 @@ The configuration model is `MassiveProviderConfig`.
 
 Environment variables:
 
-- `TIP_MASSIVE_API_KEY`: required future credential variable; real values must never be committed, pasted into chat, logged, placed in command history, or exposed in frontend bundles.
+- `TIP_MASSIVE_API_KEY`: required credential variable; real values must never be committed, pasted into chat, logged, placed in command history, placed in process arguments, or exposed in frontend bundles.
 - `TIP_MASSIVE_BASE_URL`: optional override; defaults to `https://api.massive.com`.
 - `TIP_MASSIVE_REQUEST_TIMEOUT_SECONDS`: optional positive finite timeout; defaults to `15`.
 
-No `.env` file is committed. No `.env.example` is currently required.
+No `.env` file is committed. No `.env.example` is currently required. The accepted credential file path is documented in [Massive Credential Provisioning](../operations/massive-credential-provisioning.md).
 
 ## Credential Redaction Rules
 
 The API key is represented with Pydantic `SecretStr`. It is trimmed, required, and excluded from normal representations. Adapter errors and transport call records must not include credential values.
 
-The adapter must not place the API key in ordinary query parameters. Future real transport should send credentials through a dedicated server-side credential boundary, such as an authorization header or equivalent reviewed mechanism.
+The adapter must not place the API key in ordinary query parameters. The standard-library HTTPS transport sends credentials through an Authorization bearer header. Credentials must remain server-side and must not enter ordinary query parameters.
 
 ## Adapter Responsibilities
 
@@ -69,7 +69,7 @@ It does not return raw Massive JSON, dictionaries, provider-specific objects, Da
 
 ## Transport Dependency Boundary
 
-The adapter depends on the `MassiveHttpTransport` Protocol. No production HTTP transport is implemented. Tests use a deterministic fake under `apps/api/tests/providers/support`.
+The adapter depends on the `MassiveHttpTransport` Protocol. A minimal standard-library HTTPS transport is implemented for controlled operations. Tests continue to use a deterministic fake under `apps/api/tests/providers/support`; ordinary unit tests do not perform network access.
 
 The fake records only sanitized request path, query params, timeout, and whether a credential was supplied. It does not record credential values.
 
@@ -110,24 +110,22 @@ The adapter does not sleep, retry, or expose raw response bodies.
 
 The adapter includes minimal pagination support for deterministic mocked tests. It strips `apiKey` from `next_url` query params, validates the next URL host against the configured base URL, detects pagination loops, and enforces a page limit.
 
-A real rate limiter is not implemented. Future adapter work must respect the Basic plan's 5 calls/minute limit with central pacing, no concurrency burst, resumable backfill, and request audit without secrets.
+A real rate limiter is not implemented. The live smoke test is limited to one read-only reference request and does not retry. Future adapter work must respect the Basic plan's 5 calls/minute limit with central pacing, no concurrency burst, resumable backfill, and request audit without secrets.
 
 ## Real-Network Activation Prerequisites
 
-Before any real Massive request:
+Before any non-smoke-test Massive request:
 
-1. User account entitlement must be verified.
-2. Credential storage must be selected and documented.
-3. The real API key must be provisioned on `dell5820` without entering Git, documentation, chat, command history, process arguments, or logs.
-4. A production HTTP transport must be reviewed.
-5. One minimal read-only smoke test must be explicitly approved.
-6. Provider terms and access boundary must be rechecked.
+1. Persistence and validation boundaries must be reviewed.
+2. Request pacing and failure handling must be designed.
+3. Provider terms and access boundary must be rechecked.
+4. Any one-session real retrieval must be separately authorized.
+5. No provider-backed data may be exposed publicly without private access control and licensing review.
 
 ## Non-Goals
 
-- creating or reading a real API key
-- making Massive API calls
-- implementing production HTTP transport
+- storing, printing, logging, or committing a real API key
+- making ingestion, backfill, analytics, or bulk data API calls
 - implementing ingestion
 - writing Parquet or database records
 - implementing scheduling, retries, or full backfill

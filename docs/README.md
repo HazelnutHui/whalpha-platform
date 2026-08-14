@@ -32,13 +32,14 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [Provider Evaluations](providers/README.md)
 - [Massive Stocks Basic Evaluation](providers/massive-stocks-basic-evaluation.md): Accepted first private EOD development provider.
-- [Massive Adapter Boundary](providers/massive-adapter-boundary.md): Mocked-only configuration, credential, transport, and mapping boundary.
+- [Massive Adapter Boundary](providers/massive-adapter-boundary.md): Configuration, credential, transport, smoke-test, and mapping boundary.
 
 ## Operations
 
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
 - [Data Access Boundary](operations/data-access-boundary.md): Public placeholder, data-free demo, and private provider-backed dashboard boundary.
+- [Massive Credential Provisioning](operations/massive-credential-provisioning.md): Secure credential file and one-request smoke-test operations record.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.
 - [Node Toolchain Provisioning](operations/node-toolchain-provisioning.md): Completed Node.js 24 LTS system toolchain record and historical procedure.
 

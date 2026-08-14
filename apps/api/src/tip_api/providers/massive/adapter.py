@@ -31,6 +31,7 @@ from tip_api.providers.massive.transport import (
     MassiveHttpTransport,
     MassiveParamValue,
     MassiveParams,
+    MassiveTransportDataError,
     MassiveTransportResponseError,
     MassiveTransportTimeoutError,
     MassiveTransportUnavailableError,
@@ -209,6 +210,7 @@ class MassiveMarketDataProvider:
                 params=params,
                 api_key=self._config.api_key,
                 timeout_seconds=self._config.request_timeout_seconds,
+                base_url=self._config.base_url,
             )
         except MassiveTransportResponseError as exc:
             if exc.status_code in {401, 403}:
@@ -224,6 +226,8 @@ class MassiveMarketDataProvider:
             raise ProviderUnavailableError(self.provider_id, "Massive request timed out") from exc
         except MassiveTransportUnavailableError as exc:
             raise ProviderUnavailableError(self.provider_id, "Massive transport unavailable") from exc
+        except MassiveTransportDataError as exc:
+            raise ProviderDataError(self.provider_id, "Massive response payload was invalid") from exc
 
     def _next_page_request(self, next_url: object) -> tuple[str, dict[str, MassiveParamValue]]:
         if not isinstance(next_url, str) or not next_url.strip():

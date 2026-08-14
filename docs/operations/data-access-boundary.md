@@ -53,7 +53,7 @@ Static exports must not contain restricted provider-backed data, market-state sn
 
 ## Credential Boundary
 
-Provider credentials must remain outside Git and outside frontend bundles. `TIP_MASSIVE_API_KEY` is the accepted future environment-variable name for Massive, but no real value is stored in this repository. Real values, account identifiers, tokens, private keys, and credential file paths must not be recorded in repository documentation, chat, command history, process arguments, or logs.
+Provider credentials must remain outside Git and outside frontend bundles. `TIP_MASSIVE_API_KEY` is the accepted environment-variable name for Massive. The real value is provisioned outside Git in the protected workstation credential file and must never be copied into the repository. Real values, account identifiers, tokens, private keys, and unreviewed credential locations must not be recorded in repository documentation, chat, command history, process arguments, or logs.
 
 ## OCI Boundary
 

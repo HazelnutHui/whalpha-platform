@@ -6,7 +6,7 @@ This document records the official-source evaluation for using Massive Stocks Ba
 
 ## Status
 
-Accepted for Private EOD Development — Mocked Adapter Boundary Implemented
+Accepted for Private EOD Development — Credential Boundary and Reference Smoke Test Verified
 
 ## Last Reviewed
 
@@ -168,19 +168,20 @@ The private real-data dashboard must be intended only for the owner, protected b
 
 ## Account Entitlement Status
 
-Not Verified.
+Stocks Reference Smoke-Test Verified.
 
-No Massive account entitlement has been confirmed in this repository. No account login, account creation, API key creation, API key read, or API request occurred during this evaluation.
+A protected credential file was provisioned outside Git by the user. One read-only `/v3/reference/tickers` request with `market=stocks`, `active=true`, and `limit=1` succeeded on 2026-08-14. This verifies authentication and Stocks reference entitlement only; it does not verify Grouped Daily, Custom Bars, corporate actions, history depth, rate-limit behavior, ingestion, persistence, or public-display permission.
 
 ## Implementation Status
 
-- no API key configured
+- API key configured outside Git in the protected workstation credential file
 - mocked adapter skeleton implemented
-- no production HTTP transport implemented
-- no request made
+- secure credential-file loader implemented
+- minimal standard-library HTTPS transport implemented
+- one read-only Stocks reference smoke test succeeded
 - no ingestion implemented
 - no persistence implemented
-- no real data downloaded
+- no real data stored or ingested
 - no deployment changed
 
 ## Risks
@@ -194,11 +195,8 @@ No Massive account entitlement has been confirmed in this repository. No account
 
 ## Open Questions
 
-- Actual account entitlement after signup
-- Credential storage mechanism
-- Exact adapter HTTP client
 - Rate limiter implementation
-- Grouped Daily response and entitlement verification
+- Grouped Daily one-session retrieval authorization and response verification
 - Historical backfill strategy
 - Adjustment reconciliation
 - Identity-resolution methodology
@@ -210,8 +208,8 @@ No Massive account entitlement has been confirmed in this repository. No account
 
 Re-evaluate before:
 
-- implementing a Massive adapter
-- creating account credentials in the project
+- expanding the Massive adapter beyond the verified smoke-test boundary
+- changing credential storage or service injection
 - changing plan
 - deploying real provider-backed data
 - publishing provider-derived content
@@ -222,4 +220,4 @@ Re-evaluate if Massive pricing, terms, endpoint access, or documentation changes
 
 ## Recommendation
 
-Proceed to real entitlement and credential-boundary preparation only after the user creates or verifies the account outside the repository. Do not call APIs, ingest data, or expose provider-backed outputs until credential, entitlement, and access-control gates are satisfied.
+Proceed to the first bounded EOD ingestion design with mocked fixtures first. Do not perform Grouped Daily retrieval, ingestion, persistence, or provider-backed display until the next retrieval boundary is reviewed and separately authorized.

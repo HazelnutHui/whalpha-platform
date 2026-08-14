@@ -25,8 +25,10 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Deterministic in-memory provider contract tests
 - [x] First real EOD provider evaluation
 - [x] Massive adapter configuration and credential boundary with mocked HTTP responses
-- [ ] Massive account entitlement and secure credential provisioning
-- [ ] Real provider adapter implementation
+- [x] Massive account entitlement and secure credential provisioning smoke test
+- [ ] First bounded EOD ingestion slice with mocked fixtures
+- [ ] Separately authorized one-session Grouped Daily retrieval
+- [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
 - [ ] Dashboard shell
@@ -39,7 +41,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Create and verify the user's Massive account entitlement and provision the real API credential securely on dell5820, without placing the credential in Git, documentation, chat, command history, process arguments, or logs; then perform one minimal read-only API smoke test.
+Design and implement the first bounded EOD ingestion slice using one trading session of mocked fixtures first, followed by a separately authorized one-session Grouped Daily retrieval only after persistence and validation boundaries are reviewed.
 
 ## Phase 2 — Intraday and Options
 

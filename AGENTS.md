@@ -86,6 +86,6 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 ## 8. Current Phase
 
-Infrastructure, storage, application scaffold, and local frontend/backend development toolchain are complete and verified. Dashboard V1, market-data providers, analytics pipelines, database, and production deployment are not implemented yet.
+Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, and secure Massive smoke-test transport are complete and verified. Dashboard V1, ingestion, analytics pipelines, database, private access control, and production deployment are not implemented yet.
 
-Current proposed activity: define the Initial EOD Universe, Sector/Industry Taxonomy Boundary, and Normalized Market Data Contracts before implementing any provider adapter.
+Current proposed activity: design the first bounded EOD ingestion slice with mocked fixtures before any separately authorized one-session real retrieval.

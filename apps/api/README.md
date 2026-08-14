@@ -57,7 +57,7 @@ from tip_api.providers.market_data import (
 )
 ```
 
-The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests and a Massive mocked adapter skeleton. No real provider credential, production HTTP transport, network access, ingestion, persistence, or API endpoint exists.
+The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, a Massive mocked adapter skeleton, a secure credential-file loader, and a minimal HTTPS transport. No ingestion, persistence, Dashboard API endpoint, or production data workflow exists.
 
 
 ## Massive Mocked Adapter Boundary
@@ -68,7 +68,7 @@ The Massive package is available from:
 from tip_api.providers.massive import MassiveMarketDataProvider, MassiveProviderConfig
 ```
 
-It implements configuration validation, credential redaction, injected transport, mocked response mapping, and deterministic tests only. It must not be used with a real API key or real network transport until entitlement, credential storage, and access-control prerequisites are documented and approved.
+It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. The only approved live use so far is the one-request Stocks reference smoke test through `scripts/admin/smoke-test-massive-provider.sh`. It must not be used for ingestion, backfill, dashboard data, or additional live requests without a separate authorization.
 
 ## Local Setup
 
@@ -76,7 +76,7 @@ Use the repository-level instructions in [Local Development](../../docs/developm
 
 ## Current Non-Goals
 
-- No market data provider integration
+- No market data ingestion
 - No database or ORM
 - No authentication
 - No order execution
