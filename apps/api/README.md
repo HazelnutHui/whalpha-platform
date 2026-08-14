@@ -68,7 +68,7 @@ The Massive package is available from:
 from tip_api.providers.massive import MassiveMarketDataProvider, MassiveProviderConfig
 ```
 
-It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. The only approved live use so far is the one-request Stocks reference smoke test through `scripts/admin/smoke-test-massive-provider.sh`. It must not be used for ingestion, backfill, dashboard data, or additional live requests without a separate authorization.
+It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test and the one-request Grouped Daily inspection for 2026-08-13 through `scripts/admin/inspect-massive-grouped-daily.sh`. These do not publish data. The Massive adapter must not be used for ingestion, backfill, dashboard data, or additional live requests without a separate authorization.
 
 ## Local Setup
 

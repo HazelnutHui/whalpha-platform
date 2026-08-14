@@ -16,6 +16,7 @@ Implemented:
 - credential-file loader with ownership and permission checks
 - standard-library HTTPS transport
 - one-request read-only Stocks reference smoke test
+- one-request read-only Grouped Daily inspection for 2026-08-13
 - Massive All Tickers mapping to Instrument Master V1
 - Massive Grouped Daily and Custom Bars mapping to EOD Price Bar V1
 - deterministic internal UUID strategy for mocked mapping
@@ -114,7 +115,9 @@ A real rate limiter is not implemented. The live smoke test is limited to one re
 
 ## Real-Network Activation Prerequisites
 
-Before any non-smoke-test Massive request:
+The 2026-08-13 Grouped Daily inspection verified access and payload shape but did not publish data. Production publication remains blocked until point-in-time Instrument Master identity coverage exists.
+
+Before any additional Massive request:
 
 1. Persistence and validation boundaries must be reviewed.
 2. Request pacing and failure handling must be designed.

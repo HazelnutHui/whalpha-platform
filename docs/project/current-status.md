@@ -66,6 +66,9 @@ Status date: 2026-08-14
 - Deterministic content fingerprint and manifest metadata implemented.
 - Atomic partition publishing, idempotent rerun detection, conflict rejection, and corruption checks implemented.
 - Mocked-fixture ingestion and Parquet persistence tests added.
+- One read-only Massive Grouped Daily inspection completed for 2026-08-13.
+- Grouped Daily access and payload structure verified.
+- Production publication blocked pending Instrument Master identity coverage.
 
 ## Current
 
@@ -92,7 +95,7 @@ Status date: 2026-08-14
 - Massive credential exists outside Git in the protected workstation credential file.
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
 - No ingestion API calls beyond the one reference smoke test.
-- No Grouped Daily production download.
+- No Grouped Daily production download beyond the one in-memory inspection request.
 - No production `/data` writes.
 - No historical backfill.
 - No production persistence or market-data files.
@@ -112,4 +115,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Review the completed persistence boundary, then perform one separately authorized Massive Grouped Daily retrieval for one completed U.S. trading session, validate it without publishing first, and only publish to the production data root after coverage and quality checks pass.
+Design and implement the first point-in-time Massive Instrument Master snapshot ingestion and identity-resolution dataset using bounded, rate-aware reference pagination before publishing Grouped Daily bars.

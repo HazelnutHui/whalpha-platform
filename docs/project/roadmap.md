@@ -27,7 +27,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Massive adapter configuration and credential boundary with mocked HTTP responses
 - [x] Massive account entitlement and secure credential provisioning smoke test
 - [x] First bounded EOD ingestion slice with mocked fixtures
-- [ ] Separately authorized one-session Grouped Daily retrieval
+- [x] Separately authorized one-session Grouped Daily inspection without publication
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -41,7 +41,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review the completed persistence boundary, then perform one separately authorized Massive Grouped Daily retrieval for one completed U.S. trading session, validate it without publishing first, and only publish to the production data root after coverage and quality checks pass.
+Design and implement the first point-in-time Massive Instrument Master snapshot ingestion and identity-resolution dataset using bounded, rate-aware reference pagination before publishing Grouped Daily bars.
 
 ## Phase 2 — Intraday and Options
 

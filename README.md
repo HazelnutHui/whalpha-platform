@@ -13,7 +13,7 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous MarketDataProvider boundary is implemented with deterministic in-memory contract tests. Massive Stocks Basic is accepted as the first private EOD development provider. Its secure credential-file loader, standard-library HTTPS transport, and mocked adapter skeleton are implemented. A single read-only Stocks reference smoke test has verified authentication and reference entitlement. The first bounded mocked-fixture EOD ingestion slice now validates canonical EOD Price Bars and writes deterministic temporary Parquet partitions with manifests in tests, but no real market-data ingestion, production `/data` write, database, deployment pipeline, production application, or public real-data authorization has been created for the new project.
+Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous MarketDataProvider boundary is implemented with deterministic in-memory contract tests. Massive Stocks Basic is accepted as the first private EOD development provider. Its secure credential-file loader, standard-library HTTPS transport, and mocked adapter skeleton are implemented. A single read-only Stocks reference smoke test has verified authentication and reference entitlement. The first bounded mocked-fixture EOD ingestion slice validates canonical EOD Price Bars and writes deterministic temporary Parquet partitions with manifests in tests. One controlled Massive Grouped Daily inspection for 2026-08-13 verified access and payload structure, but production publication is blocked pending Instrument Master identity coverage. No production `/data` write, database, deployment pipeline, production application, or public real-data authorization has been created for the new project.
 
 ## Application Entry Points
 
@@ -88,6 +88,7 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Massive Stocks Basic Evaluation](docs/providers/massive-stocks-basic-evaluation.md)
 - [Massive Adapter Boundary](docs/providers/massive-adapter-boundary.md)
 - [Massive Credential Provisioning](docs/operations/massive-credential-provisioning.md)
+- [Massive Grouped Daily Inspection](docs/operations/massive-grouped-daily-inspection.md)
 - [EOD Parquet Persistence](docs/architecture/eod-parquet-persistence.md)
 - [Data Access Boundary](docs/operations/data-access-boundary.md)
 - [Data Contracts](docs/data-contracts/README.md)

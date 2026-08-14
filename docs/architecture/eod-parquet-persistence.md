@@ -8,7 +8,7 @@ This document records the implemented V1 physical persistence boundary for canon
 
 Implemented for mocked one-session EOD Price Bar V1 fixtures only.
 
-No real provider retrieval, production `/data` write, historical backfill, scheduler, analytics, database, or Dashboard data API is implemented.
+A one-request Massive Grouped Daily inspection has been performed without publishing. No production `/data` write, historical backfill, scheduler, analytics, database, or Dashboard data API is implemented.
 
 ## Implemented Boundary
 

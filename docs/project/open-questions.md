@@ -5,10 +5,11 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Final credential rotation and service-injection mechanism beyond the protected local credential file
 - Exact private access-control mechanism before deploying provider-backed data
 - Rate limiter implementation
-- Grouped Daily one-session retrieval authorization and response verification
+- Grouped Daily publication after identity-resolution coverage
 - Historical backfill strategy
 - Adjustment reconciliation
 - Identity resolution methodology
+- Point-in-time Massive Instrument Master snapshot ingestion boundary
 - Massive plan upgrade threshold
 - Public demo data source
 - Business/display/redistribution license threshold

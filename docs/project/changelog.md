@@ -2,6 +2,11 @@
 
 ## 2026-08-14
 
+- Added a safe one-request Massive Grouped Daily inspection tool.
+- Executed one read-only Grouped Daily inspection for 2026-08-13 with `adjusted=false`.
+- Verified Grouped Daily access and payload structure without saving raw or canonical data.
+- Confirmed production publication is blocked pending Instrument Master identity coverage.
+- No Parquet write, `/data` write, repository publish, second Massive request, Dashboard data flow, OCI access, or provider-backed deployment was introduced.
 - Accepted partitioned Parquet as the initial canonical EOD Price Bar persistence format.
 - Implemented a one-session provider-neutral EOD ingestion service for mocked fixtures.
 - Implemented an explicit PyArrow EOD Price Bar V1 Parquet repository, manifest, deterministic content fingerprint, atomic publish, idempotency, and conflict/corruption checks.
