@@ -6,7 +6,7 @@ Instrument Master V1 maintains stable security identity. It does not store price
 
 ## Status
 
-Accepted Logical Contract — Not Yet Implemented
+Implemented Python Contract
 
 ## Grain
 
@@ -115,3 +115,24 @@ Provider identifiers map into `source_instrument_id` and source-specific mapping
 - universe membership
 - classification membership
 - provider adapter implementation
+
+## Python Implementation
+
+Import path:
+
+```python
+from tip_api.contracts.market_data.v1 import InstrumentMasterV1
+```
+
+The implementation is a provider-neutral Pydantic v2 model. It is immutable, forbids extra fields, normalizes ticker/exchange/country/currency text, preserves CIK as a string, requires timezone-aware `ingested_at`, and normalizes `ingested_at` to UTC.
+
+Validation tests cover valid common stock and ETF records, optional issuer/FIGI/CIK fields, ticker normalization, accepted share-class ticker forms, date ordering, required string fields, country/currency formatting, UTC normalization, naive datetime rejection, frozen behavior, extra-field rejection, JSON serialization, and the fact that ticker does not determine `instrument_id`.
+
+## Implementation Status
+
+- Provider-neutral Pydantic model implemented.
+- Validation and serialization tests implemented.
+- No provider mapping implemented.
+- No persistence implemented.
+- No Parquet writer implemented.
+- No market-data ingestion implemented.

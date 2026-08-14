@@ -20,3 +20,6 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Parquet physical layout details
 - Source revision reconciliation policy
 - Issuer Master introduction threshold
+- Whether public contract identifiers remain UUID-based across persistence
+- Physical Decimal representation in Parquet
+- Exact provider revision reconciliation behavior

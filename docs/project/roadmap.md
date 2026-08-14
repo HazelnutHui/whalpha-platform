@@ -18,7 +18,9 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Define Initial EOD Universe
 - [x] Define Sector/Industry, Theme, and Analytical Group boundary
 - [x] Define normalized EOD logical contracts
-- [ ] Provider-neutral Python contract models and validation tests
+- [x] Instrument Master V1 model and validation tests
+- [x] EOD Price Bar V1 model and validation tests
+- [ ] Remaining logical contract models
 - [ ] Provider boundary implementation
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -32,7 +34,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and implement provider-neutral Python contract models and validation tests for Instrument Master V1 and EOD Price Bar V1 only, without implementing a provider adapter or ingesting real market data.
+Design and implement a minimal provider boundary protocol plus deterministic in-memory adapter contract tests, without selecting or connecting to Massive, IBKR, or any real provider.
 
 ## Phase 2 — Intraday and Options
 

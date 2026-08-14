@@ -40,6 +40,9 @@ Status date: 2026-08-13
 - Five normalized EOD logical contracts accepted.
 - Point-in-time universe membership semantics accepted.
 - Provider-neutral boundary clarified for EOD contracts.
+- Instrument Master V1 Python contract implemented.
+- EOD Price Bar V1 Python contract implemented.
+- Contract validation test suite added for Instrument Master V1 and EOD Price Bar V1.
 
 ## Current
 
@@ -56,8 +59,9 @@ Status date: 2026-08-13
 - Frontend production build is verified.
 - Local Vite development server and Vite-to-FastAPI proxy are verified.
 - Initial EOD Universe, classification boundary, and normalized EOD logical contracts are documented.
+- Instrument Master V1 and EOD Price Bar V1 Python/Pydantic contracts are implemented and tested.
 - No physical schemas.
-- No Python/Pydantic market-data models.
+- Corporate Action V1, Classification V1, and Universe Membership V1 Python models are not implemented.
 - No Parquet writers.
 - No provider implementation.
 - No market data ingestion.
@@ -73,4 +77,4 @@ Status date: 2026-08-13
 
 ## Next Proposed Step
 
-Design and implement provider-neutral Python contract models and validation tests for Instrument Master V1 and EOD Price Bar V1 only, without implementing a provider adapter or ingesting real market data.
+Design and implement a minimal provider boundary protocol plus deterministic in-memory adapter contract tests, without selecting or connecting to Massive, IBKR, or any real provider.

@@ -6,7 +6,7 @@ EOD Price Bar V1 records end-of-day price and volume facts for an instrument and
 
 ## Status
 
-Accepted Logical Contract — Not Yet Implemented
+Implemented Python Contract
 
 ## Grain
 
@@ -109,3 +109,25 @@ Parquet-first. Partition by practical date boundaries such as year/month. Avoid 
 - total-return index construction
 - physical Parquet schema implementation
 - provider adapter implementation
+
+## Python Implementation
+
+Import path:
+
+```python
+from tip_api.contracts.market_data.v1 import EodPriceBarV1
+```
+
+The implementation is a provider-neutral Pydantic v2 model. It is immutable, forbids extra fields, validates Decimal price and adjustment values without converting them to binary floats, requires timezone-aware `ingested_at`, normalizes `ingested_at` to UTC, rejects datetime input for `session_date`, and normalizes `quality_flags` to deduplicated lowercase snake_case while preserving first occurrence order.
+
+Validation tests cover valid bars, nullable fields, zero volume, revision bounds, non-negative volume/trade count/notional, positive OHLC and adjustment values, OHLC consistency, source and currency validation, naive datetime rejection, UTC normalization, NaN/Infinity rejection, float rejection for Decimal fields, quality flag normalization, frozen behavior, extra-field rejection, Decimal JSON serialization, `session_date` strictness, and the fact that the model does not calculate `notional` or `adjusted_close`.
+
+## Implementation Status
+
+- Provider-neutral Pydantic model implemented.
+- Validation and serialization tests implemented.
+- No corporate-action adjustment calculation implemented.
+- No provider mapping implemented.
+- No ingestion implemented.
+- No Parquet writer implemented.
+- No persistence implemented.

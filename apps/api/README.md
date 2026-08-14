@@ -4,7 +4,7 @@ FastAPI backend scaffold for Trading Intelligence Platform.
 
 ## Purpose
 
-The API provides typed contracts for the future dashboard. The current scaffold only proves the API boundary and versioned routing shape.
+The API package provides typed contracts for the future dashboard and canonical market-data boundary. The current HTTP scaffold only exposes the Health endpoint, while selected data contracts are implemented as provider-neutral Pydantic models.
 
 ## Current Endpoint
 
@@ -19,6 +19,28 @@ Expected response:
   "version": "0.1.0"
 }
 ```
+
+
+## Implemented Python Contracts
+
+Provider-neutral market-data contracts are available from:
+
+```python
+from tip_api.contracts.market_data.v1 import (
+    EodPriceBarV1,
+    InstrumentMasterV1,
+    InstrumentStatus,
+    InstrumentType,
+    QualityStatus,
+)
+```
+
+Implemented contracts:
+
+- Instrument Master V1
+- EOD Price Bar V1
+
+These are validation models only. They do not implement provider adapters, persistence, Parquet writing, market-data ingestion, analytics, or new API endpoints.
 
 ## Local Setup
 

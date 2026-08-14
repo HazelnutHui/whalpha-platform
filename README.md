@@ -13,7 +13,7 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. No production data ingestion, database, deployment pipeline, production application, or real market-data provider integration has been created for the new project.
+Documentation, infrastructure, storage foundation, application stack decision, target architecture, minimal application scaffold, and local frontend/backend development toolchain are complete. Initial EOD universe boundaries, classification boundaries, and normalized EOD logical contracts are documented. Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. No production data ingestion, database, deployment pipeline, production application, or real market-data provider integration has been created for the new project.
 
 ## Application Entry Points
 
@@ -29,6 +29,7 @@ Documentation, infrastructure, storage foundation, application stack decision, t
 - Initial storage path: EOD-first Parquet datasets under `/data/trading-intelligence-platform`.
 - Data access: MarketDataProvider / adapter boundary before domain calculations.
 - Initial EOD data foundation: accepted universe, classification, and normalized logical contract boundaries.
+- Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 
 See [ADR 0005](docs/decisions/0005-application-technology-stack.md) and [Application Architecture](docs/architecture/application-architecture.md) for the authoritative decision details.
 

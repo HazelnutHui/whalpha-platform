@@ -6,9 +6,9 @@ This document defines the accepted V1 logical contract boundary for normalized E
 
 ## Current Status
 
-Accepted Logical Contracts — Not Yet Implemented
+Partially Implemented
 
-No Python models, Pydantic schemas, SQL tables, Parquet schemas, provider adapters, ingestion jobs, or market-data files exist for these contracts yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. No SQL tables, Parquet schemas, provider adapters, ingestion jobs, or market-data files exist for these contracts yet.
 
 ## Shared Contract Principles
 
@@ -58,7 +58,7 @@ The accepted direction is EOD-first, Parquet-first storage under the project dat
 
 ## Implementation Status
 
-Not implemented. These contracts are documentation-level decisions only.
+Partially implemented. Instrument Master V1 and EOD Price Bar V1 have Python/Pydantic validation models. The remaining V1 contracts are documentation-level decisions only. No physical schema, provider adapter, ingestion job, or persistence writer exists yet.
 
 ## Deferred Decisions
 

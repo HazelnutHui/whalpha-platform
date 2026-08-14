@@ -31,6 +31,10 @@
 - Accepted five normalized EOD logical contracts.
 - Documented point-in-time membership and revision principles.
 - No provider, data ingestion, physical schema, database, or Dashboard implementation was introduced.
+- Implemented the Instrument Master V1 Pydantic contract.
+- Implemented the EOD Price Bar V1 Pydantic contract.
+- Added validation and serialization tests for the two implemented contracts.
+- No provider adapter, persistence, real market data, database, or Dashboard implementation was introduced.
 
 ## 2026-08-12
 

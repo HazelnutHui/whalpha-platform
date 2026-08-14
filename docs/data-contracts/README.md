@@ -2,17 +2,32 @@
 
 This directory records accepted logical market-data contracts for Trading Intelligence Platform.
 
-Status for all V1 contracts: Accepted Logical Contract — Not Yet Implemented.
+## Implementation Status
 
-These documents are not JSON Schema, SQL DDL, Python models, Pydantic classes, Parquet schemas, sample data, or provider adapters.
-
-## Contracts
+Implemented as Python/Pydantic contracts:
 
 - [Instrument Master V1](instrument-master-v1.md)
 - [EOD Price Bar V1](eod-price-bar-v1.md)
+
+Accepted logical contracts only:
+
 - [Corporate Action V1](corporate-action-v1.md)
 - [Classification V1](classification-v1.md)
 - [Universe Membership V1](universe-membership-v1.md)
+
+These documents are not JSON Schema, SQL DDL, Parquet schemas, sample data, provider adapters, or persistence implementations.
+
+## Public Python Import Path
+
+```python
+from tip_api.contracts.market_data.v1 import (
+    EodPriceBarV1,
+    InstrumentMasterV1,
+    InstrumentStatus,
+    InstrumentType,
+    QualityStatus,
+)
+```
 
 ## Shared Rules
 

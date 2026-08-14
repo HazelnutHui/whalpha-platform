@@ -15,6 +15,7 @@ Confirmed current state:
 - Local development scripts exist under `scripts/dev`.
 - Local backend tests, direct Health API, frontend production build, Vite server, and Vite-to-FastAPI proxy have been verified.
 - Initial EOD Universe, classification boundary, and normalized EOD logical contracts are accepted and documented.
+- Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests.
 - Complete market data flow is not implemented.
 - No data provider is configured.
 - No production API is deployed.
@@ -137,7 +138,7 @@ Accepted logical data-contract boundary:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-These contracts remain unimplemented. No provider adapter, ingestion job, physical Parquet schema, or database table exists yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. No provider adapter, ingestion job, physical Parquet schema, or database table exists yet.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 

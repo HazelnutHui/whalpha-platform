@@ -25,7 +25,7 @@ The Initial EOD data boundary is now documented as accepted logical contracts:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-These are logical contracts only. They are not implemented as Python models, Pydantic schemas, Parquet schemas, provider adapters, or database tables.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. The remaining contracts are logical-only. None of the contracts are implemented as Parquet schemas, provider adapters, or database tables.
 
 ## Proposed Providers
 
