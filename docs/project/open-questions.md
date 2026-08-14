@@ -9,7 +9,9 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Historical backfill strategy
 - Adjustment reconciliation
 - Identity resolution methodology
-- Point-in-time Massive Instrument Master snapshot ingestion boundary
+- Rejected Massive reference type mapping policy
+- Duplicate ticker handling policy for point-in-time reference snapshots
+- Instrument Master snapshot quality-gate remediation after the first 2026-08-13 run
 - Massive plan upgrade threshold
 - Public demo data source
 - Business/display/redistribution license threshold

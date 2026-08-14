@@ -69,6 +69,10 @@ Status date: 2026-08-14
 - One read-only Massive Grouped Daily inspection completed for 2026-08-13.
 - Grouped Daily access and payload structure verified.
 - Production publication blocked pending Instrument Master identity coverage.
+- Provider Instrument Identity V1 Python contract implemented.
+- Stable provider-identifier UUIDv5 identity resolution implemented.
+- Massive All Tickers point-in-time snapshot ingestion path implemented with bounded pagination and rate-aware requests.
+- Live Massive All Tickers snapshot attempt completed for 2026-08-13 without publishing because quality gates failed.
 
 ## Current
 
@@ -96,7 +100,8 @@ Status date: 2026-08-14
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
 - No ingestion API calls beyond the one reference smoke test.
 - No Grouped Daily production download beyond the one in-memory inspection request.
-- No production `/data` writes.
+- No production `/data` writes for EOD bars.
+- No completed Instrument Master snapshot was published to `/data` because quality gates failed.
 - No historical backfill.
 - No production persistence or market-data files.
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
@@ -115,4 +120,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Design and implement the first point-in-time Massive Instrument Master snapshot ingestion and identity-resolution dataset using bounded, rate-aware reference pagination before publishing Grouped Daily bars.
+Review the failed Instrument Master snapshot quality gates, especially rejected provider type mapping, unresolved stable identifiers, and duplicate tickers, before rerunning any snapshot or publishing Grouped Daily bars.

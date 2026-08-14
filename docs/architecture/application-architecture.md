@@ -6,6 +6,8 @@ This document records the approved target application architecture for Trading I
 
 ## Current Status
 
+Instrument identity update: Provider Instrument Identity V1, deterministic UUIDv5 identity resolution, and a bounded Massive All Tickers snapshot ingestion path are implemented. The first live 2026-08-13 snapshot attempt completed pagination but did not publish because identity coverage, rejected ratio, and duplicate ticker gates failed. No Grouped Daily bars, analytics, Dashboard data API, or production application flow consume this data yet.
+
 Confirmed current state:
 
 - Minimal backend scaffold exists under `apps/api`.

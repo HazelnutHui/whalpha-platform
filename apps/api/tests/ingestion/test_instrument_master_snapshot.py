@@ -1,0 +1,164 @@
+from datetime import UTC, date, datetime
+from pathlib import Path
+from uuid import UUID
+
+import pytest
+
+from tip_api.contracts.market_data.v1 import ResolutionStatus
+from tip_api.ingestion.instrument_identity import canonical_instrument_id_for_identity, select_stable_identity
+from tip_api.ingestion.instrument_master_snapshot import (
+    InstrumentMasterSnapshotIngestionService,
+    InstrumentMasterSnapshotQualityGates,
+)
+from tip_api.persistence.parquet.instrument_master_snapshot import ParquetInstrumentMasterSnapshotRepository
+from tip_api.providers.massive.config import MassiveProviderConfig
+from tip_api.providers.massive.instrument_master_snapshot import (
+    FixedIntervalRateLimiter,
+    build_snapshot_from_payloads,
+    fetch_and_build_snapshot,
+    main,
+)
+
+INGESTED_AT = datetime(2026, 8, 14, 12, tzinfo=UTC)
+AS_OF = date(2026, 8, 13)
+
+
+class FakeTransport:
+    def __init__(self, pages):
+        self.pages = list(pages)
+        self.calls = []
+
+    def get_json(self, path, *, params, api_key, timeout_seconds, base_url):
+        assert "apiKey" not in params
+        self.calls.append((path, dict(params)))
+        if not self.pages:
+            raise AssertionError("unexpected extra request")
+        return self.pages.pop(0)
+
+
+def payload(ticker="TESTA", share="SHARE1", composite="COMP1", type="CS"):
+    return {
+        "ticker": ticker,
+        "name": f"{ticker} Holdings",
+        "market": "stocks",
+        "locale": "us",
+        "primary_exchange": "XNYS",
+        "type": type,
+        "active": True,
+        "currency_name": "usd",
+        "cik": "0001234567",
+        "composite_figi": composite,
+        "share_class_figi": share,
+        "last_updated_utc": "2026-08-13T21:00:00Z",
+    }
+
+
+def test_identity_priority_and_uuid_reproducibility():
+    first = select_stable_identity(share_class_figi="share1", composite_figi="comp1", provider_instrument_id="pid1")
+    second = select_stable_identity(share_class_figi="SHARE1", composite_figi=None, provider_instrument_id=None)
+    assert first == second
+    assert canonical_instrument_id_for_identity(first) == canonical_instrument_id_for_identity(second)
+    assert select_stable_identity(share_class_figi=None, composite_figi="comp1", provider_instrument_id="pid1").identity_type.value == "composite_figi"
+    assert select_stable_identity(share_class_figi=None, composite_figi=None, provider_instrument_id=None) is None
+
+
+def test_build_snapshot_resolves_figi_and_leaves_cik_only_unresolved():
+    result = build_snapshot_from_payloads(
+        payloads=(payload("TESTA"), {**payload("TESTB", share=None, composite=None), "cik": "000999"}),
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+    assert result.resolved_count == 1
+    assert result.unresolved_count == 1
+    assert result.identities[1].resolution_status is ResolutionStatus.UNRESOLVED
+    assert result.instruments[0].ticker == "TESTA"
+
+
+def test_unsupported_type_is_rejected_and_collision_is_ambiguous():
+    result = build_snapshot_from_payloads(
+        payloads=(payload("TESTA", share="SAME"), payload("TESTB", share="SAME"), payload("TESTC", type="WARRANT")),
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+    assert result.ambiguous_count == 2
+    assert result.rejected_count == 1
+    assert result.resolved_count == 0
+
+
+def test_pagination_success_and_rate_limiter_uses_fake_clock():
+    page1 = {"results": [payload("TESTA")], "next_url": "https://api.massive.com/v3/reference/tickers?cursor=abc"}
+    page2 = {"results": [payload("TESTB", share="SHARE2", composite="COMP2")]}
+    now = [100.0]
+    sleeps = []
+
+    def clock():
+        return now[0]
+
+    def sleeper(delay):
+        sleeps.append(delay)
+        now[0] += delay
+
+    result = fetch_and_build_snapshot(
+        config=MassiveProviderConfig(api_key="fake-key"),
+        transport=FakeTransport([page1, page2]),
+        as_of_date=AS_OF,
+        rate_limiter=FixedIntervalRateLimiter(clock=clock, sleeper=sleeper),
+        ingested_at=INGESTED_AT,
+    )
+    assert result.request_count == 2
+    assert sleeps == [15.0]
+
+
+def test_foreign_host_next_url_rejected():
+    with pytest.raises(RuntimeError):
+        fetch_and_build_snapshot(
+            config=MassiveProviderConfig(api_key="fake-key"),
+            transport=FakeTransport([{"results": [], "next_url": "https://evil.example/v3/reference/tickers?cursor=abc"}]),
+            as_of_date=AS_OF,
+            rate_limiter=FixedIntervalRateLimiter(sleeper=lambda _: None),
+            ingested_at=INGESTED_AT,
+        )
+
+
+def test_quality_gate_failure_does_not_publish(tmp_path):
+    build = build_snapshot_from_payloads(payloads=(payload("TESTA"),), as_of_date=AS_OF, ingested_at=INGESTED_AT, request_count=1, pagination_complete=True)
+    service = InstrumentMasterSnapshotIngestionService(repository=ParquetInstrumentMasterSnapshotRepository(tmp_path))
+    result = service.publish_snapshot(
+        as_of_date=AS_OF,
+        provider_id="massive_stocks_basic",
+        instruments=build.instruments,
+        identities=build.identities,
+        request_count=1,
+        raw_record_count=build.raw_record_count,
+        unique_ticker_count=build.unique_ticker_count,
+        duplicate_ticker_count=build.duplicate_ticker_count,
+        resolved_count=build.resolved_count,
+        unresolved_count=build.unresolved_count,
+        ambiguous_count=build.ambiguous_count,
+        rejected_count=build.rejected_count,
+    )
+    assert result.status == "quality_gate_failed"
+    assert not (tmp_path / "market-data").exists()
+
+
+def test_cli_argument_limits():
+    assert main(["--as-of-date", "2026-08-14", "--data-root", "/data/trading-intelligence-platform"]) == 2
+    assert main(["--as-of-date", "2026-08-13", "--data-root", "/tmp/not-approved"]) == 2
+
+
+
+def test_unit_type_is_rejected():
+    result = build_snapshot_from_payloads(
+        payloads=(payload("TESTU", type="UNIT"),),
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+    assert result.rejected_count == 1
+    assert result.resolved_count == 0
+

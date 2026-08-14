@@ -42,6 +42,8 @@ Implemented contracts:
 
 These are validation models. EOD Price Bar V1 now has a bounded mocked-fixture Parquet persistence and one-session ingestion slice, but no real provider ingestion, production data-root write, analytics, or new API endpoints are implemented.
 
+Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
+
 
 ## Implemented Provider Boundary
 
@@ -57,7 +59,7 @@ from tip_api.providers.market_data import (
 )
 ```
 
-The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, a Massive mocked adapter skeleton, a secure credential-file loader, and a minimal HTTPS transport. The first EOD ingestion service uses this boundary with mocked fixtures only. No real provider ingestion, Dashboard API endpoint, or production data workflow exists.
+The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, a Massive mocked adapter skeleton, a secure credential-file loader, and a minimal HTTPS transport. The first EOD ingestion service uses this boundary with mocked fixtures only. A bounded Massive All Tickers snapshot ingestion path exists, but the first live run did not publish. No Dashboard API endpoint or production EOD bar workflow exists.
 
 
 ## Massive Mocked Adapter Boundary
@@ -68,7 +70,7 @@ The Massive package is available from:
 from tip_api.providers.massive import MassiveMarketDataProvider, MassiveProviderConfig
 ```
 
-It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test and the one-request Grouped Daily inspection for 2026-08-13 through `scripts/admin/inspect-massive-grouped-daily.sh`. These do not publish data. The Massive adapter must not be used for ingestion, backfill, dashboard data, or additional live requests without a separate authorization.
+It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test, the one-request Grouped Daily inspection for 2026-08-13, and the bounded All Tickers snapshot attempt for 2026-08-13. The All Tickers run did not publish because quality gates failed. The Massive adapter must not be used for backfill, dashboard data, or additional live requests without a separate authorization.
 
 ## Local Setup
 
@@ -76,8 +78,9 @@ Use the repository-level instructions in [Local Development](../../docs/developm
 
 ## Current Non-Goals
 
-- No real market data ingestion
-- No production `/data` writes
+- No published real EOD bar ingestion
+- No completed production Instrument Master snapshot
+- No production `/data` writes from failed quality-gated runs
 - No database or ORM
 - No authentication
 - No order execution

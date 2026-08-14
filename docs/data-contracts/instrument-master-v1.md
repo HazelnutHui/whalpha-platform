@@ -130,6 +130,8 @@ Validation tests cover valid common stock and ETF records, optional issuer/FIGI/
 
 ## Implementation Status
 
+Provider Instrument Identity V1 and a bounded Instrument Master snapshot ingestion path now exist. The first live Massive All Tickers run for 2026-08-13 did not publish an Instrument Master snapshot because quality gates failed. Instrument Master V1 remains the canonical contract for resolved instruments only; unresolved provider identities are tracked separately.
+
 - Provider-neutral Pydantic model implemented.
 - Validation and serialization tests implemented.
 - No provider mapping implemented.

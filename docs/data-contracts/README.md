@@ -8,6 +8,7 @@ Implemented as Python/Pydantic contracts:
 
 - [Instrument Master V1](instrument-master-v1.md)
 - [EOD Price Bar V1](eod-price-bar-v1.md)
+- [Provider Instrument Identity V1](provider-instrument-identity-v1.md)
 
 Accepted logical contracts only:
 
@@ -15,7 +16,7 @@ Accepted logical contracts only:
 - [Classification V1](classification-v1.md)
 - [Universe Membership V1](universe-membership-v1.md)
 
-These documents are not JSON Schema, SQL DDL, sample production data, or provider adapters. EOD Price Bar V1 now has an implemented PyArrow Parquet persistence boundary for mocked one-session fixtures only; the other contracts remain logical-only for physical storage.
+These documents are not JSON Schema, SQL DDL, sample production data, or provider adapters. EOD Price Bar V1 has an implemented PyArrow Parquet persistence boundary for mocked one-session fixtures only. Provider Instrument Identity V1 has an implemented point-in-time snapshot contract and Parquet persistence boundary, but the first live Massive snapshot did not publish because quality gates failed. The remaining contracts remain logical-only for physical storage.
 
 ## Public Python Import Path
 

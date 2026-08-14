@@ -2,6 +2,13 @@
 
 ## 2026-08-14
 
+- Added Provider Instrument Identity V1 as a Python contract and data-contract document.
+- Accepted ADR 0009 for stable provider identifiers and deterministic UUIDv5 canonical instrument identity.
+- Implemented bounded Massive All Tickers point-in-time Instrument Master snapshot ingestion with fixed-interval pagination.
+- Implemented Instrument Master and provider identity Parquet snapshot repositories with logical completion marker semantics.
+- Executed one live Massive All Tickers snapshot attempt for 2026-08-13; pagination completed, but quality gates blocked publication.
+- No raw provider payload, completed Instrument Master snapshot, Grouped Daily publication, Dashboard data flow, OCI access, or system change was introduced.
+
 - Added a safe one-request Massive Grouped Daily inspection tool.
 - Executed one read-only Grouped Daily inspection for 2026-08-13 with `adjusted=false`.
 - Verified Grouped Daily access and payload structure without saving raw or canonical data.

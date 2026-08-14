@@ -127,6 +127,10 @@ Before any additional Massive request:
 
 ## Non-Goals
 
+## Instrument Master Snapshot Status
+
+A bounded All Tickers pagination path now exists for point-in-time Instrument Master snapshot ingestion. It uses the existing credential and transport boundary and does not store raw provider payloads. The first live run completed 14 reference requests for 2026-08-13 but did not publish because identity coverage, rejected ratio, and duplicate ticker gates failed.
+
 - storing, printing, logging, or committing a real API key
 - making ingestion, backfill, analytics, or bulk data API calls
 - implementing ingestion

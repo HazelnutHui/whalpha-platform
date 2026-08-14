@@ -17,6 +17,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Normalized Market Data Contracts](architecture/normalized-market-data-contracts.md): Accepted V1 logical market-data contract boundary.
 - [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
 - [EOD Parquet Persistence](architecture/eod-parquet-persistence.md): Implemented mocked-fixture one-session EOD Price Bar Parquet persistence boundary.
+- [Instrument Identity Resolution](architecture/instrument-identity-resolution.md): Deterministic provider identity mapping and current Instrument Master snapshot gate result.
 - [Data Boundaries](architecture/data-boundaries.md): Market Data Provider boundary and data authorization rules.
 - [Event Layer](architecture/event-layer.md): Lightweight event positioning and deferred long-term model.
 
@@ -28,6 +29,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Corporate Action V1](data-contracts/corporate-action-v1.md)
 - [Classification V1](data-contracts/classification-v1.md)
 - [Universe Membership V1](data-contracts/universe-membership-v1.md)
+- [Provider Instrument Identity V1](data-contracts/provider-instrument-identity-v1.md)
 
 ## Providers
 
@@ -42,6 +44,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Data Access Boundary](operations/data-access-boundary.md): Public placeholder, data-free demo, and private provider-backed dashboard boundary.
 - [Massive Credential Provisioning](operations/massive-credential-provisioning.md): Secure credential file and one-request smoke-test operations record.
 - [Massive Grouped Daily Inspection](operations/massive-grouped-daily-inspection.md): One-request Grouped Daily inspection record for 2026-08-13.
+- [Massive Instrument Master Ingestion](operations/massive-instrument-master-ingestion.md): Bounded All Tickers snapshot ingestion record and quality-gate result.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.
 - [Node Toolchain Provisioning](operations/node-toolchain-provisioning.md): Completed Node.js 24 LTS system toolchain record and historical procedure.
 
@@ -60,6 +63,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0006: Initial EOD Data Model and Universe Boundaries](decisions/0006-initial-eod-data-model-and-universe-boundaries.md)
 - [ADR 0007: Use Massive for Private EOD Development](decisions/0007-use-massive-for-private-eod-development.md)
 - [ADR 0008: Use Partitioned Parquet for Initial Canonical EOD Persistence](decisions/0008-use-partitioned-parquet-for-initial-canonical-eod-persistence.md)
+- [ADR 0009: Use Stable Provider Identifiers for Canonical Instrument Identity](decisions/0009-use-stable-provider-identifiers-for-canonical-instrument-identity.md)
 
 ## Project
 
