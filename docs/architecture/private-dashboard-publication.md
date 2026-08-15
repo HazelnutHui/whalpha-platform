@@ -18,6 +18,7 @@ Implemented locally:
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
 - deployed OCI session-login release `2026-08-15T133119Z-137f244e8508`
+- deployed OCI Market Overview release `2026-08-13T214405Z-42ff26a2bdcc`
 - branded `/login/` page and localhost-only Auth Service
 
 Not implemented:
