@@ -4,6 +4,12 @@ Status date: 2026-08-15
 
 ## Completed
 
+- Accepted ADR 0015 for effective-dated Security Classification V1 and quarantine-first evidence governance.
+- Completed the read-only 2026-08-14 security-type audit: Instrument Master 9,939; raw comparable 9,889; legacy default 1,864.
+- Confirmed VCX as excluded closed-end-fund pollution, separated AKAN as a U.S.-listed foreign operating ordinary share, and quarantined 4,527 records lacking sufficient classification evidence.
+- Computed non-production candidates: Core 0 and Broad 1. Production integration is blocked by evidence coverage and policy selection; current Dashboard membership is unchanged.
+- Phase A made no Massive request, credential access, canonical `/data` write, production snapshot, frontend behavior change, or OCI deployment.
+
 - Workstation infrastructure audited.
 - Old workstation application, service, cron, and port-8088 process removed.
 - Old workstation project directory removed.

@@ -52,7 +52,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and implement the first bounded daily EOD orchestration and non-sensitive run-report retention workflow around the accepted XNYS calendar, without adding Dashboard analytics.
+Review Candidate A and Candidate B, select Core U.S. Domestic Operating Equities or Broad U.S.-Listed Operating Equities as the production policy, and only then authorize Phase B classification-evidence integration.
 
 ## Phase 2 — Intraday and Options
 

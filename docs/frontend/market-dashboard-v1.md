@@ -1,5 +1,9 @@
 # Market Dashboard V1
 
+## Classification Boundary
+
+Phase A does not change the Dashboard. A future Phase B must make Market Pulse, Breadth, Movers, and Trading Activity Map share one universe definition ID, version, and as-of date. ETF benchmarks, excluded records, quarantine records, and unknown/ambiguous/heuristic-only classifications cannot enter that equity membership.
+
 ## Purpose
 
 Market Dashboard V1 is the first React dashboard for the private provider-backed market summary APIs. Dashboard V1.1 adds a professional default universe and separates operating-equity market structure from ETF benchmark performance.

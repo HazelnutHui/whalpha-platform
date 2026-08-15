@@ -1,5 +1,9 @@
 # Normalized Market Data Contracts
 
+## Classification Overlay
+
+Security Classification V1 is an effective-dated overlay on stable Instrument Master identity. It adds legal security form, issuer economic structure, listing scope, evidence, status, and disposition without changing Instrument Master V1. U.S.-listed and U.S.-domiciled are independent facts; common-share legal form does not prove an operating-company issuer. Unknown and conflicting evidence is quarantined rather than coerced into `common_stock`. See [Security Classification V1](../data-contracts/security-classification-v1.md).
+
 ## Purpose
 
 This document defines the accepted V1 logical contract boundary for normalized EOD market data. It describes the canonical contracts that Provider Adapters should produce before analytics and dashboard logic consume data.

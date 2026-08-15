@@ -1,5 +1,9 @@
 # Trading Intelligence Web
 
+## Security Governance Phase A
+
+The deployed Dashboard still uses Dashboard Universe V1. Security Classification V1 candidates are backend audit outputs only; no frontend payload, layout, or production behavior changes in Phase A.
+
 React/TypeScript/Vite frontend for Trading Intelligence Platform.
 
 ## Purpose

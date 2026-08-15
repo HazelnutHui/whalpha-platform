@@ -1,5 +1,13 @@
 # Trading Intelligence Platform — Agent Instructions
 
+## Security Classification Governance
+
+- Keep classification effective-dated and keyed by stable `instrument_id`; ticker is not a permanent key.
+- Keep security form, issuer structure, listing scope, evidence, and universe disposition separate.
+- Names and ticker patterns may only create review flags, never positive eligibility.
+- Unknown, ambiguous, malformed, heuristic-only, and insufficient-evidence records remain quarantined.
+- Phase A candidates must not feed production analytics until the user selects Core or Broad in Phase B.
+
 ## 1. Required Reading Order
 
 Every new AI/Codex session must read these files before making material changes:

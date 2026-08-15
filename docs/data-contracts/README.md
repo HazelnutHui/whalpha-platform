@@ -1,5 +1,7 @@
 # Data Contracts
 
+- [Security Classification V1](security-classification-v1.md)
+
 This directory records accepted logical market-data contracts for Trading Intelligence Platform.
 
 ## Implementation Status

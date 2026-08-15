@@ -37,3 +37,4 @@ Each ADR should include:
 - [0012: Use Server-Side Sessions for the Private Dashboard](0012-use-server-side-sessions-for-private-dashboard.md)
 - [0013: Establish Dashboard Universe V1 for Market Overview](0013-establish-dashboard-universe-v1.md)
 - [0014: Use an Exchange Calendar for EOD Freshness](0014-use-an-exchange-calendar-for-eod-freshness.md)
+- [0015: Govern Security Types and Universe Eligibility](0015-govern-security-types-and-universe-eligibility.md)

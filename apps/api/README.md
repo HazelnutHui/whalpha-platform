@@ -1,5 +1,9 @@
 # Trading Intelligence API
 
+## Security Classification V1
+
+`tip_api.contracts.security_classification.v1` exposes the immutable point-in-time classification contract. `tip_api.services.security_classification` provides override validation, classification reconciliation, and Core/Broad candidate funnel auditing. Phase A does not wire these candidates into private APIs or production snapshots.
+
 FastAPI backend scaffold for Trading Intelligence Platform.
 
 ## Purpose

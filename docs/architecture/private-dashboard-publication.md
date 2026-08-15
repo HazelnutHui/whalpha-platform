@@ -1,5 +1,9 @@
 # Private Dashboard Publication
 
+## Classification Phase Boundary
+
+Phase A audits do not produce a private snapshot or bundle. A later snapshot contract must carry the selected universe definition ID, version, as-of date, taxonomy fingerprint, and ruleset fingerprint so Pulse, Breadth, Movers, and Trading Activity Map reconcile to identical membership.
+
 ## Purpose
 
 This document records the static publication boundary for the private provider-backed Market Dashboard.

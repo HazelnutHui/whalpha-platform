@@ -1,5 +1,11 @@
 # Documentation Index
 
+## Security Type Governance
+
+- [Security Classification V1](data-contracts/security-classification-v1.md)
+- [ADR 0015](decisions/0015-govern-security-types-and-universe-eligibility.md)
+- [2026-08-14 classification audit](audits/security-type-classification-2026-08-14.md)
+
 This directory is the project knowledge base. It separates confirmed facts from proposals and deferred work.
 
 ## Product
