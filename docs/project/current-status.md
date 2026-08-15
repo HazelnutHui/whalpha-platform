@@ -105,7 +105,7 @@ Status date: 2026-08-15
 
 - Dashboard V1.1 professional overview cleanup implemented: default `Tradable U.S. Equities` universe, auxiliary universes, Sector Benchmark ETFs, Trading Activity Map naming, mover outlier isolation, and categorized Data Details.
 - Dashboard V1.1 Market Overview trust/usability upgrade implemented: SPY/QQQ/IWM/DIA benchmark strip, Sector ETF relative-to-SPY performance, conservative freshness status, top-50 Trading Activity Map default, cleaner labels/search/detail panel behavior, and SNDK data-review documentation.
-- Private Dashboard Market Overview release `2026-08-13T214405Z-42ff26a2bdcc` is deployed to OCI from source commit `42ff26a2bdccdb19fbd7725dee575a6dedf2bf9d`.
+- Private Dashboard Market Overview release `2026-08-13T214820Z-32fed3a8b17b` is deployed to OCI from source commit `32fed3a8b17b020e00c33f839d2a12e9de50d855`.
 
 ## Current
 
