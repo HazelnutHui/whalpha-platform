@@ -28,11 +28,26 @@ Decimal values are serialized as strings. Return values are decimal ratios: `0.0
 
 ## Dashboard Overview V1.1
 
-`overview/latest` returns a versioned dashboard payload with multiple universes, Sector Benchmark ETFs, and a Trading Activity Map projection. The default universe is `Tradable U.S.-Listed Equities V1`, displayed as `Tradable U.S. Equities`. See [Dashboard Universe V1](../product/dashboard-universe-v1.md).
+`overview/latest` returns a versioned dashboard payload with multiple universes, Market Benchmark Strip data, Sector Benchmark ETFs, and a Trading Activity Map projection. The default universe is `Tradable U.S.-Listed Equities V1`, displayed as `Tradable U.S. Equities`. See [Dashboard Universe V1](../product/dashboard-universe-v1.md).
+
+The Market Benchmark Strip contains SPY, QQQ, IWM, DIA, and the selected universe equal-weight return. These benchmark rows are market context only and are not included in the default stock universe.
+
+Sector Benchmark ETF rows include:
+
+- `close_to_close_return`
+- `relative_to_spy_return`
+
+`relative_to_spy_return` is the arithmetic difference between the sector ETF return and SPY return. It is not alpha, factor attribution, risk-adjusted return, sector breadth, sector rotation, or fund flow.
+
+The overview payload also includes:
+
+- `snapshot_validation_status`, currently `snapshot_validation_passed` for completed validated data
+- `freshness_status`, currently `calendar_not_independently_verified` until a reliable market-session calendar is accepted
+- `snapshot_generated_at`, populated for static private dashboard snapshots
 
 ## Liquidity and Trading Activity Naming
 
-The legacy broad endpoint remains named Liquidity Map V1. Dashboard V1.1 displays the universe-filtered projection as Trading Activity Map. Node size uses `current_close * current_volume`; it is not a market-cap heatmap, sector heatmap, fund-flow map, or money-flow map.
+The legacy broad endpoint remains named Liquidity Map V1. Dashboard V1.1 displays the universe-filtered projection as Trading Activity Map. Node size uses `current_close * current_volume`; it is not a market-cap heatmap, sector heatmap, fund-flow map, or money-flow map. The frontend default display is top 50 nodes, with 50/75/100 controls.
 
 ## Security Boundary
 

@@ -6,7 +6,7 @@ This document records the static publication boundary for the private provider-b
 
 ## Status
 
-Deployed pending manual authenticated browser verification.
+Deployed and manually authenticated by the user for the personal prototype.
 
 Implemented locally:
 
@@ -22,7 +22,6 @@ Implemented locally:
 
 Not implemented:
 
-- authenticated browser verification
 - automatic daily publication
 
 ## Architecture
@@ -36,8 +35,8 @@ dell5820
   -> Versioned deployment bundle
 
 OCI
-  /             public placeholder
-  /login/        public branded login page
+  /             public branded login page
+  /login/        compatibility redirect to /
   /dashboard/    authenticated static dashboard
   /private-data/ authenticated JSON snapshots
 ```
@@ -56,7 +55,7 @@ private-data/v1/
   liquidity-map.json
 ```
 
-`manifest.json` records contract version, release ID, generation time, session dates, file names, SHA-256 hashes, node counts, warning count, and private access classification.
+`manifest.json` records contract version, release ID, generation time, session dates, file names, SHA-256 hashes, node counts, warning count, and private access classification. Dashboard Overview JSON includes the Market Benchmark Strip, Sector Benchmark ETF relative performance, conservative freshness status, and universe-filtered Trading Activity Map data.
 
 The manifest explicitly records:
 
@@ -95,15 +94,15 @@ The bundle excludes source maps, credentials, `.env`, raw payloads, Parquet file
 
 ## Security Boundary
 
-`/dashboard/` and `/private-data/` must be protected by the same server-side session boundary. `/private-data/` must not fall back to the SPA index. Public `/` remains the data-free placeholder.
+`/dashboard/` and `/private-data/` must be protected by the same server-side session boundary. `/private-data/` must not fall back to the SPA index. Public `/` is the branded login entry and must not expose provider-backed market data before authentication.
 
 The existing htpasswd file remains the server-side credential store. Browser-native Basic Auth is replaced by a branded login page, opaque in-memory sessions, and an HttpOnly `__Host-whalpha_session` cookie.
 
-The session-login deployment verifies that public `/` remains unauthenticated and data-free, `/login/` is public, unauthenticated `/dashboard/` redirects to `/login/`, and unauthenticated `/private-data/` returns 401. Authenticated visual verification must be performed by the user in a browser; Codex does not know or handle the password.
+The session-login deployment verifies that public `/` remains unauthenticated and data-free, `/login/` redirects to `/`, unauthenticated `/dashboard/` redirects to `/?next=/dashboard/`, and unauthenticated `/private-data/` returns 401. Authenticated visual verification is performed by the user in a browser; Codex does not know or handle the password.
 
 ## Login Route Verification
 
-The deployment gate is content-aware: public `/` must retain the placeholder marker and must not contain login form fields, while `/login/` must contain branded login markers, username/password fields, and `Sign In`, and must not contain the placeholder marker. HTTP 200 alone is not accepted as proof of correct routing.
+The deployment gate is content-aware: public `/` must contain branded login markers, username/password fields, and `Sign In`, and must not contain the retired placeholder marker. `/login/` must redirect to `/`. HTTP 200 alone is not accepted as proof of correct routing.
 
 ## Login Submission Boundary
 

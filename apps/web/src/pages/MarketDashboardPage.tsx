@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getMarketDashboardData, getSnapshotDashboardData } from '../api/market';
-import type { DashboardData, DashboardUniverseViewResponse, LiquidityMapNodeResponse, SectorBenchmarkEtfResponse } from '../api/types';
+import type { DashboardData, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, MarketBenchmarkResponse, SectorBenchmarkEtfResponse } from '../api/types';
 import { demoDashboardData } from '../fixtures/marketDemo';
 import { formatCompact, formatCurrencyCompact, formatNumber, formatPercent, formatPrice, formatRatio, parseDecimal } from '../utils/format';
 import { LiquidityTreemap } from '../components/dashboard/LiquidityTreemap';
@@ -27,17 +27,25 @@ function activeUniverse(data: DashboardData, selected: string): DashboardUnivers
   return data.overview.universes.find((item) => item.definition.universe_id === selected) ?? data.overview.universes[0];
 }
 
-function Header({ data, universe, mode }: { data: DashboardData; universe: DashboardUniverseViewResponse; mode: DashboardMode }): JSX.Element {
+const MATERIAL_FLAGS = new Set(['unverified_price_discontinuity', 'identity_conflict', 'missing_required_benchmark']);
+
+function friendlyStatus(value: string): string {
+  return value.replace(/_/g, ' ');
+}
+
+function materialFlags(flags: string[]): string[] {
+  return flags.filter((flag) => MATERIAL_FLAGS.has(flag));
+}
+
+function Header({ mode }: { mode: DashboardMode }): JSX.Element {
   return (
     <header className="dashboard-header">
       <div>
         <p className="brand">WH Alpha</p>
         <h1>Market Overview</h1>
-        <p className="subtitle">EOD · {data.overview.data_as_of_label} · {universe.definition.display_name}</p>
+        <p className="subtitle">End-of-day market structure and trading activity.</p>
       </div>
       <div className="session-strip" aria-label="Session metadata">
-        <span>{universe.definition.display_name}</span>
-        <span>EOD</span>
         {mode === 'demo' ? <span className="badge badge-demo">DEMO DATA</span> : null}
         {mode === 'snapshot' ? <button className="logout-button" type="button" onClick={() => void logout()}>Logout</button> : null}
       </div>
@@ -45,21 +53,25 @@ function Header({ data, universe, mode }: { data: DashboardData; universe: Dashb
   );
 }
 
-function UniverseSelector({ data, selected, onChange }: { data: DashboardData; selected: string; onChange: (value: string) => void }): JSX.Element {
+function MetaControlBar({ data, universe, selected, onChange }: { data: DashboardData; universe: DashboardUniverseViewResponse; selected: string; onChange: (value: string) => void }): JSX.Element {
+  const multiple = data.overview.universes.length > 1;
   return (
-    <section className="panel universe-panel" aria-labelledby="universe-title">
-      <div className="section-header compact">
-        <div>
-          <p className="eyebrow">Universe</p>
-          <h2 id="universe-title">Analysis universe</h2>
-        </div>
-        <select aria-label="Dashboard universe" value={selected} onChange={(event) => onChange(event.target.value)}>
-          {data.overview.universes.map((item) => (
-            <option key={item.definition.universe_id} value={item.definition.universe_id}>{item.definition.display_name}</option>
-          ))}
-        </select>
+    <section className="meta-control-bar" aria-label="Market overview controls">
+      <div>
+        <span className="meta-label">Universe</span>
+        {multiple ? (
+          <select aria-label="Dashboard universe" value={selected} onChange={(event) => onChange(event.target.value)}>
+            {data.overview.universes.map((item) => (
+              <option key={item.definition.universe_id} value={item.definition.universe_id}>{item.definition.display_name}</option>
+            ))}
+          </select>
+        ) : (
+          <strong>{universe.definition.display_name}</strong>
+        )}
       </div>
-      <p className="section-copy">{activeUniverse(data, selected).definition.description}</p>
+      <div><span className="meta-label">Period</span><strong>1D close-to-close</strong></div>
+      <div><span className="meta-label">Data as of</span><strong>{data.overview.current_session_date} EOD</strong></div>
+      <div><span className="meta-label">Freshness</span><strong>{friendlyStatus(data.overview.freshness_status)}</strong></div>
     </section>
   );
 }
@@ -71,6 +83,23 @@ function MetricCard({ label, value, tone, note }: { label: string; value: string
       <strong>{value}</strong>
       {note ? <small>{note}</small> : null}
     </article>
+  );
+}
+
+function BenchmarkStrip({ items }: { items: MarketBenchmarkResponse[] }): JSX.Element {
+  return (
+    <section className="benchmark-strip" aria-label="Market benchmarks">
+      {items.map((item) => {
+        const value = item.close_to_close_return ? parseDecimal(item.close_to_close_return, `${item.label} return`) : 0;
+        return (
+          <article key={item.benchmark_id} className={`benchmark-chip ${item.available ? '' : 'benchmark-unavailable'}`} title={item.available && item.current_close ? `${item.label} close ${formatPrice(item.current_close)}` : `${item.label} unavailable`}>
+            <span>{item.ticker ?? 'EQW'}</span>
+            <small>{item.label}</small>
+            <strong className={item.available ? (value > 0 ? 'positive-text' : value < 0 ? 'negative-text' : '') : ''}>{item.available ? formatPercent(item.close_to_close_return, { signed: true }) : 'Unavailable'}</strong>
+          </article>
+        );
+      })}
+    </section>
   );
 }
 
@@ -169,14 +198,13 @@ function SectorBenchmarks({ items }: { items: SectorBenchmarkEtfResponse[] }): J
         </div>
         <p className="section-note">ETF benchmark performance, not sector breadth or fund flow.</p>
       </div>
-      <div className="sector-rank">
+      <div className="sector-rank sector-performance">
         {items.map((item) => (
           <div key={item.ticker} className="sector-row" title={`${item.ticker} ${item.sector}`}>
             <span className="ticker">{item.ticker}</span>
             <span>{item.sector}</span>
             <strong className={item.close_to_close_return && parseDecimal(item.close_to_close_return, item.ticker) >= 0 ? 'positive-text' : 'negative-text'}>{item.available ? formatPercent(item.close_to_close_return, { signed: true }) : 'Unavailable'}</strong>
-            <span>{item.available ? formatPrice(item.previous_close) : '—'}</span>
-            <span>{item.available ? formatPrice(item.current_close) : '—'}</span>
+            <span title="Arithmetic return difference versus SPY; not alpha or risk-adjusted return.">vs SPY {item.available && item.relative_to_spy_return ? formatPercent(item.relative_to_spy_return, { signed: true }) : '—'}</span>
           </div>
         ))}
       </div>
@@ -184,7 +212,30 @@ function SectorBenchmarks({ items }: { items: SectorBenchmarkEtfResponse[] }): J
   );
 }
 
-function MoversTable({ title, items, direction }: { title: string; items: DashboardUniverseViewResponse['movers']['top_gainers']; direction: 'up' | 'down' }): JSX.Element {
+function DetailPanel({ item, onClose }: { item: LiquidityMapNodeResponse | EodReturnResponse; onClose: () => void }): JSX.Element {
+  const flags = materialFlags(item.quality_flags);
+  const isNode = 'size_value' in item;
+  return (
+    <aside className="detail-panel" aria-labelledby="detail-title">
+      <div className="detail-header">
+        <h3 id="detail-title">{item.ticker}</h3>
+        <button type="button" onClick={onClose} aria-label="Close detail">Close</button>
+      </div>
+      <p>{item.name}</p>
+      <dl>
+        <div><dt>Return</dt><dd>{formatPercent(isNode ? item.color_value : item.close_to_close_return, { signed: true })}</dd></div>
+        <div><dt>Price</dt><dd>{formatPrice(isNode ? item.current_close : item.current_close)}</dd></div>
+        <div><dt>Share Volume</dt><dd>{formatCompact(isNode ? item.current_volume : item.current_volume)}</dd></div>
+        <div><dt>Trading Activity Proxy</dt><dd>{formatCurrencyCompact(isNode ? item.size_value : item.current_dollar_volume_proxy)}</dd></div>
+        {'rank' in item ? <div><dt>Activity Rank</dt><dd>{formatNumber(item.rank)}</dd></div> : null}
+        <div><dt>Instrument Type</dt><dd>{item.instrument_type}</dd></div>
+        <div><dt>Material Review</dt><dd>{flags.length ? flags.map((flag) => flag.replace(/_/g, ' ')).join(', ') : 'None'}</dd></div>
+      </dl>
+    </aside>
+  );
+}
+
+function MoversTable({ title, items, direction, onSelect }: { title: string; items: DashboardUniverseViewResponse['movers']['top_gainers']; direction: 'up' | 'down'; onSelect: (item: EodReturnResponse) => void }): JSX.Element {
   return (
     <section className="panel mover-panel" aria-labelledby={`${direction}-movers-title`}>
       <div className="section-header compact">
@@ -193,16 +244,18 @@ function MoversTable({ title, items, direction }: { title: string; items: Dashbo
           <h2 id={`${direction}-movers-title`}>{title}</h2>
         </div>
       </div>
-      <div className="mover-heading" aria-hidden="true"><span>Rank</span><span>Ticker</span><span>Company</span><span>Return</span><span>Close</span><span>Current Dollar Volume</span></div>
+      <p className="section-note">{direction === 'up' ? 'Top 1D gainer in selected universe' : 'Top 1D loser in selected universe'} · Dollar Volume is close × volume proxy.</p>
+      <div className="mover-heading" aria-hidden="true"><span>Rank</span><span>Ticker</span><span>Company</span><span>Return</span><span>Price</span><span>Dollar Volume</span></div>
       <ol className="mover-list">
         {items.map((item, index) => (
-          <li key={item.instrument_id} tabIndex={0}>
+          <li key={item.instrument_id} tabIndex={0} onClick={() => onSelect(item)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') onSelect(item); }}>
             <span className="rank">{index + 1}</span>
             <span className="ticker">{item.ticker}</span>
             <span className="company" title={item.name}>{item.name}</span>
             <strong className={direction === 'up' ? 'positive-text' : 'negative-text'}>{formatPercent(item.close_to_close_return, { signed: true })}</strong>
             <span>{formatPrice(item.current_close)}</span>
             <span>{formatCurrencyCompact(item.current_dollar_volume_proxy)}</span>
+            {materialFlags(item.quality_flags).length ? <span className="risk-badge">Review</span> : null}
           </li>
         ))}
       </ol>
@@ -210,34 +263,58 @@ function MoversTable({ title, items, direction }: { title: string; items: Dashbo
   );
 }
 
-function MoversPanel({ universe }: { universe: DashboardUniverseViewResponse }): JSX.Element {
+function MoversPanel({ universe, onSelect }: { universe: DashboardUniverseViewResponse; onSelect: (item: EodReturnResponse) => void }): JSX.Element {
   return (
     <div className="movers-grid" aria-label="Top movers">
-      <MoversTable title="Top Gainers" items={universe.movers.top_gainers} direction="up" />
-      <MoversTable title="Top Losers" items={universe.movers.top_losers} direction="down" />
+      <MoversTable title="Top Gainers" items={universe.movers.top_gainers} direction="up" onSelect={onSelect} />
+      <MoversTable title="Top Losers" items={universe.movers.top_losers} direction="down" onSelect={onSelect} />
     </div>
   );
 }
 
 function DataDetails({ universe, data }: { universe: DashboardUniverseViewResponse; data: DashboardData }): JSX.Element {
-  const qualityEntries = Object.entries(universe.quality_flag_counts);
+  const adjustmentCount = universe.quality_flag_counts.adjustment_factors_unverified ?? 0;
+  const materialEntries = Object.entries(universe.quality_flag_counts).filter(([flag]) => MATERIAL_FLAGS.has(flag));
   return (
     <details className="panel quality-panel">
       <summary>Data Details</summary>
+      <h3>Snapshot Status</h3>
       <dl className="quality-grid">
         <div><dt>Current session</dt><dd>{data.overview.current_session_date}</dd></div>
         <div><dt>Previous session</dt><dd>{data.overview.previous_session_date}</dd></div>
-        <div><dt>Universe count</dt><dd>{formatNumber(universe.summary.comparable_instrument_count)}</dd></div>
-        <div><dt>Outlier review</dt><dd>{formatNumber(universe.outlier_review_count)}</dd></div>
-        <div><dt>ETF excluded count</dt><dd>{formatNumber(universe.audit.etf_count)}</dd></div>
-        <div><dt>Price gate count</dt><dd>{formatNumber(universe.audit.price_gate_count)}</dd></div>
-        <div><dt>Liquidity gate final</dt><dd>{formatNumber(universe.audit.final_count)}</dd></div>
-        <div><dt>Data status</dt><dd>{data.overview.data_status}</dd></div>
+        <div><dt>Snapshot generated at</dt><dd>{data.overview.snapshot_generated_at ?? 'Unavailable'}</dd></div>
+        <div><dt>Validation status</dt><dd>{friendlyStatus(data.overview.snapshot_validation_status)}</dd></div>
+        <div><dt>Freshness status</dt><dd>{friendlyStatus(data.overview.freshness_status)}</dd></div>
       </dl>
+      <h3>Universe Funnel</h3>
+      <dl className="quality-grid">
+        <div><dt>Raw comparable</dt><dd>{formatNumber(universe.audit.raw_comparable_count)}</dd></div>
+        <div><dt>Common equities classified</dt><dd>{formatNumber(universe.audit.common_stock_count)}</dd></div>
+        <div><dt>ETF/ETP excluded</dt><dd>{formatNumber(universe.audit.etf_count)}</dd></div>
+        <div><dt>Supported exchange records</dt><dd>{formatNumber(universe.audit.major_exchange_count)}</dd></div>
+        <div><dt>Price gate passed</dt><dd>{formatNumber(universe.audit.price_gate_count)}</dd></div>
+        <div><dt>Liquidity gate final</dt><dd>{formatNumber(universe.audit.final_count)}</dd></div>
+        <div><dt>Outlier review</dt><dd>{formatNumber(universe.outlier_review_count)}</dd></div>
+      </dl>
+      <h3>Methodology Notes</h3>
       <div className="quality-flags">
-        {qualityEntries.length ? qualityEntries.map(([flag, count]) => <span key={flag}>{flag.replace(/_/g, ' ')} — {formatNumber(count)} records</span>) : <span>No quality flags in selected universe.</span>}
+        <span>close × volume trading activity proxy</span>
+        <span>Equal-weight return is not an index return</span>
+        <span>ETF benchmarks are not sector breadth</span>
+        <span>ETF benchmark volume is not fund flow</span>
       </div>
-      <p className="quality-copy">EOD market structure; not real-time. Complete means the snapshot files are internally complete, not that the data is the latest possible market day. Trading Activity Map uses close × volume proxy and close-to-close return; it is not a market-cap heatmap, sector map, or fund-flow display.</p>
+      <h3>Data Limitations</h3>
+      <div className="quality-flags">
+        {adjustmentCount ? <span>Adjustment factors unverified — {formatNumber(adjustmentCount)} records</span> : null}
+        <span>Missing point-in-time sector taxonomy</span>
+        <span>Missing market capitalization</span>
+        <span>Insufficient history for trailing liquidity</span>
+      </div>
+      <h3>Material Warnings</h3>
+      <div className="quality-flags">
+        {materialEntries.length ? materialEntries.map(([flag, count]) => <span key={flag}>{flag.replace(/_/g, ' ')} — {formatNumber(count)} records</span>) : <span>No material warnings in selected universe.</span>}
+      </div>
+      <p className="quality-copy">EOD market structure; not real-time. Snapshot validation means the completed files passed consistency checks, not that the session is independently verified as the latest market day.</p>
     </details>
   );
 }
@@ -261,9 +338,9 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
 export function MarketDashboardPage(): JSX.Element {
   const [state, setState] = useState<DashboardState>({ kind: 'loading' });
   const [selectedUniverseId, setSelectedUniverseId] = useState<string | null>(null);
-  const [mapLimit, setMapLimit] = useState(75);
+  const [mapLimit, setMapLimit] = useState(50);
   const [searchTicker, setSearchTicker] = useState('');
-  const [selectedNode, setSelectedNode] = useState<LiquidityMapNodeResponse | null>(null);
+  const [selectedItem, setSelectedItem] = useState<LiquidityMapNodeResponse | EodReturnResponse | null>(null);
   const mode = useMemo(marketDataMode, []);
 
   const load = useCallback(() => {
@@ -299,8 +376,9 @@ export function MarketDashboardPage(): JSX.Element {
 
   return (
     <main className="app-shell dashboard-shell">
-      <Header data={state.data} universe={universe} mode={state.mode} />
-      <UniverseSelector data={state.data} selected={universe.definition.universe_id} onChange={setSelectedUniverseId} />
+      <Header mode={state.mode} />
+      <MetaControlBar data={state.data} universe={universe} selected={universe.definition.universe_id} onChange={setSelectedUniverseId} />
+      <BenchmarkStrip items={state.data.overview.market_benchmarks} />
       <MarketPulse universe={universe} />
       <div className="two-column-grid">
         <BreadthChart universe={universe} />
@@ -318,11 +396,11 @@ export function MarketDashboardPage(): JSX.Element {
             <label>Search <input value={searchTicker} onChange={(event) => setSearchTicker(event.target.value)} placeholder="Ticker" /></label>
           </div>
         </div>
-        <LiquidityTreemap liquidityMap={displayedMap} highlightedTicker={searchHit?.ticker ?? null} onSelectNode={setSelectedNode} />
+        <LiquidityTreemap liquidityMap={displayedMap} highlightedTicker={searchHit?.ticker ?? null} onSelectNode={setSelectedItem} />
         {searched && !searchHit ? <p className="chart-summary">Ticker {searched} is not in the current Top {mapLimit} map.</p> : null}
-        {selectedNode ? <aside className="detail-panel"><h3>{selectedNode.ticker}</h3><p>{selectedNode.name}</p><dl><div><dt>Return</dt><dd>{formatPercent(selectedNode.color_value, { signed: true })}</dd></div><div><dt>Close</dt><dd>{formatPrice(selectedNode.current_close)}</dd></div><div><dt>Share Volume</dt><dd>{formatCompact(selectedNode.current_volume)}</dd></div><div><dt>Trading Activity Proxy</dt><dd>{formatCurrencyCompact(selectedNode.size_value)}</dd></div><div><dt>Instrument Type</dt><dd>{selectedNode.instrument_type}</dd></div></dl></aside> : null}
+        {selectedItem ? <DetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} /> : null}
       </section>
-      <MoversPanel universe={universe} />
+      <MoversPanel universe={universe} onSelect={setSelectedItem} />
       <DataDetails universe={universe} data={state.data} />
     </main>
   );

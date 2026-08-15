@@ -54,7 +54,7 @@ export function toTreemapData(liquidityMap: LiquidityMapResponse): TreemapDatum[
       node,
       itemStyle: { color: getTreemapColor(color) },
       label: {
-        formatter: node.rank <= 30 ? `${node.ticker}\n${formatPercent(node.color_value, { signed: true })}` : node.rank <= 60 ? node.ticker : '',
+        formatter: node.rank <= 15 ? `${node.ticker}\n${formatPercent(node.color_value, { signed: true })}` : node.rank <= 40 ? node.ticker : '',
       },
     } as TreemapDatum;
   });
@@ -86,8 +86,10 @@ export function LiquidityTreemap({ liquidityMap, highlightedTicker, onSelectNode
             `Return: ${formatPercent(node.color_value, { signed: true })}`,
             `Close: ${formatPrice(node.current_close)}`,
             `Volume: ${formatCompact(node.current_volume)}`,
-            `Liquidity proxy: ${formatCurrencyCompact(node.size_value)}`,
+            `Trading activity proxy: ${formatCurrencyCompact(node.size_value)}`,
+            `Activity rank: ${node.rank}`,
             `Instrument type: ${node.instrument_type}`,
+            node.quality_flags.includes('unverified_price_discontinuity') ? 'Material review: unverified price discontinuity' : '',
           ].join('<br/>');
         },
       },
@@ -108,7 +110,7 @@ export function LiquidityTreemap({ liquidityMap, highlightedTicker, onSelectNode
             color: '#f4f7fb',
             fontFamily: 'Inter, ui-sans-serif, system-ui',
             fontSize: 12,
-            overflow: 'truncate',
+            overflow: 'break',
           },
           upperLabel: { show: false },
           itemStyle: {

@@ -30,6 +30,8 @@ The price and liquidity gates use previous-session data only. This avoids same-d
 
 ETFs are excluded from the default stock breadth, movers, and Trading Activity Map. They are shown separately as Sector Benchmark ETFs when present in completed canonical EOD data.
 
+The Market Benchmark Strip separately shows SPY, QQQ, IWM, DIA, and the selected universe equal-weight return. These benchmarks are market context only and do not change stock-universe membership.
+
 The fixed Sector Benchmark ETF list is:
 
 - XLC — Communication Services
@@ -46,16 +48,26 @@ The fixed Sector Benchmark ETF list is:
 
 These are S&P 500 Select Sector SPDR benchmark returns. They are not sector breadth, fund flow, money flow, or official sector membership.
 
+Dashboard V1.1 also reports each Sector SPDR return relative to SPY:
+
+```text
+relative_to_spy_return = sector_etf_1d_return - SPY_1d_return
+```
+
+This is an arithmetic return difference, not alpha, factor attribution, or risk-adjusted excess return. If SPY is unavailable, the relative value is unavailable.
+
 ## Trading Activity Map
 
 Trading Activity Map replaces the UI label Liquidity Map V1 for the Dashboard. It uses:
 
 - size: current close x current volume
 - color: close-to-close return
-- default display: top 75 by activity proxy
+- default display: top 50 by activity proxy
 - user choices: top 50, 75, or 100
 
 It is not market-cap weighted and is not sector grouped.
+
+The current display intentionally keeps the raw close-times-volume proxy as the size metric. No logarithmic, square-root, or winsorized display transform has been accepted yet.
 
 ## Price Discontinuity Review
 
@@ -80,6 +92,20 @@ Exclusion counts are overlapping diagnostic counts, not a mutually exclusive sum
 - non-major exchange: 202
 - previous close below USD 5: 1,223
 - previous close x volume below USD 20M: 7,308
+
+## SNDK Review
+
+SNDK was reviewed because it appears as a large Trading Activity Map node for 2026-08-13. The completed canonical records show a resolved stable identity, common-stock Instrument Master metadata, internally consistent 2026-08-12 and 2026-08-13 OHLC values, and a 2026-08-13 close-to-close return of about +13.67%.
+
+The current project has no completed Corporate Action dataset or accepted adjustment-factor reconciliation path. The review therefore does not prove the price move is correct or incorrect. Current conclusion:
+
+`insufficient_history_or_corporate_action_evidence`
+
+The canonical Parquet data was not modified. Future verification requires accepted corporate-action data and additional history.
+
+## Freshness
+
+Dashboard V1.1 displays the completed current session as `Data as of 2026-08-13 EOD` and includes the static snapshot generation timestamp. Because the project has not accepted a reliable market-session calendar, freshness is reported as `calendar_not_independently_verified` rather than claiming the session is latest.
 
 ## Deferred Improvements
 

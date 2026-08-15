@@ -114,6 +114,20 @@ export interface SectorBenchmarkEtfResponse {
   previous_close: DecimalString | null;
   current_close: DecimalString | null;
   close_to_close_return: DecimalString | null;
+  relative_to_spy_return: DecimalString | null;
+  quality_flags: string[];
+}
+
+export interface MarketBenchmarkResponse {
+  benchmark_id: string;
+  label: string;
+  ticker: string | null;
+  available: boolean;
+  current_session_date: string;
+  previous_session_date: string;
+  previous_close: DecimalString | null;
+  current_close: DecimalString | null;
+  close_to_close_return: DecimalString | null;
   quality_flags: string[];
 }
 
@@ -123,7 +137,11 @@ export interface DashboardOverviewResponse {
   current_session_date: string;
   previous_session_date: string;
   data_as_of_label: string;
+  snapshot_generated_at: string | null;
+  snapshot_validation_status: string;
+  freshness_status: string;
   universes: DashboardUniverseViewResponse[];
+  market_benchmarks: MarketBenchmarkResponse[];
   sector_benchmarks: SectorBenchmarkEtfResponse[];
   data_status: string;
 }

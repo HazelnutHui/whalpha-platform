@@ -47,6 +47,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [ ] Lightweight developments
 - [x] First usable private static deployment
 - [x] Dashboard V1.1 professional universe and market overview cleanup
+- [x] Dashboard V1.1 trust/usability pass with benchmark strip, Sector ETF relative performance, conservative freshness, and top-50 Trading Activity Map default
 
 ## Next Small Target
 

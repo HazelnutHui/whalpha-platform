@@ -14,6 +14,7 @@ from tip_api.services.dashboard_overview import (
     DashboardUniverseAudit,
     DashboardUniverseDefinition,
     DashboardUniverseView,
+    MarketBenchmark,
     SectorBenchmarkEtf,
 )
 
@@ -274,6 +275,7 @@ class SectorBenchmarkEtfResponse(BaseModel):
     previous_close: str | None
     current_close: str | None
     close_to_close_return: str | None
+    relative_to_spy_return: str | None = Field(description="Arithmetic difference between sector ETF return and SPY return; not alpha or risk-adjusted return")
     quality_flags: tuple[str, ...]
 
     @classmethod
@@ -281,6 +283,36 @@ class SectorBenchmarkEtfResponse(BaseModel):
         return cls(
             ticker=model.ticker,
             sector=model.sector,
+            available=model.available,
+            current_session_date=model.current_session_date,
+            previous_session_date=model.previous_session_date,
+            previous_close=decimal_string(model.previous_close),
+            current_close=decimal_string(model.current_close),
+            close_to_close_return=decimal_string(model.close_to_close_return),
+            relative_to_spy_return=decimal_string(model.relative_to_spy_return),
+            quality_flags=model.quality_flags,
+        )
+
+
+class MarketBenchmarkResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    benchmark_id: str
+    label: str
+    ticker: str | None
+    available: bool
+    current_session_date: date
+    previous_session_date: date
+    previous_close: str | None
+    current_close: str | None
+    close_to_close_return: str | None
+    quality_flags: tuple[str, ...]
+
+    @classmethod
+    def from_model(cls, model: MarketBenchmark) -> MarketBenchmarkResponse:
+        return cls(
+            benchmark_id=model.benchmark_id,
+            label=model.label,
+            ticker=model.ticker,
             available=model.available,
             current_session_date=model.current_session_date,
             previous_session_date=model.previous_session_date,
@@ -298,7 +330,11 @@ class DashboardOverviewResponse(BaseModel):
     current_session_date: date
     previous_session_date: date
     data_as_of_label: str
+    snapshot_generated_at: str | None
+    snapshot_validation_status: str
+    freshness_status: str
     universes: tuple[DashboardUniverseViewResponse, ...]
+    market_benchmarks: tuple[MarketBenchmarkResponse, ...]
     sector_benchmarks: tuple[SectorBenchmarkEtfResponse, ...]
     data_status: str
 
@@ -310,7 +346,11 @@ class DashboardOverviewResponse(BaseModel):
             current_session_date=model.current_session_date,
             previous_session_date=model.previous_session_date,
             data_as_of_label=model.data_as_of_label,
+            snapshot_generated_at=model.snapshot_generated_at,
+            snapshot_validation_status=model.snapshot_validation_status,
+            freshness_status=model.freshness_status,
             universes=tuple(DashboardUniverseViewResponse.from_model(item) for item in model.universes),
+            market_benchmarks=tuple(MarketBenchmarkResponse.from_model(item) for item in model.market_benchmarks),
             sector_benchmarks=tuple(SectorBenchmarkEtfResponse.from_model(item) for item in model.sector_benchmarks),
             data_status=model.data_status,
         )

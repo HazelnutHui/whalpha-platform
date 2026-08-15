@@ -62,7 +62,10 @@ describe('MarketDashboardPage', () => {
     render(<MarketDashboardPage />);
     expect(screen.getByText(/Loading market overview/)).toBeInTheDocument();
     expect(await screen.findByText('Close-to-close structure')).toBeInTheDocument();
-    expect(screen.getByText('+0.64%')).toBeInTheDocument();
+    expect(screen.getByLabelText('Market benchmarks')).toBeInTheDocument();
+    expect(screen.getByText('SPY')).toBeInTheDocument();
+    expect(screen.getByText('EQW')).toBeInTheDocument();
+    expect(screen.getAllByText('+0.64%').length).toBeGreaterThan(0);
     expect(screen.getAllByText('1.40×').length).toBeGreaterThan(0);
     expect(screen.getByText('Advancers / Decliners')).toBeInTheDocument();
   });
@@ -133,6 +136,7 @@ describe('MarketDashboardPage', () => {
     expect(await screen.findByText('Top Gainers')).toBeInTheDocument();
     expect(screen.getByText('Top Losers')).toBeInTheDocument();
     expect(screen.getByText('Trading Activity Map')).toBeInTheDocument();
+    expect(screen.getByLabelText('Top N')).toHaveValue('50');
     expect(screen.getAllByText(/not a market-cap heatmap/i).length).toBeGreaterThan(0);
     expect(screen.queryByText(/^Live$/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/^Realtime$/i)).not.toBeInTheDocument();
@@ -142,7 +146,38 @@ describe('MarketDashboardPage', () => {
     render(<MarketDashboardPage />);
     expect(await screen.findByText('Data Details')).toBeInTheDocument();
     expect(screen.getAllByText('2026-08-13').length).toBeGreaterThan(0);
+    expect(screen.getByText('Snapshot Status')).toBeInTheDocument();
+    expect(screen.getByText('Universe Funnel')).toBeInTheDocument();
+    expect(screen.getByText('Methodology Notes')).toBeInTheDocument();
+    expect(screen.getByText('Data Limitations')).toBeInTheDocument();
+    expect(screen.getByText('Material Warnings')).toBeInTheDocument();
     expect(screen.getByText(/EOD market structure; not real-time/)).toBeInTheDocument();
+    expect(screen.queryByText(/1,876 warnings/)).not.toBeInTheDocument();
+  });
+
+  it('renders sector benchmark relative performance without price columns', async () => {
+    const custom = structuredClone(demoDashboardData);
+    custom.overview.sector_benchmarks[0] = {
+      ...custom.overview.sector_benchmarks[0],
+      available: true,
+      previous_close: '100',
+      current_close: '103',
+      close_to_close_return: '0.03',
+      relative_to_spy_return: '0.02',
+    };
+    vi.mocked(fetch).mockImplementation((input: RequestInfo | URL) => String(input).includes('/overview/')
+      ? Promise.resolve(okResponse(custom.overview))
+      : Promise.resolve(new Response('{}', { status: 404 })));
+    render(<MarketDashboardPage />);
+    expect(await screen.findByText('S&P 500 Select Sector SPDR 1D performance')).toBeInTheDocument();
+    expect(screen.getByText('vs SPY +2.00%')).toBeInTheDocument();
+  });
+
+  it('supports case-insensitive map search and selectable detail panel', async () => {
+    render(<MarketDashboardPage />);
+    await screen.findByText('Trading Activity Map');
+    fireEvent.change(screen.getByLabelText('Search'), { target: { value: ' testa ' } });
+    expect(screen.queryByText(/Ticker TESTA is not/)).not.toBeInTheDocument();
   });
 
 

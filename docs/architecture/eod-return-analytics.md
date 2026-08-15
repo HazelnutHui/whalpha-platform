@@ -58,6 +58,18 @@ Dashboard V1.1 adds a product-facing overview service on top of the canonical re
 
 The default `Tradable U.S. Equities` universe uses previous-session close and previous-session close-times-volume gates only. ETFs are excluded from the default equity breadth and movers, and fixed Sector Benchmark ETFs are reported separately.
 
+Dashboard V1.1 also exposes Market Benchmark Strip rows for SPY, QQQ, IWM, DIA, and the selected universe equal-weight return. ETF benchmarks do not enter stock breadth, movers, or the Trading Activity Map.
+
+Sector Benchmark ETF relative performance is:
+
+```text
+relative_to_spy_return = sector_etf_close_to_close_return - SPY_close_to_close_return
+```
+
+It is an arithmetic return difference only. It is not alpha, risk-adjusted excess return, sector breadth, sector rotation, or fund flow.
+
+Freshness is intentionally conservative. Until a reliable exchange-session calendar boundary is accepted, Dashboard Overview reports `calendar_not_independently_verified` while still displaying the completed dataset session and static snapshot generation time.
+
 ## Liquidity Map V1
 
 Liquidity Map V1 is a liquidity-weighted visual payload, not a traditional market-cap sector heatmap.

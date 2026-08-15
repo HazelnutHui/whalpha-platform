@@ -17,6 +17,8 @@ DEFAULT_TRADABLE_PRICE = Decimal("5")
 DEFAULT_TRADABLE_PREVIOUS_DOLLAR_VOLUME = Decimal("20000000")
 DEFAULT_MAP_NODE_LIMIT = 100
 MAJOR_US_EXCHANGES = frozenset({"XNYS", "XNAS", "ARCX", "BATS"})
+SNAPSHOT_VALIDATION_STATUS = "snapshot_validation_passed"
+FRESHNESS_STATUS = "calendar_not_independently_verified"
 
 TRADABLE_UNIVERSE_ID = "tradable_us_listed_equities_v1"
 OPERATING_UNIVERSE_ID = "all_operating_equities"
@@ -34,6 +36,13 @@ SECTOR_BENCHMARKS = (
     ("XLRE", "Real Estate"),
     ("XLK", "Information Technology"),
     ("XLU", "Utilities"),
+)
+
+MARKET_BENCHMARKS = (
+    ("SPY", "S&P 500 ETF"),
+    ("QQQ", "Nasdaq 100 ETF"),
+    ("IWM", "Russell 2000 ETF"),
+    ("DIA", "Dow Industrials ETF"),
 )
 
 
@@ -79,6 +88,21 @@ class SectorBenchmarkEtf:
     previous_close: Decimal | None
     current_close: Decimal | None
     close_to_close_return: Decimal | None
+    relative_to_spy_return: Decimal | None
+    quality_flags: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class MarketBenchmark:
+    benchmark_id: str
+    label: str
+    ticker: str | None
+    available: bool
+    current_session_date: date
+    previous_session_date: date
+    previous_close: Decimal | None
+    current_close: Decimal | None
+    close_to_close_return: Decimal | None
     quality_flags: tuple[str, ...]
 
 
@@ -89,7 +113,11 @@ class DashboardOverviewV11:
     current_session_date: date
     previous_session_date: date
     data_as_of_label: str
+    snapshot_generated_at: str | None
+    snapshot_validation_status: str
+    freshness_status: str
     universes: tuple[DashboardUniverseView, ...]
+    market_benchmarks: tuple[MarketBenchmark, ...]
     sector_benchmarks: tuple[SectorBenchmarkEtf, ...]
     data_status: str
 
@@ -131,9 +159,13 @@ class DashboardOverviewService:
             current_session_date=current_date,
             previous_session_date=previous_date,
             data_as_of_label=f"Data as of {current_date.isoformat()} EOD",
+            snapshot_generated_at=None,
+            snapshot_validation_status=SNAPSHOT_VALIDATION_STATUS,
+            freshness_status=FRESHNESS_STATUS,
             universes=universe_views,
+            market_benchmarks=self._market_benchmarks(rows, universe_views[0], current_date, previous_date),
             sector_benchmarks=self._sector_benchmarks(rows, current_date, previous_date),
-            data_status="complete" if rows else "insufficient_data",
+            data_status=SNAPSHOT_VALIDATION_STATUS if rows else "insufficient_data",
         )
 
     def _compute_rows(self, *, current_session_date: date, previous_session_date: date) -> tuple[DashboardReturnRow, ...]:
@@ -259,6 +291,7 @@ class DashboardOverviewService:
                         previous_close=None,
                         current_close=None,
                         close_to_close_return=None,
+                        relative_to_spy_return=None,
                         quality_flags=("benchmark_unavailable",),
                     )
                 )
@@ -273,10 +306,74 @@ class DashboardOverviewService:
                     previous_close=row.previous_close,
                     current_close=row.current_close,
                     close_to_close_return=row.close_to_close_return,
+                    relative_to_spy_return=None,
                     quality_flags=row.quality_flags,
                 )
             )
-        return tuple(sorted(result, key=lambda item: (item.close_to_close_return is None, -(item.close_to_close_return or Decimal("-999")), item.ticker)))
+        spy = by_ticker.get("SPY")
+        spy_return = spy.close_to_close_return if spy is not None and spy.instrument_type is InstrumentType.ETF else None
+        with_relative = tuple(
+            replace(item, relative_to_spy_return=(item.close_to_close_return - spy_return) if item.close_to_close_return is not None and spy_return is not None else None)
+            for item in result
+        )
+        return tuple(sorted(with_relative, key=lambda item: (item.close_to_close_return is None, -(item.close_to_close_return or Decimal("-999")), item.ticker)))
+
+    def _market_benchmarks(
+        self,
+        rows: tuple[DashboardReturnRow, ...],
+        default_universe: DashboardUniverseView,
+        current_date: date,
+        previous_date: date,
+    ) -> tuple[MarketBenchmark, ...]:
+        by_ticker = {item.row.ticker: item.row for item in rows}
+        result: list[MarketBenchmark] = []
+        for ticker, label in MARKET_BENCHMARKS:
+            row = by_ticker.get(ticker)
+            if row is None or row.instrument_type is not InstrumentType.ETF:
+                result.append(
+                    MarketBenchmark(
+                        benchmark_id=ticker.lower(),
+                        label=label,
+                        ticker=ticker,
+                        available=False,
+                        current_session_date=current_date,
+                        previous_session_date=previous_date,
+                        previous_close=None,
+                        current_close=None,
+                        close_to_close_return=None,
+                        quality_flags=("benchmark_unavailable",),
+                    )
+                )
+                continue
+            result.append(
+                MarketBenchmark(
+                    benchmark_id=ticker.lower(),
+                    label=label,
+                    ticker=ticker,
+                    available=True,
+                    current_session_date=current_date,
+                    previous_session_date=previous_date,
+                    previous_close=row.previous_close,
+                    current_close=row.current_close,
+                    close_to_close_return=row.close_to_close_return,
+                    quality_flags=row.quality_flags,
+                )
+            )
+        result.append(
+            MarketBenchmark(
+                benchmark_id="equal_weight_universe",
+                label="Equal-Weight Universe",
+                ticker=None,
+                available=default_universe.summary.equal_weight_return is not None,
+                current_session_date=current_date,
+                previous_session_date=previous_date,
+                previous_close=None,
+                current_close=None,
+                close_to_close_return=default_universe.summary.equal_weight_return,
+                quality_flags=("equal_weight_not_index_return",),
+            )
+        )
+        return tuple(result)
 
 
 def _audit(rows: tuple[DashboardReturnRow, ...], selected: tuple[DashboardReturnRow, ...]) -> DashboardUniverseAudit:

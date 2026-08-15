@@ -40,7 +40,19 @@ ETF handling is explicit:
 - The eleven S&P 500 Select Sector SPDR tickers are displayed separately as Sector Benchmark ETFs.
 - Sector ETF returns are benchmark/proxy performance, not sector constituent breadth, fund flow, or money flow.
 
-Liquidity Map V1 is renamed in the UI to Trading Activity Map. Node size remains current close x current volume, and color remains close-to-close return. Default display is top 75 nodes, with 50/75/100 controls.
+Liquidity Map V1 is renamed in the UI to Trading Activity Map. Node size remains current close x current volume, and color remains close-to-close return. Default display is top 50 nodes, with 50/75/100 controls.
+
+Dashboard V1.1 also shows a compact Market Benchmark Strip for SPY, QQQ, IWM, DIA, and the selected universe equal-weight return. These ETF benchmark returns provide market context only; they do not enter the default stock breadth, movers, or Trading Activity Map.
+
+Sector Benchmark ETFs are displayed as S&P 500 Select Sector SPDR 1D performance, including a `relative_to_spy_return` arithmetic return difference:
+
+```text
+relative_to_spy_return = sector_etf_close_to_close_return - SPY_close_to_close_return
+```
+
+This is not alpha, risk-adjusted performance, sector breadth, sector rotation, or fund flow.
+
+Freshness status is deliberately conservative. Until the project accepts a reliable market-session calendar, the Dashboard reports the completed dataset session and snapshot generation time while marking freshness as `calendar_not_independently_verified`.
 
 Price discontinuities where current close / previous close is >= 2 or <= 0.5 are flagged as `unverified_price_discontinuity` and excluded from default movers and map until corporate-action reconciliation exists.
 
@@ -51,6 +63,7 @@ Price discontinuities where current close / previous close is >= 2 or <= 0.5 are
 - ADR/common-stock separation is not claimed until Instrument Master supports it explicitly.
 - Traditional market-cap sector heatmap remains blocked by missing point-in-time sector taxonomy, market cap, and licensing decisions.
 - Once at least 20 completed sessions are available, the liquidity gate should be upgraded to a trailing median dollar-volume rule.
+- Dashboard data freshness does not claim the current session is the latest completed U.S. trading day until a reliable calendar boundary is accepted.
 
 ## Alternatives Considered
 

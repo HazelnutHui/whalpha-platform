@@ -104,6 +104,7 @@ Status date: 2026-08-15
 - The login form submission defect that navigated to `/auth/login` with `invalid_request` is fixed; the page now uses the JSON session-login client contract.
 
 - Dashboard V1.1 professional overview cleanup implemented: default `Tradable U.S. Equities` universe, auxiliary universes, Sector Benchmark ETFs, Trading Activity Map naming, mover outlier isolation, and categorized Data Details.
+- Dashboard V1.1 Market Overview trust/usability upgrade implemented: SPY/QQQ/IWM/DIA benchmark strip, Sector ETF relative-to-SPY performance, conservative freshness status, top-50 Trading Activity Map default, cleaner labels/search/detail panel behavior, and SNDK data-review documentation.
 
 ## Current
 
@@ -144,6 +145,7 @@ Status date: 2026-08-15
 - No actual sector/industry taxonomy dataset.
 - Initial close-to-close analytics and Dashboard V1.1 overview pipeline are implemented.
 - Dashboard V1 is deployed as a private authenticated static OCI release; root login, session login, real Dashboard data loading, Logout, and password rotation have been manually verified by the user.
+- Dashboard data freshness currently reports the completed dataset session and snapshot generation time, but uses `calendar_not_independently_verified` because no accepted market-session calendar exists yet.
 - No formal multi-user authentication or authorization for private market-data routes.
 - No database.
 - Static private Dashboard deployment pipeline exists for the personal prototype.

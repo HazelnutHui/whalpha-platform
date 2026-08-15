@@ -17,6 +17,7 @@ from tip_api.services.dashboard_overview import (
     DashboardUniverseAudit,
     DashboardUniverseDefinition,
     DashboardUniverseView,
+    MarketBenchmark,
     SectorBenchmarkEtf,
 )
 
@@ -139,7 +140,34 @@ def fake_overview():
             previous_close=None,
             current_close=None,
             close_to_close_return=None,
+            relative_to_spy_return=None,
             quality_flags=("benchmark_unavailable",),
+        ),
+    )
+    market_benchmarks = (
+        MarketBenchmark(
+            benchmark_id="spy",
+            label="S&P 500 ETF",
+            ticker="SPY",
+            available=False,
+            current_session_date=CURRENT,
+            previous_session_date=PREVIOUS,
+            previous_close=None,
+            current_close=None,
+            close_to_close_return=None,
+            quality_flags=("benchmark_unavailable",),
+        ),
+        MarketBenchmark(
+            benchmark_id="equal_weight_universe",
+            label="Equal-Weight Universe",
+            ticker=None,
+            available=True,
+            current_session_date=CURRENT,
+            previous_session_date=PREVIOUS,
+            previous_close=None,
+            current_close=None,
+            close_to_close_return=Decimal("0.01"),
+            quality_flags=("equal_weight_not_index_return",),
         ),
     )
     return DashboardOverviewV11(
@@ -148,9 +176,13 @@ def fake_overview():
         current_session_date=CURRENT,
         previous_session_date=PREVIOUS,
         data_as_of_label="Data as of 2026-08-13 EOD",
+        snapshot_generated_at=None,
+        snapshot_validation_status="snapshot_validation_passed",
+        freshness_status="calendar_not_independently_verified",
         universes=(universe,),
+        market_benchmarks=market_benchmarks,
         sector_benchmarks=sectors,
-        data_status="complete",
+        data_status="snapshot_validation_passed",
     )
 
 

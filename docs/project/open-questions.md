@@ -42,3 +42,5 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Trailing median dollar-volume rule after at least 20 completed sessions
 - Explicit ADR/common-stock distinction if Instrument Master can support it
 - Point-in-time sector constituent source and market-cap source for traditional heatmap
+- Whether Trading Activity Map should later use a documented display transform for concentrated activity weights while preserving raw close-times-volume tooltip values
+- Corporate-action verification source and adjustment reconciliation workflow for high-price or high-activity names such as SNDK

@@ -110,7 +110,27 @@ const sectorBenchmarks = ['XLC', 'XLY', 'XLP', 'XLE', 'XLF', 'XLV', 'XLI', 'XLB'
   previous_close: null,
   current_close: null,
   close_to_close_return: null,
+  relative_to_spy_return: null,
   quality_flags: ['synthetic_demo_fixture'],
+}));
+
+const marketBenchmarks = [
+  ['spy', 'S&P 500 ETF', 'SPY', '0.004'],
+  ['qqq', 'Nasdaq 100 ETF', 'QQQ', '0.007'],
+  ['iwm', 'Russell 2000 ETF', 'IWM', '-0.002'],
+  ['dia', 'Dow Industrials ETF', 'DIA', '0.001'],
+  ['equal_weight_universe', 'Equal-Weight Universe', null, summary.equal_weight_return],
+].map(([benchmark_id, label, ticker, close_to_close_return]) => ({
+  benchmark_id: benchmark_id as string,
+  label: label as string,
+  ticker: ticker as string | null,
+  available: true,
+  current_session_date: current,
+  previous_session_date: previous,
+  previous_close: ticker ? '100' : null,
+  current_close: ticker ? '101' : null,
+  close_to_close_return: close_to_close_return as string,
+  quality_flags: ticker ? ['synthetic_demo_fixture'] : ['equal_weight_not_index_return'],
 }));
 
 export const demoDashboardData: DashboardData = {
@@ -120,11 +140,15 @@ export const demoDashboardData: DashboardData = {
     current_session_date: current,
     previous_session_date: previous,
     data_as_of_label: 'Data as of 2026-08-13 EOD',
+    snapshot_generated_at: '2026-08-14T00:00:00Z',
+    snapshot_validation_status: 'snapshot_validation_passed',
+    freshness_status: 'calendar_not_independently_verified',
     universes: [
       universe,
       { ...universe, definition: { ...universe.definition, universe_id: 'all_operating_equities', display_name: 'All Operating Equities', name: 'All Operating Equities' } },
       { ...universe, definition: { ...universe.definition, universe_id: 'all_eligible_instruments', display_name: 'All Eligible Instruments', name: 'All Eligible Instruments' } },
     ],
+    market_benchmarks: marketBenchmarks,
     sector_benchmarks: sectorBenchmarks,
     data_status: 'synthetic_demo',
   },

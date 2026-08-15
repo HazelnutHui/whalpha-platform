@@ -24,15 +24,17 @@ API mode does not fall back to synthetic fixtures on failure. Failures render ex
 
 ## Implemented Views
 
-- Header with WH Alpha, Market Overview, EOD data-as-of date, selected universe, Logout, and a compact data-status entry.
-- Universe selector with `Tradable U.S. Equities` as the default.
+- Compact header with WH Alpha, Market Overview, Logout, and a meta/control bar for universe, period, data-as-of date, and freshness.
+- Universe control with `Tradable U.S. Equities` as the default and auxiliary universes available for research/data-quality views.
+- Market Benchmark Strip for SPY, QQQ, IWM, DIA, and selected-universe equal-weight return.
 - Market Pulse cards for equal-weight return, median return, advancers/decliners, and up/down volume ratio.
 - Market Breadth stacked bar with advancers, unchanged, decliners, counts, and percentages.
 - Up/Down Volume comparison using share volume, not money flow.
-- Sector Benchmark ETFs for the eleven fixed Select Sector SPDR tickers.
-- Apache ECharts Trading Activity Map treemap, defaulting to top 75 nodes with 50/75/100 controls.
+- Sector Benchmark ETF 1D relative performance for the eleven fixed Select Sector SPDR tickers, including arithmetic return difference versus SPY.
+- Apache ECharts Trading Activity Map treemap, defaulting to top 50 nodes with 50/75/100 controls.
 - Top Gainers and Top Losers lists using the selected universe and price-discontinuity isolation.
 - Collapsible Data Details panel with categorized quality flags and session metadata.
+- Data Details separates Snapshot Status, Universe Funnel, Methodology Notes, Data Limitations, and Material Warnings.
 - Loading, error, empty, and retry states.
 
 ## Trading Activity Map Semantics
@@ -44,6 +46,18 @@ Trading Activity Map uses:
 - Fixed diverging color clamp around +/-5% for readability.
 
 It is explicitly not market-cap weighted, not sector grouped, not fund flow, and not money flow. Instrument type may be displayed as metadata but is not a sector taxonomy. See [Dashboard Universe V1](../product/dashboard-universe-v1.md).
+
+Default node count is 50. The user may switch to 75 or 100 nodes. Labels avoid forced truncation: larger nodes show ticker and return, medium nodes show ticker, and small nodes rely on hover/detail views.
+
+## Benchmark Semantics
+
+The Market Benchmark Strip shows SPY, QQQ, IWM, DIA, and the selected universe equal-weight return. ETF benchmarks are context only and do not enter default stock breadth, movers, or Trading Activity Map.
+
+Sector Benchmark ETFs show 1D return and `relative_to_spy_return`, defined as sector ETF return minus SPY return. This is not alpha, risk-adjusted performance, sector breadth, sector rotation, or fund flow.
+
+## Freshness
+
+The Dashboard displays the completed dataset session, static snapshot generation timestamp when available, and a freshness status. Until a reliable market-session calendar is accepted, freshness is `calendar_not_independently_verified`; snapshot validation is not presented as proof that the data is the latest market day.
 
 ## API Boundary
 

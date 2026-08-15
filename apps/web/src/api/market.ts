@@ -1,5 +1,5 @@
 import { fetchJson } from './client';
-import type { DashboardData, DashboardOverviewResponse, DashboardUniverseAuditResponse, DashboardUniverseDefinitionResponse, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse, SectorBenchmarkEtfResponse, SnapshotManifestResponse } from './types';
+import type { DashboardData, DashboardOverviewResponse, DashboardUniverseAuditResponse, DashboardUniverseDefinitionResponse, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketBenchmarkResponse, MarketSummaryResponse, MoversResponse, SectorBenchmarkEtfResponse, SnapshotManifestResponse } from './types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -259,12 +259,31 @@ function parseSectorBenchmark(value: unknown): SectorBenchmarkEtfResponse {
     previous_close: requireNullableString(value, 'previous_close'),
     current_close: requireNullableString(value, 'current_close'),
     close_to_close_return: requireNullableString(value, 'close_to_close_return'),
+    relative_to_spy_return: requireNullableString(value, 'relative_to_spy_return'),
+    quality_flags: requireStringArray(value, 'quality_flags'),
+  };
+}
+
+function parseMarketBenchmark(value: unknown): MarketBenchmarkResponse {
+  if (!isRecord(value)) {
+    throw new Error('Invalid market API payload: market benchmark');
+  }
+  return {
+    benchmark_id: requireString(value, 'benchmark_id'),
+    label: requireString(value, 'label'),
+    ticker: requireNullableString(value, 'ticker'),
+    available: requireBoolean(value, 'available'),
+    current_session_date: requireString(value, 'current_session_date'),
+    previous_session_date: requireString(value, 'previous_session_date'),
+    previous_close: requireNullableString(value, 'previous_close'),
+    current_close: requireNullableString(value, 'current_close'),
+    close_to_close_return: requireNullableString(value, 'close_to_close_return'),
     quality_flags: requireStringArray(value, 'quality_flags'),
   };
 }
 
 export function parseDashboardOverview(value: unknown): DashboardOverviewResponse {
-  if (!isRecord(value) || !Array.isArray(value.universes) || !Array.isArray(value.sector_benchmarks)) {
+  if (!isRecord(value) || !Array.isArray(value.universes) || !Array.isArray(value.market_benchmarks) || !Array.isArray(value.sector_benchmarks)) {
     throw new Error('Invalid market API payload: dashboard overview');
   }
   return {
@@ -273,7 +292,11 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
     current_session_date: requireString(value, 'current_session_date'),
     previous_session_date: requireString(value, 'previous_session_date'),
     data_as_of_label: requireString(value, 'data_as_of_label'),
+    snapshot_generated_at: requireNullableString(value, 'snapshot_generated_at'),
+    snapshot_validation_status: requireString(value, 'snapshot_validation_status'),
+    freshness_status: requireString(value, 'freshness_status'),
     universes: value.universes.map(parseUniverseView),
+    market_benchmarks: value.market_benchmarks.map(parseMarketBenchmark),
     sector_benchmarks: value.sector_benchmarks.map(parseSectorBenchmark),
     data_status: requireString(value, 'data_status'),
   };

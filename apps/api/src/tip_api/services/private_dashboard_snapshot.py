@@ -105,7 +105,10 @@ def build_private_dashboard_snapshot(
 
     query_service = EodMarketDataQueryService(CanonicalEodReadRepository(safe_data_root))
     analytics = EodReturnAnalyticsService(query_service)
-    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service).get_latest_overview())
+    generated = generated_at or datetime.now(UTC)
+    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service).get_latest_overview()).model_copy(
+        update={"snapshot_generated_at": generated.astimezone(UTC).isoformat().replace("+00:00", "Z")}
+    )
     default_universe = next(item for item in overview.universes if item.definition.universe_id == overview.default_universe_id)
     summary = default_universe.summary
     movers = default_universe.movers
@@ -117,7 +120,6 @@ def build_private_dashboard_snapshot(
     ):
         raise DashboardSnapshotError("market summary snapshot session dates are inconsistent")
 
-    generated = generated_at or datetime.now(UTC)
     rid = release_id or make_release_id(
         session_date=summary.current_session_date.isoformat(), generated_at=generated, git_commit=git_commit
     )

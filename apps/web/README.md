@@ -20,9 +20,11 @@ API mode does not fall back to demo data on failure.
 - Market Pulse
 - Market Breadth
 - Up/Down Volume
-- Liquidity Map V1 treemap
+- Market Benchmark Strip for SPY, QQQ, IWM, DIA, and equal-weight universe return
+- Sector Benchmark ETF 1D relative performance versus SPY
+- Trading Activity Map treemap, default top 50
 - Top Gainers and Top Losers
-- Data Quality / Session Metadata
+- Categorized Data Details
 - Logout in snapshot mode
 - loading, error, empty, and retry states
 
@@ -58,4 +60,4 @@ npm run build
 
 ## Dashboard V1.1
 
-The dashboard consumes the versioned overview payload. API mode calls `/api/v1/private/market/overview/latest`; snapshot mode reads `/private-data/v1/market-overview.json`; demo mode remains synthetic. The default universe is `Tradable U.S. Equities`, with ETFs shown separately as Sector Benchmark ETFs.
+The dashboard consumes the versioned overview payload. API mode calls `/api/v1/private/market/overview/latest`; snapshot mode reads `/private-data/v1/market-overview.json`; demo mode remains synthetic. The default universe is `Tradable U.S. Equities`, with ETFs shown separately as market and Sector Benchmark ETFs. Freshness is conservative until a reliable market-session calendar is accepted.

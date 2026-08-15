@@ -22,6 +22,7 @@ Explicitly enabled private routes (`TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`)
 - `GET /api/v1/private/market/movers/latest`
 - `GET /api/v1/private/market/liquidity-map/latest`
 - `GET /api/v1/private/market/returns/latest`
+- `GET /api/v1/private/market/overview/latest`
 
 Expected response:
 
@@ -53,7 +54,7 @@ Implemented contracts:
 - Instrument Master V1
 - EOD Price Bar V1
 
-These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. Market Summary V1, movers, returns, and Liquidity Map V1 private responses are implemented from completed canonical sessions. No frontend Dashboard flow, public routes, or authentication system is implemented.
+These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. Market Summary V1, movers, returns, Liquidity Map V1, and Dashboard Overview V1.1 private responses are implemented from completed canonical sessions. Dashboard Overview adds market benchmarks, Sector ETF relative performance, conservative freshness status, and universe-filtered Trading Activity Map data.
 
 Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
 
@@ -85,7 +86,7 @@ The Massive package is available from:
 from tip_api.providers.massive import MassiveMarketDataProvider, MassiveProviderConfig
 ```
 
-It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test, the one-request Grouped Daily inspection for 2026-08-13, the bounded All Tickers snapshot publication for 2026-08-13, and the one-request Grouped Daily publication for 2026-08-13 that published canonical EOD bars. The Massive adapter must not be used for backfill, dashboard data, or additional live requests without a separate authorization.
+It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test, the one-request Grouped Daily inspection for 2026-08-13, the bounded All Tickers snapshot publications for completed snapshot dates, and the one-request Grouped Daily publications that created canonical EOD bars. The Massive adapter must not be used for backfill, dashboard data, or additional live requests without a separate authorization.
 
 ## Local Setup
 
