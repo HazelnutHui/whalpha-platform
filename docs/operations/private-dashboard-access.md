@@ -69,7 +69,26 @@ sudo /srv/whalpha/admin/rotate-whalpha-dashboard-password.sh --apply
 
 The dry run verifies the target host, auth file, service boundary, and fixed username. The apply flow prompts for the new password twice with hidden input, rejects empty or short passwords, writes a new htpasswd file atomically, restarts the Auth Service, and invalidates all existing in-memory sessions. It does not print the password, password length, hash, cookie, or session token.
 
-Choose a new password that is unique, at least 16 characters, only used for WH Alpha, and not shared with Google, email, school, IBKR, OCI, Massive, or any other account. A trusted password manager generated value is preferred. After rotation, update or delete the old `whalpha.com` password in Chrome Password Manager.
+Choose a new password that is unique and only used for WH Alpha. The rotation script enforces a hard minimum of 10 characters; longer randomly generated passwords from a trusted password manager are recommended. Do not reuse Google, email, school, IBKR, OCI, Massive, or any other account password. After rotation, update or delete the old `whalpha.com` password in Chrome Password Manager.
+
+## 2026-08-15 Rotation Failure and Repair
+
+The first real `--apply` run accepted hidden user input twice, then failed with:
+
+```text
+error: auth service must listen only on 127.0.0.1:8010
+```
+
+Safe metadata showed the Auth Service was active and `ss` showed the service listening only on `127.0.0.1:8010`. The failure was in the rotation script, not evidence of a public listener.
+
+Root cause:
+
+- the script restarted the Auth Service and immediately checked listener state once, with no bounded readiness polling;
+- the failure path used a helper that exited before the restore branch could complete, so rollback status was not reported clearly.
+
+Metadata showed a backup file from the failed run and the auth file mtime changed during the run, so an atomic replacement likely happened before failure. Because neither old nor new password can be tested or inspected without the user password, the current password version is `unknown` until the user performs one repaired rotation.
+
+The repaired script uses structured listener extraction, bounded readiness polling, explicit rollback status output, and a rollback path that atomically restores from the run backup if post-replacement verification fails.
 
 ## Revocation
 

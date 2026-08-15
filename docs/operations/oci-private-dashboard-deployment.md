@@ -59,6 +59,8 @@ The deployment installs `/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh
 
 The real password must be entered by the user directly on OCI. Do not paste it into chat or Git.
 
+The helper enforces a hard minimum length of 10 characters. Longer unique passwords are recommended, but passwords meeting the 10-character minimum are accepted.
+
 ## 2026-08-15 Deployment Result
 
 - workstation source commit: `987b5289a7835316ef6aae4aa326aff46de58896`
@@ -137,6 +139,28 @@ Earlier same-source deployment attempts failed post-switch validation before thi
 - Auth Service: active and listening only on `127.0.0.1:8010`.
 - password rotation helper: deployed at `/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh`.
 - deployment status: `deployed_pending_manual_password_rotation_and_login_verification`.
+
+## 2026-08-15 Password Rotation Script Repair
+
+The first real password rotation attempt failed after user input with `auth service must listen only on 127.0.0.1:8010`. Read-only diagnostics found:
+
+- Auth Service active.
+- Nginx active.
+- `8010` listening only on `127.0.0.1:8010`.
+- one root-owned backup file from the failed rotation.
+- no safe way to determine whether the active htpasswd file contains the old or newly entered password.
+
+The repaired admin helper:
+
+- extracts only the `ss` local-address field;
+- accepts exactly one `127.0.0.1:8010` listener;
+- rejects wildcard, IPv6 wildcard, public-address, multiple, and absent listeners;
+- waits briefly and repeatedly for service readiness after restart;
+- performs atomic rollback from the run backup if post-replacement validation fails;
+- prints fixed non-sensitive status keys for `rotation_failed`, `rollback_attempted`, `rollback_succeeded`, or `rollback_failed`;
+- reports `password_rotation=completed`, `sessions_invalidated=true`, `auth_service=active`, and `listener=127.0.0.1:8010` on success.
+
+The user must run one new repaired `--apply` rotation to establish a known final password state.
 
 Several same-source candidate releases failed post-switch validation while strengthening deployment assertions. The deployment script rolled back after each failure; failed release directories were retained for audit and are not the active `current` release.
 

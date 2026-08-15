@@ -223,7 +223,95 @@ def test_password_rotation_script_safety(tmp_path: Path, repo_root: Path = Path(
     assert "--apply requires an interactive terminal" in non_tty_result.stderr
     assert "openssl passwd -6 -stdin" in text
     assert "systemctl restart \"$AUTH_SERVICE\"" in text
+    assert "MIN_PASSWORD_LENGTH=10" in text
+    assert "wait_for_listener" in text
+    assert "rollback_succeeded=true" in text
+    assert "password_rotation=completed" in text
     assert "ROTATE_PASSWORD" in text
     assert "set -x" not in text
     assert "echo \"$ROTATE_PASSWORD\"" not in text
     assert "WHALPHA_PASSWORD" in text
+
+
+def run_rotation_function(script: Path, body: str, *, env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+    merged_env = {
+        "PATH": "/usr/bin:/bin",
+        "WHALPHA_ROTATE_SOURCE_ONLY": "1",
+        "WHALPHA_ROTATE_TEST_MODE": "1",
+        "WHALPHA_ROTATE_EXPECTED_HOSTNAME": "dell5820",
+        "WHALPHA_ROTATE_SLEEP_SECONDS": "0",
+        **(env or {}),
+    }
+    return subprocess.run(
+        ["bash", "-c", f"source {script}; {body}"],
+        capture_output=True,
+        text=True,
+        env=merged_env,
+    )
+
+
+def test_password_rotation_listener_parser(repo_root: Path = Path(__file__).resolve().parents[4]):
+    script = repo_root / "scripts" / "admin" / "rotate-whalpha-dashboard-password.sh"
+    good = "State Recv-Q Send-Q Local Address:Port Peer Address:Port Process\nLISTEN 0 5 127.0.0.1:8010 0.0.0.0:* users:((\"python3\",pid=123,fd=3))\n"
+    result = subprocess.run(
+        ["bash", "-c", f"source {script}; listener_addresses_from_ss"],
+        input=good,
+        capture_output=True,
+        text=True,
+        env={"WHALPHA_ROTATE_SOURCE_ONLY": "1", "WHALPHA_ROTATE_TEST_MODE": "1"},
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip() == "127.0.0.1:8010"
+
+
+@pytest.mark.parametrize(
+    ("content", "expected"),
+    [
+        ("LISTEN 0 5 127.0.0.1:8010 0.0.0.0:*\n", True),
+        ("State Recv-Q Send-Q Local Address:Port Peer Address:Port Process\nLISTEN 0 5 127.0.0.1:8010 0.0.0.0:*\n", True),
+        ("LISTEN 0 5 0.0.0.0:8010 0.0.0.0:*\n", False),
+        ("LISTEN 0 5 [::]:8010 [::]:*\n", False),
+        ("LISTEN 0 5 127.0.0.1:8010 0.0.0.0:*\nLISTEN 0 5 0.0.0.0:8010 0.0.0.0:*\n", False),
+        ("", False),
+    ],
+)
+def test_password_rotation_listener_validation(tmp_path: Path, content: str, expected: bool, repo_root: Path = Path(__file__).resolve().parents[4]):
+    script = repo_root / "scripts" / "admin" / "rotate-whalpha-dashboard-password.sh"
+    listener_file = tmp_path / "ss.txt"
+    listener_file.write_text(content, encoding="utf-8")
+    result = run_rotation_function(script, "listener_is_localhost_only", env={"WHALPHA_ROTATE_LISTENER_FILE": str(listener_file)})
+    assert (result.returncode == 0) is expected
+
+
+def test_password_rotation_listener_wait_timeout(tmp_path: Path, repo_root: Path = Path(__file__).resolve().parents[4]):
+    script = repo_root / "scripts" / "admin" / "rotate-whalpha-dashboard-password.sh"
+    listener_file = tmp_path / "ss.txt"
+    listener_file.write_text("", encoding="utf-8")
+    result = run_rotation_function(
+        script,
+        "wait_for_listener",
+        env={"WHALPHA_ROTATE_LISTENER_FILE": str(listener_file), "WHALPHA_ROTATE_LISTENER_WAIT_ATTEMPTS": "2"},
+    )
+    assert result.returncode != 0
+
+
+def test_password_rotation_rollback_restores_fixture(tmp_path: Path, repo_root: Path = Path(__file__).resolve().parents[4]):
+    script = repo_root / "scripts" / "admin" / "rotate-whalpha-dashboard-password.sh"
+    auth_dir = tmp_path / "auth"
+    auth_dir.mkdir()
+    auth_file = auth_dir / "whalpha-dashboard.htpasswd"
+    backup = auth_dir / "whalpha-dashboard.htpasswd.backup-fixture"
+    auth_file.write_text("hui:$6$new$hash\n", encoding="utf-8")
+    backup.write_text("hui:$6$old$hash\n", encoding="utf-8")
+    listener_file = tmp_path / "ss.txt"
+    listener_file.write_text("LISTEN 0 5 127.0.0.1:8010 0.0.0.0:*\n", encoding="utf-8")
+    result = run_rotation_function(
+        script,
+        f"AUTH_DIR={auth_dir}; AUTH_FILE={auth_file}; restore_backup {backup}",
+        env={"WHALPHA_ROTATE_LISTENER_FILE": str(listener_file)},
+    )
+    assert result.returncode == 0
+    assert auth_file.read_text(encoding="utf-8") == "hui:$6$old$hash\n"
+    assert oct(auth_file.stat().st_mode & 0o777) == "0o640"
+    assert "old" not in result.stdout
+    assert "hash" not in result.stdout

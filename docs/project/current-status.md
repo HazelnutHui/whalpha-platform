@@ -141,7 +141,7 @@ Status date: 2026-08-15
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
 - No analytics pipeline.
-- Dashboard V1 is deployed as a private authenticated static OCI release; user-run password rotation and authenticated browser verification are pending.
+- Dashboard V1 is deployed as a private authenticated static OCI release; a repaired user-run password rotation and authenticated browser verification are pending.
 - No formal multi-user authentication or authorization for private market-data routes.
 - No database.
 - Static private Dashboard deployment pipeline exists for the personal prototype.
@@ -150,4 +150,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-Have the user rotate the private Dashboard password interactively on OCI, then complete authenticated browser and visual verification of the root login entry and Dashboard.
+Have the user rerun the repaired private Dashboard password rotation interactively on OCI, then complete authenticated browser and visual verification of the root login entry and Dashboard.

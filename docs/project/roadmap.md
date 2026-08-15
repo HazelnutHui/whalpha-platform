@@ -49,7 +49,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Have the user rotate the private Dashboard password interactively on OCI, then complete authenticated browser and visual verification of the root login entry and Dashboard.
+Have the user rerun the repaired private Dashboard password rotation interactively on OCI, then complete authenticated browser and visual verification of the root login entry and Dashboard.
 
 ## Phase 2 — Intraday and Options
 
