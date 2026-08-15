@@ -6,7 +6,7 @@ This document records the implemented V1 physical persistence boundary for canon
 
 ## Status
 
-Implemented for EOD Price Bar V1. The first production canonical EOD session for 2026-08-13 has been published after Decimal aggregate volume correction. No historical backfill, scheduler, analytics, database, or Dashboard data API is implemented.
+Implemented for EOD Price Bar V1. The first production canonical EOD session for 2026-08-13 has been published after Decimal aggregate volume correction. No historical backfill, scheduler, analytics, database, or Dashboard data API is implemented. A default-disabled private read/query API now reads completed canonical EOD sessions for local/private verification.
 
 ## Implemented Boundary
 
@@ -125,5 +125,9 @@ The refined repository now also publishes `provider-ticker-resolver` as part of 
 - scheduler, cron, or systemd
 - retry or rate-limit implementation
 - corporate-action adjustment reconciliation
-- analytics or Dashboard data APIs
+- analytics or public Dashboard data APIs
 - database or catalog integration
+
+## Read Boundary
+
+The completed EOD Parquet partition can be read through `CanonicalEodReadRepository`. The reader validates the EOD manifest, Arrow schema, row count, content fingerprint, and linked Instrument Master/ticker resolver snapshot before returning typed read models. API responses do not expose filesystem paths, raw manifests, raw provider payloads, or Arrow tables.

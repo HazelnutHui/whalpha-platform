@@ -4,11 +4,20 @@ FastAPI backend scaffold for Trading Intelligence Platform.
 
 ## Purpose
 
-The API package provides typed contracts for the future dashboard and canonical market-data boundary. The current HTTP scaffold only exposes the Health endpoint, while selected data contracts are implemented as provider-neutral Pydantic models.
+The API package provides typed contracts, canonical market-data read services, and default-disabled private EOD routes for the future dashboard boundary. The default HTTP scaffold exposes only the Health endpoint; private market-data routes are registered only when explicitly enabled for local/private development.
 
-## Current Endpoint
+## Current Endpoints
+
+Default route:
 
 - `GET /api/v1/health`
+
+Explicitly enabled private routes (`TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`):
+
+- `GET /api/v1/private/market-data/eod/sessions`
+- `GET /api/v1/private/market-data/eod/sessions/latest`
+- `GET /api/v1/private/market-data/eod/sessions/{session_date}/summary`
+- `GET /api/v1/private/market-data/eod/sessions/{session_date}/bars`
 
 Expected response:
 
@@ -40,7 +49,7 @@ Implemented contracts:
 - Instrument Master V1
 - EOD Price Bar V1
 
-These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. No analytics or new API endpoints are implemented.
+These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. No analytics, frontend Dashboard flow, public routes, or authentication system is implemented.
 
 Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
 
@@ -80,8 +89,8 @@ Use the repository-level instructions in [Local Development](../../docs/developm
 
 ## Current Non-Goals
 
-- No Dashboard API over real EOD bars
-- No public or Dashboard serving of production `/data` EOD bars
+- No public Dashboard serving of production `/data` EOD bars
+- No authentication or authorization for private routes
 - No database or ORM
 - No authentication
 - No order execution

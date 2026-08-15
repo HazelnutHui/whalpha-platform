@@ -86,6 +86,6 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 ## 8. Current Phase
 
-Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, secure Massive smoke-test transport, point-in-time Instrument Master snapshot, and the first canonical EOD Price Bar session for 2026-08-13 are complete and verified. Dashboard V1, read/query APIs, analytics pipelines, database, private access control, and production deployment are not implemented yet.
+Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, secure Massive smoke-test transport, point-in-time Instrument Master snapshot, the first canonical EOD Price Bar session for 2026-08-13, and the first default-disabled private canonical EOD read/query API are complete and verified. Dashboard V1, analytics pipelines, database, formal private access control, and production deployment are not implemented yet.
 
-Current proposed activity: design and implement the first canonical EOD read/query service and private FastAPI response contracts for the completed 2026-08-13 session, without frontend changes or OCI deployment.
+Current proposed activity: ingest the immediately preceding completed trading session through the existing bounded pipeline, then implement canonical close-to-close return calculations required for the first Market Summary and heatmap payloads.

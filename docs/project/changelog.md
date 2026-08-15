@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-15
+
+- Implemented the first canonical EOD read repository for completed Parquet sessions with manifest, schema, fingerprint, and identity snapshot validation.
+- Added a paginated provider-neutral EOD query service and private FastAPI response contracts with Decimal values serialized as strings.
+- Added default-disabled private EOD market-data routes gated by `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES`; default OpenAPI does not show the private routes.
+- Verified the completed 2026-08-13 production session read path locally without modifying `/data`, reading credentials, calling Massive, changing frontend code, or deploying OCI.
+
 ## 2026-08-14
 
 - Accepted ADR 0010 to represent aggregate EOD volume as exact non-negative Decimal while keeping trade count and timestamps integer-semantic.

@@ -47,6 +47,8 @@ Required properties:
 
 Any API response containing restricted provider data or derived works must require effective private access control before deployment. API routes that expose provider-backed market state cannot be treated as public placeholder endpoints.
 
+The first private EOD read routes are implemented for local/private development and are default-disabled by `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=false`. Setting this flag to true registers the routes for local verification only. It is not authentication, authorization, or deployment approval.
+
 ## Static Export Restrictions
 
 Static exports must not contain restricted provider-backed data, market-state snapshots, heatmaps, analytics, research, or derived works unless appropriate public-display rights are documented.

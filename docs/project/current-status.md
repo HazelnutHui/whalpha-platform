@@ -75,6 +75,10 @@ Status date: 2026-08-14
 - Corrected Massive All Tickers snapshot completed and published for 2026-08-13 after refining expected exclusions, eligible coverage, and ticker ambiguity gates.
 - Grouped Daily parser, identity-ordering, duplicate-isolation, and Decimal aggregate-volume fixes implemented and tested.
 - First canonical EOD Price Bar session published for 2026-08-13 with 9,901 records after all V1 quality gates passed.
+- Canonical EOD read repository implemented with completed-session manifest, schema, fingerprint, and identity snapshot validation.
+- Private EOD query service and FastAPI response contracts implemented.
+- Private EOD routes are default-disabled and absent from default OpenAPI unless explicitly enabled.
+- Local production read verification completed for the 2026-08-13 session without modifying `/data`.
 
 ## Current
 
@@ -84,7 +88,7 @@ Status date: 2026-08-14
 - Frontend scaffold exists under `apps/web`.
 - Python virtualenv created at the project root and ignored by Git.
 - Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `315 passed`.
+- Backend tests verified: `347 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
 - Node.js 24 LTS and npm are installed and verified.
 - Frontend dependencies are installed and locked by npm.
@@ -92,9 +96,9 @@ Status date: 2026-08-14
 - Local Vite development server and Vite-to-FastAPI proxy are verified.
 - Initial EOD Universe, classification boundary, and normalized EOD logical contracts are documented.
 - Instrument Master V1 and EOD Price Bar V1 Python/Pydantic contracts are implemented and tested.
-- No physical schemas.
+- Physical Parquet schemas exist for Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar V1 datasets.
 - Corporate Action V1, Classification V1, and Universe Membership V1 Python models are not implemented.
-- No Parquet writers beyond the mocked-fixture EOD Price Bar V1 repository.
+- Parquet writers exist for the approved Instrument Master snapshot datasets and EOD Price Bar V1 session partitions.
 - Minimal provider boundary Protocol is implemented.
 - Massive Stocks Basic is selected for private EOD development only.
 - Massive mocked adapter skeleton exists with injected fake transport tests.
@@ -109,11 +113,13 @@ Status date: 2026-08-14
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
 - No private access-control mechanism selected.
 - No private access-control implementation.
+- Default-disabled private canonical EOD read/query API exists for completed sessions.
 - No historical market data ingestion or automated ingestion.
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
 - No analytics pipeline.
 - No Dashboard V1 implementation.
+- No formal authentication or authorization for private market-data routes.
 - No database.
 - No deployment pipeline.
 - No production application.
@@ -122,4 +128,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Design and implement the first canonical EOD read/query service and private FastAPI response contracts for the completed 2026-08-13 session, without frontend changes or OCI deployment.
+Ingest the immediately preceding completed trading session through the existing bounded pipeline, then implement canonical close-to-close return calculations required for the first Market Summary and heatmap payloads.

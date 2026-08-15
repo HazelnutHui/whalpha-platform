@@ -17,6 +17,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Normalized Market Data Contracts](architecture/normalized-market-data-contracts.md): Accepted V1 logical market-data contract boundary.
 - [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
 - [EOD Parquet Persistence](architecture/eod-parquet-persistence.md): Implemented EOD Price Bar Parquet persistence boundary and first published canonical EOD session.
+- [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md): Implemented read repository, query service, and default-disabled private API boundary.
 - [Instrument Identity Resolution](architecture/instrument-identity-resolution.md): Deterministic provider identity mapping and current Instrument Master snapshot gate result.
 - [Data Boundaries](architecture/data-boundaries.md): Market Data Provider boundary and data authorization rules.
 - [Event Layer](architecture/event-layer.md): Lightweight event positioning and deferred long-term model.
@@ -37,6 +38,11 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Provider Evaluations](providers/README.md)
 - [Massive Stocks Basic Evaluation](providers/massive-stocks-basic-evaluation.md): Accepted first private EOD development provider.
 - [Massive Adapter Boundary](providers/massive-adapter-boundary.md): Configuration, credential, transport, smoke-test, and mapping boundary.
+
+## API
+
+- [API Index](api/README.md)
+- [Private EOD Market Data V1](api/private-eod-market-data-v1.md): Default-disabled private canonical EOD query responses.
 
 ## Operations
 

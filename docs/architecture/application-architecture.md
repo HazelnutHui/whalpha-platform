@@ -259,3 +259,7 @@ Before closing material work, check whether these documents need updates:
 - microservices
 - Kubernetes
 - distributed system architecture
+
+## Canonical EOD Query Boundary
+
+A first private read/query boundary now reads completed canonical EOD Parquet sessions and exposes default-disabled FastAPI routes only when `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`. This is a local/private development switch, not authentication or public deployment approval. The frontend is unchanged.

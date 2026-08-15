@@ -32,7 +32,7 @@ Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic val
 
 The minimal synchronous provider boundary is implemented in `tip_api.providers.market_data` and documented in [Market Data Provider Boundary](market-data-provider-boundary.md). It currently supports only Instrument Master and EOD Price Bar retrieval through canonical contracts.
 
-The Massive adapter boundary now implements configuration validation, credential redaction, secure credential-file loading, a minimal standard-library HTTPS transport, injected fake transport tests, and local response mapping tests. One read-only Stocks reference smoke test has verified authentication and reference entitlement. A mocked-fixture EOD Price Bar ingestion and Parquet persistence slice exists for temporary test roots. No Grouped Daily retrieval, production `/data` persistence, analytics, Dashboard data flow, or provider-backed deployment is implemented.
+The Massive adapter boundary now implements configuration validation, credential redaction, secure credential-file loading, a minimal standard-library HTTPS transport, injected fake transport tests, and local response mapping tests. One read-only Stocks reference smoke test has verified authentication and reference entitlement. A mocked-fixture EOD Price Bar ingestion and Parquet persistence slice exists for temporary test roots. The first 2026-08-13 Grouped Daily canonical EOD partition is published. A provider-neutral read repository and default-disabled private query API can read completed canonical sessions locally. Analytics, Dashboard data flow, formal authentication, public provider-backed routes, and provider-backed deployment are not implemented.
 
 ## Provider Selection Status
 
@@ -53,7 +53,7 @@ Provider Instrument Identity V1 is now an explicit canonical boundary. Ticker an
 
 See [Data Access Boundary](../operations/data-access-boundary.md) for the accepted public placeholder, public data-free demo, and private provider-backed dashboard boundary.
 
-Massive-backed Market Data and derived works must remain private-owner only unless explicit public-display or redistribution authorization, a suitable business/display agreement, or an alternative public-display data source is documented. Public accessibility does not grant redistribution rights.
+Massive-backed Market Data and derived works must remain private-owner only unless explicit public-display or redistribution authorization, a suitable business/display agreement, or an alternative public-display data source is documented. The private route enable flag is not authentication or authorization. Public accessibility does not grant redistribution rights.
 
 Licensing and entitlement must be reviewed before broader distribution, commercial use, or public provider-backed content.
 

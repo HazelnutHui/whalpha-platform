@@ -32,6 +32,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Instrument Master snapshot quality-gate remediation and publication
 - [x] Grouped Daily parser, identity-ordering, and duplicate-isolation remediation
 - [x] Decimal aggregate-volume correction and first canonical EOD session publication
+- [x] Private canonical EOD read/query API for the completed 2026-08-13 session
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -45,7 +46,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and implement the first canonical EOD read/query service and private FastAPI response contracts for the completed 2026-08-13 session, without frontend changes or OCI deployment.
+Ingest the immediately preceding completed trading session through the existing bounded pipeline, then implement canonical close-to-close return calculations required for the first Market Summary and heatmap payloads.
 
 ## Phase 2 — Intraday and Options
 
