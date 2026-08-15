@@ -95,7 +95,7 @@ Provider bar records map into this contract. Analytics should consume canonical 
 
 ## Storage Direction
 
-Parquet-first. EOD Price Bar V1 now has an explicit PyArrow schema and a bounded one-session partition layout documented in [EOD Parquet Persistence](../architecture/eod-parquet-persistence.md). Current implementation writes mocked-fixture test partitions under pytest temporary directories. One real 2026-08-13 Grouped Daily publication attempt was blocked by quality gates, so no production EOD Price Bar partition exists.
+Parquet-first. EOD Price Bar V1 now has an explicit PyArrow schema and a bounded one-session partition layout documented in [EOD Parquet Persistence](../architecture/eod-parquet-persistence.md). Current implementation writes mocked-fixture test partitions under pytest temporary directories. Real 2026-08-13 Grouped Daily publication attempts remain blocked by quality gates, so no production EOD Price Bar partition exists.
 
 ## Deferred Fields
 
@@ -131,6 +131,6 @@ Validation tests cover valid bars, nullable fields, zero volume, revision bounds
 - Manifest, deterministic content fingerprint, idempotency, conflict rejection, and corruption checks implemented.
 - No corporate-action adjustment calculation implemented.
 - Real Grouped Daily ingestion entrypoint implemented with strict quality gates.
-- One real 2026-08-13 publication attempt failed gates and did not publish.
+- Latest real 2026-08-13 publication attempt passed identity coverage but failed numeric conversion and canonical bar count gates.
 - No production EOD Price Bar `/data` partition exists.
 - No historical backfill, scheduler, analytics, or Dashboard data API implemented.

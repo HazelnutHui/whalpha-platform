@@ -8,7 +8,7 @@ This document records the implemented V1 physical persistence boundary for canon
 
 Implemented for mocked one-session EOD Price Bar V1 fixtures only.
 
-A one-request Massive Grouped Daily inspection and a later one-request publication attempt have been performed for 2026-08-13. The publication attempt failed quality gates, so no EOD Price Bar partition was published. No historical backfill, scheduler, analytics, database, or Dashboard data API is implemented.
+A one-request Massive Grouped Daily inspection and later publication attempts have been performed for 2026-08-13. The latest corrected attempt passed identity coverage but failed numeric conversion and canonical bar count gates, so no EOD Price Bar partition was published. No historical backfill, scheduler, analytics, database, or Dashboard data API is implemented.
 
 ## Implemented Boundary
 
@@ -118,7 +118,7 @@ The service rejects empty provider results, bars for the wrong session date, dup
 
 A separate Instrument Master snapshot repository now exists for `instrument-master` and `provider-instrument-identity` datasets with a logical snapshot marker. The first live Massive All Tickers run for 2026-08-13 did not publish because quality gates failed.
 
-The refined repository now also publishes `provider-ticker-resolver` as part of the same logical snapshot. The corrected 2026-08-13 Massive snapshot is completed. A subsequent Grouped Daily publication attempt using that resolver did not publish EOD bars because conflicting duplicate bars, required numeric conversion failures, low identity coverage, and canonical bar count gates failed.
+The refined repository now also publishes `provider-ticker-resolver` as part of the same logical snapshot. The corrected 2026-08-13 Massive snapshot is completed. Subsequent Grouped Daily publication attempts using that resolver did not publish EOD bars. The latest corrected run isolated low-ratio duplicate conflicts and passed identity coverage, but required numeric conversion failures and canonical bar count gates still failed.
 
 - Massive API calls
 - credential loading

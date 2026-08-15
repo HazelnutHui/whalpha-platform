@@ -63,7 +63,7 @@ The first executed inspection used a strict integer parser for required integer-
 
 No production Instrument Master or point-in-time identity-resolution dataset exists yet. The inspection therefore did not legally resolve provider tickers to canonical `instrument_id` values and did not construct publishable canonical bars.
 
-The successful access and payload-structure result is useful, but it is not enough to publish EOD bars. The next step must establish point-in-time Instrument Master coverage and identity resolution before any Grouped Daily bars are published.
+The successful access and payload-structure result is useful, but it is not enough to publish EOD bars. Point-in-time Instrument Master coverage now exists. Later publication attempts using the completed resolver passed identity coverage after parser/order fixes, but publication remains blocked by required numeric-field semantics.
 
 ## Publish Gate
 

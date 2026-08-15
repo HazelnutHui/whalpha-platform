@@ -115,7 +115,7 @@ A real rate limiter is not implemented. The live smoke test is limited to one re
 
 ## Real-Network Activation Prerequisites
 
-The 2026-08-13 Grouped Daily inspection verified access and payload shape without publishing. After the point-in-time resolver was published, one authorized Grouped Daily publication attempt ran and failed quality gates. Production EOD bar publication remains blocked pending numeric-field interpretation, duplicate-bar handling, and identity coverage review.
+The 2026-08-13 Grouped Daily inspection verified access and payload shape without publishing. After the point-in-time resolver was published, one authorized Grouped Daily publication attempt ran and failed quality gates. Production EOD bar publication remains blocked pending required numeric-field interpretation. Duplicate-bar isolation and identity-ordering fixes are implemented; the latest corrected run passed identity coverage.
 
 Before any additional Massive request:
 

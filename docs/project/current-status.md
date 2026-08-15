@@ -73,7 +73,8 @@ Status date: 2026-08-14
 - Stable provider-identifier UUIDv5 identity resolution implemented.
 - Massive All Tickers point-in-time snapshot ingestion path implemented with bounded pagination and rate-aware requests.
 - Corrected Massive All Tickers snapshot completed and published for 2026-08-13 after refining expected exclusions, eligible coverage, and ticker ambiguity gates.
-- One Massive Grouped Daily publication attempt for 2026-08-13 completed one authorized request and failed quality gates without publishing EOD bars.
+- Grouped Daily parser, identity-ordering, and duplicate-isolation fixes implemented and tested.
+- The latest authorized 2026-08-13 Grouped Daily request passed identity coverage but failed numeric conversion and canonical bar count gates without publishing EOD bars.
 
 ## Current
 
@@ -83,7 +84,7 @@ Status date: 2026-08-14
 - Frontend scaffold exists under `apps/web`.
 - Python virtualenv created at the project root and ignored by Git.
 - Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `271 passed`.
+- Backend tests verified: `300 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
 - Node.js 24 LTS and npm are installed and verified.
 - Frontend dependencies are installed and locked by npm.
@@ -101,7 +102,7 @@ Status date: 2026-08-14
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
 - No ingestion API calls beyond the one reference smoke test.
 - No Grouped Daily production download beyond the one in-memory inspection request.
-- No production `/data` writes for EOD bars; the 2026-08-13 Grouped Daily publication attempt was blocked by quality gates.
+- No production `/data` writes for EOD bars; the latest 2026-08-13 Grouped Daily publication attempt was blocked by required numeric-field semantics.
 - Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13 under `/data/trading-intelligence-platform`.
 - No historical backfill.
 - Production Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13; no production EOD Price Bar dataset exists.
@@ -121,4 +122,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Investigate the 2026-08-13 Massive Grouped Daily publication blockers using local captured-safe fixtures or a separately authorized diagnostic plan: required numeric field parsing, conflicting duplicate bars, and identity classification coverage; do not rerun the live Grouped Daily request until the corrected parser and gates are reviewed.
+Resolve the Massive Grouped Daily required numeric-field semantics with field-level diagnostics and an explicit contract decision before any further live Grouped Daily request or EOD bar publication attempt.

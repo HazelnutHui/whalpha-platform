@@ -30,7 +30,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Separately authorized one-session Grouped Daily inspection without publication
 - [x] Point-in-time Massive Instrument Master snapshot ingestion path
 - [x] Instrument Master snapshot quality-gate remediation and publication
-- [x] One 2026-08-13 Grouped Daily publication attempt with completed resolver and quality gates
+- [x] Grouped Daily parser, identity-ordering, and duplicate-isolation remediation
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -44,7 +44,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Investigate the 2026-08-13 Massive Grouped Daily publication blockers using local captured-safe fixtures or a separately authorized diagnostic plan: required numeric field parsing, conflicting duplicate bars, and identity classification coverage; do not rerun the live Grouped Daily request until the corrected parser and gates are reviewed.
+Resolve the Massive Grouped Daily required numeric-field semantics with field-level diagnostics and an explicit contract decision before any further live Grouped Daily request or EOD bar publication attempt.
 
 ## Phase 2 — Intraday and Options
 
