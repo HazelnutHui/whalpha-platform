@@ -5,21 +5,24 @@ script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd -- "${script_dir}/../.." && pwd)
 bundle_root="${repo_root}/build/oci-dashboard"
 nginx_template="${repo_root}/deploy/oci/nginx/whalpha-private-dashboard.conf.template"
+auth_service_source="${repo_root}/deploy/oci/auth/whalpha_auth_service.py"
 remote_alias="whalpha-oci"
 remote_base="/srv/whalpha"
 remote_site_available="/etc/nginx/sites-available/whalpha.com"
 remote_site_enabled="/etc/nginx/sites-enabled/whalpha.com"
 auth_file="/etc/nginx/auth/whalpha-dashboard.htpasswd"
+auth_service_path="/srv/whalpha/auth/whalpha_auth_service.py"
+auth_unit_path="/etc/systemd/system/whalpha-dashboard-auth.service"
 
 usage() {
   cat <<MSG
 Usage: $0 --bundle-release RELEASE_ID [--dry-run]
        $0 --bundle-release RELEASE_ID --apply
 
-Default is dry-run. Apply uploads one completed static Dashboard bundle to the
-reviewed OCI host, protects /dashboard/ and /private-data/ with the existing
-server-side Basic Auth file, and verifies unauthenticated private paths return
-401. It never accepts or tests a Dashboard password.
+Default is dry-run. Apply uploads one completed static Dashboard bundle and
+the localhost-only session Auth Service to the reviewed OCI host. It verifies
+that /dashboard/ redirects unauthenticated users to /login/ and /private-data/
+returns 401. It never accepts or tests a Dashboard password.
 MSG
 }
 
@@ -67,6 +70,7 @@ cd "${repo_root}"
 [[ "$(git branch --show-current)" == "main" ]] || { echo "must run on main" >&2; exit 1; }
 [[ -z "$(git status --short)" ]] || { echo "working tree must be clean" >&2; exit 1; }
 [[ -f "${nginx_template}" ]] || { echo "Nginx template missing" >&2; exit 1; }
+[[ -f "${auth_service_source}" ]] || { echo "Auth service source missing" >&2; exit 1; }
 
 bundle_dir="${bundle_root}/${bundle_release}"
 [[ -f "${bundle_dir}/deployment-manifest.json" ]] || { echo "bundle manifest missing" >&2; exit 1; }
@@ -118,20 +122,26 @@ tmp_name="whalpha-dashboard-${bundle_release}"
 local_tar="/tmp/${tmp_name}.tar.gz"
 remote_tar="/tmp/${tmp_name}.tar.gz"
 remote_template="/tmp/${tmp_name}.nginx.conf"
+remote_auth_service="/tmp/${tmp_name}.auth.py"
 rm -f "${local_tar}"
 tar -C "${bundle_dir}" -czf "${local_tar}" .
 scp "${local_tar}" "${remote_alias}:${remote_tar}" >/dev/null
 scp "${nginx_template}" "${remote_alias}:${remote_template}" >/dev/null
+scp "${auth_service_source}" "${remote_alias}:${remote_auth_service}" >/dev/null
 rm -f "${local_tar}"
 
-ssh "${remote_alias}" bash -s -- "${bundle_release}" "${remote_tar}" "${remote_template}" "${remote_base}" "${remote_site_available}" "${remote_site_enabled}" <<'REMOTE'
+ssh "${remote_alias}" bash -s -- "${bundle_release}" "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_base}" "${remote_site_available}" "${remote_site_enabled}" "${auth_service_path}" "${auth_unit_path}" "${auth_file}" <<'REMOTE'
 set -euo pipefail
 release_id="$1"
 remote_tar="$2"
 remote_template="$3"
-remote_base="$4"
-site_available="$5"
-site_enabled="$6"
+remote_auth_service="$4"
+remote_base="$5"
+site_available="$6"
+site_enabled="$7"
+auth_service_path="$8"
+auth_unit_path="$9"
+auth_file="${10}"
 release_dir="${remote_base}/releases/${release_id}"
 stage_dir="${remote_base}/.staging-${release_id}"
 extract_dir="/tmp/whalpha-dashboard-${release_id}.extract"
@@ -157,7 +167,7 @@ rollback() {
     fi
   fi
   rm -rf "${extract_dir}"
-  rm -f "${remote_tar}" "${remote_template}"
+  rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}"
   exit ${status}
 }
 trap rollback EXIT
@@ -170,6 +180,9 @@ mkdir -p "${extract_dir}"
 tar -xzf "${remote_tar}" -C "${extract_dir}"
 (cd "${extract_dir}" && sha256sum -c checksums.sha256 >/dev/null)
 test -f "${extract_dir}/dashboard/index.html"
+test -f "${extract_dir}/login/index.html"
+test -f "${extract_dir}/login/login.css"
+test -f "${extract_dir}/login/login.js"
 test -f "${extract_dir}/private-data/v1/manifest.json"
 test -f "${extract_dir}/deployment-manifest.json"
 test -f "${extract_dir}/checksums.sha256"
@@ -190,6 +203,51 @@ sudo find "${stage_dir}" -type d -exec chmod 755 {} +
 sudo find "${stage_dir}" -type f -exec chmod 644 {} +
 sudo mv "${stage_dir}" "${release_dir}"
 
+sudo mkdir -p "$(dirname "${auth_service_path}")"
+sudo cp "${remote_auth_service}" "${auth_service_path}"
+sudo chown root:root "${auth_service_path}"
+sudo chmod 644 "${auth_service_path}"
+sudo tee "${auth_unit_path}" >/dev/null <<UNIT
+[Unit]
+Description=WH Alpha Dashboard Session Auth Service
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+ExecStart=/usr/bin/python3 ${auth_service_path} --host 127.0.0.1 --port 8010 --htpasswd ${auth_file}
+Restart=on-failure
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadOnlyPaths=/etc/nginx/auth
+ReadOnlyPaths=/srv/whalpha/auth
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+sudo systemctl daemon-reload
+sudo systemctl enable --now whalpha-dashboard-auth.service >/dev/null
+sudo systemctl restart whalpha-dashboard-auth.service
+auth_ready=false
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  code=$(curl -sS -o /dev/null -w %{http_code} http://127.0.0.1:8010/check 2>/dev/null || true)
+  if [[ "${code}" == "401" ]]; then
+    auth_ready=true
+    break
+  fi
+  sleep 1
+done
+[[ "${auth_ready}" == "true" ]] || { echo "auth service did not become ready" >&2; exit 1; }
+wrong_code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/x-www-form-urlencoded' --data 'username=hui&password=invalid-dashboard-password&next=/dashboard/' http://127.0.0.1:8010/login)
+[[ "${wrong_code}" == "303" ]] || { echo "wrong-password login did not fail safely" >&2; exit 1; }
+if ss -ltn sport = :8010 | awk 'NR>1 {print $4}' | grep -vE '^(127\.0\.0\.1|\[::ffff:127\.0\.0\.1\]):8010$' | grep -q .; then
+  echo "auth service is not bound to localhost only" >&2
+  exit 1
+fi
+
 if [[ -f "${site_available}" ]]; then
   sudo cp "${site_available}" "${backup_config}"
 fi
@@ -206,24 +264,33 @@ public_body=$(mktemp)
 private_body=$(mktemp)
 public_code=$(curl -sS -o "${public_body}" -w '%{http_code}' https://whalpha.com/)
 [[ "${public_code}" == "200" ]] || { echo "public https failed" >&2; exit 1; }
-grep -q 'WH Alpha' "${public_body}"
-grep -q 'Trading Intelligence Platform' "${public_body}"
-grep -q 'New platform under development' "${public_body}"
+grep -q 'WH Alpha' "${public_body}" || { echo "public placeholder missing WH Alpha" >&2; exit 1; }
+grep -q 'Trading Intelligence Platform' "${public_body}" || { echo "public placeholder missing platform text" >&2; exit 1; }
+grep -q 'New platform under development' "${public_body}" || { echo "public placeholder missing development text" >&2; exit 1; }
 dashboard_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/dashboard/)
-[[ "${dashboard_code}" == "401" ]] || { echo "dashboard unauth status ${dashboard_code}" >&2; exit 1; }
+[[ "${dashboard_code}" == "302" ]] || { echo "dashboard unauth status ${dashboard_code}" >&2; exit 1; }
+login_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/login/)
+[[ "${login_code}" == "200" ]] || { echo "login page status ${login_code}" >&2; exit 1; }
 private_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${private_code}" == "401" ]] || { echo "private-data unauth status ${private_code}" >&2; exit 1; }
+auth_internal_code=$(curl -sS -o /dev/null -w '%{http_code}' https://whalpha.com/auth/internal-verify)
+[[ "${auth_internal_code}" == "404" ]] || { echo "internal verify exposed ${auth_internal_code}" >&2; exit 1; }
 http_code=$(curl -sS -o /dev/null -w '%{http_code}' http://whalpha.com/)
 [[ "${http_code}" == "301" || "${http_code}" == "308" ]] || { echo "http redirect status ${http_code}" >&2; exit 1; }
 for path in /dashboard /dashboard/index.html /private-data /private-data/ /private-data/v1/manifest.json /private-data/%2e%2e/dashboard/index.html /.env /deployment-manifest.json /checksums.sha256; do
   code=$(curl -sS -o /dev/null -w '%{http_code}' "https://whalpha.com${path}")
   case "${path}:${code}" in
-    /dashboard:401|/dashboard:301|/dashboard:308|/dashboard/index.html:401|/private-data:401|/private-data/:401|/private-data/:403|/private-data/v1/manifest.json:401|/private-data/%2e%2e/dashboard/index.html:400|/private-data/%2e%2e/dashboard/index.html:401|/.env:403|/.env:404|/deployment-manifest.json:404|/checksums.sha256:404) ;;
+    /dashboard:301|/dashboard:302|/dashboard/index.html:302|/private-data:401|/private-data/:401|/private-data/:403|/private-data/v1/manifest.json:401|/private-data/%2e%2e/dashboard/index.html:400|/private-data/%2e%2e/dashboard/index.html:401|/.env:403|/.env:404|/deployment-manifest.json:404|/checksums.sha256:404) ;;
     *) echo "unexpected bypass result ${path} ${code}" >&2; exit 1 ;;
   esac
 done
-curl -sS -I https://whalpha.com/dashboard/ | grep -qi '^WWW-Authenticate:'
-curl -sS -I https://whalpha.com/private-data/v1/manifest.json | grep -qi '^Cache-Control:.*no-store'
+dashboard_headers=$(mktemp)
+private_headers=$(mktemp)
+curl -sS -I https://whalpha.com/dashboard/ | tr -d '\r' >"${dashboard_headers}"
+grep -qi '^Location: .*/login/' "${dashboard_headers}" || { echo "dashboard redirect missing login location" >&2; exit 1; }
+curl -sS -I https://whalpha.com/private-data/v1/manifest.json | tr -d '\r' >"${private_headers}"
+grep -qi '^Cache-Control:.*no-store' "${private_headers}" || { echo "private-data missing no-store header" >&2; exit 1; }
+rm -f "${dashboard_headers}" "${private_headers}"
 rm -f "${public_body}" "${private_body}"
 systemctl is-active --quiet nginx
 [[ "$(systemctl --failed --no-legend | wc -l)" == "0" ]]
@@ -231,10 +298,14 @@ if ss -ltn | awk '{print $4}' | grep -Eq ':(8000|8001)$'; then
   echo "unexpected private backend listener after deploy" >&2
   exit 1
 fi
+if ss -ltn sport = :8010 | awk 'NR>1 {print $4}' | grep -vE '^(127\.0\.0\.1|\[::ffff:127\.0\.0\.1\]):8010$' | grep -q .; then
+  echo "auth service listener is not localhost-only after deploy" >&2
+  exit 1
+fi
 (cd "${release_dir}" && sha256sum -c checksums.sha256 >/dev/null)
 echo "apply=ok"
-echo "deployment_status=deployed_pending_manual_authenticated_verification"
+echo "deployment_status=deployed_pending_manual_session_login_verification"
 trap - EXIT
 rm -rf "${extract_dir}"
-rm -f "${remote_tar}" "${remote_template}"
+rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}"
 REMOTE

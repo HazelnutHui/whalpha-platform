@@ -17,6 +17,12 @@ Provisioned by the user outside Codex. Codex verified metadata only.
 - The server stores only a password hash.
 - The hash must not enter Git, documentation, chat, command history, or logs.
 - TLS must be verified before credential use.
+- Browser-native Basic Auth is no longer the user-facing login flow.
+- The htpasswd file remains the server-side credential store for the local Auth Service.
+- Sessions are opaque, random, in-memory, and expire after seven days.
+- Service restart invalidates all sessions.
+- The session cookie is `Secure`, `HttpOnly`, `SameSite=Lax`, host-only, and path `/`.
+- Logout clears the session cookie and deletes the in-memory session.
 
 ## Future Provisioning Pattern
 
@@ -55,4 +61,4 @@ For a single-user prototype, revocation means replacing the password hash and in
 
 ## Limitations
 
-Nginx Basic Auth is acceptable only for the personal prototype. A future public or multi-user product should evaluate Cloudflare Access, OIDC, or another formal identity provider.
+The server-side session Auth Service is acceptable only for the personal prototype. A future public or multi-user product should evaluate Cloudflare Access, OIDC, or another formal identity provider.

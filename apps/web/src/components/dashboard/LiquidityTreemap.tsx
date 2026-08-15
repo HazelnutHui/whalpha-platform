@@ -8,7 +8,7 @@ import type { TreemapSeriesOption } from 'echarts/charts';
 import type { TooltipComponentOption, VisualMapComponentOption } from 'echarts/components';
 
 import type { LiquidityMapResponse } from '../../api/types';
-import { clamp, formatCompact, formatPercent, formatPrice, parseDecimal } from '../../utils/format';
+import { clamp, formatCompact, formatCurrencyCompact, formatPercent, formatPrice, parseDecimal } from '../../utils/format';
 
 echarts.use([TreemapChart, TooltipComponent, VisualMapComponent, AriaComponent, CanvasRenderer]);
 
@@ -84,7 +84,7 @@ export function LiquidityTreemap({ liquidityMap }: Props): JSX.Element {
             `Return: ${formatPercent(node.color_value, { signed: true })}`,
             `Close: ${formatPrice(node.current_close)}`,
             `Volume: ${formatCompact(node.current_volume)}`,
-            `Liquidity proxy: ${formatCompact(node.size_value)}`,
+            `Liquidity proxy: ${formatCurrencyCompact(node.size_value)}`,
             `Instrument type: ${node.instrument_type}`,
           ].join('<br/>');
         },

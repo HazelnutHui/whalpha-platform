@@ -71,12 +71,15 @@ if [[ -e "${bundle_dir}" || -e "${staging_dir}" ]]; then
 fi
 
 mkdir -p "${bundle_root}"
-mkdir -p "${staging_dir}/dashboard" "${staging_dir}/private-data"
+mkdir -p "${staging_dir}/dashboard" "${staging_dir}/login" "${staging_dir}/private-data"
 
 cd "${web_dir}"
 VITE_MARKET_DATA_MODE=snapshot VITE_DASHBOARD_BASE=/dashboard/ npm run build >/tmp/tip_dashboard_build.log
 cp -a "${web_dir}/dist/." "${staging_dir}/dashboard/"
 find "${staging_dir}/dashboard" -name '*.map' -delete
+cp "${web_dir}/static/login/index.html" "${staging_dir}/login/index.html"
+cp "${web_dir}/static/login/login.css" "${staging_dir}/login/login.css"
+cp "${web_dir}/static/login/login.js" "${staging_dir}/login/login.js"
 cp -a "${snapshot_dir}/private-data/." "${staging_dir}/private-data/"
 
 git_commit=$(cd "${repo_root}" && git rev-parse HEAD)

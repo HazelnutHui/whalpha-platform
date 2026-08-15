@@ -32,7 +32,7 @@ Confirmed:
 
 ## OCI
 
-The private static Dashboard release `2026-08-13T120220Z-987b5289a783` is deployed under the reviewed `/srv/whalpha` release layout. Public `/` remains the WH Alpha placeholder; private `/dashboard/` and `/private-data/` require Basic Auth. Do not record literal public IP addresses, SSH key material, password hashes, or credential contents here.
+The private static Dashboard session-login release `2026-08-15T125517Z-0fa5cac89847` is deployed under the reviewed `/srv/whalpha` release layout. Public `/` remains the WH Alpha placeholder; `/login/` is public; private `/dashboard/` and `/private-data/` require the server-side session boundary. Do not record literal public IP addresses, SSH key material, password hashes, or credential contents here.
 
 Confirmed:
 

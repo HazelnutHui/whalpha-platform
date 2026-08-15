@@ -14,10 +14,11 @@ Implemented locally:
 - snapshot exporter
 - frontend `snapshot` mode
 - versioned OCI bundle builder
-- Nginx configuration template
+- Nginx configuration template using session `auth_request`
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
-- deployed OCI release `2026-08-13T120220Z-987b5289a783`
+- deployed OCI session-login release `2026-08-15T125517Z-0fa5cac89847`
+- branded `/login/` page and localhost-only Auth Service
 
 Not implemented:
 
@@ -36,7 +37,8 @@ dell5820
 
 OCI
   /             public placeholder
-  /dashboard/   authenticated static dashboard
+  /login/        public branded login page
+  /dashboard/    authenticated static dashboard
   /private-data/ authenticated JSON snapshots
 ```
 
@@ -93,8 +95,8 @@ The bundle excludes source maps, credentials, `.env`, raw payloads, Parquet file
 
 ## Security Boundary
 
-`/dashboard/` and `/private-data/` must be protected by the same authentication boundary. `/private-data/` must not fall back to the SPA index. Public `/` remains the data-free placeholder.
+`/dashboard/` and `/private-data/` must be protected by the same server-side session boundary. `/private-data/` must not fall back to the SPA index. Public `/` remains the data-free placeholder.
 
-Nginx Basic Auth is acceptable for this personal prototype only after TLS, password provisioning, and config review are complete.
+The existing htpasswd file remains the server-side credential store. Browser-native Basic Auth is replaced by a branded login page, opaque in-memory sessions, and an HttpOnly `__Host-whalpha_session` cookie.
 
-The first deployment verified that public `/` remains unauthenticated and data-free, while `/dashboard/` and `/private-data/` return unauthenticated 401 responses. Authenticated visual verification must be performed by the user in a browser; Codex does not know or handle the password.
+The session-login deployment verifies that public `/` remains unauthenticated and data-free, `/login/` is public, unauthenticated `/dashboard/` redirects to `/login/`, and unauthenticated `/private-data/` returns 401. Authenticated visual verification must be performed by the user in a browser; Codex does not know or handle the password.

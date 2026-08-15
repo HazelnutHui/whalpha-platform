@@ -33,7 +33,7 @@ The demo must not imply live or real market state, must not expose credentials, 
 
 ## Private Provider-Backed Dashboard
 
-Market Dashboard V1 is implemented locally and as a private static OCI release. API mode displays provider-backed derived analytics from private routes and must not be exposed publicly. Snapshot mode reads private derived JSON snapshots under `/private-data/` and is protected by Basic Auth on OCI. Demo mode uses synthetic fixtures and is suitable for future data-free public demonstration only if it remains clearly labeled.
+Market Dashboard V1 is implemented locally and as a private static OCI release. API mode displays provider-backed derived analytics from private routes and must not be exposed publicly. Snapshot mode reads private derived JSON snapshots under `/private-data/` and is protected by the same server-side session boundary as `/dashboard/` on OCI. Demo mode uses synthetic fixtures and is suitable for future data-free public demonstration only if it remains clearly labeled.
 Snapshot mode packages provider-backed derived analytics as static JSON. `/dashboard/` and `/private-data/` must be protected together; public `/` remains data-free.
 
 

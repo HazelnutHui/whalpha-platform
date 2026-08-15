@@ -179,7 +179,8 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "--apply" in deploy_script.read_text()
     assert "VITE_MARKET_DATA_MODE=snapshot" in build_script.read_text()
     text = nginx_template.read_text()
-    assert "location /dashboard/" in text and "auth_basic" in text
+    assert "location /dashboard/" in text and "auth_request /auth/internal-verify" in text
+    assert "location /login/" in text and "location = /auth/login" in text
     assert "location /private-data/" in text and "no-store" in text
     assert "location / {" in text
     assert "Access-Control-Allow-Origin" not in text

@@ -10,7 +10,7 @@ It helps answer whether the completed EOD session was broadly up or down, whethe
 
 Implemented for local/private development only. It has been designed for the completed 2026-08-13 current session and 2026-08-12 previous session exposed by the default-disabled private APIs.
 
-The first static OCI release is deployed behind Basic Auth for the personal prototype. This is not public real-data authorization, and authenticated browser verification is still a manual user step.
+The static OCI release is deployed behind a branded login page and server-side sessions for the personal prototype. This is not public real-data authorization, and authenticated browser verification is still a manual user step.
 
 ## Data Modes
 `VITE_MARKET_DATA_MODE=snapshot` is now supported for the static OCI target. Snapshot mode reads authenticated static JSON from `/private-data/v1/` and displays `PRIVATE EOD SNAPSHOT`; it does not call the private FastAPI routes and does not fall back to demo data.
@@ -26,6 +26,7 @@ API mode does not fall back to synthetic fixtures on failure. Failures render ex
 ## Implemented Views
 
 - Header with WH Alpha, Trading Intelligence, session dates, EOD badge, private-data badge, load time, and data status.
+- Logout button in the authenticated snapshot Dashboard.
 - Market Pulse cards for equal-weight return, median return, advancers/decliners, positive return share, A/D net, and up/down volume ratio.
 - Market Breadth stacked bar with advancers, unchanged, and decliners.
 - Up/Down Volume comparison using share volume, not money flow.
@@ -49,6 +50,16 @@ It is explicitly not market-cap weighted, not sector grouped, not fund flow, and
 The frontend uses relative URLs under `/api/...` and consumes the private response contracts documented in [Private Market Summary V1](../api/private-market-summary-v1.md).
 
 Decimal values remain strings in API types and are parsed only for formatting and chart transforms. Invalid decimal strings are treated as data errors rather than displayed as `NaN`.
+
+## Presentation Formatting
+
+- Percentages display with two decimals and optional positive sign.
+- Ratios display with two decimals and `x`.
+- Counts use thousands separators.
+- Share volume uses compact notation such as `9.39B`.
+- Prices use standard currency formatting; liquidity proxies use compact currency formatting.
+- Raw API Decimal strings remain unchanged.
+- Metric cards and numeric cells use tabular numerals, bounded font sizes, and overflow protection.
 
 ## Accessibility
 
@@ -74,8 +85,8 @@ Provider-backed data and derived analytics must remain private unless formal acc
 ## Not Implemented
 
 - Public real-data deployment
-- Frontend-originated authentication
-- authentication or authorization
+- Frontend-stored credentials
+- multi-user authentication or authorization
 - public real-data display
 - market-cap heatmap
 - sector/industry grouping

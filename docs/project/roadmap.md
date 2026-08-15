@@ -49,7 +49,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Have the user complete authenticated browser and visual verification of the deployed Dashboard, then record production acceptance and address any visual/runtime defects found.
+Have the user complete authenticated browser and visual verification of the session-login Dashboard, then record production acceptance and address any visual/runtime defects found.
 
 ## Phase 2 — Intraday and Options
 

@@ -89,10 +89,14 @@ Status date: 2026-08-15
 - Versioned OCI dashboard bundle builder implemented.
 - Nginx private dashboard template and deployment script implemented.
 - Dedicated `dell5820` to OCI deployment SSH key provisioned; the WSL OCI key was retained.
-- Private Dashboard release `2026-08-13T120220Z-987b5289a783` deployed to OCI from source commit `987b5289a7835316ef6aae4aa326aff46de58896`.
+- Private Dashboard session-login release `2026-08-15T125517Z-0fa5cac89847` deployed to OCI from source commit `0fa5cac8984789f8b88ce25b5c1f43567aae5911`.
 - Public `/` remains the unauthenticated data-free placeholder.
-- `/dashboard/` and `/private-data/v1/manifest.json` return unauthenticated 401 responses.
-- Deployment status is `deployed_pending_manual_authenticated_verification`.
+- `/dashboard/` redirects unauthenticated users to `/login/`; `/private-data/v1/manifest.json` returns unauthenticated 401 JSON.
+- Deployment status is `deployed_pending_manual_session_login_verification`.
+- Branded `/login/` page and localhost-only server-side session Auth Service implemented.
+- Browser-native Basic Auth replaced for Dashboard access.
+- Dashboard Logout implemented for snapshot mode.
+- Dashboard numeric presentation rules and card overflow handling fixed for percent, ratio, count, volume, and currency values.
 
 ## Current
 
@@ -125,7 +129,7 @@ Status date: 2026-08-15
 - No historical backfill.
 - Production Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar datasets exist for 2026-08-13.
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
-- Nginx Basic Auth protects the deployed personal prototype Dashboard static paths.
+- Server-side session authentication protects the deployed personal prototype Dashboard static paths.
 - Formal multi-user authentication and authorization are not implemented.
 - Default-disabled private canonical EOD read/query API exists for completed sessions.
 - No historical market data ingestion or automated ingestion.
@@ -141,4 +145,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-Have the user complete authenticated browser and visual verification of the deployed Dashboard, then record production acceptance and address any visual/runtime defects found.
+Have the user complete authenticated browser and visual verification of the session-login Dashboard, then record production acceptance and address any visual/runtime defects found.

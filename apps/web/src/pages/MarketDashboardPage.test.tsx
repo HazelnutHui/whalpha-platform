@@ -66,6 +66,7 @@ describe('MarketDashboardPage', () => {
     expect(screen.getByText(/Loading market dashboard/)).toBeInTheDocument();
     expect(await screen.findByText('Market Pulse')).toBeInTheDocument();
     expect(screen.getByText('+0.64%')).toBeInTheDocument();
+    expect(screen.getAllByText('1.40×').length).toBeGreaterThan(0);
     expect(screen.getByText('Advancers / Decliners')).toBeInTheDocument();
   });
 
@@ -158,6 +159,21 @@ describe('MarketDashboardPage', () => {
     expect(await screen.findByText('PRIVATE EOD SNAPSHOT')).toBeInTheDocument();
     expect(screen.queryByText('DEMO DATA')).not.toBeInTheDocument();
     expect(screen.getByText('Release 2026-08-13T120000Z-abcdef0')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
+  });
+
+  it('posts logout and navigates to login in snapshot mode', async () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('VITE_MARKET_DATA_MODE', 'snapshot');
+    const assign = vi.fn();
+    Object.defineProperty(window, 'location', {
+      value: { assign },
+      writable: true,
+    });
+    render(<MarketDashboardPage />);
+    fireEvent.click(await screen.findByRole('button', { name: 'Logout' }));
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith('/auth/logout', { method: 'POST', credentials: 'same-origin' }));
+    expect(assign).toHaveBeenCalledWith('/login/');
   });
 
   it('snapshot mode failure does not fall back to demo', async () => {

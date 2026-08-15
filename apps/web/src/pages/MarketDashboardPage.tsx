@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getMarketDashboardData, getSnapshotDashboardData } from '../api/market';
 import type { DashboardData, EodReturnResponse, MarketSummaryResponse, MoversResponse } from '../api/types';
 import { demoDashboardData } from '../fixtures/marketDemo';
-import { formatCompact, formatNumber, formatPercent, formatPrice, parseDecimal } from '../utils/format';
+import { formatCompact, formatCurrencyCompact, formatNumber, formatPercent, formatPrice, formatRatio, parseDecimal } from '../utils/format';
 import { LiquidityTreemap } from '../components/dashboard/LiquidityTreemap';
 
 type DashboardMode = 'api' | 'demo' | 'snapshot';
@@ -25,6 +25,11 @@ function marketDataMode(): DashboardMode {
 
 function displayType(value: string): string {
   return value === 'common_stock' ? 'Common Stock' : value.toUpperCase();
+}
+
+async function logout(): Promise<void> {
+  await fetch('/auth/logout', { method: 'POST', credentials: 'same-origin' });
+  window.location.assign('/login/');
 }
 
 function MetricCard({ label, value, tone, note }: { label: string; value: string; tone?: 'positive' | 'negative' | 'neutral'; note?: string }): JSX.Element {
@@ -55,6 +60,7 @@ function DashboardHeader({ summary, loadedAt, mode, releaseId }: { summary: Mark
         <span>Status {summary.data_status}</span>
         {releaseId ? <span>Release {releaseId}</span> : null}
         <span>Loaded {loadedAt.toLocaleTimeString()}</span>
+        {mode === 'snapshot' ? <button className="logout-button" type="button" onClick={() => void logout()}>Logout</button> : null}
       </div>
     </header>
   );
@@ -78,7 +84,7 @@ function MarketPulse({ summary }: { summary: MarketSummaryResponse }): JSX.Eleme
         <MetricCard label="Advancers / Decliners" value={`${formatNumber(summary.advancer_count)} / ${formatNumber(summary.decliner_count)}`} />
         <MetricCard label="Positive Return Share" value={formatPercent(summary.positive_return_share)} />
         <MetricCard label="Advance–Decline Net" value={formatNumber(summary.advance_decline_net)} tone={summary.advance_decline_net > 0 ? 'positive' : summary.advance_decline_net < 0 ? 'negative' : 'neutral'} />
-        <MetricCard label="Up/Down Volume Ratio" value={summary.up_down_volume_ratio ?? '—'} />
+        <MetricCard label="Up/Down Volume Ratio" value={formatRatio(summary.up_down_volume_ratio)} />
       </div>
     </section>
   );
@@ -133,7 +139,7 @@ function VolumeBreadth({ summary }: { summary: MarketSummaryResponse }): JSX.Ele
       <div className="volume-compare">
         <div className="volume-row"><span>Advancer volume</span><strong>{formatCompact(summary.advancer_volume)}</strong></div>
         <div className="volume-row"><span>Decliner volume</span><strong>{formatCompact(summary.decliner_volume)}</strong></div>
-        <div className="volume-ratio"><span>Up/Down Volume Ratio</span><strong>{summary.up_down_volume_ratio ?? '—'}</strong></div>
+        <div className="volume-ratio"><span>Up/Down Volume Ratio</span><strong>{formatRatio(summary.up_down_volume_ratio)}</strong></div>
       </div>
       <div className="volume-bar" aria-label="Up down volume distribution">
         <div className="volume-up" style={{ width: `${upPct}%` }}>{upPct.toFixed(1)}%</div>
@@ -160,7 +166,7 @@ function MoversTable({ title, items, direction }: { title: string; items: EodRet
             <span className="company">{item.name}</span>
             <strong className={direction === 'up' ? 'positive-text' : 'negative-text'}>{formatPercent(item.close_to_close_return, { signed: true })}</strong>
             <span>{formatPrice(item.current_close)}</span>
-            <span>{formatCompact(item.current_dollar_volume_proxy)}</span>
+            <span>{formatCurrencyCompact(item.current_dollar_volume_proxy)}</span>
           </li>
         ))}
       </ol>
@@ -192,7 +198,7 @@ function DataQualityPanel({ summary, data }: { summary: MarketSummaryResponse; d
         <div><dt>Previous-only</dt><dd>{formatNumber(summary.previous_only_count)}</dd></div>
         <div><dt>Quality warnings</dt><dd>{formatNumber(summary.quality_warning_count)}</dd></div>
         <div><dt>Liquidity nodes</dt><dd>{formatNumber(data.liquidityMap.nodes.length)}</dd></div>
-        <div><dt>Mover threshold</dt><dd>{formatCompact(data.movers.threshold)}</dd></div>
+        <div><dt>Mover threshold</dt><dd>{formatCurrencyCompact(data.movers.threshold)}</dd></div>
       </dl>
       <p className="quality-copy">EOD market structure; not real-time. Liquidity Map V1 uses close × volume proxy and close-to-close return. Traditional market-cap sector heatmap is not implemented because market capitalization, sector taxonomy, and point-in-time classification are not yet available.</p>
     </section>

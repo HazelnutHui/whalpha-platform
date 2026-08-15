@@ -1,9 +1,8 @@
 # Open Questions
 
-The following decisions remain open. Final workstation storage layout, frontend framework, backend framework, charting library, initial storage format, initial repository application layout, local frontend toolchain availability, Initial EOD Universe structure, classification boundary, normalized EOD logical contract boundary, minimal provider Protocol shape, synchronous EOD V1 boundary, minimal provider error taxonomy, first real EOD development provider, general public/private data boundary, unrestricted public display under the selected individual plan, Massive adapter configuration contract shape, mocked transport boundary, mocked mapping boundary, protected credential-file loader, standard-library HTTPS transport choice, actual Stocks reference entitlement smoke test, minimal live reference request boundary, initial EOD Price Bar Parquet physical layout, mocked-fixture one-session ingestion service shape, content fingerprint behavior, idempotent partition publish behavior, first canonical EOD read/query service shape, default-disabled private route exposure, and Decimal response serialization are no longer open. See [Infrastructure](../operations/infrastructure.md), [Storage Provisioning](../operations/storage-provisioning.md), [ADR 0005](../decisions/0005-application-technology-stack.md), [ADR 0006](../decisions/0006-initial-eod-data-model-and-universe-boundaries.md), [ADR 0007](../decisions/0007-use-massive-for-private-eod-development.md), [Application Architecture](../architecture/application-architecture.md), [Initial EOD Universe](../product/initial-eod-universe.md), [Classification Boundary](../architecture/classification-boundary.md), [Normalized Market Data Contracts](../architecture/normalized-market-data-contracts.md), [Market Data Provider Boundary](../architecture/market-data-provider-boundary.md), [Massive Stocks Basic Evaluation](../providers/massive-stocks-basic-evaluation.md), and [Data Access Boundary](../operations/data-access-boundary.md).
+The following decisions remain open. Final workstation storage layout, frontend framework, backend framework, charting library, initial storage format, initial repository application layout, local frontend toolchain availability, Initial EOD Universe structure, classification boundary, normalized EOD logical contract boundary, minimal provider Protocol shape, synchronous EOD V1 boundary, minimal provider error taxonomy, first real EOD development provider, general public/private data boundary, unrestricted public display under the selected individual plan, Massive adapter configuration contract shape, mocked transport boundary, mocked mapping boundary, protected credential-file loader, standard-library HTTPS transport choice, actual Stocks reference entitlement smoke test, minimal live reference request boundary, initial EOD Price Bar Parquet physical layout, mocked-fixture one-session ingestion service shape, content fingerprint behavior, idempotent partition publish behavior, first canonical EOD read/query service shape, default-disabled private route exposure, Decimal response serialization, close-to-close return calculation boundary, and the personal-prototype session login mechanism are no longer open. See [Infrastructure](../operations/infrastructure.md), [Storage Provisioning](../operations/storage-provisioning.md), [ADR 0005](../decisions/0005-application-technology-stack.md), [ADR 0006](../decisions/0006-initial-eod-data-model-and-universe-boundaries.md), [ADR 0007](../decisions/0007-use-massive-for-private-eod-development.md), [Application Architecture](../architecture/application-architecture.md), [Initial EOD Universe](../product/initial-eod-universe.md), [Classification Boundary](../architecture/classification-boundary.md), [Normalized Market Data Contracts](../architecture/normalized-market-data-contracts.md), [Market Data Provider Boundary](../architecture/market-data-provider-boundary.md), [Massive Stocks Basic Evaluation](../providers/massive-stocks-basic-evaluation.md), and [Data Access Boundary](../operations/data-access-boundary.md).
 
 - Final credential rotation and service-injection mechanism beyond the protected local credential file
-- Exact private access-control mechanism before deploying provider-backed data
 - Rate limiter implementation
 - Historical backfill strategy
 - Adjustment reconciliation
@@ -21,7 +20,7 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Initial Analytical Group basket definitions
 - Options data source
 - Database introduction threshold
-- Authenticated browser acceptance status for the first private OCI Dashboard release
+- Authenticated browser acceptance status for the session-login private OCI Dashboard release
 - Cloudflare proxy state
 - Cleanup of obsolete OCI port rules
 - OCI swap strategy
@@ -36,8 +35,7 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Production session selection and exchange-calendar source
 - Raw provider payload retention policy
 - Production data-root publish review process for future datasets
-- Formal authentication and authorization mechanism for private market-data APIs
-- Close-to-close return calculation boundary after a second completed EOD session exists
+- Formal multi-user authentication and authorization mechanism beyond the personal-prototype session login
 
 - Traditional Market-Cap Sector Heatmap source requirements: market cap, sector taxonomy, point-in-time classification, and licensing boundary
 - Post-deployment visual/runtime defect list, if any

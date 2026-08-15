@@ -6,9 +6,9 @@ This runbook records the reviewed deployment package and future deployment flow 
 
 ## Status
 
-Deployed pending manual authenticated browser verification.
+Deployed pending manual session-login verification.
 
-The release `2026-08-13T120220Z-987b5289a783` was deployed from source commit `987b5289a7835316ef6aae4aa326aff46de58896` on 2026-08-15.
+The active release `2026-08-15T125517Z-0fa5cac89847` was deployed from source commit `0fa5cac8984789f8b88ce25b5c1f43567aae5911` on 2026-08-15. It replaces browser-native Basic Auth with a branded login page and server-side sessions.
 
 ## Local Build Steps
 
@@ -36,9 +36,19 @@ The apply deployment:
 7. Atomically switch `/srv/whalpha/current`.
 8. Tests Nginx config before reload.
 9. Reloads Nginx only after config test passes.
-10. Verifies public placeholder remains public and dashboard/data require auth.
+10. Verifies public placeholder remains public, login is public, Dashboard redirects unauthenticated users to login, and private JSON returns 401.
 
 Automatic verification does not use or request the Dashboard password. Authenticated browser verification remains a manual user step.
+
+## Session Auth Boundary
+
+- `/login/` is public and contains no real market data.
+- `/auth/login` and `/auth/logout` proxy to the localhost-only Auth Service.
+- `/auth/internal-verify` is an Nginx internal location.
+- `/dashboard/` and `/private-data/` use the same `auth_request` session check.
+- The Auth Service listens on `127.0.0.1:8010` only.
+- Wrong-password deployment verification uses a known invalid password and does not reveal whether the username or password failed.
+- No successful login is automated because Codex does not know the password.
 
 ## 2026-08-15 Deployment Result
 
@@ -46,7 +56,7 @@ Automatic verification does not use or request the Dashboard password. Authentic
 - deployed release: `2026-08-13T120220Z-987b5289a783`
 - current session: 2026-08-13
 - previous session: 2026-08-12
-- deployment status: `deployed_pending_manual_authenticated_verification`
+- deployment status: `superseded_by_session_login_release`
 - public `/`: HTTPS 200 and still serves the data-free WH Alpha placeholder
 - `/dashboard/`: unauthenticated HTTPS 401 with Basic Auth challenge
 - `/private-data/v1/manifest.json`: unauthenticated HTTPS 401 with Basic Auth challenge
@@ -56,7 +66,25 @@ Automatic verification does not use or request the Dashboard password. Authentic
 - canonical Parquet: not uploaded
 - Massive credential: not uploaded
 
-Two earlier same-source deployment attempts failed post-switch validation before this release. They were retained as failed release directories for audit and are not the active `current` release.
+## 2026-08-15 Session Login Deployment Result
+
+- active release: `2026-08-15T125517Z-0fa5cac89847`
+- source commit: `0fa5cac8984789f8b88ce25b5c1f43567aae5911`
+- current session: 2026-08-13
+- previous session: 2026-08-12
+- browser Basic Auth popup: replaced
+- branded `/login/` page: deployed and public
+- server-side in-memory sessions: deployed on localhost-only port 8010
+- logout endpoint and Dashboard Logout button: deployed
+- numeric presentation rules: updated to bounded percent, ratio, volume, and currency formatting
+- public `/`: HTTPS 200 and still serves the data-free WH Alpha placeholder
+- `/dashboard/`: unauthenticated HTTPS 302 to `/login/?next=/dashboard/`
+- `/private-data/v1/manifest.json`: unauthenticated HTTPS 401 JSON with `Cache-Control: private, no-store`
+- `/auth/internal-verify`: external HTTPS 404; usable only as an Nginx internal subrequest
+- security headers: present on login, dashboard redirect, and private-data unauthenticated responses
+- deployment status: `deployed_pending_manual_session_login_verification`
+
+Earlier same-source deployment attempts failed post-switch validation before this release. They were retained as failed release directories for audit and are not the active `current` release.
 
 ## OCI Read-Only Preflight on 2026-08-15
 
