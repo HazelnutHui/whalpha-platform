@@ -73,6 +73,33 @@ def test_logout_removes_session() -> None:
     assert not state.check_session(session.session_id)
 
 
+def test_status_endpoint_returns_empty_auth_state() -> None:
+    state = auth.AuthState(credential(), now=lambda: 1000.0)
+    server, thread = run_server(state)
+    try:
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+        conn.request("GET", "/status", headers={"Host": "whalpha.com"})
+        response = conn.getresponse()
+        body = response.read()
+        headers = dict(response.getheaders())
+        conn.close()
+        assert response.status == 401
+        assert body == b""
+        assert headers["Cache-Control"] == "private, no-store"
+
+        session = state.create_session()
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+        conn.request("HEAD", "/status", headers={"Host": "whalpha.com", "Cookie": f"{auth.COOKIE_NAME}={session.session_id}"})
+        response = conn.getresponse()
+        body = response.read()
+        conn.close()
+        assert response.status == 204
+        assert body == b""
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
 def test_rate_limit_records_failures() -> None:
     clock = {"now": 1000.0}
     state = auth.AuthState(credential(), now=lambda: clock["now"])

@@ -52,12 +52,24 @@ The branded login page must submit credentials through JavaScript using a same-o
 
 ## Rotation
 
-1. Generate a new password hash interactively.
-2. Replace the htpasswd file atomically.
-3. Test Nginx config.
-4. Reload Nginx only after config test passes.
-5. Verify old password no longer works and new password works.
-6. Record the operational event without recording the password or hash.
+Chrome or another password manager warning that a password appeared in a known data breach usually means that password is present in an external breach corpus. It does not by itself prove WH Alpha was breached, but the current Dashboard password must be replaced.
+
+The deployed OCI helper is:
+
+```bash
+/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh
+```
+
+The user must run it interactively on OCI. Codex must not receive the password.
+
+```bash
+sudo /srv/whalpha/admin/rotate-whalpha-dashboard-password.sh
+sudo /srv/whalpha/admin/rotate-whalpha-dashboard-password.sh --apply
+```
+
+The dry run verifies the target host, auth file, service boundary, and fixed username. The apply flow prompts for the new password twice with hidden input, rejects empty or short passwords, writes a new htpasswd file atomically, restarts the Auth Service, and invalidates all existing in-memory sessions. It does not print the password, password length, hash, cookie, or session token.
+
+Choose a new password that is unique, at least 16 characters, only used for WH Alpha, and not shared with Google, email, school, IBKR, OCI, Massive, or any other account. A trusted password manager generated value is preferred. After rotation, update or delete the old `whalpha.com` password in Chrome Password Manager.
 
 ## Revocation
 

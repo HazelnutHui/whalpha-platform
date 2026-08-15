@@ -173,7 +173,7 @@ describe('MarketDashboardPage', () => {
     render(<MarketDashboardPage />);
     fireEvent.click(await screen.findByRole('button', { name: 'Logout' }));
     await waitFor(() => expect(fetch).toHaveBeenCalledWith('/auth/logout', { method: 'POST', credentials: 'same-origin' }));
-    expect(assign).toHaveBeenCalledWith('/login/');
+    expect(assign).toHaveBeenCalledWith('/');
   });
 
   it('snapshot mode failure does not fall back to demo', async () => {

@@ -7,7 +7,7 @@ React/TypeScript/Vite frontend for Trading Intelligence Platform.
 The current frontend implements Market Dashboard V1 for local/private development. It consumes the default-disabled private Market Summary, Movers, and Liquidity Map APIs when explicitly enabled locally.
 
 ## Data Modes
-`VITE_MARKET_DATA_MODE=snapshot` is the production static-dashboard target. It reads `/private-data/v1/manifest.json`, `market-summary.json`, `movers.json`, and `liquidity-map.json` from the authenticated static release. It does not call FastAPI and does not fall back to demo data. The deployed OCI release uses a public `/login/` page plus server-side session cookies; the frontend never stores usernames or passwords.
+`VITE_MARKET_DATA_MODE=snapshot` is the production static-dashboard target. It reads `/private-data/v1/manifest.json`, `market-summary.json`, `movers.json`, and `liquidity-map.json` from the authenticated static release. It does not call FastAPI and does not fall back to demo data. The deployed OCI release uses `/` as the public WH Alpha login entry, keeps `/login/` as a compatibility redirect, and protects Dashboard/private JSON with server-side session cookies; the frontend never stores usernames or passwords.
 
 
 - `VITE_MARKET_DATA_MODE=api` is the default. It calls relative `/api/...` URLs through the Vite proxy.

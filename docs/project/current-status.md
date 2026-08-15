@@ -90,9 +90,12 @@ Status date: 2026-08-15
 - Nginx private dashboard template and deployment script implemented.
 - Dedicated `dell5820` to OCI deployment SSH key provisioned; the WSL OCI key was retained.
 - Private Dashboard session-login release `2026-08-15T133119Z-137f244e8508` deployed to OCI from source commit `137f244e850890dba29ee55f3a16c92923416497`.
-- Public `/` remains the unauthenticated data-free placeholder.
-- `/dashboard/` redirects unauthenticated users to `/login/`; `/private-data/v1/manifest.json` returns unauthenticated 401 JSON.
-- Deployment status is `deployed_pending_manual_session_login_verification`.
+- Private Dashboard root-login release `2026-08-13T135949Z-92819ed17316` is deployed to OCI from source commit `92819ed17316c567c40b440f5c2e8487f9db4b53`.
+- Public `/` is now the unauthenticated WH Alpha branded session-login entry.
+- `/login/` redirects to `/` for compatibility.
+- `/dashboard/` redirects unauthenticated users to `/?next=/dashboard/`; `/private-data/v1/manifest.json` returns unauthenticated 401 JSON.
+- Password rotation helper is deployed at `/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh` for user-run interactive rotation.
+- Deployment status is `deployed_pending_manual_password_rotation_and_login_verification`.
 - Branded `/login/` page and localhost-only server-side session Auth Service implemented.
 - Browser-native Basic Auth replaced for Dashboard access.
 - Dashboard Logout implemented for snapshot mode.
@@ -138,8 +141,8 @@ Status date: 2026-08-15
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
 - No analytics pipeline.
-- Dashboard V1 is deployed as a private authenticated static OCI release; manual authenticated browser verification is pending.
-- No formal authentication or authorization for private market-data routes.
+- Dashboard V1 is deployed as a private authenticated static OCI release; user-run password rotation and authenticated browser verification are pending.
+- No formal multi-user authentication or authorization for private market-data routes.
 - No database.
 - Static private Dashboard deployment pipeline exists for the personal prototype.
 - No API credentials stored in Git, documentation, frontend code, logs, or command arguments.
@@ -147,4 +150,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-Have the user complete authenticated browser and visual verification of the session-login Dashboard, then record production acceptance and address any visual/runtime defects found.
+Have the user rotate the private Dashboard password interactively on OCI, then complete authenticated browser and visual verification of the root login entry and Dashboard.

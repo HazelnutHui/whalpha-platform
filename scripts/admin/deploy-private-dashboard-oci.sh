@@ -6,6 +6,7 @@ repo_root=$(cd -- "${script_dir}/../.." && pwd)
 bundle_root="${repo_root}/build/oci-dashboard"
 nginx_template="${repo_root}/deploy/oci/nginx/whalpha-private-dashboard.conf.template"
 auth_service_source="${repo_root}/deploy/oci/auth/whalpha_auth_service.py"
+password_rotation_source="${repo_root}/scripts/admin/rotate-whalpha-dashboard-password.sh"
 remote_alias="whalpha-oci"
 remote_base="/srv/whalpha"
 remote_site_available="/etc/nginx/sites-available/whalpha.com"
@@ -13,16 +14,19 @@ remote_site_enabled="/etc/nginx/sites-enabled/whalpha.com"
 auth_file="/etc/nginx/auth/whalpha-dashboard.htpasswd"
 auth_service_path="/srv/whalpha/auth/whalpha_auth_service.py"
 auth_unit_path="/etc/systemd/system/whalpha-dashboard-auth.service"
+remote_admin_dir="/srv/whalpha/admin"
+remote_password_rotation_path="${remote_admin_dir}/rotate-whalpha-dashboard-password.sh"
 
 usage() {
   cat <<MSG
 Usage: $0 --bundle-release RELEASE_ID [--dry-run]
        $0 --bundle-release RELEASE_ID --apply
 
-Default is dry-run. Apply uploads one completed static Dashboard bundle and
-the localhost-only session Auth Service to the reviewed OCI host. It verifies
-that /dashboard/ redirects unauthenticated users to /login/ and /private-data/
-returns 401. It never accepts or tests a Dashboard password.
+Default is dry-run. Apply uploads one completed static Dashboard bundle, the
+localhost-only session Auth Service, and the password-rotation admin helper to
+the reviewed OCI host. It verifies that / is the branded login entry,
+/dashboard/ redirects unauthenticated users to /, and /private-data/ returns
+401. It never accepts or tests a Dashboard password.
 MSG
 }
 
@@ -71,6 +75,7 @@ cd "${repo_root}"
 [[ -z "$(git status --short)" ]] || { echo "working tree must be clean" >&2; exit 1; }
 [[ -f "${nginx_template}" ]] || { echo "Nginx template missing" >&2; exit 1; }
 [[ -f "${auth_service_source}" ]] || { echo "Auth service source missing" >&2; exit 1; }
+[[ -f "${password_rotation_source}" ]] || { echo "password rotation script missing" >&2; exit 1; }
 
 bundle_dir="${bundle_root}/${bundle_release}"
 [[ -f "${bundle_dir}/deployment-manifest.json" ]] || { echo "bundle manifest missing" >&2; exit 1; }
@@ -123,25 +128,30 @@ local_tar="/tmp/${tmp_name}.tar.gz"
 remote_tar="/tmp/${tmp_name}.tar.gz"
 remote_template="/tmp/${tmp_name}.nginx.conf"
 remote_auth_service="/tmp/${tmp_name}.auth.py"
+remote_password_rotation="/tmp/${tmp_name}.rotate-password.sh"
 rm -f "${local_tar}"
 tar -C "${bundle_dir}" -czf "${local_tar}" .
 scp "${local_tar}" "${remote_alias}:${remote_tar}" >/dev/null
 scp "${nginx_template}" "${remote_alias}:${remote_template}" >/dev/null
 scp "${auth_service_source}" "${remote_alias}:${remote_auth_service}" >/dev/null
+scp "${password_rotation_source}" "${remote_alias}:${remote_password_rotation}" >/dev/null
 rm -f "${local_tar}"
 
-ssh "${remote_alias}" bash -s -- "${bundle_release}" "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_base}" "${remote_site_available}" "${remote_site_enabled}" "${auth_service_path}" "${auth_unit_path}" "${auth_file}" <<'REMOTE'
+ssh "${remote_alias}" bash -s -- "${bundle_release}" "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_password_rotation}" "${remote_base}" "${remote_site_available}" "${remote_site_enabled}" "${auth_service_path}" "${auth_unit_path}" "${auth_file}" "${remote_admin_dir}" "${remote_password_rotation_path}" <<'REMOTE'
 set -euo pipefail
 release_id="$1"
 remote_tar="$2"
 remote_template="$3"
 remote_auth_service="$4"
-remote_base="$5"
-site_available="$6"
-site_enabled="$7"
-auth_service_path="$8"
-auth_unit_path="$9"
-auth_file="${10}"
+remote_password_rotation="$5"
+remote_base="$6"
+site_available="$7"
+site_enabled="$8"
+auth_service_path="$9"
+auth_unit_path="${10}"
+auth_file="${11}"
+remote_admin_dir="${12}"
+remote_password_rotation_path="${13}"
 release_dir="${remote_base}/releases/${release_id}"
 stage_dir="${remote_base}/.staging-${release_id}"
 extract_dir="/tmp/whalpha-dashboard-${release_id}.extract"
@@ -167,7 +177,7 @@ rollback() {
     fi
   fi
   rm -rf "${extract_dir}"
-  rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}"
+  rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_password_rotation}"
   exit ${status}
 }
 trap rollback EXIT
@@ -207,6 +217,10 @@ sudo mkdir -p "$(dirname "${auth_service_path}")"
 sudo cp "${remote_auth_service}" "${auth_service_path}"
 sudo chown root:root "${auth_service_path}"
 sudo chmod 644 "${auth_service_path}"
+sudo mkdir -p "${remote_admin_dir}"
+sudo cp "${remote_password_rotation}" "${remote_password_rotation_path}"
+sudo chown root:root "${remote_password_rotation_path}"
+sudo chmod 755 "${remote_password_rotation_path}"
 sudo tee "${auth_unit_path}" >/dev/null <<UNIT
 [Unit]
 Description=WH Alpha Dashboard Session Auth Service
@@ -271,27 +285,48 @@ sudo systemctl reload nginx
 public_body=$(mktemp)
 private_body=$(mktemp)
 login_body=$(mktemp)
-public_code=$(curl -sS -o "${public_body}" -w '%{http_code}' https://whalpha.com/)
+local_root_body=$(mktemp)
+local_root_code=""
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  local_root_code=$(curl -k -sS --resolve whalpha.com:443:127.0.0.1 -o "${local_root_body}" -w '%{http_code}' https://whalpha.com/)
+  if [[ "${local_root_code}" == "200" ]] && grep -q 'Quantitative Market Structure' "${local_root_body}"; then
+    break
+  fi
+  sleep 1
+done
+[[ "${local_root_code}" == "200" ]] || { echo "local root login failed" >&2; exit 1; }
+grep -q 'Quantitative Market Structure' "${local_root_body}" || { echo "local root login missing branded marker" >&2; exit 1; }
+grep -q 'name="username"' "${local_root_body}" || { echo "local root login missing username field" >&2; exit 1; }
+grep -q 'name="password"' "${local_root_body}" || { echo "local root login missing password field" >&2; exit 1; }
+if grep -q 'New platform under development' "${local_root_body}"; then
+  echo "local root route returned placeholder body" >&2
+  exit 1
+fi
+public_code=""
+for _ in 1 2 3 4 5 6 7 8 9 10; do
+  public_code=$(curl -sS -H 'Cache-Control: no-cache' -o "${public_body}" -w '%{http_code}' https://whalpha.com/)
+  if [[ "${public_code}" == "200" ]] && grep -q 'Quantitative Market Structure' "${public_body}"; then
+    break
+  fi
+  sleep 1
+done
 [[ "${public_code}" == "200" ]] || { echo "public https failed" >&2; exit 1; }
-grep -q 'WH Alpha' "${public_body}" || { echo "public placeholder missing WH Alpha" >&2; exit 1; }
-grep -q 'Trading Intelligence Platform' "${public_body}" || { echo "public placeholder missing platform text" >&2; exit 1; }
-grep -q 'New platform under development' "${public_body}" || { echo "public placeholder missing development text" >&2; exit 1; }
-if grep -q 'name="username"' "${public_body}" || grep -q 'name="password"' "${public_body}"; then
-  echo "public root unexpectedly contains login form" >&2
+grep -q 'WH Alpha' "${public_body}" || { echo "root login missing WH Alpha" >&2; exit 1; }
+grep -q 'Quantitative Market Structure' "${public_body}" || { echo "root login missing branded marker" >&2; exit 1; }
+grep -q 'name="username"' "${public_body}" || { echo "root login missing username field" >&2; exit 1; }
+grep -q 'name="password"' "${public_body}" || { echo "root login missing password field" >&2; exit 1; }
+grep -q 'Sign In' "${public_body}" || { echo "root login missing sign-in button" >&2; exit 1; }
+if grep -q 'New platform under development' "${public_body}"; then
+  echo "root route returned placeholder body" >&2
   exit 1
 fi
 dashboard_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/dashboard/)
 [[ "${dashboard_code}" == "302" ]] || { echo "dashboard unauth status ${dashboard_code}" >&2; exit 1; }
-login_code=$(curl -sS -o "${login_body}" -w '%{http_code}' https://whalpha.com/login/)
-[[ "${login_code}" == "200" ]] || { echo "login page status ${login_code}" >&2; exit 1; }
-grep -q 'Quantitative Market Structure' "${login_body}" || { echo "login page missing branded marker" >&2; exit 1; }
-grep -q 'name="username"' "${login_body}" || { echo "login page missing username field" >&2; exit 1; }
-grep -q 'name="password"' "${login_body}" || { echo "login page missing password field" >&2; exit 1; }
-grep -q 'Sign In' "${login_body}" || { echo "login page missing sign-in button" >&2; exit 1; }
-if grep -q 'New platform under development' "${login_body}"; then
-  echo "login route returned placeholder body" >&2
-  exit 1
-fi
+login_headers=$(mktemp)
+login_code=$(curl -sS -D "${login_headers}" -o "${login_body}" -w '%{http_code}' https://whalpha.com/login/)
+[[ "${login_code}" == "302" ]] || { echo "login compatibility redirect status ${login_code}" >&2; exit 1; }
+grep -Eqi '^Location: (https://whalpha\.com)?/\??' "${login_headers}" || { echo "login compatibility redirect did not target root" >&2; exit 1; }
+rm -f "${login_headers}"
 login_js_headers=$(mktemp)
 login_css_headers=$(mktemp)
 js_code=$(curl -sS -D "${login_js_headers}" -o /dev/null -w '%{http_code}' https://whalpha.com/login/login.js)
@@ -313,6 +348,17 @@ fi
 rm -f "${public_login_headers}" "${public_login_body}"
 private_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${private_code}" == "401" ]] || { echo "private-data unauth status ${private_code}" >&2; exit 1; }
+if grep -q '"current_session_date"\|"release_id"\|"nodes"' "${private_body}"; then
+  echo "private-data unauth response exposed private payload" >&2
+  exit 1
+fi
+status_headers=$(mktemp)
+status_body=$(mktemp)
+status_code=$(curl -sS -D "${status_headers}" -o "${status_body}" -w '%{http_code}' https://whalpha.com/auth/status)
+[[ "${status_code}" == "401" ]] || { echo "auth status unauth status ${status_code}" >&2; exit 1; }
+grep -qi '^Cache-Control:.*no-store' "${status_headers}" || { echo "auth status missing no-store" >&2; exit 1; }
+[[ ! -s "${status_body}" ]] || { echo "auth status returned unexpected body" >&2; exit 1; }
+rm -f "${status_headers}" "${status_body}"
 auth_internal_code=$(curl -sS -o /dev/null -w '%{http_code}' https://whalpha.com/auth/internal-verify)
 [[ "${auth_internal_code}" == "404" ]] || { echo "internal verify exposed ${auth_internal_code}" >&2; exit 1; }
 http_code=$(curl -sS -o /dev/null -w '%{http_code}' http://whalpha.com/)
@@ -327,11 +373,11 @@ done
 dashboard_headers=$(mktemp)
 private_headers=$(mktemp)
 curl -sS -I https://whalpha.com/dashboard/ | tr -d '\r' >"${dashboard_headers}"
-grep -qi '^Location: .*/login/' "${dashboard_headers}" || { echo "dashboard redirect missing login location" >&2; exit 1; }
+grep -qi '^Location: .*/?next=/dashboard/' "${dashboard_headers}" || { echo "dashboard redirect missing root login location" >&2; exit 1; }
 curl -sS -I https://whalpha.com/private-data/v1/manifest.json | tr -d '\r' >"${private_headers}"
 grep -qi '^Cache-Control:.*no-store' "${private_headers}" || { echo "private-data missing no-store header" >&2; exit 1; }
 rm -f "${dashboard_headers}" "${private_headers}"
-rm -f "${public_body}" "${private_body}" "${login_body}"
+rm -f "${public_body}" "${private_body}" "${login_body}" "${local_root_body}"
 systemctl is-active --quiet nginx
 [[ "$(systemctl --failed --no-legend | wc -l)" == "0" ]]
 if ss -ltn | awk '{print $4}' | grep -Eq ':(8000|8001)$'; then
@@ -344,7 +390,7 @@ if ss -ltn sport = :8010 | awk 'NR>1 {print $4}' | grep -vE '^(127\.0\.0\.1|\[::
 fi
 (cd "${release_dir}" && sha256sum -c checksums.sha256 >/dev/null)
 echo "apply=ok"
-echo "deployment_status=deployed_pending_manual_session_login_verification"
+echo "deployment_status=deployed_pending_manual_password_rotation_and_login_verification"
 trap - EXIT
 rm -rf "${extract_dir}"
 rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}"

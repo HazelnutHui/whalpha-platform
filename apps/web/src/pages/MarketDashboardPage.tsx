@@ -29,7 +29,7 @@ function displayType(value: string): string {
 
 async function logout(): Promise<void> {
   await fetch('/auth/logout', { method: 'POST', credentials: 'same-origin' });
-  window.location.assign('/login/');
+  window.location.assign('/');
 }
 
 function MetricCard({ label, value, tone, note }: { label: string; value: string; tone?: 'positive' | 'negative' | 'neutral'; note?: string }): JSX.Element {

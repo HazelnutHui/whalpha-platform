@@ -180,12 +180,50 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "VITE_MARKET_DATA_MODE=snapshot" in build_script.read_text()
     text = nginx_template.read_text()
     assert "location /dashboard/" in text and "auth_request /auth/internal-verify" in text
+    assert "location = / {" in text and "try_files /login/index.html =404" in text
+    assert "location = /login/" in text and "return 302 /$is_args$args" in text
+    assert "location = /auth/status" in text
     assert "location /login/" in text and "root /srv/whalpha/current" in text and "location = /auth/login" in text
     assert "location /private-data/" in text and "no-store" in text
-    assert "location / {" in text
     assert "Access-Control-Allow-Origin" not in text
     assert "Content-Security-Policy" in text
     deploy_text = deploy_script.read_text()
-    assert "login route returned placeholder body" in deploy_text
-    assert "login page missing branded marker" in deploy_text
-    assert "public root unexpectedly contains login form" in deploy_text
+    assert "root route returned placeholder body" in deploy_text
+    assert "login compatibility redirect status" in deploy_text
+    assert "auth status unauth status" in deploy_text
+    assert "remote_password_rotation_path" in deploy_text
+
+
+def test_password_rotation_script_safety(tmp_path: Path, repo_root: Path = Path(__file__).resolve().parents[4]):
+    script = repo_root / "scripts" / "admin" / "rotate-whalpha-dashboard-password.sh"
+    auth_dir = tmp_path / "auth"
+    auth_dir.mkdir()
+    (auth_dir / "whalpha-dashboard.htpasswd").write_text("hui:$6$fixture$hash\n", encoding="utf-8")
+    text = script.read_text()
+    subprocess.run(["bash", "-n", str(script)], check=True)
+    help_result = subprocess.run([str(script), "--help"], check=True, capture_output=True, text=True)
+    assert "--apply" in help_result.stdout
+    bad_result = subprocess.run([str(script), "--bad"], capture_output=True, text=True)
+    assert bad_result.returncode == 2
+    extra_result = subprocess.run([str(script), "--apply", "extra"], capture_output=True, text=True)
+    assert extra_result.returncode == 2
+    non_tty_result = subprocess.run(
+        [str(script), "--apply"],
+        env={
+            "PATH": "/usr/bin:/bin",
+            "WHALPHA_ROTATE_TEST_MODE": "1",
+            "WHALPHA_ROTATE_EXPECTED_HOSTNAME": "dell5820",
+            "WHALPHA_ROTATE_AUTH_DIR": str(auth_dir),
+        },
+        input="short\nshort\n",
+        capture_output=True,
+        text=True,
+    )
+    assert non_tty_result.returncode != 0
+    assert "--apply requires an interactive terminal" in non_tty_result.stderr
+    assert "openssl passwd -6 -stdin" in text
+    assert "systemctl restart \"$AUTH_SERVICE\"" in text
+    assert "ROTATE_PASSWORD" in text
+    assert "set -x" not in text
+    assert "echo \"$ROTATE_PASSWORD\"" not in text
+    assert "WHALPHA_PASSWORD" in text

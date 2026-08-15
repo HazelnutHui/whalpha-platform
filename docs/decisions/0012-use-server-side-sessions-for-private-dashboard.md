@@ -16,7 +16,7 @@ The private Dashboard is still a personal prototype. OCI should remain a lightwe
 
 ## Decision
 
-Replace browser-native Basic Auth prompts with a branded public `/login/` page and a minimal server-side session Auth Service.
+Replace browser-native Basic Auth prompts with a branded public login entry and a minimal server-side session Auth Service. The production root path `/` is the primary branded login entry; `/login/` remains a compatibility redirect to `/`.
 
 The Auth Service:
 
@@ -30,7 +30,7 @@ The Auth Service:
 - supports logout by deleting the current session
 - applies a small login rate limit
 
-Nginx uses `auth_request` for `/dashboard/` and `/private-data/`. Unauthenticated Dashboard requests redirect to `/login/?next=/dashboard/`; unauthenticated private JSON requests return 401. `/auth/internal-verify` is an internal Nginx subrequest location and is not publicly callable.
+Nginx uses `auth_request` for `/dashboard/` and `/private-data/`. Unauthenticated Dashboard requests redirect to `/?next=/dashboard/`; unauthenticated private JSON requests return 401. `/auth/internal-verify` is an internal Nginx subrequest location and is not publicly callable. `/auth/status` exposes only 204 or 401 status for same-origin login-page checks and returns no session details.
 
 ## Consequences
 
@@ -58,3 +58,11 @@ Nginx uses `auth_request` for `/dashboard/` and `/private-data/`. Unauthenticate
 ## Login submission clarification
 
 The branded login page uses JavaScript to prevent native form navigation and submit a same-origin JSON `POST /auth/login` request. Native form navigation to `/auth/login` is not the accepted user flow because errors must remain on the login page and credentials must never appear in URL state or browser history.
+
+## Root entry clarification
+
+The root URL is now the product entry for the personal prototype. If no valid session exists, it displays the branded login page. If a valid session exists, the frontend checks `/auth/status` and redirects to the safe `next` target, defaulting to `/dashboard/`. The compatibility `/login/` path redirects to `/` and must not become a second independent login implementation.
+
+## Password rotation clarification
+
+The htpasswd file remains the credential store, but password rotation is performed by a deployed OCI-only admin helper that prompts interactively, atomically replaces the hash file, and restarts the Auth Service to invalidate existing in-memory sessions. Codex must not receive, print, or store the password or resulting hash.

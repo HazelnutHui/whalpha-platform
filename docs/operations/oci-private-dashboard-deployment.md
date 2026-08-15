@@ -8,7 +8,7 @@ This runbook records the reviewed deployment package and future deployment flow 
 
 Deployed pending manual session-login verification.
 
-The active release `2026-08-15T133119Z-137f244e8508` was deployed from source commit `137f244e850890dba29ee55f3a16c92923416497` on 2026-08-15. It keeps browser-native Basic Auth replaced by a branded login page and server-side sessions, and fixes the login form submission contract.
+The active release is managed through the deployment script and should be verified from the current release symlink after each apply. The root path `/` is the branded WH Alpha session-login entry; `/login/` is retained only as a compatibility redirect to `/`.
 
 ## Local Build Steps
 
@@ -36,19 +36,28 @@ The apply deployment:
 7. Atomically switch `/srv/whalpha/current`.
 8. Tests Nginx config before reload.
 9. Reloads Nginx only after config test passes.
-10. Verifies public placeholder remains public, login is public, Dashboard redirects unauthenticated users to login, and private JSON returns 401.
+10. Verifies `/` serves the branded login page, `/login/` redirects to `/`, Dashboard redirects unauthenticated users to `/?next=/dashboard/`, and private JSON returns 401.
+11. Uploads the non-secret password rotation helper to `/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh`.
 
 Automatic verification does not use or request the Dashboard password. Authenticated browser verification remains a manual user step.
 
 ## Session Auth Boundary
 
-- `/login/` is public and contains no real market data.
+- `/` is public and contains the branded login page with no real market data.
+- `/login/` is a compatibility redirect to `/`.
 - `/auth/login` and `/auth/logout` proxy to the localhost-only Auth Service.
+- `/auth/status` returns only authenticated/not-authenticated status and no sensitive body.
 - `/auth/internal-verify` is an Nginx internal location.
 - `/dashboard/` and `/private-data/` use the same `auth_request` session check.
 - The Auth Service listens on `127.0.0.1:8010` only.
 - Wrong-password deployment verification uses a known invalid password and does not reveal whether the username or password failed.
 - No successful login is automated because Codex does not know the password.
+
+## Password Rotation Helper
+
+The deployment installs `/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh`. It defaults to dry-run and only rotates on `--apply` with an interactive TTY. It never accepts a password through command arguments, environment variables, files, or piped stdin. On success it restarts the Auth Service to invalidate all existing sessions.
+
+The real password must be entered by the user directly on OCI. Do not paste it into chat or Git.
 
 ## 2026-08-15 Deployment Result
 
@@ -114,6 +123,22 @@ Earlier same-source deployment attempts failed post-switch validation before thi
 - deployment verification now checks `/login/login.js` and `/login/login.css` status and Content-Type, and performs one controlled invalid JSON login using only fictitious credentials.
 - controlled invalid-login production result: HTTP 401, generic `invalid_credentials`, no session cookie, no submitted values leaked, and not `invalid_request`.
 - real successful login remains a manual browser verification step for the user.
+
+## 2026-08-15 Root Login Entry and Rotation Helper
+
+- active release: `2026-08-13T135949Z-92819ed17316`
+- source commit: `92819ed17316c567c40b440f5c2e8487f9db4b53`
+- root `/`: HTTPS 200 and serves the WH Alpha branded login page.
+- `/login/`: HTTPS 302 compatibility redirect to `/`.
+- `/dashboard/`: unauthenticated HTTPS 302 to `/?next=/dashboard/`.
+- `/private-data/v1/manifest.json`: unauthenticated HTTPS 401 JSON with no private payload exposed.
+- `/auth/status`: unauthenticated HTTPS 401, no response body, `Cache-Control: private, no-store`.
+- `/auth/internal-verify`: external HTTPS 404.
+- Auth Service: active and listening only on `127.0.0.1:8010`.
+- password rotation helper: deployed at `/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh`.
+- deployment status: `deployed_pending_manual_password_rotation_and_login_verification`.
+
+Several same-source candidate releases failed post-switch validation while strengthening deployment assertions. The deployment script rolled back after each failure; failed release directories were retained for audit and are not the active `current` release.
 
 ## OCI Read-Only Preflight on 2026-08-15
 

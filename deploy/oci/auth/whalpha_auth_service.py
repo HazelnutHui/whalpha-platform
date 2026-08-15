@@ -163,6 +163,12 @@ def make_handler(state: AuthState):
                 self.send_header("Set-Cookie", cookie)
             self.end_headers()
 
+        def _send_empty(self, status: HTTPStatus) -> None:
+            self.send_response(status)
+            self.send_header("Cache-Control", "private, no-store")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
         def _client_id(self) -> str:
             forwarded = self.headers.get("X-Real-IP") or self.headers.get("X-Forwarded-For")
             return (forwarded or self.client_address[0]).split(",", 1)[0].strip()
@@ -212,6 +218,17 @@ def make_handler(state: AuthState):
                 ok = state.check_session(parse_cookie(self.headers.get("Cookie")))
                 self._send_json(HTTPStatus.OK if ok else HTTPStatus.UNAUTHORIZED, {"authenticated": ok})
                 return
+            if self.path == "/status":
+                ok = state.check_session(parse_cookie(self.headers.get("Cookie")))
+                self._send_empty(HTTPStatus.NO_CONTENT if ok else HTTPStatus.UNAUTHORIZED)
+                return
+            self.send_error(HTTPStatus.NOT_FOUND)
+
+        def do_HEAD(self) -> None:
+            if self.path == "/status":
+                ok = state.check_session(parse_cookie(self.headers.get("Cookie")))
+                self._send_empty(HTTPStatus.NO_CONTENT if ok else HTTPStatus.UNAUTHORIZED)
+                return
             self.send_error(HTTPStatus.NOT_FOUND)
 
         def do_POST(self) -> None:
@@ -220,7 +237,7 @@ def make_handler(state: AuthState):
                 return
             if self.path == "/logout":
                 state.logout(parse_cookie(self.headers.get("Cookie")))
-                self._redirect("/login/", cookie=clear_cookie_header())
+                self._redirect("/", cookie=clear_cookie_header())
                 return
             self.send_error(HTTPStatus.NOT_FOUND)
 

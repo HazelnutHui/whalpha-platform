@@ -1,5 +1,6 @@
 (() => {
   const DEFAULT_NEXT = '/dashboard/';
+  const navigate = window.__whalphaNavigate || ((path) => window.location.assign(path));
 
   function safeNext(value) {
     if (
@@ -29,6 +30,7 @@
   const username = document.getElementById('username');
   const password = document.getElementById('password');
   let isSubmitting = false;
+  let isCheckingStatus = true;
 
   function setLoading(value) {
     if (button instanceof HTMLButtonElement) {
@@ -46,9 +48,37 @@
     }
   }
 
+  function setFormVisible(value) {
+    if (form instanceof HTMLFormElement) {
+      form.hidden = !value;
+    }
+  }
+
+  async function checkExistingSession() {
+    setFormVisible(false);
+    setLoading(true);
+    try {
+      const response = await fetch('/auth/status', {
+        method: 'GET',
+        credentials: 'same-origin',
+        headers: { Accept: 'application/json' },
+      });
+      if (response.status === 204) {
+        navigate(targetPath);
+        return;
+      }
+    } catch {
+      error?.classList.add('visible');
+    } finally {
+      isCheckingStatus = false;
+      setLoading(false);
+      setFormVisible(true);
+    }
+  }
+
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (isSubmitting) {
+    if (isSubmitting || isCheckingStatus) {
       return;
     }
     if (!(username instanceof HTMLInputElement) || !(password instanceof HTMLInputElement)) {
@@ -75,7 +105,7 @@
         return;
       }
       const payload = await response.json();
-      window.location.assign(safeNext(payload.next));
+      navigate(safeNext(payload.next));
     } catch {
       showError();
     } finally {
@@ -83,4 +113,6 @@
       setLoading(false);
     }
   });
+
+  void checkExistingSession();
 })();
