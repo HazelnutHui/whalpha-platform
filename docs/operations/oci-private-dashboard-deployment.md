@@ -8,7 +8,7 @@ This runbook records the reviewed deployment package and future deployment flow 
 
 Deployed pending manual session-login verification.
 
-The active release `2026-08-15T125517Z-0fa5cac89847` was deployed from source commit `0fa5cac8984789f8b88ce25b5c1f43567aae5911` on 2026-08-15. It replaces browser-native Basic Auth with a branded login page and server-side sessions.
+The active release `2026-08-15T130949Z-78eedc071786` was deployed from source commit `78eedc071786c39e6bdebbf4d2a8d0e35fe84804` on 2026-08-15. It keeps browser-native Basic Auth replaced by a branded login page and server-side sessions, and corrects the `/login/` route verification boundary.
 
 ## Local Build Steps
 
@@ -68,7 +68,7 @@ Automatic verification does not use or request the Dashboard password. Authentic
 
 ## 2026-08-15 Session Login Deployment Result
 
-- active release: `2026-08-15T125517Z-0fa5cac89847`
+- superseded release: `2026-08-15T125517Z-0fa5cac89847`
 - source commit: `0fa5cac8984789f8b88ce25b5c1f43567aae5911`
 - current session: 2026-08-13
 - previous session: 2026-08-12
@@ -85,6 +85,22 @@ Automatic verification does not use or request the Dashboard password. Authentic
 - deployment status: `deployed_pending_manual_session_login_verification`
 
 Earlier same-source deployment attempts failed post-switch validation before this release. They were retained as failed release directories for audit and are not the active `current` release.
+
+
+## 2026-08-15 Login Route Repair
+
+- active release: `2026-08-15T130949Z-78eedc071786`
+- source commit: `78eedc071786c39e6bdebbf4d2a8d0e35fe84804`
+- defect: prior deployment verification treated `/login/` HTTP 200 as success and did not verify that the body was the branded login page rather than the public placeholder.
+- root cause: the automated deployment gate was status-only for `/login/`; it did not assert branded-login markers or reject the public placeholder marker. The Nginx login location also used an `alias`/`$uri` mapping that was less explicit than the intended release-root mapping.
+- repair: `/login/` now maps through `root /srv/whalpha/current` to the release login artifact, and deployment verification checks body markers for both public `/` and `/login/`.
+- production `/`: HTTPS 200, contains `New platform under development.`, and does not contain the login form.
+- production `/login/`: HTTPS 200, contains `Quantitative Market Structure`, username/password fields, and `Sign In`; does not contain `New platform under development.`
+- production `/dashboard/`: unauthenticated HTTPS 302 to `/login/?next=/dashboard/`.
+- production `/private-data/v1/manifest.json`: unauthenticated HTTPS 401 JSON with no private payload exposed.
+- `/auth/internal-verify`: external HTTPS 404.
+- Auth Service: active and listening only on `127.0.0.1:8010`.
+- deployment status: `deployed_pending_manual_session_login_verification`.
 
 ## OCI Read-Only Preflight on 2026-08-15
 

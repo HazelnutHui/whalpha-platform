@@ -17,7 +17,7 @@ Implemented locally:
 - Nginx configuration template using session `auth_request`
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
-- deployed OCI session-login release `2026-08-15T125517Z-0fa5cac89847`
+- deployed OCI session-login release `2026-08-15T130949Z-78eedc071786`
 - branded `/login/` page and localhost-only Auth Service
 
 Not implemented:
@@ -100,3 +100,7 @@ The bundle excludes source maps, credentials, `.env`, raw payloads, Parquet file
 The existing htpasswd file remains the server-side credential store. Browser-native Basic Auth is replaced by a branded login page, opaque in-memory sessions, and an HttpOnly `__Host-whalpha_session` cookie.
 
 The session-login deployment verifies that public `/` remains unauthenticated and data-free, `/login/` is public, unauthenticated `/dashboard/` redirects to `/login/`, and unauthenticated `/private-data/` returns 401. Authenticated visual verification must be performed by the user in a browser; Codex does not know or handle the password.
+
+## Login Route Verification
+
+The deployment gate is content-aware: public `/` must retain the placeholder marker and must not contain login form fields, while `/login/` must contain branded login markers, username/password fields, and `Sign In`, and must not contain the placeholder marker. HTTP 200 alone is not accepted as proof of correct routing.

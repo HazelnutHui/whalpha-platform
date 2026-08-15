@@ -49,7 +49,7 @@ server {
     }
 
     location /login/ {
-        alias /srv/whalpha/current/login/;
+        root /srv/whalpha/current;
         index index.html;
         autoindex off;
         add_header Cache-Control "private, no-store" always;

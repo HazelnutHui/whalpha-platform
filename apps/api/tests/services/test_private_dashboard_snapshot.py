@@ -180,8 +180,12 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "VITE_MARKET_DATA_MODE=snapshot" in build_script.read_text()
     text = nginx_template.read_text()
     assert "location /dashboard/" in text and "auth_request /auth/internal-verify" in text
-    assert "location /login/" in text and "location = /auth/login" in text
+    assert "location /login/" in text and "root /srv/whalpha/current" in text and "location = /auth/login" in text
     assert "location /private-data/" in text and "no-store" in text
     assert "location / {" in text
     assert "Access-Control-Allow-Origin" not in text
     assert "Content-Security-Policy" in text
+    deploy_text = deploy_script.read_text()
+    assert "login route returned placeholder body" in deploy_text
+    assert "login page missing branded marker" in deploy_text
+    assert "public root unexpectedly contains login form" in deploy_text

@@ -262,15 +262,28 @@ sudo systemctl reload nginx
 
 public_body=$(mktemp)
 private_body=$(mktemp)
+login_body=$(mktemp)
 public_code=$(curl -sS -o "${public_body}" -w '%{http_code}' https://whalpha.com/)
 [[ "${public_code}" == "200" ]] || { echo "public https failed" >&2; exit 1; }
 grep -q 'WH Alpha' "${public_body}" || { echo "public placeholder missing WH Alpha" >&2; exit 1; }
 grep -q 'Trading Intelligence Platform' "${public_body}" || { echo "public placeholder missing platform text" >&2; exit 1; }
 grep -q 'New platform under development' "${public_body}" || { echo "public placeholder missing development text" >&2; exit 1; }
+if grep -q 'name="username"' "${public_body}" || grep -q 'name="password"' "${public_body}"; then
+  echo "public root unexpectedly contains login form" >&2
+  exit 1
+fi
 dashboard_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/dashboard/)
 [[ "${dashboard_code}" == "302" ]] || { echo "dashboard unauth status ${dashboard_code}" >&2; exit 1; }
-login_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/login/)
+login_code=$(curl -sS -o "${login_body}" -w '%{http_code}' https://whalpha.com/login/)
 [[ "${login_code}" == "200" ]] || { echo "login page status ${login_code}" >&2; exit 1; }
+grep -q 'Quantitative Market Structure' "${login_body}" || { echo "login page missing branded marker" >&2; exit 1; }
+grep -q 'name="username"' "${login_body}" || { echo "login page missing username field" >&2; exit 1; }
+grep -q 'name="password"' "${login_body}" || { echo "login page missing password field" >&2; exit 1; }
+grep -q 'Sign In' "${login_body}" || { echo "login page missing sign-in button" >&2; exit 1; }
+if grep -q 'New platform under development' "${login_body}"; then
+  echo "login route returned placeholder body" >&2
+  exit 1
+fi
 private_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${private_code}" == "401" ]] || { echo "private-data unauth status ${private_code}" >&2; exit 1; }
 auth_internal_code=$(curl -sS -o /dev/null -w '%{http_code}' https://whalpha.com/auth/internal-verify)
@@ -291,7 +304,7 @@ grep -qi '^Location: .*/login/' "${dashboard_headers}" || { echo "dashboard redi
 curl -sS -I https://whalpha.com/private-data/v1/manifest.json | tr -d '\r' >"${private_headers}"
 grep -qi '^Cache-Control:.*no-store' "${private_headers}" || { echo "private-data missing no-store header" >&2; exit 1; }
 rm -f "${dashboard_headers}" "${private_headers}"
-rm -f "${public_body}" "${private_body}"
+rm -f "${public_body}" "${private_body}" "${login_body}"
 systemctl is-active --quiet nginx
 [[ "$(systemctl --failed --no-legend | wc -l)" == "0" ]]
 if ss -ltn | awk '{print $4}' | grep -Eq ':(8000|8001)$'; then
