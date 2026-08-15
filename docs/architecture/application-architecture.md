@@ -6,7 +6,7 @@ This document records the approved target application architecture for Trading I
 
 ## Current Status
 
-Instrument identity update: Provider Instrument Identity V1, deterministic UUIDv5 identity resolution, and a bounded Massive All Tickers snapshot ingestion path are implemented. The first live 2026-08-13 snapshot attempt completed pagination but did not publish because identity coverage, rejected ratio, and duplicate ticker gates failed. No Grouped Daily bars, analytics, Dashboard data API, or production application flow consume this data yet.
+Instrument identity update: Provider Instrument Identity V1, deterministic UUIDv5 identity resolution, and the corrected 2026-08-13 Massive Instrument Master snapshot are implemented. One subsequent 2026-08-13 Massive Grouped Daily publication attempt completed one request but failed quality gates and did not publish EOD bars. No analytics, Dashboard data API, or production application flow consume this data yet.
 
 Confirmed current state:
 
@@ -145,7 +145,7 @@ Accepted logical data-contract boundary:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. EOD Price Bar V1 has a mocked-fixture one-session ingestion service and explicit Parquet repository. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. No real provider ingestion job, production `/data` publish, or database table exists yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. EOD Price Bar V1 has a mocked-fixture one-session ingestion service and explicit Parquet repository. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. No production EOD Price Bar publish or database table exists yet. The completed production data root currently contains Instrument Master, provider identity, and provider ticker resolver snapshots only.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 
@@ -163,7 +163,7 @@ Provider direction:
 - IBKR is best positioned for portfolio, account-aware information, selected instrument checks, and brokerage-related integration.
 - Options data source remains an open question.
 
-No production Grouped Daily retrieval, historical backfill, production `/data` publish, analytics, Dashboard data API, or provider-backed deployment is configured by this architecture document. The current Massive adapter has mocked mapping tests and one controlled reference smoke test only.
+No successful production Grouped Daily publish, historical backfill, analytics, Dashboard data API, or provider-backed deployment is configured by this architecture document. The current Massive adapter has mocked mapping tests, a controlled reference smoke test, a completed Instrument Master snapshot, and one failed quality-gated Grouped Daily publication attempt.
 
 ## Dashboard V1 Functional Areas
 

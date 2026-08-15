@@ -109,6 +109,8 @@ def build_manifest(
     parquet_file: str,
     created_at: datetime,
     records: tuple[EodPriceBarV1, ...],
+    quality_summary: dict[str, Any] | None = None,
+    identity_snapshot: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build non-sensitive manifest metadata for a completed partition."""
 
@@ -117,7 +119,7 @@ def build_manifest(
     for record in sorted_records:
         quality_counts[record.quality_status.value] = quality_counts.get(record.quality_status.value, 0) + 1
 
-    return {
+    manifest = {
         "manifest_version": MANIFEST_VERSION,
         "dataset_name": DATASET_NAME,
         "schema_version": schema_version,
@@ -131,9 +133,12 @@ def build_manifest(
         "content_sha256": content_sha256,
         "parquet_file": parquet_file,
         "created_at": created_at.astimezone(UTC).isoformat(),
-        "quality_summary": quality_counts,
+        "quality_summary": quality_summary or quality_counts,
         "completion_status": COMPLETION_STATUS,
     }
+    if identity_snapshot is not None:
+        manifest["identity_snapshot"] = identity_snapshot
+    return manifest
 
 
 def write_manifest_atomic(path: Path, manifest: dict[str, Any]) -> None:

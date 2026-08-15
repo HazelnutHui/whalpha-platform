@@ -2,6 +2,11 @@
 
 ## 2026-08-14
 
+- Added a controlled Massive Grouped Daily publication entrypoint for the completed 2026-08-13 session using the completed point-in-time ticker resolver.
+- Executed one authorized Grouped Daily request with `adjusted=false`; access succeeded but quality gates blocked publication.
+- Recorded conflicting duplicate bars, numeric conversion failures, low identity coverage, and insufficient canonical bar count as the exact blockers.
+- No raw payload, EOD Parquet partition, Dashboard data flow, OCI access, or system change was introduced.
+
 - Refined Massive Instrument Master snapshot quality classification to separate eligible records, expected exclusions, malformed records, ticker ambiguity, and stable-ID collisions.
 - Added Provider Ticker Resolver V1 and included it in the logical Instrument Master snapshot completion marker.
 - Re-ran the authorized 2026-08-13 Massive All Tickers pagination once; corrected quality gates passed and published 9,932 canonical instruments, 13,106 provider identity records, and 9,932 resolver entries.

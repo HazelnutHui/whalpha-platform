@@ -82,6 +82,8 @@ class ParquetEodPriceBarRepository:
         *,
         session_date: date,
         provider_id: str,
+        quality_summary: dict[str, Any] | None = None,
+        identity_snapshot: dict[str, Any] | None = None,
     ) -> EodPriceBarWriteResult:
         normalized_provider_id = _normalize_provider_id(provider_id)
         _validate_records_for_publish(records, session_date=session_date)
@@ -124,6 +126,8 @@ class ParquetEodPriceBarRepository:
                 parquet_file=PARQUET_FILE_NAME,
                 created_at=self.created_at or datetime.now(UTC),
                 records=ordered_records,
+                quality_summary=quality_summary,
+                identity_snapshot=identity_snapshot,
             )
             write_manifest_atomic(staging_path / MANIFEST_FILE_NAME, manifest)
             _fsync_directory(staging_path)

@@ -5,7 +5,9 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Final credential rotation and service-injection mechanism beyond the protected local credential file
 - Exact private access-control mechanism before deploying provider-backed data
 - Rate limiter implementation
-- Grouped Daily publication after identity-resolution coverage
+- Grouped Daily required numeric field interpretation after the failed 2026-08-13 publication gate
+- Conflicting duplicate Grouped Daily bar policy after the failed 2026-08-13 publication gate
+- Identity coverage gap between the completed resolver and Grouped Daily tickers
 - Historical backfill strategy
 - Adjustment reconciliation
 - Identity resolution methodology

@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Literal, Protocol
+from typing import Any, Literal, Protocol
 
 from tip_api.contracts.market_data.v1 import EodPriceBarV1
 
@@ -45,6 +45,8 @@ class EodPriceBarRepository(Protocol):
         *,
         session_date: date,
         provider_id: str,
+        quality_summary: dict[str, Any] | None = None,
+        identity_snapshot: dict[str, Any] | None = None,
     ) -> EodPriceBarWriteResult:
         """Publish one validated session and return non-sensitive audit metadata."""
         ...

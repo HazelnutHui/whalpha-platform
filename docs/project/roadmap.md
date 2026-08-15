@@ -30,6 +30,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Separately authorized one-session Grouped Daily inspection without publication
 - [x] Point-in-time Massive Instrument Master snapshot ingestion path
 - [x] Instrument Master snapshot quality-gate remediation and publication
+- [x] One 2026-08-13 Grouped Daily publication attempt with completed resolver and quality gates
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -43,7 +44,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Rerun the 2026-08-13 Grouped Daily session once, resolve tickers against the completed point-in-time resolver, recompute corrected OHLCV quality statistics, and publish canonical EOD bars only if all gates pass.
+Investigate the 2026-08-13 Massive Grouped Daily publication blockers using local captured-safe fixtures or a separately authorized diagnostic plan: required numeric field parsing, conflicting duplicate bars, and identity classification coverage; do not rerun the live Grouped Daily request until the corrected parser and gates are reviewed.
 
 ## Phase 2 — Intraday and Options
 

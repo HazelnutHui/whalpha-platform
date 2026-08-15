@@ -88,4 +88,4 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, and secure Massive smoke-test transport are complete and verified. Dashboard V1, ingestion, analytics pipelines, database, private access control, and production deployment are not implemented yet.
 
-Current proposed activity: use the completed 2026-08-13 provider ticker resolver to re-inspect and conditionally publish Grouped Daily EOD bars.
+Current proposed activity: investigate the failed 2026-08-13 Grouped Daily EOD publication gates before any additional live request or EOD bar publication attempt.

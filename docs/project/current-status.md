@@ -73,6 +73,7 @@ Status date: 2026-08-14
 - Stable provider-identifier UUIDv5 identity resolution implemented.
 - Massive All Tickers point-in-time snapshot ingestion path implemented with bounded pagination and rate-aware requests.
 - Corrected Massive All Tickers snapshot completed and published for 2026-08-13 after refining expected exclusions, eligible coverage, and ticker ambiguity gates.
+- One Massive Grouped Daily publication attempt for 2026-08-13 completed one authorized request and failed quality gates without publishing EOD bars.
 
 ## Current
 
@@ -82,7 +83,7 @@ Status date: 2026-08-14
 - Frontend scaffold exists under `apps/web`.
 - Python virtualenv created at the project root and ignored by Git.
 - Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `185 passed`.
+- Backend tests verified: `271 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
 - Node.js 24 LTS and npm are installed and verified.
 - Frontend dependencies are installed and locked by npm.
@@ -100,10 +101,10 @@ Status date: 2026-08-14
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
 - No ingestion API calls beyond the one reference smoke test.
 - No Grouped Daily production download beyond the one in-memory inspection request.
-- No production `/data` writes for EOD bars.
+- No production `/data` writes for EOD bars; the 2026-08-13 Grouped Daily publication attempt was blocked by quality gates.
 - Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13 under `/data/trading-intelligence-platform`.
 - No historical backfill.
-- No production persistence or market-data files.
+- Production Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13; no production EOD Price Bar dataset exists.
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
 - No private access-control mechanism selected.
 - No private access-control implementation.
@@ -120,4 +121,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Rerun the 2026-08-13 Grouped Daily session once, resolve tickers against the completed point-in-time resolver, recompute corrected OHLCV quality statistics, and publish canonical EOD bars only if all gates pass.
+Investigate the 2026-08-13 Massive Grouped Daily publication blockers using local captured-safe fixtures or a separately authorized diagnostic plan: required numeric field parsing, conflicting duplicate bars, and identity classification coverage; do not rerun the live Grouped Daily request until the corrected parser and gates are reviewed.

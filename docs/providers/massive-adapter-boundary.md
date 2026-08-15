@@ -25,8 +25,8 @@ Implemented:
 Not implemented:
 
 - storing a real API key in Git
-- real data ingestion
-- Parquet persistence
+- successful real EOD bar publication
+- production EOD serving workflow
 - scheduling
 - rate limiter
 - retry policy
@@ -115,7 +115,7 @@ A real rate limiter is not implemented. The live smoke test is limited to one re
 
 ## Real-Network Activation Prerequisites
 
-The 2026-08-13 Grouped Daily inspection verified access and payload shape but did not publish data. Production publication remains blocked until point-in-time Instrument Master identity coverage exists.
+The 2026-08-13 Grouped Daily inspection verified access and payload shape without publishing. After the point-in-time resolver was published, one authorized Grouped Daily publication attempt ran and failed quality gates. Production EOD bar publication remains blocked pending numeric-field interpretation, duplicate-bar handling, and identity coverage review.
 
 Before any additional Massive request:
 
@@ -133,8 +133,8 @@ A bounded All Tickers pagination path now exists for point-in-time Instrument Ma
 
 - storing, printing, logging, or committing a real API key
 - making ingestion, backfill, analytics, or bulk data API calls
-- implementing ingestion
-- writing Parquet or database records
+- successful real EOD bar publication
+- writing database records
 - implementing scheduling, retries, or full backfill
 - implementing corporate actions
 - implementing real identity resolution
