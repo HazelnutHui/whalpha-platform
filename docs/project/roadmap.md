@@ -33,6 +33,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Grouped Daily parser, identity-ordering, and duplicate-isolation remediation
 - [x] Decimal aggregate-volume correction and first canonical EOD session publication
 - [x] Private canonical EOD read/query API for the completed 2026-08-13 session
+- [x] 2026-08-12 bounded ingestion and first close-to-close Market Summary analytics
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -46,7 +47,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Ingest the immediately preceding completed trading session through the existing bounded pipeline, then implement canonical close-to-close return calculations required for the first Market Summary and heatmap payloads.
+Implement the first React Market Dashboard using the private Market Summary, Movers, and Liquidity Map APIs with local synthetic-fallback tests and no OCI deployment yet.
 
 ## Phase 2 — Intraday and Options
 

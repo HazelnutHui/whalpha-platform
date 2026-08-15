@@ -17,6 +17,7 @@ from tip_api.providers.massive.instrument_master_snapshot import (
     build_snapshot_from_payloads,
     fetch_and_build_snapshot,
     main,
+    parse_as_of_date,
 )
 
 INGESTED_AT = datetime(2026, 8, 14, 12, tzinfo=UTC)
@@ -149,8 +150,12 @@ def test_quality_gate_failure_does_not_publish(tmp_path):
     assert not (tmp_path / "market-data").exists()
 
 
+def test_parse_as_of_date_accepts_completed_historical_dates():
+    assert parse_as_of_date("2026-08-12") == date(2026, 8, 12)
+
+
 def test_cli_argument_limits():
-    assert main(["--as-of-date", "2026-08-14", "--data-root", "/data/trading-intelligence-platform"]) == 2
+    assert main(["--as-of-date", "2999-01-01", "--data-root", "/data/trading-intelligence-platform"]) == 2
     assert main(["--as-of-date", "2026-08-13", "--data-root", "/tmp/not-approved"]) == 2
 
 

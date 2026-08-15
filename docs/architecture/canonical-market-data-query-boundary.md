@@ -95,3 +95,7 @@ This flag is only a development-time exposure control. It is not authentication,
 - credential access
 - writes to `/data`
 - OCI deployment
+
+## Market Summary Extension
+
+The private query boundary now includes close-to-close return analytics, Market Summary V1, movers, and Liquidity Map V1. These responses are still default-disabled and private. They do not expose raw provider payloads, filesystem paths, market-cap heatmaps, or sector-grouped analytics.

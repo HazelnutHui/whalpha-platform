@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-14
+Status date: 2026-08-15
 
 ## Completed
 
@@ -79,6 +79,9 @@ Status date: 2026-08-14
 - Private EOD query service and FastAPI response contracts implemented.
 - Private EOD routes are default-disabled and absent from default OpenAPI unless explicitly enabled.
 - Local production read verification completed for the 2026-08-13 session without modifying `/data`.
+- The 2026-08-12 Instrument Master, provider identity, provider ticker resolver, and canonical EOD Price Bar datasets are published under `/data/trading-intelligence-platform`.
+- Close-to-close EOD return analytics implemented across the completed 2026-08-12 and 2026-08-13 sessions.
+- Market Summary V1, liquidity-screened movers, paginated returns, and Liquidity Map V1 private API responses implemented.
 
 ## Current
 
@@ -88,7 +91,7 @@ Status date: 2026-08-14
 - Frontend scaffold exists under `apps/web`.
 - Python virtualenv created at the project root and ignored by Git.
 - Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `347 passed`.
+- Backend tests verified: `366 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
 - Node.js 24 LTS and npm are installed and verified.
 - Frontend dependencies are installed and locked by npm.
@@ -106,8 +109,8 @@ Status date: 2026-08-14
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
 - Approved Massive live operations include the reference smoke test, Grouped Daily inspection, Instrument Master snapshot ingestion, and one canonical EOD session publication for 2026-08-13.
 - One Grouped Daily production publication request completed for 2026-08-13 and wrote canonical EOD bars after quality gates passed.
-- Production EOD Price Bar partition exists for 2026-08-13 under `/data/trading-intelligence-platform`.
-- Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13 under `/data/trading-intelligence-platform`.
+- Production EOD Price Bar partitions exist for 2026-08-12 and 2026-08-13 under `/data/trading-intelligence-platform`.
+- Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-12 and 2026-08-13 under `/data/trading-intelligence-platform`.
 - No historical backfill.
 - Production Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar datasets exist for 2026-08-13.
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
@@ -128,4 +131,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Ingest the immediately preceding completed trading session through the existing bounded pipeline, then implement canonical close-to-close return calculations required for the first Market Summary and heatmap payloads.
+Implement the first React Market Dashboard using the private Market Summary, Movers, and Liquidity Map APIs with local synthetic-fallback tests and no OCI deployment yet.

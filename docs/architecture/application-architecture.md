@@ -263,3 +263,7 @@ Before closing material work, check whether these documents need updates:
 ## Canonical EOD Query Boundary
 
 A first private read/query boundary now reads completed canonical EOD Parquet sessions and exposes default-disabled FastAPI routes only when `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`. This is a local/private development switch, not authentication or public deployment approval. The frontend is unchanged.
+
+## Market Summary Analytics Boundary
+
+The backend now exposes default-disabled private Market Summary V1, movers, returns, and Liquidity Map V1 routes from completed canonical EOD sessions. The frontend is unchanged. Liquidity Map V1 uses close-times-volume as a liquidity proxy; it is not market-cap weighted and is not sector grouped. A traditional market-cap sector heatmap remains deferred pending market-cap, taxonomy, and point-in-time classification sources.

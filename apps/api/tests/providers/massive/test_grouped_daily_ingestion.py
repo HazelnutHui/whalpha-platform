@@ -22,6 +22,7 @@ from tip_api.providers.massive.grouped_daily_ingestion import (
     _MissingRequired,
     _NumericFailure,
     load_identity_snapshot,
+    parse_date,
     parse_massive_decimal,
     parse_massive_integral,
     process_grouped_daily_payload,
@@ -152,6 +153,15 @@ def test_integer_semantic_policy_rejects_fractional_bool_negative_and_malformed(
     with pytest.raises(_NumericFailure):
         parse_massive_integral(value, field_name="n", required=True, allow_negative=False)
 
+
+
+def test_grouped_daily_parse_date_accepts_completed_historical_date():
+    assert parse_date("2026-08-12", name="session-date") == date(2026, 8, 12)
+
+
+def test_grouped_daily_parse_date_rejects_future_date():
+    with pytest.raises(ValueError):
+        parse_date("2999-01-01", name="session-date")
 
 def test_completed_identity_snapshot_verification(tmp_path):
     snapshot = publish_identity_snapshot(tmp_path)

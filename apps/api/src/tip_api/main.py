@@ -3,10 +3,12 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from tip_api.api.v1.private_eod import router as private_eod_router
+from tip_api.api.v1.private_market import router as private_market_router
 from tip_api.api.v1.router import router as api_v1_router
 from tip_api.config import AppConfig, config
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.services.eod_market_data import EodMarketDataQueryService
+from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 
 
 def create_app(
@@ -25,7 +27,9 @@ def create_app(
             CanonicalEodReadRepository(cfg.market_data_root)
         )
         app.state.eod_query_service = service
+        app.state.eod_return_analytics_service = EodReturnAnalyticsService(service)
         app.include_router(private_eod_router, prefix=cfg.api_v1_prefix)
+        app.include_router(private_market_router, prefix=cfg.api_v1_prefix)
     return app
 
 

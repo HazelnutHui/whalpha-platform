@@ -18,6 +18,10 @@ Explicitly enabled private routes (`TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`)
 - `GET /api/v1/private/market-data/eod/sessions/latest`
 - `GET /api/v1/private/market-data/eod/sessions/{session_date}/summary`
 - `GET /api/v1/private/market-data/eod/sessions/{session_date}/bars`
+- `GET /api/v1/private/market/summary/latest`
+- `GET /api/v1/private/market/movers/latest`
+- `GET /api/v1/private/market/liquidity-map/latest`
+- `GET /api/v1/private/market/returns/latest`
 
 Expected response:
 
@@ -49,7 +53,7 @@ Implemented contracts:
 - Instrument Master V1
 - EOD Price Bar V1
 
-These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. No analytics, frontend Dashboard flow, public routes, or authentication system is implemented.
+These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. Market Summary V1, movers, returns, and Liquidity Map V1 private responses are implemented from completed canonical sessions. No frontend Dashboard flow, public routes, or authentication system is implemented.
 
 Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
 

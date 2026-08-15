@@ -108,3 +108,7 @@ Missing critical inputs do not default to eligible. Missing inputs should produc
 - recommendation or signal generation
 - fake ticker examples
 - physical Parquet schema definition
+
+## Current Analytics Note
+
+The first Market Summary and Liquidity Map use completed canonical EOD records that passed identity and quality gates. Liquidity Map V1 uses close-times-volume as a liquidity proxy and does not imply market-cap weighting, sector grouping, or fund flow.

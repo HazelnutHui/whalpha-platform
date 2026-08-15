@@ -105,3 +105,7 @@ No raw provider payload was stored.
 
 Use the completed resolver to rerun the 2026-08-13 Grouped Daily inspection once. Publish canonical EOD bars only if corrected OHLCV, identity, and persistence gates pass.
 
+
+## 2026-08-12 Run
+
+The 2026-08-12 All Tickers run completed with 14 requests, 13,106 raw records, 9,932 canonical instruments, 13,106 provider identity records, 9,932 resolver entries, 89.7686% eligible identity coverage, and published status. No raw payload was persisted.

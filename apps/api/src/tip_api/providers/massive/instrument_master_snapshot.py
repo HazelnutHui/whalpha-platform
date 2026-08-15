@@ -40,7 +40,6 @@ from tip_api.providers.massive.transport import (
     MassiveUrllibTransport,
 )
 
-AUTHORIZED_AS_OF_DATE = date(2026, 8, 13)
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
 REFERENCE_TICKERS_PATH = "/v3/reference/tickers"
 MAX_PAGES = 20
@@ -492,8 +491,8 @@ def parse_as_of_date(value: str) -> date:
         parsed = date.fromisoformat(value)
     except ValueError as exc:
         raise ValueError("as-of date must use YYYY-MM-DD") from exc
-    if parsed != AUTHORIZED_AS_OF_DATE:
-        raise ValueError("as-of date is not authorized for this operation")
+    if parsed >= date.today():
+        raise ValueError("as-of date must be a completed historical date")
     return parsed
 
 

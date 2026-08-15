@@ -47,7 +47,6 @@ from tip_api.providers.massive.transport import (
     MassiveUrllibTransport,
 )
 
-AUTHORIZED_SESSION_DATE = date(2026, 8, 13)
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
 ENDPOINT_TEMPLATE = "/v2/aggs/grouped/locale/us/market/stocks/{session_date}"
 MARKET_TZ = ZoneInfo("America/New_York")
@@ -892,8 +891,6 @@ def _session_date_from_timestamp_ms(timestamp_ms: int) -> date | None:
         return None
     market_date = timestamp_utc.astimezone(MARKET_TZ).date()
     utc_date = timestamp_utc.date()
-    if market_date == AUTHORIZED_SESSION_DATE or utc_date == AUTHORIZED_SESSION_DATE:
-        return AUTHORIZED_SESSION_DATE
     return market_date
 
 
@@ -919,8 +916,8 @@ def parse_date(value: str, *, name: str) -> date:
         parsed = date.fromisoformat(value)
     except ValueError as exc:
         raise ValueError(f"{name} must use YYYY-MM-DD") from exc
-    if parsed != AUTHORIZED_SESSION_DATE:
-        raise ValueError(f"{name} is not authorized")
+    if parsed >= date.today():
+        raise ValueError(f"{name} must be a completed historical date")
     return parsed
 
 

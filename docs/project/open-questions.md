@@ -38,3 +38,6 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Production data-root publish review process for future datasets
 - Formal authentication and authorization mechanism for private market-data APIs
 - Close-to-close return calculation boundary after a second completed EOD session exists
+
+- Traditional Market-Cap Sector Heatmap source requirements: market cap, sector taxonomy, point-in-time classification, and licensing boundary
+- Frontend fallback behavior for private Market Summary APIs when local provider-backed data is unavailable

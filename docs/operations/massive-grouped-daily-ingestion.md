@@ -124,3 +124,7 @@ Design and implement the first canonical EOD read/query service and private Fast
 - writing outside the approved data root
 - implementing scheduling, historical backfill, analytics, or Dashboard APIs
 - accessing OCI
+
+## 2026-08-12 Run
+
+The 2026-08-12 Grouped Daily run used one `adjusted=false` request, passed V1 quality gates, and published 9,900 canonical EOD bars. It recorded 4 isolated conflicting duplicate records, 11,158 fractional-volume records, 5 missing optional VWAP values, 5 missing optional trade-count values, and 5 zero-volume records. No raw payload was persisted.
