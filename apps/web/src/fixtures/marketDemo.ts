@@ -135,14 +135,19 @@ const marketBenchmarks = [
 
 export const demoDashboardData: DashboardData = {
   overview: {
-    contract_version: '1.1',
+    contract_version: '1.2',
     default_universe_id: 'tradable_us_listed_equities_v1',
     current_session_date: current,
     previous_session_date: previous,
     data_as_of_label: 'Data as of 2026-08-13 EOD',
     snapshot_generated_at: '2026-08-14T00:00:00Z',
-    snapshot_validation_status: 'snapshot_validation_passed',
-    freshness_status: 'calendar_not_independently_verified',
+    snapshot_validation_status: 'file_schema_consistency_checks_passed',
+    freshness_status: 'stale',
+    expected_latest_completed_session: '2026-08-14',
+    actual_latest_completed_session: '2026-08-13',
+    session_lag: 1,
+    calendar_id: 'XNYS',
+    freshness_checked_at: '2026-08-15T18:00:00Z',
     universes: [
       universe,
       { ...universe, definition: { ...universe.definition, universe_id: 'all_operating_equities', display_name: 'All Operating Equities', name: 'All Operating Equities' } },

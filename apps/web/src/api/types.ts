@@ -140,6 +140,11 @@ export interface DashboardOverviewResponse {
   snapshot_generated_at: string | null;
   snapshot_validation_status: string;
   freshness_status: string;
+  expected_latest_completed_session: string | null;
+  actual_latest_completed_session: string | null;
+  session_lag: number | null;
+  calendar_id: string;
+  freshness_checked_at: string;
   universes: DashboardUniverseViewResponse[];
   market_benchmarks: MarketBenchmarkResponse[];
   sector_benchmarks: SectorBenchmarkEtfResponse[];
@@ -152,6 +157,12 @@ export interface SnapshotManifestResponse {
   generated_at: string;
   current_session_date: string;
   previous_session_date: string;
+  expected_latest_completed_session?: string | null;
+  actual_latest_completed_session?: string | null;
+  session_lag?: number | null;
+  freshness_status?: string | null;
+  calendar_id?: string | null;
+  freshness_checked_at?: string | null;
   data_status: string;
   overview_file?: string;
   summary_file: string;

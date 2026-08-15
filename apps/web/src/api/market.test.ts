@@ -25,6 +25,32 @@ describe('market API runtime validation', () => {
     expect(overview.default_universe_id).toBe('tradable_us_listed_equities_v1');
     expect(overview.universes[0].definition.display_name).toBe('Tradable U.S. Equities');
     expect(overview.sector_benchmarks).toHaveLength(11);
+    expect(overview.freshness_status).toBe('stale');
+    expect(overview.session_lag).toBe(1);
+  });
+
+  it('requires freshness metadata for snapshot contract 1.1', () => {
+    expect(() => parseSnapshotManifest({
+      snapshot_contract_version: '1.1',
+      release_id: '2026-08-14T120000Z-abcdef0',
+      generated_at: '2026-08-15T12:00:00Z',
+      current_session_date: '2026-08-14',
+      previous_session_date: '2026-08-13',
+      data_status: 'complete',
+      summary_file: 'market-summary.json',
+      movers_file: 'movers.json',
+      liquidity_map_file: 'liquidity-map.json',
+      file_sha256: {},
+      summary_node_count: 1,
+      mover_gainer_count: 10,
+      mover_loser_count: 10,
+      liquidity_node_count: 100,
+      warning_count: 0,
+      is_real_provider_backed: true,
+      access_classification: 'private',
+      contains_raw_provider_data: false,
+      contains_credentials: false,
+    })).toThrow('freshness metadata');
   });
 
   it('validates static snapshot manifests', () => {

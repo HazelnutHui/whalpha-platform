@@ -68,6 +68,20 @@ describe('MarketDashboardPage', () => {
     expect(screen.getAllByText('+0.64%').length).toBeGreaterThan(0);
     expect(screen.getAllByText('1.40×').length).toBeGreaterThan(0);
     expect(screen.getByText('Advancers / Decliners')).toBeInTheDocument();
+    expect(screen.getAllByText('1 session stale').length).toBeGreaterThan(0);
+  });
+
+  it('renders fresh calendar status independently from validation status', async () => {
+    const fresh = {
+      ...demoDashboardData.overview,
+      freshness_status: 'fresh',
+      expected_latest_completed_session: '2026-08-14',
+      actual_latest_completed_session: '2026-08-14',
+      session_lag: 0,
+    };
+    vi.mocked(fetch).mockResolvedValue(okResponse(fresh));
+    render(<MarketDashboardPage />);
+    await waitFor(() => expect(screen.getAllByText('Fresh').length).toBeGreaterThan(0));
   });
 
   it('does not fall back to demo fixtures when API fails', async () => {

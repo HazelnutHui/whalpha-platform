@@ -60,4 +60,4 @@ npm run build
 
 ## Dashboard V1.1
 
-The dashboard consumes the versioned overview payload. API mode calls `/api/v1/private/market/overview/latest`; snapshot mode reads `/private-data/v1/market-overview.json`; demo mode remains synthetic. The default universe is `Tradable U.S. Equities`, with ETFs shown separately as market and Sector Benchmark ETFs. Freshness is conservative until a reliable market-session calendar is accepted.
+The dashboard consumes the versioned overview payload. API mode calls `/api/v1/private/market/overview/latest`; snapshot mode reads `/private-data/v1/market-overview.json`; demo mode remains synthetic. The default universe is `Tradable U.S. Equities`, with ETFs shown separately as market and Sector Benchmark ETFs. Freshness compares the actual latest completed dataset session with the offline XNYS expected latest completed session and displays `Fresh`, an explicit session lag, or calendar unavailability separately from file validation.

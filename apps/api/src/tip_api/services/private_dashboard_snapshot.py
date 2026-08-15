@@ -12,7 +12,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Mapping
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.schemas.private_market import DashboardOverviewResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse
@@ -20,7 +20,7 @@ from tip_api.services.eod_market_data import EodMarketDataQueryService
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 from tip_api.services.dashboard_overview import DashboardOverviewService
 
-SNAPSHOT_CONTRACT_VERSION = "1"
+SNAPSHOT_CONTRACT_VERSION = "1.1"
 SNAPSHOT_FILES = {
     "overview_file": "market-overview.json",
     "summary_file": "market-summary.json",
@@ -37,11 +37,17 @@ class DashboardSnapshotError(RuntimeError):
 class DashboardSnapshotManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    snapshot_contract_version: str = Field(pattern=r"^1$")
+    snapshot_contract_version: str = Field(pattern=r"^1(?:\.1)?$")
     release_id: str
     generated_at: str
     current_session_date: str
     previous_session_date: str
+    expected_latest_completed_session: str | None = None
+    actual_latest_completed_session: str | None = None
+    session_lag: int | None = None
+    freshness_status: str | None = None
+    calendar_id: str | None = None
+    freshness_checked_at: str | None = None
     data_status: str
     overview_file: str
     summary_file: str
@@ -54,7 +60,7 @@ class DashboardSnapshotManifest(BaseModel):
     liquidity_node_count: int
     warning_count: int
     default_universe_id: str = "tradable_us_listed_equities_v1"
-    dashboard_contract_version: str = "1.1"
+    dashboard_contract_version: str = "1.2"
     is_real_provider_backed: bool
     access_classification: str
     contains_raw_provider_data: bool
@@ -65,6 +71,22 @@ class DashboardSnapshotManifest(BaseModel):
     def release_id_is_safe(cls, value: str) -> str:
         validate_release_id(value)
         return value
+
+    @model_validator(mode="after")
+    def freshness_contract_is_complete(self) -> DashboardSnapshotManifest:
+        if self.snapshot_contract_version == "1.1" and any(
+            value is None
+            for value in (
+                self.expected_latest_completed_session,
+                self.actual_latest_completed_session,
+                self.session_lag,
+                self.freshness_status,
+                self.calendar_id,
+                self.freshness_checked_at,
+            )
+        ):
+            raise ValueError("snapshot freshness fields are required for contract 1.1")
+        return self
 
 
 @dataclass(frozen=True, slots=True)
@@ -106,7 +128,7 @@ def build_private_dashboard_snapshot(
     query_service = EodMarketDataQueryService(CanonicalEodReadRepository(safe_data_root))
     analytics = EodReturnAnalyticsService(query_service)
     generated = generated_at or datetime.now(UTC)
-    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service).get_latest_overview()).model_copy(
+    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service).get_latest_overview(checked_at=generated)).model_copy(
         update={"snapshot_generated_at": generated.astimezone(UTC).isoformat().replace("+00:00", "Z")}
     )
     default_universe = next(item for item in overview.universes if item.definition.universe_id == overview.default_universe_id)
@@ -154,6 +176,12 @@ def build_private_dashboard_snapshot(
             generated_at=generated.astimezone(UTC).isoformat().replace("+00:00", "Z"),
             current_session_date=summary.current_session_date.isoformat(),
             previous_session_date=summary.previous_session_date.isoformat(),
+            expected_latest_completed_session=(overview.expected_latest_completed_session.isoformat() if overview.expected_latest_completed_session else None),
+            actual_latest_completed_session=(overview.actual_latest_completed_session.isoformat() if overview.actual_latest_completed_session else None),
+            session_lag=overview.session_lag,
+            freshness_status=overview.freshness_status,
+            calendar_id=overview.calendar_id,
+            freshness_checked_at=overview.freshness_checked_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
             data_status=summary.data_status,
             overview_file=SNAPSHOT_FILES["overview_file"],
             summary_file=SNAPSHOT_FILES["summary_file"],

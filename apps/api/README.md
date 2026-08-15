@@ -54,7 +54,9 @@ Implemented contracts:
 - Instrument Master V1
 - EOD Price Bar V1
 
-These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. Market Summary V1, movers, returns, Liquidity Map V1, and Dashboard Overview V1.1 private responses are implemented from completed canonical sessions. Dashboard Overview adds market benchmarks, Sector ETF relative performance, conservative freshness status, and universe-filtered Trading Activity Map data.
+These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. Market Summary V1, movers, returns, Liquidity Map V1, and Dashboard Overview private responses are implemented from completed canonical sessions. Dashboard Overview adds market benchmarks, Sector ETF relative performance, XNYS calendar freshness, and universe-filtered Trading Activity Map data.
+
+The provider-neutral Market Session Calendar uses offline `exchange-calendars` XNYS schedules and an injectable clock. It keeps expected-session freshness separate from completed-dataset availability and file/schema consistency validation.
 
 Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
 

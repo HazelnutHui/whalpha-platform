@@ -2,23 +2,23 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
-from datetime import date
+from dataclasses import dataclass, field, replace
+from datetime import UTC, date, datetime
 from decimal import Decimal
-from typing import Iterable
+from typing import Callable, Iterable
 
 from tip_api.contracts.market_data.v1 import InstrumentType, QualityStatus
 from tip_api.persistence.eod_read import EodSessionNotFoundError
 from tip_api.read_models.market import EodReturnReadModel, LiquidityMapNodeV1, LiquidityMapV1, MarketSummaryV1, MoversV1
 from tip_api.services.eod_market_data import EodMarketDataQueryService, EodQueryValidationError
 from tip_api.services.eod_return_analytics import _mean, _median
+from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar, evaluate_market_data_freshness
 
 DEFAULT_TRADABLE_PRICE = Decimal("5")
 DEFAULT_TRADABLE_PREVIOUS_DOLLAR_VOLUME = Decimal("20000000")
 DEFAULT_MAP_NODE_LIMIT = 100
 MAJOR_US_EXCHANGES = frozenset({"XNYS", "XNAS", "ARCX", "BATS"})
-SNAPSHOT_VALIDATION_STATUS = "snapshot_validation_passed"
-FRESHNESS_STATUS = "calendar_not_independently_verified"
+SNAPSHOT_VALIDATION_STATUS = "file_schema_consistency_checks_passed"
 
 TRADABLE_UNIVERSE_ID = "tradable_us_listed_equities_v1"
 OPERATING_UNIVERSE_ID = "all_operating_equities"
@@ -116,6 +116,11 @@ class DashboardOverviewV11:
     snapshot_generated_at: str | None
     snapshot_validation_status: str
     freshness_status: str
+    expected_latest_completed_session: date | None
+    actual_latest_completed_session: date | None
+    session_lag: int | None
+    calendar_id: str
+    freshness_checked_at: datetime
     universes: tuple[DashboardUniverseView, ...]
     market_benchmarks: tuple[MarketBenchmark, ...]
     sector_benchmarks: tuple[SectorBenchmarkEtf, ...]
@@ -137,6 +142,8 @@ class DashboardReturnRow:
 @dataclass(frozen=True, slots=True)
 class DashboardOverviewService:
     query_service: EodMarketDataQueryService
+    market_calendar: MarketSessionCalendar = field(default_factory=ExchangeCalendar)
+    clock: Callable[[], datetime] = field(default=lambda: datetime.now(UTC), repr=False)
 
     def get_latest_session_pair(self) -> tuple[date, date]:
         sessions = self.query_service.list_sessions()
@@ -145,8 +152,14 @@ class DashboardOverviewService:
         ordered = tuple(sorted(sessions, key=lambda item: item.session_date))
         return ordered[-1].session_date, ordered[-2].session_date
 
-    def get_latest_overview(self) -> DashboardOverviewV11:
+    def get_latest_overview(self, *, checked_at: datetime | None = None) -> DashboardOverviewV11:
         current_date, previous_date = self.get_latest_session_pair()
+        evaluation_time = checked_at or self.clock()
+        freshness = evaluate_market_data_freshness(
+            calendar=self.market_calendar,
+            actual_latest_completed_session=current_date,
+            checked_at=evaluation_time,
+        )
         rows = self._compute_rows(current_session_date=current_date, previous_session_date=previous_date)
         universe_views = (
             self._build_universe(TRADABLE_UNIVERSE_ID, rows, current_date, previous_date),
@@ -154,14 +167,19 @@ class DashboardOverviewService:
             self._build_universe(ELIGIBLE_UNIVERSE_ID, rows, current_date, previous_date),
         )
         return DashboardOverviewV11(
-            contract_version="1.1",
+            contract_version="1.2",
             default_universe_id=TRADABLE_UNIVERSE_ID,
             current_session_date=current_date,
             previous_session_date=previous_date,
             data_as_of_label=f"Data as of {current_date.isoformat()} EOD",
             snapshot_generated_at=None,
             snapshot_validation_status=SNAPSHOT_VALIDATION_STATUS,
-            freshness_status=FRESHNESS_STATUS,
+            freshness_status=freshness.freshness_status.value,
+            expected_latest_completed_session=freshness.expected_latest_completed_session,
+            actual_latest_completed_session=freshness.actual_latest_completed_session,
+            session_lag=freshness.session_lag,
+            calendar_id=freshness.calendar_id,
+            freshness_checked_at=freshness.checked_at,
             universes=universe_views,
             market_benchmarks=self._market_benchmarks(rows, universe_views[0], current_date, previous_date),
             sector_benchmarks=self._sector_benchmarks(rows, current_date, previous_date),

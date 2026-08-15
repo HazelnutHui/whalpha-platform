@@ -146,13 +146,15 @@ Status date: 2026-08-15
 - No actual sector/industry taxonomy dataset.
 - Initial close-to-close analytics and Dashboard V1.1 overview pipeline are implemented.
 - Dashboard V1 is deployed as a private authenticated static OCI release; root login, session login, real Dashboard data loading, Logout, and password rotation have been manually verified by the user.
-- Dashboard data freshness currently reports the completed dataset session and snapshot generation time, but uses `calendar_not_independently_verified` because no accepted market-session calendar exists yet.
+- An offline provider-neutral XNYS market-session calendar is implemented with injected-time tests for holidays, early closes, weekends, DST, and before/after-close boundaries.
+- Dashboard freshness now separates actual dataset availability, file/schema consistency validation, and expected-session calendar freshness.
+- The 2026-08-14 Instrument Master, provider identity, and ticker resolver logical snapshot passed a read-only integrity audit and is accepted as `accepted_with_provenance_exception`; original request and pagination provenance remains unknown, so it must not be requested again or overwritten.
 - No formal multi-user authentication or authorization for private market-data routes.
 - No database.
 - Static private Dashboard deployment pipeline exists for the personal prototype.
 - No API credentials stored in Git, documentation, frontend code, logs, or command arguments.
-- Project data root contains approved 2026-08-13 Instrument Master, identity, ticker resolver, and EOD Price Bar datasets.
+- Project data root contains approved 2026-08-12 and 2026-08-13 completed EOD sessions plus the accepted 2026-08-14 point-in-time identity snapshot. The 2026-08-14 EOD publication remains separately gated.
 
 ## Next Proposed Step
 
-Ingest enough additional completed EOD sessions to replace the one-day previous-session liquidity gate with a trailing median dollar-volume rule and prepare a point-in-time sector/market-cap classification plan.
+Execute the single authorized 2026-08-14 Grouped Daily request, publish only if all existing gates pass, and deploy a calendar-verified fresh private snapshot.

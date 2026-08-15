@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { clamp, formatCompact, formatCurrencyCompact, formatNumber, formatPercent, formatRatio, parseDecimal } from './format';
+import { clamp, formatCompact, formatCurrencyCompact, formatNumber, formatPercent, formatRatio, formatTimestamp, parseDecimal } from './format';
 
 describe('format utilities', () => {
   it('parses finite decimal strings', () => {
@@ -35,5 +35,11 @@ describe('format utilities', () => {
   it('clamps values for chart colors', () => {
     expect(clamp(10, -1, 1)).toBe(1);
     expect(clamp(-10, -1, 1)).toBe(-1);
+  });
+
+  it('formats machine UTC timestamps as human-readable zoned time', () => {
+    expect(formatTimestamp('2026-08-15T18:30:00Z', 'America/Denver')).toContain('MDT');
+    expect(formatTimestamp(null)).toBe('Unavailable');
+    expect(() => formatTimestamp('not-a-time')).toThrow('Invalid timestamp');
   });
 });

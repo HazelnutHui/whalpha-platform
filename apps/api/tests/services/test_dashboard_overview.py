@@ -57,7 +57,10 @@ class FakeRepo(EodReadRepository):
 
 
 def service(current, previous):
-    return DashboardOverviewService(EodMarketDataQueryService(FakeRepo({PREVIOUS: previous, CURRENT: current})))
+    return DashboardOverviewService(
+        EodMarketDataQueryService(FakeRepo({PREVIOUS: previous, CURRENT: current})),
+        clock=lambda: datetime(2026, 8, 15, 18, tzinfo=UTC),
+    )
 
 
 def base_rows():
@@ -160,10 +163,15 @@ def test_market_benchmark_strip_contains_core_etfs_and_equal_weight_universe():
     assert benchmarks["equal_weight_universe"].quality_flags == ("equal_weight_not_index_return",)
 
 
-def test_overview_uses_cautious_freshness_and_validation_language():
+def test_overview_separates_calendar_freshness_from_file_validation():
     current, previous = base_rows()
     overview = service(current, previous).get_latest_overview()
-    assert overview.snapshot_validation_status == "snapshot_validation_passed"
-    assert overview.freshness_status == "calendar_not_independently_verified"
-    assert overview.data_status == "snapshot_validation_passed"
+    assert overview.snapshot_validation_status == "file_schema_consistency_checks_passed"
+    assert overview.freshness_status == "stale"
+    assert overview.expected_latest_completed_session == date(2026, 8, 14)
+    assert overview.actual_latest_completed_session == date(2026, 8, 13)
+    assert overview.session_lag == 1
+    assert overview.calendar_id == "XNYS"
+    assert overview.freshness_checked_at == datetime(2026, 8, 15, 18, tzinfo=UTC)
+    assert overview.data_status == "file_schema_consistency_checks_passed"
     assert overview.snapshot_generated_at is None

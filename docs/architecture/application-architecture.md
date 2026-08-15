@@ -6,12 +6,14 @@ This document records the approved target application architecture for Trading I
 
 ## Current Status
 
-Dashboard update: the first local React Market Dashboard V1 now consumes the default-disabled private Market Summary, Movers, and Liquidity Map APIs. It is local/private only, supports explicit API/demo modes, and is not deployed to OCI.
-Publication update: the private static dashboard package is prepared. The workstation can generate dashboard-ready JSON snapshots and versioned OCI bundles; OCI deployment and authentication activation are not yet performed.
+Dashboard update: the React Market Dashboard is deployed as a private authenticated static OCI application and supports API, demo, and production snapshot modes.
+Publication update: the workstation generates validated dashboard-ready JSON snapshots and versioned OCI bundles; OCI remains a lightweight authenticated static serving plane.
+
+Freshness update: a provider-neutral offline XNYS calendar now determines the expected latest completed session at an injected timezone-aware instant. Dataset availability, file/schema consistency, and market-calendar freshness are separate states.
 
 
 
-Instrument identity update: Provider Instrument Identity V1, deterministic UUIDv5 identity resolution, and the corrected 2026-08-13 Massive Instrument Master snapshot are implemented. One subsequent 2026-08-13 Massive Grouped Daily publication attempt completed one request but failed quality gates and did not publish EOD bars. No analytics, Dashboard data API, or production application flow consume this data yet.
+Instrument identity update: Provider Instrument Identity V1 and deterministic UUIDv5 identity resolution are implemented. The 2026-08-14 logical identity snapshot passed content-integrity review and is accepted as `accepted_with_provenance_exception`; it may be used point-in-time but may not be requested again or overwritten.
 
 Confirmed current state:
 

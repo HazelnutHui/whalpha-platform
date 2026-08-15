@@ -57,7 +57,7 @@ Sector Benchmark ETFs show 1D return and `relative_to_spy_return`, defined as se
 
 ## Freshness
 
-The Dashboard displays the completed dataset session, static snapshot generation timestamp when available, and a freshness status. Until a reliable market-session calendar is accepted, freshness is `calendar_not_independently_verified`; snapshot validation is not presented as proof that the data is the latest market day.
+The Dashboard displays the completed dataset session, a human-readable snapshot generation time with an explicit timezone, and XNYS calendar freshness. `Fresh` means the actual latest completed dataset session equals the expected latest completed session; stale data shows the exact session lag, and calendar failure shows `Calendar verification unavailable`. File/schema consistency validation remains a separate status and is not presented as proof of price correctness or corporate-action reconciliation.
 
 ## API Boundary
 

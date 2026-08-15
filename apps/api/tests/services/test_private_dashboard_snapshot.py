@@ -171,18 +171,23 @@ def fake_overview():
         ),
     )
     return DashboardOverviewV11(
-        contract_version="1.1",
+        contract_version="1.2",
         default_universe_id="tradable_us_listed_equities_v1",
         current_session_date=CURRENT,
         previous_session_date=PREVIOUS,
         data_as_of_label="Data as of 2026-08-13 EOD",
         snapshot_generated_at=None,
-        snapshot_validation_status="snapshot_validation_passed",
-        freshness_status="calendar_not_independently_verified",
+        snapshot_validation_status="file_schema_consistency_checks_passed",
+        freshness_status="stale",
+        expected_latest_completed_session=date(2026, 8, 14),
+        actual_latest_completed_session=CURRENT,
+        session_lag=1,
+        calendar_id="XNYS",
+        freshness_checked_at=datetime(2026, 8, 15, 12, tzinfo=UTC),
         universes=(universe,),
         market_benchmarks=market_benchmarks,
         sector_benchmarks=sectors,
-        data_status="snapshot_validation_passed",
+        data_status="file_schema_consistency_checks_passed",
     )
 
 
@@ -190,7 +195,7 @@ class FakeOverviewService:
     def __init__(self, query_service):
         self.query_service = query_service
 
-    def get_latest_overview(self):
+    def get_latest_overview(self, *, checked_at=None):
         return fake_overview()
 
 
@@ -245,7 +250,13 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
     assert manifest["current_session_date"] == "2026-08-13"
     assert manifest["file_sha256"]["market-summary.json"] == snapshot.sha256_file(private / "market-summary.json")
     assert manifest["overview_file"] == "market-overview.json"
-    assert manifest["dashboard_contract_version"] == "1.1"
+    assert manifest["snapshot_contract_version"] == "1.1"
+    assert manifest["dashboard_contract_version"] == "1.2"
+    assert manifest["expected_latest_completed_session"] == "2026-08-14"
+    assert manifest["actual_latest_completed_session"] == "2026-08-13"
+    assert manifest["session_lag"] == 1
+    assert manifest["freshness_status"] == "stale"
+    assert manifest["calendar_id"] == "XNYS"
     assert '"equal_weight_return":"0.01"' in (private / "market-summary.json").read_text()
     assert '"default_universe_id":"tradable_us_listed_equities_v1"' in (private / "market-overview.json").read_text()
 

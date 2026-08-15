@@ -114,6 +114,8 @@ No raw provider response, canonical record dump, CSV, or database row was stored
 
 Design and implement the first canonical EOD read/query service and private FastAPI response contracts for the completed 2026-08-13 session. No frontend changes or OCI deployment are included in that next step.
 
+Future live runs must retain a non-sensitive operation report with endpoint path, session and identity reference, adjusted/request/retry counts, UTC start/completion times, quality statistics, publication result, and final fingerprint. Reports must never contain raw payloads, credentials, authorization headers, or secret query parameters.
+
 ## Non-Goals
 
 - calling any Massive endpoint other than the single authorized Grouped Daily request

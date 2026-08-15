@@ -56,7 +56,7 @@ private-data/v1/
   liquidity-map.json
 ```
 
-`manifest.json` records contract version, release ID, generation time, session dates, file names, SHA-256 hashes, node counts, warning count, and private access classification. Dashboard Overview JSON includes the Market Benchmark Strip, Sector Benchmark ETF relative performance, conservative freshness status, and universe-filtered Trading Activity Map data.
+`manifest.json` records contract version, release ID, generation time, session dates, expected and actual latest completed sessions, session lag, XNYS freshness, file names, SHA-256 hashes, node counts, warning count, and private access classification. Dashboard Overview JSON includes the same freshness facts, the Market Benchmark Strip, Sector Benchmark ETF relative performance, and universe-filtered Trading Activity Map data. File consistency validation and calendar freshness are distinct.
 
 The manifest explicitly records:
 

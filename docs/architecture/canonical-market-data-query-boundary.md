@@ -8,6 +8,8 @@ This document records the first read/query boundary for completed canonical EOD 
 
 Implemented for the completed 2026-08-13 EOD Price Bar session.
 
+Dashboard freshness is evaluated after completed-session discovery through the provider-neutral XNYS [Market Session Calendar](market-session-calendar.md). Repository validation and market-calendar freshness remain independent results.
+
 This is not an analytics engine, full export API, public data service, or authentication system.
 
 ## Implemented Boundary

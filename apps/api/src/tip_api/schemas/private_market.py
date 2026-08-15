@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID
 
@@ -333,6 +333,11 @@ class DashboardOverviewResponse(BaseModel):
     snapshot_generated_at: str | None
     snapshot_validation_status: str
     freshness_status: str
+    expected_latest_completed_session: date | None
+    actual_latest_completed_session: date | None
+    session_lag: int | None
+    calendar_id: str
+    freshness_checked_at: datetime
     universes: tuple[DashboardUniverseViewResponse, ...]
     market_benchmarks: tuple[MarketBenchmarkResponse, ...]
     sector_benchmarks: tuple[SectorBenchmarkEtfResponse, ...]
@@ -349,6 +354,11 @@ class DashboardOverviewResponse(BaseModel):
             snapshot_generated_at=model.snapshot_generated_at,
             snapshot_validation_status=model.snapshot_validation_status,
             freshness_status=model.freshness_status,
+            expected_latest_completed_session=model.expected_latest_completed_session,
+            actual_latest_completed_session=model.actual_latest_completed_session,
+            session_lag=model.session_lag,
+            calendar_id=model.calendar_id,
+            freshness_checked_at=model.freshness_checked_at,
             universes=tuple(DashboardUniverseViewResponse.from_model(item) for item in model.universes),
             market_benchmarks=tuple(MarketBenchmarkResponse.from_model(item) for item in model.market_benchmarks),
             sector_benchmarks=tuple(SectorBenchmarkEtfResponse.from_model(item) for item in model.sector_benchmarks),

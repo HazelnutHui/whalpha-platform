@@ -31,7 +31,7 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Whether public contract identifiers remain UUID-based across persistence
 - Physical Decimal representation in Parquet for future datasets beyond EOD Price Bar V1
 - Exact provider revision reconciliation behavior
-- Production session selection and exchange-calendar source
+- Operational ownership and update cadence for the accepted offline XNYS calendar dependency
 - Raw provider payload retention policy
 - Production data-root publish review process for future datasets
 - Formal multi-user authentication and authorization mechanism beyond the personal-prototype session login

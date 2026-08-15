@@ -41,9 +41,12 @@ Sector Benchmark ETF rows include:
 
 The overview payload also includes:
 
-- `snapshot_validation_status`, currently `snapshot_validation_passed` for completed validated data
-- `freshness_status`, currently `calendar_not_independently_verified` until a reliable market-session calendar is accepted
-- `snapshot_generated_at`, populated for static private dashboard snapshots
+- `snapshot_validation_status`, `file_schema_consistency_checks_passed` after file/schema/count/fingerprint validation
+- `expected_latest_completed_session` and `actual_latest_completed_session`
+- `session_lag`, nullable only when calendar evaluation is unavailable
+- `freshness_status`: `fresh`, `stale`, or `unavailable`
+- `calendar_id` and `freshness_checked_at`
+- `snapshot_generated_at`, populated for static private dashboard snapshots as an exact UTC timestamp
 
 ## Liquidity and Trading Activity Naming
 

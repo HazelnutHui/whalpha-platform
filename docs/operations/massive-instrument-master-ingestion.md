@@ -1,5 +1,7 @@
 # Massive Instrument Master Ingestion
 
+The completed 2026-08-14 snapshot is governed by the [read-only audit and acceptance record](data-audits/2026-08-14-instrument-snapshot-audit.md). Its content integrity passed, while original run request and pagination provenance is unavailable. It is accepted as `accepted_with_provenance_exception` and must not be requested again or overwritten.
+
 ## Purpose
 
 This runbook records the bounded point-in-time Massive Stocks reference ticker ingestion path for building the Instrument Master, provider identity, and provider ticker resolver snapshots.

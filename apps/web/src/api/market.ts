@@ -32,6 +32,10 @@ function requireNumber(value: Record<string, unknown>, key: string): number {
   return candidate;
 }
 
+function requireNullableNumber(value: Record<string, unknown>, key: string): number | null {
+  return value[key] === null ? null : requireNumber(value, key);
+}
+
 function requireBoolean(value: Record<string, unknown>, key: string): boolean {
   const candidate = value[key];
   if (typeof candidate !== 'boolean') {
@@ -169,6 +173,12 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     generated_at: requireString(value, 'generated_at'),
     current_session_date: requireString(value, 'current_session_date'),
     previous_session_date: requireString(value, 'previous_session_date'),
+    expected_latest_completed_session: value.expected_latest_completed_session === undefined ? undefined : requireNullableString(value, 'expected_latest_completed_session'),
+    actual_latest_completed_session: value.actual_latest_completed_session === undefined ? undefined : requireNullableString(value, 'actual_latest_completed_session'),
+    session_lag: value.session_lag === undefined ? undefined : requireNullableNumber(value, 'session_lag'),
+    freshness_status: value.freshness_status === undefined ? undefined : requireNullableString(value, 'freshness_status'),
+    calendar_id: value.calendar_id === undefined ? undefined : requireNullableString(value, 'calendar_id'),
+    freshness_checked_at: value.freshness_checked_at === undefined ? undefined : requireNullableString(value, 'freshness_checked_at'),
     data_status: requireString(value, 'data_status'),
     overview_file: typeof value.overview_file === 'string' ? value.overview_file : undefined,
     summary_file: requireString(value, 'summary_file'),
@@ -185,8 +195,18 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     contains_raw_provider_data: requireBoolean(value, 'contains_raw_provider_data'),
     contains_credentials: requireBoolean(value, 'contains_credentials'),
   };
-  if (manifest.snapshot_contract_version !== '1' || manifest.access_classification !== 'private') {
+  if (!['1', '1.1'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
     throw new Error('Unsupported private dashboard snapshot');
+  }
+  if (manifest.snapshot_contract_version === '1.1' && (
+    manifest.expected_latest_completed_session === undefined ||
+    manifest.actual_latest_completed_session === undefined ||
+    manifest.session_lag === undefined ||
+    manifest.freshness_status === undefined ||
+    manifest.calendar_id === undefined ||
+    manifest.freshness_checked_at === undefined
+  )) {
+    throw new Error('Private dashboard snapshot is missing freshness metadata');
   }
   if (manifest.contains_credentials || manifest.contains_raw_provider_data) {
     throw new Error('Unsafe private dashboard snapshot');
@@ -295,6 +315,11 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
     snapshot_generated_at: requireNullableString(value, 'snapshot_generated_at'),
     snapshot_validation_status: requireString(value, 'snapshot_validation_status'),
     freshness_status: requireString(value, 'freshness_status'),
+    expected_latest_completed_session: requireNullableString(value, 'expected_latest_completed_session'),
+    actual_latest_completed_session: requireNullableString(value, 'actual_latest_completed_session'),
+    session_lag: requireNullableNumber(value, 'session_lag'),
+    calendar_id: requireString(value, 'calendar_id'),
+    freshness_checked_at: requireString(value, 'freshness_checked_at'),
     universes: value.universes.map(parseUniverseView),
     market_benchmarks: value.market_benchmarks.map(parseMarketBenchmark),
     sector_benchmarks: value.sector_benchmarks.map(parseSectorBenchmark),

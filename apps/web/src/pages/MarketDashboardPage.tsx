@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getMarketDashboardData, getSnapshotDashboardData } from '../api/market';
 import type { DashboardData, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, MarketBenchmarkResponse, SectorBenchmarkEtfResponse } from '../api/types';
 import { demoDashboardData } from '../fixtures/marketDemo';
-import { formatCompact, formatCurrencyCompact, formatNumber, formatPercent, formatPrice, formatRatio, parseDecimal } from '../utils/format';
+import { formatCompact, formatCurrencyCompact, formatNumber, formatPercent, formatPrice, formatRatio, formatTimestamp, parseDecimal } from '../utils/format';
 import { LiquidityTreemap } from '../components/dashboard/LiquidityTreemap';
 
 type DashboardMode = 'api' | 'demo' | 'snapshot';
@@ -31,6 +31,14 @@ const MATERIAL_FLAGS = new Set(['unverified_price_discontinuity', 'identity_conf
 
 function friendlyStatus(value: string): string {
   return value.replace(/_/g, ' ');
+}
+
+function freshnessLabel(data: DashboardData): string {
+  if (data.overview.freshness_status === 'fresh') return 'Fresh';
+  if (data.overview.freshness_status === 'stale' && data.overview.session_lag !== null) {
+    return `${data.overview.session_lag} session${data.overview.session_lag === 1 ? '' : 's'} stale`;
+  }
+  return 'Calendar verification unavailable';
 }
 
 function materialFlags(flags: string[]): string[] {
@@ -71,7 +79,7 @@ function MetaControlBar({ data, universe, selected, onChange }: { data: Dashboar
       </div>
       <div><span className="meta-label">Period</span><strong>1D close-to-close</strong></div>
       <div><span className="meta-label">Data as of</span><strong>{data.overview.current_session_date} EOD</strong></div>
-      <div><span className="meta-label">Freshness</span><strong>{friendlyStatus(data.overview.freshness_status)}</strong></div>
+      <div><span className="meta-label">Freshness</span><strong>{freshnessLabel(data)}</strong></div>
     </section>
   );
 }
@@ -282,9 +290,14 @@ function DataDetails({ universe, data }: { universe: DashboardUniverseViewRespon
       <dl className="quality-grid">
         <div><dt>Current session</dt><dd>{data.overview.current_session_date}</dd></div>
         <div><dt>Previous session</dt><dd>{data.overview.previous_session_date}</dd></div>
-        <div><dt>Snapshot generated at</dt><dd>{data.overview.snapshot_generated_at ?? 'Unavailable'}</dd></div>
+        <div><dt>Snapshot generated at</dt><dd title={data.overview.snapshot_generated_at ?? undefined}>{formatTimestamp(data.overview.snapshot_generated_at)}</dd></div>
         <div><dt>Validation status</dt><dd>{friendlyStatus(data.overview.snapshot_validation_status)}</dd></div>
-        <div><dt>Freshness status</dt><dd>{friendlyStatus(data.overview.freshness_status)}</dd></div>
+        <div><dt>Expected latest session</dt><dd>{data.overview.expected_latest_completed_session ?? 'Unavailable'}</dd></div>
+        <div><dt>Actual latest session</dt><dd>{data.overview.actual_latest_completed_session ?? 'Unavailable'}</dd></div>
+        <div><dt>Session lag</dt><dd>{data.overview.session_lag ?? 'Unavailable'}</dd></div>
+        <div><dt>Freshness status</dt><dd>{freshnessLabel(data)}</dd></div>
+        <div><dt>Calendar</dt><dd>{data.overview.calendar_id}</dd></div>
+        <div><dt>Freshness checked at</dt><dd title={data.overview.freshness_checked_at}>{formatTimestamp(data.overview.freshness_checked_at)}</dd></div>
       </dl>
       <h3>Universe Funnel</h3>
       <dl className="quality-grid">
@@ -314,7 +327,7 @@ function DataDetails({ universe, data }: { universe: DashboardUniverseViewRespon
       <div className="quality-flags">
         {materialEntries.length ? materialEntries.map(([flag, count]) => <span key={flag}>{flag.replace(/_/g, ' ')} — {formatNumber(count)} records</span>) : <span>No material warnings in selected universe.</span>}
       </div>
-      <p className="quality-copy">EOD market structure; not real-time. Snapshot validation means the completed files passed consistency checks, not that the session is independently verified as the latest market day.</p>
+      <p className="quality-copy">EOD market structure; not real-time. File/schema consistency and exchange-calendar freshness are verified independently.</p>
     </details>
   );
 }

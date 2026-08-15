@@ -82,6 +82,25 @@ export function formatCurrencyCompact(decimal: string | number | null): string {
   return `$${formatNumber(parsed, 2)}`;
 }
 
+export function formatTimestamp(value: string | null, timeZone = 'America/Denver'): string {
+  if (value === null) {
+    return 'Unavailable';
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error('Invalid timestamp');
+  }
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone,
+    timeZoneName: 'short',
+  }).format(parsed);
+}
+
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }

@@ -15,6 +15,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [System Context](architecture/system-context.md): Logical system flow and infrastructure responsibilities.
 - [Application Architecture](architecture/application-architecture.md): Accepted target application architecture and runtime boundaries.
 - [Private Dashboard Publication](architecture/private-dashboard-publication.md): Static private dashboard snapshot and OCI bundle architecture.
+- [Market Session Calendar and Freshness](architecture/market-session-calendar.md): Offline XNYS session completion and Dashboard freshness boundary.
 - [Classification Boundary](architecture/classification-boundary.md): Accepted Sector/Industry, Theme, and Analytical Group boundary.
 - [Normalized Market Data Contracts](architecture/normalized-market-data-contracts.md): Accepted V1 logical market-data contract boundary.
 - [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
@@ -64,6 +65,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Massive Grouped Daily Inspection](operations/massive-grouped-daily-inspection.md): One-request Grouped Daily inspection record for 2026-08-13.
 - [Massive Grouped Daily Ingestion](operations/massive-grouped-daily-ingestion.md): Grouped Daily publication attempts and quality-gate results for 2026-08-13.
 - [Massive Instrument Master Ingestion](operations/massive-instrument-master-ingestion.md): Bounded All Tickers snapshot ingestion record and quality-gate result.
+- [2026-08-14 Instrument Snapshot Audit](operations/data-audits/2026-08-14-instrument-snapshot-audit.md): Accepted integrity audit with an explicit provenance exception.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.
 - [Node Toolchain Provisioning](operations/node-toolchain-provisioning.md): Completed Node.js 24 LTS system toolchain record and historical procedure.
 
@@ -85,6 +87,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0009: Use Stable Provider Identifiers for Canonical Instrument Identity](decisions/0009-use-stable-provider-identifiers-for-canonical-instrument-identity.md)
 - [ADR 0010: Represent Aggregate Volume as Decimal](decisions/0010-represent-aggregate-volume-as-decimal.md)
 - [ADR 0011: Publish Private Dashboard Snapshots as Authenticated Static Assets](decisions/0011-publish-private-dashboard-snapshots-as-authenticated-static-assets.md)
+- [ADR 0014: Use an Exchange Calendar for EOD Freshness](decisions/0014-use-an-exchange-calendar-for-eod-freshness.md)
 - [ADR 0012: Use Server-Side Sessions for the Private Dashboard](decisions/0012-use-server-side-sessions-for-private-dashboard.md)
 - [ADR 0013: Establish Dashboard Universe V1 for Market Overview](decisions/0013-establish-dashboard-universe-v1.md)
 
