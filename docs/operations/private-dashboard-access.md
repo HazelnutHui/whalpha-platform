@@ -46,6 +46,10 @@ It should be root-owned and mode `640` or stricter, while remaining readable by 
 
 As of the first OCI deployment, the file exists at the reviewed path with owner `root:www-data` and mode `640`. Codex did not read or output the stored hash and did not receive the password.
 
+## Login submission contract
+
+The branded login page must submit credentials through JavaScript using a same-origin `POST /auth/login` request with JSON fields `username`, `password`, and `next`. The password must never be placed in the URL, browser storage, logs, or documentation. Failed login attempts return a generic error and clear the password field client-side. Native browser navigation to `/auth/login` is not the intended flow.
+
 ## Rotation
 
 1. Generate a new password hash interactively.

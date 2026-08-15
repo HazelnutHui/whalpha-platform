@@ -17,7 +17,7 @@ Implemented locally:
 - Nginx configuration template using session `auth_request`
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
-- deployed OCI session-login release `2026-08-15T130949Z-78eedc071786`
+- deployed OCI session-login release `2026-08-15T133119Z-137f244e8508`
 - branded `/login/` page and localhost-only Auth Service
 
 Not implemented:
@@ -104,3 +104,7 @@ The session-login deployment verifies that public `/` remains unauthenticated an
 ## Login Route Verification
 
 The deployment gate is content-aware: public `/` must retain the placeholder marker and must not contain login form fields, while `/login/` must contain branded login markers, username/password fields, and `Sign In`, and must not contain the placeholder marker. HTTP 200 alone is not accepted as proof of correct routing.
+
+## Login Submission Boundary
+
+Login form submission is part of the deployment boundary. The static login page must prevent native form navigation and submit JSON to same-origin `/auth/login`; deployment verification checks login JavaScript and CSS assets plus one controlled invalid-login request using fictitious credentials.

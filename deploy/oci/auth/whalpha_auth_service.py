@@ -103,7 +103,13 @@ def verify_password(credential: Credential, username: str, password: str) -> boo
 
 
 def safe_next(value: str | None) -> str:
-    if value and value.startswith("/dashboard/") and not value.startswith("//") and "\n" not in value and "\r" not in value:
+    if (
+        value
+        and value.startswith("/dashboard/")
+        and not value.startswith("//")
+        and "\\" not in value
+        and not any(ord(char) < 32 or ord(char) == 127 for char in value)
+    ):
         return value
     return "/dashboard/"
 
@@ -138,11 +144,13 @@ def make_handler(state: AuthState):
         def log_message(self, _format: str, *_args: object) -> None:
             return
 
-        def _send_json(self, status: HTTPStatus, payload: dict[str, object]) -> None:
+        def _send_json(self, status: HTTPStatus, payload: dict[str, object], *, cookie: str | None = None) -> None:
             body = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode("utf-8")
             self.send_response(status)
             self.send_header("Content-Type", "application/json")
             self.send_header("Cache-Control", "no-store")
+            if cookie:
+                self.send_header("Set-Cookie", cookie)
             self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
@@ -174,6 +182,31 @@ def make_handler(state: AuthState):
             parsed = parse_qs(raw, keep_blank_values=True)
             return {key: values[0] for key, values in parsed.items()}
 
+        def _read_json(self) -> dict[str, str]:
+            length = int(self.headers.get("Content-Length", "0") or "0")
+            if length <= 0 or length > MAX_BODY_BYTES:
+                raise ValueError("invalid body")
+            raw = self.rfile.read(length).decode("utf-8", errors="strict")
+            payload = json.loads(raw)
+            if not isinstance(payload, dict):
+                raise ValueError("invalid body")
+            allowed = {"username", "password", "next"}
+            if set(payload) - allowed:
+                raise ValueError("invalid body")
+            result = {}
+            for key in allowed:
+                value = payload.get(key, "")
+                if value is None:
+                    value = ""
+                if not isinstance(value, str):
+                    raise ValueError("invalid body")
+                result[key] = value
+            return result
+
+        def _is_json_login(self) -> bool:
+            content_type = self.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+            return content_type == "application/json"
+
         def do_GET(self) -> None:
             if self.path == "/check":
                 ok = state.check_session(parse_cookie(self.headers.get("Cookie")))
@@ -192,15 +225,19 @@ def make_handler(state: AuthState):
             self.send_error(HTTPStatus.NOT_FOUND)
 
         def _handle_login(self) -> None:
+            wants_json = self._is_json_login()
             if not self._same_origin_ok():
                 self._send_json(HTTPStatus.FORBIDDEN, {"error": "invalid_request"})
                 return
             client_id = self._client_id()
             if state.rate_limited(client_id):
+                if wants_json:
+                    self._send_json(HTTPStatus.TOO_MANY_REQUESTS, {"error": "invalid_credentials"})
+                    return
                 self._redirect("/login/?error=1")
                 return
             try:
-                form = self._read_form()
+                form = self._read_json() if wants_json else self._read_form()
             except Exception:
                 self._send_json(HTTPStatus.BAD_REQUEST, {"error": "invalid_request"})
                 return
@@ -209,9 +246,15 @@ def make_handler(state: AuthState):
             next_url = safe_next(form.get("next"))
             if not verify_password(state.credential, username, password):
                 state.record_failure(client_id)
+                if wants_json:
+                    self._send_json(HTTPStatus.UNAUTHORIZED, {"error": "invalid_credentials"})
+                    return
                 self._redirect(f"/login/?{urlencode({'error': '1', 'next': next_url})}")
                 return
             session = state.create_session()
+            if wants_json:
+                self._send_json(HTTPStatus.OK, {"authenticated": True, "next": next_url}, cookie=cookie_header(session))
+                return
             self._redirect(next_url, cookie=cookie_header(session))
 
     return Handler

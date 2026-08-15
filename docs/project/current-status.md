@@ -89,7 +89,7 @@ Status date: 2026-08-15
 - Versioned OCI dashboard bundle builder implemented.
 - Nginx private dashboard template and deployment script implemented.
 - Dedicated `dell5820` to OCI deployment SSH key provisioned; the WSL OCI key was retained.
-- Private Dashboard session-login release `2026-08-15T130949Z-78eedc071786` deployed to OCI from source commit `78eedc071786c39e6bdebbf4d2a8d0e35fe84804`.
+- Private Dashboard session-login release `2026-08-15T133119Z-137f244e8508` deployed to OCI from source commit `137f244e850890dba29ee55f3a16c92923416497`.
 - Public `/` remains the unauthenticated data-free placeholder.
 - `/dashboard/` redirects unauthenticated users to `/login/`; `/private-data/v1/manifest.json` returns unauthenticated 401 JSON.
 - Deployment status is `deployed_pending_manual_session_login_verification`.
@@ -98,6 +98,7 @@ Status date: 2026-08-15
 - Dashboard Logout implemented for snapshot mode.
 - Dashboard numeric presentation rules and card overflow handling fixed for percent, ratio, count, volume, and currency values.
 - The `/login/` route now serves the branded login page with content-aware deployment verification; public `/` remains the data-free placeholder.
+- The login form submission defect that navigated to `/auth/login` with `invalid_request` is fixed; the page now uses the JSON session-login client contract.
 
 ## Current
 

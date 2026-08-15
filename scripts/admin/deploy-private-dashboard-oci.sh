@@ -241,8 +241,16 @@ for _ in 1 2 3 4 5 6 7 8 9 10; do
   sleep 1
 done
 [[ "${auth_ready}" == "true" ]] || { echo "auth service did not become ready" >&2; exit 1; }
-wrong_code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/x-www-form-urlencoded' --data 'username=hui&password=invalid-dashboard-password&next=/dashboard/' http://127.0.0.1:8010/login)
-[[ "${wrong_code}" == "303" ]] || { echo "wrong-password login did not fail safely" >&2; exit 1; }
+wrong_headers=$(mktemp)
+wrong_body=$(mktemp)
+wrong_code=$(curl -sS -D "${wrong_headers}" -o "${wrong_body}" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Origin: https://whalpha.com' -H 'Host: whalpha.com' --data '{"username":"invalid-test-user","password":"invalid-test-password","next":"/dashboard/"}' http://127.0.0.1:8010/login)
+[[ "${wrong_code}" == "401" ]] || { echo "wrong-password JSON login did not fail safely" >&2; exit 1; }
+grep -q '"error":"invalid_credentials"' "${wrong_body}" || { echo "wrong-password JSON login did not return generic failure" >&2; exit 1; }
+if grep -qi '^Set-Cookie:' "${wrong_headers}" || grep -q 'invalid-test-password' "${wrong_body}" || grep -q 'invalid-test-user' "${wrong_body}"; then
+  echo "wrong-password JSON login leaked credential material" >&2
+  exit 1
+fi
+rm -f "${wrong_headers}" "${wrong_body}"
 if ss -ltn sport = :8010 | awk 'NR>1 {print $4}' | grep -vE '^(127\.0\.0\.1|\[::ffff:127\.0\.0\.1\]):8010$' | grep -q .; then
   echo "auth service is not bound to localhost only" >&2
   exit 1
@@ -284,6 +292,25 @@ if grep -q 'New platform under development' "${login_body}"; then
   echo "login route returned placeholder body" >&2
   exit 1
 fi
+login_js_headers=$(mktemp)
+login_css_headers=$(mktemp)
+js_code=$(curl -sS -D "${login_js_headers}" -o /dev/null -w '%{http_code}' https://whalpha.com/login/login.js)
+css_code=$(curl -sS -D "${login_css_headers}" -o /dev/null -w '%{http_code}' https://whalpha.com/login/login.css)
+[[ "${js_code}" == "200" ]] || { echo "login JavaScript asset status ${js_code}" >&2; exit 1; }
+[[ "${css_code}" == "200" ]] || { echo "login CSS asset status ${css_code}" >&2; exit 1; }
+grep -Eiq '^Content-Type:.*(javascript|ecmascript)' "${login_js_headers}" || { echo "login JavaScript asset content type mismatch" >&2; exit 1; }
+grep -Eiq '^Content-Type:.*text/css' "${login_css_headers}" || { echo "login CSS asset content type mismatch" >&2; exit 1; }
+rm -f "${login_js_headers}" "${login_css_headers}"
+public_login_headers=$(mktemp)
+public_login_body=$(mktemp)
+public_login_code=$(curl -sS -D "${public_login_headers}" -o "${public_login_body}" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Origin: https://whalpha.com' --data '{"username":"invalid-test-user","password":"invalid-test-password","next":"/dashboard/"}' https://whalpha.com/auth/login)
+[[ "${public_login_code}" == "401" ]] || { echo "public invalid-login status ${public_login_code}" >&2; exit 1; }
+grep -q '"error":"invalid_credentials"' "${public_login_body}" || { echo "public invalid-login response was not generic auth failure" >&2; exit 1; }
+if grep -qi '^Set-Cookie:' "${public_login_headers}" || grep -q 'invalid-test-password' "${public_login_body}" || grep -q 'invalid-test-user' "${public_login_body}"; then
+  echo "public invalid-login leaked credential material" >&2
+  exit 1
+fi
+rm -f "${public_login_headers}" "${public_login_body}"
 private_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${private_code}" == "401" ]] || { echo "private-data unauth status ${private_code}" >&2; exit 1; }
 auth_internal_code=$(curl -sS -o /dev/null -w '%{http_code}' https://whalpha.com/auth/internal-verify)

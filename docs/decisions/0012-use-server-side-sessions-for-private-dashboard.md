@@ -54,3 +54,7 @@ Nginx uses `auth_request` for `/dashboard/` and `/private-data/`. Unauthenticate
 - storing sessions in a database
 - exposing private data publicly
 - changing Massive credentials or market-data ingestion
+
+## Login submission clarification
+
+The branded login page uses JavaScript to prevent native form navigation and submit a same-origin JSON `POST /auth/login` request. Native form navigation to `/auth/login` is not the accepted user flow because errors must remain on the login page and credentials must never appear in URL state or browser history.

@@ -8,7 +8,7 @@ This runbook records the reviewed deployment package and future deployment flow 
 
 Deployed pending manual session-login verification.
 
-The active release `2026-08-15T130949Z-78eedc071786` was deployed from source commit `78eedc071786c39e6bdebbf4d2a8d0e35fe84804` on 2026-08-15. It keeps browser-native Basic Auth replaced by a branded login page and server-side sessions, and corrects the `/login/` route verification boundary.
+The active release `2026-08-15T133119Z-137f244e8508` was deployed from source commit `137f244e850890dba29ee55f3a16c92923416497` on 2026-08-15. It keeps browser-native Basic Auth replaced by a branded login page and server-side sessions, and fixes the login form submission contract.
 
 ## Local Build Steps
 
@@ -101,6 +101,19 @@ Earlier same-source deployment attempts failed post-switch validation before thi
 - `/auth/internal-verify`: external HTTPS 404.
 - Auth Service: active and listening only on `127.0.0.1:8010`.
 - deployment status: `deployed_pending_manual_session_login_verification`.
+
+
+## 2026-08-15 Login Submission Repair
+
+- active release: `2026-08-15T133119Z-137f244e8508`
+- source commit: `137f244e850890dba29ee55f3a16c92923416497`
+- user-observed defect: submitting the login form navigated the browser to `/auth/login` and displayed `{"error":"invalid_request"}`.
+- root cause: `login.js` attached a submit listener but did not call `event.preventDefault()` or submit through the frontend client. The browser therefore performed a native form POST to `/auth/login`, while the intended session-login flow required an AJAX JSON contract and client-side handling of success/failure.
+- repair: the login page now intercepts submit, POSTs JSON to relative `/auth/login`, uses `credentials: same-origin`, validates `next`, clears the password on failure, and displays a generic error without navigation.
+- Auth Service contract: `POST /auth/login` with `Content-Type: application/json`, fields `username`, `password`, and `next`; success returns JSON with a Set-Cookie session, failure returns a generic JSON authentication error with no Set-Cookie.
+- deployment verification now checks `/login/login.js` and `/login/login.css` status and Content-Type, and performs one controlled invalid JSON login using only fictitious credentials.
+- controlled invalid-login production result: HTTP 401, generic `invalid_credentials`, no session cookie, no submitted values leaked, and not `invalid_request`.
+- real successful login remains a manual browser verification step for the user.
 
 ## OCI Read-Only Preflight on 2026-08-15
 

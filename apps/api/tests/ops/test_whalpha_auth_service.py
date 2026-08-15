@@ -2,9 +2,13 @@ from __future__ import annotations
 
 import base64
 import crypt
+import http.client
 import importlib.util
+import json
 import sys
+import threading
 from pathlib import Path
+from http.server import HTTPServer
 
 
 MODULE_PATH = Path(__file__).resolve().parents[4] / "deploy" / "oci" / "auth" / "whalpha_auth_service.py"
@@ -32,6 +36,9 @@ def test_safe_next_rejects_open_redirects() -> None:
     assert auth.safe_next("https://example.com/dashboard/") == "/dashboard/"
     assert auth.safe_next("//example.com/dashboard/") == "/dashboard/"
     assert auth.safe_next("/private-data/v1/manifest.json") == "/dashboard/"
+    assert auth.safe_next("/auth/logout") == "/dashboard/"
+    assert auth.safe_next("/dashboard/\\evil") == "/dashboard/"
+    assert auth.safe_next("/dashboard/\n") == "/dashboard/"
 
 
 def test_session_cookie_flags_and_opacity() -> None:
@@ -83,3 +90,87 @@ def test_load_credential_accepts_only_configured_user(tmp_path: Path) -> None:
     loaded = auth.load_credential(path)
     assert loaded.username == "hui"
     assert loaded.password_hash.startswith("$6$")
+
+
+def run_server(state):
+    server = HTTPServer(("127.0.0.1", 0), auth.make_handler(state))
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    return server, thread
+
+
+def json_login(server, payload: dict[str, str]):
+    conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+    body = json.dumps(payload)
+    conn.request(
+        "POST",
+        "/login",
+        body=body,
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Host": "whalpha.com",
+            "Origin": "https://whalpha.com",
+        },
+    )
+    response = conn.getresponse()
+    data = response.read().decode("utf-8")
+    headers = dict(response.getheaders())
+    conn.close()
+    return response.status, headers, json.loads(data)
+
+
+def test_json_login_success_sets_cookie_and_returns_safe_next() -> None:
+    server, thread = run_server(auth.AuthState(credential(), now=lambda: 1000.0))
+    try:
+        status, headers, payload = json_login(
+            server,
+            {"username": "hui", "password": "correct-password", "next": "/dashboard/"},
+        )
+        assert status == 200
+        assert payload == {"authenticated": True, "next": "/dashboard/"}
+        cookie = headers["Set-Cookie"]
+        assert cookie.startswith(f"{auth.COOKIE_NAME}=")
+        assert "HttpOnly" in cookie and "Secure" in cookie
+        assert "correct-password" not in cookie
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_json_login_rejects_bad_credentials_without_cookie() -> None:
+    server, thread = run_server(auth.AuthState(credential(), now=lambda: 1000.0))
+    try:
+        status, headers, payload = json_login(
+            server,
+            {"username": "invalid-test-user", "password": "invalid-test-password", "next": "/dashboard/"},
+        )
+        assert status == 401
+        assert payload == {"error": "invalid_credentials"}
+        assert "Set-Cookie" not in headers
+        assert "invalid-test-password" not in json.dumps(payload)
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_json_login_rejects_malformed_request_safely() -> None:
+    server, thread = run_server(auth.AuthState(credential(), now=lambda: 1000.0))
+    try:
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+        conn.request(
+            "POST",
+            "/login",
+            body=json.dumps({"username": "hui", "password": "correct-password", "extra": "nope"}),
+            headers={"Content-Type": "application/json", "Host": "whalpha.com"},
+        )
+        response = conn.getresponse()
+        payload = json.loads(response.read().decode("utf-8"))
+        headers = dict(response.getheaders())
+        conn.close()
+        assert response.status == 400
+        assert payload == {"error": "invalid_request"}
+        assert "Set-Cookie" not in headers
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
