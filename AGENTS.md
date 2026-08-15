@@ -86,6 +86,6 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 ## 8. Current Phase
 
-Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, secure Massive smoke-test transport, point-in-time Instrument Master snapshots, canonical EOD Price Bar sessions for 2026-08-12 and 2026-08-13, default-disabled private canonical EOD/Market Summary APIs, the first local React Market Dashboard V1, the private static dashboard deployment package, branded session login, and the authenticated static OCI deployment are complete and verified. Manual authenticated browser verification, public provider-backed display authorization, database/catalog services, and broader analytics modules are not implemented yet.
+Infrastructure, storage, application scaffold, local frontend/backend toolchain, core EOD contracts, point-in-time identity, canonical EOD Price Bar sessions for 2026-08-12 through 2026-08-14, offline XNYS freshness, default-disabled private APIs, React Market Dashboard, static publication, branded session login, and authenticated OCI deployment are complete and verified. Public provider-backed display authorization, automated daily ingestion, database/catalog services, and broader analytics modules are not implemented.
 
-Current proposed activity: publish the authorized 2026-08-14 Grouped Daily session against the accepted point-in-time identity snapshot, then deploy a calendar-verified fresh Dashboard snapshot if every quality gate passes.
+Current proposed activity: design the first bounded daily EOD orchestration and non-sensitive run-report retention workflow around the accepted XNYS calendar, without adding analytics scope.

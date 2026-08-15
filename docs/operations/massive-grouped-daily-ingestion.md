@@ -116,6 +116,8 @@ Design and implement the first canonical EOD read/query service and private Fast
 
 Future live runs must retain a non-sensitive operation report with endpoint path, session and identity reference, adjusted/request/retry counts, UTC start/completion times, quality statistics, publication result, and final fingerprint. Reports must never contain raw payloads, credentials, authorization headers, or secret query parameters.
 
+The 2026-08-14 operation followed this requirement. Its [safe run report](data-audits/2026-08-14-grouped-daily-run.md) records one `adjusted=false` request, zero retries, all quality results, 9,912 published bars, and the final fingerprint without raw data or credentials.
+
 ## Non-Goals
 
 - calling any Massive endpoint other than the single authorized Grouped Daily request

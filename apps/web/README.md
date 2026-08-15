@@ -15,6 +15,8 @@ The current frontend implements Market Dashboard V1 for local/private developmen
 
 API mode does not fall back to demo data on failure.
 
+The deployed production snapshot currently uses 2026-08-14 as current and 2026-08-13 as previous, with XNYS expected and actual latest session both 2026-08-14, session lag zero, and freshness `fresh`.
+
 ## Implemented Views
 
 - Market Pulse

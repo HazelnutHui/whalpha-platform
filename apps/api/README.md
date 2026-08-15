@@ -58,6 +58,8 @@ These are validation models. EOD Price Bar V1 now has a bounded Parquet persiste
 
 The provider-neutral Market Session Calendar uses offline `exchange-calendars` XNYS schedules and an injectable clock. It keeps expected-session freshness separate from completed-dataset availability and file/schema consistency validation.
 
+The one authorized 2026-08-14 Grouped Daily request passed all hard gates and published 9,912 canonical bars against the accepted point-in-time 2026-08-14 identity snapshot. Completed EOD sessions now span 2026-08-12 through 2026-08-14.
+
 Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
 
 Provider Ticker Resolver V1 is implemented for point-in-time ticker resolution. After refined quality gates, the 2026-08-13 Massive Instrument Master snapshot published 9,932 canonical instruments and 9,932 resolver entries under the project data root.

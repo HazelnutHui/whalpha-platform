@@ -97,15 +97,15 @@ Exclusion counts are overlapping diagnostic counts, not a mutually exclusive sum
 
 SNDK was reviewed because it appears as a large Trading Activity Map node for 2026-08-13. The completed canonical records show a resolved stable identity, common-stock Instrument Master metadata, internally consistent 2026-08-12 and 2026-08-13 OHLC values, and a 2026-08-13 close-to-close return of about +13.67%.
 
-The current project has no completed Corporate Action dataset or accepted adjustment-factor reconciliation path. The review therefore does not prove the price move is correct or incorrect. Current conclusion:
+External market-material review subsequently corroborated the displayed 2026-08-13 SNDK close and approximately +13.67% return. No identity, OHLC, Decimal, or provider-mapping defect was found. Current conclusion:
 
-`insufficient_history_or_corporate_action_evidence`
+`verified_consistent_with_current_canonical_data`
 
-The canonical Parquet data was not modified. Future verification requires accepted corporate-action data and additional history.
+The canonical Parquet data was not modified and no ticker-specific exception exists. The pipeline still lacks independent corporate-action and adjustment-factor reconciliation; external manual corroboration must not be represented as automated pipeline verification.
 
 ## Freshness
 
-Dashboard V1.1 displays the completed current session as `Data as of 2026-08-13 EOD` and includes the static snapshot generation timestamp. Because the project has not accepted a reliable market-session calendar, freshness is reported as `calendar_not_independently_verified` rather than claiming the session is latest.
+Dashboard V1.1 displays the completed current session and a human-readable snapshot generation timestamp. The accepted offline XNYS calendar compares expected and actual completed sessions; the deployed 2026-08-14 snapshot has lag zero and freshness `fresh`. File/schema consistency remains a separate validation state.
 
 ## Deferred Improvements
 

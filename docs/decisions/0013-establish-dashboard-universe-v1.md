@@ -52,7 +52,7 @@ relative_to_spy_return = sector_etf_close_to_close_return - SPY_close_to_close_r
 
 This is not alpha, risk-adjusted performance, sector breadth, sector rotation, or fund flow.
 
-Freshness status is deliberately conservative. Until the project accepts a reliable market-session calendar, the Dashboard reports the completed dataset session and snapshot generation time while marking freshness as `calendar_not_independently_verified`.
+Freshness is now supplied by the accepted provider-neutral offline XNYS calendar in ADR 0014. The Dashboard compares expected and actual completed sessions and reports `fresh`, `stale`, or `unavailable` separately from file/schema consistency.
 
 Price discontinuities where current close / previous close is >= 2 or <= 0.5 are flagged as `unverified_price_discontinuity` and excluded from default movers and map until corporate-action reconciliation exists.
 

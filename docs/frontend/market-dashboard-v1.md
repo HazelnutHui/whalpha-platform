@@ -8,7 +8,7 @@ It helps answer whether the completed EOD session was broadly up or down, whethe
 
 ## Status
 
-Implemented for local/private development only. It has been designed for the completed 2026-08-13 current session and 2026-08-12 previous session exposed by the default-disabled private APIs.
+Implemented for private static production and local development. The deployed snapshot uses the completed 2026-08-14 current session and 2026-08-13 previous session.
 
 The static OCI release is deployed behind a branded login page and server-side sessions for the personal prototype. This is not public real-data authorization, and root login, session login, Dashboard data loading, Logout, and password rotation have been manually verified by the user. Passwords, hashes, and browser credential details are not recorded.
 

@@ -133,7 +133,7 @@ Status date: 2026-08-15
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
 - Approved Massive live operations include the reference smoke test, Grouped Daily inspection, Instrument Master snapshot ingestion, and one canonical EOD session publication for 2026-08-13.
 - One Grouped Daily production publication request completed for 2026-08-13 and wrote canonical EOD bars after quality gates passed.
-- Production EOD Price Bar partitions exist for 2026-08-12 and 2026-08-13 under `/data/trading-intelligence-platform`.
+- Production EOD Price Bar partitions exist for 2026-08-12, 2026-08-13, and 2026-08-14 under `/data/trading-intelligence-platform`.
 - Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-12 and 2026-08-13 under `/data/trading-intelligence-platform`.
 - No historical backfill.
 - Production Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar datasets exist for 2026-08-13.
@@ -153,8 +153,10 @@ Status date: 2026-08-15
 - No database.
 - Static private Dashboard deployment pipeline exists for the personal prototype.
 - No API credentials stored in Git, documentation, frontend code, logs, or command arguments.
-- Project data root contains approved 2026-08-12 and 2026-08-13 completed EOD sessions plus the accepted 2026-08-14 point-in-time identity snapshot. The 2026-08-14 EOD publication remains separately gated.
+- The single authorized 2026-08-14 Grouped Daily request used `adjusted=false`, made no retry, passed all hard gates, and published 9,912 bars with fingerprint `f08033f26d920cc32ce4c12417521a57f45835c316994aae66c1a7da2a8501d2`.
+- The deployed private snapshot uses current 2026-08-14, previous 2026-08-13, expected and actual latest session 2026-08-14, lag zero, and freshness `fresh`.
+- OCI release `2026-08-14T224306Z-21d0e7fda749` is deployed from source commit `21d0e7fda749e3afec7edc9a884eb6408663004f`; unauthenticated public/private boundaries and remote checksums passed.
 
 ## Next Proposed Step
 
-Execute the single authorized 2026-08-14 Grouped Daily request, publish only if all existing gates pass, and deploy a calendar-verified fresh private snapshot.
+Design the first bounded daily EOD orchestration and non-sensitive run-report retention workflow around the accepted XNYS calendar, without expanding Dashboard analytics.

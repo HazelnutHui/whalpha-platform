@@ -52,7 +52,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Ingest enough additional completed EOD sessions to replace the one-day previous-session liquidity gate with a trailing median dollar-volume rule and prepare the point-in-time sector/market-cap classification plan needed for a traditional market-cap sector heatmap.
+Design and implement the first bounded daily EOD orchestration and non-sensitive run-report retention workflow around the accepted XNYS calendar, without adding Dashboard analytics.
 
 ## Phase 2 — Intraday and Options
 

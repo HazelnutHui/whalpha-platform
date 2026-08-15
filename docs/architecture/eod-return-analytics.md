@@ -6,7 +6,7 @@ This document records the first provider-neutral EOD return analytics boundary b
 
 ## Status
 
-Implemented for the completed session pair 2026-08-12 and 2026-08-13.
+Implemented for completed session pairs; the deployed latest pair is 2026-08-13 and 2026-08-14.
 
 ## Close-to-Close Returns
 
@@ -68,7 +68,7 @@ relative_to_spy_return = sector_etf_close_to_close_return - SPY_close_to_close_r
 
 It is an arithmetic return difference only. It is not alpha, risk-adjusted excess return, sector breadth, sector rotation, or fund flow.
 
-Freshness is intentionally conservative. Until a reliable exchange-session calendar boundary is accepted, Dashboard Overview reports `calendar_not_independently_verified` while still displaying the completed dataset session and static snapshot generation time.
+Dashboard Overview uses the accepted offline XNYS calendar to compare expected and actual completed sessions. Calendar freshness remains distinct from completed-file validation and return calculation.
 
 ## Liquidity Map V1
 
