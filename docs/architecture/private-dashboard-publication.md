@@ -6,7 +6,7 @@ This document records the static publication boundary for the private provider-b
 
 ## Status
 
-Prepared — not deployed.
+Deployed pending manual authenticated browser verification.
 
 Implemented locally:
 
@@ -15,14 +15,12 @@ Implemented locally:
 - frontend `snapshot` mode
 - versioned OCI bundle builder
 - Nginx configuration template
-- dry-run deployment script
+- deployment script with dry-run and reviewed apply mode
+- dedicated dell5820-to-OCI deployment SSH key
+- deployed OCI release `2026-08-13T120220Z-987b5289a783`
 
 Not implemented:
 
-- OCI auth file
-- OCI release directories
-- Nginx activation
-- bundle upload
 - authenticated browser verification
 - automatic daily publication
 
@@ -98,3 +96,5 @@ The bundle excludes source maps, credentials, `.env`, raw payloads, Parquet file
 `/dashboard/` and `/private-data/` must be protected by the same authentication boundary. `/private-data/` must not fall back to the SPA index. Public `/` remains the data-free placeholder.
 
 Nginx Basic Auth is acceptable for this personal prototype only after TLS, password provisioning, and config review are complete.
+
+The first deployment verified that public `/` remains unauthenticated and data-free, while `/dashboard/` and `/private-data/` return unauthenticated 401 responses. Authenticated visual verification must be performed by the user in a browser; Codex does not know or handle the password.

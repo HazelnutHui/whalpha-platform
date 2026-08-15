@@ -2,6 +2,12 @@
 
 ## 2026-08-15
 
+- Provisioned a dedicated `dell5820` to OCI deployment SSH key while retaining the existing WSL OCI key.
+- Regenerated the private Dashboard snapshot and OCI bundle from clean source commit `987b5289a7835316ef6aae4aa326aff46de58896`.
+- Deployed private Dashboard release `2026-08-13T120220Z-987b5289a783` to OCI.
+- Verified public `/` remains the data-free placeholder and unauthenticated `/dashboard/` plus `/private-data/v1/manifest.json` return 401.
+- Did not read or output the Dashboard password/hash, call Massive, read Massive credentials, modify `/data`, deploy raw/Parquet data, or access another OCI instance.
+
 - Accepted ADR 0011 for authenticated static private dashboard snapshots.
 - Implemented the private Dashboard JSON snapshot exporter and manifest/hash validation.
 - Added frontend `snapshot` mode for `/dashboard/` static deployment and `/private-data/` JSON snapshots.

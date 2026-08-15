@@ -56,8 +56,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
-- [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md): Reviewed dry-run deployment package and read-only OCI preflight.
-- [Private Dashboard Access](operations/private-dashboard-access.md): Future Basic Auth credential provisioning runbook.
+- [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md): Private static Dashboard deployment status and operations boundary.
+- [Private Dashboard Access](operations/private-dashboard-access.md): Basic Auth credential boundary and manual verification runbook.
 - [Data Access Boundary](operations/data-access-boundary.md): Public placeholder, data-free demo, and private provider-backed dashboard boundary.
 - [Massive Credential Provisioning](operations/massive-credential-provisioning.md): Secure credential file and one-request smoke-test operations record.
 - [Massive Grouped Daily Inspection](operations/massive-grouped-daily-inspection.md): One-request Grouped Daily inspection record for 2026-08-13.

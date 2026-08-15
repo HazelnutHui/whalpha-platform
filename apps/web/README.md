@@ -36,7 +36,7 @@ TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true scripts/dev/run-api.sh
 scripts/dev/run-web.sh
 ```
 
-The private route enable flag is a development switch only, not authentication or deployment approval.
+The private route enable flag is a development switch only, not authentication or deployment approval. The OCI static dashboard uses `snapshot` mode behind server-side Basic Auth.
 
 ## Tests
 
@@ -47,7 +47,7 @@ npm run build
 
 ## Current Non-Goals
 
-- No OCI deployment
+- No frontend-originated authentication flow
 - No public real-data display
 - No authentication or authorization
 - No market-cap heatmap

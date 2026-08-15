@@ -87,8 +87,12 @@ Status date: 2026-08-15
 - Private static dashboard snapshot exporter implemented.
 - Frontend snapshot mode implemented for `/dashboard/` static deployment.
 - Versioned OCI dashboard bundle builder implemented.
-- Nginx private dashboard template and dry-run deployment script implemented.
-- OCI read-only deployment preflight completed without modifying OCI.
+- Nginx private dashboard template and deployment script implemented.
+- Dedicated `dell5820` to OCI deployment SSH key provisioned; the WSL OCI key was retained.
+- Private Dashboard release `2026-08-13T120220Z-987b5289a783` deployed to OCI from source commit `987b5289a7835316ef6aae4aa326aff46de58896`.
+- Public `/` remains the unauthenticated data-free placeholder.
+- `/dashboard/` and `/private-data/v1/manifest.json` return unauthenticated 401 responses.
+- Deployment status is `deployed_pending_manual_authenticated_verification`.
 
 ## Current
 
@@ -121,21 +125,20 @@ Status date: 2026-08-15
 - No historical backfill.
 - Production Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar datasets exist for 2026-08-13.
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
-- No private access-control mechanism selected.
-- No private access-control implementation.
+- Nginx Basic Auth protects the deployed personal prototype Dashboard static paths.
+- Formal multi-user authentication and authorization are not implemented.
 - Default-disabled private canonical EOD read/query API exists for completed sessions.
 - No historical market data ingestion or automated ingestion.
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
 - No analytics pipeline.
-- Dashboard V1 is implemented only as a local/private frontend; it is not deployed and has no formal authentication or public access boundary.
+- Dashboard V1 is deployed as a private authenticated static OCI release; manual authenticated browser verification is pending.
 - No formal authentication or authorization for private market-data routes.
 - No database.
-- No deployment pipeline.
-- No production application.
+- Static private Dashboard deployment pipeline exists for the personal prototype.
 - No API credentials stored in Git, documentation, frontend code, logs, or command arguments.
 - Project data root contains approved 2026-08-13 Instrument Master, identity, ticker resolver, and EOD Price Bar datasets.
 
 ## Next Proposed Step
 
-Have the user provision the private dashboard password interactively on OCI, then execute the reviewed deployment script, verify public placeholder isolation and authenticated Dashboard access, and document the production release.
+Have the user complete authenticated browser and visual verification of the deployed Dashboard, then record production acceptance and address any visual/runtime defects found.

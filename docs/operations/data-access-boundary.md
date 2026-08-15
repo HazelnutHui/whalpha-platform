@@ -6,7 +6,7 @@ This document records the operational access boundary for public placeholder con
 
 ## Status
 
-Accepted Operational Boundary — Access Control Not Implemented
+Accepted Operational Boundary — Personal Prototype Access Control Implemented For Static Dashboard
 
 This is an engineering boundary, not legal advice. Provider terms and permissions must be rechecked before public release or commercial use.
 
@@ -33,7 +33,7 @@ The demo must not imply live or real market state, must not expose credentials, 
 
 ## Private Provider-Backed Dashboard
 
-Market Dashboard V1 is implemented locally. API mode displays provider-backed derived analytics from private routes and must not be deployed publicly without the pre-deployment gate. Demo mode uses synthetic fixtures and is suitable for future data-free public demonstration only if it remains clearly labeled.
+Market Dashboard V1 is implemented locally and as a private static OCI release. API mode displays provider-backed derived analytics from private routes and must not be exposed publicly. Snapshot mode reads private derived JSON snapshots under `/private-data/` and is protected by Basic Auth on OCI. Demo mode uses synthetic fixtures and is suitable for future data-free public demonstration only if it remains clearly labeled.
 Snapshot mode packages provider-backed derived analytics as static JSON. `/dashboard/` and `/private-data/` must be protected together; public `/` remains data-free.
 
 
@@ -64,7 +64,7 @@ Provider credentials must remain outside Git and outside frontend bundles. `TIP_
 
 ## OCI Boundary
 
-OCI remains a lightweight public serving layer. It must not receive full raw market-history datasets or unrestricted provider-backed exports. Any provider-backed content deployed through OCI requires the pre-deployment gate below.
+OCI remains a lightweight serving layer. It must not receive full raw market-history datasets or unrestricted provider-backed exports. The deployed static Dashboard receives only minimal Dashboard-ready private JSON snapshots; no raw provider payload, canonical Parquet, or Massive credential is uploaded to OCI.
 
 ## Pre-Deployment Gate
 

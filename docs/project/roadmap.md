@@ -45,11 +45,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [ ] Rotation
 - [ ] Relationship monitor
 - [ ] Lightweight developments
-- [ ] First usable deployment
+- [x] First usable private static deployment
 
 ## Next Small Target
 
-Have the user provision the private dashboard password interactively on OCI, then execute the reviewed deployment script, verify public placeholder isolation and authenticated Dashboard access, and document the production release.
+Have the user complete authenticated browser and visual verification of the deployed Dashboard, then record production acceptance and address any visual/runtime defects found.
 
 ## Phase 2 — Intraday and Options
 

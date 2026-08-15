@@ -21,7 +21,7 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Initial Analytical Group basket definitions
 - Options data source
 - Database introduction threshold
-- Exact OCI deployment mechanism
+- Authenticated browser acceptance status for the first private OCI Dashboard release
 - Cloudflare proxy state
 - Cleanup of obsolete OCI port rules
 - OCI swap strategy
@@ -40,4 +40,4 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Close-to-close return calculation boundary after a second completed EOD session exists
 
 - Traditional Market-Cap Sector Heatmap source requirements: market cap, sector taxonomy, point-in-time classification, and licensing boundary
-- Exact execution timing for private Dashboard Basic Auth provisioning and first OCI deployment
+- Post-deployment visual/runtime defect list, if any

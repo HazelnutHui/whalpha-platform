@@ -6,7 +6,7 @@ This document records the future credential provisioning boundary for the privat
 
 ## Status
 
-Runbook only — not executed.
+Provisioned by the user outside Codex. Codex verified metadata only.
 
 ## V1 Credential Boundary
 
@@ -37,6 +37,8 @@ The target file for the reviewed Nginx template is:
 ```
 
 It should be root-owned and mode `640` or stricter, while remaining readable by the Nginx worker according to the final server group policy.
+
+As of the first OCI deployment, the file exists at the reviewed path with owner `root:www-data` and mode `640`. Codex did not read or output the stored hash and did not receive the password.
 
 ## Rotation
 

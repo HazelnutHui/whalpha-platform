@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Market Dashboard V1 is the first local React dashboard for the private provider-backed market summary APIs.
+Market Dashboard V1 is the first React dashboard for the private provider-backed market summary APIs.
 
 It helps answer whether the completed EOD session was broadly up or down, whether breadth confirmed the move, which liquidity-screened instruments moved the most, where liquidity was concentrated, and whether the displayed data has quality warnings.
 
@@ -10,7 +10,7 @@ It helps answer whether the completed EOD session was broadly up or down, whethe
 
 Implemented for local/private development only. It has been designed for the completed 2026-08-13 current session and 2026-08-12 previous session exposed by the default-disabled private APIs.
 
-This is not deployed to OCI and is not public real-data access control.
+The first static OCI release is deployed behind Basic Auth for the personal prototype. This is not public real-data authorization, and authenticated browser verification is still a manual user step.
 
 ## Data Modes
 `VITE_MARKET_DATA_MODE=snapshot` is now supported for the static OCI target. Snapshot mode reads authenticated static JSON from `/private-data/v1/` and displays `PRIVATE EOD SNAPSHOT`; it does not call the private FastAPI routes and does not fall back to demo data.
@@ -73,7 +73,8 @@ Provider-backed data and derived analytics must remain private unless formal acc
 
 ## Not Implemented
 
-- OCI deployment
+- Public real-data deployment
+- Frontend-originated authentication
 - authentication or authorization
 - public real-data display
 - market-cap heatmap

@@ -32,6 +32,8 @@ Confirmed:
 
 ## OCI
 
+The private static Dashboard release `2026-08-13T120220Z-987b5289a783` is deployed under the reviewed `/srv/whalpha` release layout. Public `/` remains the WH Alpha placeholder; private `/dashboard/` and `/private-data/` require Basic Auth. Do not record literal public IP addresses, SSH key material, password hashes, or credential contents here.
+
 Confirmed:
 
 - SSH alias: `whalpha-oci`
