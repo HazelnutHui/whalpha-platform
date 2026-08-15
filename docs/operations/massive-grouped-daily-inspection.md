@@ -6,7 +6,7 @@ This document records the first controlled one-request Massive Grouped Daily ins
 
 ## Status
 
-Grouped Daily access and payload structure verified; production publication blocked pending Instrument Master identity coverage.
+Grouped Daily access and payload structure verified. This inspection itself did not publish; later Instrument Master and Decimal volume work enabled the first canonical EOD publication.
 
 ## Execution Record
 
@@ -57,13 +57,13 @@ Observed counts from the executed request:
 
 ## Inspection Tool Note
 
-The first executed inspection used a strict integer parser for required integer-like fields. The live payload showed many numeric conversion failures under that strict parser. After the authorized request completed, the local inspector was tightened to accept finite integral JSON numeric values for volume and trade count while still rejecting fractional values. No second live request was performed.
+The first executed inspection used a strict integer parser for aggregate volume. Later contract review accepted aggregate volume as Decimal because Massive defines `v` as a number. Trade count and timestamp remain integer-semantic.
 
 ## Identity Resolution Gate
 
 No production Instrument Master or point-in-time identity-resolution dataset exists yet. The inspection therefore did not legally resolve provider tickers to canonical `instrument_id` values and did not construct publishable canonical bars.
 
-The successful access and payload-structure result is useful, but it is not enough to publish EOD bars. Point-in-time Instrument Master coverage now exists. Later publication attempts using the completed resolver passed identity coverage after parser/order fixes, but publication remains blocked by required numeric-field semantics.
+The successful access and payload-structure result is useful, but it is not enough to publish EOD bars. Point-in-time Instrument Master coverage now exists. Later publication using the completed resolver and Decimal aggregate volume passed quality gates and published the first canonical EOD Price Bar session.
 
 ## Publish Gate
 

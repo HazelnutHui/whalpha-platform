@@ -34,7 +34,7 @@ class EodPriceBarV1(BaseModel):
     high: Decimal
     low: Decimal
     close: Decimal
-    volume: StrictInt
+    volume: Decimal
     vwap: Decimal | None = None
     trade_count: StrictInt | None = None
     notional: Decimal
@@ -66,6 +66,7 @@ class EodPriceBarV1(BaseModel):
         "high",
         "low",
         "close",
+        "volume",
         "vwap",
         "notional",
         "split_adjustment_factor",
@@ -85,6 +86,7 @@ class EodPriceBarV1(BaseModel):
         "high",
         "low",
         "close",
+        "volume",
         "vwap",
         "notional",
         "split_adjustment_factor",
@@ -125,7 +127,7 @@ class EodPriceBarV1(BaseModel):
 
     @field_validator("volume")
     @classmethod
-    def validate_volume(cls, value: int) -> int:
+    def validate_volume(cls, value: Decimal) -> Decimal:
         if value < 0:
             raise ValueError("volume must be greater than or equal to zero")
         return value

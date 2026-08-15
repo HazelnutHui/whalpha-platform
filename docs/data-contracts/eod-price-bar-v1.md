@@ -69,6 +69,8 @@ Missing VWAP or trade count remains null.
 - A halt or no-trade session must not be represented as OHLC=0.
 - Raw OHLC is never replaced by adjusted OHLC.
 - Missing values are not silently converted to zero.
+- Volume is an exact non-negative Decimal because provider aggregate volume is a numeric field and may be fractional.
+- Direct binary-float input to the canonical model is rejected; provider adapters must convert JSON numbers at the mapping boundary.
 - Volume adjustment semantics must be explicit.
 - V1 retains provider raw volume and allows normalized comparable volume separately.
 
@@ -95,7 +97,7 @@ Provider bar records map into this contract. Analytics should consume canonical 
 
 ## Storage Direction
 
-Parquet-first. EOD Price Bar V1 now has an explicit PyArrow schema and a bounded one-session partition layout documented in [EOD Parquet Persistence](../architecture/eod-parquet-persistence.md). Current implementation writes mocked-fixture test partitions under pytest temporary directories. Real 2026-08-13 Grouped Daily publication attempts remain blocked by quality gates, so no production EOD Price Bar partition exists.
+Parquet-first. EOD Price Bar V1 now has an explicit PyArrow schema and a bounded one-session partition layout documented in [EOD Parquet Persistence](../architecture/eod-parquet-persistence.md). Current implementation writes deterministic Parquet partitions and has published the first production canonical EOD Price Bar session for 2026-08-13 under the approved project data root.
 
 ## Deferred Fields
 
@@ -107,8 +109,8 @@ Parquet-first. EOD Price Bar V1 now has an explicit PyArrow schema and a bounded
 
 - intraday data
 - total-return index construction
-- production Parquet publishing
-- provider adapter implementation
+- historical backfill
+- Dashboard/API serving of persisted EOD bars
 
 ## Python Implementation
 
@@ -118,7 +120,7 @@ Import path:
 from tip_api.contracts.market_data.v1 import EodPriceBarV1
 ```
 
-The implementation is a provider-neutral Pydantic v2 model. It is immutable, forbids extra fields, validates Decimal price and adjustment values without converting them to binary floats, requires timezone-aware `ingested_at`, normalizes `ingested_at` to UTC, rejects datetime input for `session_date`, and normalizes `quality_flags` to deduplicated lowercase snake_case while preserving first occurrence order.
+The implementation is a provider-neutral Pydantic v2 model. It is immutable, forbids extra fields, validates Decimal price, volume, and adjustment values without converting them to binary floats, requires timezone-aware `ingested_at`, normalizes `ingested_at` to UTC, rejects datetime input for `session_date`, and normalizes `quality_flags` to deduplicated lowercase snake_case while preserving first occurrence order.
 
 Validation tests cover valid bars, nullable fields, zero volume, revision bounds, non-negative volume/trade count/notional, positive OHLC and adjustment values, OHLC consistency, source and currency validation, naive datetime rejection, UTC normalization, NaN/Infinity rejection, float rejection for Decimal fields, quality flag normalization, frozen behavior, extra-field rejection, Decimal JSON serialization, `session_date` strictness, and the fact that the model does not calculate `notional` or `adjusted_close`.
 
@@ -131,6 +133,6 @@ Validation tests cover valid bars, nullable fields, zero volume, revision bounds
 - Manifest, deterministic content fingerprint, idempotency, conflict rejection, and corruption checks implemented.
 - No corporate-action adjustment calculation implemented.
 - Real Grouped Daily ingestion entrypoint implemented with strict quality gates.
-- Latest real 2026-08-13 publication attempt passed identity coverage but failed numeric conversion and canonical bar count gates.
-- No production EOD Price Bar `/data` partition exists.
+- Real 2026-08-13 Grouped Daily ingestion passed V1 quality gates after Decimal volume correction.
+- First production EOD Price Bar `/data` partition exists for 2026-08-13 with 9,901 canonical records.
 - No historical backfill, scheduler, analytics, or Dashboard data API implemented.

@@ -31,6 +31,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Point-in-time Massive Instrument Master snapshot ingestion path
 - [x] Instrument Master snapshot quality-gate remediation and publication
 - [x] Grouped Daily parser, identity-ordering, and duplicate-isolation remediation
+- [x] Decimal aggregate-volume correction and first canonical EOD session publication
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -44,7 +45,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Resolve the Massive Grouped Daily required numeric-field semantics with field-level diagnostics and an explicit contract decision before any further live Grouped Daily request or EOD bar publication attempt.
+Design and implement the first canonical EOD read/query service and private FastAPI response contracts for the completed 2026-08-13 session, without frontend changes or OCI deployment.
 
 ## Phase 2 — Intraday and Options
 

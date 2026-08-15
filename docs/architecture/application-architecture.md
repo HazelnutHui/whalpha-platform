@@ -145,7 +145,7 @@ Accepted logical data-contract boundary:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. EOD Price Bar V1 has a mocked-fixture one-session ingestion service and explicit Parquet repository. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. No production EOD Price Bar publish or database table exists yet. The completed production data root currently contains Instrument Master, provider identity, and provider ticker resolver snapshots only.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. EOD Price Bar V1 has a one-session ingestion service and explicit Parquet repository. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. The completed production data root currently contains the 2026-08-13 Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar datasets. No database table, read/query API, analytics workflow, or Dashboard data flow exists yet.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 

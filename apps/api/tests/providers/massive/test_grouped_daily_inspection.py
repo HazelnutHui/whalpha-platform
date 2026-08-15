@@ -158,10 +158,10 @@ def test_integral_float_volume_and_trade_count_are_accepted() -> None:
     assert result.valid_ohlcv_count == 1
 
 
-def test_fractional_volume_is_rejected() -> None:
+def test_fractional_volume_is_accepted() -> None:
     result = inspect_grouped_daily_payload(payload(record(v=1000.5)), endpoint=ENDPOINT, session_date=SESSION)
-    assert result.numeric_conversion_failure_count == 1
-    assert result.invalid_record_count == 1
+    assert result.numeric_conversion_failure_count == 0
+    assert result.valid_ohlcv_count == 1
 
 
 def test_bad_numeric_conversion() -> None:

@@ -8,7 +8,7 @@ This document defines the accepted V1 logical contract boundary for normalized E
 
 Partially Implemented
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous provider boundary can return these canonical contracts, and a mocked-only Massive adapter skeleton maps local fixture responses into them. EOD Price Bar V1 now has an explicit PyArrow Parquet schema and mocked-fixture one-session repository tests. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. No SQL tables, real API requests, production `/data` writes, historical ingestion jobs, or production market-data files exist for these contracts yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous provider boundary can return these canonical contracts, and a mocked-only Massive adapter skeleton maps local fixture responses into them. EOD Price Bar V1 now has an explicit PyArrow Parquet schema and mocked-fixture one-session repository tests. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. A first production canonical EOD Price Bar Parquet partition exists for 2026-08-13 under the approved project data root. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only; no SQL tables, historical ingestion jobs, analytics, or Dashboard data APIs exist yet.
 
 ## Shared Contract Principles
 
@@ -50,7 +50,7 @@ Provider corrections create traceable revisions. Latest-record flags may identif
 
 ## Quality Semantics
 
-Contracts carry explicit quality status, quality flags, review status, or quality notes as appropriate. Missing or uncertain values must be represented directly rather than converted into misleading numeric defaults.
+Contracts carry explicit quality status, quality flags, review status, or quality notes as appropriate. Missing or uncertain values must be represented directly rather than converted into misleading numeric defaults. EOD aggregate volume is an exact non-negative Decimal; trade count and provider timestamps remain integer-semantic.
 
 ## Storage Direction
 

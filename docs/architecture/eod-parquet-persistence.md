@@ -6,9 +6,7 @@ This document records the implemented V1 physical persistence boundary for canon
 
 ## Status
 
-Implemented for mocked one-session EOD Price Bar V1 fixtures only.
-
-A one-request Massive Grouped Daily inspection and later publication attempts have been performed for 2026-08-13. The latest corrected attempt passed identity coverage but failed numeric conversion and canonical bar count gates, so no EOD Price Bar partition was published. No historical backfill, scheduler, analytics, database, or Dashboard data API is implemented.
+Implemented for EOD Price Bar V1. The first production canonical EOD session for 2026-08-13 has been published after Decimal aggregate volume correction. No historical backfill, scheduler, analytics, database, or Dashboard data API is implemented.
 
 ## Implemented Boundary
 
@@ -36,7 +34,7 @@ V1 layout:
 
 The physical `schema_version=1` partition corresponds to logical schema version `1.0`.
 
-Tests use pytest `tmp_path` roots. Future production roots must be explicitly reviewed before writing to `/data/trading-intelligence-platform`.
+Tests use pytest `tmp_path` roots. The approved production root is `/data/trading-intelligence-platform`; the first completed EOD Price Bar partition is for session_date=2026-08-13.
 
 ## Arrow Schema
 
@@ -45,7 +43,7 @@ The repository uses an explicit PyArrow schema:
 - `instrument_id`: string UUID representation
 - `session_date`: `date32`
 - OHLC, VWAP, notional, adjustment factors, and adjusted close: `decimal128(38, 10)`
-- `volume`: int64
+- `volume`: `decimal128(38, 10)`
 - `trade_count`: nullable int64
 - `ingested_at`: UTC timestamp with microsecond precision
 - `quality_flags`: deterministic list of strings
@@ -118,11 +116,10 @@ The service rejects empty provider results, bars for the wrong session date, dup
 
 A separate Instrument Master snapshot repository now exists for `instrument-master` and `provider-instrument-identity` datasets with a logical snapshot marker. The first live Massive All Tickers run for 2026-08-13 did not publish because quality gates failed.
 
-The refined repository now also publishes `provider-ticker-resolver` as part of the same logical snapshot. The corrected 2026-08-13 Massive snapshot is completed. Subsequent Grouped Daily publication attempts using that resolver did not publish EOD bars. The latest corrected run isolated low-ratio duplicate conflicts and passed identity coverage, but required numeric conversion failures and canonical bar count gates still failed.
+The refined repository now also publishes `provider-ticker-resolver` as part of the same logical snapshot. The corrected 2026-08-13 Massive snapshot is completed. The subsequent Decimal-volume-corrected Grouped Daily run published 9,901 canonical EOD bars for 2026-08-13 and linked the completed identity snapshot fingerprint in the manifest.
 
 - Massive API calls
 - credential loading
-- production `/data` writes
 - raw provider payload persistence
 - historical backfill
 - scheduler, cron, or systemd

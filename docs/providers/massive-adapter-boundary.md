@@ -25,7 +25,7 @@ Implemented:
 Not implemented:
 
 - storing a real API key in Git
-- successful real EOD bar publication
+- historical EOD backfill
 - production EOD serving workflow
 - scheduling
 - rate limiter
@@ -115,7 +115,7 @@ A real rate limiter is not implemented. The live smoke test is limited to one re
 
 ## Real-Network Activation Prerequisites
 
-The 2026-08-13 Grouped Daily inspection verified access and payload shape without publishing. After the point-in-time resolver was published, one authorized Grouped Daily publication attempt ran and failed quality gates. Production EOD bar publication remains blocked pending required numeric-field interpretation. Duplicate-bar isolation and identity-ordering fixes are implemented; the latest corrected run passed identity coverage.
+The 2026-08-13 Grouped Daily inspection verified access and payload shape without publishing. After the point-in-time resolver was published and Decimal aggregate volume was accepted, one authorized Grouped Daily ingestion for 2026-08-13 passed quality gates and published canonical EOD bars. Duplicate-bar isolation and identity-ordering fixes remain in force.
 
 Before any additional Massive request:
 
@@ -133,7 +133,7 @@ A bounded All Tickers pagination path now exists for point-in-time Instrument Ma
 
 - storing, printing, logging, or committing a real API key
 - making ingestion, backfill, analytics, or bulk data API calls
-- successful real EOD bar publication
+- historical EOD backfill
 - writing database records
 - implementing scheduling, retries, or full backfill
 - implementing corporate actions

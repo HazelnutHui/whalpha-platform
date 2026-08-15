@@ -144,13 +144,13 @@ def test_required_none_rejected_but_optional_none_allowed():
 
 @pytest.mark.parametrize("value,expected", [(10, 10), (10.0, 10), (Decimal("10.0"), 10), ("10", 10), (0, 0)])
 def test_integer_semantic_policy_accepts_integral_values(value, expected):
-    assert parse_massive_integral(value, field_name="v", required=True, allow_negative=False) == expected
+    assert parse_massive_integral(value, field_name="n", required=True, allow_negative=False) == expected
 
 
 @pytest.mark.parametrize("value", [True, 10.5, Decimal("10.5"), "10.5", -1, float("inf"), "bad"])
 def test_integer_semantic_policy_rejects_fractional_bool_negative_and_malformed(value):
     with pytest.raises(_NumericFailure):
-        parse_massive_integral(value, field_name="v", required=True, allow_negative=False)
+        parse_massive_integral(value, field_name="n", required=True, allow_negative=False)
 
 
 def test_completed_identity_snapshot_verification(tmp_path):
@@ -175,6 +175,25 @@ def test_identity_classification_before_numeric_validation(tmp_path):
     assert result.identity_eligible_denominator == 4
 
 
+def test_fractional_volume_is_numeric_valid_and_tracked(tmp_path):
+    snapshot = publish_identity_snapshot(tmp_path)
+    result = process_grouped_daily_payload(
+        {"results": [bar("TESTA", v=1000.5)]},
+        identity=snapshot,
+        session_date=AS_OF,
+        endpoint="x",
+        data_root=tmp_path,
+        ingested_at=INGESTED_AT,
+        publish=False,
+    )
+
+    assert result.volume_numeric_failure_count == 0
+    assert result.fractional_volume_record_count == 1
+    assert result.numeric_valid_count == 1
+    assert result.canonical_bar_count == 1
+    assert "fractional_volume_records_present" in result.quality_warnings
+
+
 def test_numeric_reconciliation_and_optional_fields(tmp_path):
     snapshot = publish_identity_snapshot(tmp_path)
     payload = {"results": [bar("TESTA", vw=None, n=None, v=0), bar("TESTB")]}
@@ -188,6 +207,39 @@ def test_numeric_reconciliation_and_optional_fields(tmp_path):
     assert result.count_reconciliation_passed is True
 
 
+def test_field_level_numeric_failure_metrics(tmp_path):
+    snapshot = publish_identity_snapshot(tmp_path, resolved_count=8)
+    records = [
+        bar("T00000", o="bad"),
+        bar("T00001", h="bad"),
+        bar("T00002", l="bad"),
+        bar("T00003", c="bad"),
+        bar("T00004", v="bad"),
+        bar("T00005", vw="bad"),
+        bar("T00006", n=1.5),
+        bar("T00007", t=1.5),
+    ]
+    result = process_grouped_daily_payload(
+        {"results": records},
+        identity=snapshot,
+        session_date=AS_OF,
+        endpoint="x",
+        data_root=tmp_path,
+        ingested_at=INGESTED_AT,
+        publish=False,
+    )
+
+    assert result.open_numeric_failure_count == 1
+    assert result.high_numeric_failure_count == 1
+    assert result.low_numeric_failure_count == 1
+    assert result.close_numeric_failure_count == 1
+    assert result.volume_numeric_failure_count == 1
+    assert result.vwap_numeric_failure_count == 1
+    assert result.trade_count_numeric_failure_count == 1
+    assert result.timestamp_numeric_failure_count == 1
+    assert result.numeric_conversion_failure_count == 8
+
+
 def test_exact_duplicates_are_deduplicated(tmp_path):
     snapshot = publish_identity_snapshot(tmp_path)
     result = process_grouped_daily_payload({"results": [bar("TESTA"), bar("TESTA"), bar("TESTB")]}, identity=snapshot, session_date=AS_OF, endpoint="x", data_root=tmp_path, ingested_at=INGESTED_AT, publish=False)
@@ -196,6 +248,24 @@ def test_exact_duplicates_are_deduplicated(tmp_path):
     assert result.numeric_classified_count == 2
     assert result.canonical_bar_count == 2
     assert "exact_duplicates_deduplicated" in result.quality_warnings
+
+
+def test_duplicate_numeric_equivalence_uses_decimal_value_semantics(tmp_path):
+    snapshot = publish_identity_snapshot(tmp_path)
+    result = process_grouped_daily_payload(
+        {"results": [bar("TESTA", v=1000), bar("TESTA", v=1000.0), bar("TESTA", v=Decimal("1000.00")), bar("TESTB")]},
+        identity=snapshot,
+        session_date=AS_OF,
+        endpoint="x",
+        data_root=tmp_path,
+        ingested_at=INGESTED_AT,
+        publish=False,
+    )
+
+    assert result.exact_duplicate_ticker_count == 1
+    assert result.exact_duplicate_record_count == 2
+    assert result.conflicting_duplicate_record_count == 0
+    assert result.canonical_bar_count == 2
 
 
 def test_conflicting_duplicates_are_isolated_below_gate(tmp_path):

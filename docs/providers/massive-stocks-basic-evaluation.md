@@ -174,7 +174,7 @@ A protected credential file was provisioned outside Git by the user. One read-on
 
 ## Implementation Status
 
-A one-request Grouped Daily inspection for 2026-08-13 has verified access and payload structure without persisting raw data or canonical records. Production publication is blocked pending Instrument Master identity coverage.
+A one-request Grouped Daily inspection for 2026-08-13 verified access and payload structure without persisting raw data or canonical records. After Instrument Master snapshot publication and Decimal volume correction, the authorized 2026-08-13 Grouped Daily ingestion published canonical EOD bars.
 
 - API key configured outside Git in the protected workstation credential file
 - mocked adapter skeleton implemented

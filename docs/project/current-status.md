@@ -68,13 +68,13 @@ Status date: 2026-08-14
 - Mocked-fixture ingestion and Parquet persistence tests added.
 - One read-only Massive Grouped Daily inspection completed for 2026-08-13.
 - Grouped Daily access and payload structure verified.
-- Production publication blocked pending Instrument Master identity coverage.
+- The initial Grouped Daily inspection identity blocker was resolved by the completed 2026-08-13 Instrument Master and ticker resolver snapshots.
 - Provider Instrument Identity V1 Python contract implemented.
 - Stable provider-identifier UUIDv5 identity resolution implemented.
 - Massive All Tickers point-in-time snapshot ingestion path implemented with bounded pagination and rate-aware requests.
 - Corrected Massive All Tickers snapshot completed and published for 2026-08-13 after refining expected exclusions, eligible coverage, and ticker ambiguity gates.
-- Grouped Daily parser, identity-ordering, and duplicate-isolation fixes implemented and tested.
-- The latest authorized 2026-08-13 Grouped Daily request passed identity coverage but failed numeric conversion and canonical bar count gates without publishing EOD bars.
+- Grouped Daily parser, identity-ordering, duplicate-isolation, and Decimal aggregate-volume fixes implemented and tested.
+- First canonical EOD Price Bar session published for 2026-08-13 with 9,901 records after all V1 quality gates passed.
 
 ## Current
 
@@ -84,7 +84,7 @@ Status date: 2026-08-14
 - Frontend scaffold exists under `apps/web`.
 - Python virtualenv created at the project root and ignored by Git.
 - Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `300 passed`.
+- Backend tests verified: `315 passed`.
 - Health endpoint verified locally on `127.0.0.1:8000`.
 - Node.js 24 LTS and npm are installed and verified.
 - Frontend dependencies are installed and locked by npm.
@@ -100,16 +100,16 @@ Status date: 2026-08-14
 - Massive mocked adapter skeleton exists with injected fake transport tests.
 - Massive credential exists outside Git in the protected workstation credential file.
 - Massive Stocks reference authentication and entitlement have been smoke-test verified once.
-- No ingestion API calls beyond the one reference smoke test.
-- No Grouped Daily production download beyond the one in-memory inspection request.
-- No production `/data` writes for EOD bars; the latest 2026-08-13 Grouped Daily publication attempt was blocked by required numeric-field semantics.
+- Approved Massive live operations include the reference smoke test, Grouped Daily inspection, Instrument Master snapshot ingestion, and one canonical EOD session publication for 2026-08-13.
+- One Grouped Daily production publication request completed for 2026-08-13 and wrote canonical EOD bars after quality gates passed.
+- Production EOD Price Bar partition exists for 2026-08-13 under `/data/trading-intelligence-platform`.
 - Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13 under `/data/trading-intelligence-platform`.
 - No historical backfill.
-- Production Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13; no production EOD Price Bar dataset exists.
+- Production Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar datasets exist for 2026-08-13.
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
 - No private access-control mechanism selected.
 - No private access-control implementation.
-- No market data ingestion.
+- No historical market data ingestion or automated ingestion.
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
 - No analytics pipeline.
@@ -118,8 +118,8 @@ Status date: 2026-08-14
 - No deployment pipeline.
 - No production application.
 - No API credentials stored in Git, documentation, frontend code, logs, or command arguments.
-- Project data root exists but contains no project datasets yet.
+- Project data root contains approved 2026-08-13 Instrument Master, identity, ticker resolver, and EOD Price Bar datasets.
 
 ## Next Proposed Step
 
-Resolve the Massive Grouped Daily required numeric-field semantics with field-level diagnostics and an explicit contract decision before any further live Grouped Daily request or EOD bar publication attempt.
+Design and implement the first canonical EOD read/query service and private FastAPI response contracts for the completed 2026-08-13 session, without frontend changes or OCI deployment.

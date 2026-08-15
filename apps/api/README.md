@@ -40,7 +40,7 @@ Implemented contracts:
 - Instrument Master V1
 - EOD Price Bar V1
 
-These are validation models. EOD Price Bar V1 now has a bounded mocked-fixture Parquet persistence and one-session ingestion slice. Real 2026-08-13 Grouped Daily ingestion attempts have run under explicit authorization, but publication gates still block EOD bar publication because required numeric-field semantics need resolution. No production EOD bar partition, analytics, or new API endpoints are implemented.
+These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. No analytics or new API endpoints are implemented.
 
 Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
 
@@ -61,7 +61,7 @@ from tip_api.providers.market_data import (
 )
 ```
 
-The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, a Massive mocked adapter skeleton, a secure credential-file loader, and a minimal HTTPS transport. A bounded Massive All Tickers snapshot has published the 2026-08-13 Instrument Master and resolver datasets. The corrected real Grouped Daily publication attempt did not publish because required numeric conversion failures remain above the V1 gate. No Dashboard API endpoint or production EOD bar serving workflow exists.
+The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, a Massive mocked adapter skeleton, a secure credential-file loader, and a minimal HTTPS transport. A bounded Massive All Tickers snapshot has published the 2026-08-13 Instrument Master and resolver datasets. The corrected real Grouped Daily ingestion published the 2026-08-13 canonical EOD bars. No Dashboard API endpoint or production EOD bar serving workflow exists.
 
 
 ## Massive Mocked Adapter Boundary
@@ -72,7 +72,7 @@ The Massive package is available from:
 from tip_api.providers.massive import MassiveMarketDataProvider, MassiveProviderConfig
 ```
 
-It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test, the one-request Grouped Daily inspection for 2026-08-13, the bounded All Tickers snapshot publication for 2026-08-13, and one Grouped Daily publication attempt for 2026-08-13. Grouped Daily publication attempts failed quality gates and did not publish. The Massive adapter must not be used for backfill, dashboard data, or additional live requests without a separate authorization.
+It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test, the one-request Grouped Daily inspection for 2026-08-13, the bounded All Tickers snapshot publication for 2026-08-13, and the one-request Grouped Daily publication for 2026-08-13 that published canonical EOD bars. The Massive adapter must not be used for backfill, dashboard data, or additional live requests without a separate authorization.
 
 ## Local Setup
 
@@ -80,9 +80,8 @@ Use the repository-level instructions in [Local Development](../../docs/developm
 
 ## Current Non-Goals
 
-- No published real EOD bar ingestion
 - No Dashboard API over real EOD bars
-- No production `/data` writes from failed EOD quality-gated runs
+- No public or Dashboard serving of production `/data` EOD bars
 - No database or ORM
 - No authentication
 - No order execution

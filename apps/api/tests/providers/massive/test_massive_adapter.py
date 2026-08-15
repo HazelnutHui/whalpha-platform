@@ -239,7 +239,7 @@ def test_grouped_daily_mapping_success_uses_adjusted_false() -> None:
     assert bar.high == Decimal("11.25")
     assert bar.low == Decimal("9.95")
     assert bar.close == Decimal("10.75")
-    assert bar.volume == 12345
+    assert bar.volume == Decimal(12345)
     assert bar.vwap == Decimal("10.55")
     assert bar.trade_count == 321
     assert bar.notional == Decimal("0")
@@ -285,6 +285,49 @@ def test_malformed_ohlc_and_missing_required_ohlc_raise_data_error() -> None:
     )
     with pytest.raises(ProviderDataError, match="decimal field"):
         adapter_missing.get_eod_bars(EodBarQuery(instrument_ids=(AAA_ID,), start_date=AS_OF, end_date=AS_OF))
+
+
+def test_grouped_daily_fractional_volume_maps_to_decimal() -> None:
+    adapter, _ = provider(
+        {route("/v2/aggs/grouped/locale/us/market/stocks/2026-08-14", {"adjusted": False}): {"results": [grouped_bar(v=12345.5)]}},
+        instrument_tickers={AAA_ID: "AAA"},
+    )
+
+    bar = adapter.get_eod_bars(EodBarQuery(instrument_ids=(AAA_ID,), start_date=AS_OF, end_date=AS_OF))[0]
+
+    assert bar.volume == Decimal("12345.5")
+
+
+def test_custom_bars_fractional_volume_maps_to_decimal() -> None:
+    adapter, _ = provider(
+        {route("/v2/aggs/ticker/AAA/range/1/day/2026-08-14/2026-08-14", {"adjusted": False, "limit": 50000, "sort": "asc"}): {"results": [custom_bar(v=Decimal("456.125"))]}},
+        instrument_tickers={AAA_ID: "AAA"},
+        strategy="custom_bars",
+    )
+
+    bar = adapter.get_eod_bars(EodBarQuery(instrument_ids=(AAA_ID,), start_date=AS_OF, end_date=AS_OF))[0]
+
+    assert bar.volume == Decimal("456.125")
+
+
+def test_malformed_volume_raises_data_error() -> None:
+    adapter, _ = provider(
+        {route("/v2/aggs/grouped/locale/us/market/stocks/2026-08-14", {"adjusted": False}): {"results": [grouped_bar(v=True)]}},
+        instrument_tickers={AAA_ID: "AAA"},
+    )
+
+    with pytest.raises(ProviderDataError, match="decimal field"):
+        adapter.get_eod_bars(EodBarQuery(instrument_ids=(AAA_ID,), start_date=AS_OF, end_date=AS_OF))
+
+
+def test_fractional_trade_count_is_rejected() -> None:
+    adapter, _ = provider(
+        {route("/v2/aggs/grouped/locale/us/market/stocks/2026-08-14", {"adjusted": False}): {"results": [grouped_bar(n=10.5)]}},
+        instrument_tickers={AAA_ID: "AAA"},
+    )
+
+    with pytest.raises(ProviderDataError, match="integer field"):
+        adapter.get_eod_bars(EodBarQuery(instrument_ids=(AAA_ID,), start_date=AS_OF, end_date=AS_OF))
 
 
 def test_null_optional_bar_values_remain_none_and_utc_ingested_at() -> None:

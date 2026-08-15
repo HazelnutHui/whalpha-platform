@@ -46,6 +46,7 @@ def make_bar(
     close: str = "10.25",
     vwap: str | None = "10.20",
     trade_count: int | None = 100,
+    volume: str = "1000",
     quality_flags: tuple[str, ...] = ("mock_fixture",),
 ) -> EodPriceBarV1:
     close_decimal = Decimal(close)
@@ -56,7 +57,7 @@ def make_bar(
         high=Decimal("10.50"),
         low=Decimal("9.75"),
         close=close_decimal,
-        volume=1000,
+        volume=Decimal(volume),
         vwap=Decimal(vwap) if vwap is not None else None,
         trade_count=trade_count,
         notional=Decimal("10250.00"),
@@ -105,6 +106,40 @@ def test_canonical_model_to_arrow_conversion_and_round_trip(tmp_path: Path) -> N
     assert rows[0]["open"] == Decimal("10.0000000000")
     assert rows[1]["vwap"] is None
     assert rows[1]["trade_count"] is None
+
+
+def test_fractional_volume_parquet_round_trip(tmp_path: Path) -> None:
+    table = records_to_table((make_bar(volume="1000.125"),))
+    path = tmp_path / "fractional-volume.parquet"
+    pq.write_table(table, path)
+    row = pq.ParquetFile(path).read().to_pylist()[0]
+
+    assert row["volume"] == Decimal("1000.1250000000")
+
+
+def test_large_volume_parquet_round_trip(tmp_path: Path) -> None:
+    table = records_to_table((make_bar(volume="123456789012345678.1234567890"),))
+    path = tmp_path / "large-volume.parquet"
+    pq.write_table(table, path)
+    row = pq.ParquetFile(path).read().to_pylist()[0]
+
+    assert row["volume"] == Decimal("123456789012345678.1234567890")
+
+
+def test_volume_decimal_scale_overflow_rejected(tmp_path: Path) -> None:
+    record = make_bar(volume="1000.12345678901")
+    with pytest.raises(EodPriceBarPersistenceError, match="scale"):
+        repository(tmp_path).publish_session((record,), session_date=SESSION, provider_id="mocked_provider")
+
+
+def test_volume_decimal_precision_overflow_rejected(tmp_path: Path) -> None:
+    record = make_bar(volume="12345678901234567890123456789.1234567890")
+    with pytest.raises(EodPriceBarPersistenceError, match="precision"):
+        repository(tmp_path).publish_session((record,), session_date=SESSION, provider_id="mocked_provider")
+
+
+def test_volume_fingerprint_normalizes_numeric_equivalence() -> None:
+    assert content_fingerprint((make_bar(volume="10"),)) == content_fingerprint((make_bar(volume="10.0"),))
 
 
 def test_quality_flags_deterministic_encoding() -> None:

@@ -66,7 +66,13 @@ def test_nullable_fields_can_be_none(field: str) -> None:
 def test_volume_zero_is_allowed() -> None:
     bar = EodPriceBarV1(**bar_payload(volume=0))
 
-    assert bar.volume == 0
+    assert bar.volume == Decimal(0)
+
+
+def test_fractional_decimal_volume_is_allowed() -> None:
+    bar = EodPriceBarV1(**bar_payload(volume=Decimal(1000.125)))
+
+    assert bar.volume == Decimal(1000.125)
 
 
 def test_revision_one_is_allowed() -> None:
@@ -173,9 +179,15 @@ def test_non_finite_decimal_is_rejected(value: Decimal) -> None:
         EodPriceBarV1(**bar_payload(close=value))
 
 
-def test_float_decimal_input_is_rejected() -> None:
+@pytest.mark.parametrize("field", ["close", "volume"])
+def test_float_decimal_input_is_rejected(field: str) -> None:
     with pytest.raises(ValidationError):
-        EodPriceBarV1(**bar_payload(close=104.125))
+        EodPriceBarV1(**bar_payload(**{field: 104.125}))
+
+
+def test_bool_volume_input_is_rejected() -> None:
+    with pytest.raises(ValidationError):
+        EodPriceBarV1(**bar_payload(volume=True))
 
 
 def test_quality_flags_are_normalized_and_deduplicated() -> None:
@@ -227,7 +239,7 @@ def test_model_does_not_compute_notional_or_adjusted_close() -> None:
     bar = EodPriceBarV1(
         **bar_payload(
             close=Decimal("104.125"),
-            volume=10,
+            volume=Decimal(10),
             notional=Decimal("1.23"),
             adjusted_close=Decimal("88.88"),
         )

@@ -5,9 +5,6 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Final credential rotation and service-injection mechanism beyond the protected local credential file
 - Exact private access-control mechanism before deploying provider-backed data
 - Rate limiter implementation
-- Grouped Daily required numeric field interpretation after the corrected 2026-08-13 publication gate
-- Field-level diagnostics for the remaining Grouped Daily numeric conversion failures
-- Whether canonical EOD volume must remain integer if provider aggregate volume is non-integral
 - Historical backfill strategy
 - Adjustment reconciliation
 - Identity resolution methodology
@@ -34,7 +31,7 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Source revision reconciliation policy
 - Issuer Master introduction threshold
 - Whether public contract identifiers remain UUID-based across persistence
-- Physical Decimal representation in Parquet
+- Physical Decimal representation in Parquet for future datasets beyond EOD Price Bar V1
 - Exact provider revision reconciliation behavior
 - Production session selection and exchange-calendar source
 - Raw provider payload retention policy

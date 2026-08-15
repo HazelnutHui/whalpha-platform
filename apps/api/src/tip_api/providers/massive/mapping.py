@@ -12,6 +12,7 @@ from pydantic import ValidationError
 from tip_api.contracts.common import QualityStatus
 from tip_api.contracts.market_data.v1 import EodPriceBarV1, InstrumentMasterV1, InstrumentStatus, InstrumentType
 from tip_api.providers.market_data import ProviderDataError
+from tip_api.providers.massive.numeric import InvalidMassiveNumericValue, MissingMassiveNumericValue, parse_massive_decimal, parse_massive_integral
 
 MASSIVE_PROVIDER_ID = "massive_stocks_basic"
 MASSIVE_UUID_NAMESPACE = uuid5(NAMESPACE_URL, "trading-intelligence-platform:massive-stocks-basic:v1")
@@ -126,7 +127,7 @@ def _map_bar_payload(
             high=_decimal(payload.get("h"), "high"),
             low=_decimal(payload.get("l"), "low"),
             close=close,
-            volume=_non_negative_int(payload.get("v"), "volume"),
+            volume=_non_negative_decimal(payload.get("v"), "volume"),
             vwap=_optional_decimal(payload.get("vw"), "vwap"),
             trade_count=_optional_non_negative_int(payload.get("n"), "trade_count"),
             notional=_optional_decimal(payload.get("notional"), "notional") or Decimal("0"),
@@ -220,24 +221,31 @@ def _optional_decimal(value: object, field_name: str) -> Decimal | None:
     return _decimal(value, field_name)
 
 
-def _non_negative_int(value: object, field_name: str) -> int:
-    if isinstance(value, bool) or value is None:
-        raise ProviderDataError(MASSIVE_PROVIDER_ID, f"Massive payload has invalid integer field: {field_name}")
-    if isinstance(value, int):
-        result = value
-    elif isinstance(value, str) and value.strip().isdigit():
-        result = int(value.strip())
-    else:
-        raise ProviderDataError(MASSIVE_PROVIDER_ID, f"Massive payload has invalid integer field: {field_name}")
+def _non_negative_decimal(value: object, field_name: str) -> Decimal:
+    try:
+        result = parse_massive_decimal(value, required=True)
+    except (MissingMassiveNumericValue, InvalidMassiveNumericValue) as exc:
+        raise ProviderDataError(MASSIVE_PROVIDER_ID, f"Massive payload has invalid decimal field: {field_name}") from exc
+    assert result is not None
     if result < 0:
-        raise ProviderDataError(MASSIVE_PROVIDER_ID, f"Massive payload has invalid integer field: {field_name}")
+        raise ProviderDataError(MASSIVE_PROVIDER_ID, f"Massive payload has invalid decimal field: {field_name}")
+    return result
+
+
+def _non_negative_int(value: object, field_name: str) -> int:
+    try:
+        result = parse_massive_integral(value, required=True, allow_negative=False)
+    except (MissingMassiveNumericValue, InvalidMassiveNumericValue) as exc:
+        raise ProviderDataError(MASSIVE_PROVIDER_ID, f"Massive payload has invalid integer field: {field_name}") from exc
+    assert result is not None
     return result
 
 
 def _optional_non_negative_int(value: object, field_name: str) -> int | None:
-    if value is None:
-        return None
-    return _non_negative_int(value, field_name)
+    try:
+        return parse_massive_integral(value, required=False, allow_negative=False)
+    except InvalidMassiveNumericValue as exc:
+        raise ProviderDataError(MASSIVE_PROVIDER_ID, f"Massive payload has invalid integer field: {field_name}") from exc
 
 
 def _source_record_id(request_id: str | None, ticker: object, timestamp: object) -> str | None:

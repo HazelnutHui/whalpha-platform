@@ -19,6 +19,7 @@ from tip_api.contracts.market_data.v1 import EodPriceBarV1
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.credential import MassiveCredentialFileError, load_massive_provider_config_from_file
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
+from tip_api.providers.massive.numeric import InvalidMassiveNumericValue, MissingMassiveNumericValue, parse_massive_decimal, parse_massive_integral
 from tip_api.providers.massive.transport import (
     MassiveHttpTransport,
     MassiveTransportDataError,
@@ -329,7 +330,7 @@ def _inspect_record(
     high_value = _required_decimal(record, "h", counters, "missing_high_count")
     low_value = _required_decimal(record, "l", counters, "missing_low_count")
     close_value = _required_decimal(record, "c", counters, "missing_close_count")
-    volume_value = _required_int(record, "v", counters, "missing_volume_count")
+    volume_value = _required_decimal(record, "v", counters, "missing_volume_count")
     vwap_value = _optional_decimal(record, "vw", counters, "missing_vwap_count")
     trade_count_value = _optional_int(record, "n", counters, "missing_trade_count")
     timestamp_value = _timestamp_matches_session(record.get("t"), session_date)

@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import sys
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from pathlib import Path
 from typing import Any, Literal, Mapping
 from uuid import UUID
@@ -32,6 +31,13 @@ from tip_api.persistence.parquet.instrument_master_snapshot import (
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.credential import MassiveCredentialFileError, load_massive_provider_config_from_file
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
+from tip_api.providers.massive.numeric import (
+    InvalidMassiveNumericValue,
+    MissingMassiveNumericValue,
+    decimal_signature,
+    parse_massive_decimal as _parse_massive_decimal,
+    parse_massive_integral as _parse_massive_integral,
+)
 from tip_api.providers.massive.transport import (
     MassiveHttpTransport,
     MassiveTransportDataError,
@@ -70,7 +76,7 @@ class NumericBar:
     high: Decimal
     low: Decimal
     close: Decimal
-    volume: int
+    volume: Decimal
     vwap: Decimal | None
     trade_count: int | None
     timestamp_session_date: date | None
@@ -114,6 +120,15 @@ class GroupedDailyIngestionResult:
     numeric_valid_count: int
     numeric_conversion_failure_count: int
     numeric_conversion_failure_ratio: float
+    open_numeric_failure_count: int
+    high_numeric_failure_count: int
+    low_numeric_failure_count: int
+    close_numeric_failure_count: int
+    volume_numeric_failure_count: int
+    vwap_numeric_failure_count: int
+    trade_count_numeric_failure_count: int
+    timestamp_numeric_failure_count: int
+    fractional_volume_record_count: int
     required_field_missing_count: int
     required_field_missing_ratio: float
     optional_vwap_missing_count: int
@@ -171,6 +186,15 @@ class GroupedDailyIngestionResult:
             ("numeric_valid_count", self.numeric_valid_count),
             ("numeric_conversion_failure_count", self.numeric_conversion_failure_count),
             ("numeric_conversion_failure_ratio", f"{self.numeric_conversion_failure_ratio:.6f}"),
+            ("open_numeric_failure_count", self.open_numeric_failure_count),
+            ("high_numeric_failure_count", self.high_numeric_failure_count),
+            ("low_numeric_failure_count", self.low_numeric_failure_count),
+            ("close_numeric_failure_count", self.close_numeric_failure_count),
+            ("volume_numeric_failure_count", self.volume_numeric_failure_count),
+            ("vwap_numeric_failure_count", self.vwap_numeric_failure_count),
+            ("trade_count_numeric_failure_count", self.trade_count_numeric_failure_count),
+            ("timestamp_numeric_failure_count", self.timestamp_numeric_failure_count),
+            ("fractional_volume_record_count", self.fractional_volume_record_count),
             ("required_field_missing_count", self.required_field_missing_count),
             ("required_field_missing_ratio", f"{self.required_field_missing_ratio:.6f}"),
             ("optional_vwap_missing_count", self.optional_vwap_missing_count),
@@ -382,6 +406,15 @@ def process_grouped_daily_payload(
         numeric_valid_count=counters.numeric_valid_count,
         numeric_conversion_failure_count=counters.numeric_conversion_failure_count,
         numeric_conversion_failure_ratio=counters.numeric_conversion_failure_ratio,
+        open_numeric_failure_count=counters.open_numeric_failure_count,
+        high_numeric_failure_count=counters.high_numeric_failure_count,
+        low_numeric_failure_count=counters.low_numeric_failure_count,
+        close_numeric_failure_count=counters.close_numeric_failure_count,
+        volume_numeric_failure_count=counters.volume_numeric_failure_count,
+        vwap_numeric_failure_count=counters.vwap_numeric_failure_count,
+        trade_count_numeric_failure_count=counters.trade_count_numeric_failure_count,
+        timestamp_numeric_failure_count=counters.timestamp_numeric_failure_count,
+        fractional_volume_record_count=counters.fractional_volume_record_count,
         required_field_missing_count=counters.required_field_missing_count,
         required_field_missing_ratio=counters.required_field_missing_ratio,
         optional_vwap_missing_count=counters.optional_vwap_missing_count,
@@ -422,6 +455,15 @@ class _Counters:
     numeric_classified_count: int = 0
     numeric_valid_count: int = 0
     numeric_conversion_failure_count: int = 0
+    open_numeric_failure_count: int = 0
+    high_numeric_failure_count: int = 0
+    low_numeric_failure_count: int = 0
+    close_numeric_failure_count: int = 0
+    volume_numeric_failure_count: int = 0
+    vwap_numeric_failure_count: int = 0
+    trade_count_numeric_failure_count: int = 0
+    timestamp_numeric_failure_count: int = 0
+    fractional_volume_record_count: int = 0
     required_field_missing_count: int = 0
     optional_vwap_missing_count: int = 0
     optional_trade_count_missing_count: int = 0
@@ -628,25 +670,30 @@ def _process_numeric_and_canonical(
 
 def _validate_numeric_bar(item: Mapping[str, object], *, counters: _Counters, session_date: date) -> NumericBar | None:
     counters.numeric_classified_count += 1
-    try:
-        open_ = parse_massive_decimal(item.get("o"), field_name="o", required=True)
-        high = parse_massive_decimal(item.get("h"), field_name="h", required=True)
-        low = parse_massive_decimal(item.get("l"), field_name="l", required=True)
-        close = parse_massive_decimal(item.get("c"), field_name="c", required=True)
-        volume = parse_massive_integral(item.get("v"), field_name="v", required=True, allow_negative=True)
-        timestamp_ms = parse_massive_integral(item.get("t"), field_name="t", required=True, allow_negative=False)
-    except _MissingRequired:
+    field_failures = 0
+    missing_required = False
+    open_, failed, missing = _parse_required_decimal_field(item.get("o"), "open_numeric_failure_count", counters)
+    field_failures += failed; missing_required = missing_required or missing
+    high, failed, missing = _parse_required_decimal_field(item.get("h"), "high_numeric_failure_count", counters)
+    field_failures += failed; missing_required = missing_required or missing
+    low, failed, missing = _parse_required_decimal_field(item.get("l"), "low_numeric_failure_count", counters)
+    field_failures += failed; missing_required = missing_required or missing
+    close, failed, missing = _parse_required_decimal_field(item.get("c"), "close_numeric_failure_count", counters)
+    field_failures += failed; missing_required = missing_required or missing
+    volume, failed, missing = _parse_required_decimal_field(item.get("v"), "volume_numeric_failure_count", counters)
+    field_failures += failed; missing_required = missing_required or missing
+    timestamp_ms, failed, missing = _parse_required_integral_field(item.get("t"), "timestamp_numeric_failure_count", counters)
+    field_failures += failed; missing_required = missing_required or missing
+    vwap, failed = _parse_optional_decimal_field(item.get("vw"), "vwap_numeric_failure_count", counters)
+    field_failures += failed
+    trade_count, failed = _parse_optional_integral_field(item.get("n"), "trade_count_numeric_failure_count", counters)
+    field_failures += failed
+    if missing_required:
         counters.required_field_missing_count += 1
-        return None
-    except _NumericFailure:
+    if field_failures:
         counters.numeric_conversion_failure_count += 1
         return None
-    try:
-        vwap = parse_massive_decimal(item.get("vw"), field_name="vw", required=False)
-        trade_count = parse_massive_integral(item.get("n"), field_name="n", required=False, allow_negative=False)
-    except _NumericFailure:
-        counters.numeric_conversion_failure_count += 1
-        return None
+    assert open_ is not None and high is not None and low is not None and close is not None and volume is not None and timestamp_ms is not None
     if item.get("vw") is None:
         counters.optional_vwap_missing_count += 1
     if item.get("n") is None:
@@ -654,6 +701,8 @@ def _validate_numeric_bar(item: Mapping[str, object], *, counters: _Counters, se
     if min(open_, high, low, close) <= 0:
         counters.nonpositive_price_count += 1
         return None
+    if volume != volume.to_integral_value():
+        counters.fractional_volume_record_count += 1
     if volume < 0:
         counters.negative_volume_count += 1
         return None
@@ -728,6 +777,8 @@ def _quality_warnings(c: _Counters) -> tuple[str, ...]:
         warnings.append("missing_optional_trade_count")
     if c.zero_volume_count:
         warnings.append("zero_volume_records_present")
+    if c.fractional_volume_record_count:
+        warnings.append("fractional_volume_records_present")
     if c.expected_exclusion_bar_count:
         warnings.append("expected_exclusions_present")
     if c.unresolved_eligible_bar_count:
@@ -751,56 +802,87 @@ def _ticker(value: object) -> str:
 
 
 def _bar_signature(item: Mapping[str, object]) -> tuple[object, ...]:
-    return tuple(item.get(key) for key in ("T", "ticker", "o", "h", "l", "c", "v", "vw", "n", "t"))
+    try:
+        ticker = _ticker(item.get("T") or item.get("ticker"))
+        return (
+            ticker,
+            decimal_signature(item.get("o"), required=True),
+            decimal_signature(item.get("h"), required=True),
+            decimal_signature(item.get("l"), required=True),
+            decimal_signature(item.get("c"), required=True),
+            decimal_signature(item.get("v"), required=True),
+            decimal_signature(item.get("vw"), required=False),
+            _parse_massive_integral(item.get("n"), required=False, allow_negative=False),
+            _parse_massive_integral(item.get("t"), required=True, allow_negative=False),
+        )
+    except (RuntimeError, MissingMassiveNumericValue, InvalidMassiveNumericValue):
+        return tuple(item.get(key) for key in ("T", "ticker", "o", "h", "l", "c", "v", "vw", "n", "t"))
 
 
-class _MissingRequired(Exception):
+class _MissingRequired(MissingMassiveNumericValue):
     pass
 
 
-class _NumericFailure(Exception):
+class _NumericFailure(InvalidMassiveNumericValue):
     pass
 
 
 def parse_massive_decimal(value: object, *, field_name: str, required: bool) -> Decimal | None:
     del field_name
-    if value is None:
-        if required:
-            raise _MissingRequired()
-        return None
-    if isinstance(value, bool):
-        raise _NumericFailure()
-    if isinstance(value, float) and not math.isfinite(value):
-        raise _NumericFailure()
-    if isinstance(value, Decimal):
-        decimal_value = value
-    elif isinstance(value, int | float):
-        decimal_value = Decimal(str(value))
-    elif isinstance(value, str):
-        stripped = value.strip()
-        if not stripped:
-            raise _NumericFailure()
-        try:
-            decimal_value = Decimal(stripped)
-        except InvalidOperation as exc:
-            raise _NumericFailure() from exc
-    else:
-        raise _NumericFailure()
-    if not decimal_value.is_finite():
-        raise _NumericFailure()
-    return decimal_value
+    try:
+        return _parse_massive_decimal(value, required=required)
+    except MissingMassiveNumericValue as exc:
+        raise _MissingRequired() from exc
+    except InvalidMassiveNumericValue as exc:
+        raise _NumericFailure() from exc
 
 
 def parse_massive_integral(value: object, *, field_name: str, required: bool, allow_negative: bool) -> int | None:
-    decimal_value = parse_massive_decimal(value, field_name=field_name, required=required)
-    if decimal_value is None:
-        return None
-    if decimal_value != decimal_value.to_integral_value():
-        raise _NumericFailure()
-    integer_value = int(decimal_value)
-    if integer_value < 0 and not allow_negative:
-        raise _NumericFailure()
-    return integer_value
+    del field_name
+    try:
+        return _parse_massive_integral(value, required=required, allow_negative=allow_negative)
+    except MissingMassiveNumericValue as exc:
+        raise _MissingRequired() from exc
+    except InvalidMassiveNumericValue as exc:
+        raise _NumericFailure() from exc
+
+
+def _parse_required_decimal_field(value: object, counter_name: str, counters: _Counters) -> tuple[Decimal | None, int, bool]:
+    try:
+        return _parse_massive_decimal(value, required=True), 0, False
+    except MissingMassiveNumericValue:
+        setattr(counters, counter_name, getattr(counters, counter_name) + 1)
+        return None, 1, True
+    except InvalidMassiveNumericValue:
+        setattr(counters, counter_name, getattr(counters, counter_name) + 1)
+        return None, 1, False
+
+
+def _parse_optional_decimal_field(value: object, counter_name: str, counters: _Counters) -> tuple[Decimal | None, int]:
+    try:
+        return _parse_massive_decimal(value, required=False), 0
+    except InvalidMassiveNumericValue:
+        setattr(counters, counter_name, getattr(counters, counter_name) + 1)
+        return None, 1
+
+
+def _parse_required_integral_field(value: object, counter_name: str, counters: _Counters) -> tuple[int | None, int, bool]:
+    try:
+        return _parse_massive_integral(value, required=True, allow_negative=False), 0, False
+    except MissingMassiveNumericValue:
+        setattr(counters, counter_name, getattr(counters, counter_name) + 1)
+        return None, 1, True
+    except InvalidMassiveNumericValue:
+        setattr(counters, counter_name, getattr(counters, counter_name) + 1)
+        return None, 1, False
+
+
+def _parse_optional_integral_field(value: object, counter_name: str, counters: _Counters) -> tuple[int | None, int]:
+    try:
+        return _parse_massive_integral(value, required=False, allow_negative=False), 0
+    except InvalidMassiveNumericValue:
+        setattr(counters, counter_name, getattr(counters, counter_name) + 1)
+        return None, 1
 
 
 def _session_date_from_timestamp_ms(timestamp_ms: int) -> date | None:

@@ -6,7 +6,7 @@ This runbook records the controlled Massive Grouped Daily canonical EOD ingestio
 
 ## Status
 
-Access verified; parser, identity-ordering, and duplicate-isolation fixes tested; publication still blocked by V1 numeric quality gates. No EOD Price Bar partition was published.
+Published. Decimal volume correction, identity-ordering, numeric validation, duplicate isolation, and V1 quality gates passed for the authorized 2026-08-13 run.
 
 ## Execution Record
 
@@ -20,9 +20,9 @@ Access verified; parser, identity-ordering, and duplicate-isolation fixes tested
 - Adjustment parameter: `adjusted=false`
 - Credential transport: Authorization bearer header through the protected loader and transport boundary
 - Raw response persistence: none
-- Canonical record persistence: none
-- EOD Parquet publication: none
-- `/data` writes: none for EOD bars
+- Canonical record persistence: 9,901 `EodPriceBarV1` records
+- EOD Parquet publication: completed
+- `/data` writes: one approved EOD Price Bar partition
 
 ## Root Cause Audit
 
@@ -66,9 +66,9 @@ Observed result from the corrected authorized run:
 - identity_eligible_denominator: 10,919
 - identity_resolved_coverage_ratio: 90.7134%
 - numeric_classified_count: 12,496
-- numeric_valid_count: 1,288
-- numeric_conversion_failure_count: 11,208
-- numeric_conversion_failure_ratio: 89.6927%
+- numeric_valid_count: 12,496
+- numeric_conversion_failure_count: 0
+- numeric_conversion_failure_ratio: 0.0000%
 - required_field_missing_count: 0
 - required_field_missing_ratio: 0.0000%
 - optional_vwap_missing_count: 4
@@ -78,48 +78,41 @@ Observed result from the corrected authorized run:
 - negative_volume_count: 0
 - zero_volume_count: 4
 - timestamp_session_mismatch_count: 0
-- identity_resolved_and_numeric_valid_count: 601
+- identity_resolved_and_numeric_valid_count: 9,901
 - canonical_validation_failure_count: 0
-- canonical_bar_count: 601
+- canonical_bar_count: 9,901
 - count_reconciliation_passed: true
-- written_record_count: 0
-- publish_ready: false
-- status: `quality_gate_failed`
+- written_record_count: 9,901
+- publish_ready: true
+- status: `published`
 
 ## Gate Result
 
-Publication was blocked for these exact reasons in the latest corrected run:
-
-- `numeric_conversion_failure_ratio_above_gate`
-- `canonical_bar_count_below_gate`
-
-Identity coverage now passes the V1 gate. Conflicting duplicate bars were isolated and recorded as a quality warning because the ratio was below 0.1%.
-
-No repository publish occurred and no completed EOD partition was created.
+Publication passed all V1 gates. Identity coverage passed, numeric conversion failures were zero, and conflicting duplicate bars were isolated as a quality warning because the ratio was below 0.1%. The repository published the completed canonical EOD partition atomically.
 
 ## Parser Note
 
 The earlier parser accepted too narrow a set of JSON number representations and the previous processing order let numeric failures short-circuit identity classification. Local tests now cover int, finite float, Decimal, numeric string, bool rejection, NaN/Infinity rejection, required null rejection, malformed string rejection, integral float/Decimal/string handling, fractional integer-semantic rejection, and no silent truncation.
 
-The corrected live run still produced a high required numeric conversion failure count. Because raw payloads are not persisted, the next investigation must use field-level diagnostics under a separate authorization or local safe fixtures and must not silently loosen canonical `EodPriceBarV1` validation. If Massive required fields legitimately include non-integer aggregate volume semantics, that must be handled as an explicit contract decision rather than by truncation or rounding.
+The later explicit contract decision [ADR 0010](../decisions/0010-represent-aggregate-volume-as-decimal.md) changed aggregate volume to exact Decimal because Massive `v` is a number. The live rerun produced 11,208 fractional-volume records, all accepted under the corrected contract, with zero required numeric conversion failures.
 
 ## Duplicate Ticker Handling
 
-Exact duplicate bars are eligible for deterministic deduplication. Conflicting duplicate bars are excluded from publication and remain a hard V1 gate failure. The 2026-08-13 live run observed four conflicting duplicate observations.
+Exact duplicate bars are eligible for deterministic deduplication. Conflicting duplicate bars are excluded from publication. Low-ratio conflicts at or below 0.1% are isolated and recorded as quality warnings; above that gate they remain a hard failure. The published 2026-08-13 run isolated four conflicting duplicate observations.
 
 ## Publication Boundary
 
-The production EOD Price Bar path remains absent:
+The production EOD Price Bar path is completed:
 
 ```text
 /data/trading-intelligence-platform/market-data/eod-price-bars/schema_version=1/session_date=2026-08-13/
 ```
 
-No raw provider response, canonical record dump, CSV, database row, or Parquet file was stored for this Grouped Daily run.
+No raw provider response, canonical record dump, CSV, or database row was stored. Only the canonical Parquet partition and manifest were published.
 
 ## Next Operational Focus
 
-Investigate the Grouped Daily blockers without another live request until a separate authorization is granted: required numeric parsing, conflicting duplicate bars, and identity classification coverage. Publication should remain blocked until required numeric-field semantics are resolved and all V1 gates pass.
+Design and implement the first canonical EOD read/query service and private FastAPI response contracts for the completed 2026-08-13 session. No frontend changes or OCI deployment are included in that next step.
 
 ## Non-Goals
 

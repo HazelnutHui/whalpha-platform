@@ -64,7 +64,7 @@ def record_to_fingerprint_row(record: EodPriceBarV1) -> dict[str, Any]:
         "high": decimal_to_string(record.high),
         "low": decimal_to_string(record.low),
         "close": decimal_to_string(record.close),
-        "volume": record.volume,
+        "volume": decimal_to_string(record.volume),
         "vwap": decimal_to_string(record.vwap),
         "trade_count": record.trade_count,
         "notional": decimal_to_string(record.notional),
