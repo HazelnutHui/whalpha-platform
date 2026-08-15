@@ -23,6 +23,7 @@ class ResolutionStatus(StrEnum):
     RESOLVED = "resolved"
     UNRESOLVED = "unresolved"
     AMBIGUOUS = "ambiguous"
+    EXCLUDED = "excluded"
     REJECTED = "rejected"
 
 
@@ -137,7 +138,7 @@ class ProviderInstrumentIdentityV1(BaseModel):
                 raise ValueError("non-resolved identity must not carry canonical_instrument_id")
             if self.resolution_method is not ResolutionMethod.UNRESOLVED:
                 raise ValueError("non-resolved identity must use unresolved method")
-            if self.resolution_status in {ResolutionStatus.AMBIGUOUS, ResolutionStatus.REJECTED} and not self.quality_flags:
-                raise ValueError("ambiguous or rejected identities require quality_flags")
+            if self.resolution_status in {ResolutionStatus.AMBIGUOUS, ResolutionStatus.EXCLUDED, ResolutionStatus.REJECTED} and not self.quality_flags:
+                raise ValueError("ambiguous, excluded, or rejected identities require quality_flags")
         return self
 

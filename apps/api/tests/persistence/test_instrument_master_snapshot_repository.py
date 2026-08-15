@@ -9,6 +9,7 @@ from tip_api.contracts.market_data.v1 import (
     InstrumentStatus,
     InstrumentType,
     ProviderInstrumentIdentityV1,
+    ProviderTickerResolverV1,
     ResolutionMethod,
     ResolutionStatus,
 )
@@ -64,15 +65,29 @@ def identity(instrument_id=ID1, ticker="TESTA"):
     )
 
 
+
+def resolver(instrument_id=ID1, ticker="TESTA"):
+    return ProviderTickerResolverV1(
+        provider="massive_stocks_basic",
+        as_of_date=AS_OF,
+        provider_ticker=ticker,
+        canonical_instrument_id=instrument_id,
+        resolution_method="share_class_figi",
+        source_identity_key=f"share_class_figi:FIGI{ticker}",
+        ingested_at=INGESTED_AT,
+    )
+
 def test_explicit_arrow_schemas_and_round_trip(tmp_path):
     instruments = (instrument(ID2, "TESTB"), instrument(ID1, "TESTA"))
     identities = (identity(ID2, "TESTB"), identity(ID1, "TESTA"))
+    resolvers = (resolver(ID2, "TESTB"), resolver(ID1, "TESTA"))
     assert instrument_records_to_table(instruments).schema.equals(INSTRUMENT_MASTER_ARROW_SCHEMA, check_metadata=False)
     assert identity_records_to_table(identities).schema.equals(PROVIDER_IDENTITY_ARROW_SCHEMA, check_metadata=False)
     repo = ParquetInstrumentMasterSnapshotRepository(tmp_path, created_at=INGESTED_AT)
     result = repo.publish_snapshot(
         instruments=instruments,
         identities=identities,
+        resolvers=resolvers,
         as_of_date=AS_OF,
         provider_id="massive_stocks_basic",
         quality_summary={"resolved_count": 2},
@@ -95,6 +110,7 @@ def test_idempotent_rerun_and_conflict(tmp_path):
     kwargs = dict(
         instruments=(instrument(ID1, "TESTA"),),
         identities=(identity(ID1, "TESTA"),),
+        resolvers=(resolver(ID1, "TESTA"),),
         as_of_date=AS_OF,
         provider_id="massive_stocks_basic",
         quality_summary={"resolved_count": 1},
@@ -103,7 +119,7 @@ def test_idempotent_rerun_and_conflict(tmp_path):
     again = repo.publish_snapshot(**kwargs)
     assert again.status == "already_present"
     with pytest.raises(InstrumentMasterSnapshotConflictError):
-        repo.publish_snapshot(**{**kwargs, "instruments": (instrument(ID2, "TESTB"),), "identities": (identity(ID2, "TESTB"),)})
+        repo.publish_snapshot(**{**kwargs, "instruments": (instrument(ID2, "TESTB"),), "identities": (identity(ID2, "TESTB"),), "resolvers": (resolver(ID2, "TESTB"),)})
 
 
 def test_incomplete_existing_partition_rejected(tmp_path):
@@ -114,6 +130,7 @@ def test_incomplete_existing_partition_rejected(tmp_path):
         repo.publish_snapshot(
             instruments=(instrument(),),
             identities=(identity(),),
+            resolvers=(resolver(),),
             as_of_date=AS_OF,
             provider_id="massive_stocks_basic",
             quality_summary={},
@@ -130,6 +147,7 @@ def test_symlink_root_rejected(tmp_path):
         repo.publish_snapshot(
             instruments=(instrument(),),
             identities=(identity(),),
+            resolvers=(resolver(),),
             as_of_date=AS_OF,
             provider_id="massive_stocks_basic",
             quality_summary={},

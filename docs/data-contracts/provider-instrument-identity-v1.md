@@ -60,6 +60,8 @@ One provider ticker identity candidate for one provider and one `as_of_date`.
 
 ## Implementation Status
 
+`excluded` is an accepted resolution status for known provider records outside the current V1 eligible universe. Excluded records are retained in the private provider identity dataset for audit but do not enter Instrument Master or ticker resolver outputs.
+
 Implemented in Python at:
 
 ```python

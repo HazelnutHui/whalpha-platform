@@ -9,6 +9,7 @@ Implemented as Python/Pydantic contracts:
 - [Instrument Master V1](instrument-master-v1.md)
 - [EOD Price Bar V1](eod-price-bar-v1.md)
 - [Provider Instrument Identity V1](provider-instrument-identity-v1.md)
+- [Provider Ticker Resolver V1](provider-ticker-resolver-v1.md)
 
 Accepted logical contracts only:
 

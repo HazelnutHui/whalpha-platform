@@ -6,7 +6,7 @@ This document records the V1 identity-resolution boundary required before publis
 
 ## Status
 
-Implemented as deterministic UUIDv5 resolution helpers, a `ProviderInstrumentIdentityV1` contract, and a bounded Massive Instrument Master snapshot ingestion path. The first live Massive snapshot attempt completed pagination but did not publish because quality gates failed.
+Implemented as deterministic UUIDv5 resolution helpers, a `ProviderInstrumentIdentityV1` contract, and a bounded Massive Instrument Master snapshot ingestion path. The first live Massive snapshot attempt completed pagination but did not publish because quality gates were too broad. After separating expected exclusions from malformed records and changing the coverage denominator to eligible records, the second run passed gates and published the 2026-08-13 point-in-time snapshots.
 
 ## Stable Identifier Priority
 
@@ -46,7 +46,7 @@ For the 2026-08-13 Massive All Tickers snapshot attempt:
 - ambiguous_count: 0
 - rejected_count: 1,454
 - identity_coverage_ratio: 77.1860%
-- publication status: blocked by quality gates
+- publication status: first run blocked; corrected second run published with 9,932 canonical instruments and 9,932 resolver entries
 
 No raw payload, Parquet partition, or completed snapshot marker was published.
 

@@ -30,6 +30,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Classification V1](data-contracts/classification-v1.md)
 - [Universe Membership V1](data-contracts/universe-membership-v1.md)
 - [Provider Instrument Identity V1](data-contracts/provider-instrument-identity-v1.md)
+- [Provider Ticker Resolver V1](data-contracts/provider-ticker-resolver-v1.md)
 
 ## Providers
 

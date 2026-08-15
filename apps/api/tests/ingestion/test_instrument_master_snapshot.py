@@ -70,9 +70,9 @@ def test_build_snapshot_resolves_figi_and_leaves_cik_only_unresolved():
         request_count=1,
         pagination_complete=True,
     )
-    assert result.resolved_count == 1
-    assert result.unresolved_count == 1
-    assert result.identities[1].resolution_status is ResolutionStatus.UNRESOLVED
+    assert result.resolved_eligible_count == 1
+    assert result.unresolved_eligible_count == 1
+    assert any(i.resolution_status is ResolutionStatus.UNRESOLVED for i in result.identities)
     assert result.instruments[0].ticker == "TESTA"
 
 
@@ -84,9 +84,9 @@ def test_unsupported_type_is_rejected_and_collision_is_ambiguous():
         request_count=1,
         pagination_complete=True,
     )
-    assert result.ambiguous_count == 2
-    assert result.rejected_count == 1
-    assert result.resolved_count == 0
+    assert result.stable_identifier_collision_count == 2
+    assert result.expected_exclusion_count == 1
+    assert result.resolved_eligible_count == 0
 
 
 def test_pagination_success_and_rate_limiter_uses_fake_clock():
@@ -132,14 +132,18 @@ def test_quality_gate_failure_does_not_publish(tmp_path):
         provider_id="massive_stocks_basic",
         instruments=build.instruments,
         identities=build.identities,
+        resolvers=build.resolvers,
         request_count=1,
         raw_record_count=build.raw_record_count,
-        unique_ticker_count=build.unique_ticker_count,
-        duplicate_ticker_count=build.duplicate_ticker_count,
-        resolved_count=build.resolved_count,
-        unresolved_count=build.unresolved_count,
-        ambiguous_count=build.ambiguous_count,
-        rejected_count=build.rejected_count,
+        eligible_record_count=build.eligible_record_count,
+        expected_exclusion_count=build.expected_exclusion_count,
+        malformed_rejected_count=build.malformed_rejected_count,
+        resolved_eligible_count=build.resolved_eligible_count,
+        unresolved_eligible_count=build.unresolved_eligible_count,
+        ambiguous_ticker_record_count=build.ambiguous_ticker_record_count,
+        stable_identifier_collision_count=build.stable_identifier_collision_count,
+        unique_provider_ticker_count=build.unique_provider_ticker_count,
+        duplicate_provider_ticker_count=build.duplicate_provider_ticker_count,
     )
     assert result.status == "quality_gate_failed"
     assert not (tmp_path / "market-data").exists()
@@ -159,6 +163,6 @@ def test_unit_type_is_rejected():
         request_count=1,
         pagination_complete=True,
     )
-    assert result.rejected_count == 1
-    assert result.resolved_count == 0
+    assert result.expected_exclusion_count == 1
+    assert result.resolved_eligible_count == 0
 

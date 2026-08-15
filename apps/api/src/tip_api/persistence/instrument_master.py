@@ -7,7 +7,7 @@ from datetime import date
 from pathlib import Path
 from typing import Literal, Protocol
 
-from tip_api.contracts.market_data.v1 import InstrumentMasterV1, ProviderInstrumentIdentityV1
+from tip_api.contracts.market_data.v1 import InstrumentMasterV1, ProviderInstrumentIdentityV1, ProviderTickerResolverV1
 
 
 class InstrumentMasterSnapshotPersistenceError(Exception):
@@ -31,13 +31,17 @@ class InstrumentMasterSnapshotWriteResult:
     provider_id: str
     instrument_count: int
     identity_count: int
+    resolver_count: int
     written_instrument_count: int
     written_identity_count: int
+    written_resolver_count: int
     instrument_partition_path: Path
     identity_partition_path: Path
+    resolver_partition_path: Path
     snapshot_manifest_path: Path
     instrument_content_sha256: str
     identity_content_sha256: str
+    resolver_content_sha256: str
     snapshot_content_sha256: str
     status: Literal["published", "already_present"]
 
@@ -50,6 +54,7 @@ class InstrumentMasterSnapshotRepository(Protocol):
         *,
         instruments: tuple[InstrumentMasterV1, ...],
         identities: tuple[ProviderInstrumentIdentityV1, ...],
+        resolvers: tuple[ProviderTickerResolverV1, ...],
         as_of_date: date,
         provider_id: str,
         quality_summary: dict[str, object],

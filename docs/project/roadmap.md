@@ -29,7 +29,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] First bounded EOD ingestion slice with mocked fixtures
 - [x] Separately authorized one-session Grouped Daily inspection without publication
 - [x] Point-in-time Massive Instrument Master snapshot ingestion path
-- [ ] Instrument Master snapshot quality-gate remediation
+- [x] Instrument Master snapshot quality-gate remediation and publication
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
@@ -43,7 +43,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review the completed but unpublished 2026-08-13 Instrument Master snapshot attempt, remediate rejected provider type mapping, unresolved stable identifiers, and duplicate tickers, then rerun the snapshot only after those gate blockers are understood.
+Rerun the 2026-08-13 Grouped Daily session once, resolve tickers against the completed point-in-time resolver, recompute corrected OHLCV quality statistics, and publish canonical EOD bars only if all gates pass.
 
 ## Phase 2 — Intraday and Options
 

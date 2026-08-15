@@ -11,7 +11,7 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Identity resolution methodology
 - Rejected Massive reference type mapping policy
 - Duplicate ticker handling policy for point-in-time reference snapshots
-- Instrument Master snapshot quality-gate remediation after the first 2026-08-13 run
+- Provider type `ETV` taxonomy decision after the completed 2026-08-13 Instrument Master snapshot
 - Massive plan upgrade threshold
 - Public demo data source
 - Business/display/redistribution license threshold

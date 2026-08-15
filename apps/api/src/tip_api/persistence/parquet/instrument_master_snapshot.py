@@ -14,7 +14,7 @@ from typing import Any
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from tip_api.contracts.market_data.v1 import InstrumentMasterV1, ProviderInstrumentIdentityV1
+from tip_api.contracts.market_data.v1 import InstrumentMasterV1, ProviderInstrumentIdentityV1, ProviderTickerResolverV1
 from tip_api.persistence.instrument_master import (
     InstrumentMasterSnapshotConflictError,
     InstrumentMasterSnapshotCorruptionError,
@@ -77,6 +77,19 @@ PROVIDER_IDENTITY_ARROW_SCHEMA = pa.schema(
     ]
 )
 
+PROVIDER_TICKER_RESOLVER_ARROW_SCHEMA = pa.schema(
+    [
+        pa.field("schema_version", pa.string(), nullable=False),
+        pa.field("provider", pa.string(), nullable=False),
+        pa.field("as_of_date", pa.date32(), nullable=False),
+        pa.field("provider_ticker", pa.string(), nullable=False),
+        pa.field("canonical_instrument_id", pa.string(), nullable=False),
+        pa.field("resolution_method", pa.string(), nullable=False),
+        pa.field("source_identity_key", pa.string(), nullable=False),
+        pa.field("ingested_at", pa.timestamp("us", tz="UTC"), nullable=False),
+    ]
+)
+
 
 def sort_instruments(records: tuple[InstrumentMasterV1, ...]) -> tuple[InstrumentMasterV1, ...]:
     return tuple(sorted(records, key=lambda record: (str(record.instrument_id), record.ticker, record.source_instrument_id)))
@@ -85,6 +98,12 @@ def sort_instruments(records: tuple[InstrumentMasterV1, ...]) -> tuple[Instrumen
 def sort_identities(records: tuple[ProviderInstrumentIdentityV1, ...]) -> tuple[ProviderInstrumentIdentityV1, ...]:
     return tuple(sorted(records, key=lambda record: (record.provider_ticker, record.provider_instrument_id or "", record.composite_figi or "", record.share_class_figi or "")))
 
+
+def sort_resolvers(records: tuple[ProviderTickerResolverV1, ...]) -> tuple[ProviderTickerResolverV1, ...]:
+    return tuple(sorted(records, key=lambda record: (record.provider_ticker, str(record.canonical_instrument_id))))
+
+def resolver_content_fingerprint(records: tuple[ProviderTickerResolverV1, ...]) -> str:
+    return records_fingerprint([_resolver_fingerprint_row(record) for record in sort_resolvers(records)])
 
 def records_fingerprint(rows: list[dict[str, Any]]) -> str:
     payload = json.dumps(rows, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
@@ -111,20 +130,24 @@ class ParquetInstrumentMasterSnapshotRepository:
         *,
         instruments: tuple[InstrumentMasterV1, ...],
         identities: tuple[ProviderInstrumentIdentityV1, ...],
+        resolvers: tuple[ProviderTickerResolverV1, ...],
         as_of_date: date,
         provider_id: str,
         quality_summary: dict[str, object],
     ) -> InstrumentMasterSnapshotWriteResult:
         provider_id = _normalize_provider_id(provider_id)
-        _validate_snapshot_records(instruments=instruments, identities=identities, as_of_date=as_of_date, provider_id=provider_id)
+        _validate_snapshot_records(instruments=instruments, identities=identities, resolvers=resolvers, as_of_date=as_of_date, provider_id=provider_id)
         instruments = sort_instruments(instruments)
         identities = sort_identities(identities)
+        resolvers = sort_resolvers(resolvers)
         instrument_sha = instrument_content_fingerprint(instruments)
         identity_sha = identity_content_fingerprint(identities)
-        snapshot_sha = records_fingerprint([{"instrument_content_sha256": instrument_sha, "identity_content_sha256": identity_sha}])
+        resolver_sha = resolver_content_fingerprint(resolvers)
+        snapshot_sha = records_fingerprint([{"instrument_content_sha256": instrument_sha, "identity_content_sha256": identity_sha, "resolver_content_sha256": resolver_sha}])
         root = _prepare_root(self.root)
         instrument_partition = _instrument_partition_path(root, as_of_date)
         identity_partition = _identity_partition_path(root, provider_id, as_of_date)
+        resolver_partition = _resolver_partition_path(root, provider_id, as_of_date)
         snapshot_dir = _snapshot_manifest_dir(root, as_of_date)
         snapshot_manifest = snapshot_dir / MANIFEST_FILE_NAME
 
@@ -132,16 +155,19 @@ class ParquetInstrumentMasterSnapshotRepository:
             return self._handle_existing_snapshot(
                 instruments=instruments,
                 identities=identities,
+                resolvers=resolvers,
                 as_of_date=as_of_date,
                 provider_id=provider_id,
                 instrument_partition=instrument_partition,
                 identity_partition=identity_partition,
+                resolver_partition=resolver_partition,
                 snapshot_manifest=snapshot_manifest,
                 instrument_sha=instrument_sha,
                 identity_sha=identity_sha,
+                resolver_sha=resolver_sha,
                 snapshot_sha=snapshot_sha,
             )
-        if instrument_partition.exists() or identity_partition.exists() or snapshot_dir.exists():
+        if instrument_partition.exists() or identity_partition.exists() or resolver_partition.exists() or snapshot_dir.exists():
             raise InstrumentMasterSnapshotCorruptionError("existing snapshot artifacts are incomplete")
 
         created_at = self.created_at or datetime.now(UTC)
@@ -182,16 +208,38 @@ class ParquetInstrumentMasterSnapshotRepository:
                 ),
                 table_to_rows=_identity_table_to_rows,
             )
+
+            self._write_partition(
+                partition_path=resolver_partition,
+                table=resolver_records_to_table(resolvers),
+                expected_schema=PROVIDER_TICKER_RESOLVER_ARROW_SCHEMA,
+                expected_fingerprint=resolver_sha,
+                expected_count=len(resolvers),
+                manifest=_dataset_manifest(
+                    dataset_name="provider-ticker-resolver",
+                    schema_version=SCHEMA_VERSION,
+                    as_of_date=as_of_date,
+                    provider_id=provider_id,
+                    record_count=len(resolvers),
+                    content_sha256=resolver_sha,
+                    created_at=created_at,
+                    quality_summary=quality_summary,
+                ),
+                table_to_rows=_resolver_table_to_rows,
+            )
             snapshot_dir.mkdir(parents=True, exist_ok=False)
             write_json_atomic(snapshot_manifest, _snapshot_manifest(
                 as_of_date=as_of_date,
                 provider_id=provider_id,
                 instrument_partition_path=instrument_partition,
                 identity_partition_path=identity_partition,
+                resolver_partition_path=resolver_partition,
                 instrument_count=len(instruments),
                 identity_count=len(identities),
+                resolver_count=len(resolvers),
                 instrument_sha=instrument_sha,
                 identity_sha=identity_sha,
+                resolver_sha=resolver_sha,
                 snapshot_sha=snapshot_sha,
                 created_at=created_at,
                 quality_summary=quality_summary,
@@ -199,7 +247,7 @@ class ParquetInstrumentMasterSnapshotRepository:
             _fsync_directory(snapshot_dir)
             _fsync_directory(snapshot_dir.parent)
         except Exception:
-            for path in (instrument_partition, identity_partition, snapshot_dir):
+            for path in (instrument_partition, identity_partition, resolver_partition, snapshot_dir):
                 if path.exists() and not path.is_symlink():
                     shutil.rmtree(path)
             raise
@@ -210,13 +258,17 @@ class ParquetInstrumentMasterSnapshotRepository:
             provider_id=provider_id,
             instrument_count=len(instruments),
             identity_count=len(identities),
+            resolver_count=len(resolvers),
             written_instrument_count=len(instruments),
             written_identity_count=len(identities),
+            written_resolver_count=len(resolvers),
             instrument_partition_path=instrument_partition,
             identity_partition_path=identity_partition,
+            resolver_partition_path=resolver_partition,
             snapshot_manifest_path=snapshot_manifest,
             instrument_content_sha256=instrument_sha,
             identity_content_sha256=identity_sha,
+            resolver_content_sha256=resolver_sha,
             snapshot_content_sha256=snapshot_sha,
             status="published",
         )
@@ -241,7 +293,7 @@ class ParquetInstrumentMasterSnapshotRepository:
                 shutil.rmtree(staging_path)
             raise
 
-    def _handle_existing_snapshot(self, *, instruments: tuple[InstrumentMasterV1, ...], identities: tuple[ProviderInstrumentIdentityV1, ...], as_of_date: date, provider_id: str, instrument_partition: Path, identity_partition: Path, snapshot_manifest: Path, instrument_sha: str, identity_sha: str, snapshot_sha: str) -> InstrumentMasterSnapshotWriteResult:
+    def _handle_existing_snapshot(self, *, instruments: tuple[InstrumentMasterV1, ...], identities: tuple[ProviderInstrumentIdentityV1, ...], resolvers: tuple[ProviderTickerResolverV1, ...], as_of_date: date, provider_id: str, instrument_partition: Path, identity_partition: Path, resolver_partition: Path, snapshot_manifest: Path, instrument_sha: str, identity_sha: str, resolver_sha: str, snapshot_sha: str) -> InstrumentMasterSnapshotWriteResult:
         manifest = _read_json(snapshot_manifest)
         expected = {
             "completion_status": COMPLETION_STATUS,
@@ -249,27 +301,34 @@ class ParquetInstrumentMasterSnapshotRepository:
             "provider_id": provider_id,
             "instrument_content_sha256": instrument_sha,
             "identity_content_sha256": identity_sha,
+            "resolver_content_sha256": resolver_sha,
             "snapshot_content_sha256": snapshot_sha,
             "instrument_count": len(instruments),
             "identity_count": len(identities),
+            "resolver_count": len(resolvers),
         }
         if any(manifest.get(key) != value for key, value in expected.items()):
             raise InstrumentMasterSnapshotConflictError("existing snapshot manifest differs")
         _validate_existing_partition(instrument_partition, expected_schema=INSTRUMENT_MASTER_ARROW_SCHEMA, expected_fingerprint=instrument_sha, expected_count=len(instruments), table_to_rows=_instrument_table_to_rows)
         _validate_existing_partition(identity_partition, expected_schema=PROVIDER_IDENTITY_ARROW_SCHEMA, expected_fingerprint=identity_sha, expected_count=len(identities), table_to_rows=_identity_table_to_rows)
+        _validate_existing_partition(resolver_partition, expected_schema=PROVIDER_TICKER_RESOLVER_ARROW_SCHEMA, expected_fingerprint=resolver_sha, expected_count=len(resolvers), table_to_rows=_resolver_table_to_rows)
         return InstrumentMasterSnapshotWriteResult(
             schema_version=SCHEMA_VERSION,
             as_of_date=as_of_date,
             provider_id=provider_id,
             instrument_count=len(instruments),
             identity_count=len(identities),
+            resolver_count=len(resolvers),
             written_instrument_count=0,
             written_identity_count=0,
+            written_resolver_count=0,
             instrument_partition_path=instrument_partition,
             identity_partition_path=identity_partition,
+            resolver_partition_path=resolver_partition,
             snapshot_manifest_path=snapshot_manifest,
             instrument_content_sha256=instrument_sha,
             identity_content_sha256=identity_sha,
+            resolver_content_sha256=resolver_sha,
             snapshot_content_sha256=snapshot_sha,
             status="already_present",
         )
@@ -282,6 +341,9 @@ def instrument_records_to_table(records: tuple[InstrumentMasterV1, ...]) -> pa.T
 def identity_records_to_table(records: tuple[ProviderInstrumentIdentityV1, ...]) -> pa.Table:
     return pa.Table.from_pylist([_identity_arrow_row(record) for record in sort_identities(records)], schema=PROVIDER_IDENTITY_ARROW_SCHEMA)
 
+
+def resolver_records_to_table(records: tuple[ProviderTickerResolverV1, ...]) -> pa.Table:
+    return pa.Table.from_pylist([_resolver_arrow_row(record) for record in sort_resolvers(records)], schema=PROVIDER_TICKER_RESOLVER_ARROW_SCHEMA)
 
 def _instrument_arrow_row(record: InstrumentMasterV1) -> dict[str, Any]:
     return {
@@ -332,6 +394,9 @@ def _identity_arrow_row(record: ProviderInstrumentIdentityV1) -> dict[str, Any]:
     }
 
 
+def _resolver_arrow_row(record: ProviderTickerResolverV1) -> dict[str, Any]:
+    return {"schema_version": record.schema_version, "provider": record.provider, "as_of_date": record.as_of_date, "provider_ticker": record.provider_ticker, "canonical_instrument_id": str(record.canonical_instrument_id), "resolution_method": record.resolution_method, "source_identity_key": record.source_identity_key, "ingested_at": record.ingested_at.astimezone(UTC)}
+
 def _instrument_fingerprint_row(record: InstrumentMasterV1) -> dict[str, Any]:
     row = _instrument_arrow_row(record)
     return _normalize_row(row)
@@ -364,7 +429,14 @@ def _identity_table_to_rows(table: pa.Table) -> list[dict[str, Any]]:
     return sorted(rows, key=lambda row: (row["provider_ticker"], row["provider_instrument_id"] or "", row["composite_figi"] or "", row["share_class_figi"] or ""))
 
 
-def _validate_snapshot_records(*, instruments: tuple[InstrumentMasterV1, ...], identities: tuple[ProviderInstrumentIdentityV1, ...], as_of_date: date, provider_id: str) -> None:
+def _resolver_fingerprint_row(record: ProviderTickerResolverV1) -> dict[str, Any]:
+    return _normalize_row(_resolver_arrow_row(record))
+
+def _resolver_table_to_rows(table: pa.Table) -> list[dict[str, Any]]:
+    rows = [_normalize_row(dict(row)) for row in table.to_pylist()]
+    return sorted(rows, key=lambda row: (row["provider_ticker"], row["canonical_instrument_id"]))
+
+def _validate_snapshot_records(*, instruments: tuple[InstrumentMasterV1, ...], identities: tuple[ProviderInstrumentIdentityV1, ...], resolvers: tuple[ProviderTickerResolverV1, ...], as_of_date: date, provider_id: str) -> None:
     if not instruments:
         raise InstrumentMasterSnapshotPersistenceError("cannot publish an empty Instrument Master snapshot")
     if not identities:
@@ -378,6 +450,13 @@ def _validate_snapshot_records(*, instruments: tuple[InstrumentMasterV1, ...], i
         if record.instrument_id in instrument_ids:
             raise InstrumentMasterSnapshotPersistenceError("duplicate canonical instrument_id")
         instrument_ids.add(record.instrument_id)
+    for record in resolvers:
+        if record.as_of_date != as_of_date:
+            raise InstrumentMasterSnapshotPersistenceError("resolver as_of_date mismatch")
+        if record.provider != provider_id:
+            raise InstrumentMasterSnapshotPersistenceError("resolver provider mismatch")
+        if record.canonical_instrument_id not in instrument_ids:
+            raise InstrumentMasterSnapshotPersistenceError("resolver references unknown canonical instrument_id")
     for record in identities:
         if record.as_of_date != as_of_date:
             raise InstrumentMasterSnapshotPersistenceError("identity as_of_date mismatch")
@@ -424,7 +503,7 @@ def _dataset_manifest(*, dataset_name: str, schema_version: str, as_of_date: dat
     }
 
 
-def _snapshot_manifest(*, as_of_date: date, provider_id: str, instrument_partition_path: Path, identity_partition_path: Path, instrument_count: int, identity_count: int, instrument_sha: str, identity_sha: str, snapshot_sha: str, created_at: datetime, quality_summary: dict[str, object]) -> dict[str, object]:
+def _snapshot_manifest(*, as_of_date: date, provider_id: str, instrument_partition_path: Path, identity_partition_path: Path, resolver_partition_path: Path, instrument_count: int, identity_count: int, resolver_count: int, instrument_sha: str, identity_sha: str, resolver_sha: str, snapshot_sha: str, created_at: datetime, quality_summary: dict[str, object]) -> dict[str, object]:
     return {
         "manifest_version": "1.0",
         "dataset_name": "instrument-master-logical-snapshot",
@@ -433,10 +512,13 @@ def _snapshot_manifest(*, as_of_date: date, provider_id: str, instrument_partiti
         "provider_id": provider_id,
         "instrument_partition_path": str(instrument_partition_path),
         "identity_partition_path": str(identity_partition_path),
+        "resolver_partition_path": str(resolver_partition_path),
         "instrument_count": instrument_count,
         "identity_count": identity_count,
+        "resolver_count": resolver_count,
         "instrument_content_sha256": instrument_sha,
         "identity_content_sha256": identity_sha,
+        "resolver_content_sha256": resolver_sha,
         "snapshot_content_sha256": snapshot_sha,
         "created_at": created_at.astimezone(UTC).isoformat(),
         "quality_summary": quality_summary,
@@ -461,6 +543,9 @@ def _instrument_partition_path(root: Path, as_of_date: date) -> Path:
 def _identity_partition_path(root: Path, provider_id: str, as_of_date: date) -> Path:
     return _contained_path(root, root / "market-data" / "provider-instrument-identity" / f"schema_version={SCHEMA_VERSION_PARTITION}" / f"provider={provider_id}" / f"as_of_date={as_of_date.isoformat()}")
 
+
+def _resolver_partition_path(root: Path, provider_id: str, as_of_date: date) -> Path:
+    return _contained_path(root, root / "market-data" / "provider-ticker-resolver" / f"schema_version={SCHEMA_VERSION_PARTITION}" / f"provider={provider_id}" / f"as_of_date={as_of_date.isoformat()}")
 
 def _snapshot_manifest_dir(root: Path, as_of_date: date) -> Path:
     return _contained_path(root, root / "market-data" / "snapshots" / "instrument-master" / f"as_of_date={as_of_date.isoformat()}")

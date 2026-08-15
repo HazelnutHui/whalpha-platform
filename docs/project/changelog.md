@@ -2,6 +2,11 @@
 
 ## 2026-08-14
 
+- Refined Massive Instrument Master snapshot quality classification to separate eligible records, expected exclusions, malformed records, ticker ambiguity, and stable-ID collisions.
+- Added Provider Ticker Resolver V1 and included it in the logical Instrument Master snapshot completion marker.
+- Re-ran the authorized 2026-08-13 Massive All Tickers pagination once; corrected quality gates passed and published 9,932 canonical instruments, 13,106 provider identity records, and 9,932 resolver entries.
+- No raw Massive payload, Grouped Daily call, Dashboard data flow, OCI access, or system change was introduced.
+
 - Added Provider Instrument Identity V1 as a Python contract and data-contract document.
 - Accepted ADR 0009 for stable provider identifiers and deterministic UUIDv5 canonical instrument identity.
 - Implemented bounded Massive All Tickers point-in-time Instrument Master snapshot ingestion with fixed-interval pagination.

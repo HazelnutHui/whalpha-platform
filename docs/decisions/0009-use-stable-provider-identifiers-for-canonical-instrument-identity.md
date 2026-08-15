@@ -73,6 +73,11 @@ Failed gates block publication.
 
 ## Consequences
 
+## Clarification: Quality Gates
+
+Expected V1 universe exclusions are not malformed provider data and do not enter the eligible identity coverage denominator. Ticker-level ambiguity is tracked separately from stable-identifier collision. Stable-identifier collision remains a hard failure; a small ticker ambiguity ratio may be isolated from the resolver without blocking unrelated instruments.
+
+
 - Canonical identity is stable across reruns for the same stable identifier.
 - Provider identity mapping is auditable and point-in-time.
 - Ticker-only and CIK-only records remain unresolved instead of receiving weak IDs.

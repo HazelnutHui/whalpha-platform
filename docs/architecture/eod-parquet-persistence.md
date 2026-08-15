@@ -118,6 +118,8 @@ The service rejects empty provider results, bars for the wrong session date, dup
 
 A separate Instrument Master snapshot repository now exists for `instrument-master` and `provider-instrument-identity` datasets with a logical snapshot marker. The first live Massive All Tickers run for 2026-08-13 did not publish because quality gates failed.
 
+The refined repository now also publishes `provider-ticker-resolver` as part of the same logical snapshot. The corrected 2026-08-13 Massive snapshot is completed.
+
 - Massive API calls
 - credential loading
 - production `/data` writes

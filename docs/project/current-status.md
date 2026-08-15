@@ -72,7 +72,7 @@ Status date: 2026-08-14
 - Provider Instrument Identity V1 Python contract implemented.
 - Stable provider-identifier UUIDv5 identity resolution implemented.
 - Massive All Tickers point-in-time snapshot ingestion path implemented with bounded pagination and rate-aware requests.
-- Live Massive All Tickers snapshot attempt completed for 2026-08-13 without publishing because quality gates failed.
+- Corrected Massive All Tickers snapshot completed and published for 2026-08-13 after refining expected exclusions, eligible coverage, and ticker ambiguity gates.
 
 ## Current
 
@@ -101,7 +101,7 @@ Status date: 2026-08-14
 - No ingestion API calls beyond the one reference smoke test.
 - No Grouped Daily production download beyond the one in-memory inspection request.
 - No production `/data` writes for EOD bars.
-- No completed Instrument Master snapshot was published to `/data` because quality gates failed.
+- Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-13 under `/data/trading-intelligence-platform`.
 - No historical backfill.
 - No production persistence or market-data files.
 - Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
@@ -120,4 +120,4 @@ Status date: 2026-08-14
 
 ## Next Proposed Step
 
-Review the failed Instrument Master snapshot quality gates, especially rejected provider type mapping, unresolved stable identifiers, and duplicate tickers, before rerunning any snapshot or publishing Grouped Daily bars.
+Rerun the 2026-08-13 Grouped Daily session once, resolve tickers against the completed point-in-time resolver, recompute corrected OHLCV quality statistics, and publish canonical EOD bars only if all gates pass.
