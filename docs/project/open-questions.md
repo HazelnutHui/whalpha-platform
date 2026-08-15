@@ -40,4 +40,4 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Close-to-close return calculation boundary after a second completed EOD session exists
 
 - Traditional Market-Cap Sector Heatmap source requirements: market cap, sector taxonomy, point-in-time classification, and licensing boundary
-- Frontend fallback behavior for private Market Summary APIs when local provider-backed data is unavailable
+- Private web access-control and deployment packaging for provider-backed Dashboard V1

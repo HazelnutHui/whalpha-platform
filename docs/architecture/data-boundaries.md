@@ -46,6 +46,9 @@ Provider choice must remain replaceable. Provider response fields must not becom
 
 ## Data Authorization Boundary
 
+The local React Market Dashboard V1 is provider-backed derived content when run in API mode. It must remain private and local until a formal access-control mechanism and provider display boundary are accepted. Demo mode is data-free and uses clearly synthetic fixtures.
+
+
 ## Instrument Identity Boundary
 
 Provider Instrument Identity V1 is now an explicit canonical boundary. Ticker and CIK alone are insufficient for security-level identity. The first Massive All Tickers snapshot attempt remained private, did not persist raw payloads, and did not publish because quality gates failed.

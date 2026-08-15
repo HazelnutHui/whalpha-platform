@@ -46,6 +46,11 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Private EOD Market Data V1](api/private-eod-market-data-v1.md): Default-disabled private canonical EOD query responses.
 - [Private Market Summary V1](api/private-market-summary-v1.md): Private Market Summary, movers, returns, and Liquidity Map response contracts.
 
+## Frontend
+
+- [Frontend Index](frontend/README.md)
+- [Market Dashboard V1](frontend/market-dashboard-v1.md): Local React dashboard for private Market Summary, Movers, Liquidity Map, and data-quality views.
+
 ## Operations
 
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.

@@ -86,6 +86,6 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 ## 8. Current Phase
 
-Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, secure Massive smoke-test transport, point-in-time Instrument Master snapshot, the first canonical EOD Price Bar session for 2026-08-13, and the first default-disabled private canonical EOD read/query API are complete and verified. Dashboard V1, analytics pipelines, database, formal private access control, and production deployment are not implemented yet.
+Infrastructure, storage, application scaffold, local frontend/backend development toolchain, core EOD contracts, provider boundary, mocked Massive adapter boundary, secure Massive smoke-test transport, point-in-time Instrument Master snapshots, canonical EOD Price Bar sessions for 2026-08-12 and 2026-08-13, default-disabled private canonical EOD/Market Summary APIs, and the first local React Market Dashboard V1 are complete and verified. Formal authentication, private web access control, OCI deployment, public provider-backed display authorization, database/catalog services, and broader analytics modules are not implemented yet.
 
-Current proposed activity: implement the first React Market Dashboard using the private Market Summary, Movers, and Liquidity Map APIs with local synthetic-fallback tests and no OCI deployment yet.
+Current proposed activity: design and implement the private web access boundary and production deployment package for OCI, while keeping real provider-backed data inaccessible to unauthenticated public users.

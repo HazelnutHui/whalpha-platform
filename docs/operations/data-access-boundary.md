@@ -33,6 +33,9 @@ The demo must not imply live or real market state, must not expose credentials, 
 
 ## Private Provider-Backed Dashboard
 
+Market Dashboard V1 is implemented locally. API mode displays provider-backed derived analytics from private routes and must not be deployed publicly without the pre-deployment gate. Demo mode uses synthetic fixtures and is suitable for future data-free public demonstration only if it remains clearly labeled.
+
+
 Any Massive-backed or other restricted provider-backed dashboard must be intended only for the owner until a suitable public-display or redistribution authorization exists.
 
 Required properties:

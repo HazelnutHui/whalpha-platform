@@ -31,6 +31,9 @@ The map endpoint is named Liquidity Map V1 because node size uses `current_close
 
 ## Security Boundary
 
+The local React Market Dashboard V1 consumes these routes only when private routes are explicitly enabled in local development. Decimal values remain strings in the frontend API boundary and are parsed only for display/chart transforms.
+
+
 Responses are provider-backed derived works and must remain private unless a separate public-display authorization and access-control decision is completed.
 
 The route enable flag is a development switch only.

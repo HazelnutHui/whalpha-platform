@@ -6,6 +6,9 @@ This document records the approved target application architecture for Trading I
 
 ## Current Status
 
+Dashboard update: the first local React Market Dashboard V1 now consumes the default-disabled private Market Summary, Movers, and Liquidity Map APIs. It is local/private only, supports explicit API/demo modes, and is not deployed to OCI.
+
+
 Instrument identity update: Provider Instrument Identity V1, deterministic UUIDv5 identity resolution, and the corrected 2026-08-13 Massive Instrument Master snapshot are implemented. One subsequent 2026-08-13 Massive Grouped Daily publication attempt completed one request but failed quality gates and did not publish EOD bars. No analytics, Dashboard data API, or production application flow consume this data yet.
 
 Confirmed current state:
@@ -92,7 +95,7 @@ The scaffold represents the FastAPI contract, React dashboard boundary, canonica
 6. React renders the dashboard using typed data contracts and Apache ECharts.
 7. OCI serves the public boundary after a deployment mechanism is selected.
 
-Only the Health API and development status page exist now.
+The Health API, default-disabled private market-data APIs, EOD return analytics APIs, and local React Market Dashboard V1 exist for local/private development.
 
 ## Repository / Application Boundaries
 
@@ -103,7 +106,7 @@ Application data belongs under `/data/trading-intelligence-platform` and must no
 Current scaffold boundaries:
 
 - `apps/api`: FastAPI backend and API contract tests
-- `apps/web`: React/Vite frontend status page
+- `apps/web`: React/Vite Market Dashboard V1 local frontend
 - `scripts/dev`: local development launch scripts
 - `docs/development`: local development instructions
 

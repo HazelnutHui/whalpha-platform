@@ -37,9 +37,9 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [ ] Real provider ingestion workflow
 - [ ] EOD development dataset
 - [ ] Core market calculations
-- [ ] Dashboard shell
-- [ ] Heatmap
-- [ ] Breadth
+- [x] Local React Market Dashboard V1 shell
+- [x] Liquidity Map V1 treemap
+- [x] EOD breadth and up/down volume views
 - [ ] Rotation
 - [ ] Relationship monitor
 - [ ] Lightweight developments
@@ -47,7 +47,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Implement the first React Market Dashboard using the private Market Summary, Movers, and Liquidity Map APIs with local synthetic-fallback tests and no OCI deployment yet.
+Design and implement the private web access boundary and production deployment package for OCI, while keeping real provider-backed data inaccessible to unauthenticated public users.
 
 ## Phase 2 — Intraday and Options
 

@@ -82,6 +82,8 @@ Status date: 2026-08-15
 - The 2026-08-12 Instrument Master, provider identity, provider ticker resolver, and canonical EOD Price Bar datasets are published under `/data/trading-intelligence-platform`.
 - Close-to-close EOD return analytics implemented across the completed 2026-08-12 and 2026-08-13 sessions.
 - Market Summary V1, liquidity-screened movers, paginated returns, and Liquidity Map V1 private API responses implemented.
+- Local React Market Dashboard V1 implemented with API/demo modes, Market Pulse, breadth, up/down volume, liquidity-screened movers, Liquidity Map V1, and data-quality/session metadata.
+- Frontend unit/component tests and production build verified for Dashboard V1.
 
 ## Current
 
@@ -121,7 +123,7 @@ Status date: 2026-08-15
 - No actual Universe evaluation.
 - No actual taxonomy dataset.
 - No analytics pipeline.
-- No Dashboard V1 implementation.
+- Dashboard V1 is implemented only as a local/private frontend; it is not deployed and has no formal authentication or public access boundary.
 - No formal authentication or authorization for private market-data routes.
 - No database.
 - No deployment pipeline.
@@ -131,4 +133,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-Implement the first React Market Dashboard using the private Market Summary, Movers, and Liquidity Map APIs with local synthetic-fallback tests and no OCI deployment yet.
+Design and implement the private web access boundary and production deployment package for OCI, while keeping real provider-backed data inaccessible to unauthenticated public users.

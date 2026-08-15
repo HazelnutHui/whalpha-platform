@@ -2,6 +2,9 @@
 
 ## Confirmed Homepage Structure
 
+Implementation note: the first local Market Dashboard V1 implements the EOD-supported subset only: Market Pulse, breadth, up/down share volume, liquidity-screened movers, Liquidity Map V1, and data-quality/session metadata. Traditional market-cap sector heatmap, sector rotation, relationship monitor, and events remain deferred.
+
+
 1. Market Structure Summary
 2. Market Risk Regime
 3. Standard Market Heatmap / Treemap
