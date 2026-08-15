@@ -95,13 +95,15 @@ Status date: 2026-08-15
 - `/login/` redirects to `/` for compatibility.
 - `/dashboard/` redirects unauthenticated users to `/?next=/dashboard/`; `/private-data/v1/manifest.json` returns unauthenticated 401 JSON.
 - Password rotation helper is deployed at `/srv/whalpha/admin/rotate-whalpha-dashboard-password.sh` for user-run interactive rotation.
-- Deployment status is `deployed_pending_manual_password_rotation_and_login_verification`.
+- Deployment status is `authenticated_private_dashboard_verified_by_user`.
 - Branded `/login/` page and localhost-only server-side session Auth Service implemented.
 - Browser-native Basic Auth replaced for Dashboard access.
 - Dashboard Logout implemented for snapshot mode.
 - Dashboard numeric presentation rules and card overflow handling fixed for percent, ratio, count, volume, and currency values.
 - The `/login/` route now serves the branded login page with content-aware deployment verification; public `/` remains the data-free placeholder.
 - The login form submission defect that navigated to `/auth/login` with `invalid_request` is fixed; the page now uses the JSON session-login client contract.
+
+- Dashboard V1.1 professional overview cleanup implemented: default `Tradable U.S. Equities` universe, auxiliary universes, Sector Benchmark ETFs, Trading Activity Map naming, mover outlier isolation, and categorized Data Details.
 
 ## Current
 
@@ -138,10 +140,10 @@ Status date: 2026-08-15
 - Formal multi-user authentication and authorization are not implemented.
 - Default-disabled private canonical EOD read/query API exists for completed sessions.
 - No historical market data ingestion or automated ingestion.
-- No actual Universe evaluation.
-- No actual taxonomy dataset.
-- No analytics pipeline.
-- Dashboard V1 is deployed as a private authenticated static OCI release; a repaired user-run password rotation and authenticated browser verification are pending.
+- Dashboard Universe V1 is implemented for the private Market Overview, with `Tradable U.S. Equities` as the default operating-equity universe.
+- No actual sector/industry taxonomy dataset.
+- Initial close-to-close analytics and Dashboard V1.1 overview pipeline are implemented.
+- Dashboard V1 is deployed as a private authenticated static OCI release; root login, session login, real Dashboard data loading, Logout, and password rotation have been manually verified by the user.
 - No formal multi-user authentication or authorization for private market-data routes.
 - No database.
 - Static private Dashboard deployment pipeline exists for the personal prototype.
@@ -150,4 +152,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-Have the user rerun the repaired private Dashboard password rotation interactively on OCI, then complete authenticated browser and visual verification of the root login entry and Dashboard.
+Ingest enough additional completed EOD sessions to replace the one-day previous-session liquidity gate with a trailing median dollar-volume rule and prepare a point-in-time sector/market-cap classification plan.

@@ -9,6 +9,7 @@ from tip_api.config import AppConfig, config
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.services.eod_market_data import EodMarketDataQueryService
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
+from tip_api.services.dashboard_overview import DashboardOverviewService
 
 
 def create_app(
@@ -28,6 +29,7 @@ def create_app(
         )
         app.state.eod_query_service = service
         app.state.eod_return_analytics_service = EodReturnAnalyticsService(service)
+        app.state.dashboard_overview_service = DashboardOverviewService(service)
         app.include_router(private_eod_router, prefix=cfg.api_v1_prefix)
         app.include_router(private_market_router, prefix=cfg.api_v1_prefix)
     return app

@@ -10,7 +10,7 @@ const resize = vi.fn();
 
 vi.mock('echarts/core', () => ({
   use: vi.fn(),
-  init: vi.fn(() => ({ setOption, resize, dispose })),
+  init: vi.fn(() => ({ setOption, resize, dispose, on: vi.fn(), off: vi.fn() })),
 }));
 vi.mock('echarts/charts', () => ({ TreemapChart: {} }));
 vi.mock('echarts/components', () => ({ AriaComponent: {}, TooltipComponent: {}, VisualMapComponent: {} }));
@@ -23,7 +23,7 @@ afterEach(() => {
 
 describe('LiquidityTreemap', () => {
   it('transforms nodes with positive sizes', () => {
-    const data = toTreemapData(demoDashboardData.liquidityMap);
+    const data = toTreemapData(demoDashboardData.overview.universes[0].trading_activity_map);
     expect(data[0].name).toBe('TESTA');
     expect(data[0].value).toBeGreaterThan(0);
   });
@@ -34,15 +34,15 @@ describe('LiquidityTreemap', () => {
   });
 
   it('initializes and disposes ECharts', () => {
-    const { unmount } = render(<LiquidityTreemap liquidityMap={demoDashboardData.liquidityMap} />);
+    const { unmount } = render(<LiquidityTreemap liquidityMap={demoDashboardData.overview.universes[0].trading_activity_map} />);
     expect(setOption).toHaveBeenCalledTimes(1);
     unmount();
     expect(dispose).toHaveBeenCalledTimes(1);
   });
 
   it('renders liquidity metadata limitations', () => {
-    const { getByText } = render(<LiquidityTreemap liquidityMap={demoDashboardData.liquidityMap} />);
-    expect(getByText('Not Market-Cap Weighted')).toBeInTheDocument();
-    expect(getByText('Not Sector Grouped')).toBeInTheDocument();
+    const { getByText } = render(<LiquidityTreemap liquidityMap={demoDashboardData.overview.universes[0].trading_activity_map} />);
+    expect(getByText(/not a market-cap heatmap/i)).toBeInTheDocument();
+    expect(getByText(/Size reflects close × volume trading activity/i)).toBeInTheDocument();
   });
 });

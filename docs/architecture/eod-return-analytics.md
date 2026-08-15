@@ -52,13 +52,19 @@ This is a close-times-volume liquidity proxy. It is not real notional, market ca
 
 Top gainers sort by return descending, liquidity proxy descending, then ticker ascending. Top losers sort by return ascending, liquidity proxy descending, then ticker ascending.
 
+## Dashboard V1.1 Universe Overview
+
+Dashboard V1.1 adds a product-facing overview service on top of the canonical return rows. It computes selected-universe Market Summary, movers, and Trading Activity Map views for `Tradable U.S. Equities`, `All Operating Equities`, and `All Eligible Instruments`.
+
+The default `Tradable U.S. Equities` universe uses previous-session close and previous-session close-times-volume gates only. ETFs are excluded from the default equity breadth and movers, and fixed Sector Benchmark ETFs are reported separately.
+
 ## Liquidity Map V1
 
 Liquidity Map V1 is a liquidity-weighted visual payload, not a traditional market-cap sector heatmap.
 
 Metadata states:
 
-- `map_type=liquidity`
+- `map_type=liquidity` for the broad legacy response; `map_type=trading_activity` for Dashboard V1.1 universe projections
 - `size_metric=close_times_volume_proxy`
 - `color_metric=close_to_close_return`
 - `is_market_cap_weighted=false`

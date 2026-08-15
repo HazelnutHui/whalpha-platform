@@ -1,23 +1,30 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseLiquidityMap, parseMovers, parseSnapshotManifest, parseSummary } from './market';
+import { parseDashboardOverview, parseLiquidityMap, parseMovers, parseSnapshotManifest, parseSummary } from './market';
 import { demoDashboardData } from '../fixtures/marketDemo';
 
 describe('market API runtime validation', () => {
   it('validates summary payloads', () => {
-    expect(parseSummary(demoDashboardData.summary).advancer_count).toBe(136);
+    expect(parseSummary(demoDashboardData.overview.universes[0].summary).advancer_count).toBe(136);
   });
 
   it('rejects malformed summary payloads', () => {
-    expect(() => parseSummary({ ...demoDashboardData.summary, advancer_count: '136' })).toThrow('advancer_count');
+    expect(() => parseSummary({ ...demoDashboardData.overview.universes[0].summary, advancer_count: '136' })).toThrow('advancer_count');
   });
 
   it('validates movers payloads', () => {
-    expect(parseMovers(demoDashboardData.movers).top_gainers).toHaveLength(10);
+    expect(parseMovers(demoDashboardData.overview.universes[0].movers).top_gainers).toHaveLength(10);
   });
 
   it('validates liquidity map payloads', () => {
-    expect(parseLiquidityMap(demoDashboardData.liquidityMap).nodes[0].ticker).toMatch(/^TEST/);
+    expect(parseLiquidityMap(demoDashboardData.overview.universes[0].trading_activity_map).nodes[0].ticker).toMatch(/^TEST/);
+  });
+
+  it('validates Dashboard V1.1 overview payloads', () => {
+    const overview = parseDashboardOverview(demoDashboardData.overview);
+    expect(overview.default_universe_id).toBe('tradable_us_listed_equities_v1');
+    expect(overview.universes[0].definition.display_name).toBe('Tradable U.S. Equities');
+    expect(overview.sector_benchmarks).toHaveLength(11);
   });
 
   it('validates static snapshot manifests', () => {
@@ -31,7 +38,8 @@ describe('market API runtime validation', () => {
       summary_file: 'market-summary.json',
       movers_file: 'movers.json',
       liquidity_map_file: 'liquidity-map.json',
-      file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64) },
+      overview_file: 'market-overview.json',
+      file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64), 'market-overview.json': 'd'.repeat(64) },
       summary_node_count: 1,
       mover_gainer_count: 10,
       mover_loser_count: 10,

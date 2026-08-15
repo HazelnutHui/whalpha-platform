@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Market Dashboard V1 is the first React dashboard for the private provider-backed market summary APIs.
+Market Dashboard V1 is the first React dashboard for the private provider-backed market summary APIs. Dashboard V1.1 adds a professional default universe and separates operating-equity market structure from ETF benchmark performance.
 
 It helps answer whether the completed EOD session was broadly up or down, whether breadth confirmed the move, which liquidity-screened instruments moved the most, where liquidity was concentrated, and whether the displayed data has quality warnings.
 
@@ -10,13 +10,12 @@ It helps answer whether the completed EOD session was broadly up or down, whethe
 
 Implemented for local/private development only. It has been designed for the completed 2026-08-13 current session and 2026-08-12 previous session exposed by the default-disabled private APIs.
 
-The static OCI release is deployed behind a branded login page and server-side sessions for the personal prototype. This is not public real-data authorization, and authenticated browser verification is still a manual user step.
+The static OCI release is deployed behind a branded login page and server-side sessions for the personal prototype. This is not public real-data authorization, and root login, session login, Dashboard data loading, Logout, and password rotation have been manually verified by the user. Passwords, hashes, and browser credential details are not recorded.
 
 ## Data Modes
-`VITE_MARKET_DATA_MODE=snapshot` is now supported for the static OCI target. Snapshot mode reads authenticated static JSON from `/private-data/v1/` and displays `PRIVATE EOD SNAPSHOT`; it does not call the private FastAPI routes and does not fall back to demo data.
+`VITE_MARKET_DATA_MODE=snapshot` is supported for the static OCI target. Snapshot mode reads authenticated static JSON from `/private-data/v1/`; it does not call the private FastAPI routes and does not fall back to demo data.
 
-
-The frontend supports two explicit modes:
+The frontend supports three explicit modes:
 
 - `VITE_MARKET_DATA_MODE=api`: default; calls relative private API routes through the Vite proxy.
 - `VITE_MARKET_DATA_MODE=demo`: uses clearly synthetic `TEST*` fixtures and displays a persistent `DEMO DATA` badge.
@@ -25,25 +24,26 @@ API mode does not fall back to synthetic fixtures on failure. Failures render ex
 
 ## Implemented Views
 
-- Header with WH Alpha, Trading Intelligence, session dates, EOD badge, private-data badge, load time, and data status.
-- Logout button in the authenticated snapshot Dashboard.
-- Market Pulse cards for equal-weight return, median return, advancers/decliners, positive return share, A/D net, and up/down volume ratio.
-- Market Breadth stacked bar with advancers, unchanged, and decliners.
+- Header with WH Alpha, Market Overview, EOD data-as-of date, selected universe, Logout, and a compact data-status entry.
+- Universe selector with `Tradable U.S. Equities` as the default.
+- Market Pulse cards for equal-weight return, median return, advancers/decliners, and up/down volume ratio.
+- Market Breadth stacked bar with advancers, unchanged, decliners, counts, and percentages.
 - Up/Down Volume comparison using share volume, not money flow.
-- Apache ECharts Liquidity Map V1 treemap.
-- Top Gainers and Top Losers lists using liquidity-screened API results.
-- Data Quality and Session Metadata panel.
+- Sector Benchmark ETFs for the eleven fixed Select Sector SPDR tickers.
+- Apache ECharts Trading Activity Map treemap, defaulting to top 75 nodes with 50/75/100 controls.
+- Top Gainers and Top Losers lists using the selected universe and price-discontinuity isolation.
+- Collapsible Data Details panel with categorized quality flags and session metadata.
 - Loading, error, empty, and retry states.
 
-## Liquidity Map Semantics
+## Trading Activity Map Semantics
 
-Liquidity Map V1 uses:
+Trading Activity Map uses:
 
 - Size: `current_close * current_volume` proxy.
 - Color: close-to-close return.
 - Fixed diverging color clamp around +/-5% for readability.
 
-It is explicitly not market-cap weighted, not sector grouped, not fund flow, and not money flow. Instrument type may be displayed as metadata but is not a sector taxonomy.
+It is explicitly not market-cap weighted, not sector grouped, not fund flow, and not money flow. Instrument type may be displayed as metadata but is not a sector taxonomy. See [Dashboard Universe V1](../product/dashboard-universe-v1.md).
 
 ## API Boundary
 
@@ -89,7 +89,7 @@ Provider-backed data and derived analytics must remain private unless formal acc
 - multi-user authentication or authorization
 - public real-data display
 - market-cap heatmap
-- sector/industry grouping
+- sector/industry constituent grouping
 - theme rotation
 - multi-day trend charts
 - Event Layer

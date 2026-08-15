@@ -15,12 +15,14 @@ from typing import Any, Mapping
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
-from tip_api.schemas.private_market import LiquidityMapResponse, MarketSummaryResponse, MoversResponse
+from tip_api.schemas.private_market import DashboardOverviewResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse
 from tip_api.services.eod_market_data import EodMarketDataQueryService
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
+from tip_api.services.dashboard_overview import DashboardOverviewService
 
 SNAPSHOT_CONTRACT_VERSION = "1"
 SNAPSHOT_FILES = {
+    "overview_file": "market-overview.json",
     "summary_file": "market-summary.json",
     "movers_file": "movers.json",
     "liquidity_map_file": "liquidity-map.json",
@@ -41,6 +43,7 @@ class DashboardSnapshotManifest(BaseModel):
     current_session_date: str
     previous_session_date: str
     data_status: str
+    overview_file: str
     summary_file: str
     movers_file: str
     liquidity_map_file: str
@@ -50,6 +53,8 @@ class DashboardSnapshotManifest(BaseModel):
     mover_loser_count: int
     liquidity_node_count: int
     warning_count: int
+    default_universe_id: str = "tradable_us_listed_equities_v1"
+    dashboard_contract_version: str = "1.1"
     is_real_provider_backed: bool
     access_classification: str
     contains_raw_provider_data: bool
@@ -100,9 +105,11 @@ def build_private_dashboard_snapshot(
 
     query_service = EodMarketDataQueryService(CanonicalEodReadRepository(safe_data_root))
     analytics = EodReturnAnalyticsService(query_service)
-    summary = MarketSummaryResponse.from_model(analytics.get_latest_summary())
-    movers = MoversResponse.from_model(analytics.get_latest_movers(per_side=10))
-    liquidity_map = LiquidityMapResponse.from_model(analytics.get_latest_liquidity_map(limit=300))
+    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service).get_latest_overview())
+    default_universe = next(item for item in overview.universes if item.definition.universe_id == overview.default_universe_id)
+    summary = default_universe.summary
+    movers = default_universe.movers
+    liquidity_map = default_universe.trading_activity_map
 
     if not (
         summary.current_session_date == movers.current_session_date == liquidity_map.current_session_date
@@ -127,6 +134,7 @@ def build_private_dashboard_snapshot(
     staging_private.mkdir(parents=True, exist_ok=False)
     try:
         payloads: Mapping[str, BaseModel] = {
+            SNAPSHOT_FILES["overview_file"]: overview,
             SNAPSHOT_FILES["summary_file"]: summary,
             SNAPSHOT_FILES["movers_file"]: movers,
             SNAPSHOT_FILES["liquidity_map_file"]: liquidity_map,
@@ -145,6 +153,7 @@ def build_private_dashboard_snapshot(
             current_session_date=summary.current_session_date.isoformat(),
             previous_session_date=summary.previous_session_date.isoformat(),
             data_status=summary.data_status,
+            overview_file=SNAPSHOT_FILES["overview_file"],
             summary_file=SNAPSHOT_FILES["summary_file"],
             movers_file=SNAPSHOT_FILES["movers_file"],
             liquidity_map_file=SNAPSHOT_FILES["liquidity_map_file"],
@@ -154,6 +163,8 @@ def build_private_dashboard_snapshot(
             mover_loser_count=len(movers.top_losers),
             liquidity_node_count=len(liquidity_map.nodes),
             warning_count=summary.quality_warning_count,
+            default_universe_id=overview.default_universe_id,
+            dashboard_contract_version=overview.contract_version,
             is_real_provider_backed=True,
             access_classification="private",
             contains_raw_provider_data=False,
@@ -202,6 +213,8 @@ def _validate_json_file(path: Path, filename: str) -> None:
         decoded = json.loads(raw.decode("utf-8"))
         if filename == SNAPSHOT_FILES["summary_file"]:
             MarketSummaryResponse.model_validate(decoded)
+        elif filename == SNAPSHOT_FILES["overview_file"]:
+            DashboardOverviewResponse.model_validate(decoded)
         elif filename == SNAPSHOT_FILES["movers_file"]:
             MoversResponse.model_validate(decoded)
         elif filename == SNAPSHOT_FILES["liquidity_map_file"]:

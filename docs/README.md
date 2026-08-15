@@ -7,6 +7,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Vision](product/vision.md): Product principles and UI language.
 - [Scope](product/scope.md): Phase 1 scope, deferred work, and explicit non-goals.
 - [Dashboard V1](product/dashboard-v1.md): Confirmed first dashboard structure and target behavior.
+- [Dashboard Universe V1](product/dashboard-universe-v1.md): Dashboard V1.1 operating-equity universe, ETF benchmark, and Trading Activity Map boundary.
 - [Initial EOD Universe](product/initial-eod-universe.md): Accepted V1 universe layers and Candidate Discovery thresholds.
 
 ## Architecture
@@ -45,7 +46,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [API Index](api/README.md)
 - [Private EOD Market Data V1](api/private-eod-market-data-v1.md): Default-disabled private canonical EOD query responses.
-- [Private Market Summary V1](api/private-market-summary-v1.md): Private Market Summary, movers, returns, and Liquidity Map response contracts.
+- [Private Market Summary V1](api/private-market-summary-v1.md): Private Market Summary, movers, returns, Dashboard Overview V1.1, and Trading Activity Map response contracts.
 
 ## Frontend
 
@@ -84,6 +85,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0009: Use Stable Provider Identifiers for Canonical Instrument Identity](decisions/0009-use-stable-provider-identifiers-for-canonical-instrument-identity.md)
 - [ADR 0010: Represent Aggregate Volume as Decimal](decisions/0010-represent-aggregate-volume-as-decimal.md)
 - [ADR 0011: Publish Private Dashboard Snapshots as Authenticated Static Assets](decisions/0011-publish-private-dashboard-snapshots-as-authenticated-static-assets.md)
+- [ADR 0012: Use Server-Side Sessions for the Private Dashboard](decisions/0012-use-server-side-sessions-for-private-dashboard.md)
+- [ADR 0013: Establish Dashboard Universe V1 for Market Overview](decisions/0013-establish-dashboard-universe-v1.md)
 
 ## Project
 

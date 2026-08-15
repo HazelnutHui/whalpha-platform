@@ -27,6 +27,7 @@ class EodMarketBarReadModel:
     ticker: str
     name: str
     instrument_type: InstrumentType
+    primary_exchange: str
     session_date: date
     open: Decimal
     high: Decimal

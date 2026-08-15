@@ -12,6 +12,13 @@ import pytest
 from tip_api.contracts.market_data.v1 import InstrumentType, QualityStatus
 from tip_api.read_models.market import EodReturnReadModel, LiquidityMapNodeV1, LiquidityMapV1, MarketSummaryV1, MoversV1
 from tip_api.services import private_dashboard_snapshot as snapshot
+from tip_api.services.dashboard_overview import (
+    DashboardOverviewV11,
+    DashboardUniverseAudit,
+    DashboardUniverseDefinition,
+    DashboardUniverseView,
+    SectorBenchmarkEtf,
+)
 
 CURRENT = date(2026, 8, 13)
 PREVIOUS = date(2026, 8, 12)
@@ -83,16 +90,76 @@ def fake_liquidity():
         quality_flags=("close_times_volume_proxy",),
     )
     return LiquidityMapV1(
-        map_type="liquidity",
+        map_type="trading_activity",
         size_metric="close_times_volume_proxy",
         color_metric="close_to_close_return",
         is_market_cap_weighted=False,
         is_sector_grouped=False,
-        threshold=Decimal("5000000"),
+        threshold=Decimal("20000000"),
         current_session_date=CURRENT,
         previous_session_date=PREVIOUS,
         nodes=(node,),
     )
+
+
+def fake_overview():
+    definition = DashboardUniverseDefinition(
+        universe_id="tradable_us_listed_equities_v1",
+        name="Tradable U.S.-Listed Equities V1",
+        display_name="Tradable U.S. Equities",
+        description="Fixture universe",
+    )
+    audit = DashboardUniverseAudit(
+        raw_comparable_count=3,
+        common_stock_count=2,
+        adr_count=None,
+        etf_count=1,
+        other_excluded_type_count=0,
+        major_exchange_count=2,
+        price_gate_count=2,
+        final_count=2,
+        exclusion_counts={"excluded_instrument_type": 1},
+    )
+    universe = DashboardUniverseView(
+        definition=definition,
+        audit=audit,
+        summary=fake_summary(),
+        movers=fake_movers(),
+        trading_activity_map=fake_liquidity(),
+        outlier_review_count=1,
+        quality_flag_counts={"close_times_volume_proxy": 2},
+    )
+    sectors = (
+        SectorBenchmarkEtf(
+            ticker="XLC",
+            sector="Communication Services",
+            available=False,
+            current_session_date=CURRENT,
+            previous_session_date=PREVIOUS,
+            previous_close=None,
+            current_close=None,
+            close_to_close_return=None,
+            quality_flags=("benchmark_unavailable",),
+        ),
+    )
+    return DashboardOverviewV11(
+        contract_version="1.1",
+        default_universe_id="tradable_us_listed_equities_v1",
+        current_session_date=CURRENT,
+        previous_session_date=PREVIOUS,
+        data_as_of_label="Data as of 2026-08-13 EOD",
+        universes=(universe,),
+        sector_benchmarks=sectors,
+        data_status="complete",
+    )
+
+
+class FakeOverviewService:
+    def __init__(self, query_service):
+        self.query_service = query_service
+
+    def get_latest_overview(self):
+        return fake_overview()
 
 
 class FakeAnalytics:
@@ -125,7 +192,7 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
     data_root = tmp_path / "data"
     data_root.mkdir()
     output_root = tmp_path / "build" / "private-dashboard"
-    monkeypatch.setattr(snapshot, "EodReturnAnalyticsService", FakeAnalytics)
+    monkeypatch.setattr(snapshot, "DashboardOverviewService", FakeOverviewService)
     result = snapshot.build_private_dashboard_snapshot(
         data_root=data_root,
         output_root=output_root,
@@ -138,20 +205,24 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
     assert (private / "market-summary.json").is_file()
     assert (private / "movers.json").is_file()
     assert (private / "liquidity-map.json").is_file()
+    assert (private / "market-overview.json").is_file()
     manifest = json.loads((private / "manifest.json").read_text())
     assert manifest["access_classification"] == "private"
     assert manifest["contains_credentials"] is False
     assert manifest["contains_raw_provider_data"] is False
     assert manifest["current_session_date"] == "2026-08-13"
     assert manifest["file_sha256"]["market-summary.json"] == snapshot.sha256_file(private / "market-summary.json")
+    assert manifest["overview_file"] == "market-overview.json"
+    assert manifest["dashboard_contract_version"] == "1.1"
     assert '"equal_weight_return":"0.01"' in (private / "market-summary.json").read_text()
+    assert '"default_universe_id":"tradable_us_listed_equities_v1"' in (private / "market-overview.json").read_text()
 
 
 def test_corrupted_snapshot_file_detection(tmp_path, monkeypatch):
     data_root = tmp_path / "data"
     data_root.mkdir()
     output_root = tmp_path / "build" / "private-dashboard"
-    monkeypatch.setattr(snapshot, "EodReturnAnalyticsService", FakeAnalytics)
+    monkeypatch.setattr(snapshot, "DashboardOverviewService", FakeOverviewService)
     result = snapshot.build_private_dashboard_snapshot(data_root=data_root, output_root=output_root, release_id=RID, allowed_output_root=output_root)
     (result.output_dir / "private-data" / "v1" / "movers.json").write_text("{}\n")
     with pytest.raises(snapshot.DashboardSnapshotError):

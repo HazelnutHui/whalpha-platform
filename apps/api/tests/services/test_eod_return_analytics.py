@@ -21,13 +21,14 @@ ID_C = UUID("00000000-0000-5000-8000-100000000003")
 ID_D = UUID("00000000-0000-5000-8000-100000000004")
 
 
-def bar(instrument_id, ticker, close, volume, session, instrument_type=InstrumentType.COMMON_STOCK, name=None):
+def bar(instrument_id, ticker, close, volume, session, instrument_type=InstrumentType.COMMON_STOCK, name=None, exchange="XNYS"):
     close_d = Decimal(str(close))
     return EodMarketBarReadModel(
         instrument_id=instrument_id,
         ticker=ticker,
         name=name or f"{ticker} Test",
         instrument_type=instrument_type,
+        primary_exchange=exchange,
         session_date=session,
         open=close_d,
         high=close_d,

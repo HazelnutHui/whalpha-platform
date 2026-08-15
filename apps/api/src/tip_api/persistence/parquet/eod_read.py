@@ -82,6 +82,7 @@ class CanonicalEodReadRepository:
                     ticker=ticker,
                     name=str(instrument["name"]),
                     instrument_type=InstrumentType(str(instrument["instrument_type"])),
+                    primary_exchange=str(instrument["primary_exchange"]),
                     session_date=row["session_date"],
                     open=row["open"],
                     high=row["high"],

@@ -9,6 +9,13 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 from tip_api.read_models.market import EodReturnReadModel, LiquidityMapNodeV1, LiquidityMapV1, MarketSummaryV1, MoversV1
+from tip_api.services.dashboard_overview import (
+    DashboardOverviewV11,
+    DashboardUniverseAudit,
+    DashboardUniverseDefinition,
+    DashboardUniverseView,
+    SectorBenchmarkEtf,
+)
 
 
 def decimal_string(value: Decimal | None) -> str | None:
@@ -187,4 +194,123 @@ class LiquidityMapResponse(BaseModel):
             current_session_date=model.current_session_date,
             previous_session_date=model.previous_session_date,
             nodes=tuple(LiquidityMapNodeResponse.from_model(item) for item in model.nodes),
+        )
+
+
+class DashboardUniverseDefinitionResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    universe_id: str
+    name: str
+    display_name: str
+    description: str
+
+    @classmethod
+    def from_model(cls, model: DashboardUniverseDefinition) -> DashboardUniverseDefinitionResponse:
+        return cls(
+            universe_id=model.universe_id,
+            name=model.name,
+            display_name=model.display_name,
+            description=model.description,
+        )
+
+
+class DashboardUniverseAuditResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    raw_comparable_count: int
+    common_stock_count: int
+    adr_count: int | None
+    etf_count: int
+    other_excluded_type_count: int
+    major_exchange_count: int
+    price_gate_count: int
+    final_count: int
+    exclusion_counts: dict[str, int]
+
+    @classmethod
+    def from_model(cls, model: DashboardUniverseAudit) -> DashboardUniverseAuditResponse:
+        return cls(
+            raw_comparable_count=model.raw_comparable_count,
+            common_stock_count=model.common_stock_count,
+            adr_count=model.adr_count,
+            etf_count=model.etf_count,
+            other_excluded_type_count=model.other_excluded_type_count,
+            major_exchange_count=model.major_exchange_count,
+            price_gate_count=model.price_gate_count,
+            final_count=model.final_count,
+            exclusion_counts=model.exclusion_counts,
+        )
+
+
+class DashboardUniverseViewResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    definition: DashboardUniverseDefinitionResponse
+    audit: DashboardUniverseAuditResponse
+    summary: MarketSummaryResponse
+    movers: MoversResponse
+    trading_activity_map: LiquidityMapResponse
+    outlier_review_count: int
+    quality_flag_counts: dict[str, int]
+
+    @classmethod
+    def from_model(cls, model: DashboardUniverseView) -> DashboardUniverseViewResponse:
+        return cls(
+            definition=DashboardUniverseDefinitionResponse.from_model(model.definition),
+            audit=DashboardUniverseAuditResponse.from_model(model.audit),
+            summary=MarketSummaryResponse.from_model(model.summary),
+            movers=MoversResponse.from_model(model.movers),
+            trading_activity_map=LiquidityMapResponse.from_model(model.trading_activity_map),
+            outlier_review_count=model.outlier_review_count,
+            quality_flag_counts=model.quality_flag_counts,
+        )
+
+
+class SectorBenchmarkEtfResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    ticker: str
+    sector: str
+    available: bool
+    current_session_date: date
+    previous_session_date: date
+    previous_close: str | None
+    current_close: str | None
+    close_to_close_return: str | None
+    quality_flags: tuple[str, ...]
+
+    @classmethod
+    def from_model(cls, model: SectorBenchmarkEtf) -> SectorBenchmarkEtfResponse:
+        return cls(
+            ticker=model.ticker,
+            sector=model.sector,
+            available=model.available,
+            current_session_date=model.current_session_date,
+            previous_session_date=model.previous_session_date,
+            previous_close=decimal_string(model.previous_close),
+            current_close=decimal_string(model.current_close),
+            close_to_close_return=decimal_string(model.close_to_close_return),
+            quality_flags=model.quality_flags,
+        )
+
+
+class DashboardOverviewResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    contract_version: str
+    default_universe_id: str
+    current_session_date: date
+    previous_session_date: date
+    data_as_of_label: str
+    universes: tuple[DashboardUniverseViewResponse, ...]
+    sector_benchmarks: tuple[SectorBenchmarkEtfResponse, ...]
+    data_status: str
+
+    @classmethod
+    def from_model(cls, model: DashboardOverviewV11) -> DashboardOverviewResponse:
+        return cls(
+            contract_version=model.contract_version,
+            default_universe_id=model.default_universe_id,
+            current_session_date=model.current_session_date,
+            previous_session_date=model.previous_session_date,
+            data_as_of_label=model.data_as_of_label,
+            universes=tuple(DashboardUniverseViewResponse.from_model(item) for item in model.universes),
+            sector_benchmarks=tuple(SectorBenchmarkEtfResponse.from_model(item) for item in model.sector_benchmarks),
+            data_status=model.data_status,
         )

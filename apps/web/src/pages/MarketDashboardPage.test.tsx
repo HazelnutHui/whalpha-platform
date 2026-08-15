@@ -9,7 +9,7 @@ const setOption = vi.fn();
 
 vi.mock('echarts/core', () => ({
   use: vi.fn(),
-  init: vi.fn(() => ({ setOption, resize: vi.fn(), dispose })),
+  init: vi.fn(() => ({ setOption, resize: vi.fn(), dispose, on: vi.fn(), off: vi.fn() })),
 }));
 vi.mock('echarts/charts', () => ({ TreemapChart: {} }));
 vi.mock('echarts/components', () => ({ AriaComponent: {}, TooltipComponent: {}, VisualMapComponent: {} }));
@@ -24,9 +24,7 @@ describe('MarketDashboardPage', () => {
     vi.stubEnv('VITE_MARKET_DATA_MODE', 'api');
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const path = String(input);
-      if (path.includes('/summary/')) return Promise.resolve(okResponse(demoDashboardData.summary));
-      if (path.includes('/movers/')) return Promise.resolve(okResponse(demoDashboardData.movers));
-      if (path.includes('/liquidity-map/')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
+      if (path.includes('/overview/')) return Promise.resolve(okResponse(demoDashboardData.overview));
       if (path.endsWith('/private-data/v1/manifest.json')) return Promise.resolve(okResponse({
         snapshot_contract_version: '1',
         release_id: '2026-08-13T120000Z-abcdef0',
@@ -37,7 +35,8 @@ describe('MarketDashboardPage', () => {
         summary_file: 'market-summary.json',
         movers_file: 'movers.json',
         liquidity_map_file: 'liquidity-map.json',
-        file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64) },
+        overview_file: 'market-overview.json',
+        file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64), 'market-overview.json': 'd'.repeat(64) },
         summary_node_count: 1,
         mover_gainer_count: 10,
         mover_loser_count: 10,
@@ -48,9 +47,7 @@ describe('MarketDashboardPage', () => {
         contains_raw_provider_data: false,
         contains_credentials: false,
       }));
-      if (path.endsWith('/private-data/v1/market-summary.json')) return Promise.resolve(okResponse(demoDashboardData.summary));
-      if (path.endsWith('/private-data/v1/movers.json')) return Promise.resolve(okResponse(demoDashboardData.movers));
-      if (path.endsWith('/private-data/v1/liquidity-map.json')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
+      if (path.endsWith('/private-data/v1/market-overview.json')) return Promise.resolve(okResponse(demoDashboardData.overview));
       return Promise.resolve(new Response('{}', { status: 404 }));
     });
   });
@@ -63,8 +60,8 @@ describe('MarketDashboardPage', () => {
 
   it('uses API mode by default and renders summary cards', async () => {
     render(<MarketDashboardPage />);
-    expect(screen.getByText(/Loading market dashboard/)).toBeInTheDocument();
-    expect(await screen.findByText('Market Pulse')).toBeInTheDocument();
+    expect(screen.getByText(/Loading market overview/)).toBeInTheDocument();
+    expect(await screen.findByText('Close-to-close structure')).toBeInTheDocument();
     expect(screen.getByText('+0.64%')).toBeInTheDocument();
     expect(screen.getAllByText('1.40×').length).toBeGreaterThan(0);
     expect(screen.getByText('Advancers / Decliners')).toBeInTheDocument();
@@ -85,9 +82,7 @@ describe('MarketDashboardPage', () => {
         return Promise.resolve(new Response('failure', { status: 503 }));
       }
       const path = String(input);
-      if (path.includes('/summary/')) return Promise.resolve(okResponse(demoDashboardData.summary));
-      if (path.includes('/movers/')) return Promise.resolve(okResponse(demoDashboardData.movers));
-      if (path.includes('/liquidity-map/')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
+      if (path.includes('/overview/')) return Promise.resolve(okResponse(demoDashboardData.overview));
       if (path.endsWith('/private-data/v1/manifest.json')) return Promise.resolve(okResponse({
         snapshot_contract_version: '1',
         release_id: '2026-08-13T120000Z-abcdef0',
@@ -98,7 +93,8 @@ describe('MarketDashboardPage', () => {
         summary_file: 'market-summary.json',
         movers_file: 'movers.json',
         liquidity_map_file: 'liquidity-map.json',
-        file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64) },
+        overview_file: 'market-overview.json',
+        file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64), 'market-overview.json': 'd'.repeat(64) },
         summary_node_count: 1,
         mover_gainer_count: 10,
         mover_loser_count: 10,
@@ -109,14 +105,12 @@ describe('MarketDashboardPage', () => {
         contains_raw_provider_data: false,
         contains_credentials: false,
       }));
-      if (path.endsWith('/private-data/v1/market-summary.json')) return Promise.resolve(okResponse(demoDashboardData.summary));
-      if (path.endsWith('/private-data/v1/movers.json')) return Promise.resolve(okResponse(demoDashboardData.movers));
-      if (path.endsWith('/private-data/v1/liquidity-map.json')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
+      if (path.endsWith('/private-data/v1/market-overview.json')) return Promise.resolve(okResponse(demoDashboardData.overview));
       return Promise.resolve(new Response('{}', { status: 404 }));
     });
     render(<MarketDashboardPage />);
     fireEvent.click(await screen.findByRole('button', { name: 'Retry' }));
-    expect(await screen.findByText('Market Pulse')).toBeInTheDocument();
+    expect(await screen.findByText('Close-to-close structure')).toBeInTheDocument();
   });
 
   it('renders demo mode with a permanent synthetic banner', async () => {
@@ -138,15 +132,15 @@ describe('MarketDashboardPage', () => {
     render(<MarketDashboardPage />);
     expect(await screen.findByText('Top Gainers')).toBeInTheDocument();
     expect(screen.getByText('Top Losers')).toBeInTheDocument();
-    expect(screen.getByText('Not Market-Cap Weighted')).toBeInTheDocument();
-    expect(screen.getByText('Not Sector Grouped')).toBeInTheDocument();
+    expect(screen.getByText('Trading Activity Map')).toBeInTheDocument();
+    expect(screen.getAllByText(/not a market-cap heatmap/i).length).toBeGreaterThan(0);
     expect(screen.queryByText(/^Live$/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/^Realtime$/i)).not.toBeInTheDocument();
   });
 
   it('renders data quality and session metadata', async () => {
     render(<MarketDashboardPage />);
-    expect(await screen.findByText('Session metadata')).toBeInTheDocument();
+    expect(await screen.findByText('Data Details')).toBeInTheDocument();
     expect(screen.getAllByText('2026-08-13').length).toBeGreaterThan(0);
     expect(screen.getByText(/EOD market structure; not real-time/)).toBeInTheDocument();
   });
@@ -156,9 +150,9 @@ describe('MarketDashboardPage', () => {
     vi.unstubAllEnvs();
     vi.stubEnv('VITE_MARKET_DATA_MODE', 'snapshot');
     render(<MarketDashboardPage />);
-    expect(await screen.findByText('PRIVATE EOD SNAPSHOT')).toBeInTheDocument();
+    expect(await screen.findByText('Close-to-close structure')).toBeInTheDocument();
     expect(screen.queryByText('DEMO DATA')).not.toBeInTheDocument();
-    expect(screen.getByText('Release 2026-08-13T120000Z-abcdef0')).toBeInTheDocument();
+    expect(screen.getByText('Data Details')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Logout' })).toBeInTheDocument();
   });
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Private Market Summary V1 exposes read-only response contracts for close-to-close returns, Market Summary V1, liquidity-screened movers, and Liquidity Map V1.
+Private Market Summary V1 exposes read-only response contracts for close-to-close returns, Market Summary V1, liquidity-screened movers, the broad Liquidity Map V1, and Dashboard Overview V1.1.
 
 ## Status
 
@@ -18,6 +18,7 @@ Routes are registered only when `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`.
 - `GET /api/v1/private/market/movers/latest`
 - `GET /api/v1/private/market/liquidity-map/latest`
 - `GET /api/v1/private/market/returns/latest`
+- `GET /api/v1/private/market/overview/latest`
 
 `returns/latest` supports bounded pagination with `limit` default 100, maximum 200, and `offset >= 0`.
 
@@ -25,9 +26,13 @@ Routes are registered only when `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`.
 
 Decimal values are serialized as strings. Return values are decimal ratios: `0.05` means 5%.
 
-## Liquidity Map Naming
+## Dashboard Overview V1.1
 
-The map endpoint is named Liquidity Map V1 because node size uses `current_close * current_volume`. It is not a market-cap heatmap, sector heatmap, fund-flow map, or money-flow map.
+`overview/latest` returns a versioned dashboard payload with multiple universes, Sector Benchmark ETFs, and a Trading Activity Map projection. The default universe is `Tradable U.S.-Listed Equities V1`, displayed as `Tradable U.S. Equities`. See [Dashboard Universe V1](../product/dashboard-universe-v1.md).
+
+## Liquidity and Trading Activity Naming
+
+The legacy broad endpoint remains named Liquidity Map V1. Dashboard V1.1 displays the universe-filtered projection as Trading Activity Map. Node size uses `current_close * current_volume`; it is not a market-cap heatmap, sector heatmap, fund-flow map, or money-flow map.
 
 ## Security Boundary
 

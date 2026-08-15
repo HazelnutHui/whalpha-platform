@@ -55,3 +55,7 @@ npm run build
 - No sector/industry grouping
 - No theme rotation
 - No intraday or real-time data
+
+## Dashboard V1.1
+
+The dashboard consumes the versioned overview payload. API mode calls `/api/v1/private/market/overview/latest`; snapshot mode reads `/private-data/v1/market-overview.json`; demo mode remains synthetic. The default universe is `Tradable U.S. Equities`, with ETFs shown separately as Sector Benchmark ETFs.

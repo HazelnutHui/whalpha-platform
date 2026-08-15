@@ -113,3 +113,7 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [System context](docs/architecture/system-context.md)
 - [Deployment boundary](docs/operations/deployment-boundary.md)
 - [Architecture decisions](docs/decisions/README.md)
+
+## Current Dashboard
+
+Dashboard V1.1 is deployed as a private, session-protected static dashboard. It uses a default `Tradable U.S. Equities` universe for Market Pulse, breadth, movers, and Trading Activity Map, and shows Sector Benchmark ETFs separately. Provider-backed data remains private.

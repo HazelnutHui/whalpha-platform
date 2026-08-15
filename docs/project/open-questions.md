@@ -20,7 +20,6 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Initial Analytical Group basket definitions
 - Options data source
 - Database introduction threshold
-- Authenticated browser acceptance status for the session-login private OCI Dashboard release
 - Cloudflare proxy state
 - Cleanup of obsolete OCI port rules
 - OCI swap strategy
@@ -39,3 +38,7 @@ The following decisions remain open. Final workstation storage layout, frontend 
 
 - Traditional Market-Cap Sector Heatmap source requirements: market cap, sector taxonomy, point-in-time classification, and licensing boundary
 - Post-deployment visual/runtime defect list, if any
+
+- Trailing median dollar-volume rule after at least 20 completed sessions
+- Explicit ADR/common-stock distinction if Instrument Master can support it
+- Point-in-time sector constituent source and market-cap source for traditional heatmap

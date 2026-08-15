@@ -46,10 +46,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [ ] Relationship monitor
 - [ ] Lightweight developments
 - [x] First usable private static deployment
+- [x] Dashboard V1.1 professional universe and market overview cleanup
 
 ## Next Small Target
 
-Have the user rerun the repaired private Dashboard password rotation interactively on OCI, then complete authenticated browser and visual verification of the root login entry and Dashboard.
+Ingest enough additional completed EOD sessions to replace the one-day previous-session liquidity gate with a trailing median dollar-volume rule and prepare the point-in-time sector/market-cap classification plan needed for a traditional market-cap sector heatmap.
 
 ## Phase 2 — Intraday and Options
 

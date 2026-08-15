@@ -6,7 +6,8 @@ from fastapi import APIRouter, HTTPException, Query, Request
 
 from tip_api.contracts.market_data.v1 import InstrumentType
 from tip_api.persistence.eod_read import EodDatasetUnavailableError, EodSessionNotFoundError
-from tip_api.schemas.private_market import EodReturnsPageResponse, EodReturnResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse
+from tip_api.schemas.private_market import DashboardOverviewResponse, EodReturnsPageResponse, EodReturnResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse
+from tip_api.services.dashboard_overview import DashboardOverviewService
 from tip_api.services.eod_market_data import EodQueryValidationError
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 
@@ -15,6 +16,13 @@ router = APIRouter(prefix="/private/market", tags=["private-market-summary"])
 
 def _service(request: Request) -> EodReturnAnalyticsService:
     service = getattr(request.app.state, "eod_return_analytics_service", None)
+    if service is None:
+        raise HTTPException(status_code=503, detail="market data unavailable")
+    return service
+
+
+def _overview_service(request: Request) -> DashboardOverviewService:
+    service = getattr(request.app.state, "dashboard_overview_service", None)
     if service is None:
         raise HTTPException(status_code=503, detail="market data unavailable")
     return service
@@ -34,6 +42,11 @@ def _safe_call(func):
 @router.get("/summary/latest", response_model=MarketSummaryResponse)
 def latest_summary(request: Request) -> MarketSummaryResponse:
     return MarketSummaryResponse.from_model(_safe_call(lambda: _service(request).get_latest_summary()))
+
+
+@router.get("/overview/latest", response_model=DashboardOverviewResponse)
+def latest_overview(request: Request) -> DashboardOverviewResponse:
+    return DashboardOverviewResponse.from_model(_safe_call(lambda: _overview_service(request).get_latest_overview()))
 
 
 @router.get("/movers/latest", response_model=MoversResponse)

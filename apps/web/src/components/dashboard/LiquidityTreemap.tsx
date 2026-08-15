@@ -7,7 +7,7 @@ import type { ComposeOption } from 'echarts/core';
 import type { TreemapSeriesOption } from 'echarts/charts';
 import type { TooltipComponentOption, VisualMapComponentOption } from 'echarts/components';
 
-import type { LiquidityMapResponse } from '../../api/types';
+import type { LiquidityMapNodeResponse, LiquidityMapResponse } from '../../api/types';
 import { clamp, formatCompact, formatCurrencyCompact, formatPercent, formatPrice, parseDecimal } from '../../utils/format';
 
 echarts.use([TreemapChart, TooltipComponent, VisualMapComponent, AriaComponent, CanvasRenderer]);
@@ -16,6 +16,8 @@ type ChartOption = ComposeOption<TreemapSeriesOption | TooltipComponentOption | 
 
 interface Props {
   liquidityMap: LiquidityMapResponse;
+  highlightedTicker?: string | null;
+  onSelectNode?: (node: LiquidityMapNodeResponse) => void;
 }
 
 interface TreemapDatum {
@@ -52,15 +54,15 @@ export function toTreemapData(liquidityMap: LiquidityMapResponse): TreemapDatum[
       node,
       itemStyle: { color: getTreemapColor(color) },
       label: {
-        formatter: `${node.ticker}\n${formatPercent(node.color_value, { signed: true })}`,
+        formatter: node.rank <= 30 ? `${node.ticker}\n${formatPercent(node.color_value, { signed: true })}` : node.rank <= 60 ? node.ticker : '',
       },
     } as TreemapDatum;
   });
 }
 
-export function LiquidityTreemap({ liquidityMap }: Props): JSX.Element {
+export function LiquidityTreemap({ liquidityMap, highlightedTicker, onSelectNode }: Props): JSX.Element {
   const chartRef = useRef<HTMLDivElement | null>(null);
-  const summary = `${liquidityMap.nodes.length} liquidity-screened instruments sized by close times volume proxy and colored by close-to-close return.`;
+  const summary = `${liquidityMap.nodes.length} tradable equities sized by close times volume proxy and colored by close-to-close return.`;
   const data = useMemo(() => toTreemapData(liquidityMap), [liquidityMap]);
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export function LiquidityTreemap({ liquidityMap }: Props): JSX.Element {
     }
     const chart = echarts.init(chartRef.current, undefined, { renderer: 'canvas' });
     const option: ChartOption = {
-      aria: { enabled: true, decal: { show: true } },
+      aria: { enabled: true, decal: { show: false } },
       tooltip: {
         confine: true,
         formatter: (params: unknown) => {
@@ -114,39 +116,46 @@ export function LiquidityTreemap({ liquidityMap }: Props): JSX.Element {
             borderWidth: 2,
             gapWidth: 2,
           },
-          data,
+          data: data.map((item) => ({
+            ...item,
+            itemStyle: {
+              ...(item as unknown as { itemStyle: object }).itemStyle,
+              borderColor: highlightedTicker === item.node.ticker ? '#f4f7fb' : '#10161f',
+              borderWidth: highlightedTicker === item.node.ticker ? 4 : 2,
+            },
+          })),
         },
       ],
     };
     chart.setOption(option);
+    const clickHandler = (params: unknown) => {
+      const param = params as { data?: TreemapDatum };
+      if (param.data?.node) {
+        onSelectNode?.(param.data.node);
+      }
+    };
+    if ('on' in chart && typeof chart.on === 'function') {
+      chart.on('click', clickHandler);
+    }
     const resize = () => chart.resize();
     window.addEventListener('resize', resize);
     return () => {
       window.removeEventListener('resize', resize);
       chart.dispose();
     };
-  }, [data]);
+  }, [data, highlightedTicker, onSelectNode]);
 
   return (
-    <section className="panel liquidity-panel" aria-labelledby="liquidity-title">
-      <div className="section-header">
-        <div>
-          <p className="eyebrow">Liquidity Map V1</p>
-          <h2 id="liquidity-title">Liquidity concentration</h2>
-        </div>
-        <div className="legend-copy">
-          <span>Size: Close × Volume Proxy</span>
-          <span>Color: Close-to-Close Return</span>
-          <span>Not Market-Cap Weighted</span>
-          <span>Not Sector Grouped</span>
-        </div>
+    <div>
+      <div className="return-legend" aria-label="Trading Activity Map color legend">
+        <span>≤−5%</span><span>−2%</span><span>0%</span><span>+2%</span><span>≥+5%</span>
       </div>
       {liquidityMap.nodes.length === 0 ? (
         <div className="empty-state">No liquidity map nodes matched the current threshold.</div>
       ) : (
         <div ref={chartRef} className="treemap-canvas" role="img" aria-label={summary} />
       )}
-      <p className="chart-summary">{summary}</p>
-    </section>
+      <p className="chart-summary">Size reflects close × volume trading activity; color reflects 1-day close-to-close return. This is not a market-cap heatmap.</p>
+    </div>
   );
 }

@@ -35,3 +35,4 @@ Each ADR should include:
 - [0010: Represent Aggregate Volume as Decimal](0010-represent-aggregate-volume-as-decimal.md)
 - [0011: Publish Private Dashboard Snapshots as Authenticated Static Assets](0011-publish-private-dashboard-snapshots-as-authenticated-static-assets.md)
 - [0012: Use Server-Side Sessions for the Private Dashboard](0012-use-server-side-sessions-for-private-dashboard.md)
+- [0013: Establish Dashboard Universe V1 for Market Overview](0013-establish-dashboard-universe-v1.md)

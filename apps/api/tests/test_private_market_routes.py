@@ -21,7 +21,9 @@ def test_private_market_routes_default_disabled_and_absent_from_openapi():
 def test_private_market_routes_enabled_and_openapi_visible():
     client = enabled_client()
     assert client.get('/api/v1/private/market/summary/latest').status_code == 200
-    assert '/api/v1/private/market/summary/latest' in client.get('/openapi.json').json()['paths']
+    paths = client.get('/openapi.json').json()['paths']
+    assert '/api/v1/private/market/summary/latest' in paths
+    assert '/api/v1/private/market/overview/latest' in paths
 
 
 def test_summary_movers_liquidity_map_and_returns_decimal_strings():
@@ -44,6 +46,12 @@ def test_summary_movers_liquidity_map_and_returns_decimal_strings():
     assert liquidity['is_market_cap_weighted'] is False
     assert liquidity['is_sector_grouped'] is False
     assert len(liquidity['nodes']) == 2
+
+    overview = client.get('/api/v1/private/market/overview/latest').json()
+    assert overview['default_universe_id'] == 'tradable_us_listed_equities_v1'
+    assert overview['universes'][0]['definition']['display_name'] == 'Tradable U.S. Equities'
+    assert overview['universes'][0]['summary']['equal_weight_return'] is None
+    assert isinstance(overview['universes'][2]['summary']['equal_weight_return'], str)
 
     returns = client.get('/api/v1/private/market/returns/latest?limit=2').json()
     assert returns['total_count'] == 3

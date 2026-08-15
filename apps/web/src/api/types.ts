@@ -76,6 +76,58 @@ export interface LiquidityMapResponse {
   nodes: LiquidityMapNodeResponse[];
 }
 
+export interface DashboardUniverseDefinitionResponse {
+  universe_id: string;
+  name: string;
+  display_name: string;
+  description: string;
+}
+
+export interface DashboardUniverseAuditResponse {
+  raw_comparable_count: number;
+  common_stock_count: number;
+  adr_count: number | null;
+  etf_count: number;
+  other_excluded_type_count: number;
+  major_exchange_count: number;
+  price_gate_count: number;
+  final_count: number;
+  exclusion_counts: Record<string, number>;
+}
+
+export interface DashboardUniverseViewResponse {
+  definition: DashboardUniverseDefinitionResponse;
+  audit: DashboardUniverseAuditResponse;
+  summary: MarketSummaryResponse;
+  movers: MoversResponse;
+  trading_activity_map: LiquidityMapResponse;
+  outlier_review_count: number;
+  quality_flag_counts: Record<string, number>;
+}
+
+export interface SectorBenchmarkEtfResponse {
+  ticker: string;
+  sector: string;
+  available: boolean;
+  current_session_date: string;
+  previous_session_date: string;
+  previous_close: DecimalString | null;
+  current_close: DecimalString | null;
+  close_to_close_return: DecimalString | null;
+  quality_flags: string[];
+}
+
+export interface DashboardOverviewResponse {
+  contract_version: string;
+  default_universe_id: string;
+  current_session_date: string;
+  previous_session_date: string;
+  data_as_of_label: string;
+  universes: DashboardUniverseViewResponse[];
+  sector_benchmarks: SectorBenchmarkEtfResponse[];
+  data_status: string;
+}
+
 export interface SnapshotManifestResponse {
   snapshot_contract_version: string;
   release_id: string;
@@ -83,6 +135,7 @@ export interface SnapshotManifestResponse {
   current_session_date: string;
   previous_session_date: string;
   data_status: string;
+  overview_file?: string;
   summary_file: string;
   movers_file: string;
   liquidity_map_file: string;
@@ -99,7 +152,5 @@ export interface SnapshotManifestResponse {
 }
 
 export interface DashboardData {
-  summary: MarketSummaryResponse;
-  movers: MoversResponse;
-  liquidityMap: LiquidityMapResponse;
+  overview: DashboardOverviewResponse;
 }

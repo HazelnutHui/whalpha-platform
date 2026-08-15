@@ -1,5 +1,5 @@
 import { fetchJson } from './client';
-import type { DashboardData, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse, SnapshotManifestResponse } from './types';
+import type { DashboardData, DashboardOverviewResponse, DashboardUniverseAuditResponse, DashboardUniverseDefinitionResponse, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse, SectorBenchmarkEtfResponse, SnapshotManifestResponse } from './types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -170,6 +170,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     current_session_date: requireString(value, 'current_session_date'),
     previous_session_date: requireString(value, 'previous_session_date'),
     data_status: requireString(value, 'data_status'),
+    overview_file: typeof value.overview_file === 'string' ? value.overview_file : undefined,
     summary_file: requireString(value, 'summary_file'),
     movers_file: requireString(value, 'movers_file'),
     liquidity_map_file: requireString(value, 'liquidity_map_file'),
@@ -193,42 +194,114 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
   return manifest;
 }
 
+function parseUniverseDefinition(value: unknown): DashboardUniverseDefinitionResponse {
+  if (!isRecord(value)) {
+    throw new Error('Invalid market API payload: universe definition');
+  }
+  return {
+    universe_id: requireString(value, 'universe_id'),
+    name: requireString(value, 'name'),
+    display_name: requireString(value, 'display_name'),
+    description: requireString(value, 'description'),
+  };
+}
+
+function parseUniverseAudit(value: unknown): DashboardUniverseAuditResponse {
+  if (!isRecord(value)) {
+    throw new Error('Invalid market API payload: universe audit');
+  }
+  const exclusion = value.exclusion_counts;
+  if (!isRecord(exclusion) || Object.values(exclusion).some((item) => typeof item !== 'number')) {
+    throw new Error('Invalid market API payload: exclusion_counts');
+  }
+  return {
+    raw_comparable_count: requireNumber(value, 'raw_comparable_count'),
+    common_stock_count: requireNumber(value, 'common_stock_count'),
+    adr_count: value.adr_count === null ? null : requireNumber(value, 'adr_count'),
+    etf_count: requireNumber(value, 'etf_count'),
+    other_excluded_type_count: requireNumber(value, 'other_excluded_type_count'),
+    major_exchange_count: requireNumber(value, 'major_exchange_count'),
+    price_gate_count: requireNumber(value, 'price_gate_count'),
+    final_count: requireNumber(value, 'final_count'),
+    exclusion_counts: Object.fromEntries(Object.entries(exclusion).map(([key, item]) => [key, item as number])),
+  };
+}
+
+function parseUniverseView(value: unknown): DashboardUniverseViewResponse {
+  if (!isRecord(value)) {
+    throw new Error('Invalid market API payload: universe view');
+  }
+  const quality = value.quality_flag_counts;
+  if (!isRecord(quality) || Object.values(quality).some((item) => typeof item !== 'number')) {
+    throw new Error('Invalid market API payload: quality_flag_counts');
+  }
+  return {
+    definition: parseUniverseDefinition(value.definition),
+    audit: parseUniverseAudit(value.audit),
+    summary: parseSummary(value.summary),
+    movers: parseMovers(value.movers),
+    trading_activity_map: parseLiquidityMap(value.trading_activity_map),
+    outlier_review_count: requireNumber(value, 'outlier_review_count'),
+    quality_flag_counts: Object.fromEntries(Object.entries(quality).map(([key, item]) => [key, item as number])),
+  };
+}
+
+function parseSectorBenchmark(value: unknown): SectorBenchmarkEtfResponse {
+  if (!isRecord(value)) {
+    throw new Error('Invalid market API payload: sector benchmark');
+  }
+  return {
+    ticker: requireString(value, 'ticker'),
+    sector: requireString(value, 'sector'),
+    available: requireBoolean(value, 'available'),
+    current_session_date: requireString(value, 'current_session_date'),
+    previous_session_date: requireString(value, 'previous_session_date'),
+    previous_close: requireNullableString(value, 'previous_close'),
+    current_close: requireNullableString(value, 'current_close'),
+    close_to_close_return: requireNullableString(value, 'close_to_close_return'),
+    quality_flags: requireStringArray(value, 'quality_flags'),
+  };
+}
+
+export function parseDashboardOverview(value: unknown): DashboardOverviewResponse {
+  if (!isRecord(value) || !Array.isArray(value.universes) || !Array.isArray(value.sector_benchmarks)) {
+    throw new Error('Invalid market API payload: dashboard overview');
+  }
+  return {
+    contract_version: requireString(value, 'contract_version'),
+    default_universe_id: requireString(value, 'default_universe_id'),
+    current_session_date: requireString(value, 'current_session_date'),
+    previous_session_date: requireString(value, 'previous_session_date'),
+    data_as_of_label: requireString(value, 'data_as_of_label'),
+    universes: value.universes.map(parseUniverseView),
+    sector_benchmarks: value.sector_benchmarks.map(parseSectorBenchmark),
+    data_status: requireString(value, 'data_status'),
+  };
+}
+
 function assertSnapshotConsistency(manifest: SnapshotManifestResponse, data: DashboardData): void {
   const current = manifest.current_session_date;
   const previous = manifest.previous_session_date;
   if (
-    data.summary.current_session_date !== current ||
-    data.movers.current_session_date !== current ||
-    data.liquidityMap.current_session_date !== current ||
-    data.summary.previous_session_date !== previous ||
-    data.movers.previous_session_date !== previous ||
-    data.liquidityMap.previous_session_date !== previous
+    data.overview.current_session_date !== current ||
+    data.overview.previous_session_date !== previous
   ) {
     throw new Error('Private dashboard snapshot session dates are inconsistent');
-  }
-  if (data.movers.top_gainers.length !== manifest.mover_gainer_count || data.movers.top_losers.length !== manifest.mover_loser_count || data.liquidityMap.nodes.length !== manifest.liquidity_node_count) {
-    throw new Error('Private dashboard snapshot counts are inconsistent');
   }
 }
 
 export async function getMarketDashboardData(signal?: AbortSignal): Promise<DashboardData> {
-  const [summary, movers, liquidityMap] = await Promise.all([
-    fetchJson<unknown>('/api/v1/private/market/summary/latest', signal).then(parseSummary),
-    fetchJson<unknown>('/api/v1/private/market/movers/latest?per_side=10', signal).then(parseMovers),
-    fetchJson<unknown>('/api/v1/private/market/liquidity-map/latest?limit=300', signal).then(parseLiquidityMap),
-  ]);
-
-  return { summary, movers, liquidityMap };
+  const overview = await fetchJson<unknown>('/api/v1/private/market/overview/latest', signal).then(parseDashboardOverview);
+  return { overview };
 }
 
 export async function getSnapshotDashboardData(signal?: AbortSignal): Promise<{ data: DashboardData; manifest: SnapshotManifestResponse }> {
   const manifest = await fetchJson<unknown>('/private-data/v1/manifest.json', signal).then(parseSnapshotManifest);
-  const [summary, movers, liquidityMap] = await Promise.all([
-    fetchJson<unknown>(`/private-data/v1/${manifest.summary_file}`, signal).then(parseSummary),
-    fetchJson<unknown>(`/private-data/v1/${manifest.movers_file}`, signal).then(parseMovers),
-    fetchJson<unknown>(`/private-data/v1/${manifest.liquidity_map_file}`, signal).then(parseLiquidityMap),
-  ]);
-  const data = { summary, movers, liquidityMap };
+  if (!manifest.overview_file) {
+    throw new Error('Private dashboard snapshot is missing Dashboard V1.1 overview');
+  }
+  const overview = await fetchJson<unknown>(`/private-data/v1/${manifest.overview_file}`, signal).then(parseDashboardOverview);
+  const data = { overview };
   assertSnapshotConsistency(manifest, data);
   return { data, manifest };
 }
