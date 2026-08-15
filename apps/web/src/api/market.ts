@@ -1,5 +1,5 @@
 import { fetchJson } from './client';
-import type { DashboardData, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse } from './types';
+import type { DashboardData, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse, SnapshotManifestResponse } from './types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -46,6 +46,18 @@ function requireStringArray(value: Record<string, unknown>, key: string): string
     throw new Error(`Invalid market API payload: ${key}`);
   }
   return candidate;
+}
+
+function requireHashRecord(value: Record<string, unknown>, key: string): Record<string, string> {
+  const candidate = value[key];
+  if (!isRecord(candidate)) {
+    throw new Error(`Invalid market API payload: ${key}`);
+  }
+  const entries = Object.entries(candidate);
+  if (entries.some(([, item]) => typeof item !== 'string' || !/^[0-9a-f]{64}$/.test(item))) {
+    throw new Error(`Invalid market API payload: ${key}`);
+  }
+  return Object.fromEntries(entries) as Record<string, string>;
 }
 
 export function parseReturn(value: unknown): EodReturnResponse {
@@ -147,6 +159,58 @@ export function parseLiquidityMap(value: unknown): LiquidityMapResponse {
   };
 }
 
+export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse {
+  if (!isRecord(value)) {
+    throw new Error('Invalid snapshot manifest');
+  }
+  const manifest = {
+    snapshot_contract_version: requireString(value, 'snapshot_contract_version'),
+    release_id: requireString(value, 'release_id'),
+    generated_at: requireString(value, 'generated_at'),
+    current_session_date: requireString(value, 'current_session_date'),
+    previous_session_date: requireString(value, 'previous_session_date'),
+    data_status: requireString(value, 'data_status'),
+    summary_file: requireString(value, 'summary_file'),
+    movers_file: requireString(value, 'movers_file'),
+    liquidity_map_file: requireString(value, 'liquidity_map_file'),
+    file_sha256: requireHashRecord(value, 'file_sha256'),
+    summary_node_count: requireNumber(value, 'summary_node_count'),
+    mover_gainer_count: requireNumber(value, 'mover_gainer_count'),
+    mover_loser_count: requireNumber(value, 'mover_loser_count'),
+    liquidity_node_count: requireNumber(value, 'liquidity_node_count'),
+    warning_count: requireNumber(value, 'warning_count'),
+    is_real_provider_backed: requireBoolean(value, 'is_real_provider_backed'),
+    access_classification: requireString(value, 'access_classification'),
+    contains_raw_provider_data: requireBoolean(value, 'contains_raw_provider_data'),
+    contains_credentials: requireBoolean(value, 'contains_credentials'),
+  };
+  if (manifest.snapshot_contract_version !== '1' || manifest.access_classification !== 'private') {
+    throw new Error('Unsupported private dashboard snapshot');
+  }
+  if (manifest.contains_credentials || manifest.contains_raw_provider_data) {
+    throw new Error('Unsafe private dashboard snapshot');
+  }
+  return manifest;
+}
+
+function assertSnapshotConsistency(manifest: SnapshotManifestResponse, data: DashboardData): void {
+  const current = manifest.current_session_date;
+  const previous = manifest.previous_session_date;
+  if (
+    data.summary.current_session_date !== current ||
+    data.movers.current_session_date !== current ||
+    data.liquidityMap.current_session_date !== current ||
+    data.summary.previous_session_date !== previous ||
+    data.movers.previous_session_date !== previous ||
+    data.liquidityMap.previous_session_date !== previous
+  ) {
+    throw new Error('Private dashboard snapshot session dates are inconsistent');
+  }
+  if (data.movers.top_gainers.length !== manifest.mover_gainer_count || data.movers.top_losers.length !== manifest.mover_loser_count || data.liquidityMap.nodes.length !== manifest.liquidity_node_count) {
+    throw new Error('Private dashboard snapshot counts are inconsistent');
+  }
+}
+
 export async function getMarketDashboardData(signal?: AbortSignal): Promise<DashboardData> {
   const [summary, movers, liquidityMap] = await Promise.all([
     fetchJson<unknown>('/api/v1/private/market/summary/latest', signal).then(parseSummary),
@@ -155,4 +219,16 @@ export async function getMarketDashboardData(signal?: AbortSignal): Promise<Dash
   ]);
 
   return { summary, movers, liquidityMap };
+}
+
+export async function getSnapshotDashboardData(signal?: AbortSignal): Promise<{ data: DashboardData; manifest: SnapshotManifestResponse }> {
+  const manifest = await fetchJson<unknown>('/private-data/v1/manifest.json', signal).then(parseSnapshotManifest);
+  const [summary, movers, liquidityMap] = await Promise.all([
+    fetchJson<unknown>(`/private-data/v1/${manifest.summary_file}`, signal).then(parseSummary),
+    fetchJson<unknown>(`/private-data/v1/${manifest.movers_file}`, signal).then(parseMovers),
+    fetchJson<unknown>(`/private-data/v1/${manifest.liquidity_map_file}`, signal).then(parseLiquidityMap),
+  ]);
+  const data = { summary, movers, liquidityMap };
+  assertSnapshotConsistency(manifest, data);
+  return { data, manifest };
 }

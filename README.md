@@ -36,6 +36,8 @@ Documentation, infrastructure, storage foundation, application stack decision, t
 - Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
 - Initial market summary analytics: completed 2026-08-12 and 2026-08-13 sessions support close-to-close returns, Market Summary V1, liquidity-screened movers, and Liquidity Map V1 private responses.
 - Initial local dashboard: React Market Dashboard V1 renders Market Pulse, breadth, up/down volume, liquidity-screened movers, Liquidity Map V1, and data quality metadata from default-disabled private APIs.
+- Private static deployment package: the workstation can export private Dashboard JSON snapshots, build a `/dashboard/` React bundle, and produce a versioned OCI bundle for a future authenticated static deployment.
+
 - Access boundary: provider-backed data and derived analytics must not be publicly exposed without an accepted authorization and access-control gate.
 
 See [ADR 0005](docs/decisions/0005-application-technology-stack.md) and [Application Architecture](docs/architecture/application-architecture.md) for the authoritative decision details.
@@ -101,6 +103,10 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Private Market Summary API V1](docs/api/private-market-summary-v1.md)
 - [EOD Return Analytics](docs/architecture/eod-return-analytics.md)
 - [Frontend Market Dashboard V1](docs/frontend/market-dashboard-v1.md)
+- [Private Dashboard Publication](docs/architecture/private-dashboard-publication.md)
+- [OCI Private Dashboard Deployment](docs/operations/oci-private-dashboard-deployment.md)
+- [Private Dashboard Access](docs/operations/private-dashboard-access.md)
+
 - [Data Access Boundary](docs/operations/data-access-boundary.md)
 - [Data Contracts](docs/data-contracts/README.md)
 - [System context](docs/architecture/system-context.md)

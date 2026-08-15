@@ -1,0 +1,74 @@
+# Template only. Do not install without deployment review.
+# Public placeholder remains unauthenticated at /.
+# Private Dashboard and JSON snapshots share the same Basic Auth boundary.
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name whalpha.com www.whalpha.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name whalpha.com www.whalpha.com;
+
+    ssl_certificate /etc/letsencrypt/live/whalpha.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/whalpha.com/privkey.pem;
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header Referrer-Policy "no-referrer" always;
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'" always;
+
+    root /var/www/whalpha-placeholder;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+
+    location /dashboard/ {
+        auth_basic "WH Alpha Private Dashboard";
+        auth_basic_user_file /etc/nginx/auth/whalpha-dashboard.htpasswd;
+        alias /srv/whalpha/current/dashboard/;
+        index index.html;
+        autoindex off;
+        add_header Cache-Control "private, no-cache" always;
+        try_files $uri $uri/ /dashboard/index.html;
+    }
+
+    location /dashboard/assets/ {
+        auth_basic "WH Alpha Private Dashboard";
+        auth_basic_user_file /etc/nginx/auth/whalpha-dashboard.htpasswd;
+        alias /srv/whalpha/current/dashboard/assets/;
+        autoindex off;
+        add_header Cache-Control "private, max-age=31536000, immutable" always;
+        try_files $uri =404;
+    }
+
+    location /private-data/ {
+        auth_basic "WH Alpha Private Dashboard";
+        auth_basic_user_file /etc/nginx/auth/whalpha-dashboard.htpasswd;
+        alias /srv/whalpha/current/private-data/;
+        autoindex off;
+        default_type application/json;
+        types { application/json json; }
+        add_header Cache-Control "private, no-store" always;
+        try_files $uri =404;
+    }
+
+    location = /deployment-manifest.json {
+        return 404;
+    }
+
+    location = /checksums.sha256 {
+        return 404;
+    }
+}

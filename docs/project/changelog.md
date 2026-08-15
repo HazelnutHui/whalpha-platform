@@ -2,6 +2,12 @@
 
 ## 2026-08-15
 
+- Accepted ADR 0011 for authenticated static private dashboard snapshots.
+- Implemented the private Dashboard JSON snapshot exporter and manifest/hash validation.
+- Added frontend `snapshot` mode for `/dashboard/` static deployment and `/private-data/` JSON snapshots.
+- Added a versioned OCI dashboard bundle builder, Nginx template, dry-run deployment script, and private access runbook.
+- Completed read-only OCI preflight without creating credentials, uploading files, reloading Nginx, modifying whalpha.com, accessing Massive, or changing `/data`.
+
 - Implemented the first local React Market Dashboard V1 using the private Market Summary, Movers, and Liquidity Map APIs.
 - Added explicit API and synthetic demo modes; API mode does not fall back to demo fixtures on failure.
 - Rendered Market Pulse, Market Breadth, Up/Down Volume, liquidity-screened movers, Liquidity Map V1, and Data Quality / Session Metadata.

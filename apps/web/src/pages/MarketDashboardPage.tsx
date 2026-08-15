@@ -1,18 +1,26 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { getMarketDashboardData } from '../api/market';
+import { getMarketDashboardData, getSnapshotDashboardData } from '../api/market';
 import type { DashboardData, EodReturnResponse, MarketSummaryResponse, MoversResponse } from '../api/types';
 import { demoDashboardData } from '../fixtures/marketDemo';
 import { formatCompact, formatNumber, formatPercent, formatPrice, parseDecimal } from '../utils/format';
 import { LiquidityTreemap } from '../components/dashboard/LiquidityTreemap';
 
+type DashboardMode = 'api' | 'demo' | 'snapshot';
+
 type DashboardState =
   | { kind: 'loading' }
-  | { kind: 'ready'; data: DashboardData; loadedAt: Date; mode: 'api' | 'demo' }
+  | { kind: 'ready'; data: DashboardData; loadedAt: Date; mode: DashboardMode; releaseId?: string }
   | { kind: 'error'; message: string };
 
-function marketDataMode(): 'api' | 'demo' {
-  return import.meta.env.VITE_MARKET_DATA_MODE === 'demo' ? 'demo' : 'api';
+function marketDataMode(): DashboardMode {
+  if (import.meta.env.VITE_MARKET_DATA_MODE === 'demo') {
+    return 'demo';
+  }
+  if (import.meta.env.VITE_MARKET_DATA_MODE === 'snapshot') {
+    return 'snapshot';
+  }
+  return 'api';
 }
 
 function displayType(value: string): string {
@@ -29,7 +37,7 @@ function MetricCard({ label, value, tone, note }: { label: string; value: string
   );
 }
 
-function DashboardHeader({ summary, loadedAt, mode }: { summary: MarketSummaryResponse; loadedAt: Date; mode: 'api' | 'demo' }): JSX.Element {
+function DashboardHeader({ summary, loadedAt, mode, releaseId }: { summary: MarketSummaryResponse; loadedAt: Date; mode: DashboardMode; releaseId?: string }): JSX.Element {
   return (
     <header className="dashboard-header">
       <div>
@@ -43,7 +51,9 @@ function DashboardHeader({ summary, loadedAt, mode }: { summary: MarketSummaryRe
         <span className="badge">EOD</span>
         <span className="badge badge-private">Private Data</span>
         {mode === 'demo' ? <span className="badge badge-demo">DEMO DATA</span> : null}
+        {mode === 'snapshot' ? <span className="badge badge-snapshot">PRIVATE EOD SNAPSHOT</span> : null}
         <span>Status {summary.data_status}</span>
+        {releaseId ? <span>Release {releaseId}</span> : null}
         <span>Loaded {loadedAt.toLocaleTimeString()}</span>
       </div>
     </header>
@@ -220,8 +230,11 @@ export function MarketDashboardPage(): JSX.Element {
     }
     const controller = new AbortController();
     setState({ kind: 'loading' });
-    getMarketDashboardData(controller.signal)
-      .then((data) => setState({ kind: 'ready', data, loadedAt: new Date(), mode }))
+    const request = mode === 'snapshot'
+      ? getSnapshotDashboardData(controller.signal).then(({ data, manifest }) => ({ data, releaseId: manifest.release_id }))
+      : getMarketDashboardData(controller.signal).then((data) => ({ data, releaseId: undefined }));
+    request
+      .then(({ data, releaseId }) => setState({ kind: 'ready', data, loadedAt: new Date(), mode, releaseId }))
       .catch((error: unknown) => {
         if (controller.signal.aborted) {
           return;
@@ -247,7 +260,7 @@ export function MarketDashboardPage(): JSX.Element {
   const { summary, movers, liquidityMap } = state.data;
   return (
     <main className="app-shell dashboard-shell">
-      <DashboardHeader summary={summary} loadedAt={state.loadedAt} mode={state.mode} />
+      <DashboardHeader summary={summary} loadedAt={state.loadedAt} mode={state.mode} releaseId={state.releaseId} />
       <MarketPulse summary={summary} />
       <div className="two-column-grid">
         <BreadthChart summary={summary} />

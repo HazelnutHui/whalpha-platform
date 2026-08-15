@@ -93,6 +93,7 @@ h2 { margin-bottom: 0; font-size: 1.08rem; line-height: 1.2; letter-spacing: 0; 
 }
 .badge-private { border-color: rgba(155, 188, 242, 0.45); color: var(--accent); }
 .badge-demo { border-color: rgba(210, 169, 93, 0.75); color: var(--warning); }
+.badge-snapshot { border-color: rgba(85, 185, 142, 0.65); color: var(--positive-strong); }
 
 .panel { padding: 18px; }
 .section-header {

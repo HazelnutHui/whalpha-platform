@@ -23,7 +23,7 @@ function combineSignals(primary: AbortSignal, secondary?: AbortSignal): AbortSig
 }
 
 export async function fetchJson<T>(path: string, signal?: AbortSignal, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<T> {
-  if (!path.startsWith('/api/')) {
+  if (!path.startsWith('/api/') && !path.startsWith('/private-data/')) {
     throw new ApiClientError('Invalid API path');
   }
 

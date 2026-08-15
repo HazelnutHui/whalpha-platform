@@ -13,6 +13,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [System Context](architecture/system-context.md): Logical system flow and infrastructure responsibilities.
 - [Application Architecture](architecture/application-architecture.md): Accepted target application architecture and runtime boundaries.
+- [Private Dashboard Publication](architecture/private-dashboard-publication.md): Static private dashboard snapshot and OCI bundle architecture.
 - [Classification Boundary](architecture/classification-boundary.md): Accepted Sector/Industry, Theme, and Analytical Group boundary.
 - [Normalized Market Data Contracts](architecture/normalized-market-data-contracts.md): Accepted V1 logical market-data contract boundary.
 - [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
@@ -55,6 +56,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
+- [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md): Reviewed dry-run deployment package and read-only OCI preflight.
+- [Private Dashboard Access](operations/private-dashboard-access.md): Future Basic Auth credential provisioning runbook.
 - [Data Access Boundary](operations/data-access-boundary.md): Public placeholder, data-free demo, and private provider-backed dashboard boundary.
 - [Massive Credential Provisioning](operations/massive-credential-provisioning.md): Secure credential file and one-request smoke-test operations record.
 - [Massive Grouped Daily Inspection](operations/massive-grouped-daily-inspection.md): One-request Grouped Daily inspection record for 2026-08-13.
@@ -80,6 +83,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0008: Use Partitioned Parquet for Initial Canonical EOD Persistence](decisions/0008-use-partitioned-parquet-for-initial-canonical-eod-persistence.md)
 - [ADR 0009: Use Stable Provider Identifiers for Canonical Instrument Identity](decisions/0009-use-stable-provider-identifiers-for-canonical-instrument-identity.md)
 - [ADR 0010: Represent Aggregate Volume as Decimal](decisions/0010-represent-aggregate-volume-as-decimal.md)
+- [ADR 0011: Publish Private Dashboard Snapshots as Authenticated Static Assets](decisions/0011-publish-private-dashboard-snapshots-as-authenticated-static-assets.md)
 
 ## Project
 

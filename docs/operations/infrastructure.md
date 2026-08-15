@@ -46,5 +46,7 @@ Confirmed:
 - Nginx and Certbot retained
 - whalpha.com and www.whalpha.com have working HTTPS
 - current page is a static placeholder
+- read-only preflight on 2026-08-15 confirmed Nginx active/enabled, public HTTP 301, public HTTPS 200, no failed units, `/srv/whalpha` absent, and auth directory absent
+
 - no application backend is running
 - 8000 and 8001 have no listeners

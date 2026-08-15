@@ -40,6 +40,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Local React Market Dashboard V1 shell
 - [x] Liquidity Map V1 treemap
 - [x] EOD breadth and up/down volume views
+- [x] Private static dashboard snapshot exporter and OCI bundle package
+
 - [ ] Rotation
 - [ ] Relationship monitor
 - [ ] Lightweight developments
@@ -47,7 +49,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and implement the private web access boundary and production deployment package for OCI, while keeping real provider-backed data inaccessible to unauthenticated public users.
+Have the user provision the private dashboard password interactively on OCI, then execute the reviewed deployment script, verify public placeholder isolation and authenticated Dashboard access, and document the production release.
 
 ## Phase 2 — Intraday and Options
 

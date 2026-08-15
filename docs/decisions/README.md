@@ -33,3 +33,4 @@ Each ADR should include:
 - [0008: Use Partitioned Parquet for Initial Canonical EOD Persistence](0008-use-partitioned-parquet-for-initial-canonical-eod-persistence.md)
 - [0009: Use Stable Provider Identifiers for Canonical Instrument Identity](0009-use-stable-provider-identifiers-for-canonical-instrument-identity.md)
 - [0010: Represent Aggregate Volume as Decimal](0010-represent-aggregate-volume-as-decimal.md)
+- [0011: Publish Private Dashboard Snapshots as Authenticated Static Assets](0011-publish-private-dashboard-snapshots-as-authenticated-static-assets.md)

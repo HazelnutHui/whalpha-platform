@@ -27,6 +27,30 @@ describe('MarketDashboardPage', () => {
       if (path.includes('/summary/')) return Promise.resolve(okResponse(demoDashboardData.summary));
       if (path.includes('/movers/')) return Promise.resolve(okResponse(demoDashboardData.movers));
       if (path.includes('/liquidity-map/')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
+      if (path.endsWith('/private-data/v1/manifest.json')) return Promise.resolve(okResponse({
+        snapshot_contract_version: '1',
+        release_id: '2026-08-13T120000Z-abcdef0',
+        generated_at: '2026-08-15T12:00:00Z',
+        current_session_date: '2026-08-13',
+        previous_session_date: '2026-08-12',
+        data_status: 'complete',
+        summary_file: 'market-summary.json',
+        movers_file: 'movers.json',
+        liquidity_map_file: 'liquidity-map.json',
+        file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64) },
+        summary_node_count: 1,
+        mover_gainer_count: 10,
+        mover_loser_count: 10,
+        liquidity_node_count: 20,
+        warning_count: 4,
+        is_real_provider_backed: true,
+        access_classification: 'private',
+        contains_raw_provider_data: false,
+        contains_credentials: false,
+      }));
+      if (path.endsWith('/private-data/v1/market-summary.json')) return Promise.resolve(okResponse(demoDashboardData.summary));
+      if (path.endsWith('/private-data/v1/movers.json')) return Promise.resolve(okResponse(demoDashboardData.movers));
+      if (path.endsWith('/private-data/v1/liquidity-map.json')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
       return Promise.resolve(new Response('{}', { status: 404 }));
     });
   });
@@ -63,6 +87,30 @@ describe('MarketDashboardPage', () => {
       if (path.includes('/summary/')) return Promise.resolve(okResponse(demoDashboardData.summary));
       if (path.includes('/movers/')) return Promise.resolve(okResponse(demoDashboardData.movers));
       if (path.includes('/liquidity-map/')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
+      if (path.endsWith('/private-data/v1/manifest.json')) return Promise.resolve(okResponse({
+        snapshot_contract_version: '1',
+        release_id: '2026-08-13T120000Z-abcdef0',
+        generated_at: '2026-08-15T12:00:00Z',
+        current_session_date: '2026-08-13',
+        previous_session_date: '2026-08-12',
+        data_status: 'complete',
+        summary_file: 'market-summary.json',
+        movers_file: 'movers.json',
+        liquidity_map_file: 'liquidity-map.json',
+        file_sha256: { 'market-summary.json': 'a'.repeat(64), 'movers.json': 'b'.repeat(64), 'liquidity-map.json': 'c'.repeat(64) },
+        summary_node_count: 1,
+        mover_gainer_count: 10,
+        mover_loser_count: 10,
+        liquidity_node_count: 20,
+        warning_count: 4,
+        is_real_provider_backed: true,
+        access_classification: 'private',
+        contains_raw_provider_data: false,
+        contains_credentials: false,
+      }));
+      if (path.endsWith('/private-data/v1/market-summary.json')) return Promise.resolve(okResponse(demoDashboardData.summary));
+      if (path.endsWith('/private-data/v1/movers.json')) return Promise.resolve(okResponse(demoDashboardData.movers));
+      if (path.endsWith('/private-data/v1/liquidity-map.json')) return Promise.resolve(okResponse(demoDashboardData.liquidityMap));
       return Promise.resolve(new Response('{}', { status: 404 }));
     });
     render(<MarketDashboardPage />);
@@ -100,6 +148,25 @@ describe('MarketDashboardPage', () => {
     expect(await screen.findByText('Session metadata')).toBeInTheDocument();
     expect(screen.getAllByText('2026-08-13').length).toBeGreaterThan(0);
     expect(screen.getByText(/EOD market structure; not real-time/)).toBeInTheDocument();
+  });
+
+
+  it('renders snapshot mode with private snapshot badge', async () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('VITE_MARKET_DATA_MODE', 'snapshot');
+    render(<MarketDashboardPage />);
+    expect(await screen.findByText('PRIVATE EOD SNAPSHOT')).toBeInTheDocument();
+    expect(screen.queryByText('DEMO DATA')).not.toBeInTheDocument();
+    expect(screen.getByText('Release 2026-08-13T120000Z-abcdef0')).toBeInTheDocument();
+  });
+
+  it('snapshot mode failure does not fall back to demo', async () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('VITE_MARKET_DATA_MODE', 'snapshot');
+    vi.mocked(fetch).mockResolvedValue(new Response('missing', { status: 404 }));
+    render(<MarketDashboardPage />);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Request failed with status 404');
+    expect(screen.queryByText('DEMO DATA')).not.toBeInTheDocument();
   });
 
   it('cancels requests on unmount', async () => {

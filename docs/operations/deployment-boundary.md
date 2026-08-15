@@ -17,6 +17,8 @@ Deployment should be reproducible, simple, and compatible with the OCI memory co
 The public placeholder may remain data-free. Any provider-backed content, including derived heatmaps, analytics, research, API responses, or static exports based on restricted provider data, requires the [Data Access Boundary](data-access-boundary.md) pre-deployment gate before deployment.
 
 No deployment, whalpha.com, OCI, Nginx, Cloudflare, or access-control change is performed by this documentation update.
+Prepared deployment package update: static private dashboard snapshots and a versioned OCI bundle can now be built locally under ignored `build/` directories. Actual OCI deployment remains blocked until the private password is provisioned interactively and the reviewed deployment script is executed in apply mode.
+
 
 ## Unknown
 

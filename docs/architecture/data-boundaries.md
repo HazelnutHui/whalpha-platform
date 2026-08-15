@@ -47,6 +47,8 @@ Provider choice must remain replaceable. Provider response fields must not becom
 ## Data Authorization Boundary
 
 The local React Market Dashboard V1 is provider-backed derived content when run in API mode. It must remain private and local until a formal access-control mechanism and provider display boundary are accepted. Demo mode is data-free and uses clearly synthetic fixtures.
+Snapshot mode is also provider-backed derived content. The static `/private-data/` JSON snapshot must share the same private authentication boundary as `/dashboard/` and must not be publicly exposed.
+
 
 
 ## Instrument Identity Boundary

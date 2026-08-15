@@ -13,6 +13,8 @@ Implemented for local/private development only. It has been designed for the com
 This is not deployed to OCI and is not public real-data access control.
 
 ## Data Modes
+`VITE_MARKET_DATA_MODE=snapshot` is now supported for the static OCI target. Snapshot mode reads authenticated static JSON from `/private-data/v1/` and displays `PRIVATE EOD SNAPSHOT`; it does not call the private FastAPI routes and does not fall back to demo data.
+
 
 The frontend supports two explicit modes:
 

@@ -76,6 +76,28 @@ export interface LiquidityMapResponse {
   nodes: LiquidityMapNodeResponse[];
 }
 
+export interface SnapshotManifestResponse {
+  snapshot_contract_version: string;
+  release_id: string;
+  generated_at: string;
+  current_session_date: string;
+  previous_session_date: string;
+  data_status: string;
+  summary_file: string;
+  movers_file: string;
+  liquidity_map_file: string;
+  file_sha256: Record<string, string>;
+  summary_node_count: number;
+  mover_gainer_count: number;
+  mover_loser_count: number;
+  liquidity_node_count: number;
+  warning_count: number;
+  is_real_provider_backed: boolean;
+  access_classification: string;
+  contains_raw_provider_data: boolean;
+  contains_credentials: boolean;
+}
+
 export interface DashboardData {
   summary: MarketSummaryResponse;
   movers: MoversResponse;

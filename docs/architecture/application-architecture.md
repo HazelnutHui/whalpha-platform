@@ -7,6 +7,8 @@ This document records the approved target application architecture for Trading I
 ## Current Status
 
 Dashboard update: the first local React Market Dashboard V1 now consumes the default-disabled private Market Summary, Movers, and Liquidity Map APIs. It is local/private only, supports explicit API/demo modes, and is not deployed to OCI.
+Publication update: the private static dashboard package is prepared. The workstation can generate dashboard-ready JSON snapshots and versioned OCI bundles; OCI deployment and authentication activation are not yet performed.
+
 
 
 Instrument identity update: Provider Instrument Identity V1, deterministic UUIDv5 identity resolution, and the corrected 2026-08-13 Massive Instrument Master snapshot are implemented. One subsequent 2026-08-13 Massive Grouped Daily publication attempt completed one request but failed quality gates and did not publish EOD bars. No analytics, Dashboard data API, or production application flow consume this data yet.

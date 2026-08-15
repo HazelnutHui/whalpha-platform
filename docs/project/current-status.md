@@ -84,6 +84,11 @@ Status date: 2026-08-15
 - Market Summary V1, liquidity-screened movers, paginated returns, and Liquidity Map V1 private API responses implemented.
 - Local React Market Dashboard V1 implemented with API/demo modes, Market Pulse, breadth, up/down volume, liquidity-screened movers, Liquidity Map V1, and data-quality/session metadata.
 - Frontend unit/component tests and production build verified for Dashboard V1.
+- Private static dashboard snapshot exporter implemented.
+- Frontend snapshot mode implemented for `/dashboard/` static deployment.
+- Versioned OCI dashboard bundle builder implemented.
+- Nginx private dashboard template and dry-run deployment script implemented.
+- OCI read-only deployment preflight completed without modifying OCI.
 
 ## Current
 
@@ -133,4 +138,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-Design and implement the private web access boundary and production deployment package for OCI, while keeping real provider-backed data inaccessible to unauthenticated public users.
+Have the user provision the private dashboard password interactively on OCI, then execute the reviewed deployment script, verify public placeholder isolation and authenticated Dashboard access, and document the production release.
