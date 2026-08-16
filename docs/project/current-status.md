@@ -275,6 +275,16 @@ The non-production CS-only candidate has 4,193 form-classified instruments and 1
 
 Focused implementation tests: `20 passed`; focused provider/classification/persistence: `83 passed`; full backend: `763 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; frontend regression: `40 passed` across 5 files. Compileall, required imports, FastAPI/Health, all shell syntax, 84-file/207-link Markdown validation, sensitive scan, socket/credential sentinel, artifact scan, and `git diff --check` passed. The warnings are the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning; frontend emitted the existing Vite React-plugin configuration warnings. The task made zero network requests and credential accesses, read `/data` only, and changed no production dataset, API, frontend, Dashboard membership, snapshot, bundle, deployment, or Core/Broad state.
 
+## EOD Historical-Window and Trailing-Liquidity Readiness
+
+The provider-neutral offline boundary now supports explicit multi-session canonical reads, 20-session XNYS window planning, exact Decimal median dollar-volume calculations, readiness auditing, and planning-only same-day-identity backfill batches. It implements only `current_as_of_constituent_liquidity`; `point_in_time_historical_panel` remains defined but unimplemented.
+
+For analysis session 2026-08-14, exchange-calendars 4.13.2 computed 20 sessions from 2026-07-17 through 2026-08-13. Only 08-12 and 08-13 are completed; 18 are missing and none corrupt. Candidate A has 1,750 instruments with two observations and one with one; Candidate B has 1,863 with two and one with one. All 1,751/1,864 results are `insufficient_history`; 20/20, 19/20, missing-previous, zero-volume, and emitted median counts are zero. No current-day bar entered the window.
+
+The planning-only gap is 18 same-day identity/resolver snapshots plus 18 Grouped Daily sessions: approximately 270 requests, conservative ceiling 378, zero retries, fixed 15-second spacing, and six proposed batches of at most three after a separately authorized one-session pilot. No request or backfill was made.
+
+Offline verification: focused history/calendar/persistence `43 passed`; provider/contracts/persistence/API/snapshot regression `271 passed`, one existing Starlette warning; full backend `784 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; frontend regression `40 passed` across 5 files. Compileall, required imports, FastAPI/Health, shell syntax, Markdown links, sensitive scan, socket/credential sentinel, artifact and listener/process checks, and `git diff --check` passed. Backend warnings remain the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning; frontend emitted only the existing Vite React-plugin configuration warnings.
+
 ## Next Proposed Step
 
-Keep SEC B2 paused and production Legacy unchanged. The next bounded work should expand completed EOD history and define a point-in-time trailing-liquidity audit before any production membership review; issuer-structure/domicile uncertainty and a formal reviewed-override dataset remain separate governance gaps.
+Keep SEC B2 paused, Legacy production membership unchanged, and the 20-session readiness at `insufficient_history`. The next action requires separate authorization for only the earliest missing XNYS session as a same-day identity plus Grouped Daily pilot; validate publication and resume semantics before considering any three-session batch.

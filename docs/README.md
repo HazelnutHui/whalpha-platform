@@ -117,3 +117,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [Provider-Classified Common Shares V1](product/provider-classified-common-shares-v1.md): Non-production CS-only and CS+ADRC definitions.
 - [2026-08-14 Provider-Classified Audit](audits/provider-classified-common-shares-2026-08-14.md): Validated inputs, type distributions, funnels, Legacy comparison, edge records, and hard gates.
+- [EOD Historical Window](architecture/eod-historical-window.md): Bounded multi-session reads and point-in-time identity rules.
+- [20-Session Median Dollar-Volume Proxy](product/20-session-trailing-liquidity.md): Exact Decimal methodology and readiness semantics.
+- [EOD History Backfill Plan](operations/eod-history-backfill-plan.md): Planning-only same-day identity and request/batch boundary.
+- [2026-08-14 Trailing-Liquidity Readiness Audit](audits/trailing-liquidity-readiness-2026-08-14.md): Current two-session coverage and 18-session gap.

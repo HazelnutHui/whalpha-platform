@@ -55,10 +55,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Exact nine-artifact private SEC source-cache reconciliation and hardened submissions ZIP validation
 - [ ] Successful SEC issuer-structure evidence publication and Core/Broad activation review — paused for the current product stage after the final bounded run failed closed
 - [x] Offline Provider-Classified Common Shares (CS-only) and CS+ADRC shadow audit with stable-ID reconciliation and deterministic fingerprints
+- [x] Provider-neutral 20-session XNYS history planner, bounded canonical reader, Decimal trailing-liquidity contract, readiness audit, and offline backfill plan
 
 ## Next Small Target
 
-Pause SEC B2 and preserve the production Legacy Liquid Screen. Extend completed EOD history, then replace the explicitly provisional one-session liquidity gate with a point-in-time trailing-liquidity shadow audit. Provider-classified shadows remain non-production and Core/Broad activation remains deferred.
+Pause SEC B2 and preserve the production Legacy Liquid Screen. The 20-session window is `insufficient_history` with 18 missing sessions. If separately authorized, run only the earliest missing session as a same-day identity/Grouped Daily pilot; do not activate the trailing rule, Provider-Classified shadows, Core, or Broad.
 
 ## Phase 2 — Intraday and Options
 

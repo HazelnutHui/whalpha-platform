@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -12,8 +13,8 @@ from uuid import UUID
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from tip_api.contracts.market_data.v1 import InstrumentType, QualityStatus
-from tip_api.persistence.eod_read import EodDatasetUnavailableError, EodSessionNotFoundError
+from tip_api.contracts.market_data.v1 import EodSessionIntegrityV1, InstrumentType, QualityStatus
+from tip_api.persistence.eod_read import EodDatasetUnavailableError, EodHistorySessionRead, EodSessionNotFoundError
 from tip_api.persistence.parquet.eod_bars import EOD_PRICE_BAR_ARROW_SCHEMA, SCHEMA_VERSION, SCHEMA_VERSION_PARTITION
 from tip_api.persistence.parquet.eod_bars import _table_to_fingerprint_rows as eod_table_to_rows
 from tip_api.persistence.parquet.instrument_master_snapshot import (
@@ -99,6 +100,76 @@ class CanonicalEodReadRepository:
             )
         return tuple(sorted(bars, key=lambda item: (item.ticker, str(item.instrument_id))))
 
+    def inspect_session(self, session_date: date) -> EodSessionIntegrityV1:
+        root = self._validated_root()
+        manifest, table = self._read_valid_eod_partition(root, session_date=session_date)
+        return self._integrity(root, session_date, manifest, table)
+
+    def read_history_sessions(self, session_dates: tuple[date, ...]) -> tuple[EodHistorySessionRead, ...]:
+        """Read only requested partitions; never use a current/latest ticker resolver."""
+
+        if len(session_dates) != len(set(session_dates)):
+            raise EodDatasetUnavailableError("duplicate requested history session")
+        root = self._validated_root()
+        result: list[EodHistorySessionRead] = []
+        for session_date in sorted(session_dates):
+            manifest, table = self._read_valid_eod_partition(root, session_date=session_date)
+            identity_as_of_date, _ = self._identity_reference(manifest)
+            instruments = self._read_instruments(root, as_of_date=identity_as_of_date)
+            bars = self._bars_from_table(table, instruments)
+            result.append(EodHistorySessionRead(self._integrity(root, session_date, manifest, table), bars))
+        return tuple(result)
+
+    def _bars_from_table(
+        self,
+        table: pa.Table,
+        instruments: dict[UUID, dict[str, Any]],
+    ) -> tuple[EodMarketBarReadModel, ...]:
+        bars: list[EodMarketBarReadModel] = []
+        for row in table.to_pylist():
+            instrument_id = UUID(row["instrument_id"])
+            instrument = instruments.get(instrument_id)
+            if instrument is None:
+                raise EodDatasetUnavailableError("EOD bar references missing instrument")
+            bars.append(
+                EodMarketBarReadModel(
+                    instrument_id=instrument_id,
+                    ticker=str(instrument["ticker"]),
+                    name=str(instrument["name"]),
+                    instrument_type=InstrumentType(str(instrument["instrument_type"])),
+                    primary_exchange=str(instrument["primary_exchange"]),
+                    session_date=row["session_date"],
+                    open=row["open"], high=row["high"], low=row["low"], close=row["close"],
+                    volume=row["volume"], vwap=row["vwap"], trade_count=row["trade_count"],
+                    currency=str(row["currency"]), source=str(row["source"]),
+                    quality_status=QualityStatus(str(row["quality_status"])),
+                    quality_flags=tuple(row["quality_flags"] or ()),
+                )
+            )
+        return tuple(sorted(bars, key=lambda item: (str(item.instrument_id), item.ticker)))
+
+    def _integrity(
+        self,
+        root: Path,
+        session_date: date,
+        manifest: dict[str, Any],
+        table: pa.Table,
+    ) -> EodSessionIntegrityV1:
+        identity_date, _ = self._identity_reference(manifest)
+        identity = manifest["identity_snapshot"]
+        parquet = root / "market-data" / "eod-price-bars" / f"schema_version={SCHEMA_VERSION_PARTITION}" / f"session_date={session_date.isoformat()}" / PARQUET_FILE_NAME
+        return EodSessionIntegrityV1(
+            session_date=session_date,
+            record_count=table.num_rows,
+            content_fingerprint=str(manifest["content_sha256"]),
+            parquet_sha256=_file_sha256(parquet),
+            identity_snapshot_date=identity_date,
+            identity_snapshot_fingerprint=str(identity["snapshot_content_sha256"]),
+            duplicate_instrument_session_count=0,
+            multiple_latest_revision_count=0,
+            future_identity_reference_count=0,
+        )
+
     def _descriptor_for_session(self, root: Path, *, session_date: date) -> EodSessionDescriptor:
         manifest, _ = self._read_valid_eod_partition(root, session_date=session_date)
         identity_as_of_date, _ = self._identity_reference(manifest)
@@ -121,6 +192,7 @@ class CanonicalEodReadRepository:
 
     def _read_valid_eod_partition(self, root: Path, *, session_date: date) -> tuple[dict[str, Any], pa.Table]:
         partition = root / "market-data" / "eod-price-bars" / f"schema_version={SCHEMA_VERSION_PARTITION}" / f"session_date={session_date.isoformat()}"
+        _reject_symlink_chain(root, partition)
         if partition.is_symlink():
             raise EodDatasetUnavailableError("EOD session partition is unavailable")
         if not partition.exists():
@@ -152,6 +224,12 @@ class CanonicalEodReadRepository:
             raise EodDatasetUnavailableError("EOD session_date mismatch")
         if table_rows_fingerprint(rows) != manifest.get("content_sha256"):
             raise EodDatasetUnavailableError("EOD session fingerprint mismatch")
+        raw_rows = table.to_pylist()
+        instrument_sessions = [(row["instrument_id"], row["session_date"]) for row in raw_rows]
+        if len(instrument_sessions) != len(set(instrument_sessions)):
+            raise EodDatasetUnavailableError("duplicate instrument/session in EOD partition")
+        if any(not row["is_latest_revision"] for row in raw_rows):
+            raise EodDatasetUnavailableError("EOD partition contains a non-latest revision")
         self._verify_identity_snapshot(root, manifest)
         return manifest, table
 
@@ -160,7 +238,10 @@ class CanonicalEodReadRepository:
         if not isinstance(identity, dict):
             raise EodDatasetUnavailableError("EOD session identity reference is missing")
         identity_as_of_date, provider_id = self._identity_reference(manifest)
+        if identity_as_of_date > date.fromisoformat(str(manifest.get("session_date"))):
+            raise EodDatasetUnavailableError("EOD session references a future identity snapshot")
         snapshot_path = root / "market-data" / "snapshots" / "instrument-master" / f"as_of_date={identity_as_of_date.isoformat()}" / MANIFEST_FILE_NAME
+        _reject_symlink_chain(root, snapshot_path)
         if snapshot_path.is_symlink() or not snapshot_path.is_file():
             raise EodDatasetUnavailableError("identity snapshot reference is unavailable")
         snapshot_manifest = _read_json(snapshot_path)
@@ -174,6 +255,7 @@ class CanonicalEodReadRepository:
     def _read_instruments(self, root: Path, *, as_of_date: date) -> dict[UUID, dict[str, Any]]:
         partition = root / "market-data" / "instrument-master" / f"schema_version={INSTRUMENT_SCHEMA_VERSION_PARTITION}" / f"as_of_date={as_of_date.isoformat()}"
         path = partition / PARQUET_FILE_NAME
+        _reject_symlink_chain(root, path)
         table = _read_schema_checked_table(path, INSTRUMENT_MASTER_ARROW_SCHEMA, "instrument snapshot")
         snapshot_manifest = _read_json(root / "market-data" / "snapshots" / "instrument-master" / f"as_of_date={as_of_date.isoformat()}" / MANIFEST_FILE_NAME)
         dataset_manifest = _read_json(partition / MANIFEST_FILE_NAME)
@@ -322,3 +404,23 @@ def _parse_utc_datetime(value: object, field_name: str) -> datetime:
     if parsed.tzinfo is None:
         raise EodDatasetUnavailableError(f"{field_name} is invalid")
     return parsed.astimezone(UTC)
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _reject_symlink_chain(root: Path, path: Path) -> None:
+    try:
+        relative = path.relative_to(root)
+    except ValueError as exc:
+        raise EodDatasetUnavailableError("EOD path escapes market data root") from exc
+    current = root
+    for part in relative.parts:
+        current = current / part
+        if current.is_symlink():
+            raise EodDatasetUnavailableError("EOD path contains a symlink")

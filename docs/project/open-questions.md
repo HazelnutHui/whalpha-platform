@@ -12,6 +12,8 @@
 - How should reviewed overrides be approved, versioned, and retired without backfilling current facts into history?
 - What completed, independently readable reviewed-override dataset contract should reconcile known contradictions such as VCX without embedding ticker exceptions in shadow code?
 - How many completed sessions and which point-in-time statistic should replace `one_session_liquidity_provisional` before any activation review?
+- What reviewed evidence would permit a historical session to use an identity snapshot other than the same date without introducing latest-resolver or survivorship bias?
+- After a one-session pilot, what operational evidence should gate each proposed three-session historical batch?
 - Phase A candidates (Core 0, Broad 1) are evidence-limited and are not realistic market-universe estimates.
 - The four failed-run ambiguities are resolved, and the corrected bounded run published 9,939 canonical evidence records with zero ambiguity/collision/conflict. The remaining governance gap is authoritative issuer structure and domicile, not provider identity linkage.
 

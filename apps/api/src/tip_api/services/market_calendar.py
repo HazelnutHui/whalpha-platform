@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from enum import StrEnum
+from importlib.metadata import version
 from typing import Protocol
 from zoneinfo import ZoneInfo
 
@@ -28,6 +29,7 @@ class FreshnessStatus(StrEnum):
 class MarketSessionCalendar(Protocol):
     calendar_id: str
     timezone: ZoneInfo
+    calendar_version: str
 
     def is_session(self, session_date: date) -> bool: ...
 
@@ -36,6 +38,8 @@ class MarketSessionCalendar(Protocol):
     def latest_completed_session(self, as_of_datetime: datetime) -> date: ...
 
     def session_lag(self, actual_session: date, expected_session: date) -> int: ...
+
+    def sessions_before(self, session_date: date, count: int) -> tuple[date, ...]: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +59,10 @@ class ExchangeCalendar:
     calendar_id: str = XNYS_CALENDAR_ID
     timezone: ZoneInfo = XNYS_TIMEZONE
     _calendar: object | None = None
+
+    @property
+    def calendar_version(self) -> str:
+        return version("exchange-calendars")
 
     def __post_init__(self) -> None:
         if self._calendar is None:
@@ -108,6 +116,23 @@ class ExchangeCalendar:
             raise
         except Exception as exc:
             raise MarketCalendarError("market calendar could not calculate session lag") from exc
+
+    def sessions_before(self, session_date: date, count: int) -> tuple[date, ...]:
+        if count <= 0:
+            raise MarketCalendarError("history session count must be positive")
+        try:
+            if not self.is_session(session_date):
+                raise MarketCalendarError("analysis date must be a market session")
+            previous = self.calendar.previous_session(pd.Timestamp(session_date))
+            labels = self.calendar.sessions_window(previous, -count)
+            result = tuple(label.date() for label in labels)
+            if len(result) != count or result[-1] != previous.date():
+                raise MarketCalendarError("market calendar returned an incomplete history window")
+            return result
+        except MarketCalendarError:
+            raise
+        except Exception as exc:
+            raise MarketCalendarError("market calendar could not build history window") from exc
 
 
 def evaluate_market_data_freshness(

@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import date
 from typing import Protocol
 
+from tip_api.contracts.market_data.v1 import EodSessionIntegrityV1
 from tip_api.read_models.eod import EodMarketBarReadModel, EodSessionDescriptor
 
 
@@ -20,6 +22,14 @@ class EodDatasetUnavailableError(EodReadError):
     """Raised when completed EOD data is incomplete or inconsistent."""
 
 
+@dataclass(frozen=True, slots=True)
+class EodHistorySessionRead:
+    """Validated immutable historical session read."""
+
+    integrity: EodSessionIntegrityV1
+    bars: tuple[EodMarketBarReadModel, ...]
+
+
 class EodReadRepository(Protocol):
     def list_sessions(self) -> tuple[EodSessionDescriptor, ...]:
         """Return validated completed sessions."""
@@ -27,4 +37,12 @@ class EodReadRepository(Protocol):
 
     def read_bars(self, session_date: date) -> tuple[EodMarketBarReadModel, ...]:
         """Return joined canonical bars for one completed session."""
+        ...
+
+    def inspect_session(self, session_date: date) -> EodSessionIntegrityV1:
+        """Validate one completed session and return non-provider integrity metadata."""
+        ...
+
+    def read_history_sessions(self, session_dates: tuple[date, ...]) -> tuple[EodHistorySessionRead, ...]:
+        """Read only the requested sessions, joined by persisted stable instrument IDs."""
         ...
