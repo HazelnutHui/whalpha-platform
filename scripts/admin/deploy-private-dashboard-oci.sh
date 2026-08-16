@@ -105,7 +105,7 @@ case "${stat_line}" in
   owner=root:www-data\|mode=600\|type=regular\ file|owner=root:www-data\|mode=640\|type=regular\ file) ;;
   *) echo "auth file metadata mismatch: ${stat_line}" >&2; exit 1 ;;
 esac
-sudo awk -F: '$1=="hui"{found=1} END{exit found?0:1}' "${auth_file}"
+sudo test -s "${auth_file}"
 if [[ -e "${remote_base}/current" && ! -L "${remote_base}/current" ]]; then
   echo "unexpected non-symlink current path" >&2
   exit 1

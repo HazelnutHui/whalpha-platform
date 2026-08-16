@@ -29,7 +29,7 @@ The apply deployment:
 
 1. Verify local host, repo, branch, clean tree, and bundle checksums.
 2. Verify remote host and user through `whalpha-oci`.
-3. Verify Nginx, TLS, auth file, and target release paths.
+3. Verify Nginx, TLS, auth-file metadata/non-empty state, and target release paths without opening or parsing htpasswd content.
 4. Upload to a new staging release directory.
 5. Verify remote checksums.
 6. Atomically move the release into place.
