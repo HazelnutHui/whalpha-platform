@@ -2,7 +2,7 @@
 
 ## Status
 
-Phase B2A implemented and fixture-validated the boundary offline. Phase B2B implements a bounded streaming transport and atomic source-cache, observation, canonical-evidence, and logical-completion layers. Four authorized B2B runs failed closed during official Series/Class CSV discovery and produced no completed source cache or evidence snapshot. The fourth run's schema `2.0` record directly supports one exact 2024 Series/Class legacy path; the offline contract now accepts only that observed year/path/basename combination alongside the modern template. No later live run has exercised the correction. Universe activation and Dashboard changes remain out of scope.
+Phase B2A implemented and fixture-validated the boundary offline. Phase B2B implements a bounded streaming transport and atomic source-cache, observation, canonical-evidence, and logical-completion layers. Five authorized B2B runs failed closed during official Series/Class CSV discovery and produced no completed source cache or evidence snapshot. The fifth run confirmed that 2026 modern, 2025 modern, and the exact 2024 legacy candidate are accepted and counted consistently, then rejected a newly observed 2023 underscore-style basename with `path_template_mismatch`. No selection or CSV download followed, and the 2023 path remains unapproved pending offline review. Universe activation and Dashboard changes remain out of scope.
 
 ## Purpose
 

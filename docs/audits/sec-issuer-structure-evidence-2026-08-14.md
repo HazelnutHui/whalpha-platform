@@ -108,6 +108,34 @@ The same remediation removes independently maintained candidate aggregate counte
 
 No new live SEC run was authorized or executed. Credential metadata/content and `/data` were not accessed; Massive, OCI, snapshot, bundle, deployment, EOD, backfill, and scheduling remained untouched. A future live request still requires separate explicit one-run authorization.
 
+## Fifth Authorized Run — 2023 Candidate Discovery
+
+Status: `failed_source_discovery`; evidence publication: `not_published`; production Universe activation: `deferred`.
+
+The separately authorized run started at `2026-08-16T08:48:37Z` and ended at `2026-08-16T08:48:43Z` with exit code 1 and cutoff 2026-08-14. It made three SEC requests and zero retries: one each for `company_tickers_exchange.json`, `company_tickers_mf.json`, and the Series/Class landing page. The JSON files passed staging format validation. No CSV, CEF, BDC, or submissions request followed.
+
+Schema `2.0` selected the second `File / Format / Size` table and scanned eight anchored rows. Its four CSV candidate records were:
+
+| Candidate | Table | Row | Size | File year | Updated | Public SEC path | URL state | Selection state | Failure |
+| --- | --- | --- | --- | ---: | --- | --- | --- | --- | --- |
+| 1 | 2 | 3 | `7.68 MB` | 2026 | 2026-06-01 | `/files/investment/data/other/investment-company-series-class-information/investment-company-series-class-2026.csv` | accepted | `cutoff_eligible` | none |
+| 2 | 2 | 5 | `7.25 MB` | 2025 | 2025-06-02 | `/files/investment/data/other/investment-company-series-class-information/investment-company-series-class-2025.csv` | accepted | `cutoff_eligible` | none |
+| 3 | 2 | 7 | `7.21 MB` | 2024 | 2024-06-05 | `/files/investment/data/other/investment-company-series-and-class-information/investment-company-series-class-2024.csv` | accepted | `cutoff_eligible` | none |
+| 4 | 2 | 9 | `7.4 MB` | 2023 | 2023-06-08 | `/files/investment/data/other/investment-company-series-class-information/investment_company_series_class_2023.csv` | rejected | `rejected` | `path_template_mismatch` |
+
+All candidates had one anchor and normalized Format `csv`; query, fragment, and userinfo presence were false. Aggregate counts were candidate 4, allowlisted 3, parsed-date 4, rejected 1, cutoff-eligible 3, and selected 0. The aggregate consistency remediation therefore worked on the real fail-closed path. Because the fourth candidate failed before selection finalization, no selected year/date/path is recorded; it would be incorrect to claim that the 2026 CSV was selected or downloaded.
+
+- Sanitized diagnostic: `operation-diagnostics/sec-issuer-structure-evidence/as_of_date=2026-08-14/run_id=sec-b2b-2026-08-14-20260816T084842Z`
+- Diagnostic size: 4,798 bytes
+- Diagnostic SHA-256: `70ae842c375add7094a4986afa337b92355c4a0848dac7757ba9b1d2cca62a2d`
+- Completed source cache, observation partition, canonical evidence partition, and logical completion manifest: absent before and after
+- Staging residue: zero; diagnostic run count increased from four to five
+- Protected inventory: 34 files, 12,942,699 bytes, unchanged digest `398d3c8eb8a986ffc34a7f2fe19c50961eca0d9ed52bd980da95217561333f17`
+- Existing identity, canonical EOD, and Massive evidence data: unchanged
+- Snapshot, bundle, deployment, OCI access, and Universe activation: not performed
+
+No new rule was added and no second run occurred. The underscore-style 2023 basename is retained only as sanitized public-path evidence.
+
 ## Current Next Gate
 
-Review the completed offline contract and regression evidence before deciding whether to authorize at most one additional bounded SEC evidence run. This audit does not authorize that request.
+Review the observed 2023 underscore-style Series/Class path offline against the historical path contract. Do not infer that all 2023-or-earlier years share this naming rule, and do not make another SEC request without new explicit authorization.

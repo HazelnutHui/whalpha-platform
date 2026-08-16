@@ -14,6 +14,7 @@ Status date: 2026-08-16
 - Completed a network-free diagnostic-contract remediation: landing discovery schema `2.0` now records bounded candidate/table/row context, parsed year/date, safe Size, public path structure, and finite URL failure codes beneath the compatible top-level `href_rejected` reason. The exact dataset allowlists and selection behavior are unchanged; the third live candidate remains unknown until separately observed. No credential or `/data` access, snapshot, bundle, OCI access, or deployment occurred.
 - Executed the one separately authorized post-schema run once. It made three SEC requests and zero retries, then failed closed at Series/Class discovery with `href_rejected` / `path_template_mismatch`. Candidate 3 was the 2024 CSV in the public `/files/investment/data/other/investment-company-series-and-class-information/` directory variant; query, fragment, and userinfo were absent. No CSV or later source was requested, all four completed SEC targets remained absent, staging was zero, and the 34-file protected inventory was unchanged. The allowlist was not changed and no second run occurred.
 - Added offline support for exactly that observed 2024 Series/Class legacy path and basename, without extending the rule to 2023 or earlier, 2025, 2026, future years, CEF, or BDC. Candidate diagnostics are now the single source for aggregate discovery counts; the fourth-run failure shape reports two eligible candidates rather than zero, and the accepted three-candidate fixture selects 2026 with eligible count three. No new live run, credential access, `/data` access, or deployment operation occurred.
+- Executed the one separately authorized post-remediation run exactly once. It made three SEC requests and zero retries; Series/Class accepted the 2026, 2025, and exact 2024 candidates, then failed closed on a fourth 2023 candidate whose underscore-style basename produced `path_template_mismatch`. Real schema `2.0` counts were candidate 4, allowlisted 3, rejected 1, cutoff-eligible 3, and selected 0. No CSV or later source was requested, no completed target was published, staging was zero, and the protected inventory was unchanged.
 
 - Completed Security Evidence Phase B2A offline: SEC issuer-evidence observation/canonical contracts, point-in-time filing interpretation, stable-identity reconciliation, deterministic Core/Broad rules, secure private User-Agent configuration tooling, transport policy, and tmp-only Parquet persistence tests.
 - Phase B2A made zero SEC/Massive requests, configured no real User-Agent, wrote no production `/data`, changed no Dashboard calculations, generated no snapshot, and performed no OCI deployment. Core/Broad production activation remains deferred.
@@ -146,7 +147,7 @@ Status date: 2026-08-16
 - Completed Instrument Master, provider identity, and ticker resolver logical snapshots exist for 2026-08-12, 2026-08-13, and 2026-08-14. Counts are 9,932/13,106/9,932 for the first two dates and 9,939/13,110/9,939 for 2026-08-14.
 - Completed canonical EOD Price Bar partitions exist for 2026-08-12, 2026-08-13, and 2026-08-14 with 9,900, 9,901, and 9,912 records respectively.
 - Completed 2026-08-14 provider security evidence contains 25 catalog records, 13,110 observations, 9,939 canonical evidence records, and a logical completion marker.
-- SEC bounded transport, source-cache safety, parsers, evidence contracts/repositories, live CLI, retries=0 entrypoint, exact observed 2024 Series/Class legacy-path support, and candidate diagnostic schema `2.0` are implemented. Four authorized discovery runs failed closed; no later live run has exercised the offline path correction, and no completed SEC source cache, observation, canonical evidence, or logical snapshot exists.
+- SEC bounded transport, source-cache safety, parsers, evidence contracts/repositories, live CLI, retries=0 entrypoint, exact observed 2024 Series/Class legacy-path support, and candidate diagnostic schema `2.0` are implemented. Five authorized discovery runs failed closed; the latest verified the 2024 correction and exposed an unapproved 2023 underscore-style basename. No completed SEC source cache, observation, canonical evidence, or logical snapshot exists.
 - Core is the accepted future default and Broad the future secondary view, but production remains on the disclosed provisional legacy 1,864-member rule pending authoritative issuer-structure and domicile coverage.
 - The 2026-08-14 identity snapshot is `accepted_with_provenance_exception`; its original request/pagination provenance is unknown and it must not be requested again or overwritten.
 - Private JSON snapshot export, frontend snapshot build, versioned bundle creation, session-login configuration, and deployment tooling are implemented. Git records release `2026-08-14T020535Z-ebb16015b7da` as the last known OCI deployment; OCI was not accessed during the 2026-08-16 documentation reconciliation, so current live health is unverified.
@@ -199,6 +200,18 @@ Verified on 2026-08-16 after the exact-path and candidate-aggregate correction:
 
 Backend warnings remain the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning. Frontend warnings remain the existing Vite React-plugin configuration deprecations, external temporary `outDir` notice, and one 639.01 kB minified chunk warning. No SEC/Massive or other provider request, credential metadata/content access, `/data` access, OCI access, production snapshot/bundle generation, deployment, EOD/backfill/scheduler work, or live run occurred.
 
+## Fifth SEC Run Postflight
+
+Verified after the fifth authorized SEC run on 2026-08-16:
+
+- focused SEC provider, issuer-evidence contract/persistence, and credential-script tests: `132 passed`, `0 warnings`, `0 skipped`, `0 xfailed`
+- the temporary offline test guard recorded 0 external-network attempts
+- Markdown local links: 82 files, 202 links checked, 0 failures
+- sensitive-information scan: 265 tracked UTF-8 files, 0 high-confidence findings
+- `bash -n` for 15 shell scripts and `git diff --check`: passed
+
+The live operation itself made only three authorized SEC requests and zero retries. It produced one sanitized failed diagnostic and no completed SEC dataset. No Massive/OCI request, production snapshot/bundle, deployment, EOD/backfill/scheduler work, code change, or second live run occurred.
+
 ## Next Proposed Step
 
-Review the completed exact-2024 offline contract and verification evidence before deciding whether to authorize at most one new bounded SEC run. This status is not live-run authorization; Core/Broad production activation remains deferred.
+Review the newly observed 2023 Series/Class underscore-style basename offline without generalizing it to other years. Another live request requires separate explicit authorization; Core/Broad production activation remains deferred.

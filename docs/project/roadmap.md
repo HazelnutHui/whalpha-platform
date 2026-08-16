@@ -56,7 +56,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review the completed offline exact-2024 Series/Class path contract, candidate-derived diagnostic aggregates, and regression evidence. If accepted, a separately authorized single bounded SEC run may test the unchanged fail-closed pipeline; this roadmap item is not authorization. No 2023-or-earlier legacy semantics are assumed, and Core/Broad activation remains deferred.
+Review the fifth-run schema `2.0` evidence for the 2023 Series/Class underscore-style basename against the historical path contract. Do not generalize the observed path to 2022 or earlier, and do not issue another live request without separate authorization. Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 
