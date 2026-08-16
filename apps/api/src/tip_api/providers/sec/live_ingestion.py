@@ -28,6 +28,7 @@ from tip_api.persistence.parquet.sec_issuer_evidence import ParquetSecIssuerEvid
 from tip_api.persistence.sec_issuer_evidence import SecIssuerEvidencePersistenceError
 from tip_api.providers.sec.bulk_sources import (
     SOURCE_CACHE_RELATIVE_ROOT,
+    SecLandingDiscoveryError,
     acquire_sec_source_cache,
     iter_selected_submissions,
     parse_tabular_json,
@@ -319,8 +320,9 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     except (SecCredentialFileError, SecTransportError, SecIssuerEvidencePersistenceError, RuntimeError, ValueError) as exc:
         reason = _safe_failure_reason(exc)
+        quality = {"landing_discovery": exc.diagnostic.to_safe_dict()} if isinstance(exc, SecLandingDiscoveryError) else {}
         try:
-            diagnostic = _write_failed_diagnostic(root, as_of_date, observed_at, transport, {}, reason)
+            diagnostic = _write_failed_diagnostic(root, as_of_date, observed_at, transport, quality, reason)
             print(f"failed_diagnostic={diagnostic}")
         except Exception:
             print("failed_diagnostic=write_failed", file=sys.stderr)
@@ -422,8 +424,8 @@ def _safe_failure_reason(exc: Exception) -> str:
         return "credential_boundary_failure"
     if isinstance(exc, SecTransportError):
         status = getattr(exc, "status_code", None)
-        if "landing page" in str(exc):
-            return "sec_csv_discovery_cardinality_failure"
+        if isinstance(exc, SecLandingDiscoveryError):
+            return exc.reason_code
         return f"sec_http_{status}" if isinstance(status, int) else "sec_transport_or_source_validation_failure"
     if isinstance(exc, SecIssuerEvidencePersistenceError):
         return "evidence_persistence_failure"

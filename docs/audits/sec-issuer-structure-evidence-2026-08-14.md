@@ -23,9 +23,9 @@ No source hash is reported because the cache was not completed and staged files 
 
 Review the landing-page CSV discovery contract offline using a small sanitized official-shape fixture or an explicitly reviewed URL-selection rule before considering any additional SEC request. A new request requires separate authorization.
 
-## Offline Remediation
+## Initial Offline Remediation
 
-The discovery contract now parses the SEC download table by row, filters explicit CSV rows by update/effective date at or before 2026-08-14, and deterministically selects the latest eligible release. Local fixtures cover multi-year tables, mixed XML/CSV rows, future releases, date formats, tied latest URLs, missing/malformed dates, unsafe URLs, absent CSVs, deterministic statistics, and the three approved table header variants. This remediation does not itself alter the failed-run record or authorize production activation.
+The first remediation added dated row selection but modeled table headers as carrying year/date semantics. That did not match the official pages' actual `File / Format / Size` structure, so it was insufficient. This does not alter the failed-run record or imply an SEC access failure.
 
 ## Second Authorized Run
 
@@ -41,3 +41,9 @@ The second and final authorized run in this phase began at `2026-08-16T04:20:02.
 - Staging residue: none observed
 
 The diagnostic category proves the failure stage but not the selector subcondition because current sanitization merges several landing-discovery errors and the staged HTML is deleted. It would be incorrect to claim a specific selected year/date, source hash, evidence distribution, Core/Broad shadow count, or edge-ticker result. Existing canonical data and the production legacy Universe remain unchanged.
+
+## DOM-Coverage Remediation
+
+The parser now uses the unique normalized `File / Format / Size` table, reads year from the file anchor and `Updated` date from complete cell text including anchor-tail nodes, and handles the two- and four-digit official date forms. Three minimal synthetic fixtures cover Series/Class, CEF, and BDC structures, including unrelated tables, CSV/XML pairs, relative links, NBSP/whitespace, undated historical rows, and reversed historical format order.
+
+Selection is cutoff-aware, row-order independent, and constrained by three exact year-parameterized SEC path rules. Current/later undated candidates, malformed or conflicting dates, unsafe paths, and ambiguous tables fail closed. The new structured diagnostic distinguishes table, row, date, URL, eligibility, and tie failures using only bounded counts and sanitized selection metadata. No raw HTML was retained. This remediation made zero SEC/Massive requests, did not access credentials or `/data`, and did not generate a snapshot or deploy OCI. Both failed live runs remain non-publishing and caused no production data damage. A future live run remains separately authorized work.

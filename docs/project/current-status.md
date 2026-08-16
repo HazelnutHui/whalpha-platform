@@ -8,6 +8,7 @@ Status date: 2026-08-16
 - The first authorized B2B run made three requests and zero retries, then failed closed because the first SEC landing page did not yield exactly one official CSV candidate. No source cache or evidence dataset was published; production Universe, Dashboard, and OCI remain unchanged.
 - Replaced the invalid single-link assumption with an offline-tested dated-table selector that ignores XML, filters future releases, rejects ambiguous or unsafe candidates, and records deterministic selection statistics. A new live run still requires explicit one-run authorization.
 - The second authorized run used the dated selector but again stopped after request 3 at the first landing-page discovery gate (`sec_csv_discovery_cardinality_failure`), with zero retries. No completed cache/evidence, shadow audit, snapshot, Universe change, or OCI deployment resulted.
+- Completed a second, network-free parser remediation after confirming the official pages use multiple tables with a `File / Format / Size` download table, anchor-label years, and anchor-tail `Updated` dates. The parser now has dataset-specific exact URL rules, historical-undated handling, bounded content-safe diagnostics, and selected-CSV content-type/schema checks. No SEC/Massive request, credential access, `/data` access, snapshot, deployment, or OCI access occurred.
 
 - Completed Security Evidence Phase B2A offline: SEC issuer-evidence observation/canonical contracts, point-in-time filing interpretation, stable-identity reconciliation, deterministic Core/Broad rules, secure private User-Agent configuration tooling, transport policy, and tmp-only Parquet persistence tests.
 - Phase B2A made zero SEC/Massive requests, configured no real User-Agent, wrote no production `/data`, changed no Dashboard calculations, generated no snapshot, and performed no OCI deployment. Core/Broad production activation remains deferred.
@@ -184,4 +185,4 @@ Status date: 2026-08-16
 
 ## Next Proposed Step
 
-Design an offline-safe landing-page structural diagnostic that distinguishes table/header, date, eligibility, and tie failures without retaining raw HTML or private contact data; do not authorize another SEC run until it is reviewed.
+Review the completed offline landing-page parser and structured diagnostics before deciding whether to authorize one new bounded SEC evidence run. Core/Broad production activation remains deferred.

@@ -54,7 +54,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design and fixture-test a sanitized SEC landing-page structural diagnostic that preserves no raw HTML or contact identity, then review it before considering any additional SEC authorization. Core/Broad activation remains deferred.
+Review the completed offline SEC landing-page parser and sanitized structural diagnostics before considering one separately authorized bounded SEC evidence run. Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 
