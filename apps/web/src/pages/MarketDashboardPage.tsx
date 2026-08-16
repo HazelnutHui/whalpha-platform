@@ -80,6 +80,8 @@ function MetaControlBar({ data, universe, selected, onChange }: { data: Dashboar
       <div><span className="meta-label">Period</span><strong>1D close-to-close</strong></div>
       <div><span className="meta-label">Data as of</span><strong>{data.overview.current_session_date} EOD</strong></div>
       <div><span className="meta-label">Freshness</span><strong>{freshnessLabel(data)}</strong></div>
+      <div><span className="meta-label">Governance</span><strong className="governance-provisional">Provisional classification</strong></div>
+      <p className="governance-copy">Price/liquidity-filtered legacy universe; canonical security-type coverage is incomplete.</p>
     </section>
   );
 }
@@ -248,7 +250,7 @@ function MoversTable({ title, items, direction, onSelect }: { title: string; ite
     <section className="panel mover-panel" aria-labelledby={`${direction}-movers-title`}>
       <div className="section-header compact">
         <div>
-          <p className="eyebrow">Tradable U.S. Equities</p>
+          <p className="eyebrow">Legacy Liquid Screen (Provisional)</p>
           <h2 id={`${direction}-movers-title`}>{title}</h2>
         </div>
       </div>
@@ -325,7 +327,8 @@ function DataDetails({ universe, data }: { universe: DashboardUniverseViewRespon
       </div>
       <h3>Material Warnings</h3>
       <div className="quality-flags">
-        {materialEntries.length ? materialEntries.map(([flag, count]) => <span key={flag}>{flag.replace(/_/g, ' ')} — {formatNumber(count)} records</span>) : <span>No material warnings in selected universe.</span>}
+        <span>Security-type evidence is incomplete; results may include non-operating or unsupported security structures.</span>
+        {materialEntries.map(([flag, count]) => <span key={flag}>{flag.replace(/_/g, ' ')} — {formatNumber(count)} records</span>)}
       </div>
       <p className="quality-copy">EOD market structure; not real-time. File/schema consistency and exchange-calendar freshness are verified independently.</p>
     </details>

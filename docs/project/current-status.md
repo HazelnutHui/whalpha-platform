@@ -4,6 +4,11 @@ Status date: 2026-08-15
 
 ## Completed
 
+- Product policy selected: Core U.S. Domestic Operating Equities future default; Broad U.S.-Listed Operating Equities future secondary; production activation deferred.
+- Implemented Provider Security Type Catalog V1, Provider Instrument Security Evidence V1, bounded Massive evidence ingestion, and atomic Parquet repository with no canonical dataset mutation.
+- Implemented an undeployed provisional Dashboard disclosure and governance metadata without changing the 1,864-member calculations.
+- The first Phase B1 live attempt used 15 requests and zero retries, reconciled 13,110 raw records, but failed ambiguous and mapped-business-key gates. No evidence partition, snapshot, or OCI release was published.
+
 - Accepted ADR 0015 for effective-dated Security Classification V1 and quarantine-first evidence governance.
 - Completed the read-only 2026-08-14 security-type audit: Instrument Master 9,939; raw comparable 9,889; legacy default 1,864.
 - Confirmed VCX as excluded closed-end-fund pollution, separated AKAN as a U.S.-listed foreign operating ordinary share, and quarantined 4,527 records lacking sufficient classification evidence.

@@ -327,6 +327,11 @@ class DashboardOverviewResponse(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     contract_version: str
     default_universe_id: str
+    universe_definition_id: str
+    universe_version: str
+    governance_status: str
+    classification_as_of_date: date
+    evidence_coverage_status: str
     current_session_date: date
     previous_session_date: date
     data_as_of_label: str
@@ -348,6 +353,11 @@ class DashboardOverviewResponse(BaseModel):
         return cls(
             contract_version=model.contract_version,
             default_universe_id=model.default_universe_id,
+            universe_definition_id=model.universe_definition_id,
+            universe_version=model.universe_version,
+            governance_status=model.governance_status,
+            classification_as_of_date=model.classification_as_of_date,
+            evidence_coverage_status=model.evidence_coverage_status,
             current_session_date=model.current_session_date,
             previous_session_date=model.previous_session_date,
             data_as_of_label=model.data_as_of_label,

@@ -4,6 +4,8 @@
 
 The deployed Dashboard still uses Dashboard Universe V1. Security Classification V1 candidates are backend audit outputs only; no frontend payload, layout, or production behavior changes in Phase A.
 
+The next snapshot contract labels the unchanged production calculation set `Legacy Liquid Screen (Provisional)`, displays an amber governance state, and includes an explicit security-type evidence limitation. The source change is not deployed when evidence ingestion hard gates fail.
+
 React/TypeScript/Vite frontend for Trading Intelligence Platform.
 
 ## Purpose

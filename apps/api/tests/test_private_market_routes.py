@@ -49,7 +49,8 @@ def test_summary_movers_liquidity_map_and_returns_decimal_strings():
 
     overview = client.get('/api/v1/private/market/overview/latest').json()
     assert overview['default_universe_id'] == 'tradable_us_listed_equities_v1'
-    assert overview['universes'][0]['definition']['display_name'] == 'Tradable U.S. Equities'
+    assert overview['universes'][0]['definition']['display_name'] == 'Legacy Liquid Screen (Provisional)'
+    assert overview['governance_status'] == 'provisional_classification'
     assert overview['universes'][0]['summary']['equal_weight_return'] is None
     assert isinstance(overview['universes'][2]['summary']['equal_weight_return'], str)
 

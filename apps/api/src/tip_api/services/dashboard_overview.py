@@ -110,6 +110,11 @@ class MarketBenchmark:
 class DashboardOverviewV11:
     contract_version: str
     default_universe_id: str
+    universe_definition_id: str
+    universe_version: str
+    governance_status: str
+    classification_as_of_date: date
+    evidence_coverage_status: str
     current_session_date: date
     previous_session_date: date
     data_as_of_label: str
@@ -167,8 +172,13 @@ class DashboardOverviewService:
             self._build_universe(ELIGIBLE_UNIVERSE_ID, rows, current_date, previous_date),
         )
         return DashboardOverviewV11(
-            contract_version="1.2",
+            contract_version="1.3",
             default_universe_id=TRADABLE_UNIVERSE_ID,
+            universe_definition_id="legacy_liquid_screen_provisional",
+            universe_version="1.0",
+            governance_status="provisional_classification",
+            classification_as_of_date=current_date,
+            evidence_coverage_status="incomplete",
             current_session_date=current_date,
             previous_session_date=previous_date,
             data_as_of_label=f"Data as of {current_date.isoformat()} EOD",
@@ -256,9 +266,9 @@ class DashboardOverviewService:
         if universe_id == TRADABLE_UNIVERSE_ID:
             definition = DashboardUniverseDefinition(
                 universe_id=universe_id,
-                name="Tradable U.S.-Listed Equities V1",
-                display_name="Tradable U.S. Equities",
-                description="Operating common-equity securities on supported U.S. exchanges with previous-session price and liquidity gates.",
+                name="Legacy Liquid Screen (Provisional)",
+                display_name="Legacy Liquid Screen (Provisional)",
+                description="Price/liquidity-filtered legacy universe; canonical security-type coverage is incomplete.",
             )
             selected = tuple(item for item in rows if not item.universe_reasons)
         elif universe_id == OPERATING_UNIVERSE_ID:

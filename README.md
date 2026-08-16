@@ -4,6 +4,8 @@
 
 The repository includes a provider-neutral, effective-dated Security Classification V1 boundary. Classification fact, evidence quality, and candidate-universe eligibility are separate. Unknown, ambiguous, malformed, heuristic-only, and insufficient-evidence records are quarantined. The [2026-08-14 read-only audit](docs/audits/security-type-classification-2026-08-14.md) found that the binary Instrument Master cannot reliably resolve most non-ETF records, so production Dashboard membership remains unchanged pending a Core-versus-Broad policy decision and stronger evidence.
 
+Phase B1 accepts Core as the future default and Broad as the future secondary view. Provider security-type evidence persistence and provisional Dashboard disclosure are implemented, but the first bounded live evidence attempt failed ambiguity/business-key gates and published nothing. Production remains unchanged. See the [attempt audit](docs/audits/security-type-provider-evidence-2026-08-14.md).
+
 Trading Intelligence Platform is a personal single-user prototype for U.S. equity market intelligence. It is designed to help the user understand market structure, sector and theme rotation, stock strength, breadth, options structure, relationship shifts, and significant market developments quickly enough to support discretionary research and trading decisions.
 
 The platform should help answer:

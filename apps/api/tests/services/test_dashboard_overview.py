@@ -97,7 +97,9 @@ def test_tradable_universe_uses_previous_session_price_and_liquidity_gates():
     current, previous = base_rows()
     overview = service(current, previous).get_latest_overview()
     tradable = next(item for item in overview.universes if item.definition.universe_id == overview.default_universe_id)
-    assert tradable.definition.display_name == "Tradable U.S. Equities"
+    assert tradable.definition.display_name == "Legacy Liquid Screen (Provisional)"
+    assert overview.governance_status == "provisional_classification"
+    assert overview.evidence_coverage_status == "incomplete"
     assert tradable.audit.raw_comparable_count == 11
     assert tradable.audit.etf_count == 6
     assert tradable.audit.price_gate_count == 3

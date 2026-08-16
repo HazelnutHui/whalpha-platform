@@ -69,9 +69,9 @@ const summary: MarketSummaryResponse = {
 const universe = {
   definition: {
     universe_id: 'tradable_us_listed_equities_v1',
-    name: 'Tradable U.S.-Listed Equities V1',
-    display_name: 'Tradable U.S. Equities',
-    description: 'Synthetic operating equity fixture with previous-session price and liquidity gates.',
+    name: 'Legacy Liquid Screen (Provisional)',
+    display_name: 'Legacy Liquid Screen (Provisional)',
+    description: 'Price/liquidity-filtered legacy universe; canonical security-type coverage is incomplete.',
   },
   audit: {
     raw_comparable_count: 280,
@@ -135,8 +135,13 @@ const marketBenchmarks = [
 
 export const demoDashboardData: DashboardData = {
   overview: {
-    contract_version: '1.2',
+    contract_version: '1.3',
     default_universe_id: 'tradable_us_listed_equities_v1',
+    universe_definition_id: 'legacy_liquid_screen_provisional',
+    universe_version: '1.0',
+    governance_status: 'provisional_classification',
+    classification_as_of_date: current,
+    evidence_coverage_status: 'incomplete',
     current_session_date: current,
     previous_session_date: previous,
     data_as_of_label: 'Data as of 2026-08-13 EOD',

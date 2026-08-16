@@ -190,12 +190,17 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     mover_loser_count: requireNumber(value, 'mover_loser_count'),
     liquidity_node_count: requireNumber(value, 'liquidity_node_count'),
     warning_count: requireNumber(value, 'warning_count'),
+    universe_definition_id: typeof value.universe_definition_id === 'string' ? value.universe_definition_id : undefined,
+    universe_version: typeof value.universe_version === 'string' ? value.universe_version : undefined,
+    governance_status: typeof value.governance_status === 'string' ? value.governance_status : undefined,
+    classification_as_of_date: value.classification_as_of_date === undefined ? undefined : requireNullableString(value, 'classification_as_of_date'),
+    evidence_coverage_status: typeof value.evidence_coverage_status === 'string' ? value.evidence_coverage_status : undefined,
     is_real_provider_backed: requireBoolean(value, 'is_real_provider_backed'),
     access_classification: requireString(value, 'access_classification'),
     contains_raw_provider_data: requireBoolean(value, 'contains_raw_provider_data'),
     contains_credentials: requireBoolean(value, 'contains_credentials'),
   };
-  if (!['1', '1.1'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
+  if (!['1', '1.1', '1.2'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
     throw new Error('Unsupported private dashboard snapshot');
   }
   if (manifest.snapshot_contract_version === '1.1' && (
@@ -207,6 +212,13 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     manifest.freshness_checked_at === undefined
   )) {
     throw new Error('Private dashboard snapshot is missing freshness metadata');
+  }
+  if (manifest.snapshot_contract_version === '1.2' && (
+    !manifest.universe_definition_id || !manifest.universe_version ||
+    manifest.governance_status !== 'provisional_classification' ||
+    !manifest.classification_as_of_date || manifest.evidence_coverage_status !== 'incomplete'
+  )) {
+    throw new Error('Private dashboard snapshot is missing governance metadata');
   }
   if (manifest.contains_credentials || manifest.contains_raw_provider_data) {
     throw new Error('Unsafe private dashboard snapshot');
@@ -309,6 +321,11 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
   return {
     contract_version: requireString(value, 'contract_version'),
     default_universe_id: requireString(value, 'default_universe_id'),
+    universe_definition_id: requireString(value, 'universe_definition_id'),
+    universe_version: requireString(value, 'universe_version'),
+    governance_status: requireString(value, 'governance_status'),
+    classification_as_of_date: requireString(value, 'classification_as_of_date'),
+    evidence_coverage_status: requireString(value, 'evidence_coverage_status'),
     current_session_date: requireString(value, 'current_session_date'),
     previous_session_date: requireString(value, 'previous_session_date'),
     data_as_of_label: requireString(value, 'data_as_of_label'),

@@ -6,7 +6,9 @@
 - Keep security form, issuer structure, listing scope, evidence, and universe disposition separate.
 - Names and ticker patterns may only create review flags, never positive eligibility.
 - Unknown, ambiguous, malformed, heuristic-only, and insufficient-evidence records remain quarantined.
-- Phase A candidates must not feed production analytics until the user selects Core or Broad in Phase B.
+- Phase A/B candidates must not feed production analytics until provider and authoritative issuer evidence satisfy the documented activation gates.
+- Product policy is Core future default and Broad future secondary, but production activation remains deferred.
+- Provider security-form evidence never proves issuer operating structure or domicile; unknown evidence remains quarantined.
 
 ## 1. Required Reading Order
 
@@ -96,4 +98,4 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 Infrastructure, storage, application scaffold, local frontend/backend toolchain, core EOD contracts, point-in-time identity, canonical EOD Price Bar sessions for 2026-08-12 through 2026-08-14, offline XNYS freshness, default-disabled private APIs, React Market Dashboard, static publication, branded session login, and authenticated OCI deployment are complete and verified. Public provider-backed display authorization, automated daily ingestion, database/catalog services, and broader analytics modules are not implemented.
 
-Current proposed activity: design the first bounded daily EOD orchestration and non-sensitive run-report retention workflow around the accepted XNYS calendar, without adding analytics scope.
+Current proposed activity: review the failed Phase B1 ambiguity/business-key conditions offline, add non-sensitive conflict diagnostics, and obtain explicit authorization before any new bounded provider-evidence request. Do not begin Phase B2 or switch production universes first.

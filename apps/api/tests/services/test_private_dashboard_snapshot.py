@@ -107,7 +107,7 @@ def fake_overview():
     definition = DashboardUniverseDefinition(
         universe_id="tradable_us_listed_equities_v1",
         name="Tradable U.S.-Listed Equities V1",
-        display_name="Tradable U.S. Equities",
+        display_name="Legacy Liquid Screen (Provisional)",
         description="Fixture universe",
     )
     audit = DashboardUniverseAudit(
@@ -171,8 +171,13 @@ def fake_overview():
         ),
     )
     return DashboardOverviewV11(
-        contract_version="1.2",
+        contract_version="1.3",
         default_universe_id="tradable_us_listed_equities_v1",
+        universe_definition_id="legacy_liquid_screen_provisional",
+        universe_version="1.0",
+        governance_status="provisional_classification",
+        classification_as_of_date=CURRENT,
+        evidence_coverage_status="incomplete",
         current_session_date=CURRENT,
         previous_session_date=PREVIOUS,
         data_as_of_label="Data as of 2026-08-13 EOD",
@@ -250,8 +255,10 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
     assert manifest["current_session_date"] == "2026-08-13"
     assert manifest["file_sha256"]["market-summary.json"] == snapshot.sha256_file(private / "market-summary.json")
     assert manifest["overview_file"] == "market-overview.json"
-    assert manifest["snapshot_contract_version"] == "1.1"
-    assert manifest["dashboard_contract_version"] == "1.2"
+    assert manifest["snapshot_contract_version"] == "1.2"
+    assert manifest["dashboard_contract_version"] == "1.3"
+    assert manifest["snapshot_contract_version"] == "1.2"
+    assert manifest["governance_status"] == "provisional_classification"
     assert manifest["expected_latest_completed_session"] == "2026-08-14"
     assert manifest["actual_latest_completed_session"] == "2026-08-13"
     assert manifest["session_lag"] == 1
@@ -259,6 +266,7 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
     assert manifest["calendar_id"] == "XNYS"
     assert '"equal_weight_return":"0.01"' in (private / "market-summary.json").read_text()
     assert '"default_universe_id":"tradable_us_listed_equities_v1"' in (private / "market-overview.json").read_text()
+    assert '"universe_definition_id":"legacy_liquid_screen_provisional"' in (private / "market-overview.json").read_text()
 
 
 def test_corrupted_snapshot_file_detection(tmp_path, monkeypatch):

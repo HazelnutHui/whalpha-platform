@@ -4,6 +4,10 @@
 
 Production still uses the legacy binary common-stock/ETF rule. Phase A proved it insufficient: non-ETF records were treated as operating equities, allowing the closed-end fund VCX into the default set. Security Classification V1 separates legal form, issuer structure, listing scope, evidence, and eligibility but is not connected to production analytics. The [2026-08-14 audit](../audits/security-type-classification-2026-08-14.md) documents non-production Core and Broad candidates.
 
+## Accepted Product Policy
+
+Core U.S. Domestic Operating Equities is the future default. Broad U.S.-Listed Operating Equities is the future secondary view. ETF/ETN records remain benchmark-only. Activation is deferred; the current 1,864-member calculation set remains unchanged and is designated `Legacy Liquid Screen (Provisional)` until evidence gates pass.
+
 ## Purpose
 
 Dashboard Universe V1 defines which completed EOD instruments drive the private Market Dashboard V1.1 overview.

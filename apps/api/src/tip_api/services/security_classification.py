@@ -21,6 +21,7 @@ from tip_api.contracts.security_classification.v1 import (
     EvidenceGrade,
     IssuerStructure,
     ListingScope,
+    ProviderInstrumentSecurityEvidenceV1,
     SecurityClassificationV1,
     SecurityForm,
     UniverseDisposition,
@@ -184,9 +185,17 @@ def reviewed_overrides() -> tuple[SecurityClassificationOverride, ...]:
 class SecurityClassificationService:
     """Classify comparable bars without changing canonical Instrument Master semantics."""
 
-    def __init__(self, *, overrides: tuple[SecurityClassificationOverride, ...] = ()) -> None:
+    def __init__(
+        self,
+        *,
+        overrides: tuple[SecurityClassificationOverride, ...] = (),
+        provider_evidence: tuple[ProviderInstrumentSecurityEvidenceV1, ...] = (),
+    ) -> None:
         validate_override_registry(overrides)
         self._overrides = overrides
+        if len({item.instrument_id for item in provider_evidence}) != len(provider_evidence):
+            raise ValueError("provider evidence instrument_id must be unique")
+        self._provider_evidence = {item.instrument_id: item for item in provider_evidence}
 
     def audit(
         self,
@@ -300,6 +309,49 @@ class SecurityClassificationService:
                 observed_at=override.reviewed_at,
                 reviewed_at=override.reviewed_at,
                 ingested_at=override.reviewed_at,
+            )
+        provider_evidence = self._provider_evidence.get(bar.instrument_id)
+        if provider_evidence is not None:
+            if provider_evidence.as_of_date != as_of_date:
+                raise ValueError("provider evidence as_of_date mismatch")
+            issuer_structure = {
+                "ETF": IssuerStructure.ETF,
+                "ETN": IssuerStructure.ETN,
+                "ETS": IssuerStructure.ETN,
+            }.get(provider_evidence.provider_type_code, IssuerStructure.UNKNOWN)
+            listing_scope = (
+                ListingScope.DEPOSITARY_RECEIPT
+                if provider_evidence.security_form_evidence is SecurityForm.ADR_ADS
+                else ListingScope.OTHER
+                if issuer_structure in {IssuerStructure.ETF, IssuerStructure.ETN}
+                else ListingScope.UNKNOWN
+            )
+            return SecurityClassificationV1(
+                taxonomy_version=TAXONOMY_VERSION,
+                ruleset_version=RULESET_VERSION,
+                instrument_id=bar.instrument_id,
+                provider=bar.source,
+                as_of_date=as_of_date,
+                effective_from=as_of_date,
+                security_form=provider_evidence.security_form_evidence,
+                issuer_structure=issuer_structure,
+                listing_scope=listing_scope,
+                primary_exchange=bar.primary_exchange,
+                listing_country="US",
+                issuer_domicile_country="UNKNOWN",
+                incorporation_country="UNKNOWN",
+                is_us_listed=True,
+                is_us_domiciled=None,
+                classification_status=provider_evidence.classification_status,
+                universe_disposition=provider_evidence.universe_disposition,
+                decision_reason_codes=provider_evidence.decision_flags,
+                classification_method=ClassificationMethod.PROVIDER_EXPLICIT,
+                evidence_grade=provider_evidence.evidence_grade,
+                evidence_ids=(f"{provider_evidence.provider}:{provider_evidence.provider_type_code}",),
+                quality_flags=provider_evidence.review_flags,
+                observed_at=provider_evidence.observed_at,
+                reviewed_at=provider_evidence.observed_at,
+                ingested_at=provider_evidence.ingested_at,
             )
         if bar.instrument_type is InstrumentType.ETF:
             return SecurityClassificationV1(

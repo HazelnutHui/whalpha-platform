@@ -1,5 +1,9 @@
 # Massive Adapter Boundary
 
+## Security-Type Evidence
+
+Phase B1 permits only one Ticker Types request and bounded point-in-time All Tickers pagination. The adapter preserves official codes/descriptions and joins with stable identifiers or the accepted point-in-time resolver. Raw responses are not persisted. Provider common-stock type proves security form only; it cannot establish issuer structure, domicile, or Core/Broad eligibility.
+
 ## Purpose
 
 This document records the implemented Massive Stocks adapter skeleton boundary. The adapter exists to validate configuration, credential handling, transport injection, provider response mapping, and a controlled one-request reference smoke test against canonical boundaries.

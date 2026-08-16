@@ -12,6 +12,10 @@ from tip_api.contracts.security_classification.v1.security_classification import
     UniverseDisposition,
     validate_non_overlapping_classifications,
 )
+from tip_api.contracts.security_classification.v1.provider_evidence import (
+    ProviderInstrumentSecurityEvidenceV1,
+    ProviderSecurityTypeCatalogV1,
+)
 
 __all__ = [
     "ClassificationMethod",
@@ -24,4 +28,6 @@ __all__ = [
     "SecurityForm",
     "UniverseDisposition",
     "validate_non_overlapping_classifications",
+    "ProviderInstrumentSecurityEvidenceV1",
+    "ProviderSecurityTypeCatalogV1",
 ]

@@ -52,7 +52,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review Candidate A and Candidate B, select Core U.S. Domestic Operating Equities or Broad U.S.-Listed Operating Equities as the production policy, and only then authorize Phase B classification-evidence integration.
+Perform an offline-safe review of the four ambiguous/nonzero business-key conflict condition, improve the next run's non-sensitive diagnostics, then obtain explicit authorization for one new bounded Phase B1 evidence request sequence. Do not begin Phase B2 or switch production universes first.
 
 ## Phase 2 — Intraday and Options
 

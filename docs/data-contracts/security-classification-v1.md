@@ -22,6 +22,8 @@ Priority is authoritative filing/exchange/issuer evidence, explicit provider typ
 
 Weak or conflicting evidence never creates eligibility. Unknown, ambiguous, malformed, heuristic-only, and insufficient-evidence classifications are quarantined.
 
+Provider Security Type Catalog V1 preserves official provider code, description, asset class, locale, endpoint, observation time, and evidence fingerprint. Provider Instrument Security Evidence V1 preserves the point-in-time type code and security-form evidence linked by stable identity. Neither contract treats `CS`, U.S. locale, CIK, FIGI, or name text as operating-company or domicile proof.
+
 ## Candidate Policies
 
 Core U.S. Domestic Operating Equities requires authoritative/provider-explicit domestic operating common or equity REIT classification. Broad U.S.-Listed Operating Equities additionally permits authoritative/provider-explicit ADR/ADS and foreign ordinary operating equities. Both apply supported exchange, two-session availability, previous close of at least USD 5, previous close-times-volume of at least USD 20 million, and material quality checks.

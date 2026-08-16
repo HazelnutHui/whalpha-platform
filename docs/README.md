@@ -5,6 +5,9 @@
 - [Security Classification V1](data-contracts/security-classification-v1.md)
 - [ADR 0015](decisions/0015-govern-security-types-and-universe-eligibility.md)
 - [2026-08-14 classification audit](audits/security-type-classification-2026-08-14.md)
+- [Provider security-type evidence architecture](architecture/provider-security-type-evidence.md)
+- [Massive security-type evidence operation](operations/massive-security-type-evidence.md)
+- [2026-08-14 provider-evidence attempt](audits/security-type-provider-evidence-2026-08-14.md)
 
 This directory is the project knowledge base. It separates confirmed facts from proposals and deferred work.
 
@@ -97,6 +100,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0014: Use an Exchange Calendar for EOD Freshness](decisions/0014-use-an-exchange-calendar-for-eod-freshness.md)
 - [ADR 0012: Use Server-Side Sessions for the Private Dashboard](decisions/0012-use-server-side-sessions-for-private-dashboard.md)
 - [ADR 0013: Establish Dashboard Universe V1 for Market Overview](decisions/0013-establish-dashboard-universe-v1.md)
+- [ADR 0015: Govern Security Types and Universe Eligibility](decisions/0015-govern-security-types-and-universe-eligibility.md)
 
 ## Project
 

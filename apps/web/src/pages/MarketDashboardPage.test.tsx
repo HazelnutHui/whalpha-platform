@@ -165,6 +165,9 @@ describe('MarketDashboardPage', () => {
     expect(screen.getByText('Methodology Notes')).toBeInTheDocument();
     expect(screen.getByText('Data Limitations')).toBeInTheDocument();
     expect(screen.getByText('Material Warnings')).toBeInTheDocument();
+    expect(screen.getAllByText('Provisional classification').length).toBeGreaterThan(0);
+    expect(screen.getByText(/Security-type evidence is incomplete/)).toBeInTheDocument();
+    expect(screen.queryByText(/No material warnings/)).not.toBeInTheDocument();
     expect(screen.getByText(/EOD market structure; not real-time/)).toBeInTheDocument();
     expect(screen.queryByText(/1,876 warnings/)).not.toBeInTheDocument();
   });

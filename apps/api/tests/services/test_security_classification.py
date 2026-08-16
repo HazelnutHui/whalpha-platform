@@ -12,6 +12,7 @@ from tip_api.contracts.security_classification.v1 import (
     ListingScope,
     SecurityForm,
     UniverseDisposition,
+    ProviderInstrumentSecurityEvidenceV1,
 )
 from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.security_classification import (
@@ -265,3 +266,23 @@ def test_candidate_sets_are_mutually_safe_and_counts_reconcile() -> None:
         if item.universe_disposition in {UniverseDisposition.EXCLUDED, UniverseDisposition.QUARANTINE}
     }
     assert excluded_or_quarantine.isdisjoint(audit.candidate_broad_ids)
+
+
+def test_provider_common_share_evidence_does_not_prove_operating_company() -> None:
+    instrument_id = uuid5(NS, "PROVIDER")
+    evidence = ProviderInstrumentSecurityEvidenceV1(
+        as_of_date=date(2026, 8, 14), instrument_id=instrument_id, provider="fictional-provider",
+        provider_ticker="PROVIDER", provider_type_code="CS", provider_type_description="Common Stock",
+        primary_exchange="XNYS", security_form_evidence=SecurityForm.COMMON_SHARE,
+        evidence_source="/v3/reference/tickers", evidence_grade=EvidenceGrade.PROVIDER_EXPLICIT,
+        classification_status=ClassificationStatus.UNKNOWN, universe_disposition=UniverseDisposition.QUARANTINE,
+        decision_flags=("provider_security_form_only",), review_flags=("issuer_structure_unresolved",),
+        observed_at=datetime(2026, 8, 15, tzinfo=UTC), ingested_at=datetime(2026, 8, 15, tzinfo=UTC),
+    )
+    previous = (bar("PROVIDER", date(2026, 8, 13), instrument_id=instrument_id),)
+    current = (bar("PROVIDER", date(2026, 8, 14), instrument_id=instrument_id),)
+    audit = SecurityClassificationService(provider_evidence=(evidence,)).audit(current_bars=current, previous_bars=previous)
+    item = audit.classifications[0]
+    assert item.security_form is SecurityForm.COMMON_SHARE
+    assert item.issuer_structure is IssuerStructure.UNKNOWN
+    assert item.universe_disposition is UniverseDisposition.QUARANTINE

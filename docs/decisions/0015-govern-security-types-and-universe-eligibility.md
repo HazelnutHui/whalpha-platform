@@ -20,7 +20,7 @@ Phase A computes two non-production candidates:
 - Core U.S. Domestic Operating Equities
 - Broad U.S.-Listed Operating Equities
 
-The final production default remains deferred until the evidence gap is closed and the user selects a policy after reviewing both candidates.
+The product policy is now accepted: Core U.S. Domestic Operating Equities is the future default, and Broad U.S.-Listed Operating Equities is the future secondary selectable view. ETF/ETN records remain benchmark-only and are not equity-universe choices. Production activation remains deferred until authoritative evidence coverage and reconciliation gates pass.
 
 ## Consequences
 
@@ -29,7 +29,7 @@ The final production default remains deferred until the evidence gap is closed a
 - ETF benchmarks remain outside equity breadth, movers, and activity-map membership.
 - Manual overrides are stable-ID and effective-date keyed with authoritative evidence.
 - Historical type changes append periods rather than rewriting history.
-- Current production analytics remain on the legacy rule during Phase A.
+- Current production analytics remain on the legacy rule and must be disclosed as provisional until activation gates pass.
 
 ## Alternatives Considered
 

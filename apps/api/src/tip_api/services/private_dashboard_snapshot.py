@@ -20,7 +20,7 @@ from tip_api.services.eod_market_data import EodMarketDataQueryService
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 from tip_api.services.dashboard_overview import DashboardOverviewService
 
-SNAPSHOT_CONTRACT_VERSION = "1.1"
+SNAPSHOT_CONTRACT_VERSION = "1.2"
 SNAPSHOT_FILES = {
     "overview_file": "market-overview.json",
     "summary_file": "market-summary.json",
@@ -37,7 +37,7 @@ class DashboardSnapshotError(RuntimeError):
 class DashboardSnapshotManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    snapshot_contract_version: str = Field(pattern=r"^1(?:\.1)?$")
+    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[12])?$")
     release_id: str
     generated_at: str
     current_session_date: str
@@ -61,6 +61,11 @@ class DashboardSnapshotManifest(BaseModel):
     warning_count: int
     default_universe_id: str = "tradable_us_listed_equities_v1"
     dashboard_contract_version: str = "1.2"
+    universe_definition_id: str = "legacy_liquid_screen_provisional"
+    universe_version: str = "1.0"
+    governance_status: str = "provisional_classification"
+    classification_as_of_date: str | None = None
+    evidence_coverage_status: str = "incomplete"
     is_real_provider_backed: bool
     access_classification: str
     contains_raw_provider_data: bool
@@ -74,7 +79,7 @@ class DashboardSnapshotManifest(BaseModel):
 
     @model_validator(mode="after")
     def freshness_contract_is_complete(self) -> DashboardSnapshotManifest:
-        if self.snapshot_contract_version == "1.1" and any(
+        if self.snapshot_contract_version in {"1.1", "1.2"} and any(
             value is None
             for value in (
                 self.expected_latest_completed_session,
@@ -86,6 +91,8 @@ class DashboardSnapshotManifest(BaseModel):
             )
         ):
             raise ValueError("snapshot freshness fields are required for contract 1.1")
+        if self.snapshot_contract_version == "1.2" and self.classification_as_of_date is None:
+            raise ValueError("snapshot governance fields are required for contract 1.2")
         return self
 
 
@@ -195,6 +202,11 @@ def build_private_dashboard_snapshot(
             warning_count=summary.quality_warning_count,
             default_universe_id=overview.default_universe_id,
             dashboard_contract_version=overview.contract_version,
+            universe_definition_id=overview.universe_definition_id,
+            universe_version=overview.universe_version,
+            governance_status=overview.governance_status,
+            classification_as_of_date=overview.classification_as_of_date.isoformat(),
+            evidence_coverage_status=overview.evidence_coverage_status,
             is_real_provider_backed=True,
             access_classification="private",
             contains_raw_provider_data=False,

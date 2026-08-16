@@ -134,6 +134,11 @@ export interface MarketBenchmarkResponse {
 export interface DashboardOverviewResponse {
   contract_version: string;
   default_universe_id: string;
+  universe_definition_id: string;
+  universe_version: string;
+  governance_status: string;
+  classification_as_of_date: string;
+  evidence_coverage_status: string;
   current_session_date: string;
   previous_session_date: string;
   data_as_of_label: string;
@@ -174,6 +179,11 @@ export interface SnapshotManifestResponse {
   mover_loser_count: number;
   liquidity_node_count: number;
   warning_count: number;
+  universe_definition_id?: string;
+  universe_version?: string;
+  governance_status?: string;
+  classification_as_of_date?: string | null;
+  evidence_coverage_status?: string;
   is_real_provider_backed: boolean;
   access_classification: string;
   contains_raw_provider_data: boolean;
