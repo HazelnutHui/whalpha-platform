@@ -56,7 +56,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-After the offline schema/documentation review, separately authorize at most one bounded SEC evidence run to observe the rejected candidate without changing allowlists from assumptions. Core/Broad activation remains deferred. This roadmap item is not authorization for a live request.
+Review the schema `2.0` evidence for the 2024 Series/Class public directory-name variant against the exact dataset path contract and historical-path policy. Decide offline whether a narrowly tested rule change is justified; do not infer acceptance from one observation. Core/Broad activation remains deferred, and this roadmap item does not authorize another live request.
 
 ## Phase 2 — Intraday and Options
 

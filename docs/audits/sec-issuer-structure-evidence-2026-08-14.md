@@ -72,3 +72,34 @@ Because discovery failed before a CSV was selected, no release date, file year, 
 The third run's sanitized record established only that candidate 3 failed under the aggregate `href_rejected` reason after two candidates passed the exact allowlist. It did not retain candidate ordinal, DOM row, file year/date, Format/Size, public path structure, or the specific URL rule, so it cannot establish whether that candidate was a legitimate target variant, an historical row, unrelated CSV, or suspicious URL.
 
 The offline remediation adds landing-discovery diagnostic schema `2.0` with deterministic candidate-level context and finite URL failure codes while preserving the compatible top-level reason. Complete URLs, external hostnames, query/fragment/userinfo values, headers, User-Agent, contact identity, raw HTML, and response bodies remain excluded. Exact Series/Class, CEF, and BDC allowlists and selection behavior were not changed. The third live candidate therefore remains `unknown`; no path interpretation is recorded without a future separately authorized observation. This remediation made zero network requests, did not inspect credentials or `/data`, and did not generate or deploy any production artifact.
+
+## Fourth Authorized Run — Schema 2.0 Evidence
+
+Status: `failed_source_discovery`; evidence publication: `not_published`; production Universe activation: `deferred`.
+
+The separately authorized one-run operation started at `2026-08-16T07:46:45Z` and ended at `2026-08-16T07:46:51Z` with exit code 1 and evidence cutoff 2026-08-14. It made exactly three SEC requests and zero retries: one request each for `company_tickers_exchange.json`, `company_tickers_mf.json`, and the Investment Company Series/Class landing page. The two JSON sources reached staging validation. Discovery then failed closed with top-level `href_rejected`; no Series/Class CSV, CEF landing/CSV, BDC landing/CSV, or submissions archive was requested.
+
+Schema `2.0` found the unique second `File / Format / Size` table, scanned six anchored rows, and retained these bounded candidate records:
+
+| Candidate | Table | Row | Format | Size | File year | Updated | Public SEC path | Basename | Template | URL state | Failure | Query | Fragment | Userinfo |
+| --- | --- | --- | --- | --- | ---: | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | 2 | 3 | `csv` | `7.68 MB` | 2026 | 2026-06-01 | `/files/investment/data/other/investment-company-series-class-information/investment-company-series-class-2026.csv` | `investment-company-series-class-2026.csv` | match | accepted | none | false | false | false |
+| 2 | 2 | 5 | `csv` | `7.25 MB` | 2025 | 2025-06-02 | `/files/investment/data/other/investment-company-series-class-information/investment-company-series-class-2025.csv` | `investment-company-series-class-2025.csv` | match | accepted | none | false | false | false |
+| 3 | 2 | 7 | `csv` | `7.21 MB` | 2024 | 2024-06-05 | `/files/investment/data/other/investment-company-series-and-class-information/investment-company-series-class-2024.csv` | `investment-company-series-class-2024.csv` | mismatch | rejected | `path_template_mismatch` | false | false | false |
+
+The third candidate therefore provides direct evidence of a public SEC directory-name variant, but this run does not decide that the variant should be accepted. The strict allowlist and selection code were not changed, and no second run was made.
+
+- Sanitized diagnostic: `operation-diagnostics/sec-issuer-structure-evidence/as_of_date=2026-08-14/run_id=sec-b2b-2026-08-14-20260816T074649Z`
+- Diagnostic size: 3,903 bytes
+- Diagnostic SHA-256: `9abd62a6ef9dc4f61e41b6e32c9dde54b594d33dbf8b640c5673b764ede05c50`
+- Completed source cache, observation partition, canonical evidence partition, and logical completion manifest: absent before and after
+- Staging residue: zero
+- Protected inventory: 34 files and 12,942,699 bytes before and after; the deterministic relative-path/size/content-hash inventory digest remained `398d3c8eb8a986ffc34a7f2fe19c50961eca0d9ed52bd980da95217561333f17`
+- Existing Instrument Master, Provider Identity, Ticker Resolver, Massive security evidence, and EOD partitions: unchanged
+- Source downloads, CSV header checks, source sizes/hashes, observation/evidence reconciliation, snapshot/bundle generation, OCI access, deployment, and Universe activation: not reached or not performed
+
+The private SEC credential was consumed only by the existing in-process loader after metadata checks; no User-Agent/contact value was printed, copied, hashed, committed, or recorded in the diagnostic.
+
+## Current Next Gate
+
+Review the observed 2024 public-path variant offline against the existing dataset-specific path contract and historical-path policy. Do not widen the allowlist solely because the path appeared once. Any code change needs its own reviewed offline task, and any later SEC request requires new explicit one-run authorization.

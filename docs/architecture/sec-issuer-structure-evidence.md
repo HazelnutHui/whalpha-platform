@@ -2,7 +2,7 @@
 
 ## Status
 
-Phase B2A implemented and fixture-validated the boundary offline. Phase B2B implements a bounded streaming transport and atomic source-cache, observation, canonical-evidence, and logical-completion layers. The first authorized B2B run failed closed during official CSV discovery and produced no completed source cache or evidence snapshot. Universe activation and Dashboard changes remain out of scope.
+Phase B2A implemented and fixture-validated the boundary offline. Phase B2B implements a bounded streaming transport and atomic source-cache, observation, canonical-evidence, and logical-completion layers. Four authorized B2B runs failed closed during official Series/Class CSV discovery and produced no completed source cache or evidence snapshot. The latest schema `2.0` record identifies a 2024 public directory-name variant rejected by the exact current template with `path_template_mismatch`; this is evidence for offline review, not an allowlist decision. Universe activation and Dashboard changes remain out of scope.
 
 ## Purpose
 

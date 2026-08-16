@@ -4,7 +4,7 @@
 
 The Phase B2B command is `scripts/admin/ingest-sec-issuer-structure-evidence.sh`. With no arguments it performs only identity and target preflight. `--apply` is a separately authorized live operation; ordinary tests and dry-runs do not load the private User-Agent or use the network.
 
-The command allows only the documented SEC bulk/reference URLs, a maximum of 12 HTTP attempts, serial requests at no more than two per second, and bounded retry for 429/recoverable 5xx responses. It must not be rerun after a failed authorized operation without a new review and authorization.
+The command allows only the documented SEC bulk/reference URLs, a maximum of 12 HTTP attempts, and serial requests at no more than two per second. The generic transport supports bounded retry for 429/recoverable 5xx responses, but the current live entrypoint explicitly sets retries to zero. It must not be rerun after a failed authorized operation without a new review and authorization.
 
 ## Publication Gates
 
@@ -29,3 +29,9 @@ The source-cache manifest records total, eligible, and future CSV candidate coun
 After the dated selector passed all offline tests, the separately authorized run on 2026-08-16 UTC made three requests and zero retries. Both reference JSON files again passed staging validation. The first Investment Company Series/Class landing request reached the dated-discovery gate, which returned `sec_csv_discovery_cardinality_failure`; no CSV or submissions request followed.
 
 The diagnostic from that run intentionally omitted response bodies but collapsed several selector subconditions, so the exact failed row could not be reconstructed. The offline remediation now emits a non-content structural summary and exact reason code without retaining HTML or contact identity. Three minimal synthetic fixtures model the official page structures; no live SEC request was authorized or performed during this remediation.
+
+## Fourth B2B Run
+
+The one separately authorized post-schema run on 2026-08-16 UTC made three SEC requests and zero retries. Both approved ticker-reference JSON resources reached staging validation. Candidate-level schema `2.0` then showed that the 2026 and 2025 Series/Class CSV candidates matched the current template, while the 2024 candidate used the public `investment-company-series-and-class-information` directory variant and failed with `path_template_mismatch`. Query, fragment, and userinfo were absent. The operation failed closed before any CSV, CEF, BDC, or submissions request.
+
+No completed source cache, observation, canonical evidence, or logical manifest was published. Staging was empty after the run, the 34-file protected inventory was unchanged, the allowlist was not changed, and no second run occurred. Review the path variant offline before proposing any narrowly tested rule change; another SEC request requires new explicit authorization.
