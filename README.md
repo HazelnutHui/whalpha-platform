@@ -6,7 +6,7 @@ The repository includes a provider-neutral, effective-dated Security Classificat
 
 Phase B1 accepts Core as the future default and Broad as the future secondary view. The corrected bounded run published the official 25-code provider catalog, 13,110 normalized observations, 9,939 canonical evidence records, and a verified logical completion marker. Provider type improves security-form evidence but does not establish issuer structure or domicile, so production membership remains unchanged and provisional. See the [evidence audit](docs/audits/security-type-provider-evidence-2026-08-14.md).
 
-Phase B2A added the offline SEC issuer-structure boundary. Phase B2B added the bounded streaming transport, source-cache safety checks, normalized observation persistence, canonical evidence persistence, and logical completion contract. The first authorized B2B run stopped after three requests when the first landing page did not yield exactly one official CSV candidate; no cache or evidence partition was published and no Universe or Dashboard output changed. See [SEC Issuer-Structure Evidence](docs/architecture/sec-issuer-structure-evidence.md) and the [B2B run audit](docs/audits/sec-issuer-structure-evidence-2026-08-14.md).
+Phase B2A added the offline SEC issuer-structure boundary. Phase B2B added the bounded streaming transport, source-cache safety checks, normalized observation persistence, canonical evidence persistence, and logical completion contract. Three separately authorized bounded runs each stopped after three requests and zero retries at Series/Class landing discovery; none published a completed SEC cache or evidence snapshot. Landing discovery now uses exact dataset paths and candidate-level diagnostic schema `2.0`, but it has not been exercised by another live run. See [SEC Issuer-Structure Evidence](docs/architecture/sec-issuer-structure-evidence.md) and the [B2B run audit](docs/audits/sec-issuer-structure-evidence-2026-08-14.md).
 
 Trading Intelligence Platform is a personal single-user prototype for U.S. equity market intelligence. It is designed to help the user understand market structure, sector and theme rotation, stock strength, breadth, options structure, relationship shifts, and significant market developments quickly enough to support discretionary research and trading decisions.
 
@@ -21,7 +21,7 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack, canonical EOD contracts, point-in-time identity, private analytics, Dashboard, and authenticated static deployment boundaries are implemented. Completed canonical EOD sessions now cover 2026-08-12 through 2026-08-14. The 2026-08-14 identity snapshot is accepted with a provenance exception after a full content-integrity audit, and its one authorized Grouped Daily request published 9,912 verified canonical bars. An offline XNYS calendar reports the deployed 2026-08-14 Dashboard snapshot as fresh with session lag zero. Server-side sessions protect `/dashboard/` and `/private-data/`; `/` is the branded login entry and `/login/` is a compatibility redirect. No public real-data authorization, database, automated daily ingestion, or general production API deployment has been created.
+Documentation, infrastructure, storage foundation, application stack, canonical EOD contracts, point-in-time identity, bounded real-data ingestion, private analytics, Dashboard, and authenticated static publication boundaries are implemented. Completed canonical EOD sessions cover 2026-08-12 through 2026-08-14. The 2026-08-14 identity snapshot is accepted with a provenance exception after a full content-integrity audit, and its one authorized Grouped Daily request published 9,912 verified canonical bars. The last deployment recorded in Git used the 2026-08-14 snapshot with XNYS session lag zero and server-side session protection; current OCI runtime health requires a separate authorized check. No public real-data authorization, database, automated daily ingestion, historical backfill, or general production API deployment has been created.
 
 ## Application Entry Points
 
@@ -39,14 +39,14 @@ Documentation, infrastructure, storage foundation, application stack, canonical 
 - Initial EOD data foundation: accepted universe, classification, and normalized logical contract boundaries.
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
-- First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential loader, HTTPS transport, and one-request reference smoke test verified.
-- Initial persistence: EOD Price Bar V1 Parquet writer with manifest, deterministic fingerprint, idempotency, and conflict checks; the first real 2026-08-13 canonical EOD session is published under the approved project data root.
+- First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential/HTTPS transport, bounded All Tickers identity ingestion, Grouped Daily publication, and provider security evidence workflows are verified.
+- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, and EOD Price Bar Parquet repositories use manifests, deterministic fingerprints, idempotency, and conflict checks. Completed canonical EOD sessions exist for 2026-08-12 through 2026-08-14.
 - Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
 - Initial market summary analytics: the latest completed pair, 2026-08-13 and 2026-08-14, supports close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.
 - Initial local dashboard: React Market Dashboard V1 renders Market Pulse, breadth, up/down volume, liquidity-screened movers, a Trading Activity Map, market/sector benchmarks, and categorized data details from default-disabled private APIs.
-- Private static deployment: the workstation exports private Dashboard JSON snapshots, builds a `/dashboard/` React bundle, and deploys a versioned OCI release with `/` as the branded session-login entry for the personal prototype.
-- Private session login: a localhost-only OCI Auth Service validates the existing server-side htpasswd credential and issues opaque HttpOnly session cookies for the personal prototype. A deployed admin helper rotates the single Dashboard password through an interactive TTY flow without accepting or printing passwords or hashes.
+- Private static deployment: the workstation exports private Dashboard JSON snapshots and versioned `/dashboard/` React bundles. Git records authenticated OCI deployments with `/` as the branded session-login entry; live OCI state is not implied without a current check.
+- Private session login: the deployed design uses a localhost-only OCI Auth Service, opaque HttpOnly session cookies, and an interactive password-rotation helper. Git records successful verification of that design; current service health is an operational check, not a repository fact.
 
 - Access boundary: provider-backed data and derived analytics must not be publicly exposed without an accepted authorization and access-control gate.
 
@@ -125,4 +125,4 @@ This project is a personal single-user prototype. It may be reachable over the p
 
 ## Current Dashboard
 
-Dashboard V1.1 is deployed as a private, session-protected static dashboard. It uses a default `Tradable U.S. Equities` universe for Market Pulse, breadth, movers, and Trading Activity Map, and shows Sector Benchmark ETFs separately. Provider-backed data remains private.
+Dashboard V1.1 is implemented for private, session-protected static publication. The last deployment recorded in Git used the default `Tradable U.S. Equities` universe for Market Pulse, breadth, movers, and Trading Activity Map, with Sector Benchmark ETFs shown separately. Provider-backed data remains private; current OCI health was not verified by this documentation reconciliation.

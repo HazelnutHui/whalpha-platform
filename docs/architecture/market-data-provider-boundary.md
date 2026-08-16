@@ -6,13 +6,13 @@ This document records the implemented minimal provider-neutral market-data provi
 
 ## Status
 
-Implemented Minimal Boundary — First Provider Candidate Evaluated
+Implemented Provider-Neutral Boundary — Massive Bounded Workflows Published
 
-The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is accepted as the first private EOD development provider candidate. The Massive adapter boundary now includes secure credential-file loading, standard-library HTTPS transport, and one successful read-only Stocks reference smoke test. It still has no ingestion, persistence, dashboard endpoint, rate-limit scheduler, Grouped Daily production download, or public provider-backed deployment.
+The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is the first private EOD development provider. Its adapter boundary includes secure credential-file loading, standard-library HTTPS transport, bounded All Tickers and Grouped Daily workflows, canonical mapping, and atomic Parquet persistence outside the Protocol itself. Completed identity/EOD datasets and default-disabled private Dashboard APIs exist. Automated scheduling, historical backfill, and unrestricted public provider-backed serving do not.
 
 ## Synchronous V1 Boundary
 
-V1 uses a synchronous Python Protocol. It intentionally avoids async, pagination, retry, caching, streaming, provider fallback, and persistence until real requirements justify them.
+V1 uses a synchronous Python Protocol. The provider-neutral interface intentionally avoids async, pagination, retry, caching, streaming, provider fallback, and persistence. Provider-specific operational workflows may implement bounded pagination, pacing, transport, and persistence around the Protocol without leaking those concerns into canonical domain calculations.
 
 Public import path:
 
@@ -126,30 +126,27 @@ The provider-neutral boundary has no credential fields and does not require raw 
 
 ## Deferred Concerns
 
-- bounded EOD ingestion workflow
-- Grouped Daily production retrieval
+- automated daily EOD ingestion
+- historical backfill
 - rate limiter implementation
 - async support
-- pagination
+- reusable pagination beyond the bounded Massive workflows
 - retry and rate-limit handling beyond exception semantics
 - caching
 - provider registry or fallback
-- data reconciliation across sources
-- persistence and Parquet writing
+- broader data reconciliation across sources
+- database/catalog introduction and Parquet lifecycle management
 - corporate actions, classifications, universe membership, options, real-time quotes, fundamentals, and news provider methods
 
-## Non-Goals
+## Boundary Non-Goals
 
-- real provider adapter
-- data download
-- market-data ingestion
-- provider entitlement probing
-- credentials or secrets handling
-- persistence
-- analytics calculation
-- Dashboard implementation
-- API endpoint implementation
+- vendor schemas in domain calculations
+- credentials in provider-neutral query objects or canonical contracts
+- unrestricted live requests from ordinary tests
+- public redistribution authorization
+- automatic trading or order execution
+- treating the Protocol as a scheduler, database, or deployment layer
 
 ## Implementation Status
 
-Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. The Massive credential loader and minimal HTTPS transport exist, and one reference smoke test has succeeded. A mocked-fixture EOD Price Bar ingestion and Parquet persistence slice now exists outside the provider package. No real provider ingestion, analytics, dashboard endpoint, or provider-backed deployment exists.
+Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. Massive-specific configuration, credential, transport, adapter, inspection, identity, Grouped Daily, and security-evidence workflows live under `tip_api.providers.massive`; persistence remains behind provider-neutral repositories. Bounded live operations published completed point-in-time identity, EOD, and provider security evidence datasets. Default-disabled private analytics/Dashboard endpoints and a protected static snapshot deployment path consume canonical outputs. No automated ingestion, historical backfill, production API service, or unrestricted public provider-backed display exists.

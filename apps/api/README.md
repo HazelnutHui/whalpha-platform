@@ -6,7 +6,7 @@
 
 Phase B1 adds immutable provider type catalog, normalized observation, canonical instrument evidence, and logical completion contracts with bounded Massive ingestion and atomic Parquet persistence. The corrected 2026-08-14 run published 25 catalog records, 13,110 observations, and 9,939 canonical evidence records. `CS` remains quarantine because security form alone does not resolve issuer structure or domicile. Evidence partitions are independent of canonical Instrument Master and EOD datasets.
 
-Phase B2A adds offline-tested SEC issuer evidence contracts, point-in-time identity and filing interpretation, deterministic Core/Broad decisions, a private User-Agent loader, an injectable transport policy, and an atomic Parquet repository. There is no live SEC transport implementation or ingestion CLI, and production Core/Broad activation remains deferred.
+Phase B2A added offline-tested SEC issuer evidence contracts, point-in-time identity and filing interpretation, deterministic Core/Broad decisions, a private User-Agent loader, and atomic Parquet persistence. Phase B2B added a bounded streaming live transport, source cache, ingestion CLI, safe ZIP handling, observation/canonical evidence repositories, and a logical completion marker. Three authorized runs failed closed during Series/Class landing discovery and published no completed SEC evidence. Diagnostic schema `2.0` is implemented; production Core/Broad activation remains deferred.
 
 FastAPI backend scaffold for Trading Intelligence Platform.
 
@@ -87,7 +87,7 @@ from tip_api.providers.market_data import (
 )
 ```
 
-The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval only. It has deterministic in-memory tests, a Massive mocked adapter skeleton, a secure credential-file loader, and a minimal HTTPS transport. A bounded Massive All Tickers snapshot has published the 2026-08-13 Instrument Master and resolver datasets. The corrected real Grouped Daily ingestion published the 2026-08-13 canonical EOD bars. No Dashboard API endpoint or production EOD bar serving workflow exists.
+The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval. It has deterministic in-memory tests, a Massive adapter with injected transport, a secure credential-file loader, and a standard-library HTTPS transport. Bounded Massive workflows published point-in-time Instrument Master, provider identity, ticker resolver, and canonical EOD datasets for the completed dates. Default-disabled private Dashboard/EOD APIs read completed Parquet sessions locally. No unrestricted public provider-backed API or automated daily workflow exists.
 
 
 ## Massive Mocked Adapter Boundary
@@ -106,9 +106,8 @@ Use the repository-level instructions in [Local Development](../../docs/developm
 
 ## Current Non-Goals
 
-- No public Dashboard serving of production `/data` EOD bars
-- No authentication or authorization for private routes
+- No unrestricted public Dashboard or API serving directly from production `/data`
+- No formal multi-user authentication or authorization for private API routes
 - No database or ORM
-- No authentication
 - No order execution
-- No production deployment configuration
+- No deployed production FastAPI service; the recorded private deployment is static snapshot based

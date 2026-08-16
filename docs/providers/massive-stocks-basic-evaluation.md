@@ -6,7 +6,7 @@ This document records the official-source evaluation for using Massive Stocks Ba
 
 ## Status
 
-Accepted for Private EOD Development — Credential Boundary and Reference Smoke Test Verified
+Accepted for Private EOD Development — Bounded Identity and EOD Workflows Verified
 
 ## Last Reviewed
 
@@ -80,7 +80,7 @@ Initial recommendation:
 - Do not scan the whole universe with per-ticker Previous Day requests.
 - Do not use snapshot endpoints as canonical EOD bars.
 
-This evaluation does not verify endpoint entitlement and does not call the API.
+This was the initial evaluation direction. Subsequent separately authorized operations verified Grouped Daily access and published bounded canonical EOD sessions; Custom Bars, corporate actions, and general history entitlement remain unverified.
 
 ## Corporate Actions
 
@@ -156,7 +156,7 @@ Accepted engineering boundary:
 
 The workstation remains the source of truth for provider access, data processing, and derived results. OCI remains a lightweight public serving layer.
 
-Before any Massive-backed data or derived works are deployed, a private access-control mechanism must be selected, implemented, and independently verified. This evaluation does not modify deployment, whalpha.com, OCI, Nginx, Cloudflare, or access controls.
+The personal-prototype path subsequently selected and implemented a private server-side session boundary for static Dashboard snapshots. Git records successful deployment verification, but this document does not grant public display rights or assert current live OCI health. Any broader public or commercial use still requires a fresh terms and authorization review.
 
 ## Public Demo Boundary
 
@@ -168,9 +168,9 @@ The private real-data dashboard must be intended only for the owner, protected b
 
 ## Account Entitlement Status
 
-Stocks Reference Smoke-Test Verified.
+Stocks Reference, All Tickers, and Grouped Daily Bounded Access Verified.
 
-A protected credential file was provisioned outside Git by the user. One read-only `/v3/reference/tickers` request with `market=stocks`, `active=true`, and `limit=1` succeeded on 2026-08-14. This verifies authentication and Stocks reference entitlement only; it does not verify Grouped Daily, Custom Bars, corporate actions, history depth, rate-limit behavior, ingestion, persistence, or public-display permission.
+A protected credential file was provisioned outside Git by the user. The initial one-request Stocks reference smoke test succeeded. Later separately authorized bounded operations exercised All Tickers pagination, Grouped Daily inspection/publication, and security-type evidence endpoints. These operations do not verify Custom Bars, corporate actions, full history depth, general rate-limit behavior, or public-display permission.
 
 ## Implementation Status
 
@@ -181,10 +181,12 @@ A one-request Grouped Daily inspection for 2026-08-13 verified access and payloa
 - secure credential-file loader implemented
 - minimal standard-library HTTPS transport implemented
 - one read-only Stocks reference smoke test succeeded
-- no ingestion implemented
-- no persistence implemented
-- no real data stored or ingested
-- no deployment changed
+- bounded All Tickers Instrument Master, provider identity, and ticker resolver publication implemented
+- bounded Grouped Daily publication implemented; completed EOD sessions cover 2026-08-12 through 2026-08-14
+- provider security-type catalog, observation, canonical evidence, and logical completion implemented for 2026-08-14
+- canonical Parquet persistence, private analytics APIs, Dashboard snapshots, and versioned static bundle workflow implemented
+- Git records private authenticated static Dashboard deployments; current OCI health was not checked for this status reconciliation
+- no historical backfill, automated daily ingestion, corporate-action ingestion, or unrestricted public provider-backed serving
 
 ## Risks
 
@@ -198,7 +200,6 @@ A one-request Grouped Daily inspection for 2026-08-13 verified access and payloa
 ## Open Questions
 
 - Rate limiter implementation
-- Grouped Daily one-session retrieval authorization and response verification
 - Historical backfill strategy
 - Adjustment reconciliation
 - Identity-resolution methodology
@@ -210,7 +211,7 @@ A one-request Grouped Daily inspection for 2026-08-13 verified access and payloa
 
 Re-evaluate before:
 
-- expanding the Massive adapter beyond the verified smoke-test boundary
+- expanding the Massive adapter beyond the currently verified bounded endpoints
 - changing credential storage or service injection
 - changing plan
 - deploying real provider-backed data
@@ -222,4 +223,4 @@ Re-evaluate if Massive pricing, terms, endpoint access, or documentation changes
 
 ## Recommendation
 
-Proceed to the first bounded EOD ingestion design with mocked fixtures first. Do not perform Grouped Daily retrieval, ingestion, persistence, or provider-backed display until the next retrieval boundary is reviewed and separately authorized.
+Keep future Massive operations separately authorized and bounded. The next provider work is not another exploratory Grouped Daily request: historical backfill, automation, corporate actions, new endpoints, or broader display rights each require their own reviewed boundary. Ordinary development and tests must remain fixture/fake-transport based.

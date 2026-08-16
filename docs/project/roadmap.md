@@ -34,9 +34,9 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Decimal aggregate-volume correction and first canonical EOD session publication
 - [x] Private canonical EOD read/query API for the completed 2026-08-13 session
 - [x] 2026-08-12 bounded ingestion and first close-to-close Market Summary analytics
-- [ ] Real provider ingestion workflow
-- [ ] EOD development dataset
-- [ ] Core market calculations
+- [x] Bounded real-provider identity and EOD ingestion workflows
+- [x] Initial three-session EOD development dataset
+- [x] Initial close-to-close market summary, breadth, movers, benchmark, and trading-activity calculations
 - [x] Local React Market Dashboard V1 shell
 - [x] Liquidity Map V1 treemap
 - [x] EOD breadth and up/down volume views
@@ -51,10 +51,12 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Provider-neutral offline XNYS market-session calendar and explicit freshness contract
 - [x] Corrected Phase B1 provider security-type evidence publication and provisional universe disclosure source
 - [x] Offline SEC issuer-structure evidence boundary, private User-Agent tool, fixture state machines, and tmp-only persistence
+- [x] Bounded SEC live transport, source-cache/evidence publication boundaries, fail-closed discovery, and diagnostic schema `2.0`
+- [ ] Successful SEC issuer-structure evidence publication and Core/Broad activation review
 
 ## Next Small Target
 
-Review the candidate-level diagnostic schema `2.0`, then separately authorize at most one bounded SEC evidence run to observe the rejected candidate without changing allowlists from assumptions. Core/Broad activation remains deferred.
+After the offline schema/documentation review, separately authorize at most one bounded SEC evidence run to observe the rejected candidate without changing allowlists from assumptions. Core/Broad activation remains deferred. This roadmap item is not authorization for a live request.
 
 ## Phase 2 — Intraday and Options
 
@@ -67,6 +69,6 @@ Review the candidate-level diagnostic schema `2.0`, then separately authorize at
 
 - Portfolio
 - Richer Event workflows
-- Authentication if needed
+- Formal multi-user authentication beyond the personal-prototype session boundary
 - AI explanation
 - Broader public showcase

@@ -2,14 +2,14 @@
 
 ## Current Status
 
-The minimal application scaffold exists:
+The workstation application includes:
 
-- Backend scaffold: `apps/api`
-- Frontend scaffold: `apps/web`
-- Versioned Health API contract: `GET /api/v1/health`
-- Local development scripts: `scripts/dev/run-api.sh` and `scripts/dev/run-web.sh`
+- FastAPI Health plus default-disabled private EOD and market-overview routes under `apps/api`
+- canonical Parquet read/query services, close-to-close analytics, Dashboard Overview, and snapshot export
+- React/Vite Dashboard V1.1 under `apps/web` with API, demo, and snapshot modes
+- local scripts `scripts/dev/run-api.sh` and `scripts/dev/run-web.sh`
 
-Backend dependency installation, backend tests, the Health API localhost check, frontend dependency installation, frontend production build, Vite local server, and Vite-to-FastAPI proxy were verified on `dell5820`. Node.js 24 LTS and npm are installed; see [Node Toolchain Provisioning](../operations/node-toolchain-provisioning.md).
+Backend tests, the Health API localhost check, frontend regression/build, Vite local server, and Vite-to-FastAPI proxy have been verified on `dell5820`. Node.js 24 LTS and npm are installed; see [Node Toolchain Provisioning](../operations/node-toolchain-provisioning.md).
 
 ## Prerequisites
 
@@ -56,6 +56,8 @@ scripts/dev/run-api.sh
 
 The script starts Uvicorn on `127.0.0.1:8000` and does not bind to public interfaces.
 
+The default app exposes only Health. For an explicitly authorized local/private canonical-data session, set `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true` before starting the API. That flag is not authentication or public deployment approval.
+
 ## Start Frontend
 
 ```bash
@@ -95,11 +97,11 @@ This build has been verified after `npm install` succeeded.
 
 ## Development Boundaries
 
-- No real market data provider is configured.
-- No Massive or IBKR credentials are configured.
+- Provider configuration exists outside Git but is not loaded by ordinary tests or the default Health-only app.
+- All ordinary tests use fixtures or injected fake transports; do not run live SEC or Massive entrypoints as part of local verification.
+- Canonical production data remains under `/data/trading-intelligence-platform`; tests write only to temporary roots.
 - No database exists.
-- No production deployment pipeline exists.
-- No OCI change is part of local development setup.
+- Snapshot/bundle/deployment tooling exists, but no OCI change is part of local development setup.
 - Do not store secrets in Git.
 - Do not bind local development servers to `0.0.0.0`.
 
@@ -112,9 +114,8 @@ This build has been verified after `npm install` succeeded.
 
 ## Current Limitations
 
-- The frontend is a development status page, not Dashboard V1.
-- The backend exposes only the versioned Health API.
-- The provider boundary is documented but not implemented.
-- No market data is loaded.
-- No analytics pipeline is implemented.
-- No production deployment has been created.
+- Private routes are default-disabled and have no formal multi-user API authentication.
+- Historical backfill and automated daily ingestion are not implemented.
+- There is no database, corporate-action reconciliation, point-in-time sector taxonomy, or market-cap dataset.
+- Theme/relationship analytics, Options ingestion, and the full Event Engine remain deferred.
+- The production deployment design is static snapshot based; no production FastAPI service is deployed.

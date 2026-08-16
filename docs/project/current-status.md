@@ -137,54 +137,37 @@ Status date: 2026-08-16
 
 ## Current
 
-- Documentation and infrastructure foundation complete.
-- Application stack and target architecture documented.
-- Backend scaffold exists under `apps/api`.
-- Frontend scaffold exists under `apps/web`.
-- Python virtualenv created at the project root and ignored by Git.
-- Backend dependencies installed in the project virtualenv.
-- Backend tests verified: `366 passed`.
-- Health endpoint verified locally on `127.0.0.1:8000`.
-- Node.js 24 LTS and npm are installed and verified.
-- Frontend dependencies are installed and locked by npm.
-- Frontend production build is verified.
-- Local Vite development server and Vite-to-FastAPI proxy are verified.
-- Initial EOD Universe, classification boundary, and normalized EOD logical contracts are documented.
-- Instrument Master V1 and EOD Price Bar V1 Python/Pydantic contracts are implemented and tested.
-- Physical Parquet schemas exist for Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar V1 datasets.
-- Corporate Action V1, Classification V1, and Universe Membership V1 Python models are not implemented.
-- Parquet writers exist for the approved Instrument Master snapshot datasets and EOD Price Bar V1 session partitions.
-- Minimal provider boundary Protocol is implemented.
-- Massive Stocks Basic is selected for private EOD development only.
-- Massive mocked adapter skeleton exists with injected fake transport tests.
-- Massive credential exists outside Git in the protected workstation credential file.
-- Massive Stocks reference authentication and entitlement have been smoke-test verified once.
-- Approved Massive live operations include the reference smoke test, Grouped Daily inspection, Instrument Master snapshot ingestion, and one canonical EOD session publication for 2026-08-13.
-- One Grouped Daily production publication request completed for 2026-08-13 and wrote canonical EOD bars after quality gates passed.
-- Production EOD Price Bar partitions exist for 2026-08-12, 2026-08-13, and 2026-08-14 under `/data/trading-intelligence-platform`.
-- Completed Instrument Master, provider identity, and provider ticker resolver snapshots exist for 2026-08-12 and 2026-08-13 under `/data/trading-intelligence-platform`.
-- No historical backfill.
-- Production Instrument Master, provider identity, provider ticker resolver, and EOD Price Bar datasets exist for 2026-08-13.
-- Mocked-fixture tests write temporary Parquet partitions only under pytest `tmp_path`.
-- Server-side session authentication protects the deployed personal prototype Dashboard static paths.
-- Formal multi-user authentication and authorization are not implemented.
-- Default-disabled private canonical EOD read/query API exists for completed sessions.
-- No historical market data ingestion or automated ingestion.
-- Dashboard Universe V1 is implemented for the private Market Overview, with `Tradable U.S. Equities` as the default operating-equity universe.
-- No actual sector/industry taxonomy dataset.
-- Initial close-to-close analytics and Dashboard V1.1 overview pipeline are implemented.
-- Dashboard V1 is deployed as a private authenticated static OCI release; root login, session login, real Dashboard data loading, Logout, and password rotation have been manually verified by the user.
-- An offline provider-neutral XNYS market-session calendar is implemented with injected-time tests for holidays, early closes, weekends, DST, and before/after-close boundaries.
-- Dashboard freshness now separates actual dataset availability, file/schema consistency validation, and expected-session calendar freshness.
-- The 2026-08-14 Instrument Master, provider identity, and ticker resolver logical snapshot passed a read-only integrity audit and is accepted as `accepted_with_provenance_exception`; original request and pagination provenance remains unknown, so it must not be requested again or overwritten.
-- No formal multi-user authentication or authorization for private market-data routes.
-- No database.
-- Static private Dashboard deployment pipeline exists for the personal prototype.
-- No API credentials stored in Git, documentation, frontend code, logs, or command arguments.
-- The single authorized 2026-08-14 Grouped Daily request used `adjusted=false`, made no retry, passed all hard gates, and published 9,912 bars with fingerprint `f08033f26d920cc32ce4c12417521a57f45835c316994aae66c1a7da2a8501d2`.
-- The deployed private snapshot uses current 2026-08-14, previous 2026-08-13, expected and actual latest session 2026-08-14, lag zero, and freshness `fresh`.
-- OCI release `2026-08-14T224306Z-21d0e7fda749` is deployed from source commit `21d0e7fda749e3afec7edc9a884eb6408663004f`; unauthenticated public/private boundaries and remote checksums passed.
-- OCI release `2026-08-14T020535Z-ebb16015b7da` is deployed from clean source commit `ebb16015b7da259e68033ca442544def5a300d63`. It exposes the provisional legacy-universe disclosure while preserving the 1,864-member calculations; unauthenticated boundaries, checksums, services, and listeners passed. Authenticated visual acceptance of the disclosure remains manual.
+- The workstation is the source of truth for code, processing, canonical Parquet, private analytics, and deployment artifacts.
+- FastAPI health and default-disabled private EOD/market routes are implemented; no production FastAPI service is deployed.
+- React Dashboard V1.1 supports API, demo, and private snapshot modes with Market Pulse, breadth, up/down volume, movers, benchmark context, Sector ETF relative performance, Trading Activity Map, freshness, and governance disclosure.
+- Massive secure credential/transport, bounded All Tickers ingestion, Grouped Daily ingestion, provider security evidence, and fixture/fake-transport tests are implemented.
+- Completed Instrument Master, provider identity, and ticker resolver logical snapshots exist for 2026-08-12, 2026-08-13, and 2026-08-14. Counts are 9,932/13,106/9,932 for the first two dates and 9,939/13,110/9,939 for 2026-08-14.
+- Completed canonical EOD Price Bar partitions exist for 2026-08-12, 2026-08-13, and 2026-08-14 with 9,900, 9,901, and 9,912 records respectively.
+- Completed 2026-08-14 provider security evidence contains 25 catalog records, 13,110 observations, 9,939 canonical evidence records, and a logical completion marker.
+- SEC bounded transport, source-cache safety, parsers, evidence contracts/repositories, live CLI, retries=0 entrypoint, and candidate diagnostic schema `2.0` are implemented. Three authorized discovery runs failed closed; no completed SEC source cache, observation, canonical evidence, or logical snapshot exists.
+- Core is the accepted future default and Broad the future secondary view, but production remains on the disclosed provisional legacy 1,864-member rule pending authoritative issuer-structure and domicile coverage.
+- The 2026-08-14 identity snapshot is `accepted_with_provenance_exception`; its original request/pagination provenance is unknown and it must not be requested again or overwritten.
+- Private JSON snapshot export, frontend snapshot build, versioned bundle creation, session-login configuration, and deployment tooling are implemented. Git records release `2026-08-14T020535Z-ebb16015b7da` as the last known OCI deployment; OCI was not accessed during the 2026-08-16 documentation reconciliation, so current live health is unverified.
+- No historical backfill, automated daily ingestion, database/catalog service, corporate-action reconciliation, point-in-time sector taxonomy, market-cap dataset, Theme/relationship analytics, Options ingestion, or complete Event Engine exists.
+- Ignored `build/`, `apps/web/dist`, historical snapshots, and historical bundles exist locally. They were not generated or removed by the documentation reconciliation; retention policy remains open.
+- `/data` project subdirectories are group-writable in the observed metadata while the project root is mode `750`; the intended group-write policy is not yet documented and was not changed.
+- Provider credentials remain outside Git. Ordinary tests use fixtures, injected fakes, and explicit socket-prohibition regressions.
+
+## Offline Verification Baseline
+
+Verified on 2026-08-16 for the docs-only status reconciliation:
+
+- backend full: `619 passed`, `2 warnings`, `0 skipped`, `0 xfailed`
+- SEC provider suite: `96 passed`; bulk discovery: `53 passed`; extended SEC contracts/persistence/operation set: `113 passed`
+- explicit network/socket prohibition selection: `8 passed`, `611 deselected`
+- frontend regression: `40 passed` across 5 files
+- frontend production build: success, 589 modules transformed; output was directed to a temporary `/tmp` directory rather than a production snapshot/bundle
+- Python compileall, required imports, Health contract, and `bash -n` for 15 shell scripts: passed
+- Markdown local links: 82 files, 202 links checked, 0 failures
+- sensitive-information scan: 264 tracked UTF-8 files, 0 high-confidence findings; synthetic credentialed-URL rejection fixtures were excluded only from that URL rule
+- `git diff --check`: passed
+
+Backend warnings are the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning. Frontend warnings are the existing Vite React-plugin configuration deprecations and one 639.01 kB minified chunk warning. No provider network request, credential read, `/data` write, OCI access, production snapshot/bundle generation, deployment, or artifact deletion occurred.
 
 ## Next Proposed Step
 

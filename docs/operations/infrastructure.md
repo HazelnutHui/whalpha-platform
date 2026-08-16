@@ -32,9 +32,9 @@ Confirmed:
 
 ## OCI
 
-The private static Dashboard session-login release `2026-08-15T125517Z-0fa5cac89847` is deployed under the reviewed `/srv/whalpha` release layout. Public `/` remains the WH Alpha placeholder; `/login/` is public; private `/dashboard/` and `/private-data/` require the server-side session boundary. Do not record literal public IP addresses, SSH key material, password hashes, or credential contents here.
+The following is the last known state recorded by Git history and deployment documentation, not a current live-health assertion. The most recent recorded deployment is private Dashboard disclosure release `2026-08-14T020535Z-ebb16015b7da`, built from commit `ebb16015b7da259e68033ca442544def5a300d63`. It uses `/` as the branded session-login entry, `/login/` as a compatibility redirect, and a shared server-side session boundary for `/dashboard/` and `/private-data/`. OCI was not accessed during the 2026-08-16 documentation reconciliation, so current services, checksums, listeners, TLS, and routes were not re-verified. Do not record literal public IP addresses, SSH key material, password hashes, or credential contents here.
 
-Confirmed:
+Last recorded infrastructure facts:
 
 - SSH alias: `whalpha-oci`
 - instance name: HUI
@@ -45,10 +45,9 @@ Confirmed:
 - approximately 1 GiB RAM
 - approximately 45G root disk
 - no swap
-- Nginx and Certbot retained
-- whalpha.com and www.whalpha.com have working HTTPS
-- current page is a static placeholder
-- read-only preflight on 2026-08-15 confirmed Nginx active/enabled, public HTTP 301, public HTTPS 200, no failed units, `/srv/whalpha` absent, and auth directory absent
+- Nginx and Certbot were retained
+- HTTPS and the public/private route boundary passed the recorded deployment checks
+- a localhost-only session Auth Service, Nginx `auth_request`, and versioned static releases were deployed and verified at the recorded time
+- no production FastAPI market-data service was deployed to OCI
 
-- no application backend is running
-- 8000 and 8001 have no listeners
+Before relying on any current OCI claim, perform a separately authorized read-only operational verification. Historical preflight statements describing `/srv/whalpha` as absent or `/` as a static placeholder were superseded by the recorded private Dashboard deployments.
