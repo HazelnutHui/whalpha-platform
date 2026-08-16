@@ -2,6 +2,7 @@ from decimal import Decimal
 from email.message import Message
 from io import BytesIO
 import socket
+from urllib.error import HTTPError
 
 import pytest
 from pydantic import SecretStr
@@ -15,6 +16,7 @@ from tip_api.providers.sec.transport import (
     redirect_is_allowed,
     validate_sec_url,
 )
+from tip_api.providers.sec.live_ingestion import SEC_LIVE_MAX_RETRIES
 
 UA = SecretStr("trading-intelligence-platform fixture-contact@invalid.example")
 
@@ -87,7 +89,32 @@ class Opener:
         self.responses = list(responses)
 
     def open(self, request, timeout):
-        return self.responses.pop(0)
+        response = self.responses.pop(0)
+        if isinstance(response, Exception):
+            raise response
+        return response
+
+
+def test_zero_retry_policy_stops_after_first_recoverable_failure() -> None:
+    assert SEC_LIVE_MAX_RETRIES == 0
+    headers = Message()
+    failure = HTTPError("https://www.sec.gov/files/source.json", 503, "fixture", headers, None)
+    opener = Opener([failure, Response(b"must-not-be-requested")])
+    transport = BoundedSecTransport(
+        request_ceiling=12,
+        retry_policy=SecRetryPolicy(max_retries=0),
+        opener=opener,
+    )
+    with pytest.raises(SecTransportError) as caught:
+        transport.get_bytes(
+            "https://www.sec.gov/files/source.json",
+            user_agent=UA,
+            timeout_seconds=Decimal("2"),
+        )
+    assert caught.value.status_code == 503
+    assert transport.request_count == 1
+    assert transport.retry_count == 0
+    assert len(opener.responses) == 1
 
 
 def test_bounded_transport_streams_and_enforces_request_ceiling_without_leaking_contact(tmp_path) -> None:

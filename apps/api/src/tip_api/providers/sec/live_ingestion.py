@@ -44,10 +44,11 @@ from tip_api.providers.sec.issuer_evidence import (
     interpret_sec_fixture,
     reconcile_sec_evidence,
 )
-from tip_api.providers.sec.transport import BoundedSecTransport, SecTransportError
+from tip_api.providers.sec.transport import BoundedSecTransport, SecRetryPolicy, SecTransportError
 
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
 APPROVED_AS_OF_DATE = date(2026, 8, 14)
+SEC_LIVE_MAX_RETRIES = 0
 INTERESTING_FORMS = frozenset({"N-54A", "N-54C", "N-2", "10-K", "20-F", "40-F"})
 EXCHANGE_TO_MIC = {
     "NYSE": "XNYS", "NEW YORK STOCK EXCHANGE": "XNYS", "NASDAQ": "XNAS",
@@ -281,10 +282,18 @@ def main(argv: list[str] | None = None) -> int:
         print("network_requests=0")
         return 0
     observed_at = datetime.now(UTC)
-    transport = BoundedSecTransport(request_ceiling=12)
+    transport = BoundedSecTransport(
+        request_ceiling=12,
+        retry_policy=SecRetryPolicy(max_retries=SEC_LIVE_MAX_RETRIES),
+    )
     try:
         config = load_sec_provider_config_from_file()
-        config = SecProviderConfig(user_agent=config.user_agent, request_timeout_seconds="300", max_requests_per_second=config.max_requests_per_second, max_retries=2)
+        config = SecProviderConfig(
+            user_agent=config.user_agent,
+            request_timeout_seconds="300",
+            max_requests_per_second=config.max_requests_per_second,
+            max_retries=SEC_LIVE_MAX_RETRIES,
+        )
         cache = acquire_sec_source_cache(root, as_of_date=as_of_date, observed_at=observed_at, config=config, transport=transport)
         result = build_live_evidence(cache.path, as_of_date=as_of_date, observed_at=observed_at, identities=identities)
         if not result.publish_ready:
