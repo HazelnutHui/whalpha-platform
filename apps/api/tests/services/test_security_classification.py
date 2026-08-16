@@ -277,6 +277,7 @@ def test_provider_common_share_evidence_does_not_prove_operating_company() -> No
         evidence_source="/v3/reference/tickers", evidence_grade=EvidenceGrade.PROVIDER_EXPLICIT,
         classification_status=ClassificationStatus.UNKNOWN, universe_disposition=UniverseDisposition.QUARANTINE,
         decision_flags=("provider_security_form_only",), review_flags=("issuer_structure_unresolved",),
+        provider_observation_ids=("a" * 64,),
         observed_at=datetime(2026, 8, 15, tzinfo=UTC), ingested_at=datetime(2026, 8, 15, tzinfo=UTC),
     )
     previous = (bar("PROVIDER", date(2026, 8, 13), instrument_id=instrument_id),)

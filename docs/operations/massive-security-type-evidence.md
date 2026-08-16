@@ -14,10 +14,14 @@ The operator must first verify accepted identity partitions, absent evidence tar
 
 ## Hard Gates
 
-Catalog codes must be unique; raw count must exceed 5,000; identity linkage must reach 99%; stable collisions, mapped business-key conflicts, and ambiguous mappings must be zero; all raw records must reconcile among unique evidence, exact duplicates, ambiguous, unjoined, and malformed categories. Schema, count, fingerprints, reread, and staging cleanup must pass.
+Catalog codes must be unique; raw count must exceed 5,000; canonical-eligible identity linkage must reach 99%; stable collisions, canonical business-key conflicts, and ambiguous mappings must be zero. All raw records must reconcile among canonical-mapped observations, expected-unjoined observations, exact duplicates, ambiguous, collision, and malformed categories. Schema, count, fingerprints, reread, and staging cleanup must pass.
 
 Any failure ends the authorized run. It does not permit an automatic second request sequence.
 
 ## 2026-08-16 Attempt
 
-The first Phase B1 run stopped before persistence because ambiguous mappings and mapped business-key conflicts were nonzero. Its initial identity-link ratio also used the wrong denominator by treating accepted expected-exclusion identities without canonical IDs as unlinked. The denominator implementation is corrected and tested, but no second live run is authorized by this record.
+The first Phase B1 run reached both authorized endpoints successfully and stopped before persistence because four observations were marked ambiguous and the old canonical business key conflicted. Its initial identity-link ratio also used all 13,110 observations as the denominator, incorrectly treating expected exclusions and unresolved/rejected identities as canonical-link failures.
+
+Phase B1A proved that `BCPC` and `TPC` each contain one resolved observation with Share Class FIGI and one identifier-free excluded observation. The old ticker fallback attached each excluded observation to the resolved instrument, then marked both observations in each group conflicting. The corrected result is 9,939 canonical-mapped, 3,171 expected-unjoined, zero ambiguity/collision, and a canonical linkage ratio of 9,939/9,939.
+
+A future authorized run writes a sanitized failed diagnostic if quality gates fail after payload normalization. Diagnostic status is always `failed`, is physically separate from completed evidence, and cannot authorize retry. No second live run was made during Phase B1A.

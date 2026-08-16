@@ -22,6 +22,8 @@ Phase A computes two non-production candidates:
 
 The product policy is now accepted: Core U.S. Domestic Operating Equities is the future default, and Broad U.S.-Listed Operating Equities is the future secondary selectable view. ETF/ETN records remain benchmark-only and are not equity-universe choices. Production activation remains deferred until authoritative evidence coverage and reconciliation gates pass.
 
+Provider observations and canonical evidence are separate records. All normalized provider observations are retained by deterministic observation ID, including expected exclusions and unresolved records without canonical identity. Only uniquely mapped observations become canonical evidence. Canonical linkage denominators exclude expected-unjoined observations. Ticker fallback is allowed only for a unique point-in-time identity observation with an agreeing resolver; a duplicate ticker never causes an excluded observation to inherit another observation's canonical identity.
+
 ## Consequences
 
 - Classification facts no longer change Instrument Master V1 semantics.

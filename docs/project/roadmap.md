@@ -52,7 +52,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Perform an offline-safe review of the four ambiguous/nonzero business-key conflict condition, improve the next run's non-sensitive diagnostics, then obtain explicit authorization for one new bounded Phase B1 evidence request sequence. Do not begin Phase B2 or switch production universes first.
+After reviewing the completed offline reconciliation remediation, authorize exactly one new bounded Phase B1 Ticker Types and point-in-time All Tickers request sequence. Retain a sanitized failed-run diagnostic if gates fail and publish completed evidence only if corrected gates pass; do not begin Phase B2 or switch production universes first.
 
 ## Phase 2 — Intraday and Options
 

@@ -8,11 +8,14 @@ Status date: 2026-08-15
 - Implemented Provider Security Type Catalog V1, Provider Instrument Security Evidence V1, bounded Massive evidence ingestion, and atomic Parquet repository with no canonical dataset mutation.
 - Implemented an undeployed provisional Dashboard disclosure and governance metadata without changing the 1,864-member calculations.
 - The first Phase B1 live attempt used 15 requests and zero retries, reconciled 13,110 raw records, but failed ambiguous and mapped-business-key gates. No evidence partition, snapshot, or OCI release was published.
+- Phase B1A read-only reconciliation confirmed two duplicate-ticker groups, `BCPC` and `TPC`. Each combines one stable-ID resolved observation with one identifier-free excluded observation; old ticker fallback caused the four false ambiguous observations.
+- Provider observations are now separate from canonical evidence. The corrected offline identity result is 9,939 canonical-mapped, 3,171 expected-unjoined, zero stable collision/ticker ambiguity, and linkage 9,939/9,939.
+- Sanitized failed-run diagnostics are implemented outside completed evidence datasets. Phase B1A made no provider request, credential access, `/data` write, snapshot build, or OCI deployment.
 
 - Accepted ADR 0015 for effective-dated Security Classification V1 and quarantine-first evidence governance.
 - Completed the read-only 2026-08-14 security-type audit: Instrument Master 9,939; raw comparable 9,889; legacy default 1,864.
 - Confirmed VCX as excluded closed-end-fund pollution, separated AKAN as a U.S.-listed foreign operating ordinary share, and quarantined 4,527 records lacking sufficient classification evidence.
-- Computed non-production candidates: Core 0 and Broad 1. Production integration is blocked by evidence coverage and policy selection; current Dashboard membership is unchanged.
+- Computed non-production Phase A candidates: Core 0 and Broad 1. Product policy is selected, but production integration remains blocked by evidence coverage; current Dashboard membership is unchanged.
 - Phase A made no Massive request, credential access, canonical `/data` write, production snapshot, frontend behavior change, or OCI deployment.
 
 - Workstation infrastructure audited.
@@ -170,4 +173,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-Design the first bounded daily EOD orchestration and non-sensitive run-report retention workflow around the accepted XNYS calendar, without expanding Dashboard analytics.
+After reviewing the offline reconciliation fix, authorize exactly one bounded Phase B1 Ticker Types and point-in-time All Tickers run. Retain a sanitized failed-run diagnostic if gates fail and publish completed evidence only if corrected gates pass.

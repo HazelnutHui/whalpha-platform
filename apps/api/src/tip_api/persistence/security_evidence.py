@@ -9,6 +9,7 @@ from typing import Literal, Protocol
 
 from tip_api.contracts.security_classification.v1 import (
     ProviderInstrumentSecurityEvidenceV1,
+    ProviderSecurityObservationV1,
     ProviderSecurityTypeCatalogV1,
 )
 
@@ -35,6 +36,13 @@ class SecurityEvidenceWriteResult:
     status: Literal["published", "already_present"]
 
 
+@dataclass(frozen=True, slots=True)
+class FailedDiagnosticWriteResult:
+    diagnostic_path: Path
+    run_id: str
+    status: Literal["written"]
+
+
 class SecurityEvidenceRepository(Protocol):
     def publish_catalog(
         self,
@@ -42,6 +50,16 @@ class SecurityEvidenceRepository(Protocol):
         *,
         observed_date: date,
         provider_id: str,
+    ) -> SecurityEvidenceWriteResult: ...
+
+    def publish_observations(
+        self,
+        records: tuple[ProviderSecurityObservationV1, ...],
+        *,
+        as_of_date: date,
+        provider_id: str,
+        catalog_content_sha256: str,
+        quality_summary: dict[str, object],
     ) -> SecurityEvidenceWriteResult: ...
 
     def publish_instrument_evidence(
