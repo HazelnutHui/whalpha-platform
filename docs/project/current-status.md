@@ -265,7 +265,11 @@ The final run invoked the live entrypoint once from `2026-08-16T10:39:44Z` throu
 
 Postflight focused SEC/provider/contracts/persistence tests: `237 passed`; Health/socket selection: `4 passed`, one existing Starlette warning. Compileall, required imports, FastAPI app import, all shell syntax, Markdown links (82 files, 202 local links), sensitive scan (269 UTF-8 files, zero findings), `git diff --check`, listener checks, and residual-process checks passed. Offline test network attempts were zero. No Massive/OCI/EOD/Dashboard/snapshot/bundle/deployment or Universe operation occurred.
 
-## Next Proposed Step
+## 2026-07-17 Single-Session EOD Backfill Pilot
+
+The separately authorized pilot completed successfully. Instrument Master ran once with 14 paginated reference requests and zero retries, publishing 9,879 canonical instruments and resolver entries plus 13,024 provider identity observations. After formal same-day snapshot reread and a 52-second inter-entrypoint interval, Grouped Daily ran once with one adjusted=false request and zero retries, publishing 9,844 canonical EOD bars. Both operations passed existing quality, schema, count, fingerprint, hash, reference, atomic-publication, and staging-cleanup gates.
+
+The original 34-file protected inventory is unchanged. Nine authorized files were added for the three identity datasets, identity logical manifest, and EOD partition. No raw payload was retained. Only Massive reference tickers and the 2026-07-17 grouped endpoint were reached; no SEC, OCI, later date, scheduler, API/frontend, Dashboard, snapshot/bundle, deployment, or Universe operation occurred. Final classification: `completed_single_session_pilot`.
 
 ## Provider-Classified Common-Share Shadow Audit
 
@@ -279,12 +283,12 @@ Focused implementation tests: `20 passed`; focused provider/classification/persi
 
 The provider-neutral offline boundary now supports explicit multi-session canonical reads, 20-session XNYS window planning, exact Decimal median dollar-volume calculations, readiness auditing, and planning-only same-day-identity backfill batches. It implements only `current_as_of_constituent_liquidity`; `point_in_time_historical_panel` remains defined but unimplemented.
 
-For analysis session 2026-08-14, exchange-calendars 4.13.2 computed 20 sessions from 2026-07-17 through 2026-08-13. Only 08-12 and 08-13 are completed; 18 are missing and none corrupt. Candidate A has 1,750 instruments with two observations and one with one; Candidate B has 1,863 with two and one with one. All 1,751/1,864 results are `insufficient_history`; 20/20, 19/20, missing-previous, zero-volume, and emitted median counts are zero. No current-day bar entered the window.
+For analysis session 2026-08-14, exchange-calendars 4.13.2 computed 20 sessions from 2026-07-17 through 2026-08-13. Sessions 07-17, 08-12, and 08-13 are completed; 17 are missing and none corrupt. Candidate A observation counts are 1,743 at three sessions, seven at two, and one at one; Candidate B counts are 1,856, seven, and one. All 1,751/1,864 results remain `insufficient_history`; 20/20, 19/20, missing-previous, zero-volume, and emitted median counts are zero. No current-day bar entered the window.
 
-The planning-only gap is 18 same-day identity/resolver snapshots plus 18 Grouped Daily sessions: approximately 270 requests, conservative ceiling 378, zero retries, fixed 15-second spacing, and six proposed batches of at most three after a separately authorized one-session pilot. No request or backfill was made.
+The remaining planning-only gap is 17 same-day identity/resolver snapshots plus 17 Grouped Daily sessions: approximately 255 requests and conservative ceiling 357, with zero retries, fixed 15-second spacing, and six possible batches of at most three. No later date or batch is authorized.
 
 Offline verification: focused history/calendar/persistence `43 passed`; provider/contracts/persistence/API/snapshot regression `271 passed`, one existing Starlette warning; full backend `784 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; frontend regression `40 passed` across 5 files. Compileall, required imports, FastAPI/Health, shell syntax, Markdown links, sensitive scan, socket/credential sentinel, artifact and listener/process checks, and `git diff --check` passed. Backend warnings remain the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning; frontend emitted only the existing Vite React-plugin configuration warnings.
 
 ## Next Proposed Step
 
-Keep SEC B2 paused, Legacy production membership unchanged, and the 20-session readiness at `insufficient_history`. The next action requires separate authorization for only the earliest missing XNYS session as a same-day identity plus Grouped Daily pilot; validate publication and resume semantics before considering any three-session batch.
+Keep SEC B2 paused, Legacy production membership unchanged, and the 20-session readiness at `insufficient_history`. Manually review the completed pilot before separately deciding whether to authorize a first chronological batch of at most three sessions; no batch is implied by the pilot result.

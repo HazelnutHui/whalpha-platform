@@ -2,6 +2,11 @@
 
 ## 2026-08-16
 
+- Completed the separately authorized 2026-07-17 single-session Massive backfill pilot. The Instrument Master entrypoint ran once with 14 reference pages and zero retries, then the Grouped Daily entrypoint ran once after a 52-second interval with one adjusted=false request and zero retries.
+- Published and formally reread the same-day identity snapshot (13,024 observations, 9,879 canonical instruments/resolver entries) and canonical EOD partition (9,844 bars). Existing schemas, quality gates, fingerprints, Parquet hashes, identity references, atomic publication, and staging cleanup all passed; raw provider payload was not retained.
+- The original 34-file protected inventory remained content- and metadata-identical; nine authorized identity/EOD files were added. The 20-session window now has three completed and 17 missing sessions, remains `insufficient_history`, and emits no 20-session median.
+- Reached only the authorized Massive reference and 2026-07-17 Grouped Daily endpoints: 15 requests total, zero retries. No SEC/OCI/other service, later session, scheduler, API/frontend, Dashboard, snapshot/bundle, deployment, or Universe activation occurred. Final state: `completed_single_session_pilot`.
+
 - Added provider-neutral frozen contracts and services for bounded multi-session canonical EOD reads, XNYS 20-session planning, exact Decimal median dollar-volume proxy calculation, readiness reconciliation, and a planning-only historical backfill plan. Analysis-day bars are structurally excluded from their own eligibility window.
 - Added a stable-ID history reader that validates only requested partitions, manifest/schema/count/content fingerprints, physical Parquet SHA-256, identity references, revisions, path containment, and symlinks without calling a ticker resolver. `current_as_of_constituent_liquidity` is implemented; the distinct `point_in_time_historical_panel` remains unimplemented.
 - Read-only production audit computed the 2026-07-17 through 2026-08-13 XNYS window: 08-12 and 08-13 completed, 18 missing, zero corrupt. Candidate A/B have zero 20/20 results and all 1,751/1,864 records are `insufficient_history`; no median or Dashboard result was generated.
