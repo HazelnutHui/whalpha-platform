@@ -59,10 +59,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Successful 2026-07-17 same-day identity plus Grouped Daily single-session production backfill pilot
 - [x] Successful first three-session production backfill batch for 2026-07-20 through 2026-07-22
 - [x] Successful second three-session production backfill batch for 2026-07-23, 2026-07-24, and 2026-07-27
+- [x] Successful third three-session production backfill batch for 2026-07-28 through 2026-07-30
 
 ## Next Small Target
 
-Pause SEC B2 and preserve the production Legacy Liquid Screen. The 20-session window remains `insufficient_history` with 11 missing sessions after the successful second batch. Manually review the batch before separately deciding whether to authorize the next chronological batch of at most three sessions; do not activate the trailing rule, Provider-Classified shadows, Core, or Broad.
+Pause SEC B2 and preserve the production Legacy Liquid Screen. The 20-session window remains `insufficient_history` with eight missing sessions after the successful third batch. Manually review the batch before separately deciding whether to authorize the next chronological batch of at most three sessions; do not activate the trailing rule, Provider-Classified shadows, Core, or Broad.
 
 ## Phase 2 — Intraday and Options
 
