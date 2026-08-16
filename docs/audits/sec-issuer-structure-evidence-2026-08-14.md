@@ -100,6 +100,14 @@ The third candidate therefore provides direct evidence of a public SEC directory
 
 The private SEC credential was consumed only by the existing in-process loader after metadata checks; no User-Agent/contact value was printed, copied, hashed, committed, or recorded in the diagnostic.
 
+## Offline Exact-2024 Remediation
+
+The observed 2024 public-path variant has been reviewed and implemented offline as one exact exception: `/files/investment/data/other/investment-company-series-and-class-information/investment-company-series-class-2024.csv` is accepted only for parsed file year 2024 and the exact 2024 basename. The modern path remains valid, CEF and BDC are unchanged, and no rule is inferred for 2023 or earlier, 2025, 2026, or future legacy paths.
+
+The same remediation removes independently maintained candidate aggregate counters. Schema `2.0` now derives candidate, allowlisted, parsed-date, future, historical-undated, rejected, cutoff-eligible, and selected counts from candidate diagnostics. The fourth-run shape therefore reproduces two cutoff-eligible candidates before the rejected third candidate, rather than the prior inconsistent top-level zero. With the exact legacy exception, the three observed synthetic candidates yield eligible count three, selected count one, and deterministic 2026 selection regardless of row order.
+
+No new live SEC run was authorized or executed. Credential metadata/content and `/data` were not accessed; Massive, OCI, snapshot, bundle, deployment, EOD, backfill, and scheduling remained untouched. A future live request still requires separate explicit one-run authorization.
+
 ## Current Next Gate
 
-Review the observed 2024 public-path variant offline against the existing dataset-specific path contract and historical-path policy. Do not widen the allowlist solely because the path appeared once. Any code change needs its own reviewed offline task, and any later SEC request requires new explicit one-run authorization.
+Review the completed offline contract and regression evidence before deciding whether to authorize at most one additional bounded SEC evidence run. This audit does not authorize that request.

@@ -33,6 +33,10 @@ CSV_PATH_TEMPLATES = {
     "closed_end_fund": "/files/investment/data/other/closed-end-fund-information/closed-end-investment-company-{year}.csv",
     "business_development_company": "/files/investment/data/other/business-development-company-report/business-development-company-{year}.csv",
 }
+SERIES_CLASS_2024_LEGACY_PATH = (
+    "/files/investment/data/other/investment-company-series-and-class-information/"
+    "investment-company-series-class-2024.csv"
+)
 CSV_REQUIRED_HEADER_GROUPS = {
     "investment_company_series_class": (
         frozenset({"cik", "cik number", "registrant cik"}),
@@ -151,6 +155,7 @@ class SecLandingDiscoveryDiagnostic:
     rejection_reason_counts: tuple[tuple[str, int], ...]
     cutoff_eligible_count: int
     max_date_candidate_count: int
+    selected_count: int
     selected_year: int | None = None
     selected_date: str | None = None
     selected_host: str | None = None
@@ -373,10 +378,7 @@ def select_dated_official_csv(
     parser = _LandingTableParser()
     parser.feed(html)
     stats: dict[str, int] = {
-        "rows_scanned": 0, "rows_with_anchors": 0, "csv_candidate_count": 0,
-        "allowlisted_count": 0, "parsed_date_count": 0, "future_count": 0,
-        "undated_historical_count": 0, "malformed_count": 0,
-        "rejected_count": 0, "cutoff_eligible_count": 0,
+        "rows_scanned": 0, "rows_with_anchors": 0, "malformed_count": 0,
         "max_date_candidate_count": 0,
     }
     reasons: dict[str, int] = {}
@@ -409,8 +411,7 @@ def select_dated_official_csv(
         normalized_format = _normalized_header(format_cell.text)
         if normalized_format != "csv":
             continue
-        stats["csv_candidate_count"] += 1
-        candidate_ordinal = stats["csv_candidate_count"]
+        candidate_ordinal = len(candidate_diagnostics) + 1
         diagnostic = SecCsvCandidateDiagnostic(
             dataset_id=dataset_id,
             candidate_ordinal=candidate_ordinal,
@@ -465,7 +466,6 @@ def select_dated_official_csv(
             reasons[detail] = reasons.get(detail, 0) + 1
             _reject_or_fail("href_rejected", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
         url = analysis.canonical_url
-        stats["allowlisted_count"] += 1
         if updated_date_error is not None:
             candidate_diagnostics.append(replace(diagnostic, selection_state="rejected", failure_code=updated_date_error.reason_code))
             _reject_or_fail(updated_date_error.reason_code, dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
@@ -479,20 +479,23 @@ def select_dated_official_csv(
         if effective_date.year != year:
             candidate_diagnostics[diagnostic_index] = replace(diagnostic, selection_state="rejected", failure_code="file_year_date_mismatch")
             _reject_or_fail("file_year_date_mismatch", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
-        stats["parsed_date_count"] += 1
         if effective_date > evidence_cutoff:
-            stats["future_count"] += 1
             candidate_diagnostics[diagnostic_index] = replace(diagnostic, selection_state="future_excluded")
         else:
             candidate_diagnostics[diagnostic_index] = replace(diagnostic, selection_state="cutoff_eligible")
             candidates.append(candidate)
-    if stats["csv_candidate_count"] == 0:
+    if not candidate_diagnostics:
         _fail_discovery("no_csv_candidate", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
     unique_by_key: dict[tuple[int, date | None, str], _CsvCandidate] = {}
     for candidate in candidates:
         unique_by_key.setdefault((candidate.dataset_year, candidate.effective_date, candidate.url), candidate)
     unique = sorted(unique_by_key.values(), key=lambda item: (item.effective_date or date.min, item.dataset_year, item.url))
-    stats["cutoff_eligible_count"] = len(unique)
+    unique_diagnostic_indexes = {candidate.diagnostic_index for candidate in unique}
+    for candidate in candidates:
+        if candidate.diagnostic_index not in unique_diagnostic_indexes:
+            candidate_diagnostics[candidate.diagnostic_index] = replace(
+                candidate_diagnostics[candidate.diagnostic_index], selection_state="duplicate_excluded"
+            )
     if not unique:
         reason = "updated_date_missing_current_candidate" if undated else "no_cutoff_eligible_candidate"
         _fail_discovery(reason, dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
@@ -504,13 +507,12 @@ def select_dated_official_csv(
         _fail_discovery("max_date_distinct_url_tie", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
     selected = min(latest, key=lambda item: (item.dataset_year, item.url))
     selected_key = (selected.dataset_year, selected.effective_date, selected.url)
-    for candidate in candidates:
+    for candidate in unique:
         state = "selected" if (candidate.dataset_year, candidate.effective_date, candidate.url) == selected_key else "eligible_not_selected"
         candidate_diagnostics[candidate.diagnostic_index] = replace(candidate_diagnostics[candidate.diagnostic_index], selection_state=state)
     for candidate in undated:
         if candidate.dataset_year >= selected.dataset_year:
             _fail_discovery("updated_date_missing_current_candidate", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
-        stats["undated_historical_count"] += 1
         reasons["undated_historical_excluded"] = reasons.get("undated_historical_excluded", 0) + 1
         candidate_diagnostics[candidate.diagnostic_index] = replace(
             candidate_diagnostics[candidate.diagnostic_index], selection_state="undated_historical_excluded"
@@ -525,9 +527,9 @@ def select_dated_official_csv(
     return SecCsvSelection(
         dataset_id=dataset_id, url=selected.url, dataset_year=selected.dataset_year,
         effective_date=latest_date, selection_reason_code="selected",
-        total_csv_candidate_count=stats["csv_candidate_count"],
-        eligible_count=stats["cutoff_eligible_count"],
-        future_dated_count=stats["future_count"], diagnostic=diagnostic,
+        total_csv_candidate_count=diagnostic.csv_candidate_count,
+        eligible_count=diagnostic.cutoff_eligible_count,
+        future_dated_count=diagnostic.future_count, diagnostic=diagnostic,
     )
 
 
@@ -658,7 +660,12 @@ def _analyze_csv_url(dataset_id: str, landing_url: str, href: str, year: int) ->
         template_match = False
         return rejected(SecCsvUrlFailureCode.FILE_YEAR_MISMATCH)
     expected_path = template.format(year=year)
-    template_match = parsed.path == expected_path
+    legacy_match = (
+        dataset_id == "investment_company_series_class"
+        and year == 2024
+        and parsed.path == SERIES_CLASS_2024_LEGACY_PATH
+    )
+    template_match = parsed.path == expected_path or legacy_match
     if not template_match:
         return rejected(SecCsvUrlFailureCode.PATH_TEMPLATE_MISMATCH)
     try:
@@ -700,7 +707,6 @@ def _reject_or_fail(
     candidate_diagnostics: list[SecCsvCandidateDiagnostic],
 ) -> None:
     stats["malformed_count"] += 1
-    stats["rejected_count"] += 1
     reasons[reason] = reasons.get(reason, 0) + 1
     _fail_discovery(reason, dataset_id, landing_url, tables, signature, stats, reasons, candidate_diagnostics)
 
@@ -739,20 +745,41 @@ def _make_diagnostic(
     selected_path_pattern: str | None = None,
     candidate_diagnostics: Iterable[SecCsvCandidateDiagnostic] = (),
 ) -> SecLandingDiscoveryDiagnostic:
+    candidates = tuple(candidate_diagnostics)
+    aggregates = _candidate_aggregate_counts(candidates)
     return SecLandingDiscoveryDiagnostic(
         schema_version="2.0", dataset_id=dataset_id, page_id=Path(urlparse(landing_url).path).name,
         table_count=len(tables), normalized_header_signature=signature,
         rows_scanned=stats["rows_scanned"], rows_with_anchors=stats["rows_with_anchors"],
-        csv_candidate_count=stats["csv_candidate_count"], allowlisted_count=stats["allowlisted_count"],
-        parsed_date_count=stats["parsed_date_count"], future_count=stats["future_count"],
-        undated_historical_count=stats["undated_historical_count"],
-        malformed_count=stats["malformed_count"], rejected_count=stats["rejected_count"],
+        csv_candidate_count=aggregates["csv_candidate_count"], allowlisted_count=aggregates["allowlisted_count"],
+        parsed_date_count=aggregates["parsed_date_count"], future_count=aggregates["future_count"],
+        undated_historical_count=aggregates["undated_historical_count"],
+        malformed_count=stats["malformed_count"], rejected_count=aggregates["rejected_count"],
         rejection_reason_counts=tuple(sorted(reasons.items())),
-        cutoff_eligible_count=stats["cutoff_eligible_count"], max_date_candidate_count=stats["max_date_candidate_count"],
+        cutoff_eligible_count=aggregates["cutoff_eligible_count"], max_date_candidate_count=stats["max_date_candidate_count"],
+        selected_count=aggregates["selected_count"],
         selected_year=selected_year, selected_date=selected_date, selected_host=selected_host,
         selected_path_pattern=selected_path_pattern,
-        candidate_diagnostics=tuple(candidate_diagnostics),
+        candidate_diagnostics=candidates,
     )
+
+
+def _candidate_aggregate_counts(
+    candidates: tuple[SecCsvCandidateDiagnostic, ...],
+) -> dict[str, int]:
+    eligible_states = {"cutoff_eligible", "eligible_not_selected", "selected"}
+    return {
+        "csv_candidate_count": len(candidates),
+        "allowlisted_count": sum(item.url_validation_state == "accepted" for item in candidates),
+        "parsed_date_count": sum(item.parsed_updated_date is not None for item in candidates),
+        "future_count": sum(item.selection_state == "future_excluded" for item in candidates),
+        "undated_historical_count": sum(
+            item.selection_state == "undated_historical_excluded" for item in candidates
+        ),
+        "rejected_count": sum(item.selection_state == "rejected" for item in candidates),
+        "cutoff_eligible_count": sum(item.selection_state in eligible_states for item in candidates),
+        "selected_count": sum(item.selection_state == "selected" for item in candidates),
+    }
 
 
 def _collapse(value: str) -> str:

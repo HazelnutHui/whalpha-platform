@@ -11,6 +11,7 @@ import tip_api.providers.sec.bulk_sources as bulk_sources
 from tip_api.providers.sec.bulk_sources import (
     LANDING_PAGES,
     CSV_PATH_TEMPLATES,
+    SERIES_CLASS_2024_LEGACY_PATH,
     SecCsvUrlFailureCode,
     SecLandingDiscoveryError,
     iter_selected_submissions,
@@ -32,6 +33,11 @@ def fixture(name: str) -> str:
 def href(dataset_id: str, year: int, *, extension: str = "csv") -> str:
     path = CSV_PATH_TEMPLATES[dataset_id].format(year=year)
     return path[:-3] + extension
+
+
+def legacy_series_href(year: int, *, extension: str = "csv") -> str:
+    directory = SERIES_CLASS_2024_LEGACY_PATH.rsplit("/", 1)[0]
+    return f"{directory}/investment-company-series-class-{year}.{extension}"
 
 
 def page(dataset_id: str, rows: list[str], *, headers=("File", "Format", "Size"), extra="") -> str:
@@ -59,6 +65,130 @@ def test_real_structure_fixtures_select_dated_csv(dataset_id: str, fixture_name:
     assert result.diagnostic.table_count == 2
     assert result.diagnostic.normalized_header_signature == ("file", "format", "size")
     assert result.diagnostic.undated_historical_count >= 1
+
+
+def test_observed_three_candidate_fixture_selects_2026_and_counts_all_eligible() -> None:
+    dataset = "investment_company_series_class"
+    result = select_dated_official_csv(
+        dataset,
+        LANDING_PAGES[dataset],
+        fixture("series_class_2024_legacy_landing.html"),
+        evidence_cutoff=CUTOFF,
+    )
+    diagnostic = result.diagnostic
+    assert result.dataset_year == 2026
+    assert result.effective_date == date(2026, 6, 1)
+    assert result.url == f"https://www.sec.gov{href(dataset, 2026)}"
+    assert result.eligible_count == 3
+    assert diagnostic.csv_candidate_count == 3
+    assert diagnostic.allowlisted_count == 3
+    assert diagnostic.cutoff_eligible_count == 3
+    assert diagnostic.rejected_count == 0
+    assert diagnostic.selected_count == 1
+    assert [item.selection_state for item in diagnostic.candidate_diagnostics] == [
+        "selected", "eligible_not_selected", "eligible_not_selected",
+    ]
+    assert all(item.path_template_match is True for item in diagnostic.candidate_diagnostics)
+
+
+def test_observed_three_candidate_selection_is_independent_of_row_order() -> None:
+    dataset = "investment_company_series_class"
+    rows = [
+        row(dataset, 2026, "6/1/2026", size="7.68 MB"),
+        row(dataset, 2025, "6/2/2025", size="7.25 MB"),
+        row(dataset, 2024, "6/5/2024", custom_href=SERIES_CLASS_2024_LEGACY_PATH, size="7.21 MB"),
+    ]
+    first = select_dated_official_csv(dataset, LANDING_PAGES[dataset], page(dataset, rows), evidence_cutoff=CUTOFF)
+    reversed_result = select_dated_official_csv(
+        dataset, LANDING_PAGES[dataset], page(dataset, list(reversed(rows))), evidence_cutoff=CUTOFF,
+    )
+    assert (first.url, first.dataset_year, first.effective_date, first.eligible_count) == (
+        reversed_result.url, reversed_result.dataset_year, reversed_result.effective_date, reversed_result.eligible_count,
+    )
+    assert first.dataset_year == 2026 and first.eligible_count == 3
+
+
+@pytest.mark.parametrize("value", [
+    SERIES_CLASS_2024_LEGACY_PATH,
+    f"https://www.sec.gov{SERIES_CLASS_2024_LEGACY_PATH}",
+])
+def test_exact_2024_legacy_series_path_accepts_relative_and_absolute_https(
+    value: str,
+    tmp_path: Path,
+) -> None:
+    dataset = "investment_company_series_class"
+    result = select_dated_official_csv(
+        dataset,
+        LANDING_PAGES[dataset],
+        page(dataset, [row(dataset, 2024, "6/5/2024", custom_href=value)]),
+        evidence_cutoff=CUTOFF,
+    )
+    candidate = result.diagnostic.candidate_diagnostics[0]
+    assert result.url == f"https://www.sec.gov{SERIES_CLASS_2024_LEGACY_PATH}"
+    assert result.dataset_year == 2024
+    assert candidate.url_validation_state == "accepted"
+    assert candidate.path_template_match is True
+    source = tmp_path / "series.csv"
+    source.write_text("CIK,Series ID\n1,S000001\n", encoding="utf-8")
+    validate_selected_csv_response(result, "text/csv", source)
+
+
+@pytest.mark.parametrize(("year", "value", "failure_code"), [
+    (2025, legacy_series_href(2025), "path_template_mismatch"),
+    (2026, legacy_series_href(2026), "path_template_mismatch"),
+    (2023, legacy_series_href(2023), "path_template_mismatch"),
+    (2024, legacy_series_href(2023), "path_template_mismatch"),
+    (2024, SERIES_CLASS_2024_LEGACY_PATH.replace("series-and-class", "series-and-classes"), "path_template_mismatch"),
+    (2024, f"{SERIES_CLASS_2024_LEGACY_PATH}?download=PRIVATE-QUERY", "query_present"),
+    (2024, f"{SERIES_CLASS_2024_LEGACY_PATH}#PRIVATE-FRAGMENT", "fragment_present"),
+    (2024, f"https://PRIVATE-USER@www.sec.gov{SERIES_CLASS_2024_LEGACY_PATH}", "userinfo_present"),
+    (2024, f"https://www.sec.gov:8443{SERIES_CLASS_2024_LEGACY_PATH}", "nonstandard_port"),
+    (2024, SERIES_CLASS_2024_LEGACY_PATH.replace("/investment-company-series-class-2024.csv", "/../investment-company-series-and-class-information/investment-company-series-class-2024.csv"), "traversal_present"),
+    (2024, SERIES_CLASS_2024_LEGACY_PATH.replace("/investment-company-series-class-2024.csv", "/%2e%2e/investment-company-series-and-class-information/investment-company-series-class-2024.csv"), "encoded_traversal_present"),
+    (2024, f"https://www.sec.gov.evil.example{SERIES_CLASS_2024_LEGACY_PATH}", "host_not_allowed"),
+    (2024, legacy_series_href(2024, extension="xml"), "extension_not_csv"),
+])
+def test_2024_legacy_series_path_is_an_exact_exception(
+    year: int,
+    value: str,
+    failure_code: str,
+) -> None:
+    dataset = "investment_company_series_class"
+    with pytest.raises(SecLandingDiscoveryError) as caught:
+        select_dated_official_csv(
+            dataset,
+            LANDING_PAGES[dataset],
+            page(dataset, [row(dataset, year, f"6/1/{year}", custom_href=value)]),
+            evidence_cutoff=CUTOFF,
+        )
+    diagnostic = caught.value.diagnostic
+    candidate = diagnostic.candidate_diagnostics[0]
+    assert caught.value.reason_code == "href_rejected"
+    assert candidate.failure_code == failure_code
+    assert candidate.url_validation_state == "rejected"
+    rendered = json.dumps(diagnostic.to_safe_dict(), sort_keys=True)
+    assert "PRIVATE-QUERY" not in rendered
+    assert "PRIVATE-FRAGMENT" not in rendered
+    assert "PRIVATE-USER" not in rendered
+
+
+@pytest.mark.parametrize("dataset", ["closed_end_fund", "business_development_company"])
+def test_2024_series_legacy_exception_does_not_change_other_dataset_paths(dataset: str) -> None:
+    modern = select_dated_official_csv(
+        dataset,
+        LANDING_PAGES[dataset],
+        page(dataset, [row(dataset, 2024, "6/1/2024")]),
+        evidence_cutoff=CUTOFF,
+    )
+    assert modern.dataset_year == 2024
+    with pytest.raises(SecLandingDiscoveryError) as caught:
+        select_dated_official_csv(
+            dataset,
+            LANDING_PAGES[dataset],
+            page(dataset, [row(dataset, 2024, "6/1/2024", custom_href=SERIES_CLASS_2024_LEGACY_PATH)]),
+            evidence_cutoff=CUTOFF,
+        )
+    assert caught.value.diagnostic.candidate_diagnostics[0].failure_code == "path_template_mismatch"
 
 
 def test_anchor_tail_two_and_four_digit_dates_and_cutoff_are_supported() -> None:
@@ -103,6 +233,10 @@ def test_duplicate_same_url_and_date_is_deduplicated() -> None:
     item = row(dataset, 2026, "6/1/2026")
     result = select_dated_official_csv(dataset, LANDING_PAGES[dataset], page(dataset, [item, item]), evidence_cutoff=CUTOFF)
     assert result.eligible_count == 1 and result.diagnostic.max_date_candidate_count == 1
+    assert result.diagnostic.selected_count == 1
+    assert [item.selection_state for item in result.diagnostic.candidate_diagnostics] == [
+        "selected", "duplicate_excluded",
+    ]
 
 
 @pytest.mark.parametrize(("html", "reason"), [
@@ -260,6 +394,25 @@ def test_three_candidate_failure_records_actionable_candidate_context() -> None:
     assert caught.value.reason_code == "href_rejected"
     assert diagnostic.csv_candidate_count == 3
     assert diagnostic.allowlisted_count == 2
+    assert diagnostic.cutoff_eligible_count == 2
+    assert diagnostic.rejected_count == 1
+    assert diagnostic.selected_count == 0
+    assert [item.selection_state for item in diagnostic.candidate_diagnostics] == [
+        "cutoff_eligible", "cutoff_eligible", "rejected",
+    ]
+    assert diagnostic.allowlisted_count == sum(
+        item.url_validation_state == "accepted" for item in diagnostic.candidate_diagnostics
+    )
+    assert diagnostic.cutoff_eligible_count == sum(
+        item.selection_state in {"cutoff_eligible", "eligible_not_selected", "selected"}
+        for item in diagnostic.candidate_diagnostics
+    )
+    assert diagnostic.rejected_count == sum(
+        item.selection_state == "rejected" for item in diagnostic.candidate_diagnostics
+    )
+    assert diagnostic.selected_count == sum(
+        item.selection_state == "selected" for item in diagnostic.candidate_diagnostics
+    )
     assert diagnostic.table_count == 2
     assert len(diagnostic.candidate_diagnostics) == 3
     rejected = diagnostic.candidate_diagnostics[2]
@@ -312,7 +465,9 @@ def test_missing_size_and_date_are_null_not_raw_content() -> None:
     assert caught.value.reason_code == "updated_date_missing_current_candidate"
 
 
-def test_diagnostic_serialization_is_deterministic_and_does_not_leak_url_values() -> None:
+def test_diagnostic_serialization_is_deterministic_and_does_not_leak_url_values(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
     dataset = "closed_end_fund"
     sentinel = "PRIVATE-CONTACT-SENTINEL@invalid.example"
     malicious = f"https://{sentinel}@www.sec.gov{href(dataset, 2026)}?secret={sentinel}#{sentinel}"
@@ -330,6 +485,8 @@ def test_diagnostic_serialization_is_deterministic_and_does_not_leak_url_values(
         assert caught.value.diagnostic.candidate_diagnostics[0].userinfo_present is True
     assert rendered[0] == rendered[1]
     assert sentinel not in rendered[0]
+    captured = capsys.readouterr()
+    assert sentinel not in captured.out and sentinel not in captured.err
 
 
 def test_diagnostic_and_error_do_not_expose_raw_html_or_sentinel() -> None:

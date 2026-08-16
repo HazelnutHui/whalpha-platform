@@ -56,7 +56,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review the schema `2.0` evidence for the 2024 Series/Class public directory-name variant against the exact dataset path contract and historical-path policy. Decide offline whether a narrowly tested rule change is justified; do not infer acceptance from one observation. Core/Broad activation remains deferred, and this roadmap item does not authorize another live request.
+Review the completed offline exact-2024 Series/Class path contract, candidate-derived diagnostic aggregates, and regression evidence. If accepted, a separately authorized single bounded SEC run may test the unchanged fail-closed pipeline; this roadmap item is not authorization. No 2023-or-earlier legacy semantics are assumed, and Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 
