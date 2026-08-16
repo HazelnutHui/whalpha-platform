@@ -21,6 +21,14 @@ from tip_api.contracts.security_classification.v1.provider_evidence import (
     ProviderSecurityTypeCatalogV1,
     SanitizedObservationSummaryV1,
 )
+from tip_api.contracts.security_classification.v1.sec_evidence import (
+    SecEvidenceGrade,
+    SecEvidenceResolutionStatus,
+    SecEvidenceSubject,
+    SecIssuerEvidenceManifestV1,
+    SecIssuerEvidenceObservationV1,
+    SecIssuerStructureEvidenceV1,
+)
 
 __all__ = [
     "ClassificationMethod",
@@ -40,4 +48,10 @@ __all__ = [
     "ProviderSecurityTypeCatalogV1",
     "SanitizedObservationSummaryV1",
     "FailedSecurityEvidenceDiagnosticV1",
+    "SecEvidenceGrade",
+    "SecEvidenceResolutionStatus",
+    "SecEvidenceSubject",
+    "SecIssuerEvidenceManifestV1",
+    "SecIssuerEvidenceObservationV1",
+    "SecIssuerStructureEvidenceV1",
 ]

@@ -6,6 +6,8 @@
 - [ADR 0015](decisions/0015-govern-security-types-and-universe-eligibility.md)
 - [2026-08-14 classification audit](audits/security-type-classification-2026-08-14.md)
 - [Provider security-type evidence architecture](architecture/provider-security-type-evidence.md)
+- [SEC issuer-structure evidence architecture](architecture/sec-issuer-structure-evidence.md)
+- [SEC User-Agent provisioning](operations/sec-user-agent-provisioning.md)
 - [Massive security-type evidence operation](operations/massive-security-type-evidence.md)
 - [2026-08-14 provider-evidence audit](audits/security-type-provider-evidence-2026-08-14.md)
 

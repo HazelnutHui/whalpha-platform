@@ -26,6 +26,8 @@ Provider observations and canonical evidence are separate records. All normalize
 
 Phase B1B persisted the official provider type catalog and point-in-time observations under these rules. A logical completion manifest, rather than any one component partition, defines a completed provider evidence snapshot. The resulting provider evidence establishes security form at useful coverage but does not satisfy the authoritative issuer-structure or domicile gate; production Core/Broad activation remains deferred.
 
+Phase B2A establishes a separate SEC issuer-structure evidence boundary. SEC filer identity, filing evidence, security identity, and Universe decisions remain distinct. CIK and ticker cannot independently create canonical security identity. Official fund/BDC datasets and effective-dated filing state machines may establish exclusions; cover-page facts may establish security form only after a consistent point-in-time identity join. Missing or conflicting evidence remains quarantined. This clarification does not activate Core/Broad or authorize a live SEC request.
+
 ## Consequences
 
 - Classification facts no longer change Instrument Master V1 semantics.

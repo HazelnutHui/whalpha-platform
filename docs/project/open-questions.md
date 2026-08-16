@@ -2,6 +2,9 @@
 
 ## Security Type Governance
 
+- Which bounded SEC bulk sources and quality gates should be authorized for Phase B2B after private User-Agent provisioning?
+- What authoritative evidence will close remaining domicile, REIT subtype, SPAC, partnership, and security-to-filer gaps without ticker-only joins?
+
 - Core is selected as the future default and Broad as the secondary view; when can evidence coverage safely activate them?
 - Which point-in-time source will provide issuer structure, domicile/incorporation, ADR status, REIT subtype, BDC/CEF/SPAC status, and security form at sufficient coverage?
 - How should reviewed overrides be approved, versioned, and retired without backfilling current facts into history?

@@ -50,10 +50,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Dashboard V1.1 trust/usability pass with benchmark strip, Sector ETF relative performance, conservative freshness, and top-50 Trading Activity Map default
 - [x] Provider-neutral offline XNYS market-session calendar and explicit freshness contract
 - [x] Corrected Phase B1 provider security-type evidence publication and provisional universe disclosure source
+- [x] Offline SEC issuer-structure evidence boundary, private User-Agent tool, fixture state machines, and tmp-only persistence
 
 ## Next Small Target
 
-Design and implement Phase B2 SEC/authoritative issuer-structure evidence integration with a privately configured SEC-compliant User-Agent, without switching the production Core/Broad Universe.
+Privately configure the SEC-compliant User-Agent on `dell5820`, then separately review one bounded Phase B2B live evidence plan without switching the production Core/Broad Universe.
 
 ## Phase 2 — Intraday and Options
 

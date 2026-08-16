@@ -4,6 +4,9 @@ Status date: 2026-08-16
 
 ## Completed
 
+- Completed Security Evidence Phase B2A offline: SEC issuer-evidence observation/canonical contracts, point-in-time filing interpretation, stable-identity reconciliation, deterministic Core/Broad rules, secure private User-Agent configuration tooling, transport policy, and tmp-only Parquet persistence tests.
+- Phase B2A made zero SEC/Massive requests, configured no real User-Agent, wrote no production `/data`, changed no Dashboard calculations, generated no snapshot, and performed no OCI deployment. Core/Broad production activation remains deferred.
+
 - Product policy selected: Core U.S. Domestic Operating Equities future default; Broad U.S.-Listed Operating Equities future secondary; production activation deferred.
 - Published the completed 2026-08-14 provider security evidence snapshot: 25 catalog types, 13,110 observations, 9,939 canonical evidence records, and a verified logical completion marker. The corrected run used 15 requests and zero retries.
 - Implemented Provider Security Type Catalog V1, Provider Security Observation V1, Canonical Provider Instrument Security Evidence V1, bounded Massive ingestion, logical completion, and atomic Parquet persistence with no canonical dataset mutation.
@@ -176,4 +179,4 @@ Status date: 2026-08-16
 
 ## Next Proposed Step
 
-Design Phase B2 SEC/authoritative issuer-structure evidence integration with a privately configured SEC-compliant User-Agent, while keeping production Core/Broad activation deferred.
+Have the user privately configure the SEC User-Agent on `dell5820`; only after that, separately review and authorize one bounded Phase B2B SEC live evidence run while keeping production Core/Broad activation deferred.

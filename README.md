@@ -6,6 +6,8 @@ The repository includes a provider-neutral, effective-dated Security Classificat
 
 Phase B1 accepts Core as the future default and Broad as the future secondary view. The corrected bounded run published the official 25-code provider catalog, 13,110 normalized observations, 9,939 canonical evidence records, and a verified logical completion marker. Provider type improves security-form evidence but does not establish issuer structure or domicile, so production membership remains unchanged and provisional. See the [evidence audit](docs/audits/security-type-provider-evidence-2026-08-14.md).
 
+Phase B2A adds an offline-only SEC issuer-structure evidence boundary, private User-Agent configuration loader/helper, point-in-time identity reconciliation, deterministic Core/Broad decision rules, and atomic Parquet persistence tests. No SEC request, production data write, snapshot, deployment, or Universe switch occurred. See [SEC Issuer-Structure Evidence](docs/architecture/sec-issuer-structure-evidence.md).
+
 Trading Intelligence Platform is a personal single-user prototype for U.S. equity market intelligence. It is designed to help the user understand market structure, sector and theme rotation, stock strength, breadth, options structure, relationship shifts, and significant market developments quickly enough to support discretionary research and trading decisions.
 
 The platform should help answer:

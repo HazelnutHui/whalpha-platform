@@ -33,3 +33,11 @@ A completed provider evidence snapshot additionally requires one logical complet
 Core U.S. Domestic Operating Equities requires authoritative/provider-explicit domestic operating common or equity REIT classification. Broad U.S.-Listed Operating Equities additionally permits authoritative/provider-explicit ADR/ADS and foreign ordinary operating equities. Both apply supported exchange, two-session availability, previous close of at least USD 5, previous close-times-volume of at least USD 20 million, and material quality checks.
 
 The one-day previous-session liquidity gate is provisional and is not 20-day ADV. A later phase requires trailing median dollar volume.
+
+## SEC Issuer Evidence
+
+Phase B2A adds `SecIssuerEvidenceObservationV1` and `SecIssuerStructureEvidenceV1`. SEC observations are point-in-time assertions and may remain unjoined; canonical evidence requires a unique stable-identity resolution. Evidence grade, security form, issuer structure, listing scope, resolution status, quality, and Universe disposition remain separate.
+
+CIK is filer identity, not security identity. Ticker and exchange are join evidence only. SIC and names cannot produce positive inclusion. Filing cutoff prevents future evidence from being applied historically. Conflicting or insufficient evidence remains quarantined.
+
+See [SEC Issuer-Structure Evidence](../architecture/sec-issuer-structure-evidence.md) for source-specific interpretation and persistence rules.

@@ -9,6 +9,7 @@
 - Phase A/B candidates must not feed production analytics until provider and authoritative issuer evidence satisfy the documented activation gates.
 - Product policy is Core future default and Broad future secondary, but production activation remains deferred.
 - Provider security-form evidence never proves issuer operating structure or domicile; unknown evidence remains quarantined.
+- SEC filer identity and filing evidence do not automatically establish listed-security identity; live SEC access requires separately authorized private User-Agent configuration.
 
 ## 1. Required Reading Order
 

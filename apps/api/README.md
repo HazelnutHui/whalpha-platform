@@ -6,6 +6,8 @@
 
 Phase B1 adds immutable provider type catalog, normalized observation, canonical instrument evidence, and logical completion contracts with bounded Massive ingestion and atomic Parquet persistence. The corrected 2026-08-14 run published 25 catalog records, 13,110 observations, and 9,939 canonical evidence records. `CS` remains quarantine because security form alone does not resolve issuer structure or domicile. Evidence partitions are independent of canonical Instrument Master and EOD datasets.
 
+Phase B2A adds offline-tested SEC issuer evidence contracts, point-in-time identity and filing interpretation, deterministic Core/Broad decisions, a private User-Agent loader, an injectable transport policy, and an atomic Parquet repository. There is no live SEC transport implementation or ingestion CLI, and production Core/Broad activation remains deferred.
+
 FastAPI backend scaffold for Trading Intelligence Platform.
 
 ## Purpose
