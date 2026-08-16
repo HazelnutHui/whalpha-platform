@@ -185,7 +185,7 @@ No live SEC request was authorized or performed for this clarification. No crede
 
 ## Current Next Gate
 
-Review the offline selected-source gate and schema `3.0` contract. A bounded live SEC validation requires separate explicit authorization; successful publication and Core/Broad activation remain deferred.
+The final bounded run for this product stage has completed unsuccessfully. Do not perform another SEC B2 live run or add another historical exception in this phase. Keep the Legacy Liquid Screen provisional and return to EOD history, trailing liquidity, sector taxonomy, and website functionality.
 
 ## Offline Source-Cache and ZIP Safety Completion
 
@@ -194,3 +194,33 @@ The publication preflight review found that the existing acquisition code intent
 The same offline change completes the submissions ZIP safety gate for encrypted, duplicate/normalized-duplicate, absolute, traversing, backslash, percent-encoded, symlink, non-regular, nested, and unexpected members; member-count, per-member, total-expansion, compression-ratio, and zero compressed-size boundaries; and bounded JSON parsing with filename/CIK and basic filings-schema validation. No extracted member is persisted.
 
 All evidence for this correction came from local synthetic ZIPs, fake transports, and pytest `tmp_path`. No SEC, Massive, or other external request was made; no credential was read or statted; `/data` and OCI were not accessed; and no production cache, evidence, snapshot, bundle, deployment, or Universe activation was created. The historical failed diagnostics remain unchanged, production SEC evidence remains unpublished, and a live run remains separately authorized work.
+
+## Final Authorized Run — CEF Selected-Source Attempt
+
+Status: `sec_transport_or_source_validation_failure`; evidence publication: `not_published`; production Universe activation: `deferred`; SEC B2 phase: `paused`.
+
+The final authorized entrypoint invocation began at `2026-08-16T10:39:44Z`, ended at `2026-08-16T10:39:51Z`, and returned exit code 1. It was invoked exactly once, used cutoff 2026-08-14, request ceiling 12, and zero retries. The deterministic request sequence was:
+
+1. `company_tickers_exchange.json`
+2. `company_tickers_mf.json`
+3. Investment Company Series/Class landing page
+4. selected Series/Class CSV
+5. Closed-End Fund landing page
+6. selected CEF CSV attempt
+
+The transition to request 5 establishes that Series/Class discovery returned a validated structured selection and that its selected CSV passed response/header validation. The transition to request 6 establishes that CEF discovery also returned a validated structured selection. BDC landing/CSV and `submissions.zip` were not reached. Historical warning URLs were not requested by the selected-object acquisition path.
+
+The retained operation diagnostic is `operation-diagnostics/sec-issuer-structure-evidence/as_of_date=2026-08-14/run_id=sec-b2b-2026-08-14-20260816T103948Z/diagnostic.json`, size 329 bytes, SHA-256 `b82dd884f4fe3a78507faab26111063a8fc6e0b6667d107081710b8bfacfab0b`. It records request count 6, retry count 0, generic failure code `sec_transport_or_source_validation_failure`, schema `1.0`, and an empty quality summary. Because source-cache staging was cleaned, no surviving run evidence contains the successful landing candidate/warning counts, selected years/dates/paths, artifact sizes/hashes, or the narrower sixth-request failure. Claiming those values would be speculation; no second request was made to recover them.
+
+Postflight results:
+
+- Four completed SEC targets: absent
+- Staging residue: zero
+- Sanitized diagnostic count: seven
+- Protected inventory: 34 files, 12,942,699 bytes, unchanged digest `398d3c8eb8a986ffc34a7f2fe19c50961eca0d9ed52bd980da95217561333f17`
+- Instrument Master / Provider Identity / Resolver / resolved identities: 9,939 / 13,110 / 9,939 / 9,939, with manifests, fingerprints, schemas, and references revalidated
+- Existing identity, EOD, and Massive evidence: unchanged
+- Source cache, observations, canonical evidence, logical manifest, and Core/Broad shadow audit: not produced
+- Massive/OCI/EOD/Dashboard/snapshot/bundle/deployment/Universe operations: not performed
+
+The credential was used only inside the authorized process after metadata verified a regular non-symlink file owned by `hui` with mode 600. No credential/contact value, header, or raw response was printed or retained. Focused offline postflight tests passed, with zero external network attempts. This was the final SEC live run for the current product stage; the code and rules were not modified, and SEC B2 is now paused.

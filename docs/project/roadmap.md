@@ -53,11 +53,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Offline SEC issuer-structure evidence boundary, private User-Agent tool, fixture state machines, and tmp-only persistence
 - [x] Bounded SEC live transport, source-cache/evidence publication boundaries, two-stage selected-source discovery gate, and diagnostic schema `3.0` with historical schema `2.0` audit compatibility
 - [x] Exact nine-artifact private SEC source-cache reconciliation and hardened submissions ZIP validation
-- [ ] Successful SEC issuer-structure evidence publication and Core/Broad activation review
+- [ ] Successful SEC issuer-structure evidence publication and Core/Broad activation review — paused for the current product stage after the final bounded run failed closed
 
 ## Next Small Target
 
-Review the completed offline selected-source, nine-artifact source-cache, and submissions ZIP safety contracts. The 2022 path remains outside the allowlist and no 2021-or-earlier rule is inferred. Do not issue a bounded live SEC validation without separate authorization; successful SEC evidence publication and Core/Broad activation remain deferred.
+Pause SEC B2 without another live run or historical-path exception. Preserve the provisional Legacy Liquid Screen and proceed with EOD history, trailing liquidity, sector taxonomy, and website functionality. Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 
