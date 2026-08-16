@@ -26,3 +26,18 @@ Review the landing-page CSV discovery contract offline using a small sanitized o
 ## Offline Remediation
 
 The discovery contract now parses the SEC download table by row, filters explicit CSV rows by update/effective date at or before 2026-08-14, and deterministically selects the latest eligible release. Local fixtures cover multi-year tables, mixed XML/CSV rows, future releases, date formats, tied latest URLs, missing/malformed dates, unsafe URLs, absent CSVs, deterministic statistics, and the three approved table header variants. This remediation does not itself alter the failed-run record or authorize production activation.
+
+## Second Authorized Run
+
+Status: `failed_source_discovery`; evidence publication: `not_published`; production Universe activation: `deferred`.
+
+The second and final authorized run in this phase began at `2026-08-16T04:20:02.777992Z`. It made three requests and zero retries. The two ticker-reference JSON sources reached and passed staging format validation. Request 3 was the Investment Company Series/Class landing page; dated discovery returned `sec_csv_discovery_cardinality_failure`, so no CSV or submissions download occurred.
+
+- Sanitized diagnostic: `operation-diagnostics/sec-issuer-structure-evidence/as_of_date=2026-08-14/run_id=sec-b2b-2026-08-14-20260816T042002Z`
+- Completed source cache: absent
+- SEC observation partition: absent
+- Canonical SEC evidence partition: absent
+- Logical completion manifest: absent
+- Staging residue: none observed
+
+The diagnostic category proves the failure stage but not the selector subcondition because current sanitization merges several landing-discovery errors and the staged HTML is deleted. It would be incorrect to claim a specific selected year/date, source hash, evidence distribution, Core/Broad shadow count, or edge-ticker result. Existing canonical data and the production legacy Universe remain unchanged.

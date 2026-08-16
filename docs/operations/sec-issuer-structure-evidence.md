@@ -21,3 +21,9 @@ The 2026-08-16 UTC operation made three requests and zero retries. Both ticker-r
 The original global “exactly one CSV link” rule was incorrect because SEC data tables retain multiple yearly CSV and XML releases. The corrected selector parses download-table rows and requires an explicit dataset year, update/effective date, format, and href. It accepts the documented SEC date formats, rejects future-dated versions relative to the evidence cutoff, and selects the maximum eligible date independently of HTML order. A tie between distinct canonical URLs is an error. HTTP, external-host, script/data, traversal, fragment, query, userinfo, or non-`/files/` CSV paths are rejected.
 
 The source-cache manifest records total, eligible, and future CSV candidate counts plus the selected dataset year, effective date, canonical URL, file hash, and size. It never records the private User-Agent or contact address.
+
+## Second B2B Run
+
+After the dated selector passed all offline tests, the separately authorized run on 2026-08-16 UTC made three requests and zero retries. Both reference JSON files again passed staging validation. The first Investment Company Series/Class landing request reached the dated-discovery gate, which returned `sec_csv_discovery_cardinality_failure`; no CSV or submissions request followed.
+
+The current sanitized diagnostic intentionally omits response bodies, but it also collapses the selector's no-candidate, malformed-row, no-cutoff-eligible, and tied-latest subconditions into one reason. Because staging HTML was removed, the exact DOM/subcondition cannot be reconstructed without another request. No such request was made. A future design must retain a non-content structural summary such as table/header counts and candidate-status counts without retaining HTML or contact identity.

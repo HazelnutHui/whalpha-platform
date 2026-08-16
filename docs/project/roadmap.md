@@ -54,7 +54,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Execute the separately authorized single Phase B2B run with dated-table CSV selection and review its shadow evidence results. Core/Broad activation remains deferred.
+Design and fixture-test a sanitized SEC landing-page structural diagnostic that preserves no raw HTML or contact identity, then review it before considering any additional SEC authorization. Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 

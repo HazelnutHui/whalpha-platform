@@ -3,6 +3,7 @@
 ## Security Type Governance
 
 - What authoritative issuer/domicile evidence coverage threshold should eventually gate Core/Broad production activation after Phase B2B evidence is reviewed?
+- Which non-content landing-page structural fields are sufficient to diagnose official table-shape changes while preserving the no-raw-HTML boundary?
 - Which bounded SEC bulk sources and quality gates should be authorized for Phase B2B after private User-Agent provisioning?
 - What authoritative evidence will close remaining domicile, REIT subtype, SPAC, partnership, and security-to-filer gaps without ticker-only joins?
 
