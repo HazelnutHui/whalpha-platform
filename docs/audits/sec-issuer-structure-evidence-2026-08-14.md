@@ -173,6 +173,16 @@ Every candidate had normalized Format `csv`, one anchor, and no query, fragment,
 
 The credential was only parsed inside the unique run by the existing loader after a regular-file, non-symlink, hui-owner, mode-600 metadata check. No credential or contact value was printed, copied, hashed, committed, or recorded. No rule was modified and no second run occurred.
 
+## Offline Selection-Policy Clarification
+
+The sixth-run schema `2.0` evidence does not justify a new 2022 path allowlist. It instead exposed that the then-current parser validated every historical candidate against Exact Dataset Template before determining which source would be selected. That policy allowed a safe but unused historical filename variation to block a fully validated unique latest source.
+
+The offline remediation replaces that policy with two gates. Baseline URL Safety applies without exception to every CSV candidate. Selection then uses all structurally and temporally valid candidates to find the unique latest date at or before cutoff. Only that selected source must pass its dataset-specific exact template before download. A strictly older dated candidate may ignore only `path_template_mismatch`, and only after baseline safety, explicit date parsing, and file-year/date agreement pass. The action is `historical_path_template_mismatch_ignored`; the candidate never reaches transport. Strictly older baseline-safe undated rows use the separate `undated_historical_ignored` rule. All other safety, date, same/newer, future-invalid, tie, and selected-template failures remain blocking, with no fallback to an older source.
+
+The local 2026–2022 fixture therefore produces selected year 2026, selected date 2026-06-01, the existing modern 2026 path, one 2022 historical-path warning, zero blocking rejections, and one selected record. The 2022 public path remains absent from the allowlist. Diagnostics emitted by new code are schema `3.0`; all six existing schema `2.0` operation diagnostics remain unchanged and audit-readable.
+
+No live SEC request was authorized or performed for this clarification. No credential was read or statted, `/data` and OCI were not accessed, and no source cache, evidence, snapshot, bundle, deployment, Dashboard, EOD, scheduling, or Universe change occurred.
+
 ## Current Next Gate
 
-Review the observed exact 2022 underscore-style Series/Class path offline. Do not infer a rule for 2021 or earlier and do not execute another live run without a new explicit authorization. Core/Broad activation remains deferred.
+Review the offline selected-source gate and schema `3.0` contract. A bounded live SEC validation requires separate explicit authorization; successful publication and Core/Broad activation remain deferred.

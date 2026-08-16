@@ -215,8 +215,16 @@ def test_2023_underscore_series_path_is_an_exact_exception(
             evidence_cutoff=CUTOFF,
         )
     candidate = caught.value.diagnostic.candidate_diagnostics[0]
-    assert caught.value.reason_code == "href_rejected"
-    assert candidate.failure_code == failure_code
+    assert caught.value.reason_code == (
+        "selected_path_template_mismatch"
+        if failure_code == "path_template_mismatch"
+        else "selected_href_rejected"
+    )
+    assert candidate.failure_code == (
+        "selected_path_template_mismatch"
+        if failure_code == "path_template_mismatch"
+        else failure_code
+    )
     assert candidate.url_validation_state == "rejected"
     rendered = json.dumps(caught.value.diagnostic.to_safe_dict(), sort_keys=True)
     assert "PRIVATE-QUERY" not in rendered
@@ -279,8 +287,16 @@ def test_2024_legacy_series_path_is_an_exact_exception(
         )
     diagnostic = caught.value.diagnostic
     candidate = diagnostic.candidate_diagnostics[0]
-    assert caught.value.reason_code == "href_rejected"
-    assert candidate.failure_code == failure_code
+    assert caught.value.reason_code == (
+        "selected_path_template_mismatch"
+        if failure_code == "path_template_mismatch"
+        else "selected_href_rejected"
+    )
+    assert candidate.failure_code == (
+        "selected_path_template_mismatch"
+        if failure_code == "path_template_mismatch"
+        else failure_code
+    )
     assert candidate.url_validation_state == "rejected"
     rendered = json.dumps(diagnostic.to_safe_dict(), sort_keys=True)
     assert "PRIVATE-QUERY" not in rendered
@@ -305,7 +321,8 @@ def test_series_historical_exceptions_do_not_change_other_dataset_paths(dataset:
             page(dataset, [row(dataset, 2024, "6/1/2024", custom_href=series_path)]),
             evidence_cutoff=CUTOFF,
         )
-    assert caught.value.diagnostic.candidate_diagnostics[0].failure_code == "path_template_mismatch"
+    assert caught.value.reason_code == "selected_path_template_mismatch"
+    assert caught.value.diagnostic.candidate_diagnostics[0].failure_code == "selected_path_template_mismatch"
 
 
 def test_anchor_tail_two_and_four_digit_dates_and_cutoff_are_supported() -> None:
@@ -358,7 +375,7 @@ def test_duplicate_same_url_and_date_is_deduplicated() -> None:
 
 @pytest.mark.parametrize(("html", "reason"), [
     ("<html></html>", "download_table_not_found"),
-    ("<table><tr><th>Year</th><th>Format</th><th>URL</th></tr></table>", "download_table_header_mismatch"),
+    ("<table><tr><th>Year</th><th>Format</th><th>URL</th></tr></table>", "download_table_not_found"),
 ])
 def test_table_discovery_failures_have_exact_reason(html: str, reason: str) -> None:
     dataset = "closed_end_fund"
@@ -408,7 +425,7 @@ def test_undated_current_or_only_candidate_hard_fails_but_old_archive_does_not()
     for rows in ([row(dataset, 2026, None), valid], [old]):
         with pytest.raises(SecLandingDiscoveryError) as caught:
             select_dated_official_csv(dataset, LANDING_PAGES[dataset], page(dataset, list(rows)), evidence_cutoff=CUTOFF)
-        assert caught.value.reason_code == "updated_date_missing_current_candidate"
+        assert caught.value.reason_code == "current_candidate_date_missing"
 
 
 def test_no_csv_and_no_cutoff_candidate_are_distinct() -> None:
@@ -421,16 +438,17 @@ def test_no_csv_and_no_cutoff_candidate_are_distinct() -> None:
     assert future.value.reason_code == "no_cutoff_eligible_candidate"
 
 
-def test_same_max_date_distinct_urls_hard_fails(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_same_max_date_distinct_urls_hard_fails() -> None:
     dataset = "closed_end_fund"
-    rows = [row(dataset, 2026, "6/1/2026"), row(dataset, 2026, "6/1/2026", custom_href="second")]
-    original = bulk_sources._analyze_csv_url
-    def controlled(dataset_id: str, landing_url: str, value: str, year: int):
-        if value == "second":
-            analysis = original(dataset_id, landing_url, href(dataset_id, year), year)
-            return replace(analysis, canonical_url="https://www.sec.gov/files/test-only-distinct.csv")
-        return original(dataset_id, landing_url, value, year)
-    monkeypatch.setattr(bulk_sources, "_analyze_csv_url", controlled)
+    rows = [
+        row(dataset, 2026, "6/1/2026"),
+        row(
+            dataset,
+            2026,
+            "6/1/2026",
+            custom_href="/files/investment/data/other/closed-end-fund-information/other-2026.csv",
+        ),
+    ]
     with pytest.raises(SecLandingDiscoveryError) as caught:
         select_dated_official_csv(dataset, LANDING_PAGES[dataset], page(dataset, rows), evidence_cutoff=CUTOFF)
     assert caught.value.reason_code == "max_date_distinct_url_tie"
@@ -449,7 +467,7 @@ def test_same_max_date_distinct_urls_hard_fails(monkeypatch: pytest.MonkeyPatch)
     ("https://www.sec.gov{path}?download=PRIVATE-QUERY", "query_present"),
     ("https://www.sec.gov{path}#PRIVATE-FRAGMENT", "fragment_present"),
     ("https://www.sec.gov:8443{path}", "nonstandard_port"),
-    ("/files/other-dataset/file.csv", "path_template_mismatch"),
+    ("/files/other-dataset/file.csv", "path_root_not_allowed"),
     ("{path_without_extension}", "extension_not_csv"),
     ("javascript:data.csv", "scheme_not_https"),
     ("https://[broken", "malformed_url"),
@@ -459,10 +477,18 @@ def test_url_policy_rejects_with_specific_safe_code(bad: str, failure_code: str)
     value = bad.format(path=href(dataset, 2026), path_without_extension=href(dataset, 2026)[:-4])
     with pytest.raises(SecLandingDiscoveryError) as caught:
         select_dated_official_csv(dataset, LANDING_PAGES[dataset], page(dataset, [row(dataset, 2026, "6/1/2026", custom_href=value)]), evidence_cutoff=CUTOFF)
-    assert caught.value.reason_code == "href_rejected"
+    assert caught.value.reason_code == (
+        "selected_path_template_mismatch"
+        if failure_code == "path_template_mismatch"
+        else "selected_href_rejected"
+    )
     candidate = caught.value.diagnostic.candidate_diagnostics[0]
-    assert caught.value.diagnostic.schema_version == "2.0"
-    assert candidate.failure_code == failure_code
+    assert caught.value.diagnostic.schema_version == "3.0"
+    assert candidate.failure_code == (
+        "selected_path_template_mismatch"
+        if failure_code == "path_template_mismatch"
+        else failure_code
+    )
     assert candidate.url_validation_state == "rejected"
     rendered = json.dumps(caught.value.diagnostic.to_safe_dict(), sort_keys=True)
     assert "PRIVATE-QUERY" not in rendered
@@ -474,7 +500,7 @@ def test_url_failure_code_contract_is_finite_and_complete() -> None:
         "scheme_not_https", "userinfo_present", "host_not_allowed", "nonstandard_port",
         "backslash_present", "traversal_present", "encoded_traversal_present",
         "query_present", "fragment_present", "path_template_mismatch", "extension_not_csv",
-        "file_year_mismatch", "malformed_url",
+        "file_year_mismatch", "malformed_url", "path_root_not_allowed",
     }
 
 
@@ -489,7 +515,7 @@ def test_url_path_year_mismatch_has_distinct_code() -> None:
             evidence_cutoff=CUTOFF,
         )
     candidate = caught.value.diagnostic.candidate_diagnostics[0]
-    assert caught.value.reason_code == "href_rejected"
+    assert caught.value.reason_code == "file_year_mismatch"
     assert candidate.failure_code == "file_year_mismatch"
     assert candidate.parsed_file_year == 2026
     assert candidate.path_template_match is False
@@ -503,30 +529,28 @@ def test_three_candidate_failure_records_actionable_candidate_context() -> None:
         row(dataset, 2026, "6/1/26", size="1\u00a0MB"),
         row(dataset, 2024, "6/1/2024", custom_href="/files/investment/data/other/unrelated/report-2024.csv", size="2 MB"),
     ]
-    with pytest.raises(SecLandingDiscoveryError) as caught:
-        select_dated_official_csv(
-            dataset, LANDING_PAGES[dataset], page(dataset, rows, extra=unrelated), evidence_cutoff=CUTOFF,
-        )
-    diagnostic = caught.value.diagnostic
-    assert caught.value.reason_code == "href_rejected"
+    result = select_dated_official_csv(
+        dataset, LANDING_PAGES[dataset], page(dataset, rows, extra=unrelated), evidence_cutoff=CUTOFF,
+    )
+    diagnostic = result.diagnostic
     assert diagnostic.csv_candidate_count == 3
     assert diagnostic.allowlisted_count == 2
-    assert diagnostic.cutoff_eligible_count == 2
-    assert diagnostic.rejected_count == 1
-    assert diagnostic.selected_count == 0
+    assert diagnostic.cutoff_eligible_count == 3
+    assert diagnostic.rejected_count == 0
+    assert diagnostic.selected_count == 1
     assert [item.selection_state for item in diagnostic.candidate_diagnostics] == [
-        "cutoff_eligible", "cutoff_eligible", "rejected",
+        "eligible_not_selected", "selected", "ignored_warning",
     ]
     assert diagnostic.allowlisted_count == sum(
         item.url_validation_state == "accepted" for item in diagnostic.candidate_diagnostics
     )
     assert diagnostic.cutoff_eligible_count == sum(
-        item.selection_state in {"cutoff_eligible", "eligible_not_selected", "selected"}
+        item.baseline_url_status == "passed"
+        and item.updated_date is not None
+        and item.temporal_relation != "future"
         for item in diagnostic.candidate_diagnostics
     )
-    assert diagnostic.rejected_count == sum(
-        item.selection_state == "rejected" for item in diagnostic.candidate_diagnostics
-    )
+    assert diagnostic.historical_path_warning_count == 1
     assert diagnostic.selected_count == sum(
         item.selection_state == "selected" for item in diagnostic.candidate_diagnostics
     )
@@ -541,9 +565,9 @@ def test_three_candidate_failure_records_actionable_candidate_context() -> None:
     assert rejected.parsed_file_year == 2024
     assert rejected.parsed_updated_date == "2024-06-01"
     assert rejected.anchor_count == 1
-    assert rejected.selection_state == "rejected"
+    assert rejected.selection_state == "ignored_warning"
     assert rejected.url_validation_state == "rejected"
-    assert rejected.failure_code == "path_template_mismatch"
+    assert rejected.failure_code == "historical_path_template_mismatch_ignored"
     assert rejected.normalized_path == "/files/investment/data/other/unrelated/report-2024.csv"
     assert rejected.path_basename == "report-2024.csv"
     assert rejected.path_template_match is False
@@ -579,7 +603,7 @@ def test_missing_size_and_date_are_null_not_raw_content() -> None:
     candidate = caught.value.diagnostic.candidate_diagnostics[0]
     assert candidate.normalized_size_text is None
     assert candidate.parsed_updated_date is None
-    assert caught.value.reason_code == "updated_date_missing_current_candidate"
+    assert caught.value.reason_code == "current_candidate_date_missing"
 
 
 def test_diagnostic_serialization_is_deterministic_and_does_not_leak_url_values(
@@ -598,8 +622,8 @@ def test_diagnostic_serialization_is_deterministic_and_does_not_leak_url_values(
                 evidence_cutoff=CUTOFF,
             )
         rendered.append(json.dumps(caught.value.diagnostic.to_safe_dict(), sort_keys=True))
-        assert caught.value.reason_code == "href_rejected"
-        assert caught.value.diagnostic.candidate_diagnostics[0].userinfo_present is True
+        assert caught.value.reason_code == "selected_href_rejected"
+        assert caught.value.diagnostic.candidate_diagnostics[0].failure_code == "userinfo_present"
     assert rendered[0] == rendered[1]
     assert sentinel not in rendered[0]
     captured = capsys.readouterr()
