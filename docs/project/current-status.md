@@ -9,6 +9,8 @@ Status date: 2026-08-16
 - Replaced the invalid single-link assumption with an offline-tested dated-table selector that ignores XML, filters future releases, rejects ambiguous or unsafe candidates, and records deterministic selection statistics. A new live run still requires explicit one-run authorization.
 - The second authorized run used the dated selector but again stopped after request 3 at the first landing-page discovery gate (`sec_csv_discovery_cardinality_failure`), with zero retries. No completed cache/evidence, shadow audit, snapshot, Universe change, or OCI deployment resulted.
 - Completed a second, network-free parser remediation after confirming the official pages use multiple tables with a `File / Format / Size` download table, anchor-label years, and anchor-tail `Updated` dates. The parser now has dataset-specific exact URL rules, historical-undated handling, bounded content-safe diagnostics, and selected-CSV content-type/schema checks. No SEC/Massive request, credential access, `/data` access, snapshot, deployment, or OCI access occurred.
+- Set the bounded SEC live entrypoint to zero retries in commit `780425397c2bb3de3c389c195909790e94c039ad`; the generic transport and other providers retain their existing policies.
+- The next single authorized SEC run made three requests and zero retries, then failed closed on `href_rejected` while parsing the Investment Company Series/Class landing page. No CSV or later source was requested, no completed cache/evidence was published, staging was clean, and the 34-file protected-data inventory remained identical.
 
 - Completed Security Evidence Phase B2A offline: SEC issuer-evidence observation/canonical contracts, point-in-time filing interpretation, stable-identity reconciliation, deterministic Core/Broad rules, secure private User-Agent configuration tooling, transport policy, and tmp-only Parquet persistence tests.
 - Phase B2A made zero SEC/Massive requests, configured no real User-Agent, wrote no production `/data`, changed no Dashboard calculations, generated no snapshot, and performed no OCI deployment. Core/Broad production activation remains deferred.
@@ -185,4 +187,4 @@ Status date: 2026-08-16
 
 ## Next Proposed Step
 
-Review the completed offline landing-page parser and structured diagnostics before deciding whether to authorize one new bounded SEC evidence run. Core/Broad production activation remains deferred.
+Review the retained sanitized `href_rejected` diagnostic offline before authorizing any additional SEC request. Core/Broad production activation remains deferred.
