@@ -14,7 +14,7 @@ The operator must first verify accepted identity partitions, absent evidence tar
 
 ## Hard Gates
 
-Catalog codes must be unique; raw count must exceed 5,000; canonical-eligible identity linkage must reach 99%; stable collisions, canonical business-key conflicts, and ambiguous mappings must be zero. All raw records must reconcile among canonical-mapped observations, expected-unjoined observations, exact duplicates, ambiguous, collision, and malformed categories. Schema, count, fingerprints, reread, and staging cleanup must pass.
+Catalog codes must be unique; raw count must exceed 5,000; canonical-eligible identity linkage must reach 99.9%; stable collisions, canonical business-key conflicts, and ambiguous mappings must be zero. All raw records must reconcile among canonical-mapped observations, expected-unjoined observations, exact duplicates, ambiguous, collision, and malformed categories. Schema, count, fingerprints, reread, logical completion, and staging cleanup must pass.
 
 Any failure ends the authorized run. It does not permit an automatic second request sequence.
 
@@ -24,4 +24,8 @@ The first Phase B1 run reached both authorized endpoints successfully and stoppe
 
 Phase B1A proved that `BCPC` and `TPC` each contain one resolved observation with Share Class FIGI and one identifier-free excluded observation. The old ticker fallback attached each excluded observation to the resolved instrument, then marked both observations in each group conflicting. The corrected result is 9,939 canonical-mapped, 3,171 expected-unjoined, zero ambiguity/collision, and a canonical linkage ratio of 9,939/9,939.
 
-A future authorized run writes a sanitized failed diagnostic if quality gates fail after payload normalization. Diagnostic status is always `failed`, is physically separate from completed evidence, and cannot authorize retry. No second live run was made during Phase B1A.
+## 2026-08-16 Corrected Run
+
+The separately authorized Phase B1B run made 15 requests and zero retries. It published a 25-code catalog, 13,110 normalized observations, 9,939 canonical evidence records, and one logical completion marker. Reconciliation was 9,939 canonical-mapped plus 3,171 expected-unjoined, with zero ambiguity, collision, malformed record, exact duplicate, or canonical conflict; linkage was 9,939/9,939.
+
+Any future failure writes a sanitized diagnostic, including failures before reconciliation. Diagnostic status is always `failed`, is physically separate from completed evidence, represents unavailable statistics as null, and cannot authorize retry.

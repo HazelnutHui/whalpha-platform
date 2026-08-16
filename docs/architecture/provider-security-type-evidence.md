@@ -9,8 +9,9 @@ Phase B1 preserves Massive's official ticker-type catalog and point-in-time All 
 - `market-data/provider-security-type-catalog/schema_version=1/provider=<provider>/observed_date=<UTC-date>/`
 - `market-data/provider-security-observation/schema_version=1/provider=<provider>/as_of_date=<date>/`
 - `market-data/provider-instrument-security-evidence/schema_version=1/provider=<provider>/as_of_date=<date>/`
+- `market-data/snapshots/provider-security-evidence/as_of_date=<date>/manifest.json`
 
-Each completed partition contains `part-00000.parquet` and `manifest.json`, an explicit Arrow schema, deterministic ordering, content SHA-256, Parquet SHA-256, record count, source endpoint, and completion status. The instrument manifest references the catalog content fingerprint.
+Each partition contains `part-00000.parquet` and `manifest.json`, an explicit Arrow schema, deterministic ordering, content SHA-256, Parquet SHA-256, record count, source endpoint, and completion status. A consumer accepts the three partitions as one completed evidence snapshot only through the logical manifest. That marker is written atomically after all component manifests, Parquet schemas, counts, content fingerprints, and file hashes are reread and verified.
 
 ## Semantics
 
@@ -31,5 +32,7 @@ Canonical linkage is measured only over observations eligible for canonical iden
 ## Failed Diagnostics
 
 Failed-run diagnostics live under `operation-diagnostics/provider-security-type-evidence/`, outside all completed evidence datasets. They contain only counters, reason codes, identifier-presence types, optional canonical IDs, and sanitized ticker/type summaries. They never contain raw JSON, HTTP headers, credentials, or authorization values, and no completed-evidence reader treats them as data.
+
+When transport or pagination fails before reconciliation, unknown statistics are serialized as `null` with `statistics_complete=false`; zero is never used to guess an unavailable count. Request attempts remain exact through a bounded counting transport.
 
 Raw responses are neither logged nor persisted.

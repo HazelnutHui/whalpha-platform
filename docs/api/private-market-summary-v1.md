@@ -4,6 +4,8 @@
 
 Private Market Summary V1 exposes read-only response contracts for close-to-close returns, Market Summary V1, liquidity-screened movers, the broad Liquidity Map V1, and Dashboard Overview V1.1.
 
+Dashboard Overview governance metadata includes `universe_definition_id`, `universe_version`, `governance_status`, `classification_as_of_date`, and `evidence_coverage_status`. Provider security-form publication does not change legacy membership or imply complete issuer-structure classification; production remains provisional until the separate activation gate is met.
+
 ## Status
 
 Implemented for local/private development. Routes are default-disabled and are not authentication or authorization.

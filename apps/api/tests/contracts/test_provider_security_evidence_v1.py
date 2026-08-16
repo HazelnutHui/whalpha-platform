@@ -7,8 +7,10 @@ from pydantic import ValidationError
 from tip_api.contracts.security_classification.v1 import (
     ClassificationStatus,
     EvidenceGrade,
+    FailedSecurityEvidenceDiagnosticV1,
     ProviderInstrumentSecurityEvidenceV1,
     ProviderObservationStatus,
+    ProviderSecurityEvidenceSnapshotManifestV1,
     ProviderSecurityObservationV1,
     ProviderSecurityTypeCatalogV1,
     SecurityForm,
@@ -65,3 +67,37 @@ def test_observation_allows_unjoined_without_instrument_and_rejects_invalid_mapp
         ProviderSecurityObservationV1.model_validate(
             {**value.model_dump(), "observation_status": "canonical_mapped"}
         )
+
+
+def test_logical_snapshot_manifest_rejects_unsafe_paths() -> None:
+    values = dict(
+        provider="massive", as_of_date=date(2026, 8, 14), observed_date=date(2026, 8, 16),
+        created_at=NOW, source_endpoints=("/v3/reference/tickers",), request_count=15,
+        catalog_path="market-data/catalog", observations_path="market-data/observations",
+        evidence_path="market-data/evidence", catalog_record_count=25,
+        observation_record_count=13110, evidence_record_count=9939,
+        catalog_content_sha256="a" * 64, observations_content_sha256="b" * 64,
+        evidence_content_sha256="c" * 64, catalog_parquet_sha256="d" * 64,
+        observations_parquet_sha256="e" * 64, evidence_parquet_sha256="f" * 64,
+        logical_content_sha256="1" * 64,
+    )
+    manifest = ProviderSecurityEvidenceSnapshotManifestV1(**values)
+    assert manifest.completion_status == "completed"
+    with pytest.raises(ValidationError, match="relative path"):
+        ProviderSecurityEvidenceSnapshotManifestV1(**{**values, "catalog_path": "../catalog"})
+
+
+def test_runtime_diagnostic_requires_unknown_statistics_to_be_null() -> None:
+    values = dict(
+        run_id="failed-test", as_of_date=date(2026, 8, 14), provider="massive",
+        endpoint_names=("/v3/reference/tickers",), request_count=1,
+        ticker_types_request_count=1, all_tickers_request_count=0,
+        statistics_complete=False, raw_observation_count=None, status_counts={},
+        linkage_numerator=None, linkage_denominator=None, linkage_ratio=None,
+        exact_duplicate_count=None, ambiguous_count=None, collision_count=None,
+        business_key_conflict_count=None, reconciliation_status="unavailable",
+        failure_reasons=("provider_transport_failure",), conflicting_observations=(), created_at=NOW,
+    )
+    assert FailedSecurityEvidenceDiagnosticV1(**values).statistics_complete is False
+    with pytest.raises(ValidationError, match="must be null"):
+        FailedSecurityEvidenceDiagnosticV1(**{**values, "raw_observation_count": 0})

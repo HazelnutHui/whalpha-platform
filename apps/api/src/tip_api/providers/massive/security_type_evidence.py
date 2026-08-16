@@ -58,7 +58,7 @@ ALL_TICKERS_PATH = "/v3/reference/tickers"
 MAX_ALL_TICKER_PAGES = 15
 MAX_TOTAL_REQUESTS = 16
 MINIMUM_RAW_RECORDS = 5000
-MINIMUM_JOIN_RATIO = 0.99
+MINIMUM_JOIN_RATIO = 0.999
 
 EXPLICIT_FORMS: dict[str, SecurityForm] = {
     "CS": SecurityForm.COMMON_SHARE,
@@ -167,6 +167,32 @@ class _Resolution:
     instrument_id: UUID | None
     method: str
     reasons: tuple[str, ...]
+
+
+@dataclass(slots=True)
+class CountingMassiveTransport:
+    """Count bounded request attempts without retaining request secrets or bodies."""
+
+    transport: MassiveHttpTransport
+    request_count: int = 0
+    ticker_types_request_count: int = 0
+    all_tickers_request_count: int = 0
+
+    def get_json(self, path: str, **kwargs: object) -> Mapping[str, object]:
+        self.request_count += 1
+        if path == TICKER_TYPES_PATH:
+            self.ticker_types_request_count += 1
+        elif path == ALL_TICKERS_PATH:
+            self.all_tickers_request_count += 1
+        else:
+            raise RuntimeError("Massive security evidence requested an unapproved endpoint")
+        if (
+            self.request_count > MAX_TOTAL_REQUESTS
+            or self.ticker_types_request_count > 1
+            or self.all_tickers_request_count > MAX_ALL_TICKER_PAGES
+        ):
+            raise RuntimeError("Massive security evidence request ceiling exceeded")
+        return self.transport.get_json(path, **kwargs)  # type: ignore[arg-type]
 
 
 def fetch_security_evidence(
@@ -417,6 +443,7 @@ def build_failed_diagnostic(
         request_count=result.request_count,
         ticker_types_request_count=result.ticker_types_request_count,
         all_tickers_request_count=result.all_tickers_request_count,
+        statistics_complete=True,
         raw_observation_count=result.raw_record_count,
         status_counts=dict(sorted(status_counts.items())),
         linkage_numerator=result.linkage_numerator,
@@ -429,6 +456,41 @@ def build_failed_diagnostic(
         reconciliation_status="passed" if reconciled else "failed",
         failure_reasons=result.quality_gate_failures,
         conflicting_observations=conflicts,
+        created_at=created_at,
+    )
+
+
+def build_runtime_failed_diagnostic(
+    *,
+    as_of_date: date,
+    run_id: str,
+    created_at: datetime,
+    transport: CountingMassiveTransport,
+    failure_reason: str,
+) -> FailedSecurityEvidenceDiagnosticV1:
+    """Build a safe diagnostic when a request fails before reconciliation exists."""
+
+    return FailedSecurityEvidenceDiagnosticV1(
+        run_id=run_id,
+        as_of_date=as_of_date,
+        provider=MASSIVE_PROVIDER_ID,
+        endpoint_names=(TICKER_TYPES_PATH, ALL_TICKERS_PATH),
+        request_count=transport.request_count,
+        ticker_types_request_count=transport.ticker_types_request_count,
+        all_tickers_request_count=transport.all_tickers_request_count,
+        statistics_complete=False,
+        raw_observation_count=None,
+        status_counts={},
+        linkage_numerator=None,
+        linkage_denominator=None,
+        linkage_ratio=None,
+        exact_duplicate_count=None,
+        ambiguous_count=None,
+        collision_count=None,
+        business_key_conflict_count=None,
+        reconciliation_status="unavailable",
+        failure_reasons=(failure_reason,),
+        conflicting_observations=(),
         created_at=created_at,
     )
 
@@ -792,12 +854,13 @@ def _read_json(path: Path) -> dict[str, object]:
     return value
 
 
-def target_partitions(root: Path, *, as_of_date: date, observed_date: date) -> tuple[Path, Path, Path]:
+def target_partitions(root: Path, *, as_of_date: date, observed_date: date) -> tuple[Path, Path, Path, Path]:
     base = root / "market-data"
     return (
         base / "provider-security-type-catalog" / "schema_version=1" / f"provider={MASSIVE_PROVIDER_ID}" / f"observed_date={observed_date.isoformat()}",
         base / "provider-security-observation" / "schema_version=1" / f"provider={MASSIVE_PROVIDER_ID}" / f"as_of_date={as_of_date.isoformat()}",
         base / "provider-instrument-security-evidence" / "schema_version=1" / f"provider={MASSIVE_PROVIDER_ID}" / f"as_of_date={as_of_date.isoformat()}",
+        base / "snapshots" / "provider-security-evidence" / f"as_of_date={as_of_date.isoformat()}",
     )
 
 
@@ -824,16 +887,19 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         return int(exc.code) if isinstance(exc.code, int) else 2
     observed_at = datetime.now(UTC)
-    catalog_target, observation_target, evidence_target = target_partitions(root, as_of_date=as_of_date, observed_date=observed_at.date())
-    if any(path.exists() or path.is_symlink() for path in (catalog_target, observation_target, evidence_target)):
+    targets = target_partitions(root, as_of_date=as_of_date, observed_date=observed_at.date())
+    if any(path.exists() or path.is_symlink() for path in targets):
         print("error=security evidence target already exists", file=sys.stderr)
         return 1
+    run_id = f"phase-b1-{as_of_date.isoformat()}-{observed_at.strftime('%Y%m%dT%H%M%SZ')}"
+    counting_transport = CountingMassiveTransport(MassiveUrllibTransport())
+    diagnostic_written = False
     try:
         indexes = load_identity_indexes(root, as_of_date=as_of_date)
         config = load_massive_provider_config_from_file()
         result = fetch_security_evidence(
             config=config,
-            transport=MassiveUrllibTransport(),
+            transport=counting_transport,
             as_of_date=as_of_date,
             indexes=indexes,
             rate_limiter=FixedIntervalRateLimiter(),
@@ -842,9 +908,9 @@ def main(argv: list[str] | None = None) -> int:
         for line in result.safe_lines():
             print(line)
         if not result.publish_ready:
-            run_id = f"phase-b1-{as_of_date.isoformat()}-{observed_at.strftime('%Y%m%dT%H%M%SZ')}"
             diagnostic = build_failed_diagnostic(result, run_id=run_id, created_at=observed_at)
             diagnostic_write = write_failed_diagnostic(root, diagnostic)
+            diagnostic_written = True
             print(f"failed_diagnostic_status={diagnostic_write.status}")
             print(f"failed_diagnostic_run_id={diagnostic_write.run_id}")
             return 1
@@ -880,16 +946,59 @@ def main(argv: list[str] | None = None) -> int:
             catalog_content_sha256=catalog_write.content_sha256,
             quality_summary=quality,
         )
+        snapshot_write = repository.publish_logical_snapshot(
+            as_of_date=as_of_date,
+            observed_date=observed_at.date(),
+            provider_id=MASSIVE_PROVIDER_ID,
+            created_at=observed_at,
+            request_count=result.request_count,
+            catalog=catalog_write,
+            observations=observation_write,
+            evidence=evidence_write,
+        )
         print(f"catalog_status={catalog_write.status}")
         print(f"catalog_content_sha256={catalog_write.content_sha256}")
         print(f"observation_status={observation_write.status}")
         print(f"observation_content_sha256={observation_write.content_sha256}")
         print(f"evidence_status={evidence_write.status}")
         print(f"evidence_content_sha256={evidence_write.content_sha256}")
+        print(f"logical_snapshot_status={snapshot_write.status}")
+        print(f"logical_snapshot_content_sha256={snapshot_write.logical_content_sha256}")
         return 0
     except (MassiveCredentialFileError, MassiveTransportError, SecurityEvidencePersistenceError, RuntimeError, ValueError) as exc:
-        print(f"error={exc}", file=sys.stderr)
+        failure_reason = _safe_failure_reason(exc)
+        if not diagnostic_written:
+            try:
+                diagnostic = build_runtime_failed_diagnostic(
+                    as_of_date=as_of_date,
+                    run_id=run_id,
+                    created_at=observed_at,
+                    transport=counting_transport,
+                    failure_reason=failure_reason,
+                )
+                diagnostic_write = write_failed_diagnostic(root, diagnostic)
+                print(f"failed_diagnostic_status={diagnostic_write.status}")
+                print(f"failed_diagnostic_run_id={diagnostic_write.run_id}")
+            except SecurityEvidencePersistenceError:
+                print("failed_diagnostic_status=write_failed", file=sys.stderr)
+        print(f"error={failure_reason}", file=sys.stderr)
         return 1
+
+
+def _safe_failure_reason(exc: Exception) -> str:
+    if isinstance(exc, MassiveCredentialFileError):
+        return "credential_boundary_failure"
+    if isinstance(exc, MassiveTransportError):
+        status = getattr(exc, "status_code", None)
+        return f"provider_http_{status}" if isinstance(status, int) else "provider_transport_failure"
+    if isinstance(exc, SecurityEvidencePersistenceError):
+        return "evidence_persistence_failure"
+    message = str(exc).lower()
+    if "pagination" in message:
+        return "pagination_validation_failure"
+    if "request ceiling" in message or "page limit" in message:
+        return "request_ceiling_failure"
+    return "evidence_runtime_failure"
 
 
 if __name__ == "__main__":

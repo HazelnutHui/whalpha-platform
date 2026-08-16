@@ -49,10 +49,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Dashboard V1.1 professional universe and market overview cleanup
 - [x] Dashboard V1.1 trust/usability pass with benchmark strip, Sector ETF relative performance, conservative freshness, and top-50 Trading Activity Map default
 - [x] Provider-neutral offline XNYS market-session calendar and explicit freshness contract
+- [x] Corrected Phase B1 provider security-type evidence publication and provisional universe disclosure source
 
 ## Next Small Target
 
-After reviewing the completed offline reconciliation remediation, authorize exactly one new bounded Phase B1 Ticker Types and point-in-time All Tickers request sequence. Retain a sanitized failed-run diagnostic if gates fail and publish completed evidence only if corrected gates pass; do not begin Phase B2 or switch production universes first.
+Design and implement Phase B2 SEC/authoritative issuer-structure evidence integration with a privately configured SEC-compliant User-Agent, without switching the production Core/Broad Universe.
 
 ## Phase 2 — Intraday and Options
 

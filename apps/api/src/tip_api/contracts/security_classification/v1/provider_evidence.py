@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import date, datetime
 from enum import StrEnum
+from pathlib import PurePosixPath
 from typing import Any, Literal
 from uuid import UUID
 
@@ -275,16 +276,17 @@ class FailedSecurityEvidenceDiagnosticV1(BaseModel):
     request_count: int = Field(ge=0)
     ticker_types_request_count: int = Field(ge=0)
     all_tickers_request_count: int = Field(ge=0)
-    raw_observation_count: int = Field(ge=0)
+    statistics_complete: bool
+    raw_observation_count: int | None = Field(default=None, ge=0)
     status_counts: dict[str, int]
-    linkage_numerator: int = Field(ge=0)
-    linkage_denominator: int = Field(ge=0)
-    linkage_ratio: str
-    exact_duplicate_count: int = Field(ge=0)
-    ambiguous_count: int = Field(ge=0)
-    collision_count: int = Field(ge=0)
-    business_key_conflict_count: int = Field(ge=0)
-    reconciliation_status: Literal["passed", "failed"]
+    linkage_numerator: int | None = Field(default=None, ge=0)
+    linkage_denominator: int | None = Field(default=None, ge=0)
+    linkage_ratio: str | None = None
+    exact_duplicate_count: int | None = Field(default=None, ge=0)
+    ambiguous_count: int | None = Field(default=None, ge=0)
+    collision_count: int | None = Field(default=None, ge=0)
+    business_key_conflict_count: int | None = Field(default=None, ge=0)
+    reconciliation_status: Literal["passed", "failed", "unavailable"]
     failure_reasons: tuple[str, ...]
     conflicting_observations: tuple[SanitizedObservationSummaryV1, ...]
     created_at: datetime
@@ -313,3 +315,95 @@ class FailedSecurityEvidenceDiagnosticV1(BaseModel):
     @classmethod
     def normalize_created_at(cls, value: datetime) -> datetime:
         return normalize_utc_datetime(value)
+
+    @model_validator(mode="after")
+    def validate_statistics_state(self) -> FailedSecurityEvidenceDiagnosticV1:
+        statistics = (
+            self.raw_observation_count,
+            self.linkage_numerator,
+            self.linkage_denominator,
+            self.linkage_ratio,
+            self.exact_duplicate_count,
+            self.ambiguous_count,
+            self.collision_count,
+            self.business_key_conflict_count,
+        )
+        if self.statistics_complete and any(value is None for value in statistics):
+            raise ValueError("complete diagnostic statistics must not be null")
+        if not self.statistics_complete and any(value is not None for value in statistics):
+            raise ValueError("incomplete diagnostic statistics must be null")
+        return self
+
+
+class ProviderSecurityEvidenceSnapshotManifestV1(BaseModel):
+    """Logical completion marker for the three evidence partitions."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    manifest_version: Literal["1.0"] = "1.0"
+    completion_status: Literal["completed"] = "completed"
+    provider: str
+    as_of_date: date
+    observed_date: date
+    created_at: datetime
+    source_endpoints: tuple[str, ...]
+    request_count: int = Field(ge=1, le=16)
+    retry_count: Literal[0] = 0
+    catalog_path: str
+    observations_path: str
+    evidence_path: str
+    catalog_record_count: int = Field(gt=0)
+    observation_record_count: int = Field(gt=0)
+    evidence_record_count: int = Field(gt=0)
+    catalog_content_sha256: str
+    observations_content_sha256: str
+    evidence_content_sha256: str
+    catalog_parquet_sha256: str
+    observations_parquet_sha256: str
+    evidence_parquet_sha256: str
+    logical_content_sha256: str
+
+    @field_validator("provider", mode="before")
+    @classmethod
+    def normalize_provider(cls, value: str) -> str:
+        return normalize_required_string(value, field_name="provider")
+
+    @field_validator("created_at")
+    @classmethod
+    def normalize_manifest_created_at(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("source_endpoints", mode="before")
+    @classmethod
+    def normalize_endpoints(cls, value: Any) -> tuple[str, ...]:
+        if not isinstance(value, (tuple, list, set, frozenset)):
+            raise ValueError("source_endpoints must be a collection")
+        endpoints = tuple(sorted({normalize_required_string(item, field_name="source_endpoints") for item in value}))
+        if any(not item.startswith("/") or "?" in item for item in endpoints):
+            raise ValueError("source_endpoints must contain paths without query parameters")
+        return endpoints
+
+    @field_validator("catalog_path", "observations_path", "evidence_path")
+    @classmethod
+    def validate_relative_path(cls, value: str, info: Any) -> str:
+        normalized = normalize_required_string(value, field_name=info.field_name)
+        path = PurePosixPath(normalized)
+        if path.is_absolute() or ".." in path.parts or path.as_posix() != normalized:
+            raise ValueError(f"{info.field_name} must be a normalized relative path")
+        return normalized
+
+    @field_validator(
+        "catalog_content_sha256",
+        "observations_content_sha256",
+        "evidence_content_sha256",
+        "catalog_parquet_sha256",
+        "observations_parquet_sha256",
+        "evidence_parquet_sha256",
+        "logical_content_sha256",
+    )
+    @classmethod
+    def validate_hashes(cls, value: str, info: Any) -> str:
+        normalized = normalize_required_string(value, field_name=info.field_name).lower()
+        if len(normalized) != 64 or any(char not in "0123456789abcdef" for char in normalized):
+            raise ValueError(f"{info.field_name} must be SHA-256 hexadecimal")
+        return normalized

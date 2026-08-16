@@ -24,6 +24,8 @@ The product policy is now accepted: Core U.S. Domestic Operating Equities is the
 
 Provider observations and canonical evidence are separate records. All normalized provider observations are retained by deterministic observation ID, including expected exclusions and unresolved records without canonical identity. Only uniquely mapped observations become canonical evidence. Canonical linkage denominators exclude expected-unjoined observations. Ticker fallback is allowed only for a unique point-in-time identity observation with an agreeing resolver; a duplicate ticker never causes an excluded observation to inherit another observation's canonical identity.
 
+Phase B1B persisted the official provider type catalog and point-in-time observations under these rules. A logical completion manifest, rather than any one component partition, defines a completed provider evidence snapshot. The resulting provider evidence establishes security form at useful coverage but does not satisfy the authoritative issuer-structure or domicile gate; production Core/Broad activation remains deferred.
+
 ## Consequences
 
 - Classification facts no longer change Instrument Master V1 semantics.

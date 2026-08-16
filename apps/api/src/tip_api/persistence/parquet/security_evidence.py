@@ -18,13 +18,16 @@ from tip_api.contracts.security_classification.v1 import (
     FailedSecurityEvidenceDiagnosticV1,
     ProviderInstrumentSecurityEvidenceV1,
     ProviderSecurityObservationV1,
+    ProviderSecurityEvidenceSnapshotManifestV1,
     ProviderSecurityTypeCatalogV1,
 )
 from tip_api.persistence.parquet.instrument_master_snapshot import records_fingerprint
 from tip_api.persistence.security_evidence import (
+    CompletedSecurityEvidenceSnapshot,
     SecurityEvidenceConflictError,
     SecurityEvidenceCorruptionError,
     SecurityEvidencePersistenceError,
+    SecurityEvidenceSnapshotWriteResult,
     SecurityEvidenceWriteResult,
     FailedDiagnosticWriteResult,
 )
@@ -38,6 +41,8 @@ CATALOG_DATASET = "provider-security-type-catalog"
 EVIDENCE_DATASET = "provider-instrument-security-evidence"
 OBSERVATION_DATASET = "provider-security-observation"
 DIAGNOSTIC_DIRECTORY = "operation-diagnostics/provider-security-type-evidence"
+SNAPSHOT_DATASET = "provider-security-evidence"
+SNAPSHOT_DIRECTORY = "market-data/snapshots/provider-security-evidence"
 
 CATALOG_SCHEMA = pa.schema(
     [
@@ -204,6 +209,74 @@ class ParquetSecurityEvidenceRepository:
             },
         )
 
+    def publish_logical_snapshot(
+        self,
+        *,
+        as_of_date: date,
+        observed_date: date,
+        provider_id: str,
+        created_at: datetime,
+        request_count: int,
+        catalog: SecurityEvidenceWriteResult,
+        observations: SecurityEvidenceWriteResult,
+        evidence: SecurityEvidenceWriteResult,
+    ) -> SecurityEvidenceSnapshotWriteResult:
+        root = self._root()
+        _verify_write_result(root, catalog, CATALOG_DATASET, CATALOG_SCHEMA)
+        _verify_write_result(root, observations, OBSERVATION_DATASET, OBSERVATION_SCHEMA)
+        _verify_write_result(root, evidence, EVIDENCE_DATASET, INSTRUMENT_EVIDENCE_SCHEMA)
+        components = {
+            "provider": provider_id,
+            "as_of_date": as_of_date.isoformat(),
+            "observed_date": observed_date.isoformat(),
+            "source_endpoints": ["/v3/reference/tickers", "/v3/reference/tickers/types"],
+            "request_count": request_count,
+            "retry_count": 0,
+            "catalog_path": catalog.partition_path.relative_to(root).as_posix(),
+            "observations_path": observations.partition_path.relative_to(root).as_posix(),
+            "evidence_path": evidence.partition_path.relative_to(root).as_posix(),
+            "catalog_record_count": catalog.record_count,
+            "observation_record_count": observations.record_count,
+            "evidence_record_count": evidence.record_count,
+            "catalog_content_sha256": catalog.content_sha256,
+            "observations_content_sha256": observations.content_sha256,
+            "evidence_content_sha256": evidence.content_sha256,
+            "catalog_parquet_sha256": catalog.parquet_sha256,
+            "observations_parquet_sha256": observations.parquet_sha256,
+            "evidence_parquet_sha256": evidence.parquet_sha256,
+        }
+        logical_hash = _logical_components_hash(components)
+        manifest = ProviderSecurityEvidenceSnapshotManifestV1(
+            **components,
+            created_at=created_at,
+            logical_content_sha256=logical_hash,
+        )
+        partition = root / SNAPSHOT_DIRECTORY / f"as_of_date={as_of_date.isoformat()}"
+        if partition.exists() or partition.is_symlink():
+            return _validate_existing_logical_snapshot(partition, manifest)
+        partition.parent.mkdir(parents=True, exist_ok=True)
+        staging = partition.parent / f".{partition.name}.staging.{os.getpid()}"
+        if staging.exists() or staging.is_symlink():
+            raise SecurityEvidenceConflictError("logical snapshot staging path already exists")
+        try:
+            staging.mkdir()
+            _write_json(staging / MANIFEST_FILE, manifest.model_dump(mode="json"))
+            reread = ProviderSecurityEvidenceSnapshotManifestV1.model_validate_json(
+                (staging / MANIFEST_FILE).read_text(encoding="utf-8")
+            )
+            if reread != manifest:
+                raise SecurityEvidenceCorruptionError("logical snapshot manifest reread mismatch")
+            _fsync_directory(staging)
+            staging.replace(partition)
+            _fsync_directory(partition.parent)
+            return SecurityEvidenceSnapshotWriteResult(
+                partition / MANIFEST_FILE, logical_hash, "published"
+            )
+        except Exception:
+            if staging.exists() and not staging.is_symlink():
+                shutil.rmtree(staging)
+            raise
+
     def _root(self) -> Path:
         if not self.root.is_absolute() or self.root.is_symlink() or not self.root.is_dir():
             raise SecurityEvidencePersistenceError("data root is unavailable")
@@ -284,6 +357,187 @@ def _validate_existing(
     if manifest.get("parquet_sha256") != parquet_sha:
         raise SecurityEvidenceCorruptionError("existing parquet hash mismatch")
     return SecurityEvidenceWriteResult(dataset, partition, count, content_sha, parquet_sha, "already_present")
+
+
+def _verify_write_result(
+    root: Path,
+    result: SecurityEvidenceWriteResult,
+    dataset: str,
+    schema: pa.Schema,
+) -> None:
+    try:
+        result.partition_path.relative_to(root)
+    except ValueError as exc:
+        raise SecurityEvidencePersistenceError("evidence partition escapes data root") from exc
+    manifest_path = result.partition_path / MANIFEST_FILE
+    parquet_path = result.partition_path / PARQUET_FILE
+    if any(path.is_symlink() for path in (result.partition_path, manifest_path, parquet_path)):
+        raise SecurityEvidenceCorruptionError("evidence partition contains a symlink")
+    if not manifest_path.is_file() or not parquet_path.is_file():
+        raise SecurityEvidenceCorruptionError("evidence partition is incomplete")
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    expected = {
+        "dataset_name": dataset,
+        "record_count": result.record_count,
+        "content_sha256": result.content_sha256,
+        "parquet_sha256": result.parquet_sha256,
+        "completion_status": COMPLETION_STATUS,
+    }
+    if any(manifest.get(key) != value for key, value in expected.items()):
+        raise SecurityEvidenceCorruptionError("evidence partition manifest does not match write result")
+    table = pq.ParquetFile(parquet_path).read()
+    _validate_table(table, schema, result.record_count, result.content_sha256)
+    if _file_sha256(parquet_path) != result.parquet_sha256:
+        raise SecurityEvidenceCorruptionError("evidence partition parquet hash mismatch")
+
+
+def _validate_existing_logical_snapshot(
+    partition: Path,
+    expected: ProviderSecurityEvidenceSnapshotManifestV1,
+) -> SecurityEvidenceSnapshotWriteResult:
+    manifest_path = partition / MANIFEST_FILE
+    if partition.is_symlink() or manifest_path.is_symlink() or not manifest_path.is_file():
+        raise SecurityEvidenceCorruptionError("existing logical snapshot is incomplete")
+    actual = ProviderSecurityEvidenceSnapshotManifestV1.model_validate_json(
+        manifest_path.read_text(encoding="utf-8")
+    )
+    if actual != expected:
+        raise SecurityEvidenceConflictError("existing logical snapshot conflicts with requested evidence")
+    return SecurityEvidenceSnapshotWriteResult(
+        manifest_path, actual.logical_content_sha256, "already_present"
+    )
+
+
+def read_completed_security_evidence_snapshot(
+    root: Path,
+    *,
+    as_of_date: date,
+) -> CompletedSecurityEvidenceSnapshot:
+    repository_root = ParquetSecurityEvidenceRepository(root)._root()
+    manifest_path = (
+        repository_root
+        / SNAPSHOT_DIRECTORY
+        / f"as_of_date={as_of_date.isoformat()}"
+        / MANIFEST_FILE
+    )
+    if manifest_path.is_symlink() or not manifest_path.is_file():
+        raise SecurityEvidenceCorruptionError("completed logical snapshot manifest is unavailable")
+    manifest = ProviderSecurityEvidenceSnapshotManifestV1.model_validate_json(
+        manifest_path.read_text(encoding="utf-8")
+    )
+    if manifest.as_of_date != as_of_date:
+        raise SecurityEvidenceCorruptionError("logical snapshot as_of_date mismatch")
+    components = {
+        field: getattr(manifest, field)
+        for field in (
+            "provider",
+            "as_of_date",
+            "observed_date",
+            "source_endpoints",
+            "request_count",
+            "retry_count",
+            "catalog_path",
+            "observations_path",
+            "evidence_path",
+            "catalog_record_count",
+            "observation_record_count",
+            "evidence_record_count",
+            "catalog_content_sha256",
+            "observations_content_sha256",
+            "evidence_content_sha256",
+            "catalog_parquet_sha256",
+            "observations_parquet_sha256",
+            "evidence_parquet_sha256",
+        )
+    }
+    serialized_components = {
+        key: value.isoformat() if isinstance(value, date) else list(value) if isinstance(value, tuple) else value
+        for key, value in components.items()
+    }
+    if _logical_components_hash(serialized_components) != manifest.logical_content_sha256:
+        raise SecurityEvidenceCorruptionError("logical snapshot fingerprint mismatch")
+
+    catalog = _read_partition_records(
+        repository_root,
+        manifest.catalog_path,
+        CATALOG_DATASET,
+        CATALOG_SCHEMA,
+        manifest.catalog_record_count,
+        manifest.catalog_content_sha256,
+        manifest.catalog_parquet_sha256,
+        ProviderSecurityTypeCatalogV1,
+    )
+    observations = _read_partition_records(
+        repository_root,
+        manifest.observations_path,
+        OBSERVATION_DATASET,
+        OBSERVATION_SCHEMA,
+        manifest.observation_record_count,
+        manifest.observations_content_sha256,
+        manifest.observations_parquet_sha256,
+        ProviderSecurityObservationV1,
+    )
+    evidence = _read_partition_records(
+        repository_root,
+        manifest.evidence_path,
+        EVIDENCE_DATASET,
+        INSTRUMENT_EVIDENCE_SCHEMA,
+        manifest.evidence_record_count,
+        manifest.evidence_content_sha256,
+        manifest.evidence_parquet_sha256,
+        ProviderInstrumentSecurityEvidenceV1,
+    )
+    if tuple(item.provider_type_code for item in catalog) != tuple(sorted(item.provider_type_code for item in catalog)):
+        raise SecurityEvidenceCorruptionError("catalog ordering is not deterministic")
+    if tuple(item.provider_observation_id for item in observations) != tuple(sorted(item.provider_observation_id for item in observations)):
+        raise SecurityEvidenceCorruptionError("observation ordering is not deterministic")
+    evidence_keys = tuple((str(item.instrument_id), item.provider_ticker) for item in evidence)
+    if evidence_keys != tuple(sorted(evidence_keys)):
+        raise SecurityEvidenceCorruptionError("canonical evidence ordering is not deterministic")
+    return CompletedSecurityEvidenceSnapshot(manifest, catalog, observations, evidence)
+
+
+def _read_partition_records(
+    root: Path,
+    relative_path: str,
+    dataset: str,
+    schema: pa.Schema,
+    count: int,
+    content_sha256: str,
+    parquet_sha256: str,
+    model: type[Any],
+) -> tuple[Any, ...]:
+    path = root / relative_path
+    try:
+        path.relative_to(root)
+    except ValueError as exc:
+        raise SecurityEvidenceCorruptionError("logical snapshot path escapes data root") from exc
+    manifest_path, parquet_path = path / MANIFEST_FILE, path / PARQUET_FILE
+    if any(item.is_symlink() for item in (path, manifest_path, parquet_path)):
+        raise SecurityEvidenceCorruptionError("logical snapshot references a symlink")
+    if not manifest_path.is_file() or not parquet_path.is_file():
+        raise SecurityEvidenceCorruptionError("logical snapshot references an incomplete partition")
+    partition_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    expected = {
+        "dataset_name": dataset,
+        "record_count": count,
+        "content_sha256": content_sha256,
+        "parquet_sha256": parquet_sha256,
+        "completion_status": COMPLETION_STATUS,
+    }
+    if any(partition_manifest.get(key) != value for key, value in expected.items()):
+        raise SecurityEvidenceCorruptionError("logical snapshot partition manifest mismatch")
+    table = pq.ParquetFile(parquet_path).read()
+    _validate_table(table, schema, count, content_sha256)
+    if _file_sha256(parquet_path) != parquet_sha256:
+        raise SecurityEvidenceCorruptionError("logical snapshot parquet hash mismatch")
+    return tuple(model.model_validate(row) for row in table.to_pylist())
+
+
+def _logical_components_hash(components: dict[str, object]) -> str:
+    return hashlib.sha256(
+        json.dumps(components, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
 
 
 def _catalog_row(record: ProviderSecurityTypeCatalogV1) -> dict[str, Any]:

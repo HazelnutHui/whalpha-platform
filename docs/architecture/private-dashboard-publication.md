@@ -4,7 +4,7 @@
 
 Phase A audits do not produce a private snapshot or bundle. A later snapshot contract must carry the selected universe definition ID, version, as-of date, taxonomy fingerprint, and ruleset fingerprint so Pulse, Breadth, Movers, and Trading Activity Map reconcile to identical membership.
 
-Snapshot contract 1.2 adds provisional governance metadata while retaining the legacy calculation membership. A hard evidence-ingestion gate failure blocks snapshot generation and deployment, even when the disclosure implementation itself passes tests.
+Snapshot contract 1.2 adds provisional governance metadata while retaining the legacy calculation membership. Provider security-form evidence can be complete while `evidence_coverage_status` remains incomplete for production classification because issuer structure and domicile are separate activation requirements.
 
 ## Purpose
 

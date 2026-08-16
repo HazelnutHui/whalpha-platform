@@ -16,7 +16,9 @@ from tip_api.providers.massive.instrument_master_snapshot import FixedIntervalRa
 from tip_api.providers.massive.security_type_evidence import (
     IdentityIndexes,
     IdentityReference,
+    CountingMassiveTransport,
     build_failed_diagnostic,
+    build_runtime_failed_diagnostic,
     build_instrument_evidence,
     fetch_security_evidence,
     parse_args,
@@ -231,6 +233,35 @@ def test_failed_diagnostic_is_sanitized() -> None:
     assert "authorization" not in rendered.lower()
     assert "raw_payload" not in rendered.lower()
     assert "http_headers" not in rendered.lower()
+
+
+def test_runtime_failure_diagnostic_preserves_only_known_request_counts() -> None:
+    transport = CountingMassiveTransport(FakeTransport([]))
+    transport.request_count = 1
+    transport.ticker_types_request_count = 1
+    diagnostic = build_runtime_failed_diagnostic(
+        as_of_date=AS_OF,
+        run_id="phase-b1-network-test",
+        created_at=NOW,
+        transport=transport,
+        failure_reason="provider_transport_failure",
+    )
+    assert diagnostic.statistics_complete is False
+    assert diagnostic.raw_observation_count is None
+    assert diagnostic.reconciliation_status == "unavailable"
+    assert diagnostic.request_count == 1
+    rendered = json.dumps(diagnostic.model_dump(mode="json"), sort_keys=True)
+    assert "authorization" not in rendered.lower()
+
+
+def test_counting_transport_rejects_unapproved_endpoint_and_request_ceiling() -> None:
+    transport = CountingMassiveTransport(FakeTransport([{}] * 17))
+    with pytest.raises(RuntimeError, match="unapproved"):
+        transport.get_json("/v3/reference/tickers/TEST", params={}, api_key="not-used", timeout_seconds=1, base_url="https://api.massive.com")
+    transport = CountingMassiveTransport(FakeTransport([{}] * 17))
+    transport.request_count = 16
+    with pytest.raises(RuntimeError, match="ceiling"):
+        transport.get_json("/v3/reference/tickers", params={}, api_key="not-used", timeout_seconds=1, base_url="https://api.massive.com")
 
 
 class FakeTransport:

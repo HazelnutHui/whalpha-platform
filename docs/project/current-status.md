@@ -1,16 +1,18 @@
 # Current Status
 
-Status date: 2026-08-15
+Status date: 2026-08-16
 
 ## Completed
 
 - Product policy selected: Core U.S. Domestic Operating Equities future default; Broad U.S.-Listed Operating Equities future secondary; production activation deferred.
-- Implemented Provider Security Type Catalog V1, Provider Instrument Security Evidence V1, bounded Massive evidence ingestion, and atomic Parquet repository with no canonical dataset mutation.
-- Implemented an undeployed provisional Dashboard disclosure and governance metadata without changing the 1,864-member calculations.
+- Published the completed 2026-08-14 provider security evidence snapshot: 25 catalog types, 13,110 observations, 9,939 canonical evidence records, and a verified logical completion marker. The corrected run used 15 requests and zero retries.
+- Implemented Provider Security Type Catalog V1, Provider Security Observation V1, Canonical Provider Instrument Security Evidence V1, bounded Massive ingestion, logical completion, and atomic Parquet persistence with no canonical dataset mutation.
+- Implemented a provisional Dashboard disclosure and governance metadata without changing the 1,864-member calculations; deployment is pending the clean-source release step.
 - The first Phase B1 live attempt used 15 requests and zero retries, reconciled 13,110 raw records, but failed ambiguous and mapped-business-key gates. No evidence partition, snapshot, or OCI release was published.
 - Phase B1A read-only reconciliation confirmed two duplicate-ticker groups, `BCPC` and `TPC`. Each combines one stable-ID resolved observation with one identifier-free excluded observation; old ticker fallback caused the four false ambiguous observations.
 - Provider observations are now separate from canonical evidence. The corrected offline identity result is 9,939 canonical-mapped, 3,171 expected-unjoined, zero stable collision/ticker ambiguity, and linkage 9,939/9,939.
-- Sanitized failed-run diagnostics are implemented outside completed evidence datasets. Phase B1A made no provider request, credential access, `/data` write, snapshot build, or OCI deployment.
+- Sanitized failed-run diagnostics are implemented outside completed evidence datasets, including pre-reconciliation transport failures with unknown statistics represented as null.
+- The provider-evidence audit leaves Core at 0 and Broad at 1. Of the legacy 1,864, 1,862 remain quarantine, VCX is an authoritative exclusion, and AKAN is the one authoritative Broad candidate; issuer-structure coverage remains insufficient for activation.
 
 - Accepted ADR 0015 for effective-dated Security Classification V1 and quarantine-first evidence governance.
 - Completed the read-only 2026-08-14 security-type audit: Instrument Master 9,939; raw comparable 9,889; legacy default 1,864.
@@ -173,4 +175,4 @@ Status date: 2026-08-15
 
 ## Next Proposed Step
 
-After reviewing the offline reconciliation fix, authorize exactly one bounded Phase B1 Ticker Types and point-in-time All Tickers run. Retain a sanitized failed-run diagnostic if gates fail and publish completed evidence only if corrected gates pass.
+Design Phase B2 SEC/authoritative issuer-structure evidence integration with a privately configured SEC-compliant User-Agent, while keeping production Core/Broad activation deferred.

@@ -1,5 +1,9 @@
 # Dashboard Universe V1
 
+## Governance Status
+
+The current 1,864-member calculation set remains `Legacy Liquid Screen (Provisional)`. Phase B1B published provider security-form evidence, but 1,862 legacy members still lack sufficient issuer-structure/domicile evidence and remain quarantine in the governance audit. Core is the accepted future default and Broad the future secondary view; neither candidate is connected to production analytics yet.
+
 ## Phase A Security Classification Audit
 
 Production still uses the legacy binary common-stock/ETF rule. Phase A proved it insufficient: non-ETF records were treated as operating equities, allowing the closed-end fund VCX into the default set. Security Classification V1 separates legal form, issuer structure, listing scope, evidence, and eligibility but is not connected to production analytics. The [2026-08-14 audit](../audits/security-type-classification-2026-08-14.md) documents non-production Core and Broad candidates.

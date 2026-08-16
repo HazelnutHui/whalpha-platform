@@ -7,7 +7,7 @@
 - [2026-08-14 classification audit](audits/security-type-classification-2026-08-14.md)
 - [Provider security-type evidence architecture](architecture/provider-security-type-evidence.md)
 - [Massive security-type evidence operation](operations/massive-security-type-evidence.md)
-- [2026-08-14 provider-evidence attempt](audits/security-type-provider-evidence-2026-08-14.md)
+- [2026-08-14 provider-evidence audit](audits/security-type-provider-evidence-2026-08-14.md)
 
 This directory is the project knowledge base. It separates confirmed facts from proposals and deferred work.
 

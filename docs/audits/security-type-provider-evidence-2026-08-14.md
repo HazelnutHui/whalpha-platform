@@ -1,44 +1,46 @@
-# Provider Security-Type Evidence Attempt: 2026-08-14
+# Provider Security-Type Evidence Audit: 2026-08-14
 
-- Operation time: 2026-08-16 UTC
+- Evidence as-of date: 2026-08-14
+- Successful operation time: 2026-08-16 UTC
 - Provider: Massive Stocks Basic
-- Result: quality-gate failure; no evidence partition published
+- Result: completed provider evidence snapshot
 
-## Network And Reconciliation
+## Controlled Requests
 
-- Ticker Types requests: 1
-- All Tickers requests: 14
-- Total requests: 15
-- Retries: 0
-- Catalog records received: 25
-- All Tickers raw records: 13,110
-- Uniquely mapped canonical evidence: 9,937
-- Exact duplicates: 0
-- Ambiguous: 4
-- Canonically unjoined: 3,169
-- Malformed: 0
+The corrected Phase B1B run made one `/v3/reference/tickers/types` request and 14 point-in-time `/v3/reference/tickers` requests: 15 total, zero retries, no other endpoints. Raw responses and headers were neither printed nor retained.
 
-The categories reconcile exactly: 9,937 + 0 + 4 + 3,169 = 13,110. Stable identifier collision gate did not fail. The mapped business-key duplicate gate was nonzero, but the first safe summary did not retain its exact count; it is therefore recorded as unknown/nonzero rather than guessed.
+The preceding failed Phase B1 run used the same request counts. Its old reconciliation incorrectly attached identifier-free excluded `BCPC` and `TPC` observations to resolved instruments by ticker, producing four false ambiguous observations and four canonical evidence conflicts. Phase B1A corrected the identity precedence and denominator before this authorized rerun.
 
-## Gate Failure
+## Publication Integrity
 
-The run reported an identity join ratio of 0.757971 because the implementation divided canonical mappings by all raw records. That incorrectly treated expected-exclusion records already present in Provider Identity, but intentionally lacking canonical IDs, as identity misses. The implementation now measures linkage to the accepted identity snapshot separately from canonical evidence creation.
+| Dataset | Rows | Content SHA-256 |
+| --- | ---: | --- |
+| Provider Security Type Catalog | 25 | `48c7106d3e53538159986b6d4a5a18822a4b3c47ae51bcfa0db8423abf19cc0d` |
+| Provider Security Observations | 13,110 | `bf19d66846406a8d4b77581a2e4ab385b24bb3755fa07499a7b8b90c958119f4` |
+| Canonical Provider Instrument Security Evidence | 9,939 | `d8b7873eae825a2782e23d10b958111f04fb46ee5a77ce279a0404e7610c2568` |
 
-Phase B1A read-only reconciliation identified the exact persisted identity pattern behind the four observations:
+The logical completion fingerprint is `f4ad3b09c5ae605790232b824e1b69208ad3a10571b3b66ea265700114855a12`. Explicit Arrow schemas, deterministic ordering, manifest counts, content fingerprints, Parquet hashes, rereads, logical references, and staging cleanup passed.
 
-- `BCPC`: one resolved observation using Share Class FIGI `BBG001S5P2R4`, plus one identifier-free excluded `structured_product` observation.
-- `TPC`: one resolved observation using Share Class FIGI `BBG001S5V297`, plus one identifier-free excluded `preferred_stock` observation.
+## Reconciliation
 
-Both tickers occur once in the point-in-time resolver, pointing only to the resolved observation. The old evidence code nevertheless used resolver fallback for the identifier-free excluded observation. Each pair was then grouped under one canonical instrument and treated as two conflicting observations: two groups times two observations produced four ambiguous observations and a canonical business-key conflict count of four. Stable-identifier collision count was zero.
+All 13,110 observations reconcile exactly: 9,939 canonical-mapped plus 3,171 expected-unjoined. Exact duplicates, ambiguous mappings, stable-identifier collisions, malformed observations, and canonical business-key conflicts are all zero. The corrected eligible linkage ratio is 9,939 / 9,939 = 1.0; expected exclusions and unresolved/rejected identities are not linkage-denominator failures.
 
-The accepted identity snapshot reconciles as 9,939 resolved, 1,131 unresolved, 1,950 excluded, and 90 rejected, totaling 13,110. Under corrected semantics, resolved observations are the canonical-linkage denominator; the other 3,171 are expected-unjoined. The offline result is therefore 9,939/9,939 (1.0), not 9,937/13,110. No provider payload was reconstructed and no second request sequence was attempted.
+`BCPC` and `TPC` each retain two distinct observations. The resolved common-share observation joins by Share Class FIGI. The identifier-free `BCPC` structured-product and `TPC` preferred-stock observations remain expected-unjoined and do not enter canonical evidence.
 
-## Unavailable Outputs
+## Provider Type Distribution
 
-No catalog or instrument evidence partition was published. Therefore provider-code distribution, security-form reclassification, legacy-pool deterministic exclusions, updated quarantine counts, and updated Core/Broad candidate counts are unavailable for this attempt. Phase A counts remain historical context only and were not presented as Phase B1 results.
+The catalog contains 25 codes: ADRC, ADRP, ADRR, ADRW, AGEN, BASKET, BOND, CS, EQLK, ETF, ETN, ETS, ETV, FUND, GDR, IX, LT, NYRS, OS, OTHER, PFD, RIGHT, SP, UNIT, and WARRANT.
 
-VCX, AKAN, VXT, and AZ received no new persisted provider evidence in this attempt. Existing authoritative Phase A decisions remain unchanged.
+The point-in-time observations contain: ADRC 376; CS 5,320; ETF 5,374; ETN 51; ETS 111; ETV 90; FUND 332; PFD 429; RIGHT 122; SP 158; UNIT 306; WARRANT 441. Canonical evidence contains ADRC 372, CS 4,193, and ETF 5,374. Its form distribution is 372 ADR/ADS, 4,193 common shares, and 5,374 fund shares; 5,374 are deterministic ETF exclusions and 4,565 remain quarantine.
 
-## Production Effect
+Provider type primarily establishes security form. `CS` does not prove an operating issuer or domestic domicile. Catalog codes not yet governed by an explicit rule remain review/quarantine rather than being guessed from descriptions.
 
-Existing Instrument Master, Provider Identity, Ticker Resolver, EOD, and Dashboard snapshot data were unchanged. Provisional-governance UI and snapshot-contract changes are implemented and tested in source, but production snapshot generation and OCI deployment were correctly blocked.
+## Comparable And Legacy Audit
+
+Across 9,889 comparable instruments, classifications are 5,361 excluded-resolved, one resolved, and 4,527 unknown. Issuer structure is 5,360 ETF, one authoritative closed-end fund, one authoritative operating company, and 4,527 unknown. Candidate Core remains 0 and Candidate Broad remains 1 (AKAN). These are evidence-coverage counts, not estimates of the true listed-equity population.
+
+The unchanged legacy default has 1,864 members: 1,862 quarantine, one authoritative Broad candidate (AKAN), and one authoritative exclusion (VCX). VCX remains the one confirmed legacy-pool contaminant. VXT and BCPC/TPC are absent from the comparable set; AZ is present but remains provider-explicit common-share form with unknown issuer structure and quarantine disposition.
+
+## Production Boundary
+
+The evidence publication does not alter Instrument Master, Provider Identity, Ticker Resolver, EOD bars, or the legacy 1,864 calculations. Core is the accepted future default and Broad the future secondary view, but activation remains deferred pending authoritative issuer-structure and domicile evidence. The production disclosure must therefore remain `Legacy Liquid Screen (Provisional)` with an explicit incomplete-classification warning.

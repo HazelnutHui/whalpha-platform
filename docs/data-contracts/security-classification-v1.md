@@ -26,6 +26,8 @@ Provider Security Type Catalog V1 preserves official provider code, description,
 
 Provider Security Observation V1 is the complete normalized observation layer. `instrument_id` is nullable and reconciliation status distinguishes canonical mapped, expected unjoined, ambiguous, collision, and malformed observations. Its deterministic observation ID includes provider, date, ticker, type, exchange, and available stable identifiers; ticker alone is never the key. Canonical Provider Instrument Security Evidence contains only uniquely mapped observations and uses instrument/date/provider/evidence-kind/version as its business key.
 
+A completed provider evidence snapshot additionally requires one logical completion manifest referencing the catalog, observation, and canonical evidence paths, counts, content fingerprints, and Parquet hashes. Readers reject component-only, conflicting, incomplete, or corrupt states.
+
 ## Candidate Policies
 
 Core U.S. Domestic Operating Equities requires authoritative/provider-explicit domestic operating common or equity REIT classification. Broad U.S.-Listed Operating Equities additionally permits authoritative/provider-explicit ADR/ADS and foreign ordinary operating equities. Both apply supported exchange, two-session availability, previous close of at least USD 5, previous close-times-volume of at least USD 20 million, and material quality checks.

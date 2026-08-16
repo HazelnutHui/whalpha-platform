@@ -4,7 +4,7 @@
 
 `tip_api.contracts.security_classification.v1` exposes the immutable point-in-time classification contract. `tip_api.services.security_classification` provides override validation, classification reconciliation, and Core/Broad candidate funnel auditing. Phase A does not wire these candidates into private APIs or production snapshots.
 
-Phase B1 adds immutable provider type catalog/instrument evidence contracts, bounded Massive ingestion, and atomic Parquet persistence. `CS` remains quarantine because security form alone does not resolve issuer structure or domicile. Evidence partitions are independent of canonical Instrument Master and EOD datasets.
+Phase B1 adds immutable provider type catalog, normalized observation, canonical instrument evidence, and logical completion contracts with bounded Massive ingestion and atomic Parquet persistence. The corrected 2026-08-14 run published 25 catalog records, 13,110 observations, and 9,939 canonical evidence records. `CS` remains quarantine because security form alone does not resolve issuer structure or domicile. Evidence partitions are independent of canonical Instrument Master and EOD datasets.
 
 FastAPI backend scaffold for Trading Intelligence Platform.
 
