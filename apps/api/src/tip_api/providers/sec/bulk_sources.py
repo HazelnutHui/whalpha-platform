@@ -9,8 +9,9 @@ import os
 import re
 import shutil
 import zipfile
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, date, datetime
+from enum import StrEnum
 from html.parser import HTMLParser
 from pathlib import Path, PurePosixPath
 from typing import Any, Iterable, Mapping
@@ -91,8 +92,49 @@ class SecCsvSelection:
     diagnostic: SecLandingDiscoveryDiagnostic
 
 
+class SecCsvUrlFailureCode(StrEnum):
+    """Finite, non-content reasons for rejecting a landing-page CSV URL."""
+
+    SCHEME_NOT_HTTPS = "scheme_not_https"
+    USERINFO_PRESENT = "userinfo_present"
+    HOST_NOT_ALLOWED = "host_not_allowed"
+    NONSTANDARD_PORT = "nonstandard_port"
+    BACKSLASH_PRESENT = "backslash_present"
+    TRAVERSAL_PRESENT = "traversal_present"
+    ENCODED_TRAVERSAL_PRESENT = "encoded_traversal_present"
+    QUERY_PRESENT = "query_present"
+    FRAGMENT_PRESENT = "fragment_present"
+    PATH_TEMPLATE_MISMATCH = "path_template_mismatch"
+    EXTENSION_NOT_CSV = "extension_not_csv"
+    FILE_YEAR_MISMATCH = "file_year_mismatch"
+    MALFORMED_URL = "malformed_url"
+
+
+@dataclass(frozen=True, slots=True)
+class SecCsvCandidateDiagnostic:
+    dataset_id: str
+    candidate_ordinal: int
+    download_table_ordinal: int
+    table_row_index: int
+    normalized_format: str
+    normalized_size_text: str | None
+    parsed_file_year: int | None
+    parsed_updated_date: str | None
+    anchor_count: int
+    selection_state: str
+    url_validation_state: str
+    failure_code: str | None
+    normalized_path: str | None
+    path_basename: str | None
+    path_template_match: bool | None
+    query_present: bool
+    fragment_present: bool
+    userinfo_present: bool
+
+
 @dataclass(frozen=True, slots=True)
 class SecLandingDiscoveryDiagnostic:
+    schema_version: str
     dataset_id: str
     page_id: str
     table_count: int
@@ -113,6 +155,7 @@ class SecLandingDiscoveryDiagnostic:
     selected_date: str | None = None
     selected_host: str | None = None
     selected_path_pattern: str | None = None
+    candidate_diagnostics: tuple[SecCsvCandidateDiagnostic, ...] = ()
 
     def to_safe_dict(self) -> dict[str, object]:
         return asdict(self)
@@ -125,6 +168,24 @@ class SecLandingDiscoveryError(SecTransportError):
         super().__init__(f"SEC landing discovery failed: {reason_code}")
         self.reason_code = reason_code
         self.diagnostic = diagnostic
+
+
+@dataclass(frozen=True, slots=True)
+class _CsvUrlAnalysis:
+    canonical_url: str | None
+    failure_code: SecCsvUrlFailureCode | None
+    normalized_path: str | None
+    path_basename: str | None
+    path_template_match: bool | None
+    query_present: bool
+    fragment_present: bool
+    userinfo_present: bool
+
+
+class _SecCsvUrlValidationError(SecTransportError):
+    def __init__(self, failure_code: SecCsvUrlFailureCode) -> None:
+        super().__init__("SEC CSV URL rejected")
+        self.failure_code = failure_code
 
 
 @dataclass(frozen=True, slots=True)
@@ -190,6 +251,7 @@ class _CsvCandidate:
     dataset_year: int
     effective_date: date | None
     url: str
+    diagnostic_index: int
 
 
 def acquire_sec_source_cache(
@@ -319,17 +381,22 @@ def select_dated_official_csv(
     }
     reasons: dict[str, int] = {}
     signatures = [_table_header_signature(table) for table in parser.tables]
-    matches = [(table, signature) for table, signature in zip(parser.tables, signatures, strict=True) if signature == ("file", "format", "size")]
+    matches = [
+        (ordinal, table, signature)
+        for ordinal, (table, signature) in enumerate(zip(parser.tables, signatures, strict=True), start=1)
+        if signature == ("file", "format", "size")
+    ]
+    candidate_diagnostics: list[SecCsvCandidateDiagnostic] = []
     if not parser.tables:
-        _fail_discovery("download_table_not_found", dataset_id, landing_url, parser.tables, (), stats, reasons)
+        _fail_discovery("download_table_not_found", dataset_id, landing_url, parser.tables, (), stats, reasons, candidate_diagnostics)
     if not matches:
-        _fail_discovery("download_table_header_mismatch", dataset_id, landing_url, parser.tables, (), stats, reasons)
+        _fail_discovery("download_table_header_mismatch", dataset_id, landing_url, parser.tables, (), stats, reasons, candidate_diagnostics)
     if len(matches) != 1:
-        _fail_discovery("download_table_ambiguous", dataset_id, landing_url, parser.tables, ("file", "format", "size"), stats, reasons)
-    table, signature = matches[0]
+        _fail_discovery("download_table_ambiguous", dataset_id, landing_url, parser.tables, ("file", "format", "size"), stats, reasons, candidate_diagnostics)
+    table_ordinal, table, signature = matches[0]
     candidates: list[_CsvCandidate] = []
     undated: list[_CsvCandidate] = []
-    for row in table:
+    for row_index, row in enumerate(table, start=1):
         if any(cell.is_header for cell in row):
             continue
         stats["rows_scanned"] += 1
@@ -337,58 +404,123 @@ def select_dated_official_csv(
         if anchor_count:
             stats["rows_with_anchors"] += 1
         if len(row) != 3:
-            _reject_or_fail("row_shape_invalid", dataset_id, landing_url, parser.tables, signature, stats, reasons)
-        file_cell, format_cell, _size_cell = row
-        if _normalized_header(format_cell.text) != "csv":
+            _reject_or_fail("row_shape_invalid", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
+        file_cell, format_cell, size_cell = row
+        normalized_format = _normalized_header(format_cell.text)
+        if normalized_format != "csv":
             continue
         stats["csv_candidate_count"] += 1
+        candidate_ordinal = stats["csv_candidate_count"]
+        diagnostic = SecCsvCandidateDiagnostic(
+            dataset_id=dataset_id,
+            candidate_ordinal=candidate_ordinal,
+            download_table_ordinal=table_ordinal,
+            table_row_index=row_index,
+            normalized_format=normalized_format,
+            normalized_size_text=_safe_size_text(size_cell.text),
+            parsed_file_year=None,
+            parsed_updated_date=None,
+            anchor_count=len(file_cell.links),
+            selection_state="candidate",
+            url_validation_state="not_evaluated",
+            failure_code=None,
+            normalized_path=None,
+            path_basename=None,
+            path_template_match=None,
+            query_present=False,
+            fragment_present=False,
+            userinfo_present=False,
+        )
         if len(file_cell.links) != 1:
-            _reject_or_fail("anchor_cardinality_invalid", dataset_id, landing_url, parser.tables, signature, stats, reasons)
+            candidate_diagnostics.append(replace(diagnostic, selection_state="rejected", failure_code="anchor_cardinality_invalid"))
+            _reject_or_fail("anchor_cardinality_invalid", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
         href, anchor_text = file_cell.links[0]
         year = _file_year(anchor_text)
         if year is None:
-            _reject_or_fail("file_year_missing", dataset_id, landing_url, parser.tables, signature, stats, reasons)
+            candidate_diagnostics.append(replace(diagnostic, selection_state="rejected", failure_code="file_year_missing"))
+            _reject_or_fail("file_year_missing", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
+        diagnostic = replace(diagnostic, parsed_file_year=year)
+        effective_date: date | None = None
+        updated_date_error: _UpdatedDateError | None = None
         try:
-            url = _canonical_csv_url(dataset_id, landing_url, href, year)
-        except (SecTransportError, ValueError):
-            _reject_or_fail("href_rejected", dataset_id, landing_url, parser.tables, signature, stats, reasons)
+            effective_date = _updated_date(file_cell.text)
+        except _UpdatedDateError as exc:
+            updated_date_error = exc
+        diagnostic = replace(diagnostic, parsed_updated_date=effective_date.isoformat() if effective_date else None)
+        analysis = _analyze_csv_url(dataset_id, landing_url, href, year)
+        diagnostic = replace(
+            diagnostic,
+            url_validation_state="accepted" if analysis.failure_code is None else "rejected",
+            failure_code=str(analysis.failure_code) if analysis.failure_code is not None else None,
+            normalized_path=analysis.normalized_path,
+            path_basename=analysis.path_basename,
+            path_template_match=analysis.path_template_match,
+            query_present=analysis.query_present,
+            fragment_present=analysis.fragment_present,
+            userinfo_present=analysis.userinfo_present,
+        )
+        if analysis.failure_code is not None or analysis.canonical_url is None:
+            candidate_diagnostics.append(replace(diagnostic, selection_state="rejected"))
+            detail = str(analysis.failure_code or SecCsvUrlFailureCode.MALFORMED_URL)
+            reasons[detail] = reasons.get(detail, 0) + 1
+            _reject_or_fail("href_rejected", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
+        url = analysis.canonical_url
         stats["allowlisted_count"] += 1
-        effective_date = _updated_date(file_cell.text, dataset_id, landing_url, parser.tables, signature, stats, reasons)
-        candidate = _CsvCandidate(year, effective_date, url)
+        if updated_date_error is not None:
+            candidate_diagnostics.append(replace(diagnostic, selection_state="rejected", failure_code=updated_date_error.reason_code))
+            _reject_or_fail(updated_date_error.reason_code, dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
+        diagnostic_index = len(candidate_diagnostics)
+        candidate_diagnostics.append(diagnostic)
+        candidate = _CsvCandidate(year, effective_date, url, diagnostic_index)
         if effective_date is None:
+            candidate_diagnostics[diagnostic_index] = replace(diagnostic, selection_state="undated_pending")
             undated.append(candidate)
             continue
         if effective_date.year != year:
-            _reject_or_fail("file_year_date_mismatch", dataset_id, landing_url, parser.tables, signature, stats, reasons)
+            candidate_diagnostics[diagnostic_index] = replace(diagnostic, selection_state="rejected", failure_code="file_year_date_mismatch")
+            _reject_or_fail("file_year_date_mismatch", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
         stats["parsed_date_count"] += 1
         if effective_date > evidence_cutoff:
             stats["future_count"] += 1
+            candidate_diagnostics[diagnostic_index] = replace(diagnostic, selection_state="future_excluded")
         else:
+            candidate_diagnostics[diagnostic_index] = replace(diagnostic, selection_state="cutoff_eligible")
             candidates.append(candidate)
     if stats["csv_candidate_count"] == 0:
-        _fail_discovery("no_csv_candidate", dataset_id, landing_url, parser.tables, signature, stats, reasons)
-    unique = sorted(set(candidates), key=lambda item: (item.effective_date or date.min, item.dataset_year, item.url))
+        _fail_discovery("no_csv_candidate", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
+    unique_by_key: dict[tuple[int, date | None, str], _CsvCandidate] = {}
+    for candidate in candidates:
+        unique_by_key.setdefault((candidate.dataset_year, candidate.effective_date, candidate.url), candidate)
+    unique = sorted(unique_by_key.values(), key=lambda item: (item.effective_date or date.min, item.dataset_year, item.url))
     stats["cutoff_eligible_count"] = len(unique)
     if not unique:
         reason = "updated_date_missing_current_candidate" if undated else "no_cutoff_eligible_candidate"
-        _fail_discovery(reason, dataset_id, landing_url, parser.tables, signature, stats, reasons)
+        _fail_discovery(reason, dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
     latest_date = max(item.effective_date for item in unique if item.effective_date is not None)
     latest = [item for item in unique if item.effective_date == latest_date]
     distinct_urls = {item.url for item in latest}
     stats["max_date_candidate_count"] = len(distinct_urls)
     if len(distinct_urls) != 1:
-        _fail_discovery("max_date_distinct_url_tie", dataset_id, landing_url, parser.tables, signature, stats, reasons)
+        _fail_discovery("max_date_distinct_url_tie", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
     selected = min(latest, key=lambda item: (item.dataset_year, item.url))
+    selected_key = (selected.dataset_year, selected.effective_date, selected.url)
+    for candidate in candidates:
+        state = "selected" if (candidate.dataset_year, candidate.effective_date, candidate.url) == selected_key else "eligible_not_selected"
+        candidate_diagnostics[candidate.diagnostic_index] = replace(candidate_diagnostics[candidate.diagnostic_index], selection_state=state)
     for candidate in undated:
         if candidate.dataset_year >= selected.dataset_year:
-            _fail_discovery("updated_date_missing_current_candidate", dataset_id, landing_url, parser.tables, signature, stats, reasons)
+            _fail_discovery("updated_date_missing_current_candidate", dataset_id, landing_url, parser.tables, signature, stats, reasons, candidate_diagnostics)
         stats["undated_historical_count"] += 1
         reasons["undated_historical_excluded"] = reasons.get("undated_historical_excluded", 0) + 1
+        candidate_diagnostics[candidate.diagnostic_index] = replace(
+            candidate_diagnostics[candidate.diagnostic_index], selection_state="undated_historical_excluded"
+        )
     reasons["selected"] = 1
     diagnostic = _make_diagnostic(
         dataset_id, landing_url, parser.tables, signature, stats, reasons,
         selected_year=selected.dataset_year, selected_date=latest_date.isoformat(),
         selected_host="www.sec.gov", selected_path_pattern=Path(urlparse(selected.url).path).name,
+        candidate_diagnostics=candidate_diagnostics,
     )
     return SecCsvSelection(
         dataset_id=dataset_id, url=selected.url, dataset_year=selected.dataset_year,
@@ -413,21 +545,19 @@ def _file_year(anchor_text: str) -> int | None:
     return int(match.group(1)) if match else None
 
 
-def _updated_date(
-    text: str,
-    dataset_id: str,
-    landing_url: str,
-    tables: list[list[list[_LandingCell]]],
-    signature: tuple[str, ...],
-    stats: dict[str, int],
-    reasons: dict[str, int],
-) -> date | None:
+class _UpdatedDateError(ValueError):
+    def __init__(self, reason_code: str) -> None:
+        super().__init__("SEC landing-page updated date is invalid")
+        self.reason_code = reason_code
+
+
+def _updated_date(text: str) -> date | None:
     normalized = _collapse(text.replace("\xa0", " "))
     if "updated" not in normalized.casefold():
         return None
     values = re.findall(r"(?i)\bupdated\s+(\d{1,2}/\d{1,2}/(?:\d{2}|\d{4}))\b", normalized)
     if not values:
-        _reject_or_fail("updated_date_parse_failed", dataset_id, landing_url, tables, signature, stats, reasons)
+        raise _UpdatedDateError("updated_date_parse_failed")
     parsed: set[date] = set()
     for value in values:
         try:
@@ -435,28 +565,128 @@ def _updated_date(
             year = 2000 + year if year < 100 else year
             parsed.add(date(year, month, day))
         except ValueError:
-            _reject_or_fail("updated_date_parse_failed", dataset_id, landing_url, tables, signature, stats, reasons)
+            raise _UpdatedDateError("updated_date_parse_failed") from None
     if len(parsed) != 1:
-        _reject_or_fail("multiple_dates_in_row", dataset_id, landing_url, tables, signature, stats, reasons)
+        raise _UpdatedDateError("multiple_dates_in_row")
     return next(iter(parsed))
 
 
 def _canonical_csv_url(dataset_id: str, landing_url: str, href: str, year: int) -> str:
-    if any(ord(char) < 32 for char in href) or "\\" in href:
-        raise SecTransportError("SEC CSV URL rejected")
-    raw = urlparse(href)
-    if raw.scheme.lower() not in {"", "https"} or raw.query or raw.fragment or raw.username or raw.password or raw.port not in {None, 443}:
-        raise SecTransportError("SEC CSV URL rejected")
-    decoded_path = unquote(raw.path)
-    if "\\" in decoded_path or ".." in PurePosixPath(decoded_path).parts or unquote(decoded_path) != decoded_path:
-        raise SecTransportError("SEC CSV URL rejected")
-    resolved = urljoin(landing_url, href)
-    validate_sec_url(resolved)
-    parsed = urlparse(resolved)
-    expected_path = CSV_PATH_TEMPLATES[dataset_id].format(year=year)
-    if parsed.scheme != "https" or parsed.hostname != "www.sec.gov" or parsed.port not in {None, 443} or parsed.query or parsed.fragment or parsed.username or parsed.password or parsed.path != expected_path:
-        raise SecTransportError("SEC CSV URL rejected")
-    return f"https://www.sec.gov{parsed.path}"
+    analysis = _analyze_csv_url(dataset_id, landing_url, href, year)
+    if analysis.failure_code is not None or analysis.canonical_url is None:
+        raise _SecCsvUrlValidationError(analysis.failure_code or SecCsvUrlFailureCode.MALFORMED_URL)
+    return analysis.canonical_url
+
+
+def _analyze_csv_url(dataset_id: str, landing_url: str, href: str, year: int) -> _CsvUrlAnalysis:
+    query_present = False
+    fragment_present = False
+    userinfo_present = False
+    normalized_path: str | None = None
+    path_basename: str | None = None
+    template_match: bool | None = None
+
+    def rejected(code: SecCsvUrlFailureCode) -> _CsvUrlAnalysis:
+        return _CsvUrlAnalysis(
+            None, code, normalized_path, path_basename, template_match,
+            query_present, fragment_present, userinfo_present,
+        )
+
+    if not isinstance(href, str) or not href or any(ord(char) < 32 or ord(char) == 127 for char in href):
+        return rejected(SecCsvUrlFailureCode.MALFORMED_URL)
+    if "\\" in href:
+        return rejected(SecCsvUrlFailureCode.BACKSLASH_PRESENT)
+    try:
+        raw = urlparse(href)
+        query_present = "?" in href.split("#", maxsplit=1)[0]
+        fragment_present = "#" in href
+        userinfo_present = raw.username is not None or raw.password is not None
+        port = raw.port
+        raw_hostname = raw.hostname
+    except (TypeError, ValueError):
+        return rejected(SecCsvUrlFailureCode.MALFORMED_URL)
+    normalized_path = _safe_public_path(raw.path)
+    path_basename = PurePosixPath(normalized_path).name if normalized_path else None
+    if raw.scheme.casefold() not in {"", "https"}:
+        return rejected(SecCsvUrlFailureCode.SCHEME_NOT_HTTPS)
+    if userinfo_present:
+        return rejected(SecCsvUrlFailureCode.USERINFO_PRESENT)
+    if raw_hostname is not None and raw_hostname.casefold() != "www.sec.gov":
+        return rejected(SecCsvUrlFailureCode.HOST_NOT_ALLOWED)
+    if port not in {None, 443}:
+        return rejected(SecCsvUrlFailureCode.NONSTANDARD_PORT)
+    if query_present:
+        return rejected(SecCsvUrlFailureCode.QUERY_PRESENT)
+    if fragment_present:
+        return rejected(SecCsvUrlFailureCode.FRAGMENT_PRESENT)
+    if _has_literal_traversal(raw.path):
+        return rejected(SecCsvUrlFailureCode.TRAVERSAL_PRESENT)
+    decoded_once = unquote(raw.path)
+    if "\\" in decoded_once:
+        return rejected(SecCsvUrlFailureCode.BACKSLASH_PRESENT)
+    decoded_twice = unquote(decoded_once)
+    if decoded_once != raw.path and (
+        _has_literal_traversal(decoded_once)
+        or _has_literal_traversal(decoded_twice)
+        or "\\" in decoded_twice
+    ):
+        return rejected(SecCsvUrlFailureCode.ENCODED_TRAVERSAL_PRESENT)
+    try:
+        resolved = urljoin(landing_url, href)
+        parsed = urlparse(resolved)
+        resolved_port = parsed.port
+    except (TypeError, ValueError):
+        return rejected(SecCsvUrlFailureCode.MALFORMED_URL)
+    normalized_path = _safe_public_path(parsed.path)
+    path_basename = PurePosixPath(normalized_path).name if normalized_path else None
+    if parsed.scheme != "https":
+        return rejected(SecCsvUrlFailureCode.SCHEME_NOT_HTTPS)
+    if parsed.username is not None or parsed.password is not None:
+        userinfo_present = True
+        return rejected(SecCsvUrlFailureCode.USERINFO_PRESENT)
+    if parsed.hostname != "www.sec.gov":
+        return rejected(SecCsvUrlFailureCode.HOST_NOT_ALLOWED)
+    if resolved_port not in {None, 443}:
+        return rejected(SecCsvUrlFailureCode.NONSTANDARD_PORT)
+    if not parsed.path.casefold().endswith(".csv"):
+        template_match = False
+        return rejected(SecCsvUrlFailureCode.EXTENSION_NOT_CSV)
+    template = CSV_PATH_TEMPLATES[dataset_id]
+    prefix, suffix = template.split("{year}", maxsplit=1)
+    path_match = re.fullmatch(f"{re.escape(prefix)}((?:19|20)\\d{{2}}){re.escape(suffix)}", parsed.path)
+    if path_match is not None and int(path_match.group(1)) != year:
+        template_match = False
+        return rejected(SecCsvUrlFailureCode.FILE_YEAR_MISMATCH)
+    expected_path = template.format(year=year)
+    template_match = parsed.path == expected_path
+    if not template_match:
+        return rejected(SecCsvUrlFailureCode.PATH_TEMPLATE_MISMATCH)
+    try:
+        validate_sec_url(resolved)
+    except SecTransportError:
+        return rejected(SecCsvUrlFailureCode.MALFORMED_URL)
+    return _CsvUrlAnalysis(
+        f"https://www.sec.gov{parsed.path}", None, normalized_path, path_basename,
+        True, query_present, fragment_present, userinfo_present,
+    )
+
+
+def _safe_public_path(value: str) -> str | None:
+    if not value or len(value) > 512 or any(ord(char) < 32 or ord(char) == 127 for char in value):
+        return None
+    return value if value.startswith("/") else None
+
+
+def _has_literal_traversal(value: str) -> bool:
+    return ".." in PurePosixPath(value).parts
+
+
+def _safe_size_text(value: str) -> str | None:
+    normalized = _collapse(value.replace("\xa0", " ")).upper()
+    if not normalized:
+        return None
+    match = re.fullmatch(r"(\d+(?:\.\d+)?)\s*(B|KB|MB|GB|BYTE|BYTES)", normalized)
+    return f"{match.group(1)} {match.group(2)}" if match else None
 
 
 def _reject_or_fail(
@@ -467,11 +697,12 @@ def _reject_or_fail(
     signature: tuple[str, ...],
     stats: dict[str, int],
     reasons: dict[str, int],
+    candidate_diagnostics: list[SecCsvCandidateDiagnostic],
 ) -> None:
     stats["malformed_count"] += 1
     stats["rejected_count"] += 1
     reasons[reason] = reasons.get(reason, 0) + 1
-    _fail_discovery(reason, dataset_id, landing_url, tables, signature, stats, reasons)
+    _fail_discovery(reason, dataset_id, landing_url, tables, signature, stats, reasons, candidate_diagnostics)
 
 
 def _fail_discovery(
@@ -482,9 +713,16 @@ def _fail_discovery(
     signature: tuple[str, ...],
     stats: dict[str, int],
     reasons: dict[str, int],
+    candidate_diagnostics: list[SecCsvCandidateDiagnostic],
 ) -> None:
     reasons[reason] = reasons.get(reason, 0) + (0 if reason in reasons else 1)
-    raise SecLandingDiscoveryError(reason, _make_diagnostic(dataset_id, landing_url, tables, signature, stats, reasons))
+    raise SecLandingDiscoveryError(
+        reason,
+        _make_diagnostic(
+            dataset_id, landing_url, tables, signature, stats, reasons,
+            candidate_diagnostics=candidate_diagnostics,
+        ),
+    )
 
 
 def _make_diagnostic(
@@ -499,9 +737,10 @@ def _make_diagnostic(
     selected_date: str | None = None,
     selected_host: str | None = None,
     selected_path_pattern: str | None = None,
+    candidate_diagnostics: Iterable[SecCsvCandidateDiagnostic] = (),
 ) -> SecLandingDiscoveryDiagnostic:
     return SecLandingDiscoveryDiagnostic(
-        dataset_id=dataset_id, page_id=Path(urlparse(landing_url).path).name,
+        schema_version="2.0", dataset_id=dataset_id, page_id=Path(urlparse(landing_url).path).name,
         table_count=len(tables), normalized_header_signature=signature,
         rows_scanned=stats["rows_scanned"], rows_with_anchors=stats["rows_with_anchors"],
         csv_candidate_count=stats["csv_candidate_count"], allowlisted_count=stats["allowlisted_count"],
@@ -512,6 +751,7 @@ def _make_diagnostic(
         cutoff_eligible_count=stats["cutoff_eligible_count"], max_date_candidate_count=stats["max_date_candidate_count"],
         selected_year=selected_year, selected_date=selected_date, selected_host=selected_host,
         selected_path_pattern=selected_path_pattern,
+        candidate_diagnostics=tuple(candidate_diagnostics),
     )
 
 

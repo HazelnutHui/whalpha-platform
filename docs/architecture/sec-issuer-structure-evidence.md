@@ -30,6 +30,12 @@ Each dataset has its own exact, year-parameterized `https://www.sec.gov` path ru
 
 `application/octet-stream` is accepted only at the selected-CSV validation layer, after the URL has passed the dataset-specific rule and the non-empty file has passed the matching dataset header checks. The generic SEC transport is not relaxed.
 
+## Landing discovery diagnostics
+
+Landing discovery diagnostics use schema version `2.0`. The existing top-level failure reason remains stable (for example, `href_rejected`), while each CSV candidate records its deterministic ordinal, download-table ordinal, DOM row index, normalized format and bounded size text, parsed file year and update date, anchor count, selection state, URL validation state, and a finite detailed failure code. Candidate diagnostics may retain the normalized public SEC path, basename, and template-match result. They never retain a complete URL, external hostname, query or fragment values, userinfo, headers, User-Agent, contact identity, raw HTML, or response content.
+
+URL failures distinguish HTTPS scheme, userinfo, host, port, backslash, literal or encoded traversal, query, fragment, dataset path template, CSV extension, file-year mismatch, and malformed URL. This is diagnostic-only: the dataset-specific allowlists and fail-closed selection behavior are unchanged. Unsafe or unparseable Size text becomes null rather than being copied into the diagnostic, and all serialized candidate order follows the source DOM so repeated parsing of the same input is deterministic.
+
 ## Evidence Semantics
 
 Evidence grades, strongest first, are:

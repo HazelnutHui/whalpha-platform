@@ -66,3 +66,9 @@ The landing parser found two tables, uniquely selected the normalized `File / Fo
 - Production snapshot, bundle, deployment, and Universe change: not performed
 
 Because discovery failed before a CSV was selected, no release date, file year, CSV header result, source file size, or source hash exists for any of the three datasets. No second live run is authorized.
+
+## Offline actionable-diagnostic remediation
+
+The third run's sanitized record established only that candidate 3 failed under the aggregate `href_rejected` reason after two candidates passed the exact allowlist. It did not retain candidate ordinal, DOM row, file year/date, Format/Size, public path structure, or the specific URL rule, so it cannot establish whether that candidate was a legitimate target variant, an historical row, unrelated CSV, or suspicious URL.
+
+The offline remediation adds landing-discovery diagnostic schema `2.0` with deterministic candidate-level context and finite URL failure codes while preserving the compatible top-level reason. Complete URLs, external hostnames, query/fragment/userinfo values, headers, User-Agent, contact identity, raw HTML, and response bodies remain excluded. Exact Series/Class, CEF, and BDC allowlists and selection behavior were not changed. The third live candidate therefore remains `unknown`; no path interpretation is recorded without a future separately authorized observation. This remediation made zero network requests, did not inspect credentials or `/data`, and did not generate or deploy any production artifact.
