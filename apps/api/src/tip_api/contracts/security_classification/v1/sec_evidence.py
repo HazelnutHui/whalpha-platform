@@ -267,3 +267,73 @@ class SecIssuerEvidenceManifestV1(BaseModel):
     @classmethod
     def normalize_created_at(cls, value: datetime) -> datetime:
         return normalize_utc_datetime(value)
+
+
+class SecEvidenceDatasetReferenceV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    dataset_name: str
+    partition_path: str
+    record_count: int
+    content_sha256: str
+    parquet_sha256: str
+
+    @field_validator("dataset_name", "partition_path", mode="before")
+    @classmethod
+    def normalize_text(cls, value: str, info: Any) -> str:
+        normalized = normalize_required_string(value, field_name=info.field_name)
+        if info.field_name == "partition_path" and (normalized.startswith("/") or ".." in normalized.split("/")):
+            raise ValueError("partition_path must be a safe relative path")
+        return normalized
+
+    @field_validator("record_count")
+    @classmethod
+    def nonnegative_count(cls, value: int) -> int:
+        if value < 0:
+            raise ValueError("record_count must be non-negative")
+        return value
+
+    @field_validator("content_sha256", "parquet_sha256")
+    @classmethod
+    def hashes(cls, value: str, info: Any) -> str:
+        normalized = normalize_required_string(value, field_name=info.field_name).lower()
+        if len(normalized) != 64 or any(char not in "0123456789abcdef" for char in normalized):
+            raise ValueError(f"{info.field_name} must be SHA-256 hexadecimal")
+        return normalized
+
+
+class SecIssuerEvidenceSnapshotManifestV1(BaseModel):
+    """Logical completion marker; readers must not infer completion from one partition."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_version: Literal["1.0"] = "1.0"
+    dataset_name: Literal["sec-issuer-structure-evidence-snapshot"] = "sec-issuer-structure-evidence-snapshot"
+    completion_status: Literal["completed"] = "completed"
+    as_of_date: date
+    observed_at: datetime
+    source_cache_manifest_sha256: str
+    observation: SecEvidenceDatasetReferenceV1
+    canonical_evidence: SecEvidenceDatasetReferenceV1
+    quality_summary: dict[str, int | float | str]
+    logical_content_sha256: str
+
+    @field_validator("as_of_date", mode="before")
+    @classmethod
+    def strict_date(cls, value: Any) -> Any:
+        if isinstance(value, datetime):
+            raise ValueError("as_of_date must not receive datetime")
+        return value
+
+    @field_validator("observed_at")
+    @classmethod
+    def utc_timestamp(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("source_cache_manifest_sha256", "logical_content_sha256")
+    @classmethod
+    def snapshot_hashes(cls, value: str, info: Any) -> str:
+        normalized = normalize_required_string(value, field_name=info.field_name).lower()
+        if len(normalized) != 64 or any(char not in "0123456789abcdef" for char in normalized):
+            raise ValueError(f"{info.field_name} must be SHA-256 hexadecimal")
+        return normalized

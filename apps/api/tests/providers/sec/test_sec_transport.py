@@ -1,10 +1,13 @@
 from decimal import Decimal
+from email.message import Message
+from io import BytesIO
 import socket
 
 import pytest
 from pydantic import SecretStr
 
 from tip_api.providers.sec.transport import (
+    BoundedSecTransport,
     FakeSecTransport,
     SecRateLimiter,
     SecRetryPolicy,
@@ -66,3 +69,44 @@ def test_fake_transport_never_opens_socket(monkeypatch: pytest.MonkeyPatch) -> N
     transport = FakeSecTransport({url: b"fixture"})
     assert transport.get_bytes(url, user_agent=UA, timeout_seconds=Decimal("2")) == b"fixture"
     assert transport.requests == [url]
+
+
+class Response(BytesIO):
+    status = 200
+
+    def __init__(self, value: bytes, content_type="application/json", content_length=None):
+        super().__init__(value)
+        self.headers = Message()
+        self.headers["Content-Type"] = content_type
+        if content_length is not None:
+            self.headers["Content-Length"] = str(content_length)
+
+
+class Opener:
+    def __init__(self, responses):
+        self.responses = list(responses)
+
+    def open(self, request, timeout):
+        return self.responses.pop(0)
+
+
+def test_bounded_transport_streams_and_enforces_request_ceiling_without_leaking_contact(tmp_path) -> None:
+    transport = BoundedSecTransport(request_ceiling=1, opener=Opener([Response(b"fixture")]))
+    target = tmp_path / "source.json"
+    result = transport.download(
+        "https://www.sec.gov/files/source.json", target,
+        user_agent=UA, timeout_seconds=Decimal("2"), max_bytes=100,
+    )
+    assert target.read_bytes() == b"fixture" and result.byte_count == 7
+    assert transport.request_count == 1 and "fixture-contact" not in repr(result)
+    with pytest.raises(SecTransportError, match="ceiling"):
+        transport.get_bytes("https://www.sec.gov/files/second.json", user_agent=UA, timeout_seconds=Decimal("2"))
+
+
+def test_bounded_transport_rejects_declared_and_streamed_oversize(tmp_path) -> None:
+    first = BoundedSecTransport(opener=Opener([Response(b"x", content_length=101)]))
+    with pytest.raises(SecTransportError, match="size"):
+        first.download("https://www.sec.gov/files/a", tmp_path / "a", user_agent=UA, timeout_seconds=Decimal("2"), max_bytes=100)
+    second = BoundedSecTransport(opener=Opener([Response(b"x" * 101)]))
+    with pytest.raises(SecTransportError, match="size"):
+        second.download("https://www.sec.gov/files/b", tmp_path / "b", user_agent=UA, timeout_seconds=Decimal("2"), max_bytes=100)

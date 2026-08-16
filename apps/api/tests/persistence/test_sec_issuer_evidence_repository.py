@@ -9,6 +9,9 @@ from tip_api.contracts.security_classification.v1 import (
     IssuerStructure,
     ListingScope,
     SecEvidenceGrade,
+    SecEvidenceResolutionStatus,
+    SecEvidenceSubject,
+    SecIssuerEvidenceObservationV1,
     SecIssuerStructureEvidenceV1,
     SecurityForm,
     UniverseDisposition,
@@ -42,6 +45,18 @@ def record(reason="authoritative_fixture"):
         quality_status=QualityStatus.VALID,
         quality_flags=(),
         source_observed_at=NOW,
+    )
+
+
+def observation():
+    return SecIssuerEvidenceObservationV1(
+        observation_id="b" * 64, instrument_id=UUID("00000000-0000-4000-8000-000000000001"),
+        cik="1", source_dataset="fixture", source_document_type="fixture", filing_date=AS_OF,
+        effective_from=AS_OF, ticker="TEST", exchange="XNYS", evidence_subject=SecEvidenceSubject.FUND_STATUS,
+        asserted_security_form=SecurityForm.FUND_SHARE, asserted_issuer_structure=IssuerStructure.CLOSED_END_FUND,
+        evidence_grade=SecEvidenceGrade.AUTHORITATIVE_EXPLICIT,
+        resolution_status=SecEvidenceResolutionStatus.CANONICAL_MAPPED,
+        decision_reasons=("fixture",), source_observed_at=NOW, quality_status=QualityStatus.VALID, quality_flags=(),
     )
 
 
@@ -83,3 +98,22 @@ def test_business_key_conflict_hard_fails(tmp_path: Path) -> None:
         ParquetSecIssuerEvidenceRepository(tmp_path, NOW).publish(
             (record(), record("conflict")), source_datasets=("fixture",)
         )
+
+
+def test_observation_and_logical_snapshot_round_trip(tmp_path: Path) -> None:
+    repo = ParquetSecIssuerEvidenceRepository(tmp_path, NOW)
+    observation_write = repo.publish_observations(
+        (observation(),), as_of_date=AS_OF, source_cache_manifest_sha256="c" * 64,
+    )
+    evidence_write = repo.publish((record(),), source_datasets=("fixture",))
+    logical = repo.publish_logical_snapshot(
+        as_of_date=AS_OF, observed_at=NOW, source_cache_manifest_sha256="c" * 64,
+        observation=observation_write, canonical_evidence=evidence_write,
+        quality_summary={"ambiguous_count": 0, "reconciliation_status": "passed"},
+    )
+    assert logical.status == "published" and logical.manifest_path.is_file()
+    assert repo.publish_logical_snapshot(
+        as_of_date=AS_OF, observed_at=NOW, source_cache_manifest_sha256="c" * 64,
+        observation=observation_write, canonical_evidence=evidence_write,
+        quality_summary={"ambiguous_count": 0, "reconciliation_status": "passed"},
+    ).status == "already_present"

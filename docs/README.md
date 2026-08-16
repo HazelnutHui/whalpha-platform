@@ -8,6 +8,8 @@
 - [Provider security-type evidence architecture](architecture/provider-security-type-evidence.md)
 - [SEC issuer-structure evidence architecture](architecture/sec-issuer-structure-evidence.md)
 - [SEC User-Agent provisioning](operations/sec-user-agent-provisioning.md)
+- [SEC issuer-structure evidence operation](operations/sec-issuer-structure-evidence.md)
+- [SEC Phase B2B 2026-08-14 audit](audits/sec-issuer-structure-evidence-2026-08-14.md)
 - [Massive security-type evidence operation](operations/massive-security-type-evidence.md)
 - [2026-08-14 provider-evidence audit](audits/security-type-provider-evidence-2026-08-14.md)
 

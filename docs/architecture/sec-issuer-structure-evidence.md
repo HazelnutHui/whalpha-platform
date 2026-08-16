@@ -2,7 +2,7 @@
 
 ## Status
 
-Phase B2A implements and fixture-validates this boundary offline. No SEC request, production partition, snapshot, Universe activation, or deployment is part of Phase B2A.
+Phase B2A implemented and fixture-validated the boundary offline. Phase B2B implements a bounded streaming transport and atomic source-cache, observation, canonical-evidence, and logical-completion layers. The first authorized B2B run failed closed during official CSV discovery and produced no completed source cache or evidence snapshot. Universe activation and Dashboard changes remain out of scope.
 
 ## Purpose
 
@@ -18,9 +18,11 @@ The future dataset root is:
 
 `market-data/sec-issuer-structure-evidence/schema_version=1/as_of_date=YYYY-MM-DD/`
 
-Under the approved production data root, the full future path is `/data/trading-intelligence-platform/market-data/sec-issuer-structure-evidence/...`. Phase B2A does not create it.
+The approved layers are `source-cache/sec/security-classification/as_of_date=<date>`, `market-data/sec-issuer-structure-observation/schema_version=1/as_of_date=<date>`, `market-data/sec-issuer-structure-evidence/schema_version=1/as_of_date=<date>`, and `market-data/snapshots/sec-issuer-structure-evidence/as_of_date=<date>`. Readers must require the final logical completion manifest; a cache or individual partition is not sufficient.
 
 The repository provides explicit Arrow schema, deterministic ordering and fingerprinting, manifest and Parquet hashes, reread validation, sibling staging, atomic publication, idempotent rerun, conflict rejection, corruption rejection, and symlink containment. Phase B2A invokes it only under pytest `tmp_path`.
+
+The live transport permits HTTPS only to `www.sec.gov` and `data.sec.gov`, runs serially at no more than two requests per second, limits the operation to 12 HTTP attempts, uses bounded retry only for 429/recoverable 5xx responses, and never serializes the private User-Agent. ZIP validation rejects traversal, links, unexpected members, and configured compressed or expanded size limits. The 2026-08-14 cutoff is applied before canonical reconciliation; current reference data without historical-effective semantics cannot be backfilled as historical classification evidence.
 
 ## Evidence Semantics
 

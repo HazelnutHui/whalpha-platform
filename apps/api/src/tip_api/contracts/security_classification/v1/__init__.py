@@ -25,8 +25,10 @@ from tip_api.contracts.security_classification.v1.sec_evidence import (
     SecEvidenceGrade,
     SecEvidenceResolutionStatus,
     SecEvidenceSubject,
+    SecEvidenceDatasetReferenceV1,
     SecIssuerEvidenceManifestV1,
     SecIssuerEvidenceObservationV1,
+    SecIssuerEvidenceSnapshotManifestV1,
     SecIssuerStructureEvidenceV1,
 )
 
@@ -51,7 +53,9 @@ __all__ = [
     "SecEvidenceGrade",
     "SecEvidenceResolutionStatus",
     "SecEvidenceSubject",
+    "SecEvidenceDatasetReferenceV1",
     "SecIssuerEvidenceManifestV1",
     "SecIssuerEvidenceObservationV1",
+    "SecIssuerEvidenceSnapshotManifestV1",
     "SecIssuerStructureEvidenceV1",
 ]

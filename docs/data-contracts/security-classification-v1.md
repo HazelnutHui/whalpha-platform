@@ -38,6 +38,8 @@ The one-day previous-session liquidity gate is provisional and is not 20-day ADV
 
 Phase B2A adds `SecIssuerEvidenceObservationV1` and `SecIssuerStructureEvidenceV1`. SEC observations are point-in-time assertions and may remain unjoined; canonical evidence requires a unique stable-identity resolution. Evidence grade, security form, issuer structure, listing scope, resolution status, quality, and Universe disposition remain separate.
 
+Phase B2B adds `SecEvidenceDatasetReferenceV1` and `SecIssuerEvidenceSnapshotManifestV1`. The logical manifest references independently validated observation and canonical-evidence partitions plus the source-cache manifest hash. File/schema/count/fingerprint completion is distinct from evidence coverage and does not activate a production Universe.
+
 CIK is filer identity, not security identity. Ticker and exchange are join evidence only. SIC and names cannot produce positive inclusion. Filing cutoff prevents future evidence from being applied historically. Conflicting or insufficient evidence remains quarantined.
 
 See [SEC Issuer-Structure Evidence](../architecture/sec-issuer-structure-evidence.md) for source-specific interpretation and persistence rules.

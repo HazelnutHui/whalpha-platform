@@ -28,6 +28,8 @@ Phase B1B persisted the official provider type catalog and point-in-time observa
 
 Phase B2A establishes a separate SEC issuer-structure evidence boundary. SEC filer identity, filing evidence, security identity, and Universe decisions remain distinct. CIK and ticker cannot independently create canonical security identity. Official fund/BDC datasets and effective-dated filing state machines may establish exclusions; cover-page facts may establish security form only after a consistent point-in-time identity join. Missing or conflicting evidence remains quarantined. This clarification does not activate Core/Broad or authorize a live SEC request.
 
+Phase B2B adds a bounded live-source implementation without changing activation status. Official source files are first streamed into an atomic source cache, then normalized into observation and canonical evidence datasets, and only a separate logical manifest marks the evidence snapshot completed. A source-discovery or quality failure cannot create that marker. The first authorized run stopped at the CSV discovery gate and published no evidence; Core/Broad activation remains deferred.
+
 ## Consequences
 
 - Classification facts no longer change Instrument Master V1 semantics.

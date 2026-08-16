@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Protocol
 
-from tip_api.contracts.security_classification.v1 import SecIssuerStructureEvidenceV1
+from tip_api.contracts.security_classification.v1 import SecIssuerEvidenceObservationV1, SecIssuerStructureEvidenceV1
 
 
 class SecIssuerEvidencePersistenceError(Exception):
@@ -30,7 +30,22 @@ class SecIssuerEvidenceWriteResult:
     status: Literal["published", "already_present"]
 
 
+@dataclass(frozen=True, slots=True)
+class SecIssuerEvidenceSnapshotWriteResult:
+    manifest_path: Path
+    logical_content_sha256: str
+    status: Literal["published", "already_present"]
+
+
 class SecIssuerEvidenceRepository(Protocol):
+    def publish_observations(
+        self,
+        records: tuple[SecIssuerEvidenceObservationV1, ...],
+        *,
+        as_of_date: object,
+        source_cache_manifest_sha256: str,
+    ) -> SecIssuerEvidenceWriteResult: ...
+
     def publish(
         self,
         records: tuple[SecIssuerStructureEvidenceV1, ...],

@@ -54,7 +54,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Privately configure the SEC-compliant User-Agent on `dell5820`, then separately review one bounded Phase B2B live evidence plan without switching the production Core/Broad Universe.
+Review and fixture-test the Phase B2B landing-page CSV discovery failure offline before authorizing any additional SEC request. Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 

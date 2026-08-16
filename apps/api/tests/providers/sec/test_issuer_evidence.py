@@ -95,6 +95,23 @@ def test_cik_cover_page_join_handles_multiple_securities_without_merging() -> No
     assert value is not None and value.instrument_id == ID_B
 
 
+def test_approved_cik_ticker_exchange_seed_resolves_without_ticker_only_join() -> None:
+    raw = fixture(
+        "company_tickers_exchange", share_class_figi=None,
+        allow_cik_ticker_exchange=True,
+    )
+    value = parse(raw, (identity(share=None, composite=None, provider_id=None),))
+    assert value is not None and value.instrument_id == ID_A
+    assert "cik_cover_ticker_exchange_join" in value.decision_reasons
+
+
+def test_current_reference_without_historical_date_never_backfills_classification() -> None:
+    value = parse(fixture("company_tickers_mf", historical_cutoff_supported=False))
+    assert value is not None and value.asserted_security_form is None
+    assert value.evidence_grade is SecEvidenceGrade.INSUFFICIENT
+    assert "historical_effective_date_unavailable" in value.quality_flags
+
+
 def test_ticker_reuse_is_point_in_time() -> None:
     records = (
         identity(effective_to=date(2025, 1, 1), share=None, composite=None, provider_id=None),

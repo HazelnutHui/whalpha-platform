@@ -77,10 +77,10 @@ class SecIdentityResolver:
                 break
 
         cover_matches: tuple[SecIdentityRecord, ...] = ()
-        if raw.get("source_dataset") == "inline_xbrl_cover":
+        if raw.get("source_dataset") == "inline_xbrl_cover" or raw.get("allow_cik_ticker_exchange") is True:
             cik = _normalize_cik(_raw_value(raw, "cik", "cik_str"))
-            ticker = _optional_text(_raw_value(raw, "TradingSymbol", "trading_symbol"), uppercase=True)
-            exchange = _optional_text(_raw_value(raw, "SecurityExchangeName", "security_exchange_name"), uppercase=True)
+            ticker = _optional_text(_raw_value(raw, "TradingSymbol", "trading_symbol", "ticker"), uppercase=True)
+            exchange = _optional_text(_raw_value(raw, "SecurityExchangeName", "security_exchange_name", "exchange"), uppercase=True)
             if cik and ticker and exchange:
                 cover_matches = tuple(
                     item for item in active
@@ -89,7 +89,7 @@ class SecIdentityResolver:
                 if not selected and len({item.instrument_id for item in cover_matches}) == 1:
                     selected, method = cover_matches, "cik_cover_ticker_exchange"
                 elif not selected and len({item.instrument_id for item in cover_matches}) > 1:
-                    return SecIdentityResolution(None, SecEvidenceResolutionStatus.AMBIGUOUS, "cik_cover_ticker_exchange", ("multiple_cover_page_candidates",))
+                    return SecIdentityResolution(None, SecEvidenceResolutionStatus.AMBIGUOUS, "cik_cover_ticker_exchange", ("multiple_cik_ticker_exchange_candidates",))
 
         if not selected:
             reason = "ticker_only_identity_forbidden" if _optional_text(raw.get("ticker"), uppercase=True) else "identity_evidence_missing"
@@ -281,6 +281,8 @@ def _interpret_assertion(raw: Mapping[str, Any], dataset: str) -> tuple[
     if dataset == "company_tickers_exchange":
         flags = ("sic_review_signal",) if raw.get("sic") else ()
         return None, None, None, SecEvidenceSubject.IDENTITY_REFERENCE, SecEvidenceGrade.CORROBORATING_REFERENCE, ("join_seed_only",), flags
+    if raw.get("historical_cutoff_supported") is False:
+        return None, None, None, SecEvidenceSubject.IDENTITY_REFERENCE, SecEvidenceGrade.INSUFFICIENT, ("current_reference_not_backfilled",), ("historical_effective_date_unavailable",)
     if dataset == "company_tickers_mf":
         return SecurityForm.FUND_SHARE, None, None, SecEvidenceSubject.FUND_STATUS, SecEvidenceGrade.AUTHORITATIVE_EXPLICIT, ("mutual_fund_dataset_presence",), ()
     if dataset == "n_cen":
