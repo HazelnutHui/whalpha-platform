@@ -55,3 +55,11 @@ The fifth run's schema `2.0` evidence supports one narrow filename contract: par
 An official-shape four-candidate fixture produces four CSV candidates, four allowlisted and cutoff-eligible candidates, zero rejected candidates, and exactly one selection: the 2026 release dated 2026-06-01. The 2025, 2024, and 2023 releases remain eligible but unselected, and reversing row order yields the same result. Source acquisition consumes only the returned selection, so historical CSVs are not download targets. This remediation changed no diagnostic schema or aggregate semantics.
 
 No live run was authorized or executed during this remediation. Credentials were not read or statted, `/data` and OCI were not accessed, and no snapshot, bundle, deployment, EOD, backfill, scheduling, Dashboard, or Universe work occurred. A future SEC request still requires separate explicit one-run authorization.
+
+## Sixth B2B Run
+
+The one separately authorized post-2023-remediation run started at `2026-08-16T09:30:12Z` and ended at `2026-08-16T09:30:18Z` with exit code 1. It used cutoff 2026-08-14, request ceiling 12, and zero retries. The two approved ticker-reference JSON resources passed staging validation. Request 3 reached Series/Class landing discovery; no other request followed.
+
+Schema `2.0` selected the unique second `File / Format / Size` table and scanned ten anchored rows. It recorded five CSV candidates: 2026 modern, 2025 modern, exact 2024 legacy, and exact 2023 underscore were accepted and cutoff-eligible; a fifth 2022 candidate used the modern directory with basename `investment_company_series_class_2022.csv` and failed `path_template_mismatch`. Counts were candidates 5, allowlisted 4, rejected 1, cutoff-eligible 4, and selected 0. The failure occurred before selection finalization, so the 2026 CSV was not downloaded and CEF, BDC, and submissions were not reached.
+
+The run failed closed, retained one sanitized diagnostic, removed its staging, and published no completed source cache, observation, canonical evidence, or logical manifest. The 34-file protected inventory remained byte-for-byte identical. No rule was changed, no second run occurred, and the 2022 path must be reviewed offline without inferring a general rule for earlier years.

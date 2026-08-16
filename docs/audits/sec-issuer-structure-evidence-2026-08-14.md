@@ -144,6 +144,35 @@ A synthetic official-shape landing with the observed 2026 modern, 2025 modern, 2
 
 No live SEC run was authorized or executed. Credential metadata/content, `/data`, Massive, OCI, snapshots, bundles, deployment, EOD, backfill, scheduling, Dashboard, and Universe activation were not accessed or changed.
 
+## Sixth Authorized Run — 2022 Candidate Discovery
+
+Status: `failed_source_discovery`; evidence publication: `not_published`; production Universe activation: `deferred`.
+
+The separately authorized run started at `2026-08-16T09:30:12Z` and ended at `2026-08-16T09:30:18Z` with exit code 1, cutoff 2026-08-14, request ceiling 12, and zero retries. It invoked the live entrypoint exactly once and made three SEC requests: one each for `company_tickers_exchange.json`, `company_tickers_mf.json`, and the Series/Class landing page. Both JSON sources passed staging format validation. No Series/Class CSV, CEF landing/CSV, BDC landing/CSV, or submissions archive was requested.
+
+Schema `2.0` selected the second `File / Format / Size` table and scanned ten anchored rows. Its five CSV candidate records were:
+
+| Candidate | Table | Row | Size | File year | Updated | Public SEC path | URL state | Selection state | Failure |
+| --- | --- | --- | --- | ---: | --- | --- | --- | --- | --- |
+| 1 | 2 | 3 | `7.68 MB` | 2026 | 2026-06-01 | `/files/investment/data/other/investment-company-series-class-information/investment-company-series-class-2026.csv` | accepted | `cutoff_eligible` | none |
+| 2 | 2 | 5 | `7.25 MB` | 2025 | 2025-06-02 | `/files/investment/data/other/investment-company-series-class-information/investment-company-series-class-2025.csv` | accepted | `cutoff_eligible` | none |
+| 3 | 2 | 7 | `7.21 MB` | 2024 | 2024-06-05 | `/files/investment/data/other/investment-company-series-and-class-information/investment-company-series-class-2024.csv` | accepted | `cutoff_eligible` | none |
+| 4 | 2 | 9 | `7.4 MB` | 2023 | 2023-06-08 | `/files/investment/data/other/investment-company-series-class-information/investment_company_series_class_2023.csv` | accepted | `cutoff_eligible` | none |
+| 5 | 2 | 11 | `7.55 MB` | 2022 | 2022-06-27 | `/files/investment/data/other/investment-company-series-and-class-information/investment_company_series_class_2022.csv` | rejected | `rejected` | `path_template_mismatch` |
+
+Every candidate had normalized Format `csv`, one anchor, and no query, fragment, or userinfo. Aggregate counts were candidate 5, allowlisted 4, rejected 1, cutoff-eligible 4, and selected 0. Because candidate 5 failed before selection finalization, no selected year/date/path was recorded and it would be incorrect to claim the 2026 CSV was selected or downloaded.
+
+- Sanitized diagnostic: `operation-diagnostics/sec-issuer-structure-evidence/as_of_date=2026-08-14/run_id=sec-b2b-2026-08-14-20260816T093016Z`
+- Diagnostic size: 5,674 bytes
+- Diagnostic SHA-256: `703daffbda0f590782a8dff0e627ba63e160c1269402636636139bc1388ce4cc`
+- Completed source cache, observation partition, canonical evidence partition, and logical completion manifest: absent before and after
+- Staging residue: zero; diagnostic run count increased from five to six
+- Protected inventory: 34 files, 12,942,699 bytes, unchanged digest `398d3c8eb8a986ffc34a7f2fe19c50961eca0d9ed52bd980da95217561333f17`
+- Existing identity, canonical EOD, and Massive evidence data: unchanged
+- Massive/OCI access, snapshot, bundle, deployment, EOD, backfill, scheduling, Dashboard work, and Universe activation: not performed
+
+The credential was only parsed inside the unique run by the existing loader after a regular-file, non-symlink, hui-owner, mode-600 metadata check. No credential or contact value was printed, copied, hashed, committed, or recorded. No rule was modified and no second run occurred.
+
 ## Current Next Gate
 
-Any attempt to continue the bounded SEC evidence publication now requires a new, explicit authorization for at most one live run. Do not infer a 2022-or-earlier path rule from the 2023 evidence, and keep Core/Broad activation deferred.
+Review the observed exact 2022 underscore-style Series/Class path offline. Do not infer a rule for 2021 or earlier and do not execute another live run without a new explicit authorization. Core/Broad activation remains deferred.

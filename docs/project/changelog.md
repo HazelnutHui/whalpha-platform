@@ -2,6 +2,10 @@
 
 ## 2026-08-16
 
+- Executed the separately authorized post-2023-remediation SEC entrypoint exactly once. The run used cutoff 2026-08-14, request ceiling 12, made three SEC requests and zero retries, accepted the 2026/2025 modern, exact 2024 legacy, and exact 2023 underscore Series/Class candidates, then failed closed on a fifth 2022 underscore basename with `path_template_mismatch`.
+- Schema `2.0` reported five candidates, four allowlisted/cutoff-eligible, one rejected, and zero selected. No CSV, CEF, BDC, or submissions request followed. The 2022 path was not approved, no rule was changed, and no second run occurred.
+- Published no SEC source cache, observation, canonical evidence, or logical manifest. Staging residue was zero, the 34-file protected inventory remained unchanged, and only the 5,674-byte sanitized diagnostic was retained. No Massive/OCI access, snapshot, bundle, deployment, EOD, backfill, scheduler, Dashboard, or Universe activation occurred.
+
 - Added one exact offline Series/Class filename contract based only on the fifth run's schema `2.0` evidence: the modern directory plus `investment_company_series_class_2023.csv` is accepted only for parsed file year 2023. No rule is inferred for 2022 or earlier, and underscore basenames for 2024 and later remain rejected.
 - Added a four-candidate official-shape fixture and regressions proving four allowlisted/cutoff-eligible candidates, zero rejected, exactly one deterministic 2026 selection, row-order independence, exact relative/absolute acceptance, URL-security rejection coverage, CEF/BDC isolation, duplicate stability, aggregate consistency, sentinel redaction, and zero external socket attempts.
 - Preserved the modern Series/Class template, exact 2024 legacy-directory rule, CEF/BDC paths, cutoff, live retry setting, generic SEC transport, diagnostic schema `2.0`, and candidate-derived aggregates. No live run, credential metadata/content access, `/data` or OCI access, snapshot/bundle, deployment, EOD, backfill, scheduler, Dashboard, or Universe work occurred.
