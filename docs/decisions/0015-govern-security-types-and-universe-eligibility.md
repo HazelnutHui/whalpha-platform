@@ -32,6 +32,8 @@ Phase B2B adds a bounded live-source implementation without changing activation 
 
 SEC landing-page version selection uses explicit table-row year, format, and effective/update date rather than HTML order or a hard-coded current URL. The latest candidate not later than the evidence cutoff is selected; ambiguous same-date URLs fail closed. This preserves point-in-time evidence semantics and does not alter the deferred production policy.
 
+After SEC B2 was paused, the completed Massive evidence was used offline for two explicitly provisional shadows: provider `CS` only, and `CS` plus a separately counted `ADRC` layer. This is a reversible audit application of the existing evidence hierarchy, not a new Core/Broad decision. Security-form classification and tradability filtering are separate; the latter uses the current one-session USD 5/USD 20M Decimal gates and must be labeled provisional. Provider `CS` cannot establish domicile or issuer structure, and known reviewed contradictions remain report-only until a completed reviewed-override dataset can be read and reconciled.
+
 ## Consequences
 
 - Classification facts no longer change Instrument Master V1 semantics.

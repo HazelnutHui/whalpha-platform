@@ -267,4 +267,14 @@ Postflight focused SEC/provider/contracts/persistence tests: `237 passed`; Healt
 
 ## Next Proposed Step
 
-Do not run SEC B2 again in the current product stage. Preserve the provisional Legacy Liquid Screen and continue with EOD history, trailing liquidity, sector taxonomy, and website functionality; Core/Broad activation remains deferred.
+## Provider-Classified Common-Share Shadow Audit
+
+The completed Massive evidence and 2026-08-13/14 EOD partitions were reread offline through their manifest/schema/count/fingerprint/hash gates. The inputs reconcile to 25 catalog types, 13,110 observations, 9,939 canonical evidence records, 3,171 expected-unjoined records, 9,939 identity instruments, and 9,901/9,912 EOD bars. No ambiguity, collision, malformed evidence, canonical conflict, orphan, or unknown canonical type was found.
+
+The non-production CS-only candidate has 4,193 form-classified instruments and 1,751 final members after the sequential one-session tradability filter. The separate CS+ADRC comparison has 4,565 classified and 1,864 final members, including exactly 113 ADRCs. Against Legacy 1,864, Candidate A retains 1,751/removes 113/adds 0; Candidate B retains 1,864/removes 0/adds 0. All hard gates passed. Provider classification still does not prove domicile or issuer structure; VCX is a known report-only contradiction because there is no completed reviewed-override dataset.
+
+Focused implementation tests: `20 passed`; focused provider/classification/persistence: `83 passed`; full backend: `763 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; frontend regression: `40 passed` across 5 files. Compileall, required imports, FastAPI/Health, all shell syntax, 84-file/207-link Markdown validation, sensitive scan, socket/credential sentinel, artifact scan, and `git diff --check` passed. The warnings are the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning; frontend emitted the existing Vite React-plugin configuration warnings. The task made zero network requests and credential accesses, read `/data` only, and changed no production dataset, API, frontend, Dashboard membership, snapshot, bundle, deployment, or Core/Broad state.
+
+## Next Proposed Step
+
+Keep SEC B2 paused and production Legacy unchanged. The next bounded work should expand completed EOD history and define a point-in-time trailing-liquidity audit before any production membership review; issuer-structure/domicile uncertainty and a formal reviewed-override dataset remain separate governance gaps.

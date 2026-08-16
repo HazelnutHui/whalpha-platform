@@ -126,3 +126,7 @@ Dashboard V1.1 displays the completed current session and a human-readable snaps
 - point-in-time sector/industry taxonomy
 - market capitalization source
 - traditional market-cap sector heatmap
+
+## Provider-Classified Shadow Status
+
+The production Legacy Liquid Screen remains unchanged. A separate [offline provider-classified audit](provider-classified-common-shares-v1.md) reports 1,751 CS-only members and a 1,864-member CS+ADRC comparison for 2026-08-14. ADRC is never folded into the CS-only candidate. The observed equality between the CS+ADRC shadow and Legacy is not an activation argument; provider form does not establish U.S. domicile or operating-company structure, and the liquidity gate uses only one previous session.

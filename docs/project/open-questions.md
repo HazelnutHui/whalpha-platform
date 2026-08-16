@@ -10,6 +10,8 @@
 - Core is selected as the future default and Broad as the secondary view; when can evidence coverage safely activate them?
 - Which point-in-time source will provide issuer structure, domicile/incorporation, ADR status, REIT subtype, BDC/CEF/SPAC status, and security form at sufficient coverage?
 - How should reviewed overrides be approved, versioned, and retired without backfilling current facts into history?
+- What completed, independently readable reviewed-override dataset contract should reconcile known contradictions such as VCX without embedding ticker exceptions in shadow code?
+- How many completed sessions and which point-in-time statistic should replace `one_session_liquidity_provisional` before any activation review?
 - Phase A candidates (Core 0, Broad 1) are evidence-limited and are not realistic market-universe estimates.
 - The four failed-run ambiguities are resolved, and the corrected bounded run published 9,939 canonical evidence records with zero ambiguity/collision/conflict. The remaining governance gap is authoritative issuer structure and domicile, not provider identity linkage.
 

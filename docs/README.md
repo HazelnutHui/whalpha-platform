@@ -112,3 +112,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Roadmap](project/roadmap.md): Proposed sequencing without date commitments.
 - [Open Questions](project/open-questions.md): Decisions still required.
 - [Changelog](project/changelog.md): Meaningful project-level changes.
+
+## Universe Shadow Audits
+
+- [Provider-Classified Common Shares V1](product/provider-classified-common-shares-v1.md): Non-production CS-only and CS+ADRC definitions.
+- [2026-08-14 Provider-Classified Audit](audits/provider-classified-common-shares-2026-08-14.md): Validated inputs, type distributions, funnels, Legacy comparison, edge records, and hard gates.
