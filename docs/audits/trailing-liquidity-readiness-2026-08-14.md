@@ -7,11 +7,11 @@
 - Previous/liquidity cutoff: 2026-08-13
 - Window: 2026-07-17 through 2026-08-13
 - Expected sessions: 2026-07-17, 07-20, 07-21, 07-22, 07-23, 07-24, 07-27, 07-28, 07-29, 07-30, 07-31, 08-03, 08-04, 08-05, 08-06, 08-07, 08-10, 08-11, 08-12, 08-13
-- Completed in window: 2026-07-17, 2026-07-20, 2026-07-21, 2026-07-22, 2026-07-23, 2026-07-24, 2026-07-27, 2026-07-28, 2026-07-29, 2026-07-30, 2026-07-31, 2026-08-03, 2026-08-04, 2026-08-05, 2026-08-06, 2026-08-07, 2026-08-12, 2026-08-13
-- Missing: 2 (2026-08-10, 08-11)
+- Completed in window: all 20 expected sessions
+- Missing: 0
 - Corrupt/unavailable: 0
-- Readiness: `insufficient_history`
-- Descriptor fingerprint: `b3bc186afba9320d52fb4ba99a9639f4a9fc35d5a52d7cc1f97ffcebe22eb1e2`
+- Readiness: `ready`
+- Descriptor fingerprint: `c403e32f323a80ad3ce77add6969373ef7b14920b53709c4c673d704d4d5d37c`
 
 The completed 2026-08-14 partition exists for return analytics but is excluded from this window.
 
@@ -35,6 +35,8 @@ The completed 2026-08-14 partition exists for return analytics but is excluded f
 | 2026-08-05 | 9,869 | `3f8a37fa6e171566f7baa5e8c7ea9e846a04af7ee37cf64a5e25df3e85bcfca5` | `6043cb59db04d09594bf002175b141ef52351c26f688d570da18d74999a187bd` | 2026-08-05 | `a6d6d4f44826063edc3c3cadcc431ddfab7c98dcb8b13c77bcb7564f8eee6bb3` |
 | 2026-08-06 | 9,875 | `04ca5378d5b944f5501e2466ef2e0d740ed9e73851ba6c25e55b344437b29822` | `3c0dbd4f71d7eaac73b1bde363004c90fcefced68015c8e90bc3dc7f3ff95bc6` | 2026-08-06 | `0cf49f3234c686c1916bbc38885ee0b08a971139db55a9611acc40297850a2b9` |
 | 2026-08-07 | 9,877 | `3dd0f45cf3cdd2116e6f090f0ed2f1cf822d150b8fc2269e3444848f8ea66af0` | `d09d440260a3c2ec711cf1902e7659d63cbceef4d1f6eb2d6f311df047896e59` | 2026-08-07 | `23426651b603fb78ea7399b0cc1ae7f086ccf1cb26fa56e518ab93678f7ba644` |
+| 2026-08-10 | 9,892 | `02b557b24c9afbae0714e406ee8b8c2c6bc8c187b2edbec2981d01e059f086ca` | `30ae1c52ef14d44812f7667ab4066f418ded15b8b4fda9892d908358e3e0b2da` | 2026-08-10 | `99f2cf9ce0f34644800b3ce2462937221200d26606b1d28217491bdd7c658d6c` |
+| 2026-08-11 | 9,885 | `55b55ff32340ea65376d8ab4d31c649432a5943c4cd5313c9883fa109aae9dd6` | `0d6e045eb5842c3af837f0840431484adcf9546fb5eb730093e5e5828c96bdaa` | 2026-08-11 | `46b374bcb7c17e6582eef737a965e3021f4ab0692608e18d5d1d98ebd2102926` |
 | 2026-08-12 | 9,900 | `dee4299a4c662af6eb5853aff30af7f261727e57c9de4489cc558441a8638bd3` | `924ae001fea34ec6f82aeca252adbacf176e50818a13dc51053807fdeb5b9aa1` | 2026-08-12 | `ab208fa5c0e2116d818a22c28d369324325b69d9ba05acd29da0028611cf872f` |
 | 2026-08-13 | 9,901 | `aace64323774e1e91cc3f4dbbb8cd47923cdcc8df495216750a992cc2d9b8f1e` | `e2b7e6b0e79a627a2049e5aff16c98b770579afa8cc8791e2d7514bef05a9481` | 2026-08-13 | `2f4fe6a6c7266fea960449fedc98804b15ae72a65abed4632e8dde2ac4624f95` |
 
@@ -44,27 +46,27 @@ Future identity references, duplicate instrument/session rows, and multiple/non-
 
 | Metric | Candidate A: 1,751 CS | Candidate B: 1,864 CS+ADRC |
 | --- | ---: | ---: |
-| 20/20 | 0 | 0 |
-| 19/20 | 0 | 0 |
-| 18 observations | 1,742 | 1,854 |
-| 17 observations | 1 | 2 |
-| 16 observations | 1 | 1 |
-| 11 observations | 1 | 1 |
-| 9 observations | 2 | 2 |
-| 8 observations | 2 | 2 |
-| 2 observations | 1 | 1 |
+| 20/20 | 1,742 | 1,854 |
+| 19/20 | 1 | 2 |
+| 18 observations | 1 | 1 |
+| 13 observations | 1 | 1 |
+| 11 observations | 2 | 2 |
+| 10 observations | 2 | 2 |
+| 4 observations | 1 | 1 |
 | 1 observation | 1 | 1 |
 | Missing previous bar | 0 | 0 |
 | Previous price gate pass/fail | 1,751 / 0 | 1,864 / 0 |
-| Insufficient history | 1,751 | 1,864 |
+| Insufficient history | 9 | 10 |
 | Zero-volume observations | 0 | 0 |
-| Fractional-volume observations | 31,434 | 33,463 |
-| Non-null 20-session median | 0 | 0 |
+| Fractional-volume observations | 34,934 | 37,189 |
+| Non-null 20-session median | 1,742 | 1,854 |
+| Below liquidity threshold | 103 | 110 |
+| Passed price and liquidity gates | 1,639 | 1,744 |
 
-Candidate A coverage fingerprint: `9f41883d64c0e3b0b99c13ced25131fb312665e8bb3f45a3ccbb055f25de4885`. Candidate B: `382e779aea1e62cfc253bac993a023f30229e52c3196e03f928d0f5f3d906b51`.
+Candidate A coverage fingerprint: `1a927a90bd1a57b12067a2ba909bdd53984038159ddd65c04665740617650da2`. Candidate B: `f937d9e6d3c689de994628fda486754d7e6444281f58b34249638121ae3fe266`.
 
 ## Planning Result and Boundaries
 
-The successful fifth three-session batch leaves two missing EOD sessions, each requiring same-day identity/resolver acquisition. The updated planning estimate is 30–42 requests, with conservative ceiling 42 and one separately authorized final batch. Plan fingerprint: `ae0f1baea4636b1cbb16fd65316733429fecbca718f7b915ceb9c3e28bf6e1c4`.
+The completed final batch leaves no missing acquisition session. The planning request range and conservative ceiling are both zero; plan fingerprint: `82c102a4893b2a12009a9cc952c71090ac85dc5a26afeda107331439c86dece6`.
 
-The pilot and first five batches added only their authorized same-day identity and EOD partitions. No trailing-liquidity dataset or Dashboard result was created; readiness remains `insufficient_history`, and the analysis-day bar remains excluded.
+The analysis-day bar remains excluded. Existing Decimal logic computed medians only for instruments with complete 20/20 observations; incomplete instruments remain fail-closed. There is no reviewed production publisher for these results, so no derived dataset, Dashboard result, or Universe activation was created.
