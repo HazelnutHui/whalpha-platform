@@ -271,6 +271,12 @@ The separately authorized pilot completed successfully. Instrument Master ran on
 
 The original 34-file protected inventory is unchanged. Nine authorized files were added for the three identity datasets, identity logical manifest, and EOD partition. No raw payload was retained. Only Massive reference tickers and the 2026-07-17 grouped endpoint were reached; no SEC, OCI, later date, scheduler, API/frontend, Dashboard, snapshot/bundle, deployment, or Universe operation occurred. Final classification: `completed_single_session_pilot`.
 
+## First Three-Session EOD Backfill Batch
+
+The separately authorized 2026-07-20 through 2026-07-22 batch completed in strict date order. Each same-day identity entrypoint ran once with 14 reference pages, passed formal snapshot reread, and was followed after at least 15 seconds by one adjusted=false Grouped Daily request. All six entrypoints exited 0 with zero retries. Canonical identity/resolver counts were 9,880, 9,879, and 9,879; canonical EOD counts were 9,858, 9,846, and 9,847.
+
+Every partition passed existing quality, schema, count, ordering, fingerprint, physical-hash, same-day identity-reference, formal-reader, atomic-publication, and staging-cleanup gates. The original 43-file inventory remained content- and metadata-identical; exactly 27 authorized files were added. No raw payload, later date, SEC/OCI request, scheduler, Dashboard/API/frontend, snapshot/bundle, deployment, or Universe activation occurred. Final classification: `completed_three_session_batch`.
+
 ## Provider-Classified Common-Share Shadow Audit
 
 The completed Massive evidence and 2026-08-13/14 EOD partitions were reread offline through their manifest/schema/count/fingerprint/hash gates. The inputs reconcile to 25 catalog types, 13,110 observations, 9,939 canonical evidence records, 3,171 expected-unjoined records, 9,939 identity instruments, and 9,901/9,912 EOD bars. No ambiguity, collision, malformed evidence, canonical conflict, orphan, or unknown canonical type was found.
@@ -283,12 +289,12 @@ Focused implementation tests: `20 passed`; focused provider/classification/persi
 
 The provider-neutral offline boundary now supports explicit multi-session canonical reads, 20-session XNYS window planning, exact Decimal median dollar-volume calculations, readiness auditing, and planning-only same-day-identity backfill batches. It implements only `current_as_of_constituent_liquidity`; `point_in_time_historical_panel` remains defined but unimplemented.
 
-For analysis session 2026-08-14, exchange-calendars 4.13.2 computed 20 sessions from 2026-07-17 through 2026-08-13. Sessions 07-17, 08-12, and 08-13 are completed; 17 are missing and none corrupt. Candidate A observation counts are 1,743 at three sessions, seven at two, and one at one; Candidate B counts are 1,856, seven, and one. All 1,751/1,864 results remain `insufficient_history`; 20/20, 19/20, missing-previous, zero-volume, and emitted median counts are zero. No current-day bar entered the window.
+For analysis session 2026-08-14, exchange-calendars 4.13.2 computed 20 sessions from 2026-07-17 through 2026-08-13. Sessions 07-17, 07-20, 07-21, 07-22, 08-12, and 08-13 are completed; 14 are missing and none corrupt. Candidate A observation counts are 1,743 at six sessions, one at four, six at two, and one at one; Candidate B counts are 1,856, one, six, and one. All 1,751/1,864 results remain `insufficient_history`; 20/20, 19/20, missing-previous, zero-volume, and emitted median counts are zero. No current-day bar entered the window.
 
-The remaining planning-only gap is 17 same-day identity/resolver snapshots plus 17 Grouped Daily sessions: approximately 255 requests and conservative ceiling 357, with zero retries, fixed 15-second spacing, and six possible batches of at most three. No later date or batch is authorized.
+The remaining planning-only gap is 14 same-day identity/resolver snapshots plus 14 Grouped Daily sessions: approximately 210 requests and conservative ceiling 294, with zero retries, fixed 15-second spacing, and five possible batches of at most three. No later date or batch is authorized.
 
 Offline verification: focused history/calendar/persistence `43 passed`; provider/contracts/persistence/API/snapshot regression `271 passed`, one existing Starlette warning; full backend `784 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; frontend regression `40 passed` across 5 files. Compileall, required imports, FastAPI/Health, shell syntax, Markdown links, sensitive scan, socket/credential sentinel, artifact and listener/process checks, and `git diff --check` passed. Backend warnings remain the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning; frontend emitted only the existing Vite React-plugin configuration warnings.
 
 ## Next Proposed Step
 
-Keep SEC B2 paused, Legacy production membership unchanged, and the 20-session readiness at `insufficient_history`. Manually review the completed pilot before separately deciding whether to authorize a first chronological batch of at most three sessions; no batch is implied by the pilot result.
+Keep SEC B2 paused, Legacy production membership unchanged, and the 20-session readiness at `insufficient_history`. Manually review the completed first batch before separately deciding whether to authorize the next chronological batch of at most three sessions; no later batch is implied by this result.

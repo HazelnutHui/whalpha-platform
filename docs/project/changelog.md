@@ -2,6 +2,11 @@
 
 ## 2026-08-16
 
+- Completed the separately authorized first three-session Massive backfill batch for 2026-07-20, 07-21, and 07-22 in strict order. Each Instrument Master entrypoint ran once with 14 reference pages, and each same-day Grouped Daily entrypoint ran once with adjusted=false; all six exited 0 with zero retries and at least 15 seconds between adjacent live entrypoints.
+- Published and formally reread three same-day identity snapshots with 9,880/9,879/9,879 canonical instruments and three canonical EOD partitions with 9,858/9,846/9,847 bars. Existing quality, schema, count, ordering, fingerprint, physical-hash, identity-reference, atomic-publication, and staging-cleanup gates all passed.
+- The original 43-file protected inventory remained content- and metadata-identical; exactly 27 authorized files were added, yielding 70 files and digest `b2537a2d3627f1915c38540ea7af32a93b960a8c826ef1913151c426ae169fe3`. The history window now has six completed and 14 missing sessions, remains `insufficient_history`, and emits no 20-session median.
+- Reached only the authorized Massive reference and three Grouped Daily endpoints: 45 requests total, zero retries. No SEC/OCI/other service, later session, scheduler, API/frontend, Dashboard, snapshot/bundle, deployment, or Universe activation occurred. Final state: `completed_three_session_batch`.
+
 - Completed the separately authorized 2026-07-17 single-session Massive backfill pilot. The Instrument Master entrypoint ran once with 14 reference pages and zero retries, then the Grouped Daily entrypoint ran once after a 52-second interval with one adjusted=false request and zero retries.
 - Published and formally reread the same-day identity snapshot (13,024 observations, 9,879 canonical instruments/resolver entries) and canonical EOD partition (9,844 bars). Existing schemas, quality gates, fingerprints, Parquet hashes, identity references, atomic publication, and staging cleanup all passed; raw provider payload was not retained.
 - The original 34-file protected inventory remained content- and metadata-identical; nine authorized identity/EOD files were added. The 20-session window now has three completed and 17 missing sessions, remains `insufficient_history`, and emits no 20-session median.
