@@ -390,7 +390,7 @@ if ss -ltn sport = :8010 | awk 'NR>1 {print $4}' | grep -vE '^(127\.0\.0\.1|\[::
 fi
 (cd "${release_dir}" && sha256sum -c checksums.sha256 >/dev/null)
 echo "apply=ok"
-echo "deployment_status=deployed_pending_manual_password_rotation_and_login_verification"
+echo "deployment_status=deployed_pending_manual_authenticated_visual_verification"
 trap - EXIT
 rm -rf "${extract_dir}"
 rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}"

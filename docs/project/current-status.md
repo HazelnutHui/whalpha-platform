@@ -7,7 +7,7 @@ Status date: 2026-08-16
 - Product policy selected: Core U.S. Domestic Operating Equities future default; Broad U.S.-Listed Operating Equities future secondary; production activation deferred.
 - Published the completed 2026-08-14 provider security evidence snapshot: 25 catalog types, 13,110 observations, 9,939 canonical evidence records, and a verified logical completion marker. The corrected run used 15 requests and zero retries.
 - Implemented Provider Security Type Catalog V1, Provider Security Observation V1, Canonical Provider Instrument Security Evidence V1, bounded Massive ingestion, logical completion, and atomic Parquet persistence with no canonical dataset mutation.
-- Implemented a provisional Dashboard disclosure and governance metadata without changing the 1,864-member calculations; deployment is pending the clean-source release step.
+- Deployed the provisional Dashboard disclosure and governance metadata without changing the 1,864-member calculations.
 - The first Phase B1 live attempt used 15 requests and zero retries, reconciled 13,110 raw records, but failed ambiguous and mapped-business-key gates. No evidence partition, snapshot, or OCI release was published.
 - Phase B1A read-only reconciliation confirmed two duplicate-ticker groups, `BCPC` and `TPC`. Each combines one stable-ID resolved observation with one identifier-free excluded observation; old ticker fallback caused the four false ambiguous observations.
 - Provider observations are now separate from canonical evidence. The corrected offline identity result is 9,939 canonical-mapped, 3,171 expected-unjoined, zero stable collision/ticker ambiguity, and linkage 9,939/9,939.
@@ -172,6 +172,7 @@ Status date: 2026-08-16
 - The single authorized 2026-08-14 Grouped Daily request used `adjusted=false`, made no retry, passed all hard gates, and published 9,912 bars with fingerprint `f08033f26d920cc32ce4c12417521a57f45835c316994aae66c1a7da2a8501d2`.
 - The deployed private snapshot uses current 2026-08-14, previous 2026-08-13, expected and actual latest session 2026-08-14, lag zero, and freshness `fresh`.
 - OCI release `2026-08-14T224306Z-21d0e7fda749` is deployed from source commit `21d0e7fda749e3afec7edc9a884eb6408663004f`; unauthenticated public/private boundaries and remote checksums passed.
+- OCI release `2026-08-14T020535Z-ebb16015b7da` is deployed from clean source commit `ebb16015b7da259e68033ca442544def5a300d63`. It exposes the provisional legacy-universe disclosure while preserving the 1,864-member calculations; unauthenticated boundaries, checksums, services, and listeners passed. Authenticated visual acceptance of the disclosure remains manual.
 
 ## Next Proposed Step
 

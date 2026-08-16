@@ -6,6 +6,8 @@ Phase A does not change the Dashboard. A future Phase B must make Market Pulse, 
 
 The V1.3 response labels unchanged legacy calculations as provisional and carries `universe_definition_id`, `universe_version`, `governance_status`, `classification_as_of_date`, and `evidence_coverage_status`. The UI displays an amber `Provisional classification` state and a material evidence warning. Published provider security-form evidence does not connect Core/Broad candidates to metrics or remove the issuer-structure limitation.
 
+Release `2026-08-14T020535Z-ebb16015b7da` deploys this disclosure with the prior 1,864-member summary, movers, and Trading Activity Map payloads unchanged. Authenticated visual confirmation remains a user-run check because automated deployment does not use the user's password.
+
 ## Purpose
 
 Market Dashboard V1 is the first React dashboard for the private provider-backed market summary APIs. Dashboard V1.1 adds a professional default universe and separates operating-equity market structure from ETF benchmark performance.
