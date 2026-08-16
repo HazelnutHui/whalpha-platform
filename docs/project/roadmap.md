@@ -54,7 +54,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review and fixture-test the Phase B2B landing-page CSV discovery failure offline before authorizing any additional SEC request. Core/Broad activation remains deferred.
+Execute the separately authorized single Phase B2B run with dated-table CSV selection and review its shadow evidence results. Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 

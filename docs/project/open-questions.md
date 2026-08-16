@@ -2,7 +2,7 @@
 
 ## Security Type Governance
 
-- How should each approved SEC landing page identify its single current CSV without relying on ambiguous link cardinality or unreviewed filename heuristics?
+- What authoritative issuer/domicile evidence coverage threshold should eventually gate Core/Broad production activation after Phase B2B evidence is reviewed?
 - Which bounded SEC bulk sources and quality gates should be authorized for Phase B2B after private User-Agent provisioning?
 - What authoritative evidence will close remaining domicile, REIT subtype, SPAC, partnership, and security-to-filer gaps without ticker-only joins?
 

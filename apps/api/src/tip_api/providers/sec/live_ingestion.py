@@ -301,6 +301,12 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(f"request_count={transport.request_count}")
         print(f"retry_count={transport.retry_count}")
+        for source_name, selection in cache.csv_selections:
+            print(f"{source_name}_csv_dataset_year={selection.dataset_year}")
+            print(f"{source_name}_csv_effective_date={selection.effective_date.isoformat()}")
+            print(f"{source_name}_csv_total_candidates={selection.total_csv_candidate_count}")
+            print(f"{source_name}_csv_eligible_candidates={selection.eligible_count}")
+            print(f"{source_name}_csv_future_candidates={selection.future_dated_count}")
         for key, value in result.safe_summary().items():
             print(f"{key}={value}")
         print(f"source_cache_status={cache.status}")

@@ -6,6 +6,7 @@ Status date: 2026-08-16
 
 - Implemented Phase B2B bounded SEC transport, atomic source-cache safeguards, safe ZIP selection, normalized observation persistence, canonical evidence persistence, and logical completion contracts with deterministic offline tests.
 - The first authorized B2B run made three requests and zero retries, then failed closed because the first SEC landing page did not yield exactly one official CSV candidate. No source cache or evidence dataset was published; production Universe, Dashboard, and OCI remain unchanged.
+- Replaced the invalid single-link assumption with an offline-tested dated-table selector that ignores XML, filters future releases, rejects ambiguous or unsafe candidates, and records deterministic selection statistics. A new live run still requires explicit one-run authorization.
 
 - Completed Security Evidence Phase B2A offline: SEC issuer-evidence observation/canonical contracts, point-in-time filing interpretation, stable-identity reconciliation, deterministic Core/Broad rules, secure private User-Agent configuration tooling, transport policy, and tmp-only Parquet persistence tests.
 - Phase B2A made zero SEC/Massive requests, configured no real User-Agent, wrote no production `/data`, changed no Dashboard calculations, generated no snapshot, and performed no OCI deployment. Core/Broad production activation remains deferred.
@@ -182,4 +183,4 @@ Status date: 2026-08-16
 
 ## Next Proposed Step
 
-Review and fixture-test the retained `failed_source_discovery` diagnostic and official-CSV selection rule offline before authorizing any additional SEC request.
+Execute the separately authorized single Phase B2B run using the reviewed dated-table selector; activate no production Universe regardless of evidence coverage.

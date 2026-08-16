@@ -15,3 +15,9 @@ Failed operations write only a sanitized diagnostic under `operation-diagnostics
 ## First B2B Run
 
 The 2026-08-16 UTC operation made three requests and zero retries. Both ticker-reference JSON files passed format validation. The first CSV landing page response did not produce exactly one allowlisted official CSV candidate, so source acquisition failed closed. Staging was removed; no source cache, observation partition, canonical evidence partition, or logical completion marker was published. See the [audit](../audits/sec-issuer-structure-evidence-2026-08-14.md).
+
+## Dated CSV Selection
+
+The original global “exactly one CSV link” rule was incorrect because SEC data tables retain multiple yearly CSV and XML releases. The corrected selector parses download-table rows and requires an explicit dataset year, update/effective date, format, and href. It accepts the documented SEC date formats, rejects future-dated versions relative to the evidence cutoff, and selects the maximum eligible date independently of HTML order. A tie between distinct canonical URLs is an error. HTTP, external-host, script/data, traversal, fragment, query, userinfo, or non-`/files/` CSV paths are rejected.
+
+The source-cache manifest records total, eligible, and future CSV candidate counts plus the selected dataset year, effective date, canonical URL, file hash, and size. It never records the private User-Agent or contact address.

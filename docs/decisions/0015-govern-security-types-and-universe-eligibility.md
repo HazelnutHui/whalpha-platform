@@ -30,6 +30,8 @@ Phase B2A establishes a separate SEC issuer-structure evidence boundary. SEC fil
 
 Phase B2B adds a bounded live-source implementation without changing activation status. Official source files are first streamed into an atomic source cache, then normalized into observation and canonical evidence datasets, and only a separate logical manifest marks the evidence snapshot completed. A source-discovery or quality failure cannot create that marker. The first authorized run stopped at the CSV discovery gate and published no evidence; Core/Broad activation remains deferred.
 
+SEC landing-page version selection uses explicit table-row year, format, and effective/update date rather than HTML order or a hard-coded current URL. The latest candidate not later than the evidence cutoff is selected; ambiguous same-date URLs fail closed. This preserves point-in-time evidence semantics and does not alter the deferred production policy.
+
 ## Consequences
 
 - Classification facts no longer change Instrument Master V1 semantics.

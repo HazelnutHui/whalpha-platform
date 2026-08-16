@@ -22,3 +22,7 @@ No source hash is reported because the cache was not completed and staged files 
 ## Next Gate
 
 Review the landing-page CSV discovery contract offline using a small sanitized official-shape fixture or an explicitly reviewed URL-selection rule before considering any additional SEC request. A new request requires separate authorization.
+
+## Offline Remediation
+
+The discovery contract now parses the SEC download table by row, filters explicit CSV rows by update/effective date at or before 2026-08-14, and deterministically selects the latest eligible release. Local fixtures cover multi-year tables, mixed XML/CSV rows, future releases, date formats, tied latest URLs, missing/malformed dates, unsafe URLs, absent CSVs, deterministic statistics, and the three approved table header variants. This remediation does not itself alter the failed-run record or authorize production activation.
