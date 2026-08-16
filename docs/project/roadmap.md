@@ -52,11 +52,12 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Corrected Phase B1 provider security-type evidence publication and provisional universe disclosure source
 - [x] Offline SEC issuer-structure evidence boundary, private User-Agent tool, fixture state machines, and tmp-only persistence
 - [x] Bounded SEC live transport, source-cache/evidence publication boundaries, two-stage selected-source discovery gate, and diagnostic schema `3.0` with historical schema `2.0` audit compatibility
+- [x] Exact nine-artifact private SEC source-cache reconciliation and hardened submissions ZIP validation
 - [ ] Successful SEC issuer-structure evidence publication and Core/Broad activation review
 
 ## Next Small Target
 
-Review the offline selected-source gate and schema `3.0` contract. The 2022 path remains outside the allowlist and no 2021-or-earlier rule is inferred. Do not issue a bounded live SEC validation without separate authorization; successful SEC evidence publication and Core/Broad activation remain deferred.
+Review the completed offline selected-source, nine-artifact source-cache, and submissions ZIP safety contracts. The 2022 path remains outside the allowlist and no 2021-or-earlier rule is inferred. Do not issue a bounded live SEC validation without separate authorization; successful SEC evidence publication and Core/Broad activation remain deferred.
 
 ## Phase 2 — Intraday and Options
 

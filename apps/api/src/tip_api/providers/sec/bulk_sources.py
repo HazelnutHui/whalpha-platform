@@ -8,6 +8,8 @@ import json
 import os
 import re
 import shutil
+import stat
+import unicodedata
 import zipfile
 from dataclasses import asdict, dataclass, replace
 from datetime import UTC, date, datetime
@@ -62,16 +64,31 @@ MAX_SUBMISSIONS_ZIP_BYTES = 8 * 1024 * 1024 * 1024
 MAX_ZIP_MEMBERS = 1_000_000
 MAX_ZIP_MEMBER_BYTES = 64 * 1024 * 1024
 MAX_ZIP_TOTAL_UNCOMPRESSED = 64 * 1024 * 1024 * 1024
+MAX_ZIP_COMPRESSION_RATIO = 200
+ZIP_READ_CHUNK_BYTES = 1024 * 1024
+SOURCE_CACHE_ARTIFACTS = {
+    "company_tickers_exchange.json": "official_ticker_json",
+    "company_tickers_mf.json": "official_ticker_json",
+    "investment_company_series_class.landing.html": "official_landing_html",
+    "investment_company_series_class.csv": "selected_csv",
+    "closed_end_fund.landing.html": "official_landing_html",
+    "closed_end_fund.csv": "selected_csv",
+    "business_development_company.landing.html": "official_landing_html",
+    "business_development_company.csv": "selected_csv",
+    "submissions.zip": "submissions_zip",
+}
+SUBMISSIONS_MEMBER_PATTERN = re.compile(r"CIK(?P<cik>[0-9]{10})\.json\Z")
 
 
 @dataclass(frozen=True, slots=True)
 class SecCachedSource:
     source_name: str
+    artifact_role: str
     url: str
     file_name: str
     observed_at: str
     content_type: str
-    compressed_size: int
+    byte_size: int
     sha256: str
     dataset_year: int | None = None
     effective_date: str | None = None
@@ -359,19 +376,21 @@ def acquire_sec_source_cache(
     selections: dict[str, SecCsvSelection] = {}
     try:
         staging.mkdir(mode=0o750)
-        _download(transport, config, COMPANY_EXCHANGE_URL, staging / "company_tickers_exchange.json", "company_tickers_exchange", observed_at, MAX_SMALL_SOURCE_BYTES, sources)
+        _download(transport, config, COMPANY_EXCHANGE_URL, staging / "company_tickers_exchange.json", "company_tickers_exchange", "official_ticker_json", observed_at, MAX_SMALL_SOURCE_BYTES, sources)
         _validate_tabular_json(staging / "company_tickers_exchange.json")
-        _download(transport, config, COMPANY_MF_URL, staging / "company_tickers_mf.json", "company_tickers_mf", observed_at, MAX_SMALL_SOURCE_BYTES, sources)
+        _download(transport, config, COMPANY_MF_URL, staging / "company_tickers_mf.json", "company_tickers_mf", "official_ticker_json", observed_at, MAX_SMALL_SOURCE_BYTES, sources)
         _validate_tabular_json(staging / "company_tickers_mf.json")
         for source_name, landing_url in LANDING_PAGES.items():
             landing_file = staging / f"{source_name}.landing.html"
-            _download(transport, config, landing_url, landing_file, f"{source_name}_landing", observed_at, MAX_SMALL_SOURCE_BYTES, sources)
+            landing = _download(transport, config, landing_url, landing_file, f"{source_name}_landing", "official_landing_html", observed_at, MAX_SMALL_SOURCE_BYTES, sources)
+            _validate_landing_response(landing)
             selection = select_dated_official_csv(
                 source_name,
                 landing_url,
                 landing_file.read_text(encoding="utf-8", errors="strict"),
                 evidence_cutoff=as_of_date,
             )
+            _validate_landing_selection(selection)
             selections[source_name] = selection
             csv_file = staging / f"{source_name}.csv"
             downloaded = download_selected_csv(
@@ -379,9 +398,10 @@ def acquire_sec_source_cache(
             )
             validate_selected_csv_response(selection, downloaded.content_type, csv_file)
         submissions = staging / "submissions.zip"
-        _download(transport, config, SUBMISSIONS_URL, submissions, "submissions", observed_at, MAX_SUBMISSIONS_ZIP_BYTES, sources)
+        _download(transport, config, SUBMISSIONS_URL, submissions, "submissions", "submissions_zip", observed_at, MAX_SUBMISSIONS_ZIP_BYTES, sources)
         validate_submissions_zip(submissions)
-        manifest = {
+        _validate_source_cache_artifacts(staging, sources)
+        manifest = json.loads(json.dumps({
             "schema_version": "1.0",
             "dataset_name": "sec-security-classification-source-cache",
             "completion_status": "completed",
@@ -389,6 +409,7 @@ def acquire_sec_source_cache(
             "observed_at": observed_at.astimezone(UTC).isoformat(),
             "request_count": transport.request_count,
             "retry_count": transport.retry_count,
+            "artifact_count": len(SOURCE_CACHE_ARTIFACTS),
             "csv_selections": {
                 name: {
                     "selected_url": selection.url,
@@ -403,10 +424,11 @@ def acquire_sec_source_cache(
                 for name, selection in sorted(selections.items())
             },
             "sources": [asdict(item) for item in sorted(sources, key=lambda item: item.source_name)],
-        }
+        }, sort_keys=True))
         _write_json(staging / "manifest.json", manifest)
         if json.loads((staging / "manifest.json").read_text(encoding="utf-8")) != manifest:
             raise SecTransportError("SEC source cache manifest reread mismatch")
+        _validate_completed_source_cache_staging(staging, manifest)
         staging.replace(partition)
         return SecSourceCacheResult(
             partition, tuple(sorted(sources, key=lambda item: item.source_name)),
@@ -425,6 +447,7 @@ def _download(
     url: str,
     target: Path,
     source_name: str,
+    artifact_role: str,
     observed_at: datetime,
     max_bytes: int,
     output: list[SecCachedSource],
@@ -432,13 +455,79 @@ def _download(
     effective_date: date | None = None,
 ) -> SecCachedSource:
     result = transport.download(url, target, user_agent=config.user_agent, timeout_seconds=config.request_timeout_seconds, max_bytes=max_bytes)
+    if result.url != url:
+        raise SecTransportError("SEC download result URL mismatch")
     cached = SecCachedSource(
-        source_name, result.url, target.name, observed_at.astimezone(UTC).isoformat(),
+        source_name, artifact_role, result.url, target.name, observed_at.astimezone(UTC).isoformat(),
         result.content_type, result.byte_count, result.sha256, dataset_year,
         effective_date.isoformat() if effective_date else None,
     )
     output.append(cached)
     return cached
+
+
+def _validate_landing_response(source: SecCachedSource) -> None:
+    if source.content_type not in {"text/html", "application/xhtml+xml"}:
+        raise SecTransportError("SEC landing response content type is invalid")
+    if source.byte_size <= 0 or source.byte_size > MAX_SMALL_SOURCE_BYTES:
+        raise SecTransportError("SEC landing response size is invalid")
+
+
+def _validate_landing_selection(selection: SecCsvSelection) -> None:
+    diagnostic = selection.diagnostic
+    if (
+        diagnostic.normalized_header_signature != ("file", "format", "size")
+        or diagnostic.table_count < 1
+        or diagnostic.rows_scanned < 1
+        or diagnostic.csv_candidate_count < 1
+    ):
+        raise SecTransportError("SEC landing response table signature is invalid")
+
+
+def _validate_source_cache_artifacts(
+    staging: Path,
+    sources: list[SecCachedSource],
+) -> None:
+    if len(sources) != len(SOURCE_CACHE_ARTIFACTS):
+        raise SecTransportError("SEC source cache artifact count is invalid")
+    by_file = {source.file_name: source for source in sources}
+    if len(by_file) != len(sources) or set(by_file) != set(SOURCE_CACHE_ARTIFACTS):
+        raise SecTransportError("SEC source cache artifact inventory is invalid")
+    entries = {entry.name for entry in staging.iterdir()}
+    if entries != set(SOURCE_CACHE_ARTIFACTS):
+        raise SecTransportError("SEC source cache staging inventory is invalid")
+    for file_name, expected_role in SOURCE_CACHE_ARTIFACTS.items():
+        source = by_file[file_name]
+        artifact = staging / file_name
+        if (
+            source.artifact_role != expected_role
+            or artifact.is_symlink()
+            or not artifact.is_file()
+            or source.byte_size <= 0
+            or artifact.stat().st_size != source.byte_size
+            or source_file_hash(artifact) != source.sha256
+            or validate_sec_url(source.url) != source.url
+        ):
+            raise SecTransportError("SEC source cache artifact validation failed")
+
+
+def _validate_completed_source_cache_staging(
+    staging: Path,
+    manifest: dict[str, object],
+) -> None:
+    manifest_path = staging / "manifest.json"
+    expected_entries = set(SOURCE_CACHE_ARTIFACTS) | {"manifest.json"}
+    if (
+        {entry.name for entry in staging.iterdir()} != expected_entries
+        or manifest_path.is_symlink()
+        or not manifest_path.is_file()
+        or manifest.get("completion_status") != "completed"
+        or manifest.get("artifact_count") != len(SOURCE_CACHE_ARTIFACTS)
+    ):
+        raise SecTransportError("SEC source cache completion marker is invalid")
+    manifest_sources = manifest.get("sources")
+    if not isinstance(manifest_sources, list) or len(manifest_sources) != len(SOURCE_CACHE_ARTIFACTS):
+        raise SecTransportError("SEC source cache manifest artifact count is invalid")
 
 
 def download_selected_csv(
@@ -459,6 +548,7 @@ def download_selected_csv(
         selection.url,
         target,
         source_name,
+        "selected_csv",
         observed_at,
         MAX_CSV_BYTES,
         output,
@@ -1246,22 +1336,108 @@ def read_csv_rows(path: Path) -> tuple[dict[str, str], ...]:
 
 
 def validate_submissions_zip(path: Path) -> None:
-    with zipfile.ZipFile(path) as archive:
-        members = archive.infolist()
-        if not members or len(members) > MAX_ZIP_MEMBERS:
-            raise SecTransportError("SEC submissions ZIP member count is invalid")
-        total = 0
-        for member in members:
-            name = PurePosixPath(member.filename)
-            if name.is_absolute() or ".." in name.parts or member.is_dir() or member.external_attr >> 16 & 0o170000 == 0o120000:
-                raise SecTransportError("SEC submissions ZIP contains an unsafe member")
-            if len(name.parts) != 1 or not name.name.startswith("CIK") or not name.name.endswith(".json"):
-                raise SecTransportError("SEC submissions ZIP member name is invalid")
-            if member.file_size > MAX_ZIP_MEMBER_BYTES:
-                raise SecTransportError("SEC submissions ZIP member exceeds size limit")
-            total += member.file_size
-            if total > MAX_ZIP_TOTAL_UNCOMPRESSED:
-                raise SecTransportError("SEC submissions ZIP exceeds expansion limit")
+    try:
+        with zipfile.ZipFile(path) as archive:
+            members = archive.infolist()
+            if not members or len(members) > MAX_ZIP_MEMBERS:
+                raise SecTransportError("SEC submissions ZIP member count is invalid")
+            total = 0
+            normalized_names: set[str] = set()
+            for member in members:
+                match = _validate_submissions_member(member, normalized_names)
+                if member.file_size > MAX_ZIP_MEMBER_BYTES:
+                    raise SecTransportError("SEC submissions ZIP member exceeds size limit")
+                total += member.file_size
+                if total > MAX_ZIP_TOTAL_UNCOMPRESSED:
+                    raise SecTransportError("SEC submissions ZIP exceeds expansion limit")
+                payload = _read_bounded_zip_member(archive, member)
+                _validate_submission_payload(payload, match.group("cik"))
+    except SecTransportError:
+        raise
+    except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, UnicodeError, ValueError) as exc:
+        raise SecTransportError("SEC submissions ZIP is invalid") from exc
+
+
+def _validate_submissions_member(
+    member: zipfile.ZipInfo,
+    normalized_names: set[str],
+) -> re.Match[str]:
+    raw_name = member.filename
+    if member.flag_bits & 0x1:
+        raise SecTransportError("SEC submissions ZIP contains an encrypted member")
+    if "\\" in raw_name:
+        raise SecTransportError("SEC submissions ZIP contains an unsafe member path")
+    decoded_name = raw_name
+    for _ in range(3):
+        next_name = unquote(decoded_name)
+        if next_name == decoded_name:
+            break
+        decoded_name = next_name
+    raw_path = PurePosixPath(raw_name)
+    decoded_path = PurePosixPath(decoded_name)
+    if (
+        raw_path.is_absolute()
+        or decoded_path.is_absolute()
+        or ".." in raw_path.parts
+        or ".." in decoded_path.parts
+    ):
+        raise SecTransportError("SEC submissions ZIP contains an unsafe member path")
+    normalized_name = unicodedata.normalize("NFC", decoded_name).casefold()
+    if normalized_name in normalized_names:
+        raise SecTransportError("SEC submissions ZIP contains duplicate members")
+    normalized_names.add(normalized_name)
+    mode = member.external_attr >> 16
+    member_type = stat.S_IFMT(mode)
+    if member.is_dir() or member_type not in {0, stat.S_IFREG}:
+        raise SecTransportError("SEC submissions ZIP contains a non-regular member")
+    if len(decoded_path.parts) != 1:
+        raise SecTransportError("SEC submissions ZIP member name is invalid")
+    match = SUBMISSIONS_MEMBER_PATTERN.fullmatch(decoded_path.name)
+    if match is None or decoded_name != raw_name:
+        raise SecTransportError("SEC submissions ZIP member name is invalid")
+    if member.compress_size == 0:
+        if member.file_size != 0:
+            raise SecTransportError("SEC submissions ZIP compression metadata is invalid")
+    elif member.file_size / member.compress_size > MAX_ZIP_COMPRESSION_RATIO:
+        raise SecTransportError("SEC submissions ZIP compression ratio exceeds limit")
+    return match
+
+
+def _read_bounded_zip_member(archive: zipfile.ZipFile, member: zipfile.ZipInfo) -> bytes:
+    chunks: list[bytes] = []
+    total = 0
+    with archive.open(member) as handle:
+        while True:
+            chunk = handle.read(ZIP_READ_CHUNK_BYTES)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > MAX_ZIP_MEMBER_BYTES or total > member.file_size:
+                raise SecTransportError("SEC submissions ZIP member exceeds bounded size")
+            chunks.append(chunk)
+    if total != member.file_size:
+        raise SecTransportError("SEC submissions ZIP member size mismatch")
+    return b"".join(chunks)
+
+
+def _validate_submission_payload(payload: bytes, expected_cik: str) -> None:
+    try:
+        value = json.loads(payload.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise SecTransportError("SEC submissions member JSON is invalid") from exc
+    if not isinstance(value, dict):
+        raise SecTransportError("SEC submissions member root is invalid")
+    cik = value.get("cik")
+    filings = value.get("filings")
+    cik_text = str(cik) if isinstance(cik, (str, int)) and not isinstance(cik, bool) else ""
+    if not cik_text.isdigit() or cik_text.zfill(10) != expected_cik or not isinstance(filings, dict):
+        raise SecTransportError("SEC submissions member schema is invalid")
+    recent = filings.get("recent")
+    files = filings.get("files")
+    if recent is not None and not isinstance(recent, dict):
+        raise SecTransportError("SEC submissions recent filings schema is invalid")
+    if files is not None and not isinstance(files, list):
+        raise SecTransportError("SEC submissions historical files schema is invalid")
 
 
 def iter_selected_submissions(path: Path, ciks: set[str]) -> Iterable[tuple[str, Mapping[str, Any]]]:

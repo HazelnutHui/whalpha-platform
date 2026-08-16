@@ -545,8 +545,8 @@ def test_tabular_json_requires_exact_field_row_shape(tmp_path: Path) -> None:
 def test_submissions_zip_rejects_traversal_and_reads_selected_cik(tmp_path: Path) -> None:
     safe = tmp_path / "safe.zip"
     with zipfile.ZipFile(safe, "w") as archive:
-        archive.writestr("CIK0000000001.json", json.dumps({"cik": "1"}))
-        archive.writestr("CIK0000000002.json", json.dumps({"cik": "2"}))
+        archive.writestr("CIK0000000001.json", json.dumps({"cik": "1", "filings": {"recent": {}}}))
+        archive.writestr("CIK0000000002.json", json.dumps({"cik": "2", "filings": {"recent": {}}}))
     validate_submissions_zip(safe)
     assert tuple(iter_selected_submissions(safe, {"0000000002"}))[0][0] == "0000000002"
     unsafe = tmp_path / "unsafe.zip"

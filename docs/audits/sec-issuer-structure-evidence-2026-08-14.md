@@ -186,3 +186,11 @@ No live SEC request was authorized or performed for this clarification. No crede
 ## Current Next Gate
 
 Review the offline selected-source gate and schema `3.0` contract. A bounded live SEC validation requires separate explicit authorization; successful publication and Core/Broad activation remain deferred.
+
+## Offline Source-Cache and ZIP Safety Completion
+
+The publication preflight review found that the existing acquisition code intentionally retained the three official landing HTML pages, but their role and exact nine-artifact cache contract were not explicit. The offline correction formalizes the private cache as two ticker JSON files, three landing HTML pages, three selected CSV files, and `submissions.zip`. Landing HTML is private provenance evidence, not Dashboard or public content. Every artifact now carries a role, official URL, size, and SHA-256 and is reread before a last-written completion manifest and atomic rename. Existing/symlink targets and partial or mismatched staging inventories fail closed.
+
+The same offline change completes the submissions ZIP safety gate for encrypted, duplicate/normalized-duplicate, absolute, traversing, backslash, percent-encoded, symlink, non-regular, nested, and unexpected members; member-count, per-member, total-expansion, compression-ratio, and zero compressed-size boundaries; and bounded JSON parsing with filename/CIK and basic filings-schema validation. No extracted member is persisted.
+
+All evidence for this correction came from local synthetic ZIPs, fake transports, and pytest `tmp_path`. No SEC, Massive, or other external request was made; no credential was read or statted; `/data` and OCI were not accessed; and no production cache, evidence, snapshot, bundle, deployment, or Universe activation was created. The historical failed diagnostics remain unchanged, production SEC evidence remains unpublished, and a live run remains separately authorized work.
