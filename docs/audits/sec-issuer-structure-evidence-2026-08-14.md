@@ -136,6 +136,14 @@ All candidates had one anchor and normalized Format `csv`; query, fragment, and 
 
 No new rule was added and no second run occurred. The underscore-style 2023 basename is retained only as sanitized public-path evidence.
 
+## Offline Exact-2023 Remediation
+
+The fifth-run evidence was reviewed offline and supports one exact additional contract: `/files/investment/data/other/investment-company-series-class-information/investment_company_series_class_2023.csv` is accepted only when the parsed file year is 2023 and the path matches character-for-character. The existing modern hyphen template and the separately evidenced exact 2024 legacy-directory rule remain unchanged. Underscore basenames for 2024 and later, all neighboring spellings and directories, and all 2022-or-earlier variants remain rejected or unknown rather than inferred.
+
+A synthetic official-shape landing with the observed 2026 modern, 2025 modern, 2024 exact legacy, and 2023 exact underscore candidates yields candidate 4, allowlisted 4, rejected 0, cutoff-eligible 4, and selected 1. Selection is the 2026 release dated 2026-06-01 in normal and reversed row order; 2025, 2024, and 2023 are eligible but not selected. Existing duplicate exclusion, candidate-derived aggregates, CEF/BDC isolation, safe URL failure codes, sentinel redaction, and socket prohibition remain covered.
+
+No live SEC run was authorized or executed. Credential metadata/content, `/data`, Massive, OCI, snapshots, bundles, deployment, EOD, backfill, scheduling, Dashboard, and Universe activation were not accessed or changed.
+
 ## Current Next Gate
 
-Review the observed 2023 underscore-style Series/Class path offline against the historical path contract. Do not infer that all 2023-or-earlier years share this naming rule, and do not make another SEC request without new explicit authorization.
+Any attempt to continue the bounded SEC evidence publication now requires a new, explicit authorization for at most one live run. Do not infer a 2022-or-earlier path rule from the 2023 evidence, and keep Core/Broad activation deferred.

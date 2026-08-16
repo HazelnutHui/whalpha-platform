@@ -11,6 +11,7 @@ import tip_api.providers.sec.bulk_sources as bulk_sources
 from tip_api.providers.sec.bulk_sources import (
     LANDING_PAGES,
     CSV_PATH_TEMPLATES,
+    SERIES_CLASS_2023_UNDERSCORE_PATH,
     SERIES_CLASS_2024_LEGACY_PATH,
     SecCsvUrlFailureCode,
     SecLandingDiscoveryError,
@@ -38,6 +39,11 @@ def href(dataset_id: str, year: int, *, extension: str = "csv") -> str:
 def legacy_series_href(year: int, *, extension: str = "csv") -> str:
     directory = SERIES_CLASS_2024_LEGACY_PATH.rsplit("/", 1)[0]
     return f"{directory}/investment-company-series-class-{year}.{extension}"
+
+
+def underscore_series_href(year: int, *, extension: str = "csv") -> str:
+    directory = SERIES_CLASS_2023_UNDERSCORE_PATH.rsplit("/", 1)[0]
+    return f"{directory}/investment_company_series_class_{year}.{extension}"
 
 
 def page(dataset_id: str, rows: list[str], *, headers=("File", "Format", "Size"), extra="") -> str:
@@ -108,6 +114,116 @@ def test_observed_three_candidate_selection_is_independent_of_row_order() -> Non
     assert first.dataset_year == 2026 and first.eligible_count == 3
 
 
+def test_observed_four_candidate_fixture_selects_only_2026_and_counts_all_eligible() -> None:
+    dataset = "investment_company_series_class"
+    result = select_dated_official_csv(
+        dataset,
+        LANDING_PAGES[dataset],
+        fixture("series_class_2023_underscore_landing.html"),
+        evidence_cutoff=CUTOFF,
+    )
+    diagnostic = result.diagnostic
+    assert result.url == f"https://www.sec.gov{href(dataset, 2026)}"
+    assert result.dataset_year == 2026
+    assert result.effective_date == date(2026, 6, 1)
+    assert result.eligible_count == 4
+    assert diagnostic.csv_candidate_count == 4
+    assert diagnostic.allowlisted_count == 4
+    assert diagnostic.rejected_count == 0
+    assert diagnostic.cutoff_eligible_count == 4
+    assert diagnostic.selected_count == 1
+    assert [item.selection_state for item in diagnostic.candidate_diagnostics] == [
+        "selected", "eligible_not_selected", "eligible_not_selected", "eligible_not_selected",
+    ]
+    assert [item.parsed_file_year for item in diagnostic.candidate_diagnostics] == [2026, 2025, 2024, 2023]
+    assert all(item.path_template_match is True for item in diagnostic.candidate_diagnostics)
+
+
+def test_observed_four_candidate_selection_is_independent_of_row_order() -> None:
+    dataset = "investment_company_series_class"
+    rows = [
+        row(dataset, 2026, "6/1/2026", size="7.68 MB"),
+        row(dataset, 2025, "6/2/2025", size="7.25 MB"),
+        row(dataset, 2024, "6/5/2024", custom_href=SERIES_CLASS_2024_LEGACY_PATH, size="7.21 MB"),
+        row(dataset, 2023, "6/8/2023", custom_href=SERIES_CLASS_2023_UNDERSCORE_PATH, size="7.4 MB"),
+    ]
+    first = select_dated_official_csv(dataset, LANDING_PAGES[dataset], page(dataset, rows), evidence_cutoff=CUTOFF)
+    reversed_result = select_dated_official_csv(
+        dataset, LANDING_PAGES[dataset], page(dataset, list(reversed(rows))), evidence_cutoff=CUTOFF,
+    )
+    assert (first.url, first.dataset_year, first.effective_date, first.eligible_count) == (
+        reversed_result.url, reversed_result.dataset_year, reversed_result.effective_date, reversed_result.eligible_count,
+    )
+    assert first.url == f"https://www.sec.gov{href(dataset, 2026)}"
+    assert first.eligible_count == 4
+
+
+@pytest.mark.parametrize("value", [
+    SERIES_CLASS_2023_UNDERSCORE_PATH,
+    f"https://www.sec.gov{SERIES_CLASS_2023_UNDERSCORE_PATH}",
+])
+def test_exact_2023_underscore_series_path_accepts_relative_and_absolute_https(
+    value: str,
+    tmp_path: Path,
+) -> None:
+    dataset = "investment_company_series_class"
+    result = select_dated_official_csv(
+        dataset,
+        LANDING_PAGES[dataset],
+        page(dataset, [row(dataset, 2023, "6/8/2023", custom_href=value)]),
+        evidence_cutoff=CUTOFF,
+    )
+    candidate = result.diagnostic.candidate_diagnostics[0]
+    assert result.url == f"https://www.sec.gov{SERIES_CLASS_2023_UNDERSCORE_PATH}"
+    assert result.dataset_year == 2023
+    assert candidate.url_validation_state == "accepted"
+    assert candidate.path_template_match is True
+    source = tmp_path / "series.csv"
+    source.write_text("CIK,Series ID\n1,S000001\n", encoding="utf-8")
+    validate_selected_csv_response(result, "text/csv", source)
+
+
+@pytest.mark.parametrize(("year", "value", "failure_code"), [
+    (2022, underscore_series_href(2022), "path_template_mismatch"),
+    (2024, underscore_series_href(2024), "path_template_mismatch"),
+    (2025, underscore_series_href(2025), "path_template_mismatch"),
+    (2026, underscore_series_href(2026), "path_template_mismatch"),
+    (2023, underscore_series_href(2022), "path_template_mismatch"),
+    (2023, SERIES_CLASS_2023_UNDERSCORE_PATH.replace("series-class-information", "series-classes-information"), "path_template_mismatch"),
+    (2023, SERIES_CLASS_2023_UNDERSCORE_PATH.replace("investment_company", "investment-company"), "path_template_mismatch"),
+    (2023, SERIES_CLASS_2023_UNDERSCORE_PATH.removesuffix(".csv") + ".CSV", "path_template_mismatch"),
+    (2023, underscore_series_href(2023, extension="xml"), "extension_not_csv"),
+    (2023, f"{SERIES_CLASS_2023_UNDERSCORE_PATH}?download=PRIVATE-QUERY", "query_present"),
+    (2023, f"{SERIES_CLASS_2023_UNDERSCORE_PATH}#PRIVATE-FRAGMENT", "fragment_present"),
+    (2023, f"https://PRIVATE-USER@www.sec.gov{SERIES_CLASS_2023_UNDERSCORE_PATH}", "userinfo_present"),
+    (2023, f"https://www.sec.gov:8443{SERIES_CLASS_2023_UNDERSCORE_PATH}", "nonstandard_port"),
+    (2023, f"https://www.sec.gov.evil.example{SERIES_CLASS_2023_UNDERSCORE_PATH}", "host_not_allowed"),
+    (2023, SERIES_CLASS_2023_UNDERSCORE_PATH.replace("/investment_company_series_class_2023.csv", "/../investment-company-series-class-information/investment_company_series_class_2023.csv"), "traversal_present"),
+    (2023, SERIES_CLASS_2023_UNDERSCORE_PATH.replace("/investment_company_series_class_2023.csv", "/%2e%2e/investment-company-series-class-information/investment_company_series_class_2023.csv"), "encoded_traversal_present"),
+])
+def test_2023_underscore_series_path_is_an_exact_exception(
+    year: int,
+    value: str,
+    failure_code: str,
+) -> None:
+    dataset = "investment_company_series_class"
+    with pytest.raises(SecLandingDiscoveryError) as caught:
+        select_dated_official_csv(
+            dataset,
+            LANDING_PAGES[dataset],
+            page(dataset, [row(dataset, year, f"6/1/{year}", custom_href=value)]),
+            evidence_cutoff=CUTOFF,
+        )
+    candidate = caught.value.diagnostic.candidate_diagnostics[0]
+    assert caught.value.reason_code == "href_rejected"
+    assert candidate.failure_code == failure_code
+    assert candidate.url_validation_state == "rejected"
+    rendered = json.dumps(caught.value.diagnostic.to_safe_dict(), sort_keys=True)
+    assert "PRIVATE-QUERY" not in rendered
+    assert "PRIVATE-FRAGMENT" not in rendered
+    assert "PRIVATE-USER" not in rendered
+
+
 @pytest.mark.parametrize("value", [
     SERIES_CLASS_2024_LEGACY_PATH,
     f"https://www.sec.gov{SERIES_CLASS_2024_LEGACY_PATH}",
@@ -173,7 +289,8 @@ def test_2024_legacy_series_path_is_an_exact_exception(
 
 
 @pytest.mark.parametrize("dataset", ["closed_end_fund", "business_development_company"])
-def test_2024_series_legacy_exception_does_not_change_other_dataset_paths(dataset: str) -> None:
+@pytest.mark.parametrize("series_path", [SERIES_CLASS_2024_LEGACY_PATH, SERIES_CLASS_2023_UNDERSCORE_PATH])
+def test_series_historical_exceptions_do_not_change_other_dataset_paths(dataset: str, series_path: str) -> None:
     modern = select_dated_official_csv(
         dataset,
         LANDING_PAGES[dataset],
@@ -185,7 +302,7 @@ def test_2024_series_legacy_exception_does_not_change_other_dataset_paths(datase
         select_dated_official_csv(
             dataset,
             LANDING_PAGES[dataset],
-            page(dataset, [row(dataset, 2024, "6/1/2024", custom_href=SERIES_CLASS_2024_LEGACY_PATH)]),
+            page(dataset, [row(dataset, 2024, "6/1/2024", custom_href=series_path)]),
             evidence_cutoff=CUTOFF,
         )
     assert caught.value.diagnostic.candidate_diagnostics[0].failure_code == "path_template_mismatch"
@@ -498,6 +615,29 @@ def test_diagnostic_and_error_do_not_expose_raw_html_or_sentinel() -> None:
     rendered = json.dumps(caught.value.diagnostic.to_safe_dict(), sort_keys=True) + repr(caught.value) + str(caught.value)
     assert sentinel not in rendered and "bad-date" not in rendered
     assert caught.value.reason_code == "updated_date_parse_failed"
+
+
+def test_2023_path_rejection_does_not_expose_credential_sentinel(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    dataset = "investment_company_series_class"
+    sentinel = "PRIVATE-CREDENTIAL-SENTINEL"
+    with pytest.raises(SecLandingDiscoveryError) as caught:
+        select_dated_official_csv(
+            dataset,
+            LANDING_PAGES[dataset],
+            page(dataset, [row(
+                dataset,
+                2023,
+                "6/8/2023",
+                custom_href=f"{SERIES_CLASS_2023_UNDERSCORE_PATH}?credential={sentinel}",
+            )]),
+            evidence_cutoff=CUTOFF,
+        )
+    rendered = json.dumps(caught.value.diagnostic.to_safe_dict(), sort_keys=True) + repr(caught.value) + str(caught.value)
+    captured = capsys.readouterr()
+    assert sentinel not in rendered
+    assert sentinel not in captured.out and sentinel not in captured.err
 
 
 @pytest.mark.parametrize("content_type", ["text/csv", "text/csv; charset=utf-8", "application/octet-stream"])

@@ -56,7 +56,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review the fifth-run schema `2.0` evidence for the 2023 Series/Class underscore-style basename against the historical path contract. Do not generalize the observed path to 2022 or earlier, and do not issue another live request without separate authorization. Core/Broad activation remains deferred.
+The fifth-run 2023 underscore basename has been reviewed and implemented as one exact offline contract without generalizing to 2022 or earlier. The next bounded step, only under a new explicit authorization, is at most one SEC issuer-structure evidence run using the unchanged cutoff, zero retries, strict allowlists, and fail-closed publication gates. Core/Broad activation remains deferred.
 
 ## Phase 2 — Intraday and Options
 

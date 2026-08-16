@@ -147,7 +147,7 @@ Status date: 2026-08-16
 - Completed Instrument Master, provider identity, and ticker resolver logical snapshots exist for 2026-08-12, 2026-08-13, and 2026-08-14. Counts are 9,932/13,106/9,932 for the first two dates and 9,939/13,110/9,939 for 2026-08-14.
 - Completed canonical EOD Price Bar partitions exist for 2026-08-12, 2026-08-13, and 2026-08-14 with 9,900, 9,901, and 9,912 records respectively.
 - Completed 2026-08-14 provider security evidence contains 25 catalog records, 13,110 observations, 9,939 canonical evidence records, and a logical completion marker.
-- SEC bounded transport, source-cache safety, parsers, evidence contracts/repositories, live CLI, retries=0 entrypoint, exact observed 2024 Series/Class legacy-path support, and candidate diagnostic schema `2.0` are implemented. Five authorized discovery runs failed closed; the latest verified the 2024 correction and exposed an unapproved 2023 underscore-style basename. No completed SEC source cache, observation, canonical evidence, or logical snapshot exists.
+- SEC bounded transport, source-cache safety, parsers, evidence contracts/repositories, live CLI, retries=0 entrypoint, exact observed 2024 Series/Class legacy-path support, exact observed 2023 underscore-filename support, and candidate diagnostic schema `2.0` are implemented. Five authorized discovery runs failed closed; the fifth exposed the 2023 basename that was subsequently reviewed and supported offline without a new live run. No completed SEC source cache, observation, canonical evidence, or logical snapshot exists.
 - Core is the accepted future default and Broad the future secondary view, but production remains on the disclosed provisional legacy 1,864-member rule pending authoritative issuer-structure and domicile coverage.
 - The 2026-08-14 identity snapshot is `accepted_with_provenance_exception`; its original request/pagination provenance is unknown and it must not be requested again or overwritten.
 - Private JSON snapshot export, frontend snapshot build, versioned bundle creation, session-login configuration, and deployment tooling are implemented. Git records release `2026-08-14T020535Z-ebb16015b7da` as the last known OCI deployment; OCI was not accessed during the 2026-08-16 documentation reconciliation, so current live health is unverified.
@@ -212,6 +212,21 @@ Verified after the fifth authorized SEC run on 2026-08-16:
 
 The live operation itself made only three authorized SEC requests and zero retries. It produced one sanitized failed diagnostic and no completed SEC dataset. No Massive/OCI request, production snapshot/bundle, deployment, EOD/backfill/scheduler work, code change, or second live run occurred.
 
+## Exact 2023 Series Filename Offline Verification
+
+Verified on 2026-08-16 after adding only the observed exact 2023 underscore filename contract:
+
+- bulk discovery: `95 passed`; all SEC provider tests: `138 passed`; extended SEC contracts/persistence/operation set: `155 passed`
+- backend full: `661 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; the external-network guard recorded `0` attempts
+- frontend regression: `40 passed` across 5 files
+- frontend production-mode build verification: success, 589 modules transformed, with output directed to and removed from `/tmp`
+- Python compileall, required imports, Health contract, and `bash -n` for 15 shell scripts: passed
+- Markdown local links: 82 files, 202 links checked, 0 failures
+- sensitive-information scan: 266 tracked-or-pending UTF-8 files, 0 high-confidence findings; synthetic credentialed-URL rejection fixtures were excluded only from that URL rule
+- `git diff --check`: passed
+
+Backend warnings remain the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning. Frontend warnings remain the existing Vite React-plugin configuration deprecations and one 639.01 kB minified chunk warning. No live SEC/Massive or other provider request, credential metadata/content access, `/data` access, OCI access, production snapshot/bundle generation, deployment, EOD/backfill/scheduler, Dashboard, or Universe work occurred.
+
 ## Next Proposed Step
 
-Review the newly observed 2023 Series/Class underscore-style basename offline without generalizing it to other years. Another live request requires separate explicit authorization; Core/Broad production activation remains deferred.
+Any further SEC evidence publication attempt requires separate explicit authorization for at most one bounded live run. The 2022-and-earlier Series/Class naming contract remains unknown, and Core/Broad production activation remains deferred.

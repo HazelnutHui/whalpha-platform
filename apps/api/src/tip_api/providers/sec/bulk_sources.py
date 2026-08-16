@@ -37,6 +37,10 @@ SERIES_CLASS_2024_LEGACY_PATH = (
     "/files/investment/data/other/investment-company-series-and-class-information/"
     "investment-company-series-class-2024.csv"
 )
+SERIES_CLASS_2023_UNDERSCORE_PATH = (
+    "/files/investment/data/other/investment-company-series-class-information/"
+    "investment_company_series_class_2023.csv"
+)
 CSV_REQUIRED_HEADER_GROUPS = {
     "investment_company_series_class": (
         frozenset({"cik", "cik number", "registrant cik"}),
@@ -660,12 +664,14 @@ def _analyze_csv_url(dataset_id: str, landing_url: str, href: str, year: int) ->
         template_match = False
         return rejected(SecCsvUrlFailureCode.FILE_YEAR_MISMATCH)
     expected_path = template.format(year=year)
-    legacy_match = (
+    observed_historical_match = (
         dataset_id == "investment_company_series_class"
-        and year == 2024
-        and parsed.path == SERIES_CLASS_2024_LEGACY_PATH
+        and (
+            (year == 2024 and parsed.path == SERIES_CLASS_2024_LEGACY_PATH)
+            or (year == 2023 and parsed.path == SERIES_CLASS_2023_UNDERSCORE_PATH)
+        )
     )
-    template_match = parsed.path == expected_path or legacy_match
+    template_match = parsed.path == expected_path or observed_historical_match
     if not template_match:
         return rejected(SecCsvUrlFailureCode.PATH_TEMPLATE_MISMATCH)
     try:
