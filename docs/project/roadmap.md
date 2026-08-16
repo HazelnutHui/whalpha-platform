@@ -58,10 +58,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Provider-neutral 20-session XNYS history planner, bounded canonical reader, Decimal trailing-liquidity contract, readiness audit, and offline backfill plan
 - [x] Successful 2026-07-17 same-day identity plus Grouped Daily single-session production backfill pilot
 - [x] Successful first three-session production backfill batch for 2026-07-20 through 2026-07-22
+- [x] Successful second three-session production backfill batch for 2026-07-23, 2026-07-24, and 2026-07-27
 
 ## Next Small Target
 
-Pause SEC B2 and preserve the production Legacy Liquid Screen. The 20-session window remains `insufficient_history` with 14 missing sessions after the successful first batch. Manually review the batch before separately deciding whether to authorize the next chronological batch of at most three sessions; do not activate the trailing rule, Provider-Classified shadows, Core, or Broad.
+Pause SEC B2 and preserve the production Legacy Liquid Screen. The 20-session window remains `insufficient_history` with 11 missing sessions after the successful second batch. Manually review the batch before separately deciding whether to authorize the next chronological batch of at most three sessions; do not activate the trailing rule, Provider-Classified shadows, Core, or Broad.
 
 ## Phase 2 — Intraday and Options
 
