@@ -5,7 +5,6 @@ from __future__ import annotations
 import argparse
 import json
 from collections import Counter
-from dataclasses import asdict
 from datetime import UTC, date, datetime
 from pathlib import Path
 from uuid import UUID
@@ -26,7 +25,6 @@ from tip_api.services.security_classification import (
 )
 from tip_api.services.universe_pre_activation import (
     build_universe_review,
-    compare_stable_sets,
     membership_fingerprint,
     repository_reviewed_overrides,
 )
@@ -128,11 +126,21 @@ def main(argv: list[str] | None = None) -> int:
         final=bundle.final_memberships,
     )
     comparisons = {
-        "candidate_a_passed_vs_legacy": asdict(compare_stable_sets(passed[CANDIDATE_A_ID], legacy)),
-        "candidate_b_passed_vs_legacy": asdict(compare_stable_sets(passed[CANDIDATE_B_ID], legacy)),
-        "candidate_a_passed_vs_candidate_b_passed": asdict(
-            compare_stable_sets(passed[CANDIDATE_A_ID], passed[CANDIDATE_B_ID])
+        "candidate_a_passed_vs_legacy": _legacy_comparison(
+            legacy, passed[CANDIDATE_A_ID]
         ),
+        "candidate_b_passed_vs_legacy": _legacy_comparison(
+            legacy, passed[CANDIDATE_B_ID]
+        ),
+        "candidate_a_passed_vs_candidate_b_passed": {
+            "candidate_a_count": len(passed[CANDIDATE_A_ID]),
+            "candidate_b_count": len(passed[CANDIDATE_B_ID]),
+            "retained": len(passed[CANDIDATE_A_ID] & passed[CANDIDATE_B_ID]),
+            "b_minus_a": len(passed[CANDIDATE_B_ID] - passed[CANDIDATE_A_ID]),
+            "a_minus_b": len(passed[CANDIDATE_A_ID] - passed[CANDIDATE_B_ID]),
+            "candidate_a_fingerprint": membership_fingerprint(passed[CANDIDATE_A_ID]),
+            "candidate_b_fingerprint": membership_fingerprint(passed[CANDIDATE_B_ID]),
+        },
     }
     plan = {
         "status": "publish_ready" if args.apply else "dry_run_ready",
@@ -283,6 +291,18 @@ def _removed_reasons(
         for item in ids
     )
     return dict(sorted(counts.items()))
+
+
+def _legacy_comparison(legacy: frozenset[UUID], candidate: frozenset[UUID]) -> dict[str, object]:
+    return {
+        "legacy_count": len(legacy),
+        "candidate_count": len(candidate),
+        "retained": len(legacy & candidate),
+        "removed_from_legacy": len(legacy - candidate),
+        "added_to_candidate": len(candidate - legacy),
+        "legacy_fingerprint": membership_fingerprint(legacy),
+        "candidate_fingerprint": membership_fingerprint(candidate),
+    }
 
 
 def _audit_gaps(repository, sessions, records, ticker_by_id, type_by_id):
