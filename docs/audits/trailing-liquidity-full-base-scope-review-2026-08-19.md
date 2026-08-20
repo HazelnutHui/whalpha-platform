@@ -2,13 +2,13 @@
 
 ## Status
 
-Implementation and offline dry-run passed. The single authorized apply ran from 2026-08-20T10:35:59Z to 2026-08-20T10:45:59Z and exited 1 before staging because an audit-only previous-session `close × volume` Decimal exceeded the approved persisted scale. No shadow target was published and no second apply was attempted. Production Activation, Dashboard snapshot, API/frontend, and OCI release are unchanged.
+Implementation and the final offline dry-run passed. The separately authorized publication apply ran exactly once from 2026-08-20T11:25:45Z to 2026-08-20T11:35:34Z and exited 1 before staging because a metric Decimal exceeded the approved persisted scale. No shadow target was published and no second apply was attempted. Production Activation, Dashboard snapshot, API/frontend, and OCI release are unchanged.
 
 ## Root cause and reproduction gate
 
 Formal code and reader inspection confirmed that Provider-Classified Candidate A/B first applied the previous-session `close × volume >= USD 20M` gate. Trailing Liquidity V1 then calculated its 20-session median only for those 1,751/1,864 requested IDs. The resulting policy was therefore the intersection of the old one-day liquidity gate and the new 20-session gate.
 
-The frozen V1 metric and decision ledgers were rebuilt from formal inputs. The publication gate compares all 1,864 metrics (including observation counts, medians, statuses, and reasons) and all 3,615 decisions after excluding only the publication timestamp; Candidate fingerprints reproduce as:
+The frozen V1 metric and decision ledgers were rebuilt from formal inputs. The publication gate compares all 1,864 metrics (including observation counts, Decimal median values, statuses, and reasons) and all 3,615 decisions after excluding only the publication timestamp. Decimal values compare by numeric value rather than serialized trailing-zero scale; both gates reproduced exactly. Candidate fingerprints reproduce as:
 
 - A: `1b8b9757054130c04ac21266d3660107c0b38d37db0ba8e510a0dcb2ed9583fd`
 - B: `2404a29b818ac365db19dff9734eea10cbda7b88f16b93610ea49297bb03aa95`
@@ -67,11 +67,11 @@ These are offline audit values only. No Dashboard snapshot or production derived
 
 ## Publication result
 
-Dry-run produced 4,565 metric/status rows, 8,758 decision rows, 3,550 membership rows, 3,550 diff rows, and 20 funnel rows. Dry-run wrote zero `/data` files.
+The final dry-run exited 0 and produced 4,565 metric/status rows, 8,758 decision rows, 3,550 membership rows, 3,550 diff rows, and 20 funnel rows. It reproduced the 1,864 V1 metrics and 3,615 V1 decisions exactly, closed all 20 sequential funnel stages, and wrote zero `/data` files.
 
-The only apply failed at the pre-staging row-validation gate. The persistence contract correctly refused to round a higher-scale daily proxy into `decimal128(38,10)`. The offline repair removes that audit-only Decimal from the physical contract and preserves only the exact boolean fact `previous_dollar_volume_below_threshold`; the eligibility median and previous close remain Decimal. A regression proves publication round-trip without narrowing the source product. The repaired code was not applied to production in this task.
+The one authorized apply failed at the pre-staging metric row-validation gate with `TrailingLiquidityPersistenceError: Decimal exceeds approved scale`. The earlier repair had removed the audit-only previous-session product and preserved only its full-precision comparison boolean, but at least one remaining metric Decimal (`previous_close` or `median_dollar_volume_proxy_20s`) still exceeds the physical `decimal128(38,10)` scale contract. The guard refused to round, quantize, or truncate it. Because the exception does not identify the field or record, this audit does not infer one. Resolving the physical Decimal contract requires a separate offline task; this run did not change schema or calculation semantics.
 
-Postflight found zero full-base targets, zero staging residue, and an unchanged 243-file / 82,189,948-byte protected inventory with digest `3f5e4a3c23776c9dc269dd1d520cda079b54c26f9974d6336d1031f6496c148e`. There are no publication Parquet hashes or logical fingerprint to report.
+Postflight found zero full-base targets, zero staging residue, and an unchanged 243-file / 82,189,948-byte protected inventory with digest `3f5e4a3c23776c9dc269dd1d520cda079b54c26f9974d6336d1031f6496c148e`. There are no publication Parquet hashes or logical fingerprint to report. The apply count for this authorization is one and will not be repeated.
 
 ## Boundaries
 

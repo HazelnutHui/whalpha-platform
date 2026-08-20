@@ -29,3 +29,5 @@ The original V1 union was limited to 1,864 records already admitted by the prior
 The corrected family publishes five Parquet components—metric/status facts, complete policy decisions, selected memberships, old-versus-corrected diffs, and funnel stages—plus a final logical manifest. Each of the 4,565 Secondary-base stable IDs has a metric/status row; each A/B base ID has exactly one mutually exclusive disposition. Source references bind the publication to the 20 EOD partitions, security evidence, immutable V1 publication, and reviewed overrides.
 
 Paths use `trailing-liquidity-full-base-*` dataset names and the logical `trailing-liquidity-full-base-scope-review` family. This is a new shadow boundary, not an overwrite of V1.
+
+The 2026-08-20 authorized publication remained fail-closed before staging: a remaining metric Decimal exceeded the approved `decimal128(38,10)` scale. The repository did not round or truncate it, no target was created, and this family remains an implemented but unpublished shadow boundary pending a separate offline physical-contract review.

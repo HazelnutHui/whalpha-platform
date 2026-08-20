@@ -10,7 +10,7 @@ The corrected offline shadow enumerates 4,193 CS and 4,565 CS+ADRC stable IDs di
 
 Production Activation, private snapshot, API/frontend behavior, and OCI release `2026-08-19T083341Z-7ed7fdc21686` are unchanged. The new result is shadow-only. Authenticated desktop validation of the deployed two-option selector is complete; mobile, tablet, and keyboard acceptance are not claimed.
 
-The sole authorized full-base apply exited 1 before staging on an audit-only Decimal scale violation. No new `/data` target exists. The offline contract was repaired to persist the exact below-threshold boolean rather than narrow the daily product, but the repaired version has not been applied and requires a new, separate authorization after review.
+The separately authorized corrected-shadow dry-run exited 0 and exactly reproduced 1,864 V1 metrics and 3,615 V1 decisions, including Decimal metrics by numeric value. Its sole apply then exited 1 before staging because a remaining metric Decimal exceeded the approved `decimal128(38,10)` scale. No new `/data` target exists; the protected 243-file inventory is unchanged. A separate offline physical-contract diagnosis is required before any future publication authorization.
 
 ## Dashboard Universe Activation V1
 
