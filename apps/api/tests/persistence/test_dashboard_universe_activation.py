@@ -39,6 +39,7 @@ def test_atomic_publication_and_final_formal_reread_exit_path(tmp_path,monkeypat
     result=repo.ParquetDashboardUniverseActivationRepository(tmp_path).publish(records=values,legacy_count=3,legacy_fingerprint=SHA,trailing_window_start=date(2026,7,22),trailing_window_end=date(2026,8,18),trailing_window_session_count=20,reviewed_override_count=2,activated_at=AT)
     assert result.record_count==2
     completed=repo.read_completed_dashboard_universe_activation(tmp_path,analysis_session=SESSION,validate_sources=True)
+    assert tuple(item.universe_id for item in completed.universes)==(CANDIDATE_A_ID,repo.PUBLIC_SECONDARY_ID)
     assert completed.select(None)[0].universe_id==CANDIDATE_A_ID
     assert completed.select(repo.PUBLIC_SECONDARY_ID)[1]==members[repo.PUBLIC_SECONDARY_ID]
     assert not tuple(tmp_path.rglob("*staging*"))

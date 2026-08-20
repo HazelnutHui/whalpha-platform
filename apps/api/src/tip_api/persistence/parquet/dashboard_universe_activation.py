@@ -132,6 +132,8 @@ def read_completed_dashboard_universe_activation(root: Path, *, analysis_session
     payload=manifest.model_dump(mode="json",exclude={"manifest_version","completion_status","logical_content_fingerprint"})
     if _json_fp(payload)!=manifest.logical_content_fingerprint: raise DashboardUniverseActivationError("activation logical fingerprint mismatch")
     records=_read_dataset(dataset,manifest.activation_dataset); _validate_records(records)
+    records_by_id={item.universe_id:item for item in records}
+    records=tuple(records_by_id[universe_id] for universe_id in manifest.available_universe_ids)
     review=read_completed_universe_review(root,analysis_session=analysis_session,validate_source=validate_sources)
     if review.manifest.logical_content_fingerprint!=manifest.pre_activation_review_fingerprint or review.manifest.legacy_count!=manifest.legacy_member_count or review.manifest.legacy_membership_fingerprint!=manifest.legacy_membership_fingerprint or review.manifest.override_dataset.record_count!=manifest.reviewed_override_count:
         raise DashboardUniverseActivationError("activation source reference mismatch")
