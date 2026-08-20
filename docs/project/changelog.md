@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-19
+
+- Used the existing XNYS 4.13.2 freshness service at the execution instant to authorize exactly 2026-08-17, 08-18, and 08-19 after finding actual latest 08-14, expected latest 08-19, and lag three. The weekend generated no request.
+- Published and formally reread three same-day identity snapshots and three adjusted=false EOD partitions in strict order: 9,939/9,947/9,947 canonical instruments and 9,916/9,909/9,926 bars. All six entrypoints exited 0; total Massive requests were 45 and retries were zero.
+- Preserved the original 196-file inventory content and metadata; exactly 27 authorized files yielded 223 files and digest `e453c759200cdf1dfb603a38b4eb519a74092c0f594865c226c233a92d2306d2`. Canonical freshness is now lag zero at 2026-08-19.
+- The rolling 07-22 through 08-18 window is 20/0/0 and `ready`. With membership evidence fixed as-of 08-14, A/B have 1,738/1,850 non-null medians, 1,641/1,747 passes, and 8/9 insufficient histories. No derived dataset, Dashboard/API/frontend, Universe activation, SEC/OCI access, snapshot/bundle, or deployment occurred.
+
 ## 2026-08-16
 
 - Completed the separately authorized final Massive backfill batch for 2026-08-10 and 08-11 in strict order. Each Instrument Master entrypoint ran once with 14 reference pages and each same-day Grouped Daily entrypoint ran once with adjusted=false; all four exited 0 with zero retries and at least 15 seconds between adjacent entrypoints.

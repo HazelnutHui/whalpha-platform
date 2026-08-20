@@ -301,6 +301,14 @@ The separately authorized final 2026-08-10 and 2026-08-11 batch completed in str
 
 Every partition passed existing quality, schema, count, ordering, fingerprint, physical-hash, same-day identity-reference, formal-reader, atomic-publication, and staging-cleanup gates. The original 178-file inventory remained content- and metadata-identical; exactly 18 authorized files were added, yielding 196 files and digest `eb86f69336e567019b7e1553501e38e8545be6a60e5c43e2da0544b7b04c98c0`. No raw payload, other date, SEC/OCI request, scheduler, Dashboard/API/frontend, snapshot/bundle, deployment, or Universe activation occurred. Final classification: `completed_two_session_final_batch`.
 
+## Latest EOD Catch-Up
+
+The dynamically authorized 2026-08-17 through 2026-08-19 catch-up completed in strict date order after the existing XNYS freshness service identified 08-19 as the expected latest completed session and 08-14 as actual latest, for lag three. Each same-day identity entrypoint used 14 reference requests, and each adjusted=false Grouped Daily entrypoint used one request. All six exited 0 with zero retries and at least 15 seconds between adjacent calls.
+
+Canonical identity/resolver counts were 9,939, 9,947, and 9,947; EOD counts were 9,916, 9,909, and 9,926. All schemas, counts, ordering, fingerprints, physical hashes, same-day references, quality gates, atomic publications, and formal rereads passed. The original 196 files remained content- and metadata-identical; exactly 27 authorized files yielded 223 files and digest `e453c759200cdf1dfb603a38b4eb519a74092c0f594865c226c233a92d2306d2`. See the [catch-up audit](../audits/eod-catch-up-2026-08-17-through-2026-08-19.md).
+
+The latest canonical EOD and expected completed XNYS session are both 2026-08-19, so post-publication lag is zero. No raw payload, other date, SEC/OCI request, scheduler, Dashboard/API/frontend, derived dataset, snapshot/bundle, deployment, or Universe activation occurred.
+
 ## Provider-Classified Common-Share Shadow Audit
 
 The completed Massive evidence and 2026-08-13/14 EOD partitions were reread offline through their manifest/schema/count/fingerprint/hash gates. The inputs reconcile to 25 catalog types, 13,110 observations, 9,939 canonical evidence records, 3,171 expected-unjoined records, 9,939 identity instruments, and 9,901/9,912 EOD bars. No ambiguity, collision, malformed evidence, canonical conflict, orphan, or unknown canonical type was found.
@@ -315,10 +323,12 @@ The provider-neutral offline boundary now supports explicit multi-session canoni
 
 For analysis session 2026-08-14, exchange-calendars 4.13.2 computed 20 sessions from 2026-07-17 through 2026-08-13. All 20 partitions are completed, none are missing or corrupt, and descriptor readiness is `ready`. Candidate A has 1,742 at 20/20, one at 19, one at 18, one at 13, two at 11, two at 10, one at four, and one at one; Candidate B has 1,854, two, one, one, two, two, one, and one. Existing Decimal logic emitted 1,742/1,854 in-memory medians; 9/10 members remain `insufficient_history`. No current-day bar entered the window.
 
+The latest read-only audit rolls analysis to 2026-08-19 and uses the 20 sessions from 07-22 through 08-18; it is also 20/0/0 and `ready`, fingerprint `705a20e8664bd94a7f20c83f687445b4249865d1feb2f25b8636933ac38f775a`. Candidate membership evidence remains as-of 08-14. A/B have 1,742/1,854 at 20/20, 1,738/1,850 non-null medians, 1,641/1,747 passed, and 8/9 insufficient-history results. The 08-19 bar does not enter its own window. See the [08-19 readiness audit](../audits/trailing-liquidity-readiness-2026-08-19.md).
+
 The acquisition plan now has zero missing sessions and a zero request range. No reviewed production derived-result publisher exists, so no trailing-liquidity dataset or Dashboard result was persisted.
 
 Offline verification: focused history/calendar/persistence `43 passed`; provider/contracts/persistence/API/snapshot regression `271 passed`, one existing Starlette warning; full backend `784 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; frontend regression `40 passed` across 5 files. Compileall, required imports, FastAPI/Health, shell syntax, Markdown links, sensitive scan, socket/credential sentinel, artifact and listener/process checks, and `git diff --check` passed. Backend warnings remain the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning; frontend emitted only the existing Vite React-plugin configuration warnings.
 
 ## Next Proposed Step
 
-Keep SEC B2 paused and Legacy production membership unchanged. Manually review the ready partition descriptor, instrument-level incomplete histories, and in-memory trailing results before separately authorizing any derived publication, Dashboard synchronization, or Universe decision.
+Keep SEC B2 paused and Legacy production membership unchanged. Manually review the fresh 08-19 EOD state, instrument-level incomplete histories, and in-memory trailing results before separately authorizing any derived publication, Dashboard synchronization, or Universe decision.
