@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import Decimal, ROUND_DOWN, ROUND_UP, localcontext
 from types import SimpleNamespace
 from uuid import UUID, uuid5
 
@@ -115,6 +115,20 @@ def test_legacy_membership_and_input_order_do_not_change_corrected_result():
     second, *_ = fixture_bundle(empty_legacy=True, reverse=True)
     assert first.final_memberships == second.final_memberships
     assert [item.membership_fingerprint for item in first.summaries] == [item.membership_fingerprint for item in second.summaries]
+
+
+@pytest.mark.parametrize(("precision", "rounding"), ((9, ROUND_DOWN), (28, ROUND_UP), (50, ROUND_DOWN)))
+def test_full_base_decisions_analytics_and_fingerprints_ignore_global_decimal_context(precision, rounding):
+    with localcontext() as context:
+        context.prec = precision
+        context.rounding = rounding
+        bundle, *_ = fixture_bundle()
+    with localcontext() as context:
+        context.prec = 28
+        reference, *_ = fixture_bundle()
+    assert bundle.final_memberships == reference.final_memberships
+    assert bundle.analytics == reference.analytics
+    assert [item.membership_fingerprint for item in bundle.summaries] == [item.membership_fingerprint for item in reference.summaries]
 
 
 def test_primary_subset_and_security_type_boundary():

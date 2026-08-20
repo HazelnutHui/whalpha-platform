@@ -30,6 +30,8 @@ from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.market_calendar import MarketSessionCalendar
 
 HISTORY_SESSION_COUNT = 20
+CANONICAL_DECIMAL_SCALE = 10
+DOLLAR_VOLUME_PRODUCT_SCALE = CANONICAL_DECIMAL_SCALE * 2
 PREVIOUS_CLOSE_THRESHOLD = Decimal("5")
 MEDIAN_DOLLAR_VOLUME_THRESHOLD = Decimal("20000000")
 TRAILING_LIQUIDITY_POLICY_VERSION = "20-session-median-dollar-volume-proxy-v1"
@@ -228,11 +230,77 @@ def build_historical_backfill_plan(
     )
 
 
+def fixed_scale_coefficient(value: Decimal, *, scale: int) -> int:
+    """Return an exact integer coefficient without consulting Decimal context."""
+
+    if not value.is_finite():
+        raise ValueError("a finite Decimal is required")
+    sign, digits, exponent = value.as_tuple()
+    coefficient = 0
+    for digit in digits:
+        coefficient = coefficient * 10 + digit
+    if sign:
+        coefficient = -coefficient
+    shift = exponent + scale
+    if shift >= 0:
+        return coefficient * (10 ** shift)
+    divisor = 10 ** (-shift)
+    quotient, remainder = divmod(abs(coefficient), divisor)
+    if remainder:
+        raise ValueError(f"Decimal cannot be represented exactly at scale {scale}")
+    return -quotient if coefficient < 0 else quotient
+
+
+def decimal_coefficient_and_scale(value: Decimal) -> tuple[int, int]:
+    """Return an exact coefficient/scale pair without Decimal arithmetic."""
+
+    if not value.is_finite():
+        raise ValueError("a finite Decimal is required")
+    sign, digits, exponent = value.as_tuple()
+    coefficient = 0
+    for digit in digits:
+        coefficient = coefficient * 10 + digit
+    if sign:
+        coefficient = -coefficient
+    if exponent >= 0:
+        return coefficient * (10 ** exponent), 0
+    return coefficient, -exponent
+
+
+def decimal_from_scaled_coefficient(coefficient: int, *, scale: int) -> Decimal:
+    """Rebuild Decimal from an integer tuple, independent of global context."""
+
+    if scale < 0:
+        raise ValueError("scale must not be negative")
+    sign = 1 if coefficient < 0 else 0
+    digits = tuple(int(character) for character in str(abs(coefficient)))
+    return Decimal((sign, digits, -scale))
+
+
+def exact_dollar_volume_proxy(close: Decimal, volume: Decimal) -> Decimal:
+    """Multiply Decimal values with arbitrary-size integers and exact scale."""
+
+    close_coefficient, close_scale = decimal_coefficient_and_scale(close)
+    volume_coefficient, volume_scale = decimal_coefficient_and_scale(volume)
+    return decimal_from_scaled_coefficient(
+        close_coefficient * volume_coefficient,
+        scale=close_scale + volume_scale,
+    )
+
+
 def exact_even_median(values: Iterable[Decimal]) -> Decimal:
-    ordered = sorted(values)
-    if len(ordered) != HISTORY_SESSION_COUNT:
+    coefficient_scales = tuple(decimal_coefficient_and_scale(value) for value in values)
+    if len(coefficient_scales) != HISTORY_SESSION_COUNT:
         raise ValueError("20 observations are required for the 20-session median")
-    return (ordered[9] + ordered[10]) / Decimal(2)
+    common_scale = max(scale for _, scale in coefficient_scales)
+    coefficients = sorted(
+        coefficient * (10 ** (common_scale - scale))
+        for coefficient, scale in coefficient_scales
+    )
+    middle_sum = coefficients[9] + coefficients[10]
+    if middle_sum % 2 == 0:
+        return decimal_from_scaled_coefficient(middle_sum // 2, scale=common_scale)
+    return decimal_from_scaled_coefficient(middle_sum * 5, scale=common_scale + 1)
 
 
 def _instrument_result(
@@ -270,7 +338,7 @@ def _instrument_result(
     elif previous is not None and previous.close < PREVIOUS_CLOSE_THRESHOLD:
         eligibility = TrailingLiquidityEligibilityStatus.BELOW_PRICE_THRESHOLD
     elif previous is not None:
-        median = exact_even_median(bar.close * bar.volume for bar in ordered_bars)
+        median = exact_even_median(exact_dollar_volume_proxy(bar.close, bar.volume) for bar in ordered_bars)
         if median >= MEDIAN_DOLLAR_VOLUME_THRESHOLD:
             liquidity_status = "passed"
             eligibility = TrailingLiquidityEligibilityStatus.PASSED

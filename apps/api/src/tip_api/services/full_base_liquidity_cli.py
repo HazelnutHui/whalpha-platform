@@ -6,6 +6,7 @@ import argparse
 import json
 from collections import Counter
 from datetime import UTC, date, datetime
+from fractions import Fraction
 from pathlib import Path
 
 import pyarrow.parquet as pq
@@ -22,7 +23,13 @@ from tip_api.persistence.parquet.full_base_liquidity import (
 from tip_api.persistence.parquet.security_evidence import read_completed_security_evidence_snapshot
 from tip_api.persistence.parquet.trailing_liquidity import DECISION_SCHEMA as V1_DECISION_SCHEMA, METRIC_SCHEMA as V1_METRIC_SCHEMA, read_completed_trailing_liquidity_publication
 from tip_api.persistence.parquet.universe_review import OVERRIDE_SCHEMA, read_completed_universe_review
-from tip_api.services.eod_history import MEDIAN_DOLLAR_VOLUME_THRESHOLD, PREVIOUS_CLOSE_THRESHOLD, plan_eod_history_window
+from tip_api.services.eod_history import (
+    MEDIAN_DOLLAR_VOLUME_THRESHOLD,
+    PREVIOUS_CLOSE_THRESHOLD,
+    exact_dollar_volume_proxy,
+    exact_even_median,
+    plan_eod_history_window,
+)
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID, build_full_base_scope_review, calculate_membership_analytics
 from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.provider_classified_universe import CANDIDATE_A_ID, CANDIDATE_B_ID, audit_provider_classified_universes
@@ -103,6 +110,21 @@ def main(argv: list[str] | None = None) -> int:
     evidence_by_id = {item.instrument_id: item for item in security.evidence}
     if any(evidence_by_id[item].provider_type_code != "ADRC" for item in b - a):
         raise RuntimeError("corrected Secondary minus Primary contains non-ADRC")
+    exact_arithmetic = _exact_arithmetic_reconciliation(
+        repo=repo,
+        descriptor=descriptor,
+        bundle=bundle,
+        v1_metrics=_read_v1_metric_records(trailing),
+        overrides=overrides,
+    )
+    if any(exact_arithmetic[key] for key in (
+        "daily_product_mismatch_count",
+        "median_mismatch_count",
+        "decision_mismatch_count",
+        "membership_mismatch_count",
+        "v1_metric_mismatch_count",
+    )):
+        raise RuntimeError("integer production arithmetic differs from the independent Fraction oracle")
 
     current_by_id = {item.instrument_id: item for item in repo.read_bars(ANALYSIS_SESSION)}
     previous_by_id = {item.instrument_id: item for item in repo.read_bars(descriptor.previous_session)}
@@ -123,6 +145,7 @@ def main(argv: list[str] | None = None) -> int:
         "security_type_distribution": dict(sorted(type_counts.items())),
         "source_descriptor_fingerprint": descriptor.fingerprint,
         "v1_reproduction": reproduction,
+        "exact_arithmetic_reconciliation": exact_arithmetic,
         "metric_rows": len(bundle.metrics), "decision_rows": len(bundle.decisions),
         "membership_rows": len(bundle.memberships), "diff_rows": len(bundle.diffs), "funnel_rows": len(bundle.funnels),
         "policies": [item.model_dump(mode="json") for item in bundle.summaries],
@@ -200,11 +223,7 @@ def _reproduce_v1(repo, security, trailing, descriptor, integrity, instruments, 
     if table.schema != V1_DECISION_SCHEMA:
         raise RuntimeError("Trailing Liquidity V1 decision schema mismatch")
     persisted = tuple(TrailingLiquidityShadowDecisionV1.model_validate(row) for row in table.to_pylist())
-    metric_path = ROOT / trailing.manifest.metric_dataset.dataset_path / "part-00000.parquet"
-    metric_table = pq.ParquetFile(metric_path).read()
-    if metric_table.schema != V1_METRIC_SCHEMA:
-        raise RuntimeError("Trailing Liquidity V1 metric schema mismatch")
-    persisted_metrics = tuple(TrailingLiquidityMetricV1.model_validate(row) for row in metric_table.to_pylist())
+    persisted_metrics = _read_v1_metric_records(trailing)
     freeze = lambda rows: [item.model_dump(mode="json", exclude={"calculated_at"}) for item in sorted(rows, key=lambda item: (item.universe_id, str(item.instrument_id)))]
     return {
         "decision_exact": freeze(rebuilt.decisions) == freeze(persisted),
@@ -212,6 +231,118 @@ def _reproduce_v1(repo, security, trailing, descriptor, integrity, instruments, 
         "candidate_a_fingerprint": rebuilt.candidate_a_audit_fingerprint,
         "candidate_b_fingerprint": rebuilt.candidate_b_audit_fingerprint,
         "requested_a": len(provider_audit.candidate_a.member_ids), "requested_b": len(provider_audit.candidate_b.member_ids),
+    }
+
+
+def _read_v1_metric_records(trailing):
+    metric_path = ROOT / trailing.manifest.metric_dataset.dataset_path / "part-00000.parquet"
+    metric_table = pq.ParquetFile(metric_path).read()
+    if metric_table.schema != V1_METRIC_SCHEMA:
+        raise RuntimeError("Trailing Liquidity V1 metric schema mismatch")
+    return tuple(TrailingLiquidityMetricV1.model_validate(row) for row in metric_table.to_pylist())
+
+
+def _exact_arithmetic_reconciliation(*, repo, descriptor, bundle, v1_metrics, overrides):
+    """Audit production integer arithmetic with an independent Fraction oracle."""
+
+    bars_by_id = {}
+    daily_product_mismatches = []
+    absolute_errors = []
+    relative_errors = []
+    for session_read in repo.read_history_sessions(descriptor.completed_sessions):
+        for bar in session_read.bars:
+            by_session = bars_by_id.setdefault(bar.instrument_id, {})
+            by_session[session_read.integrity.session_date] = bar
+    metric_by_id = {item.instrument_id: item for item in bundle.metrics}
+    oracle_median_by_id = {}
+    median_mismatches = []
+    for instrument_id, metric in metric_by_id.items():
+        bars = bars_by_id.get(instrument_id, {})
+        oracle_products = []
+        production_products = []
+        for session in descriptor.expected_sessions:
+            bar = bars.get(session)
+            if bar is None:
+                continue
+            oracle = Fraction(bar.close) * Fraction(bar.volume)
+            production = exact_dollar_volume_proxy(bar.close, bar.volume)
+            oracle_products.append(oracle)
+            production_products.append(production)
+            error = abs(Fraction(production) - oracle)
+            if error:
+                daily_product_mismatches.append((str(instrument_id), bar.ticker, session.isoformat()))
+                absolute_errors.append(error)
+                if oracle:
+                    relative_errors.append(error / abs(oracle))
+        if len(oracle_products) != 20:
+            continue
+        ordered = sorted(oracle_products)
+        oracle_median = (ordered[9] + ordered[10]) / 2
+        oracle_median_by_id[instrument_id] = oracle_median
+        production_median = exact_even_median(production_products)
+        error = abs(Fraction(production_median) - oracle_median)
+        if error:
+            median_mismatches.append((str(instrument_id), metric.display_ticker))
+            absolute_errors.append(error)
+            if oracle_median:
+                relative_errors.append(error / abs(oracle_median))
+
+    active_overrides = {
+        item.instrument_id: item.decision.value
+        for item in overrides
+        if item.is_effective_on(descriptor.analysis_session)
+    }
+    expected_memberships = {FULL_BASE_A_ID: set(), FULL_BASE_B_ID: set()}
+    threshold = Fraction(MEDIAN_DOLLAR_VOLUME_THRESHOLD)
+    for instrument_id, metric in metric_by_id.items():
+        oracle_median = oracle_median_by_id.get(instrument_id)
+        base_pass = (
+            metric.supported_exchange
+            and metric.current_bar_present
+            and metric.previous_bar_present
+            and metric.previous_close is not None
+            and metric.previous_close >= PREVIOUS_CLOSE_THRESHOLD
+            and oracle_median is not None
+            and oracle_median >= threshold
+            and active_overrides.get(instrument_id) not in {"exclude", "quarantine"}
+        )
+        if not base_pass:
+            continue
+        expected_memberships[FULL_BASE_B_ID].add(instrument_id)
+        if metric.provider_type_code == "CS":
+            expected_memberships[FULL_BASE_A_ID].add(instrument_id)
+    decision_mismatch_count = 0
+    for decision in bundle.decisions:
+        expected = decision.instrument_id in expected_memberships[decision.policy_id]
+        decision_mismatch_count += decision.included is not expected
+    membership_mismatch_count = sum(
+        len(frozenset(expected_memberships[policy_id]) ^ bundle.final_memberships[policy_id])
+        for policy_id in (FULL_BASE_A_ID, FULL_BASE_B_ID)
+    )
+
+    v1_metric_mismatch_count = 0
+    for metric in v1_metrics:
+        if metric.median_dollar_volume_proxy_20s is None:
+            continue
+        oracle_median = oracle_median_by_id.get(metric.instrument_id)
+        if oracle_median is None or Fraction(metric.median_dollar_volume_proxy_20s) != oracle_median:
+            v1_metric_mismatch_count += 1
+    maximum_error = max(absolute_errors, default=Fraction(0))
+    maximum_relative_error = max(relative_errors, default=Fraction(0))
+    return {
+        "oracle": "python_fraction_from_canonical_decimal_tuples",
+        "daily_observation_count": sum(len(bars_by_id.get(item, {})) for item in metric_by_id),
+        "daily_product_mismatch_count": len(daily_product_mismatches),
+        "median_comparable_count": len(oracle_median_by_id),
+        "median_mismatch_count": len(median_mismatches),
+        "decision_mismatch_count": decision_mismatch_count,
+        "membership_mismatch_count": membership_mismatch_count,
+        "v1_metric_count": len(v1_metrics),
+        "v1_metric_mismatch_count": v1_metric_mismatch_count,
+        "maximum_absolute_error": str(maximum_error),
+        "maximum_relative_error": str(maximum_relative_error),
+        "threshold_crossing_count": decision_mismatch_count,
+        "affected_instruments": sorted({item[0] for item in daily_product_mismatches + median_mismatches}),
     }
 
 

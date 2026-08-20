@@ -56,6 +56,8 @@ Every sequential row satisfies `input_count - excluded_count = remaining_count`,
 
 The metric uses only the 20 completed XNYS sessions before the analysis session. Daily proxy is canonical close multiplied by canonical volume using Decimal. Exactly 20 observations are required; missing bars are not zero-filled or forward-filled. The even median is the exact mean of the tenth and eleventh ordered values. The analysis session never selects itself. The previous-session product is compared at full Decimal precision for the audit-only `previous_dollar_volume_below_threshold` Boolean; the product itself is not persisted and is not a candidate gate.
 
+The logical arithmetic is implemented with signed integer coefficients and explicit scales, not Decimal multiplication/addition/division under the ambient Python context. Canonical scale-10 inputs produce a scale-20 product; an odd middle-coefficient sum is represented at scale 21. Decimal objects are reconstructed only at the contract boundary. Comparisons are exact, no float/round/quantize path exists, and values outside the physical tuple limits fail closed. The calculation version remains V1 because this change enforces the already-declared exact arithmetic and the 2026-08-19 results reconcile numerically; immutable published Trailing Liquidity V1 is not rewritten.
+
 ## Reviewed overrides
 
 Effective intervals are half-open and keyed only by stable instrument ID. `exclude` and `quarantine` fail closed. `allow` never bypasses type, exchange, comparable-bar, price, history, or trailing-liquidity gates. Future, overlapping, conflicting, duplicate, orphan, and ticker-keyed decisions are rejected.

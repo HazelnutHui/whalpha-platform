@@ -14,6 +14,8 @@ The separately authorized corrected-shadow dry-run exited 0 and exactly reproduc
 
 The repaired default dry-run reread all formal inputs and round-tripped 4,565 metrics, 8,758 decisions, 3,550 memberships, 3,550 diffs, and 20 funnels through temporary Parquet with unchanged corrected fingerprints. No apply ran, no `/data` target exists, and the protected 243-file inventory is unchanged. Production remains 1,641/1,747; corrected 1,719/1,831 remains unpublished shadow-only.
 
+The subsequent arithmetic-context audit found a latent contract defect even though this session's values had zero observed mismatch: daily Decimal multiplication and even-median addition/division inherited Python's default precision 28 with nontrapping `Inexact`/`Rounded`. The implementation now uses arbitrary-precision integer coefficients and explicit scales for all eligibility arithmetic and an independent `Fraction` dry-run oracle. Explicit local precision 78 is limited to non-membership audit analytics. No apply or `/data` write occurred; calculation and physical schema versions remain V1 because exact numeric results and membership fingerprints are unchanged.
+
 ## Dashboard Universe Activation V1
 
 The completed pre-activation inputs now feed a versioned Dashboard activation boundary for analysis session 2026-08-19. `provider_classified_common_shares_v1` is the sole default with 1,641 provider-classified CS members. `provider_classified_common_shares_plus_adrs_v1` is the optional secondary with the same 1,641 CS plus 106 ADRCs. Membership uses stable instrument IDs and the completed reviewed overlay; Legacy 1,864 remains unchanged and formally readable only for compatibility and rollback.

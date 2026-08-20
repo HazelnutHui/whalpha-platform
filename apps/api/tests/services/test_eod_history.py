@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, Inexact, ROUND_DOWN, ROUND_HALF_EVEN, ROUND_UP, Rounded, localcontext
 import socket
 from uuid import UUID, uuid5
 
@@ -21,6 +21,7 @@ from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.eod_history import (
     audit_trailing_liquidity,
     build_historical_backfill_plan,
+    exact_dollar_volume_proxy,
     exact_even_median,
     plan_eod_history_window,
 )
@@ -127,6 +128,42 @@ def test_exact_even_decimal_median_and_threshold_boundaries(calendar: ExchangeCa
     assert result.median_dollar_volume_proxy == Decimal("20000000.0000000000")
     assert result.price_gate_status == "passed"
     assert result.eligibility_status is TrailingLiquidityEligibilityStatus.PASSED
+
+
+@pytest.mark.parametrize("precision", (9, 28, 50))
+@pytest.mark.parametrize("rounding", (ROUND_DOWN, ROUND_HALF_EVEN, ROUND_UP))
+def test_dollar_volume_and_median_ignore_global_decimal_context(precision: int, rounding: str) -> None:
+    close = Decimal("1234567890123456789012345678.1234567890")
+    volume = Decimal("8765432109876543210987654321.9876543210")
+    with localcontext() as context:
+        context.prec = precision
+        context.rounding = rounding
+        context.traps[Inexact] = True
+        context.traps[Rounded] = True
+        product = exact_dollar_volume_proxy(close, volume)
+        median = exact_even_median((product,) * 20)
+    expected_coefficient = 12345678901234567890123456781234567890 * 87654321098765432109876543219876543210
+    assert product.as_tuple() == Decimal((0, tuple(map(int, str(expected_coefficient))), -20)).as_tuple()
+    assert median.as_tuple() == product.as_tuple()
+
+
+def test_odd_middle_coefficient_adds_scale_without_rounding() -> None:
+    values = tuple(Decimal(index).scaleb(-20) for index in range(1, 21))
+    with localcontext() as context:
+        context.prec = 9
+        context.traps[Inexact] = True
+        context.traps[Rounded] = True
+        result = exact_even_median(values)
+    assert result.as_tuple() == Decimal("0.000000000000000000105").as_tuple()
+
+
+def test_smallest_scale20_units_straddle_liquidity_threshold() -> None:
+    threshold = Decimal("20000000.00000000000000000000")
+    below = Decimal("19999999.99999999999999999999")
+    above = Decimal("20000000.00000000000000000001")
+    assert threshold >= Decimal("20000000")
+    assert below < Decimal("20000000")
+    assert above > Decimal("20000000")
 
 
 def test_nineteen_of_twenty_is_insufficient_and_never_filled(calendar: ExchangeCalendar) -> None:

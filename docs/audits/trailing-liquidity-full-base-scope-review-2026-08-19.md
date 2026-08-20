@@ -87,3 +87,11 @@ The offline repair uses a bounded exact Decimal tuple for medians and retains De
 ## Boundaries
 
 Provider requests, credential access, Git remote, OCI, public web, EOD ingestion, canonical mutation, Dashboard/API/frontend/snapshot change, and deployment were all zero. SEC B2 remains paused. Authenticated desktop selector validation is complete; mobile, tablet, and keyboard validation remain open.
+
+## Offline Decimal arithmetic-context audit
+
+Python 3.12.3 started with precision 28, `ROUND_HALF_EVEN`, `Emin=-999999`, `Emax=999999`; only `InvalidOperation`, `DivisionByZero`, and `Overflow` were trapped, while `Inexact` and `Rounded` were not. Code inspection confirmed that the former daily `close * volume` and `(middle_10 + middle_11) / 2` paths inherited that context and could therefore round silently in the theoretical 76/20 and 77/21 domain. Threshold comparisons themselves do not round.
+
+A pre-fix, read-only integer-coefficient oracle compared all available full-base daily products and all complete medians: daily-product mismatches 0, median mismatches 0, threshold crossings 0, maximum absolute and relative errors 0. The final formal dry-run independently reconciled 90,506 available daily observations and 4,435 complete-window medians with `Fraction`; daily, median, decision, membership, and 1,864-row immutable-V1 metric mismatch counts were all zero. Thus the current 2026-08-19 data happened to fit the default context exactly, but the algorithm was not safe for its declared physical domain.
+
+The repaired calculation uses arbitrary-precision integer coefficients for daily products, median ordering, addition, division-by-two parity, previous-session audit comparisons, and ratio-gate cross multiplication. Global precisions 9/28/50, alternate rounding modes, and active `Inexact`/`Rounded` traps produce identical results. A separate `Fraction` oracle is now part of the formal dry-run gate. No apply ran; the corrected 1,719/1,831 shadow remains unpublished, production remains 1,641/1,747, and all production data and deployment state remain unchanged.

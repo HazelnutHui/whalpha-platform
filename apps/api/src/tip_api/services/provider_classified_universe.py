@@ -26,6 +26,7 @@ from tip_api.services.security_classification import (
     MINIMUM_PREVIOUS_DOLLAR_VOLUME,
     SUPPORTED_EXCHANGES,
 )
+from tip_api.services.eod_history import exact_dollar_volume_proxy
 
 CANDIDATE_A_ID = "provider_classified_common_shares_v1"
 CANDIDATE_A_NAME = "Provider-Classified Common Shares (Provisional)"
@@ -256,7 +257,7 @@ def _candidate(
     price = {item for item in exchange if previous[item].close >= MINIMUM_PREVIOUS_CLOSE}
     liquid = {
         item for item in price
-        if previous[item].close * previous[item].volume >= MINIMUM_PREVIOUS_DOLLAR_VOLUME
+        if exact_dollar_volume_proxy(previous[item].close, previous[item].volume) >= MINIMUM_PREVIOUS_DOLLAR_VOLUME
     }
     sequential_exclusions = Counter()
     sequential_exclusions["missing_current_or_previous_session"] = len(classified - both)
@@ -273,7 +274,7 @@ def _candidate(
     )
     overlapping_exclusions["previous_dollar_volume_below_20m"] = sum(
         1 for item in classified & set(previous)
-        if previous[item].close * previous[item].volume < MINIMUM_PREVIOUS_DOLLAR_VOLUME
+        if exact_dollar_volume_proxy(previous[item].close, previous[item].volume) < MINIMUM_PREVIOUS_DOLLAR_VOLUME
     )
     funnel = CandidateFunnel(
         len(classified), len(both), len(exchange), len(price), len(liquid), len(liquid),
@@ -320,7 +321,7 @@ def _legacy_passes(current: EodMarketBarReadModel, previous: EodMarketBarReadMod
         current.instrument_type is InstrumentType.COMMON_STOCK
         and current.primary_exchange in SUPPORTED_EXCHANGES
         and previous.close >= MINIMUM_PREVIOUS_CLOSE
-        and previous.close * previous.volume >= MINIMUM_PREVIOUS_DOLLAR_VOLUME
+        and exact_dollar_volume_proxy(previous.close, previous.volume) >= MINIMUM_PREVIOUS_DOLLAR_VOLUME
     )
 
 

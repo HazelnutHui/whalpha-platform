@@ -7,7 +7,7 @@ import json
 from collections import Counter
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_EVEN, localcontext
 from typing import Mapping
 from uuid import UUID
 
@@ -24,12 +24,21 @@ from tip_api.contracts.market_data.v1.full_base_liquidity import (
 from tip_api.contracts.security_classification.v1 import ProviderInstrumentSecurityEvidenceV1
 from tip_api.contracts.security_classification.v1.universe_review import ReviewedEligibilityDecision, ReviewedEligibilityOverrideV1, validate_override_intervals
 from tip_api.persistence.eod_read import EodReadRepository
-from tip_api.services.eod_history import MEDIAN_DOLLAR_VOLUME_THRESHOLD, PREVIOUS_CLOSE_THRESHOLD, audit_trailing_liquidity
+from tip_api.services.eod_history import (
+    CANONICAL_DECIMAL_SCALE,
+    MEDIAN_DOLLAR_VOLUME_THRESHOLD,
+    PREVIOUS_CLOSE_THRESHOLD,
+    audit_trailing_liquidity,
+    exact_dollar_volume_proxy,
+    fixed_scale_coefficient,
+)
 from tip_api.services.security_classification import SUPPORTED_EXCHANGES
 from tip_api.services.universe_pre_activation import membership_fingerprint
 
 FULL_BASE_A_ID = "full_base_provider_classified_common_shares_v1"
 FULL_BASE_B_ID = "full_base_provider_classified_common_shares_plus_adrs_v1"
+CANONICAL_DECIMAL_PRECISION = 38
+ANALYTICS_CALCULATION_PRECISION = CANONICAL_DECIMAL_PRECISION * 2 + 2
 
 
 @dataclass(frozen=True, slots=True)
@@ -220,7 +229,7 @@ def _unique_bars(bars: tuple[object, ...]) -> dict[UUID, object]:
 def _metric(*, instrument_id, source, instrument, current, previous, bars, audit_result, descriptor, membership_evidence_as_of_date, calculated_at):
     current_present = current is not None
     previous_close = None if previous is None else previous.close
-    previous_below = None if previous is None else previous.close * previous.volume < MEDIAN_DOLLAR_VOLUME_THRESHOLD
+    previous_below = None if previous is None else exact_dollar_volume_proxy(previous.close, previous.volume) < MEDIAN_DOLLAR_VOLUME_THRESHOLD
     if instrument is None:
         status, flags = "invalid_input", ("orphan_instrument_reference",)
     elif instrument.get("primary_exchange") not in SUPPORTED_EXCHANGES:
@@ -237,8 +246,9 @@ def _metric(*, instrument_id, source, instrument, current, previous, bars, audit
         status, flags = audit_result.eligibility_status.value, audit_result.reason_codes
     flags = set(flags)
     if current is not None and previous is not None:
-        ratio = current.close / previous.close
-        if ratio >= Decimal("2") or ratio <= Decimal("0.5"):
+        current_close_coefficient = fixed_scale_coefficient(current.close, scale=CANONICAL_DECIMAL_SCALE)
+        previous_close_coefficient = fixed_scale_coefficient(previous.close, scale=CANONICAL_DECIMAL_SCALE)
+        if current_close_coefficient >= 2 * previous_close_coefficient or 2 * current_close_coefficient <= previous_close_coefficient:
             flags.add("material_return_outlier_review")
     return FullBaseMetricV1(
         analysis_session=descriptor.analysis_session, membership_evidence_as_of_date=membership_evidence_as_of_date,
@@ -339,37 +349,49 @@ def _decision_by_key(decisions, policy_id, instrument_id):
 
 
 def calculate_membership_analytics(ids, current_by_id, previous_by_id):
-    returns = []
-    eligible_map = []
-    advancer_volume = Decimal("0")
-    decliner_volume = Decimal("0")
-    for instrument_id in ids:
-        current, previous = current_by_id[instrument_id], previous_by_id[instrument_id]
-        value = current.close / previous.close - Decimal("1")
-        returns.append(value)
-        current_proxy = current.close * current.volume
-        if current_proxy >= Decimal("5000000") and Decimal("0.5") < current.close / previous.close < Decimal("2"):
-            eligible_map.append(value)
-        if value > 0:
-            advancer_volume += current.volume
-        elif value < 0:
-            decliner_volume += current.volume
-    ordered = sorted(returns)
-    count = len(ordered)
-    median = None if not ordered else (ordered[count // 2] if count % 2 else (ordered[count // 2 - 1] + ordered[count // 2]) / Decimal("2"))
-    advancers = sum(value > 0 for value in ordered)
-    decliners = sum(value < 0 for value in ordered)
-    return {
-        "member_count": count,
-        "equal_weight_return": str(sum(ordered, Decimal("0")) / Decimal(count)) if count else None,
-        "median_return": None if median is None else str(median),
-        "advancers": advancers, "decliners": decliners, "unchanged": count - advancers - decliners,
-        "positive_share": str(Decimal(advancers) / Decimal(count)) if count else None,
-        "advance_decline_net": advancers - decliners,
-        "advancer_volume": str(advancer_volume), "decliner_volume": str(decliner_volume),
-        "up_down_volume_ratio": None if decliner_volume == 0 else str(advancer_volume / decliner_volume),
-        "mover_gainer_count": min(10, sum(value > 0 for value in eligible_map)),
-        "mover_loser_count": min(10, sum(value < 0 for value in eligible_map)),
-        "activity_map_node_count": min(300, len(eligible_map)),
-        "fingerprint": hashlib.sha256(json.dumps([str(item) for item in ordered], separators=(",", ":")).encode()).hexdigest(),
-    }
+    # Dashboard-comparison analytics may require non-terminating division.  Give
+    # them an explicit local policy derived from the two decimal128(38,10)
+    # inputs; they must never inherit a process-global Decimal context.
+    with localcontext() as context:
+        context.prec = ANALYTICS_CALCULATION_PRECISION
+        context.rounding = ROUND_HALF_EVEN
+        returns = []
+        eligible_map = []
+        advancer_volume = Decimal("0")
+        decliner_volume = Decimal("0")
+        for instrument_id in ids:
+            current, previous = current_by_id[instrument_id], previous_by_id[instrument_id]
+            value = current.close / previous.close - Decimal("1")
+            returns.append(value)
+            current_proxy = exact_dollar_volume_proxy(current.close, current.volume)
+            current_close_coefficient = fixed_scale_coefficient(current.close, scale=CANONICAL_DECIMAL_SCALE)
+            previous_close_coefficient = fixed_scale_coefficient(previous.close, scale=CANONICAL_DECIMAL_SCALE)
+            if (
+                current_proxy >= Decimal("5000000")
+                and previous_close_coefficient < 2 * current_close_coefficient
+                and current_close_coefficient < 2 * previous_close_coefficient
+            ):
+                eligible_map.append(value)
+            if value > 0:
+                advancer_volume += current.volume
+            elif value < 0:
+                decliner_volume += current.volume
+        ordered = sorted(returns)
+        count = len(ordered)
+        median = None if not ordered else (ordered[count // 2] if count % 2 else (ordered[count // 2 - 1] + ordered[count // 2]) / Decimal("2"))
+        advancers = sum(value > 0 for value in ordered)
+        decliners = sum(value < 0 for value in ordered)
+        return {
+            "member_count": count,
+            "equal_weight_return": str(sum(ordered, Decimal("0")) / Decimal(count)) if count else None,
+            "median_return": None if median is None else str(median),
+            "advancers": advancers, "decliners": decliners, "unchanged": count - advancers - decliners,
+            "positive_share": str(Decimal(advancers) / Decimal(count)) if count else None,
+            "advance_decline_net": advancers - decliners,
+            "advancer_volume": str(advancer_volume), "decliner_volume": str(decliner_volume),
+            "up_down_volume_ratio": None if decliner_volume == 0 else str(advancer_volume / decliner_volume),
+            "mover_gainer_count": min(10, sum(value > 0 for value in eligible_map)),
+            "mover_loser_count": min(10, sum(value < 0 for value in eligible_map)),
+            "activity_map_node_count": min(300, len(eligible_map)),
+            "fingerprint": hashlib.sha256(json.dumps([str(item) for item in ordered], separators=(",", ":")).encode()).hexdigest(),
+        }
