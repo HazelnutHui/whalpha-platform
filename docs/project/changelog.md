@@ -2,6 +2,10 @@
 
 ## 2026-08-19
 
+- Accepted Dashboard Universe Activation V1: `Common Shares` is the sole default and `Common Shares + ADRs` the optional view. Legacy remains formally readable for rollback and is not an ordinary selector option.
+- Added the versioned activation contract/repository/formal reader and default-dry-run administrator CLI, with explicit Arrow schema, atomic publication, final logical marker, source validation, and a regression that requires successful apply postflight to return exit 0.
+- Integrated stable-ID activation selection across private market APIs, multi-Universe private snapshots, and the React Dashboard. URL selection is allowlisted and all Universe-dependent modules use one fingerprint; failures do not silently fall back to Legacy or demo.
+
 - Implemented Reviewed Eligibility Override V1, stable-ID Legacy/A/B comparison, explicit Parquet schemas, atomic shadow repository, formal reader, and a default-dry-run administrator CLI. VCX receives an authoritative closed-end-fund exclusion and AKAN an authoritative operating ordinary-share allow; allow cannot bypass upstream gates.
 - Published 2 overrides and 3,388 pre-activation decisions plus a final logical marker. The sole apply atomically wrote all targets but exited 1 during final reread because of a missing reader import; no second apply occurred, and the repaired reader subsequently validated all sources, schemas, counts, fingerprints, and hashes read-only.
 - Legacy is 1,864; Candidate A/B passed and final shadows are 1,641/1,747. A removes 223 from Legacy (including 113 ADRCs); B removes 117; B minus A is 106 passed ADRCs. Ten incomplete/missing-previous records retain their data-derived exclusions.

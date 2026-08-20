@@ -167,7 +167,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
   if (!isRecord(value)) {
     throw new Error('Invalid snapshot manifest');
   }
-  const manifest = {
+  const manifest: SnapshotManifestResponse = {
     snapshot_contract_version: requireString(value, 'snapshot_contract_version'),
     release_id: requireString(value, 'release_id'),
     generated_at: requireString(value, 'generated_at'),
@@ -200,7 +200,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     contains_raw_provider_data: requireBoolean(value, 'contains_raw_provider_data'),
     contains_credentials: requireBoolean(value, 'contains_credentials'),
   };
-  if (!['1', '1.1', '1.2'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
+  if (!['1', '1.1', '1.2', '1.3'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
     throw new Error('Unsupported private dashboard snapshot');
   }
   if (manifest.snapshot_contract_version === '1.1' && (
@@ -220,6 +220,14 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
   )) {
     throw new Error('Private dashboard snapshot is missing governance metadata');
   }
+  if (manifest.snapshot_contract_version === '1.3') {
+    const ids = value.available_universe_ids;
+    if (!Array.isArray(ids) || ids.length !== 2 || ids.some((item) => typeof item !== 'string')) throw new Error('Private dashboard snapshot activation catalog is invalid');
+    manifest.selected_universe_id = requireString(value, 'selected_universe_id');
+    manifest.available_universe_ids = ids as string[];
+    manifest.activation_fingerprint = requireString(value, 'activation_fingerprint');
+    manifest.membership_evidence_as_of = requireString(value, 'membership_evidence_as_of');
+  }
   if (manifest.contains_credentials || manifest.contains_raw_provider_data) {
     throw new Error('Unsafe private dashboard snapshot');
   }
@@ -235,6 +243,11 @@ function parseUniverseDefinition(value: unknown): DashboardUniverseDefinitionRes
     name: requireString(value, 'name'),
     display_name: requireString(value, 'display_name'),
     description: requireString(value, 'description'),
+    long_display_name: requireString(value, 'long_display_name'),
+    provisional: requireBoolean(value, 'provisional'),
+    member_count: requireNumber(value, 'member_count'),
+    security_type_composition: Object.fromEntries(Object.entries(value.security_type_composition as Record<string, unknown>).map(([key,item])=>[key,Number(item)])),
+    membership_fingerprint: requireString(value, 'membership_fingerprint'),
   };
 }
 
@@ -275,6 +288,7 @@ function parseUniverseView(value: unknown): DashboardUniverseViewResponse {
     trading_activity_map: parseLiquidityMap(value.trading_activity_map),
     outlier_review_count: requireNumber(value, 'outlier_review_count'),
     quality_flag_counts: Object.fromEntries(Object.entries(quality).map(([key, item]) => [key, item as number])),
+    equal_weight_benchmark: parseMarketBenchmark(value.equal_weight_benchmark),
   };
 }
 
@@ -321,10 +335,17 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
   return {
     contract_version: requireString(value, 'contract_version'),
     default_universe_id: requireString(value, 'default_universe_id'),
+    selected_universe_id: requireString(value, 'selected_universe_id'),
     universe_definition_id: requireString(value, 'universe_definition_id'),
     universe_version: requireString(value, 'universe_version'),
     governance_status: requireString(value, 'governance_status'),
     classification_as_of_date: requireString(value, 'classification_as_of_date'),
+    trailing_window_start: requireString(value, 'trailing_window_start'),
+    trailing_window_end: requireString(value, 'trailing_window_end'),
+    trailing_window_session_count: requireNumber(value, 'trailing_window_session_count'),
+    reviewed_override_count: requireNumber(value, 'reviewed_override_count'),
+    activation_fingerprint: requireString(value, 'activation_fingerprint'),
+    legacy_rollback_available: requireBoolean(value, 'legacy_rollback_available'),
     evidence_coverage_status: requireString(value, 'evidence_coverage_status'),
     current_session_date: requireString(value, 'current_session_date'),
     previous_session_date: requireString(value, 'previous_session_date'),
@@ -355,8 +376,9 @@ function assertSnapshotConsistency(manifest: SnapshotManifestResponse, data: Das
   }
 }
 
-export async function getMarketDashboardData(signal?: AbortSignal): Promise<DashboardData> {
-  const overview = await fetchJson<unknown>('/api/v1/private/market/overview/latest', signal).then(parseDashboardOverview);
+export async function getMarketDashboardData(signal?: AbortSignal, universeId?: string): Promise<DashboardData> {
+  const query = universeId ? `?universe_id=${encodeURIComponent(universeId)}` : '';
+  const overview = await fetchJson<unknown>(`/api/v1/private/market/overview/latest${query}`, signal).then(parseDashboardOverview);
   return { overview };
 }
 

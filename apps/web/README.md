@@ -1,5 +1,7 @@
 # Trading Intelligence Web
 
+The Market Overview Universe selector exposes only `Common Shares` and `Common Shares + ADRs`, with the CS-only view as default. A validated stable ID is persisted in the URL; Legacy remains an internal rollback boundary.
+
 ## Security Governance Phase A
 
 The deployed Dashboard still uses Dashboard Universe V1. Security Classification V1 candidates are backend audit outputs only; no frontend payload, layout, or production behavior changes in Phase A.

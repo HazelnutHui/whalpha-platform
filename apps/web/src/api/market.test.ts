@@ -22,8 +22,8 @@ describe('market API runtime validation', () => {
 
   it('validates Dashboard V1.1 overview payloads', () => {
     const overview = parseDashboardOverview(demoDashboardData.overview);
-    expect(overview.default_universe_id).toBe('tradable_us_listed_equities_v1');
-    expect(overview.universes[0].definition.display_name).toBe('Legacy Liquid Screen (Provisional)');
+    expect(overview.default_universe_id).toBe('provider_classified_common_shares_v1');
+    expect(overview.universes[0].definition.display_name).toBe('Common Shares');
     expect(overview.governance_status).toBe('provisional_classification');
     expect(overview.sector_benchmarks).toHaveLength(11);
     expect(overview.freshness_status).toBe('stale');

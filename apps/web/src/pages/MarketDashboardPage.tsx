@@ -24,7 +24,16 @@ async function logout(): Promise<void> {
 }
 
 function activeUniverse(data: DashboardData, selected: string): DashboardUniverseViewResponse {
-  return data.overview.universes.find((item) => item.definition.universe_id === selected) ?? data.overview.universes[0];
+  return data.overview.universes.find((item) => item.definition.universe_id === selected)
+    ?? data.overview.universes.find((item) => item.definition.universe_id === data.overview.default_universe_id)
+    ?? data.overview.universes[0];
+}
+
+function requestedUniverse(): string | null { return new URLSearchParams(window.location.search ?? '').get('universe'); }
+function writeUniverseToUrl(universeId: string, replace = false): void {
+  const params=new URLSearchParams(window.location.search ?? ''); params.set('universe',universeId);
+  const path=window.location.pathname || '/dashboard/';
+  window.history[replace ? 'replaceState' : 'pushState']({}, '', `${path}?${params.toString()}`);
 }
 
 const MATERIAL_FLAGS = new Set(['unverified_price_discontinuity', 'identity_conflict', 'missing_required_benchmark']);
@@ -81,7 +90,7 @@ function MetaControlBar({ data, universe, selected, onChange }: { data: Dashboar
       <div><span className="meta-label">Data as of</span><strong>{data.overview.current_session_date} EOD</strong></div>
       <div><span className="meta-label">Freshness</span><strong>{freshnessLabel(data)}</strong></div>
       <div><span className="meta-label">Governance</span><strong className="governance-provisional">Provisional classification</strong></div>
-      <p className="governance-copy">Price/liquidity-filtered legacy universe; canonical security-type coverage is incomplete.</p>
+      <p className="governance-copy">{universe.definition.description} U.S.-listed scope does not establish issuer domicile.</p>
     </section>
   );
 }
@@ -96,7 +105,8 @@ function MetricCard({ label, value, tone, note }: { label: string; value: string
   );
 }
 
-function BenchmarkStrip({ items }: { items: MarketBenchmarkResponse[] }): JSX.Element {
+function BenchmarkStrip({ items, equalWeight }: { items: MarketBenchmarkResponse[]; equalWeight: MarketBenchmarkResponse }): JSX.Element {
+  items = [...items, equalWeight];
   return (
     <section className="benchmark-strip" aria-label="Market benchmarks">
       {items.map((item) => {
@@ -250,7 +260,7 @@ function MoversTable({ title, items, direction, onSelect }: { title: string; ite
     <section className="panel mover-panel" aria-labelledby={`${direction}-movers-title`}>
       <div className="section-header compact">
         <div>
-          <p className="eyebrow">Legacy Liquid Screen (Provisional)</p>
+          <p className="eyebrow">Selected Universe</p>
           <h2 id={`${direction}-movers-title`}>{title}</h2>
         </div>
       </div>
@@ -308,12 +318,18 @@ function DataDetails({ universe, data }: { universe: DashboardUniverseViewRespon
         <div><dt>ETF/ETP excluded</dt><dd>{formatNumber(universe.audit.etf_count)}</dd></div>
         <div><dt>Supported exchange records</dt><dd>{formatNumber(universe.audit.major_exchange_count)}</dd></div>
         <div><dt>Price gate passed</dt><dd>{formatNumber(universe.audit.price_gate_count)}</dd></div>
-        <div><dt>Liquidity gate final</dt><dd>{formatNumber(universe.audit.final_count)}</dd></div>
+        <div><dt>Selected members</dt><dd>{formatNumber(universe.definition.member_count)}</dd></div>
+        <div><dt>CS / ADRC</dt><dd>{formatNumber(universe.definition.security_type_composition.CS ?? 0)} / {formatNumber(universe.definition.security_type_composition.ADRC ?? 0)}</dd></div>
+        <div><dt>Membership evidence as of</dt><dd>{data.overview.classification_as_of_date}</dd></div>
+        <div><dt>Reviewed overrides</dt><dd>{formatNumber(data.overview.reviewed_override_count)}</dd></div>
         <div><dt>Outlier review</dt><dd>{formatNumber(universe.outlier_review_count)}</dd></div>
       </dl>
       <h3>Methodology Notes</h3>
       <div className="quality-flags">
         <span>close × volume trading activity proxy</span>
+        <span>20 completed XNYS sessions: {data.overview.trailing_window_start} to {data.overview.trailing_window_end}</span>
+        <span>Previous close threshold: USD 5</span>
+        <span>20-session median dollar-volume proxy threshold: USD 20M</span>
         <span>Equal-weight return is not an index return</span>
         <span>ETF benchmarks are not sector breadth</span>
         <span>ETF benchmark volume is not fund flow</span>
@@ -323,11 +339,12 @@ function DataDetails({ universe, data }: { universe: DashboardUniverseViewRespon
         {adjustmentCount ? <span>Adjustment factors unverified — {formatNumber(adjustmentCount)} records</span> : null}
         <span>Missing point-in-time sector taxonomy</span>
         <span>Missing market capitalization</span>
-        <span>Insufficient history for trailing liquidity</span>
+        <span>Provider security form does not prove issuer domicile</span>
+        <span>Legacy rollback available internally</span>
       </div>
       <h3>Material Warnings</h3>
       <div className="quality-flags">
-        <span>Security-type evidence is incomplete; results may include non-operating or unsupported security structures.</span>
+        <span>Provider security-form coverage is complete for included members; issuer domicile and structure remain provisional.</span>
         {materialEntries.map(([flag, count]) => <span key={flag}>{flag.replace(/_/g, ' ')} — {formatNumber(count)} records</span>)}
       </div>
       <p className="quality-copy">EOD market structure; not real-time. File/schema consistency and exchange-calendar freshness are verified independently.</p>
@@ -367,11 +384,14 @@ export function MarketDashboardPage(): JSX.Element {
     }
     const controller = new AbortController();
     setState({ kind: 'loading' });
-    const request = mode === 'snapshot' ? getSnapshotDashboardData(controller.signal).then(({ data }) => data) : getMarketDashboardData(controller.signal);
+    const requested = requestedUniverse();
+    const request = mode === 'snapshot' ? getSnapshotDashboardData(controller.signal).then(({ data }) => data) : getMarketDashboardData(controller.signal, requested ?? undefined);
     request
       .then((data) => {
         setState({ kind: 'ready', data, mode });
-        setSelectedUniverseId(data.overview.default_universe_id);
+        const allowed=data.overview.universes.some((item)=>item.definition.universe_id===requested);
+        const selected=allowed && requested ? requested : data.overview.default_universe_id;
+        setSelectedUniverseId(selected); writeUniverseToUrl(selected,true);
       })
       .catch((error: unknown) => {
         if (!controller.signal.aborted) setState({ kind: 'error', message: error instanceof Error ? error.message : 'Market overview request failed' });
@@ -380,6 +400,10 @@ export function MarketDashboardPage(): JSX.Element {
   }, [mode]);
 
   useEffect(() => load(), [load]);
+  useEffect(() => {
+    const handler=()=>{ if(state.kind==='ready'){ const requested=requestedUniverse(); const allowed=state.data.overview.universes.some((item)=>item.definition.universe_id===requested); const selected=allowed&&requested?requested:state.data.overview.default_universe_id; setSelectedUniverseId(selected); if(!allowed) writeUniverseToUrl(selected,true); } };
+    window.addEventListener('popstate',handler); return()=>window.removeEventListener('popstate',handler);
+  },[state]);
 
   if (state.kind === 'loading') return <LoadingState />;
   if (state.kind === 'error') return <ErrorState message={state.message} onRetry={() => load()} />;
@@ -393,8 +417,8 @@ export function MarketDashboardPage(): JSX.Element {
   return (
     <main className="app-shell dashboard-shell">
       <Header mode={state.mode} />
-      <MetaControlBar data={state.data} universe={universe} selected={universe.definition.universe_id} onChange={setSelectedUniverseId} />
-      <BenchmarkStrip items={state.data.overview.market_benchmarks} />
+      <MetaControlBar data={state.data} universe={universe} selected={universe.definition.universe_id} onChange={(value)=>{setSelectedUniverseId(value);setSelectedItem(null);writeUniverseToUrl(value);}} />
+      <BenchmarkStrip items={state.data.overview.market_benchmarks} equalWeight={universe.equal_weight_benchmark} />
       <MarketPulse universe={universe} />
       <div className="two-column-grid">
         <BreadthChart universe={universe} />

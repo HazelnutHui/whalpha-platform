@@ -66,10 +66,12 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Calendar-bounded latest EOD catch-up for 2026-08-17 through 2026-08-19; canonical freshness lag zero
 - [x] Versioned Trailing Liquidity V1 metric/decision shadow publication for 2026-08-19 with logical completion marker
 - [x] Stable-ID Legacy/A/B pre-activation comparison and Reviewed Eligibility Override V1 shadow publication
+- [x] Versioned Dashboard Universe Activation V1 with selectable Common Shares and Common Shares + ADRs
+- [x] Multi-Universe private API, snapshot, and React selector integration
 
 ## Next Small Target
 
-Keep SEC B2 paused. Separately authorize Production Universe activation and Dashboard integration using the reviewed primary/secondary proposal, with Legacy retained as compatibility/rollback. Do not deploy or change Dashboard/API/frontend in the governance review itself.
+Keep SEC B2 paused. After authenticated manual verification of the selectable-Universe deployment, proceed to point-in-time sector taxonomy and sector constituent breadth/rotation. Legacy remains compatibility/rollback only.
 
 ## Phase 2 — Intraday and Options
 

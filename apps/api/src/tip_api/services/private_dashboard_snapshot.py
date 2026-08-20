@@ -19,8 +19,10 @@ from tip_api.schemas.private_market import DashboardOverviewResponse, LiquidityM
 from tip_api.services.eod_market_data import EodMarketDataQueryService
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 from tip_api.services.dashboard_overview import DashboardOverviewService
+from tip_api.persistence.parquet.dashboard_universe_activation import read_completed_dashboard_universe_activation
+from tip_api.persistence.parquet.dashboard_universe_activation import CompletedDashboardUniverseActivation
 
-SNAPSHOT_CONTRACT_VERSION = "1.2"
+SNAPSHOT_CONTRACT_VERSION = "1.3"
 SNAPSHOT_FILES = {
     "overview_file": "market-overview.json",
     "summary_file": "market-summary.json",
@@ -37,7 +39,7 @@ class DashboardSnapshotError(RuntimeError):
 class DashboardSnapshotManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[12])?$")
+    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[123])?$")
     release_id: str
     generated_at: str
     current_session_date: str
@@ -66,6 +68,10 @@ class DashboardSnapshotManifest(BaseModel):
     governance_status: str = "provisional_classification"
     classification_as_of_date: str | None = None
     evidence_coverage_status: str = "incomplete"
+    selected_universe_id: str | None = None
+    available_universe_ids: tuple[str, ...] = ()
+    activation_fingerprint: str | None = None
+    membership_evidence_as_of: str | None = None
     is_real_provider_backed: bool
     access_classification: str
     contains_raw_provider_data: bool
@@ -93,6 +99,12 @@ class DashboardSnapshotManifest(BaseModel):
             raise ValueError("snapshot freshness fields are required for contract 1.1")
         if self.snapshot_contract_version == "1.2" and self.classification_as_of_date is None:
             raise ValueError("snapshot governance fields are required for contract 1.2")
+        if self.snapshot_contract_version == "1.3" and (
+            self.classification_as_of_date is None or self.selected_universe_id is None or
+            len(self.available_universe_ids) != 2 or self.activation_fingerprint is None or
+            self.membership_evidence_as_of is None
+        ):
+            raise ValueError("snapshot activation fields are required for contract 1.3")
         return self
 
 
@@ -128,6 +140,7 @@ def build_private_dashboard_snapshot(
     generated_at: datetime | None = None,
     git_commit: str | None = None,
     allowed_output_root: Path | None = None,
+    dashboard_activation: CompletedDashboardUniverseActivation | None = None,
 ) -> DashboardSnapshotResult:
     safe_data_root = _validate_existing_root(data_root, label="data_root")
     safe_output_root = _validate_output_root(output_root, allowed_output_root=allowed_output_root)
@@ -135,7 +148,8 @@ def build_private_dashboard_snapshot(
     query_service = EodMarketDataQueryService(CanonicalEodReadRepository(safe_data_root))
     analytics = EodReturnAnalyticsService(query_service)
     generated = generated_at or datetime.now(UTC)
-    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service).get_latest_overview(checked_at=generated)).model_copy(
+    activation = dashboard_activation or read_completed_dashboard_universe_activation(safe_data_root, analysis_session=query_service.list_sessions()[-1].session_date, validate_sources=True)
+    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service, activation).get_latest_overview(checked_at=generated)).model_copy(
         update={"snapshot_generated_at": generated.astimezone(UTC).isoformat().replace("+00:00", "Z")}
     )
     default_universe = next(item for item in overview.universes if item.definition.universe_id == overview.default_universe_id)
@@ -207,6 +221,10 @@ def build_private_dashboard_snapshot(
             governance_status=overview.governance_status,
             classification_as_of_date=overview.classification_as_of_date.isoformat(),
             evidence_coverage_status=overview.evidence_coverage_status,
+            selected_universe_id=overview.selected_universe_id,
+            available_universe_ids=tuple(item.definition.universe_id for item in overview.universes),
+            activation_fingerprint=overview.activation_fingerprint,
+            membership_evidence_as_of=overview.classification_as_of_date.isoformat(),
             is_real_provider_backed=True,
             access_classification="private",
             contains_raw_provider_data=False,

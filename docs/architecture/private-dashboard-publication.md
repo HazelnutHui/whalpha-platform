@@ -4,7 +4,7 @@
 
 Phase A audits do not produce a private snapshot or bundle. A later snapshot contract must carry the selected universe definition ID, version, as-of date, taxonomy fingerprint, and ruleset fingerprint so Pulse, Breadth, Movers, and Trading Activity Map reconcile to identical membership.
 
-Snapshot contract 1.2 adds provisional governance metadata while retaining the legacy calculation membership. Provider security-form evidence can be complete while `evidence_coverage_status` remains incomplete for production classification because issuer structure and domicile are separate activation requirements.
+Snapshot contract 1.3 carries the completed activation catalog and full Primary/Secondary Dashboard payloads. Provider security-form evidence can be complete while issuer structure and domicile remain provisional.
 
 ## Purpose
 
@@ -62,7 +62,7 @@ private-data/v1/
   liquidity-map.json
 ```
 
-`manifest.json` records contract version, release ID, generation time, session dates, expected and actual latest completed sessions, session lag, XNYS freshness, file names, SHA-256 hashes, node counts, warning count, and private access classification. Dashboard Overview JSON includes the same freshness facts, the Market Benchmark Strip, Sector Benchmark ETF relative performance, and universe-filtered Trading Activity Map data. File consistency validation and calendar freshness are distinct.
+`manifest.json` records contract version, release ID, generation time, activation fingerprint/catalog/default, session dates, freshness, file names, SHA-256 hashes, per-Universe node counts, warning count, and private access classification. Dashboard Overview JSON contains complete payloads for both activated universes. File consistency validation and calendar freshness are distinct.
 
 The manifest explicitly records:
 

@@ -10,7 +10,7 @@ The offline [Provider-Classified Common Shares V1](docs/product/provider-classif
 
 The [EOD historical-window boundary](docs/architecture/eod-historical-window.md) plans the 20 XNYS sessions before an analysis date and validates bounded canonical partitions. For 2026-08-19, the 07-22 through 08-18 window is `ready`; the versioned [Trailing Liquidity V1 shadow publication](docs/audits/trailing-liquidity-shadow-publication-2026-08-19.md) persists auditable metric facts and separate A/B decisions. It does not change the production Universe or Dashboard.
 
-The completed [Universe pre-activation review](docs/audits/universe-pre-activation-review-2026-08-19.md) now adds an effective-dated reviewed-override shadow and formally compares Legacy with trailing-qualified A/B stable-ID sets. It recommends Provider-Classified Common Shares (Provisional) as primary and an ADR-inclusive optional secondary, but production activation and Dashboard integration remain separately authorized work.
+The completed [Universe pre-activation review](docs/audits/universe-pre-activation-review-2026-08-19.md) adds an effective-dated reviewed-override boundary and formally compares Legacy with trailing-qualified A/B stable-ID sets. Dashboard Universe Activation V1 now makes Provider-Classified Common Shares (Provisional) the default and exposes an ADR-inclusive optional view. Legacy remains available only for compatibility and rollback.
 
 Phase B2A added the offline SEC issuer-structure boundary. Phase B2B added the bounded streaming transport, source-cache safety checks, normalized observation persistence, canonical evidence persistence, and logical completion contract. Five separately authorized bounded runs each stopped at Series/Class landing discovery and published no completed SEC cache or evidence snapshot. The fifth run verified the exact 2024 legacy exception and candidate-derived counts, then failed closed on a newly observed 2023 underscore-style basename after three requests and zero retries. Offline remediation now accepts only that exact 2023 public path for parsed file year 2023; a four-candidate official-shape fixture deterministically selects the 2026 release and leaves 2025, 2024, and 2023 eligible but unselected. No new live run occurred, and no rule is inferred for 2022 or earlier. See [SEC Issuer-Structure Evidence](docs/architecture/sec-issuer-structure-evidence.md) and the [B2B run audit](docs/audits/sec-issuer-structure-evidence-2026-08-14.md).
 
@@ -115,6 +115,7 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Instrument Identity Resolution](docs/architecture/instrument-identity-resolution.md)
 - [EOD Parquet Persistence](docs/architecture/eod-parquet-persistence.md)
 - [Trailing Liquidity Shadow Publication](docs/architecture/trailing-liquidity-shadow-publication.md)
+- [Dashboard Universe Activation](docs/architecture/dashboard-universe-activation.md)
 - [Canonical Market Data Query Boundary](docs/architecture/canonical-market-data-query-boundary.md)
 - [Private EOD Market Data API V1](docs/api/private-eod-market-data-v1.md)
 - [Private Market Summary API V1](docs/api/private-market-summary-v1.md)
@@ -132,4 +133,4 @@ This project is a personal single-user prototype. It may be reachable over the p
 
 ## Current Dashboard
 
-Dashboard V1.1 is implemented for private, session-protected static publication. The last deployment recorded in Git used the default `Tradable U.S. Equities` universe for Market Pulse, breadth, movers, and Trading Activity Map, with Sector Benchmark ETFs shown separately. Provider-backed data remains private; current OCI health was not verified by this documentation reconciliation.
+Dashboard Universe V1 uses `Common Shares` as the default and `Common Shares + ADRs` as the optional view. All Universe-dependent modules share the activated stable-ID membership; Legacy is retained internally for rollback and is not an ordinary selector option. Provider-backed data remains private.

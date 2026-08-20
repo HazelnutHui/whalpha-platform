@@ -2,7 +2,7 @@
 
 ## Governance Status
 
-The current 1,864-member calculation set remains `Legacy Liquid Screen (Provisional)`. Phase B1B published provider security-form evidence, but 1,862 legacy members still lack sufficient issuer-structure/domicile evidence and remain quarantine in the governance audit. Core is the accepted future default and Broad the future secondary view; neither candidate is connected to production analytics yet.
+Dashboard Universe Activation V1 makes the 1,641-member Provider-Classified Common Shares (Provisional) set the default and the 1,747-member CS+ADRC set the optional secondary view for analysis session 2026-08-19. Legacy 1,864 remains formally readable for rollback but is absent from the ordinary selector. Provider security form does not prove issuer domicile or operating-company structure.
 
 ## Phase A Security Classification Audit
 
@@ -10,7 +10,7 @@ Production still uses the legacy binary common-stock/ETF rule. Phase A proved it
 
 ## Accepted Product Policy
 
-Core U.S. Domestic Operating Equities is the future default. Broad U.S.-Listed Operating Equities is the future secondary view. ETF/ETN records remain benchmark-only. Activation is deferred; the current 1,864-member calculation set remains unchanged and is designated `Legacy Liquid Screen (Provisional)` until evidence gates pass.
+`Common Shares` is the default short label for `provider_classified_common_shares_v1`. `Common Shares + ADRs` selects `provider_classified_common_shares_plus_adrs_v1`. The primary has 1,641 CS; the secondary adds 106 qualifying ADRCs. These are activation-session facts, not permanent constants. Legacy is compatibility/rollback only.
 
 ## Purpose
 
@@ -129,9 +129,9 @@ Dashboard V1.1 displays the completed current session and a human-readable snaps
 
 ## Provider-Classified Shadow Status
 
-The production Legacy Liquid Screen remains unchanged. A separate [offline provider-classified audit](provider-classified-common-shares-v1.md) reports 1,751 CS-only members and a 1,864-member CS+ADRC comparison for 2026-08-14. ADRC is never folded into the CS-only candidate. The observed equality between the CS+ADRC shadow and Legacy is not an activation argument; provider form does not establish U.S. domicile or operating-company structure, and the liquidity gate uses only one previous session.
+The [offline provider-classified audit](provider-classified-common-shares-v1.md) reports 1,751 CS-only requested members and a 1,864-member CS+ADRC requested comparison for 2026-08-14. Trailing-liquidity and reviewed eligibility reduce the activated views to 1,641 and 1,747 respectively. ADRC is never folded into the CS-only view.
 
-The completed pre-activation review applies the published 20-session decisions and reviewed stable-ID overlay. It recommends **Provider-Classified Common Shares (Provisional)** as the future primary and **Provider-Classified Common Shares + ADRs** as an optional secondary. These remain shadows: they do not claim verified U.S. domicile/issuer structure and are not connected to production analytics or Dashboard responses.
+The completed pre-activation review applies the published 20-session decisions and reviewed stable-ID overlay. Its two proposals are now the activated Dashboard catalog, while remaining provisional and not claiming verified U.S. domicile or issuer structure.
 
 ## Trailing-Liquidity Readiness
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import subprocess
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -105,10 +106,12 @@ def fake_liquidity():
 
 def fake_overview():
     definition = DashboardUniverseDefinition(
-        universe_id="tradable_us_listed_equities_v1",
-        name="Tradable U.S.-Listed Equities V1",
-        display_name="Legacy Liquid Screen (Provisional)",
+        universe_id="provider_classified_common_shares_v1",
+        name="Provider-Classified Common Shares (Provisional)",
+        display_name="Common Shares",
         description="Fixture universe",
+        long_display_name="Provider-Classified Common Shares (Provisional)", provisional=True,
+        member_count=2, security_type_composition={"CS":2}, membership_fingerprint="a"*64,
     )
     audit = DashboardUniverseAudit(
         raw_comparable_count=3,
@@ -129,7 +132,9 @@ def fake_overview():
         trading_activity_map=fake_liquidity(),
         outlier_review_count=1,
         quality_flag_counts={"close_times_volume_proxy": 2},
+        equal_weight_benchmark=MarketBenchmark(benchmark_id="equal_weight_universe",label="Equal-Weight Universe",ticker=None,available=True,current_session_date=CURRENT,previous_session_date=PREVIOUS,previous_close=None,current_close=None,close_to_close_return=Decimal("0.01"),quality_flags=("equal_weight_not_index_return",)),
     )
+    secondary=replace(universe,definition=replace(definition,universe_id="provider_classified_common_shares_plus_adrs_v1",display_name="Common Shares + ADRs",member_count=3,security_type_composition={"CS":2,"ADRC":1}))
     sectors = (
         SectorBenchmarkEtf(
             ticker="XLC",
@@ -171,13 +176,16 @@ def fake_overview():
         ),
     )
     return DashboardOverviewV11(
-        contract_version="1.3",
-        default_universe_id="tradable_us_listed_equities_v1",
-        universe_definition_id="legacy_liquid_screen_provisional",
+        contract_version="2.0",
+        default_universe_id="provider_classified_common_shares_v1",
+        selected_universe_id="provider_classified_common_shares_v1",
+        universe_definition_id="dashboard_universe_activation_v1",
         universe_version="1.0",
         governance_status="provisional_classification",
         classification_as_of_date=CURRENT,
-        evidence_coverage_status="incomplete",
+        trailing_window_start=date(2026,7,16),trailing_window_end=PREVIOUS,trailing_window_session_count=20,
+        reviewed_override_count=2,activation_fingerprint="b"*64,legacy_rollback_available=True,
+        evidence_coverage_status="provider_form_complete_issuer_structure_provisional",
         current_session_date=CURRENT,
         previous_session_date=PREVIOUS,
         data_as_of_label="Data as of 2026-08-13 EOD",
@@ -189,7 +197,7 @@ def fake_overview():
         session_lag=1,
         calendar_id="XNYS",
         freshness_checked_at=datetime(2026, 8, 15, 12, tzinfo=UTC),
-        universes=(universe,),
+        universes=(universe,secondary),
         market_benchmarks=market_benchmarks,
         sector_benchmarks=sectors,
         data_status="file_schema_consistency_checks_passed",
@@ -197,7 +205,7 @@ def fake_overview():
 
 
 class FakeOverviewService:
-    def __init__(self, query_service):
+    def __init__(self, query_service, activation):
         self.query_service = query_service
 
     def get_latest_overview(self, *, checked_at=None):
@@ -241,6 +249,7 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
         release_id=RID,
         generated_at=datetime(2026, 8, 15, 12, tzinfo=UTC),
         allowed_output_root=output_root,
+        dashboard_activation=object(),
     )
     private = result.output_dir / "private-data" / "v1"
     assert (private / "manifest.json").is_file()
@@ -255,9 +264,8 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
     assert manifest["current_session_date"] == "2026-08-13"
     assert manifest["file_sha256"]["market-summary.json"] == snapshot.sha256_file(private / "market-summary.json")
     assert manifest["overview_file"] == "market-overview.json"
-    assert manifest["snapshot_contract_version"] == "1.2"
-    assert manifest["dashboard_contract_version"] == "1.3"
-    assert manifest["snapshot_contract_version"] == "1.2"
+    assert manifest["snapshot_contract_version"] == "1.3"
+    assert manifest["dashboard_contract_version"] == "2.0"
     assert manifest["governance_status"] == "provisional_classification"
     assert manifest["expected_latest_completed_session"] == "2026-08-14"
     assert manifest["actual_latest_completed_session"] == "2026-08-13"
@@ -265,8 +273,8 @@ def test_build_snapshot_exports_contract_files(tmp_path, monkeypatch):
     assert manifest["freshness_status"] == "stale"
     assert manifest["calendar_id"] == "XNYS"
     assert '"equal_weight_return":"0.01"' in (private / "market-summary.json").read_text()
-    assert '"default_universe_id":"tradable_us_listed_equities_v1"' in (private / "market-overview.json").read_text()
-    assert '"universe_definition_id":"legacy_liquid_screen_provisional"' in (private / "market-overview.json").read_text()
+    assert '"default_universe_id":"provider_classified_common_shares_v1"' in (private / "market-overview.json").read_text()
+    assert '"universe_definition_id":"dashboard_universe_activation_v1"' in (private / "market-overview.json").read_text()
 
 
 def test_corrupted_snapshot_file_detection(tmp_path, monkeypatch):
@@ -274,7 +282,7 @@ def test_corrupted_snapshot_file_detection(tmp_path, monkeypatch):
     data_root.mkdir()
     output_root = tmp_path / "build" / "private-dashboard"
     monkeypatch.setattr(snapshot, "DashboardOverviewService", FakeOverviewService)
-    result = snapshot.build_private_dashboard_snapshot(data_root=data_root, output_root=output_root, release_id=RID, allowed_output_root=output_root)
+    result = snapshot.build_private_dashboard_snapshot(data_root=data_root, output_root=output_root, release_id=RID, allowed_output_root=output_root,dashboard_activation=object())
     (result.output_dir / "private-data" / "v1" / "movers.json").write_text("{}\n")
     with pytest.raises(snapshot.DashboardSnapshotError):
         snapshot.validate_snapshot_release(result.output_dir)
@@ -288,7 +296,7 @@ def test_output_symlink_and_traversal_rejected(tmp_path):
     target.mkdir()
     link.symlink_to(target, target_is_directory=True)
     with pytest.raises(snapshot.DashboardSnapshotError):
-        snapshot.build_private_dashboard_snapshot(data_root=data_root, output_root=link, release_id=RID, allowed_output_root=link)
+        snapshot.build_private_dashboard_snapshot(data_root=data_root, output_root=link, release_id=RID, allowed_output_root=link,dashboard_activation=object())
     with pytest.raises(ValueError):
         snapshot.validate_release_id("2026-08-13T120000Z-abcdef0/escape")
 

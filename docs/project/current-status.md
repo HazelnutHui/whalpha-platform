@@ -1,6 +1,12 @@
 # Current Status
 
-Status date: 2026-08-16
+Status date: 2026-08-20
+
+## Dashboard Universe Activation V1
+
+The completed pre-activation inputs now feed a versioned Dashboard activation boundary for analysis session 2026-08-19. `provider_classified_common_shares_v1` is the sole default with 1,641 provider-classified CS members. `provider_classified_common_shares_plus_adrs_v1` is the optional secondary with the same 1,641 CS plus 106 ADRCs. Membership uses stable instrument IDs and the completed reviewed overlay; Legacy 1,864 remains unchanged and formally readable only for compatibility and rollback.
+
+Private market APIs, the versioned private snapshot, and the React Dashboard share the completed activation reader. Unknown selections fail closed, all Universe-dependent modules use one selected fingerprint, and the normal selector contains only `Common Shares` and `Common Shares + ADRs`. Provider form does not prove issuer domicile or operating-company structure, so the primary remains provisional.
 
 ## Completed
 

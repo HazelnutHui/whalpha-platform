@@ -13,6 +13,7 @@ from tip_api.read_models.market import EodReturnReadModel, LiquidityMapNodeV1, L
 from tip_api.services.eod_market_data import EodMarketDataQueryService, EodQueryValidationError
 from tip_api.services.eod_return_analytics import _mean, _median
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar, evaluate_market_data_freshness
+from tip_api.persistence.parquet.dashboard_universe_activation import CompletedDashboardUniverseActivation
 
 DEFAULT_TRADABLE_PRICE = Decimal("5")
 DEFAULT_TRADABLE_PREVIOUS_DOLLAR_VOLUME = Decimal("20000000")
@@ -52,6 +53,11 @@ class DashboardUniverseDefinition:
     name: str
     display_name: str
     description: str
+    long_display_name: str
+    provisional: bool
+    member_count: int
+    security_type_composition: dict[str, int]
+    membership_fingerprint: str
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,6 +82,7 @@ class DashboardUniverseView:
     trading_activity_map: LiquidityMapV1
     outlier_review_count: int
     quality_flag_counts: dict[str, int]
+    equal_weight_benchmark: MarketBenchmark
 
 
 @dataclass(frozen=True, slots=True)
@@ -110,10 +117,17 @@ class MarketBenchmark:
 class DashboardOverviewV11:
     contract_version: str
     default_universe_id: str
+    selected_universe_id: str
     universe_definition_id: str
     universe_version: str
     governance_status: str
     classification_as_of_date: date
+    trailing_window_start: date
+    trailing_window_end: date
+    trailing_window_session_count: int
+    reviewed_override_count: int
+    activation_fingerprint: str
+    legacy_rollback_available: bool
     evidence_coverage_status: str
     current_session_date: date
     previous_session_date: date
@@ -147,6 +161,7 @@ class DashboardReturnRow:
 @dataclass(frozen=True, slots=True)
 class DashboardOverviewService:
     query_service: EodMarketDataQueryService
+    activation: CompletedDashboardUniverseActivation
     market_calendar: MarketSessionCalendar = field(default_factory=ExchangeCalendar)
     clock: Callable[[], datetime] = field(default=lambda: datetime.now(UTC), repr=False)
 
@@ -157,7 +172,19 @@ class DashboardOverviewService:
         ordered = tuple(sorted(sessions, key=lambda item: item.session_date))
         return ordered[-1].session_date, ordered[-2].session_date
 
-    def get_latest_overview(self, *, checked_at: datetime | None = None) -> DashboardOverviewV11:
+    def get_latest_returns_for_universe(self, universe_id: str | None = None) -> tuple[tuple[EodReturnReadModel, ...], object]:
+        current_date, previous_date = self.get_latest_session_pair()
+        try:
+            record, member_ids = self.activation.select(universe_id)
+        except ValueError as exc:
+            raise EodQueryValidationError("unknown dashboard universe") from exc
+        rows = self._compute_rows(current_session_date=current_date, previous_session_date=previous_date)
+        by_id = {item.row.instrument_id: item.row for item in rows}
+        if member_ids - set(by_id):
+            raise EodQueryValidationError("activated universe member is missing current/previous bar")
+        return tuple(by_id[item] for item in sorted(member_ids, key=str)), record
+
+    def get_latest_overview(self, *, universe_id: str | None = None, checked_at: datetime | None = None) -> DashboardOverviewV11:
         current_date, previous_date = self.get_latest_session_pair()
         evaluation_time = checked_at or self.clock()
         freshness = evaluate_market_data_freshness(
@@ -166,19 +193,30 @@ class DashboardOverviewService:
             checked_at=evaluation_time,
         )
         rows = self._compute_rows(current_session_date=current_date, previous_session_date=previous_date)
-        universe_views = (
-            self._build_universe(TRADABLE_UNIVERSE_ID, rows, current_date, previous_date),
-            self._build_universe(OPERATING_UNIVERSE_ID, rows, current_date, previous_date),
-            self._build_universe(ELIGIBLE_UNIVERSE_ID, rows, current_date, previous_date),
+        try:
+            selected_record, _ = self.activation.select(universe_id)
+        except ValueError as exc:
+            raise EodQueryValidationError("unknown dashboard universe") from exc
+        universe_views = tuple(
+            self._build_universe(record, self.activation.member_ids_by_universe[record.universe_id], rows, current_date, previous_date)
+            for record in self.activation.universes
         )
+        default_id = self.activation.manifest.default_universe_id
         return DashboardOverviewV11(
-            contract_version="1.3",
-            default_universe_id=TRADABLE_UNIVERSE_ID,
-            universe_definition_id="legacy_liquid_screen_provisional",
+            contract_version="2.0",
+            default_universe_id=default_id,
+            selected_universe_id=selected_record.universe_id,
+            universe_definition_id="dashboard_universe_activation_v1",
             universe_version="1.0",
             governance_status="provisional_classification",
-            classification_as_of_date=current_date,
-            evidence_coverage_status="incomplete",
+            classification_as_of_date=self.activation.manifest.membership_evidence_as_of,
+            trailing_window_start=self.activation.manifest.trailing_window_start,
+            trailing_window_end=self.activation.manifest.trailing_window_end,
+            trailing_window_session_count=self.activation.manifest.trailing_window_session_count,
+            reviewed_override_count=self.activation.manifest.reviewed_override_count,
+            activation_fingerprint=self.activation.manifest.logical_content_fingerprint,
+            legacy_rollback_available=True,
+            evidence_coverage_status="provider_form_complete_issuer_structure_provisional",
             current_session_date=current_date,
             previous_session_date=previous_date,
             data_as_of_label=f"Data as of {current_date.isoformat()} EOD",
@@ -191,7 +229,7 @@ class DashboardOverviewService:
             calendar_id=freshness.calendar_id,
             freshness_checked_at=freshness.checked_at,
             universes=universe_views,
-            market_benchmarks=self._market_benchmarks(rows, universe_views[0], current_date, previous_date),
+            market_benchmarks=self._market_benchmarks(rows, current_date, previous_date),
             sector_benchmarks=self._sector_benchmarks(rows, current_date, previous_date),
             data_status=SNAPSHOT_VALIDATION_STATUS if rows else "insufficient_data",
         )
@@ -261,44 +299,35 @@ class DashboardOverviewService:
         return tuple(sorted(rows, key=lambda item: (item.row.ticker, str(item.row.instrument_id))))
 
     def _build_universe(
-        self, universe_id: str, rows: tuple[DashboardReturnRow, ...], current_date: date, previous_date: date
+        self, record, member_ids, rows: tuple[DashboardReturnRow, ...], current_date: date, previous_date: date
     ) -> DashboardUniverseView:
-        if universe_id == TRADABLE_UNIVERSE_ID:
-            definition = DashboardUniverseDefinition(
-                universe_id=universe_id,
-                name="Legacy Liquid Screen (Provisional)",
-                display_name="Legacy Liquid Screen (Provisional)",
-                description="Price/liquidity-filtered legacy universe; canonical security-type coverage is incomplete.",
-            )
-            selected = tuple(item for item in rows if not item.universe_reasons)
-        elif universe_id == OPERATING_UNIVERSE_ID:
-            definition = DashboardUniverseDefinition(
-                universe_id=universe_id,
-                name="All Operating Equities",
-                display_name="All Operating Equities",
-                description="Operating common-equity securities without the V1 price and liquidity gates.",
-            )
-            selected = tuple(item for item in rows if item.is_operating_equity and item.is_major_exchange)
-        elif universe_id == ELIGIBLE_UNIVERSE_ID:
-            definition = DashboardUniverseDefinition(
-                universe_id=universe_id,
-                name="All Eligible Instruments",
-                display_name="All Eligible Instruments",
-                description="Broad comparable research view; may include ETFs and other supported products.",
-            )
-            selected = rows
-        else:
-            raise EodQueryValidationError("unknown dashboard universe")
+        definition = DashboardUniverseDefinition(
+            universe_id=record.universe_id, name=record.long_display_name, display_name=record.display_name,
+            description=record.description, long_display_name=record.long_display_name,
+            provisional=record.provisional, member_count=record.member_count,
+            security_type_composition={item.provider_type_code:item.count for item in record.security_type_composition},
+            membership_fingerprint=record.membership_fingerprint,
+        )
+        by_id={item.row.instrument_id:item for item in rows}
+        missing=member_ids-set(by_id)
+        if missing: raise EodQueryValidationError("activated universe member is missing current/previous bar")
+        selected=tuple(by_id[item] for item in sorted(member_ids,key=str))
         selected_rows = tuple(item.row for item in selected)
         non_outlier = tuple(item.row for item in selected if not item.is_outlier)
         return DashboardUniverseView(
             definition=definition,
-            audit=_audit(rows, selected),
+            audit=_audit(rows, selected, definition),
             summary=_summary(selected_rows, current_date, previous_date, rows),
             movers=_movers(non_outlier, current_date, previous_date),
             trading_activity_map=_trading_activity_map(non_outlier, current_date, previous_date, limit=DEFAULT_MAP_NODE_LIMIT),
             outlier_review_count=sum(1 for item in selected if item.is_outlier),
             quality_flag_counts=_quality_flag_counts(selected_rows),
+            equal_weight_benchmark=MarketBenchmark(
+                benchmark_id="equal_weight_universe", label="Equal-Weight Universe", ticker=None,
+                available=bool(selected_rows), current_session_date=current_date, previous_session_date=previous_date,
+                previous_close=None,current_close=None,close_to_close_return=_mean(tuple(row.close_to_close_return for row in selected_rows)),
+                quality_flags=("equal_weight_not_index_return",),
+            ),
         )
 
     def _sector_benchmarks(
@@ -349,7 +378,6 @@ class DashboardOverviewService:
     def _market_benchmarks(
         self,
         rows: tuple[DashboardReturnRow, ...],
-        default_universe: DashboardUniverseView,
         current_date: date,
         previous_date: date,
     ) -> tuple[MarketBenchmark, ...]:
@@ -387,36 +415,22 @@ class DashboardOverviewService:
                     quality_flags=row.quality_flags,
                 )
             )
-        result.append(
-            MarketBenchmark(
-                benchmark_id="equal_weight_universe",
-                label="Equal-Weight Universe",
-                ticker=None,
-                available=default_universe.summary.equal_weight_return is not None,
-                current_session_date=current_date,
-                previous_session_date=previous_date,
-                previous_close=None,
-                current_close=None,
-                close_to_close_return=default_universe.summary.equal_weight_return,
-                quality_flags=("equal_weight_not_index_return",),
-            )
-        )
         return tuple(result)
 
 
-def _audit(rows: tuple[DashboardReturnRow, ...], selected: tuple[DashboardReturnRow, ...]) -> DashboardUniverseAudit:
+def _audit(rows: tuple[DashboardReturnRow, ...], selected: tuple[DashboardReturnRow, ...], definition: DashboardUniverseDefinition) -> DashboardUniverseAudit:
     exclusion_counts: dict[str, int] = {}
     for item in rows:
         for reason in item.universe_reasons:
             exclusion_counts[reason] = exclusion_counts.get(reason, 0) + 1
     return DashboardUniverseAudit(
         raw_comparable_count=len(rows),
-        common_stock_count=sum(1 for item in rows if item.row.instrument_type is InstrumentType.COMMON_STOCK),
-        adr_count=None,
+        common_stock_count=definition.security_type_composition.get("CS",0),
+        adr_count=definition.security_type_composition.get("ADRC",0),
         etf_count=sum(1 for item in rows if item.row.instrument_type is InstrumentType.ETF),
         other_excluded_type_count=sum(1 for item in rows if item.row.instrument_type not in {InstrumentType.COMMON_STOCK, InstrumentType.ETF}),
-        major_exchange_count=sum(1 for item in rows if item.is_major_exchange),
-        price_gate_count=sum(1 for item in rows if item.is_operating_equity and item.is_major_exchange and item.is_price_eligible),
+        major_exchange_count=len(selected),
+        price_gate_count=len(selected),
         final_count=len(selected),
         exclusion_counts=dict(sorted(exclusion_counts.items())),
     )

@@ -68,10 +68,12 @@ const summary: MarketSummaryResponse = {
 
 const universe = {
   definition: {
-    universe_id: 'tradable_us_listed_equities_v1',
-    name: 'Legacy Liquid Screen (Provisional)',
-    display_name: 'Legacy Liquid Screen (Provisional)',
-    description: 'Price/liquidity-filtered legacy universe; canonical security-type coverage is incomplete.',
+    universe_id: 'provider_classified_common_shares_v1',
+    name: 'Provider-Classified Common Shares (Provisional)',
+    display_name: 'Common Shares',
+    long_display_name: 'Provider-Classified Common Shares (Provisional)',
+    description: 'Provider-classified common shares passing reviewed gates.', provisional: true,
+    member_count: 240, security_type_composition: { CS: 240 }, membership_fingerprint: 'a'.repeat(64),
   },
   audit: {
     raw_comparable_count: 280,
@@ -99,6 +101,7 @@ const universe = {
   },
   outlier_review_count: 2,
   quality_flag_counts: { synthetic_demo_fixture: 240 },
+  equal_weight_benchmark: { benchmark_id:'equal_weight_universe',label:'Equal-Weight Universe',ticker:null,available:true,current_session_date:current,previous_session_date:previous,previous_close:null,current_close:null,close_to_close_return:summary.equal_weight_return,quality_flags:['equal_weight_not_index_return'] },
 };
 
 const sectorBenchmarks = ['XLC', 'XLY', 'XLP', 'XLE', 'XLF', 'XLV', 'XLI', 'XLB', 'XLRE', 'XLK', 'XLU'].map((ticker, index) => ({
@@ -119,7 +122,6 @@ const marketBenchmarks = [
   ['qqq', 'Nasdaq 100 ETF', 'QQQ', '0.007'],
   ['iwm', 'Russell 2000 ETF', 'IWM', '-0.002'],
   ['dia', 'Dow Industrials ETF', 'DIA', '0.001'],
-  ['equal_weight_universe', 'Equal-Weight Universe', null, summary.equal_weight_return],
 ].map(([benchmark_id, label, ticker, close_to_close_return]) => ({
   benchmark_id: benchmark_id as string,
   label: label as string,
@@ -135,13 +137,15 @@ const marketBenchmarks = [
 
 export const demoDashboardData: DashboardData = {
   overview: {
-    contract_version: '1.3',
-    default_universe_id: 'tradable_us_listed_equities_v1',
-    universe_definition_id: 'legacy_liquid_screen_provisional',
+    contract_version: '2.0',
+    default_universe_id: 'provider_classified_common_shares_v1',
+    selected_universe_id: 'provider_classified_common_shares_v1',
+    universe_definition_id: 'dashboard_universe_activation_v1',
     universe_version: '1.0',
     governance_status: 'provisional_classification',
     classification_as_of_date: current,
-    evidence_coverage_status: 'incomplete',
+    trailing_window_start:'2026-07-16',trailing_window_end:previous,trailing_window_session_count:20,reviewed_override_count:2,activation_fingerprint:'b'.repeat(64),legacy_rollback_available:true,
+    evidence_coverage_status: 'provider_form_complete_issuer_structure_provisional',
     current_session_date: current,
     previous_session_date: previous,
     data_as_of_label: 'Data as of 2026-08-13 EOD',
@@ -155,8 +159,7 @@ export const demoDashboardData: DashboardData = {
     freshness_checked_at: '2026-08-15T18:00:00Z',
     universes: [
       universe,
-      { ...universe, definition: { ...universe.definition, universe_id: 'all_operating_equities', display_name: 'All Operating Equities', name: 'All Operating Equities' } },
-      { ...universe, definition: { ...universe.definition, universe_id: 'all_eligible_instruments', display_name: 'All Eligible Instruments', name: 'All Eligible Instruments' } },
+      { ...universe, definition: { ...universe.definition, universe_id: 'provider_classified_common_shares_plus_adrs_v1', display_name: 'Common Shares + ADRs', name: 'Provider-Classified Common Shares + ADRs', long_display_name:'Provider-Classified Common Shares + ADRs',member_count:260,security_type_composition:{CS:240,ADRC:20} } },
     ],
     market_benchmarks: marketBenchmarks,
     sector_benchmarks: sectorBenchmarks,

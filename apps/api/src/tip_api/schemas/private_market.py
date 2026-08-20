@@ -70,6 +70,9 @@ class EodReturnsPageResponse(BaseModel):
     limit: int
     offset: int
     items: tuple[EodReturnResponse, ...]
+    universe_id: str | None = None
+    universe_membership_fingerprint: str | None = None
+    universe_member_count: int | None = None
 
 
 class MarketSummaryResponse(BaseModel):
@@ -95,6 +98,9 @@ class MarketSummaryResponse(BaseModel):
     etf_comparable_count: int
     quality_warning_count: int
     data_status: str
+    universe_id: str | None = None
+    universe_membership_fingerprint: str | None = None
+    universe_member_count: int | None = None
 
     @classmethod
     def from_model(cls, model: MarketSummaryV1) -> MarketSummaryResponse:
@@ -130,6 +136,9 @@ class MoversResponse(BaseModel):
     threshold: str
     top_gainers: tuple[EodReturnResponse, ...]
     top_losers: tuple[EodReturnResponse, ...]
+    universe_id: str | None = None
+    universe_membership_fingerprint: str | None = None
+    universe_member_count: int | None = None
 
     @classmethod
     def from_model(cls, model: MoversV1) -> MoversResponse:
@@ -182,6 +191,9 @@ class LiquidityMapResponse(BaseModel):
     current_session_date: date
     previous_session_date: date
     nodes: tuple[LiquidityMapNodeResponse, ...]
+    universe_id: str | None = None
+    universe_membership_fingerprint: str | None = None
+    universe_member_count: int | None = None
 
     @classmethod
     def from_model(cls, model: LiquidityMapV1) -> LiquidityMapResponse:
@@ -204,6 +216,11 @@ class DashboardUniverseDefinitionResponse(BaseModel):
     name: str
     display_name: str
     description: str
+    long_display_name: str
+    provisional: bool
+    member_count: int
+    security_type_composition: dict[str, int]
+    membership_fingerprint: str
 
     @classmethod
     def from_model(cls, model: DashboardUniverseDefinition) -> DashboardUniverseDefinitionResponse:
@@ -212,6 +229,11 @@ class DashboardUniverseDefinitionResponse(BaseModel):
             name=model.name,
             display_name=model.display_name,
             description=model.description,
+            long_display_name=model.long_display_name,
+            provisional=model.provisional,
+            member_count=model.member_count,
+            security_type_composition=model.security_type_composition,
+            membership_fingerprint=model.membership_fingerprint,
         )
 
 
@@ -251,6 +273,7 @@ class DashboardUniverseViewResponse(BaseModel):
     trading_activity_map: LiquidityMapResponse
     outlier_review_count: int
     quality_flag_counts: dict[str, int]
+    equal_weight_benchmark: MarketBenchmarkResponse
 
     @classmethod
     def from_model(cls, model: DashboardUniverseView) -> DashboardUniverseViewResponse:
@@ -262,6 +285,7 @@ class DashboardUniverseViewResponse(BaseModel):
             trading_activity_map=LiquidityMapResponse.from_model(model.trading_activity_map),
             outlier_review_count=model.outlier_review_count,
             quality_flag_counts=model.quality_flag_counts,
+            equal_weight_benchmark=MarketBenchmarkResponse.from_model(model.equal_weight_benchmark),
         )
 
 
@@ -327,10 +351,17 @@ class DashboardOverviewResponse(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     contract_version: str
     default_universe_id: str
+    selected_universe_id: str
     universe_definition_id: str
     universe_version: str
     governance_status: str
     classification_as_of_date: date
+    trailing_window_start: date
+    trailing_window_end: date
+    trailing_window_session_count: int
+    reviewed_override_count: int
+    activation_fingerprint: str
+    legacy_rollback_available: bool
     evidence_coverage_status: str
     current_session_date: date
     previous_session_date: date
@@ -353,10 +384,17 @@ class DashboardOverviewResponse(BaseModel):
         return cls(
             contract_version=model.contract_version,
             default_universe_id=model.default_universe_id,
+            selected_universe_id=model.selected_universe_id,
             universe_definition_id=model.universe_definition_id,
             universe_version=model.universe_version,
             governance_status=model.governance_status,
             classification_as_of_date=model.classification_as_of_date,
+            trailing_window_start=model.trailing_window_start,
+            trailing_window_end=model.trailing_window_end,
+            trailing_window_session_count=model.trailing_window_session_count,
+            reviewed_override_count=model.reviewed_override_count,
+            activation_fingerprint=model.activation_fingerprint,
+            legacy_rollback_available=model.legacy_rollback_available,
             evidence_coverage_status=model.evidence_coverage_status,
             current_session_date=model.current_session_date,
             previous_session_date=model.previous_session_date,

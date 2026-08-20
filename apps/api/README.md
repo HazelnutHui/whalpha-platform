@@ -1,5 +1,7 @@
 # Trading Intelligence API
 
+Dashboard Universe Activation V1 is the formal production membership boundary for private market analytics. Omitted Universe selection uses `provider_classified_common_shares_v1`; the ADR-inclusive alternative is explicitly allowlisted. Unknown IDs fail closed and never silently select Legacy.
+
 ## Security Classification V1
 
 `tip_api.contracts.security_classification.v1` exposes the immutable point-in-time classification contract. `tip_api.services.security_classification` provides override validation, classification reconciliation, and Core/Broad candidate funnel auditing. Phase A does not wire these candidates into private APIs or production snapshots.

@@ -33,7 +33,7 @@ API mode does not fall back to synthetic fixtures on failure. Failures render ex
 ## Implemented Views
 
 - Compact header with WH Alpha, Market Overview, Logout, and a meta/control bar for universe, period, data-as-of date, and freshness.
-- Universe control with `Tradable U.S. Equities` as the default and auxiliary universes available for research/data-quality views.
+- Universe control with `Common Shares` as the default and `Common Shares + ADRs` as the only ordinary alternative; Legacy remains an internal rollback boundary.
 - Market Benchmark Strip for SPY, QQQ, IWM, DIA, and selected-universe equal-weight return.
 - Market Pulse cards for equal-weight return, median return, advancers/decliners, and up/down volume ratio.
 - Market Breadth stacked bar with advancers, unchanged, decliners, counts, and percentages.
@@ -103,6 +103,8 @@ The API binds to `127.0.0.1:8000` and Vite binds to `127.0.0.1:5173`. Vite proxi
 `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true` is a development switch only. It is not authentication, authorization, or deployment approval.
 
 Provider-backed data and derived analytics must remain private unless formal access control and provider display rights are accepted and implemented.
+
+The selector persists a validated stable ID in the `universe` URL query, supports browser history, normalizes invalid input to the activation default, and updates all Universe-dependent modules without using input as a file path.
 
 ## Not Implemented
 

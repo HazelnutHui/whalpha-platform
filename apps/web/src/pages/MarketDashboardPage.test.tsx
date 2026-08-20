@@ -21,6 +21,7 @@ function okResponse(payload: unknown): Response {
 
 describe('MarketDashboardPage', () => {
   beforeEach(() => {
+    window.history.replaceState({}, '', '/dashboard/');
     vi.stubEnv('VITE_MARKET_DATA_MODE', 'api');
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const path = String(input);
@@ -166,10 +167,36 @@ describe('MarketDashboardPage', () => {
     expect(screen.getByText('Data Limitations')).toBeInTheDocument();
     expect(screen.getByText('Material Warnings')).toBeInTheDocument();
     expect(screen.getAllByText('Provisional classification').length).toBeGreaterThan(0);
-    expect(screen.getByText(/Security-type evidence is incomplete/)).toBeInTheDocument();
+    expect(screen.getByText(/issuer domicile and structure remain provisional/)).toBeInTheDocument();
     expect(screen.queryByText(/No material warnings/)).not.toBeInTheDocument();
     expect(screen.getByText(/EOD market structure; not real-time/)).toBeInTheDocument();
     expect(screen.queryByText(/1,876 warnings/)).not.toBeInTheDocument();
+  });
+
+  it('defaults to Common Shares and exposes only the two activated universes', async () => {
+    render(<MarketDashboardPage />);
+    const selector=await screen.findByLabelText('Dashboard universe');
+    expect(selector).toHaveValue('provider_classified_common_shares_v1');
+    expect(Array.from((selector as HTMLSelectElement).options).map((item)=>item.textContent)).toEqual(['Common Shares','Common Shares + ADRs']);
+    expect(screen.queryByRole('option',{name:/Legacy/})).not.toBeInTheDocument();
+  });
+
+  it('switches every view with a stable URL universe value', async () => {
+    render(<MarketDashboardPage />);
+    const selector=await screen.findByLabelText('Dashboard universe');
+    fireEvent.change(selector,{target:{value:'provider_classified_common_shares_plus_adrs_v1'}});
+    expect(selector).toHaveValue('provider_classified_common_shares_plus_adrs_v1');
+    expect(window.location.search).toContain('universe=provider_classified_common_shares_plus_adrs_v1');
+    expect(screen.getByText(/Market Pulse · Common Shares \+ ADRs/)).toBeInTheDocument();
+    expect(screen.getByText(/Market Breadth · Common Shares \+ ADRs/)).toBeInTheDocument();
+  });
+
+  it('normalizes an invalid URL universe to the activated default', async () => {
+    window.history.replaceState({},'', '/dashboard/?universe=..%2F..%2Fetc');
+    render(<MarketDashboardPage />);
+    const selector=await screen.findByLabelText('Dashboard universe');
+    expect(selector).toHaveValue('provider_classified_common_shares_v1');
+    expect(window.location.search).toContain('universe=provider_classified_common_shares_v1');
   });
 
   it('renders sector benchmark relative performance without price columns', async () => {

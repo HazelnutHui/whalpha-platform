@@ -21,6 +21,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Scope](product/scope.md): Phase 1 scope, deferred work, and explicit non-goals.
 - [Dashboard V1](product/dashboard-v1.md): Confirmed first dashboard structure and target behavior.
 - [Dashboard Universe V1](product/dashboard-universe-v1.md): Dashboard V1.1 operating-equity universe, ETF benchmark, and Trading Activity Map boundary.
+- [Dashboard Universe Activation V1](data-contracts/dashboard-universe-activation-v1.md): Completed selectable-Universe policy and publication contract.
 - [Initial EOD Universe](product/initial-eod-universe.md): Accepted V1 universe layers and Candidate Discovery thresholds.
 
 ## Architecture
@@ -35,6 +36,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [EOD Parquet Persistence](architecture/eod-parquet-persistence.md): Implemented EOD Price Bar Parquet persistence boundary and first published canonical EOD session.
 - [Trailing Liquidity Shadow Publication](architecture/trailing-liquidity-shadow-publication.md): Versioned offline metric/decision Parquet publication with a final logical completion marker.
 - [Universe Pre-Activation Review](architecture/universe-pre-activation-review.md): Reviewed stable-ID override overlay and atomic shadow review publication.
+- [Dashboard Universe Activation](architecture/dashboard-universe-activation.md): Formal reader, analytics, snapshot, and selector boundary.
 - [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md): Implemented read repository, query service, and default-disabled private API boundary.
 - [EOD Return Analytics](architecture/eod-return-analytics.md): Close-to-close returns, Market Summary V1, movers, and Liquidity Map V1 semantics.
 - [Instrument Identity Resolution](architecture/instrument-identity-resolution.md): Deterministic provider identity mapping and current Instrument Master snapshot gate result.
@@ -53,6 +55,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Provider Ticker Resolver V1](data-contracts/provider-ticker-resolver-v1.md)
 - [Trailing Liquidity Shadow Publication V1](data-contracts/trailing-liquidity-shadow-v1.md)
 - [Reviewed Eligibility Override V1](data-contracts/reviewed-eligibility-override-v1.md)
+- [Dashboard Universe Activation V1](data-contracts/dashboard-universe-activation-v1.md)
 
 ## Providers
 
@@ -77,6 +80,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
 - [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md): Private static Dashboard deployment status and operations boundary.
 - [Private Dashboard Access](operations/private-dashboard-access.md): Basic Auth credential boundary and manual verification runbook.
+- [Dashboard Universe Activation](operations/dashboard-universe-activation.md): Dry-run, one-apply, verification, and rollback boundary.
 - [Data Access Boundary](operations/data-access-boundary.md): Public placeholder, data-free demo, and private provider-backed dashboard boundary.
 - [Massive Credential Provisioning](operations/massive-credential-provisioning.md): Secure credential file and one-request smoke-test operations record.
 - [Massive Grouped Daily Inspection](operations/massive-grouped-daily-inspection.md): One-request Grouped Daily inspection record for 2026-08-13.

@@ -81,6 +81,11 @@ export interface DashboardUniverseDefinitionResponse {
   name: string;
   display_name: string;
   description: string;
+  long_display_name: string;
+  provisional: boolean;
+  member_count: number;
+  security_type_composition: Record<string, number>;
+  membership_fingerprint: string;
 }
 
 export interface DashboardUniverseAuditResponse {
@@ -103,6 +108,7 @@ export interface DashboardUniverseViewResponse {
   trading_activity_map: LiquidityMapResponse;
   outlier_review_count: number;
   quality_flag_counts: Record<string, number>;
+  equal_weight_benchmark: MarketBenchmarkResponse;
 }
 
 export interface SectorBenchmarkEtfResponse {
@@ -134,10 +140,17 @@ export interface MarketBenchmarkResponse {
 export interface DashboardOverviewResponse {
   contract_version: string;
   default_universe_id: string;
+  selected_universe_id: string;
   universe_definition_id: string;
   universe_version: string;
   governance_status: string;
   classification_as_of_date: string;
+  trailing_window_start: string;
+  trailing_window_end: string;
+  trailing_window_session_count: number;
+  reviewed_override_count: number;
+  activation_fingerprint: string;
+  legacy_rollback_available: boolean;
   evidence_coverage_status: string;
   current_session_date: string;
   previous_session_date: string;
@@ -184,6 +197,10 @@ export interface SnapshotManifestResponse {
   governance_status?: string;
   classification_as_of_date?: string | null;
   evidence_coverage_status?: string;
+  selected_universe_id?: string;
+  available_universe_ids?: string[];
+  activation_fingerprint?: string;
+  membership_evidence_as_of?: string;
   is_real_provider_backed: boolean;
   access_classification: string;
   contains_raw_provider_data: boolean;

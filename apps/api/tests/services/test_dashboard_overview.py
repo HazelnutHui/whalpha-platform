@@ -9,6 +9,9 @@ from tip_api.persistence.eod_read import EodReadRepository, EodSessionNotFoundEr
 from tip_api.read_models.eod import EodMarketBarReadModel, EodSessionDescriptor
 from tip_api.services.dashboard_overview import DashboardOverviewService
 from tip_api.services.eod_market_data import EodMarketDataQueryService
+from tip_api.contracts.market_data.v1.dashboard_universe_activation import DashboardUniverseActivationDatasetReferenceV1, DashboardUniverseActivationManifestV1, DashboardUniverseActivationRecordV1, SecurityTypeCountV1
+from tip_api.persistence.parquet.dashboard_universe_activation import CompletedDashboardUniverseActivation, PUBLIC_SECONDARY_ID
+from tip_api.services.provider_classified_universe import CANDIDATE_A_ID
 
 CURRENT = date(2026, 8, 13)
 PREVIOUS = date(2026, 8, 12)
@@ -57,8 +60,16 @@ class FakeRepo(EodReadRepository):
 
 
 def service(current, previous):
+    activated=datetime(2026,8,15,tzinfo=UTC); sha="a"*64
+    records=(
+        DashboardUniverseActivationRecordV1(activation_id=uid(90),analysis_session=CURRENT,membership_evidence_as_of=PREVIOUS,activated_at=activated,universe_id=CANDIDATE_A_ID,display_name="Common Shares",long_display_name="Provider-Classified Common Shares (Provisional)",description="Fixture common shares",is_default=True,member_count=2,security_type_composition=(SecurityTypeCountV1(provider_type_code="CS",count=2),),membership_fingerprint=sha,trailing_liquidity_source_fingerprint=sha,reviewed_override_source_fingerprint=sha,pre_activation_review_fingerprint=sha,current_eod_fingerprint=sha,previous_eod_fingerprint=sha,legacy_rollback_reference="market-data/snapshots/legacy",limitations=("fixture",)),
+        DashboardUniverseActivationRecordV1(activation_id=uid(91),analysis_session=CURRENT,membership_evidence_as_of=PREVIOUS,activated_at=activated,universe_id=PUBLIC_SECONDARY_ID,display_name="Common Shares + ADRs",long_display_name="Provider-Classified Common Shares + ADRs",description="Fixture ADR view",is_default=False,member_count=3,security_type_composition=(SecurityTypeCountV1(provider_type_code="CS",count=2),SecurityTypeCountV1(provider_type_code="ADRC",count=1)),membership_fingerprint=sha,trailing_liquidity_source_fingerprint=sha,reviewed_override_source_fingerprint=sha,pre_activation_review_fingerprint=sha,current_eod_fingerprint=sha,previous_eod_fingerprint=sha,legacy_rollback_reference="market-data/snapshots/legacy",limitations=("fixture",)),
+    )
+    manifest=DashboardUniverseActivationManifestV1(policy_version="dashboard-universe-v1",analysis_session=CURRENT,membership_evidence_as_of=PREVIOUS,trailing_window_start=date(2026,7,22),trailing_window_end=date(2026,8,18),trailing_window_session_count=20,reviewed_override_count=2,activated_at=activated,default_universe_id=CANDIDATE_A_ID,available_universe_ids=(CANDIDATE_A_ID,PUBLIC_SECONDARY_ID),activation_dataset=DashboardUniverseActivationDatasetReferenceV1(dataset_path="fixture",record_count=2,content_fingerprint=sha,parquet_sha256=sha),pre_activation_review_path="fixture",pre_activation_review_fingerprint=sha,legacy_member_count=3,legacy_membership_fingerprint=sha,logical_content_fingerprint=sha)
+    activation=CompletedDashboardUniverseActivation(manifest,records,{CANDIDATE_A_ID:frozenset({uid(1),uid(6)}),PUBLIC_SECONDARY_ID:frozenset({uid(1),uid(3),uid(6)})})
     return DashboardOverviewService(
         EodMarketDataQueryService(FakeRepo({PREVIOUS: previous, CURRENT: current})),
+        activation,
         clock=lambda: datetime(2026, 8, 15, 18, tzinfo=UTC),
     )
 
@@ -97,16 +108,13 @@ def test_tradable_universe_uses_previous_session_price_and_liquidity_gates():
     current, previous = base_rows()
     overview = service(current, previous).get_latest_overview()
     tradable = next(item for item in overview.universes if item.definition.universe_id == overview.default_universe_id)
-    assert tradable.definition.display_name == "Legacy Liquid Screen (Provisional)"
+    assert tradable.definition.display_name == "Common Shares"
     assert overview.governance_status == "provisional_classification"
-    assert overview.evidence_coverage_status == "incomplete"
+    assert overview.evidence_coverage_status == "provider_form_complete_issuer_structure_provisional"
     assert tradable.audit.raw_comparable_count == 11
     assert tradable.audit.etf_count == 6
-    assert tradable.audit.price_gate_count == 3
+    assert tradable.audit.price_gate_count == 2
     assert tradable.audit.final_count == 2
-    assert tradable.audit.exclusion_counts["excluded_instrument_type"] == 6
-    assert tradable.audit.exclusion_counts["previous_close_below_5"] == 1
-    assert tradable.audit.exclusion_counts["previous_dollar_volume_below_20m"] == 1
     assert {row.ticker for row in tradable.movers.top_gainers} == {"TESTA"}
     assert all(node.ticker != "TESTE" for node in tradable.trading_activity_map.nodes)
 
@@ -129,13 +137,13 @@ def test_price_discontinuity_is_reviewed_and_excluded_from_movers_and_map():
     assert tradable.quality_flag_counts["unverified_price_discontinuity"] == 1
 
 
-def test_all_operating_and_all_eligible_auxiliary_universes_are_available():
+def test_only_activated_primary_and_secondary_are_available():
     current, previous = base_rows()
     overview = service(current, previous).get_latest_overview()
     universes = {item.definition.universe_id: item for item in overview.universes}
-    assert set(universes) == {"tradable_us_listed_equities_v1", "all_operating_equities", "all_eligible_instruments"}
-    assert universes["all_operating_equities"].audit.final_count == 4
-    assert universes["all_eligible_instruments"].audit.final_count == 11
+    assert set(universes) == {CANDIDATE_A_ID, PUBLIC_SECONDARY_ID}
+    assert universes[CANDIDATE_A_ID].audit.final_count == 2
+    assert universes[PUBLIC_SECONDARY_ID].audit.final_count == 3
 
 
 def test_sector_benchmarks_are_fixed_and_do_not_fabricate_missing_data():
@@ -156,13 +164,14 @@ def test_market_benchmark_strip_contains_core_etfs_and_equal_weight_universe():
     current, previous = base_rows()
     overview = service(current, previous).get_latest_overview()
     benchmarks = {item.benchmark_id: item for item in overview.market_benchmarks}
-    assert set(benchmarks) == {"spy", "qqq", "iwm", "dia", "equal_weight_universe"}
+    assert set(benchmarks) == {"spy", "qqq", "iwm", "dia"}
     assert benchmarks["spy"].ticker == "SPY"
     assert benchmarks["spy"].available is True
     assert benchmarks["spy"].close_to_close_return == Decimal("0.01")
-    assert benchmarks["equal_weight_universe"].ticker is None
-    assert benchmarks["equal_weight_universe"].close_to_close_return is not None
-    assert benchmarks["equal_weight_universe"].quality_flags == ("equal_weight_not_index_return",)
+    equal_weight=overview.universes[0].equal_weight_benchmark
+    assert equal_weight.ticker is None
+    assert equal_weight.close_to_close_return is not None
+    assert equal_weight.quality_flags == ("equal_weight_not_index_return",)
 
 
 def test_overview_separates_calendar_freshness_from_file_validation():

@@ -30,7 +30,7 @@ Decimal values are serialized as strings. Return values are decimal ratios: `0.0
 
 ## Dashboard Overview V1.1
 
-`overview/latest` returns a versioned dashboard payload with multiple universes, Market Benchmark Strip data, Sector Benchmark ETFs, and a Trading Activity Map projection. The default universe is `Tradable U.S.-Listed Equities V1`, displayed as `Tradable U.S. Equities`. See [Dashboard Universe V1](../product/dashboard-universe-v1.md).
+`overview/latest` returns both activated universes, Market Benchmark Strip data, Sector Benchmark ETFs, and a Trading Activity Map projection. Omitted `universe_id` selects `provider_classified_common_shares_v1`; the only optional ID is `provider_classified_common_shares_plus_adrs_v1`. Unknown or path-like values receive 4xx and never fall back to Legacy. The related summary, movers, map, returns, and overview routes use the same validated selection.
 
 The Market Benchmark Strip contains SPY, QQQ, IWM, DIA, and the selected universe equal-weight return. These benchmark rows are market context only and are not included in the default stock universe.
 
