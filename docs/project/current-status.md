@@ -10,6 +10,8 @@ Private market APIs, the versioned private snapshot, and the React Dashboard sha
 
 The sole production activation apply exited 0 after its final formal reread. Its dataset fingerprint is `a4e76ddc328f3d971d8c66ed305640b6c9810b82bbb6b9849fc9f353ffd0e504`, Parquet SHA-256 is `b28ffc97a57eb892606c646d07b322ef52b3ef31f1b846731034a017e758217a`, and logical fingerprint is `f9018502a57dc859c83ce843872c8119b3fb855980cd143a2da8d0a8bbc1e0ca`.
 
+OCI release `2026-08-19T083341Z-7ed7fdc21686` deploys the selectable Universe Dashboard behind the existing Session boundary. Unauthenticated routing, private-data `no-store`, Nginx, and localhost-only Auth Service checks passed. Status is `deployed_pending_manual_authenticated_universe_verification`; automated work did not use the real password.
+
 ## Completed
 
 - Implemented Phase B2B bounded SEC transport, atomic source-cache safeguards, safe ZIP selection, normalized observation persistence, canonical evidence persistence, and logical completion contracts with deterministic offline tests.

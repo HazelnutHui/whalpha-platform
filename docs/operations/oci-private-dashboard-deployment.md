@@ -1,5 +1,9 @@
 # OCI Private Dashboard Deployment
 
+## Latest Selectable-Universe Release
+
+Release `2026-08-19T083341Z-7ed7fdc21686` is the current versioned release. It serves private snapshot contract 1.3 with Common Shares as default and Common Shares + ADRs as the optional view. Legacy remains available only through retained data and historical releases for deliberate rollback. Automated unauthenticated protection checks passed; authenticated visual/selector verification remains manual.
+
 ## Purpose
 
 This runbook records the reviewed deployment package and future deployment flow for the private static Market Dashboard.
