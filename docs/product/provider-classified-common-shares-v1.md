@@ -13,7 +13,7 @@ Provider type is security-form evidence only. `CS` does not establish U.S. domic
 
 Membership begins from the completed 2026-08-14 canonical provider evidence keyed by stable `instrument_id`. Exactly one evidence record must exist, its type must be present in the completed provider catalog, its date cannot be later than the analysis date, and its instrument must exist in the completed Instrument Master. Ticker-only joins and inference from name, CIK, FIGI, description, or the old binary `InstrumentType` are prohibited.
 
-Missing, new/unknown, multiple, conflicting, future-dated, malformed, ambiguous, collision, orphan, or formally contradicted evidence is quarantined. Explicit types other than `CS`/`ADRC` are deterministic exclusions. The repository does not yet have a completed, independently readable reviewed-override dataset, so known reviewed contradictions are reported in the audit and do not silently change shadow membership.
+Missing, new/unknown, multiple, conflicting, future-dated, malformed, ambiguous, collision, orphan, or formally contradicted evidence is quarantined. Explicit types other than `CS`/`ADRC` are deterministic exclusions. A completed 2026-08-19 pre-activation review now publishes a versioned stable-ID override overlay: VCX has an authoritative exclusion and AKAN an authoritative allow. Neither changes trailing-qualified membership because VCX already fails liquidity and AKAN already fails price; `allow` cannot bypass those gates. Other unresolved edge records remain unchanged.
 
 ## Tradability Layer
 

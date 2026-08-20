@@ -10,8 +10,8 @@
 - Core is selected as the future default and Broad as the secondary view; when can evidence coverage safely activate them?
 - Which point-in-time source will provide issuer structure, domicile/incorporation, ADR status, REIT subtype, BDC/CEF/SPAC status, and security form at sufficient coverage?
 - How should reviewed overrides be approved, versioned, and retired without backfilling current facts into history?
-- What completed, independently readable reviewed-override dataset contract should reconcile known contradictions such as VCX without embedding ticker exceptions in shadow code?
-- After manual A/B-versus-Legacy review, should the published 20-session median shadow rule replace `one_session_liquidity_provisional` in a separately versioned production Universe policy?
+- What approval and retirement workflow should govern future rows in the now-completed Reviewed Eligibility Override V1 dataset?
+- What exact versioned activation manifest and rollback procedure should connect the recommended primary/secondary shadows to Dashboard analytics?
 - What reviewed evidence would permit a historical session to use an identity snapshot other than the same date without introducing latest-resolver or survivorship bias?
 - After a one-session pilot, what operational evidence should gate each proposed three-session historical batch?
 - Phase A candidates (Core 0, Broad 1) are evidence-limited and are not realistic market-universe estimates.

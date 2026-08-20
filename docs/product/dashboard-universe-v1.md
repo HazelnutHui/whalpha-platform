@@ -121,7 +121,7 @@ Dashboard V1.1 displays the completed current session and a human-readable snaps
 
 ## Deferred Improvements
 
-- trailing 20-session median dollar-volume gate
+- separately authorized activation of the published 20-session median dollar-volume policy
 - explicit ADR/common-stock separation if Instrument Master can support it
 - point-in-time sector/industry taxonomy
 - market capitalization source
@@ -131,6 +131,8 @@ Dashboard V1.1 displays the completed current session and a human-readable snaps
 
 The production Legacy Liquid Screen remains unchanged. A separate [offline provider-classified audit](provider-classified-common-shares-v1.md) reports 1,751 CS-only members and a 1,864-member CS+ADRC comparison for 2026-08-14. ADRC is never folded into the CS-only candidate. The observed equality between the CS+ADRC shadow and Legacy is not an activation argument; provider form does not establish U.S. domicile or operating-company structure, and the liquidity gate uses only one previous session.
 
+The completed pre-activation review applies the published 20-session decisions and reviewed stable-ID overlay. It recommends **Provider-Classified Common Shares (Provisional)** as the future primary and **Provider-Classified Common Shares + ADRs** as an optional secondary. These remain shadows: they do not claim verified U.S. domicile/issuer structure and are not connected to production analytics or Dashboard responses.
+
 ## Trailing-Liquidity Readiness
 
-The accepted future shadow method is the [20-Session Median Dollar-Volume Proxy](20-session-trailing-liquidity.md), using only the 20 XNYS sessions before analysis date `D`. `D` never selects itself. This is `current_as_of_constituent_liquidity`, not a survivorship-free historical panel. For 2026-08-14 only 08-12 and 08-13 are present in the expected 07-17 through 08-13 window; all candidate results are therefore `insufficient_history`, and production continues using `one_session_liquidity_provisional` unchanged.
+The published shadow method is the [20-Session Median Dollar-Volume Proxy](20-session-trailing-liquidity.md), using only the 20 XNYS sessions before analysis date `D`. `D` never selects itself. This is `current_as_of_constituent_liquidity`, not a survivorship-free historical panel. For 2026-08-19 the 07-22 through 08-18 window is complete; A/B have 1,641/1,747 passed members. Production continues using the Legacy rule until a separate activation changes the default.

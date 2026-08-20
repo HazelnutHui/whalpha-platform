@@ -2,6 +2,11 @@
 
 ## 2026-08-19
 
+- Implemented Reviewed Eligibility Override V1, stable-ID Legacy/A/B comparison, explicit Parquet schemas, atomic shadow repository, formal reader, and a default-dry-run administrator CLI. VCX receives an authoritative closed-end-fund exclusion and AKAN an authoritative operating ordinary-share allow; allow cannot bypass upstream gates.
+- Published 2 overrides and 3,388 pre-activation decisions plus a final logical marker. The sole apply atomically wrote all targets but exited 1 during final reread because of a missing reader import; no second apply occurred, and the repaired reader subsequently validated all sources, schemas, counts, fingerprints, and hashes read-only.
+- Legacy is 1,864; Candidate A/B passed and final shadows are 1,641/1,747. A removes 223 from Legacy (including 113 ADRCs); B removes 117; B minus A is 106 passed ADRCs. Ten incomplete/missing-previous records retain their data-derived exclusions.
+- Recommended Provider-Classified Common Shares (Provisional) as primary, the ADR-inclusive view as optional secondary, and Legacy for compatibility/rollback only. Production Universe and Dashboard remain unchanged; network, credential, provider, OCI, snapshot/bundle, and deployment operations were zero.
+
 - Accepted ADR 0016 and implemented versioned `decimal128(38, 10)` Parquet contracts, a provider-neutral metric/decision service, atomic repository, formal reader, and default-dry-run administrator CLI for Trailing Liquidity V1 shadow publication.
 - Published one 1,864-row union metric dataset and one 3,615-row Candidate A/B decision dataset after one successful dry-run and one authorized apply. The final logical marker binds the exact 20 EOD/identity sources, 2026-08-14 membership evidence, thresholds, counts, hashes, and fingerprints.
 - Reconciled Candidate A to 1,641 passed, 97 below-liquidity, 4 below-price, 1 missing-previous, and 8 insufficient-history records; Candidate B reconciles to 1,747/103/4/1/9. Ten unique incomplete/missing-previous instruments were audited only from local bar and identity evidence.

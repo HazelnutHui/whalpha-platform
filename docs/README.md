@@ -129,3 +129,4 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Universe Pre-Activation Review Runbook](operations/universe-pre-activation-review.md): Offline stable-ID comparison and reviewed-override shadow publication.
 - [2026-08-14 Trailing-Liquidity Readiness Audit](audits/trailing-liquidity-readiness-2026-08-14.md): Current two-session coverage and 18-session gap.
 - [2026-08-19 Trailing-Liquidity Shadow Publication Audit](audits/trailing-liquidity-shadow-publication-2026-08-19.md): Production derived artifacts, A/B reconciliation, gap evidence, hashes, and safety postflight.
+- [2026-08-19 Universe Pre-Activation Review Audit](audits/universe-pre-activation-review-2026-08-19.md): Stable-ID Legacy/A/B comparison, reviewed overrides, final shadow proposals, publication hashes, and safety postflight.

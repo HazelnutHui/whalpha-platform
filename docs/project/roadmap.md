@@ -65,10 +65,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Successful final two-session production backfill batch for 2026-08-10 and 2026-08-11; 20-session partition descriptor ready
 - [x] Calendar-bounded latest EOD catch-up for 2026-08-17 through 2026-08-19; canonical freshness lag zero
 - [x] Versioned Trailing Liquidity V1 metric/decision shadow publication for 2026-08-19 with logical completion marker
+- [x] Stable-ID Legacy/A/B pre-activation comparison and Reviewed Eligibility Override V1 shadow publication
 
 ## Next Small Target
 
-Pause SEC B2 and preserve the production Legacy Liquid Screen. Manually compare the completed Candidate A/B trailing-liquidity shadow publication with Legacy, including the ten unique incomplete-history/missing-previous records, before separately deciding any production Universe policy. Do not activate Provider-Classified shadows, Core, or Broad or synchronize Dashboard data without a new authorization.
+Keep SEC B2 paused. Separately authorize Production Universe activation and Dashboard integration using the reviewed primary/secondary proposal, with Legacy retained as compatibility/rollback. Do not deploy or change Dashboard/API/frontend in the governance review itself.
 
 ## Phase 2 — Intraday and Options
 
