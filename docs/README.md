@@ -34,6 +34,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
 - [EOD Parquet Persistence](architecture/eod-parquet-persistence.md): Implemented EOD Price Bar Parquet persistence boundary and first published canonical EOD session.
 - [Trailing Liquidity Shadow Publication](architecture/trailing-liquidity-shadow-publication.md): Versioned offline metric/decision Parquet publication with a final logical completion marker.
+- [Universe Pre-Activation Review](architecture/universe-pre-activation-review.md): Reviewed stable-ID override overlay and atomic shadow review publication.
 - [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md): Implemented read repository, query service, and default-disabled private API boundary.
 - [EOD Return Analytics](architecture/eod-return-analytics.md): Close-to-close returns, Market Summary V1, movers, and Liquidity Map V1 semantics.
 - [Instrument Identity Resolution](architecture/instrument-identity-resolution.md): Deterministic provider identity mapping and current Instrument Master snapshot gate result.
@@ -51,6 +52,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Provider Instrument Identity V1](data-contracts/provider-instrument-identity-v1.md)
 - [Provider Ticker Resolver V1](data-contracts/provider-ticker-resolver-v1.md)
 - [Trailing Liquidity Shadow Publication V1](data-contracts/trailing-liquidity-shadow-v1.md)
+- [Reviewed Eligibility Override V1](data-contracts/reviewed-eligibility-override-v1.md)
 
 ## Providers
 
@@ -124,5 +126,6 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [20-Session Median Dollar-Volume Proxy](product/20-session-trailing-liquidity.md): Exact Decimal methodology and readiness semantics.
 - [EOD History Backfill Plan](operations/eod-history-backfill-plan.md): Planning-only same-day identity and request/batch boundary.
 - [Trailing Liquidity Shadow Publication Runbook](operations/trailing-liquidity-shadow-publication.md): Offline dry-run/apply, atomic publication, and postflight boundary.
+- [Universe Pre-Activation Review Runbook](operations/universe-pre-activation-review.md): Offline stable-ID comparison and reviewed-override shadow publication.
 - [2026-08-14 Trailing-Liquidity Readiness Audit](audits/trailing-liquidity-readiness-2026-08-14.md): Current two-session coverage and 18-session gap.
 - [2026-08-19 Trailing-Liquidity Shadow Publication Audit](audits/trailing-liquidity-shadow-publication-2026-08-19.md): Production derived artifacts, A/B reconciliation, gap evidence, hashes, and safety postflight.

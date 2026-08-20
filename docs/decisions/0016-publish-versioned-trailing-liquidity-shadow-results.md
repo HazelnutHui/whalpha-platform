@@ -31,6 +31,8 @@ The existing stable identifiers remain:
 
 The second identifier retains the explicit `shadow` qualifier; it is not renamed into a production Universe.
 
+The completed decision table is also the immutable upstream input for a later Universe pre-activation review. Reviewed exclusions may remove a `passed` member in a separate versioned overlay; they do not rewrite Trailing Liquidity V1 or convert non-passed rows into members.
+
 ## Consequences
 
 - Trailing Liquidity V1 becomes versioned, auditable derived data without changing canonical EOD, identity, or provider evidence.

@@ -15,6 +15,7 @@ Implemented as Python/Pydantic contracts:
 - [Provider Instrument Identity V1](provider-instrument-identity-v1.md)
 - [Provider Ticker Resolver V1](provider-ticker-resolver-v1.md)
 - [Trailing Liquidity Shadow Publication V1](trailing-liquidity-shadow-v1.md)
+- [Reviewed Eligibility Override V1](reviewed-eligibility-override-v1.md)
 
 Accepted logical contracts only:
 

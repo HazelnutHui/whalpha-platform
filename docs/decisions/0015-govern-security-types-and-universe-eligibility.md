@@ -34,6 +34,8 @@ SEC landing-page version selection uses explicit table-row year, format, and eff
 
 After SEC B2 was paused, the completed Massive evidence was used offline for two explicitly provisional shadows: provider `CS` only, and `CS` plus a separately counted `ADRC` layer. This is a reversible audit application of the existing evidence hierarchy, not a new Core/Broad decision. Security-form classification and tradability filtering are separate; the latter uses the current one-session USD 5/USD 20M Decimal gates and must be labeled provisional. Provider `CS` cannot establish domicile or issuer structure, and known reviewed contradictions remain report-only until a completed reviewed-override dataset can be read and reconciled.
 
+The pre-activation implementation defines that missing boundary: reviewed facts are immutable stable-`instrument_id`, effective-dated shadow rows with explicit evidence provenance. They are applied after upstream tradability gates, so an `allow` decision cannot manufacture price, liquidity, or history eligibility. Publication of the boundary remains distinct from production activation.
+
 ## Consequences
 
 - Classification facts no longer change Instrument Master V1 semantics.
