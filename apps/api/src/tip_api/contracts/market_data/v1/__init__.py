@@ -32,6 +32,17 @@ from tip_api.contracts.market_data.v1.trailing_liquidity_publication import (
     TrailingLiquidityShadowManifestV1,
     TrailingLiquiditySourceSessionV1,
 )
+from tip_api.contracts.market_data.v1.full_base_liquidity import (
+    FullBaseDatasetReferenceV1,
+    FullBaseDecisionV1,
+    FullBaseDisposition,
+    FullBaseFunnelStageV1,
+    FullBaseMembershipV1,
+    FullBaseMetricV1,
+    FullBasePolicySummaryV1,
+    FullBaseScopeReviewManifestV1,
+    FullBaseSetDiffV1,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -58,4 +69,13 @@ __all__ = [
     "TrailingLiquidityShadowDecisionV1",
     "TrailingLiquidityShadowManifestV1",
     "TrailingLiquiditySourceSessionV1",
+    "FullBaseDatasetReferenceV1",
+    "FullBaseDecisionV1",
+    "FullBaseDisposition",
+    "FullBaseFunnelStageV1",
+    "FullBaseMembershipV1",
+    "FullBaseMetricV1",
+    "FullBasePolicySummaryV1",
+    "FullBaseScopeReviewManifestV1",
+    "FullBaseSetDiffV1",
 ]

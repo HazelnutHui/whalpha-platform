@@ -41,6 +41,14 @@ The completed decision table is also the immutable upstream input for a later Un
 - Production Universe activation, Dashboard/API consumption, snapshots, bundles, and deployment remain deferred.
 - `current_as_of_constituent_liquidity` remains distinct from a survivorship-free historical panel.
 
+## 2026-08-20 Scope Clarification
+
+The V1 mechanics were sound, but its requested A/B sets inherited the earlier Provider-Classified audit's previous-session `close × volume >= USD 20M` gate. V1 therefore calculated the 20-session median only inside a Legacy-anchored one-day-liquidity scope. That is a conservative shadow, not the complete provider-classified policy base.
+
+The corrected shadow uses a separate dataset family. It enumerates every canonical `CS` (Primary) and every canonical `CS` or `ADRC` (Secondary) from the 2026-08-14 point-in-time provider evidence before applying exchange, comparable-bar, previous-close, complete-history, 20-session median, and reviewed-overlay gates. Legacy and Activation may be used only for post-calculation reproduction and set comparison. V1 remains immutable and formally readable.
+
+The new publication records a complete decision ledger and a reconciled sequential funnel. It does not alter Activation V1, the Dashboard snapshot, the deployed Dashboard, or the production Universe.
+
 ## Alternatives Considered
 
 - Save CLI stdout as JSON. Rejected because it lacks a versioned schema, physical integrity checks, and a logical completion boundary.

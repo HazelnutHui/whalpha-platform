@@ -4,6 +4,8 @@
 
 Dashboard Universe Activation V1 makes the 1,641-member Provider-Classified Common Shares (Provisional) set the default and the 1,747-member CS+ADRC set the optional secondary view for analysis session 2026-08-19. Legacy 1,864 remains formally readable for rollback but is absent from the ordinary selector. Provider security form does not prove issuer domicile or operating-company structure.
 
+The authenticated desktop selector was manually verified after deployment: the two options, counts, URL persistence, refresh behavior, browser history, and Universe-dependent module switching worked as expected. Mobile, tablet, and keyboard acceptance remain unverified.
+
 ## Phase A Security Classification Audit
 
 Production still uses the legacy binary common-stock/ETF rule. Phase A proved it insufficient: non-ETF records were treated as operating equities, allowing the closed-end fund VCX into the default set. Security Classification V1 separates legal form, issuer structure, listing scope, evidence, and eligibility but is not connected to production analytics. The [2026-08-14 audit](../audits/security-type-classification-2026-08-14.md) documents non-production Core and Broad candidates.
@@ -135,4 +137,6 @@ The completed pre-activation review applies the published 20-session decisions a
 
 ## Trailing-Liquidity Readiness
 
-The published shadow method is the [20-Session Median Dollar-Volume Proxy](20-session-trailing-liquidity.md), using only the 20 XNYS sessions before analysis date `D`. `D` never selects itself. This is `current_as_of_constituent_liquidity`, not a survivorship-free historical panel. For 2026-08-19 the 07-22 through 08-18 window is complete; A/B have 1,641/1,747 passed members. Production continues using the Legacy rule until a separate activation changes the default.
+The published shadow method is the [20-Session Median Dollar-Volume Proxy](20-session-trailing-liquidity.md), using only the 20 XNYS sessions before analysis date `D`. `D` never selects itself. This is `current_as_of_constituent_liquidity`, not a survivorship-free historical panel. For 2026-08-19 the 07-22 through 08-18 window is complete. Activation V1 currently serves 1,641/1,747 members.
+
+An offline scope audit proved those counts were conservatively anchored to the old one-session dollar-volume candidate range. The full-base corrected shadow starts from all 4,193 provider-classified CS and all 4,565 CS/ADRC evidence records, and produces 1,719/1,831 shadow members. These corrected results are not activated and are not present in the production Dashboard or snapshot. A separately authorized review/activation/deployment is required.

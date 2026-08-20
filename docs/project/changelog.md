@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-20 — Full-base trailing-liquidity scope correction
+
+- Proved by formal reader and code-path review that Trailing Liquidity V1 was scoped to candidates already passing the old previous-session USD 20M dollar-volume gate.
+- Reproduced all frozen V1 decisions and fingerprints before calculating the correction.
+- Added a provider-evidence-first builder, complete decision ledger, sequential/overlapping funnel contract, versioned Parquet repository, formal reader, offline CLI, and scope-regression fixtures.
+- Corrected shadow results are 1,719 CS and 1,831 CS+ADRC; current activated members are fully retained, with 78/84 additions and zero prohibited-type leakage.
+- Recorded completed authenticated desktop selector validation without claiming mobile, tablet, or keyboard acceptance.
+- No provider request, credential access, canonical-data mutation, Dashboard/API/frontend/snapshot change, OCI access, or deployment occurred.
+
 ## 2026-08-19
 
 - Accepted Dashboard Universe Activation V1: `Common Shares` is the sole default and `Common Shares + ADRs` the optional view. Legacy remains formally readable for rollback and is not an ordinary selector option.

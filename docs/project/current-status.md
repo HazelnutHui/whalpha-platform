@@ -2,6 +2,14 @@
 
 Status date: 2026-08-20
 
+## Trailing-Liquidity Full-Base Scope Review
+
+Formal reread proved Trailing Liquidity V1 was calculated over the prior Provider-Classified candidate sets (1,751 CS-only and 1,864 CS+ADRC), which had already passed a previous-session `close × volume >= USD 20M` gate. V1 exactly reproduces, contains no prohibited security-type leakage, and remains immutable, but it does not enumerate the complete provider-classified base.
+
+The corrected offline shadow enumerates 4,193 CS and 4,565 CS+ADRC stable IDs directly from the completed 2026-08-14 canonical provider evidence. With the unchanged USD 5 price and 20-session median USD 20M gates, it selects 1,719 CS and 1,831 total (1,719 CS + 112 ADRC). Current production members are fully retained; corrected Primary adds 78 and corrected Secondary adds 84. Of those additions, 32/34 respectively had previous-session dollar volume below USD 20M but passed the 20-session median gate.
+
+Production Activation, private snapshot, API/frontend behavior, and OCI release `2026-08-19T083341Z-7ed7fdc21686` are unchanged. The new result is shadow-only. Authenticated desktop validation of the deployed two-option selector is complete; mobile, tablet, and keyboard acceptance are not claimed.
+
 ## Dashboard Universe Activation V1
 
 The completed pre-activation inputs now feed a versioned Dashboard activation boundary for analysis session 2026-08-19. `provider_classified_common_shares_v1` is the sole default with 1,641 provider-classified CS members. `provider_classified_common_shares_plus_adrs_v1` is the optional secondary with the same 1,641 CS plus 106 ADRCs. Membership uses stable instrument IDs and the completed reviewed overlay; Legacy 1,864 remains unchanged and formally readable only for compatibility and rollback.

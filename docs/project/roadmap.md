@@ -71,7 +71,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Keep SEC B2 paused. After authenticated manual verification of the selectable-Universe deployment, proceed to point-in-time sector taxonomy and sector constituent breadth/rotation. Legacy remains compatibility/rollback only.
+Review the full-base trailing-liquidity scope-correction shadow against the currently activated 1,641/1,747 membership. Any activation, new private snapshot, Dashboard change, or OCI deployment requires a separate authorization. Keep SEC B2 paused; after the Universe scope decision, proceed to point-in-time sector taxonomy and sector constituent breadth/rotation.
 
 ## Phase 2 — Intraday and Options
 

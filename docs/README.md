@@ -35,6 +35,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Market Data Provider Boundary](architecture/market-data-provider-boundary.md): Implemented minimal synchronous provider Protocol, query models, capabilities, and errors.
 - [EOD Parquet Persistence](architecture/eod-parquet-persistence.md): Implemented EOD Price Bar Parquet persistence boundary and first published canonical EOD session.
 - [Trailing Liquidity Shadow Publication](architecture/trailing-liquidity-shadow-publication.md): Versioned offline metric/decision Parquet publication with a final logical completion marker.
+- [Full-Base Trailing Liquidity Scope Review V1](data-contracts/trailing-liquidity-full-base-scope-review-v1.md): Complete provider-evidence base, decision ledger, funnel, set diff, and shadow publication contract.
 - [Universe Pre-Activation Review](architecture/universe-pre-activation-review.md): Reviewed stable-ID override overlay and atomic shadow review publication.
 - [Dashboard Universe Activation](architecture/dashboard-universe-activation.md): Formal reader, analytics, snapshot, and selector boundary.
 - [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md): Implemented read repository, query service, and default-disabled private API boundary.
@@ -135,4 +136,5 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Universe Pre-Activation Review Runbook](operations/universe-pre-activation-review.md): Offline stable-ID comparison and reviewed-override shadow publication.
 - [2026-08-14 Trailing-Liquidity Readiness Audit](audits/trailing-liquidity-readiness-2026-08-14.md): Current two-session coverage and 18-session gap.
 - [2026-08-19 Trailing-Liquidity Shadow Publication Audit](audits/trailing-liquidity-shadow-publication-2026-08-19.md): Production derived artifacts, A/B reconciliation, gap evidence, hashes, and safety postflight.
+- [2026-08-19 Full-Base Scope Review Audit](audits/trailing-liquidity-full-base-scope-review-2026-08-19.md): V1 reproduction, corrected full-base funnels, set differences, analytics, hashes, and production-isolation evidence.
 - [2026-08-19 Universe Pre-Activation Review Audit](audits/universe-pre-activation-review-2026-08-19.md): Stable-ID Legacy/A/B comparison, reviewed overrides, final shadow proposals, publication hashes, and safety postflight.
