@@ -172,13 +172,13 @@ def build_full_base_scope_review(
                 direction, reason = "old_removed", _decision_by_key(decisions, policy_id, instrument_id).disposition.value
             else:
                 metric = metric_by_id[instrument_id]
-                rescued = metric.previous_dollar_volume_proxy is not None and metric.previous_dollar_volume_proxy < MEDIAN_DOLLAR_VOLUME_THRESHOLD
+                rescued = metric.previous_dollar_volume_below_threshold is True
                 direction, reason = "corrected_added", ("rescued_from_previous_session_dollar_volume_scope" if rescued else "full_base_not_in_legacy_scope")
             metric = metric_by_id[instrument_id]
             diffs.append(FullBaseSetDiffV1(
                 analysis_session=descriptor.analysis_session, policy_id=policy_id, instrument_id=instrument_id,
                 provider_type_code=evidence_by_id[instrument_id].provider_type_code, direction=direction, reason_code=reason,
-                previous_dollar_volume_proxy=metric.previous_dollar_volume_proxy,
+                rescued_from_previous_session_scope=(direction == "corrected_added" and metric.previous_dollar_volume_below_threshold is True),
                 median_dollar_volume_proxy_20s=metric.median_dollar_volume_proxy_20s,
             ))
         types = Counter(evidence_by_id[item].provider_type_code for item in corrected)
@@ -187,8 +187,7 @@ def build_full_base_scope_review(
             cs_count=types["CS"], adrc_count=types["ADRC"], membership_fingerprint=membership_fingerprint(corrected),
             old_count=len(old), retained_count=len(old & corrected), removed_count=len(old - corrected), added_count=len(corrected - old),
             rescued_previous_day_below_threshold_count=sum(
-                metric_by_id[item].previous_dollar_volume_proxy is not None
-                and metric_by_id[item].previous_dollar_volume_proxy < MEDIAN_DOLLAR_VOLUME_THRESHOLD
+                metric_by_id[item].previous_dollar_volume_below_threshold is True
                 for item in corrected - old
             ),
         ))
@@ -221,7 +220,7 @@ def _unique_bars(bars: tuple[object, ...]) -> dict[UUID, object]:
 def _metric(*, instrument_id, source, instrument, current, previous, bars, audit_result, descriptor, membership_evidence_as_of_date, calculated_at):
     current_present = current is not None
     previous_close = None if previous is None else previous.close
-    previous_proxy = None if previous is None else previous.close * previous.volume
+    previous_below = None if previous is None else previous.close * previous.volume < MEDIAN_DOLLAR_VOLUME_THRESHOLD
     if instrument is None:
         status, flags = "invalid_input", ("orphan_instrument_reference",)
     elif instrument.get("primary_exchange") not in SUPPORTED_EXCHANGES:
@@ -247,7 +246,7 @@ def _metric(*, instrument_id, source, instrument, current, previous, bars, audit
         primary_exchange=None if instrument is None else instrument.get("primary_exchange"),
         supported_exchange=instrument is not None and instrument.get("primary_exchange") in SUPPORTED_EXCHANGES,
         current_bar_present=current_present, previous_bar_present=previous is not None,
-        previous_close=previous_close, previous_dollar_volume_proxy=previous_proxy,
+        previous_close=previous_close, previous_dollar_volume_below_threshold=previous_below,
         observation_count=len(bars), median_dollar_volume_proxy_20s=None if audit_result is None else audit_result.median_dollar_volume_proxy,
         metric_status=status, quality_flags=tuple(flags), source_window_fingerprint=descriptor.fingerprint, calculated_at=calculated_at,
     )

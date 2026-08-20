@@ -42,7 +42,7 @@ class FullBaseMetricV1(BaseModel):
     current_bar_present: bool
     previous_bar_present: bool
     previous_close: Decimal | None
-    previous_dollar_volume_proxy: Decimal | None
+    previous_dollar_volume_below_threshold: bool | None
     observation_count: int = Field(ge=0, le=20)
     median_dollar_volume_proxy_20s: Decimal | None
     metric_status: str
@@ -86,7 +86,7 @@ class FullBaseMetricV1(BaseModel):
     def consistency(self) -> "FullBaseMetricV1":
         if self.median_dollar_volume_proxy_20s is not None and self.observation_count != 20:
             raise ValueError("20-session median requires exactly 20 observations")
-        if not self.previous_bar_present and (self.previous_close is not None or self.previous_dollar_volume_proxy is not None):
+        if not self.previous_bar_present and (self.previous_close is not None or self.previous_dollar_volume_below_threshold is not None):
             raise ValueError("missing previous bar cannot expose previous values")
         return self
 
@@ -153,7 +153,7 @@ class FullBaseSetDiffV1(BaseModel):
     provider_type_code: str
     direction: Literal["old_retained", "old_removed", "corrected_added"]
     reason_code: str
-    previous_dollar_volume_proxy: Decimal | None
+    rescued_from_previous_session_scope: bool
     median_dollar_volume_proxy_20s: Decimal | None
 
 

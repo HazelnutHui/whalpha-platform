@@ -8,6 +8,7 @@
 - Corrected shadow results are 1,719 CS and 1,831 CS+ADRC; current activated members are fully retained, with 78/84 additions and zero prohibited-type leakage.
 - Recorded completed authenticated desktop selector validation without claiming mobile, tablet, or keyboard acceptance.
 - No provider request, credential access, canonical-data mutation, Dashboard/API/frontend/snapshot change, OCI access, or deployment occurred.
+- The sole shadow apply exited 1 before staging on an audit-only Decimal scale violation. No target or residue was created and no second apply ran. The offline contract now persists an exact threshold-state boolean instead of narrowing the daily Decimal product; publication remains pending separate authorization.
 
 ## 2026-08-19
 

@@ -59,7 +59,7 @@ METRIC_SCHEMA = pa.schema([
     pa.field("primary_exchange", pa.string(), True), pa.field("supported_exchange", pa.bool_(), False),
     pa.field("current_bar_present", pa.bool_(), False), pa.field("previous_bar_present", pa.bool_(), False),
     pa.field("previous_close", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
-    pa.field("previous_dollar_volume_proxy", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
+    pa.field("previous_dollar_volume_below_threshold", pa.bool_(), True),
     pa.field("observation_count", pa.int16(), False),
     pa.field("median_dollar_volume_proxy_20s", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
     pa.field("metric_status", pa.string(), False), pa.field("quality_flags", pa.list_(pa.string()), False),
@@ -83,7 +83,7 @@ DIFF_SCHEMA = pa.schema([
     pa.field("policy_id", pa.string(), False), pa.field("instrument_id", pa.string(), False),
     pa.field("provider_type_code", pa.string(), False), pa.field("direction", pa.string(), False),
     pa.field("reason_code", pa.string(), False),
-    pa.field("previous_dollar_volume_proxy", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
+    pa.field("rescued_from_previous_session_scope", pa.bool_(), False),
     pa.field("median_dollar_volume_proxy_20s", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
 ])
 FUNNEL_SCHEMA = pa.schema([
@@ -286,7 +286,7 @@ def _row(item) -> dict[str, Any]:
     if "disposition" in row: row["disposition"] = item.disposition.value
     for key in ("quality_flags", "reason_codes", "exclusion_reason_codes", "source_fingerprints"):
         if key in row: row[key] = list(row[key])
-    for key in ("previous_close", "previous_dollar_volume_proxy", "median_dollar_volume_proxy_20s"):
+    for key in ("previous_close", "median_dollar_volume_proxy_20s"):
         if key in row: _validate_decimal(row[key])
     return row
 

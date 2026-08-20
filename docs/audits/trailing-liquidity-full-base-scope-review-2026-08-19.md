@@ -2,7 +2,7 @@
 
 ## Status
 
-Implementation and offline dry-run passed. Versioned shadow publication is pending the single authorized apply at this checkpoint. Production Activation, Dashboard snapshot, API/frontend, and OCI release are unchanged.
+Implementation and offline dry-run passed. The single authorized apply ran from 2026-08-20T10:35:59Z to 2026-08-20T10:45:59Z and exited 1 before staging because an audit-only previous-session `close × volume` Decimal exceeded the approved persisted scale. No shadow target was published and no second apply was attempted. Production Activation, Dashboard snapshot, API/frontend, and OCI release are unchanged.
 
 ## Root cause and reproduction gate
 
@@ -65,9 +65,13 @@ Corrected Secondary has 1,046 advancers, 776 decliners, 9 unchanged, equal-weigh
 
 These are offline audit values only. No Dashboard snapshot or production derived analytics dataset was generated.
 
-## Publication checkpoint
+## Publication result
 
-Dry-run produced 4,565 metric/status rows, 8,758 decision rows, 3,550 membership rows, 3,550 diff rows, and 20 funnel rows. Dry-run wrote zero `/data` files. Publication hashes and final inventory are added only after a successful single apply and formal reread.
+Dry-run produced 4,565 metric/status rows, 8,758 decision rows, 3,550 membership rows, 3,550 diff rows, and 20 funnel rows. Dry-run wrote zero `/data` files.
+
+The only apply failed at the pre-staging row-validation gate. The persistence contract correctly refused to round a higher-scale daily proxy into `decimal128(38,10)`. The offline repair removes that audit-only Decimal from the physical contract and preserves only the exact boolean fact `previous_dollar_volume_below_threshold`; the eligibility median and previous close remain Decimal. A regression proves publication round-trip without narrowing the source product. The repaired code was not applied to production in this task.
+
+Postflight found zero full-base targets, zero staging residue, and an unchanged 243-file / 82,189,948-byte protected inventory with digest `3f5e4a3c23776c9dc269dd1d520cda079b54c26f9974d6336d1031f6496c148e`. There are no publication Parquet hashes or logical fingerprint to report.
 
 ## Boundaries
 

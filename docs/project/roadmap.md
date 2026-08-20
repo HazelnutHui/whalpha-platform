@@ -71,7 +71,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review the full-base trailing-liquidity scope-correction shadow against the currently activated 1,641/1,747 membership. Any activation, new private snapshot, Dashboard change, or OCI deployment requires a separate authorization. Keep SEC B2 paused; after the Universe scope decision, proceed to point-in-time sector taxonomy and sector constituent breadth/rotation.
+Review the full-base scope calculation and the post-failure Decimal-contract repair. A new shadow apply requires separate authorization because the sole apply in the scope-correction task failed before staging and was not repeated. Any later activation, private snapshot, Dashboard change, or OCI deployment remains a separate step. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

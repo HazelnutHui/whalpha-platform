@@ -85,7 +85,7 @@ def test_full_base_fixes_legacy_scope_and_previous_day_bias():
     assert false_friend not in bundle.final_memberships[FULL_BASE_A_ID]
     reasons = {item.instrument_id:item.disposition for item in bundle.decisions if item.policy_id == FULL_BASE_A_ID}
     assert reasons[false_friend] is FullBaseDisposition.BELOW_TRAILING_LIQUIDITY
-    assert next(item for item in bundle.metrics if item.instrument_id == cs).previous_dollar_volume_proxy == Decimal("10000000")
+    assert next(item for item in bundle.metrics if item.instrument_id == cs).previous_dollar_volume_below_threshold is True
 
 
 def test_legacy_membership_and_input_order_do_not_change_corrected_result():
@@ -120,13 +120,13 @@ def test_analysis_session_cannot_enter_window():
 def sample_records():
     metric = FullBaseMetricV1(analysis_session=D,membership_evidence_as_of_date=E,instrument_id=iid("one"),display_ticker="ONE",
         provider_type_code="CS",primary_exchange="XNYS",supported_exchange=True,current_bar_present=True,previous_bar_present=True,
-        previous_close=Decimal("5"),previous_dollar_volume_proxy=Decimal("20000000"),observation_count=20,
+        previous_close=Decimal("5"),previous_dollar_volume_below_threshold=False,observation_count=20,
         median_dollar_volume_proxy_20s=Decimal("20000000"),metric_status="passed",quality_flags=(),source_window_fingerprint=H1,calculated_at=NOW)
     decision = FullBaseDecisionV1(analysis_session=D,membership_evidence_as_of_date=E,policy_id=FULL_BASE_A_ID,instrument_id=metric.instrument_id,
         provider_type_code="CS",disposition="included",included=True,stage_id="final_membership",reason_codes=("passed",),reviewed_override_decision=None,calculated_at=NOW)
     membership = FullBaseMembershipV1(analysis_session=D,policy_id=FULL_BASE_A_ID,instrument_id=metric.instrument_id,provider_type_code="CS")
     diff = FullBaseSetDiffV1(analysis_session=D,policy_id=FULL_BASE_A_ID,instrument_id=metric.instrument_id,provider_type_code="CS",direction="corrected_added",
-        reason_code="full_base_not_in_legacy_scope",previous_dollar_volume_proxy=Decimal("20000000"),median_dollar_volume_proxy_20s=Decimal("20000000"))
+        reason_code="full_base_not_in_legacy_scope",rescued_from_previous_session_scope=False,median_dollar_volume_proxy_20s=Decimal("20000000"))
     funnel = FullBaseFunnelStageV1(analysis_session=D,membership_evidence_as_of_date=E,policy_id=FULL_BASE_A_ID,stage_order=1,
         stage_id="final",stage_label="Final",stage_kind="sequential",input_count=1,excluded_count=0,remaining_count=1,
         exclusion_reason_codes=(),source_fingerprints=(H1,))
