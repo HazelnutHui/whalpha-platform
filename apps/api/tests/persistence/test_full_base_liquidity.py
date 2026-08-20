@@ -52,14 +52,14 @@ class Repo:
     def read_history_sessions(self, days): return tuple(EodHistorySessionRead(integrity(day), self.rows[day]) for day in days)
 
 
-def fixture_bundle(*, empty_legacy=False, reverse=False):
+def fixture_bundle(*, empty_legacy=False, reverse=False, rescued_previous_volume="1000000"):
     calendar = ExchangeCalendar(); days = calendar.sessions_before(D, 20)
     rescued_cs, rescued_adrc, false_friend = iid("rescued-cs"), iid("rescued-adrc"), iid("false-friend")
     ids = (rescued_cs, rescued_adrc, false_friend)
     rows = {}
     for index, day in enumerate(days):
         values = [
-            bar(rescued_cs, day, ticker="RCS", volume="1000000" if day == days[-1] else "3000000"),
+            bar(rescued_cs, day, ticker="RCS", volume=rescued_previous_volume if day == days[-1] else "3000000"),
             bar(rescued_adrc, day, ticker="RADR", volume="1000000" if day == days[-1] else "3000000"),
             bar(false_friend, day, ticker="FALSE", volume="3000000" if day == days[-1] else "1000000"),
         ]
@@ -86,6 +86,17 @@ def test_full_base_fixes_legacy_scope_and_previous_day_bias():
     reasons = {item.instrument_id:item.disposition for item in bundle.decisions if item.policy_id == FULL_BASE_A_ID}
     assert reasons[false_friend] is FullBaseDisposition.BELOW_TRAILING_LIQUIDITY
     assert next(item for item in bundle.metrics if item.instrument_id == cs).previous_dollar_volume_below_threshold is True
+
+
+@pytest.mark.parametrize(("volume", "expected"), (
+    ("2000000", False),
+    ("1999999.99999999999", True),
+    ("2000000.00000000001", False),
+))
+def test_previous_session_threshold_boolean_uses_full_decimal_precision(volume, expected):
+    bundle, cs, *_ = fixture_bundle(rescued_previous_volume=volume)
+    metric = next(item for item in bundle.metrics if item.instrument_id == cs)
+    assert metric.previous_dollar_volume_below_threshold is expected
 
 
 def test_legacy_membership_and_input_order_do_not_change_corrected_result():
