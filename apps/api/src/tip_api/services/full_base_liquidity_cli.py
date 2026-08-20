@@ -10,13 +10,13 @@ from pathlib import Path
 
 import pyarrow.parquet as pq
 
-from tip_api.contracts.market_data.v1 import TrailingLiquidityShadowDecisionV1, TrailingLiquiditySourceSessionV1
+from tip_api.contracts.market_data.v1 import TrailingLiquidityMetricV1, TrailingLiquidityShadowDecisionV1, TrailingLiquiditySourceSessionV1
 from tip_api.contracts.security_classification.v1.universe_review import ReviewedEligibilityOverrideV1
 from tip_api.persistence.parquet.dashboard_universe_activation import read_completed_dashboard_universe_activation
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.full_base_liquidity import ParquetFullBaseScopeReviewRepository, read_completed_full_base_scope_review
 from tip_api.persistence.parquet.security_evidence import read_completed_security_evidence_snapshot
-from tip_api.persistence.parquet.trailing_liquidity import DECISION_SCHEMA as V1_DECISION_SCHEMA, read_completed_trailing_liquidity_publication
+from tip_api.persistence.parquet.trailing_liquidity import DECISION_SCHEMA as V1_DECISION_SCHEMA, METRIC_SCHEMA as V1_METRIC_SCHEMA, read_completed_trailing_liquidity_publication
 from tip_api.persistence.parquet.universe_review import OVERRIDE_SCHEMA, read_completed_universe_review
 from tip_api.services.eod_history import MEDIAN_DOLLAR_VOLUME_THRESHOLD, PREVIOUS_CLOSE_THRESHOLD, plan_eod_history_window
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID, build_full_base_scope_review, calculate_membership_analytics
@@ -72,8 +72,8 @@ def main(argv: list[str] | None = None) -> int:
     else:
         semantic_override_fingerprint = review.manifest.override_dataset.content_fingerprint
     reproduction = _reproduce_v1(repo, security, trailing, descriptor, integrity, instruments, created_at)
-    if not reproduction["decision_exact"]:
-        raise RuntimeError("frozen Legacy/V1 decisions could not be reproduced")
+    if not reproduction["decision_exact"] or not reproduction["metric_exact"]:
+        raise RuntimeError("frozen Legacy/V1 metrics or decisions could not be reproduced")
     old_memberships = {
         CANDIDATE_A_ID: activation.member_ids_by_universe[CANDIDATE_A_ID],
         PUBLIC_SECONDARY_ID: activation.member_ids_by_universe[PUBLIC_SECONDARY_ID],
@@ -180,9 +180,16 @@ def _reproduce_v1(repo, security, trailing, descriptor, integrity, instruments, 
     if table.schema != V1_DECISION_SCHEMA:
         raise RuntimeError("Trailing Liquidity V1 decision schema mismatch")
     persisted = tuple(TrailingLiquidityShadowDecisionV1.model_validate(row) for row in table.to_pylist())
+    metric_path = ROOT / trailing.manifest.metric_dataset.dataset_path / "part-00000.parquet"
+    metric_table = pq.ParquetFile(metric_path).read()
+    if metric_table.schema != V1_METRIC_SCHEMA:
+        raise RuntimeError("Trailing Liquidity V1 metric schema mismatch")
+    persisted_metrics = tuple(TrailingLiquidityMetricV1.model_validate(row) for row in metric_table.to_pylist())
     freeze = lambda rows: [item.model_dump(mode="json", exclude={"calculated_at"}) for item in sorted(rows, key=lambda item: (item.universe_id, str(item.instrument_id)))]
+    freeze_metrics = lambda rows: [item.model_dump(mode="json", exclude={"calculated_at"}) for item in sorted(rows, key=lambda item: str(item.instrument_id))]
     return {
         "decision_exact": freeze(rebuilt.decisions) == freeze(persisted),
+        "metric_exact": freeze_metrics(rebuilt.metrics) == freeze_metrics(persisted_metrics),
         "candidate_a_fingerprint": rebuilt.candidate_a_audit_fingerprint,
         "candidate_b_fingerprint": rebuilt.candidate_b_audit_fingerprint,
         "requested_a": len(provider_audit.candidate_a.member_ids), "requested_b": len(provider_audit.candidate_b.member_ids),

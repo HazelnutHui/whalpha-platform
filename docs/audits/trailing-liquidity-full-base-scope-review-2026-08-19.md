@@ -8,7 +8,7 @@ Implementation and offline dry-run passed. The single authorized apply ran from 
 
 Formal code and reader inspection confirmed that Provider-Classified Candidate A/B first applied the previous-session `close × volume >= USD 20M` gate. Trailing Liquidity V1 then calculated its 20-session median only for those 1,751/1,864 requested IDs. The resulting policy was therefore the intersection of the old one-day liquidity gate and the new 20-session gate.
 
-The frozen V1 decision ledger was rebuilt from its formal inputs. All 3,615 decisions matched after excluding only the publication timestamp; Candidate fingerprints reproduced as:
+The frozen V1 metric and decision ledgers were rebuilt from formal inputs. The publication gate compares all 1,864 metrics (including observation counts, medians, statuses, and reasons) and all 3,615 decisions after excluding only the publication timestamp; Candidate fingerprints reproduce as:
 
 - A: `1b8b9757054130c04ac21266d3660107c0b38d37db0ba8e510a0dcb2ed9583fd`
 - B: `2404a29b818ac365db19dff9734eea10cbda7b88f16b93610ea49297bb03aa95`
