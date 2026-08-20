@@ -20,7 +20,7 @@ from tip_api.persistence.parquet.full_base_liquidity import (
 from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.eod_history import plan_eod_history_window
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID, build_full_base_scope_review
-from tip_api.services.full_base_liquidity_cli import main as cli_main
+from tip_api.services.full_base_liquidity_cli import _freeze_metric_records, main as cli_main
 from tip_api.services.market_calendar import ExchangeCalendar
 
 D = date(2026, 8, 19); E = date(2026, 8, 14); NOW = datetime(2026, 8, 20, 12, tzinfo=UTC)
@@ -97,6 +97,14 @@ def test_previous_session_threshold_boolean_uses_full_decimal_precision(volume, 
     bundle, cs, *_ = fixture_bundle(rescued_previous_volume=volume)
     metric = next(item for item in bundle.metrics if item.instrument_id == cs)
     assert metric.previous_dollar_volume_below_threshold is expected
+
+
+def test_v1_metric_reproduction_compares_decimal_values_not_scale():
+    bundle, *_ = fixture_bundle()
+    metric = bundle.metrics[0]
+    left = metric.model_copy(update={"median_dollar_volume_proxy_20s": Decimal("25695393.29024274000000000000")})
+    right = metric.model_copy(update={"median_dollar_volume_proxy_20s": Decimal("25695393.2902427400")})
+    assert _freeze_metric_records((left,)) == _freeze_metric_records((right,))
 
 
 def test_legacy_membership_and_input_order_do_not_change_corrected_result():

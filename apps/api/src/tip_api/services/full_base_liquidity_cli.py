@@ -33,6 +33,14 @@ EXPECTED_DESCRIPTOR = "705a20e8664bd94a7f20c83f687445b4249865d1feb2f25b8636933ac
 EXPECTED_V1_LOGICAL = "89b58983f8c51680d77662dee7e2bfbf25406e160039d1a842d624396b08e65a"
 
 
+def _freeze_metric_records(rows):
+    """Compare Decimal metrics by numeric value, independent of persisted scale."""
+    return [
+        item.model_dump(mode="python", exclude={"calculated_at"})
+        for item in sorted(rows, key=lambda item: str(item.instrument_id))
+    ]
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the versioned full-base trailing-liquidity scope review.")
     parser.add_argument("--apply", action="store_true", help="atomically publish the completed shadow review")
@@ -186,10 +194,9 @@ def _reproduce_v1(repo, security, trailing, descriptor, integrity, instruments, 
         raise RuntimeError("Trailing Liquidity V1 metric schema mismatch")
     persisted_metrics = tuple(TrailingLiquidityMetricV1.model_validate(row) for row in metric_table.to_pylist())
     freeze = lambda rows: [item.model_dump(mode="json", exclude={"calculated_at"}) for item in sorted(rows, key=lambda item: (item.universe_id, str(item.instrument_id)))]
-    freeze_metrics = lambda rows: [item.model_dump(mode="json", exclude={"calculated_at"}) for item in sorted(rows, key=lambda item: str(item.instrument_id))]
     return {
         "decision_exact": freeze(rebuilt.decisions) == freeze(persisted),
-        "metric_exact": freeze_metrics(rebuilt.metrics) == freeze_metrics(persisted_metrics),
+        "metric_exact": _freeze_metric_records(rebuilt.metrics) == _freeze_metric_records(persisted_metrics),
         "candidate_a_fingerprint": rebuilt.candidate_a_audit_fingerprint,
         "candidate_b_fingerprint": rebuilt.candidate_b_audit_fingerprint,
         "requested_a": len(provider_audit.candidate_a.member_ids), "requested_b": len(provider_audit.candidate_b.member_ids),
