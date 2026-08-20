@@ -15,6 +15,7 @@ from uuid import uuid4
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.contracts.security_classification.v1.universe_review import (
     ReviewedEligibilityOverrideV1,
     UniversePreActivationManifestV1,
