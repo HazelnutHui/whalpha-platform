@@ -325,10 +325,18 @@ For analysis session 2026-08-14, exchange-calendars 4.13.2 computed 20 sessions 
 
 The latest read-only audit rolls analysis to 2026-08-19 and uses the 20 sessions from 07-22 through 08-18; it is also 20/0/0 and `ready`, fingerprint `705a20e8664bd94a7f20c83f687445b4249865d1feb2f25b8636933ac38f775a`. Candidate membership evidence remains as-of 08-14. A/B have 1,742/1,854 at 20/20, 1,738/1,850 non-null medians, 1,641/1,747 passed, and 8/9 insufficient-history results. The 08-19 bar does not enter its own window. See the [08-19 readiness audit](../audits/trailing-liquidity-readiness-2026-08-19.md).
 
-The acquisition plan now has zero missing sessions and a zero request range. No reviewed production derived-result publisher exists, so no trailing-liquidity dataset or Dashboard result was persisted.
+The acquisition plan now has zero missing sessions and a zero request range. A reviewed shadow-only derived publisher now exists; production Universe and Dashboard consumption remain deferred.
 
 Offline verification: focused history/calendar/persistence `43 passed`; provider/contracts/persistence/API/snapshot regression `271 passed`, one existing Starlette warning; full backend `784 passed`, `2 warnings`, `0 skipped`, `0 xfailed`; frontend regression `40 passed` across 5 files. Compileall, required imports, FastAPI/Health, shell syntax, Markdown links, sensitive scan, socket/credential sentinel, artifact and listener/process checks, and `git diff --check` passed. Backend warnings remain the existing Python `crypt` deprecation and Starlette TestClient/httpx migration warning; frontend emitted only the existing Vite React-plugin configuration warnings.
 
+## Trailing Liquidity V1 Shadow Publication
+
+The 2026-08-19 shadow publication is completed and formally reread. It contains 1,864 union metric facts, 3,615 separate A/B decisions, and a final logical marker referencing the exact 07-22 through 08-18 EOD/identity window and 08-14 membership evidence. Metric, decision, and logical fingerprints are `8abe29f4deb064acea974590fe965ecb166405381e7632762eb2ecba783ea7fc`, `9f27f7babaf347cab590386d9229d97f1f4348e32e483a35deffddc25d0a3254`, and `89b58983f8c51680d77662dee7e2bfbf25406e160039d1a842d624396b08e65a`.
+
+Candidate A reconciles 1,751 requested into 1,641 passed, 97 below liquidity, 4 below price, 1 missing previous bar, and 8 insufficient histories. Candidate B reconciles 1,864 into 1,747, 103, 4, 1, and 9. There are no duplicate business keys, orphan references, security-form leaks, silent unknown inclusions, or future-session inputs. Ten unique incomplete/missing-previous instruments are recorded in the [production audit](../audits/trailing-liquidity-shadow-publication-2026-08-19.md) without unsupported corporate-event inference.
+
+Implementation verification passed 800 backend and 40 frontend regression tests. Backend warnings are the two existing deprecations; frontend warnings are the existing Vite configuration notices; skipped and xfailed counts are zero. The canonical 223-file inventory is unchanged, staging is empty, and no network, credential, SEC/Massive/OCI, Dashboard/API/frontend, snapshot/bundle, deployment, scheduler, system configuration, or Universe activation occurred.
+
 ## Next Proposed Step
 
-Keep SEC B2 paused and Legacy production membership unchanged. Manually review the fresh 08-19 EOD state, instrument-level incomplete histories, and in-memory trailing results before separately authorizing any derived publication, Dashboard synchronization, or Universe decision.
+Keep SEC B2 paused and Legacy production membership unchanged. Manually compare the published Candidate A/B shadow decisions and incomplete-history evidence with Legacy before separately authorizing any production Universe policy or Dashboard synchronization.

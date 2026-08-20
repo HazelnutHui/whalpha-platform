@@ -64,10 +64,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Successful fifth three-session production backfill batch for 2026-08-05 through 2026-08-07
 - [x] Successful final two-session production backfill batch for 2026-08-10 and 2026-08-11; 20-session partition descriptor ready
 - [x] Calendar-bounded latest EOD catch-up for 2026-08-17 through 2026-08-19; canonical freshness lag zero
+- [x] Versioned Trailing Liquidity V1 metric/decision shadow publication for 2026-08-19 with logical completion marker
 
 ## Next Small Target
 
-Pause SEC B2 and preserve the production Legacy Liquid Screen. Manually review the fresh 08-19 canonical EOD state and rolling readiness audit, including 8/9 instrument-level insufficient-history results and the lack of a production derived-result publisher, before separately deciding any Dashboard or Universe work. Do not activate Provider-Classified shadows, Core, or Broad from this catch-up.
+Pause SEC B2 and preserve the production Legacy Liquid Screen. Manually compare the completed Candidate A/B trailing-liquidity shadow publication with Legacy, including the ten unique incomplete-history/missing-previous records, before separately deciding any production Universe policy. Do not activate Provider-Classified shadows, Core, or Broad or synchronize Dashboard data without a new authorization.
 
 ## Phase 2 — Intraday and Options
 

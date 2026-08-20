@@ -125,3 +125,4 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [EOD History Backfill Plan](operations/eod-history-backfill-plan.md): Planning-only same-day identity and request/batch boundary.
 - [Trailing Liquidity Shadow Publication Runbook](operations/trailing-liquidity-shadow-publication.md): Offline dry-run/apply, atomic publication, and postflight boundary.
 - [2026-08-14 Trailing-Liquidity Readiness Audit](audits/trailing-liquidity-readiness-2026-08-14.md): Current two-session coverage and 18-session gap.
+- [2026-08-19 Trailing-Liquidity Shadow Publication Audit](audits/trailing-liquidity-shadow-publication-2026-08-19.md): Production derived artifacts, A/B reconciliation, gap evidence, hashes, and safety postflight.

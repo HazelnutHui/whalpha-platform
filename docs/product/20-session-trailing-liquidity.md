@@ -18,4 +18,6 @@ The current analysis session never enters its own window. A 19/20 result is `ins
 
 ## Current State
 
-For 2026-08-14, XNYS 4.13.2 calculates a 20-session window from 2026-07-17 through 2026-08-13. Only 2026-08-12 and 2026-08-13 are completed, so readiness is `insufficient_history`; no production or shadow 20-session median is emitted. See the [read-only audit](../audits/trailing-liquidity-readiness-2026-08-14.md).
+For analysis session 2026-08-19, XNYS 4.13.2 calculates the 20-session window from 2026-07-22 through 2026-08-18. All 20 canonical partitions validate and readiness is `ready`; the 2026-08-19 bar is excluded from its own qualification window.
+
+The versioned [shadow publication](../audits/trailing-liquidity-shadow-publication-2026-08-19.md) persists one metric fact per Candidate B instrument and separate Candidate A/B decisions. It remains shadow derived data: production Universe membership and Dashboard calculations are unchanged.
