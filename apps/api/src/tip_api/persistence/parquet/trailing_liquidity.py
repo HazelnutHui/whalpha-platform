@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -340,6 +340,7 @@ def _read_partition(
     dataset: str,
     schema: pa.Schema,
     model: type[Any],
+    row_transform: Callable[[dict[str, Any]], dict[str, Any]] | None = None,
 ) -> int:
     partition = root / reference.dataset_path
     try:
@@ -369,7 +370,7 @@ def _read_partition(
     if _file_sha256(parquet_path) != reference.parquet_sha256:
         raise TrailingLiquidityCorruptionError("dataset physical hash mismatch")
     for row in table.to_pylist():
-        model.model_validate(row)
+        model.model_validate(row if row_transform is None else row_transform(row))
     return table.num_rows
 
 
@@ -429,16 +430,25 @@ def _normalized_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     for row in rows:
         normalized: dict[str, Any] = {}
         for key, value in row.items():
-            if isinstance(value, datetime):
-                normalized[key] = value.astimezone(UTC).isoformat()
-            elif isinstance(value, date):
-                normalized[key] = value.isoformat()
-            elif isinstance(value, Decimal):
-                normalized[key] = decimal_to_string(value)
-            else:
-                normalized[key] = value
+            normalized[key] = _normalized_value(value)
         output.append(normalized)
     return sorted(output, key=lambda item: json.dumps(item, sort_keys=True, separators=(",", ":")))
+
+
+def _normalized_value(value: Any) -> Any:
+    if isinstance(value, datetime):
+        return value.astimezone(UTC).isoformat()
+    if isinstance(value, date):
+        return value.isoformat()
+    if isinstance(value, Decimal):
+        return decimal_to_string(value)
+    if isinstance(value, bytes):
+        return {"__bytes_hex__": value.hex()}
+    if isinstance(value, dict):
+        return {key: _normalized_value(item) for key, item in sorted(value.items())}
+    if isinstance(value, (list, tuple)):
+        return [_normalized_value(item) for item in value]
+    return value
 
 
 def _rows_fingerprint(rows: list[dict[str, Any]]) -> str:

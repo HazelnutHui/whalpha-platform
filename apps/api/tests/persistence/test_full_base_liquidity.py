@@ -7,6 +7,7 @@ from types import SimpleNamespace
 from uuid import UUID, uuid5
 
 import pytest
+import pyarrow as pa
 
 from tip_api.contracts.market_data.v1 import EodSessionIntegrityV1, InstrumentType, QualityStatus, TrailingLiquiditySourceSessionV1
 from tip_api.contracts.market_data.v1.full_base_liquidity import (
@@ -15,10 +16,12 @@ from tip_api.contracts.market_data.v1.full_base_liquidity import (
 )
 from tip_api.persistence.eod_read import EodHistorySessionRead
 from tip_api.persistence.parquet.full_base_liquidity import (
+    EXACT_DECIMAL_TYPE, MEDIAN_MAX_INTEGER_DIGITS, MEDIAN_MAX_PRECISION, MEDIAN_MAX_SCALE,
     METRIC_SCHEMA, ParquetFullBaseScopeReviewRepository, read_completed_full_base_scope_review,
+    validate_full_base_physical_round_trip,
 )
 from tip_api.read_models.eod import EodMarketBarReadModel
-from tip_api.services.eod_history import plan_eod_history_window
+from tip_api.services.eod_history import exact_even_median, plan_eod_history_window
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID, build_full_base_scope_review
 from tip_api.services.full_base_liquidity_cli import _freeze_metric_records, main as cli_main
 from tip_api.services.market_calendar import ExchangeCalendar
@@ -140,12 +143,12 @@ def sample_records():
     metric = FullBaseMetricV1(analysis_session=D,membership_evidence_as_of_date=E,instrument_id=iid("one"),display_ticker="ONE",
         provider_type_code="CS",primary_exchange="XNYS",supported_exchange=True,current_bar_present=True,previous_bar_present=True,
         previous_close=Decimal("5"),previous_dollar_volume_below_threshold=False,observation_count=20,
-        median_dollar_volume_proxy_20s=Decimal("20000000"),metric_status="passed",quality_flags=(),source_window_fingerprint=H1,calculated_at=NOW)
+        median_dollar_volume_proxy_20s=Decimal("320686.75045605845000000000"),metric_status="passed",quality_flags=(),source_window_fingerprint=H1,calculated_at=NOW)
     decision = FullBaseDecisionV1(analysis_session=D,membership_evidence_as_of_date=E,policy_id=FULL_BASE_A_ID,instrument_id=metric.instrument_id,
         provider_type_code="CS",disposition="included",included=True,stage_id="final_membership",reason_codes=("passed",),reviewed_override_decision=None,calculated_at=NOW)
     membership = FullBaseMembershipV1(analysis_session=D,policy_id=FULL_BASE_A_ID,instrument_id=metric.instrument_id,provider_type_code="CS")
     diff = FullBaseSetDiffV1(analysis_session=D,policy_id=FULL_BASE_A_ID,instrument_id=metric.instrument_id,provider_type_code="CS",direction="corrected_added",
-        reason_code="full_base_not_in_legacy_scope",rescued_from_previous_session_scope=False,median_dollar_volume_proxy_20s=Decimal("20000000"))
+        reason_code="full_base_not_in_legacy_scope",rescued_from_previous_session_scope=False,median_dollar_volume_proxy_20s=Decimal("320686.75045605845000000000"))
     funnel = FullBaseFunnelStageV1(analysis_session=D,membership_evidence_as_of_date=E,policy_id=FULL_BASE_A_ID,stage_order=1,
         stage_id="final",stage_label="Final",stage_kind="sequential",input_count=1,excluded_count=0,remaining_count=1,
         exclusion_reason_codes=(),source_fingerprints=(H1,))
@@ -170,6 +173,8 @@ def test_atomic_publication_and_formal_reread(tmp_path):
     result=publish(tmp_path); completed=read_completed_full_base_scope_review(tmp_path,analysis_session=D,validate_sources=False)
     assert result.status=="published" and len(completed.metrics)==1 and len(completed.memberships)==1
     assert METRIC_SCHEMA.field("previous_close").type.precision==38
+    assert METRIC_SCHEMA.field("median_dollar_volume_proxy_20s").type == EXACT_DECIMAL_TYPE
+    assert completed.metrics[0].median_dollar_volume_proxy_20s == Decimal("320686.75045605845000000000")
     with pytest.raises(Exception): publish(tmp_path)
 
 
@@ -189,6 +194,42 @@ def test_symlink_and_decimal_over_scale_fail_closed(tmp_path):
     target=tmp_path/"real"; target.mkdir(); link=tmp_path/"link"; link.symlink_to(target,target_is_directory=True)
     with pytest.raises(Exception): publish(link)
     with pytest.raises(ValueError): FullBaseDatasetReferenceV1(dataset_path="../escape",record_count=1,content_fingerprint=H1,parquet_sha256=H2)
+
+
+def test_exact_decimal_tuple_contract_and_theoretical_boundary(tmp_path):
+    metric,decision,membership,diff,funnel,_ = sample_records()
+    boundary = Decimal("9" * MEDIAN_MAX_INTEGER_DIGITS + "." + "9" * MEDIAN_MAX_SCALE)
+    metric = metric.model_copy(update={"median_dollar_volume_proxy_20s": boundary})
+    diff = diff.model_copy(update={"median_dollar_volume_proxy_20s": boundary})
+    counts = validate_full_base_physical_round_trip(metrics=(metric,),decisions=(decision,),memberships=(membership,),
+        diffs=(diff,),funnels=(funnel,),temp_root=tmp_path)
+    assert counts == {"metric":1,"decision":1,"membership":1,"diff":1,"funnel":1}
+    assert len(boundary.as_tuple().digits) == MEDIAN_MAX_PRECISION and -boundary.as_tuple().exponent == MEDIAN_MAX_SCALE
+
+
+def test_decimal256_cannot_cover_theoretical_even_median_precision():
+    assert pa.decimal256(76, 20).precision == 76
+    with pytest.raises(Exception):
+        pa.decimal256(77, 21)
+
+
+def test_exact_decimal_tuple_rejects_beyond_theoretical_limit_with_context(tmp_path):
+    metric,decision,membership,diff,funnel,_ = sample_records()
+    metric = metric.model_copy(update={"median_dollar_volume_proxy_20s": Decimal("1e56")})
+    with pytest.raises(Exception) as failure:
+        validate_full_base_physical_round_trip(metrics=(metric,),decisions=(decision,),memberships=(membership,),
+            diffs=(diff,),funnels=(funnel,),temp_root=tmp_path)
+    message = str(failure.value)
+    assert all(token in message for token in (
+        "dataset=trailing-liquidity-full-base-metrics", "field=median_dollar_volume_proxy_20s",
+        f"instrument_id={metric.instrument_id}", "ticker=ONE", "observed_precision=1", "observed_scale=0",
+        "approved_precision=77", "approved_scale=21",
+    ))
+
+
+def test_even_median_preserves_half_unit_at_additional_scale():
+    values = [Decimal(index) for index in range(9)] + [Decimal("10.00000000000000000000"), Decimal("10.00000000000000000001")] + [Decimal(20 + index) for index in range(9)]
+    assert exact_even_median(values) == Decimal("10.000000000000000000005")
 
 
 def test_cli_argument_contract_does_not_touch_data():

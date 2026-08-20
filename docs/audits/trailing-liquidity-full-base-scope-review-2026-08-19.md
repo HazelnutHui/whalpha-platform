@@ -73,6 +73,17 @@ The one authorized apply failed at the pre-staging metric row-validation gate wi
 
 Postflight found zero full-base targets, zero staging residue, and an unchanged 243-file / 82,189,948-byte protected inventory with digest `3f5e4a3c23776c9dc269dd1d520cda079b54c26f9974d6336d1031f6496c148e`. There are no publication Parquet hashes or logical fingerprint to report. The apply count for this authorization is one and will not be repeated.
 
+## Offline Decimal physical-contract diagnosis
+
+The separately authorized offline diagnosis executed no apply. Across 4,565 planned metrics, `previous_close` has 4,527 non-null values, maximum precision 16 and scale 10, with zero values outside `decimal128(38,10)`. The 20-session median has 3,218 non-null values, maximum observed precision 28 and scale 20. Exactly two values cannot be represented losslessly at scale 10:
+
+- JUNS, instrument `0d334e89-9b01-51eb-8ff5-665a44936897`: `320686.75045605845000000000` (precision 26, scale 20);
+- HERZ, instrument `692e5dee-b7e7-5ff3-ae28-364b189b8772`: `61601.80674210025000000000` (precision 25, scale 20).
+
+All 3,550 diff medians have maximum observed precision 28 and scale 20 and happen to quantize exactly to scale 10 in this session, but they use the same theoretical-safe contract as metric medians. The source canonical Arrow contract is Decimal128(38,10) for both close and volume. Product precision/scale can reach 76/20; summing two middle products can require precision 77, and dividing an odd coefficient by two can require scale 21. Decimal256's maximum precision 76 is insufficient for that full contract.
+
+The offline repair uses a bounded exact Decimal tuple for medians and retains Decimal128(38,10) for previous close. A formal dry-run exited 0 and wrote/read all 4,565 metrics, 8,758 decisions, 3,550 memberships, 3,550 diffs, and 20 funnels through temporary Parquet. V1 metric and decision reproduction remained exact, corrected membership fingerprints remained unchanged, `/data` stayed byte-identical, and no target or staging was created. Corrected shadow publication remains pending separate authorization.
+
 ## Boundaries
 
 Provider requests, credential access, Git remote, OCI, public web, EOD ingestion, canonical mutation, Dashboard/API/frontend/snapshot change, and deployment were all zero. SEC B2 remains paused. Authenticated desktop selector validation is complete; mobile, tablet, and keyboard validation remain open.

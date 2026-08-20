@@ -25,6 +25,18 @@ The logical publication references five versioned Parquet components:
 
 All components use explicit Arrow schemas, deterministic business-key ordering, content fingerprints, physical Parquet SHA-256, same-filesystem staging, and formal reread. The logical manifest is renamed last.
 
+### Exact Decimal physical representation
+
+`previous_close` retains the canonical price representation `decimal128(38,10)`. `median_dollar_volume_proxy_20s` uses an exact Decimal-tuple Arrow struct:
+
+- `sign`: Boolean;
+- `coefficient`: unsigned big-endian binary integer;
+- `exponent`: signed 32-bit Decimal exponent.
+
+This is not a string representation and does not round or quantize. The formal reader reconstructs the logical Decimal before Pydantic validation. Canonical close and volume can each use precision 38/scale 10, so a daily product can require precision 76/scale 20. Adding the two middle products can require 77 coefficient digits, and exact division by two can require scale 21. Because Arrow Decimal256 has a maximum precision of 76, no fixed Arrow Decimal type covers the full theoretical contract. The exact tuple is bounded to precision 77, scale 21, and 56 integer digits; anything larger fails closed with field and stable-instrument context.
+
+The full-base target has never completed. This physical contract is therefore finalized within schema V1 before its first publication; no existing completed schema is rewritten and Trailing Liquidity V1 remains unchanged and readable by its original reader.
+
 ## Sequential decision order
 
 1. point-in-time provider evidence base;
@@ -42,7 +54,7 @@ Every sequential row satisfies `input_count - excluded_count = remaining_count`,
 
 ## Liquidity semantics
 
-The metric uses only the 20 completed XNYS sessions before the analysis session. Daily proxy is canonical close multiplied by canonical volume using Decimal. Exactly 20 observations are required; missing bars are not zero-filled or forward-filled. The even median is the exact mean of the tenth and eleventh ordered values. The analysis session never selects itself. A previous-session dollar-volume value is retained only as an audit field and is not a candidate gate.
+The metric uses only the 20 completed XNYS sessions before the analysis session. Daily proxy is canonical close multiplied by canonical volume using Decimal. Exactly 20 observations are required; missing bars are not zero-filled or forward-filled. The even median is the exact mean of the tenth and eleventh ordered values. The analysis session never selects itself. The previous-session product is compared at full Decimal precision for the audit-only `previous_dollar_volume_below_threshold` Boolean; the product itself is not persisted and is not a candidate gate.
 
 ## Reviewed overrides
 

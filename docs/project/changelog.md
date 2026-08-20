@@ -12,6 +12,8 @@
 - Strengthened the future publication gate to compare every immutable V1 metric as well as every V1 decision before a corrected shadow can be published.
 - Added exact Decimal-threshold boundary coverage and corrected the V1 metric reproduction gate to compare Decimal values independently of harmless trailing-zero scale; the full backend now passes 838 tests with two existing warnings.
 - The newly authorized dry-run exited 0 and exactly reproduced all expected counts, fingerprints, and 20 closed funnel stages. Its one apply exited 1 before staging because a remaining metric Decimal exceeded `decimal128(38,10)`; no target, staging residue, Activation, Dashboard, snapshot, or OCI change resulted, and no second apply ran.
+- Diagnosed the failure completely offline: only two of 3,218 non-null metric medians exceeded scale 10; previous close had zero violations. Canonical Decimal128(38,10) inputs imply a theoretical 76/20 product and 77/21 exact even median, exceeding Decimal256's precision-76 ceiling.
+- Finalized the unpublished full-base V1 physical contract with Decimal128(38,10) previous close and a bounded exact Decimal tuple for medians. The final no-apply dry-run round-tripped all 4,565/8,758/3,550/3,550/20 planned rows through temporary Parquet, preserved V1 and corrected fingerprints, and left `/data`, production 1,641/1,747, Dashboard, snapshot, and OCI unchanged.
 
 ## 2026-08-19
 

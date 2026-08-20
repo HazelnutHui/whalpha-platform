@@ -10,7 +10,9 @@ The corrected offline shadow enumerates 4,193 CS and 4,565 CS+ADRC stable IDs di
 
 Production Activation, private snapshot, API/frontend behavior, and OCI release `2026-08-19T083341Z-7ed7fdc21686` are unchanged. The new result is shadow-only. Authenticated desktop validation of the deployed two-option selector is complete; mobile, tablet, and keyboard acceptance are not claimed.
 
-The separately authorized corrected-shadow dry-run exited 0 and exactly reproduced 1,864 V1 metrics and 3,615 V1 decisions, including Decimal metrics by numeric value. Its sole apply then exited 1 before staging because a remaining metric Decimal exceeded the approved `decimal128(38,10)` scale. No new `/data` target exists; the protected 243-file inventory is unchanged. A separate offline physical-contract diagnosis is required before any future publication authorization.
+The separately authorized corrected-shadow dry-run exited 0 and exactly reproduced 1,864 V1 metrics and 3,615 V1 decisions. Its sole apply then exited 1 before staging because two metric medians could not be losslessly represented at scale 10. The completed offline diagnosis retained `previous_close` as Decimal128(38,10) and introduced a bounded exact Decimal-tuple physical representation for medians because the theoretical 77/21 even-median contract exceeds Decimal256's maximum precision 76.
+
+The repaired default dry-run reread all formal inputs and round-tripped 4,565 metrics, 8,758 decisions, 3,550 memberships, 3,550 diffs, and 20 funnels through temporary Parquet with unchanged corrected fingerprints. No apply ran, no `/data` target exists, and the protected 243-file inventory is unchanged. Production remains 1,641/1,747; corrected 1,719/1,831 remains unpublished shadow-only.
 
 ## Dashboard Universe Activation V1
 

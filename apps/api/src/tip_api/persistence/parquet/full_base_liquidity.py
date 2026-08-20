@@ -5,8 +5,10 @@ from __future__ import annotations
 import json
 import os
 import shutil
+import tempfile
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
+from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
@@ -40,7 +42,6 @@ from tip_api.persistence.parquet.trailing_liquidity import (
     _stage_partition,
     _staging,
     _validated_root,
-    _validate_decimal,
     _write_json,
 )
 
@@ -52,6 +53,18 @@ FUNNEL_DATASET = "trailing-liquidity-full-base-funnels"
 BASE_DIRECTORY = "market-data/derived"
 LOGICAL_DIRECTORY = "market-data/snapshots/trailing-liquidity-full-base-scope-review"
 
+# A Decimal128(38,10) input can produce a 76-digit/scale-20 product.  The
+# average of two products can require 77 digits and scale 21.  Arrow's
+# Decimal256 tops out at 76 digits, so the median uses an exact Decimal tuple.
+MEDIAN_MAX_PRECISION = 77
+MEDIAN_MAX_SCALE = 21
+MEDIAN_MAX_INTEGER_DIGITS = 56
+EXACT_DECIMAL_TYPE = pa.struct([
+    pa.field("sign", pa.bool_(), False),
+    pa.field("coefficient", pa.binary(), False),
+    pa.field("exponent", pa.int32(), False),
+])
+
 METRIC_SCHEMA = pa.schema([
     pa.field("schema_version", pa.string(), False), pa.field("analysis_session", pa.date32(), False),
     pa.field("membership_evidence_as_of_date", pa.date32(), False), pa.field("instrument_id", pa.string(), False),
@@ -61,7 +74,7 @@ METRIC_SCHEMA = pa.schema([
     pa.field("previous_close", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
     pa.field("previous_dollar_volume_below_threshold", pa.bool_(), True),
     pa.field("observation_count", pa.int16(), False),
-    pa.field("median_dollar_volume_proxy_20s", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
+    pa.field("median_dollar_volume_proxy_20s", EXACT_DECIMAL_TYPE, True),
     pa.field("metric_status", pa.string(), False), pa.field("quality_flags", pa.list_(pa.string()), False),
     pa.field("source_window_fingerprint", pa.string(), False), pa.field("calculated_at", pa.timestamp("us", tz="UTC"), False),
 ])
@@ -84,7 +97,7 @@ DIFF_SCHEMA = pa.schema([
     pa.field("provider_type_code", pa.string(), False), pa.field("direction", pa.string(), False),
     pa.field("reason_code", pa.string(), False),
     pa.field("rescued_from_previous_session_scope", pa.bool_(), False),
-    pa.field("median_dollar_volume_proxy_20s", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), True),
+    pa.field("median_dollar_volume_proxy_20s", EXACT_DECIMAL_TYPE, True),
 ])
 FUNNEL_SCHEMA = pa.schema([
     pa.field("schema_version", pa.string(), False), pa.field("analysis_session", pa.date32(), False),
@@ -129,13 +142,7 @@ class ParquetFullBaseScopeReviewRepository:
                 median_dollar_volume_threshold, created_at: datetime) -> FullBasePublicationResult:
         root = _validated_root(self.root)
         _validate_records(analysis_session, metrics, decisions, memberships, diffs, funnels)
-        data = {
-            "metric": (METRIC_DATASET, METRIC_SCHEMA, [_row(item) for item in sorted(metrics, key=lambda x: str(x.instrument_id))]),
-            "decision": (DECISION_DATASET, DECISION_SCHEMA, [_row(item) for item in sorted(decisions, key=lambda x: (x.policy_id, str(x.instrument_id)))]),
-            "membership": (MEMBERSHIP_DATASET, MEMBERSHIP_SCHEMA, [_row(item) for item in sorted(memberships, key=lambda x: (x.policy_id, str(x.instrument_id)))]),
-            "diff": (DIFF_DATASET, DIFF_SCHEMA, [_row(item) for item in sorted(diffs, key=lambda x: (x.policy_id, str(x.instrument_id)))]),
-            "funnel": (FUNNEL_DATASET, FUNNEL_SCHEMA, [_row(item) for item in sorted(funnels, key=lambda x: (x.policy_id, x.stage_order))]),
-        }
+        data = _publication_data(metrics, decisions, memberships, diffs, funnels)
         targets, logical_target = _targets(root, analysis_session)
         for path in (*targets.values(), logical_target):
             _reject_symlink_chain(root, path)
@@ -219,9 +226,10 @@ def read_completed_full_base_scope_review(root: Path, *, analysis_session: date,
     }
     output = {}
     for key, (reference, dataset, schema, model) in specs.items():
-        _read_partition(root, reference, dataset, schema, model)
+        transform = _logical_row if key in {"metric", "diff"} else None
+        _read_partition(root, reference, dataset, schema, model, row_transform=transform)
         table = pq.ParquetFile(root / reference.dataset_path / PARQUET_FILE).read()
-        output[key] = tuple(model.model_validate(row) for row in table.to_pylist())
+        output[key] = tuple(model.model_validate(row if transform is None else transform(row)) for row in table.to_pylist())
     if len({item.instrument_id for item in output["metric"]}) != len(output["metric"]): raise TrailingLiquidityCorruptionError("duplicate metric key")
     if len({(item.policy_id, item.instrument_id) for item in output["decision"]}) != len(output["decision"]): raise TrailingLiquidityCorruptionError("duplicate decision key")
     membership_ids = {(item.policy_id, item.instrument_id) for item in output["membership"]}
@@ -280,15 +288,114 @@ def _targets(root: Path, analysis_session: date):
     return targets, root / LOGICAL_DIRECTORY / suffix
 
 
-def _row(item) -> dict[str, Any]:
+def _publication_data(metrics, decisions, memberships, diffs, funnels):
+    return {
+        "metric": (METRIC_DATASET, METRIC_SCHEMA, [_row(item, METRIC_DATASET) for item in sorted(metrics, key=lambda x: str(x.instrument_id))]),
+        "decision": (DECISION_DATASET, DECISION_SCHEMA, [_row(item, DECISION_DATASET) for item in sorted(decisions, key=lambda x: (x.policy_id, str(x.instrument_id)))]),
+        "membership": (MEMBERSHIP_DATASET, MEMBERSHIP_SCHEMA, [_row(item, MEMBERSHIP_DATASET) for item in sorted(memberships, key=lambda x: (x.policy_id, str(x.instrument_id)))]),
+        "diff": (DIFF_DATASET, DIFF_SCHEMA, [_row(item, DIFF_DATASET) for item in sorted(diffs, key=lambda x: (x.policy_id, str(x.instrument_id)))]),
+        "funnel": (FUNNEL_DATASET, FUNNEL_SCHEMA, [_row(item, FUNNEL_DATASET) for item in sorted(funnels, key=lambda x: (x.policy_id, x.stage_order))]),
+    }
+
+
+def validate_full_base_physical_round_trip(*, metrics, decisions, memberships, diffs, funnels, temp_root: Path | None = None) -> dict[str, int]:
+    """Exercise every physical schema through local Parquet without touching /data."""
+    data = _publication_data(metrics, decisions, memberships, diffs, funnels)
+    with tempfile.TemporaryDirectory(prefix="tip-full-base-physical-", dir=temp_root or Path("/tmp")) as directory:
+        root = Path(directory)
+        counts = {}
+        for key, (_, schema, rows) in data.items():
+            path = root / f"{key}.parquet"
+            table = pa.Table.from_pylist(rows, schema=schema)
+            pq.write_table(table, path)
+            reread = pq.ParquetFile(path).read()
+            if not reread.schema.equals(schema, check_metadata=False) or reread.num_rows != len(rows):
+                raise TrailingLiquidityCorruptionError(f"{key} temporary Parquet schema/count mismatch")
+            if _rows_fingerprint(reread.to_pylist()) != _rows_fingerprint(rows):
+                raise TrailingLiquidityCorruptionError(f"{key} temporary Parquet fingerprint mismatch")
+            model = {"metric": FullBaseMetricV1, "decision": FullBaseDecisionV1, "membership": FullBaseMembershipV1,
+                     "diff": FullBaseSetDiffV1, "funnel": FullBaseFunnelStageV1}[key]
+            transform = _logical_row if key in {"metric", "diff"} else None
+            logical = tuple(model.model_validate(row if transform is None else transform(row)) for row in reread.to_pylist())
+            if len(logical) != len(rows):
+                raise TrailingLiquidityCorruptionError(f"{key} temporary Parquet logical reread mismatch")
+            counts[key] = len(logical)
+        return counts
+
+
+def _row(item, dataset: str) -> dict[str, Any]:
     row = item.model_dump(mode="python")
     if "instrument_id" in row: row["instrument_id"] = str(item.instrument_id)
     if "disposition" in row: row["disposition"] = item.disposition.value
     for key in ("quality_flags", "reason_codes", "exclusion_reason_codes", "source_fingerprints"):
         if key in row: row[key] = list(row[key])
-    for key in ("previous_close", "median_dollar_volume_proxy_20s"):
-        if key in row: _validate_decimal(row[key])
+    if "previous_close" in row:
+        _validate_fixed_decimal(row["previous_close"], dataset=dataset, field="previous_close", item=item)
+    if "median_dollar_volume_proxy_20s" in row:
+        row["median_dollar_volume_proxy_20s"] = _encode_exact_median(
+            row["median_dollar_volume_proxy_20s"], dataset=dataset, item=item
+        )
     return row
+
+
+def _decimal_shape(value: Decimal) -> tuple[int, int, int]:
+    _, digits, exponent = value.as_tuple()
+    precision = len(digits)
+    scale = max(-exponent, 0)
+    integer_digits = max(precision - scale, 0) if exponent < 0 else precision + exponent
+    return precision, scale, integer_digits
+
+
+def _contract_error(*, dataset: str, field: str, item, value: Decimal, approved_precision: int,
+                    approved_scale: int, reason: str) -> TrailingLiquidityPersistenceError:
+    precision, scale, _ = _decimal_shape(value)
+    return TrailingLiquidityPersistenceError(
+        f"dataset={dataset} field={field} instrument_id={item.instrument_id} "
+        f"ticker={getattr(item, 'display_ticker', '<unavailable>')} observed_precision={precision} "
+        f"observed_scale={scale} approved_precision={approved_precision} approved_scale={approved_scale} reason={reason}"
+    )
+
+
+def _validate_fixed_decimal(value: Decimal | None, *, dataset: str, field: str, item) -> None:
+    if value is None:
+        return
+    precision, scale, integer_digits = _decimal_shape(value)
+    if not value.is_finite() or scale > DECIMAL_SCALE or precision > DECIMAL_PRECISION or integer_digits > DECIMAL_PRECISION - DECIMAL_SCALE:
+        raise _contract_error(dataset=dataset, field=field, item=item, value=value,
+                              approved_precision=DECIMAL_PRECISION, approved_scale=DECIMAL_SCALE,
+                              reason="fixed_decimal_contract_exceeded")
+
+
+def _encode_exact_median(value: Decimal | None, *, dataset: str, item) -> dict[str, Any] | None:
+    if value is None:
+        return None
+    precision, scale, integer_digits = _decimal_shape(value)
+    if (not value.is_finite() or value.is_signed() or precision > MEDIAN_MAX_PRECISION or
+            scale > MEDIAN_MAX_SCALE or integer_digits > MEDIAN_MAX_INTEGER_DIGITS):
+        raise _contract_error(dataset=dataset, field="median_dollar_volume_proxy_20s", item=item, value=value,
+                              approved_precision=MEDIAN_MAX_PRECISION, approved_scale=MEDIAN_MAX_SCALE,
+                              reason="exact_median_contract_exceeded")
+    sign, digits, exponent = value.as_tuple()
+    coefficient = int("".join(str(digit) for digit in digits))
+    encoded = coefficient.to_bytes(max(1, (coefficient.bit_length() + 7) // 8), "big", signed=False)
+    return {"sign": bool(sign), "coefficient": encoded, "exponent": exponent}
+
+
+def _decode_exact_median(value: dict[str, Any] | None) -> Decimal | None:
+    if value is None:
+        return None
+    if set(value) != {"sign", "coefficient", "exponent"} or not isinstance(value["coefficient"], bytes):
+        raise TrailingLiquidityCorruptionError("exact median physical tuple is malformed")
+    coefficient = int.from_bytes(value["coefficient"], "big", signed=False)
+    digits = tuple(int(digit) for digit in str(coefficient))
+    return Decimal((int(value["sign"]), digits, int(value["exponent"])))
+
+
+def _logical_row(row: dict[str, Any]) -> dict[str, Any]:
+    output = dict(row)
+    if "median_dollar_volume_proxy_20s" in output:
+        output["median_dollar_volume_proxy_20s"] = _decode_exact_median(output["median_dollar_volume_proxy_20s"])
+    return output
 
 
 def _validate_records(analysis_session, metrics, decisions, memberships, diffs, funnels):

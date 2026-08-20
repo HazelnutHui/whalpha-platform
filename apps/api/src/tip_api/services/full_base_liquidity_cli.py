@@ -14,7 +14,11 @@ from tip_api.contracts.market_data.v1 import TrailingLiquidityMetricV1, Trailing
 from tip_api.contracts.security_classification.v1.universe_review import ReviewedEligibilityOverrideV1
 from tip_api.persistence.parquet.dashboard_universe_activation import read_completed_dashboard_universe_activation
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
-from tip_api.persistence.parquet.full_base_liquidity import ParquetFullBaseScopeReviewRepository, read_completed_full_base_scope_review
+from tip_api.persistence.parquet.full_base_liquidity import (
+    ParquetFullBaseScopeReviewRepository,
+    read_completed_full_base_scope_review,
+    validate_full_base_physical_round_trip,
+)
 from tip_api.persistence.parquet.security_evidence import read_completed_security_evidence_snapshot
 from tip_api.persistence.parquet.trailing_liquidity import DECISION_SCHEMA as V1_DECISION_SCHEMA, METRIC_SCHEMA as V1_METRIC_SCHEMA, read_completed_trailing_liquidity_publication
 from tip_api.persistence.parquet.universe_review import OVERRIDE_SCHEMA, read_completed_universe_review
@@ -106,6 +110,13 @@ def main(argv: list[str] | None = None) -> int:
         CANDIDATE_A_ID: calculate_membership_analytics(old_memberships[CANDIDATE_A_ID], current_by_id, previous_by_id),
         PUBLIC_SECONDARY_ID: calculate_membership_analytics(old_memberships[PUBLIC_SECONDARY_ID], current_by_id, previous_by_id),
     }
+    physical_round_trip = validate_full_base_physical_round_trip(
+        metrics=bundle.metrics,
+        decisions=bundle.decisions,
+        memberships=bundle.memberships,
+        diffs=bundle.diffs,
+        funnels=bundle.funnels,
+    )
     plan = {
         "status": "publish_ready" if args.apply else "dry_run_ready",
         "analysis_session": ANALYSIS_SESSION.isoformat(), "membership_evidence_as_of_date": EVIDENCE_DATE.isoformat(),
@@ -119,6 +130,7 @@ def main(argv: list[str] | None = None) -> int:
         "overlapping_exclusions": bundle.overlapping_exclusions,
         "analytics": {"current_production": current_analytics, "corrected_shadow": bundle.analytics},
         "edge_tickers": _edge_audit(evidence_by_id, bundle, old_memberships, overrides),
+        "physical_round_trip": physical_round_trip,
         "external_network_requests": 0,
     }
     if not args.apply:

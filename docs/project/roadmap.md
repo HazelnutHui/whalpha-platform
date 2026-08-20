@@ -71,7 +71,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Perform a strictly offline diagnosis of the remaining full-base metric Decimal that exceeds `decimal128(38,10)`, then review the physical schema policy without changing the frozen eligibility calculation. The authorized publication apply failed before staging and must not be repeated. Any later apply, activation, private snapshot, Dashboard change, or OCI deployment requires a separate authorization. Keep SEC B2 paused.
+Review the completed offline exact-Decimal physical contract and its full formal dry-run. A future bounded full-base shadow apply requires separate authorization and must start from the committed clean implementation; activation, private snapshot, Dashboard change, and OCI deployment remain later, independently authorized decisions. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

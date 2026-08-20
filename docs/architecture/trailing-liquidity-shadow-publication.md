@@ -30,4 +30,8 @@ The corrected family publishes five Parquet components—metric/status facts, co
 
 Paths use `trailing-liquidity-full-base-*` dataset names and the logical `trailing-liquidity-full-base-scope-review` family. This is a new shadow boundary, not an overwrite of V1.
 
-The 2026-08-20 authorized publication remained fail-closed before staging: a remaining metric Decimal exceeded the approved `decimal128(38,10)` scale. The repository did not round or truncate it, no target was created, and this family remains an implemented but unpublished shadow boundary pending a separate offline physical-contract review.
+The 2026-08-20 authorized publication remained fail-closed before staging: a remaining metric Decimal exceeded the approved `decimal128(38,10)` scale. The repository did not round or truncate it and no target was created.
+
+The subsequent offline physical-contract review found two affected metric medians and no affected `previous_close` values. Canonical close and volume are each `decimal128(38,10)`: their product can require precision 76/scale 20, while an exact even median can require precision 77/scale 21. Arrow `decimal256` supports at most precision 76, so it cannot cover the complete input contract. The unpublished full-base family therefore retains `previous_close` as `decimal128(38,10)` and stores each median as an explicit Arrow struct containing sign, an unsigned big-endian binary coefficient, and the Decimal exponent. The reader reconstructs the logical Decimal exactly; deterministic fingerprints encode binary coefficients as canonical hexadecimal solely for hashing.
+
+The exact-median physical gate permits at most precision 77, scale 21, and 56 integer digits. Errors identify dataset, field, stable instrument ID, ticker, observed precision/scale, and approved precision/scale. This is the first-publication physical schema for the still-unpublished V1 family, so no schema version is bumped and no completed schema is silently changed.
