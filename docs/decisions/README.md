@@ -38,3 +38,4 @@ Each ADR should include:
 - [0013: Establish Dashboard Universe V1 for Market Overview](0013-establish-dashboard-universe-v1.md)
 - [0014: Use an Exchange Calendar for EOD Freshness](0014-use-an-exchange-calendar-for-eod-freshness.md)
 - [0015: Govern Security Types and Universe Eligibility](0015-govern-security-types-and-universe-eligibility.md)
+- [0016: Publish Versioned Trailing Liquidity Shadow Results](0016-publish-versioned-trailing-liquidity-shadow-results.md)

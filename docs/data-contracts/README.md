@@ -14,6 +14,7 @@ Implemented as Python/Pydantic contracts:
 - [EOD Price Bar V1](eod-price-bar-v1.md)
 - [Provider Instrument Identity V1](provider-instrument-identity-v1.md)
 - [Provider Ticker Resolver V1](provider-ticker-resolver-v1.md)
+- [Trailing Liquidity Shadow Publication V1](trailing-liquidity-shadow-v1.md)
 
 Accepted logical contracts only:
 

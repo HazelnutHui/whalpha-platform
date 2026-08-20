@@ -22,6 +22,16 @@ from tip_api.contracts.market_data.v1.instrument_master import (
     InstrumentStatus,
     InstrumentType,
 )
+from tip_api.contracts.market_data.v1.trailing_liquidity_publication import (
+    ShadowEligibilityStatus,
+    TrailingLiquidityCandidateSummaryV1,
+    TrailingLiquidityDatasetReferenceV1,
+    TrailingLiquidityMetricStatus,
+    TrailingLiquidityMetricV1,
+    TrailingLiquidityShadowDecisionV1,
+    TrailingLiquidityShadowManifestV1,
+    TrailingLiquiditySourceSessionV1,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -40,4 +50,12 @@ __all__ = [
     "ResolutionStatus",
     "TrailingLiquidityEligibilityStatus",
     "TrailingLiquidityResultV1",
+    "ShadowEligibilityStatus",
+    "TrailingLiquidityCandidateSummaryV1",
+    "TrailingLiquidityDatasetReferenceV1",
+    "TrailingLiquidityMetricStatus",
+    "TrailingLiquidityMetricV1",
+    "TrailingLiquidityShadowDecisionV1",
+    "TrailingLiquidityShadowManifestV1",
+    "TrailingLiquiditySourceSessionV1",
 ]

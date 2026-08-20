@@ -112,6 +112,7 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Massive Instrument Master Ingestion](docs/operations/massive-instrument-master-ingestion.md)
 - [Instrument Identity Resolution](docs/architecture/instrument-identity-resolution.md)
 - [EOD Parquet Persistence](docs/architecture/eod-parquet-persistence.md)
+- [Trailing Liquidity Shadow Publication](docs/architecture/trailing-liquidity-shadow-publication.md)
 - [Canonical Market Data Query Boundary](docs/architecture/canonical-market-data-query-boundary.md)
 - [Private EOD Market Data API V1](docs/api/private-eod-market-data-v1.md)
 - [Private Market Summary API V1](docs/api/private-market-summary-v1.md)
