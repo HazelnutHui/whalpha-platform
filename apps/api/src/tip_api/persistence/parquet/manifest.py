@@ -47,11 +47,33 @@ def logical_revision_key(record: EodPriceBarV1) -> tuple[str, str, str]:
 
 
 def decimal_to_string(value: Decimal | None) -> str | None:
-    """Represent Decimal values deterministically without float conversion."""
+    """Represent a finite Decimal canonically without consulting its context."""
 
     if value is None:
         return None
-    return format(value.normalize(), "f")
+    if not value.is_finite():
+        raise ValueError("fingerprint Decimal must be finite")
+    sign, raw_digits, exponent = value.as_tuple()
+    digits = "".join(str(digit) for digit in raw_digits).lstrip("0")
+    if not digits:
+        return "-0" if sign else "0"
+    # Numeric equivalence, including trailing fractional zeroes, is part of the
+    # historical fingerprint contract.  Canonicalize the coefficient directly;
+    # Decimal.normalize() is unsuitable because it obeys the process context.
+    trailing_zero_count = len(digits) - len(digits.rstrip("0"))
+    if trailing_zero_count:
+        digits = digits[:-trailing_zero_count]
+        exponent += trailing_zero_count
+    if exponent >= 0:
+        rendered = digits + ("0" * exponent)
+    else:
+        point = len(digits) + exponent
+        rendered = (
+            digits[:point] + "." + digits[point:]
+            if point > 0
+            else "0." + ("0" * -point) + digits
+        )
+    return ("-" if sign else "") + rendered
 
 
 def record_to_fingerprint_row(record: EodPriceBarV1) -> dict[str, Any]:

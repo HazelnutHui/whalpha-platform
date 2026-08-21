@@ -71,7 +71,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Review the completed offline exact-Decimal physical and arithmetic-context contracts plus their full formal dry-run. A future bounded full-base shadow apply requires separate authorization and must start from the committed clean implementation; activation, private snapshot, Dashboard change, and OCI deployment remain later, independently authorized decisions. Keep SEC B2 paused.
+Authorize, if desired, one separately bounded full-base shadow publication from the clean context-independent implementation. The production-root precision/trap matrix and independent raw-input Fraction reconciliation are complete; no apply has run. Activation, private snapshot, Dashboard change, and OCI deployment remain later, independently authorized decisions. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

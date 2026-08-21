@@ -7,7 +7,7 @@ import json
 from collections import Counter
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from decimal import Decimal, ROUND_HALF_EVEN, localcontext
+from decimal import Context, Decimal, Inexact, ROUND_HALF_EVEN, Rounded, localcontext
 from typing import Mapping
 from uuid import UUID
 
@@ -39,6 +39,19 @@ FULL_BASE_A_ID = "full_base_provider_classified_common_shares_v1"
 FULL_BASE_B_ID = "full_base_provider_classified_common_shares_plus_adrs_v1"
 CANONICAL_DECIMAL_PRECISION = 38
 ANALYTICS_CALCULATION_PRECISION = CANONICAL_DECIMAL_PRECISION * 2 + 2
+
+
+def _analytics_decimal_context() -> Context:
+    """Return an isolated policy for non-membership division analytics."""
+
+    context = Context(prec=ANALYTICS_CALCULATION_PRECISION, rounding=ROUND_HALF_EVEN)
+    # Non-terminating ratios are expected display/audit values.  Explicitly
+    # permit their rounding inside this local context instead of inheriting a
+    # caller's traps.  The discarded context also contains any local flags.
+    context.traps[Inexact] = False
+    context.traps[Rounded] = False
+    context.clear_flags()
+    return context
 
 
 @dataclass(frozen=True, slots=True)
@@ -352,9 +365,7 @@ def calculate_membership_analytics(ids, current_by_id, previous_by_id):
     # Dashboard-comparison analytics may require non-terminating division.  Give
     # them an explicit local policy derived from the two decimal128(38,10)
     # inputs; they must never inherit a process-global Decimal context.
-    with localcontext() as context:
-        context.prec = ANALYTICS_CALCULATION_PRECISION
-        context.rounding = ROUND_HALF_EVEN
+    with localcontext(_analytics_decimal_context()):
         returns = []
         eligible_map = []
         advancer_volume = Decimal("0")

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from collections import Counter
 from datetime import UTC, date, datetime
@@ -24,6 +25,7 @@ from tip_api.persistence.parquet.security_evidence import read_completed_securit
 from tip_api.persistence.parquet.trailing_liquidity import DECISION_SCHEMA as V1_DECISION_SCHEMA, METRIC_SCHEMA as V1_METRIC_SCHEMA, read_completed_trailing_liquidity_publication
 from tip_api.persistence.parquet.universe_review import OVERRIDE_SCHEMA, read_completed_universe_review
 from tip_api.services.eod_history import (
+    MATERIAL_QUALITY_FLAGS,
     MEDIAN_DOLLAR_VOLUME_THRESHOLD,
     PREVIOUS_CLOSE_THRESHOLD,
     exact_dollar_volume_proxy,
@@ -33,6 +35,7 @@ from tip_api.services.eod_history import (
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID, build_full_base_scope_review, calculate_membership_analytics
 from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.provider_classified_universe import CANDIDATE_A_ID, CANDIDATE_B_ID, audit_provider_classified_universes
+from tip_api.services.security_classification import SUPPORTED_EXCHANGES
 from tip_api.services.trailing_liquidity_publication import build_trailing_liquidity_publication
 from tip_api.services.universe_pre_activation import records_fingerprint
 
@@ -97,9 +100,10 @@ def main(argv: list[str] | None = None) -> int:
         CANDIDATE_A_ID: activation.member_ids_by_universe[CANDIDATE_A_ID],
         PUBLIC_SECONDARY_ID: activation.member_ids_by_universe[PUBLIC_SECONDARY_ID],
     }
+    current_bars = repo.read_bars(ANALYSIS_SESSION)
     bundle = build_full_base_scope_review(
         descriptor=descriptor, repository=repo, evidence=security.evidence, instruments=instruments,
-        current_bars=repo.read_bars(ANALYSIS_SESSION), membership_evidence_as_of_date=EVIDENCE_DATE,
+        current_bars=current_bars, membership_evidence_as_of_date=EVIDENCE_DATE,
         reviewed_overrides=overrides, old_memberships=old_memberships, calculated_at=created_at,
     )
     a, b = bundle.final_memberships[FULL_BASE_A_ID], bundle.final_memberships[FULL_BASE_B_ID]
@@ -113,7 +117,11 @@ def main(argv: list[str] | None = None) -> int:
     exact_arithmetic = _exact_arithmetic_reconciliation(
         repo=repo,
         descriptor=descriptor,
-        bundle=bundle,
+        evidence=security.evidence,
+        instruments=instruments,
+        current_bars=current_bars,
+        actual_decisions=bundle.decisions,
+        actual_memberships=bundle.final_memberships,
         v1_metrics=_read_v1_metric_records(trailing),
         overrides=overrides,
     )
@@ -242,21 +250,44 @@ def _read_v1_metric_records(trailing):
     return tuple(TrailingLiquidityMetricV1.model_validate(row) for row in metric_table.to_pylist())
 
 
-def _exact_arithmetic_reconciliation(*, repo, descriptor, bundle, v1_metrics, overrides):
-    """Audit production integer arithmetic with an independent Fraction oracle."""
+def _exact_arithmetic_reconciliation(
+    *, repo, descriptor, evidence, instruments, current_bars,
+    actual_decisions, actual_memberships, v1_metrics, overrides,
+):
+    """Rebuild every gate from raw canonical inputs with a Fraction oracle."""
 
+    evidence_by_id = {}
+    for item in evidence:
+        if item.instrument_id in evidence_by_id:
+            raise RuntimeError("Fraction oracle found duplicate canonical evidence")
+        evidence_by_id[item.instrument_id] = item
+    base_ids = {
+        item.instrument_id for item in evidence
+        if item.provider_type_code in {"CS", "ADRC"}
+    }
     bars_by_id = {}
     daily_product_mismatches = []
     absolute_errors = []
     relative_errors = []
     for session_read in repo.read_history_sessions(descriptor.completed_sessions):
+        session = session_read.integrity.session_date
         for bar in session_read.bars:
+            if bar.instrument_id not in base_ids:
+                continue
             by_session = bars_by_id.setdefault(bar.instrument_id, {})
-            by_session[session_read.integrity.session_date] = bar
-    metric_by_id = {item.instrument_id: item for item in bundle.metrics}
+            if session in by_session:
+                raise RuntimeError("Fraction oracle found duplicate instrument/session")
+            by_session[session] = bar
+    current_by_id = {}
+    for bar in current_bars:
+        if bar.instrument_id in current_by_id:
+            raise RuntimeError("Fraction oracle found duplicate current instrument")
+        current_by_id[bar.instrument_id] = bar
+
     oracle_median_by_id = {}
     median_mismatches = []
-    for instrument_id, metric in metric_by_id.items():
+    first_difference = None
+    for instrument_id in sorted(base_ids, key=str):
         bars = bars_by_id.get(instrument_id, {})
         oracle_products = []
         production_products = []
@@ -270,7 +301,13 @@ def _exact_arithmetic_reconciliation(*, repo, descriptor, bundle, v1_metrics, ov
             production_products.append(production)
             error = abs(Fraction(production) - oracle)
             if error:
-                daily_product_mismatches.append((str(instrument_id), bar.ticker, session.isoformat()))
+                difference = (str(instrument_id), bar.ticker, session.isoformat())
+                daily_product_mismatches.append(difference)
+                first_difference = first_difference or {
+                    "field": "daily_dollar_volume", "instrument_id": difference[0],
+                    "ticker": difference[1], "session": difference[2],
+                    "expected": str(oracle), "actual": str(production),
+                }
                 absolute_errors.append(error)
                 if oracle:
                     relative_errors.append(error / abs(oracle))
@@ -282,44 +319,143 @@ def _exact_arithmetic_reconciliation(*, repo, descriptor, bundle, v1_metrics, ov
         production_median = exact_even_median(production_products)
         error = abs(Fraction(production_median) - oracle_median)
         if error:
-            median_mismatches.append((str(instrument_id), metric.display_ticker))
+            ticker = evidence_by_id[instrument_id].provider_ticker
+            median_mismatches.append((str(instrument_id), ticker))
+            first_difference = first_difference or {
+                "field": "median_dollar_volume_proxy_20s", "instrument_id": str(instrument_id),
+                "ticker": ticker, "expected": str(oracle_median), "actual": str(production_median),
+            }
             absolute_errors.append(error)
             if oracle_median:
                 relative_errors.append(error / abs(oracle_median))
 
-    active_overrides = {
-        item.instrument_id: item.decision.value
-        for item in overrides
-        if item.is_effective_on(descriptor.analysis_session)
-    }
-    expected_memberships = {FULL_BASE_A_ID: set(), FULL_BASE_B_ID: set()}
-    threshold = Fraction(MEDIAN_DOLLAR_VOLUME_THRESHOLD)
-    for instrument_id, metric in metric_by_id.items():
-        oracle_median = oracle_median_by_id.get(instrument_id)
-        base_pass = (
-            metric.supported_exchange
-            and metric.current_bar_present
-            and metric.previous_bar_present
-            and metric.previous_close is not None
-            and metric.previous_close >= PREVIOUS_CLOSE_THRESHOLD
-            and oracle_median is not None
-            and oracle_median >= threshold
-            and active_overrides.get(instrument_id) not in {"exclude", "quarantine"}
-        )
-        if not base_pass:
+    active_overrides = {}
+    for item in overrides:
+        if not item.is_effective_on(descriptor.analysis_session):
             continue
-        expected_memberships[FULL_BASE_B_ID].add(instrument_id)
-        if metric.provider_type_code == "CS":
-            expected_memberships[FULL_BASE_A_ID].add(instrument_id)
+        if item.instrument_id in active_overrides:
+            raise RuntimeError("Fraction oracle found multiple active overrides")
+        active_overrides[item.instrument_id] = item
+
+    expected_decisions = {}
+    expected_memberships = {FULL_BASE_A_ID: set(), FULL_BASE_B_ID: set()}
+    for policy_id, allowed_types in (
+        (FULL_BASE_A_ID, {"CS"}),
+        (FULL_BASE_B_ID, {"CS", "ADRC"}),
+    ):
+        for instrument_id in sorted(
+            (item for item in base_ids if evidence_by_id[item].provider_type_code in allowed_types),
+            key=str,
+        ):
+            source = evidence_by_id[instrument_id]
+            instrument = instruments.get(instrument_id)
+            current = current_by_id.get(instrument_id)
+            observations = bars_by_id.get(instrument_id, {})
+            previous = observations.get(descriptor.previous_session)
+            reasons = set()
+            if instrument is None:
+                disposition, stage = "invalid_input", "input_quality"
+                reasons.add("orphan_instrument_reference")
+            elif instrument.get("primary_exchange") not in SUPPORTED_EXCHANGES:
+                disposition, stage = "unsupported_exchange", "supported_exchange"
+                reasons.add("unsupported_exchange")
+            elif current is None:
+                disposition, stage = "missing_current_bar", "comparable_bars"
+                reasons.add("missing_current_bar")
+            elif previous is None:
+                disposition, stage = "missing_previous_bar", "comparable_bars"
+                reasons.add("missing_previous_bar")
+            elif Fraction(previous.close) < Fraction(PREVIOUS_CLOSE_THRESHOLD):
+                disposition, stage = "below_previous_close", "previous_close"
+                reasons.add("below_previous_close")
+            else:
+                reasons.add("adjustment_factors_unverified")
+                ordered_bars = [
+                    observations[session] for session in descriptor.expected_sessions
+                    if session in observations
+                ]
+                quality_failure = any(
+                    MATERIAL_QUALITY_FLAGS.intersection(bar.quality_flags)
+                    for bar in ordered_bars
+                )
+                if quality_failure:
+                    disposition, stage = "invalid_input", "input_quality"
+                    reasons.add("material_data_quality_flag")
+                elif len(ordered_bars) != 20:
+                    disposition, stage = "insufficient_history", "history_completeness"
+                    reasons.add("insufficient_20_session_history")
+                elif oracle_median_by_id[instrument_id] < Fraction(MEDIAN_DOLLAR_VOLUME_THRESHOLD):
+                    disposition, stage = "below_trailing_liquidity", "trailing_liquidity"
+                    reasons.add("median_dollar_volume_below_20m")
+                else:
+                    disposition, stage = "included", "final_membership"
+
+            if current is not None and previous is not None:
+                current_close = Fraction(current.close)
+                previous_close = Fraction(previous.close)
+                if current_close >= 2 * previous_close or 2 * current_close <= previous_close:
+                    reasons.add("material_return_outlier_review")
+
+            active_override = active_overrides.get(instrument_id)
+            override_value = None
+            if active_override is not None:
+                override_value = active_override.decision.value
+                if disposition == "included" and override_value == "exclude":
+                    disposition, stage = "reviewed_exclusion", "reviewed_overlay"
+                    reasons.add(active_override.reason_code)
+                elif disposition == "included" and override_value == "quarantine":
+                    disposition, stage = "reviewed_quarantine", "reviewed_overlay"
+                    reasons.add(active_override.reason_code)
+                elif override_value == "allow":
+                    reasons.add("reviewed_allow_does_not_bypass_quantitative_gates")
+                elif disposition != "included":
+                    reasons.add("reviewed_exclusion_not_reached_due_prior_gate")
+            if disposition == "included":
+                reasons.add("full_base_trailing_liquidity_passed")
+                expected_memberships[policy_id].add(instrument_id)
+            expected_decisions[(policy_id, instrument_id)] = {
+                "provider_type_code": source.provider_type_code,
+                "disposition": disposition,
+                "included": disposition == "included",
+                "stage_id": stage,
+                "reason_codes": tuple(sorted(reasons)),
+                "reviewed_override_decision": override_value,
+            }
+
+    actual_by_key = {}
+    for item in actual_decisions:
+        key = (item.policy_id, item.instrument_id)
+        if key in actual_by_key:
+            raise RuntimeError("production decision ledger contains a duplicate key")
+        actual_by_key[key] = item
     decision_mismatch_count = 0
-    for decision in bundle.decisions:
-        expected = decision.instrument_id in expected_memberships[decision.policy_id]
-        decision_mismatch_count += decision.included is not expected
+    for key in sorted(set(expected_decisions) | set(actual_by_key), key=lambda item: (item[0], str(item[1]))):
+        expected = expected_decisions.get(key)
+        actual = actual_by_key.get(key)
+        actual_value = None if actual is None else {
+            "provider_type_code": actual.provider_type_code,
+            "disposition": actual.disposition.value,
+            "included": actual.included,
+            "stage_id": actual.stage_id,
+            "reason_codes": tuple(actual.reason_codes),
+            "reviewed_override_decision": actual.reviewed_override_decision,
+        }
+        if expected != actual_value:
+            decision_mismatch_count += 1
+            first_difference = first_difference or {
+                "field": "decision", "policy_id": key[0], "instrument_id": str(key[1]),
+                "ticker": evidence_by_id[key[1]].provider_ticker,
+                "expected": expected, "actual": actual_value,
+            }
+
     membership_mismatch_count = sum(
-        len(frozenset(expected_memberships[policy_id]) ^ bundle.final_memberships[policy_id])
+        len(frozenset(expected_memberships[policy_id]) ^ actual_memberships[policy_id])
         for policy_id in (FULL_BASE_A_ID, FULL_BASE_B_ID)
     )
-
+    expected_fingerprints = {
+        policy_id: _oracle_membership_fingerprint(expected_memberships[policy_id])
+        for policy_id in (FULL_BASE_A_ID, FULL_BASE_B_ID)
+    }
     v1_metric_mismatch_count = 0
     for metric in v1_metrics:
         if metric.median_dollar_volume_proxy_20s is None:
@@ -330,8 +466,8 @@ def _exact_arithmetic_reconciliation(*, repo, descriptor, bundle, v1_metrics, ov
     maximum_error = max(absolute_errors, default=Fraction(0))
     maximum_relative_error = max(relative_errors, default=Fraction(0))
     return {
-        "oracle": "python_fraction_from_canonical_decimal_tuples",
-        "daily_observation_count": sum(len(bars_by_id.get(item, {})) for item in metric_by_id),
+        "oracle": "independent_fraction_from_raw_canonical_inputs",
+        "daily_observation_count": sum(len(bars_by_id.get(item, {})) for item in base_ids),
         "daily_product_mismatch_count": len(daily_product_mismatches),
         "median_comparable_count": len(oracle_median_by_id),
         "median_mismatch_count": len(median_mismatches),
@@ -342,8 +478,26 @@ def _exact_arithmetic_reconciliation(*, repo, descriptor, bundle, v1_metrics, ov
         "maximum_absolute_error": str(maximum_error),
         "maximum_relative_error": str(maximum_relative_error),
         "threshold_crossing_count": decision_mismatch_count,
+        "expected_membership_counts": {
+            policy_id: len(expected_memberships[policy_id])
+            for policy_id in (FULL_BASE_A_ID, FULL_BASE_B_ID)
+        },
+        "expected_membership_fingerprints": expected_fingerprints,
+        "first_difference": first_difference,
         "affected_instruments": sorted({item[0] for item in daily_product_mismatches + median_mismatches}),
     }
+
+
+def _oracle_membership_fingerprint(ids) -> str:
+    """Reproduce the public stable-ID set contract without production helpers."""
+
+    payload = json.dumps(
+        [str(item) for item in sorted(set(ids), key=str)],
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _edge_audit(evidence_by_id, bundle, old_memberships, overrides):

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from decimal import Decimal, ROUND_DOWN, ROUND_UP, localcontext
+from decimal import Decimal, Inexact, ROUND_DOWN, ROUND_UP, Rounded, localcontext
 from types import SimpleNamespace
 from uuid import UUID, uuid5
 
@@ -23,7 +23,7 @@ from tip_api.persistence.parquet.full_base_liquidity import (
 from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.eod_history import exact_even_median, plan_eod_history_window
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID, build_full_base_scope_review
-from tip_api.services.full_base_liquidity_cli import _freeze_metric_records, main as cli_main
+from tip_api.services.full_base_liquidity_cli import _exact_arithmetic_reconciliation, _freeze_metric_records, main as cli_main
 from tip_api.services.market_calendar import ExchangeCalendar
 
 D = date(2026, 8, 19); E = date(2026, 8, 14); NOW = datetime(2026, 8, 20, 12, tzinfo=UTC)
@@ -55,7 +55,7 @@ class Repo:
     def read_history_sessions(self, days): return tuple(EodHistorySessionRead(integrity(day), self.rows[day]) for day in days)
 
 
-def fixture_bundle(*, empty_legacy=False, reverse=False, rescued_previous_volume="1000000"):
+def fixture_bundle(*, empty_legacy=False, reverse=False, rescued_previous_volume="1000000", return_inputs=False):
     calendar = ExchangeCalendar(); days = calendar.sessions_before(D, 20)
     rescued_cs, rescued_adrc, false_friend = iid("rescued-cs"), iid("rescued-adrc"), iid("false-friend")
     ids = (rescued_cs, rescued_adrc, false_friend)
@@ -77,6 +77,11 @@ def fixture_bundle(*, empty_legacy=False, reverse=False, rescued_previous_volume
            "provider_classified_common_shares_plus_adrs_v1": frozenset() if empty_legacy else frozenset({false_friend})}
     bundle = build_full_base_scope_review(descriptor=descriptor, repository=repo, evidence=evidence, instruments=instruments,
         current_bars=current, membership_evidence_as_of_date=E, reviewed_overrides=(), old_memberships=old, calculated_at=NOW)
+    if return_inputs:
+        return bundle, SimpleNamespace(
+            repo=repo, descriptor=descriptor, evidence=evidence,
+            instruments=instruments, current_bars=current,
+        )
     return bundle, rescued_cs, rescued_adrc, false_friend
 
 
@@ -129,6 +134,42 @@ def test_full_base_decisions_analytics_and_fingerprints_ignore_global_decimal_co
     assert bundle.final_memberships == reference.final_memberships
     assert bundle.analytics == reference.analytics
     assert [item.membership_fingerprint for item in bundle.summaries] == [item.membership_fingerprint for item in reference.summaries]
+
+
+def test_nonmembership_analytics_does_not_inherit_traps_or_leak_flags():
+    with localcontext() as context:
+        context.prec = 9
+        context.rounding = ROUND_DOWN
+        context.traps[Inexact] = True
+        context.traps[Rounded] = True
+        context.clear_flags()
+        bundle, *_ = fixture_bundle()
+        assert bundle.analytics
+        assert context.flags[Inexact] is False
+        assert context.flags[Rounded] is False
+
+
+def test_fraction_oracle_rebuilds_decisions_from_raw_inputs_without_bundle_metrics():
+    bundle, inputs = fixture_bundle(return_inputs=True)
+    result = _exact_arithmetic_reconciliation(
+        repo=inputs.repo,
+        descriptor=inputs.descriptor,
+        evidence=inputs.evidence,
+        instruments=inputs.instruments,
+        current_bars=inputs.current_bars,
+        actual_decisions=bundle.decisions,
+        actual_memberships=bundle.final_memberships,
+        v1_metrics=(),
+        overrides=(),
+    )
+    assert result["daily_product_mismatch_count"] == 0
+    assert result["median_mismatch_count"] == 0
+    assert result["decision_mismatch_count"] == 0
+    assert result["membership_mismatch_count"] == 0
+    assert result["first_difference"] is None
+    assert result["expected_membership_fingerprints"] == {
+        item.policy_id: item.membership_fingerprint for item in bundle.summaries
+    }
 
 
 def test_primary_subset_and_security_type_boundary():

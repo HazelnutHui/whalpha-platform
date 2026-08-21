@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import socket
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import Decimal, Inexact, ROUND_DOWN, ROUND_UP, Rounded, localcontext
 from pathlib import Path
 from uuid import UUID
 
@@ -26,7 +26,7 @@ from tip_api.persistence.parquet.eod_bars import (
     ParquetEodPriceBarRepository,
     records_to_table,
 )
-from tip_api.persistence.parquet.manifest import content_fingerprint
+from tip_api.persistence.parquet.manifest import content_fingerprint, decimal_to_string
 
 SESSION = date(2026, 8, 13)
 CREATED_AT = datetime(2026, 8, 14, 12, 0, tzinfo=UTC)
@@ -140,6 +140,40 @@ def test_volume_decimal_precision_overflow_rejected(tmp_path: Path) -> None:
 
 def test_volume_fingerprint_normalizes_numeric_equivalence() -> None:
     assert content_fingerprint((make_bar(volume="10"),)) == content_fingerprint((make_bar(volume="10.0"),))
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    (
+        ("0", "0"), ("-0.000", "-0"), ("12.3400", "12.34"),
+        ("-0.0012300", "-0.00123"), ("1.2300E+7", "12300000"),
+        ("123456789012345678901234567890.0000", "123456789012345678901234567890"),
+    ),
+)
+@pytest.mark.parametrize(("precision", "rounding"), ((9, ROUND_DOWN), (28, ROUND_UP), (50, ROUND_DOWN)))
+def test_decimal_fingerprint_string_is_context_independent(value, expected, precision, rounding) -> None:
+    with localcontext() as context:
+        context.prec = precision
+        context.rounding = rounding
+        context.traps[Inexact] = True
+        context.traps[Rounded] = True
+        assert decimal_to_string(Decimal(value)) == expected
+        assert context.flags[Inexact] is False
+        assert context.flags[Rounded] is False
+
+
+def test_eod_fingerprint_is_context_independent_with_traps() -> None:
+    records = (make_bar(volume="123456789012345678.1234567890"),)
+    reference = content_fingerprint(records)
+    for precision, rounding in ((9, ROUND_DOWN), (28, ROUND_UP), (50, ROUND_DOWN)):
+        with localcontext() as context:
+            context.prec = precision
+            context.rounding = rounding
+            context.traps[Inexact] = True
+            context.traps[Rounded] = True
+            assert content_fingerprint(records) == reference
+            assert context.flags[Inexact] is False
+            assert context.flags[Rounded] is False
 
 
 def test_quality_flags_deterministic_encoding() -> None:
