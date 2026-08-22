@@ -15,7 +15,7 @@ class SupersedingFullBaseManifestV2(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     manifest_version: Literal["2.0"] = "2.0"
     completion_status: Literal["completed"] = "completed"
-    revision_id: Literal["authoritative-security-form-v1"] = "authoritative-security-form-v1"
+    revision_id: Literal["authoritative-security-form-v2"] = "authoritative-security-form-v2"
     analysis_session: date
     membership_evidence_as_of_date: date
     source_full_base_logical_path: str

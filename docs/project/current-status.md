@@ -2,7 +2,7 @@
 
 ## 2026-08-21 HSAI reviewed security-form readiness
 
-Offline implementation and dry-run validation added a provider-neutral, stable-ID, point-in-time reviewed security-form evidence boundary. HSAI is reviewed as ADR/ADS effective 2026-07-10, producing a planned superseding shadow of 1,718 CS and 1,831 total (1,718 CS + 113 ADRC). V1 reproduction, independent exact arithmetic, temporary Parquet/formal reread, type leakage, and reference gates pass. No apply occurred: production is still 1,641/1,747 and the existing completed full-base shadow remains 1,719/1,831.
+Offline implementation and two production-root dry-runs validate a provider-neutral, stable-ID, point-in-time reviewed security-form evidence boundary. HSAI is reviewed as ADR/ADS effective 2023-02-09 and open-ended; the 2026-07-10 event changes only its ADS ratio. Immutable revision `authoritative-security-form-v2` plans 1,718 CS and 1,831 total (1,718 CS + 113 ADRC). Both runs produced identical rows, content/logical fingerprints, and Parquet hashes; V1 reproduction, independent exact arithmetic, temporary formal reread, type leakage, interval, and reference gates pass. No apply occurred: production is still 1,641/1,747 and the existing completed full-base shadow remains 1,719/1,831.
 
 Status date: 2026-08-20
 

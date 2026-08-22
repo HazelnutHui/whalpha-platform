@@ -12,7 +12,8 @@ from uuid import UUID, uuid5
 
 from tip_api.contracts.security_classification.v1 import SecurityForm
 from tip_api.contracts.security_classification.v1.universe_review import (
-    ReviewedSecurityFormEvidenceType, ReviewedSecurityFormEvidenceV1, ReviewedSecurityFormSourceV1,
+    ReviewedSecurityFormCoveredFact, ReviewedSecurityFormEvidenceType,
+    ReviewedSecurityFormEvidenceV1, ReviewedSecurityFormSourceV1,
 )
 from tip_api.persistence.parquet.dashboard_universe_activation import read_completed_dashboard_universe_activation
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
@@ -38,22 +39,40 @@ REVIEW_TIMESTAMP = datetime(2026, 8, 21, tzinfo=UTC)
 
 
 def hsai_reviewed_security_form() -> ReviewedSecurityFormEvidenceV1:
-    business_key = f"{HSAI_ID}|2026-07-10|adr_ads"
+    business_key = f"{HSAI_ID}|2023-02-09|adr_ads"
     return ReviewedSecurityFormEvidenceV1(
         evidence_id=uuid5(EVIDENCE_NAMESPACE, business_key), instrument_id=HSAI_ID,
-        effective_from=date(2026, 7, 10), effective_to=None,
+        effective_from=date(2023, 2, 9), effective_to=None,
         reviewed_security_form=SecurityForm.ADR_ADS,
         evidence_type=ReviewedSecurityFormEvidenceType.AUTHORITATIVE_REGULATORY_FILING,
         sources=(
             ReviewedSecurityFormSourceV1(
-                filing_type="Form 20-F", document_date=date(2025, 12, 31),
+                filing_type="Form 424B4", document_date=date(2023, 2, 8), filing_date=date(2023, 2, 8),
+                covered_fact=ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS,
+                fact_effective_from=date(2023, 2, 9),
+                official_source_url="https://www.sec.gov/Archives/edgar/data/1861737/000110465923017567/tm2120356-28_424b4.htm",
+                supported_conclusion="The Nasdaq-listed HSAI security is an American Depositary Share from its 2023-02-09 listing.",
+            ),
+            ReviewedSecurityFormSourceV1(
+                filing_type="Form 20-F", document_date=date(2023, 12, 31), filing_date=None,
+                covered_fact=ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS,
+                fact_effective_from=date(2023, 2, 9),
+                official_source_url="https://www.sec.gov/Archives/edgar/data/1861737/000110465924051452/hsai-20231231x20f.htm",
+                supported_conclusion="The annual filing confirms that Nasdaq symbol HSAI represents American Depositary Shares.",
+            ),
+            ReviewedSecurityFormSourceV1(
+                filing_type="Form 20-F", document_date=date(2025, 12, 31), filing_date=None,
+                covered_fact=ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS,
+                fact_effective_from=date(2023, 2, 9),
                 official_source_url="https://www.sec.gov/Archives/edgar/data/1861737/000110465926048025/hsai-20251231x20f.htm",
                 supported_conclusion="Nasdaq symbol HSAI represents American Depositary Shares.",
             ),
             ReviewedSecurityFormSourceV1(
-                filing_type="Form 6-K", document_date=date(2026, 7, 10),
+                filing_type="Form 6-K", document_date=date(2026, 7, 10), filing_date=date(2026, 7, 10),
+                covered_fact=ReviewedSecurityFormCoveredFact.ADS_RATIO_CHANGED,
+                fact_effective_from=date(2026, 7, 10),
                 official_source_url="https://www.sec.gov/Archives/edgar/data/1861737/000110465926082432/tm2620203d1_6k.htm",
-                supported_conclusion="After the ratio change each ADS represents eight Class B ordinary shares.",
+                supported_conclusion="The ADS ratio changed to eight Class B ordinary shares per ADS; the listed security remained an ADS.",
             ),
         ), reviewer_identifier="manual-authoritative-security-form-review",
         reason_code="authoritative_ads_listing_corrects_provider_cs",
@@ -174,6 +193,8 @@ def main(argv: list[str] | None = None) -> int:
             "secondary_retained": len(b & old_shadow_sets[FULL_BASE_B_ID]), "secondary_removed": len(old_shadow_sets[FULL_BASE_B_ID] - b), "secondary_added": len(b - old_shadow_sets[FULL_BASE_B_ID]),
         },
         "hsai": {"instrument_id": str(HSAI_ID), "provider_type_code": "CS", "reviewed_security_form": "adr_ads",
+                 "security_form_effective_from": security_forms[0].effective_from.isoformat(),
+                 "ratio_change_date": "2026-07-10", "adjustment_factors_unverified": True,
                  "effective_type_code": corrected.effective_provider_types[HSAI_ID], "primary_disposition": hsai_a.disposition.value,
                  "secondary_disposition": hsai_b.disposition.value, "secondary_included": hsai_b.included,
                  "supported_exchange": metrics[HSAI_ID].supported_exchange,

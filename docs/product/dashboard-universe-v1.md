@@ -2,7 +2,7 @@
 
 ## Reviewed HSAI correction is not active
 
-The current Dashboard remains on the activated 1,641/1,747 memberships. An offline authoritative review establishes that HSAI is an ADS rather than a directly traded common share; the superseding shadow plan would exclude it from Common Shares while retaining it in Common Shares + ADRs after the same quantitative gates. That revision is not published or activated. AKR, UNIT, and DFNS manual warnings are accepted as non-blocking. The completed 1,719/1,831 full-base shadow remains immutable.
+The current Dashboard remains on the activated 1,641/1,747 memberships. An offline authoritative review establishes that HSAI has been an ADS since its 2023-02-09 Nasdaq listing, rather than becoming an ADS at the 2026-07-10 ratio change. The superseding shadow plan would exclude it from Common Shares while retaining it in Common Shares + ADRs after the same quantitative gates. That revision is not published or activated. AKR, UNIT, and DFNS manual warnings are accepted as non-blocking. The completed 1,719/1,831 full-base shadow remains immutable.
 
 ## Governance Status
 

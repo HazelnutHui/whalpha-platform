@@ -1,6 +1,6 @@
 # Open Questions
 
-- Should the reviewed HSAI ADR/ADS superseding shadow (planned 1,718/1,831) receive a separate bounded publication authorization after manual review of the one-record evidence contract and complete decision ledger?
+- Should the reviewed HSAI ADR/ADS superseding shadow revision `authoritative-security-form-v2` (planned 1,718/1,831, security-form effective 2023-02-09) receive a separate bounded publication authorization after manual review of its four-source ledger and complete decision ledger?
 
 ## Security Type Governance
 

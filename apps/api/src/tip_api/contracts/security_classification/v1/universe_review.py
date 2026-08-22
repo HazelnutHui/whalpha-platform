@@ -25,12 +25,20 @@ class ReviewedSecurityFormEvidenceType(StrEnum):
     AUTHORITATIVE_REGULATORY_FILING = "authoritative_regulatory_filing"
 
 
+class ReviewedSecurityFormCoveredFact(StrEnum):
+    LISTED_SECURITY_IS_ADS = "listed_security_is_ads"
+    ADS_RATIO_CHANGED = "ads_ratio_changed"
+
+
 class ReviewedSecurityFormSourceV1(BaseModel):
     """An authoritative public-document reference; fetched payloads are never stored."""
 
     model_config = ConfigDict(frozen=True, extra="forbid")
     filing_type: str
     document_date: date
+    filing_date: date | None = None
+    covered_fact: ReviewedSecurityFormCoveredFact
+    fact_effective_from: date
     official_source_url: str
     supported_conclusion: str
 
@@ -103,9 +111,19 @@ class ReviewedSecurityFormEvidenceV1(BaseModel):
             raise ValueError("effective_to must be later than effective_from")
         if self.reviewed_security_form not in {SecurityForm.COMMON_SHARE, SecurityForm.ORDINARY_SHARE, SecurityForm.ADR_ADS}:
             raise ValueError("reviewed security form is not eligible for the CS/ADR policy boundary")
-        if any(source.document_date > self.effective_from for source in self.sources):
-            raise ValueError("future evidence cannot be backfilled before its document date")
-        if len({(source.filing_type, source.document_date, source.official_source_url) for source in self.sources}) != len(self.sources):
+        form_sources = tuple(
+            source for source in self.sources
+            if source.covered_fact is ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS
+        )
+        if not form_sources:
+            raise ValueError("reviewed security form requires a security-form source")
+        if min(source.fact_effective_from for source in form_sources) != self.effective_from:
+            raise ValueError("security-form evidence effective date is unsupported or future")
+        if len({
+            (source.filing_type, source.document_date, source.filing_date, source.covered_fact,
+             source.fact_effective_from, source.official_source_url)
+            for source in self.sources
+        }) != len(self.sources):
             raise ValueError("duplicate authoritative source reference")
         return self
 

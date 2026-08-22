@@ -26,7 +26,7 @@ from tip_api.persistence.parquet.trailing_liquidity import (
     _rows_fingerprint, _validated_root,
 )
 
-REVISION_ID = "authoritative-security-form-v1"
+REVISION_ID = "authoritative-security-form-v2"
 BASE = "market-data/snapshots/trailing-liquidity-full-base-scope-review-v2"
 PARQUET_FILES = {
     "reviewed_security_form": "reviewed-security-form-evidence.parquet",
@@ -44,6 +44,8 @@ REVIEWED_FORM_SCHEMA = pa.schema([
     pa.field("evidence_type", pa.string(), False),
     pa.field("sources", pa.list_(pa.struct([
         pa.field("filing_type", pa.string(), False), pa.field("document_date", pa.date32(), False),
+        pa.field("filing_date", pa.date32(), True),
+        pa.field("covered_fact", pa.string(), False), pa.field("fact_effective_from", pa.date32(), False),
         pa.field("official_source_url", pa.string(), False), pa.field("supported_conclusion", pa.string(), False),
     ])), False),
     pa.field("reviewer_identifier", pa.string(), False), pa.field("reason_code", pa.string(), False),
@@ -74,7 +76,10 @@ def _evidence_rows(records):
         row["evidence_id"] = str(item.evidence_id); row["instrument_id"] = str(item.instrument_id)
         row["reviewed_security_form"] = item.reviewed_security_form.value
         row["evidence_type"] = item.evidence_type.value
-        row["sources"] = [source.model_dump(mode="python") for source in item.sources]
+        row["sources"] = [
+            {**source.model_dump(mode="python"), "covered_fact": source.covered_fact.value}
+            for source in item.sources
+        ]
         rows.append(row)
     return rows
 

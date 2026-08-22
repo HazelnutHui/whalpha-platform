@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-08-21 — HSAI historical security-form interval correction
+
+- Corrected the unpublished HSAI reviewed-form plan so ADR/ADS is effective from the 2023-02-09 Nasdaq listing, not the 2026-07-10 ADS ratio adjustment. The frozen four-source ledger separates security-form effective time, source document/covered-fact time, and UTC review/record time. Two production-root dry-runs of immutable revision `authoritative-security-form-v2` were identical and yielded 1,718 CS / 1,831 CS+ADRC with zero oracle, V1, type, duplicate, orphan, conflict, or funnel errors. No apply, `/data` write, production/Shadow mutation, Activation, Dashboard, snapshot, network, credential, or OCI action occurred.
+
 ## 2026-08-21 — HSAI authoritative security-form readiness
 
 - Added an offline-only reviewed security-form evidence contract and immutable superseding full-base revision strategy. HSAI is corrected by stable instrument ID from provider CS to reviewed ADR/ADS without bypassing quantitative gates. The dry-run plans 1 reviewed-form row, 4,565 metrics, 9,130 decisions, 3,549 memberships/diffs, and 20 funnels; Primary is 1,718 CS and Secondary is 1,831 (1,718 CS + 113 ADRC). AKR, UNIT, and DFNS warnings remain accepted and non-blocking. No apply, production data, Activation, Dashboard, snapshot, network, credential, or OCI change occurred.

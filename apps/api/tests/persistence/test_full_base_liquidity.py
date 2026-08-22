@@ -27,7 +27,7 @@ from tip_api.services.full_base_liquidity_cli import _exact_arithmetic_reconcili
 from tip_api.services.full_base_security_form_cli import main as superseding_cli_main
 from tip_api.contracts.security_classification.v1 import SecurityForm
 from tip_api.contracts.security_classification.v1.universe_review import (
-    ReviewedSecurityFormEvidenceType, ReviewedSecurityFormEvidenceV1,
+    ReviewedSecurityFormCoveredFact, ReviewedSecurityFormEvidenceType, ReviewedSecurityFormEvidenceV1,
     ReviewedSecurityFormSourceV1, validate_reviewed_security_form_intervals,
 )
 from tip_api.persistence.parquet.superseding_full_base import (
@@ -50,7 +50,9 @@ def reviewed_form(instrument_id, *, effective_from=date(2026, 7, 10), effective_
         reviewed_security_form=SecurityForm.ADR_ADS,
         evidence_type=ReviewedSecurityFormEvidenceType.AUTHORITATIVE_REGULATORY_FILING,
         sources=(ReviewedSecurityFormSourceV1(
-            filing_type="Form 6-K", document_date=source_date,
+            filing_type="Form 6-K", document_date=source_date, filing_date=source_date,
+            covered_fact=ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS,
+            fact_effective_from=effective_from,
             official_source_url="https://www.sec.gov/Archives/edgar/data/1/reviewed.htm",
             supported_conclusion="The listed security is an ADS.",
         ),), reviewer_identifier="fixture-reviewer", reason_code="authoritative_ads",
@@ -246,10 +248,26 @@ def test_reviewed_security_form_decisions_ignore_decimal_context(precision, roun
 
 def test_reviewed_security_form_contract_rejects_future_unsafe_duplicate_and_overlap():
     target = iid("reviewed")
-    with pytest.raises(ValueError, match="future evidence"):
-        reviewed_form(target, effective_from=date(2026, 7, 9), source_date=date(2026, 7, 10))
+    unsupported_source = ReviewedSecurityFormSourceV1(
+        filing_type="Form 6-K", document_date=date(2026, 7, 10), filing_date=date(2026, 7, 10),
+        covered_fact=ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS,
+        fact_effective_from=date(2026, 7, 10),
+        official_source_url="https://www.sec.gov/Archives/edgar/data/1/reviewed.htm",
+        supported_conclusion="The listed security is an ADS.",
+    )
+    with pytest.raises(ValueError, match="unsupported or future"):
+        ReviewedSecurityFormEvidenceV1(
+            evidence_id=iid("future-review"), instrument_id=target,
+            effective_from=date(2026, 7, 9), reviewed_security_form=SecurityForm.ADR_ADS,
+            evidence_type=ReviewedSecurityFormEvidenceType.AUTHORITATIVE_REGULATORY_FILING,
+            sources=(unsupported_source,), reviewer_identifier="fixture-reviewer",
+            reason_code="authoritative_ads", reason="Reviewed filing establishes ADS form.",
+            recorded_at=NOW, reviewed_at=NOW,
+        )
     with pytest.raises(ValueError, match="safe public SEC"):
-        ReviewedSecurityFormSourceV1(filing_type="6-K", document_date=date(2026, 7, 10),
+        ReviewedSecurityFormSourceV1(filing_type="6-K", document_date=date(2026, 7, 10), filing_date=date(2026, 7, 10),
+            covered_fact=ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS,
+            fact_effective_from=date(2026, 7, 10),
             official_source_url="https://sec.gov.evil.test/Archives/edgar/data/1/x.htm",
             supported_conclusion="ADS")
     first = reviewed_form(target, effective_to=date(2026, 8, 1))
@@ -258,6 +276,79 @@ def test_reviewed_security_form_contract_rejects_future_unsafe_duplicate_and_ove
         validate_reviewed_security_form_intervals((first, overlap))
     with pytest.raises(ValueError, match="duplicate"):
         validate_reviewed_security_form_intervals((first, first))
+
+
+@pytest.mark.parametrize(
+    ("session", "expected"),
+    (
+        (date(2023, 2, 8), False),
+        (date(2023, 2, 9), True),
+        (date(2026, 7, 9), True),
+        (date(2026, 7, 10), True),
+        (date(2026, 8, 19), True),
+        (date(2035, 1, 1), True),
+    ),
+)
+def test_hsai_reviewed_form_historical_boundaries(session, expected):
+    from tip_api.services.full_base_security_form_cli import hsai_reviewed_security_form
+
+    evidence = hsai_reviewed_security_form()
+    assert evidence.effective_from == date(2023, 2, 9)
+    assert evidence.effective_to is None
+    assert evidence.is_effective_on(session) is expected
+    assert evidence.recorded_at == datetime(2026, 8, 21, tzinfo=UTC)
+    assert evidence.reviewed_at == datetime(2026, 8, 21, tzinfo=UTC)
+    assert [source.official_source_url for source in evidence.sources] == [
+        "https://www.sec.gov/Archives/edgar/data/1861737/000110465923017567/tm2120356-28_424b4.htm",
+        "https://www.sec.gov/Archives/edgar/data/1861737/000110465924051452/hsai-20231231x20f.htm",
+        "https://www.sec.gov/Archives/edgar/data/1861737/000110465926048025/hsai-20251231x20f.htm",
+        "https://www.sec.gov/Archives/edgar/data/1861737/000110465926082432/tm2620203d1_6k.htm",
+    ]
+    assert [source.filing_date for source in evidence.sources] == [
+        date(2023, 2, 8), None, None, date(2026, 7, 10),
+    ]
+    ratio_sources = [
+        source for source in evidence.sources
+        if source.covered_fact is ReviewedSecurityFormCoveredFact.ADS_RATIO_CHANGED
+    ]
+    assert len(ratio_sources) == 1
+    assert ratio_sources[0].fact_effective_from == date(2026, 7, 10)
+    assert all(
+        source.covered_fact is ReviewedSecurityFormCoveredFact.LISTED_SECURITY_IS_ADS
+        for source in evidence.sources[:3]
+    )
+
+
+def test_reviewed_security_form_ratio_only_and_orphan_fail_closed():
+    target = iid("ratio-only")
+    ratio_source = ReviewedSecurityFormSourceV1(
+        filing_type="Form 6-K", document_date=date(2026, 7, 10), filing_date=date(2026, 7, 10),
+        covered_fact=ReviewedSecurityFormCoveredFact.ADS_RATIO_CHANGED,
+        fact_effective_from=date(2026, 7, 10),
+        official_source_url="https://www.sec.gov/Archives/edgar/data/1/ratio.htm",
+        supported_conclusion="The ADS ratio changed while the listed form remained ADS.",
+    )
+    with pytest.raises(ValueError, match="security-form source"):
+        ReviewedSecurityFormEvidenceV1(
+            evidence_id=iid("ratio-only-evidence"), instrument_id=target,
+            effective_from=date(2026, 7, 10), reviewed_security_form=SecurityForm.ADR_ADS,
+            evidence_type=ReviewedSecurityFormEvidenceType.AUTHORITATIVE_REGULATORY_FILING,
+            sources=(ratio_source,), reviewer_identifier="fixture-reviewer",
+            reason_code="ratio_only", reason="Ratio evidence alone is not a form origin.",
+            recorded_at=NOW, reviewed_at=NOW,
+        )
+    _, inputs = fixture_bundle(return_inputs=True)
+    with pytest.raises(ValueError, match="orphan reviewed security-form"):
+        build_full_base_scope_review(
+            descriptor=inputs.descriptor, repository=inputs.repo, evidence=inputs.evidence,
+            instruments=inputs.instruments, current_bars=inputs.current_bars,
+            membership_evidence_as_of_date=E, reviewed_overrides=(),
+            old_memberships={
+                "provider_classified_common_shares_v1": frozenset(),
+                "provider_classified_common_shares_plus_adrs_v1": frozenset(),
+            },
+            calculated_at=NOW, reviewed_security_forms=(reviewed_form(iid("orphan")),),
+        )
 
 
 def test_superseding_repository_round_trip_and_existing_target(tmp_path):
