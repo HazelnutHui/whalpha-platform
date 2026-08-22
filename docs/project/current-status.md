@@ -1,5 +1,11 @@
 # Current Status
 
+## 2026-08-22 Activation V2 authorization readiness
+
+Implemented an offline-only immutable Activation V2 publisher/reader and atomic active/default pointer. All formal Activation consumers now resolve the shared pointer; installations without a pointer retain V1 compatibility, while malformed pointers fail closed. The separately authorized rollback mechanism atomically swaps validated active/rollback references and cannot rewrite either target.
+
+The production-root dry-run bound revision `authoritative-security-form-v2` to superseding publication `51403e939930265ba1a273e9f8bc2113cb455f22e8437c1d2775005fd293ee97` and naturally planned 1,718 CS / 1,831 CS+ADRC with Common Shares still the sole default. No apply occurred, no active pointer or V2 target was created, and production remains 1,641/1,747. Snapshot, Dashboard, frontend, OCI, provider, credential, and network state are unchanged.
+
 ## 2026-08-21 HSAI reviewed security-form readiness
 
 Offline implementation and two production-root dry-runs validate a provider-neutral, stable-ID, point-in-time reviewed security-form evidence boundary. HSAI is reviewed as ADR/ADS effective 2023-02-09 and open-ended; the 2026-07-10 event changes only its ADS ratio. Immutable revision `authoritative-security-form-v2` plans 1,718 CS and 1,831 total (1,718 CS + 113 ADRC). Both runs produced identical rows, content/logical fingerprints, and Parquet hashes; V1 reproduction, independent exact arithmetic, temporary formal reread, type leakage, interval, and reference gates pass. No apply occurred: production is still 1,641/1,747 and the existing completed full-base shadow remains 1,719/1,831.

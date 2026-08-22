@@ -1,6 +1,6 @@
 # Roadmap
 
-- Next authorized step: separately review and, only if approved, publish the immutable `authoritative-security-form-v2` superseding full-base shadow. Activation, Dashboard/snapshot changes, and OCI deployment remain separate later authorizations.
+- Next authorized step: separately authorize the bounded Activation V2 apply after reviewing its immutable-target and pointer dry-run. Dashboard snapshot/frontend/OCI changes remain later independent authorizations.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -73,7 +73,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Authorize, if desired, one separately bounded full-base shadow publication from the clean context-independent implementation. The production-root precision/trap matrix and independent raw-input Fraction reconciliation are complete; no apply has run. Activation, private snapshot, Dashboard change, and OCI deployment remain later, independently authorized decisions. Keep SEC B2 paused.
+Authorize, if desired, one separately bounded Activation V2 publication and atomic pointer switch. The source shadow and read-only V2 activation dry-run are complete; this implementation task executed no apply. Private snapshot, Dashboard change, and OCI deployment remain later, independently authorized decisions. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

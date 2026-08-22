@@ -13,7 +13,7 @@ from tip_api.read_models.market import EodReturnReadModel, LiquidityMapNodeV1, L
 from tip_api.services.eod_market_data import EodMarketDataQueryService, EodQueryValidationError
 from tip_api.services.eod_return_analytics import _mean, _median
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar, evaluate_market_data_freshness
-from tip_api.persistence.parquet.dashboard_universe_activation import CompletedDashboardUniverseActivation
+from tip_api.persistence.parquet.dashboard_universe_activation_active import ActiveDashboardUniverseActivation
 
 DEFAULT_TRADABLE_PRICE = Decimal("5")
 DEFAULT_TRADABLE_PREVIOUS_DOLLAR_VOLUME = Decimal("20000000")
@@ -161,7 +161,7 @@ class DashboardReturnRow:
 @dataclass(frozen=True, slots=True)
 class DashboardOverviewService:
     query_service: EodMarketDataQueryService
-    activation: CompletedDashboardUniverseActivation
+    activation: ActiveDashboardUniverseActivation
     market_calendar: MarketSessionCalendar = field(default_factory=ExchangeCalendar)
     clock: Callable[[], datetime] = field(default=lambda: datetime.now(UTC), repr=False)
 
@@ -206,8 +206,8 @@ class DashboardOverviewService:
             contract_version="2.0",
             default_universe_id=default_id,
             selected_universe_id=selected_record.universe_id,
-            universe_definition_id="dashboard_universe_activation_v1",
-            universe_version="1.0",
+            universe_definition_id=self.activation.manifest.policy_version,
+            universe_version=self.activation.manifest.manifest_version,
             governance_status="provisional_classification",
             classification_as_of_date=self.activation.manifest.membership_evidence_as_of,
             trailing_window_start=self.activation.manifest.trailing_window_start,

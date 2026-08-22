@@ -22,6 +22,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Dashboard V1](product/dashboard-v1.md): Confirmed first dashboard structure and target behavior.
 - [Dashboard Universe V1](product/dashboard-universe-v1.md): Dashboard V1.1 operating-equity universe, ETF benchmark, and Trading Activity Map boundary.
 - [Dashboard Universe Activation V1](data-contracts/dashboard-universe-activation-v1.md): Completed selectable-Universe policy and publication contract.
+- [Dashboard Universe Activation V2](data-contracts/dashboard-universe-activation-v2.md): Immutable revision, atomic active pointer, V1 compatibility, and separate rollback contract.
 - [Initial EOD Universe](product/initial-eod-universe.md): Accepted V1 universe layers and Candidate Discovery thresholds.
 
 ## Architecture

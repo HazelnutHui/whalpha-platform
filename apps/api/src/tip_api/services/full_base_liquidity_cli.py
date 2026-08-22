@@ -14,7 +14,7 @@ import pyarrow.parquet as pq
 
 from tip_api.contracts.market_data.v1 import TrailingLiquidityMetricV1, TrailingLiquidityShadowDecisionV1, TrailingLiquiditySourceSessionV1
 from tip_api.contracts.security_classification.v1.universe_review import ReviewedEligibilityOverrideV1
-from tip_api.persistence.parquet.dashboard_universe_activation import read_completed_dashboard_universe_activation
+from tip_api.persistence.parquet.dashboard_universe_activation_active import read_active_dashboard_universe_activation
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.full_base_liquidity import (
     ParquetFullBaseScopeReviewRepository,
@@ -72,7 +72,7 @@ def main(argv: list[str] | None = None) -> int:
     security = read_completed_security_evidence_snapshot(ROOT, as_of_date=EVIDENCE_DATE)
     trailing = read_completed_trailing_liquidity_publication(ROOT, analysis_session=ANALYSIS_SESSION, validate_sources=True)
     review = read_completed_universe_review(ROOT, analysis_session=ANALYSIS_SESSION, validate_source=True)
-    activation = read_completed_dashboard_universe_activation(ROOT, analysis_session=ANALYSIS_SESSION, validate_sources=True)
+    activation = read_active_dashboard_universe_activation(ROOT, analysis_session=ANALYSIS_SESSION, validate_sources=True)
     if (
         len(security.catalog), len(security.observations), len(security.evidence),
         trailing.metric_record_count, trailing.decision_record_count,

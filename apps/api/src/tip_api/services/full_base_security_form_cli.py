@@ -15,7 +15,7 @@ from tip_api.contracts.security_classification.v1.universe_review import (
     ReviewedSecurityFormCoveredFact, ReviewedSecurityFormEvidenceType,
     ReviewedSecurityFormEvidenceV1, ReviewedSecurityFormSourceV1,
 )
-from tip_api.persistence.parquet.dashboard_universe_activation import read_completed_dashboard_universe_activation
+from tip_api.persistence.parquet.dashboard_universe_activation_active import read_active_dashboard_universe_activation
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.full_base_liquidity import read_completed_full_base_scope_review
 from tip_api.persistence.parquet.security_evidence import read_completed_security_evidence_snapshot
@@ -98,7 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     security = read_completed_security_evidence_snapshot(ROOT, as_of_date=EVIDENCE_DATE)
     trailing = read_completed_trailing_liquidity_publication(ROOT, analysis_session=ANALYSIS_SESSION, validate_sources=True)
     review = read_completed_universe_review(ROOT, analysis_session=ANALYSIS_SESSION, validate_source=True)
-    activation = read_completed_dashboard_universe_activation(ROOT, analysis_session=ANALYSIS_SESSION, validate_sources=True)
+    activation = read_active_dashboard_universe_activation(ROOT, analysis_session=ANALYSIS_SESSION, validate_sources=True)
     previous_shadow = read_completed_full_base_scope_review(ROOT, analysis_session=ANALYSIS_SESSION, validate_sources=True)
     if trailing.manifest.logical_content_fingerprint != EXPECTED_V1_LOGICAL or previous_shadow.manifest.logical_content_fingerprint != OLD_FULL_BASE_LOGICAL:
         raise RuntimeError("immutable source publication fingerprint mismatch")

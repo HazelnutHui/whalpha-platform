@@ -19,8 +19,7 @@ from tip_api.schemas.private_market import DashboardOverviewResponse, LiquidityM
 from tip_api.services.eod_market_data import EodMarketDataQueryService
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 from tip_api.services.dashboard_overview import DashboardOverviewService
-from tip_api.persistence.parquet.dashboard_universe_activation import read_completed_dashboard_universe_activation
-from tip_api.persistence.parquet.dashboard_universe_activation import CompletedDashboardUniverseActivation
+from tip_api.persistence.parquet.dashboard_universe_activation_active import ActiveDashboardUniverseActivation, read_active_dashboard_universe_activation
 
 SNAPSHOT_CONTRACT_VERSION = "1.3"
 SNAPSHOT_FILES = {
@@ -140,7 +139,7 @@ def build_private_dashboard_snapshot(
     generated_at: datetime | None = None,
     git_commit: str | None = None,
     allowed_output_root: Path | None = None,
-    dashboard_activation: CompletedDashboardUniverseActivation | None = None,
+    dashboard_activation: ActiveDashboardUniverseActivation | None = None,
 ) -> DashboardSnapshotResult:
     safe_data_root = _validate_existing_root(data_root, label="data_root")
     safe_output_root = _validate_output_root(output_root, allowed_output_root=allowed_output_root)
@@ -148,7 +147,7 @@ def build_private_dashboard_snapshot(
     query_service = EodMarketDataQueryService(CanonicalEodReadRepository(safe_data_root))
     analytics = EodReturnAnalyticsService(query_service)
     generated = generated_at or datetime.now(UTC)
-    activation = dashboard_activation or read_completed_dashboard_universe_activation(safe_data_root, analysis_session=query_service.list_sessions()[-1].session_date, validate_sources=True)
+    activation = dashboard_activation or read_active_dashboard_universe_activation(safe_data_root, analysis_session=query_service.list_sessions()[-1].session_date, validate_sources=True)
     overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service, activation).get_latest_overview(checked_at=generated)).model_copy(
         update={"snapshot_generated_at": generated.astimezone(UTC).isoformat().replace("+00:00", "Z")}
     )

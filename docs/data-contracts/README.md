@@ -16,6 +16,7 @@ Implemented as Python/Pydantic contracts:
 - [Provider Ticker Resolver V1](provider-ticker-resolver-v1.md)
 - [Trailing Liquidity Shadow Publication V1](trailing-liquidity-shadow-v1.md)
 - [Reviewed Eligibility Override V1](reviewed-eligibility-override-v1.md)
+- [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
 
 Accepted logical contracts only:
 

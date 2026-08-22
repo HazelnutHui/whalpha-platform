@@ -1,0 +1,17 @@
+# Dashboard Universe Activation V2
+
+Activation V2 is an immutable, revisioned two-row catalog plus a separately stored active pointer. The first supported revision is `authoritative-security-form-v2` for analysis session 2026-08-19. It is strictly sourced from completed superseding full-base publication `51403e939930265ba1a273e9f8bc2113cb455f22e8437c1d2775005fd293ee97`.
+
+The immutable target is:
+
+`market-data/snapshots/dashboard-universe-activation-v2/revision=authoritative-security-form-v2/analysis_session=2026-08-19`
+
+It contains one explicit-schema Parquet file and a last-written manifest. The active pointer is the single JSON file `market-data/snapshots/dashboard-universe-activation-active/active.json`. Its `active` and `rollback` references bind schema version, revision, session, normalized logical path, and logical fingerprint. The pointer also binds the sole default and the two public catalog IDs.
+
+Publication first writes and formally rereads the immutable target. Only then may it atomically replace the pointer under an exclusive data-root lock and compare-and-swap guard. A crash before target rename leaves no target. A crash after target publication leaves a completed but inactive target. A crash after pointer replacement is diagnosed by formally reading the pointer; it must never be retried blindly.
+
+When no pointer exists, the active reader formally reads Activation V1 for backward compatibility. A malformed, unsafe, inconsistent, or dangling pointer fails closed and never falls back to V1. All runtime Activation consumers call the active reader.
+
+Rollback is a separate default-dry-run operation. It validates both references and the expected active fingerprint, then atomically swaps `active` and `rollback`. Publication does not automatically roll back, and rollback cannot overwrite either immutable target.
+
+The planned V2 catalog keeps `Common Shares` as the sole default and `Common Shares + ADRs` as the optional view. The planned source-derived memberships are 1,718 CS and 1,831 total (1,718 CS + 113 ADRC). These values remain inactive until a separate bounded activation authorization executes the V2 publisher with `--apply`.
