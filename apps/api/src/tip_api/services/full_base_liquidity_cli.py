@@ -252,8 +252,8 @@ def _read_v1_metric_records(trailing):
 
 def _exact_arithmetic_reconciliation(
     *, repo, descriptor, evidence, instruments, current_bars,
-    actual_decisions, actual_memberships, v1_metrics, overrides,
-):
+    actual_decisions, actual_memberships, v1_metrics, overrides, reviewed_security_forms=(),
+        ):
     """Rebuild every gate from raw canonical inputs with a Fraction oracle."""
 
     evidence_by_id = {}
@@ -261,10 +261,16 @@ def _exact_arithmetic_reconciliation(
         if item.instrument_id in evidence_by_id:
             raise RuntimeError("Fraction oracle found duplicate canonical evidence")
         evidence_by_id[item.instrument_id] = item
-    base_ids = {
-        item.instrument_id for item in evidence
-        if item.provider_type_code in {"CS", "ADRC"}
-    }
+    active_security_forms = {}
+    for item in reviewed_security_forms:
+        if item.is_effective_on(descriptor.analysis_session):
+            if item.instrument_id not in evidence_by_id or item.instrument_id in active_security_forms:
+                raise RuntimeError("Fraction oracle found invalid reviewed security-form evidence")
+            active_security_forms[item.instrument_id] = item
+    effective_types = {item.instrument_id: item.provider_type_code for item in evidence}
+    for instrument_id, item in active_security_forms.items():
+        effective_types[instrument_id] = "ADRC" if item.reviewed_security_form.value == "adr_ads" else "CS"
+    base_ids = {instrument_id for instrument_id, code in effective_types.items() if code in {"CS", "ADRC"}}
     bars_by_id = {}
     daily_product_mismatches = []
     absolute_errors = []
@@ -343,17 +349,21 @@ def _exact_arithmetic_reconciliation(
         (FULL_BASE_A_ID, {"CS"}),
         (FULL_BASE_B_ID, {"CS", "ADRC"}),
     ):
-        for instrument_id in sorted(
-            (item for item in base_ids if evidence_by_id[item].provider_type_code in allowed_types),
-            key=str,
-        ):
+        policy_ids = base_ids if reviewed_security_forms else {
+            item for item in base_ids if effective_types[item] in allowed_types
+        }
+        for instrument_id in sorted(policy_ids, key=str):
             source = evidence_by_id[instrument_id]
             instrument = instruments.get(instrument_id)
             current = current_by_id.get(instrument_id)
             observations = bars_by_id.get(instrument_id, {})
             previous = observations.get(descriptor.previous_session)
             reasons = set()
-            if instrument is None:
+            security_form_eligible = effective_types[instrument_id] in allowed_types
+            if not security_form_eligible:
+                disposition, stage = "target_security_form", "target_security_form"
+                reasons.add("reviewed_security_form_not_eligible_for_policy")
+            elif instrument is None:
                 disposition, stage = "invalid_input", "input_quality"
                 reasons.add("orphan_instrument_reference")
             elif instrument.get("primary_exchange") not in SUPPORTED_EXCHANGES:
@@ -390,13 +400,13 @@ def _exact_arithmetic_reconciliation(
                 else:
                     disposition, stage = "included", "final_membership"
 
-            if current is not None and previous is not None:
+            if security_form_eligible and current is not None and previous is not None:
                 current_close = Fraction(current.close)
                 previous_close = Fraction(previous.close)
                 if current_close >= 2 * previous_close or 2 * current_close <= previous_close:
                     reasons.add("material_return_outlier_review")
 
-            active_override = active_overrides.get(instrument_id)
+            active_override = active_overrides.get(instrument_id) if security_form_eligible else None
             override_value = None
             if active_override is not None:
                 override_value = active_override.decision.value
@@ -414,7 +424,7 @@ def _exact_arithmetic_reconciliation(
                 reasons.add("full_base_trailing_liquidity_passed")
                 expected_memberships[policy_id].add(instrument_id)
             expected_decisions[(policy_id, instrument_id)] = {
-                "provider_type_code": source.provider_type_code,
+                "provider_type_code": effective_types[instrument_id],
                 "disposition": disposition,
                 "included": disposition == "included",
                 "stage_id": stage,

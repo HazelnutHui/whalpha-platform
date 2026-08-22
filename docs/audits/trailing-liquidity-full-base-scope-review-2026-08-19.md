@@ -1,5 +1,15 @@
 # 2026-08-19 Full-Base Trailing-Liquidity Scope Review
 
+## HSAI authoritative security-form readiness (offline, 2026-08-21)
+
+Manual review accepted AKR, UNIT, and DFNS warnings as non-blocking. AKR remains common beneficial interest despite its REIT/trust wording; UNIT remains common stock despite its ticker matching a provider type token; DFNS retains the daily-proxy anomaly flag while the frozen 20-session median/no-winsorization rule remains unchanged.
+
+HSAI stable instrument `c66e6ab5-b3e2-5b32-845f-90f8eceed5a3` is blocked from activating the existing shadow as-is. Reviewed authoritative evidence is recorded by reference only: Hesai Group Form 20-F ([official SEC filing](https://www.sec.gov/Archives/edgar/data/1861737/000110465926048025/hsai-20251231x20f.htm), document/reporting date 2025-12-31) identifies HSAI as ADSs, and the 2026-07-10 Form 6-K ([official SEC filing](https://www.sec.gov/Archives/edgar/data/1861737/000110465926082432/tm2620203d1_6k.htm)) states that each ADS represents eight Class B ordinary shares after the ratio change. No filing was fetched this turn.
+
+The new provider-neutral reviewed security-form boundary changes HSAI's effective form from provider `CS` to `ADR/ADS` from 2026-07-10. Formal dry-run recomputation yields Primary 1,718 CS (fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978`) and Secondary 1,831 = 1,718 CS + 113 ADRC (fingerprint unchanged at `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295`). HSAI fails Primary at `target_security_form` and passes every existing Secondary quantitative gate: supported exchange, current/previous bars, previous close 17.11, 20 observations, and median proxy `24932582.63967815500000000000`.
+
+The planned superseding manifest uses schema 2.0 and immutable revision `authoritative-security-form-v1`. The offline dry-run wrote and formally reread only a temporary target: one reviewed-form row, 4,565 metrics, 9,130 complete decisions, 3,549 memberships, 3,549 diffs, and 20 funnels. Fraction-oracle mismatches and V1 reproduction mismatches were zero. No `--apply` ran; production remains 1,641/1,747, and the completed 1,719/1,831 shadow remains unchanged.
+
 ## Status
 
 Implementation and the final offline dry-run passed. The separately authorized publication apply ran exactly once from 2026-08-20T11:25:45Z to 2026-08-20T11:35:34Z and exited 1 before staging because a metric Decimal exceeded the approved persisted scale. No shadow target was published and no second apply was attempted. Production Activation, Dashboard snapshot, API/frontend, and OCI release are unchanged.

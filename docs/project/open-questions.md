@@ -1,5 +1,7 @@
 # Open Questions
 
+- Should the reviewed HSAI ADR/ADS superseding shadow (planned 1,718/1,831) receive a separate bounded publication authorization after manual review of the one-record evidence contract and complete decision ledger?
+
 ## Security Type Governance
 
 - Should the reviewed full-base 1,719 CS / 1,831 CS+ADRC shadow replace the currently activated conservative 1,641/1,747 sets after human set-diff and edge-record review?

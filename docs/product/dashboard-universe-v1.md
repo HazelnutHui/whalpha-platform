@@ -1,5 +1,9 @@
 # Dashboard Universe V1
 
+## Reviewed HSAI correction is not active
+
+The current Dashboard remains on the activated 1,641/1,747 memberships. An offline authoritative review establishes that HSAI is an ADS rather than a directly traded common share; the superseding shadow plan would exclude it from Common Shares while retaining it in Common Shares + ADRs after the same quantitative gates. That revision is not published or activated. AKR, UNIT, and DFNS manual warnings are accepted as non-blocking. The completed 1,719/1,831 full-base shadow remains immutable.
+
 ## Governance Status
 
 Dashboard Universe Activation V1 makes the 1,641-member Provider-Classified Common Shares (Provisional) set the default and the 1,747-member CS+ADRC set the optional secondary view for analysis session 2026-08-19. Legacy 1,864 remains formally readable for rollback but is absent from the ordinary selector. Provider security form does not prove issuer domicile or operating-company structure.

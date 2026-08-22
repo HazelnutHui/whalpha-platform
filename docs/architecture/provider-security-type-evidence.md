@@ -1,5 +1,11 @@
 # Provider Security-Type Evidence
 
+## Reviewed security-form correction boundary
+
+Provider classifications remain immutable source evidence. A separate `ReviewedSecurityFormEvidenceV1` may supersede the effective security form for a stable `instrument_id` over a half-open interval when already-reviewed authoritative filings support the correction. Ticker and company name are display-only. Duplicate business keys, overlapping/conflicting intervals, unsafe source URLs, orphan instruments, and evidence dated after `effective_from` fail closed.
+
+The first planned record corrects HSAI (`c66e6ab5-b3e2-5b32-845f-90f8eceed5a3`) from provider `CS` to reviewed `ADR/ADS`, effective 2026-07-10. It references the reviewed 2025 Form 20-F document date/period and 2026-07-10 Form 6-K; no SEC content was fetched or stored. This correction changes only the security-form policy boundary. It cannot bypass exchange, current/previous bar, USD 5 previous-close, 20/20 history, USD 20M median proxy, quality, or reviewed-eligibility gates.
+
 ## Purpose
 
 Phase B1 preserves Massive's official ticker-type catalog and point-in-time All Tickers type fields without changing Instrument Master, identity, resolver, or EOD datasets. Phase B1A separates normalized provider observations from evidence that has a unique canonical identity.

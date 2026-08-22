@@ -1,5 +1,11 @@
 # Full-Base Trailing Liquidity Scope Review V1
 
+## Superseding reviewed-form revision
+
+The completed V1 target is immutable. A reviewed security-form correction therefore uses publication manifest `2.0` and revision `authoritative-security-form-v1` under `trailing-liquidity-full-base-scope-review-v2`; it never overwrites the V1 analysis-session path. One atomic revision target contains reviewed-form evidence, metrics, complete two-policy decisions, memberships, diffs, funnels, and a last-written manifest.
+
+The security-form evidence contract is frozen and forbids extra fields. Its key is stable `instrument_id` plus effective interval, with authoritative source type/date/official URL, reviewer, reason, and UTC audit timestamps. The corrected decision ledger contains every CS/ADRC union instrument for both policies, so an ADR/ADS has an explicit `target_security_form` disposition in Primary and can still proceed through all quantitative gates in Secondary. Physical Decimal tuple and context-independent arithmetic contracts are unchanged.
+
 ## Purpose
 
 This shadow contract corrects the candidate-enumeration scope of Trailing Liquidity V1. It starts from the completed point-in-time canonical provider security evidence, not Legacy membership, Activation, a Dashboard snapshot, available tickers, or a one-session dollar-volume screen.

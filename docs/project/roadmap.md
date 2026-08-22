@@ -1,5 +1,7 @@
 # Roadmap
 
+- Next authorized step: separately review and, only if approved, publish the immutable `authoritative-security-form-v1` superseding full-base shadow. Activation, Dashboard/snapshot changes, and OCI deployment remain separate later authorizations.
+
 This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Phase 0 — Foundation

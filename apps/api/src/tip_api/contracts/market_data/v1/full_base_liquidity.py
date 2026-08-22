@@ -17,6 +17,7 @@ from tip_api.contracts.market_data.v1.trailing_liquidity_publication import Trai
 
 class FullBaseDisposition(StrEnum):
     INCLUDED = "included"
+    TARGET_SECURITY_FORM = "target_security_form"
     UNSUPPORTED_EXCHANGE = "unsupported_exchange"
     MISSING_CURRENT_BAR = "missing_current_bar"
     MISSING_PREVIOUS_BAR = "missing_previous_bar"

@@ -1,5 +1,9 @@
 # Current Status
 
+## 2026-08-21 HSAI reviewed security-form readiness
+
+Offline implementation and dry-run validation added a provider-neutral, stable-ID, point-in-time reviewed security-form evidence boundary. HSAI is reviewed as ADR/ADS effective 2026-07-10, producing a planned superseding shadow of 1,718 CS and 1,831 total (1,718 CS + 113 ADRC). V1 reproduction, independent exact arithmetic, temporary Parquet/formal reread, type leakage, and reference gates pass. No apply occurred: production is still 1,641/1,747 and the existing completed full-base shadow remains 1,719/1,831.
+
 Status date: 2026-08-20
 
 ## Trailing-Liquidity Full-Base Scope Review

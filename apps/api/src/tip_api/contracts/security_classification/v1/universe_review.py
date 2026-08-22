@@ -6,6 +6,7 @@ from datetime import date, datetime
 from enum import StrEnum
 from pathlib import PurePosixPath
 from typing import Any, Literal
+from urllib.parse import unquote, urlsplit
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -18,6 +19,114 @@ class ReviewedEligibilityDecision(StrEnum):
     EXCLUDE = "exclude"
     QUARANTINE = "quarantine"
     ALLOW = "allow"
+
+
+class ReviewedSecurityFormEvidenceType(StrEnum):
+    AUTHORITATIVE_REGULATORY_FILING = "authoritative_regulatory_filing"
+
+
+class ReviewedSecurityFormSourceV1(BaseModel):
+    """An authoritative public-document reference; fetched payloads are never stored."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    filing_type: str
+    document_date: date
+    official_source_url: str
+    supported_conclusion: str
+
+    @field_validator("filing_type", "supported_conclusion", mode="before")
+    @classmethod
+    def text(cls, value: str, info: Any) -> str:
+        return normalize_required_string(value, field_name=info.field_name)
+
+    @field_validator("official_source_url", mode="before")
+    @classmethod
+    def safe_official_url(cls, value: str) -> str:
+        value = normalize_required_string(value, field_name="official_source_url")
+        if any(ord(character) < 32 or character == "\\" for character in value):
+            raise ValueError("official_source_url contains an unsafe character")
+        parsed = urlsplit(value)
+        if (
+            parsed.scheme != "https"
+            or parsed.hostname != "www.sec.gov"
+            or parsed.username is not None
+            or parsed.password is not None
+            or parsed.port not in {None, 443}
+            or parsed.query
+            or parsed.fragment
+        ):
+            raise ValueError("official_source_url must be a safe public SEC HTTPS URL")
+        decoded = unquote(parsed.path)
+        if not decoded.startswith("/Archives/edgar/data/") or any(part == ".." for part in decoded.split("/")):
+            raise ValueError("official_source_url is outside the reviewed SEC filing root")
+        return value
+
+
+class ReviewedSecurityFormEvidenceV1(BaseModel):
+    """Point-in-time reviewed correction of a provider security-form assertion."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    schema_version: Literal["1.0"] = "1.0"
+    evidence_id: UUID
+    instrument_id: UUID
+    effective_from: date
+    effective_to: date | None = None
+    reviewed_security_form: SecurityForm
+    evidence_type: ReviewedSecurityFormEvidenceType
+    sources: tuple[ReviewedSecurityFormSourceV1, ...]
+    reviewer_identifier: str
+    reason_code: str
+    reason: str
+    recorded_at: datetime
+    reviewed_at: datetime
+
+    @field_validator("reviewer_identifier", "reason_code", "reason", mode="before")
+    @classmethod
+    def text(cls, value: str, info: Any) -> str:
+        return normalize_required_string(value, field_name=info.field_name)
+
+    @field_validator("recorded_at", "reviewed_at")
+    @classmethod
+    def utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("sources", mode="before")
+    @classmethod
+    def source_collection(cls, value: Any) -> tuple[ReviewedSecurityFormSourceV1, ...]:
+        if not isinstance(value, (tuple, list)) or not value:
+            raise ValueError("at least one authoritative source is required")
+        return tuple(value)
+
+    @model_validator(mode="after")
+    def semantics(self) -> "ReviewedSecurityFormEvidenceV1":
+        if self.effective_to is not None and self.effective_to <= self.effective_from:
+            raise ValueError("effective_to must be later than effective_from")
+        if self.reviewed_security_form not in {SecurityForm.COMMON_SHARE, SecurityForm.ORDINARY_SHARE, SecurityForm.ADR_ADS}:
+            raise ValueError("reviewed security form is not eligible for the CS/ADR policy boundary")
+        if any(source.document_date > self.effective_from for source in self.sources):
+            raise ValueError("future evidence cannot be backfilled before its document date")
+        if len({(source.filing_type, source.document_date, source.official_source_url) for source in self.sources}) != len(self.sources):
+            raise ValueError("duplicate authoritative source reference")
+        return self
+
+    def is_effective_on(self, session: date) -> bool:
+        return self.effective_from <= session and (self.effective_to is None or session < self.effective_to)
+
+
+def validate_reviewed_security_form_intervals(records: tuple[ReviewedSecurityFormEvidenceV1, ...]) -> None:
+    if len({item.evidence_id for item in records}) != len(records):
+        raise ValueError("duplicate reviewed security-form evidence_id")
+    keys = [(item.instrument_id, item.effective_from) for item in records]
+    if len(set(keys)) != len(keys):
+        raise ValueError("duplicate reviewed security-form business key")
+    by_id: dict[UUID, list[ReviewedSecurityFormEvidenceV1]] = {}
+    for item in records:
+        by_id.setdefault(item.instrument_id, []).append(item)
+    for group in by_id.values():
+        ordered = sorted(group, key=lambda item: item.effective_from)
+        for previous, current in zip(ordered, ordered[1:], strict=False):
+            if previous.effective_to is None or current.effective_from < previous.effective_to:
+                raise ValueError("reviewed security-form intervals overlap or conflict")
 
 
 class ReviewedEligibilityOverrideV1(BaseModel):

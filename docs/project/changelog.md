@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-08-21 — HSAI authoritative security-form readiness
+
+- Added an offline-only reviewed security-form evidence contract and immutable superseding full-base revision strategy. HSAI is corrected by stable instrument ID from provider CS to reviewed ADR/ADS without bypassing quantitative gates. The dry-run plans 1 reviewed-form row, 4,565 metrics, 9,130 decisions, 3,549 memberships/diffs, and 20 funnels; Primary is 1,718 CS and Secondary is 1,831 (1,718 CS + 113 ADRC). AKR, UNIT, and DFNS warnings remain accepted and non-blocking. No apply, production data, Activation, Dashboard, snapshot, network, credential, or OCI change occurred.
+
 ## 2026-08-20 — Full-base trailing-liquidity scope correction
 
 - Proved by formal reader and code-path review that Trailing Liquidity V1 was scoped to candidates already passing the old previous-session USD 20M dollar-volume gate.

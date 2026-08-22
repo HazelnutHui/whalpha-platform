@@ -22,7 +22,14 @@ from tip_api.contracts.market_data.v1.full_base_liquidity import (
     FullBaseSetDiffV1,
 )
 from tip_api.contracts.security_classification.v1 import ProviderInstrumentSecurityEvidenceV1
-from tip_api.contracts.security_classification.v1.universe_review import ReviewedEligibilityDecision, ReviewedEligibilityOverrideV1, validate_override_intervals
+from tip_api.contracts.security_classification.v1 import SecurityForm
+from tip_api.contracts.security_classification.v1.universe_review import (
+    ReviewedEligibilityDecision,
+    ReviewedEligibilityOverrideV1,
+    ReviewedSecurityFormEvidenceV1,
+    validate_override_intervals,
+    validate_reviewed_security_form_intervals,
+)
 from tip_api.persistence.eod_read import EodReadRepository
 from tip_api.services.eod_history import (
     CANONICAL_DECIMAL_SCALE,
@@ -65,6 +72,8 @@ class FullBaseScopeBundle:
     final_memberships: dict[str, frozenset[UUID]]
     analytics: dict[str, dict[str, object]]
     overlapping_exclusions: dict[str, dict[str, int]]
+    original_provider_types: dict[UUID, str]
+    effective_provider_types: dict[UUID, str]
 
 
 def build_full_base_scope_review(
@@ -78,6 +87,7 @@ def build_full_base_scope_review(
     reviewed_overrides: tuple[ReviewedEligibilityOverrideV1, ...],
     old_memberships: Mapping[str, frozenset[UUID]],
     calculated_at: datetime,
+    reviewed_security_forms: tuple[ReviewedSecurityFormEvidenceV1, ...] = (),
 ) -> FullBaseScopeBundle:
     """Calculate A/B from complete point-in-time provider evidence, never Legacy."""
     if descriptor.readiness_status.value != "ready" or len(descriptor.completed_sessions) != 20:
@@ -88,13 +98,33 @@ def build_full_base_scope_review(
         raise ValueError("calculated_at must be timezone-aware")
     calculated_at = calculated_at.astimezone(UTC)
     validate_override_intervals(reviewed_overrides)
+    validate_reviewed_security_form_intervals(reviewed_security_forms)
     evidence_by_id: dict[UUID, ProviderInstrumentSecurityEvidenceV1] = {}
     for item in evidence:
         if item.instrument_id in evidence_by_id:
             raise ValueError("duplicate canonical security evidence")
         evidence_by_id[item.instrument_id] = item
-    a_base = frozenset(item.instrument_id for item in evidence if item.provider_type_code == "CS")
-    b_base = frozenset(item.instrument_id for item in evidence if item.provider_type_code in {"CS", "ADRC"})
+    active_security_forms: dict[UUID, ReviewedSecurityFormEvidenceV1] = {}
+    for item in reviewed_security_forms:
+        if item.is_effective_on(descriptor.analysis_session):
+            if item.instrument_id not in evidence_by_id:
+                raise ValueError("orphan reviewed security-form evidence")
+            if item.instrument_id in active_security_forms:
+                raise ValueError("multiple active reviewed security-form assertions")
+            active_security_forms[item.instrument_id] = item
+    original_provider_types = {item.instrument_id: item.provider_type_code for item in evidence}
+    effective_provider_types = dict(original_provider_types)
+    for instrument_id, item in active_security_forms.items():
+        effective_provider_types[instrument_id] = {
+            SecurityForm.COMMON_SHARE: "CS",
+            SecurityForm.ORDINARY_SHARE: "CS",
+            SecurityForm.ADR_ADS: "ADRC",
+        }[item.reviewed_security_form]
+    candidate_union = frozenset(
+        instrument_id for instrument_id, code in effective_provider_types.items() if code in {"CS", "ADRC"}
+    )
+    a_base = frozenset(instrument_id for instrument_id in candidate_union if effective_provider_types[instrument_id] == "CS")
+    b_base = candidate_union
     if not a_base <= b_base:
         raise ValueError("full-base Primary is not a subset of Secondary")
 
@@ -132,6 +162,7 @@ def build_full_base_scope_review(
         _metric(
             instrument_id=instrument_id,
             source=evidence_by_id[instrument_id],
+            effective_provider_type=effective_provider_types[instrument_id],
             instrument=instruments.get(instrument_id),
             current=current_by_id.get(instrument_id),
             previous=previous_by_id.get(instrument_id),
@@ -148,15 +179,18 @@ def build_full_base_scope_review(
     final: dict[str, frozenset[UUID]] = {}
     funnels: list[FullBaseFunnelStageV1] = []
     overlap: dict[str, dict[str, int]] = {}
+    complete_policy_ledger = bool(reviewed_security_forms)
     for policy_id, base in ((FULL_BASE_A_ID, a_base), (FULL_BASE_B_ID, b_base)):
+        decision_base = b_base if complete_policy_ledger else base
         policy_decisions = tuple(
             _decision(
                 policy_id=policy_id,
                 metric=metric_by_id[instrument_id],
                 active_override=active_overrides.get(instrument_id),
                 calculated_at=calculated_at,
+                security_form_eligible=instrument_id in base,
             )
-            for instrument_id in sorted(base, key=str)
+            for instrument_id in sorted(decision_base, key=str)
         )
         decisions.extend(policy_decisions)
         included = frozenset(item.instrument_id for item in policy_decisions if item.included)
@@ -165,7 +199,7 @@ def build_full_base_scope_review(
         overlap[policy_id] = dict(sorted(Counter(reason for item in policy_decisions for reason in item.reason_codes).items()))
     if not final[FULL_BASE_A_ID] <= final[FULL_BASE_B_ID]:
         raise ValueError("corrected Primary is not a subset of corrected Secondary")
-    if any(evidence_by_id[item].provider_type_code != "ADRC" for item in final[FULL_BASE_B_ID] - final[FULL_BASE_A_ID]):
+    if any(effective_provider_types[item] != "ADRC" for item in final[FULL_BASE_B_ID] - final[FULL_BASE_A_ID]):
         raise ValueError("Secondary minus Primary contains a non-ADRC instrument")
 
     memberships = tuple(
@@ -173,13 +207,16 @@ def build_full_base_scope_review(
             analysis_session=descriptor.analysis_session,
             policy_id=policy_id,
             instrument_id=instrument_id,
-            provider_type_code=evidence_by_id[instrument_id].provider_type_code,
+            provider_type_code=effective_provider_types[instrument_id],
         )
         for policy_id in (FULL_BASE_A_ID, FULL_BASE_B_ID)
         for instrument_id in sorted(final[policy_id], key=str)
     )
     diffs: list[FullBaseSetDiffV1] = []
     summaries = []
+    decision_index = {(item.policy_id, item.instrument_id): item for item in decisions}
+    if len(decision_index) != len(decisions):
+        raise ValueError("duplicate decision ledger key")
     old_key = {
         FULL_BASE_A_ID: "provider_classified_common_shares_v1",
         FULL_BASE_B_ID: "provider_classified_common_shares_plus_adrs_v1",
@@ -191,7 +228,10 @@ def build_full_base_scope_review(
             if instrument_id in old and instrument_id in corrected:
                 direction, reason = "old_retained", "frozen_formula_reproduced"
             elif instrument_id in old:
-                direction, reason = "old_removed", _decision_by_key(decisions, policy_id, instrument_id).disposition.value
+                decision = decision_index.get((policy_id, instrument_id))
+                if decision is None:
+                    raise ValueError("decision ledger key is unavailable")
+                direction, reason = "old_removed", decision.disposition.value
             else:
                 metric = metric_by_id[instrument_id]
                 rescued = metric.previous_dollar_volume_below_threshold is True
@@ -199,11 +239,11 @@ def build_full_base_scope_review(
             metric = metric_by_id[instrument_id]
             diffs.append(FullBaseSetDiffV1(
                 analysis_session=descriptor.analysis_session, policy_id=policy_id, instrument_id=instrument_id,
-                provider_type_code=evidence_by_id[instrument_id].provider_type_code, direction=direction, reason_code=reason,
+                provider_type_code=effective_provider_types[instrument_id], direction=direction, reason_code=reason,
                 rescued_from_previous_session_scope=(direction == "corrected_added" and metric.previous_dollar_volume_below_threshold is True),
                 median_dollar_volume_proxy_20s=metric.median_dollar_volume_proxy_20s,
             ))
-        types = Counter(evidence_by_id[item].provider_type_code for item in corrected)
+        types = Counter(effective_provider_types[item] for item in corrected)
         summaries.append(FullBasePolicySummaryV1(
             policy_id=policy_id, base_count=len(a_base if policy_id == FULL_BASE_A_ID else b_base), final_count=len(corrected),
             cs_count=types["CS"], adrc_count=types["ADRC"], membership_fingerprint=membership_fingerprint(corrected),
@@ -227,6 +267,8 @@ def build_full_base_scope_review(
         final_memberships=final,
         analytics=analytics,
         overlapping_exclusions=overlap,
+        original_provider_types=original_provider_types,
+        effective_provider_types=effective_provider_types,
     )
 
 
@@ -239,7 +281,7 @@ def _unique_bars(bars: tuple[object, ...]) -> dict[UUID, object]:
     return result
 
 
-def _metric(*, instrument_id, source, instrument, current, previous, bars, audit_result, descriptor, membership_evidence_as_of_date, calculated_at):
+def _metric(*, instrument_id, source, effective_provider_type, instrument, current, previous, bars, audit_result, descriptor, membership_evidence_as_of_date, calculated_at):
     current_present = current is not None
     previous_close = None if previous is None else previous.close
     previous_below = None if previous is None else exact_dollar_volume_proxy(previous.close, previous.volume) < MEDIAN_DOLLAR_VOLUME_THRESHOLD
@@ -265,7 +307,7 @@ def _metric(*, instrument_id, source, instrument, current, previous, bars, audit
             flags.add("material_return_outlier_review")
     return FullBaseMetricV1(
         analysis_session=descriptor.analysis_session, membership_evidence_as_of_date=membership_evidence_as_of_date,
-        instrument_id=instrument_id, display_ticker=source.provider_ticker, provider_type_code=source.provider_type_code,
+        instrument_id=instrument_id, display_ticker=source.provider_ticker, provider_type_code=effective_provider_type,
         primary_exchange=None if instrument is None else instrument.get("primary_exchange"),
         supported_exchange=instrument is not None and instrument.get("primary_exchange") in SUPPORTED_EXCHANGES,
         current_bar_present=current_present, previous_bar_present=previous is not None,
@@ -275,7 +317,21 @@ def _metric(*, instrument_id, source, instrument, current, previous, bars, audit
     )
 
 
-def _decision(*, policy_id, metric, active_override, calculated_at):
+def _decision(*, policy_id, metric, active_override, calculated_at, security_form_eligible=True):
+    if not security_form_eligible:
+        return FullBaseDecisionV1(
+            analysis_session=metric.analysis_session,
+            membership_evidence_as_of_date=metric.membership_evidence_as_of_date,
+            policy_id=policy_id,
+            instrument_id=metric.instrument_id,
+            provider_type_code=metric.provider_type_code,
+            disposition=FullBaseDisposition.TARGET_SECURITY_FORM,
+            included=False,
+            stage_id="target_security_form",
+            reason_codes=("reviewed_security_form_not_eligible_for_policy",),
+            reviewed_override_decision=None,
+            calculated_at=calculated_at,
+        )
     status = {
         "unsupported_exchange": FullBaseDisposition.UNSUPPORTED_EXCHANGE,
         "missing_current_bar": FullBaseDisposition.MISSING_CURRENT_BAR,
@@ -326,7 +382,7 @@ def _decision(*, policy_id, metric, active_override, calculated_at):
 def _funnel(policy_id, decisions, descriptor, evidence_date):
     stages = (
         ("provider_evidence_base", "Point-in-time canonical provider evidence", ()),
-        ("target_security_form", "Target security form", ()),
+        ("target_security_form", "Target security form", (FullBaseDisposition.TARGET_SECURITY_FORM,)),
         ("supported_exchange", "Supported exchange", (FullBaseDisposition.UNSUPPORTED_EXCHANGE, FullBaseDisposition.INVALID_INPUT)),
         ("comparable_bars", "Current and previous canonical bars", (FullBaseDisposition.MISSING_CURRENT_BAR, FullBaseDisposition.MISSING_PREVIOUS_BAR)),
         ("previous_close", "Previous close at least USD 5", (FullBaseDisposition.BELOW_PREVIOUS_CLOSE,)),

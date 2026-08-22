@@ -24,6 +24,15 @@ from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.eod_history import exact_even_median, plan_eod_history_window
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID, build_full_base_scope_review
 from tip_api.services.full_base_liquidity_cli import _exact_arithmetic_reconciliation, _freeze_metric_records, main as cli_main
+from tip_api.services.full_base_security_form_cli import main as superseding_cli_main
+from tip_api.contracts.security_classification.v1 import SecurityForm
+from tip_api.contracts.security_classification.v1.universe_review import (
+    ReviewedSecurityFormEvidenceType, ReviewedSecurityFormEvidenceV1,
+    ReviewedSecurityFormSourceV1, validate_reviewed_security_form_intervals,
+)
+from tip_api.persistence.parquet.superseding_full_base import (
+    ParquetSupersedingFullBaseRepository, read_completed_superseding_full_base,
+)
 from tip_api.services.market_calendar import ExchangeCalendar
 
 D = date(2026, 8, 19); E = date(2026, 8, 14); NOW = datetime(2026, 8, 20, 12, tzinfo=UTC)
@@ -32,6 +41,21 @@ H1 = "a" * 64; H2 = "b" * 64
 
 
 def iid(name): return uuid5(NS, name)
+
+
+def reviewed_form(instrument_id, *, effective_from=date(2026, 7, 10), effective_to=None, source_date=date(2026, 7, 10)):
+    return ReviewedSecurityFormEvidenceV1(
+        evidence_id=iid(f"review-{instrument_id}-{effective_from}"), instrument_id=instrument_id,
+        effective_from=effective_from, effective_to=effective_to,
+        reviewed_security_form=SecurityForm.ADR_ADS,
+        evidence_type=ReviewedSecurityFormEvidenceType.AUTHORITATIVE_REGULATORY_FILING,
+        sources=(ReviewedSecurityFormSourceV1(
+            filing_type="Form 6-K", document_date=source_date,
+            official_source_url="https://www.sec.gov/Archives/edgar/data/1/reviewed.htm",
+            supported_conclusion="The listed security is an ADS.",
+        ),), reviewer_identifier="fixture-reviewer", reason_code="authoritative_ads",
+        reason="Reviewed filing establishes the listed ADS form.", recorded_at=NOW, reviewed_at=NOW,
+    )
 
 
 def bar(i, day, *, ticker="X", close="10", volume="3000000"):
@@ -177,6 +201,134 @@ def test_primary_subset_and_security_type_boundary():
     assert bundle.final_memberships[FULL_BASE_A_ID] <= bundle.final_memberships[FULL_BASE_B_ID]
     by_id = {item.instrument_id:item.provider_type_code for item in bundle.metrics}
     assert {by_id[item] for item in bundle.final_memberships[FULL_BASE_B_ID]-bundle.final_memberships[FULL_BASE_A_ID]} == {"ADRC"}
+
+
+def test_reviewed_security_form_reclassifies_stable_id_without_bypassing_gates():
+    baseline, inputs = fixture_bundle(return_inputs=True)
+    target = next(item for item in baseline.final_memberships[FULL_BASE_A_ID])
+    old = {"provider_classified_common_shares_v1": frozenset(),
+           "provider_classified_common_shares_plus_adrs_v1": frozenset()}
+    corrected = build_full_base_scope_review(
+        descriptor=inputs.descriptor, repository=inputs.repo, evidence=inputs.evidence,
+        instruments=inputs.instruments, current_bars=inputs.current_bars,
+        membership_evidence_as_of_date=E, reviewed_overrides=(), old_memberships=old,
+        calculated_at=NOW, reviewed_security_forms=(reviewed_form(target),),
+    )
+    decisions = {(item.policy_id, item.instrument_id): item for item in corrected.decisions}
+    assert decisions[(FULL_BASE_A_ID, target)].disposition is FullBaseDisposition.TARGET_SECURITY_FORM
+    assert decisions[(FULL_BASE_B_ID, target)].included is True
+    assert target not in corrected.final_memberships[FULL_BASE_A_ID]
+    assert target in corrected.final_memberships[FULL_BASE_B_ID]
+    assert corrected.original_provider_types[target] == "CS"
+    assert corrected.effective_provider_types[target] == "ADRC"
+    assert len(corrected.decisions) == 2 * len(corrected.metrics)
+
+
+@pytest.mark.parametrize(("precision", "rounding"), ((9, ROUND_DOWN), (28, ROUND_UP), (50, ROUND_DOWN)))
+def test_reviewed_security_form_decisions_ignore_decimal_context(precision, rounding):
+    baseline, inputs = fixture_bundle(return_inputs=True)
+    target = next(item for item in baseline.final_memberships[FULL_BASE_A_ID])
+    kwargs = dict(descriptor=inputs.descriptor, repository=inputs.repo, evidence=inputs.evidence,
+        instruments=inputs.instruments, current_bars=inputs.current_bars,
+        membership_evidence_as_of_date=E, reviewed_overrides=(),
+        old_memberships={"provider_classified_common_shares_v1": frozenset(),
+                         "provider_classified_common_shares_plus_adrs_v1": frozenset()},
+        calculated_at=NOW, reviewed_security_forms=(reviewed_form(target),))
+    with localcontext() as context:
+        context.prec = precision; context.rounding = rounding
+        context.traps[Inexact] = True; context.traps[Rounded] = True; context.clear_flags()
+        actual = build_full_base_scope_review(**kwargs)
+        assert context.flags[Inexact] is False and context.flags[Rounded] is False
+    reference = build_full_base_scope_review(**kwargs)
+    assert actual.final_memberships == reference.final_memberships
+    assert [item.membership_fingerprint for item in actual.summaries] == [item.membership_fingerprint for item in reference.summaries]
+
+
+def test_reviewed_security_form_contract_rejects_future_unsafe_duplicate_and_overlap():
+    target = iid("reviewed")
+    with pytest.raises(ValueError, match="future evidence"):
+        reviewed_form(target, effective_from=date(2026, 7, 9), source_date=date(2026, 7, 10))
+    with pytest.raises(ValueError, match="safe public SEC"):
+        ReviewedSecurityFormSourceV1(filing_type="6-K", document_date=date(2026, 7, 10),
+            official_source_url="https://sec.gov.evil.test/Archives/edgar/data/1/x.htm",
+            supported_conclusion="ADS")
+    first = reviewed_form(target, effective_to=date(2026, 8, 1))
+    overlap = reviewed_form(target, effective_from=date(2026, 7, 20))
+    with pytest.raises(ValueError, match="overlap"):
+        validate_reviewed_security_form_intervals((first, overlap))
+    with pytest.raises(ValueError, match="duplicate"):
+        validate_reviewed_security_form_intervals((first, first))
+
+
+def test_superseding_repository_round_trip_and_existing_target(tmp_path):
+    baseline, inputs = fixture_bundle(return_inputs=True)
+    target_id = next(item for item in baseline.final_memberships[FULL_BASE_A_ID])
+    corrected = build_full_base_scope_review(
+        descriptor=inputs.descriptor, repository=inputs.repo, evidence=inputs.evidence,
+        instruments=inputs.instruments, current_bars=inputs.current_bars,
+        membership_evidence_as_of_date=E, reviewed_overrides=(),
+        old_memberships={"provider_classified_common_shares_v1": frozenset(),
+                         "provider_classified_common_shares_plus_adrs_v1": frozenset()},
+        calculated_at=NOW, reviewed_security_forms=(reviewed_form(target_id),),
+    )
+    result = ParquetSupersedingFullBaseRepository(tmp_path).publish(
+        analysis_session=D, membership_evidence_as_of_date=E,
+        reviewed_security_forms=(reviewed_form(target_id),), metrics=corrected.metrics,
+        decisions=corrected.decisions, memberships=corrected.memberships, diffs=corrected.diffs,
+        funnels=corrected.funnels, policies=corrected.summaries,
+        source_full_base_logical_path="market-data/snapshots/source",
+        source_full_base_logical_fingerprint=H1, source_descriptor_fingerprint=corrected.metrics[0].source_window_fingerprint,
+        created_at=NOW,
+    )
+    assert len(result.reviewed_security_forms) == 1
+    reread = read_completed_superseding_full_base(tmp_path, analysis_session=D)
+    assert reread.memberships == result.memberships
+    with pytest.raises(Exception, match="already exists"):
+        ParquetSupersedingFullBaseRepository(tmp_path).publish(
+            analysis_session=D, membership_evidence_as_of_date=E,
+            reviewed_security_forms=(reviewed_form(target_id),), metrics=corrected.metrics,
+            decisions=corrected.decisions, memberships=corrected.memberships, diffs=corrected.diffs,
+            funnels=corrected.funnels, policies=corrected.summaries,
+            source_full_base_logical_path="market-data/snapshots/source",
+            source_full_base_logical_fingerprint=H1, source_descriptor_fingerprint=corrected.metrics[0].source_window_fingerprint,
+            created_at=NOW,
+        )
+
+
+def test_superseding_failed_formal_reread_removes_new_target(tmp_path, monkeypatch):
+    import tip_api.persistence.parquet.superseding_full_base as persistence
+    baseline, inputs = fixture_bundle(return_inputs=True)
+    target_id = next(item for item in baseline.final_memberships[FULL_BASE_A_ID])
+    corrected = build_full_base_scope_review(
+        descriptor=inputs.descriptor, repository=inputs.repo, evidence=inputs.evidence,
+        instruments=inputs.instruments, current_bars=inputs.current_bars,
+        membership_evidence_as_of_date=E, reviewed_overrides=(),
+        old_memberships={"provider_classified_common_shares_v1": frozenset(),
+                         "provider_classified_common_shares_plus_adrs_v1": frozenset()},
+        calculated_at=NOW, reviewed_security_forms=(reviewed_form(target_id),),
+    )
+    monkeypatch.setattr(persistence, "read_completed_superseding_full_base", lambda *args, **kwargs: (_ for _ in ()).throw(RuntimeError("synthetic reread")))
+    with pytest.raises(RuntimeError, match="synthetic reread"):
+        ParquetSupersedingFullBaseRepository(tmp_path).publish(
+            analysis_session=D, membership_evidence_as_of_date=E,
+            reviewed_security_forms=(reviewed_form(target_id),), metrics=corrected.metrics,
+            decisions=corrected.decisions, memberships=corrected.memberships, diffs=corrected.diffs,
+            funnels=corrected.funnels, policies=corrected.summaries,
+            source_full_base_logical_path="market-data/snapshots/source",
+            source_full_base_logical_fingerprint=H1, source_descriptor_fingerprint=corrected.metrics[0].source_window_fingerprint,
+            created_at=NOW,
+        )
+    assert not list(tmp_path.rglob("analysis_session=2026-08-19"))
+    assert not list(tmp_path.rglob("*.staging-*"))
+
+
+def test_superseding_cli_rejects_unknown_and_multiple_arguments():
+    with pytest.raises(SystemExit) as unknown:
+        superseding_cli_main(["--unknown"])
+    assert unknown.value.code == 2
+    with pytest.raises(SystemExit) as multiple:
+        superseding_cli_main(["--apply", "extra"])
+    assert multiple.value.code == 2
 
 
 def test_sequential_funnel_closes_and_does_not_repeat_final_count_as_each_stage():
