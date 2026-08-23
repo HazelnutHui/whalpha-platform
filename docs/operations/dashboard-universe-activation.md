@@ -14,6 +14,7 @@ Never overwrite an existing activation. Any nonzero apply result blocks snapshot
 2. A later, separately authorized operation may invoke that command once with `--apply`. It publishes the immutable revision first and atomically replaces the active pointer only after formal reread.
 3. Never retry an uncertain apply. Inspect the original process, immutable target, pointer bytes, and formal active reader instead.
 4. A completed target with no pointer is inactive. A pointer to V2 is active even if the invoking shell failed after the pointer switch.
-5. Rollback requires separate authorization. `scripts/admin/rollback-dashboard-universe-activation.sh` is also default-dry-run; its apply mode validates both targets and the expected active fingerprint before atomically swapping references.
+5. If the immutable target is completed but inactive, run `scripts/admin/recover-dashboard-universe-activation-v2.sh` without arguments. After reviewing its target validation and `expected_current_pointer_fingerprint`, a separate authorization may run `--apply --expected-current-pointer-fingerprint <approved-token>`. It only links the existing target and never rewrites it.
+6. Rollback requires separate authorization. Run `scripts/admin/rollback-dashboard-universe-activation.sh` without arguments and record its `expected_active_pointer_fingerprint` and rollback target. Apply must use `--apply --expected-active-pointer-fingerprint <approved-sha256>`; any state change after dry-run is rejected without writing.
 
 An absent pointer is the only V1 compatibility fallback. A present but invalid pointer is an integrity failure, not permission to fall back.

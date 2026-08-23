@@ -16,6 +16,11 @@ from tip_api.contracts.market_data.v1.dashboard_universe_activation import (
 )
 
 
+PRIMARY_UNIVERSE_ID = "provider_classified_common_shares_v1"
+SECONDARY_UNIVERSE_ID = "provider_classified_common_shares_plus_adrs_v1"
+PUBLIC_UNIVERSE_ORDER = (PRIMARY_UNIVERSE_ID, SECONDARY_UNIVERSE_ID)
+
+
 class DashboardUniverseActivationRecordV2(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -131,8 +136,8 @@ class DashboardUniverseActivationManifestV2(BaseModel):
 
     @model_validator(mode="after")
     def catalog(self) -> "DashboardUniverseActivationManifestV2":
-        if len(set(self.available_universe_ids)) != 2 or self.default_universe_id not in self.available_universe_ids:
-            raise ValueError("activation catalog must contain two unique universes and its default")
+        if self.default_universe_id != PRIMARY_UNIVERSE_ID or self.available_universe_ids != PUBLIC_UNIVERSE_ORDER:
+            raise ValueError("activation catalog must be Primary-first with Common Shares as default")
         if self.trailing_window_start > self.trailing_window_end:
             raise ValueError("trailing window is invalid")
         return self
@@ -200,8 +205,8 @@ class DashboardUniverseActivationPointerV1(BaseModel):
             raise ValueError("active and rollback references must differ")
         if self.active.analysis_session != self.rollback.analysis_session:
             raise ValueError("active and rollback analysis sessions must match")
-        if len(set(self.available_universe_ids)) != 2 or self.default_universe_id not in self.available_universe_ids:
-            raise ValueError("pointer catalog is invalid")
+        if self.default_universe_id != PRIMARY_UNIVERSE_ID or self.available_universe_ids != PUBLIC_UNIVERSE_ORDER:
+            raise ValueError("pointer catalog must be Primary-first with Common Shares as default")
         return self
 
 

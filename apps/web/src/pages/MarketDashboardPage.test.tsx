@@ -181,6 +181,44 @@ describe('MarketDashboardPage', () => {
     expect(screen.queryByRole('option',{name:/Legacy/})).not.toBeInTheDocument();
   });
 
+  it('preserves the real Activation V2 Primary-first catalog, labels, and URL keys', async () => {
+    const v2 = structuredClone(demoDashboardData.overview);
+    v2.universe_definition_id = 'dashboard-universe-activation-v2';
+    v2.universe_version = '2.0';
+    v2.default_universe_id = 'provider_classified_common_shares_v1';
+    v2.selected_universe_id = 'provider_classified_common_shares_v1';
+    v2.universes = [
+      {
+        ...v2.universes.find((item) => item.definition.universe_id === 'provider_classified_common_shares_v1')!,
+        definition: {
+          ...v2.universes.find((item) => item.definition.universe_id === 'provider_classified_common_shares_v1')!.definition,
+          display_name: 'Common Shares',
+          member_count: 1718,
+          security_type_composition: { CS: 1718 },
+        },
+      },
+      {
+        ...v2.universes.find((item) => item.definition.universe_id === 'provider_classified_common_shares_plus_adrs_v1')!,
+        definition: {
+          ...v2.universes.find((item) => item.definition.universe_id === 'provider_classified_common_shares_plus_adrs_v1')!.definition,
+          display_name: 'Common Shares + ADRs',
+          member_count: 1831,
+          security_type_composition: { CS: 1718, ADRC: 113 },
+        },
+      },
+    ];
+    vi.mocked(fetch).mockResolvedValue(okResponse(v2));
+    window.history.replaceState({}, '', '/dashboard/?universe=provider_classified_common_shares_v1');
+    render(<MarketDashboardPage />);
+    const selector = await screen.findByLabelText('Dashboard universe');
+    expect(Array.from((selector as HTMLSelectElement).options).map((item) => [item.value, item.textContent])).toEqual([
+      ['provider_classified_common_shares_v1', 'Common Shares'],
+      ['provider_classified_common_shares_plus_adrs_v1', 'Common Shares + ADRs'],
+    ]);
+    expect(selector).toHaveValue('provider_classified_common_shares_v1');
+    expect(screen.queryByRole('option', { name: /Legacy/ })).not.toBeInTheDocument();
+  });
+
   it('switches every view with a stable URL universe value', async () => {
     render(<MarketDashboardPage />);
     const selector=await screen.findByLabelText('Dashboard universe');

@@ -12,6 +12,8 @@ from tip_api.contracts.market_data.v2.dashboard_universe_activation import Dashb
 from tip_api.persistence.parquet import dashboard_universe_activation as v1repo
 from tip_api.persistence.parquet import dashboard_universe_activation_active as repo
 from tip_api.services import dashboard_universe_activation_v2_cli as cli
+from tip_api.services import dashboard_universe_activation_recover_cli as recover_cli
+from tip_api.services import dashboard_universe_activation_rollback_cli as rollback_cli
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
 from tip_api.services.provider_classified_universe import CANDIDATE_A_ID, CANDIDATE_B_ID
 from tip_api.services.universe_pre_activation import membership_fingerprint
@@ -138,6 +140,10 @@ def test_v2_atomic_publication_pointer_and_formal_reread(monkeypatch, tmp_path):
     assert result.target_path.is_dir() and result.pointer_path.is_file()
     active = repo.read_active_dashboard_universe_activation(tmp_path, analysis_session=SESSION)
     assert active.manifest.policy_version == "dashboard-universe-v2"
+    assert tuple(item.universe_id for item in active.universes) == (
+        CANDIDATE_A_ID,
+        v1repo.PUBLIC_SECONDARY_ID,
+    )
     assert active.select(None)[0].universe_id == CANDIDATE_A_ID
     assert not tuple(tmp_path.rglob("*staging*"))
 
@@ -158,10 +164,88 @@ def test_crash_after_target_publish_keeps_inactive_immutable_target(monkeypatch,
     assert repo.read_active_dashboard_universe_activation(tmp_path, analysis_session=SESSION).manifest.policy_version == "dashboard-universe-v1"
 
 
+def test_verify_then_link_recovers_completed_inactive_target(monkeypatch, tmp_path):
+    with pytest.raises(repo.DashboardUniverseActivationV2Error, match="after target"):
+        _publish(monkeypatch, tmp_path, failpoint="after_target_publish")
+    completed = repo.validate_activation_v2_link_preflight(tmp_path, SESSION)
+    current = repo.read_active_dashboard_universe_activation(tmp_path, analysis_session=SESSION)
+    pointer = repo.ParquetDashboardUniverseActivationV2Repository(tmp_path).activate_existing(
+        analysis_session=SESSION,
+        expected_current_pointer_fingerprint=repo.ABSENT_POINTER_FINGERPRINT,
+        expected_current_activation_fingerprint=current.manifest.logical_content_fingerprint,
+        expected_target_logical_fingerprint=completed.manifest.logical_content_fingerprint,
+        switched_at=AT,
+    )
+    assert pointer.active.target_schema_version == "2.0"
+    assert repo.read_active_dashboard_universe_activation(
+        tmp_path, analysis_session=SESSION
+    ).manifest.logical_content_fingerprint == completed.manifest.logical_content_fingerprint
+
+
+def test_verify_then_link_rejects_wrong_pointer_or_target_fingerprint(monkeypatch, tmp_path):
+    with pytest.raises(repo.DashboardUniverseActivationV2Error, match="after target"):
+        _publish(monkeypatch, tmp_path, failpoint="after_target_publish")
+    completed = repo.validate_activation_v2_link_preflight(tmp_path, SESSION)
+    current = repo.read_active_dashboard_universe_activation(tmp_path, analysis_session=SESSION)
+    repository = repo.ParquetDashboardUniverseActivationV2Repository(tmp_path)
+    with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="pointer changed"):
+        repository.activate_existing(
+            analysis_session=SESSION,
+            expected_current_pointer_fingerprint="d" * 64,
+            expected_current_activation_fingerprint=current.manifest.logical_content_fingerprint,
+            expected_target_logical_fingerprint=completed.manifest.logical_content_fingerprint,
+            switched_at=AT,
+        )
+    with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="approved target"):
+        repository.activate_existing(
+            analysis_session=SESSION,
+            expected_current_pointer_fingerprint=repo.ABSENT_POINTER_FINGERPRINT,
+            expected_current_activation_fingerprint=current.manifest.logical_content_fingerprint,
+            expected_target_logical_fingerprint="d" * 64,
+            switched_at=AT,
+        )
+    assert not repo.active_pointer_path(tmp_path).exists()
+
+
 def test_crash_after_pointer_is_detectable_as_active(monkeypatch, tmp_path):
     with pytest.raises(repo.DashboardUniverseActivationV2Error, match="after pointer"):
         _publish(monkeypatch, tmp_path, failpoint="after_pointer_switch")
     assert repo.read_active_dashboard_universe_activation(tmp_path, analysis_session=SESSION).manifest.policy_version == "dashboard-universe-v2"
+
+
+@pytest.mark.parametrize("failpoint", ["after_target_parent_creation", "after_pointer_parent_creation"])
+def test_first_directory_creation_failpoints_remain_unambiguously_inactive(
+    monkeypatch, tmp_path, failpoint
+):
+    with pytest.raises(repo.DashboardUniverseActivationV2Error, match="parent creation"):
+        _publish(monkeypatch, tmp_path, failpoint=failpoint)
+    assert repo.read_active_dashboard_universe_activation(
+        tmp_path, analysis_session=SESSION
+    ).manifest.policy_version == "dashboard-universe-v1"
+    assert not repo.active_pointer_path(tmp_path).exists()
+    assert not tuple(tmp_path.rglob("*staging*"))
+    if failpoint == "after_target_parent_creation":
+        assert not repo.v2_target_path(tmp_path, SESSION).exists()
+    else:
+        assert repo.validate_activation_v2_link_preflight(tmp_path, SESSION)
+
+
+def test_new_directory_entries_are_fsynced_child_then_parent(monkeypatch, tmp_path):
+    calls = []
+    original = repo._fsync_directory
+    monkeypatch.setattr(repo, "_fsync_directory", lambda path: (calls.append(path), original(path))[1])
+    _publish(monkeypatch, tmp_path)
+    target = repo.v2_target_path(tmp_path, SESSION)
+    pointer_parent = repo.active_pointer_path(tmp_path).parent
+    for created in (target.parent.parent, target.parent, pointer_parent):
+        assert created in calls
+        assert created.parent in calls
+        assert any(
+            child_index < parent_index
+            for child_index, child in enumerate(calls)
+            for parent_index, parent in enumerate(calls)
+            if child == created and parent == created.parent
+        )
 
 
 def test_existing_and_partial_target_rejected(monkeypatch, tmp_path):
@@ -199,7 +283,7 @@ def test_pointer_fingerprint_and_path_traversal_fail_closed(monkeypatch, tmp_pat
     payload = json.loads(path.read_text())
     payload["default_universe_id"] = v1repo.PUBLIC_SECONDARY_ID
     path.write_text(json.dumps(payload))
-    with pytest.raises(repo.DashboardUniverseActivationV2Error, match="fingerprint"):
+    with pytest.raises(repo.DashboardUniverseActivationV2Error, match="malformed|fingerprint"):
         repo.read_active_dashboard_universe_activation(tmp_path, analysis_session=SESSION)
     reference = payload["active"]
     reference["logical_path"] = "../escape"
@@ -231,11 +315,32 @@ def test_rollback_is_separate_atomic_pointer_switch(monkeypatch, tmp_path):
     before = repo.read_dashboard_universe_activation_pointer(tmp_path)
     replacement = repo.rollback_active_dashboard_universe_activation(
         tmp_path, analysis_session=SESSION,
-        expected_active_fingerprint=before.active.logical_content_fingerprint, switched_at=AT,
+        expected_active_pointer_fingerprint=before.pointer_content_fingerprint, switched_at=AT,
     )
     assert replacement.active.target_schema_version == "1.0"
     assert replacement.rollback.target_schema_version == "2.0"
     assert repo.read_active_dashboard_universe_activation(tmp_path, analysis_session=SESSION).manifest.policy_version == "dashboard-universe-v1"
+
+
+def test_rollback_rejects_stale_explicit_pointer_digest_without_writing(monkeypatch, tmp_path):
+    _publish(monkeypatch, tmp_path)
+    approved = repo.read_dashboard_universe_activation_pointer(tmp_path)
+    repo.rollback_active_dashboard_universe_activation(
+        tmp_path,
+        analysis_session=SESSION,
+        expected_active_pointer_fingerprint=approved.pointer_content_fingerprint,
+        switched_at=AT,
+    )
+    pointer_path = repo.active_pointer_path(tmp_path)
+    before = pointer_path.read_bytes()
+    with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="changed"):
+        repo.rollback_active_dashboard_universe_activation(
+            tmp_path,
+            analysis_session=SESSION,
+            expected_active_pointer_fingerprint=approved.pointer_content_fingerprint,
+            switched_at=AT,
+        )
+    assert pointer_path.read_bytes() == before
 
 
 def test_concurrent_lock_rejected(monkeypatch, tmp_path):
@@ -275,3 +380,37 @@ def test_cli_apply_success_path_returns_zero(monkeypatch, tmp_path, capsys):
     monkeypatch.setattr(cli, "read_active_dashboard_universe_activation", lambda *a, **k: completed)
     assert cli.main(["--apply"]) == 0
     assert json.loads(capsys.readouterr().out)["status"] == "completed"
+
+
+def test_recovery_cli_dry_run_and_explicit_cas_argument(monkeypatch, tmp_path, capsys):
+    completed = SimpleNamespace(
+        manifest=SimpleNamespace(
+            logical_content_fingerprint=SOURCE_SHA,
+            default_universe_id=CANDIDATE_A_ID,
+            available_universe_ids=(CANDIDATE_A_ID, v1repo.PUBLIC_SECONDARY_ID),
+        ),
+        universes=_v2_records(),
+    )
+    current = SimpleNamespace(manifest=SimpleNamespace(logical_content_fingerprint=recover_cli.EXPECTED_CURRENT))
+    monkeypatch.setattr(recover_cli, "ROOT", tmp_path)
+    monkeypatch.setattr(recover_cli, "validate_activation_v2_link_preflight", lambda *a, **k: completed)
+    monkeypatch.setattr(recover_cli, "read_active_dashboard_universe_activation", lambda *a, **k: current)
+    monkeypatch.setattr(recover_cli, "active_pointer_state_fingerprint", lambda root: "absent")
+    assert recover_cli.main([]) == 0
+    assert json.loads(capsys.readouterr().out)["expected_current_pointer_fingerprint"] == "absent"
+    assert recover_cli.main(["--apply"]) == 2
+
+
+def test_rollback_cli_requires_dry_run_approved_pointer_digest(monkeypatch, tmp_path, capsys):
+    pointer = SimpleNamespace(
+        active=SimpleNamespace(model_dump=lambda **k: {}, logical_content_fingerprint=SOURCE_SHA),
+        rollback=SimpleNamespace(model_dump=lambda **k: {}),
+        pointer_content_fingerprint=FORM_SHA,
+    )
+    active = SimpleNamespace(manifest=SimpleNamespace(logical_content_fingerprint=SOURCE_SHA))
+    monkeypatch.setattr(rollback_cli, "ROOT", tmp_path)
+    monkeypatch.setattr(rollback_cli, "read_dashboard_universe_activation_pointer", lambda root: pointer)
+    monkeypatch.setattr(rollback_cli, "read_active_dashboard_universe_activation", lambda *a, **k: active)
+    assert rollback_cli.main([]) == 0
+    assert json.loads(capsys.readouterr().out)["expected_active_pointer_fingerprint"] == FORM_SHA
+    assert rollback_cli.main(["--apply"]) == 2

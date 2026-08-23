@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fcntl
+import hmac
 import json
 import os
 import shutil
@@ -25,6 +26,7 @@ from tip_api.contracts.market_data.v2.dashboard_universe_activation import (
     DashboardUniverseActivationPointerV1,
     DashboardUniverseActivationRecordV2,
     DashboardUniverseActivationTargetReferenceV1,
+    PUBLIC_UNIVERSE_ORDER,
 )
 from tip_api.persistence.parquet.dashboard_universe_activation import (
     PUBLIC_SECONDARY_ID,
@@ -53,6 +55,7 @@ EXPECTED_PRIMARY_COUNT = 1718
 EXPECTED_PRIMARY_FINGERPRINT = "c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978"
 EXPECTED_SECONDARY_COUNT = 1831
 EXPECTED_SECONDARY_FINGERPRINT = "2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295"
+ABSENT_POINTER_FINGERPRINT = "absent"
 
 V2_SCHEMA = pa.schema([
     pa.field("schema_version", pa.string(), False),
@@ -145,6 +148,38 @@ def validate_activation_v2_preflight(root: Path, analysis_session: date) -> tupl
         if pointer_staging:
             raise DashboardUniverseActivationV2ConflictError("active pointer staging residue exists")
     return target, pointer
+
+
+def validate_activation_v2_link_preflight(
+    root: Path, analysis_session: date
+) -> CompletedDashboardUniverseActivationV2:
+    """Validate an already completed immutable target for pointer-only recovery."""
+    safe_root = _validated_root(root)
+    target = v2_target_path(safe_root, analysis_session)
+    pointer = active_pointer_path(safe_root)
+    _reject_symlink_chain(safe_root, target)
+    _reject_symlink_chain(safe_root, pointer)
+    if target.parent.exists() and tuple(target.parent.glob(f".{target.name}.staging-*")):
+        raise DashboardUniverseActivationV2ConflictError("V2 activation staging residue exists")
+    if pointer.parent.exists() and tuple(pointer.parent.glob(f".{pointer.name}.staging-*")):
+        raise DashboardUniverseActivationV2ConflictError("active pointer staging residue exists")
+    return read_completed_dashboard_universe_activation_v2(
+        safe_root, analysis_session=analysis_session, validate_sources=True
+    )
+
+
+def active_pointer_state_fingerprint(root: Path) -> str:
+    """Return the exact CAS token for the current pointer bytes, or ``absent``."""
+    safe_root = _validated_root(root)
+    path = active_pointer_path(safe_root)
+    _reject_symlink_chain(safe_root, path)
+    content = _pointer_bytes(path)
+    if content is None:
+        return ABSENT_POINTER_FINGERPRINT
+    # Parse and validate before exposing a token for authorization.
+    pointer = read_dashboard_universe_activation_pointer(safe_root)
+    assert pointer is not None
+    return pointer.pointer_content_fingerprint
 
 
 def read_dashboard_universe_activation_pointer(root: Path) -> DashboardUniverseActivationPointerV1 | None:
@@ -339,6 +374,17 @@ class ParquetDashboardUniverseActivationV2Repository:
             if source_publication_fingerprint != EXPECTED_SOURCE_FINGERPRINT:
                 raise DashboardUniverseActivationV2Error("V2 activation source fingerprint is not approved")
             created_parents = _mkdir_parents_tracking(root, target.parent)
+            if failpoint == "after_target_parent_creation":
+                for directory in created_parents:
+                    try:
+                        parent = directory.parent
+                        directory.rmdir()
+                        _fsync_directory(parent)
+                    except OSError:
+                        pass
+                raise DashboardUniverseActivationV2Error(
+                    "injected failure after target parent creation"
+                )
             staging = target.parent / f".{target.name}.staging-{uuid4().hex}"
             _reject_symlink_chain(root, staging)
             if staging.exists() or staging.is_symlink():
@@ -407,7 +453,7 @@ class ParquetDashboardUniverseActivationV2Repository:
                     rollback=rollback_reference,
                     switched_at=activated_at,
                 )
-                _atomic_write_pointer(root, pointer)
+                _atomic_write_pointer(root, pointer, failpoint=failpoint)
                 if failpoint == "after_pointer_switch":
                     raise DashboardUniverseActivationV2Error("injected failure after pointer switch")
                 active = read_active_dashboard_universe_activation(
@@ -438,22 +484,94 @@ class ParquetDashboardUniverseActivationV2Repository:
                             pass
                 raise
 
+    def activate_existing(
+        self,
+        *,
+        analysis_session: date,
+        expected_current_pointer_fingerprint: str,
+        expected_current_activation_fingerprint: str,
+        expected_target_logical_fingerprint: str,
+        switched_at: datetime,
+        failpoint: str | None = None,
+    ) -> DashboardUniverseActivationPointerV1:
+        """Verify a completed immutable target and atomically link it active."""
+        root = _validated_root(self.root)
+        pointer_path = active_pointer_path(root)
+        with _exclusive_activation_lock(root):
+            initial_pointer_bytes = _pointer_bytes(pointer_path)
+            observed_pointer_fingerprint = (
+                ABSENT_POINTER_FINGERPRINT
+                if initial_pointer_bytes is None
+                else read_dashboard_universe_activation_pointer(root).pointer_content_fingerprint
+            )
+            if not hmac.compare_digest(
+                observed_pointer_fingerprint, expected_current_pointer_fingerprint
+            ):
+                raise DashboardUniverseActivationV2ConflictError(
+                    "active pointer changed before activate-existing"
+                )
+            current = read_active_dashboard_universe_activation(
+                root, analysis_session=analysis_session, validate_sources=True
+            )
+            if not hmac.compare_digest(
+                current.manifest.logical_content_fingerprint,
+                expected_current_activation_fingerprint,
+            ):
+                raise DashboardUniverseActivationV2ConflictError(
+                    "active activation changed before activate-existing"
+                )
+            completed = validate_activation_v2_link_preflight(root, analysis_session)
+            if not hmac.compare_digest(
+                completed.manifest.logical_content_fingerprint,
+                expected_target_logical_fingerprint,
+            ):
+                raise DashboardUniverseActivationV2ConflictError(
+                    "completed V2 target is not the approved target"
+                )
+            if isinstance(current, CompletedDashboardUniverseActivationV2):
+                raise DashboardUniverseActivationV2ConflictError(
+                    "completed V2 target is already active"
+                )
+            if _pointer_bytes(pointer_path) != initial_pointer_bytes:
+                raise DashboardUniverseActivationV2ConflictError(
+                    "active pointer changed concurrently"
+                )
+            pointer = _build_pointer(
+                active=_reference_for_completed(root, completed),
+                rollback=_reference_for_completed(root, current),
+                switched_at=switched_at,
+            )
+            _atomic_write_pointer(root, pointer, failpoint=failpoint)
+            active = read_active_dashboard_universe_activation(
+                root, analysis_session=analysis_session, validate_sources=True
+            )
+            if active.manifest.logical_content_fingerprint != expected_target_logical_fingerprint:
+                raise DashboardUniverseActivationV2Error(
+                    "activate-existing final active reread failed"
+                )
+            return pointer
+
 
 def rollback_active_dashboard_universe_activation(
     root: Path,
     *,
     analysis_session: date,
-    expected_active_fingerprint: str,
+    expected_active_pointer_fingerprint: str,
     switched_at: datetime,
 ) -> DashboardUniverseActivationPointerV1:
     safe_root = _validated_root(root)
     pointer_path = active_pointer_path(safe_root)
     with _exclusive_activation_lock(safe_root):
+        initial_pointer_bytes = _pointer_bytes(pointer_path)
         pointer = read_dashboard_universe_activation_pointer(safe_root)
         if pointer is None:
             raise DashboardUniverseActivationV2Error("rollback requires an explicit active pointer")
-        if pointer.active.logical_content_fingerprint != expected_active_fingerprint:
+        if not hmac.compare_digest(
+            pointer.pointer_content_fingerprint, expected_active_pointer_fingerprint
+        ):
             raise DashboardUniverseActivationV2ConflictError("active activation changed before rollback")
+        if pointer.active.analysis_session != analysis_session or pointer.rollback.analysis_session != analysis_session:
+            raise DashboardUniverseActivationV2Error("rollback pointer session mismatch")
         _read_reference(safe_root, pointer.active, validate_sources=True)
         rollback_target = _read_reference(safe_root, pointer.rollback, validate_sources=True)
         replacement = _build_pointer(
@@ -461,6 +579,10 @@ def rollback_active_dashboard_universe_activation(
             rollback=pointer.active,
             switched_at=switched_at,
         )
+        if _pointer_bytes(pointer_path) != initial_pointer_bytes:
+            raise DashboardUniverseActivationV2ConflictError(
+                "active pointer changed concurrently before rollback"
+            )
         _atomic_write_pointer(safe_root, replacement)
         reread = read_active_dashboard_universe_activation(
             safe_root, analysis_session=analysis_session, validate_sources=True
@@ -540,11 +662,15 @@ def _build_pointer(
     )
 
 
-def _atomic_write_pointer(root: Path, pointer: DashboardUniverseActivationPointerV1) -> None:
+def _atomic_write_pointer(
+    root: Path,
+    pointer: DashboardUniverseActivationPointerV1,
+    *,
+    failpoint: str | None = None,
+) -> None:
     path = active_pointer_path(root)
     _reject_symlink_chain(root, path)
-    parent_created = not path.parent.exists()
-    path.parent.mkdir(parents=True, exist_ok=True)
+    created_parents = _mkdir_parents_durable(root, path.parent)
     _reject_symlink_chain(root, path)
     if path.exists() and (path.is_symlink() or not path.is_file()):
         raise DashboardUniverseActivationV2Error("active pointer path is unsafe")
@@ -552,15 +678,21 @@ def _atomic_write_pointer(root: Path, pointer: DashboardUniverseActivationPointe
     if staging.exists() or staging.is_symlink():
         raise DashboardUniverseActivationV2ConflictError("active pointer staging exists")
     try:
+        if failpoint == "after_pointer_parent_creation":
+            raise DashboardUniverseActivationV2Error(
+                "injected failure after pointer parent creation"
+            )
         _write_json(staging, pointer.model_dump(mode="json"))
         os.replace(staging, path)
         _fsync_directory(path.parent)
     except Exception:
         if staging.exists() and not staging.is_symlink():
             staging.unlink()
-        if parent_created:
+        for directory in created_parents:
             try:
-                path.parent.rmdir()
+                parent = directory.parent
+                directory.rmdir()
+                _fsync_directory(parent)
             except OSError:
                 pass
         raise
@@ -576,7 +708,8 @@ def _validate_v2_records(
         raise DashboardUniverseActivationV2Error("V2 activation record identity conflict")
     if sum(item.is_default for item in records) != 1 or not next(item for item in records if item.is_default).universe_id == CANDIDATE_A_ID:
         raise DashboardUniverseActivationV2Error("Common Shares must remain the sole default")
-    ordered = tuple(sorted(records, key=lambda item: item.universe_id))
+    by_input_id = {item.universe_id: item for item in records}
+    ordered = tuple(by_input_id[universe_id] for universe_id in PUBLIC_UNIVERSE_ORDER)
     by_id = {item.universe_id: item for item in ordered}
     if (
         by_id[CANDIDATE_A_ID].member_count != EXPECTED_PRIMARY_COUNT
@@ -586,7 +719,7 @@ def _validate_v2_records(
     ):
         raise DashboardUniverseActivationV2Error("V2 activation approved membership gate failed")
     if manifest is not None:
-        if tuple(item.universe_id for item in ordered) != tuple(sorted(manifest.available_universe_ids)):
+        if tuple(item.universe_id for item in ordered) != manifest.available_universe_ids:
             raise DashboardUniverseActivationV2Error("V2 activation manifest catalog mismatch")
         if any(item.analysis_session != manifest.analysis_session for item in ordered):
             raise DashboardUniverseActivationV2Error("V2 activation record session mismatch")
@@ -661,15 +794,24 @@ def _validated_root(root: Path) -> Path:
     return root.resolve(strict=True)
 
 
-def _mkdir_parents_tracking(root: Path, directory: Path) -> tuple[Path, ...]:
+def _mkdir_parents_durable(root: Path, directory: Path) -> tuple[Path, ...]:
     missing: list[Path] = []
     current = directory
     while current != root and not current.exists():
         missing.append(current)
         current = current.parent
     _reject_symlink_chain(root, current)
-    directory.mkdir(parents=True, exist_ok=True)
+    for path in reversed(missing):
+        _reject_symlink_chain(root, path.parent)
+        path.mkdir()
+        # Persist the new directory itself and the parent directory entry.
+        _fsync_directory(path)
+        _fsync_directory(path.parent)
     return tuple(missing)
+
+
+# Backward-compatible private name retained for focused fault-injection tests.
+_mkdir_parents_tracking = _mkdir_parents_durable
 
 
 def _reject_symlink_chain(root: Path, path: Path) -> None:

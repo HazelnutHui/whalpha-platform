@@ -4,6 +4,8 @@
 
 Implemented an offline-only immutable Activation V2 publisher/reader and atomic active/default pointer. All formal Activation consumers now resolve the shared pointer; installations without a pointer retain V1 compatibility, while malformed pointers fail closed. The separately authorized rollback mechanism atomically swaps validated active/rollback references and cannot rewrite either target.
 
+Authorization hardening now adds verify-then-link recovery for a completed inactive target, durable first-directory parent-entry fsync, rollback apply bound to the pointer digest approved during dry-run, and a contract-fixed Primary-first public catalog. These changes remain offline-only; Production has not been activated.
+
 The production-root dry-run bound revision `authoritative-security-form-v2` to superseding publication `51403e939930265ba1a273e9f8bc2113cb455f22e8437c1d2775005fd293ee97` and naturally planned 1,718 CS / 1,831 CS+ADRC with Common Shares still the sole default. No apply occurred, no active pointer or V2 target was created, and production remains 1,641/1,747. Snapshot, Dashboard, frontend, OCI, provider, credential, and network state are unchanged.
 
 ## 2026-08-21 HSAI reviewed security-form readiness

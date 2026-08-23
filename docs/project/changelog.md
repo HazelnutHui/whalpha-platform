@@ -2,6 +2,8 @@
 
 ## 2026-08-22 — Versioned Activation V2 readiness
 
+- Closed the four authorization-review findings: completed inactive targets now have a verify-then-link path, first-created directories receive durable parent-entry fsyncs, rollback apply requires the dry-run-approved pointer digest, and the public catalog is contractually Primary-first.
+
 - Added a revisioned immutable Activation V2 contract/repository and a fingerprinted atomic active/default pointer. Formal consumers now use one active reader, with compatibility fallback only when no pointer exists and fail-closed behavior for malformed or inconsistent pointers.
 - Added a separately authorized rollback boundary, exclusive lock and compare-and-swap concurrency protection, explicit crash-boundary behavior, existing/partial-target rejection, final formal reread, and default-dry-run CLIs.
 - The production-root dry-run binds only superseding publication `51403e939930265ba1a273e9f8bc2113cb455f22e8437c1d2775005fd293ee97` and plans 1,718 CS plus 1,831 CS+ADRC. Apply count was zero; production remains 1,641/1,747 and no pointer, snapshot, Dashboard, frontend, or OCI change occurred.
