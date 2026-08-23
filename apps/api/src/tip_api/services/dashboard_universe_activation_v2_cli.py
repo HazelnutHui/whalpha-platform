@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import sys
 from collections import Counter
 from dataclasses import dataclass
@@ -30,6 +31,9 @@ from tip_api.persistence.parquet.superseding_full_base import (
 )
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
 from tip_api.services.provider_classified_universe import CANDIDATE_A_ID
+from tip_api.services.dashboard_universe_activation_plan import (
+    build_activation_approval_plan, canonical_json_bytes, load_approved_plan,
+)
 
 
 ROOT = Path("/data/trading-intelligence-platform")
@@ -59,13 +63,20 @@ class ActivationV2Plan:
 def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if args in (["--help"], ["-h"]):
-        print("Usage: publish-dashboard-universe-activation-v2.sh [--apply]")
+        print("Usage: publish-dashboard-universe-activation-v2.sh [--approval-package /tmp/plan.json] | --apply --approved-plan /tmp/plan.json --approved-plan-sha256 SHA256 --expected-current-state-fingerprint SHA256")
         return 0
-    if args not in ([], ["--apply"]):
-        print("only --apply is accepted", file=sys.stderr)
+    dry_package = len(args) == 2 and args[0] == "--approval-package"
+    apply = len(args) == 7 and args[0] == "--apply" and args[1] == "--approved-plan" and args[3] == "--approved-plan-sha256" and args[5] == "--expected-current-state-fingerprint"
+    if args and not dry_package and not apply:
+        print("apply requires approved plan, plan SHA-256, and expected current-state fingerprint", file=sys.stderr)
         return 2
-    apply = args == ["--apply"]
-    plan = _prepare_plan()
+    approved = load_approved_plan(Path(args[2]), args[4]) if apply else None
+    frozen_at = datetime.fromisoformat(approved["activated_at"].replace("Z", "+00:00")) if approved else None
+    plan = _prepare_plan(activated_at=frozen_at) if approved else _prepare_plan()
+    approval = build_activation_approval_plan(ROOT, plan)
+    if apply:
+        if args[6] != approved["expected_active_state_fingerprint"] or approval != approved:
+            raise RuntimeError("approved activation plan no longer matches current state")
     target = v2_target_path(ROOT, SESSION)
     pointer = active_pointer_path(ROOT)
     result = {
@@ -103,8 +114,24 @@ def main(argv: list[str] | None = None) -> int:
             "membership_fingerprint": plan.legacy_fingerprint,
         },
         "apply_invocations": 0 if not apply else 1,
+        "approval_plan": approval,
     }
     if not apply:
+        if dry_package:
+            output = Path(args[1])
+            if not output.is_absolute() or not output.resolve().is_relative_to(Path("/tmp")) or output.exists() or output.is_symlink():
+                raise RuntimeError("approval package must be a new absolute /tmp file")
+            with output.open("xb") as handle:
+                handle.write(canonical_json_bytes(approval))
+                handle.flush()
+                os.fsync(handle.fileno())
+            output.chmod(0o444)
+            directory_fd = os.open(output.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory_fd)
+            finally:
+                os.close(directory_fd)
+            result["approval_package"] = str(output)
         print(json.dumps(result, sort_keys=True))
         return 0
     published = ParquetDashboardUniverseActivationV2Repository(ROOT).publish_and_activate(
@@ -121,6 +148,8 @@ def main(argv: list[str] | None = None) -> int:
         reviewed_security_form_count=plan.reviewed_security_form_count,
         activated_at=plan.activated_at,
         expected_current_fingerprint=plan.current_fingerprint,
+        expected_current_pointer_fingerprint=approval["expected_current_pointer_fingerprint"],
+        expected_artifact_hashes=approval,
     )
     completed = read_completed_dashboard_universe_activation_v2(ROOT, analysis_session=SESSION, validate_sources=True)
     active = read_active_dashboard_universe_activation(ROOT, analysis_session=SESSION, validate_sources=True)
@@ -137,7 +166,7 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def _prepare_plan() -> ActivationV2Plan:
+def _prepare_plan(*, activated_at: datetime | None = None) -> ActivationV2Plan:
     validate_activation_v2_preflight(ROOT, SESSION)
     source = read_completed_superseding_full_base(ROOT, analysis_session=SESSION)
     if source.manifest.logical_content_fingerprint != EXPECTED_SOURCE:
@@ -157,7 +186,7 @@ def _prepare_plan() -> ActivationV2Plan:
     }
     current_eod = CanonicalEodReadRepository(ROOT).inspect_session(SESSION)
     previous_eod = CanonicalEodReadRepository(ROOT).inspect_session(PREVIOUS_SESSION)
-    activated_at = datetime.now(UTC)
+    activated_at = activated_at or datetime.now(UTC)
     definitions = (
         (
             CANDIDATE_A_ID,

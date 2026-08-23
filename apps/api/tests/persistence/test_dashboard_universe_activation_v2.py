@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, date, datetime
+from pathlib import Path
 from types import SimpleNamespace
 from uuid import UUID
 
@@ -12,6 +13,7 @@ from tip_api.contracts.market_data.v2.dashboard_universe_activation import Dashb
 from tip_api.persistence.parquet import dashboard_universe_activation as v1repo
 from tip_api.persistence.parquet import dashboard_universe_activation_active as repo
 from tip_api.services import dashboard_universe_activation_v2_cli as cli
+from tip_api.services import dashboard_universe_activation_plan as approval_plan
 from tip_api.services import dashboard_universe_activation_recover_cli as recover_cli
 from tip_api.services import dashboard_universe_activation_rollback_cli as rollback_cli
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
@@ -361,11 +363,13 @@ def test_cli_dry_run_zero_write_and_argument_boundary(monkeypatch, tmp_path, cap
     plan = cli.ActivationV2Plan(values, "source", SOURCE_SHA, FORM_SHA, 3, SHA, 2, 1, AT, SHA, "v1_compatibility_fallback")
     monkeypatch.setattr(cli, "ROOT", tmp_path)
     monkeypatch.setattr(cli, "_prepare_plan", lambda: plan)
+    monkeypatch.setattr(cli, "build_activation_approval_plan", lambda root, value: {"plan_sha256": SHA})
     assert cli.main([]) == 0
     assert json.loads(capsys.readouterr().out)["status"] == "dry_run_ready"
     assert not tuple(tmp_path.rglob("*"))
     assert cli.main(["--bad"]) == 2
     assert cli.main(["--apply", "extra"]) == 2
+    assert cli.main(["--apply", "--approved-plan", "/tmp/x"]) == 2
 
 
 def test_cli_apply_success_path_returns_zero(monkeypatch, tmp_path, capsys):
@@ -378,8 +382,183 @@ def test_cli_apply_success_path_returns_zero(monkeypatch, tmp_path, capsys):
     monkeypatch.setattr(cli, "ParquetDashboardUniverseActivationV2Repository", lambda root: SimpleNamespace(publish_and_activate=lambda **kwargs: published))
     monkeypatch.setattr(cli, "read_completed_dashboard_universe_activation_v2", lambda *a, **k: completed)
     monkeypatch.setattr(cli, "read_active_dashboard_universe_activation", lambda *a, **k: completed)
-    assert cli.main(["--apply"]) == 0
+    assert cli.main(["--apply"]) == 2
+    assert "requires approved plan" in capsys.readouterr().err
+
+
+def test_cli_approved_apply_success_path_returns_zero(monkeypatch, tmp_path, capsys):
+    values = _v2_records()
+    plan = cli.ActivationV2Plan(
+        values, "source", SOURCE_SHA, FORM_SHA, 3, SHA, 2, 1, AT, SHA,
+        "v1_compatibility_fallback",
+    )
+    approved = {
+        "activated_at": "2026-08-20T00:00:00Z",
+        "expected_active_state_fingerprint": "e" * 64,
+        "expected_current_pointer_fingerprint": repo.ABSENT_POINTER_FINGERPRINT,
+    }
+    published = SimpleNamespace(
+        content_fingerprint=SHA, parquet_sha256=SHA,
+        logical_content_fingerprint=SOURCE_SHA, pointer_content_fingerprint=FORM_SHA,
+    )
+    completed = SimpleNamespace(manifest=SimpleNamespace(logical_content_fingerprint=SOURCE_SHA))
+    calls = []
+    monkeypatch.setattr(cli, "ROOT", tmp_path)
+    monkeypatch.setattr(cli, "load_approved_plan", lambda path, digest: approved)
+    monkeypatch.setattr(cli, "_prepare_plan", lambda **kwargs: plan)
+    monkeypatch.setattr(cli, "build_activation_approval_plan", lambda root, value: approved)
+    monkeypatch.setattr(
+        cli, "ParquetDashboardUniverseActivationV2Repository",
+        lambda root: SimpleNamespace(publish_and_activate=lambda **kwargs: (calls.append(kwargs), published)[1]),
+    )
+    monkeypatch.setattr(cli, "read_completed_dashboard_universe_activation_v2", lambda *a, **k: completed)
+    monkeypatch.setattr(cli, "read_active_dashboard_universe_activation", lambda *a, **k: completed)
+    args = [
+        "--apply", "--approved-plan", "/tmp/approved.json",
+        "--approved-plan-sha256", "f" * 64,
+        "--expected-current-state-fingerprint", "e" * 64,
+    ]
+    assert cli.main(args) == 0
     assert json.loads(capsys.readouterr().out)["status"] == "completed"
+    assert calls[0]["activated_at"] == AT
+    assert calls[0]["expected_artifact_hashes"] is approved
+
+
+def _approval_fixture(monkeypatch, tmp_path):
+    _sources(monkeypatch, tmp_path)
+    (tmp_path / "source").mkdir()
+    current = repo.read_active_dashboard_universe_activation(
+        tmp_path, analysis_session=SESSION, validate_sources=True
+    )
+    plan = cli.ActivationV2Plan(
+        _v2_records(), "source", SOURCE_SHA, FORM_SHA, 3, SHA, 2, 1, AT,
+        current.manifest.logical_content_fingerprint, "v1_compatibility_fallback",
+    )
+    return plan, approval_plan.build_activation_approval_plan(tmp_path, plan)
+
+
+def test_approval_plan_is_deterministic_and_fully_bound(monkeypatch, tmp_path):
+    plan, first = _approval_fixture(monkeypatch, tmp_path)
+    second = approval_plan.build_activation_approval_plan(tmp_path, plan)
+    assert first == second
+    assert first["plan_sha256"] == approval_plan.plan_sha256(first)
+    assert first["activated_at"] == "2026-08-20T00:00:00Z"
+    assert first["parquet_sha256"] == second["parquet_sha256"]
+    assert first["manifest_sha256"] == second["manifest_sha256"]
+    assert first["pointer_sha256"] == second["pointer_sha256"]
+    assert tuple(item["universe_id"] for item in first["universes"]) == (
+        CANDIDATE_A_ID, v1repo.PUBLIC_SECONDARY_ID,
+    )
+
+
+def test_approved_plan_wrong_digest_and_tamper_fail_closed(monkeypatch, tmp_path):
+    _, approved = _approval_fixture(monkeypatch, tmp_path)
+    path = Path("/tmp") / f"activation-plan-{tmp_path.name}.json"
+    path.write_bytes(approval_plan.canonical_json_bytes(approved))
+    try:
+        with pytest.raises(RuntimeError, match="SHA-256"):
+            approval_plan.load_approved_plan(path, "0" * 64)
+        tampered = dict(approved)
+        tampered["activated_at"] = "2026-08-21T00:00:00Z"
+        path.write_bytes(approval_plan.canonical_json_bytes(tampered))
+        with pytest.raises(RuntimeError, match="SHA-256"):
+            approval_plan.load_approved_plan(path, approved["plan_sha256"])
+        tampered = dict(approved)
+        tampered["unexpected"] = True
+        tampered["plan_sha256"] = approval_plan.plan_sha256(tampered)
+        path.write_bytes(approval_plan.canonical_json_bytes(tampered))
+        with pytest.raises(RuntimeError, match="fields"):
+            approval_plan.load_approved_plan(path, tampered["plan_sha256"])
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def test_approved_artifacts_match_physical_apply_and_replay_is_rejected(monkeypatch, tmp_path):
+    plan, approved = _approval_fixture(monkeypatch, tmp_path)
+    repository = repo.ParquetDashboardUniverseActivationV2Repository(tmp_path)
+    result = repository.publish_and_activate(
+        records=plan.records, source_publication_path=plan.source_path,
+        source_publication_fingerprint=plan.source_fingerprint,
+        reviewed_security_form_fingerprint=plan.reviewed_security_form_fingerprint,
+        legacy_member_count=plan.legacy_count,
+        legacy_membership_fingerprint=plan.legacy_fingerprint,
+        trailing_window_start=date(2026, 7, 22), trailing_window_end=date(2026, 8, 18),
+        trailing_window_session_count=20,
+        reviewed_override_count=plan.reviewed_override_count,
+        reviewed_security_form_count=plan.reviewed_security_form_count,
+        activated_at=plan.activated_at,
+        expected_current_fingerprint=plan.current_fingerprint,
+        expected_current_pointer_fingerprint=approved["expected_current_pointer_fingerprint"],
+        expected_artifact_hashes=approved,
+    )
+    assert repo._file_sha256(result.target_path / repo.PARQUET_FILE) == approved["parquet_sha256"]
+    assert repo._file_sha256(result.target_path / repo.MANIFEST_FILE) == approved["manifest_sha256"]
+    assert repo._file_sha256(result.pointer_path) == approved["pointer_sha256"]
+    assert result.pointer_content_fingerprint == approved["rollback_authorization_digest"]
+    with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="pointer changed|already exists"):
+        repository.publish_and_activate(
+            records=plan.records, source_publication_path=plan.source_path,
+            source_publication_fingerprint=plan.source_fingerprint,
+            reviewed_security_form_fingerprint=plan.reviewed_security_form_fingerprint,
+            legacy_member_count=plan.legacy_count,
+            legacy_membership_fingerprint=plan.legacy_fingerprint,
+            trailing_window_start=date(2026, 7, 22), trailing_window_end=date(2026, 8, 18),
+            trailing_window_session_count=20, reviewed_override_count=2,
+            reviewed_security_form_count=1, activated_at=plan.activated_at,
+            expected_current_fingerprint=plan.current_fingerprint,
+            expected_current_pointer_fingerprint=approved["expected_current_pointer_fingerprint"],
+            expected_artifact_hashes=approved,
+        )
+
+
+def test_stale_active_state_token_rejects_before_target_write(monkeypatch, tmp_path):
+    plan, approved = _approval_fixture(monkeypatch, tmp_path)
+    stale = dict(approved)
+    stale["expected_active_state_fingerprint"] = "0" * 64
+    with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="active state"):
+        repo.ParquetDashboardUniverseActivationV2Repository(tmp_path).publish_and_activate(
+            records=plan.records, source_publication_path=plan.source_path,
+            source_publication_fingerprint=plan.source_fingerprint,
+            reviewed_security_form_fingerprint=plan.reviewed_security_form_fingerprint,
+            legacy_member_count=plan.legacy_count,
+            legacy_membership_fingerprint=plan.legacy_fingerprint,
+            trailing_window_start=date(2026, 7, 22), trailing_window_end=date(2026, 8, 18),
+            trailing_window_session_count=20, reviewed_override_count=2,
+            reviewed_security_form_count=1, activated_at=plan.activated_at,
+            expected_current_fingerprint=plan.current_fingerprint,
+            expected_current_pointer_fingerprint=approved["expected_current_pointer_fingerprint"],
+            expected_artifact_hashes=stale,
+        )
+    assert not repo.v2_target_path(tmp_path, SESSION).exists()
+    assert not tuple(tmp_path.rglob("*staging*"))
+
+
+def test_source_change_after_approval_rejects_before_target_write(monkeypatch, tmp_path):
+    plan, approved = _approval_fixture(monkeypatch, tmp_path)
+    changed = SimpleNamespace(
+        manifest=SimpleNamespace(
+            logical_content_fingerprint="0" * 64,
+            reviewed_security_form_dataset=SimpleNamespace(content_fingerprint=FORM_SHA),
+        ),
+        memberships=(),
+    )
+    monkeypatch.setattr(repo, "read_completed_superseding_full_base", lambda *a, **k: changed)
+    with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="source publication"):
+        repo.ParquetDashboardUniverseActivationV2Repository(tmp_path).publish_and_activate(
+            records=plan.records, source_publication_path=plan.source_path,
+            source_publication_fingerprint=plan.source_fingerprint,
+            reviewed_security_form_fingerprint=plan.reviewed_security_form_fingerprint,
+            legacy_member_count=plan.legacy_count,
+            legacy_membership_fingerprint=plan.legacy_fingerprint,
+            trailing_window_start=date(2026, 7, 22), trailing_window_end=date(2026, 8, 18),
+            trailing_window_session_count=20, reviewed_override_count=2,
+            reviewed_security_form_count=1, activated_at=plan.activated_at,
+            expected_current_fingerprint=plan.current_fingerprint,
+            expected_current_pointer_fingerprint=approved["expected_current_pointer_fingerprint"],
+            expected_artifact_hashes=approved,
+        )
+    assert not repo.v2_target_path(tmp_path, SESSION).exists()
+    assert not tuple(tmp_path.rglob("*staging*"))
 
 
 def test_recovery_cli_dry_run_and_explicit_cas_argument(monkeypatch, tmp_path, capsys):

@@ -6,6 +6,8 @@ Implemented an offline-only immutable Activation V2 publisher/reader and atomic 
 
 Authorization hardening now adds verify-then-link recovery for a completed inactive target, durable first-directory parent-entry fsync, rollback apply bound to the pointer digest approved during dry-run, and a contract-fixed Primary-first public catalog. These changes remain offline-only; Production has not been activated.
 
+The final authorization boundary now cryptographically binds the primary apply to a canonical dry-run Activation Plan. Bare apply is rejected; the caller must provide the approved plan file, its digest, and its approved active-state fingerprint. Dynamic activation time/IDs are frozen in that plan, and the planned Parquet, manifest, and pointer hashes must match the actual immutable files byte-for-byte. All active state and formal sources are revalidated under the publication lock before a production directory is created. This remains code/readiness work only: Production apply count and `/data` writes are zero.
+
 The production-root dry-run bound revision `authoritative-security-form-v2` to superseding publication `51403e939930265ba1a273e9f8bc2113cb455f22e8437c1d2775005fd293ee97` and naturally planned 1,718 CS / 1,831 CS+ADRC with Common Shares still the sole default. No apply occurred, no active pointer or V2 target was created, and production remains 1,641/1,747. Snapshot, Dashboard, frontend, OCI, provider, credential, and network state are unchanged.
 
 ## 2026-08-21 HSAI reviewed security-form readiness

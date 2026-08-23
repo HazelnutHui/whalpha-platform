@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import fcntl
+import hashlib
 import hmac
 import json
 import os
@@ -352,6 +353,8 @@ class ParquetDashboardUniverseActivationV2Repository:
         reviewed_security_form_count: int,
         activated_at: datetime,
         expected_current_fingerprint: str,
+        expected_current_pointer_fingerprint: str | None = None,
+        expected_artifact_hashes: dict[str, Any] | None = None,
         failpoint: str | None = None,
     ) -> DashboardUniverseActivationV2Result:
         root = _validated_root(self.root)
@@ -364,15 +367,75 @@ class ParquetDashboardUniverseActivationV2Repository:
         _reject_symlink_chain(root, pointer_path)
         with _exclusive_activation_lock(root):
             initial_pointer_bytes = _pointer_bytes(pointer_path)
+            observed_pointer = ABSENT_POINTER_FINGERPRINT if initial_pointer_bytes is None else read_dashboard_universe_activation_pointer(root).pointer_content_fingerprint
+            if expected_current_pointer_fingerprint is not None and not hmac.compare_digest(observed_pointer, expected_current_pointer_fingerprint):
+                raise DashboardUniverseActivationV2ConflictError("active pointer changed before publication")
             current = read_active_dashboard_universe_activation(root, analysis_session=session, validate_sources=True)
             if current.manifest.logical_content_fingerprint != expected_current_fingerprint:
                 raise DashboardUniverseActivationV2ConflictError("active activation changed before publication")
+            if expected_artifact_hashes is not None:
+                observed_state = _json_fingerprint({
+                    "current_activation_fingerprint": current.manifest.logical_content_fingerprint,
+                    "current_pointer_fingerprint": observed_pointer,
+                })
+                if not hmac.compare_digest(
+                    observed_state,
+                    expected_artifact_hashes["expected_active_state_fingerprint"],
+                ):
+                    raise DashboardUniverseActivationV2ConflictError(
+                        "approved active state changed before publication"
+                    )
             rollback_reference = _reference_for_completed(root, current)
             if target.exists() or target.is_symlink():
                 raise DashboardUniverseActivationV2ConflictError("V2 activation target already exists")
             records = _validate_v2_records(records, None)
             if source_publication_fingerprint != EXPECTED_SOURCE_FINGERPRINT:
                 raise DashboardUniverseActivationV2Error("V2 activation source fingerprint is not approved")
+            source = read_completed_superseding_full_base(root, analysis_session=session)
+            expected_source_path = superseding_target_path(root, session).relative_to(root).as_posix()
+            if (
+                source_publication_path != expected_source_path
+                or source.manifest.logical_content_fingerprint != source_publication_fingerprint
+                or source.manifest.reviewed_security_form_dataset.content_fingerprint
+                != reviewed_security_form_fingerprint
+            ):
+                raise DashboardUniverseActivationV2ConflictError(
+                    "approved source publication changed before publication"
+                )
+            source_members = {
+                FULL_BASE_A_ID: frozenset(
+                    item.instrument_id for item in source.memberships
+                    if item.policy_id == FULL_BASE_A_ID
+                ),
+                FULL_BASE_B_ID: frozenset(
+                    item.instrument_id for item in source.memberships
+                    if item.policy_id == FULL_BASE_B_ID
+                ),
+            }
+            approved_members = {
+                CANDIDATE_A_ID: source_members[FULL_BASE_A_ID],
+                PUBLIC_SECONDARY_ID: source_members[FULL_BASE_B_ID],
+            }
+            by_universe = {item.universe_id: item for item in records}
+            for universe_id, member_ids in approved_members.items():
+                record = by_universe[universe_id]
+                if (
+                    record.member_count != len(member_ids)
+                    or record.membership_fingerprint != membership_fingerprint(member_ids)
+                ):
+                    raise DashboardUniverseActivationV2ConflictError(
+                        "approved source membership changed before publication"
+                    )
+            current_eod = CanonicalEodReadRepository(root).inspect_session(session)
+            previous_eod = CanonicalEodReadRepository(root).inspect_session(trailing_window_end)
+            if any(
+                item.current_eod_fingerprint != current_eod.content_fingerprint
+                or item.previous_eod_fingerprint != previous_eod.content_fingerprint
+                for item in records
+            ):
+                raise DashboardUniverseActivationV2ConflictError(
+                    "approved EOD source changed before publication"
+                )
             created_parents = _mkdir_parents_tracking(root, target.parent)
             if failpoint == "after_target_parent_creation":
                 for directory in created_parents:
@@ -400,6 +463,8 @@ class ParquetDashboardUniverseActivationV2Repository:
                     os.fsync(handle.fileno())
                 content_fingerprint = _rows_fingerprint(rows)
                 parquet_sha256 = _file_sha256(parquet)
+                if expected_artifact_hashes is not None and (content_fingerprint != expected_artifact_hashes["activation_content_fingerprint"] or parquet_sha256 != expected_artifact_hashes["parquet_sha256"]):
+                    raise DashboardUniverseActivationV2ConflictError("approved activation artifact mismatch")
                 reference = DashboardUniverseActivationDatasetReferenceV1(
                     dataset_path=target.relative_to(root).as_posix(),
                     record_count=2,
@@ -432,6 +497,32 @@ class ParquetDashboardUniverseActivationV2Repository:
                     logical_content_fingerprint=logical_fingerprint,
                 )
                 _write_json(staging / MANIFEST_FILE, manifest.model_dump(mode="json"))
+                if expected_artifact_hashes is not None and (logical_fingerprint != expected_artifact_hashes["activation_logical_fingerprint"] or _file_sha256(staging / MANIFEST_FILE) != expected_artifact_hashes["manifest_sha256"]):
+                    raise DashboardUniverseActivationV2ConflictError("approved activation manifest mismatch")
+                active_reference = DashboardUniverseActivationTargetReferenceV1(
+                    target_schema_version="2.0",
+                    revision_id=REVISION_ID,
+                    analysis_session=session,
+                    logical_path=target.relative_to(root).as_posix(),
+                    logical_content_fingerprint=logical_fingerprint,
+                )
+                pointer = _build_pointer(
+                    active=active_reference,
+                    rollback=rollback_reference,
+                    switched_at=activated_at,
+                )
+                pointer_payload = pointer.model_dump(mode="json")
+                pointer_sha = hashlib.sha256(
+                    (json.dumps(pointer_payload, sort_keys=True, separators=(",", ":")) + "\n").encode()
+                ).hexdigest()
+                if expected_artifact_hashes is not None and (
+                    pointer.pointer_content_fingerprint
+                    != expected_artifact_hashes["planned_active_pointer_fingerprint"]
+                    or pointer_sha != expected_artifact_hashes["pointer_sha256"]
+                ):
+                    raise DashboardUniverseActivationV2ConflictError(
+                        "approved activation pointer mismatch"
+                    )
                 _fsync_directory(staging)
                 if failpoint == "before_target_rename":
                     raise DashboardUniverseActivationV2Error("injected failure before target rename")
@@ -447,13 +538,14 @@ class ParquetDashboardUniverseActivationV2Repository:
                     raise DashboardUniverseActivationV2Error("injected failure after target publication")
                 if _pointer_bytes(pointer_path) != initial_pointer_bytes:
                     raise DashboardUniverseActivationV2ConflictError("active pointer changed concurrently")
-                active_reference = _reference_for_completed(root, completed)
-                pointer = _build_pointer(
-                    active=active_reference,
-                    rollback=rollback_reference,
-                    switched_at=activated_at,
-                )
                 _atomic_write_pointer(root, pointer, failpoint=failpoint)
+                if expected_artifact_hashes is not None:
+                    if _file_sha256(target / PARQUET_FILE) != expected_artifact_hashes["parquet_sha256"]:
+                        raise DashboardUniverseActivationV2Error("published Parquet differs from approved plan")
+                    if _file_sha256(target / MANIFEST_FILE) != expected_artifact_hashes["manifest_sha256"]:
+                        raise DashboardUniverseActivationV2Error("published manifest differs from approved plan")
+                    if _file_sha256(pointer_path) != expected_artifact_hashes["pointer_sha256"]:
+                        raise DashboardUniverseActivationV2Error("active pointer differs from approved plan")
                 if failpoint == "after_pointer_switch":
                     raise DashboardUniverseActivationV2Error("injected failure after pointer switch")
                 active = read_active_dashboard_universe_activation(

@@ -10,8 +10,8 @@ Never overwrite an existing activation. Any nonzero apply result blocks snapshot
 
 ## Activation V2 authorization boundary
 
-1. Run `scripts/admin/publish-dashboard-universe-activation-v2.sh` without arguments. It must report `dry_run_ready`, the reviewed source fingerprint, 1,718/1,831 planned memberships, target absence, and V1 compatibility mode without writing `/data`.
-2. A later, separately authorized operation may invoke that command once with `--apply`. It publishes the immutable revision first and atomically replaces the active pointer only after formal reread.
+1. Run `scripts/admin/publish-dashboard-universe-activation-v2.sh --approval-package /tmp/<new-plan>.json`. It must report `dry_run_ready`, the reviewed source fingerprint, 1,718/1,831 planned memberships, target absence, V1 compatibility mode, the frozen artifact hashes, `plan_sha256`, and `expected_active_state_fingerprint` without writing `/data`. The new package is canonical JSON, fsynced, and mode 0444.
+2. A later, separately authorized operation may invoke exactly `scripts/admin/publish-dashboard-universe-activation-v2.sh --apply --approved-plan /tmp/<approved-plan>.json --approved-plan-sha256 <approved-plan-sha256> --expected-current-state-fingerprint <approved-current-state-sha256>`. Bare apply and missing approval fields are rejected. Apply must rebuild the byte-identical plan, validate it again under the lock, publish the immutable revision, and atomically replace the pointer only after formal reread.
 3. Never retry an uncertain apply. Inspect the original process, immutable target, pointer bytes, and formal active reader instead.
 4. A completed target with no pointer is inactive. A pointer to V2 is active even if the invoking shell failed after the pointer switch.
 5. If the immutable target is completed but inactive, run `scripts/admin/recover-dashboard-universe-activation-v2.sh` without arguments. After reviewing its target validation and `expected_current_pointer_fingerprint`, a separate authorization may run `--apply --expected-current-pointer-fingerprint <approved-token>`. It only links the existing target and never rewrites it.

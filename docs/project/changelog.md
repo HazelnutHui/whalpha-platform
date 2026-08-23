@@ -2,6 +2,7 @@
 
 ## 2026-08-22 — Versioned Activation V2 readiness
 
+- Bound the main Activation V2 apply to a canonical dry-run approval package. Bare apply is rejected; the immutable plan freezes time/IDs and binds current state, sources, paths, catalog, rollback, fingerprints, and exact Parquet/manifest/pointer hashes. Apply requires the separately approved plan digest and current-state token, revalidates them under lock before production directory creation, and verifies the published bytes against the plan.
 - Closed the four authorization-review findings: completed inactive targets now have a verify-then-link path, first-created directories receive durable parent-entry fsyncs, rollback apply requires the dry-run-approved pointer digest, and the public catalog is contractually Primary-first.
 
 - Added a revisioned immutable Activation V2 contract/repository and a fingerprinted atomic active/default pointer. Formal consumers now use one active reader, with compatibility fallback only when no pointer exists and fail-closed behavior for malformed or inconsistent pointers.
