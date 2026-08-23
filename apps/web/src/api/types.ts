@@ -100,6 +100,19 @@ export interface DashboardUniverseAuditResponse {
   exclusion_counts: Record<string, number>;
 }
 
+export interface DashboardUniverseFunnelStageResponse {
+  universe_id: string;
+  stage_index: number;
+  stage_id: string;
+  display_label: string;
+  input_count: number;
+  excluded_count: number;
+  remaining_count: number;
+  source_revision: string;
+  source_session: string;
+  source_fingerprint: string;
+}
+
 export interface DashboardUniverseViewResponse {
   definition: DashboardUniverseDefinitionResponse;
   audit: DashboardUniverseAuditResponse;
@@ -109,6 +122,7 @@ export interface DashboardUniverseViewResponse {
   outlier_review_count: number;
   quality_flag_counts: Record<string, number>;
   equal_weight_benchmark: MarketBenchmarkResponse;
+  funnel: DashboardUniverseFunnelStageResponse[];
 }
 
 export interface SectorBenchmarkEtfResponse {
@@ -201,6 +215,8 @@ export interface SnapshotManifestResponse {
   available_universe_ids?: string[];
   activation_fingerprint?: string;
   membership_evidence_as_of?: string;
+  funnel_stage_count?: number;
+  funnel_source_fingerprint?: string;
   is_real_provider_backed: boolean;
   access_classification: string;
   contains_raw_provider_data: boolean;

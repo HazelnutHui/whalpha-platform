@@ -1,8 +1,12 @@
 # Dashboard Universe V1
 
-## Reviewed HSAI correction is not active
+## Activation V2 and formal Funnel boundary
 
-The current Dashboard remains on the activated 1,641/1,747 memberships. An offline authoritative review establishes that HSAI has been an ADS since its 2023-02-09 Nasdaq listing, rather than becoming an ADS at the 2026-07-10 ratio change. The superseding shadow plan would exclude it from Common Shares while retaining it in Common Shares + ADRs after the same quantitative gates. That revision is not published or activated. AKR, UNIT, and DFNS manual warnings are accepted as non-blocking. The completed 1,719/1,831 full-base shadow remains immutable.
+Production Activation V2 now resolves 1,718 Common Shares and 1,831 Common Shares + ADRs (1,718 CS plus 113 ADRC); Primary remains first/default and Legacy remains hidden with rollback retained. The deployed snapshot still contains the prior 1,641/1,747 payload. Snapshot contract 1.4 / Dashboard contract 2.1 will carry the [formal source-backed Funnel](dashboard-universe-funnel.md), but freshness currently blocks publication.
+
+## Reviewed HSAI correction
+
+The authoritative revision is now the active Universe source: HSAI has been an ADS since its 2023-02-09 Nasdaq listing and is excluded from Common Shares while retained in Common Shares + ADRs after the same quantitative gates. AKR, UNIT, and DFNS manual warnings remain accepted as non-blocking. Snapshot and OCI still show the prior activation until separately refreshed.
 
 ## Governance Status
 

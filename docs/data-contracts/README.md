@@ -1,5 +1,7 @@
 # Data Contracts
 
+- [Dashboard Snapshot V2](dashboard-snapshot-v2.md)
+
 - [Security Classification V1](security-classification-v1.md)
 
 Security Classification V1 now includes offline-tested SEC issuer evidence observation, canonical evidence, and completion-manifest contracts. No production SEC evidence partition exists.

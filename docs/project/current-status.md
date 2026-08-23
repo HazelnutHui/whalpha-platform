@@ -1,5 +1,13 @@
 # Current Status
 
+## 2026-08-23 — Dashboard Snapshot V2 offline readiness
+
+- Production Activation V2 is active at 1,718 CS / 1,831 CS+ADRC, Primary-first/default with Legacy hidden.
+- Snapshot 1.4 and Dashboard 2.1 carry two source-backed, ten-stage formal Funnels; React renders the selected ledger instead of reconstructing summary stages.
+- A durable immutable snapshot publisher binds deterministic approvals, lock-time CAS/freshness, exact hashes, fsync, verify-then-link recovery, and separately authorized rollback.
+- Production snapshot/OCI remain release `2026-08-19T083341Z-7ed7fdc21686` with old 1,641/1,747 payloads.
+- Canonical EOD 2026-08-19 trails XNYS expected latest 2026-08-21 by two sessions. Candidate generation under `/tmp` succeeds, but production plan/apply fail closed. No `/data`, bundle, or OCI write occurred.
+
 ## 2026-08-22 Activation V2 authorization readiness
 
 Implemented an offline-only immutable Activation V2 publisher/reader and atomic active/default pointer. All formal Activation consumers now resolve the shared pointer; installations without a pointer retain V1 compatibility, while malformed pointers fail closed. The separately authorized rollback mechanism atomically swaps validated active/rollback references and cannot rewrite either target.

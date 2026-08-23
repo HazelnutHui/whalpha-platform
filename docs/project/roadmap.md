@@ -73,7 +73,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Authorize, if desired, one separately bounded Activation V2 publication and atomic pointer switch. The source shadow and read-only V2 activation dry-run are complete; this implementation task executed no apply. Private snapshot, Dashboard change, and OCI deployment remain later, independently authorized decisions. Keep SEC B2 paused.
+Authorize a bounded EOD catch-up to restore XNYS freshness. Only after lag returns to zero should a separate snapshot approval/publication review be considered. Snapshot V2, formal Funnel, pointer/recovery, and rollback code are offline-ready; production snapshot and OCI remain unchanged. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

@@ -1,5 +1,9 @@
 # Market Dashboard V1
 
+## Formal Universe Funnel
+
+Dashboard contract 2.1 renders the ten ordered, source-backed stages supplied for the selected active Universe. The browser does not derive Funnel stages from summary or audit counts. Common Shares remains first/default; Common Shares + ADRs remains second. URL selection, refresh, and history change the Funnel together with every other Universe-dependent module. Snapshot 1.3 remains compatible but reports that the formal Funnel is unavailable.
+
 ## Classification Boundary
 
 Phase A does not change the Dashboard. A future Phase B must make Market Pulse, Breadth, Movers, and Trading Activity Map share one universe definition ID, version, and as-of date. ETF benchmarks, excluded records, quarantine records, and unknown/ambiguous/heuristic-only classifications cannot enter that equity membership.

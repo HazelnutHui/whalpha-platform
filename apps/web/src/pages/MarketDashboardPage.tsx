@@ -312,18 +312,16 @@ function DataDetails({ universe, data }: { universe: DashboardUniverseViewRespon
         <div><dt>Freshness checked at</dt><dd title={data.overview.freshness_checked_at}>{formatTimestamp(data.overview.freshness_checked_at)}</dd></div>
       </dl>
       <h3>Universe Funnel</h3>
-      <dl className="quality-grid">
-        <div><dt>Raw comparable</dt><dd>{formatNumber(universe.audit.raw_comparable_count)}</dd></div>
-        <div><dt>Common equities classified</dt><dd>{formatNumber(universe.audit.common_stock_count)}</dd></div>
-        <div><dt>ETF/ETP excluded</dt><dd>{formatNumber(universe.audit.etf_count)}</dd></div>
-        <div><dt>Supported exchange records</dt><dd>{formatNumber(universe.audit.major_exchange_count)}</dd></div>
-        <div><dt>Price gate passed</dt><dd>{formatNumber(universe.audit.price_gate_count)}</dd></div>
-        <div><dt>Selected members</dt><dd>{formatNumber(universe.definition.member_count)}</dd></div>
-        <div><dt>CS / ADRC</dt><dd>{formatNumber(universe.definition.security_type_composition.CS ?? 0)} / {formatNumber(universe.definition.security_type_composition.ADRC ?? 0)}</dd></div>
-        <div><dt>Membership evidence as of</dt><dd>{data.overview.classification_as_of_date}</dd></div>
-        <div><dt>Reviewed overrides</dt><dd>{formatNumber(data.overview.reviewed_override_count)}</dd></div>
-        <div><dt>Outlier review</dt><dd>{formatNumber(universe.outlier_review_count)}</dd></div>
-      </dl>
+      {universe.funnel?.length === 10 ? (
+        <ol className="funnel-list" aria-label={`${universe.definition.display_name} screening Funnel`}>
+          {universe.funnel.map((stage) => (
+            <li key={stage.stage_id}>
+              <span>{stage.stage_index}. {stage.display_label}</span>
+              <span>{formatNumber(stage.input_count)} − {formatNumber(stage.excluded_count)} = <strong>{formatNumber(stage.remaining_count)}</strong></span>
+            </li>
+          ))}
+        </ol>
+      ) : <p className="quality-copy">Formal Universe Funnel unavailable for this snapshot version.</p>}
       <h3>Methodology Notes</h3>
       <div className="quality-flags">
         <span>close × volume trading activity proxy</span>

@@ -21,7 +21,7 @@ from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 from tip_api.services.dashboard_overview import DashboardOverviewService
 from tip_api.persistence.parquet.dashboard_universe_activation_active import ActiveDashboardUniverseActivation, read_active_dashboard_universe_activation
 
-SNAPSHOT_CONTRACT_VERSION = "1.3"
+SNAPSHOT_CONTRACT_VERSION = "1.4"
 SNAPSHOT_FILES = {
     "overview_file": "market-overview.json",
     "summary_file": "market-summary.json",
@@ -38,7 +38,7 @@ class DashboardSnapshotError(RuntimeError):
 class DashboardSnapshotManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[123])?$")
+    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[1234])?$")
     release_id: str
     generated_at: str
     current_session_date: str
@@ -71,6 +71,8 @@ class DashboardSnapshotManifest(BaseModel):
     available_universe_ids: tuple[str, ...] = ()
     activation_fingerprint: str | None = None
     membership_evidence_as_of: str | None = None
+    funnel_stage_count: int | None = None
+    funnel_source_fingerprint: str | None = None
     is_real_provider_backed: bool
     access_classification: str
     contains_raw_provider_data: bool
@@ -98,12 +100,16 @@ class DashboardSnapshotManifest(BaseModel):
             raise ValueError("snapshot freshness fields are required for contract 1.1")
         if self.snapshot_contract_version == "1.2" and self.classification_as_of_date is None:
             raise ValueError("snapshot governance fields are required for contract 1.2")
-        if self.snapshot_contract_version == "1.3" and (
+        if self.snapshot_contract_version in {"1.3", "1.4"} and (
             self.classification_as_of_date is None or self.selected_universe_id is None or
             len(self.available_universe_ids) != 2 or self.activation_fingerprint is None or
             self.membership_evidence_as_of is None
         ):
-            raise ValueError("snapshot activation fields are required for contract 1.3")
+            raise ValueError("snapshot activation fields are required for contract 1.3+")
+        if self.snapshot_contract_version == "1.4" and (
+            self.funnel_stage_count != 20 or self.funnel_source_fingerprint is None
+        ):
+            raise ValueError("snapshot Funnel fields are required for contract 1.4")
         return self
 
 
@@ -190,8 +196,10 @@ def build_private_dashboard_snapshot(
             _validate_json_file(path, filename)
             hashes[filename] = sha256_file(path)
 
+        funnel_stage_count = sum(len(item.funnel) for item in overview.universes)
+        snapshot_contract_version = SNAPSHOT_CONTRACT_VERSION if funnel_stage_count == 20 else "1.3"
         manifest = DashboardSnapshotManifest(
-            snapshot_contract_version=SNAPSHOT_CONTRACT_VERSION,
+            snapshot_contract_version=snapshot_contract_version,
             release_id=rid,
             generated_at=generated.astimezone(UTC).isoformat().replace("+00:00", "Z"),
             current_session_date=summary.current_session_date.isoformat(),
@@ -224,6 +232,11 @@ def build_private_dashboard_snapshot(
             available_universe_ids=tuple(item.definition.universe_id for item in overview.universes),
             activation_fingerprint=overview.activation_fingerprint,
             membership_evidence_as_of=overview.classification_as_of_date.isoformat(),
+            funnel_stage_count=funnel_stage_count if snapshot_contract_version == "1.4" else None,
+            funnel_source_fingerprint=(
+                next(item.funnel[0].source_fingerprint for item in overview.universes if item.funnel)
+                if snapshot_contract_version == "1.4" else None
+            ),
             is_real_provider_backed=True,
             access_classification="private",
             contains_raw_provider_data=False,
@@ -303,6 +316,13 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             raise DashboardSnapshotError("snapshot file checksum mismatch")
     if manifest.access_classification != "private" or manifest.contains_credentials or manifest.contains_raw_provider_data:
         raise DashboardSnapshotError("snapshot manifest violates access boundary")
+    if manifest.snapshot_contract_version == "1.4":
+        overview = DashboardOverviewResponse.model_validate_json((private_dir / manifest.overview_file).read_text(encoding="utf-8"))
+        if overview.contract_version != "2.1" or sum(len(item.funnel) for item in overview.universes) != 20:
+            raise DashboardSnapshotError("snapshot formal Funnel contract mismatch")
+        fingerprints = {stage.source_fingerprint for item in overview.universes for stage in item.funnel}
+        if fingerprints != {manifest.funnel_source_fingerprint}:
+            raise DashboardSnapshotError("snapshot Funnel source fingerprint mismatch")
     return manifest
 
 

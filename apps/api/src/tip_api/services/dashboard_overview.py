@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
 from datetime import UTC, date, datetime
+from pathlib import Path
 from decimal import Decimal
 from typing import Callable, Iterable
 
@@ -14,6 +15,10 @@ from tip_api.services.eod_market_data import EodMarketDataQueryService, EodQuery
 from tip_api.services.eod_return_analytics import _mean, _median
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar, evaluate_market_data_freshness
 from tip_api.persistence.parquet.dashboard_universe_activation_active import ActiveDashboardUniverseActivation
+from tip_api.persistence.parquet.dashboard_universe_activation import PUBLIC_SECONDARY_ID
+from tip_api.persistence.parquet.superseding_full_base import read_completed_superseding_full_base
+from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
+from tip_api.services.provider_classified_universe import CANDIDATE_A_ID
 
 DEFAULT_TRADABLE_PRICE = Decimal("5")
 DEFAULT_TRADABLE_PREVIOUS_DOLLAR_VOLUME = Decimal("20000000")
@@ -74,6 +79,20 @@ class DashboardUniverseAudit:
 
 
 @dataclass(frozen=True, slots=True)
+class DashboardUniverseFunnelStage:
+    universe_id: str
+    stage_index: int
+    stage_id: str
+    display_label: str
+    input_count: int
+    excluded_count: int
+    remaining_count: int
+    source_revision: str
+    source_session: date
+    source_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
 class DashboardUniverseView:
     definition: DashboardUniverseDefinition
     audit: DashboardUniverseAudit
@@ -83,6 +102,7 @@ class DashboardUniverseView:
     outlier_review_count: int
     quality_flag_counts: dict[str, int]
     equal_weight_benchmark: MarketBenchmark
+    funnel: tuple[DashboardUniverseFunnelStage, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -197,13 +217,15 @@ class DashboardOverviewService:
             selected_record, _ = self.activation.select(universe_id)
         except ValueError as exc:
             raise EodQueryValidationError("unknown dashboard universe") from exc
+        funnels = self._formal_funnels(current_date)
         universe_views = tuple(
-            self._build_universe(record, self.activation.member_ids_by_universe[record.universe_id], rows, current_date, previous_date)
+            self._build_universe(record, self.activation.member_ids_by_universe[record.universe_id], rows, current_date, previous_date,
+                                 funnel=funnels.get(record.universe_id, ()))
             for record in self.activation.universes
         )
         default_id = self.activation.manifest.default_universe_id
         return DashboardOverviewV11(
-            contract_version="2.0",
+            contract_version="2.1" if all(len(item.funnel) == 10 for item in universe_views) else "2.0",
             default_universe_id=default_id,
             selected_universe_id=selected_record.universe_id,
             universe_definition_id=self.activation.manifest.policy_version,
@@ -299,7 +321,8 @@ class DashboardOverviewService:
         return tuple(sorted(rows, key=lambda item: (item.row.ticker, str(item.row.instrument_id))))
 
     def _build_universe(
-        self, record, member_ids, rows: tuple[DashboardReturnRow, ...], current_date: date, previous_date: date
+        self, record, member_ids, rows: tuple[DashboardReturnRow, ...], current_date: date, previous_date: date,
+        *, funnel: tuple[DashboardUniverseFunnelStage, ...] = (),
     ) -> DashboardUniverseView:
         definition = DashboardUniverseDefinition(
             universe_id=record.universe_id, name=record.long_display_name, display_name=record.display_name,
@@ -328,7 +351,44 @@ class DashboardOverviewService:
                 previous_close=None,current_close=None,close_to_close_return=_mean(tuple(row.close_to_close_return for row in selected_rows)),
                 quality_flags=("equal_weight_not_index_return",),
             ),
+            funnel=funnel,
         )
+
+    def _formal_funnels(self, analysis_session: date) -> dict[str, tuple[DashboardUniverseFunnelStage, ...]]:
+        if getattr(self.activation.manifest, "manifest_version", None) != "2.0":
+            return {}
+        source = read_completed_superseding_full_base(
+            Path(self.query_service.repository.root), analysis_session=analysis_session
+        )
+        if source.manifest.logical_content_fingerprint != self.activation.manifest.source_publication_fingerprint:
+            raise EodQueryValidationError("active activation and formal Funnel source disagree")
+        mapping = {FULL_BASE_A_ID: CANDIDATE_A_ID, FULL_BASE_B_ID: PUBLIC_SECONDARY_ID}
+        output: dict[str, list[DashboardUniverseFunnelStage]] = {value: [] for value in mapping.values()}
+        for item in source.funnels:
+            universe_id = mapping.get(item.policy_id)
+            if universe_id is None:
+                raise EodQueryValidationError("formal Funnel contains an unknown policy")
+            if item.stage_kind != "sequential" or item.input_count - item.excluded_count != item.remaining_count:
+                raise EodQueryValidationError("formal Funnel stage does not close")
+            output[universe_id].append(DashboardUniverseFunnelStage(
+                universe_id=universe_id, stage_index=item.stage_order, stage_id=item.stage_id,
+                display_label=item.stage_label, input_count=item.input_count,
+                excluded_count=item.excluded_count, remaining_count=item.remaining_count,
+                source_revision=source.manifest.revision_id, source_session=analysis_session,
+                source_fingerprint=source.manifest.logical_content_fingerprint,
+            ))
+        finalized: dict[str, tuple[DashboardUniverseFunnelStage, ...]] = {}
+        records = {item.universe_id: item for item in self.activation.universes}
+        for universe_id, stages in output.items():
+            ordered = tuple(sorted(stages, key=lambda value: value.stage_index))
+            if tuple(item.stage_index for item in ordered) != tuple(range(1, 11)):
+                raise EodQueryValidationError("formal Funnel stage order is incomplete")
+            if any(left.remaining_count != right.input_count for left, right in zip(ordered, ordered[1:])):
+                raise EodQueryValidationError("formal Funnel stages do not reconcile")
+            if ordered[-1].remaining_count != records[universe_id].member_count:
+                raise EodQueryValidationError("formal Funnel final count disagrees with active membership")
+            finalized[universe_id] = ordered
+        return finalized
 
     def _sector_benchmarks(
         self, rows: tuple[DashboardReturnRow, ...], current_date: date, previous_date: date

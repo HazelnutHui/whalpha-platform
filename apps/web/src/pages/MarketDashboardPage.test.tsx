@@ -196,6 +196,7 @@ describe('MarketDashboardPage', () => {
           member_count: 1718,
           security_type_composition: { CS: 1718 },
         },
+        funnel: [],
       },
       {
         ...v2.universes.find((item) => item.definition.universe_id === 'provider_classified_common_shares_plus_adrs_v1')!,
@@ -205,6 +206,7 @@ describe('MarketDashboardPage', () => {
           member_count: 1831,
           security_type_composition: { CS: 1718, ADRC: 113 },
         },
+        funnel: [],
       },
     ];
     vi.mocked(fetch).mockResolvedValue(okResponse(v2));
@@ -222,11 +224,14 @@ describe('MarketDashboardPage', () => {
   it('switches every view with a stable URL universe value', async () => {
     render(<MarketDashboardPage />);
     const selector=await screen.findByLabelText('Dashboard universe');
+    expect(screen.getByLabelText('Common Shares screening Funnel').children).toHaveLength(10);
     fireEvent.change(selector,{target:{value:'provider_classified_common_shares_plus_adrs_v1'}});
     expect(selector).toHaveValue('provider_classified_common_shares_plus_adrs_v1');
     expect(window.location.search).toContain('universe=provider_classified_common_shares_plus_adrs_v1');
     expect(screen.getByText(/Market Pulse · Common Shares \+ ADRs/)).toBeInTheDocument();
     expect(screen.getByText(/Market Breadth · Common Shares \+ ADRs/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Common Shares + ADRs screening Funnel').children).toHaveLength(10);
+    expect(screen.queryByLabelText('Common Shares screening Funnel')).not.toBeInTheDocument();
   });
 
   it('normalizes an invalid URL universe to the activated default', async () => {

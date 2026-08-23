@@ -308,6 +308,9 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "dry-run" in deploy_script.read_text()
     assert "--apply" in deploy_script.read_text()
     assert "VITE_MARKET_DATA_MODE=snapshot" in build_script.read_text()
+    assert "--snapshot-path" in build_script.read_text()
+    assert "private-dashboard-v2/revision=universe-funnel-v2" in build_script.read_text()
+    assert "release_id=*" in build_script.read_text()
     text = nginx_template.read_text()
     assert "location /dashboard/" in text and "auth_request /auth/internal-verify" in text
     assert "location = / {" in text and "try_files /login/index.html =404" in text

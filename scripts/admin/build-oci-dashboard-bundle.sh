@@ -5,11 +5,12 @@ script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd -- "${script_dir}/../.." && pwd)
 web_dir="${repo_root}/apps/web"
 snapshot_root="${repo_root}/build/private-dashboard"
+snapshot_v2_root="/data/trading-intelligence-platform/market-data/snapshots/private-dashboard-v2/revision=universe-funnel-v2"
 bundle_root="${repo_root}/build/oci-dashboard"
 
 usage() {
   cat <<MSG
-Usage: $0 --snapshot-release RELEASE_ID [--bundle-release RELEASE_ID]
+Usage: $0 (--snapshot-release RELEASE_ID | --snapshot-path ABSOLUTE_PATH) [--bundle-release RELEASE_ID]
 
 Build a versioned OCI dashboard bundle from an existing private dashboard snapshot.
 No upload or deployment is performed.
@@ -17,11 +18,16 @@ MSG
 }
 
 snapshot_release=""
+snapshot_path=""
 bundle_release=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --snapshot-release)
       snapshot_release="${2:-}"
+      shift 2
+      ;;
+    --snapshot-path)
+      snapshot_path="${2:-}"
       shift 2
       ;;
     --bundle-release)
@@ -40,26 +46,46 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "${snapshot_release}" ]]; then
-  echo "--snapshot-release is required" >&2
+if [[ -n "${snapshot_release}" && -n "${snapshot_path}" ]] || [[ -z "${snapshot_release}" && -z "${snapshot_path}" ]]; then
+  echo "exactly one of --snapshot-release or --snapshot-path is required" >&2
   usage >&2
   exit 2
 fi
-if [[ ! "${snapshot_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
+if [[ -n "${snapshot_release}" && ! "${snapshot_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
   echo "Unsafe snapshot release id" >&2
   exit 2
 fi
-if [[ -z "${bundle_release}" ]]; then
+if [[ -z "${bundle_release}" && -n "${snapshot_release}" ]]; then
   bundle_release="${snapshot_release}"
+fi
+if [[ -z "${bundle_release}" ]]; then
+  echo "--bundle-release is required with --snapshot-path" >&2
+  exit 2
 fi
 if [[ ! "${bundle_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
   echo "Unsafe bundle release id" >&2
   exit 2
 fi
 
-snapshot_dir="${snapshot_root}/${snapshot_release}"
+if [[ -n "${snapshot_path}" ]]; then
+  if [[ "${snapshot_path}" != /* ]]; then
+    echo "--snapshot-path must be absolute" >&2
+    exit 2
+  fi
+  snapshot_dir=$(realpath -e -- "${snapshot_path}")
+  if [[ "${snapshot_dir}" != "${snapshot_path}" || "${snapshot_dir}" != "${snapshot_v2_root}"/release_id=* ]]; then
+    echo "Snapshot path is outside the approved immutable V2 namespace or contains a symlink" >&2
+    exit 2
+  fi
+else
+  snapshot_dir="${snapshot_root}/${snapshot_release}"
+fi
 if [[ ! -f "${snapshot_dir}/private-data/v1/manifest.json" ]]; then
   echo "Completed snapshot manifest was not found" >&2
+  exit 1
+fi
+if [[ ! -f "${snapshot_dir}/.complete" ]]; then
+  echo "Completed snapshot marker was not found" >&2
   exit 1
 fi
 

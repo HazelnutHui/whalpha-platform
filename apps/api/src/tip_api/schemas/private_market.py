@@ -6,13 +6,14 @@ from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from tip_api.read_models.market import EodReturnReadModel, LiquidityMapNodeV1, LiquidityMapV1, MarketSummaryV1, MoversV1
 from tip_api.services.dashboard_overview import (
     DashboardOverviewV11,
     DashboardUniverseAudit,
     DashboardUniverseDefinition,
+    DashboardUniverseFunnelStage,
     DashboardUniverseView,
     MarketBenchmark,
     SectorBenchmarkEtf,
@@ -264,6 +265,30 @@ class DashboardUniverseAuditResponse(BaseModel):
         )
 
 
+class DashboardUniverseFunnelStageResponse(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+    universe_id: str
+    stage_index: int = Field(ge=1, le=10)
+    stage_id: str
+    display_label: str
+    input_count: int = Field(ge=0)
+    excluded_count: int = Field(ge=0)
+    remaining_count: int = Field(ge=0)
+    source_revision: str
+    source_session: date
+    source_fingerprint: str
+
+    @model_validator(mode="after")
+    def closes(self) -> "DashboardUniverseFunnelStageResponse":
+        if self.input_count - self.excluded_count != self.remaining_count:
+            raise ValueError("Funnel stage does not close")
+        return self
+
+    @classmethod
+    def from_model(cls, model: DashboardUniverseFunnelStage) -> "DashboardUniverseFunnelStageResponse":
+        return cls(universe_id=model.universe_id, stage_index=model.stage_index, stage_id=model.stage_id, display_label=model.display_label, input_count=model.input_count, excluded_count=model.excluded_count, remaining_count=model.remaining_count, source_revision=model.source_revision, source_session=model.source_session, source_fingerprint=model.source_fingerprint)
+
+
 class DashboardUniverseViewResponse(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
     definition: DashboardUniverseDefinitionResponse
@@ -274,6 +299,21 @@ class DashboardUniverseViewResponse(BaseModel):
     outlier_review_count: int
     quality_flag_counts: dict[str, int]
     equal_weight_benchmark: MarketBenchmarkResponse
+    funnel: tuple[DashboardUniverseFunnelStageResponse, ...] = ()
+
+    @model_validator(mode="after")
+    def funnel_contract(self) -> "DashboardUniverseViewResponse":
+        if not self.funnel:
+            return self
+        if len(self.funnel) != 10 or tuple(item.stage_index for item in self.funnel) != tuple(range(1, 11)):
+            raise ValueError("formal Universe Funnel must have ten ordered stages")
+        if any(item.universe_id != self.definition.universe_id for item in self.funnel):
+            raise ValueError("Funnel stage Universe reference mismatch")
+        if any(current.remaining_count != following.input_count for current, following in zip(self.funnel, self.funnel[1:])):
+            raise ValueError("Universe Funnel stages do not close sequentially")
+        if self.funnel[-1].remaining_count != self.definition.member_count:
+            raise ValueError("Universe Funnel final count disagrees with membership")
+        return self
 
     @classmethod
     def from_model(cls, model: DashboardUniverseView) -> DashboardUniverseViewResponse:
@@ -286,6 +326,7 @@ class DashboardUniverseViewResponse(BaseModel):
             outlier_review_count=model.outlier_review_count,
             quality_flag_counts=model.quality_flag_counts,
             equal_weight_benchmark=MarketBenchmarkResponse.from_model(model.equal_weight_benchmark),
+            funnel=tuple(DashboardUniverseFunnelStageResponse.from_model(item) for item in model.funnel),
         )
 
 

@@ -1,5 +1,5 @@
 import { fetchJson } from './client';
-import type { DashboardData, DashboardOverviewResponse, DashboardUniverseAuditResponse, DashboardUniverseDefinitionResponse, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketBenchmarkResponse, MarketSummaryResponse, MoversResponse, SectorBenchmarkEtfResponse, SnapshotManifestResponse } from './types';
+import type { DashboardData, DashboardOverviewResponse, DashboardUniverseAuditResponse, DashboardUniverseDefinitionResponse, DashboardUniverseFunnelStageResponse, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketBenchmarkResponse, MarketSummaryResponse, MoversResponse, SectorBenchmarkEtfResponse, SnapshotManifestResponse } from './types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -195,12 +195,14 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     governance_status: typeof value.governance_status === 'string' ? value.governance_status : undefined,
     classification_as_of_date: value.classification_as_of_date === undefined ? undefined : requireNullableString(value, 'classification_as_of_date'),
     evidence_coverage_status: typeof value.evidence_coverage_status === 'string' ? value.evidence_coverage_status : undefined,
+    funnel_stage_count: value.funnel_stage_count === undefined ? undefined : requireNumber(value, 'funnel_stage_count'),
+    funnel_source_fingerprint: typeof value.funnel_source_fingerprint === 'string' ? value.funnel_source_fingerprint : undefined,
     is_real_provider_backed: requireBoolean(value, 'is_real_provider_backed'),
     access_classification: requireString(value, 'access_classification'),
     contains_raw_provider_data: requireBoolean(value, 'contains_raw_provider_data'),
     contains_credentials: requireBoolean(value, 'contains_credentials'),
   };
-  if (!['1', '1.1', '1.2', '1.3'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
+  if (!['1', '1.1', '1.2', '1.3', '1.4'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
     throw new Error('Unsupported private dashboard snapshot');
   }
   if (manifest.snapshot_contract_version === '1.1' && (
@@ -220,7 +222,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
   )) {
     throw new Error('Private dashboard snapshot is missing governance metadata');
   }
-  if (manifest.snapshot_contract_version === '1.3') {
+  if (['1.3', '1.4'].includes(manifest.snapshot_contract_version)) {
     const ids = value.available_universe_ids;
     if (!Array.isArray(ids) || ids.length !== 2 || ids.some((item) => typeof item !== 'string')) throw new Error('Private dashboard snapshot activation catalog is invalid');
     manifest.selected_universe_id = requireString(value, 'selected_universe_id');
@@ -228,6 +230,11 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     manifest.activation_fingerprint = requireString(value, 'activation_fingerprint');
     manifest.membership_evidence_as_of = requireString(value, 'membership_evidence_as_of');
   }
+  if (manifest.snapshot_contract_version === '1.4' && (
+    manifest.funnel_stage_count !== 20 ||
+    !manifest.funnel_source_fingerprint ||
+    !/^[0-9a-f]{64}$/.test(manifest.funnel_source_fingerprint)
+  )) throw new Error('Private dashboard snapshot Funnel metadata is invalid');
   if (manifest.contains_credentials || manifest.contains_raw_provider_data) {
     throw new Error('Unsafe private dashboard snapshot');
   }
@@ -272,6 +279,21 @@ function parseUniverseAudit(value: unknown): DashboardUniverseAuditResponse {
   };
 }
 
+function parseFunnelStage(value: unknown): DashboardUniverseFunnelStageResponse {
+  if (!isRecord(value)) throw new Error('Invalid market API payload: Funnel stage');
+  const stage = {
+    universe_id: requireString(value, 'universe_id'), stage_index: requireNumber(value, 'stage_index'),
+    stage_id: requireString(value, 'stage_id'), display_label: requireString(value, 'display_label'),
+    input_count: requireNumber(value, 'input_count'), excluded_count: requireNumber(value, 'excluded_count'),
+    remaining_count: requireNumber(value, 'remaining_count'), source_revision: requireString(value, 'source_revision'),
+    source_session: requireString(value, 'source_session'), source_fingerprint: requireString(value, 'source_fingerprint'),
+  };
+  if (stage.input_count - stage.excluded_count !== stage.remaining_count) {
+    throw new Error('Invalid market API payload: Funnel stage does not close');
+  }
+  return stage;
+}
+
 function parseUniverseView(value: unknown): DashboardUniverseViewResponse {
   if (!isRecord(value)) {
     throw new Error('Invalid market API payload: universe view');
@@ -280,7 +302,7 @@ function parseUniverseView(value: unknown): DashboardUniverseViewResponse {
   if (!isRecord(quality) || Object.values(quality).some((item) => typeof item !== 'number')) {
     throw new Error('Invalid market API payload: quality_flag_counts');
   }
-  return {
+  const view = {
     definition: parseUniverseDefinition(value.definition),
     audit: parseUniverseAudit(value.audit),
     summary: parseSummary(value.summary),
@@ -289,7 +311,17 @@ function parseUniverseView(value: unknown): DashboardUniverseViewResponse {
     outlier_review_count: requireNumber(value, 'outlier_review_count'),
     quality_flag_counts: Object.fromEntries(Object.entries(quality).map(([key, item]) => [key, item as number])),
     equal_weight_benchmark: parseMarketBenchmark(value.equal_weight_benchmark),
+    funnel: Array.isArray(value.funnel) ? value.funnel.map(parseFunnelStage) : [],
   };
+  if (view.funnel.length > 0) {
+    if (view.funnel.length !== 10 || view.funnel.some((stage, index) =>
+      stage.stage_index !== index + 1 || stage.universe_id !== view.definition.universe_id ||
+      (index > 0 && view.funnel[index - 1].remaining_count !== stage.input_count)
+    ) || view.funnel[9].remaining_count !== view.definition.member_count) {
+      throw new Error('Invalid market API payload: formal Universe Funnel');
+    }
+  }
+  return view;
 }
 
 function parseSectorBenchmark(value: unknown): SectorBenchmarkEtfResponse {

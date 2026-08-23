@@ -28,6 +28,13 @@ describe('market API runtime validation', () => {
     expect(overview.sector_benchmarks).toHaveLength(11);
     expect(overview.freshness_status).toBe('stale');
     expect(overview.session_lag).toBe(1);
+    expect(overview.universes[0].funnel).toHaveLength(10);
+  });
+
+  it('rejects a Funnel stage that does not close', () => {
+    const invalid = structuredClone(demoDashboardData.overview);
+    invalid.universes[0].funnel[0].excluded_count += 1;
+    expect(() => parseDashboardOverview(invalid)).toThrow('Funnel stage does not close');
   });
 
   it('requires freshness metadata for snapshot contract 1.1', () => {
@@ -78,6 +85,26 @@ describe('market API runtime validation', () => {
       contains_credentials: false,
     });
     expect(manifest.snapshot_contract_version).toBe('1');
+  });
+
+  it('validates the formal Funnel snapshot contract', () => {
+    const base = {
+      snapshot_contract_version: '1.4', release_id: '2026-08-19T120000Z-abcdef0',
+      generated_at: '2026-08-23T12:00:00Z', current_session_date: '2026-08-19', previous_session_date: '2026-08-18',
+      expected_latest_completed_session: '2026-08-19', actual_latest_completed_session: '2026-08-19', session_lag: 0,
+      freshness_status: 'fresh', calendar_id: 'XNYS', freshness_checked_at: '2026-08-23T12:00:00Z', data_status: 'complete',
+      overview_file: 'market-overview.json', summary_file: 'market-summary.json', movers_file: 'movers.json', liquidity_map_file: 'liquidity-map.json',
+      file_sha256: {}, summary_node_count: 1, mover_gainer_count: 10, mover_loser_count: 10, liquidity_node_count: 100, warning_count: 0,
+      universe_definition_id: 'dashboard_universe_activation_v2', universe_version: '2.0', governance_status: 'provisional_classification',
+      classification_as_of_date: '2026-08-14', evidence_coverage_status: 'provider_form_complete_issuer_structure_provisional',
+      selected_universe_id: 'provider_classified_common_shares_v1',
+      available_universe_ids: ['provider_classified_common_shares_v1', 'provider_classified_common_shares_plus_adrs_v1'],
+      activation_fingerprint: 'a'.repeat(64), membership_evidence_as_of: '2026-08-14',
+      funnel_stage_count: 20, funnel_source_fingerprint: 'b'.repeat(64), is_real_provider_backed: true,
+      access_classification: 'private', contains_raw_provider_data: false, contains_credentials: false,
+    };
+    expect(parseSnapshotManifest(base).funnel_stage_count).toBe(20);
+    expect(() => parseSnapshotManifest({ ...base, funnel_stage_count: 19 })).toThrow('Funnel');
   });
 
   it('requires governance metadata for snapshot contract 1.2', () => {

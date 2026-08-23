@@ -1,5 +1,9 @@
 # Documentation Index
 
+- [Dashboard Snapshot V2 data contract](data-contracts/dashboard-snapshot-v2.md)
+- [Dashboard Universe Funnel](product/dashboard-universe-funnel.md)
+- [Dashboard Snapshot V2 operations](operations/dashboard-snapshot-publication.md)
+
 ## Security Type Governance
 
 - [Security Classification V1](data-contracts/security-classification-v1.md)

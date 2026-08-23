@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-23 — Formal Dashboard Funnel and durable Snapshot V2 readiness
+
+- Added Dashboard contract 2.1 with ten source-backed, sequentially closed Funnel stages for each active public Universe; API/snapshot carry them directly and React switches the matching ledger with the existing stable URL selection.
+- Added snapshot contract 1.4 plus immutable publication, active pointer with V1 no-pointer compatibility, canonical approval plan, lock/CAS, fsync, completed-target verify-then-link, and independent rollback.
+- Added an XNYS freshness gate at plan creation and inside the apply lock. The formal candidate is 1,718/1,831 with all 20 stages, but actual EOD 2026-08-19 trails expected 2026-08-21 by two sessions, so publication is blocked.
+- Production snapshot, Activation pointer, Dashboard deployment, and OCI release were unchanged; `/data` and external-network writes were zero.
+
 ## 2026-08-22 — Versioned Activation V2 readiness
 
 - Bound the main Activation V2 apply to a canonical dry-run approval package. Bare apply is rejected; the immutable plan freezes time/IDs and binds current state, sources, paths, catalog, rollback, fingerprints, and exact Parquet/manifest/pointer hashes. Apply requires the separately approved plan digest and current-state token, revalidates them under lock before production directory creation, and verifies the published bytes against the plan.

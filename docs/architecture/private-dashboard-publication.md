@@ -1,5 +1,9 @@
 # Private Dashboard Publication
 
+## Snapshot 1.4 / Dashboard 2.1 offline readiness
+
+The [Dashboard Snapshot V2 contract](../data-contracts/dashboard-snapshot-v2.md) and [operations boundary](../operations/dashboard-snapshot-publication.md) add the formal 20-record Universe Funnel, immutable releases, approval-plan-bound atomic publication, active-pointer compatibility fallback, verify-then-link recovery, separate rollback, and a lock-time XNYS freshness gate. The production release remains contract 1.3 and unchanged. With canonical EOD at 2026-08-19 and expected latest at 2026-08-21, the offline candidate is `stale` with lag two and cannot create a production approval package.
+
 ## Classification Phase Boundary
 
 Phase A audits do not produce a private snapshot or bundle. A later snapshot contract must carry the selected universe definition ID, version, as-of date, taxonomy fingerprint, and ruleset fingerprint so Pulse, Breadth, Movers, and Trading Activity Map reconcile to identical membership.

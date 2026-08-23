@@ -66,6 +66,21 @@ const summary: MarketSummaryResponse = {
   data_status: 'synthetic_demo',
 };
 
+function funnel(universeId: string, selected: number) {
+  return Array.from({ length: 10 }, (_, offset) => ({
+    universe_id: universeId,
+    stage_index: offset + 1,
+    stage_id: `synthetic_stage_${offset + 1}`,
+    display_label: `Synthetic stage ${offset + 1}`,
+    input_count: offset === 0 ? 280 : selected,
+    excluded_count: offset === 0 ? 280 - selected : 0,
+    remaining_count: selected,
+    source_revision: 'synthetic-demo',
+    source_session: current,
+    source_fingerprint: 'f'.repeat(64),
+  }));
+}
+
 const universe = {
   definition: {
     universe_id: 'provider_classified_common_shares_v1',
@@ -102,6 +117,7 @@ const universe = {
   outlier_review_count: 2,
   quality_flag_counts: { synthetic_demo_fixture: 240 },
   equal_weight_benchmark: { benchmark_id:'equal_weight_universe',label:'Equal-Weight Universe',ticker:null,available:true,current_session_date:current,previous_session_date:previous,previous_close:null,current_close:null,close_to_close_return:summary.equal_weight_return,quality_flags:['equal_weight_not_index_return'] },
+  funnel: funnel('provider_classified_common_shares_v1', 240),
 };
 
 const sectorBenchmarks = ['XLC', 'XLY', 'XLP', 'XLE', 'XLF', 'XLV', 'XLI', 'XLB', 'XLRE', 'XLK', 'XLU'].map((ticker, index) => ({
@@ -159,7 +175,7 @@ export const demoDashboardData: DashboardData = {
     freshness_checked_at: '2026-08-15T18:00:00Z',
     universes: [
       universe,
-      { ...universe, definition: { ...universe.definition, universe_id: 'provider_classified_common_shares_plus_adrs_v1', display_name: 'Common Shares + ADRs', name: 'Provider-Classified Common Shares + ADRs', long_display_name:'Provider-Classified Common Shares + ADRs',member_count:260,security_type_composition:{CS:240,ADRC:20} } },
+      { ...universe, definition: { ...universe.definition, universe_id: 'provider_classified_common_shares_plus_adrs_v1', display_name: 'Common Shares + ADRs', name: 'Provider-Classified Common Shares + ADRs', long_display_name:'Provider-Classified Common Shares + ADRs',member_count:260,security_type_composition:{CS:240,ADRC:20} }, funnel: funnel('provider_classified_common_shares_plus_adrs_v1', 260) },
     ],
     market_benchmarks: marketBenchmarks,
     sector_benchmarks: sectorBenchmarks,
