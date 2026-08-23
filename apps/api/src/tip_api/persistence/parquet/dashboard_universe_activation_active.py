@@ -368,6 +368,23 @@ class ParquetDashboardUniverseActivationV2Repository:
         with _exclusive_activation_lock(root):
             initial_pointer_bytes = _pointer_bytes(pointer_path)
             observed_pointer = ABSENT_POINTER_FINGERPRINT if initial_pointer_bytes is None else read_dashboard_universe_activation_pointer(root).pointer_content_fingerprint
+            if expected_artifact_hashes is not None:
+                approved_unsigned = {
+                    key: value for key, value in expected_artifact_hashes.items()
+                    if key != "plan_sha256"
+                }
+                approved_digest = hashlib.sha256(
+                    (json.dumps(
+                        approved_unsigned, sort_keys=True, separators=(",", ":"),
+                        ensure_ascii=True,
+                    ) + "\n").encode()
+                ).hexdigest()
+                if not hmac.compare_digest(
+                    approved_digest, expected_artifact_hashes["plan_sha256"]
+                ):
+                    raise DashboardUniverseActivationV2ConflictError(
+                        "approved plan SHA-256 changed before publication"
+                    )
             if expected_current_pointer_fingerprint is not None and not hmac.compare_digest(observed_pointer, expected_current_pointer_fingerprint):
                 raise DashboardUniverseActivationV2ConflictError("active pointer changed before publication")
             current = read_active_dashboard_universe_activation(root, analysis_session=session, validate_sources=True)
@@ -386,6 +403,42 @@ class ParquetDashboardUniverseActivationV2Repository:
                         "approved active state changed before publication"
                     )
             rollback_reference = _reference_for_completed(root, current)
+            if expected_artifact_hashes is not None:
+                expected_envelope = {
+                    "schema_version": "1.0",
+                    "revision_id": REVISION_ID,
+                    "analysis_session": session.isoformat(),
+                    "source_publication_id": source_publication_fingerprint,
+                    "source_publication_path": str((root / source_publication_path).resolve(strict=True)),
+                    "source_publication_fingerprint": source_publication_fingerprint,
+                    "reviewed_security_form_fingerprint": reviewed_security_form_fingerprint,
+                    "expected_current_pointer_fingerprint": observed_pointer,
+                    "expected_current_activation_fingerprint": current.manifest.logical_content_fingerprint,
+                    "activated_at": activated_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
+                    "activation_ids": [str(item.activation_id) for item in records],
+                    "universes": [{
+                        "universe_id": item.universe_id,
+                        "member_count": item.member_count,
+                        "composition": {
+                            entry.provider_type_code: entry.count
+                            for entry in item.security_type_composition
+                        },
+                        "membership_fingerprint": item.membership_fingerprint,
+                    } for item in records],
+                    "target_path": str(target),
+                    "parquet_path": str(target / PARQUET_FILE),
+                    "manifest_path": str(target / MANIFEST_FILE),
+                    "pointer_path": str(pointer_path),
+                    "rollback_target": rollback_reference.model_dump(mode="json"),
+                    "planned_inventory_change": {"new_files": 3, "modified_files": 0},
+                }
+                if any(
+                    expected_artifact_hashes.get(key) != value
+                    for key, value in expected_envelope.items()
+                ):
+                    raise DashboardUniverseActivationV2ConflictError(
+                        "approved plan envelope changed before publication"
+                    )
             if target.exists() or target.is_symlink():
                 raise DashboardUniverseActivationV2ConflictError("V2 activation target already exists")
             records = _validate_v2_records(records, None)

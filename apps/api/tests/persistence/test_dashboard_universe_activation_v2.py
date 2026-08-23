@@ -515,6 +515,7 @@ def test_stale_active_state_token_rejects_before_target_write(monkeypatch, tmp_p
     plan, approved = _approval_fixture(monkeypatch, tmp_path)
     stale = dict(approved)
     stale["expected_active_state_fingerprint"] = "0" * 64
+    stale["plan_sha256"] = approval_plan.plan_sha256(stale)
     with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="active state"):
         repo.ParquetDashboardUniverseActivationV2Repository(tmp_path).publish_and_activate(
             records=plan.records, source_publication_path=plan.source_path,
@@ -528,6 +529,28 @@ def test_stale_active_state_token_rejects_before_target_write(monkeypatch, tmp_p
             expected_current_fingerprint=plan.current_fingerprint,
             expected_current_pointer_fingerprint=approved["expected_current_pointer_fingerprint"],
             expected_artifact_hashes=stale,
+        )
+    assert not repo.v2_target_path(tmp_path, SESSION).exists()
+    assert not tuple(tmp_path.rglob("*staging*"))
+
+
+def test_repository_rechecks_plan_digest_inside_lock_before_writing(monkeypatch, tmp_path):
+    plan, approved = _approval_fixture(monkeypatch, tmp_path)
+    tampered = dict(approved)
+    tampered["manifest_sha256"] = "0" * 64
+    with pytest.raises(repo.DashboardUniverseActivationV2ConflictError, match="plan SHA-256"):
+        repo.ParquetDashboardUniverseActivationV2Repository(tmp_path).publish_and_activate(
+            records=plan.records, source_publication_path=plan.source_path,
+            source_publication_fingerprint=plan.source_fingerprint,
+            reviewed_security_form_fingerprint=plan.reviewed_security_form_fingerprint,
+            legacy_member_count=plan.legacy_count,
+            legacy_membership_fingerprint=plan.legacy_fingerprint,
+            trailing_window_start=date(2026, 7, 22), trailing_window_end=date(2026, 8, 18),
+            trailing_window_session_count=20, reviewed_override_count=2,
+            reviewed_security_form_count=1, activated_at=plan.activated_at,
+            expected_current_fingerprint=plan.current_fingerprint,
+            expected_current_pointer_fingerprint=approved["expected_current_pointer_fingerprint"],
+            expected_artifact_hashes=tampered,
         )
     assert not repo.v2_target_path(tmp_path, SESSION).exists()
     assert not tuple(tmp_path.rglob("*staging*"))
