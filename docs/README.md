@@ -1,6 +1,7 @@
 # Documentation Index
 
 - [Dashboard Snapshot V2 data contract](data-contracts/dashboard-snapshot-v2.md)
+- [Same-Day Identity and EOD Catch-Up V1](data-contracts/same-day-identity-eod-catchup-v1.md)
 - [Dashboard Universe Funnel](product/dashboard-universe-funnel.md)
 - [Dashboard Snapshot V2 operations](operations/dashboard-snapshot-publication.md)
 
@@ -94,6 +95,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Massive Grouped Daily Inspection](operations/massive-grouped-daily-inspection.md): One-request Grouped Daily inspection record for 2026-08-13.
 - [Massive Grouped Daily Ingestion](operations/massive-grouped-daily-ingestion.md): Grouped Daily publication attempts and quality-gate results for 2026-08-13.
 - [Massive Instrument Master Ingestion](operations/massive-instrument-master-ingestion.md): Bounded All Tickers snapshot ingestion record and quality-gate result.
+- [Same-Day Identity and EOD Catch-Up Readiness](audits/same-day-identity-eod-catchup-readiness-2026-08-23.md): Offline four-stage publication and recovery verification.
 - [2026-08-14 Instrument Snapshot Audit](operations/data-audits/2026-08-14-instrument-snapshot-audit.md): Accepted integrity audit with an explicit provenance exception.
 - [2026-08-14 Grouped Daily Run Report](operations/data-audits/2026-08-14-grouped-daily-run.md): Non-sensitive single-request quality and publication record.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.

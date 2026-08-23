@@ -105,33 +105,10 @@ def ingest_massive_instrument_master_snapshot(
     rate_limiter: FixedIntervalRateLimiter | None = None,
     ingested_at: datetime | None = None,
 ):
-    build = fetch_and_build_snapshot(
-        config=config,
-        transport=transport,
-        as_of_date=as_of_date,
-        rate_limiter=rate_limiter or FixedIntervalRateLimiter(),
-        ingested_at=ingested_at or datetime.now(UTC),
-    )
-    service = InstrumentMasterSnapshotIngestionService(
-        repository=ParquetInstrumentMasterSnapshotRepository(root=data_root),
-    )
-    return service.publish_snapshot(
-        as_of_date=as_of_date,
-        provider_id=MASSIVE_PROVIDER_ID,
-        instruments=build.instruments,
-        identities=build.identities,
-        resolvers=build.resolvers,
-        request_count=build.request_count,
-        raw_record_count=build.raw_record_count,
-        eligible_record_count=build.eligible_record_count,
-        expected_exclusion_count=build.expected_exclusion_count,
-        malformed_rejected_count=build.malformed_rejected_count,
-        resolved_eligible_count=build.resolved_eligible_count,
-        unresolved_eligible_count=build.unresolved_eligible_count,
-        ambiguous_ticker_record_count=build.ambiguous_ticker_record_count,
-        stable_identifier_collision_count=build.stable_identifier_collision_count,
-        unique_provider_ticker_count=build.unique_provider_ticker_count,
-        duplicate_provider_ticker_count=build.duplicate_provider_ticker_count,
+    del config, transport, as_of_date, data_root, rate_limiter, ingested_at
+    raise RuntimeError(
+        "direct network-to-production Identity ingestion is disabled; "
+        "use fetch-only, plan, and approved apply"
     )
 
 
@@ -287,15 +264,17 @@ def _fetch_reference_pages(*, config: MassiveProviderConfig, transport: MassiveH
         next_url = response.get("next_url")
         if next_url is None:
             return tuple(pages), request_number, True
-        path, params = _next_page_request(next_url, base_url=config.base_url)
+        path, params = _next_page_request(next_url, base_url=config.base_url, expected_date=as_of_date)
     raise RuntimeError("Massive reference page limit exceeded")
 
 
-def _next_page_request(next_url: object, *, base_url: str) -> tuple[str, dict[str, MassiveParamValue]]:
+def _next_page_request(next_url: object, *, base_url: str, expected_date: date | None = None) -> tuple[str, dict[str, MassiveParamValue]]:
     if not isinstance(next_url, str) or not next_url.strip():
         raise RuntimeError("Massive reference next_url is invalid")
     parsed = urlparse(next_url)
     base = urlparse(base_url)
+    if parsed.scheme and parsed.scheme != "https":
+        raise RuntimeError("Massive reference next_url scheme changed")
     if parsed.netloc and parsed.netloc != base.netloc:
         raise RuntimeError("Massive reference next_url host changed")
     if parsed.path != REFERENCE_TICKERS_PATH:
@@ -305,6 +284,8 @@ def _next_page_request(next_url: object, *, base_url: str) -> tuple[str, dict[st
         if key.lower() == "apikey":
             continue
         params[key] = value
+    if expected_date is not None and "date" in params and params["date"] != expected_date.isoformat():
+        raise RuntimeError("Massive reference next_url date changed")
     return parsed.path, params
 
 
@@ -504,90 +485,12 @@ def parse_data_root(value: str) -> Path:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="ingest-massive-instrument-master.sh")
-    parser.add_argument("--as-of-date", required=True)
-    parser.add_argument("--data-root", required=True)
-    try:
-        args = parser.parse_args(sys.argv[1:] if argv is None else argv)
-        as_of_date = parse_as_of_date(args.as_of_date)
-        data_root = parse_data_root(args.data_root)
-    except (SystemExit, ValueError) as exc:
-        if not isinstance(exc, SystemExit):
-            print(f"error={exc}", file=sys.stderr)
-            return 2
-        return int(exc.code) if isinstance(exc.code, int) else 2
-    print("provider=massive")
-    print(f"endpoint={REFERENCE_TICKERS_PATH}")
-    print(f"as_of_date={as_of_date.isoformat()}")
-    print(f"max_pages={MAX_PAGES}")
-    print(f"max_records={MAX_RECORDS}")
-    print(f"minimum_request_interval_seconds={MIN_REQUEST_INTERVAL_SECONDS}")
-    try:
-        config = load_massive_provider_config_from_file()
-        build = fetch_and_build_snapshot(
-            config=config,
-            transport=MassiveUrllibTransport(),
-            as_of_date=as_of_date,
-            rate_limiter=FixedIntervalRateLimiter(),
-            ingested_at=datetime.now(UTC),
-        )
-        result = InstrumentMasterSnapshotIngestionService(
-            repository=ParquetInstrumentMasterSnapshotRepository(root=data_root),
-        ).publish_snapshot(
-            as_of_date=as_of_date,
-            provider_id=MASSIVE_PROVIDER_ID,
-            instruments=build.instruments,
-            identities=build.identities,
-            resolvers=build.resolvers,
-            request_count=build.request_count,
-            raw_record_count=build.raw_record_count,
-            eligible_record_count=build.eligible_record_count,
-            expected_exclusion_count=build.expected_exclusion_count,
-            malformed_rejected_count=build.malformed_rejected_count,
-            resolved_eligible_count=build.resolved_eligible_count,
-            unresolved_eligible_count=build.unresolved_eligible_count,
-            ambiguous_ticker_record_count=build.ambiguous_ticker_record_count,
-            stable_identifier_collision_count=build.stable_identifier_collision_count,
-            unique_provider_ticker_count=build.unique_provider_ticker_count,
-            duplicate_provider_ticker_count=build.duplicate_provider_ticker_count,
-        )
-    except MassiveCredentialFileError:
-        print("status=credential-boundary-error")
-        return 1
-    except MassiveTransportResponseError as exc:
-        if exc.status_code in {401, 403}:
-            status = "authentication-or-entitlement-failed"
-        elif exc.status_code == 429:
-            status = "rate-limited"
-        else:
-            status = "http-error"
-        print(f"status={status}")
-        return 1
-    except MassiveTransportTimeoutError:
-        print("status=timeout")
-        return 1
-    except MassiveTransportUnavailableError:
-        print("status=unavailable")
-        return 1
-    except MassiveTransportDataError:
-        print("status=malformed-response")
-        return 1
-    except Exception as exc:
-        print(f"status=failed")
-        print(f"failure_class={exc.__class__.__name__}")
-        return 1
-    for line in result.safe_lines():
-        print(line)
-    for code, count in build.type_counts:
-        print(f"provider_type_count.{code}={count}")
-    for category, count in build.category_counts:
-        print(f"category_count.{category}={count}")
-    for code, count in build.unknown_type_counts:
-        print(f"unknown_type_count.{code}={count}")
-    if build.ambiguous_ticker_samples:
-        print("ambiguous_ticker_samples=" + ",".join(build.ambiguous_ticker_samples))
-    return 0
+    from tip_api.providers.massive.same_day_catchup import identity_main
 
+    try:
+        return identity_main(argv)
+    except SystemExit as exc:
+        return int(exc.code) if isinstance(exc.code, int) else 2
 
 
 if __name__ == "__main__":

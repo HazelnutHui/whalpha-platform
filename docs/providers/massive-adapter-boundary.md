@@ -4,6 +4,16 @@
 
 Phase B1 permits only one Ticker Types request and bounded point-in-time All Tickers pagination. The adapter preserves official codes/descriptions and joins with stable identifiers or the accepted point-in-time resolver. Raw responses are not persisted. Provider common-stock type proves security form only; it cannot establish issuer structure, domicile, or Core/Broad eligibility.
 
+## Same-day catch-up boundary
+
+Instrument Master and Grouped Daily administrator ingestion now use the
+[Same-Day Identity and EOD Catch-Up V1](../data-contracts/same-day-identity-eod-catchup-v1.md)
+four-stage contract. Only fetch-only can create a transport or load the Massive
+credential. It can write only a hashed package below `/tmp`. Offline plan and
+apply retain the existing mapping and quality semantics, but an apply is bound
+to a separately approved deterministic plan and expected inventory state.
+There is no remaining supported network-to-production caller or scheduler.
+
 ## Purpose
 
 This document records the implemented Massive Stocks adapter skeleton boundary. The adapter exists to validate configuration, credential handling, transport injection, provider response mapping, and a controlled one-request reference smoke test against canonical boundaries.

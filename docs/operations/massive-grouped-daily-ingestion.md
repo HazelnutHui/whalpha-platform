@@ -1,5 +1,19 @@
 # Massive Grouped Daily Ingestion
 
+## Current mandatory workflow
+
+The administrator entrypoint now implements the four-stage [Same-Day Identity
+and EOD Catch-Up V1](../data-contracts/same-day-identity-eod-catchup-v1.md)
+contract. Fetch-only freezes one exact-date `adjusted=false` response below
+`/tmp`; offline planning binds the exact same-day completed Identity logical
+fingerprint and canonical artifacts; approved apply has no socket access and
+requires the plan path, plan SHA-256, and expected state fingerprint; formal
+reread completes the operation. Previous-date and `latest` resolver fallbacks
+are rejected. The older network-to-publication Python function is disabled.
+
+The records below are historical evidence and do not authorize or document the
+current CLI invocation sequence.
+
 ## Purpose
 
 This runbook records the controlled Massive Grouped Daily canonical EOD ingestion attempt for the completed 2026-08-13 U.S. trading session. The workflow uses the completed point-in-time Massive ticker resolver to classify raw grouped bars before constructing canonical `EodPriceBarV1` records and publishing Parquet only when all gates pass.

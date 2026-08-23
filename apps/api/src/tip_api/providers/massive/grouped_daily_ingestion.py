@@ -304,23 +304,10 @@ def ingest_grouped_daily(
     data_root: Path,
     ingested_at: datetime | None = None,
 ) -> GroupedDailyIngestionResult:
-    identity = load_identity_snapshot(data_root, provider_id=MASSIVE_PROVIDER_ID, as_of_date=identity_as_of_date)
-    endpoint = ENDPOINT_TEMPLATE.format(session_date=session_date.isoformat())
-    response = transport.get_json(
-        endpoint,
-        params={"adjusted": False},
-        api_key=config.api_key,
-        timeout_seconds=config.request_timeout_seconds,
-        base_url=config.base_url,
-    )
-    return process_grouped_daily_payload(
-        response,
-        identity=identity,
-        session_date=session_date,
-        endpoint=endpoint,
-        data_root=data_root,
-        ingested_at=ingested_at or datetime.now(UTC),
-        publish=True,
+    del config, transport, session_date, identity_as_of_date, data_root, ingested_at
+    raise RuntimeError(
+        "direct network-to-production EOD ingestion is disabled; "
+        "use fetch-only, plan, and approved apply"
     )
 
 
@@ -929,64 +916,12 @@ def parse_data_root(value: str) -> Path:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="ingest-massive-grouped-daily.sh")
-    parser.add_argument("--session-date", required=True)
-    parser.add_argument("--identity-as-of-date", required=True)
-    parser.add_argument("--data-root", required=True)
+    from tip_api.providers.massive.same_day_catchup import eod_main
+
     try:
-        args = parser.parse_args(sys.argv[1:] if argv is None else argv)
-        session_date = parse_date(args.session_date, name="session-date")
-        identity_date = parse_date(args.identity_as_of_date, name="identity-as-of-date")
-        if session_date != identity_date:
-            raise ValueError("session and identity dates must match")
-        data_root = parse_data_root(args.data_root)
-    except (SystemExit, ValueError) as exc:
-        if not isinstance(exc, SystemExit):
-            print(f"error={exc}", file=sys.stderr)
-            return 2
+        return eod_main(argv)
+    except SystemExit as exc:
         return int(exc.code) if isinstance(exc.code, int) else 2
-    print("provider=massive")
-    print(f"endpoint={ENDPOINT_TEMPLATE.format(session_date=session_date.isoformat())}")
-    print(f"session_date={session_date.isoformat()}")
-    print("request_limit=1")
-    print("adjusted=false")
-    try:
-        config = load_massive_provider_config_from_file()
-        result = ingest_grouped_daily(
-            config=config,
-            transport=MassiveUrllibTransport(),
-            session_date=session_date,
-            identity_as_of_date=identity_date,
-            data_root=data_root,
-        )
-    except MassiveCredentialFileError:
-        print("status=credential-boundary-error")
-        return 1
-    except MassiveTransportResponseError as exc:
-        print(
-            "status=rate-limited"
-            if exc.status_code == 429
-            else "status=authentication-or-entitlement-failed"
-            if exc.status_code in {401, 403}
-            else "status=http-error"
-        )
-        return 1
-    except MassiveTransportTimeoutError:
-        print("status=timeout")
-        return 1
-    except MassiveTransportUnavailableError:
-        print("status=unavailable")
-        return 1
-    except MassiveTransportDataError:
-        print("status=malformed-response")
-        return 1
-    except Exception as exc:
-        print("status=failed")
-        print(f"failure_class={exc.__class__.__name__}")
-        return 1
-    for line in result.safe_lines():
-        print(line)
-    return 0
 
 
 if __name__ == "__main__":

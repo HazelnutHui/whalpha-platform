@@ -1,0 +1,594 @@
+from __future__ import annotations
+
+import json
+import shutil
+import socket
+from datetime import UTC, date, datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+
+import pytest
+
+from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
+from tip_api.providers.massive.config import MassiveProviderConfig
+from tip_api.providers.massive.grouped_daily_ingestion import (
+    ingest_grouped_daily,
+    load_identity_snapshot,
+)
+from tip_api.providers.massive.instrument_master_snapshot import (
+    FixedIntervalRateLimiter,
+    ingest_massive_instrument_master_snapshot,
+)
+from tip_api.providers.massive.same_day_catchup import (
+    SameDayCatchupError,
+    _read_fetch_package,
+    apply_approved_plan,
+    build_eod_plan,
+    build_identity_plan,
+    eod_main,
+    fetch_eod_package,
+    fetch_identity_package,
+    file_sha256,
+    identity_main,
+    inventory_fingerprint,
+)
+from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
+
+FETCHED_AT = datetime(2026, 8, 23, 12, tzinfo=UTC)
+
+
+class FakeTransport:
+    def __init__(self, responses):
+        self.responses = list(responses)
+        self.calls = []
+
+    def get_json(self, path, *, params, api_key, timeout_seconds, base_url):
+        assert api_key.get_secret_value() == "fixture-only"
+        assert "apiKey" not in params and "apikey" not in params
+        self.calls.append((path, dict(params), base_url))
+        if not self.responses:
+            raise AssertionError("unexpected request")
+        return self.responses.pop(0)
+
+
+def reference_record(index: int, session: date) -> dict[str, object]:
+    ticker = f"T{index:05d}"
+    return {
+        "ticker": ticker,
+        "name": f"{ticker} Holdings",
+        "market": "stocks",
+        "locale": "us",
+        "primary_exchange": "XNYS",
+        "type": "CS",
+        "active": True,
+        "currency_name": "usd",
+        "cik": f"{index:010d}",
+        "composite_figi": f"COMP{index:08d}",
+        "share_class_figi": f"SHARE{index:08d}",
+        "last_updated_utc": f"{session.isoformat()}T20:00:00Z",
+    }
+
+
+def reference_pages(session: date, count: int = 5001):
+    rows = [reference_record(index, session) for index in range(count)]
+    return (
+        {
+            "results": rows[:3000],
+            "next_url": (
+                "https://api.massive.com/v3/reference/tickers"
+                f"?cursor=page2&date={session.isoformat()}"
+            ),
+        },
+        {"results": rows[3000:]},
+    )
+
+
+def grouped_payload(session: date, count: int = 5001, **override):
+    timestamp = int(
+        datetime(
+            session.year,
+            session.month,
+            session.day,
+            12,
+            tzinfo=ZoneInfo("America/New_York"),
+        ).timestamp()
+        * 1000
+    )
+    rows = [
+        {
+            "T": f"T{index:05d}",
+            "o": "10.00",
+            "h": "12.00",
+            "l": "9.00",
+            "c": "11.00",
+            "v": "1000.5",
+            "vw": "10.50",
+            "n": 25,
+            "t": timestamp,
+        }
+        for index in range(count)
+    ]
+    if override:
+        rows[0].update(override)
+    return {"results": rows}
+
+
+def no_wait_limiter() -> FixedIntervalRateLimiter:
+    return FixedIntervalRateLimiter(clock=lambda: 1.0, sleeper=lambda _seconds: None)
+
+
+def fetch_identity(tmp_path: Path, session: date) -> tuple[Path, FakeTransport]:
+    package = tmp_path / f"identity-{session.isoformat()}"
+    transport = FakeTransport(reference_pages(session))
+    result = fetch_identity_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=transport,
+        session_date=session,
+        package_path=package,
+        fetched_at=FETCHED_AT,
+        rate_limiter=no_wait_limiter(),
+    )
+    assert result.request_count == 2
+    return package, transport
+
+
+def plan_and_apply_identity(tmp_path: Path, root: Path, session: date):
+    package, _ = fetch_identity(tmp_path, session)
+    plan_path = tmp_path / f"identity-{session.isoformat()}.plan.json"
+    plan = build_identity_plan(package_path=package, plan_path=plan_path, data_root=root)
+    applied = apply_approved_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=file_sha256(plan_path),
+        expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+        data_root=root,
+        expected_operation="identity",
+        expected_session=session,
+    )
+    return plan_path, applied
+
+
+def fetch_plan_apply_eod(tmp_path: Path, root: Path, session: date):
+    package = tmp_path / f"eod-{session.isoformat()}"
+    transport = FakeTransport([grouped_payload(session)])
+    fetched = fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=transport,
+        session_date=session,
+        package_path=package,
+        fetched_at=FETCHED_AT,
+    )
+    assert fetched.adjusted is False
+    assert transport.calls == [
+        (
+            f"/v2/aggs/grouped/locale/us/market/stocks/{session.isoformat()}",
+            {"adjusted": False},
+            "https://api.massive.com",
+        )
+    ]
+    plan_path = tmp_path / f"eod-{session.isoformat()}.plan.json"
+    plan = build_eod_plan(package_path=package, plan_path=plan_path, data_root=root)
+    apply_approved_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=file_sha256(plan_path),
+        expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+        data_root=root,
+        expected_operation="eod",
+        expected_session=session,
+    )
+    return plan_path, plan
+
+
+def test_two_session_end_to_end_and_freshness(tmp_path):
+    root = tmp_path / "isolated-data"
+    root.mkdir()
+    for session in (date(2026, 8, 20), date(2026, 8, 21)):
+        _, identity_plan = plan_and_apply_identity(tmp_path, root, session)
+        identity = load_identity_snapshot(
+            root, provider_id="massive_stocks_basic", as_of_date=session
+        )
+        assert (
+            identity.manifest["snapshot_content_sha256"]
+            == identity_plan.content_fingerprints["logical"]
+        )
+        _, eod_plan = fetch_plan_apply_eod(tmp_path, root, session)
+        integrity = CanonicalEodReadRepository(root).inspect_session(session)
+        assert integrity.record_count == 5001
+        assert integrity.content_fingerprint == eod_plan.content_fingerprints["eod"]
+        assert integrity.identity_snapshot_date == session
+
+    sessions = CanonicalEodReadRepository(root).list_sessions()
+    actual = sessions[-1].session_date
+    freshness = evaluate_market_data_freshness(
+        calendar=ExchangeCalendar(),
+        actual_latest_completed_session=actual,
+        checked_at=datetime(2026, 8, 23, 12, tzinfo=UTC),
+    )
+    assert actual == date(2026, 8, 21)
+    assert freshness.expected_latest_completed_session == date(2026, 8, 21)
+    assert freshness.session_lag == 0
+    assert freshness.freshness_status.value == "fresh"
+    assert not tuple(root.rglob("*.staging.*"))
+
+
+def test_identity_completed_components_recover_without_overwrite(tmp_path):
+    root = tmp_path / "data"
+    root.mkdir()
+    package, _ = fetch_identity(tmp_path, date(2026, 8, 20))
+    plan_path = tmp_path / "identity.plan.json"
+    plan = build_identity_plan(package_path=package, plan_path=plan_path, data_root=root)
+    with pytest.raises(SameDayCatchupError, match="injected failure"):
+        apply_approved_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=file_sha256(plan_path),
+            expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+            data_root=root,
+            fail_after_target_count=3,
+            expected_operation="identity",
+            expected_session=date(2026, 8, 20),
+        )
+    logical = Path(plan.publication_order[-1])
+    assert not logical.exists()
+    completed_hashes = {
+        item.target_path: file_sha256(Path(item.target_path))
+        for item in plan.artifacts
+        if Path(item.target_path).exists()
+    }
+    first_completed = next(Path(item.target_path) for item in plan.artifacts if Path(item.target_path).exists())
+    first_ref = next(item for item in plan.artifacts if Path(item.target_path) == first_completed)
+    first_completed.write_bytes(first_completed.read_bytes() + b"tamper")
+    with pytest.raises(SameDayCatchupError, match="artifact mismatch"):
+        apply_approved_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=file_sha256(plan_path),
+            expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+            data_root=root,
+            verify_then_complete=True,
+        )
+    shutil.copyfile(first_ref.source_path, first_completed)
+    unrelated = root / "unexpected-state.txt"
+    unrelated.write_text("changed", encoding="utf-8")
+    with pytest.raises(SameDayCatchupError, match="recovery base state changed"):
+        apply_approved_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=file_sha256(plan_path),
+            expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+            data_root=root,
+            verify_then_complete=True,
+        )
+    unrelated.unlink()
+    apply_approved_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=file_sha256(plan_path),
+        expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+        data_root=root,
+        verify_then_complete=True,
+        expected_operation="identity",
+        expected_session=date(2026, 8, 20),
+    )
+    assert all(file_sha256(Path(path)) == digest for path, digest in completed_hashes.items())
+    load_identity_snapshot(
+        root, provider_id="massive_stocks_basic", as_of_date=date(2026, 8, 20)
+    )
+
+
+def test_tamper_and_state_change_fail_before_target(tmp_path):
+    session = date(2026, 8, 20)
+    root = tmp_path / "data"
+    root.mkdir()
+    package, _ = fetch_identity(tmp_path, session)
+    plan_path = tmp_path / "identity.plan.json"
+    plan = build_identity_plan(package_path=package, plan_path=plan_path, data_root=root)
+    before = inventory_fingerprint(root)
+
+    response = package / "response-01.json"
+    response.chmod(0o600)
+    response.write_text(response.read_text() + " ")
+    with pytest.raises(SameDayCatchupError, match="package"):
+        apply_approved_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=file_sha256(plan_path),
+            expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+            data_root=root,
+        )
+    assert inventory_fingerprint(root) == before
+
+    shutil.rmtree(package)
+    package, _ = fetch_identity(tmp_path, session)
+    plan2_path = tmp_path / "identity2.plan.json"
+    plan2 = build_identity_plan(package_path=package, plan_path=plan2_path, data_root=root)
+    (root / "state-changed").write_text("x")
+    with pytest.raises(SameDayCatchupError, match="current state changed"):
+        apply_approved_plan(
+            plan_path=plan2_path,
+            approved_plan_sha256=file_sha256(plan2_path),
+            expected_current_state_fingerprint=plan2.expected_current_state_fingerprint,
+            data_root=root,
+        )
+    assert not Path(plan2.publication_order[0]).exists()
+
+
+def test_grouped_wrong_date_previous_identity_and_invalid_ohlc_fail(tmp_path):
+    root = tmp_path / "data"
+    root.mkdir()
+    plan_and_apply_identity(tmp_path, root, date(2026, 8, 20))
+    wrong_package = tmp_path / "wrong-eod"
+    with pytest.raises(SameDayCatchupError, match="session mismatch"):
+        fetch_eod_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=FakeTransport([grouped_payload(date(2026, 8, 20))]),
+            session_date=date(2026, 8, 21),
+            package_path=wrong_package,
+            fetched_at=FETCHED_AT,
+        )
+    package = tmp_path / "no-same-day-identity"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped_payload(date(2026, 8, 21))]),
+        session_date=date(2026, 8, 21),
+        package_path=package,
+        fetched_at=FETCHED_AT,
+    )
+    with pytest.raises(SameDayCatchupError, match="same-day completed Identity"):
+        build_eod_plan(
+            package_path=package,
+            plan_path=tmp_path / "wrong-identity.plan.json",
+            data_root=root,
+        )
+
+    bad = tmp_path / "bad-ohlc"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped_payload(date(2026, 8, 20), h="8")]),
+        session_date=date(2026, 8, 20),
+        package_path=bad,
+        fetched_at=FETCHED_AT,
+    )
+    with pytest.raises(SameDayCatchupError, match="quality gates"):
+        build_eod_plan(
+            package_path=bad,
+            plan_path=tmp_path / "bad-ohlc.plan.json",
+            data_root=root,
+        )
+
+
+def test_duplicate_pages_cross_date_pagination_and_credential_material_rejected(tmp_path):
+    session = date(2026, 8, 20)
+    with pytest.raises(SameDayCatchupError, match="allowlist"):
+        fetch_identity_package(
+            config=MassiveProviderConfig(
+                api_key="fixture-only", base_url="https://example.test"
+            ),
+            transport=FakeTransport([]),
+            session_date=session,
+            package_path=tmp_path / "foreign-base",
+            fetched_at=FETCHED_AT,
+            rate_limiter=no_wait_limiter(),
+        )
+    duplicate = {"results": [reference_record(1, session)]}
+    duplicate_first = {
+        **duplicate,
+        "next_url": (
+            "https://api.massive.com/v3/reference/tickers"
+            f"?cursor=two&date={session.isoformat()}"
+        ),
+    }
+    with pytest.raises(SameDayCatchupError, match="duplicate reference page"):
+        fetch_identity_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=FakeTransport([duplicate_first, duplicate]),
+            session_date=session,
+            package_path=tmp_path / "duplicate",
+            fetched_at=FETCHED_AT,
+            rate_limiter=no_wait_limiter(),
+        )
+
+    cross_date = {
+        "results": [reference_record(1, session)],
+        "next_url": "https://api.massive.com/v3/reference/tickers?cursor=x&date=2026-08-21",
+    }
+    transport = FakeTransport([cross_date])
+    with pytest.raises(RuntimeError, match="date changed"):
+        fetch_identity_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=transport,
+            session_date=session,
+            package_path=tmp_path / "cross-date",
+            fetched_at=FETCHED_AT,
+            rate_limiter=no_wait_limiter(),
+        )
+
+    for label, next_url, error in (
+        ("host", "https://evil.example/v3/reference/tickers?date=2026-08-20", "host changed"),
+        ("path", "https://api.massive.com/v3/reference/tickers/types?date=2026-08-20", "path changed"),
+        ("scheme", "http://api.massive.com/v3/reference/tickers?date=2026-08-20", "scheme changed"),
+    ):
+        with pytest.raises(RuntimeError, match=error):
+            fetch_identity_package(
+                config=MassiveProviderConfig(api_key="fixture-only"),
+                transport=FakeTransport([{"results": [], "next_url": next_url}]),
+                session_date=session,
+                package_path=tmp_path / label,
+                fetched_at=FETCHED_AT,
+                rate_limiter=no_wait_limiter(),
+            )
+
+    loop_page = {
+        "results": [],
+        "next_url": (
+            "https://api.massive.com/v3/reference/tickers"
+            "?cursor=loop&date=2026-08-20"
+        ),
+    }
+    with pytest.raises(RuntimeError, match="pagination loop"):
+        fetch_identity_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=FakeTransport([loop_page, loop_page]),
+            session_date=session,
+            package_path=tmp_path / "loop",
+            fetched_at=FETCHED_AT,
+            rate_limiter=no_wait_limiter(),
+        )
+
+    sanitized_package = tmp_path / "sanitized-next-url"
+    fetch_identity_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport(
+            [
+                {
+                    "results": [reference_record(1, session)],
+                    "next_url": (
+                        "https://api.massive.com/v3/reference/tickers"
+                        "?cursor=second&date=2026-08-20&apiKey=MUST_NOT_PERSIST"
+                    ),
+                },
+                {"results": [reference_record(2, session)]},
+            ]
+        ),
+        session_date=session,
+        package_path=sanitized_package,
+        fetched_at=FETCHED_AT,
+        rate_limiter=no_wait_limiter(),
+    )
+    assert b"MUST_NOT_PERSIST" not in b"".join(
+        path.read_bytes() for path in sanitized_package.iterdir()
+    )
+    assert len(transport.calls) == 1
+
+    with pytest.raises(SameDayCatchupError, match="credential"):
+        fetch_eod_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=FakeTransport(
+                [{**grouped_payload(session), "Authorization": "secret"}]
+            ),
+            session_date=session,
+            package_path=tmp_path / "secret",
+            fetched_at=FETCHED_AT,
+        )
+
+
+def test_partial_symlink_replay_and_eod_post_rename_state(tmp_path):
+    session = date(2026, 8, 20)
+    root = tmp_path / "data"
+    root.mkdir()
+    identity_path, identity_plan = plan_and_apply_identity(tmp_path, root, session)
+    with pytest.raises(SameDayCatchupError, match="current state changed"):
+        apply_approved_plan(
+            plan_path=identity_path,
+            approved_plan_sha256=file_sha256(identity_path),
+            expected_current_state_fingerprint=identity_plan.expected_current_state_fingerprint,
+            data_root=root,
+        )
+
+    package = tmp_path / "eod"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped_payload(session)]),
+        session_date=session,
+        package_path=package,
+        fetched_at=FETCHED_AT,
+    )
+    plan_path = tmp_path / "eod.plan.json"
+    plan = build_eod_plan(package_path=package, plan_path=plan_path, data_root=root)
+    with pytest.raises(SameDayCatchupError, match="injected failure"):
+        apply_approved_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=file_sha256(plan_path),
+            expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+            data_root=root,
+            fail_after_target_count=1,
+        )
+    integrity = CanonicalEodReadRepository(root).inspect_session(session)
+    assert integrity.record_count == 5001
+    with pytest.raises(SameDayCatchupError):
+        apply_approved_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=file_sha256(plan_path),
+            expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+            data_root=root,
+        )
+
+    symlink_root = tmp_path / "linked-root"
+    symlink_root.symlink_to(root, target_is_directory=True)
+    with pytest.raises(SameDayCatchupError):
+        inventory_fingerprint(symlink_root)
+
+
+def test_plan_and_package_tamper_cli_contract_and_apply_socket_guard(tmp_path, monkeypatch):
+    root = tmp_path / "data"
+    root.mkdir()
+    session = date(2026, 8, 20)
+    with pytest.raises(RuntimeError, match="direct network-to-production"):
+        ingest_massive_instrument_master_snapshot(
+            config=None,
+            transport=None,
+            as_of_date=session,
+            data_root=tmp_path,
+        )
+    with pytest.raises(RuntimeError, match="direct network-to-production"):
+        ingest_grouped_daily(
+            config=None,
+            transport=None,
+            session_date=session,
+            identity_as_of_date=session,
+            data_root=tmp_path,
+        )
+    real_package_parent = tmp_path / "real-package-parent"
+    real_package_parent.mkdir()
+    linked_package_parent = tmp_path / "linked-package-parent"
+    linked_package_parent.symlink_to(real_package_parent, target_is_directory=True)
+    with pytest.raises(SameDayCatchupError, match="symlink"):
+        fetch_identity_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=FakeTransport([]),
+            session_date=session,
+            package_path=linked_package_parent / "package",
+            fetched_at=FETCHED_AT,
+            rate_limiter=no_wait_limiter(),
+        )
+    package, _ = fetch_identity(tmp_path, session)
+    plan_path = tmp_path / "identity.plan.json"
+    plan = build_identity_plan(package_path=package, plan_path=plan_path, data_root=root)
+    approved_sha = file_sha256(plan_path)
+    plan_path.chmod(0o600)
+    content = json.loads(plan_path.read_text())
+    content["counts"]["raw_records"] += 1
+    plan_path.write_text(json.dumps(content))
+    with pytest.raises(SameDayCatchupError, match="SHA-256"):
+        apply_approved_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=approved_sha,
+            expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+            data_root=root,
+        )
+    assert not Path(plan.publication_order[0]).exists()
+
+    with pytest.raises(SystemExit) as exc:
+        identity_main(["--apply", "--session-date", session.isoformat()])
+    assert exc.value.code == 2
+    with pytest.raises(SystemExit) as exc:
+        eod_main(["--apply", "--session-date", session.isoformat()])
+    assert exc.value.code == 2
+
+    package2, _ = fetch_identity(tmp_path, date(2026, 8, 21))
+    plan2_path = tmp_path / "identity2.plan.json"
+    plan2 = build_identity_plan(package_path=package2, plan_path=plan2_path, data_root=root)
+    original = socket.create_connection
+    observed = {"blocked": False}
+
+    import tip_api.providers.massive.same_day_catchup as module
+
+    publish = module._publish_target_directory
+
+    def probe(*args, **kwargs):
+        with pytest.raises(SameDayCatchupError, match="network access"):
+            socket.create_connection(("example.invalid", 443))
+        observed["blocked"] = True
+        return publish(*args, **kwargs)
+
+    monkeypatch.setattr(module, "_publish_target_directory", probe)
+    apply_approved_plan(
+        plan_path=plan2_path,
+        approved_plan_sha256=file_sha256(plan2_path),
+        expected_current_state_fingerprint=plan2.expected_current_state_fingerprint,
+        data_root=root,
+    )

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-23 — Approval-bound same-day Identity and EOD catch-up
+
+- Split both Massive administrator entrypoints into fetch-only `/tmp` package,
+  offline deterministic approval plan, approval-bound offline apply, and
+  formal reread stages. Disabled the old direct network-to-production Python
+  functions.
+- Bound EOD to the exact same-day logical Identity fingerprint and made the
+  Identity logical marker last. Added immutable-component
+  verify-then-complete recovery with baseline CAS and fail-closed partial or
+  changed state.
+- Added HTTPS host/path/date pagination controls, duplicate/loop ceilings,
+  credential-bearing URL sanitization, package/plan custody, apply socket
+  prohibition, durable atomic publication, and replay/symlink/traversal gates.
+- Completed the two-session 2026-08-20/21 workflow only in `/tmp` with fake
+  transport. Provider, credential, external network, Production apply, `/data`,
+  Dashboard snapshot, Activation, frontend bundle, and OCI changes were zero.
+
 ## 2026-08-23 — Formal Dashboard Funnel and durable Snapshot V2 readiness
 
 - Added Dashboard contract 2.1 with ten source-backed, sequentially closed Funnel stages for each active public Universe; API/snapshot carry them directly and React switches the matching ledger with the existing stable URL selection.

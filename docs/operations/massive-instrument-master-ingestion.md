@@ -1,5 +1,19 @@
 # Massive Instrument Master Ingestion
 
+## Current mandatory workflow
+
+The administrator entrypoint no longer permits a network request to publish
+directly. Every new date must use the four-stage [Same-Day Identity and EOD
+Catch-Up V1](../data-contracts/same-day-identity-eod-catchup-v1.md) contract:
+fetch-only to a private `/tmp` package, offline approval plan, separately
+approved offline apply, and formal reread. Instrument Master, Provider
+Instrument Identity, and Provider Ticker Resolver publish as immutable
+components; the logical completion manifest is last. A completed logical
+manifest is required before same-day EOD planning.
+
+The historical command and execution records below describe completed runs;
+that direct invocation form is disabled and must not be reused.
+
 The completed 2026-08-14 snapshot is governed by the [read-only audit and acceptance record](data-audits/2026-08-14-instrument-snapshot-audit.md). Its content integrity passed, while original run request and pagination provenance is unavailable. It is accepted as `accepted_with_provenance_exception` and must not be requested again or overwritten.
 
 ## Purpose
@@ -10,7 +24,7 @@ This runbook records the bounded point-in-time Massive Stocks reference ticker i
 
 Implemented and executed for 2026-08-13. The first run used overly broad rejected/coverage gates and did not publish. The second run corrected the taxonomy, completed pagination, passed quality gates, and published the point-in-time snapshot.
 
-## Command
+## Historical command (disabled)
 
 ```bash
 scripts/admin/ingest-massive-instrument-master.sh   --as-of-date 2026-08-13   --data-root /data/trading-intelligence-platform

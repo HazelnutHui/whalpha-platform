@@ -1,5 +1,21 @@
 # Current Status
 
+## 2026-08-23 — Same-day Identity and EOD catch-up safety readiness
+
+- Replaced the administrator network-to-production path with four explicit
+  stages: fetch-only package, offline deterministic plan, offline
+  approval-bound apply, and formal production reread.
+- Identity components remain immutable and the logical completion marker is
+  last. Exact matching inactive components support verify-then-complete;
+  partial, changed, symlinked, or unrelated state fails closed. EOD requires
+  the exact same-day completed Identity fingerprint.
+- A fully isolated fake-transport rehearsal completed 2026-08-20 and
+  2026-08-21 and reached freshness lag zero in `/tmp`; it did not create those
+  production sessions.
+- Production apply, `/data` writes, provider/network requests, and credential
+  access were zero. Production Activation remains 1,718/1,831 and the formal
+  Dashboard snapshot remains unchanged.
+
 ## 2026-08-23 — Dashboard Snapshot V2 offline readiness
 
 - Production Activation V2 is active at 1,718 CS / 1,831 CS+ADRC, Primary-first/default with Legacy hidden.

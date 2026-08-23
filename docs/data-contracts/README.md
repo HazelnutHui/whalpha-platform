@@ -1,6 +1,7 @@
 # Data Contracts
 
 - [Dashboard Snapshot V2](dashboard-snapshot-v2.md)
+- [Same-Day Identity and EOD Catch-Up V1](same-day-identity-eod-catchup-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
 

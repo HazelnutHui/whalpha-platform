@@ -1,6 +1,9 @@
 # Roadmap
 
-- Next authorized step: separately authorize the bounded Activation V2 apply after reviewing its immutable-target and pointer dry-run. Dashboard snapshot/frontend/OCI changes remain later independent authorizations.
+- Next authorized step: separately authorize a bounded exact-date Identity and
+  EOD catch-up using fetch packages and independently approved plans. Snapshot
+  publication remains blocked until canonical freshness is restored; frontend
+  and OCI remain later independent authorizations.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -37,6 +40,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Private canonical EOD read/query API for the completed 2026-08-13 session
 - [x] 2026-08-12 bounded ingestion and first close-to-close Market Summary analytics
 - [x] Bounded real-provider identity and EOD ingestion workflows
+- [x] Approval-bound same-day fetch/plan/apply/reread workflow with offline
+  apply, same-day Identity dependency, recovery, and fake-transport rehearsal
 - [x] Initial three-session EOD development dataset
 - [x] Initial close-to-close market summary, breadth, movers, benchmark, and trading-activity calculations
 - [x] Local React Market Dashboard V1 shell
