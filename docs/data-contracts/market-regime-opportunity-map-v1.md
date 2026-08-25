@@ -2,9 +2,9 @@
 
 ## Status
 
-Status: **Proposed V1 contract; Phase 1a offline profile and Phase 1b
-deterministic state profile implemented; no production dataset or API is
-active**.
+Status: **Proposed V1 contract; Phase 1a, Phase 1b, and the fixed-registry
+Phase 2 ETF relationship profile are implemented offline; no production
+dataset or API is active**.
 
 The implemented Phase 1a profile is a reversible `/tmp` audit boundary. It
 emits both public Universes in catalog order, five dimension ledgers, 18 metric
@@ -38,6 +38,19 @@ canonical artifact set is exactly `source-input-manifest.json`,
 last-written `state-audit-manifest.json`. Generated time, elapsed time, and peak
 memory are physical audit metadata and do not enter any state logical
 fingerprint.
+
+The Phase 2 profile uses contract `etf-relationship-map/1.0`, calculation
+`market-regime-opportunity-map-etf-relationships-v1.0.0`, parameter set
+`mrom-etf-relationships-v1-fixed-registry-1`, and fingerprint
+`c84d6338412f68be44e35760de83bbad8dd306bbbd480166e874fc05eee5eca9`.
+Its exact non-manifest artifact set is `pair-registry.json`,
+`source-input-manifest.json`, `relationship-metrics.json`,
+`current-relationship-summary.json`, `relationship-explanation-ledger.json`,
+`historical-relationship-states.json`,
+`market-regime-relationship-comparison.json`, and
+`relationship-oracle-report.json`; `relationship-audit-manifest.json` is
+written last. Physical generated time, timings, and peak memory do not enter
+the aggregate logical fingerprint.
 
 This contract freezes the machine-readable boundary for the product described
 in [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).
@@ -128,6 +141,9 @@ reader results rather than hard-code them.
 | Phase 1b state history | `universe_id + as_of_session` | Exactly one per expected XNYS session |
 | Phase 1b transition | `universe_id + as_of_session` | Exactly one state-machine decision per history row |
 | Phase 1b explanation | `universe_id + as_of_session` | Exactly one deterministic explanation per state row |
+| Phase 2 window metric | `pair_id + as_of_session + window_sessions` | Exactly 5, 10, and 20 per emitted pair/session |
+| Phase 2 relationship history | `pair_id + as_of_session` | All 16 registered pairs from first 5-session availability onward |
+| Phase 2 regime comparison | `universe_id + pair_id + as_of_session` | Exactly one contemporaneous comparison per public Universe/pair |
 
 Primary members may also occur in Secondary. Their raw market facts and
 stock-specific component values must be byte-equivalent across views. Only
@@ -232,13 +248,14 @@ override them silently.
 
 ## Relationship record
 
-Relationship fields are:
+The implemented offline relationship fields are:
 
 - `pair_id`, numerator/denominator stable IDs and session tickers;
 - `economic_hypothesis`, `reverse_explanation`, and
   `causality_disclaimer=true`;
-- 5- and 20-session returns for each leg;
-- 5- and 20-session relative-strength spreads;
+- 5-, 10-, and 20-session endpoint closes and returns for each leg;
+- 5-, 10-, and 20-session relative-strength spreads and daily-log-return
+  correlations, with exact observation counts and endpoint dates;
 - `correlation_20`, `correlation_20_prior_5`, and `correlation_change_5`;
 - ratio level, robust z-score, percentile, observation counts, and
   missingness;
@@ -247,6 +264,21 @@ Relationship fields are:
 - stability results for 18/20/22-return perturbations;
 - optional raw and Holm-adjusted p-values;
 - invalidation conditions and warnings.
+
+Every window preserves `availability`, `missing_reason`, direction combination,
+and ordered reason codes. The relationship row also carries parameter/source
+fingerprints, source session range, current/previous deterministic state,
+18/20/22 correlation perturbations, confidence, warnings, and a logical
+fingerprint. `relationship_break_candidate`, `rotation_candidate`, `divergence`,
+`synchronous_strengthening`, `synchronous_weakening`, `neutral`, and
+`unavailable` are the only state values. State priority and thresholds are the
+product contract; runtime data cannot alter them.
+
+The Market Regime comparison record is deliberately separate. It references
+the Phase 1b state row and classifies the contemporaneous narrative as
+`consistent`, `conflict`, or `neutral` using fixed pair orientation. It cannot
+change the pair state or regime score and always carries
+`contemporaneous_comparison_not_causal`.
 
 Valid `relationship_state` values are `synchronous_strengthening`,
 `synchronous_weakening`, `divergence`, `rotation_candidate`,

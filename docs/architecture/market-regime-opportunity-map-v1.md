@@ -2,8 +2,9 @@
 
 ## Status
 
-Status: **Accepted implementation plan; Phase 1a offline core and Phase 1b
-deterministic state ledger implemented; no Production publication exists**.
+Status: **Accepted implementation plan; Phase 1a, Phase 1b, and Phase 2
+fixed-basket relationships implemented offline; no Production publication
+exists**.
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)
@@ -239,6 +240,8 @@ Remove the Phase 1 modules and tests; no persisted or runtime consumer exists.
 
 ### Phase 2 — ETF Relationship Map
 
+**Implementation status: complete at the offline `/tmp` audit boundary.**
+
 **Inputs**
 
 - Phase 1 source panel;
@@ -251,10 +254,11 @@ Remove the Phase 1 modules and tests; no persisted or runtime consumer exists.
   and invalidation records;
 - null robust z/percentile with `insufficient_history` until 60 sessions.
 
-**Suggested files/modules**
+**Implemented files/modules**
 
-- ETF/pair contracts, `etf_relationships.py`, registered parameter artifact,
-  and independent statistics oracle.
+- typed ETF/pair contracts; `etf_relationships.py`;
+  `relationship_v1_0_0.py`; independent `etf_relationship_oracle.py`;
+  canonical `etf_relationship_audit.py`; and a socket-guarded, no-apply CLI.
 
 **Tests**
 
@@ -541,7 +545,16 @@ the 45–55 hysteresis band on 2026-08-20, and ended with Balanced candidate and
 confirmed state for both Universes on 2026-08-21. This short trajectory verifies
 implementation mechanics only; it is not a backtest or predictive validation.
 
-The next minimum slice is the separately authorized fixed-basket **Phase 2 ETF
-Relationship Map** offline calculation. Candidate scoring, sector taxonomy,
-API, frontend, snapshot, and Production publication remain deferred to their
-named phases.
+Phase 2 is implemented as an isolated offline slice. The formal 2026-08-21 run
+loaded the EOD/Identity/Activation panel once, emitted all 16 registered pairs
+over 21 calculable as-of sessions (336 history rows), and reproduced every
+window/state/reason code through an independent raw-panel Oracle. Full replay,
+append, input permutation, future-prefix, Decimal-context, canonical reread,
+and two-run byte determinism are required gates. The Phase 2 logical audit
+fingerprint is `e5acfa29771d965e9bdf21d1bfab24148220217ac474327cdc60e2212532e3a5`.
+
+The next minimum slice is a separately authorized **read-only API and desktop
+page integration** over these versioned Phase 1 and Phase 2 contracts. It must
+present all registered pairs, methodology, and short-history caveats without
+adding pair discovery, sector breadth, candidate scoring, snapshot
+publication, or deployment. Those remain deferred to their named phases.

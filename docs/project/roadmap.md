@@ -1,10 +1,9 @@
 # Roadmap
 
-- Next proposed product step: implement only the offline fixed-basket Phase 2
-  ETF Relationship Map over registered, formally readable ETFs and
-  pre-registered economic pairs. EOD catch-up, sector taxonomy, candidates,
-  Production snapshot, frontend, bundle, and OCI remain separate
-  authorizations.
+- Next proposed product step: add the first read-only API and desktop page
+  integration over the completed Phase 1 and Phase 2 contracts. EOD catch-up,
+  sector taxonomy, candidates, Production snapshot, bundle, and OCI remain
+  separate authorizations.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -80,14 +79,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   architecture, validation, and phased-delivery design
 - [x] Market Regime Phase 1a offline raw-metric and five-dimension ledger
 - [x] Market Regime Phase 1b offline state/hysteresis ledger
+- [x] Market Regime Phase 2 offline fixed-basket ETF Relationship Map
 
 ## Next Small Target
 
-Implement only the fixed-basket Phase 2 ETF Relationship Map offline: use the
-30 registered ETFs and 16 pre-registered economic pairs, retain statistical-
-not-causal language, and persist evidence only under `/tmp` with an independent
-oracle. Defer sectors, candidates, API/frontend, Production snapshot, bundle,
-and OCI. Keep SEC B2 paused.
+Implement the first read-only API and desktop page contract over the completed
+Phase 1 regime and Phase 2 relationship artifacts. Show all 16 pairs,
+methodology, evidence/counterevidence, confidence, and short-history caveats;
+do not add pair mining, sector breadth, candidates, Production snapshot,
+bundle, or OCI. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

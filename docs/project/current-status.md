@@ -1,5 +1,26 @@
 # Current Status
 
+## 2026-08-25 — Market Regime Phase 2 offline ETF relationships
+
+- Implemented the exact 30-ETF basket and 16 pre-registered economic pairs as
+  immutable, versioned parameters. No pair discovery, substitution, result-
+  driven filtering, sector inference, or parameter search exists.
+- Added deterministic 5/10/20-XNYS-session endpoint returns, relative spreads,
+  daily-log-return correlations, 20-session correlation change, ratio context,
+  18/20/22 stability checks, relationship states, confidence, missingness, and
+  fixed-template evidence/counterevidence ledgers.
+- Added a separate raw-panel Oracle and canonical tmp-only CLI/audit reader.
+  The formal 2026-08-21 run emitted 336 history rows and all 16 current pairs;
+  Oracle mismatch was zero and full/append, permutation, future-prefix, and
+  Decimal-context gates passed.
+- Two complete formal runs had logical fingerprint
+  `e5acfa29771d965e9bdf21d1bfab24148220217ac474327cdc60e2212532e3a5`
+  and byte-identical non-time artifacts. All pairs have `low` confidence at 26
+  sessions; this is short-history implementation evidence, not a backtest.
+- The current Balanced regime is shown only as a contemporaneous comparison;
+  it never changes relationship calculations. No Production data, API,
+  frontend, snapshot, network, credential, bundle, or OCI boundary changed.
+
 ## 2026-08-25 — Market Regime Phase 1b deterministic state ledger
 
 - Added a separately versioned, pure state machine over verified Phase 1a

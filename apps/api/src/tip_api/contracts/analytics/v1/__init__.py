@@ -18,6 +18,17 @@ from .market_regime_state import (
     StateOracleComparisonV1,
     StateThresholdDistanceV1,
 )
+from .etf_relationship import (
+    EtfRelationshipExplanationV1,
+    EtfRelationshipOracleComparisonV1,
+    EtfRelationshipRecordV1,
+    EtfRelationshipWindowMetricV1,
+    MarketRegimeRelationshipComparisonV1,
+    RegimeRelationshipAlignment,
+    RelationshipAvailability,
+    RelationshipConfidence,
+    RelationshipState,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -34,4 +45,13 @@ __all__ = [
     "RegimeTransitionStatus",
     "StateOracleComparisonV1",
     "StateThresholdDistanceV1",
+    "EtfRelationshipExplanationV1",
+    "EtfRelationshipOracleComparisonV1",
+    "EtfRelationshipRecordV1",
+    "EtfRelationshipWindowMetricV1",
+    "MarketRegimeRelationshipComparisonV1",
+    "RegimeRelationshipAlignment",
+    "RelationshipAvailability",
+    "RelationshipConfidence",
+    "RelationshipState",
 ]

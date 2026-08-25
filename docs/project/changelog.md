@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-25 — Market Regime Phase 2 offline ETF relationship map
+
+- Added the immutable 30-ETF/16-pair registry, typed relationship contracts,
+  deterministic 5/10/20-session calculations, explicit state precedence,
+  confidence/missingness, and fixed evidence/counterevidence explanations.
+- Added a genuinely independent raw-panel Oracle, chronological replay/append,
+  permutation and future-prefix checks, nine-case Decimal context matrix, and a
+  socket-guarded no-apply CLI with canonical `/tmp` artifacts.
+- The formal 2026-08-21 run produced 336 history rows and all 16 current pairs.
+  Oracle mismatch was zero; two runs had logical fingerprint
+  `e5acfa29771d965e9bdf21d1bfab24148220217ac474327cdc60e2212532e3a5`
+  and byte-identical non-time artifacts.
+- Confidence is `low` for every pair because only 26 sessions exist. Regime
+  comparison is contemporaneous and non-causal. No EOD/Identity/Activation,
+  Production, API, frontend, snapshot, network, credential, bundle, or OCI
+  state changed.
+
 ## 2026-08-25 — Market Regime Phase 1b deterministic state classification
 
 - Added an immutable state parameter contract, typed candidate/confirmed state

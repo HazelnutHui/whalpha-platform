@@ -2,8 +2,8 @@
 
 ## Status and decision boundary
 
-Status: **Accepted design; Phase 1a offline core and Phase 1b deterministic
-state ledger implemented; not production-active**.
+Status: **Accepted design; Phase 1a core, Phase 1b state ledger, and Phase 2
+fixed-basket ETF relationships implemented offline; not production-active**.
 
 Phase 1a now implements the fixed five-dimension raw-metric, normalization,
 Composite, missingness, contribution, and explanation ledger for explicit
@@ -15,6 +15,11 @@ version-compatible Phase 1a Composites without changing their formulas or
 fingerprints, and emits a separate candidate/confirmed state history under
 `/tmp`. Neither profile has an API, frontend, snapshot, pointer, or Production
 publication boundary.
+
+Phase 2 consumes the same once-loaded 26-session panel and the completed Phase
+1 audit ledgers. It computes all 16 pre-registered pairs for 5, 10, and 20
+XNYS-session windows, writes a separate canonical `/tmp` audit, and does not
+change either regime result. It does not scan or rank unregistered pairs.
 
 This specification defines a transparent decision-support page for short-horizon
 equity research. It does not issue trading instructions, estimate certain
@@ -379,6 +384,12 @@ corr20_t = PearsonCorr(daily log returns A,B over last 20 returns)
 corr_change_5 = corr20_t - corr20_(t-5)
 ```
 
+The implemented offline profile emits `k in {5,10,20}`. An `N`-session return
+uses the inclusive endpoint sequence `t-N ... t` (N+1 closes); its correlation
+uses the N adjacent daily log returns from the same endpoints. One missing
+paired close makes that window unavailable rather than shortening or filling
+it. The 20-session correlation remains the state-classification correlation.
+
 Requirements and states:
 
 - 5-session return needs 6 paired closes; 20-session return and `corr20` need
@@ -416,6 +427,13 @@ Confidence describes statistical support, not outcome probability:
 The frozen baseline therefore cannot exceed `low`. If p-values are displayed,
 they are descriptive and Holm-adjusted across the fixed 16-pair family. No card
 is promoted solely because a p-value crosses a threshold.
+
+The implemented parameter contract is
+`mrom-etf-relationships-v1-fixed-registry-1`, fingerprint
+`c84d6338412f68be44e35760de83bbad8dd306bbbd480166e874fc05eee5eca9`.
+At the 26-session baseline every pair is available but confidence is `low`;
+ratio z-score and percentile remain null because their 60-observation gate is
+not met. This is an implementation/replay validation, not a backtest.
 
 Each card shows the current and five-session-ago statistics, delta, economic
 rationale, a plausible reverse explanation, sample size, confidence, and
