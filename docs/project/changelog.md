@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-25 — Market Regime Phase 1b deterministic state classification
+
+- Added an immutable state parameter contract, typed candidate/confirmed state
+  records, deterministic bootstrap and hysteresis state machine, chronological
+  replay/append boundary, and complete transition and explanation ledgers.
+- Added a genuinely independent state Oracle plus exact threshold, reversal,
+  missingness, XNYS gap, restart, future-prefix, cross-Universe, and global
+  Decimal-context coverage. The offline CLI is socket guarded and writes only
+  canonical `/tmp` review artifacts.
+- The formal 2026-08-21 trajectory had six calculable sessions per Universe.
+  Both Universes initialized Balanced provisionally on 2026-08-17, cleared it
+  on 2026-08-18, held Balanced in the 2026-08-20 hysteresis band, and ended
+  candidate/confirmed Balanced on 2026-08-21 with zero Oracle mismatch.
+- Two full runs produced byte-identical non-time artifacts. No Phase 1a
+  formula, EOD, Identity, Activation, API, frontend, snapshot, Production,
+  network, credential, bundle, or OCI state changed.
+
 ## 2026-08-25 — Market Regime Phase 1a offline core
 
 - Added typed Phase 1a analytics contracts, immutable fixed V1 parameters, a

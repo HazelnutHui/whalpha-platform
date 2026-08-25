@@ -1,10 +1,10 @@
 # Roadmap
 
-- Next proposed product step: implement the offline Phase 1b Market Regime
-  state ledger over version-compatible historical Composites, including
-  bootstrap, confirmation, hysteresis, immediate Stress override, missing-data
-  pause, and transition reasons. EOD catch-up, ETF relationships, Production
-  snapshot, frontend, bundle, and OCI remain separate authorizations.
+- Next proposed product step: implement only the offline fixed-basket Phase 2
+  ETF Relationship Map over registered, formally readable ETFs and
+  pre-registered economic pairs. EOD catch-up, sector taxonomy, candidates,
+  Production snapshot, frontend, bundle, and OCI remain separate
+  authorizations.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -79,15 +79,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Market Regime & Opportunity Map V1 product, quantitative, data-contract,
   architecture, validation, and phased-delivery design
 - [x] Market Regime Phase 1a offline raw-metric and five-dimension ledger
-- [ ] Market Regime Phase 1b offline state/hysteresis ledger
+- [x] Market Regime Phase 1b offline state/hysteresis ledger
 
 ## Next Small Target
 
-Implement only the Phase 1b Market Regime state ledger: rebuild compatible
-prior-session Composites without future data, apply the accepted hysteresis
-table, persist transition counters and reasons under `/tmp`, and prove every
-transition with an independent oracle. Defer relationships, candidates,
-API/frontend, Production snapshot, bundle, and OCI. Keep SEC B2 paused.
+Implement only the fixed-basket Phase 2 ETF Relationship Map offline: use the
+30 registered ETFs and 16 pre-registered economic pairs, retain statistical-
+not-causal language, and persist evidence only under `/tmp` with an independent
+oracle. Defer sectors, candidates, API/frontend, Production snapshot, bundle,
+and OCI. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

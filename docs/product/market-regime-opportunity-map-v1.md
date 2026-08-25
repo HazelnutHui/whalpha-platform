@@ -2,17 +2,19 @@
 
 ## Status and decision boundary
 
-Status: **Accepted design; Phase 1a offline core implemented; not
-production-active**.
+Status: **Accepted design; Phase 1a offline core and Phase 1b deterministic
+state ledger implemented; not production-active**.
 
 Phase 1a now implements the fixed five-dimension raw-metric, normalization,
 Composite, missingness, contribution, and explanation ledger for explicit
 completed sessions. It writes canonical review artifacts only under `/tmp` and
 has no API, frontend, snapshot, pointer, or Production publication boundary.
-The Phase 1a profile deliberately leaves `regime_state=null` and records
-`state_classification_status=deferred_phase_1a`; the accepted hysteresis table
-below remains authoritative for the next separately implemented state-ledger
-slice.
+The Phase 1a profile deliberately keeps its original `regime_state=null` and
+`state_classification_status=deferred_phase_1a` semantics. Phase 1b consumes
+version-compatible Phase 1a Composites without changing their formulas or
+fingerprints, and emits a separate candidate/confirmed state history under
+`/tmp`. Neither profile has an API, frontend, snapshot, pointer, or Production
+publication boundary.
 
 This specification defines a transparent decision-support page for short-horizon
 equity research. It does not issue trading instructions, estimate certain
@@ -293,6 +295,30 @@ Normal transitions move one adjacent state at a time. The immediate stress
 override is the only skip. Missing required data never changes state: it makes
 the current calculation unavailable and displays the prior state as stale,
 with no synthetic confirmation session.
+
+Phase 1b freezes the remaining initialization and replay details in the
+separate state parameter set `mrom-regime-state-v1-fixed-baseline-1`,
+fingerprint
+`2ef5471536c131a7ca319fcb3fd3209092866bb4842fd25ff4de4d32ec79abb1`:
+
+- the first available candidate starts a two-session bootstrap and is never
+  silently accepted as confirmed;
+- if the first two candidates disagree, the more defensive one is initialized
+  as provisional; one later available session matching it clears provisional;
+- a missing Composite creates an explicit unavailable/stale row, holds the last
+  confirmed state, and pauses rather than increments a pending counter;
+- the caller supplies a complete, unique, ascending XNYS-session sequence;
+  duplicates, non-XNYS dates, or an omitted expected session fail closed;
+- pending confirmation reversals reset deterministically; ordinary cross-level
+  changes advance only one adjacent state, while `score <=20` remains the sole
+  immediate cross-level Stress override; and
+- replay from the first session, daily append, and restart from a serialized
+  prefix must produce the same state history fingerprint.
+
+These are transparent operating rules, not fitted thresholds. They were not
+selected from the frozen 2026-08-21 outcome and have not been statistically
+validated as a predictive model. A parameter change requires a new version and
+fingerprint.
 
 ## B. ETF Relationship Map
 

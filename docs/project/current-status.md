@@ -1,5 +1,30 @@
 # Current Status
 
+## 2026-08-25 — Market Regime Phase 1b deterministic state ledger
+
+- Added a separately versioned, pure state machine over verified Phase 1a
+  Composites. Candidate bands remain `>=70` Risk-on, `50–<70` Balanced,
+  `30–<50` Defensive, and `<30` Stress; entry/exit hysteresis, confirmation
+  counters, adjacent-only normal transitions, and the immediate `<=20` Stress
+  override are explicit.
+- Frozen bootstrap and replay details in
+  `mrom-regime-state-v1-fixed-baseline-1` (fingerprint
+  `2ef5471536c131a7ca319fcb3fd3209092866bb4842fd25ff4de4d32ec79abb1`):
+  the first candidate never
+  auto-confirms, disagreement initializes the more defensive state
+  provisionally, missing Composite pauses state, and XNYS gaps or duplicates
+  fail closed.
+- The offline CLI writes only canonical `/tmp` state history, current summary,
+  transition/explanation ledgers, parameter/source contracts, Oracle report,
+  and audit manifest. Append, restart, permutation, future-prefix, Universe
+  isolation, and Decimal-context checks reconcile with full replay.
+- The formal six-session trajectory for each Universe ended 2026-08-21 with
+  candidate and confirmed state both Balanced. Independent Oracle mismatch was
+  zero, and two complete runs produced byte-identical non-time artifacts.
+- The 26-session source history is sufficient to verify mechanics, not
+  predictive performance. No Phase 1a formula, Production data, API, frontend,
+  snapshot, network, credential, bundle, or OCI boundary changed.
+
 ## 2026-08-25 — Market Regime Phase 1a offline core
 
 - Implemented the fixed V1 five-dimension Market Regime calculation as pure,

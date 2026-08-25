@@ -2,17 +2,19 @@
 
 ## Status
 
-Status: **Proposed V1 contract; Phase 1a offline profile implemented; no
-production dataset or API is active**.
+Status: **Proposed V1 contract; Phase 1a offline profile and Phase 1b
+deterministic state profile implemented; no production dataset or API is
+active**.
 
 The implemented Phase 1a profile is a reversible `/tmp` audit boundary. It
 emits both public Universes in catalog order, five dimension ledgers, 18 metric
 ledgers per Universe, the Composite, missingness, explanations, and an
 independent-oracle report. It does not emit relationship, opportunity,
 candidate, risk-mode, state-transition, or Production publication records.
-`regime_state` is therefore null and
+`regime_state` therefore remains null in Phase 1a and
 `state_classification_status=deferred_phase_1a`; this is a scoped implementation
-state, not missing market data.
+state, not missing market data. Phase 1b is a separate ledger over compatible
+Phase 1a Composites and does not alter that Phase 1a schema.
 
 The checked-in parameter artifact is
 `parameter_set_id=mrom-v1-fixed-baseline-1`, fingerprint
@@ -23,6 +25,19 @@ The offline artifact set is exactly `input-manifest.json`, `raw-metrics.json`,
 `calculation-manifest.json`. Every JSON file is canonical and hash-bound; only
 physical audit metadata (`generated_at`, elapsed time, and peak memory) is
 excluded from the aggregate logical fingerprint.
+
+The Phase 1b profile uses
+`state_parameter_set_id=mrom-regime-state-v1-fixed-baseline-1` and
+`state_calculation_version=market-regime-opportunity-map-state-v1.0.0`, with
+state parameter fingerprint
+`2ef5471536c131a7ca319fcb3fd3209092866bb4842fd25ff4de4d32ec79abb1`. Its
+canonical artifact set is exactly `source-input-manifest.json`,
+`state-parameter-contract.json`, `state-history.json`,
+`current-state-summary.json`, `transition-ledger.json`,
+`state-explanation-ledger.json`, `state-oracle-report.json`, and the
+last-written `state-audit-manifest.json`. Generated time, elapsed time, and peak
+memory are physical audit metadata and do not enter any state logical
+fingerprint.
 
 This contract freezes the machine-readable boundary for the product described
 in [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).
@@ -110,6 +125,9 @@ reader results rather than hard-code them.
 | Candidate component | `snapshot_id + universe_id + instrument_id + component_id` | Exactly seven when score is complete |
 | Reason/evidence | `snapshot_id + subject_type + subject_id + reason_code + ordinal` | Deterministic and unique |
 | Quality gate | `snapshot_id + gate_code` | Unique |
+| Phase 1b state history | `universe_id + as_of_session` | Exactly one per expected XNYS session |
+| Phase 1b transition | `universe_id + as_of_session` | Exactly one state-machine decision per history row |
+| Phase 1b explanation | `universe_id + as_of_session` | Exactly one deterministic explanation per state row |
 
 Primary members may also occur in Secondary. Their raw market facts and
 stock-specific component values must be byte-equivalent across views. Only
@@ -149,6 +167,38 @@ serialized in the ordinary catalog.
 | `configured_weight_available` | decimal string | No | Sum of present configured composite weights |
 | `state_reason_codes` | ordered array | No | Deterministic transition evidence |
 | `history_sessions_used` | ordered dates | No | Ascending |
+
+### Phase 1b state record
+
+Each expected XNYS session and Universe is represented separately. Candidate
+and confirmed state must never share one ambiguous field. Required fields are:
+
+- `as_of_session`, `universe_id`, `composite`,
+  `instantaneous_candidate_state`, `confirmed_state`, and
+  `previous_confirmed_state`;
+- `transition_status`, `transition_rule_id`, `pending_target_state`,
+  `consecutive_confirmation_sessions`, `required_confirmation_sessions`, and
+  `confirmation_sessions_remaining`;
+- `entry_threshold`, `exit_threshold`, `boundary_operator`,
+  `initialization_status`, `state_availability`, `state_is_provisional`, and
+  `in_hysteresis_band`;
+- ordered `supporting_dimension_ids`, `conflicting_dimension_ids`, threshold
+  distances, reason codes, fixed disclaimers, calculation/state versions,
+  state parameter fingerprint, source Composite fingerprint, and row logical
+  fingerprint.
+
+Candidate bands are `risk_on >=70`, `balanced >=50 and <70`, `defensive >=30
+and <50`, and `stress <30`. The authoritative transition thresholds and
+confirmation counts are the product table. The Phase 1b parameter contract also
+freezes first-candidate bootstrap, more-defensive provisional initialization,
+provisional clearing, missing-Composite pause, XNYS-gap rejection, adjacent-only
+normal transitions, and the sole immediate `<=20` Stress override.
+
+Unavailable Composite values are null, never zero. Once initialized, an
+unavailable row retains the previous confirmed state only as explicitly stale;
+it cannot initialize, confirm, cancel, or advance a transition. A complete
+expected-session gap, duplicate session, non-XNYS date, nonfinite Composite, or
+version/fingerprint mismatch fails closed.
 
 The five `dimension_id` values and configured composite weights are fixed:
 

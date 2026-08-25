@@ -2,8 +2,8 @@
 
 ## Status
 
-Status: **Accepted implementation plan; Phase 1a offline core implemented; no
-Production publication exists**.
+Status: **Accepted implementation plan; Phase 1a offline core and Phase 1b
+deterministic state ledger implemented; no Production publication exists**.
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)
@@ -196,6 +196,11 @@ Each phase is an independent commit series with its own rollback boundary.
   records for both public Universes;
 - `/tmp` canonical JSON review artifact only;
 - no candidate ranking and no Production snapshot.
+
+Phase 1 is split into two independently versioned offline boundaries. Phase 1a
+owns metrics, normalization, missingness, and Composite. Phase 1b reads those
+verified Composites, replays the fixed candidate/confirmed state machine, and
+owns no Phase 1a formula or output field.
 
 **Suggested files/modules**
 
@@ -501,7 +506,7 @@ domain commits.
   evidence.
 - No operation selects a “latest” bundle or release implicitly.
 
-## Recommended next minimum slice
+## Implemented offline slices and next minimum slice
 
 Phase 1a is implemented as an isolated offline commit series:
 
@@ -520,9 +525,23 @@ administrator CLI that accepts only a direct `/tmp` output directory. The
 available in each, zero oracle mismatch, and deterministic logical
 fingerprints.
 
-The next minimum slice is the separately versioned **Phase 1b offline regime
-state ledger**. It should calculate compatible prior-session Composites, then
-implement bootstrap, confirmation counters, hysteresis, immediate Stress
-override, stale/missing behavior, and transition reason codes. Defer ETF
-relationship states, candidate scoring, API, frontend, snapshot, and Production
-publication until their named phases.
+Phase 1b is also implemented as an isolated offline commit series. It loads the
+formal panel once, calculates compatible Phase 1a prefixes entirely in memory,
+then executes a pure chronological state machine. A second implementation path
+independently evaluates candidate bands, bootstrap, pending counters,
+hysteresis, immediate Stress, unavailable rows, and reason codes without
+importing the production state service. Full replay, append, restart,
+permutation, future-prefix, cross-Universe, and Decimal-context gates are part
+of the boundary.
+
+The formal 2026-08-21 run produced six calculable Composite sessions per
+Universe, initialized Balanced provisionally on 2026-08-17, cleared
+provisional on 2026-08-18, held Balanced through a Defensive candidate inside
+the 45–55 hysteresis band on 2026-08-20, and ended with Balanced candidate and
+confirmed state for both Universes on 2026-08-21. This short trajectory verifies
+implementation mechanics only; it is not a backtest or predictive validation.
+
+The next minimum slice is the separately authorized fixed-basket **Phase 2 ETF
+Relationship Map** offline calculation. Candidate scoring, sector taxonomy,
+API, frontend, snapshot, and Production publication remain deferred to their
+named phases.
