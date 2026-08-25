@@ -1,5 +1,7 @@
 # Data Contracts
 
+- [Market Regime Local Preview Bundle V1](market-regime-preview-bundle-v1.md)
+
 - [Dashboard Snapshot V2](dashboard-snapshot-v2.md)
 - [Same-Day Identity and EOD Catch-Up V1](same-day-identity-eod-catchup-v1.md)
 

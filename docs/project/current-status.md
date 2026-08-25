@@ -1,5 +1,26 @@
 # Current Status
 
+## 2026-08-25 — Market Regime read-only API and desktop preview
+
+- Added a canonical two-file `/tmp` preview bundle that formally binds the
+  explicit Phase 1a, Phase 1b, and Phase 2 audits. It carries both public
+  Universes, all five regime dimensions, state history, all 30 registered ETFs,
+  and all 16 pair records with full history and explanations.
+- Added default-disabled private API contract `market-regime-opportunity-map-api/1.0`.
+  A configured bundle is verified once at startup and cached; requests never
+  scan `/data` or recompute analytics. With no explicit config, the routes are
+  absent and existing application behavior is unchanged.
+- Added the first desktop page with Balanced state context, auditable
+  contribution cards, fixed relationship highlights, complete 5/10/20 map,
+  filters, pair drawer, URL navigation, and non-causal/short-history warnings.
+  Common Shares remains first/default; ETF facts are invariant across the two
+  Universe views.
+- The exact 2026-08-21 audits reconcile to Primary/Secondary Composite
+  `63.9102`/`64.8167`, all 16 pairs, and zero source Oracle mismatch. This is a
+  local preview only: no Production analytics publication, snapshot, pointer,
+  deployment, guest route, network access, credential access, or `/data` write
+  occurred.
+
 ## 2026-08-25 — Market Regime Phase 2 offline ETF relationships
 
 - Implemented the exact 30-ETF basket and 16 pre-registered economic pairs as

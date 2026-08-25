@@ -1,9 +1,9 @@
 # Roadmap
 
-- Next proposed product step: add the first read-only API and desktop page
-  integration over the completed Phase 1 and Phase 2 contracts. EOD catch-up,
-  sector taxonomy, candidates, Production snapshot, bundle, and OCI remain
-  separate authorizations.
+- Next proposed product step: human-review the completed local Market Regime
+  page, then separately design immutable Production analytics publication.
+  EOD catch-up, sector taxonomy, candidates, Production snapshot, guest access,
+  bundle, and OCI remain separate authorizations.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -80,14 +80,14 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Market Regime Phase 1a offline raw-metric and five-dimension ledger
 - [x] Market Regime Phase 1b offline state/hysteresis ledger
 - [x] Market Regime Phase 2 offline fixed-basket ETF Relationship Map
+- [x] Market Regime read-only local API, preview bundle, and desktop page
 
 ## Next Small Target
 
-Implement the first read-only API and desktop page contract over the completed
-Phase 1 regime and Phase 2 relationship artifacts. Show all 16 pairs,
-methodology, evidence/counterevidence, confidence, and short-history caveats;
-do not add pair mining, sector breadth, candidates, Production snapshot,
-bundle, or OCI. Keep SEC B2 paused.
+Complete human review of the local Market Regime page. If accepted, design the
+immutable Production analytics dataset, approval/pointer/recovery boundary,
+and snapshot integration as a separate task; do not publish or deploy during
+that design. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

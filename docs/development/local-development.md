@@ -58,6 +58,29 @@ The script starts Uvicorn on `127.0.0.1:8000` and does not bind to public interf
 
 The default app exposes only Health. For an explicitly authorized local/private canonical-data session, set `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true` before starting the API. That flag is not authentication or public deployment approval.
 
+For the Market Regime local preview, first build a canonical bundle from the
+three explicit completed audits:
+
+```bash
+scripts/admin/build-market-regime-preview.sh \
+  --as-of-session 2026-08-21 \
+  --phase1a-audit /tmp/<explicit-phase1a-audit> \
+  --phase1b-audit /tmp/<explicit-phase1b-audit> \
+  --phase2-audit /tmp/<explicit-phase2-audit> \
+  --output-dir /tmp/<new-empty-preview-directory>
+```
+
+Then start the API with both explicit preview settings:
+
+```bash
+TIP_ENABLE_MARKET_REGIME_PREVIEW_ROUTES=true \
+TIP_MARKET_REGIME_PREVIEW_BUNDLE=/tmp/<explicit-completed-bundle> \
+PYTHONPATH=apps/api/src .venv/bin/uvicorn tip_api.main:app --host 127.0.0.1 --port 8000
+```
+
+Open `http://127.0.0.1:5173/?view=regime`. The bundle and routes are local
+preview infrastructure only; neither setting authorizes Production use.
+
 ## Start Frontend
 
 ```bash

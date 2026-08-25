@@ -2,8 +2,8 @@
 
 ## Status
 
-Status: **Accepted implementation plan; Phase 1a, Phase 1b, and Phase 2
-fixed-basket relationships implemented offline; no Production publication
+Status: **Accepted implementation plan; Phase 1a, Phase 1b, Phase 2, and a
+read-only local API/desktop preview are implemented; no Production publication
 exists**.
 
 This document sequences the design in
@@ -553,8 +553,15 @@ append, input permutation, future-prefix, Decimal-context, canonical reread,
 and two-run byte determinism are required gates. The Phase 2 logical audit
 fingerprint is `e5acfa29771d965e9bdf21d1bfab24148220217ac474327cdc60e2212532e3a5`.
 
-The next minimum slice is a separately authorized **read-only API and desktop
-page integration** over these versioned Phase 1 and Phase 2 contracts. It must
-present all registered pairs, methodology, and short-history caveats without
-adding pair discovery, sector breadth, candidate scoring, snapshot
-publication, or deployment. Those remain deferred to their named phases.
+The read-only API and desktop integration is now implemented as a local-only
+slice. An explicit three-audit builder emits a two-file canonical `/tmp`
+preview bundle; the API formally verifies it once at startup and retains an
+immutable cache. The default application does not register the route. The
+desktop view renders both Universes, the five-dimension ledger, all 16 pairs,
+fixed highlights, filters, pair detail, and short-history boundaries without
+recalculation.
+
+The next step is **human review of this local page**, followed by a separately
+authorized design for immutable Production analytics publication. Pair
+discovery, sector breadth, candidate scoring, snapshot publication, guest
+access, bundle creation, and deployment remain deferred.

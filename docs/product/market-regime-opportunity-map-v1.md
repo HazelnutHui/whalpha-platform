@@ -2,8 +2,8 @@
 
 ## Status and decision boundary
 
-Status: **Accepted design; Phase 1a core, Phase 1b state ledger, and Phase 2
-fixed-basket ETF relationships implemented offline; not production-active**.
+Status: **Accepted design; Phase 1a, Phase 1b, Phase 2, and the read-only local
+API/desktop preview are implemented; not production-active**.
 
 Phase 1a now implements the fixed five-dimension raw-metric, normalization,
 Composite, missingness, contribution, and explanation ledger for explicit
@@ -13,8 +13,9 @@ The Phase 1a profile deliberately keeps its original `regime_state=null` and
 `state_classification_status=deferred_phase_1a` semantics. Phase 1b consumes
 version-compatible Phase 1a Composites without changing their formulas or
 fingerprints, and emits a separate candidate/confirmed state history under
-`/tmp`. Neither profile has an API, frontend, snapshot, pointer, or Production
-publication boundary.
+`/tmp`. A later local-preview integration reads these immutable audits through
+an explicit, validated `/tmp` bundle; it does not add a Production snapshot,
+pointer, or publication boundary.
 
 Phase 2 consumes the same once-loaded 26-session panel and the completed Phase
 1 audit ledgers. It computes all 16 pre-registered pairs for 5, 10, and 20

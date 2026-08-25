@@ -2,9 +2,9 @@
 
 ## Status
 
-Status: **Proposed V1 contract; Phase 1a, Phase 1b, and the fixed-registry
-Phase 2 ETF relationship profile are implemented offline; no production
-dataset or API is active**.
+Status: **Proposed V1 contract; Phase 1a, Phase 1b, Phase 2, and a separately
+versioned read-only local preview bundle/API are implemented; no Production
+analytics dataset or API is active**.
 
 The implemented Phase 1a profile is a reversible `/tmp` audit boundary. It
 emits both public Universes in catalog order, five dimension ledgers, 18 metric
@@ -505,6 +505,12 @@ gate. Quality-gate results and failure/warning lists are persisted, not inferred
 from a presentation label.
 
 ## Snapshot, API, and frontend boundary
+
+The implemented local-preview profile is defined separately in
+[Market Regime Local Preview Bundle V1](market-regime-preview-bundle-v1.md).
+It validates explicit `/tmp` audits and serves an immutable startup cache only
+when explicitly configured. It is not the future persisted Production dataset
+described below.
 
 - The analytics builder reads formal immutable sources and emits a candidate
   only after all quality gates pass.

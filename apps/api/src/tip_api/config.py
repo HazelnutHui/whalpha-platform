@@ -14,17 +14,28 @@ class AppConfig:
     environment: str = "development"
     market_data_root: Path = Path("/data/trading-intelligence-platform")
     enable_private_market_data_routes: bool = False
+    enable_market_regime_preview_routes: bool = False
+    market_regime_preview_bundle: Path | None = None
 
     def __post_init__(self) -> None:
         if not self.market_data_root.is_absolute():
             raise ValueError("market_data_root must be an absolute path")
+        if self.market_regime_preview_bundle is not None and not self.market_regime_preview_bundle.is_absolute():
+            raise ValueError("market_regime_preview_bundle must be an absolute path")
+        if self.enable_market_regime_preview_routes and self.market_regime_preview_bundle is None:
+            raise ValueError("enabled Market Regime preview routes require an explicit bundle")
 
 
 def load_app_config(env: Mapping[str, str] | None = None) -> AppConfig:
     source = os.environ if env is None else env
+    bundle_value = source.get("TIP_MARKET_REGIME_PREVIEW_BUNDLE")
     return AppConfig(
         market_data_root=Path(source.get("TIP_MARKET_DATA_ROOT", "/data/trading-intelligence-platform")),
         enable_private_market_data_routes=_truthy(source.get("TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES")),
+        enable_market_regime_preview_routes=_truthy(
+            source.get("TIP_ENABLE_MARKET_REGIME_PREVIEW_ROUTES")
+        ),
+        market_regime_preview_bundle=Path(bundle_value) if bundle_value else None,
     )
 
 

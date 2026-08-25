@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-25 — Market Regime read-only API and desktop preview
+
+- Added the canonical, source-bound `/tmp` preview bundle and formal reader,
+  plus a socket-guarded no-apply CLI. Payload identity excludes `generated_at`
+  and binds all three completed offline audits.
+- Added default-disabled private overview and relationship-detail endpoints.
+  The configured bundle is validated once at startup; default Production
+  behavior never depends on `/tmp` and no request scans the EOD panel.
+- Added the desktop Market Regime & Opportunity Map with both Universes, five
+  auditable dimensions, full 16-pair 5/10/20 map, fixed highlights, filters,
+  URL navigation, pair detail, evidence/counterevidence, and methodology.
+- Real local 2026-08-21 data reconciled exactly. Production data, snapshot,
+  Activation, authentication, guest access, network, credentials, OCI, and
+  deployment were unchanged.
+
 ## 2026-08-25 — Market Regime Phase 2 offline ETF relationship map
 
 - Added the immutable 30-ETF/16-pair registry, typed relationship contracts,

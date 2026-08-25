@@ -5,5 +5,6 @@ The authenticated Dashboard supports the two activated Universe views through a 
 This directory records frontend runtime boundaries and implemented local dashboard behavior.
 
 - [Market Dashboard V1](market-dashboard-v1.md)
+- [Market Regime & Opportunity Map Local Preview](market-regime-opportunity-map-preview.md)
 - [Dashboard Universe V1](../product/dashboard-universe-v1.md)
 - [Private Dashboard Publication](../architecture/private-dashboard-publication.md)
