@@ -40,3 +40,4 @@ Each ADR should include:
 - [0015: Govern Security Types and Universe Eligibility](0015-govern-security-types-and-universe-eligibility.md)
 - [0016: Publish Versioned Trailing Liquidity Shadow Results](0016-publish-versioned-trailing-liquidity-shadow-results.md)
 - [0017: Activate Selectable Dashboard Universes](0017-activate-selectable-dashboard-universes.md)
+- [0018: Stage Market Regime & Opportunity Map V1 as Transparent EOD Analytics](0018-stage-market-regime-opportunity-map-v1.md)

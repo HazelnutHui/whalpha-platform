@@ -1,9 +1,10 @@
 # Roadmap
 
-- Next authorized step: separately authorize a bounded exact-date Identity and
-  EOD catch-up using fetch packages and independently approved plans. Snapshot
-  publication remains blocked until canonical freshness is restored; frontend
-  and OCI remain later independent authorizations.
+- Next proposed product step: implement the offline Phase 1a Market Regime raw
+  metric and five-dimension ledger against an explicit completed session, write
+  review evidence only under `/tmp`, and prove it with an independent oracle.
+  EOD catch-up, Production snapshot, frontend, bundle, and OCI work remain
+  separate authorizations.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -75,10 +76,17 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Stable-ID Legacy/A/B pre-activation comparison and Reviewed Eligibility Override V1 shadow publication
 - [x] Versioned Dashboard Universe Activation V1 with selectable Common Shares and Common Shares + ADRs
 - [x] Multi-Universe private API, snapshot, and React selector integration
+- [x] Market Regime & Opportunity Map V1 product, quantitative, data-contract,
+  architecture, validation, and phased-delivery design
+- [ ] Market Regime Phase 1a offline raw-metric and five-dimension ledger
 
 ## Next Small Target
 
-Authorize a bounded EOD catch-up to restore XNYS freshness. Only after lag returns to zero should a separate snapshot approval/publication review be considered. Snapshot V2, formal Funnel, pointer/recovery, and rollback code are offline-ready; production snapshot and OCI remain unchanged. Keep SEC B2 paused.
+Implement the Phase 1a Market Regime ledger only: fixed parameters, explicit
+2026-08-21 formal sources, raw metrics, five dimensions, composite,
+missingness, explanations, and an independent oracle. Keep output in `/tmp`;
+defer hysteresis persistence, relationships, candidates, API/frontend,
+Production snapshot, bundle, and OCI. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

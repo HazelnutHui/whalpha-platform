@@ -1,5 +1,8 @@
 # Documentation Index
 
+- [Market Regime & Opportunity Map V1 product specification](product/market-regime-opportunity-map-v1.md)
+- [Market Regime & Opportunity Map V1 data contract](data-contracts/market-regime-opportunity-map-v1.md)
+- [Market Regime & Opportunity Map V1 architecture and implementation plan](architecture/market-regime-opportunity-map-v1.md)
 - [Dashboard Snapshot V2 data contract](data-contracts/dashboard-snapshot-v2.md)
 - [Same-Day Identity and EOD Catch-Up V1](data-contracts/same-day-identity-eod-catchup-v1.md)
 - [Dashboard Universe Funnel](product/dashboard-universe-funnel.md)
@@ -22,6 +25,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 ## Product
 
+- [Market Regime & Opportunity Map V1](product/market-regime-opportunity-map-v1.md): Transparent regime, registered ETF relationships, opportunity stages, risk modes, and validation design.
 - [Vision](product/vision.md): Product principles and UI language.
 - [Scope](product/scope.md): Phase 1 scope, deferred work, and explicit non-goals.
 - [Dashboard V1](product/dashboard-v1.md): Confirmed first dashboard structure and target behavior.
@@ -32,6 +36,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 ## Architecture
 
+- [Market Regime & Opportunity Map V1](architecture/market-regime-opportunity-map-v1.md): Offline V1A/V1B data flow, six implementation phases, tests, and rollback boundaries.
 - [System Context](architecture/system-context.md): Logical system flow and infrastructure responsibilities.
 - [Application Architecture](architecture/application-architecture.md): Accepted target application architecture and runtime boundaries.
 - [Private Dashboard Publication](architecture/private-dashboard-publication.md): Static private dashboard snapshot and OCI bundle architecture.
@@ -53,6 +58,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 ## Data Contracts
 
 - [Data Contracts Index](data-contracts/README.md)
+- [Market Regime & Opportunity Map V1](data-contracts/market-regime-opportunity-map-v1.md)
 - [Instrument Master V1](data-contracts/instrument-master-v1.md)
 - [EOD Price Bar V1](data-contracts/eod-price-bar-v1.md)
 - [Corporate Action V1](data-contracts/corporate-action-v1.md)
@@ -124,6 +130,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0013: Establish Dashboard Universe V1 for Market Overview](decisions/0013-establish-dashboard-universe-v1.md)
 - [ADR 0015: Govern Security Types and Universe Eligibility](decisions/0015-govern-security-types-and-universe-eligibility.md)
 - [ADR 0016: Publish Versioned Trailing Liquidity Shadow Results](decisions/0016-publish-versioned-trailing-liquidity-shadow-results.md)
+- [ADR 0018: Stage Market Regime & Opportunity Map V1 as Transparent EOD Analytics](decisions/0018-stage-market-regime-opportunity-map-v1.md)
 
 ## Project
 

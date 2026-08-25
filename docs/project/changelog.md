@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-25 — Market Regime & Opportunity Map V1 design
+
+- Added the product specification, proposed data contract, implementation
+  architecture, and ADR for a transparent four-layer Market Regime &
+  Opportunity Map.
+- Defined five exact regime dimensions and fixed composite weights, hysteretic
+  regime and candidate states, a 16-pair registered ETF ledger, seven-component
+  candidate score, three visible risk modes, evidence templates, and a
+  walk-forward anti-overfitting framework.
+- Recorded the formal data feasibility boundary: 26 completed EOD sessions
+  support 5/10/20-session analytics; point-in-time sector taxonomy, 40/60-session
+  history, market cap, fundamentals, options, corporate-action reconciliation,
+  and true fund flows remain deferred.
+- Split V1A existing-data analytics from V1B taxonomy-dependent sector
+  transmission and recommended an offline `/tmp` Phase 1a ledger as the next
+  minimum implementation slice. This change is documentation only; no
+  Production, network, snapshot, frontend, bundle, or OCI action occurred.
+
 ## 2026-08-23 — Approval-bound same-day Identity and EOD catch-up
 
 - Split both Massive administrator entrypoints into fetch-only `/tmp` package,

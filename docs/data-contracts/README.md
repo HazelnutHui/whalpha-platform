@@ -23,6 +23,7 @@ Implemented as Python/Pydantic contracts:
 
 Accepted logical contracts only:
 
+- [Market Regime & Opportunity Map V1](market-regime-opportunity-map-v1.md)
 - [Corporate Action V1](corporate-action-v1.md)
 - [Classification V1](classification-v1.md)
 - [Universe Membership V1](universe-membership-v1.md)

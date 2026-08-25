@@ -1,5 +1,24 @@
 # Current Status
 
+## 2026-08-25 — Market Regime & Opportunity Map V1 design
+
+- Accepted a docs-only, non-production design for a transparent Market Regime,
+  fixed registered ETF Relationship Map, opportunity-candidate ledger,
+  deterministic stages, three visible risk modes, and chronological validation.
+- Frozen the development baseline at 2026-08-21 EOD plus its same-day Identity.
+  Formal read-only review confirmed 26 completed sessions: 5/10/20-session
+  windows are available, while 40/60-session statistics and performance claims
+  remain unavailable.
+- Split delivery into V1A Market Regime Core plus ETF relationships using
+  existing data, and V1B sector breadth/transmission after an effective-dated
+  taxonomy exists. Price correlation cannot become sector membership; volume
+  cannot be called fund flow; underlying-stock evaluation cannot imply option
+  outcomes.
+- The recommended next slice is an offline `/tmp` Phase 1a raw-metric,
+  five-dimension, composite, missingness, and explanation ledger with an
+  independent oracle. No feature code, Production data, snapshot, frontend,
+  bundle, or OCI change was made in this design step.
+
 ## 2026-08-23 — Same-day Identity and EOD catch-up safety readiness
 
 - Replaced the administrator network-to-production path with four explicit
