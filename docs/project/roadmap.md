@@ -1,7 +1,8 @@
 # Roadmap
 
-- Next proposed product step: human-review the completed local Market Regime
-  page, then separately design immutable Production analytics publication.
+- Next proposed product step: human-review the refined local Market Regime
+  page. Only after explicit acceptance should immutable Production analytics
+  publication be designed as a separate authorization.
   EOD catch-up, sector taxonomy, candidates, Production snapshot, guest access,
   bundle, and OCI remain separate authorizations.
 
@@ -84,10 +85,10 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Complete human review of the local Market Regime page. If accepted, design the
-immutable Production analytics dataset, approval/pointer/recovery boundary,
-and snapshot integration as a separate task; do not publish or deploy during
-that design. Keep SEC B2 paused.
+Repeat human visual review of the refined local Market Regime page at the three
+desktop viewports and with pair detail open. Do not start Production analytics
+publication design, publication, snapshot integration, or deployment without
+a separate authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

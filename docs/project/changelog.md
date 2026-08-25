@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-25 — Market Regime local-preview UX refinement
+
+- Reordered the local preview around the confirmed market state, fixed-rule
+  support/drag context, and transition distance; Composite is now supporting
+  information rather than the dominant visual.
+- Added display-only precision, score bars, Support/Neutral/Drag labels, and
+  compact short-viewport behavior while retaining exact calculation ledgers in
+  expandable audit sections.
+- Expanded relationship highlights and pair detail with both-leg returns,
+  relative spread, deterministic investor-readable evidence, and clearer
+  state-versus-relative-performance separation. All 16 preregistered pairs
+  remain visible.
+- No API payload, formula, parameter, threshold, state, fingerprint,
+  Production data, snapshot, authentication, network, or deployment boundary
+  changed.
+
 ## 2026-08-25 — Market Regime read-only API and desktop preview
 
 - Added the canonical, source-bound `/tmp` preview bundle and formal reader,

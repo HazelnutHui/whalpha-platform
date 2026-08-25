@@ -1,5 +1,21 @@
 # Current Status
 
+## 2026-08-25 — Market Regime local-preview UX refinement
+
+- Refined only the local preview presentation layer. Balanced is now the first
+  visual conclusion; Composite is secondary, and fixed source fields identify
+  the leading support, main drag, and transition distance without generated or
+  predictive language.
+- Added investor-readable display precision, five visible score bars and
+  Support/Neutral/Drag labels, named two-leg highlight comparisons, and a pair
+  drawer that leads with relative-performance context. Exact Decimals, raw
+  reason codes, configured/effective weights, ratio diagnostics, and
+  contribution reconciliation remain available in audit expansions.
+- The complete 16-pair map, Primary/Secondary behavior, URL state, session
+  boundary, API payload, calculation values, thresholds, logical fingerprints,
+  and Production-default behavior are unchanged. This remains a local preview
+  pending another human visual review; no publication or deployment occurred.
+
 ## 2026-08-25 — Market Regime read-only API and desktop preview
 
 - Added a canonical two-file `/tmp` preview bundle that formally binds the
