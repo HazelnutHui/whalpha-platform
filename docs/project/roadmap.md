@@ -1,8 +1,10 @@
 # Roadmap
 
-- Next proposed product step: human-review the refined local Market Regime
-  page. Only after explicit acceptance should immutable Production analytics
-  publication be designed as a separate authorization.
+- Next proposed product step: human-review both English and Simplified Chinese
+  local Market Regime and Dashboard views, then design the historical-change
+  layer and lightweight visualizations as a separate implementation. Only
+  after explicit acceptance should immutable Production analytics publication
+  be designed as a separate authorization.
   EOD catch-up, sector taxonomy, candidates, Production snapshot, guest access,
   bundle, and OCI remain separate authorizations.
 
@@ -82,13 +84,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Market Regime Phase 1b offline state/hysteresis ledger
 - [x] Market Regime Phase 2 offline fixed-basket ETF Relationship Map
 - [x] Market Regime read-only local API, preview bundle, and desktop page
+- [x] Typed English/Simplified Chinese interface for login, Dashboard, and
+  Market Regime local preview
 
 ## Next Small Target
 
-Repeat human visual review of the refined local Market Regime page at the three
-desktop viewports and with pair detail open. Do not start Production analytics
-publication design, publication, snapshot integration, or deployment without
-a separate authorization. Keep SEC B2 paused.
+Review the English and Chinese local pages at all desktop viewports, then scope
+the historical-change layer and lightweight visualizations. Do not start
+Production analytics publication design, publication, snapshot integration,
+guest access, or deployment without a separate authorization. Keep SEC B2
+paused.
 
 ## Phase 2 — Intraday and Options
 

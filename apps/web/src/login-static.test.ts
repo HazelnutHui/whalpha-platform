@@ -1,11 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import loginScript from '../static/login/login.js?raw';
+import loginI18nScript from '../static/login/login-i18n.js?raw';
 
 function renderLogin(url = '/') {
   window.history.replaceState({}, '', url);
   document.body.innerHTML = `
+    <div class="login-language" role="group" aria-label="Interface language" data-i18n-aria="languageAria">
+      <span data-i18n="languageLabel">Language</span>
+      <button type="button" data-locale="en">English</button>
+      <button type="button" data-locale="zh">中文</button>
+    </div>
     <form method="post" action="/auth/login" autocomplete="on">
-      <p id="login-error" class="login-error" role="alert">Invalid username or password.</p>
+      <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
       <input id="next" name="next" type="hidden" value="/dashboard/" />
       <input id="username" name="username" type="text" autocomplete="username" />
       <input id="password" name="password" type="password" autocomplete="current-password" />
@@ -18,9 +24,15 @@ function runLoginScript() {
   Function(loginScript)();
 }
 
+function runLoginI18nScript() {
+  Function(loginI18nScript)();
+}
+
 describe('static login client', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    window.localStorage.clear();
+    delete (window as unknown as { __whalphaLoginI18n?: unknown }).__whalphaLoginI18n;
     delete (window as unknown as { __whalphaNavigate?: unknown }).__whalphaNavigate;
     renderLogin();
   });
@@ -48,7 +60,7 @@ describe('static login client', () => {
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     });
     const body = JSON.parse(fetchMock.mock.calls[1][1].body);
-    expect(body).toEqual({ username: 'hui', password: 'invalid-test-password', next: '/dashboard/' });
+    expect(body).toEqual({ username: 'hui', password: 'invalid-test-password', next: '/dashboard/?lang=en' });
     expect(String(fetchMock.mock.calls[1][0])).not.toContain('invalid-test-password');
   });
 
@@ -67,7 +79,7 @@ describe('static login client', () => {
     document.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
 
-    expect(JSON.parse(fetchMock.mock.calls[1][1].body).next).toBe('/dashboard/');
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).next).toBe('/dashboard/?lang=en');
   });
 
   it('clears password and stays on login page on failure', async () => {
@@ -117,7 +129,7 @@ describe('static login client', () => {
     const fetchMock = vi.fn().mockResolvedValueOnce({ status: 204, ok: true });
     vi.stubGlobal('fetch', fetchMock);
     runLoginScript();
-    await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith('/dashboard/'));
+    await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith('/dashboard/?lang=en'));
   });
 
   it('accepts only dashboard next paths', async () => {
@@ -133,6 +145,45 @@ describe('static login client', () => {
     (document.getElementById('password') as HTMLInputElement).value = 'invalid-test-password';
     document.querySelector('form')!.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
-    expect(JSON.parse(fetchMock.mock.calls[1][1].body).next).toBe('/dashboard/research');
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body).next).toBe('/dashboard/research?lang=en');
+  });
+
+  it('keeps authentication behavior while applying explicit bilingual locale state', async () => {
+    Object.defineProperty(window.navigator, 'language', { configurable: true, value: 'zh-CN' });
+    renderLogin('/?next=%2Fdashboard%2F%3Fview%3Dregime%26universe%3Dprimary');
+    runLoginI18nScript();
+    const loginI18n = (window as unknown as { __whalphaLoginI18n: { locale: string; messages: Record<'en' | 'zh', Record<string, string>> } }).__whalphaLoginI18n;
+    expect(loginI18n.locale).toBe('en');
+    expect(Object.keys(loginI18n.messages.en).sort()).toEqual(Object.keys(loginI18n.messages.zh).sort());
+    expect(document.documentElement.lang).toBe('en');
+    expect(window.location.search).toContain('lang=en');
+
+    const fetchMock = vi.fn().mockResolvedValueOnce({ status: 401, ok: false });
+    vi.stubGlobal('fetch', fetchMock);
+    runLoginScript();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    expect((document.getElementById('next') as HTMLInputElement).value).toContain('lang=en');
+
+    (document.querySelector('[data-locale="zh"]') as HTMLButtonElement).click();
+    expect(window.localStorage.getItem('whalpha.interface.locale')).toBe('zh');
+    expect(window.location.search).toContain('lang=zh');
+    expect(document.documentElement.lang).toBe('zh-CN');
+    expect(document.getElementById('login-error')).toHaveTextContent('用户名或密码错误。');
+    expect((document.getElementById('next') as HTMLInputElement).value).toContain('lang=zh');
+    expect((document.getElementById('next') as HTMLInputElement).value).toContain('view=regime');
+    expect((document.getElementById('next') as HTMLInputElement).value).toContain('universe=primary');
+  });
+
+  it('lets URL locale override storage and safely canonicalizes invalid locale', () => {
+    window.localStorage.setItem('whalpha.interface.locale', 'zh');
+    renderLogin('/?lang=en');
+    runLoginI18nScript();
+    expect((window as unknown as { __whalphaLoginI18n: { locale: string } }).__whalphaLoginI18n.locale).toBe('en');
+
+    renderLogin('/?lang=unsafe%3Cscript%3E');
+    window.localStorage.clear();
+    runLoginI18nScript();
+    expect((window as unknown as { __whalphaLoginI18n: { locale: string } }).__whalphaLoginI18n.locale).toBe('en');
+    expect(new URLSearchParams(window.location.search).get('lang')).toBe('en');
   });
 });

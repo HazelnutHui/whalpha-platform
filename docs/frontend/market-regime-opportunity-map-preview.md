@@ -31,6 +31,13 @@ Valid direct links, refresh, and browser back/forward reconstruct the view.
 Common Shares remains first and default. Switching to Common Shares + ADRs
 loads that separate regime ledger; the ETF facts do not change.
 
+The shared page shell also provides `English` and `中文`. A legal `lang` URL
+value wins over an explicitly saved browser preference, and English is the
+first-visit default. Language switching preserves all page and Universe query
+state and changes presentation only: API requests, exact values, pair rows,
+warnings, source identities, and analytics fingerprints stay identical. See
+[Frontend Interface Internationalization](interface-internationalization.md).
+
 ## Presentation boundary
 
 - Positive/negative color is accompanied by signed numbers and state text.

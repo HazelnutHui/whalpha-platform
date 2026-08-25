@@ -1,6 +1,7 @@
 (() => {
   const DEFAULT_NEXT = '/dashboard/';
   const navigate = window.__whalphaNavigate || ((path) => window.location.assign(path));
+  const i18n = window.__whalphaLoginI18n;
 
   function safeNext(value) {
     if (
@@ -15,12 +16,18 @@
     return DEFAULT_NEXT;
   }
 
+  function withLocale(path) {
+    const url = new URL(safeNext(path), window.location.origin);
+    url.searchParams.set('lang', i18n?.locale === 'zh' ? 'zh' : 'en');
+    return `${url.pathname}${url.search}${url.hash}`;
+  }
   const params = new URLSearchParams(window.location.search);
-  const targetPath = safeNext(params.get('next'));
+  function targetPath() { return withLocale(params.get('next')); }
   const nextInput = document.getElementById('next');
   if (nextInput instanceof HTMLInputElement) {
-    nextInput.value = targetPath;
+    nextInput.value = targetPath();
   }
+  window.addEventListener('whalpha:localechange', () => { if (nextInput instanceof HTMLInputElement) nextInput.value = targetPath(); setLoading(isSubmitting || isCheckingStatus); });
   const error = document.getElementById('login-error');
   if (params.get('error') === '1') {
     error?.classList.add('visible');
@@ -36,7 +43,7 @@
     if (button instanceof HTMLButtonElement) {
       button.disabled = value;
       button.setAttribute('aria-busy', value ? 'true' : 'false');
-      button.textContent = value ? 'Signing In' : 'Sign In';
+      button.textContent = value ? (i18n?.t('submitting') ?? 'Signing In') : (i18n?.t('submit') ?? 'Sign In');
     }
   }
 
@@ -64,7 +71,7 @@
         headers: { Accept: 'application/json' },
       });
       if (response.status === 204) {
-        navigate(targetPath);
+        navigate(targetPath());
         return;
       }
     } catch {

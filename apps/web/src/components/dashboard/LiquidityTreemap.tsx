@@ -9,6 +9,7 @@ import type { TooltipComponentOption, VisualMapComponentOption } from 'echarts/c
 
 import type { LiquidityMapNodeResponse, LiquidityMapResponse } from '../../api/types';
 import { clamp, formatCompact, formatCurrencyCompact, formatPercent, formatPrice, parseDecimal } from '../../utils/format';
+import { useI18n } from '../../i18n/I18nProvider';
 
 echarts.use([TreemapChart, TooltipComponent, VisualMapComponent, AriaComponent, CanvasRenderer]);
 
@@ -61,8 +62,9 @@ export function toTreemapData(liquidityMap: LiquidityMapResponse): TreemapDatum[
 }
 
 export function LiquidityTreemap({ liquidityMap, highlightedTicker, onSelectNode }: Props): JSX.Element {
+  const { t } = useI18n();
   const chartRef = useRef<HTMLDivElement | null>(null);
-  const summary = `${liquidityMap.nodes.length} tradable equities sized by close times volume proxy and colored by close-to-close return.`;
+  const summary = t('dashboard.treemapAria', { count: liquidityMap.nodes.length });
   const data = useMemo(() => toTreemapData(liquidityMap), [liquidityMap]);
 
   useEffect(() => {
@@ -83,13 +85,13 @@ export function LiquidityTreemap({ liquidityMap, highlightedTicker, onSelectNode
           return [
             `<strong>${node.ticker}</strong>`,
             node.name,
-            `Return: ${formatPercent(node.color_value, { signed: true })}`,
-            `Close: ${formatPrice(node.current_close)}`,
-            `Volume: ${formatCompact(node.current_volume)}`,
-            `Trading activity proxy: ${formatCurrencyCompact(node.size_value)}`,
-            `Activity rank: ${node.rank}`,
-            `Instrument type: ${node.instrument_type}`,
-            node.quality_flags.includes('unverified_price_discontinuity') ? 'Material review: unverified price discontinuity' : '',
+            t('dashboard.tooltipReturn', { value: formatPercent(node.color_value, { signed: true }) }),
+            t('dashboard.tooltipClose', { value: formatPrice(node.current_close) }),
+            t('dashboard.tooltipVolume', { value: formatCompact(node.current_volume) }),
+            t('dashboard.tooltipActivity', { value: formatCurrencyCompact(node.size_value) }),
+            t('dashboard.tooltipRank', { value: node.rank }),
+            t('dashboard.tooltipType', { value: node.instrument_type }),
+            node.quality_flags.includes('unverified_price_discontinuity') ? t('dashboard.tooltipReview') : '',
           ].join('<br/>');
         },
       },
@@ -108,7 +110,7 @@ export function LiquidityTreemap({ liquidityMap, highlightedTicker, onSelectNode
           animation: !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
           label: {
             color: '#f4f7fb',
-            fontFamily: 'Inter, ui-sans-serif, system-ui',
+            fontFamily: 'Inter, ui-sans-serif, system-ui, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
             fontSize: 12,
             overflow: 'break',
           },
@@ -145,19 +147,19 @@ export function LiquidityTreemap({ liquidityMap, highlightedTicker, onSelectNode
       window.removeEventListener('resize', resize);
       chart.dispose();
     };
-  }, [data, highlightedTicker, onSelectNode]);
+  }, [data, highlightedTicker, onSelectNode, t]);
 
   return (
     <div>
-      <div className="return-legend" aria-label="Trading Activity Map color legend">
+      <div className="return-legend" aria-label={t('dashboard.treemapLegend')}>
         <span>≤−5%</span><span>−2%</span><span>0%</span><span>+2%</span><span>≥+5%</span>
       </div>
       {liquidityMap.nodes.length === 0 ? (
-        <div className="empty-state">No liquidity map nodes matched the current threshold.</div>
+        <div className="empty-state">{t('dashboard.treemapEmpty')}</div>
       ) : (
         <div ref={chartRef} className="treemap-canvas" role="img" aria-label={summary} />
       )}
-      <p className="chart-summary">Size reflects close × volume trading activity; color reflects 1-day close-to-close return. This is not a market-cap heatmap.</p>
+      <p className="chart-summary">{t('dashboard.treemapSummary')}</p>
     </div>
   );
 }

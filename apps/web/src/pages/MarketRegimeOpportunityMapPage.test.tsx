@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { MarketRegimeOpportunityMapPage } from './MarketRegimeOpportunityMapPage';
 import { marketRegimeFixture, PRIMARY_UNIVERSE, SECONDARY_UNIVERSE } from '../test/marketRegimeFixture';
+import { I18nProvider } from '../i18n/I18nProvider';
+import { LanguageSelector } from '../i18n/LanguageSelector';
 
 const getPreview = vi.fn((universe?: string, _signal?: AbortSignal) => Promise.resolve(marketRegimeFixture(universe === SECONDARY_UNIVERSE ? SECONDARY_UNIVERSE : PRIMARY_UNIVERSE)));
 vi.mock('../api/marketRegime', async (original) => ({ ...(await original<typeof import('../api/marketRegime')>()), getMarketRegimePreview: (universe?: string, signal?: AbortSignal) => getPreview(universe, signal) }));
@@ -57,5 +59,25 @@ describe('Market Regime Opportunity Map desktop preview', () => {
     render(<MarketRegimeOpportunityMapPage />);
     expect(await screen.findByText('Market Regime preview unavailable')).toBeInTheDocument();
     expect(screen.getByText(/No partial or mixed-version analytics/)).toBeInTheDocument();
+  });
+
+  it('changes only presentation language while preserving the analytics payload and exact values', async () => {
+    window.localStorage.clear();
+    window.history.replaceState({}, '', '/?view=regime&universe=provider_classified_common_shares_v1&lang=en');
+    render(<I18nProvider><LanguageSelector /><MarketRegimeOpportunityMapPage /></I18nProvider>);
+    expect(await screen.findByText('Mixed but constructive')).toBeInTheDocument();
+    expect(document.querySelector('[data-exact-value="63.9102"]')).toHaveTextContent('63.9 / 100');
+    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(20);
+    expect(getPreview).toHaveBeenCalledTimes(1);
+
+    fireEvent.click(screen.getByRole('button', { name: '中文' }));
+    expect(await screen.findByText('分化但总体偏积极')).toBeInTheDocument();
+    expect(document.querySelector('[data-exact-value="63.9102"]')).toHaveTextContent('63.9 / 100');
+    expect(screen.getByText('均衡')).toBeInTheDocument();
+    expect(screen.getByText('全部16组预登记关系')).toBeInTheDocument();
+    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(20);
+    expect(getPreview).toHaveBeenCalledTimes(1);
+    expect(new URLSearchParams(window.location.search).get('universe')).toBe(PRIMARY_UNIVERSE);
+    expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh');
   });
 });

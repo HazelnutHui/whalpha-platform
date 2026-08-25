@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getMarketRegimePreview, type MarketRegimePreviewResponse, type RegimeDimension, type Relationship, type RelationshipWindow } from '../api/marketRegime';
+import { useI18n, type Translate } from '../i18n/I18nProvider';
+import {
+  confidenceName, dimensionAuditText, dimensionName, dimensionShortName, evidenceName, familyName,
+  localizeClientError, metricName, pairText, reasonText, relationshipName, stateName, stateSummary,
+  unitName, universeName, warningText,
+} from '../i18n/domain';
 
 type PageState = { kind: 'loading' } | { kind: 'error'; message: string } | { kind: 'ready'; data: MarketRegimePreviewResponse };
 type WindowSize = 5 | 10 | 20;
@@ -10,58 +16,28 @@ const STATE_PRIORITY: Record<string, number> = {
   relationship_break_candidate: 0, rotation_candidate: 1, divergence: 2,
   synchronous_weakening: 3, synchronous_strengthening: 4, neutral: 5, unavailable: 6,
 };
-const DIMENSION_LABELS: Record<string, string> = {
-  trend: 'Trend', breadth: 'Breadth', volatility: 'Volatility environment',
-  liquidity_participation: 'Liquidity / Participation', leadership_dispersion: 'Leadership / Dispersion',
-};
-const DIMENSION_SHORT_LABELS: Record<string, string> = {
-  trend: 'Trend', breadth: 'Breadth', volatility: 'Volatility',
-  liquidity_participation: 'Participation', leadership_dispersion: 'Leadership / Dispersion',
-};
-const REASON_LABELS: Record<string, string> = {
-  candidate_band_balanced: 'The Composite remains inside the fixed Balanced range.',
-  confirmed_state_held: 'The confirmed state held under the fixed hysteresis rules.',
-  state_input_available: 'All critical state inputs are available.',
-  short_history_low_confidence: 'Only 26 sessions are available, so reliability remains low.',
-  short_history_limits_reliability: 'Short history limits how much weight to place on this relationship.',
-  both_five_session_returns_negative: 'Both ETFs declined over the 5-session window.',
-  both_five_session_returns_positive: 'Both ETFs advanced over the 5-session window.',
-  positive_correlation_threshold_met: 'The fixed positive-correlation rule was met.',
-  five_session_spread_threshold_met: 'The 5-session relative-performance spread crossed its fixed threshold.',
-  opposite_return_signs: 'The two ETFs moved in opposite directions over 5 sessions.',
-  relative_strength_direction_differs_across_windows: 'Relative leadership is not consistent across 5, 10, and 20 sessions.',
-  correlation_threshold_not_stable_across_18_20_22_windows: 'Correlation is sensitive to small changes in the lookback window.',
-  no_higher_priority_relationship_rule_met: 'No higher-priority fixed relationship rule was triggered.',
-  confidence_low: 'Reliability is low because the available history is short.',
-  dimension_available: 'The dimension passed its input and availability checks.',
-};
-const STATE_SUMMARIES: Record<string, string> = {
-  risk_on: 'Broadly constructive', balanced: 'Mixed but constructive', defensive: 'Defensive conditions', stress: 'Market stress',
-};
 
-function human(value: string): string {
-  return value.replace(/_/g, ' ').replace(/\b\w/g, (item: string) => item.toUpperCase());
+function number(t: Translate, value: string | null, digits = 2): string {
+  return value === null ? t('common.unavailable') : Number(value).toFixed(digits);
 }
-function number(value: string | null, digits = 2): string {
-  return value === null ? 'Unavailable' : Number(value).toFixed(digits);
+function score(t: Translate, value: string | null): string { return number(t, value, 1); }
+function contribution(t: Translate, value: string | null): string {
+  return value === null ? t('common.unavailable') : `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(2)} ${t('common.pointsShort')}`;
 }
-function score(value: string | null): string { return number(value, 1); }
-function contribution(value: string | null): string { return value === null ? 'Unavailable' : `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(2)} pts`; }
 function weight(value: string): string { return `${Number(value).toFixed(Number(value) % 1 === 0 ? 0 : 1)}%`; }
-function percent(value: string | null): string {
-  return value === null ? 'Unavailable' : `${Number(value) >= 0 ? '+' : ''}${(Number(value) * 100).toFixed(2)}%`;
+function percent(t: Translate, value: string | null): string {
+  return value === null ? t('common.unavailable') : `${Number(value) >= 0 ? '+' : ''}${(Number(value) * 100).toFixed(2)}%`;
 }
-function percentagePoints(value: string | null): string {
-  return value === null ? 'Unavailable' : `${Math.abs(Number(value) * 100).toFixed(2)} percentage points`;
+function percentagePoints(t: Translate, value: string | null): string {
+  return value === null ? t('common.unavailable') : Math.abs(Number(value) * 100).toFixed(2);
 }
-function signed(value: string | null, digits = 2): string {
-  return value === null ? 'Unavailable' : `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}`;
+function signed(t: Translate, value: string | null, digits = 2): string {
+  return value === null ? t('common.unavailable') : `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}`;
 }
-function reasonText(value: string): string { return REASON_LABELS[value] ?? human(value); }
-function sentenceList(values: string[]): string {
-  if (values.length === 0) return 'No dimensions';
+function sentenceList(t: Translate, values: string[]): string {
+  if (values.length === 0) return t('common.noDimensions');
   if (values.length === 1) return values[0];
-  return `${values.slice(0, -1).join(', ')} and ${values[values.length - 1]}`;
+  return `${values.slice(0, -1).join(t('common.listSeparator'))}${t('common.listAnd')}${values[values.length - 1]}`;
 }
 function requested(): { universe?: string; window: WindowSize; family: string; state: string; scope: string; pair?: string } {
   const query = new URLSearchParams(window.location.search); const windowValue = Number(query.get('window'));
@@ -74,110 +50,116 @@ function updateUrl(changes: Record<string, string | null>, replace = false): voi
   window.history[replace ? 'replaceState' : 'pushState']({}, '', url);
 }
 function StateMark({ state }: { state: string | null }): JSX.Element {
-  return <span className={`regime-state state-${state ?? 'unavailable'}`}><i aria-hidden="true" />{state ? human(state) : 'Unavailable'}</span>;
+  const { t } = useI18n();
+  return <span className={`regime-state state-${state ?? 'unavailable'}`}><i aria-hidden="true" />{relationshipName(t, state)}</span>;
 }
 function metricFor(item: Relationship, windowSize: WindowSize): RelationshipWindow {
   return item.current.windows.find((metric) => metric.window_sessions === windowSize) as RelationshipWindow;
 }
-function directionSentence(metric: RelationshipWindow, windowSize: WindowSize): string {
-  if (metric.left_return === null || metric.right_return === null) return `The ${windowSize}-session comparison is unavailable.`;
+function directionSentence(t: Translate, metric: RelationshipWindow, windowSize: WindowSize): string {
+  if (metric.left_return === null || metric.right_return === null) return t('regime.comparisonUnavailable', { count: windowSize });
   const left = Number(metric.left_return); const right = Number(metric.right_return);
-  if (left < 0 && right < 0) return `Both ETFs declined over ${windowSize} sessions.`;
-  if (left > 0 && right > 0) return `Both ETFs advanced over ${windowSize} sessions.`;
-  if (left > 0 && right < 0) return `The left ETF advanced while the right ETF declined over ${windowSize} sessions.`;
-  if (left < 0 && right > 0) return `The left ETF declined while the right ETF advanced over ${windowSize} sessions.`;
-  return `The two ETFs were mixed around flat over ${windowSize} sessions.`;
+  if (left < 0 && right < 0) return t('regime.bothDeclined', { count: windowSize });
+  if (left > 0 && right > 0) return t('regime.bothAdvanced', { count: windowSize });
+  if (left > 0 && right < 0) return t('regime.leftUpRightDown', { count: windowSize });
+  if (left < 0 && right > 0) return t('regime.leftDownRightUp', { count: windowSize });
+  return t('regime.mixedFlat', { count: windowSize });
 }
-function relativeSentence(item: Relationship, metric: RelationshipWindow): string {
-  if (metric.relative_return === null) return 'Relative performance is unavailable.';
+function relativeSentence(t: Translate, item: Relationship, metric: RelationshipWindow): string {
+  if (metric.relative_return === null) return t('regime.relativeUnavailable');
   const leftLeads = Number(metric.relative_return) >= 0;
   const leader = leftLeads ? item.definition.left_ticker : item.definition.right_ticker;
   const laggard = leftLeads ? item.definition.right_ticker : item.definition.left_ticker;
   const bothNegative = metric.left_return !== null && metric.right_return !== null && Number(metric.left_return) < 0 && Number(metric.right_return) < 0;
-  return `${leader} ${bothNegative ? 'held up' : 'performed'} ${percentagePoints(metric.relative_return)} better than ${laggard}.`;
+  return t(bothNegative ? 'regime.relativeHeldUp' : 'regime.relativeBetter', {
+    leader, laggard, points: percentagePoints(t, metric.relative_return),
+  });
 }
-function crossWindowSentence(item: Relationship): string {
+function crossWindowSentence(t: Translate, item: Relationship): string {
   const available = item.current.windows.filter((metric) => metric.relative_return !== null);
-  if (available.length !== 3) return 'Cross-window relative strength is incomplete.';
+  if (available.length !== 3) return t('regime.crossWindowIncomplete');
   const signs = available.map((metric) => Math.sign(Number(metric.relative_return)));
-  if (signs.every((value) => value >= 0)) return `${item.definition.left_ticker} leads ${item.definition.right_ticker} across 5, 10, and 20 sessions.`;
-  if (signs.every((value) => value <= 0)) return `${item.definition.right_ticker} leads ${item.definition.left_ticker} across 5, 10, and 20 sessions.`;
-  return 'Relative leadership changes across 5, 10, and 20 sessions.';
+  if (signs.every((value) => value >= 0)) return t('regime.crossWindowLeft', { left: item.definition.left_ticker, right: item.definition.right_ticker });
+  if (signs.every((value) => value <= 0)) return t('regime.crossWindowRight', { left: item.definition.left_ticker, right: item.definition.right_ticker });
+  return t('regime.crossWindowMixed');
 }
 function dimensionTone(data: MarketRegimePreviewResponse, dimensionId: string): EvidenceTone {
   if (data.regime.current_state.conflicting_dimension_ids.includes(dimensionId)) return 'drag';
   if (data.regime.current_state.supporting_dimension_ids.includes(dimensionId)) return 'support';
   return 'neutral';
 }
-function dimensionCopy(dimension: RegimeDimension, tone: EvidenceTone): string {
-  if (dimension.dimension_id === 'volatility') return 'Realized volatility conditions are supportive; this is not a claim that volatility itself is high.';
-  if (dimension.dimension_id === 'liquidity_participation') return tone === 'drag' ? 'Participation is the main drag; price × volume is a participation proxy, not fund flow.' : 'Participation is mixed and remains a price-and-volume proxy, not fund flow.';
-  if (dimension.dimension_id === 'leadership_dispersion') return 'Leadership breadth supports the reading; it does not imply current leaders will keep rising.';
-  if (dimension.dimension_id === 'breadth') return tone === 'support' ? 'More members support the market direction.' : tone === 'drag' ? 'Member-level breadth is holding back the reading.' : 'Member-level breadth is mixed rather than decisive.';
-  return tone === 'support' ? 'Medium-term trend remains supportive.' : tone === 'drag' ? 'Trend is holding back the current reading.' : 'Trend evidence is mixed.';
+function dimensionCopy(t: Translate, dimension: RegimeDimension, tone: EvidenceTone): string {
+  if (dimension.dimension_id === 'volatility') return t('dimension.copy.volatility');
+  if (dimension.dimension_id === 'liquidity_participation') return t(tone === 'drag' ? 'dimension.copy.participationDrag' : 'dimension.copy.participationMixed');
+  if (dimension.dimension_id === 'leadership_dispersion') return t('dimension.copy.leadership');
+  if (dimension.dimension_id === 'breadth') return t(tone === 'support' ? 'dimension.copy.breadthSupport' : tone === 'drag' ? 'dimension.copy.breadthDrag' : 'dimension.copy.breadthNeutral');
+  return t(tone === 'support' ? 'dimension.copy.trendSupport' : tone === 'drag' ? 'dimension.copy.trendDrag' : 'dimension.copy.trendNeutral');
 }
 
 function Hero({ data }: { data: MarketRegimePreviewResponse }): JSX.Element {
+  const { t } = useI18n();
   const state = data.regime.current_state; const confirmed = state.confirmed_state ?? 'unavailable';
   const candidateDiffers = state.instantaneous_candidate_state !== null && state.instantaneous_candidate_state !== state.confirmed_state;
-  const support = state.supporting_dimension_ids.map((item) => DIMENSION_SHORT_LABELS[item]);
-  const conflict = state.conflicting_dimension_ids.map((item) => DIMENSION_SHORT_LABELS[item]);
+  const support = state.supporting_dimension_ids.map((item) => dimensionShortName(t, item));
+  const conflict = state.conflicting_dimension_ids.map((item) => dimensionShortName(t, item));
   const riskOnDistance = state.threshold_distances.find((item) => item.threshold_id === 'balanced_to_risk_on');
   const defensiveDistance = state.threshold_distances.find((item) => item.threshold_id === 'balanced_to_defensive');
   const transitionCopy = confirmed === 'balanced' && riskOnDistance && defensiveDistance
-    ? `Risk-on confirmation is ${Math.abs(Number(riskOnDistance.signed_distance)).toFixed(1)} points away; Defensive conditions are not pending.`
-    : state.pending_target_state ? `${human(state.pending_target_state)} is pending with ${state.confirmation_sessions_remaining} confirmation session${state.confirmation_sessions_remaining === 1 ? '' : 's'} remaining.`
-      : 'No regime transition is currently pending.';
+    ? t('regime.riskOnDistance', { distance: Math.abs(Number(riskOnDistance.signed_distance)).toFixed(1) })
+    : state.pending_target_state ? t(state.confirmation_sessions_remaining === 1 ? 'regime.pending' : 'regime.pendingPlural', { state: stateName(t, state.pending_target_state), count: state.confirmation_sessions_remaining })
+      : t('regime.noTransition');
   return <section className="regime-hero panel">
-    <div className="hero-heading"><p className="eyebrow">Market regime · Frozen local preview</p><h1>Market Regime &amp; Opportunity Map</h1></div>
-    <div className="hero-state-block"><span className="hero-label">Confirmed state</span><div className={`hero-state state-text-${confirmed}`}><i aria-hidden="true" />{human(confirmed)}</div><strong>{STATE_SUMMARIES[confirmed] ?? 'State unavailable'}</strong></div>
-    <div className="hero-composite" data-exact-value={data.regime.composite.regime_score ?? undefined}><span>Composite</span><strong>{score(data.regime.composite.regime_score)} <small>/ 100</small></strong><p>{candidateDiffers ? <>Candidate: <b>{human(state.instantaneous_candidate_state as string)}</b></> : 'Candidate matches the confirmed state.'}</p></div>
-    <div className="hero-evidence"><div className="evidence-callout evidence-support"><span>What supports it</span><strong>{sentenceList(support)}</strong><small>{support.length ? 'Trend and risk conditions remain constructive.' : 'No supporting dimension is available.'}</small></div><div className="evidence-callout evidence-drag"><span>What holds it back</span><strong>{sentenceList(conflict)}</strong><small>{conflict.length ? 'Participation is not confirming the stronger dimensions.' : 'No material drag is present.'}</small></div></div>
-    <div className="hero-transition"><span>{transitionCopy}</span><small>Fixed thresholds and hysteresis; no dynamic adjustment.</small></div>
-    <div className="regime-hero-meta"><span>As of <b>{data.as_of_session}</b></span><span>Universe <b>{data.regime.definition.display_name}</b></span><span className="short-history-chip">26-session preview</span><span>Research context, not a trade recommendation.</span></div>
+    <div className="hero-heading"><p className="eyebrow">{t('regime.heroEyebrow')}</p><h1>{t('regime.title')}</h1></div>
+    <div className="hero-state-block"><span className="hero-label">{t('regime.confirmedState')}</span><div className={`hero-state state-text-${confirmed}`}><i aria-hidden="true" />{stateName(t, confirmed)}</div><strong>{stateSummary(t, confirmed)}</strong></div>
+    <div className="hero-composite" data-exact-value={data.regime.composite.regime_score ?? undefined}><span>{t('regime.composite')}</span><strong>{score(t, data.regime.composite.regime_score)} <small>/ 100</small></strong><p>{candidateDiffers ? t('regime.candidate', { state: stateName(t, state.instantaneous_candidate_state) }) : t('regime.candidateMatches')}</p></div>
+    <div className="hero-evidence"><div className="evidence-callout evidence-support"><span>{t('regime.whatSupports')}</span><strong>{sentenceList(t, support)}</strong><small>{t(support.length ? 'regime.supportCopy' : 'regime.supportUnavailable')}</small></div><div className="evidence-callout evidence-drag"><span>{t('regime.whatDrags')}</span><strong>{sentenceList(t, conflict)}</strong><small>{t(conflict.length ? 'regime.dragCopy' : 'regime.dragUnavailable')}</small></div></div>
+    <div className="hero-transition"><span>{transitionCopy}</span><small>{t('regime.fixedRules')}</small></div>
+    <div className="regime-hero-meta"><span>{t('regime.asOf', { session: data.as_of_session })}</span><span>{t('regime.universeMeta', { universe: universeName(t, data.regime.definition.universe_id, data.regime.definition.display_name) })}</span><span className="short-history-chip">{t('regime.sessionPreview', { count: data.input_session_count })}</span><span>{t('regime.researchCaveat')}</span></div>
   </section>;
 }
 
 function Dimensions({ data }: { data: MarketRegimePreviewResponse }): JSX.Element {
+  const { t } = useI18n();
   const exactTotal = data.regime.composite.dimensions.map((item) => Number(item.score_contribution ?? 0)).reduce((a, b) => a + b, 0).toFixed(4);
-  return <section className="panel dimensions-panel" aria-labelledby="dimensions-title"><div className="section-header compact"><div><p className="eyebrow">Regime drivers</p><h2 id="dimensions-title">What supports the market—and what holds it back</h2></div><p className="section-note">The Composite is the transparent weighted sum of these five dimensions.</p></div>
+  return <section className="panel dimensions-panel" aria-labelledby="dimensions-title"><div className="section-header compact"><div><p className="eyebrow">{t('regime.drivers')}</p><h2 id="dimensions-title">{t('regime.driversTitle')}</h2></div><p className="section-note">{t('regime.driversNote')}</p></div>
     <div className="dimension-grid">{data.regime.composite.dimensions.map((dimension) => {
       const tone = dimensionTone(data, dimension.dimension_id); const width = Math.max(0, Math.min(100, Number(dimension.score ?? 0)));
       return <details className={`dimension-card tone-${tone}`} key={dimension.dimension_id}><summary>
-        <span className="dimension-name">{DIMENSION_LABELS[dimension.dimension_id]}</span><span className={`evidence-tag evidence-${tone}`}>{human(tone)}</span>
-        <strong>{score(dimension.score)}</strong><div className="dimension-bar" aria-label={`${DIMENSION_LABELS[dimension.dimension_id]} score ${score(dimension.score)} out of 100`}><i style={{ width: `${width}%` }} /></div>
-        <p>{dimensionCopy(dimension, tone)}</p><small>Weight {weight(dimension.effective_weight)} <b>·</b> Contribution {contribution(dimension.score_contribution)}</small><span className="audit-link">View calculation</span>
-      </summary><div className="dimension-audit"><p>{dimension.rendered_explanation}</p><div className="metric-ledger"><div className="metric-ledger-head"><span>Metric</span><span>Raw</span><span>Normalized</span><span>Configured / effective weight</span><span>Contribution</span></div>{dimension.raw_metrics.map((metric) => <div key={metric.metric_id}><span>{human(metric.metric_id)}</span><span>{number(metric.raw_value, 4)} <small>{metric.raw_unit}</small></span><span>{number(metric.normalized_value, 4)}</span><span>{number(metric.configured_weight, 4)} / {number(metric.effective_weight, 4)}</span><span>{number(metric.weighted_contribution, 4)}</span></div>)}</div><p className="reason-line"><b>Reason codes:</b> {dimension.reason_codes.join(' · ')} — {dimension.reason_codes.map(reasonText).join(' ')}</p></div></details>;
+        <span className="dimension-name">{dimensionName(t, dimension.dimension_id)}</span><span className={`evidence-tag evidence-${tone}`}>{evidenceName(t, tone)}</span>
+        <strong>{score(t, dimension.score)}</strong><div className="dimension-bar" aria-label={t('regime.scoreAria', { dimension: dimensionName(t, dimension.dimension_id), score: score(t, dimension.score) })}><i style={{ width: `${width}%` }} /></div>
+        <p>{dimensionCopy(t, dimension, tone)}</p><small>{t('regime.weightContribution', { weight: weight(dimension.effective_weight), contribution: contribution(t, dimension.score_contribution) })}</small><span className="audit-link">{t('regime.viewCalculation')}</span>
+      </summary><div className="dimension-audit"><p>{dimensionAuditText(t, dimension.dimension_id)}</p><div className="metric-ledger"><div className="metric-ledger-head"><span>{t('common.metric')}</span><span>{t('common.raw')}</span><span>{t('common.normalized')}</span><span>{t('regime.configEffectiveWeight')}</span><span>{t('common.contribution')}</span></div>{dimension.raw_metrics.map((metric) => <div key={metric.metric_id}><span>{metricName(t, metric.metric_id)}</span><span>{number(t, metric.raw_value, 4)} <small>{unitName(t, metric.raw_unit)}</small></span><span>{number(t, metric.normalized_value, 4)}</span><span>{number(t, metric.configured_weight, 4)} / {number(t, metric.effective_weight, 4)}</span><span>{number(t, metric.weighted_contribution, 4)}</span></div>)}</div><p className="reason-line"><b>{t('common.reasonCodes')}:</b> {dimension.reason_codes.join(' · ')} — {dimension.reason_codes.map((code) => reasonText(t, code)).join(' ')}</p></div></details>;
     })}</div>
-    <details className="contribution-audit"><summary>Calculation audit</summary><div><span>Exact contribution reconciliation</span><strong>{exactTotal} = {number(data.regime.composite.regime_score, 4)}</strong><span>Configured/effective weights and high-precision Decimal values are shown inside each dimension. Regime adjustment remains fixed at 0.</span></div></details>
+    <details className="contribution-audit"><summary>{t('regime.calculationAudit')}</summary><div><span>{t('regime.exactReconciliation')}</span><strong>{exactTotal} = {number(t, data.regime.composite.regime_score, 4)}</strong><span>{t('regime.auditNote')}</span></div></details>
   </section>;
 }
 
 function RelationshipCard({ item, windowSize, onOpen }: { item: Relationship; windowSize: WindowSize; onOpen: () => void }): JSX.Element {
-  const metric = metricFor(item, windowSize);
-  return <button type="button" className="relationship-highlight" title={`Open ${item.definition.left_ticker} / ${item.definition.right_ticker} relationship detail`} onClick={onOpen}>
-    <span className="highlight-family">{item.definition.economic_rationale}</span><div className="highlight-title"><strong>{item.definition.left_ticker} / {item.definition.right_ticker}</strong><StateMark state={item.current.relationship_state} /></div>
-    <div className="highlight-returns"><span><small>{item.definition.left_ticker}</small><b>{percent(metric.left_return)}</b></span><span><small>{item.definition.right_ticker}</small><b>{percent(metric.right_return)}</b></span><span className="highlight-spread"><small>Relative spread</small><b>{percent(metric.relative_return)}</b></span></div>
-    <p>{directionSentence(metric, windowSize)} {relativeSentence(item, metric)}</p>
+  const { t } = useI18n(); const metric = metricFor(item, windowSize); const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`;
+  return <button type="button" className="relationship-highlight" title={t('regime.openPair', { pair })} onClick={onOpen}>
+    <span className="highlight-family">{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</span><div className="highlight-title"><strong>{pair}</strong><StateMark state={item.current.relationship_state} /></div>
+    <div className="highlight-returns"><span><small>{item.definition.left_ticker}</small><b>{percent(t, metric.left_return)}</b></span><span><small>{item.definition.right_ticker}</small><b>{percent(t, metric.right_return)}</b></span><span className="highlight-spread"><small>{t('regime.relativeSpread')}</small><b>{percent(t, metric.relative_return)}</b></span></div>
+    <p>{directionSentence(t, metric, windowSize)} {relativeSentence(t, item, metric)}</p>
   </button>;
 }
 function WindowMetric({ relationship, windowSize }: { relationship: Relationship; windowSize: WindowSize }): JSX.Element {
-  const metric = metricFor(relationship, windowSize);
-  return <><span className="return-cell"><small>{relationship.definition.left_ticker}</small><b className={metric.left_return && Number(metric.left_return) >= 0 ? 'positive-text' : 'negative-text'}>{percent(metric.left_return)}</b></span><span className="return-cell"><small>{relationship.definition.right_ticker}</small><b className={metric.right_return && Number(metric.right_return) >= 0 ? 'positive-text' : 'negative-text'}>{percent(metric.right_return)}</b></span><span className="spread-cell"><small>Spread</small><strong>{percent(metric.relative_return)}</strong></span><span className="correlation-cell"><small>Correlation</small><b>{number(metric.rolling_correlation, 2)}</b></span></>;
+  const { t } = useI18n(); const metric = metricFor(relationship, windowSize);
+  return <><span className="return-cell"><small>{relationship.definition.left_ticker}</small><b className={metric.left_return && Number(metric.left_return) >= 0 ? 'positive-text' : 'negative-text'}>{percent(t, metric.left_return)}</b></span><span className="return-cell"><small>{relationship.definition.right_ticker}</small><b className={metric.right_return && Number(metric.right_return) >= 0 ? 'positive-text' : 'negative-text'}>{percent(t, metric.right_return)}</b></span><span className="spread-cell"><small>{t('common.spread')}</small><strong>{percent(t, metric.relative_return)}</strong></span><span className="correlation-cell"><small>{t('common.correlation')}</small><b>{number(t, metric.rolling_correlation, 2)}</b></span></>;
 }
 function PairDetail({ item, windowSize, onClose }: { item: Relationship; windowSize: WindowSize; onClose: () => void }): JSX.Element {
-  const metric = metricFor(item, windowSize);
-  return <aside className="relationship-drawer" role="dialog" aria-modal="false" aria-labelledby="pair-detail-title"><div className="detail-header"><div><p className="eyebrow">{human(item.definition.relationship_family)}</p><h2 id="pair-detail-title">{item.definition.left_ticker} / {item.definition.right_ticker}</h2><p>{item.definition.economic_rationale}</p></div><button className="drawer-close" type="button" onClick={onClose} aria-label={`Close ${item.definition.left_ticker} / ${item.definition.right_ticker} details`}><span aria-hidden="true">×</span> Close</button></div>
-    <div className="drawer-observation"><span>Current read · {windowSize} sessions</span><strong>{directionSentence(metric, windowSize)}</strong><strong>{relativeSentence(item, metric)}</strong><p>{crossWindowSentence(item)} Short history limits reliability.</p></div>
-    <div className="drawer-summary"><div><span>Relationship state</span><StateMark state={item.current.relationship_state} /></div><div><span>Relative result</span><strong>{percent(metric.relative_return)}</strong><small>{Number(metric.relative_return ?? 0) >= 0 ? item.definition.left_ticker : item.definition.right_ticker} leads</small></div><div><span>Reliability</span><strong>{human(item.current.confidence)}</strong><small>Completeness and rule agreement—not forecast probability.</small></div></div>
-    <div className="pair-window-detail"><div className="pair-window-head"><span>Window</span><span>{item.definition.left_ticker}</span><span>{item.definition.right_ticker}</span><span>Spread</span><span>Correlation</span></div>{item.current.windows.map((row) => <div className={row.window_sessions === windowSize ? 'selected-window' : ''} key={row.window_sessions}><strong>{row.window_sessions} sessions</strong><span>{percent(row.left_return)}</span><span>{percent(row.right_return)}</span><span>{percent(row.relative_return)}</span><span>{number(row.rolling_correlation, 2)}</span></div>)}</div>
-    <div className="evidence-columns"><section><h3>Supporting evidence</h3><ul>{item.explanation.supporting_evidence.map((line) => <li key={line}>{reasonText(line)}</li>)}</ul></section><section><h3>Counterevidence</h3>{item.explanation.counterevidence.length ? <ul>{item.explanation.counterevidence.map((line) => <li key={line}>{reasonText(line)}</li>)}</ul> : <p>No fixed-rule counterevidence for the current classification.</p>}</section></div>
-    <details className="technical-diagnostics"><summary>Technical diagnostics and interpretation boundary</summary><dl className="drawer-stats"><div><dt>Correlation change</dt><dd>{signed(item.current.correlation_change_5, 2)}</dd></div><div><dt>Price-ratio level</dt><dd>{number(item.current.ratio_level, 3)}</dd></div><div><dt>Ratio robust-z / percentile</dt><dd>{item.current.ratio_robust_z === null && item.current.ratio_percentile === null ? 'Unavailable — needs at least 60 sessions' : `${number(item.current.ratio_robust_z, 2)} / ${number(item.current.ratio_percentile, 2)}`}</dd></div></dl><p><b>Reason codes:</b> {item.current.reason_codes.join(' · ')}</p><p>{item.definition.expected_interpretation}</p><p>{item.definition.forbidden_interpretation}</p></details>
-    <div className="drawer-disclaimers"><span>Statistical relationship, not causation.</span><span>Price relationship, not fund flow.</span><span>Research candidate, not trade recommendation.</span></div>
+  const { t } = useI18n(); const metric = metricFor(item, windowSize); const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`;
+  return <aside className="relationship-drawer" role="dialog" aria-modal="false" aria-labelledby="pair-detail-title"><div className="detail-header"><div><p className="eyebrow">{familyName(t, item.definition.relationship_family)}</p><h2 id="pair-detail-title">{pair}</h2><p>{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</p></div><button className="drawer-close" type="button" onClick={onClose} aria-label={t('regime.closePair', { pair })}><span aria-hidden="true">×</span> {t('common.close')}</button></div>
+    <div className="drawer-observation"><span>{t('regime.currentRead', { count: windowSize })}</span><strong>{directionSentence(t, metric, windowSize)}</strong><strong>{relativeSentence(t, item, metric)}</strong><p>{crossWindowSentence(t, item)} {t('regime.shortReliability')}</p></div>
+    <div className="drawer-summary"><div><span>{t('regime.relationshipState')}</span><StateMark state={item.current.relationship_state} /></div><div><span>{t('regime.relativeResult')}</span><strong>{percent(t, metric.relative_return)}</strong><small>{t('regime.leads', { ticker: Number(metric.relative_return ?? 0) >= 0 ? item.definition.left_ticker : item.definition.right_ticker })}</small></div><div><span>{t('regime.reliability')}</span><strong>{confidenceName(t, item.current.confidence)}</strong><small>{t('regime.reliabilityMeaning')}</small></div></div>
+    <div className="pair-window-detail"><div className="pair-window-head"><span>{t('common.window')}</span><span>{item.definition.left_ticker}</span><span>{item.definition.right_ticker}</span><span>{t('common.spread')}</span><span>{t('common.correlation')}</span></div>{item.current.windows.map((row) => <div className={row.window_sessions === windowSize ? 'selected-window' : ''} key={row.window_sessions}><strong>{t('regime.windowSessions', { count: row.window_sessions })}</strong><span>{percent(t, row.left_return)}</span><span>{percent(t, row.right_return)}</span><span>{percent(t, row.relative_return)}</span><span>{number(t, row.rolling_correlation, 2)}</span></div>)}</div>
+    <div className="evidence-columns"><section><h3>{t('regime.supportingEvidence')}</h3><ul>{item.explanation.supporting_evidence.map((line) => <li key={line}>{reasonText(t, line)}</li>)}</ul></section><section><h3>{t('regime.counterevidence')}</h3>{item.explanation.counterevidence.length ? <ul>{item.explanation.counterevidence.map((line) => <li key={line}>{reasonText(t, line)}</li>)}</ul> : <p>{t('regime.noCounterevidence')}</p>}</section></div>
+    <details className="technical-diagnostics"><summary>{t('regime.technical')}</summary><dl className="drawer-stats"><div><dt>{t('regime.correlationChange')}</dt><dd>{signed(t, item.current.correlation_change_5, 2)}</dd></div><div><dt>{t('regime.ratioLevel')}</dt><dd>{number(t, item.current.ratio_level, 3)}</dd></div><div><dt>{t('regime.ratioRobust')}</dt><dd>{item.current.ratio_robust_z === null && item.current.ratio_percentile === null ? t('regime.needs60') : `${number(t, item.current.ratio_robust_z, 2)} / ${number(t, item.current.ratio_percentile, 2)}`}</dd></div></dl><p><b>{t('common.reasonCodes')}:</b> {item.current.reason_codes.join(' · ')}</p><p>{pairText(t, item.definition.pair_id, 'expected', item.definition.expected_interpretation)}</p><p>{pairText(t, item.definition.pair_id, 'forbidden', item.definition.forbidden_interpretation)}</p></details>
+    <div className="drawer-disclaimers"><span>{t('regime.causationCaveat')}</span><span>{t('regime.fundFlowCaveat')}</span><span>{t('regime.candidateCaveat')}</span></div>
   </aside>;
 }
 
 function Relationships({ data }: { data: MarketRegimePreviewResponse }): JSX.Element {
+  const { t } = useI18n();
   const initial = requested(); const [windowSize, setWindowSize] = useState<WindowSize>(initial.window); const [family, setFamily] = useState(initial.family); const [stateFilter, setStateFilter] = useState(initial.state); const [scope, setScope] = useState(initial.scope); const [pairId, setPairId] = useState<string | undefined>(initial.pair);
   useEffect(() => { const onPop = () => { const next = requested(); setWindowSize(next.window); setFamily(next.family); setStateFilter(next.state); setScope(next.scope); setPairId(next.pair); }; window.addEventListener('popstate', onPop); return () => window.removeEventListener('popstate', onPop); }, []);
   const families = useMemo(() => [...new Set(data.relationships.map((item) => item.definition.relationship_family))], [data]);
@@ -185,23 +167,25 @@ function Relationships({ data }: { data: MarketRegimePreviewResponse }): JSX.Ele
   const visible = data.relationships.filter((item) => (family === 'all' || item.definition.relationship_family === family) && (stateFilter === 'all' || item.current.relationship_state === stateFilter) && (scope === 'all' || item.current.relationship_state !== 'neutral'));
   const highlights = [...data.relationships].filter((item) => !['neutral', 'unavailable'].includes(item.current.relationship_state)).sort((a, b) => (STATE_PRIORITY[a.current.relationship_state] - STATE_PRIORITY[b.current.relationship_state]) || a.definition.registry_order - b.definition.registry_order).slice(0, 4);
   const selected = pairId ? data.relationships.find((item) => item.definition.pair_id === pairId) : undefined;
-  return <><section className="panel highlights-panel"><div className="section-header compact"><div><p className="eyebrow">Relationship highlights · {windowSize} sessions</p><h2>Where the market’s internal relationships disagree</h2></div><details className="highlight-method"><summary>How highlights are selected</summary><p>Non-neutral states appear first using the fixed state priority and preregistered pair order. Returns do not select or rank pairs.</p></details></div><div className="highlight-grid">{highlights.map((item) => <RelationshipCard key={item.definition.pair_id} item={item} windowSize={windowSize} onOpen={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }} />)}</div></section>
-    <section className="panel relationship-map-panel"><div className="section-header relationship-header"><div><p className="eyebrow">Complete relationship map</p><h2>All 16 preregistered pairs</h2></div><div className="window-tabs" aria-label="Relationship window">{([5, 10, 20] as WindowSize[]).map((value) => <button type="button" className={windowSize === value ? 'active' : ''} key={value} onClick={() => { setWindowSize(value); updateUrl({ window: String(value) }); }}>{value} sessions</button>)}</div></div>
-      <div className="relationship-filters"><label>Family<select value={family} onChange={(event) => { setFamily(event.target.value); updateUrl({ family: event.target.value }); }}><option value="all">All families</option>{families.map((value) => <option key={value} value={value}>{human(value)}</option>)}</select></label><label>State<select value={stateFilter} onChange={(event) => { setStateFilter(event.target.value); updateUrl({ state: event.target.value }); }}><option value="all">All states</option>{states.map((value) => <option key={value} value={value}>{human(value)}</option>)}</select></label><label className="toggle-filter"><input type="checkbox" checked={scope === 'nonneutral'} onChange={(event) => { const value = event.target.checked ? 'nonneutral' : 'all'; setScope(value); updateUrl({ scope: value }); }} /> Only non-neutral</label><button type="button" onClick={() => { setFamily('all'); setStateFilter('all'); setScope('all'); updateUrl({ family: null, state: null, scope: null }); }}>Clear filters</button></div>
-      <div className="relationship-table"><div className="relationship-table-head"><span>Pair / economic relationship</span><span>Left return</span><span>Right return</span><span>Relative result</span><span>Co-movement</span><span>Relationship state</span></div>{visible.map((item) => <button type="button" className="relationship-row" title={`Open ${item.definition.left_ticker} / ${item.definition.right_ticker} detail`} key={item.definition.pair_id} onClick={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }}><span className="pair-identity"><strong>{item.definition.left_ticker} / {item.definition.right_ticker}</strong><small>{item.definition.economic_rationale}</small></span><WindowMetric relationship={item} windowSize={windowSize} /><span className="relationship-state-cell"><StateMark state={item.current.relationship_state} /><small>{human(item.current.confidence)} reliability</small>{item.explanation.counterevidence.length ? <em>Evidence caveat</em> : null}</span></button>)}</div><p className="table-foot">Showing {visible.length} of 16 preregistered pairs. ETF metrics remain identical across Universe selections.</p>
+  return <><section className="panel highlights-panel"><div className="section-header compact"><div><p className="eyebrow">{t('regime.highlightEyebrow', { count: windowSize })}</p><h2>{t('regime.highlightTitle')}</h2></div><details className="highlight-method"><summary>{t('regime.highlightMethod')}</summary><p>{t('regime.highlightMethodBody')}</p></details></div><div className="highlight-grid">{highlights.map((item) => <RelationshipCard key={item.definition.pair_id} item={item} windowSize={windowSize} onOpen={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }} />)}</div></section>
+    <section className="panel relationship-map-panel"><div className="section-header relationship-header"><div><p className="eyebrow">{t('regime.completeMap')}</p><h2>{t('regime.allPairs')}</h2></div><div className="window-tabs" aria-label={t('regime.relationshipWindowAria')}>{([5, 10, 20] as WindowSize[]).map((value) => <button type="button" className={windowSize === value ? 'active' : ''} key={value} onClick={() => { setWindowSize(value); updateUrl({ window: String(value) }); }}>{t('regime.windowSessions', { count: value })}</button>)}</div></div>
+      <div className="relationship-filters"><label>{t('common.family')}<select value={family} onChange={(event) => { setFamily(event.target.value); updateUrl({ family: event.target.value }); }}><option value="all">{t('regime.allFamilies')}</option>{families.map((value) => <option key={value} value={value}>{familyName(t, value)}</option>)}</select></label><label>{t('common.state')}<select value={stateFilter} onChange={(event) => { setStateFilter(event.target.value); updateUrl({ state: event.target.value }); }}><option value="all">{t('regime.allStates')}</option>{states.map((value) => <option key={value} value={value}>{relationshipName(t, value)}</option>)}</select></label><label className="toggle-filter"><input aria-label={t('regime.onlyNonNeutral')} type="checkbox" checked={scope === 'nonneutral'} onChange={(event) => { const value = event.target.checked ? 'nonneutral' : 'all'; setScope(value); updateUrl({ scope: value }); }} /> {t('regime.onlyNonNeutral')}</label><button type="button" onClick={() => { setFamily('all'); setStateFilter('all'); setScope('all'); updateUrl({ family: null, state: null, scope: null }); }}>{t('regime.clearFilters')}</button></div>
+      <div className="relationship-table"><div className="relationship-table-head"><span>{t('regime.tablePair')}</span><span>{t('regime.tableLeft')}</span><span>{t('regime.tableRight')}</span><span>{t('regime.tableRelative')}</span><span>{t('regime.tableMovement')}</span><span>{t('regime.tableState')}</span></div>{visible.map((item) => { const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`; return <button type="button" className="relationship-row" title={t('regime.openPair', { pair })} key={item.definition.pair_id} onClick={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }}><span className="pair-identity"><strong>{pair}</strong><small>{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</small></span><WindowMetric relationship={item} windowSize={windowSize} /><span className="relationship-state-cell"><StateMark state={item.current.relationship_state} /><small>{t('regime.reliabilityInline', { value: confidenceName(t, item.current.confidence) })}</small>{item.explanation.counterevidence.length ? <em>{t('regime.evidenceCaveat')}</em> : null}</span></button>; })}</div><p className="table-foot">{t('regime.showingPairs', { count: visible.length })}</p>
     </section>{selected ? <PairDetail item={selected} windowSize={windowSize} onClose={() => { setPairId(undefined); updateUrl({ pair: null }); }} /> : null}</>;
 }
 
 function Methodology({ data }: { data: MarketRegimePreviewResponse }): JSX.Element {
-  return <details className="panel methodology"><summary>Methodology, safeguards, and source diagnostics</summary><div className="method-grid"><div><h3>Fixed, preregistered scope</h3><p>Five fixed-weight regime dimensions sit beside 16 preregistered ETF relationships over 5, 10, and 20 XNYS sessions.</p><p>Highlights use fixed state priority and registry order—not return-based selection.</p></div><div><h3>Interpretation boundaries</h3><p>Correlation is not causation. Price relationships are not fund flow. Confidence describes completeness and rule agreement, not forecast probability.</p><p>This is research context, not a backtest or trade recommendation.</p></div><div><h3>Short-history boundary</h3><p>Only {data.input_session_count} sessions ({data.input_first_session} to {data.input_last_session}) are available. Ratio robust-z and percentile require at least 60 sessions.</p></div><div><h3>Source identity</h3><code>Phase 1a {data.source_logical_fingerprints.phase1a}<br />Phase 1b {data.source_logical_fingerprints.phase1b}<br />Phase 2 {data.source_logical_fingerprints.phase2}</code></div></div>{data.warnings.map((warning) => <p className="quality-copy" key={warning}>• {warning}</p>)}</details>;
+  const { t } = useI18n();
+  return <details className="panel methodology"><summary>{t('regime.methodologyTitle')}</summary><div className="method-grid"><div><h3>{t('regime.fixedScope')}</h3><p>{t('regime.fixedScopeBody')}</p><p>{t('regime.fixedScopeHighlight')}</p></div><div><h3>{t('regime.interpretation')}</h3><p>{t('regime.interpretationBody')}</p><p>{t('regime.interpretationResearch')}</p></div><div><h3>{t('regime.shortHistory')}</h3><p>{t('regime.shortHistoryBody', { count: data.input_session_count, start: data.input_first_session, end: data.input_last_session })}</p></div><div><h3>{t('regime.sourceIdentity')}</h3><code>Phase 1a {data.source_logical_fingerprints.phase1a}<br />Phase 1b {data.source_logical_fingerprints.phase1b}<br />Phase 2 {data.source_logical_fingerprints.phase2}</code></div></div>{data.warnings.map((warning) => <p className="quality-copy" key={warning}>• {warningText(t, warning)}</p>)}</details>;
 }
 
 export function MarketRegimeOpportunityMapPage(): JSX.Element {
+  const { t } = useI18n();
   const [state, setState] = useState<PageState>({ kind: 'loading' }); const initial = requested(); const [universeId, setUniverseId] = useState(initial.universe);
-  const load = useCallback((universe?: string) => { const controller = new AbortController(); setState({ kind: 'loading' }); getMarketRegimePreview(universe, controller.signal).then((data) => { setState({ kind: 'ready', data }); if (universe !== data.selected_universe_id) updateUrl({ universe: data.selected_universe_id }, true); }).catch((error: unknown) => { if (!controller.signal.aborted) setState({ kind: 'error', message: error instanceof Error ? error.message : 'Market Regime preview unavailable' }); }); return () => controller.abort(); }, []);
+  const load = useCallback((universe?: string) => { const controller = new AbortController(); setState({ kind: 'loading' }); getMarketRegimePreview(universe, controller.signal).then((data) => { setState({ kind: 'ready', data }); if (universe !== data.selected_universe_id) updateUrl({ universe: data.selected_universe_id }, true); }).catch((error: unknown) => { if (!controller.signal.aborted) setState({ kind: 'error', message: error instanceof Error ? error.message : '' }); }); return () => controller.abort(); }, []);
   useEffect(() => load(universeId), [load, universeId]); useEffect(() => { const onPop = () => setUniverseId(requested().universe); window.addEventListener('popstate', onPop); return () => window.removeEventListener('popstate', onPop); }, []);
-  if (state.kind === 'loading') return <main className="app-shell"><div className="panel state-panel">Loading Market Regime preview…</div></main>;
-  if (state.kind === 'error') return <main className="app-shell"><div className="panel state-panel error-state" role="alert"><h1>Market Regime preview unavailable</h1><p>{state.message}</p><p>No partial or mixed-version analytics were shown.</p><button type="button" onClick={() => load(universeId)}>Retry</button></div></main>;
+  if (state.kind === 'loading') return <main className="app-shell"><div className="panel state-panel">{t('regime.loading')}</div></main>;
+  if (state.kind === 'error') return <main className="app-shell"><div className="panel state-panel error-state" role="alert"><h1>{t('regime.unavailableTitle')}</h1><p>{localizeClientError(t, state.message)}</p><p>{t('regime.unavailableBody')}</p><button type="button" onClick={() => load(universeId)}>{t('common.retry')}</button></div></main>;
   const data = state.data;
-  return <main className="app-shell regime-shell"><div className="regime-topbar"><div><span className="brand">WH Alpha · Private research</span><span>Local read-only preview</span></div><label>Universe<select aria-label="Universe" value={data.selected_universe_id} onChange={(event) => { setUniverseId(event.target.value); updateUrl({ universe: event.target.value }); }}>{data.available_universes.map((item) => <option key={item.universe_id} value={item.universe_id}>{item.display_name} · {item.member_count.toLocaleString()}</option>)}</select></label></div><Hero data={data} /><Dimensions data={data} /><Relationships data={data} /><Methodology data={data} /></main>;
+  return <main className="app-shell regime-shell"><div className="regime-topbar"><div><span className="brand">{t('regime.privateResearch')}</span><span>{t('regime.localPreview')}</span></div><label>{t('common.universe')}<select aria-label={t('regime.topbarUniverseAria')} value={data.selected_universe_id} onChange={(event) => { setUniverseId(event.target.value); updateUrl({ universe: event.target.value }); }}>{data.available_universes.map((item) => <option key={item.universe_id} value={item.universe_id}>{universeName(t, item.universe_id, item.display_name)} · {item.member_count.toLocaleString('en-US')}</option>)}</select></label></div><Hero data={data} /><Dimensions data={data} /><Relationships data={data} /><Methodology data={data} /></main>;
 }

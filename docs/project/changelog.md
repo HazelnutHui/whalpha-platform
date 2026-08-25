@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-25 — English and Simplified Chinese interface
+
+- Added a typed React `en`/`zh` catalog, shared locale provider, fixed domain
+  terminology/reason mappings, and accessible global language selector. The
+  static login surface uses the same URL/storage/default policy without
+  changing its session or redirect security boundary.
+- Localized the current Market Dashboard and Market Regime & Opportunity Map,
+  including loading/error/empty states, full 16-pair map, five dimensions,
+  pair details, tooltips, audit labels, limitations, and warnings. Raw IDs,
+  reason codes, exact values, and fingerprints remain unmodified.
+- Added deterministic URL > explicit localStorage > English resolution,
+  invalid-value canonicalization, history/deep-link preservation, dictionary
+  parity, data-invariance, login, and bilingual page tests.
+- This remains local preview work. No analytics formula, API numeric semantics,
+  Production data, snapshot, Activation, guest access, network, credential,
+  OCI, or deployment boundary changed.
+
 ## 2026-08-25 — Market Regime local-preview UX refinement
 
 - Reordered the local preview around the confirmed market state, fixed-rule

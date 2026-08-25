@@ -1,5 +1,23 @@
 # Current Status
 
+## 2026-08-25 — English and Simplified Chinese local interface
+
+- Added a typed, centralized `en`/`zh` presentation catalog for the complete
+  current Market Dashboard and Market Regime preview, including domain terms,
+  fixed pair explanations, stable reason-code interpretations, errors,
+  warnings, tooltips, empty states, and audit labels. The static session login
+  uses the same deterministic locale policy without changing authentication.
+- First visit remains English. Legal URL `lang` wins over a prior explicit
+  localStorage choice; absent URL state uses that choice and then English.
+  Illegal values fail safely to English. Language, Universe, view, filters,
+  pair deep links, refresh, and browser history are isolated and composable.
+- English and Chinese render the same API payload, exact Decimal values,
+  precision, 16 pairs, five dimensions, freshness, limitations, and functions.
+  Locale is excluded from analytics identity and no calculation, API numeric
+  semantics, session protection, or future guest-content boundary changed.
+- This is a local bilingual preview only. Production data, snapshots, OCI,
+  deployment, network, credentials, and guest access remain unchanged.
+
 ## 2026-08-25 — Market Regime local-preview UX refinement
 
 - Refined only the local preview presentation layer. Balanced is now the first

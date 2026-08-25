@@ -3,9 +3,12 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 
 import { MarketDashboardPage } from './MarketDashboardPage';
 import { demoDashboardData } from '../fixtures/marketDemo';
+import { I18nProvider } from '../i18n/I18nProvider';
+import { LanguageSelector } from '../i18n/LanguageSelector';
 
 const dispose = vi.fn();
 const setOption = vi.fn();
+const originalLocation = window.location;
 
 vi.mock('echarts/core', () => ({
   use: vi.fn(),
@@ -21,6 +24,7 @@ function okResponse(payload: unknown): Response {
 
 describe('MarketDashboardPage', () => {
   beforeEach(() => {
+    window.localStorage.clear();
     window.history.replaceState({}, '', '/dashboard/');
     vi.stubEnv('VITE_MARKET_DATA_MODE', 'api');
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
@@ -57,6 +61,9 @@ describe('MarketDashboardPage', () => {
     cleanup();
     vi.restoreAllMocks();
     vi.unstubAllEnvs();
+    if (window.location !== originalLocation) {
+      Object.defineProperty(window, 'location', { value: originalLocation, writable: true });
+    }
   });
 
   it('uses API mode by default and renders summary cards', async () => {
@@ -88,7 +95,7 @@ describe('MarketDashboardPage', () => {
   it('does not fall back to demo fixtures when API fails', async () => {
     vi.mocked(fetch).mockResolvedValue(new Response('failure', { status: 503 }));
     render(<MarketDashboardPage />);
-    expect(await screen.findByRole('alert')).toHaveTextContent('Request failed with status 503');
+    expect(await screen.findByRole('alert')).toHaveTextContent('The requested data could not be loaded (HTTP 503).');
     expect(screen.queryByText('DEMO DATA')).not.toBeInTheDocument();
   });
 
@@ -289,7 +296,7 @@ describe('MarketDashboardPage', () => {
     render(<MarketDashboardPage />);
     fireEvent.click(await screen.findByRole('button', { name: 'Logout' }));
     await waitFor(() => expect(fetch).toHaveBeenCalledWith('/auth/logout', { method: 'POST', credentials: 'same-origin' }));
-    expect(assign).toHaveBeenCalledWith('/');
+    expect(assign).toHaveBeenCalledWith('/?lang=en');
   });
 
   it('snapshot mode failure does not fall back to demo', async () => {
@@ -297,7 +304,7 @@ describe('MarketDashboardPage', () => {
     vi.stubEnv('VITE_MARKET_DATA_MODE', 'snapshot');
     vi.mocked(fetch).mockResolvedValue(new Response('missing', { status: 404 }));
     render(<MarketDashboardPage />);
-    expect(await screen.findByRole('alert')).toHaveTextContent('Request failed with status 404');
+    expect(await screen.findByRole('alert')).toHaveTextContent('The requested data could not be loaded (HTTP 404).');
     expect(screen.queryByText('DEMO DATA')).not.toBeInTheDocument();
   });
 
@@ -311,5 +318,25 @@ describe('MarketDashboardPage', () => {
     await waitFor(() => expect(observedSignal).toBeDefined());
     unmount();
     expect(observedSignal?.aborted).toBe(true);
+  });
+
+  it('renders the identical dashboard data in Chinese without issuing new analytics requests', async () => {
+    window.history.replaceState({}, '', '/dashboard/?universe=provider_classified_common_shares_v1&lang=en');
+    render(<I18nProvider><LanguageSelector /><MarketDashboardPage /></I18nProvider>);
+    expect(await screen.findByText('Close-to-close structure')).toBeInTheDocument();
+    const requestsBeforeSwitch = vi.mocked(fetch).mock.calls.length;
+    expect(screen.getAllByText('+0.64%').length).toBeGreaterThan(0);
+    expect(screen.getByLabelText('Dashboard universe')).toHaveValue('provider_classified_common_shares_v1');
+
+    fireEvent.click(screen.getByRole('button', { name: '中文' }));
+    expect(screen.getByText('收盘价对比结构')).toBeInTheDocument();
+    expect(screen.getByText('交易活跃度集中在哪里')).toBeInTheDocument();
+    expect(screen.getAllByText('+0.64%').length).toBeGreaterThan(0);
+    const selector = screen.getByLabelText('仪表盘股票池') as HTMLSelectElement;
+    expect(selector).toHaveValue('provider_classified_common_shares_v1');
+    expect(Array.from(selector.options).map((item) => item.textContent)).toEqual(['普通股', '普通股 + 美国存托凭证']);
+    expect(vi.mocked(fetch).mock.calls.length).toBe(requestsBeforeSwitch);
+    expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh');
+    expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_v1');
   });
 });

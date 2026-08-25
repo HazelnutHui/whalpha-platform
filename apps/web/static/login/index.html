@@ -5,20 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WH Alpha Sign In</title>
     <link rel="stylesheet" href="/login/login.css" />
+    <script defer src="/login/login-i18n.js"></script>
     <script defer src="/login/login.js"></script>
   </head>
   <body>
     <main class="login-page">
+      <div class="login-language" role="group" aria-label="Interface language" data-i18n-aria="languageAria">
+        <span data-i18n="languageLabel">Language</span>
+        <button type="button" data-locale="en">English</button>
+        <button type="button" data-locale="zh">中文</button>
+      </div>
       <section class="login-hero" aria-labelledby="brand-title">
         <div class="login-brand">
           <p class="eyebrow">WH Alpha</p>
           <h1 id="brand-title">WH Alpha</h1>
-          <h2>Quantitative Market Structure<br />&amp; Trading Intelligence Platform</h2>
-          <p>A private U.S. equity market intelligence workspace for market breadth, cross-sectional strength, liquidity structure, and daily market analysis.</p>
-          <div class="login-tags" aria-label="Workspace scope">
-            <span>End-of-Day Market Structure</span>
-            <span>Private Research Workspace</span>
-            <span>Data-Driven Market Intelligence</span>
+          <h2 data-i18n="platform">Quantitative Market Structure &amp; Trading Intelligence Platform</h2>
+          <p data-i18n="description">A private U.S. equity market intelligence workspace for market breadth, cross-sectional strength, liquidity structure, and daily market analysis.</p>
+          <div class="login-tags" aria-label="Workspace scope" data-i18n-aria="workspaceAria">
+            <span data-i18n="tagEod">End-of-Day Market Structure</span>
+            <span data-i18n="tagPrivate">Private Research Workspace</span>
+            <span data-i18n="tagData">Data-Driven Market Intelligence</span>
           </div>
           <div class="market-matrix" aria-hidden="true">
             <span></span><span></span><span></span><span></span><span></span><span></span>
@@ -32,19 +38,19 @@
       </section>
       <section class="login-panel-wrap" aria-labelledby="login-title">
         <form class="login-panel" method="post" action="/auth/login" autocomplete="on">
-          <h2 id="login-title">Sign in</h2>
-          <p>Use your private dashboard credentials to continue.</p>
-          <p id="login-error" class="login-error" role="alert">Invalid username or password.</p>
+          <h2 id="login-title" data-i18n="signIn">Sign in</h2>
+          <p data-i18n="continue">Use your private dashboard credentials to continue.</p>
+          <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
           <input id="next" name="next" type="hidden" value="/dashboard/" />
           <div class="login-field">
-            <label for="username">Username</label>
+            <label for="username" data-i18n="username">Username</label>
             <input id="username" name="username" type="text" autocomplete="username" inputmode="text" required autofocus />
           </div>
           <div class="login-field">
-            <label for="password">Password</label>
+            <label for="password" data-i18n="password">Password</label>
             <input id="password" name="password" type="password" autocomplete="current-password" required />
           </div>
-          <button class="login-submit" type="submit">Sign In</button>
+          <button class="login-submit" type="submit" data-i18n="submit">Sign In</button>
         </form>
       </section>
     </main>

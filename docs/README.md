@@ -86,6 +86,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 - [Frontend Index](frontend/README.md)
 - [Market Dashboard V1](frontend/market-dashboard-v1.md): Local React dashboard for private Market Summary, Movers, Liquidity Map, and data-quality views.
+- [Frontend interface internationalization](frontend/interface-internationalization.md): Typed English/Simplified Chinese catalog, URL and localStorage precedence, terminology, and guest-reuse boundary.
+- [Market Regime & Opportunity Map local preview](frontend/market-regime-opportunity-map-preview.md): Read-only desktop presentation, audit details, and non-production boundary.
 
 ## Operations
 
