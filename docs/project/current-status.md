@@ -1,5 +1,26 @@
 # Current Status
 
+## 2026-08-25 — Market Regime Phase 1a offline core
+
+- Implemented the fixed V1 five-dimension Market Regime calculation as pure,
+  source-bound backend code with all 18 raw metrics, normalizers, configured and
+  effective weights, contributions, missingness, reason codes, and explanation
+  records visible. Risk-mode adjustment remains exactly zero.
+- Added a genuinely separate raw-panel oracle, Decimal-context isolation,
+  deterministic stable-ID ordering, tmp-only canonical JSON writer/formal
+  reader, output path/symlink gates, and an in-process socket prohibition.
+- The formal 2026-08-21 run used 26 consecutive completed XNYS sessions and
+  calculated both active Universes. Primary Composite is `63.9102`; Secondary
+  is `64.8167`; all configured weight is available and oracle mismatches are
+  zero. These are transparent EOD decision-support facts, not a trade signal.
+- Phase 1a does not classify or persist Risk-on/Balanced/Defensive/Stress. The
+  accepted hysteresis contract is deferred to a separate Phase 1b state ledger,
+  as are ETF relationships, sectors, candidates, API, frontend, snapshot, and
+  Production publication.
+- The run wrote only retained `/tmp` review evidence. Production data,
+  Activation, snapshot, listeners, repository inputs, network, credentials,
+  frontend, bundle, and OCI were unchanged.
+
 ## 2026-08-25 — Market Regime & Opportunity Map V1 design
 
 - Accepted a docs-only, non-production design for a transparent Market Regime,

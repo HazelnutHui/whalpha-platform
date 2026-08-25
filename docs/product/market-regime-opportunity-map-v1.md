@@ -2,7 +2,17 @@
 
 ## Status and decision boundary
 
-Status: **Accepted design; not implemented or production-active**.
+Status: **Accepted design; Phase 1a offline core implemented; not
+production-active**.
+
+Phase 1a now implements the fixed five-dimension raw-metric, normalization,
+Composite, missingness, contribution, and explanation ledger for explicit
+completed sessions. It writes canonical review artifacts only under `/tmp` and
+has no API, frontend, snapshot, pointer, or Production publication boundary.
+The Phase 1a profile deliberately leaves `regime_state=null` and records
+`state_classification_status=deferred_phase_1a`; the accepted hysteresis table
+below remains authoritative for the next separately implemented state-ledger
+slice.
 
 This specification defines a transparent decision-support page for short-horizon
 equity research. It does not issue trading instructions, estimate certain
@@ -242,6 +252,15 @@ proxy, not fund flow.”
 The two-sided metric avoids treating both stagnant markets and disorderly
 dispersion as healthy. Template: “Leadership is {broad/concentrated/disorderly};
 the top return decile accounts for {share} of positive 5-session movement.”
+
+The fixed V1 top-decile cardinality is `ceil(0.10 × positive_count)`. Rows are
+ordered by positive return descending and stable `instrument_id` ascending, so
+the cutoff is deterministic even when returns tie. Missing dimensions are not
+reweighted across the Composite: a present dimension retains its configured
+Composite weight, while missing metric weight may be redistributed only inside
+that dimension. The available configured Composite weight and missingness
+remain explicit; the Composite is null unless Trend, Breadth, and Volatility
+are present and at least 90 configured weight points are available.
 
 ### Conflicting evidence
 

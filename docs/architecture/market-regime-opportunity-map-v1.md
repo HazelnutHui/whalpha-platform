@@ -2,8 +2,8 @@
 
 ## Status
 
-Status: **Accepted implementation plan; no feature code or Production
-publication exists**.
+Status: **Accepted implementation plan; Phase 1a offline core implemented; no
+Production publication exists**.
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)
@@ -503,7 +503,7 @@ domain commits.
 
 ## Recommended next minimum slice
 
-Implement **Phase 1a: offline Market Regime raw-metric and dimension ledger**:
+Phase 1a is implemented as an isolated offline commit series:
 
 1. strict contracts and checked-in parameter set;
 2. explicit 2026-08-21 source read into an in-memory panel;
@@ -512,7 +512,17 @@ Implement **Phase 1a: offline Market Regime raw-metric and dimension ledger**:
 4. independent oracle and Decimal-context invariance tests;
 5. canonical `/tmp` review output only.
 
-Defer hysteresis persistence, ETF relationship states, candidate scoring, API,
-frontend, snapshot, and Production publication. This slice uses no new provider
-or taxonomy, proves the core anti-black-box ledger, and can be reverted as one
-isolated implementation commit series.
+The implementation adds typed analytics contracts, the fixed checked-in
+parameter set, formal EOD/Identity/Activation source binding, a pure
+five-dimension service, a separate raw-panel oracle, and a socket-guarded
+administrator CLI that accepts only a direct `/tmp` output directory. The
+2026-08-21 formal run calculated both public Universes with all 18 metrics
+available in each, zero oracle mismatch, and deterministic logical
+fingerprints.
+
+The next minimum slice is the separately versioned **Phase 1b offline regime
+state ledger**. It should calculate compatible prior-session Composites, then
+implement bootstrap, confirmation counters, hysteresis, immediate Stress
+override, stale/missing behavior, and transition reason codes. Defer ETF
+relationship states, candidate scoring, API, frontend, snapshot, and Production
+publication until their named phases.

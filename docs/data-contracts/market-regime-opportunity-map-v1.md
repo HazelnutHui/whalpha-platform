@@ -2,8 +2,27 @@
 
 ## Status
 
-Status: **Proposed V1 contract; design only; no production dataset or API is
-active**.
+Status: **Proposed V1 contract; Phase 1a offline profile implemented; no
+production dataset or API is active**.
+
+The implemented Phase 1a profile is a reversible `/tmp` audit boundary. It
+emits both public Universes in catalog order, five dimension ledgers, 18 metric
+ledgers per Universe, the Composite, missingness, explanations, and an
+independent-oracle report. It does not emit relationship, opportunity,
+candidate, risk-mode, state-transition, or Production publication records.
+`regime_state` is therefore null and
+`state_classification_status=deferred_phase_1a`; this is a scoped implementation
+state, not missing market data.
+
+The checked-in parameter artifact is
+`parameter_set_id=mrom-v1-fixed-baseline-1`, fingerprint
+`69f9cb4744f4d133c72ba872588a87821b3445cabdd6fc129785f06232407759`.
+The offline artifact set is exactly `input-manifest.json`, `raw-metrics.json`,
+`normalized-metrics.json`, `composite.json`, `missingness.json`,
+`explanation-ledger.json`, `oracle-report.json`, and a last-written
+`calculation-manifest.json`. Every JSON file is canonical and hash-bound; only
+physical audit metadata (`generated_at`, elapsed time, and peak memory) is
+excluded from the aggregate logical fingerprint.
 
 This contract freezes the machine-readable boundary for the product described
 in [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).
@@ -309,6 +328,9 @@ unsupported facts.
 - Unavailable statistics are null plus a reason code; no numeric field is
   zero-filled.
 - A dimension is null below 70% internal configured weight.
+- Available metric weight is redistributed only within its dimension. Missing
+  dimensions are not reweighted across the Composite; present dimensions keep
+  their fixed configured weights.
 - Regime state is null unless required dimensions and 90 composite weight
   points are present.
 - Candidate base score is null when more than 20 component weight points are

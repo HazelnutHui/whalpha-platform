@@ -1,10 +1,10 @@
 # Roadmap
 
-- Next proposed product step: implement the offline Phase 1a Market Regime raw
-  metric and five-dimension ledger against an explicit completed session, write
-  review evidence only under `/tmp`, and prove it with an independent oracle.
-  EOD catch-up, Production snapshot, frontend, bundle, and OCI work remain
-  separate authorizations.
+- Next proposed product step: implement the offline Phase 1b Market Regime
+  state ledger over version-compatible historical Composites, including
+  bootstrap, confirmation, hysteresis, immediate Stress override, missing-data
+  pause, and transition reasons. EOD catch-up, ETF relationships, Production
+  snapshot, frontend, bundle, and OCI remain separate authorizations.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -78,15 +78,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Multi-Universe private API, snapshot, and React selector integration
 - [x] Market Regime & Opportunity Map V1 product, quantitative, data-contract,
   architecture, validation, and phased-delivery design
-- [ ] Market Regime Phase 1a offline raw-metric and five-dimension ledger
+- [x] Market Regime Phase 1a offline raw-metric and five-dimension ledger
+- [ ] Market Regime Phase 1b offline state/hysteresis ledger
 
 ## Next Small Target
 
-Implement the Phase 1a Market Regime ledger only: fixed parameters, explicit
-2026-08-21 formal sources, raw metrics, five dimensions, composite,
-missingness, explanations, and an independent oracle. Keep output in `/tmp`;
-defer hysteresis persistence, relationships, candidates, API/frontend,
-Production snapshot, bundle, and OCI. Keep SEC B2 paused.
+Implement only the Phase 1b Market Regime state ledger: rebuild compatible
+prior-session Composites without future data, apply the accepted hysteresis
+table, persist transition counters and reasons under `/tmp`, and prove every
+transition with an independent oracle. Defer relationships, candidates,
+API/frontend, Production snapshot, bundle, and OCI. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

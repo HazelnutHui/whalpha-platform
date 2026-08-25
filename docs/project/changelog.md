@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-25 — Market Regime Phase 1a offline core
+
+- Added typed Phase 1a analytics contracts, immutable fixed V1 parameters, a
+  formal 26-session EOD/same-day-Identity/Activation source reader, pure five-
+  dimension calculation service, and a complete raw/normalized/weight/
+  contribution/missingness/explanation ledger.
+- Added an independently implemented raw-panel oracle, stable-ID permutation
+  checks, no-future/no-cross-Universe gates, explicit local Decimal precision
+  50 arithmetic, outer precision/trap invariance, and contribution
+  reconciliation.
+- Added a socket-guarded offline CLI and canonical `/tmp` artifact reader. The
+  path boundary rejects `/data`, repository paths, symlinks, traversal, and
+  existing non-empty targets; no apply or Production writer exists.
+- The formal 2026-08-21 calculation produced Primary/Secondary Composites
+  `63.9102`/`64.8167`, with all 18 metrics available per Universe and zero
+  oracle mismatch. State/hysteresis is explicitly deferred to Phase 1b; ETF
+  relationships, sectors, candidates, API, frontend, snapshot, bundle, and OCI
+  remain unimplemented.
+
 ## 2026-08-25 — Market Regime & Opportunity Map V1 design
 
 - Added the product specification, proposed data contract, implementation
