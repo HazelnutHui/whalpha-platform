@@ -15,7 +15,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `f344a589a8c93e527e63470335d88d293141aee1` |
+| Deployed bundle source commit | `1f3eb5512eb0d1ba67112395450c2783221596da` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -26,9 +26,9 @@ recorded by a deployed bundle.
 
 ## Formal local state
 
-The 2026-08-26 reconciliation used the project readers. The complete Market
-Intelligence source-validation path passed before a reporting-only descriptor
-field error; the corrected extraction then reread the active artifacts.
+The 2026-08-26 post-deployment reconciliation used the project readers and
+reread the active custody/contracts. The MI 1.1 plan and apply independently
+reread the complete Regime and Candidate source chain before activation.
 
 | Boundary | Active verified value |
 | --- | --- |
@@ -43,15 +43,16 @@ field error; the corrected extraction then reread the active artifacts.
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
 | Primary | 1,718 CS; fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978` |
 | Secondary | 1,831 = 1,718 CS + 113 ADRC; fingerprint `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295` |
-| Market Intelligence | `2026-08-24T043223Z-aee1a6ab0f67` |
-| Market Intelligence payload SHA-256 | `58b48bbd14cc033435eb11c307556c9e137b70e0766e333695aba0c56c07f374` |
-| Market Intelligence logical fingerprint | `35d2080f0720519960c49825df374fda2a1d1103f8874dc19238cf4c3d3a0d9e` |
-| Dashboard Snapshot | `2026-08-24T045652Z-aee1a6ab0f67` |
-| Contracts | Snapshot 1.5 / Dashboard 2.2 |
-| Snapshot pointer fingerprint | `9d98680062a2efc274855e40e10418192aa91a68dd34e135bade942cda1899b7` |
+| Market Intelligence | `2026-08-24T142500Z-1f3eb5512eb0`, contract 1.1 |
+| Market Intelligence payload SHA-256 | `978519c1db9630ef456a1e0a2e27a35ab5cdd8786a43727ce20d24cc86d534a6` |
+| Market Intelligence logical fingerprint | `9d9f04541b3d5cfc4e3282a2f2b9e3b15e43811f6d66c1459a3f7b4f7babcf5a` |
+| Candidate publication | 146 Primary / 155 Secondary cards; fingerprint `fb586f32af2e7ccb00b79a5d5d72701175fa021e93ec262374a779f5b83c48a6` |
+| Dashboard Snapshot | `2026-08-24T144500Z-1f3eb5512eb0` |
+| Contracts | Snapshot 1.6 / Dashboard 2.3 |
+| Snapshot pointer fingerprint | `223ae10170097dcfef9f9352c997a96bdc9200f75232a8f23a22db1b354bf334` |
 | Data status | `stale_review`: actual 2026-08-24, expected 2026-08-25, lag one |
-| `/data` inventory | 302 files / 95,250,500 bytes |
-| `/data` inventory fingerprint | `a90d8c10f6dd0ae7174f8c2c7810042cd5ff3ad30689c72163b7ed42d1cdbe78` |
+| `/data` inventory | 312 files / 107,298,545 bytes |
+| `/data` inventory fingerprint | `1f9c469663616c527e1809f509d9f728d0111fc35d75a643d85c0bb52ea39e36` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -69,21 +70,20 @@ Tailscale listeners were present.
   protected Session and load the same product payload.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
-- Repository source contains the Phase 5 offline candidate score/risk/state,
+- Production contains the Phase 5 offline candidate score/risk/state,
   independent Oracle, canonical `/tmp` audit/reread boundary, bounded
   language-neutral consumer, MI 1.1, Snapshot 1.6 / Dashboard 2.3, strict
-  frontend parser, and the third first-level Stock Candidate workspace. These
-  changes have no active Production pointer or deployed-product effect.
+  frontend parser, and the third first-level Stock Candidate workspace. MI 1.1,
+  Snapshot 1.6 / Dashboard 2.3, and the matching OCI bundle are active.
 - The current formal candidate audit is the 2026-08-24 baseline-3 directory
   `/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, fingerprint
   `1f25a1c9060d459e372903ad116579973c709363f365f19fa66bb515774c93df`.
   It binds two calculable sessions, has zero Oracle mismatch, and passes all
   four replay-equivalence gates. This `/tmp` evidence is local development
   custody, not a Production pointer or deployment artifact.
-- A formal development build from that audit produced a reread MI 1.1 payload
-  with 146 Primary / 155 Secondary display-review cards and a reread Snapshot
-  1.6 / Dashboard 2.3 Candidate file of about 5.14 MB. The output remains under
-  `/tmp`; it is not an approval package or Production state.
+- The active MI 1.1 payload contains 146 Primary / 155 Secondary
+  display-review cards; Snapshot 1.6 / Dashboard 2.3 serves the same bounded
+  Candidate file of about 5.14 MB.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
@@ -96,8 +96,8 @@ Tailscale listeners were present.
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-26T103119Z-f344a589a8c9`, built from deployed source commit
-`f344a589a8c93e527e63470335d88d293141aee1` and bound to the active Snapshot
+`2026-08-26T151600Z-1f3eb5512eb0`, built from deployed source commit
+`1f3eb5512eb0d1ba67112395450c2783221596da` and bound to the active Snapshot
 and Market Intelligence publication. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
@@ -107,16 +107,16 @@ manifest, Nginx and Auth Service active and enabled, and the Auth Service bound
 only to `127.0.0.1:8010`. Postflight checked the public data-free entry,
 unauthenticated Dashboard redirect, private-data/auth-status 401 responses,
 external internal-verify 404, then created a temporary guest Session and proved
-it read the Dashboard and exact Snapshot 1.5 payload before logout. No
+it read the Dashboard and exact Snapshot 1.6 Candidate payload before logout. No
 credential or cookie content was printed or retained. Password-based browser
 behavior remains a manual user check.
 
-Remote release retention contains the active release, immediate rollback
-`2026-08-26T094339Z-f9711d5403f6`, and deliberate older selectable-Universe
-fallback `2026-08-19T083341Z-7ed7fdc21686`, with no staging/partial residue.
-The superseded `2026-08-26T062038Z-895a073769ad` release and matching local
-bundle were removed after exact pointer/type checks. The local report remains
-network-free and cannot replace this separately authorized OCI check.
+Remote release retention contains the active release plus
+`2026-08-26T103119Z-f344a589a8c9`, `2026-08-26T094339Z-f9711d5403f6`, and the
+deliberate older selectable-Universe fallback
+`2026-08-19T083341Z-7ed7fdc21686`, with no staging/partial residue. The local
+report remains network-free and cannot replace this separately authorized OCI
+check.
 
 ## Product guardrails
 

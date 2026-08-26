@@ -34,9 +34,8 @@ builds reject known synthetic fixture markers.
 
 The deployed production Snapshot uses 2026-08-24 as current and 2026-08-21 as
 previous, with expected session 2026-08-25, lag one, and explicit
-`stale_review`. Snapshot 1.6 / Dashboard 2.3 Candidate integration is verified
-in source but is not active until a separately approved Market Intelligence,
-Snapshot, bundle, and deployment sequence completes.
+`stale_review`. Snapshot 1.6 / Dashboard 2.3 is active and serves the bounded
+Candidate consumer from MI 1.1 without browser-side score recomputation.
 
 ## Implemented Views
 

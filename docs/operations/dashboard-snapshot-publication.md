@@ -2,14 +2,13 @@
 
 ## Market Intelligence consumer binding
 
-The active Market Regime-capable release is Snapshot 1.5 / Dashboard 2.2. The
-next Candidate-capable contract is Snapshot 1.6 / Dashboard 2.3. Its
+The active Candidate-capable release is Snapshot 1.6 / Dashboard 2.3. Its
 dry-run receives an explicit `--market-intelligence-publication-id`, formally
 reads the active immutable publication, and freezes that reference in candidate
 and plan. It never discovers a latest analytics directory. Analytics and
 Snapshot publication remain separately approved operations. Snapshot 1.6
 requires MI 1.1 and adds the exact bound `opportunity-candidates.json`; it
-cannot be produced from the active MI 1.0 publication.
+cannot be produced from an MI 1.0 publication.
 
 ## Safety boundary
 

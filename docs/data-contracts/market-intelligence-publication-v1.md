@@ -3,7 +3,8 @@
 ## Status and scope
 
 Implemented as an approval-bound Production contract. Active publication
-`2026-08-24T043223Z-aee1a6ab0f67` is the exact user-approved 2026-08-24
+`2026-08-24T142500Z-1f3eb5512eb0` uses contract 1.1 and is the exact
+user-approved 2026-08-24
 `stale_review`: expected session 2026-08-25, lag one. It is not an ordinary
 fresh publication and does not authorize reuse of the exception for another
 session or release.
@@ -78,7 +79,7 @@ session or future release.
 
 ## Contract 1.1 Candidate extension
 
-Repository source also implements `market-intelligence-publication/1.1` while
+Production implements `market-intelligence-publication/1.1` while
 retaining formal 1.0 reading and rollback compatibility. Version 1.1 keeps the
 same immutable two-file layout, pointer version, namespace, and revision, and
 adds a mandatory language-neutral Candidate source binding and bounded
@@ -88,5 +89,5 @@ The plan version becomes 1.1 and freezes the exact `/tmp` Candidate audit,
 audit/Oracle/equivalence lineage, and Candidate analytics fingerprint. Apply
 and verify-then-link reread that approved audit under the existing guarded
 publication flow. A 1.0 plan cannot activate a 1.1 payload. The active
-Production publication remains 1.0 until a new exact freshness or stale-review
-authorization is approved; the existing 2026-08-24 exception is not inherited.
+Production publication is 1.1 under its own exact 2026-08-24 stale-review
+authorization; the exception is not inherited by another release.

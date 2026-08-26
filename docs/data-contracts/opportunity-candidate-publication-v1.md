@@ -2,10 +2,9 @@
 
 ## Status and purpose
 
-Implemented in repository source and formally exercised against the completed
-2026-08-24 baseline-3 Candidate audit. It is not active Production state until
-a separately approved Market Intelligence 1.1, Snapshot 1.6, bundle, and OCI
-deployment sequence completes.
+Implemented, published, and deployed from the completed 2026-08-24 baseline-3
+Candidate audit through MI 1.1, Snapshot 1.6 / Dashboard 2.3, and the bound OCI
+release. Future publication sequences remain separately approved.
 
 Contract `opportunity-candidate-publication/1.0` is a bounded,
 language-neutral consumer projection of the much larger canonical Candidate

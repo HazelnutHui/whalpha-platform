@@ -52,11 +52,12 @@ relative-performance proxies, never actual fund flow.
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
 - Active Market Intelligence publication is
-  `2026-08-24T043223Z-aee1a6ab0f67`.
+  `2026-08-24T142500Z-1f3eb5512eb0`, contract 1.1, with 146 Primary and 155
+  Secondary bounded Candidate cards.
 - Active Dashboard Snapshot is
-  `2026-08-24T045652Z-aee1a6ab0f67`, contract 1.5 / Dashboard 2.2.
+  `2026-08-24T144500Z-1f3eb5512eb0`, contract 1.6 / Dashboard 2.3.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-26T103119Z-f344a589a8c9` from source commit `f344a589a8c9`.
+  `2026-08-26T151600Z-1f3eb5512eb0` from source commit `1f3eb5512eb0`.
 
 The active analytics and Snapshot are an exact, one-release review of
 2026-08-24 data with expected session 2026-08-25 and lag one. Their required
@@ -95,7 +96,7 @@ The 2026-08-26 deployment verified over SSH that the remote current symlink
 selects the recorded release, Nginx and the Auth Service are active/enabled,
 and the Auth Service listens only on localhost. Postflight proved a temporary
 guest Session could read the Dashboard and the exact bound Snapshot, logged it
-out, and then reconfirmed the unauthenticated boundary. Three reviewed releases
+out, and then reconfirmed the unauthenticated boundary. Four reviewed releases
 remain with no staging/partial residue. Password-based browser health remains
 a manual user check because no password was read or used.
 
@@ -139,9 +140,9 @@ quarantine, separate Conservative/Balanced/Aggressive eligibility/ranking,
 chronological Watch/Prepare/Enter/invalidated replay, an independent raw-panel
 Oracle, a canonical `/tmp` audit/reread boundary, language-neutral bounded
 publication projection, MI 1.1, Snapshot 1.6 / Dashboard 2.3, strict React
-parser, and the third first-level Candidate workspace. It does not alter
-`/data` or the active product. Formal publication, Snapshot activation, bundle,
-and deployment remain pending and retain separate operational gates.
+parser, and the third first-level Candidate workspace. MI 1.1, Snapshot 1.6 /
+Dashboard 2.3, the bundle, and the OCI product are active. Future publication
+sequences retain the same separate operational gates.
 
 The formal read-only 2026-08-24 candidate audit is
 `/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, logical fingerprint
@@ -157,12 +158,11 @@ Current risk-mode outputs reach the fixed 25/50/100 display caps in each
 Universe. The full two-session audit took about 928 seconds and peaked near
 1.9 GiB, so incremental daily execution remains required before automation.
 
-The formal audit produced a successfully reread development MI 1.1 candidate
-and Snapshot 1.6 / Dashboard 2.3 under `/tmp`. The bounded Candidate JSON is
+The formal audit was published through MI 1.1 and Snapshot 1.6 / Dashboard 2.3
+after a new exact stale-review authorization. The bounded Candidate JSON is
 about 5.14 MB and contains 146 Primary and 155 Secondary display/review cards.
-These are development verification artifacts, not active pointers. The current
-stale-review authorization predates this new publication and cannot authorize
-its activation without a new exact user decision.
+The active audit, parameter, state-parameter, MI, Snapshot, and OCI bundle
+bindings were reread after deployment.
 
 ## Verification entry point
 

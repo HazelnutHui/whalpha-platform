@@ -13,13 +13,14 @@ Verified through the `whalpha-oci` SSH alias and deployment postflight on
 2026-08-26 without reading credentials:
 
 - `/srv/whalpha/current` resolves to
-  `/srv/whalpha/releases/2026-08-26T103119Z-f344a589a8c9`;
+  `/srv/whalpha/releases/2026-08-26T151600Z-1f3eb5512eb0`;
 - the release is built from source commit
-  `f344a589a8c93e527e63470335d88d293141aee1`;
-- it binds Market Intelligence `2026-08-24T043223Z-aee1a6ab0f67` and
-  Snapshot `2026-08-24T045652Z-aee1a6ab0f67`;
-- it serves Snapshot 1.5 / Dashboard 2.2, `en` and `zh`, English by default,
-  and the exact one-session-lag `stale_review` payload;
+  `1f3eb5512eb0d1ba67112395450c2783221596da`;
+- it binds Market Intelligence `2026-08-24T142500Z-1f3eb5512eb0` and
+  Snapshot `2026-08-24T144500Z-1f3eb5512eb0`;
+- it serves Snapshot 1.6 / Dashboard 2.3, the bounded Stock Candidate
+  workspace, `en` and `zh`, English by default, and the exact one-session-lag
+  `stale_review` payload;
 - the deployment manifest declares no credentials, raw payload, or Parquet;
 - Nginx and `whalpha-dashboard-auth.service` are active and enabled;
 - the Auth Service listens only on `127.0.0.1:8010`;
@@ -27,12 +28,12 @@ Verified through the `whalpha-oci` SSH alias and deployment postflight on
   `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
   `/auth/status`, and returns 404 for external `/auth/internal-verify`;
 - deployment postflight creates a temporary guest Session, verifies the same
-  Dashboard and Snapshot 1.5 payload are readable, logs out, and removes the
-  local cookie jar without printing it;
+  Dashboard and Snapshot 1.6 Candidate payload are readable, logs out, and
+  removes the local cookie jar without printing it;
 - no staging or partial release residue exists; and
-- the current release, immediate rollback `2026-08-26T094339Z-f9711d5403f6`,
-  and deliberate older selectable-Universe fallback
-  `2026-08-19T083341Z-7ed7fdc21686` are retained.
+- the current release, prior releases `2026-08-26T103119Z-f344a589a8c9` and
+  `2026-08-26T094339Z-f9711d5403f6`, and deliberate older selectable-Universe
+  fallback `2026-08-19T083341Z-7ed7fdc21686` are retained.
 
 Authenticated browser behavior was not tested because the verification did not
 read or use the user's password.
@@ -40,10 +41,12 @@ read or use the user's password.
 ## Immutable bundle boundary
 
 The builder requires an explicit immutable Snapshot path and Market
-Intelligence publication. It rejects a contract other than Snapshot 1.5 /
-Dashboard 2.2, identity mismatch, missing analytics, or fewer than 16 registered
-relationships. It freezes locales `en` and `zh`, default locale `en`, and the
-analytics checksum and logical identity.
+Intelligence publication. It accepts only the exact Snapshot 1.5 / Dashboard
+2.2 or Snapshot 1.6 / Dashboard 2.3 pair and rejects identity mismatch,
+missing analytics, or fewer than 16 registered relationships. For 1.6 it also
+freezes and validates Candidate audit/parameter/display bindings and the
+underlying-stock/price-proxy disclosure boundaries. It freezes locales `en`
+and `zh`, default locale `en`, and the analytics checksum and logical identity.
 
 The production React graph contains no static dependency on the synthetic
 Dashboard fixture. Development demo mode loads it lazily only behind the Vite

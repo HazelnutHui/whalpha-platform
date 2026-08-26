@@ -3,8 +3,8 @@
 ## Status
 
 Implemented and active. Production Snapshot
-`2026-08-24T045652Z-aee1a6ab0f67` uses Snapshot 1.5 / Dashboard 2.2 and binds
-Market Intelligence `2026-08-24T043223Z-aee1a6ab0f67`. It is the exact
+`2026-08-24T144500Z-1f3eb5512eb0` uses Snapshot 1.6 / Dashboard 2.3 and binds
+Market Intelligence `2026-08-24T142500Z-1f3eb5512eb0`. It is the exact
 user-approved `stale_review` for actual 2026-08-24 versus expected 2026-08-25,
 lag one. Snapshot 1.4 / Dashboard 2.1 and the 1.3 compatibility release remain
 historical/rollback contracts, not the active state.
@@ -69,7 +69,7 @@ same explicit acknowledgement and rejects changed freshness under lock.
 
 ## Contract 1.6 Candidate extension
 
-Repository source implements Snapshot 1.6 / Dashboard 2.3 as an additive
+The active Snapshot 1.6 / Dashboard 2.3 is an additive
 consumer of Market Intelligence 1.1. It retains the 1.5 files and adds exactly
 `opportunity-candidates.json`, whose bounded language-neutral payload is
 described in the [Candidate publication contract](opportunity-candidate-publication-v1.md).

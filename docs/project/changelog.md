@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-26 — Phase 6 production publication and OCI deployment
+
+- Published and activated MI 1.1 publication
+  `2026-08-24T142500Z-1f3eb5512eb0` from the baseline-3 Candidate audit under
+  the exact one-session stale-review authorization.
+- Published and activated Snapshot 1.6 / Dashboard 2.3 release
+  `2026-08-24T144500Z-1f3eb5512eb0`, including the 5.14 MB bounded Candidate
+  file with 146 Primary and 155 Secondary display/review cards.
+- Built and deployed OCI release `2026-08-26T151600Z-1f3eb5512eb0` from source
+  commit `1f3eb5512eb0d1ba67112395450c2783221596da`. Remote preflight, Nginx,
+  current symlink, public entry, guest Session, protected Dashboard, exact
+  Snapshot 1.6, Candidate contract, logout, and unauthenticated boundaries
+  passed. Password-based visual behavior remains a manual user check.
+- Post-publication reconciliation reports 312 `/data` files / 107,298,545
+  bytes, no symlink/staging/partial residue, and a clean `main` repository.
+
 ## 2026-08-26 — Phase 6 Candidate consumer and Snapshot contract
 
 - Added a bounded, language-neutral `opportunity-candidate-publication/1.0`
@@ -20,10 +36,8 @@
   structured support/counterevidence, visible invalidation, raw facts, human
   review checklist, bilingual copy, mobile layout, and fail-closed parsing.
 - Extended the OCI bundle and guest postflight gates for the exact 1.6/2.3
-  contract. A formal `/tmp` build reread 146 Primary and 155 Secondary cards;
-  the Candidate file is about 5.14 MB. No `/data`, active pointer, bundle, OCI,
-  network, or deployment state changed. A new exact freshness/stale-review
-  authorization remains required before publication.
+  contract. A pre-publication `/tmp` build reread 146 Primary and 155 Secondary
+  cards; the Candidate file is about 5.14 MB.
 
 ## 2026-08-26 — Phase 5 candidate state, Oracle, and canonical audit
 

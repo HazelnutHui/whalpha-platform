@@ -19,7 +19,7 @@ version-compatible Phase 1a Composites without changing their formulas or
 fingerprints, and emits a separate candidate/confirmed state history under
 `/tmp`. The immutable Market Intelligence publisher now validates these audit
 sources, promotes a language-neutral payload to `/data`, and exposes it through
-Snapshot 1.5 / Dashboard 2.2. The audit artifacts remain immutable sources;
+Snapshot 1.6 / Dashboard 2.3. The audit artifacts remain immutable sources;
 they are not themselves Production pointers.
 
 Phase 2 consumes the same once-loaded 26-session panel and the completed Phase
@@ -32,11 +32,10 @@ state core: strict ledgers, the frozen seven-component parameter set, source-
 bound bar coverage, price-derived registered-ETF proxy selection, missing-
 component reweighting, anomaly quarantine, deterministic Conservative/
 Balanced/Aggressive ranking, Watch/Prepare/Enter/invalidated replay, an
-independent raw-panel Oracle, and canonical `/tmp` audit/reread. It has no API,
-or `/data` write boundary. Phase 6 adds the bounded, language-neutral MI 1.1 /
-Snapshot 1.6 / Dashboard 2.3 consumer and bilingual Stock Candidate workspace
-in repository source. That consumer is not active Production state until a
-separate publication and deployment is approved.
+independent raw-panel Oracle, and canonical `/tmp` audit/reread. Phase 6 adds
+the bounded, language-neutral MI 1.1 / Snapshot 1.6 / Dashboard 2.3 consumer
+and bilingual Stock Candidate workspace. That consumer is active Production
+state; later publications still require separate approval.
 
 The initial design baseline remains `as_of_session=2026-08-21`; the active
 publication rolls the same versioned formulas and registered relationships to

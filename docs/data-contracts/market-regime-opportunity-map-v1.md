@@ -3,7 +3,7 @@
 ## Status
 
 Status: **Implemented V1 calculation contract. A separately versioned immutable
-Market Intelligence publication and Snapshot 1.5 / Dashboard 2.2 consumer are
+Market Intelligence 1.1 publication and Snapshot 1.6 / Dashboard 2.3 consumer are
 active for the exact 2026-08-24 `stale_review` release**.
 
 The implemented Phase 1a profile is a reversible `/tmp` audit boundary. It

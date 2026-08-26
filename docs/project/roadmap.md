@@ -4,14 +4,13 @@
   approval-bound Identity/EOD workflow, then prepare a fresh Market
   Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
-- Next product-validation step: review the implemented Phase 6 bounded
-  Candidate consumer, MI 1.1, Snapshot 1.6 / Dashboard 2.3, and bilingual
-  Stock Candidate workspace against a fresh daily audit before publication.
+- Next product-validation step: use the deployed Phase 6 bounded Candidate
+  workspace, then review its behavior against a fresh daily audit before the
+  next publication.
   The bilingual hierarchy, Daily Decision Brief, current-payload change layer,
   relationship decision lanes, and equal-capability guest Session entry are
   implemented in repository source. Exact relationship run length/acceleration,
-  formal taxonomy, position management, and deployment remain separate
-  contract work.
+  formal taxonomy, and position management remain separate contract work.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -108,7 +107,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   no role-dependent product branch
 - [x] Phase 5 Candidate score/risk/state, independent Oracle, and canonical audit
 - [x] Bounded Candidate publication, MI 1.1, Snapshot 1.6 / Dashboard 2.3, and
-  bilingual first-level Stock Candidate workspace in repository source
+  deployed bilingual first-level Stock Candidate workspace
 
 ## Next Small Target
 

@@ -52,7 +52,7 @@ in-dataset release and therefore fails closed on rollback.
 
 ## Downstream order
 
-After a separately authorized fresh MI 1.1 publication: build Snapshot 1.6 /
+After a separately authorized MI 1.1 publication: build Snapshot 1.6 /
 Dashboard 2.3 with the explicit publication ID; separately approve/apply Snapshot; then
 build OCI with both the explicit Snapshot and
 `--market-intelligence-publication`. OCI deployment remains another authorization.
