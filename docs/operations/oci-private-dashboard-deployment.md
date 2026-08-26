@@ -9,6 +9,20 @@ It copies bilingual login assets, freezes default locale `en` and locales
 `en`/`zh`, and records analytics SHA/logical identity. It never reads `latest`
 or recomputes analytics.
 
+## Production Dashboard demo isolation
+
+The production React entry has no static dependency on the synthetic Dashboard
+fixture. Explicit local demo mode is development-only and loads its fixture
+lazily behind `import.meta.env.DEV`; API and snapshot builds never fall back to
+synthetic data after a request or validation failure. The formal response parser
+rejects `synthetic_demo` at its runtime boundary.
+
+Every Vite production build fails closed if any emitted chunk or asset contains
+`synthetic_demo_fixture`, `synthetic_demo`, or `demoDashboardData`. OCI candidate
+review repeats the scan over the complete immutable bundle, including every JS
+chunk, before deployment. A failed scan requires a new code/build authorization;
+the candidate must not be stripped, rewritten, or deployed.
+
 ## Latest Selectable-Universe Release
 
 Release `2026-08-19T083341Z-7ed7fdc21686` is the current versioned release. It serves private snapshot contract 1.3 with Common Shares as default and Common Shares + ADRs as the optional view. Legacy remains available only through retained data and historical releases for deliberate rollback. Automated unauthenticated protection checks passed; authenticated visual/selector verification remains manual.
@@ -27,7 +41,10 @@ The active release is managed through the deployment script and should be verifi
 
 ```bash
 scripts/admin/build-private-dashboard-snapshot.sh
-scripts/admin/build-oci-dashboard-bundle.sh --snapshot-release <release-id>
+scripts/admin/build-oci-dashboard-bundle.sh \
+  --snapshot-path <immutable-snapshot-absolute-path> \
+  --market-intelligence-publication <publication-id> \
+  --bundle-release <release-id>
 scripts/admin/deploy-private-dashboard-oci.sh --bundle-release <release-id> --dry-run
 scripts/admin/deploy-private-dashboard-oci.sh --bundle-release <release-id> --apply
 ```

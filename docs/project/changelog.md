@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-26 — Production Dashboard demo isolation
+
+- Removed the synthetic Dashboard fixture from the production static dependency
+  graph. Explicit demo mode remains available only in development through a
+  guarded lazy import.
+- Formal API/snapshot failures remain visible errors with retry and never fall
+  back to synthetic data. The formal Dashboard parser now rejects synthetic
+  response status.
+- Added source-graph and emitted-bundle gates that fail a production build if
+  any JS chunk or asset contains a known Dashboard fixture marker. Snapshot 1.5,
+  Dashboard 2.2, stale-review display, authentication, and analytics semantics
+  are unchanged.
+
 ## 2026-08-25 — Market Intelligence Production publication preparation
 
 - Added immutable publication/manifest/pointer/plan contracts, source-validating

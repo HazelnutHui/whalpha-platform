@@ -22,6 +22,12 @@ function okResponse(payload: unknown): Response {
   return new Response(JSON.stringify(payload), { status: 200, headers: { 'Content-Type': 'application/json' } });
 }
 
+function formalDashboardOverview() {
+  const overview = structuredClone(demoDashboardData.overview);
+  overview.data_status = 'complete';
+  return overview;
+}
+
 describe('MarketDashboardPage', () => {
   beforeEach(() => {
     window.localStorage.clear();
@@ -29,7 +35,7 @@ describe('MarketDashboardPage', () => {
     vi.stubEnv('VITE_MARKET_DATA_MODE', 'api');
     vi.spyOn(globalThis, 'fetch').mockImplementation((input: RequestInfo | URL) => {
       const path = String(input);
-      if (path.includes('/overview/')) return Promise.resolve(okResponse(demoDashboardData.overview));
+      if (path.includes('/overview/')) return Promise.resolve(okResponse(formalDashboardOverview()));
       if (path.endsWith('/private-data/v1/manifest.json')) return Promise.resolve(okResponse({
         snapshot_contract_version: '1',
         release_id: '2026-08-13T120000Z-abcdef0',
@@ -52,7 +58,7 @@ describe('MarketDashboardPage', () => {
         contains_raw_provider_data: false,
         contains_credentials: false,
       }));
-      if (path.endsWith('/private-data/v1/market-overview.json')) return Promise.resolve(okResponse(demoDashboardData.overview));
+      if (path.endsWith('/private-data/v1/market-overview.json')) return Promise.resolve(okResponse(formalDashboardOverview()));
       return Promise.resolve(new Response('{}', { status: 404 }));
     });
   });
@@ -81,7 +87,7 @@ describe('MarketDashboardPage', () => {
 
   it('renders fresh calendar status independently from validation status', async () => {
     const fresh = {
-      ...demoDashboardData.overview,
+      ...formalDashboardOverview(),
       freshness_status: 'fresh',
       expected_latest_completed_session: '2026-08-14',
       actual_latest_completed_session: '2026-08-14',
@@ -94,7 +100,7 @@ describe('MarketDashboardPage', () => {
 
   it('shows the exact review-deployment banner in both languages', async () => {
     const review = {
-      ...demoDashboardData.overview,
+      ...formalDashboardOverview(),
       data_status: 'stale_review', review_mode: true,
       current_session_date: '2026-08-24', previous_session_date: '2026-08-21',
       actual_latest_completed_session: '2026-08-24', expected_latest_completed_session: '2026-08-25',
@@ -127,7 +133,7 @@ describe('MarketDashboardPage', () => {
         return Promise.resolve(new Response('failure', { status: 503 }));
       }
       const path = String(input);
-      if (path.includes('/overview/')) return Promise.resolve(okResponse(demoDashboardData.overview));
+      if (path.includes('/overview/')) return Promise.resolve(okResponse(formalDashboardOverview()));
       if (path.endsWith('/private-data/v1/manifest.json')) return Promise.resolve(okResponse({
         snapshot_contract_version: '1',
         release_id: '2026-08-13T120000Z-abcdef0',
@@ -150,7 +156,7 @@ describe('MarketDashboardPage', () => {
         contains_raw_provider_data: false,
         contains_credentials: false,
       }));
-      if (path.endsWith('/private-data/v1/market-overview.json')) return Promise.resolve(okResponse(demoDashboardData.overview));
+      if (path.endsWith('/private-data/v1/market-overview.json')) return Promise.resolve(okResponse(formalDashboardOverview()));
       return Promise.resolve(new Response('{}', { status: 404 }));
     });
     render(<MarketDashboardPage />);
@@ -209,7 +215,7 @@ describe('MarketDashboardPage', () => {
   });
 
   it('preserves the real Activation V2 Primary-first catalog, labels, and URL keys', async () => {
-    const v2 = structuredClone(demoDashboardData.overview);
+    const v2 = formalDashboardOverview();
     v2.universe_definition_id = 'dashboard-universe-activation-v2';
     v2.universe_version = '2.0';
     v2.default_universe_id = 'provider_classified_common_shares_v1';
@@ -271,6 +277,7 @@ describe('MarketDashboardPage', () => {
 
   it('renders sector benchmark relative performance without price columns', async () => {
     const custom = structuredClone(demoDashboardData);
+    custom.overview.data_status = 'complete';
     custom.overview.sector_benchmarks[0] = {
       ...custom.overview.sector_benchmarks[0],
       available: true,

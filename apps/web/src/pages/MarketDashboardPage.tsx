@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { getMarketDashboardData, getSnapshotDashboardData } from '../api/market';
 import type { DashboardData, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, MarketBenchmarkResponse, SectorBenchmarkEtfResponse } from '../api/types';
-import { demoDashboardData } from '../fixtures/marketDemo';
 import { formatCompact, formatCurrencyCompact, formatNumber, formatPercent, formatPrice, formatRatio, formatTimestamp, parseDecimal } from '../utils/format';
 import { LiquidityTreemap } from '../components/dashboard/LiquidityTreemap';
 import { useI18n, type Translate } from '../i18n/I18nProvider';
@@ -18,9 +17,17 @@ type DashboardState =
   | { kind: 'error'; message: string };
 
 function marketDataMode(): DashboardMode {
-  if (import.meta.env.VITE_MARKET_DATA_MODE === 'demo') return 'demo';
+  if (import.meta.env.DEV && import.meta.env.VITE_MARKET_DATA_MODE === 'demo') return 'demo';
   if (import.meta.env.VITE_MARKET_DATA_MODE === 'snapshot') return 'snapshot';
   return 'api';
+}
+
+async function loadExplicitDevelopmentDemo(): Promise<DashboardData> {
+  if (!import.meta.env.DEV || import.meta.env.VITE_MARKET_DATA_MODE !== 'demo') {
+    throw new Error('Synthetic Dashboard data is unavailable outside explicit development mode.');
+  }
+  const { demoDashboardData } = await import('../fixtures/marketDemo');
+  return demoDashboardData;
 }
 
 async function logout(locale: string): Promise<void> {
@@ -231,7 +238,13 @@ export function MarketDashboardPage(): JSX.Element {
   const [mapLimit, setMapLimit] = useState(50); const [searchTicker, setSearchTicker] = useState('');
   const [selectedItem, setSelectedItem] = useState<LiquidityMapNodeResponse | EodReturnResponse | null>(null); const mode = useMemo(marketDataMode, []);
   const load = useCallback(() => {
-    if (mode === 'demo') { setState({ kind: 'ready', data: demoDashboardData, mode }); setSelectedUniverseId(demoDashboardData.overview.default_universe_id); return undefined; }
+    if (mode === 'demo') {
+      let active = true; setState({ kind: 'loading' });
+      void loadExplicitDevelopmentDemo()
+        .then((data) => { if (active) { setState({ kind: 'ready', data, mode }); setSelectedUniverseId(data.overview.default_universe_id); } })
+        .catch((error: unknown) => { if (active) setState({ kind: 'error', message: error instanceof Error ? error.message : '' }); });
+      return () => { active = false; };
+    }
     const controller = new AbortController(); setState({ kind: 'loading' }); const requested = requestedUniverse();
     const request = mode === 'snapshot' ? getSnapshotDashboardData(controller.signal).then(({ data }) => data) : getMarketDashboardData(controller.signal, requested ?? undefined);
     request.then((data) => { setState({ kind: 'ready', data, mode }); const allowed = data.overview.universes.some((item) => item.definition.universe_id === requested); const selected = allowed && requested ? requested : data.overview.default_universe_id; setSelectedUniverseId(selected); writeUniverseToUrl(selected, true); })

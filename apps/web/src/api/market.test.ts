@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { parseDashboardOverview, parseLiquidityMap, parseMovers, parseSnapshotManifest, parseSummary } from './market';
 import { demoDashboardData } from '../fixtures/marketDemo';
 
+function formalDashboardOverview() {
+  const overview = structuredClone(demoDashboardData.overview);
+  overview.data_status = 'complete';
+  return overview;
+}
+
 describe('market API runtime validation', () => {
   it('validates summary payloads', () => {
     expect(parseSummary(demoDashboardData.overview.universes[0].summary).advancer_count).toBe(136);
@@ -21,7 +27,7 @@ describe('market API runtime validation', () => {
   });
 
   it('validates Dashboard V1.1 overview payloads', () => {
-    const overview = parseDashboardOverview(demoDashboardData.overview);
+    const overview = parseDashboardOverview(formalDashboardOverview());
     expect(overview.default_universe_id).toBe('provider_classified_common_shares_v1');
     expect(overview.universes[0].definition.display_name).toBe('Common Shares');
     expect(overview.governance_status).toBe('provisional_classification');
@@ -32,7 +38,7 @@ describe('market API runtime validation', () => {
   });
 
   it('rejects a Funnel stage that does not close', () => {
-    const invalid = structuredClone(demoDashboardData.overview);
+    const invalid = formalDashboardOverview();
     invalid.universes[0].funnel[0].excluded_count += 1;
     expect(() => parseDashboardOverview(invalid)).toThrow('Funnel stage does not close');
   });
@@ -136,7 +142,7 @@ describe('market API runtime validation', () => {
   });
 
   it('accepts the explicit stale-review overview and rejects unknown status or contract values', () => {
-    const review = structuredClone(demoDashboardData.overview);
+    const review = formalDashboardOverview();
     review.contract_version = '2.1';
     review.data_status = 'stale_review';
     review.review_mode = true;
@@ -153,6 +159,13 @@ describe('market API runtime validation', () => {
     expect(() => parseDashboardOverview({ ...review, contract_version: '2.2' })).toThrow('Unsupported market Dashboard contract');
     expect(() => parseDashboardOverview({ ...review, review_mode: false, review_contract_version: null,
       review_approved_as_of_session: null, review_expected_latest_session: null, review_expected_lag_sessions: null })).toThrow('unexpected review deployment');
+  });
+
+  it('rejects synthetic Dashboard responses at the formal API boundary', () => {
+    expect(() => parseDashboardOverview({
+      ...formalDashboardOverview(),
+      data_status: 'synthetic_demo',
+    })).toThrow('data_status');
   });
 
   it('requires governance metadata for snapshot contract 1.2', () => {

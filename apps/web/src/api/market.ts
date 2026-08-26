@@ -72,12 +72,12 @@ function requireSnapshotDataStatus(value: Record<string, unknown>, key: string):
   return candidate as 'complete' | 'insufficient_data' | 'stale_review';
 }
 
-function requireDashboardDataStatus(value: Record<string, unknown>, key: string): 'complete' | 'insufficient_data' | 'synthetic_demo' | 'file_schema_consistency_checks_passed' | 'stale_review' {
+function requireDashboardDataStatus(value: Record<string, unknown>, key: string): 'complete' | 'insufficient_data' | 'file_schema_consistency_checks_passed' | 'stale_review' {
   const candidate = requireString(value, key);
-  if (!['complete', 'insufficient_data', 'synthetic_demo', 'file_schema_consistency_checks_passed', 'stale_review'].includes(candidate)) {
+  if (!['complete', 'insufficient_data', 'file_schema_consistency_checks_passed', 'stale_review'].includes(candidate)) {
     throw new Error(`Invalid market API payload: ${key}`);
   }
-  return candidate as 'complete' | 'insufficient_data' | 'synthetic_demo' | 'file_schema_consistency_checks_passed' | 'stale_review';
+  return candidate as 'complete' | 'insufficient_data' | 'file_schema_consistency_checks_passed' | 'stale_review';
 }
 
 function optionalNullableString(value: Record<string, unknown>, key: string): string | null | undefined {
