@@ -130,10 +130,14 @@ multi-session relationship persistence counts, and evidence acceleration need
 an additive reviewed analytics-response contract; they are not inferred in the
 browser.
 
-The next quantitative product slice is the already specified Phase 5 stock
-candidate/state/risk-mode pipeline. It must not be approximated from movers or
-implemented as a frontend-only score. Provider acquisition, formal publication,
-Snapshot generation, and deployment retain their separate operational gates.
+The first isolated Phase 5A stock-candidate slice is implemented in repository
+source: strict fact/component/confidence/batch contracts, a fingerprinted fixed
+seven-component parameter set, pure 26-session scoring, missingness and anomaly
+quarantine, and separate Conservative/Balanced/Aggressive eligibility/ranking.
+It is not a frontend score and does not alter `/data` or the active product.
+Chronological Watch/Prepare/Enter/invalidated replay, independent oracle,
+canonical `/tmp` audit, publication, Snapshot, API/frontend integration, and
+deployment remain pending and retain separate operational gates.
 
 ## Verification entry point
 

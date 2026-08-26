@@ -27,6 +27,13 @@ Phase 2 consumes the same once-loaded 26-session panel and the completed Phase
 XNYS-session windows, writes a separate canonical `/tmp` audit, and does not
 change either regime result. It does not scan or rank unregistered pairs.
 
+Phase 5A now implements the isolated pure-domain candidate score and risk-mode
+core: strict ledgers, the frozen seven-component parameter set, source-bound
+bar-coverage accounting, price-derived registered-ETF proxy selection,
+missing-component reweighting, anomaly quarantine, and deterministic
+Conservative/Balanced/Aggressive ranking. It has no audit writer, state-machine
+history, API, frontend, Production publication, or `/data` write boundary yet.
+
 The initial design baseline remains `as_of_session=2026-08-21`; the active
 publication rolls the same versioned formulas and registered relationships to
 2026-08-24 with its matching same-day Identity and EOD source. Baselines and
@@ -163,11 +170,17 @@ estimated from the 2026-08-21 observation.
 Cross-sectional metrics use this versioned robust normalizer:
 
 1. include only eligible observations for the selected Universe and session;
-2. winsorize at the session’s 5th and 95th percentiles;
+2. winsorize at the session’s 5th and 95th percentiles using inclusive linear
+   interpolation (`h=(n-1)p`) under the local Decimal context;
 3. compute `z = 0.67448975 × (x - median) / MAD`;
 4. apply the declared direction and publish `clip(50 + 15 × z, 0, 100)`;
 5. if `MAD=0`, use average-tie percentile rank; if every value is tied, emit
-   50 for all records and warning `zero_cross_sectional_dispersion`.
+50 for all records and warning `zero_cross_sectional_dispersion`.
+
+Average-tie percentile fallback uses inclusive 0–100 ranks: the first ordered
+observation is 0, the last is 100, tied observations receive their average
+rank, and stable ID order makes grouping deterministic. These computation-only
+conventions are versioned; they were not fitted from observed outcomes.
 
 The raw value, winsorized value, median, MAD, z-score, direction, normalized
 score, configured weight, effective weight, and contribution remain visible.

@@ -69,6 +69,9 @@ Tailscale listeners were present.
   protected Session and load the same product payload.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
+- Repository source contains the isolated Phase 5A candidate-score/risk-mode
+  domain core. It has no state-history audit, API/frontend consumer,
+  Production publication, or active product effect.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

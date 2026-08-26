@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-08-26 — Phase 5A candidate scoring and risk-mode domain core
+
+- Added strict opportunity-candidate fact, component, submetric, confidence,
+  batch, risk-assessment, and risk-mode result contracts. Candidate score facts
+  remain separate from risk eligibility and rank.
+- Added the immutable seven-component/three-risk-mode parameter set
+  `mrom-candidate-v1-fixed-baseline-1`, fingerprint
+  `2256e94a45d979bf818cdc048939c4650c10f9312099f83756e321ceee910b6f`.
+  The parameter fingerprint fixes Decimal Type-7 5th/95th percentile
+  interpolation and inclusive average-tie 0–100 percentile fallback.
+- Implemented a pure, source-bound 26-session scorer over active stable-ID
+  memberships. It preserves as-of bar coverage, same-session ticker metadata,
+  CS/ADRC separation, the V1A registered-ETF price-proxy cap, missing-component
+  reweighting, exact displayed-contribution reconciliation, and explicit
+  underlying-not-option/proxy-not-sector caveats.
+- Implemented separate Conservative/Balanced/Aggressive gates and deterministic
+  concentration-aware ranks without changing base facts or score. Extreme
+  return/gap observations quarantine a row and remain visible even when its
+  score is otherwise unavailable.
+- Added focused coverage for missingness, proxy absence/cap, CS/ADRC isolation,
+  anomaly quarantine, risk-mode separation, concentration caps, source failure,
+  deterministic fingerprints, and outer Decimal precision/trap invariance.
+- A no-write 2026-08-24 formal-source memory rehearsal covered 1,716/1,718
+  Primary and 1,829/1,831 Secondary members, produced scores for every covered
+  member, selected registered-ETF proxies for 1,475/1,552, and quarantined 20
+  extreme-move rows in each view. Balanced/Aggressive retained their fixed
+  50/100 caps; Conservative retained zero because Phase 5A correctly lacked
+  state-confirmation history rather than bypassing its 0.75 confidence floor.
+  Reusing per-instrument log returns preserved both batch fingerprints; the
+  two-Universe formal read/calculation remained about 219 seconds, so source
+  validation and shared Primary/Secondary fact reuse remain optimization work.
+- This slice makes no network request and adds no `/data`, API, frontend,
+  Snapshot, publication, bundle, deployment, scheduler, position, or option
+  boundary. Candidate state history, independent oracle, and canonical `/tmp`
+  audit remain the next Phase 5 work.
+
 ## 2026-08-26 — Daily decision layer and equal-capability guest entry
 
 - Built and deployed OCI release `2026-08-26T103119Z-f344a589a8c9` from source

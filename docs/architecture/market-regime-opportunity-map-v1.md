@@ -14,9 +14,10 @@ independent approval and rollback domains.
 ## Status
 
 Status: **Implemented through Phase 2, read-only API/local preview, immutable
-Market Intelligence publication, Snapshot 1.5 / Dashboard 2.2, and the
-live-verified explicitly bound OCI release. The active 2026-08-24 payload is
-`stale_review`**.
+Market Intelligence publication, Snapshot 1.5 / Dashboard 2.2, the
+live-verified explicitly bound OCI release, and an isolated Phase 5A pure
+candidate-score/risk-mode core. The active 2026-08-24 payload is
+`stale_review`; Phase 5A is not published**.
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)
@@ -390,6 +391,10 @@ Disable the Phase 4 calculation version; Phase 1/2 V1A remains valid.
 
 ### Phase 5 — Candidate States and Risk Modes
 
+**Implementation status: Phase 5A score/risk core implemented; chronological
+candidate state replay, independent oracle, canonical `/tmp` audit, and all
+runtime consumers remain pending.**
+
 **Inputs**
 
 - Phase 1 regime, Phase 2 relationships, optional Phase 4 formal transmission;
@@ -573,7 +578,19 @@ desktop view renders both Universes, the five-dimension ledger, all 16 pairs,
 fixed highlights, filters, pair detail, and short-history boundaries without
 recalculation.
 
-The next step is **human review of this local page**, followed by a separately
-authorized design for immutable Production analytics publication. Pair
-discovery, sector breadth, candidate scoring, snapshot publication, guest
-access, bundle creation, and deployment remain deferred.
+Phase 5A is implemented as an isolated pure-domain slice. It adds strict
+candidate fact/component/confidence/batch and risk-assessment contracts, a
+checked-in seven-component and three-risk-mode parameter set, deterministic
+Decimal Type-7 winsor boundaries and average-tie percentiles, a 26-session
+active-Universe scorer, anomaly quarantine, missing-component reweighting, and
+concentration-aware ranking. Focused fixtures prove score/contribution
+reconciliation, unchanged facts across risk modes, ADRC exclusion in
+Conservative mode, proxy-component absence/cap behavior, more-than-20-point
+missingness failure, anomaly quarantine, stable ordering, and Decimal-context
+invariance.
+
+The next minimum slice is the chronological Watch/Prepare/Enter/invalidated
+state ledger, followed by an independent raw-panel oracle and canonical `/tmp`
+audit/re-read boundary. Sector breadth, candidate publication, Snapshot/API/
+frontend integration, bundle creation, and deployment remain deferred. Guest
+Session entry already exists and does not create a candidate-data variant.

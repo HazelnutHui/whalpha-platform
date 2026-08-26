@@ -64,6 +64,18 @@ from .review_deployment import (
     ReviewDeploymentAuthorizationV1,
     approved_review_authorization,
 )
+from .opportunity_candidate import (
+    CandidateComponentV1,
+    CandidateConfidenceV1,
+    CandidateDataQualityStatus,
+    CandidateMetricAvailability,
+    CandidateMetricV1,
+    CandidateRiskAssessmentV1,
+    CandidateRiskMode,
+    CandidateRiskModeResultV1,
+    OpportunityCandidateBatchV1,
+    OpportunityCandidateScoreV1,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -118,4 +130,14 @@ __all__ = [
     "REVIEW_EXPECTED_LATEST_SESSION",
     "ReviewDeploymentAuthorizationV1",
     "approved_review_authorization",
+    "CandidateComponentV1",
+    "CandidateConfidenceV1",
+    "CandidateDataQualityStatus",
+    "CandidateMetricAvailability",
+    "CandidateMetricV1",
+    "CandidateRiskAssessmentV1",
+    "CandidateRiskMode",
+    "CandidateRiskModeResultV1",
+    "OpportunityCandidateBatchV1",
+    "OpportunityCandidateScoreV1",
 ]

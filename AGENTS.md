@@ -113,6 +113,6 @@ Common Shares as Primary and 1,831 Common Shares plus ADRs as Secondary. The
 The authoritative cross-task handoff is
 [docs/project/current-context.md](docs/project/current-context.md). Read it
 before relying on historical status, roadmap, audit, or deployment entries.
-SEC B2 remains paused. Automated daily ingestion, a point-in-time sector
-taxonomy, fundamentals, valuation, options data, and guest access are not
-implemented.
+SEC B2 remains paused. Equal-capability guest Session entry is implemented.
+Automated daily ingestion, a point-in-time sector taxonomy, fundamentals,
+valuation, and options data are not implemented.

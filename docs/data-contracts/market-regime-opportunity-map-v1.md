@@ -52,6 +52,18 @@ Its exact non-manifest artifact set is `pair-registry.json`,
 written last. Physical generated time, timings, and peak memory do not enter
 the aggregate logical fingerprint.
 
+The implemented Phase 5A pure-domain profile uses contract
+`opportunity-candidate/1.0`, calculation
+`market-regime-opportunity-candidate-v1.0.0`, parameter set
+`mrom-candidate-v1-fixed-baseline-1`, and fingerprint
+`2256e94a45d979bf818cdc048939c4650c10f9312099f83756e321ceee910b6f`.
+It emits a source-bound fact batch for every as-of bar-covered active-Universe
+member plus separate risk-mode assessments. Risk mode never changes candidate
+facts or the base score. Phase 5A currently has no canonical audit writer,
+state-transition ledger, independent raw-panel oracle, API, frontend,
+Production publication, or `/data` writer; those remain required before Phase
+5 can be called complete.
+
 This contract freezes the machine-readable calculation boundary for the
 product described in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).
@@ -358,6 +370,12 @@ Candidate confidence uses the fixed four-term formula in the product
 specification. It publishes source-completeness, history-completeness,
 relationship-support, and state-confirmation terms separately. It is a measure
 of evidence availability and stability, not a predicted success probability.
+
+Cross-sectional 5th/95th percentile winsorization uses inclusive linear
+interpolation with `h=(n-1)p` in the isolated Decimal context. Zero-MAD fallback
+and the 20-session return percentile use inclusive 0–100 average ranks, with
+stable-ID ordering before tie grouping. These algorithms are part of the Phase
+5A parameter fingerprint and cannot be changed at runtime.
 
 ## State transition record
 
