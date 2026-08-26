@@ -2,7 +2,8 @@
 
 The React application has two first-level workspaces: Market Dashboard and
 Market Regime & Opportunities (`市场风向与机会`). Desktop navigation uses a
-persistent left rail; Universe, language, and private Session controls share an
+persistent left rail, with Market Regime & Opportunities first and selected by
+default; Universe, language, and private Session controls share an
 opaque sticky utility header. The Universe selector exposes only `Common
 Shares` and `Common Shares + ADRs`, with CS-only as default. A validated stable
 ID is persisted in the URL; Legacy remains an internal rollback boundary.

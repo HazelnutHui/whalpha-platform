@@ -14,7 +14,7 @@ const UNIVERSES = [PRIMARY_UNIVERSE, SECONDARY_UNIVERSE] as const;
 type UniverseId = (typeof UNIVERSES)[number];
 
 function requestedWorkspace(): Workspace {
-  return new URLSearchParams(window.location.search).get('view') === 'regime' ? 'regime' : 'market';
+  return new URLSearchParams(window.location.search).get('view') === 'market' ? 'market' : 'regime';
 }
 
 function isUniverse(value: string | null): value is UniverseId {
@@ -61,7 +61,7 @@ export default function App(): JSX.Element {
   }, []);
 
   const navigate = (next: Workspace) => {
-    writeQuery({ view: next === 'regime' ? 'regime' : null });
+    writeQuery({ view: next });
     setWorkspace(next);
   };
   const selectUniverse = (next: string) => {
@@ -79,15 +79,15 @@ export default function App(): JSX.Element {
           <span>{t('app.productLabel')}</span>
         </div>
         <nav className="workspace-navigation" aria-label={t('app.navAria')}>
-          <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onClick={() => navigate('market')}>
-            <span className="workspace-index">01</span>
-            <strong>{t('app.marketDashboard')}</strong>
-            <small>{t('app.marketDashboardDescription')}</small>
-          </button>
           <button type="button" className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onClick={() => navigate('regime')}>
-            <span className="workspace-index">02</span>
+            <span className="workspace-index">01</span>
             <strong>{t('app.regimeMap')}</strong>
             <small>{t('app.regimeMapDescription')}</small>
+          </button>
+          <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onClick={() => navigate('market')}>
+            <span className="workspace-index">02</span>
+            <strong>{t('app.marketDashboard')}</strong>
+            <small>{t('app.marketDashboardDescription')}</small>
           </button>
         </nav>
         <p className="workspace-boundary">{t('app.researchBoundary')}</p>

@@ -70,6 +70,8 @@ Tailscale listeners were present.
   or Snapshot failure.
 - Repository `main` contains the tested, not-yet-deployed first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
+  Market Regime & Opportunities is the first navigation item and default
+  workspace; Market Dashboard is second.
   It centralizes Universe/language/Session controls, adds a factual first-screen
   Market Dashboard summary, and shows six relationship highlights before the
   complete 16-pair table. The deployed bundle remains the immutable source

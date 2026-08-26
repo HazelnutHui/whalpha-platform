@@ -2,6 +2,8 @@
 
 ## 2026-08-26 — First-level workspace and current-market hierarchy
 
+- Promoted Market Regime & Opportunities to the first navigation item and
+  default workspace; Market Dashboard is the second explicit route.
 - Replaced the small sticky view tabs with a persistent desktop left rail that
   treats Market Dashboard and Market Regime & Opportunities as first-level
   workspaces. Universe, language, and private Session controls now share one

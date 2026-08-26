@@ -3,7 +3,8 @@
 The authenticated Dashboard has a persistent first-level workspace shell for
 Market Dashboard and Market Regime & Opportunities (`市场风向与机会`). Universe,
 language, and private Session controls share the top utility header. The two
-activated Universe views use stable URL selection; invalid values normalize to
+activated Universe views use stable URL selection. Market Regime & Opportunities
+is the first item and default workspace; invalid Universe values normalize to
 `Common Shares`, and API/Snapshot failures do not fall back to demo or Legacy.
 
 This directory records frontend runtime boundaries and implemented local dashboard behavior.

@@ -26,8 +26,9 @@ language-neutral analytics.
 Repository `main` now presents Market Dashboard and Market Regime &
 Opportunities (`市场风向与机会`) as first-level workspaces with persistent desktop
 left navigation and one shared Universe/language/Session utility header. Market
-Dashboard begins with a factual “what is happening now” summary and explains
-Universe membership versus same-session comparable coverage. Six fixed-priority
+Regime & Opportunities is the first item and default workspace; Market
+Dashboard is second and begins with a factual “what is happening now” summary.
+It explains Universe membership versus same-session comparable coverage. Six fixed-priority
 relationship highlights precede the complete 16-pair table. These source
 changes are tested but are not yet deployed to OCI.
 

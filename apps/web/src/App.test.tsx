@@ -25,8 +25,10 @@ describe('primary workspace shell', () => {
   it('presents persistent first-level workspaces and shared utility controls', () => {
     render(<I18nProvider><App /></I18nProvider>);
     expect(screen.getByRole('navigation', { name: 'Primary workspaces' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Market Dashboard/ })).toHaveAttribute('aria-current', 'page');
-    expect(screen.getByTestId('market-workspace')).toHaveTextContent('market:true');
+    const workspaceButtons = screen.getByRole('navigation', { name: 'Primary workspaces' }).querySelectorAll('button');
+    expect(workspaceButtons[0]).toHaveTextContent('Regime & Opportunities');
+    expect(screen.getByRole('button', { name: /Regime & Opportunities/ })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
     expect(screen.getByText('Private Session')).toBeInTheDocument();
   });
@@ -35,16 +37,16 @@ describe('primary workspace shell', () => {
     render(<I18nProvider><App /></I18nProvider>);
     fireEvent.change(screen.getByLabelText('Active Universe'), { target: { value: 'provider_classified_common_shares_plus_adrs_v1' } });
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_plus_adrs_v1');
-    fireEvent.click(screen.getByRole('button', { name: /Regime & Opportunities/ }));
-    expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
-    expect(new URLSearchParams(window.location.search).get('view')).toBe('regime');
+    fireEvent.click(screen.getByRole('button', { name: /Market Dashboard/ }));
+    expect(screen.getByTestId('market-workspace')).toHaveTextContent('market:true');
+    expect(new URLSearchParams(window.location.search).get('view')).toBe('market');
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_plus_adrs_v1');
 
     act(() => {
-      window.history.pushState({}, '', '/dashboard/?lang=en&universe=provider_classified_common_shares_v1');
+      window.history.pushState({}, '', '/dashboard/?view=regime&lang=en&universe=provider_classified_common_shares_v1');
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
-    expect(screen.getByTestId('market-workspace')).toBeInTheDocument();
+    expect(screen.getByTestId('regime-workspace')).toBeInTheDocument();
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
   });
 
