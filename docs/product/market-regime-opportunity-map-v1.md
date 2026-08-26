@@ -2,8 +2,9 @@
 
 ## Status and decision boundary
 
-Status: **Accepted design; Phase 1a, Phase 1b, Phase 2, and the read-only local
-API/desktop preview are implemented; not production-active**.
+Status: **Implemented and production-published through the separate immutable
+Market Intelligence boundary; the active 2026-08-24 publication is an exact
+`stale_review`, not fresh data**.
 
 Phase 1a now implements the fixed five-dimension raw-metric, normalization,
 Composite, missingness, contribution, and explanation ledger for explicit
@@ -13,21 +14,24 @@ The Phase 1a profile deliberately keeps its original `regime_state=null` and
 `state_classification_status=deferred_phase_1a` semantics. Phase 1b consumes
 version-compatible Phase 1a Composites without changing their formulas or
 fingerprints, and emits a separate candidate/confirmed state history under
-`/tmp`. A later local-preview integration reads these immutable audits through
-an explicit, validated `/tmp` bundle; it does not add a Production snapshot,
-pointer, or publication boundary.
+`/tmp`. The immutable Market Intelligence publisher now validates these audit
+sources, promotes a language-neutral payload to `/data`, and exposes it through
+Snapshot 1.5 / Dashboard 2.2. The audit artifacts remain immutable sources;
+they are not themselves Production pointers.
 
 Phase 2 consumes the same once-loaded 26-session panel and the completed Phase
 1 audit ledgers. It computes all 16 pre-registered pairs for 5, 10, and 20
 XNYS-session windows, writes a separate canonical `/tmp` audit, and does not
 change either regime result. It does not scan or rank unregistered pairs.
 
+The initial design baseline remains `as_of_session=2026-08-21`; the active
+publication rolls the same versioned formulas and registered relationships to
+2026-08-24 with its matching same-day Identity and EOD source. Baselines and
+active publications must never mix Identity dates.
+
 This specification defines a transparent decision-support page for short-horizon
 equity research. It does not issue trading instructions, estimate certain
-outcomes, or model option returns. The frozen design baseline is
-`as_of_session=2026-08-21`; the matching same-day Identity and EOD datasets must
-be used together. The completed 2026-08-24 Identity must not be mixed with the
-2026-08-21 EOD baseline.
+outcomes, or model option returns.
 
 The page is intended to help answer, in order:
 

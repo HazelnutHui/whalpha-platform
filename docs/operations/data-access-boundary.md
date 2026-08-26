@@ -2,7 +2,8 @@
 
 ## Purpose
 
-This document records the operational access boundary for public placeholder content, public data-free demos, and private provider-backed dashboards.
+This document records the operational access boundary for the public data-free
+login surface, possible data-free demos, and private provider-backed dashboards.
 
 ## Status
 
@@ -10,9 +11,9 @@ Accepted Operational Boundary — Personal Prototype Access Control Implemented 
 
 This is an engineering boundary, not legal advice. Provider terms and permissions must be rechecked before public release or commercial use.
 
-## Public Placeholder
+## Public data-free surface
 
-The public development placeholder may include:
+The public branded login may include:
 
 - WH Alpha branding
 - project description
@@ -34,7 +35,9 @@ The demo must not imply live or real market state, must not expose credentials, 
 ## Private Provider-Backed Dashboard
 
 Market Dashboard V1 is implemented locally and as a private static OCI release. API mode displays provider-backed derived analytics from private routes and must not be exposed publicly. Snapshot mode reads private derived JSON snapshots under `/private-data/` and is protected by the same server-side session boundary as `/dashboard/` on OCI. Demo mode uses synthetic fixtures and is suitable for future data-free public demonstration only if it remains clearly labeled.
-Snapshot mode packages provider-backed derived analytics as static JSON. `/dashboard/` and `/private-data/` must be protected together; public `/` remains data-free.
+Snapshot mode packages provider-backed derived analytics as static JSON.
+`/dashboard/` and `/private-data/` must be protected together; public `/`
+remains a data-free login surface.
 
 
 
@@ -50,7 +53,10 @@ Required properties:
 
 ## Protected API Responses
 
-Any API response containing restricted provider data or derived works must require effective private access control before deployment. API routes that expose provider-backed market state cannot be treated as public placeholder endpoints.
+Any API response containing restricted provider data or derived works must
+require effective private access control before deployment. API routes that
+expose provider-backed market state cannot be treated as public data-free
+endpoints.
 
 The first private EOD read routes are implemented for local/private development and are default-disabled by `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=false`. Setting this flag to true registers the routes for local verification only. It is not authentication, authorization, or deployment approval.
 
@@ -92,12 +98,11 @@ If real provider-backed content is accidentally made public:
 
 No incident automation is implemented by this document.
 
-## Non-Goals
+## Non-goals
 
 - implementing Cloudflare Access
-- configuring Nginx Basic Auth
-- creating users or credentials
-- creating a login page
-- modifying whalpha.com
-- deploying provider-backed data
+- changing or bypassing the current Session boundary
+- creating users or handling credentials through Codex
+- implementing guest access
+- making provider-backed data public
 - making legal determinations

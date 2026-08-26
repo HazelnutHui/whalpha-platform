@@ -2,8 +2,8 @@
 
 ## Status and scope
 
-The local React Dashboard and the static session login surface support the
-same two interface locales:
+The React Dashboard and the static session login surface support the same two
+interface locales in local and production bundles:
 
 - `en` renders HTML language `en` and is the authoritative default;
 - `zh` renders HTML language `zh-CN` and provides professional Simplified
@@ -112,6 +112,7 @@ precision, timeliness, functionality, or language availability.
 
 ## Publication boundary
 
-The bilingual implementation is validated only through the explicitly
-configured local preview. It does not create a Production analytics
-publication, Dashboard snapshot, OCI bundle, deployment, or guest route.
+The bilingual implementation is active in the bound Snapshot 1.5 / Dashboard
+2.2 bundle. One language-neutral Market Intelligence payload supplies both
+locales, and locale remains excluded from analytics identity. This does not
+create guest access or authorize different content by role.

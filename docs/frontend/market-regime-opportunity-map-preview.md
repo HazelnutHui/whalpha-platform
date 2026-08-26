@@ -1,10 +1,11 @@
-# Market Regime & Opportunity Map Local Preview
+# Market Regime & Opportunity Map Frontend
 
 ## Implemented desktop surface
 
-The local Dashboard now has a `Regime & Opportunity Map` view selected by
-`view=regime`. It renders only the configured preview API payload and performs
-no financial calculation in React.
+The Dashboard has a `Regime & Opportunity Map` view selected by `view=regime`.
+It renders either the configured local preview API payload or the formally
+embedded Snapshot 1.5 Market Intelligence payload and performs no financial
+calculation in React.
 
 The refined page contains:
 
@@ -62,10 +63,12 @@ information, so 1366×768 exposes useful Relationship Highlight content in the
 first view. At narrower widths cards reduce columns and relationship rows
 reflow without whole-page horizontal overflow.
 
-## Non-production status
+## Publication status
 
-This page is available only in a local application started with an explicit
-`/tmp` preview bundle. It is absent from the current Production Dashboard,
-static snapshot, OCI bundle, and `whalpha.com`. Existing session protection is
-unchanged. Future guest and authenticated users must consume the identical
-analytics payload with the same fields, precision, and as-of session.
+The local `/tmp` preview remains available for explicit development review.
+The same versioned frontend is also present in the active Snapshot 1.5 /
+Dashboard 2.2 production bundle and reads immutable Market Intelligence rather
+than `/tmp`. The active 2026-08-24 payload is visibly `stale_review`; existing
+Session protection is unchanged. Future guest and authenticated users must
+consume the identical analytics payload with the same fields, precision,
+freshness, and as-of session.

@@ -1,5 +1,9 @@
 # Documentation Index
 
+- [Authoritative current context](project/current-context.md): compact,
+  evidence-scoped handoff for new tasks and devices.
+- [Current status](project/current-status.md): current product and operational
+  summary; historical execution detail belongs in changelog and audits.
 - [Market Regime & Opportunity Map V1 product specification](product/market-regime-opportunity-map-v1.md)
 - [Market Regime & Opportunity Map V1 data contract](data-contracts/market-regime-opportunity-map-v1.md)
 - [Market Regime & Opportunity Map V1 architecture and implementation plan](architecture/market-regime-opportunity-map-v1.md)
@@ -87,14 +91,15 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Frontend Index](frontend/README.md)
 - [Market Dashboard V1](frontend/market-dashboard-v1.md): Local React dashboard for private Market Summary, Movers, Liquidity Map, and data-quality views.
 - [Frontend interface internationalization](frontend/interface-internationalization.md): Typed English/Simplified Chinese catalog, URL and localStorage precedence, terminology, and guest-reuse boundary.
-- [Market Regime & Opportunity Map local preview](frontend/market-regime-opportunity-map-preview.md): Read-only desktop presentation, audit details, and non-production boundary.
+- [Market Regime & Opportunity Map frontend](frontend/market-regime-opportunity-map-preview.md): Shared local/production presentation, audit details, and immutable payload boundary.
 
 ## Operations
 
+- [Local build artifact retention](operations/local-build-artifact-retention.md): retained rollback/current bundles and safe ignored-output cleanup boundary.
 - [Infrastructure](operations/infrastructure.md): Non-sensitive infrastructure facts.
 - [Deployment Boundary](operations/deployment-boundary.md): Source-of-truth and deployment constraints.
 - [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md): Private static Dashboard deployment status and operations boundary.
-- [Private Dashboard Access](operations/private-dashboard-access.md): Basic Auth credential boundary and manual verification runbook.
+- [Private Dashboard Access](operations/private-dashboard-access.md): Session credential boundary, rotation, and manual verification runbook.
 - [Dashboard Universe Activation](operations/dashboard-universe-activation.md): Dry-run, one-apply, verification, and rollback boundary.
 - [Market Intelligence Publication V1](data-contracts/market-intelligence-publication-v1.md): Immutable language-neutral analytics and reader contract.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.

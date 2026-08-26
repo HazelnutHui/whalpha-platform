@@ -32,9 +32,13 @@ Confirmed:
 
 ## OCI
 
-The following is the last known state recorded by Git history and deployment documentation, not a current live-health assertion. The most recent recorded deployment is private Dashboard disclosure release `2026-08-14T020535Z-ebb16015b7da`, built from commit `ebb16015b7da259e68033ca442544def5a300d63`. It uses `/` as the branded session-login entry, `/login/` as a compatibility redirect, and a shared server-side session boundary for `/dashboard/` and `/private-data/`. OCI was not accessed during the 2026-08-16 documentation reconciliation, so current services, checksums, listeners, TLS, and routes were not re-verified. Do not record literal public IP addresses, SSH key material, password hashes, or credential contents here.
+Live-verified through the `whalpha-oci` SSH alias on 2026-08-26 without reading
+credentials or contacting a public endpoint. The active private Dashboard
+release is `2026-08-26T062038Z-895a073769ad`; `/` is the data-free branded
+Session-login entry, and `/dashboard/` and `/private-data/` share the server-side
+Session boundary.
 
-Last recorded infrastructure facts:
+Confirmed infrastructure facts:
 
 - SSH alias: `whalpha-oci`
 - instance name: HUI
@@ -46,8 +50,13 @@ Last recorded infrastructure facts:
 - approximately 45G root disk
 - no swap
 - Nginx and Certbot were retained
-- HTTPS and the public/private route boundary passed the recorded deployment checks
-- a localhost-only session Auth Service, Nginx `auth_request`, and versioned static releases were deployed and verified at the recorded time
+- Nginx and the Session Auth Service are active and enabled
+- the Auth Service listens only on `127.0.0.1:8010`
+- loopback HTTPS checks passed the unauthenticated public/private route boundary
+- only the current release and one reviewed rollback release remain
+- no release staging/partial residue exists
 - no production FastAPI market-data service was deployed to OCI
 
-Before relying on any current OCI claim, perform a separately authorized read-only operational verification. Historical preflight statements describing `/srv/whalpha` as absent or `/` as a static placeholder were superseded by the recorded private Dashboard deployments.
+Do not record literal public IP addresses, SSH key material, password hashes, or
+credential contents here. Authenticated browser behavior remains a manual user
+check.

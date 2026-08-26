@@ -1,12 +1,13 @@
 # Roadmap
 
-- Next proposed product step: human-review both English and Simplified Chinese
-  local Market Regime and Dashboard views, then design the historical-change
-  layer and lightweight visualizations as a separate implementation. Only
-  after explicit acceptance should immutable Production analytics publication
-  be designed as a separate authorization.
-  EOD catch-up, sector taxonomy, candidates, Production snapshot, guest access,
-  bundle, and OCI remain separate authorizations.
+- Next operational step: restore ordinary lag-zero freshness through the
+  approval-bound Identity/EOD workflow, then prepare a fresh Market
+  Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
+  authorizations.
+- Next product-design step: human-review the bilingual information hierarchy,
+  top-level workspace navigation, first-screen conclusion, and historical-
+  change layer before implementation. Sector taxonomy, stock candidates,
+  guest access, and new analytics remain separate decisions.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -53,7 +54,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Private static dashboard snapshot exporter and OCI bundle package
 
 - [ ] Rotation
-- [ ] Relationship monitor
+- [x] Fixed registered ETF relationship monitor
 - [ ] Lightweight developments
 - [x] First usable private static deployment
 - [x] Dashboard V1.1 professional universe and market overview cleanup
@@ -83,19 +84,23 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Market Regime Phase 1a offline raw-metric and five-dimension ledger
 - [x] Market Regime Phase 1b offline state/hysteresis ledger
 - [x] Market Regime Phase 2 offline fixed-basket ETF Relationship Map
-- [x] Market Regime read-only local API, preview bundle, and desktop page
+- [x] Market Regime read-only local API, preview bundle, and first React page
 - [x] Typed English/Simplified Chinese interface for login, Dashboard, and
-  Market Regime local preview
+  Market Regime in local and private static production modes
 - [x] Market Intelligence immutable contract, reader, publisher, Snapshot 1.5,
   and explicit OCI integration path
 - [x] Exact, one-release stale review authorization contract and bilingual
   `stale_review` presentation without weakening normal freshness
+- [x] Immutable 2026-08-24 Market Intelligence production publication
+- [x] Snapshot 1.5 / Dashboard 2.2 stale-review publication and bound OCI bundle
+- [x] Production bundle isolation from synthetic Dashboard fixtures
 
 ## Next Small Target
 
-Catch EOD up through the formally expected XNYS session, regenerate/review one
-fresh Market Intelligence plan, then separately authorize its single apply.
-Snapshot and OCI remain later, separate approvals. Keep SEC B2 paused.
+Catch EOD up through the formally expected XNYS session, regenerate and review
+one fresh Market Intelligence plan, then decide separately whether to publish.
+Snapshot, bundle, and OCI remain later independent approvals. Keep SEC B2
+paused.
 
 ## Phase 2 — Intraday and Options
 

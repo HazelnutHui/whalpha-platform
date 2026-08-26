@@ -2,9 +2,9 @@
 
 ## Status
 
-Status: **Proposed V1 contract; Phase 1a, Phase 1b, Phase 2, and a separately
-versioned read-only local preview bundle/API are implemented; no Production
-analytics dataset or API is active**.
+Status: **Implemented V1 calculation contract. A separately versioned immutable
+Market Intelligence publication and Snapshot 1.5 / Dashboard 2.2 consumer are
+active for the exact 2026-08-24 `stale_review` release**.
 
 The implemented Phase 1a profile is a reversible `/tmp` audit boundary. It
 emits both public Universes in catalog order, five dimension ledgers, 18 metric
@@ -52,10 +52,13 @@ Its exact non-manifest artifact set is `pair-registry.json`,
 written last. Physical generated time, timings, and peak memory do not enter
 the aggregate logical fingerprint.
 
-This contract freezes the machine-readable boundary for the product described
-in [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).
-It does not amend any existing Production market-data, Identity, Activation, or
-Dashboard contract.
+This contract freezes the machine-readable calculation boundary for the
+product described in
+[Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).
+Production custody is defined separately by
+[Market Intelligence Publication V1](market-intelligence-publication-v1.md),
+which binds these analytics to formal market-data, Identity, Activation, and
+Dashboard sources without changing the formulas in this contract.
 
 Initial identifiers:
 
@@ -87,7 +90,9 @@ parameter set. It comprises:
 
 The implementation may persist these as several Parquet artifacts or a
 canonical JSON snapshot, but the logical grains and fingerprints are the same.
-No active pointer or Production path is authorized by this design.
+An active Production path requires the separate Market Intelligence
+publication, approval, pointer, and rollback contracts; this calculation
+contract alone never authorizes publication.
 
 ## Source binding
 
@@ -506,24 +511,27 @@ from a presentation label.
 
 ## Snapshot, API, and frontend boundary
 
-The implemented local-preview profile is defined separately in
+The implemented local-preview profile remains defined separately in
 [Market Regime Local Preview Bundle V1](market-regime-preview-bundle-v1.md).
 It validates explicit `/tmp` audits and serves an immutable startup cache only
-when explicitly configured. It is not the future persisted Production dataset
-described below.
+when explicitly configured.
 
-- The analytics builder reads formal immutable sources and emits a candidate
-  only after all quality gates pass.
-- A future snapshot publisher must write immutable artifacts, formally reread
-  them, and only then use a separately authorized pointer boundary. This design
-  does not activate or alter the existing Dashboard Snapshot contract.
-- The API returns the persisted calculation and may filter/page candidates; it
-  must not recompute scores, infer sectors, or select latest sources.
-- The frontend selects a public Universe and risk mode, renders the supplied
-  facts and ranks, and never hides methodology or data-quality fields.
-- Guest and authenticated sessions receive the same snapshot, precision,
-  freshness, and functionality. Authentication may differ only at the session
-  boundary.
+Production custody is now implemented by Market Intelligence Publication V1
+and Snapshot 1.5 / Dashboard 2.2:
+
+- the analytics builder reads formal immutable sources and emits a candidate
+  only after all quality gates pass;
+- the publisher formally rereads the candidate, uses an approval-bound
+  immutable target and active pointer, and retains a separate rollback domain;
+- Snapshot publication binds an explicit active Market Intelligence ID and
+  never discovers a latest directory or recomputes scores;
+- the API returns the persisted calculation and may filter records, but must
+  not recompute scores, infer sectors, or select latest sources;
+- the frontend selects a public Universe, renders supplied facts, and never
+  hides methodology or data-quality fields;
+- future guest and authenticated sessions must receive the same snapshot,
+  precision, freshness, and functionality. Authentication may differ only at
+  the Session boundary.
 
 ## Schema evolution
 

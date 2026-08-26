@@ -1,18 +1,26 @@
 # Trading Intelligence Platform
 
-## Security Type Governance Phase A
+## Security Type Governance
 
-The repository includes a provider-neutral, effective-dated Security Classification V1 boundary. Classification fact, evidence quality, and candidate-universe eligibility are separate. Unknown, ambiguous, malformed, heuristic-only, and insufficient-evidence records are quarantined. The [2026-08-14 read-only audit](docs/audits/security-type-classification-2026-08-14.md) found that the binary Instrument Master cannot reliably resolve most non-ETF records, so production Dashboard membership remains unchanged pending a Core-versus-Broad policy decision and stronger evidence.
+The repository implements a provider-neutral, effective-dated Security
+Classification boundary keyed by stable `instrument_id`. Security form, issuer
+structure, listing scope, evidence quality, and Universe disposition remain
+separate. Unknown, ambiguous, malformed, heuristic-only, and insufficient-
+evidence records are quarantined.
 
-Phase B1 accepts Core as the future default and Broad as the future secondary view. The corrected bounded run published the official 25-code provider catalog, 13,110 normalized observations, 9,939 canonical evidence records, and a verified logical completion marker. Provider type improves security-form evidence but does not establish issuer structure or domicile, so production membership remains unchanged and provisional. See the [evidence audit](docs/audits/security-type-provider-evidence-2026-08-14.md).
+The active provisional Dashboard Universe uses the reviewed Activation V2
+publication: 1,718 provider-classified Common Shares as Primary and those same
+1,718 plus 113 ADRCs as Secondary. This is not evidence that every member is a
+U.S.-domestic operating company. Core remains the future default policy and
+Broad the future secondary policy only after authoritative issuer-structure
+and domicile evidence satisfies the documented gates.
 
-The offline [Provider-Classified Common Shares V1](docs/product/provider-classified-common-shares-v1.md) audit now separates a 1,751-member CS-only shadow from a 1,864-member CS+ADRC comparison. These are provider-form classifications with a provisional one-session liquidity gate—not U.S.-domestic operating-company universes—and neither is production-active.
-
-The [EOD historical-window boundary](docs/architecture/eod-historical-window.md) plans the 20 XNYS sessions before an analysis date and validates bounded canonical partitions. For 2026-08-19, the 07-22 through 08-18 window is `ready`; the versioned [Trailing Liquidity V1 shadow publication](docs/audits/trailing-liquidity-shadow-publication-2026-08-19.md) persists auditable metric facts and separate A/B decisions. It does not change the production Universe or Dashboard.
-
-The completed [Universe pre-activation review](docs/audits/universe-pre-activation-review-2026-08-19.md) adds an effective-dated reviewed-override boundary and formally compares Legacy with trailing-qualified A/B stable-ID sets. Dashboard Universe Activation V1 now makes Provider-Classified Common Shares (Provisional) the default and exposes an ADR-inclusive optional view. Legacy remains available only for compatibility and rollback.
-
-Phase B2A added the offline SEC issuer-structure boundary. Phase B2B added the bounded streaming transport, source-cache safety checks, normalized observation persistence, canonical evidence persistence, and logical completion contract. Five separately authorized bounded runs each stopped at Series/Class landing discovery and published no completed SEC cache or evidence snapshot. The fifth run verified the exact 2024 legacy exception and candidate-derived counts, then failed closed on a newly observed 2023 underscore-style basename after three requests and zero retries. Offline remediation now accepts only that exact 2023 public path for parsed file year 2023; a four-candidate official-shape fixture deterministically selects the 2026 release and leaves 2025, 2024, and 2023 eligible but unselected. No new live run occurred, and no rule is inferred for 2022 or earlier. See [SEC Issuer-Structure Evidence](docs/architecture/sec-issuer-structure-evidence.md) and the [B2B run audit](docs/audits/sec-issuer-structure-evidence-2026-08-14.md).
+Phase B1 provider evidence is completed. SEC Phase B2 transport and fail-closed
+publication boundaries are implemented, but no completed SEC evidence
+publication exists and B2 is paused. See the [classification audit](docs/audits/security-type-classification-2026-08-14.md),
+[provider-evidence audit](docs/audits/security-type-provider-evidence-2026-08-14.md),
+[Universe activation architecture](docs/architecture/dashboard-universe-activation.md),
+and [SEC evidence architecture](docs/architecture/sec-issuer-structure-evidence.md).
 
 Trading Intelligence Platform is a personal single-user prototype for U.S. equity market intelligence. It is designed to help the user understand market structure, sector and theme rotation, stock strength, breadth, options structure, relationship shifts, and significant market developments quickly enough to support discretionary research and trading decisions.
 
@@ -27,7 +35,22 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage foundation, application stack, canonical EOD contracts, point-in-time identity, bounded real-data ingestion, private analytics, Dashboard, and authenticated static publication boundaries are implemented. Completed canonical EOD sessions now cover every XNYS session from 2026-07-17 through 2026-08-19; latest canonical freshness was lag zero at publication preflight. The 2026-08-14 identity snapshot remains accepted with its documented provenance exception. The last deployment recorded in Git used the 2026-08-14 Dashboard snapshot; current OCI runtime health requires a separate authorized check. No public real-data authorization, database, automated daily ingestion, production Trailing Liquidity Universe activation, or general production API deployment has been created.
+Documentation, infrastructure, storage, the application stack, canonical
+EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
+Dashboard Snapshot 1.5 / Dashboard 2.2, bilingual presentation, and
+authenticated static publication are implemented. Canonical sessions cover
+every XNYS session from 2026-07-17 through 2026-08-24. The active Dashboard is
+an explicitly authorized review of 2026-08-24 data, expected 2026-08-25 and
+lagging one session; it must be presented as `stale_review`, never fresh.
+
+Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
+Common Shares plus 113 ADRCs. Provider security form remains provisional and
+does not establish issuer structure or domicile. There is no automated daily
+ingestion, database/catalog service, general production API, guest access,
+point-in-time sector taxonomy, fundamentals, valuation, or options dataset.
+See the [authoritative current context](docs/project/current-context.md) for
+the exact active publications, fingerprints, verification boundary, and next
+authorized work.
 
 ## Application Entry Points
 
@@ -46,9 +69,9 @@ Documentation, infrastructure, storage foundation, application stack, canonical 
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
 - First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential/HTTPS transport, bounded All Tickers identity ingestion, Grouped Daily publication, and provider security evidence workflows are verified.
-- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-19.
+- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-24.
 - Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
-- Initial market summary analytics: the latest completed pair, 2026-08-13 and 2026-08-14, supports close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
+- Market summary analytics use the latest two formally completed sessions and support close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.
 - Initial local dashboard: React Market Dashboard V1 renders Market Pulse, breadth, up/down volume, liquidity-screened movers, a Trading Activity Map, market/sector benchmarks, and categorized data details from default-disabled private APIs.
 - Private static deployment: the workstation exports private Dashboard JSON snapshots and versioned `/dashboard/` React bundles. Git records authenticated OCI deployments with `/` as the branded session-login entry; live OCI state is not implied without a current check.
@@ -100,6 +123,7 @@ This project is a personal single-user prototype. It may be reachable over the p
 - [Agent instructions](AGENTS.md)
 - [Documentation index](docs/README.md)
 - [Current status](docs/project/current-status.md)
+- [Authoritative current context](docs/project/current-context.md)
 - [Dashboard V1](docs/product/dashboard-v1.md)
 - [Application architecture](docs/architecture/application-architecture.md)
 - [Initial EOD Universe](docs/product/initial-eod-universe.md)

@@ -13,9 +13,10 @@ independent approval and rollback domains.
 
 ## Status
 
-Status: **Accepted implementation plan; Phase 1a, Phase 1b, Phase 2, and a
-read-only local API/desktop preview are implemented; no Production publication
-exists**.
+Status: **Implemented through Phase 2, read-only API/local preview, immutable
+Market Intelligence publication, Snapshot 1.5 / Dashboard 2.2, and the
+live-verified explicitly bound OCI release. The active 2026-08-24 payload is
+`stale_review`**.
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)

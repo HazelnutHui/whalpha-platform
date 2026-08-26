@@ -19,7 +19,11 @@ Phase A does not change the Dashboard. A future Phase B must make Market Pulse, 
 
 The V1.3 response labels unchanged legacy calculations as provisional and carries `universe_definition_id`, `universe_version`, `governance_status`, `classification_as_of_date`, and `evidence_coverage_status`. The UI displays an amber `Provisional classification` state and a material evidence warning. Published provider security-form evidence does not connect Core/Broad candidates to metrics or remove the issuer-structure limitation.
 
-Release `2026-08-14T020535Z-ebb16015b7da` deploys this disclosure with the prior 1,864-member summary, movers, and Trading Activity Map payloads unchanged. Authenticated visual confirmation remains a user-run check because automated deployment does not use the user's password.
+The active release `2026-08-26T062038Z-895a073769ad` deploys the activated
+Primary/Secondary Universes, Market Intelligence, bilingual interface, and the
+exact 2026-08-24 `stale_review` Snapshot. Authenticated visual confirmation
+remains a user-run check because automated verification does not use the
+user's password.
 
 ## Purpose
 
@@ -29,7 +33,9 @@ It helps answer whether the completed EOD session was broadly up or down, whethe
 
 ## Status
 
-Implemented for private static production and local development. The deployed snapshot uses the completed 2026-08-14 current session and 2026-08-13 previous session.
+Implemented for private static production and local development. The deployed
+Snapshot uses the completed 2026-08-24 current session and 2026-08-21 previous
+session, with expected session 2026-08-25 and explicit lag one.
 
 The static OCI release is deployed behind a branded login page and server-side sessions for the personal prototype. This is not public real-data authorization, and root login, session login, Dashboard data loading, Logout, and password rotation have been manually verified by the user. Passwords, hashes, and browser credential details are not recorded.
 
@@ -39,9 +45,12 @@ The static OCI release is deployed behind a branded login page and server-side s
 The frontend supports three explicit modes:
 
 - `VITE_MARKET_DATA_MODE=api`: default; calls relative private API routes through the Vite proxy.
-- `VITE_MARKET_DATA_MODE=demo`: uses clearly synthetic `TEST*` fixtures and displays a persistent `DEMO DATA` badge.
+- `VITE_MARKET_DATA_MODE=demo`: development-only, lazily loads clearly
+  synthetic `TEST*` fixtures, and displays a persistent `DEMO DATA` badge.
 
-API mode does not fall back to synthetic fixtures on failure. Failures render explicit error states.
+API and Snapshot modes do not fall back to synthetic fixtures on failure.
+Production builds reject emitted assets containing known demo markers.
+Failures render explicit error states.
 
 ## Implemented Views
 

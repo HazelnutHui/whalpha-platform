@@ -6,8 +6,13 @@
 - Keep security form, issuer structure, listing scope, evidence, and universe disposition separate.
 - Names and ticker patterns may only create review flags, never positive eligibility.
 - Unknown, ambiguous, malformed, heuristic-only, and insufficient-evidence records remain quarantined.
-- Phase A/B candidates must not feed production analytics until provider and authoritative issuer evidence satisfy the documented activation gates.
-- Product policy is Core future default and Broad future secondary, but production activation remains deferred.
+- Unactivated Phase A/B candidates and future Core/Broad candidates must not
+  feed production analytics. The explicitly activated provider-form
+  Primary/Secondary Universes may feed the current Dashboard only with their
+  provisional status and issuer-structure limitation preserved.
+- Product policy is Core future default and Broad future secondary. The active
+  provider-form Primary/Secondary Activation is provisional; production
+  Core/Broad issuer-structure activation remains deferred.
 - Provider security-form evidence never proves issuer operating structure or domicile; unknown evidence remains quarantined.
 - SEC filer identity and filing evidence do not automatically establish listed-security identity; live SEC access requires separately authorized private User-Agent configuration.
 
@@ -17,8 +22,9 @@ Every new AI/Codex session must read these files before making material changes:
 
 1. [README.md](README.md)
 2. [docs/README.md](docs/README.md)
-3. [docs/project/current-status.md](docs/project/current-status.md)
-4. The product, architecture, operations, or ADR files directly related to the current task.
+3. [docs/project/current-context.md](docs/project/current-context.md)
+4. [docs/project/current-status.md](docs/project/current-status.md)
+5. The product, architecture, operations, or ADR files directly related to the current task.
 
 ## 2. Project Mission
 
@@ -97,6 +103,16 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 ## 8. Current Phase
 
-Infrastructure, storage, application scaffold, local frontend/backend toolchain, core EOD contracts, point-in-time identity, canonical EOD Price Bar sessions for 2026-08-12 through 2026-08-14, offline XNYS freshness, default-disabled private APIs, React Market Dashboard, static publication, branded session login, and authenticated OCI deployment are complete and verified. Public provider-backed display authorization, automated daily ingestion, database/catalog services, and broader analytics modules are not implemented.
+Infrastructure, storage, the application stack, canonical EOD/Identity through
+2026-08-24, Activation V2, immutable Market Intelligence, Dashboard Snapshot
+1.5 / Dashboard 2.2, bilingual React presentation, branded Session login, and
+an authenticated OCI release are implemented. Active analytics use 1,718
+Common Shares as Primary and 1,831 Common Shares plus ADRs as Secondary. The
+2026-08-24 release is an explicitly authorized `stale_review`, not fresh data.
 
-Current proposed activity: design Phase B2 SEC/authoritative issuer-structure evidence integration with a privately configured SEC-compliant User-Agent. Phase B1 provider security-form evidence is complete, but Core/Broad production activation remains deferred.
+The authoritative cross-task handoff is
+[docs/project/current-context.md](docs/project/current-context.md). Read it
+before relying on historical status, roadmap, audit, or deployment entries.
+SEC B2 remains paused. Automated daily ingestion, a point-in-time sector
+taxonomy, fundamentals, valuation, options data, and guest access are not
+implemented.

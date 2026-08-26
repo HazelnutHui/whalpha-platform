@@ -153,7 +153,16 @@ Accepted logical data-contract boundary:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. Bounded Parquet repositories exist for Instrument Master, provider identity, ticker resolver, EOD bars, provider security evidence, and the not-yet-published SEC evidence boundary. Corporate Action V1, Classification V1, and Universe Membership V1 remain logical-only. The production data root contains completed point-in-time identity and canonical EOD data for 2026-08-12 through 2026-08-14 plus completed 2026-08-14 provider security evidence. Default-disabled read/query APIs, EOD analytics, Dashboard Overview, and private snapshot export consume these completed datasets.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic
+validation models. Bounded Parquet repositories exist for Instrument Master,
+provider identity, ticker resolver, EOD bars, provider security evidence, and
+the not-yet-published SEC evidence boundary. Corporate Action V1 and broader
+issuer classification remain incomplete. The production data root contains 27
+completed point-in-time Identity and canonical EOD sessions through 2026-08-24,
+active provider-form Primary/Secondary Universe memberships, immutable Market
+Intelligence, and Snapshot 1.5 / Dashboard 2.2. Default-disabled read/query
+APIs, EOD analytics, Dashboard Overview, and private Snapshot export consume
+these completed datasets.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 
@@ -167,11 +176,17 @@ Provider direction:
 - The Massive adapter runs on the workstation boundary and maps responses into canonical contracts before analysis.
 - Provider credentials must remain server-side and outside Git.
 - Provider-backed outputs remain private unless public-display or redistribution authorization is separately documented.
-- OCI public placeholder content remains data-free.
+- OCI public login content remains data-free; provider-backed Dashboard and
+  static JSON remain behind the shared Session boundary.
 - IBKR is best positioned for portfolio, account-aware information, selected instrument checks, and brokerage-related integration.
 - Options data source remains an open question.
 
-Bounded Grouped Daily publications produced completed canonical sessions for 2026-08-12 through 2026-08-14. Close-to-close analytics, default-disabled private Dashboard APIs, private snapshots, and versioned deployment tooling are implemented. Historical backfill, automated daily ingestion, unrestricted public provider-backed display, and a production API service are not implemented.
+Bounded Grouped Daily publications produced completed canonical sessions from
+2026-07-17 through 2026-08-24. Close-to-close analytics, default-disabled
+private Dashboard APIs, immutable Market Intelligence, private snapshots, and
+versioned deployment tooling are implemented. Automated daily ingestion,
+unrestricted public provider-backed display, and a production API service are
+not implemented.
 
 ## Dashboard V1 Functional Areas
 

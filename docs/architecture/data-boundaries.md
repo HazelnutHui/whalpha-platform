@@ -56,7 +56,9 @@ Snapshot mode is also provider-backed derived content. The static `/private-data
 Provider Instrument Identity V1 is now an explicit canonical boundary. Ticker and CIK alone are insufficient for security-level identity. The first Massive All Tickers snapshot attempt remained private, did not persist raw payloads, and did not publish because quality gates failed.
 
 
-See [Data Access Boundary](../operations/data-access-boundary.md) for the accepted public placeholder, public data-free demo, and private provider-backed dashboard boundary.
+See [Data Access Boundary](../operations/data-access-boundary.md) for the
+accepted public data-free login/demo and private provider-backed Dashboard
+boundary.
 
 Massive-backed Market Data and derived works must remain private-owner only unless explicit public-display or redistribution authorization, a suitable business/display agreement, or an alternative public-display data source is documented. The private route enable flag is not authentication or authorization. Public accessibility does not grant redistribution rights.
 

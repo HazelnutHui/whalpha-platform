@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-08-26 — Authoritative context and status reconciliation
+
+- Replaced the mixed historical/current 572-line status ledger with a concise
+  current-state summary and moved recovery-critical IDs, fingerprints,
+  verification scope, product guardrails, and Windows/Mac continuity into one
+  authoritative current-context handoff. Historical execution detail remains
+  in this changelog and dated audits.
+- Reconciled AGENTS, README, roadmap, Market Regime product/contract status,
+  private API governance, and the OCI runbook with active EOD/Identity,
+  Activation V2, Market Intelligence, Snapshot 1.5 / Dashboard 2.2, bilingual
+  presentation, and the last recorded OCI release.
+- Added a fixed-root, network-prohibited, credential-free current-context
+  report. It formally reads active contracts, verifies `/data` inventory and
+  residue, validates the matching local bundle checksums, and offers a slower
+  explicit full-source reread without exposing a write or network mode.
+- Defined a minimal local build retention set and removed superseded/failed
+  ignored private-Snapshot and OCI bundle directories plus transient Vite
+  output. Canonical `/data`, the legacy fallback, the deliberate rollback
+  bundle, and current bundle were retained.
+- Live-verified the OCI current symlink, manifest boundary, Nginx, Session Auth
+  Service, localhost-only listener, and unauthenticated routes without reading
+  credentials or using a public endpoint. Removed 21 exact superseded/failed
+  remote release directories after pointer/type checks; current and one
+  rollback release remain with no staging/partial residue.
+- Replaced historical troubleshooting in current operations documents with a
+  concise current deployment, access, retention, and verification baseline.
+
 ## 2026-08-26 — Production Dashboard demo isolation
 
 - Removed the synthetic Dashboard fixture from the production static dependency
