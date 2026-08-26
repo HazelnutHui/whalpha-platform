@@ -37,6 +37,13 @@ the bounded, language-neutral MI 1.1 / Snapshot 1.6 / Dashboard 2.3 consumer
 and bilingual Stock Candidate workspace. That consumer is active Production
 state; later publications still require separate approval.
 
+Phase 7 adds an offline, additive entry-geometry shadow layer. It does not
+change the deployed Candidate score or rank. It separates “which stocks show
+leadership” from “whether current price location merits technical review” and
+classifies bounded breakout, breakout watch, orderly pullback, strong but
+extended, or no viable setup. Publication and frontend integration remain
+pending a new consumer contract.
+
 The initial design baseline remains `as_of_session=2026-08-21`; the active
 publication rolls the same versioned formulas and registered relationships to
 2026-08-24 with its matching same-day Identity and EOD source. Baselines and
@@ -663,6 +670,36 @@ not assigned a guessed sector. Ranking sorts eligible records by base score
 descending, confidence descending, liquidity descending, then ticker
 ascending; a deterministic concentration pass removes excess rows. This is
 the risk-adjusted rank. No personalized position amount is produced.
+
+## Additive entry geometry and chase-risk boundary
+
+Candidate leadership quality and entry location are two independent axes. A
+high-ranked stock can be a valid research priority and simultaneously be too
+extended for immediate technical review. The original base score, state, and
+risk rank remain immutable inputs; entry geometry never applies a hidden
+penalty to them.
+
+The fixed V1 shadow layer publishes SMA10/SMA20 and ATR14 location, three- and
+five-session movement, a volatility-scaled five-session move, trailing up
+sessions, current gap/range/close location, volume ratio, prior-five-session
+close high/low, and a labelled reference-support distance. It emits low,
+moderate, high, or extreme extension plus one technical structure and review
+posture. High or extreme extension always prevents `technical_review_ready`.
+
+The human presentation target is a two-axis board with distinct lanes:
+
+- **Technical review ready:** bounded breakout or orderly pullback; still
+  requires event, thesis, options, position-risk, and execution checks.
+- **Monitor for trigger:** near-breakout or otherwise incomplete structure.
+- **Wait for reset:** leadership remains strong but price is high/extreme
+  extension.
+- **Deprioritized / not assessable:** score, state, source, or history gates do
+  not support technical review.
+
+Reference support is not a stop price, the volume/range climax flag is not a
+reversal forecast, and no posture is an order instruction. Exact fields and
+thresholds are authoritative in the
+[Candidate Entry Geometry V1 contract](../data-contracts/candidate-entry-geometry-v1.md).
 
 ## Evaluation and anti-overfitting contract
 

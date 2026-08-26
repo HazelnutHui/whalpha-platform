@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-08-26 — Candidate entry geometry and chase-risk shadow
+
+- Accepted ADR 0021 and added the fixed `candidate-entry-geometry/1.0` shadow
+  contract. The original Candidate score, state, and risk ranks remain the
+  leadership/research-priority axis and are not penalized or reordered.
+  Parameter set `candidate-entry-geometry-v1-fixed-baseline-1` has fingerprint
+  `e531ffdc18d334329ac906cbe89f0cc88fc2e8932412ff0b6d8ce0b732cc25a1`.
+- Added deterministic SMA10/SMA20, ATR14, three-/five-session move,
+  volatility-scaled extension, consecutive-up, gap/range/close-location,
+  volume-ratio, prior-high/low, and reference-support facts. Added explicit
+  breakout, breakout-watch, pullback, strong-but-extended, no-setup, extension,
+  first-rejection, review-posture, counterevidence, and manual-check semantics.
+- Added a second raw-panel Oracle, input-permutation gate, socket-guarded CLI,
+  and four-file owner-read-only canonical `/tmp` audit. Focused tests cover
+  additive source binding, high-extension chase rejection, Oracle equivalence,
+  and audit reread/custody.
+- Formally completed `/tmp/whalpha-candidate-entry-baseline1-20260824`,
+  fingerprint
+  `6b013f948d5c6d1011cab0685f661907739b77f1cd1fbfa4307d4789a8638bee`,
+  with zero Oracle mismatch, no external request, and no Production write.
+- Primary Balanced top 50 contains 41 wait-for-reset high/extreme extensions,
+  two technical-review-ready structures, four breakout watches, and three
+  no-viable-setup rows. This is current-distribution evidence, not predictive
+  validation or a reason to tune thresholds.
+- No `/data`, Market Intelligence, Snapshot, frontend, bundle, OCI release,
+  provider, credential, or scheduler state changed.
+
 ## 2026-08-26 — Phase 6 production publication and OCI deployment
 
 - Published and activated MI 1.1 publication

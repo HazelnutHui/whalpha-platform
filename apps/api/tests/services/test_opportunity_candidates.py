@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal, Inexact, ROUND_DOWN, ROUND_HALF_EVEN, ROUND_UP, Rounded, localcontext
+import json
+from pathlib import Path
+import tempfile
 from uuid import UUID, uuid5
 
 import pytest
 
 from tip_api.contracts.analytics.v1 import (
+    CandidateEntryReviewPosture,
+    CandidateExtensionRisk,
     CandidateConfidenceV1,
     CandidateDataQualityStatus,
     CandidateMetricAvailability,
@@ -15,6 +20,7 @@ from tip_api.contracts.analytics.v1 import (
     CandidatePriorStateSourceV1,
     CandidatePriorStateSupportV1,
     CandidateRiskMode,
+    CandidateTechnicalSetup,
     RegimeState,
 )
 from tip_api.parameters.market_regime.candidate_v1_1_1 import (
@@ -34,6 +40,14 @@ from tip_api.services.opportunity_candidates import (
     OpportunityCandidateCalculationError,
     calculate_opportunity_candidate_scores,
     rank_opportunity_candidates,
+)
+from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
+from tip_api.services.candidate_entry_geometry_oracle import (
+    compare_with_independent_entry_geometry_oracle,
+)
+from tip_api.services.candidate_entry_geometry_audit import (
+    read_candidate_entry_geometry_audit,
+    write_candidate_entry_geometry_audit,
 )
 
 
@@ -168,6 +182,21 @@ def _bootstrap(panel: MarketRegimeInputPanel, universe_id: str = PRIMARY) -> Can
         source_state_session=None,
         state_history_fingerprint=CANDIDATE_PRIOR_STATE_BOOTSTRAP_FINGERPRINT,
         supports=(),
+    )
+
+
+def _entry_states(batch, stage=CandidateOpportunityStage.WATCH):
+    from tip_api.contracts.analytics.v1 import OpportunityCandidateStateRecordV1
+
+    return tuple(
+        OpportunityCandidateStateRecordV1.model_construct(
+            as_of_session=batch.as_of_session,
+            universe_id=batch.universe_id,
+            instrument_id=item.instrument_id,
+            final_stage=stage,
+            logical_fingerprint=f"{index + 9000:064x}",
+        )
+        for index, item in enumerate(batch.candidates)
     )
 
 
@@ -412,3 +441,142 @@ def test_bootstrap_is_explicit_and_confidence_is_strict(full_panel: MarketRegime
             prior_state_record_fingerprint=None,
             confidence="0.9999",
         )
+
+
+def test_entry_geometry_is_additive_and_source_bound(full_panel: MarketRegimeInputPanel) -> None:
+    batch = _calculate(full_panel)
+    result = calculate_candidate_entry_geometry(
+        panel=full_panel,
+        candidate_batch=batch,
+        state_records=_entry_states(batch),
+    )
+    assert result.source_candidate_batch_fingerprint == batch.logical_fingerprint
+    assert result.source_history_fingerprint == full_panel.history_source_fingerprint
+    assert result.assessed_count == len(batch.candidates)
+    assert result.unavailable_count == 0
+    assert sum(result.extension_counts.values()) == len(batch.candidates)
+    assert all(item.source_candidate_fingerprint for item in result.records)
+    assert all(item.candidate_base_score is not None for item in result.records)
+    assert batch == _calculate(full_panel)  # the entry layer cannot rewrite score or rank facts
+    assert "shadow_only_not_candidate_rank_input" in result.warnings
+
+
+def test_entry_geometry_flags_a_large_extension_instead_of_calling_it_ready(
+    full_panel: MarketRegimeInputPanel,
+) -> None:
+    target_id = sorted(full_panel.select_universe(PRIMARY).member_ids, key=str)[0]
+    bars = []
+    for item in full_panel.bars:
+        if item.instrument_id == target_id and item.session_date == full_panel.as_of_session:
+            close = item.close * Decimal("1.20")
+            bars.append(
+                replace(
+                    item,
+                    open=item.close * Decimal("1.15"),
+                    high=close * Decimal("1.01"),
+                    low=item.close * Decimal("0.99"),
+                    close=close,
+                    volume=item.volume * Decimal("2.10"),
+                )
+            )
+        else:
+            bars.append(item)
+    panel = replace(full_panel, bars=tuple(bars), history_source_fingerprint="9" * 64)
+    batch = _calculate(panel)
+    result = calculate_candidate_entry_geometry(
+        panel=panel,
+        candidate_batch=batch,
+        state_records=_entry_states(batch),
+    )
+    target = next(item for item in result.records if item.instrument_id == target_id)
+    assert target.extension_risk in {CandidateExtensionRisk.HIGH, CandidateExtensionRisk.EXTREME}
+    assert target.review_posture is CandidateEntryReviewPosture.WAIT_FOR_RESET
+    assert target.technical_setup in {
+        CandidateTechnicalSetup.STRONG_BUT_EXTENDED,
+        CandidateTechnicalSetup.NO_VIABLE_SETUP,
+    }
+    assert target.first_rejection_code in {"extension_risk_high", "extension_risk_extreme"}
+
+
+def test_entry_geometry_fails_when_candidate_history_binding_differs(
+    full_panel: MarketRegimeInputPanel,
+) -> None:
+    batch = _calculate(full_panel).model_copy(update={"history_source_fingerprint": "8" * 64})
+    with pytest.raises(Exception, match="source history differs"):
+        calculate_candidate_entry_geometry(
+            panel=full_panel,
+            candidate_batch=batch,
+            state_records=_entry_states(batch),
+        )
+
+
+def test_independent_entry_geometry_oracle_matches_and_is_permutation_stable(
+    full_panel: MarketRegimeInputPanel,
+) -> None:
+    batch = _calculate(full_panel)
+    states = _entry_states(batch)
+    result = calculate_candidate_entry_geometry(
+        panel=full_panel,
+        candidate_batch=batch,
+        state_records=states,
+    )
+    oracle = compare_with_independent_entry_geometry_oracle(
+        panel=full_panel,
+        candidate_batch=batch,
+        state_records=states,
+        actual=result,
+    )
+    assert oracle.record_count == len(batch.candidates)
+    assert oracle.mismatch_count == 0
+    assert not oracle.mismatches
+    assert oracle.input_permutation_match
+    assert len(oracle.oracle_fingerprint) == 64
+
+
+def test_entry_geometry_audit_writes_last_and_formally_rereads(
+    full_panel: MarketRegimeInputPanel,
+) -> None:
+    batch = _calculate(full_panel)
+    states = _entry_states(batch)
+    result = calculate_candidate_entry_geometry(
+        panel=full_panel,
+        candidate_batch=batch,
+        state_records=states,
+    )
+    oracle = compare_with_independent_entry_geometry_oracle(
+        panel=full_panel,
+        candidate_batch=batch,
+        state_records=states,
+        actual=result,
+    )
+    source_dir = Path(tempfile.mkdtemp(prefix="entry-geometry-source-", dir="/tmp"))
+    output_dir = Path(tempfile.mkdtemp(prefix="entry-geometry-audit-", dir="/tmp"))
+    source_manifest = {
+        "logical_content_fingerprint": "4" * 64,
+        "candidate_calculation_version": "market-regime-opportunity-candidate-v1.1.1",
+        "candidate_parameter_fingerprint": "5" * 64,
+        "candidate_state_parameter_fingerprint": "6" * 64,
+        "as_of_session": full_panel.as_of_session.isoformat(),
+    }
+    source_path = source_dir / "candidate-audit-manifest.json"
+    source_path.write_bytes((json.dumps(source_manifest, sort_keys=True, separators=(",", ":")) + "\n").encode())
+    try:
+        manifest = write_candidate_entry_geometry_audit(
+            output_dir=output_dir,
+            candidate_audit_dir=source_dir,
+            candidate_audit_manifest=source_manifest,
+            batches=(result,),
+            oracle_reports=(oracle,),
+            generated_at=datetime(2026, 8, 26, tzinfo=UTC),
+        )
+        assert manifest["completion_status"] == "completed"
+        assert manifest["shadow_only"] is True
+        assert manifest["oracle_mismatch_count"] == 0
+        assert read_candidate_entry_geometry_audit(output_dir) == manifest
+        assert {path.stat().st_mode & 0o777 for path in output_dir.iterdir()} == {0o400}
+    finally:
+        for directory in (output_dir, source_dir):
+            for path in directory.iterdir():
+                path.chmod(0o600)
+                path.unlink()
+            directory.rmdir()

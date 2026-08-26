@@ -158,6 +158,19 @@ Current risk-mode outputs reach the fixed 25/50/100 display caps in each
 Universe. The full two-session audit took about 928 seconds and peaked near
 1.9 GiB, so incremental daily execution remains required before automation.
 
+An additive Candidate Entry Geometry V1 shadow is implemented without changing
+the deployed score, state, or rank. It uses fixed SMA/ATR/return/gap/range/
+volume facts to separate bounded breakout, breakout watch, orderly pullback,
+strong-but-extended, and no-viable-setup results. The formal read-only audit is
+`/tmp/whalpha-candidate-entry-baseline1-20260824`, fingerprint
+`6b013f948d5c6d1011cab0685f661907739b77f1cd1fbfa4307d4789a8638bee`,
+with zero Oracle mismatches and input-permutation equivalence. In the Primary
+Balanced top 50, 41 are wait-for-reset high/extreme extension, two are
+technical-review ready, four are breakout watches, and three have no viable
+bounded setup. This confirms that the existing list is a leadership/research
+rank, not an entry-timing list. The new layer is not in `/data`, MI, Snapshot,
+frontend, bundle, or OCI.
+
 The formal audit was published through MI 1.1 and Snapshot 1.6 / Dashboard 2.3
 after a new exact stale-review authorization. The bounded Candidate JSON is
 about 5.14 MB and contains 146 Primary and 155 Secondary display/review cards.

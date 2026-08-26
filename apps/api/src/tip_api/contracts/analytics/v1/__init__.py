@@ -100,6 +100,15 @@ from .opportunity_candidate_publication import (
     OpportunityCandidatePublicationV1,
     OpportunityCandidateUniversePublicationV1,
 )
+from .candidate_entry_geometry import (
+    CandidateEntryGeometryBatchV1,
+    CandidateEntryGeometryMetricsV1,
+    CandidateEntryGeometryV1,
+    CandidateEntryReviewPosture,
+    CandidateExtensionRisk,
+    CandidateTechnicalSetup,
+    EntryGeometryAvailability,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -186,4 +195,11 @@ __all__ = [
     "OpportunityCandidatePublicationSourceV1",
     "OpportunityCandidatePublicationV1",
     "OpportunityCandidateUniversePublicationV1",
+    "CandidateEntryGeometryBatchV1",
+    "CandidateEntryGeometryMetricsV1",
+    "CandidateEntryGeometryV1",
+    "CandidateEntryReviewPosture",
+    "CandidateExtensionRisk",
+    "CandidateTechnicalSetup",
+    "EntryGeometryAvailability",
 ]

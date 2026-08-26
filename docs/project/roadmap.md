@@ -5,8 +5,11 @@
   Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
 - Next product-validation step: use the deployed Phase 6 bounded Candidate
-  workspace, then review its behavior against a fresh daily audit before the
-  next publication.
+  workspace and the completed Entry Geometry shadow. Design an additive
+  Candidate consumer that presents leadership quality and entry location as
+  separate axes with review-now, watch-trigger, wait-reset, and other lanes.
+  Do not tune the frozen shadow thresholds from the one-session distribution;
+  review them chronologically when enough history exists.
   The bilingual hierarchy, Daily Decision Brief, current-payload change layer,
   relationship decision lanes, and equal-capability guest Session entry are
   implemented in repository source. Exact relationship run length/acceleration,
@@ -108,13 +111,17 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Phase 5 Candidate score/risk/state, independent Oracle, and canonical audit
 - [x] Bounded Candidate publication, MI 1.1, Snapshot 1.6 / Dashboard 2.3, and
   deployed bilingual first-level Stock Candidate workspace
+- [x] Offline Candidate Entry Geometry V1 contract, fixed parameters,
+  independent Oracle, canonical audit, and real-data chase-bias review
+- [ ] Additive Candidate entry-geometry publication/Snapshot/frontend consumer
+  and separately approved deployment
 
 ## Next Small Target
 
-Catch EOD up through the formally expected XNYS session, regenerate and review
-one fresh Market Intelligence plan, then decide separately whether to publish.
-Snapshot, bundle, and OCI remain later independent approvals. Keep SEC B2
-paused.
+Choose between restoring lag-zero EOD freshness first or implementing the
+additive entry-geometry consumer against the already audited 2026-08-24 shadow.
+Any MI publication, Snapshot, bundle, and OCI deployment remain later
+independent approvals. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

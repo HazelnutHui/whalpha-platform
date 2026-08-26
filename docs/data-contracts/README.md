@@ -4,6 +4,7 @@
 
 - [Dashboard Snapshot V2](dashboard-snapshot-v2.md)
 - [Opportunity Candidate Publication V1](opportunity-candidate-publication-v1.md)
+- [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
 - [Same-Day Identity and EOD Catch-Up V1](same-day-identity-eod-catchup-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
@@ -23,6 +24,7 @@ Implemented as Python/Pydantic contracts:
 - [Trailing Liquidity Shadow Publication V1](trailing-liquidity-shadow-v1.md)
 - [Reviewed Eligibility Override V1](reviewed-eligibility-override-v1.md)
 - [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
+- [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
 
 Accepted logical contracts only:
 

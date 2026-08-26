@@ -44,6 +44,8 @@ Candidate workspace. Canonical sessions cover
 every XNYS session from 2026-07-17 through 2026-08-24. The active Dashboard is
 an explicitly authorized review of 2026-08-24 data, expected 2026-08-25 and
 lagging one session; it must be presented as `stale_review`, never fresh.
+An additive entry-geometry and chase-risk layer is implemented only as an
+offline shadow audit; it does not yet affect the active Candidate payload or UI.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

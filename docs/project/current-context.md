@@ -84,6 +84,15 @@ Tailscale listeners were present.
 - The active MI 1.1 payload contains 146 Primary / 155 Secondary
   display-review cards; Snapshot 1.6 / Dashboard 2.3 serves the same bounded
   Candidate file of about 5.14 MB.
+- Candidate Entry Geometry V1 is an additive offline shadow only. Its formal
+  2026-08-24 audit is
+  `/tmp/whalpha-candidate-entry-baseline1-20260824`, fingerprint
+  `6b013f948d5c6d1011cab0685f661907739b77f1cd1fbfa4307d4789a8638bee`,
+  with zero independent-Oracle mismatch and input-permutation equivalence. It
+  does not alter active Candidate score/state/rank or any `/data`, MI, Snapshot,
+  frontend, bundle, or OCI artifact. Primary Balanced top 50 contains 41
+  wait-for-reset high/extreme extensions, two technical-review-ready rows, four
+  breakout watches, and three no-viable-setup rows.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
@@ -138,7 +147,9 @@ check.
 This handoff does not authorize provider or SEC access, credential inspection,
 EOD or Identity acquisition, scheduler changes, Activation, publication,
 Snapshot creation, bundle generation, OCI deployment or rollback, guest
-access, UI implementation, or a new quantitative feature.
+access, further UI implementation, or another quantitative feature. The
+completed entry-geometry shadow described above is evidence, not continuing
+authorization.
 
 ## Cross-device continuity
 
