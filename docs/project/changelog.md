@@ -2,6 +2,11 @@
 
 ## 2026-08-26 — Daily decision layer and equal-capability guest entry
 
+- Built and deployed OCI release `2026-08-26T103119Z-f344a589a8c9` from source
+  commit `f344a589a8c93e527e63470335d88d293141aee1`, reusing the exact active
+  Snapshot 1.5 / Dashboard 2.2 and Market Intelligence publication. Dry-run,
+  checksums, service/listener checks, atomic switch, unauthenticated boundary,
+  temporary guest Dashboard/Snapshot access, and logout postflight passed.
 - Added a conclusion-first Daily Decision Brief using the existing immutable
   Regime payload: broad Risk-on confirmation, one-/five-session Composite
   changes, exact supporting/conflicting dimensions, and remaining distance to

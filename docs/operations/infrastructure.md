@@ -33,9 +33,9 @@ Confirmed:
 ## OCI
 
 Live-verified through the `whalpha-oci` SSH alias on 2026-08-26 without reading
-credentials or contacting a public endpoint. The active private Dashboard
-release is `2026-08-26T062038Z-895a073769ad`; `/` is the data-free branded
-Session-login entry, and `/dashboard/` and `/private-data/` share the server-side
+credentials. The active Dashboard release is
+`2026-08-26T103119Z-f344a589a8c9`; `/` is the data-free branded credential/guest
+Session entry, and `/dashboard/` and `/private-data/` share the server-side
 Session boundary.
 
 Confirmed infrastructure facts:
@@ -52,11 +52,13 @@ Confirmed infrastructure facts:
 - Nginx and Certbot were retained
 - Nginx and the Session Auth Service are active and enabled
 - the Auth Service listens only on `127.0.0.1:8010`
-- loopback HTTPS checks passed the unauthenticated public/private route boundary
-- only the current release and one reviewed rollback release remain
+- loopback HTTPS checks passed the unauthenticated route boundary, and a
+  temporary guest Session read the same Dashboard and Snapshot before logout
+- the current release, immediate rollback, and one deliberate older fallback
+  remain
 - no release staging/partial residue exists
 - no production FastAPI market-data service was deployed to OCI
 
 Do not record literal public IP addresses, SSH key material, password hashes, or
-credential contents here. Authenticated browser behavior remains a manual user
-check.
+credential contents here. Password-based browser behavior remains a manual
+user check.

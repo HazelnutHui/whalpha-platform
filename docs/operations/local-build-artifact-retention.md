@@ -19,10 +19,10 @@ Keep only:
    active Snapshot reader names it as the exact pre-pointer legacy fallback;
 2. `build/oci-dashboard/2026-08-19T083341Z-7ed7fdc21686`, as the deliberate
    selectable-Universe rollback bundle;
-3. `build/oci-dashboard/2026-08-26T062038Z-895a073769ad`, as the immediate
+3. `build/oci-dashboard/2026-08-26T094339Z-f9711d5403f6`, as the immediate
    rollback bundle;
-4. `build/oci-dashboard/2026-08-26T094339Z-f9711d5403f6`, as the active
-   deployed bundle pending authenticated visual verification.
+4. `build/oci-dashboard/2026-08-26T103119Z-f344a589a8c9`, as the active
+   deployed bundle.
 
 The active Snapshot 1.5 release is formally retained under `/data`; a duplicate
 `build/private-dashboard` copy is not required. The report validates every
@@ -33,13 +33,12 @@ active Snapshot/Market Intelligence lineage.
 
 Keep only:
 
-1. `/srv/whalpha/releases/2026-08-26T094339Z-f9711d5403f6`, selected by
+1. `/srv/whalpha/releases/2026-08-26T103119Z-f344a589a8c9`, selected by
    `/srv/whalpha/current`;
-2. `/srv/whalpha/releases/2026-08-26T062038Z-895a073769ad`, as the immediate
+2. `/srv/whalpha/releases/2026-08-26T094339Z-f9711d5403f6`, as the immediate
    rollback release;
 3. `/srv/whalpha/releases/2026-08-19T083341Z-7ed7fdc21686`, retained
-   temporarily until authenticated visual verification, after which it is the
-   exact cleanup candidate.
+   as the deliberate older selectable-Universe fallback.
 
 Remote cleanup requires separate exact path, type, symlink, active-pointer,
 service, and rollback verification. It must never infer remote state from a
@@ -74,3 +73,9 @@ OCI retained only the then-current and rollback releases; Nginx, the Auth
 Service, localhost listener, and unauthenticated route boundary passed
 immediately after cleanup. The later deployment temporarily expanded the
 retained set as recorded above.
+
+After deploying `2026-08-26T103119Z-f344a589a8c9`, the exact superseded
+`2026-08-26T062038Z-895a073769ad` local bundle and remote release were verified
+as regular directories distinct from the active pointer and removed. Current,
+immediate rollback, and deliberate older fallback remain locally and remotely;
+there is no staging/partial residue.

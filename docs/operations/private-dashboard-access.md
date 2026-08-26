@@ -22,10 +22,12 @@ On 2026-08-26, a credential-free SSH check verified:
 - the Auth Service listening only on `127.0.0.1:8010`;
 - public `/` returning the data-free branded login page;
 - unauthenticated `/dashboard/` redirecting to `/?next=/dashboard/`;
-- private data and `/auth/status` returning 401; and
-- external `/auth/internal-verify` returning 404.
+- private data and `/auth/status` returning 401;
+- external `/auth/internal-verify` returning 404; and
+- a temporary guest Session reading both `/dashboard/` and the same protected
+  Snapshot 1.5 payload, followed by successful logout and cookie-jar removal.
 
-This does not prove successful authenticated browser login. That remains a
+Guest server-side access is verified. Password-based browser login remains a
 manual user check because Codex does not know or use the password.
 
 ## Credential and Session rules

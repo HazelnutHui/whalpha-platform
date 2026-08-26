@@ -38,7 +38,7 @@ The platform should help answer:
 Documentation, infrastructure, storage, the application stack, canonical
 EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
 Dashboard Snapshot 1.5 / Dashboard 2.2, bilingual presentation, and
-authenticated static publication are implemented. Canonical sessions cover
+Session-protected static publication is implemented. Canonical sessions cover
 every XNYS session from 2026-07-17 through 2026-08-24. The active Dashboard is
 an explicitly authorized review of 2026-08-24 data, expected 2026-08-25 and
 lagging one session; it must be presented as `stale_review`, never fresh.
@@ -76,7 +76,10 @@ authorized work.
 - Market summary analytics use the latest two formally completed sessions and support close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.
 - Initial local dashboard: React Market Dashboard V1 renders Market Pulse, breadth, up/down volume, liquidity-screened movers, a Trading Activity Map, market/sector benchmarks, and categorized data details from default-disabled private APIs.
-- Private static deployment: the workstation exports private Dashboard JSON snapshots and versioned `/dashboard/` React bundles. Git records authenticated OCI deployments with `/` as the branded session-login entry; live OCI state is not implied without a current check.
+- Static deployment: the workstation exports protected Dashboard JSON snapshots
+  and versioned `/dashboard/` React bundles. Git records OCI deployments with
+  `/` as the branded credential/guest Session entry; live OCI state is not
+  implied without a current check.
 - Protected Session entry: the OCI design uses a localhost-only Auth Service,
   opaque HttpOnly Session cookies, owner credential login, equal-capability
   guest entry, and an interactive password-rotation helper. Guest and

@@ -13,9 +13,9 @@ Verified through the `whalpha-oci` SSH alias and deployment postflight on
 2026-08-26 without reading credentials:
 
 - `/srv/whalpha/current` resolves to
-  `/srv/whalpha/releases/2026-08-26T094339Z-f9711d5403f6`;
+  `/srv/whalpha/releases/2026-08-26T103119Z-f344a589a8c9`;
 - the release is built from source commit
-  `f9711d5403f60cd70a93b50ee314ab38a6af24a2`;
+  `f344a589a8c93e527e63470335d88d293141aee1`;
 - it binds Market Intelligence `2026-08-24T043223Z-aee1a6ab0f67` and
   Snapshot `2026-08-24T045652Z-aee1a6ab0f67`;
 - it serves Snapshot 1.5 / Dashboard 2.2, `en` and `zh`, English by default,
@@ -26,10 +26,13 @@ Verified through the `whalpha-oci` SSH alias and deployment postflight on
 - an unauthenticated loopback HTTPS check returns 200 for `/`, redirects
   `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
   `/auth/status`, and returns 404 for external `/auth/internal-verify`;
+- deployment postflight creates a temporary guest Session, verifies the same
+  Dashboard and Snapshot 1.5 payload are readable, logs out, and removes the
+  local cookie jar without printing it;
 - no staging or partial release residue exists; and
-- the current release, immediate rollback `2026-08-26T062038Z-895a073769ad`,
-  and older reviewed rollback `2026-08-19T083341Z-7ed7fdc21686` are retained
-  temporarily pending authenticated visual verification and exact cleanup.
+- the current release, immediate rollback `2026-08-26T094339Z-f9711d5403f6`,
+  and deliberate older selectable-Universe fallback
+  `2026-08-19T083341Z-7ed7fdc21686` are retained.
 
 Authenticated browser behavior was not tested because the verification did not
 read or use the user's password.

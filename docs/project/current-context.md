@@ -15,7 +15,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `f9711d5403f60cd70a93b50ee314ab38a6af24a2` |
+| Deployed bundle source commit | `f344a589a8c93e527e63470335d88d293141aee1` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -65,44 +65,43 @@ Tailscale listeners were present.
 - Relationship history: 336 rows over 26 sessions; confidence is low.
 - English and Simplified Chinese use one language-neutral payload. English is
   the first-visit default.
-- The deployed release still has credential Session entry only. Repository
-  source adds equal-capability guest Session entry; it is not a production fact
-  until a newer OCI release passes the deployment and guest postflight gates.
+- Credential and equal-capability guest entry both create the same role-free
+  protected Session and load the same product payload.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
-  workspace; Market Structure & Activity is second in current repository source.
+  workspace; Market Structure & Activity is second.
   It centralizes Universe/language/Session controls, adds a factual first-screen
-  market-structure summary. Current repository source additionally adds the
-  Daily Decision Brief, decision-lane relationship selection, prior-state
-  markers, consolidated reliability warning, and collapsed 16-pair audit table.
+  market-structure summary, Daily Decision Brief, decision-lane relationship
+  selection, prior-state markers, consolidated reliability warning, and
+  collapsed 16-pair audit table.
 
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-26T094339Z-f9711d5403f6`, built from deployed source commit
-`f9711d5403f60cd70a93b50ee314ab38a6af24a2` and bound to the active Snapshot
+`2026-08-26T103119Z-f344a589a8c9`, built from deployed source commit
+`f344a589a8c93e527e63470335d88d293141aee1` and bound to the active Snapshot
 and Market Intelligence publication. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-An authorized SSH read-only check on 2026-08-26 verified the remote `current`
-symlink, clean deployment manifest fields, Nginx and Auth Service active and
-enabled, and the Auth Service bound only to `127.0.0.1:8010`. Loopback HTTPS
-checks verified the public data-free login, unauthenticated Dashboard redirect,
-private-data and auth-status 401 responses, and external internal-verify 404.
-No credential content was accessed. Deployment postflight also passed the
-public unauthenticated route boundary. Authenticated browser behavior remains
-unverified because no password was read or used.
+The 2026-08-26 deployment verified the remote `current` symlink, clean bundle
+manifest, Nginx and Auth Service active and enabled, and the Auth Service bound
+only to `127.0.0.1:8010`. Postflight checked the public data-free entry,
+unauthenticated Dashboard redirect, private-data/auth-status 401 responses,
+external internal-verify 404, then created a temporary guest Session and proved
+it read the Dashboard and exact Snapshot 1.5 payload before logout. No
+credential or cookie content was printed or retained. Password-based browser
+behavior remains a manual user check.
 
-Remote release retention temporarily contains the active release, immediate
-rollback `2026-08-26T062038Z-895a073769ad`, and older reviewed rollback
-`2026-08-19T083341Z-7ed7fdc21686`, with no staging/partial residue. Retain all
-three until manual authenticated visual verification, then separately remove
-the oldest exact release. The local report intentionally remains network-free
-and cannot replace this separately authorized OCI check.
+Remote release retention contains the active release, immediate rollback
+`2026-08-26T094339Z-f9711d5403f6`, and deliberate older selectable-Universe
+fallback `2026-08-19T083341Z-7ed7fdc21686`, with no staging/partial residue.
+The superseded `2026-08-26T062038Z-895a073769ad` release and matching local
+bundle were removed after exact pointer/type checks. The local report remains
+network-free and cannot replace this separately authorized OCI check.
 
 ## Product guardrails
 

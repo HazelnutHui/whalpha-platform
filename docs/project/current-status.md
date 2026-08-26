@@ -9,7 +9,7 @@ detail belongs in the [changelog](changelog.md) and dated audits, not here.
 
 ## Current product
 
-WH Alpha is an authenticated, bilingual U.S. equity market-intelligence
+WH Alpha is a Session-protected, bilingual U.S. equity market-intelligence
 dashboard for discretionary research. Its intended decision chain is:
 
 ```text
@@ -27,15 +27,15 @@ Repository `main` now presents Market Structure & Activity and Market Regime &
 Opportunities (`市场风向与机会`) as first-level workspaces with persistent desktop
 left navigation and one shared Universe/language/Session utility header. Market
 Regime & Opportunities is the first item and default workspace; Market
-Dashboard is second and begins with a factual “what is happening now” summary.
+Structure & Activity is second and begins with a factual “what is happening
+now” summary.
 It explains Universe membership versus same-session comparable coverage. A
 Daily Decision Brief adds one- and five-session Composite changes, distances
 to both state boundaries, and an explicit broad Risk-on stance. Six fixed
 economic decision lanes precede the collapsed complete 16-pair audit table;
 each highlight shows current-versus-prior relationship state, and the short-
-history warning is consolidated. The earlier workspace hierarchy is deployed;
-the new brief, relationship refinement, second-workspace name, and guest entry
-are tested repository changes pending the next deployment record.
+history warning is consolidated. These changes and equal-capability guest entry
+are deployed in the current OCI release.
 
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
@@ -54,7 +54,7 @@ relative-performance proxies, never actual fund flow.
 - Active Dashboard Snapshot is
   `2026-08-24T045652Z-aee1a6ab0f67`, contract 1.5 / Dashboard 2.2.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-26T094339Z-f9711d5403f6` from source commit `f9711d5403f6`.
+  `2026-08-26T103119Z-f344a589a8c9` from source commit `f344a589a8c9`.
 
 The active analytics and Snapshot are an exact, one-release review of
 2026-08-24 data with expected session 2026-08-25 and lag one. Their required
@@ -89,12 +89,13 @@ context audit. Exact displayed scores are publication facts, not trade signals.
   Universe, precision, freshness, and analytics. No role-based difference is
   authorized.
 
-The 2026-08-26 audit verified over SSH that the remote current symlink selects
-the recorded release, Nginx and the Auth Service are active/enabled, the Auth
-Service listens only on localhost, and unauthenticated loopback route checks
-preserve the Session boundary. Only current and rollback releases remain, with
-no staging/partial residue. Authenticated browser health remains a manual user
-check because no password was read or used.
+The 2026-08-26 deployment verified over SSH that the remote current symlink
+selects the recorded release, Nginx and the Auth Service are active/enabled,
+and the Auth Service listens only on localhost. Postflight proved a temporary
+guest Session could read the Dashboard and the exact bound Snapshot, logged it
+out, and then reconfirmed the unauthenticated boundary. Three reviewed releases
+remain with no staging/partial residue. Password-based browser health remains
+a manual user check because no password was read or used.
 
 ## Current limitations and risks
 

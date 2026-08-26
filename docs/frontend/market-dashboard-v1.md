@@ -19,11 +19,11 @@ Phase A does not change the Dashboard. A future Phase B must make Market Pulse, 
 
 The V1.3 response labels unchanged legacy calculations as provisional and carries `universe_definition_id`, `universe_version`, `governance_status`, `classification_as_of_date`, and `evidence_coverage_status`. The UI displays an amber `Provisional classification` state and a material evidence warning. Published provider security-form evidence does not connect Core/Broad candidates to metrics or remove the issuer-structure limitation.
 
-The active release `2026-08-26T094339Z-f9711d5403f6` deploys the activated
+The active release `2026-08-26T103119Z-f344a589a8c9` deploys the activated
 Primary/Secondary Universes, Market Intelligence, bilingual interface, and the
-exact 2026-08-24 `stale_review` Snapshot. Authenticated visual confirmation
-remains a user-run check because automated verification does not use the
-user's password.
+exact 2026-08-24 `stale_review` Snapshot. Guest Session access is verified;
+password-based visual confirmation remains a user-run check because automated
+verification does not use the user's password.
 
 ## Purpose
 
@@ -37,7 +37,11 @@ Implemented for private static production and local development. The deployed
 Snapshot uses the completed 2026-08-24 current session and 2026-08-21 previous
 session, with expected session 2026-08-25 and explicit lag one.
 
-The static OCI release is deployed behind a branded login page and server-side sessions for the personal prototype. This is not public real-data authorization, and root login, session login, Dashboard data loading, Logout, and password rotation have been manually verified by the user. Passwords, hashes, and browser credential details are not recorded.
+The static OCI release is deployed behind a branded credential/guest entry and
+server-side Sessions for the personal prototype. Both entry paths load the same
+Dashboard and data. This is not a commercial redistribution authorization.
+Passwords, hashes, Session tokens, and browser credential details are not
+recorded.
 
 ## Data Modes
 `VITE_MARKET_DATA_MODE=snapshot` is supported for the static OCI target. Snapshot mode reads authenticated static JSON from `/private-data/v1/`; it does not call the private FastAPI routes and does not fall back to demo data.
@@ -77,8 +81,8 @@ Failures render explicit error states.
 - Loading, error, empty, and retry states.
 
 The shared shell and first-screen summary are implemented, locally verified,
-and included in the active OCI bundle. Authenticated visual review remains a
-manual user check.
+and included in the active OCI bundle. Guest access is postflight-verified;
+password-based visual review remains a manual user check.
 
 ## Trading Activity Map Semantics
 

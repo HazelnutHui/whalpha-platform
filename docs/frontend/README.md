@@ -1,6 +1,6 @@
 # Frontend Documentation
 
-The authenticated Dashboard has a persistent first-level workspace shell for
+The Session-protected Dashboard has a persistent first-level workspace shell for
 Market Structure & Activity (`市场结构与活跃度`) and Market Regime &
 Opportunities (`市场风向与机会`). Universe, language, and protected Session
 controls share the top utility header. The two

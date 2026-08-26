@@ -82,11 +82,10 @@ reflow without whole-page horizontal overflow.
 ## Publication status
 
 The local `/tmp` preview remains available for explicit development review.
-The currently deployed frontend reads immutable Snapshot 1.5 / Dashboard 2.2
-Market Intelligence rather than `/tmp`. The Daily Decision Brief,
-decision-lane highlights, collapsed audit table, second-workspace rename, and
-guest entry are implemented in repository source and become production facts
-only after the recorded deployment gate passes. The active 2026-08-24 payload
+The deployed frontend reads immutable Snapshot 1.5 / Dashboard 2.2 Market
+Intelligence rather than `/tmp`. The Daily Decision Brief, decision-lane
+highlights, collapsed audit table, second-workspace rename, and guest entry are
+active in release `2026-08-26T103119Z-f344a589a8c9`. The 2026-08-24 payload
 remains visibly `stale_review`. Guest and credential Sessions consume the
 identical analytics payload with the same fields, precision, freshness, and
 as-of session.

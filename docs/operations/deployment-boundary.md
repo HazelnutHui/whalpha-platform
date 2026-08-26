@@ -20,9 +20,10 @@ including derived heatmaps, analytics, research, API responses, or static
 exports based on restricted provider data, requires the
 [Data Access Boundary](data-access-boundary.md) pre-deployment gate.
 
-The private static Dashboard is deployed behind the branded Session login.
+The static Dashboard is deployed behind the branded Session entry.
 Public `/` contains no market data. `/dashboard/` and `/private-data/` are
-protected by the same server-side authentication boundary.
+protected by the same server-side Session boundary.
 
-Guest access and a public/multi-user identity model are not implemented or
-authorized.
+Equal-capability guest entry is implemented through the same role-free Session
+as credential login. A public/multi-user identity model, per-user private state,
+and role-dependent product access are not implemented or authorized.
