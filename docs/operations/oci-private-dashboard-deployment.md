@@ -9,13 +9,13 @@ project changelog, not in this current runbook.
 
 ## Live-verified state
 
-Verified through the `whalpha-oci` SSH alias on 2026-08-26 without reading
-credentials or making a public Internet request:
+Verified through the `whalpha-oci` SSH alias and deployment postflight on
+2026-08-26 without reading credentials:
 
 - `/srv/whalpha/current` resolves to
-  `/srv/whalpha/releases/2026-08-26T062038Z-895a073769ad`;
+  `/srv/whalpha/releases/2026-08-26T094339Z-f9711d5403f6`;
 - the release is built from source commit
-  `895a073769adbe6ce7313cc82b4fa932a22d6cc1`;
+  `f9711d5403f60cd70a93b50ee314ab38a6af24a2`;
 - it binds Market Intelligence `2026-08-24T043223Z-aee1a6ab0f67` and
   Snapshot `2026-08-24T045652Z-aee1a6ab0f67`;
 - it serves Snapshot 1.5 / Dashboard 2.2, `en` and `zh`, English by default,
@@ -27,8 +27,9 @@ credentials or making a public Internet request:
   `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
   `/auth/status`, and returns 404 for external `/auth/internal-verify`;
 - no staging or partial release residue exists; and
-- only the current release and rollback release
-  `2026-08-19T083341Z-7ed7fdc21686` are retained.
+- the current release, immediate rollback `2026-08-26T062038Z-895a073769ad`,
+  and older reviewed rollback `2026-08-19T083341Z-7ed7fdc21686` are retained
+  temporarily pending authenticated visual verification and exact cleanup.
 
 Authenticated browser behavior was not tested because the verification did not
 read or use the user's password.

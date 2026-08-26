@@ -2,6 +2,11 @@
 
 ## 2026-08-26 — First-level workspace and current-market hierarchy
 
+- Built and deployed OCI release `2026-08-26T094339Z-f9711d5403f6` from source
+  commit `f9711d5403f60cd70a93b50ee314ab38a6af24a2`, reusing the active immutable
+  Snapshot and Market Intelligence publication. Dry-run, apply, checksum,
+  service, listener, and unauthenticated access-boundary checks passed;
+  authenticated visual verification remains manual.
 - Promoted Market Regime & Opportunities to the first navigation item and
   default workspace; Market Dashboard is the second explicit route.
 - Replaced the small sticky view tabs with a persistent desktop left rail that

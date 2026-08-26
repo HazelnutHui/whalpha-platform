@@ -7,7 +7,7 @@
 - Next product-design step: define the data contract for one-session deltas,
   five-session direction/speed, threshold distance, and relationship
   persistence. The bilingual top-level workspace navigation and factual
-  first-screen summary are implemented in source but not deployed. Sector
+  first-screen summary are implemented and deployed. Sector
   taxonomy, stock candidates, guest access, and new analytics remain separate
   decisions.
 

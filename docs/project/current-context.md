@@ -15,7 +15,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `895a073769adbe6ce7313cc82b4fa932a22d6cc1` |
+| Deployed bundle source commit | `f9711d5403f60cd70a93b50ee314ab38a6af24a2` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -68,20 +68,19 @@ Tailscale listeners were present.
 - Session authentication remains active. Guest access is absent.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
-- Repository `main` contains the tested, not-yet-deployed first-level workspace
+- Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
   workspace; Market Dashboard is second.
   It centralizes Universe/language/Session controls, adds a factual first-screen
   Market Dashboard summary, and shows six relationship highlights before the
-  complete 16-pair table. The deployed bundle remains the immutable source
-  commit recorded below.
+  complete 16-pair table.
 
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-26T062038Z-895a073769ad`, built from deployed source commit
-`895a073769adbe6ce7313cc82b4fa932a22d6cc1` and bound to the active Snapshot
+`2026-08-26T094339Z-f9711d5403f6`, built from deployed source commit
+`f9711d5403f60cd70a93b50ee314ab38a6af24a2` and bound to the active Snapshot
 and Market Intelligence publication. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
@@ -91,13 +90,16 @@ symlink, clean deployment manifest fields, Nginx and Auth Service active and
 enabled, and the Auth Service bound only to `127.0.0.1:8010`. Loopback HTTPS
 checks verified the public data-free login, unauthenticated Dashboard redirect,
 private-data and auth-status 401 responses, and external internal-verify 404.
-No credential content or public endpoint was accessed. Authenticated browser
-behavior remains unverified because no password was read or used.
+No credential content was accessed. Deployment postflight also passed the
+public unauthenticated route boundary. Authenticated browser behavior remains
+unverified because no password was read or used.
 
-Remote release retention is clean: only the active release and
-`2026-08-19T083341Z-7ed7fdc21686` rollback remain, with no staging/partial
-residue. The local report intentionally remains network-free and cannot replace
-this separately authorized OCI check.
+Remote release retention temporarily contains the active release, immediate
+rollback `2026-08-26T062038Z-895a073769ad`, and older reviewed rollback
+`2026-08-19T083341Z-7ed7fdc21686`, with no staging/partial residue. Retain all
+three until manual authenticated visual verification, then separately remove
+the oldest exact release. The local report intentionally remains network-free
+and cannot replace this separately authorized OCI check.
 
 ## Product guardrails
 

@@ -19,7 +19,7 @@ Phase A does not change the Dashboard. A future Phase B must make Market Pulse, 
 
 The V1.3 response labels unchanged legacy calculations as provisional and carries `universe_definition_id`, `universe_version`, `governance_status`, `classification_as_of_date`, and `evidence_coverage_status`. The UI displays an amber `Provisional classification` state and a material evidence warning. Published provider security-form evidence does not connect Core/Broad candidates to metrics or remove the issuer-structure limitation.
 
-The active release `2026-08-26T062038Z-895a073769ad` deploys the activated
+The active release `2026-08-26T094339Z-f9711d5403f6` deploys the activated
 Primary/Secondary Universes, Market Intelligence, bilingual interface, and the
 exact 2026-08-24 `stale_review` Snapshot. Authenticated visual confirmation
 remains a user-run check because automated verification does not use the
@@ -76,8 +76,9 @@ Failures render explicit error states.
 - Data Details separates Snapshot Status, Universe Funnel, Methodology Notes, Data Limitations, and Material Warnings.
 - Loading, error, empty, and retry states.
 
-The shared shell and first-screen summary are implemented and locally verified
-on repository `main`; they are not part of the currently deployed OCI bundle.
+The shared shell and first-screen summary are implemented, locally verified,
+and included in the active OCI bundle. Authenticated visual review remains a
+manual user check.
 
 ## Trading Activity Map Semantics
 

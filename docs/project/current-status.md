@@ -30,7 +30,8 @@ Regime & Opportunities is the first item and default workspace; Market
 Dashboard is second and begins with a factual “what is happening now” summary.
 It explains Universe membership versus same-session comparable coverage. Six fixed-priority
 relationship highlights precede the complete 16-pair table. These source
-changes are tested but are not yet deployed to OCI.
+changes are tested and deployed to OCI; authenticated visual review remains a
+manual user check.
 
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
@@ -49,7 +50,7 @@ relative-performance proxies, never actual fund flow.
 - Active Dashboard Snapshot is
   `2026-08-24T045652Z-aee1a6ab0f67`, contract 1.5 / Dashboard 2.2.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-26T062038Z-895a073769ad` from source commit `895a073769ad`.
+  `2026-08-26T094339Z-f9711d5403f6` from source commit `f9711d5403f6`.
 
 The active analytics and Snapshot are an exact, one-release review of
 2026-08-24 data with expected session 2026-08-25 and lag one. Their required

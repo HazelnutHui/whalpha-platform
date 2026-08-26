@@ -19,8 +19,10 @@ Keep only:
    active Snapshot reader names it as the exact pre-pointer legacy fallback;
 2. `build/oci-dashboard/2026-08-19T083341Z-7ed7fdc21686`, as the deliberate
    selectable-Universe rollback bundle;
-3. `build/oci-dashboard/2026-08-26T062038Z-895a073769ad`, as the active
-   deployed bundle.
+3. `build/oci-dashboard/2026-08-26T062038Z-895a073769ad`, as the immediate
+   rollback bundle;
+4. `build/oci-dashboard/2026-08-26T094339Z-f9711d5403f6`, as the active
+   deployed bundle pending authenticated visual verification.
 
 The active Snapshot 1.5 release is formally retained under `/data`; a duplicate
 `build/private-dashboard` copy is not required. The report validates every
@@ -31,10 +33,13 @@ active Snapshot/Market Intelligence lineage.
 
 Keep only:
 
-1. `/srv/whalpha/releases/2026-08-26T062038Z-895a073769ad`, selected by
+1. `/srv/whalpha/releases/2026-08-26T094339Z-f9711d5403f6`, selected by
    `/srv/whalpha/current`;
-2. `/srv/whalpha/releases/2026-08-19T083341Z-7ed7fdc21686`, as the reviewed
-   rollback release.
+2. `/srv/whalpha/releases/2026-08-26T062038Z-895a073769ad`, as the immediate
+   rollback release;
+3. `/srv/whalpha/releases/2026-08-19T083341Z-7ed7fdc21686`, retained
+   temporarily until authenticated visual verification, after which it is the
+   exact cleanup candidate.
 
 Remote cleanup requires separate exact path, type, symlink, active-pointer,
 service, and rollback verification. It must never infer remote state from a
@@ -64,7 +69,8 @@ source, canonical data, or active pointer.
 
 The same task then live-verified the OCI current pointer, rollback target,
 directory types, and absence of any other symlink or staging/partial residue.
-It removed 21 superseded or failed remote release directories. OCI now retains
-only the current and rollback releases listed above; Nginx, the Auth Service,
-localhost listener, and unauthenticated route boundary passed immediately after
-cleanup.
+It removed 21 superseded or failed remote release directories. At that point,
+OCI retained only the then-current and rollback releases; Nginx, the Auth
+Service, localhost listener, and unauthenticated route boundary passed
+immediately after cleanup. The later deployment temporarily expanded the
+retained set as recorded above.

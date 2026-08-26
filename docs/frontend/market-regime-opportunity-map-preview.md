@@ -78,9 +78,9 @@ reflow without whole-page horizontal overflow.
 The local `/tmp` preview remains available for explicit development review.
 The prior versioned frontend is present in the active Snapshot 1.5 / Dashboard
 2.2 production bundle and reads immutable Market Intelligence rather than
-`/tmp`. The renamed workspace, shared shell, and six-highlight presentation are
-implemented and verified on repository `main` but are not deployed by this
-change. The active 2026-08-24 payload remains visibly `stale_review`; existing
+`/tmp`. The renamed workspace, shared shell, first/default navigation position,
+and six-highlight presentation are implemented, verified, and deployed. The
+active 2026-08-24 payload remains visibly `stale_review`; existing
 Session protection is unchanged. Future guest and authenticated users must
 consume the identical analytics payload with the same fields, precision,
 freshness, and as-of session.
