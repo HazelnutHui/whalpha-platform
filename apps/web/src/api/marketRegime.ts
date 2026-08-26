@@ -101,6 +101,24 @@ export function parseMarketRegimePreview(value: unknown): MarketRegimePreviewRes
 }
 
 export async function getMarketRegimePreview(universeId: string | undefined, signal?: AbortSignal): Promise<MarketRegimePreviewResponse> {
+  if (import.meta.env.VITE_MARKET_DATA_MODE === 'snapshot') {
+    const envelope = object(
+      await fetchJson<unknown>('/private-data/v1/market-regime-overviews.json', signal),
+      'snapshot envelope',
+    );
+    if (
+      envelope.schema_version !== '1.0'
+      || envelope.contract_version !== 'market-regime-snapshot/1.0'
+      || !Array.isArray(envelope.records)
+      || envelope.records.length !== 2
+      || !Array.isArray(envelope.universe_order)
+      || envelope.universe_order.length !== 2
+    ) throw new Error('Unsupported Market Regime snapshot contract');
+    const selected = universeId ?? envelope.default_universe_id;
+    const record = envelope.records.find((item) => object(item, 'snapshot record').selected_universe_id === selected);
+    if (!record) throw new Error('Selected Market Regime Universe is unavailable');
+    return parseMarketRegimePreview(record);
+  }
   const query = universeId ? `?universe_id=${encodeURIComponent(universeId)}` : '';
   return parseMarketRegimePreview(await fetchJson<unknown>(`/api/v1/private/market-regime/overview${query}`, signal));
 }

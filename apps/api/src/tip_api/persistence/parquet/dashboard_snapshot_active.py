@@ -146,7 +146,9 @@ def current_state_fingerprint(root: Path, legacy_root: Path) -> str:
 def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
                         activation_logical_fingerprint: str, generated_at: datetime) -> DashboardSnapshotApprovalPlanV2:
     root=_validated_root(root); manifest=validate_snapshot_release(candidate)
-    if manifest.snapshot_contract_version!="1.4" or manifest.dashboard_contract_version!="2.1":
+    if (manifest.snapshot_contract_version, manifest.dashboard_contract_version) not in {
+        ("1.4", "2.1"), ("1.5", "2.2")
+    }:
         raise DashboardSnapshotPublicationError("candidate snapshot contract is not V2")
     if manifest.freshness_status!="fresh" or manifest.session_lag!=0 or manifest.expected_latest_completed_session!=manifest.actual_latest_completed_session:
         raise DashboardSnapshotPublicationError(
@@ -180,6 +182,8 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
     pointer_bytes=deterministic_json_bytes(pointer_payload)
     payload={
         "plan_version":"2.0","revision_id":REVISION_ID,"release_id":manifest.release_id,
+        "snapshot_contract_version":manifest.snapshot_contract_version,
+        "dashboard_contract_version":manifest.dashboard_contract_version,
         "generated_at":generated_at.astimezone(UTC).isoformat().replace("+00:00","Z"),
         "analysis_session":manifest.current_session_date,"expected_latest_completed_session":manifest.expected_latest_completed_session,
         "actual_latest_completed_session":manifest.actual_latest_completed_session,"freshness_status":"fresh","session_lag":0,
@@ -192,6 +196,9 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
         "aggregate_sha256":aggregate,"manifest_sha256":active_ref.manifest_sha256,
         "planned_pointer_sha256":hashlib.sha256(pointer_bytes).hexdigest(),"planned_pointer_fingerprint":pointer_fp,
         "rollback":rollback.model_dump(mode="json"),
+        "market_intelligence_publication_id":manifest.market_intelligence_publication_id,
+        "market_intelligence_payload_sha256":manifest.market_intelligence_payload_sha256,
+        "market_intelligence_logical_fingerprint":manifest.market_intelligence_logical_fingerprint,
     }
     return DashboardSnapshotApprovalPlanV2(**payload,plan_content_fingerprint=canonical_sha(payload))
 
@@ -204,12 +211,22 @@ def validate_plan(plan: DashboardSnapshotApprovalPlanV2) -> None:
         raise DashboardSnapshotPublicationError("snapshot approval candidate changed")
     if manifest.generated_at!=plan.generated_at.astimezone(UTC).isoformat().replace("+00:00","Z"):
         raise DashboardSnapshotPublicationError("snapshot approval timestamp mismatch")
+    if (
+        manifest.snapshot_contract_version != plan.snapshot_contract_version
+        or manifest.dashboard_contract_version != plan.dashboard_contract_version
+        or manifest.market_intelligence_publication_id != plan.market_intelligence_publication_id
+        or manifest.market_intelligence_payload_sha256 != plan.market_intelligence_payload_sha256
+        or manifest.market_intelligence_logical_fingerprint
+        != plan.market_intelligence_logical_fingerprint
+    ):
+        raise DashboardSnapshotPublicationError("snapshot approval consumer binding changed")
 
 
 def _planned_pointer(plan: DashboardSnapshotApprovalPlanV2) -> DashboardSnapshotActivePointerV2:
     active=DashboardSnapshotTargetReferenceV2(
         storage_kind="data_root",release_id=plan.release_id,logical_path=plan.target_logical_path,
-        snapshot_contract_version="1.4",dashboard_contract_version="2.1",
+        snapshot_contract_version=plan.snapshot_contract_version,
+        dashboard_contract_version=plan.dashboard_contract_version,
         aggregate_sha256=plan.aggregate_sha256,manifest_sha256=plan.manifest_sha256,
     )
     payload={"pointer_version":"2.0","status":"active","active":active.model_dump(mode="json"),

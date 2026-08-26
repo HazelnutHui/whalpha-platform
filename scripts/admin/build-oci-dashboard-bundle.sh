@@ -10,7 +10,7 @@ bundle_root="${repo_root}/build/oci-dashboard"
 
 usage() {
   cat <<MSG
-Usage: $0 (--snapshot-release RELEASE_ID | --snapshot-path ABSOLUTE_PATH) [--bundle-release RELEASE_ID]
+Usage: $0 (--snapshot-release RELEASE_ID | --snapshot-path ABSOLUTE_PATH) --market-intelligence-publication PUBLICATION_ID [--bundle-release RELEASE_ID]
 
 Build a versioned OCI dashboard bundle from an existing private dashboard snapshot.
 No upload or deployment is performed.
@@ -20,6 +20,7 @@ MSG
 snapshot_release=""
 snapshot_path=""
 bundle_release=""
+market_intelligence_publication=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --snapshot-release)
@@ -32,6 +33,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --bundle-release)
       bundle_release="${2:-}"
+      shift 2
+      ;;
+    --market-intelligence-publication)
+      market_intelligence_publication="${2:-}"
       shift 2
       ;;
     --help|-h)
@@ -60,6 +65,10 @@ if [[ -z "${bundle_release}" && -n "${snapshot_release}" ]]; then
 fi
 if [[ -z "${bundle_release}" ]]; then
   echo "--bundle-release is required with --snapshot-path" >&2
+  exit 2
+fi
+if [[ -z "${market_intelligence_publication}" ]] || [[ ! "${market_intelligence_publication}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
+  echo "--market-intelligence-publication must be an explicit safe publication id" >&2
   exit 2
 fi
 if [[ ! "${bundle_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
@@ -106,22 +115,40 @@ find "${staging_dir}/dashboard" -name '*.map' -delete
 cp "${web_dir}/static/login/index.html" "${staging_dir}/login/index.html"
 cp "${web_dir}/static/login/login.css" "${staging_dir}/login/login.css"
 cp "${web_dir}/static/login/login.js" "${staging_dir}/login/login.js"
+cp "${web_dir}/static/login/login-i18n.js" "${staging_dir}/login/login-i18n.js"
 cp -a "${snapshot_dir}/private-data/." "${staging_dir}/private-data/"
 
 git_commit=$(cd "${repo_root}" && git rev-parse HEAD)
 build_timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 file_count=$(find "${staging_dir}" -type f | wc -l)
-python3 - "${staging_dir}" "${bundle_release}" "${git_commit}" "${build_timestamp}" "${file_count}" <<'PY'
+python3 - "${staging_dir}" "${bundle_release}" "${git_commit}" "${build_timestamp}" "${file_count}" "${market_intelligence_publication}" <<'PY'
 import json, sys
 from pathlib import Path
 root=Path(sys.argv[1])
 manifest=json.loads((root/'private-data/v1/manifest.json').read_text())
+if manifest.get('snapshot_contract_version') != '1.5' or manifest.get('dashboard_contract_version') != '2.2':
+  raise SystemExit('OCI bundle requires Snapshot 1.5 / Dashboard 2.2')
+if manifest.get('market_intelligence_publication_id') != sys.argv[6]:
+  raise SystemExit('snapshot Market Intelligence publication differs from explicit OCI binding')
+analytics_path=root/'private-data/v1/market-regime-overviews.json'
+if not analytics_path.is_file():
+  raise SystemExit('snapshot Market Intelligence payload is missing')
+analytics=json.loads(analytics_path.read_text())
+if analytics.get('publication_id') != sys.argv[6] or len(analytics.get('records', [])) != 2:
+  raise SystemExit('snapshot Market Intelligence payload binding is invalid')
+if any(len(record.get('relationships', [])) != 16 for record in analytics['records']):
+  raise SystemExit('snapshot does not contain all 16 ETF relationships')
 payload={
   'release_id': sys.argv[2],
   'git_commit': sys.argv[3],
   'build_timestamp': sys.argv[4],
   'frontend_mode': 'snapshot',
   'dashboard_base': '/dashboard/',
+  'default_locale': 'en',
+  'supported_locales': ['en','zh'],
+  'market_intelligence_publication_id': sys.argv[6],
+  'market_intelligence_payload_sha256': manifest['market_intelligence_payload_sha256'],
+  'market_intelligence_logical_fingerprint': manifest['market_intelligence_logical_fingerprint'],
   'current_session_date': manifest['current_session_date'],
   'previous_session_date': manifest['previous_session_date'],
   'file_count': int(sys.argv[5]),

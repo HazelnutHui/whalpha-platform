@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-08-25 — Market Intelligence Production publication preparation
+
+- Added immutable publication/manifest/pointer/plan contracts, source-validating
+  reader, offline administrator, CAS/fsync, recovery, rollback, and fault guards.
+- Added Snapshot 1.5 / Dashboard 2.2, explicit OCI binding, formal API cache,
+  and bilingual snapshot-mode integration without changing analytics.
+- Generated a deterministic historical 2026-08-21 candidate and stale-gated
+  `/tmp` plan; Production remained unchanged and no deployment occurred.
+
 ## 2026-08-25 — English and Simplified Chinese interface
 
 - Added a typed React `en`/`zh` catalog, shared locale provider, fixed domain

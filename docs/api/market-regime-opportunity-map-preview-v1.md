@@ -1,5 +1,13 @@
 # Market Regime & Opportunity Map Preview API V1
 
+## Formal Production source
+
+The response contract is unchanged when sourced from formal Market Intelligence.
+`TIP_ENABLE_MARKET_INTELLIGENCE_ROUTES=true` selects the active reader once at
+startup; preview and formal flags are mutually exclusive. With neither, routes
+remain absent. Snapshot mode reads the two-record
+`market-regime-overviews.json` envelope through the same response parser.
+
 ## Boundary
 
 Contract `market-regime-opportunity-map-api/1.0` is a read-only, private local

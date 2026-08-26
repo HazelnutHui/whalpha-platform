@@ -1,0 +1,59 @@
+# Market Intelligence Publication V1
+
+## Status and scope
+
+Implemented as an approval-bound Production contract. The reviewed 2026-08-21
+candidate is historical and inactive because XNYS freshness is one session
+behind. No Production target or active pointer has been written.
+
+The publication contains one language-neutral Market Regime & Opportunity Map
+payload shared by the English and Simplified Chinese interfaces. Locale never
+enters this contract or its fingerprints.
+
+## Immutable layout
+
+```text
+<data-root>/market-data/analytics/market-intelligence/
+  schema_version=1/revision=market-regime-opportunity-map-v1/
+    analysis_session=<YYYY-MM-DD>/publication_id=<id>/
+      market-intelligence.json
+      manifest.json
+<data-root>/market-data/analytics/market-intelligence-active/active.json
+```
+
+A completed directory contains exactly two regular immutable files. Extra
+files, symlinks, path traversal, non-canonical JSON, or any physical/logical
+hash mismatch fail closed. Completed targets are never overwritten or repaired.
+
+## Payload and manifest
+
+Contract `market-intelligence-publication/1.0` binds:
+
+- schema/calculation versions, revision, publication ID, and analysis session;
+- the exact 26-session EOD ledger, latest EOD physical/business/content hashes,
+  same-day Identity logical fingerprint, and history fingerprint;
+- Activation pointer/logical fingerprints, Primary-first catalog, counts, and
+  membership fingerprints;
+- Phase 1a, Phase 1b, Phase 2, and preview aggregate logical fingerprints;
+- both Universe regime ledgers, state history, five dimensions, missingness,
+  30 ETFs, all 16 pairs, 5/10/20 metrics, and 336 relationship-history rows;
+- `language_neutral=true`, locales `en`/`zh`, zero external requests, no
+  credentials, and no raw provider payload.
+
+`generated_at` and `publication_id` do not alter payload logical content, but
+remain physically bound by payload SHA and manifest. JSON is NFC-normalized,
+key-sorted, compact, newline-terminated, and rejects NaN/Infinity.
+
+## Formal reader and API
+
+The reader validates pointer identity, namespace, exact files, canonical bytes,
+SHA-256, logical fingerprints, source lineage, Universe order/counts, and pair
+counts. An absent pointer is unavailable; a corrupt pointer never falls back.
+
+`TIP_ENABLE_MARKET_INTELLIGENCE_ROUTES=true` validates the active release once
+at FastAPI startup and creates an immutable in-memory view. Requests never scan
+EOD or recalculate analytics. With no explicit flag routes remain absent;
+preview and formal modes are mutually exclusive.
+
+Any analytics, lineage, ordering, nullability, or meaning change requires a new
+contract/calculation version and fingerprint. Translation changes do not.

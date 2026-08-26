@@ -40,3 +40,17 @@ Approval-plan creation requires `fresh`, lag zero, and exact expected/actual ses
 - OCI bundle construction requires an explicitly named immutable snapshot release; it does not select a latest directory or pointer implicitly.
 
 No production bundle or OCI deployment belongs to this boundary.
+
+## Contract 1.5 Market Intelligence extension
+
+Snapshot 1.5 pairs Dashboard contract 2.2 with the 1.4 Activation/Funnel data
+and adds `market-regime-overviews.json`. The language-neutral envelope contains
+two stable-order API records, 30 ETFs, and all 16 pairs. Its manifest freezes an
+explicit Market Intelligence publication ID, payload SHA, publication logical
+fingerprint, and nested analytics logical fingerprint.
+
+The builder accepts only a formally readable active Market Intelligence release
+whose session, Activation, catalog, counts, and memberships match the Snapshot.
+Contract 1.4 stays readable unchanged and does not claim analytics exist.
+Snapshot 1.5 never reads `/tmp`, recomputes analytics, or mixes the old
+1,641/1,747 fallback data with the new page.

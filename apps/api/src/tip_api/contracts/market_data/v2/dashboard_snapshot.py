@@ -80,6 +80,8 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     plan_version: Literal["2.0"] = "2.0"
     revision_id: Literal["universe-funnel-v2"] = "universe-funnel-v2"
     release_id: str
+    snapshot_contract_version: Literal["1.4", "1.5"] = "1.4"
+    dashboard_contract_version: Literal["2.1", "2.2"] = "2.1"
     generated_at: datetime
     analysis_session: date
     expected_latest_completed_session: date
@@ -99,6 +101,9 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     planned_pointer_sha256: str
     planned_pointer_fingerprint: str
     rollback: DashboardSnapshotTargetReferenceV2
+    market_intelligence_publication_id: str | None = None
+    market_intelligence_payload_sha256: str | None = None
+    market_intelligence_logical_fingerprint: str | None = None
     plan_content_fingerprint: str
 
     @field_validator(
@@ -133,6 +138,25 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
         if not path.is_absolute() or not path.is_relative_to(PurePosixPath("/tmp")) or ".." in path.parts:
             raise ValueError("candidate path must be an absolute /tmp path")
         return value
+
+    @field_validator("market_intelligence_payload_sha256", "market_intelligence_logical_fingerprint")
+    @classmethod
+    def optional_digests(cls, value: str | None) -> str | None:
+        return _sha(value) if value is not None else None
+
+    @model_validator(mode="after")
+    def market_intelligence_binding(self) -> "DashboardSnapshotApprovalPlanV2":
+        values = (
+            self.market_intelligence_publication_id,
+            self.market_intelligence_payload_sha256,
+            self.market_intelligence_logical_fingerprint,
+        )
+        if self.snapshot_contract_version == "1.5":
+            if self.dashboard_contract_version != "2.2" or any(value is None for value in values):
+                raise ValueError("Snapshot 1.5 requires Dashboard 2.2 and Market Intelligence")
+        elif self.dashboard_contract_version != "2.1" or any(value is not None for value in values):
+            raise ValueError("Snapshot 1.4 cannot bind Market Intelligence")
+        return self
 
 
 def _sha(value: str) -> str:

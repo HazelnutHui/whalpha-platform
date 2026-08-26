@@ -44,6 +44,17 @@ from .market_regime_preview import (
     PreviewUniverseAnalyticsV1,
     PreviewUniverseDefinitionV1,
 )
+from .market_intelligence import (
+    MarketIntelligenceActivePointerV1,
+    MarketIntelligenceActivationSourceV1,
+    MarketIntelligenceApprovalPlanV1,
+    MarketIntelligenceEodSourceV1,
+    MarketIntelligenceFileReferenceV1,
+    MarketIntelligenceManifestV1,
+    MarketIntelligencePayloadV1,
+    MarketIntelligenceSourceBindingV1,
+    MarketIntelligenceTargetReferenceV1,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -82,4 +93,13 @@ __all__ = [
     "PreviewSourceLogicalFingerprintsV1",
     "PreviewUniverseAnalyticsV1",
     "PreviewUniverseDefinitionV1",
+    "MarketIntelligenceActivePointerV1",
+    "MarketIntelligenceActivationSourceV1",
+    "MarketIntelligenceApprovalPlanV1",
+    "MarketIntelligenceEodSourceV1",
+    "MarketIntelligenceFileReferenceV1",
+    "MarketIntelligenceManifestV1",
+    "MarketIntelligencePayloadV1",
+    "MarketIntelligenceSourceBindingV1",
+    "MarketIntelligenceTargetReferenceV1",
 ]

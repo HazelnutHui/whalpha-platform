@@ -8,6 +8,7 @@ from tip_api.api.v1.private_market_regime import router as private_market_regime
 from tip_api.api.v1.router import router as api_v1_router
 from tip_api.config import AppConfig, config
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
+from tip_api.persistence.parquet.market_intelligence_active import read_active_market_intelligence
 from tip_api.persistence.parquet.dashboard_universe_activation import DashboardUniverseActivationError
 from tip_api.persistence.parquet.dashboard_universe_activation_active import ActiveDashboardUniverseActivation, read_active_dashboard_universe_activation
 from tip_api.services.eod_market_data import EodMarketDataQueryService
@@ -46,6 +47,13 @@ def create_app(
         app.state.market_regime_preview_service = MarketRegimePreviewService.from_bundle(
             cfg.market_regime_preview_bundle
         )
+        app.include_router(private_market_regime_router, prefix=cfg.api_v1_prefix)
+    if cfg.enable_market_intelligence_routes:
+        publication = read_active_market_intelligence(cfg.market_data_root, validate_sources=True)
+        app.state.market_regime_preview_service = MarketRegimePreviewService.from_payload(
+            publication.payload.analytics, publication.payload.source.preview_generated_at
+        )
+        app.state.market_intelligence_publication = publication
         app.include_router(private_market_regime_router, prefix=cfg.api_v1_prefix)
     return app
 

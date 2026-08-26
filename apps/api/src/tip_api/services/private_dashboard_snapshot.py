@@ -14,20 +14,24 @@ from typing import Any, Mapping
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from tip_api.contracts.analytics.v1 import PreviewUniverseDefinitionV1
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.schemas.private_market import DashboardOverviewResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse
 from tip_api.services.eod_market_data import EodMarketDataQueryService
 from tip_api.services.eod_return_analytics import EodReturnAnalyticsService
 from tip_api.services.dashboard_overview import DashboardOverviewService
 from tip_api.persistence.parquet.dashboard_universe_activation_active import ActiveDashboardUniverseActivation, read_active_dashboard_universe_activation
+from tip_api.persistence.parquet.market_intelligence_active import CompletedMarketIntelligence
+from tip_api.services.market_regime_preview import MarketRegimePreviewService
 
-SNAPSHOT_CONTRACT_VERSION = "1.4"
+SNAPSHOT_CONTRACT_VERSION = "1.5"
 SNAPSHOT_FILES = {
     "overview_file": "market-overview.json",
     "summary_file": "market-summary.json",
     "movers_file": "movers.json",
     "liquidity_map_file": "liquidity-map.json",
 }
+MARKET_INTELLIGENCE_FILE = "market-regime-overviews.json"
 _RELEASE_ID_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$")
 
 
@@ -38,7 +42,7 @@ class DashboardSnapshotError(RuntimeError):
 class DashboardSnapshotManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[1234])?$")
+    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[12345])?$")
     release_id: str
     generated_at: str
     current_session_date: str
@@ -73,6 +77,11 @@ class DashboardSnapshotManifest(BaseModel):
     membership_evidence_as_of: str | None = None
     funnel_stage_count: int | None = None
     funnel_source_fingerprint: str | None = None
+    market_intelligence_file: str | None = None
+    market_intelligence_publication_id: str | None = None
+    market_intelligence_payload_sha256: str | None = None
+    market_intelligence_logical_fingerprint: str | None = None
+    analytics_payload_logical_fingerprint: str | None = None
     is_real_provider_backed: bool
     access_classification: str
     contains_raw_provider_data: bool
@@ -100,16 +109,27 @@ class DashboardSnapshotManifest(BaseModel):
             raise ValueError("snapshot freshness fields are required for contract 1.1")
         if self.snapshot_contract_version == "1.2" and self.classification_as_of_date is None:
             raise ValueError("snapshot governance fields are required for contract 1.2")
-        if self.snapshot_contract_version in {"1.3", "1.4"} and (
+        if self.snapshot_contract_version in {"1.3", "1.4", "1.5"} and (
             self.classification_as_of_date is None or self.selected_universe_id is None or
             len(self.available_universe_ids) != 2 or self.activation_fingerprint is None or
             self.membership_evidence_as_of is None
         ):
             raise ValueError("snapshot activation fields are required for contract 1.3+")
-        if self.snapshot_contract_version == "1.4" and (
+        if self.snapshot_contract_version in {"1.4", "1.5"} and (
             self.funnel_stage_count != 20 or self.funnel_source_fingerprint is None
         ):
             raise ValueError("snapshot Funnel fields are required for contract 1.4")
+        if self.snapshot_contract_version == "1.5" and any(
+            value is None
+            for value in (
+                self.market_intelligence_file,
+                self.market_intelligence_publication_id,
+                self.market_intelligence_payload_sha256,
+                self.market_intelligence_logical_fingerprint,
+                self.analytics_payload_logical_fingerprint,
+            )
+        ):
+            raise ValueError("snapshot Market Intelligence fields are required for contract 1.5")
         return self
 
 
@@ -146,6 +166,7 @@ def build_private_dashboard_snapshot(
     git_commit: str | None = None,
     allowed_output_root: Path | None = None,
     dashboard_activation: ActiveDashboardUniverseActivation | None = None,
+    market_intelligence: CompletedMarketIntelligence | None = None,
 ) -> DashboardSnapshotResult:
     safe_data_root = _validate_existing_root(data_root, label="data_root")
     safe_output_root = _validate_output_root(output_root, allowed_output_root=allowed_output_root)
@@ -183,21 +204,69 @@ def build_private_dashboard_snapshot(
     staging_private = staging_dir / "private-data" / "v1"
     staging_private.mkdir(parents=True, exist_ok=False)
     try:
-        payloads: Mapping[str, BaseModel] = {
+        payloads: dict[str, BaseModel | Mapping[str, Any]] = {
             SNAPSHOT_FILES["overview_file"]: overview,
             SNAPSHOT_FILES["summary_file"]: summary,
             SNAPSHOT_FILES["movers_file"]: movers,
             SNAPSHOT_FILES["liquidity_map_file"]: liquidity_map,
         }
+        market_payload: Mapping[str, Any] | None = None
+        if market_intelligence is not None:
+            if (
+                market_intelligence.payload.analysis_session != summary.current_session_date
+                or market_intelligence.payload.source.activation.logical_fingerprint
+                != overview.activation_fingerprint
+                or market_intelligence.payload.source.activation.universes
+                != tuple(
+                    PreviewUniverseDefinitionV1(
+                        universe_id=item.definition.universe_id,
+                        display_name=item.definition.display_name,
+                        catalog_order=index,
+                        is_default=item.definition.universe_id == overview.default_universe_id,
+                        member_count=item.definition.member_count,
+                        membership_fingerprint=item.definition.membership_fingerprint,
+                    )
+                    for index, item in enumerate(overview.universes)
+                )
+            ):
+                raise DashboardSnapshotError(
+                    "Market Intelligence source does not match Dashboard Snapshot sources"
+                )
+            market_service = MarketRegimePreviewService.from_payload(
+                market_intelligence.payload.analytics,
+                market_intelligence.payload.source.preview_generated_at,
+            )
+            market_payload = {
+                "schema_version": "1.0",
+                "contract_version": "market-regime-snapshot/1.0",
+                "publication_id": market_intelligence.payload.publication_id,
+                "payload_sha256": market_intelligence.manifest.payload_sha256,
+                "payload_logical_fingerprint": market_intelligence.payload.logical_fingerprint,
+                "analytics_logical_fingerprint": (
+                    market_intelligence.payload.analytics.logical_fingerprint
+                ),
+                "default_universe_id": overview.default_universe_id,
+                "universe_order": [item.definition.universe_id for item in overview.universes],
+                "records": [
+                    market_service.overview(item.definition.universe_id).model_dump(mode="json")
+                    for item in overview.universes
+                ],
+            }
+            payloads[MARKET_INTELLIGENCE_FILE] = market_payload
         hashes: dict[str, str] = {}
         for filename, payload in payloads.items():
             path = staging_private / filename
-            _write_json(path, payload.model_dump(mode="json"))
+            value = payload.model_dump(mode="json") if isinstance(payload, BaseModel) else payload
+            _write_json(path, value)
             _validate_json_file(path, filename)
             hashes[filename] = sha256_file(path)
 
         funnel_stage_count = sum(len(item.funnel) for item in overview.universes)
-        snapshot_contract_version = SNAPSHOT_CONTRACT_VERSION if funnel_stage_count == 20 else "1.3"
+        snapshot_contract_version = (
+            SNAPSHOT_CONTRACT_VERSION
+            if funnel_stage_count == 20 and market_intelligence is not None
+            else ("1.4" if funnel_stage_count == 20 else "1.3")
+        )
         manifest = DashboardSnapshotManifest(
             snapshot_contract_version=snapshot_contract_version,
             release_id=rid,
@@ -222,7 +291,9 @@ def build_private_dashboard_snapshot(
             liquidity_node_count=len(liquidity_map.nodes),
             warning_count=summary.quality_warning_count,
             default_universe_id=overview.default_universe_id,
-            dashboard_contract_version=overview.contract_version,
+            dashboard_contract_version=(
+                "2.2" if snapshot_contract_version == "1.5" else overview.contract_version
+            ),
             universe_definition_id=overview.universe_definition_id,
             universe_version=overview.universe_version,
             governance_status=overview.governance_status,
@@ -232,10 +303,37 @@ def build_private_dashboard_snapshot(
             available_universe_ids=tuple(item.definition.universe_id for item in overview.universes),
             activation_fingerprint=overview.activation_fingerprint,
             membership_evidence_as_of=overview.classification_as_of_date.isoformat(),
-            funnel_stage_count=funnel_stage_count if snapshot_contract_version == "1.4" else None,
+            funnel_stage_count=(
+                funnel_stage_count
+                if snapshot_contract_version in {"1.4", "1.5"}
+                else None
+            ),
             funnel_source_fingerprint=(
                 next(item.funnel[0].source_fingerprint for item in overview.universes if item.funnel)
-                if snapshot_contract_version == "1.4" else None
+                if snapshot_contract_version in {"1.4", "1.5"} else None
+            ),
+            market_intelligence_file=(
+                MARKET_INTELLIGENCE_FILE if market_intelligence is not None else None
+            ),
+            market_intelligence_publication_id=(
+                market_intelligence.payload.publication_id
+                if market_intelligence is not None
+                else None
+            ),
+            market_intelligence_payload_sha256=(
+                market_intelligence.manifest.payload_sha256
+                if market_intelligence is not None
+                else None
+            ),
+            market_intelligence_logical_fingerprint=(
+                market_intelligence.payload.logical_fingerprint
+                if market_intelligence is not None
+                else None
+            ),
+            analytics_payload_logical_fingerprint=(
+                market_intelligence.payload.analytics.logical_fingerprint
+                if market_intelligence is not None
+                else None
             ),
             is_real_provider_backed=True,
             access_classification="private",
@@ -291,6 +389,8 @@ def _validate_json_file(path: Path, filename: str) -> None:
             MoversResponse.model_validate(decoded)
         elif filename == SNAPSHOT_FILES["liquidity_map_file"]:
             LiquidityMapResponse.model_validate(decoded)
+        elif filename == MARKET_INTELLIGENCE_FILE:
+            _validate_market_intelligence_snapshot(decoded)
         else:
             raise DashboardSnapshotError(f"unexpected snapshot file {filename}")
     except DashboardSnapshotError:
@@ -316,14 +416,59 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             raise DashboardSnapshotError("snapshot file checksum mismatch")
     if manifest.access_classification != "private" or manifest.contains_credentials or manifest.contains_raw_provider_data:
         raise DashboardSnapshotError("snapshot manifest violates access boundary")
-    if manifest.snapshot_contract_version == "1.4":
+    if manifest.snapshot_contract_version in {"1.4", "1.5"}:
         overview = DashboardOverviewResponse.model_validate_json((private_dir / manifest.overview_file).read_text(encoding="utf-8"))
         if overview.contract_version != "2.1" or sum(len(item.funnel) for item in overview.universes) != 20:
             raise DashboardSnapshotError("snapshot formal Funnel contract mismatch")
         fingerprints = {stage.source_fingerprint for item in overview.universes for stage in item.funnel}
         if fingerprints != {manifest.funnel_source_fingerprint}:
             raise DashboardSnapshotError("snapshot Funnel source fingerprint mismatch")
+    if manifest.snapshot_contract_version == "1.5":
+        if manifest.dashboard_contract_version != "2.2":
+            raise DashboardSnapshotError("snapshot Dashboard contract 2.2 is required")
+        analytics_path = private_dir / MARKET_INTELLIGENCE_FILE
+        if analytics_path.is_symlink() or not analytics_path.is_file():
+            raise DashboardSnapshotError("snapshot Market Intelligence file is missing")
+        _validate_json_file(analytics_path, MARKET_INTELLIGENCE_FILE)
+        if sha256_file(analytics_path) != manifest.file_sha256.get(MARKET_INTELLIGENCE_FILE):
+            raise DashboardSnapshotError("snapshot Market Intelligence checksum mismatch")
+        analytics = json.loads(analytics_path.read_bytes())
+        if (
+            analytics["publication_id"] != manifest.market_intelligence_publication_id
+            or analytics["payload_sha256"] != manifest.market_intelligence_payload_sha256
+            or analytics["payload_logical_fingerprint"]
+            != manifest.market_intelligence_logical_fingerprint
+            or analytics["analytics_logical_fingerprint"]
+            != manifest.analytics_payload_logical_fingerprint
+        ):
+            raise DashboardSnapshotError("snapshot Market Intelligence reference mismatch")
     return manifest
+
+
+def _validate_market_intelligence_snapshot(value: object) -> None:
+    if not isinstance(value, dict):
+        raise DashboardSnapshotError("Market Intelligence snapshot is not an object")
+    if (
+        value.get("schema_version") != "1.0"
+        or value.get("contract_version") != "market-regime-snapshot/1.0"
+        or not isinstance(value.get("records"), list)
+        or len(value["records"]) != 2
+        or value.get("universe_order")
+        != [
+            "provider_classified_common_shares_v1",
+            "provider_classified_common_shares_plus_adrs_v1",
+        ]
+    ):
+        raise DashboardSnapshotError("Market Intelligence snapshot contract is invalid")
+    from tip_api.contracts.analytics.v1 import MarketRegimeOpportunityMapResponseV1
+
+    records = tuple(
+        MarketRegimeOpportunityMapResponseV1.model_validate(item) for item in value["records"]
+    )
+    if tuple(item.selected_universe_id for item in records) != tuple(value["universe_order"]):
+        raise DashboardSnapshotError("Market Intelligence snapshot Universe order differs")
+    if any(len(item.relationships) != 16 for item in records):
+        raise DashboardSnapshotError("Market Intelligence snapshot pair registry is incomplete")
 
 
 def _validate_existing_root(path: Path, *, label: str) -> Path:

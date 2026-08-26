@@ -1,5 +1,18 @@
 # Current Status
 
+## 2026-08-25 — Market Intelligence Production integration prepared
+
+- Implemented immutable Market Intelligence 1.0, formal active reader,
+  approval-bound offline publisher, CAS/fsync, verify-then-link, and rollback.
+- Added Snapshot 1.5 / Dashboard 2.2 embedding, explicit OCI binding, formal API
+  startup cache, and snapshot-mode Frontend. One language-neutral payload serves
+  identical English and Chinese values.
+- The 2026-08-21 candidate rereads to 1,718/1,831, Composite
+  63.9102/64.8167, 30 ETFs, 16 pairs, and 336 history records with zero preview
+  migration mismatch and a byte-identical deterministic rerun.
+- Expected XNYS is 2026-08-24 while actual EOD is 2026-08-21. The retained plan
+  is `activation_allowed=false`; no Production/Snapshot/bundle/deploy occurred.
+
 ## 2026-08-25 — English and Simplified Chinese local interface
 
 - Added a typed, centralized `en`/`zh` presentation catalog for the complete

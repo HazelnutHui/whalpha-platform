@@ -16,6 +16,7 @@ from tip_api.persistence.parquet.dashboard_snapshot_active import (
 )
 from tip_api.persistence.parquet.dashboard_universe_activation_active import read_active_dashboard_universe_activation
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
+from tip_api.persistence.parquet.market_intelligence_active import read_active_market_intelligence
 from tip_api.services.private_dashboard_snapshot import build_private_dashboard_snapshot, deterministic_json_bytes
 
 ROOT=Path("/data/trading-intelligence-platform")
@@ -46,6 +47,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--approved-plan",type=Path)
     p.add_argument("--approved-plan-sha256")
     p.add_argument("--expected-current-state-fingerprint")
+    p.add_argument("--market-intelligence-publication-id")
     return p
 
 
@@ -53,7 +55,7 @@ def main(argv: list[str]|None=None) -> int:
     args=_parser().parse_args(argv)
     approved_mode=args.apply or args.verify_then_link
     if approved_mode:
-        if not all((args.approved_plan,args.approved_plan_sha256,args.expected_current_state_fingerprint)) or any((args.approval_package,args.output_root,args.release_id,args.generated_at)):
+        if not all((args.approved_plan,args.approved_plan_sha256,args.expected_current_state_fingerprint)) or any((args.approval_package,args.output_root,args.release_id,args.generated_at,args.market_intelligence_publication_id)):
             _parser().error("approved operation requires plan, plan SHA-256, and expected current-state fingerprint only")
         plan=_load_plan(args.approved_plan,args.approved_plan_sha256)
         if plan.expected_current_state_fingerprint!=args.expected_current_state_fingerprint:
@@ -83,8 +85,16 @@ def main(argv: list[str]|None=None) -> int:
     if not output.is_absolute() or not output.resolve(strict=False).is_relative_to(Path("/tmp")):
         raise DashboardSnapshotPublicationError("dry-run output root must be under /tmp")
     activation=read_active_dashboard_universe_activation(ROOT,analysis_session=SESSION,validate_sources=True)
+    market_intelligence = None
+    if args.market_intelligence_publication_id:
+        market_intelligence = read_active_market_intelligence(ROOT, validate_sources=True)
+        if market_intelligence.payload.publication_id != args.market_intelligence_publication_id:
+            raise DashboardSnapshotPublicationError(
+                "explicit Market Intelligence publication is not the active formal release"
+            )
     candidate=build_private_dashboard_snapshot(data_root=ROOT,output_root=output,allowed_output_root=output,
-        release_id=args.release_id,generated_at=generated,dashboard_activation=activation)
+        release_id=args.release_id,generated_at=generated,dashboard_activation=activation,
+        market_intelligence=market_intelligence)
     manifest=candidate.manifest
     response={"status":"dry_run_ready","candidate_path":str(candidate.output_dir),
               "freshness_status":manifest.freshness_status,"session_lag":manifest.session_lag,

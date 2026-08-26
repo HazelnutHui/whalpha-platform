@@ -333,13 +333,12 @@ class DashboardOverviewService:
         )
         by_id={item.row.instrument_id:item for item in rows}
         missing=member_ids-set(by_id)
-        if missing: raise EodQueryValidationError("activated universe member is missing current/previous bar")
-        selected=tuple(by_id[item] for item in sorted(member_ids,key=str))
+        selected=tuple(by_id[item] for item in sorted(member_ids & set(by_id),key=str))
         selected_rows = tuple(item.row for item in selected)
         non_outlier = tuple(item.row for item in selected if not item.is_outlier)
         return DashboardUniverseView(
             definition=definition,
-            audit=_audit(rows, selected, definition),
+            audit=_audit(rows, selected, definition, missing_member_count=len(missing)),
             summary=_summary(selected_rows, current_date, previous_date, rows),
             movers=_movers(non_outlier, current_date, previous_date),
             trading_activity_map=_trading_activity_map(non_outlier, current_date, previous_date, limit=DEFAULT_MAP_NODE_LIMIT),
@@ -357,8 +356,11 @@ class DashboardOverviewService:
     def _formal_funnels(self, analysis_session: date) -> dict[str, tuple[DashboardUniverseFunnelStage, ...]]:
         if getattr(self.activation.manifest, "manifest_version", None) != "2.0":
             return {}
+        source_session = self.activation.manifest.analysis_session
+        if source_session > analysis_session:
+            raise EodQueryValidationError("active Funnel source is from a future session")
         source = read_completed_superseding_full_base(
-            Path(self.query_service.repository.root), analysis_session=analysis_session
+            Path(self.query_service.repository.root), analysis_session=source_session
         )
         if source.manifest.logical_content_fingerprint != self.activation.manifest.source_publication_fingerprint:
             raise EodQueryValidationError("active activation and formal Funnel source disagree")
@@ -374,7 +376,7 @@ class DashboardOverviewService:
                 universe_id=universe_id, stage_index=item.stage_order, stage_id=item.stage_id,
                 display_label=item.stage_label, input_count=item.input_count,
                 excluded_count=item.excluded_count, remaining_count=item.remaining_count,
-                source_revision=source.manifest.revision_id, source_session=analysis_session,
+                source_revision=source.manifest.revision_id, source_session=source_session,
                 source_fingerprint=source.manifest.logical_content_fingerprint,
             ))
         finalized: dict[str, tuple[DashboardUniverseFunnelStage, ...]] = {}
@@ -478,11 +480,19 @@ class DashboardOverviewService:
         return tuple(result)
 
 
-def _audit(rows: tuple[DashboardReturnRow, ...], selected: tuple[DashboardReturnRow, ...], definition: DashboardUniverseDefinition) -> DashboardUniverseAudit:
+def _audit(
+    rows: tuple[DashboardReturnRow, ...],
+    selected: tuple[DashboardReturnRow, ...],
+    definition: DashboardUniverseDefinition,
+    *,
+    missing_member_count: int = 0,
+) -> DashboardUniverseAudit:
     exclusion_counts: dict[str, int] = {}
     for item in rows:
         for reason in item.universe_reasons:
             exclusion_counts[reason] = exclusion_counts.get(reason, 0) + 1
+    if missing_member_count:
+        exclusion_counts["missing_current_or_previous_bar"] = missing_member_count
     return DashboardUniverseAudit(
         raw_comparable_count=len(rows),
         common_stock_count=definition.security_type_composition.get("CS",0),

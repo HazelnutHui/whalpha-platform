@@ -1,5 +1,13 @@
 # Dashboard Snapshot V2 Operations
 
+## Market Intelligence consumer binding
+
+The next Market Regime-capable release is Snapshot 1.5 / Dashboard 2.2. Its
+dry-run receives an explicit `--market-intelligence-publication-id`, formally
+reads the active immutable publication, and freezes that reference in candidate
+and plan. It never discovers a latest analytics directory. Analytics and
+Snapshot publication remain separately approved operations.
+
 ## Safety boundary
 
 The publisher and rollback tools are offline administrator workflows. They do not fetch EOD or provider data. Never run apply while canonical freshness is stale.

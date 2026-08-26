@@ -311,6 +311,10 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "--snapshot-path" in build_script.read_text()
     assert "private-dashboard-v2/revision=universe-funnel-v2" in build_script.read_text()
     assert "release_id=*" in build_script.read_text()
+    assert "--market-intelligence-publication" in build_script.read_text()
+    assert "Snapshot 1.5 / Dashboard 2.2" in build_script.read_text()
+    assert "login-i18n.js" in build_script.read_text()
+    assert "'default_locale': 'en'" in build_script.read_text()
     text = nginx_template.read_text()
     assert "location /dashboard/" in text and "auth_request /auth/internal-verify" in text
     assert "location = / {" in text and "try_files /login/index.html =404" in text

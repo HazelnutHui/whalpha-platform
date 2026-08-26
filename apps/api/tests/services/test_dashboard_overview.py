@@ -146,6 +146,18 @@ def test_only_activated_primary_and_secondary_are_available():
     assert universes[PUBLIC_SECONDARY_ID].audit.final_count == 3
 
 
+def test_overview_reports_activated_members_without_comparable_bars_as_missing():
+    current, previous = base_rows()
+    current = tuple(row for row in current if row.instrument_id != uid(6))
+    overview = service(current, previous).get_latest_overview()
+    primary = next(
+        item for item in overview.universes if item.definition.universe_id == CANDIDATE_A_ID
+    )
+    assert primary.definition.member_count == 2
+    assert primary.audit.final_count == 1
+    assert primary.audit.exclusion_counts["missing_current_or_previous_bar"] == 1
+
+
 def test_sector_benchmarks_are_fixed_and_do_not_fabricate_missing_data():
     current, previous = base_rows()
     overview = service(current, previous).get_latest_overview()

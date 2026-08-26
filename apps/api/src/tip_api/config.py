@@ -16,6 +16,7 @@ class AppConfig:
     enable_private_market_data_routes: bool = False
     enable_market_regime_preview_routes: bool = False
     market_regime_preview_bundle: Path | None = None
+    enable_market_intelligence_routes: bool = False
 
     def __post_init__(self) -> None:
         if not self.market_data_root.is_absolute():
@@ -24,6 +25,8 @@ class AppConfig:
             raise ValueError("market_regime_preview_bundle must be an absolute path")
         if self.enable_market_regime_preview_routes and self.market_regime_preview_bundle is None:
             raise ValueError("enabled Market Regime preview routes require an explicit bundle")
+        if self.enable_market_regime_preview_routes and self.enable_market_intelligence_routes:
+            raise ValueError("preview and formal Market Intelligence routes are mutually exclusive")
 
 
 def load_app_config(env: Mapping[str, str] | None = None) -> AppConfig:
@@ -36,6 +39,9 @@ def load_app_config(env: Mapping[str, str] | None = None) -> AppConfig:
             source.get("TIP_ENABLE_MARKET_REGIME_PREVIEW_ROUTES")
         ),
         market_regime_preview_bundle=Path(bundle_value) if bundle_value else None,
+        enable_market_intelligence_routes=_truthy(
+            source.get("TIP_ENABLE_MARKET_INTELLIGENCE_ROUTES")
+        ),
     )
 
 

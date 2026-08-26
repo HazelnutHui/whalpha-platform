@@ -1,5 +1,14 @@
 # OCI Private Dashboard Deployment
 
+## Snapshot 1.5 bundle binding
+
+The builder requires an explicit immutable Snapshot release/path and
+`--market-intelligence-publication`. It rejects contracts other than Snapshot
+1.5 / Dashboard 2.2, a mismatched ID, missing analytics, or fewer than 16 pairs.
+It copies bilingual login assets, freezes default locale `en` and locales
+`en`/`zh`, and records analytics SHA/logical identity. It never reads `latest`
+or recomputes analytics.
+
 ## Latest Selectable-Universe Release
 
 Release `2026-08-19T083341Z-7ed7fdc21686` is the current versioned release. It serves private snapshot contract 1.3 with Common Shares as default and Common Shares + ADRs as the optional view. Legacy remains available only through retained data and historical releases for deliberate rollback. Automated unauthenticated protection checks passed; authenticated visual/selector verification remains manual.

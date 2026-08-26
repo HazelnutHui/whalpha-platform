@@ -86,14 +86,14 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Market Regime read-only local API, preview bundle, and desktop page
 - [x] Typed English/Simplified Chinese interface for login, Dashboard, and
   Market Regime local preview
+- [x] Market Intelligence immutable contract, reader, publisher, Snapshot 1.5,
+  and explicit OCI integration path
 
 ## Next Small Target
 
-Review the English and Chinese local pages at all desktop viewports, then scope
-the historical-change layer and lightweight visualizations. Do not start
-Production analytics publication design, publication, snapshot integration,
-guest access, or deployment without a separate authorization. Keep SEC B2
-paused.
+Catch EOD up through the formally expected XNYS session, regenerate/review one
+fresh Market Intelligence plan, then separately authorize its single apply.
+Snapshot and OCI remain later, separate approvals. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

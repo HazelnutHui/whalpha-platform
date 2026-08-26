@@ -252,7 +252,7 @@ class MarketRegimePreviewService:
     """Immutable in-memory query view populated from one validated bundle at startup."""
 
     def __init__(self, completed: CompletedPreviewBundle) -> None:
-        self._manifest = completed.manifest
+        self._generated_at = completed.manifest.generated_at
         self._payload = completed.payload
         self._universes = {item.definition.universe_id: item for item in completed.payload.universes}
         self._relationships = {item.definition.pair_id: item for item in completed.payload.relationships}
@@ -260,6 +260,23 @@ class MarketRegimePreviewService:
     @classmethod
     def from_bundle(cls, path: Path) -> "MarketRegimePreviewService":
         return cls(read_market_regime_preview_bundle(path))
+
+    @classmethod
+    def from_payload(
+        cls, payload: MarketRegimePreviewPayloadV1, generated_at: datetime
+    ) -> "MarketRegimePreviewService":
+        """Build the same immutable API view from a formal publication payload."""
+
+        instance = cls.__new__(cls)
+        instance._generated_at = generated_at
+        instance._payload = payload
+        instance._universes = {
+            item.definition.universe_id: item for item in payload.universes
+        }
+        instance._relationships = {
+            item.definition.pair_id: item for item in payload.relationships
+        }
+        return instance
 
     def overview(self, universe_id: str | None = None) -> MarketRegimeOpportunityMapResponseV1:
         selected = universe_id or self._payload.default_universe_id
@@ -270,7 +287,7 @@ class MarketRegimePreviewService:
             item for item in self._payload.relationship_comparisons if item.universe_id == selected
         )
         return MarketRegimeOpportunityMapResponseV1(
-            bundle_generated_at=self._manifest.generated_at,
+            bundle_generated_at=self._generated_at,
             bundle_logical_fingerprint=self._payload.logical_fingerprint,
             as_of_session=self._payload.as_of_session,
             data_status=self._payload.data_status,

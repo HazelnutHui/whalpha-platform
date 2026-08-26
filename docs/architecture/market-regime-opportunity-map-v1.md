@@ -1,5 +1,16 @@
 # Market Regime & Opportunity Map V1 Architecture and Implementation Plan
 
+## Production publication integration
+
+The Production chain is formal EOD/Identity/Activation to immutable Market
+Intelligence, formal active reader, Snapshot 1.5, explicit OCI bundle, and the
+existing read-only API cache/bilingual Frontend. One language-neutral object
+serves English and Chinese; locale never affects analytics identity.
+
+No layer selects `latest`, reads Dell `/tmp` in Production, or recalculates the
+26-session panel on a request/startup path. Publisher, Snapshot, and OCI are
+independent approval and rollback domains.
+
 ## Status
 
 Status: **Accepted implementation plan; Phase 1a, Phase 1b, Phase 2, and a
