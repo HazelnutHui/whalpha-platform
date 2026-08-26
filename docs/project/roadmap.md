@@ -88,6 +88,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   Market Regime local preview
 - [x] Market Intelligence immutable contract, reader, publisher, Snapshot 1.5,
   and explicit OCI integration path
+- [x] Exact, one-release stale review authorization contract and bilingual
+  `stale_review` presentation without weakening normal freshness
 
 ## Next Small Target
 

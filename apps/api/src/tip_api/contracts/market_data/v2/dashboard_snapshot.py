@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
+from tip_api.contracts.analytics.v1.review_deployment import ReviewDeploymentAuthorizationV1
+
 
 class DashboardSnapshotFileReferenceV2(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
@@ -86,8 +88,12 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     analysis_session: date
     expected_latest_completed_session: date
     actual_latest_completed_session: date
-    freshness_status: Literal["fresh"]
-    session_lag: Literal[0]
+    freshness_status: Literal["fresh", "stale"]
+    session_lag: int = Field(ge=0)
+    review_mode: bool = False
+    normal_freshness: bool = False
+    activation_allowed_by_review_authorization: bool = False
+    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
     activation_pointer_fingerprint: str
     activation_logical_fingerprint: str
     expected_current_state_fingerprint: str
@@ -156,6 +162,32 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
                 raise ValueError("Snapshot 1.5 requires Dashboard 2.2 and Market Intelligence")
         elif self.dashboard_contract_version != "2.1" or any(value is not None for value in values):
             raise ValueError("Snapshot 1.4 cannot bind Market Intelligence")
+        return self
+
+    @model_validator(mode="after")
+    def freshness_authorization_reconciles(self) -> "DashboardSnapshotApprovalPlanV2":
+        normal = (
+            self.freshness_status == "fresh"
+            and self.session_lag == 0
+            and self.expected_latest_completed_session == self.actual_latest_completed_session
+        )
+        if self.normal_freshness != normal:
+            raise ValueError("normal snapshot freshness authorization differs")
+        if self.review_mode != (self.review_deployment is not None):
+            raise ValueError("snapshot review mode and authorization differ")
+        review_allowed = self.review_deployment is not None and (
+            self.analysis_session == self.review_deployment.approved_as_of_session
+            and self.actual_latest_completed_session
+            == self.review_deployment.approved_as_of_session
+            and self.expected_latest_completed_session
+            == self.review_deployment.expected_latest_session
+            and self.session_lag == self.review_deployment.expected_lag_sessions
+            and self.freshness_status == "stale"
+        )
+        if self.activation_allowed_by_review_authorization != review_allowed:
+            raise ValueError("snapshot review freshness authorization differs")
+        if normal and self.review_deployment is not None:
+            raise ValueError("fresh snapshot must not carry stale-review authorization")
         return self
 
 

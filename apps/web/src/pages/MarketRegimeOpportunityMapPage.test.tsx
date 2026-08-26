@@ -61,6 +61,24 @@ describe('Market Regime Opportunity Map desktop preview', () => {
     expect(screen.getByText(/No partial or mixed-version analytics/)).toBeInTheDocument();
   });
 
+  it('shows the explicit stale-review banner without changing analytics', async () => {
+    const payload = marketRegimeFixture();
+    payload.data_status = 'stale_review';
+    payload.review_deployment = {
+      contract_version: 'production-review-deployment/1.0', review_mode: true,
+      normal_freshness: false, data_status: 'stale_review',
+      approved_as_of_session: '2026-08-24', expected_latest_session: '2026-08-25',
+      expected_lag_sessions: 1,
+      explicit_user_acknowledgement: 'I_ACKNOWLEDGE_2026_08_24_STALE_REVIEW_LAG_1',
+    };
+    getPreview.mockResolvedValueOnce(payload);
+    render(<MarketRegimeOpportunityMapPage />);
+    expect(await screen.findByText(
+      'Review deployment · Data as of 2026-08-24 · 1 completed session behind',
+    )).toBeInTheDocument();
+    expect(document.querySelector('[data-exact-value="63.9102"]')).toBeInTheDocument();
+  });
+
   it('changes only presentation language while preserving the analytics payload and exact values', async () => {
     window.localStorage.clear();
     window.history.replaceState({}, '', '/?view=regime&universe=provider_classified_common_shares_v1&lang=en');

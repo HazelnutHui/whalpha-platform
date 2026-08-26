@@ -10,9 +10,11 @@ from fastapi.testclient import TestClient
 
 from tip_api.config import AppConfig
 from tip_api.contracts.analytics.v1 import (
+    REVIEW_ACKNOWLEDGEMENT,
     MarketIntelligenceActivationSourceV1,
     MarketIntelligenceEodSourceV1,
     MarketIntelligenceSourceBindingV1,
+    approved_review_authorization,
 )
 from tip_api.main import create_app
 from tip_api.persistence.parquet import market_intelligence_active as repo
@@ -196,6 +198,10 @@ def test_tamper_state_symlink_partial_and_stale_fail_closed(monkeypatch, tmp_pat
         repo.publish_and_activate(root=root, plan=plan, expected_current_state_fingerprint="e" * 64)
     stale_body = plan.model_dump(mode="json", exclude={"plan_content_fingerprint"})
     stale_body["activation_allowed"] = False
+    stale_body["normal_freshness"] = False
+    stale_body["freshness_status"] = "stale"
+    stale_body["session_lag"] = 1
+    stale_body["expected_latest_completed_session"] = "2026-08-22"
     stale = type(plan).model_validate(
         {**stale_body, "plan_content_fingerprint": repo.canonical_fingerprint(stale_body)}
     )
@@ -206,6 +212,53 @@ def test_tamper_state_symlink_partial_and_stale_fail_closed(monkeypatch, tmp_pat
     target.symlink_to(tmp_path, target_is_directory=True)
     with pytest.raises(Exception, match="target|symlink"):
         repo.publish_and_activate(root=root, plan=plan, expected_current_state_fingerprint=STATE)
+
+
+def test_review_authorization_is_exact_and_does_not_weaken_normal_freshness(monkeypatch, tmp_path):
+    root, _, plan = _setup(monkeypatch, tmp_path)
+    review = approved_review_authorization(
+        approved_as_of_session=date(2026, 8, 24),
+        expected_latest_session=date(2026, 8, 25),
+        expected_lag_sessions=1,
+        explicit_user_acknowledgement=REVIEW_ACKNOWLEDGEMENT,
+    )
+    review_plan = plan.model_copy(update={
+        "analysis_session": date(2026, 8, 24),
+        "actual_latest_completed_session": date(2026, 8, 24),
+        "expected_latest_completed_session": date(2026, 8, 25),
+        "freshness_status": "stale",
+        "session_lag": 1,
+        "activation_allowed": False,
+        "normal_freshness": False,
+        "review_mode": True,
+        "activation_allowed_by_review_authorization": True,
+        "review_deployment": review,
+    })
+    freshness = SimpleNamespace(
+        actual_latest_completed_session=date(2026, 8, 24),
+        expected_latest_completed_session=date(2026, 8, 25),
+        session_lag=1,
+        freshness_status=SimpleNamespace(value="stale"),
+    )
+    monkeypatch.setattr(cli, "_freshness", lambda *args: freshness)
+    gate = cli._approved_freshness_validator(
+        root, review_plan, SimpleNamespace(review_acknowledgement=REVIEW_ACKNOWLEDGEMENT)
+    )
+    gate()
+    with pytest.raises(repo.MarketIntelligencePublicationError, match="acknowledgement"):
+        cli._approved_freshness_validator(
+            root, review_plan, SimpleNamespace(review_acknowledgement="wrong")
+        )
+    freshness.expected_latest_completed_session = date(2026, 8, 26)
+    with pytest.raises(repo.MarketIntelligencePublicationError, match="no longer matches"):
+        gate()
+    with pytest.raises(ValueError, match="exact binding"):
+        approved_review_authorization(
+            approved_as_of_session=date(2026, 8, 24),
+            expected_latest_session=date(2026, 8, 26),
+            expected_lag_sessions=1,
+            explicit_user_acknowledgement=REVIEW_ACKNOWLEDGEMENT,
+        )
 
 
 def test_source_change_and_partial_target_are_zero_write_rejections(monkeypatch, tmp_path):

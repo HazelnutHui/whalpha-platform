@@ -60,6 +60,13 @@ export interface MarketRegimePreviewResponse {
   regime: UniverseAnalytics; relationships: Relationship[];
   relationship_comparisons: RegimeRelationshipComparison[]; warnings: string[];
   quality_gates: Array<{ gate_id: string; status: string; reason_codes: string[] }>;
+  review_deployment?: ReviewDeployment | null;
+}
+export interface ReviewDeployment {
+  contract_version: 'production-review-deployment/1.0'; review_mode: true;
+  normal_freshness: false; data_status: 'stale_review'; approved_as_of_session: string;
+  expected_latest_session: string; expected_lag_sessions: 1;
+  explicit_user_acknowledgement: string;
 }
 
 const DECIMAL = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
@@ -74,6 +81,15 @@ function decimal(value: unknown, label: string): void {
 export function parseMarketRegimePreview(value: unknown): MarketRegimePreviewResponse {
   const root = object(value, 'root');
   if (root.schema_version !== '1.0' || root.contract_version !== 'market-regime-opportunity-map-api/1.0') throw new Error('Unsupported Market Regime API contract');
+  if (root.data_status === 'stale_review') {
+    const review = object(root.review_deployment, 'review deployment');
+    if (review.contract_version !== 'production-review-deployment/1.0' || review.review_mode !== true
+      || review.approved_as_of_session !== root.as_of_session || review.expected_lag_sessions !== 1) {
+      throw new Error('Invalid Market Regime review deployment contract');
+    }
+  } else if (root.review_deployment !== null && root.review_deployment !== undefined) {
+    throw new Error('Normal Market Regime response carries review metadata');
+  }
   if (!Array.isArray(root.available_universes) || root.available_universes.length !== 2) throw new Error('Market Regime Universe catalog is incomplete');
   if (!Array.isArray(root.relationships) || root.relationships.length !== 16) throw new Error('Market Regime relationship registry is incomplete');
   const universes = root.available_universes.map((item) => object(item, 'Universe'));

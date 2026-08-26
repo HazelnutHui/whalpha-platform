@@ -57,3 +57,19 @@ preview and formal modes are mutually exclusive.
 
 Any analytics, lineage, ordering, nullability, or meaning change requires a new
 contract/calculation version and fingerprint. Translation changes do not.
+
+## Explicit review deployment sub-contract
+
+Normal activation remains `fresh` only: lag zero and exact expected/actual
+session equality. Contract `production-review-deployment/1.0` adds one
+deliberately non-general exception for the user-approved review release. It is
+valid only for analysis/actual session `2026-08-24`, expected session
+`2026-08-25`, lag one, and the exact explicit acknowledgement token. The
+authorization is stored in the language-neutral payload, manifest, immutable
+reference, pointer, and approval plan, so a changed date, lag, source, plan,
+or current state fails closed.
+
+Review responses use `data_status=stale_review`; they never claim `fresh`.
+English and Chinese render the same authorization and analytics payload. This
+sub-contract is not an `allow-stale` switch and cannot authorize any other
+session or future release.

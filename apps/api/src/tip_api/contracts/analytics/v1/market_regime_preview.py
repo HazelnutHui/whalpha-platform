@@ -14,6 +14,7 @@ from .etf_relationship import (
 )
 from .market_regime import ExplanationLedgerEntryV1, MarketRegimeCompositeV1
 from .market_regime_state import MarketRegimeStateExplanationV1, MarketRegimeStateRecordV1
+from .review_deployment import ReviewDeploymentAuthorizationV1
 
 
 PREVIEW_SCHEMA_VERSION = "1.0"
@@ -238,7 +239,8 @@ class MarketRegimeOpportunityMapResponseV1(BaseModel):
     bundle_generated_at: datetime
     bundle_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     as_of_session: date
-    data_status: Literal["degraded_short_history"]
+    data_status: Literal["degraded_short_history", "stale_review"]
+    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
     input_first_session: date
     input_last_session: date
     input_session_count: int
@@ -253,6 +255,16 @@ class MarketRegimeOpportunityMapResponseV1(BaseModel):
     relationship_comparisons: tuple[MarketRegimeRelationshipComparisonV1, ...]
     warnings: tuple[str, ...]
     quality_gates: tuple[PreviewQualityGateV1, ...]
+
+    @model_validator(mode="after")
+    def review_status_reconciles(self) -> "MarketRegimeOpportunityMapResponseV1":
+        if (self.data_status == "stale_review") != (self.review_deployment is not None):
+            raise ValueError("Market Regime review status and authorization differ")
+        if self.review_deployment is not None and (
+            self.as_of_session != self.review_deployment.approved_as_of_session
+        ):
+            raise ValueError("Market Regime review session differs from authorization")
+        return self
 
 
 class MarketRegimeRelationshipDetailResponseV1(BaseModel):

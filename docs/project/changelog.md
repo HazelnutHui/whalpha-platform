@@ -510,3 +510,14 @@
 - Separated workstation and OCI SSH identities.
 - Established initial product, architecture, and Dashboard V1 decisions.
 - Created project documentation foundation.
+# 2026-08-25 — Explicit Production review deployment contract
+
+- Added `production-review-deployment/1.0`, narrowly bound to analysis and
+  actual session 2026-08-24, expected session 2026-08-25, lag one, and an
+  explicit acknowledgement. Normal publications still require lag zero.
+- Bound review metadata through Market Intelligence candidate/manifest/plan,
+  active reader/API, Snapshot 1.5 candidate/manifest/plan, and both English and
+  Chinese first-screen banners. The payload remains language neutral.
+- Added fail-closed checks for missing/wrong acknowledgement, changed session,
+  expected date or lag, plus focused and full regressions. No generic
+  `--allow-stale` was introduced.

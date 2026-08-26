@@ -53,6 +53,13 @@ function StateMark({ state }: { state: string | null }): JSX.Element {
   const { t } = useI18n();
   return <span className={`regime-state state-${state ?? 'unavailable'}`}><i aria-hidden="true" />{relationshipName(t, state)}</span>;
 }
+function ReviewDeploymentBanner({ data }: { data: MarketRegimePreviewResponse }): JSX.Element | null {
+  const { t } = useI18n(); const review = data.review_deployment;
+  if (data.data_status !== 'stale_review' || !review) return null;
+  return <section className="review-deployment-banner" role="status"><strong>{t('review.banner', {
+    session: review.approved_as_of_session, count: review.expected_lag_sessions,
+  })}</strong></section>;
+}
 function metricFor(item: Relationship, windowSize: WindowSize): RelationshipWindow {
   return item.current.windows.find((metric) => metric.window_sessions === windowSize) as RelationshipWindow;
 }
@@ -187,5 +194,5 @@ export function MarketRegimeOpportunityMapPage(): JSX.Element {
   if (state.kind === 'loading') return <main className="app-shell"><div className="panel state-panel">{t('regime.loading')}</div></main>;
   if (state.kind === 'error') return <main className="app-shell"><div className="panel state-panel error-state" role="alert"><h1>{t('regime.unavailableTitle')}</h1><p>{localizeClientError(t, state.message)}</p><p>{t('regime.unavailableBody')}</p><button type="button" onClick={() => load(universeId)}>{t('common.retry')}</button></div></main>;
   const data = state.data;
-  return <main className="app-shell regime-shell"><div className="regime-topbar"><div><span className="brand">{t('regime.privateResearch')}</span><span>{t('regime.localPreview')}</span></div><label>{t('common.universe')}<select aria-label={t('regime.topbarUniverseAria')} value={data.selected_universe_id} onChange={(event) => { setUniverseId(event.target.value); updateUrl({ universe: event.target.value }); }}>{data.available_universes.map((item) => <option key={item.universe_id} value={item.universe_id}>{universeName(t, item.universe_id, item.display_name)} · {item.member_count.toLocaleString('en-US')}</option>)}</select></label></div><Hero data={data} /><Dimensions data={data} /><Relationships data={data} /><Methodology data={data} /></main>;
+  return <main className="app-shell regime-shell"><div className="regime-topbar"><div><span className="brand">{t('regime.privateResearch')}</span><span>{t('regime.localPreview')}</span></div><label>{t('common.universe')}<select aria-label={t('regime.topbarUniverseAria')} value={data.selected_universe_id} onChange={(event) => { setUniverseId(event.target.value); updateUrl({ universe: event.target.value }); }}>{data.available_universes.map((item) => <option key={item.universe_id} value={item.universe_id}>{universeName(t, item.universe_id, item.display_name)} · {item.member_count.toLocaleString('en-US')}</option>)}</select></label></div><ReviewDeploymentBanner data={data} /><Hero data={data} /><Dimensions data={data} /><Relationships data={data} /><Methodology data={data} /></main>;
 }

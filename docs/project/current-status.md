@@ -560,3 +560,13 @@ Implementation verification passed 820 backend and 40 frontend regression tests.
 The Universe pre-activation review is completed. Legacy is 1,864; trailing-qualified Candidate A/B are 1,641/1,747, with stable-ID fingerprints `aaa1f596c489ea2d73e21e01aa604fc9782f3ea20d17436ff8f52b8f0292b54f` and `7e4b9d587a7b2052d87cffa19a61ef2a5c926659d1c07654b5c83afab548ec88`. Two authoritative reviewed overrides are published; VCX is exclude and AKAN is allow, but both already fail an upstream trailing gate, so final counts are unchanged. The completed 2-row override, 3,388-row review, and logical marker are formally readable.
 
 Recommend Provider-Classified Common Shares (Provisional) as primary, the ADR-inclusive view as optional secondary, and Legacy only for compatibility/rollback. Keep SEC B2 paused. The next separately authorized task is Production Universe activation and Dashboard integration; this status does not activate either.
+# 2026-08-25 — Exact review deployment authorization
+
+- Added a versioned, language-neutral review contract bound only to
+  2026-08-24 / expected 2026-08-25 / lag one; the ordinary lag-zero freshness
+  gate remains unchanged and there is no general stale override.
+- Market Intelligence and Snapshot 1.5 plans, readers, pointers, API responses,
+  and English/Chinese banners bind and expose the same `stale_review` state.
+- Full backend/frontend regression passes before publication. Production
+  publication and OCI deployment remain controlled by the separately generated
+  canonical approval plans and the explicit authorization in the active task.

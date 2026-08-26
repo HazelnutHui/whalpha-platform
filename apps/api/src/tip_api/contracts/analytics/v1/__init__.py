@@ -55,6 +55,15 @@ from .market_intelligence import (
     MarketIntelligenceSourceBindingV1,
     MarketIntelligenceTargetReferenceV1,
 )
+from .review_deployment import (
+    REVIEW_ACKNOWLEDGEMENT,
+    REVIEW_APPROVED_AS_OF_SESSION,
+    REVIEW_DEPLOYMENT_CONTRACT_VERSION,
+    REVIEW_EXPECTED_LAG_SESSIONS,
+    REVIEW_EXPECTED_LATEST_SESSION,
+    ReviewDeploymentAuthorizationV1,
+    approved_review_authorization,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -102,4 +111,11 @@ __all__ = [
     "MarketIntelligencePayloadV1",
     "MarketIntelligenceSourceBindingV1",
     "MarketIntelligenceTargetReferenceV1",
+    "REVIEW_ACKNOWLEDGEMENT",
+    "REVIEW_APPROVED_AS_OF_SESSION",
+    "REVIEW_DEPLOYMENT_CONTRACT_VERSION",
+    "REVIEW_EXPECTED_LAG_SESSIONS",
+    "REVIEW_EXPECTED_LATEST_SESSION",
+    "ReviewDeploymentAuthorizationV1",
+    "approved_review_authorization",
 ]

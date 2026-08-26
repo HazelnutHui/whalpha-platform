@@ -92,6 +92,23 @@ describe('MarketDashboardPage', () => {
     await waitFor(() => expect(screen.getAllByText('Fresh').length).toBeGreaterThan(0));
   });
 
+  it('shows the exact review-deployment banner in both languages', async () => {
+    const review = {
+      ...demoDashboardData.overview,
+      data_status: 'stale_review', review_mode: true,
+      review_contract_version: 'production-review-deployment/1.0',
+      review_approved_as_of_session: '2026-08-24',
+      review_expected_latest_session: '2026-08-25', review_expected_lag_sessions: 1,
+    };
+    vi.mocked(fetch).mockResolvedValue(okResponse(review));
+    render(<I18nProvider><LanguageSelector /><MarketDashboardPage /></I18nProvider>);
+    expect(await screen.findByText(
+      'Review deployment · Data as of 2026-08-24 · 1 completed session behind',
+    )).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '中文' }));
+    expect(screen.getByText('审核预览 · 数据截至2026-08-24 · 落后1个已完成交易日')).toBeInTheDocument();
+  });
+
   it('does not fall back to demo fixtures when API fails', async () => {
     vi.mocked(fetch).mockResolvedValue(new Response('failure', { status: 503 }));
     render(<MarketDashboardPage />);

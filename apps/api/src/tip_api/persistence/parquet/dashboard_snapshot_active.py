@@ -17,6 +17,10 @@ from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotActivePointerV2, DashboardSnapshotApprovalPlanV2,
     DashboardSnapshotFileReferenceV2, DashboardSnapshotTargetReferenceV2,
 )
+from tip_api.contracts.analytics.v1.review_deployment import (
+    REVIEW_ACKNOWLEDGEMENT,
+    ReviewDeploymentAuthorizationV1,
+)
 from tip_api.persistence.parquet.dashboard_universe_activation_active import (
     _fsync_directory, _mkdir_parents_durable, _reject_symlink_chain, _validated_root,
     read_dashboard_universe_activation_pointer,
@@ -150,7 +154,28 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
         ("1.4", "2.1"), ("1.5", "2.2")
     }:
         raise DashboardSnapshotPublicationError("candidate snapshot contract is not V2")
-    if manifest.freshness_status!="fresh" or manifest.session_lag!=0 or manifest.expected_latest_completed_session!=manifest.actual_latest_completed_session:
+    normal_freshness = (
+        manifest.freshness_status == "fresh"
+        and manifest.session_lag == 0
+        and manifest.expected_latest_completed_session
+        == manifest.actual_latest_completed_session
+    )
+    review = None
+    if manifest.review_mode:
+        review = ReviewDeploymentAuthorizationV1(
+            approved_as_of_session=manifest.review_approved_as_of_session,
+            expected_latest_session=manifest.review_expected_latest_session,
+            expected_lag_sessions=manifest.review_expected_lag_sessions,
+            explicit_user_acknowledgement=REVIEW_ACKNOWLEDGEMENT,
+        )
+    review_allowed = review is not None and (
+        manifest.current_session_date == review.approved_as_of_session.isoformat()
+        and manifest.actual_latest_completed_session == review.approved_as_of_session.isoformat()
+        and manifest.expected_latest_completed_session == review.expected_latest_session.isoformat()
+        and manifest.session_lag == review.expected_lag_sessions
+        and manifest.freshness_status == "stale"
+    )
+    if not (normal_freshness or review_allowed):
         raise DashboardSnapshotPublicationError(
             f"stale snapshot cannot produce an approval plan: expected={manifest.expected_latest_completed_session} actual={manifest.actual_latest_completed_session} lag={manifest.session_lag}"
         )
@@ -186,7 +211,12 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
         "dashboard_contract_version":manifest.dashboard_contract_version,
         "generated_at":generated_at.astimezone(UTC).isoformat().replace("+00:00","Z"),
         "analysis_session":manifest.current_session_date,"expected_latest_completed_session":manifest.expected_latest_completed_session,
-        "actual_latest_completed_session":manifest.actual_latest_completed_session,"freshness_status":"fresh","session_lag":0,
+        "actual_latest_completed_session":manifest.actual_latest_completed_session,
+        "freshness_status":manifest.freshness_status,"session_lag":manifest.session_lag,
+        "review_mode":review is not None,
+        "normal_freshness":normal_freshness,
+        "activation_allowed_by_review_authorization":review_allowed,
+        "review_deployment":review.model_dump(mode="json") if review is not None else None,
         "activation_pointer_fingerprint":activation_pointer.pointer_content_fingerprint,
         "activation_logical_fingerprint":activation_logical_fingerprint,
         "expected_current_state_fingerprint":current_state_fingerprint(root,legacy_root),
@@ -220,6 +250,16 @@ def validate_plan(plan: DashboardSnapshotApprovalPlanV2) -> None:
         != plan.market_intelligence_logical_fingerprint
     ):
         raise DashboardSnapshotPublicationError("snapshot approval consumer binding changed")
+    review = plan.review_deployment
+    if manifest.review_mode != (review is not None):
+        raise DashboardSnapshotPublicationError("snapshot approval review mode changed")
+    if review is not None and (
+        manifest.review_contract_version != review.contract_version
+        or manifest.review_approved_as_of_session != review.approved_as_of_session.isoformat()
+        or manifest.review_expected_latest_session != review.expected_latest_session.isoformat()
+        or manifest.review_expected_lag_sessions != review.expected_lag_sessions
+    ):
+        raise DashboardSnapshotPublicationError("snapshot approval review binding changed")
 
 
 def _planned_pointer(plan: DashboardSnapshotApprovalPlanV2) -> DashboardSnapshotActivePointerV2:
@@ -262,6 +302,8 @@ def publish_and_activate(*, root: Path, legacy_root: Path, plan: DashboardSnapsh
                          expected_current_state_fingerprint: str, failpoint: str|None=None,
                          freshness_validator: Callable[[], None] | None = None) -> ActiveDashboardSnapshot:
     root=_validated_root(root); validate_plan(plan)
+    if not (plan.normal_freshness or plan.activation_allowed_by_review_authorization):
+        raise DashboardSnapshotPublicationConflict("snapshot plan is not freshness-authorized")
     if expected_current_state_fingerprint!=plan.expected_current_state_fingerprint:
         raise DashboardSnapshotPublicationConflict("approved current snapshot state mismatch")
     with _lock(root):
@@ -318,6 +360,8 @@ def verify_then_link(*, root: Path, legacy_root: Path, plan: DashboardSnapshotAp
                      expected_current_state_fingerprint: str,
                      freshness_validator: Callable[[], None] | None = None) -> ActiveDashboardSnapshot:
     root=_validated_root(root);validate_plan(plan)
+    if not (plan.normal_freshness or plan.activation_allowed_by_review_authorization):
+        raise DashboardSnapshotPublicationConflict("snapshot plan is not freshness-authorized")
     with _lock(root):
         if freshness_validator is not None:
             freshness_validator()

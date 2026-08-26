@@ -32,3 +32,11 @@ Default publication creates only a review candidate under `/tmp`. An approval pa
 | malformed/dangling pointer | ambiguous or corrupt active state | fail closed; no compatibility fallback |
 
 OCI packaging must name an explicitly approved immutable release and never discover the newest directory automatically.
+
+For the one approved stale review, the Snapshot CLI additionally requires an
+explicit analysis session and the exact versioned review fields used by the
+active Market Intelligence release. Apply or verify-then-link accepts only the
+canonical plan plus full-file SHA, current-state fingerprint, exact analysis
+session, and acknowledgement. The formal XNYS state is checked before and
+inside the lock; any session/lag/expected-date drift fails closed. Ordinary
+stale snapshots remain ineligible.

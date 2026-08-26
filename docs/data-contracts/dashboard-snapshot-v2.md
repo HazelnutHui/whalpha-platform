@@ -54,3 +54,10 @@ whose session, Activation, catalog, counts, and memberships match the Snapshot.
 Contract 1.4 stays readable unchanged and does not claim analytics exist.
 Snapshot 1.5 never reads `/tmp`, recomputes analytics, or mixes the old
 1,641/1,747 fallback data with the new page.
+
+Snapshot 1.5 may carry the exact `production-review-deployment/1.0`
+authorization already bound by its active Market Intelligence source. In that
+case its overview, analytics envelope, manifest, and plan all report
+`stale_review`, approved as-of `2026-08-24`, expected `2026-08-25`, and lag
+one. The normal lag-zero gate is unchanged; review plan/apply requires the
+same explicit acknowledgement and rejects changed freshness under lock.

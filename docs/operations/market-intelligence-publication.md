@@ -23,6 +23,14 @@ candidate may be reviewed, but its plan records `activation_allowed=false`;
 apply and verify-then-link reject it before creating Production paths. A fresh
 plan must be regenerated after catch-up.
 
+The sole exception is the exact `production-review-deployment/1.0` contract.
+Planning must explicitly pass `--review-deployment`, the approved as-of
+session, expected session, lag, and acknowledgement. Apply/verify-then-link
+must pass the identical acknowledgement in addition to the canonical plan,
+full-file plan SHA, session/revision, and current-state fingerprint. The lock
+recomputes formal freshness and requires actual `2026-08-24`, expected
+`2026-08-25`, `stale`, and lag one. There is no generic stale flag.
+
 ## Apply, recovery, and rollback
 
 Apply requires `--apply`, exact data root/session/revision, absolute approved

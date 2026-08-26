@@ -364,6 +364,18 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
   if (!isRecord(value) || !Array.isArray(value.universes) || !Array.isArray(value.market_benchmarks) || !Array.isArray(value.sector_benchmarks)) {
     throw new Error('Invalid market API payload: dashboard overview');
   }
+  const reviewMode = value.review_mode === undefined ? false : requireBoolean(value, 'review_mode');
+  const reviewContract = value.review_contract_version === undefined ? null : requireNullableString(value, 'review_contract_version');
+  const reviewAsOf = value.review_approved_as_of_session === undefined ? null : requireNullableString(value, 'review_approved_as_of_session');
+  const reviewExpected = value.review_expected_latest_session === undefined ? null : requireNullableString(value, 'review_expected_latest_session');
+  const reviewLag = value.review_expected_lag_sessions === undefined ? null : requireNullableNumber(value, 'review_expected_lag_sessions');
+  if (reviewMode && (value.data_status !== 'stale_review' || reviewContract !== 'production-review-deployment/1.0'
+    || reviewAsOf === null || reviewExpected === null || reviewLag !== 1)) {
+    throw new Error('Invalid market API payload: review deployment');
+  }
+  if (!reviewMode && [reviewContract, reviewAsOf, reviewExpected, reviewLag].some((item) => item !== null)) {
+    throw new Error('Invalid market API payload: unexpected review deployment');
+  }
   return {
     contract_version: requireString(value, 'contract_version'),
     default_universe_id: requireString(value, 'default_universe_id'),
@@ -394,6 +406,11 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
     market_benchmarks: value.market_benchmarks.map(parseMarketBenchmark),
     sector_benchmarks: value.sector_benchmarks.map(parseSectorBenchmark),
     data_status: requireString(value, 'data_status'),
+    review_mode: reviewMode,
+    review_contract_version: reviewContract,
+    review_approved_as_of_session: reviewAsOf,
+    review_expected_latest_session: reviewExpected,
+    review_expected_lag_sessions: reviewLag,
   };
 }
 

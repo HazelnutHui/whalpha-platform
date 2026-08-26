@@ -12,7 +12,12 @@ from contextlib import contextmanager
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from tip_api.contracts.analytics.v1 import MarketIntelligenceApprovalPlanV1
+from tip_api.contracts.analytics.v1 import (
+    REVIEW_ACKNOWLEDGEMENT,
+    MarketIntelligenceApprovalPlanV1,
+    ReviewDeploymentAuthorizationV1,
+    approved_review_authorization,
+)
 from tip_api.contracts.analytics.v1.market_intelligence import MARKET_INTELLIGENCE_REVISION
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.market_intelligence_active import (
@@ -56,6 +61,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--expected-current-state-fingerprint")
     parser.add_argument("--expected-active-pointer-fingerprint")
     parser.add_argument("--rollback-apply", action="store_true")
+    parser.add_argument("--review-deployment", action="store_true")
+    parser.add_argument("--review-approved-as-of-session", type=date.fromisoformat)
+    parser.add_argument("--review-expected-latest-session", type=date.fromisoformat)
+    parser.add_argument("--review-expected-lag-sessions", type=int)
+    parser.add_argument("--review-acknowledgement")
     return parser
 
 
@@ -96,13 +106,14 @@ def main(argv: list[str] | None = None) -> int:
             != args.expected_current_state_fingerprint
         ):
             raise MarketIntelligencePublicationError("CLI bindings disagree with approved plan")
-        _freshness_gate(args.data_root)
+        freshness_validator = _approved_freshness_validator(args.data_root, plan, args)
+        freshness_validator()
         operation = verify_then_link if args.verify_then_link else publish_and_activate
         result = operation(
             root=args.data_root,
             plan=plan,
             expected_current_state_fingerprint=args.expected_current_state_fingerprint,
-            freshness_validator=lambda: _freshness_gate(args.data_root),
+            freshness_validator=freshness_validator,
         )
         print(
             json.dumps(
@@ -128,6 +139,7 @@ def _plan(args: argparse.Namespace) -> int:
         f"{_repo_head_short()}"
     )
     candidate = output / "market-intelligence.plan.artifacts"
+    review = _review_authorization_from_plan_args(args)
     completed = build_market_intelligence_candidate(
         data_root=args.data_root,
         analysis_session=args.analysis_session,
@@ -138,6 +150,7 @@ def _plan(args: argparse.Namespace) -> int:
         phase1b_audit_path=args.phase1b_audit,
         phase2_audit_path=args.phase2_audit,
         candidate_path=candidate,
+        review_deployment=review,
     )
     freshness = _freshness(args.data_root, created_at)
     plan = build_approval_plan(
@@ -158,7 +171,11 @@ def _plan(args: argparse.Namespace) -> int:
     plan_path = args.approval_package
     _new_tmp_file(plan_path, raw, 0o444)
     response = {
-        "status": "dry_run_ready" if plan.activation_allowed else "freshness_blocked",
+        "status": (
+            "dry_run_ready"
+            if plan.activation_allowed or plan.activation_allowed_by_review_authorization
+            else "freshness_blocked"
+        ),
         "production_write_count": 0,
         "candidate_path": str(completed.path),
         "approval_package": str(plan_path),
@@ -180,6 +197,11 @@ def _plan(args: argparse.Namespace) -> int:
         ),
         "freshness_status": plan.freshness_status,
         "session_lag": plan.session_lag,
+        "review_mode": plan.review_mode,
+        "normal_freshness": plan.normal_freshness,
+        "activation_allowed_by_review_authorization": (
+            plan.activation_allowed_by_review_authorization
+        ),
     }
     print(json.dumps(response, sort_keys=True))
     return 0
@@ -202,6 +224,16 @@ def _require_plan_arguments(parser: argparse.ArgumentParser, args: argparse.Name
         parser.error("--plan requires all explicit source, session, revision, output and state bindings")
     if any((args.approved_plan, args.approved_plan_sha256, args.expected_active_pointer_fingerprint)):
         parser.error("approved operation arguments cannot be combined with --plan")
+    review_values = (
+        args.review_approved_as_of_session,
+        args.review_expected_latest_session,
+        args.review_expected_lag_sessions,
+        args.review_acknowledgement,
+    )
+    if args.review_deployment != all(value is not None for value in review_values):
+        parser.error("review plan requires all exact review authorization bindings")
+    if any(value is not None for value in review_values) and not args.review_deployment:
+        parser.error("review authorization bindings require --review-deployment")
 
 
 def _require_approved_arguments(parser: argparse.ArgumentParser, args: argparse.Namespace) -> None:
@@ -226,6 +258,10 @@ def _require_approved_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.created_at,
         args.expected_active_pointer_fingerprint,
         args.rollback_apply,
+        args.review_deployment,
+        args.review_approved_as_of_session,
+        args.review_expected_latest_session,
+        args.review_expected_lag_sessions,
     )
     if any(forbidden) or args.revision != MARKET_INTELLIGENCE_REVISION:
         parser.error("approved operation has conflicting or invalid arguments")
@@ -248,6 +284,11 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.approved_plan,
         args.approved_plan_sha256,
         args.expected_current_state_fingerprint,
+        args.review_deployment,
+        args.review_approved_as_of_session,
+        args.review_expected_latest_session,
+        args.review_expected_lag_sessions,
+        args.review_acknowledgement,
     )
     if any(forbidden):
         parser.error("rollback only accepts its approved pointer digest")
@@ -291,6 +332,60 @@ def _freshness_gate(root: Path) -> None:
         raise MarketIntelligencePublicationError(
             "Market Intelligence activation is blocked by stale EOD freshness"
         )
+
+
+def _review_authorization_from_plan_args(
+    args: argparse.Namespace,
+) -> ReviewDeploymentAuthorizationV1 | None:
+    if not args.review_deployment:
+        return None
+    try:
+        return approved_review_authorization(
+            approved_as_of_session=args.review_approved_as_of_session,
+            expected_latest_session=args.review_expected_latest_session,
+            expected_lag_sessions=args.review_expected_lag_sessions,
+            explicit_user_acknowledgement=args.review_acknowledgement,
+        )
+    except ValueError as exc:
+        raise MarketIntelligencePublicationError(str(exc)) from exc
+
+
+def _approved_freshness_validator(
+    root: Path,
+    plan: MarketIntelligenceApprovalPlanV1,
+    args: argparse.Namespace,
+):
+    if plan.activation_allowed:
+        if args.review_acknowledgement is not None:
+            raise MarketIntelligencePublicationError(
+                "fresh publication cannot use review acknowledgement"
+            )
+        return lambda: _freshness_gate(root)
+    review = plan.review_deployment
+    if (
+        not plan.activation_allowed_by_review_authorization
+        or review is None
+        or args.review_acknowledgement != REVIEW_ACKNOWLEDGEMENT
+        or args.review_acknowledgement != review.explicit_user_acknowledgement
+    ):
+        raise MarketIntelligencePublicationError(
+            "approved stale review requires the exact explicit acknowledgement"
+        )
+
+    def gate() -> None:
+        value = _freshness(root, datetime.now(UTC))
+        if (
+            value.actual_latest_completed_session != review.approved_as_of_session
+            or value.expected_latest_completed_session != review.expected_latest_session
+            or value.session_lag != review.expected_lag_sessions
+            or value.freshness_status.value != "stale"
+            or plan.analysis_session != review.approved_as_of_session
+        ):
+            raise MarketIntelligencePublicationError(
+                "formal freshness no longer matches the exact review authorization"
+            )
+
+    return gate
 
 
 def _parse_utc(value: str) -> datetime:

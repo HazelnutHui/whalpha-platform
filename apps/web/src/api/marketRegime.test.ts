@@ -14,6 +14,21 @@ describe('Market Regime API parser', () => {
     expect(result.regime.composite.dimensions).toHaveLength(5);
   });
 
+  it('accepts only coherent stale-review metadata', () => {
+    const payload = marketRegimeFixture();
+    payload.data_status = 'stale_review';
+    payload.review_deployment = {
+      contract_version: 'production-review-deployment/1.0', review_mode: true,
+      normal_freshness: false, data_status: 'stale_review',
+      approved_as_of_session: payload.as_of_session, expected_latest_session: '2026-08-25',
+      expected_lag_sessions: 1,
+      explicit_user_acknowledgement: 'I_ACKNOWLEDGE_2026_08_24_STALE_REVIEW_LAG_1',
+    };
+    expect(parseMarketRegimePreview(payload).data_status).toBe('stale_review');
+    payload.review_deployment.expected_lag_sessions = 2 as 1;
+    expect(() => parseMarketRegimePreview(payload)).toThrow(/review deployment/);
+  });
+
   it('rejects partial, reordered, and non-decimal data', () => {
     const partial = marketRegimeFixture(); partial.relationships.pop();
     expect(() => parseMarketRegimePreview(partial)).toThrow(/incomplete/);

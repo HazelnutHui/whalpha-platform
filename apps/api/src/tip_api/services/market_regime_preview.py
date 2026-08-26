@@ -35,6 +35,7 @@ from tip_api.contracts.analytics.v1 import (
     PreviewSourceLogicalFingerprintsV1,
     PreviewUniverseAnalyticsV1,
     PreviewUniverseDefinitionV1,
+    ReviewDeploymentAuthorizationV1,
 )
 from tip_api.contracts.analytics.v1.market_regime_preview import (
     PREVIEW_MANIFEST_FILE,
@@ -256,6 +257,7 @@ class MarketRegimePreviewService:
         self._payload = completed.payload
         self._universes = {item.definition.universe_id: item for item in completed.payload.universes}
         self._relationships = {item.definition.pair_id: item for item in completed.payload.relationships}
+        self._review_deployment: ReviewDeploymentAuthorizationV1 | None = None
 
     @classmethod
     def from_bundle(cls, path: Path) -> "MarketRegimePreviewService":
@@ -263,7 +265,10 @@ class MarketRegimePreviewService:
 
     @classmethod
     def from_payload(
-        cls, payload: MarketRegimePreviewPayloadV1, generated_at: datetime
+        cls,
+        payload: MarketRegimePreviewPayloadV1,
+        generated_at: datetime,
+        review_deployment: ReviewDeploymentAuthorizationV1 | None = None,
     ) -> "MarketRegimePreviewService":
         """Build the same immutable API view from a formal publication payload."""
 
@@ -276,6 +281,7 @@ class MarketRegimePreviewService:
         instance._relationships = {
             item.definition.pair_id: item for item in payload.relationships
         }
+        instance._review_deployment = review_deployment
         return instance
 
     def overview(self, universe_id: str | None = None) -> MarketRegimeOpportunityMapResponseV1:
@@ -290,7 +296,10 @@ class MarketRegimePreviewService:
             bundle_generated_at=self._generated_at,
             bundle_logical_fingerprint=self._payload.logical_fingerprint,
             as_of_session=self._payload.as_of_session,
-            data_status=self._payload.data_status,
+            data_status=(
+                "stale_review" if self._review_deployment is not None else self._payload.data_status
+            ),
+            review_deployment=self._review_deployment,
             input_first_session=self._payload.input_first_session,
             input_last_session=self._payload.input_last_session,
             input_session_count=self._payload.input_session_count,

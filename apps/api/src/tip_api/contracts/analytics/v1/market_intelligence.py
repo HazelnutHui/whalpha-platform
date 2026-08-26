@@ -14,6 +14,7 @@ from .market_regime_preview import (
     PreviewSourceLogicalFingerprintsV1,
     PreviewUniverseDefinitionV1,
 )
+from .review_deployment import ReviewDeploymentAuthorizationV1
 
 
 MARKET_INTELLIGENCE_SCHEMA_VERSION = "1.0"
@@ -117,6 +118,7 @@ class MarketIntelligencePayloadV1(FrozenModel):
     analytics: MarketRegimePreviewPayloadV1
     language_neutral: Literal[True] = True
     supported_interface_locales: tuple[Literal["en", "zh"], ...] = ("en", "zh")
+    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
     logical_fingerprint: str
 
     @field_validator("publication_id")
@@ -166,6 +168,7 @@ class MarketIntelligenceManifestV1(FrozenModel):
     etf_count: Literal[30] = 30
     relationship_count: Literal[16] = 16
     relationship_history_count: Literal[336] = 336
+    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
     external_request_count: Literal[0] = 0
     contains_credentials: Literal[False] = False
     contains_raw_provider_data: Literal[False] = False
@@ -216,6 +219,7 @@ class MarketIntelligenceTargetReferenceV1(FrozenModel):
     analytics_logical_fingerprint: str
     manifest_sha256: str
     aggregate_sha256: str
+    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
 
     @field_validator("publication_id")
     @classmethod
@@ -295,6 +299,10 @@ class MarketIntelligenceApprovalPlanV1(FrozenModel):
     freshness_status: Literal["fresh", "stale", "unavailable"]
     session_lag: int | None
     activation_allowed: bool
+    review_mode: bool = False
+    normal_freshness: bool = False
+    activation_allowed_by_review_authorization: bool = False
+    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
     inventory_change_file_count: Literal[3] = 3
     inventory_change_bytes: int = Field(gt=0)
     recovery_boundary: str
@@ -351,6 +359,31 @@ class MarketIntelligenceApprovalPlanV1(FrozenModel):
         ):
             raise ValueError("approval source paths must be normalized absolute /tmp paths")
         return value
+
+    @model_validator(mode="after")
+    def freshness_authorization_reconciles(self) -> "MarketIntelligenceApprovalPlanV1":
+        normal = (
+            self.freshness_status == "fresh"
+            and self.session_lag == 0
+            and self.expected_latest_completed_session == self.actual_latest_completed_session
+        )
+        if self.activation_allowed != normal or self.normal_freshness != normal:
+            raise ValueError("normal Market Intelligence freshness authorization differs")
+        if self.review_mode != (self.review_deployment is not None):
+            raise ValueError("review mode and review authorization differ")
+        review_allowed = self.review_deployment is not None and (
+            self.analysis_session == self.review_deployment.approved_as_of_session
+            and self.actual_latest_completed_session == self.review_deployment.approved_as_of_session
+            and self.expected_latest_completed_session
+            == self.review_deployment.expected_latest_session
+            and self.session_lag == self.review_deployment.expected_lag_sessions
+            and self.freshness_status == "stale"
+        )
+        if self.activation_allowed_by_review_authorization != review_allowed:
+            raise ValueError("review Market Intelligence freshness authorization differs")
+        if normal and self.review_deployment is not None:
+            raise ValueError("fresh publication must not carry stale-review authorization")
+        return self
 
 
 def _sha(value: str) -> str:

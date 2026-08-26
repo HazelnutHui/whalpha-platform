@@ -419,6 +419,26 @@ class DashboardOverviewResponse(BaseModel):
     market_benchmarks: tuple[MarketBenchmarkResponse, ...]
     sector_benchmarks: tuple[SectorBenchmarkEtfResponse, ...]
     data_status: str
+    review_mode: bool = False
+    review_contract_version: str | None = None
+    review_approved_as_of_session: date | None = None
+    review_expected_latest_session: date | None = None
+    review_expected_lag_sessions: int | None = None
+
+    @model_validator(mode="after")
+    def review_contract_is_complete(self) -> "DashboardOverviewResponse":
+        values = (
+            self.review_contract_version,
+            self.review_approved_as_of_session,
+            self.review_expected_latest_session,
+            self.review_expected_lag_sessions,
+        )
+        if self.review_mode:
+            if any(value is None for value in values) or self.data_status != "stale_review":
+                raise ValueError("Dashboard review deployment metadata is incomplete")
+        elif any(value is not None for value in values):
+            raise ValueError("normal Dashboard response cannot carry review metadata")
+        return self
 
     @classmethod
     def from_model(cls, model: DashboardOverviewV11) -> DashboardOverviewResponse:

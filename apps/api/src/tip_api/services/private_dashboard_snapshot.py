@@ -15,6 +15,7 @@ from typing import Any, Mapping
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from tip_api.contracts.analytics.v1 import PreviewUniverseDefinitionV1
+from tip_api.contracts.analytics.v1.review_deployment import REVIEW_ACKNOWLEDGEMENT
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.schemas.private_market import DashboardOverviewResponse, LiquidityMapResponse, MarketSummaryResponse, MoversResponse
 from tip_api.services.eod_market_data import EodMarketDataQueryService
@@ -82,6 +83,11 @@ class DashboardSnapshotManifest(BaseModel):
     market_intelligence_payload_sha256: str | None = None
     market_intelligence_logical_fingerprint: str | None = None
     analytics_payload_logical_fingerprint: str | None = None
+    review_mode: bool = False
+    review_contract_version: str | None = None
+    review_approved_as_of_session: str | None = None
+    review_expected_latest_session: str | None = None
+    review_expected_lag_sessions: int | None = None
     is_real_provider_backed: bool
     access_classification: str
     contains_raw_provider_data: bool
@@ -130,6 +136,25 @@ class DashboardSnapshotManifest(BaseModel):
             )
         ):
             raise ValueError("snapshot Market Intelligence fields are required for contract 1.5")
+        review_values = (
+            self.review_contract_version,
+            self.review_approved_as_of_session,
+            self.review_expected_latest_session,
+            self.review_expected_lag_sessions,
+        )
+        if self.review_mode:
+            if any(value is None for value in review_values) or self.data_status != "stale_review":
+                raise ValueError("snapshot review deployment metadata is incomplete")
+            if (
+                self.current_session_date != self.review_approved_as_of_session
+                or self.actual_latest_completed_session != self.review_approved_as_of_session
+                or self.expected_latest_completed_session != self.review_expected_latest_session
+                or self.session_lag != self.review_expected_lag_sessions
+                or self.freshness_status != "stale"
+            ):
+                raise ValueError("snapshot review freshness differs from authorization")
+        elif any(value is not None for value in review_values):
+            raise ValueError("normal snapshot cannot carry review deployment metadata")
         return self
 
 
@@ -175,9 +200,33 @@ def build_private_dashboard_snapshot(
     analytics = EodReturnAnalyticsService(query_service)
     generated = generated_at or datetime.now(UTC)
     activation = dashboard_activation or read_active_dashboard_universe_activation(safe_data_root, analysis_session=query_service.list_sessions()[-1].session_date, validate_sources=True)
-    overview = DashboardOverviewResponse.from_model(DashboardOverviewService(query_service, activation).get_latest_overview(checked_at=generated)).model_copy(
+    overview = DashboardOverviewResponse.from_model(
+        DashboardOverviewService(query_service, activation).get_latest_overview(checked_at=generated)
+    ).model_copy(
         update={"snapshot_generated_at": generated.astimezone(UTC).isoformat().replace("+00:00", "Z")}
     )
+    review = market_intelligence.payload.review_deployment if market_intelligence else None
+    if review is not None:
+        if (
+            overview.current_session_date != review.approved_as_of_session
+            or overview.actual_latest_completed_session != review.approved_as_of_session
+            or overview.expected_latest_completed_session != review.expected_latest_session
+            or overview.session_lag != review.expected_lag_sessions
+            or overview.freshness_status != "stale"
+        ):
+            raise DashboardSnapshotError(
+                "Dashboard freshness no longer matches Market Intelligence review authorization"
+            )
+        overview = overview.model_copy(
+            update={
+                "data_status": "stale_review",
+                "review_mode": True,
+                "review_contract_version": review.contract_version,
+                "review_approved_as_of_session": review.approved_as_of_session,
+                "review_expected_latest_session": review.expected_latest_session,
+                "review_expected_lag_sessions": review.expected_lag_sessions,
+            }
+        )
     default_universe = next(item for item in overview.universes if item.definition.universe_id == overview.default_universe_id)
     summary = default_universe.summary
     movers = default_universe.movers
@@ -235,6 +284,7 @@ def build_private_dashboard_snapshot(
             market_service = MarketRegimePreviewService.from_payload(
                 market_intelligence.payload.analytics,
                 market_intelligence.payload.source.preview_generated_at,
+                market_intelligence.payload.review_deployment,
             )
             market_payload = {
                 "schema_version": "1.0",
@@ -244,6 +294,9 @@ def build_private_dashboard_snapshot(
                 "payload_logical_fingerprint": market_intelligence.payload.logical_fingerprint,
                 "analytics_logical_fingerprint": (
                     market_intelligence.payload.analytics.logical_fingerprint
+                ),
+                "review_deployment": (
+                    review.model_dump(mode="json") if review is not None else None
                 ),
                 "default_universe_id": overview.default_universe_id,
                 "universe_order": [item.definition.universe_id for item in overview.universes],
@@ -279,7 +332,7 @@ def build_private_dashboard_snapshot(
             freshness_status=overview.freshness_status,
             calendar_id=overview.calendar_id,
             freshness_checked_at=overview.freshness_checked_at.astimezone(UTC).isoformat().replace("+00:00", "Z"),
-            data_status=summary.data_status,
+            data_status="stale_review" if review is not None else summary.data_status,
             overview_file=SNAPSHOT_FILES["overview_file"],
             summary_file=SNAPSHOT_FILES["summary_file"],
             movers_file=SNAPSHOT_FILES["movers_file"],
@@ -334,6 +387,17 @@ def build_private_dashboard_snapshot(
                 market_intelligence.payload.analytics.logical_fingerprint
                 if market_intelligence is not None
                 else None
+            ),
+            review_mode=review is not None,
+            review_contract_version=(review.contract_version if review is not None else None),
+            review_approved_as_of_session=(
+                review.approved_as_of_session.isoformat() if review is not None else None
+            ),
+            review_expected_latest_session=(
+                review.expected_latest_session.isoformat() if review is not None else None
+            ),
+            review_expected_lag_sessions=(
+                review.expected_lag_sessions if review is not None else None
             ),
             is_real_provider_backed=True,
             access_classification="private",
@@ -442,6 +506,21 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             != manifest.analytics_payload_logical_fingerprint
         ):
             raise DashboardSnapshotError("snapshot Market Intelligence reference mismatch")
+        if analytics.get("review_deployment") != (
+            {
+                "contract_version": manifest.review_contract_version,
+                "review_mode": True,
+                "normal_freshness": False,
+                "data_status": "stale_review",
+                "approved_as_of_session": manifest.review_approved_as_of_session,
+                "expected_latest_session": manifest.review_expected_latest_session,
+                "expected_lag_sessions": manifest.review_expected_lag_sessions,
+                "explicit_user_acknowledgement": REVIEW_ACKNOWLEDGEMENT,
+            }
+            if manifest.review_mode
+            else None
+        ):
+            raise DashboardSnapshotError("snapshot Market Intelligence review binding mismatch")
     return manifest
 
 

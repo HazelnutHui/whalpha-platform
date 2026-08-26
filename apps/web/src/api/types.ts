@@ -181,6 +181,11 @@ export interface DashboardOverviewResponse {
   market_benchmarks: MarketBenchmarkResponse[];
   sector_benchmarks: SectorBenchmarkEtfResponse[];
   data_status: string;
+  review_mode?: boolean;
+  review_contract_version?: string | null;
+  review_approved_as_of_session?: string | null;
+  review_expected_latest_session?: string | null;
+  review_expected_lag_sessions?: number | null;
 }
 
 export interface SnapshotManifestResponse {

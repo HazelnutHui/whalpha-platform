@@ -27,6 +27,7 @@ from tip_api.contracts.analytics.v1 import (
     MarketIntelligenceSourceBindingV1,
     MarketIntelligenceTargetReferenceV1,
     PreviewUniverseDefinitionV1,
+    ReviewDeploymentAuthorizationV1,
 )
 from tip_api.contracts.analytics.v1.market_intelligence import (
     MARKET_INTELLIGENCE_MANIFEST_FILE,
@@ -135,6 +136,7 @@ def build_market_intelligence_candidate(
     phase1b_audit_path: Path,
     phase2_audit_path: Path,
     candidate_path: Path,
+    review_deployment: ReviewDeploymentAuthorizationV1 | None = None,
 ) -> CompletedMarketIntelligence:
     """Create one language-neutral candidate from explicit verified sources."""
 
@@ -153,6 +155,7 @@ def build_market_intelligence_candidate(
         generated_at=generated_at.astimezone(UTC),
         source=source,
         analytics=preview.payload,
+        review_deployment=review_deployment,
         logical_fingerprint="0" * 64,
     )
     payload = payload_candidate.model_copy(
@@ -186,6 +189,11 @@ def build_market_intelligence_candidate(
         "etf_count": len(preview.payload.etf_basket),
         "relationship_count": len(preview.payload.relationships),
         "relationship_history_count": len(preview.payload.relationship_history),
+        "review_deployment": (
+            review_deployment.model_dump(mode="json")
+            if review_deployment is not None
+            else None
+        ),
         "external_request_count": 0,
         "contains_credentials": False,
         "contains_raw_provider_data": False,
@@ -373,6 +381,7 @@ def read_market_intelligence_release(
         or payload.logical_fingerprint != manifest.payload_logical_fingerprint
         or payload.analytics.logical_fingerprint != manifest.analytics_logical_fingerprint
         or payload.source != manifest.source
+        or payload.review_deployment != manifest.review_deployment
     ):
         raise MarketIntelligencePublicationError("Market Intelligence payload custody mismatch")
     if canonical_fingerprint(
@@ -499,6 +508,14 @@ def build_approval_plan(
         and session_lag == 0
         and expected_latest_completed_session == actual_latest_completed_session
     )
+    review = completed.payload.review_deployment
+    review_allowed = review is not None and (
+        completed.payload.analysis_session == review.approved_as_of_session
+        and actual_latest_completed_session == review.approved_as_of_session
+        and expected_latest_completed_session == review.expected_latest_session
+        and session_lag == review.expected_lag_sessions
+        and freshness_status == "stale"
+    )
     payload = {
         "plan_version": "1.0",
         "operation": "market_intelligence_publication",
@@ -539,6 +556,10 @@ def build_approval_plan(
         "freshness_status": freshness_status,
         "session_lag": session_lag,
         "activation_allowed": activation_allowed,
+        "review_mode": review is not None,
+        "normal_freshness": activation_allowed,
+        "activation_allowed_by_review_authorization": review_allowed,
+        "review_deployment": review.model_dump(mode="json") if review is not None else None,
         "inventory_change_file_count": 3,
         "inventory_change_bytes": sum(item.size for item in files) + len(pointer_raw),
         "recovery_boundary": (
@@ -571,6 +592,7 @@ def validate_plan(plan: MarketIntelligenceApprovalPlanV1) -> CompletedMarketInte
         or completed.payload.analytics.logical_fingerprint != plan.analytics_logical_fingerprint
         or file_sha256(candidate / MARKET_INTELLIGENCE_MANIFEST_FILE) != plan.manifest_sha256
         or completed.payload.source != plan.source
+        or completed.payload.review_deployment != plan.review_deployment
     ):
         raise MarketIntelligencePublicationError("Market Intelligence candidate changed")
     return completed
@@ -588,7 +610,7 @@ def publish_and_activate(
     validate_plan(plan)
     if expected_current_state_fingerprint != plan.expected_current_state_fingerprint:
         raise MarketIntelligencePublicationConflict("approved Production state differs from plan")
-    if not plan.activation_allowed:
+    if not (plan.activation_allowed or plan.activation_allowed_by_review_authorization):
         raise MarketIntelligencePublicationConflict("approval plan is not freshness-eligible")
     with _exclusive_lock(safe_root):
         if freshness_validator is not None:
@@ -644,7 +666,7 @@ def verify_then_link(
     validate_plan(plan)
     if expected_current_state_fingerprint != plan.expected_current_state_fingerprint:
         raise MarketIntelligencePublicationConflict("approved Production state differs from plan")
-    if not plan.activation_allowed:
+    if not (plan.activation_allowed or plan.activation_allowed_by_review_authorization):
         raise MarketIntelligencePublicationConflict("approval plan is not freshness-eligible")
     with _exclusive_lock(safe_root):
         if freshness_validator is not None:
@@ -736,6 +758,7 @@ def _reference(
         analytics_logical_fingerprint=payload.analytics.logical_fingerprint,
         manifest_sha256=file_sha256(path / MARKET_INTELLIGENCE_MANIFEST_FILE),
         aggregate_sha256=aggregate_sha256(files),
+        review_deployment=payload.review_deployment,
     )
 
 
@@ -840,6 +863,7 @@ def _planned_reference(plan: MarketIntelligenceApprovalPlanV1) -> MarketIntellig
         analytics_logical_fingerprint=plan.analytics_logical_fingerprint,
         manifest_sha256=plan.manifest_sha256,
         aggregate_sha256=plan.aggregate_sha256,
+        review_deployment=plan.review_deployment,
     )
 
 

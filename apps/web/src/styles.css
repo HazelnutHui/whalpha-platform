@@ -62,6 +62,15 @@ body {
 }
 
 .regime-shell { display: grid; gap: 12px; }
+.review-deployment-banner {
+  padding: 10px 14px;
+  border: 1px solid var(--warning);
+  border-left-width: 4px;
+  background: color-mix(in srgb, var(--warning) 10%, var(--surface));
+  color: var(--text);
+  font-size: .84rem;
+  letter-spacing: .01em;
+}
 .regime-shell > * { min-width: 0; }
 .regime-topbar {
   min-height: 34px;

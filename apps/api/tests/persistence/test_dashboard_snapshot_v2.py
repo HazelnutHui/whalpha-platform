@@ -304,6 +304,11 @@ def test_cli_current_freshness_cannot_be_spoofed_by_generated_at(monkeypatch, tm
     monkeypatch.setattr(cli, "_formal_freshness", lambda: stale)
     monkeypatch.setattr(cli, "read_active_dashboard_universe_activation", lambda *a, **k: object())
     monkeypatch.setattr(
+        cli,
+        "read_dashboard_universe_activation_pointer",
+        lambda *a, **k: SimpleNamespace(active=SimpleNamespace(analysis_session=date(2026, 8, 13))),
+    )
+    monkeypatch.setattr(
         cli, "build_private_dashboard_snapshot",
         lambda **kwargs: SimpleNamespace(output_dir=candidate, manifest=manifest),
     )
@@ -315,6 +320,7 @@ def test_cli_current_freshness_cannot_be_spoofed_by_generated_at(monkeypatch, tm
         "--output-root", str(tmp_path / "output"),
         "--release-id", "2026-08-19T120000Z-abcdef0",
         "--generated-at", "2026-08-19T12:00:00Z",
+        "--analysis-session", manifest.current_session_date,
     ]) == 0
     payload = __import__("json").loads(capsys.readouterr().out)
     assert payload["status"] == "stale_blocked"

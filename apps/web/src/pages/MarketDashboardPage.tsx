@@ -55,6 +55,17 @@ function materialFlags(flags: string[]): string[] {
   return flags.filter((flag) => MATERIAL_FLAGS.has(flag));
 }
 
+function ReviewDeploymentBanner({ data }: { data: DashboardData }): JSX.Element | null {
+  const { t } = useI18n(); const overview = data.overview;
+  if (!overview.review_mode || overview.data_status !== 'stale_review') return null;
+  return <section className="review-deployment-banner" role="status">
+    <strong>{t('review.banner', {
+      session: overview.review_approved_as_of_session ?? overview.current_session_date,
+      count: overview.review_expected_lag_sessions ?? overview.session_lag ?? 1,
+    })}</strong>
+  </section>;
+}
+
 function Header({ mode }: { mode: DashboardMode }): JSX.Element {
   const { locale, t } = useI18n();
   return (
@@ -233,7 +244,7 @@ export function MarketDashboardPage(): JSX.Element {
   const selected = selectedUniverseId ?? state.data.overview.default_universe_id; const universe = activeUniverse(state.data, selected);
   const displayedMap = { ...universe.trading_activity_map, nodes: universe.trading_activity_map.nodes.slice(0, mapLimit) }; const searched = searchTicker.trim().toUpperCase();
   const searchHit = searched ? displayedMap.nodes.find((node) => node.ticker === searched) ?? null : null;
-  return <main className="app-shell dashboard-shell"><Header mode={state.mode} /><MetaControlBar data={state.data} universe={universe} selected={universe.definition.universe_id} onChange={(value) => { setSelectedUniverseId(value); setSelectedItem(null); writeUniverseToUrl(value); }} />
+  return <main className="app-shell dashboard-shell"><Header mode={state.mode} /><ReviewDeploymentBanner data={state.data} /><MetaControlBar data={state.data} universe={universe} selected={universe.definition.universe_id} onChange={(value) => { setSelectedUniverseId(value); setSelectedItem(null); writeUniverseToUrl(value); }} />
     <BenchmarkStrip items={state.data.overview.market_benchmarks} equalWeight={universe.equal_weight_benchmark} /><MarketPulse universe={universe} /><div className="two-column-grid"><BreadthChart universe={universe} /><VolumeBreadth universe={universe} /></div><SectorBenchmarks items={state.data.overview.sector_benchmarks} />
     <section className="panel liquidity-panel" aria-labelledby="activity-title"><div className="section-header"><div><p className="eyebrow">{t('dashboard.activityMap')}</p><h2 id="activity-title">{t('dashboard.activityTitle')}</h2></div><div className="map-controls"><label>{t('dashboard.topN')} <select aria-label={t('dashboard.topN')} value={mapLimit} onChange={(event) => setMapLimit(Number(event.target.value))}><option value={50}>50</option><option value={75}>75</option><option value={100}>100</option></select></label><label>{t('dashboard.search')} <input aria-label={t('dashboard.search')} value={searchTicker} onChange={(event) => setSearchTicker(event.target.value)} placeholder={t('dashboard.searchPlaceholder')} /></label></div></div>
       <LiquidityTreemap liquidityMap={displayedMap} highlightedTicker={searchHit?.ticker ?? null} onSelectNode={setSelectedItem} />{searched && !searchHit ? <p className="chart-summary">{t('dashboard.searchMiss', { ticker: searched, count: mapLimit })}</p> : null}{selectedItem ? <DetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} /> : null}

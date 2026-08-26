@@ -51,7 +51,9 @@ def create_app(
     if cfg.enable_market_intelligence_routes:
         publication = read_active_market_intelligence(cfg.market_data_root, validate_sources=True)
         app.state.market_regime_preview_service = MarketRegimePreviewService.from_payload(
-            publication.payload.analytics, publication.payload.source.preview_generated_at
+            publication.payload.analytics,
+            publication.payload.source.preview_generated_at,
+            publication.payload.review_deployment,
         )
         app.state.market_intelligence_publication = publication
         app.include_router(private_market_regime_router, prefix=cfg.api_v1_prefix)
