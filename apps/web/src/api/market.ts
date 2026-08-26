@@ -64,6 +64,30 @@ function requireHashRecord(value: Record<string, unknown>, key: string): Record<
   return Object.fromEntries(entries) as Record<string, string>;
 }
 
+function requireSnapshotDataStatus(value: Record<string, unknown>, key: string): 'complete' | 'insufficient_data' | 'stale_review' {
+  const candidate = requireString(value, key);
+  if (!['complete', 'insufficient_data', 'stale_review'].includes(candidate)) {
+    throw new Error(`Invalid market API payload: ${key}`);
+  }
+  return candidate as 'complete' | 'insufficient_data' | 'stale_review';
+}
+
+function requireDashboardDataStatus(value: Record<string, unknown>, key: string): 'complete' | 'insufficient_data' | 'synthetic_demo' | 'file_schema_consistency_checks_passed' | 'stale_review' {
+  const candidate = requireString(value, key);
+  if (!['complete', 'insufficient_data', 'synthetic_demo', 'file_schema_consistency_checks_passed', 'stale_review'].includes(candidate)) {
+    throw new Error(`Invalid market API payload: ${key}`);
+  }
+  return candidate as 'complete' | 'insufficient_data' | 'synthetic_demo' | 'file_schema_consistency_checks_passed' | 'stale_review';
+}
+
+function optionalNullableString(value: Record<string, unknown>, key: string): string | null | undefined {
+  return value[key] === undefined ? undefined : requireNullableString(value, key);
+}
+
+function optionalNullableNumber(value: Record<string, unknown>, key: string): number | null | undefined {
+  return value[key] === undefined ? undefined : requireNullableNumber(value, key);
+}
+
 export function parseReturn(value: unknown): EodReturnResponse {
   if (!isRecord(value)) {
     throw new Error('Invalid market API payload: return item');
@@ -179,7 +203,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     freshness_status: value.freshness_status === undefined ? undefined : requireNullableString(value, 'freshness_status'),
     calendar_id: value.calendar_id === undefined ? undefined : requireNullableString(value, 'calendar_id'),
     freshness_checked_at: value.freshness_checked_at === undefined ? undefined : requireNullableString(value, 'freshness_checked_at'),
-    data_status: requireString(value, 'data_status'),
+    data_status: requireSnapshotDataStatus(value, 'data_status'),
     overview_file: typeof value.overview_file === 'string' ? value.overview_file : undefined,
     summary_file: requireString(value, 'summary_file'),
     movers_file: requireString(value, 'movers_file'),
@@ -197,12 +221,24 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     evidence_coverage_status: typeof value.evidence_coverage_status === 'string' ? value.evidence_coverage_status : undefined,
     funnel_stage_count: value.funnel_stage_count === undefined ? undefined : requireNumber(value, 'funnel_stage_count'),
     funnel_source_fingerprint: typeof value.funnel_source_fingerprint === 'string' ? value.funnel_source_fingerprint : undefined,
+    dashboard_contract_version: typeof value.dashboard_contract_version === 'string' ? value.dashboard_contract_version : undefined,
+    default_universe_id: typeof value.default_universe_id === 'string' ? value.default_universe_id : undefined,
+    market_intelligence_file: optionalNullableString(value, 'market_intelligence_file'),
+    market_intelligence_publication_id: optionalNullableString(value, 'market_intelligence_publication_id'),
+    market_intelligence_payload_sha256: optionalNullableString(value, 'market_intelligence_payload_sha256'),
+    market_intelligence_logical_fingerprint: optionalNullableString(value, 'market_intelligence_logical_fingerprint'),
+    analytics_payload_logical_fingerprint: optionalNullableString(value, 'analytics_payload_logical_fingerprint'),
+    review_mode: value.review_mode === undefined ? undefined : requireBoolean(value, 'review_mode'),
+    review_contract_version: optionalNullableString(value, 'review_contract_version'),
+    review_approved_as_of_session: optionalNullableString(value, 'review_approved_as_of_session'),
+    review_expected_latest_session: optionalNullableString(value, 'review_expected_latest_session'),
+    review_expected_lag_sessions: optionalNullableNumber(value, 'review_expected_lag_sessions'),
     is_real_provider_backed: requireBoolean(value, 'is_real_provider_backed'),
     access_classification: requireString(value, 'access_classification'),
     contains_raw_provider_data: requireBoolean(value, 'contains_raw_provider_data'),
     contains_credentials: requireBoolean(value, 'contains_credentials'),
   };
-  if (!['1', '1.1', '1.2', '1.3', '1.4'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
+  if (!['1', '1.1', '1.2', '1.3', '1.4', '1.5'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
     throw new Error('Unsupported private dashboard snapshot');
   }
   if (manifest.snapshot_contract_version === '1.1' && (
@@ -222,7 +258,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
   )) {
     throw new Error('Private dashboard snapshot is missing governance metadata');
   }
-  if (['1.3', '1.4'].includes(manifest.snapshot_contract_version)) {
+  if (['1.3', '1.4', '1.5'].includes(manifest.snapshot_contract_version)) {
     const ids = value.available_universe_ids;
     if (!Array.isArray(ids) || ids.length !== 2 || ids.some((item) => typeof item !== 'string')) throw new Error('Private dashboard snapshot activation catalog is invalid');
     manifest.selected_universe_id = requireString(value, 'selected_universe_id');
@@ -230,11 +266,48 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     manifest.activation_fingerprint = requireString(value, 'activation_fingerprint');
     manifest.membership_evidence_as_of = requireString(value, 'membership_evidence_as_of');
   }
-  if (manifest.snapshot_contract_version === '1.4' && (
+  if (['1.4', '1.5'].includes(manifest.snapshot_contract_version) && (
     manifest.funnel_stage_count !== 20 ||
     !manifest.funnel_source_fingerprint ||
     !/^[0-9a-f]{64}$/.test(manifest.funnel_source_fingerprint)
   )) throw new Error('Private dashboard snapshot Funnel metadata is invalid');
+  if (manifest.snapshot_contract_version === '1.5') {
+    const intelligenceHashes = [
+      manifest.market_intelligence_payload_sha256,
+      manifest.market_intelligence_logical_fingerprint,
+      manifest.analytics_payload_logical_fingerprint,
+    ];
+    if (
+      manifest.dashboard_contract_version !== '2.2'
+      || !manifest.default_universe_id
+      || manifest.market_intelligence_file !== 'market-regime-overviews.json'
+      || !manifest.market_intelligence_publication_id
+      || intelligenceHashes.some((item) => typeof item !== 'string' || !/^[0-9a-f]{64}$/.test(item))
+      || !manifest.file_sha256['market-regime-overviews.json']
+    ) {
+      throw new Error('Private dashboard snapshot Market Intelligence metadata is invalid');
+    }
+    const reviewValues = [
+      manifest.review_contract_version,
+      manifest.review_approved_as_of_session,
+      manifest.review_expected_latest_session,
+      manifest.review_expected_lag_sessions,
+    ];
+    if (manifest.review_mode) {
+      if (
+        manifest.data_status !== 'stale_review'
+        || manifest.review_contract_version !== 'production-review-deployment/1.0'
+        || manifest.review_approved_as_of_session !== manifest.current_session_date
+        || manifest.review_approved_as_of_session !== manifest.actual_latest_completed_session
+        || manifest.review_expected_latest_session !== manifest.expected_latest_completed_session
+        || manifest.review_expected_lag_sessions !== 1
+        || manifest.review_expected_lag_sessions !== manifest.session_lag
+        || manifest.freshness_status !== 'stale'
+      ) throw new Error('Private dashboard snapshot review deployment is invalid');
+    } else if (manifest.data_status === 'stale_review' || reviewValues.some((item) => item !== null && item !== undefined)) {
+      throw new Error('Private dashboard snapshot review deployment is unexpected');
+    }
+  }
   if (manifest.contains_credentials || manifest.contains_raw_provider_data) {
     throw new Error('Unsafe private dashboard snapshot');
   }
@@ -364,20 +437,36 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
   if (!isRecord(value) || !Array.isArray(value.universes) || !Array.isArray(value.market_benchmarks) || !Array.isArray(value.sector_benchmarks)) {
     throw new Error('Invalid market API payload: dashboard overview');
   }
+  const contractVersion = requireString(value, 'contract_version');
+  if (!['2.0', '2.1'].includes(contractVersion)) throw new Error('Unsupported market Dashboard contract');
+  const dataStatus = requireDashboardDataStatus(value, 'data_status');
   const reviewMode = value.review_mode === undefined ? false : requireBoolean(value, 'review_mode');
   const reviewContract = value.review_contract_version === undefined ? null : requireNullableString(value, 'review_contract_version');
   const reviewAsOf = value.review_approved_as_of_session === undefined ? null : requireNullableString(value, 'review_approved_as_of_session');
   const reviewExpected = value.review_expected_latest_session === undefined ? null : requireNullableString(value, 'review_expected_latest_session');
   const reviewLag = value.review_expected_lag_sessions === undefined ? null : requireNullableNumber(value, 'review_expected_lag_sessions');
-  if (reviewMode && (value.data_status !== 'stale_review' || reviewContract !== 'production-review-deployment/1.0'
-    || reviewAsOf === null || reviewExpected === null || reviewLag !== 1)) {
+  if (reviewMode && (
+    dataStatus !== 'stale_review'
+    || reviewContract !== 'production-review-deployment/1.0'
+    || reviewAsOf === null
+    || reviewExpected === null
+    || reviewLag !== 1
+    || reviewAsOf !== value.current_session_date
+    || reviewAsOf !== value.actual_latest_completed_session
+    || reviewExpected !== value.expected_latest_completed_session
+    || reviewLag !== value.session_lag
+    || value.freshness_status !== 'stale'
+  )) {
     throw new Error('Invalid market API payload: review deployment');
   }
-  if (!reviewMode && [reviewContract, reviewAsOf, reviewExpected, reviewLag].some((item) => item !== null)) {
+  if (!reviewMode && (
+    dataStatus === 'stale_review'
+    || [reviewContract, reviewAsOf, reviewExpected, reviewLag].some((item) => item !== null)
+  )) {
     throw new Error('Invalid market API payload: unexpected review deployment');
   }
   return {
-    contract_version: requireString(value, 'contract_version'),
+    contract_version: contractVersion,
     default_universe_id: requireString(value, 'default_universe_id'),
     selected_universe_id: requireString(value, 'selected_universe_id'),
     universe_definition_id: requireString(value, 'universe_definition_id'),
@@ -405,7 +494,7 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
     universes: value.universes.map(parseUniverseView),
     market_benchmarks: value.market_benchmarks.map(parseMarketBenchmark),
     sector_benchmarks: value.sector_benchmarks.map(parseSectorBenchmark),
-    data_status: requireString(value, 'data_status'),
+    data_status: dataStatus,
     review_mode: reviewMode,
     review_contract_version: reviewContract,
     review_approved_as_of_session: reviewAsOf,

@@ -180,7 +180,7 @@ export interface DashboardOverviewResponse {
   universes: DashboardUniverseViewResponse[];
   market_benchmarks: MarketBenchmarkResponse[];
   sector_benchmarks: SectorBenchmarkEtfResponse[];
-  data_status: string;
+  data_status: 'complete' | 'insufficient_data' | 'synthetic_demo' | 'file_schema_consistency_checks_passed' | 'stale_review';
   review_mode?: boolean;
   review_contract_version?: string | null;
   review_approved_as_of_session?: string | null;
@@ -200,7 +200,7 @@ export interface SnapshotManifestResponse {
   freshness_status?: string | null;
   calendar_id?: string | null;
   freshness_checked_at?: string | null;
-  data_status: string;
+  data_status: 'complete' | 'insufficient_data' | 'stale_review';
   overview_file?: string;
   summary_file: string;
   movers_file: string;
@@ -222,6 +222,18 @@ export interface SnapshotManifestResponse {
   membership_evidence_as_of?: string;
   funnel_stage_count?: number;
   funnel_source_fingerprint?: string;
+  dashboard_contract_version?: string;
+  default_universe_id?: string;
+  market_intelligence_file?: string | null;
+  market_intelligence_publication_id?: string | null;
+  market_intelligence_payload_sha256?: string | null;
+  market_intelligence_logical_fingerprint?: string | null;
+  analytics_payload_logical_fingerprint?: string | null;
+  review_mode?: boolean;
+  review_contract_version?: string | null;
+  review_approved_as_of_session?: string | null;
+  review_expected_latest_session?: string | null;
+  review_expected_lag_sessions?: number | null;
   is_real_provider_backed: boolean;
   access_classification: string;
   contains_raw_provider_data: boolean;

@@ -96,6 +96,9 @@ describe('MarketDashboardPage', () => {
     const review = {
       ...demoDashboardData.overview,
       data_status: 'stale_review', review_mode: true,
+      current_session_date: '2026-08-24', previous_session_date: '2026-08-21',
+      actual_latest_completed_session: '2026-08-24', expected_latest_completed_session: '2026-08-25',
+      session_lag: 1, freshness_status: 'stale',
       review_contract_version: 'production-review-deployment/1.0',
       review_approved_as_of_session: '2026-08-24',
       review_expected_latest_session: '2026-08-25', review_expected_lag_sessions: 1,

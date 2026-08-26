@@ -107,6 +107,54 @@ describe('market API runtime validation', () => {
     expect(() => parseSnapshotManifest({ ...base, funnel_stage_count: 19 })).toThrow('Funnel');
   });
 
+  it('validates the formal Snapshot 1.5 review contract', () => {
+    const base = {
+      snapshot_contract_version: '1.5', dashboard_contract_version: '2.2', release_id: '2026-08-24T045652Z-aee1a6ab0f67',
+      generated_at: '2026-08-25T04:56:52Z', current_session_date: '2026-08-24', previous_session_date: '2026-08-21',
+      expected_latest_completed_session: '2026-08-25', actual_latest_completed_session: '2026-08-24', session_lag: 1,
+      freshness_status: 'stale', calendar_id: 'XNYS', freshness_checked_at: '2026-08-25T04:56:52Z', data_status: 'stale_review',
+      overview_file: 'market-overview.json', summary_file: 'market-summary.json', movers_file: 'movers.json', liquidity_map_file: 'liquidity-map.json',
+      market_intelligence_file: 'market-regime-overviews.json', file_sha256: { 'market-regime-overviews.json': 'c'.repeat(64) },
+      summary_node_count: 2, mover_gainer_count: 20, mover_loser_count: 20, liquidity_node_count: 200, warning_count: 0,
+      default_universe_id: 'provider_classified_common_shares_v1', universe_definition_id: 'dashboard_universe_activation_v2', universe_version: '2.0',
+      governance_status: 'provisional_classification', classification_as_of_date: '2026-08-14', evidence_coverage_status: 'provider_form_complete_issuer_structure_provisional',
+      selected_universe_id: 'provider_classified_common_shares_v1',
+      available_universe_ids: ['provider_classified_common_shares_v1', 'provider_classified_common_shares_plus_adrs_v1'],
+      activation_fingerprint: 'a'.repeat(64), membership_evidence_as_of: '2026-08-14', funnel_stage_count: 20, funnel_source_fingerprint: 'b'.repeat(64),
+      market_intelligence_publication_id: '2026-08-24T043223Z-aee1a6ab0f67', market_intelligence_payload_sha256: 'd'.repeat(64),
+      market_intelligence_logical_fingerprint: 'e'.repeat(64), analytics_payload_logical_fingerprint: 'f'.repeat(64),
+      review_mode: true, review_contract_version: 'production-review-deployment/1.0', review_approved_as_of_session: '2026-08-24',
+      review_expected_latest_session: '2026-08-25', review_expected_lag_sessions: 1,
+      is_real_provider_backed: true, access_classification: 'private', contains_raw_provider_data: false, contains_credentials: false,
+    };
+    expect(parseSnapshotManifest(base).dashboard_contract_version).toBe('2.2');
+    expect(() => parseSnapshotManifest({ ...base, dashboard_contract_version: '2.3' })).toThrow('Market Intelligence metadata');
+    expect(() => parseSnapshotManifest({ ...base, review_expected_lag_sessions: 2 })).toThrow('review deployment');
+    expect(() => parseSnapshotManifest({ ...base, market_intelligence_payload_sha256: 12 })).toThrow('market_intelligence_payload_sha256');
+    expect(() => parseSnapshotManifest({ ...base, snapshot_contract_version: '1.6' })).toThrow('Unsupported');
+    expect(() => parseSnapshotManifest({ ...base, market_intelligence_publication_id: undefined })).toThrow('Market Intelligence metadata');
+  });
+
+  it('accepts the explicit stale-review overview and rejects unknown status or contract values', () => {
+    const review = structuredClone(demoDashboardData.overview);
+    review.contract_version = '2.1';
+    review.data_status = 'stale_review';
+    review.review_mode = true;
+    review.review_contract_version = 'production-review-deployment/1.0';
+    review.review_approved_as_of_session = review.current_session_date;
+    review.review_expected_latest_session = '2026-08-25';
+    review.review_expected_lag_sessions = 1;
+    review.actual_latest_completed_session = review.current_session_date;
+    review.expected_latest_completed_session = '2026-08-25';
+    review.session_lag = 1;
+    review.freshness_status = 'stale';
+    expect(parseDashboardOverview(review).data_status).toBe('stale_review');
+    expect(() => parseDashboardOverview({ ...review, data_status: 'unknown_review' })).toThrow('data_status');
+    expect(() => parseDashboardOverview({ ...review, contract_version: '2.2' })).toThrow('Unsupported market Dashboard contract');
+    expect(() => parseDashboardOverview({ ...review, review_mode: false, review_contract_version: null,
+      review_approved_as_of_session: null, review_expected_latest_session: null, review_expected_lag_sessions: null })).toThrow('unexpected review deployment');
+  });
+
   it('requires governance metadata for snapshot contract 1.2', () => {
     expect(() => parseSnapshotManifest({
       snapshot_contract_version: '1.2', release_id: '2026-08-14T120000Z-abcdef0', generated_at: '2026-08-15T12:00:00Z',

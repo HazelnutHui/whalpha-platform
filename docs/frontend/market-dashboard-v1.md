@@ -4,6 +4,15 @@
 
 Dashboard contract 2.1 renders the ten ordered, source-backed stages supplied for the selected active Universe. The browser does not derive Funnel stages from summary or audit counts. Common Shares remains first/default; Common Shares + ADRs remains second. URL selection, refresh, and history change the Funnel together with every other Universe-dependent module. Snapshot 1.3 remains compatible but reports that the formal Funnel is unavailable.
 
+Snapshot contract 1.5 identifies the complete Dashboard 2.2 static release and
+adds the language-neutral Market Intelligence envelope. The Dashboard overview
+inside that release remains the Dashboard 2.1 response object by design. The
+browser validates the 1.5 manifest's Dashboard version, immutable Market
+Intelligence binding, Funnel metadata, and exact review-deployment fields before
+loading the overview. `stale_review` is accepted only with the explicit
+`production-review-deployment/1.0` session/lag binding; unknown status or
+contract values continue to fail closed.
+
 ## Classification Boundary
 
 Phase A does not change the Dashboard. A future Phase B must make Market Pulse, Breadth, Movers, and Trading Activity Map share one universe definition ID, version, and as-of date. ETF benchmarks, excluded records, quarantine records, and unknown/ambiguous/heuristic-only classifications cannot enter that equity membership.

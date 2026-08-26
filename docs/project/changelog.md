@@ -521,3 +521,12 @@
 - Added fail-closed checks for missing/wrong acknowledgement, changed session,
   expected date or lag, plus focused and full regressions. No generic
   `--allow-stale` was introduced.
+
+# 2026-08-25 — Dashboard Snapshot 1.5 frontend contract compatibility
+
+- Added typed, fail-closed Snapshot 1.5 manifest validation to the existing
+  static Dashboard loader, including Dashboard 2.2, Market Intelligence,
+  Funnel, and exact stale-review bindings.
+- Kept the embedded Dashboard overview on its defined 2.1 response contract;
+  unknown snapshot versions, Dashboard contracts, and data-status values remain
+  rejected instead of being converted to empty or synthetic data.
