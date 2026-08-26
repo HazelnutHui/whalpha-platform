@@ -2,9 +2,11 @@
 
 ## Status and scope
 
-Implemented as an approval-bound Production contract. The reviewed 2026-08-21
-candidate is historical and inactive because XNYS freshness is one session
-behind. No Production target or active pointer has been written.
+Implemented as an approval-bound Production contract. Active publication
+`2026-08-24T043223Z-aee1a6ab0f67` is the exact user-approved 2026-08-24
+`stale_review`: expected session 2026-08-25, lag one. It is not an ordinary
+fresh publication and does not authorize reuse of the exception for another
+session or release.
 
 The publication contains one language-neutral Market Regime & Opportunity Map
 payload shared by the English and Simplified Chinese interfaces. Locale never

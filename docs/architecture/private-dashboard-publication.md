@@ -1,8 +1,15 @@
 # Private Dashboard Publication
 
-## Snapshot 1.4 / Dashboard 2.1 offline readiness
+## Active Snapshot 1.5 / Dashboard 2.2 boundary
 
-The [Dashboard Snapshot V2 contract](../data-contracts/dashboard-snapshot-v2.md) and [operations boundary](../operations/dashboard-snapshot-publication.md) add the formal 20-record Universe Funnel, immutable releases, approval-plan-bound atomic publication, active-pointer compatibility fallback, verify-then-link recovery, separate rollback, and a lock-time XNYS freshness gate. The production release remains contract 1.3 and unchanged. With canonical EOD at 2026-08-19 and expected latest at 2026-08-21, the offline candidate is `stale` with lag two and cannot create a production approval package.
+The [Dashboard Snapshot V2 contract](../data-contracts/dashboard-snapshot-v2.md)
+and [operations boundary](../operations/dashboard-snapshot-publication.md)
+define the formal 20-record Universe Funnel, immutable releases,
+approval-plan-bound atomic publication, active-pointer compatibility fallback,
+verify-then-link recovery, separate rollback, and lock-time XNYS freshness
+gate. Active Snapshot `2026-08-24T045652Z-aee1a6ab0f67` uses contract 1.5 /
+Dashboard 2.2 and binds the exact approved `stale_review` Market Intelligence
+publication. Ordinary publication remains lag-zero only.
 
 ## Classification Phase Boundary
 
@@ -27,9 +34,10 @@ Implemented locally:
 - Nginx configuration template using session `auth_request`
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
-- deployed OCI session-login release `2026-08-15T133119Z-137f244e8508`
-- deployed OCI fresh Market Overview release `2026-08-14T224306Z-21d0e7fda749`, built from source commit `21d0e7fda749e3afec7edc9a884eb6408663004f`
-- branded `/login/` page and localhost-only Auth Service
+- deployed OCI release `2026-08-26T103119Z-f344a589a8c9`, built from source
+  commit `f344a589a8c93e527e63470335d88d293141aee1`
+- branded credential-or-guest `/` entry, `/login/` compatibility redirect, and
+  localhost-only Auth Service
 
 Not implemented:
 
@@ -61,9 +69,11 @@ Each bundle contains:
 ```text
 private-data/v1/
   manifest.json
+  market-overview.json
   market-summary.json
   movers.json
   liquidity-map.json
+  market-regime-overviews.json
 ```
 
 `manifest.json` records contract version, release ID, generation time, activation fingerprint/catalog/default, session dates, freshness, file names, SHA-256 hashes, per-Universe node counts, warning count, and private access classification. Dashboard Overview JSON contains complete payloads for both activated universes. File consistency validation and calendar freshness are distinct.
@@ -94,9 +104,11 @@ build/oci-dashboard/<release-id>/
     assets/...
   private-data/v1/
     manifest.json
+    market-overview.json
     market-summary.json
     movers.json
     liquidity-map.json
+    market-regime-overviews.json
   deployment-manifest.json
   checksums.sha256
 ```

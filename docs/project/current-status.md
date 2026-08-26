@@ -130,14 +130,28 @@ multi-session relationship persistence counts, and evidence acceleration need
 an additive reviewed analytics-response contract; they are not inferred in the
 browser.
 
-The first isolated Phase 5A stock-candidate slice is implemented in repository
+The Phase 5 offline stock-candidate pipeline is implemented in repository
 source: strict fact/component/confidence/batch contracts, a fingerprinted fixed
 seven-component parameter set, pure 26-session scoring, missingness and anomaly
-quarantine, and separate Conservative/Balanced/Aggressive eligibility/ranking.
-It is not a frontend score and does not alter `/data` or the active product.
-Chronological Watch/Prepare/Enter/invalidated replay, independent oracle,
-canonical `/tmp` audit, publication, Snapshot, API/frontend integration, and
+quarantine, separate Conservative/Balanced/Aggressive eligibility/ranking,
+chronological Watch/Prepare/Enter/invalidated replay, an independent raw-panel
+Oracle, and a canonical `/tmp` audit/reread boundary. It does not alter `/data`
+or the active product. Publication, Snapshot, API/frontend integration, and
 deployment remain pending and retain separate operational gates.
+
+The formal read-only 2026-08-24 candidate audit is
+`/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, logical fingerprint
+`1f25a1c9060d459e372903ad116579973c709363f365f19fa66bb515774c93df`.
+It covers the independently calculable 2026-08-21 and 2026-08-24 sessions,
+reports zero Oracle mismatches, and passes append, restart, input-permutation,
+and future-prefix equivalence. On 2026-08-24, Primary has 1,716 scored / two
+missing members, 20 quarantined rows, 1,414 Watch, 46 invalidated, and no
+Prepare/Enter state; Secondary has 1,829 scored / two missing, 20 quarantined,
+1,512 Watch, 55 invalidated, and no Prepare/Enter state. The absence of later
+stages is expected from only two candidate sessions, not predictive evidence.
+Current risk-mode outputs reach the fixed 25/50/100 display caps in each
+Universe. The full two-session audit took about 928 seconds and peaked near
+1.9 GiB, so incremental daily execution remains required before automation.
 
 ## Verification entry point
 

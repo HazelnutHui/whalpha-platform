@@ -1,5 +1,46 @@
 # Changelog
 
+## 2026-08-26 — Phase 5 candidate state, Oracle, and canonical audit
+
+- Upgraded the candidate contract to `opportunity-candidate/1.1` and the
+  calculation to `market-regime-opportunity-candidate-v1.1.1`, with fixed
+  parameter set `mrom-candidate-v1-fixed-baseline-3` and fingerprint
+  `4e44d58430c82f95c6e612c5227db0b050acfff29615e6fec4e49b139087d347`.
+  The full formula, normalization, confidence, risk, anomaly, and source-
+  quality policy now enters the parameter fingerprint.
+- Added a typed prior-state source so current confidence can use only the
+  immediately preceding compatible candidate-state row. Added deterministic
+  Watch/Prepare/Enter/invalidated replay, missing-session hold/null behavior,
+  breakout facts, stable-ID ticker-change handling, and separate state/history
+  fingerprints. Candidate invalidation remains explicitly distinct from a
+  position Exit or sell instruction.
+- Added stable registered-ETF driver IDs, preserved EOD adjustment/quality
+  facts through the formal reader, and separated known source-level degraded
+  flags from security-specific quarantine. Unknown quality flags, non-valid
+  status, non-unit factors, and extreme returns/gaps still fail closed.
+- Added an independent raw-panel Oracle for scores, risk rankings, and state
+  replay, plus a socket-guarded CLI and exact ten-file canonical `/tmp` audit.
+  The reader verifies custody, file and logical hashes, typed record hashes,
+  Primary-first ordering, source panels, transitions, and replay equivalence.
+- The first formal baseline-2 audit correctly exposed an over-broad quality
+  rule that quarantined every scored member because all canonical bars carry
+  the known source-level `adjustment_factors_unverified` flag. Baseline-3
+  separates that visible degraded limitation from unknown/security-specific
+  quality failures; it does not suppress or relabel the source flag.
+- Completed and formally reread the 2026-08-24 baseline-3 audit at
+  `/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, fingerprint
+  `1f25a1c9060d459e372903ad116579973c709363f365f19fa66bb515774c93df`.
+  Two candidate sessions produced 7,090 score rows and 7,098 state rows with
+  zero Oracle mismatch and all append/restart/permutation/future-prefix gates
+  true. Current Primary/Secondary each retain 20 quarantined extreme-move rows;
+  no Prepare/Enter state is possible from the two-session evidence. Each
+  Universe reaches the fixed 25/50/100 risk-mode display caps.
+- The full audit took about 928 seconds and 1.9 GiB peak memory. This is
+  acceptable for a development audit but not the intended daily hot path;
+  incremental state/source reuse is required before scheduler integration.
+- This slice remains offline and read-only with no `/data`, publication,
+  Snapshot, API/frontend, OCI, scheduler, position, or option boundary.
+
 ## 2026-08-26 — Phase 5A candidate scoring and risk-mode domain core
 
 - Added strict opportunity-candidate fact, component, submetric, confidence,

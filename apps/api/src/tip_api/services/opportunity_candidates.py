@@ -26,6 +26,7 @@ from tip_api.contracts.analytics.v1 import (
     CandidateDataQualityStatus,
     CandidateMetricAvailability,
     CandidateMetricV1,
+    CandidatePriorStateSourceV1,
     CandidateRiskAssessmentV1,
     CandidateRiskMode,
     CandidateRiskModeResultV1,
@@ -33,22 +34,69 @@ from tip_api.contracts.analytics.v1 import (
     OpportunityCandidateScoreV1,
     RegimeState,
 )
-from tip_api.parameters.market_regime.candidate_v1_0_0 import (
+from tip_api.parameters.market_regime.candidate_v1_1_1 import (
+    ANNUALIZATION_SESSION_COUNT,
     BASE_LIQUIDITY_FLOOR,
     BASE_PRICE_FLOOR,
     BASE_WATCH_CONFIDENCE,
     BASE_WATCH_SCORE,
+    CANDIDATE_NON_BLOCKING_QUALITY_FLAGS,
     CANDIDATE_PARAMETER_FINGERPRINT,
+    CANDIDATE_PANEL_SESSION_COUNT,
+    CANDIDATE_REQUIRED_HISTORY_SESSION_COUNT,
+    CALCULATION_DECIMAL_PRECISION,
     COMPONENT_PARAMETERS,
+    CONFIDENCE_HISTORY_WEIGHT,
+    CONFIDENCE_RELATIONSHIP_WEIGHT,
+    CONFIDENCE_SOURCE_WEIGHT,
+    CONFIDENCE_STATE_WEIGHT,
     CORRELATION_MINIMUM,
     CORRELATION_MINIMUM_OBSERVATIONS,
     CROSS_SECTION_ROBUST_Z_SCALE,
+    CROSS_SECTION_SCORE_CENTER,
     CROSS_SECTION_SCORE_SCALE,
     CROSS_SECTION_WINSOR_HIGH,
     CROSS_SECTION_WINSOR_LOW,
+    DOLLAR_VOLUME_MINIMUM_OBSERVATIONS,
+    DOLLAR_VOLUME_WINDOW,
+    DOWNSIDE_TAIL_MINIMUM_OBSERVATIONS,
+    DOWNSIDE_TAIL_NORMALIZER_HIGH,
+    DOWNSIDE_TAIL_NORMALIZER_LOW,
+    DOWNSIDE_TAIL_RETURN_THRESHOLD,
+    DOWNSIDE_TAIL_SESSION_COUNT,
+    DRIVER_CORRELATION_NORMALIZER_HIGH,
+    DRIVER_CORRELATION_WINDOW,
     ETF_ALIGNMENT_CAP,
+    EXTREME_CLOSE_RETURN_REVIEW_THRESHOLD,
+    EXTREME_OPEN_GAP_REVIEW_THRESHOLD,
+    LIQUIDITY_NORMALIZER_HIGH,
+    LIQUIDITY_NORMALIZER_LOW,
+    MAXIMUM_DRAWDOWN_CLOSE_COUNT,
+    MAXIMUM_DRAWDOWN_NORMALIZER_HIGH,
+    MAXIMUM_DRAWDOWN_NORMALIZER_LOW,
     MINIMUM_CONFIGURED_WEIGHT_AVAILABLE,
+    OPEN_GAP_MINIMUM_OBSERVATIONS,
+    OPEN_GAP_NORMALIZER_HIGH,
+    OPEN_GAP_NORMALIZER_LOW,
+    OPEN_GAP_SESSION_COUNT,
+    PRICE_NORMALIZER_HIGH,
+    PRICE_NORMALIZER_LOW,
+    PRIOR_VOLUME_MINIMUM_OBSERVATIONS,
+    PRIOR_VOLUME_WINDOW,
+    RAW_DECIMAL_SCALE,
+    REALIZED_VOLATILITY_NORMALIZER_HIGH,
+    REALIZED_VOLATILITY_NORMALIZER_LOW,
+    REALIZED_VOLATILITY_RETURN_COUNT,
+    RELATIONSHIP_SUPPORT_LEVELS,
     RISK_MODE_PARAMETERS,
+    SCORE_DECIMAL_SCALE,
+    SMA_LONG_WINDOW,
+    SMA_RATIO_NORMALIZER_HIGH,
+    SMA_RATIO_NORMALIZER_LOW,
+    SMA_SHORT_WINDOW,
+    STATE_CONFIRMATION_SUPPORT_SESSION_CAP,
+    VOLUME_PERSISTENCE_MINIMUM_OBSERVATIONS,
+    VOLUME_PERSISTENCE_SESSION_COUNT,
     CandidateComponentParameter,
     CandidateRiskModeParameter,
 )
@@ -61,10 +109,11 @@ from tip_api.services.provider_classified_universe import CANDIDATE_A_ID
 ZERO = Decimal("0")
 ONE = Decimal("1")
 HUNDRED = Decimal("100")
-ANNUALIZATION = Decimal("252")
-SCORE_QUANTUM = Decimal("0.0001")
-RAW_QUANTUM = Decimal("0.0000000001")
+ANNUALIZATION = Decimal(ANNUALIZATION_SESSION_COUNT)
+SCORE_QUANTUM = Decimal(1).scaleb(-SCORE_DECIMAL_SCALE)
+RAW_QUANTUM = Decimal(1).scaleb(-RAW_DECIMAL_SCALE)
 MIN_DRIVER_CORRELATION = Decimal(CORRELATION_MINIMUM)
+LOW_RELATIONSHIP_SUPPORT = Decimal(dict(RELATIONSHIP_SUPPORT_LEVELS)["low"])
 
 
 class OpportunityCandidateCalculationError(RuntimeError):
@@ -80,9 +129,12 @@ class _RawCandidate:
     history_count: int
     values: dict[str, Decimal | None]
     missing_reasons: dict[str, str]
+    primary_driver_instrument_id: UUID | None
     primary_driver_ticker: str | None
     driver_correlation: Decimal | None
     corporate_action_review_required: bool
+    corporate_action_review_reason_codes: tuple[str, ...]
+    non_blocking_quality_flags: tuple[str, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -101,7 +153,7 @@ def calculate_opportunity_candidate_scores(
     regime_score: Decimal | str | None,
     regime_state: RegimeState | str | None,
     regime_source_fingerprint: str,
-    state_confirmation_counts: dict[UUID, int] | None = None,
+    prior_state_source: CandidatePriorStateSourceV1,
 ) -> OpportunityCandidateBatchV1:
     """Calculate one source-bound fact ledger for every as-of bar-covered member."""
 
@@ -112,7 +164,7 @@ def calculate_opportunity_candidate_scores(
             regime_score=None if regime_score is None else _decimal(regime_score, "regime_score"),
             regime_state=None if regime_state is None else RegimeState(regime_state),
             regime_source_fingerprint=regime_source_fingerprint,
-            state_confirmation_counts=state_confirmation_counts or {},
+            prior_state_source=prior_state_source,
         )
 
 
@@ -154,7 +206,7 @@ def rank_opportunity_candidates(
         retained: list[OpportunityCandidateScoreV1] = []
         group_counts: dict[str, int] = defaultdict(int)
         for candidate in sortable:
-            group = candidate.primary_driver_ticker or "unclassified"
+            group = str(candidate.primary_driver_instrument_id) if candidate.primary_driver_instrument_id else "unclassified"
             if len(retained) >= parameter.candidate_display_cap:
                 preliminary[candidate.instrument_id].append("risk_mode_display_cap_exceeded")
                 continue
@@ -172,7 +224,7 @@ def rank_opportunity_candidates(
                 risk_mode=mode,
                 eligible=candidate.instrument_id in ranks,
                 risk_adjusted_rank=ranks.get(candidate.instrument_id),
-                concentration_key=candidate.primary_driver_ticker or "unclassified",
+                concentration_key=(str(candidate.primary_driver_instrument_id) if candidate.primary_driver_instrument_id else "unclassified"),
                 rejection_reason_codes=tuple(preliminary[candidate.instrument_id]),
             )
             for candidate in batch.candidates
@@ -211,11 +263,11 @@ def _calculate_scores(
     regime_score: Decimal | None,
     regime_state: RegimeState | None,
     regime_source_fingerprint: str,
-    state_confirmation_counts: dict[UUID, int],
+    prior_state_source: CandidatePriorStateSourceV1,
 ) -> OpportunityCandidateBatchV1:
     _validate_sha(regime_source_fingerprint, "regime_source_fingerprint")
-    if len(panel.sessions) < 26 or panel.sessions[-1] != panel.as_of_session:
-        raise OpportunityCandidateCalculationError("candidate scoring requires 26 ordered sessions ending at as-of")
+    if len(panel.sessions) != CANDIDATE_PANEL_SESSION_COUNT or panel.sessions[-1] != panel.as_of_session:
+        raise OpportunityCandidateCalculationError("candidate scoring requires the exact ordered session count ending at as-of")
     if tuple(sorted(panel.sessions)) != panel.sessions or len(set(panel.sessions)) != len(panel.sessions):
         raise OpportunityCandidateCalculationError("candidate sessions must be unique and ascending")
     if regime_score is not None and not ZERO <= regime_score <= HUNDRED:
@@ -228,6 +280,8 @@ def _calculate_scores(
         raise OpportunityCandidateCalculationError("Secondary must be a strict superset of Primary")
     if universe_id not in {CANDIDATE_A_ID, PUBLIC_SECONDARY_ID}:
         raise OpportunityCandidateCalculationError("candidate scoring permits only active public Universes")
+    if prior_state_source.universe_id != universe_id or prior_state_source.as_of_session != panel.as_of_session:
+        raise OpportunityCandidateCalculationError("typed prior candidate-state source does not match the score batch")
 
     by_instrument: dict[UUID, dict[object, MarketRegimeBar]] = defaultdict(dict)
     current: dict[UUID, MarketRegimeBar] = {}
@@ -279,6 +333,25 @@ def _calculate_scores(
             )
         )
 
+    candidate_ids = tuple(item.instrument_id for item in raw_candidates)
+    if prior_state_source.bootstrap:
+        confirmation_by_id: dict[UUID, tuple[int, str | None]] = {
+            instrument_id: (0, None) for instrument_id in candidate_ids
+        }
+    else:
+        if prior_state_source.source_state_session != panel.sessions[-2]:
+            raise OpportunityCandidateCalculationError("prior candidate-state source must be the immediately preceding panel session")
+        support_ids = tuple(item.instrument_id for item in prior_state_source.supports)
+        if support_ids != candidate_ids:
+            raise OpportunityCandidateCalculationError("prior candidate-state support must cover every current candidate exactly")
+        confirmation_by_id = {
+            item.instrument_id: (
+                item.stage_confirmation_session_count,
+                item.source_state_record_fingerprint,
+            )
+            for item in prior_state_source.supports
+        }
+
     robust_metric_ids = (
         "driver_relative_strength_5",
         "stock_relative_to_driver_5",
@@ -313,7 +386,8 @@ def _calculate_scores(
             regime_state=regime_state,
             cross_scores=cross_scores,
             return_percentiles=return_percentiles,
-            confirmation_count=state_confirmation_counts.get(item.instrument_id, 0),
+            confirmation_count=confirmation_by_id[item.instrument_id][0],
+            prior_state_record_fingerprint=confirmation_by_id[item.instrument_id][1],
         )
         for item in raw_candidates
     )
@@ -328,6 +402,7 @@ def _calculate_scores(
         membership_fingerprint=universe.membership_fingerprint,
         regime_source_fingerprint=regime_source_fingerprint,
         history_source_fingerprint=panel.history_source_fingerprint,
+        prior_state_source=prior_state_source,
         bar_covered_member_count=len(candidates),
         missing_member_ids=tuple(missing_ids),
         candidates=candidates,
@@ -362,9 +437,14 @@ def _raw_candidate(
     values["stock_relative_to_spy_5"] = _difference(values["return_5"], spy_return_5)
     values["stock_relative_to_spy_20"] = _difference(values["return_20"], spy_return_20)
 
-    closes10 = _series(bars, sessions[-10:], "close", minimum=10)
-    closes20 = _series(bars, sessions[-20:], "close", minimum=20)
-    closes6 = _series(bars, sessions[-6:], "close", minimum=6)
+    closes10 = _series(bars, sessions[-SMA_SHORT_WINDOW:], "close", minimum=SMA_SHORT_WINDOW)
+    closes20 = _series(bars, sessions[-SMA_LONG_WINDOW:], "close", minimum=SMA_LONG_WINDOW)
+    closes6 = _series(
+        bars,
+        sessions[-MAXIMUM_DRAWDOWN_CLOSE_COUNT:],
+        "close",
+        minimum=MAXIMUM_DRAWDOWN_CLOSE_COUNT,
+    )
     values["close_above_sma10"] = None if closes10 is None else (HUNDRED if current_bar.close > _mean(closes10) else ZERO)
     if closes10 is None or closes20 is None:
         values["sma10_to_sma20"] = None
@@ -372,7 +452,12 @@ def _raw_candidate(
         values["sma10_to_sma20"] = _mean(closes10) / _mean(closes20) - ONE
     values["maximum_drawdown_5"] = None if closes6 is None else abs(_maximum_drawdown(closes6))
 
-    prior_volumes = _series(bars, sessions[-21:-1], "volume", minimum=15)
+    prior_volumes = _series(
+        bars,
+        sessions[-PRIOR_VOLUME_WINDOW - 1 : -1],
+        "volume",
+        minimum=PRIOR_VOLUME_MINIMUM_OBSERVATIONS,
+    )
     values["current_volume_ratio"] = (
         None if prior_volumes is None or _median(prior_volumes) <= ZERO else current_bar.volume / _median(prior_volumes)
     )
@@ -384,32 +469,53 @@ def _raw_candidate(
     else:
         positive = values["return_1"] > ZERO
         above = values["current_volume_ratio"] > ONE
-        values["up_session_participation"] = HUNDRED if positive and above else Decimal("50") if positive or above else ZERO
+        values["up_session_participation"] = (
+            HUNDRED if positive and above else Decimal(CROSS_SECTION_SCORE_CENTER) if positive or above else ZERO
+        )
     persistence: list[Decimal] = []
-    for index in range(len(sessions) - 5, len(sessions)):
+    for index in range(len(sessions) - VOLUME_PERSISTENCE_SESSION_COUNT, len(sessions)):
         bar = bars.get(sessions[index])
-        prior = _series(bars, sessions[max(0, index - 20):index], "volume", minimum=15)
+        prior = _series(
+            bars,
+            sessions[max(0, index - PRIOR_VOLUME_WINDOW) : index],
+            "volume",
+            minimum=PRIOR_VOLUME_MINIMUM_OBSERVATIONS,
+        )
         if bar is not None and prior is not None:
             persistence.append(ONE if bar.volume > _median(prior) else ZERO)
-    values["volume_persistence_5"] = _mean(tuple(persistence)) if len(persistence) >= 4 else None
+    values["volume_persistence_5"] = (
+        _mean(tuple(persistence))
+        if len(persistence) >= VOLUME_PERSISTENCE_MINIMUM_OBSERVATIONS
+        else None
+    )
 
-    log_returns_10 = _log_returns(bars, sessions[-11:])
+    log_returns_10 = _log_returns(bars, sessions[-REALIZED_VOLATILITY_RETURN_COUNT - 1 :])
     values["realized_volatility_10"] = (
         None if log_returns_10 is None else _sample_standard_deviation(log_returns_10) * ANNUALIZATION.sqrt()
     )
-    gaps = _open_gaps(bars, sessions[-6:])
-    values["maximum_open_gap_5"] = None if len(gaps) < 5 else max(abs(item) for item in gaps)
-    recent_returns = _simple_returns(bars, sessions[-6:])
+    gaps = _open_gaps(bars, sessions[-OPEN_GAP_SESSION_COUNT - 1 :])
+    values["maximum_open_gap_5"] = (
+        None if len(gaps) < OPEN_GAP_MINIMUM_OBSERVATIONS else max(abs(item) for item in gaps)
+    )
+    recent_returns = _simple_returns(bars, sessions[-DOWNSIDE_TAIL_SESSION_COUNT - 1 :])
     values["downside_tail_share_5"] = (
-        None if len(recent_returns) < 4 else Decimal(sum(item <= Decimal("-0.04") for item in recent_returns)) / Decimal(len(recent_returns))
+        None
+        if len(recent_returns) < DOWNSIDE_TAIL_MINIMUM_OBSERVATIONS
+        else Decimal(sum(item <= Decimal(DOWNSIDE_TAIL_RETURN_THRESHOLD) for item in recent_returns))
+        / Decimal(len(recent_returns))
     )
     dollar_volumes = tuple(
-        bar.close * bar.volume for session in sessions[-20:] if (bar := bars.get(session)) is not None
+        bar.close * bar.volume
+        for session in sessions[-DOLLAR_VOLUME_WINDOW:]
+        if (bar := bars.get(session)) is not None
     )
-    values["median_dollar_volume_20"] = _median(dollar_volumes) if len(dollar_volumes) >= 15 else None
+    values["median_dollar_volume_20"] = (
+        _median(dollar_volumes) if len(dollar_volumes) >= DOLLAR_VOLUME_MINIMUM_OBSERVATIONS else None
+    )
     values["latest_price"] = current_bar.close
 
     driver_ticker = None
+    driver_instrument_id = None
     driver_correlation = None
     for ticker in sorted(etf_ids):
         driver_return = etf_returns_5.get(ticker)
@@ -418,12 +524,13 @@ def _raw_candidate(
         correlation, observations = _paired_correlation(
             candidate_log_returns,
             etf_log_returns[etf_ids[ticker]],
-            sessions[-20:],
+            sessions[-DRIVER_CORRELATION_WINDOW:],
         )
         if correlation is None or observations < CORRELATION_MINIMUM_OBSERVATIONS or correlation < MIN_DRIVER_CORRELATION:
             continue
         if driver_correlation is None or correlation > driver_correlation:
             driver_ticker = ticker
+            driver_instrument_id = etf_ids[ticker]
             driver_correlation = correlation
     if driver_ticker is None:
         values["driver_relative_strength_5"] = None
@@ -443,20 +550,49 @@ def _raw_candidate(
             reasons[metric_id] = "insufficient_required_history"
     all_returns = _simple_returns(bars, sessions)
     all_gaps = _open_gaps(bars, sessions)
-    corporate_review = any(abs(item) >= Decimal("0.50") for item in all_returns) or any(
-        abs(item) >= Decimal("0.30") for item in all_gaps
+    review_reasons: list[str] = []
+    if any(abs(item) >= Decimal(EXTREME_CLOSE_RETURN_REVIEW_THRESHOLD) for item in all_returns):
+        review_reasons.append("extreme_close_return_review_threshold_reached")
+    if any(abs(item) >= Decimal(EXTREME_OPEN_GAP_REVIEW_THRESHOLD) for item in all_gaps):
+        review_reasons.append("extreme_open_gap_review_threshold_reached")
+    candidate_bars = tuple(bars[session] for session in sessions if session in bars)
+    if any(
+        factor != ONE
+        for bar in candidate_bars
+        for factor in (
+            bar.split_adjustment_factor,
+            bar.dividend_adjustment_factor,
+            bar.total_return_adjustment_factor,
+        )
+    ):
+        review_reasons.append("non_unit_adjustment_factor_review_required")
+    if any(bar.quality_status != "valid" for bar in candidate_bars):
+        review_reasons.append("source_quality_status_review_required")
+    observed_quality_flags = {
+        flag
+        for bar in candidate_bars
+        for flag in bar.quality_flags
+    }
+    allowed_quality_flags = set(CANDIDATE_NON_BLOCKING_QUALITY_FLAGS)
+    if observed_quality_flags - allowed_quality_flags:
+        review_reasons.append("unknown_source_quality_flag_review_required")
+    non_blocking_quality_flags = tuple(
+        flag for flag in CANDIDATE_NON_BLOCKING_QUALITY_FLAGS if flag in observed_quality_flags
     )
     return _RawCandidate(
         instrument_id=current_bar.instrument_id,
         ticker=current_bar.ticker,
         security_type=security_type,
         latest_price=current_bar.close,
-        history_count=sum(session in bars for session in sessions[-21:]),
+        history_count=sum(session in bars for session in sessions[-CANDIDATE_REQUIRED_HISTORY_SESSION_COUNT:]),
         values=values,
         missing_reasons=reasons,
+        primary_driver_instrument_id=driver_instrument_id,
         primary_driver_ticker=driver_ticker,
         driver_correlation=driver_correlation,
-        corporate_action_review_required=corporate_review,
+        corporate_action_review_required=bool(review_reasons),
+        corporate_action_review_reason_codes=tuple(review_reasons),
+        non_blocking_quality_flags=non_blocking_quality_flags,
     )
 
 
@@ -470,26 +606,59 @@ def _candidate_record(
     cross_scores: dict[str, dict[UUID, Decimal]],
     return_percentiles: dict[UUID, Decimal],
     confirmation_count: int,
+    prior_state_record_fingerprint: str | None,
 ) -> OpportunityCandidateScoreV1:
     normalized: dict[str, Decimal | None] = {
         "regime_score": regime_score,
         "driver_relative_strength_5": cross_scores["driver_relative_strength_5"].get(raw.instrument_id),
         "stock_relative_to_driver_5": cross_scores["stock_relative_to_driver_5"].get(raw.instrument_id),
-        "driver_correlation_20": _linear(raw.values["driver_correlation_20"], Decimal("0.35"), Decimal("0.80")),
+        "driver_correlation_20": _linear(
+            raw.values["driver_correlation_20"],
+            Decimal(CORRELATION_MINIMUM),
+            Decimal(DRIVER_CORRELATION_NORMALIZER_HIGH),
+        ),
         "stock_relative_to_spy_5": cross_scores["stock_relative_to_spy_5"].get(raw.instrument_id),
         "stock_relative_to_spy_20": cross_scores["stock_relative_to_spy_20"].get(raw.instrument_id),
         "stock_return_percentile_20": return_percentiles.get(raw.instrument_id),
         "close_above_sma10": raw.values["close_above_sma10"],
-        "sma10_to_sma20": _linear(raw.values["sma10_to_sma20"], Decimal("-0.03"), Decimal("0.03")),
-        "maximum_drawdown_5": _declining(raw.values["maximum_drawdown_5"], Decimal("0.02"), Decimal("0.12")),
+        "sma10_to_sma20": _linear(
+            raw.values["sma10_to_sma20"],
+            Decimal(SMA_RATIO_NORMALIZER_LOW),
+            Decimal(SMA_RATIO_NORMALIZER_HIGH),
+        ),
+        "maximum_drawdown_5": _declining(
+            raw.values["maximum_drawdown_5"],
+            Decimal(MAXIMUM_DRAWDOWN_NORMALIZER_LOW),
+            Decimal(MAXIMUM_DRAWDOWN_NORMALIZER_HIGH),
+        ),
         "current_volume_ratio": cross_scores["current_volume_ratio_log"].get(raw.instrument_id),
         "up_session_participation": raw.values["up_session_participation"],
         "volume_persistence_5": None if raw.values["volume_persistence_5"] is None else raw.values["volume_persistence_5"] * HUNDRED,
-        "realized_volatility_10": _declining(raw.values["realized_volatility_10"], Decimal("0.25"), Decimal("1.00")),
-        "maximum_open_gap_5": _declining(raw.values["maximum_open_gap_5"], Decimal("0.03"), Decimal("0.20")),
-        "downside_tail_share_5": _declining(raw.values["downside_tail_share_5"], ZERO, Decimal("0.40")),
-        "median_dollar_volume_20": _log_linear(raw.values["median_dollar_volume_20"], Decimal("5000000"), Decimal("100000000")),
-        "latest_price": _linear(raw.values["latest_price"], Decimal("2"), Decimal("20")),
+        "realized_volatility_10": _declining(
+            raw.values["realized_volatility_10"],
+            Decimal(REALIZED_VOLATILITY_NORMALIZER_LOW),
+            Decimal(REALIZED_VOLATILITY_NORMALIZER_HIGH),
+        ),
+        "maximum_open_gap_5": _declining(
+            raw.values["maximum_open_gap_5"],
+            Decimal(OPEN_GAP_NORMALIZER_LOW),
+            Decimal(OPEN_GAP_NORMALIZER_HIGH),
+        ),
+        "downside_tail_share_5": _declining(
+            raw.values["downside_tail_share_5"],
+            Decimal(DOWNSIDE_TAIL_NORMALIZER_LOW),
+            Decimal(DOWNSIDE_TAIL_NORMALIZER_HIGH),
+        ),
+        "median_dollar_volume_20": _log_linear(
+            raw.values["median_dollar_volume_20"],
+            Decimal(LIQUIDITY_NORMALIZER_LOW),
+            Decimal(LIQUIDITY_NORMALIZER_HIGH),
+        ),
+        "latest_price": _linear(
+            raw.values["latest_price"],
+            Decimal(PRICE_NORMALIZER_LOW),
+            Decimal(PRICE_NORMALIZER_HIGH),
+        ),
     }
     raw_aliases = {
         "regime_score": regime_score,
@@ -531,21 +700,29 @@ def _candidate_record(
         else None
     )
     source_completeness = available_weight / HUNDRED
-    history_completeness = min(Decimal(raw.history_count) / Decimal(21), ONE)
-    relationship_support = Decimal("0.40") if raw.primary_driver_ticker is not None else ZERO
-    state_support = min(Decimal(max(confirmation_count, 0)) / Decimal(3), ONE)
+    history_completeness = min(Decimal(raw.history_count) / Decimal(CANDIDATE_REQUIRED_HISTORY_SESSION_COUNT), ONE)
+    relationship_support = LOW_RELATIONSHIP_SUPPORT if raw.primary_driver_ticker is not None else ZERO
+    state_support = min(
+        Decimal(confirmation_count) / Decimal(STATE_CONFIRMATION_SUPPORT_SESSION_CAP),
+        ONE,
+    )
+    source_completeness = source_completeness.quantize(SCORE_QUANTUM)
+    history_completeness = history_completeness.quantize(SCORE_QUANTUM)
+    relationship_support = relationship_support.quantize(SCORE_QUANTUM)
+    state_support = state_support.quantize(SCORE_QUANTUM)
     confidence_value = (
-        Decimal("0.40") * source_completeness
-        + Decimal("0.25") * history_completeness
-        + Decimal("0.20") * relationship_support
-        + Decimal("0.15") * state_support
+        Decimal(CONFIDENCE_SOURCE_WEIGHT) * source_completeness
+        + Decimal(CONFIDENCE_HISTORY_WEIGHT) * history_completeness
+        + Decimal(CONFIDENCE_RELATIONSHIP_WEIGHT) * relationship_support
+        + Decimal(CONFIDENCE_STATE_WEIGHT) * state_support
     )
     confidence = CandidateConfidenceV1(
         source_completeness=_q_score(source_completeness),
         history_completeness=_q_score(history_completeness),
         relationship_support=_q_score(relationship_support),
         state_confirmation_support=_q_score(state_support),
-        confirmation_session_count=max(confirmation_count, 0),
+        confirmation_session_count=confirmation_count,
+        prior_state_record_fingerprint=prior_state_record_fingerprint,
         confidence=_q_score(confidence_value),
     )
     positive = sorted(
@@ -572,12 +749,24 @@ def _candidate_record(
     if base_score is None:
         warnings.append("candidate_score_unavailable_due_to_component_missingness")
     if raw.corporate_action_review_required:
+        warnings.extend(raw.corporate_action_review_reason_codes)
         warnings.append("corporate_action_review_required")
+    if raw.non_blocking_quality_flags:
+        warnings.extend(
+            f"non_blocking_source_quality_flag:{flag}"
+            for flag in raw.non_blocking_quality_flags
+        )
+        warnings.append("non_blocking_source_quality_limitations_present")
     quality = (
         CandidateDataQualityStatus.QUARANTINED
         if raw.corporate_action_review_required
         else CandidateDataQualityStatus.DEGRADED
-        if base_score is None or available_weight < HUNDRED or raw.primary_driver_ticker is not None
+        if (
+            base_score is None
+            or available_weight < HUNDRED
+            or raw.primary_driver_ticker is not None
+            or raw.non_blocking_quality_flags
+        )
         else CandidateDataQualityStatus.PASSED
     )
     reasons = ["fixed_candidate_parameter_set", "regime_adjustment_fixed_zero"]
@@ -587,6 +776,7 @@ def _candidate_record(
     if raw.primary_driver_ticker is not None:
         reasons.append("registered_etf_price_proxy_selected")
     if raw.corporate_action_review_required:
+        reasons.extend(raw.corporate_action_review_reason_codes)
         reasons.append("corporate_action_review_required")
     provisional = OpportunityCandidateScoreV1(
         parameter_fingerprint=CANDIDATE_PARAMETER_FINGERPRINT,
@@ -607,6 +797,7 @@ def _candidate_record(
         annualized_volatility_10=_q_optional_raw(raw.values["realized_volatility_10"]),
         maximum_absolute_open_gap_5=_q_optional_raw(raw.values["maximum_open_gap_5"]),
         current_volume_ratio=_q_optional_raw(raw.values["current_volume_ratio"]),
+        primary_driver_instrument_id=raw.primary_driver_instrument_id,
         primary_driver_ticker=raw.primary_driver_ticker,
         driver_correlation_20=_q_optional_raw(raw.driver_correlation),
         relationship_kind="price_derived_exposure_proxy" if raw.primary_driver_ticker else None,
@@ -654,7 +845,7 @@ def _component_draft(
                     availability=CandidateMetricAvailability.UNAVAILABLE,
                     missing_reason=reason,
                     evidence_type=_evidence_type(metric_id),
-                    source_sessions=tuple(sessions[-21:]),
+                    source_sessions=tuple(sessions[-CANDIDATE_REQUIRED_HISTORY_SESSION_COUNT:]),
                     reason_codes=(reason,),
                 )
             )
@@ -668,7 +859,7 @@ def _component_draft(
                 availability=CandidateMetricAvailability.AVAILABLE,
                 missing_reason=None,
                 evidence_type=_evidence_type(metric_id),
-                source_sessions=tuple(sessions[-21:]),
+                source_sessions=tuple(sessions[-CANDIDATE_REQUIRED_HISTORY_SESSION_COUNT:]),
                 reason_codes=("fixed_v1_normalization",),
             )
         )
@@ -828,7 +1019,7 @@ def _robust_cross_section(values: dict[UUID, Decimal | None]) -> dict[UUID, Deci
         return _average_rank_percentiles(winsorized)
     return {
         key: _clip100(
-            Decimal("50")
+            Decimal(CROSS_SECTION_SCORE_CENTER)
             + Decimal(CROSS_SECTION_SCORE_SCALE)
             * Decimal(CROSS_SECTION_ROBUST_Z_SCALE)
             * (value - center)
@@ -843,7 +1034,7 @@ def _average_rank_percentiles(values: dict[UUID, Decimal | None]) -> dict[UUID, 
     if not clean:
         return {}
     if len(set(clean.values())) == 1:
-        return {key: Decimal("50") for key in clean}
+        return {key: Decimal(CROSS_SECTION_SCORE_CENTER) for key in clean}
     groups: dict[Decimal, list[UUID]] = defaultdict(list)
     for key, value in clean.items():
         groups[value].append(key)
@@ -953,11 +1144,28 @@ def _evidence_type(metric_id: str) -> str:
 
 
 def _validate_bar(bar: MarketRegimeBar) -> None:
-    values = (bar.open, bar.high, bar.low, bar.close, bar.volume)
+    values = (
+        bar.open,
+        bar.high,
+        bar.low,
+        bar.close,
+        bar.volume,
+        bar.split_adjustment_factor,
+        bar.dividend_adjustment_factor,
+        bar.total_return_adjustment_factor,
+    )
     if any(not value.is_finite() for value in values):
         raise OpportunityCandidateCalculationError("non-finite candidate input")
     if min(bar.open, bar.high, bar.low, bar.close) <= ZERO or bar.volume < ZERO:
         raise OpportunityCandidateCalculationError("illegal candidate price or volume")
+    if min(
+        bar.split_adjustment_factor,
+        bar.dividend_adjustment_factor,
+        bar.total_return_adjustment_factor,
+    ) <= ZERO:
+        raise OpportunityCandidateCalculationError("candidate adjustment factors must be positive")
+    if bar.quality_status not in {"valid", "warning", "rejected", "pending_review"}:
+        raise OpportunityCandidateCalculationError("candidate source quality status is unknown")
     if bar.high < max(bar.open, bar.close, bar.low) or bar.low > min(bar.open, bar.close, bar.high):
         raise OpportunityCandidateCalculationError("invalid candidate OHLC")
 
@@ -989,7 +1197,7 @@ def _q_optional_raw(value: Decimal | None) -> str | None:
 
 
 def _calculation_context() -> Context:
-    context = Context(prec=50, rounding=ROUND_HALF_EVEN)
+    context = Context(prec=CALCULATION_DECIMAL_PRECISION, rounding=ROUND_HALF_EVEN)
     context.traps[InvalidOperation] = True
     context.traps[DivisionByZero] = True
     context.traps[Overflow] = True

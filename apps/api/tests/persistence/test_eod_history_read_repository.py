@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
 
 import pyarrow as pa
@@ -27,6 +28,10 @@ def test_history_read_validates_integrity_and_does_not_call_resolver(tmp_path: P
     assert result[0].integrity.identity_snapshot_date == SESSION_DATE
     assert result[0].integrity.future_identity_reference_count == 0
     assert len(result[0].bars) == 3
+    testa = next(item for item in result[0].bars if item.ticker == "TESTA")
+    assert testa.split_adjustment_factor == Decimal("0.5000000000")
+    assert testa.dividend_adjustment_factor == Decimal("1.0000000000")
+    assert testa.total_return_adjustment_factor == Decimal("0.5000000000")
 
 
 def test_duplicate_requested_session_is_rejected(tmp_path: Path) -> None:

@@ -23,7 +23,7 @@ from .relationship_v1_0_0 import (
     RELATIONSHIP_PARAMETER_FINGERPRINT,
     RELATIONSHIP_PARAMETER_SET_ID,
 )
-from .candidate_v1_0_0 import (
+from .candidate_v1_1_1 import (
     CANDIDATE_CALCULATION_VERSION,
     CANDIDATE_CONTRACT_VERSION,
     CANDIDATE_PARAMETER_FINGERPRINT,

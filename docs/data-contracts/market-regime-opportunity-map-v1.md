@@ -52,17 +52,27 @@ Its exact non-manifest artifact set is `pair-registry.json`,
 written last. Physical generated time, timings, and peak memory do not enter
 the aggregate logical fingerprint.
 
-The implemented Phase 5A pure-domain profile uses contract
-`opportunity-candidate/1.0`, calculation
-`market-regime-opportunity-candidate-v1.0.0`, parameter set
-`mrom-candidate-v1-fixed-baseline-1`, and fingerprint
-`2256e94a45d979bf818cdc048939c4650c10f9312099f83756e321ceee910b6f`.
-It emits a source-bound fact batch for every as-of bar-covered active-Universe
-member plus separate risk-mode assessments. Risk mode never changes candidate
-facts or the base score. Phase 5A currently has no canonical audit writer,
-state-transition ledger, independent raw-panel oracle, API, frontend,
-Production publication, or `/data` writer; those remain required before Phase
-5 can be called complete.
+The implemented Phase 5 offline profile uses contract
+`opportunity-candidate/1.1`, calculation
+`market-regime-opportunity-candidate-v1.1.1`, parameter set
+`mrom-candidate-v1-fixed-baseline-3`, and fingerprint
+`4e44d58430c82f95c6e612c5227db0b050acfff29615e6fec4e49b139087d347`.
+It emits source-bound fact batches for every as-of bar-covered active-Universe
+member, separate risk-mode assessments, and a separately fingerprinted
+candidate-context state ledger. Risk mode never changes candidate facts or the
+base score. A socket-guarded CLI, independent raw-panel Oracle, and canonical
+`/tmp` audit/reread boundary are implemented. API, frontend, Production
+publication, and `/data` writing remain outside this profile.
+
+The candidate audit file set is exactly `source-input-manifest.json`,
+`candidate-parameter-contract.json`, `raw-candidate-facts.json`,
+`cross-section-normalization-ledger.json`, `candidate-score-history.json`,
+`candidate-state-history.json`, `candidate-transition-ledger.json`,
+`current-risk-mode-results.json`, `candidate-oracle-report.json`, and the
+last-written `candidate-audit-manifest.json`. Each historical candidate session
+binds its own complete 26-session source panel. Formal reread rejects unsafe
+custody, non-canonical JSON, fingerprint mismatch, Oracle mismatch, or failed
+append/restart/permutation/future-prefix equivalence.
 
 This contract freezes the machine-readable calculation boundary for the
 product described in
@@ -152,7 +162,7 @@ reader results rather than hard-code them.
 | Relationship | `snapshot_id + pair_id` | At most one; pair IDs fixed by parameter set |
 | Opportunity direction | `snapshot_id + direction_id` | Unique |
 | Candidate | `snapshot_id + universe_id + instrument_id` | Unique |
-| Candidate component | `snapshot_id + universe_id + instrument_id + component_id` | Exactly seven when score is complete |
+| Candidate component | `snapshot_id + universe_id + instrument_id + component_id` | Exactly seven for every bar-covered candidate, including explicitly unavailable components |
 | Reason/evidence | `snapshot_id + subject_type + subject_id + reason_code + ordinal` | Deterministic and unique |
 | Quality gate | `snapshot_id + gate_code` | Unique |
 | Phase 1b state history | `universe_id + as_of_session` | Exactly one per expected XNYS session |
@@ -162,10 +172,12 @@ reader results rather than hard-code them.
 | Phase 2 relationship history | `pair_id + as_of_session` | All 16 registered pairs from first 5-session availability onward |
 | Phase 2 regime comparison | `universe_id + pair_id + as_of_session` | Exactly one contemporaneous comparison per public Universe/pair |
 
-Primary members may also occur in Secondary. Their raw market facts and
-stock-specific component values must be byte-equivalent across views. Only
-Universe-relative normalization, ADRC policy, concentration filtering, and rank
-may differ, and each difference is explicit.
+Primary members may also occur in Secondary. Their source bars and pre-
+normalization stock facts must be byte-equivalent across views. Universe-
+relative normalization, normalized component values, contributions, final
+score, ADRC policy, concentration filtering, and rank may differ, and each
+difference is explicit. No consumer may describe a cross-sectional score as an
+instrument-only fact.
 
 ## Universe record
 
@@ -328,26 +340,27 @@ V1A must not emit `formal_sector` or `formal_industry`.
 | `security_type` | string | No | Formal activated security form |
 | `universe_id` | string | No | Primary or Secondary |
 | `latest_data_session` | date | No | Must equal snapshot as-of |
-| `decision_context` | enum | No | `candidate` or `position` |
-| `opportunity_stage` | enum | Yes | `watch`, `prepare`, `enter`, `exit` |
-| `stage_display_semantics` | enum | No | `candidate_discovery` or `position_management` |
 | `base_score` | decimal string | Yes | Scale 4, fixed V1 weights |
 | `regime_adjustment` | decimal string | No | V1 fixed to `0.0000`; cannot be implicit |
 | `adjusted_score` | decimal string | Yes | V1 equals `base_score` |
-| `risk_mode` | enum | No | `conservative`, `balanced`, `aggressive` |
-| `risk_adjusted_rank` | integer | Yes | Separate from score |
 | `configured_weight_available` | decimal string | No | `[0,100]` |
 | `confidence` | decimal string | No | Scale 4, `[0,1]`; data/statistical support only |
-| `primary_relationship_id` | string | Yes | Registered relationship or formal taxonomy link |
+| `primary_driver_instrument_id` | UUID string | Yes | Stable ID of the selected registered ETF proxy |
+| `primary_driver_ticker` | string | Yes | Same-day display metadata only; never the durable key |
 | `relationship_kind` | enum | Yes | `price_derived_exposure_proxy`, `formal_taxonomy` |
 | `data_quality_status` | enum | No | `passed`, `degraded`, `quarantined`, `failed` |
-| `stale_state` | boolean | No | Missing session held for at most one session |
 | `reason_codes` | ordered array | No | Stable codes |
 | `supporting_evidence` | ordered array | No | Strongest contribution first |
 | `counterevidence` | ordered array | No | Most adverse contribution first |
 | `invalidation_conditions` | ordered array | No | Machine-readable predicates and text |
 | `missingness` | object | No | Required/optional missing fields and weights |
 | `warnings` | ordered array | No | Empty when none |
+
+Candidate facts, candidate-state rows, and risk-mode assessments are separate
+records. State rows own `decision_context`, stage, stale-state, transition, and
+confirmation fields. Risk assessments own `risk_mode`, eligibility, rejection
+reasons, concentration key, and `risk_adjusted_rank`. Neither layer may rewrite
+the source candidate facts or base score.
 
 Candidate component IDs and configured weights are fixed:
 

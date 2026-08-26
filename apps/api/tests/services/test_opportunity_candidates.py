@@ -8,14 +8,21 @@ from uuid import UUID, uuid5
 import pytest
 
 from tip_api.contracts.analytics.v1 import (
+    CandidateConfidenceV1,
     CandidateDataQualityStatus,
     CandidateMetricAvailability,
+    CandidateOpportunityStage,
+    CandidatePriorStateSourceV1,
+    CandidatePriorStateSupportV1,
     CandidateRiskMode,
     RegimeState,
 )
-from tip_api.parameters.market_regime.candidate_v1_0_0 import (
+from tip_api.parameters.market_regime.candidate_v1_1_1 import (
+    CANDIDATE_NON_BLOCKING_QUALITY_FLAGS,
+    CANDIDATE_PRIOR_STATE_BOOTSTRAP_FINGERPRINT,
     CANDIDATE_PARAMETER_FINGERPRINT,
     COMPONENT_PARAMETERS,
+    parameter_payload,
 )
 from tip_api.services.market_regime_sources import (
     MarketRegimeBar,
@@ -126,14 +133,41 @@ def full_panel() -> MarketRegimeInputPanel:
 
 def _calculate(panel: MarketRegimeInputPanel, universe_id: str = PRIMARY):
     universe = panel.select_universe(universe_id)
-    confirmations = {instrument_id: 3 for instrument_id in universe.member_ids}
+    supports = tuple(
+        CandidatePriorStateSupportV1(
+            instrument_id=instrument_id,
+            prior_stage=CandidateOpportunityStage.WATCH,
+            stage_confirmation_session_count=3,
+            source_state_record_fingerprint=f"{index + 500:064x}",
+        )
+        for index, instrument_id in enumerate(sorted(universe.member_ids, key=str))
+    )
+    prior_state_source = CandidatePriorStateSourceV1(
+        universe_id=universe_id,
+        as_of_session=panel.as_of_session,
+        bootstrap=False,
+        source_state_session=panel.sessions[-2],
+        state_history_fingerprint="3" * 64,
+        supports=supports,
+    )
     return calculate_opportunity_candidate_scores(
         panel=panel,
         universe_id=universe_id,
         regime_score=Decimal("72.5000"),
         regime_state=RegimeState.RISK_ON,
         regime_source_fingerprint="2" * 64,
-        state_confirmation_counts=confirmations,
+        prior_state_source=prior_state_source,
+    )
+
+
+def _bootstrap(panel: MarketRegimeInputPanel, universe_id: str = PRIMARY) -> CandidatePriorStateSourceV1:
+    return CandidatePriorStateSourceV1(
+        universe_id=universe_id,
+        as_of_session=panel.as_of_session,
+        bootstrap=True,
+        source_state_session=None,
+        state_history_fingerprint=CANDIDATE_PRIOR_STATE_BOOTSTRAP_FINGERPRINT,
+        supports=(),
     )
 
 
@@ -158,6 +192,10 @@ def test_fixed_parameter_and_complete_candidate_ledger(full_panel: MarketRegimeI
         proxy = next(item for item in candidate.components if item.component_id == "etf_sector_alignment")
         if proxy.score is not None:
             assert Decimal(proxy.score) <= Decimal("70")
+        if candidate.primary_driver_ticker is None:
+            assert candidate.primary_driver_instrument_id is None
+        else:
+            assert candidate.primary_driver_instrument_id is not None
         assert "candidate_score_not_success_probability" in candidate.warnings
         assert "underlying_stock_score_not_option_return" in candidate.warnings
 
@@ -230,6 +268,58 @@ def test_extreme_move_quarantines_and_cannot_rank(full_panel: MarketRegimeInputP
     assert "candidate_quarantined" in assessment.rejection_reason_codes
 
 
+@pytest.mark.parametrize(
+    ("changes", "reason"),
+    (
+        ({"split_adjustment_factor": Decimal("2")}, "non_unit_adjustment_factor_review_required"),
+        ({"quality_status": "warning"}, "source_quality_status_review_required"),
+        ({"quality_flags": ("provider_warning",)}, "unknown_source_quality_flag_review_required"),
+    ),
+)
+def test_adjustment_and_quality_evidence_quarantine(
+    full_panel: MarketRegimeInputPanel,
+    changes: dict[str, object],
+    reason: str,
+) -> None:
+    target = _id("stock-000")
+    latest = full_panel.as_of_session
+    bars = tuple(
+        replace(item, **changes)
+        if item.instrument_id == target and item.session_date == latest
+        else item
+        for item in full_panel.bars
+    )
+    candidate = next(item for item in _calculate(replace(full_panel, bars=bars)).candidates if item.instrument_id == target)
+    assert candidate.corporate_action_review_required
+    assert candidate.data_quality_status is CandidateDataQualityStatus.QUARANTINED
+    assert reason in candidate.reason_codes
+
+
+@pytest.mark.parametrize("quality_flag", CANDIDATE_NON_BLOCKING_QUALITY_FLAGS)
+def test_allowlisted_source_quality_flags_degrade_without_quarantine(
+    full_panel: MarketRegimeInputPanel,
+    quality_flag: str,
+) -> None:
+    target = _id("stock-000")
+    latest = full_panel.as_of_session
+    bars = tuple(
+        replace(item, quality_flags=(quality_flag,))
+        if item.instrument_id == target and item.session_date == latest
+        else item
+        for item in full_panel.bars
+    )
+    candidate = next(
+        item
+        for item in _calculate(replace(full_panel, bars=bars)).candidates
+        if item.instrument_id == target
+    )
+    assert not candidate.corporate_action_review_required
+    assert candidate.data_quality_status is CandidateDataQualityStatus.DEGRADED
+    assert f"non_blocking_source_quality_flag:{quality_flag}" in candidate.warnings
+    assert "non_blocking_source_quality_limitations_present" in candidate.warnings
+    assert "corporate_action_review_required" not in candidate.reason_codes
+
+
 def test_risk_modes_change_only_eligibility_and_rank(full_panel: MarketRegimeInputPanel) -> None:
     batch = _calculate(full_panel, SECONDARY)
     conservative = rank_opportunity_candidates(batch=batch, risk_mode="conservative")
@@ -269,6 +359,7 @@ def test_bad_source_binding_and_unknown_universe_fail_closed(full_panel: MarketR
             regime_score="50",
             regime_state="balanced",
             regime_source_fingerprint="bad",
+            prior_state_source=_bootstrap(full_panel),
         )
     with pytest.raises(Exception, match="unknown active Universe"):
         calculate_opportunity_candidate_scores(
@@ -277,4 +368,47 @@ def test_bad_source_binding_and_unknown_universe_fail_closed(full_panel: MarketR
             regime_score="50",
             regime_state="balanced",
             regime_source_fingerprint="2" * 64,
+            prior_state_source=_bootstrap(full_panel, "legacy"),
+        )
+
+
+def test_parameter_payload_binds_complete_candidate_formula() -> None:
+    payload = parameter_payload()
+    assert payload["confidence"]["weights"] == {
+        "source_completeness": "0.40",
+        "history_completeness": "0.25",
+        "relationship_support": "0.20",
+        "state_confirmation_support": "0.15",
+    }
+    assert payload["normalizers"]["sma10_to_sma20"] == ["-0.03", "0.03"]
+    assert payload["quality_review"]["extreme_close_return_threshold"] == "0.50"
+    assert payload["quality_review"]["non_unit_adjustment_factor_requires_review"] is True
+    assert payload["quality_review"]["non_blocking_quality_flags"] == list(
+        CANDIDATE_NON_BLOCKING_QUALITY_FLAGS
+    )
+    assert payload["quality_review"]["unknown_quality_flag_requires_review"] is True
+    assert "any_quality_flag_requires_review" not in payload["quality_review"]
+
+
+def test_bootstrap_is_explicit_and_confidence_is_strict(full_panel: MarketRegimeInputPanel) -> None:
+    batch = calculate_opportunity_candidate_scores(
+        panel=full_panel,
+        universe_id=PRIMARY,
+        regime_score=Decimal("72.5000"),
+        regime_state=RegimeState.RISK_ON,
+        regime_source_fingerprint="2" * 64,
+        prior_state_source=_bootstrap(full_panel),
+    )
+    assert batch.prior_state_source.bootstrap
+    assert all(item.confidence.confirmation_session_count == 0 for item in batch.candidates)
+    assert all(item.confidence.prior_state_record_fingerprint is None for item in batch.candidates)
+    with pytest.raises(ValueError, match="fixed four-term formula"):
+        CandidateConfidenceV1(
+            source_completeness="1.0000",
+            history_completeness="1.0000",
+            relationship_support="0.4000",
+            state_confirmation_support="0.0000",
+            confirmation_session_count=0,
+            prior_state_record_fingerprint=None,
+            confidence="0.9999",
         )

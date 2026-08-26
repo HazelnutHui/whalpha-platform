@@ -15,9 +15,9 @@ independent approval and rollback domains.
 
 Status: **Implemented through Phase 2, read-only API/local preview, immutable
 Market Intelligence publication, Snapshot 1.5 / Dashboard 2.2, the
-live-verified explicitly bound OCI release, and an isolated Phase 5A pure
-candidate-score/risk-mode core. The active 2026-08-24 payload is
-`stale_review`; Phase 5A is not published**.
+live-verified explicitly bound OCI release, and the Phase 5 offline candidate
+score/risk/state/Oracle/audit boundary. The active 2026-08-24 payload is
+`stale_review`; candidate analytics are not published**.
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)
@@ -391,9 +391,10 @@ Disable the Phase 4 calculation version; Phase 1/2 V1A remains valid.
 
 ### Phase 5 — Candidate States and Risk Modes
 
-**Implementation status: Phase 5A score/risk core implemented; chronological
-candidate state replay, independent oracle, canonical `/tmp` audit, and all
-runtime consumers remain pending.**
+**Implementation status: offline score/risk core, chronological candidate-state
+replay, independent Oracle, socket-guarded CLI, and canonical `/tmp` audit/
+reread are implemented. Production publication and runtime consumers remain
+pending.**
 
 **Inputs**
 
@@ -421,8 +422,13 @@ runtime consumers remain pending.**
 - every state transition and hysteresis counter;
 - corporate-action/extreme-return quarantine, missing-data pause, gap risk;
 - deterministic concentration scan and rank ties;
-- Primary facts equal Secondary facts for shared members; ADRC policy only affects
-  eligibility/rank.
+- for the same session, source panel, and stable ID, shared Primary/Secondary
+  members have identical security-level raw facts, missing reasons, anomaly
+  flags, and registered-ETF proxy selection. Universe Regime input,
+  cross-sectional normalization, normalized components, base score,
+  confidence, state, eligibility, and rank remain explicitly Universe-
+  contextual; ADRC policy affects only eligibility/rank and never rewrites raw
+  facts or the base score.
 
 **Acceptance**
 
@@ -578,7 +584,7 @@ desktop view renders both Universes, the five-dimension ledger, all 16 pairs,
 fixed highlights, filters, pair detail, and short-history boundaries without
 recalculation.
 
-Phase 5A is implemented as an isolated pure-domain slice. It adds strict
+Phase 5 is implemented as an isolated offline slice. It adds strict
 candidate fact/component/confidence/batch and risk-assessment contracts, a
 checked-in seven-component and three-risk-mode parameter set, deterministic
 Decimal Type-7 winsor boundaries and average-tie percentiles, a 26-session
@@ -589,8 +595,17 @@ Conservative mode, proxy-component absence/cap behavior, more-than-20-point
 missingness failure, anomaly quarantine, stable ordering, and Decimal-context
 invariance.
 
-The next minimum slice is the chronological Watch/Prepare/Enter/invalidated
-state ledger, followed by an independent raw-panel oracle and canonical `/tmp`
-audit/re-read boundary. Sector breadth, candidate publication, Snapshot/API/
-frontend integration, bundle creation, and deployment remain deferred. Guest
-Session entry already exists and does not create a candidate-data variant.
+The next minimum slice is the additive candidate publication and Snapshot/API/
+frontend consumer contract. Sector breadth, position context, bundle creation,
+and deployment remain deferred until that consumer chain is implemented and
+reviewed. Guest Session entry already exists and must not create a candidate-
+data variant.
+
+The first accepted formal Phase 5 audit covers 2026-08-21 and 2026-08-24 under
+candidate calculation `market-regime-opportunity-candidate-v1.1.1`. Its
+logical fingerprint is
+`1f25a1c9060d459e372903ad116579973c709363f365f19fa66bb515774c93df`,
+with zero independent-Oracle mismatch and all append/restart/permutation/
+future-prefix gates true. Its roughly 928-second, 1.9-GiB cold replay is an
+audit path, not the future scheduler path; daily operation must append from the
+previous verified state and avoid duplicate full-history source reconstruction.

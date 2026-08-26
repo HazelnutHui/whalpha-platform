@@ -2,7 +2,12 @@
 
 ## Status
 
-Implemented and verified offline. No production Snapshot V2 has been published. Production remains release `2026-08-19T083341Z-7ed7fdc21686` on contract 1.3. Canonical EOD is stale at 2026-08-19 versus XNYS expected latest completed session 2026-08-21, so publication fails closed.
+Implemented and active. Production Snapshot
+`2026-08-24T045652Z-aee1a6ab0f67` uses Snapshot 1.5 / Dashboard 2.2 and binds
+Market Intelligence `2026-08-24T043223Z-aee1a6ab0f67`. It is the exact
+user-approved `stale_review` for actual 2026-08-24 versus expected 2026-08-25,
+lag one. Snapshot 1.4 / Dashboard 2.1 and the 1.3 compatibility release remain
+historical/rollback contracts, not the active state.
 
 ## Contracts
 

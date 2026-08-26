@@ -109,6 +109,9 @@ def bar(
     vwap: Decimal | None = Decimal("10.50"),
     trade_count: int | None = 7,
     quality_flags: tuple[str, ...] = (),
+    split_adjustment_factor: Decimal = Decimal("1"),
+    dividend_adjustment_factor: Decimal = Decimal("1"),
+    total_return_adjustment_factor: Decimal = Decimal("1"),
 ) -> EodPriceBarV1:
     return EodPriceBarV1(
         instrument_id=instrument_id,
@@ -122,9 +125,9 @@ def bar(
         trade_count=trade_count,
         notional=Decimal("1055.25"),
         currency="USD",
-        split_adjustment_factor=Decimal("1"),
-        dividend_adjustment_factor=Decimal("1"),
-        total_return_adjustment_factor=Decimal("1"),
+        split_adjustment_factor=split_adjustment_factor,
+        dividend_adjustment_factor=dividend_adjustment_factor,
+        total_return_adjustment_factor=total_return_adjustment_factor,
         adjusted_close=close,
         source=PROVIDER_ID,
         source_record_id=None,
@@ -154,7 +157,13 @@ def publish_completed_eod_dataset(root: Path) -> CompletedEodFixture:
     )
     bars = (
         bar(TESTC_ID, open_=Decimal("30"), high=Decimal("31"), low=Decimal("29"), close=Decimal("30.5"), volume=Decimal("300")),
-        bar(TESTA_ID, volume=Decimal("100.25"), quality_flags=("adjustment_factors_unverified",)),
+        bar(
+            TESTA_ID,
+            volume=Decimal("100.25"),
+            quality_flags=("adjustment_factors_unverified",),
+            split_adjustment_factor=Decimal("0.5"),
+            total_return_adjustment_factor=Decimal("0.5"),
+        ),
         bar(TESTB_ID, open_=Decimal("20"), high=Decimal("21"), low=Decimal("19"), close=Decimal("20.5"), volume=Decimal("0"), vwap=None, trade_count=None, quality_flags=("missing_vwap", "missing_trade_count", "zero_volume")),
     )
     eod = ParquetEodPriceBarRepository(root, created_at=CREATED_AT).publish_session(

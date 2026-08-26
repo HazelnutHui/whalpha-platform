@@ -27,12 +27,13 @@ Phase 2 consumes the same once-loaded 26-session panel and the completed Phase
 XNYS-session windows, writes a separate canonical `/tmp` audit, and does not
 change either regime result. It does not scan or rank unregistered pairs.
 
-Phase 5A now implements the isolated pure-domain candidate score and risk-mode
-core: strict ledgers, the frozen seven-component parameter set, source-bound
-bar-coverage accounting, price-derived registered-ETF proxy selection,
-missing-component reweighting, anomaly quarantine, and deterministic
-Conservative/Balanced/Aggressive ranking. It has no audit writer, state-machine
-history, API, frontend, Production publication, or `/data` write boundary yet.
+Phase 5 now implements the offline candidate score, risk-mode, and candidate-
+state core: strict ledgers, the frozen seven-component parameter set, source-
+bound bar coverage, price-derived registered-ETF proxy selection, missing-
+component reweighting, anomaly quarantine, deterministic Conservative/
+Balanced/Aggressive ranking, Watch/Prepare/Enter/invalidated replay, an
+independent raw-panel Oracle, and canonical `/tmp` audit/reread. It has no API,
+frontend, Production publication, or `/data` write boundary yet.
 
 The initial design baseline remains `as_of_session=2026-08-21`; the active
 publication rolls the same versioned formulas and registered relationships to
@@ -470,8 +471,8 @@ Market Regime → registered ETF or formal sector direction → active-Universe 
 ```
 
 V1A stops at registered ETF direction. A stock may be associated with the
-approved driver ETF having the highest absolute 20-return correlation when
-there are at least 18 paired returns and `abs(correlation)>=0.35`; ticker breaks
+approved driver ETF having the highest positive 20-return correlation when
+there are at least 18 paired returns and `correlation>=0.35`; ticker breaks
 ties ascending. That association is a `price-derived exposure proxy`, is capped
 in scoring, and cannot populate sector or industry fields. V1B replaces it with
 effective-dated formal taxonomy while retaining the proxy as separate evidence.
@@ -486,7 +487,7 @@ The V1 base score is fixed and independent of risk mode:
 | Component | Weight | Exact V1 content |
 |---|---:|---|
 | Market alignment | 12% | Current transparent regime composite; null when regime unavailable |
-| ETF/sector alignment | 13% | V1A: 50% ETF-relative 5-session strength + 50% correlation direction; capped at 70 because it is a proxy. V1B removes the cap only for formal taxonomy evidence |
+| ETF/sector alignment | 13% | V1A: 40% driver 5-session return relative to SPY + 35% stock-minus-driver 5-session return + 25% normalized positive 20-return correlation; capped at 70 because it is a proxy. V1B removes the cap only for formal taxonomy evidence |
 | Stock relative strength | 25% | 45% robust score of `r5-stock - r5-SPY`, 35% robust score of `r20-stock - r20-SPY`, 20% within-Universe 20-session return percentile |
 | Trend quality | 18% | 35% `close>SMA10`, 35% normalized `(SMA10/SMA20-1)` using `L(-3%,3%)`, 30% inverse maximum 5-session close drawdown using `D(2%,12%)` |
 | Volume participation | 12% | 50% robust score of `ln(current volume / prior-20 median)`, 25% up-session participation indicator, 25% fraction of last 5 sessions above own prior-20 volume median |
@@ -550,6 +551,13 @@ confidence =
 Relationship support is 0/0.40/0.70/1.00 for
 insufficient/low/medium/high. All four terms are displayed.
 
+`current state confirmation count` is not a caller-supplied judgment. For an
+as-of calculation it is the capped consecutive-session count carried by the
+immediately preceding compatible candidate-state ledger row for the same
+stable `instrument_id`; it is zero when no prior row exists. The score is
+calculated first from that prior-state fact, then the current state transition
+is evaluated. The current row never feeds back into its own confidence.
+
 ### Explanations
 
 Every candidate emits five blocks:
@@ -604,7 +612,7 @@ also carries `decision_context=candidate|position`:
 | Not listed → Watch | base score `>=50`, confidence `>=0.40`, price `>=USD 2`, median dollar-volume proxy `>=USD 5M` | 1 session |
 | Watch → Prepare | base score `>=65`, regime not Stress, relative-strength and trend components each `>=55` | 2 consecutive sessions |
 | Prepare → Enter | base score `>=75`, fixed state liquidity gates pass, and no quarantine | 2 consecutive sessions |
-| Prepare → Enter trigger | prior state Prepare, close exceeds prior five-session close high, volume ratio `>=1.20`, base score `>=70`, regime not Stress | 1 session |
+| Prepare → Enter trigger | prior state Prepare, current close exceeds the maximum close of the five completed sessions immediately before the current session, volume ratio `>=1.20`, base score `>=70`, regime not Stress | 1 session |
 | Enter → Prepare | score `<68` or trend component `<50` | 2 consecutive sessions |
 | Prepare → Watch | score `<58` or market alignment `<40` | 2 consecutive sessions |
 | Any active stage → Exit/invalidated | score `<45`, fixed price/liquidity floor fails, or a declared invalidation condition fires | 1 session |
@@ -616,10 +624,14 @@ session with `stale_state=true`; thereafter `opportunity_stage=null` and manual
 review is required. It does not synthesize Exit.
 
 An absolute close-to-close return of at least 50%, an absolute open gap of at
-least 30%, a non-unit adjustment factor, or a manifest quality warning creates
-`corporate_action_review_required`. Until formal reconciliation clears it, the
-candidate cannot promote to Prepare or Enter. Raw provider values are never
-manually altered.
+least 30%, a non-unit adjustment factor, a non-valid source quality status, or
+an unknown source quality flag creates `corporate_action_review_required`.
+The fixed source-level flags `adjustment_factors_unverified`, `missing_vwap`,
+`missing_trade_count`, and `zero_volume` remain visible degraded evidence but
+do not by themselves assert a security-specific corporate action: candidate
+formulas either do not consume those fields or already expose the zero-volume
+fact. Until a blocking review is cleared, the candidate cannot promote to
+Prepare or Enter. Raw provider values are never manually altered.
 
 All transitions emit stable reason codes, including
 `score_prepare_confirmed`, `breakout_participation_trigger`,

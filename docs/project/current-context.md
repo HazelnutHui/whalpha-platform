@@ -69,9 +69,15 @@ Tailscale listeners were present.
   protected Session and load the same product payload.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
-- Repository source contains the isolated Phase 5A candidate-score/risk-mode
-  domain core. It has no state-history audit, API/frontend consumer,
-  Production publication, or active product effect.
+- Repository source contains the Phase 5 offline candidate score/risk/state,
+  independent Oracle, and canonical `/tmp` audit/reread boundary. It has no
+  API/frontend consumer, Production publication, or active product effect.
+- The current formal candidate audit is the 2026-08-24 baseline-3 directory
+  `/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, fingerprint
+  `1f25a1c9060d459e372903ad116579973c709363f365f19fa66bb515774c93df`.
+  It binds two calculable sessions, has zero Oracle mismatch, and passes all
+  four replay-equivalence gates. This `/tmp` evidence is local development
+  custody, not a Production pointer or deployment artifact.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

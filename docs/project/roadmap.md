@@ -4,15 +4,14 @@
   approval-bound Identity/EOD workflow, then prepare a fresh Market
   Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
-- Next product-design step: complete the accepted Phase 5 source-bound offline
-  pipeline. The isolated Phase 5A candidate-score and risk-mode core is
-  implemented; the next minimum slice is chronological candidate state replay,
-  then the independent oracle and canonical `/tmp` audit/reread boundary.
+- Next product-design step: integrate the completed Phase 5 source-bound
+  offline candidate score/risk/state/Oracle/audit pipeline through an additive
+  Market Intelligence, Snapshot, API, and bilingual frontend contract.
   The bilingual hierarchy, Daily Decision Brief, current-payload change layer,
   relationship decision lanes, and equal-capability guest Session entry are
   implemented in repository source. Exact relationship run length/acceleration,
-  formal taxonomy, stock candidate publication, API/frontend integration, and
-  deployment remain separate contract work.
+  formal taxonomy, position management, and deployment remain separate
+  contract work.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 

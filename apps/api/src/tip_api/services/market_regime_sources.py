@@ -58,6 +58,11 @@ class MarketRegimeBar:
     low: Decimal
     close: Decimal
     volume: Decimal
+    split_adjustment_factor: Decimal = Decimal("1")
+    dividend_adjustment_factor: Decimal = Decimal("1")
+    total_return_adjustment_factor: Decimal = Decimal("1")
+    quality_status: str = "valid"
+    quality_flags: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -171,6 +176,11 @@ def load_formal_market_regime_panel(
                     low=item.low,
                     close=item.close,
                     volume=item.volume,
+                    split_adjustment_factor=item.split_adjustment_factor,
+                    dividend_adjustment_factor=item.dividend_adjustment_factor,
+                    total_return_adjustment_factor=item.total_return_adjustment_factor,
+                    quality_status=item.quality_status.value,
+                    quality_flags=item.quality_flags,
                 )
             )
     bars_tuple = tuple(sorted(bars, key=lambda item: (item.session_date, str(item.instrument_id))))

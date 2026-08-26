@@ -40,6 +40,9 @@ class EodMarketBarReadModel:
     source: str
     quality_status: QualityStatus
     quality_flags: tuple[str, ...]
+    split_adjustment_factor: Decimal = Decimal("1")
+    dividend_adjustment_factor: Decimal = Decimal("1")
+    total_return_adjustment_factor: Decimal = Decimal("1")
 
 
 @dataclass(frozen=True, slots=True)

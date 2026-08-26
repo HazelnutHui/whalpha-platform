@@ -96,6 +96,9 @@ class CanonicalEodReadRepository:
                     source=str(row["source"]),
                     quality_status=QualityStatus(str(row["quality_status"])),
                     quality_flags=tuple(row["quality_flags"] or ()),
+                    split_adjustment_factor=row["split_adjustment_factor"],
+                    dividend_adjustment_factor=row["dividend_adjustment_factor"],
+                    total_return_adjustment_factor=row["total_return_adjustment_factor"],
                 )
             )
         return tuple(sorted(bars, key=lambda item: (item.ticker, str(item.instrument_id))))
@@ -144,6 +147,9 @@ class CanonicalEodReadRepository:
                     currency=str(row["currency"]), source=str(row["source"]),
                     quality_status=QualityStatus(str(row["quality_status"])),
                     quality_flags=tuple(row["quality_flags"] or ()),
+                    split_adjustment_factor=row["split_adjustment_factor"],
+                    dividend_adjustment_factor=row["dividend_adjustment_factor"],
+                    total_return_adjustment_factor=row["total_return_adjustment_factor"],
                 )
             )
         return tuple(sorted(bars, key=lambda item: (str(item.instrument_id), item.ticker)))

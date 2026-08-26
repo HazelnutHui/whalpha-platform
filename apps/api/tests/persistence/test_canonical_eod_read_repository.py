@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from decimal import Decimal
 from pathlib import Path
 
 import pyarrow as pa
@@ -25,6 +26,9 @@ def test_lists_completed_sessions_and_reads_joined_bars(tmp_path: Path) -> None:
     assert [bar.ticker for bar in bars] == ["TESTA", "TESTB", "TESTC"]
     assert bars[0].name == "TESTA Test Instrument"
     assert str(bars[0].volume) == "100.2500000000"
+    assert bars[0].split_adjustment_factor == Decimal("0.5000000000")
+    assert bars[0].dividend_adjustment_factor == Decimal("1.0000000000")
+    assert bars[0].total_return_adjustment_factor == Decimal("0.5000000000")
     assert bars[1].vwap is None
     assert bars[1].trade_count is None
 
