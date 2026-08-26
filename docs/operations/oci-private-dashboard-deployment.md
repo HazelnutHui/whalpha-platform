@@ -79,19 +79,24 @@ An authorized apply must:
 3. upload to a new staging directory and verify remote checksums;
 4. atomically promote the release and switch `/srv/whalpha/current`;
 5. test Nginx configuration before reload;
-6. verify the login page, compatibility redirect, unauthenticated Dashboard
+6. verify the entry page, compatibility redirect, unauthenticated Dashboard
    redirect, protected JSON, auth status, and internal-only verification route;
-7. leave authenticated login as a manual user check; and
-8. retain the prior reviewed rollback release until a later exact cleanup.
+7. create a bounded guest Session, prove it opens both Dashboard and the same
+   private Snapshot, log it out, and prove the asset is protected again;
+8. leave password-based browser login as a manual user check; and
+9. retain the prior reviewed rollback release until a later exact cleanup.
 
 Deployment, rollback, password rotation, publication, Snapshot creation, and
 bundle creation are separate explicit approvals.
 
 ## Session boundary
 
-- `/` is the public, data-free branded Session login page.
+- `/` is the public, data-free branded Session entry page.
 - `/login/` is a compatibility redirect to `/`.
-- `/auth/login` and `/auth/logout` proxy to the localhost-only Auth Service.
+- `/auth/login`, `/auth/guest`, and `/auth/logout` proxy to the localhost-only
+  Auth Service.
+- Credential and guest entry create the same role-free Session; neither Nginx
+  nor the Dashboard receives a capability distinction.
 - `/auth/status` exposes only authentication state.
 - `/auth/internal-verify` is an Nginx internal location.
 - `/dashboard/` and `/private-data/` use the same `auth_request` check.
@@ -117,4 +122,4 @@ logs. See [Private Dashboard Access](private-dashboard-access.md).
 - changing DNS, Cloudflare, TLS, firewall, SSH, or unrelated system services;
 - reading or outputting passwords, hashes, cookies, or private keys;
 - treating unauthenticated probes as authenticated browser verification; or
-- converting the personal Session boundary into public provider-data access.
+- adding unprotected provider-data routes or role-dependent product access.

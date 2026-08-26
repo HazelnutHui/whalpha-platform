@@ -23,15 +23,19 @@ dimension Market Regime, and 16 preregistered ETF relationships. English is
 the first-visit default; English and Simplified Chinese render the same
 language-neutral analytics.
 
-Repository `main` now presents Market Dashboard and Market Regime &
+Repository `main` now presents Market Structure & Activity and Market Regime &
 Opportunities (`市场风向与机会`) as first-level workspaces with persistent desktop
 left navigation and one shared Universe/language/Session utility header. Market
 Regime & Opportunities is the first item and default workspace; Market
 Dashboard is second and begins with a factual “what is happening now” summary.
-It explains Universe membership versus same-session comparable coverage. Six fixed-priority
-relationship highlights precede the complete 16-pair table. These source
-changes are tested and deployed to OCI; authenticated visual review remains a
-manual user check.
+It explains Universe membership versus same-session comparable coverage. A
+Daily Decision Brief adds one- and five-session Composite changes, distances
+to both state boundaries, and an explicit broad Risk-on stance. Six fixed
+economic decision lanes precede the collapsed complete 16-pair audit table;
+each highlight shows current-versus-prior relationship state, and the short-
+history warning is consolidated. The earlier workspace hierarchy is deployed;
+the new brief, relationship refinement, second-workspace name, and guest entry
+are tested repository changes pending the next deployment record.
 
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
@@ -73,16 +77,16 @@ context audit. Exact displayed scores are publication facts, not trade signals.
 
 ## Access and deployment boundary
 
-- `/` is the branded Session-login entry.
+- `/` is the branded credential-or-guest Session entry.
 - `/dashboard/` and `/private-data/` share the server-side Session boundary.
 - The Auth Service design is localhost-only on OCI.
 - Production bundles contain no canonical Parquet, raw provider payload, or
   credentials.
 - Synthetic Dashboard data is excluded from the production dependency graph.
   API and Snapshot failures fail closed and never fall back to demo data.
-- Guest access is not implemented. Until product policy changes, any future
-  guest entry must expose the same data, functionality, language, Universe,
-  and analytics as authenticated users; no role-based content difference is
+- Guest entry creates the same role-free opaque Session as credential login.
+  Guest and credential Sessions expose the same data, functionality, language,
+  Universe, precision, freshness, and analytics. No role-based difference is
   authorized.
 
 The 2026-08-26 audit verified over SSH that the remote current symlink selects
@@ -116,16 +120,19 @@ existing approval-bound same-day Identity/EOD workflow, then generate and
 review a fresh Market Intelligence plan. Publication, Snapshot generation,
 bundle construction, and OCI deployment remain separate explicit approvals.
 
-The first information-hierarchy slice is implemented in repository source:
-first-level workspaces, shared controls, an opaque sticky header, a factual
-first-screen summary, six fixed-priority relationship highlights, and the
-Universe/comparable explanation. The next product-design slice is the change
-layer: one-session deltas, five-session direction/speed, threshold distance,
-and relationship persistence. That work requires a reviewed data-contract
-decision before implementation.
+The information-hierarchy and current-payload change layer are implemented in
+repository source: first-level workspaces, shared controls, an opaque sticky
+header, factual first-screen summaries, one-/five-session Regime deltas, both
+threshold distances, relationship prior-state persistence, decision-lane
+highlights, and the Universe/comparable explanation. Exact first-seen dates,
+multi-session relationship persistence counts, and evidence acceleration need
+an additive reviewed analytics-response contract; they are not inferred in the
+browser.
 
-This is a candidate, not authorization for guest access, a new quantitative
-model, provider acquisition, publication, or deployment.
+The next quantitative product slice is the already specified Phase 5 stock
+candidate/state/risk-mode pipeline. It must not be approximated from movers or
+implemented as a frontend-only score. Provider acquisition, formal publication,
+Snapshot generation, and deployment retain their separate operational gates.
 
 ## Verification entry point
 

@@ -27,23 +27,31 @@
   if (nextInput instanceof HTMLInputElement) {
     nextInput.value = targetPath();
   }
-  window.addEventListener('whalpha:localechange', () => { if (nextInput instanceof HTMLInputElement) nextInput.value = targetPath(); setLoading(isSubmitting || isCheckingStatus); });
+  window.addEventListener('whalpha:localechange', () => { if (nextInput instanceof HTMLInputElement) nextInput.value = targetPath(); setLoading(isSubmitting || isGuestSubmitting || isCheckingStatus); });
   const error = document.getElementById('login-error');
+  const guestError = document.getElementById('guest-error');
   if (params.get('error') === '1') {
     error?.classList.add('visible');
   }
   const form = document.querySelector('form');
   const button = document.querySelector('.login-submit');
+  const guestButton = document.querySelector('.guest-submit');
   const username = document.getElementById('username');
   const password = document.getElementById('password');
   let isSubmitting = false;
+  let isGuestSubmitting = false;
   let isCheckingStatus = true;
 
   function setLoading(value) {
     if (button instanceof HTMLButtonElement) {
       button.disabled = value;
       button.setAttribute('aria-busy', value ? 'true' : 'false');
-      button.textContent = value ? (i18n?.t('submitting') ?? 'Signing In') : (i18n?.t('submit') ?? 'Sign In');
+      button.textContent = value && isSubmitting ? (i18n?.t('submitting') ?? 'Signing In') : (i18n?.t('submit') ?? 'Sign In');
+    }
+    if (guestButton instanceof HTMLButtonElement) {
+      guestButton.disabled = value;
+      guestButton.setAttribute('aria-busy', value && isGuestSubmitting ? 'true' : 'false');
+      guestButton.textContent = value && isGuestSubmitting ? (i18n?.t('guestSubmitting') ?? 'Opening guest access') : (i18n?.t('guestSubmit') ?? 'Continue as guest');
     }
   }
 
@@ -53,6 +61,10 @@
       password.value = '';
       password.focus();
     }
+  }
+
+  function showGuestError() {
+    guestError?.classList.add('visible');
   }
 
   function setFormVisible(value) {
@@ -85,7 +97,7 @@
 
   form?.addEventListener('submit', async (event) => {
     event.preventDefault();
-    if (isSubmitting || isCheckingStatus) {
+    if (isSubmitting || isGuestSubmitting || isCheckingStatus) {
       return;
     }
     if (!(username instanceof HTMLInputElement) || !(password instanceof HTMLInputElement)) {
@@ -94,8 +106,9 @@
     }
     isSubmitting = true;
     error?.classList.remove('visible');
+    guestError?.classList.remove('visible');
     setLoading(true);
-    const requestedNext = nextInput instanceof HTMLInputElement ? nextInput.value : targetPath;
+    const requestedNext = nextInput instanceof HTMLInputElement ? nextInput.value : targetPath();
     try {
       const response = await fetch('/auth/login', {
         method: 'POST',
@@ -117,6 +130,36 @@
       showError();
     } finally {
       isSubmitting = false;
+      setLoading(false);
+    }
+  });
+
+  guestButton?.addEventListener('click', async () => {
+    if (isSubmitting || isGuestSubmitting || isCheckingStatus) {
+      return;
+    }
+    isGuestSubmitting = true;
+    error?.classList.remove('visible');
+    guestError?.classList.remove('visible');
+    setLoading(true);
+    const requestedNext = nextInput instanceof HTMLInputElement ? nextInput.value : targetPath();
+    try {
+      const response = await fetch('/auth/guest', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ next: safeNext(requestedNext) }),
+      });
+      if (!response.ok) {
+        showGuestError();
+        return;
+      }
+      const payload = await response.json();
+      navigate(safeNext(payload.next));
+    } catch {
+      showGuestError();
+    } finally {
+      isGuestSubmitting = false;
       setLoading(false);
     }
   });

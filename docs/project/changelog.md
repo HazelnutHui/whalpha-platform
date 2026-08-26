@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-08-26 — Daily decision layer and equal-capability guest entry
+
+- Added a conclusion-first Daily Decision Brief using the existing immutable
+  Regime payload: broad Risk-on confirmation, one-/five-session Composite
+  changes, exact supporting/conflicting dimensions, and remaining distance to
+  both Risk-on and Defensive boundaries. No analytics score, threshold,
+  publication, or fingerprint is recalculated in React.
+- Replaced generic support/drag sentences with evidence-consistent copy,
+  selected relationship highlights across six fixed economic decision lanes,
+  added current-versus-prior state markers, consolidated the global
+  short-history reliability warning, and collapsed the complete 16-pair audit
+  table by default. Returns remain excluded from highlight selection/ranking.
+- Renamed the second user-facing workspace to `Market Structure & Activity` /
+  `市场结构与活跃度`; formal Dashboard contract identifiers remain unchanged.
+- Accepted ADR 0019 and added same-origin, rate-limited `POST /auth/guest`.
+  Guest entry creates the same opaque role-free Session, cookie, Nginx
+  authorization result, Dashboard, and private-data access as credential
+  login. It accepts no credential or role and does not create a second data
+  path.
+- Extended login, Auth Service, Nginx, deployment postflight, bilingual copy,
+  and regression coverage. Deployment postflight now proves a temporary guest
+  Session can read both the Dashboard and bound Snapshot, logs it out, and
+  removes local cookie material without printing it.
+- Exact first-seen dates, multi-session relationship run lengths/evidence
+  acceleration, stock candidate scoring, trade-state publication, portfolio
+  state, options analytics, data acquisition, and automated execution are not
+  fabricated by this interface slice and remain separate contract work.
+
 ## 2026-08-26 — First-level workspace and current-market hierarchy
 
 - Built and deployed OCI release `2026-08-26T094339Z-f9711d5403f6` from source

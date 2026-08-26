@@ -38,10 +38,10 @@ only after an explicit user selection. It edits only `lang`; `view`,
 parameters remain intact. `popstate`, refresh, and direct links reconstruct
 the same language and page state.
 
-The static login page implements the same policy before session checking. Its
-safe Dashboard `next` value carries the selected locale, while the existing
-same-origin path checks, session endpoint, cookie behavior, redirects, and
-authentication error boundary remain unchanged.
+The static entry page implements the same policy before Session checking. Its
+safe Dashboard `next` value carries the selected locale for both credential and
+guest entry. The guest path uses the same language choices and reaches the same
+Dashboard payload; identity never selects a catalog or analytics response.
 
 ## Typed catalog architecture
 
@@ -73,7 +73,7 @@ than being invented or hidden.
 
 | English | Simplified Chinese |
 |---|---|
-| Market Dashboard | 市场仪表盘 |
+| Market Structure & Activity | 市场结构与活跃度 |
 | Market Regime & Opportunities | 市场风向与机会 |
 | Risk-on / Balanced / Defensive / Stress | 风险偏好 / 均衡 / 防御 / 压力 |
 | Candidate / Confirmed | 候选状态 / 确认状态 |
@@ -108,13 +108,13 @@ probability.
    invariance, authentication, layout, and screenshot tests.
 6. Review terminology and full sentences with an investment-research lens.
 
-Future guest access must reuse this exact locale state and catalog. Identity or
-role may protect the route, but must not change analytics content, fields,
-precision, timeliness, functionality, or language availability.
+Guest access reuses this exact locale state and catalog. Credential and guest
+Sessions must not change analytics content, fields, precision, timeliness,
+functionality, or language availability.
 
 ## Publication boundary
 
-The bilingual implementation is active in the bound Snapshot 1.5 / Dashboard
-2.2 bundle. One language-neutral Market Intelligence payload supplies both
-locales, and locale remains excluded from analytics identity. This does not
-create guest access or authorize different content by role.
+The bilingual implementation uses one language-neutral Market Intelligence
+payload for both locales, and locale remains excluded from analytics identity.
+Guest and credential Sessions consume that same payload. No role-dependent
+content is authorized.

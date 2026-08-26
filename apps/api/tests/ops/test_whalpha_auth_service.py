@@ -10,6 +10,8 @@ import threading
 from pathlib import Path
 from http.server import HTTPServer
 
+import pytest
+
 
 MODULE_PATH = Path(__file__).resolve().parents[4] / "deploy" / "oci" / "auth" / "whalpha_auth_service.py"
 spec = importlib.util.spec_from_file_location("whalpha_auth_service", MODULE_PATH)
@@ -111,6 +113,30 @@ def test_rate_limit_records_failures() -> None:
     assert not state.rate_limited("client")
 
 
+def test_guest_rate_limit_is_separate_from_login_failures() -> None:
+    clock = {"now": 1000.0}
+    state = auth.AuthState(credential(), now=lambda: clock["now"])
+    for _ in range(auth.GUEST_LIMIT):
+        assert not state.guest_rate_limited("client")
+        state.record_guest_request("client")
+    assert state.guest_rate_limited("client")
+    assert not state.rate_limited("client")
+    clock["now"] += auth.GUEST_WINDOW_SECONDS + 1
+    assert not state.guest_rate_limited("client")
+
+
+def test_active_session_count_is_bounded_and_expiry_releases_capacity() -> None:
+    clock = {"now": 1000.0}
+    state = auth.AuthState(credential(), now=lambda: clock["now"], max_active_sessions=1)
+    first = state.create_session()
+    with pytest.raises(auth.SessionCapacityError):
+        state.create_session()
+    clock["now"] = first.expires_at + 1
+    replacement = state.create_session()
+    assert replacement.session_id != first.session_id
+    assert len(state.sessions) == 1
+
+
 def test_load_credential_accepts_only_configured_user(tmp_path: Path) -> None:
     path = tmp_path / "auth.htpasswd"
     path.write_text(f"other:ignored\nhui:{credential().password_hash}\n", encoding="utf-8")
@@ -138,6 +164,27 @@ def json_login(server, payload: dict[str, str]):
             "Accept": "application/json",
             "Host": "whalpha.com",
             "Origin": "https://whalpha.com",
+        },
+    )
+    response = conn.getresponse()
+    data = response.read().decode("utf-8")
+    headers = dict(response.getheaders())
+    conn.close()
+    return response.status, headers, json.loads(data)
+
+
+def json_guest(server, payload: dict[str, str], *, origin: str = "https://whalpha.com"):
+    conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+    body = json.dumps(payload)
+    conn.request(
+        "POST",
+        "/guest",
+        body=body,
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Host": "whalpha.com",
+            "Origin": origin,
         },
     )
     response = conn.getresponse()
@@ -196,6 +243,66 @@ def test_json_login_rejects_malformed_request_safely() -> None:
         headers = dict(response.getheaders())
         conn.close()
         assert response.status == 400
+        assert payload == {"error": "invalid_request"}
+        assert "Set-Cookie" not in headers
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_guest_session_uses_same_opaque_cookie_and_safe_next() -> None:
+    state = auth.AuthState(credential(), now=lambda: 1000.0)
+    server, thread = run_server(state)
+    try:
+        status, headers, payload = json_guest(server, {"next": "/dashboard/?view=regime&lang=zh"})
+        assert status == 200
+        assert payload == {"authenticated": True, "next": "/dashboard/?view=regime&lang=zh"}
+        cookie = headers["Set-Cookie"]
+        assert cookie.startswith(f"{auth.COOKIE_NAME}=")
+        assert "Secure" in cookie and "HttpOnly" in cookie and "SameSite=Lax" in cookie
+        token = cookie.split("=", 1)[1].split(";", 1)[0]
+        assert state.check_session(token)
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_guest_rejects_cross_origin_and_unknown_fields() -> None:
+    server, thread = run_server(auth.AuthState(credential(), now=lambda: 1000.0))
+    try:
+        status, headers, payload = json_guest(server, {"next": "/dashboard/"}, origin="https://evil.example")
+        assert status == 403
+        assert payload == {"error": "invalid_request"}
+        assert "Set-Cookie" not in headers
+
+        status, headers, payload = json_guest(server, {"next": "/dashboard/", "role": "admin"})
+        assert status == 400
+        assert payload == {"error": "invalid_request"}
+        assert "Set-Cookie" not in headers
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_guest_requires_json_content_type() -> None:
+    server, thread = run_server(auth.AuthState(credential(), now=lambda: 1000.0))
+    try:
+        conn = http.client.HTTPConnection("127.0.0.1", server.server_address[1], timeout=5)
+        conn.request(
+            "POST",
+            "/guest",
+            body='{"next":"/dashboard/"}',
+            headers={
+                "Content-Type": "text/plain",
+                "Host": "whalpha.com",
+                "Origin": "https://whalpha.com",
+            },
+        )
+        response = conn.getresponse()
+        payload = json.loads(response.read().decode("utf-8"))
+        headers = dict(response.getheaders())
+        conn.close()
+        assert response.status == 415
         assert payload == {"error": "invalid_request"}
         assert "Set-Cookie" not in headers
     finally:

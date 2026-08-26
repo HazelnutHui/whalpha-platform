@@ -46,7 +46,7 @@ dell5820
   -> Versioned deployment bundle
 
 OCI
-  /             public branded login page
+  /             public branded credential/guest Session entry page
   /login/        compatibility redirect to /
   /dashboard/    authenticated static dashboard
   /private-data/ authenticated JSON snapshots
@@ -105,15 +105,15 @@ The bundle excludes source maps, credentials, `.env`, raw payloads, Parquet file
 
 ## Security Boundary
 
-`/dashboard/` and `/private-data/` must be protected by the same server-side session boundary. `/private-data/` must not fall back to the SPA index. Public `/` is the branded login entry and must not expose provider-backed market data before authentication.
+`/dashboard/` and `/private-data/` must be protected by the same server-side session boundary. `/private-data/` must not fall back to the SPA index. Public `/` is the branded Session entry and must not expose provider-backed market data before a Session exists.
 
-The existing htpasswd file remains the server-side credential store. Browser-native Basic Auth is replaced by a branded login page, opaque in-memory sessions, and an HttpOnly `__Host-whalpha_session` cookie.
+The existing htpasswd file remains the server-side credential store for the owner login. Browser-native Basic Auth is replaced by a branded entry page, opaque in-memory Sessions, and an HttpOnly `__Host-whalpha_session` cookie. `POST /auth/guest` creates the same role-free Session without accepting a credential; guest and credential Sessions have no data or capability difference.
 
-The session-login deployment verifies that public `/` remains unauthenticated and data-free, `/login/` redirects to `/`, unauthenticated `/dashboard/` redirects to `/?next=/dashboard/`, and unauthenticated `/private-data/` returns 401. Authenticated visual verification is performed by the user in a browser; Codex does not know or handle the password.
+The deployment verifies that public `/` remains data-free, `/login/` redirects to `/`, unauthenticated `/dashboard/` redirects to `/?next=/dashboard/`, and unauthenticated `/private-data/` returns 401. It also creates a temporary guest Session, reads the same Dashboard and private Snapshot through it, logs it out, and removes the local cookie jar without printing the token. Password-based visual verification remains a user browser check; Codex does not know or handle the password.
 
 ## Login Route Verification
 
-The deployment gate is content-aware: public `/` must contain branded login markers, username/password fields, and `Sign In`, and must not contain the retired placeholder marker. `/login/` must redirect to `/`. HTTP 200 alone is not accepted as proof of correct routing.
+The deployment gate is content-aware: public `/` must contain branded entry markers, username/password fields, `Sign In`, and the guest control, and must not contain the retired placeholder marker. `/login/` must redirect to `/`. HTTP 200 alone is not accepted as proof of correct routing.
 
 ## Login Submission Boundary
 

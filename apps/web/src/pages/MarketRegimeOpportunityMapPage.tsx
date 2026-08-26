@@ -17,12 +17,32 @@ const STATE_PRIORITY: Record<string, number> = {
   synchronous_weakening: 3, synchronous_strengthening: 4, neutral: 5, unavailable: 6,
 };
 
+const DECISION_LANES = [
+  ['growth_broad', 'small_large', 'mid_large'],
+  ['growth_value'],
+  ['consumer_risk', 'technology_defensive', 'industrial_defensive', 'financial_defensive'],
+  ['energy_broad', 'health_broad'],
+  ['semis_growth', 'software_growth', 'biotech_health', 'regional_financials'],
+  ['credit_quality', 'credit_duration'],
+] as const;
+
 function number(t: Translate, value: string | null, digits = 2): string {
   return value === null ? t('common.unavailable') : Number(value).toFixed(digits);
 }
 function score(t: Translate, value: string | null): string { return number(t, value, 1); }
 function contribution(t: Translate, value: string | null): string {
   return value === null ? t('common.unavailable') : `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(2)} ${t('common.pointsShort')}`;
+}
+function delta(t: Translate, current: string | null, prior: string | null, digits = 1): string {
+  if (current === null || prior === null) return t('common.unavailable');
+  const value = Number(current) - Number(prior);
+  return `${value >= 0 ? '+' : ''}${value.toFixed(digits)}`;
+}
+function thresholdDistance(item: { signed_distance: string; boundary_operator: string } | undefined): string | null {
+  if (!item) return null;
+  const signed = Number(item.signed_distance);
+  if (!Number.isFinite(signed)) return null;
+  return Math.max(0, item.boundary_operator.includes('>') ? -signed : signed).toFixed(1);
 }
 function weight(value: string): string { return `${Number(value).toFixed(Number(value) % 1 === 0 ? 0 : 1)}%`; }
 function percent(t: Translate, value: string | null): string {
@@ -60,6 +80,41 @@ function ReviewDeploymentBanner({ data }: { data: MarketRegimePreviewResponse })
     session: review.approved_as_of_session, count: review.expected_lag_sessions,
   })}</strong></section>;
 }
+
+function DecisionBrief({ data }: { data: MarketRegimePreviewResponse }): JSX.Element {
+  const { t } = useI18n();
+  const state = data.regime.current_state;
+  const history = data.regime.state_history.filter((item) => item.composite !== null);
+  const currentScore = state.composite ?? data.regime.composite.regime_score;
+  const priorScore = history.length >= 2 ? history[history.length - 2].composite : null;
+  const fiveSessionScore = history.length >= 6 ? history[history.length - 6].composite : null;
+  const oneDayChange = currentScore !== null && priorScore !== null ? Number(currentScore) - Number(priorScore) : null;
+  const confirmed = state.confirmed_state ?? 'unavailable';
+  const riskOn = state.threshold_distances.find((item) => item.threshold_id === 'balanced_to_risk_on');
+  const defensive = state.threshold_distances.find((item) => item.threshold_id === 'balanced_to_defensive');
+  const broadRiskOn = confirmed === 'risk_on' && state.conflicting_dimension_ids.length === 0;
+  const headlineKey = confirmed === 'balanced'
+    ? oneDayChange !== null && oneDayChange < 0 ? 'regime.briefBalancedDeteriorating'
+      : oneDayChange !== null && oneDayChange > 0 ? 'regime.briefBalancedImproving' : 'regime.briefBalancedMixed'
+    : confirmed === 'risk_on' ? 'regime.briefRiskOn'
+      : confirmed === 'defensive' ? 'regime.briefDefensive'
+        : confirmed === 'stress' ? 'regime.briefStress' : 'regime.briefUnavailable';
+  return <section className="panel decision-brief" aria-labelledby="decision-brief-title">
+    <div className="decision-brief-heading"><div><p className="eyebrow">{t('regime.briefEyebrow')}</p><h1 id="decision-brief-title">{t('regime.briefTitle')}</h1></div><span className={`decision-stance ${broadRiskOn ? 'supports-risk-on' : 'selective-risk'}`}>{t(broadRiskOn ? 'regime.broadRiskOnSupported' : 'regime.broadRiskOnUnsupported')}</span></div>
+    <strong className="decision-headline">{t(headlineKey)}</strong>
+    <p className="decision-summary">{t('regime.briefEvidence', {
+      supports: sentenceList(t, state.supporting_dimension_ids.map((item) => dimensionShortName(t, item))),
+      drags: sentenceList(t, state.conflicting_dimension_ids.map((item) => dimensionShortName(t, item))),
+    })}</p>
+    <div className="decision-change-grid">
+      <article><span>{t('regime.oneSessionChange')}</span><strong>{delta(t, currentScore, priorScore)}</strong><small>{t('regime.scorePoints')}</small></article>
+      <article><span>{t('regime.fiveSessionChange')}</span><strong>{delta(t, currentScore, fiveSessionScore)}</strong><small>{t('regime.scorePoints')}</small></article>
+      <article><span>{t('regime.distanceRiskOn')}</span><strong>{thresholdDistance(riskOn) ?? t('common.unavailable')}</strong><small>{t('regime.scorePoints')}</small></article>
+      <article><span>{t('regime.distanceDefensive')}</span><strong>{thresholdDistance(defensive) ?? t('common.unavailable')}</strong><small>{t('regime.scorePoints')}</small></article>
+    </div>
+    <p className="decision-boundary">{t('regime.briefBoundary')}</p>
+  </section>;
+}
 function metricFor(item: Relationship, windowSize: WindowSize): RelationshipWindow {
   return item.current.windows.find((metric) => metric.window_sessions === windowSize) as RelationshipWindow;
 }
@@ -90,6 +145,30 @@ function crossWindowSentence(t: Translate, item: Relationship): string {
   if (signs.every((value) => value <= 0)) return t('regime.crossWindowRight', { left: item.definition.left_ticker, right: item.definition.right_ticker });
   return t('regime.crossWindowMixed');
 }
+function relationshipChanged(item: Relationship): boolean {
+  return item.current.previous_relationship_state !== undefined
+    && item.current.previous_relationship_state !== null
+    && item.current.previous_relationship_state !== item.current.relationship_state;
+}
+function relationshipPersistence(t: Translate, item: Relationship): string {
+  const previous = item.current.previous_relationship_state;
+  if (previous === undefined || previous === null) return t('regime.stateHistoryUnavailable');
+  if (previous === item.current.relationship_state) return t('regime.stateContinues');
+  return t('regime.stateChangedFrom', { state: relationshipName(t, previous) });
+}
+function selectDecisionHighlights(items: Relationship[]): Relationship[] {
+  const selected: Relationship[] = [];
+  DECISION_LANES.forEach((pairIds) => {
+    const candidates = pairIds.map((pairId) => items.find((item) => item.definition.pair_id === pairId)).filter((item): item is Relationship => item !== undefined);
+    const representative = candidates.find((item) => !['neutral', 'unavailable'].includes(item.current.relationship_state)) ?? candidates[0];
+    if (representative && !selected.includes(representative)) selected.push(representative);
+  });
+  const remaining = [...items].filter((item) => !selected.includes(item) && !['neutral', 'unavailable'].includes(item.current.relationship_state))
+    .sort((a, b) => Number(relationshipChanged(b)) - Number(relationshipChanged(a))
+      || (STATE_PRIORITY[a.current.relationship_state] - STATE_PRIORITY[b.current.relationship_state])
+      || a.definition.registry_order - b.definition.registry_order);
+  return [...selected, ...remaining].slice(0, 6);
+}
 function dimensionTone(data: MarketRegimePreviewResponse, dimensionId: string): EvidenceTone {
   if (data.regime.current_state.conflicting_dimension_ids.includes(dimensionId)) return 'drag';
   if (data.regime.current_state.supporting_dimension_ids.includes(dimensionId)) return 'support';
@@ -112,14 +191,17 @@ function Hero({ data }: { data: MarketRegimePreviewResponse }): JSX.Element {
   const riskOnDistance = state.threshold_distances.find((item) => item.threshold_id === 'balanced_to_risk_on');
   const defensiveDistance = state.threshold_distances.find((item) => item.threshold_id === 'balanced_to_defensive');
   const transitionCopy = confirmed === 'balanced' && riskOnDistance && defensiveDistance
-    ? t('regime.riskOnDistance', { distance: Math.abs(Number(riskOnDistance.signed_distance)).toFixed(1) })
+    ? t('regime.thresholdPosition', {
+      riskOn: Math.abs(Number(riskOnDistance.signed_distance)).toFixed(1),
+      defensive: Math.abs(Number(defensiveDistance.signed_distance)).toFixed(1),
+    })
     : state.pending_target_state ? t(state.confirmation_sessions_remaining === 1 ? 'regime.pending' : 'regime.pendingPlural', { state: stateName(t, state.pending_target_state), count: state.confirmation_sessions_remaining })
       : t('regime.noTransition');
   return <section className="regime-hero panel">
-    <div className="hero-heading"><p className="eyebrow">{t('regime.heroEyebrow')}</p><h1>{t('regime.title')}</h1></div>
+    <div className="hero-heading"><p className="eyebrow">{t('regime.heroEyebrow')}</p><h2>{t('regime.title')}</h2></div>
     <div className="hero-state-block"><span className="hero-label">{t('regime.confirmedState')}</span><div className={`hero-state state-text-${confirmed}`}><i aria-hidden="true" />{stateName(t, confirmed)}</div><strong>{stateSummary(t, confirmed)}</strong></div>
     <div className="hero-composite" data-exact-value={data.regime.composite.regime_score ?? undefined}><span>{t('regime.composite')}</span><strong>{score(t, data.regime.composite.regime_score)} <small>/ 100</small></strong><p>{candidateDiffers ? t('regime.candidate', { state: stateName(t, state.instantaneous_candidate_state) }) : t('regime.candidateMatches')}</p></div>
-    <div className="hero-evidence"><div className="evidence-callout evidence-support"><span>{t('regime.whatSupports')}</span><strong>{sentenceList(t, support)}</strong><small>{t(support.length ? 'regime.supportCopy' : 'regime.supportUnavailable')}</small></div><div className="evidence-callout evidence-drag"><span>{t('regime.whatDrags')}</span><strong>{sentenceList(t, conflict)}</strong><small>{t(conflict.length ? 'regime.dragCopy' : 'regime.dragUnavailable')}</small></div></div>
+    <div className="hero-evidence"><div className="evidence-callout evidence-support"><span>{t('regime.whatSupports')}</span><strong>{sentenceList(t, support)}</strong><small>{t(support.length ? 'regime.supportDetail' : 'regime.supportUnavailable')}</small></div><div className="evidence-callout evidence-drag"><span>{t('regime.whatDrags')}</span><strong>{sentenceList(t, conflict)}</strong><small>{t(conflict.length ? 'regime.dragDetail' : 'regime.dragUnavailable')}</small></div></div>
     <div className="hero-transition"><span>{transitionCopy}</span><small>{t('regime.fixedRules')}</small></div>
     <div className="regime-hero-meta"><span>{t('regime.asOf', { session: data.as_of_session })}</span><span>{t('regime.universeMeta', { universe: universeName(t, data.regime.definition.universe_id, data.regime.definition.display_name) })}</span><span className="short-history-chip">{t('regime.sessionPreview', { count: data.input_session_count })}</span><span>{t('regime.researchCaveat')}</span></div>
   </section>;
@@ -145,6 +227,7 @@ function RelationshipCard({ item, windowSize, onOpen }: { item: Relationship; wi
   const { t } = useI18n(); const metric = metricFor(item, windowSize); const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`;
   return <button type="button" className="relationship-highlight" title={t('regime.openPair', { pair })} onClick={onOpen}>
     <span className="highlight-family">{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</span><div className="highlight-title"><strong>{pair}</strong><StateMark state={item.current.relationship_state} /></div>
+    <span className={`relationship-change ${relationshipChanged(item) ? 'changed' : ''}`}>{relationshipPersistence(t, item)}</span>
     <div className="highlight-returns"><span><small>{item.definition.left_ticker}</small><b>{percent(t, metric.left_return)}</b></span><span><small>{item.definition.right_ticker}</small><b>{percent(t, metric.right_return)}</b></span><span className="highlight-spread"><small>{t('regime.relativeSpread')}</small><b>{percent(t, metric.relative_return)}</b></span></div>
     <p>{directionSentence(t, metric, windowSize)} {relativeSentence(t, item, metric)}</p>
   </button>;
@@ -172,13 +255,24 @@ function Relationships({ data }: { data: MarketRegimePreviewResponse }): JSX.Ele
   const families = useMemo(() => [...new Set(data.relationships.map((item) => item.definition.relationship_family))], [data]);
   const states = useMemo(() => [...new Set(data.relationships.map((item) => item.current.relationship_state))], [data]);
   const visible = data.relationships.filter((item) => (family === 'all' || item.definition.relationship_family === family) && (stateFilter === 'all' || item.current.relationship_state === stateFilter) && (scope === 'all' || item.current.relationship_state !== 'neutral'));
-  const highlights = [...data.relationships].filter((item) => !['neutral', 'unavailable'].includes(item.current.relationship_state)).sort((a, b) => (STATE_PRIORITY[a.current.relationship_state] - STATE_PRIORITY[b.current.relationship_state]) || a.definition.registry_order - b.definition.registry_order).slice(0, 6);
+  const highlights = selectDecisionHighlights(data.relationships);
   const selected = pairId ? data.relationships.find((item) => item.definition.pair_id === pairId) : undefined;
-  return <><section className="panel highlights-panel"><div className="section-header compact"><div><p className="eyebrow">{t('regime.highlightEyebrow', { count: windowSize })}</p><h2>{t('regime.highlightTitle')}</h2></div><details className="highlight-method"><summary>{t('regime.highlightMethod')}</summary><p>{t('regime.highlightMethodBody')}</p></details></div><div className="highlight-grid">{highlights.map((item) => <RelationshipCard key={item.definition.pair_id} item={item} windowSize={windowSize} onOpen={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }} />)}</div></section>
-    <section className="panel relationship-map-panel"><div className="section-header relationship-header"><div><p className="eyebrow">{t('regime.completeMap')}</p><h2>{t('regime.allPairs')}</h2></div><div className="window-tabs" aria-label={t('regime.relationshipWindowAria')}>{([5, 10, 20] as WindowSize[]).map((value) => <button type="button" className={windowSize === value ? 'active' : ''} key={value} onClick={() => { setWindowSize(value); updateUrl({ window: String(value) }); }}>{t('regime.windowSessions', { count: value })}</button>)}</div></div>
-      <div className="relationship-filters"><label>{t('common.family')}<select value={family} onChange={(event) => { setFamily(event.target.value); updateUrl({ family: event.target.value }); }}><option value="all">{t('regime.allFamilies')}</option>{families.map((value) => <option key={value} value={value}>{familyName(t, value)}</option>)}</select></label><label>{t('common.state')}<select value={stateFilter} onChange={(event) => { setStateFilter(event.target.value); updateUrl({ state: event.target.value }); }}><option value="all">{t('regime.allStates')}</option>{states.map((value) => <option key={value} value={value}>{relationshipName(t, value)}</option>)}</select></label><label className="toggle-filter"><input aria-label={t('regime.onlyNonNeutral')} type="checkbox" checked={scope === 'nonneutral'} onChange={(event) => { const value = event.target.checked ? 'nonneutral' : 'all'; setScope(value); updateUrl({ scope: value }); }} /> {t('regime.onlyNonNeutral')}</label><button type="button" onClick={() => { setFamily('all'); setStateFilter('all'); setScope('all'); updateUrl({ family: null, state: null, scope: null }); }}>{t('regime.clearFilters')}</button></div>
-      <div className="relationship-table"><div className="relationship-table-head"><span>{t('regime.tablePair')}</span><span>{t('regime.tableLeft')}</span><span>{t('regime.tableRight')}</span><span>{t('regime.tableRelative')}</span><span>{t('regime.tableMovement')}</span><span>{t('regime.tableState')}</span></div>{visible.map((item) => { const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`; return <button type="button" className="relationship-row" title={t('regime.openPair', { pair })} key={item.definition.pair_id} onClick={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }}><span className="pair-identity"><strong>{pair}</strong><small>{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</small></span><WindowMetric relationship={item} windowSize={windowSize} /><span className="relationship-state-cell"><StateMark state={item.current.relationship_state} /><small>{t('regime.reliabilityInline', { value: confidenceName(t, item.current.confidence) })}</small>{item.explanation.counterevidence.length ? <em>{t('regime.evidenceCaveat')}</em> : null}</span></button>; })}</div><p className="table-foot">{t('regime.showingPairs', { count: visible.length })}</p>
-    </section>{selected ? <PairDetail item={selected} windowSize={windowSize} onClose={() => { setPairId(undefined); updateUrl({ pair: null }); }} /> : null}</>;
+  return <>
+    <section className="panel highlights-panel">
+      <div className="section-header compact"><div><p className="eyebrow">{t('regime.highlightEyebrow', { count: windowSize })}</p><h2>{t('regime.highlightTitle')}</h2></div><details className="highlight-method"><summary>{t('regime.highlightMethod')}</summary><p>{t('regime.highlightMethodBody')}</p></details></div>
+      <p className="relationship-reliability-note">{t('regime.globalLowReliability', { count: data.input_session_count })}</p>
+      <div className="highlight-grid">{highlights.map((item) => <RelationshipCard key={item.definition.pair_id} item={item} windowSize={windowSize} onOpen={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }} />)}</div>
+    </section>
+    <details className="panel relationship-map-panel">
+      <summary className="relationship-map-summary"><span><span className="eyebrow">{t('regime.completeMap')}</span><strong>{t('regime.allPairs')}</strong></span><small>{t('regime.expandCompleteMap')}</small></summary>
+      <div className="relationship-map-content">
+        <div className="section-header relationship-header"><p className="section-note">{t('regime.completeMapNote')}</p><div className="window-tabs" aria-label={t('regime.relationshipWindowAria')}>{([5, 10, 20] as WindowSize[]).map((value) => <button type="button" className={windowSize === value ? 'active' : ''} key={value} onClick={() => { setWindowSize(value); updateUrl({ window: String(value) }); }}>{t('regime.windowSessions', { count: value })}</button>)}</div></div>
+        <div className="relationship-filters"><label>{t('common.family')}<select value={family} onChange={(event) => { setFamily(event.target.value); updateUrl({ family: event.target.value }); }}><option value="all">{t('regime.allFamilies')}</option>{families.map((value) => <option key={value} value={value}>{familyName(t, value)}</option>)}</select></label><label>{t('common.state')}<select value={stateFilter} onChange={(event) => { setStateFilter(event.target.value); updateUrl({ state: event.target.value }); }}><option value="all">{t('regime.allStates')}</option>{states.map((value) => <option key={value} value={value}>{relationshipName(t, value)}</option>)}</select></label><label className="toggle-filter"><input aria-label={t('regime.onlyNonNeutral')} type="checkbox" checked={scope === 'nonneutral'} onChange={(event) => { const value = event.target.checked ? 'nonneutral' : 'all'; setScope(value); updateUrl({ scope: value }); }} /> {t('regime.onlyNonNeutral')}</label><button type="button" onClick={() => { setFamily('all'); setStateFilter('all'); setScope('all'); updateUrl({ family: null, state: null, scope: null }); }}>{t('regime.clearFilters')}</button></div>
+        <div className="relationship-table"><div className="relationship-table-head"><span>{t('regime.tablePair')}</span><span>{t('regime.tableLeft')}</span><span>{t('regime.tableRight')}</span><span>{t('regime.tableRelative')}</span><span>{t('regime.tableMovement')}</span><span>{t('regime.tableState')}</span></div>{visible.map((item) => { const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`; return <button type="button" className="relationship-row" title={t('regime.openPair', { pair })} key={item.definition.pair_id} onClick={() => { setPairId(item.definition.pair_id); updateUrl({ pair: item.definition.pair_id }); }}><span className="pair-identity"><strong>{pair}</strong><small>{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</small></span><WindowMetric relationship={item} windowSize={windowSize} /><span className="relationship-state-cell"><StateMark state={item.current.relationship_state} /><small>{relationshipPersistence(t, item)} · {t('regime.reliabilityInline', { value: confidenceName(t, item.current.confidence) })}</small></span></button>; })}</div><p className="table-foot">{t('regime.showingPairs', { count: visible.length })}</p>
+      </div>
+    </details>
+    {selected ? <PairDetail item={selected} windowSize={windowSize} onClose={() => { setPairId(undefined); updateUrl({ pair: null }); }} /> : null}
+  </>;
 }
 
 function Methodology({ data }: { data: MarketRegimePreviewResponse }): JSX.Element {
@@ -194,5 +288,5 @@ export function MarketRegimeOpportunityMapPage({ withinWorkspaceShell = false }:
   if (state.kind === 'loading') return <main className="app-shell"><div className="panel state-panel">{t('regime.loading')}</div></main>;
   if (state.kind === 'error') return <main className="app-shell"><div className="panel state-panel error-state" role="alert"><h1>{t('regime.unavailableTitle')}</h1><p>{localizeClientError(t, state.message)}</p><p>{t('regime.unavailableBody')}</p><button type="button" onClick={() => load(universeId)}>{t('common.retry')}</button></div></main>;
   const data = state.data;
-  return <main className="app-shell regime-shell"><div className="regime-topbar"><div><span className="brand">{t('regime.privateResearch')}</span><span>{t('regime.localPreview')}</span></div>{withinWorkspaceShell ? null : <label>{t('common.universe')}<select aria-label={t('regime.topbarUniverseAria')} value={data.selected_universe_id} onChange={(event) => { setUniverseId(event.target.value); updateUrl({ universe: event.target.value }); }}>{data.available_universes.map((item) => <option key={item.universe_id} value={item.universe_id}>{universeName(t, item.universe_id, item.display_name)} · {item.member_count.toLocaleString('en-US')}</option>)}</select></label>}</div><ReviewDeploymentBanner data={data} /><Hero data={data} /><Dimensions data={data} /><Relationships data={data} /><Methodology data={data} /></main>;
+  return <main className="app-shell regime-shell"><div className="regime-topbar"><div><span className="brand">{t('regime.privateResearch')}</span><span>{t('regime.localPreview')}</span></div>{withinWorkspaceShell ? null : <label>{t('common.universe')}<select aria-label={t('regime.topbarUniverseAria')} value={data.selected_universe_id} onChange={(event) => { setUniverseId(event.target.value); updateUrl({ universe: event.target.value }); }}>{data.available_universes.map((item) => <option key={item.universe_id} value={item.universe_id}>{universeName(t, item.universe_id, item.display_name)} · {item.member_count.toLocaleString('en-US')}</option>)}</select></label>}</div><ReviewDeploymentBanner data={data} /><DecisionBrief data={data} /><Hero data={data} /><Dimensions data={data} /><Relationships data={data} /><Methodology data={data} /></main>;
 }

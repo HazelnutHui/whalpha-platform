@@ -23,10 +23,11 @@ Usage: $0 --bundle-release RELEASE_ID [--dry-run]
        $0 --bundle-release RELEASE_ID --apply
 
 Default is dry-run. Apply uploads one completed static Dashboard bundle, the
-localhost-only session Auth Service, and the password-rotation admin helper to
-the reviewed OCI host. It verifies that / is the branded login entry,
-/dashboard/ redirects unauthenticated users to /, and /private-data/ returns
-401. It never accepts or tests a Dashboard password.
+localhost-only Session Auth Service, and the password-rotation admin helper to
+the reviewed OCI host. It verifies that / is the branded credential/guest
+entry, /dashboard/ and /private-data/ reject missing Sessions, and a
+temporary guest Session reads the same protected Dashboard and Snapshot before
+logout. It never accepts or tests a Dashboard password.
 MSG
 }
 
@@ -178,6 +179,7 @@ rollback() {
   fi
   rm -rf "${extract_dir}"
   rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_password_rotation}"
+  rm -f "${guest_headers:-}" "${guest_body:-}" "${guest_cookie_jar:-}" "${guest_dashboard_body:-}" "${guest_private_body:-}"
   exit ${status}
 }
 trap rollback EXIT
@@ -265,6 +267,20 @@ if grep -qi '^Set-Cookie:' "${wrong_headers}" || grep -q 'invalid-test-password'
   exit 1
 fi
 rm -f "${wrong_headers}" "${wrong_body}"
+guest_headers=$(mktemp)
+guest_body=$(mktemp)
+guest_code=$(curl -sS -D "${guest_headers}" -o "${guest_body}" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Origin: https://whalpha.com' -H 'Host: whalpha.com' --data '{"next":"/dashboard/?view=regime&lang=en"}' http://127.0.0.1:8010/guest)
+[[ "${guest_code}" == "200" ]] || { echo "localhost guest Session status ${guest_code}" >&2; exit 1; }
+grep -q '"authenticated":true' "${guest_body}" || { echo "localhost guest Session did not authenticate" >&2; exit 1; }
+guest_cookie=$(awk 'BEGIN{IGNORECASE=1} /^Set-Cookie:/ {sub(/^[^:]+:[[:space:]]*/, ""); sub(/;.*/, ""); print; exit}' "${guest_headers}" | tr -d '\r')
+[[ "${guest_cookie}" == __Host-whalpha_session=* ]] || { echo "localhost guest Session cookie missing" >&2; exit 1; }
+guest_check_code=$(curl -sS -o /dev/null -w '%{http_code}' -H "Cookie: ${guest_cookie}" http://127.0.0.1:8010/check)
+[[ "${guest_check_code}" == "200" ]] || { echo "localhost guest Session did not pass shared auth check" >&2; exit 1; }
+curl -sS -o /dev/null -X POST -H "Cookie: ${guest_cookie}" http://127.0.0.1:8010/logout
+unset guest_cookie
+rm -f "${guest_headers}" "${guest_body}"
+guest_headers=""
+guest_body=""
 if ss -ltn sport = :8010 | awk 'NR>1 {print $4}' | grep -vE '^(127\.0\.0\.1|\[::ffff:127\.0\.0\.1\]):8010$' | grep -q .; then
   echo "auth service is not bound to localhost only" >&2
   exit 1
@@ -298,6 +314,7 @@ done
 grep -q 'Quantitative Market Structure' "${local_root_body}" || { echo "local root login missing branded marker" >&2; exit 1; }
 grep -q 'name="username"' "${local_root_body}" || { echo "local root login missing username field" >&2; exit 1; }
 grep -q 'name="password"' "${local_root_body}" || { echo "local root login missing password field" >&2; exit 1; }
+grep -q 'class="guest-submit"' "${local_root_body}" || { echo "local root login missing guest entry" >&2; exit 1; }
 if grep -q 'New platform under development' "${local_root_body}"; then
   echo "local root route returned placeholder body" >&2
   exit 1
@@ -315,6 +332,7 @@ grep -q 'WH Alpha' "${public_body}" || { echo "root login missing WH Alpha" >&2;
 grep -q 'Quantitative Market Structure' "${public_body}" || { echo "root login missing branded marker" >&2; exit 1; }
 grep -q 'name="username"' "${public_body}" || { echo "root login missing username field" >&2; exit 1; }
 grep -q 'name="password"' "${public_body}" || { echo "root login missing password field" >&2; exit 1; }
+grep -q 'class="guest-submit"' "${public_body}" || { echo "root login missing guest entry" >&2; exit 1; }
 grep -q 'Sign In' "${public_body}" || { echo "root login missing sign-in button" >&2; exit 1; }
 if grep -q 'New platform under development' "${public_body}"; then
   echo "root route returned placeholder body" >&2
@@ -346,6 +364,26 @@ if grep -qi '^Set-Cookie:' "${public_login_headers}" || grep -q 'invalid-test-pa
   exit 1
 fi
 rm -f "${public_login_headers}" "${public_login_body}"
+guest_cookie_jar=$(mktemp)
+guest_body=$(mktemp)
+guest_dashboard_body=$(mktemp)
+guest_private_body=$(mktemp)
+guest_code=$(curl -sS -c "${guest_cookie_jar}" -o "${guest_body}" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Origin: https://whalpha.com' --data '{"next":"/dashboard/?view=regime&lang=en"}' https://whalpha.com/auth/guest)
+[[ "${guest_code}" == "200" ]] || { echo "public guest Session status ${guest_code}" >&2; exit 1; }
+grep -q '"authenticated":true' "${guest_body}" || { echo "public guest Session response mismatch" >&2; exit 1; }
+guest_dashboard_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_dashboard_body}" -w '%{http_code}' https://whalpha.com/dashboard/)
+[[ "${guest_dashboard_code}" == "200" ]] || { echo "guest Dashboard status ${guest_dashboard_code}" >&2; exit 1; }
+grep -q '<div id="root"></div>' "${guest_dashboard_body}" || { echo "guest Dashboard shell mismatch" >&2; exit 1; }
+guest_private_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
+[[ "${guest_private_code}" == "200" ]] || { echo "guest private-data status ${guest_private_code}" >&2; exit 1; }
+grep -q '"snapshot_contract_version":"1.5"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }
+guest_logout_code=$(curl -sS -b "${guest_cookie_jar}" -o /dev/null -w '%{http_code}' -X POST https://whalpha.com/auth/logout)
+[[ "${guest_logout_code}" == "303" ]] || { echo "guest logout status ${guest_logout_code}" >&2; exit 1; }
+rm -f "${guest_cookie_jar}" "${guest_body}" "${guest_dashboard_body}" "${guest_private_body}"
+guest_cookie_jar=""
+guest_body=""
+guest_dashboard_body=""
+guest_private_body=""
 private_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${private_code}" == "401" ]] || { echo "private-data unauth status ${private_code}" >&2; exit 1; }
 if grep -q '"current_session_date"\|"release_id"\|"nodes"' "${private_body}"; then

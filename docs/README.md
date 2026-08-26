@@ -138,6 +138,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0012: Use Server-Side Sessions for the Private Dashboard](decisions/0012-use-server-side-sessions-for-private-dashboard.md)
 - [ADR 0013: Establish Dashboard Universe V1 for Market Overview](decisions/0013-establish-dashboard-universe-v1.md)
 - [ADR 0015: Govern Security Types and Universe Eligibility](decisions/0015-govern-security-types-and-universe-eligibility.md)
+- [ADR 0019: Offer Equal-Capability Guest Sessions](decisions/0019-offer-equal-capability-guest-sessions.md)
 - [ADR 0016: Publish Versioned Trailing Liquidity Shadow Results](decisions/0016-publish-versioned-trailing-liquidity-shadow-results.md)
 - [ADR 0018: Stage Market Regime & Opportunity Map V1 as Transparent EOD Analytics](decisions/0018-stage-market-regime-opportunity-map-v1.md)
 

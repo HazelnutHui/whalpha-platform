@@ -30,14 +30,14 @@ describe('primary workspace shell', () => {
     expect(screen.getByRole('button', { name: /Regime & Opportunities/ })).toHaveAttribute('aria-current', 'page');
     expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
-    expect(screen.getByText('Private Session')).toBeInTheDocument();
+    expect(screen.getByText('Protected Session')).toBeInTheDocument();
   });
 
   it('preserves Universe across workspace navigation and browser history', () => {
     render(<I18nProvider><App /></I18nProvider>);
     fireEvent.change(screen.getByLabelText('Active Universe'), { target: { value: 'provider_classified_common_shares_plus_adrs_v1' } });
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_plus_adrs_v1');
-    fireEvent.click(screen.getByRole('button', { name: /Market Dashboard/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Market Structure & Activity/ }));
     expect(screen.getByTestId('market-workspace')).toHaveTextContent('market:true');
     expect(new URLSearchParams(window.location.search).get('view')).toBe('market');
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_plus_adrs_v1');

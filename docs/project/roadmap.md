@@ -4,12 +4,13 @@
   approval-bound Identity/EOD workflow, then prepare a fresh Market
   Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
-- Next product-design step: define the data contract for one-session deltas,
-  five-session direction/speed, threshold distance, and relationship
-  persistence. The bilingual top-level workspace navigation and factual
-  first-screen summary are implemented and deployed. Sector
-  taxonomy, stock candidates, guest access, and new analytics remain separate
-  decisions.
+- Next product-design step: implement the accepted Phase 5 stock candidate,
+  state-machine, and risk-mode contract as a source-bound offline pipeline.
+  The bilingual hierarchy, Daily Decision Brief, current-payload change layer,
+  relationship decision lanes, and equal-capability guest Session entry are
+  implemented in repository source. Exact relationship run length/acceleration,
+  formal taxonomy, and stock candidate publication remain separate contract
+  work.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -99,6 +100,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Persistent first-level workspace navigation, shared Universe/language/
   Session controls, factual first-screen market summary, six relationship
   highlights, sticky-header isolation, and Universe/comparable explanation
+- [x] Daily Decision Brief, one-/five-session Regime changes, two-sided
+  threshold distance, economic-lane relationship highlights, prior-state
+  change markers, consolidated reliability warning, and collapsed audit table
+- [x] Equal-capability guest Session entry with the same protected payload and
+  no role-dependent product branch
 
 ## Next Small Target
 

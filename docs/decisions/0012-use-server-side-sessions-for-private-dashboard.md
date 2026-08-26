@@ -1,5 +1,9 @@
 # ADR 0012: Use Server-Side Sessions for the Private Dashboard
 
+> Extended by [ADR 0019](0019-offer-equal-capability-guest-sessions.md): the
+> same role-free Session may now be created through guest entry as well as the
+> owner credential. The Nginx application/data boundary remains unchanged.
+
 ## Status
 
 Accepted

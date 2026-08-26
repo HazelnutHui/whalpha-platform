@@ -16,6 +16,9 @@ function renderLogin(url = '/') {
       <input id="username" name="username" type="text" autocomplete="username" />
       <input id="password" name="password" type="password" autocomplete="current-password" />
       <button class="login-submit" type="submit">Sign In</button>
+      <button class="guest-submit" type="button">Continue as guest</button>
+      <p id="guest-error" class="login-error" role="alert" data-i18n="guestError">Guest access is temporarily unavailable.</p>
+      <p class="guest-note" data-i18n="guestNote">Guest and signed-in sessions receive the same content.</p>
     </form>
   `;
 }
@@ -130,6 +133,29 @@ describe('static login client', () => {
     vi.stubGlobal('fetch', fetchMock);
     runLoginScript();
     await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith('/dashboard/?lang=en'));
+  });
+
+  it('opens the same dashboard through a guest Session without credentials', async () => {
+    const navigate = vi.fn();
+    (window as unknown as { __whalphaNavigate: typeof navigate }).__whalphaNavigate = navigate;
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ status: 401, ok: false })
+      .mockResolvedValueOnce({ status: 200, ok: true, json: async () => ({ authenticated: true, next: '/dashboard/?view=regime&lang=en' }) });
+    vi.stubGlobal('fetch', fetchMock);
+    renderLogin('/?next=%2Fdashboard%2F%3Fview%3Dregime');
+    runLoginI18nScript();
+    runLoginScript();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(1));
+
+    (document.querySelector('.guest-submit') as HTMLButtonElement).click();
+    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
+    expect(fetchMock.mock.calls[1][0]).toBe('/auth/guest');
+    expect(fetchMock.mock.calls[1][1]).toMatchObject({ method: 'POST', credentials: 'same-origin' });
+    expect(JSON.parse(fetchMock.mock.calls[1][1].body)).toEqual({ next: '/dashboard/?view=regime&lang=en' });
+    expect(fetchMock.mock.calls[1][1].body).not.toContain('username');
+    expect(fetchMock.mock.calls[1][1].body).not.toContain('password');
+    await vi.waitFor(() => expect(navigate).toHaveBeenCalledWith('/dashboard/?view=regime&lang=en'));
   });
 
   it('accepts only dashboard next paths', async () => {

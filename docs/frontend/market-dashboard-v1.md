@@ -1,4 +1,4 @@
-# Market Dashboard V1
+# Market Structure & Activity (Dashboard V1)
 
 ## Formal Universe Funnel
 
@@ -54,9 +54,9 @@ Failures render explicit error states.
 
 ## Implemented Views
 
-- Persistent desktop left navigation makes Market Dashboard and Market Regime
+- Persistent desktop left navigation makes Market Structure & Activity and Market Regime
   & Opportunities first-level workspaces. A shared opaque sticky utility header
-  owns Universe, language, and private Session controls without covering
+  owns Universe, language, and protected Session controls without covering
   scrolling content.
 - Shared Universe control with `Common Shares` as the default and `Common
   Shares + ADRs` as the only ordinary alternative; Legacy remains an internal

@@ -16,6 +16,7 @@ export interface RegimeDimension {
   raw_metrics: RegimeMetric[]; reason_codes: string[];
 }
 export interface RegimeState {
+  as_of_session?: string;
   composite: string | null; instantaneous_candidate_state: string | null; confirmed_state: string | null;
   transition_status: string; pending_target_state: string | null; confirmation_sessions_remaining: number;
   in_hysteresis_band: boolean; supporting_dimension_ids: string[]; conflicting_dimension_ids: string[];
@@ -44,6 +45,7 @@ export interface Relationship {
     relationship_family: string; economic_rationale: string; expected_interpretation: string;
     forbidden_interpretation: string; availability_requirement: string };
   current: { relationship_state: string; confidence: string; availability: string; missing_reason: string | null;
+    previous_relationship_state?: string | null;
     windows: RelationshipWindow[]; ratio_level: string | null; ratio_robust_z: string | null;
     ratio_percentile: string | null; correlation_20_prior_5: string | null; correlation_change_5: string | null;
     reason_codes: string[]; warnings: string[] };

@@ -135,6 +135,13 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--focus); out
   font-weight: 800;
 }
 .login-submit[aria-busy="true"] { opacity: 0.72; cursor: progress; }
+.login-divider { display: flex; align-items: center; gap: 10px; margin: 16px 0; color: var(--muted); font-size: .75rem; }
+.login-divider::before, .login-divider::after { content: ''; height: 1px; flex: 1; background: var(--border); }
+.guest-submit { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); background: var(--surface-3); color: var(--text); font-weight: 800; }
+.guest-submit:hover { border-color: var(--accent); }
+.guest-submit[aria-busy="true"] { opacity: .72; cursor: progress; }
+.login-submit:disabled, .guest-submit:disabled { cursor: not-allowed; opacity: .62; }
+.login-panel .guest-note { margin: 11px 0 0; color: var(--muted); font-size: .72rem; line-height: 1.45; }
 @media (max-width: 860px) {
   .login-page { grid-template-columns: 1fr; }
   .login-panel-wrap { padding-top: 0; }

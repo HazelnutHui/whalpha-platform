@@ -7,7 +7,9 @@
       description: 'A private U.S. equity market intelligence workspace for market breadth, cross-sectional strength, liquidity structure, and daily market analysis.',
       workspaceAria: 'Workspace scope', tagEod: 'End-of-Day Market Structure', tagPrivate: 'Private Research Workspace', tagData: 'Data-Driven Market Intelligence',
       signIn: 'Sign in', continue: 'Use your private dashboard credentials to continue.', invalid: 'Invalid username or password.',
-      username: 'Username', password: 'Password', submit: 'Sign In', submitting: 'Signing In',
+      username: 'Username', password: 'Password', submit: 'Sign In', submitting: 'Signing In', or: 'or',
+      guestSubmit: 'Continue as guest', guestSubmitting: 'Opening guest access', guestError: 'Guest access is temporarily unavailable.',
+      guestNote: 'Guest and signed-in sessions receive the same data, tools, language options, Universe choices, and analysis.',
     },
     zh: {
       title: 'WH Alpha 登录', languageLabel: '语言', languageAria: '界面语言', english: 'English', chinese: '中文',
@@ -15,7 +17,9 @@
       description: '面向美国股票市场的私人研究工作台，聚焦市场广度、横截面强弱、流动性结构与每日市场分析。',
       workspaceAria: '研究范围', tagEod: '日终市场结构', tagPrivate: '私人研究工作台', tagData: '数据驱动的市场情报',
       signIn: '登录', continue: '请使用私人仪表盘凭据继续。', invalid: '用户名或密码错误。',
-      username: '用户名', password: '密码', submit: '登录', submitting: '正在登录',
+      username: '用户名', password: '密码', submit: '登录', submitting: '正在登录', or: '或',
+      guestSubmit: '以游客身份继续', guestSubmitting: '正在打开游客访问', guestError: '游客访问暂时不可用。',
+      guestNote: '游客与登录用户获得完全相同的数据、工具、语言、股票池选项和分析内容。',
     },
   };
 

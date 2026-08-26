@@ -20,6 +20,9 @@ SESSION_TTL_SECONDS: Final = 7 * 24 * 60 * 60
 MAX_BODY_BYTES: Final = 4096
 LOGIN_LIMIT: Final = 5
 LOGIN_WINDOW_SECONDS: Final = 60
+GUEST_LIMIT: Final = 10
+GUEST_WINDOW_SECONDS: Final = 60
+MAX_ACTIVE_SESSIONS: Final = 4096
 ALLOWED_USERNAME: Final = "hui"
 
 
@@ -35,15 +38,23 @@ class Session:
     expires_at: float
 
 
+class SessionCapacityError(RuntimeError):
+    pass
+
+
 class AuthState:
-    def __init__(self, credential: Credential, *, now=time.time) -> None:
+    def __init__(self, credential: Credential, *, now=time.time, max_active_sessions: int = MAX_ACTIVE_SESSIONS) -> None:
         self.credential = credential
         self.now = now
+        self.max_active_sessions = max_active_sessions
         self.sessions: dict[str, Session] = {}
         self.failures: dict[str, list[float]] = {}
+        self.guest_requests: dict[str, list[float]] = {}
 
     def create_session(self) -> Session:
         self.cleanup_expired()
+        if len(self.sessions) >= self.max_active_sessions:
+            raise SessionCapacityError("active Session capacity reached")
         token = secrets.token_urlsafe(48)
         session = Session(session_id=token, expires_at=self.now() + SESSION_TTL_SECONDS)
         self.sessions[token] = session
@@ -80,6 +91,17 @@ class AuthState:
         attempts = [item for item in self.failures.get(client_id, []) if item > self.now() - LOGIN_WINDOW_SECONDS]
         attempts.append(self.now())
         self.failures[client_id] = attempts
+
+    def guest_rate_limited(self, client_id: str) -> bool:
+        now = self.now()
+        attempts = [item for item in self.guest_requests.get(client_id, []) if item > now - GUEST_WINDOW_SECONDS]
+        self.guest_requests[client_id] = attempts
+        return len(attempts) >= GUEST_LIMIT
+
+    def record_guest_request(self, client_id: str) -> None:
+        attempts = [item for item in self.guest_requests.get(client_id, []) if item > self.now() - GUEST_WINDOW_SECONDS]
+        attempts.append(self.now())
+        self.guest_requests[client_id] = attempts
 
 
 def load_credential(path: Path) -> Credential:
@@ -188,7 +210,7 @@ def make_handler(state: AuthState):
             parsed = parse_qs(raw, keep_blank_values=True)
             return {key: values[0] for key, values in parsed.items()}
 
-        def _read_json(self) -> dict[str, str]:
+        def _read_json(self, allowed: set[str]) -> dict[str, str]:
             length = int(self.headers.get("Content-Length", "0") or "0")
             if length <= 0 or length > MAX_BODY_BYTES:
                 raise ValueError("invalid body")
@@ -196,7 +218,6 @@ def make_handler(state: AuthState):
             payload = json.loads(raw)
             if not isinstance(payload, dict):
                 raise ValueError("invalid body")
-            allowed = {"username", "password", "next"}
             if set(payload) - allowed:
                 raise ValueError("invalid body")
             result = {}
@@ -209,7 +230,7 @@ def make_handler(state: AuthState):
                 result[key] = value
             return result
 
-        def _is_json_login(self) -> bool:
+        def _is_json_request(self) -> bool:
             content_type = self.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
             return content_type == "application/json"
 
@@ -235,6 +256,9 @@ def make_handler(state: AuthState):
             if self.path.startswith("/login"):
                 self._handle_login()
                 return
+            if self.path == "/guest":
+                self._handle_guest()
+                return
             if self.path == "/logout":
                 state.logout(parse_cookie(self.headers.get("Cookie")))
                 self._redirect("/", cookie=clear_cookie_header())
@@ -242,7 +266,7 @@ def make_handler(state: AuthState):
             self.send_error(HTTPStatus.NOT_FOUND)
 
         def _handle_login(self) -> None:
-            wants_json = self._is_json_login()
+            wants_json = self._is_json_request()
             if not self._same_origin_ok():
                 self._send_json(HTTPStatus.FORBIDDEN, {"error": "invalid_request"})
                 return
@@ -254,7 +278,7 @@ def make_handler(state: AuthState):
                 self._redirect("/login/?error=1")
                 return
             try:
-                form = self._read_json() if wants_json else self._read_form()
+                form = self._read_json({"username", "password", "next"}) if wants_json else self._read_form()
             except Exception:
                 self._send_json(HTTPStatus.BAD_REQUEST, {"error": "invalid_request"})
                 return
@@ -268,11 +292,43 @@ def make_handler(state: AuthState):
                     return
                 self._redirect(f"/login/?{urlencode({'error': '1', 'next': next_url})}")
                 return
-            session = state.create_session()
+            try:
+                session = state.create_session()
+            except SessionCapacityError:
+                self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": "temporarily_unavailable"})
+                return
             if wants_json:
                 self._send_json(HTTPStatus.OK, {"authenticated": True, "next": next_url}, cookie=cookie_header(session))
                 return
             self._redirect(next_url, cookie=cookie_header(session))
+
+        def _handle_guest(self) -> None:
+            if not self._same_origin_ok():
+                self._send_json(HTTPStatus.FORBIDDEN, {"error": "invalid_request"})
+                return
+            if not self._is_json_request():
+                self._send_json(HTTPStatus.UNSUPPORTED_MEDIA_TYPE, {"error": "invalid_request"})
+                return
+            client_id = self._client_id()
+            if state.guest_rate_limited(client_id):
+                self._send_json(HTTPStatus.TOO_MANY_REQUESTS, {"error": "temporarily_unavailable"})
+                return
+            try:
+                form = self._read_json({"next"})
+            except Exception:
+                self._send_json(HTTPStatus.BAD_REQUEST, {"error": "invalid_request"})
+                return
+            state.record_guest_request(client_id)
+            try:
+                session = state.create_session()
+            except SessionCapacityError:
+                self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": "temporarily_unavailable"})
+                return
+            self._send_json(
+                HTTPStatus.OK,
+                {"authenticated": True, "next": safe_next(form.get("next"))},
+                cookie=cookie_header(session),
+            )
 
     return Handler
 

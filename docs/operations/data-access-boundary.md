@@ -3,7 +3,8 @@
 ## Purpose
 
 This document records the operational access boundary for the public data-free
-login surface, possible data-free demos, and private provider-backed dashboards.
+entry surface, possible data-free demos, and Session-protected provider-backed
+dashboards.
 
 ## Status
 
@@ -13,7 +14,7 @@ This is an engineering boundary, not legal advice. Provider terms and permission
 
 ## Public data-free surface
 
-The public branded login may include:
+The public branded entry may include:
 
 - WH Alpha branding
 - project description
@@ -41,7 +42,11 @@ remains a data-free login surface.
 
 
 
-Any Massive-backed or other restricted provider-backed dashboard must be intended only for the owner until a suitable public-display or redistribution authorization exists.
+The current personal prototype may be used by the owner and a small circle of
+friends through equal-capability guest or credential Sessions. This engineering
+decision does not establish provider public-display or redistribution rights;
+terms and account entitlement must be rechecked before broader promotion or
+commercial use.
 
 Required properties:
 
@@ -103,6 +108,6 @@ No incident automation is implemented by this document.
 - implementing Cloudflare Access
 - changing or bypassing the current Session boundary
 - creating users or handling credentials through Codex
-- implementing guest access
+- implementing per-user roles or guest/member content differences
 - making provider-backed data public
 - making legal determinations

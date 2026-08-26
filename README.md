@@ -46,8 +46,10 @@ lagging one session; it must be presented as `stale_review`, never fresh.
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and
 does not establish issuer structure or domicile. There is no automated daily
-ingestion, database/catalog service, general production API, guest access,
-point-in-time sector taxonomy, fundamentals, valuation, or options dataset.
+ingestion, database/catalog service, general production API, point-in-time
+sector taxonomy, fundamentals, valuation, or options dataset. Equal-capability
+guest Session entry is implemented in repository source; it does not create a
+role or a second data surface.
 See the [authoritative current context](docs/project/current-context.md) for
 the exact active publications, fingerprints, verification boundary, and next
 authorized work.
@@ -75,7 +77,11 @@ authorized work.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.
 - Initial local dashboard: React Market Dashboard V1 renders Market Pulse, breadth, up/down volume, liquidity-screened movers, a Trading Activity Map, market/sector benchmarks, and categorized data details from default-disabled private APIs.
 - Private static deployment: the workstation exports private Dashboard JSON snapshots and versioned `/dashboard/` React bundles. Git records authenticated OCI deployments with `/` as the branded session-login entry; live OCI state is not implied without a current check.
-- Private session login: the deployed design uses a localhost-only OCI Auth Service, opaque HttpOnly session cookies, and an interactive password-rotation helper. Git records successful verification of that design; current service health is an operational check, not a repository fact.
+- Protected Session entry: the OCI design uses a localhost-only Auth Service,
+  opaque HttpOnly Session cookies, owner credential login, equal-capability
+  guest entry, and an interactive password-rotation helper. Guest and
+  credential Sessions load the same product. Git records the design and
+  verification gates; current service health remains an operational check.
 
 - Access boundary: provider-backed data and derived analytics must not be publicly exposed without an accepted authorization and access-control gate.
 

@@ -65,16 +65,19 @@ Tailscale listeners were present.
 - Relationship history: 336 rows over 26 sessions; confidence is low.
 - English and Simplified Chinese use one language-neutral payload. English is
   the first-visit default.
-- Session authentication remains active. Guest access is absent.
+- The deployed release still has credential Session entry only. Repository
+  source adds equal-capability guest Session entry; it is not a production fact
+  until a newer OCI release passes the deployment and guest postflight gates.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
-  workspace; Market Dashboard is second.
+  workspace; Market Structure & Activity is second in current repository source.
   It centralizes Universe/language/Session controls, adds a factual first-screen
-  Market Dashboard summary, and shows six relationship highlights before the
-  complete 16-pair table.
+  market-structure summary. Current repository source additionally adds the
+  Daily Decision Brief, decision-lane relationship selection, prior-state
+  markers, consolidated reliability warning, and collapsed 16-pair audit table.
 
 ## OCI production state
 

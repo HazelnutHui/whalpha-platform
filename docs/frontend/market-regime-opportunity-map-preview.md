@@ -11,32 +11,38 @@ calculation in React.
 
 The refined page contains:
 
-1. a compact Market State hero that makes the Confirmed state the first visual
-   conclusion, shows Composite as secondary context, and names the strongest
-   fixed-rule support, the main drag, and distance from the next transition;
-2. five expandable dimension cards with a 0–100 bar, Support/Neutral/Drag text,
+1. a Daily Decision Brief that states whether broad Risk-on is confirmed,
+   describes the current stance, shows exact one- and five-session Composite
+   changes, and shows distance to both Risk-on and Defensive thresholds;
+2. a compact Market State evidence block that shows Composite as secondary
+   context and names the exact supporting and conflicting dimensions without
+   substituting generic copy;
+3. five expandable dimension cards with a 0–100 bar, Support/Neutral/Drag text,
    investor-readable fixed copy, display precision, weight, and contribution;
    exact Decimal values, configured/effective weights, normalization, reason
    codes, and contribution reconciliation remain in the audit expansion;
-3. six fixed-priority relationship highlights (non-neutral state priority,
-   then immutable registry order) that show both ETF returns, relative spread,
-   state, and a deterministic natural-language comparison;
-4. all 16 relationship rows with 5/10/20-session selection, family/state
-   filters, non-neutral scope, and clear action;
-5. a pair drawer whose first read explains direction and relative leadership,
+4. six decision-lane relationship highlights that preserve fixed economic
+   coverage, show both ETF returns, relative spread, current-versus-prior state,
+   and a deterministic natural-language comparison; returns never select or
+   rank a pair;
+5. one consolidated short-history reliability warning instead of a repeated
+   warning on every relationship;
+6. all 16 relationship rows retained in a collapsed-by-default audit table
+   with 5/10/20-session selection, family/state filters, and non-neutral scope;
+7. a pair drawer whose first read explains direction and relative leadership,
    keeps state beside the relative result, and translates fixed reason codes
    into sentences; ratio level and raw reason codes are retained under
    Technical diagnostics;
-6. methodology, source fingerprints, and short-history limitations.
+8. methodology, source fingerprints, and short-history limitations.
 
 The selected window, Universe, filters, and pair ID use URL query parameters.
 Valid direct links, refresh, and browser back/forward reconstruct the view.
 Common Shares remains first and default. Switching to Common Shares + ADRs
 loads that separate regime ledger; the ETF facts do not change.
 
-The shared application shell presents Market Dashboard and Market Regime &
+The shared application shell presents Market Structure & Activity and Market Regime &
 Opportunities as persistent first-level workspaces. On desktop, navigation is
-in a dedicated left rail; Universe, language, and private Session controls are
+in a dedicated left rail; Universe, language, and protected Session controls are
 in one opaque sticky utility header and are not repeated inside either page.
 The header occupies layout space, so scrolling content cannot show through or
 hide underneath it. On narrow screens, the rail becomes a compact top-level
@@ -76,11 +82,11 @@ reflow without whole-page horizontal overflow.
 ## Publication status
 
 The local `/tmp` preview remains available for explicit development review.
-The prior versioned frontend is present in the active Snapshot 1.5 / Dashboard
-2.2 production bundle and reads immutable Market Intelligence rather than
-`/tmp`. The renamed workspace, shared shell, first/default navigation position,
-and six-highlight presentation are implemented, verified, and deployed. The
-active 2026-08-24 payload remains visibly `stale_review`; existing
-Session protection is unchanged. Future guest and authenticated users must
-consume the identical analytics payload with the same fields, precision,
-freshness, and as-of session.
+The currently deployed frontend reads immutable Snapshot 1.5 / Dashboard 2.2
+Market Intelligence rather than `/tmp`. The Daily Decision Brief,
+decision-lane highlights, collapsed audit table, second-workspace rename, and
+guest entry are implemented in repository source and become production facts
+only after the recorded deployment gate passes. The active 2026-08-24 payload
+remains visibly `stale_review`. Guest and credential Sessions consume the
+identical analytics payload with the same fields, precision, freshness, and
+as-of session.
