@@ -4,7 +4,7 @@
   evidence-scoped handoff for new tasks and devices.
 - [Current status](project/current-status.md): current product and operational
   summary; historical execution detail belongs in changelog and audits.
-- [Market Regime & Opportunity Map V1 product specification](product/market-regime-opportunity-map-v1.md)
+- [Market Regime & Opportunities V1 product specification](product/market-regime-opportunity-map-v1.md)
 - [Market Regime & Opportunity Map V1 data contract](data-contracts/market-regime-opportunity-map-v1.md)
 - [Market Regime & Opportunity Map V1 architecture and implementation plan](architecture/market-regime-opportunity-map-v1.md)
 - [Dashboard Snapshot V2 data contract](data-contracts/dashboard-snapshot-v2.md)
@@ -29,7 +29,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 
 ## Product
 
-- [Market Regime & Opportunity Map V1](product/market-regime-opportunity-map-v1.md): Transparent regime, registered ETF relationships, opportunity stages, risk modes, and validation design.
+- [Market Regime & Opportunities V1](product/market-regime-opportunity-map-v1.md): Transparent regime, registered ETF relationships, opportunity stages, risk modes, and validation design.
 - [Vision](product/vision.md): Product principles and UI language.
 - [Scope](product/scope.md): Phase 1 scope, deferred work, and explicit non-goals.
 - [Dashboard V1](product/dashboard-v1.md): Confirmed first dashboard structure and target behavior.
@@ -91,7 +91,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Frontend Index](frontend/README.md)
 - [Market Dashboard V1](frontend/market-dashboard-v1.md): Local React dashboard for private Market Summary, Movers, Liquidity Map, and data-quality views.
 - [Frontend interface internationalization](frontend/interface-internationalization.md): Typed English/Simplified Chinese catalog, URL and localStorage precedence, terminology, and guest-reuse boundary.
-- [Market Regime & Opportunity Map frontend](frontend/market-regime-opportunity-map-preview.md): Shared local/production presentation, audit details, and immutable payload boundary.
+- [Market Regime & Opportunities frontend](frontend/market-regime-opportunity-map-preview.md): Shared shell, local/production presentation, audit details, and immutable payload boundary.
 
 ## Operations
 

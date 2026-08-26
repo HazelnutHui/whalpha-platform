@@ -21,7 +21,7 @@ describe('Market Regime Opportunity Map desktop preview', () => {
     expect(screen.getByText('Drag')).toBeInTheDocument();
     expect(screen.getAllByText('Neutral').length).toBeGreaterThan(0);
     expect(screen.getByText('63.9102 = 63.9102')).toBeInTheDocument();
-    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(20);
+    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(22);
     expect(screen.getByText(/Only 26 completed XNYS sessions/)).toBeInTheDocument();
     expect(screen.getByText('Research context, not a trade recommendation.')).toBeInTheDocument();
   });
@@ -37,7 +37,7 @@ describe('Market Regime Opportunity Map desktop preview', () => {
     fireEvent.click(igv);
     expect(screen.getByRole('heading', { name: 'IGV / QQQ' })).toBeInTheDocument();
     expect(screen.getByText('Both ETFs declined over 20 sessions.')).toBeInTheDocument();
-    expect(screen.getByText(/IGV held up 2.00 percentage points better than QQQ/)).toBeInTheDocument();
+    expect(screen.getAllByText(/IGV held up 2.00 percentage points better than QQQ/).length).toBeGreaterThanOrEqual(2);
     expect(screen.getAllByText('Synchronous Weakening').length).toBeGreaterThan(0);
     expect(screen.getByRole('button', { name: 'Close IGV / QQQ details' })).toBeInTheDocument();
     expect(screen.getByText(/needs at least 60 sessions/)).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe('Market Regime Opportunity Map desktop preview', () => {
     render(<I18nProvider><LanguageSelector /><MarketRegimeOpportunityMapPage /></I18nProvider>);
     expect(await screen.findByText('Mixed but constructive')).toBeInTheDocument();
     expect(document.querySelector('[data-exact-value="63.9102"]')).toHaveTextContent('63.9 / 100');
-    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(20);
+    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(22);
     expect(getPreview).toHaveBeenCalledTimes(1);
 
     fireEvent.click(screen.getByRole('button', { name: '中文' }));
@@ -93,7 +93,7 @@ describe('Market Regime Opportunity Map desktop preview', () => {
     expect(document.querySelector('[data-exact-value="63.9102"]')).toHaveTextContent('63.9 / 100');
     expect(screen.getByText('均衡')).toBeInTheDocument();
     expect(screen.getByText('全部16组预登记关系')).toBeInTheDocument();
-    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(20);
+    expect(screen.getAllByRole('button').filter((item) => /L\d+ \/ R\d+|IGV \/ QQQ/.test(item.textContent ?? '')).length).toBe(22);
     expect(getPreview).toHaveBeenCalledTimes(1);
     expect(new URLSearchParams(window.location.search).get('universe')).toBe(PRIMARY_UNIVERSE);
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh');

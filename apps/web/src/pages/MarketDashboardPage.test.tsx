@@ -83,6 +83,8 @@ describe('MarketDashboardPage', () => {
     expect(screen.getAllByText('1.40×').length).toBeGreaterThan(0);
     expect(screen.getByText('Advancers / Decliners')).toBeInTheDocument();
     expect(screen.getAllByText('1 session stale').length).toBeGreaterThan(0);
+    expect(screen.getByText('Breadth and share-volume participation leaned positive.')).toBeInTheDocument();
+    expect(screen.getByText('136 advanced / 91 declined · 56.67% positive')).toBeInTheDocument();
   });
 
   it('renders fresh calendar status independently from validation status', async () => {
@@ -273,6 +275,25 @@ describe('MarketDashboardPage', () => {
     const selector=await screen.findByLabelText('Dashboard universe');
     expect(selector).toHaveValue('provider_classified_common_shares_v1');
     expect(window.location.search).toContain('universe=provider_classified_common_shares_v1');
+  });
+
+  it('explains Universe membership versus same-session comparison coverage', async () => {
+    const custom = formalDashboardOverview();
+    custom.universes[0].definition.member_count = 1718;
+    custom.universes[0].definition.security_type_composition = { CS: 1718 };
+    custom.universes[0].audit.final_count = 1718;
+    custom.universes[0].funnel = custom.universes[0].funnel.map((stage, index) => ({
+      ...stage,
+      input_count: index === 0 ? 1758 : 1718,
+      excluded_count: index === 0 ? 40 : 0,
+      remaining_count: 1718,
+    }));
+    custom.universes[0].summary.comparable_instrument_count = 1716;
+    vi.mocked(fetch).mockResolvedValue(okResponse(custom));
+    render(<MarketDashboardPage />);
+    expect(await screen.findByText('1,716 comparable of 1,718 Universe members')).toBeInTheDocument();
+    expect(screen.getByText('2 members are outside this same-session comparison.')).toBeInTheDocument();
+    expect(screen.getByText(/requires valid observations in both completed sessions/)).toBeInTheDocument();
   });
 
   it('renders sector benchmark relative performance without price columns', async () => {

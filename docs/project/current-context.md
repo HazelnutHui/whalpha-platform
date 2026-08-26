@@ -68,6 +68,12 @@ Tailscale listeners were present.
 - Session authentication remains active. Guest access is absent.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
+- Repository `main` contains the tested, not-yet-deployed first-level workspace
+  shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
+  It centralizes Universe/language/Session controls, adds a factual first-screen
+  Market Dashboard summary, and shows six relationship highlights before the
+  complete 16-pair table. The deployed bundle remains the immutable source
+  commit recorded below.
 
 ## OCI production state
 

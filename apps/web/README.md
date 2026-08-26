@@ -1,32 +1,44 @@
 # Trading Intelligence Web
 
-The Market Overview Universe selector exposes only `Common Shares` and `Common Shares + ADRs`, with the CS-only view as default. A validated stable ID is persisted in the URL; Legacy remains an internal rollback boundary.
+The React application has two first-level workspaces: Market Dashboard and
+Market Regime & Opportunities (`市场风向与机会`). Desktop navigation uses a
+persistent left rail; Universe, language, and private Session controls share an
+opaque sticky utility header. The Universe selector exposes only `Common
+Shares` and `Common Shares + ADRs`, with CS-only as default. A validated stable
+ID is persisted in the URL; Legacy remains an internal rollback boundary.
 
-## Security Governance Phase A
-
-The deployed Dashboard still uses Dashboard Universe V1. Security Classification V1 candidates are backend audit outputs only; no frontend payload, layout, or production behavior changes in Phase A.
-
-Snapshot contract 1.2 labels the unchanged production calculation set `Legacy Liquid Screen (Provisional)`, displays an amber governance state, and includes an explicit security-type evidence limitation. Published provider security-form evidence does not remove this warning because issuer-structure coverage remains incomplete.
+The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
+security form remains provisional and does not establish issuer structure or
+domicile.
 
 React/TypeScript/Vite frontend for Trading Intelligence Platform.
 
 ## Purpose
 
-The current frontend implements Market Dashboard V1 for local/private development. It consumes the default-disabled private Market Summary, Movers, and Liquidity Map APIs when explicitly enabled locally.
+The frontend implements Market Dashboard, Market Regime & Opportunities, and
+the shared bilingual application shell for local/private development and
+versioned static publication.
 
 ## Data Modes
 `VITE_MARKET_DATA_MODE=snapshot` is the production static-dashboard target. It reads `/private-data/v1/manifest.json`, `market-summary.json`, `movers.json`, and `liquidity-map.json` from the authenticated static release. It does not call FastAPI and does not fall back to demo data. The deployed OCI release uses `/` as the public WH Alpha login entry, keeps `/login/` as a compatibility redirect, and protects Dashboard/private JSON with server-side session cookies; the frontend never stores usernames or passwords.
 
 
 - `VITE_MARKET_DATA_MODE=api` is the default. It calls relative `/api/...` URLs through the Vite proxy.
-- `VITE_MARKET_DATA_MODE=demo` uses clearly synthetic `TEST*` fixtures and displays a persistent `DEMO DATA` badge.
+- `VITE_MARKET_DATA_MODE=demo` is development-only, lazily loads clearly
+  synthetic `TEST*` fixtures, and displays a persistent `DEMO DATA` badge.
 
-API mode does not fall back to demo data on failure.
+API and Snapshot modes do not fall back to demo data on failure. Production
+builds reject known synthetic fixture markers.
 
-The deployed production snapshot currently uses 2026-08-14 as current and 2026-08-13 as previous, with XNYS expected and actual latest session both 2026-08-14, session lag zero, and freshness `fresh`.
+The deployed production Snapshot uses 2026-08-24 as current and 2026-08-21 as
+previous, with expected session 2026-08-25, lag one, and explicit
+`stale_review`. The latest shared-shell changes are verified in source but are
+not deployed by this change.
 
 ## Implemented Views
 
+- Persistent first-level workspace navigation and shared utility controls
+- Factual first-screen market summary and Universe/comparable explanation
 - Market Pulse
 - Market Breadth
 - Up/Down Volume
@@ -35,6 +47,8 @@ The deployed production snapshot currently uses 2026-08-14 as current and 2026-0
 - Trading Activity Map treemap, default top 50
 - Top Gainers and Top Losers
 - Categorized Data Details
+- Market Regime five-dimension evidence and six highlighted ETF relationships
+- Complete 16-pair relationship table and detail drawer
 - Logout in snapshot mode
 - loading, error, empty, and retry states
 

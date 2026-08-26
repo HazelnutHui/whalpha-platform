@@ -54,8 +54,17 @@ Failures render explicit error states.
 
 ## Implemented Views
 
-- Compact header with WH Alpha, Market Overview, Logout, and a meta/control bar for universe, period, data-as-of date, and freshness.
-- Universe control with `Common Shares` as the default and `Common Shares + ADRs` as the only ordinary alternative; Legacy remains an internal rollback boundary.
+- Persistent desktop left navigation makes Market Dashboard and Market Regime
+  & Opportunities first-level workspaces. A shared opaque sticky utility header
+  owns Universe, language, and private Session controls without covering
+  scrolling content.
+- Shared Universe control with `Common Shares` as the default and `Common
+  Shares + ADRs` as the only ordinary alternative; Legacy remains an internal
+  rollback boundary.
+- First-screen “What is happening inside the market” summary using only current
+  one-session facts: breadth counts/share, up/down share-volume ratio, strongest
+  and weakest sector ETFs, and explicit Universe-versus-comparable coverage.
+  It is labeled as neither Market Regime nor a trade signal.
 - Market Benchmark Strip for SPY, QQQ, IWM, DIA, and selected-universe equal-weight return.
 - Market Pulse cards for equal-weight return, median return, advancers/decliners, and up/down volume ratio.
 - Market Breadth stacked bar with advancers, unchanged, decliners, counts, and percentages.
@@ -66,6 +75,9 @@ Failures render explicit error states.
 - Collapsible Data Details panel with categorized quality flags and session metadata.
 - Data Details separates Snapshot Status, Universe Funnel, Methodology Notes, Data Limitations, and Material Warnings.
 - Loading, error, empty, and retry states.
+
+The shared shell and first-screen summary are implemented and locally verified
+on repository `main`; they are not part of the currently deployed OCI bundle.
 
 ## Trading Activity Map Semantics
 

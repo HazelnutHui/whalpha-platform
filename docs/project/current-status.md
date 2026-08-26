@@ -23,6 +23,14 @@ dimension Market Regime, and 16 preregistered ETF relationships. English is
 the first-visit default; English and Simplified Chinese render the same
 language-neutral analytics.
 
+Repository `main` now presents Market Dashboard and Market Regime &
+Opportunities (`市场风向与机会`) as first-level workspaces with persistent desktop
+left navigation and one shared Universe/language/Session utility header. Market
+Dashboard begins with a factual “what is happening now” summary and explains
+Universe membership versus same-session comparable coverage. Six fixed-priority
+relationship highlights precede the complete 16-pair table. These source
+changes are tested but are not yet deployed to OCI.
+
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
 relative-performance proxies, never actual fund flow.
@@ -106,21 +114,16 @@ existing approval-bound same-day Identity/EOD workflow, then generate and
 review a fresh Market Intelligence plan. Publication, Snapshot generation,
 bundle construction, and OCI deployment remain separate explicit approvals.
 
-The next product-design slice is a human-reviewed information hierarchy:
+The first information-hierarchy slice is implemented in repository source:
+first-level workspaces, shared controls, an opaque sticky header, a factual
+first-screen summary, six fixed-priority relationship highlights, and the
+Universe/comparable explanation. The next product-design slice is the change
+layer: one-session deltas, five-session direction/speed, threshold distance,
+and relationship persistence. That work requires a reviewed data-contract
+decision before implementation.
 
-1. make Market Dashboard and Market Regime two unmistakable top-level
-   workspaces;
-2. put the current market conclusion and supporting/contradicting evidence on
-   the first screen;
-3. add one-session change, five-session direction/speed, threshold distance,
-   and relationship persistence;
-4. rank the most decision-relevant 5-8 relationships first while retaining
-   the complete registered set;
-5. fix sticky-header overlap and explain 1,718 Universe members versus 1,716
-   same-session comparable observations.
-
-These are candidates, not authorization to implement UI, guest access, a new
-quantitative model, provider acquisition, publication, or deployment.
+This is a candidate, not authorization for guest access, a new quantitative
+model, provider acquisition, publication, or deployment.
 
 ## Verification entry point
 

@@ -1,4 +1,7 @@
-# Market Regime & Opportunity Map V1
+# Market Regime & Opportunities V1
+
+User-facing Chinese name: **市场风向与机会**. Existing machine-contract IDs and
+filenames retain `market-regime-opportunity-map` for compatibility.
 
 ## Status and decision boundary
 
@@ -685,7 +688,7 @@ not promises of profit.
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ Market Regime & Opportunity Map   As of 2026-08-21   Freshness / sources   │
+│ Market Regime & Opportunities     As of 2026-08-21   Freshness / sources   │
 │ Universe: [Common Shares ▼]       Risk mode: [Balanced ▼]   Methodology     │
 ├───────────────────────────────┬──────────────────────────────────────────────┤
 │ Regime: BALANCED  58 / 100    │ What changed                               │

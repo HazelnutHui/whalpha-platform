@@ -1,8 +1,10 @@
-# Market Regime & Opportunity Map Frontend
+# Market Regime & Opportunities Frontend
 
 ## Implemented desktop surface
 
-The Dashboard has a `Regime & Opportunity Map` view selected by `view=regime`.
+The user-facing workspace is named `Market Regime & Opportunities` in English
+and `市场风向与机会` in Chinese. It is selected by `view=regime`; the established
+API and data-contract identifiers retain their existing technical names.
 It renders either the configured local preview API payload or the formally
 embedded Snapshot 1.5 Market Intelligence payload and performs no financial
 calculation in React.
@@ -16,7 +18,7 @@ The refined page contains:
    investor-readable fixed copy, display precision, weight, and contribution;
    exact Decimal values, configured/effective weights, normalization, reason
    codes, and contribution reconciliation remain in the audit expansion;
-3. four fixed-priority relationship highlights (non-neutral state priority,
+3. six fixed-priority relationship highlights (non-neutral state priority,
    then immutable registry order) that show both ETF returns, relative spread,
    state, and a deterministic natural-language comparison;
 4. all 16 relationship rows with 5/10/20-session selection, family/state
@@ -32,7 +34,15 @@ Valid direct links, refresh, and browser back/forward reconstruct the view.
 Common Shares remains first and default. Switching to Common Shares + ADRs
 loads that separate regime ledger; the ETF facts do not change.
 
-The shared page shell also provides `English` and `中文`. A legal `lang` URL
+The shared application shell presents Market Dashboard and Market Regime &
+Opportunities as persistent first-level workspaces. On desktop, navigation is
+in a dedicated left rail; Universe, language, and private Session controls are
+in one opaque sticky utility header and are not repeated inside either page.
+The header occupies layout space, so scrolling content cannot show through or
+hide underneath it. On narrow screens, the rail becomes a compact top-level
+workspace selector.
+
+The shell also provides `English` and `中文`. A legal `lang` URL
 value wins over an explicitly saved browser preference, and English is the
 first-visit default. Language switching preserves all page and Universe query
 state and changes presentation only: API requests, exact values, pair rows,
@@ -66,9 +76,11 @@ reflow without whole-page horizontal overflow.
 ## Publication status
 
 The local `/tmp` preview remains available for explicit development review.
-The same versioned frontend is also present in the active Snapshot 1.5 /
-Dashboard 2.2 production bundle and reads immutable Market Intelligence rather
-than `/tmp`. The active 2026-08-24 payload is visibly `stale_review`; existing
+The prior versioned frontend is present in the active Snapshot 1.5 / Dashboard
+2.2 production bundle and reads immutable Market Intelligence rather than
+`/tmp`. The renamed workspace, shared shell, and six-highlight presentation are
+implemented and verified on repository `main` but are not deployed by this
+change. The active 2026-08-24 payload remains visibly `stale_review`; existing
 Session protection is unchanged. Future guest and authenticated users must
 consume the identical analytics payload with the same fields, precision,
 freshness, and as-of session.

@@ -47,7 +47,7 @@ describe('typed interface locale state', () => {
     Object.defineProperty(window.navigator, 'language', { configurable: true, value: 'zh-CN' });
     mount();
     expect(screen.getByTestId('locale')).toHaveTextContent('en');
-    expect(screen.getByText('Market Regime & Opportunity Map')).toBeInTheDocument();
+    expect(screen.getByText('Market Regime & Opportunities')).toBeInTheDocument();
     await waitFor(() => expect(new URLSearchParams(window.location.search).get('lang')).toBe('en'));
     expect(document.documentElement.lang).toBe('en');
   });
@@ -56,7 +56,7 @@ describe('typed interface locale state', () => {
     window.localStorage.setItem(LOCALE_STORAGE_KEY, 'zh');
     mount();
     expect(screen.getByTestId('locale')).toHaveTextContent('zh');
-    expect(screen.getByText('市场状态与机会图谱')).toBeInTheDocument();
+    expect(screen.getByText('市场风向与机会')).toBeInTheDocument();
     await waitFor(() => expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh'));
     expect(document.documentElement.lang).toBe('zh-CN');
   });
@@ -68,7 +68,7 @@ describe('typed interface locale state', () => {
     expect(new URLSearchParams(window.location.search).get('view')).toBe('regime');
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_v1');
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh');
-    expect(screen.getByText('市场状态与机会图谱')).toBeInTheDocument();
+    expect(screen.getByText('市场风向与机会')).toBeInTheDocument();
 
     act(() => {
       window.history.pushState({}, '', '/dashboard/?view=regime&universe=provider_classified_common_shares_plus_adrs_v1&lang=en');
@@ -76,7 +76,7 @@ describe('typed interface locale state', () => {
     });
     await waitFor(() => expect(screen.getByTestId('locale')).toHaveTextContent('en'));
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_plus_adrs_v1');
-    expect(screen.getByText('Market Regime & Opportunity Map')).toBeInTheDocument();
+    expect(screen.getByText('Market Regime & Opportunities')).toBeInTheDocument();
   });
 
   it('safely canonicalizes an illegal URL locale to English even with stored Chinese', async () => {

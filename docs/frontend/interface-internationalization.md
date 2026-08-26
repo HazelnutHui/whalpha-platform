@@ -2,7 +2,7 @@
 
 ## Status and scope
 
-The React Dashboard and the static session login surface support the same two
+The React Dashboard and the static Session login surface support the same two
 interface locales in local and production bundles:
 
 - `en` renders HTML language `en` and is the authoritative default;
@@ -12,8 +12,10 @@ interface locales in local and production bundles:
 This is presentation-only. Locale never enters analytics requests, source
 payloads, calculation parameters, fingerprints, numeric formatting, dates,
 session handling, authorization, or data freshness. The Market Dashboard and
-Market Regime & Opportunity Map expose the same rows, fields, precision,
-warnings, and interactions in both languages.
+Market Regime & Opportunities workspaces expose the same rows, fields, precision,
+warnings, and interactions in both languages. The user-facing workspace name
+is `Market Regime & Opportunities` / `市场风向与机会`; the formal API and contract
+identifiers remain unchanged.
 
 ## Locale state contract
 
@@ -72,7 +74,7 @@ than being invented or hidden.
 | English | Simplified Chinese |
 |---|---|
 | Market Dashboard | 市场仪表盘 |
-| Market Regime & Opportunity Map | 市场状态与机会图谱 |
+| Market Regime & Opportunities | 市场风向与机会 |
 | Risk-on / Balanced / Defensive / Stress | 风险偏好 / 均衡 / 防御 / 压力 |
 | Candidate / Confirmed | 候选状态 / 确认状态 |
 | Composite | 综合评分 |

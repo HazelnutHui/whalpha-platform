@@ -4,10 +4,12 @@
   approval-bound Identity/EOD workflow, then prepare a fresh Market
   Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
-- Next product-design step: human-review the bilingual information hierarchy,
-  top-level workspace navigation, first-screen conclusion, and historical-
-  change layer before implementation. Sector taxonomy, stock candidates,
-  guest access, and new analytics remain separate decisions.
+- Next product-design step: define the data contract for one-session deltas,
+  five-session direction/speed, threshold distance, and relationship
+  persistence. The bilingual top-level workspace navigation and factual
+  first-screen summary are implemented in source but not deployed. Sector
+  taxonomy, stock candidates, guest access, and new analytics remain separate
+  decisions.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -94,6 +96,9 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Immutable 2026-08-24 Market Intelligence production publication
 - [x] Snapshot 1.5 / Dashboard 2.2 stale-review publication and bound OCI bundle
 - [x] Production bundle isolation from synthetic Dashboard fixtures
+- [x] Persistent first-level workspace navigation, shared Universe/language/
+  Session controls, factual first-screen market summary, six relationship
+  highlights, sticky-header isolation, and Universe/comparable explanation
 
 ## Next Small Target
 

@@ -73,7 +73,7 @@ function ReviewDeploymentBanner({ data }: { data: DashboardData }): JSX.Element 
   </section>;
 }
 
-function Header({ mode }: { mode: DashboardMode }): JSX.Element {
+function Header({ mode, showSessionControl }: { mode: DashboardMode; showSessionControl: boolean }): JSX.Element {
   const { locale, t } = useI18n();
   return (
     <header className="dashboard-header">
@@ -84,18 +84,18 @@ function Header({ mode }: { mode: DashboardMode }): JSX.Element {
       </div>
       <div className="session-strip" aria-label={t('dashboard.sessionMetadata')}>
         {mode === 'demo' ? <span className="badge badge-demo">{t('dashboard.demoData')}</span> : null}
-        {mode === 'snapshot' ? <button className="logout-button" type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
+        {mode === 'snapshot' && showSessionControl ? <button className="logout-button" type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
       </div>
     </header>
   );
 }
 
-function MetaControlBar({ data, universe, selected, onChange }: { data: DashboardData; universe: DashboardUniverseViewResponse; selected: string; onChange: (value: string) => void }): JSX.Element {
+function MetaControlBar({ data, universe, selected, onChange, showUniverseControl }: { data: DashboardData; universe: DashboardUniverseViewResponse; selected: string; onChange: (value: string) => void; showUniverseControl: boolean }): JSX.Element {
   const { t } = useI18n(); const multiple = data.overview.universes.length > 1;
   const localizedUniverse = universeName(t, universe.definition.universe_id, universe.definition.display_name);
   return (
-    <section className="meta-control-bar" aria-label={t('dashboard.controlsAria')}>
-      <div>
+    <section className={`meta-control-bar ${showUniverseControl ? '' : 'meta-control-bar-workspace'}`} aria-label={t('dashboard.controlsAria')}>
+      {showUniverseControl ? <div>
         <span className="meta-label">{t('common.universe')}</span>
         {multiple ? (
           <select aria-label={t('dashboard.universeAria')} value={selected} onChange={(event) => onChange(event.target.value)}>
@@ -104,7 +104,7 @@ function MetaControlBar({ data, universe, selected, onChange }: { data: Dashboar
             ))}
           </select>
         ) : <strong>{localizedUniverse}</strong>}
-      </div>
+      </div> : null}
       <div><span className="meta-label">{t('dashboard.period')}</span><strong>{t('dashboard.periodValue')}</strong></div>
       <div><span className="meta-label">{t('dashboard.dataAsOf')}</span><strong>{data.overview.current_session_date} EOD</strong></div>
       <div><span className="meta-label">{t('dashboard.freshness')}</span><strong>{freshnessLabel(t, data)}</strong></div>
@@ -112,6 +112,37 @@ function MetaControlBar({ data, universe, selected, onChange }: { data: Dashboar
       <p className="governance-copy">{universeDescription(t, universe.definition.universe_id, universe.definition.description)} {t('dashboard.scopeCaveat')}</p>
     </section>
   );
+}
+
+function marketNowHeadline(t: Translate, universe: DashboardUniverseViewResponse): string {
+  const summary = universe.summary;
+  const breadthPositive = summary.advancer_count > summary.decliner_count;
+  const breadthNegative = summary.advancer_count < summary.decliner_count;
+  const volumeRatio = summary.up_down_volume_ratio === null ? null : Number(summary.up_down_volume_ratio);
+  if (breadthPositive && volumeRatio !== null && volumeRatio > 1) return t('dashboard.nowBothPositive');
+  if (breadthPositive && volumeRatio !== null && volumeRatio < 1) return t('dashboard.nowBreadthPositiveVolumeNegative');
+  if (breadthNegative && volumeRatio !== null && volumeRatio > 1) return t('dashboard.nowBreadthNegativeVolumePositive');
+  if (breadthNegative && volumeRatio !== null && volumeRatio < 1) return t('dashboard.nowBothWeak');
+  return t('dashboard.nowMixed');
+}
+
+function MarketNow({ universe, sectors }: { universe: DashboardUniverseViewResponse; sectors: SectorBenchmarkEtfResponse[] }): JSX.Element {
+  const { t } = useI18n(); const summary = universe.summary;
+  const ranked = sectors.filter((item) => item.available && item.close_to_close_return !== null)
+    .sort((left, right) => Number(right.close_to_close_return) - Number(left.close_to_close_return));
+  const leaders = ranked.slice(0, 3); const laggards = ranked.slice(-3).reverse();
+  const memberGap = universe.definition.member_count - summary.comparable_instrument_count;
+  const formatSectors = (items: SectorBenchmarkEtfResponse[]) => items.length
+    ? items.map((item) => `${item.ticker} ${formatPercent(item.close_to_close_return, { signed: true })}`).join(' · ')
+    : t('common.unavailable');
+  return <section className="panel market-now" aria-labelledby="market-now-title">
+    <div className="section-header"><div><p className="eyebrow">{t('dashboard.nowEyebrow')}</p><h2 id="market-now-title">{t('dashboard.nowTitle')}</h2></div><p className="section-note">{t('dashboard.nowCaveat')}</p></div>
+    <div className="market-now-grid">
+      <div className="market-now-conclusion"><span>{t('dashboard.nowRead')}</span><strong>{marketNowHeadline(t, universe)}</strong><p>{t('dashboard.nowBreadthFact', { advancers: formatNumber(summary.advancer_count), decliners: formatNumber(summary.decliner_count), positiveShare: formatPercent(summary.positive_return_share) })}</p><p>{t('dashboard.nowVolumeFact', { ratio: formatRatio(summary.up_down_volume_ratio) })}</p></div>
+      <div className="market-now-leadership"><span>{t('dashboard.nowLeaders')}</span><strong>{formatSectors(leaders)}</strong><small>{t('dashboard.nowLaggards')}</small><strong>{formatSectors(laggards)}</strong></div>
+      <div className="market-now-coverage"><span>{t('dashboard.nowCoverage')}</span><strong>{t('dashboard.nowComparable', { members: formatNumber(universe.definition.member_count), comparable: formatNumber(summary.comparable_instrument_count) })}</strong>{memberGap > 0 ? <p>{t('dashboard.nowComparableGap', { count: formatNumber(memberGap) })}</p> : null}<small>{t('dashboard.nowComparableExplain')}</small></div>
+    </div>
+  </section>;
 }
 
 function MetricCard({ label, value, tone, note }: { label: string; value: string; tone?: 'positive' | 'negative' | 'neutral'; note?: string }): JSX.Element {
@@ -232,7 +263,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
   const { t } = useI18n(); return <main className="app-shell"><div className="panel state-panel error-state" role="alert"><h1>{t('dashboard.title')}</h1><p>{localizeClientError(t, message)}</p><button type="button" onClick={onRetry}>{t('common.retry')}</button></div></main>;
 }
 
-export function MarketDashboardPage(): JSX.Element {
+export function MarketDashboardPage({ withinWorkspaceShell = false }: { withinWorkspaceShell?: boolean } = {}): JSX.Element {
   const { t } = useI18n();
   const [state, setState] = useState<DashboardState>({ kind: 'loading' }); const [selectedUniverseId, setSelectedUniverseId] = useState<string | null>(null);
   const [mapLimit, setMapLimit] = useState(50); const [searchTicker, setSearchTicker] = useState('');
@@ -257,8 +288,8 @@ export function MarketDashboardPage(): JSX.Element {
   const selected = selectedUniverseId ?? state.data.overview.default_universe_id; const universe = activeUniverse(state.data, selected);
   const displayedMap = { ...universe.trading_activity_map, nodes: universe.trading_activity_map.nodes.slice(0, mapLimit) }; const searched = searchTicker.trim().toUpperCase();
   const searchHit = searched ? displayedMap.nodes.find((node) => node.ticker === searched) ?? null : null;
-  return <main className="app-shell dashboard-shell"><Header mode={state.mode} /><ReviewDeploymentBanner data={state.data} /><MetaControlBar data={state.data} universe={universe} selected={universe.definition.universe_id} onChange={(value) => { setSelectedUniverseId(value); setSelectedItem(null); writeUniverseToUrl(value); }} />
-    <BenchmarkStrip items={state.data.overview.market_benchmarks} equalWeight={universe.equal_weight_benchmark} /><MarketPulse universe={universe} /><div className="two-column-grid"><BreadthChart universe={universe} /><VolumeBreadth universe={universe} /></div><SectorBenchmarks items={state.data.overview.sector_benchmarks} />
+  return <main className="app-shell dashboard-shell"><Header mode={state.mode} showSessionControl={!withinWorkspaceShell} /><ReviewDeploymentBanner data={state.data} /><MetaControlBar data={state.data} universe={universe} selected={universe.definition.universe_id} onChange={(value) => { setSelectedUniverseId(value); setSelectedItem(null); writeUniverseToUrl(value); }} showUniverseControl={!withinWorkspaceShell} />
+    <MarketNow universe={universe} sectors={state.data.overview.sector_benchmarks} /><BenchmarkStrip items={state.data.overview.market_benchmarks} equalWeight={universe.equal_weight_benchmark} /><MarketPulse universe={universe} /><div className="two-column-grid"><BreadthChart universe={universe} /><VolumeBreadth universe={universe} /></div><SectorBenchmarks items={state.data.overview.sector_benchmarks} />
     <section className="panel liquidity-panel" aria-labelledby="activity-title"><div className="section-header"><div><p className="eyebrow">{t('dashboard.activityMap')}</p><h2 id="activity-title">{t('dashboard.activityTitle')}</h2></div><div className="map-controls"><label>{t('dashboard.topN')} <select aria-label={t('dashboard.topN')} value={mapLimit} onChange={(event) => setMapLimit(Number(event.target.value))}><option value={50}>50</option><option value={75}>75</option><option value={100}>100</option></select></label><label>{t('dashboard.search')} <input aria-label={t('dashboard.search')} value={searchTicker} onChange={(event) => setSearchTicker(event.target.value)} placeholder={t('dashboard.searchPlaceholder')} /></label></div></div>
       <LiquidityTreemap liquidityMap={displayedMap} highlightedTicker={searchHit?.ticker ?? null} onSelectNode={setSelectedItem} />{searched && !searchHit ? <p className="chart-summary">{t('dashboard.searchMiss', { ticker: searched, count: mapLimit })}</p> : null}{selectedItem ? <DetailPanel item={selectedItem} onClose={() => setSelectedItem(null)} /> : null}
     </section><MoversPanel universe={universe} onSelect={setSelectedItem} /><DataDetails universe={universe} data={state.data} />

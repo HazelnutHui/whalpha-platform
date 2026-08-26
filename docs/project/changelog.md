@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-26 — First-level workspace and current-market hierarchy
+
+- Replaced the small sticky view tabs with a persistent desktop left rail that
+  treats Market Dashboard and Market Regime & Opportunities as first-level
+  workspaces. Universe, language, and private Session controls now share one
+  opaque sticky utility header; narrow layouts retain explicit workspace
+  navigation without overlaying content.
+- Renamed the user-facing Chinese workspace from the literal
+  `市场状态与机会图谱` to `市场风向与机会`; English is shortened to `Market Regime &
+  Opportunities`. Machine contract IDs and URLs remain compatible.
+- Added a first-screen factual market read using existing one-session breadth,
+  share-volume participation, sector-ETF leadership, and comparison coverage.
+  It explicitly does not claim to be Market Regime or a trade signal and
+  explains 1,718 Universe members versus 1,716 comparable observations.
+- Increased fixed-priority relationship highlights from four to six while
+  retaining all 16 preregistered pairs and the existing non-return-based order.
+- Added shared-shell, history, locale, coverage-explanation, and presentation
+  tests. Production build/demo-isolation checks pass. No analytics formula,
+  API/data contract, authentication, formal data, Snapshot, bundle, OCI
+  release, or deployment changed.
+
 ## 2026-08-26 — Authoritative context and status reconciliation
 
 - Replaced the mixed historical/current 572-line status ledger with a concise
