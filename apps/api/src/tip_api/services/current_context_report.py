@@ -111,6 +111,7 @@ def build_report(
     inventory = _inventory_state(data, include_fingerprint=include_inventory)
     publication_residue = _publication_residue(data)
     analytics = market_intelligence.payload.analytics
+    candidate_analytics = getattr(market_intelligence.payload, "candidate_analytics", None)
     universe_analytics = []
     for item in analytics.universes:
         universe_analytics.append(
@@ -194,6 +195,27 @@ def build_report(
                 if market_intelligence.manifest.review_deployment is not None
                 else None
             ),
+            "candidate": (
+                {
+                    "contract_version": candidate_analytics.contract_version,
+                    "logical_fingerprint": candidate_analytics.logical_fingerprint,
+                    "audit_logical_fingerprint": (
+                        candidate_analytics.source.candidate_audit_logical_fingerprint
+                    ),
+                    "parameter_fingerprint": (
+                        candidate_analytics.source.candidate_parameter_fingerprint
+                    ),
+                    "state_parameter_fingerprint": (
+                        candidate_analytics.source.candidate_state_parameter_fingerprint
+                    ),
+                    "display_counts": {
+                        item.universe_id: len(item.candidates)
+                        for item in candidate_analytics.universes
+                    },
+                }
+                if candidate_analytics is not None
+                else None
+            ),
             "universes": universe_analytics,
         },
         "snapshot": {
@@ -208,6 +230,10 @@ def build_report(
             "review_mode": snapshot.manifest.review_mode,
             "market_intelligence_publication_id": (
                 snapshot.manifest.market_intelligence_publication_id
+            ),
+            "candidate_contract_version": snapshot.manifest.candidate_contract_version,
+            "candidate_analytics_logical_fingerprint": (
+                snapshot.manifest.candidate_analytics_logical_fingerprint
             ),
             "pointer_fingerprint": (
                 snapshot.pointer.pointer_content_fingerprint

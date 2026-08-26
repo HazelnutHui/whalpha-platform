@@ -37,8 +37,11 @@ The platform should help answer:
 
 Documentation, infrastructure, storage, the application stack, canonical
 EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
-Dashboard Snapshot 1.5 / Dashboard 2.2, bilingual presentation, and
-Session-protected static publication is implemented. Canonical sessions cover
+active Dashboard Snapshot 1.5 / Dashboard 2.2, bilingual presentation, and
+Session-protected static publication are implemented. Repository source also
+contains the audited Stock Candidate pipeline, MI 1.1, Snapshot 1.6 /
+Dashboard 2.3 consumer contracts, and the third Candidate workspace; these are
+not active until separately published and deployed. Canonical sessions cover
 every XNYS session from 2026-07-17 through 2026-08-24. The active Dashboard is
 an explicitly authorized review of 2026-08-24 data, expected 2026-08-25 and
 lagging one session; it must be presented as `stale_review`, never fresh.

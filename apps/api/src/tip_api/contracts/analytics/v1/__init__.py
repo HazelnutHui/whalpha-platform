@@ -48,10 +48,13 @@ from .market_intelligence import (
     MarketIntelligenceActivePointerV1,
     MarketIntelligenceActivationSourceV1,
     MarketIntelligenceApprovalPlanV1,
+    MarketIntelligenceApprovalPlanV1_1,
     MarketIntelligenceEodSourceV1,
     MarketIntelligenceFileReferenceV1,
     MarketIntelligenceManifestV1,
+    MarketIntelligenceManifestV1_1,
     MarketIntelligencePayloadV1,
+    MarketIntelligencePayloadV1_1,
     MarketIntelligenceSourceBindingV1,
     MarketIntelligenceTargetReferenceV1,
 )
@@ -86,6 +89,16 @@ from .opportunity_candidate import (
     OpportunityCandidateBatchV1,
     OpportunityCandidateScoreV1,
     OpportunityCandidateStateRecordV1,
+)
+from .opportunity_candidate_publication import (
+    CandidatePublicationEvidenceV1,
+    CandidatePublicationStateV1,
+    CandidateRiskDispositionV1,
+    CandidateRiskModePublicationV1,
+    OpportunityCandidatePublicationItemV1,
+    OpportunityCandidatePublicationSourceV1,
+    OpportunityCandidatePublicationV1,
+    OpportunityCandidateUniversePublicationV1,
 )
 
 __all__ = [
@@ -128,10 +141,13 @@ __all__ = [
     "MarketIntelligenceActivePointerV1",
     "MarketIntelligenceActivationSourceV1",
     "MarketIntelligenceApprovalPlanV1",
+    "MarketIntelligenceApprovalPlanV1_1",
     "MarketIntelligenceEodSourceV1",
     "MarketIntelligenceFileReferenceV1",
     "MarketIntelligenceManifestV1",
+    "MarketIntelligenceManifestV1_1",
     "MarketIntelligencePayloadV1",
+    "MarketIntelligencePayloadV1_1",
     "MarketIntelligenceSourceBindingV1",
     "MarketIntelligenceTargetReferenceV1",
     "REVIEW_ACKNOWLEDGEMENT",
@@ -162,4 +178,12 @@ __all__ = [
     "OpportunityCandidateBatchV1",
     "OpportunityCandidateScoreV1",
     "OpportunityCandidateStateRecordV1",
+    "CandidatePublicationEvidenceV1",
+    "CandidatePublicationStateV1",
+    "CandidateRiskDispositionV1",
+    "CandidateRiskModePublicationV1",
+    "OpportunityCandidatePublicationItemV1",
+    "OpportunityCandidatePublicationSourceV1",
+    "OpportunityCandidatePublicationV1",
+    "OpportunityCandidateUniversePublicationV1",
 ]

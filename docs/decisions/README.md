@@ -42,3 +42,4 @@ Each ADR should include:
 - [0017: Activate Selectable Dashboard Universes](0017-activate-selectable-dashboard-universes.md)
 - [0018: Stage Market Regime & Opportunity Map V1 as Transparent EOD Analytics](0018-stage-market-regime-opportunity-map-v1.md)
 - [0019: Offer Equal-Capability Guest Sessions](0019-offer-equal-capability-guest-sessions.md)
+- [0020: Publish a Bounded Opportunity Candidate Consumer](0020-publish-bounded-opportunity-candidate-consumer.md)

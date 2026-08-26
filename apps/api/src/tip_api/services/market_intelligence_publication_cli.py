@@ -15,6 +15,7 @@ from pathlib import Path
 from tip_api.contracts.analytics.v1 import (
     REVIEW_ACKNOWLEDGEMENT,
     MarketIntelligenceApprovalPlanV1,
+    MarketIntelligenceApprovalPlanV1_1,
     ReviewDeploymentAuthorizationV1,
     approved_review_authorization,
 )
@@ -52,6 +53,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--phase1a-audit", type=Path)
     parser.add_argument("--phase1b-audit", type=Path)
     parser.add_argument("--phase2-audit", type=Path)
+    parser.add_argument("--candidate-audit", type=Path)
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--approval-package", type=Path)
     parser.add_argument("--publication-id")
@@ -149,6 +151,7 @@ def _plan(args: argparse.Namespace) -> int:
         phase1a_audit_path=args.phase1a_audit,
         phase1b_audit_path=args.phase1b_audit,
         phase2_audit_path=args.phase2_audit,
+        candidate_audit_path=args.candidate_audit,
         candidate_path=candidate,
         review_deployment=review,
     )
@@ -160,6 +163,7 @@ def _plan(args: argparse.Namespace) -> int:
         phase1a_audit_path=args.phase1a_audit,
         phase1b_audit_path=args.phase1b_audit,
         phase2_audit_path=args.phase2_audit,
+        candidate_audit_path=args.candidate_audit,
         expected_current_state_fingerprint=args.expected_current_state_fingerprint,
         expected_latest_completed_session=freshness.expected_latest_completed_session,
         actual_latest_completed_session=freshness.actual_latest_completed_session,
@@ -215,6 +219,7 @@ def _require_plan_arguments(parser: argparse.ArgumentParser, args: argparse.Name
         args.phase1a_audit,
         args.phase1b_audit,
         args.phase2_audit,
+        args.candidate_audit,
         args.output_root,
         args.approval_package,
         args.expected_current_state_fingerprint,
@@ -252,6 +257,7 @@ def _require_approved_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.phase1a_audit,
         args.phase1b_audit,
         args.phase2_audit,
+        args.candidate_audit,
         args.output_root,
         args.approval_package,
         args.publication_id,
@@ -277,6 +283,7 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.phase1a_audit,
         args.phase1b_audit,
         args.phase2_audit,
+        args.candidate_audit,
         args.output_root,
         args.approval_package,
         args.publication_id,
@@ -294,7 +301,9 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
         parser.error("rollback only accepts its approved pointer digest")
 
 
-def _load_plan(path: Path, expected_sha256: str) -> MarketIntelligenceApprovalPlanV1:
+def _load_plan(
+    path: Path, expected_sha256: str
+) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1:
     if (
         not path.is_absolute()
         or not path.resolve(strict=True).is_relative_to(Path("/tmp"))
@@ -311,7 +320,12 @@ def _load_plan(path: Path, expected_sha256: str) -> MarketIntelligenceApprovalPl
         raise MarketIntelligencePublicationError("approved plan JSON is malformed") from exc
     if canonical_bytes(value) != raw:
         raise MarketIntelligencePublicationError("approved plan JSON is non-canonical")
-    plan = MarketIntelligenceApprovalPlanV1.model_validate(value)
+    plan_type = (
+        MarketIntelligenceApprovalPlanV1_1
+        if value.get("plan_version") == "1.1"
+        else MarketIntelligenceApprovalPlanV1
+    )
+    plan = plan_type.model_validate(value)
     validate_plan(plan)
     return plan
 

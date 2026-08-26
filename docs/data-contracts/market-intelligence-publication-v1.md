@@ -75,3 +75,18 @@ Review responses use `data_status=stale_review`; they never claim `fresh`.
 English and Chinese render the same authorization and analytics payload. This
 sub-contract is not an `allow-stale` switch and cannot authorize any other
 session or future release.
+
+## Contract 1.1 Candidate extension
+
+Repository source also implements `market-intelligence-publication/1.1` while
+retaining formal 1.0 reading and rollback compatibility. Version 1.1 keeps the
+same immutable two-file layout, pointer version, namespace, and revision, and
+adds a mandatory language-neutral Candidate source binding and bounded
+`opportunity-candidate-publication/1.0` analytics object.
+
+The plan version becomes 1.1 and freezes the exact `/tmp` Candidate audit,
+audit/Oracle/equivalence lineage, and Candidate analytics fingerprint. Apply
+and verify-then-link reread that approved audit under the existing guarded
+publication flow. A 1.0 plan cannot activate a 1.1 payload. The active
+Production publication remains 1.0 until a new exact freshness or stale-review
+authorization is approved; the existing 2026-08-24 exception is not inherited.

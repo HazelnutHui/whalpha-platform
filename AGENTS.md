@@ -103,16 +103,8 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 
 ## 8. Current Phase
 
-Infrastructure, storage, the application stack, canonical EOD/Identity through
-2026-08-24, Activation V2, immutable Market Intelligence, Dashboard Snapshot
-1.5 / Dashboard 2.2, bilingual React presentation, branded Session login, and
-an authenticated OCI release are implemented. Active analytics use 1,718
-Common Shares as Primary and 1,831 Common Shares plus ADRs as Secondary. The
-2026-08-24 release is an explicitly authorized `stale_review`, not fresh data.
-
-The authoritative cross-task handoff is
-[docs/project/current-context.md](docs/project/current-context.md). Read it
-before relying on historical status, roadmap, audit, or deployment entries.
-SEC B2 remains paused. Equal-capability guest Session entry is implemented.
-Automated daily ingestion, a point-in-time sector taxonomy, fundamentals,
-valuation, and options data are not implemented.
+Do not duplicate volatile sessions, releases, fingerprints, or next-step claims
+in this instruction file. Read [docs/project/current-status.md](docs/project/current-status.md)
+and [docs/project/current-context.md](docs/project/current-context.md) for the
+authoritative current phase and verified operational state. The roadmap remains
+proposed sequencing, not authorization.

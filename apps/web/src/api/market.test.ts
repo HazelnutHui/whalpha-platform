@@ -137,7 +137,7 @@ describe('market API runtime validation', () => {
     expect(() => parseSnapshotManifest({ ...base, dashboard_contract_version: '2.3' })).toThrow('Market Intelligence metadata');
     expect(() => parseSnapshotManifest({ ...base, review_expected_lag_sessions: 2 })).toThrow('review deployment');
     expect(() => parseSnapshotManifest({ ...base, market_intelligence_payload_sha256: 12 })).toThrow('market_intelligence_payload_sha256');
-    expect(() => parseSnapshotManifest({ ...base, snapshot_contract_version: '1.6' })).toThrow('Unsupported');
+    expect(() => parseSnapshotManifest({ ...base, snapshot_contract_version: '1.6', dashboard_contract_version: '2.3' })).toThrow('Candidate metadata');
     expect(() => parseSnapshotManifest({ ...base, market_intelligence_publication_id: undefined })).toThrow('Market Intelligence metadata');
   });
 

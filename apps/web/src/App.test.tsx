@@ -10,6 +10,9 @@ vi.mock('./pages/MarketDashboardPage', () => ({
 vi.mock('./pages/MarketRegimeOpportunityMapPage', () => ({
   MarketRegimeOpportunityMapPage: ({ withinWorkspaceShell }: { withinWorkspaceShell?: boolean }) => <main data-testid="regime-workspace">regime:{String(withinWorkspaceShell)}</main>,
 }));
+vi.mock('./pages/OpportunityCandidatesPage', () => ({
+  OpportunityCandidatesPage: () => <main data-testid="candidate-workspace">candidates</main>,
+}));
 
 describe('primary workspace shell', () => {
   beforeEach(() => {
@@ -28,6 +31,7 @@ describe('primary workspace shell', () => {
     const workspaceButtons = screen.getByRole('navigation', { name: 'Primary workspaces' }).querySelectorAll('button');
     expect(workspaceButtons[0]).toHaveTextContent('Regime & Opportunities');
     expect(screen.getByRole('button', { name: /Regime & Opportunities/ })).toHaveAttribute('aria-current', 'page');
+    expect(workspaceButtons[2]).toHaveTextContent('Stock Candidates');
     expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
     expect(screen.getByText('Protected Session')).toBeInTheDocument();

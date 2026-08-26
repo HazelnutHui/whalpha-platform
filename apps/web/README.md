@@ -1,7 +1,8 @@
 # Trading Intelligence Web
 
-The React application has two first-level workspaces: Market Dashboard and
-Market Regime & Opportunities (`市场风向与机会`). Desktop navigation uses a
+The React application has three first-level workspaces: Market Regime &
+Opportunities (`市场风向与机会`), Market Dashboard, and Stock Candidates
+(`个股候选`). Desktop navigation uses a
 persistent left rail, with Market Regime & Opportunities first and selected by
 default; Universe, language, and private Session controls share an
 opaque sticky utility header. The Universe selector exposes only `Common
@@ -16,7 +17,7 @@ React/TypeScript/Vite frontend for Trading Intelligence Platform.
 
 ## Purpose
 
-The frontend implements Market Dashboard, Market Regime & Opportunities, and
+The frontend implements Market Dashboard, Market Regime & Opportunities, Stock Candidates, and
 the shared bilingual application shell for local/private development and
 versioned static publication.
 
@@ -33,8 +34,9 @@ builds reject known synthetic fixture markers.
 
 The deployed production Snapshot uses 2026-08-24 as current and 2026-08-21 as
 previous, with expected session 2026-08-25, lag one, and explicit
-`stale_review`. The latest shared-shell changes are verified in source but are
-not deployed by this change.
+`stale_review`. Snapshot 1.6 / Dashboard 2.3 Candidate integration is verified
+in source but is not active until a separately approved Market Intelligence,
+Snapshot, bundle, and deployment sequence completes.
 
 ## Implemented Views
 
@@ -50,6 +52,7 @@ not deployed by this change.
 - Categorized Data Details
 - Market Regime five-dimension evidence and six highlighted ETF relationships
 - Complete 16-pair relationship table and detail drawer
+- Language-neutral, risk-mode-specific Stock Candidate ranking and evidence drawer
 - Logout in snapshot mode
 - loading, error, empty, and retry states
 

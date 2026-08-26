@@ -9,7 +9,10 @@ import tempfile
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from tip_api.contracts.market_data.v2.dashboard_snapshot import DashboardSnapshotApprovalPlanV2
+from tip_api.contracts.market_data.v2.dashboard_snapshot import (
+    DashboardSnapshotApprovalPlanV2,
+    DashboardSnapshotApprovalPlanV2_1,
+)
 from tip_api.contracts.analytics.v1 import (
     REVIEW_ACKNOWLEDGEMENT,
     ReviewDeploymentAuthorizationV1,
@@ -36,11 +39,13 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2:
+def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1:
     if not path.is_absolute() or not path.resolve(strict=True).is_relative_to(Path("/tmp")) or path.is_symlink():
         raise DashboardSnapshotPublicationError("approved plan must be a regular /tmp file")
     if _sha(path)!=digest: raise DashboardSnapshotPublicationError("approved plan SHA-256 mismatch")
-    plan=DashboardSnapshotApprovalPlanV2.model_validate_json(path.read_text());validate_plan(plan);return plan
+    value=json.loads(path.read_text())
+    plan_type=(DashboardSnapshotApprovalPlanV2_1 if value.get("plan_version")=="2.1" else DashboardSnapshotApprovalPlanV2)
+    plan=plan_type.model_validate(value);validate_plan(plan);return plan
 
 
 def _parser() -> argparse.ArgumentParser:

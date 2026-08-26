@@ -229,6 +229,14 @@ export interface SnapshotManifestResponse {
   market_intelligence_payload_sha256?: string | null;
   market_intelligence_logical_fingerprint?: string | null;
   analytics_payload_logical_fingerprint?: string | null;
+  opportunity_candidates_file?: string | null;
+  candidate_contract_version?: string | null;
+  candidate_analytics_logical_fingerprint?: string | null;
+  candidate_audit_logical_fingerprint?: string | null;
+  candidate_parameter_fingerprint?: string | null;
+  candidate_state_parameter_fingerprint?: string | null;
+  candidate_primary_display_count?: number | null;
+  candidate_secondary_display_count?: number | null;
   review_mode?: boolean;
   review_contract_version?: string | null;
   review_approved_as_of_session?: string | null;

@@ -17,14 +17,16 @@ market state -> strength direction -> sector/theme -> stock candidate
 -> trade preparation -> entry/invalidation -> position management
 ```
 
-The current production-capable slice covers market overview, breadth, movers,
+The current production-capable source slice covers market overview, breadth, movers,
 Trading Activity Map, benchmark and sector-ETF context, a transparent five-
-dimension Market Regime, and 16 preregistered ETF relationships. English is
+dimension Market Regime, 16 preregistered ETF relationships, and a bounded
+Stock Candidate research workspace. English is
 the first-visit default; English and Simplified Chinese render the same
 language-neutral analytics.
 
-Repository `main` now presents Market Structure & Activity and Market Regime &
-Opportunities (`市场风向与机会`) as first-level workspaces with persistent desktop
+Repository source now presents Market Regime & Opportunities
+(`市场风向与机会`), Market Structure & Activity, and Stock Candidates
+(`个股候选`) as first-level workspaces with persistent desktop
 left navigation and one shared Universe/language/Session utility header. Market
 Regime & Opportunities is the first item and default workspace; Market
 Structure & Activity is second and begins with a factual “what is happening
@@ -130,14 +132,16 @@ multi-session relationship persistence counts, and evidence acceleration need
 an additive reviewed analytics-response contract; they are not inferred in the
 browser.
 
-The Phase 5 offline stock-candidate pipeline is implemented in repository
+The Phase 5 offline stock-candidate pipeline and Phase 6 consumer integration are implemented in repository
 source: strict fact/component/confidence/batch contracts, a fingerprinted fixed
 seven-component parameter set, pure 26-session scoring, missingness and anomaly
 quarantine, separate Conservative/Balanced/Aggressive eligibility/ranking,
 chronological Watch/Prepare/Enter/invalidated replay, an independent raw-panel
-Oracle, and a canonical `/tmp` audit/reread boundary. It does not alter `/data`
-or the active product. Publication, Snapshot, API/frontend integration, and
-deployment remain pending and retain separate operational gates.
+Oracle, a canonical `/tmp` audit/reread boundary, language-neutral bounded
+publication projection, MI 1.1, Snapshot 1.6 / Dashboard 2.3, strict React
+parser, and the third first-level Candidate workspace. It does not alter
+`/data` or the active product. Formal publication, Snapshot activation, bundle,
+and deployment remain pending and retain separate operational gates.
 
 The formal read-only 2026-08-24 candidate audit is
 `/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, logical fingerprint
@@ -152,6 +156,13 @@ stages is expected from only two candidate sessions, not predictive evidence.
 Current risk-mode outputs reach the fixed 25/50/100 display caps in each
 Universe. The full two-session audit took about 928 seconds and peaked near
 1.9 GiB, so incremental daily execution remains required before automation.
+
+The formal audit produced a successfully reread development MI 1.1 candidate
+and Snapshot 1.6 / Dashboard 2.3 under `/tmp`. The bounded Candidate JSON is
+about 5.14 MB and contains 146 Primary and 155 Secondary display/review cards.
+These are development verification artifacts, not active pointers. The current
+stale-review authorization predates this new publication and cannot authorize
+its activation without a new exact user decision.
 
 ## Verification entry point
 

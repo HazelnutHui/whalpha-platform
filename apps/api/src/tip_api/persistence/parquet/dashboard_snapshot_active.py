@@ -15,6 +15,7 @@ from uuid import uuid4
 
 from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotActivePointerV2, DashboardSnapshotApprovalPlanV2,
+    DashboardSnapshotApprovalPlanV2_1,
     DashboardSnapshotFileReferenceV2, DashboardSnapshotTargetReferenceV2,
 )
 from tip_api.contracts.analytics.v1.review_deployment import (
@@ -148,10 +149,10 @@ def current_state_fingerprint(root: Path, legacy_root: Path) -> str:
 
 
 def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
-                        activation_logical_fingerprint: str, generated_at: datetime) -> DashboardSnapshotApprovalPlanV2:
+                        activation_logical_fingerprint: str, generated_at: datetime) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1:
     root=_validated_root(root); manifest=validate_snapshot_release(candidate)
     if (manifest.snapshot_contract_version, manifest.dashboard_contract_version) not in {
-        ("1.4", "2.1"), ("1.5", "2.2")
+        ("1.4", "2.1"), ("1.5", "2.2"), ("1.6", "2.3")
     }:
         raise DashboardSnapshotPublicationError("candidate snapshot contract is not V2")
     normal_freshness = (
@@ -206,7 +207,8 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
     pointer_fp=canonical_sha(pointer_payload); pointer_payload["pointer_content_fingerprint"]=pointer_fp
     pointer_bytes=deterministic_json_bytes(pointer_payload)
     payload={
-        "plan_version":"2.0","revision_id":REVISION_ID,"release_id":manifest.release_id,
+        "plan_version":"2.1" if manifest.snapshot_contract_version == "1.6" else "2.0",
+        "revision_id":REVISION_ID,"release_id":manifest.release_id,
         "snapshot_contract_version":manifest.snapshot_contract_version,
         "dashboard_contract_version":manifest.dashboard_contract_version,
         "generated_at":generated_at.astimezone(UTC).isoformat().replace("+00:00","Z"),
@@ -230,10 +232,23 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
         "market_intelligence_payload_sha256":manifest.market_intelligence_payload_sha256,
         "market_intelligence_logical_fingerprint":manifest.market_intelligence_logical_fingerprint,
     }
-    return DashboardSnapshotApprovalPlanV2(**payload,plan_content_fingerprint=canonical_sha(payload))
+    if manifest.snapshot_contract_version == "1.6":
+        payload.update(
+            candidate_contract_version=manifest.candidate_contract_version,
+            candidate_analytics_logical_fingerprint=manifest.candidate_analytics_logical_fingerprint,
+            candidate_audit_logical_fingerprint=manifest.candidate_audit_logical_fingerprint,
+            candidate_parameter_fingerprint=manifest.candidate_parameter_fingerprint,
+            candidate_state_parameter_fingerprint=manifest.candidate_state_parameter_fingerprint,
+        )
+    plan_type = (
+        DashboardSnapshotApprovalPlanV2_1
+        if manifest.snapshot_contract_version == "1.6"
+        else DashboardSnapshotApprovalPlanV2
+    )
+    return plan_type(**payload,plan_content_fingerprint=canonical_sha(payload))
 
 
-def validate_plan(plan: DashboardSnapshotApprovalPlanV2) -> None:
+def validate_plan(plan: DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1) -> None:
     payload=plan.model_dump(mode="json",exclude={"plan_content_fingerprint"})
     if canonical_sha(payload)!=plan.plan_content_fingerprint: raise DashboardSnapshotPublicationError("snapshot approval plan fingerprint mismatch")
     candidate=Path(plan.candidate_path); manifest=validate_snapshot_release(candidate); files=file_references(candidate)
@@ -250,6 +265,17 @@ def validate_plan(plan: DashboardSnapshotApprovalPlanV2) -> None:
         != plan.market_intelligence_logical_fingerprint
     ):
         raise DashboardSnapshotPublicationError("snapshot approval consumer binding changed")
+    if isinstance(plan, DashboardSnapshotApprovalPlanV2_1) and (
+        manifest.candidate_contract_version != plan.candidate_contract_version
+        or manifest.candidate_analytics_logical_fingerprint
+        != plan.candidate_analytics_logical_fingerprint
+        or manifest.candidate_audit_logical_fingerprint
+        != plan.candidate_audit_logical_fingerprint
+        or manifest.candidate_parameter_fingerprint != plan.candidate_parameter_fingerprint
+        or manifest.candidate_state_parameter_fingerprint
+        != plan.candidate_state_parameter_fingerprint
+    ):
+        raise DashboardSnapshotPublicationError("snapshot approval Candidate binding changed")
     review = plan.review_deployment
     if manifest.review_mode != (review is not None):
         raise DashboardSnapshotPublicationError("snapshot approval review mode changed")

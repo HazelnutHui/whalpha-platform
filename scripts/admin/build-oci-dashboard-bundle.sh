@@ -126,8 +126,9 @@ import json, sys
 from pathlib import Path
 root=Path(sys.argv[1])
 manifest=json.loads((root/'private-data/v1/manifest.json').read_text())
-if manifest.get('snapshot_contract_version') != '1.5' or manifest.get('dashboard_contract_version') != '2.2':
-  raise SystemExit('OCI bundle requires Snapshot 1.5 / Dashboard 2.2')
+contract=(manifest.get('snapshot_contract_version'), manifest.get('dashboard_contract_version'))
+if contract not in {('1.5','2.2'),('1.6','2.3')}:
+  raise SystemExit('OCI bundle requires Snapshot 1.5 / Dashboard 2.2 or Snapshot 1.6 / Dashboard 2.3')
 if manifest.get('market_intelligence_publication_id') != sys.argv[6]:
   raise SystemExit('snapshot Market Intelligence publication differs from explicit OCI binding')
 analytics_path=root/'private-data/v1/market-regime-overviews.json'
@@ -138,6 +139,31 @@ if analytics.get('publication_id') != sys.argv[6] or len(analytics.get('records'
   raise SystemExit('snapshot Market Intelligence payload binding is invalid')
 if any(len(record.get('relationships', [])) != 16 for record in analytics['records']):
   raise SystemExit('snapshot does not contain all 16 ETF relationships')
+candidate_fingerprint=None
+candidate_audit_fingerprint=None
+if contract == ('1.6','2.3'):
+  candidate_path=root/'private-data/v1/opportunity-candidates.json'
+  if not candidate_path.is_file():
+    raise SystemExit('Snapshot 1.6 Candidate payload is missing')
+  candidate=json.loads(candidate_path.read_text())
+  candidate_analytics=candidate.get('analytics',{})
+  candidate_source=candidate_analytics.get('source',{})
+  candidate_fingerprint=manifest.get('candidate_analytics_logical_fingerprint')
+  candidate_audit_fingerprint=manifest.get('candidate_audit_logical_fingerprint')
+  if (manifest.get('candidate_contract_version') != 'opportunity-candidate/1.1'
+      or candidate.get('publication_id') != sys.argv[6]
+      or candidate.get('payload_sha256') != manifest.get('market_intelligence_payload_sha256')
+      or candidate.get('payload_logical_fingerprint') != manifest.get('market_intelligence_logical_fingerprint')
+      or candidate.get('candidate_analytics_logical_fingerprint') != candidate_fingerprint
+      or candidate_analytics.get('logical_fingerprint') != candidate_fingerprint
+      or candidate_source.get('candidate_audit_logical_fingerprint') != candidate_audit_fingerprint
+      or candidate_source.get('candidate_parameter_fingerprint') != manifest.get('candidate_parameter_fingerprint')
+      or candidate_source.get('candidate_state_parameter_fingerprint') != manifest.get('candidate_state_parameter_fingerprint')
+      or len(candidate_analytics.get('universes',[{},{}])[0].get('candidates',[])) != manifest.get('candidate_primary_display_count')
+      or len(candidate_analytics.get('universes',[{},{}])[1].get('candidates',[])) != manifest.get('candidate_secondary_display_count')
+      or candidate_analytics.get('underlying_stock_result_not_option_return') is not True
+      or candidate_analytics.get('price_volume_not_fund_flow') is not True):
+    raise SystemExit('Snapshot 1.6 Candidate binding is invalid')
 payload={
   'release_id': sys.argv[2],
   'git_commit': sys.argv[3],
@@ -149,6 +175,10 @@ payload={
   'market_intelligence_publication_id': sys.argv[6],
   'market_intelligence_payload_sha256': manifest['market_intelligence_payload_sha256'],
   'market_intelligence_logical_fingerprint': manifest['market_intelligence_logical_fingerprint'],
+  'snapshot_contract_version': contract[0],
+  'dashboard_contract_version': contract[1],
+  'candidate_analytics_logical_fingerprint': candidate_fingerprint,
+  'candidate_audit_logical_fingerprint': candidate_audit_fingerprint,
   'current_session_date': manifest['current_session_date'],
   'previous_session_date': manifest['previous_session_date'],
   'file_count': int(sys.argv[5]),

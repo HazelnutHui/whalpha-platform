@@ -66,3 +66,20 @@ case its overview, analytics envelope, manifest, and plan all report
 `stale_review`, approved as-of `2026-08-24`, expected `2026-08-25`, and lag
 one. The normal lag-zero gate is unchanged; review plan/apply requires the
 same explicit acknowledgement and rejects changed freshness under lock.
+
+## Contract 1.6 Candidate extension
+
+Repository source implements Snapshot 1.6 / Dashboard 2.3 as an additive
+consumer of Market Intelligence 1.1. It retains the 1.5 files and adds exactly
+`opportunity-candidates.json`, whose bounded language-neutral payload is
+described in the [Candidate publication contract](opportunity-candidate-publication-v1.md).
+The manifest and approval plan freeze the Candidate analytics, audit, scoring-
+parameter, state-parameter, displayed-count, Market Intelligence, and file-hash
+bindings. Snapshot 1.5 / Dashboard 2.2 remains formally readable and cannot
+silently acquire Candidate data.
+
+The OCI builder accepts only the exact 1.5/2.2 or 1.6/2.3 pair. For 1.6 it
+requires the Candidate file and cross-checks its Market Intelligence and audit
+lineage; deployment postflight gives a temporary guest Session the same
+Candidate resource as a credential Session, then logs out and reconfirms the
+unauthenticated boundary.

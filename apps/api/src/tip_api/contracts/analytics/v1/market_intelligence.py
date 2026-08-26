@@ -15,10 +15,15 @@ from .market_regime_preview import (
     PreviewUniverseDefinitionV1,
 )
 from .review_deployment import ReviewDeploymentAuthorizationV1
+from .opportunity_candidate_publication import (
+    OpportunityCandidatePublicationSourceV1,
+    OpportunityCandidatePublicationV1,
+)
 
 
 MARKET_INTELLIGENCE_SCHEMA_VERSION = "1.0"
 MARKET_INTELLIGENCE_CONTRACT_VERSION = "market-intelligence-publication/1.0"
+MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_1 = "market-intelligence-publication/1.1"
 MARKET_INTELLIGENCE_POINTER_VERSION = "1.0"
 MARKET_INTELLIGENCE_PLAN_VERSION = "1.0"
 MARKET_INTELLIGENCE_REVISION = "market-regime-opportunity-map-v1"
@@ -147,6 +152,43 @@ class MarketIntelligencePayloadV1(FrozenModel):
         return self
 
 
+class MarketIntelligencePayloadV1_1(MarketIntelligencePayloadV1):
+    """Market Intelligence 1.1 adds the formally bound Candidate consumer view."""
+
+    contract_version: Literal["market-intelligence-publication/1.1"] = (
+        MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_1
+    )
+    candidate_source: OpportunityCandidatePublicationSourceV1
+    candidate_analytics: OpportunityCandidatePublicationV1
+
+    @model_validator(mode="after")
+    def candidate_lineage_reconciles(self) -> "MarketIntelligencePayloadV1_1":
+        candidate = self.candidate_analytics
+        if self.analysis_session != candidate.as_of_session:
+            raise ValueError("Market Intelligence Candidate analysis session differs")
+        if self.candidate_source != candidate.source:
+            raise ValueError("Market Intelligence Candidate source binding differs")
+        if candidate.universe_order != tuple(
+            row.universe_id for row in self.source.activation.universes
+        ):
+            raise ValueError("Market Intelligence Candidate Universe order differs")
+        if tuple(
+            row.membership_fingerprint for row in candidate.universes
+        ) != tuple(row.membership_fingerprint for row in self.source.activation.universes):
+            raise ValueError("Market Intelligence Candidate memberships differ")
+        if candidate.source.activation_pointer_fingerprint != self.source.activation.pointer_fingerprint:
+            raise ValueError("Market Intelligence Candidate Activation pointer differs")
+        eod = self.source.eod
+        if (
+            candidate.source.identity_logical_fingerprint != eod.identity_logical_fingerprint
+            or candidate.source.eod_content_fingerprint != eod.content_fingerprint
+            or candidate.source.eod_business_key_fingerprint != eod.business_key_fingerprint
+            or candidate.source.history_source_fingerprint != eod.history_source_fingerprint
+        ):
+            raise ValueError("Market Intelligence Candidate EOD or Identity lineage differs")
+        return self
+
+
 class MarketIntelligenceManifestV1(FrozenModel):
     schema_version: Literal["1.0"] = MARKET_INTELLIGENCE_SCHEMA_VERSION
     contract_version: Literal["market-intelligence-publication/1.0"] = (
@@ -189,6 +231,21 @@ class MarketIntelligenceManifestV1(FrozenModel):
     )
     @classmethod
     def digests(cls, value: str) -> str:
+        return _sha(value)
+
+
+class MarketIntelligenceManifestV1_1(MarketIntelligenceManifestV1):
+    contract_version: Literal["market-intelligence-publication/1.1"] = (
+        MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_1
+    )
+    candidate_source: OpportunityCandidatePublicationSourceV1
+    candidate_analytics_logical_fingerprint: str
+    candidate_primary_display_count: int = Field(ge=0)
+    candidate_secondary_display_count: int = Field(ge=0)
+
+    @field_validator("candidate_analytics_logical_fingerprint")
+    @classmethod
+    def candidate_digest(cls, value: str) -> str:
         return _sha(value)
 
 
@@ -384,6 +441,32 @@ class MarketIntelligenceApprovalPlanV1(FrozenModel):
         if normal and self.review_deployment is not None:
             raise ValueError("fresh publication must not carry stale-review authorization")
         return self
+
+
+class MarketIntelligenceApprovalPlanV1_1(MarketIntelligenceApprovalPlanV1):
+    """Approval plan that freezes the Candidate audit consumed by MI 1.1."""
+
+    plan_version: Literal["1.1"] = "1.1"
+    candidate_audit_path: str
+    candidate_source: OpportunityCandidatePublicationSourceV1
+    candidate_analytics_logical_fingerprint: str
+
+    @field_validator("candidate_audit_path")
+    @classmethod
+    def candidate_tmp_source_path(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if (
+            not path.is_absolute()
+            or not path.is_relative_to(PurePosixPath("/tmp"))
+            or ".." in path.parts
+        ):
+            raise ValueError("Candidate audit path must be a normalized absolute /tmp path")
+        return value
+
+    @field_validator("candidate_analytics_logical_fingerprint")
+    @classmethod
+    def candidate_fingerprint(cls, value: str) -> str:
+        return _sha(value)
 
 
 def _sha(value: str) -> str:

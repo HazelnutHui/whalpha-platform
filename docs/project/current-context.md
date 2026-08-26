@@ -70,14 +70,20 @@ Tailscale listeners were present.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
 - Repository source contains the Phase 5 offline candidate score/risk/state,
-  independent Oracle, and canonical `/tmp` audit/reread boundary. It has no
-  API/frontend consumer, Production publication, or active product effect.
+  independent Oracle, canonical `/tmp` audit/reread boundary, bounded
+  language-neutral consumer, MI 1.1, Snapshot 1.6 / Dashboard 2.3, strict
+  frontend parser, and the third first-level Stock Candidate workspace. These
+  changes have no active Production pointer or deployed-product effect.
 - The current formal candidate audit is the 2026-08-24 baseline-3 directory
   `/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, fingerprint
   `1f25a1c9060d459e372903ad116579973c709363f365f19fa66bb515774c93df`.
   It binds two calculable sessions, has zero Oracle mismatch, and passes all
   four replay-equivalence gates. This `/tmp` evidence is local development
   custody, not a Production pointer or deployment artifact.
+- A formal development build from that audit produced a reread MI 1.1 payload
+  with 146 Primary / 155 Secondary display-review cards and a reread Snapshot
+  1.6 / Dashboard 2.3 Candidate file of about 5.14 MB. The output remains under
+  `/tmp`; it is not an approval package or Production state.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

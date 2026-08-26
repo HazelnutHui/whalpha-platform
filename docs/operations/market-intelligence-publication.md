@@ -9,9 +9,9 @@ verify-then-link, and rollback are separately explicit and lock-protected.
 ## Plan and dry-run
 
 Planning requires exact data root, analysis session, revision, preview bundle,
-Phase 1a/1b/2 audits, output/plan paths, UTC timestamp, and expected Production
+Phase 1a/1b/2 audits, the completed Candidate audit, output/plan paths, UTC timestamp, and expected Production
 inventory fingerprint. It formally rereads EOD, same-day Identity, Activation,
-and source custody before emitting two candidate files and one canonical plan.
+and source custody before emitting two candidate files and one canonical MI 1.1 plan.
 
 The plan freezes source hashes, current inventory and consumer state, target
 absence, artifact paths/hashes/sizes, aggregate hash, publication/pointer
@@ -52,7 +52,7 @@ in-dataset release and therefore fails closed on rollback.
 
 ## Downstream order
 
-After a separately authorized fresh publication: build Snapshot 1.5 / Dashboard
-2.2 with the explicit publication ID; separately approve/apply Snapshot; then
+After a separately authorized fresh MI 1.1 publication: build Snapshot 1.6 /
+Dashboard 2.3 with the explicit publication ID; separately approve/apply Snapshot; then
 build OCI with both the explicit Snapshot and
 `--market-intelligence-publication`. OCI deployment remains another authorization.

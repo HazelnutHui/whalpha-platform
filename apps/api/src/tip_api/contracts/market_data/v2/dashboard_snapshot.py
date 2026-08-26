@@ -82,8 +82,8 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     plan_version: Literal["2.0"] = "2.0"
     revision_id: Literal["universe-funnel-v2"] = "universe-funnel-v2"
     release_id: str
-    snapshot_contract_version: Literal["1.4", "1.5"] = "1.4"
-    dashboard_contract_version: Literal["2.1", "2.2"] = "2.1"
+    snapshot_contract_version: Literal["1.4", "1.5", "1.6"] = "1.4"
+    dashboard_contract_version: Literal["2.1", "2.2", "2.3"] = "2.1"
     generated_at: datetime
     analysis_session: date
     expected_latest_completed_session: date
@@ -157,13 +157,15 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
             self.market_intelligence_payload_sha256,
             self.market_intelligence_logical_fingerprint,
         )
-        if self.snapshot_contract_version == "1.5":
-            if self.dashboard_contract_version != "2.2" or any(value is None for value in values):
-                raise ValueError("Snapshot 1.5 requires Dashboard 2.2 and Market Intelligence")
+        if self.snapshot_contract_version in {"1.5", "1.6"}:
+            expected = "2.3" if self.snapshot_contract_version == "1.6" else "2.2"
+            if self.dashboard_contract_version != expected or any(value is None for value in values):
+                raise ValueError(
+                    f"Snapshot {self.snapshot_contract_version} requires Dashboard {expected} and Market Intelligence"
+                )
         elif self.dashboard_contract_version != "2.1" or any(value is not None for value in values):
             raise ValueError("Snapshot 1.4 cannot bind Market Intelligence")
         return self
-
     @model_validator(mode="after")
     def freshness_authorization_reconciles(self) -> "DashboardSnapshotApprovalPlanV2":
         normal = (
@@ -189,6 +191,29 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
         if normal and self.review_deployment is not None:
             raise ValueError("fresh snapshot must not carry stale-review authorization")
         return self
+
+
+class DashboardSnapshotApprovalPlanV2_1(DashboardSnapshotApprovalPlanV2):
+    """Snapshot 1.6 approval plan with immutable Candidate consumer bindings."""
+
+    plan_version: Literal["2.1"] = "2.1"
+    snapshot_contract_version: Literal["1.6"] = "1.6"
+    dashboard_contract_version: Literal["2.3"] = "2.3"
+    candidate_contract_version: Literal["opportunity-candidate/1.1"]
+    candidate_analytics_logical_fingerprint: str
+    candidate_audit_logical_fingerprint: str
+    candidate_parameter_fingerprint: str
+    candidate_state_parameter_fingerprint: str
+
+    @field_validator(
+        "candidate_analytics_logical_fingerprint",
+        "candidate_audit_logical_fingerprint",
+        "candidate_parameter_fingerprint",
+        "candidate_state_parameter_fingerprint",
+    )
+    @classmethod
+    def candidate_digests(cls, value: str) -> str:
+        return _sha(value)
 
 
 def _sha(value: str) -> str:

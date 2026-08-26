@@ -289,3 +289,20 @@ A private read/query boundary reads completed canonical EOD Parquet sessions and
 ## Market Summary Analytics Boundary
 
 The backend exposes default-disabled private Market Summary V1, movers, returns, Liquidity Map V1, and Dashboard Overview routes from completed canonical EOD sessions. The frontend renders these results in API or snapshot mode. Liquidity Map V1 uses close-times-volume as a liquidity proxy; it is not market-cap weighted and is not sector grouped. A traditional market-cap sector heatmap remains deferred pending market-cap, taxonomy, and point-in-time classification sources.
+
+## Opportunity Candidate Consumer Boundary
+
+The canonical Candidate audit remains an offline computation and replay
+boundary. Production consumers do not scan its `/tmp` files, recompute ranks,
+or expose the full rejected population. A single bounded language-neutral
+projection is built only after the audit reader, Oracle, equivalence, session,
+Universe, EOD, Identity, and Activation gates pass. Market Intelligence 1.1 is
+the immutable aggregate owner; Snapshot 1.6 / Dashboard 2.3 exports the same
+projection as protected static JSON.
+
+The React Candidate workspace selects server-calculated risk ranks and
+localizes stable codes. It never treats ticker as identity, confidence as win
+probability, ETF price proxies as formal sector membership, price/volume as
+fund flow, invalidation as a position exit, or the underlying-stock result as
+an option return. Guest and credential Sessions consume the identical file;
+role never enters the analytics, cache, or filtering boundary.

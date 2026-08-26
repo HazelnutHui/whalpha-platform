@@ -33,7 +33,10 @@ bound bar coverage, price-derived registered-ETF proxy selection, missing-
 component reweighting, anomaly quarantine, deterministic Conservative/
 Balanced/Aggressive ranking, Watch/Prepare/Enter/invalidated replay, an
 independent raw-panel Oracle, and canonical `/tmp` audit/reread. It has no API,
-frontend, Production publication, or `/data` write boundary yet.
+or `/data` write boundary. Phase 6 adds the bounded, language-neutral MI 1.1 /
+Snapshot 1.6 / Dashboard 2.3 consumer and bilingual Stock Candidate workspace
+in repository source. That consumer is not active Production state until a
+separate publication and deployment is approved.
 
 The initial design baseline remains `as_of_session=2026-08-21`; the active
 publication rolls the same versioned formulas and registered relationships to

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-08-26 — Phase 6 Candidate consumer and Snapshot contract
+
+- Added a bounded, language-neutral `opportunity-candidate-publication/1.0`
+  projection. It formally rereads the Candidate audit, requires zero Oracle
+  mismatch and all replay/permutation gates, joins score/state/risk facts by
+  stable `instrument_id`, and publishes only the three fixed risk-mode display
+  unions plus Prepare/Enter/invalidated review rows.
+- Added Market Intelligence 1.1 and plan 1.1 while preserving 1.0 reader,
+  pointer, namespace, revision, and rollback compatibility. The new contract
+  binds Candidate audit, EOD, Identity, Activation, parameter, state, Oracle,
+  batch, and risk-result lineage without copying raw audit or provider data.
+- Added Snapshot 1.6 / Dashboard 2.3 and plan 2.1 with exact Candidate file-set,
+  hash, publication, audit, parameter, Universe, and displayed-count checks.
+  Existing Snapshot 1.5 / Dashboard 2.2 remains readable unchanged.
+- Added the third first-level `Stock Candidates` / `个股候选` workspace with
+  Balanced default, Conservative/Balanced/Aggressive formal ranks, stage and
+  ticker filters, short-history explanation, seven-component visualization,
+  structured support/counterevidence, visible invalidation, raw facts, human
+  review checklist, bilingual copy, mobile layout, and fail-closed parsing.
+- Extended the OCI bundle and guest postflight gates for the exact 1.6/2.3
+  contract. A formal `/tmp` build reread 146 Primary and 155 Secondary cards;
+  the Candidate file is about 5.14 MB. No `/data`, active pointer, bundle, OCI,
+  network, or deployment state changed. A new exact freshness/stale-review
+  authorization remains required before publication.
+
 ## 2026-08-26 — Phase 5 candidate state, Oracle, and canonical audit
 
 - Upgraded the candidate contract to `opportunity-candidate/1.1` and the

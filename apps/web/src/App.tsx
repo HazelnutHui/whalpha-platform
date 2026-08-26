@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 
 import { MarketDashboardPage } from './pages/MarketDashboardPage';
 import { MarketRegimeOpportunityMapPage } from './pages/MarketRegimeOpportunityMapPage';
+import { OpportunityCandidatesPage } from './pages/OpportunityCandidatesPage';
 import { LanguageSelector } from './i18n/LanguageSelector';
 import { useI18n } from './i18n/I18nProvider';
 import { universeName } from './i18n/domain';
 
-type Workspace = 'market' | 'regime';
+type Workspace = 'market' | 'regime' | 'candidates';
 
 const PRIMARY_UNIVERSE = 'provider_classified_common_shares_v1';
 const SECONDARY_UNIVERSE = 'provider_classified_common_shares_plus_adrs_v1';
@@ -14,7 +15,8 @@ const UNIVERSES = [PRIMARY_UNIVERSE, SECONDARY_UNIVERSE] as const;
 type UniverseId = (typeof UNIVERSES)[number];
 
 function requestedWorkspace(): Workspace {
-  return new URLSearchParams(window.location.search).get('view') === 'market' ? 'market' : 'regime';
+  const value = new URLSearchParams(window.location.search).get('view');
+  return value === 'market' || value === 'candidates' ? value : 'regime';
 }
 
 function isUniverse(value: string | null): value is UniverseId {
@@ -89,6 +91,11 @@ export default function App(): JSX.Element {
             <strong>{t('app.marketDashboard')}</strong>
             <small>{t('app.marketDashboardDescription')}</small>
           </button>
+          <button type="button" className={workspace === 'candidates' ? 'active' : ''} aria-current={workspace === 'candidates' ? 'page' : undefined} onClick={() => navigate('candidates')}>
+            <span className="workspace-index">03</span>
+            <strong>{t('app.stockCandidates')}</strong>
+            <small>{t('app.stockCandidatesDescription')}</small>
+          </button>
         </nav>
         <p className="workspace-boundary">{t('app.researchBoundary')}</p>
       </aside>
@@ -107,7 +114,7 @@ export default function App(): JSX.Element {
             {snapshotMode ? <button type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
           </div>
         </header>
-        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : <MarketDashboardPage withinWorkspaceShell />}
+        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : <OpportunityCandidatesPage />}
       </div>
     </div>
   );
