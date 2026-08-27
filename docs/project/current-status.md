@@ -45,32 +45,30 @@ relative-performance proxies, never actual fund flow.
 
 ## Active data and publications
 
-- Canonical EOD and same-day Identity are completed through 2026-08-25.
-- Latest EOD contains 9,954 rows; same-day Identity contains 9,974 canonical
+- Canonical EOD and same-day Identity are completed through 2026-08-26.
+- Latest EOD contains 9,953 rows; same-day Identity contains 9,974 canonical
   instruments, 13,141 provider observations, and 9,974 resolver rows.
 - Activation V2 is active with Common Shares as the sole default:
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
 - Active Market Intelligence publication is
-  `2026-08-24T142500Z-1f3eb5512eb0`, contract 1.1, with 146 Primary and 155
-  Secondary bounded Candidate cards.
+  `2026-08-26T050254Z-6c60502e4473`, contract 1.2, with 496 Primary and 532
+  Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-24T144500Z-1f3eb5512eb0`, contract 1.6 / Dashboard 2.3.
+  `2026-08-26T053233Z-6c60502e4473`, contract 1.7 / Dashboard 2.4.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-26T151600Z-1f3eb5512eb0` from source commit `1f3eb5512eb0`.
+  `2026-08-26T053233Z-6c60502e4473` from source commit `6c60502e4473`.
 
-The active analytics and Snapshot are an exact, one-release review of
-2026-08-24 data with expected session 2026-08-25 and lag one. Their required
-status is `stale_review`. This authorization did not weaken the ordinary
-lag-zero freshness gate and must not be generalized to another session. At the
-2026-08-27 check, local 2026-08-25 EOD itself trails expected completed XNYS
-session 2026-08-26 by one session, so a new ordinary Production approval plan
-is still blocked.
+The active analytics and Snapshot are the ordinary fresh 2026-08-26 release:
+expected and actual completed XNYS session are both 2026-08-26, lag is zero,
+data status is `complete`, and review mode is false. The prior narrowly bound
+2026-08-24 `stale_review` release remains historical evidence only; it did not
+weaken the normal freshness gate.
 
 ## Market Regime
 
-- Primary: 50.6585, Balanced.
-- Secondary: 50.9036, Balanced.
+- Primary: 57.8456, Balanced.
+- Secondary: 57.9041, Balanced.
 - Fixed basket: 30 ETFs.
 - Preregistered relationships: 16.
 - Windows: 5, 10, and 20 XNYS sessions.
@@ -78,8 +76,8 @@ is still blocked.
 - History depth: 26 sessions, so relationship confidence remains low and is
   implementation evidence rather than predictive validation.
 
-The underlying active publication was formally reread during the 2026-08-26
-context audit. Exact displayed scores are publication facts, not trade signals.
+The underlying active publication was formally reread after the 2026-08-27
+deployment. Exact displayed scores are publication facts, not trade signals.
 
 ## Access and deployment boundary
 
@@ -95,17 +93,17 @@ context audit. Exact displayed scores are publication facts, not trade signals.
   Universe, precision, freshness, and analytics. No role-based difference is
   authorized.
 
-The 2026-08-26 deployment verified over SSH that the remote current symlink
-selects the recorded release, Nginx and the Auth Service are active/enabled,
-and the Auth Service listens only on localhost. Postflight proved a temporary
-guest Session could read the Dashboard and the exact bound Snapshot, logged it
-out, and then reconfirmed the unauthenticated boundary. Four reviewed releases
-remain with no staging/partial residue. Password-based browser health remains
-a manual user check because no password was read or used.
+The 2026-08-27 deployment passed remote preflight, Nginx configuration checks,
+atomic apply, unauthenticated protection, and the temporary equal-capability
+guest Session postflight defined by the deployment tool. Password-based and
+visual browser behavior remains a manual user check because no password was
+read or used.
 
 ## Current limitations and risks
 
-- Active data is a stale review, not current-session production data.
+- The analytics history is only 29 EOD sessions and the active calculations
+  use 26 sessions. This is contract and implementation evidence, not enough
+  history for predictive validation or stable threshold calibration.
 - Provider security form does not prove issuer operating structure or
   domicile. Both public Universes remain explicitly provisional.
 - SEC B2 published no completed source cache or issuer-structure evidence and
@@ -116,16 +114,24 @@ a manual user check because no password was read or used.
   service, or general production API exists.
 - Historical analytics replay current-as-of membership and are not a
   survivorship-free backtest.
+- The OCI bundle helper's `--snapshot-release` shortcut still resolves the
+  legacy local snapshot directory; current V2 snapshots require the supported
+  explicit `--snapshot-path` plus `--bundle-release` form until this is fixed.
+- The frontend production build reports a chunk above 500 KB, and the active
+  Candidate JSON is about 20.4 MB. Workspace code splitting and summary/detail
+  payload separation are required before substantially expanding the UI.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
 
 ## Next candidate work
 
-The next operational priority is to restore ordinary freshness through the
-existing approval-bound same-day Identity/EOD workflow, then generate and
-review a fresh Market Intelligence plan. Publication, Snapshot generation,
-bundle construction, and OCI deployment remain separate explicit approvals.
+The next operational priority is to profile and shorten the daily pipeline
+without changing results: remove repeated historical-panel parsing, add
+incremental state and resumable content-addressed stages, then introduce
+deterministic process parallelism with a serial reference path. Publication,
+Snapshot generation, bundle construction, and OCI deployment remain separate
+explicit approvals.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky
@@ -136,65 +142,40 @@ multi-session relationship persistence counts, and evidence acceleration need
 an additive reviewed analytics-response contract; they are not inferred in the
 browser.
 
-The Phase 5 offline stock-candidate pipeline and Phase 6 consumer integration are implemented in repository
-source: strict fact/component/confidence/batch contracts, a fingerprinted fixed
+The Phase 5 stock-candidate pipeline and Phase 6 consumer integration are
+active: strict fact/component/confidence/batch contracts, a fingerprinted
 seven-component parameter set, pure 26-session scoring, missingness and anomaly
 quarantine, separate Conservative/Balanced/Aggressive eligibility/ranking,
-chronological Watch/Prepare/Enter/invalidated replay, an independent raw-panel
-Oracle, a canonical `/tmp` audit/reread boundary, language-neutral bounded
-publication projection, MI 1.1, Snapshot 1.6 / Dashboard 2.3, strict React
-parser, and the third first-level Candidate workspace. MI 1.1, Snapshot 1.6 /
-Dashboard 2.3, the bundle, and the OCI product are active. Future publication
-sequences retain the same separate operational gates.
+chronological Watch/Prepare/Enter/invalidated replay, independent Oracles,
+canonical `/tmp` audit/reread boundaries, Candidate publication 1.1, MI 1.2,
+Snapshot 1.7 / Dashboard 2.4, and strict frontend parsing. Earlier contracts
+remain readable rollback boundaries.
 
-The formal read-only 2026-08-24 candidate audit is
-`/tmp/whalpha-candidate-phase5c-baseline3-20260824.0JaMYi`, logical fingerprint
-`1f25a1c9060d459e372903ad116579973c709363f365f19fa66bb515774c93df`.
-It covers the independently calculable 2026-08-21 and 2026-08-24 sessions,
-reports zero Oracle mismatches, and passes append, restart, input-permutation,
-and future-prefix equivalence. On 2026-08-24, Primary has 1,716 scored / two
-missing members, 20 quarantined rows, 1,414 Watch, 46 invalidated, and no
-Prepare/Enter state; Secondary has 1,829 scored / two missing, 20 quarantined,
-1,512 Watch, 55 invalidated, and no Prepare/Enter state. The absence of later
-stages is expected from only two candidate sessions, not predictive evidence.
-Current risk-mode outputs reach the fixed 25/50/100 display caps in each
-Universe. The full two-session audit took about 928 seconds and peaked near
-1.9 GiB, so incremental daily execution remains required before automation.
+Candidate Entry Geometry V1 remains separate from leadership score/state/rank.
+It uses fixed SMA/ATR/return/gap/range/volume facts to distinguish bounded
+breakout, breakout watch, orderly pullback, strong-but-extended, and no viable
+setup. The active UI selects fixed review-now, watch-trigger, wait-reset, and
+other-research lanes from the complete hard-risk-qualified population; it does
+not convert stock-price structure into an option-return claim.
 
-Candidate Entry Geometry V1 is implemented without changing
-the deployed score, state, or rank. It uses fixed SMA/ATR/return/gap/range/
-volume facts to separate bounded breakout, breakout watch, orderly pullback,
-strong-but-extended, and no-viable-setup results. The formal read-only audit is
-`/tmp/whalpha-candidate-entry-baseline1-20260824`, fingerprint
-`6b013f948d5c6d1011cab0685f661907739b77f1cd1fbfa4307d4789a8638bee`,
-with zero Oracle mismatches and input-permutation equivalence. In the Primary
-Balanced top 50, 41 are wait-for-reset high/extreme extension, two are
-technical-review ready, four are breakout watches, and three have no viable
-bounded setup. This confirms that the existing list is a leadership/research
-rank, not an entry-timing list.
-
-Repository source now also contains the additive consumer: Candidate
-publication 1.1, MI 1.2, Snapshot 1.7 / Dashboard 2.4, strict frontend parsing,
-and a default entry-location view with separate review-now, watch-trigger,
-wait-reset, and other-research lanes. It is locally tested but is not active in
-the current OCI release.
-
-The verified 2026-08-25 Candidate audit is
-`/tmp/whalpha-candidate-phase5c-20260825.AGE0pk`, fingerprint
-`32c0647ae18e165052a4fdb5ea00a0ae7f3cec5306daecdc4360ef7de829e626`;
-the bound entry audit is `/tmp/whalpha-candidate-entry-20260825.LpjkWN`,
-fingerprint
-`3875872f719537170f17aab04b0715c86ffb67259f75adf0ee796b4a8f0c182b`.
+The formal 2026-08-26 Candidate audit is
+`/tmp/whalpha-candidate-phase5c-20260826`, fingerprint
+`34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`;
+the bound entry audit is `/tmp/whalpha-candidate-entry-20260826`, fingerprint
+`b3e54546f297bcca9e9a23bb011e0137342777dedc979eca1b4cda71f173ff46`.
 Both formal rereads passed with zero Oracle mismatch and zero network or
-Production writes. Primary Balanced has 1,282 hard-qualified rows partitioned
-as 52 review-now, 1,096 watch-trigger, 125 wait-reset, and nine other-research;
-each lane displays at most eight after the existing concentration rules.
+Production writes; entry input-permutation equivalence is true. Primary has
+53 technical-review-ready, 1,250 monitor-for-trigger, 109 wait-for-reset, and
+303 deprioritized records. It has 98 strong-but-extended setups, so strength
+does not automatically become an entry instruction.
 
-The formal audit was published through MI 1.1 and Snapshot 1.6 / Dashboard 2.3
-after a new exact stale-review authorization. The bounded Candidate JSON is
-about 5.14 MB and contains 146 Primary and 155 Secondary display/review cards.
-The active audit, parameter, state-parameter, MI, Snapshot, and OCI bundle
-bindings were reread after deployment.
+The active Candidate JSON is about 20.4 MB and should be split into summary
+and on-demand detail before the payload grows materially further. The daily
+Candidate audit used about one logical CPU at full utilization for roughly 30
+minutes and grew to about 2.7 GiB RSS. Dell has an 8-core / 16-thread Xeon
+W-2145, but the current analytics path has no explicit process pool. Provider
+requests must retain their fixed serial request gates; immutable CPU-bound
+calculations are the safe parallelization target.
 
 ## Verification entry point
 

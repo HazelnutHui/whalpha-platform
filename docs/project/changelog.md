@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-08-27 — Fresh 2026-08-26 publication and Candidate entry deployment
+
+- Published and formally reread same-day 2026-08-26 Identity and EOD through
+  their approval-bound workflows: 9,974 canonical instruments, 13,141 provider
+  identities, 9,974 resolvers, and 9,953 EOD rows. Local history now contains
+  29 sessions from 2026-07-17 through 2026-08-26.
+- Completed and formally reread the 2026-08-26 Regime Phase 1a/1b, all 16 ETF
+  relationships, preview, Candidate, and Entry Geometry audits. Candidate
+  fingerprint is `34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`;
+  Entry Geometry fingerprint is
+  `b3e54546f297bcca9e9a23bb011e0137342777dedc979eca1b4cda71f173ff46`.
+  Oracle mismatches are zero and Entry Geometry input-permutation equivalence
+  is true.
+- Published ordinary-fresh MI 1.2 publication
+  `2026-08-26T050254Z-6c60502e4473` and Snapshot 1.7 / Dashboard 2.4 release
+  `2026-08-26T053233Z-6c60502e4473`. Expected and actual session are both
+  2026-08-26, lag is zero, and review mode is false.
+- Built and deployed OCI release `2026-08-26T053233Z-6c60502e4473` from source
+  commit `6c60502e4473a7ee7512b720f71a135a665f2f34`. Dry-run, remote preflight,
+  Nginx checks, atomic apply, unauthenticated protection, and temporary guest
+  Session postflight passed. Password-based visual behavior remains a manual
+  user check.
+- Post-deployment full-source reconciliation reports 340 `/data` files /
+  156,415,379 bytes, no symlink or publication residue, and exact MI, Snapshot,
+  Candidate, Entry Geometry, bundle, and source-commit bindings.
+- Observed the heavy Candidate audit using roughly one logical CPU for about
+  30 minutes and reaching about 2.7 GiB RSS on the 8-core / 16-thread Dell.
+  Deterministic incremental processing, shared immutable panels, resumable
+  stages, and then bounded process parallelism are the next performance work;
+  provider requests retain their serial request gates.
+- The active Candidate payload is about 20.4 MB. Summary/detail separation,
+  compression, and on-demand loading are now explicit payload-efficiency work.
+
 ## 2026-08-27 — 2026-08-25 data and additive Candidate entry consumer
 
 - Published and formally reread same-day 2026-08-25 Identity and EOD through
