@@ -107,6 +107,36 @@ does not send a notification. Durable attempt and alert-delivery custody plus a
 default-disabled SMTP library adapter are described below; no real transport
 or notification command is installed.
 
+### 2026-08-27 real terminal-review state
+
+The 2026-08-27 EOD terminal event is bound by one immutable review recorded at
+2026-08-27T22:24:36.997840Z. Its `not_before` is
+2026-08-28T16:00:00Z. Before that instant, the formal offline state is
+`waiting_to_retry` / `wait` with
+`operator_review_not_before_pending`. The review records zero requests and
+zero Production writes and explicitly reports
+`fetch_authorized_by_review=false`.
+
+The boundary uses the following public evidence:
+
+- Massive documents the Grouped Daily endpoint as included across Stocks
+  plans and Stocks Basic as end-of-day, but publishes no exact stable REST
+  release minute:
+  <https://massive.com/docs/rest/stocks/aggregates/daily-market-summary>
+- The Stocks plan page describes Basic as end-of-day:
+  <https://massive.com/pricing?product=stocks>
+- Separate Stocks flat-file documentation says finalized daily flat files are
+  generally available around 11:00 ET on the following day:
+  <https://massive.com/docs/flat-files/stocks/overview?assetClass=stocks&license=personal&name=stocks_basic>
+
+The selected 12:00 ET next-day boundary adds one hour to that approximate
+flat-file time. This is a stability-first operator inference, not a statement
+that the Basic plan includes flat files, not a REST service-level guarantee,
+and not proof that the 2026-08-27 REST dataset is complete. At or after the
+boundary, first rerun the offline readiness check. A real request still needs
+a separate exact fetch-authorization review and valid exact-revision external
+controls.
+
 ## Provider-attempt custody
 
 Custody uses the same pre-provisioned Dell run root, global lock, and
@@ -617,6 +647,8 @@ formally ended `permanent_failure`, leaving package, staging, approval plan,
 and canonical EOD targets absent. The old 1.0 terminal did not retain the
 numeric HTTP status. No retry, EOD Apply, analytics calculation, publication,
 deployment, notification, or scheduler activation followed.
-ADR 0047's plan-aware readiness and operator-review path are repository-tested
-only. No real review event was appended, the old status remains unknown, and
-no retry authority exists.
+ADR 0047's plan-aware readiness and operator-review path are repository-tested.
+One real offline review event was appended for the exact old terminal and set
+a conservative 2026-08-28T16:00:00Z boundary. Its legacy HTTP status remains
+unknown, the current state is `waiting_to_retry`, and the review grants no
+retry authority.

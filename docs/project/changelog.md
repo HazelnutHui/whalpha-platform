@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-27 — Real EOD terminal review recorded without retry
+
+- Reviewed public Massive plan and endpoint documentation plus the local
+  exact-date `adjusted=false` adapter and immutable run journal. The evidence
+  supports Stocks Basic EOD access and correct local endpoint construction but
+  does not establish an exact same-day REST publication minute or the unknown
+  HTTP status from the legacy failure event.
+- Appended exactly one offline terminal-failure review bound to terminal event
+  `cb8cf64d212fe5da269e7936eb18b7f2a354962db27dfd8fd127760f7cfee297`.
+  Review event fingerprint is
+  `83b641f17c3897544f6c1a962add51f27d7e63b9097825618a7c70db2de01489`;
+  logical review fingerprint is
+  `61a5c1b559b83d10f15dd675910eee7f657980d1523e50fedae9dde03ca1a499`.
+- Selected the conservative `not_before=2026-08-28T16:00:00Z`, one hour after
+  the provider's approximate next-day 11:00 ET flat-file completion guidance.
+  That separate flat-file guidance is operational evidence only, not a
+  Grouped Daily REST availability guarantee.
+- Formal offline reread returned `waiting_to_retry` / `wait` with reason
+  `operator_review_not_before_pending`, one attempt, one review, no alert, zero
+  external requests, and zero Production writes. Package and staging paths
+  remained absent. No credential access, fetch, retry, Apply, analytics,
+  publication, bundle, deployment, scheduler, or notification occurred.
+
 ## 2026-08-27 — Plan-aware EOD readiness and immutable operator review
 
 - Accepted ADR 0047 and advanced readiness to 1.1 with an explicit Massive
@@ -16,8 +39,10 @@
   records zero requests/writes and grants no fetch, Apply, scheduler,
   publication, or deployment authority.
 - Added plan-profile, wait/release, exact-failure binding, duplicate, legacy-
-  journal compatibility, redaction, and no-network tests. The real 2026-08-27
-  failure remains status-unknown; no review or retry was performed.
+  journal compatibility, redaction, and no-network tests. At implementation
+  time the real 2026-08-27 failure remained status-unknown and unreviewed; the
+  later bounded real review is recorded above. Its HTTP status is still
+  unknown and no retry has been performed.
 
 ## 2026-08-27 — First controlled data rehearsal and safe failure evidence
 

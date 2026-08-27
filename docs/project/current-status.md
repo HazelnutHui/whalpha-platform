@@ -71,6 +71,14 @@ and the static active payload does not dynamically rewrite its publication-
 time freshness metadata. The prior narrowly bound 2026-08-24 `stale_review`
 release remains historical evidence only; it did not weaken the normal gate.
 
+The exact failed EOD terminal now has one immutable offline operator review.
+The current readiness state is `waiting_to_retry` until
+2026-08-28T16:00:00Z, with one attempt, one review, no alert, zero external
+requests, and zero Production writes in the review decision. This boundary is
+a conservative operator choice, not a verified REST release time. It grants
+no provider-fetch authority; the old exact-revision Host Runtime and standing
+authorization are inactive after later commits.
+
 ## Market Regime
 
 - Primary: 57.8456, Balanced.
@@ -305,9 +313,10 @@ profile now requires an immutable, bounded operator availability review before
 a first current-session EOD request. A permanent/quality terminal can be
 released for exactly one later bounded fetch review only by an event tied to
 its exact terminal fingerprint. The review CLI is offline and grants no fetch,
-Apply, scheduler, publication, or deployment authority. It has not been used
-on the real 2026-08-27 terminal; its status remains unknown and no retry is
-authorized.
+Apply, scheduler, publication, or deployment authority. It has now appended
+one real review tied to the exact 2026-08-27 terminal. Readiness remains
+`waiting_to_retry` until 2026-08-28T16:00:00Z and no retry is authorized by
+the review itself; the legacy HTTP status remains unknown.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky

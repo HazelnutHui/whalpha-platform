@@ -234,10 +234,22 @@ requires an immutable operator review and bounded `not_before`. Journal 1.3's
 reader is repository-tested against immutable 1.2 event bytes and can append a
 standalone review bound to the exact prior terminal fingerprint. This repository-only
 path performs and authorizes no fetch, Apply, scheduler, publication, or
-deployment. It has not been invoked against the real run root: the 2026-08-27
-status remains unknown, no operator review exists, and no retry is authorized.
-The source change also keeps the old `c3af030` Host Runtime and standing
-authorization inactive by exact-revision mismatch.
+deployment. At 2026-08-27T22:24:36.997840Z, the offline command appended one
+real terminal-failure review bound to event fingerprint
+`cb8cf64d212fe5da269e7936eb18b7f2a354962db27dfd8fd127760f7cfee297`.
+The review event fingerprint is
+`83b641f17c3897544f6c1a962add51f27d7e63b9097825618a7c70db2de01489`
+and its logical review fingerprint is
+`61a5c1b559b83d10f15dd675910eee7f657980d1523e50fedae9dde03ca1a499`.
+It records `authorize_one_fetch_after` with `not_before=2026-08-28T16:00:00Z`.
+A subsequent offline reread returned `waiting_to_retry` / `wait`, reason
+`operator_review_not_before_pending`, one attempt, one review, no alert, zero
+external requests, and zero Production writes. The time is a conservative
+operator boundary inferred from public plan/endpoint documentation and the
+provider's separate next-day flat-file completion guidance; it is not a
+Grouped Daily REST release guarantee or a provider-completeness assertion.
+The review does not itself authorize a fetch. The old `c3af030` Host Runtime
+and standing authorization also remain inactive by exact-revision mismatch.
 
 ## Analytics and presentation
 
