@@ -12,7 +12,10 @@
   email omission.
 - A read-only Dell check at 20:18Z selected 2026-08-27
   `prepare_identity_catchup` but remained in the stabilization window until
-  20:30Z. Daily run/alert roots and a matching user timer were absent.
+  20:30Z. The network-free check at exactly 20:30Z then returned only
+  `ready_for_fetch_review` / `review_fetch_authorization`, with zero attempts,
+  requests, or writes. Daily run/alert roots and a matching user timer were
+  absent.
 - An in-memory Host/authorization candidate was not written and no credential,
   network request, canonical write, external config, service, timer, email,
   publication, deployment, or scheduler state was created or changed.

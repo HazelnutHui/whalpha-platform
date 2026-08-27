@@ -260,10 +260,12 @@ remain separate explicit approvals.
 
 The 2026-08-27 20:18Z read-only Dell check found latest canonical Identity/EOD
 at 2026-08-26 and selected `prepare_identity_catchup` for 2026-08-27. Readiness
-was still in the post-close stabilization window until 20:30Z. No daily run
-root, alert root, matching user timer, external Host Runtime, or standing
-authorization was installed; no credential, network request, or write was
-performed.
+was still in the post-close stabilization window until 20:30Z. A second
+network-free check at exactly 20:30Z advanced only to
+`ready_for_fetch_review` / `review_fetch_authorization`, with zero attempts,
+requests, and writes. No daily run root, alert root, matching user timer,
+external Host Runtime, or standing authorization was installed; no credential,
+provider fetch, or write was performed.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky
