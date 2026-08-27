@@ -16,6 +16,7 @@ from tip_api.contracts.analytics.v1 import (
     REVIEW_ACKNOWLEDGEMENT,
     MarketIntelligenceApprovalPlanV1,
     MarketIntelligenceApprovalPlanV1_1,
+    MarketIntelligenceApprovalPlanV1_2,
     ReviewDeploymentAuthorizationV1,
     approved_review_authorization,
 )
@@ -54,6 +55,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--phase1b-audit", type=Path)
     parser.add_argument("--phase2-audit", type=Path)
     parser.add_argument("--candidate-audit", type=Path)
+    parser.add_argument("--entry-geometry-audit", type=Path)
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--approval-package", type=Path)
     parser.add_argument("--publication-id")
@@ -152,6 +154,7 @@ def _plan(args: argparse.Namespace) -> int:
         phase1b_audit_path=args.phase1b_audit,
         phase2_audit_path=args.phase2_audit,
         candidate_audit_path=args.candidate_audit,
+        entry_geometry_audit_path=args.entry_geometry_audit,
         candidate_path=candidate,
         review_deployment=review,
     )
@@ -164,6 +167,7 @@ def _plan(args: argparse.Namespace) -> int:
         phase1b_audit_path=args.phase1b_audit,
         phase2_audit_path=args.phase2_audit,
         candidate_audit_path=args.candidate_audit,
+        entry_geometry_audit_path=args.entry_geometry_audit,
         expected_current_state_fingerprint=args.expected_current_state_fingerprint,
         expected_latest_completed_session=freshness.expected_latest_completed_session,
         actual_latest_completed_session=freshness.actual_latest_completed_session,
@@ -258,6 +262,7 @@ def _require_approved_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.phase1b_audit,
         args.phase2_audit,
         args.candidate_audit,
+        args.entry_geometry_audit,
         args.output_root,
         args.approval_package,
         args.publication_id,
@@ -284,6 +289,7 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.phase1b_audit,
         args.phase2_audit,
         args.candidate_audit,
+        args.entry_geometry_audit,
         args.output_root,
         args.approval_package,
         args.publication_id,
@@ -303,7 +309,7 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
 
 def _load_plan(
     path: Path, expected_sha256: str
-) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1:
+) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2:
     if (
         not path.is_absolute()
         or not path.resolve(strict=True).is_relative_to(Path("/tmp"))
@@ -320,11 +326,13 @@ def _load_plan(
         raise MarketIntelligencePublicationError("approved plan JSON is malformed") from exc
     if canonical_bytes(value) != raw:
         raise MarketIntelligencePublicationError("approved plan JSON is non-canonical")
-    plan_type = (
-        MarketIntelligenceApprovalPlanV1_1
-        if value.get("plan_version") == "1.1"
-        else MarketIntelligenceApprovalPlanV1
-    )
+    plan_type = {
+        "1.0": MarketIntelligenceApprovalPlanV1,
+        "1.1": MarketIntelligenceApprovalPlanV1_1,
+        "1.2": MarketIntelligenceApprovalPlanV1_2,
+    }.get(value.get("plan_version"))
+    if plan_type is None:
+        raise MarketIntelligencePublicationError("unsupported Market Intelligence plan version")
     plan = plan_type.model_validate(value)
     validate_plan(plan)
     return plan

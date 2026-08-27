@@ -4,26 +4,47 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections import Counter
+from collections import Counter, defaultdict
+from decimal import ROUND_FLOOR, Decimal
 from pathlib import Path
 from typing import Any
 
 from tip_api.contracts.analytics.v1 import (
     CandidateOpportunityStage,
+    CandidateEntryGeometryBatchV1,
+    CandidateEntryGeometryV1,
+    CandidateEntryLane,
+    CandidateEntryLanePublicationV1,
+    CandidateEntryReviewPosture,
     CandidatePublicationEvidenceV1,
     CandidatePublicationStateV1,
     CandidateRiskDispositionV1,
     CandidateRiskMode,
     CandidateRiskModePublicationV1,
+    CandidateRiskModeEntryPublicationV1,
     CandidateRiskModeResultV1,
     OpportunityCandidateBatchV1,
     OpportunityCandidatePublicationItemV1,
+    OpportunityCandidatePublicationItemV1_1,
     OpportunityCandidatePublicationSourceV1,
+    OpportunityCandidatePublicationSourceV1_1,
     OpportunityCandidatePublicationV1,
+    OpportunityCandidatePublicationV1_1,
     OpportunityCandidateStateRecordV1,
     OpportunityCandidateUniversePublicationV1,
+    OpportunityCandidateUniversePublicationV1_1,
+)
+from tip_api.parameters.market_regime import (
+    ENTRY_LANE_CONSUMER_CONTRACT_VERSION,
+    ENTRY_LANE_CONSUMER_PARAMETER_FINGERPRINT,
+    ENTRY_LANE_CONSUMER_PARAMETER_SET_ID,
+    ENTRY_LANE_DISPLAY_CAPS,
+    SELECTION_LIMIT_REJECTION_CODES,
 )
 from tip_api.parameters.market_regime.candidate_v1_1_1 import RISK_MODE_PARAMETERS
+from tip_api.services.candidate_entry_geometry_audit import (
+    read_candidate_entry_geometry_audit,
+)
 from tip_api.services.opportunity_candidate_audit import read_opportunity_candidate_audit
 
 
@@ -33,7 +54,8 @@ class OpportunityCandidatePublicationError(RuntimeError):
 
 def build_opportunity_candidate_publication(
     audit_path: Path,
-) -> OpportunityCandidatePublicationV1:
+    entry_geometry_audit_path: Path | None = None,
+) -> OpportunityCandidatePublicationV1 | OpportunityCandidatePublicationV1_1:
     """Reread one immutable audit and project only bounded, current-session product facts."""
 
     manifest = read_opportunity_candidate_audit(audit_path)
@@ -74,6 +96,33 @@ def build_opportunity_candidate_publication(
         if len(rows) != len(state_by_universe[universe_id]):
             raise OpportunityCandidatePublicationError("Candidate state stable IDs are duplicated")
 
+    entry_manifest = None
+    entry_by_universe: dict[str, CandidateEntryGeometryBatchV1] = {}
+    if entry_geometry_audit_path is not None:
+        entry_manifest = read_candidate_entry_geometry_audit(entry_geometry_audit_path)
+        if (
+            entry_manifest["as_of_session"] != as_of_session
+            or tuple(entry_manifest["universe_ids"]) != universe_order
+            or entry_manifest["source"]["candidate_audit_logical_fingerprint"]
+            != manifest["logical_content_fingerprint"]
+            or entry_manifest["source"]["candidate_audit_manifest_sha256"]
+            != _sha256(audit_path / "candidate-audit-manifest.json")
+        ):
+            raise OpportunityCandidatePublicationError(
+                "entry-geometry audit does not bind the exact Candidate audit"
+            )
+        entry_batches = tuple(
+            CandidateEntryGeometryBatchV1.model_validate(row)
+            for row in _artifact(
+                entry_geometry_audit_path, "entry-geometry-batches.json"
+            )["records"]
+        )
+        entry_by_universe = {row.universe_id: row for row in entry_batches}
+        if tuple(entry_by_universe) != universe_order:
+            raise OpportunityCandidatePublicationError(
+                "entry-geometry audit Universe order differs"
+            )
+
     universe_sources = {row["universe_id"]: row for row in current_panel["universes"]}
     publications = tuple(
         _universe_publication(
@@ -81,11 +130,12 @@ def build_opportunity_candidate_publication(
             states=state_by_universe[universe_id],
             risks={mode: risk_by_key[(universe_id, mode)] for mode in CandidateRiskMode},
             membership_fingerprint=universe_sources[universe_id]["membership_fingerprint"],
+            entry_batch=entry_by_universe.get(universe_id),
         )
         for universe_id in universe_order
     )
     flags = manifest["equivalence_flags"]
-    source = OpportunityCandidatePublicationSourceV1(
+    source_fields = dict(
         candidate_audit_manifest_sha256=_sha256(audit_path / "candidate-audit-manifest.json"),
         candidate_audit_logical_fingerprint=manifest["logical_content_fingerprint"],
         candidate_history_fingerprint=manifest["candidate_history_fingerprint"],
@@ -114,9 +164,37 @@ def build_opportunity_candidate_publication(
         current_candidate_batch_fingerprints=tuple(row.logical_fingerprint for row in batches),
         current_risk_result_fingerprints=tuple(row.logical_fingerprint for row in risks),
     )
+    source = (
+        OpportunityCandidatePublicationSourceV1_1(
+            **source_fields,
+            entry_geometry_audit_manifest_sha256=_sha256(
+                entry_geometry_audit_path / "entry-geometry-audit-manifest.json"
+            ),
+            entry_geometry_audit_logical_fingerprint=entry_manifest[
+                "logical_content_fingerprint"
+            ],
+            entry_geometry_contract_version=entry_manifest["contract_version"],
+            entry_geometry_calculation_version=entry_manifest["calculation_version"],
+            entry_geometry_parameter_set_id=entry_manifest["parameter_set_id"],
+            entry_geometry_parameter_fingerprint=entry_manifest["parameter_fingerprint"],
+            entry_geometry_oracle_mismatch_count=entry_manifest["oracle_mismatch_count"],
+            entry_geometry_input_permutation_match=entry_manifest["input_permutation_match"],
+            entry_geometry_batch_fingerprints=tuple(entry_manifest["batch_fingerprints"]),
+            entry_lane_consumer_contract_version=ENTRY_LANE_CONSUMER_CONTRACT_VERSION,
+            entry_lane_consumer_parameter_set_id=ENTRY_LANE_CONSUMER_PARAMETER_SET_ID,
+            entry_lane_consumer_parameter_fingerprint=ENTRY_LANE_CONSUMER_PARAMETER_FINGERPRINT,
+        )
+        if entry_manifest is not None and entry_geometry_audit_path is not None
+        else OpportunityCandidatePublicationSourceV1(**source_fields)
+    )
+    has_entry = entry_manifest is not None
     body: dict[str, Any] = {
         "schema_version": "1.0",
-        "contract_version": "opportunity-candidate-publication/1.0",
+        "contract_version": (
+            "opportunity-candidate-publication/1.1"
+            if has_entry
+            else "opportunity-candidate-publication/1.0"
+        ),
         "as_of_session": as_of_session,
         "default_universe_id": universe_order[0],
         "universe_order": universe_order,
@@ -133,9 +211,21 @@ def build_opportunity_candidate_publication(
             "research_candidate_not_trade_recommendation",
             "underlying_stock_result_not_option_return",
             "price_volume_proxies_not_fund_flow",
+            *(("entry_location_separate_from_leadership_rank",) if has_entry else ()),
+            *(("entry_lane_not_trade_recommendation",) if has_entry else ()),
+            *(("reference_support_not_stop_price",) if has_entry else ()),
         ),
     }
-    return OpportunityCandidatePublicationV1(
+    publication_type = (
+        OpportunityCandidatePublicationV1_1 if has_entry else OpportunityCandidatePublicationV1
+    )
+    if has_entry:
+        body.update(
+            leadership_rank_preserved=True,
+            entry_location_separate_from_leadership=True,
+            reference_support_not_stop_price=True,
+        )
+    return publication_type(
         **body,
         logical_fingerprint=_fingerprint(body),
     )
@@ -147,7 +237,8 @@ def _universe_publication(
     states: dict[str, OpportunityCandidateStateRecordV1],
     risks: dict[CandidateRiskMode, CandidateRiskModeResultV1],
     membership_fingerprint: str,
-) -> OpportunityCandidateUniversePublicationV1:
+    entry_batch: CandidateEntryGeometryBatchV1 | None,
+) -> OpportunityCandidateUniversePublicationV1 | OpportunityCandidateUniversePublicationV1_1:
     if batch.membership_fingerprint != membership_fingerprint:
         raise OpportunityCandidatePublicationError("Candidate membership source differs")
     score_by_id = {str(row.instrument_id): row for row in batch.candidates}
@@ -159,6 +250,21 @@ def _universe_publication(
         raise OpportunityCandidatePublicationError("Candidate risk assessment population differs")
     if not set(score_by_id).issubset(states):
         raise OpportunityCandidatePublicationError("Candidate current state population is incomplete")
+    entry_by_id: dict[str, CandidateEntryGeometryV1] = {}
+    if entry_batch is not None:
+        if (
+            entry_batch.as_of_session != batch.as_of_session
+            or entry_batch.universe_id != batch.universe_id
+            or entry_batch.source_candidate_batch_fingerprint != batch.logical_fingerprint
+        ):
+            raise OpportunityCandidatePublicationError(
+                "entry-geometry batch does not bind the Candidate batch"
+            )
+        entry_by_id = {str(row.instrument_id): row for row in entry_batch.records}
+        if set(entry_by_id) != set(score_by_id):
+            raise OpportunityCandidatePublicationError(
+                "entry-geometry population differs from Candidate scores"
+            )
 
     caps = {row.risk_mode: row.candidate_display_cap for row in RISK_MODE_PARAMETERS}
     mode_publications: list[CandidateRiskModePublicationV1] = []
@@ -191,11 +297,29 @@ def _universe_publication(
         }
         and instrument_id in score_by_id
     )
+    entry_mode_publications: tuple[CandidateRiskModeEntryPublicationV1, ...] = ()
+    if entry_batch is not None:
+        entry_mode_publications = tuple(
+            _entry_mode_publication(
+                mode=mode,
+                assessments=assessment_by_mode[mode],
+                scores=score_by_id,
+                geometries=entry_by_id,
+            )
+            for mode in CandidateRiskMode
+        )
+        included.update(
+            str(instrument_id)
+            for result in entry_mode_publications
+            for lane in result.lanes
+            for instrument_id in lane.displayed_instrument_ids
+        )
     cards = tuple(
         _candidate_item(
             score_by_id[instrument_id],
             states[instrument_id],
             tuple(assessment_by_mode[mode][instrument_id] for mode in CandidateRiskMode),
+            entry_by_id.get(instrument_id),
         )
         for instrument_id in sorted(included)
     )
@@ -204,7 +328,7 @@ def _universe_publication(
         state.final_stage.value if state.final_stage is not None else "unavailable"
         for state in states.values()
     )
-    return OpportunityCandidateUniversePublicationV1(
+    fields = dict(
         universe_id=batch.universe_id,
         universe_member_count=batch.universe_member_count,
         membership_fingerprint=batch.membership_fingerprint,
@@ -216,9 +340,17 @@ def _universe_publication(
         candidates=cards,
         candidate_batch_logical_fingerprint=batch.logical_fingerprint,
     )
+    if entry_batch is not None:
+        return OpportunityCandidateUniversePublicationV1_1(
+            **fields,
+            entry_risk_modes=entry_mode_publications,
+        )
+    return OpportunityCandidateUniversePublicationV1(**fields)
 
 
-def _candidate_item(score, state, assessments) -> OpportunityCandidatePublicationItemV1:
+def _candidate_item(
+    score, state, assessments, entry_geometry: CandidateEntryGeometryV1 | None
+) -> OpportunityCandidatePublicationItemV1 | OpportunityCandidatePublicationItemV1_1:
     if (
         score.instrument_id != state.instrument_id
         or score.ticker != state.ticker
@@ -229,7 +361,7 @@ def _candidate_item(score, state, assessments) -> OpportunityCandidatePublicatio
     evidence = tuple(
         _evidence(value, "supporting") for value in score.supporting_evidence
     ) + tuple(_evidence(value, "counterevidence") for value in score.counterevidence)
-    return OpportunityCandidatePublicationItemV1(
+    fields = dict(
         instrument_id=score.instrument_id,
         ticker=score.ticker,
         security_type=score.security_type,
@@ -277,6 +409,95 @@ def _candidate_item(score, state, assessments) -> OpportunityCandidatePublicatio
             for row in assessments
         ),
         score_logical_fingerprint=score.logical_fingerprint,
+    )
+    if entry_geometry is not None:
+        return OpportunityCandidatePublicationItemV1_1(
+            **fields,
+            entry_geometry=entry_geometry,
+        )
+    return OpportunityCandidatePublicationItemV1(**fields)
+
+
+def _entry_mode_publication(
+    *, mode: CandidateRiskMode, assessments, scores, geometries
+) -> CandidateRiskModeEntryPublicationV1:
+    risk_parameter = next(row for row in RISK_MODE_PARAMETERS if row.risk_mode == mode.value)
+    cap = ENTRY_LANE_DISPLAY_CAPS[mode.value]
+    maximum_per_group = max(
+        1,
+        int(
+            (Decimal(cap) * Decimal(risk_parameter.concentration_cap)).to_integral_value(
+                rounding=ROUND_FLOOR
+            )
+        ),
+    )
+    qualified = {
+        instrument_id
+        for instrument_id, row in assessments.items()
+        if row.eligible
+        or (
+            row.rejection_reason_codes
+            and set(row.rejection_reason_codes).issubset(SELECTION_LIMIT_REJECTION_CODES)
+        )
+    }
+    lane_members: dict[CandidateEntryLane, list[str]] = defaultdict(list)
+    for instrument_id in qualified:
+        lane_members[_entry_lane(geometries[instrument_id])].append(instrument_id)
+    lanes = []
+    for lane in CandidateEntryLane:
+        ordered = sorted(lane_members[lane], key=lambda value: _leadership_key(scores[value]))
+        displayed: list[str] = []
+        group_counts: dict[str, int] = defaultdict(int)
+        for instrument_id in ordered:
+            score = scores[instrument_id]
+            group = (
+                str(score.primary_driver_instrument_id)
+                if score.primary_driver_instrument_id is not None
+                else "unclassified"
+            )
+            if len(displayed) >= cap:
+                break
+            if group_counts[group] >= maximum_per_group:
+                continue
+            displayed.append(instrument_id)
+            group_counts[group] += 1
+        lanes.append(
+            CandidateEntryLanePublicationV1(
+                lane=lane,
+                qualifying_count=len(ordered),
+                display_cap=cap,
+                displayed_instrument_ids=tuple(displayed),
+            )
+        )
+    body = {
+        "risk_mode": mode.value,
+        "hard_risk_gate_qualified_count": len(qualified),
+        "lanes": [row.model_dump(mode="json") for row in lanes],
+    }
+    return CandidateRiskModeEntryPublicationV1(
+        **body,
+        logical_fingerprint=_fingerprint(body),
+    )
+
+
+def _entry_lane(geometry: CandidateEntryGeometryV1) -> CandidateEntryLane:
+    mapping = {
+        CandidateEntryReviewPosture.TECHNICAL_REVIEW_READY: CandidateEntryLane.REVIEW_NOW,
+        CandidateEntryReviewPosture.MONITOR_FOR_TRIGGER: CandidateEntryLane.WATCH_TRIGGER,
+        CandidateEntryReviewPosture.WAIT_FOR_RESET: CandidateEntryLane.WAIT_RESET,
+        CandidateEntryReviewPosture.DEPRIORITIZED: CandidateEntryLane.OTHER_RESEARCH,
+        CandidateEntryReviewPosture.NOT_ASSESSABLE: CandidateEntryLane.OTHER_RESEARCH,
+    }
+    return mapping[geometry.review_posture]
+
+
+def _leadership_key(score) -> tuple[Decimal, Decimal, Decimal, str, str]:
+    return (
+        -Decimal(score.base_score or "-1"),
+        -Decimal(score.confidence.confidence),
+        -Decimal(score.median_dollar_volume_20 or "0"),
+        score.ticker,
+        str(score.instrument_id),
     )
 
 

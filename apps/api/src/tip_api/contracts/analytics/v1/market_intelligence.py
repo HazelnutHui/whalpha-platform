@@ -17,13 +17,16 @@ from .market_regime_preview import (
 from .review_deployment import ReviewDeploymentAuthorizationV1
 from .opportunity_candidate_publication import (
     OpportunityCandidatePublicationSourceV1,
+    OpportunityCandidatePublicationSourceV1_1,
     OpportunityCandidatePublicationV1,
+    OpportunityCandidatePublicationV1_1,
 )
 
 
 MARKET_INTELLIGENCE_SCHEMA_VERSION = "1.0"
 MARKET_INTELLIGENCE_CONTRACT_VERSION = "market-intelligence-publication/1.0"
 MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_1 = "market-intelligence-publication/1.1"
+MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_2 = "market-intelligence-publication/1.2"
 MARKET_INTELLIGENCE_POINTER_VERSION = "1.0"
 MARKET_INTELLIGENCE_PLAN_VERSION = "1.0"
 MARKET_INTELLIGENCE_REVISION = "market-regime-opportunity-map-v1"
@@ -189,6 +192,16 @@ class MarketIntelligencePayloadV1_1(MarketIntelligencePayloadV1):
         return self
 
 
+class MarketIntelligencePayloadV1_2(MarketIntelligencePayloadV1_1):
+    """Market Intelligence 1.2 binds entry geometry and lane selection."""
+
+    contract_version: Literal["market-intelligence-publication/1.2"] = (
+        MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_2
+    )
+    candidate_source: OpportunityCandidatePublicationSourceV1_1
+    candidate_analytics: OpportunityCandidatePublicationV1_1
+
+
 class MarketIntelligenceManifestV1(FrozenModel):
     schema_version: Literal["1.0"] = MARKET_INTELLIGENCE_SCHEMA_VERSION
     contract_version: Literal["market-intelligence-publication/1.0"] = (
@@ -246,6 +259,23 @@ class MarketIntelligenceManifestV1_1(MarketIntelligenceManifestV1):
     @field_validator("candidate_analytics_logical_fingerprint")
     @classmethod
     def candidate_digest(cls, value: str) -> str:
+        return _sha(value)
+
+
+class MarketIntelligenceManifestV1_2(MarketIntelligenceManifestV1_1):
+    contract_version: Literal["market-intelligence-publication/1.2"] = (
+        MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_2
+    )
+    candidate_source: OpportunityCandidatePublicationSourceV1_1
+    entry_geometry_audit_logical_fingerprint: str
+    entry_lane_consumer_parameter_fingerprint: str
+
+    @field_validator(
+        "entry_geometry_audit_logical_fingerprint",
+        "entry_lane_consumer_parameter_fingerprint",
+    )
+    @classmethod
+    def entry_digests(cls, value: str) -> str:
         return _sha(value)
 
 
@@ -466,6 +496,36 @@ class MarketIntelligenceApprovalPlanV1_1(MarketIntelligenceApprovalPlanV1):
     @field_validator("candidate_analytics_logical_fingerprint")
     @classmethod
     def candidate_fingerprint(cls, value: str) -> str:
+        return _sha(value)
+
+
+class MarketIntelligenceApprovalPlanV1_2(MarketIntelligenceApprovalPlanV1_1):
+    """Approval plan that also freezes the entry-geometry audit consumer."""
+
+    plan_version: Literal["1.2"] = "1.2"
+    entry_geometry_audit_path: str
+    candidate_source: OpportunityCandidatePublicationSourceV1_1
+    entry_geometry_audit_logical_fingerprint: str
+    entry_lane_consumer_parameter_fingerprint: str
+
+    @field_validator("entry_geometry_audit_path")
+    @classmethod
+    def entry_geometry_tmp_source_path(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if (
+            not path.is_absolute()
+            or not path.is_relative_to(PurePosixPath("/tmp"))
+            or ".." in path.parts
+        ):
+            raise ValueError("entry-geometry audit path must be a normalized absolute /tmp path")
+        return value
+
+    @field_validator(
+        "entry_geometry_audit_logical_fingerprint",
+        "entry_lane_consumer_parameter_fingerprint",
+    )
+    @classmethod
+    def entry_fingerprints(cls, value: str) -> str:
         return _sha(value)
 
 

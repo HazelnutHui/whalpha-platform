@@ -2,8 +2,11 @@
 
 ## Status and purpose
 
-Implemented as an offline shadow calculation and canonical `/tmp` audit. It is
-not published, served by Snapshot, rendered in the frontend, or deployed.
+Implemented as an offline source calculation and canonical `/tmp` audit. The
+source remains separate from Candidate leadership and is never written into
+`/data`. An additive, versioned consumer is implemented in repository source
+through Candidate publication 1.1, MI 1.2, Snapshot 1.7 / Dashboard 2.4, and
+the frontend; whether it is active must be checked in Current Context.
 
 Contract `candidate-entry-geometry/1.0` supplements the deployed Candidate
 leadership score. It measures technical entry location and chase risk without
@@ -100,3 +103,14 @@ The manifest fixes `shadow_only=true`, `external_request_count=0`, and
 `production_write_count=0`. The independent Oracle repeats raw price-location
 and classification calculations without importing the production calculator
 and requires zero mismatch plus input-permutation equivalence.
+
+## Additive lane consumer
+
+`candidate-entry-lane-consumer/1.0` with parameter set
+`candidate-entry-lane-consumer-v1-fixed-baseline-1` projects the full
+hard-risk-qualified population into fixed `review_now`, `watch_trigger`,
+`wait_reset`, and `other_research` lanes. Each lane has a display cap of eight
+and reuses Candidate issuer/industry concentration limits. It does not change
+the base score, state, eligibility, or original formal rank. The publication
+binds the entry audit manifest, logical fingerprint, parameter/Oracle/batch
+fingerprints, and the lane-consumer parameter fingerprint.

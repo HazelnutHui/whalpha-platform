@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Verified at: 2026-08-26 UTC
+Verified at: 2026-08-27 UTC
 
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
@@ -26,18 +26,20 @@ recorded by a deployed bundle.
 
 ## Formal local state
 
-The 2026-08-26 post-deployment reconciliation used the project readers and
-reread the active custody/contracts. The MI 1.1 plan and apply independently
-reread the complete Regime and Candidate source chain before activation.
+The 2026-08-27 reconciliation used the project readers after the separately
+approved 2026-08-25 Identity/EOD publication. It reread the full local
+inventory and active custody/contracts. The active Production MI/Snapshot is
+still the older 2026-08-24 review release; the verified 2026-08-25 analytics
+below are local `/tmp` evidence until a new publication is separately applied.
 
 | Boundary | Active verified value |
 | --- | --- |
-| Canonical EOD | 27 sessions, 2026-07-17 through 2026-08-24 |
-| Latest EOD | 2026-08-24, 9,942 rows |
-| EOD content fingerprint | `fd9ae8083442ea45a22a2c01f69c1b5eed5d471e31fcdc163468f2220f7be63a` |
-| EOD Parquet SHA-256 | `1a1a1b4b8c4474e0319788ae41f5251278ea9dd353b61c0e8e1c9dcb419f32a7` |
-| Same-day Identity | 9,968 instruments / 13,131 provider identities / 9,968 resolvers |
-| Identity logical fingerprint | `d68832d2c1f3ee0f9d5486eb615cc7a9aac1dc890d7339a4d57455a194277de1` |
+| Canonical EOD | 28 sessions, 2026-07-17 through 2026-08-25 |
+| Latest EOD | 2026-08-25, 9,954 rows |
+| EOD content fingerprint | `48a2160a15d611e0fca42a8ad95128f0051e2a7fe29c9574141a1209ac7ff5ff` |
+| EOD Parquet SHA-256 | `99ac16444ddc67daf0751b6843b4b2d7218fb024e33a68fd5a96dacd6339d8ad` |
+| Same-day Identity | 9,974 instruments / 13,141 provider identities / 9,974 resolvers |
+| Identity logical fingerprint | `2d23e6f0b5a29273d6aef5677384268c96f0fb435a7f92eb73a7863d637951f7` |
 | Activation analysis session | 2026-08-19 |
 | Activation pointer fingerprint | `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168` |
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
@@ -50,9 +52,10 @@ reread the complete Regime and Candidate source chain before activation.
 | Dashboard Snapshot | `2026-08-24T144500Z-1f3eb5512eb0` |
 | Contracts | Snapshot 1.6 / Dashboard 2.3 |
 | Snapshot pointer fingerprint | `223ae10170097dcfef9f9352c997a96bdc9200f75232a8f23a22db1b354bf334` |
-| Data status | `stale_review`: actual 2026-08-24, expected 2026-08-25, lag one |
-| `/data` inventory | 312 files / 107,298,545 bytes |
-| `/data` inventory fingerprint | `1f9c469663616c527e1809f509d9f728d0111fc35d75a643d85c0bb52ea39e36` |
+| Active review metadata | `stale_review`: actual 2026-08-24, then-expected 2026-08-25, lag one |
+| Current local freshness gate | `stale`: actual 2026-08-25, expected 2026-08-26, lag one |
+| `/data` inventory | 321 files / 110,607,400 bytes |
+| `/data` inventory fingerprint | `6163b94714419a9421ac8271d0d26aeccbe6e5cfcfe6e169224d40aeec63c069` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -84,15 +87,33 @@ Tailscale listeners were present.
 - The active MI 1.1 payload contains 146 Primary / 155 Secondary
   display-review cards; Snapshot 1.6 / Dashboard 2.3 serves the same bounded
   Candidate file of about 5.14 MB.
-- Candidate Entry Geometry V1 is an additive offline shadow only. Its formal
-  2026-08-24 audit is
+- Candidate Entry Geometry V1 remains a separate, immutable source calculation.
+  Its original formal 2026-08-24 audit is
   `/tmp/whalpha-candidate-entry-baseline1-20260824`, fingerprint
   `6b013f948d5c6d1011cab0685f661907739b77f1cd1fbfa4307d4789a8638bee`,
   with zero independent-Oracle mismatch and input-permutation equivalence. It
-  does not alter active Candidate score/state/rank or any `/data`, MI, Snapshot,
-  frontend, bundle, or OCI artifact. Primary Balanced top 50 contains 41
+  does not alter active Candidate score/state/rank. Primary Balanced top 50 contains 41
   wait-for-reset high/extreme extensions, two technical-review-ready rows, four
   breakout watches, and three no-viable-setup rows.
+- A new additive consumer is implemented and locally verified but not yet
+  active in Production: Candidate publication 1.1, MI 1.2, Snapshot 1.7 /
+  Dashboard 2.4, and the bilingual entry-location view. It preserves formal
+  leadership rank and selects fixed `review_now`, `watch_trigger`,
+  `wait_reset`, and `other_research` lanes from the complete hard-risk-qualified
+  population under the existing concentration caps.
+- The verified 2026-08-25 Candidate audit is
+  `/tmp/whalpha-candidate-phase5c-20260825.AGE0pk`, fingerprint
+  `32c0647ae18e165052a4fdb5ea00a0ae7f3cec5306daecdc4360ef7de829e626`.
+  The bound entry audit is
+  `/tmp/whalpha-candidate-entry-20260825.LpjkWN`, fingerprint
+  `3875872f719537170f17aab04b0715c86ffb67259f75adf0ee796b4a8f0c182b`.
+  Both have zero Oracle mismatch, zero network/Production writes, and passed
+  their formal reread; entry input-permutation equivalence is true.
+- On 2026-08-25 Primary Balanced, the complete hard-qualified population is
+  1,282: 52 `review_now`, 1,096 `watch_trigger`, 125 `wait_reset`, and nine
+  `other_research`. Each lane has an eight-card cap; concentration rules can
+  yield fewer cards. The resulting local Candidate publication 1.1 fingerprint
+  is `025953284275b478d5f71f6974fd34faf197902bb9104ae513c4d525b3434df0`.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

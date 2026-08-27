@@ -83,3 +83,17 @@ requires the Candidate file and cross-checks its Market Intelligence and audit
 lineage; deployment postflight gives a temporary guest Session the same
 Candidate resource as a credential Session, then logs out and reconfirms the
 unauthenticated boundary.
+
+## Contract 1.7 entry-location extension
+
+Snapshot 1.7 pairs Dashboard 2.4 with Market Intelligence 1.2 and Candidate
+publication 1.1. It retains the exact file set introduced by Snapshot 1.6, but
+upgrades the Candidate envelope to `opportunity-candidate-snapshot/1.1` and
+adds manifest/plan bindings for the entry contract, audit logical fingerprint,
+entry parameter fingerprint, and lane-consumer parameter fingerprint.
+
+The reader validates all nested bindings and fails closed on a mixed 1.0/1.1
+Candidate envelope, changed lane IDs/counts/order, or missing entry geometry.
+The OCI builder and deployment postflight accept and validate the 1.7/2.4 pair
+while retaining old 1.5/2.2 and 1.6/2.3 rollback compatibility. Freshness,
+approval, guest-equality, and no-demo boundaries are unchanged.

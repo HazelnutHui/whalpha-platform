@@ -21,12 +21,15 @@ from tip_api.contracts.analytics.v1 import (
     MarketIntelligenceActivationSourceV1,
     MarketIntelligenceApprovalPlanV1,
     MarketIntelligenceApprovalPlanV1_1,
+    MarketIntelligenceApprovalPlanV1_2,
     MarketIntelligenceEodSourceV1,
     MarketIntelligenceFileReferenceV1,
     MarketIntelligenceManifestV1,
     MarketIntelligenceManifestV1_1,
+    MarketIntelligenceManifestV1_2,
     MarketIntelligencePayloadV1,
     MarketIntelligencePayloadV1_1,
+    MarketIntelligencePayloadV1_2,
     MarketIntelligenceSourceBindingV1,
     MarketIntelligenceTargetReferenceV1,
     PreviewUniverseDefinitionV1,
@@ -85,8 +88,8 @@ class MarketIntelligenceUnavailable(MarketIntelligencePublicationError):
 @dataclass(frozen=True, slots=True)
 class CompletedMarketIntelligence:
     path: Path
-    manifest: MarketIntelligenceManifestV1 | MarketIntelligenceManifestV1_1
-    payload: MarketIntelligencePayloadV1 | MarketIntelligencePayloadV1_1
+    manifest: MarketIntelligenceManifestV1 | MarketIntelligenceManifestV1_1 | MarketIntelligenceManifestV1_2
+    payload: MarketIntelligencePayloadV1 | MarketIntelligencePayloadV1_1 | MarketIntelligencePayloadV1_2
     reference: MarketIntelligenceTargetReferenceV1
     pointer: MarketIntelligenceActivePointerV1 | None = None
 
@@ -143,6 +146,7 @@ def build_market_intelligence_candidate(
     phase2_audit_path: Path,
     candidate_path: Path,
     candidate_audit_path: Path | None = None,
+    entry_geometry_audit_path: Path | None = None,
     review_deployment: ReviewDeploymentAuthorizationV1 | None = None,
 ) -> CompletedMarketIntelligence:
     """Create one language-neutral candidate from explicit verified sources."""
@@ -156,8 +160,15 @@ def build_market_intelligence_candidate(
         phase1b_audit_path=phase1b_audit_path,
         phase2_audit_path=phase2_audit_path,
     )
+    if entry_geometry_audit_path is not None and candidate_audit_path is None:
+        raise MarketIntelligencePublicationError(
+            "entry-geometry publication requires the bound Candidate audit"
+        )
     candidate_analytics = (
-        build_opportunity_candidate_publication(candidate_audit_path)
+        build_opportunity_candidate_publication(
+            candidate_audit_path,
+            entry_geometry_audit_path,
+        )
         if candidate_audit_path is not None
         else None
     )
@@ -171,7 +182,13 @@ def build_market_intelligence_candidate(
         "logical_fingerprint": "0" * 64,
     }
     payload_candidate = (
-        MarketIntelligencePayloadV1_1(
+        MarketIntelligencePayloadV1_2(
+            **payload_fields,
+            candidate_source=candidate_analytics.source,
+            candidate_analytics=candidate_analytics,
+        )
+        if entry_geometry_audit_path is not None
+        else MarketIntelligencePayloadV1_1(
             **payload_fields,
             candidate_source=candidate_analytics.source,
             candidate_analytics=candidate_analytics,
@@ -228,8 +245,21 @@ def build_market_intelligence_candidate(
                 "candidate_secondary_display_count": len(candidate_analytics.universes[1].candidates),
             }
         )
+    if entry_geometry_audit_path is not None:
+        manifest_body.update(
+            {
+                "entry_geometry_audit_logical_fingerprint": (
+                    candidate_analytics.source.entry_geometry_audit_logical_fingerprint
+                ),
+                "entry_lane_consumer_parameter_fingerprint": (
+                    candidate_analytics.source.entry_lane_consumer_parameter_fingerprint
+                ),
+            }
+        )
     manifest_type = (
-        MarketIntelligenceManifestV1_1
+        MarketIntelligenceManifestV1_2
+        if entry_geometry_audit_path is not None
+        else MarketIntelligenceManifestV1_1
         if candidate_analytics is not None
         else MarketIntelligenceManifestV1
     )
@@ -415,6 +445,9 @@ def read_market_intelligence_release(
     elif contract_version == "market-intelligence-publication/1.1":
         payload = MarketIntelligencePayloadV1_1.model_validate(payload_json)
         manifest = MarketIntelligenceManifestV1_1.model_validate(manifest_json)
+    elif contract_version == "market-intelligence-publication/1.2":
+        payload = MarketIntelligencePayloadV1_2.model_validate(payload_json)
+        manifest = MarketIntelligenceManifestV1_2.model_validate(manifest_json)
     else:
         raise MarketIntelligencePublicationError(
             "unsupported Market Intelligence publication contract"
@@ -439,6 +472,16 @@ def read_market_intelligence_release(
         != manifest.candidate_secondary_display_count
     ):
         raise MarketIntelligencePublicationError("Market Intelligence Candidate custody mismatch")
+    if isinstance(payload, MarketIntelligencePayloadV1_2) and (
+        not isinstance(manifest, MarketIntelligenceManifestV1_2)
+        or payload.candidate_source.entry_geometry_audit_logical_fingerprint
+        != manifest.entry_geometry_audit_logical_fingerprint
+        or payload.candidate_source.entry_lane_consumer_parameter_fingerprint
+        != manifest.entry_lane_consumer_parameter_fingerprint
+    ):
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence entry-geometry custody mismatch"
+        )
     if canonical_fingerprint(
         payload.model_dump(
             mode="json", exclude={"publication_id", "generated_at", "logical_fingerprint"}
@@ -518,13 +561,14 @@ def build_approval_plan(
     phase1b_audit_path: Path,
     phase2_audit_path: Path,
     candidate_audit_path: Path | None = None,
+    entry_geometry_audit_path: Path | None = None,
     expected_current_state_fingerprint: str,
     expected_latest_completed_session: date | None,
     actual_latest_completed_session: date,
     freshness_status: str,
     session_lag: int | None,
     created_at: datetime,
-) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1:
+) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2:
     safe_root = _validated_root(root)
     completed = read_market_intelligence_release(candidate, validate_sources=False)
     source, preview = validate_source_binding(
@@ -538,16 +582,35 @@ def build_approval_plan(
     if completed.payload.source != source or completed.payload.analytics != preview.payload:
         raise MarketIntelligencePublicationError("candidate source binding changed")
     candidate_analytics = None
-    if isinstance(completed.payload, MarketIntelligencePayloadV1_1):
+    if isinstance(completed.payload, MarketIntelligencePayloadV1_2):
+        if candidate_audit_path is None or entry_geometry_audit_path is None:
+            raise MarketIntelligencePublicationError(
+                "MI 1.2 plan requires Candidate and entry-geometry audit paths"
+            )
+        candidate_analytics = build_opportunity_candidate_publication(
+            candidate_audit_path, entry_geometry_audit_path
+        )
+        if (
+            candidate_analytics != completed.payload.candidate_analytics
+            or candidate_analytics.source != completed.payload.candidate_source
+        ):
+            raise MarketIntelligencePublicationError(
+                "Candidate entry-geometry audit binding changed"
+            )
+    elif isinstance(completed.payload, MarketIntelligencePayloadV1_1):
         if candidate_audit_path is None:
             raise MarketIntelligencePublicationError("MI 1.1 plan requires Candidate audit path")
+        if entry_geometry_audit_path is not None:
+            raise MarketIntelligencePublicationError(
+                "MI 1.1 plan cannot silently ignore an entry-geometry audit"
+            )
         candidate_analytics = build_opportunity_candidate_publication(candidate_audit_path)
         if (
             candidate_analytics != completed.payload.candidate_analytics
             or candidate_analytics.source != completed.payload.candidate_source
         ):
             raise MarketIntelligencePublicationError("Candidate audit binding changed")
-    elif candidate_audit_path is not None:
+    elif candidate_audit_path is not None or entry_geometry_audit_path is not None:
         raise MarketIntelligencePublicationError("MI 1.0 plan cannot bind a Candidate audit")
     actual_inventory = inventory_fingerprint(safe_root)
     if actual_inventory != expected_current_state_fingerprint:
@@ -585,7 +648,13 @@ def build_approval_plan(
         and freshness_status == "stale"
     )
     payload = {
-        "plan_version": "1.1" if candidate_analytics is not None else "1.0",
+        "plan_version": (
+            "1.2"
+            if isinstance(completed.payload, MarketIntelligencePayloadV1_2)
+            else "1.1"
+            if candidate_analytics is not None
+            else "1.0"
+        ),
         "operation": "market_intelligence_publication",
         "revision": MARKET_INTELLIGENCE_REVISION,
         "publication_id": completed.payload.publication_id,
@@ -647,8 +716,22 @@ def build_approval_plan(
                 "candidate_analytics_logical_fingerprint": candidate_analytics.logical_fingerprint,
             }
         )
+    if isinstance(completed.payload, MarketIntelligencePayloadV1_2):
+        payload.update(
+            {
+                "entry_geometry_audit_path": str(entry_geometry_audit_path),
+                "entry_geometry_audit_logical_fingerprint": (
+                    candidate_analytics.source.entry_geometry_audit_logical_fingerprint
+                ),
+                "entry_lane_consumer_parameter_fingerprint": (
+                    candidate_analytics.source.entry_lane_consumer_parameter_fingerprint
+                ),
+            }
+        )
     plan_type = (
-        MarketIntelligenceApprovalPlanV1_1
+        MarketIntelligenceApprovalPlanV1_2
+        if isinstance(completed.payload, MarketIntelligencePayloadV1_2)
+        else MarketIntelligenceApprovalPlanV1_1
         if candidate_analytics is not None
         else MarketIntelligenceApprovalPlanV1
     )
@@ -658,7 +741,7 @@ def build_approval_plan(
 
 
 def validate_plan(
-    plan: MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1,
+    plan: MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2,
 ) -> CompletedMarketIntelligence:
     if canonical_fingerprint(
         plan.model_dump(mode="json", exclude={"plan_content_fingerprint"})
@@ -688,6 +771,14 @@ def validate_plan(
             raise MarketIntelligencePublicationError("Market Intelligence Candidate plan changed")
     elif isinstance(completed.payload, MarketIntelligencePayloadV1_1):
         raise MarketIntelligencePublicationError("MI 1.1 requires a plan 1.1 Candidate binding")
+    if isinstance(plan, MarketIntelligenceApprovalPlanV1_2) and (
+        not isinstance(completed.payload, MarketIntelligencePayloadV1_2)
+        or completed.payload.candidate_source.entry_geometry_audit_logical_fingerprint
+        != plan.entry_geometry_audit_logical_fingerprint
+        or completed.payload.candidate_source.entry_lane_consumer_parameter_fingerprint
+        != plan.entry_lane_consumer_parameter_fingerprint
+    ):
+        raise MarketIntelligencePublicationError("MI 1.2 entry-geometry plan changed")
     return completed
 
 
@@ -831,8 +922,8 @@ def aggregate_sha256(files: tuple[MarketIntelligenceFileReferenceV1, ...]) -> st
 def _reference(
     path: Path,
     *,
-    manifest: MarketIntelligenceManifestV1 | MarketIntelligenceManifestV1_1,
-    payload: MarketIntelligencePayloadV1 | MarketIntelligencePayloadV1_1,
+    manifest: MarketIntelligenceManifestV1 | MarketIntelligenceManifestV1_1 | MarketIntelligenceManifestV1_2,
+    payload: MarketIntelligencePayloadV1 | MarketIntelligencePayloadV1_1 | MarketIntelligencePayloadV1_2,
     logical_path: str | None = None,
 ) -> MarketIntelligenceTargetReferenceV1:
     files = file_references(path)
@@ -901,7 +992,7 @@ def _validate_completed_source_binding(
 
 def _validate_plan_sources(
     root: Path,
-    plan: MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1,
+    plan: MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2,
 ) -> None:
     actual, preview = validate_source_binding(
         data_root=root,
@@ -914,7 +1005,12 @@ def _validate_plan_sources(
     if actual != plan.source or preview.payload.logical_fingerprint != plan.analytics_logical_fingerprint:
         raise MarketIntelligencePublicationConflict("approved source binding changed")
     if isinstance(plan, MarketIntelligenceApprovalPlanV1_1):
-        candidate = build_opportunity_candidate_publication(Path(plan.candidate_audit_path))
+        candidate = build_opportunity_candidate_publication(
+            Path(plan.candidate_audit_path),
+            Path(plan.entry_geometry_audit_path)
+            if isinstance(plan, MarketIntelligenceApprovalPlanV1_2)
+            else None,
+        )
         if (
             candidate.source != plan.candidate_source
             or candidate.logical_fingerprint != plan.candidate_analytics_logical_fingerprint

@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 from datetime import date
+from enum import StrEnum
 from typing import Literal
 from uuid import UUID
 
@@ -19,6 +20,12 @@ from .opportunity_candidate import (
     CandidateRiskMode,
     CandidateStateGateResultV1,
     CandidateStateTransitionStatus,
+)
+from .candidate_entry_geometry import CandidateEntryGeometryV1
+from tip_api.parameters.market_regime.candidate_entry_consumer_v1_0_0 import (
+    ENTRY_LANE_CONSUMER_CONTRACT_VERSION,
+    ENTRY_LANE_CONSUMER_PARAMETER_SET_ID,
+    ENTRY_LANE_ORDER,
 )
 
 
@@ -95,8 +102,10 @@ class OpportunityCandidatePublicationItemV1(FrozenModel):
     def item_reconciles(self) -> "OpportunityCandidatePublicationItemV1":
         if tuple(row.risk_mode for row in self.risk_dispositions) != tuple(CandidateRiskMode):
             raise ValueError("candidate risk dispositions must use fixed mode order")
-        if self.state.final_stage is not CandidateOpportunityStage.INVALIDATED and not any(
-            row.eligible for row in self.risk_dispositions
+        if (
+            self.state.final_stage is not CandidateOpportunityStage.INVALIDATED
+            and not any(row.eligible for row in self.risk_dispositions)
+            and getattr(self, "entry_geometry", None) is None
         ):
             raise ValueError("published active candidate must be eligible in at least one risk mode")
         return self
@@ -234,4 +243,147 @@ class OpportunityCandidatePublicationV1(FrozenModel):
         ).encode("utf-8")
         if hashlib.sha256(raw).hexdigest() != self.logical_fingerprint:
             raise ValueError("candidate publication logical fingerprint mismatch")
+        return self
+
+
+class CandidateEntryLane(StrEnum):
+    REVIEW_NOW = "review_now"
+    WATCH_TRIGGER = "watch_trigger"
+    WAIT_RESET = "wait_reset"
+    OTHER_RESEARCH = "other_research"
+
+
+class CandidateEntryLanePublicationV1(FrozenModel):
+    lane: CandidateEntryLane
+    qualifying_count: int = Field(ge=0)
+    display_cap: int = Field(gt=0)
+    displayed_instrument_ids: tuple[UUID, ...]
+
+    @model_validator(mode="after")
+    def lane_reconciles(self) -> "CandidateEntryLanePublicationV1":
+        if len(self.displayed_instrument_ids) > min(self.qualifying_count, self.display_cap):
+            raise ValueError("entry-lane display exceeds its qualifying population or cap")
+        if len(self.displayed_instrument_ids) != len(set(self.displayed_instrument_ids)):
+            raise ValueError("entry-lane display IDs must be unique")
+        return self
+
+
+class CandidateRiskModeEntryPublicationV1(FrozenModel):
+    risk_mode: CandidateRiskMode
+    hard_risk_gate_qualified_count: int = Field(ge=0)
+    lanes: tuple[
+        CandidateEntryLanePublicationV1,
+        CandidateEntryLanePublicationV1,
+        CandidateEntryLanePublicationV1,
+        CandidateEntryLanePublicationV1,
+    ]
+    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def lane_order_reconciles(self) -> "CandidateRiskModeEntryPublicationV1":
+        if tuple(row.lane.value for row in self.lanes) != ENTRY_LANE_ORDER:
+            raise ValueError("entry lanes must use the fixed decision order")
+        if sum(row.qualifying_count for row in self.lanes) != self.hard_risk_gate_qualified_count:
+            raise ValueError("entry-lane qualifying counts do not reconcile")
+        raw = self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        if hashlib.sha256(
+            json.dumps(raw, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+        ).hexdigest() != self.logical_fingerprint:
+            raise ValueError("entry-lane logical fingerprint mismatch")
+        return self
+
+
+class OpportunityCandidatePublicationItemV1_1(OpportunityCandidatePublicationItemV1):
+    entry_geometry: CandidateEntryGeometryV1
+
+    @model_validator(mode="after")
+    def entry_geometry_reconciles(self) -> "OpportunityCandidatePublicationItemV1_1":
+        if (
+            self.entry_geometry.instrument_id != self.instrument_id
+            or self.entry_geometry.ticker != self.ticker
+            or self.entry_geometry.security_type != self.security_type
+            or self.entry_geometry.source_candidate_fingerprint != self.score_logical_fingerprint
+            or self.entry_geometry.candidate_stage != self.state.final_stage
+            or self.entry_geometry.candidate_base_score != self.base_score
+        ):
+            raise ValueError("published Candidate and entry geometry differ")
+        return self
+
+
+class OpportunityCandidateUniversePublicationV1_1(OpportunityCandidateUniversePublicationV1):
+    entry_risk_modes: tuple[
+        CandidateRiskModeEntryPublicationV1,
+        CandidateRiskModeEntryPublicationV1,
+        CandidateRiskModeEntryPublicationV1,
+    ]
+    candidates: tuple[OpportunityCandidatePublicationItemV1_1, ...]
+
+    @model_validator(mode="after")
+    def entry_universe_reconciles(self) -> "OpportunityCandidateUniversePublicationV1_1":
+        if tuple(row.risk_mode for row in self.entry_risk_modes) != tuple(CandidateRiskMode):
+            raise ValueError("entry risk modes must use fixed mode order")
+        published = {row.instrument_id for row in self.candidates}
+        if any(
+            instrument_id not in published
+            for result in self.entry_risk_modes
+            for lane in result.lanes
+            for instrument_id in lane.displayed_instrument_ids
+        ):
+            raise ValueError("entry lane references an unpublished Candidate card")
+        if any(row.entry_geometry.universe_id != self.universe_id for row in self.candidates):
+            raise ValueError("entry geometry Universe differs from Candidate publication")
+        return self
+
+
+class OpportunityCandidatePublicationSourceV1_1(OpportunityCandidatePublicationSourceV1):
+    entry_geometry_audit_manifest_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    entry_geometry_audit_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    entry_geometry_contract_version: Literal["candidate-entry-geometry/1.0"]
+    entry_geometry_calculation_version: Literal["candidate-entry-geometry-v1.0.0"]
+    entry_geometry_parameter_set_id: Literal["candidate-entry-geometry-v1-fixed-baseline-1"]
+    entry_geometry_parameter_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    entry_geometry_oracle_mismatch_count: Literal[0] = 0
+    entry_geometry_input_permutation_match: Literal[True] = True
+    entry_geometry_batch_fingerprints: tuple[str, str]
+    entry_lane_consumer_contract_version: Literal[ENTRY_LANE_CONSUMER_CONTRACT_VERSION]
+    entry_lane_consumer_parameter_set_id: Literal[ENTRY_LANE_CONSUMER_PARAMETER_SET_ID]
+    entry_lane_consumer_parameter_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def entry_fingerprints_are_digests(self) -> "OpportunityCandidatePublicationSourceV1_1":
+        if any(re.fullmatch(r"[0-9a-f]{64}", value) is None for value in self.entry_geometry_batch_fingerprints):
+            raise ValueError("entry-geometry batch fingerprints must be SHA-256 digests")
+        return self
+
+
+class OpportunityCandidatePublicationV1_1(OpportunityCandidatePublicationV1):
+    contract_version: Literal["opportunity-candidate-publication/1.1"] = (
+        "opportunity-candidate-publication/1.1"
+    )
+    source: OpportunityCandidatePublicationSourceV1_1
+    universes: tuple[
+        OpportunityCandidateUniversePublicationV1_1,
+        OpportunityCandidateUniversePublicationV1_1,
+    ]
+    leadership_rank_preserved: Literal[True] = True
+    entry_location_separate_from_leadership: Literal[True] = True
+    reference_support_not_stop_price: Literal[True] = True
+
+    @model_validator(mode="after")
+    def entry_publication_reconciles(self) -> "OpportunityCandidatePublicationV1_1":
+        if any(
+            row.entry_geometry.as_of_session != self.as_of_session
+            for universe in self.universes
+            for row in universe.candidates
+        ):
+            raise ValueError("entry geometry as-of session differs from Candidate publication")
+        raw = json.dumps(
+            self.model_dump(mode="json", exclude={"logical_fingerprint"}),
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+            allow_nan=False,
+        ).encode("utf-8")
+        if hashlib.sha256(raw).hexdigest() != self.logical_fingerprint:
+            raise ValueError("Candidate 1.1 publication logical fingerprint mismatch")
         return self

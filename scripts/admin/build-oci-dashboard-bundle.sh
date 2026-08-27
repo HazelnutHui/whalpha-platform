@@ -127,8 +127,8 @@ from pathlib import Path
 root=Path(sys.argv[1])
 manifest=json.loads((root/'private-data/v1/manifest.json').read_text())
 contract=(manifest.get('snapshot_contract_version'), manifest.get('dashboard_contract_version'))
-if contract not in {('1.5','2.2'),('1.6','2.3')}:
-  raise SystemExit('OCI bundle requires Snapshot 1.5 / Dashboard 2.2 or Snapshot 1.6 / Dashboard 2.3')
+if contract not in {('1.5','2.2'),('1.6','2.3'),('1.7','2.4')}:
+  raise SystemExit('OCI bundle requires Snapshot 1.5 / Dashboard 2.2, Snapshot 1.6 / Dashboard 2.3, or Snapshot 1.7 / Dashboard 2.4')
 if manifest.get('market_intelligence_publication_id') != sys.argv[6]:
   raise SystemExit('snapshot Market Intelligence publication differs from explicit OCI binding')
 analytics_path=root/'private-data/v1/market-regime-overviews.json'
@@ -141,10 +141,10 @@ if any(len(record.get('relationships', [])) != 16 for record in analytics['recor
   raise SystemExit('snapshot does not contain all 16 ETF relationships')
 candidate_fingerprint=None
 candidate_audit_fingerprint=None
-if contract == ('1.6','2.3'):
+if contract in {('1.6','2.3'),('1.7','2.4')}:
   candidate_path=root/'private-data/v1/opportunity-candidates.json'
   if not candidate_path.is_file():
-    raise SystemExit('Snapshot 1.6 Candidate payload is missing')
+    raise SystemExit('Candidate payload is missing')
   candidate=json.loads(candidate_path.read_text())
   candidate_analytics=candidate.get('analytics',{})
   candidate_source=candidate_analytics.get('source',{})
@@ -163,7 +163,16 @@ if contract == ('1.6','2.3'):
       or len(candidate_analytics.get('universes',[{},{}])[1].get('candidates',[])) != manifest.get('candidate_secondary_display_count')
       or candidate_analytics.get('underlying_stock_result_not_option_return') is not True
       or candidate_analytics.get('price_volume_not_fund_flow') is not True):
-    raise SystemExit('Snapshot 1.6 Candidate binding is invalid')
+    raise SystemExit('Candidate binding is invalid')
+  if contract == ('1.7','2.4') and (
+      candidate.get('contract_version') != 'opportunity-candidate-snapshot/1.1'
+      or candidate_analytics.get('contract_version') != 'opportunity-candidate-publication/1.1'
+      or candidate_analytics.get('leadership_rank_preserved') is not True
+      or candidate_analytics.get('entry_location_separate_from_leadership') is not True
+      or candidate_source.get('entry_geometry_audit_logical_fingerprint') != manifest.get('entry_geometry_audit_logical_fingerprint')
+      or candidate_source.get('entry_geometry_parameter_fingerprint') != manifest.get('entry_geometry_parameter_fingerprint')
+      or candidate_source.get('entry_lane_consumer_parameter_fingerprint') != manifest.get('entry_lane_consumer_parameter_fingerprint')):
+    raise SystemExit('Snapshot 1.7 entry-geometry binding is invalid')
 payload={
   'release_id': sys.argv[2],
   'git_commit': sys.argv[3],

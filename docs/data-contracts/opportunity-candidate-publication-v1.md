@@ -55,3 +55,20 @@ The Snapshot manifest additionally freezes the audit, parameter, state-
 parameter, per-file, and displayed-count bindings. Missing, extra, symlinked,
 hash-inconsistent, cross-publication, or contract-inconsistent files fail
 closed with no demo or cached fallback.
+
+## Contract 1.1 entry-location extension
+
+`opportunity-candidate-publication/1.1` retains every 1.0 leadership fact and
+formal risk rank, embeds the typed `candidate-entry-geometry/1.0` record in
+each published card, and adds per-risk-mode lane selections. The card union is
+expanded only as needed to serve the bounded lanes; rows must still pass the
+hard Candidate risk gate, and existing concentration caps remain in force.
+
+The fixed lane order is `review_now`, `watch_trigger`, `wait_reset`, then
+`other_research`, with a display cap of eight per lane. Qualifying counts refer
+to the complete hard-qualified population, not the old 25/50/100 display union.
+The source freezes the entry audit, parameter, Oracle, permutation, batch, and
+lane-consumer fingerprints. Explicit booleans state that leadership rank is
+preserved, entry location is separate, and reference support is not a stop
+price. MI 1.2 and Snapshot 1.7 / Dashboard 2.4 are the matching consumers;
+older 1.0/1.1/1.6/2.3 readers remain supported without inventing entry data.

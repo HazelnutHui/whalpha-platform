@@ -237,6 +237,11 @@ export interface SnapshotManifestResponse {
   candidate_state_parameter_fingerprint?: string | null;
   candidate_primary_display_count?: number | null;
   candidate_secondary_display_count?: number | null;
+  candidate_publication_contract_version?: string | null;
+  entry_geometry_contract_version?: string | null;
+  entry_geometry_audit_logical_fingerprint?: string | null;
+  entry_geometry_parameter_fingerprint?: string | null;
+  entry_lane_consumer_parameter_fingerprint?: string | null;
   review_mode?: boolean;
   review_contract_version?: string | null;
   review_approved_as_of_session?: string | null;

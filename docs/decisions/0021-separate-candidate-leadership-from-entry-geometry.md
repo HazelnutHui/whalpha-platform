@@ -49,11 +49,15 @@ posture: technical review ready, monitor for trigger, wait for reset,
 deprioritized, or not assessable. High or extreme extension can never be called
 technical-review ready.
 
-The first version is an offline shadow contract with a second independent
-raw-panel Oracle and canonical `/tmp` audit. It does not feed Candidate score,
-state, risk rank, Market Intelligence, Snapshot, frontend, or Production.
-Parameters were frozen before the real-data distribution was reviewed and were
-not fitted to forward outcomes.
+The source calculation remains an offline contract with a second independent
+raw-panel Oracle and canonical `/tmp` audit. It never feeds Candidate score,
+state, or risk rank. An additive consumer may publish the unchanged geometry
+through a separately versioned Candidate publication, Market Intelligence,
+Snapshot, and frontend contract. Consumer lanes must select only from the
+complete hard-risk-qualified population, preserve original formal rank, reuse
+existing concentration caps, and expose their own fixed fingerprinted
+parameters. Parameters were frozen before the real-data distribution was
+reviewed and were not fitted to forward outcomes.
 
 ## Consequences
 
@@ -68,8 +72,9 @@ not fitted to forward outcomes.
   review posture is not a recommendation or order instruction.
 - Twenty-six sessions can verify deterministic mechanics and current
   distribution only. It cannot validate predictive value or justify tuning.
-- Publication, Snapshot, frontend integration, and deployment require a new
-  additive consumer contract and separate approvals.
+- The implemented consumer uses Candidate publication 1.1, MI 1.2, Snapshot
+  1.7 / Dashboard 2.4, and fixed lane-consumer contract 1.0. Production
+  activation and deployment still require their normal separate approvals.
 
 ## Alternatives Considered
 

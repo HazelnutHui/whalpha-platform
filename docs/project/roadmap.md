@@ -4,10 +4,9 @@
   approval-bound Identity/EOD workflow, then prepare a fresh Market
   Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
-- Next product-validation step: use the deployed Phase 6 bounded Candidate
-  workspace and the completed Entry Geometry shadow. Design an additive
-  Candidate consumer that presents leadership quality and entry location as
-  separate axes with review-now, watch-trigger, wait-reset, and other lanes.
+- Next product-validation step: review the implemented additive Candidate
+  consumer that presents leadership quality and entry location as separate
+  axes with review-now, watch-trigger, wait-reset, and other lanes.
   Do not tune the frozen shadow thresholds from the one-session distribution;
   review them chronologically when enough history exists.
   The bilingual hierarchy, Daily Decision Brief, current-payload change layer,
@@ -113,15 +112,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   deployed bilingual first-level Stock Candidate workspace
 - [x] Offline Candidate Entry Geometry V1 contract, fixed parameters,
   independent Oracle, canonical audit, and real-data chase-bias review
-- [ ] Additive Candidate entry-geometry publication/Snapshot/frontend consumer
-  and separately approved deployment
+- [x] Additive Candidate entry-geometry publication/Snapshot/frontend consumer
+- [ ] Freshness-compliant MI 1.2 / Snapshot 1.7 / Dashboard 2.4 publication,
+  bundle, and separately approved OCI deployment
 
 ## Next Small Target
 
-Choose between restoring lag-zero EOD freshness first or implementing the
-additive entry-geometry consumer against the already audited 2026-08-24 shadow.
-Any MI publication, Snapshot, bundle, and OCI deployment remain later
-independent approvals. Keep SEC B2 paused.
+Restore lag-zero EOD freshness, then prepare and review the already implemented
+additive entry-geometry consumer through MI 1.2 and Snapshot 1.7 / Dashboard
+2.4. Publication, Snapshot, bundle, and OCI deployment remain independent
+approval-bound operations. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

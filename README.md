@@ -37,7 +37,8 @@ The platform should help answer:
 
 Documentation, infrastructure, storage, the application stack, canonical
 EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
-active MI 1.1 and Dashboard Snapshot 1.6 / Dashboard 2.3, bilingual
+active MI 1.1 and Dashboard Snapshot 1.6 / Dashboard 2.3, plus repository-
+implemented MI 1.2 and Snapshot 1.7 / Dashboard 2.4 entry-location consumers, bilingual
 presentation, and Session-protected static publication are implemented. The
 deployed product includes the audited Stock Candidate pipeline and third
 Candidate workspace. Canonical sessions cover

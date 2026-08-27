@@ -91,3 +91,19 @@ and verify-then-link reread that approved audit under the existing guarded
 publication flow. A 1.0 plan cannot activate a 1.1 payload. The active
 Production publication is 1.1 under its own exact 2026-08-24 stale-review
 authorization; the exception is not inherited by another release.
+
+## Contract 1.2 entry-location extension
+
+Market Intelligence 1.2 keeps the immutable two-file layout, pointer namespace,
+revision, and 1.0/1.1 read/rollback compatibility. It requires
+`opportunity-candidate-publication/1.1` and freezes the exact Candidate and
+entry-geometry `/tmp` audits, entry logical/parameter/Oracle/batch lineage, the
+fixed lane-consumer parameter fingerprint, and the resulting Candidate
+analytics fingerprint.
+
+Approval plan 1.2 rereads both audits and rejects missing, changed, mismatched,
+or silently ignored entry sources. The normal freshness gate is unchanged:
+the locally verified 2026-08-25 candidate may be built for review, but it
+cannot be activated while expected completed XNYS session is 2026-08-26 unless
+a new exact review contract is explicitly authorized. The historical 2026-08-24
+review acknowledgement cannot be reused.

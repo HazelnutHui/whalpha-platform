@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-26
+Status date: 2026-08-27
 
 This document is the concise current-state summary. Exact publication IDs,
 fingerprints, verification scope, and cross-device handoff are maintained in
@@ -45,9 +45,9 @@ relative-performance proxies, never actual fund flow.
 
 ## Active data and publications
 
-- Canonical EOD and same-day Identity are completed through 2026-08-24.
-- Latest EOD contains 9,942 rows; same-day Identity contains 9,968 canonical
-  instruments, 13,131 provider observations, and 9,968 resolver rows.
+- Canonical EOD and same-day Identity are completed through 2026-08-25.
+- Latest EOD contains 9,954 rows; same-day Identity contains 9,974 canonical
+  instruments, 13,141 provider observations, and 9,974 resolver rows.
 - Activation V2 is active with Common Shares as the sole default:
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
@@ -62,7 +62,10 @@ relative-performance proxies, never actual fund flow.
 The active analytics and Snapshot are an exact, one-release review of
 2026-08-24 data with expected session 2026-08-25 and lag one. Their required
 status is `stale_review`. This authorization did not weaken the ordinary
-lag-zero freshness gate and must not be generalized to another session.
+lag-zero freshness gate and must not be generalized to another session. At the
+2026-08-27 check, local 2026-08-25 EOD itself trails expected completed XNYS
+session 2026-08-26 by one session, so a new ordinary Production approval plan
+is still blocked.
 
 ## Market Regime
 
@@ -158,7 +161,7 @@ Current risk-mode outputs reach the fixed 25/50/100 display caps in each
 Universe. The full two-session audit took about 928 seconds and peaked near
 1.9 GiB, so incremental daily execution remains required before automation.
 
-An additive Candidate Entry Geometry V1 shadow is implemented without changing
+Candidate Entry Geometry V1 is implemented without changing
 the deployed score, state, or rank. It uses fixed SMA/ATR/return/gap/range/
 volume facts to separate bounded breakout, breakout watch, orderly pullback,
 strong-but-extended, and no-viable-setup results. The formal read-only audit is
@@ -168,8 +171,24 @@ with zero Oracle mismatches and input-permutation equivalence. In the Primary
 Balanced top 50, 41 are wait-for-reset high/extreme extension, two are
 technical-review ready, four are breakout watches, and three have no viable
 bounded setup. This confirms that the existing list is a leadership/research
-rank, not an entry-timing list. The new layer is not in `/data`, MI, Snapshot,
-frontend, bundle, or OCI.
+rank, not an entry-timing list.
+
+Repository source now also contains the additive consumer: Candidate
+publication 1.1, MI 1.2, Snapshot 1.7 / Dashboard 2.4, strict frontend parsing,
+and a default entry-location view with separate review-now, watch-trigger,
+wait-reset, and other-research lanes. It is locally tested but is not active in
+the current OCI release.
+
+The verified 2026-08-25 Candidate audit is
+`/tmp/whalpha-candidate-phase5c-20260825.AGE0pk`, fingerprint
+`32c0647ae18e165052a4fdb5ea00a0ae7f3cec5306daecdc4360ef7de829e626`;
+the bound entry audit is `/tmp/whalpha-candidate-entry-20260825.LpjkWN`,
+fingerprint
+`3875872f719537170f17aab04b0715c86ffb67259f75adf0ee796b4a8f0c182b`.
+Both formal rereads passed with zero Oracle mismatch and zero network or
+Production writes. Primary Balanced has 1,282 hard-qualified rows partitioned
+as 52 review-now, 1,096 watch-trigger, 125 wait-reset, and nine other-research;
+each lane displays at most eight after the existing concentration rules.
 
 The formal audit was published through MI 1.1 and Snapshot 1.6 / Dashboard 2.3
 after a new exact stale-review authorization. The bounded Candidate JSON is

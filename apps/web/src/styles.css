@@ -34,6 +34,25 @@
 .candidate-risk-tabs { display: inline-flex; padding: 4px; border: 1px solid var(--border); border-radius: 10px; }
 .candidate-risk-tabs button { border: 0; background: transparent; padding: 9px 18px; border-radius: 7px; color: var(--muted); }
 .candidate-risk-tabs button.active { background: var(--text); color: var(--surface); }
+.candidate-view-tabs { display: flex; gap: 8px; margin: 14px 0; }
+.candidate-view-tabs button { border: 1px solid var(--border); background: var(--surface-2); color: var(--muted); padding: 8px 14px; border-radius: 999px; }
+.candidate-view-tabs button.active { border-color: var(--accent); color: var(--text); box-shadow: inset 0 0 0 1px var(--accent); }
+.candidate-axis-explainer { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 16px; align-items: center; margin: 18px 24px 12px; padding: 18px 22px; border: 1px solid var(--border); border-radius: 12px; background: linear-gradient(135deg, var(--surface), var(--surface-2)); }
+.candidate-axis-explainer div { display: grid; gap: 5px; }
+.candidate-axis-explainer span { color: var(--accent); font-size: .73rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.candidate-axis-explainer strong { font-size: .9rem; }
+.candidate-axis-explainer b { color: var(--muted); font-size: 1.3rem; }
+.candidate-axis-explainer p { grid-column: 1 / -1; margin: 2px 0 0; padding-top: 12px; border-top: 1px solid var(--border); color: var(--warning); }
+.candidate-lanes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 0 24px 18px; }
+.candidate-lane-card { position: relative; overflow: hidden; display: grid; gap: 6px; min-height: 116px; padding: 15px; text-align: left; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 11px; }
+.candidate-lane-card:hover, .candidate-lane-card.active { transform: translateY(-1px); border-color: var(--accent); box-shadow: 0 8px 24px rgba(0,0,0,.08); }
+.candidate-lane-card > span { font-weight: 750; }
+.candidate-lane-card > strong { font-size: 1.65rem; line-height: 1; }
+.candidate-lane-card > small { color: var(--muted); }
+.candidate-lane-card > i { position: absolute; height: 4px; left: 0; bottom: 0; background: var(--accent); }
+.candidate-lane-review_now > i { background: var(--positive); }
+.candidate-lane-wait_reset > i { background: var(--warning); }
+.candidate-lane-other_research > i { background: var(--muted); }
 .candidate-control-panel > p { color: var(--muted); margin: 10px 0 14px; }
 .candidate-filters { display: flex; gap: 14px; }
 .candidate-filters label { display: grid; gap: 5px; color: var(--muted); font-size: .78rem; }
@@ -50,6 +69,11 @@
 .candidate-stage { font-weight: 700; }
 .candidate-stage-watch { color: var(--accent); } .candidate-stage-prepare { color: var(--warning); }
 .candidate-stage-enter { color: var(--positive); } .candidate-stage-invalidated { color: var(--negative); }
+.candidate-entry-posture { display: inline-flex; align-items: center; width: fit-content; padding: 5px 8px; border-radius: 999px; font-size: .75rem; font-weight: 750; background: var(--surface-2); color: var(--muted); }
+.candidate-entry-posture-technical_review_ready { background: color-mix(in srgb, var(--positive) 14%, transparent); color: var(--positive); }
+.candidate-entry-posture-monitor_for_trigger { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); }
+.candidate-entry-posture-wait_for_reset { background: color-mix(in srgb, var(--warning) 14%, transparent); color: var(--warning); }
+.candidate-entry-posture-deprioritized, .candidate-entry-posture-not_assessable { color: var(--muted); }
 .candidate-empty { padding: 38px; text-align: center; color: var(--muted); }
 .candidate-drawer-backdrop { position: fixed; inset: 0; z-index: 80; background: rgba(5, 12, 16, .56); display: flex; justify-content: flex-end; }
 .candidate-drawer { width: min(720px, 92vw); height: 100%; overflow: auto; padding: 28px; background: var(--surface); box-shadow: -20px 0 60px rgba(0,0,0,.25); }
@@ -62,6 +86,14 @@
 .candidate-detail-summary span { display: block; color: var(--muted); font-size: .72rem; }
 .candidate-detail-summary strong { display: block; margin-top: 5px; font-size: 1.15rem; }
 .candidate-boundary { padding: 12px 14px; border-left: 3px solid var(--warning); background: var(--surface-2); }
+.candidate-entry-detail { padding: 18px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-2); }
+.candidate-entry-verdict { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px 14px; }
+.candidate-entry-verdict > strong { font-size: 1.12rem; }
+.candidate-entry-verdict > small { grid-column: 2; color: var(--muted); }
+.candidate-entry-reason-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.candidate-entry-reason-grid > div { padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.candidate-entry-reason-grid h4 { margin: 0 0 10px; }
+.candidate-entry-reason-grid p { color: var(--muted); font-size: .82rem; }
 .candidate-drawer section { margin-top: 27px; }
 .candidate-contributions { display: grid; gap: 9px; }
 .candidate-contributions > div { display: grid; grid-template-columns: 180px 1fr 70px; gap: 10px; align-items: center; }
@@ -80,6 +112,10 @@
   .candidate-row { min-width: 0; grid-template-columns: 55px 1fr 1fr; gap: 8px; padding: 15px; }
   .candidate-row > *:nth-child(n+4) { display: none; }
   .candidate-detail-summary { grid-template-columns: 1fr 1fr; }
+  .candidate-axis-explainer { grid-template-columns: 1fr; margin-inline: 12px; }
+  .candidate-axis-explainer b { display: none; }
+  .candidate-lanes { grid-template-columns: 1fr 1fr; margin-inline: 12px; }
+  .candidate-entry-reason-grid { grid-template-columns: 1fr; }
   .candidate-evidence-grid { grid-template-columns: 1fr; }
   .candidate-contributions > div { grid-template-columns: 130px 1fr 55px; }
   .candidate-drawer { width: 100vw; padding: 20px; }

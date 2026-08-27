@@ -23,10 +23,46 @@ function fixture() {
   const universe = (universe_id: string) => ({
     universe_id, universe_member_count: 1, membership_fingerprint: 'd'.repeat(64), bar_covered_member_count: 1, missing_member_count: 0,
     quality_counts: { degraded: 1 }, stage_counts: { watch: 1 }, risk_modes: MODES.map((risk_mode) => ({ risk_mode, eligible_count: 1, rejected_count: 0, display_cap: 1, displayed_instrument_ids: [candidate.instrument_id], logical_fingerprint: 'e'.repeat(64) })),
-    candidates: [candidate], candidate_batch_logical_fingerprint: 'f'.repeat(64),
+    candidates: [{ ...candidate }], candidate_batch_logical_fingerprint: 'f'.repeat(64),
   });
   const analytics = { schema_version: '1.0', contract_version: 'opportunity-candidate-publication/1.0', as_of_session: '2026-08-24', default_universe_id: PRIMARY, universe_order: [PRIMARY, SECONDARY], risk_mode_order: MODES, source: {}, universes: [universe(PRIMARY), universe(SECONDARY)], language_neutral: true, research_priority_only: true, underlying_stock_result_not_option_return: true, price_volume_not_fund_flow: true, warnings: ['short_candidate_state_history'], logical_fingerprint: '9'.repeat(64) };
   return { schema_version: '1.0', contract_version: 'opportunity-candidate-snapshot/1.0', publication_id: '2026-08-24T120000Z-abcdef0', payload_sha256: '1'.repeat(64), payload_logical_fingerprint: '2'.repeat(64), candidate_analytics_logical_fingerprint: analytics.logical_fingerprint, default_universe_id: PRIMARY, universe_order: [PRIMARY, SECONDARY], analytics };
+}
+
+function entryFixture() {
+  const value = fixture();
+  value.contract_version = 'opportunity-candidate-snapshot/1.1';
+  value.analytics.contract_version = 'opportunity-candidate-publication/1.1';
+  Object.assign(value.analytics, { leadership_rank_preserved: true, entry_location_separate_from_leadership: true, reference_support_not_stop_price: true });
+  value.analytics.universes.forEach((universe) => {
+    const mutableUniverse = universe as typeof universe & { entry_risk_modes: Array<Record<string, unknown>> };
+    const candidate = universe.candidates[0] as typeof universe.candidates[0] & Record<string, unknown>;
+    candidate.entry_geometry = {
+      contract_version: 'candidate-entry-geometry/1.0', parameter_fingerprint: '1'.repeat(64),
+      as_of_session: '2026-08-24', universe_id: universe.universe_id, instrument_id: candidate.instrument_id,
+      ticker: candidate.ticker, security_type: candidate.security_type, candidate_stage: 'watch', candidate_base_score: '70.0000',
+      relative_strength_component_score: '70.0000', trend_component_score: '70.0000', source_candidate_fingerprint: candidate.score_logical_fingerprint,
+      source_state_fingerprint: 'b'.repeat(64), volume_climax_risk_candidate: false, extension_risk: 'low',
+      technical_setup: 'breakout_confirmed', review_posture: 'technical_review_ready', first_rejection_code: null,
+      why_now_codes: ['bounded_breakout_confirmed'], supporting_fact_codes: ['prior_close_high_exceeded'], counterevidence_codes: [],
+      what_would_make_reviewable_codes: ['complete_company_event_options_and_execution_review'], technical_invalidation_codes: [],
+      required_manual_check_codes: [], warnings: [], logical_fingerprint: '3'.repeat(64),
+      metrics: { availability: 'available', close: '25.0000000000', sma_10: '24.0000000000', sma_20: '23.0000000000', atr_14: '1.0000000000',
+        return_3: '0.0300000000', return_5: '0.0500000000', close_to_sma_10_atr: '1.0000000000', close_to_sma_20_atr: '2.0000000000',
+        move_5_volatility_units: '0.5000000000', consecutive_up_sessions: 2, current_gap_atr: '0.1000000000', current_range_atr: '1.0000000000',
+        current_close_location: '0.8000000000', current_volume_ratio: '1.2000000000', prior_five_session_close_high: '24.5000000000',
+        prior_five_session_close_low: '22.0000000000', breakout_distance_atr: '0.5000000000', pullback_from_prior_high_atr: '-0.5000000000',
+        reference_support_kind: 'sma20', reference_support_value: '23.0000000000', reference_support_distance_pct: '0.0800000000', missing_reason_codes: [] },
+    };
+    mutableUniverse.entry_risk_modes = MODES.map((risk_mode) => ({ risk_mode, hard_risk_gate_qualified_count: 1,
+      lanes: [
+        { lane: 'review_now', qualifying_count: 1, display_cap: 8, displayed_instrument_ids: [candidate.instrument_id] },
+        { lane: 'watch_trigger', qualifying_count: 0, display_cap: 8, displayed_instrument_ids: [] },
+        { lane: 'wait_reset', qualifying_count: 0, display_cap: 8, displayed_instrument_ids: [] },
+        { lane: 'other_research', qualifying_count: 0, display_cap: 8, displayed_instrument_ids: [] },
+      ], logical_fingerprint: '4'.repeat(64) }));
+  });
+  return value;
 }
 
 describe('Opportunity Candidate snapshot parser', () => {
@@ -38,7 +74,7 @@ describe('Opportunity Candidate snapshot parser', () => {
   });
 
   it('fails closed on version, rank, stage, component, or fingerprint drift', () => {
-    const version = fixture(); version.contract_version = 'opportunity-candidate-snapshot/1.1';
+    const version = fixture(); version.contract_version = 'opportunity-candidate-snapshot/2.0';
     expect(() => parseOpportunityCandidateSnapshot(version)).toThrow('Unsupported');
     const rank = fixture(); rank.analytics.universes[0].risk_modes[0].displayed_instrument_ids = [];
     expect(() => parseOpportunityCandidateSnapshot(rank)).toThrow('display count');
@@ -52,5 +88,14 @@ describe('Opportunity Candidate snapshot parser', () => {
     expect(() => parseOpportunityCandidateSnapshot(fractionalRank)).toThrow('rank');
     const fingerprint = fixture(); fingerprint.candidate_analytics_logical_fingerprint = '0'.repeat(64);
     expect(() => parseOpportunityCandidateSnapshot(fingerprint)).toThrow('binding');
+  });
+
+  it('accepts the additive entry-geometry contract and fails closed on lane drift', () => {
+    const parsed = parseOpportunityCandidateSnapshot(entryFixture());
+    expect(parsed.publication_contract_version).toBe('opportunity-candidate-publication/1.1');
+    expect(parsed.universe.entry_risk_modes?.[1].lanes[0].displayed_instrument_ids).toHaveLength(1);
+    expect(parsed.universe.candidates[0].entry_geometry?.review_posture).toBe('technical_review_ready');
+    const drift = entryFixture(); const entryModes = (drift.analytics.universes[0] as typeof drift.analytics.universes[0] & { entry_risk_modes: Array<{ lanes: unknown[] }> }).entry_risk_modes; entryModes[0].lanes.reverse();
+    expect(() => parseOpportunityCandidateSnapshot(drift)).toThrow('lane order');
   });
 });

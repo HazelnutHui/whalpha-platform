@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-08-27 — 2026-08-25 data and additive Candidate entry consumer
+
+- Published and formally reread same-day 2026-08-25 Identity and EOD through
+  their approval-bound workflows: 9,974 canonical instruments, 13,141 provider
+  identities, 9,974 resolvers, and 9,954 EOD rows. Local history now contains
+  28 sessions from 2026-07-17 through 2026-08-25.
+- Completed and formally reread the 2026-08-25 Regime Phase 1a/1b, all 16 ETF
+  relationships, preview, Candidate, and entry-geometry audits. Candidate
+  fingerprint is `32c0647ae18e165052a4fdb5ea00a0ae7f3cec5306daecdc4360ef7de829e626`;
+  entry fingerprint is
+  `3875872f719537170f17aab04b0715c86ffb67259f75adf0ee796b4a8f0c182b`.
+  Oracle mismatches, external requests, and Production writes are zero.
+- Added fixed `candidate-entry-lane-consumer/1.0` selection from the complete
+  hard-risk-qualified population. It preserves leadership ranks, reuses
+  concentration caps, and provides bounded review-now, watch-trigger,
+  wait-reset, and other-research lanes.
+- Added Candidate publication 1.1, MI 1.2/plan 1.2, Snapshot 1.7 / Dashboard
+  2.4/plan 2.2, strict bundle/deployment validation, bilingual frontend parsing,
+  and the default quality-by-entry-location workspace while preserving older
+  read and rollback contracts.
+- Full validation passed: 1,104 backend tests, 84 frontend tests, and the
+  production frontend build. Production remains on the 2026-08-24 MI 1.1 /
+  Snapshot 1.6 / Dashboard 2.3 release until the separate freshness and
+  deployment gates are satisfied.
+
 ## 2026-08-26 — Candidate entry geometry and chase-risk shadow
 
 - Accepted ADR 0021 and added the fixed `candidate-entry-geometry/1.0` shadow

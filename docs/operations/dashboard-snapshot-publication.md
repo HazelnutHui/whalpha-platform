@@ -2,13 +2,19 @@
 
 ## Market Intelligence consumer binding
 
-The active Candidate-capable release is Snapshot 1.6 / Dashboard 2.3. Its
+The active release remains Snapshot 1.6 / Dashboard 2.3. Repository source also
+supports Snapshot 1.7 / Dashboard 2.4 for the additive entry-location consumer. Its
 dry-run receives an explicit `--market-intelligence-publication-id`, formally
 reads the active immutable publication, and freezes that reference in candidate
 and plan. It never discovers a latest analytics directory. Analytics and
 Snapshot publication remain separately approved operations. Snapshot 1.6
 requires MI 1.1 and adds the exact bound `opportunity-candidates.json`; it
 cannot be produced from an MI 1.0 publication.
+
+Snapshot 1.7 requires MI 1.2 and Candidate publication 1.1. It keeps the same
+file name but upgrades the envelope to `opportunity-candidate-snapshot/1.1`
+and freezes entry-audit, entry-parameter, and lane-consumer fingerprints. A
+mixed or incomplete version pair fails closed.
 
 ## Safety boundary
 

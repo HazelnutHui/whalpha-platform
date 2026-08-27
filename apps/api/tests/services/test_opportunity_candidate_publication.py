@@ -6,7 +6,10 @@ from pathlib import Path
 import pytest
 from pydantic import ValidationError
 
-from tip_api.contracts.analytics.v1 import OpportunityCandidatePublicationSourceV1
+from tip_api.contracts.analytics.v1 import (
+    OpportunityCandidatePublicationSourceV1,
+    OpportunityCandidatePublicationV1_1,
+)
 from tip_api.parameters.market_regime.candidate_v1_1_1 import (
     CANDIDATE_CALCULATION_VERSION,
     CANDIDATE_CONTRACT_VERSION,
@@ -20,6 +23,7 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import (
 from tip_api.services.opportunity_candidate_publication import (
     build_opportunity_candidate_publication,
 )
+from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
 from tests.services import test_opportunity_candidate_audit as fixture
 
 
@@ -116,3 +120,48 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
     invalid_source["current_candidate_batch_fingerprints"][0] = "not-a-digest"
     with pytest.raises(ValidationError, match="SHA-256"):
         OpportunityCandidatePublicationSourceV1.model_validate(invalid_source)
+
+    entry_dir = tmp_path / "entry"
+    entry_dir.mkdir()
+    entry_batches = tuple(
+        calculate_candidate_entry_geometry(
+            panel=panel,
+            candidate_batch=batch,
+            state_records=tuple(row for row in states if row.universe_id == batch.universe_id),
+        )
+        for batch in batches
+    )
+    entry_manifest = {
+        "as_of_session": panel.as_of_session.isoformat(),
+        "universe_ids": [fixture.PRIMARY, fixture.SECONDARY],
+        "logical_content_fingerprint": "6" * 64,
+        "contract_version": "candidate-entry-geometry/1.0",
+        "calculation_version": "candidate-entry-geometry-v1.0.0",
+        "parameter_set_id": "candidate-entry-geometry-v1-fixed-baseline-1",
+        "parameter_fingerprint": entry_batches[0].parameter_fingerprint,
+        "oracle_mismatch_count": 0,
+        "input_permutation_match": True,
+        "batch_fingerprints": [row.logical_fingerprint for row in entry_batches],
+        "source": {
+            "candidate_audit_logical_fingerprint": manifest["logical_content_fingerprint"],
+            "candidate_audit_manifest_sha256": __import__("hashlib").sha256(b"{}\n").hexdigest(),
+        },
+    }
+    monkeypatch.setattr(
+        "tip_api.services.opportunity_candidate_publication.read_candidate_entry_geometry_audit",
+        lambda _: entry_manifest,
+    )
+    (entry_dir / "entry-geometry-audit-manifest.json").write_text("{}\n")
+    (entry_dir / "entry-geometry-batches.json").write_text(
+        json.dumps({"records": [row.model_dump(mode="json") for row in entry_batches]})
+    )
+    entry_publication = build_opportunity_candidate_publication(tmp_path, entry_dir)
+    assert isinstance(entry_publication, OpportunityCandidatePublicationV1_1)
+    assert entry_publication.leadership_rank_preserved is True
+    assert entry_publication.entry_location_separate_from_leadership is True
+    assert all(row.entry_risk_modes for row in entry_publication.universes)
+    assert all(
+        candidate.entry_geometry.instrument_id == candidate.instrument_id
+        for universe in entry_publication.universes
+        for candidate in universe.candidates
+    )
