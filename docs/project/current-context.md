@@ -38,6 +38,7 @@ active custody/contracts after deployment.
 | EOD content fingerprint | `60de33ca6d37501387cc1d233d999a16f176197c185cb844dcc0fa3bee592466` |
 | EOD Parquet SHA-256 | `50d19945be381d845ad9b2badad9a433797d242ca4388de73a880f6f16357db3` |
 | Latest canonical Identity | 2026-08-27: 9,982 instruments / 13,148 provider identities / 9,982 resolvers |
+| Latest Identity logical fingerprint | `a4db78888d19799f7e38485cfceeb3e6d4611ab2f1cb3d6785a8fc90e6f295ad` |
 | Latest-EOD-bound Identity | 2026-08-26: 9,974 instruments / 13,141 provider identities / 9,974 resolvers |
 | EOD-bound Identity logical fingerprint | `3f9fe19f4f57cb16552443d5bdd45d5ca6367409dddf5e675d2a32d08fad7acf` |
 | Identity/EOD alignment | `identity_ahead_of_eod` |
