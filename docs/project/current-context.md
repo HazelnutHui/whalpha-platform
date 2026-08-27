@@ -140,8 +140,8 @@ reservation, recovery, or `/data` write occurred through this layer.
 ADR 0036 now supplies repository-tested, explicitly installed fetch/Apply
 adapters that compose the external authorization SHA, acquisition/Apply
 custody, real Massive boundaries, and formal terminal evidence. Request 1.1
-binds Apply to `canonical_apply_started`; coordinator 1.1 accepts Identity's
-actual bounded 1–20 HTTP requests; and the authorized canonical root is
+binds Apply to `canonical_apply_started`; ADR 0036's coordinator 1.1 accepts
+Identity's actual bounded 1–20 HTTP requests; and the authorized canonical root is
 `/data/trading-intelligence-platform`. The adapters remain uninstalled; that
 slice created no real authorization artifact, host pin, credential read,
 provider request, reservation, Apply, CLI, or scheduler entry.
@@ -151,8 +151,11 @@ SHA-pinned owner-only config enables them and the invocation opts in. Runtime
 derives the actual Dell hostname, executing source root, clean Git HEAD, and
 current readiness-policy fingerprint rather than trusting asserted strings.
 No real host config root/artifact, CLI transition, service, timer, alert, or
-scheduler exists. Unresolved attempts are reported for recovery; recovery is
-not yet routed by this CLI.
+scheduler exists. ADR 0038 now routes one explicitly requested unresolved
+acquisition, canonical-Apply, or offline-action event to its existing recovery
+boundary after an exact locked journal reread. Recovery keeps networking
+disabled, never performs Apply or replays calculation, and never loops. This is
+repository-tested only; no real recovery or run-journal transition occurred.
 
 ## Analytics and presentation
 

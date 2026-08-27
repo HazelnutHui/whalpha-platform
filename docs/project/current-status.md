@@ -217,7 +217,7 @@ adapters. They preflight the external grant before reservation or credential
 access, bind acquisition/Apply starts to request 1.1, preserve actual bounded
 Identity HTTP request counts, and leave unknown fetch or any Apply exception
 unresolved for recovery. The corrected authorized canonical root is
-`/data/trading-intelligence-platform`; coordinator contract is 1.1. The ports
+`/data/trading-intelligence-platform`; coordinator contract was then 1.1. The ports
 remain absent unless explicitly installed, and that slice created no real
 authorization, host pin, credential read, request, Apply, CLI, or scheduler
 entry.
@@ -226,7 +226,11 @@ SHA-pinned host-runtime contract. Capability installation requires an explicit
 flag, enabled owner-only config, and independently derived actual Dell hostname,
 executing source root, clean HEAD, and readiness-policy fingerprint. No real
 host config, CLI invocation, service, timer, alert, or scheduler exists. The
-CLI reports unresolved attempts but does not yet execute recovery.
+CLI now has ADR 0038's explicit, mutually exclusive recovery mode. It rereads
+one exact pending acquisition, Apply, or offline event and invokes only the
+matching existing no-request/no-Apply/no-replay recovery boundary. Coordinator
+contract is 1.2. This route is repository-tested only; no real recovery or
+run-journal transition occurred.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

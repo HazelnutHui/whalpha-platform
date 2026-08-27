@@ -17,6 +17,7 @@ from tip_api.services.daily_eod_coordinator import (
     CoordinatorStatus,
     DailyEodCoordinatorConfig,
     DailyEodCoordinatorError,
+    RecoveryTransitionEvidence,
     coordinate_daily_eod_transition,
 )
 from tip_api.services.daily_eod_executor import (
@@ -355,6 +356,132 @@ def test_unresolved_attempt_requires_recovery_before_any_action(
 
     assert result.status is CoordinatorStatus.RECOVERY_REQUIRED
     assert result.next_action == next_action
+
+
+@pytest.mark.parametrize(
+    ("event_type", "recovery_action", "outcome"),
+    (
+        (
+            "acquisition_started",
+            "recover_acquisition_attempt",
+            "recovered_package_ready",
+        ),
+        (
+            "canonical_apply_started",
+            "recover_canonical_apply",
+            "recovered_succeeded",
+        ),
+        ("action_started", "recover_offline_action", "recovered_not_completed"),
+    ),
+)
+def test_explicit_recovery_routes_exactly_one_pending_event(
+    event_type: str,
+    recovery_action: str,
+    outcome: str,
+) -> None:
+    pending = event(1, event_type)
+    calls = []
+
+    def recover(context):
+        calls.append(context)
+        return RecoveryTransitionEvidence(
+            recovery_action=recovery_action,
+            target_session=TARGET.isoformat(),
+            pending_event_fingerprint=pending.event_fingerprint,
+            outcome=outcome,
+            event_fingerprint="f" * 64,
+            external_request_count=0,
+            production_write_count=0,
+            action_replayed=False,
+            reason_code="formally_reconciled",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(),
+        checked_at=AFTER_STABILIZATION,
+        recover_unresolved=True,
+        planner=planner(plan(NextAction.PREPARE_IDENTITY_CATCHUP)),
+        journal_reader=journal((pending,)),
+        recovery_capability=recover,
+    )
+
+    assert len(calls) == 1
+    assert calls[0].pending_event == pending
+    assert calls[0].recovery_action == recovery_action
+    assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
+    assert result.external_request_count == 0
+    assert result.production_write_count == 0
+
+
+def test_explicit_blocked_recovery_requires_operator_diagnosis() -> None:
+    pending = event(1, "action_started")
+
+    def recover(_context):
+        return RecoveryTransitionEvidence(
+            recovery_action="recover_offline_action",
+            target_session=TARGET.isoformat(),
+            pending_event_fingerprint=pending.event_fingerprint,
+            outcome="recovery_blocked",
+            event_fingerprint="f" * 64,
+            external_request_count=0,
+            production_write_count=0,
+            action_replayed=False,
+            reason_code="state_is_ambiguous",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(),
+        checked_at=AFTER_STABILIZATION,
+        recover_unresolved=True,
+        planner=planner(plan(NextAction.PREPARE_IDENTITY_CATCHUP)),
+        journal_reader=journal((pending,)),
+        recovery_capability=recover,
+    )
+
+    assert result.status is CoordinatorStatus.BLOCKED
+    assert result.next_action == "operator_diagnosis"
+
+
+def test_explicit_recovery_requires_a_capability_and_rejects_replay_claims() -> None:
+    pending = event(1, "action_started")
+    kwargs = {
+        "config": config(),
+        "checked_at": AFTER_STABILIZATION,
+        "recover_unresolved": True,
+        "planner": planner(plan(NextAction.PREPARE_IDENTITY_CATCHUP)),
+        "journal_reader": journal((pending,)),
+    }
+    with pytest.raises(DailyEodCoordinatorError, match="explicit recovery capability"):
+        coordinate_daily_eod_transition(**kwargs)
+
+    def invalid(_context):
+        return RecoveryTransitionEvidence(
+            recovery_action="recover_offline_action",
+            target_session=TARGET.isoformat(),
+            pending_event_fingerprint=pending.event_fingerprint,
+            outcome="recovered_not_completed",
+            event_fingerprint="f" * 64,
+            external_request_count=0,
+            production_write_count=0,
+            action_replayed=True,
+            reason_code="invalid_replay",
+        )
+
+    with pytest.raises(DailyEodCoordinatorError, match="evidence is invalid"):
+        coordinate_daily_eod_transition(**kwargs, recovery_capability=invalid)
+
+    def wrong_family_outcome(_context):
+        return replace(
+            invalid(_context),
+            action_replayed=False,
+            outcome="recovered_package_ready",
+        )
+
+    with pytest.raises(DailyEodCoordinatorError, match="evidence is invalid"):
+        coordinate_daily_eod_transition(
+            **kwargs,
+            recovery_capability=wrong_family_outcome,
+        )
 
 
 def test_offline_action_is_ready_but_not_executed_by_default() -> None:

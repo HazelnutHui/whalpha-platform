@@ -43,7 +43,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.1"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.2"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -94,6 +94,27 @@ class AuthorizedTransitionEvidence:
 
 
 @dataclass(frozen=True, slots=True)
+class RecoveryTransitionContext:
+    coordinator: DailyEodCoordinatorConfig
+    pending_event: DailyEodRunEvent
+    automation_plan: DailyEodAutomationPlan
+    recovery_action: str
+
+
+@dataclass(frozen=True, slots=True)
+class RecoveryTransitionEvidence:
+    recovery_action: str
+    target_session: str
+    pending_event_fingerprint: str
+    outcome: str
+    event_fingerprint: str
+    external_request_count: int
+    production_write_count: int
+    action_replayed: bool
+    reason_code: str
+
+
+@dataclass(frozen=True, slots=True)
 class DailyEodCoordinatorResult:
     status: CoordinatorStatus
     next_action: str
@@ -120,6 +141,9 @@ JournalReader = Callable[[Path, date], tuple[DailyEodRunEvent, ...]]
 AuthorizedCapability = Callable[
     [AuthorizedTransitionContext], AuthorizedTransitionEvidence
 ]
+RecoveryCapability = Callable[
+    [RecoveryTransitionContext], RecoveryTransitionEvidence
+]
 OfflineExecutor = Callable[..., DailyEodExecutionResult]
 
 
@@ -128,8 +152,10 @@ def coordinate_daily_eod_transition(
     config: DailyEodCoordinatorConfig,
     checked_at: datetime,
     execute_offline: bool = False,
+    recover_unresolved: bool = False,
     fetch_capability: AuthorizedCapability | None = None,
     apply_capability: AuthorizedCapability | None = None,
+    recovery_capability: RecoveryCapability | None = None,
     planner: Planner = plan_daily_eod_automation,
     journal_reader: JournalReader | None = None,
     offline_executor: OfflineExecutor = execute_daily_eod_action,
@@ -145,28 +171,27 @@ def coordinate_daily_eod_transition(
     )
     pending = unresolved_started_event(events)
     if pending is not None:
-        if pending.event_type == ACQUISITION_START_EVENT:
+        recovery_action, recovery_reason = _pending_recovery(pending)
+        if not recover_unresolved:
             return _result(
                 status=CoordinatorStatus.RECOVERY_REQUIRED,
-                next_action="recover_acquisition_attempt",
-                reasons=("unresolved_acquisition_attempt",),
+                next_action=recovery_action,
+                reasons=(recovery_reason,),
                 plan=plan,
             )
-        if pending.event_type == START_EVENT:
-            return _result(
-                status=CoordinatorStatus.RECOVERY_REQUIRED,
-                next_action="recover_offline_action",
-                reasons=("unresolved_offline_attempt",),
-                plan=plan,
+        if recovery_capability is None:
+            raise DailyEodCoordinatorError(
+                "recovery execution requires an explicit recovery capability"
             )
-        if pending.event_type == CANONICAL_APPLY_START_EVENT:
-            return _result(
-                status=CoordinatorStatus.RECOVERY_REQUIRED,
-                next_action="recover_canonical_apply",
-                reasons=("unresolved_canonical_apply",),
-                plan=plan,
+        recovery = recovery_capability(
+            RecoveryTransitionContext(
+                coordinator=config,
+                pending_event=pending,
+                automation_plan=plan,
+                recovery_action=recovery_action,
             )
-        raise DailyEodCoordinatorError("unrecognized unresolved journal event")
+        )
+        return _recovery_result(plan, pending, recovery, recovery_action)
 
     if plan.status is PlanStatus.BLOCKED or plan.next_action is NextAction.OPERATOR_DIAGNOSIS:
         return _result(
@@ -367,6 +392,69 @@ def _offline_result(
         reasons=(execution.reason_code,),
         plan=plan,
         transition_fingerprint=execution.event.event_fingerprint,
+    )
+
+
+def _pending_recovery(pending: DailyEodRunEvent) -> tuple[str, str]:
+    if pending.event_type == ACQUISITION_START_EVENT:
+        return "recover_acquisition_attempt", "unresolved_acquisition_attempt"
+    if pending.event_type == START_EVENT:
+        return "recover_offline_action", "unresolved_offline_attempt"
+    if pending.event_type == CANONICAL_APPLY_START_EVENT:
+        return "recover_canonical_apply", "unresolved_canonical_apply"
+    raise DailyEodCoordinatorError("unrecognized unresolved journal event")
+
+
+def _recovery_result(
+    plan: DailyEodAutomationPlan,
+    pending: DailyEodRunEvent,
+    evidence: RecoveryTransitionEvidence,
+    recovery_action: str,
+) -> DailyEodCoordinatorResult:
+    allowed_outcomes = {
+        "recover_acquisition_attempt": {
+            "recovered_package_ready",
+            "recovered_not_completed",
+            "recovery_blocked",
+        },
+        "recover_canonical_apply": {
+            "recovered_succeeded",
+            "recovered_not_completed",
+            "recovery_blocked",
+        },
+        "recover_offline_action": {
+            "recovered_succeeded",
+            "recovered_not_completed",
+            "recovery_blocked",
+        },
+    }
+    if (
+        not isinstance(evidence, RecoveryTransitionEvidence)
+        or evidence.recovery_action != recovery_action
+        or evidence.target_session != plan.target_session
+        or evidence.pending_event_fingerprint != pending.event_fingerprint
+        or recovery_action not in allowed_outcomes
+        or evidence.outcome not in allowed_outcomes[recovery_action]
+        or not _is_fingerprint(evidence.event_fingerprint)
+        or evidence.external_request_count != 0
+        or evidence.production_write_count != 0
+        or evidence.action_replayed
+        or not evidence.reason_code
+    ):
+        raise DailyEodCoordinatorError("recovery capability evidence is invalid")
+    blocked = evidence.outcome == "recovery_blocked"
+    return _result(
+        status=(
+            CoordinatorStatus.BLOCKED
+            if blocked
+            else CoordinatorStatus.TRANSITION_EXECUTED
+        ),
+        next_action=(
+            NextAction.OPERATOR_DIAGNOSIS.value if blocked else recovery_action
+        ),
+        reasons=(evidence.reason_code,),
+        plan=plan,
+        transition_fingerprint=_fingerprint(asdict(evidence)),
     )
 
 

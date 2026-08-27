@@ -67,9 +67,9 @@ publication, deployment, notification, service, timer, or scheduler.
 - A clean configured repository cannot authorize code executed from another
   checkout or a dirty revision.
 - Scheduler installation still grants no publication or deployment authority.
-- Unresolved acquisition, Apply, or offline attempts are reported but not yet
-  executed by this CLI; a bounded recovery router remains required before an
-  unattended rehearsal.
+- At this decision's acceptance, unresolved acquisition, Apply, or offline
+  attempts were reported but not executed. ADR 0038 subsequently added the
+  explicit bounded recovery route required before a controlled rehearsal.
 
 ## Alternatives Considered
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import socket
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -110,6 +111,8 @@ def test_default_invocation_does_not_read_host_config_or_install_capabilities(
     assert payload["status"] == "manual_authorization_required"
     assert captured[0]["fetch_capability"] is None
     assert captured[0]["apply_capability"] is None
+    assert captured[0]["recover_unresolved"] is False
+    assert captured[0]["recovery_capability"] is None
 
 
 def test_capability_enablement_requires_external_config_and_sha() -> None:
@@ -228,3 +231,36 @@ def test_recovery_required_returns_nonzero(monkeypatch, capsys) -> None:
 
     assert cli.main(arguments()) == 1
     assert json.loads(capsys.readouterr().out)["status"] == "recovery_required"
+
+
+def test_explicit_recovery_installs_only_no_network_recovery_port(
+    monkeypatch,
+    capsys,
+) -> None:
+    captured = []
+
+    def coordinate(**kwargs):
+        captured.append(kwargs)
+        assert kwargs["recover_unresolved"] is True
+        assert kwargs["recovery_capability"] is cli.recover_one_daily_eod_transition
+        assert kwargs["fetch_capability"] is None
+        assert kwargs["apply_capability"] is None
+        with pytest.raises(RuntimeError, match="network is prohibited"):
+            socket.create_connection(("example.invalid", 443))
+        return result(CoordinatorStatus.TRANSITION_EXECUTED)
+
+    monkeypatch.setattr(cli, "coordinate_daily_eod_transition", coordinate)
+
+    assert cli.main(arguments() + ["--recover-unresolved"]) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "transition_executed"
+    assert len(captured) == 1
+
+
+def test_recovery_cannot_be_combined_with_execution_or_authorized_ports() -> None:
+    with pytest.raises(SystemExit):
+        cli.main(arguments() + ["--recover-unresolved", "--execute-offline"])
+    with pytest.raises(SystemExit):
+        cli.main(
+            arguments()
+            + ["--recover-unresolved", "--enable-authorized-capabilities"]
+        )

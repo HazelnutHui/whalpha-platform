@@ -15,9 +15,10 @@
   Apply reservation/recovery custody is complete under journal 1.2. ADR 0036
   capability adapters now compose the real boundaries while remaining
   uninstalled and inactive. The default-disabled externally pinned host config
-  and one-transition CLI are now repository-tested. Next route only the named
-  unresolved attempt through its existing no-duplicate recovery boundary, then
-  review authorization provisioning, alerting, rehearsal, and scheduler
+  and one-transition CLI are now repository-tested. Exact one-event recovery
+  routing is also complete for acquisition, canonical Apply, and offline
+  actions without request, Apply, replay, or loop. Next review authorization
+  provisioning, alerting, controlled rehearsal, and scheduler
   activation separately. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
 - Next product-validation step: review the implemented additive Candidate
@@ -147,15 +148,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Canonical Identity/EOD Apply reservation and no-write interruption recovery
 - [x] Standing-authorized fetch/Apply capability composition with exact request counts
 - [x] Externally SHA-pinned host runtime and default-disabled one-transition CLI
+- [x] Exact one-transition recovery routing without request, Apply, or replay
 
 ## Next Small Target
 
-Route the coordinator's named unresolved acquisition, Apply, or offline attempt
-to exactly one existing recovery boundary without fetching, replaying Apply, or
-looping. Then review and provision external host/authorization artifacts or
-retain manual approvals. Alert delivery, controlled rehearsal, and scheduler
-activation remain separate. Do not combine Production publication, Snapshot,
-bundle, OCI, or deployment authorization. Keep SEC B2 paused.
+Review and provision external host/authorization artifacts or retain manual
+approvals. Then implement alert delivery and conduct a controlled one-transition
+rehearsal before considering scheduler activation. Do not combine Production
+publication, Snapshot, bundle, OCI, or deployment authorization. Keep SEC B2
+paused.
 
 ## Phase 2 — Intraday and Options
 

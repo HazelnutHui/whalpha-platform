@@ -26,6 +26,10 @@ from tip_api.services.daily_eod_host_runtime import (
     read_host_runtime_config,
     verify_dell_runtime,
 )
+from tip_api.services.daily_eod_recovery_router import (
+    DailyEodRecoveryRouterError,
+    recover_one_daily_eod_transition,
+)
 from tip_api.services.daily_eod_run_journal import DailyEodRunJournalError
 
 
@@ -63,13 +67,20 @@ def main(argv: list[str] | None = None) -> int:
                 config=coordinator_config,
                 checked_at=args.checked_at,
                 execute_offline=args.execute_offline,
+                recover_unresolved=args.recover_unresolved,
                 fetch_capability=(None if capabilities is None else capabilities.fetch),
                 apply_capability=(None if capabilities is None else capabilities.apply),
+                recovery_capability=(
+                    recover_one_daily_eod_transition
+                    if args.recover_unresolved
+                    else None
+                ),
             )
     except (
         DailyEodAuthorizedCapabilityError,
         DailyEodCoordinatorError,
         DailyEodHostRuntimeError,
+        DailyEodRecoveryRouterError,
         DailyEodRunJournalError,
         OSError,
         RuntimeError,
@@ -173,6 +184,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--candidate-work-dir", type=Path)
     parser.add_argument("--execute-offline", action="store_true")
+    parser.add_argument("--recover-unresolved", action="store_true")
     parser.add_argument("--enable-authorized-capabilities", action="store_true")
     parser.add_argument("--host-config", type=Path)
     parser.add_argument("--host-config-sha256")
@@ -203,6 +215,12 @@ def _validate_arguments(
         value = getattr(args, name)
         if value is not None and not value.is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
+    if args.recover_unresolved and args.enable_authorized_capabilities:
+        parser.error(
+            "--recover-unresolved cannot be combined with authorized capabilities"
+        )
+    if args.recover_unresolved and args.execute_offline:
+        parser.error("--recover-unresolved cannot be combined with --execute-offline")
     host_values = (args.host_config, args.host_config_sha256)
     if args.enable_authorized_capabilities:
         if args.host_config is None or not _is_fingerprint(args.host_config_sha256):

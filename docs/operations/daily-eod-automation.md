@@ -173,9 +173,11 @@ coordinator does not grant authority.
 Offline execution is also opt-in per invocation and delegates exactly one
 action to ADR 0030.
 
-There is no coordinator CLI or scheduler entry yet. The capability ports remain
-uninstalled by default. No real run root, authorization artifact, credential
-read, provider request, or canonical write was created by this implementation.
+At the ADR 0034 slice there was no coordinator CLI or scheduler entry. ADR 0037
+subsequently added the default-disabled CLI, and ADR 0038 added explicit
+one-event recovery routing. Capability ports remain uninstalled by default.
+No real run root, authorization artifact, credential read, provider request,
+or canonical write was created by the coordinator implementation.
 
 ## Canonical Apply custody
 
@@ -236,8 +238,11 @@ expected-state fingerprints must be provided together before Apply.
 
 The CLI may opt into one existing offline calculation with `--execute-offline`,
 but never loops and never gains publication, deployment, or scheduler
-authority. Recovery-required results return nonzero and name the recovery
-boundary; this CLI does not yet execute recovery. Exceptions without formal
+authority. ADR 0038 adds mutually exclusive `--recover-unresolved`: it
+formally rereads the one exact pending event and invokes only its acquisition,
+canonical-Apply, or offline-action recovery boundary. The socket guard remains
+active; recovery never requests provider data, performs Apply, replays a
+calculation, retries, or loops. Exceptions without formal
 terminal evidence report request/write counts as unknown, never as assumed
 zero. No real host/runtime config,
 CLI invocation, service, timer, or scheduler was created.
@@ -376,13 +381,11 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. A bounded one-transition recovery router for the existing acquisition,
-   canonical-Apply, and offline recovery boundaries.
-2. Explicit review/provisioning of the external host and standing-authorization
+1. Explicit review/provisioning of the external host and standing-authorization
    artifacts and SHA pins, or continued manual approval.
-3. Actual alert delivery and a controlled real timing rehearsal to calibrate
+2. Actual alert delivery and a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
-4. Separate authorization decisions for publication, Snapshot/bundle, OCI
+3. Separate authorization decisions for publication, Snapshot/bundle, OCI
    deployment, and finally scheduler activation.
 
 The executor and journal are implemented and tested, but no durable real run
@@ -399,4 +402,5 @@ recovery are repository-tested under journal 1.2, but no real Apply adapter,
 reservation, or recovery ran. ADR 0036 adapters are repository-tested but have
 not been installed or invoked against real authorization, credentials, Massive,
 or `/data`. ADR 0037 host config and CLI are repository-tested only; no external
-runtime artifact, CLI transition, service, timer, or scheduler exists.
+runtime artifact, CLI transition, service, timer, or scheduler exists. ADR 0038
+recovery routing is repository-tested only; no real recovery event was appended.

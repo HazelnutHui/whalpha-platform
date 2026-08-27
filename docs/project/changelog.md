@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-27 — Exact one-transition recovery routing
+
+- Accepted ADR 0038 and added an explicit coordinator/CLI recovery port for
+  exactly one unresolved acquisition, canonical-Apply, or offline-action event.
+- Required an exact locked journal reread and immutable start-event bindings;
+  canonical recovery cannot substitute a new plan SHA or inventory fingerprint.
+- Kept recovery mutually exclusive with authorized capabilities and offline
+  execution under the socket guard, with zero requests, zero canonical writes,
+  no action replay, and no loop.
+- Added family, mismatch, malformed-binding, blocked-state, no-network, and
+  invalid-evidence tests.
+- No real run root, recovery, credential read, provider request, Apply, `/data`
+  write, publication, deployment, service, timer, alert, or scheduler state was
+  created or changed.
+
 ## 2026-08-27 — Host-gated one-transition CLI
 
 - Accepted ADR 0037 and added an owner-only, externally SHA-pinned host-runtime

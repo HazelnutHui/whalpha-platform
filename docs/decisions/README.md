@@ -60,3 +60,4 @@ Each ADR should include:
 - [0035: Custody Canonical Daily Apply](0035-custody-canonical-daily-apply.md)
 - [0036: Compose Authorized Daily Data Capabilities](0036-compose-authorized-daily-data-capabilities.md)
 - [0037: Gate One-Transition CLI with Host Runtime](0037-gate-one-transition-cli-with-host-runtime.md)
+- [0038: Route One Interrupted Daily Transition](0038-route-one-interrupted-daily-transition.md)

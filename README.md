@@ -79,7 +79,11 @@ unimplemented. A one-transition CLI and externally SHA-pinned host-runtime
 contract are also repository-tested: capability ports remain absent unless an
 external owner-only config enables them, the invocation explicitly opts in,
 and actual Dell/source/clean-HEAD/policy identity all match. No real host config
-or CLI transition exists.
+or CLI transition exists. Explicit one-transition recovery routing now covers
+the acquisition, canonical-Apply, and offline-action journal families. It
+formally rereads the exact pending event, keeps the socket guard active, and
+never fetches, applies canonical data, replays calculation, or loops. No real
+recovery invocation has occurred.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and
