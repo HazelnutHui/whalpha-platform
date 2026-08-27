@@ -1,9 +1,10 @@
 # Roadmap
 
-- Next operational step: restore ordinary lag-zero freshness through the
-  approval-bound Identity/EOD workflow, then prepare a fresh Market
-  Intelligence plan. Publication, Snapshot, bundle, and OCI remain separate
-  authorizations.
+- Next operational step: continue the Dell-only Candidate pipeline
+  optimization after the verified shared-panel/state-index slice: add
+  verified-prior incremental state, resumable stages, validation tiers, and
+  then deterministic process parallelism. Publication, Snapshot, bundle, and
+  OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -113,15 +114,21 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Offline Candidate Entry Geometry V1 contract, fixed parameters,
   independent Oracle, canonical audit, and real-data chase-bias review
 - [x] Additive Candidate entry-geometry publication/Snapshot/frontend consumer
-- [ ] Freshness-compliant MI 1.2 / Snapshot 1.7 / Dashboard 2.4 publication,
+- [x] Freshness-compliant MI 1.2 / Snapshot 1.7 / Dashboard 2.4 publication,
   bundle, and separately approved OCI deployment
+- [x] Candidate full-path stage measurement, overlapping-panel shared reads,
+  stable-ID state indexing, and worktree-safe Dell Python runner
+- [ ] Verified-prior Candidate incremental state and resumable stages
+- [ ] Candidate daily/periodic/code-change validation tiers
+- [ ] Deterministic Candidate process parallelism with serial equivalence
 
 ## Next Small Target
 
-Restore lag-zero EOD freshness, then prepare and review the already implemented
-additive entry-geometry consumer through MI 1.2 and Snapshot 1.7 / Dashboard
-2.4. Publication, Snapshot, bundle, and OCI deployment remain independent
-approval-bound operations. Keep SEC B2 paused.
+Bind a verified prior Candidate audit to a new-session incremental calculation
+without changing the cold full-replay reference. Record explicit stage inputs,
+outputs, timings, reuse decisions, and failure location on Dell. Publication,
+Snapshot, bundle, and OCI deployment remain independent approval-bound
+operations. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

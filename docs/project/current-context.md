@@ -65,10 +65,11 @@ Development, canonical data, research, replay, and heavy recomputation use
 Dell as the source of truth. OCI is the static web-serving, Session-auth, and
 public-read boundary; Windows and future Mac clients are remote work entry
 points, not independent compute/data authorities. Dell has a Xeon W-2145 with
-8 physical cores / 16 threads. The current heavy Candidate and publication
-paths are effectively single-core and require a separately reviewed,
-deterministic incremental/process-parallel optimization before daily
-automation.
+8 physical cores / 16 threads. The first Candidate optimization slice now
+shares overlapping immutable panel reads and stable-ID state indexes while
+retaining the exact serial logical output. Verified-prior incremental state,
+resumable stages, validation tiers, and then deterministic process parallelism
+remain required before daily automation.
 
 ## Analytics and presentation
 

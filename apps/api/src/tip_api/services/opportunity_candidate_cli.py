@@ -10,7 +10,7 @@ import socket
 import time
 from collections import defaultdict
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
@@ -35,9 +35,11 @@ from tip_api.parameters.market_regime.state_v1_0_0 import (
     STATE_CALCULATION_VERSION,
     STATE_PARAMETER_FINGERPRINT,
 )
-from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.services.market_calendar import ExchangeCalendar
-from tip_api.services.market_regime_sources import MarketRegimeInputPanel, load_formal_market_regime_panel
+from tip_api.services.market_regime_sources import (
+    MarketRegimeInputPanel,
+    load_formal_market_regime_panels,
+)
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
 from tip_api.services.opportunity_candidate_oracle import (
     CandidateOracleComparisonV1,
@@ -65,6 +67,44 @@ class CandidateOfflineRun:
     oracle_report: CandidateOracleComparisonV1
     equivalence_flags: Mapping[str, bool]
     candidate_sessions: tuple[date, ...]
+    timings: Mapping[str, str]
+    runtime_metrics: Mapping[str, int]
+
+
+@dataclass(slots=True)
+class _StageProfiler:
+    """Collect physical runtime evidence without entering logical fingerprints."""
+
+    _wall_seconds: dict[str, float] = field(default_factory=lambda: defaultdict(float))
+    _cpu_seconds: dict[str, float] = field(default_factory=lambda: defaultdict(float))
+    _invocations: dict[str, int] = field(default_factory=lambda: defaultdict(int))
+
+    @contextmanager
+    def stage(self, name: str):
+        wall_started = time.perf_counter()
+        cpu_started = time.process_time()
+        try:
+            yield
+        finally:
+            self._wall_seconds[name] += time.perf_counter() - wall_started
+            self._cpu_seconds[name] += time.process_time() - cpu_started
+            self._invocations[name] += 1
+
+    def timings(self) -> dict[str, str]:
+        return {
+            key: value
+            for name in sorted(self._wall_seconds)
+            for key, value in (
+                (f"{name}_wall_seconds", _seconds(self._wall_seconds[name])),
+                (f"{name}_cpu_seconds", _seconds(self._cpu_seconds[name])),
+            )
+        }
+
+    def invocation_metrics(self) -> dict[str, int]:
+        return {
+            f"{name}_invocation_count": self._invocations[name]
+            for name in sorted(self._invocations)
+        }
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -88,31 +128,38 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     validate_output(args.output_dir)
+    profiler = _StageProfiler()
+    io_before = _process_io_counters()
+    usage_before = resource.getrusage(resource.RUSAGE_SELF)
     started = time.monotonic()
     with _offline_socket_guard():
-        phase1b = read_market_regime_state_audit(args.phase1b_audit)
-        state_records, source_payload, current_payload = _read_phase1b_payloads(args.phase1b_audit)
-        _validate_phase1b(
-            manifest=phase1b,
-            state_records=state_records,
-            source_payload=source_payload,
-            current_payload=current_payload,
-            as_of_session=args.as_of_session,
-        )
-        available_eod_sessions = tuple(
-            item.session_date for item in CanonicalEodReadRepository(args.data_root).list_sessions()
-        )
-        candidate_sessions = _select_candidate_sessions(
-            state_records=state_records,
-            available_eod_sessions=available_eod_sessions,
-            as_of_session=args.as_of_session,
-            calendar=ExchangeCalendar(),
-        )
-        run = _calculate_offline(
-            data_root=args.data_root,
-            candidate_sessions=candidate_sessions,
-            regime_records=state_records,
-        )
+        with profiler.stage("phase1b_source_read_validate"):
+            phase1b = read_market_regime_state_audit(args.phase1b_audit)
+            state_records, source_payload, current_payload = _read_phase1b_payloads(args.phase1b_audit)
+            _validate_phase1b(
+                manifest=phase1b,
+                state_records=state_records,
+                source_payload=source_payload,
+                current_payload=current_payload,
+                as_of_session=args.as_of_session,
+            )
+        with profiler.stage("candidate_session_selection"):
+            available_eod_sessions = tuple(
+                date.fromisoformat(item)
+                for item in source_payload.get("history_sessions", ())
+            )
+            candidate_sessions = _select_candidate_sessions(
+                state_records=state_records,
+                available_eod_sessions=available_eod_sessions,
+                as_of_session=args.as_of_session,
+                calendar=ExchangeCalendar(),
+            )
+        with profiler.stage("candidate_offline_calculation"):
+            run = _calculate_offline(
+                data_root=args.data_root,
+                candidate_sessions=candidate_sessions,
+                regime_records=state_records,
+            )
         if (
             run.oracle_report.mismatch_count
             or not run.oracle_report.shared_raw_fact_match
@@ -121,6 +168,23 @@ def main(argv: list[str] | None = None) -> int:
         ):
             raise RuntimeError("candidate Oracle or replay-equivalence gate failed")
         elapsed = _seconds(time.monotonic() - started)
+        with profiler.stage("audit_projection_build"):
+            raw_facts = _raw_fact_records(run.score_history)
+            normalization_ledger = _normalization_records(run.score_history)
+        usage_after = resource.getrusage(resource.RUSAGE_SELF)
+        io_after = _process_io_counters()
+        timings = {
+            **profiler.timings(),
+            **run.timings,
+            "total_before_audit_write_seconds": elapsed,
+        }
+        runtime_metrics = {
+            **profiler.invocation_metrics(),
+            **run.runtime_metrics,
+            **_resource_deltas(usage_before, usage_after),
+            **_io_deltas(io_before, io_after),
+            "candidate_session_count": len(candidate_sessions),
+        }
         manifest = write_audit(
             output_dir=args.output_dir,
             panels=run.panels,
@@ -137,11 +201,12 @@ def main(argv: list[str] | None = None) -> int:
             risk_results=run.current_risk_results,
             oracle_comparison=run.oracle_report,
             equivalence_flags=run.equivalence_flags,
-            raw_facts=_raw_fact_records(run.score_history),
-            normalization_ledger=_normalization_records(run.score_history),
+            raw_facts=raw_facts,
+            normalization_ledger=normalization_ledger,
             generated_at=datetime.now(UTC),
-            timings={"total_before_audit_write_seconds": elapsed},
-            peak_memory_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+            timings=timings,
+            peak_memory_kib=usage_after.ru_maxrss,
+            runtime_metrics=runtime_metrics,
         )
     print(json.dumps(_summary(manifest, args.output_dir), sort_keys=True, separators=(",", ":")))
     return 0
@@ -228,6 +293,7 @@ def _calculate_offline(
     *, data_root: Path, candidate_sessions: tuple[date, ...],
     regime_records: Sequence[MarketRegimeStateRecordV1],
 ) -> CandidateOfflineRun:
+    profiler = _StageProfiler()
     regime_by_key = {(item.as_of_session, item.universe_id): item for item in regime_records}
     panels: list[MarketRegimeInputPanel] = []
     batches_by_universe: dict[str, list[OpportunityCandidateBatchV1]] = {
@@ -236,13 +302,21 @@ def _calculate_offline(
     states_by_universe_and_id: dict[tuple[str, UUID], list[OpportunityCandidateStateRecordV1]] = {}
     observations_by_universe_and_id: dict[tuple[str, UUID], list[CandidateStateObservationV1]] = {}
     oracle_reports: list[CandidateOracleComparisonV1] = []
+    final_session_risk = ()
 
-    for session_index, session in enumerate(candidate_sessions):
-        panel = load_formal_market_regime_panel(data_root=data_root, as_of_session=session)
-        _validate_panel_catalog(panel, session)
+    with profiler.stage("panel_load_validate"):
+        loaded_panels = load_formal_market_regime_panels(
+            data_root=data_root,
+            as_of_sessions=candidate_sessions,
+        )
+        for session, panel in zip(candidate_sessions, loaded_panels, strict=True):
+            _validate_panel_catalog(panel, session)
+
+    for session_index, (session, panel) in enumerate(zip(candidate_sessions, loaded_panels, strict=True)):
+        with profiler.stage("candidate_state_index_build"):
+            bars_by_instrument, latest_bar_by_instrument = _index_panel_bars(panel)
         panels.append(panel)
         session_batches = []
-        session_observations: dict[tuple[str, UUID], CandidateStateObservationV1] = {}
         for universe_id in PUBLIC_UNIVERSE_ORDER:
             member_ids = tuple(sorted(panel.select_universe(universe_id).member_ids, key=str))
             as_of_bar_ids = {
@@ -266,52 +340,63 @@ def _calculate_offline(
                 instrument_ids=covered_member_ids,
             )
             regime = regime_by_key[(session, universe_id)]
-            batch = calculate_opportunity_candidate_scores(
-                panel=panel,
-                universe_id=universe_id,
-                regime_score=regime.composite,
-                regime_state=regime.confirmed_state,
-                regime_source_fingerprint=regime.logical_fingerprint,
-                prior_state_source=prior_source,
-            )
+            with profiler.stage("candidate_score_calculation"):
+                batch = calculate_opportunity_candidate_scores(
+                    panel=panel,
+                    universe_id=universe_id,
+                    regime_score=regime.composite,
+                    regime_state=regime.confirmed_state,
+                    regime_source_fingerprint=regime.logical_fingerprint,
+                    prior_state_source=prior_source,
+                )
             batches_by_universe[universe_id].append(batch)
             session_batches.append(batch)
-            candidates = {item.instrument_id: item for item in batch.candidates}
-            metadata = _member_metadata(panel, member_ids, candidates, universe_id)
-            for instrument_id in member_ids:
-                candidate = candidates.get(instrument_id)
-                observation = None
-                if candidate is not None:
-                    observation = CandidateStateObservationV1(
-                        candidate=candidate,
-                        regime_state=regime.confirmed_state,
-                        breakout_fact=_breakout_fact(panel, candidate),
-                    )
-                    session_observations[(universe_id, instrument_id)] = observation
-                    observations_by_universe_and_id.setdefault((universe_id, instrument_id), []).append(observation)
-                key = (universe_id, instrument_id)
-                history = states_by_universe_and_id.setdefault(key, [])
-                ticker, security_type = metadata[instrument_id]
-                if history:
-                    new_rows = append_opportunity_candidate_state_history(
-                        existing_history=tuple(history),
-                        observations=(() if observation is None else (observation,)),
-                        expected_sessions=(session,),
-                        universe_id=universe_id,
-                        instrument_id=instrument_id,
-                        ticker=ticker,
-                        security_type=security_type,
-                    )
-                else:
-                    new_rows = replay_opportunity_candidate_state_history(
-                        observations=(() if observation is None else (observation,)),
-                        expected_sessions=(session,),
-                        universe_id=universe_id,
-                        instrument_id=instrument_id,
-                        ticker=ticker,
-                        security_type=security_type,
-                    )
-                history.extend(new_rows)
+            with profiler.stage("candidate_state_update"):
+                candidates = {item.instrument_id: item for item in batch.candidates}
+                metadata = _member_metadata(
+                    panel,
+                    member_ids,
+                    candidates,
+                    universe_id,
+                    latest_bar_by_instrument=latest_bar_by_instrument,
+                )
+                for instrument_id in member_ids:
+                    candidate = candidates.get(instrument_id)
+                    observation = None
+                    if candidate is not None:
+                        observation = CandidateStateObservationV1(
+                            candidate=candidate,
+                            regime_state=regime.confirmed_state,
+                            breakout_fact=_breakout_fact(
+                                panel,
+                                candidate,
+                                bars_by_session=bars_by_instrument.get(candidate.instrument_id, {}),
+                            ),
+                        )
+                        observations_by_universe_and_id.setdefault((universe_id, instrument_id), []).append(observation)
+                    key = (universe_id, instrument_id)
+                    history = states_by_universe_and_id.setdefault(key, [])
+                    ticker, security_type = metadata[instrument_id]
+                    if history:
+                        new_rows = append_opportunity_candidate_state_history(
+                            existing_history=tuple(history),
+                            observations=(() if observation is None else (observation,)),
+                            expected_sessions=(session,),
+                            universe_id=universe_id,
+                            instrument_id=instrument_id,
+                            ticker=ticker,
+                            security_type=security_type,
+                        )
+                    else:
+                        new_rows = replay_opportunity_candidate_state_history(
+                            observations=(() if observation is None else (observation,)),
+                            expected_sessions=(session,),
+                            universe_id=universe_id,
+                            instrument_id=instrument_id,
+                            ticker=ticker,
+                            security_type=security_type,
+                        )
+                    history.extend(new_rows)
 
         state_cases = ()
         if session_index == len(candidate_sessions) - 1:
@@ -329,33 +414,31 @@ def _calculate_offline(
             )
         risk = ()
         if session_index == len(candidate_sessions) - 1:
-            risk = tuple(
-                rank_opportunity_candidates(batch=batch, risk_mode=mode)
-                for batch in session_batches
-                for mode in CandidateRiskMode
+            with profiler.stage("candidate_risk_ranking"):
+                risk = tuple(
+                    rank_opportunity_candidates(batch=batch, risk_mode=mode)
+                    for batch in session_batches
+                    for mode in CandidateRiskMode
+                )
+            final_session_risk = risk
+        with profiler.stage("candidate_independent_oracle"):
+            oracle_reports.append(
+                compare_with_independent_candidate_oracle(
+                    panel=panel,
+                    batches=tuple(session_batches),
+                    regime_context_by_universe={
+                        universe_id: (
+                            regime_by_key[(session, universe_id)].composite,
+                            regime_by_key[(session, universe_id)].confirmed_state,
+                        )
+                        for universe_id in PUBLIC_UNIVERSE_ORDER
+                    },
+                    risk_results=risk,
+                    state_cases=state_cases,
+                )
             )
-        oracle_reports.append(
-            compare_with_independent_candidate_oracle(
-                panel=panel,
-                batches=tuple(session_batches),
-                regime_context_by_universe={
-                    universe_id: (
-                        regime_by_key[(session, universe_id)].composite,
-                        regime_by_key[(session, universe_id)].confirmed_state,
-                    )
-                    for universe_id in PUBLIC_UNIVERSE_ORDER
-                },
-                risk_results=risk,
-                state_cases=state_cases,
-            )
-        )
 
-    current_batches = tuple(batches_by_universe[item][-1] for item in PUBLIC_UNIVERSE_ORDER)
-    current_risk = tuple(
-        rank_opportunity_candidates(batch=batch, risk_mode=mode)
-        for batch in current_batches
-        for mode in CandidateRiskMode
-    )
+    current_risk = final_session_risk
     flattened_states = {
         universe_id: tuple(
             row
@@ -367,11 +450,12 @@ def _calculate_offline(
         )
         for universe_id in PUBLIC_UNIVERSE_ORDER
     }
-    equivalence = _equivalence_checks(
-        candidate_sessions=candidate_sessions,
-        states=states_by_universe_and_id,
-        observations=observations_by_universe_and_id,
-    )
+    with profiler.stage("candidate_replay_equivalence"):
+        equivalence = _equivalence_checks(
+            candidate_sessions=candidate_sessions,
+            states=states_by_universe_and_id,
+            observations=observations_by_universe_and_id,
+        )
     return CandidateOfflineRun(
         panels=tuple(panels),
         score_history={key: tuple(value) for key, value in batches_by_universe.items()},
@@ -380,6 +464,12 @@ def _calculate_offline(
         oracle_report=_combine_oracles(oracle_reports),
         equivalence_flags=equivalence,
         candidate_sessions=candidate_sessions,
+        timings=profiler.timings(),
+        runtime_metrics={
+            **profiler.invocation_metrics(),
+            "panel_load_count": len(candidate_sessions),
+            "candidate_batch_count": len(candidate_sessions) * len(PUBLIC_UNIVERSE_ORDER),
+        },
     )
 
 
@@ -390,33 +480,40 @@ def _validate_panel_catalog(panel: MarketRegimeInputPanel, session: date) -> Non
         raise RuntimeError("formal candidate panel Universe order mismatch")
 
 
-def _member_metadata(panel, member_ids, candidates, universe_id):
+def _index_panel_bars(panel):
+    by_instrument = defaultdict(dict)
     latest_by_id = {}
-    for bar in sorted(panel.bars, key=lambda item: (item.session_date, str(item.instrument_id))):
-        if bar.instrument_id in set(member_ids):
+    for bar in panel.bars:
+        if bar.session_date in by_instrument[bar.instrument_id]:
+            raise RuntimeError("duplicate candidate state instrument/session bar")
+        by_instrument[bar.instrument_id][bar.session_date] = bar
+        previous = latest_by_id.get(bar.instrument_id)
+        if previous is None or bar.session_date > previous.session_date:
             latest_by_id[bar.instrument_id] = bar
+    return dict(by_instrument), latest_by_id
+
+
+def _member_metadata(panel, member_ids, candidates, universe_id, *, latest_bar_by_instrument):
     primary_ids = panel.select_universe(PUBLIC_UNIVERSE_ORDER[0]).member_ids
     output = {}
     for instrument_id in member_ids:
         if instrument_id in candidates:
             output[instrument_id] = (candidates[instrument_id].ticker, candidates[instrument_id].security_type)
-        elif instrument_id in latest_by_id:
-            output[instrument_id] = (latest_by_id[instrument_id].ticker, "CS" if instrument_id in primary_ids else "ADRC")
+        elif instrument_id in latest_bar_by_instrument:
+            output[instrument_id] = (
+                latest_bar_by_instrument[instrument_id].ticker,
+                "CS" if instrument_id in primary_ids else "ADRC",
+            )
         else:
             raise RuntimeError(f"cannot source candidate-state display identity for missing member: {instrument_id}")
     return output
 
 
-def _breakout_fact(panel, candidate):
+def _breakout_fact(panel, candidate, *, bars_by_session):
     prior_sessions = panel.sessions[-6:-1]
-    by_session = {
-        item.session_date: item
-        for item in panel.bars
-        if item.instrument_id == candidate.instrument_id
-    }
     if (
         len(prior_sessions) != 5
-        or any(session not in by_session for session in (*prior_sessions, panel.as_of_session))
+        or any(session not in bars_by_session for session in (*prior_sessions, panel.as_of_session))
         or candidate.current_volume_ratio is None
     ):
         return CandidateBreakoutFactV1(
@@ -431,8 +528,8 @@ def _breakout_fact(panel, candidate):
             missing_reason="insufficient_prior_five_session_history",
             reason_codes=("insufficient_prior_five_session_history",),
         )
-    close = by_session[panel.as_of_session].close
-    prior_high = max(by_session[item].close for item in prior_sessions)
+    close = bars_by_session[panel.as_of_session].close
+    prior_high = max(bars_by_session[item].close for item in prior_sessions)
     ratio = Decimal(candidate.current_volume_ratio)
     return CandidateBreakoutFactV1(
         as_of_session=panel.as_of_session,
@@ -589,6 +686,40 @@ def _summary(manifest: Mapping[str, Any], output_dir: Path) -> dict[str, Any]:
 
 def _seconds(value: float) -> str:
     return format(value, ".6f")
+
+
+def _process_io_counters() -> dict[str, int]:
+    """Read Linux process I/O counters when available; unsupported hosts return none."""
+
+    path = Path("/proc/self/io")
+    try:
+        rows = path.read_text(encoding="ascii").splitlines()
+    except (FileNotFoundError, PermissionError, OSError):
+        return {}
+    counters: dict[str, int] = {}
+    for row in rows:
+        name, separator, raw_value = row.partition(":")
+        if separator and raw_value.strip().isdigit():
+            counters[name.strip()] = int(raw_value.strip())
+    return counters
+
+
+def _io_deltas(before: Mapping[str, int], after: Mapping[str, int]) -> dict[str, int]:
+    retained = {"rchar", "wchar", "syscr", "syscw", "read_bytes", "write_bytes"}
+    return {
+        f"process_io_{name}_delta": max(0, after[name] - before.get(name, 0))
+        for name in sorted(after)
+        if name in retained
+    }
+
+
+def _resource_deltas(before, after) -> dict[str, int]:
+    return {
+        "process_input_block_delta": max(0, int(after.ru_inblock - before.ru_inblock)),
+        "process_output_block_delta": max(0, int(after.ru_oublock - before.ru_oublock)),
+        "process_voluntary_context_switch_delta": max(0, int(after.ru_nvcsw - before.ru_nvcsw)),
+        "process_involuntary_context_switch_delta": max(0, int(after.ru_nivcsw - before.ru_nivcsw)),
+    }
 
 
 def _raw(value: Decimal) -> str:

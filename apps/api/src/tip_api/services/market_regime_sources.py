@@ -115,29 +115,61 @@ def load_formal_market_regime_panel(
 ) -> MarketRegimeInputPanel:
     """Reread exact immutable EOD/Identity/Activation sources without latest fallback."""
 
+    return load_formal_market_regime_panels(
+        data_root=data_root,
+        as_of_sessions=(as_of_session,),
+    )[0]
+
+
+def load_formal_market_regime_panels(
+    *,
+    data_root: Path,
+    as_of_sessions: tuple[date, ...],
+) -> tuple[MarketRegimeInputPanel, ...]:
+    """Load overlapping formal panels with each immutable source session read once."""
+
     if not data_root.is_absolute() or data_root.is_symlink() or not data_root.is_dir():
         raise MarketRegimeSourceError("data root must be an absolute regular directory")
+    if not as_of_sessions or tuple(sorted(as_of_sessions)) != as_of_sessions or len(set(as_of_sessions)) != len(
+        as_of_sessions
+    ):
+        raise MarketRegimeSourceError("panel as-of sessions must be non-empty, unique, and ascending")
     safe_root = data_root.resolve(strict=True)
     calendar = ExchangeCalendar()
-    sessions = calendar.sessions_before(as_of_session, 25) + (as_of_session,)
-    if len(sessions) != 26 or sessions[-1] != as_of_session or len(set(sessions)) != 26:
+    panel_sessions_by_as_of = {
+        as_of_session: calendar.sessions_before(as_of_session, 25) + (as_of_session,)
+        for as_of_session in as_of_sessions
+    }
+    if any(
+        len(sessions) != 26 or sessions[-1] != as_of_session or len(set(sessions)) != 26
+        for as_of_session, sessions in panel_sessions_by_as_of.items()
+    ):
         raise MarketRegimeSourceError("exact 26-session XNYS panel is required")
+    required_sessions = tuple(
+        sorted(
+            {
+                session
+                for sessions in panel_sessions_by_as_of.values()
+                for session in sessions
+            }
+        )
+    )
 
     repository = CanonicalEodReadRepository(safe_root)
     descriptors = repository.list_sessions()
     descriptor_dates = {item.session_date for item in descriptors}
-    missing_sessions = tuple(item for item in sessions if item not in descriptor_dates)
+    missing_sessions = tuple(item for item in required_sessions if item not in descriptor_dates)
     if missing_sessions:
         raise MarketRegimeSourceError(
             "required completed EOD sessions are missing: "
             + ",".join(item.isoformat() for item in missing_sessions)
         )
-    reads = repository.read_history_sessions(sessions)
-    if tuple(item.integrity.session_date for item in reads) != sessions:
+    reads = repository.read_history_sessions(required_sessions)
+    if tuple(item.integrity.session_date for item in reads) != required_sessions:
         raise MarketRegimeSourceError("formal reader session order mismatch")
 
-    source_sessions = tuple(
-        MarketRegimeSourceSession(
+    source_sessions_by_date = {
+        item.integrity.session_date: MarketRegimeSourceSession(
             session_date=item.integrity.session_date,
             dataset_path=(
                 "market-data/eod-price-bars/schema_version=1/session_date="
@@ -150,21 +182,20 @@ def load_formal_market_regime_panel(
             identity_snapshot_fingerprint=item.integrity.identity_snapshot_fingerprint,
         )
         for item in reads
-    )
-    as_of_integrity = reads[-1].integrity
-    if as_of_integrity.identity_snapshot_date != as_of_session:
-        raise MarketRegimeSourceError("as-of EOD does not reference same-day Identity")
+    }
+    integrity_by_date = {item.integrity.session_date: item.integrity for item in reads}
 
-    bars: list[MarketRegimeBar] = []
+    bars_by_session: dict[date, tuple[MarketRegimeBar, ...]] = {}
     seen_keys: set[tuple[UUID, date]] = set()
     for session_read in reads:
+        session_bars: list[MarketRegimeBar] = []
         for item in session_read.bars:
             key = (item.instrument_id, item.session_date)
             if key in seen_keys:
                 raise MarketRegimeSourceError("duplicate instrument/session business key")
             seen_keys.add(key)
             _validate_bar(item.open, item.high, item.low, item.close, item.volume)
-            bars.append(
+            session_bars.append(
                 MarketRegimeBar(
                     instrument_id=item.instrument_id,
                     ticker=item.ticker,
@@ -183,7 +214,9 @@ def load_formal_market_regime_panel(
                     quality_flags=item.quality_flags,
                 )
             )
-    bars_tuple = tuple(sorted(bars, key=lambda item: (item.session_date, str(item.instrument_id))))
+        bars_by_session[session_read.integrity.session_date] = tuple(
+            sorted(session_bars, key=lambda item: str(item.instrument_id))
+        )
 
     pointer = read_dashboard_universe_activation_pointer(safe_root)
     if pointer is None:
@@ -207,37 +240,50 @@ def load_formal_market_regime_panel(
             )
         )
     pointer_fingerprint = active_pointer_state_fingerprint(safe_root)
-    business_key_fingerprint = _as_of_business_key_fingerprint(repository, safe_root, as_of_session)
-    history_source_fingerprint = _fingerprint(
-        [
-            {
-                "session_date": item.session_date.isoformat(),
-                "dataset_path": item.dataset_path,
-                "record_count": item.record_count,
-                "content_fingerprint": item.content_fingerprint,
-                "parquet_sha256": item.parquet_sha256,
-                "identity_snapshot_date": item.identity_snapshot_date.isoformat(),
-                "identity_snapshot_fingerprint": item.identity_snapshot_fingerprint,
-            }
-            for item in source_sessions
-        ]
-    )
-    panel = MarketRegimeInputPanel(
-        as_of_session=as_of_session,
-        calendar_id=calendar.calendar_id,
-        calendar_version=calendar.calendar_version,
-        sessions=sessions,
-        source_sessions=source_sessions,
-        bars=bars_tuple,
-        universes=tuple(universes),
-        activation_pointer_fingerprint=pointer_fingerprint,
-        identity_logical_fingerprint=as_of_integrity.identity_snapshot_fingerprint,
-        eod_content_fingerprint=as_of_integrity.content_fingerprint,
-        eod_business_key_fingerprint=business_key_fingerprint,
-        history_source_fingerprint=history_source_fingerprint,
-    )
-    _validate_frozen_baseline(panel, as_of_integrity, safe_root)
-    return panel
+    panels: list[MarketRegimeInputPanel] = []
+    for as_of_session in as_of_sessions:
+        sessions = panel_sessions_by_as_of[as_of_session]
+        source_sessions = tuple(source_sessions_by_date[item] for item in sessions)
+        as_of_integrity = integrity_by_date[as_of_session]
+        if as_of_integrity.identity_snapshot_date != as_of_session:
+            raise MarketRegimeSourceError("as-of EOD does not reference same-day Identity")
+        bars_tuple = tuple(
+            bar
+            for session in sessions
+            for bar in bars_by_session[session]
+        )
+        business_key_fingerprint = _as_of_business_key_fingerprint(repository, safe_root, as_of_session)
+        history_source_fingerprint = _fingerprint(
+            [
+                {
+                    "session_date": item.session_date.isoformat(),
+                    "dataset_path": item.dataset_path,
+                    "record_count": item.record_count,
+                    "content_fingerprint": item.content_fingerprint,
+                    "parquet_sha256": item.parquet_sha256,
+                    "identity_snapshot_date": item.identity_snapshot_date.isoformat(),
+                    "identity_snapshot_fingerprint": item.identity_snapshot_fingerprint,
+                }
+                for item in source_sessions
+            ]
+        )
+        panel = MarketRegimeInputPanel(
+            as_of_session=as_of_session,
+            calendar_id=calendar.calendar_id,
+            calendar_version=calendar.calendar_version,
+            sessions=sessions,
+            source_sessions=source_sessions,
+            bars=bars_tuple,
+            universes=tuple(universes),
+            activation_pointer_fingerprint=pointer_fingerprint,
+            identity_logical_fingerprint=as_of_integrity.identity_snapshot_fingerprint,
+            eod_content_fingerprint=as_of_integrity.content_fingerprint,
+            eod_business_key_fingerprint=business_key_fingerprint,
+            history_source_fingerprint=history_source_fingerprint,
+        )
+        _validate_frozen_baseline(panel, as_of_integrity, safe_root)
+        panels.append(panel)
+    return tuple(panels)
 
 
 def _validate_frozen_baseline(panel: MarketRegimeInputPanel, integrity: object, root: Path) -> None:

@@ -2,9 +2,9 @@
 
 ## Status
 
-Status: **Implemented V1 calculation contract. A separately versioned immutable
-Market Intelligence 1.1 publication and Snapshot 1.6 / Dashboard 2.3 consumer are
-active for the exact 2026-08-24 `stale_review` release**.
+Status: **Implemented V1 calculation contract. The active ordinary-fresh
+2026-08-26 release uses Market Intelligence 1.2 and Snapshot 1.7 / Dashboard
+2.4 with Candidate publication 1.1**.
 
 The implemented Phase 1a profile is a reversible `/tmp` audit boundary. It
 emits both public Universes in catalog order, five dimension ledgers, 18 metric
@@ -73,6 +73,13 @@ last-written `candidate-audit-manifest.json`. Each historical candidate session
 binds its own complete 26-session source panel. Formal reread rejects unsafe
 custody, non-canonical JSON, fingerprint mismatch, Oracle mismatch, or failed
 append/restart/permutation/future-prefix equivalence.
+
+Physical Candidate runtime evidence includes per-stage wall/CPU timings, the
+pre-writer peak-memory sample, and optional process I/O/invocation counters.
+These fields are excluded from the aggregate logical fingerprint. Overlapping
+panels may share already validated immutable session reads and stable-ID bar
+indexes, but every emitted panel retains the same 26-session source ledger and
+all logical outputs must match the serial reference exactly.
 
 This contract freezes the machine-readable calculation boundary for the
 product described in
@@ -547,8 +554,9 @@ The implemented local-preview profile remains defined separately in
 It validates explicit `/tmp` audits and serves an immutable startup cache only
 when explicitly configured.
 
-Production custody is now implemented by Market Intelligence Publication V1
-and Snapshot 1.5 / Dashboard 2.2:
+Production custody is now implemented by Market Intelligence 1.2 and Snapshot
+1.7 / Dashboard 2.4; the older additive contracts remain readable rollback
+boundaries:
 
 - the analytics builder reads formal immutable sources and emits a candidate
   only after all quality gates pass;
@@ -560,7 +568,7 @@ and Snapshot 1.5 / Dashboard 2.2:
   not recompute scores, infer sectors, or select latest sources;
 - the frontend selects a public Universe, renders supplied facts, and never
   hides methodology or data-quality fields;
-- future guest and authenticated sessions must receive the same snapshot,
+- guest and credential sessions receive the same snapshot,
   precision, freshness, and functionality. Authentication may differ only at
   the Session boundary.
 

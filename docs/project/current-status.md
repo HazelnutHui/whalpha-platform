@@ -126,12 +126,18 @@ read or used.
 
 ## Next candidate work
 
-The next operational priority is to profile and shorten the daily pipeline
-without changing results: remove repeated historical-panel parsing, add
-incremental state and resumable content-addressed stages, then introduce
-deterministic process parallelism with a serial reference path. Publication,
-Snapshot generation, bundle construction, and OCI deployment remain separate
-explicit approvals.
+The first Candidate performance slice is implemented without changing results:
+physical per-stage runtime evidence, a worktree-safe Dell Python runner,
+overlapping-panel shared reads, one stable-ID state bar index per panel, and
+reuse of the already verified current risk ranking. On the same complete
+2026-08-26 audit, time before the audit writer fell from 1840.44 to 461.88
+seconds while the logical fingerprint remained
+`34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`
+with zero Oracle mismatch. The next operational priority is verified-prior
+incremental state, resumable content-addressed stages, and validation tiers;
+deterministic process parallelism follows with the serial path retained.
+Publication, Snapshot generation, bundle construction, and OCI deployment
+remain separate explicit approvals.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky
@@ -170,12 +176,12 @@ Production writes; entry input-permutation equivalence is true. Primary has
 does not automatically become an entry instruction.
 
 The active Candidate JSON is about 20.4 MB and should be split into summary
-and on-demand detail before the payload grows materially further. The daily
-Candidate audit used about one logical CPU at full utilization for roughly 30
-minutes and grew to about 2.7 GiB RSS. Dell has an 8-core / 16-thread Xeon
-W-2145, but the current analytics path has no explicit process pool. Provider
-requests must retain their fixed serial request gates; immutable CPU-bound
-calculations are the safe parallelization target.
+and on-demand detail before the payload grows materially further. Dell remains
+the sole heavy-compute, historical-storage, and data-governance authority;
+OCI is only the static serving/Session boundary. The optimized full Candidate
+path remains serial and has no explicit process pool yet. Provider requests
+retain their fixed serial request gates; immutable CPU-bound calculations are
+the safe parallelization target after incremental execution is complete.
 
 ## Verification entry point
 

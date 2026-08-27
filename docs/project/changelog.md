@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-27 — Candidate pipeline measurement and repeated-work removal
+
+- Added physical per-stage wall/CPU timings plus process I/O, invocation, and
+  context-switch counters to the Candidate audit manifest. Runtime evidence is
+  excluded from the logical fingerprint and older audits remain readable.
+- Added a repository-aware Dell Python runner and formal Candidate wrapper.
+  Linked Codex worktrees may reuse the main checkout's virtual environment
+  without silently importing main-checkout source.
+- Replaced per-candidate full-panel scans with one stable-ID bar index per
+  panel and reused the already Oracle-checked final risk results.
+- Added a formal multi-panel reader that validates the union of overlapping
+  immutable 26-session inputs once, then reconstructs the exact source-bound
+  panel for each Candidate session.
+- On the same complete 2026-08-26 inputs, the instrumented baseline took
+  1840.44 seconds before audit writing; the optimized path took 461.88 seconds.
+  Panel validation fell from 837.98 to 226.57 seconds and state update from
+  773.19 to 4.50 seconds. Process character reads fell from about 734 MB to
+  221 MB and the pre-writer RSS sample from about 3.0 GiB to 2.0 GiB.
+- Both real-data audits produced Candidate fingerprint
+  `34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`
+  with zero Oracle mismatch and passed all replay-equivalence gates. No
+  `/data`, publication, Snapshot, bundle, deployment, or OCI state changed.
+
 ## 2026-08-27 — Fresh 2026-08-26 publication and Candidate entry deployment
 
 - Published and formally reread same-day 2026-08-26 Identity and EOD through

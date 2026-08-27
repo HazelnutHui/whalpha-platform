@@ -257,6 +257,7 @@ def _write(target: Path, *, generated_at: datetime = datetime(2026, 8, 26, tzinf
         generated_at=generated_at,
         timings={"oracle": "0.100000", "total": "0.200000"},
         peak_memory_kib=512,
+        runtime_metrics={"process_io_read_bytes_delta": 123},
     )
 
 
@@ -319,10 +320,12 @@ def test_logical_manifest_is_independent_of_runtime_metadata_and_input_order() -
             generated_at=datetime(2026, 8, 27, tzinfo=UTC),
             timings={"total": "9.9"},
             peak_memory_kib=999,
+            runtime_metrics={"process_io_read_bytes_delta": 999},
         )
         assert a["logical_content_fingerprint"] == b["logical_content_fingerprint"]
         assert a["generated_at"] != b["generated_at"]
         assert a["timings"] != b["timings"]
+        assert a["runtime_metrics"] != b["runtime_metrics"]
     finally:
         shutil.rmtree(first, ignore_errors=True)
         shutil.rmtree(second, ignore_errors=True)
@@ -515,6 +518,7 @@ def test_reread_recomputes_nested_typed_record_fingerprint_after_outer_resign() 
             "generated_at",
             "timings",
             "peak_memory_kib",
+            "runtime_metrics",
             "completion_status",
         }
         manifest["logical_content_fingerprint"] = _fingerprint(
@@ -545,6 +549,7 @@ def test_reread_rejects_false_or_missing_replay_equivalence_gate(mutation: str) 
             "generated_at",
             "timings",
             "peak_memory_kib",
+            "runtime_metrics",
             "completion_status",
         }
         manifest["logical_content_fingerprint"] = _fingerprint(

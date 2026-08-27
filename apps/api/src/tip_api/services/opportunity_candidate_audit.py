@@ -76,6 +76,7 @@ def write_opportunity_candidate_audit(
     generated_at: datetime,
     timings: Mapping[str, str],
     peak_memory_kib: int,
+    runtime_metrics: Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
     """Write a completed immutable audit and formally reread it before return."""
 
@@ -231,6 +232,7 @@ def write_opportunity_candidate_audit(
         "generated_at": generated_at.astimezone(UTC).isoformat(),
         "timings": dict(sorted(timings.items())),
         "peak_memory_kib": peak_memory_kib,
+        "runtime_metrics": dict(sorted((runtime_metrics or {}).items())),
         "completion_status": "completed",
     }
     # The completion marker is deliberately created only after every artifact.
@@ -266,6 +268,7 @@ def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
             "generated_at",
             "timings",
             "peak_memory_kib",
+            "runtime_metrics",
             "completion_status",
         }
     }

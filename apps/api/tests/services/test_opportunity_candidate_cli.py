@@ -95,7 +95,7 @@ def test_verify_output_only_rereads_candidate_audit(monkeypatch, tmp_path, capsy
         lambda path: pytest.fail("output validator must not run in reread mode"),
     ))
     monkeypatch.setattr(cli, "read_market_regime_state_audit", lambda path: pytest.fail("Phase1b must not be read"))
-    monkeypatch.setattr(cli, "load_formal_market_regime_panel", lambda **kwargs: pytest.fail("/data must not be read"))
+    monkeypatch.setattr(cli, "load_formal_market_regime_panels", lambda **kwargs: pytest.fail("/data must not be read"))
     assert cli.main([
         "--as-of-session", "2026-08-24", "--data-root", str(tmp_path),
         "--phase1b-audit", str(tmp_path / "phase1b"), "--output-dir", str(output), "--verify-output",
@@ -179,7 +179,11 @@ def test_phase1b_history_selects_only_full_candidate_panels() -> None:
 def test_two_session_offline_run_passes_oracle_and_replay_gates(monkeypatch, tmp_path) -> None:
     panels = _panels()
     by_session = {item.as_of_session: item for item in panels}
-    monkeypatch.setattr(cli, "load_formal_market_regime_panel", lambda *, data_root, as_of_session: by_session[as_of_session])
+    monkeypatch.setattr(
+        cli,
+        "load_formal_market_regime_panels",
+        lambda *, data_root, as_of_sessions: tuple(by_session[item] for item in as_of_sessions),
+    )
     run = cli._calculate_offline(
         data_root=tmp_path,
         candidate_sessions=tuple(item.as_of_session for item in panels),
@@ -193,6 +197,11 @@ def test_two_session_offline_run_passes_oracle_and_replay_gates(monkeypatch, tmp
     assert run.oracle_report.input_permutation_match
     assert all(run.equivalence_flags.values())
     assert all(item.parameter_fingerprint == CANDIDATE_STATE_PARAMETER_FINGERPRINT for rows in run.state_history.values() for item in rows)
+    assert run.runtime_metrics["panel_load_count"] == 2
+    assert run.runtime_metrics["candidate_score_calculation_invocation_count"] == 4
+    assert run.runtime_metrics["candidate_independent_oracle_invocation_count"] == 2
+    assert Decimal(run.timings["candidate_score_calculation_wall_seconds"]) >= 0
+    assert Decimal(run.timings["candidate_independent_oracle_cpu_seconds"]) >= 0
 
 
 def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
@@ -202,8 +211,8 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
     by_session = {item.as_of_session: item for item in panels}
     monkeypatch.setattr(
         cli,
-        "load_formal_market_regime_panel",
-        lambda *, data_root, as_of_session: by_session[as_of_session],
+        "load_formal_market_regime_panels",
+        lambda *, data_root, as_of_sessions: tuple(by_session[item] for item in as_of_sessions),
     )
     run = cli._calculate_offline(
         data_root=tmp_path,
@@ -234,11 +243,6 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
     monkeypatch.setattr(cli, "_validate_phase1b", lambda **kwargs: None)
     monkeypatch.setattr(
         cli,
-        "CanonicalEodReadRepository",
-        lambda path: SimpleNamespace(list_sessions=lambda: ()),
-    )
-    monkeypatch.setattr(
-        cli,
         "_select_candidate_sessions",
         lambda **kwargs: tuple(item.as_of_session for item in panels),
     )
@@ -254,6 +258,9 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
     assert captured["equivalence_flags"] == run.equivalence_flags
     assert len(captured["candidate_batches"]) == 4
     assert captured["risk_results"] == run.current_risk_results
+    assert captured["runtime_metrics"]["candidate_session_count"] == 2
+    assert "candidate_offline_calculation_wall_seconds" in captured["timings"]
+    assert "audit_projection_build_cpu_seconds" in captured["timings"]
     assert "panel" not in captured
     assert '"status":"completed"' in capsys.readouterr().out
 
@@ -270,7 +277,11 @@ def test_as_of_missing_member_uses_history_identity_and_emits_missing_state(monk
     )
     panels = (first, second)
     by_session = {item.as_of_session: item for item in panels}
-    monkeypatch.setattr(cli, "load_formal_market_regime_panel", lambda *, data_root, as_of_session: by_session[as_of_session])
+    monkeypatch.setattr(
+        cli,
+        "load_formal_market_regime_panels",
+        lambda *, data_root, as_of_sessions: tuple(by_session[item] for item in as_of_sessions),
+    )
     run = cli._calculate_offline(
         data_root=tmp_path,
         candidate_sessions=tuple(item.as_of_session for item in panels),

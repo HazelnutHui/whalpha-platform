@@ -32,7 +32,8 @@ Confirmed current state:
 - Completed Instrument Master, provider identity, ticker resolver, and EOD datasets exist for 2026-08-12 through 2026-08-14; provider security evidence exists for 2026-08-14.
 - Massive credential provisioning, production HTTPS transport, reference smoke test, bounded All Tickers ingestion, and bounded Grouped Daily publication are complete.
 - Default-disabled canonical EOD query APIs, close-to-close analytics, Dashboard Overview, snapshot export, and bundle publication paths are implemented.
-- Historical backfill and automated daily ingestion are not implemented.
+- The initial 29-session EOD historical window through 2026-08-26 is
+  implemented; broader backfill and automated daily ingestion are not.
 - No production API is deployed.
 - No database exists.
 - The last OCI deployment recorded in Git is a private session-protected static Dashboard with a branded root login; this document does not assert current live health.
@@ -157,10 +158,10 @@ Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic
 validation models. Bounded Parquet repositories exist for Instrument Master,
 provider identity, ticker resolver, EOD bars, provider security evidence, and
 the not-yet-published SEC evidence boundary. Corporate Action V1 and broader
-issuer classification remain incomplete. The production data root contains 27
-completed point-in-time Identity and canonical EOD sessions through 2026-08-24,
+issuer classification remain incomplete. The production data root contains 29
+completed point-in-time Identity and canonical EOD sessions through 2026-08-26,
 active provider-form Primary/Secondary Universe memberships, immutable Market
-Intelligence, and Snapshot 1.5 / Dashboard 2.2. Default-disabled read/query
+Intelligence 1.2, and Snapshot 1.7 / Dashboard 2.4. Default-disabled read/query
 APIs, EOD analytics, Dashboard Overview, and private Snapshot export consume
 these completed datasets.
 
@@ -182,7 +183,7 @@ Provider direction:
 - Options data source remains an open question.
 
 Bounded Grouped Daily publications produced completed canonical sessions from
-2026-07-17 through 2026-08-24. Close-to-close analytics, default-disabled
+2026-07-17 through 2026-08-26. Close-to-close analytics, default-disabled
 private Dashboard APIs, immutable Market Intelligence, private snapshots, and
 versioned deployment tooling are implemented. Automated daily ingestion,
 unrestricted public provider-backed display, and a production API service are

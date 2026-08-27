@@ -106,8 +106,13 @@ Expected response:
 
 ```bash
 cd /home/hui/projects/trading-intelligence-platform
-.venv/bin/python -m pytest apps/api/tests
+scripts/dev/run-project-python.sh -m pytest apps/api/tests
 ```
+
+The project runner always places the current checkout or Codex worktree's
+`apps/api/src` first on `PYTHONPATH`. A linked worktree may reuse the main Dell
+checkout's virtual environment without silently importing the main checkout's
+source code. `TIP_PYTHON_BIN` may select another compatible interpreter.
 
 ## Build Frontend
 
