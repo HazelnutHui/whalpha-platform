@@ -49,6 +49,14 @@ Candidate and corrected V1.0.1 Market Regime state. The state daily path
 formally consumes current Phase 1a plus prior Phase 1b audits without reopening
 canonical EOD. These changes are offline development work and are not deployed.
 
+Repository development source also contains an exact-session read-only daily
+planner and a single-action executor for the four offline analytics stages.
+Execution is bound to an unchanged plan fingerprint, global Dell lock,
+immutable hash-chained journal, validated output evidence, and post-action
+formal re-plan. This boundary is tested but has not been run against real daily
+state; provider acquisition, canonical apply, publication, deployment, and
+scheduler activation remain separately unauthorized.
+
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and
 does not establish issuer structure or domicile. There is no automated daily

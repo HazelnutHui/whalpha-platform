@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-27 — Single-action offline daily execution custody
+
+- Accepted ADR 0030 and added an executor limited to one exact, unchanged
+  planner action across Phase 1a, verified-prior Phase 1b, daily Candidate, or
+  Candidate entry geometry. It holds a global lock, records start before
+  calculation, validates returned evidence, formally re-plans, and records
+  success only after the named immutable stage completes and the plan advances.
+- Added an owner-only append-only Dell run journal with immutable canonical
+  events, cross-session SHA-256 chaining, strict permissions/symlink/sequence
+  validation, unresolved-prior-session blocking, and non-blocking concurrency
+  rejection. Interrupted recovery inspects formal state and never re-executes.
+- Added a worktree-safe administrator entry and failure, interruption,
+  tampering, stale-plan, concurrency, recovery, evidence, and network-guard
+  tests. No durable real run root was provisioned and no real action ran.
+- No provider request, credential access, `/data` write, publication, Snapshot,
+  bundle, deployment, OCI, Production, or scheduler state changed.
+
 ## 2026-08-27 — Read-only daily EOD automation control plane
 
 - Accepted ADR 0029 and added a deterministic exact-session planner across

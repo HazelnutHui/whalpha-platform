@@ -177,8 +177,14 @@ serial. ADR 0029 now adds an exact-session read-only daily state planner. A real
 2026-08-26 rehearsal formally reread the corrected Phase 1b/Candidate
 incremental development chain and returned `calculate_entry_geometry` as the
 sole next action. It made zero external requests and Production writes and did
-not enable a scheduler. The single-action offline executor and durable Dell run
-custody are next.
+not enable a scheduler. ADR 0030 now adds the repository-tested single-action
+offline executor and durable Dell run custody: exact plan/action binding, one
+global lock, immutable hash-chained events, evidence validation, post-action
+formal re-plan, and inspection-only crash recovery. It is limited to Phase 1a,
+verified-prior Phase 1b, daily Candidate, and entry geometry. No durable real
+run root is provisioned and no real action has been executed through it.
+Session-readiness/retry policy and provider acquisition/canonical-apply
+standing authorization are next.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

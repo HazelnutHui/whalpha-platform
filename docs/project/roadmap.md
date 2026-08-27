@@ -5,8 +5,10 @@
   verified-prior Phase 1b append, immutable panel-stage reuse, and streaming/
   resumable Candidate audit output, explicit validation tiers, and bounded
   deterministic cold-Oracle process parallelism are complete. The exact-
-  session read-only daily control-plane planner is also complete; next add a
-  single-action offline executor and durable Dell run custody. Publication,
+  session read-only planner plus single-action offline executor and durable
+  Dell run custody are complete in repository source. Next define session
+  readiness, bounded retry/backoff, missed-session recovery, and the standing-
+  authorization boundary for provider acquisition/canonical apply. Publication,
   Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
@@ -127,14 +129,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Streaming and resumable source-bound Candidate audit stages
 - [x] Candidate daily/periodic/code-change validation tiers
 - [x] Deterministic cold-replay Candidate Oracle process parallelism with serial equivalence
+- [x] Exact-session daily planner and single-action offline executor with durable run custody
 
 ## Next Small Target
 
-Add the daily EOD control plane's single-action offline executor and durable,
-append-only Dell run custody. It must consume one exact planner action, hold an
-exclusive run lock, re-plan after immutable completion, and never combine
-provider acquisition, Production publication, Snapshot, bundle, OCI, or
-scheduler activation authorization. Keep SEC B2 paused.
+Define the daily EOD session-readiness, bounded retry/backoff, timeout, alert,
+and missed-session recovery contract, then separately decide whether provider
+acquisition and canonical apply receive standing authorization or remain
+manual. Do not activate a scheduler or combine Production publication,
+Snapshot, bundle, OCI, or deployment authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

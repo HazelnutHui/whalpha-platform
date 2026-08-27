@@ -102,8 +102,15 @@ keeps one effective Oracle worker. ADR 0029's exact-session, read-only daily
 planner is now implemented. A real 2026-08-26 rehearsal formally reconciled
 the corrected incremental chain and selected `calculate_entry_geometry` as its
 sole next action, with zero external requests and Production writes. A
-single-action executor and durable Dell run custody are next; no scheduler is
-enabled.
+single-action executor and durable Dell run-custody implementation now consume
+only an exact unchanged plan for one of four offline analytics actions. The
+executor holds a global lock, journals start/terminal events in an immutable
+cross-session hash chain, validates output evidence, and re-plans before
+recording success. Interrupted-attempt recovery only classifies formal state
+and never re-executes. This boundary is repository-tested only: no durable real
+run root is provisioned, no real action has run through it, and no scheduler is
+enabled. Session-readiness/retry policy and provider acquisition/apply standing
+authorization are next.
 
 ## Analytics and presentation
 
