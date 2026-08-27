@@ -55,3 +55,4 @@ Each ADR should include:
 - [0030: Custody One Offline Daily Action at a Time](0030-custody-one-offline-daily-action-at-a-time.md)
 - [0031: Separate Market Close from Provider Readiness](0031-separate-market-close-from-provider-readiness.md)
 - [0032: Custody Provider Fetch Attempts Before Automation](0032-custody-provider-fetch-attempts-before-automation.md)
+- [0033: Bound Standing Daily Data Authorization](0033-bound-standing-daily-data-authorization.md)

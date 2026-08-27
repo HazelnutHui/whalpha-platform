@@ -8,8 +8,9 @@
   session read-only planner plus single-action offline executor and durable
   Dell run custody plus the network-free session-readiness, bounded retry, and
   missed-session policy and durable acquisition-attempt custody are complete
-  in repository source. Next decide the standing-authorization boundary for
-  provider acquisition/canonical apply, then build the one-transition daily
+  in repository source. The default-deny, expiring standing-authorization
+  boundary for provider acquisition/canonical apply is also defined and
+  repository-tested but not activated. Next build the one-transition daily
   coordinator. Publication, Snapshot, bundle, and OCI remain separate
   authorizations.
 - Next product-validation step: review the implemented additive Candidate
@@ -134,14 +135,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Exact-session daily planner and single-action offline executor with durable run custody
 - [x] XNYS-close-aware readiness, bounded retry, alert state, and oldest-gap recovery policy
 - [x] Shared-lock durable provider-attempt reservation, outcome, and recovery custody
+- [x] Expiring, externally SHA-pinned standing Identity/EOD data-authorization contract
 
 ## Next Small Target
 
-Decide whether exact-session Identity/EOD fetch and canonical apply receive
-standing authorization or remain manual, then add the one-transition daily
-coordinator around the accepted boundary. Real notification delivery and
-scheduler activation remain separate. Do not combine Production publication,
-Snapshot, bundle, OCI, or deployment authorization. Keep SEC B2 paused.
+Add the one-transition daily coordinator around the accepted but inactive
+standing-authorization boundary. Then review and provision a real authorization
+artifact and separate host SHA pin, or retain manual provider/apply approvals.
+Real notification delivery and scheduler activation remain separate. Do not
+combine Production publication, Snapshot, bundle, OCI, or deployment
+authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

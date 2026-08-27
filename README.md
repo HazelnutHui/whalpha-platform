@@ -64,8 +64,11 @@ recovery without making a provider request or completeness claim. Durable
 acquisition-attempt custody is now implemented through fresh readiness reservation,
 persistent bounded outcomes, exact frozen-package evidence, and no-request
 interruption recovery under the same Dell global lock and hash chain.
-Notifications, standing provider/apply authorization, and scheduler activation
-remain unimplemented. No real run root or fetch attempt has been created.
+The repository now also defines an expiring, exact-revision standing data-
+authorization contract for Identity/EOD fetch and canonical apply. It is
+default-deny: no real authorization artifact or external SHA pin exists.
+Notifications, the one-transition coordinator, and scheduler activation remain
+unimplemented. No real run root or fetch attempt has been created.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

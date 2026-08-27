@@ -122,7 +122,12 @@ reserves only a fresh exact readiness fingerprint, records bounded outcomes,
 formally binds completed package evidence, and recovers interruption without a
 request. This is repository-tested only: journal 1.1 has not been provisioned
 for a real run and no fetch was executed. Provider fetch/canonical-apply
-standing authorization remains next.
+standing authorization is now defined by ADR 0033 as an expiring, exact-
+revision, externally SHA-pinned contract for only Identity/EOD fetch and
+canonical apply. Its reader and transition verifier are repository-tested, but
+no real authorization directory, artifact, host pin, fetch, or apply was
+created. The one-transition coordinator remains next; publication and public-
+serving operations stay outside this scope.
 
 ## Analytics and presentation
 

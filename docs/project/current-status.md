@@ -197,7 +197,11 @@ cross-session journal. It binds a fresh exact readiness fingerprint, package
 path/type/session/request count/hashes/timing, persists bounded retry evidence,
 and never loads credentials or executes a request. No real journal root or
 fetch attempt was created. Provider fetch/canonical-apply standing
-authorization remains next.
+authorization is now repository-defined by ADR 0033 with a maximum 90-day
+window, exact host/provider/path/code/readiness bindings, an external whole-
+file SHA pin, and a four-operation Identity/EOD scope. No real authorization
+directory, artifact, pin, or transition exists; current real operations still
+require manual approval. The one-transition coordinator remains next.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

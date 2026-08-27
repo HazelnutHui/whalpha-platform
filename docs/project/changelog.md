@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-27 — Default-deny standing daily data authorization
+
+- Accepted ADR 0033 and added an expiring, exact-revision authorization
+  contract limited to Massive Identity/EOD fetch and approved canonical apply.
+- Required a separately activated whole-file SHA pin plus exact host, provider,
+  `/data`, run-root, readiness-policy, custody, package, plan, and current-state
+  bindings. Publication, deployment, scheduler, SEC, options, and orders remain
+  explicitly unauthorized.
+- Added canonical owner-only artifact validation and one-transition decisions
+  with one-request/one-write maximums and fail-closed scope, expiry, revision,
+  mode, hash, and stale-request tests.
+- No real authorization directory, artifact, host pin, provider request,
+  credential read, `/data` write, publication, deployment, or scheduler state
+  was created or changed.
+
 ## 2026-08-27 — Durable provider-attempt custody
 
 - Accepted ADR 0032 and extended the unused real-world run-journal contract to

@@ -122,9 +122,39 @@ or invalid package custody blocks the daily state machine. Terminal attempts
 feed the next readiness calculation so retry delay and maximum count persist
 across processes.
 
-Custody is not the standing-authorization contract. Until that separate
-decision is accepted, every real `--fetch-only` request and every canonical
-apply still requires explicit approval.
+Custody is not the standing-authorization contract. The contract below is now
+accepted but inactive; until a real artifact and external pin are separately
+approved, every real `--fetch-only` request and canonical apply still requires
+explicit approval.
+
+## Standing daily data authorization
+
+ADR 0033 defines the repository contract for a future standing authorization.
+It can cover only exact-session Massive Identity/EOD fetch and their existing
+approved canonical apply boundaries. A reviewed artifact is active only when a
+separately activated host configuration supplies its exact whole-file SHA-256.
+It must also match the Dell host, `/data`, run root, implementation revision,
+readiness-policy fingerprint, effective interval, and one exact coordinator-
+derived transition. Maximum validity is 90 days.
+
+The artifact must be a canonical owner-only `0400` JSON file directly under a
+pre-provisioned owner-only `0700` authorization directory outside Git and
+`/data`. The repository exposes an in-memory candidate builder and strict
+reader/verifier; it does not provision the directory, write an active artifact,
+or configure the external SHA pin. No active artifact currently exists.
+
+Fetch authorization requires an unresolved custody reservation and permits at
+most one request. Apply authorization requires completed package custody,
+package hashes, the frozen approval-plan SHA, and its exact expected-current-
+state fingerprint, and permits at most one canonical transition. Any expiry,
+stale request, revision change, scope/path/hash mismatch, or unsafe artifact
+custody rejects the transition.
+
+This grant never includes publication, Snapshot, bundle, deployment, rollback,
+Universe activation, SEC, intraday/options data, orders, notifications, or the
+scheduler itself. Until an authorization artifact and external host SHA pin are
+explicitly reviewed and activated, provider fetch and canonical apply remain
+manual approvals.
 
 ## Read-only plan
 
@@ -260,8 +290,9 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. An explicit standing-authorization contract for provider fetch and
-   canonical apply, or continued manual approval for those two boundaries.
+1. The one-transition coordinator, followed by explicit review/provisioning of
+   a real standing-authorization artifact and its separate host SHA pin, or
+   continued manual approval for provider fetch and canonical apply.
 2. Actual alert delivery and a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
 3. Separate authorization decisions for publication, Snapshot/bundle, OCI
@@ -271,4 +302,6 @@ The executor and journal are implemented and tested, but no durable real run
 root has been provisioned and no real action has been executed through this
 boundary yet. Readiness planning is also implemented and tested without making
 a provider request or enabling a scheduler. Acquisition custody is implemented
-and tested without creating the real run root or executing a fetch.
+and tested without creating the real run root or executing a fetch. Standing
+authorization validation is implemented and tested, but no real authorization
+directory, artifact, SHA pin, or authorized transition exists.
