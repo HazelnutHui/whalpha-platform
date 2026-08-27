@@ -24,11 +24,12 @@
   are complete in repository source. The network-prohibited joint preflight for
   external alert/host/data-authorization artifacts is also repository-tested.
   Explicit post-coordination intent/custody/SMTP composition is complete under
-  a default-off CLI flag. Next select the real SMTP service and addresses,
-  review/provision all external artifacts at one stable revision, run that
-  preflight, then perform a separately authorized controlled email/one-
-  transition rehearsal before considering scheduler activation. Publication,
-  Snapshot, bundle, and OCI remain separate authorizations.
+  a default-off CLI flag. External preflight 1.1 now also supports explicit
+  `daily_data_only` review while SMTP remains deferred. Next review/provision
+  the Host/data authorization and run root at one stable revision, run the no-
+  email preflight, then perform a separately authorized single data transition
+  before considering scheduler activation. Publication, Snapshot, bundle, and
+  OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -162,16 +163,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Default-disabled external SMTP adapter with owner-only credential custody
 - [x] Network-prohibited joint external-control configuration preflight
 - [x] Explicit post-coordination email delivery composition with at-most-once custody
+- [x] Explicit data-only external preflight while SMTP remains deferred
 
 ## Next Small Target
 
-Select the actual SMTP service, sender, and recipient, then draft and review the
-external alert, host-runtime, and standing data-authorization artifacts at one
-stable implementation revision. Provision them only after review, run the ADR
-0042 no-network preflight, and separately authorize a controlled email/one-
-transition rehearsal before considering scheduler activation. Do not combine
-Production publication, Snapshot, bundle, OCI, or deployment authorization.
-Keep SEC B2 paused.
+Review and provision the external Host Runtime, standing data authorization,
+and owner-only daily run root at one stable implementation revision. Run ADR
+0044's `--without-email` preflight, then separately authorize exactly one
+supervised Identity fetch or Apply transition. SMTP remains optional and
+deferred. Do not combine Production publication, Snapshot, bundle, OCI,
+deployment, or scheduler authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

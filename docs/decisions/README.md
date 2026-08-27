@@ -66,3 +66,4 @@ Each ADR should include:
 - [0041: Deliver Daily Alerts Through External SMTP](0041-deliver-daily-alerts-through-external-smtp.md)
 - [0042: Preflight External Daily Controls Together](0042-preflight-external-daily-controls-together.md)
 - [0043: Compose Explicit Email Delivery After Coordination](0043-compose-explicit-email-delivery-after-coordination.md)
+- [0044: Allow Data-Only Preflight When Email Is Deferred](0044-allow-data-only-preflight-when-email-is-deferred.md)

@@ -14,6 +14,7 @@ from tip_api.services.daily_eod_email_delivery import (
     read_email_transport_config,
 )
 from tip_api.services.daily_eod_external_preflight import (
+    CONTRACT_VERSION,
     DailyEodExternalPreflightError,
     preflight_external_controls,
 )
@@ -51,12 +52,14 @@ def main(argv: list[str] | None = None) -> int:
                 repository_root=source_root,
                 expected_file_sha256=args.authorization_sha256,
             )
-            email_config = read_email_transport_config(
-                config_path=args.email_config,
-                config_root=args.email_config.parent,
-                repository_root=source_root,
-                expected_file_sha256=args.email_config_sha256,
-            )
+            email_config = None
+            if not args.without_email:
+                email_config = read_email_transport_config(
+                    config_path=args.email_config,
+                    config_root=args.email_config.parent,
+                    repository_root=source_root,
+                    expected_file_sha256=args.email_config_sha256,
+                )
             result = preflight_external_controls(
                 host_config=host_config,
                 authorization=authorization,
@@ -82,9 +85,7 @@ def main(argv: list[str] | None = None) -> int:
         print(
             json.dumps(
                 {
-                    "contract_version": (
-                        "daily-eod-external-control-preflight/1.0"
-                    ),
+                    "contract_version": CONTRACT_VERSION,
                     "status": "rejected",
                     "reason_code": "external_control_preflight_rejected",
                     "error_type": type(exc).__name__,
@@ -118,8 +119,9 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--host-config-sha256", required=True)
     parser.add_argument("--authorization", required=True, type=Path)
     parser.add_argument("--authorization-sha256", required=True)
-    parser.add_argument("--email-config", required=True, type=Path)
-    parser.add_argument("--email-config-sha256", required=True)
+    parser.add_argument("--without-email", action="store_true")
+    parser.add_argument("--email-config", type=Path)
+    parser.add_argument("--email-config-sha256")
     return parser
 
 
@@ -127,16 +129,28 @@ def _validate_arguments(
     parser: argparse.ArgumentParser,
     args: argparse.Namespace,
 ) -> None:
-    for name in ("host_config", "authorization", "email_config"):
+    for name in ("host_config", "authorization"):
         if not getattr(args, name).is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
     for name in (
         "host_config_sha256",
         "authorization_sha256",
-        "email_config_sha256",
     ):
         if not _is_fingerprint(getattr(args, name)):
             parser.error(f"--{name.replace('_', '-')} must be a SHA-256 fingerprint")
+    email_values = (args.email_config, args.email_config_sha256)
+    if args.without_email:
+        if any(value is not None for value in email_values):
+            parser.error("--without-email cannot include email config arguments")
+    elif (
+        args.email_config is None
+        or not args.email_config.is_absolute()
+        or not _is_fingerprint(args.email_config_sha256)
+    ):
+        parser.error(
+            "email preflight requires absolute --email-config and "
+            "--email-config-sha256, or explicit --without-email"
+        )
 
 
 def _source_repository_root() -> Path:

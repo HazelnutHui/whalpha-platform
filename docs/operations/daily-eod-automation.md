@@ -368,6 +368,21 @@ scripts/admin/preflight-daily-eod-external-controls.sh \
   --email-config-sha256 <64-hex-whole-file-sha>
 ```
 
+ADR 0044 advances the result to
+`daily-eod-external-control-preflight/1.1`. When email is deliberately
+deferred, replace the two email arguments with the explicit flag:
+
+```bash
+--without-email
+```
+
+This returns `preflight_mode=daily_data_only`, null email/alert fields, and
+`email_transport_enabled=false`. Omitting email arguments without the flag is
+rejected, as is combining the flag with any email argument. Data-only mode
+still requires enabled Host Runtime plus the complete active four-operation
+Identity/EOD authorization; it never reads the email config or implies an
+alert channel.
+
 Run this only from the configured clean Dell source repository at the exact
 revision pinned by all three artifacts. A successful result says
 `configuration_consistent`; it does **not** authorize a provider request,
@@ -520,12 +535,12 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Select the real SMTP service, sender, and recipient; review and provision
-   the external alert, host-runtime, and standing-authorization artifacts and
-   SHA pins together at one stable implementation revision, or continue manual
-   approval.
-2. Run the ADR 0042 no-network config preflight, followed only under separate
-   authorization by a controlled email and one-transition rehearsal.
+1. Review and provision the external Host Runtime, standing data authorization,
+   and daily run root at one stable implementation revision, or continue manual
+   approval. SMTP may remain deferred.
+2. Run the ADR 0044 `--without-email` no-network preflight, followed only under
+   separate authorization by one controlled data transition. Add a controlled
+   email rehearsal later only after SMTP is deliberately configured.
 3. Conduct a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
 4. Make separate authorization decisions for publication, Snapshot/bundle, OCI
@@ -557,3 +572,5 @@ artifact, credential read, network call, email, service, or timer exists. ADR
 read or created and no installed preflight was performed. ADR 0043's explicit
 CLI delivery route is also repository-tested only with fake SMTP; it has not
 been invoked against any real config, credential, alert root, or transport.
+ADR 0044 data-only preflight is repository-tested only; no Host Runtime,
+standing authorization, run root, or installed preflight was created.

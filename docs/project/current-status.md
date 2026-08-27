@@ -251,9 +251,19 @@ networking, writes, and activation. The command is repository-tested only; no
 real external artifacts were provisioned or preflighted. ADR 0043 adds the
 explicit post-coordination CLI composition from a non-null intent through
 alert custody to SMTP. Default and normal-state paths remain zero-delivery;
-only synthetic credentials and a fake sender have exercised this route.
+only synthetic credentials and a fake sender have exercised this route. ADR
+0044 advances joint preflight to 1.1 with an explicit no-email data-only mode;
+the full four-operation data scope remains mandatory and email inputs must be
+clearly included or omitted.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
+
+The 2026-08-27 20:18Z read-only Dell check found latest canonical Identity/EOD
+at 2026-08-26 and selected `prepare_identity_catchup` for 2026-08-27. Readiness
+was still in the post-close stabilization window until 20:30Z. No daily run
+root, alert root, matching user timer, external Host Runtime, or standing
+authorization was installed; no credential, network request, or write was
+performed.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky

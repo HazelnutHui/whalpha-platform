@@ -131,6 +131,7 @@ def test_consistent_controls_report_zero_authority_and_zero_io() -> None:
     payload = result.as_dict()
 
     assert result.status == "configuration_consistent"
+    assert result.preflight_mode == "data_and_email"
     assert result.configuration_consistent is True
     assert result.allowed_operations == tuple(item.value for item in StandingOperation)
     assert result.credential_paths_distinct is True
@@ -146,6 +147,34 @@ def test_consistent_controls_report_zero_authority_and_zero_io() -> None:
     assert "credential_path" not in payload
     assert str(MASSIVE_CREDENTIAL) not in repr(payload)
     assert str(SMTP_CREDENTIAL) not in repr(payload)
+
+
+def test_data_only_mode_explicitly_omits_email_without_weakening_data_scope() -> None:
+    result = preflight(
+        email_config=None,
+        email_config_path=None,
+        email_config_file_sha256=None,
+    )
+
+    assert result.contract_version == "daily-eod-external-control-preflight/1.1"
+    assert result.preflight_mode == "daily_data_only"
+    assert result.email_config_id is None
+    assert result.email_config_file_sha256 is None
+    assert result.alert_root is None
+    assert result.email_transport_enabled is False
+    assert result.host_capabilities_enabled is True
+    assert result.allowed_operations == tuple(item.value for item in StandingOperation)
+    assert result.credential_file_access_count == 0
+    assert result.external_request_count == 0
+    assert result.filesystem_write_count == 0
+    assert result.production_write_count == 0
+    assert result.controlled_rehearsal_authorized is False
+    assert result.scheduler_enabled is False
+
+
+def test_email_preflight_inputs_cannot_be_partially_omitted() -> None:
+    with pytest.raises(DailyEodExternalPreflightError, match="supplied together"):
+        preflight(email_config=None)
 
 
 @pytest.mark.parametrize(

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-27 — Explicit no-email data-control preflight
+
+- Accepted ADR 0044 and advanced external-control preflight to 1.1 with an
+  explicit `daily_data_only` mode after the user deferred SMTP configuration.
+- Kept enabled Host Runtime, all four active Identity/EOD operations, exact
+  revision/SHA/path/policy binding, credential isolation, socket prohibition,
+  and zero-write evidence mandatory while omitting all email reads and claims.
+- Added contract and CLI tests for data-only success, null email/alert fields,
+  zero credential/network/write counts, and rejection of implicit or mixed
+  email omission.
+- A read-only Dell check at 20:18Z selected 2026-08-27
+  `prepare_identity_catchup` but remained in the stabilization window until
+  20:30Z. Daily run/alert roots and a matching user timer were absent.
+- An in-memory Host/authorization candidate was not written and no credential,
+  network request, canonical write, external config, service, timer, email,
+  publication, deployment, or scheduler state was created or changed.
+
 ## 2026-08-27 — Explicit post-coordination email delivery
 
 - Accepted ADR 0043 and added explicit one-transition CLI composition from a

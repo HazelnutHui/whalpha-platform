@@ -163,6 +163,43 @@ def test_cli_reads_only_control_files_and_reports_no_activation(
     assert after == before
 
 
+def test_cli_data_only_mode_never_reads_email_config(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    repository, arguments, massive_credential, smtp_credential = installed_controls(
+        tmp_path
+    )
+    email_index = arguments.index("--email-config")
+    data_only_arguments = arguments[:email_index] + ["--without-email"]
+    monkeypatch.setattr(cli, "_source_repository_root", lambda: repository)
+    monkeypatch.setattr(
+        cli,
+        "verify_dell_runtime",
+        lambda **_kwargs: verified(repository),
+    )
+    monkeypatch.setattr(
+        cli,
+        "read_email_transport_config",
+        lambda **_kwargs: pytest.fail("data-only mode read email config"),
+    )
+
+    assert cli.main(data_only_arguments) == 0
+    payload = json.loads(capsys.readouterr().out)
+
+    assert payload["contract_version"] == "daily-eod-external-control-preflight/1.1"
+    assert payload["status"] == "configuration_consistent"
+    assert payload["preflight_mode"] == "daily_data_only"
+    assert payload["email_config_id"] is None
+    assert payload["email_config_file_sha256"] is None
+    assert payload["alert_root"] is None
+    assert payload["email_transport_enabled"] is False
+    assert payload["credential_file_access_count"] == 0
+    assert not massive_credential.exists()
+    assert not smtp_credential.exists()
+
+
 def test_cli_socket_guard_rejects_network_before_any_result(
     tmp_path: Path,
     monkeypatch,
@@ -223,6 +260,34 @@ def test_cli_requires_absolute_paths_and_exact_sha() -> None:
                 "/tmp/authorization.json",
                 "--authorization-sha256",
                 "c" * 64,
+                "--email-config",
+                "/tmp/email.json",
+                "--email-config-sha256",
+                "d" * 64,
+            ]
+        )
+
+
+def test_cli_requires_explicit_email_inclusion_or_omission() -> None:
+    common = [
+        "--checked-at",
+        NOW.isoformat(),
+        "--host-config",
+        "/tmp/host.json",
+        "--host-config-sha256",
+        "b" * 64,
+        "--authorization",
+        "/tmp/authorization.json",
+        "--authorization-sha256",
+        "c" * 64,
+    ]
+    with pytest.raises(SystemExit):
+        cli.main(common)
+    with pytest.raises(SystemExit):
+        cli.main(
+            common
+            + [
+                "--without-email",
                 "--email-config",
                 "/tmp/email.json",
                 "--email-config-sha256",

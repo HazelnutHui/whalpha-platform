@@ -179,6 +179,18 @@ custody, and SMTP adapter after one formal coordinator result when the CLI has
 an explicit delivery flag and exact Host/email SHA pins. Normal states perform
 no credential access or alert write. No real external artifact has been
 created or preflighted, and no delivery route has been invoked.
+ADR 0044 advances external preflight to 1.1 with an explicit
+`daily_data_only` mode because SMTP is deferred. The mode never reads email
+config and retains the complete Host/Identity/EOD authorization checks.
+
+At 2026-08-27T20:18:05Z, a fresh network-free Dell report still showed latest
+Identity/EOD 2026-08-26 and a clean repository at `353b5d1`. The exact
+2026-08-27 automation plan selected `prepare_identity_catchup`. Readiness was
+`stabilizing` until 20:30Z with zero attempts, requests, or writes. The proposed
+daily run and alert roots were absent and no matching user timer was active.
+An in-memory seven-day Host/standing-authorization candidate was reviewed but
+not written; its revision became intentionally obsolete when ADR 0044 work
+began.
 
 ## Analytics and presentation
 

@@ -105,6 +105,10 @@ been created or preflighted. The one-transition CLI now also has an explicit
 post-coordination route from a non-null alert intent through immutable custody
 to SMTP. Default invocation and normal no-alert results remain zero-delivery;
 the route has only fake-transport tests and has never sent real email.
+Because SMTP is deliberately deferred, external-control preflight 1.1 now also
+has an explicit `daily_data_only` mode. It keeps the complete four-operation
+Identity/EOD scope while omitting all email inputs and claims; no real data-
+only external artifacts or preflight have been installed.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

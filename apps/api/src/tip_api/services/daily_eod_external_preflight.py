@@ -28,7 +28,7 @@ from tip_api.services.daily_eod_standing_authorization import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-external-control-preflight/1.0"
+CONTRACT_VERSION = "daily-eod-external-control-preflight/1.1"
 
 
 class DailyEodExternalPreflightError(RuntimeError):
@@ -45,13 +45,14 @@ class DailyEodExternalPreflightResult:
     implementation_revision: str
     data_root: str
     run_root: str
-    alert_root: str
+    alert_root: str | None
+    preflight_mode: str
     host_config_id: str
     authorization_id: str
-    email_config_id: str
+    email_config_id: str | None
     host_config_file_sha256: str
     authorization_file_sha256: str
-    email_config_file_sha256: str
+    email_config_file_sha256: str | None
     allowed_operations: tuple[str, ...]
     host_capabilities_enabled: bool
     email_transport_enabled: bool
@@ -75,15 +76,15 @@ def preflight_external_controls(
     *,
     host_config: DailyEodHostRuntimeConfigV1,
     authorization: DailyEodStandingAuthorizationV1,
-    email_config: DailyEodEmailTransportConfigV1,
+    email_config: DailyEodEmailTransportConfigV1 | None,
     verified_runtime: VerifiedDellRuntime,
     checked_at: datetime,
     host_config_path: Path,
     host_config_file_sha256: str,
     authorization_path: Path,
     authorization_file_sha256: str,
-    email_config_path: Path,
-    email_config_file_sha256: str,
+    email_config_path: Path | None,
+    email_config_file_sha256: str | None,
 ) -> DailyEodExternalPreflightResult:
     """Prove configuration consistency without inspecting credentials or roots."""
 
@@ -97,24 +98,40 @@ def preflight_external_controls(
         authorization,
         "standing authorization",
     )
-    email_config = _revalidate(
-        DailyEodEmailTransportConfigV1,
-        email_config,
-        "email transport config",
-    )
+    if email_config is None:
+        if email_config_path is not None or email_config_file_sha256 is not None:
+            raise DailyEodExternalPreflightError(
+                "email preflight inputs must be supplied together"
+            )
+    else:
+        if email_config_path is None or email_config_file_sha256 is None:
+            raise DailyEodExternalPreflightError(
+                "email preflight inputs must be supplied together"
+            )
+        email_config = _revalidate(
+            DailyEodEmailTransportConfigV1,
+            email_config,
+            "email transport config",
+        )
+    email_included = email_config is not None
     checked = _aware_utc(checked_at)
-    file_shas = (
+    file_shas = [
         host_config_file_sha256,
         authorization_file_sha256,
-        email_config_file_sha256,
-    )
-    paths = (host_config_path, authorization_path, email_config_path)
-    control_roots = tuple(path.parent for path in paths)
+    ]
+    paths = [host_config_path, authorization_path]
+    if email_included:
+        assert email_config_file_sha256 is not None
+        assert email_config_path is not None
+        file_shas.append(email_config_file_sha256)
+        paths.append(email_config_path)
+    path_tuple = tuple(paths)
+    control_roots = tuple(path.parent for path in path_tuple)
     if (
         not isinstance(verified_runtime, VerifiedDellRuntime)
         or not verified_runtime.worktree_clean
         or not all(_is_fingerprint(value) for value in file_shas)
-        or not all(path.is_absolute() for path in paths)
+        or not all(path.is_absolute() for path in path_tuple)
         or any(
             _paths_overlap(left, right)
             for index, left in enumerate(control_roots)
@@ -127,12 +144,15 @@ def preflight_external_controls(
     repository_root = Path(host_config.repository_root)
     data_root = Path(host_config.data_root)
     run_root = Path(host_config.run_root)
-    alert_root = Path(email_config.alert_root)
+    alert_root = None if email_config is None else Path(email_config.alert_root)
+    protected_operational_roots = (repository_root, data_root, run_root) + (
+        () if alert_root is None else (alert_root,)
+    )
     if (
         any(
             _paths_overlap(control_root, protected_root)
             for control_root in control_roots
-            for protected_root in (repository_root, data_root, run_root, alert_root)
+            for protected_root in protected_operational_roots
         )
         or Path(host_config.authorization_root) != authorization_path.parent
         or Path(host_config.authorization_path) != authorization_path
@@ -143,20 +163,14 @@ def preflight_external_controls(
         )
     if (
         host_config.host != authorization.host
-        or host_config.host != email_config.host
         or host_config.host != verified_runtime.host
-        or host_config.repository_root != email_config.repository_root
         or host_config.repository_root != verified_runtime.repository_root
         or host_config.implementation_revision
         != authorization.implementation_revision
         or host_config.implementation_revision
-        != email_config.implementation_revision
-        or host_config.implementation_revision
         != verified_runtime.implementation_revision
         or host_config.data_root != authorization.data_root
-        or host_config.data_root != email_config.data_root
         or host_config.run_root != authorization.run_root
-        or host_config.run_root != email_config.run_root
         or host_config.readiness_policy_fingerprint
         != authorization.readiness_policy_fingerprint
         or host_config.readiness_policy_fingerprint
@@ -165,31 +179,41 @@ def preflight_external_controls(
         raise DailyEodExternalPreflightError(
             "external control runtime binding is inconsistent"
         )
+    if email_config is not None and (
+        host_config.host != email_config.host
+        or host_config.repository_root != email_config.repository_root
+        or host_config.implementation_revision
+        != email_config.implementation_revision
+        or host_config.data_root != email_config.data_root
+        or host_config.run_root != email_config.run_root
+    ):
+        raise DailyEodExternalPreflightError(
+            "external control runtime binding is inconsistent"
+        )
     required_operations = tuple(StandingOperation)
     if (
         not host_config.capabilities_enabled
-        or not email_config.enabled
         or authorization.allowed_operations != required_operations
+        or (email_config is not None and not email_config.enabled)
     ):
         raise DailyEodExternalPreflightError(
             "external controls are not enabled for the complete daily scope"
         )
-    credential_paths = (
-        Path(host_config.credential_path),
-        Path(email_config.credential_path),
-    )
+    credential_paths = [Path(host_config.credential_path)]
+    if email_config is not None:
+        credential_paths.append(Path(email_config.credential_path))
     protected_roots = (
         repository_root,
         data_root,
         run_root,
-        alert_root,
+        *(value for value in (alert_root,) if value is not None),
         *control_roots,
     )
     if (
-        credential_paths[0] == credential_paths[1]
-        or _paths_overlap(
-            credential_paths[0].parent,
-            credential_paths[1].parent,
+        any(
+            left == right or _paths_overlap(left.parent, right.parent)
+            for index, left in enumerate(credential_paths)
+            for right in credential_paths[index + 1 :]
         )
         or any(
             _paths_overlap(path.parent, protected_root)
@@ -230,16 +254,23 @@ def preflight_external_controls(
         "implementation_revision": verified_runtime.implementation_revision,
         "data_root": str(data_root),
         "run_root": str(run_root),
-        "alert_root": str(alert_root),
+        "alert_root": None if alert_root is None else str(alert_root),
+        "preflight_mode": (
+            "data_and_email" if email_included else "daily_data_only"
+        ),
         "host_config_id": host_config.config_id,
         "authorization_id": authorization.authorization_id,
-        "email_config_id": email_config.config_id,
+        "email_config_id": (
+            None if email_config is None else email_config.config_id
+        ),
         "host_config_file_sha256": host_config_file_sha256,
         "authorization_file_sha256": authorization_file_sha256,
         "email_config_file_sha256": email_config_file_sha256,
         "allowed_operations": tuple(item.value for item in required_operations),
         "host_capabilities_enabled": True,
-        "email_transport_enabled": True,
+        "email_transport_enabled": bool(
+            email_config is not None and email_config.enabled
+        ),
         "configuration_consistent": True,
         "credential_paths_distinct": True,
         "credential_file_access_count": 0,
