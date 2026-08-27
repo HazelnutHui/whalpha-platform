@@ -17,7 +17,7 @@ from tip_api.contracts.analytics.v1 import (
     MarketRegimeDimensionV1,
     RegimeState,
 )
-from tip_api.parameters.market_regime.state_v1_0_0 import (
+from tip_api.parameters.market_regime.state_v1_0_1 import (
     FROZEN_PHASE1A_AUDIT_FINGERPRINT,
     STATE_PARAMETER_FINGERPRINT,
     state_parameter_payload,
@@ -28,6 +28,7 @@ from tip_api.services.market_regime_sources import (
     MarketRegimeSourceSession,
     MarketRegimeUniverseSource,
 )
+from tip_api.services.market_regime_history import _prefix_panel
 from tip_api.services.market_regime_state import (
     MarketRegimeStateError,
     append_regime_state_history,
@@ -297,6 +298,16 @@ def test_input_permutation_append_restart_and_future_prefix_equivalence() -> Non
         item.logical_fingerprint
         for item in replay_regime_state_history(composites=composites[:-1], expected_sessions=sessions[:-1], universe_id=PRIMARY, calendar=CALENDAR)[0]
     )
+
+
+def test_phase1a_history_prefix_keeps_rolling_source_window_without_dropping_state_start() -> None:
+    sessions = CALENDAR.sessions_before(date(2026, 8, 26), 28) + (date(2026, 8, 26),)
+    panel = _audit_panel(sessions)
+    first = _prefix_panel(panel, 20)
+    later = _prefix_panel(panel, 28)
+    assert first.sessions == sessions[:21]
+    assert later.sessions == sessions[-26:]
+    assert later.as_of_session == sessions[-1]
 
 
 @pytest.mark.parametrize("precision", (9, 28, 50))

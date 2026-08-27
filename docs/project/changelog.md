@@ -1,5 +1,40 @@
 # Changelog
 
+## 2026-08-27 — Stable state prefix and verified-prior Candidate append
+
+- Added Candidate audit schema 1.1 execution mode
+  `verified_prior_incremental`. It formally rereads an immediately prior audit,
+  validates calculation/parameter/Activation/Universe/Phase 1b compatibility,
+  calculates only the new session, independently Oracles score/risk/state
+  append, and writes a cumulative immutable audit with an explicit validation
+  ledger. Legacy cold audits remain readable.
+- Real 2026-08-25 to 2026-08-26 validation first failed closed because legacy
+  Phase 1b daily audits changed historical confirmed states when their rolling
+  26-session input window advanced. The differences were business semantics,
+  not container-only fingerprints, and were not bypassed.
+- Accepted ADR 0023 and added state calculation V1.0.1 / parameter set
+  `mrom-regime-state-v1-stable-prefix-2`. Phase 1b cold replay now retains the
+  first contiguous canonical session as its state-history boundary while each
+  Phase 1a Composite continues to use at most its exact trailing 26 sessions.
+  Legacy V1.0.0 audits remain formally readable.
+- Corrected 2026-08-25 and 2026-08-26 Phase 1b development audits retained all
+  16 prior rows exactly and added only the two 2026-08-26 Universe rows, both
+  with zero Oracle mismatch. This real-data rehearsal preceded freezing the
+  corrected identifiers as V1.0.1; final versioned source passed the complete
+  backend regression and did not create a new Production-bound audit.
+- On corrected sources, incremental and cold 2026-08-26 Candidate development
+  audits matched every source, raw-fact, normalization, score, state,
+  transition, risk record, and business fingerprint; both had zero Oracle
+  mismatch. Incremental took 309.02 seconds before writing versus 461.67
+  seconds cold. Formal panel reread remains the dominant 216.57-second cost.
+- Restored formal EOD session-directory validation to the cold path after
+  proving that a Phase 1b 26-session source ledger is not the complete
+  canonical EOD history. No `/data`, publication, Snapshot, bundle, OCI,
+  credential, provider, or scheduler state changed.
+- Routed the Market Regime and Phase 1b administrator wrappers through the
+  repository-aware Python runner so linked Dell worktrees cannot silently
+  import main-checkout source.
+
 ## 2026-08-27 — Candidate pipeline measurement and repeated-work removal
 
 - Added physical per-stage wall/CPU timings plus process I/O, invocation, and

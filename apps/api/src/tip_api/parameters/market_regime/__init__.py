@@ -9,7 +9,7 @@ from .v1_0_0 import (
     PARAMETER_SET_FINGERPRINT,
     PARAMETER_SET_ID,
 )
-from .state_v1_0_0 import (
+from .state_v1_0_1 import (
     STATE_CALCULATION_VERSION,
     STATE_CONTRACT_VERSION,
     STATE_PARAMETER_FINGERPRINT,

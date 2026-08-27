@@ -26,11 +26,15 @@ The offline artifact set is exactly `input-manifest.json`, `raw-metrics.json`,
 physical audit metadata (`generated_at`, elapsed time, and peak memory) is
 excluded from the aggregate logical fingerprint.
 
-The Phase 1b profile uses
-`state_parameter_set_id=mrom-regime-state-v1-fixed-baseline-1` and
-`state_calculation_version=market-regime-opportunity-map-state-v1.0.0`, with
+The corrected Phase 1b profile uses
+`state_parameter_set_id=mrom-regime-state-v1-stable-prefix-2` and
+`state_calculation_version=market-regime-opportunity-map-state-v1.0.1`, with
 state parameter fingerprint
-`2ef5471536c131a7ca319fcb3fd3209092866bb4842fd25ff4de4d32ec79abb1`. Its
+`cbbce1923f7993ea936d41c989cad5296883c368e98f63c731a45c9fa3d9c2d0`. It
+retains a stable first-canonical-session replay boundary while each Composite
+uses at most its trailing 26-session source window. The legacy V1.0.0
+fixed-baseline audit remains readable but may not seed corrected downstream
+incremental work. Its
 canonical artifact set is exactly `source-input-manifest.json`,
 `state-parameter-contract.json`, `state-history.json`,
 `current-state-summary.json`, `transition-ledger.json`,
@@ -64,7 +68,7 @@ base score. A socket-guarded CLI, independent raw-panel Oracle, and canonical
 `/tmp` audit/reread boundary are implemented. API, frontend, Production
 publication, and `/data` writing remain outside this profile.
 
-The candidate audit file set is exactly `source-input-manifest.json`,
+The cold Candidate audit file set is exactly `source-input-manifest.json`,
 `candidate-parameter-contract.json`, `raw-candidate-facts.json`,
 `cross-section-normalization-ledger.json`, `candidate-score-history.json`,
 `candidate-state-history.json`, `candidate-transition-ledger.json`,
@@ -73,6 +77,15 @@ last-written `candidate-audit-manifest.json`. Each historical candidate session
 binds its own complete 26-session source panel. Formal reread rejects unsafe
 custody, non-canonical JSON, fingerprint mismatch, Oracle mismatch, or failed
 append/restart/permutation/future-prefix equivalence.
+
+The additive Candidate audit schema 1.1 uses
+`execution_mode=verified_prior_incremental` and adds exactly
+`incremental-validation-ledger.json`. It binds a formally reread immediately
+prior audit, preserves its score/state/source/raw/normalization prefix, and
+runs the independent score/risk and state-append Oracle for the sole new
+session. Its container and Oracle fingerprints intentionally differ from a
+cold audit; all cumulative business-output fingerprints must match the
+compatible stable-prefix cold reference.
 
 Physical Candidate runtime evidence includes per-stage wall/CPU timings, the
 pre-writer peak-memory sample, and optional process I/O/invocation counters.

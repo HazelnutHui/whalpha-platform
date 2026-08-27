@@ -133,8 +133,19 @@ reuse of the already verified current risk ranking. On the same complete
 2026-08-26 audit, time before the audit writer fell from 1840.44 to 461.88
 seconds while the logical fingerprint remained
 `34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`
-with zero Oracle mismatch. The next operational priority is verified-prior
-incremental state, resumable content-addressed stages, and validation tiers;
+with zero Oracle mismatch. Verified-prior Candidate append is now implemented
+and matches a corrected stable-prefix cold reference across every business
+artifact. Real validation exposed a legacy Phase 1b rolling-window defect that
+reinitialized historical state when the 26-session window advanced. State
+calculation V1.0.1 now preserves a stable canonical left boundary while each
+Composite retains its trailing 26-session source window. Legacy V1.0.0 audits
+remain readable and Production remains unchanged.
+
+On corrected 2026-08-26 development inputs, Candidate incremental time before
+writing was 309.02 seconds versus 461.67 seconds cold. Formal current-panel
+reread still consumed 216.57 seconds and prior-audit reread 46.35 seconds. The
+next operational priority is verified-prior Phase 1b append, immutable panel-
+stage reuse, streaming/resumable audit output, and validation tiers;
 deterministic process parallelism follows with the serial path retained.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
@@ -178,8 +189,9 @@ does not automatically become an entry instruction.
 The active Candidate JSON is about 20.4 MB and should be split into summary
 and on-demand detail before the payload grows materially further. Dell remains
 the sole heavy-compute, historical-storage, and data-governance authority;
-OCI is only the static serving/Session boundary. The optimized full Candidate
-path remains serial and has no explicit process pool yet. Provider requests
+OCI is only the static serving/Session boundary. The optimized full and
+incremental Candidate paths remain serial and have no explicit process pool
+yet. Provider requests
 retain their fixed serial request gates; immutable CPU-bound calculations are
 the safe parallelization target after incremental execution is complete.
 

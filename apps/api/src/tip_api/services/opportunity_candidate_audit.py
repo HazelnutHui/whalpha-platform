@@ -7,7 +7,7 @@ import json
 import os
 import stat
 import unicodedata
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, dataclass, is_dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from enum import Enum
@@ -51,11 +51,35 @@ CANDIDATE_ARTIFACT_FILES = (
     "candidate-oracle-report.json",
 )
 CANDIDATE_AUDIT_MANIFEST = "candidate-audit-manifest.json"
+CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT = "incremental-validation-ledger.json"
+CANDIDATE_INCREMENTAL_ARTIFACT_FILES = (
+    *CANDIDATE_ARTIFACT_FILES,
+    CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT,
+)
 REQUIRED_EQUIVALENCE_FLAGS = (
     "append_full_replay_match",
     "restart_replay_match",
     "future_prefix_stable",
 )
+REQUIRED_INCREMENTAL_EQUIVALENCE_FLAGS = (
+    "prior_prefix_preserved",
+    "incremental_restart_match",
+    "future_prefix_stable",
+)
+
+
+@dataclass(frozen=True, slots=True)
+class OpportunityCandidateAuditContents:
+    """Formally verified cumulative Candidate inputs for a subsequent append."""
+
+    manifest: Mapping[str, Any]
+    source_panels: tuple[Mapping[str, Any], ...]
+    candidate_batches: tuple[OpportunityCandidateBatchV1, ...]
+    state_history: tuple[OpportunityCandidateStateRecordV1, ...]
+    risk_results: tuple[CandidateRiskModeResultV1, ...]
+    raw_facts: tuple[Mapping[str, Any], ...]
+    normalization_ledger: tuple[Mapping[str, Any], ...]
+    validation_ledger: Mapping[str, Any] | None
 
 
 class OpportunityCandidateAuditError(RuntimeError):
@@ -77,6 +101,8 @@ def write_opportunity_candidate_audit(
     timings: Mapping[str, str],
     peak_memory_kib: int,
     runtime_metrics: Mapping[str, int] | None = None,
+    prior_source_panels: Sequence[Mapping[str, Any]] = (),
+    incremental_validation: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Write a completed immutable audit and formally reread it before return."""
 
@@ -86,16 +112,27 @@ def write_opportunity_candidate_audit(
     if any(target.iterdir()):
         raise OpportunityCandidateAuditError("existing non-empty output directory is rejected")
 
-    ordered_panels = tuple(panels)
-    if not ordered_panels:
+    current_panels = tuple(panels)
+    if not current_panels:
         raise OpportunityCandidateAuditError("candidate audit requires at least one source panel")
-    if tuple(item.as_of_session for item in ordered_panels) != tuple(
-        sorted({item.as_of_session for item in ordered_panels})
+    if tuple(item.as_of_session for item in current_panels) != tuple(
+        sorted({item.as_of_session for item in current_panels})
     ):
         raise OpportunityCandidateAuditError("candidate source panels must be unique and ascending")
+    incremental = incremental_validation is not None
+    if bool(prior_source_panels) != incremental:
+        raise OpportunityCandidateAuditError("incremental source prefix and validation ledger must be supplied together")
+    source_panel_rows = tuple(_jsonable(item) for item in prior_source_panels) + tuple(
+        _panel_source_row(item) for item in current_panels
+    )
+    if tuple(item.get("as_of_session") for item in source_panel_rows) != tuple(
+        sorted({item.get("as_of_session") for item in source_panel_rows})
+    ):
+        raise OpportunityCandidateAuditError("candidate source panel ledger must be unique and ascending")
+    current_panel = current_panels[-1]
     universe_order = {
         item.universe_id: index
-        for index, item in enumerate(sorted(ordered_panels[-1].universes, key=lambda row: row.catalog_order))
+        for index, item in enumerate(sorted(current_panel.universes, key=lambda row: row.catalog_order))
     }
     batches = tuple(
         sorted(
@@ -124,23 +161,35 @@ def write_opportunity_candidate_audit(
             ),
         )
     )
-    flags = _validate_equivalence_flags(equivalence_flags, oracle_comparison)
-    _validate_inputs(panels=ordered_panels, batches=batches, states=states, risks=risks, oracle=oracle_comparison)
+    flags = _validate_equivalence_flags(
+        equivalence_flags,
+        oracle_comparison,
+        incremental=incremental,
+    )
+    _validate_inputs(
+        source_panels=source_panel_rows,
+        current_panel=current_panel,
+        batches=batches,
+        states=states,
+        risks=risks,
+        oracle=oracle_comparison,
+    )
 
     batch_records = [item.model_dump(mode="json") for item in batches]
     state_records = [item.model_dump(mode="json") for item in states]
     risk_records = [item.model_dump(mode="json") for item in risks]
+    stable_raw_facts = _stable_external_records(raw_facts)
+    stable_normalization_ledger = _stable_external_records(normalization_ledger)
     history_fingerprint = _fingerprint(batch_records)
     state_fingerprint = opportunity_candidate_state_history_fingerprint(states)
     risk_fingerprint = _fingerprint(risk_records)
     oracle_record = _jsonable(oracle_comparison)
     oracle_fingerprint = str(oracle_record["oracle_fingerprint"])
-    current_panel = ordered_panels[-1]
     universe_ids = tuple(
         item.universe_id for item in sorted(current_panel.universes, key=lambda row: row.catalog_order)
     )
     base = {
-        "schema_version": "1.0",
+        "schema_version": "1.1" if incremental else "1.0",
         "candidate_contract_version": CANDIDATE_CONTRACT_VERSION,
         "candidate_calculation_version": CANDIDATE_CALCULATION_VERSION,
         "candidate_parameter_set_id": CANDIDATE_PARAMETER_SET_ID,
@@ -152,10 +201,12 @@ def write_opportunity_candidate_audit(
         "as_of_session": current_panel.as_of_session.isoformat(),
         "universe_ids": list(universe_ids),
     }
+    if incremental:
+        base["execution_mode"] = "verified_prior_incremental"
     payloads = {
         "source-input-manifest.json": {
             **base,
-            "panels": [_panel_source_row(item) for item in ordered_panels],
+            "panels": list(source_panel_rows),
             "warnings": [
                 "current_as_of_constituent_replay",
                 "underlying_stock_opportunity_not_option_return",
@@ -167,10 +218,10 @@ def write_opportunity_candidate_audit(
             "candidate_parameter_contract": parameter_payload(),
             "candidate_state_parameter_contract": candidate_state_parameter_payload(),
         },
-        "raw-candidate-facts.json": {**base, "records": _stable_external_records(raw_facts)},
+        "raw-candidate-facts.json": {**base, "records": stable_raw_facts},
         "cross-section-normalization-ledger.json": {
             **base,
-            "records": _stable_external_records(normalization_ledger),
+            "records": stable_normalization_ledger,
         },
         "candidate-score-history.json": {
             **base,
@@ -194,9 +245,26 @@ def write_opportunity_candidate_audit(
         },
         "candidate-oracle-report.json": {**base, "record": oracle_record},
     }
+    artifact_files = CANDIDATE_ARTIFACT_FILES
+    if incremental:
+        validation = _validate_incremental_validation_input(
+            incremental_validation,
+            source_panels=source_panel_rows,
+            batches=batches,
+            states=states,
+            risks=risks,
+            oracle=oracle_comparison,
+            raw_facts=stable_raw_facts,
+            normalization_ledger=stable_normalization_ledger,
+        )
+        payloads[CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT] = {
+            **base,
+            "record": validation,
+        }
+        artifact_files = CANDIDATE_INCREMENTAL_ARTIFACT_FILES
 
     artifact_rows: list[dict[str, Any]] = []
-    for name in CANDIDATE_ARTIFACT_FILES:
+    for name in artifact_files:
         payload = _with_logical_fingerprint(payloads[name])
         raw = _canonical_bytes(payload)
         _write_new(target / name, raw)
@@ -226,6 +294,9 @@ def write_opportunity_candidate_audit(
         "external_request_count": 0,
         "production_write_count": 0,
     }
+    if incremental:
+        logical["prior_audit_logical_fingerprint"] = validation["prior_audit_logical_fingerprint"]
+        logical["prior_as_of_session"] = validation["prior_as_of_session"]
     manifest = {
         **logical,
         "logical_content_fingerprint": _fingerprint(logical),
@@ -245,10 +316,38 @@ def write_opportunity_candidate_audit(
 def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
     """Verify custody, canonical encoding, hashes, contracts, and Oracle gates."""
 
+    manifest, _, _, _, _, _ = _read_opportunity_candidate_audit(output_dir)
+    return manifest
+
+
+def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCandidateAuditContents:
+    """Formally reread an audit and return the cumulative append inputs."""
+
+    manifest, payloads, batches, states, risks, _ = _read_opportunity_candidate_audit(output_dir)
+    raw = payloads["raw-candidate-facts.json"].get("records")
+    normalization = payloads["cross-section-normalization-ledger.json"].get("records")
+    if not isinstance(raw, list) or not all(isinstance(item, dict) for item in raw):
+        raise OpportunityCandidateAuditError("candidate raw-fact ledger is malformed")
+    if not isinstance(normalization, list) or not all(isinstance(item, dict) for item in normalization):
+        raise OpportunityCandidateAuditError("candidate normalization ledger is malformed")
+    validation_payload = payloads.get(CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT)
+    return OpportunityCandidateAuditContents(
+        manifest=manifest,
+        source_panels=tuple(payloads["source-input-manifest.json"]["panels"]),
+        candidate_batches=batches,
+        state_history=states,
+        risk_results=risks,
+        raw_facts=tuple(raw),
+        normalization_ledger=tuple(normalization),
+        validation_ledger=(None if validation_payload is None else validation_payload["record"]),
+    )
+
+
+def _read_opportunity_candidate_audit(output_dir: Path):
+    """Internal verified reread that retains canonical artifact payloads."""
+
     target = _safe_completed_directory(output_dir)
-    expected = set(CANDIDATE_ARTIFACT_FILES) | {CANDIDATE_AUDIT_MANIFEST}
-    if {item.name for item in target.iterdir()} != expected:
-        raise OpportunityCandidateAuditError("audit file set is incomplete or contains extras")
+    names = {item.name for item in target.iterdir()}
     if any(
         item.is_symlink()
         or not item.is_file()
@@ -257,8 +356,23 @@ def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
         for item in target.iterdir()
     ):
         raise OpportunityCandidateAuditError("unsafe audit artifact")
+    if CANDIDATE_AUDIT_MANIFEST not in names:
+        raise OpportunityCandidateAuditError("audit file set is incomplete or contains extras")
 
     manifest = _read_canonical_json(target / CANDIDATE_AUDIT_MANIFEST)
+    schema_version = manifest.get("schema_version")
+    execution_mode = manifest.get("execution_mode")
+    if schema_version == "1.0" and execution_mode is None:
+        artifact_files = CANDIDATE_ARTIFACT_FILES
+        incremental = False
+    elif schema_version == "1.1" and execution_mode == "verified_prior_incremental":
+        artifact_files = CANDIDATE_INCREMENTAL_ARTIFACT_FILES
+        incremental = True
+    else:
+        raise OpportunityCandidateAuditError("unsupported Candidate audit schema or execution mode")
+    expected = set(artifact_files) | {CANDIDATE_AUDIT_MANIFEST}
+    if names != expected:
+        raise OpportunityCandidateAuditError("audit file set is incomplete or contains extras")
     logical = {
         key: value
         for key, value in manifest.items()
@@ -276,7 +390,7 @@ def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
         "logical_content_fingerprint"
     ):
         raise OpportunityCandidateAuditError("audit manifest fingerprint mismatch")
-    if tuple(item.get("name") for item in manifest.get("artifacts", ())) != CANDIDATE_ARTIFACT_FILES:
+    if tuple(item.get("name") for item in manifest.get("artifacts", ())) != artifact_files:
         raise OpportunityCandidateAuditError("audit artifact order mismatch")
 
     artifact_payloads: dict[str, dict[str, Any]] = {}
@@ -304,6 +418,8 @@ def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
         "as_of_session",
         "universe_ids",
     )
+    if incremental:
+        base_keys = (*base_keys, "execution_mode")
     if any(
         any(payload.get(key) != manifest.get(key) for key in base_keys)
         for payload in artifact_payloads.values()
@@ -382,9 +498,10 @@ def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
     transition_payload = artifact_payloads["candidate-transition-ledger.json"]
     _require_equal(transition_payload.get("records"), [_transition_row(item) for item in states], "transition ledger")
     flags = manifest.get("equivalence_flags")
+    required_flags = REQUIRED_INCREMENTAL_EQUIVALENCE_FLAGS if incremental else REQUIRED_EQUIVALENCE_FLAGS
     if (
         not isinstance(flags, dict)
-        or any(flags.get(name) is not True for name in REQUIRED_EQUIVALENCE_FLAGS)
+        or any(flags.get(name) is not True for name in required_flags)
         or any(type(value) is not bool or value is not True for value in flags.values())
     ):
         raise OpportunityCandidateAuditError("Candidate replay equivalence gates did not pass")
@@ -400,7 +517,28 @@ def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
         or manifest.get("input_permutation_match") is not True
     ):
         raise OpportunityCandidateAuditError("Candidate Oracle equivalence gates did not pass")
-    return manifest
+    if incremental:
+        validation = _validate_incremental_validation_input(
+            artifact_payloads[CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT].get("record"),
+            source_panels=tuple(source_panels),
+            batches=batches,
+            states=states,
+            risks=risks,
+            oracle=oracle,
+            raw_facts=artifact_payloads["raw-candidate-facts.json"].get("records"),
+            normalization_ledger=artifact_payloads["cross-section-normalization-ledger.json"].get("records"),
+        )
+        _require_equal(
+            manifest.get("prior_audit_logical_fingerprint"),
+            validation.get("prior_audit_logical_fingerprint"),
+            "incremental prior audit fingerprint",
+        )
+        _require_equal(
+            manifest.get("prior_as_of_session"),
+            validation.get("prior_as_of_session"),
+            "incremental prior as-of session",
+        )
+    return manifest, artifact_payloads, batches, states, risks, oracle
 
 
 def validate_tmp_output_dir(output_dir: Path) -> Path:
@@ -420,21 +558,20 @@ def validate_tmp_output_dir(output_dir: Path) -> Path:
     return output_dir
 
 
-def _validate_inputs(*, panels, batches, states, risks, oracle) -> None:
+def _validate_inputs(*, source_panels, current_panel, batches, states, risks, oracle) -> None:
     if not batches:
         raise OpportunityCandidateAuditError("candidate audit requires at least one typed batch")
-    panel_sessions = tuple(item.as_of_session for item in panels)
+    panel_sessions = tuple(date.fromisoformat(item["as_of_session"]) for item in source_panels)
     if panel_sessions != tuple(sorted(set(panel_sessions))):
         raise OpportunityCandidateAuditError("candidate source panels must be unique and ascending")
-    current_panel = panels[-1]
     universe_ids = tuple(
         item.universe_id for item in sorted(current_panel.universes, key=lambda row: row.catalog_order)
     )
     if len(universe_ids) != len(set(universe_ids)):
         raise OpportunityCandidateAuditError("candidate source panel Universes must be unique")
     if any(
-        tuple(item.universe_id for item in sorted(panel.universes, key=lambda row: row.catalog_order)) != universe_ids
-        for panel in panels
+        tuple(item.get("universe_id") for item in panel.get("universes", ())) != universe_ids
+        for panel in source_panels
     ):
         raise OpportunityCandidateAuditError("candidate source panel Universe catalogs do not match")
     if current_panel.as_of_session != max(item.as_of_session for item in batches):
@@ -472,15 +609,94 @@ def _validate_inputs(*, panels, batches, states, risks, oracle) -> None:
 
 
 def _validate_equivalence_flags(
-    flags: Mapping[str, bool], oracle: CandidateOracleComparisonV1
+    flags: Mapping[str, bool], oracle: CandidateOracleComparisonV1, *, incremental: bool = False
 ) -> dict[str, bool]:
-    if not isinstance(flags, Mapping) or any(name not in flags for name in REQUIRED_EQUIVALENCE_FLAGS):
+    required = REQUIRED_INCREMENTAL_EQUIVALENCE_FLAGS if incremental else REQUIRED_EQUIVALENCE_FLAGS
+    if not isinstance(flags, Mapping) or any(name not in flags for name in required):
         raise OpportunityCandidateAuditError("required Candidate replay equivalence flags are missing")
     if any(type(value) is not bool or value is not True for value in flags.values()):
         raise OpportunityCandidateAuditError("Candidate replay equivalence gates must all pass")
     if "input_permutation_match" in flags and flags["input_permutation_match"] is not oracle.input_permutation_match:
         raise OpportunityCandidateAuditError("Candidate input-permutation gates disagree")
     return dict(sorted(flags.items()))
+
+
+def _validate_incremental_validation_input(
+    value: Mapping[str, Any] | None,
+    *,
+    source_panels: Sequence[Mapping[str, Any]],
+    batches: Sequence[OpportunityCandidateBatchV1],
+    states: Sequence[OpportunityCandidateStateRecordV1],
+    risks: Sequence[CandidateRiskModeResultV1],
+    oracle: CandidateOracleComparisonV1,
+    raw_facts: Sequence[Mapping[str, Any]],
+    normalization_ledger: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    if not isinstance(value, Mapping):
+        raise OpportunityCandidateAuditError("incremental validation ledger is missing")
+    record = _jsonable(value)
+    required_strings = (
+        "prior_audit_logical_fingerprint",
+        "prior_as_of_session",
+        "current_as_of_session",
+        "prior_candidate_history_fingerprint",
+        "prior_candidate_state_history_fingerprint",
+        "prior_raw_facts_records_fingerprint",
+        "prior_normalization_records_fingerprint",
+        "current_session_oracle_fingerprint",
+    )
+    if any(not isinstance(record.get(name), str) or not record[name] for name in required_strings):
+        raise OpportunityCandidateAuditError("incremental validation ledger has missing bindings")
+    fingerprint_fields = (
+        "prior_audit_logical_fingerprint",
+        "prior_candidate_history_fingerprint",
+        "prior_candidate_state_history_fingerprint",
+        "prior_raw_facts_records_fingerprint",
+        "prior_normalization_records_fingerprint",
+        "current_session_oracle_fingerprint",
+    )
+    if any(len(record[name]) != 64 or any(character not in "0123456789abcdef" for character in record[name]) for name in fingerprint_fields):
+        raise OpportunityCandidateAuditError("incremental validation ledger has malformed fingerprints")
+    if record.get("validation_scope") != "verified_prior_plus_current_session_oracle":
+        raise OpportunityCandidateAuditError("incremental validation scope is unsupported")
+    reuse_checks = record.get("reuse_checks")
+    if not isinstance(reuse_checks, Mapping) or not reuse_checks or any(
+        type(result) is not bool or result is not True for result in reuse_checks.values()
+    ):
+        raise OpportunityCandidateAuditError("incremental reuse checks did not pass")
+    prior_session = date.fromisoformat(record["prior_as_of_session"])
+    current_session = date.fromisoformat(record["current_as_of_session"])
+    panel_sessions = tuple(date.fromisoformat(item["as_of_session"]) for item in source_panels)
+    if len(panel_sessions) < 2 or panel_sessions[-2:] != (prior_session, current_session):
+        raise OpportunityCandidateAuditError("incremental source panel boundary mismatch")
+    batch_sessions = tuple(sorted({item.as_of_session for item in batches}))
+    if batch_sessions != panel_sessions:
+        raise OpportunityCandidateAuditError("incremental Candidate session ledger mismatch")
+    if oracle.oracle_fingerprint != record["current_session_oracle_fingerprint"]:
+        raise OpportunityCandidateAuditError("incremental current-session Oracle binding mismatch")
+    if any(item.as_of_session != current_session for item in risks):
+        raise OpportunityCandidateAuditError("incremental risk results are not current-session results")
+    prior_batches = tuple(item for item in batches if item.as_of_session <= prior_session)
+    prior_states = tuple(item for item in states if item.as_of_session <= prior_session)
+    if _fingerprint([item.model_dump(mode="json") for item in prior_batches]) != record[
+        "prior_candidate_history_fingerprint"
+    ]:
+        raise OpportunityCandidateAuditError("incremental Candidate prefix fingerprint mismatch")
+    if opportunity_candidate_state_history_fingerprint(prior_states) != record[
+        "prior_candidate_state_history_fingerprint"
+    ]:
+        raise OpportunityCandidateAuditError("incremental state prefix fingerprint mismatch")
+    if not isinstance(raw_facts, Sequence) or not isinstance(normalization_ledger, Sequence):
+        raise OpportunityCandidateAuditError("incremental external ledgers are malformed")
+    prior_raw = tuple(item for item in raw_facts if date.fromisoformat(item["as_of_session"]) <= prior_session)
+    prior_normalization = tuple(
+        item for item in normalization_ledger if date.fromisoformat(item["as_of_session"]) <= prior_session
+    )
+    if _fingerprint(prior_raw) != record["prior_raw_facts_records_fingerprint"]:
+        raise OpportunityCandidateAuditError("incremental raw-fact prefix fingerprint mismatch")
+    if _fingerprint(prior_normalization) != record["prior_normalization_records_fingerprint"]:
+        raise OpportunityCandidateAuditError("incremental normalization prefix fingerprint mismatch")
+    return record
 
 
 def _validate_parameter_contract(target: Path, manifest: Mapping[str, Any]) -> None:

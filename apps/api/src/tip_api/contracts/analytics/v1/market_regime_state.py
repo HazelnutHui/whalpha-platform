@@ -60,14 +60,20 @@ class MarketRegimeStateRecordV1(BaseModel):
 
     schema_version: Literal["1.0"] = "1.0"
     contract_version: Literal["market-regime-state/1.0"] = "market-regime-state/1.0"
-    calculation_version: Literal["market-regime-opportunity-map-state-v1.0.0"] = (
-        "market-regime-opportunity-map-state-v1.0.0"
+    calculation_version: Literal[
+        "market-regime-opportunity-map-state-v1.0.0",
+        "market-regime-opportunity-map-state-v1.0.1",
+    ] = (
+        "market-regime-opportunity-map-state-v1.0.1"
     )
     phase1a_calculation_version: Literal["market-regime-opportunity-map-v1.0.0"] = (
         "market-regime-opportunity-map-v1.0.0"
     )
-    state_parameter_set_id: Literal["mrom-regime-state-v1-fixed-baseline-1"] = (
-        "mrom-regime-state-v1-fixed-baseline-1"
+    state_parameter_set_id: Literal[
+        "mrom-regime-state-v1-fixed-baseline-1",
+        "mrom-regime-state-v1-stable-prefix-2",
+    ] = (
+        "mrom-regime-state-v1-stable-prefix-2"
     )
     state_parameter_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     phase1a_parameter_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
@@ -128,8 +134,11 @@ class MarketRegimeStateExplanationV1(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     schema_version: Literal["1.0"] = "1.0"
-    calculation_version: Literal["market-regime-opportunity-map-state-v1.0.0"] = (
-        "market-regime-opportunity-map-state-v1.0.0"
+    calculation_version: Literal[
+        "market-regime-opportunity-map-state-v1.0.0",
+        "market-regime-opportunity-map-state-v1.0.1",
+    ] = (
+        "market-regime-opportunity-map-state-v1.0.1"
     )
     state_parameter_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     as_of_session: date
@@ -154,8 +163,11 @@ class StateOracleComparisonV1(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
     schema_version: Literal["1.0"] = "1.0"
-    calculation_version: Literal["market-regime-opportunity-map-state-v1.0.0"] = (
-        "market-regime-opportunity-map-state-v1.0.0"
+    calculation_version: Literal[
+        "market-regime-opportunity-map-state-v1.0.0",
+        "market-regime-opportunity-map-state-v1.0.1",
+    ] = (
+        "market-regime-opportunity-map-state-v1.0.1"
     )
     state_parameter_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     universe_id: str

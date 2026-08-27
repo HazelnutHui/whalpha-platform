@@ -40,6 +40,21 @@ The command is socket-guarded, writes no Production state, and requires an
 owner-controlled new `/tmp` target. Publication and deployment remain separate
 approval-bound operations.
 
+Append one session from an immediately prior verified Candidate audit with:
+
+```bash
+scripts/admin/calculate-opportunity-candidates-offline.sh \
+  --as-of-session YYYY-MM-DD \
+  --data-root /data/trading-intelligence-platform \
+  --phase1b-audit /tmp/<corrected-stable-prefix-phase1b-audit> \
+  --prior-candidate-audit /tmp/<immediately-prior-candidate-audit> \
+  --output-dir /tmp/<new-empty-incremental-candidate-audit>
+```
+
+The prior audit must be the preceding XNYS session and use compatible
+calculation, parameter, Activation, membership, and stable-prefix Phase 1b
+sources. A mismatch fails closed and requires a corrected cold replay.
+
 ## 2026-08-27 Dell baseline and first optimization
 
 Both runs used the same 2026-08-26 formal inputs, all four calculable Candidate
@@ -71,13 +86,37 @@ so writer streaming and peak-memory instrumentation remain open work.
 
 ## Next performance sequence
 
-1. Add an incremental path that binds a verified prior Candidate audit and
-   calculates only the new session while preserving a cold full-replay mode.
-2. Separate daily, periodic, and code/model-change validation tiers without
+1. Add the same verified-prior one-session append to corrected stable-prefix
+   Phase 1b; its cold replay is now an upstream daily bottleneck.
+2. Cache or content-address formally validated immutable EOD panel inputs so a
+   daily Candidate run does not reread 25 unchanged partitions.
+3. Separate daily, periodic, and code/model-change validation tiers without
    weakening the full reference audit.
-3. Add content-addressed resumable stages with explicit input/output
+4. Add content-addressed resumable stages with explicit input/output
    fingerprints and failure locations.
-4. Process-parallelize only independent CPU work using stable `instrument_id`
+5. Process-parallelize only independent CPU work using stable `instrument_id`
    shards; merge and fingerprint in one deterministic parent order.
-5. Split Candidate public summary and on-demand detail payloads. This changes
+6. Split Candidate public summary and on-demand detail payloads. This changes
    neither guest/credential capability parity nor the Dell/OCI boundary.
+
+## 2026-08-27 corrected stable-prefix proof
+
+The first real incremental attempt correctly failed because the legacy Phase
+1b rolling window had changed historical confirmed states. ADR 0023 corrects
+that upstream boundary. Corrected 2026-08-25 and 2026-08-26 Phase 1b
+development audits retained 16/16 prior state rows exactly and added only the
+two current Universe rows. This real-data equivalence rehearsal occurred before
+the corrected calculation and parameter identifiers were frozen as V1.0.1;
+the final versioned code is covered by the complete backend regression but no
+new Production-bound analytics audit was created.
+
+Using that corrected source, a 2026-08-25 cold Candidate audit was appended to
+2026-08-26. The incremental and 2026-08-26 corrected cold audit matched every
+source panel, raw fact, normalization record, Candidate batch, state row,
+transition row, current risk result, and all corresponding business
+fingerprints. Both Oracles had zero mismatch. The cold path took 461.67 seconds
+before writing; incremental took 309.02 seconds. Of the incremental time,
+216.57 seconds reread the 26-session panel and 46.35 seconds formally reread
+the prior Candidate audit. The result is logically complete but not yet the
+target daily latency; immutable-panel reuse and streaming audit output remain
+necessary.

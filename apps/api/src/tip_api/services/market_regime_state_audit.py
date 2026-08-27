@@ -16,7 +16,7 @@ from tip_api.contracts.analytics.v1 import (
     MarketRegimeStateRecordV1,
     StateOracleComparisonV1,
 )
-from tip_api.parameters.market_regime.state_v1_0_0 import (
+from tip_api.parameters.market_regime.state_v1_0_1 import (
     FROZEN_PHASE1A_AUDIT_FINGERPRINT,
     PHASE1A_CALCULATION_VERSION,
     PHASE1A_PARAMETER_FINGERPRINT,
@@ -26,6 +26,11 @@ from tip_api.parameters.market_regime.state_v1_0_0 import (
     STATE_PARAMETER_FINGERPRINT,
     STATE_PARAMETER_SET_ID,
     state_parameter_payload,
+)
+from tip_api.parameters.market_regime.state_v1_0_0 import (
+    STATE_CALCULATION_VERSION as LEGACY_STATE_CALCULATION_VERSION,
+    STATE_PARAMETER_FINGERPRINT as LEGACY_STATE_PARAMETER_FINGERPRINT,
+    state_parameter_payload as legacy_state_parameter_payload,
 )
 from tip_api.services.market_regime_state import state_history_fingerprint
 from tip_api.services.market_regime_sources import MarketRegimeInputPanel
@@ -242,8 +247,19 @@ def read_market_regime_state_audit(output_dir: Path) -> dict[str, Any]:
         if _fingerprint(payload) != content_fingerprint or content_fingerprint != expected_row["logical_content_fingerprint"]:
             raise MarketRegimeStateAuditError(f"state audit logical hash mismatch: {name}")
     parameter_payload = _read_canonical_json(target / "state-parameter-contract.json")
-    if parameter_payload["parameter_contract"] != state_parameter_payload():
+    calculation_version = manifest.get("calculation_version")
+    if calculation_version == STATE_CALCULATION_VERSION:
+        expected_parameter_payload = state_parameter_payload()
+        expected_parameter_fingerprint = STATE_PARAMETER_FINGERPRINT
+    elif calculation_version == LEGACY_STATE_CALCULATION_VERSION:
+        expected_parameter_payload = legacy_state_parameter_payload()
+        expected_parameter_fingerprint = LEGACY_STATE_PARAMETER_FINGERPRINT
+    else:
+        raise MarketRegimeStateAuditError("unsupported state calculation version")
+    if parameter_payload["parameter_contract"] != expected_parameter_payload:
         raise MarketRegimeStateAuditError("state parameter contract mismatch")
+    if manifest.get("state_parameter_fingerprint") != expected_parameter_fingerprint:
+        raise MarketRegimeStateAuditError("state parameter fingerprint mismatch")
     history_payload = _read_canonical_json(target / "state-history.json")
     history_records = tuple(MarketRegimeStateRecordV1.model_validate(item) for item in history_payload["records"])
     by_universe: dict[str, list[MarketRegimeStateRecordV1]] = {}

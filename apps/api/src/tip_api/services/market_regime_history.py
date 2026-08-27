@@ -69,8 +69,9 @@ def calculate_phase1a_composite_history(
 
 
 def _prefix_panel(panel: MarketRegimeInputPanel, end_index: int) -> MarketRegimeInputPanel:
-    sessions = panel.sessions[: end_index + 1]
-    source_sessions = panel.source_sessions[: end_index + 1]
+    start_index = max(0, end_index - 25)
+    sessions = panel.sessions[start_index : end_index + 1]
+    source_sessions = panel.source_sessions[start_index : end_index + 1]
     allowed = set(sessions)
     current_source = source_sessions[-1]
     return replace(

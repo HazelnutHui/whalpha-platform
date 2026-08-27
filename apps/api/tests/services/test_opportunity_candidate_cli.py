@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import socket
+import shutil
+import tempfile
 from dataclasses import replace
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from types import SimpleNamespace
@@ -11,8 +13,13 @@ from uuid import UUID, uuid5
 import pytest
 
 from tip_api.parameters.market_regime.candidate_v1_1_1 import CANDIDATE_STATE_PARAMETER_FINGERPRINT
-from tip_api.parameters.market_regime.state_v1_0_0 import STATE_CALCULATION_VERSION, STATE_PARAMETER_FINGERPRINT
+from tip_api.parameters.market_regime.state_v1_0_1 import STATE_CALCULATION_VERSION, STATE_PARAMETER_FINGERPRINT
 from tip_api.services import opportunity_candidate_cli as cli
+from tip_api.services.opportunity_candidate_audit import (
+    OpportunityCandidateAuditError,
+    read_opportunity_candidate_audit_contents,
+    write_opportunity_candidate_audit,
+)
 from tip_api.services.market_regime_sources import (
     MarketRegimeBar,
     MarketRegimeInputPanel,
@@ -246,6 +253,11 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
         "_select_candidate_sessions",
         lambda **kwargs: tuple(item.as_of_session for item in panels),
     )
+    monkeypatch.setattr(
+        cli,
+        "_list_available_eod_sessions",
+        lambda path: tuple(item.as_of_session for item in panels),
+    )
     monkeypatch.setattr(cli, "_calculate_offline", lambda **kwargs: run)
 
     assert cli.main([
@@ -292,3 +304,146 @@ def test_as_of_missing_member_uses_history_identity_and_emits_missing_state(monk
     assert primary_rows[-1].state_availability.value == "unavailable"
     assert primary_rows[-1].consecutive_missing_sessions == 1
     assert run.oracle_report.mismatch_count == 0
+
+
+def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp_path) -> None:
+    panels = _panels()
+    regimes = _regime_records(panels)
+    by_session = {item.as_of_session: item for item in panels}
+    monkeypatch.setattr(
+        cli,
+        "load_formal_market_regime_panels",
+        lambda *, data_root, as_of_sessions: tuple(by_session[item] for item in as_of_sessions),
+    )
+    prior_run = cli._calculate_offline(
+        data_root=tmp_path,
+        candidate_sessions=(panels[0].as_of_session,),
+        regime_records=regimes,
+    )
+    cold_run = cli._calculate_offline(
+        data_root=tmp_path,
+        candidate_sessions=tuple(item.as_of_session for item in panels),
+        regime_records=regimes,
+    )
+    prior_dir = Path(tempfile.mkdtemp(prefix="candidate-prior-", dir="/tmp"))
+    incremental_dir = Path(tempfile.mkdtemp(prefix="candidate-incremental-", dir="/tmp"))
+    tampered_dir = Path(tempfile.mkdtemp(prefix="candidate-incremental-tampered-", dir="/tmp"))
+    try:
+        write_opportunity_candidate_audit(
+            output_dir=prior_dir,
+            panels=(panels[0],),
+            candidate_batches=tuple(
+                batch for universe_id in (PRIMARY, SECONDARY) for batch in prior_run.score_history[universe_id]
+            ),
+            state_history=tuple(
+                row for universe_id in (PRIMARY, SECONDARY) for row in prior_run.state_history[universe_id]
+            ),
+            risk_results=prior_run.current_risk_results,
+            oracle_comparison=prior_run.oracle_report,
+            equivalence_flags=prior_run.equivalence_flags,
+            raw_facts=cli._raw_fact_records(prior_run.score_history),
+            normalization_ledger=cli._normalization_records(prior_run.score_history),
+            generated_at=datetime.now(UTC),
+            timings={},
+            peak_memory_kib=1,
+        )
+        prior = read_opportunity_candidate_audit_contents(prior_dir)
+        incremental = cli._calculate_incremental(
+            data_root=tmp_path,
+            candidate_sessions=tuple(item.as_of_session for item in panels),
+            regime_records=regimes,
+            prior_audit=prior,
+        )
+
+        def batch_fingerprints(run):
+            return tuple(
+                batch.logical_fingerprint
+                for session in tuple(item.as_of_session for item in panels)
+                for universe_id in (PRIMARY, SECONDARY)
+                for batch in run.score_history[universe_id]
+                if batch.as_of_session == session
+            )
+
+        def state_fingerprints(run):
+            return tuple(
+                row.logical_fingerprint
+                for session in tuple(item.as_of_session for item in panels)
+                for universe_id in (PRIMARY, SECONDARY)
+                for row in run.state_history[universe_id]
+                if row.as_of_session == session
+            )
+
+        assert batch_fingerprints(incremental) == batch_fingerprints(cold_run)
+        assert state_fingerprints(incremental) == state_fingerprints(cold_run)
+        assert tuple(item.logical_fingerprint for item in incremental.current_risk_results) == tuple(
+            item.logical_fingerprint for item in cold_run.current_risk_results
+        )
+        assert incremental.oracle_report.mismatch_count == 0
+        assert all(incremental.equivalence_flags.values())
+
+        manifest = write_opportunity_candidate_audit(
+            output_dir=incremental_dir,
+            panels=incremental.panels,
+            prior_source_panels=prior.source_panels,
+            candidate_batches=tuple(
+                batch for universe_id in (PRIMARY, SECONDARY) for batch in incremental.score_history[universe_id]
+            ),
+            state_history=tuple(
+                row for universe_id in (PRIMARY, SECONDARY) for row in incremental.state_history[universe_id]
+            ),
+            risk_results=incremental.current_risk_results,
+            oracle_comparison=incremental.oracle_report,
+            equivalence_flags=incremental.equivalence_flags,
+            raw_facts=(*prior.raw_facts, *cli._raw_fact_records(incremental.current_score_history)),
+            normalization_ledger=(
+                *prior.normalization_ledger,
+                *cli._normalization_records(incremental.current_score_history),
+            ),
+            incremental_validation=cli._incremental_validation_ledger(
+                prior_audit=prior,
+                run=incremental,
+            ),
+            generated_at=datetime.now(UTC),
+            timings={},
+            peak_memory_kib=1,
+        )
+        reread = read_opportunity_candidate_audit_contents(incremental_dir)
+        assert manifest["schema_version"] == "1.1"
+        assert manifest["execution_mode"] == "verified_prior_incremental"
+        assert reread.validation_ledger["prior_audit_logical_fingerprint"] == prior.manifest[
+            "logical_content_fingerprint"
+        ]
+        assert tuple(item.logical_fingerprint for item in reread.candidate_batches) == batch_fingerprints(cold_run)
+        changed_raw = list(prior.raw_facts)
+        changed_raw[0] = {**changed_raw[0], "ticker": "TAMPERED"}
+        with pytest.raises(OpportunityCandidateAuditError, match="raw-fact prefix"):
+            write_opportunity_candidate_audit(
+                output_dir=tampered_dir,
+                panels=incremental.panels,
+                prior_source_panels=prior.source_panels,
+                candidate_batches=tuple(
+                    batch for universe_id in (PRIMARY, SECONDARY) for batch in incremental.score_history[universe_id]
+                ),
+                state_history=tuple(
+                    row for universe_id in (PRIMARY, SECONDARY) for row in incremental.state_history[universe_id]
+                ),
+                risk_results=incremental.current_risk_results,
+                oracle_comparison=incremental.oracle_report,
+                equivalence_flags=incremental.equivalence_flags,
+                raw_facts=(*changed_raw, *cli._raw_fact_records(incremental.current_score_history)),
+                normalization_ledger=(
+                    *prior.normalization_ledger,
+                    *cli._normalization_records(incremental.current_score_history),
+                ),
+                incremental_validation=cli._incremental_validation_ledger(
+                    prior_audit=prior,
+                    run=incremental,
+                ),
+                generated_at=datetime.now(UTC),
+                timings={},
+                peak_memory_kib=1,
+            )
+    finally:
+        shutil.rmtree(prior_dir, ignore_errors=True)
+        shutil.rmtree(incremental_dir, ignore_errors=True)
+        shutil.rmtree(tampered_dir, ignore_errors=True)

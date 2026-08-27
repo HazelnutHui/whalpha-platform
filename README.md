@@ -37,16 +37,16 @@ The platform should help answer:
 
 Documentation, infrastructure, storage, the application stack, canonical
 EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
-active MI 1.1 and Dashboard Snapshot 1.6 / Dashboard 2.3, plus repository-
-implemented MI 1.2 and Snapshot 1.7 / Dashboard 2.4 entry-location consumers, bilingual
-presentation, and Session-protected static publication are implemented. The
-deployed product includes the audited Stock Candidate pipeline and third
-Candidate workspace. Canonical sessions cover
-every XNYS session from 2026-07-17 through 2026-08-24. The active Dashboard is
-an explicitly authorized review of 2026-08-24 data, expected 2026-08-25 and
-lagging one session; it must be presented as `stale_review`, never fresh.
-An additive entry-geometry and chase-risk layer is implemented only as an
-offline shadow audit; it does not yet affect the active Candidate payload or UI.
+MI 1.2, Snapshot 1.7 / Dashboard 2.4, entry-location consumers, bilingual
+presentation, equal-capability guest Sessions, and Session-protected static
+publication are implemented. The deployed product includes the audited Stock
+Candidate pipeline and third Candidate workspace. Canonical sessions cover
+every XNYS session from 2026-07-17 through 2026-08-26. The active Dashboard is
+the ordinary fresh 2026-08-26 release with lag zero.
+
+Repository development source adds verified-prior Candidate one-session append
+and corrects cross-as-of Market Regime state-prefix stability in calculation
+V1.0.1. These changes are offline development work and are not deployed.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and
@@ -76,7 +76,7 @@ authorized work.
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
 - First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential/HTTPS transport, bounded All Tickers identity ingestion, Grouped Daily publication, and provider security evidence workflows are verified.
-- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-24.
+- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-26.
 - Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
 - Market summary analytics use the latest two formally completed sessions and support close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.

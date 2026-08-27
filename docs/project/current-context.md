@@ -65,11 +65,15 @@ Development, canonical data, research, replay, and heavy recomputation use
 Dell as the source of truth. OCI is the static web-serving, Session-auth, and
 public-read boundary; Windows and future Mac clients are remote work entry
 points, not independent compute/data authorities. Dell has a Xeon W-2145 with
-8 physical cores / 16 threads. The first Candidate optimization slice now
-shares overlapping immutable panel reads and stable-ID state indexes while
-retaining the exact serial logical output. Verified-prior incremental state,
-resumable stages, validation tiers, and then deterministic process parallelism
-remain required before daily automation.
+8 physical cores / 16 threads. The Candidate pipeline now shares overlapping
+immutable panel reads, uses stable-ID state indexes, and supports a verified-
+prior one-session append with an additive audit schema. Real append/cold
+comparison exposed a legacy Phase 1b rolling-window state-prefix defect;
+repository source corrects it with state calculation V1.0.1 and a stable
+canonical left boundary. This is development-only and has not changed active
+Production. Verified-prior Phase 1b append, immutable panel-stage reuse,
+resumable/streaming audit output, validation tiers, and then deterministic
+process parallelism remain required before daily automation.
 
 ## Analytics and presentation
 

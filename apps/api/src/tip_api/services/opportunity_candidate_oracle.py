@@ -90,6 +90,20 @@ class CandidateStateOracleCase:
 
 
 @dataclass(frozen=True, slots=True)
+class CandidateIncrementalStateOracleCase:
+    """One-session state append independently initialized from a verified row."""
+
+    prior_record: OpportunityCandidateStateRecordV1
+    observation: CandidateStateObservationV1 | None
+    as_of_session: date
+    universe_id: str
+    instrument_id: UUID
+    ticker: str
+    security_type: str
+    actual_record: OpportunityCandidateStateRecordV1
+
+
+@dataclass(frozen=True, slots=True)
 class CandidateOracleComparisonV1:
     candidate_count: int
     risk_result_count: int
@@ -137,6 +151,7 @@ def compare_with_independent_candidate_oracle(
     regime_context_by_universe: Mapping[str, tuple[Decimal | str | None, RegimeState | str | None]],
     risk_results: Sequence[CandidateRiskModeResultV1] = (),
     state_cases: Sequence[CandidateStateOracleCase] = (),
+    incremental_state_cases: Sequence[CandidateIncrementalStateOracleCase] = (),
 ) -> CandidateOracleComparisonV1:
     """Recalculate facts, scores, rankings, and supplied state histories."""
 
@@ -193,6 +208,18 @@ def compare_with_independent_candidate_oracle(
                     wanted,
                     mismatches,
                 )
+
+        for case in incremental_state_cases:
+            expected = _oracle_incremental_state(case)
+            state_count += 1
+            state_fingerprints.append(expected.logical_fingerprint)
+            _compare_models(
+                "incremental_state",
+                f"{case.universe_id}:{case.instrument_id}:{case.as_of_session.isoformat()}",
+                case.actual_record,
+                expected,
+                mismatches,
+            )
 
         shared_match = _shared_raw_match(raw_by_universe, mismatches)
         permuted_match = _permutation_match(
@@ -552,6 +579,31 @@ def _oracle_state_history(case):
         else:
             output.append(_state_available(observation, runtime))
     return tuple(output)
+
+
+def _oracle_incremental_state(case):
+    prior = case.prior_record
+    if (
+        prior.universe_id != case.universe_id
+        or prior.instrument_id != case.instrument_id
+        or prior.security_type != case.security_type
+        or prior.as_of_session >= case.as_of_session
+    ):
+        raise ValueError("incremental Oracle prior state is incompatible with append case")
+    observation = case.observation
+    if observation is not None and observation.candidate.as_of_session != case.as_of_session:
+        raise ValueError("incremental Oracle observation session mismatch")
+    runtime = _StateRuntime(
+        stage=prior.final_stage,
+        pending_target=prior.pending_target_stage,
+        pending_rule=prior.transition_rule_id if prior.pending_target_stage is not None else None,
+        pending_count=(prior.confirmation_count_after if prior.pending_target_stage is not None else 0),
+        missing_count=prior.consecutive_missing_sessions,
+        stage_count=prior.stage_confirmation_count_after,
+    )
+    if observation is None or observation.candidate.base_score is None or observation.candidate.median_dollar_volume_20 is None:
+        return _state_missing(case, case.as_of_session, observation, runtime)
+    return _state_available(observation, runtime)
 
 
 def _state_available(observation, runtime):

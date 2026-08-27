@@ -16,11 +16,13 @@ from tip_api.contracts.analytics.v1 import (
     RegimeState,
     StateOracleComparisonV1,
 )
-from tip_api.parameters.market_regime.state_v1_0_0 import (
+from tip_api.parameters.market_regime.state_v1_0_1 import (
     BOOTSTRAP_CONFIRMATION_SESSIONS,
     DEFENSIVE_RANK,
     PHASE1A_PARAMETER_FINGERPRINT,
+    STATE_CALCULATION_VERSION,
     STATE_PARAMETER_FINGERPRINT,
+    STATE_PARAMETER_SET_ID,
     TRANSITION_RULES,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
@@ -250,9 +252,9 @@ def _live_row(composite, memory):
     row = {
         "schema_version": "1.0",
         "contract_version": "market-regime-state/1.0",
-        "calculation_version": "market-regime-opportunity-map-state-v1.0.0",
+        "calculation_version": STATE_CALCULATION_VERSION,
         "phase1a_calculation_version": "market-regime-opportunity-map-v1.0.0",
-        "state_parameter_set_id": "mrom-regime-state-v1-fixed-baseline-1",
+        "state_parameter_set_id": STATE_PARAMETER_SET_ID,
         "state_parameter_fingerprint": STATE_PARAMETER_FINGERPRINT,
         "phase1a_parameter_fingerprint": PHASE1A_PARAMETER_FINGERPRINT,
         "as_of_session": composite.as_of_session.isoformat(),
@@ -291,9 +293,9 @@ def _missing_row(session, universe_id, memory):
     row = {
         "schema_version": "1.0",
         "contract_version": "market-regime-state/1.0",
-        "calculation_version": "market-regime-opportunity-map-state-v1.0.0",
+        "calculation_version": STATE_CALCULATION_VERSION,
         "phase1a_calculation_version": "market-regime-opportunity-map-v1.0.0",
-        "state_parameter_set_id": "mrom-regime-state-v1-fixed-baseline-1",
+        "state_parameter_set_id": STATE_PARAMETER_SET_ID,
         "state_parameter_fingerprint": STATE_PARAMETER_FINGERPRINT,
         "phase1a_parameter_fingerprint": PHASE1A_PARAMETER_FINGERPRINT,
         "as_of_session": session.isoformat(),
@@ -354,7 +356,7 @@ def _explanation(row):
     )
     return {
         "schema_version": "1.0",
-        "calculation_version": "market-regime-opportunity-map-state-v1.0.0",
+        "calculation_version": STATE_CALCULATION_VERSION,
         "state_parameter_fingerprint": STATE_PARAMETER_FINGERPRINT,
         "as_of_session": row["as_of_session"],
         "universe_id": row["universe_id"],

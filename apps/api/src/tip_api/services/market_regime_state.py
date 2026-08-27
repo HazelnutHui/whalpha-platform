@@ -19,7 +19,7 @@ from tip_api.contracts.analytics.v1 import (
     RegimeTransitionStatus,
     StateThresholdDistanceV1,
 )
-from tip_api.parameters.market_regime.state_v1_0_0 import (
+from tip_api.parameters.market_regime.state_v1_0_1 import (
     BOOTSTRAP_CONFIRMATION_SESSIONS,
     CANDIDATE_BANDS,
     DEFENSIVE_RANK,

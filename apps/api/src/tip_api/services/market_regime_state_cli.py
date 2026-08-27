@@ -12,14 +12,14 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 from tip_api.contracts.market_data.v2.dashboard_universe_activation import PUBLIC_UNIVERSE_ORDER
-from tip_api.parameters.market_regime.state_v1_0_0 import (
+from tip_api.parameters.market_regime.state_v1_0_1 import (
     FROZEN_PHASE1A_AUDIT_FINGERPRINT,
     PHASE1A_CALCULATION_VERSION,
     PHASE1A_PARAMETER_FINGERPRINT,
 )
 from tip_api.services.market_regime_audit import read_market_regime_audit
 from tip_api.services.market_regime_history import calculate_phase1a_composite_history
-from tip_api.services.market_regime_sources import load_formal_market_regime_panel
+from tip_api.services.market_regime_sources import load_formal_market_regime_history_panel
 from tip_api.services.market_regime_state import (
     append_regime_state_history,
     replay_regime_state_history,
@@ -70,7 +70,10 @@ def main(argv: list[str] | None = None) -> int:
         input_started = time.monotonic()
         phase1a_audit = read_market_regime_audit(args.phase1a_audit)
         _validate_phase1a_audit(phase1a_audit, args.as_of_session, ordered)
-        panel = load_formal_market_regime_panel(data_root=args.data_root, as_of_session=args.as_of_session)
+        panel = load_formal_market_regime_history_panel(
+            data_root=args.data_root,
+            as_of_session=args.as_of_session,
+        )
         timings["source_load_seconds"] = _seconds(time.monotonic() - input_started)
 
         phase1a_started = time.monotonic()

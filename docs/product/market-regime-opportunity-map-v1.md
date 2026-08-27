@@ -333,9 +333,11 @@ the current calculation unavailable and displays the prior state as stale,
 with no synthetic confirmation session.
 
 Phase 1b freezes the remaining initialization and replay details in the
-separate state parameter set `mrom-regime-state-v1-fixed-baseline-1`,
+corrected state parameter set `mrom-regime-state-v1-stable-prefix-2`,
 fingerprint
-`2ef5471536c131a7ca319fcb3fd3209092866bb4842fd25ff4de4d32ec79abb1`:
+`cbbce1923f7993ea936d41c989cad5296883c368e98f63c731a45c9fa3d9c2d0`.
+The legacy fixed-baseline-1 parameter remains readable but its rolling-window
+bootstrap is not eligible for new incremental work:
 
 - the first available candidate starts a two-session bootstrap and is never
   silently accepted as confirmed;
@@ -349,7 +351,10 @@ fingerprint
   changes advance only one adjacent state, while `score <=20` remains the sole
   immediate cross-level Stress override; and
 - replay from the first session, daily append, and restart from a serialized
-  prefix must produce the same state history fingerprint.
+  prefix must produce the same state history fingerprint; and
+- cold replay retains the first contiguous canonical session as its left
+  boundary across adjacent as-of dates, while each Composite uses at most its
+  exact trailing 26-session source window.
 
 These are transparent operating rules, not fitted thresholds. They were not
 selected from the frozen 2026-08-21 outcome and have not been statistically

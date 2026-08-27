@@ -3,7 +3,7 @@
 ## Production publication integration
 
 The Production chain is formal EOD/Identity/Activation to immutable Market
-Intelligence, formal active reader, Snapshot 1.5, explicit OCI bundle, and the
+Intelligence, formal active reader, Snapshot 1.7, explicit OCI bundle, and the
 existing read-only API cache/bilingual Frontend. One language-neutral object
 serves English and Chinese; locale never affects analytics identity.
 
@@ -13,11 +13,12 @@ independent approval and rollback domains.
 
 ## Status
 
-Status: **Implemented through Phase 6, including active MI 1.1, Snapshot 1.6 /
-Dashboard 2.3, the bilingual Candidate workspace, and its explicitly bound OCI
-release. The active 2026-08-24 payload is `stale_review`. An additive Phase 7
-entry-geometry/chase-risk layer is implemented and formally audited offline;
-it is not yet published or deployed.**
+Status: **Implemented through Phase 7, including active MI 1.2, Snapshot 1.7 /
+Dashboard 2.4, the bilingual Candidate workspace, entry-location consumer, and
+their explicitly bound OCI release. The active 2026-08-26 payload is ordinary
+fresh. Repository development adds verified-prior Candidate append and a
+versioned Phase 1b cross-as-of state-prefix correction; neither development
+change is deployed.**
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)
@@ -595,11 +596,12 @@ Conservative mode, proxy-component absence/cap behavior, more-than-20-point
 missingness failure, anomaly quarantine, stable ordering, and Decimal-context
 invariance.
 
-The bounded Candidate publication, Snapshot/API/frontend consumer, bundle, and
-deployment are implemented. Guest Session entry uses the same Candidate data
-and has no role-dependent variant. The next Candidate slice is the additive
-entry-geometry consumer described in ADR 0021; it remains offline until a new
-publication/Snapshot/frontend contract is reviewed.
+The bounded Candidate publication, Snapshot/API/frontend consumer, entry-
+geometry layer, bundle, and deployment are implemented. Guest Session entry
+uses the same Candidate data and has no role-dependent variant. Repository
+development now adds the verified-prior Candidate audit described in ADR 0022
+and the stable-prefix Phase 1b correction described in ADR 0023. Production
+publication remains a separate authorization.
 
 The first accepted formal Phase 5 audit covers 2026-08-21 and 2026-08-24 under
 candidate calculation `market-regime-opportunity-candidate-v1.1.1`. Its
@@ -610,12 +612,11 @@ future-prefix gates true. Its roughly 928-second, 1.9-GiB cold replay is an
 audit path, not the future scheduler path; daily operation must append from the
 previous verified state and avoid duplicate full-history source reconstruction.
 
-Phase 7 is implemented as an additive offline shadow slice. It keeps the
+Phase 7 keeps the
 Candidate score, state, and risk rank unchanged, then calculates fixed
 SMA/ATR/return/gap/range/volume entry-location facts, low through extreme
 extension risk, bounded breakout/pullback structures, and explicit review
 postures. A separate raw-panel Oracle and canonical `/tmp` audit require zero
-mismatch and input-permutation equivalence. The first 2026-08-24 audit is
-`/tmp/whalpha-candidate-entry-baseline1-20260824`, fingerprint
-`6b013f948d5c6d1011cab0685f661907739b77f1cd1fbfa4307d4789a8638bee`.
-It is shadow-only and has no `/data`, MI, Snapshot, frontend, or OCI effect.
+mismatch and input-permutation equivalence. It is published through the active
+MI 1.2 / Snapshot 1.7 / Dashboard 2.4 consumer without altering the leadership
+score or risk rank.

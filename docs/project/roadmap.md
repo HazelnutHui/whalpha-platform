@@ -1,10 +1,11 @@
 # Roadmap
 
-- Next operational step: continue the Dell-only Candidate pipeline
-  optimization after the verified shared-panel/state-index slice: add
-  verified-prior incremental state, resumable stages, validation tiers, and
-  then deterministic process parallelism. Publication, Snapshot, bundle, and
-  OCI remain separate authorizations.
+- Next operational step: continue the Dell-only daily pipeline optimization
+  after the verified Candidate append and Phase 1b stable-prefix correction:
+  add verified-prior Phase 1b append, immutable panel-stage reuse, streaming/
+  resumable audit output, validation tiers, and then deterministic process
+  parallelism. Publication, Snapshot, bundle, and OCI remain separate
+  authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -118,17 +119,18 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   bundle, and separately approved OCI deployment
 - [x] Candidate full-path stage measurement, overlapping-panel shared reads,
   stable-ID state indexing, and worktree-safe Dell Python runner
-- [ ] Verified-prior Candidate incremental state and resumable stages
+- [x] Verified-prior Candidate incremental state with corrected cold-output equivalence
+- [ ] Verified-prior Phase 1b incremental state and resumable content-addressed stages
 - [ ] Candidate daily/periodic/code-change validation tiers
 - [ ] Deterministic Candidate process parallelism with serial equivalence
 
 ## Next Small Target
 
-Bind a verified prior Candidate audit to a new-session incremental calculation
-without changing the cold full-replay reference. Record explicit stage inputs,
-outputs, timings, reuse decisions, and failure location on Dell. Publication,
-Snapshot, bundle, and OCI deployment remain independent approval-bound
-operations. Keep SEC B2 paused.
+Bind a verified prior corrected Phase 1b audit to one new Composite, then reuse
+formally validated immutable panel inputs across daily Candidate execution.
+Record explicit stage inputs, outputs, timings, reuse decisions, and failure
+location on Dell. Publication, Snapshot, bundle, and OCI deployment remain
+independent approval-bound operations. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

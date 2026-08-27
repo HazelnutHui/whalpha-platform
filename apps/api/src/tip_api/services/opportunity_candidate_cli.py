@@ -31,10 +31,11 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import (
     CANDIDATE_PANEL_SESSION_COUNT,
     CANDIDATE_STATE_PARAMETER_FINGERPRINT,
 )
-from tip_api.parameters.market_regime.state_v1_0_0 import (
+from tip_api.parameters.market_regime.state_v1_0_1 import (
     STATE_CALCULATION_VERSION,
     STATE_PARAMETER_FINGERPRINT,
 )
+from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.market_regime_sources import (
     MarketRegimeInputPanel,
@@ -42,6 +43,7 @@ from tip_api.services.market_regime_sources import (
 )
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
 from tip_api.services.opportunity_candidate_oracle import (
+    CandidateIncrementalStateOracleCase,
     CandidateOracleComparisonV1,
     CandidateStateOracleCase,
     compare_with_independent_candidate_oracle,
@@ -69,6 +71,20 @@ class CandidateOfflineRun:
     candidate_sessions: tuple[date, ...]
     timings: Mapping[str, str]
     runtime_metrics: Mapping[str, int]
+
+
+@dataclass(frozen=True, slots=True)
+class CandidateIncrementalRun:
+    panels: tuple[MarketRegimeInputPanel, ...]
+    score_history: Mapping[str, tuple[OpportunityCandidateBatchV1, ...]]
+    state_history: Mapping[str, tuple[OpportunityCandidateStateRecordV1, ...]]
+    current_risk_results: tuple[Any, ...]
+    oracle_report: CandidateOracleComparisonV1
+    equivalence_flags: Mapping[str, bool]
+    candidate_sessions: tuple[date, ...]
+    timings: Mapping[str, str]
+    runtime_metrics: Mapping[str, int]
+    current_score_history: Mapping[str, tuple[OpportunityCandidateBatchV1, ...]]
 
 
 @dataclass(slots=True)
@@ -115,10 +131,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--phase1b-audit", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument(
+        "--prior-candidate-audit",
+        type=Path,
+        help="Formally verified immediately prior Candidate audit for one-session incremental execution.",
+    )
     parser.add_argument("--verify-output", action="store_true", help="Reread an existing completed audit only.")
     args = parser.parse_args(argv)
-    for name in ("data_root", "phase1b_audit", "output_dir"):
-        if not getattr(args, name).is_absolute():
+    for name in ("data_root", "phase1b_audit", "output_dir", "prior_candidate_audit"):
+        value = getattr(args, name)
+        if value is not None and not value.is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
 
     read_audit, write_audit, validate_output = _audit_api()
@@ -143,23 +165,42 @@ def main(argv: list[str] | None = None) -> int:
                 current_payload=current_payload,
                 as_of_session=args.as_of_session,
             )
-        with profiler.stage("candidate_session_selection"):
-            available_eod_sessions = tuple(
-                date.fromisoformat(item)
-                for item in source_payload.get("history_sessions", ())
-            )
-            candidate_sessions = _select_candidate_sessions(
-                state_records=state_records,
-                available_eod_sessions=available_eod_sessions,
-                as_of_session=args.as_of_session,
-                calendar=ExchangeCalendar(),
-            )
-        with profiler.stage("candidate_offline_calculation"):
-            run = _calculate_offline(
-                data_root=args.data_root,
-                candidate_sessions=candidate_sessions,
-                regime_records=state_records,
-            )
+        prior_audit = None
+        if args.prior_candidate_audit is not None:
+            with profiler.stage("prior_candidate_audit_read_validate"):
+                prior_audit = _read_prior_candidate_audit(args.prior_candidate_audit)
+            with profiler.stage("candidate_session_selection"):
+                prior_sessions = tuple(
+                    date.fromisoformat(item["as_of_session"])
+                    for item in prior_audit.source_panels
+                )
+                if not prior_sessions or ExchangeCalendar().previous_session(args.as_of_session) != prior_sessions[-1]:
+                    raise RuntimeError("prior Candidate audit is not the immediately preceding XNYS session")
+                candidate_sessions = (*prior_sessions, args.as_of_session)
+            with profiler.stage("candidate_incremental_calculation"):
+                run = _calculate_incremental(
+                    data_root=args.data_root,
+                    candidate_sessions=candidate_sessions,
+                    regime_records=state_records,
+                    prior_audit=prior_audit,
+                )
+        else:
+            with profiler.stage("candidate_session_selection"):
+                available_eod_sessions = tuple(
+                    _list_available_eod_sessions(args.data_root)
+                )
+                candidate_sessions = _select_candidate_sessions(
+                    state_records=state_records,
+                    available_eod_sessions=available_eod_sessions,
+                    as_of_session=args.as_of_session,
+                    calendar=ExchangeCalendar(),
+                )
+            with profiler.stage("candidate_offline_calculation"):
+                run = _calculate_offline(
+                    data_root=args.data_root,
+                    candidate_sessions=candidate_sessions,
+                    regime_records=state_records,
+                )
         if (
             run.oracle_report.mismatch_count
             or not run.oracle_report.shared_raw_fact_match
@@ -169,8 +210,15 @@ def main(argv: list[str] | None = None) -> int:
             raise RuntimeError("candidate Oracle or replay-equivalence gate failed")
         elapsed = _seconds(time.monotonic() - started)
         with profiler.stage("audit_projection_build"):
-            raw_facts = _raw_fact_records(run.score_history)
-            normalization_ledger = _normalization_records(run.score_history)
+            if prior_audit is None:
+                raw_facts = _raw_fact_records(run.score_history)
+                normalization_ledger = _normalization_records(run.score_history)
+            else:
+                raw_facts = (*prior_audit.raw_facts, *_raw_fact_records(run.current_score_history))
+                normalization_ledger = (
+                    *prior_audit.normalization_ledger,
+                    *_normalization_records(run.current_score_history),
+                )
         usage_after = resource.getrusage(resource.RUSAGE_SELF)
         io_after = _process_io_counters()
         timings = {
@@ -185,6 +233,15 @@ def main(argv: list[str] | None = None) -> int:
             **_io_deltas(io_before, io_after),
             "candidate_session_count": len(candidate_sessions),
         }
+        incremental_kwargs = {}
+        if prior_audit is not None:
+            incremental_kwargs = {
+                "prior_source_panels": prior_audit.source_panels,
+                "incremental_validation": _incremental_validation_ledger(
+                    prior_audit=prior_audit,
+                    run=run,
+                ),
+            }
         manifest = write_audit(
             output_dir=args.output_dir,
             panels=run.panels,
@@ -207,6 +264,7 @@ def main(argv: list[str] | None = None) -> int:
             timings=timings,
             peak_memory_kib=usage_after.ru_maxrss,
             runtime_metrics=runtime_metrics,
+            **incremental_kwargs,
         )
     print(json.dumps(_summary(manifest, args.output_dir), sort_keys=True, separators=(",", ":")))
     return 0
@@ -221,6 +279,16 @@ def _audit_api():
     )
 
     return read_opportunity_candidate_audit, write_opportunity_candidate_audit, validate_tmp_output_dir
+
+
+def _read_prior_candidate_audit(path: Path):
+    from tip_api.services.opportunity_candidate_audit import read_opportunity_candidate_audit_contents
+
+    return read_opportunity_candidate_audit_contents(path)
+
+
+def _list_available_eod_sessions(data_root: Path) -> tuple[date, ...]:
+    return tuple(item.session_date for item in CanonicalEodReadRepository(data_root).list_sessions())
 
 
 def _read_phase1b_payloads(
@@ -473,6 +541,310 @@ def _calculate_offline(
     )
 
 
+def _calculate_incremental(
+    *,
+    data_root: Path,
+    candidate_sessions: tuple[date, ...],
+    regime_records: Sequence[MarketRegimeStateRecordV1],
+    prior_audit,
+) -> CandidateIncrementalRun:
+    """Append exactly one session to a formally verified Candidate audit."""
+
+    profiler = _StageProfiler()
+    if len(candidate_sessions) < 2:
+        raise RuntimeError("incremental Candidate calculation requires a non-empty prior prefix")
+    current_session = candidate_sessions[-1]
+    prior_session = candidate_sessions[-2]
+    regime_by_key = {(item.as_of_session, item.universe_id): item for item in regime_records}
+
+    with profiler.stage("incremental_panel_load_validate"):
+        panels = load_formal_market_regime_panels(
+            data_root=data_root,
+            as_of_sessions=(current_session,),
+        )
+        if len(panels) != 1:
+            raise RuntimeError("incremental Candidate calculation requires exactly one current panel")
+        panel = panels[0]
+        _validate_panel_catalog(panel, current_session)
+        _validate_incremental_prior(
+            prior_audit=prior_audit,
+            candidate_sessions=candidate_sessions,
+            regime_by_key=regime_by_key,
+            current_panel=panel,
+        )
+
+    prior_batches_by_universe = {
+        universe_id: tuple(
+            item for item in prior_audit.candidate_batches if item.universe_id == universe_id
+        )
+        for universe_id in PUBLIC_UNIVERSE_ORDER
+    }
+    histories: dict[tuple[str, UUID], list[OpportunityCandidateStateRecordV1]] = {}
+    for row in prior_audit.state_history:
+        histories.setdefault((row.universe_id, row.instrument_id), []).append(row)
+    prior_state_fingerprints = tuple(item.logical_fingerprint for item in prior_audit.state_history)
+    prior_batch_fingerprints = tuple(item.logical_fingerprint for item in prior_audit.candidate_batches)
+
+    with profiler.stage("incremental_state_index_build"):
+        bars_by_instrument, latest_bar_by_instrument = _index_panel_bars(panel)
+    current_batches: dict[str, tuple[OpportunityCandidateBatchV1, ...]] = {}
+    incremental_cases: list[CandidateIncrementalStateOracleCase] = []
+    session_batches: list[OpportunityCandidateBatchV1] = []
+
+    for universe_id in PUBLIC_UNIVERSE_ORDER:
+        member_ids = tuple(sorted(panel.select_universe(universe_id).member_ids, key=str))
+        as_of_bar_ids = {
+            item.instrument_id for item in panel.bars if item.session_date == current_session
+        }
+        covered_member_ids = tuple(item for item in member_ids if item in as_of_bar_ids)
+        prior_flat = tuple(
+            row for row in prior_audit.state_history if row.universe_id == universe_id
+        )
+        prior_source = candidate_prior_state_source_from_history(
+            history=prior_flat,
+            as_of_session=current_session,
+            universe_id=universe_id,
+            instrument_ids=covered_member_ids,
+        )
+        regime = regime_by_key[(current_session, universe_id)]
+        with profiler.stage("incremental_candidate_score_calculation"):
+            batch = calculate_opportunity_candidate_scores(
+                panel=panel,
+                universe_id=universe_id,
+                regime_score=regime.composite,
+                regime_state=regime.confirmed_state,
+                regime_source_fingerprint=regime.logical_fingerprint,
+                prior_state_source=prior_source,
+            )
+        current_batches[universe_id] = (batch,)
+        session_batches.append(batch)
+        candidates = {item.instrument_id: item for item in batch.candidates}
+        metadata = _member_metadata(
+            panel,
+            member_ids,
+            candidates,
+            universe_id,
+            latest_bar_by_instrument=latest_bar_by_instrument,
+        )
+        with profiler.stage("incremental_candidate_state_append"):
+            for instrument_id in member_ids:
+                key = (universe_id, instrument_id)
+                history = histories.get(key)
+                if not history or history[-1].as_of_session != prior_session:
+                    raise RuntimeError("incremental Candidate state prefix is incomplete")
+                candidate = candidates.get(instrument_id)
+                observation = None
+                if candidate is not None:
+                    observation = CandidateStateObservationV1(
+                        candidate=candidate,
+                        regime_state=regime.confirmed_state,
+                        breakout_fact=_breakout_fact(
+                            panel,
+                            candidate,
+                            bars_by_session=bars_by_instrument.get(instrument_id, {}),
+                        ),
+                    )
+                ticker, security_type = metadata[instrument_id]
+                appended = append_opportunity_candidate_state_history(
+                    existing_history=tuple(history),
+                    observations=(() if observation is None else (observation,)),
+                    expected_sessions=(current_session,),
+                    universe_id=universe_id,
+                    instrument_id=instrument_id,
+                    ticker=ticker,
+                    security_type=security_type,
+                )
+                if len(appended) != 1:
+                    raise RuntimeError("incremental Candidate state append did not emit exactly one row")
+                repeated = append_opportunity_candidate_state_history(
+                    existing_history=tuple(history),
+                    observations=(() if observation is None else (observation,)),
+                    expected_sessions=(current_session,),
+                    universe_id=universe_id,
+                    instrument_id=instrument_id,
+                    ticker=ticker,
+                    security_type=security_type,
+                )
+                if repeated[0].logical_fingerprint != appended[0].logical_fingerprint:
+                    raise RuntimeError("incremental Candidate state restart equivalence failed")
+                prior_record = history[-1]
+                history.extend(appended)
+                incremental_cases.append(
+                    CandidateIncrementalStateOracleCase(
+                        prior_record=prior_record,
+                        observation=observation,
+                        as_of_session=current_session,
+                        universe_id=universe_id,
+                        instrument_id=instrument_id,
+                        ticker=ticker,
+                        security_type=security_type,
+                        actual_record=appended[0],
+                    )
+                )
+
+    with profiler.stage("incremental_candidate_risk_ranking"):
+        current_risk = tuple(
+            rank_opportunity_candidates(batch=batch, risk_mode=mode)
+            for batch in session_batches
+            for mode in CandidateRiskMode
+        )
+    with profiler.stage("incremental_candidate_independent_oracle"):
+        oracle = compare_with_independent_candidate_oracle(
+            panel=panel,
+            batches=tuple(session_batches),
+            regime_context_by_universe={
+                universe_id: (
+                    regime_by_key[(current_session, universe_id)].composite,
+                    regime_by_key[(current_session, universe_id)].confirmed_state,
+                )
+                for universe_id in PUBLIC_UNIVERSE_ORDER
+            },
+            risk_results=current_risk,
+            incremental_state_cases=tuple(incremental_cases),
+        )
+
+    score_history = {
+        universe_id: (*prior_batches_by_universe[universe_id], *current_batches[universe_id])
+        for universe_id in PUBLIC_UNIVERSE_ORDER
+    }
+    state_history = {
+        universe_id: tuple(
+            row
+            for (candidate_universe, _), rows in sorted(
+                histories.items(), key=lambda item: (item[0][0], str(item[0][1]))
+            )
+            if candidate_universe == universe_id
+            for row in rows
+        )
+        for universe_id in PUBLIC_UNIVERSE_ORDER
+    }
+    combined_batch_fingerprints = tuple(
+        item.logical_fingerprint
+        for session in candidate_sessions
+        for universe_id in PUBLIC_UNIVERSE_ORDER
+        for item in score_history[universe_id]
+        if item.as_of_session == session
+    )
+    combined_state_fingerprints = tuple(
+        row.logical_fingerprint
+        for session in candidate_sessions
+        for universe_id in PUBLIC_UNIVERSE_ORDER
+        for row in state_history[universe_id]
+        if row.as_of_session == session
+    )
+    flags = {
+        "prior_prefix_preserved": combined_batch_fingerprints[:-len(PUBLIC_UNIVERSE_ORDER)]
+        == prior_batch_fingerprints,
+        "incremental_restart_match": oracle.mismatch_count == 0,
+        "future_prefix_stable": combined_state_fingerprints[:-len(incremental_cases)]
+        == prior_state_fingerprints,
+        "input_permutation_match": oracle.input_permutation_match,
+    }
+    return CandidateIncrementalRun(
+        panels=(panel,),
+        score_history=score_history,
+        state_history=state_history,
+        current_risk_results=current_risk,
+        oracle_report=oracle,
+        equivalence_flags=flags,
+        candidate_sessions=candidate_sessions,
+        timings=profiler.timings(),
+        runtime_metrics={
+            **profiler.invocation_metrics(),
+            "panel_load_count": 1,
+            "candidate_batch_count": len(PUBLIC_UNIVERSE_ORDER),
+            "reused_candidate_session_count": len(candidate_sessions) - 1,
+        },
+        current_score_history=current_batches,
+    )
+
+
+def _validate_incremental_prior(*, prior_audit, candidate_sessions, regime_by_key, current_panel) -> None:
+    manifest = prior_audit.manifest
+    prior_sessions = tuple(
+        date.fromisoformat(item["as_of_session"]) for item in prior_audit.source_panels
+    )
+    if prior_sessions != candidate_sessions[:-1]:
+        raise RuntimeError("prior Candidate audit does not exactly match the current session prefix")
+    if manifest.get("as_of_session") != candidate_sessions[-2].isoformat():
+        raise RuntimeError("prior Candidate audit is not the immediate predecessor")
+    if tuple(manifest.get("universe_ids", ())) != PUBLIC_UNIVERSE_ORDER:
+        raise RuntimeError("prior Candidate audit Universe order mismatch")
+    prior_panel = prior_audit.source_panels[-1]
+    if prior_panel.get("activation_pointer_fingerprint") != current_panel.activation_pointer_fingerprint:
+        raise RuntimeError("Candidate Activation changed; a cold full replay is required")
+    current_memberships = {
+        item.universe_id: item.membership_fingerprint for item in current_panel.universes
+    }
+    prior_memberships = {
+        item["universe_id"]: item["membership_fingerprint"]
+        for item in prior_panel.get("universes", ())
+    }
+    if prior_memberships != current_memberships:
+        raise RuntimeError("Candidate Universe membership changed; a cold full replay is required")
+    batch_keys = {(item.as_of_session, item.universe_id) for item in prior_audit.candidate_batches}
+    expected_keys = {
+        (session, universe_id)
+        for session in prior_sessions
+        for universe_id in PUBLIC_UNIVERSE_ORDER
+    }
+    if batch_keys != expected_keys:
+        raise RuntimeError("prior Candidate batch prefix is incomplete")
+    for batch in prior_audit.candidate_batches:
+        regime = regime_by_key.get((batch.as_of_session, batch.universe_id))
+        if regime is None or batch.regime_source_fingerprint != regime.logical_fingerprint:
+            raise RuntimeError("prior Candidate audit no longer matches Phase 1b history")
+
+
+def _incremental_validation_ledger(*, prior_audit, run: CandidateIncrementalRun) -> dict[str, Any]:
+    prior_validation = prior_audit.validation_ledger
+    if prior_validation is None:
+        segments = (
+            {
+                "scope": "verified_legacy_prefix",
+                "through_session": prior_audit.manifest["as_of_session"],
+                "audit_logical_fingerprint": prior_audit.manifest["logical_content_fingerprint"],
+                "oracle_fingerprint": prior_audit.manifest["oracle_fingerprint"],
+            },
+        )
+    else:
+        segments = tuple(prior_validation.get("validation_segments", ()))
+    segments = (
+        *segments,
+        {
+            "scope": "current_session_independent_oracle",
+            "session": run.candidate_sessions[-1].isoformat(),
+            "oracle_fingerprint": run.oracle_report.oracle_fingerprint,
+            "oracle_mismatch_count": run.oracle_report.mismatch_count,
+        },
+    )
+    return {
+        "validation_scope": "verified_prior_plus_current_session_oracle",
+        "prior_audit_logical_fingerprint": prior_audit.manifest["logical_content_fingerprint"],
+        "prior_as_of_session": prior_audit.manifest["as_of_session"],
+        "current_as_of_session": run.candidate_sessions[-1].isoformat(),
+        "prior_candidate_history_fingerprint": prior_audit.manifest["candidate_history_fingerprint"],
+        "prior_candidate_state_history_fingerprint": prior_audit.manifest[
+            "candidate_state_history_fingerprint"
+        ],
+        "prior_raw_facts_records_fingerprint": _records_fingerprint(prior_audit.raw_facts),
+        "prior_normalization_records_fingerprint": _records_fingerprint(
+            prior_audit.normalization_ledger
+        ),
+        "current_session_oracle_fingerprint": run.oracle_report.oracle_fingerprint,
+        "reuse_checks": {
+            "prior_audit_formally_reread": True,
+            "candidate_session_prefix_exact": True,
+            "activation_unchanged": True,
+            "membership_unchanged": True,
+            "phase1b_prefix_compatible": True,
+            "prior_candidate_prefix_preserved": run.equivalence_flags["prior_prefix_preserved"],
+            "prior_state_prefix_preserved": run.equivalence_flags["future_prefix_stable"],
+        },
+        "validation_segments": segments,
+    }
+
+
 def _validate_panel_catalog(panel: MarketRegimeInputPanel, session: date) -> None:
     if panel.as_of_session != session:
         raise RuntimeError("formal candidate panel session mismatch")
@@ -686,6 +1058,12 @@ def _summary(manifest: Mapping[str, Any], output_dir: Path) -> dict[str, Any]:
 
 def _seconds(value: float) -> str:
     return format(value, ".6f")
+
+
+def _records_fingerprint(value: Sequence[Mapping[str, Any]]) -> str:
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+    ).hexdigest()
 
 
 def _process_io_counters() -> dict[str, int]:

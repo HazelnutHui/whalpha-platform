@@ -105,6 +105,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Opportunity Candidate Publication V1](data-contracts/opportunity-candidate-publication-v1.md): Bounded, language-neutral Candidate consumer and lineage contract.
 - [Candidate Entry Geometry V1](data-contracts/candidate-entry-geometry-v1.md): Offline source audit and additive consumer contract separating leadership quality from entry location and chase risk.
 - [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md): Dell-only compute/data authority, worktree-safe runner, measured baseline, and deterministic optimization sequence.
+- [ADR 0022: Verified-prior Candidate increment](decisions/0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md): separates daily append validation from the cold full-replay reference.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.
@@ -146,6 +147,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0018: Stage Market Regime & Opportunity Map V1 as Transparent EOD Analytics](decisions/0018-stage-market-regime-opportunity-map-v1.md)
 - [ADR 0020: Publish a Bounded Opportunity Candidate Consumer](decisions/0020-publish-bounded-opportunity-candidate-consumer.md)
 - [ADR 0021: Separate Candidate Leadership from Entry Geometry](decisions/0021-separate-candidate-leadership-from-entry-geometry.md)
+- [ADR 0022: Bind Daily Candidate Calculation to a Verified Prior Audit](decisions/0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md)
+- [ADR 0023: Preserve Market Regime State Prefix Across As-Of Sessions](decisions/0023-preserve-market-regime-state-prefix-across-as-of-sessions.md)
 
 ## Project
 

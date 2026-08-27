@@ -30,6 +30,9 @@ class _FixtureCalendar:
         index = self.sessions.index(session)
         return self.sessions[index - count : index]
 
+    def previous_session(self, session):
+        return self.sessions[self.sessions.index(session) - 1]
+
 
 class _FixtureTable:
     def __init__(self, session, instrument_ids):
@@ -152,6 +155,56 @@ def test_overlapping_formal_panels_read_each_source_session_once(monkeypatch, tm
     assert all(len(item.bars) == 52 for item in panels)
     assert panels[0].bars[-1].session_date == sessions[-2]
     assert panels[1].bars[-1].session_date == sessions[-1]
+
+
+def test_stable_prefix_history_panel_retains_canonical_left_boundary(monkeypatch, tmp_path) -> None:
+    sessions = tuple(date(2026, 1, 2) + timedelta(days=index) for index in range(29))
+    first_id, second_id = _id("first"), _id("second")
+    bars_by_session = {
+        session: (_bar(first_id, "AAA", session), _bar(second_id, "BBB", session))
+        for session in sessions
+    }
+    repository = _FixtureRepository(sessions, bars_by_session)
+    monkeypatch.setattr(sources, "ExchangeCalendar", lambda: _FixtureCalendar(sessions))
+    monkeypatch.setattr(sources, "CanonicalEodReadRepository", lambda root: repository)
+    monkeypatch.setattr(
+        sources,
+        "read_dashboard_universe_activation_pointer",
+        lambda root: SimpleNamespace(active=SimpleNamespace(analysis_session=sessions[-1])),
+    )
+    activation = SimpleNamespace(
+        universes=(
+            SimpleNamespace(
+                universe_id=PRIMARY,
+                display_name="Primary",
+                is_default=True,
+                membership_fingerprint="a" * 64,
+            ),
+            SimpleNamespace(
+                universe_id=SECONDARY,
+                display_name="Secondary",
+                is_default=False,
+                membership_fingerprint="b" * 64,
+            ),
+        ),
+        member_ids_by_universe={
+            PRIMARY: frozenset((first_id,)),
+            SECONDARY: frozenset((first_id, second_id)),
+        },
+    )
+    monkeypatch.setattr(sources, "read_active_dashboard_universe_activation", lambda *args, **kwargs: activation)
+    monkeypatch.setattr(sources, "active_pointer_state_fingerprint", lambda root: "c" * 64)
+
+    panel = sources.load_formal_market_regime_history_panel(
+        data_root=tmp_path,
+        as_of_session=sessions[-1],
+    )
+
+    assert panel.sessions == sessions
+    assert tuple(item.session_date for item in panel.source_sessions) == sessions
+    assert len(panel.bars) == len(sessions) * 2
+    assert repository.history_requests == [sessions]
+    assert repository.business_key_requests == list(sessions[25:])
 
 
 @pytest.mark.parametrize(

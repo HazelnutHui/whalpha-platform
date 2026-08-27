@@ -12,7 +12,7 @@ from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from tip_api.parameters.market_regime.state_v1_0_0 import STATE_PARAMETER_FINGERPRINT
+from tip_api.parameters.market_regime.state_v1_0_1 import STATE_PARAMETER_FINGERPRINT
 from tip_api.parameters.market_regime.v1_0_0 import PARAMETER_SET_FINGERPRINT
 from tip_api.services.etf_relationship_audit import (
     read_etf_relationship_audit,

@@ -121,6 +121,76 @@ def load_formal_market_regime_panel(
     )[0]
 
 
+def load_formal_market_regime_history_panel(
+    *,
+    data_root: Path,
+    as_of_session: date,
+) -> MarketRegimeInputPanel:
+    """Load one stable-prefix panel from the first canonical session through as-of."""
+
+    if not data_root.is_absolute() or data_root.is_symlink() or not data_root.is_dir():
+        raise MarketRegimeSourceError("data root must be an absolute regular directory")
+    safe_root = data_root.resolve(strict=True)
+    calendar = ExchangeCalendar()
+    descriptors = CanonicalEodReadRepository(safe_root).list_sessions()
+    sessions = tuple(item.session_date for item in descriptors if item.session_date <= as_of_session)
+    if len(sessions) < 26 or sessions[-1] != as_of_session:
+        raise MarketRegimeSourceError("stable-prefix history requires at least 26 sessions through as-of")
+    if any(calendar.previous_session(right) != left for left, right in zip(sessions, sessions[1:])):
+        raise MarketRegimeSourceError("stable-prefix history contains an XNYS session gap")
+    rolling_as_of_sessions = sessions[25:]
+    panels = load_formal_market_regime_panels(
+        data_root=safe_root,
+        as_of_sessions=rolling_as_of_sessions,
+    )
+    source_by_session: dict[date, MarketRegimeSourceSession] = {}
+    bars_by_key: dict[tuple[UUID, date], MarketRegimeBar] = {}
+    for panel in panels:
+        for source in panel.source_sessions:
+            previous = source_by_session.get(source.session_date)
+            if previous is not None and previous != source:
+                raise MarketRegimeSourceError("overlapping stable-prefix source custody differs")
+            source_by_session[source.session_date] = source
+        for bar in panel.bars:
+            key = (bar.instrument_id, bar.session_date)
+            previous = bars_by_key.get(key)
+            if previous is not None and previous != bar:
+                raise MarketRegimeSourceError("overlapping stable-prefix bars differ")
+            bars_by_key[key] = bar
+    if tuple(sorted(source_by_session)) != sessions:
+        raise MarketRegimeSourceError("stable-prefix source ledger is incomplete")
+    source_sessions = tuple(source_by_session[item] for item in sessions)
+    history_source_fingerprint = _fingerprint(
+        [
+            {
+                "session_date": item.session_date.isoformat(),
+                "dataset_path": item.dataset_path,
+                "record_count": item.record_count,
+                "content_fingerprint": item.content_fingerprint,
+                "parquet_sha256": item.parquet_sha256,
+                "identity_snapshot_date": item.identity_snapshot_date.isoformat(),
+                "identity_snapshot_fingerprint": item.identity_snapshot_fingerprint,
+            }
+            for item in source_sessions
+        ]
+    )
+    current = panels[-1]
+    return MarketRegimeInputPanel(
+        as_of_session=current.as_of_session,
+        calendar_id=current.calendar_id,
+        calendar_version=current.calendar_version,
+        sessions=sessions,
+        source_sessions=source_sessions,
+        bars=tuple(bars_by_key[key] for key in sorted(bars_by_key, key=lambda item: (item[1], str(item[0])))),
+        universes=current.universes,
+        activation_pointer_fingerprint=current.activation_pointer_fingerprint,
+        identity_logical_fingerprint=current.identity_logical_fingerprint,
+        eod_content_fingerprint=current.eod_content_fingerprint,
+        eod_business_key_fingerprint=current.eod_business_key_fingerprint,
+        history_source_fingerprint=history_source_fingerprint,
+    )
+
+
 def load_formal_market_regime_panels(
     *,
     data_root: Path,

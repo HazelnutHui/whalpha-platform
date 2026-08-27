@@ -44,3 +44,5 @@ Each ADR should include:
 - [0019: Offer Equal-Capability Guest Sessions](0019-offer-equal-capability-guest-sessions.md)
 - [0020: Publish a Bounded Opportunity Candidate Consumer](0020-publish-bounded-opportunity-candidate-consumer.md)
 - [0021: Separate Candidate Leadership from Entry Geometry](0021-separate-candidate-leadership-from-entry-geometry.md)
+- [0022: Bind Daily Candidate Calculation to a Verified Prior Audit](0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md)
+- [0023: Preserve Market Regime State Prefix Across As-Of Sessions](0023-preserve-market-regime-state-prefix-across-as-of-sessions.md)
