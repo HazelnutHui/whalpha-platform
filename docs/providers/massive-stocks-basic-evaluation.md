@@ -10,7 +10,7 @@ Accepted for Private EOD Development — Bounded Identity and EOD Workflows Veri
 
 ## Last Reviewed
 
-2026-08-14
+2026-08-27
 
 ## Official Sources
 
@@ -29,7 +29,7 @@ Accepted for Private EOD Development — Bounded Identity and EOD Workflows Veri
 
 ## Plan Summary
 
-Public Plan Information reviewed on 2026-08-14:
+Public Plan Information rechecked on 2026-08-27:
 
 - plan: Stocks Basic
 - price: USD 0/month
@@ -130,6 +130,11 @@ Future adapter requirements:
 - idempotent ingestion
 - request audit without secrets
 
+The public Grouped Daily documentation does not guarantee a precise
+post-close stable-publication minute. Provider readiness must therefore remain
+separate from exchange close and use bounded operational evidence rather than
+an inferred availability promise.
+
 ## History Limit
 
 Stocks Basic is currently listed with 2 years of historical data. This is enough for development and initial validation, but not enough for long-term regime research or full historical market-structure studies.
@@ -182,11 +187,11 @@ A one-request Grouped Daily inspection for 2026-08-13 verified access and payloa
 - minimal standard-library HTTPS transport implemented
 - one read-only Stocks reference smoke test succeeded
 - bounded All Tickers Instrument Master, provider identity, and ticker resolver publication implemented
-- bounded Grouped Daily publication implemented; completed EOD sessions cover 2026-08-12 through 2026-08-14
+- bounded Grouped Daily publication implemented; completed EOD sessions cover 2026-07-17 through 2026-08-26
 - provider security-type catalog, observation, canonical evidence, and logical completion implemented for 2026-08-14
 - canonical Parquet persistence, private analytics APIs, Dashboard snapshots, and versioned static bundle workflow implemented
 - Git records private authenticated static Dashboard deployments; current OCI health was not checked for this status reconciliation
-- no historical backfill, automated daily ingestion, corporate-action ingestion, or unrestricted public provider-backed serving
+- no automated daily ingestion, corporate-action ingestion, or unrestricted public provider-backed serving
 
 ## Risks
 

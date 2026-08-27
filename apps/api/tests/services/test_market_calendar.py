@@ -21,6 +21,10 @@ def test_known_august_2026_sessions_and_weekend(calendar: ExchangeCalendar) -> N
     assert not calendar.is_session(date(2026, 8, 15))
     assert not calendar.is_session(date(2026, 8, 16))
     assert calendar.previous_session(date(2026, 8, 14)) == date(2026, 8, 13)
+    assert calendar.next_session(date(2026, 8, 14)) == date(2026, 8, 17)
+    assert calendar.session_close(date(2026, 8, 14)) == datetime(
+        2026, 8, 14, 20, tzinfo=UTC
+    )
 
 
 def test_weekend_latest_completed_session_is_friday(calendar: ExchangeCalendar) -> None:
@@ -38,6 +42,9 @@ def test_holiday_and_early_close(calendar: ExchangeCalendar) -> None:
     assert calendar.is_session(date(2026, 11, 27))
     assert calendar.latest_completed_session(datetime(2026, 11, 27, 17, 59, tzinfo=UTC)) == date(2026, 11, 25)
     assert calendar.latest_completed_session(datetime(2026, 11, 27, 18, 0, tzinfo=UTC)) == date(2026, 11, 27)
+    assert calendar.session_close(date(2026, 11, 27)) == datetime(
+        2026, 11, 27, 18, tzinfo=UTC
+    )
 
 
 def test_dst_uses_exchange_schedule_utc_close(calendar: ExchangeCalendar) -> None:

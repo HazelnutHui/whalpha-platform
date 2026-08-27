@@ -25,6 +25,50 @@ Acquisition and canonical `/data` apply remain authorization boundaries.
 Publication, Snapshot, bundle, OCI deployment, and scheduler activation are
 outside both commands.
 
+## Session and provider readiness
+
+Market close is not provider readiness. Massive documents Stocks Basic as EOD
+and the Grouped Daily endpoint as available across Stocks plans, but does not
+guarantee a precise stable-publication minute. Daily aggregates may also be
+updated for late or corrected trades. The first fetch review therefore begins
+30 minutes after the actual XNYS close as a provisional operational choice,
+not as a completeness claim.
+
+The network-free readiness command is:
+
+```bash
+scripts/admin/plan-daily-eod-readiness.sh \
+  --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --target-session YYYY-MM-DD \
+  --latest-canonical-session YYYY-MM-DD \
+  --acquisition-action prepare_identity_catchup
+```
+
+The action must be the acquisition action reported by the exact-session daily
+planner. The target must be the oldest missing XNYS session. Use
+`prepare_eod_catchup` only after the same-day Identity boundary formally
+completes and the daily planner advances.
+
+Prior separately authorized fetch outcomes may be supplied in chronological
+order without secrets or response content:
+
+```bash
+--attempt '1|YYYY-MM-DDTHH:MM:SS+00:00|not_ready' \
+--attempt '2|YYYY-MM-DDTHH:MM:SS+00:00|rate_limited|1800'
+```
+
+Recognized outcomes are `not_ready`, `rate_limited`, `transient_failure`,
+`fetch_package_ready`, `permanent_failure`, and `quality_failure`. The policy
+allows at most five attempts with 15/30/60/120-minute backoff, honors a bounded
+rate-limit `Retry-After`, and moves an elapsed six-hour daily deadline into
+missed-session recovery. Permanent/quality failures and exhausted attempts
+require diagnosis. A ready fetch package only requests separate apply review.
+
+The result always declares zero requests/writes, no scheduler, and no provider
+completeness assertion. Exit 1 means alert/diagnosis is required; it does not
+send a notification. Real attempt persistence and notification delivery are
+not implemented yet.
+
 ## Read-only plan
 
 Every audit path is explicit and must be a distinct direct child of `/tmp`.
@@ -159,13 +203,15 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. An explicit standing-authorization contract for provider fetch and
+1. Durable acquisition-attempt custody and an explicit standing-authorization
+   contract for provider fetch and
    canonical apply, or continued manual approval for those two boundaries.
-2. Session-readiness timing, bounded retry/backoff, timeout, alert, and missed-
-   session recovery rules.
+2. Actual alert delivery and a controlled real timing rehearsal to calibrate
+   the provisional 30-minute/limited-retry policy.
 3. Separate authorization decisions for publication, Snapshot/bundle, OCI
    deployment, and finally scheduler activation.
 
 The executor and journal are implemented and tested, but no durable real run
 root has been provisioned and no real action has been executed through this
-boundary yet.
+boundary yet. Readiness planning is also implemented and tested without making
+a provider request or enabling a scheduler.

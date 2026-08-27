@@ -6,10 +6,11 @@
   resumable Candidate audit output, explicit validation tiers, and bounded
   deterministic cold-Oracle process parallelism are complete. The exact-
   session read-only planner plus single-action offline executor and durable
-  Dell run custody are complete in repository source. Next define session
-  readiness, bounded retry/backoff, missed-session recovery, and the standing-
-  authorization boundary for provider acquisition/canonical apply. Publication,
-  Snapshot, bundle, and OCI remain separate authorizations.
+  Dell run custody plus the network-free session-readiness, bounded retry, and
+  missed-session policy are complete in repository source. Next add durable
+  acquisition-attempt custody and decide the standing-authorization boundary
+  for provider acquisition/canonical apply. Publication, Snapshot, bundle, and
+  OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -130,14 +131,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Candidate daily/periodic/code-change validation tiers
 - [x] Deterministic cold-replay Candidate Oracle process parallelism with serial equivalence
 - [x] Exact-session daily planner and single-action offline executor with durable run custody
+- [x] XNYS-close-aware readiness, bounded retry, alert state, and oldest-gap recovery policy
 
 ## Next Small Target
 
-Define the daily EOD session-readiness, bounded retry/backoff, timeout, alert,
-and missed-session recovery contract, then separately decide whether provider
-acquisition and canonical apply receive standing authorization or remain
-manual. Do not activate a scheduler or combine Production publication,
-Snapshot, bundle, OCI, or deployment authorization. Keep SEC B2 paused.
+Add durable acquisition-attempt custody, then separately decide whether exact-
+session Identity/EOD fetch and canonical apply receive standing authorization
+or remain manual. Real notification delivery and scheduler activation remain
+separate. Do not combine Production publication, Snapshot, bundle, OCI, or
+deployment authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

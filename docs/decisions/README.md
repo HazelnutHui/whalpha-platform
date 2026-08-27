@@ -53,3 +53,4 @@ Each ADR should include:
 - [0028: Parallelize Only Independent Cold-Replay Oracle Sessions](0028-parallelize-only-independent-cold-replay-oracle-sessions.md)
 - [0029: Separate Daily Run Planning from Authorized Execution](0029-separate-daily-run-planning-from-authorized-execution.md)
 - [0030: Custody One Offline Daily Action at a Time](0030-custody-one-offline-daily-action-at-a-time.md)
+- [0031: Separate Market Close from Provider Readiness](0031-separate-market-close-from-provider-readiness.md)

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-27 — Market-close-aware daily readiness policy
+
+- Accepted ADR 0031 and added a deterministic, network-free readiness plan
+  separating XNYS close from unguaranteed provider EOD stability. The first
+  fetch review is provisionally 30 minutes after actual close, including early
+  closes and daylight-saving transitions; it never claims completeness.
+- Added bounded 15/30/60/120-minute retry, provider `Retry-After` handling,
+  five-attempt and six-hour limits, terminal failure diagnosis, explicit alert
+  state, separate fetch/apply review, and oldest-missing-session recovery.
+- Added a worktree-safe read-only administrator entry and calendar, policy,
+  CLI, malformed history, backoff, exhaustion, and network-guard tests.
+- No credential, provider request, `/data` write, fetch package, apply,
+  notification, publication, deployment, OCI, Production, or scheduler state
+  changed.
+
 ## 2026-08-27 — Single-action offline daily execution custody
 
 - Accepted ADR 0030 and added an executor limited to one exact, unchanged

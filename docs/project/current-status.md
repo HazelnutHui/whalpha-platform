@@ -184,7 +184,13 @@ formal re-plan, and inspection-only crash recovery. It is limited to Phase 1a,
 verified-prior Phase 1b, daily Candidate, and entry geometry. No durable real
 run root is provisioned and no real action has been executed through it.
 Session-readiness/retry policy and provider acquisition/canonical-apply
-standing authorization are next.
+standing authorization were the next boundary. ADR 0031 now adds the
+repository-tested, network-free readiness decision: actual XNYS close and early-close handling,
+30-minute provisional stabilization, bounded retry/`Retry-After`, five-attempt
+and six-hour limits, explicit alert state, and oldest-missing-session recovery.
+It makes no provider-completeness claim and performs no fetch, apply,
+notification, or scheduler action. Durable acquisition-attempt custody and
+the standing-authorization decision remain next.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

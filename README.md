@@ -57,6 +57,13 @@ formal re-plan. This boundary is tested but has not been run against real daily
 state; provider acquisition, canonical apply, publication, deployment, and
 scheduler activation remain separately unauthorized.
 
+The next repository-only control slice separates XNYS close from provider
+readiness. It applies a provisional post-close stabilization window, bounded
+retry and `Retry-After`, explicit alert state, and oldest-missing-session
+recovery without making a provider request or completeness claim. Durable
+acquisition-attempt custody, notifications, standing provider/apply
+authorization, and scheduler activation remain unimplemented.
+
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and
 does not establish issuer structure or domicile. There is no automated daily

@@ -110,7 +110,13 @@ recording success. Interrupted-attempt recovery only classifies formal state
 and never re-executes. This boundary is repository-tested only: no durable real
 run root is provisioned, no real action has run through it, and no scheduler is
 enabled. Session-readiness/retry policy and provider acquisition/apply standing
-authorization are next.
+authorization were the next boundary. ADR 0031 now implements the first half
+as a pure, network-free readiness plan: actual XNYS close/early-close handling, a
+provisional 30-minute stabilization window, bounded 15/30/60/120-minute retry,
+five-attempt and six-hour limits, explicit alert state, and oldest-missing-
+session recovery. It never asserts provider completeness or performs a fetch,
+apply, notification, or scheduler action. Durable acquisition-attempt custody
+and the standing-authorization decision remain next.
 
 ## Analytics and presentation
 
