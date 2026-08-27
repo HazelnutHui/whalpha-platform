@@ -202,11 +202,16 @@ window, exact host/provider/path/code/readiness bindings, an external whole-
 file SHA pin, and a four-operation Identity/EOD scope. No real authorization
 directory, artifact, pin, or transition exists; current real operations still
 require manual approval. ADR 0034 now adds the repository-tested coordinator
-core with one-transition maximum,
-default-absent provider/apply capabilities, explicit recovery stops, opt-in
-offline execution, and a hard stop at publication review. It has no real CLI,
-adapter, authorization activation, request, or write. Authorized fetch/apply
-adapters remain next.
+core with one-transition maximum, default-absent provider/apply capabilities,
+explicit recovery stops, opt-in offline execution, and a hard stop at
+publication review. It has no real CLI, adapter, authorization activation,
+request, or write. Authorized fetch/apply adapters remain next.
+ADR 0035 now adds repository-tested canonical Identity/EOD Apply custody under
+journal 1.2. Reservation binds the completed acquisition, frozen plan SHA,
+package hashes, expected inventory, absent targets, and exact paths; recovery
+never writes and distinguishes formally complete, provably untouched, and
+partial/ambiguous state. No real Apply adapter, reservation, recovery, or
+`/data` write exists.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

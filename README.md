@@ -69,9 +69,11 @@ authorization contract for Identity/EOD fetch and canonical apply. It is
 default-deny: no real authorization artifact or external SHA pin exists.
 The one-transition coordinator core now joins wait, recovery, authorization
 review, offline execution, diagnosis, and publication-review states without
-looping. Real authorized fetch/apply capability adapters, notifications, and
-scheduler activation remain unimplemented. No real run root or fetch attempt
-has been created.
+looping. Canonical Identity/EOD Apply now also has exact reservation and no-
+write interruption recovery under a third disjoint journal family. Real
+authorized fetch/apply capability adapters, notifications, and scheduler
+activation remain unimplemented. No real run root, fetch attempt, or Apply has
+been created.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

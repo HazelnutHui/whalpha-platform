@@ -35,6 +35,7 @@ from tip_api.services.daily_eod_readiness import (
 )
 from tip_api.services.daily_eod_run_journal import (
     ACQUISITION_START_EVENT,
+    CANONICAL_APPLY_START_EVENT,
     START_EVENT,
     DailyEodRunEvent,
     locked_daily_eod_run_journal,
@@ -156,6 +157,13 @@ def coordinate_daily_eod_transition(
                 status=CoordinatorStatus.RECOVERY_REQUIRED,
                 next_action="recover_offline_action",
                 reasons=("unresolved_offline_attempt",),
+                plan=plan,
+            )
+        if pending.event_type == CANONICAL_APPLY_START_EVENT:
+            return _result(
+                status=CoordinatorStatus.RECOVERY_REQUIRED,
+                next_action="recover_canonical_apply",
+                reasons=("unresolved_canonical_apply",),
                 plan=plan,
             )
         raise DailyEodCoordinatorError("unrecognized unresolved journal event")

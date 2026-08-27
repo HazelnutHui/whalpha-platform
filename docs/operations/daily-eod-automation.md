@@ -168,13 +168,35 @@ Provider fetch and canonical apply are explicit capability ports and are absent
 by default. An installed capability must bind the exact target and readiness
 fingerprint, return one formal event fingerprint, and cannot claim more than
 one request or one canonical write. A future real adapter must independently
-satisfy ADR 0032 and ADR 0033; the coordinator does not grant authority.
+satisfy ADR 0032, ADR 0033, and ADR 0035; the coordinator does not grant
+authority.
 Offline execution is also opt-in per invocation and delegates exactly one
 action to ADR 0030.
 
 There is no coordinator CLI or scheduler entry yet. No real capability, run
 root, authorization artifact, provider request, or canonical write was created
 by this implementation.
+
+## Canonical Apply custody
+
+ADR 0035 adds `daily-eod-canonical-apply-custody/1.0` and the third disjoint
+`daily-eod-run-journal/1.2` event family. Before an external Identity/EOD Apply,
+reservation proves the latest exact acquisition package, current apply-review
+readiness, frozen plan and whole-file SHA, package hashes, expected canonical
+inventory, absent targets, and exact paths under the shared global lock. It
+then records `canonical_apply_started` without executing Apply.
+
+A successful external Apply may close the attempt only after the exact-session
+automation planner formally proves the named canonical stage complete and
+advanced. Any exception or failed postcondition remains unresolved. Recovery
+never writes: it records success when formal readers prove completion, not
+completed only when every target is absent and the entire inventory is
+unchanged, or blocked for partial/changed/ambiguous state. Partial Identity
+publication may use the existing `verify-then-complete` boundary only after
+separate diagnosis and authorization.
+
+There is no real Apply capability or CLI for this custody layer yet, and no
+real journal root or Apply was created.
 
 ## Read-only plan
 
@@ -310,7 +332,7 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Real ADR 0032/0033 fetch and canonical-apply capability adapters, followed
+1. Real ADR 0032/0033/0035 fetch and canonical-Apply capability adapters, followed
    by explicit review/provisioning of a standing-authorization artifact and
    its separate host SHA pin, or continued manual approval for those actions.
 2. Actual alert delivery and a controlled real timing rehearsal to calibrate
@@ -326,4 +348,6 @@ and tested without creating the real run root or executing a fetch. Standing
 authorization validation is implemented and tested, but no real authorization
 directory, artifact, SHA pin, or authorized transition exists. The coordinator
 core is implemented and tested with default-absent provider/apply capabilities;
-it has no real CLI or scheduler entry.
+it has no real CLI or scheduler entry. Canonical Apply reservation and no-write
+recovery are repository-tested under journal 1.2, but no real Apply adapter,
+reservation, or recovery ran.

@@ -126,6 +126,22 @@ class FetchPackageEvidenceV1(FrozenModel):
     package_content_sha256: str
 
 
+class CatchupApprovalPlanEvidenceV1(FrozenModel):
+    operation: Literal["identity", "eod"]
+    session_date: date
+    plan_path: str
+    plan_file_sha256: str
+    plan_content_sha256: str
+    data_root: str
+    fetch_package_path: str
+    fetch_package_manifest_sha256: str
+    fetch_package_content_sha256: str
+    expected_current_state_fingerprint: str
+    publication_order: tuple[str, ...]
+    inventory_change_file_count: int = Field(ge=1)
+    inventory_change_bytes: int = Field(ge=1)
+
+
 def canonical_json_bytes(value: object) -> bytes:
     return (json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True) + "\n").encode("utf-8")
 
@@ -276,6 +292,42 @@ def read_fetch_package_evidence(
         fetched_at=manifest.fetched_at,
         package_manifest_sha256=file_sha256(package_path / "package.json"),
         package_content_sha256=manifest.package_content_sha256,
+    )
+
+
+def read_catchup_approval_plan_evidence(
+    *,
+    plan_path: Path,
+    approved_plan_sha256: str,
+    expected_operation: Literal["identity", "eod"],
+    expected_session: date,
+    expected_data_root: Path,
+) -> CatchupApprovalPlanEvidenceV1:
+    """Formally reread a frozen apply plan and expose bounded custody evidence."""
+
+    plan = _read_plan(plan_path, approved_plan_sha256)
+    data_root = _validate_data_root(expected_data_root)
+    if (
+        plan.operation != expected_operation
+        or plan.session_date != expected_session
+        or plan.data_root != str(data_root)
+    ):
+        raise SameDayCatchupError("approval plan identity mismatch")
+    _verify_package_custody(plan)
+    return CatchupApprovalPlanEvidenceV1(
+        operation=plan.operation,
+        session_date=plan.session_date,
+        plan_path=str(plan_path),
+        plan_file_sha256=file_sha256(plan_path),
+        plan_content_sha256=plan.plan_content_sha256,
+        data_root=plan.data_root,
+        fetch_package_path=plan.fetch_package_path,
+        fetch_package_manifest_sha256=plan.fetch_package_manifest_sha256,
+        fetch_package_content_sha256=plan.fetch_package_content_sha256,
+        expected_current_state_fingerprint=plan.expected_current_state_fingerprint,
+        publication_order=plan.publication_order,
+        inventory_change_file_count=plan.inventory_change_file_count,
+        inventory_change_bytes=plan.inventory_change_bytes,
     )
 
 

@@ -28,6 +28,9 @@ and offline calculations share the same non-blocking global lock and
 cross-session SHA-256 event chain, while using disjoint start/terminal event
 families that cannot close one another.
 
+ADR 0035 later extends the still-unactivated journal to 1.2 with a third
+disjoint canonical-Apply family; it does not change this acquisition contract.
+
 Before a separately authorized Identity or EOD fetch, custody requires:
 
 - one exact acquisition action and oldest-missing target session;

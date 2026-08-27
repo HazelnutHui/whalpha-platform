@@ -306,6 +306,7 @@ def test_apply_capability_is_called_once_and_bounded_to_one_write() -> None:
     ("event_type", "next_action"),
     (
         ("acquisition_started", "recover_acquisition_attempt"),
+        ("canonical_apply_started", "recover_canonical_apply"),
         ("action_started", "recover_offline_action"),
     ),
 )

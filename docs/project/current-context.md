@@ -120,7 +120,7 @@ apply, notification, or scheduler action. Durable acquisition-attempt custody
 now shares the global lock and cross-session journal with offline execution,
 reserves only a fresh exact readiness fingerprint, records bounded outcomes,
 formally binds completed package evidence, and recovers interruption without a
-request. This is repository-tested only: journal 1.1 has not been provisioned
+request. This is repository-tested only: journal 1.2 has not been provisioned
 for a real run and no fetch was executed. Provider fetch/canonical-apply
 standing authorization is now defined by ADR 0033 as an expiring, exact-
 revision, externally SHA-pinned contract for only Identity/EOD fetch and
@@ -128,11 +128,16 @@ canonical apply. Its reader and transition verifier are repository-tested, but
 no real authorization directory, artifact, host pin, fetch, or apply was
 created. Publication and public-serving operations stay outside this scope.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
-planning, journal recovery,
-readiness, authorization review, one opt-in offline action, diagnosis, and the
-publication-review stop while never looping. Provider/apply capability ports
-are absent by default; no CLI, real adapter, authorization activation, request,
-or write exists. Real authorized adapters remain next.
+planning, journal recovery, readiness, authorization review, one opt-in offline
+action, diagnosis, and the publication-review stop while never looping.
+Provider/apply capability ports are absent by default; no CLI, real adapter,
+authorization activation, request, or write exists. Real authorized adapters
+remain next.
+ADR 0035 adds exact canonical-Apply reservation, success proof, and no-write
+recovery under a third disjoint journal family. It binds completed acquisition
+hashes, the formal plan, current inventory, absent targets, and exact paths;
+unknown or partial outcomes remain unresolved or blocked. No real Apply
+adapter, reservation, recovery, or `/data` write exists.
 
 ## Analytics and presentation
 

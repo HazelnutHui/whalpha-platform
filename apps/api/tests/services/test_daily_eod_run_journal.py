@@ -107,6 +107,38 @@ def test_acquisition_and_offline_terminal_families_cannot_cross(tmp_path) -> Non
         )
 
 
+def test_canonical_apply_terminal_family_cannot_cross(tmp_path) -> None:
+    root = _root(tmp_path)
+    with journal.locked_daily_eod_run_journal(run_root=root, target_session=SESSION) as locked:
+        attempt = journal.new_attempt_id(
+            target_session=SESSION,
+            plan_fingerprint=PLAN_FP,
+            sequence=1,
+        )
+        locked.append(
+            event_type="canonical_apply_started",
+            attempt_id=attempt,
+            details={"operation": "identity"},
+        )
+        with pytest.raises(journal.DailyEodRunJournalError, match="does not match"):
+            locked.append(
+                event_type="action_failed",
+                attempt_id=attempt,
+                details={"reason_code": "wrong_family"},
+            )
+        with pytest.raises(journal.DailyEodRunJournalError, match="does not match"):
+            locked.append(
+                event_type="acquisition_transient_failed",
+                attempt_id=attempt,
+                details={"reason_code": "wrong_family"},
+            )
+        locked.append(
+            event_type="canonical_apply_recovery_blocked",
+            attempt_id=attempt,
+            details={"reason_code": "test"},
+        )
+
+
 def test_event_time_must_be_aware_and_monotonic(tmp_path) -> None:
     root = _root(tmp_path)
     with journal.locked_daily_eod_run_journal(run_root=root, target_session=SESSION) as locked:

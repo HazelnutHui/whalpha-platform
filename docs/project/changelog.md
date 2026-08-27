@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-27 — Canonical daily Apply custody
+
+- Accepted ADR 0035 and extended the still-unactivated shared journal to 1.2
+  with a third terminal-family-isolated canonical-Apply state machine.
+- Added exact Apply reservation bound to completed acquisition hashes, a formal
+  frozen plan, whole-file SHA, expected inventory, absent targets, session,
+  operation, data root, package, and automation paths.
+- Added post-Apply formal success proof and no-write interruption recovery that
+  distinguishes completed, provably untouched, and partial/changed/ambiguous
+  state without replaying Apply.
+- Exposed a bounded formal plan-evidence reader without raw responses or staged
+  artifact content and added journal/custody/coordinator recovery tests.
+- No real journal root, authorization artifact, credential read, provider
+  request, Apply, `/data` write, publication, deployment, or scheduler state
+  was created or changed.
+
 ## 2026-08-27 — One-transition daily coordinator core
 
 - Accepted ADR 0034 and added a deterministic coordinator that joins the exact

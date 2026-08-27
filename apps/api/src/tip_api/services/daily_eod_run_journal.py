@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 
-JOURNAL_CONTRACT = "daily-eod-run-journal/1.1"
+JOURNAL_CONTRACT = "daily-eod-run-journal/1.2"
 LOCK_FILE = ".daily-eod.lock"
 EVENT_NAME = re.compile(r"event-(\d{6})\.json")
 START_EVENT = "action_started"
@@ -42,8 +42,23 @@ ACQUISITION_TERMINAL_EVENTS = frozenset(
         "acquisition_recovery_blocked",
     }
 )
-START_EVENTS = frozenset({START_EVENT, ACQUISITION_START_EVENT})
-TERMINAL_EVENTS = ACTION_TERMINAL_EVENTS | ACQUISITION_TERMINAL_EVENTS
+CANONICAL_APPLY_START_EVENT = "canonical_apply_started"
+CANONICAL_APPLY_TERMINAL_EVENTS = frozenset(
+    {
+        "canonical_apply_succeeded",
+        "canonical_apply_recovered_succeeded",
+        "canonical_apply_recovered_not_completed",
+        "canonical_apply_recovery_blocked",
+    }
+)
+START_EVENTS = frozenset(
+    {START_EVENT, ACQUISITION_START_EVENT, CANONICAL_APPLY_START_EVENT}
+)
+TERMINAL_EVENTS = (
+    ACTION_TERMINAL_EVENTS
+    | ACQUISITION_TERMINAL_EVENTS
+    | CANONICAL_APPLY_TERMINAL_EVENTS
+)
 EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS
 
 
@@ -326,6 +341,8 @@ def _terminal_matches_start(start_type: str, terminal_type: str) -> bool:
         return terminal_type in ACTION_TERMINAL_EVENTS
     if start_type == ACQUISITION_START_EVENT:
         return terminal_type in ACQUISITION_TERMINAL_EVENTS
+    if start_type == CANONICAL_APPLY_START_EVENT:
+        return terminal_type in CANONICAL_APPLY_TERMINAL_EVENTS
     return False
 
 

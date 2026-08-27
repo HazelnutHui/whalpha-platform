@@ -57,3 +57,4 @@ Each ADR should include:
 - [0032: Custody Provider Fetch Attempts Before Automation](0032-custody-provider-fetch-attempts-before-automation.md)
 - [0033: Bound Standing Daily Data Authorization](0033-bound-standing-daily-data-authorization.md)
 - [0034: Coordinate Exactly One Daily Transition](0034-coordinate-exactly-one-daily-transition.md)
+- [0035: Custody Canonical Daily Apply](0035-custody-canonical-daily-apply.md)

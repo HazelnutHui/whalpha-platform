@@ -31,6 +31,7 @@ from tip_api.providers.massive.same_day_catchup import (
     file_sha256,
     identity_main,
     inventory_fingerprint,
+    read_catchup_approval_plan_evidence,
     read_fetch_package_evidence,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
@@ -168,6 +169,35 @@ def plan_and_apply_identity(tmp_path: Path, root: Path, session: date):
         expected_session=session,
     )
     return plan_path, applied
+
+
+def test_public_approval_plan_evidence_formally_rereads_without_artifacts(
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 8, 20)
+    root = tmp_path / "plan-evidence-data"
+    root.mkdir()
+    package, _ = fetch_identity(tmp_path, session)
+    plan_path = tmp_path / "identity-evidence.plan.json"
+    plan = build_identity_plan(
+        package_path=package,
+        plan_path=plan_path,
+        data_root=root,
+    )
+
+    evidence = read_catchup_approval_plan_evidence(
+        plan_path=plan_path,
+        approved_plan_sha256=file_sha256(plan_path),
+        expected_operation="identity",
+        expected_session=session,
+        expected_data_root=root,
+    )
+
+    assert evidence.plan_content_sha256 == plan.plan_content_sha256
+    assert evidence.fetch_package_path == str(package)
+    assert evidence.publication_order == plan.publication_order
+    assert "artifacts" not in evidence.model_dump()
+    assert "responses" not in evidence.model_dump()
 
 
 def fetch_plan_apply_eod(tmp_path: Path, root: Path, session: date):

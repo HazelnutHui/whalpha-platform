@@ -39,7 +39,8 @@ the automation plan and shared journal, then returns or invokes at most one of:
 
 Provider and canonical-apply capabilities are explicit optional ports and are
 absent by default. A future real adapter must independently satisfy ADR 0032
-custody and ADR 0033 authorization before returning formal bounded evidence.
+acquisition custody, ADR 0033 authorization, and ADR 0035 canonical-apply
+custody before returning formal bounded evidence.
 The coordinator validates the requested operation, exact precondition
 fingerprint, target session, result class, and maximum one-request/one-write
 counts. It never supplies authorization itself.

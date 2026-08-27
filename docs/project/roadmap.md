@@ -11,9 +11,10 @@
   in repository source. The default-deny, expiring standing-authorization
   boundary for provider acquisition/canonical apply is also defined and
   repository-tested but not activated. The one-transition coordinator core is
-  complete with default-absent provider/apply capabilities. Next implement the
-  real ADR 0032/0033 capability adapters without activating them. Publication,
-  Snapshot, bundle, and OCI remain separate authorizations.
+  complete with default-absent provider/apply capabilities, and canonical
+  Apply reservation/recovery custody is complete under journal 1.2. Next
+  implement the real ADR 0032/0033/0035 capability adapters without activating
+  them. Publication, Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -138,11 +139,12 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Shared-lock durable provider-attempt reservation, outcome, and recovery custody
 - [x] Expiring, externally SHA-pinned standing Identity/EOD data-authorization contract
 - [x] Default-deny one-transition coordinator core with explicit capability ports
+- [x] Canonical Identity/EOD Apply reservation and no-write interruption recovery
 
 ## Next Small Target
 
-Implement real fetch and canonical-apply capability adapters that compose
-acquisition/apply custody with the accepted but inactive standing-authorization
+Implement real fetch and canonical-Apply capability adapters that compose
+acquisition/Apply custody with the accepted but inactive standing-authorization
 boundary. Then review and provision a real authorization artifact and separate
 host SHA pin, or retain manual provider/apply approvals. Real notification
 delivery and scheduler activation remain separate. Do not combine Production
