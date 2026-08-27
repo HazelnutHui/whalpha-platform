@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-27 — Host-gated one-transition CLI
+
+- Accepted ADR 0037 and added an owner-only, externally SHA-pinned host-runtime
+  config contract whose absence or disabled flag keeps capabilities uninstalled.
+- Added a one-transition CLI and admin wrapper with explicit capability and
+  offline-execution opt-ins; it never loops or grants publication/deployment.
+- Added independent actual hostname, executing source-root, clean Git HEAD, and
+  readiness-policy verification instead of trusting configured assertions.
+- Added tests for disabled/default behavior, config custody, dirty/revision/host
+  mismatch, explicit installation, incomplete Apply bindings, and recovery exit.
+- No host config root/artifact, authorization, credential read, provider request,
+  run root, Apply, `/data` write, publication, deployment, service, timer, alert,
+  or scheduler state was created or changed.
+
 ## 2026-08-27 — Authorized daily data capability composition
 
 - Accepted ADR 0036 and added explicitly installed fetch/Apply adapters that

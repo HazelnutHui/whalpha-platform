@@ -130,8 +130,8 @@ created. Publication and public-serving operations stay outside this scope.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.
-Provider/apply capability ports are absent by default; no CLI, authorization
-activation, request, or write exists.
+Provider/apply capability ports are absent by default; that coordinator slice
+introduced no CLI, authorization activation, request, or write.
 ADR 0035 adds exact canonical-Apply reservation, success proof, and no-write
 recovery under a third disjoint journal family. It binds completed acquisition
 hashes, the formal plan, current inventory, absent targets, and exact paths;
@@ -142,9 +142,17 @@ adapters that compose the external authorization SHA, acquisition/Apply
 custody, real Massive boundaries, and formal terminal evidence. Request 1.1
 binds Apply to `canonical_apply_started`; coordinator 1.1 accepts Identity's
 actual bounded 1–20 HTTP requests; and the authorized canonical root is
-`/data/trading-intelligence-platform`. The adapters remain uninstalled: no
-real authorization artifact, host pin, credential read, provider request,
-reservation, Apply, CLI, or scheduler entry exists.
+`/data/trading-intelligence-platform`. The adapters remain uninstalled; that
+slice created no real authorization artifact, host pin, credential read,
+provider request, reservation, Apply, CLI, or scheduler entry.
+ADR 0037 now adds the repository-tested one-transition CLI and external
+host-runtime config contract. Authorized ports stay absent unless an externally
+SHA-pinned owner-only config enables them and the invocation opts in. Runtime
+derives the actual Dell hostname, executing source root, clean Git HEAD, and
+current readiness-policy fingerprint rather than trusting asserted strings.
+No real host config root/artifact, CLI transition, service, timer, alert, or
+scheduler exists. Unresolved attempts are reported for recovery; recovery is
+not yet routed by this CLI.
 
 ## Analytics and presentation
 

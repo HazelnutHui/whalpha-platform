@@ -204,8 +204,8 @@ directory, artifact, pin, or transition exists; current real operations still
 require manual approval. ADR 0034 now adds the repository-tested coordinator
 core with one-transition maximum, default-absent provider/apply capabilities,
 explicit recovery stops, opt-in offline execution, and a hard stop at
-publication review. It has no real CLI, installed adapter, authorization
-activation, request, or write.
+publication review. That slice introduced no CLI, installed adapter,
+authorization activation, request, or write.
 ADR 0035 now adds repository-tested canonical Identity/EOD Apply custody under
 journal 1.2. Reservation binds the completed acquisition, frozen plan SHA,
 package hashes, expected inventory, absent targets, and exact paths; recovery
@@ -218,8 +218,15 @@ access, bind acquisition/Apply starts to request 1.1, preserve actual bounded
 Identity HTTP request counts, and leave unknown fetch or any Apply exception
 unresolved for recovery. The corrected authorized canonical root is
 `/data/trading-intelligence-platform`; coordinator contract is 1.1. The ports
-remain absent unless explicitly installed, and no real authorization, host
-pin, credential read, request, Apply, CLI, or scheduler entry exists.
+remain absent unless explicitly installed, and that slice created no real
+authorization, host pin, credential read, request, Apply, CLI, or scheduler
+entry.
+ADR 0037 now adds a default-disabled one-transition CLI and externally
+SHA-pinned host-runtime contract. Capability installation requires an explicit
+flag, enabled owner-only config, and independently derived actual Dell hostname,
+executing source root, clean HEAD, and readiness-policy fingerprint. No real
+host config, CLI invocation, service, timer, alert, or scheduler exists. The
+CLI reports unresolved attempts but does not yet execute recovery.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

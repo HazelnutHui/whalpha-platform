@@ -59,3 +59,4 @@ Each ADR should include:
 - [0034: Coordinate Exactly One Daily Transition](0034-coordinate-exactly-one-daily-transition.md)
 - [0035: Custody Canonical Daily Apply](0035-custody-canonical-daily-apply.md)
 - [0036: Compose Authorized Daily Data Capabilities](0036-compose-authorized-daily-data-capabilities.md)
+- [0037: Gate One-Transition CLI with Host Runtime](0037-gate-one-transition-cli-with-host-runtime.md)

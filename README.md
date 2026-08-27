@@ -75,7 +75,11 @@ standing-authorized fetch/Apply adapters now compose those boundaries and
 preserve actual Identity pagination request counts, but remain uninstalled and
 inactive. No real authorization, run root, credential read, fetch attempt, or
 Apply has been created; notifications and scheduler activation remain
-unimplemented.
+unimplemented. A one-transition CLI and externally SHA-pinned host-runtime
+contract are also repository-tested: capability ports remain absent unless an
+external owner-only config enables them, the invocation explicitly opts in,
+and actual Dell/source/clean-HEAD/policy identity all match. No real host config
+or CLI transition exists.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

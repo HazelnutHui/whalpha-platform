@@ -195,8 +195,8 @@ unchanged, or blocked for partial/changed/ambiguous state. Partial Identity
 publication may use the existing `verify-then-complete` boundary only after
 separate diagnosis and authorization.
 
-No Apply adapter is installed and there is no CLI for this custody layer; no
-real journal root or Apply was created.
+No Apply adapter is installed and there is no standalone Apply/recovery CLI for
+this custody layer; no real journal root or Apply was created.
 
 ## Authorized capability adapters
 
@@ -218,6 +218,29 @@ Construction performs no I/O, and the coordinator receives no capability
 unless one is explicitly supplied. No real adapter was installed or invoked;
 no authorization artifact, host SHA pin, credential read, request, Apply,
 notification, or scheduler state exists.
+
+## Host-gated one-transition CLI
+
+ADR 0037 adds `daily-eod-host-runtime-config/1.0` and
+`scripts/admin/run-one-daily-eod-transition.sh`. The CLI takes only explicit
+session and artifact paths and calls the coordinator once. Authorized ports are
+absent by default, and a socket guard remains active in that mode.
+
+Installing the ports requires `--enable-authorized-capabilities`, an absolute
+external host-config path, and its exact external whole-file SHA. The canonical
+owner-only config must also enable capabilities and match the actual Dell
+hostname, executing repository source, completely clean Git HEAD, current
+readiness policy, data/run roots, authorization SHA, and credential path. The
+credential is not read during host-runtime verification. Approved-plan and
+expected-state fingerprints must be provided together before Apply.
+
+The CLI may opt into one existing offline calculation with `--execute-offline`,
+but never loops and never gains publication, deployment, or scheduler
+authority. Recovery-required results return nonzero and name the recovery
+boundary; this CLI does not yet execute recovery. Exceptions without formal
+terminal evidence report request/write counts as unknown, never as assumed
+zero. No real host/runtime config,
+CLI invocation, service, timer, or scheduler was created.
 
 ## Read-only plan
 
@@ -353,12 +376,13 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. A default-disabled host configuration and coordinator CLI that can install
-   the ADR 0036 adapters only from explicit external authorization paths and
-   SHA pin, followed by review/provisioning or continued manual approval.
-2. Actual alert delivery and a controlled real timing rehearsal to calibrate
+1. A bounded one-transition recovery router for the existing acquisition,
+   canonical-Apply, and offline recovery boundaries.
+2. Explicit review/provisioning of the external host and standing-authorization
+   artifacts and SHA pins, or continued manual approval.
+3. Actual alert delivery and a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
-3. Separate authorization decisions for publication, Snapshot/bundle, OCI
+4. Separate authorization decisions for publication, Snapshot/bundle, OCI
    deployment, and finally scheduler activation.
 
 The executor and journal are implemented and tested, but no durable real run
@@ -368,9 +392,11 @@ a provider request or enabling a scheduler. Acquisition custody is implemented
 and tested without creating the real run root or executing a fetch. Standing
 authorization validation is implemented and tested, but no real authorization
 directory, artifact, SHA pin, or authorized transition exists. The coordinator
-core is implemented and tested with default-absent provider/apply capabilities;
-it has no real CLI or scheduler entry. Canonical Apply reservation and no-write
+core is implemented and tested with default-absent provider/apply capabilities.
+ADR 0037 now supplies its default-disabled CLI but no scheduler entry. Canonical
+Apply reservation and no-write
 recovery are repository-tested under journal 1.2, but no real Apply adapter,
 reservation, or recovery ran. ADR 0036 adapters are repository-tested but have
 not been installed or invoked against real authorization, credentials, Massive,
-or `/data`.
+or `/data`. ADR 0037 host config and CLI are repository-tested only; no external
+runtime artifact, CLI transition, service, timer, or scheduler exists.

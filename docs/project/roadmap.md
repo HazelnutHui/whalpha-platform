@@ -14,10 +14,12 @@
   complete with default-absent provider/apply capabilities, and canonical
   Apply reservation/recovery custody is complete under journal 1.2. ADR 0036
   capability adapters now compose the real boundaries while remaining
-  uninstalled and inactive. Next define the default-disabled host configuration
-  and coordinator entry point, then review authorization provisioning,
-  alerting, rehearsal, and scheduler activation separately. Publication,
-  Snapshot, bundle, and OCI remain separate authorizations.
+  uninstalled and inactive. The default-disabled externally pinned host config
+  and one-transition CLI are now repository-tested. Next route only the named
+  unresolved attempt through its existing no-duplicate recovery boundary, then
+  review authorization provisioning, alerting, rehearsal, and scheduler
+  activation separately. Publication, Snapshot, bundle, and OCI remain separate
+  authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -144,16 +146,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Default-deny one-transition coordinator core with explicit capability ports
 - [x] Canonical Identity/EOD Apply reservation and no-write interruption recovery
 - [x] Standing-authorized fetch/Apply capability composition with exact request counts
+- [x] Externally SHA-pinned host runtime and default-disabled one-transition CLI
 
 ## Next Small Target
 
-Define a default-disabled host configuration and one-transition CLI that can
-install the ADR 0036 capabilities only with explicit external authorization
-paths and SHA pin. Then review and provision a real authorization artifact or
-retain manual provider/apply approvals. Alert delivery, controlled rehearsal,
-and scheduler activation remain separate. Do not combine Production
-publication, Snapshot, bundle, OCI, or deployment authorization. Keep SEC B2
-paused.
+Route the coordinator's named unresolved acquisition, Apply, or offline attempt
+to exactly one existing recovery boundary without fetching, replaying Apply, or
+looping. Then review and provision external host/authorization artifacts or
+retain manual approvals. Alert delivery, controlled rehearsal, and scheduler
+activation remain separate. Do not combine Production publication, Snapshot,
+bundle, OCI, or deployment authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 
