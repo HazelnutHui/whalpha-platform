@@ -34,8 +34,12 @@ from tip_api.services.daily_eod_canonical_apply_custody import (
 from tip_api.services.daily_eod_coordinator import AuthorizedTransitionContext
 from tip_api.services.daily_eod_readiness import (
     AcquisitionAttempt,
+    AcquisitionOperatorReview,
     AttemptOutcome,
     DailyEodReadinessPolicy,
+    OperatorReviewDisposition,
+    OperatorReviewEvidenceCode,
+    OperatorReviewPurpose,
     plan_daily_eod_readiness,
 )
 from tip_api.services.daily_eod_run_journal import DailyEodRunEvent
@@ -134,12 +138,30 @@ def context(*, action: NextAction, apply: bool) -> AuthorizedTransitionContext:
         if apply
         else ()
     )
+    operator_reviews = (
+        (
+            AcquisitionOperatorReview(
+                purpose=OperatorReviewPurpose.INITIAL_EOD_AVAILABILITY,
+                acquisition_action=action,
+                attempt_sequence=0,
+                reviewed_at=datetime(2026, 8, 27, 20, 30, tzinfo=UTC),
+                not_before=datetime(2026, 8, 27, 20, 30, tzinfo=UTC),
+                disposition=OperatorReviewDisposition.AUTHORIZE_ONE_FETCH_AFTER,
+                evidence_code=(
+                    OperatorReviewEvidenceCode.PROVIDER_PLAN_AND_RELEASE_REVIEWED
+                ),
+            ),
+        )
+        if action is NextAction.PREPARE_EOD_CATCHUP and not apply
+        else ()
+    )
     readiness = plan_daily_eod_readiness(
         checked_at=NOW,
         target_session=TARGET,
         latest_canonical_session=LATEST,
         acquisition_action=action,
         attempts=attempts,
+        operator_reviews=operator_reviews,
     )
     subject = "identity" if action is NextAction.PREPARE_IDENTITY_CATCHUP else "eod"
     return AuthorizedTransitionContext(

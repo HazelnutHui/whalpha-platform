@@ -125,9 +125,12 @@ def test_nonready_outcome_becomes_bounded_readiness_history(tmp_path) -> None:
             target_session=TARGET,
             acquisition_action=ACTION,
         )
-    assert attempts == (
-        AcquisitionAttempt(1, CHECKED, AttemptOutcome.NOT_READY, None),
-    )
+    assert len(attempts) == 1
+    assert attempts[0].sequence == 1
+    assert attempts[0].observed_at == CHECKED
+    assert attempts[0].outcome is AttemptOutcome.NOT_READY
+    assert attempts[0].retry_after_seconds is None
+    assert attempts[0].terminal_event_fingerprint == finished.event.event_fingerprint
     retry_checked = datetime(2026, 8, 27, 20, 45, tzinfo=UTC)
     waiting = _readiness(
         attempts, checked=datetime(2026, 8, 27, 20, 44, tzinfo=UTC)

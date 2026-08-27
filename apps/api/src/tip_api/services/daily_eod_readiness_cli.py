@@ -14,6 +14,7 @@ from tip_api.services.daily_eod_readiness import (
     AcquisitionAttempt,
     AttemptOutcome,
     DailyEodReadinessError,
+    ReadinessNextAction,
     plan_daily_eod_readiness,
 )
 from tip_api.services.market_calendar import MarketCalendarError
@@ -67,7 +68,13 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 1
     print(json.dumps(plan.as_dict(), sort_keys=True, separators=(",", ":")))
-    return 1 if plan.alert_required else 0
+    return (
+        1
+        if plan.alert_required
+        or getattr(plan, "next_action", None)
+        is ReadinessNextAction.OPERATOR_DIAGNOSIS
+        else 0
+    )
 
 
 def _parse_attempt(value: str) -> AcquisitionAttempt:

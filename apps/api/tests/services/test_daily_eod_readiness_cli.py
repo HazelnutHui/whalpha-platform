@@ -100,6 +100,17 @@ def test_cli_alert_plan_exits_nonzero(monkeypatch, capsys) -> None:
     capsys.readouterr()
 
 
+def test_cli_operator_review_gate_exits_nonzero(capsys) -> None:
+    argv = _argv()
+    argv[-1] = "prepare_eod_catchup"
+
+    assert cli.main(argv) == 1
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == "awaiting_operator_review"
+    assert payload["operator_review_required"] is True
+    assert payload["external_request_count"] == 0
+
+
 def test_readiness_socket_guard_blocks_and_restores() -> None:
     original = socket.socket
     with cli._offline_socket_guard():

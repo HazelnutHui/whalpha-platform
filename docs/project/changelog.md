@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-27 — Plan-aware EOD readiness and immutable operator review
+
+- Accepted ADR 0047 and advanced readiness to 1.1 with an explicit Massive
+  Stocks Basic EOD recency profile. Identity retains the provisional 30-minute
+  review point, while first current-session Basic EOD now requires a separate
+  bounded operator availability review.
+- Added immutable initial-availability and exact-terminal failure reviews with
+  allow-once-after or keep-blocked decisions, controlled evidence codes, and a
+  seven-day maximum `not_before` horizon.
+- Advanced acquisition custody to 1.2, the one-transition coordinator to 1.4,
+  and the shared journal to backward-compatible 1.3. Existing 1.2 events remain
+  readable and hash-chained; package-ready history cannot be reopened.
+- Added an offline, explicit-acknowledgement administrator command. Review
+  records zero requests/writes and grants no fetch, Apply, scheduler,
+  publication, or deployment authority.
+- Added plan-profile, wait/release, exact-failure binding, duplicate, legacy-
+  journal compatibility, redaction, and no-network tests. The real 2026-08-27
+  failure remains status-unknown; no review or retry was performed.
+
 ## 2026-08-27 — First controlled data rehearsal and safe failure evidence
 
 - Installed seven-day owner-only data controls at exact revision `c3af030`;

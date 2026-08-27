@@ -45,9 +45,12 @@ relative-performance proxies, never actual fund flow.
 
 ## Active data and publications
 
-- Canonical EOD and same-day Identity are completed through 2026-08-26.
-- Latest EOD contains 9,953 rows; same-day Identity contains 9,974 canonical
-  instruments, 13,141 provider observations, and 9,974 resolver rows.
+- Canonical EOD is completed through 2026-08-26; latest canonical Identity is
+  2026-08-27, so Identity is one session ahead of EOD.
+- Latest EOD contains 9,953 rows. Latest Identity contains 9,982 canonical
+  instruments, 13,148 provider observations, and 9,982 resolver rows. The
+  Identity snapshot bound to latest EOD remains 2026-08-26 with 9,974 / 13,141
+  / 9,974 rows respectively.
 - Activation V2 is active with Common Shares as the sole default:
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
@@ -59,11 +62,14 @@ relative-performance proxies, never actual fund flow.
 - The locally retained OCI bundle and live-verified deployed release are
   `2026-08-26T053233Z-6c60502e4473` from source commit `6c60502e4473`.
 
-The active analytics and Snapshot are the ordinary fresh 2026-08-26 release:
-expected and actual completed XNYS session are both 2026-08-26, lag is zero,
-data status is `complete`, and review mode is false. The prior narrowly bound
-2026-08-24 `stale_review` release remains historical evidence only; it did not
-weaken the normal freshness gate.
+The active analytics and Snapshot were published as the ordinary fresh
+2026-08-26 release: expected and actual session were both 2026-08-26, lag was
+zero, data status was `complete`, and review mode was false. After the
+2026-08-27 close, canonical EOD now lags the expected session by one because
+the controlled EOD request failed. No new analytics or Snapshot was published,
+and the static active payload does not dynamically rewrite its publication-
+time freshness metadata. The prior narrowly bound 2026-08-24 `stale_review`
+release remains historical evidence only; it did not weaken the normal gate.
 
 ## Market Regime
 
@@ -101,6 +107,11 @@ read or used.
 
 ## Current limitations and risks
 
+- The active static 2026-08-26 payload still carries its publication-time
+  `complete` metadata even though the post-close 2026-08-27 pipeline is now one
+  session behind. No later stale-review or fresh release was published; users
+  must rely on the displayed analysis/session date until the daily chain is
+  repaired.
 - The analytics history is only 29 EOD sessions and the active calculations
   use 26 sessions. This is contract and implementation evidence, not enough
   history for predictive validation or stable threshold calibration.
@@ -287,6 +298,16 @@ email, and scheduler authority remain absent.
 ADR 0046 advances the credential-free context report to 1.1. It no longer
 labels latest-EOD provenance as the overall Identity state; it separately
 reports latest Identity, latest EOD's bound Identity, and their alignment.
+
+ADR 0047 advances readiness to 1.1, acquisition custody to 1.2, the coordinator
+to 1.4, and the backward-compatible run journal to 1.3. The active Basic EOD
+profile now requires an immutable, bounded operator availability review before
+a first current-session EOD request. A permanent/quality terminal can be
+released for exactly one later bounded fetch review only by an event tied to
+its exact terminal fingerprint. The review CLI is offline and grants no fetch,
+Apply, scheduler, publication, or deployment authority. It has not been used
+on the real 2026-08-27 terminal; its status remains unknown and no retry is
+authorized.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky

@@ -41,8 +41,10 @@ MI 1.2, Snapshot 1.7 / Dashboard 2.4, entry-location consumers, bilingual
 presentation, equal-capability guest Sessions, and Session-protected static
 publication are implemented. The deployed product includes the audited Stock
 Candidate pipeline and third Candidate workspace. Canonical sessions cover
-every XNYS session from 2026-07-17 through 2026-08-26. The active Dashboard is
-the ordinary fresh 2026-08-26 release with lag zero.
+every XNYS session from 2026-07-17 through 2026-08-26. The active Dashboard was
+published as the ordinary fresh 2026-08-26 lag-zero release; after the
+2026-08-27 close the canonical pipeline is one session behind and no later
+analytics/Snapshot release exists.
 
 Repository development source adds verified-prior one-session append for both
 Candidate and corrected V1.0.1 Market Regime state. The state daily path
@@ -120,6 +122,13 @@ there was no EOD package or canonical EOD write. ADR 0045 adds safe status and
 request-count evidence for future failures but does not authorize a retry.
 Context report 1.1 now represents this partial state directly: latest Identity
 is separate from the Identity snapshot bound into latest EOD.
+
+Readiness 1.1 is now plan-aware: the active Stocks Basic EOD profile requires
+an immutable operator availability review before a first current-session EOD
+request. Journal 1.3 is repository-tested for 1.2 compatibility and supports
+one exact terminal-bound operator review without deleting history. This path
+is repository-tested only; no real review, retry, new external control,
+scheduler, publication, or deployment has been authorized.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

@@ -19,13 +19,18 @@ from tip_api.services.daily_eod_automation import NextAction
 from tip_api.services.daily_eod_readiness import (
     ACQUISITION_ACTIONS,
     AcquisitionAttempt,
+    AcquisitionOperatorReview,
     AttemptOutcome,
     DailyEodReadinessPlan,
+    OperatorReviewDisposition,
+    OperatorReviewEvidenceCode,
+    OperatorReviewPurpose,
     ReadinessNextAction,
     ReadinessStatus,
     plan_daily_eod_readiness,
 )
 from tip_api.services.daily_eod_run_journal import (
+    ACQUISITION_REVIEW_EVENT,
     ACQUISITION_START_EVENT,
     DailyEodRunEvent,
     DailyEodRunJournalError,
@@ -35,7 +40,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-acquisition-custody/1.1"
+CONTRACT_VERSION = "daily-eod-acquisition-custody/1.2"
 MAXIMUM_PLAN_AGE = timedelta(minutes=5)
 OUTCOME_EVENT = {
     AttemptOutcome.NOT_READY: "acquisition_not_ready",
@@ -150,6 +155,11 @@ def reserve_acquisition_attempt(
             latest_canonical_session=config.latest_canonical_session,
             acquisition_action=config.acquisition_action,
             attempts=attempts,
+            operator_reviews=acquisition_operator_reviews_from_events(
+                events,
+                target_session=config.target_session,
+                acquisition_action=config.acquisition_action,
+            ),
         )
         if (
             readiness.logical_content_fingerprint != expected_readiness_fingerprint
@@ -383,6 +393,7 @@ def acquisition_attempts_from_events(
                     retry_after_seconds=(
                         retry_after if isinstance(retry_after, int) else None
                     ),
+                    terminal_event_fingerprint=event.event_fingerprint,
                 )
             )
             if attempt_number != len(attempts):
@@ -391,18 +402,68 @@ def acquisition_attempts_from_events(
     return tuple(attempts)
 
 
+def acquisition_operator_reviews_from_events(
+    events: tuple[DailyEodRunEvent, ...],
+    *,
+    target_session: date,
+    acquisition_action: NextAction,
+) -> tuple[AcquisitionOperatorReview, ...]:
+    """Project immutable operator-review events into readiness evidence."""
+
+    reviews: list[AcquisitionOperatorReview] = []
+    for event in events:
+        if event.event_type != ACQUISITION_REVIEW_EVENT:
+            continue
+        if event.target_session != target_session.isoformat():
+            raise DailyEodRunJournalError("operator review session mismatch")
+        if event.details.get("acquisition_action") != acquisition_action.value:
+            continue
+        try:
+            review = AcquisitionOperatorReview(
+                purpose=OperatorReviewPurpose(str(event.details["purpose"])),
+                acquisition_action=acquisition_action,
+                attempt_sequence=int(event.details["attempt_sequence"]),
+                reviewed_at=datetime.fromisoformat(event.observed_at),
+                not_before=datetime.fromisoformat(str(event.details["not_before"])),
+                disposition=OperatorReviewDisposition(
+                    str(event.details["disposition"])
+                ),
+                evidence_code=OperatorReviewEvidenceCode(
+                    str(event.details["evidence_code"])
+                ),
+                source_event_fingerprint=event.details.get(
+                    "source_event_fingerprint"
+                ),
+            )
+        except (KeyError, TypeError, ValueError) as exc:
+            raise DailyEodRunJournalError(
+                "operator review details are malformed"
+            ) from exc
+        if event.details.get("review_fingerprint") != review.logical_fingerprint:
+            raise DailyEodRunJournalError("operator review fingerprint mismatch")
+        reviews.append(review)
+    # Formal validation happens inside readiness; retain exact event order here.
+    return tuple(reviews)
+
+
 def _readiness_from_events(
     events: tuple[DailyEodRunEvent, ...],
     *,
     config: DailyEodAcquisitionConfig,
     checked_at: datetime,
 ) -> DailyEodReadinessPlan:
+    attempts = acquisition_attempts_from_events(
+        events,
+        target_session=config.target_session,
+        acquisition_action=config.acquisition_action,
+    )
     return plan_daily_eod_readiness(
         checked_at=checked_at,
         target_session=config.target_session,
         latest_canonical_session=config.latest_canonical_session,
         acquisition_action=config.acquisition_action,
-        attempts=acquisition_attempts_from_events(
+        attempts=attempts,
+        operator_reviews=acquisition_operator_reviews_from_events(
             events,
             target_session=config.target_session,
             acquisition_action=config.acquisition_action,

@@ -28,8 +28,10 @@
   `daily_data_only` review while SMTP remains deferred. Its first controlled
   run completed same-day Identity but the one EOD request failed permanently
   before a package existed. ADR 0045 now preserves safe status/request evidence
-  for future attempts. Diagnose the Stocks Basic EOD availability boundary and
-  redesign the review policy before any retry or scheduler consideration.
+  for future attempts. ADR 0047 makes readiness plan-aware and adds a bounded,
+  immutable operator-review path without changing the old unknown status or
+  authorizing a retry. Diagnose the exact old failure and select a defensible
+  Basic EOD `not_before` boundary before any retry or scheduler consideration.
   Publication, Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
@@ -167,15 +169,19 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Explicit data-only external preflight while SMTP remains deferred
 - [x] Safe provider failure status and request-count evidence
 - [x] Context report separates latest Identity from EOD-bound Identity
+- [x] Plan-aware Basic EOD readiness and immutable single-use operator review
 
 ## Next Small Target
 
 Reconcile the exact Stocks Basic EOD availability/entitlement boundary without
-replaying the status-unknown 2026-08-27 terminal. Design a plan-aware readiness
-policy and explicit operator recovery path, then review fresh exact-revision
-Host/authorization controls before any new provider request. Do not combine
-EOD retry, analytics, Production publication, Snapshot, bundle, OCI,
-deployment, or scheduler authorization. Keep SMTP and SEC B2 paused.
+replaying the status-unknown 2026-08-27 terminal. The plan-aware policy and
+explicit operator-review path are implemented but have not been invoked.
+Decide whether non-sensitive evidence is sufficient to bind the old terminal
+and select a defensible `not_before`; only then review fresh exact-revision
+Host/authorization controls and separately consider one EOD request. Do not
+combine that decision with analytics, Production publication, Snapshot,
+bundle, OCI deployment, or scheduler authorization. Keep SMTP and SEC B2
+paused.
 
 ## Phase 2 — Intraday and Options
 

@@ -24,6 +24,12 @@ from tip_api.services.daily_eod_executor import (
     DailyEodExecutionResult,
     StageExecutionEvidence,
 )
+from tip_api.services.daily_eod_readiness import (
+    AcquisitionOperatorReview,
+    OperatorReviewDisposition,
+    OperatorReviewEvidenceCode,
+    OperatorReviewPurpose,
+)
 from tip_api.services.daily_eod_run_journal import DailyEodRunEvent
 
 
@@ -143,6 +149,36 @@ def completed_fetch_events(
         observed_at="2026-08-27T20:32:00+00:00",
     )
     return started, completed
+
+
+def initial_eod_review_event() -> DailyEodRunEvent:
+    reviewed_at = datetime(2026, 8, 27, 20, 31, tzinfo=UTC)
+    review = AcquisitionOperatorReview(
+        purpose=OperatorReviewPurpose.INITIAL_EOD_AVAILABILITY,
+        acquisition_action=NextAction.PREPARE_EOD_CATCHUP,
+        attempt_sequence=0,
+        reviewed_at=reviewed_at,
+        not_before=reviewed_at,
+        disposition=OperatorReviewDisposition.AUTHORIZE_ONE_FETCH_AFTER,
+        evidence_code=(
+            OperatorReviewEvidenceCode.PROVIDER_PLAN_AND_RELEASE_REVIEWED
+        ),
+    )
+    return event(
+        1,
+        "acquisition_operator_reviewed",
+        details={
+            "acquisition_action": NextAction.PREPARE_EOD_CATCHUP.value,
+            "purpose": review.purpose.value,
+            "attempt_sequence": 0,
+            "not_before": reviewed_at.isoformat(),
+            "disposition": review.disposition.value,
+            "evidence_code": review.evidence_code.value,
+            "source_event_fingerprint": None,
+            "review_fingerprint": review.logical_fingerprint,
+        },
+        observed_at=reviewed_at.isoformat(),
+    )
 
 
 def test_waits_without_calling_a_capability_before_stabilization() -> None:
@@ -274,7 +310,7 @@ def test_successful_fetch_cannot_claim_zero_requests() -> None:
             config=config(),
             checked_at=AFTER_STABILIZATION,
             planner=planner(plan(NextAction.PREPARE_EOD_CATCHUP)),
-            journal_reader=journal(),
+            journal_reader=journal((initial_eod_review_event(),)),
             fetch_capability=fetch,
         )
 
@@ -282,7 +318,7 @@ def test_successful_fetch_cannot_claim_zero_requests() -> None:
         coordinate_daily_eod_transition(
             config=config(),
             checked_at=AFTER_STABILIZATION,
-            planner=planner(plan(NextAction.PREPARE_EOD_CATCHUP)),
+            planner=planner(plan(NextAction.PREPARE_IDENTITY_CATCHUP)),
             journal_reader=journal(),
             fetch_capability=fetch,
         )
@@ -591,7 +627,11 @@ def test_elapsed_daily_deadline_propagates_alert_requirement() -> None:
         journal_reader=journal(),
     )
 
-    assert result.status is CoordinatorStatus.MANUAL_AUTHORIZATION_REQUIRED
+    assert result.status is CoordinatorStatus.BLOCKED
+    assert result.next_action == "operator_diagnosis"
+    assert result.reason_codes[0] == (
+        "basic_eod_release_window_requires_operator_review"
+    )
     assert result.alert_required is True
     assert result.readiness_plan_fingerprint is not None
 

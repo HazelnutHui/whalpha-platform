@@ -30,11 +30,15 @@ outside both commands.
 Market close is not provider readiness. Massive documents Stocks Basic as EOD
 and the Grouped Daily endpoint as available across Stocks plans, but does not
 guarantee a precise stable-publication minute. Daily aggregates may also be
-updated for late or corrected trades. The first fetch review therefore begins
-30 minutes after the actual XNYS close as a provisional operational choice,
-not as a completeness or plan-entitlement claim. The active Stocks Basic
-boundary is end-of-day rather than 15-minute delayed; its exact current-session
-availability time remains unproven.
+updated for late or corrected trades. Identity's first fetch review begins 30
+minutes after the actual XNYS close as a provisional operational choice, not
+as a completeness claim. Readiness 1.1 also records an explicit provider-
+recency profile. Under the active `massive_stocks_basic_end_of_day` profile, a
+first current-session EOD request does not become reviewable from the 30-minute
+clock alone. It requires one immutable operator availability review with an
+explicit `not_before` time. Older missing sessions retain oldest-first recovery
+without inventing a current-session release gate. The exact Basic current-
+session availability time remains unproven.
 
 The network-free readiness command is:
 
@@ -66,11 +70,36 @@ rate-limit `Retry-After`, and moves an elapsed six-hour daily deadline into
 missed-session recovery. Permanent/quality failures and exhausted attempts
 require diagnosis. A ready fetch package only requests separate apply review.
 
-ADR 0045 advances acquisition custody to 1.1. Authorized fetch outcomes now
-retain the exact bounded request count and, for provider redirect/client
+ADR 0045 advanced acquisition custody to 1.1. ADR 0047 advances it to 1.2 and
+readiness to 1.1. Authorized fetch outcomes now retain the exact bounded
+request count and, for provider redirect/client
 responses, only the numeric HTTP status. Response bodies, URLs, headers,
 request IDs, provider messages, and credentials remain excluded. Status
 evidence does not make a permanent failure retryable.
+
+ADR 0047 adds the offline operator-review command. It appends one immutable
+journal event but never reserves, authorizes, or executes a provider request:
+
+```bash
+scripts/admin/review-daily-eod-acquisition.sh \
+  --target-session YYYY-MM-DD \
+  --latest-canonical-session YYYY-MM-DD \
+  --acquisition-action prepare_eod_catchup \
+  --run-root /home/hui/.local/state/trading-intelligence-platform/daily-eod \
+  --package /tmp/<future-exact-attempt-package> \
+  --purpose initial_eod_availability \
+  --disposition authorize_one_fetch_after \
+  --evidence-code provider_plan_and_release_reviewed \
+  --not-before YYYY-MM-DDTHH:MM:SS+00:00 \
+  --acknowledgement I_UNDERSTAND_REVIEW_DOES_NOT_EXECUTE_OR_AUTHORIZE_FETCH
+```
+
+For terminal recovery, use purpose `terminal_failure_retry` and bind
+`--expected-terminal-event-fingerprint` to the exact latest permanent/quality
+terminal. Allowed diagnosis codes are bounded by the CLI. The standard retry
+schedule and five-attempt limit still apply. Package-ready history cannot be
+reopened. Do not invoke this command merely to clear a blocker; first establish
+the non-sensitive diagnosis and a defensible `not_before` time.
 
 The result always declares zero requests/writes, no scheduler, and no provider
 completeness assertion. Exit 1 means alert/diagnosis is required; this command
@@ -545,12 +574,14 @@ the already completed and deployed 2026-08-26 publication chain.
 
 1. Diagnose the status-unknown 2026-08-27 EOD terminal without replay and
    reconcile the Stocks Basic current-session availability boundary.
-2. Design and test a plan-aware readiness policy plus an explicit operator
-   recovery path before provisioning new exact-revision controls or requesting
-   EOD again. SMTP may remain deferred.
-3. Conduct a later controlled timing rehearsal to replace the provisional
-   30-minute review boundary with evidence appropriate to the active plan.
-4. Make separate authorization decisions for analytics continuation,
+2. Plan-aware readiness and immutable operator review are now implemented and
+   tested under ADR 0047. Decide whether the available diagnosis is sufficient
+   to append a real review before provisioning fresh exact-revision controls.
+   SMTP may remain deferred.
+3. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
+   EOD review time from non-sensitive evidence; do not treat the 30-minute
+   Identity point as EOD availability.
+4. Make separate authorization decisions for any EOD retry, analytics continuation,
    publication, Snapshot/bundle, OCI deployment, and finally scheduler
    activation.
 
@@ -562,8 +593,9 @@ Apply. The next source revision invalidates those exact-revision controls.
 No offline analytics action or recovery event has run. No service, timer, or
 scheduler exists.
 
-Canonical Apply reservation and no-write recovery remain available under
-journal 1.2. ADR 0038 recovery routing remains repository-tested only; no real
+Canonical Apply reservation and no-write recovery remain available. Journal
+1.3 reads the immutable 1.2 history and adds only standalone operator-review
+events. ADR 0038 recovery routing remains repository-tested only; no real
 recovery event was appended.
 ADR 0039 alert intent is repository-tested only; no intent was persisted and no
 notification delivery was attempted.
@@ -585,3 +617,6 @@ formally ended `permanent_failure`, leaving package, staging, approval plan,
 and canonical EOD targets absent. The old 1.0 terminal did not retain the
 numeric HTTP status. No retry, EOD Apply, analytics calculation, publication,
 deployment, notification, or scheduler activation followed.
+ADR 0047's plan-aware readiness and operator-review path are repository-tested
+only. No real review event was appended, the old status remains unknown, and
+no retry authority exists.

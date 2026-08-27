@@ -15,7 +15,10 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 
-JOURNAL_CONTRACT = "daily-eod-run-journal/1.2"
+JOURNAL_CONTRACT = "daily-eod-run-journal/1.3"
+READABLE_JOURNAL_CONTRACTS = frozenset(
+    {"daily-eod-run-journal/1.2", JOURNAL_CONTRACT}
+)
 LOCK_FILE = ".daily-eod.lock"
 EVENT_NAME = re.compile(r"event-(\d{6})\.json")
 START_EVENT = "action_started"
@@ -54,12 +57,13 @@ CANONICAL_APPLY_TERMINAL_EVENTS = frozenset(
 START_EVENTS = frozenset(
     {START_EVENT, ACQUISITION_START_EVENT, CANONICAL_APPLY_START_EVENT}
 )
+ACQUISITION_REVIEW_EVENT = "acquisition_operator_reviewed"
 TERMINAL_EVENTS = (
     ACTION_TERMINAL_EVENTS
     | ACQUISITION_TERMINAL_EVENTS
     | CANONICAL_APPLY_TERMINAL_EVENTS
 )
-EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS
+EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS | {ACQUISITION_REVIEW_EVENT}
 
 
 class DailyEodRunJournalError(RuntimeError):
@@ -76,10 +80,11 @@ class DailyEodRunEvent:
     previous_event_fingerprint: str | None
     details: Mapping[str, Any]
     event_fingerprint: str
+    contract_version: str = JOURNAL_CONTRACT
 
     def as_dict(self) -> dict[str, Any]:
         return {
-            "contract_version": JOURNAL_CONTRACT,
+            "contract_version": self.contract_version,
             "sequence": self.sequence,
             "event_type": self.event_type,
             "target_session": self.target_session,
@@ -142,6 +147,7 @@ class LockedDailyEodRunJournal:
             previous_event_fingerprint=base["previous_event_fingerprint"],
             details=base["details"],
             event_fingerprint=_fingerprint(base),
+            contract_version=JOURNAL_CONTRACT,
         )
         path = self.session_dir / f"event-{sequence:06d}.json"
         _write_new(path, _canonical_bytes(event.as_dict()))
@@ -261,7 +267,11 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
         "details",
         "event_fingerprint",
     }
-    if set(payload) != expected_keys or payload.get("contract_version") != JOURNAL_CONTRACT:
+    contract_version = payload.get("contract_version")
+    if (
+        set(payload) != expected_keys
+        or contract_version not in READABLE_JOURNAL_CONTRACTS
+    ):
         raise DailyEodRunJournalError("daily run journal event contract mismatch")
     logical = {key: value for key, value in payload.items() if key != "event_fingerprint"}
     fingerprint = payload.get("event_fingerprint")
@@ -299,6 +309,7 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
         previous_event_fingerprint=previous,
         details=details,
         event_fingerprint=str(fingerprint),
+        contract_version=str(contract_version),
     )
 
 
@@ -309,6 +320,11 @@ def _validate_event_state_machine(events: tuple[DailyEodRunEvent, ...]) -> None:
             if pending is not None:
                 raise DailyEodRunJournalError("daily run journal has overlapping attempts")
             pending = event
+        elif event.event_type == ACQUISITION_REVIEW_EVENT:
+            if pending is not None or event.contract_version != JOURNAL_CONTRACT:
+                raise DailyEodRunJournalError(
+                    "daily run operator review is not safely placed"
+                )
         else:
             if (
                 pending is None
@@ -325,6 +341,12 @@ def _validate_next_event(
     if event_type not in EVENT_TYPES or not _is_fingerprint(attempt_id):
         raise DailyEodRunJournalError("daily run next event is invalid")
     pending = unresolved_started_event(events)
+    if event_type == ACQUISITION_REVIEW_EVENT:
+        if pending is not None:
+            raise DailyEodRunJournalError(
+                "daily run operator review cannot overlap an attempt"
+            )
+        return
     if event_type in START_EVENTS:
         if pending is not None:
             raise DailyEodRunJournalError("daily run has an unresolved started action")

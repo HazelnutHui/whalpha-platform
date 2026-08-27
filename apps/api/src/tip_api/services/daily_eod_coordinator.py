@@ -13,6 +13,7 @@ from typing import Callable
 from tip_api.services.daily_eod_acquisition_custody import (
     DailyEodAcquisitionConfig,
     acquisition_attempts_from_events,
+    acquisition_operator_reviews_from_events,
 )
 from tip_api.services.daily_eod_automation import (
     DailyEodAutomationPaths,
@@ -43,7 +44,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.3"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.4"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -254,6 +255,11 @@ def coordinate_daily_eod_transition(
         latest_canonical_session=config.latest_canonical_session,
         acquisition_action=plan.next_action,
         attempts=attempts,
+        operator_reviews=acquisition_operator_reviews_from_events(
+            events,
+            target_session=config.target_session,
+            acquisition_action=plan.next_action,
+        ),
     )
     if readiness.next_action is ReadinessNextAction.WAIT:
         return _result(

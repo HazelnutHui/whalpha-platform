@@ -37,8 +37,10 @@ active custody/contracts after deployment.
 | Latest EOD | 2026-08-26, 9,953 rows |
 | EOD content fingerprint | `60de33ca6d37501387cc1d233d999a16f176197c185cb844dcc0fa3bee592466` |
 | EOD Parquet SHA-256 | `50d19945be381d845ad9b2badad9a433797d242ca4388de73a880f6f16357db3` |
-| Same-day Identity | 9,974 instruments / 13,141 provider identities / 9,974 resolvers |
-| Identity logical fingerprint | `3f9fe19f4f57cb16552443d5bdd45d5ca6367409dddf5e675d2a32d08fad7acf` |
+| Latest canonical Identity | 2026-08-27: 9,982 instruments / 13,148 provider identities / 9,982 resolvers |
+| Latest-EOD-bound Identity | 2026-08-26: 9,974 instruments / 13,141 provider identities / 9,974 resolvers |
+| EOD-bound Identity logical fingerprint | `3f9fe19f4f57cb16552443d5bdd45d5ca6367409dddf5e675d2a32d08fad7acf` |
+| Identity/EOD alignment | `identity_ahead_of_eod` |
 | Activation analysis session | 2026-08-19 |
 | Activation pointer fingerprint | `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168` |
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
@@ -52,9 +54,9 @@ active custody/contracts after deployment.
 | Contracts | Snapshot 1.7 / Dashboard 2.4 |
 | Snapshot pointer fingerprint | `5c6a5cce3e40c8ab07f3634fec05a1ffe02e8045d2d14c471ab5dc71d43bf122` |
 | Active review metadata | none; ordinary fresh release |
-| Current local freshness gate | `fresh`: actual and expected 2026-08-26, lag zero |
-| `/data` inventory | 340 files / 156,415,379 bytes |
-| `/data` inventory fingerprint | `ee241ca8e89fe5a010d67a5bd654852293fbbf1c6a3c80090222e8d1eb3879b8` |
+| Current post-close pipeline freshness | expected 2026-08-27, canonical EOD 2026-08-26, lag one; no new analytics/Snapshot publication |
+| `/data` inventory | 347 files / 158,668,614 bytes after the 2026-08-27 Identity Apply |
+| `/data` inventory fingerprint | not recomputed by the post-Identity report; prior 340-file fingerprint `ee241ca8e89fe5a010d67a5bd654852293fbbf1c6a3c80090222e8d1eb3879b8` is historical only |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -223,6 +225,18 @@ ADR 0046 corrects the handoff view exposed by context report 1.0. Report 1.1
 now shows latest canonical Identity 2026-08-27 separately from latest EOD
 2026-08-26 and its bound Identity 2026-08-26, with
 `identity_eod_alignment=identity_ahead_of_eod`.
+
+ADR 0047 now makes readiness explicitly plan-aware. The active default profile
+is `massive_stocks_basic_end_of_day`; Identity retains the provisional
+30-minute first-review point, while a first current-session Basic EOD request
+requires an immutable operator review and bounded `not_before`. Journal 1.3's
+reader is repository-tested against immutable 1.2 event bytes and can append a
+standalone review bound to the exact prior terminal fingerprint. This repository-only
+path performs and authorizes no fetch, Apply, scheduler, publication, or
+deployment. It has not been invoked against the real run root: the 2026-08-27
+status remains unknown, no operator review exists, and no retry is authorized.
+The source change also keeps the old `c3af030` Host Runtime and standing
+authorization inactive by exact-revision mismatch.
 
 ## Analytics and presentation
 
