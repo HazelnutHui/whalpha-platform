@@ -162,8 +162,13 @@ seconds before writing, 17.921 seconds for ten streamed artifacts, a 3,343,112
 KiB process peak, and an approximately 164-second work-directory-to-delivery
 boundary. Its nine source/business/Oracle files were byte-identical to the
 earlier panel-cache audit, all four equivalence gates were true, and Oracle
-mismatch was zero. The next operational priority is explicit validation tiers;
-deterministic process parallelism follows with the serial path retained.
+mismatch was zero. Repository source now enforces daily verified-prior,
+periodic cold-reference,
+and code/model-change cold-full-replay modes under ADR 0027. A real 2026-08-26
+periodic cold reference completed in 597.70 seconds; formal comparison with the
+final incremental audit took 197.20 seconds and matched all eight comparable
+business projections. Both audits had zero Oracle mismatch. Deterministic
+process parallelism is now next, with the serial path retained.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

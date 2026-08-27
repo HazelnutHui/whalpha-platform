@@ -624,6 +624,13 @@ interruption reuses its verified artifact prefix after reconstruction. One
 formal completed-audit reread precedes atomic delivery to the final path.
 Calculation-stage checkpointing remains separate future work.
 
+ADR 0027 makes validation intent an explicit execution input. The daily path
+is the verified-prior one-session append, the periodic path creates a cold
+reference and compares all eight business projections to the daily result, and
+the code/model-change path requires the cold full replay. Mode/date/reference
+drift fails closed. This is an audit and automation boundary, not a claim of
+predictive efficacy or publication authorization.
+
 The first accepted formal Phase 5 audit covers 2026-08-21 and 2026-08-24 under
 candidate calculation `market-regime-opportunity-candidate-v1.1.1`. Its
 logical fingerprint is

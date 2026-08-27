@@ -152,6 +152,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0024: Bind Daily Market Regime State to Verified Upstream Audits](decisions/0024-bind-daily-market-regime-state-to-verified-upstream-audits.md)
 - [ADR 0025: Share Formally Validated Panels Between Dell Stages](decisions/0025-share-formally-validated-panels-between-dell-stages.md)
 - [ADR 0026: Stream and Resume Candidate Audit Artifacts](decisions/0026-stream-and-resume-candidate-audit-artifacts.md)
+- [ADR 0027: Make Candidate Validation Tiers Explicit](decisions/0027-make-candidate-validation-tiers-explicit.md)
 
 ## Project
 

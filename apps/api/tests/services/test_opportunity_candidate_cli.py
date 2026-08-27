@@ -16,7 +16,9 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import CANDIDATE_STATE_PA
 from tip_api.parameters.market_regime.state_v1_0_1 import STATE_CALCULATION_VERSION, STATE_PARAMETER_FINGERPRINT
 from tip_api.services import opportunity_candidate_cli as cli
 from tip_api.services.opportunity_candidate_audit import (
+    CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS,
     OpportunityCandidateAuditError,
+    read_opportunity_candidate_business_fingerprints,
     read_opportunity_candidate_audit_contents,
     write_opportunity_candidate_audit,
 )
@@ -120,6 +122,111 @@ def test_relative_paths_are_rejected_before_any_reader(monkeypatch) -> None:
         ])
 
 
+def _tier_manifest(*, incremental: bool, suffix: str = "a"):
+    return {
+        "schema_version": "1.1" if incremental else "1.0",
+        **({"execution_mode": "verified_prior_incremental"} if incremental else {}),
+        "as_of_session": "2026-08-26",
+        "logical_content_fingerprint": suffix * 64,
+        "oracle_mismatch_count": 0,
+        "artifacts": [
+            {"name": name, "logical_content_fingerprint": f"{index:064x}"}
+            for index, name in enumerate(CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS, start=1)
+        ],
+    }
+
+
+def _tier_business(manifest):
+    return {
+        item["name"]: item["logical_content_fingerprint"]
+        for item in manifest["artifacts"]
+    }
+
+
+def test_validation_tiers_require_their_exact_audit_modes() -> None:
+    incremental = _tier_manifest(incremental=True)
+    cold = _tier_manifest(incremental=False, suffix="b")
+    assert cli._validate_completed_tier("daily", incremental, None)["validation_scope"].startswith(
+        "verified_prior"
+    )
+    assert cli._validate_completed_tier("code_change", cold, None) == {
+        "validation_scope": "cold_full_replay"
+    }
+    periodic = cli._validate_completed_tier(
+        "periodic",
+        incremental,
+        cold,
+        business_fingerprints=_tier_business(incremental),
+        reference_business_fingerprints=_tier_business(cold),
+    )
+    assert periodic["business_artifact_match"] is True
+    assert periodic["business_artifact_count"] == len(CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS)
+    with pytest.raises(RuntimeError, match="daily validation requires"):
+        cli._validate_completed_tier("daily", cold, None)
+    with pytest.raises(RuntimeError, match="code-change validation requires"):
+        cli._validate_completed_tier("code_change", incremental, None)
+
+
+def test_periodic_validation_fails_closed_on_business_difference() -> None:
+    incremental = _tier_manifest(incremental=True)
+    cold = _tier_manifest(incremental=False, suffix="b")
+    cold["artifacts"][4]["logical_content_fingerprint"] = "f" * 64
+    with pytest.raises(RuntimeError, match="candidate-score-history.json"):
+        cli._validate_completed_tier(
+            "periodic",
+            incremental,
+            cold,
+            business_fingerprints=_tier_business(incremental),
+            reference_business_fingerprints=_tier_business(cold),
+        )
+
+
+def test_periodic_verify_formally_reads_both_audits(monkeypatch, tmp_path, capsys) -> None:
+    output = tmp_path / "candidate-incremental"
+    reference = tmp_path / "candidate-cold"
+    manifests = {output: _tier_manifest(incremental=True), reference: _tier_manifest(incremental=False)}
+    calls = []
+    monkeypatch.setattr(
+        cli,
+        "_audit_api",
+        lambda: (
+            lambda path: pytest.fail("ordinary reader must not replace the business projection reader"),
+            lambda **kwargs: pytest.fail("writer must not run"),
+            lambda path: pytest.fail("output validator must not run"),
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "_read_candidate_business_fingerprints",
+        lambda path: calls.append(path) or (manifests[path], _tier_business(manifests[path])),
+    )
+    assert cli.main([
+        "--as-of-session", "2026-08-26",
+        "--data-root", str(tmp_path),
+        "--phase1b-audit", str(tmp_path / "phase1b"),
+        "--output-dir", str(output),
+        "--verify-output",
+        "--validation-tier", "periodic",
+        "--reference-audit", str(reference),
+    ]) == 0
+    assert calls == [output, reference]
+    rendered = capsys.readouterr().out
+    assert '"validation_tier":"periodic"' in rendered
+    assert '"business_artifact_match":true' in rendered
+
+
+def test_daily_tier_requires_prior_audit_before_loading_services(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(cli, "_audit_api", lambda: pytest.fail("audit API must not load"))
+    with pytest.raises(SystemExit):
+        cli.main([
+            "--as-of-session", "2026-08-26",
+            "--data-root", str(tmp_path),
+            "--phase1b-audit", str(tmp_path / "phase1b"),
+            "--output-dir", str(tmp_path / "candidate"),
+            "--validation-tier", "daily",
+        ])
+
+
 def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp_path, capsys) -> None:
     output = tmp_path / "candidate-audit"
     work = tmp_path / "candidate-work"
@@ -137,7 +244,7 @@ def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp
         cli,
         "_finalize_resumable_audit",
         lambda work_dir, output_dir: calls.append(("finalize", work_dir, output_dir))
-        or {"as_of_session": "2026-08-24", "oracle_mismatch_count": 0},
+        or {"schema_version": "1.0", "as_of_session": "2026-08-24", "oracle_mismatch_count": 0},
     )
     monkeypatch.setattr(cli, "read_market_regime_state_audit", lambda path: pytest.fail("Phase1b must not be read"))
     assert cli.main([
@@ -337,6 +444,7 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
     def write_audit(**kwargs):
         captured.update(kwargs)
         return {
+            "schema_version": "1.0",
             "as_of_session": panels[-1].as_of_session.isoformat(),
             "universe_ids": [PRIMARY, SECONDARY],
             "oracle_mismatch_count": 0,
@@ -433,6 +541,7 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
     )
     prior_dir = Path(tempfile.mkdtemp(prefix="candidate-prior-", dir="/tmp"))
     incremental_dir = Path(tempfile.mkdtemp(prefix="candidate-incremental-", dir="/tmp"))
+    cold_dir = Path(tempfile.mkdtemp(prefix="candidate-cold-", dir="/tmp"))
     tampered_dir = Path(tempfile.mkdtemp(prefix="candidate-incremental-tampered-", dir="/tmp"))
     try:
         write_opportunity_candidate_audit(
@@ -520,6 +629,33 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
             "logical_content_fingerprint"
         ]
         assert tuple(item.logical_fingerprint for item in reread.candidate_batches) == batch_fingerprints(cold_run)
+        write_opportunity_candidate_audit(
+            output_dir=cold_dir,
+            panels=cold_run.panels,
+            candidate_batches=tuple(
+                batch
+                for universe_id in (PRIMARY, SECONDARY)
+                for batch in cold_run.score_history[universe_id]
+            ),
+            state_history=tuple(
+                row
+                for universe_id in (PRIMARY, SECONDARY)
+                for row in cold_run.state_history[universe_id]
+            ),
+            risk_results=cold_run.current_risk_results,
+            oracle_comparison=cold_run.oracle_report,
+            equivalence_flags=cold_run.equivalence_flags,
+            raw_facts=cli._raw_fact_records(cold_run.score_history),
+            normalization_ledger=cli._normalization_records(cold_run.score_history),
+            generated_at=datetime.now(UTC),
+            timings={},
+            peak_memory_kib=1,
+        )
+        _, incremental_business = read_opportunity_candidate_business_fingerprints(
+            incremental_dir
+        )
+        _, cold_business = read_opportunity_candidate_business_fingerprints(cold_dir)
+        assert incremental_business == cold_business
         changed_raw = list(prior.raw_facts)
         changed_raw[0] = {**changed_raw[0], "ticker": "TAMPERED"}
         with pytest.raises(OpportunityCandidateAuditError, match="raw-fact prefix"):
@@ -552,4 +688,5 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
     finally:
         shutil.rmtree(prior_dir, ignore_errors=True)
         shutil.rmtree(incremental_dir, ignore_errors=True)
+        shutil.rmtree(cold_dir, ignore_errors=True)
         shutil.rmtree(tampered_dir, ignore_errors=True)

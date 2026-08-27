@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-27 — Explicit Candidate validation tiers
+
+- Accepted ADR 0027 and added executable `daily`, `periodic`, and
+  `code_change` gates. Daily requires verified-prior append; periodic and
+  code/model change require cold replay. Invalid mode/input combinations fail
+  before calculation.
+- Periodic verification formally rereads both same-session audits and compares
+  eight schema-neutral business projections. It deliberately does not compare
+  incremental and cold Oracle containers, whose declared session scopes differ;
+  both Oracles and all mode-specific equivalence gates must pass independently.
+- A real 2026-08-26 cold reference completed in 597.70 seconds. Formal
+  comparison with the final incremental audit took 197.20 seconds and all eight
+  projections matched; Oracle mismatch, external requests, and Production
+  writes were zero.
+- No `/data`, publication, Snapshot, bundle, deployment, OCI, credential,
+  provider, or scheduler state changed.
+
 ## 2026-08-27 — Streaming and resumable Candidate audit delivery
 
 - Accepted ADR 0026 and retained Candidate audit schemas 1.0/1.1 plus exact

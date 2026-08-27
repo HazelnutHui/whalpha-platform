@@ -69,6 +69,10 @@ from tip_api.services.opportunity_candidates import (
 )
 
 
+CANDIDATE_VALIDATION_TIERS = ("daily", "periodic", "code_change")
+CANDIDATE_PERIODIC_BUSINESS_ARTIFACT_COUNT = 8
+
+
 @dataclass(frozen=True, slots=True)
 class CandidateOfflineRun:
     panels: tuple[MarketRegimeInputPanel, ...]
@@ -158,6 +162,16 @@ def main(argv: list[str] | None = None) -> int:
         help="Formally verified immediately prior Candidate audit for one-session incremental execution.",
     )
     parser.add_argument("--verify-output", action="store_true", help="Reread an existing completed audit only.")
+    parser.add_argument(
+        "--validation-tier",
+        choices=CANDIDATE_VALIDATION_TIERS,
+        help="Explicit daily incremental, periodic cold-reference, or code/model-change full validation.",
+    )
+    parser.add_argument(
+        "--reference-audit",
+        type=Path,
+        help="Completed cold audit used only for periodic verification of an incremental output.",
+    )
     args = parser.parse_args(argv)
     for name in (
         "data_root",
@@ -166,22 +180,66 @@ def main(argv: list[str] | None = None) -> int:
         "prior_candidate_audit",
         "panel_cache_root",
         "audit_work_dir",
+        "reference_audit",
     ):
         value = getattr(args, name)
         if value is not None and not value.is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
 
+    validation_tier = _resolve_validation_tier(parser, args)
+
     read_audit, write_audit, validate_output = _audit_api()
     if args.verify_output:
-        manifest = read_audit(args.output_dir)
-        print(json.dumps(_summary(manifest, args.output_dir), sort_keys=True, separators=(",", ":")))
+        reference_manifest = None
+        business_fingerprints = None
+        reference_business_fingerprints = None
+        if validation_tier == "periodic":
+            manifest, business_fingerprints = _read_candidate_business_fingerprints(
+                args.output_dir
+            )
+            reference_manifest, reference_business_fingerprints = (
+                _read_candidate_business_fingerprints(args.reference_audit)
+            )
+        else:
+            manifest = read_audit(args.output_dir)
+        tier_evidence = _validate_completed_tier(
+            validation_tier,
+            manifest,
+            reference_manifest,
+            business_fingerprints=business_fingerprints,
+            reference_business_fingerprints=reference_business_fingerprints,
+        )
+        print(
+            json.dumps(
+                _summary(
+                    manifest,
+                    args.output_dir,
+                    validation_tier=validation_tier,
+                    tier_evidence=tier_evidence,
+                ),
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
         return 0
 
     validate_output(args.output_dir)
     if args.audit_work_dir is not None:
         completed = _finalize_resumable_audit(args.audit_work_dir, args.output_dir)
         if completed is not None:
-            print(json.dumps(_summary(completed, args.output_dir), sort_keys=True, separators=(",", ":")))
+            tier_evidence = _validate_calculated_tier(validation_tier, completed)
+            print(
+                json.dumps(
+                    _summary(
+                        completed,
+                        args.output_dir,
+                        validation_tier=validation_tier,
+                        tier_evidence=tier_evidence,
+                    ),
+                    sort_keys=True,
+                    separators=(",", ":"),
+                )
+            )
             return 0
     profiler = _StageProfiler()
     io_before = _process_io_counters()
@@ -267,6 +325,7 @@ def main(argv: list[str] | None = None) -> int:
             **_resource_deltas(usage_before, usage_after),
             **_io_deltas(io_before, io_after),
             "candidate_session_count": len(candidate_sessions),
+            f"candidate_validation_tier_{validation_tier}_count": 1,
         }
         incremental_kwargs = {}
         if prior_audit is not None:
@@ -314,7 +373,19 @@ def main(argv: list[str] | None = None) -> int:
             if completed is None or completed.get("logical_content_fingerprint") != prepared_fingerprint:
                 raise RuntimeError("resumable Candidate audit did not complete its formal finalization")
             manifest = completed
-    print(json.dumps(_summary(manifest, args.output_dir), sort_keys=True, separators=(",", ":")))
+    tier_evidence = _validate_calculated_tier(validation_tier, manifest)
+    print(
+        json.dumps(
+            _summary(
+                manifest,
+                args.output_dir,
+                validation_tier=validation_tier,
+                tier_evidence=tier_evidence,
+            ),
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+    )
     return 0
 
 
@@ -335,10 +406,100 @@ def _read_prior_candidate_audit(path: Path):
     return read_opportunity_candidate_audit_contents(path)
 
 
+def _read_candidate_business_fingerprints(path: Path):
+    from tip_api.services.opportunity_candidate_audit import (
+        read_opportunity_candidate_business_fingerprints,
+    )
+
+    return read_opportunity_candidate_business_fingerprints(path)
+
+
 def _finalize_resumable_audit(work_dir: Path, output_dir: Path):
     from tip_api.services.opportunity_candidate_audit import finalize_resumable_candidate_audit
 
     return finalize_resumable_candidate_audit(work_dir, output_dir)
+
+
+def _resolve_validation_tier(parser: argparse.ArgumentParser, args) -> str | None:
+    tier = args.validation_tier
+    if args.reference_audit is not None and (not args.verify_output or tier != "periodic"):
+        parser.error("--reference-audit requires --verify-output --validation-tier periodic")
+    if args.verify_output:
+        if tier == "periodic" and args.reference_audit is None:
+            parser.error("periodic verification requires --reference-audit")
+        return tier
+    if tier is None:
+        tier = "daily" if args.prior_candidate_audit is not None else "code_change"
+    if tier == "daily" and args.prior_candidate_audit is None:
+        parser.error("daily validation requires --prior-candidate-audit")
+    if tier in {"periodic", "code_change"} and args.prior_candidate_audit is not None:
+        parser.error(f"{tier} validation requires the cold full-replay path without --prior-candidate-audit")
+    return tier
+
+
+def _validate_completed_tier(
+    tier: str | None,
+    manifest: Mapping[str, Any],
+    reference: Mapping[str, Any] | None,
+    *,
+    business_fingerprints: Mapping[str, str] | None = None,
+    reference_business_fingerprints: Mapping[str, str] | None = None,
+) -> dict[str, Any]:
+    if tier is None:
+        return {}
+    incremental = (
+        manifest.get("schema_version") == "1.1"
+        and manifest.get("execution_mode") == "verified_prior_incremental"
+    )
+    if tier == "daily":
+        if not incremental:
+            raise RuntimeError("daily validation requires a verified-prior incremental audit")
+        return {"validation_scope": "verified_prior_plus_current_session_oracle"}
+    if tier == "code_change":
+        if incremental or manifest.get("schema_version") != "1.0":
+            raise RuntimeError("code-change validation requires a cold full-replay audit")
+        return {"validation_scope": "cold_full_replay"}
+    if not incremental or reference is None:
+        raise RuntimeError("periodic validation requires an incremental audit and cold reference")
+    if reference.get("schema_version") != "1.0" or reference.get("execution_mode") is not None:
+        raise RuntimeError("periodic reference must be a cold full-replay audit")
+    if manifest.get("as_of_session") != reference.get("as_of_session"):
+        raise RuntimeError("periodic Candidate audits have different as-of sessions")
+    if business_fingerprints is None or reference_business_fingerprints is None:
+        raise RuntimeError("periodic Candidate business projections were not formally read")
+    artifact_names = tuple(business_fingerprints)
+    if (
+        len(artifact_names) != CANDIDATE_PERIODIC_BUSINESS_ARTIFACT_COUNT
+        or tuple(reference_business_fingerprints) != artifact_names
+    ):
+        raise RuntimeError("periodic Candidate business projection set is malformed")
+    mismatches = tuple(
+        name
+        for name in artifact_names
+        if business_fingerprints.get(name) != reference_business_fingerprints.get(name)
+    )
+    if mismatches:
+        raise RuntimeError(
+            "periodic Candidate cold-reference mismatch: " + ", ".join(mismatches)
+        )
+    return {
+        "validation_scope": "incremental_vs_cold_business_outputs",
+        "business_artifact_match": True,
+        "business_artifact_count": CANDIDATE_PERIODIC_BUSINESS_ARTIFACT_COUNT,
+        "reference_logical_content_fingerprint": reference.get("logical_content_fingerprint"),
+    }
+
+
+def _validate_calculated_tier(tier: str, manifest: Mapping[str, Any]) -> dict[str, Any]:
+    if tier == "daily":
+        return _validate_completed_tier(tier, manifest, None)
+    if manifest.get("schema_version") != "1.0" or manifest.get("execution_mode") is not None:
+        raise RuntimeError(f"{tier} calculation did not produce a cold full-replay audit")
+    return {
+        "validation_scope": (
+            "cold_full_replay_reference" if tier == "periodic" else "cold_full_replay"
+        )
+    }
 
 
 def _list_available_eod_sessions(data_root: Path) -> tuple[date, ...]:
@@ -935,6 +1096,7 @@ def _incremental_validation_ledger(*, prior_audit, run: CandidateIncrementalRun)
     )
     return {
         "validation_scope": "verified_prior_plus_current_session_oracle",
+        "validation_tier": "daily",
         "prior_audit_logical_fingerprint": prior_audit.manifest["logical_content_fingerprint"],
         "prior_as_of_session": prior_audit.manifest["as_of_session"],
         "current_as_of_session": run.candidate_sessions[-1].isoformat(),
@@ -1161,8 +1323,14 @@ def _normalization_records(
     return tuple(rows)
 
 
-def _summary(manifest: Mapping[str, Any], output_dir: Path) -> dict[str, Any]:
-    return {
+def _summary(
+    manifest: Mapping[str, Any],
+    output_dir: Path,
+    *,
+    validation_tier: str | None = None,
+    tier_evidence: Mapping[str, Any] | None = None,
+) -> dict[str, Any]:
+    summary = {
         "status": "completed" if manifest.get("oracle_mismatch_count", 0) == 0 else "oracle_mismatch",
         "as_of_session": manifest.get("as_of_session"),
         "universe_ids": manifest.get("universe_ids"),
@@ -1172,6 +1340,11 @@ def _summary(manifest: Mapping[str, Any], output_dir: Path) -> dict[str, Any]:
         "external_request_count": 0,
         "production_write_count": 0,
     }
+    if validation_tier is not None:
+        summary["validation_tier"] = validation_tier
+    if tier_evidence:
+        summary["validation_evidence"] = dict(tier_evidence)
+    return summary
 
 
 def _seconds(value: float) -> str:

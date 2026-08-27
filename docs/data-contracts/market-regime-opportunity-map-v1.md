@@ -129,6 +129,15 @@ The final manifest is prepared only after all artifacts, formally reread once,
 and delivered by atomic directory rename. Recovery metadata never enters a
 completed audit or its logical fingerprint.
 
+Candidate validation tiers are operational gates over the same audit
+contracts. `daily` requires schema 1.1 verified-prior append evidence.
+`periodic` requires a separately completed schema 1.0 cold replay and compares
+the schema-neutral business projections of source panels, parameter contracts,
+raw facts, normalization, score records, state records, transition records,
+and current risk records. `code_change` requires schema 1.0 cold full replay.
+Incremental and cold Oracle artifacts are each validated but not compared to
+one another because their intentionally declared session scopes differ.
+
 This contract freezes the machine-readable calculation boundary for the
 product described in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).

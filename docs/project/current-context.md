@@ -88,8 +88,13 @@ writing, 17.921 seconds for ten streamed artifacts, a 3,343,112 KiB process
 peak, and an approximately 164-second work-directory-to-delivery boundary.
 Its nine source/business/Oracle files were byte-identical to the earlier
 panel-cache audit, all four equivalence gates were true, and Oracle mismatch
-was zero. Validation tiers and then deterministic process parallelism remain
-before daily automation.
+was zero. Repository source now explicitly enforces `daily`, `periodic`, and
+`code_change` validation tiers under ADR 0027. A real same-version
+2026-08-26 periodic cold reference took 597.70 seconds and the formal
+incremental-versus-cold comparison took 197.20 seconds; all eight comparable
+business projections matched and both audits had zero Oracle mismatch.
+Deterministic process parallelism remains the next optimization before
+automation.
 
 ## Analytics and presentation
 

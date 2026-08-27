@@ -58,6 +58,7 @@ scripts/admin/calculate-opportunity-candidates-offline.sh \
   --phase1b-audit /tmp/<exact-completed-phase1b-audit> \
   --prior-candidate-audit /tmp/<immediately-prior-candidate-audit> \
   --panel-cache-root /tmp/<same-owner-controlled-panel-cache> \
+  --validation-tier daily \
   --audit-work-dir /tmp/<new-owner-controlled-candidate-work-directory> \
   --output-dir /tmp/<new-empty-incremental-candidate-audit>
 ```
@@ -83,12 +84,34 @@ scripts/admin/calculate-opportunity-candidates-offline.sh \
   --data-root /data/trading-intelligence-platform \
   --phase1b-audit /tmp/<corrected-stable-prefix-phase1b-audit> \
   --prior-candidate-audit /tmp/<immediately-prior-candidate-audit> \
+  --validation-tier daily \
   --output-dir /tmp/<new-empty-incremental-candidate-audit>
 ```
 
 The prior audit must be the preceding XNYS session and use compatible
 calculation, parameter, Activation, membership, and stable-prefix Phase 1b
 sources. A mismatch fails closed and requires a corrected cold replay.
+
+Build and compare the periodic cold reference explicitly:
+
+```bash
+scripts/admin/calculate-opportunity-candidates-offline.sh \
+  --as-of-session YYYY-MM-DD \
+  --data-root /data/trading-intelligence-platform \
+  --phase1b-audit /tmp/<exact-completed-phase1b-audit> \
+  --validation-tier periodic \
+  --audit-work-dir /tmp/<new-cold-reference-work-directory> \
+  --output-dir /tmp/<new-cold-reference-audit>
+
+scripts/admin/calculate-opportunity-candidates-offline.sh \
+  --as-of-session YYYY-MM-DD \
+  --data-root /data/trading-intelligence-platform \
+  --phase1b-audit /tmp/<exact-completed-phase1b-audit> \
+  --output-dir /tmp/<completed-daily-incremental-audit> \
+  --verify-output \
+  --validation-tier periodic \
+  --reference-audit /tmp/<completed-cold-reference-audit>
+```
 
 ## 2026-08-27 Dell baseline and first optimization
 
@@ -171,12 +194,25 @@ development results; `/data` and Production were unchanged.
 
 ## Next performance sequence
 
-1. Separate daily, periodic, and code/model-change validation tiers without
-   weakening the full reference audit.
-2. Process-parallelize only independent CPU work using stable `instrument_id`
+1. Process-parallelize only independent CPU work using stable `instrument_id`
    shards; merge and fingerprint in one deterministic parent order.
-3. Split Candidate public summary and on-demand detail payloads. This changes
+2. Split Candidate public summary and on-demand detail payloads. This changes
    neither guest/credential capability parity nor the Dell/OCI boundary.
+
+## 2026-08-27 explicit validation-tier result
+
+ADR 0027 makes `daily`, `periodic`, and `code_change` executable CLI gates.
+Daily requires the verified-prior append. Periodic and code/model change
+require a cold full replay; periodic verification formally rereads both audits
+and compares eight schema-neutral business projections rather than their
+intentionally different incremental/cold containers and Oracle scopes.
+
+The real 2026-08-26 cold periodic reference completed in 597.70 seconds with
+3,516,264 KiB maximum RSS and zero Oracle mismatch. Formal comparison of the
+final incremental audit with that same-version cold reference completed in
+197.20 seconds with 3,506,364 KiB maximum RSS; all eight business projections
+matched. External-request and Production-write counts were zero. These are
+Dell `/tmp` development audits; `/data` and Production were unchanged.
 
 ## 2026-08-27 verified-prior Phase 1b result
 

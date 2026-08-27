@@ -61,6 +61,19 @@ CANDIDATE_INCREMENTAL_ARTIFACT_FILES = (
     *CANDIDATE_ARTIFACT_FILES,
     CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT,
 )
+CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS = {
+    "source-input-manifest.json": ("panels",),
+    "candidate-parameter-contract.json": (
+        "candidate_parameter_contract",
+        "candidate_state_parameter_contract",
+    ),
+    "raw-candidate-facts.json": ("records",),
+    "cross-section-normalization-ledger.json": ("records",),
+    "candidate-score-history.json": ("records",),
+    "candidate-state-history.json": ("records",),
+    "candidate-transition-ledger.json": ("records",),
+    "current-risk-mode-results.json": ("records",),
+}
 REQUIRED_EQUIVALENCE_FLAGS = (
     "append_full_replay_match",
     "restart_replay_match",
@@ -432,6 +445,23 @@ def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCa
         normalization_ledger=tuple(normalization),
         validation_ledger=(None if validation_payload is None else validation_payload["record"]),
     )
+
+
+def read_opportunity_candidate_business_fingerprints(
+    output_dir: Path,
+) -> tuple[dict[str, Any], dict[str, str]]:
+    """Formally reread an audit and fingerprint schema-neutral business projections."""
+
+    manifest, payloads, _, _, _, _ = _read_opportunity_candidate_audit(output_dir)
+    projections: dict[str, str] = {}
+    for name, keys in CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS.items():
+        payload = payloads.get(name)
+        if not isinstance(payload, Mapping) or any(key not in payload for key in keys):
+            raise OpportunityCandidateAuditError(
+                f"Candidate periodic business projection is malformed: {name}"
+            )
+        projections[name] = _fingerprint({key: payload[key] for key in keys})
+    return manifest, projections
 
 
 def finalize_resumable_candidate_audit(work_dir: Path, output_dir: Path) -> dict[str, Any] | None:
@@ -1130,6 +1160,8 @@ def _validate_incremental_validation_input(
         raise OpportunityCandidateAuditError("incremental validation ledger has malformed fingerprints")
     if record.get("validation_scope") != "verified_prior_plus_current_session_oracle":
         raise OpportunityCandidateAuditError("incremental validation scope is unsupported")
+    if record.get("validation_tier") not in {None, "daily"}:
+        raise OpportunityCandidateAuditError("incremental Candidate validation tier is unsupported")
     cache_status = record.get("current_panel_stage_cache_status")
     cache_fingerprint = record.get("current_panel_stage_logical_fingerprint")
     if cache_status is not None or cache_fingerprint is not None:
