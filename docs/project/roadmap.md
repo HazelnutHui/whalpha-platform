@@ -21,11 +21,13 @@
   intent and deterministic deduplication identity are also complete. Keep
   manual approval while code revision is still changing. At-most-once alert
   delivery custody and its default-disabled, externally configured SMTP adapter
-  are complete in repository source. Next review the external alert/host/data-
-  authorization artifacts at one stable revision, then perform controlled
-  preflight and one-transition rehearsal before considering scheduler
-  activation. Publication, Snapshot, bundle, and OCI remain separate
-  authorizations.
+  are complete in repository source. The network-prohibited joint preflight for
+  external alert/host/data-authorization artifacts is also repository-tested.
+  Next select the real SMTP service and addresses, review/provision all
+  external artifacts at one stable revision, run that preflight, then perform
+  a separately authorized controlled email/one-transition rehearsal before
+  considering scheduler activation. Publication, Snapshot, bundle, and OCI
+  remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -157,15 +159,17 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Channel-neutral daily alert intent with stable deduplication identity
 - [x] Immutable at-most-once alert delivery custody with ambiguous replay stop
 - [x] Default-disabled external SMTP adapter with owner-only credential custody
+- [x] Network-prohibited joint external-control configuration preflight
 
 ## Next Small Target
 
-Review the proposed external alert, host-runtime, and standing data-
-authorization artifacts together at one stable implementation revision. First
-perform configuration-only preflight with no network, then a separately
-authorized controlled email/one-transition rehearsal before considering
-scheduler activation. Do not combine Production publication, Snapshot, bundle,
-OCI, or deployment authorization. Keep SEC B2 paused.
+Select the actual SMTP service, sender, and recipient, then draft and review the
+external alert, host-runtime, and standing data-authorization artifacts at one
+stable implementation revision. Provision them only after review, run the ADR
+0042 no-network preflight, and separately authorize a controlled email/one-
+transition rehearsal before considering scheduler activation. Do not combine
+Production publication, Snapshot, bundle, OCI, or deployment authorization.
+Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

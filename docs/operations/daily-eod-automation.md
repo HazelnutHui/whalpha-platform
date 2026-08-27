@@ -328,6 +328,39 @@ There is deliberately no provisioning or send command yet. First review all
 external paths and exact revision, perform no-network configuration preflight,
 then authorize any controlled fake/local or real rehearsal separately.
 
+## Joint external-control preflight
+
+ADR 0042 provides the config-only, network-prohibited entry point:
+
+```bash
+scripts/admin/preflight-daily-eod-external-controls.sh \
+  --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --host-config /absolute/external/runtime/host.json \
+  --host-config-sha256 <64-hex-whole-file-sha> \
+  --authorization /absolute/external/authorization/daily.json \
+  --authorization-sha256 <64-hex-whole-file-sha> \
+  --email-config /absolute/external/email/smtp.json \
+  --email-config-sha256 <64-hex-whole-file-sha>
+```
+
+Run this only from the configured clean Dell source repository at the exact
+revision pinned by all three artifacts. A successful result says
+`configuration_consistent`; it does **not** authorize a provider request,
+canonical Apply, email, rehearsal, publication, deployment, or scheduler. It
+records zero credential-file access, network requests, filesystem writes, and
+Production writes.
+
+The three config directories must be distinct and non-nested. Massive and SMTP
+credential directories must also be distinct from one another and from every
+config/repository/data/run/alert root. The preflight intentionally does not
+test credential existence or inspect their metadata. Do not pass credential
+paths or values on the command line.
+
+No real external artifacts currently exist, so this command has not been run
+against an installed configuration. Its tests use only owner-only temporary
+config files, absent synthetic credential paths, a fake verified runtime, and
+the active socket guard.
+
 ## Read-only plan
 
 Every audit path is explicit and must be a distinct direct child of `/tmp`.
@@ -462,10 +495,11 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Review the external alert, host-runtime, and standing-authorization
-   artifacts and SHA pins together at one stable implementation revision, or
-   continue manual approval.
-2. Conduct a no-network config/custody preflight, followed only under separate
+1. Select the real SMTP service, sender, and recipient; review and provision
+   the external alert, host-runtime, and standing-authorization artifacts and
+   SHA pins together at one stable implementation revision, or continue manual
+   approval.
+2. Run the ADR 0042 no-network config preflight, followed only under separate
    authorization by a controlled email and one-transition rehearsal.
 3. Conduct a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
@@ -494,4 +528,5 @@ ADR 0040 alert custody is repository-tested only; no real root, transport call,
 or delivery event exists. ADR 0041 SMTP config, credential loading, rendering,
 TLS behavior, and custody composition are repository-tested only; no external
 artifact, credential read, network call, email, command, service, or timer
-exists.
+exists. ADR 0042 joint preflight is repository-tested only; no real external
+artifacts were read or created and no installed preflight was performed.

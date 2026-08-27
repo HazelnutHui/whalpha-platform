@@ -244,7 +244,11 @@ known-failed or unresolved retries. ADR 0041 adds the first concrete channel:
 a default-disabled SMTP adapter with exact-revision external config, separate
 owner-only credentials, verified TLS, deterministic bilingual content, and
 conservative unknown-outcome handling. It is repository-tested only: no email
-config, credential, alert root, command, transport call, or delivery exists.
+config, credential, alert root, transport call, or delivery exists. ADR 0042
+adds a read-only joint config preflight that verifies all three external
+artifacts at one clean Dell revision while prohibiting credential access,
+networking, writes, and activation. The command is repository-tested only; no
+real external artifacts were provisioned or preflighted.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

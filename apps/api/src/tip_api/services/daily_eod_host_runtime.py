@@ -238,7 +238,15 @@ def verify_dell_runtime(
         raise DailyEodHostRuntimeError("actual host differs from host runtime config")
     try:
         revision_result = command_runner(
-            ["git", "-C", str(repository_root), "rev-parse", "--verify", "HEAD"],
+            [
+                "git",
+                "--no-optional-locks",
+                "-C",
+                str(repository_root),
+                "rev-parse",
+                "--verify",
+                "HEAD",
+            ],
             check=True,
             capture_output=True,
             text=True,
@@ -246,6 +254,7 @@ def verify_dell_runtime(
         status_result = command_runner(
             [
                 "git",
+                "--no-optional-locks",
                 "-C",
                 str(repository_root),
                 "status",

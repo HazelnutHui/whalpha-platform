@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-27 — Joint external daily-control preflight
+
+- Accepted ADR 0042 and added a read-only command that reconciles the host-
+  runtime, standing data-authorization, and SMTP artifacts under independent
+  whole-file SHA pins at one verified clean Dell revision.
+- Added exact cross-artifact host/revision/repository/data/run/policy/path/SHA
+  checks, complete four-operation scope validation, and distinct non-nested
+  config and credential custody rules.
+- Installed a socket guard for the entire preflight and excluded credential
+  paths from its bounded report. Git verification disables optional locking;
+  success grants no controlled rehearsal, publication, deployment, or
+  scheduler authority.
+- Added config-drift, disabled/incomplete scope, expiry, nested custody,
+  absent-credential, zero-write, socket-guard, and redacted-rejection tests.
+- No real config, authorization, credential, run/alert root, provider request,
+  email, transition, `/data` write, deployment, service, timer, or scheduler
+  state was created or changed.
+
 ## 2026-08-27 — Default-disabled external SMTP alert adapter
 
 - Accepted ADR 0041 and added an exact-revision, externally SHA-pinned SMTP

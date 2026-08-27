@@ -170,7 +170,11 @@ repository-tested, default-disabled SMTP adapter behind that custody boundary.
 It uses whole-file SHA-pinned external config, exact Dell/runtime/root binding,
 owner-only two-key credential custody, verified implicit TLS or STARTTLS, and a
 deterministic bilingual message. No external email config, credential, alert
-root, command, network request, delivery, service, timer, or scheduler exists.
+root, network request, delivery, service, timer, or scheduler exists. ADR 0042
+now adds a repository-tested read-only joint preflight command for the host,
+standing-authorization, and email artifacts. It prohibits networking and
+reports configuration consistency without credential access, writes, or
+rehearsal authority. No real external artifact has been created or preflighted.
 
 ## Analytics and presentation
 
