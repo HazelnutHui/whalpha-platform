@@ -45,9 +45,10 @@
   formal taxonomy, and position management remain separate contract work.
   ADR 0048 and Snapshot 1.8 / Dashboard 2.5 now split the 20.4 MB Candidate
   payload into a 1.49 MB first-load summary and 32 on-demand detail shards while
-  formally reconstructing the unchanged full publication. The next Candidate
-  model step is to define independent strategy channels before changing any
-  score or ranking threshold.
+  formally reconstructing the unchanged full publication. ADR 0049 now defines
+  the independent six-channel shadow taxonomy and evidence rules without a
+  formula or Production integration. The next model step is a point-in-time
+  chronological evaluation panel before any score or threshold is selected.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -177,19 +178,19 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Context report separates latest Identity from EOD-bound Identity
 - [x] Plan-aware Basic EOD readiness and immutable single-use operator review
 - [x] Lossless Candidate summary/on-demand-detail Snapshot projection
+- [x] Independent Candidate strategy-channel shadow taxonomy and contract
 
 ## Next Small Target
 
 Keep the 2026-08-27 EOD attempt paused until its immutable
 2026-08-28T16:00:00Z boundary. Product development may continue from the
-formally completed 2026-08-26 inputs. Next define a strategy-channel contract
-for momentum breakout, strong-stock pullback, trend continuation, technical
-reversal, fundamental value reversal, and defensive/rotation opportunity.
-Each channel must expose eligibility, ranking reasons, counterevidence, entry
-location, invalidation, and market fit independently; do not tune thresholds
-from one-session distributions. Keep Snapshot 1.8 undeployed until its exact
-bundle and browser behavior are separately reviewed. Keep SMTP and SEC B2
-paused.
+formally completed 2026-08-26 inputs. The six-channel taxonomy and typed shadow
+contract are complete. Next define the point-in-time chronological evaluation
+panel and outcome ledger that can test each channel separately without current-
+membership look-ahead or stock/option-return confusion. Do not select formulas
+or thresholds from one-session distributions. Keep Snapshot 1.8 undeployed
+until its exact bundle and browser behavior are separately reviewed. Keep SMTP
+and SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

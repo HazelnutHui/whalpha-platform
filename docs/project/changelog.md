@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-27 — Independent Candidate strategy-channel shadow contract
+
+- Accepted ADR 0049 and fixed six Candidate research archetypes: momentum
+  breakout, strong-stock pullback, trend continuation, technical reversal,
+  fundamental value reversal, and defensive rotation.
+- Added the typed `candidate-strategy-channel-shadow/1.0` contract with a fixed
+  taxonomy fingerprint, explicit result for every security/channel, same-
+  channel-only scores/ranks, separate market fit, source-dated evidence, first
+  rejection, counterevidence, reviewability, invalidation, and logical
+  fingerprints.
+- The contract fails closed on future evidence, omitted channels, cross-channel
+  rank misuse, primary event evidence, price-only value reversal, and
+  unlabelled relationship proxies. Fundamental/valuation absence remains an
+  unavailable result instead of a technical substitute.
+- This is taxonomy and validation infrastructure only. No formula, threshold,
+  real-data assessment, Candidate/MI/Snapshot/frontend integration,
+  publication, deployment, provider request, credential access, or `/data`
+  write occurred.
+
 ## 2026-08-27 — Lossless Candidate summary and on-demand detail
 
 - Accepted ADR 0048 and added Snapshot 1.8 / Dashboard 2.5 as a consumer-only

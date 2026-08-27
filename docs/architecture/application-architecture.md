@@ -302,9 +302,11 @@ The canonical Candidate audit remains an offline computation and replay
 boundary. Production consumers do not scan its `/tmp` files, recompute ranks,
 or expose the full rejected population. A single bounded language-neutral
 projection is built only after the audit reader, Oracle, equivalence, session,
-Universe, EOD, Identity, and Activation gates pass. Market Intelligence 1.1 is
-the immutable aggregate owner; Snapshot 1.6 / Dashboard 2.3 exports the same
-projection as protected static JSON.
+Universe, EOD, Identity, and Activation gates pass. Active Market Intelligence
+1.2 is the immutable aggregate owner; active Snapshot 1.7 / Dashboard 2.4
+exports the same projection as protected static JSON. Repository-only Snapshot
+1.8 / Dashboard 2.5 changes delivery to a compact summary and on-demand detail
+shards without changing Candidate publication 1.1.
 
 The React Candidate workspace selects server-calculated risk ranks and
 localizes stable codes. It never treats ticker as identity, confidence as win
@@ -312,3 +314,11 @@ probability, ETF price proxies as formal sector membership, price/volume as
 fund flow, invalidation as a position exit, or the underlying-stock result as
 an option return. Guest and credential Sessions consume the identical file;
 role never enters the analytics, cache, or filtering boundary.
+
+ADR 0049 adds a repository-only strategy-channel shadow boundary above the
+existing Candidate and entry-geometry facts. Six fixed archetypes produce
+independent assessments and within-channel ranks; there is no cross-channel
+score. Market fit, event context, and future option expression remain separate
+axes. This taxonomy is not connected to Market Intelligence, Snapshot, React,
+or Production until channel-specific formulas pass chronological evaluation
+and separate activation review.

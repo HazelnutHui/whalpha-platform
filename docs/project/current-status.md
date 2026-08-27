@@ -141,6 +141,12 @@ read or used.
   Repository source has completed summary/detail payload separation but has not
   deployed it; workspace code splitting remains required before substantially
   expanding the UI.
+- Repository source defines six independent Candidate strategy channels, but
+  only as a typed shadow taxonomy. It has no formula, real assessment,
+  historical validation, consumer, or Production integration. Fundamental
+  value reversal remains explicitly unavailable without governed fundamental
+  and valuation inputs; defensive rotation still needs point-in-time security
+  taxonomy and channel-specific evaluation.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
@@ -355,6 +361,16 @@ Production writes; entry input-permutation equivalence is true. Primary has
 53 technical-review-ready, 1,250 monitor-for-trigger, 109 wait-for-reset, and
 303 deprioritized records. It has 98 strong-but-extended setups, so strength
 does not automatically become an entry instruction.
+
+ADR 0049 now defines a repository-only six-channel Candidate shadow contract:
+momentum breakout, strong-stock pullback, trend continuation, technical
+reversal, fundamental value reversal, and defensive rotation. It requires one
+  explicit result per security/channel, within-channel ranking only, visible
+  market fit, source-dated evidence, first rejection, counterevidence,
+reviewability conditions, and invalidation. Event evidence is auxiliary;
+price-derived relationships remain proxies; stock results remain distinct
+from option returns. No formula, threshold, real-data assessment, Market
+Intelligence/Snapshot field, UI, publication, or deployment was added.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

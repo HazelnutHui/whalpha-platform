@@ -288,6 +288,14 @@ and standing authorization also remain inactive by exact-revision mismatch.
   produced and validated approval plan 2.3 without applying it. This is not
   published or deployed; active Production remains Snapshot 1.7 / Dashboard
   2.4. Guest and credential Sessions remain capability-identical by contract.
+- Repository source also contains ADR 0049's typed strategy-channel shadow
+  taxonomy for momentum breakout, strong-stock pullback, trend continuation,
+  technical reversal, fundamental value reversal, and defensive rotation.
+  Scores/ranks are restricted to same-channel research priority; market fit,
+  event context, entry geometry, and future option expression remain separate.
+  This has no formula, real assessment, consumer, publication, or Production
+  effect. Fundamental/value data and point-in-time defensive taxonomy remain
+  missing inputs rather than technical proxies.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
