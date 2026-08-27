@@ -53,6 +53,55 @@ def test_identity_state_rejects_wrong_date_or_incomplete_manifest(tmp_path: Path
         report._identity_state(root, date(2026, 8, 24))
 
 
+def test_latest_identity_state_is_independent_from_latest_eod(tmp_path: Path) -> None:
+    root = tmp_path / "data"
+    for day, count in ((date(2026, 8, 26), 9974), (date(2026, 8, 27), 9982)):
+        target = (
+            root
+            / "market-data/snapshots/instrument-master"
+            / f"as_of_date={day.isoformat()}"
+            / "manifest.json"
+        )
+        target.parent.mkdir(parents=True)
+        target.write_text(
+            json.dumps(
+                {
+                    "completion_status": "completed",
+                    "as_of_date": day.isoformat(),
+                    "instrument_count": count,
+                    "identity_count": count + 3000,
+                    "resolver_count": count,
+                    "snapshot_content_sha256": "a" * 64,
+                }
+            )
+        )
+
+    state = report._latest_identity_state(root)
+    alignment = report._identity_eod_alignment(
+        latest_identity_date=date.fromisoformat(state["as_of_date"]),
+        latest_eod_session=date(2026, 8, 26),
+        eod_bound_identity_date=date(2026, 8, 26),
+    )
+
+    assert state["as_of_date"] == "2026-08-27"
+    assert state["instrument_count"] == 9982
+    assert alignment == {
+        "status": "identity_ahead_of_eod",
+        "latest_identity_date": "2026-08-27",
+        "latest_eod_session": "2026-08-26",
+        "eod_bound_identity_date": "2026-08-26",
+    }
+
+
+def test_identity_eod_alignment_rejects_inconsistent_eod_binding() -> None:
+    with pytest.raises(report.CurrentContextReportError, match="binding"):
+        report._identity_eod_alignment(
+            latest_identity_date=date(2026, 8, 27),
+            latest_eod_session=date(2026, 8, 26),
+            eod_bound_identity_date=date(2026, 8, 25),
+        )
+
+
 def test_inventory_and_residue_report_symlink_without_following_it(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

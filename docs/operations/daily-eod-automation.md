@@ -32,7 +32,9 @@ and the Grouped Daily endpoint as available across Stocks plans, but does not
 guarantee a precise stable-publication minute. Daily aggregates may also be
 updated for late or corrected trades. The first fetch review therefore begins
 30 minutes after the actual XNYS close as a provisional operational choice,
-not as a completeness claim.
+not as a completeness or plan-entitlement claim. The active Stocks Basic
+boundary is end-of-day rather than 15-minute delayed; its exact current-session
+availability time remains unproven.
 
 The network-free readiness command is:
 
@@ -63,6 +65,12 @@ allows at most five attempts with 15/30/60/120-minute backoff, honors a bounded
 rate-limit `Retry-After`, and moves an elapsed six-hour daily deadline into
 missed-session recovery. Permanent/quality failures and exhausted attempts
 require diagnosis. A ready fetch package only requests separate apply review.
+
+ADR 0045 advances acquisition custody to 1.1. Authorized fetch outcomes now
+retain the exact bounded request count and, for provider redirect/client
+responses, only the numeric HTTP status. Response bodies, URLs, headers,
+request IDs, provider messages, and credentials remain excluded. Status
+evidence does not make a permanent failure retryable.
 
 The result always declares zero requests/writes, no scheduler, and no provider
 completeness assertion. Exit 1 means alert/diagnosis is required; this command
@@ -535,42 +543,45 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Review and provision the external Host Runtime, standing data authorization,
-   and daily run root at one stable implementation revision, or continue manual
-   approval. SMTP may remain deferred.
-2. Run the ADR 0044 `--without-email` no-network preflight, followed only under
-   separate authorization by one controlled data transition. Add a controlled
-   email rehearsal later only after SMTP is deliberately configured.
-3. Conduct a controlled real timing rehearsal to calibrate
-   the provisional 30-minute/limited-retry policy.
-4. Make separate authorization decisions for publication, Snapshot/bundle, OCI
-   deployment, and finally scheduler activation.
+1. Diagnose the status-unknown 2026-08-27 EOD terminal without replay and
+   reconcile the Stocks Basic current-session availability boundary.
+2. Design and test a plan-aware readiness policy plus an explicit operator
+   recovery path before provisioning new exact-revision controls or requesting
+   EOD again. SMTP may remain deferred.
+3. Conduct a later controlled timing rehearsal to replace the provisional
+   30-minute review boundary with evidence appropriate to the active plan.
+4. Make separate authorization decisions for analytics continuation,
+   publication, Snapshot/bundle, OCI deployment, and finally scheduler
+   activation.
 
-The executor and journal are implemented and tested, but no durable real run
-root has been provisioned and no real action has been executed through this
-boundary yet. Readiness planning is also implemented and tested without making
-a provider request or enabling a scheduler. Acquisition custody is implemented
-and tested without creating the real run root or executing a fetch. Standing
-authorization validation is implemented and tested, but no real authorization
-directory, artifact, SHA pin, or authorized transition exists. The coordinator
-core is implemented and tested with default-absent provider/apply capabilities.
-ADR 0037 now supplies its default-disabled CLI but no scheduler entry. Canonical
-Apply reservation and no-write
-recovery are repository-tested under journal 1.2, but no real Apply adapter,
-reservation, or recovery ran. ADR 0036 adapters are repository-tested but have
-not been installed or invoked against real authorization, credentials, Massive,
-or `/data`. ADR 0037 host config and CLI are repository-tested only; no external
-runtime artifact, CLI transition, service, timer, or scheduler exists. ADR 0038
-recovery routing is repository-tested only; no real recovery event was appended.
+The executor, journal, readiness planner, standing authorization, capability
+adapters, Host Runtime, and coordinator have now had their first controlled
+real use. Owner-only controls and the run root were installed at `c3af030`;
+Identity fetch and canonical Apply completed, then EOD failed before package or
+Apply. The next source revision invalidates those exact-revision controls.
+No offline analytics action or recovery event has run. No service, timer, or
+scheduler exists.
+
+Canonical Apply reservation and no-write recovery remain available under
+journal 1.2. ADR 0038 recovery routing remains repository-tested only; no real
+recovery event was appended.
 ADR 0039 alert intent is repository-tested only; no intent was persisted and no
 notification delivery was attempted.
 ADR 0040 alert custody is repository-tested only; no real root, transport call,
 or delivery event exists. ADR 0041 SMTP config, credential loading, rendering,
 TLS behavior, and custody composition are repository-tested only; no external
 artifact, credential read, network call, email, service, or timer exists. ADR
-0042 joint preflight is repository-tested only; no real external artifacts were
-read or created and no installed preflight was performed. ADR 0043's explicit
+0042 joint email preflight remains repository-tested only. ADR 0044's installed
+data-only preflight succeeded once. ADR 0043's explicit
 CLI delivery route is also repository-tested only with fake SMTP; it has not
 been invoked against any real config, credential, alert root, or transport.
-ADR 0044 data-only preflight is repository-tested only; no Host Runtime,
-standing authorization, run root, or installed preflight was created.
+SMTP path remains unused.
+
+The first installed 2026-08-27 data-only preflight succeeded at revision
+`c3af030`. Identity fetch used 14 requests, its offline plan validated 13,148
+provider-identity rows and 9,982 instrument/resolver rows, and one canonical
+Identity Apply completed. The subsequent EOD fetch made one request and
+formally ended `permanent_failure`, leaving package, staging, approval plan,
+and canonical EOD targets absent. The old 1.0 terminal did not retain the
+numeric HTTP status. No retry, EOD Apply, analytics calculation, publication,
+deployment, notification, or scheduler activation followed.

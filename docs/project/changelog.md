@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-27 — First controlled data rehearsal and safe failure evidence
+
+- Installed seven-day owner-only data controls at exact revision `c3af030`;
+  data-only preflight 1.1 completed without credential access, networking, or
+  Production writes.
+- Completed the 2026-08-27 Identity chain: 14 provider requests, 13,148
+  provider-identity rows, 9,982 instrument/resolver rows, offline plan review,
+  and one canonical Apply.
+- The following EOD fetch made one request and formally ended
+  `permanent_failure`. Package, staging, approval-plan, and canonical EOD
+  targets remained absent; no retry or downstream action followed.
+- Accepted ADR 0045 and advanced acquisition custody to 1.1 so future failures
+  retain only bounded request count and numeric HTTP status, never response
+  content, URLs, headers, provider messages, request IDs, or credentials.
+- The original EOD event predates 1.1 and its exact HTTP status remains
+  unverified. Stocks Basic is publicly described as end-of-day, so the
+  30-minute post-close boundary remains review timing rather than a readiness
+  assertion.
+- Accepted ADR 0046 and advanced the read-only context report to 1.1 so latest
+  canonical Identity and latest-EOD-bound Identity are separate, with an
+  explicit alignment state.
+
 ## 2026-08-27 — Explicit no-email data-control preflight
 
 - Accepted ADR 0044 and advanced external-control preflight to 1.1 with an

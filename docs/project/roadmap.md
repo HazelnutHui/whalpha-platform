@@ -25,11 +25,12 @@
   external alert/host/data-authorization artifacts is also repository-tested.
   Explicit post-coordination intent/custody/SMTP composition is complete under
   a default-off CLI flag. External preflight 1.1 now also supports explicit
-  `daily_data_only` review while SMTP remains deferred. Next review/provision
-  the Host/data authorization and run root at one stable revision, run the no-
-  email preflight, then perform a separately authorized single data transition
-  before considering scheduler activation. Publication, Snapshot, bundle, and
-  OCI remain separate authorizations.
+  `daily_data_only` review while SMTP remains deferred. Its first controlled
+  run completed same-day Identity but the one EOD request failed permanently
+  before a package existed. ADR 0045 now preserves safe status/request evidence
+  for future attempts. Diagnose the Stocks Basic EOD availability boundary and
+  redesign the review policy before any retry or scheduler consideration.
+  Publication, Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -164,15 +165,17 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Network-prohibited joint external-control configuration preflight
 - [x] Explicit post-coordination email delivery composition with at-most-once custody
 - [x] Explicit data-only external preflight while SMTP remains deferred
+- [x] Safe provider failure status and request-count evidence
+- [x] Context report separates latest Identity from EOD-bound Identity
 
 ## Next Small Target
 
-Review and provision the external Host Runtime, standing data authorization,
-and owner-only daily run root at one stable implementation revision. Run ADR
-0044's `--without-email` preflight, then separately authorize exactly one
-supervised Identity fetch or Apply transition. SMTP remains optional and
-deferred. Do not combine Production publication, Snapshot, bundle, OCI,
-deployment, or scheduler authorization. Keep SEC B2 paused.
+Reconcile the exact Stocks Basic EOD availability/entitlement boundary without
+replaying the status-unknown 2026-08-27 terminal. Design a plan-aware readiness
+policy and explicit operator recovery path, then review fresh exact-revision
+Host/authorization controls before any new provider request. Do not combine
+EOD retry, analytics, Production publication, Snapshot, bundle, OCI,
+deployment, or scheduler authorization. Keep SMTP and SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

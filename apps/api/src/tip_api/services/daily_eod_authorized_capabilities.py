@@ -198,6 +198,7 @@ class DailyEodAuthorizedCapabilities:
                 outcome,
                 request_count=counting_transport.request_count,
                 retry_after_seconds=retry_after,
+                provider_http_status_code=exc.status_code,
             )
         except (MassiveTransportTimeoutError, MassiveTransportUnavailableError):
             return self._record_fetch_outcome(
@@ -411,6 +412,7 @@ class DailyEodAuthorizedCapabilities:
         *,
         request_count: int,
         retry_after_seconds: int | None = None,
+        provider_http_status_code: int | None = None,
     ) -> AuthorizedTransitionEvidence:
         if not 0 <= request_count <= decision.provider_request_limit:
             raise DailyEodAuthorizedCapabilityError(
@@ -420,6 +422,8 @@ class DailyEodAuthorizedCapabilities:
             config=context.acquisition,
             outcome=outcome,
             retry_after_seconds=retry_after_seconds,
+            request_count=request_count,
+            provider_http_status_code=provider_http_status_code,
             authorization_decision_fingerprint=decision.logical_content_fingerprint,
             clock=self._clock,
         )

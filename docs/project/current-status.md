@@ -182,7 +182,8 @@ offline executor and durable Dell run custody: exact plan/action binding, one
 global lock, immutable hash-chained events, evidence validation, post-action
 formal re-plan, and inspection-only crash recovery. It is limited to Phase 1a,
 verified-prior Phase 1b, daily Candidate, and entry geometry. No durable real
-run root is provisioned and no real action has been executed through it.
+analytics action has yet been executed through it; the run root was later
+provisioned for the controlled acquisition/Apply rehearsal recorded below.
 Session-readiness/retry policy and provider acquisition/canonical-apply
 standing authorization were the next boundary. ADR 0031 now adds the
 repository-tested, network-free readiness decision: actual XNYS close and
@@ -266,6 +267,26 @@ network-free check at exactly 20:30Z advanced only to
 requests, and writes. No daily run root, alert root, matching user timer,
 external Host Runtime, or standing authorization was installed; no credential,
 provider fetch, or write was performed.
+
+That review was later explicitly authorized. At exact revision `c3af030`, the
+installed seven-day data-only external controls passed preflight. Same-day
+Identity fetched in 14 requests and canonical Identity 2026-08-27 formally
+completed: 13,148 provider-identity rows and 9,982 instrument/resolver rows.
+The next EOD fetch made one request but terminated `permanent_failure`; no EOD
+package, staging residue, approval plan, or canonical 2026-08-27 EOD target
+exists. The old terminal does not retain the numeric HTTP status, so the exact
+cause is unverified and no retry occurred. Canonical EOD therefore remains
+2026-08-26, while Identity is now 2026-08-27.
+
+ADR 0045 adds bounded request-count and numeric HTTP-status evidence for future
+failures without retaining response content or changing failure classification.
+The repository change invalidates the installed `c3af030` exact-revision
+controls until separately reviewed and reprovisioned. Publication, deployment,
+email, and scheduler authority remain absent.
+
+ADR 0046 advances the credential-free context report to 1.1. It no longer
+labels latest-EOD provenance as the overall Identity state; it separately
+reports latest Identity, latest EOD's bound Identity, and their alignment.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky

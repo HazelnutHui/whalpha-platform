@@ -35,7 +35,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-acquisition-custody/1.0"
+CONTRACT_VERSION = "daily-eod-acquisition-custody/1.1"
 MAXIMUM_PLAN_AGE = timedelta(minutes=5)
 OUTCOME_EVENT = {
     AttemptOutcome.NOT_READY: "acquisition_not_ready",
@@ -196,6 +196,8 @@ def record_acquisition_outcome(
     config: DailyEodAcquisitionConfig,
     outcome: AttemptOutcome,
     retry_after_seconds: int | None = None,
+    request_count: int | None = None,
+    provider_http_status_code: int | None = None,
     authorization_decision_fingerprint: str | None = None,
     clock: Clock = lambda: datetime.now(UTC),
 ) -> AcquisitionCustodyResult:
@@ -203,6 +205,12 @@ def record_acquisition_outcome(
 
     _validate_config(config, require_new_package=False)
     _validate_outcome(outcome, retry_after_seconds)
+    _validate_provider_evidence(
+        config=config,
+        outcome=outcome,
+        request_count=request_count,
+        provider_http_status_code=provider_http_status_code,
+    )
     if authorization_decision_fingerprint is not None and not _is_fingerprint(
         authorization_decision_fingerprint
     ):
@@ -228,8 +236,16 @@ def record_acquisition_outcome(
             "retry_after_seconds": retry_after_seconds,
             "provider_request_executed_by_custody": False,
             "authorization_decision_fingerprint": authorization_decision_fingerprint,
+            "provider_http_status_code": provider_http_status_code,
         }
         if package_evidence is not None:
+            if (
+                request_count is not None
+                and request_count != package_evidence.request_count
+            ):
+                raise DailyEodAcquisitionCustodyError(
+                    "recorded request count differs from package evidence"
+                )
             details.update(
                 {
                     "request_count": package_evidence.request_count,
@@ -238,6 +254,8 @@ def record_acquisition_outcome(
                     "package_content_sha256": package_evidence.package_content_sha256,
                 }
             )
+        elif request_count is not None:
+            details["request_count"] = request_count
         event = journal.append(
             event_type=OUTCOME_EVENT[outcome],
             attempt_id=pending.attempt_id,
@@ -511,6 +529,52 @@ def _validate_outcome(outcome: AttemptOutcome, retry_after_seconds: int | None) 
         or retry_after_seconds > 4 * 60 * 60
     ):
         raise DailyEodAcquisitionCustodyError("retry-after outcome evidence is invalid")
+
+
+def _validate_provider_evidence(
+    *,
+    config: DailyEodAcquisitionConfig,
+    outcome: AttemptOutcome,
+    request_count: int | None,
+    provider_http_status_code: int | None,
+) -> None:
+    maximum_requests = (
+        20
+        if config.acquisition_action is NextAction.PREPARE_IDENTITY_CATCHUP
+        else 1
+    )
+    if request_count is not None and (
+        type(request_count) is not int
+        or request_count < 0
+        or request_count > maximum_requests
+    ):
+        raise DailyEodAcquisitionCustodyError(
+            "provider request-count evidence is invalid"
+        )
+    if provider_http_status_code is None:
+        return
+    if (
+        type(provider_http_status_code) is not int
+        or not 300 <= provider_http_status_code < 500
+        or request_count is None
+        or request_count < 1
+    ):
+        raise DailyEodAcquisitionCustodyError(
+            "provider HTTP-status evidence is invalid"
+        )
+    expected_outcome = (
+        AttemptOutcome.NOT_READY
+        if provider_http_status_code == 404
+        else (
+            AttemptOutcome.RATE_LIMITED
+            if provider_http_status_code == 429
+            else AttemptOutcome.PERMANENT_FAILURE
+        )
+    )
+    if outcome is not expected_outcome:
+        raise DailyEodAcquisitionCustodyError(
+            "provider HTTP status disagrees with acquisition outcome"
+        )
 
 
 def _validate_authorization_binding(

@@ -155,6 +155,54 @@ def test_rate_limit_requires_bounded_retry_after(tmp_path) -> None:
     assert result.event.details["retry_after_seconds"] == 1800
 
 
+def test_nonpackage_http_failure_retains_only_safe_provider_evidence(tmp_path) -> None:
+    config = _config(tmp_path)
+    _reserve(config)
+
+    result = custody.record_acquisition_outcome(
+        config=config,
+        outcome=AttemptOutcome.PERMANENT_FAILURE,
+        request_count=1,
+        provider_http_status_code=403,
+        clock=lambda: datetime(2026, 8, 27, 20, 31, tzinfo=UTC),
+    )
+
+    assert result.event.details["request_count"] == 1
+    assert result.event.details["provider_http_status_code"] == 403
+    assert "response" not in result.event.details
+
+
+@pytest.mark.parametrize(
+    ("outcome", "request_count", "status_code"),
+    (
+        (AttemptOutcome.PERMANENT_FAILURE, 0, 403),
+        (AttemptOutcome.PERMANENT_FAILURE, 21, 403),
+        (AttemptOutcome.PERMANENT_FAILURE, 1, 404),
+        (AttemptOutcome.NOT_READY, 1, 403),
+        (AttemptOutcome.RATE_LIMITED, 1, 403),
+    ),
+)
+def test_provider_http_evidence_must_match_scope_and_outcome(
+    tmp_path,
+    outcome,
+    request_count,
+    status_code,
+) -> None:
+    config = _config(tmp_path)
+    _reserve(config)
+
+    with pytest.raises(
+        custody.DailyEodAcquisitionCustodyError,
+        match="provider|HTTP",
+    ):
+        custody.record_acquisition_outcome(
+            config=config,
+            outcome=outcome,
+            request_count=request_count,
+            provider_http_status_code=status_code,
+        )
+
+
 def test_package_ready_requires_formal_exact_package_evidence(monkeypatch, tmp_path) -> None:
     config = _config(tmp_path)
     _reserve(config)

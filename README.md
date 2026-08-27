@@ -53,9 +53,10 @@ Repository development source also contains an exact-session read-only daily
 planner and a single-action executor for the four offline analytics stages.
 Execution is bound to an unchanged plan fingerprint, global Dell lock,
 immutable hash-chained journal, validated output evidence, and post-action
-formal re-plan. This boundary is tested but has not been run against real daily
-state; provider acquisition, canonical apply, publication, deployment, and
-scheduler activation remain separately unauthorized.
+formal re-plan. This boundary has not yet run the real daily analytics stages.
+Its acquisition/Apply controls completed same-day Identity once; EOD stopped
+at a failed fetch before Apply. Publication, deployment, and scheduler
+activation remain separately unauthorized.
 
 The next repository-only control slice separates XNYS close from provider
 readiness. It applies a provisional post-close stabilization window, bounded
@@ -66,30 +67,32 @@ persistent bounded outcomes, exact frozen-package evidence, and no-request
 interruption recovery under the same Dell global lock and hash chain.
 The repository now also defines an expiring, exact-revision standing data-
 authorization contract for Identity/EOD fetch and canonical apply. It is
-default-deny: no real authorization artifact or external SHA pin exists.
+default-deny: the first external artifact was pinned only to `c3af030`, expires
+after seven days, and becomes inactive on any source-revision change.
 The one-transition coordinator core now joins wait, recovery, authorization
 review, offline execution, diagnosis, and publication-review states without
 looping. Canonical Identity/EOD Apply now also has exact reservation and no-
 write interruption recovery under a third disjoint journal family. Explicit
 standing-authorized fetch/Apply adapters now compose those boundaries and
-preserve actual Identity pagination request counts, but remain uninstalled and
-inactive. No real authorization, run root, credential read, fetch attempt, or
-Apply has been created; notification delivery and scheduler activation remain
-uninstalled. A one-transition CLI and externally SHA-pinned host-runtime
-contract are also repository-tested: capability ports remain absent unless an
+preserve actual Identity pagination request counts. Their first controlled use
+completed Identity and stopped on the subsequent EOD failure. Notification
+delivery and scheduler activation remain uninstalled. A one-transition CLI and
+externally SHA-pinned host-runtime contract are also repository-tested:
+capability ports remain absent unless an
 external owner-only config enables them, the invocation explicitly opts in,
-and actual Dell/source/clean-HEAD/policy identity all match. No real host config
-or CLI transition exists. Explicit one-transition recovery routing now covers
-the acquisition, canonical-Apply, and offline-action journal families. It
+and actual Dell/source/clean-HEAD/policy identity all match. The first Host
+config and CLI transitions were pinned to `c3af030`. Explicit one-transition
+recovery routing now covers the acquisition, canonical-Apply, and offline-
+action journal families. It
 formally rereads the exact pending event, keeps the socket guard active, and
 never fetches, applies canonical data, replays calculation, or loops. No real
 recovery invocation has occurred.
 Repository source now also preserves alert-required coordinator states and can
 explicitly emit a channel-neutral, deterministic alert intent. Intent creation
 does not persist or deliver notifications. External channel configuration,
-credentials, retry policy, and delivery receipts remain uninstalled; external
-authorization remains intentionally unprovisioned until the remaining control-
-plane code stops changing revision.
+credentials, retry policy, and delivery receipts remain uninstalled. Data
+authorization is exact-revision and must be reprovisioned after control-plane
+code changes.
 Repository source now also contains a separate immutable, at-most-once alert
 delivery custody boundary. It records a start before invoking an explicitly
 supplied transport, deduplicates formally delivered intents, and blocks known
@@ -107,8 +110,16 @@ to SMTP. Default invocation and normal no-alert results remain zero-delivery;
 the route has only fake-transport tests and has never sent real email.
 Because SMTP is deliberately deferred, external-control preflight 1.1 now also
 has an explicit `daily_data_only` mode. It keeps the complete four-operation
-Identity/EOD scope while omitting all email inputs and claims; no real data-
-only external artifacts or preflight have been installed.
+Identity/EOD scope while omitting all email inputs and claims. It was initially
+repository-tested only; the first installed use is recorded below.
+
+The first controlled data-only rehearsal installed seven-day external controls
+at `c3af030` and completed 2026-08-27 Identity. The single EOD request then
+failed closed as a status-unknown non-404/non-429 provider client response;
+there was no EOD package or canonical EOD write. ADR 0045 adds safe status and
+request-count evidence for future failures but does not authorize a retry.
+Context report 1.1 now represents this partial state directly: latest Identity
+is separate from the Identity snapshot bound into latest EOD.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

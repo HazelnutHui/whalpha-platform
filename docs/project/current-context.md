@@ -107,9 +107,9 @@ only an exact unchanged plan for one of four offline analytics actions. The
 executor holds a global lock, journals start/terminal events in an immutable
 cross-session hash chain, validates output evidence, and re-plans before
 recording success. Interrupted-attempt recovery only classifies formal state
-and never re-executes. This boundary is repository-tested only: no durable real
-run root is provisioned, no real action has run through it, and no scheduler is
-enabled. Session-readiness/retry policy and provider acquisition/apply standing
+and never re-executes. Before the first controlled 2026-08-27 rehearsal, this
+boundary was repository-tested only; no scheduler is enabled. Session-
+readiness/retry policy and provider acquisition/apply standing
 authorization were the next boundary. ADR 0031 now implements the first half
 as a pure, network-free readiness plan with actual XNYS close/early-close
 handling, a provisional 30-minute stabilization window, and bounded
@@ -120,13 +120,13 @@ apply, notification, or scheduler action. Durable acquisition-attempt custody
 now shares the global lock and cross-session journal with offline execution,
 reserves only a fresh exact readiness fingerprint, records bounded outcomes,
 formally binds completed package evidence, and recovers interruption without a
-request. This is repository-tested only: journal 1.2 has not been provisioned
-for a real run and no fetch was executed. Provider fetch/canonical-apply
+request. Before the first controlled rehearsal, journal 1.2 had not been
+provisioned for a real run and no fetch had executed. Provider fetch/canonical-apply
 standing authorization is now defined by ADR 0033 as an expiring, exact-
 revision, externally SHA-pinned contract for only Identity/EOD fetch and
-canonical apply. Its reader and transition verifier are repository-tested, but
-no real authorization directory, artifact, host pin, fetch, or apply was
-created. Publication and public-serving operations stay outside this scope.
+canonical apply. Its reader and transition verifier were initially repository-
+tested only; the later controlled state is recorded below. Publication and
+public-serving operations stay outside this scope.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.
@@ -142,19 +142,21 @@ adapters that compose the external authorization SHA, acquisition/Apply
 custody, real Massive boundaries, and formal terminal evidence. Request 1.1
 binds Apply to `canonical_apply_started`; ADR 0036's coordinator 1.1 accepts
 Identity's actual bounded 1–20 HTTP requests; and the authorized canonical root
-is `/data/trading-intelligence-platform`. The adapters remain uninstalled; that
-slice created no real authorization artifact, host pin, credential read,
-provider request, reservation, Apply, CLI, or scheduler entry.
+is `/data/trading-intelligence-platform`. That implementation slice created no
+real authorization artifact, host pin, credential read, provider request,
+reservation, Apply, CLI, or scheduler entry; later controlled use is recorded
+below.
 ADR 0037 now adds the repository-tested one-transition CLI and external
 host-runtime config contract. Authorized ports stay absent unless an externally
 SHA-pinned owner-only config enables them and the invocation opts in. Runtime
 derives the actual Dell hostname, executing source root, clean Git HEAD, and
 current readiness-policy fingerprint rather than trusting asserted strings.
-No real host config root/artifact, CLI transition, service, timer, alert, or
-scheduler exists. ADR 0038 now routes one explicitly requested unresolved
-acquisition, canonical-Apply, or offline-action event to its existing recovery
-boundary after an exact locked journal reread. Recovery keeps networking
-disabled, never performs Apply or replays calculation, and never loops. This is
+That implementation slice created no real Host artifact or transition. No
+service, timer, alert, or scheduler exists. ADR 0038 now routes one explicitly
+requested unresolved acquisition, canonical-Apply, or offline-action event to
+its existing recovery boundary after an exact locked journal reread. Recovery
+keeps networking disabled, never performs Apply or replays calculation, and
+never loops. This is
 repository-tested only; no real recovery or run-journal transition occurred.
 ADR 0039 now carries alert-required state through coordinator 1.3 and can emit
 one stable, channel-neutral alert intent with a deterministic deduplication key.
@@ -197,6 +199,30 @@ at exactly 2026-08-27T20:30:00Z returned `ready_for_fetch_review` with
 `next_action=review_fetch_authorization` for the same 2026-08-27 Identity
 catch-up. It recorded zero attempts, external requests, and Production writes;
 no provider fetch or authorization followed.
+
+The user subsequently authorized the controlled data-only rehearsal. External
+owner-only Host Runtime, standing authorization, and daily run roots were
+installed at exact revision `c3af030`, valid through
+2026-09-03T20:49:28Z. Preflight 1.1 returned
+`configuration_consistent` / `daily_data_only` with zero credential reads,
+network requests, and Production writes. The 2026-08-27 Identity fetch then
+made 14 requests; its offline plan validated 13,148 provider-identity rows and
+9,982 instrument/resolver rows, and canonical Identity Apply completed with one
+Production transition.
+
+The following 2026-08-27 EOD fetch made exactly one request and terminated
+`permanent_failure`. It left the package, staging path, approval plan, and
+canonical EOD target absent. The original acquisition-custody 1.0 event did not
+retain the numeric HTTP status; local code proves only that it was neither 404
+nor 429. No retry or later stage was run. ADR 0045 adds safe status/request-
+count evidence for future attempts without changing retry policy. Any new
+commit also invalidates the installed exact-revision controls until they are
+separately reviewed and reprovisioned.
+
+ADR 0046 corrects the handoff view exposed by context report 1.0. Report 1.1
+now shows latest canonical Identity 2026-08-27 separately from latest EOD
+2026-08-26 and its bound Identity 2026-08-26, with
+`identity_eod_alignment=identity_ahead_of_eod`.
 
 ## Analytics and presentation
 

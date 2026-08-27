@@ -298,6 +298,8 @@ def test_identity_fetch_reports_actual_bounded_http_request_count() -> None:
     assert result.outcome == "succeeded"
     assert result.external_request_count == 2
     assert recorded[0]["outcome"] is AttemptOutcome.FETCH_PACKAGE_READY
+    assert recorded[0]["request_count"] == 2
+    assert recorded[0]["provider_http_status_code"] is None
     assert len(recorded[0]["authorization_decision_fingerprint"]) == 64
 
 
@@ -343,6 +345,35 @@ def test_rate_limit_records_exact_request_count_and_retry_after() -> None:
     assert result.external_request_count == 1
     assert recorded[0]["outcome"] is AttemptOutcome.RATE_LIMITED
     assert recorded[0]["retry_after_seconds"] == 1200
+    assert recorded[0]["request_count"] == 1
+    assert recorded[0]["provider_http_status_code"] == 429
+
+
+def test_permanent_http_failure_records_safe_status_and_exact_request_count() -> None:
+    recorded = []
+
+    def fetcher(*, transport, **_kwargs):
+        transport.get_json("/eod")
+
+    class ForbiddenTransport:
+        def get_json(self, *_args, **_kwargs):
+            raise MassiveTransportResponseError(403, "not retained")
+
+    def recorder(**kwargs):
+        recorded.append(kwargs)
+        return acquisition_recording(**kwargs)
+
+    result = build_capabilities(
+        transport=ForbiddenTransport(),
+        eod_fetcher=fetcher,
+        acquisition_recorder=recorder,
+    ).fetch(context(action=NextAction.PREPARE_EOD_CATCHUP, apply=False))
+
+    assert result.outcome == "failed"
+    assert result.external_request_count == 1
+    assert recorded[0]["outcome"] is AttemptOutcome.PERMANENT_FAILURE
+    assert recorded[0]["request_count"] == 1
+    assert recorded[0]["provider_http_status_code"] == 403
 
 
 def test_unexpected_fetch_error_leaves_reservation_unresolved() -> None:

@@ -93,7 +93,12 @@ def build_report(
         if latest_rows != latest_descriptor.record_count:
             raise CurrentContextReportError("latest EOD row count changed during full reread")
 
-    identity = _identity_state(data, latest_descriptor.session_date)
+    identity = _latest_identity_state(data)
+    identity_eod_alignment = _identity_eod_alignment(
+        latest_identity_date=date.fromisoformat(identity["as_of_date"]),
+        latest_eod_session=latest_descriptor.session_date,
+        eod_bound_identity_date=latest_integrity.identity_snapshot_date,
+    )
     activation_pointer = read_dashboard_universe_activation_pointer(data)
     if activation_pointer is None:
         raise CurrentContextReportError("Activation V2 pointer is absent")
@@ -125,7 +130,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.0",
+        "report_contract": "tip-current-context-report/1.1",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -152,8 +157,12 @@ def build_report(
             "latest_content_fingerprint": latest_integrity.content_fingerprint,
             "latest_parquet_sha256": latest_integrity.parquet_sha256,
             "identity_snapshot_date": latest_integrity.identity_snapshot_date.isoformat(),
+            "bound_identity_snapshot_date": (
+                latest_integrity.identity_snapshot_date.isoformat()
+            ),
         },
         "identity": identity,
+        "identity_eod_alignment": identity_eod_alignment,
         "activation": {
             "analysis_session": activation.manifest.analysis_session.isoformat(),
             "pointer_fingerprint": activation_pointer.pointer_content_fingerprint,
@@ -314,6 +323,54 @@ def _identity_state(root: Path, as_of_date: date) -> dict[str, Any]:
         "provider_identity_count": value["identity_count"],
         "resolver_count": value["resolver_count"],
         "logical_fingerprint": fingerprint,
+    }
+
+
+def _latest_identity_state(root: Path) -> dict[str, Any]:
+    snapshot_root = root / "market-data/snapshots/instrument-master"
+    if (
+        snapshot_root.is_symlink()
+        or not snapshot_root.is_dir()
+        or snapshot_root.resolve(strict=True) != snapshot_root
+    ):
+        raise CurrentContextReportError("Identity snapshot root is unavailable")
+    candidates: list[date] = []
+    for path in snapshot_root.iterdir():
+        if not path.name.startswith("as_of_date="):
+            continue
+        if path.is_symlink() or not path.is_dir():
+            raise CurrentContextReportError("Identity snapshot path is unsafe")
+        try:
+            candidates.append(date.fromisoformat(path.name.removeprefix("as_of_date=")))
+        except ValueError as exc:
+            raise CurrentContextReportError(
+                "Identity snapshot date is malformed"
+            ) from exc
+    if not candidates:
+        raise CurrentContextReportError("no completed Identity snapshot exists")
+    return _identity_state(root, max(candidates))
+
+
+def _identity_eod_alignment(
+    *,
+    latest_identity_date: date,
+    latest_eod_session: date,
+    eod_bound_identity_date: date,
+) -> dict[str, str]:
+    if eod_bound_identity_date != latest_eod_session:
+        raise CurrentContextReportError("latest EOD Identity binding is inconsistent")
+    status = (
+        "aligned"
+        if latest_identity_date == latest_eod_session
+        else "identity_ahead_of_eod"
+        if latest_identity_date > latest_eod_session
+        else "identity_behind_eod"
+    )
+    return {
+        "status": status,
+        "latest_identity_date": latest_identity_date.isoformat(),
+        "latest_eod_session": latest_eod_session.isoformat(),
+        "eod_bound_identity_date": eod_bound_identity_date.isoformat(),
     }
 
 
