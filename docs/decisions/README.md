@@ -62,3 +62,4 @@ Each ADR should include:
 - [0037: Gate One-Transition CLI with Host Runtime](0037-gate-one-transition-cli-with-host-runtime.md)
 - [0038: Route One Interrupted Daily Transition](0038-route-one-interrupted-daily-transition.md)
 - [0039: Separate Daily Alert Intent from Delivery](0039-separate-daily-alert-intent-from-delivery.md)
+- [0040: Custody One Daily Alert Delivery Attempt](0040-custody-one-daily-alert-delivery-attempt.md)

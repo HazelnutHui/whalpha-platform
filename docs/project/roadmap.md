@@ -19,10 +19,11 @@
   routing is also complete for acquisition, canonical Apply, and offline
   actions without request, Apply, replay, or loop. The channel-neutral alert
   intent and deterministic deduplication identity are also complete. Keep
-  manual approval while code revision is still changing. Next select and
-  custody one alert transport, then review external authorization, controlled
-  rehearsal, and scheduler activation separately. Publication, Snapshot,
-  bundle, and OCI remain separate authorizations.
+  manual approval while code revision is still changing. At-most-once alert
+  delivery custody is complete with no transport installed. Next implement one
+  externally configured email adapter, then review external authorization,
+  controlled rehearsal, and scheduler activation separately. Publication,
+  Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -152,11 +153,12 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Externally SHA-pinned host runtime and default-disabled one-transition CLI
 - [x] Exact one-transition recovery routing without request, Apply, or replay
 - [x] Channel-neutral daily alert intent with stable deduplication identity
+- [x] Immutable at-most-once alert delivery custody with ambiguous replay stop
 
 ## Next Small Target
 
-Select one notification transport and add durable reservation, receipt, and
-deduplication custody without placing channel credentials in Git. Then review
+Implement one externally configured email transport behind the completed alert
+custody boundary without placing channel credentials in Git. Then review
 external host/authorization artifacts at the stable implementation revision
 and conduct a controlled one-transition rehearsal before considering scheduler
 activation. Do not combine Production publication, Snapshot, bundle, OCI, or

@@ -89,6 +89,11 @@ explicitly emit a channel-neutral, deterministic alert intent. It does not
 persist or deliver notifications; no channel, credential, retry, or delivery
 receipt is installed. External authorization remains intentionally unprovisioned
 until the remaining control-plane code stops changing revision.
+Repository source now also contains a separate immutable, at-most-once alert
+delivery custody boundary. It records a start before invoking an explicitly
+supplied transport, deduplicates formally delivered intents, and blocks known
+failed or crash-ambiguous retries. No transport adapter, alert root, channel
+configuration, credential, or real delivery exists yet.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

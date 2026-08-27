@@ -263,16 +263,41 @@ target and exact coordinator state produces the same deduplication key. A
 normal state returns `alert_intent: null`.
 
 This is not delivery. The intent always records `delivery_attempted=false`,
-zero external requests, and zero Production writes. No outbox, channel,
-credential, retry, escalation, or receipt exists. Do not configure a timer on
-the assumption that printing the intent notified anyone. Exceptions before a
-formal coordinator result remain rejected CLI results and require future
-watchdog coverage.
+zero external requests, and zero Production writes. ADR 0040 supplies the
+separate uninstalled custody boundary below, but no real outbox/root, channel,
+credential, retry, escalation, or delivery receipt exists. Do not configure a
+timer on the assumption that printing the intent notified anyone. Exceptions
+before a formal coordinator result remain rejected CLI results and require
+future watchdog coverage.
 
 Standing authorization and host runtime bind an exact Git revision. Keep
 manual approval while alert/rehearsal code is changing; review and provision
 the external artifacts only after selecting the delivery boundary and freezing
 the implementation revision for controlled rehearsal.
+
+## Alert delivery custody
+
+ADR 0040 adds `daily-eod-alert-delivery-custody/1.0` behind the intent boundary.
+It is a library capability port, not an installed command or transport. A future
+operator must pre-provision a dedicated owner-only `0700` alert root outside
+Git, `/data`, and the daily transition run root. Repository code does not create
+that root.
+
+Custody uses a separate global lock and immutable per-deduplication-key journal.
+It writes `delivery_started` before invoking an explicitly supplied transport.
+A valid delivered terminal requires one external request and only a hashed
+provider reference; known failure may record zero or one request. Alert journal
+writes are custody evidence, never canonical Production data writes.
+
+If the transport or process stops after the start event, do not resend. The
+outcome is ambiguous and subsequent calls fail closed. A formally delivered
+intent returns `already_delivered` without transport access. A known failed
+terminal also requires operator review; no retry policy is authorized yet.
+
+No email adapter, channel config, credential loader, real alert root, or
+delivery is present. The next slice may implement one externally configured
+email transport while keeping credentials outside Git and binding its exact
+result to this custody contract.
 
 ## Read-only plan
 
@@ -408,8 +433,8 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Select one alert transport and add durable reservation, deduplication, and
-   delivery-receipt custody without committing channel credentials.
+1. Implement one externally configured email transport behind ADR 0040 without
+   committing channel credentials.
 2. Review/provision the external host and standing-authorization artifacts and
    SHA pins at the stable implementation revision, or continue manual approval.
 3. Conduct a controlled real timing rehearsal to calibrate
@@ -435,3 +460,5 @@ runtime artifact, CLI transition, service, timer, or scheduler exists. ADR 0038
 recovery routing is repository-tested only; no real recovery event was appended.
 ADR 0039 alert intent is repository-tested only; no intent was persisted and no
 notification delivery was attempted.
+ADR 0040 alert custody is repository-tested only; no real root, transport call,
+or delivery event exists.

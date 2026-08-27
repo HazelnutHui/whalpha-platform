@@ -237,6 +237,11 @@ or missed-session attention states. It never claims delivery: no channel,
 outbox, credential, retry, receipt, or real notification is implemented.
 External runtime/authorization provisioning remains deferred while exact-
 revision-bound control code is still changing.
+ADR 0040 adds a separate owner-only, immutable alert-delivery journal and one-
+attempt custody port. It reserves before transport, requires bounded terminal
+evidence, returns an already-delivered intent without another call, and blocks
+known-failed or unresolved retries. This is repository-tested only: no alert
+root, transport adapter, channel configuration, credential, or delivery exists.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

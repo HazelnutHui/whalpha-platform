@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-27 — At-most-once alert delivery custody
+
+- Accepted ADR 0040 and added a separate owner-only immutable alert journal
+  keyed by the ADR 0039 deduplication identity.
+- Added pre-transport `delivery_started`, bounded delivered/failed evidence,
+  canonical hash-chain reread, global concurrency locking, and exact channel/
+  intent binding.
+- Formally delivered alerts become idempotent without another transport call;
+  known failure, invalid evidence, or crash-ambiguous outcome blocks automatic
+  replay and requires review.
+- Added permission, tamper, channel drift, concurrency, duplicate, failure, and
+  interruption tests using only temporary directories and fake capabilities.
+- No real alert root, transport, channel configuration, credential read,
+  external request, notification, `/data` write, deployment, timer, or scheduler
+  state was created or changed.
+
 ## 2026-08-27 — Channel-neutral daily alert intent
 
 - Accepted ADR 0039 and advanced the coordinator to 1.3 with an exact

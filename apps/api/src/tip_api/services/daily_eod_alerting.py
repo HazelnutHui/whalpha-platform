@@ -90,10 +90,63 @@ def plan_daily_eod_alert(
         "external_request_count": 0,
         "production_write_count": 0,
     }
-    return DailyEodAlertIntent(
+    intent = DailyEodAlertIntent(
         **base,
         logical_content_fingerprint=_fingerprint(base),
     )
+    validate_daily_eod_alert_intent(intent)
+    return intent
+
+
+def validate_daily_eod_alert_intent(intent: DailyEodAlertIntent) -> None:
+    """Reject any alert envelope that differs from the canonical contract."""
+
+    if not isinstance(intent, DailyEodAlertIntent):
+        raise DailyEodAlertingError("alert intent is invalid")
+    try:
+        target_session = date.fromisoformat(intent.target_session)
+        status = CoordinatorStatus(intent.coordinator_status)
+    except ValueError as exc:
+        raise DailyEodAlertingError("alert intent identity is malformed") from exc
+    category, severity = _classification(status)
+    expected_deduplication_key = _fingerprint(
+        {
+            "contract_version": CONTRACT_VERSION,
+            "target_session": target_session.isoformat(),
+            "category": category,
+            "source_fingerprint": intent.source_fingerprint,
+        }
+    )
+    base = {
+        "contract_version": intent.contract_version,
+        "target_session": intent.target_session,
+        "category": intent.category,
+        "severity": intent.severity,
+        "coordinator_status": intent.coordinator_status,
+        "next_action": intent.next_action,
+        "reason_codes": intent.reason_codes,
+        "source_fingerprint": intent.source_fingerprint,
+        "deduplication_key": intent.deduplication_key,
+        "delivery_attempted": intent.delivery_attempted,
+        "external_request_count": intent.external_request_count,
+        "production_write_count": intent.production_write_count,
+    }
+    if (
+        intent.contract_version != CONTRACT_VERSION
+        or intent.category != category
+        or intent.severity is not severity
+        or not intent.next_action
+        or not intent.reason_codes
+        or any(not reason for reason in intent.reason_codes)
+        or not _is_fingerprint(intent.source_fingerprint)
+        or intent.deduplication_key != expected_deduplication_key
+        or intent.delivery_attempted
+        or intent.external_request_count != 0
+        or intent.production_write_count != 0
+        or not _is_fingerprint(intent.logical_content_fingerprint)
+        or intent.logical_content_fingerprint != _fingerprint(base)
+    ):
+        raise DailyEodAlertingError("alert intent contract is inconsistent")
 
 
 def _classification(

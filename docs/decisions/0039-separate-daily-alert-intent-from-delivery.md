@@ -55,8 +55,10 @@ the active operational model.
 - Stable deduplication identity exists before any channel is selected.
 - No result can claim that a user was notified merely because an intent was
   created.
-- Actual transport, durable reservation/receipt custody, channel credentials,
-  retries, escalation, and process-crash monitoring remain separate work.
+- At this decision's acceptance, transport and durable delivery custody were
+  separate work. ADR 0040 subsequently added at-most-once reservation/terminal
+  custody; channel credentials, transport, retries, escalation, and process-
+  crash reconciliation remain separate.
 - Exceptions that occur before a formal coordinator result still produce the
   existing rejected CLI result, not an alert intent; future watchdog or
   transport integration must cover that failure class.

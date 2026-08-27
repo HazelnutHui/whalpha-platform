@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import date
 
 import pytest
@@ -8,6 +9,7 @@ from tip_api.services.daily_eod_alerting import (
     AlertSeverity,
     DailyEodAlertingError,
     plan_daily_eod_alert,
+    validate_daily_eod_alert_intent,
 )
 from tip_api.services.daily_eod_coordinator import (
     CoordinatorStatus,
@@ -138,4 +140,18 @@ def test_rejects_target_session_mismatch() -> None:
         plan_daily_eod_alert(
             target_session=date(2026, 8, 28),
             result=result(CoordinatorStatus.BLOCKED, alert_required=True),
+        )
+
+
+def test_formal_intent_validation_rejects_tampering() -> None:
+    intent = plan_daily_eod_alert(
+        target_session=TARGET,
+        result=result(CoordinatorStatus.BLOCKED, alert_required=True),
+    )
+    assert intent is not None
+    validate_daily_eod_alert_intent(intent)
+
+    with pytest.raises(DailyEodAlertingError, match="inconsistent"):
+        validate_daily_eod_alert_intent(
+            replace(intent, next_action="silently_changed")
         )

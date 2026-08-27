@@ -162,6 +162,11 @@ It explicitly records that delivery was not attempted. No alert outbox,
 transport, channel credential, retry, receipt, or real notification exists.
 Because host and standing authorization bind exact Git revision, external
 artifacts remain deliberately unprovisioned until control-plane code is stable.
+ADR 0040 now adds repository-tested, at-most-once alert delivery custody under
+a separate immutable journal. It records `delivery_started` before an explicit
+transport call, deduplicates formally delivered intents, and blocks automatic
+retry after known failure or crash-ambiguous outcome. No alert root, transport,
+channel configuration, credential read, external request, or delivery exists.
 
 ## Analytics and presentation
 
