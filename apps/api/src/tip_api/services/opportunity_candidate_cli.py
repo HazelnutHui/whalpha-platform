@@ -52,9 +52,11 @@ from tip_api.services.market_regime_panel_cache import (
 )
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
 from tip_api.services.opportunity_candidate_oracle import (
+    CandidateOracleJob,
     CandidateIncrementalStateOracleCase,
     CandidateOracleComparisonV1,
     CandidateStateOracleCase,
+    compare_candidate_oracle_jobs,
     compare_with_independent_candidate_oracle,
 )
 from tip_api.services.opportunity_candidate_state import (
@@ -71,6 +73,7 @@ from tip_api.services.opportunity_candidates import (
 
 CANDIDATE_VALIDATION_TIERS = ("daily", "periodic", "code_change")
 CANDIDATE_PERIODIC_BUSINESS_ARTIFACT_COUNT = 8
+DEFAULT_CANDIDATE_MAX_WORKERS = 4
 
 
 @dataclass(frozen=True, slots=True)
@@ -171,6 +174,12 @@ def main(argv: list[str] | None = None) -> int:
         "--reference-audit",
         type=Path,
         help="Completed cold audit used only for periodic verification of an incremental output.",
+    )
+    parser.add_argument(
+        "--max-workers",
+        type=_worker_count,
+        default=DEFAULT_CANDIDATE_MAX_WORKERS,
+        help="Bounded Dell-local process workers for independent cold-replay session Oracles (1-8).",
     )
     args = parser.parse_args(argv)
     for name in (
@@ -276,6 +285,7 @@ def main(argv: list[str] | None = None) -> int:
                     prior_audit=prior_audit,
                     panel_cache_root=args.panel_cache_root,
                     expected_panel_source=source_payload,
+                    max_workers=args.max_workers,
                 )
         else:
             with profiler.stage("candidate_session_selection"):
@@ -293,6 +303,7 @@ def main(argv: list[str] | None = None) -> int:
                     data_root=args.data_root,
                     candidate_sessions=candidate_sessions,
                     regime_records=state_records,
+                    max_workers=args.max_workers,
                 )
         if (
             run.oracle_report.mismatch_count
@@ -326,6 +337,7 @@ def main(argv: list[str] | None = None) -> int:
             **_io_deltas(io_before, io_after),
             "candidate_session_count": len(candidate_sessions),
             f"candidate_validation_tier_{validation_tier}_count": 1,
+            "candidate_oracle_requested_max_workers": args.max_workers,
         }
         incremental_kwargs = {}
         if prior_audit is not None:
@@ -435,6 +447,16 @@ def _resolve_validation_tier(parser: argparse.ArgumentParser, args) -> str | Non
     if tier in {"periodic", "code_change"} and args.prior_candidate_audit is not None:
         parser.error(f"{tier} validation requires the cold full-replay path without --prior-candidate-audit")
     return tier
+
+
+def _worker_count(value: str) -> int:
+    try:
+        workers = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("max workers must be an integer") from exc
+    if not 1 <= workers <= 8:
+        raise argparse.ArgumentTypeError("max workers must be between 1 and 8")
+    return workers
 
 
 def _validate_completed_tier(
@@ -578,6 +600,7 @@ def _select_candidate_sessions(
 def _calculate_offline(
     *, data_root: Path, candidate_sessions: tuple[date, ...],
     regime_records: Sequence[MarketRegimeStateRecordV1],
+    max_workers: int = 1,
 ) -> CandidateOfflineRun:
     profiler = _StageProfiler()
     regime_by_key = {(item.as_of_session, item.universe_id): item for item in regime_records}
@@ -588,6 +611,7 @@ def _calculate_offline(
     states_by_universe_and_id: dict[tuple[str, UUID], list[OpportunityCandidateStateRecordV1]] = {}
     observations_by_universe_and_id: dict[tuple[str, UUID], list[CandidateStateObservationV1]] = {}
     oracle_reports: list[CandidateOracleComparisonV1] = []
+    oracle_jobs: list[CandidateOracleJob] = []
     final_session_risk = ()
 
     with profiler.stage("panel_load_validate"):
@@ -707,22 +731,26 @@ def _calculate_offline(
                     for mode in CandidateRiskMode
                 )
             final_session_risk = risk
-        with profiler.stage("candidate_independent_oracle"):
-            oracle_reports.append(
-                compare_with_independent_candidate_oracle(
-                    panel=panel,
-                    batches=tuple(session_batches),
-                    regime_context_by_universe={
-                        universe_id: (
-                            regime_by_key[(session, universe_id)].composite,
-                            regime_by_key[(session, universe_id)].confirmed_state,
-                        )
-                        for universe_id in PUBLIC_UNIVERSE_ORDER
-                    },
-                    risk_results=risk,
-                    state_cases=state_cases,
-                )
+        oracle_jobs.append(
+            CandidateOracleJob(
+                panel=panel,
+                batches=tuple(session_batches),
+                regime_context_by_universe={
+                    universe_id: (
+                        regime_by_key[(session, universe_id)].composite,
+                        regime_by_key[(session, universe_id)].confirmed_state,
+                    )
+                    for universe_id in PUBLIC_UNIVERSE_ORDER
+                },
+                risk_results=tuple(risk),
+                state_cases=tuple(state_cases),
             )
+        )
+
+    with profiler.stage("candidate_independent_oracle"):
+        oracle_reports.extend(
+            compare_candidate_oracle_jobs(oracle_jobs, max_workers=max_workers)
+        )
 
     current_risk = final_session_risk
     flattened_states = {
@@ -755,6 +783,8 @@ def _calculate_offline(
             **profiler.invocation_metrics(),
             "panel_load_count": len(candidate_sessions),
             "candidate_batch_count": len(candidate_sessions) * len(PUBLIC_UNIVERSE_ORDER),
+            "candidate_oracle_session_job_count": len(oracle_jobs),
+            "candidate_oracle_effective_max_workers": min(max_workers, len(oracle_jobs)),
         },
     )
 
@@ -767,6 +797,7 @@ def _calculate_incremental(
     prior_audit,
     panel_cache_root: Path | None = None,
     expected_panel_source: Mapping[str, Any] | None = None,
+    max_workers: int = 1,
 ) -> CandidateIncrementalRun:
     """Append exactly one session to a formally verified Candidate audit."""
 
@@ -975,6 +1006,8 @@ def _calculate_incremental(
             "reused_candidate_session_count": len(candidate_sessions) - 1,
             "panel_cache_hit_count": 1 if panel_cache_status == "hit" else 0,
             "panel_cache_write_count": 1 if panel_cache_status == "populated" else 0,
+            "candidate_oracle_session_job_count": 1,
+            "candidate_oracle_effective_max_workers": 1,
         },
         current_score_history=current_batches,
         panel_cache_status=panel_cache_status,
@@ -1401,9 +1434,13 @@ def _offline_socket_guard():
 
     class GuardedSocket(original_socket):
         def connect(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+            if self.family == socket.AF_UNIX:
+                return super().connect(*args, **kwargs)
             raise RuntimeError("network is prohibited during offline candidate calculation")
 
         def connect_ex(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+            if self.family == socket.AF_UNIX:
+                return super().connect_ex(*args, **kwargs)
             raise RuntimeError("network is prohibited during offline candidate calculation")
 
     def rejected(*args, **kwargs):  # type: ignore[no-untyped-def]

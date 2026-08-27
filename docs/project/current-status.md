@@ -168,7 +168,12 @@ and code/model-change cold-full-replay modes under ADR 0027. A real 2026-08-26
 periodic cold reference completed in 597.70 seconds; formal comparison with the
 final incremental audit took 197.20 seconds and matched all eight comparable
 business projections. Both audits had zero Oracle mismatch. Deterministic
-process parallelism is now next, with the serial path retained.
+process parallelism is now implemented only across independent cold-replay
+session Oracles under ADR 0028. Four workers reduced the real cold Oracle stage
+from 117.09 to 76.23 seconds and end-to-end time from 597.70 to 560.02 seconds;
+all nine business/Oracle files were byte-identical. Daily remains one effective
+Oracle worker because 2- and 4-worker inner-session prototypes were slower than
+serial. Daily EOD automation design is now next.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 
@@ -212,10 +217,10 @@ The active Candidate JSON is about 20.4 MB and should be split into summary
 and on-demand detail before the payload grows materially further. Dell remains
 the sole heavy-compute, historical-storage, and data-governance authority;
 OCI is only the static serving/Session boundary. The optimized full and
-incremental Candidate paths remain serial and have no explicit process pool
-yet. Provider requests
-retain their fixed serial request gates; immutable CPU-bound calculations are
-the safe parallelization target after incremental execution is complete.
+incremental Candidate calculations retain serial state/order custody. Cold
+replay alone may use the bounded session-Oracle process pool; daily append uses
+one effective Oracle worker. Provider requests retain their fixed serial
+request gates.
 
 ## Verification entry point
 

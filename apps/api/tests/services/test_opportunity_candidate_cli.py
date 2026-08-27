@@ -227,6 +227,19 @@ def test_daily_tier_requires_prior_audit_before_loading_services(monkeypatch, tm
         ])
 
 
+@pytest.mark.parametrize("value", ["0", "9", "not-a-number"])
+def test_cli_rejects_unsafe_worker_counts_before_loading_services(monkeypatch, tmp_path, value) -> None:
+    monkeypatch.setattr(cli, "_audit_api", lambda: pytest.fail("audit API must not load"))
+    with pytest.raises(SystemExit):
+        cli.main([
+            "--as-of-session", "2026-08-26",
+            "--data-root", str(tmp_path),
+            "--phase1b-audit", str(tmp_path / "phase1b"),
+            "--output-dir", str(tmp_path / "candidate"),
+            "--max-workers", value,
+        ])
+
+
 def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp_path, capsys) -> None:
     output = tmp_path / "candidate-audit"
     work = tmp_path / "candidate-work"
@@ -258,8 +271,12 @@ def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp
     assert '"status":"completed"' in capsys.readouterr().out
 
 
-def test_socket_guard_blocks_connect_dns_and_restores() -> None:
+def test_socket_guard_blocks_network_allows_local_process_ipc_and_restores(tmp_path) -> None:
     original = socket.socket
+    listener = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    local_path = tmp_path / "candidate-worker.sock"
+    listener.bind(str(local_path))
+    listener.listen(1)
     with cli._offline_socket_guard():
         with pytest.raises(RuntimeError, match="network is prohibited"):
             socket.create_connection(("127.0.0.1", 9))
@@ -269,6 +286,10 @@ def test_socket_guard_blocks_connect_dns_and_restores() -> None:
         with pytest.raises(RuntimeError, match="network is prohibited"):
             guarded.connect(("127.0.0.1", 9))
         guarded.close()
+        local = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        local.connect(str(local_path))
+        local.close()
+    listener.close()
     assert socket.socket is original
 
 
@@ -344,9 +365,25 @@ def test_two_session_offline_run_passes_oracle_and_replay_gates(monkeypatch, tmp
     assert all(item.parameter_fingerprint == CANDIDATE_STATE_PARAMETER_FINGERPRINT for rows in run.state_history.values() for item in rows)
     assert run.runtime_metrics["panel_load_count"] == 2
     assert run.runtime_metrics["candidate_score_calculation_invocation_count"] == 4
-    assert run.runtime_metrics["candidate_independent_oracle_invocation_count"] == 2
+    assert run.runtime_metrics["candidate_independent_oracle_invocation_count"] == 1
+    assert run.runtime_metrics["candidate_oracle_session_job_count"] == 2
+    assert run.runtime_metrics["candidate_oracle_effective_max_workers"] == 1
     assert Decimal(run.timings["candidate_score_calculation_wall_seconds"]) >= 0
     assert Decimal(run.timings["candidate_independent_oracle_cpu_seconds"]) >= 0
+
+    parallel = cli._calculate_offline(
+        data_root=tmp_path,
+        candidate_sessions=tuple(item.as_of_session for item in panels),
+        regime_records=_regime_records(panels),
+        max_workers=2,
+    )
+    assert parallel.oracle_report == run.oracle_report
+    assert parallel.equivalence_flags == run.equivalence_flags
+    assert parallel.score_history == run.score_history
+    assert parallel.state_history == run.state_history
+    assert parallel.current_risk_results == run.current_risk_results
+    assert parallel.runtime_metrics["candidate_oracle_session_job_count"] == 2
+    assert parallel.runtime_metrics["candidate_oracle_effective_max_workers"] == 2
 
 
 def test_incremental_panel_uses_exact_stage_cache_without_data_read(monkeypatch) -> None:
@@ -440,6 +477,7 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
         regime_records=_regime_records(panels),
     )
     captured = {}
+    calculation_kwargs = {}
 
     def write_audit(**kwargs):
         captured.update(kwargs)
@@ -472,7 +510,11 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
         "_list_available_eod_sessions",
         lambda path: tuple(item.as_of_session for item in panels),
     )
-    monkeypatch.setattr(cli, "_calculate_offline", lambda **kwargs: run)
+    monkeypatch.setattr(
+        cli,
+        "_calculate_offline",
+        lambda **kwargs: calculation_kwargs.update(kwargs) or run,
+    )
 
     assert cli.main([
         "--as-of-session", panels[-1].as_of_session.isoformat(),
@@ -485,6 +527,8 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
     assert len(captured["candidate_batches"]) == 4
     assert captured["risk_results"] == run.current_risk_results
     assert captured["runtime_metrics"]["candidate_session_count"] == 2
+    assert captured["runtime_metrics"]["candidate_oracle_requested_max_workers"] == 4
+    assert calculation_kwargs["max_workers"] == 4
     assert "candidate_offline_calculation_wall_seconds" in captured["timings"]
     assert "audit_projection_build_cpu_seconds" in captured["timings"]
     assert "panel" not in captured
@@ -568,6 +612,7 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
             candidate_sessions=tuple(item.as_of_session for item in panels),
             regime_records=regimes,
             prior_audit=prior,
+            max_workers=4,
         )
 
         def batch_fingerprints(run):
@@ -595,6 +640,7 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
         )
         assert incremental.oracle_report.mismatch_count == 0
         assert all(incremental.equivalence_flags.values())
+        assert incremental.runtime_metrics["candidate_oracle_effective_max_workers"] == 1
 
         manifest = write_opportunity_candidate_audit(
             output_dir=incremental_dir,

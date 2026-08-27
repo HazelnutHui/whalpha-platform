@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-27 — Deterministic cold-replay Oracle process parallelism
+
+- Accepted ADR 0028 and added bounded 1–8 worker `forkserver` execution across
+  independent cold-replay session Oracles. Workers disable network/DNS and the
+  parent retains chronological state, ordered merge, aggregate fingerprints,
+  and audit custody. Worker failures propagate without fallback.
+- Four workers reduced the real 2026-08-26 cold Oracle stage from 117.09 to
+  76.23 seconds and end-to-end cold replay from 597.70 to 560.02 seconds. Nine
+  business/Oracle files, the audit logical fingerprint, and Oracle fingerprint
+  were exact; Oracle mismatch was zero.
+- Rejected a one-session Universe-level process prototype after real serial,
+  2-worker, and 4-worker runs took 277.81, 286.99, and 291.22 seconds. Daily
+  therefore retains one effective Oracle worker.
+- No `/data`, publication, Snapshot, bundle, deployment, OCI, credential,
+  provider, or scheduler state changed.
+
 ## 2026-08-27 — Explicit Candidate validation tiers
 
 - Accepted ADR 0027 and added executable `daily`, `periodic`, and

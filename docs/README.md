@@ -153,6 +153,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0025: Share Formally Validated Panels Between Dell Stages](decisions/0025-share-formally-validated-panels-between-dell-stages.md)
 - [ADR 0026: Stream and Resume Candidate Audit Artifacts](decisions/0026-stream-and-resume-candidate-audit-artifacts.md)
 - [ADR 0027: Make Candidate Validation Tiers Explicit](decisions/0027-make-candidate-validation-tiers-explicit.md)
+- [ADR 0028: Parallelize Only Independent Cold-Replay Oracle Sessions](decisions/0028-parallelize-only-independent-cold-replay-oracle-sessions.md)
 
 ## Project
 

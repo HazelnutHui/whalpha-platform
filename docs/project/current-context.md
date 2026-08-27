@@ -93,8 +93,12 @@ was zero. Repository source now explicitly enforces `daily`, `periodic`, and
 2026-08-26 periodic cold reference took 597.70 seconds and the formal
 incremental-versus-cold comparison took 197.20 seconds; all eight comparable
 business projections matched and both audits had zero Oracle mismatch.
-Deterministic process parallelism remains the next optimization before
-automation.
+Repository source now also applies ADR 0028's bounded process parallelism only
+to independent cold-replay session Oracles. Four workers reduced the same cold
+Oracle stage from 117.09 to 76.23 seconds and end-to-end time from 597.70 to
+560.02 seconds; all nine business/Oracle files and both aggregate fingerprints
+were exact. A measured inner-daily parallel prototype was slower, so daily
+keeps one effective Oracle worker. Daily EOD automation design is next.
 
 ## Analytics and presentation
 

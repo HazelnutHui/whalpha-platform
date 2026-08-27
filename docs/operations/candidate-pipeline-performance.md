@@ -100,6 +100,7 @@ scripts/admin/calculate-opportunity-candidates-offline.sh \
   --data-root /data/trading-intelligence-platform \
   --phase1b-audit /tmp/<exact-completed-phase1b-audit> \
   --validation-tier periodic \
+  --max-workers 4 \
   --audit-work-dir /tmp/<new-cold-reference-work-directory> \
   --output-dir /tmp/<new-cold-reference-audit>
 
@@ -194,10 +195,33 @@ development results; `/data` and Production were unchanged.
 
 ## Next performance sequence
 
-1. Process-parallelize only independent CPU work using stable `instrument_id`
-   shards; merge and fingerprint in one deterministic parent order.
-2. Split Candidate public summary and on-demand detail payloads. This changes
+1. Split Candidate public summary and on-demand detail payloads. This changes
    neither guest/credential capability parity nor the Dell/OCI boundary.
+
+## 2026-08-27 deterministic process-parallel result
+
+ADR 0028 adds bounded 1–8 worker execution for independent full-session
+Oracles in cold periodic and code-change replay. Workers use an isolated
+`forkserver`, disable network and DNS, and return results to the parent in the
+original session order. The parent retains state recursion, ordering,
+comparison, aggregate fingerprints, and audit custody. A daily append has one
+Oracle session and therefore remains one effective worker.
+
+For a parallel Oracle stage, the recorded process CPU field covers the
+coordinating parent, not total forkserver-worker CPU. Use stage wall time,
+worker/job counters, and serial-equivalence evidence for performance decisions.
+
+On the same four-session 2026-08-26 cold replay, 4 workers reduced the Oracle
+stage from 117.09 to 76.23 seconds, pre-writer time from 459.05 to 420.18
+seconds, and end-to-end time from 597.70 to 560.02 seconds. All nine
+business/Oracle artifacts were byte-identical, logical and Oracle fingerprints
+were exact, and Oracle mismatch was zero.
+
+A one-session inner-Oracle prototype was rejected after measurement: serial,
+2-worker, and 4-worker end-to-end times were 277.81, 286.99, and 291.22 seconds
+respectively. Its outputs were exact, but safe process transfer cost exceeded
+the available parallel work. Daily keeps the faster serial Oracle rather than
+using cores performatively.
 
 ## 2026-08-27 explicit validation-tier result
 

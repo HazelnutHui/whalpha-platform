@@ -3,8 +3,9 @@
 - Next operational step: continue the Dell-only daily pipeline optimization
   after the verified Candidate append and Phase 1b stable-prefix correction:
   verified-prior Phase 1b append, immutable panel-stage reuse, and streaming/
-  resumable Candidate audit output, and explicit validation tiers are complete;
-  next add deterministic process parallelism. Publication, Snapshot, bundle,
+  resumable Candidate audit output, explicit validation tiers, and bounded
+  deterministic cold-Oracle process parallelism are complete. Publication,
+  Snapshot, bundle,
   and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
@@ -124,15 +125,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Immutable formally validated Phase 1a/Candidate panel-stage reuse
 - [x] Streaming and resumable source-bound Candidate audit stages
 - [x] Candidate daily/periodic/code-change validation tiers
-- [ ] Deterministic Candidate process parallelism with serial equivalence
+- [x] Deterministic cold-replay Candidate Oracle process parallelism with serial equivalence
 
 ## Next Small Target
 
-Add deterministic Candidate process parallelism for independent stable-ID
-shards, retaining serial reference execution, canonical parent-order merge,
-exact fingerprints, and fail-closed equivalence. Publication, Snapshot, bundle,
-and OCI deployment remain independent approval-bound operations. Keep SEC B2
-paused.
+Design the approval-bound daily EOD automation state machine around the
+completed verified-prior, recovery, validation-tier, and bounded cold-Oracle
+paths. Keep serial daily Oracle execution, formal failure escalation, and
+atomic custody. Publication, Snapshot, bundle, and OCI deployment remain
+independent approval-bound operations. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

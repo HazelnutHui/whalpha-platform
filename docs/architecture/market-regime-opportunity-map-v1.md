@@ -631,6 +631,12 @@ the code/model-change path requires the cold full replay. Mode/date/reference
 drift fails closed. This is an audit and automation boundary, not a claim of
 predictive efficacy or publication authorization.
 
+ADR 0028 permits deterministic process parallelism only across independent
+cold-replay session Oracles. Isolated workers have no network/DNS access; the
+parent preserves chronological state, canonical order, comparisons, aggregate
+fingerprints, and audit delivery. Daily append keeps one effective Oracle
+worker because measured Universe-level process splitting was slower.
+
 The first accepted formal Phase 5 audit covers 2026-08-21 and 2026-08-24 under
 candidate calculation `market-regime-opportunity-candidate-v1.1.1`. Its
 logical fingerprint is

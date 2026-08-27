@@ -138,6 +138,13 @@ and current risk records. `code_change` requires schema 1.0 cold full replay.
 Incremental and cold Oracle artifacts are each validated but not compared to
 one another because their intentionally declared session scopes differ.
 
+Cold replay may calculate its complete per-session independent Oracles in
+separate processes. Session jobs and results retain canonical session order;
+the parent performs the unchanged aggregate Oracle fingerprint. Requested and
+effective worker counts are physical runtime evidence only. Daily incremental
+execution has one Oracle session and remains serial. Parallel and serial cold
+outputs must be exact across every business and Oracle artifact.
+
 This contract freezes the machine-readable calculation boundary for the
 product described in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).

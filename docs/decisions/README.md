@@ -50,3 +50,4 @@ Each ADR should include:
 - [0025: Share Formally Validated Panels Between Dell Stages](0025-share-formally-validated-panels-between-dell-stages.md)
 - [0026: Stream and Resume Candidate Audit Artifacts](0026-stream-and-resume-candidate-audit-artifacts.md)
 - [0027: Make Candidate Validation Tiers Explicit](0027-make-candidate-validation-tiers-explicit.md)
+- [0028: Parallelize Only Independent Cold-Replay Oracle Sessions](0028-parallelize-only-independent-cold-replay-oracle-sessions.md)

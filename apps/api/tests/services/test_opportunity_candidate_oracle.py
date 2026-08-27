@@ -6,6 +6,8 @@ from decimal import Decimal, Inexact, ROUND_DOWN, Rounded, localcontext
 from pathlib import Path
 from uuid import UUID, uuid5
 
+import pytest
+
 from tip_api.contracts.analytics.v1 import (
     CandidateBreakoutAvailability,
     CandidateBreakoutFactV1,
@@ -26,7 +28,9 @@ from tip_api.services.market_regime_sources import (
     MarketRegimeUniverseSource,
 )
 from tip_api.services.opportunity_candidate_oracle import (
+    CandidateOracleJob,
     CandidateStateOracleCase,
+    compare_candidate_oracle_jobs,
     compare_with_independent_candidate_oracle,
 )
 from tip_api.services.opportunity_candidate_state import replay_opportunity_candidate_state_history
@@ -214,6 +218,57 @@ def test_independent_oracle_reproduces_scores_risks_and_bootstrap_state() -> Non
     assert report.state_record_count == 1
     assert report.shared_raw_fact_match
     assert report.input_permutation_match
+
+
+def test_process_parallel_session_oracles_are_exactly_equal_to_serial_reference() -> None:
+    panel = _panel()
+    batches, risks = _actuals(panel)
+    job = CandidateOracleJob(
+        panel=panel,
+        batches=batches,
+        regime_context_by_universe={
+            PRIMARY: (Decimal("62.5000"), RegimeState.BALANCED),
+            SECONDARY: (Decimal("58.2500"), RegimeState.DEFENSIVE),
+        },
+        risk_results=risks,
+        state_cases=(_state_case(panel, batches[0]),),
+    )
+    serial = compare_candidate_oracle_jobs((job, job), max_workers=1)
+    parallel = compare_candidate_oracle_jobs((job, job), max_workers=2)
+    assert parallel == serial
+
+
+def test_process_parallel_session_oracle_propagates_worker_failure() -> None:
+    panel = _panel()
+    batches, risks = _actuals(panel)
+    valid = CandidateOracleJob(
+        panel=panel,
+        batches=batches,
+        regime_context_by_universe={
+            PRIMARY: (Decimal("62.5000"), RegimeState.BALANCED),
+            SECONDARY: (Decimal("58.2500"), RegimeState.DEFENSIVE),
+        },
+        risk_results=risks,
+    )
+    invalid = replace(valid, regime_context_by_universe={})
+    with pytest.raises(KeyError):
+        compare_candidate_oracle_jobs((valid, invalid), max_workers=2)
+
+
+@pytest.mark.parametrize("max_workers", [0, 9, True])
+def test_oracle_rejects_unsafe_worker_counts(max_workers) -> None:
+    panel = _panel()
+    batches, risks = _actuals(panel)
+    with pytest.raises(ValueError, match="max_workers"):
+        compare_candidate_oracle_jobs((CandidateOracleJob(
+            panel=panel,
+            batches=batches,
+            regime_context_by_universe={
+                PRIMARY: (Decimal("62.5000"), RegimeState.BALANCED),
+                SECONDARY: (Decimal("58.2500"), RegimeState.DEFENSIVE),
+            },
+            risk_results=risks,
+        ),), max_workers=max_workers)
 
 
 def test_one_field_mutation_is_reported() -> None:

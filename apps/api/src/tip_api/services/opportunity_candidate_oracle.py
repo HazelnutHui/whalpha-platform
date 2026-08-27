@@ -8,8 +8,11 @@ from __future__ import annotations
 
 import hashlib
 import json
+import multiprocessing
+import socket
 import unicodedata
 from collections import defaultdict
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, replace
 from datetime import date
 from decimal import (
@@ -114,6 +117,20 @@ class CandidateOracleComparisonV1:
     shared_raw_fact_match: bool
     input_permutation_match: bool
     oracle_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
+class CandidateOracleJob:
+    """One complete session Oracle, independent of every other session job."""
+
+    panel: MarketRegimeInputPanel
+    batches: tuple[OpportunityCandidateBatchV1, ...]
+    regime_context_by_universe: Mapping[
+        str, tuple[Decimal | str | None, RegimeState | str | None]
+    ]
+    risk_results: tuple[CandidateRiskModeResultV1, ...] = ()
+    state_cases: tuple[CandidateStateOracleCase, ...] = ()
+    incremental_state_cases: tuple[CandidateIncrementalStateOracleCase, ...] = ()
 
 
 @dataclass(frozen=True, slots=True)
@@ -254,6 +271,61 @@ def compare_with_independent_candidate_oracle(
         input_permutation_match=permuted_match,
         oracle_fingerprint=fingerprint,
     )
+
+
+def compare_candidate_oracle_jobs(
+    jobs: Sequence[CandidateOracleJob],
+    *,
+    max_workers: int = 1,
+) -> tuple[CandidateOracleComparisonV1, ...]:
+    """Run independent session Oracles and retain exact caller order."""
+
+    ordered = tuple(jobs)
+    if not ordered:
+        raise ValueError("Candidate Oracle jobs cannot be empty")
+    if type(max_workers) is not int or not 1 <= max_workers <= 8:
+        raise ValueError("Candidate Oracle max_workers must be between 1 and 8")
+    if max_workers == 1 or len(ordered) == 1:
+        return tuple(_run_candidate_oracle_job(job) for job in ordered)
+    with ProcessPoolExecutor(
+        max_workers=min(max_workers, len(ordered)),
+        mp_context=multiprocessing.get_context("forkserver"),
+        initializer=_disable_oracle_worker_network,
+    ) as executor:
+        return tuple(executor.map(_run_candidate_oracle_job, ordered, chunksize=1))
+
+
+def _run_candidate_oracle_job(job: CandidateOracleJob) -> CandidateOracleComparisonV1:
+    return compare_with_independent_candidate_oracle(
+        panel=job.panel,
+        batches=job.batches,
+        regime_context_by_universe=job.regime_context_by_universe,
+        risk_results=job.risk_results,
+        state_cases=job.state_cases,
+        incremental_state_cases=job.incremental_state_cases,
+    )
+
+
+def _disable_oracle_worker_network() -> None:
+    original_socket = socket.socket
+
+    class GuardedSocket(original_socket):
+        def connect(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+            if self.family == socket.AF_UNIX:
+                return super().connect(*args, **kwargs)
+            raise RuntimeError("network is prohibited in Candidate Oracle workers")
+
+        def connect_ex(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+            if self.family == socket.AF_UNIX:
+                return super().connect_ex(*args, **kwargs)
+            raise RuntimeError("network is prohibited in Candidate Oracle workers")
+
+    def rejected(*args, **kwargs):  # type: ignore[no-untyped-def]
+        raise RuntimeError("network is prohibited in Candidate Oracle workers")
+
+    socket.socket = GuardedSocket
+    socket.create_connection = rejected
+    socket.getaddrinfo = rejected
 
 
 def _oracle_batch(
@@ -740,8 +812,14 @@ def _permutation_match(*, panel, batches, regime_context_by_universe, expected):
     reversed_panel = replace(panel, bars=tuple(reversed(panel.bars)))
     for actual in batches:
         score, state = regime_context_by_universe[actual.universe_id]
-        permuted, _ = _oracle_batch(panel=reversed_panel, actual=actual, regime_score=None if score is None else Decimal(score), regime_state=None if state is None else RegimeState(state))
-        if permuted.logical_fingerprint != expected[actual.universe_id].logical_fingerprint: return False
+        permuted, _ = _oracle_batch(
+            panel=reversed_panel,
+            actual=actual,
+            regime_score=None if score is None else Decimal(score),
+            regime_state=None if state is None else RegimeState(state),
+        )
+        if permuted.logical_fingerprint != expected[actual.universe_id].logical_fingerprint:
+            return False
     return True
 
 
