@@ -46,13 +46,14 @@ def _readiness(attempts=(), *, checked=CHECKED):
     )
 
 
-def _reserve(config, *, checked=CHECKED, attempts=()):
+def _reserve(config, *, checked=CHECKED, attempts=(), **kwargs):
     plan = _readiness(attempts, checked=checked)
     return custody.reserve_acquisition_attempt(
         config=config,
         checked_at=checked,
         expected_readiness_fingerprint=plan.logical_content_fingerprint,
         clock=lambda: checked,
+        **kwargs,
     )
 
 
@@ -71,7 +72,11 @@ def _package_evidence(config) -> FetchPackageEvidenceV1:
 
 def test_reserves_without_executing_provider_request(tmp_path) -> None:
     config = _config(tmp_path)
-    result = _reserve(config)
+    result = _reserve(
+        config,
+        authorization_file_sha256="c" * 64,
+        authorization_content_sha256="d" * 64,
+    )
     assert result.outcome == "reserved"
     assert result.as_dict()["provider_request_executed_by_custody"] is False
     assert result.as_dict()["credential_access_count"] == 0
@@ -81,6 +86,8 @@ def test_reserves_without_executing_provider_request(tmp_path) -> None:
         events = journal.read_events()
     assert [item.event_type for item in events] == ["acquisition_started"]
     assert events[0].details["attempt_number"] == 1
+    assert events[0].details["authorization_file_sha256"] == "c" * 64
+    assert events[0].details["authorization_content_sha256"] == "d" * 64
 
 
 def test_stale_readiness_or_unresolved_attempt_rejects_duplicate(tmp_path) -> None:
@@ -103,11 +110,13 @@ def test_nonready_outcome_becomes_bounded_readiness_history(tmp_path) -> None:
     finished = custody.record_acquisition_outcome(
         config=config,
         outcome=AttemptOutcome.NOT_READY,
+        authorization_decision_fingerprint="e" * 64,
         clock=lambda: datetime(2026, 8, 27, 20, 32, tzinfo=UTC),
     )
     assert finished.outcome == "not_ready"
     assert finished.readiness_plan is not None
     assert finished.readiness_plan.next_check_at == "2026-08-27T20:45:00+00:00"
+    assert finished.event.details["authorization_decision_fingerprint"] == "e" * 64
     with locked_daily_eod_run_journal(
         run_root=config.run_root, target_session=TARGET
     ) as journal:

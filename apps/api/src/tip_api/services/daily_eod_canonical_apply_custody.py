@@ -109,6 +109,8 @@ def reserve_canonical_apply(
     config: DailyEodCanonicalApplyConfig,
     checked_at: datetime,
     expected_readiness_fingerprint: str,
+    authorization_file_sha256: str | None = None,
+    authorization_content_sha256: str | None = None,
     clock: Clock = lambda: datetime.now(UTC),
     plan_reader: PlanReader = read_catchup_approval_plan_evidence,
     inventory_reader: InventoryReader = inventory_fingerprint,
@@ -124,6 +126,10 @@ def reserve_canonical_apply(
         )
     if not _is_fingerprint(expected_readiness_fingerprint):
         raise DailyEodCanonicalApplyCustodyError("readiness fingerprint is malformed")
+    _validate_authorization_binding(
+        authorization_file_sha256,
+        authorization_content_sha256,
+    )
     with locked_daily_eod_run_journal(
         run_root=config.run_root,
         target_session=config.target_session,
@@ -193,6 +199,8 @@ def reserve_canonical_apply(
                 "approval_plan_content_sha256": evidence.plan_content_sha256,
                 "expected_current_state_fingerprint": evidence.expected_current_state_fingerprint,
                 "execution_input_fingerprint": input_fingerprint,
+                "authorization_file_sha256": authorization_file_sha256,
+                "authorization_content_sha256": authorization_content_sha256,
             },
         )
         return CanonicalApplyCustodyResult(
@@ -208,12 +216,19 @@ def reserve_canonical_apply(
 def record_canonical_apply_success(
     *,
     config: DailyEodCanonicalApplyConfig,
+    authorization_decision_fingerprint: str | None = None,
     clock: Clock = lambda: datetime.now(UTC),
     planner: Planner = plan_daily_eod_automation,
 ) -> CanonicalApplyCustodyResult:
     """Record success only after formal canonical state proves plan advancement."""
 
     _validate_config(config)
+    if authorization_decision_fingerprint is not None and not _is_fingerprint(
+        authorization_decision_fingerprint
+    ):
+        raise DailyEodCanonicalApplyCustodyError(
+            "authorization decision fingerprint is malformed"
+        )
     with locked_daily_eod_run_journal(
         run_root=config.run_root,
         target_session=config.target_session,
@@ -238,6 +253,7 @@ def record_canonical_apply_success(
                 "automation_status": current.status.value,
                 "automation_next_action": current.next_action.value,
                 "reason_code": "canonical_stage_completed_and_replanned",
+                "authorization_decision_fingerprint": authorization_decision_fingerprint,
             },
         )
         return CanonicalApplyCustodyResult(
@@ -481,6 +497,19 @@ def _validate_config(config: DailyEodCanonicalApplyConfig) -> None:
     ):
         raise DailyEodCanonicalApplyCustodyError(
             "canonical apply fingerprints are malformed"
+        )
+
+
+def _validate_authorization_binding(
+    file_sha256: str | None,
+    content_sha256: str | None,
+) -> None:
+    if (file_sha256 is None) != (content_sha256 is None) or (
+        file_sha256 is not None
+        and (not _is_fingerprint(file_sha256) or not _is_fingerprint(content_sha256))
+    ):
+        raise DailyEodCanonicalApplyCustodyError(
+            "authorization artifact binding is malformed"
         )
 
 

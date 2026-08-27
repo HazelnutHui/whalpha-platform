@@ -58,3 +58,4 @@ Each ADR should include:
 - [0033: Bound Standing Daily Data Authorization](0033-bound-standing-daily-data-authorization.md)
 - [0034: Coordinate Exactly One Daily Transition](0034-coordinate-exactly-one-daily-transition.md)
 - [0035: Custody Canonical Daily Apply](0035-custody-canonical-daily-apply.md)
+- [0036: Compose Authorized Daily Data Capabilities](0036-compose-authorized-daily-data-capabilities.md)

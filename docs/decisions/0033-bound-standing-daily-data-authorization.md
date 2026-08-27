@@ -100,3 +100,9 @@ assumptions can change without a forced review checkpoint.
 
 Rejected as the target operating model, while remaining the default until an
 external authorization artifact and host SHA pin are explicitly activated.
+
+ADR 0036 later advances the authorized-transition request to 1.1 before any
+real activation. Apply now binds `canonical_apply_started`, the canonical data
+root is `/data/trading-intelligence-platform`, and Identity authorization
+permits the existing formally bounded maximum of 20 paginated HTTP requests.
+The standing authorization artifact contract remains 1.0.

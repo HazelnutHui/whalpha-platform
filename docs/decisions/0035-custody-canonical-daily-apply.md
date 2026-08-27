@@ -38,6 +38,8 @@ Before an external apply, custody must hold the global lock and prove:
 
 Reservation appends `canonical_apply_started` with only non-sensitive exact
 bindings and then releases the lock. It does not authorize or execute apply.
+ADR 0036 later adds the externally pinned authorization file/content hashes to
+that start and binds the resulting start event into authorization request 1.1.
 
 After an externally authorized apply returns, success may be recorded only when
 the exact-session automation planner formally proves the named canonical stage

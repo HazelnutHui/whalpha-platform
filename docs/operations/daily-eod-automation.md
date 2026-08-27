@@ -167,15 +167,15 @@ offline calculation, and publication review. It never loops or retries.
 Provider fetch and canonical apply are explicit capability ports and are absent
 by default. An installed capability must bind the exact target and readiness
 fingerprint, return one formal event fingerprint, and cannot claim more than
-one request or one canonical write. A future real adapter must independently
-satisfy ADR 0032, ADR 0033, and ADR 0035; the coordinator does not grant
-authority.
+20 Identity HTTP requests, one EOD HTTP request, or one canonical Apply. The
+ADR 0036 adapters independently satisfy ADR 0032, ADR 0033, and ADR 0035; the
+coordinator does not grant authority.
 Offline execution is also opt-in per invocation and delegates exactly one
 action to ADR 0030.
 
-There is no coordinator CLI or scheduler entry yet. No real capability, run
-root, authorization artifact, provider request, or canonical write was created
-by this implementation.
+There is no coordinator CLI or scheduler entry yet. The capability ports remain
+uninstalled by default. No real run root, authorization artifact, credential
+read, provider request, or canonical write was created by this implementation.
 
 ## Canonical Apply custody
 
@@ -195,8 +195,29 @@ unchanged, or blocked for partial/changed/ambiguous state. Partial Identity
 publication may use the existing `verify-then-complete` boundary only after
 separate diagnosis and authorization.
 
-There is no real Apply capability or CLI for this custody layer yet, and no
+No Apply adapter is installed and there is no CLI for this custody layer; no
 real journal root or Apply was created.
+
+## Authorized capability adapters
+
+ADR 0036 adds executable but explicitly uninstalled fetch and Apply adapters.
+They reread and preflight the externally SHA-pinned grant before reservation,
+bind the new custody start into authorized-transition request 1.1, and only
+then cross the existing credential/network or canonical-write boundary.
+Authorization file/content hashes are retained on the start and the decision
+fingerprint on a formally completed terminal.
+
+Identity uses a per-invocation counting transport and reports its actual 1–20
+HTTP requests; EOD remains exactly one. Known bounded provider outcomes are
+recorded normally. Unexpected fetch exceptions and every Apply exception stay
+unresolved for explicit recovery, so neither request nor Apply is silently
+replayed. The authorized canonical root is
+`/data/trading-intelligence-platform`, not `/data`.
+
+Construction performs no I/O, and the coordinator receives no capability
+unless one is explicitly supplied. No real adapter was installed or invoked;
+no authorization artifact, host SHA pin, credential read, request, Apply,
+notification, or scheduler state exists.
 
 ## Read-only plan
 
@@ -332,9 +353,9 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Real ADR 0032/0033/0035 fetch and canonical-Apply capability adapters, followed
-   by explicit review/provisioning of a standing-authorization artifact and
-   its separate host SHA pin, or continued manual approval for those actions.
+1. A default-disabled host configuration and coordinator CLI that can install
+   the ADR 0036 adapters only from explicit external authorization paths and
+   SHA pin, followed by review/provisioning or continued manual approval.
 2. Actual alert delivery and a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
 3. Separate authorization decisions for publication, Snapshot/bundle, OCI
@@ -350,4 +371,6 @@ directory, artifact, SHA pin, or authorized transition exists. The coordinator
 core is implemented and tested with default-absent provider/apply capabilities;
 it has no real CLI or scheduler entry. Canonical Apply reservation and no-write
 recovery are repository-tested under journal 1.2, but no real Apply adapter,
-reservation, or recovery ran.
+reservation, or recovery ran. ADR 0036 adapters are repository-tested but have
+not been installed or invoked against real authorization, credentials, Massive,
+or `/data`.

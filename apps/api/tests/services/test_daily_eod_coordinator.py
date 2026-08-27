@@ -207,7 +207,7 @@ def test_fetch_capability_is_called_exactly_once_with_exact_context() -> None:
     assert result.production_write_count == 0
 
 
-def test_fetch_capability_cannot_claim_two_requests() -> None:
+def test_identity_fetch_capability_can_report_bounded_pagination() -> None:
     def fetch(context):
         return AuthorizedTransitionEvidence(
             operation=context.operation,
@@ -217,7 +217,40 @@ def test_fetch_capability_cannot_claim_two_requests() -> None:
             event_fingerprint="f" * 64,
             external_request_count=2,
             production_write_count=0,
+            reason_code="two_page_identity_fetch",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(),
+        checked_at=AFTER_STABILIZATION,
+        planner=planner(plan(NextAction.PREPARE_IDENTITY_CATCHUP)),
+        journal_reader=journal(),
+        fetch_capability=fetch,
+    )
+
+    assert result.external_request_count == 2
+
+
+def test_identity_fetch_capability_cannot_claim_more_than_twenty_requests() -> None:
+    def fetch(context):
+        return AuthorizedTransitionEvidence(
+            operation=context.operation,
+            target_session=TARGET.isoformat(),
+            precondition_fingerprint=context.readiness_plan.logical_content_fingerprint,
+            outcome="succeeded",
+            event_fingerprint="f" * 64,
+            external_request_count=21,
+            production_write_count=0,
             reason_code="too_many_requests",
+        )
+
+    with pytest.raises(DailyEodCoordinatorError, match="evidence is invalid"):
+        coordinate_daily_eod_transition(
+            config=config(),
+            checked_at=AFTER_STABILIZATION,
+            planner=planner(plan(NextAction.PREPARE_IDENTITY_CATCHUP)),
+            journal_reader=journal(),
+            fetch_capability=fetch,
         )
 
 

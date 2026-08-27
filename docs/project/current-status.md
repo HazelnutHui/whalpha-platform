@@ -204,14 +204,22 @@ directory, artifact, pin, or transition exists; current real operations still
 require manual approval. ADR 0034 now adds the repository-tested coordinator
 core with one-transition maximum, default-absent provider/apply capabilities,
 explicit recovery stops, opt-in offline execution, and a hard stop at
-publication review. It has no real CLI, adapter, authorization activation,
-request, or write. Authorized fetch/apply adapters remain next.
+publication review. It has no real CLI, installed adapter, authorization
+activation, request, or write.
 ADR 0035 now adds repository-tested canonical Identity/EOD Apply custody under
 journal 1.2. Reservation binds the completed acquisition, frozen plan SHA,
 package hashes, expected inventory, absent targets, and exact paths; recovery
 never writes and distinguishes formally complete, provably untouched, and
-partial/ambiguous state. No real Apply adapter, reservation, recovery, or
-`/data` write exists.
+partial/ambiguous state. No real Apply reservation, recovery, or `/data` write
+occurred through this layer.
+ADR 0036 now adds repository-tested standing-authorized fetch/Apply capability
+adapters. They preflight the external grant before reservation or credential
+access, bind acquisition/Apply starts to request 1.1, preserve actual bounded
+Identity HTTP request counts, and leave unknown fetch or any Apply exception
+unresolved for recovery. The corrected authorized canonical root is
+`/data/trading-intelligence-platform`; coordinator contract is 1.1. The ports
+remain absent unless explicitly installed, and no real authorization, host
+pin, credential read, request, Apply, CLI, or scheduler entry exists.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

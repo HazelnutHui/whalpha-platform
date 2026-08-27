@@ -115,6 +115,8 @@ def reserve_acquisition_attempt(
     config: DailyEodAcquisitionConfig,
     checked_at: datetime,
     expected_readiness_fingerprint: str,
+    authorization_file_sha256: str | None = None,
+    authorization_content_sha256: str | None = None,
     clock: Clock = lambda: datetime.now(UTC),
 ) -> AcquisitionCustodyResult:
     """Reserve one separately authorized fetch without executing it."""
@@ -126,6 +128,10 @@ def reserve_acquisition_attempt(
         raise DailyEodAcquisitionCustodyError("readiness plan is outside the reservation age window")
     if not _is_fingerprint(expected_readiness_fingerprint):
         raise DailyEodAcquisitionCustodyError("readiness fingerprint is malformed")
+    _validate_authorization_binding(
+        authorization_file_sha256,
+        authorization_content_sha256,
+    )
     with locked_daily_eod_run_journal(
         run_root=config.run_root,
         target_session=config.target_session,
@@ -172,6 +178,8 @@ def reserve_acquisition_attempt(
                 "execution_input_fingerprint": _execution_input_fingerprint(config),
                 "package_path": str(config.package_path),
                 "attempt_number": len(attempts) + 1,
+                "authorization_file_sha256": authorization_file_sha256,
+                "authorization_content_sha256": authorization_content_sha256,
             },
         )
         return AcquisitionCustodyResult(
@@ -188,12 +196,19 @@ def record_acquisition_outcome(
     config: DailyEodAcquisitionConfig,
     outcome: AttemptOutcome,
     retry_after_seconds: int | None = None,
+    authorization_decision_fingerprint: str | None = None,
     clock: Clock = lambda: datetime.now(UTC),
 ) -> AcquisitionCustodyResult:
     """Record the result of an externally authorized fetch under exact custody."""
 
     _validate_config(config, require_new_package=False)
     _validate_outcome(outcome, retry_after_seconds)
+    if authorization_decision_fingerprint is not None and not _is_fingerprint(
+        authorization_decision_fingerprint
+    ):
+        raise DailyEodAcquisitionCustodyError(
+            "authorization decision fingerprint is malformed"
+        )
     with locked_daily_eod_run_journal(
         run_root=config.run_root,
         target_session=config.target_session,
@@ -212,6 +227,7 @@ def record_acquisition_outcome(
             "reason_code": f"fetch_{outcome.value}",
             "retry_after_seconds": retry_after_seconds,
             "provider_request_executed_by_custody": False,
+            "authorization_decision_fingerprint": authorization_decision_fingerprint,
         }
         if package_evidence is not None:
             details.update(
@@ -495,6 +511,19 @@ def _validate_outcome(outcome: AttemptOutcome, retry_after_seconds: int | None) 
         or retry_after_seconds > 4 * 60 * 60
     ):
         raise DailyEodAcquisitionCustodyError("retry-after outcome evidence is invalid")
+
+
+def _validate_authorization_binding(
+    file_sha256: str | None,
+    content_sha256: str | None,
+) -> None:
+    if (file_sha256 is None) != (content_sha256 is None) or (
+        file_sha256 is not None
+        and (not _is_fingerprint(file_sha256) or not _is_fingerprint(content_sha256))
+    ):
+        raise DailyEodAcquisitionCustodyError(
+            "authorization artifact binding is malformed"
+        )
 
 
 def _execution_input_fingerprint(config: DailyEodAcquisitionConfig) -> str:

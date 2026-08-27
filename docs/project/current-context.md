@@ -130,14 +130,21 @@ created. Publication and public-serving operations stay outside this scope.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.
-Provider/apply capability ports are absent by default; no CLI, real adapter,
-authorization activation, request, or write exists. Real authorized adapters
-remain next.
+Provider/apply capability ports are absent by default; no CLI, authorization
+activation, request, or write exists.
 ADR 0035 adds exact canonical-Apply reservation, success proof, and no-write
 recovery under a third disjoint journal family. It binds completed acquisition
 hashes, the formal plan, current inventory, absent targets, and exact paths;
 unknown or partial outcomes remain unresolved or blocked. No real Apply
-adapter, reservation, recovery, or `/data` write exists.
+reservation, recovery, or `/data` write occurred through this layer.
+ADR 0036 now supplies repository-tested, explicitly installed fetch/Apply
+adapters that compose the external authorization SHA, acquisition/Apply
+custody, real Massive boundaries, and formal terminal evidence. Request 1.1
+binds Apply to `canonical_apply_started`; coordinator 1.1 accepts Identity's
+actual bounded 1–20 HTTP requests; and the authorized canonical root is
+`/data/trading-intelligence-platform`. The adapters remain uninstalled: no
+real authorization artifact, host pin, credential read, provider request,
+reservation, Apply, CLI, or scheduler entry exists.
 
 ## Analytics and presentation
 

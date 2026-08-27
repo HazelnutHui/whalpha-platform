@@ -195,6 +195,7 @@ def automation_plan(*, completed: bool) -> DailyEodAutomationPlan:
 def reserve(
     cfg: DailyEodCanonicalApplyConfig,
     evidence: CatchupApprovalPlanEvidenceV1,
+    **kwargs,
 ):
     return reserve_canonical_apply(
         config=cfg,
@@ -203,6 +204,7 @@ def reserve(
         clock=lambda: datetime(2026, 8, 27, 21, 1, tzinfo=UTC),
         plan_reader=lambda **_kwargs: evidence,
         inventory_reader=lambda _root: CURRENT_STATE,
+        **kwargs,
     )
 
 
@@ -214,12 +216,19 @@ def test_reservation_binds_completed_acquisition_plan_and_inventory(
     setup_completed_acquisition(cfg)
     evidence = plan_evidence(cfg, tmp_path / "canonical-target")
 
-    result = reserve(cfg, evidence)
+    result = reserve(
+        cfg,
+        evidence,
+        authorization_file_sha256="a" * 64,
+        authorization_content_sha256="b" * 64,
+    )
 
     assert result.outcome == "reserved"
     assert result.plan_evidence == evidence
     assert result.as_dict()["apply_executed_by_custody"] is False
     assert result.as_dict()["production_write_count"] == 0
+    assert result.event.details["authorization_file_sha256"] == "a" * 64
+    assert result.event.details["authorization_content_sha256"] == "b" * 64
     with locked_daily_eod_run_journal(run_root=root, target_session=TARGET) as journal:
         assert unresolved_started_event(journal.read_events()) == result.event
 
@@ -274,12 +283,14 @@ def test_success_requires_formal_stage_completion_and_closes_attempt(tmp_path: P
 
     result = record_canonical_apply_success(
         config=cfg,
+        authorization_decision_fingerprint="c" * 64,
         clock=lambda: datetime(2026, 8, 27, 21, 2, tzinfo=UTC),
         planner=lambda **_kwargs: automation_plan(completed=True),
     )
 
     assert result.outcome == "succeeded"
     assert result.automation_plan.next_action is NextAction.PREPARE_EOD_CATCHUP
+    assert result.event.details["authorization_decision_fingerprint"] == "c" * 64
     with locked_daily_eod_run_journal(run_root=root, target_session=TARGET) as journal:
         assert unresolved_started_event(journal.read_events()) is None
 

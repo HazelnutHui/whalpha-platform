@@ -43,7 +43,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.0"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.1"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -314,7 +314,7 @@ def _capability_result(
     *,
     apply: bool,
 ) -> DailyEodCoordinatorResult:
-    expected_requests = 0 if apply else 1
+    maximum_requests = 0 if apply else 20 if operation == "fetch_identity" else 1
     expected_writes = 1 if apply else 0
     if (
         not isinstance(evidence, AuthorizedTransitionEvidence)
@@ -324,12 +324,13 @@ def _capability_result(
         != readiness.logical_content_fingerprint
         or evidence.outcome not in {"succeeded", "waiting", "failed"}
         or not _is_fingerprint(evidence.event_fingerprint)
-        or not 0 <= evidence.external_request_count <= expected_requests
+        or not 0 <= evidence.external_request_count <= maximum_requests
         or not 0 <= evidence.production_write_count <= expected_writes
         or (
             evidence.outcome == "succeeded"
             and (
-                evidence.external_request_count != expected_requests
+                (not apply and evidence.external_request_count < 1)
+                or (apply and evidence.external_request_count != 0)
                 or evidence.production_write_count != expected_writes
             )
         )

@@ -53,6 +53,10 @@ No CLI, real capability adapter, authorization artifact, run root, scheduler,
 notification, publication, Snapshot, bundle, deployment, or rollback is
 activated by this repository slice.
 
+ADR 0036 later advances the coordinator contract to 1.1 and supplies explicit
+but still uninstalled capability adapters. Identity success now accepts the
+formally bounded 1–20 actual HTTP request count; EOD remains exactly one.
+
 ## Consequences
 
 - One common state-machine entry can later be woken by a scheduler without

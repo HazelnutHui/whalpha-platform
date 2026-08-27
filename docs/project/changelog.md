@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-27 — Authorized daily data capability composition
+
+- Accepted ADR 0036 and added explicitly installed fetch/Apply adapters that
+  compose standing authorization, acquisition/Apply custody, and the existing
+  Massive execution boundaries.
+- Corrected the authorized canonical root to
+  `/data/trading-intelligence-platform`, advanced the transition request to 1.1
+  with `canonical_apply_started`, and advanced coordinator evidence to 1.1.
+- Preserved actual bounded Identity pagination HTTP request counts instead of
+  reporting every fetch as one request.
+- Added authorization artifact/content and decision fingerprints to custody,
+  plus fail-closed tests for expiry, rate limits, unexpected fetch errors, and
+  ambiguous Apply outcomes.
+- No capability was installed; no real authorization, host pin, credential
+  read, provider request, Apply, `/data` write, publication, deployment, or
+  scheduler state was created or changed.
+
 ## 2026-08-27 — Canonical daily Apply custody
 
 - Accepted ADR 0035 and extended the still-unactivated shared journal to 1.2

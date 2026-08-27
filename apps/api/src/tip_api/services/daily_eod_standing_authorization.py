@@ -21,11 +21,12 @@ from tip_api.services.market_calendar import ExchangeCalendar
 
 
 CONTRACT_VERSION = "daily-eod-standing-authorization/1.0"
-REQUEST_CONTRACT_VERSION = "daily-eod-authorized-transition-request/1.0"
+REQUEST_CONTRACT_VERSION = "daily-eod-authorized-transition-request/1.1"
 DECISION_CONTRACT_VERSION = "daily-eod-authorization-decision/1.0"
 MAXIMUM_VALIDITY = timedelta(days=90)
 MAXIMUM_REQUEST_AGE = timedelta(minutes=5)
 MAXIMUM_ARTIFACT_BYTES = 64 * 1024
+APPROVED_CANONICAL_DATA_ROOT = Path("/data/trading-intelligence-platform")
 
 
 class DailyEodStandingAuthorizationError(RuntimeError):
@@ -52,9 +53,7 @@ OPERATION_ACTION = {
     StandingOperation.FETCH_EOD: NextAction.PREPARE_EOD_CATCHUP,
     StandingOperation.APPLY_EOD: NextAction.PREPARE_EOD_CATCHUP,
 }
-APPLY_EVENT_TYPES = frozenset(
-    {"acquisition_package_ready", "acquisition_recovered_package_ready"}
-)
+APPLY_EVENT_TYPES = frozenset({"canonical_apply_started"})
 
 
 class DailyEodStandingAuthorizationV1(BaseModel):
@@ -108,8 +107,10 @@ class DailyEodStandingAuthorizationV1(BaseModel):
             or expires - valid_from > MAXIMUM_VALIDITY
         ):
             raise ValueError("standing authorization time boundary is invalid")
-        if Path(self.data_root) != Path("/data"):
-            raise ValueError("standing authorization data root must be /data")
+        if Path(self.data_root) != APPROVED_CANONICAL_DATA_ROOT:
+            raise ValueError(
+                "standing authorization data root must be the approved canonical root"
+            )
         run_root = Path(self.run_root)
         if not run_root.is_absolute() or _is_within(run_root, Path("/data")):
             raise ValueError("standing authorization run root is invalid")
@@ -139,7 +140,7 @@ class DailyEodAuthorizedTransitionRequestV1(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    contract_version: Literal["daily-eod-authorized-transition-request/1.0"] = (
+    contract_version: Literal["daily-eod-authorized-transition-request/1.1"] = (
         REQUEST_CONTRACT_VERSION
     )
     requested_at: datetime
@@ -204,7 +205,7 @@ class DailyEodAuthorizedTransitionRequestV1(BaseModel):
                 raise ValueError("fetch authorization cannot carry apply evidence")
         else:
             if self.custody_event_type not in APPLY_EVENT_TYPES:
-                raise ValueError("apply authorization requires completed package custody")
+                raise ValueError("apply authorization requires an unresolved apply reservation")
             if not all(_is_fingerprint(value) for value in package_fields):
                 raise ValueError("apply authorization package hashes are malformed")
             if self.approval_plan_path is None or not _is_direct_tmp_path(
@@ -361,24 +362,23 @@ def authorize_standing_transition(
 
     checked = _aware_utc(evaluated_at)
     requested = _aware_utc(request.requested_at)
-    if checked < authorization.valid_from or checked > authorization.expires_at:
-        raise DailyEodStandingAuthorizationError("standing authorization is not active")
+    validate_standing_authorization_runtime(
+        authorization=authorization,
+        evaluated_at=checked,
+        operation=request.operation,
+        actual_host=actual_host,
+        actual_provider_id=actual_provider_id,
+        actual_data_root=actual_data_root,
+        actual_run_root=actual_run_root,
+        actual_implementation_revision=actual_implementation_revision,
+        actual_readiness_policy_fingerprint=actual_readiness_policy_fingerprint,
+    )
+    if request.readiness_policy_fingerprint != authorization.readiness_policy_fingerprint:
+        raise DailyEodStandingAuthorizationError(
+            "runtime differs from standing authorization"
+        )
     if requested > checked or checked - requested > MAXIMUM_REQUEST_AGE:
         raise DailyEodStandingAuthorizationError("standing authorization request is stale")
-    if request.operation not in authorization.allowed_operations:
-        raise DailyEodStandingAuthorizationError("operation is outside standing authorization")
-    if (
-        actual_host != authorization.host
-        or actual_provider_id != authorization.provider_id
-        or str(actual_data_root) != authorization.data_root
-        or str(actual_run_root) != authorization.run_root
-        or actual_implementation_revision != authorization.implementation_revision
-        or actual_readiness_policy_fingerprint
-        != authorization.readiness_policy_fingerprint
-        or request.readiness_policy_fingerprint
-        != authorization.readiness_policy_fingerprint
-    ):
-        raise DailyEodStandingAuthorizationError("runtime differs from standing authorization")
     request_fingerprint = _fingerprint(request.model_dump(mode="json"))
     base = {
         "contract_version": DECISION_CONTRACT_VERSION,
@@ -388,7 +388,11 @@ def authorize_standing_transition(
         "operation": request.operation.value,
         "target_session": request.target_session.isoformat(),
         "request_fingerprint": request_fingerprint,
-        "provider_request_limit": 1 if request.operation in FETCH_OPERATIONS else 0,
+        "provider_request_limit": (
+            20
+            if request.operation is StandingOperation.FETCH_IDENTITY
+            else 1 if request.operation is StandingOperation.FETCH_EOD else 0
+        ),
         "canonical_write_limit": 1 if request.operation in APPLY_OPERATIONS else 0,
         "publication_authorized": False,
         "deployment_authorized": False,
@@ -398,6 +402,37 @@ def authorize_standing_transition(
         **base,
         logical_content_fingerprint=_fingerprint(base),
     )
+
+
+def validate_standing_authorization_runtime(
+    *,
+    authorization: DailyEodStandingAuthorizationV1,
+    evaluated_at: datetime,
+    operation: StandingOperation,
+    actual_host: str,
+    actual_provider_id: str,
+    actual_data_root: Path,
+    actual_run_root: Path,
+    actual_implementation_revision: str,
+    actual_readiness_policy_fingerprint: str,
+) -> None:
+    """Reject an inactive or mismatched grant before creating a custody start."""
+
+    checked = _aware_utc(evaluated_at)
+    if checked < authorization.valid_from or checked > authorization.expires_at:
+        raise DailyEodStandingAuthorizationError("standing authorization is not active")
+    if operation not in authorization.allowed_operations:
+        raise DailyEodStandingAuthorizationError("operation is outside standing authorization")
+    if (
+        actual_host != authorization.host
+        or actual_provider_id != authorization.provider_id
+        or str(actual_data_root) != authorization.data_root
+        or str(actual_run_root) != authorization.run_root
+        or actual_implementation_revision != authorization.implementation_revision
+        or actual_readiness_policy_fingerprint
+        != authorization.readiness_policy_fingerprint
+    ):
+        raise DailyEodStandingAuthorizationError("runtime differs from standing authorization")
 
 
 def _canonical_bytes(value: object) -> bytes:

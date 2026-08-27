@@ -24,6 +24,7 @@ from tip_api.services.daily_eod_standing_authorization import (
 
 NOW = datetime(2026, 8, 27, 22, 0, tzinfo=UTC)
 RUN_ROOT = Path("/home/hui/.local/state/trading-intelligence-platform/daily-eod")
+DATA_ROOT = Path("/data/trading-intelligence-platform")
 REVISION = "a" * 40
 POLICY_FINGERPRINT = DailyEodReadinessPolicy().logical_fingerprint
 FINGERPRINT = "b" * 64
@@ -36,7 +37,7 @@ def authorization(**overrides):
         "valid_from": NOW,
         "expires_at": NOW + timedelta(days=30),
         "host": "dell5820",
-        "data_root": Path("/data"),
+        "data_root": DATA_ROOT,
         "run_root": RUN_ROOT,
         "implementation_revision": REVISION,
         "readiness_policy_fingerprint": POLICY_FINGERPRINT,
@@ -67,7 +68,7 @@ def request(operation: StandingOperation, **overrides):
         ),
         "custody_attempt_id": "c" * 64,
         "custody_event_type": (
-            "acquisition_package_ready" if applying else "acquisition_started"
+            "canonical_apply_started" if applying else "acquisition_started"
         ),
         "custody_event_fingerprint": "d" * 64,
         "readiness_policy_fingerprint": POLICY_FINGERPRINT,
@@ -91,7 +92,7 @@ def authorize(operation: StandingOperation, **overrides):
         "evaluated_at": NOW + timedelta(minutes=2),
         "actual_host": "dell5820",
         "actual_provider_id": MASSIVE_PROVIDER_ID,
-        "actual_data_root": Path("/data"),
+        "actual_data_root": DATA_ROOT,
         "actual_run_root": RUN_ROOT,
         "actual_implementation_revision": REVISION,
         "actual_readiness_policy_fingerprint": POLICY_FINGERPRINT,
@@ -103,7 +104,7 @@ def authorize(operation: StandingOperation, **overrides):
 @pytest.mark.parametrize(
     ("operation", "requests", "writes"),
     (
-        (StandingOperation.FETCH_IDENTITY, 1, 0),
+        (StandingOperation.FETCH_IDENTITY, 20, 0),
         (StandingOperation.APPLY_IDENTITY, 0, 1),
         (StandingOperation.FETCH_EOD, 1, 0),
         (StandingOperation.APPLY_EOD, 0, 1),
@@ -209,7 +210,7 @@ def test_request_cannot_skip_an_xnys_session() -> None:
 @pytest.mark.parametrize(
     "change",
     (
-        {"custody_event_type": "acquisition_started"},
+        {"custody_event_type": "acquisition_package_ready"},
         {"package_manifest_sha256": None},
         {"approval_plan_path": "/var/tmp/plan.json"},
         {"approval_plan_sha256": "bad"},
