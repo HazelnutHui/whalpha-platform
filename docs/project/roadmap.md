@@ -2,10 +2,10 @@
 
 - Next operational step: continue the Dell-only daily pipeline optimization
   after the verified Candidate append and Phase 1b stable-prefix correction:
-  add verified-prior Phase 1b append, immutable panel-stage reuse, streaming/
-  resumable audit output, validation tiers, and then deterministic process
-  parallelism. Publication, Snapshot, bundle, and OCI remain separate
-  authorizations.
+  verified-prior Phase 1b append is complete; next add immutable panel-stage
+  reuse for Candidate, streaming/resumable audit output, validation tiers, and
+  then deterministic process parallelism. Publication, Snapshot, bundle, and
+  OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -120,14 +120,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Candidate full-path stage measurement, overlapping-panel shared reads,
   stable-ID state indexing, and worktree-safe Dell Python runner
 - [x] Verified-prior Candidate incremental state with corrected cold-output equivalence
-- [ ] Verified-prior Phase 1b incremental state and resumable content-addressed stages
+- [x] Verified-prior Phase 1b incremental state with cold business-output equivalence
+- [ ] Resumable content-addressed stages and immutable Candidate panel reuse
 - [ ] Candidate daily/periodic/code-change validation tiers
 - [ ] Deterministic Candidate process parallelism with serial equivalence
 
 ## Next Small Target
 
-Bind a verified prior corrected Phase 1b audit to one new Composite, then reuse
-formally validated immutable panel inputs across daily Candidate execution.
+Reuse formally validated immutable panel inputs across daily Candidate
+execution, then add resumable/streaming audit stages.
 Record explicit stage inputs, outputs, timings, reuse decisions, and failure
 location on Dell. Publication, Snapshot, bundle, and OCI deployment remain
 independent approval-bound operations. Keep SEC B2 paused.

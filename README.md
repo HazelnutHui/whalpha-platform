@@ -44,9 +44,10 @@ Candidate pipeline and third Candidate workspace. Canonical sessions cover
 every XNYS session from 2026-07-17 through 2026-08-26. The active Dashboard is
 the ordinary fresh 2026-08-26 release with lag zero.
 
-Repository development source adds verified-prior Candidate one-session append
-and corrects cross-as-of Market Regime state-prefix stability in calculation
-V1.0.1. These changes are offline development work and are not deployed.
+Repository development source adds verified-prior one-session append for both
+Candidate and corrected V1.0.1 Market Regime state. The state daily path
+formally consumes current Phase 1a plus prior Phase 1b audits without reopening
+canonical EOD. These changes are offline development work and are not deployed.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

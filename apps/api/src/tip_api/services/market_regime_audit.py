@@ -7,6 +7,7 @@ import json
 import os
 import stat
 import unicodedata
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
@@ -42,6 +43,15 @@ SNAPSHOT_NAMESPACE = UUID("efed7060-e698-52b6-a2a7-4296e50b63b2")
 
 class MarketRegimeAuditError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True, slots=True)
+class MarketRegimeAuditContents:
+    """Formally verified Phase 1a inputs exposed to a downstream append."""
+
+    manifest: dict[str, Any]
+    input_manifest: dict[str, Any]
+    composites: tuple[MarketRegimeCompositeV1, ...]
 
 
 def write_market_regime_audit(
@@ -222,6 +232,24 @@ def write_market_regime_audit(
 
 
 def read_market_regime_audit(output_dir: Path) -> dict[str, Any]:
+    manifest, _, _ = _read_market_regime_audit(output_dir)
+    return manifest
+
+
+def read_market_regime_audit_contents(output_dir: Path) -> MarketRegimeAuditContents:
+    """Reread a completed audit once and return its typed downstream inputs."""
+
+    manifest, payloads, composites = _read_market_regime_audit(output_dir)
+    return MarketRegimeAuditContents(
+        manifest=manifest,
+        input_manifest=payloads["input-manifest.json"],
+        composites=composites,
+    )
+
+
+def _read_market_regime_audit(
+    output_dir: Path,
+) -> tuple[dict[str, Any], dict[str, dict[str, Any]], tuple[MarketRegimeCompositeV1, ...]]:
     if output_dir.is_symlink():
         raise MarketRegimeAuditError("symlink audit directory is rejected")
     target = output_dir.resolve(strict=True)
@@ -257,6 +285,7 @@ def read_market_regime_audit(output_dir: Path) -> dict[str, Any]:
     rows = {item["name"]: item for item in manifest.get("artifacts", [])}
     if tuple(item["name"] for item in manifest.get("artifacts", [])) != ARTIFACT_FILES:
         raise MarketRegimeAuditError("audit artifact order mismatch")
+    payloads: dict[str, dict[str, Any]] = {}
     for name in ARTIFACT_FILES:
         path = target / name
         raw = path.read_bytes()
@@ -267,17 +296,29 @@ def read_market_regime_audit(output_dir: Path) -> dict[str, Any]:
         fingerprint = payload.pop("logical_content_fingerprint", None)
         if _fingerprint(payload) != fingerprint or fingerprint != item["logical_content_fingerprint"]:
             raise MarketRegimeAuditError(f"audit artifact logical fingerprint mismatch: {name}")
-    composites_payload = _read_canonical_json(target / "composite.json")
+        payloads[name] = payload
+    composites_payload = payloads["composite.json"]
     composites = tuple(MarketRegimeCompositeV1.model_validate(item) for item in composites_payload["records"])
-    oracle_payload = _read_canonical_json(target / "oracle-report.json")
+    oracle_payload = payloads["oracle-report.json"]
     oracles = tuple(OracleComparisonV1.model_validate(item) for item in oracle_payload["records"])
-    explanations_payload = _read_canonical_json(target / "explanation-ledger.json")
+    explanations_payload = payloads["explanation-ledger.json"]
     tuple(ExplanationLedgerEntryV1.model_validate(item) for item in explanations_payload["records"])
     if [item.logical_fingerprint for item in composites] != manifest["composite_fingerprints"]:
         raise MarketRegimeAuditError("composite fingerprint ledger mismatch")
+    if (
+        tuple(item.universe_id for item in composites) != tuple(manifest.get("universe_ids", ()))
+        or any(item.as_of_session.isoformat() != manifest.get("as_of_session") for item in composites)
+        or any(item.parameter_set_fingerprint != PARAMETER_SET_FINGERPRINT for item in composites)
+    ):
+        raise MarketRegimeAuditError("Phase 1a Composite contract binding mismatch")
     if [item.oracle_fingerprint for item in oracles] != manifest["oracle_fingerprints"]:
         raise MarketRegimeAuditError("oracle fingerprint ledger mismatch")
-    return manifest
+    if (
+        manifest.get("oracle_mismatch_count") != 0
+        or any(item.mismatch_count != 0 or item.mismatches for item in oracles)
+    ):
+        raise MarketRegimeAuditError("Phase 1a Oracle equivalence gate did not pass")
+    return manifest, payloads, composites
 
 
 def validate_tmp_output_dir(output_dir: Path) -> Path:

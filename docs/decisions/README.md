@@ -46,3 +46,4 @@ Each ADR should include:
 - [0021: Separate Candidate Leadership from Entry Geometry](0021-separate-candidate-leadership-from-entry-geometry.md)
 - [0022: Bind Daily Candidate Calculation to a Verified Prior Audit](0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md)
 - [0023: Preserve Market Regime State Prefix Across As-Of Sessions](0023-preserve-market-regime-state-prefix-across-as-of-sessions.md)
+- [0024: Bind Daily Market Regime State to Verified Upstream Audits](0024-bind-daily-market-regime-state-to-verified-upstream-audits.md)

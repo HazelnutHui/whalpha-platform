@@ -16,9 +16,9 @@ independent approval and rollback domains.
 Status: **Implemented through Phase 7, including active MI 1.2, Snapshot 1.7 /
 Dashboard 2.4, the bilingual Candidate workspace, entry-location consumer, and
 their explicitly bound OCI release. The active 2026-08-26 payload is ordinary
-fresh. Repository development adds verified-prior Candidate append and a
-versioned Phase 1b cross-as-of state-prefix correction; neither development
-change is deployed.**
+fresh. Repository development adds verified-prior Candidate and Phase 1b
+append paths plus a versioned Phase 1b cross-as-of state-prefix correction;
+none of those development changes is deployed.**
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)
@@ -600,7 +600,10 @@ The bounded Candidate publication, Snapshot/API/frontend consumer, entry-
 geometry layer, bundle, and deployment are implemented. Guest Session entry
 uses the same Candidate data and has no role-dependent variant. Repository
 development now adds the verified-prior Candidate audit described in ADR 0022
-and the stable-prefix Phase 1b correction described in ADR 0023. Production
+and the stable-prefix Phase 1b correction described in ADR 0023. Phase 1b also
+supports the verified-upstream one-session append described in ADR 0024: the
+daily path consumes current Phase 1a plus prior Phase 1b audits without
+reopening `/data`; the stable-prefix cold path remains the reference. Production
 publication remains a separate authorization.
 
 The first accepted formal Phase 5 audit covers 2026-08-21 and 2026-08-24 under

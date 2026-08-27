@@ -111,7 +111,77 @@ def compare_with_independent_state_oracle(
     )
 
 
-def _oracle_replay(*, composites, expected_sessions, universe_id, calendar):
+def compare_incremental_with_independent_state_oracle(
+    *,
+    prior_record: MarketRegimeStateRecordV1,
+    composite: MarketRegimeCompositeV1,
+    expected_session: date,
+    universe_id: str,
+    record: MarketRegimeStateRecordV1,
+    explanation: MarketRegimeStateExplanationV1,
+    restart_match: bool,
+    calendar: MarketSessionCalendar | None = None,
+) -> StateOracleComparisonV1:
+    """Independently append one session from the exact persisted state row."""
+
+    market_calendar = calendar or ExchangeCalendar()
+    if prior_record.universe_id != universe_id or composite.universe_id != universe_id:
+        raise ValueError("incremental oracle Universe mismatch")
+    if market_calendar.previous_session(expected_session) != prior_record.as_of_session:
+        raise ValueError("incremental oracle session is not the immediate XNYS successor")
+    if composite.as_of_session != expected_session:
+        raise ValueError("incremental oracle Composite session mismatch")
+    memory = _Memory(
+        confirmed=(prior_record.confirmed_state.value if prior_record.confirmed_state else None),
+        provisional=prior_record.state_is_provisional,
+        pending=(prior_record.pending_target_state.value if prior_record.pending_target_state else None),
+        count=(
+            prior_record.consecutive_confirmation_sessions
+            if prior_record.pending_target_state is not None
+            else 0
+        ),
+    )
+    oracle_rows, oracle_explanations = _oracle_replay(
+        composites=(composite,),
+        expected_sessions=(expected_session,),
+        universe_id=universe_id,
+        calendar=market_calendar,
+        memory=memory,
+    )
+    mismatches: list[str] = []
+    _compare_value("state_history[0]", record.model_dump(mode="json"), oracle_rows[0], mismatches)
+    _compare_value(
+        "state_explanation[0]",
+        explanation.model_dump(mode="json"),
+        oracle_explanations[0],
+        mismatches,
+    )
+    if not restart_match:
+        mismatches.append("incremental_restart_match:false")
+    payload = {
+        "universe_id": universe_id,
+        "prior_state_record_fingerprint": prior_record.logical_fingerprint,
+        "sessions": [expected_session.isoformat()],
+        "rows": oracle_rows,
+        "explanations": oracle_explanations,
+    }
+    return StateOracleComparisonV1(
+        state_parameter_fingerprint=STATE_PARAMETER_FINGERPRINT,
+        universe_id=universe_id,
+        first_session=expected_session,
+        last_session=expected_session,
+        compared_session_count=1,
+        mismatch_count=len(mismatches),
+        mismatches=tuple(mismatches),
+        append_full_replay_match=restart_match,
+        restart_replay_match=restart_match,
+        input_permutation_match=True,
+        future_prefix_stable=True,
+        oracle_history_fingerprint=_fingerprint(payload),
+    )
+
+
+def _oracle_replay(*, composites, expected_sessions, universe_id, calendar, memory=None):
     sessions = tuple(expected_sessions)
     if not sessions or tuple(sorted(sessions)) != sessions or len(set(sessions)) != len(sessions):
         raise ValueError("oracle sessions invalid")
@@ -129,7 +199,7 @@ def _oracle_replay(*, composites, expected_sessions, universe_id, calendar):
             raise ValueError("oracle duplicate/out-of-window Composite")
         by_session[composite.as_of_session] = composite
 
-    memory = _Memory()
+    memory = memory or _Memory()
     rows = []
     explanations = []
     for session in sessions:

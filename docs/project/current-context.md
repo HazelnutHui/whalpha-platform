@@ -70,10 +70,15 @@ immutable panel reads, uses stable-ID state indexes, and supports a verified-
 prior one-session append with an additive audit schema. Real append/cold
 comparison exposed a legacy Phase 1b rolling-window state-prefix defect;
 repository source corrects it with state calculation V1.0.1 and a stable
-canonical left boundary. This is development-only and has not changed active
-Production. Verified-prior Phase 1b append, immutable panel-stage reuse,
-resumable/streaming audit output, validation tiers, and then deterministic
-process parallelism remain required before daily automation.
+canonical left boundary. Phase 1b audit schema 1.1 now formally rereads the
+current Phase 1a and immediately prior Phase 1b audits, appends one session,
+and runs an independent current-session state Oracle without reopening
+`/data`. On real 2026-08-26 inputs it matched the V1.0.1 cold state,
+explanation, transition, summary, and history outputs exactly: 0.237 seconds
+before writing versus 302.736 seconds cold, with zero Oracle mismatch. This is
+development-only and has not changed active Production. Immutable panel-stage
+reuse for Candidate, resumable/streaming audit output, validation tiers, and
+then deterministic process parallelism remain before daily automation.
 
 ## Analytics and presentation
 

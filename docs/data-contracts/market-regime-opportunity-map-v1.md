@@ -87,6 +87,17 @@ session. Its container and Oracle fingerprints intentionally differ from a
 cold audit; all cumulative business-output fingerprints must match the
 compatible stable-prefix cold reference.
 
+The additive Phase 1b audit schema 1.1 also uses
+`execution_mode=verified_prior_incremental` and adds exactly
+`incremental-validation-ledger.json`. It consumes the formally reread current
+Phase 1a audit and immediately prior corrected Phase 1b audit, appends one
+state/explanation row per Universe, and runs an independent one-session state
+Oracle initialized from the prior persisted row. The validation ledger binds
+the prior state/source/explanation prefixes and current Phase 1a Composite
+fingerprints. Activation, membership, version, date, Oracle, or prefix drift
+fails closed to the stable-prefix cold path. Incremental execution does not
+reopen canonical EOD partitions.
+
 Physical Candidate runtime evidence includes per-stage wall/CPU timings, the
 pre-writer peak-memory sample, and optional process I/O/invocation counters.
 These fields are excluded from the aggregate logical fingerprint. Overlapping

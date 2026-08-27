@@ -20,6 +20,7 @@ from tip_api.services.market_regime import (
 from tip_api.services.market_regime_audit import (
     MarketRegimeAuditError,
     read_market_regime_audit,
+    read_market_regime_audit_contents,
     validate_tmp_output_dir,
     write_market_regime_audit,
 )
@@ -273,6 +274,10 @@ def test_audit_artifacts_are_canonical_rereadable_and_logically_deterministic(
         assert a["logical_content_fingerprint"] == b["logical_content_fingerprint"]
         assert a["composite_fingerprints"] == b["composite_fingerprints"]
         assert a["generated_at"] != b["generated_at"]
+        contents = read_market_regime_audit_contents(first)
+        assert contents.manifest == a
+        assert contents.input_manifest["as_of_session"] == full_panel.as_of_session.isoformat()
+        assert contents.composites == (result,)
     finally:
         shutil.rmtree(first, ignore_errors=True)
         shutil.rmtree(second, ignore_errors=True)

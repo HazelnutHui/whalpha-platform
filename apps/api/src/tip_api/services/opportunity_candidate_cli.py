@@ -313,11 +313,14 @@ def _validate_phase1b(
         raise RuntimeError("Phase 1b as-of session mismatch")
     if tuple(manifest.get("universe_ids", ())) != PUBLIC_UNIVERSE_ORDER:
         raise RuntimeError("Phase 1b Universe order mismatch")
-    history_sessions = tuple(date.fromisoformat(item) for item in source_payload.get("history_sessions", ()))
-    if tuple(sorted(history_sessions)) != history_sessions or len(set(history_sessions)) != len(history_sessions):
-        raise RuntimeError("Phase 1b source history sessions are not unique and ascending")
-    if not history_sessions or history_sessions[-1] != as_of_session:
-        raise RuntimeError("Phase 1b source history does not end at as-of")
+    state_sessions = tuple(
+        date.fromisoformat(item)
+        for item in source_payload.get("state_sessions", source_payload.get("history_sessions", ()))
+    )
+    if tuple(sorted(state_sessions)) != state_sessions or len(set(state_sessions)) != len(state_sessions):
+        raise RuntimeError("Phase 1b state sessions are not unique and ascending")
+    if not state_sessions or state_sessions[-1] != as_of_session:
+        raise RuntimeError("Phase 1b state history does not end at as-of")
     current_rows = tuple(current_payload.get("records", ()))
     if tuple(item.get("universe_id") for item in current_rows) != PUBLIC_UNIVERSE_ORDER:
         raise RuntimeError("Phase 1b current-state Universe order mismatch")

@@ -39,11 +39,16 @@ from tip_api.services.market_regime_state import (
 from tip_api.services.market_regime_state_audit import (
     MarketRegimeStateAuditError,
     STATE_ARTIFACT_FILES,
+    STATE_INCREMENTAL_ARTIFACT_FILES,
     _validate_tmp_output_dir,
     read_market_regime_state_audit,
+    read_market_regime_state_audit_contents,
     write_market_regime_state_audit,
 )
-from tip_api.services.market_regime_state_oracle import compare_with_independent_state_oracle
+from tip_api.services.market_regime_state_oracle import (
+    compare_incremental_with_independent_state_oracle,
+    compare_with_independent_state_oracle,
+)
 
 
 PRIMARY = "provider_classified_common_shares_v1"
@@ -444,6 +449,129 @@ def test_state_audit_is_canonical_rereadable_and_non_time_deterministic() -> Non
     finally:
         shutil.rmtree(first, ignore_errors=True)
         shutil.rmtree(second, ignore_errors=True)
+
+
+def test_verified_prior_state_audit_appends_one_session_and_matches_cold_business_history() -> None:
+    sessions = SESSIONS[-4:]
+    composites = tuple(_composite(session, score) for session, score in zip(sessions, ("60", "61", "70", "71"), strict=True))
+    prior_records, prior_explanations = replay_regime_state_history(
+        composites=composites[:-1], expected_sessions=sessions[:-1], universe_id=PRIMARY, calendar=CALENDAR
+    )
+    prior_oracle = compare_with_independent_state_oracle(
+        composites=composites[:-1], expected_sessions=sessions[:-1], universe_id=PRIMARY,
+        records=prior_records, explanations=prior_explanations,
+        append_full_replay_match=True, restart_replay_match=True,
+        input_permutation_match=True, future_prefix_stable=True, calendar=CALENDAR,
+    )
+    prior_dir = Path(tempfile.mkdtemp(prefix="mrom-state-prior-", dir="/tmp"))
+    incremental_dir = Path(tempfile.mkdtemp(prefix="mrom-state-incremental-", dir="/tmp"))
+    cold_dir = Path(tempfile.mkdtemp(prefix="mrom-state-cold-", dir="/tmp"))
+    try:
+        prior_manifest = write_market_regime_state_audit(
+            output_dir=prior_dir, panel=_audit_panel(sessions[:-1]),
+            phase1a_audit_manifest={
+                "logical_content_fingerprint": "3" * 64,
+                "composite_fingerprints": [composites[-2].logical_fingerprint],
+            },
+            histories={PRIMARY: prior_records}, explanations={PRIMARY: prior_explanations},
+            oracle_reports=(prior_oracle,), first_calculable_session=sessions[0],
+            generated_at=datetime(2026, 8, 25, tzinfo=UTC), timings={}, peak_memory_kib=123,
+        )
+        appended, appended_explanations = append_regime_state_history(
+            existing_history=prior_records, composites=(composites[-1],),
+            expected_sessions=(sessions[-1],), universe_id=PRIMARY, calendar=CALENDAR,
+        )
+        incremental_oracle = compare_incremental_with_independent_state_oracle(
+            prior_record=prior_records[-1], composite=composites[-1],
+            expected_session=sessions[-1], universe_id=PRIMARY, record=appended[0],
+            explanation=appended_explanations[0], restart_match=True, calendar=CALENDAR,
+        )
+        assert incremental_oracle.mismatch_count == 0
+        current_records = (*prior_records, *appended)
+        current_explanations = (*prior_explanations, *appended_explanations)
+        phase1a_manifest = {
+            "logical_content_fingerprint": FROZEN_PHASE1A_AUDIT_FINGERPRINT,
+            "composite_fingerprints": [composites[-1].logical_fingerprint],
+        }
+        panel = _audit_panel(sessions)
+        phase1a_input = {
+            "as_of_session": sessions[-1].isoformat(),
+            "activation_pointer_fingerprint": panel.activation_pointer_fingerprint,
+            "identity_logical_fingerprint": panel.identity_logical_fingerprint,
+            "eod_content_fingerprint": panel.eod_content_fingerprint,
+            "history_source_fingerprint": panel.history_source_fingerprint,
+            "history_sessions": [item.isoformat() for item in panel.sessions],
+            "source_sessions": [
+                {
+                    "session_date": item.session_date.isoformat(),
+                    "dataset_path": item.dataset_path,
+                    "record_count": item.record_count,
+                    "content_fingerprint": item.content_fingerprint,
+                    "parquet_sha256": item.parquet_sha256,
+                    "identity_snapshot_date": item.identity_snapshot_date.isoformat(),
+                    "identity_snapshot_fingerprint": item.identity_snapshot_fingerprint,
+                }
+                for item in panel.source_sessions
+            ],
+            "universes": [{
+                "universe_id": PRIMARY, "catalog_order": 0, "is_default": True,
+                "member_count": 1, "membership_fingerprint": "b" * 64,
+            }],
+        }
+        prior_source_fingerprint = next(
+            item["logical_content_fingerprint"] for item in prior_manifest["artifacts"]
+            if item["name"] == "source-input-manifest.json"
+        )
+        validation = {
+            "validation_scope": "verified_prior_plus_current_session_oracle",
+            "prior_audit_logical_fingerprint": prior_manifest["logical_content_fingerprint"],
+            "prior_as_of_session": sessions[-2].isoformat(),
+            "current_as_of_session": sessions[-1].isoformat(),
+            "prior_history_logical_fingerprints": prior_manifest["history_logical_fingerprints"],
+            "prior_explanation_records_fingerprint": _fingerprint([
+                item.model_dump(mode="json") for item in prior_explanations
+            ]),
+            "prior_source_manifest_fingerprint": prior_source_fingerprint,
+            "current_phase1a_audit_logical_fingerprint": FROZEN_PHASE1A_AUDIT_FINGERPRINT,
+            "current_phase1a_composite_fingerprints": [composites[-1].logical_fingerprint],
+            "current_session_oracle_fingerprints": [incremental_oracle.oracle_history_fingerprint],
+            "reuse_checks": {"prior_formally_reread": True, "prefix_preserved": True},
+            "validation_segments": [{
+                "scope": "current_session_independent_state_append_oracle",
+                "session": sessions[-1].isoformat(),
+            }],
+        }
+        incremental_manifest = write_market_regime_state_audit(
+            output_dir=incremental_dir, panel=None, phase1a_audit_manifest=phase1a_manifest,
+            phase1a_input_manifest=phase1a_input, histories={PRIMARY: current_records},
+            explanations={PRIMARY: current_explanations}, oracle_reports=(incremental_oracle,),
+            first_calculable_session=sessions[0], generated_at=datetime(2026, 8, 26, tzinfo=UTC),
+            timings={}, peak_memory_kib=123, incremental_validation=validation,
+        )
+        full_oracle = compare_with_independent_state_oracle(
+            composites=composites, expected_sessions=sessions, universe_id=PRIMARY,
+            records=current_records, explanations=current_explanations,
+            append_full_replay_match=True, restart_replay_match=True,
+            input_permutation_match=True, future_prefix_stable=True, calendar=CALENDAR,
+        )
+        cold_manifest = write_market_regime_state_audit(
+            output_dir=cold_dir, panel=panel, phase1a_audit_manifest=phase1a_manifest,
+            histories={PRIMARY: current_records}, explanations={PRIMARY: current_explanations},
+            oracle_reports=(full_oracle,), first_calculable_session=sessions[0],
+            generated_at=datetime(2026, 8, 26, tzinfo=UTC), timings={}, peak_memory_kib=123,
+        )
+        assert incremental_manifest["schema_version"] == "1.1"
+        assert incremental_manifest["execution_mode"] == "verified_prior_incremental"
+        assert incremental_manifest["history_logical_fingerprints"] == cold_manifest["history_logical_fingerprints"]
+        assert {item.name for item in incremental_dir.iterdir()} == set(STATE_INCREMENTAL_ARTIFACT_FILES) | {"state-audit-manifest.json"}
+        contents = read_market_regime_state_audit_contents(incremental_dir)
+        assert contents.histories[PRIMARY] == current_records
+        assert contents.explanations[PRIMARY] == current_explanations
+        assert contents.validation_ledger == validation
+    finally:
+        shutil.rmtree(prior_dir, ignore_errors=True)
+        shutil.rmtree(incremental_dir, ignore_errors=True)
+        shutil.rmtree(cold_dir, ignore_errors=True)
 
 
 def test_state_output_path_and_parameter_contract_are_fail_closed(tmp_path: Path) -> None:

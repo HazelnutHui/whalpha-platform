@@ -1,6 +1,21 @@
 # Changelog
 
-## 2026-08-27 — Stable state prefix and verified-prior Candidate append
+## 2026-08-27 — Verified-prior Phase 1b and Candidate append
+
+- Accepted ADR 0024 and added Phase 1b audit schema 1.1
+  `verified_prior_incremental`. It formally rereads current Phase 1a and the
+  immediately prior corrected Phase 1b audit, validates date/version/
+  Activation/membership/prefix custody, appends one row per Universe, and runs
+  a separate one-session state Oracle without reopening `/data`.
+- Final V1.0.1 real-data audits covered a cold 2026-08-25 prefix and separate
+  incremental/cold 2026-08-26 results. State history, explanation, transition,
+  current-summary records, and both Universe history fingerprints were exact;
+  both Oracles had zero mismatch. Incremental time before writing was 0.237
+  seconds versus 302.736 seconds cold.
+- Strengthened formal Phase 1a and Phase 1b readers to reject failed Oracle
+  gates and inconsistent typed/container bindings while retaining successful
+  legacy V1.0.0 state-audit compatibility. No `/data`, publication, Snapshot,
+  bundle, deployment, provider, credential, or scheduler state changed.
 
 - Added Candidate audit schema 1.1 execution mode
   `verified_prior_incremental`. It formally rereads an immediately prior audit,

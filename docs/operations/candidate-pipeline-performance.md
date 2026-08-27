@@ -86,18 +86,33 @@ so writer streaming and peak-memory instrumentation remain open work.
 
 ## Next performance sequence
 
-1. Add the same verified-prior one-session append to corrected stable-prefix
-   Phase 1b; its cold replay is now an upstream daily bottleneck.
-2. Cache or content-address formally validated immutable EOD panel inputs so a
+1. Cache or content-address formally validated immutable EOD panel inputs so a
    daily Candidate run does not reread 25 unchanged partitions.
-3. Separate daily, periodic, and code/model-change validation tiers without
+2. Separate daily, periodic, and code/model-change validation tiers without
    weakening the full reference audit.
-4. Add content-addressed resumable stages with explicit input/output
+3. Add content-addressed resumable stages with explicit input/output
    fingerprints and failure locations.
-5. Process-parallelize only independent CPU work using stable `instrument_id`
+4. Process-parallelize only independent CPU work using stable `instrument_id`
    shards; merge and fingerprint in one deterministic parent order.
-6. Split Candidate public summary and on-demand detail payloads. This changes
+5. Split Candidate public summary and on-demand detail payloads. This changes
    neither guest/credential capability parity nor the Dell/OCI boundary.
+
+## 2026-08-27 verified-prior Phase 1b result
+
+Phase 1b audit schema 1.1 formally consumes the current Phase 1a audit and the
+immediately prior corrected Phase 1b audit, then appends one state/explanation
+row per Universe. It validates the immediate XNYS boundary, calculation and
+parameter versions, Activation, membership, and all prior prefixes, and runs
+an independent state append Oracle. The daily path does not reopen `/data`.
+
+The final V1.0.1 real-data comparison used a cold 2026-08-25 audit as the
+verified prefix and compared 2026-08-26 incremental with a separate 2026-08-26
+cold replay. Cumulative state history, explanations, transition ledger,
+current summary, and both Universe history fingerprints matched exactly. Both
+paths had zero Oracle mismatch. Time before writing was 0.237 seconds
+incremental versus 302.736 seconds cold; current Phase 1a reread took 0.007
+seconds, prior Phase 1b reread 0.228 seconds, and append plus Oracle 0.002
+seconds. These are `/tmp` development audits, not Production publications.
 
 ## 2026-08-27 corrected stable-prefix proof
 
