@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-27 — Explicit post-coordination email delivery
+
+- Accepted ADR 0043 and added explicit one-transition CLI composition from a
+  formal alert intent through ADR 0040 custody to the ADR 0041 SMTP adapter.
+- Required intent emission, absolute external Host/email configs, independent
+  whole-file SHA pins, exact Dell/runtime/root identity, and separate provider/
+  SMTP config and credential custody.
+- Preserved the coordinator socket guard independently from later SMTP access;
+  normal states perform no credential load, alert write, or delivery.
+- Added fake-transport tests for default zero access, normal null delivery,
+  first delivery, duplicate suppression, known credential failure, disabled
+  config, ambiguous SMTP outcome, redaction, and complete explicit arguments.
+- No real config, credential, alert root, network request, email, provider
+  transition, `/data` write, publication, deployment, service, timer, or
+  scheduler state was created or changed.
+
 ## 2026-08-27 — Joint external daily-control preflight
 
 - Accepted ADR 0042 and added a read-only command that reconciles the host-

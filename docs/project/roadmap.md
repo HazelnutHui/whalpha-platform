@@ -23,11 +23,12 @@
   delivery custody and its default-disabled, externally configured SMTP adapter
   are complete in repository source. The network-prohibited joint preflight for
   external alert/host/data-authorization artifacts is also repository-tested.
-  Next select the real SMTP service and addresses, review/provision all
-  external artifacts at one stable revision, run that preflight, then perform
-  a separately authorized controlled email/one-transition rehearsal before
-  considering scheduler activation. Publication, Snapshot, bundle, and OCI
-  remain separate authorizations.
+  Explicit post-coordination intent/custody/SMTP composition is complete under
+  a default-off CLI flag. Next select the real SMTP service and addresses,
+  review/provision all external artifacts at one stable revision, run that
+  preflight, then perform a separately authorized controlled email/one-
+  transition rehearsal before considering scheduler activation. Publication,
+  Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -160,6 +161,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Immutable at-most-once alert delivery custody with ambiguous replay stop
 - [x] Default-disabled external SMTP adapter with owner-only credential custody
 - [x] Network-prohibited joint external-control configuration preflight
+- [x] Explicit post-coordination email delivery composition with at-most-once custody
 
 ## Next Small Target
 

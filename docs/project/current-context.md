@@ -174,7 +174,11 @@ root, network request, delivery, service, timer, or scheduler exists. ADR 0042
 now adds a repository-tested read-only joint preflight command for the host,
 standing-authorization, and email artifacts. It prohibits networking and
 reports configuration consistency without credential access, writes, or
-rehearsal authority. No real external artifact has been created or preflighted.
+rehearsal authority. ADR 0043 now composes the intent, immutable delivery
+custody, and SMTP adapter after one formal coordinator result when the CLI has
+an explicit delivery flag and exact Host/email SHA pins. Normal states perform
+no credential access or alert write. No real external artifact has been
+created or preflighted, and no delivery route has been invoked.
 
 ## Analytics and presentation
 

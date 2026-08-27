@@ -248,7 +248,10 @@ config, credential, alert root, transport call, or delivery exists. ADR 0042
 adds a read-only joint config preflight that verifies all three external
 artifacts at one clean Dell revision while prohibiting credential access,
 networking, writes, and activation. The command is repository-tested only; no
-real external artifacts were provisioned or preflighted.
+real external artifacts were provisioned or preflighted. ADR 0043 adds the
+explicit post-coordination CLI composition from a non-null intent through
+alert custody to SMTP. Default and normal-state paths remain zero-delivery;
+only synthetic credentials and a fake sender have exercised this route.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

@@ -65,3 +65,4 @@ Each ADR should include:
 - [0040: Custody One Daily Alert Delivery Attempt](0040-custody-one-daily-alert-delivery-attempt.md)
 - [0041: Deliver Daily Alerts Through External SMTP](0041-deliver-daily-alerts-through-external-smtp.md)
 - [0042: Preflight External Daily Controls Together](0042-preflight-external-daily-controls-together.md)
+- [0043: Compose Explicit Email Delivery After Coordination](0043-compose-explicit-email-delivery-after-coordination.md)

@@ -108,6 +108,11 @@ def test_default_invocation_does_not_read_host_config_or_install_capabilities(
         "read_host_runtime_config",
         lambda **_kwargs: pytest.fail("host config must remain unread"),
     )
+    monkeypatch.setattr(
+        cli,
+        "read_email_transport_config",
+        lambda **_kwargs: pytest.fail("email config must remain unread"),
+    )
 
     assert cli.main(arguments()) == 0
     payload = json.loads(capsys.readouterr().out)

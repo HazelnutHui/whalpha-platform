@@ -18,12 +18,22 @@ from tip_api.services.daily_eod_alerting import (
     DailyEodAlertingError,
     plan_daily_eod_alert,
 )
+from tip_api.services.daily_eod_alert_custody import (
+    DailyEodAlertCustodyConfig,
+    DailyEodAlertCustodyError,
+    deliver_daily_eod_alert,
+)
 from tip_api.services.daily_eod_automation import DailyEodAutomationPaths
 from tip_api.services.daily_eod_coordinator import (
     CoordinatorStatus,
     DailyEodCoordinatorConfig,
     DailyEodCoordinatorError,
     coordinate_daily_eod_transition,
+)
+from tip_api.services.daily_eod_email_delivery import (
+    DailyEodEmailConfigError,
+    DailyEodEmailDeliveryCapability,
+    read_email_transport_config,
 )
 from tip_api.services.daily_eod_host_runtime import (
     DailyEodHostRuntimeError,
@@ -60,11 +70,15 @@ def main(argv: list[str] | None = None) -> int:
         panel_cache_root=args.panel_cache_root,
         candidate_work_dir=args.candidate_work_dir,
     )
+    result = None
     try:
         capabilities = (
             _load_authorized_capabilities(args, automation_paths)
             if args.enable_authorized_capabilities
             else None
+        )
+        email_delivery = (
+            _load_email_delivery(args) if args.deliver_alert_email else None
         )
         with _network_boundary(enabled=capabilities is not None):
             result = coordinate_daily_eod_transition(
@@ -89,10 +103,24 @@ def main(argv: list[str] | None = None) -> int:
                 payload["alert_intent"] = (
                     None if intent is None else intent.as_dict()
                 )
+        alert_delivery = None
+        if email_delivery is not None and intent is not None:
+            custody_config, capability = email_delivery
+            alert_delivery = deliver_daily_eod_alert(
+                config=custody_config,
+                intent=intent,
+                capability=capability,
+            )
+        if args.deliver_alert_email:
+            payload["alert_delivery"] = (
+                None if alert_delivery is None else alert_delivery.as_dict()
+            )
     except (
         DailyEodAuthorizedCapabilityError,
+        DailyEodAlertCustodyError,
         DailyEodAlertingError,
         DailyEodCoordinatorError,
+        DailyEodEmailConfigError,
         DailyEodHostRuntimeError,
         DailyEodRecoveryRouterError,
         DailyEodRunJournalError,
@@ -100,15 +128,24 @@ def main(argv: list[str] | None = None) -> int:
         RuntimeError,
         ValueError,
     ) as exc:
+        transition_known = result is not None
         print(
             json.dumps(
                 {
                     "status": "rejected",
                     "reason_code": "daily_eod_one_transition_rejected",
                     "error_type": type(exc).__name__,
-                    "external_request_count": None,
-                    "production_write_count": None,
-                    "transition_outcome_formally_known": False,
+                    "coordinator_status": (
+                        None if result is None else result.status.value
+                    ),
+                    "external_request_count": (
+                        None if result is None else result.external_request_count
+                    ),
+                    "production_write_count": (
+                        None if result is None else result.production_write_count
+                    ),
+                    "transition_outcome_formally_known": transition_known,
+                    "alert_delivery_outcome_formally_known": False,
                     "publication_authorized": False,
                     "deployment_authorized": False,
                     "scheduler_enabled": False,
@@ -121,8 +158,14 @@ def main(argv: list[str] | None = None) -> int:
     print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
     return (
         1
-        if result.status
-        in {CoordinatorStatus.BLOCKED, CoordinatorStatus.RECOVERY_REQUIRED}
+        if (
+            result.status
+            in {CoordinatorStatus.BLOCKED, CoordinatorStatus.RECOVERY_REQUIRED}
+            or (
+                alert_delivery is not None
+                and alert_delivery.outcome == "failed"
+            )
+        )
         else 0
     )
 
@@ -176,6 +219,56 @@ def _load_authorized_capabilities(
     )
 
 
+def _load_email_delivery(
+    args: argparse.Namespace,
+) -> tuple[DailyEodAlertCustodyConfig, DailyEodEmailDeliveryCapability]:
+    source_root = _source_repository_root()
+    host_config = read_host_runtime_config(
+        config_path=args.host_config,
+        config_root=args.host_config.parent,
+        repository_root=source_root,
+        expected_file_sha256=args.host_config_sha256,
+    )
+    verified = verify_dell_runtime(
+        config=host_config,
+        source_repository_root=source_root,
+    )
+    if (
+        Path(host_config.data_root) != args.data_root
+        or Path(host_config.run_root) != args.run_root
+        or _paths_overlap(args.host_config.parent, args.email_config.parent)
+    ):
+        raise DailyEodHostRuntimeError(
+            "email delivery CLI paths differ from host runtime config"
+        )
+    email_config = read_email_transport_config(
+        config_path=args.email_config,
+        config_root=args.email_config.parent,
+        repository_root=source_root,
+        expected_file_sha256=args.email_config_sha256,
+    )
+    if _paths_overlap(
+        Path(host_config.credential_path).parent,
+        Path(email_config.credential_path).parent,
+    ):
+        raise DailyEodEmailConfigError(
+            "provider and email credentials require separate custody"
+        )
+    custody_config = DailyEodAlertCustodyConfig(
+        alert_root=Path(email_config.alert_root),
+        repository_root=Path(host_config.repository_root),
+        data_root=Path(host_config.data_root),
+        run_root=Path(host_config.run_root),
+        channel="email",
+    )
+    capability = DailyEodEmailDeliveryCapability(
+        config=email_config,
+        custody_config=custody_config,
+        verified_runtime=verified,
+    )
+    return custody_config, capability
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Coordinate exactly one Dell daily EOD transition without looping."
@@ -200,9 +293,12 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--execute-offline", action="store_true")
     parser.add_argument("--recover-unresolved", action="store_true")
     parser.add_argument("--emit-alert-intent", action="store_true")
+    parser.add_argument("--deliver-alert-email", action="store_true")
     parser.add_argument("--enable-authorized-capabilities", action="store_true")
     parser.add_argument("--host-config", type=Path)
     parser.add_argument("--host-config-sha256")
+    parser.add_argument("--email-config", type=Path)
+    parser.add_argument("--email-config-sha256")
     parser.add_argument("--approved-plan-sha256")
     parser.add_argument("--expected-current-state-fingerprint")
     return parser
@@ -237,18 +333,36 @@ def _validate_arguments(
     if args.recover_unresolved and args.execute_offline:
         parser.error("--recover-unresolved cannot be combined with --execute-offline")
     host_values = (args.host_config, args.host_config_sha256)
-    if args.enable_authorized_capabilities:
+    host_required = (
+        args.enable_authorized_capabilities or args.deliver_alert_email
+    )
+    if host_required:
         if args.host_config is None or not _is_fingerprint(args.host_config_sha256):
             parser.error(
-                "--enable-authorized-capabilities requires an absolute --host-config "
-                "and --host-config-sha256"
+                "authorized capabilities or email delivery require an absolute "
+                "--host-config and --host-config-sha256"
             )
         if not args.host_config.is_absolute():
             parser.error("--host-config must be absolute")
     elif any(value is not None for value in host_values):
         parser.error(
-            "host runtime arguments require --enable-authorized-capabilities"
+            "host runtime arguments require an explicitly enabled capability"
         )
+    email_values = (args.email_config, args.email_config_sha256)
+    if args.deliver_alert_email:
+        if not args.emit_alert_intent:
+            parser.error("--deliver-alert-email requires --emit-alert-intent")
+        if (
+            args.email_config is None
+            or not args.email_config.is_absolute()
+            or not _is_fingerprint(args.email_config_sha256)
+        ):
+            parser.error(
+                "--deliver-alert-email requires an absolute --email-config "
+                "and --email-config-sha256"
+            )
+    elif any(value is not None for value in email_values):
+        parser.error("email config arguments require --deliver-alert-email")
     apply_values = (
         args.approved_plan_sha256,
         args.expected_current_state_fingerprint,
@@ -308,6 +422,19 @@ def _is_fingerprint(value: object) -> bool:
         and len(value) == 64
         and all(character in "0123456789abcdef" for character in value)
     )
+
+
+def _paths_overlap(left: Path, right: Path) -> bool:
+    try:
+        left.absolute().relative_to(right.absolute())
+        return True
+    except ValueError:
+        pass
+    try:
+        right.absolute().relative_to(left.absolute())
+        return True
+    except ValueError:
+        return False
 
 
 if __name__ == "__main__":  # pragma: no cover

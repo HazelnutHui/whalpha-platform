@@ -120,6 +120,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0040: Daily alert delivery custody](decisions/0040-custody-one-daily-alert-delivery-attempt.md): records one immutable pre-send reservation and bounded terminal evidence while prohibiting automatic replay of an ambiguous attempt.
 - [ADR 0041: External SMTP daily alerts](decisions/0041-deliver-daily-alerts-through-external-smtp.md): adds a default-disabled, exact-revision email adapter with external owner-only config and credentials behind alert custody.
 - [ADR 0042: Joint external-control preflight](decisions/0042-preflight-external-daily-controls-together.md): reconciles host, data-authorization, and email artifacts without reading credentials, networking, writing, or granting rehearsal/scheduler authority.
+- [ADR 0043: Explicit post-coordination email](decisions/0043-compose-explicit-email-delivery-after-coordination.md): composes alert intent, at-most-once custody, and SMTP only after one formal coordinator result and explicit CLI opt-in.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.

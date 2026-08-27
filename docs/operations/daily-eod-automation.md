@@ -324,9 +324,34 @@ recipient acceptance is treated as unknown and must not be retried
 automatically. Successful evidence contains only a hash of the stable
 Message-ID, never a secret or raw provider response.
 
-There is deliberately no provisioning or send command yet. First review all
-external paths and exact revision, perform no-network configuration preflight,
-then authorize any controlled fake/local or real rehearsal separately.
+ADR 0043 now composes intent, custody, and SMTP in the existing one-transition
+command, but only with explicit delivery opt-in. Add the following to the full
+required `run-one-daily-eod-transition.sh` argument set:
+
+```bash
+--emit-alert-intent \
+--deliver-alert-email \
+--host-config /absolute/external/runtime/host.json \
+--host-config-sha256 <64-hex-whole-file-sha> \
+--email-config /absolute/external/email/smtp.json \
+--email-config-sha256 <64-hex-whole-file-sha>
+```
+
+The Host Runtime and email config directories must be non-overlapping, as must
+the Massive and SMTP credential directories. Email delivery does not require
+data capabilities to be enabled, but both configs must match the actual clean
+Dell revision and CLI data/run roots. The coordinator remains socket-guarded
+unless its separate data-capability flag is enabled; SMTP is reachable only
+after a formal coordinator result and non-null alert intent.
+
+A normal result reports both `alert_intent` and `alert_delivery` as null and
+does not load SMTP credentials or touch the alert root. Known email failure is
+reported and exits nonzero. An exception after `delivery_started` has unknown
+delivery outcome and must not be replayed; the rejected envelope still retains
+the already-known coordinator status and data request/write counts. The command
+remains uninstalled in real operations: first review all external paths and the
+exact revision, run the ADR 0042 no-network preflight, then separately authorize
+a controlled fake/local or real rehearsal.
 
 ## Joint external-control preflight
 
@@ -527,6 +552,8 @@ notification delivery was attempted.
 ADR 0040 alert custody is repository-tested only; no real root, transport call,
 or delivery event exists. ADR 0041 SMTP config, credential loading, rendering,
 TLS behavior, and custody composition are repository-tested only; no external
-artifact, credential read, network call, email, command, service, or timer
-exists. ADR 0042 joint preflight is repository-tested only; no real external
-artifacts were read or created and no installed preflight was performed.
+artifact, credential read, network call, email, service, or timer exists. ADR
+0042 joint preflight is repository-tested only; no real external artifacts were
+read or created and no installed preflight was performed. ADR 0043's explicit
+CLI delivery route is also repository-tested only with fake SMTP; it has not
+been invoked against any real config, credential, alert root, or transport.

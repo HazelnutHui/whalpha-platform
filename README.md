@@ -75,7 +75,7 @@ standing-authorized fetch/Apply adapters now compose those boundaries and
 preserve actual Identity pagination request counts, but remain uninstalled and
 inactive. No real authorization, run root, credential read, fetch attempt, or
 Apply has been created; notification delivery and scheduler activation remain
-unimplemented. A one-transition CLI and externally SHA-pinned host-runtime
+uninstalled. A one-transition CLI and externally SHA-pinned host-runtime
 contract are also repository-tested: capability ports remain absent unless an
 external owner-only config enables them, the invocation explicitly opts in,
 and actual Dell/source/clean-HEAD/policy identity all match. No real host config
@@ -101,7 +101,10 @@ network request, delivery, service, timer, or scheduler exists. A read-only
 joint external-control preflight command now reconciles host, standing data-
 authorization, and email config at one clean Dell revision without touching
 credentials or granting rehearsal authority. No real external artifact has
-been created or preflighted.
+been created or preflighted. The one-transition CLI now also has an explicit
+post-coordination route from a non-null alert intent through immutable custody
+to SMTP. Default invocation and normal no-alert results remain zero-delivery;
+the route has only fake-transport tests and has never sent real email.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and
