@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-27 — Formally validated Phase 1a/Candidate panel reuse
+
+- Accepted ADR 0025 and added the optional
+  `market-regime-formal-panel-cache/1.0` Dell-local stage. Phase 1a may persist
+  its already validated exact 26-session panel under a content-derived key;
+  Candidate may reuse it only when the current Phase 1b source ledger binds
+  the same EOD, Identity, Activation, session, and ordered-Universe custody.
+- Cache absence uses the unchanged formal reader and populates the exact entry.
+  A present unsafe, malformed, corrupt, or source-mismatched entry fails closed.
+  Entries have canonical fixed-schema bars, physical/logical fingerprints,
+  stable-ID memberships, owner-only custody, no `latest` pointer, and no OCI or
+  Production role.
+- On final V1.0.1 2026-08-26 development inputs, panel load fell from 217.409
+  to 8.837 seconds and total time before audit writing from 310.008 to 101.792
+  seconds. All nine source/business/Oracle files were byte-identical and both
+  independent Oracles had zero mismatch. Cache evidence and physical timings
+  intentionally changed only the audit container fingerprint.
+- No `/data`, publication, Snapshot, bundle, deployment, OCI, credential,
+  provider, or scheduler state changed.
+
 ## 2026-08-27 — Verified-prior Phase 1b and Candidate append
 
 - Accepted ADR 0024 and added Phase 1b audit schema 1.1

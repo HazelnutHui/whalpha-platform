@@ -19,6 +19,7 @@ from tip_api.services.market_regime_audit import (
     write_market_regime_audit,
 )
 from tip_api.services.market_regime_oracle import compare_with_independent_oracle
+from tip_api.services.market_regime_panel_cache import write_market_regime_panel_cache
 from tip_api.services.market_regime_sources import load_formal_market_regime_panel
 
 
@@ -36,12 +37,19 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument(
+        "--panel-cache-root",
+        type=Path,
+        help="Optional owner-controlled Dell-local content-addressed panel cache.",
+    )
     parser.add_argument("--verify-output", action="store_true", help="Reread an existing completed audit only.")
     args = parser.parse_args(argv)
     if not args.data_root.is_absolute():
         parser.error("--data-root must be absolute")
     if not args.output_dir.is_absolute():
         parser.error("--output-dir must be absolute")
+    if args.panel_cache_root is not None and not args.panel_cache_root.is_absolute():
+        parser.error("--panel-cache-root must be absolute")
     if tuple(args.universe_id) != tuple(dict.fromkeys(args.universe_id)):
         parser.error("duplicate --universe-id is not allowed")
     ordered = tuple(item for item in PUBLIC_UNIVERSE_ORDER if item in args.universe_id)
@@ -56,6 +64,12 @@ def main(argv: list[str] | None = None) -> int:
     started = time.monotonic()
     with _offline_socket_guard():
         panel = load_formal_market_regime_panel(data_root=args.data_root, as_of_session=args.as_of_session)
+        cache_manifest = None
+        if args.panel_cache_root is not None:
+            cache_manifest = write_market_regime_panel_cache(
+                cache_root=args.panel_cache_root,
+                panel=panel,
+            )
         composites = []
         explanations = []
         oracle_reports = []
@@ -76,7 +90,13 @@ def main(argv: list[str] | None = None) -> int:
             elapsed_seconds=elapsed,
             peak_memory_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         )
-    print(json.dumps(_summary(manifest, args.output_dir), sort_keys=True, separators=(",", ":")))
+    summary = _summary(manifest, args.output_dir)
+    if cache_manifest is not None:
+        summary["panel_cache_key"] = cache_manifest["cache_key"]
+        summary["panel_cache_logical_fingerprint"] = cache_manifest[
+            "logical_content_fingerprint"
+        ]
+    print(json.dumps(summary, sort_keys=True, separators=(",", ":")))
     return 1 if manifest["oracle_mismatch_count"] else 0
 
 

@@ -76,9 +76,14 @@ and runs an independent current-session state Oracle without reopening
 `/data`. On real 2026-08-26 inputs it matched the V1.0.1 cold state,
 explanation, transition, summary, and history outputs exactly: 0.237 seconds
 before writing versus 302.736 seconds cold, with zero Oracle mismatch. This is
-development-only and has not changed active Production. Immutable panel-stage
-reuse for Candidate, resumable/streaming audit output, validation tiers, and
-then deterministic process parallelism remain before daily automation.
+development-only and has not changed active Production. Repository source now
+also implements optional content-addressed reuse of the formally validated
+Phase 1a panel in the daily Candidate append. On real 2026-08-26 development
+inputs it reduced panel loading from 217.409 to 8.837 seconds and total time
+before writing from 310.008 to 101.792 seconds; all nine business/Oracle files
+were byte-identical and both paths had zero Oracle mismatch. Streaming and
+resumable audit output, validation tiers, and then deterministic process
+parallelism remain before daily automation.
 
 ## Analytics and presentation
 

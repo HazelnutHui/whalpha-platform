@@ -606,6 +606,15 @@ daily path consumes current Phase 1a plus prior Phase 1b audits without
 reopening `/data`; the stable-prefix cold path remains the reference. Production
 publication remains a separate authorization.
 
+ADR 0025 adds an optional Dell-local immutable panel-stage boundary between
+Phase 1a and the daily Candidate append. Phase 1a writes the already validated
+26-session panel under a content-derived key. Candidate selects it only from
+the exact current Phase 1b source ledger; a miss invokes the formal canonical
+reader, while an existing invalid entry fails closed. The cache is explicit,
+owner-controlled, has no mutable latest pointer, and is never an OCI or
+Production source. Candidate business artifacts and Oracle semantics remain
+identical to the cold-reader path.
+
 The first accepted formal Phase 5 audit covers 2026-08-21 and 2026-08-24 under
 candidate calculation `market-regime-opportunity-candidate-v1.1.1`. Its
 logical fingerprint is

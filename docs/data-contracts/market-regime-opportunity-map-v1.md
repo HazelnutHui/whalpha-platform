@@ -105,6 +105,20 @@ panels may share already validated immutable session reads and stable-ID bar
 indexes, but every emitted panel retains the same 26-session source ledger and
 all logical outputs must match the serial reference exactly.
 
+The optional formal panel-stage cache uses contract
+`market-regime-formal-panel-cache/1.0`. Its SHA-256 entry key binds the exact
+as-of date, 26 ordered sessions, all session content/Parquet/Identity
+fingerprints, history fingerprint, current EOD and Identity fingerprints,
+Activation pointer, and ordered Universe counts and membership fingerprints.
+Each immutable entry contains one fixed-schema, canonically ordered Parquet bar
+panel plus a last-written canonical manifest with physical and logical bar
+fingerprints and complete stable-ID Universe membership. Phase 1a may populate
+an entry only after formal source validation. Candidate schema 1.1 may consume
+it only when the current Phase 1b source ledger selects the exact same key.
+Absence is a cold-reader cache miss; an existing invalid entry is a hard
+failure. Cache custody and timing evidence do not alter Candidate business
+records or substitute for the independent Oracle.
+
 This contract freezes the machine-readable calculation boundary for the
 product described in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).

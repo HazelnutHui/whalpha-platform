@@ -149,6 +149,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0021: Separate Candidate Leadership from Entry Geometry](decisions/0021-separate-candidate-leadership-from-entry-geometry.md)
 - [ADR 0022: Bind Daily Candidate Calculation to a Verified Prior Audit](decisions/0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md)
 - [ADR 0023: Preserve Market Regime State Prefix Across As-Of Sessions](decisions/0023-preserve-market-regime-state-prefix-across-as-of-sessions.md)
+- [ADR 0024: Bind Daily Market Regime State to Verified Upstream Audits](decisions/0024-bind-daily-market-regime-state-to-verified-upstream-audits.md)
+- [ADR 0025: Share Formally Validated Panels Between Dell Stages](decisions/0025-share-formally-validated-panels-between-dell-stages.md)
 
 ## Project
 

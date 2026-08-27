@@ -211,6 +211,81 @@ def test_two_session_offline_run_passes_oracle_and_replay_gates(monkeypatch, tmp
     assert Decimal(run.timings["candidate_independent_oracle_cpu_seconds"]) >= 0
 
 
+def test_incremental_panel_uses_exact_stage_cache_without_data_read(monkeypatch) -> None:
+    panel = _panels()[-1]
+    root = Path(tempfile.mkdtemp(prefix="candidate-panel-cache-hit-", dir="/tmp"))
+    root.chmod(0o700)
+    try:
+        manifest = cli.write_market_regime_panel_cache(cache_root=root, panel=panel)
+        monkeypatch.setattr(
+            cli,
+            "load_formal_market_regime_panels",
+            lambda **kwargs: pytest.fail("canonical data must not be reread on an exact cache hit"),
+        )
+        reread, status, fingerprint = cli._load_incremental_panel(
+            data_root=Path("/data/unused"),
+            current_session=panel.as_of_session,
+            panel_cache_root=root,
+            expected_panel_source=cli.panel_source_boundary(panel),
+        )
+        assert reread == replace(
+            panel,
+            bars=tuple(sorted(panel.bars, key=lambda item: (item.session_date, str(item.instrument_id)))),
+        )
+        assert status == "hit"
+        assert fingerprint == manifest["logical_content_fingerprint"]
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+
+def test_incremental_panel_cache_miss_runs_formal_reader_and_populates(monkeypatch, tmp_path) -> None:
+    panel = _panels()[-1]
+    root = Path(tempfile.mkdtemp(prefix="candidate-panel-cache-miss-", dir="/tmp"))
+    shutil.rmtree(root)
+    calls = []
+    monkeypatch.setattr(
+        cli,
+        "load_formal_market_regime_panels",
+        lambda **kwargs: calls.append(kwargs) or (panel,),
+    )
+    try:
+        loaded, status, fingerprint = cli._load_incremental_panel(
+            data_root=tmp_path,
+            current_session=panel.as_of_session,
+            panel_cache_root=root,
+            expected_panel_source=cli.panel_source_boundary(panel),
+        )
+        assert loaded == panel
+        assert status == "populated"
+        assert isinstance(fingerprint, str) and len(fingerprint) == 64
+        assert calls == [{"data_root": tmp_path, "as_of_sessions": (panel.as_of_session,)}]
+        reread, _, _ = cli._load_incremental_panel(
+            data_root=tmp_path,
+            current_session=panel.as_of_session,
+            panel_cache_root=root,
+            expected_panel_source=cli.panel_source_boundary(panel),
+        )
+        assert reread == replace(
+            panel,
+            bars=tuple(sorted(panel.bars, key=lambda item: (item.session_date, str(item.instrument_id)))),
+        )
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+
+def test_incremental_panel_rejects_malformed_current_phase1b_source(tmp_path) -> None:
+    source = cli.panel_source_boundary(_panels()[-1])
+    source["source_custody_mode"] = "verified_prior_state_plus_current_phase1a_audit"
+    source["history_source_fingerprint"] = "malformed"
+    with pytest.raises(RuntimeError, match="source custody is malformed"):
+        cli._load_incremental_panel(
+            data_root=tmp_path,
+            current_session=_panels()[-1].as_of_session,
+            panel_cache_root=None,
+            expected_panel_source=source,
+        )
+
+
 def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
     monkeypatch, tmp_path, capsys,
 ) -> None:

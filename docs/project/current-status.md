@@ -142,15 +142,22 @@ Composite retains its trailing 26-session source window. Legacy V1.0.0 audits
 remain readable and Production remains unchanged.
 
 On corrected 2026-08-26 development inputs, Candidate incremental time before
-writing was 309.02 seconds versus 461.67 seconds cold. Formal current-panel
-reread still consumed 216.57 seconds and prior-audit reread 46.35 seconds.
+writing was 309.02 seconds versus 461.67 seconds cold. Repository source now
+implements ADR 0025's optional immutable panel-stage reuse between Phase 1a
+and Candidate. The final real-data comparison reduced current-panel load from
+217.409 to 8.837 seconds and total time before writing from 310.008 to 101.792
+seconds. Source, raw-fact, normalization, score, state, transition, risk,
+parameter, and Oracle files were byte-identical; both Oracles had zero
+mismatch. The cache is explicit, content-addressed, Dell-local, and fails
+closed on a present invalid entry; it neither writes `/data` nor changes
+Production.
 Verified-prior Phase 1b append is now implemented. The final-version real
 2026-08-26 incremental audit matched the V1.0.1 cold state history,
 explanations, transitions, and current summary exactly with zero Oracle
 mismatch; time before writing was 0.237 seconds versus 302.736 seconds cold.
-The next operational priority is immutable panel-stage reuse for Candidate,
-streaming/resumable audit output, and validation tiers; deterministic process
-parallelism follows with the serial path retained.
+The next operational priority is streaming/resumable audit output and
+validation tiers; deterministic process parallelism follows with the serial
+path retained.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

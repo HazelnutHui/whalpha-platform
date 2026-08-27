@@ -659,6 +659,20 @@ def _validate_incremental_validation_input(
         raise OpportunityCandidateAuditError("incremental validation ledger has malformed fingerprints")
     if record.get("validation_scope") != "verified_prior_plus_current_session_oracle":
         raise OpportunityCandidateAuditError("incremental validation scope is unsupported")
+    cache_status = record.get("current_panel_stage_cache_status")
+    cache_fingerprint = record.get("current_panel_stage_logical_fingerprint")
+    if cache_status is not None or cache_fingerprint is not None:
+        if cache_status not in {"disabled", "populated", "hit"}:
+            raise OpportunityCandidateAuditError("incremental panel-stage cache status is invalid")
+        if cache_status == "disabled":
+            if cache_fingerprint is not None:
+                raise OpportunityCandidateAuditError("disabled panel-stage cache has a fingerprint")
+        elif (
+            not isinstance(cache_fingerprint, str)
+            or len(cache_fingerprint) != 64
+            or any(character not in "0123456789abcdef" for character in cache_fingerprint)
+        ):
+            raise OpportunityCandidateAuditError("incremental panel-stage cache fingerprint is malformed")
     reuse_checks = record.get("reuse_checks")
     if not isinstance(reuse_checks, Mapping) or not reuse_checks or any(
         type(result) is not bool or result is not True for result in reuse_checks.values()

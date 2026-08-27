@@ -41,6 +41,14 @@ from tip_api.services.market_regime_sources import (
     MarketRegimeInputPanel,
     load_formal_market_regime_panels,
 )
+from tip_api.services.market_regime_panel_cache import (
+    MarketRegimePanelCacheError,
+    MarketRegimePanelCacheMiss,
+    normalize_source_boundary,
+    panel_source_boundary,
+    read_market_regime_panel_cache,
+    write_market_regime_panel_cache,
+)
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
 from tip_api.services.opportunity_candidate_oracle import (
     CandidateIncrementalStateOracleCase,
@@ -85,6 +93,8 @@ class CandidateIncrementalRun:
     timings: Mapping[str, str]
     runtime_metrics: Mapping[str, int]
     current_score_history: Mapping[str, tuple[OpportunityCandidateBatchV1, ...]]
+    panel_cache_status: str = "disabled"
+    panel_cache_logical_fingerprint: str | None = None
 
 
 @dataclass(slots=True)
@@ -132,13 +142,24 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--phase1b-audit", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument(
+        "--panel-cache-root",
+        type=Path,
+        help="Optional owner-controlled Dell-local content-addressed panel cache.",
+    )
+    parser.add_argument(
         "--prior-candidate-audit",
         type=Path,
         help="Formally verified immediately prior Candidate audit for one-session incremental execution.",
     )
     parser.add_argument("--verify-output", action="store_true", help="Reread an existing completed audit only.")
     args = parser.parse_args(argv)
-    for name in ("data_root", "phase1b_audit", "output_dir", "prior_candidate_audit"):
+    for name in (
+        "data_root",
+        "phase1b_audit",
+        "output_dir",
+        "prior_candidate_audit",
+        "panel_cache_root",
+    ):
         value = getattr(args, name)
         if value is not None and not value.is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
@@ -183,6 +204,8 @@ def main(argv: list[str] | None = None) -> int:
                     candidate_sessions=candidate_sessions,
                     regime_records=state_records,
                     prior_audit=prior_audit,
+                    panel_cache_root=args.panel_cache_root,
+                    expected_panel_source=source_payload,
                 )
         else:
             with profiler.stage("candidate_session_selection"):
@@ -550,6 +573,8 @@ def _calculate_incremental(
     candidate_sessions: tuple[date, ...],
     regime_records: Sequence[MarketRegimeStateRecordV1],
     prior_audit,
+    panel_cache_root: Path | None = None,
+    expected_panel_source: Mapping[str, Any] | None = None,
 ) -> CandidateIncrementalRun:
     """Append exactly one session to a formally verified Candidate audit."""
 
@@ -561,13 +586,12 @@ def _calculate_incremental(
     regime_by_key = {(item.as_of_session, item.universe_id): item for item in regime_records}
 
     with profiler.stage("incremental_panel_load_validate"):
-        panels = load_formal_market_regime_panels(
+        panel, panel_cache_status, panel_cache_fingerprint = _load_incremental_panel(
             data_root=data_root,
-            as_of_sessions=(current_session,),
+            current_session=current_session,
+            panel_cache_root=panel_cache_root,
+            expected_panel_source=expected_panel_source,
         )
-        if len(panels) != 1:
-            raise RuntimeError("incremental Candidate calculation requires exactly one current panel")
-        panel = panels[0]
         _validate_panel_catalog(panel, current_session)
         _validate_incremental_prior(
             prior_audit=prior_audit,
@@ -757,8 +781,12 @@ def _calculate_incremental(
             "panel_load_count": 1,
             "candidate_batch_count": len(PUBLIC_UNIVERSE_ORDER),
             "reused_candidate_session_count": len(candidate_sessions) - 1,
+            "panel_cache_hit_count": 1 if panel_cache_status == "hit" else 0,
+            "panel_cache_write_count": 1 if panel_cache_status == "populated" else 0,
         },
         current_score_history=current_batches,
+        panel_cache_status=panel_cache_status,
+        panel_cache_logical_fingerprint=panel_cache_fingerprint,
     )
 
 
@@ -799,6 +827,59 @@ def _validate_incremental_prior(*, prior_audit, candidate_sessions, regime_by_ke
             raise RuntimeError("prior Candidate audit no longer matches Phase 1b history")
 
 
+def _load_incremental_panel(
+    *,
+    data_root: Path,
+    current_session: date,
+    panel_cache_root: Path | None,
+    expected_panel_source: Mapping[str, Any] | None,
+) -> tuple[MarketRegimeInputPanel, str, str | None]:
+    """Load an exact verified stage cache or populate it from the formal cold reader."""
+
+    expected_boundary = None
+    if expected_panel_source is not None:
+        try:
+            expected_boundary = normalize_source_boundary(expected_panel_source)
+        except MarketRegimePanelCacheError as exc:
+            # Legacy stable-prefix Phase 1b ledgers span more than the exact
+            # Candidate panel and cannot select a cache entry. The cold reader
+            # remains the compatible fallback.
+            if (
+                expected_panel_source.get("source_custody_mode")
+                == "verified_prior_state_plus_current_phase1a_audit"
+            ):
+                raise RuntimeError("current Phase 1b panel source custody is malformed") from exc
+            expected_boundary = None
+    if panel_cache_root is not None and expected_boundary is not None and panel_cache_root.exists():
+        try:
+            panel, manifest = read_market_regime_panel_cache(
+                cache_root=panel_cache_root,
+                expected_source=expected_boundary,
+            )
+            return panel, "hit", manifest["logical_content_fingerprint"]
+        except MarketRegimePanelCacheMiss:
+            pass
+        except MarketRegimePanelCacheError as exc:
+            raise RuntimeError("candidate panel cache failed formal reread") from exc
+
+    panels = load_formal_market_regime_panels(
+        data_root=data_root,
+        as_of_sessions=(current_session,),
+    )
+    if len(panels) != 1:
+        raise RuntimeError("incremental Candidate calculation requires exactly one current panel")
+    panel = panels[0]
+    if expected_boundary is not None and panel_source_boundary(panel) != expected_boundary:
+        raise RuntimeError("formal Candidate panel does not match Phase 1b source custody")
+    if panel_cache_root is None:
+        return panel, "disabled", None
+    try:
+        manifest = write_market_regime_panel_cache(cache_root=panel_cache_root, panel=panel)
+    except MarketRegimePanelCacheError as exc:
+        raise RuntimeError("candidate panel cache population failed") from exc
+    return panel, "populated", manifest["logical_content_fingerprint"]
+
+
 def _incremental_validation_ledger(*, prior_audit, run: CandidateIncrementalRun) -> dict[str, Any]:
     prior_validation = prior_audit.validation_ledger
     if prior_validation is None:
@@ -835,6 +916,8 @@ def _incremental_validation_ledger(*, prior_audit, run: CandidateIncrementalRun)
             prior_audit.normalization_ledger
         ),
         "current_session_oracle_fingerprint": run.oracle_report.oracle_fingerprint,
+        "current_panel_stage_cache_status": run.panel_cache_status,
+        "current_panel_stage_logical_fingerprint": run.panel_cache_logical_fingerprint,
         "reuse_checks": {
             "prior_audit_formally_reread": True,
             "candidate_session_prefix_exact": True,
@@ -843,6 +926,7 @@ def _incremental_validation_ledger(*, prior_audit, run: CandidateIncrementalRun)
             "phase1b_prefix_compatible": True,
             "prior_candidate_prefix_preserved": run.equivalence_flags["prior_prefix_preserved"],
             "prior_state_prefix_preserved": run.equivalence_flags["future_prefix_stable"],
+            "current_panel_formally_validated": True,
         },
         "validation_segments": segments,
     }

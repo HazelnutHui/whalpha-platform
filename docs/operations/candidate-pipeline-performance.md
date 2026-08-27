@@ -40,6 +40,33 @@ The command is socket-guarded, writes no Production state, and requires an
 owner-controlled new `/tmp` target. Publication and deployment remain separate
 approval-bound operations.
 
+Phase 1a and the daily Candidate append may share an explicit Dell-local panel
+cache:
+
+```bash
+scripts/admin/calculate-market-regime-offline.sh \
+  --as-of-session YYYY-MM-DD \
+  --universe-id provider_classified_common_shares_v1 \
+  --universe-id provider_classified_common_shares_plus_adrs_v1 \
+  --data-root /data/trading-intelligence-platform \
+  --panel-cache-root /tmp/<owner-controlled-panel-cache> \
+  --output-dir /tmp/<new-empty-phase1a-audit>
+
+scripts/admin/calculate-opportunity-candidates-offline.sh \
+  --as-of-session YYYY-MM-DD \
+  --data-root /data/trading-intelligence-platform \
+  --phase1b-audit /tmp/<exact-completed-phase1b-audit> \
+  --prior-candidate-audit /tmp/<immediately-prior-candidate-audit> \
+  --panel-cache-root /tmp/<same-owner-controlled-panel-cache> \
+  --output-dir /tmp/<new-empty-incremental-candidate-audit>
+```
+
+The cache is optional and content-addressed by the exact 26-session EOD,
+Identity, Activation, and ordered-Universe source ledger. An absent exact
+entry invokes the unchanged formal reader and populates the cache. A present
+unsafe, malformed, or mismatched entry fails closed. The cache has no `latest`
+pointer, never belongs in OCI, and does not authorize `/data` writes.
+
 Append one session from an immediately prior verified Candidate audit with:
 
 ```bash
@@ -84,17 +111,37 @@ The current manifest memory sample is taken before the audit writer. A baseline
 run was separately observed near 6.3 GiB RSS during large JSON serialization,
 so writer streaming and peak-memory instrumentation remain open work.
 
+## 2026-08-27 immutable panel reuse result
+
+The final V1.0.1 2026-08-26 Candidate append was run once without a cache and
+once against the exact Phase 1a-populated cache. Formal current-panel loading
+fell from 217.409 to 8.837 seconds. Total time before audit writing fell from
+310.008 to 101.792 seconds, a 67.2% reduction. Process character reads fell
+from 684,039,139 to 521,493,089.
+
+The source manifest, raw facts, normalization ledger, score history, state
+history, transition ledger, current risk results, parameter contract, and
+independent Oracle report were byte-identical across both paths. Both Oracles
+reported zero mismatch. The aggregate audit fingerprint differs by design
+because cache evidence and physical runtime evidence are recorded separately
+from the unchanged business artifacts. These were `/tmp` development audits;
+Production and `/data` were unchanged.
+
+The remaining roughly 102 seconds before writing are dominated by formal
+prior-Candidate reread (46.393 seconds), the independent current-session Oracle
+(29.296 seconds), and score calculation (11.144 seconds). Large cumulative
+JSON writing and final formal reread add further wall time outside the
+pre-writer metric.
+
 ## Next performance sequence
 
-1. Cache or content-address formally validated immutable EOD panel inputs so a
-   daily Candidate run does not reread 25 unchanged partitions.
+1. Add streaming and resumable audit stages with explicit input/output
+   fingerprints and failure locations.
 2. Separate daily, periodic, and code/model-change validation tiers without
    weakening the full reference audit.
-3. Add content-addressed resumable stages with explicit input/output
-   fingerprints and failure locations.
-4. Process-parallelize only independent CPU work using stable `instrument_id`
+3. Process-parallelize only independent CPU work using stable `instrument_id`
    shards; merge and fingerprint in one deterministic parent order.
-5. Split Candidate public summary and on-demand detail payloads. This changes
+4. Split Candidate public summary and on-demand detail payloads. This changes
    neither guest/credential capability parity nor the Dell/OCI boundary.
 
 ## 2026-08-27 verified-prior Phase 1b result
@@ -132,6 +179,6 @@ transition row, current risk result, and all corresponding business
 fingerprints. Both Oracles had zero mismatch. The cold path took 461.67 seconds
 before writing; incremental took 309.02 seconds. Of the incremental time,
 216.57 seconds reread the 26-session panel and 46.35 seconds formally reread
-the prior Candidate audit. The result is logically complete but not yet the
-target daily latency; immutable-panel reuse and streaming audit output remain
-necessary.
+the prior Candidate audit. That comparison established the panel-reuse target;
+the immutable panel cache documented above now removes the repeated canonical
+source read. Streaming audit output remains necessary.
