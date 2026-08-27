@@ -185,12 +185,19 @@ verified-prior Phase 1b, daily Candidate, and entry geometry. No durable real
 run root is provisioned and no real action has been executed through it.
 Session-readiness/retry policy and provider acquisition/canonical-apply
 standing authorization were the next boundary. ADR 0031 now adds the
-repository-tested, network-free readiness decision: actual XNYS close and early-close handling,
-30-minute provisional stabilization, bounded retry/`Retry-After`, five-attempt
+repository-tested, network-free readiness decision: actual XNYS close and
+early-close handling, 30-minute provisional stabilization, bounded
+retry/`Retry-After`, five-attempt
 and six-hour limits, explicit alert state, and oldest-missing-session recovery.
 It makes no provider-completeness claim and performs no fetch, apply,
 notification, or scheduler action. Durable acquisition-attempt custody and
-the standing-authorization decision remain next.
+the standing-authorization decision were next. ADR 0032 now adds repository-
+tested reservation/outcome/recovery custody under the shared global lock and
+cross-session journal. It binds a fresh exact readiness fingerprint, package
+path/type/session/request count/hashes/timing, persists bounded retry evidence,
+and never loads credentials or executes a request. No real journal root or
+fetch attempt was created. Provider fetch/canonical-apply standing
+authorization remains next.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

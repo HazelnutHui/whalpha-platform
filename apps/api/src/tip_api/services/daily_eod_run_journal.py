@@ -15,11 +15,11 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 
-JOURNAL_CONTRACT = "daily-eod-run-journal/1.0"
+JOURNAL_CONTRACT = "daily-eod-run-journal/1.1"
 LOCK_FILE = ".daily-eod.lock"
 EVENT_NAME = re.compile(r"event-(\d{6})\.json")
 START_EVENT = "action_started"
-TERMINAL_EVENTS = frozenset(
+ACTION_TERMINAL_EVENTS = frozenset(
     {
         "action_succeeded",
         "action_failed",
@@ -28,7 +28,23 @@ TERMINAL_EVENTS = frozenset(
         "action_recovery_blocked",
     }
 )
-EVENT_TYPES = frozenset({START_EVENT, *TERMINAL_EVENTS})
+ACQUISITION_START_EVENT = "acquisition_started"
+ACQUISITION_TERMINAL_EVENTS = frozenset(
+    {
+        "acquisition_not_ready",
+        "acquisition_rate_limited",
+        "acquisition_transient_failed",
+        "acquisition_package_ready",
+        "acquisition_permanent_failed",
+        "acquisition_quality_failed",
+        "acquisition_recovered_package_ready",
+        "acquisition_recovered_not_completed",
+        "acquisition_recovery_blocked",
+    }
+)
+START_EVENTS = frozenset({START_EVENT, ACQUISITION_START_EVENT})
+TERMINAL_EVENTS = ACTION_TERMINAL_EVENTS | ACQUISITION_TERMINAL_EVENTS
+EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS
 
 
 class DailyEodRunJournalError(RuntimeError):
@@ -84,13 +100,16 @@ class LockedDailyEodRunJournal:
     ) -> DailyEodRunEvent:
         events = self.read_events()
         _validate_next_event(events, event_type=event_type, attempt_id=attempt_id)
+        event_time = _normalize_observed_at(observed_at or datetime.now(UTC))
+        if events and event_time < datetime.fromisoformat(events[-1].observed_at):
+            raise DailyEodRunJournalError("daily run event timestamp moved backwards")
         sequence = len(events) + 1
         base = {
             "contract_version": JOURNAL_CONTRACT,
             "sequence": sequence,
             "event_type": event_type,
             "target_session": self.target_session.isoformat(),
-            "observed_at": (observed_at or datetime.now(UTC)).astimezone(UTC).isoformat(),
+            "observed_at": event_time.isoformat(),
             "attempt_id": attempt_id,
             "previous_event_fingerprint": (
                 self.previous_session_event_fingerprint
@@ -158,7 +177,7 @@ def locked_daily_eod_run_journal(
 def unresolved_started_event(
     events: tuple[DailyEodRunEvent, ...],
 ) -> DailyEodRunEvent | None:
-    if events and events[-1].event_type == START_EVENT:
+    if events and events[-1].event_type in START_EVENTS:
         return events[-1]
     return None
 
@@ -271,12 +290,16 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
 def _validate_event_state_machine(events: tuple[DailyEodRunEvent, ...]) -> None:
     pending: DailyEodRunEvent | None = None
     for event in events:
-        if event.event_type == START_EVENT:
+        if event.event_type in START_EVENTS:
             if pending is not None:
                 raise DailyEodRunJournalError("daily run journal has overlapping attempts")
             pending = event
         else:
-            if pending is None or event.attempt_id != pending.attempt_id:
+            if (
+                pending is None
+                or event.attempt_id != pending.attempt_id
+                or not _terminal_matches_start(pending.event_type, event.event_type)
+            ):
                 raise DailyEodRunJournalError("daily run terminal event has no matching start")
             pending = None
 
@@ -287,11 +310,23 @@ def _validate_next_event(
     if event_type not in EVENT_TYPES or not _is_fingerprint(attempt_id):
         raise DailyEodRunJournalError("daily run next event is invalid")
     pending = unresolved_started_event(events)
-    if event_type == START_EVENT:
+    if event_type in START_EVENTS:
         if pending is not None:
             raise DailyEodRunJournalError("daily run has an unresolved started action")
-    elif pending is None or pending.attempt_id != attempt_id:
+    elif (
+        pending is None
+        or pending.attempt_id != attempt_id
+        or not _terminal_matches_start(pending.event_type, event_type)
+    ):
         raise DailyEodRunJournalError("daily run terminal event does not match the pending action")
+
+
+def _terminal_matches_start(start_type: str, terminal_type: str) -> bool:
+    if start_type == START_EVENT:
+        return terminal_type in ACTION_TERMINAL_EVENTS
+    if start_type == ACQUISITION_START_EVENT:
+        return terminal_type in ACQUISITION_TERMINAL_EVENTS
+    return False
 
 
 def _safe_run_root(run_root: Path) -> Path:
@@ -428,6 +463,12 @@ def _canonical_bytes(value: object) -> bytes:
         json.dumps(_jsonable(value), sort_keys=True, separators=(",", ":"), ensure_ascii=True)
         + "\n"
     ).encode("utf-8")
+
+
+def _normalize_observed_at(value: datetime) -> datetime:
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise DailyEodRunJournalError("daily run event timestamp must be timezone-aware")
+    return value.astimezone(UTC)
 
 
 def _fingerprint(value: object) -> str:

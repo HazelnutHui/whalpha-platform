@@ -31,6 +31,7 @@ from tip_api.providers.massive.same_day_catchup import (
     file_sha256,
     identity_main,
     inventory_fingerprint,
+    read_fetch_package_evidence,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
 
@@ -130,6 +131,28 @@ def fetch_identity(tmp_path: Path, session: date) -> tuple[Path, FakeTransport]:
     )
     assert result.request_count == 2
     return package, transport
+
+
+def test_public_fetch_package_evidence_formally_rereads_without_payload(tmp_path) -> None:
+    session = date(2026, 8, 21)
+    package = tmp_path / "eod-evidence"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped_payload(session, count=1)]),
+        session_date=session,
+        package_path=package,
+        fetched_at=FETCHED_AT,
+    )
+    evidence = read_fetch_package_evidence(
+        package_path=package,
+        operation="eod",
+        expected_session=session,
+    )
+    assert evidence.request_count == 1
+    assert evidence.package_type == "grouped_daily"
+    assert len(evidence.package_manifest_sha256) == 64
+    assert len(evidence.package_content_sha256) == 64
+    assert "results" not in evidence.model_dump()
 
 
 def plan_and_apply_identity(tmp_path: Path, root: Path, session: date):

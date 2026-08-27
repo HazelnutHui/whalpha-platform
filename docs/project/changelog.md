@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-27 — Durable provider-attempt custody
+
+- Accepted ADR 0032 and extended the unused real-world run-journal contract to
+  1.1 with disjoint provider-acquisition and offline-action event families
+  under one global lock and cross-session SHA-256 chain.
+- Added exact-readiness reservation, bounded outcome recording, persistent
+  retry projection, and no-request recovery. Package-ready evidence must
+  formally match operation, session, path, type, request count, hashes, and a
+  reservation-to-result time interval.
+- Exposed a non-sensitive formal fetch-package evidence reader and added a
+  worktree-safe custody administrator entry with duplicate, concurrency-family,
+  stale-plan, time, residue, wrong-package, recovery, and network-guard tests.
+- No credential, provider request, fetch package, real run root, `/data` write,
+  apply, notification, publication, deployment, OCI, Production, or scheduler
+  state changed.
+
 ## 2026-08-27 — Market-close-aware daily readiness policy
 
 - Accepted ADR 0031 and added a deterministic, network-free readiness plan

@@ -61,8 +61,11 @@ The next repository-only control slice separates XNYS close from provider
 readiness. It applies a provisional post-close stabilization window, bounded
 retry and `Retry-After`, explicit alert state, and oldest-missing-session
 recovery without making a provider request or completeness claim. Durable
-acquisition-attempt custody, notifications, standing provider/apply
-authorization, and scheduler activation remain unimplemented.
+acquisition-attempt custody is now implemented through fresh readiness reservation,
+persistent bounded outcomes, exact frozen-package evidence, and no-request
+interruption recovery under the same Dell global lock and hash chain.
+Notifications, standing provider/apply authorization, and scheduler activation
+remain unimplemented. No real run root or fetch attempt has been created.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

@@ -115,6 +115,17 @@ class CatchupApprovalPlanV1(FrozenModel):
     plan_content_sha256: str
 
 
+class FetchPackageEvidenceV1(FrozenModel):
+    operation: Literal["identity", "eod"]
+    session_date: date
+    package_path: str
+    package_type: Literal["identity_reference", "grouped_daily"]
+    request_count: int = Field(ge=1)
+    fetched_at: datetime
+    package_manifest_sha256: str
+    package_content_sha256: str
+
+
 def canonical_json_bytes(value: object) -> bytes:
     return (json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True) + "\n").encode("utf-8")
 
@@ -239,6 +250,32 @@ def fetch_eod_package(
         request_count=1,
         pagination_complete=True,
         fetched_at=fetched_at or datetime.now(UTC),
+    )
+
+
+def read_fetch_package_evidence(
+    *,
+    package_path: Path,
+    operation: Literal["identity", "eod"],
+    expected_session: date,
+) -> FetchPackageEvidenceV1:
+    """Formally reread a frozen package and expose only non-sensitive custody."""
+
+    expected_type: Literal["identity_reference", "grouped_daily"] = (
+        "identity_reference" if operation == "identity" else "grouped_daily"
+    )
+    manifest, _ = _read_fetch_package(package_path, expected_type=expected_type)
+    if manifest.session_date != expected_session:
+        raise SameDayCatchupError("fetch package session mismatch")
+    return FetchPackageEvidenceV1(
+        operation=operation,
+        session_date=manifest.session_date,
+        package_path=str(package_path),
+        package_type=manifest.package_type,
+        request_count=manifest.request_count,
+        fetched_at=manifest.fetched_at,
+        package_manifest_sha256=file_sha256(package_path / "package.json"),
+        package_content_sha256=manifest.package_content_sha256,
     )
 
 

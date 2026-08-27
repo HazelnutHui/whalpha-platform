@@ -105,10 +105,11 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Opportunity Candidate Publication V1](data-contracts/opportunity-candidate-publication-v1.md): Bounded, language-neutral Candidate consumer and lineage contract.
 - [Candidate Entry Geometry V1](data-contracts/candidate-entry-geometry-v1.md): Offline source audit and additive consumer contract separating leadership quality from entry location and chase risk.
 - [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md): Dell-only compute/data authority, worktree-safe runner, measured baseline, and deterministic optimization sequence.
-- [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): XNYS/provider readiness, bounded retry, exact-session planning, single-action offline execution, durable Dell run custody, interruption recovery, and remaining unattended-operation gates.
+- [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): XNYS/provider readiness, bounded retry, provider-attempt custody, exact-session planning, single-action offline execution, interruption recovery, and remaining unattended-operation gates.
 - [ADR 0022: Verified-prior Candidate increment](decisions/0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md): separates daily append validation from the cold full-replay reference.
 - [ADR 0030: Single-action daily custody](decisions/0030-custody-one-offline-daily-action-at-a-time.md): binds one offline action to an unchanged plan, immutable journal, lock, post-action re-plan, and inspection-only recovery.
 - [ADR 0031: Market close versus provider readiness](decisions/0031-separate-market-close-from-provider-readiness.md): defines the network-free stabilization, bounded retry, alert, and oldest-gap recovery policy.
+- [ADR 0032: Provider-attempt custody](decisions/0032-custody-provider-fetch-attempts-before-automation.md): reserves and reconciles exact provider attempts under the shared immutable daily journal without executing them.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.

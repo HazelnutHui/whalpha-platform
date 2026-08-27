@@ -16,6 +16,9 @@ def test_daily_pipeline_administrator_scripts_use_worktree_safe_runner() -> None
         ),
         "execute-daily-eod-offline-action.sh": "tip_api.services.daily_eod_executor_cli",
         "plan-daily-eod-readiness.sh": "tip_api.services.daily_eod_readiness_cli",
+        "custody-daily-eod-acquisition.sh": (
+            "tip_api.services.daily_eod_acquisition_custody_cli"
+        ),
     }
     for name, module in expected_modules.items():
         path = REPO_ROOT / "scripts" / "admin" / name

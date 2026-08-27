@@ -111,12 +111,18 @@ and never re-executes. This boundary is repository-tested only: no durable real
 run root is provisioned, no real action has run through it, and no scheduler is
 enabled. Session-readiness/retry policy and provider acquisition/apply standing
 authorization were the next boundary. ADR 0031 now implements the first half
-as a pure, network-free readiness plan: actual XNYS close/early-close handling, a
-provisional 30-minute stabilization window, bounded 15/30/60/120-minute retry,
+as a pure, network-free readiness plan with actual XNYS close/early-close
+handling, a provisional 30-minute stabilization window, and bounded
+15/30/60/120-minute retry,
 five-attempt and six-hour limits, explicit alert state, and oldest-missing-
 session recovery. It never asserts provider completeness or performs a fetch,
 apply, notification, or scheduler action. Durable acquisition-attempt custody
-and the standing-authorization decision remain next.
+now shares the global lock and cross-session journal with offline execution,
+reserves only a fresh exact readiness fingerprint, records bounded outcomes,
+formally binds completed package evidence, and recovers interruption without a
+request. This is repository-tested only: journal 1.1 has not been provisioned
+for a real run and no fetch was executed. Provider fetch/canonical-apply
+standing authorization remains next.
 
 ## Analytics and presentation
 

@@ -66,8 +66,65 @@ require diagnosis. A ready fetch package only requests separate apply review.
 
 The result always declares zero requests/writes, no scheduler, and no provider
 completeness assertion. Exit 1 means alert/diagnosis is required; it does not
-send a notification. Real attempt persistence and notification delivery are
-not implemented yet.
+send a notification. Durable attempt custody is implemented below;
+notification delivery is not.
+
+## Provider-attempt custody
+
+Custody uses the same pre-provisioned Dell run root, global lock, and
+cross-session journal as offline execution. It does not execute a provider
+request. Reserve one exact readiness decision within five minutes:
+
+```bash
+scripts/admin/custody-daily-eod-acquisition.sh \
+  --target-session YYYY-MM-DD \
+  --latest-canonical-session YYYY-MM-DD \
+  --acquisition-action prepare_identity_catchup \
+  --package /tmp/<new-exact-attempt-package> \
+  --run-root /home/hui/.local/state/trading-intelligence-platform/daily-eod \
+  --reserve \
+  --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --expected-readiness-fingerprint <64-hex-readiness-fingerprint>
+```
+
+Reservation writes an immutable start event but prints
+`provider_request_executed_by_custody=false`. A provider fetch remains a
+separately authorized invocation of the existing exact-date Identity or EOD
+`--fetch-only` command. After that invocation returns, record its classified
+outcome with the exact same session, latest-canonical value, action, package,
+and run root:
+
+```bash
+scripts/admin/custody-daily-eod-acquisition.sh \
+  <the-same-custody-identity-arguments> \
+  --record-outcome fetch_package_ready
+```
+
+Other outcomes are `not_ready`, `rate_limited`, `transient_failure`,
+`permanent_failure`, and `quality_failure`. Only rate limiting accepts
+`--retry-after-seconds`. A package-ready outcome formally rereads the frozen
+package and binds exact operation, session, path, type, request count, hashes,
+and reservation-to-result timing. Non-package-ready outcomes require both the
+package target and its staging path to be absent.
+
+If the external fetch process stops before an outcome is recorded, do not
+rerun it. Use:
+
+```bash
+scripts/admin/custody-daily-eod-acquisition.sh \
+  <the-same-custody-identity-arguments> \
+  --recover-incomplete
+```
+
+Recovery performs no network access. A formally complete package is reconciled
+as ready; total absence becomes a bounded transient attempt; staging, symlink,
+or invalid package custody blocks the daily state machine. Terminal attempts
+feed the next readiness calculation so retry delay and maximum count persist
+across processes.
+
+Custody is not the standing-authorization contract. Until that separate
+decision is accepted, every real `--fetch-only` request and every canonical
+apply still requires explicit approval.
 
 ## Read-only plan
 
@@ -203,8 +260,7 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Durable acquisition-attempt custody and an explicit standing-authorization
-   contract for provider fetch and
+1. An explicit standing-authorization contract for provider fetch and
    canonical apply, or continued manual approval for those two boundaries.
 2. Actual alert delivery and a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
@@ -214,4 +270,5 @@ the already completed and deployed 2026-08-26 publication chain.
 The executor and journal are implemented and tested, but no durable real run
 root has been provisioned and no real action has been executed through this
 boundary yet. Readiness planning is also implemented and tested without making
-a provider request or enabling a scheduler.
+a provider request or enabling a scheduler. Acquisition custody is implemented
+and tested without creating the real run root or executing a fetch.

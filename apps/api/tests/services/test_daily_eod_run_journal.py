@@ -81,6 +81,62 @@ def test_unresolved_start_rejects_another_start_but_accepts_matching_terminal(tm
         )
 
 
+def test_acquisition_and_offline_terminal_families_cannot_cross(tmp_path) -> None:
+    root = _root(tmp_path)
+    with journal.locked_daily_eod_run_journal(run_root=root, target_session=SESSION) as locked:
+        attempt = journal.new_attempt_id(
+            target_session=SESSION,
+            plan_fingerprint=PLAN_FP,
+            sequence=1,
+        )
+        locked.append(
+            event_type="acquisition_started",
+            attempt_id=attempt,
+            details={"acquisition_action": "prepare_identity_catchup"},
+        )
+        with pytest.raises(journal.DailyEodRunJournalError, match="does not match"):
+            locked.append(
+                event_type="action_failed",
+                attempt_id=attempt,
+                details={"reason_code": "wrong_family"},
+            )
+        locked.append(
+            event_type="acquisition_transient_failed",
+            attempt_id=attempt,
+            details={"reason_code": "test"},
+        )
+
+
+def test_event_time_must_be_aware_and_monotonic(tmp_path) -> None:
+    root = _root(tmp_path)
+    with journal.locked_daily_eod_run_journal(run_root=root, target_session=SESSION) as locked:
+        attempt = journal.new_attempt_id(
+            target_session=SESSION,
+            plan_fingerprint=PLAN_FP,
+            sequence=1,
+        )
+        with pytest.raises(journal.DailyEodRunJournalError, match="timezone-aware"):
+            locked.append(
+                event_type="action_started",
+                attempt_id=attempt,
+                details={},
+                observed_at=datetime(2026, 8, 27, 1),
+            )
+        locked.append(
+            event_type="action_started",
+            attempt_id=attempt,
+            details={},
+            observed_at=datetime(2026, 8, 27, 2, tzinfo=UTC),
+        )
+        with pytest.raises(journal.DailyEodRunJournalError, match="backwards"):
+            locked.append(
+                event_type="action_failed",
+                attempt_id=attempt,
+                details={},
+                observed_at=datetime(2026, 8, 27, 1, tzinfo=UTC),
+            )
+
+
 def test_tampered_event_fails_closed(tmp_path) -> None:
     root = _root(tmp_path)
     with journal.locked_daily_eod_run_journal(run_root=root, target_session=SESSION) as locked:

@@ -37,8 +37,10 @@ Each invocation must:
    is complete and the plan has advanced; and
 7. release the lock without authorizing another action.
 
-Run custody uses contract `daily-eod-run-journal/1.0` in an explicitly
-pre-provisioned owner-only Dell directory outside Git and outside `/data`.
+Run custody originally introduced `daily-eod-run-journal/1.0`, extended by ADR
+0032 to `daily-eod-run-journal/1.1` for disjoint acquisition events, in an
+explicitly pre-provisioned owner-only Dell directory outside Git and outside
+`/data`.
 Events are canonical JSON, immutable owner-read-only files in a monotonically
 numbered, cross-session SHA-256 chain. The root, lock, session directories,
 event sequence, permissions, symlink boundary, event schema, fingerprints, and
