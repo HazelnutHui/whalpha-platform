@@ -152,6 +152,12 @@ read or used.
   252-session research minimum; daily point-in-time Universe membership and
   completed corporate-action governance are also missing. Current-constituent
   replay is explicitly ineligible for performance claims.
+- The 2026-08-27 historical-readiness audit formally returns
+  `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
+  binding are mechanically sound, and SPY covers 29/29 sessions, but daily
+  Universe membership, corporate actions, adjustment reconciliation, and
+  terminal/delisting identity are absent. Every one of 286,652 retained bars
+  carries `adjustment_factors_unverified` and all adjustment factors are one.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
@@ -385,6 +391,15 @@ records later. The fixed policy prohibits random splits, uses chronological
 overlapping five-session label window, quarantines corporate-action ambiguity,
 and never labels a stock outcome as option performance. This is a typed
 contract only; no real signal/outcome row or performance statistic exists.
+
+The read-only historical-readiness audit confirms that the short retained
+panel cannot close those gaps. It contains 10,048 unique bar instruments and
+9,672 present in every session, but adjacent sessions add 520 and lose 411
+rows without governed lifecycle causes. The first/latest Identity snapshots
+contain only `active` records; 84 first-snapshot IDs disappear and 187 latest-
+snapshot IDs are new, with zero inactive/delisted rows or terminal trade dates.
+With a 26-session feature window, the panel can mature at most 3 one-session,
+1 three-session, and 0 five-session signal dates. Use it only for mechanics.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

@@ -303,6 +303,13 @@ and standing authorization also remain inactive by exact-revision mismatch.
   performance-eligible. No evaluation dataset or result exists; 29 sessions,
   missing daily point-in-time membership, and incomplete corporate-action
   governance remain hard blockers.
+- A credential-free 2026-08-27 historical-readiness audit returns
+  `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
+  coverage, and same-session Identity binding, but found no daily Universe
+  membership or corporate-action dataset, all bars flagged with unverified
+  all-one adjustment factors, and no retained inactive/delisted Identity rows.
+  The next safe work is source/retention design, not formula tuning or a
+  physical backtest dataset.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

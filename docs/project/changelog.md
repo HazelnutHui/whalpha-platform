@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-27 — Strategy-evaluation historical readiness audit
+
+- Formally read all 29 canonical EOD sessions and their same-date Identity
+  bindings: 286,652 bars, 10,048 unique instruments, 9,672 present throughout,
+  and SPY present under one stable ID in 29/29 sessions.
+- Verified that only one Activation/full-base membership session and one
+  provider security-evidence date exist; no physical daily Universe Membership
+  V1 or corporate-action dataset exists.
+- All retained bars are valid but carry `adjustment_factors_unverified`; split,
+  dividend, and total-return factors are all one. First/latest Identity
+  snapshots retain only active rows, with 84 first-only and 187 latest-only IDs
+  but no inactive/delisted or terminal-date records.
+- Recorded `NOT_READY_FOR_PERFORMANCE_EVALUATION`. No provider request,
+  credential access, `/data` write, backfill, evaluation dataset, formula,
+  publication, deployment, scheduler, or notification occurred.
+
 ## 2026-08-27 — Sealed strategy signals and later forward outcomes
 
 - Accepted ADR 0050 and added fixed Candidate strategy evaluation policy 1.0:
