@@ -42,7 +42,7 @@ read or use the user's password.
 
 The builder requires an explicit immutable Snapshot path and Market
 Intelligence publication. It accepts only the exact Snapshot 1.5 / Dashboard
-2.2, Snapshot 1.6 / Dashboard 2.3, or Snapshot 1.7 / Dashboard 2.4 pair and rejects identity mismatch,
+2.2 through Snapshot 1.8 / Dashboard 2.5 supported pairs and rejects identity mismatch,
 missing analytics, or fewer than 16 registered relationships. For 1.6 it also
 freezes and validates Candidate audit/parameter/display bindings and the
 underlying-stock/price-proxy disclosure boundaries. It freezes locales `en`
@@ -50,6 +50,9 @@ and `zh`, default locale `en`, and the analytics checksum and logical identity.
 For 1.7 it additionally validates Candidate publication 1.1, embedded entry
 geometry, fixed lane order/counts, entry audit/parameter lineage, preserved
 leadership rank, and the reference-support-not-stop-price boundary.
+For 1.8 it additionally validates the summary fingerprint, ordered detail
+shards, full-Candidate identity, and guest access to both the summary and one
+declared detail shard.
 
 The production React graph contains no static dependency on the synthetic
 Dashboard fixture. Development demo mode loads it lazily only behind the Vite

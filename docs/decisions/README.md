@@ -70,3 +70,4 @@ Each ADR should include:
 - [0045: Retain Safe Provider Failure Evidence](0045-retain-safe-provider-failure-evidence.md)
 - [0046: Separate Latest Identity From EOD Binding in Context Report](0046-separate-latest-identity-from-eod-binding-in-context-report.md)
 - [0047: Make Provider Readiness Plan-Aware and Reviewable](0047-make-provider-readiness-plan-aware-and-reviewable.md)
+- [0048: Split Candidate Summary from On-Demand Detail](0048-split-candidate-summary-from-on-demand-detail.md)

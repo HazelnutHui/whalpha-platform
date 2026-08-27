@@ -13,6 +13,7 @@ from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotApprovalPlanV2,
     DashboardSnapshotApprovalPlanV2_1,
     DashboardSnapshotApprovalPlanV2_2,
+    DashboardSnapshotApprovalPlanV2_3,
 )
 from tip_api.contracts.analytics.v1 import (
     REVIEW_ACKNOWLEDGEMENT,
@@ -40,7 +41,7 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2:
+def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3:
     if not path.is_absolute() or not path.resolve(strict=True).is_relative_to(Path("/tmp")) or path.is_symlink():
         raise DashboardSnapshotPublicationError("approved plan must be a regular /tmp file")
     if _sha(path)!=digest: raise DashboardSnapshotPublicationError("approved plan SHA-256 mismatch")
@@ -49,6 +50,7 @@ def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | Das
         "2.0": DashboardSnapshotApprovalPlanV2,
         "2.1": DashboardSnapshotApprovalPlanV2_1,
         "2.2": DashboardSnapshotApprovalPlanV2_2,
+        "2.3": DashboardSnapshotApprovalPlanV2_3,
     }.get(value.get("plan_version"))
     if plan_type is None:
         raise DashboardSnapshotPublicationError("unsupported snapshot plan version")

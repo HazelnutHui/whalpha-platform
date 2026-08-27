@@ -24,6 +24,10 @@ from tip_api.services.opportunity_candidate_publication import (
     build_opportunity_candidate_publication,
 )
 from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
+from tip_api.services.opportunity_candidate_snapshot_split import (
+    build_split_candidate_snapshot,
+    reconstruct_full_candidate_publication,
+)
 from tests.services import test_opportunity_candidate_audit as fixture
 
 
@@ -165,3 +169,18 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
         for universe in entry_publication.universes
         for candidate in universe.candidates
     )
+    summary, shards = build_split_candidate_snapshot(
+        candidate_analytics=entry_publication,
+        publication_id="2026-08-24T120000Z-abcdef0",
+        payload_sha256="7" * 64,
+        payload_logical_fingerprint="8" * 64,
+    )
+    assert reconstruct_full_candidate_publication(summary, shards) == entry_publication
+    assert sum(item.item_count for item in shards) == sum(
+        len(universe.candidates) for universe in entry_publication.universes
+    )
+    assert {
+        item.filename for item in summary.analytics.detail_shards
+    } == {
+        f"opportunity-candidate-details-{item.shard_id}.json" for item in shards
+    }

@@ -17,6 +17,7 @@ from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotActivePointerV2, DashboardSnapshotApprovalPlanV2,
     DashboardSnapshotApprovalPlanV2_1,
     DashboardSnapshotApprovalPlanV2_2,
+    DashboardSnapshotApprovalPlanV2_3,
     DashboardSnapshotFileReferenceV2, DashboardSnapshotTargetReferenceV2,
 )
 from tip_api.contracts.analytics.v1.review_deployment import (
@@ -150,10 +151,10 @@ def current_state_fingerprint(root: Path, legacy_root: Path) -> str:
 
 
 def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
-                        activation_logical_fingerprint: str, generated_at: datetime) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2:
+                        activation_logical_fingerprint: str, generated_at: datetime) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3:
     root=_validated_root(root); manifest=validate_snapshot_release(candidate)
     if (manifest.snapshot_contract_version, manifest.dashboard_contract_version) not in {
-        ("1.4", "2.1"), ("1.5", "2.2"), ("1.6", "2.3"), ("1.7", "2.4")
+        ("1.4", "2.1"), ("1.5", "2.2"), ("1.6", "2.3"), ("1.7", "2.4"), ("1.8", "2.5")
     }:
         raise DashboardSnapshotPublicationError("candidate snapshot contract is not V2")
     normal_freshness = (
@@ -209,7 +210,8 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
     pointer_bytes=deterministic_json_bytes(pointer_payload)
     payload={
         "plan_version":(
-            "2.2" if manifest.snapshot_contract_version == "1.7"
+            "2.3" if manifest.snapshot_contract_version == "1.8"
+            else "2.2" if manifest.snapshot_contract_version == "1.7"
             else "2.1" if manifest.snapshot_contract_version == "1.6"
             else "2.0"
         ),
@@ -237,7 +239,7 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
         "market_intelligence_payload_sha256":manifest.market_intelligence_payload_sha256,
         "market_intelligence_logical_fingerprint":manifest.market_intelligence_logical_fingerprint,
     }
-    if manifest.snapshot_contract_version in {"1.6", "1.7"}:
+    if manifest.snapshot_contract_version in {"1.6", "1.7", "1.8"}:
         payload.update(
             candidate_contract_version=manifest.candidate_contract_version,
             candidate_analytics_logical_fingerprint=manifest.candidate_analytics_logical_fingerprint,
@@ -245,7 +247,7 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
             candidate_parameter_fingerprint=manifest.candidate_parameter_fingerprint,
             candidate_state_parameter_fingerprint=manifest.candidate_state_parameter_fingerprint,
         )
-    if manifest.snapshot_contract_version == "1.7":
+    if manifest.snapshot_contract_version in {"1.7", "1.8"}:
         payload.update(
             candidate_publication_contract_version=manifest.candidate_publication_contract_version,
             entry_geometry_contract_version=manifest.entry_geometry_contract_version,
@@ -253,8 +255,17 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
             entry_geometry_parameter_fingerprint=manifest.entry_geometry_parameter_fingerprint,
             entry_lane_consumer_parameter_fingerprint=manifest.entry_lane_consumer_parameter_fingerprint,
         )
+    if manifest.snapshot_contract_version == "1.8":
+        payload.update(
+            candidate_summary_contract_version=manifest.candidate_summary_contract_version,
+            candidate_summary_logical_fingerprint=manifest.candidate_summary_logical_fingerprint,
+            candidate_detail_contract_version=manifest.candidate_detail_contract_version,
+            candidate_detail_files=manifest.candidate_detail_files,
+        )
     plan_type = (
-        DashboardSnapshotApprovalPlanV2_2
+        DashboardSnapshotApprovalPlanV2_3
+        if manifest.snapshot_contract_version == "1.8"
+        else DashboardSnapshotApprovalPlanV2_2
         if manifest.snapshot_contract_version == "1.7"
         else DashboardSnapshotApprovalPlanV2_1
         if manifest.snapshot_contract_version == "1.6"
@@ -263,7 +274,7 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
     return plan_type(**payload,plan_content_fingerprint=canonical_sha(payload))
 
 
-def validate_plan(plan: DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2) -> None:
+def validate_plan(plan: DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3) -> None:
     payload=plan.model_dump(mode="json",exclude={"plan_content_fingerprint"})
     if canonical_sha(payload)!=plan.plan_content_fingerprint: raise DashboardSnapshotPublicationError("snapshot approval plan fingerprint mismatch")
     candidate=Path(plan.candidate_path); manifest=validate_snapshot_release(candidate); files=file_references(candidate)
@@ -304,6 +315,18 @@ def validate_plan(plan: DashboardSnapshotApprovalPlanV2 | DashboardSnapshotAppro
     ):
         raise DashboardSnapshotPublicationError(
             "snapshot approval entry-geometry binding changed"
+        )
+    if isinstance(plan, DashboardSnapshotApprovalPlanV2_3) and (
+        manifest.candidate_summary_contract_version
+        != plan.candidate_summary_contract_version
+        or manifest.candidate_summary_logical_fingerprint
+        != plan.candidate_summary_logical_fingerprint
+        or manifest.candidate_detail_contract_version
+        != plan.candidate_detail_contract_version
+        or manifest.candidate_detail_files != plan.candidate_detail_files
+    ):
+        raise DashboardSnapshotPublicationError(
+            "snapshot approval split Candidate binding changed"
         )
     review = plan.review_deployment
     if manifest.review_mode != (review is not None):

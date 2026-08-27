@@ -125,6 +125,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0045: Safe provider failure evidence](decisions/0045-retain-safe-provider-failure-evidence.md): retains bounded request counts and numeric HTTP status without response content so failed acquisition can be diagnosed without replay.
 - [ADR 0046: Identity/EOD context separation](decisions/0046-separate-latest-identity-from-eod-binding-in-context-report.md): reports latest canonical Identity separately from the Identity snapshot bound into latest EOD.
 - [ADR 0047: Plan-aware provider readiness](decisions/0047-make-provider-readiness-plan-aware-and-reviewable.md): gives Identity and EOD distinct recency profiles and adds an immutable, non-executing operator-review gate for Basic current-session EOD and terminal recovery.
+- [ADR 0048: Split Candidate summary/detail delivery](decisions/0048-split-candidate-summary-from-on-demand-detail.md): reduces first-load Candidate bytes while preserving lossless, on-demand explanation and full source binding.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.
@@ -135,6 +136,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Massive Instrument Master Ingestion](operations/massive-instrument-master-ingestion.md): Bounded All Tickers snapshot ingestion record and quality-gate result.
 - [Same-Day Identity and EOD Catch-Up Readiness](audits/same-day-identity-eod-catchup-readiness-2026-08-23.md): Offline four-stage publication and recovery verification.
 - [2026-08-27 Daily EOD Terminal Review Audit](audits/daily-eod-terminal-review-2026-08-27.md): Public provider evidence boundary, immutable real review, conservative next-day gate, and zero-request/write postflight.
+- [2026-08-27 Candidate Snapshot Split Audit](audits/candidate-snapshot-split-2026-08-27.md): Real 8/26 payload size, shard distribution, lossless reconstruction, and Production-isolation evidence.
 - [2026-08-14 Instrument Snapshot Audit](operations/data-audits/2026-08-14-instrument-snapshot-audit.md): Accepted integrity audit with an explicit provenance exception.
 - [2026-08-14 Grouped Daily Run Report](operations/data-audits/2026-08-14-grouped-daily-run.md): Non-sensitive single-request quality and publication record.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseOpportunityCandidateSnapshot } from './opportunityCandidates';
+import { parseOpportunityCandidateDetailShard, parseOpportunityCandidateSnapshot, parseOpportunityCandidateSummarySnapshot } from './opportunityCandidates';
 
 const PRIMARY = 'provider_classified_common_shares_v1';
 const SECONDARY = 'provider_classified_common_shares_plus_adrs_v1';
@@ -65,6 +65,35 @@ function entryFixture() {
   return value;
 }
 
+function summaryFixture() {
+  const full = entryFixture();
+  const descriptors: Array<Record<string, unknown>> = [];
+  const universes = full.analytics.universes.map((universe, index) => {
+    const source = universe.candidates[0] as typeof universe.candidates[0] & Record<string, any>;
+    const shardId = `u${index}-1`; const filename = `opportunity-candidate-details-${shardId}.json`;
+    descriptors.push({ shard_id: shardId, universe_id: universe.universe_id, stable_id_prefix: '1', filename, item_count: 1, logical_fingerprint: `${index + 5}`.repeat(64) });
+    return { ...universe, candidates: [{ instrument_id: source.instrument_id, ticker: source.ticker, security_type: source.security_type,
+      base_score: source.base_score, confidence: source.confidence, latest_price: source.latest_price,
+      median_dollar_volume_20: source.median_dollar_volume_20, data_quality_status: source.data_quality_status,
+      final_stage: source.state.final_stage, risk_dispositions: source.risk_dispositions,
+      entry_summary: { review_posture: source.entry_geometry.review_posture, technical_setup: source.entry_geometry.technical_setup,
+        extension_risk: source.entry_geometry.extension_risk, reference_support_distance_pct: source.entry_geometry.metrics.reference_support_distance_pct },
+      score_logical_fingerprint: source.score_logical_fingerprint, entry_geometry_logical_fingerprint: source.entry_geometry.logical_fingerprint,
+      detail_shard_id: shardId }] };
+  });
+  const analytics = { schema_version: '1.0', contract_version: 'opportunity-candidate-summary/1.0',
+    full_publication_contract_version: 'opportunity-candidate-publication/1.1', full_candidate_analytics_logical_fingerprint: full.analytics.logical_fingerprint,
+    as_of_session: full.analytics.as_of_session, default_universe_id: PRIMARY, universe_order: [PRIMARY, SECONDARY], risk_mode_order: MODES,
+    source: full.analytics.source, universes, detail_shards: descriptors, language_neutral: true, research_priority_only: true,
+    underlying_stock_result_not_option_return: true, price_volume_not_fund_flow: true, leadership_rank_preserved: true,
+    entry_location_separate_from_leadership: true, reference_support_not_stop_price: true, warnings: full.analytics.warnings,
+    logical_fingerprint: '7'.repeat(64) };
+  return { schema_version: '1.0', contract_version: 'opportunity-candidate-summary-snapshot/1.0', publication_id: full.publication_id,
+    payload_sha256: full.payload_sha256, payload_logical_fingerprint: full.payload_logical_fingerprint,
+    candidate_analytics_logical_fingerprint: full.analytics.logical_fingerprint, default_universe_id: PRIMARY,
+    universe_order: [PRIMARY, SECONDARY], analytics };
+}
+
 describe('Opportunity Candidate snapshot parser', () => {
   it('accepts the fixed language-neutral contract and selected Universe', () => {
     const parsed = parseOpportunityCandidateSnapshot(fixture(), SECONDARY);
@@ -97,5 +126,27 @@ describe('Opportunity Candidate snapshot parser', () => {
     expect(parsed.universe.candidates[0].entry_geometry?.review_posture).toBe('technical_review_ready');
     const drift = entryFixture(); const entryModes = (drift.analytics.universes[0] as typeof drift.analytics.universes[0] & { entry_risk_modes: Array<{ lanes: unknown[] }> }).entry_risk_modes; entryModes[0].lanes.reverse();
     expect(() => parseOpportunityCandidateSnapshot(drift)).toThrow('lane order');
+  });
+
+  it('accepts the split summary contract and binds each row to one declared detail shard', () => {
+    const parsed = parseOpportunityCandidateSummarySnapshot(summaryFixture(), SECONDARY);
+    expect(parsed.snapshot_contract_version).toBe('opportunity-candidate-summary-snapshot/1.0');
+    expect(parsed.universe.candidates[0].detail_file).toBe('opportunity-candidate-details-u1-1.json');
+    expect(parsed.universe.candidates[0].entry_summary?.review_posture).toBe('technical_review_ready');
+    const drift = summaryFixture(); drift.analytics.universes[0].candidates[0].detail_shard_id = 'u0-f';
+    expect(() => parseOpportunityCandidateSummarySnapshot(drift)).toThrow('shard binding');
+  });
+
+  it('accepts only a full detail row bound to the selected summary', () => {
+    const response = parseOpportunityCandidateSummarySnapshot(summaryFixture(), SECONDARY);
+    const item = response.universe.candidates[0]; const full = entryFixture();
+    const detail = full.analytics.universes[1].candidates[0];
+    const shard = { schema_version: '1.0', contract_version: 'opportunity-candidate-detail-shard/1.0',
+      publication_id: response.publication_id, candidate_analytics_logical_fingerprint: response.logical_fingerprint,
+      shard_id: item.detail_shard_id, universe_id: SECONDARY, stable_id_prefix: '1', candidates: [detail], item_count: 1,
+      logical_fingerprint: '8'.repeat(64) };
+    expect(parseOpportunityCandidateDetailShard(shard, response, item).ticker).toBe('TEST');
+    const drift = { ...shard, universe_id: PRIMARY };
+    expect(() => parseOpportunityCandidateDetailShard(drift, response, item)).toThrow('binding');
   });
 });

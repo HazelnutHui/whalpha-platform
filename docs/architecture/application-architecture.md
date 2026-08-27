@@ -165,6 +165,11 @@ Intelligence 1.2, and Snapshot 1.7 / Dashboard 2.4. Default-disabled read/query
 APIs, EOD analytics, Dashboard Overview, and private Snapshot export consume
 these completed datasets.
 
+Repository source adds Snapshot 1.8 / Dashboard 2.5 as a consumer-only
+Candidate delivery optimization: a compact list projection and stable-ID
+detail shards formally reconstruct the unchanged Candidate publication 1.1.
+It is not yet the active Production snapshot.
+
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 
 ## Provider Boundary

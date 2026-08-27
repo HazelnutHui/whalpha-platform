@@ -29,9 +29,10 @@
   run completed same-day Identity but the one EOD request failed permanently
   before a package existed. ADR 0045 now preserves safe status/request evidence
   for future attempts. ADR 0047 makes readiness plan-aware and adds a bounded,
-  immutable operator-review path without changing the old unknown status or
-  authorizing a retry. Diagnose the exact old failure and select a defensible
-  Basic EOD `not_before` boundary before any retry or scheduler consideration.
+  immutable operator-review path without changing the old unknown HTTP status.
+  One real offline review binds that terminal to a conservative
+  2026-08-28T16:00:00Z boundary without authorizing a retry. Recheck readiness
+  only at or after that time before any retry or scheduler consideration.
   Publication, Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
@@ -42,6 +43,11 @@
   relationship decision lanes, and equal-capability guest Session entry are
   implemented in repository source. Exact relationship run length/acceleration,
   formal taxonomy, and position management remain separate contract work.
+  ADR 0048 and Snapshot 1.8 / Dashboard 2.5 now split the 20.4 MB Candidate
+  payload into a 1.49 MB first-load summary and 32 on-demand detail shards while
+  formally reconstructing the unchanged full publication. The next Candidate
+  model step is to define independent strategy channels before changing any
+  score or ranking threshold.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -170,17 +176,19 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Safe provider failure status and request-count evidence
 - [x] Context report separates latest Identity from EOD-bound Identity
 - [x] Plan-aware Basic EOD readiness and immutable single-use operator review
+- [x] Lossless Candidate summary/on-demand-detail Snapshot projection
 
 ## Next Small Target
 
-Reconcile the exact Stocks Basic EOD availability/entitlement boundary without
-replaying the status-unknown 2026-08-27 terminal. The plan-aware policy and
-explicit operator-review path are implemented but have not been invoked.
-Decide whether non-sensitive evidence is sufficient to bind the old terminal
-and select a defensible `not_before`; only then review fresh exact-revision
-Host/authorization controls and separately consider one EOD request. Do not
-combine that decision with analytics, Production publication, Snapshot,
-bundle, OCI deployment, or scheduler authorization. Keep SMTP and SEC B2
+Keep the 2026-08-27 EOD attempt paused until its immutable
+2026-08-28T16:00:00Z boundary. Product development may continue from the
+formally completed 2026-08-26 inputs. Next define a strategy-channel contract
+for momentum breakout, strong-stock pullback, trend continuation, technical
+reversal, fundamental value reversal, and defensive/rotation opportunity.
+Each channel must expose eligibility, ranking reasons, counterevidence, entry
+location, invalidation, and market fit independently; do not tune thresholds
+from one-session distributions. Keep Snapshot 1.8 undeployed until its exact
+bundle and browser behavior are separately reviewed. Keep SMTP and SEC B2
 paused.
 
 ## Phase 2 — Intraday and Options

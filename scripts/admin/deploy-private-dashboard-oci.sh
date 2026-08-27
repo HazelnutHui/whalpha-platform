@@ -369,6 +369,7 @@ guest_body=$(mktemp)
 guest_dashboard_body=$(mktemp)
 guest_private_body=$(mktemp)
 guest_candidate_body=$(mktemp)
+guest_candidate_detail_body=$(mktemp)
 guest_code=$(curl -sS -c "${guest_cookie_jar}" -o "${guest_body}" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Origin: https://whalpha.com' --data '{"next":"/dashboard/?view=regime&lang=en"}' https://whalpha.com/auth/guest)
 [[ "${guest_code}" == "200" ]] || { echo "public guest Session status ${guest_code}" >&2; exit 1; }
 grep -q '"authenticated":true' "${guest_body}" || { echo "public guest Session response mismatch" >&2; exit 1; }
@@ -377,26 +378,44 @@ guest_dashboard_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_dashboard_b
 grep -q '<div id="root"></div>' "${guest_dashboard_body}" || { echo "guest Dashboard shell mismatch" >&2; exit 1; }
 guest_private_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${guest_private_code}" == "200" ]] || { echo "guest private-data status ${guest_private_code}" >&2; exit 1; }
-grep -Eq '"snapshot_contract_version":"1\.(5|6|7)"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }
-if grep -Eq '"snapshot_contract_version":"1\.(6|7)"' "${guest_private_body}"; then
+grep -Eq '"snapshot_contract_version":"1\.(5|6|7|8)"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }
+if grep -Eq '"snapshot_contract_version":"1\.(6|7|8)"' "${guest_private_body}"; then
   grep -q '"candidate_contract_version":"opportunity-candidate/1.1"' "${guest_private_body}" || { echo "guest Candidate manifest contract mismatch" >&2; exit 1; }
-  guest_candidate_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_candidate_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/opportunity-candidates.json)
+  guest_candidate_filename=opportunity-candidates.json
+  if grep -q '"snapshot_contract_version":"1.8"' "${guest_private_body}"; then
+    guest_candidate_filename=opportunity-candidates-summary.json
+  fi
+  guest_candidate_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_candidate_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/${guest_candidate_filename}")
   [[ "${guest_candidate_code}" == "200" ]] || { echo "guest Candidate data status ${guest_candidate_code}" >&2; exit 1; }
-  grep -Eq '"contract_version":"opportunity-candidate-snapshot/1\.(0|1)"' "${guest_candidate_body}" || { echo "guest Candidate contract mismatch" >&2; exit 1; }
+  grep -Eq '"contract_version":"(opportunity-candidate-snapshot/1\.(0|1)|opportunity-candidate-summary-snapshot/1\.0)"' "${guest_candidate_body}" || { echo "guest Candidate contract mismatch" >&2; exit 1; }
   grep -q '"underlying_stock_result_not_option_return":true' "${guest_candidate_body}" || { echo "guest Candidate decision boundary missing" >&2; exit 1; }
-  if grep -q '"snapshot_contract_version":"1.7"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(7|8)"' "${guest_private_body}"; then
     grep -q '"entry_location_separate_from_leadership":true' "${guest_candidate_body}" || { echo "guest entry-geometry boundary missing" >&2; exit 1; }
     grep -q '"leadership_rank_preserved":true' "${guest_candidate_body}" || { echo "guest leadership-rank boundary missing" >&2; exit 1; }
+  fi
+  if grep -q '"snapshot_contract_version":"1.8"' "${guest_private_body}"; then
+    guest_detail_filename=$(python3 - "${guest_private_body}" <<'PY'
+import json,sys
+value=json.load(open(sys.argv[1],encoding='utf-8'))
+files=value.get('candidate_detail_files') or []
+if not files: raise SystemExit(1)
+print(files[0])
+PY
+)
+    guest_detail_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_candidate_detail_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/${guest_detail_filename}")
+    [[ "${guest_detail_code}" == "200" ]] || { echo "guest Candidate detail status ${guest_detail_code}" >&2; exit 1; }
+    grep -q '"contract_version":"opportunity-candidate-detail-shard/1.0"' "${guest_candidate_detail_body}" || { echo "guest Candidate detail contract mismatch" >&2; exit 1; }
   fi
 fi
 guest_logout_code=$(curl -sS -b "${guest_cookie_jar}" -o /dev/null -w '%{http_code}' -X POST https://whalpha.com/auth/logout)
 [[ "${guest_logout_code}" == "303" ]] || { echo "guest logout status ${guest_logout_code}" >&2; exit 1; }
-rm -f "${guest_cookie_jar}" "${guest_body}" "${guest_dashboard_body}" "${guest_private_body}" "${guest_candidate_body}"
+rm -f "${guest_cookie_jar}" "${guest_body}" "${guest_dashboard_body}" "${guest_private_body}" "${guest_candidate_body}" "${guest_candidate_detail_body}"
 guest_cookie_jar=""
 guest_body=""
 guest_dashboard_body=""
 guest_private_body=""
 guest_candidate_body=""
+guest_candidate_detail_body=""
 private_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${private_code}" == "401" ]] || { echo "private-data unauth status ${private_code}" >&2; exit 1; }
 if grep -q '"current_session_date"\|"release_id"\|"nodes"' "${private_body}"; then

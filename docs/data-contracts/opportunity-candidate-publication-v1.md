@@ -2,9 +2,11 @@
 
 ## Status and purpose
 
-Implemented, published, and deployed from the completed 2026-08-24 baseline-3
-Candidate audit through MI 1.1, Snapshot 1.6 / Dashboard 2.3, and the bound OCI
-release. Future publication sequences remain separately approved.
+Implemented, published, and deployed through the completed 2026-08-26
+Candidate and Entry Geometry audits, MI 1.2, Snapshot 1.7 / Dashboard 2.4, and
+the bound OCI release. Repository source adds an undeployed Snapshot 1.8 /
+Dashboard 2.5 delivery projection. Future publication sequences remain
+separately approved.
 
 Contract `opportunity-candidate-publication/1.0` is a bounded,
 language-neutral consumer projection of the much larger canonical Candidate
@@ -72,3 +74,21 @@ lane-consumer fingerprints. Explicit booleans state that leadership rank is
 preserved, entry location is separate, and reference support is not a stop
 price. MI 1.2 and Snapshot 1.7 / Dashboard 2.4 are the matching consumers;
 older 1.0/1.1/1.6/2.3 readers remain supported without inventing entry data.
+
+## Snapshot 1.8 summary/detail projection
+
+Snapshot 1.8 / Dashboard 2.5 changes only static delivery. Candidate
+publication 1.1 and Market Intelligence 1.2 remain the authoritative full
+analytics contracts.
+
+`opportunity-candidates-summary.json` retains source lineage, complete
+Universe/stage/quality counts, risk ranks, entry lanes, and the compact fields
+needed for list rendering. Every list row binds its score fingerprint,
+entry-geometry fingerprint, and one deterministic stable-ID detail shard.
+
+Detail shards retain the original typed 1.1 cards. The formal Snapshot reader
+validates all descriptor/file hashes and logical fingerprints, reconstructs
+the full Candidate publication, and requires exact equality with its original
+logical fingerprint. The frontend performs no score or explanation
+calculation; it fetches one declared shard only after the user opens a stock.
+Snapshot 1.7 remains readable as a rollback contract.

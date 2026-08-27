@@ -280,9 +280,14 @@ and standing authorization also remain inactive by exact-revision mismatch.
   automatically become an entry instruction. This is distribution evidence,
   not outcome validation.
 - The active Candidate payload has 496 Primary and 532 Secondary records and
-  is about 20.4 MB. Summary/detail separation, compression, and on-demand
-  loading are the next payload-efficiency concern; guest and credential
-  Sessions must remain capability-identical.
+  is about 20.4 MB. Repository source now adds ADR 0048's Snapshot 1.8 /
+  Dashboard 2.5 lossless delivery projection: a 1,490,756-byte first-load
+  summary plus 32 stable-ID detail shards of 474,940–1,028,834 bytes. A real
+  `/tmp` 2026-08-26 build formally reconstructed the unchanged full Candidate
+  1.1 publication with the same 496/532 counts. A separate lag-zero build
+  produced and validated approval plan 2.3 without applying it. This is not
+  published or deployed; active Production remains Snapshot 1.7 / Dashboard
+  2.4. Guest and credential Sessions remain capability-identical by contract.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

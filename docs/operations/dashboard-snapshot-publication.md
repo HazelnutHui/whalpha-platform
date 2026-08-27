@@ -2,8 +2,8 @@
 
 ## Market Intelligence consumer binding
 
-The active release remains Snapshot 1.6 / Dashboard 2.3. Repository source also
-supports Snapshot 1.7 / Dashboard 2.4 for the additive entry-location consumer. Its
+The active release is Snapshot 1.7 / Dashboard 2.4. Repository source also
+supports Snapshot 1.8 / Dashboard 2.5 for split Candidate delivery. Its
 dry-run receives an explicit `--market-intelligence-publication-id`, formally
 reads the active immutable publication, and freezes that reference in candidate
 and plan. It never discovers a latest analytics directory. Analytics and
@@ -15,6 +15,13 @@ Snapshot 1.7 requires MI 1.2 and Candidate publication 1.1. It keeps the same
 file name but upgrades the envelope to `opportunity-candidate-snapshot/1.1`
 and freezes entry-audit, entry-parameter, and lane-consumer fingerprints. A
 mixed or incomplete version pair fails closed.
+
+Snapshot 1.8 keeps MI 1.2 and Candidate publication 1.1 unchanged. It emits a
+compact summary plus deterministic stable-ID detail shards. The reader validates
+every file, reconstructs the original full Candidate publication, and fails
+closed on any missing shard or summary/detail drift. Approval plan 2.3 freezes
+the ordered shard list and summary identity. This support is development-only;
+the active Production release remains 1.7/2.4.
 
 ## Safety boundary
 

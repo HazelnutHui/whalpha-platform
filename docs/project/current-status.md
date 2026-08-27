@@ -136,9 +136,11 @@ read or used.
 - The OCI bundle helper's `--snapshot-release` shortcut still resolves the
   legacy local snapshot directory; current V2 snapshots require the supported
   explicit `--snapshot-path` plus `--bundle-release` form until this is fixed.
-- The frontend production build reports a chunk above 500 KB, and the active
-  Candidate JSON is about 20.4 MB. Workspace code splitting and summary/detail
-  payload separation are required before substantially expanding the UI.
+- The frontend production build still reports a JavaScript chunk above 500 KB,
+  and active Production still serves the 20.4 MB monolithic Candidate JSON.
+  Repository source has completed summary/detail payload separation but has not
+  deployed it; workspace code splitting remains required before substantially
+  expanding the UI.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
@@ -354,8 +356,12 @@ Production writes; entry input-permutation equivalence is true. Primary has
 303 deprioritized records. It has 98 strong-but-extended setups, so strength
 does not automatically become an entry instruction.
 
-The active Candidate JSON is about 20.4 MB and should be split into summary
-and on-demand detail before the payload grows materially further. Dell remains
+The active Candidate JSON is about 20.4 MB. Repository source now implements
+Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing
+Candidate publication 1.1: the real 8/26 first-load file is 1.49 MB (92.68%
+smaller), with 32 detail shards and exact full-publication reconstruction.
+This development candidate is not published or deployed; active Production
+remains Snapshot 1.7 / Dashboard 2.4. Dell remains
 the sole heavy-compute, historical-storage, and data-governance authority;
 OCI is only the static serving/Session boundary. The optimized full and
 incremental Candidate calculations retain serial state/order custody. Cold

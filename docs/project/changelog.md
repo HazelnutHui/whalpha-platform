@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-27 — Lossless Candidate summary and on-demand detail
+
+- Accepted ADR 0048 and added Snapshot 1.8 / Dashboard 2.5 as a consumer-only
+  extension over unchanged Market Intelligence 1.2 and Candidate publication
+  1.1.
+- Replaced the new-contract monolithic Candidate delivery with one typed list
+  summary and deterministic Universe/stable-ID detail shards. Summary rows bind
+  exact score and entry fingerprints; the manifest and approval plan freeze
+  every shard filename, logical fingerprint, and file SHA-256.
+- Added formal lossless reconstruction of the full Candidate publication,
+  strict frontend summary parsing, and one-shard detail loading with
+  summary/detail identity checks. Snapshot 1.5–1.7 remain readable rollback
+  contracts; no browser-side scoring or explanation logic was introduced.
+- A real `/tmp` 2026-08-26 Snapshot produced the same 496 Primary and 532
+  Secondary records. Initial Candidate bytes fell from 20,367,627 to 1,490,756
+  (92.68%); 32 detail shards range from 474,940 to 1,028,834 bytes. Full formal
+  reread and reconstruction passed. A second lag-zero real build also produced
+  and validated approval plan 2.3 with all 32 files bound; the plan was not
+  applied.
+- No provider request, credential access, `/data` write, MI/Snapshot
+  publication, bundle publication, OCI access, deployment, scheduler, or
+  notification occurred. Production remains Snapshot 1.7 / Dashboard 2.4.
+
 ## 2026-08-27 — Real EOD terminal review recorded without retry
 
 - Reviewed public Massive plan and endpoint documentation plus the local

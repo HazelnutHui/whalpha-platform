@@ -127,8 +127,8 @@ from pathlib import Path
 root=Path(sys.argv[1])
 manifest=json.loads((root/'private-data/v1/manifest.json').read_text())
 contract=(manifest.get('snapshot_contract_version'), manifest.get('dashboard_contract_version'))
-if contract not in {('1.5','2.2'),('1.6','2.3'),('1.7','2.4')}:
-  raise SystemExit('OCI bundle requires Snapshot 1.5 / Dashboard 2.2, Snapshot 1.6 / Dashboard 2.3, or Snapshot 1.7 / Dashboard 2.4')
+if contract not in {('1.5','2.2'),('1.6','2.3'),('1.7','2.4'),('1.8','2.5')}:
+  raise SystemExit('OCI bundle requires a supported Snapshot 1.5-1.8 / Dashboard 2.2-2.5 pair')
 if manifest.get('market_intelligence_publication_id') != sys.argv[6]:
   raise SystemExit('snapshot Market Intelligence publication differs from explicit OCI binding')
 analytics_path=root/'private-data/v1/market-regime-overviews.json'
@@ -141,8 +141,8 @@ if any(len(record.get('relationships', [])) != 16 for record in analytics['recor
   raise SystemExit('snapshot does not contain all 16 ETF relationships')
 candidate_fingerprint=None
 candidate_audit_fingerprint=None
-if contract in {('1.6','2.3'),('1.7','2.4')}:
-  candidate_path=root/'private-data/v1/opportunity-candidates.json'
+if contract in {('1.6','2.3'),('1.7','2.4'),('1.8','2.5')}:
+  candidate_path=root/'private-data/v1'/('opportunity-candidates-summary.json' if contract == ('1.8','2.5') else 'opportunity-candidates.json')
   if not candidate_path.is_file():
     raise SystemExit('Candidate payload is missing')
   candidate=json.loads(candidate_path.read_text())
@@ -155,7 +155,7 @@ if contract in {('1.6','2.3'),('1.7','2.4')}:
       or candidate.get('payload_sha256') != manifest.get('market_intelligence_payload_sha256')
       or candidate.get('payload_logical_fingerprint') != manifest.get('market_intelligence_logical_fingerprint')
       or candidate.get('candidate_analytics_logical_fingerprint') != candidate_fingerprint
-      or candidate_analytics.get('logical_fingerprint') != candidate_fingerprint
+      or (candidate_analytics.get('full_candidate_analytics_logical_fingerprint') if contract == ('1.8','2.5') else candidate_analytics.get('logical_fingerprint')) != candidate_fingerprint
       or candidate_source.get('candidate_audit_logical_fingerprint') != candidate_audit_fingerprint
       or candidate_source.get('candidate_parameter_fingerprint') != manifest.get('candidate_parameter_fingerprint')
       or candidate_source.get('candidate_state_parameter_fingerprint') != manifest.get('candidate_state_parameter_fingerprint')
@@ -164,15 +164,37 @@ if contract in {('1.6','2.3'),('1.7','2.4')}:
       or candidate_analytics.get('underlying_stock_result_not_option_return') is not True
       or candidate_analytics.get('price_volume_not_fund_flow') is not True):
     raise SystemExit('Candidate binding is invalid')
-  if contract == ('1.7','2.4') and (
-      candidate.get('contract_version') != 'opportunity-candidate-snapshot/1.1'
-      or candidate_analytics.get('contract_version') != 'opportunity-candidate-publication/1.1'
+  if contract in {('1.7','2.4'),('1.8','2.5')} and (
+      candidate.get('contract_version') != ('opportunity-candidate-summary-snapshot/1.0' if contract == ('1.8','2.5') else 'opportunity-candidate-snapshot/1.1')
+      or candidate_analytics.get('contract_version') != ('opportunity-candidate-summary/1.0' if contract == ('1.8','2.5') else 'opportunity-candidate-publication/1.1')
       or candidate_analytics.get('leadership_rank_preserved') is not True
       or candidate_analytics.get('entry_location_separate_from_leadership') is not True
       or candidate_source.get('entry_geometry_audit_logical_fingerprint') != manifest.get('entry_geometry_audit_logical_fingerprint')
       or candidate_source.get('entry_geometry_parameter_fingerprint') != manifest.get('entry_geometry_parameter_fingerprint')
       or candidate_source.get('entry_lane_consumer_parameter_fingerprint') != manifest.get('entry_lane_consumer_parameter_fingerprint')):
-    raise SystemExit('Snapshot 1.7 entry-geometry binding is invalid')
+    raise SystemExit('Snapshot entry-geometry binding is invalid')
+  if contract == ('1.8','2.5'):
+    detail_files=manifest.get('candidate_detail_files',[])
+    descriptors=candidate_analytics.get('detail_shards',[])
+    if (manifest.get('candidate_summary_logical_fingerprint') != candidate_analytics.get('logical_fingerprint')
+        or manifest.get('candidate_summary_contract_version') != 'opportunity-candidate-summary/1.0'
+        or manifest.get('candidate_detail_contract_version') != 'opportunity-candidate-detail-shard/1.0'
+        or not detail_files or sorted(detail_files) != detail_files
+        or sorted(item.get('filename') for item in descriptors) != detail_files
+        or any(not (root/'private-data/v1'/name).is_file() for name in detail_files)):
+      raise SystemExit('Snapshot 1.8 split Candidate binding is invalid')
+    for descriptor in descriptors:
+      detail=json.loads((root/'private-data/v1'/descriptor['filename']).read_text())
+      if (detail.get('contract_version') != 'opportunity-candidate-detail-shard/1.0'
+          or detail.get('publication_id') != sys.argv[6]
+          or detail.get('candidate_analytics_logical_fingerprint') != candidate_fingerprint
+          or detail.get('shard_id') != descriptor.get('shard_id')
+          or detail.get('universe_id') != descriptor.get('universe_id')
+          or detail.get('stable_id_prefix') != descriptor.get('stable_id_prefix')
+          or detail.get('item_count') != descriptor.get('item_count')
+          or detail.get('logical_fingerprint') != descriptor.get('logical_fingerprint')
+          or len(detail.get('candidates',[])) != descriptor.get('item_count')):
+        raise SystemExit('Snapshot 1.8 Candidate detail binding is invalid')
 payload={
   'release_id': sys.argv[2],
   'git_commit': sys.argv[3],

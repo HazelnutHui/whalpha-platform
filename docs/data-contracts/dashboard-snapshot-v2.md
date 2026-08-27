@@ -2,12 +2,12 @@
 
 ## Status
 
-Implemented and active. Production Snapshot
-`2026-08-24T144500Z-1f3eb5512eb0` uses Snapshot 1.6 / Dashboard 2.3 and binds
-Market Intelligence `2026-08-24T142500Z-1f3eb5512eb0`. It is the exact
-user-approved `stale_review` for actual 2026-08-24 versus expected 2026-08-25,
-lag one. Snapshot 1.4 / Dashboard 2.1 and the 1.3 compatibility release remain
-historical/rollback contracts, not the active state.
+Implemented. Active Production Snapshot
+`2026-08-26T053233Z-6c60502e4473` uses Snapshot 1.7 / Dashboard 2.4 and binds
+Market Intelligence `2026-08-26T050254Z-6c60502e4473`. It was published under
+ordinary lag-zero freshness. Repository source additionally implements the
+undeployed Snapshot 1.8 / Dashboard 2.5 split Candidate consumer. Snapshot
+1.3–1.6 releases remain historical/rollback contracts, not the active state.
 
 ## Contracts
 
@@ -97,3 +97,17 @@ Candidate envelope, changed lane IDs/counts/order, or missing entry geometry.
 The OCI builder and deployment postflight accept and validate the 1.7/2.4 pair
 while retaining old 1.5/2.2 and 1.6/2.3 rollback compatibility. Freshness,
 approval, guest-equality, and no-demo boundaries are unchanged.
+
+## Contract 1.8 split Candidate delivery
+
+Snapshot 1.8 pairs Dashboard 2.5 with the same Market Intelligence 1.2 and
+Candidate publication 1.1 used by Snapshot 1.7. It replaces the monolithic
+Candidate snapshot file with one summary file and deterministic stable-ID
+detail shards. The manifest freezes the summary contract/fingerprint, detail
+contract, ordered filenames, and SHA-256 of every file.
+
+Approval plan 2.3 carries those bindings through atomic publication. Formal
+validation reads every shard and losslessly reconstructs the full Candidate
+publication before accepting a release. The browser loads the summary first
+and one declared shard per opened security. Older Snapshot contracts remain
+readable and do not silently acquire split files.

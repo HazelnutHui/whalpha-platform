@@ -82,8 +82,8 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     plan_version: Literal["2.0"] = "2.0"
     revision_id: Literal["universe-funnel-v2"] = "universe-funnel-v2"
     release_id: str
-    snapshot_contract_version: Literal["1.4", "1.5", "1.6", "1.7"] = "1.4"
-    dashboard_contract_version: Literal["2.1", "2.2", "2.3", "2.4"] = "2.1"
+    snapshot_contract_version: Literal["1.4", "1.5", "1.6", "1.7", "1.8"] = "1.4"
+    dashboard_contract_version: Literal["2.1", "2.2", "2.3", "2.4", "2.5"] = "2.1"
     generated_at: datetime
     analysis_session: date
     expected_latest_completed_session: date
@@ -157,9 +157,10 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
             self.market_intelligence_payload_sha256,
             self.market_intelligence_logical_fingerprint,
         )
-        if self.snapshot_contract_version in {"1.5", "1.6", "1.7"}:
+        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8"}:
             expected = (
-                "2.4" if self.snapshot_contract_version == "1.7"
+                "2.5" if self.snapshot_contract_version == "1.8"
+                else "2.4" if self.snapshot_contract_version == "1.7"
                 else "2.3" if self.snapshot_contract_version == "1.6"
                 else "2.2"
             )
@@ -242,6 +243,35 @@ class DashboardSnapshotApprovalPlanV2_2(DashboardSnapshotApprovalPlanV2_1):
     @classmethod
     def entry_digests(cls, value: str) -> str:
         return _sha(value)
+
+
+class DashboardSnapshotApprovalPlanV2_3(DashboardSnapshotApprovalPlanV2_2):
+    """Snapshot 1.8 approval plan with lossless summary/detail bindings."""
+
+    plan_version: Literal["2.3"] = "2.3"
+    snapshot_contract_version: Literal["1.8"] = "1.8"
+    dashboard_contract_version: Literal["2.5"] = "2.5"
+    candidate_summary_contract_version: Literal["opportunity-candidate-summary/1.0"]
+    candidate_summary_logical_fingerprint: str
+    candidate_detail_contract_version: Literal[
+        "opportunity-candidate-detail-shard/1.0"
+    ]
+    candidate_detail_files: tuple[str, ...]
+
+    @field_validator("candidate_summary_logical_fingerprint")
+    @classmethod
+    def summary_digest(cls, value: str) -> str:
+        return _sha(value)
+
+    @model_validator(mode="after")
+    def detail_files_reconcile(self) -> "DashboardSnapshotApprovalPlanV2_3":
+        if (
+            not self.candidate_detail_files
+            or self.candidate_detail_files != tuple(sorted(self.candidate_detail_files))
+            or len(self.candidate_detail_files) != len(set(self.candidate_detail_files))
+        ):
+            raise ValueError("Candidate detail files must be non-empty, unique, and ordered")
+        return self
 
 
 def _sha(value: str) -> str:
