@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-27 — Read-only daily EOD automation control plane
+
+- Accepted ADR 0029 and added a deterministic exact-session planner across
+  same-day Identity/EOD, Phase 1a, verified-prior Phase 1b, daily Candidate,
+  and Candidate entry geometry. Missing evidence yields one next action;
+  corruption, lineage mismatch, or downstream residue blocks the run.
+- Added worktree-safe planner and entry-geometry administrator scripts and
+  corrected both Massive Identity/EOD administrator wrappers to use the shared
+  project runner rather than a checkout-local virtual-environment path.
+- A real 2026-08-26 read-only rehearsal selected `calculate_entry_geometry`
+  after formally rereading the corrected daily incremental development chain.
+  Plan fingerprint was
+  `5f5f5be7a0e219ca21acaa01afc889f1397ca216ef7e8daab692686ee55cf21d`.
+- No provider request, `/data` write, publication, Snapshot, bundle,
+  deployment, OCI, credential, or scheduler state changed.
+
 ## 2026-08-27 — Deterministic cold-replay Oracle process parallelism
 
 - Accepted ADR 0028 and added bounded 1–8 worker `forkserver` execution across

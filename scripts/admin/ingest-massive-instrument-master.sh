@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-cd "$repo_root/apps/api"
-exec ../../.venv/bin/python -m tip_api.providers.massive.instrument_master_snapshot "$@"
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+repo_root=$(cd -- "${script_dir}/../.." && pwd)
+
+exec "${repo_root}/scripts/dev/run-project-python.sh" \
+  -m tip_api.providers.massive.instrument_master_snapshot "$@"

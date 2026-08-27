@@ -1,0 +1,543 @@
+"""Read-only, fail-closed planning for one exact daily EOD analytics run."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+from dataclasses import asdict, dataclass
+from datetime import date
+from enum import StrEnum
+from pathlib import Path
+from typing import Callable, Mapping
+
+from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
+from tip_api.providers.massive.grouped_daily_ingestion import load_identity_snapshot
+from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
+from tip_api.services.candidate_entry_geometry_audit import (
+    read_candidate_entry_geometry_audit,
+)
+from tip_api.services.market_calendar import ExchangeCalendar
+from tip_api.services.market_regime_audit import read_market_regime_audit_contents
+from tip_api.services.market_regime_state_audit import (
+    read_market_regime_state_audit_contents,
+)
+from tip_api.services.opportunity_candidate_audit import (
+    read_opportunity_candidate_audit_contents,
+)
+
+
+CONTRACT_VERSION = "daily-eod-automation-plan/1.0"
+
+
+class DailyEodAutomationError(RuntimeError):
+    """Raised when the planner inputs cannot define one safe daily run."""
+
+
+class ArtifactStatus(StrEnum):
+    COMPLETED = "completed"
+    MISSING = "missing"
+    INVALID = "invalid"
+    NOT_INSPECTED = "not_inspected"
+
+
+class PlanStatus(StrEnum):
+    WAITING_FOR_AUTHORIZED_INPUT = "waiting_for_authorized_input"
+    READY_FOR_OFFLINE_CALCULATION = "ready_for_offline_calculation"
+    ANALYTICS_READY = "analytics_ready"
+    BLOCKED = "blocked"
+
+
+class NextAction(StrEnum):
+    PREPARE_IDENTITY_CATCHUP = "prepare_identity_catchup"
+    PREPARE_EOD_CATCHUP = "prepare_eod_catchup"
+    CALCULATE_PHASE1A = "calculate_phase1a"
+    CALCULATE_PHASE1B_INCREMENTAL = "calculate_phase1b_incremental"
+    CALCULATE_CANDIDATE_DAILY = "calculate_candidate_daily"
+    CALCULATE_ENTRY_GEOMETRY = "calculate_entry_geometry"
+    REVIEW_PUBLICATION = "review_publication"
+    OPERATOR_DIAGNOSIS = "operator_diagnosis"
+
+
+@dataclass(frozen=True, slots=True)
+class DailyEodAutomationPaths:
+    data_root: Path
+    phase1a_audit: Path
+    prior_phase1b_audit: Path
+    phase1b_audit: Path
+    prior_candidate_audit: Path
+    candidate_audit: Path
+    entry_geometry_audit: Path
+
+
+@dataclass(frozen=True, slots=True)
+class ArtifactObservation:
+    stage: str
+    status: ArtifactStatus
+    path: str
+    as_of_session: str | None = None
+    logical_fingerprint: str | None = None
+    reason_codes: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class DailyEodAutomationPlan:
+    contract_version: str
+    target_session: str
+    prior_session: str
+    status: PlanStatus
+    next_action: NextAction
+    reason_codes: tuple[str, ...]
+    observations: tuple[ArtifactObservation, ...]
+    publication_authorized: bool
+    deployment_authorized: bool
+    scheduler_enabled: bool
+    external_request_count: int
+    production_write_count: int
+    logical_content_fingerprint: str
+
+    def as_dict(self) -> dict[str, object]:
+        return _jsonable(asdict(self))
+
+
+@dataclass(frozen=True, slots=True)
+class _CompletedProof:
+    observation: ArtifactObservation
+    payload: object
+
+
+def plan_daily_eod_automation(
+    *,
+    target_session: date,
+    paths: DailyEodAutomationPaths,
+    calendar: ExchangeCalendar | None = None,
+) -> DailyEodAutomationPlan:
+    """Formally inspect one exact session and return only its next safe action."""
+
+    _validate_paths(paths)
+    session_calendar = calendar or ExchangeCalendar()
+    if not session_calendar.is_session(target_session):
+        raise DailyEodAutomationError("daily target must be an XNYS session")
+    prior_session = session_calendar.previous_session(target_session)
+    locations = _stage_locations(target_session, paths)
+    observations: list[ArtifactObservation] = []
+
+    identity = _inspect(
+        stage="identity",
+        path=locations["identity"],
+        reader=lambda: load_identity_snapshot(
+            paths.data_root,
+            provider_id=MASSIVE_PROVIDER_ID,
+            as_of_date=target_session,
+        ),
+        session=lambda value: value.as_of_date.isoformat(),
+        fingerprint=lambda value: str(value.manifest["snapshot_content_sha256"]),
+    )
+    observations.append(identity.observation)
+    if identity.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="identity",
+            failed=identity.observation,
+            observations=observations,
+            locations=locations,
+        )
+
+    eod = _inspect(
+        stage="eod",
+        path=locations["eod"],
+        reader=lambda: CanonicalEodReadRepository(paths.data_root).inspect_session(target_session),
+        session=lambda value: value.session_date.isoformat(),
+        fingerprint=lambda value: value.content_fingerprint,
+    )
+    observations.append(eod.observation)
+    if eod.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="eod",
+            failed=eod.observation,
+            observations=observations,
+            locations=locations,
+        )
+    if eod.payload.identity_snapshot_fingerprint != identity.observation.logical_fingerprint:
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "eod_identity_fingerprint_mismatch",
+        )
+
+    phase1a = _inspect(
+        stage="phase1a",
+        path=paths.phase1a_audit,
+        reader=lambda: read_market_regime_audit_contents(paths.phase1a_audit),
+        session=lambda value: str(value.manifest["as_of_session"]),
+        fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
+    )
+    observations.append(phase1a.observation)
+    if phase1a.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="phase1a",
+            failed=phase1a.observation,
+            observations=observations,
+            locations=locations,
+        )
+    if phase1a.observation.as_of_session != target_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "phase1a_session_mismatch")
+    if (
+        phase1a.payload.input_manifest.get("identity_logical_fingerprint")
+        != identity.observation.logical_fingerprint
+        or phase1a.payload.input_manifest.get("eod_content_fingerprint")
+        != eod.observation.logical_fingerprint
+    ):
+        return _blocked(target_session, prior_session, observations, "phase1a_source_fingerprint_mismatch")
+
+    prior_phase1b = _inspect(
+        stage="prior_phase1b",
+        path=paths.prior_phase1b_audit,
+        reader=lambda: read_market_regime_state_audit_contents(paths.prior_phase1b_audit),
+        session=lambda value: str(value.manifest["as_of_session"]),
+        fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
+    )
+    observations.append(prior_phase1b.observation)
+    if prior_phase1b.observation.status is not ArtifactStatus.COMPLETED:
+        return _blocked(target_session, prior_session, observations, "verified_prior_phase1b_unavailable")
+    if prior_phase1b.observation.as_of_session != prior_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "prior_phase1b_session_mismatch")
+
+    phase1b = _inspect(
+        stage="phase1b",
+        path=paths.phase1b_audit,
+        reader=lambda: read_market_regime_state_audit_contents(paths.phase1b_audit),
+        session=lambda value: str(value.manifest["as_of_session"]),
+        fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
+    )
+    observations.append(phase1b.observation)
+    if phase1b.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="phase1b",
+            failed=phase1b.observation,
+            observations=observations,
+            locations=locations,
+        )
+    phase1b_manifest = phase1b.payload.manifest
+    phase1b_source = phase1b.payload.source_manifest
+    if phase1b.observation.as_of_session != target_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "phase1b_session_mismatch")
+    if phase1b_manifest.get("execution_mode") != "verified_prior_incremental":
+        return _blocked(target_session, prior_session, observations, "phase1b_not_daily_incremental")
+    if (
+        phase1b_manifest.get("prior_as_of_session") != prior_session.isoformat()
+        or phase1b_manifest.get("prior_audit_logical_fingerprint")
+        != prior_phase1b.observation.logical_fingerprint
+    ):
+        return _blocked(target_session, prior_session, observations, "phase1b_prior_binding_mismatch")
+    if (
+        phase1b_source.get("phase1a_audit_logical_fingerprint")
+        != phase1a.observation.logical_fingerprint
+    ):
+        return _blocked(target_session, prior_session, observations, "phase1b_phase1a_binding_mismatch")
+
+    prior_candidate = _inspect(
+        stage="prior_candidate",
+        path=paths.prior_candidate_audit,
+        reader=lambda: read_opportunity_candidate_audit_contents(paths.prior_candidate_audit),
+        session=lambda value: str(value.manifest["as_of_session"]),
+        fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
+    )
+    observations.append(prior_candidate.observation)
+    if prior_candidate.observation.status is not ArtifactStatus.COMPLETED:
+        return _blocked(target_session, prior_session, observations, "verified_prior_candidate_unavailable")
+    if prior_candidate.observation.as_of_session != prior_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "prior_candidate_session_mismatch")
+
+    candidate = _inspect(
+        stage="candidate",
+        path=paths.candidate_audit,
+        reader=lambda: read_opportunity_candidate_audit_contents(paths.candidate_audit),
+        session=lambda value: str(value.manifest["as_of_session"]),
+        fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
+    )
+    observations.append(candidate.observation)
+    if candidate.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="candidate",
+            failed=candidate.observation,
+            observations=observations,
+            locations=locations,
+        )
+    candidate_manifest = candidate.payload.manifest
+    if candidate.observation.as_of_session != target_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "candidate_session_mismatch")
+    if candidate_manifest.get("execution_mode") != "verified_prior_incremental":
+        return _blocked(target_session, prior_session, observations, "candidate_not_daily_incremental")
+    candidate_validation = candidate.payload.validation_ledger
+    if (
+        not isinstance(candidate_validation, Mapping)
+        or candidate_validation.get("validation_tier") != "daily"
+        or candidate_validation.get("validation_scope")
+        != "verified_prior_plus_current_session_oracle"
+    ):
+        return _blocked(target_session, prior_session, observations, "candidate_daily_validation_missing")
+    if (
+        candidate_manifest.get("prior_as_of_session") != prior_session.isoformat()
+        or candidate_manifest.get("prior_audit_logical_fingerprint")
+        != prior_candidate.observation.logical_fingerprint
+    ):
+        return _blocked(target_session, prior_session, observations, "candidate_prior_binding_mismatch")
+
+    entry = _inspect(
+        stage="entry_geometry",
+        path=paths.entry_geometry_audit,
+        reader=lambda: read_candidate_entry_geometry_audit(paths.entry_geometry_audit),
+        session=lambda value: str(value["as_of_session"]),
+        fingerprint=lambda value: str(value["logical_content_fingerprint"]),
+    )
+    observations.append(entry.observation)
+    if entry.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="entry_geometry",
+            failed=entry.observation,
+            observations=observations,
+            locations=locations,
+        )
+    if entry.observation.as_of_session != target_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "entry_geometry_session_mismatch")
+    if (
+        entry.payload.get("source", {}).get("candidate_audit_logical_fingerprint")
+        != candidate.observation.logical_fingerprint
+    ):
+        return _blocked(target_session, prior_session, observations, "entry_candidate_binding_mismatch")
+    return _build_plan(
+        target_session=target_session,
+        prior_session=prior_session,
+        status=PlanStatus.ANALYTICS_READY,
+        next_action=NextAction.REVIEW_PUBLICATION,
+        reason_codes=("all_daily_analytics_formally_verified",),
+        observations=observations,
+    )
+
+
+def _inspect(
+    *,
+    stage: str,
+    path: Path,
+    reader: Callable[[], object],
+    session: Callable[[object], str],
+    fingerprint: Callable[[object], str],
+) -> _CompletedProof:
+    if not _lexists(path):
+        return _CompletedProof(
+            ArtifactObservation(stage, ArtifactStatus.MISSING, str(path), reason_codes=("artifact_absent",)),
+            None,
+        )
+    try:
+        payload = reader()
+        observation = ArtifactObservation(
+            stage=stage,
+            status=ArtifactStatus.COMPLETED,
+            path=str(path),
+            as_of_session=session(payload),
+            logical_fingerprint=fingerprint(payload),
+        )
+        _validate_observation(observation)
+        return _CompletedProof(observation, payload)
+    except Exception:  # Formal readers are the fail-closed corruption boundary.
+        return _CompletedProof(
+            ArtifactObservation(
+                stage,
+                ArtifactStatus.INVALID,
+                str(path),
+                reason_codes=("formal_reader_failed_closed",),
+            ),
+            None,
+        )
+
+
+def _stop_before_stage(
+    *,
+    target_session: date,
+    prior_session: date,
+    stage: str,
+    failed: ArtifactObservation,
+    observations: list[ArtifactObservation],
+    locations: Mapping[str, Path],
+) -> DailyEodAutomationPlan:
+    downstream = _downstream_existing(stage, locations)
+    if failed.status is ArtifactStatus.INVALID:
+        return _blocked(target_session, prior_session, observations, f"{stage}_invalid")
+    if downstream:
+        observations.extend(
+            ArtifactObservation(
+                item,
+                ArtifactStatus.NOT_INSPECTED,
+                str(locations[item]),
+                reason_codes=("downstream_exists_without_verified_prerequisite",),
+            )
+            for item in downstream
+        )
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "downstream_artifact_without_verified_prerequisite",
+        )
+    action_by_stage = {
+        "identity": (PlanStatus.WAITING_FOR_AUTHORIZED_INPUT, NextAction.PREPARE_IDENTITY_CATCHUP),
+        "eod": (PlanStatus.WAITING_FOR_AUTHORIZED_INPUT, NextAction.PREPARE_EOD_CATCHUP),
+        "phase1a": (PlanStatus.READY_FOR_OFFLINE_CALCULATION, NextAction.CALCULATE_PHASE1A),
+        "phase1b": (
+            PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            NextAction.CALCULATE_PHASE1B_INCREMENTAL,
+        ),
+        "candidate": (
+            PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            NextAction.CALCULATE_CANDIDATE_DAILY,
+        ),
+        "entry_geometry": (
+            PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            NextAction.CALCULATE_ENTRY_GEOMETRY,
+        ),
+    }
+    status, action = action_by_stage[stage]
+    return _build_plan(
+        target_session=target_session,
+        prior_session=prior_session,
+        status=status,
+        next_action=action,
+        reason_codes=(f"{stage}_required",),
+        observations=observations,
+    )
+
+
+def _blocked(
+    target_session: date,
+    prior_session: date,
+    observations: list[ArtifactObservation],
+    reason_code: str,
+) -> DailyEodAutomationPlan:
+    return _build_plan(
+        target_session=target_session,
+        prior_session=prior_session,
+        status=PlanStatus.BLOCKED,
+        next_action=NextAction.OPERATOR_DIAGNOSIS,
+        reason_codes=(reason_code,),
+        observations=observations,
+    )
+
+
+def _build_plan(
+    *,
+    target_session: date,
+    prior_session: date,
+    status: PlanStatus,
+    next_action: NextAction,
+    reason_codes: tuple[str, ...],
+    observations: list[ArtifactObservation],
+) -> DailyEodAutomationPlan:
+    logical = {
+        "contract_version": CONTRACT_VERSION,
+        "target_session": target_session.isoformat(),
+        "prior_session": prior_session.isoformat(),
+        "status": status.value,
+        "next_action": next_action.value,
+        "reason_codes": list(reason_codes),
+        "observations": [_jsonable(asdict(item)) for item in observations],
+        "publication_authorized": False,
+        "deployment_authorized": False,
+        "scheduler_enabled": False,
+        "external_request_count": 0,
+        "production_write_count": 0,
+    }
+    return DailyEodAutomationPlan(
+        contract_version=CONTRACT_VERSION,
+        target_session=target_session.isoformat(),
+        prior_session=prior_session.isoformat(),
+        status=status,
+        next_action=next_action,
+        reason_codes=reason_codes,
+        observations=tuple(observations),
+        publication_authorized=False,
+        deployment_authorized=False,
+        scheduler_enabled=False,
+        external_request_count=0,
+        production_write_count=0,
+        logical_content_fingerprint=_fingerprint(logical),
+    )
+
+
+def _stage_locations(target_session: date, paths: DailyEodAutomationPaths) -> dict[str, Path]:
+    session = target_session.isoformat()
+    return {
+        "identity": paths.data_root / "market-data" / "snapshots" / "instrument-master" / f"as_of_date={session}",
+        "eod": paths.data_root / "market-data" / "eod-price-bars" / "schema_version=1" / f"session_date={session}",
+        "phase1a": paths.phase1a_audit,
+        "phase1b": paths.phase1b_audit,
+        "candidate": paths.candidate_audit,
+        "entry_geometry": paths.entry_geometry_audit,
+    }
+
+
+def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str, ...]:
+    order = ("identity", "eod", "phase1a", "phase1b", "candidate", "entry_geometry")
+    index = order.index(stage)
+    return tuple(item for item in order[index + 1 :] if _lexists(locations[item]))
+
+
+def _validate_paths(paths: DailyEodAutomationPaths) -> None:
+    if not paths.data_root.is_absolute():
+        raise DailyEodAutomationError("data root must be absolute")
+    audits = (
+        paths.phase1a_audit,
+        paths.prior_phase1b_audit,
+        paths.phase1b_audit,
+        paths.prior_candidate_audit,
+        paths.candidate_audit,
+        paths.entry_geometry_audit,
+    )
+    if len(set(audits)) != len(audits):
+        raise DailyEodAutomationError("daily audit paths must be distinct")
+    if any(not item.is_absolute() or item.parent != Path("/tmp") for item in audits):
+        raise DailyEodAutomationError("daily audits must be direct children of /tmp")
+
+
+def _validate_observation(observation: ArtifactObservation) -> None:
+    if observation.as_of_session is None:
+        raise DailyEodAutomationError("completed artifact session is missing")
+    fingerprint = observation.logical_fingerprint
+    if (
+        fingerprint is None
+        or len(fingerprint) != 64
+        or any(character not in "0123456789abcdef" for character in fingerprint)
+    ):
+        raise DailyEodAutomationError("completed artifact fingerprint is malformed")
+
+
+def _lexists(path: Path) -> bool:
+    return os.path.lexists(path)
+
+
+def _fingerprint(value: object) -> str:
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True).encode("utf-8")
+    ).hexdigest()
+
+
+def _jsonable(value: object) -> object:
+    if isinstance(value, StrEnum):
+        return value.value
+    if isinstance(value, dict):
+        return {str(key): _jsonable(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(item) for item in value]
+    return value

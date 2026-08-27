@@ -4,9 +4,10 @@
   after the verified Candidate append and Phase 1b stable-prefix correction:
   verified-prior Phase 1b append, immutable panel-stage reuse, and streaming/
   resumable Candidate audit output, explicit validation tiers, and bounded
-  deterministic cold-Oracle process parallelism are complete. Publication,
-  Snapshot, bundle,
-  and OCI remain separate authorizations.
+  deterministic cold-Oracle process parallelism are complete. The exact-
+  session read-only daily control-plane planner is also complete; next add a
+  single-action offline executor and durable Dell run custody. Publication,
+  Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -129,11 +130,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Design the approval-bound daily EOD automation state machine around the
-completed verified-prior, recovery, validation-tier, and bounded cold-Oracle
-paths. Keep serial daily Oracle execution, formal failure escalation, and
-atomic custody. Publication, Snapshot, bundle, and OCI deployment remain
-independent approval-bound operations. Keep SEC B2 paused.
+Add the daily EOD control plane's single-action offline executor and durable,
+append-only Dell run custody. It must consume one exact planner action, hold an
+exclusive run lock, re-plan after immutable completion, and never combine
+provider acquisition, Production publication, Snapshot, bundle, OCI, or
+scheduler activation authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

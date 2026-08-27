@@ -173,7 +173,12 @@ session Oracles under ADR 0028. Four workers reduced the real cold Oracle stage
 from 117.09 to 76.23 seconds and end-to-end time from 597.70 to 560.02 seconds;
 all nine business/Oracle files were byte-identical. Daily remains one effective
 Oracle worker because 2- and 4-worker inner-session prototypes were slower than
-serial. Daily EOD automation design is now next.
+serial. ADR 0029 now adds an exact-session read-only daily state planner. A real
+2026-08-26 rehearsal formally reread the corrected Phase 1b/Candidate
+incremental development chain and returned `calculate_entry_geometry` as the
+sole next action. It made zero external requests and Production writes and did
+not enable a scheduler. The single-action offline executor and durable Dell run
+custody are next.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

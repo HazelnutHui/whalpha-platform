@@ -98,7 +98,12 @@ to independent cold-replay session Oracles. Four workers reduced the same cold
 Oracle stage from 117.09 to 76.23 seconds and end-to-end time from 597.70 to
 560.02 seconds; all nine business/Oracle files and both aggregate fingerprints
 were exact. A measured inner-daily parallel prototype was slower, so daily
-keeps one effective Oracle worker. Daily EOD automation design is next.
+keeps one effective Oracle worker. ADR 0029's exact-session, read-only daily
+planner is now implemented. A real 2026-08-26 rehearsal formally reconciled
+the corrected incremental chain and selected `calculate_entry_geometry` as its
+sole next action, with zero external requests and Production writes. A
+single-action executor and durable Dell run custody are next; no scheduler is
+enabled.
 
 ## Analytics and presentation
 

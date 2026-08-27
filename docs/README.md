@@ -105,6 +105,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Opportunity Candidate Publication V1](data-contracts/opportunity-candidate-publication-v1.md): Bounded, language-neutral Candidate consumer and lineage contract.
 - [Candidate Entry Geometry V1](data-contracts/candidate-entry-geometry-v1.md): Offline source audit and additive consumer contract separating leadership quality from entry location and chase risk.
 - [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md): Dell-only compute/data authority, worktree-safe runner, measured baseline, and deterministic optimization sequence.
+- [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): Exact-session read-only planning, fail-closed action graph, rehearsal evidence, and remaining unattended-operation gates.
 - [ADR 0022: Verified-prior Candidate increment](decisions/0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md): separates daily append validation from the cold full-replay reference.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
@@ -154,6 +155,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0026: Stream and Resume Candidate Audit Artifacts](decisions/0026-stream-and-resume-candidate-audit-artifacts.md)
 - [ADR 0027: Make Candidate Validation Tiers Explicit](decisions/0027-make-candidate-validation-tiers-explicit.md)
 - [ADR 0028: Parallelize Only Independent Cold-Replay Oracle Sessions](decisions/0028-parallelize-only-independent-cold-replay-oracle-sessions.md)
+- [ADR 0029: Separate Daily Run Planning from Authorized Execution](decisions/0029-separate-daily-run-planning-from-authorized-execution.md)
 
 ## Project
 

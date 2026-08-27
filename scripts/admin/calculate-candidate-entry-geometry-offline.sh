@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
+
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd -- "${script_dir}/../.." && pwd)
 
 exec "${repo_root}/scripts/dev/run-project-python.sh" \
-  -m tip_api.providers.massive.grouped_daily_ingestion "$@"
+  -m tip_api.services.candidate_entry_geometry_cli "$@"
