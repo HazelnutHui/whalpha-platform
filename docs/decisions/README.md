@@ -56,3 +56,4 @@ Each ADR should include:
 - [0031: Separate Market Close from Provider Readiness](0031-separate-market-close-from-provider-readiness.md)
 - [0032: Custody Provider Fetch Attempts Before Automation](0032-custody-provider-fetch-attempts-before-automation.md)
 - [0033: Bound Standing Daily Data Authorization](0033-bound-standing-daily-data-authorization.md)
+- [0034: Coordinate Exactly One Daily Transition](0034-coordinate-exactly-one-daily-transition.md)

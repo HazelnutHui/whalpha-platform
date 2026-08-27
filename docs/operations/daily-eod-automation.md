@@ -156,6 +156,26 @@ scheduler itself. Until an authorization artifact and external host SHA pin are
 explicitly reviewed and activated, provider fetch and canonical apply remain
 manual approvals.
 
+## One-transition coordinator
+
+ADR 0034 adds the repository-only coordinator core. One invocation formally
+joins the exact automation plan, shared journal, and acquisition readiness and
+returns or invokes at most one transition. It distinguishes wait, acquisition
+recovery, offline recovery, diagnosis, manual fetch/apply authorization,
+offline calculation, and publication review. It never loops or retries.
+
+Provider fetch and canonical apply are explicit capability ports and are absent
+by default. An installed capability must bind the exact target and readiness
+fingerprint, return one formal event fingerprint, and cannot claim more than
+one request or one canonical write. A future real adapter must independently
+satisfy ADR 0032 and ADR 0033; the coordinator does not grant authority.
+Offline execution is also opt-in per invocation and delegates exactly one
+action to ADR 0030.
+
+There is no coordinator CLI or scheduler entry yet. No real capability, run
+root, authorization artifact, provider request, or canonical write was created
+by this implementation.
+
 ## Read-only plan
 
 Every audit path is explicit and must be a distinct direct child of `/tmp`.
@@ -290,9 +310,9 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. The one-transition coordinator, followed by explicit review/provisioning of
-   a real standing-authorization artifact and its separate host SHA pin, or
-   continued manual approval for provider fetch and canonical apply.
+1. Real ADR 0032/0033 fetch and canonical-apply capability adapters, followed
+   by explicit review/provisioning of a standing-authorization artifact and
+   its separate host SHA pin, or continued manual approval for those actions.
 2. Actual alert delivery and a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
 3. Separate authorization decisions for publication, Snapshot/bundle, OCI
@@ -304,4 +324,6 @@ boundary yet. Readiness planning is also implemented and tested without making
 a provider request or enabling a scheduler. Acquisition custody is implemented
 and tested without creating the real run root or executing a fetch. Standing
 authorization validation is implemented and tested, but no real authorization
-directory, artifact, SHA pin, or authorized transition exists.
+directory, artifact, SHA pin, or authorized transition exists. The coordinator
+core is implemented and tested with default-absent provider/apply capabilities;
+it has no real CLI or scheduler entry.

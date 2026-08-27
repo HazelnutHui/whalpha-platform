@@ -10,9 +10,10 @@
   missed-session policy and durable acquisition-attempt custody are complete
   in repository source. The default-deny, expiring standing-authorization
   boundary for provider acquisition/canonical apply is also defined and
-  repository-tested but not activated. Next build the one-transition daily
-  coordinator. Publication, Snapshot, bundle, and OCI remain separate
-  authorizations.
+  repository-tested but not activated. The one-transition coordinator core is
+  complete with default-absent provider/apply capabilities. Next implement the
+  real ADR 0032/0033 capability adapters without activating them. Publication,
+  Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -136,15 +137,17 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] XNYS-close-aware readiness, bounded retry, alert state, and oldest-gap recovery policy
 - [x] Shared-lock durable provider-attempt reservation, outcome, and recovery custody
 - [x] Expiring, externally SHA-pinned standing Identity/EOD data-authorization contract
+- [x] Default-deny one-transition coordinator core with explicit capability ports
 
 ## Next Small Target
 
-Add the one-transition daily coordinator around the accepted but inactive
-standing-authorization boundary. Then review and provision a real authorization
-artifact and separate host SHA pin, or retain manual provider/apply approvals.
-Real notification delivery and scheduler activation remain separate. Do not
-combine Production publication, Snapshot, bundle, OCI, or deployment
-authorization. Keep SEC B2 paused.
+Implement real fetch and canonical-apply capability adapters that compose
+acquisition/apply custody with the accepted but inactive standing-authorization
+boundary. Then review and provision a real authorization artifact and separate
+host SHA pin, or retain manual provider/apply approvals. Real notification
+delivery and scheduler activation remain separate. Do not combine Production
+publication, Snapshot, bundle, OCI, or deployment authorization. Keep SEC B2
+paused.
 
 ## Phase 2 — Intraday and Options
 

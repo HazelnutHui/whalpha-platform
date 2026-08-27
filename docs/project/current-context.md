@@ -126,8 +126,13 @@ standing authorization is now defined by ADR 0033 as an expiring, exact-
 revision, externally SHA-pinned contract for only Identity/EOD fetch and
 canonical apply. Its reader and transition verifier are repository-tested, but
 no real authorization directory, artifact, host pin, fetch, or apply was
-created. The one-transition coordinator remains next; publication and public-
-serving operations stay outside this scope.
+created. Publication and public-serving operations stay outside this scope.
+ADR 0034 now implements the repository-only coordinator core: it joins exact
+planning, journal recovery,
+readiness, authorization review, one opt-in offline action, diagnosis, and the
+publication-review stop while never looping. Provider/apply capability ports
+are absent by default; no CLI, real adapter, authorization activation, request,
+or write exists. Real authorized adapters remain next.
 
 ## Analytics and presentation
 

@@ -111,6 +111,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0031: Market close versus provider readiness](decisions/0031-separate-market-close-from-provider-readiness.md): defines the network-free stabilization, bounded retry, alert, and oldest-gap recovery policy.
 - [ADR 0032: Provider-attempt custody](decisions/0032-custody-provider-fetch-attempts-before-automation.md): reserves and reconciles exact provider attempts under the shared immutable daily journal without executing them.
 - [ADR 0033: Standing daily data authorization](decisions/0033-bound-standing-daily-data-authorization.md): defines an expiring, externally SHA-pinned, default-deny scope for exact Identity/EOD fetch and canonical apply without activating it.
+- [ADR 0034: One-transition daily coordination](decisions/0034-coordinate-exactly-one-daily-transition.md): joins planning, readiness, recovery, authorization review, and offline execution while invoking at most one explicitly installed capability.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.

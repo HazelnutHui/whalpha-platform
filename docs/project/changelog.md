@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-27 — One-transition daily coordinator core
+
+- Accepted ADR 0034 and added a deterministic coordinator that joins the exact
+  automation plan, shared journal, acquisition readiness, recovery, offline
+  execution, and publication-review stop without looping or retrying.
+- Provider fetch and canonical apply are explicit capabilities absent by
+  default. Returned evidence must match operation, target, precondition, event,
+  and maximum one-request/one-write bounds.
+- Added coverage for wait, manual authorization, fetch/apply capability,
+  unresolved recovery, offline opt-in, diagnosis, publication stop, and unsafe
+  custody paths.
+- No real capability adapter, CLI, run root, authorization artifact, host pin,
+  credential read, provider request, `/data` write, publication, deployment, or
+  scheduler state was created or changed.
+
 ## 2026-08-27 — Default-deny standing daily data authorization
 
 - Accepted ADR 0033 and added an expiring, exact-revision authorization
