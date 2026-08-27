@@ -63,3 +63,4 @@ Each ADR should include:
 - [0038: Route One Interrupted Daily Transition](0038-route-one-interrupted-daily-transition.md)
 - [0039: Separate Daily Alert Intent from Delivery](0039-separate-daily-alert-intent-from-delivery.md)
 - [0040: Custody One Daily Alert Delivery Attempt](0040-custody-one-daily-alert-delivery-attempt.md)
+- [0041: Deliver Daily Alerts Through External SMTP](0041-deliver-daily-alerts-through-external-smtp.md)

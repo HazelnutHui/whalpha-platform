@@ -65,9 +65,10 @@ missed-session recovery. Permanent/quality failures and exhausted attempts
 require diagnosis. A ready fetch package only requests separate apply review.
 
 The result always declares zero requests/writes, no scheduler, and no provider
-completeness assertion. Exit 1 means alert/diagnosis is required; it does not
-send a notification. Durable attempt custody is implemented below;
-notification delivery is not.
+completeness assertion. Exit 1 means alert/diagnosis is required; this command
+does not send a notification. Durable attempt and alert-delivery custody plus a
+default-disabled SMTP library adapter are described below; no real transport
+or notification command is installed.
 
 ## Provider-attempt custody
 
@@ -294,10 +295,38 @@ outcome is ambiguous and subsequent calls fail closed. A formally delivered
 intent returns `already_delivered` without transport access. A known failed
 terminal also requires operator review; no retry policy is authorized yet.
 
-No email adapter, channel config, credential loader, real alert root, or
-delivery is present. The next slice may implement one externally configured
-email transport while keeping credentials outside Git and binding its exact
-result to this custody contract.
+ADR 0041 adds a repository-only SMTP adapter behind this custody port. It is
+not an installed command and remains disabled unless a separately reviewed,
+owner-only external config sets `enabled=true` at the exact verified Dell
+revision. Config, credential, alert root, real delivery, and scheduler state
+remain absent.
+
+The canonical `daily-eod-email-transport-config/1.0` JSON file must be `0400`
+under a `0700` directory outside Git and `/data`, with its exact whole-file SHA
+supplied independently. It binds the repository/data/run/alert roots, source
+revision, sender, sorted unique recipients, endpoint, TLS mode, timeout, and
+credential path. Only implicit TLS on 465 and STARTTLS on 587 are accepted.
+Reading this config never touches the credential path.
+
+The separate `smtp.env` must be `0400` directly under an owner-only `0700`
+directory and contain exactly:
+
+```text
+TIP_SMTP_USERNAME=<external value>
+TIP_SMTP_PASSWORD=<external value>
+```
+
+Never place those values in Git, shell history, logs, audit output, or a
+command line. The adapter loads them only after ADR 0040 has durably recorded
+`delivery_started`. Configuration/credential rejection before SMTP returns a
+known zero-request failure. Once SMTP begins, any exception or partial
+recipient acceptance is treated as unknown and must not be retried
+automatically. Successful evidence contains only a hash of the stable
+Message-ID, never a secret or raw provider response.
+
+There is deliberately no provisioning or send command yet. First review all
+external paths and exact revision, perform no-network configuration preflight,
+then authorize any controlled fake/local or real rehearsal separately.
 
 ## Read-only plan
 
@@ -433,10 +462,11 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Implement one externally configured email transport behind ADR 0040 without
-   committing channel credentials.
-2. Review/provision the external host and standing-authorization artifacts and
-   SHA pins at the stable implementation revision, or continue manual approval.
+1. Review the external alert, host-runtime, and standing-authorization
+   artifacts and SHA pins together at one stable implementation revision, or
+   continue manual approval.
+2. Conduct a no-network config/custody preflight, followed only under separate
+   authorization by a controlled email and one-transition rehearsal.
 3. Conduct a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
 4. Make separate authorization decisions for publication, Snapshot/bundle, OCI
@@ -461,4 +491,7 @@ recovery routing is repository-tested only; no real recovery event was appended.
 ADR 0039 alert intent is repository-tested only; no intent was persisted and no
 notification delivery was attempted.
 ADR 0040 alert custody is repository-tested only; no real root, transport call,
-or delivery event exists.
+or delivery event exists. ADR 0041 SMTP config, credential loading, rendering,
+TLS behavior, and custody composition are repository-tested only; no external
+artifact, credential read, network call, email, command, service, or timer
+exists.

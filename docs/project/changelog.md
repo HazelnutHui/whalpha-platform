@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-27 — Default-disabled external SMTP alert adapter
+
+- Accepted ADR 0041 and added an exact-revision, externally SHA-pinned SMTP
+  configuration that is absent/disabled by default and grants no scheduler,
+  publication, or deployment authority.
+- Added separate owner-only two-key credential custody, implicit TLS 465 and
+  STARTTLS 587 enforcement, deterministic bilingual operational content, and
+  a stable Message-ID/deduplication header.
+- Bound the adapter to the verified Dell runtime and ADR 0040 roots. Known
+  pre-request credential failure records zero requests; initiated transport
+  exceptions or partial acceptance remain unresolved and cannot auto-replay.
+- Added synthetic config, permission, secret-redaction, rendering, TLS,
+  success, deduplication, known-failure, and ambiguous-outcome tests.
+- No external config, credential, alert root, command, real SMTP request,
+  notification, `/data` write, deployment, service, timer, or scheduler state
+  was created or changed.
+
 ## 2026-08-27 — At-most-once alert delivery custody
 
 - Accepted ADR 0040 and added a separate owner-only immutable alert journal

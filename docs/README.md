@@ -118,6 +118,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0038: One-transition recovery routing](decisions/0038-route-one-interrupted-daily-transition.md): formally rereads one exact pending journal event and invokes only its matching no-request/no-replay recovery boundary.
 - [ADR 0039: Daily alert intent](decisions/0039-separate-daily-alert-intent-from-delivery.md): preserves alert-required state and emits a stable deduplication envelope without claiming persistence or notification delivery.
 - [ADR 0040: Daily alert delivery custody](decisions/0040-custody-one-daily-alert-delivery-attempt.md): records one immutable pre-send reservation and bounded terminal evidence while prohibiting automatic replay of an ambiguous attempt.
+- [ADR 0041: External SMTP daily alerts](decisions/0041-deliver-daily-alerts-through-external-smtp.md): adds a default-disabled, exact-revision email adapter with external owner-only config and credentials behind alert custody.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.

@@ -165,8 +165,12 @@ artifacts remain deliberately unprovisioned until control-plane code is stable.
 ADR 0040 now adds repository-tested, at-most-once alert delivery custody under
 a separate immutable journal. It records `delivery_started` before an explicit
 transport call, deduplicates formally delivered intents, and blocks automatic
-retry after known failure or crash-ambiguous outcome. No alert root, transport,
-channel configuration, credential read, external request, or delivery exists.
+retry after known failure or crash-ambiguous outcome. ADR 0041 now supplies a
+repository-tested, default-disabled SMTP adapter behind that custody boundary.
+It uses whole-file SHA-pinned external config, exact Dell/runtime/root binding,
+owner-only two-key credential custody, verified implicit TLS or STARTTLS, and a
+deterministic bilingual message. No external email config, credential, alert
+root, command, network request, delivery, service, timer, or scheduler exists.
 
 ## Analytics and presentation
 

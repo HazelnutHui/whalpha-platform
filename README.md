@@ -85,15 +85,19 @@ formally rereads the exact pending event, keeps the socket guard active, and
 never fetches, applies canonical data, replays calculation, or loops. No real
 recovery invocation has occurred.
 Repository source now also preserves alert-required coordinator states and can
-explicitly emit a channel-neutral, deterministic alert intent. It does not
-persist or deliver notifications; no channel, credential, retry, or delivery
-receipt is installed. External authorization remains intentionally unprovisioned
-until the remaining control-plane code stops changing revision.
+explicitly emit a channel-neutral, deterministic alert intent. Intent creation
+does not persist or deliver notifications. External channel configuration,
+credentials, retry policy, and delivery receipts remain uninstalled; external
+authorization remains intentionally unprovisioned until the remaining control-
+plane code stops changing revision.
 Repository source now also contains a separate immutable, at-most-once alert
 delivery custody boundary. It records a start before invoking an explicitly
 supplied transport, deduplicates formally delivered intents, and blocks known
-failed or crash-ambiguous retries. No transport adapter, alert root, channel
-configuration, credential, or real delivery exists yet.
+failed or crash-ambiguous retries. A default-disabled SMTP adapter now provides
+the first concrete channel through externally SHA-pinned config, separate
+owner-only credentials, verified TLS, exact runtime/root bindings, and one
+deterministic bilingual message. No real email config, credential, alert root,
+command, network request, delivery, service, timer, or scheduler exists.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

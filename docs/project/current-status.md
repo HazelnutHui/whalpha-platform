@@ -240,8 +240,11 @@ revision-bound control code is still changing.
 ADR 0040 adds a separate owner-only, immutable alert-delivery journal and one-
 attempt custody port. It reserves before transport, requires bounded terminal
 evidence, returns an already-delivered intent without another call, and blocks
-known-failed or unresolved retries. This is repository-tested only: no alert
-root, transport adapter, channel configuration, credential, or delivery exists.
+known-failed or unresolved retries. ADR 0041 adds the first concrete channel:
+a default-disabled SMTP adapter with exact-revision external config, separate
+owner-only credentials, verified TLS, deterministic bilingual content, and
+conservative unknown-outcome handling. It is repository-tested only: no email
+config, credential, alert root, command, transport call, or delivery exists.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

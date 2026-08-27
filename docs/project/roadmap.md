@@ -20,10 +20,12 @@
   actions without request, Apply, replay, or loop. The channel-neutral alert
   intent and deterministic deduplication identity are also complete. Keep
   manual approval while code revision is still changing. At-most-once alert
-  delivery custody is complete with no transport installed. Next implement one
-  externally configured email adapter, then review external authorization,
-  controlled rehearsal, and scheduler activation separately. Publication,
-  Snapshot, bundle, and OCI remain separate authorizations.
+  delivery custody and its default-disabled, externally configured SMTP adapter
+  are complete in repository source. Next review the external alert/host/data-
+  authorization artifacts at one stable revision, then perform controlled
+  preflight and one-transition rehearsal before considering scheduler
+  activation. Publication, Snapshot, bundle, and OCI remain separate
+  authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -154,15 +156,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Exact one-transition recovery routing without request, Apply, or replay
 - [x] Channel-neutral daily alert intent with stable deduplication identity
 - [x] Immutable at-most-once alert delivery custody with ambiguous replay stop
+- [x] Default-disabled external SMTP adapter with owner-only credential custody
 
 ## Next Small Target
 
-Implement one externally configured email transport behind the completed alert
-custody boundary without placing channel credentials in Git. Then review
-external host/authorization artifacts at the stable implementation revision
-and conduct a controlled one-transition rehearsal before considering scheduler
-activation. Do not combine Production publication, Snapshot, bundle, OCI, or
-deployment authorization. Keep SEC B2 paused.
+Review the proposed external alert, host-runtime, and standing data-
+authorization artifacts together at one stable implementation revision. First
+perform configuration-only preflight with no network, then a separately
+authorized controlled email/one-transition rehearsal before considering
+scheduler activation. Do not combine Production publication, Snapshot, bundle,
+OCI, or deployment authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 
