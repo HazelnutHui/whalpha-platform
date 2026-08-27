@@ -8,7 +8,10 @@ from types import SimpleNamespace
 import pytest
 
 from tip_api.services import daily_eod_coordinator_cli as cli
-from tip_api.services.daily_eod_coordinator import CoordinatorStatus
+from tip_api.services.daily_eod_coordinator import (
+    CoordinatorStatus,
+    DailyEodCoordinatorResult,
+)
 from tip_api.services.daily_eod_host_runtime import (
     VerifiedDellRuntime,
     build_host_runtime_config_candidate,
@@ -264,3 +267,59 @@ def test_recovery_cannot_be_combined_with_execution_or_authorized_ports() -> Non
             arguments()
             + ["--recover-unresolved", "--enable-authorized-capabilities"]
         )
+
+
+def test_explicit_alert_intent_is_emitted_without_delivery(
+    monkeypatch,
+    capsys,
+) -> None:
+    alerting = DailyEodCoordinatorResult(
+        status=CoordinatorStatus.BLOCKED,
+        target_session=TARGET,
+        next_action="operator_diagnosis",
+        reason_codes=("daily_deadline_elapsed",),
+        automation_plan_fingerprint="a" * 64,
+        readiness_plan_fingerprint="b" * 64,
+        transition_fingerprint=None,
+        external_request_count=0,
+        production_write_count=0,
+        alert_required=True,
+        logical_content_fingerprint="c" * 64,
+    )
+    monkeypatch.setattr(
+        cli,
+        "coordinate_daily_eod_transition",
+        lambda **_kwargs: alerting,
+    )
+
+    assert cli.main(arguments() + ["--emit-alert-intent"]) == 1
+    payload = json.loads(capsys.readouterr().out)
+    intent = payload["alert_intent"]
+    assert intent["category"] == "pipeline_blocked"
+    assert intent["delivery_attempted"] is False
+    assert intent["external_request_count"] == 0
+    assert intent["production_write_count"] == 0
+
+
+def test_explicit_alert_intent_is_null_for_normal_state(monkeypatch, capsys) -> None:
+    normal = DailyEodCoordinatorResult(
+        status=CoordinatorStatus.WAITING,
+        target_session=TARGET,
+        next_action="wait",
+        reason_codes=("post_close_stabilization_window",),
+        automation_plan_fingerprint="a" * 64,
+        readiness_plan_fingerprint="b" * 64,
+        transition_fingerprint=None,
+        external_request_count=0,
+        production_write_count=0,
+        alert_required=False,
+        logical_content_fingerprint="c" * 64,
+    )
+    monkeypatch.setattr(
+        cli,
+        "coordinate_daily_eod_transition",
+        lambda **_kwargs: normal,
+    )
+
+    assert cli.main(arguments() + ["--emit-alert-intent"]) == 0
+    assert json.loads(capsys.readouterr().out)["alert_intent"] is None

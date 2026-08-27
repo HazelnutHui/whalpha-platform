@@ -141,8 +141,8 @@ ADR 0036 now supplies repository-tested, explicitly installed fetch/Apply
 adapters that compose the external authorization SHA, acquisition/Apply
 custody, real Massive boundaries, and formal terminal evidence. Request 1.1
 binds Apply to `canonical_apply_started`; ADR 0036's coordinator 1.1 accepts
-Identity's actual bounded 1–20 HTTP requests; and the authorized canonical root is
-`/data/trading-intelligence-platform`. The adapters remain uninstalled; that
+Identity's actual bounded 1–20 HTTP requests; and the authorized canonical root
+is `/data/trading-intelligence-platform`. The adapters remain uninstalled; that
 slice created no real authorization artifact, host pin, credential read,
 provider request, reservation, Apply, CLI, or scheduler entry.
 ADR 0037 now adds the repository-tested one-transition CLI and external
@@ -156,6 +156,12 @@ acquisition, canonical-Apply, or offline-action event to its existing recovery
 boundary after an exact locked journal reread. Recovery keeps networking
 disabled, never performs Apply or replays calculation, and never loops. This is
 repository-tested only; no real recovery or run-journal transition occurred.
+ADR 0039 now carries alert-required state through coordinator 1.3 and can emit
+one stable, channel-neutral alert intent with a deterministic deduplication key.
+It explicitly records that delivery was not attempted. No alert outbox,
+transport, channel credential, retry, receipt, or real notification exists.
+Because host and standing authorization bind exact Git revision, external
+artifacts remain deliberately unprovisioned until control-plane code is stable.
 
 ## Analytics and presentation
 

@@ -43,7 +43,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.2"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.3"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -117,6 +117,7 @@ class RecoveryTransitionEvidence:
 @dataclass(frozen=True, slots=True)
 class DailyEodCoordinatorResult:
     status: CoordinatorStatus
+    target_session: str
     next_action: str
     reason_codes: tuple[str, ...]
     automation_plan_fingerprint: str
@@ -124,6 +125,7 @@ class DailyEodCoordinatorResult:
     transition_fingerprint: str | None
     external_request_count: int
     production_write_count: int
+    alert_required: bool = False
     publication_authorized: bool = False
     deployment_authorized: bool = False
     scheduler_enabled: bool = False
@@ -178,6 +180,7 @@ def coordinate_daily_eod_transition(
                 next_action=recovery_action,
                 reasons=(recovery_reason,),
                 plan=plan,
+                alert=True,
             )
         if recovery_capability is None:
             raise DailyEodCoordinatorError(
@@ -199,6 +202,7 @@ def coordinate_daily_eod_transition(
             next_action=NextAction.OPERATOR_DIAGNOSIS.value,
             reasons=plan.reason_codes,
             plan=plan,
+            alert=True,
         )
     if plan.status is PlanStatus.ANALYTICS_READY:
         if plan.next_action is not NextAction.REVIEW_PUBLICATION:
@@ -266,6 +270,7 @@ def coordinate_daily_eod_transition(
             reasons=readiness.reason_codes,
             plan=plan,
             readiness=readiness,
+            alert=readiness.alert_required,
         )
     if readiness.next_action is ReadinessNextAction.REVIEW_FETCH_AUTHORIZATION:
         operation = _operation(plan.next_action, apply=False)
@@ -276,6 +281,7 @@ def coordinate_daily_eod_transition(
                 reasons=("authorized_fetch_capability_not_installed",),
                 plan=plan,
                 readiness=readiness,
+                alert=readiness.alert_required,
             )
         evidence = fetch_capability(
             _transition_context(config, acquisition, plan, readiness, operation)
@@ -290,6 +296,7 @@ def coordinate_daily_eod_transition(
                 reasons=("authorized_apply_capability_not_installed",),
                 plan=plan,
                 readiness=readiness,
+                alert=readiness.alert_required,
             )
         evidence = apply_capability(
             _transition_context(config, acquisition, plan, readiness, operation)
@@ -455,6 +462,7 @@ def _recovery_result(
         reasons=(evidence.reason_code,),
         plan=plan,
         transition_fingerprint=_fingerprint(asdict(evidence)),
+        alert=blocked,
     )
 
 
@@ -478,9 +486,11 @@ def _result(
     transition_fingerprint: str | None = None,
     requests: int = 0,
     writes: int = 0,
+    alert: bool = False,
 ) -> DailyEodCoordinatorResult:
     base = {
         "status": status,
+        "target_session": plan.target_session,
         "next_action": next_action,
         "reason_codes": reasons,
         "automation_plan_fingerprint": plan.logical_content_fingerprint,
@@ -490,6 +500,7 @@ def _result(
         "transition_fingerprint": transition_fingerprint,
         "external_request_count": requests,
         "production_write_count": writes,
+        "alert_required": alert,
         "publication_authorized": False,
         "deployment_authorized": False,
         "scheduler_enabled": False,

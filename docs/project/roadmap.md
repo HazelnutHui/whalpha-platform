@@ -17,10 +17,12 @@
   uninstalled and inactive. The default-disabled externally pinned host config
   and one-transition CLI are now repository-tested. Exact one-event recovery
   routing is also complete for acquisition, canonical Apply, and offline
-  actions without request, Apply, replay, or loop. Next review authorization
-  provisioning, alerting, controlled rehearsal, and scheduler
-  activation separately. Publication, Snapshot, bundle, and OCI remain separate
-  authorizations.
+  actions without request, Apply, replay, or loop. The channel-neutral alert
+  intent and deterministic deduplication identity are also complete. Keep
+  manual approval while code revision is still changing. Next select and
+  custody one alert transport, then review external authorization, controlled
+  rehearsal, and scheduler activation separately. Publication, Snapshot,
+  bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
@@ -149,14 +151,16 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Standing-authorized fetch/Apply capability composition with exact request counts
 - [x] Externally SHA-pinned host runtime and default-disabled one-transition CLI
 - [x] Exact one-transition recovery routing without request, Apply, or replay
+- [x] Channel-neutral daily alert intent with stable deduplication identity
 
 ## Next Small Target
 
-Review and provision external host/authorization artifacts or retain manual
-approvals. Then implement alert delivery and conduct a controlled one-transition
-rehearsal before considering scheduler activation. Do not combine Production
-publication, Snapshot, bundle, OCI, or deployment authorization. Keep SEC B2
-paused.
+Select one notification transport and add durable reservation, receipt, and
+deduplication custody without placing channel credentials in Git. Then review
+external host/authorization artifacts at the stable implementation revision
+and conduct a controlled one-transition rehearsal before considering scheduler
+activation. Do not combine Production publication, Snapshot, bundle, OCI, or
+deployment authorization. Keep SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

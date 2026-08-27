@@ -247,6 +247,33 @@ terminal evidence report request/write counts as unknown, never as assumed
 zero. No real host/runtime config,
 CLI invocation, service, timer, or scheduler was created.
 
+## Alert intent boundary
+
+ADR 0039 adds `daily-eod-alert-intent/1.0` and coordinator 1.3. Blocked states,
+an unresolved interrupted transition, and missed-session attention now retain
+`alert_required=true` in the coordinator fingerprint. To expose the
+channel-neutral envelope, add:
+
+```bash
+--emit-alert-intent
+```
+
+The JSON result then contains `alert_intent`. Repeated observation of the same
+target and exact coordinator state produces the same deduplication key. A
+normal state returns `alert_intent: null`.
+
+This is not delivery. The intent always records `delivery_attempted=false`,
+zero external requests, and zero Production writes. No outbox, channel,
+credential, retry, escalation, or receipt exists. Do not configure a timer on
+the assumption that printing the intent notified anyone. Exceptions before a
+formal coordinator result remain rejected CLI results and require future
+watchdog coverage.
+
+Standing authorization and host runtime bind an exact Git revision. Keep
+manual approval while alert/rehearsal code is changing; review and provision
+the external artifacts only after selecting the delivery boundary and freezing
+the implementation revision for controlled rehearsal.
+
 ## Read-only plan
 
 Every audit path is explicit and must be a distinct direct child of `/tmp`.
@@ -381,11 +408,13 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Explicit review/provisioning of the external host and standing-authorization
-   artifacts and SHA pins, or continued manual approval.
-2. Actual alert delivery and a controlled real timing rehearsal to calibrate
+1. Select one alert transport and add durable reservation, deduplication, and
+   delivery-receipt custody without committing channel credentials.
+2. Review/provision the external host and standing-authorization artifacts and
+   SHA pins at the stable implementation revision, or continue manual approval.
+3. Conduct a controlled real timing rehearsal to calibrate
    the provisional 30-minute/limited-retry policy.
-3. Separate authorization decisions for publication, Snapshot/bundle, OCI
+4. Make separate authorization decisions for publication, Snapshot/bundle, OCI
    deployment, and finally scheduler activation.
 
 The executor and journal are implemented and tested, but no durable real run
@@ -404,3 +433,5 @@ not been installed or invoked against real authorization, credentials, Massive,
 or `/data`. ADR 0037 host config and CLI are repository-tested only; no external
 runtime artifact, CLI transition, service, timer, or scheduler exists. ADR 0038
 recovery routing is repository-tested only; no real recovery event was appended.
+ADR 0039 alert intent is repository-tested only; no intent was persisted and no
+notification delivery was attempted.

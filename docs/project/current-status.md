@@ -217,8 +217,8 @@ adapters. They preflight the external grant before reservation or credential
 access, bind acquisition/Apply starts to request 1.1, preserve actual bounded
 Identity HTTP request counts, and leave unknown fetch or any Apply exception
 unresolved for recovery. The corrected authorized canonical root is
-`/data/trading-intelligence-platform`; coordinator contract was then 1.1. The ports
-remain absent unless explicitly installed, and that slice created no real
+`/data/trading-intelligence-platform`; coordinator contract was then 1.1. The
+ports remain absent unless explicitly installed, and that slice created no real
 authorization, host pin, credential read, request, Apply, CLI, or scheduler
 entry.
 ADR 0037 now adds a default-disabled one-transition CLI and externally
@@ -231,6 +231,12 @@ one exact pending acquisition, Apply, or offline event and invokes only the
 matching existing no-request/no-Apply/no-replay recovery boundary. Coordinator
 contract is 1.2. This route is repository-tested only; no real recovery or
 run-journal transition occurred.
+ADR 0039 advances the coordinator to 1.3, preserves alert-required state, and
+adds an explicitly emitted deterministic alert intent for blocked, interrupted,
+or missed-session attention states. It never claims delivery: no channel,
+outbox, credential, retry, receipt, or real notification is implemented.
+External runtime/authorization provisioning remains deferred while exact-
+revision-bound control code is still changing.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

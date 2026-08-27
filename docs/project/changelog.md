@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-27 — Channel-neutral daily alert intent
+
+- Accepted ADR 0039 and advanced the coordinator to 1.3 with an exact
+  `alert_required` field included in its logical fingerprint.
+- Added deterministic, channel-neutral warning/critical intents for blocked,
+  interrupted-transition, and missed-session attention states.
+- Added explicit CLI intent emission with a stable deduplication key and
+  `delivery_attempted=false`; normal states emit no intent.
+- Deferred exact-revision external authorization provisioning until remaining
+  alert/rehearsal code is stable, retaining manual approvals.
+- No alert was persisted or delivered; no transport, channel credential,
+  provider request, `/data` write, publication, deployment, service, timer, or
+  scheduler state was created or changed.
+
 ## 2026-08-27 — Exact one-transition recovery routing
 
 - Accepted ADR 0038 and added an explicit coordinator/CLI recovery port for

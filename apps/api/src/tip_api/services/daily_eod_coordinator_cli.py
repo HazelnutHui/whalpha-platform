@@ -14,6 +14,10 @@ from tip_api.services.daily_eod_authorized_capabilities import (
     DailyEodAuthorizedCapabilityConfig,
     DailyEodAuthorizedCapabilityError,
 )
+from tip_api.services.daily_eod_alerting import (
+    DailyEodAlertingError,
+    plan_daily_eod_alert,
+)
 from tip_api.services.daily_eod_automation import DailyEodAutomationPaths
 from tip_api.services.daily_eod_coordinator import (
     CoordinatorStatus,
@@ -76,8 +80,18 @@ def main(argv: list[str] | None = None) -> int:
                     else None
                 ),
             )
+            payload = result.as_dict()
+            if args.emit_alert_intent:
+                intent = plan_daily_eod_alert(
+                    target_session=args.target_session,
+                    result=result,
+                )
+                payload["alert_intent"] = (
+                    None if intent is None else intent.as_dict()
+                )
     except (
         DailyEodAuthorizedCapabilityError,
+        DailyEodAlertingError,
         DailyEodCoordinatorError,
         DailyEodHostRuntimeError,
         DailyEodRecoveryRouterError,
@@ -104,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
             )
         )
         return 1
-    print(json.dumps(result.as_dict(), sort_keys=True, separators=(",", ":")))
+    print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
     return (
         1
         if result.status
@@ -185,6 +199,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--candidate-work-dir", type=Path)
     parser.add_argument("--execute-offline", action="store_true")
     parser.add_argument("--recover-unresolved", action="store_true")
+    parser.add_argument("--emit-alert-intent", action="store_true")
     parser.add_argument("--enable-authorized-capabilities", action="store_true")
     parser.add_argument("--host-config", type=Path)
     parser.add_argument("--host-config-sha256")

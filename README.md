@@ -74,7 +74,7 @@ write interruption recovery under a third disjoint journal family. Explicit
 standing-authorized fetch/Apply adapters now compose those boundaries and
 preserve actual Identity pagination request counts, but remain uninstalled and
 inactive. No real authorization, run root, credential read, fetch attempt, or
-Apply has been created; notifications and scheduler activation remain
+Apply has been created; notification delivery and scheduler activation remain
 unimplemented. A one-transition CLI and externally SHA-pinned host-runtime
 contract are also repository-tested: capability ports remain absent unless an
 external owner-only config enables them, the invocation explicitly opts in,
@@ -84,6 +84,11 @@ the acquisition, canonical-Apply, and offline-action journal families. It
 formally rereads the exact pending event, keeps the socket guard active, and
 never fetches, applies canonical data, replays calculation, or loops. No real
 recovery invocation has occurred.
+Repository source now also preserves alert-required coordinator states and can
+explicitly emit a channel-neutral, deterministic alert intent. It does not
+persist or deliver notifications; no channel, credential, retry, or delivery
+receipt is installed. External authorization remains intentionally unprovisioned
+until the remaining control-plane code stops changing revision.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

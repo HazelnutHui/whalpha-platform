@@ -174,6 +174,7 @@ def test_ready_fetch_requires_manual_authorization_by_default() -> None:
     assert result.next_action == "review_fetch_authorization"
     assert result.reason_codes == ("authorized_fetch_capability_not_installed",)
     assert result.as_dict()["status"] == "manual_authorization_required"
+    assert result.alert_required is False
 
 
 def test_fetch_capability_is_called_exactly_once_with_exact_context() -> None:
@@ -356,6 +357,7 @@ def test_unresolved_attempt_requires_recovery_before_any_action(
 
     assert result.status is CoordinatorStatus.RECOVERY_REQUIRED
     assert result.next_action == next_action
+    assert result.alert_required is True
 
 
 @pytest.mark.parametrize(
@@ -440,6 +442,7 @@ def test_explicit_blocked_recovery_requires_operator_diagnosis() -> None:
 
     assert result.status is CoordinatorStatus.BLOCKED
     assert result.next_action == "operator_diagnosis"
+    assert result.alert_required is True
 
 
 def test_explicit_recovery_requires_a_capability_and_rejects_replay_claims() -> None:
@@ -573,10 +576,24 @@ def test_blocked_and_publication_ready_states_never_execute() -> None:
     )
 
     assert blocked.status is CoordinatorStatus.BLOCKED
+    assert blocked.alert_required is True
     assert ready.status is CoordinatorStatus.PUBLICATION_REVIEW_READY
     assert ready.publication_authorized is False
     assert ready.deployment_authorized is False
     assert ready.scheduler_enabled is False
+
+
+def test_elapsed_daily_deadline_propagates_alert_requirement() -> None:
+    result = coordinate_daily_eod_transition(
+        config=config(),
+        checked_at=datetime(2026, 8, 28, 3, 0, tzinfo=UTC),
+        planner=planner(plan(NextAction.PREPARE_EOD_CATCHUP)),
+        journal_reader=journal(),
+    )
+
+    assert result.status is CoordinatorStatus.MANUAL_AUTHORIZATION_REQUIRED
+    assert result.alert_required is True
+    assert result.readiness_plan_fingerprint is not None
 
 
 def test_coordinator_rejects_unsafe_custody_paths() -> None:
