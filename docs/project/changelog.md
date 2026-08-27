@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-27 — Sealed strategy signals and later forward outcomes
+
+- Accepted ADR 0050 and added fixed Candidate strategy evaluation policy 1.0:
+  chronological 50/25/25 development/validation/holdout, 1/3/5-session labels,
+  five-session purge/embargo, no random split, and point-in-time membership for
+  any performance-eligible signal.
+- Added separate typed contracts for outcome-free sealed signals and later
+  forward outcomes. Signal IDs bind session, Universe, stable instrument,
+  channel, and assessment; future source sessions and current-constituent
+  performance claims fail closed.
+- Available outcomes reconcile next-open/horizon-close underlying-stock return,
+  benchmark difference, and MFE/MAE. Pending labels must remain null and
+  corporate-action uncertainty cannot feed numeric evaluation.
+- No physical dataset, writer, formula, real signal/outcome, backfill, provider
+  request, credential access, `/data` write, publication, or deployment
+  occurred. Current 29-session history remains below the 252-session minimum.
+
 ## 2026-08-27 — Independent Candidate strategy-channel shadow contract
 
 - Accepted ADR 0049 and fixed six Candidate research archetypes: momentum

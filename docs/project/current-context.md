@@ -296,6 +296,13 @@ and standing authorization also remain inactive by exact-revision mismatch.
   This has no formula, real assessment, consumer, publication, or Production
   effect. Fundamental/value data and point-in-time defensive taxonomy remain
   missing inputs rather than technical proxies.
+- ADR 0050 adds the repository-only chronological evaluation boundary: source-
+  dated signals are sealed without outcomes, and 1/3/5-session underlying-
+  stock labels may be attached only later under a fixed no-random-split,
+  five-session purge/embargo policy. Current-constituent replay is not
+  performance-eligible. No evaluation dataset or result exists; 29 sessions,
+  missing daily point-in-time membership, and incomplete corporate-action
+  governance remain hard blockers.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

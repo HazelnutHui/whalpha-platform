@@ -146,6 +146,20 @@ from .candidate_strategy_channel import (
     StrategyMarketFit,
     strategy_channel_logical_fingerprint,
 )
+from .candidate_strategy_evaluation import (
+    STRATEGY_EVALUATION_POLICY_FINGERPRINT,
+    STRATEGY_EVALUATION_POLICY_VERSION,
+    STRATEGY_OUTCOME_CONTRACT_VERSION,
+    STRATEGY_SIGNAL_CONTRACT_VERSION,
+    CandidateStrategyEvaluationPolicyV1,
+    CandidateStrategyForwardOutcomeV1,
+    CandidateStrategySignalV1,
+    StrategyCorporateActionStatus,
+    StrategyEvaluationSplit,
+    StrategyMembershipMode,
+    StrategyOutcomeStatus,
+    candidate_strategy_signal_id,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -272,4 +286,16 @@ __all__ = [
     "StrategyEvidenceSource",
     "StrategyMarketFit",
     "strategy_channel_logical_fingerprint",
+    "STRATEGY_EVALUATION_POLICY_FINGERPRINT",
+    "STRATEGY_EVALUATION_POLICY_VERSION",
+    "STRATEGY_OUTCOME_CONTRACT_VERSION",
+    "STRATEGY_SIGNAL_CONTRACT_VERSION",
+    "CandidateStrategyEvaluationPolicyV1",
+    "CandidateStrategyForwardOutcomeV1",
+    "CandidateStrategySignalV1",
+    "StrategyCorporateActionStatus",
+    "StrategyEvaluationSplit",
+    "StrategyMembershipMode",
+    "StrategyOutcomeStatus",
+    "candidate_strategy_signal_id",
 ]

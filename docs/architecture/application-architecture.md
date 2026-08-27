@@ -322,3 +322,8 @@ score. Market fit, event context, and future option expression remain separate
 axes. This taxonomy is not connected to Market Intelligence, Snapshot, React,
 or Production until channel-specific formulas pass chronological evaluation
 and separate activation review.
+
+ADR 0050 separates future evaluation into sealed, outcome-free signal records
+and later-maturing forward-outcome records. Only point-in-time membership may
+be performance-eligible. The contracts are repository-only: no evaluation
+writer, historical dataset, formula, or consumer is connected to the runtime.

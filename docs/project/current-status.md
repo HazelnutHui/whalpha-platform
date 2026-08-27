@@ -147,6 +147,11 @@ read or used.
   value reversal remains explicitly unavailable without governed fundamental
   and valuation inputs; defensive rotation still needs point-in-time security
   taxonomy and channel-specific evaluation.
+- ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
+  or outcome dataset exists. Current history is 29 sessions versus the fixed
+  252-session research minimum; daily point-in-time Universe membership and
+  completed corporate-action governance are also missing. Current-constituent
+  replay is explicitly ineligible for performance claims.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
@@ -365,12 +370,21 @@ does not automatically become an entry instruction.
 ADR 0049 now defines a repository-only six-channel Candidate shadow contract:
 momentum breakout, strong-stock pullback, trend continuation, technical
 reversal, fundamental value reversal, and defensive rotation. It requires one
-  explicit result per security/channel, within-channel ranking only, visible
-  market fit, source-dated evidence, first rejection, counterevidence,
+explicit result per security/channel, within-channel ranking only, visible
+market fit, source-dated evidence, first rejection, counterevidence,
 reviewability conditions, and invalidation. Event evidence is auxiliary;
 price-derived relationships remain proxies; stock results remain distinct
 from option returns. No formula, threshold, real-data assessment, Market
 Intelligence/Snapshot field, UI, publication, or deployment was added.
+
+The next evaluation boundary is also repository-defined: one sealed signal
+record contains only contemporaneously available source sessions and exact
+point-in-time membership, while 1/3/5-session stock outcomes mature in separate
+records later. The fixed policy prohibits random splits, uses chronological
+50/25/25 development/validation/holdout boundaries, purges/embargoes the
+overlapping five-session label window, quarantines corporate-action ambiguity,
+and never labels a stock outcome as option performance. This is a typed
+contract only; no real signal/outcome row or performance statistic exists.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

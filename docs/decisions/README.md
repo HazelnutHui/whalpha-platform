@@ -72,3 +72,4 @@ Each ADR should include:
 - [0047: Make Provider Readiness Plan-Aware and Reviewable](0047-make-provider-readiness-plan-aware-and-reviewable.md)
 - [0048: Split Candidate Summary from On-Demand Detail](0048-split-candidate-summary-from-on-demand-detail.md)
 - [0049: Separate Candidate Strategy Channels](0049-separate-candidate-strategy-channels.md)
+- [0050: Seal Strategy Signals Before Forward Outcomes](0050-seal-strategy-signals-before-forward-outcomes.md)

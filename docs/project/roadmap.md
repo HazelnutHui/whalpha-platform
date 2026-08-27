@@ -49,6 +49,9 @@
   the independent six-channel shadow taxonomy and evidence rules without a
   formula or Production integration. The next model step is a point-in-time
   chronological evaluation panel before any score or threshold is selected.
+  ADR 0050 now fixes its sealed-signal/later-outcome and anti-leakage contract;
+  the next step is to audit which point-in-time historical inputs are truly
+  available before designing a physical Dell dataset or backfill.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -179,18 +182,21 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Plan-aware Basic EOD readiness and immutable single-use operator review
 - [x] Lossless Candidate summary/on-demand-detail Snapshot projection
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
+- [x] Sealed-signal/later-outcome chronological evaluation contract
 
 ## Next Small Target
 
 Keep the 2026-08-27 EOD attempt paused until its immutable
 2026-08-28T16:00:00Z boundary. Product development may continue from the
-formally completed 2026-08-26 inputs. The six-channel taxonomy and typed shadow
-contract are complete. Next define the point-in-time chronological evaluation
-panel and outcome ledger that can test each channel separately without current-
-membership look-ahead or stock/option-return confusion. Do not select formulas
-or thresholds from one-session distributions. Keep Snapshot 1.8 undeployed
-until its exact bundle and browser behavior are separately reviewed. Keep SMTP
-and SEC B2 paused.
+formally completed 2026-08-26 inputs. The six-channel typed shadow contract and
+the evaluation boundary are complete. Next perform a read-only
+historical-readiness audit for point-in-time membership, identity, EOD
+adjustments, corporate actions, benchmark paths, and survivorship/delisting
+coverage. Do not create a physical evaluation dataset or backfill until that
+audit identifies a valid source path, and do not select formulas or thresholds
+from one-session distributions. Keep Snapshot 1.8 undeployed until its exact
+bundle and browser behavior are separately reviewed. Keep SMTP and SEC B2
+paused.
 
 ## Phase 2 — Intraday and Options
 

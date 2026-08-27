@@ -4,6 +4,7 @@
 
 - [Dashboard Snapshot V2](dashboard-snapshot-v2.md)
 - [Opportunity Candidate Publication V1](opportunity-candidate-publication-v1.md)
+- [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
 - [Same-Day Identity and EOD Catch-Up V1](same-day-identity-eod-catchup-v1.md)
 
