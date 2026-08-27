@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import hashlib
 import json
 import resource
@@ -147,6 +148,11 @@ def main(argv: list[str] | None = None) -> int:
         help="Optional owner-controlled Dell-local content-addressed panel cache.",
     )
     parser.add_argument(
+        "--audit-work-dir",
+        type=Path,
+        help="Optional owner-controlled /tmp work directory for resumable streamed audit artifacts.",
+    )
+    parser.add_argument(
         "--prior-candidate-audit",
         type=Path,
         help="Formally verified immediately prior Candidate audit for one-session incremental execution.",
@@ -159,6 +165,7 @@ def main(argv: list[str] | None = None) -> int:
         "output_dir",
         "prior_candidate_audit",
         "panel_cache_root",
+        "audit_work_dir",
     ):
         value = getattr(args, name)
         if value is not None and not value.is_absolute():
@@ -171,6 +178,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     validate_output(args.output_dir)
+    if args.audit_work_dir is not None:
+        completed = _finalize_resumable_audit(args.audit_work_dir, args.output_dir)
+        if completed is not None:
+            print(json.dumps(_summary(completed, args.output_dir), sort_keys=True, separators=(",", ":")))
+            return 0
     profiler = _StageProfiler()
     io_before = _process_io_counters()
     usage_before = resource.getrusage(resource.RUSAGE_SELF)
@@ -287,8 +299,21 @@ def main(argv: list[str] | None = None) -> int:
             timings=timings,
             peak_memory_kib=usage_after.ru_maxrss,
             runtime_metrics=runtime_metrics,
+            **(
+                {"work_dir": args.audit_work_dir, "defer_finalization": True}
+                if args.audit_work_dir is not None
+                else {}
+            ),
             **incremental_kwargs,
         )
+        if args.audit_work_dir is not None:
+            prepared_fingerprint = manifest["logical_content_fingerprint"]
+            del run, prior_audit, raw_facts, normalization_ledger, incremental_kwargs
+            gc.collect()
+            completed = _finalize_resumable_audit(args.audit_work_dir, args.output_dir)
+            if completed is None or completed.get("logical_content_fingerprint") != prepared_fingerprint:
+                raise RuntimeError("resumable Candidate audit did not complete its formal finalization")
+            manifest = completed
     print(json.dumps(_summary(manifest, args.output_dir), sort_keys=True, separators=(",", ":")))
     return 0
 
@@ -308,6 +333,12 @@ def _read_prior_candidate_audit(path: Path):
     from tip_api.services.opportunity_candidate_audit import read_opportunity_candidate_audit_contents
 
     return read_opportunity_candidate_audit_contents(path)
+
+
+def _finalize_resumable_audit(work_dir: Path, output_dir: Path):
+    from tip_api.services.opportunity_candidate_audit import finalize_resumable_candidate_audit
+
+    return finalize_resumable_candidate_audit(work_dir, output_dir)
 
 
 def _list_available_eod_sessions(data_root: Path) -> tuple[date, ...]:

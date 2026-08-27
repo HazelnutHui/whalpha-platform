@@ -12,6 +12,7 @@ from pathlib import Path
 from uuid import UUID, uuid5
 
 import pytest
+import tip_api.services.opportunity_candidate_audit as candidate_audit
 
 from tip_api.services.opportunity_candidate_audit import (
     CANDIDATE_ARTIFACT_FILES,
@@ -237,7 +238,13 @@ def _inputs():
     return panel, batches, state_case.actual_records, risks, oracle, raw_facts, normalization
 
 
-def _write(target: Path, *, generated_at: datetime = datetime(2026, 8, 26, tzinfo=UTC)):
+def _write(
+    target: Path,
+    *,
+    generated_at: datetime = datetime(2026, 8, 26, tzinfo=UTC),
+    work_dir: Path | None = None,
+    defer_finalization: bool = False,
+):
     panel, batches, states, risks, oracle, raw_facts, normalization = _inputs()
     return write_opportunity_candidate_audit(
         output_dir=target,
@@ -258,6 +265,8 @@ def _write(target: Path, *, generated_at: datetime = datetime(2026, 8, 26, tzinf
         timings={"oracle": "0.100000", "total": "0.200000"},
         peak_memory_kib=512,
         runtime_metrics={"process_io_read_bytes_delta": 123},
+        work_dir=work_dir,
+        defer_finalization=defer_finalization,
     )
 
 
@@ -329,6 +338,172 @@ def test_logical_manifest_is_independent_of_runtime_metadata_and_input_order() -
     finally:
         shutil.rmtree(first, ignore_errors=True)
         shutil.rmtree(second, ignore_errors=True)
+
+
+def test_streamed_canonical_encoder_matches_legacy_json_encoding() -> None:
+    value = {
+        "z": [1, True, None, {"accent": "e\u0301", "中文": "市场"}],
+        "a": {"float": 0.00001, "escaped": "line\nbreak"},
+    }
+    expected = (
+        json.dumps(
+            candidate_audit._normalize_nfc(value),
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+            allow_nan=False,
+        )
+        + "\n"
+    ).encode("utf-8")
+    assert _canonical_bytes(value) == expected
+
+
+def test_resumable_writer_reuses_verified_artifact_prefix(monkeypatch) -> None:
+    output = Path(tempfile.mkdtemp(prefix="mrom-candidate-resume-output-", dir="/tmp"))
+    work = Path(tempfile.mkdtemp(prefix="mrom-candidate-resume-work-", dir="/tmp"))
+    baseline = Path(tempfile.mkdtemp(prefix="mrom-candidate-resume-baseline-", dir="/tmp"))
+    shutil.rmtree(output)
+    shutil.rmtree(work)
+    original = candidate_audit._write_or_reuse_resumable_artifact
+    calls = 0
+
+    def interrupt_after_first(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise RuntimeError("simulated interruption")
+        return original(*args, **kwargs)
+
+    try:
+        baseline_manifest = _write(baseline)
+        monkeypatch.setattr(candidate_audit, "_write_or_reuse_resumable_artifact", interrupt_after_first)
+        with pytest.raises(RuntimeError, match="simulated interruption"):
+            _write(output, work_dir=work)
+        assert not output.exists()
+        journal = json.loads((work / candidate_audit.CANDIDATE_AUDIT_RESUME_FILE).read_bytes())
+        assert len(journal["completed_artifacts"]) == 1
+        assert journal["next_artifact"] == CANDIDATE_ARTIFACT_FILES[1]
+
+        monkeypatch.setattr(candidate_audit, "_write_or_reuse_resumable_artifact", original)
+        resumed = _write(output, work_dir=work)
+        assert resumed["logical_content_fingerprint"] == baseline_manifest["logical_content_fingerprint"]
+        assert resumed["runtime_metrics"]["audit_artifact_resume_reuse_count"] == 1
+        assert not work.exists()
+        for name in CANDIDATE_ARTIFACT_FILES:
+            assert (output / name).read_bytes() == (baseline / name).read_bytes()
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)
+        shutil.rmtree(baseline, ignore_errors=True)
+
+
+def test_resumable_writer_fails_closed_on_corrupt_completed_artifact(monkeypatch) -> None:
+    output = Path(tempfile.mkdtemp(prefix="mrom-candidate-corrupt-output-", dir="/tmp"))
+    work = Path(tempfile.mkdtemp(prefix="mrom-candidate-corrupt-work-", dir="/tmp"))
+    shutil.rmtree(output)
+    shutil.rmtree(work)
+    original = candidate_audit._write_or_reuse_resumable_artifact
+    calls = 0
+
+    def interrupt_after_first(*args, **kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 2:
+            raise RuntimeError("simulated interruption")
+        return original(*args, **kwargs)
+
+    try:
+        monkeypatch.setattr(candidate_audit, "_write_or_reuse_resumable_artifact", interrupt_after_first)
+        with pytest.raises(RuntimeError, match="simulated interruption"):
+            _write(output, work_dir=work)
+        artifact = work / CANDIDATE_ARTIFACT_FILES[0]
+        artifact.chmod(0o600)
+        artifact.write_text("{}\n", encoding="utf-8")
+        artifact.chmod(0o400)
+
+        monkeypatch.setattr(candidate_audit, "_write_or_reuse_resumable_artifact", original)
+        with pytest.raises(OpportunityCandidateAuditError, match="fingerprint|descriptor"):
+            _write(output, work_dir=work)
+        assert not output.exists()
+        assert work.is_dir()
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def test_completed_work_directory_finalizes_without_recalculation(monkeypatch) -> None:
+    output = Path(tempfile.mkdtemp(prefix="mrom-candidate-finalize-output-", dir="/tmp"))
+    work = Path(tempfile.mkdtemp(prefix="mrom-candidate-finalize-work-", dir="/tmp"))
+    shutil.rmtree(output)
+    shutil.rmtree(work)
+    original_rename = candidate_audit.os.rename
+
+    def interrupt_delivery(source, destination):
+        if Path(source) == work and Path(destination) == output:
+            raise RuntimeError("simulated final delivery interruption")
+        return original_rename(source, destination)
+
+    try:
+        monkeypatch.setattr(candidate_audit.os, "rename", interrupt_delivery)
+        with pytest.raises(RuntimeError, match="final delivery"):
+            _write(output, work_dir=work)
+        assert (work / CANDIDATE_AUDIT_MANIFEST).is_file()
+        assert not (work / candidate_audit.CANDIDATE_AUDIT_RESUME_FILE).exists()
+
+        monkeypatch.setattr(candidate_audit.os, "rename", original_rename)
+        manifest = candidate_audit.finalize_resumable_candidate_audit(work, output)
+        assert manifest is not None and manifest["completion_status"] == "completed"
+        assert output.is_dir() and not work.exists()
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def test_prepared_manifest_and_complete_journal_finalize_after_interruption(monkeypatch) -> None:
+    output = Path(tempfile.mkdtemp(prefix="mrom-candidate-pending-output-", dir="/tmp"))
+    work = Path(tempfile.mkdtemp(prefix="mrom-candidate-pending-work-", dir="/tmp"))
+    shutil.rmtree(output)
+    shutil.rmtree(work)
+    original_unlink = Path.unlink
+
+    def interrupt_journal_removal(path, *args, **kwargs):
+        if path == work / candidate_audit.CANDIDATE_AUDIT_RESUME_FILE:
+            raise RuntimeError("simulated journal removal interruption")
+        return original_unlink(path, *args, **kwargs)
+
+    try:
+        monkeypatch.setattr(Path, "unlink", interrupt_journal_removal)
+        with pytest.raises(RuntimeError, match="journal removal"):
+            _write(output, work_dir=work)
+        assert (work / candidate_audit.CANDIDATE_AUDIT_RESUME_FILE).is_file()
+        assert (work / candidate_audit.CANDIDATE_AUDIT_PENDING_MANIFEST).is_file()
+
+        monkeypatch.setattr(Path, "unlink", original_unlink)
+        manifest = candidate_audit.finalize_resumable_candidate_audit(work, output)
+        assert manifest is not None and manifest["oracle_mismatch_count"] == 0
+        assert output.is_dir() and not work.exists()
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def test_deferred_finalization_preserves_work_until_separate_formal_reread() -> None:
+    output = Path(tempfile.mkdtemp(prefix="mrom-candidate-deferred-output-", dir="/tmp"))
+    work = Path(tempfile.mkdtemp(prefix="mrom-candidate-deferred-work-", dir="/tmp"))
+    shutil.rmtree(output)
+    shutil.rmtree(work)
+    try:
+        prepared = _write(output, work_dir=work, defer_finalization=True)
+        assert not output.exists()
+        assert (work / candidate_audit.CANDIDATE_AUDIT_RESUME_FILE).is_file()
+        assert (work / candidate_audit.CANDIDATE_AUDIT_PENDING_MANIFEST).is_file()
+        completed = candidate_audit.finalize_resumable_candidate_audit(work, output)
+        assert completed is not None
+        assert completed["logical_content_fingerprint"] == prepared["logical_content_fingerprint"]
+        assert output.is_dir() and not work.exists()
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)
 
 
 @pytest.mark.parametrize("gate", ["mismatch", "shared", "permutation"])

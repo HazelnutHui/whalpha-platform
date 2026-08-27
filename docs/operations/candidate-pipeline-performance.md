@@ -58,6 +58,7 @@ scripts/admin/calculate-opportunity-candidates-offline.sh \
   --phase1b-audit /tmp/<exact-completed-phase1b-audit> \
   --prior-candidate-audit /tmp/<immediately-prior-candidate-audit> \
   --panel-cache-root /tmp/<same-owner-controlled-panel-cache> \
+  --audit-work-dir /tmp/<new-owner-controlled-candidate-work-directory> \
   --output-dir /tmp/<new-empty-incremental-candidate-audit>
 ```
 
@@ -66,6 +67,13 @@ Identity, Activation, and ordered-Universe source ledger. An absent exact
 entry invokes the unchanged formal reader and populates the cache. A present
 unsafe, malformed, or mismatched entry fails closed. The cache has no `latest`
 pointer, never belongs in OCI, and does not authorize `/data` writes.
+
+`--audit-work-dir` enables exact restart and memory-separated finalization. It
+must be a distinct, new, owner-controlled direct child of `/tmp`. Completed
+artifact prefixes are reused only after physical, canonical, logical, source,
+typed-record, Oracle, and equivalence bindings pass. Unknown files, gaps,
+changed inputs, or corruption fail closed. A fully prepared interrupted audit
+is finalized before any Phase 1b, panel, Candidate, or `/data` source is read.
 
 Append one session from an immediately prior verified Candidate audit with:
 
@@ -107,9 +115,9 @@ panels and builds one stable-ID bar index per panel. It does not skip content,
 Identity, Activation, Oracle, or replay checks and does not change Candidate
 formulas, ranks, states, or fingerprints.
 
-The current manifest memory sample is taken before the audit writer. A baseline
-run was separately observed near 6.3 GiB RSS during large JSON serialization,
-so writer streaming and peak-memory instrumentation remain open work.
+The original manifest memory sample was taken before the audit writer. A
+baseline run was separately observed near 6.3 GiB RSS during large JSON
+serialization; the streaming/resume result below replaces that open item.
 
 ## 2026-08-27 immutable panel reuse result
 
@@ -133,15 +141,41 @@ prior-Candidate reread (46.393 seconds), the independent current-session Oracle
 JSON writing and final formal reread add further wall time outside the
 pre-writer metric.
 
+## 2026-08-27 streaming and resumable audit result
+
+ADR 0026 retains Candidate audit schemas 1.0/1.1 and completed file bytes while
+streaming canonical JSON, physical hashes, and logical hashes. Formal reread no
+longer retains raw artifact bytes plus a second full canonical encoding. An
+explicit recovery journal binds the exact final path and all artifact, typed-
+record, source, Oracle, equivalence, and prior-audit identities. Final delivery
+is an atomic work-directory rename after one formal completed-audit reread.
+
+The final real 2026-08-26 verified-prior run used the immutable panel cache and
+an explicit recovery directory. Time before writing was 111.636 seconds; the
+ten artifacts streamed in 17.921 seconds. The process peak recorded in the
+completed manifest was 3,343,112 KiB. The observed work-directory creation to
+atomic-delivery boundary was approximately 164 seconds; the earlier
+non-released streamed attempt took 366.38 seconds and peaked at 6,232,876 KiB.
+The final design therefore removed roughly 46% of that measured peak and more
+than halved that run's elapsed time by releasing calculation objects before
+the one final formal reread and removing duplicate validation.
+
+All nine source/business/Oracle files were byte-identical to the earlier
+panel-cache audit. The additive incremental validation ledger was byte-
+identical to the preceding streamed implementation. The final logical audit
+fingerprint was
+`0e9db80894a56c0ddd3180975a99237e84159846a1ac5ff7195978d82f887a63`,
+all four equivalence gates were true, Oracle mismatch was zero, and external
+request and Production-write counts were zero. These are Dell `/tmp`
+development results; `/data` and Production were unchanged.
+
 ## Next performance sequence
 
-1. Add streaming and resumable audit stages with explicit input/output
-   fingerprints and failure locations.
-2. Separate daily, periodic, and code/model-change validation tiers without
+1. Separate daily, periodic, and code/model-change validation tiers without
    weakening the full reference audit.
-3. Process-parallelize only independent CPU work using stable `instrument_id`
+2. Process-parallelize only independent CPU work using stable `instrument_id`
    shards; merge and fingerprint in one deterministic parent order.
-4. Split Candidate public summary and on-demand detail payloads. This changes
+3. Split Candidate public summary and on-demand detail payloads. This changes
    neither guest/credential capability parity nor the Dell/OCI boundary.
 
 ## 2026-08-27 verified-prior Phase 1b result

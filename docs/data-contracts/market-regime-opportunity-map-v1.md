@@ -119,6 +119,16 @@ Absence is a cold-reader cache miss; an existing invalid entry is a hard
 failure. Cache custody and timing evidence do not alter Candidate business
 records or substitute for the independent Oracle.
 
+Candidate audit schemas 1.0 and 1.1 also support the physical recovery contract
+`opportunity-candidate-audit-resume/1.0` without changing their completed file
+sets or logical contents. Its canonical journal binds the exact final output
+path, ordered artifact logical fingerprints, typed batch/state/risk
+fingerprints, source-derived base, Oracle, equivalence gates, and prior-audit
+identity. Only a contiguous, formally verified artifact prefix may be reused.
+The final manifest is prepared only after all artifacts, formally reread once,
+and delivered by atomic directory rename. Recovery metadata never enters a
+completed audit or its logical fingerprint.
+
 This contract freezes the machine-readable calculation boundary for the
 product described in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md).

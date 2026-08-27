@@ -5,7 +5,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import resource
 import stat
+import time
 import unicodedata
 from dataclasses import asdict, dataclass, is_dataclass
 from datetime import UTC, date, datetime
@@ -52,6 +54,9 @@ CANDIDATE_ARTIFACT_FILES = (
 )
 CANDIDATE_AUDIT_MANIFEST = "candidate-audit-manifest.json"
 CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT = "incremental-validation-ledger.json"
+CANDIDATE_AUDIT_RESUME_CONTRACT = "opportunity-candidate-audit-resume/1.0"
+CANDIDATE_AUDIT_RESUME_FILE = "candidate-audit-resume.json"
+CANDIDATE_AUDIT_PENDING_MANIFEST = f"{CANDIDATE_AUDIT_MANIFEST}.partial"
 CANDIDATE_INCREMENTAL_ARTIFACT_FILES = (
     *CANDIDATE_ARTIFACT_FILES,
     CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT,
@@ -103,14 +108,25 @@ def write_opportunity_candidate_audit(
     runtime_metrics: Mapping[str, int] | None = None,
     prior_source_panels: Sequence[Mapping[str, Any]] = (),
     incremental_validation: Mapping[str, Any] | None = None,
+    work_dir: Path | None = None,
+    defer_finalization: bool = False,
 ) -> dict[str, Any]:
-    """Write a completed immutable audit and formally reread it before return."""
+    """Stream a completed immutable audit, optionally resuming verified artifact stages."""
 
-    target = validate_tmp_output_dir(output_dir)
-    target.mkdir(mode=0o700, parents=False, exist_ok=True)
-    target.chmod(0o700)
-    if any(target.iterdir()):
-        raise OpportunityCandidateAuditError("existing non-empty output directory is rejected")
+    final_target = validate_tmp_output_dir(output_dir)
+    resumable = work_dir is not None
+    if defer_finalization and not resumable:
+        raise OpportunityCandidateAuditError("deferred finalization requires a resumable work directory")
+    if resumable:
+        if final_target.exists():
+            raise OpportunityCandidateAuditError("resumable output directory must not already exist")
+        target = _prepare_candidate_audit_work_dir(work_dir, final_target=final_target)
+    else:
+        target = final_target
+        target.mkdir(mode=0o700, parents=False, exist_ok=True)
+        target.chmod(0o700)
+        if any(target.iterdir()):
+            raise OpportunityCandidateAuditError("existing non-empty output directory is rejected")
 
     current_panels = tuple(panels)
     if not current_panels:
@@ -263,19 +279,67 @@ def write_opportunity_candidate_audit(
         }
         artifact_files = CANDIDATE_INCREMENTAL_ARTIFACT_FILES
 
-    artifact_rows: list[dict[str, Any]] = []
-    for name in artifact_files:
-        payload = _with_logical_fingerprint(payloads[name])
-        raw = _canonical_bytes(payload)
-        _write_new(target / name, raw)
-        artifact_rows.append(
-            {
-                "name": name,
-                "bytes": len(raw),
-                "sha256": hashlib.sha256(raw).hexdigest(),
-                "logical_content_fingerprint": payload["logical_content_fingerprint"],
-            }
+    prepared_payloads = {
+        name: _with_logical_fingerprint(payloads[name])
+        for name in artifact_files
+    }
+    resume_identity = _fingerprint(
+        {
+            "contract_version": CANDIDATE_AUDIT_RESUME_CONTRACT,
+            "final_output_dir": str(final_target),
+            "base": base,
+            "artifacts": [
+                {
+                    "name": name,
+                    "logical_content_fingerprint": prepared_payloads[name][
+                        "logical_content_fingerprint"
+                    ],
+                }
+                for name in artifact_files
+            ],
+            "candidate_batch_fingerprints": [item.logical_fingerprint for item in batches],
+            "candidate_state_record_fingerprints": [item.logical_fingerprint for item in states],
+            "risk_result_fingerprints": [item.logical_fingerprint for item in risks],
+            "oracle_fingerprint": oracle_fingerprint,
+            "equivalence_flags": flags,
+            "prior_audit_logical_fingerprint": (
+                None if not incremental else validation["prior_audit_logical_fingerprint"]
+            ),
+        }
+    )
+    resume_journal = None
+    if resumable:
+        resume_journal = _load_or_create_resume_journal(
+            target,
+            final_target=final_target,
+            resume_identity=resume_identity,
+            artifact_files=artifact_files,
         )
+
+    writer_wall_started = time.monotonic()
+    writer_cpu_started = time.process_time()
+    artifact_rows: list[dict[str, Any]] = []
+    reused_artifact_count = 0
+    for name in artifact_files:
+        payload = prepared_payloads[name]
+        if resume_journal is None:
+            byte_count, physical_sha256 = _write_canonical_new(target / name, payload)
+            artifact = _artifact_row(
+                name=name,
+                byte_count=byte_count,
+                physical_sha256=physical_sha256,
+                logical_fingerprint=payload["logical_content_fingerprint"],
+            )
+        else:
+            artifact, reused = _write_or_reuse_resumable_artifact(
+                target,
+                name=name,
+                payload=payload,
+                resume_journal=resume_journal,
+                artifact_files=artifact_files,
+            )
+            reused_artifact_count += int(reused)
+        artifact_rows.append(artifact)
 
     logical = {
         **base,
@@ -297,19 +361,46 @@ def write_opportunity_candidate_audit(
     if incremental:
         logical["prior_audit_logical_fingerprint"] = validation["prior_audit_logical_fingerprint"]
         logical["prior_as_of_session"] = validation["prior_as_of_session"]
+    writer_wall_seconds = time.monotonic() - writer_wall_started
+    writer_cpu_seconds = time.process_time() - writer_cpu_started
+    final_timings = {
+        **timings,
+        "audit_artifact_stream_write_wall_seconds": f"{writer_wall_seconds:.6f}",
+        "audit_artifact_stream_write_cpu_seconds": f"{writer_cpu_seconds:.6f}",
+    }
+    final_runtime_metrics = {
+        **(runtime_metrics or {}),
+        "audit_artifact_stream_write_count": len(artifact_files) - reused_artifact_count,
+        "audit_artifact_resume_reuse_count": reused_artifact_count,
+        "audit_streaming_writer_enabled": 1,
+        "audit_resumable_work_dir_enabled": int(resumable),
+    }
     manifest = {
         **logical,
         "logical_content_fingerprint": _fingerprint(logical),
         "generated_at": generated_at.astimezone(UTC).isoformat(),
-        "timings": dict(sorted(timings.items())),
-        "peak_memory_kib": peak_memory_kib,
-        "runtime_metrics": dict(sorted((runtime_metrics or {}).items())),
+        "timings": dict(sorted(final_timings.items())),
+        "peak_memory_kib": max(peak_memory_kib, resource.getrusage(resource.RUSAGE_SELF).ru_maxrss),
+        "runtime_metrics": dict(sorted(final_runtime_metrics.items())),
         "completion_status": "completed",
     }
-    # The completion marker is deliberately created only after every artifact.
-    _write_new(target / CANDIDATE_AUDIT_MANIFEST, _canonical_bytes(manifest))
-    for path in target.iterdir():
-        path.chmod(0o400)
+    if resumable:
+        _prepare_resumable_candidate_audit_manifest(
+            target,
+            manifest=manifest,
+            resume_identity=resume_identity,
+        )
+        if defer_finalization:
+            return manifest
+        completed = finalize_resumable_candidate_audit(target, final_target)
+        if completed is None:
+            raise OpportunityCandidateAuditError("completed Candidate work directory did not finalize")
+        return completed
+    else:
+        # The completion marker is deliberately created only after every artifact.
+        _write_canonical_new(target / CANDIDATE_AUDIT_MANIFEST, manifest)
+        for path in target.iterdir():
+            path.chmod(0o400)
     return read_opportunity_candidate_audit(target)
 
 
@@ -341,6 +432,69 @@ def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCa
         normalization_ledger=tuple(normalization),
         validation_ledger=(None if validation_payload is None else validation_payload["record"]),
     )
+
+
+def finalize_resumable_candidate_audit(work_dir: Path, output_dir: Path) -> dict[str, Any] | None:
+    """Finalize a fully written work directory without rerunning Candidate calculation."""
+
+    final_target = validate_tmp_output_dir(output_dir)
+    if final_target.exists():
+        raise OpportunityCandidateAuditError("resumable output directory must not already exist")
+    if not work_dir.exists():
+        return None
+    target = _safe_candidate_audit_work_dir(work_dir, final_target=final_target)
+    names = {item.name for item in target.iterdir()}
+    if CANDIDATE_AUDIT_RESUME_FILE in names:
+        journal = _read_resume_journal(target / CANDIDATE_AUDIT_RESUME_FILE)
+        if journal.get("final_output_dir") != str(final_target):
+            raise OpportunityCandidateAuditError("Candidate recovery journal output binding mismatch")
+        if journal.get("next_artifact") is not None:
+            return None
+        if CANDIDATE_AUDIT_PENDING_MANIFEST not in names:
+            return None
+        completed = journal.get("completed_artifacts", ())
+        artifact_files = tuple(journal.get("artifact_order", ()))
+        if tuple(item.get("name") for item in completed) != artifact_files:
+            raise OpportunityCandidateAuditError("completed Candidate recovery journal is malformed")
+        if names != set(artifact_files) | {
+            CANDIDATE_AUDIT_RESUME_FILE,
+            CANDIDATE_AUDIT_PENDING_MANIFEST,
+        }:
+            raise OpportunityCandidateAuditError("completed Candidate work directory contains extras")
+        pending_manifest = _read_canonical_json(target / CANDIDATE_AUDIT_PENDING_MANIFEST)
+        _validate_pending_manifest(pending_manifest, artifact_files=artifact_files, artifacts=completed)
+        (target / CANDIDATE_AUDIT_RESUME_FILE).unlink()
+        _fsync_directory(target)
+        os.rename(
+            target / CANDIDATE_AUDIT_PENDING_MANIFEST,
+            target / CANDIDATE_AUDIT_MANIFEST,
+        )
+        _fsync_directory(target)
+        names = {item.name for item in target.iterdir()}
+    if CANDIDATE_AUDIT_PENDING_MANIFEST in names:
+        pending = _read_canonical_json(target / CANDIDATE_AUDIT_PENDING_MANIFEST)
+        artifact_files = _artifact_files_for_manifest(pending)
+        if names != set(artifact_files) | {CANDIDATE_AUDIT_PENDING_MANIFEST}:
+            raise OpportunityCandidateAuditError("resumable pending audit file set is unsafe")
+        _validate_pending_manifest(
+            pending,
+            artifact_files=artifact_files,
+            artifacts=pending.get("artifacts", ()),
+        )
+        os.rename(
+            target / CANDIDATE_AUDIT_PENDING_MANIFEST,
+            target / CANDIDATE_AUDIT_MANIFEST,
+        )
+        _fsync_directory(target)
+        names = {item.name for item in target.iterdir()}
+    if CANDIDATE_AUDIT_MANIFEST not in names:
+        if names:
+            raise OpportunityCandidateAuditError("resumable work directory lost its recovery journal")
+        return None
+    manifest = read_opportunity_candidate_audit(target)
+    os.rename(target, final_target)
+    _fsync_directory(final_target.parent)
+    return manifest
 
 
 def _read_opportunity_candidate_audit(output_dir: Path):
@@ -396,10 +550,11 @@ def _read_opportunity_candidate_audit(output_dir: Path):
     artifact_payloads: dict[str, dict[str, Any]] = {}
     for row in manifest["artifacts"]:
         name = row["name"]
-        raw = (target / name).read_bytes()
-        if len(raw) != row.get("bytes") or hashlib.sha256(raw).hexdigest() != row.get("sha256"):
+        path = target / name
+        physical_sha256 = _file_sha256(path)
+        if path.stat().st_size != row.get("bytes") or physical_sha256 != row.get("sha256"):
             raise OpportunityCandidateAuditError(f"audit artifact custody mismatch: {name}")
-        payload = _read_canonical_json(target / name)
+        payload = _read_canonical_json(path, physical_sha256=physical_sha256)
         fingerprint = payload.pop("logical_content_fingerprint", None)
         if _fingerprint(payload) != fingerprint or fingerprint != row.get("logical_content_fingerprint"):
             raise OpportunityCandidateAuditError(f"audit artifact logical fingerprint mismatch: {name}")
@@ -539,6 +694,322 @@ def _read_opportunity_candidate_audit(output_dir: Path):
             "incremental prior as-of session",
         )
     return manifest, artifact_payloads, batches, states, risks, oracle
+
+
+def _artifact_files_for_manifest(manifest: Mapping[str, Any]) -> tuple[str, ...]:
+    if manifest.get("schema_version") == "1.0" and manifest.get("execution_mode") is None:
+        return CANDIDATE_ARTIFACT_FILES
+    if (
+        manifest.get("schema_version") == "1.1"
+        and manifest.get("execution_mode") == "verified_prior_incremental"
+    ):
+        return CANDIDATE_INCREMENTAL_ARTIFACT_FILES
+    raise OpportunityCandidateAuditError("unsupported resumable Candidate audit schema")
+
+
+def _validate_pending_manifest(
+    manifest: Mapping[str, Any],
+    *,
+    artifact_files: tuple[str, ...],
+    artifacts: Sequence[Mapping[str, Any]],
+) -> None:
+    logical = {
+        key: value
+        for key, value in manifest.items()
+        if key
+        not in {
+            "logical_content_fingerprint",
+            "generated_at",
+            "timings",
+            "peak_memory_kib",
+            "runtime_metrics",
+            "completion_status",
+        }
+    }
+    if (
+        manifest.get("completion_status") != "completed"
+        or _fingerprint(logical) != manifest.get("logical_content_fingerprint")
+        or tuple(item.get("name") for item in manifest.get("artifacts", ())) != artifact_files
+        or list(manifest.get("artifacts", ())) != [dict(item) for item in artifacts]
+    ):
+        raise OpportunityCandidateAuditError("pending Candidate audit manifest is malformed")
+
+
+def _prepare_candidate_audit_work_dir(work_dir: Path | None, *, final_target: Path) -> Path:
+    if work_dir is None:
+        raise OpportunityCandidateAuditError("resumable Candidate audit requires a work directory")
+    if work_dir == final_target:
+        raise OpportunityCandidateAuditError("Candidate audit work and output directories must differ")
+    if not work_dir.exists():
+        _validate_direct_tmp_path(work_dir, label="work directory")
+        work_dir.mkdir(mode=0o700, parents=False)
+        work_dir.chmod(0o700)
+    return _safe_candidate_audit_work_dir(work_dir, final_target=final_target)
+
+
+def _safe_candidate_audit_work_dir(work_dir: Path, *, final_target: Path) -> Path:
+    _validate_direct_tmp_path(work_dir, label="work directory")
+    if work_dir == final_target or work_dir.is_symlink():
+        raise OpportunityCandidateAuditError("Candidate audit work directory is unsafe")
+    target = work_dir.resolve(strict=True)
+    metadata = target.stat()
+    if (
+        not target.is_dir()
+        or target.parent != Path("/tmp")
+        or metadata.st_uid != os.geteuid()
+        or stat.S_IMODE(metadata.st_mode) != 0o700
+    ):
+        raise OpportunityCandidateAuditError("Candidate audit work directory custody mismatch")
+    if any(
+        item.is_symlink()
+        or not item.is_file()
+        or item.stat().st_uid != os.geteuid()
+        or stat.S_IMODE(item.stat().st_mode) != 0o400
+        for item in target.iterdir()
+    ):
+        raise OpportunityCandidateAuditError("unsafe resumable Candidate artifact")
+    return target
+
+
+def _load_or_create_resume_journal(
+    target: Path,
+    *,
+    final_target: Path,
+    resume_identity: str,
+    artifact_files: tuple[str, ...],
+) -> dict[str, Any]:
+    journal_path = target / CANDIDATE_AUDIT_RESUME_FILE
+    if not any(target.iterdir()):
+        journal = _resume_journal_payload(
+            final_target=final_target,
+            resume_identity=resume_identity,
+            artifact_files=artifact_files,
+            completed_artifacts=(),
+        )
+        _write_canonical_new(journal_path, journal)
+        _fsync_directory(target)
+        return journal
+    if not journal_path.is_file():
+        raise OpportunityCandidateAuditError("resumable Candidate audit is missing its recovery journal")
+    journal_pending = target / f"{CANDIDATE_AUDIT_RESUME_FILE}.partial"
+    if journal_pending.exists():
+        _unlink_verified_partial(journal_pending)
+    journal = _read_resume_journal(journal_path)
+    if (
+        journal.get("contract_version") != CANDIDATE_AUDIT_RESUME_CONTRACT
+        or journal.get("resume_identity") != resume_identity
+        or journal.get("final_output_dir") != str(final_target)
+        or tuple(journal.get("artifact_order", ())) != artifact_files
+        or journal.get("status") != "writing_artifacts"
+    ):
+        raise OpportunityCandidateAuditError("Candidate recovery journal input binding mismatch")
+    completed = journal.get("completed_artifacts")
+    if not isinstance(completed, list) or tuple(item.get("name") for item in completed) != artifact_files[: len(completed)]:
+        raise OpportunityCandidateAuditError("Candidate recovery journal artifact prefix is malformed")
+    allowed = {CANDIDATE_AUDIT_RESUME_FILE, *(item["name"] for item in completed)}
+    next_name = artifact_files[len(completed)] if len(completed) < len(artifact_files) else None
+    if next_name is not None:
+        allowed.update({next_name, f"{next_name}.partial"})
+    names = {item.name for item in target.iterdir()}
+    if not names <= allowed:
+        raise OpportunityCandidateAuditError("resumable Candidate audit contains unexpected files")
+    for item in completed:
+        _validate_resumable_artifact(target / item["name"], item)
+    return journal
+
+
+def _read_resume_journal(path: Path) -> dict[str, Any]:
+    journal = _read_canonical_json(path)
+    logical_fingerprint = journal.pop("logical_content_fingerprint", None)
+    if _fingerprint(journal) != logical_fingerprint:
+        raise OpportunityCandidateAuditError("Candidate recovery journal fingerprint mismatch")
+    journal["logical_content_fingerprint"] = logical_fingerprint
+    if journal.get("contract_version") != CANDIDATE_AUDIT_RESUME_CONTRACT:
+        raise OpportunityCandidateAuditError("Candidate recovery journal contract mismatch")
+    return journal
+
+
+def _resume_journal_payload(
+    *,
+    final_target: Path,
+    resume_identity: str,
+    artifact_files: tuple[str, ...],
+    completed_artifacts: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    logical = {
+        "schema_version": "1.0",
+        "contract_version": CANDIDATE_AUDIT_RESUME_CONTRACT,
+        "resume_identity": resume_identity,
+        "final_output_dir": str(final_target),
+        "artifact_order": list(artifact_files),
+        "completed_artifacts": [dict(item) for item in completed_artifacts],
+        "next_artifact": (
+            None if len(completed_artifacts) == len(artifact_files) else artifact_files[len(completed_artifacts)]
+        ),
+        "status": "writing_artifacts",
+    }
+    return {**logical, "logical_content_fingerprint": _fingerprint(logical)}
+
+
+def _write_or_reuse_resumable_artifact(
+    target: Path,
+    *,
+    name: str,
+    payload: Mapping[str, Any],
+    resume_journal: dict[str, Any],
+    artifact_files: tuple[str, ...],
+) -> tuple[dict[str, Any], bool]:
+    completed = resume_journal["completed_artifacts"]
+    expected_logical = payload["logical_content_fingerprint"]
+    if len(completed) < artifact_files.index(name):
+        raise OpportunityCandidateAuditError("Candidate recovery journal skipped an artifact stage")
+    if len(completed) > artifact_files.index(name):
+        artifact = dict(completed[artifact_files.index(name)])
+        if artifact.get("logical_content_fingerprint") != expected_logical:
+            raise OpportunityCandidateAuditError("resumed Candidate artifact logical identity changed")
+        _validate_resumable_artifact(target / name, artifact)
+        return artifact, True
+
+    path = target / name
+    partial = target / f"{name}.partial"
+    reused = False
+    if path.exists():
+        artifact = _artifact_row_from_existing(path, name=name, expected_logical=expected_logical)
+        reused = True
+        if partial.exists():
+            _unlink_verified_partial(partial)
+    else:
+        if partial.exists():
+            try:
+                artifact = _artifact_row_from_existing(
+                    partial,
+                    name=name,
+                    expected_logical=expected_logical,
+                )
+                os.rename(partial, path)
+                _fsync_directory(target)
+                reused = True
+            except OpportunityCandidateAuditError:
+                _unlink_verified_partial(partial)
+        if not path.exists():
+            byte_count, physical_sha256 = _write_canonical_new(partial, payload)
+            artifact = _artifact_row(
+                name=name,
+                byte_count=byte_count,
+                physical_sha256=physical_sha256,
+                logical_fingerprint=expected_logical,
+            )
+            os.rename(partial, path)
+            _fsync_directory(target)
+    completed.append(artifact)
+    updated = _resume_journal_payload(
+        final_target=Path(resume_journal["final_output_dir"]),
+        resume_identity=resume_journal["resume_identity"],
+        artifact_files=artifact_files,
+        completed_artifacts=completed,
+    )
+    _replace_resume_journal(target, updated)
+    resume_journal.clear()
+    resume_journal.update(updated)
+    return artifact, reused
+
+
+def _artifact_row_from_existing(path: Path, *, name: str, expected_logical: str) -> dict[str, Any]:
+    if (
+        path.is_symlink()
+        or not path.is_file()
+        or path.stat().st_uid != os.geteuid()
+        or stat.S_IMODE(path.stat().st_mode) != 0o400
+    ):
+        raise OpportunityCandidateAuditError("resumable Candidate artifact custody mismatch")
+    physical_sha256 = _file_sha256(path)
+    payload = _read_canonical_json(path, physical_sha256=physical_sha256)
+    logical_fingerprint = payload.pop("logical_content_fingerprint", None)
+    if _fingerprint(payload) != logical_fingerprint or logical_fingerprint != expected_logical:
+        raise OpportunityCandidateAuditError("resumable Candidate artifact logical fingerprint mismatch")
+    return _artifact_row(
+        name=name,
+        byte_count=path.stat().st_size,
+        physical_sha256=physical_sha256,
+        logical_fingerprint=logical_fingerprint,
+    )
+
+
+def _validate_resumable_artifact(path: Path, artifact: Mapping[str, Any]) -> None:
+    actual = _artifact_row_from_existing(
+        path,
+        name=str(artifact.get("name")),
+        expected_logical=str(artifact.get("logical_content_fingerprint")),
+    )
+    if actual != artifact:
+        raise OpportunityCandidateAuditError("resumable Candidate artifact descriptor mismatch")
+
+
+def _artifact_row(
+    *, name: str, byte_count: int, physical_sha256: str, logical_fingerprint: str
+) -> dict[str, Any]:
+    return {
+        "name": name,
+        "bytes": byte_count,
+        "sha256": physical_sha256,
+        "logical_content_fingerprint": logical_fingerprint,
+    }
+
+
+def _replace_resume_journal(target: Path, journal: Mapping[str, Any]) -> None:
+    path = target / CANDIDATE_AUDIT_RESUME_FILE
+    pending = target / f"{CANDIDATE_AUDIT_RESUME_FILE}.partial"
+    if pending.exists():
+        _unlink_verified_partial(pending)
+    _write_canonical_new(pending, journal)
+    os.replace(pending, path)
+    _fsync_directory(target)
+
+
+def _unlink_verified_partial(path: Path) -> None:
+    if (
+        path.is_symlink()
+        or not path.is_file()
+        or path.stat().st_uid != os.geteuid()
+        or stat.S_IMODE(path.stat().st_mode) != 0o400
+        or not path.name.endswith(".partial")
+    ):
+        raise OpportunityCandidateAuditError("unsafe Candidate partial artifact")
+    path.unlink()
+
+
+def _prepare_resumable_candidate_audit_manifest(
+    target: Path,
+    *,
+    manifest: Mapping[str, Any],
+    resume_identity: str,
+) -> None:
+    journal = _read_resume_journal(target / CANDIDATE_AUDIT_RESUME_FILE)
+    if journal.get("resume_identity") != resume_identity or journal.get("next_artifact") is not None:
+        raise OpportunityCandidateAuditError("Candidate recovery journal is not ready for completion")
+    pending = target / CANDIDATE_AUDIT_PENDING_MANIFEST
+    if pending.exists():
+        _unlink_verified_partial(pending)
+    _write_canonical_new(pending, manifest)
+    _fsync_directory(target)
+
+
+def _fsync_directory(path: Path) -> None:
+    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
+def _validate_direct_tmp_path(path: Path, *, label: str) -> None:
+    if not path.is_absolute() or path.parent != Path("/tmp") or path.name in {"", ".", ".."}:
+        raise OpportunityCandidateAuditError(f"{label} must be a direct child of /tmp")
+    current = Path("/")
+    for part in path.parts[1:]:
+        current /= part
+        if current.exists() and current.is_symlink():
+            raise OpportunityCandidateAuditError(f"symlink {label} path is rejected")
 
 
 def validate_tmp_output_dir(output_dir: Path) -> Path:
@@ -952,7 +1423,10 @@ def _jsonable(value: Any) -> Any:
     if is_dataclass(value) and not isinstance(value, type):
         return _jsonable(asdict(value))
     if isinstance(value, Mapping):
-        return {str(key): _jsonable(item) for key, item in value.items()}
+        return {
+            unicodedata.normalize("NFC", str(key)): _jsonable(item)
+            for key, item in value.items()
+        }
     if isinstance(value, (list, tuple, set, frozenset)):
         return [_jsonable(item) for item in value]
     if isinstance(value, Enum):
@@ -965,7 +1439,9 @@ def _jsonable(value: Any) -> Any:
         if not value.is_finite():
             raise OpportunityCandidateAuditError("non-finite decimal cannot enter an audit artifact")
         return str(value)
-    if value is None or isinstance(value, (str, int, float, bool)):
+    if isinstance(value, str):
+        return unicodedata.normalize("NFC", value)
+    if value is None or isinstance(value, (int, float, bool)):
         return value
     raise OpportunityCandidateAuditError(f"unsupported audit value type: {type(value).__name__}")
 
@@ -975,21 +1451,49 @@ def _with_logical_fingerprint(payload: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _canonical_bytes(value: object) -> bytes:
-    normalized = _normalize_nfc(value)
     try:
-        encoded = json.dumps(
-            normalized,
-            sort_keys=True,
-            separators=(",", ":"),
-            ensure_ascii=True,
-            allow_nan=False,
+        return b"".join(
+            _canonical_byte_chunks(_normalize_nfc(value), trailing_newline=True)
         )
     except (TypeError, ValueError) as exc:
         raise OpportunityCandidateAuditError("audit value is not canonical-JSON serializable") from exc
-    return (encoded + "\n").encode("utf-8")
+
+
+def _canonical_byte_chunks(value: object, *, trailing_newline: bool = False):
+    """Yield canonical JSON without materializing a second complete payload."""
+
+    _require_nfc(value)
+    encoder = json.JSONEncoder(
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+        allow_nan=False,
+    )
+    for chunk in encoder.iterencode(value):
+        yield chunk.encode("utf-8")
+    if trailing_newline:
+        yield b"\n"
+
+
+def _require_nfc(value: object) -> None:
+    stack = [value]
+    while stack:
+        item = stack.pop()
+        if isinstance(item, str):
+            if not unicodedata.is_normalized("NFC", item):
+                raise OpportunityCandidateAuditError("audit strings must use canonical NFC")
+        elif isinstance(item, Mapping):
+            for key, nested in item.items():
+                if not isinstance(key, str) or not unicodedata.is_normalized("NFC", key):
+                    raise OpportunityCandidateAuditError("audit object keys must be canonical NFC strings")
+                stack.append(nested)
+        elif isinstance(item, (list, tuple)):
+            stack.extend(item)
 
 
 def _normalize_nfc(value: object) -> object:
+    """Retain the model-fingerprint normalization contract used by state rows."""
+
     if isinstance(value, str):
         return unicodedata.normalize("NFC", value)
     if isinstance(value, list):
@@ -1004,33 +1508,71 @@ def _normalize_nfc(value: object) -> object:
     return value
 
 
-def _read_canonical_json(path: Path) -> dict[str, Any]:
-    raw = path.read_bytes()
+def _read_canonical_json(path: Path, *, physical_sha256: str | None = None) -> dict[str, Any]:
     try:
-        value = json.loads(raw)
+        with path.open("r", encoding="utf-8") as handle:
+            value = json.load(handle)
     except Exception as exc:
         raise OpportunityCandidateAuditError(f"malformed audit JSON: {path.name}") from exc
-    if raw != _canonical_bytes(value):
+    actual_sha256 = physical_sha256 or _file_sha256(path)
+    if actual_sha256 != _canonical_sha256(value, trailing_newline=True):
         raise OpportunityCandidateAuditError(f"non-canonical audit JSON: {path.name}")
     if not isinstance(value, dict):
         raise OpportunityCandidateAuditError("audit artifact must be an object")
     return value
 
 
-def _write_new(path: Path, raw: bytes) -> None:
+def _write_canonical_new(path: Path, value: object) -> tuple[int, str]:
     flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
     descriptor = os.open(path, flags, 0o400)
+    digest = hashlib.sha256()
+    byte_count = 0
     try:
         with os.fdopen(descriptor, "wb", closefd=False) as handle:
-            handle.write(raw)
+            buffer = bytearray()
+            for chunk in _canonical_byte_chunks(value, trailing_newline=True):
+                byte_count += len(chunk)
+                buffer.extend(chunk)
+                if len(buffer) >= 1024 * 1024:
+                    handle.write(buffer)
+                    digest.update(buffer)
+                    buffer.clear()
+            if buffer:
+                handle.write(buffer)
+                digest.update(buffer)
             handle.flush()
             os.fsync(handle.fileno())
     finally:
         os.close(descriptor)
+    return byte_count, digest.hexdigest()
+
+
+def _file_sha256(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _canonical_sha256(value: object, *, trailing_newline: bool) -> str:
+    digest = hashlib.sha256()
+    try:
+        buffer = bytearray()
+        for chunk in _canonical_byte_chunks(value, trailing_newline=trailing_newline):
+            buffer.extend(chunk)
+            if len(buffer) >= 1024 * 1024:
+                digest.update(buffer)
+                buffer.clear()
+        if buffer:
+            digest.update(buffer)
+    except (TypeError, ValueError) as exc:
+        raise OpportunityCandidateAuditError("audit value is not canonical-JSON serializable") from exc
+    return digest.hexdigest()
 
 
 def _fingerprint(value: object) -> str:
-    return hashlib.sha256(_canonical_bytes(value)[:-1]).hexdigest()
+    return _canonical_sha256(value, trailing_newline=False)
 
 
 def _candidate_model_fingerprint(value: object) -> str:

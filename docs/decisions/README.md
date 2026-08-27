@@ -48,3 +48,4 @@ Each ADR should include:
 - [0023: Preserve Market Regime State Prefix Across As-Of Sessions](0023-preserve-market-regime-state-prefix-across-as-of-sessions.md)
 - [0024: Bind Daily Market Regime State to Verified Upstream Audits](0024-bind-daily-market-regime-state-to-verified-upstream-audits.md)
 - [0025: Share Formally Validated Panels Between Dell Stages](0025-share-formally-validated-panels-between-dell-stages.md)
+- [0026: Stream and Resume Candidate Audit Artifacts](0026-stream-and-resume-candidate-audit-artifacts.md)

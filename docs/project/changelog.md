@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-27 — Streaming and resumable Candidate audit delivery
+
+- Accepted ADR 0026 and retained Candidate audit schemas 1.0/1.1 plus exact
+  completed business bytes while streaming canonical JSON, physical SHA-256,
+  and logical hashes through bounded buffers. Formal reread no longer retains
+  duplicate raw and canonical artifact copies.
+- Added an explicit owner-controlled `/tmp` recovery directory with a canonical
+  journal bound to the final path, artifact and typed-record fingerprints,
+  source base, Oracle, equivalence gates, and prior audit. Verified contiguous
+  prefixes resume; gaps, unexpected files, source drift, and corruption fail
+  closed. A prepared interruption finalizes before reopening calculation data.
+- The final real 2026-08-26 development run recorded 111.636 seconds before
+  writing, 17.921 seconds for ten streamed artifacts, 3,343,112 KiB peak RSS,
+  and an approximately 164-second recovery-directory-to-delivery boundary.
+  Nine source/business/Oracle files were byte-identical to the prior panel-
+  cache result; all equivalence gates passed and Oracle mismatch was zero.
+- No `/data`, publication, Snapshot, bundle, deployment, OCI, credential,
+  provider, or scheduler state changed.
+
 ## 2026-08-27 — Formally validated Phase 1a/Candidate panel reuse
 
 - Accepted ADR 0025 and added the optional

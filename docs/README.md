@@ -151,6 +151,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0023: Preserve Market Regime State Prefix Across As-Of Sessions](decisions/0023-preserve-market-regime-state-prefix-across-as-of-sessions.md)
 - [ADR 0024: Bind Daily Market Regime State to Verified Upstream Audits](decisions/0024-bind-daily-market-regime-state-to-verified-upstream-audits.md)
 - [ADR 0025: Share Formally Validated Panels Between Dell Stages](decisions/0025-share-formally-validated-panels-between-dell-stages.md)
+- [ADR 0026: Stream and Resume Candidate Audit Artifacts](decisions/0026-stream-and-resume-candidate-audit-artifacts.md)
 
 ## Project
 

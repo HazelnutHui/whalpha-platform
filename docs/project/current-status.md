@@ -155,9 +155,15 @@ Verified-prior Phase 1b append is now implemented. The final-version real
 2026-08-26 incremental audit matched the V1.0.1 cold state history,
 explanations, transitions, and current summary exactly with zero Oracle
 mismatch; time before writing was 0.237 seconds versus 302.736 seconds cold.
-The next operational priority is streaming/resumable audit output and
-validation tiers; deterministic process parallelism follows with the serial
-path retained.
+Repository source now also implements ADR 0026's streaming and resumable
+Candidate artifact boundary without changing completed audit schemas or
+business bytes. The final real 2026-08-26 development run recorded 111.636
+seconds before writing, 17.921 seconds for ten streamed artifacts, a 3,343,112
+KiB process peak, and an approximately 164-second work-directory-to-delivery
+boundary. Its nine source/business/Oracle files were byte-identical to the
+earlier panel-cache audit, all four equivalence gates were true, and Oracle
+mismatch was zero. The next operational priority is explicit validation tiers;
+deterministic process parallelism follows with the serial path retained.
 Publication, Snapshot generation, bundle construction, and OCI deployment
 remain separate explicit approvals.
 

@@ -120,6 +120,37 @@ def test_relative_paths_are_rejected_before_any_reader(monkeypatch) -> None:
         ])
 
 
+def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp_path, capsys) -> None:
+    output = tmp_path / "candidate-audit"
+    work = tmp_path / "candidate-work"
+    calls = []
+    monkeypatch.setattr(
+        cli,
+        "_audit_api",
+        lambda: (
+            lambda path: pytest.fail("completed output reader must not run"),
+            lambda **kwargs: pytest.fail("candidate writer must not run"),
+            lambda path: calls.append(("validate", path)) or path,
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "_finalize_resumable_audit",
+        lambda work_dir, output_dir: calls.append(("finalize", work_dir, output_dir))
+        or {"as_of_session": "2026-08-24", "oracle_mismatch_count": 0},
+    )
+    monkeypatch.setattr(cli, "read_market_regime_state_audit", lambda path: pytest.fail("Phase1b must not be read"))
+    assert cli.main([
+        "--as-of-session", "2026-08-24",
+        "--data-root", str(tmp_path),
+        "--phase1b-audit", str(tmp_path / "phase1b"),
+        "--output-dir", str(output),
+        "--audit-work-dir", str(work),
+    ]) == 0
+    assert calls == [("validate", output), ("finalize", work, output)]
+    assert '"status":"completed"' in capsys.readouterr().out
+
+
 def test_socket_guard_blocks_connect_dns_and_restores() -> None:
     original = socket.socket
     with cli._offline_socket_guard():

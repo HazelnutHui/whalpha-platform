@@ -615,6 +615,15 @@ owner-controlled, has no mutable latest pointer, and is never an OCI or
 Production source. Candidate business artifacts and Oracle semantics remain
 identical to the cold-reader path.
 
+ADR 0026 keeps the completed Candidate audit contract byte-compatible while
+streaming canonical JSON and hashes through bounded buffers. An explicit
+owner-controlled `/tmp` work directory holds a source-bound recovery journal
+and a contiguous prefix of immutable artifacts. A fully prepared interruption
+can finish before calculation sources are reopened; an earlier writer
+interruption reuses its verified artifact prefix after reconstruction. One
+formal completed-audit reread precedes atomic delivery to the final path.
+Calculation-stage checkpointing remains separate future work.
+
 The first accepted formal Phase 5 audit covers 2026-08-21 and 2026-08-24 under
 candidate calculation `market-regime-opportunity-candidate-v1.1.1`. Its
 logical fingerprint is
