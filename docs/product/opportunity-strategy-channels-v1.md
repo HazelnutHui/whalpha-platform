@@ -106,27 +106,29 @@ pullback, and trend continuation. It reuses the exact Candidate and Entry
 Geometry batches, emits all six channel results, and bounds the first consumer
 to eight ranked explanations per channel. Technical reversal, fundamental
 value reversal, and defensive rotation remain explicitly unavailable.
+An independent calculator now verifies technical-channel score, status, and
+rank without importing the Production implementation. Its immutable 2026-08-26
+temporary-root audit passed both Universes with zero mismatch and input-
+permutation equivalence.
 
 The fixed weights are transparent provisional mechanics, not chronologically
 validated parameters. Market/sector fit remains separate and unvalidated. The
 preview is not connected to Market Intelligence, Snapshot, frontend,
 publication, deployment, or Production. See
 [Candidate Strategy Channel Preview V1](../data-contracts/candidate-strategy-channel-preview-v1.md)
-and the [2026-08-28 read-only review](../audits/candidate-strategy-channel-preview-2026-08-28.md).
+and the [2026-08-28 offline review](../audits/candidate-strategy-channel-preview-2026-08-28.md).
 
 ## Planned implementation sequence
 
-1. Add an independent calculation Oracle and immutable temporary-root audit
-   for the fixed three-channel shadow preview.
-2. Evaluate the three formulas chronologically after the point-in-time panel
+1. Evaluate the three formulas chronologically after the point-in-time panel
    and outcome ledger are physically ready; revise parameters only through a
    new version.
-3. Design an additive bilingual product payload only after explanation and
+2. Design an additive bilingual product payload only after explanation and
    signal-volume review; keep the display cap at eight per channel.
-4. Add reversal-specific stabilization facts and evaluate technical reversal.
-5. Complete security taxonomy/defensive mapping and evaluate defensive
+3. Add reversal-specific stabilization facts and evaluate technical reversal.
+4. Complete security taxonomy/defensive mapping and evaluate defensive
    rotation across Regimes.
-6. Ingest governed fundamentals and valuation data before implementing
+5. Ingest governed fundamentals and valuation data before implementing
    fundamental value reversal.
-7. Publish only channels that pass audit, temporal validation, and separate
+6. Publish only channels that pass audit, temporal validation, and separate
    activation review.

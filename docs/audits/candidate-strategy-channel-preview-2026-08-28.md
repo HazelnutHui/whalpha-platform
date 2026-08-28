@@ -4,9 +4,10 @@
 
 `MECHANICS_IMPLEMENTED_NOT_VALIDATED`
 
-This was a read-only Dell calculation over the existing formal 2026-08-26
-Candidate and Entry Geometry audits. It wrote no `/data`, `/tmp`, publication,
-Snapshot, bundle, deployment, or Production state.
+This was an offline Dell calculation over the existing formal 2026-08-26
+Candidate and Entry Geometry audits. It wrote one immutable shadow audit under
+`/tmp/whalpha-candidate-strategy-preview-20260826`; it wrote no `/data`,
+publication, Snapshot, bundle, deployment, or Production state.
 
 ## Bound source evidence
 
@@ -20,6 +21,21 @@ Snapshot, bundle, deployment, or Production state.
 Both existing audit readers completed before calculation. The preview then
 passed typed full-population reconciliation and the bounded consumer retained
 at most eight records per channel.
+
+The independent Oracle does not import the Production strategy calculator. It
+recomputed every technical-channel score, status, and within-channel rank from
+the typed Candidate and Entry Geometry inputs. Both Universes returned zero
+mismatches and input-permutation equivalence.
+
+- Strategy audit fingerprint:
+  `1c2036a6266647482de12d1ed7a1f9adf0f41311bc886979324ba3a0859c2877`
+- Primary Oracle fingerprint:
+  `ec27bbdb21c124b37bf02d4432518f5ec459f1a206df059e943a965ac6cf1464`
+- Secondary Oracle fingerprint:
+  `36bf1370d8f07150c26021c7b05e4c2666c0d0d2bef2cf084e8e699fc5a81c1f`
+- Audit custody: directory mode `0700`; five canonical artifacts mode `0400`;
+  atomic directory rename; formal reread passed
+- External requests: `0`; Production writes: `0`
 
 ## Primary Universe
 
@@ -74,7 +90,7 @@ Consumer fingerprint:
 
 ## Remaining limitations
 
-There is no independent Oracle or formal persisted strategy audit yet. The
-current 29-session/current-constituent history is not performance eligible.
-Nothing in this review authorizes publication, frontend integration,
-deployment, or trade action.
+The current 29-session/current-constituent history is not performance eligible.
+The Oracle proves implementation agreement and deterministic ordering, not
+economic validity. Nothing in this review authorizes publication, frontend
+integration, deployment, threshold tuning, performance claims, or trade action.

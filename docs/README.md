@@ -114,7 +114,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Market Intelligence Publication V1](data-contracts/market-intelligence-publication-v1.md): Immutable language-neutral analytics and reader contract.
 - [Opportunity Candidate Publication V1](data-contracts/opportunity-candidate-publication-v1.md): Bounded, language-neutral Candidate consumer and lineage contract.
 - [Opportunity Strategy Channels V1](product/opportunity-strategy-channels-v1.md): Independent Candidate archetypes, evidence boundaries, within-channel ranking, and temporal-validation requirements.
-- [Candidate Strategy Channel Preview V1](data-contracts/candidate-strategy-channel-preview-v1.md): Fixed offline formulas, explicit unavailable channels, explanations, and bounded consumer.
+- [Candidate Strategy Channel Preview V1](data-contracts/candidate-strategy-channel-preview-v1.md): Fixed offline formulas, explicit unavailable channels, explanations, bounded consumer, independent Oracle, and immutable temporary-root audit.
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md): Sealed point-in-time signals, separately matured stock outcomes, and anti-leakage evaluation policy.
 - [Candidate Entry Geometry V1](data-contracts/candidate-entry-geometry-v1.md): Offline source audit and additive consumer contract separating leadership quality from entry location and chase risk.
 - [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md): Dell-only compute/data authority, worktree-safe runner, measured baseline, and deterministic optimization sequence.
@@ -160,7 +160,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [2026-08-27 Daily EOD Terminal Review Audit](audits/daily-eod-terminal-review-2026-08-27.md): Public provider evidence boundary, immutable real review, conservative next-day gate, and zero-request/write postflight.
 - [2026-08-27 Candidate Snapshot Split Audit](audits/candidate-snapshot-split-2026-08-27.md): Real 8/26 payload size, shard distribution, lossless reconstruction, and Production-isolation evidence.
 - [2026-08-27 Strategy Evaluation Readiness Audit](audits/strategy-evaluation-readiness-2026-08-27.md): EOD/Identity/benchmark coverage, membership/adjustment/lifecycle gaps, and the formal not-ready result.
-- [2026-08-28 Candidate Strategy Channel Preview Review](audits/candidate-strategy-channel-preview-2026-08-28.md): Read-only fixed-formula mechanics, full-population counts, bounded views, and validation limits.
+- [2026-08-28 Candidate Strategy Channel Preview Review](audits/candidate-strategy-channel-preview-2026-08-28.md): Offline fixed-formula mechanics, independent Oracle, immutable audit, full-population counts, bounded views, and validation limits.
 - [2026-08-14 Instrument Snapshot Audit](operations/data-audits/2026-08-14-instrument-snapshot-audit.md): Accepted integrity audit with an explicit provenance exception.
 - [2026-08-14 Grouped Daily Run Report](operations/data-audits/2026-08-14-grouped-daily-run.md): Non-sensitive single-request quality and publication record.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.

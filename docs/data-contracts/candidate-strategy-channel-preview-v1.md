@@ -2,9 +2,9 @@
 
 ## Status
 
-Implemented in repository source as a pure Dell/offline shadow calculation and
-bounded consumer. It is fixed but not chronologically validated, published, or
-deployed.
+Implemented in repository source as a pure Dell/offline shadow calculation,
+bounded consumer, independent Oracle, and immutable temporary-root audit. It is
+fixed but not chronologically validated, published, or deployed.
 
 ## Inputs and custody
 
@@ -79,12 +79,26 @@ shows only the leading contiguous ranks among Advance and Watch results, capped
 at eight per channel. Deprioritized and unavailable rows are not displayed but
 remain in the full shadow batch for audit.
 
+## Independent Oracle and audit
+
+The Oracle independently repeats the fixed formulas, technical status gates,
+and within-channel ranking without importing the Production strategy
+calculator. It also reverses both typed source sequences and requires identical
+expected output. The audit writer refuses any Oracle mismatch.
+
+The operational entry point formally rereads the Candidate and Entry Geometry
+audits, requires exact current-session Universe order and source fingerprints,
+and runs with outbound sockets disabled. It atomically writes a direct child of
+`/tmp`, binds both source manifest hashes, records zero external requests and
+zero Production writes, makes artifacts read-only, and formally rereads typed
+batches and consumers before success. The audit remains disposable shadow
+evidence, not a publication input.
+
 ## Remaining activation gates
 
-1. Independent calculation Oracle and formal immutable temporary-root audit.
-2. Chronological 1/3/5-session evaluation using point-in-time membership and
+1. Chronological 1/3/5-session evaluation using point-in-time membership and
    corporate-action/lifecycle-safe outcomes.
-3. Review by Regime, industry, liquidity, volatility, turnover, chase, false
+2. Review by Regime, industry, liquidity, volatility, turnover, chase, false
    positives, and missed opportunities.
-4. Additive product payload and bilingual UI review.
-5. Separate publication and deployment authorization.
+3. Additive product payload and bilingual UI review.
+4. Separate publication and deployment authorization.

@@ -166,12 +166,15 @@ read or used.
   now implements a fixed, unvalidated offline preview for momentum breakout,
   strong-stock pullback, and trend continuation. Each has a separate formula,
   reasons, counterevidence, invalidation, missing-data state, within-channel
-  rank, and an eight-record bounded consumer. The 2026-08-26 read-only review
-  verified mechanics and exposed signal-volume counts, not performance.
+  rank, and an eight-record bounded consumer. The 2026-08-26 offline review
+  verified mechanics and exposed signal-volume counts, not performance. An
+  independent implementation also recomputed score, status, and rank without
+  importing the Production calculator. Its atomic `/tmp` audit formally reread
+  both source audits and returned zero mismatch for both Universes with input-
+  permutation equivalence.
   Technical reversal, fundamental value reversal, and defensive rotation
-  remain explicitly unavailable. There is no formal strategy audit, Oracle,
-  product payload, frontend integration, publication, deployment, or
-  Production effect.
+  remain explicitly unavailable. There is no product payload, frontend
+  integration, publication, deployment, or Production effect.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -217,9 +220,10 @@ quarantines and missing required evidence stays unavailable. The provider
 permission/coverage/pricing inquiry packet is prepared but has not been sent.
 No concrete source policy, adapter, history, or operational authority exists.
 Repository development has therefore returned to explainable Candidate
-strategy channels. The fixed offline preview and bounded consumer described
-above are implemented; an Oracle/formal audit and product integration remain
-next, while real validation is still blocked on adequate point-in-time history.
+strategy channels. The fixed offline preview, bounded consumer, independent
+Oracle, and formal temporary-root audit described above are implemented;
+additive product integration remains next, while real validation is still
+blocked on adequate point-in-time history.
 
 ## Next candidate work
 

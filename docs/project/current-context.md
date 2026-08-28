@@ -1,6 +1,8 @@
 # Authoritative Current Context
 
-Verified at: 2026-08-27 UTC
+Operational state verified at: 2026-08-27 UTC
+
+Repository development context updated at: 2026-08-28 UTC
 
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
@@ -295,10 +297,14 @@ and standing authorization also remain inactive by exact-revision mismatch.
   event context, entry geometry, and future option expression remain separate.
   ADR 0056 now adds a fixed, unvalidated Dell/offline preview for the first
   three technical channels and an eight-record-per-channel bounded consumer.
-  A read-only 2026-08-26 calculation produced reconciled full-population counts
-  and deterministic batch/consumer fingerprints. It is not a formal persisted
-  audit and has no Market Intelligence, Snapshot, frontend, publication,
-  deployment, or Production effect. Technical reversal, fundamental value
+  A 2026-08-26 offline calculation produced reconciled full-population counts
+  and deterministic batch/consumer fingerprints. Its independent Oracle
+  recomputed score, status, and rank without importing the Production
+  calculator. The immutable `/tmp` audit fingerprint is
+  `1c2036a6266647482de12d1ed7a1f9adf0f41311bc886979324ba3a0859c2877`;
+  both Universes have zero mismatches and input-permutation equivalence. It has
+  no Market Intelligence, Snapshot, frontend, publication, deployment, or
+  Production effect. Technical reversal, fundamental value
   reversal, and defensive rotation remain explicitly unavailable rather than
   being synthesized from proxies.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-

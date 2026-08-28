@@ -21,6 +21,12 @@
 - Added deterministic and input-permutation tests. No provider, `/data`,
   publication, Snapshot, frontend, deployment, scheduler, or Production state
   changed.
+- Added an independent Oracle that does not import the Production strategy
+  calculator and recomputes score, status, and rank. Added an atomic, immutable
+  `/tmp` audit bound to both formal source manifests. The real 2026-08-26
+  Primary and Secondary run passed with zero mismatch and input-permutation
+  equivalence; audit fingerprint is
+  `1c2036a6266647482de12d1ed7a1f9adf0f41311bc886979324ba3a0859c2877`.
 
 ## 2026-08-28 — Family-specific source resolution closure
 

@@ -43,9 +43,18 @@ Intelligence, Snapshot, frontend, Production, publication, or deployment.
 - Missing or quarantined inputs do not become zero or neutral scores.
 - The 2026-08-26 cross-section is an implementation review only; it did not fit
   weights or thresholds.
-- Chronological evaluation, an independent calculation Oracle, product payload
-  design, and activation review remain necessary before UI or Production use.
+- Chronological evaluation, product payload design, and activation review
+  remain necessary before UI or Production use.
 - Underlying-stock research results remain distinct from option returns.
+
+## Implementation Evidence
+
+The 2026-08-28 implementation now includes an independent calculation Oracle
+and an atomic, immutable `/tmp` audit. On the complete 2026-08-26 Candidate and
+Entry Geometry sources, both Primary and Secondary returned zero score, status,
+or rank mismatches and passed input-permutation equivalence. This closes the
+mechanical verification item only; the chronological-validation and activation
+boundaries above remain unchanged.
 
 ## Alternatives Considered
 

@@ -66,9 +66,9 @@
   ADR 0054/0055 now complete the intended general permission and family/fact
   source-resolution boundary, and the exact provider inquiry packet is
   prepared but unsent. Stop expanding generic governance here. The first fixed
-  explainable Candidate strategy-channel shadow and bounded consumer are now
-  complete; the next slice is its independent Oracle/formal audit and additive
-  product presentation. Historical performance calibration waits for
+  explainable Candidate strategy-channel shadow, bounded consumer, independent
+  Oracle, and atomic temporary-root audit are now complete; the next slice is
+  additive product presentation. Historical performance calibration waits for
   permission-cleared point-in-time data.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
@@ -201,6 +201,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Lossless Candidate summary/on-demand-detail Snapshot projection
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Fixed explainable three-channel offline preview and bounded consumer
+- [x] Independent strategy-channel Oracle and immutable temporary-root audit
 - [x] Sealed-signal/later-outcome chronological evaluation contract
 - [x] Read-only historical strategy-evaluation readiness audit
 - [x] Point-in-time historical research foundation and source capability gap matrix
@@ -250,10 +251,10 @@ inquiry packet are complete. Written candidate-plan answers and a real review
 package require separate authorization; only a separately authorized pilot may
 follow. Do not build provider adapters merely to continue governance work.
 
-The first explainable Candidate strategy-channel preview and bounded consumer
-are now implemented offline. The next safe feature step is an independent
-Oracle and formal temporary-root audit, followed by an additive bilingual
-product payload/UI review. Keep market fit and event context separate, expose
+The first explainable Candidate strategy-channel preview, bounded consumer,
+independent Oracle, and formal temporary-root audit are now implemented
+offline. The next safe feature step is an additive bilingual product payload/UI
+review. Keep market fit and event context separate, expose
 entry/chase risk, cap the first view at eight per channel, and prohibit a cross-
 strategy total. Defer performance claims and threshold calibration until the
 point-in-time historical foundation is physically ready.
