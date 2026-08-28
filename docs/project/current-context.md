@@ -293,9 +293,14 @@ and standing authorization also remain inactive by exact-revision mismatch.
   technical reversal, fundamental value reversal, and defensive rotation.
   Scores/ranks are restricted to same-channel research priority; market fit,
   event context, entry geometry, and future option expression remain separate.
-  This has no formula, real assessment, consumer, publication, or Production
-  effect. Fundamental/value data and point-in-time defensive taxonomy remain
-  missing inputs rather than technical proxies.
+  ADR 0056 now adds a fixed, unvalidated Dell/offline preview for the first
+  three technical channels and an eight-record-per-channel bounded consumer.
+  A read-only 2026-08-26 calculation produced reconciled full-population counts
+  and deterministic batch/consumer fingerprints. It is not a formal persisted
+  audit and has no Market Intelligence, Snapshot, frontend, publication,
+  deployment, or Production effect. Technical reversal, fundamental value
+  reversal, and defensive rotation remain explicitly unavailable rather than
+  being synthesized from proxies.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-
   dated signals are sealed without outcomes, and 1/3/5-session underlying-
   stock labels may be attached only later under a fixed no-random-split,

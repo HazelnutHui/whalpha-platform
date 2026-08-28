@@ -114,6 +114,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Market Intelligence Publication V1](data-contracts/market-intelligence-publication-v1.md): Immutable language-neutral analytics and reader contract.
 - [Opportunity Candidate Publication V1](data-contracts/opportunity-candidate-publication-v1.md): Bounded, language-neutral Candidate consumer and lineage contract.
 - [Opportunity Strategy Channels V1](product/opportunity-strategy-channels-v1.md): Independent Candidate archetypes, evidence boundaries, within-channel ranking, and temporal-validation requirements.
+- [Candidate Strategy Channel Preview V1](data-contracts/candidate-strategy-channel-preview-v1.md): Fixed offline formulas, explicit unavailable channels, explanations, and bounded consumer.
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md): Sealed point-in-time signals, separately matured stock outcomes, and anti-leakage evaluation policy.
 - [Candidate Entry Geometry V1](data-contracts/candidate-entry-geometry-v1.md): Offline source audit and additive consumer contract separating leadership quality from entry location and chase risk.
 - [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md): Dell-only compute/data authority, worktree-safe runner, measured baseline, and deterministic optimization sequence.
@@ -140,6 +141,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0047: Plan-aware provider readiness](decisions/0047-make-provider-readiness-plan-aware-and-reviewable.md): gives Identity and EOD distinct recency profiles and adds an immutable, non-executing operator-review gate for Basic current-session EOD and terminal recovery.
 - [ADR 0048: Split Candidate summary/detail delivery](decisions/0048-split-candidate-summary-from-on-demand-detail.md): reduces first-load Candidate bytes while preserving lossless, on-demand explanation and full source binding.
 - [ADR 0049: Separate Candidate strategy channels](decisions/0049-separate-candidate-strategy-channels.md): fixes independent same-archetype research channels and prohibits a cross-strategy total score.
+- [ADR 0056: Prototype explainable strategy channels offline](decisions/0056-prototype-explainable-strategy-channels-offline.md): adds the unvalidated three-channel shadow calculation without Production activation.
 - [ADR 0050: Seal strategy signals before outcomes](decisions/0050-seal-strategy-signals-before-forward-outcomes.md): separates contemporaneous point-in-time signals from later stock outcomes and prohibits random-split leakage.
 - [ADR 0051: Require a point-in-time historical research foundation](decisions/0051-require-point-in-time-historical-research-foundation.md): requires governed membership, actions, lifecycle, adjustments, and coverage before formula evaluation.
 - [ADR 0054: Gate data sources by explicit use permission](decisions/0054-gate-data-sources-by-explicit-use-permission.md): requires evidence-backed acquisition, retention, derived-use, display, and delivery permission without weakening guest parity.
@@ -158,6 +160,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [2026-08-27 Daily EOD Terminal Review Audit](audits/daily-eod-terminal-review-2026-08-27.md): Public provider evidence boundary, immutable real review, conservative next-day gate, and zero-request/write postflight.
 - [2026-08-27 Candidate Snapshot Split Audit](audits/candidate-snapshot-split-2026-08-27.md): Real 8/26 payload size, shard distribution, lossless reconstruction, and Production-isolation evidence.
 - [2026-08-27 Strategy Evaluation Readiness Audit](audits/strategy-evaluation-readiness-2026-08-27.md): EOD/Identity/benchmark coverage, membership/adjustment/lifecycle gaps, and the formal not-ready result.
+- [2026-08-28 Candidate Strategy Channel Preview Review](audits/candidate-strategy-channel-preview-2026-08-28.md): Read-only fixed-formula mechanics, full-population counts, bounded views, and validation limits.
 - [2026-08-14 Instrument Snapshot Audit](operations/data-audits/2026-08-14-instrument-snapshot-audit.md): Accepted integrity audit with an explicit provenance exception.
 - [2026-08-14 Grouped Daily Run Report](operations/data-audits/2026-08-14-grouped-daily-run.md): Non-sensitive single-request quality and publication record.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.

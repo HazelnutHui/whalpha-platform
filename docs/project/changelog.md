@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-28 — Explainable Candidate strategy-channel preview
+
+- Accepted ADR 0056 and replaced the taxonomy-only strategy shadow with a
+  source-bound offline preview for momentum breakout, strong-stock pullback,
+  and trend continuation. Each channel has its own fixed formula, status,
+  within-channel rank, reasons, counterevidence, invalidation, and missing-data
+  handling; no cross-channel total exists.
+- Kept market/sector fit outside technical scores and kept technical reversal,
+  fundamental value reversal, and defensive rotation explicitly unavailable.
+  Strong-stock pullback relies on Entry Geometry's quiet-pullback fact instead
+  of rewarding the general volume-participation component.
+- Added a bounded consumer that retains complete counts but exposes at most the
+  top eight Advance/Watch explanations per channel.
+- Completed a read-only calculation over the formal 2026-08-26 Candidate and
+  Entry Geometry audits. It found 10/43/130 Primary and 11/47/138 Secondary
+  Advance rows across breakout/pullback/continuation respectively; the first
+  view remains capped at eight per channel. This is mechanics evidence, not
+  historical validation or option performance.
+- Added deterministic and input-permutation tests. No provider, `/data`,
+  publication, Snapshot, frontend, deployment, scheduler, or Production state
+  changed.
+
 ## 2026-08-28 — Family-specific source resolution closure
 
 - Accepted ADR 0055 and added executable Source Resolution Governance V1.

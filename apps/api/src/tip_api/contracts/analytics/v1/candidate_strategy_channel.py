@@ -13,10 +13,16 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-
-STRATEGY_CHANNEL_CONTRACT_VERSION = "candidate-strategy-channel-shadow/1.0"
-STRATEGY_CHANNEL_CALCULATION_VERSION = "candidate-strategy-channel-shadow-v1.0.0"
-STRATEGY_CHANNEL_PARAMETER_SET_ID = "candidate-strategy-channel-taxonomy-v1"
+from tip_api.parameters.market_regime.candidate_strategy_preview_v1_0_0 import (
+    REQUIRED_PRIMARY_EVIDENCE as REQUIRED_PRIMARY_EVIDENCE_BY_CHANNEL,
+    STRATEGY_CHANNEL_CALCULATION_VERSION,
+    STRATEGY_CHANNEL_CONSUMER_CONTRACT_VERSION,
+    STRATEGY_CHANNEL_CONTRACT_VERSION,
+    STRATEGY_CHANNEL_DISPLAY_CAP,
+    STRATEGY_CHANNEL_ORDER,
+    STRATEGY_CHANNEL_PARAMETER_FINGERPRINT,
+    STRATEGY_CHANNEL_PARAMETER_SET_ID,
+)
 
 
 class StrategyChannel(StrEnum):
@@ -28,56 +34,10 @@ class StrategyChannel(StrEnum):
     DEFENSIVE_ROTATION = "defensive_rotation"
 
 
-STRATEGY_CHANNEL_ORDER = tuple(item.value for item in StrategyChannel)
-
-
 REQUIRED_PRIMARY_EVIDENCE = {
-    StrategyChannel.MOMENTUM_BREAKOUT: ("price_volume",),
-    StrategyChannel.STRONG_STOCK_PULLBACK: ("price_volume",),
-    StrategyChannel.TREND_CONTINUATION: ("price_volume",),
-    StrategyChannel.TECHNICAL_REVERSAL: ("price_volume",),
-    StrategyChannel.FUNDAMENTAL_VALUE_REVERSAL: (
-        "fundamentals",
-        "valuation",
-        "price_volume",
-    ),
-    StrategyChannel.DEFENSIVE_ROTATION: (
-        "market_regime",
-        "price_derived_relationship_proxy",
-        "price_volume",
-    ),
+    StrategyChannel(channel): values
+    for channel, values in REQUIRED_PRIMARY_EVIDENCE_BY_CHANNEL.items()
 }
-
-
-STRATEGY_CHANNEL_PARAMETER_FINGERPRINT = hashlib.sha256(
-    json.dumps(
-        {
-            "parameter_set_id": STRATEGY_CHANNEL_PARAMETER_SET_ID,
-            "channel_order": STRATEGY_CHANNEL_ORDER,
-            "status_order": (
-                "advance_to_research",
-                "watch_for_trigger",
-                "deprioritized",
-                "unavailable",
-            ),
-            "required_primary_evidence": {
-                channel.value: values
-                for channel, values in REQUIRED_PRIMARY_EVIDENCE.items()
-            },
-            "score_scope": "within_channel_research_priority_not_return_probability",
-            "cross_channel_score_prohibited": True,
-            "market_fit_separate_from_channel_score": True,
-            "event_context_is_auxiliary": True,
-            "first_rejection_is_risk_not_status_reason": True,
-            "advanced_result_requires_counterevidence": True,
-            "underlying_stock_result_not_option_return": True,
-            "price_volume_not_fund_flow": True,
-        },
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=True,
-    ).encode("utf-8")
-).hexdigest()
 
 
 class StrategyChannelStatus(StrEnum):
@@ -332,6 +292,95 @@ class CandidateStrategyChannelBatchV1(FrozenModel):
                 raise ValueError("within-channel ranks must be unique and contiguous")
         if _fingerprint(self, exclude={"logical_fingerprint"}) != self.logical_fingerprint:
             raise ValueError("strategy-channel batch logical fingerprint mismatch")
+        return self
+
+
+class CandidateStrategyChannelViewV1(FrozenModel):
+    schema_version: Literal["1.0"] = "1.0"
+    channel: StrategyChannel
+    status_counts: dict[StrategyChannelStatus, int]
+    qualifying_count: int = Field(ge=0)
+    display_cap: Literal[STRATEGY_CHANNEL_DISPLAY_CAP] = STRATEGY_CHANNEL_DISPLAY_CAP
+    displayed_records: tuple[CandidateStrategyChannelAssessmentV1, ...]
+    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def view_reconciles(self) -> "CandidateStrategyChannelViewV1":
+        if any(count < 0 for count in self.status_counts.values()):
+            raise ValueError("strategy-channel status counts cannot be negative")
+        expected_qualifying = sum(
+            self.status_counts.get(status, 0)
+            for status in (
+                StrategyChannelStatus.ADVANCE_TO_RESEARCH,
+                StrategyChannelStatus.WATCH_FOR_TRIGGER,
+            )
+        )
+        if self.qualifying_count != expected_qualifying:
+            raise ValueError("strategy-channel qualifying count does not reconcile")
+        if len(self.displayed_records) != min(self.qualifying_count, self.display_cap):
+            raise ValueError("strategy-channel display count differs from its cap")
+        if any(
+            row.channel is not self.channel
+            or row.status
+            not in {
+                StrategyChannelStatus.ADVANCE_TO_RESEARCH,
+                StrategyChannelStatus.WATCH_FOR_TRIGGER,
+            }
+            for row in self.displayed_records
+        ):
+            raise ValueError("strategy-channel view contains an ineligible record")
+        ranks = tuple(row.within_channel_rank for row in self.displayed_records)
+        if ranks != tuple(range(1, len(ranks) + 1)):
+            raise ValueError("strategy-channel view must contain the leading contiguous ranks")
+        if _fingerprint(self, exclude={"logical_fingerprint"}) != self.logical_fingerprint:
+            raise ValueError("strategy-channel view logical fingerprint mismatch")
+        return self
+
+
+class CandidateStrategyChannelConsumerV1(FrozenModel):
+    schema_version: Literal["1.0"] = "1.0"
+    contract_version: Literal[STRATEGY_CHANNEL_CONSUMER_CONTRACT_VERSION] = (
+        STRATEGY_CHANNEL_CONSUMER_CONTRACT_VERSION
+    )
+    as_of_session: date
+    universe_id: str
+    source_batch_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    channel_order: tuple[
+        StrategyChannel,
+        StrategyChannel,
+        StrategyChannel,
+        StrategyChannel,
+        StrategyChannel,
+        StrategyChannel,
+    ] = tuple(StrategyChannel)
+    channels: tuple[
+        CandidateStrategyChannelViewV1,
+        CandidateStrategyChannelViewV1,
+        CandidateStrategyChannelViewV1,
+        CandidateStrategyChannelViewV1,
+        CandidateStrategyChannelViewV1,
+        CandidateStrategyChannelViewV1,
+    ]
+    cross_channel_score_prohibited: Literal[True] = True
+    shadow_only: Literal[True] = True
+    warnings: tuple[str, ...]
+    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def consumer_reconciles(self) -> "CandidateStrategyChannelConsumerV1":
+        if tuple(item.value for item in self.channel_order) != STRATEGY_CHANNEL_ORDER:
+            raise ValueError("strategy-channel consumer order differs")
+        if tuple(item.channel for item in self.channels) != self.channel_order:
+            raise ValueError("strategy-channel consumer views differ from product order")
+        for view in self.channels:
+            if any(
+                row.as_of_session != self.as_of_session
+                or row.universe_id != self.universe_id
+                for row in view.displayed_records
+            ):
+                raise ValueError("strategy-channel consumer record identity differs")
+        if _fingerprint(self, exclude={"logical_fingerprint"}) != self.logical_fingerprint:
+            raise ValueError("strategy-channel consumer logical fingerprint mismatch")
         return self
 
 

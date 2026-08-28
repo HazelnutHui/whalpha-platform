@@ -100,22 +100,33 @@ model.
 
 ## Current implementation state
 
-Repository source contains only the typed shadow contract
-`candidate-strategy-channel-shadow/1.0` and its invariants. It is not connected
-to Candidate calculation, Market Intelligence, Snapshot, frontend, or
-Production. Dell remains the only approved compute, history, and governance
-boundary for later formula research.
+Repository source now contains the typed shadow contract plus ADR 0056's first
+fixed, source-bound offline preview for momentum breakout, strong-stock
+pullback, and trend continuation. It reuses the exact Candidate and Entry
+Geometry batches, emits all six channel results, and bounds the first consumer
+to eight ranked explanations per channel. Technical reversal, fundamental
+value reversal, and defensive rotation remain explicitly unavailable.
+
+The fixed weights are transparent provisional mechanics, not chronologically
+validated parameters. Market/sector fit remains separate and unvalidated. The
+preview is not connected to Market Intelligence, Snapshot, frontend,
+publication, deployment, or Production. See
+[Candidate Strategy Channel Preview V1](../data-contracts/candidate-strategy-channel-preview-v1.md)
+and the [2026-08-28 read-only review](../audits/candidate-strategy-channel-preview-2026-08-28.md).
 
 ## Planned implementation sequence
 
-1. Define a point-in-time chronological evaluation panel and channel outcome
-   ledger without adding new Production fields.
-2. Freeze and evaluate momentum breakout, strong-stock pullback, and trend
-   continuation formulas separately.
-3. Add reversal-specific stabilization facts and evaluate technical reversal.
-4. Complete security taxonomy/defensive mapping and evaluate defensive
+1. Add an independent calculation Oracle and immutable temporary-root audit
+   for the fixed three-channel shadow preview.
+2. Evaluate the three formulas chronologically after the point-in-time panel
+   and outcome ledger are physically ready; revise parameters only through a
+   new version.
+3. Design an additive bilingual product payload only after explanation and
+   signal-volume review; keep the display cap at eight per channel.
+4. Add reversal-specific stabilization facts and evaluate technical reversal.
+5. Complete security taxonomy/defensive mapping and evaluate defensive
    rotation across Regimes.
-5. Ingest governed fundamentals and valuation data before implementing
+6. Ingest governed fundamentals and valuation data before implementing
    fundamental value reversal.
-6. Publish only channels that pass audit, temporal validation, and separate
+7. Publish only channels that pass audit, temporal validation, and separate
    activation review.

@@ -162,12 +162,16 @@ read or used.
   Repository source has completed summary/detail payload separation but has not
   deployed it; workspace code splitting remains required before substantially
   expanding the UI.
-- Repository source defines six independent Candidate strategy channels, but
-  only as a typed shadow taxonomy. It has no formula, real assessment,
-  historical validation, consumer, or Production integration. Fundamental
-  value reversal remains explicitly unavailable without governed fundamental
-  and valuation inputs; defensive rotation still needs point-in-time security
-  taxonomy and channel-specific evaluation.
+- Repository source defines six independent Candidate strategy channels and
+  now implements a fixed, unvalidated offline preview for momentum breakout,
+  strong-stock pullback, and trend continuation. Each has a separate formula,
+  reasons, counterevidence, invalidation, missing-data state, within-channel
+  rank, and an eight-record bounded consumer. The 2026-08-26 read-only review
+  verified mechanics and exposed signal-volume counts, not performance.
+  Technical reversal, fundamental value reversal, and defensive rotation
+  remain explicitly unavailable. There is no formal strategy audit, Oracle,
+  product payload, frontend integration, publication, deployment, or
+  Production effect.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -212,9 +216,10 @@ Ticker joins and first-non-null selection are disabled; any usable conflict
 quarantines and missing required evidence stays unavailable. The provider
 permission/coverage/pricing inquiry packet is prepared but has not been sent.
 No concrete source policy, adapter, history, or operational authority exists.
-The next authorized repository development may therefore return to explainable
-Candidate strategy channels; real validation remains blocked on adequate
-point-in-time history.
+Repository development has therefore returned to explainable Candidate
+strategy channels. The fixed offline preview and bounded consumer described
+above are implemented; an Oracle/formal audit and product integration remain
+next, while real validation is still blocked on adequate point-in-time history.
 
 ## Next candidate work
 

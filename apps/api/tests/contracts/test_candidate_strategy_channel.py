@@ -9,8 +9,11 @@ from pydantic import ValidationError
 from tip_api.contracts.analytics.v1 import (
     CandidateStrategyChannelAssessmentV1,
     CandidateStrategyChannelBatchV1,
+    STRATEGY_CHANNEL_CALCULATION_VERSION,
+    STRATEGY_CHANNEL_CONTRACT_VERSION,
     STRATEGY_CHANNEL_ORDER,
     STRATEGY_CHANNEL_PARAMETER_FINGERPRINT,
+    STRATEGY_CHANNEL_PARAMETER_SET_ID,
     StrategyChannel,
     strategy_channel_logical_fingerprint,
 )
@@ -55,9 +58,9 @@ def _assessment(
     unavailable = status == "unavailable"
     payload: dict[str, object] = {
         "schema_version": "1.0",
-        "contract_version": "candidate-strategy-channel-shadow/1.0",
-        "calculation_version": "candidate-strategy-channel-shadow-v1.0.0",
-        "parameter_set_id": "candidate-strategy-channel-taxonomy-v1",
+        "contract_version": STRATEGY_CHANNEL_CONTRACT_VERSION,
+        "calculation_version": STRATEGY_CHANNEL_CALCULATION_VERSION,
+        "parameter_set_id": STRATEGY_CHANNEL_PARAMETER_SET_ID,
         "parameter_fingerprint": DIGEST,
         "as_of_session": SESSION.isoformat(),
         "universe_id": "primary",
@@ -112,9 +115,9 @@ def _batch(records: list[dict[str, object]] | None = None) -> dict[str, object]:
         counts[channel] = channel_counts
     payload: dict[str, object] = {
         "schema_version": "1.0",
-        "contract_version": "candidate-strategy-channel-shadow/1.0",
-        "calculation_version": "candidate-strategy-channel-shadow-v1.0.0",
-        "parameter_set_id": "candidate-strategy-channel-taxonomy-v1",
+        "contract_version": STRATEGY_CHANNEL_CONTRACT_VERSION,
+        "calculation_version": STRATEGY_CHANNEL_CALCULATION_VERSION,
+        "parameter_set_id": STRATEGY_CHANNEL_PARAMETER_SET_ID,
         "parameter_fingerprint": DIGEST,
         "as_of_session": SESSION.isoformat(),
         "universe_id": "primary",
