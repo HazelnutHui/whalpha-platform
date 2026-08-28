@@ -167,9 +167,10 @@ read or used.
 - ADR 0051 defines the source-neutral historical foundation and retention
   boundary. Repository source now implements immutable provider-neutral typed
   rows for corporate-action observations, lifecycle evidence, three-state
-  daily membership, adjustment entries, and bounded coverage/readiness, with
-  fixture-only validation. PyArrow schemas, Parquet repositories, real rows,
-  and 252/504-session history remain physically absent.
+  daily membership, adjustment entries, and bounded coverage/readiness.
+  Explicit PyArrow schemas and immutable temporary-root Parquet repositories
+  now pass synthetic round-trip, hash, conflict, corruption, and path-safety
+  tests. Real rows and 252/504-session history remain physically absent.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
@@ -427,8 +428,8 @@ about 1.66 GB before new families, so disk is not the blocker; historical
 Identity pagination would take roughly 28–40 serial hours from the current
 29-session base. Provider permission, live endpoint entitlement, and missing
 merger/successor/terminal sources block a real pilot. The next repository-safe
-work is deterministic PyArrow schemas and temporary-root Parquet writer/reader
-validation only.
+work is saved synthetic provider-response mapping, then independent split and
+dividend adjustment invariants; neither step uses credentials or `/data`.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

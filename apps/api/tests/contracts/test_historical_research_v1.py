@@ -22,6 +22,7 @@ from tip_api.contracts.market_data.v1 import (
     InstrumentLifecycleStatus,
     KnowledgeTimeStatus,
     LineageEvidenceStatus,
+    RESEARCH_REQUIRED_DATASET_FAMILIES,
     ResolutionStatus,
     UniverseMembershipDecisionV1,
     UniverseMembershipDisposition,
@@ -420,7 +421,10 @@ def test_research_ready_coverage_requires_every_completed_family() -> None:
         coverage_reference(family, index).model_copy(
             update={"first_session": sessions[0]}
         )
-        for index, family in enumerate(HistoricalDatasetFamily, start=1)
+        for index, family in enumerate(
+            sorted(RESEARCH_REQUIRED_DATASET_FAMILIES, key=lambda item: item.value),
+            start=1,
+        )
     )
     manifest = HistoricalCoverageManifestV1(
         coverage_id="a" * 64,
@@ -454,7 +458,10 @@ def test_research_ready_coverage_rejects_short_or_undercovered_history() -> None
         coverage_reference(family, index).model_copy(
             update={"first_session": short_sessions[0]}
         )
-        for index, family in enumerate(HistoricalDatasetFamily, start=1)
+        for index, family in enumerate(
+            sorted(RESEARCH_REQUIRED_DATASET_FAMILIES, key=lambda item: item.value),
+            start=1,
+        )
     )
     with pytest.raises(ValidationError):
         HistoricalCoverageManifestV1(
@@ -492,6 +499,67 @@ def test_research_ready_coverage_rejects_short_or_undercovered_history() -> None
             maximum_outcome_horizon_sessions=5,
             matured_signal_session_count=221,
             datasets=undercovered,
+            readiness_status=HistoricalReadinessStatus.RESEARCH_READY,
+            reason_codes=(),
+            created_at=INGESTED_AT,
+            logical_fingerprint="b" * 64,
+        )
+
+
+def test_source_observations_do_not_replace_canonical_corporate_actions() -> None:
+    sessions = tuple(
+        date(2026, 8, 26) - timedelta(days=index)
+        for index in reversed(range(252))
+    )
+    incomplete_families = (
+        RESEARCH_REQUIRED_DATASET_FAMILIES
+        - {HistoricalDatasetFamily.CORPORATE_ACTION}
+        | {HistoricalDatasetFamily.CORPORATE_ACTION_SOURCE_OBSERVATION}
+    )
+    datasets = tuple(
+        coverage_reference(family, index).model_copy(
+            update={"first_session": sessions[0]}
+        )
+        for index, family in enumerate(
+            sorted(incomplete_families, key=lambda item: item.value),
+            start=1,
+        )
+    )
+    with pytest.raises(ValidationError):
+        HistoricalCoverageManifestV1(
+            coverage_id="a" * 64,
+            sessions=sessions,
+            feature_warmup_sessions=26,
+            maximum_outcome_horizon_sessions=5,
+            matured_signal_session_count=221,
+            datasets=datasets,
+            readiness_status=HistoricalReadinessStatus.RESEARCH_READY,
+            reason_codes=(),
+            created_at=INGESTED_AT,
+            logical_fingerprint="b" * 64,
+        )
+
+    complete_required = tuple(
+        coverage_reference(family, index).model_copy(
+            update={"first_session": sessions[0]}
+        )
+        for index, family in enumerate(
+            sorted(RESEARCH_REQUIRED_DATASET_FAMILIES, key=lambda item: item.value),
+            start=1,
+        )
+    )
+    incomplete_observation = coverage_reference(
+        HistoricalDatasetFamily.CORPORATE_ACTION_SOURCE_OBSERVATION,
+        7,
+    ).model_copy(update={"first_session": sessions[0], "completed": False})
+    with pytest.raises(ValidationError):
+        HistoricalCoverageManifestV1(
+            coverage_id="a" * 64,
+            sessions=sessions,
+            feature_warmup_sessions=26,
+            maximum_outcome_horizon_sessions=5,
+            matured_signal_session_count=221,
+            datasets=(*complete_required, incomplete_observation),
             readiness_status=HistoricalReadinessStatus.RESEARCH_READY,
             reason_codes=(),
             created_at=INGESTED_AT,

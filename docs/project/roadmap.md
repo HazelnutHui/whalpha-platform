@@ -57,9 +57,11 @@
   252/504-session boundary. The current public provider review and Dell
   storage/request plan are also complete. Provider-neutral historical row and
   coverage contracts now enforce the point-in-time boundary with synthetic
-  tests. The next repository-safe step is fixture-only PyArrow schemas and
-  temporary-root Parquet writers/readers; real provider work remains blocked
-  on permission, entitlement, and lifecycle-source review.
+  tests, and the four new row families have explicit temporary-root Parquet
+  writers/readers with immutable completion evidence. The next repository-safe
+  step is saved synthetic provider-response mapping and independent adjustment
+  invariants; real provider work remains blocked on permission, entitlement,
+  and lifecycle-source review.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -194,6 +196,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Read-only historical strategy-evaluation readiness audit
 - [x] Point-in-time historical research foundation and source capability gap matrix
 - [x] Provider-neutral historical row and coverage/readiness contracts
+- [x] Historical PyArrow schemas and temporary-root Parquet repositories
 
 ## Next Small Target
 
@@ -210,9 +213,9 @@ compatible with the documented owner-only terms, owner non-display/derived use
 needs clarification, live historical/corporate-action entitlement is
 unverified, and full lifecycle sources are absent.
 
-Next implement deterministic PyArrow schemas, temporary-root Parquet writers/
-readers, and synthetic corporate-action/lifecycle/adjustment/membership round-
-trip fixtures. Do not access credentials, acquire, or write history
+Next implement Massive corporate-action mapping against saved synthetic
+responses only, followed by independent split/dividend adjustment and reverse-
+to-raw invariants. Do not access credentials, acquire, or write history
 until source permission, product posture, account entitlement, and an exact
 pilot are separately reviewed. Do not select formulas or thresholds from one-
 session distributions. Keep Snapshot 1.8 undeployed until its exact bundle and

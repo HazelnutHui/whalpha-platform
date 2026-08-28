@@ -317,8 +317,12 @@ and standing authorization also remain inactive by exact-revision mismatch.
   preferred. Provider-neutral Pydantic row/manifest contracts now enforce
   three clocks, stable-ID lineage, tri-state membership, distinct split/total-
   return factors, and a 252-session research-ready floor using synthetic
-  fixtures. This adds no PyArrow repository, physical dataset, provider
-  verification, `/data` write, formula, publication, or deployment.
+  fixtures. Explicit Arrow schemas and immutable temporary-root Parquet
+  repositories now cover source action observations, lifecycle, membership,
+  and adjustments with formal reread and tamper/conflict gates. Provider source
+  observations cannot substitute for canonical Corporate Action coverage.
+  This adds no canonical dataset, provider verification, `/data` write,
+  formula, publication, or deployment.
 - That 2026-08-28 public-source/storage review is now complete. Massive Basic's
   documented EOD, point-in-time reference, split, and dividend shapes are
   technically plausible, and projected Dell storage is small. A real pilot is
@@ -326,8 +330,8 @@ and standing authorization also remain inactive by exact-revision mismatch.
   successor/terminal evidence is missing, and official individual-use terms
   conflict with equal-capability friend/guest access and raise a separate non-
   display/derived-use question. No access, data, or deployment state changed.
-  The next safe slice is fixture-only PyArrow schemas and temporary-root
-  Parquet writers/readers.
+  The next safe slice is saved synthetic provider-response mapping, followed by
+  independent split/dividend adjustment invariants.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

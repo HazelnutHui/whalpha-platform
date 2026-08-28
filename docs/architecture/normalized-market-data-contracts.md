@@ -15,9 +15,11 @@ Partially Implemented
 Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral
 Python/Pydantic contracts with PyArrow persistence and formal readers. The
 bounded Massive workflows have published the canonical sequence recorded in
-current status. Corporate Action V1 and Universe Membership V1 now have
-provider-neutral typed historical row boundaries, but no PyArrow repositories,
-provider adapters, or completed datasets. Classification V1 has its separately
+current status. The historical boundary now has a provider-neutral corporate-
+action source-observation repository and a daily Universe-decision repository;
+the source observation does not substitute for canonical Corporate Action V1.
+Neither family has a provider adapter or completed canonical dataset.
+Classification V1 has its separately
 documented security-evidence implementation state. No SQL database or general
 historical backfill job exists.
 

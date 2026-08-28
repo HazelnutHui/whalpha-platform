@@ -140,6 +140,8 @@ is slow but workable on Dell. Identity pagination, not EOD, is the dominant
 runtime. Data-source completeness and permission are the blockers, not Dell
 CPU, disk, or Parquet.
 
-The safe next implementation work is fixture-only physical contracts and
-readers. A real provider pilot remains blocked until the licensing/product
-posture and exact account entitlement are reviewed.
+The safe next implementation work at review time was fixture-only physical
+contracts and readers; that repository-only step is now complete. Saved
+synthetic response mapping and independent adjustment invariants may proceed,
+but a real provider pilot remains blocked until the licensing/product posture
+and exact account entitlement are reviewed.

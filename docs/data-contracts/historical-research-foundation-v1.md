@@ -3,8 +3,9 @@
 ## Status
 
 Implemented as provider-neutral, immutable Python/Pydantic row and manifest
-contracts with synthetic tests. No PyArrow schema, Parquet repository,
-provider adapter, canonical dataset, `/data` write, or research result exists.
+contracts plus explicit PyArrow schemas and temporary-root Parquet repositories
+with synthetic tests. No provider adapter, canonical dataset, `/data` write,
+or research result exists.
 
 ## Purpose
 
@@ -23,6 +24,10 @@ identifier and revision, stable-ID resolution, action-specific facts,
 effective/source-available/first-observed/ingested timing, correction or
 cancellation lineage, and explicit quality state. Incomplete action fields are
 accepted only as quarantined evidence; heuristics never establish an action.
+This source family is explicitly distinct from the required canonical
+`corporate_action` family and cannot substitute for it in `research_ready`.
+A completed source partition may contain zero rows so a valid no-event result
+can be represented without inventing an action.
 
 ### Instrument lifecycle observation
 
@@ -87,11 +92,23 @@ The contracts are exported from
 `tip_api.contracts.market_data.v1`. The implementation lives in
 `historical_research.py` and is covered by fixture-only contract tests.
 
-## Next physical boundary
+## Implemented physical boundary
 
-The next separately reviewable slice is deterministic PyArrow schemas plus
-temporary-root Parquet writers/readers and synthetic round-trip, corruption,
-ordering, hash, and completion tests. It must not use provider credentials or
-write the Dell canonical `/data` root. A real pilot remains blocked by source
-permission, account entitlement, lifecycle-source coverage, and an exact
-authorized acquisition plan.
+Corporate-action source observations, lifecycle observations, daily membership
+decisions, and adjustment entries have exact Arrow schemas. Their repository:
+
+- uses the proposed schema-versioned family partitions;
+- orders rows and rejects duplicate business keys;
+- writes a staged Parquet file plus completion manifest and atomically installs
+  the immutable partition;
+- records logical and physical SHA-256 evidence;
+- formally rereads schema, count, ordering, hashes, partition path, and typed
+  rows;
+- rejects unsafe path segments, symlink boundaries, incomplete partitions,
+  corruption, and conflicting reruns.
+
+All repository tests use isolated temporary roots. The next safe slice is
+provider mapping against saved synthetic response fixtures, followed by
+independent split/dividend adjustment invariants. A real pilot remains blocked
+by source permission, account entitlement, lifecycle-source coverage, and an
+exact authorized acquisition plan.

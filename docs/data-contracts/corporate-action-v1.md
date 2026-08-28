@@ -10,9 +10,9 @@ Partially Implemented — Typed Source Observation Only
 
 The provider-neutral historical source-observation record implements the
 action scope, source revision/correction state, three clocks, stable-ID
-resolution, evidence quality, and action-specific validation. Canonical event
-IDs, PyArrow persistence, completed coverage, and provider adapters remain
-unimplemented.
+resolution, evidence quality, action-specific validation, and fixture-only
+PyArrow persistence. Canonical event IDs, canonical Corporate Action
+persistence, completed coverage, and provider adapters remain unimplemented.
 
 ## Grain
 

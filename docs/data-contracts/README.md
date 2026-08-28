@@ -39,8 +39,8 @@ historical typed boundary:
 
 These documents are not JSON Schema, SQL DDL, sample production data, or
 provider adapters. The historical foundation now has provider-neutral
-Pydantic row/manifest contracts and synthetic validation, but no PyArrow
-schema or physical repository. EOD Price Bar V1 and the point-in-time Instrument/Provider
+Pydantic row/manifest contracts, explicit PyArrow schemas, and temporary-root
+Parquet repository validation, but no canonical dataset. EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
 The initial blocked live attempts remain historical audit evidence; corrected
 bounded operations subsequently published the current canonical sequence. The

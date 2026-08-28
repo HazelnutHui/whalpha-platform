@@ -7,6 +7,19 @@ from tip_api.persistence.eod_bars import (
     EodPriceBarRepository,
     EodPriceBarWriteResult,
 )
+from tip_api.persistence.historical_research import (
+    HistoricalResearchConflictError,
+    HistoricalResearchCorruptionError,
+    HistoricalResearchPartitionWriteResult,
+    HistoricalResearchPersistenceError,
+)
+from tip_api.persistence.instrument_master import (
+    InstrumentMasterSnapshotConflictError,
+    InstrumentMasterSnapshotCorruptionError,
+    InstrumentMasterSnapshotPersistenceError,
+    InstrumentMasterSnapshotRepository,
+    InstrumentMasterSnapshotWriteResult,
+)
 
 __all__ = [
     "EodPriceBarConflictError",
@@ -14,5 +27,13 @@ __all__ = [
     "EodPriceBarPersistenceError",
     "EodPriceBarRepository",
     "EodPriceBarWriteResult",
+    "HistoricalResearchConflictError",
+    "HistoricalResearchCorruptionError",
+    "HistoricalResearchPartitionWriteResult",
+    "HistoricalResearchPersistenceError",
+    "InstrumentMasterSnapshotConflictError",
+    "InstrumentMasterSnapshotCorruptionError",
+    "InstrumentMasterSnapshotPersistenceError",
+    "InstrumentMasterSnapshotRepository",
+    "InstrumentMasterSnapshotWriteResult",
 ]
-from tip_api.persistence.instrument_master import InstrumentMasterSnapshotConflictError, InstrumentMasterSnapshotCorruptionError, InstrumentMasterSnapshotPersistenceError, InstrumentMasterSnapshotRepository, InstrumentMasterSnapshotWriteResult

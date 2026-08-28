@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-28 — Historical fixture Parquet repositories
+
+- Added explicit PyArrow schemas and immutable Parquet partition repositories
+  for corporate-action source observations, instrument lifecycle observations,
+  daily Universe membership decisions, and adjustment-ledger entries.
+- Added deterministic ordering and logical fingerprints, physical file hashes,
+  staged atomic completion manifests, idempotent rereads, and fail-closed
+  duplicate, conflict, corruption, path, and symlink validation.
+- Separated provider corporate-action observations from the required canonical
+  Corporate Action research family. A source observation can never satisfy the
+  canonical readiness gate; zero-event source partitions are representable
+  without inventing rows.
+- All physical tests wrote only isolated temporary roots. No provider adapter
+  or request, credential access, `/data` write, real history, formula,
+  publication, deployment, scheduler, or notification occurred.
+
 ## 2026-08-28 — Historical research typed foundation contracts
 
 - Added immutable provider-neutral Pydantic records for corporate-action

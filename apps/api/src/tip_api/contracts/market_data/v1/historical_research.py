@@ -83,6 +83,7 @@ class AdjustmentAvailabilityStatus(StrEnum):
 class HistoricalDatasetFamily(StrEnum):
     EOD_PRICE_BAR = "eod_price_bar"
     POINT_IN_TIME_IDENTITY = "point_in_time_identity"
+    CORPORATE_ACTION_SOURCE_OBSERVATION = "corporate_action_source_observation"
     UNIVERSE_MEMBERSHIP = "universe_membership"
     CORPORATE_ACTION = "corporate_action"
     INSTRUMENT_LIFECYCLE = "instrument_lifecycle"
@@ -94,6 +95,18 @@ class HistoricalReadinessStatus(StrEnum):
     SOURCE_INCOMPLETE = "source_incomplete"
     QUARANTINED = "quarantined"
     RESEARCH_READY = "research_ready"
+
+
+RESEARCH_REQUIRED_DATASET_FAMILIES = frozenset(
+    {
+        HistoricalDatasetFamily.EOD_PRICE_BAR,
+        HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
+        HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP,
+        HistoricalDatasetFamily.CORPORATE_ACTION,
+        HistoricalDatasetFamily.INSTRUMENT_LIFECYCLE,
+        HistoricalDatasetFamily.ADJUSTMENT_LEDGER,
+    }
+)
 
 
 class FrozenContract(BaseModel):
@@ -663,14 +676,16 @@ class HistoricalCoverageManifestV1(FrozenContract):
         )
         if self.matured_signal_session_count > maximum_matured_count:
             raise ValueError("matured signal count exceeds the bounded session window")
-        required = set(HistoricalDatasetFamily)
+        required = RESEARCH_REQUIRED_DATASET_FAMILIES
         present = set(families)
         complete = {item.family for item in self.datasets if item.completed}
         if self.readiness_status is HistoricalReadinessStatus.RESEARCH_READY:
             if len(self.sessions) < 252:
                 raise ValueError("research-ready manifest requires at least 252 sessions")
-            if present != required or complete != required:
+            if not required.issubset(present) or not required.issubset(complete):
                 raise ValueError("research-ready manifest requires every completed family")
+            if complete != present:
+                raise ValueError("research-ready manifest cannot reference incomplete datasets")
             if any(
                 item.first_session > self.sessions[0]
                 or item.last_session < self.sessions[-1]

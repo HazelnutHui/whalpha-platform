@@ -2,7 +2,7 @@
 
 ## Status
 
-Design complete; provider pilot not authorized.
+Fixture-only physical foundation implemented; provider pilot not authorized.
 
 This plan turns ADR 0051 into a bounded Dell physical direction. It does not
 create a dataset, call a provider, inspect credentials, write `/data`, or grant
@@ -55,9 +55,12 @@ market-data/
     schema_version=1/coverage_id=<immutable-id>/
 ```
 
-This is a proposed layout for fixture implementation. Exact production paths
-must be frozen in the pilot approval plan. Completed partitions are immutable,
-symlinks are rejected, and conflicting reruns fail closed.
+The source-observation, lifecycle, membership, and adjustment fixture
+repositories now implement this layout under caller-provided temporary roots.
+Exact production paths must still be frozen in the pilot approval plan.
+Completed partitions are immutable, symlinks are rejected, and conflicting
+reruns fail closed. Provider corporate-action observations remain distinct from
+the future canonical Corporate Action family.
 
 ## Layer ownership
 
@@ -97,11 +100,11 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 
 ## Implementation sequence before a real pilot
 
-1. Add provider-neutral logical/Pydantic contracts for corporate-action source
+1. **Complete:** add provider-neutral logical/Pydantic contracts for corporate-action source
    observations, lifecycle, adjustment ledger, and coverage manifests.
-2. Refine Universe Membership V1 into an explicit included/excluded/
+2. **Complete:** refine Universe Membership V1 into an explicit included/excluded/
    quarantined physical decision with evaluated-base lineage.
-3. Add PyArrow schemas, deterministic fingerprints, temporary-root writers,
+3. **Complete:** add PyArrow schemas, deterministic fingerprints, temporary-root writers,
    formal readers, and tamper/conflict tests.
 4. Implement Massive response mapping against saved synthetic fixtures only.
 5. Implement independent split/dividend factor fixtures and reverse-to-raw
@@ -158,4 +161,6 @@ gaps require an additional source or a formally accepted quarantine boundary.
 - Current account entitlement for historical/corporate-action endpoints is not
   live-verified.
 - Merger/spinoff/successor and terminal-outcome source remains missing.
-- Physical contracts, readers, and fixture validation do not yet exist.
+- Provider response mapping and action-factor reconciliation fixtures remain
+  repository work; the physical row repositories themselves are complete for
+  the current fixture boundary.

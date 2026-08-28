@@ -11,8 +11,9 @@ Partially Implemented — Typed Daily Decision Only
 The provider-neutral historical daily-decision record implements explicit
 included/excluded/quarantined disposition, methodology and origin, exact
 evaluated-base/source fingerprints, cutoff/evaluation timing, and reason/quality
-state. Universe Definition, partition manifests, PyArrow persistence, and a
-real historical builder remain unimplemented.
+state plus fixture-only PyArrow persistence. Universe Definition, complete
+evaluated-base/disposition partition manifests, and a real historical builder
+remain unimplemented.
 
 ## Grain
 
