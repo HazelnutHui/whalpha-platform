@@ -261,9 +261,12 @@ and Snapshot 1.9 browser review are now implemented. Keep market fit and event
 context separate, expose entry/chase risk, cap the first view at eight per
 channel, and prohibit a cross-strategy total. Approval Plan 2.4 and local OCI
 bundle/postflight validation are complete. The next product action is human UI
-review followed by separately authorized Snapshot apply, bundle rebuild from a
-clean exact commit, and OCI deployment; defer performance claims and threshold
-calibration until the point-in-time historical foundation is physically ready.
+review. Its local candidate now preserves the selected Candidate subview and
+strategy channel in the URL and makes unavailable evidence explicit. After
+human acceptance, Snapshot apply, bundle rebuild from a clean exact commit,
+and OCI deployment each remain separately authorized actions; defer
+performance claims and threshold calibration until the point-in-time
+historical foundation is physically ready.
 
 ## Phase 2 — Intraday and Options
 

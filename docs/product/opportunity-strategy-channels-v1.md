@@ -115,8 +115,13 @@ The fixed weights are transparent provisional mechanics, not chronologically
 validated parameters. Market/sector fit remains separate and unvalidated. ADR
 0057 now projects the formal audit into one bounded Snapshot 1.9 payload and a
 bilingual lazy Strategy Channels workspace. It does not recalculate in the
-browser and remains unpublished and undeployed. See
-[Candidate Strategy Channel Preview V1](../data-contracts/candidate-strategy-channel-preview-v1.md)
+browser. Candidate view/channel state is URL-addressable and restores on
+refresh or browser history navigation. Strategy mode removes the unrelated
+risk-mode control, uses Advance + Watch as its headline population, and marks
+evidence-incomplete channels unavailable rather than presenting an unexplained
+zero. The UI remains unpublished and undeployed; user visual acceptance is
+still required. See
+[Candidate Strategy Channel Preview V1](../data-contracts/candidate-strategy-channel-preview-v1.md),
 the [Candidate Strategy Channel Product V1](../data-contracts/candidate-strategy-channel-product-v1.md),
 the [2026-08-28 offline review](../audits/candidate-strategy-channel-preview-2026-08-28.md),
 and the [product/Snapshot review](../audits/candidate-strategy-product-snapshot-review-2026-08-28.md).
@@ -126,9 +131,9 @@ and the [product/Snapshot review](../audits/candidate-strategy-product-snapshot-
 1. Evaluate the three formulas chronologically after the point-in-time panel
    and outcome ledger are physically ready; revise parameters only through a
    new version.
-2. Review the implemented additive bilingual payload/UI with the user; keep the
-   display cap at eight per channel and make any behavior change through a new
-   explicit contract/version.
+2. Complete user visual review of the implemented additive bilingual payload/
+   UI; keep the display cap at eight per channel and make any payload behavior
+   change through a new explicit contract/version.
 3. Add reversal-specific stabilization facts and evaluate technical reversal.
 4. Complete security taxonomy/defensive mapping and evaluate defensive
    rotation across Regimes.

@@ -77,6 +77,9 @@ describe('strategy-channel workspace', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Strategy channels' }));
     await waitFor(() => expect(getCandidateStrategies).toHaveBeenCalledTimes(1));
+    expect(new URL(window.location.href).searchParams.get('candidateView')).toBe('strategy');
+    expect(screen.queryByRole('button', { name: 'Balanced' })).not.toBeInTheDocument();
+    expect(screen.getByText('Advance + Watch pool')).toBeInTheDocument();
     expect(await screen.findByText('ABCD')).toBeInTheDocument();
     expect(screen.getByText('Compare like with like')).toBeInTheDocument();
     expect(screen.getByText('Human review remains required')).toBeInTheDocument();
@@ -84,5 +87,17 @@ describe('strategy-channel workspace', () => {
     fireEvent.click(screen.getByText('ABCD').closest('button')!);
     expect(screen.getByRole('dialog')).toHaveTextContent('ABCD · Momentum breakout');
     expect(screen.getByRole('dialog')).toHaveTextContent('The breakout can fail or reverse.');
+  });
+
+  it('restores a directly linked strategy channel and makes unavailable evidence explicit', async () => {
+    window.history.replaceState({}, '', '/dashboard/?view=candidates&lang=en&candidateView=strategy&candidateStrategy=technical_reversal');
+    render(<I18nProvider><OpportunityCandidatesPage /></I18nProvider>);
+    await waitFor(() => expect(getCandidateStrategies).toHaveBeenCalledTimes(1));
+    expect(await screen.findByRole('button', { name: /^Oversold technical reversal/ })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: /^Oversold technical reversal/ })).toHaveTextContent('Evidence pending · 1,718');
+    expect(screen.getByText('Stabilization and reclaim facts are not yet governed, so no proxy result is shown.')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: /^Strong-stock pullback/ }));
+    expect(new URL(window.location.href).searchParams.get('candidateStrategy')).toBe('strong_stock_pullback');
   });
 });

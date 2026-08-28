@@ -106,6 +106,8 @@
 .strategy-channel-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0 24px 18px; }
 .strategy-channel-card { display: grid; gap: 7px; min-height: 112px; padding: 16px; text-align: left; color: var(--text); background: var(--surface); border: 1px solid var(--border); border-radius: 11px; }
 .strategy-channel-card:hover, .strategy-channel-card.active { border-color: var(--accent); box-shadow: 0 8px 24px rgba(0,0,0,.08); transform: translateY(-1px); }
+.strategy-channel-card.unavailable { background: color-mix(in srgb, var(--surface) 88%, var(--muted)); }
+.strategy-channel-card.unavailable > strong { color: var(--muted); font-size: 1rem; }
 .strategy-channel-card > span { font-weight: 750; }
 .strategy-channel-card > strong { font-size: 1.55rem; }
 .strategy-channel-card > small { color: var(--muted); }
@@ -123,6 +125,7 @@
 .strategy-decision-grid > div { padding: 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-2); }
 .strategy-decision-grid h3 { margin-top: 0; }
 .strategy-decision-grid p { color: var(--muted); }
+.candidate-strategy-control-note { padding-left: 12px; border-left: 3px solid var(--warning); }
 
 @media (max-width: 760px) {
   .candidate-hero { padding: 28px 20px 18px; }

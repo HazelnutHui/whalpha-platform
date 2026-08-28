@@ -313,7 +313,11 @@ and standing authorization also remain inactive by exact-revision mismatch.
   validation, and temporary-guest postflight validation. A local 50-file
   bundle build passed without OCI access and carried the same product/audit
   fingerprints. No plan was approved/applied and no activation or deployment
-  occurred. Technical reversal,
+  occurred. The subsequent UI continuity pass preserves Candidate view and
+  strategy channel in the URL, removes the unrelated risk-mode control from
+  strategy mode, and makes evidence-incomplete channels explicit; 91 frontend
+  tests and the Snapshot-mode build pass. Human visual acceptance remains
+  pending. Technical reversal,
   fundamental value reversal, and defensive rotation remain explicitly
   unavailable rather than being synthesized from proxies.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-

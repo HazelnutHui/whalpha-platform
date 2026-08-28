@@ -182,6 +182,12 @@ read or used.
   bundle and guest-postflight validation. A local 50-file bundle build passed
   exact strategy hash/lineage/count/rank/boundary checks. No plan was approved
   or applied, no OCI connection occurred, and Production remains unchanged.
+  A subsequent UI continuity pass makes the Candidate subview and exact
+  strategy channel URL-addressable, removes irrelevant risk-mode controls from
+  strategy mode, uses the Advance + Watch population in its headline, and
+  explicitly labels evidence-incomplete channels. All 91 frontend tests and a
+  Snapshot-mode build pass. A Dell-local real-payload preview is available for
+  human review; this is not user acceptance or deployment.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and

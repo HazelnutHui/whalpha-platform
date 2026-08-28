@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-28 — Candidate strategy workspace continuity review
+
+- Made Candidate subview and strategy-channel selection URL-addressable, so
+  direct links, refresh, and browser history restore the exact research view.
+- Moved the Candidate subview selector ahead of contextual controls and removed
+  the disabled risk-mode selector from strategy mode. Its headline now reports
+  the selected channel's Advance + Watch pool rather than an entry-risk count.
+- Made the three evidence-incomplete channels visibly unavailable with their
+  affected population instead of presenting an unexplained zero. English and
+  Chinese remain one behavior with presentation-only translation.
+- The focused interaction tests, all 91 frontend tests, and Snapshot-mode build
+  pass. A Dell-local real 2026-08-26 payload preview was prepared for human
+  review. No `/data` write, publication, deployment, OCI access, or Production
+  change occurred.
+
 ## 2026-08-28 — Carry strategy identity through publication and bundle
 
 - Accepted ADR 0058 and added Approval Plan 2.4 exclusively for Snapshot 1.9 /
