@@ -23,8 +23,8 @@ MAX_TICKER_EVENT_REQUESTS = 5
 DEFAULT_SERIAL_PACE_SECONDS = 15
 DEFAULT_SOURCE_GAPS = (
     "account_endpoint_entitlement_unverified",
+    "equal_capability_source_permission_unresolved",
     "exact_live_pilot_authorization_absent",
-    "guest_friend_product_posture_conflict_unresolved",
     "merger_successor_terminal_source_incomplete",
     "provider_permission_review_incomplete",
 )

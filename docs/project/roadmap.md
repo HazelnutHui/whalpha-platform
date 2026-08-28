@@ -200,6 +200,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Historical PyArrow schemas and temporary-root Parquet repositories
 - [x] Synthetic Massive split/dividend mapping and adjustment invariants
 - [x] Credential-free read-only exact historical pilot planner
+- [x] Cross-family Data Record Governance V1 and equal-capability serving policy
 
 ## Next Small Target
 
@@ -219,8 +220,10 @@ unverified, and full lifecycle sources are absent.
 The credential-free read-only pilot planner is complete: it binds exact
 requested sessions and caller inventory, endpoint/page ceilings, deterministic
 future `/tmp` paths, source gaps, and a permanent default-deny result. Next
-re-review source permission, guest/friend product posture, account endpoint
-entitlement, missing lifecycle sources, and one exact live-pilot authorization.
+re-review equal-capability source permission, account endpoint entitlement,
+missing lifecycle sources, and one exact live-pilot authorization. Product
+posture is no longer open: guest and credential shared content stay identical,
+and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
 Do not select formulas or thresholds from one-session distributions. Keep
 Snapshot 1.8 undeployed until its exact bundle and browser behavior are

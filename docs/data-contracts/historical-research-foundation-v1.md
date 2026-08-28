@@ -112,6 +112,8 @@ decisions, and adjustment entries have exact Arrow schemas. Their repository:
 
 All repository tests use isolated temporary roots. Saved synthetic Massive
 split/dividend mapping and independent adjustment invariants are now complete.
-The next safe slice is a credential-free, read-only exact pilot planner. A real
-pilot remains blocked by source permission, account entitlement, lifecycle-
-source coverage, and an exact authorized acquisition plan.
+The credential-free, read-only exact pilot planner is also complete. A real
+pilot remains blocked by equal-capability source permission, account
+entitlement, lifecycle-source coverage, and an exact authorized acquisition
+plan. Cross-family state is now governed by Data Record Governance V1 without
+replacing the domain statuses in this contract.

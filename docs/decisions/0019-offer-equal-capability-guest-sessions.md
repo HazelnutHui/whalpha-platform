@@ -92,3 +92,17 @@ blocked as a supported data-source posture until the user obtains compatible
 permission/license or selects an alternate display-compatible source. The
 finding does not itself authorize disabling guest access, changing payloads,
 deleting data, or deploying a replacement.
+
+## 2026-08-28 product-policy reaffirmation
+
+The user explicitly reaffirmed that current guest and credential Sessions must
+retain the highest identical shared-product capability. Owner-only or member-
+only market analysis is not an acceptable workaround for a source-permission
+conflict. A source that cannot support equal-capability serving must remain out
+of future shared web publications for both entry paths until permission or a
+replacement source is documented. This decision does not alter the currently
+deployed payload.
+
+Future personal watchlists, holdings, and brokerage records are a different
+content scope: they may be isolated to their owner only after a real user-
+identity model exists, while shared market data and analytics remain identical.

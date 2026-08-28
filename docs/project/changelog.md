@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-28 — Unified record governance and shared-content parity
+
+- Accepted ADR 0052 and added Data Record Governance V1 with separate data-
+  layer, disposition, evidence, quality, coverage, point-in-time eligibility,
+  retention, content-scope, and web-serving dimensions. Similar domain states
+  are mapped, not flattened into one ambiguous status.
+- Added an executable standard registry for 16 current core data families and
+  fail-closed validation for family, layer, stable-key grain, retention, scope,
+  quarantine, exclusion, supersession, historical availability, and serving
+  policy.
+- Reaffirmed guest/credential shared-product parity as a fixed policy. There is
+  no owner-only market-analysis serving state; incompatible sources are blocked
+  from future shared publications for both entry paths. Future user-private
+  records require a real identity boundary.
+- Replaced the historical planner's obsolete unresolved-product-posture blocker
+  with the narrower unresolved equal-capability source-permission blocker.
+- No existing dataset was migrated, rewritten, deleted, published, or deployed;
+  no provider, credential, `/data`, authentication, or OCI state changed.
+
 ## 2026-08-28 — Read-only historical pilot planner
 
 - Added `historical-research-pilot-plan/1.0`, a pure planner that accepts only

@@ -106,6 +106,10 @@ deployment. Exact displayed scores are publication facts, not trade signals.
   Guest and credential Sessions expose the same data, functionality, language,
   Universe, precision, freshness, and analytics. No role-based difference is
   authorized.
+- The user has reaffirmed that this is a hard shared-product rule. Source
+  incompatibility must be resolved through permission or replacement, not an
+  owner-only market-analysis tier. Future personal records require a separate
+  identity boundary and do not change shared analytics parity.
 
 The 2026-08-27 deployment passed remote preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the temporary equal-capability
@@ -136,7 +140,9 @@ read or used.
   equal-capability guest path serves the same provider-derived payload to other
   users. Session protection and non-commercial friend use do not establish
   permission. Owner-only non-display/derivative calculation and retention also
-  require clarification. No access or deployment change has been authorized.
+  require clarification. Product posture is now resolved in favor of equal-
+  capability Sessions; compatible source permission remains unresolved. No
+  access or deployment change has been authorized.
 - Historical analytics replay current-as-of membership and are not a
   survivorship-free backtest.
 - The OCI bundle helper's `--snapshot-release` shortcut still resolves the
@@ -434,8 +440,12 @@ accepts only caller-supplied fingerprinted inventory, subtracts existing exact
 sessions, enforces the 80-request/zero-retry/15-second-serial boundary, and
 derives deterministic future `/tmp` package paths. It performs no storage scan,
 request, credential access, or write and permanently returns `not_authorized`.
-The next transition is external review of terms/product posture, account
-entitlement, missing lifecycle sources, and one exact live-pilot authorization.
+ADR 0052 and Data Record Governance V1 now add one executable cross-family
+registry and orthogonal disposition, evidence, quality, coverage, point-in-time,
+retention, content-scope, and serving dimensions. They do not rewrite existing
+records. The next transition is external review of equal-capability source
+permission, account entitlement, missing lifecycle sources, and one exact
+live-pilot authorization.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

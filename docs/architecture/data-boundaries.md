@@ -79,7 +79,15 @@ See [Data Access Boundary](../operations/data-access-boundary.md) for the
 accepted public data-free login/demo and private provider-backed Dashboard
 boundary.
 
-Massive-backed Market Data and derived works must remain private-owner only unless explicit public-display or redistribution authorization, a suitable business/display agreement, or an alternative public-display data source is documented. The private route enable flag is not authentication or authorization. Public accessibility does not grant redistribution rights.
+Massive-backed Market Data and derived works are not cleared for the confirmed
+equal-capability shared-product posture unless compatible permission, a
+suitable agreement, or an alternative display-compatible source is
+documented. The product will not create an owner-only market-analysis tier as
+a workaround: an incompatible source remains out of future shared publications
+for both guest and credential Sessions. The private route enable flag is not
+authentication or authorization. Public accessibility does not grant
+redistribution rights. The current deployed payload is unchanged by this
+architecture clarification.
 
 Licensing and entitlement must be reviewed before broader distribution, commercial use, or public provider-backed content.
 

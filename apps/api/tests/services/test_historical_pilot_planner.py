@@ -75,6 +75,8 @@ def test_maximum_plan_is_exactly_eighty_serial_requests_and_never_authorizes() -
     assert plan.authorization_status is PilotAuthorizationStatus.NOT_AUTHORIZED
     assert plan.next_action is PilotNextAction.REVIEW_PLAN_ONLY
     assert plan.source_gap_codes == DEFAULT_SOURCE_GAPS
+    assert "equal_capability_source_permission_unresolved" in plan.source_gap_codes
+    assert all("product_posture" not in code for code in plan.source_gap_codes)
     assert not any(
         (
             plan.acquisition_authorized,

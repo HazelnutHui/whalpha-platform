@@ -9,7 +9,11 @@ authorization.
 
 The provider-neutral Python/Pydantic row and coverage contracts plus explicit
 PyArrow schemas and temporary-root Parquet repositories are now implemented
-with synthetic tests. Canonical data and provider mappings remain absent.
+with synthetic tests. Saved synthetic split/dividend mapping, independent
+adjustment invariants, and the default-deny exact pilot planner are also
+implemented. Canonical historical data remains absent. Data Record Governance
+V1 supplies the cross-family state vocabulary without replacing these domain
+contracts.
 
 The immediate objective is not “more bars.” It is a history that can answer,
 for each signal session, which instrument existed, which Universe decision was
@@ -281,6 +285,6 @@ The first authorized operation should be a small representative pilot, not a
 - Canonical multi-event adjustment construction beyond the completed isolated
   split/dividend fixture invariants
 - Historical membership builder
-- Backfill planner and request estimates
+- Approved live-pilot execution and later bulk-backfill orchestration
 - Backup and deletion policy
 - Formula selection, signal generation, and performance evaluation

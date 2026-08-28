@@ -8,6 +8,7 @@
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
 - [Same-Day Identity and EOD Catch-Up V1](same-day-identity-eod-catchup-v1.md)
 - [Historical Research Foundation Contracts V1](historical-research-foundation-v1.md)
+- [Data Record Governance V1](data-record-governance-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
 
@@ -28,6 +29,7 @@ Implemented as Python/Pydantic contracts:
 - [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
 - [Historical Research Foundation Contracts V1](historical-research-foundation-v1.md)
+- [Data Record Governance V1](data-record-governance-v1.md)
 
 Accepted logical contracts only or only partially represented by the
 historical typed boundary:

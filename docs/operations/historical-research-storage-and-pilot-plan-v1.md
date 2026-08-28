@@ -189,5 +189,5 @@ gaps require an additional source or a formally accepted quarantine boundary.
 - Merger/spinoff/successor and terminal-outcome source remains missing.
 - Provider response mapping, action-factor reconciliation fixtures, and the
   read-only exact planner are complete for the network-free repository
-  boundary. Terms/product posture, account entitlement, lifecycle-source
+  boundary. Equal-capability source permission, account entitlement, lifecycle-source
   coverage, and an exact live-pilot authorization remain before acquisition.

@@ -74,3 +74,4 @@ Each ADR should include:
 - [0049: Separate Candidate Strategy Channels](0049-separate-candidate-strategy-channels.md)
 - [0050: Seal Strategy Signals Before Forward Outcomes](0050-seal-strategy-signals-before-forward-outcomes.md)
 - [0051: Require a Point-in-Time Historical Research Foundation](0051-require-point-in-time-historical-research-foundation.md)
+- [0052: Unify Cross-Family Data Record Governance Classification](0052-unify-data-record-governance-classification.md)

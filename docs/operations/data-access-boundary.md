@@ -33,7 +33,7 @@ A public portfolio or dashboard demo may be created later only if it uses:
 
 The demo must not imply live or real market state, must not expose credentials, and must remain separated from the private real-data dashboard.
 
-## Private Provider-Backed Dashboard
+## Session-Protected Provider-Backed Dashboard
 
 Market Dashboard V1 is implemented locally and as a private static OCI release. API mode displays provider-backed derived analytics from private routes and must not be exposed publicly. Snapshot mode reads private derived JSON snapshots under `/private-data/` and is protected by the same server-side session boundary as `/dashboard/` on OCI. Demo mode uses synthetic fixtures and is suitable for future data-free public demonstration only if it remains clearly labeled.
 Snapshot mode packages provider-backed derived analytics as static JSON.
@@ -48,13 +48,16 @@ official-terms review found that Massive individual-use data is described as
 owner-only and cannot be used for an application intended for other end users
 or displayed as Market Data/Derived Works to third parties without permission.
 Therefore a small circle of friends is not cleared merely because the site is
-Session protected or non-commercial. No further Massive-backed guest/friend
-expansion is allowed until express permission, a suitable license, or an
-alternate display-compatible source is documented.
+Session protected or non-commercial. The user has confirmed that guest and
+credential content must not diverge. A source that is not cleared for this
+equal-capability posture must not enter a future shared publication for either
+entry path until express permission, a suitable license, or an alternate
+display-compatible source is documented.
 
 This finding does not itself authorize an access change, data deletion, or
-deployment. The active guest posture requires a separate user decision and
-operational action.
+deployment. The currently deployed equal-capability payload remains unchanged;
+source compatibility is an unresolved publication input, not a reason to
+create user roles.
 
 Required properties:
 
@@ -119,3 +122,7 @@ No incident automation is implemented by this document.
 - implementing per-user roles or guest/member content differences
 - making provider-backed data public
 - making legal determinations
+
+Future user-private watchlists, holdings, and brokerage records are outside
+the current role-free Session model. They require a real identity boundary and
+do not authorize differences in shared market data or analysis.

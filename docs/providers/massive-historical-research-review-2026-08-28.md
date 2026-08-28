@@ -144,5 +144,7 @@ The safe next implementation work at review time was fixture-only physical
 contracts and readers; that repository-only step is now complete. Saved
 synthetic response mapping and independent adjustment invariants are also now
 complete. A credential-free exact pilot planner may proceed, but a real
-provider pilot remains blocked until the licensing/product posture and exact
-account entitlement are reviewed.
+provider pilot remains blocked until equal-capability source permission and
+exact account entitlement are reviewed. The product posture is now resolved:
+guest and credential shared content remain identical, and owner-only market
+analysis is not a fallback.

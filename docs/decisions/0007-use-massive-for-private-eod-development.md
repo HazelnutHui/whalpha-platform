@@ -1,5 +1,11 @@
 # 0007: Use Massive for Private EOD Development
 
+> The initial private-owner serving boundary below is historical. ADR 0019 and
+> ADR 0052 now require identical guest/credential shared content and prohibit an
+> owner-only market-analysis tier. Massive remains a private Dell development
+> source candidate, but it is not cleared for future equal-capability web
+> publication without compatible permission or replacement.
+
 ## Status
 
 Accepted
@@ -70,13 +76,18 @@ This documentation records an operational interpretation for engineering boundar
 
 Massive Market Data Terms grant personal, non-business, non-commercial, non-transferable use under the applicable restrictions. The terms restrict unauthorized redistribution and public display of Market Data and also restrict charts, analytics, research, and other derived works based on Market Data.
 
-Accepted operational boundary:
+Initial operational boundary at the time of this ADR:
 
 - Provider-backed real-data dashboard views are private-owner only.
 - Provider-backed API responses must be protected before deployment.
 - Public static exports must not include restricted provider data or provider-derived analytics.
 - Public portfolio demos must use clearly marked synthetic/demo fixtures or data with appropriate public-display rights.
 - Public real-data products require explicit authorization, suitable license terms, an alternative data source with public-display rights, or appropriate legal/compliance review.
+
+The first bullet is superseded as a product-serving choice by ADR 0019 and ADR
+0052. Current shared product capability does not branch by entry path. A source
+that cannot support equal-capability use remains out of future shared
+publications for both guest and credential Sessions.
 
 ## Public Placeholder
 

@@ -1,0 +1,37 @@
+"""Version 1 cross-family data-governance contracts."""
+
+from tip_api.contracts.data_governance.v1.record_classification import (
+    STANDARD_DATA_FAMILY_REGISTRY_V1,
+    SHARED_CONTENT_ACCESS_POLICY_V1,
+    ContentScope,
+    CoverageStatus,
+    DataFamilyDefinitionV1,
+    DataLayer,
+    EvidenceStatus,
+    GovernedRecordClassificationV1,
+    PointInTimeEligibility,
+    RecordDisposition,
+    RetentionClass,
+    SharedContentAccessPolicyV1,
+    StableKeyKind,
+    WebServingPolicy,
+    validate_governance_registry,
+)
+
+__all__ = [
+    "STANDARD_DATA_FAMILY_REGISTRY_V1",
+    "SHARED_CONTENT_ACCESS_POLICY_V1",
+    "ContentScope",
+    "CoverageStatus",
+    "DataFamilyDefinitionV1",
+    "DataLayer",
+    "EvidenceStatus",
+    "GovernedRecordClassificationV1",
+    "PointInTimeEligibility",
+    "RecordDisposition",
+    "RetentionClass",
+    "SharedContentAccessPolicyV1",
+    "StableKeyKind",
+    "WebServingPolicy",
+    "validate_governance_registry",
+]

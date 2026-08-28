@@ -70,6 +70,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Classification V1](data-contracts/classification-v1.md)
 - [Universe Membership V1](data-contracts/universe-membership-v1.md)
 - [Historical Research Foundation Contracts V1](data-contracts/historical-research-foundation-v1.md)
+- [Data Record Governance V1](data-contracts/data-record-governance-v1.md): Cross-family layer, disposition, evidence, quality, coverage, point-in-time, retention, content-scope, and equal-capability serving classification.
 - [Provider Instrument Identity V1](data-contracts/provider-instrument-identity-v1.md)
 - [Provider Ticker Resolver V1](data-contracts/provider-ticker-resolver-v1.md)
 - [Trailing Liquidity Shadow Publication V1](data-contracts/trailing-liquidity-shadow-v1.md)
@@ -137,6 +138,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0049: Separate Candidate strategy channels](decisions/0049-separate-candidate-strategy-channels.md): fixes independent same-archetype research channels and prohibits a cross-strategy total score.
 - [ADR 0050: Seal strategy signals before outcomes](decisions/0050-seal-strategy-signals-before-forward-outcomes.md): separates contemporaneous point-in-time signals from later stock outcomes and prohibits random-split leakage.
 - [ADR 0051: Require a point-in-time historical research foundation](decisions/0051-require-point-in-time-historical-research-foundation.md): requires governed membership, actions, lifecycle, adjustments, and coverage before formula evaluation.
+- [ADR 0052: Unify cross-family data record governance](decisions/0052-unify-data-record-governance-classification.md): keeps domain states separate while enforcing one executable family registry and shared-content parity.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.

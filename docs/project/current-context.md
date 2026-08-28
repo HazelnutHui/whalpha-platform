@@ -340,8 +340,14 @@ and standing authorization also remain inactive by exact-revision mismatch.
   reviewed 80-request ceiling, zero retry, serial pacing, deterministic future
   `/tmp` package paths, and permanent `not_authorized` output. It does not scan
   `/data`, access credentials, call a provider, or write data. A real pilot
-  remains blocked on terms/product posture, account entitlement, lifecycle
-  source coverage, and separate exact authorization.
+  remains blocked on equal-capability source permission, account entitlement,
+  lifecycle source coverage, and separate exact authorization. The user has
+  resolved product posture: guest and credential shared content remain
+  identical; incompatible sources are not converted into an owner-only tier.
+- ADR 0052 and Data Record Governance V1 now define one executable family
+  registry plus separate layer, disposition, evidence, quality, coverage,
+  point-in-time, retention, content-scope, and serving dimensions. Existing
+  domain states remain authoritative and no dataset was rewritten.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

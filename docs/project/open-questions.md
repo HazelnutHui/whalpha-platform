@@ -28,9 +28,9 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Rate limiter implementation
 - Exact current provider entitlement, endpoint mix, and pilot scope for the
   accepted 252/504-session historical foundation
-- Should real provider-backed Production become owner-only, should the user
-  obtain written multi-user/derived-use permission, or should guest/friend
-  serving move to a display-compatible alternate source?
+- Which written permission, license, or alternate source will support the
+  confirmed equal-capability guest/credential shared product? Owner-only
+  market-analysis serving is not a permitted fallback.
 - What account-specific permission supports owner non-display calculations,
   derived strategy research, retained history, and required deletion on
   provider termination?
