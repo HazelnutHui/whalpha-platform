@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-28 — Separate breakout stage and add breakout-anatomy facts
+
+- Accepted ADR 0064. The Momentum Breakout UI now distinguishes a confirmed
+  trigger, a near trigger, and an overextended leader waiting for reset; the
+  combined Advance + Watch pool is explicitly not presented as a list of
+  completed breakouts.
+- Advanced the descriptive fact layer to Continuation Facts 1.1 with six
+  t-1-normalized breakout-anatomy facts covering preceding range, ATR
+  contraction, broader-high position, current move, and single-session path
+  concentration. Strategy score, status, and rank remain unchanged.
+- The formal 2026-08-26 offline audit assessed 3,543 rows with zero unavailable
+  facts, zero independent-Oracle mismatch, exact input-permutation equivalence,
+  and audit fingerprint
+  `6e4b996cd7b75d49bf5f60fda94dfb6942da33d049c9b8589eb5f5fe455247a8`.
+- Primary contains 10 Advance and 232 Watch breakout records; 98 Watch records
+  are high/extreme-extension reset cases. This descriptive cross-section did
+  not select new gates or make an outcome claim.
+
 ## 2026-08-28 — Formalize and profile the continuation-fact audit
 
 - Accepted ADR 0063 and added an immutable tmp-only Continuation Facts audit,

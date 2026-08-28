@@ -12,6 +12,12 @@ from uuid import uuid4
 import pytest
 
 from tip_api.contracts.analytics.v1 import ContinuationFactAvailability
+from tip_api.parameters.market_regime.candidate_continuation_facts_v1_0_0 import (
+    CONTINUATION_FACTS_PARAMETER_FINGERPRINT as V1_0_PARAMETER_FINGERPRINT,
+)
+from tip_api.parameters.market_regime.candidate_continuation_facts_v1_1_0 import (
+    CONTINUATION_FACTS_PARAMETER_FINGERPRINT as V1_1_PARAMETER_FINGERPRINT,
+)
 from tip_api.services.candidate_continuation_facts import (
     CandidateContinuationFactsCalculationError,
     calculate_candidate_continuation_facts,
@@ -44,6 +50,16 @@ def _inputs():
     return panel, candidate_batch, entry
 
 
+def test_continuation_fact_parameter_versions_are_distinct_and_v1_0_is_frozen() -> None:
+    assert V1_0_PARAMETER_FINGERPRINT == (
+        "91859225d8a9d64fe56243a9e8f977b59e54aca8614ead27d0858d8694730231"
+    )
+    assert V1_1_PARAMETER_FINGERPRINT == (
+        "31d6c5f36691bcc0081ab6150c951df42e4ae08e5c7b51871ed68fe13b8bc9ec"
+    )
+    assert V1_0_PARAMETER_FINGERPRINT != V1_1_PARAMETER_FINGERPRINT
+
+
 def test_continuation_facts_are_descriptive_source_bound_and_complete() -> None:
     panel, candidates, entry = _inputs()
 
@@ -68,6 +84,9 @@ def test_continuation_facts_are_descriptive_source_bound_and_complete() -> None:
         assert Decimal("0") <= Decimal(metrics.largest_absolute_return_share_10) <= Decimal("1")
         assert Decimal(metrics.atr_5_to_14) > 0
         assert Decimal(metrics.close_drawdown_from_high_20_atr) >= 0
+        assert Decimal(metrics.prior_10_close_range_atr) >= 0
+        assert Decimal(metrics.prior_atr_5_to_14) > 0
+        assert Decimal("0") <= Decimal(metrics.current_absolute_return_share_10) <= Decimal("1")
 
 
 def test_continuation_facts_are_input_permutation_invariant() -> None:
@@ -113,7 +132,7 @@ def test_continuation_facts_fail_closed_for_missing_history() -> None:
     row = next(item for item in result.records if item.instrument_id == target)
     assert row.metrics.availability is ContinuationFactAvailability.UNAVAILABLE
     assert row.metrics.missing_reason_codes == (
-        "missing_contiguous_twenty_session_history",
+        "missing_contiguous_twenty_one_session_history",
     )
 
 

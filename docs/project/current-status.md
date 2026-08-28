@@ -581,6 +581,21 @@ replay alone may use the bounded session-Oracle process pool; daily append uses
 one effective Oracle worker. Provider requests retain their fixed serial
 request gates.
 
+ADR 0064 now separates Momentum Breakout stage language from strategy status.
+The repository UI renders confirmed, near-trigger, and extended/reset-first
+records distinctly and explicitly says that Advance + Watch is not a list of
+completed breakouts. The frozen Strategy Preview score, status, rank, and
+published payload are unchanged. Continuation Facts 1.1 adds six t-1-normalized
+breakout-anatomy facts for preceding range, ATR contraction, broader-high
+position, current close/intraday move, and current-session path concentration.
+The formal 2026-08-26 shadow audit at
+`/tmp/whalpha-candidate-continuation-breakout-facts-20260826` assessed 3,543
+rows with zero unavailable facts, zero Oracle mismatch, exact permutation
+equivalence, and logical fingerprint
+`6e4b996cd7b75d49bf5f60fda94dfb6942da33d049c9b8589eb5f5fe455247a8`.
+These facts do not enter Strategy, publication, Snapshot, or Dashboard pending
+chronological validation.
+
 ## Verification entry point
 
 Run the local, credential-free report from the repository root:

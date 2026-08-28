@@ -92,13 +92,17 @@ describe('strategy-channel workspace', () => {
     expect(screen.getByText('Compare like with like')).toBeInTheDocument();
     expect(screen.getByText('Human review remains required')).toBeInTheDocument();
     expect(screen.getAllByText('Momentum breakout').length).toBeGreaterThan(1);
+    expect(screen.getByText('Triggered · review')).toBeInTheDocument();
+    expect(screen.getByText(/not a list of completed breakouts/)).toBeInTheDocument();
     fireEvent.click(screen.getByText('How this channel ranks'));
     expect(screen.getByText('35%')).toBeInTheDocument();
     expect(screen.getByText(/current trend-continuation baseline overlaps heavily/)).toBeInTheDocument();
+    expect(screen.getByText(/separate audited shadow layer now describes the prior 10-session base/)).toBeInTheDocument();
     expect(screen.getByText(/45% normalized 5-session stock return versus SPY/)).toBeInTheDocument();
     expect(screen.getByText('All Advance results come before all Watch results. Within each status: channel score descending, then ticker and stable instrument ID as deterministic tie-breakers.')).toBeInTheDocument();
     fireEvent.click(screen.getByText('ABCD').closest('button')!);
     expect(screen.getByRole('dialog')).toHaveTextContent('ABCD · Momentum breakout');
+    expect(screen.getByRole('dialog')).toHaveTextContent('Triggered · review');
     expect(screen.getByRole('dialog')).toHaveTextContent('The breakout can fail or reverse.');
     expect(screen.getByRole('dialog')).toHaveTextContent('Why this exact score');
     expect(screen.getByRole('dialog')).toHaveTextContent('Position / chase-risk review');

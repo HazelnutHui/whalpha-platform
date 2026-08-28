@@ -18,7 +18,7 @@ from tip_api.contracts.analytics.v1 import (
     CandidateEntryGeometryBatchV1,
     OpportunityCandidateBatchV1,
 )
-from tip_api.parameters.market_regime import candidate_continuation_facts_v1_0_0 as p
+from tip_api.parameters.market_regime import candidate_continuation_facts_v1_1_0 as p
 from tip_api.services.market_regime_sources import MarketRegimeBar, MarketRegimeInputPanel
 
 
@@ -143,7 +143,7 @@ def _expected_rows(*, panel, candidate_batch, entry_geometry_batch) -> dict[UUID
 
 def _metrics(required, bars) -> dict[str, Any]:
     if any(session not in bars for session in required):
-        return _unavailable(("missing_contiguous_twenty_session_history",))
+        return _unavailable(("missing_contiguous_twenty_one_session_history",))
     ordered = [bars[session] for session in required]
     if any(
         row.open <= ZERO
@@ -208,6 +208,14 @@ def _metrics(required, bars) -> dict[str, Any]:
     )
     if atr14 <= ZERO or prior_volume <= ZERO:
         return _unavailable(("nonpositive_continuation_atr_or_prior_volume",))
+    prior_ranges = ranges[:-1]
+    prior_atr14 = _mean(prior_ranges[-p.CONTINUATION_FACTS_ATR_LONG_WINDOW:])
+    prior_atr5 = _mean(prior_ranges[-p.CONTINUATION_FACTS_ATR_SHORT_WINDOW:])
+    if prior_atr14 <= ZERO:
+        return _unavailable(("nonpositive_prior_breakout_atr",))
+    prior_closes = closes[:-1]
+    prior_ten = prior_closes[-10:]
+    current_log = (closes[-1] / closes[-2]).ln()
     recent = closes[-p.CONTINUATION_FACTS_STRUCTURE_WINDOW:]
     prior = closes[
         -2
@@ -236,6 +244,20 @@ def _metrics(required, bars) -> dict[str, Any]:
         "recent_close_low_vs_prior_5_atr": _raw((min(recent) - min(prior)) / atr14),
         "recent_close_high_vs_prior_5_atr": _raw((max(recent) - max(prior)) / atr14),
         "recent_volume_median_ratio_5_to_prior_15": _raw(recent_volume / prior_volume),
+        "prior_10_close_range_atr": _raw(
+            (max(prior_ten) - min(prior_ten)) / prior_atr14
+        ),
+        "prior_atr_5_to_14": _raw(prior_atr5 / prior_atr14),
+        "close_vs_prior_20_close_high_atr": _raw(
+            (closes[-1] - max(prior_closes[-20:])) / prior_atr14
+        ),
+        "current_close_move_atr": _raw((closes[-1] - closes[-2]) / prior_atr14),
+        "current_intraday_move_atr": _raw(
+            (ordered[-1].close - ordered[-1].open) / prior_atr14
+        ),
+        "current_absolute_return_share_10": _raw(
+            ZERO if path == ZERO else abs(current_log) / path
+        ),
         "missing_reason_codes": [],
     }
 
@@ -254,6 +276,12 @@ def _unavailable(reasons) -> dict[str, Any]:
         "recent_close_low_vs_prior_5_atr",
         "recent_close_high_vs_prior_5_atr",
         "recent_volume_median_ratio_5_to_prior_15",
+        "prior_10_close_range_atr",
+        "prior_atr_5_to_14",
+        "close_vs_prior_20_close_high_atr",
+        "current_close_move_atr",
+        "current_intraday_move_atr",
+        "current_absolute_return_share_10",
     )
     return {
         "availability": "unavailable",

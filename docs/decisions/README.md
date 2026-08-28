@@ -86,3 +86,4 @@ Each ADR should include:
 - [0061: Bind Displayed Strategy Methods and Audit Channel Overlap](0061-bind-displayed-strategy-methods-and-audit-channel-overlap.md)
 - [0062: Add Descriptive Continuation Facts Before Rescoring](0062-add-descriptive-continuation-facts-before-rescoring.md)
 - [0063: Formalize Continuation Fact Audit with a Bounded Current Read](0063-formalize-continuation-fact-audit-with-bounded-current-read.md)
+- [0064: Separate Breakout Stage from Breakout Quality](0064-separate-breakout-stage-from-breakout-quality.md)

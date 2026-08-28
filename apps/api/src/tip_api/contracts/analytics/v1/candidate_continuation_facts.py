@@ -13,7 +13,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from tip_api.parameters.market_regime.candidate_continuation_facts_v1_0_0 import (
+from tip_api.parameters.market_regime.candidate_continuation_facts_v1_1_0 import (
     CONTINUATION_FACTS_CALCULATION_VERSION,
     CONTINUATION_FACTS_CONTRACT_VERSION,
     CONTINUATION_FACTS_PARAMETER_FINGERPRINT,
@@ -42,6 +42,12 @@ class CandidateContinuationMetricsV1(BaseModel):
     recent_close_low_vs_prior_5_atr: str | None
     recent_close_high_vs_prior_5_atr: str | None
     recent_volume_median_ratio_5_to_prior_15: str | None
+    prior_10_close_range_atr: str | None
+    prior_atr_5_to_14: str | None
+    close_vs_prior_20_close_high_atr: str | None
+    current_close_move_atr: str | None
+    current_intraday_move_atr: str | None
+    current_absolute_return_share_10: str | None
     missing_reason_codes: tuple[str, ...]
 
     @model_validator(mode="after")
@@ -59,6 +65,12 @@ class CandidateContinuationMetricsV1(BaseModel):
             "recent_close_low_vs_prior_5_atr",
             "recent_close_high_vs_prior_5_atr",
             "recent_volume_median_ratio_5_to_prior_15",
+            "prior_10_close_range_atr",
+            "prior_atr_5_to_14",
+            "close_vs_prior_20_close_high_atr",
+            "current_close_move_atr",
+            "current_intraday_move_atr",
+            "current_absolute_return_share_10",
         )
         if self.availability is ContinuationFactAvailability.AVAILABLE:
             if (
@@ -73,6 +85,7 @@ class CandidateContinuationMetricsV1(BaseModel):
                 "largest_absolute_return_share_10",
                 "positive_return_share_10",
                 "above_sma10_share_10",
+                "current_absolute_return_share_10",
             ):
                 lower = (
                     Decimal("-1")
@@ -87,6 +100,10 @@ class CandidateContinuationMetricsV1(BaseModel):
                 raise ValueError("continuation high drawdown cannot be negative")
             if values["recent_volume_median_ratio_5_to_prior_15"] < 0:
                 raise ValueError("continuation volume ratio cannot be negative")
+            if values["prior_10_close_range_atr"] < 0:
+                raise ValueError("prior close range cannot be negative")
+            if values["prior_atr_5_to_14"] <= 0:
+                raise ValueError("prior ATR ratio must be positive")
         elif (
             any(getattr(self, name) is not None for name in names)
             or not self.missing_reason_codes

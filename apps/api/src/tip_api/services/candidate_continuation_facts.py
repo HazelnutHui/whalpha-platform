@@ -15,7 +15,7 @@ from tip_api.contracts.analytics.v1 import (
     OpportunityCandidateBatchV1,
     continuation_facts_fingerprint,
 )
-from tip_api.parameters.market_regime.candidate_continuation_facts_v1_0_0 import (
+from tip_api.parameters.market_regime.candidate_continuation_facts_v1_1_0 import (
     CONTINUATION_FACTS_ATR_LONG_WINDOW,
     CONTINUATION_FACTS_ATR_SHORT_WINDOW,
     CONTINUATION_FACTS_CALCULATION_VERSION,
@@ -200,7 +200,7 @@ def _calculate(*, panel, candidate_batch, entry_geometry_batch):
 def _metrics(*, required_sessions, bars) -> CandidateContinuationMetricsV1:
     missing = tuple(session for session in required_sessions if session not in bars)
     if missing:
-        return _unavailable(("missing_contiguous_twenty_session_history",))
+        return _unavailable(("missing_contiguous_twenty_one_session_history",))
     ordered = [bars[session] for session in required_sessions]
     if any(
         bar.open <= ZERO
@@ -271,6 +271,18 @@ def _metrics(*, required_sessions, bars) -> CandidateContinuationMetricsV1:
     if atr_long <= ZERO or prior_volume <= ZERO:
         return _unavailable(("nonpositive_continuation_atr_or_prior_volume",))
 
+    # Breakout anatomy is deliberately normalized by information available at
+    # t-1.  The trigger bar therefore cannot make its own base look tighter or
+    # its own threshold easier to clear.
+    prior_true_ranges = true_ranges[:-1]
+    prior_atr_long = _mean(prior_true_ranges[-CONTINUATION_FACTS_ATR_LONG_WINDOW:])
+    prior_atr_short = _mean(prior_true_ranges[-CONTINUATION_FACTS_ATR_SHORT_WINDOW:])
+    if prior_atr_long <= ZERO:
+        return _unavailable(("nonpositive_prior_breakout_atr",))
+    prior_closes = closes[:-1]
+    prior_ten_closes = prior_closes[-10:]
+    current_log_return = (closes[-1] / closes[-2]).ln()
+
     recent = closes[-CONTINUATION_FACTS_STRUCTURE_WINDOW:]
     prior = closes[
         -2 * CONTINUATION_FACTS_STRUCTURE_WINDOW : -CONTINUATION_FACTS_STRUCTURE_WINDOW
@@ -302,6 +314,20 @@ def _metrics(*, required_sessions, bars) -> CandidateContinuationMetricsV1:
         recent_close_low_vs_prior_5_atr=_raw((min(recent) - min(prior)) / atr_long),
         recent_close_high_vs_prior_5_atr=_raw((max(recent) - max(prior)) / atr_long),
         recent_volume_median_ratio_5_to_prior_15=_raw(recent_volume / prior_volume),
+        prior_10_close_range_atr=_raw(
+            (max(prior_ten_closes) - min(prior_ten_closes)) / prior_atr_long
+        ),
+        prior_atr_5_to_14=_raw(prior_atr_short / prior_atr_long),
+        close_vs_prior_20_close_high_atr=_raw(
+            (closes[-1] - max(prior_closes[-20:])) / prior_atr_long
+        ),
+        current_close_move_atr=_raw((closes[-1] - closes[-2]) / prior_atr_long),
+        current_intraday_move_atr=_raw(
+            (ordered[-1].close - ordered[-1].open) / prior_atr_long
+        ),
+        current_absolute_return_share_10=_raw(
+            ZERO if absolute_path == ZERO else abs(current_log_return) / absolute_path
+        ),
         missing_reason_codes=(),
     )
 
@@ -321,6 +347,12 @@ def _unavailable(codes: tuple[str, ...]) -> CandidateContinuationMetricsV1:
         recent_close_low_vs_prior_5_atr=None,
         recent_close_high_vs_prior_5_atr=None,
         recent_volume_median_ratio_5_to_prior_15=None,
+        prior_10_close_range_atr=None,
+        prior_atr_5_to_14=None,
+        close_vs_prior_20_close_high_atr=None,
+        current_close_move_atr=None,
+        current_intraday_move_atr=None,
+        current_absolute_return_share_10=None,
         missing_reason_codes=codes,
     )
 

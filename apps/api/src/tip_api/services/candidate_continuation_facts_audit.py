@@ -13,7 +13,7 @@ from typing import Any, Mapping, Sequence
 from uuid import uuid4
 
 from tip_api.contracts.analytics.v1 import CandidateContinuationFactsBatchV1
-from tip_api.parameters.market_regime.candidate_continuation_facts_v1_0_0 import (
+from tip_api.parameters.market_regime.candidate_continuation_facts_v1_1_0 import (
     CONTINUATION_FACTS_CALCULATION_VERSION,
     CONTINUATION_FACTS_CONTRACT_VERSION,
     CONTINUATION_FACTS_PARAMETER_FINGERPRINT,
