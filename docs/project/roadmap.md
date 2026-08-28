@@ -67,9 +67,10 @@
   source-resolution boundary, and the exact provider inquiry packet is
   prepared but unsent. Stop expanding generic governance here. The first fixed
   explainable Candidate strategy-channel shadow, bounded consumer, independent
-  Oracle, and atomic temporary-root audit are now complete; the next slice is
-  additive product presentation. Historical performance calibration waits for
-  permission-cleared point-in-time data.
+  Oracle, atomic temporary-root audit, additive product projection, and
+  bilingual lazy consumer are now complete. Historical performance calibration
+  waits for permission-cleared point-in-time data; publication and deployment
+  remain separately authorized work.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -202,6 +203,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Fixed explainable three-channel offline preview and bounded consumer
 - [x] Independent strategy-channel Oracle and immutable temporary-root audit
+- [x] Lazy strategy-channel product projection and bilingual review consumer
 - [x] Sealed-signal/later-outcome chronological evaluation contract
 - [x] Read-only historical strategy-evaluation readiness audit
 - [x] Point-in-time historical research foundation and source capability gap matrix
@@ -241,7 +243,7 @@ posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
 Do not select formulas or thresholds from one-session distributions. Keep
-Snapshot 1.8 undeployed until its exact bundle and browser behavior are
+Snapshot 1.8/1.9 undeployed until their exact bundle and browser behavior are
 separately reviewed. Keep SMTP and SEC B2 paused.
 
 The general historical governance design pass is complete. Pilot approval 1.1
@@ -252,12 +254,13 @@ package require separate authorization; only a separately authorized pilot may
 follow. Do not build provider adapters merely to continue governance work.
 
 The first explainable Candidate strategy-channel preview, bounded consumer,
-independent Oracle, and formal temporary-root audit are now implemented
-offline. The next safe feature step is an additive bilingual product payload/UI
-review. Keep market fit and event context separate, expose
-entry/chase risk, cap the first view at eight per channel, and prohibit a cross-
-strategy total. Defer performance claims and threshold calibration until the
-point-in-time historical foundation is physically ready.
+independent Oracle, formal temporary-root audit, additive bilingual product,
+and Snapshot 1.9 browser review are now implemented. Keep market fit and event
+context separate, expose entry/chase risk, cap the first view at eight per
+channel, and prohibit a cross-strategy total. The next product action is human
+UI review followed by separately authorized publication-path support; defer
+performance claims and threshold calibration until the point-in-time
+historical foundation is physically ready.
 
 ## Phase 2 — Intraday and Options
 

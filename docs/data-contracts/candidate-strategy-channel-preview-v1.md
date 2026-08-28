@@ -4,7 +4,9 @@
 
 Implemented in repository source as a pure Dell/offline shadow calculation,
 bounded consumer, independent Oracle, and immutable temporary-root audit. It is
-fixed but not chronologically validated, published, or deployed.
+fixed but not chronologically validated, published, or deployed. An additive
+repository-only product projection and bilingual UI now consume its formal
+audit without changing this shadow calculation.
 
 ## Inputs and custody
 
@@ -100,5 +102,6 @@ evidence, not a publication input.
    corporate-action/lifecycle-safe outcomes.
 2. Review by Regime, industry, liquidity, volatility, turnover, chase, false
    positives, and missed opportunities.
-3. Additive product payload and bilingual UI review.
+3. Additive product payload and bilingual UI review. **Completed mechanically;
+   not published or deployed.**
 4. Separate publication and deployment authorization.

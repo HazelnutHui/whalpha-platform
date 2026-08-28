@@ -7,7 +7,9 @@ Implemented. Active Production Snapshot
 Market Intelligence `2026-08-26T050254Z-6c60502e4473`. It was published under
 ordinary lag-zero freshness. Repository source additionally implements the
 undeployed Snapshot 1.8 / Dashboard 2.5 split Candidate consumer. Snapshot
-1.3–1.6 releases remain historical/rollback contracts, not the active state.
+1.9 / Dashboard 2.6 is also implemented in repository source as an undeployed
+additive lazy strategy-channel review consumer. Snapshot 1.3–1.6 releases
+remain historical/rollback contracts, not the active state.
 
 ## Contracts
 
@@ -111,3 +113,19 @@ validation reads every shard and losslessly reconstructs the full Candidate
 publication before accepting a release. The browser loads the summary first
 and one declared shard per opened security. Older Snapshot contracts remain
 readable and do not silently acquire split files.
+
+## Contract 1.9 lazy strategy-channel delivery
+
+Snapshot 1.9 pairs Dashboard 2.6 with the unchanged Snapshot 1.8 Candidate
+summary and detail shards and adds exactly `candidate-strategy-channels.json`.
+The manifest freezes its contract, SHA-256, product/audit/parameter logical
+fingerprints, and exact Candidate/Entry Geometry lineage. Formal validation
+rereads the typed product and rejects mixed contracts, changed sources,
+nonzero Oracle mismatch, reordered Universes/channels, inconsistent counts or
+ranks, and changed guest/credential capability policy.
+
+The browser requests this file only when Strategy Channels is selected. It
+renders no synthetic fallback and performs no scoring. Repository build/read
+and bilingual browser support are implemented; publication-plan, bundle,
+activation, and deployment support are intentionally not authorized by this
+slice. Snapshot 1.8 and older releases remain readable unchanged.

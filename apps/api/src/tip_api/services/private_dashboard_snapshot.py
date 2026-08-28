@@ -15,6 +15,7 @@ from typing import Any, Literal, Mapping
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from tip_api.contracts.analytics.v1 import (
+    CandidateStrategyChannelProductV1,
     MarketIntelligencePayloadV1_1,
     MarketIntelligencePayloadV1_2,
     OpportunityCandidatePublicationV1,
@@ -42,6 +43,9 @@ from tip_api.services.opportunity_candidate_snapshot_split import (
     build_split_candidate_snapshot,
     reconstruct_full_candidate_publication,
 )
+from tip_api.services.candidate_strategy_channel_product import (
+    build_candidate_strategy_channel_product,
+)
 
 SNAPSHOT_CONTRACT_VERSION = "1.8"
 SNAPSHOT_FILES = {
@@ -53,6 +57,7 @@ SNAPSHOT_FILES = {
 MARKET_INTELLIGENCE_FILE = "market-regime-overviews.json"
 OPPORTUNITY_CANDIDATES_FILE = "opportunity-candidates.json"
 OPPORTUNITY_CANDIDATE_SUMMARY_FILE = "opportunity-candidates-summary.json"
+CANDIDATE_STRATEGY_CHANNELS_FILE = "candidate-strategy-channels.json"
 _RELEASE_ID_RE = re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$")
 
 
@@ -63,7 +68,7 @@ class DashboardSnapshotError(RuntimeError):
 class DashboardSnapshotManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[12345678])?$")
+    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[123456789])?$")
     release_id: str
     generated_at: str
     current_session_date: str
@@ -120,6 +125,12 @@ class DashboardSnapshotManifest(BaseModel):
     candidate_summary_logical_fingerprint: str | None = None
     candidate_detail_contract_version: str | None = None
     candidate_detail_files: tuple[str, ...] = ()
+    candidate_strategy_file: str | None = None
+    candidate_strategy_contract_version: str | None = None
+    candidate_strategy_audit_manifest_sha256: str | None = None
+    candidate_strategy_audit_logical_fingerprint: str | None = None
+    candidate_strategy_parameter_fingerprint: str | None = None
+    candidate_strategy_logical_fingerprint: str | None = None
     review_mode: bool = False
     review_contract_version: str | None = None
     review_approved_as_of_session: str | None = None
@@ -152,17 +163,17 @@ class DashboardSnapshotManifest(BaseModel):
             raise ValueError("snapshot freshness fields are required for contract 1.1")
         if self.snapshot_contract_version == "1.2" and self.classification_as_of_date is None:
             raise ValueError("snapshot governance fields are required for contract 1.2")
-        if self.snapshot_contract_version in {"1.3", "1.4", "1.5", "1.6", "1.7", "1.8"} and (
+        if self.snapshot_contract_version in {"1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"} and (
             self.classification_as_of_date is None or self.selected_universe_id is None or
             len(self.available_universe_ids) != 2 or self.activation_fingerprint is None or
             self.membership_evidence_as_of is None
         ):
             raise ValueError("snapshot activation fields are required for contract 1.3+")
-        if self.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8"} and (
+        if self.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"} and (
             self.funnel_stage_count != 20 or self.funnel_source_fingerprint is None
         ):
             raise ValueError("snapshot Funnel fields are required for contract 1.4")
-        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8"} and any(
+        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9"} and any(
             value is None
             for value in (
                 self.market_intelligence_file,
@@ -183,11 +194,12 @@ class DashboardSnapshotManifest(BaseModel):
             self.candidate_primary_display_count,
             self.candidate_secondary_display_count,
         )
-        if self.snapshot_contract_version in {"1.6", "1.7", "1.8"}:
+        if self.snapshot_contract_version in {"1.6", "1.7", "1.8", "1.9"}:
             expected_dashboard = {
                 "1.6": "2.3",
                 "1.7": "2.4",
                 "1.8": "2.5",
+                "1.9": "2.6",
             }[self.snapshot_contract_version]
             if self.dashboard_contract_version != expected_dashboard or any(
                 value is None for value in candidate_values
@@ -204,7 +216,7 @@ class DashboardSnapshotManifest(BaseModel):
             self.entry_geometry_parameter_fingerprint,
             self.entry_lane_consumer_parameter_fingerprint,
         )
-        if self.snapshot_contract_version in {"1.7", "1.8"}:
+        if self.snapshot_contract_version in {"1.7", "1.8", "1.9"}:
             if (
                 any(value is None for value in entry_values)
                 or self.candidate_publication_contract_version
@@ -219,7 +231,7 @@ class DashboardSnapshotManifest(BaseModel):
             self.candidate_summary_logical_fingerprint,
             self.candidate_detail_contract_version,
         )
-        if self.snapshot_contract_version == "1.8":
+        if self.snapshot_contract_version in {"1.8", "1.9"}:
             if (
                 self.opportunity_candidates_file != OPPORTUNITY_CANDIDATE_SUMMARY_FILE
                 or self.candidate_summary_contract_version
@@ -236,9 +248,31 @@ class DashboardSnapshotManifest(BaseModel):
                     for value in self.candidate_detail_files
                 )
             ):
-                raise ValueError("Snapshot 1.8 requires split Candidate bindings")
+                raise ValueError("Snapshot 1.8+ requires split Candidate bindings")
         elif any(value is not None for value in split_values) or self.candidate_detail_files:
             raise ValueError("Snapshot before 1.8 cannot carry split Candidate bindings")
+        strategy_values = (
+            self.candidate_strategy_file,
+            self.candidate_strategy_contract_version,
+            self.candidate_strategy_audit_manifest_sha256,
+            self.candidate_strategy_audit_logical_fingerprint,
+            self.candidate_strategy_parameter_fingerprint,
+            self.candidate_strategy_logical_fingerprint,
+        )
+        if self.snapshot_contract_version == "1.9":
+            if (
+                any(value is None for value in strategy_values)
+                or self.candidate_strategy_file != CANDIDATE_STRATEGY_CHANNELS_FILE
+                or self.candidate_strategy_contract_version
+                != "candidate-strategy-channel-product/1.0"
+            ):
+                raise ValueError(
+                    "Snapshot 1.9 requires complete strategy-channel bindings"
+                )
+        elif any(value is not None for value in strategy_values):
+            raise ValueError(
+                "Snapshot before 1.9 cannot carry strategy-channel bindings"
+            )
         review_values = (
             self.review_contract_version,
             self.review_approved_as_of_session,
@@ -295,6 +329,7 @@ def build_private_dashboard_snapshot(
     allowed_output_root: Path | None = None,
     dashboard_activation: ActiveDashboardUniverseActivation | None = None,
     market_intelligence: CompletedMarketIntelligence | None = None,
+    candidate_strategy_audit_path: Path | None = None,
 ) -> DashboardSnapshotResult:
     safe_data_root = _validate_existing_root(data_root, label="data_root")
     safe_output_root = _validate_output_root(output_root, allowed_output_root=allowed_output_root)
@@ -372,6 +407,13 @@ def build_private_dashboard_snapshot(
         candidate_payload: Mapping[str, Any] | None = None
         candidate_summary: OpportunityCandidateSummarySnapshotV1 | None = None
         candidate_detail_shards: tuple[OpportunityCandidateDetailShardV1, ...] = ()
+        candidate_strategy: CandidateStrategyChannelProductV1 | None = None
+        if candidate_strategy_audit_path is not None and not isinstance(
+            candidate_mi_payload, MarketIntelligencePayloadV1_2
+        ):
+            raise DashboardSnapshotError(
+                "strategy-channel Snapshot requires Candidate publication 1.1"
+            )
         if market_intelligence is not None:
             if (
                 market_intelligence.payload.analysis_session != summary.current_session_date
@@ -435,6 +477,14 @@ def build_private_dashboard_snapshot(
                         payloads[
                             f"opportunity-candidate-details-{shard.shard_id}.json"
                         ] = shard
+                    if candidate_strategy_audit_path is not None:
+                        candidate_strategy = build_candidate_strategy_channel_product(
+                            strategy_audit_dir=candidate_strategy_audit_path,
+                            candidate_analytics=candidate_mi_payload.candidate_analytics,
+                        )
+                        payloads[CANDIDATE_STRATEGY_CHANNELS_FILE] = (
+                            candidate_strategy
+                        )
                 else:
                     candidate_payload = {
                         "schema_version": "1.0",
@@ -462,7 +512,9 @@ def build_private_dashboard_snapshot(
 
         funnel_stage_count = sum(len(item.funnel) for item in overview.universes)
         snapshot_contract_version = (
-            SNAPSHOT_CONTRACT_VERSION
+            "1.9"
+            if candidate_strategy is not None
+            else SNAPSHOT_CONTRACT_VERSION
             if funnel_stage_count == 20
             and isinstance(candidate_mi_payload, MarketIntelligencePayloadV1_2)
             else (
@@ -500,7 +552,9 @@ def build_private_dashboard_snapshot(
             warning_count=summary.quality_warning_count,
             default_universe_id=overview.default_universe_id,
             dashboard_contract_version=(
-                "2.5"
+                "2.6"
+                if snapshot_contract_version == "1.9"
+                else "2.5"
                 if snapshot_contract_version == "1.8"
                 else "2.4"
                 if snapshot_contract_version == "1.7"
@@ -519,12 +573,12 @@ def build_private_dashboard_snapshot(
             membership_evidence_as_of=overview.classification_as_of_date.isoformat(),
             funnel_stage_count=(
                 funnel_stage_count
-                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8"}
+                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"}
                 else None
             ),
             funnel_source_fingerprint=(
                 next(item.funnel[0].source_fingerprint for item in overview.universes if item.funnel)
-                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8"} else None
+                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"} else None
             ),
             market_intelligence_file=(
                 MARKET_INTELLIGENCE_FILE if market_intelligence is not None else None
@@ -635,6 +689,36 @@ def build_private_dashboard_snapshot(
                     for item in candidate_detail_shards
                 )
             ),
+            candidate_strategy_file=(
+                CANDIDATE_STRATEGY_CHANNELS_FILE
+                if candidate_strategy is not None
+                else None
+            ),
+            candidate_strategy_contract_version=(
+                candidate_strategy.contract_version
+                if candidate_strategy is not None
+                else None
+            ),
+            candidate_strategy_audit_manifest_sha256=(
+                candidate_strategy.source.strategy_audit_manifest_sha256
+                if candidate_strategy is not None
+                else None
+            ),
+            candidate_strategy_audit_logical_fingerprint=(
+                candidate_strategy.source.strategy_audit_logical_fingerprint
+                if candidate_strategy is not None
+                else None
+            ),
+            candidate_strategy_parameter_fingerprint=(
+                candidate_strategy.source.strategy_parameter_fingerprint
+                if candidate_strategy is not None
+                else None
+            ),
+            candidate_strategy_logical_fingerprint=(
+                candidate_strategy.logical_fingerprint
+                if candidate_strategy is not None
+                else None
+            ),
             review_mode=review is not None,
             review_contract_version=(review.contract_version if review is not None else None),
             review_approved_as_of_session=(
@@ -706,6 +790,8 @@ def _validate_json_file(path: Path, filename: str) -> None:
             _validate_opportunity_candidate_snapshot(decoded)
         elif filename == OPPORTUNITY_CANDIDATE_SUMMARY_FILE:
             OpportunityCandidateSummarySnapshotV1.model_validate(decoded)
+        elif filename == CANDIDATE_STRATEGY_CHANNELS_FILE:
+            CandidateStrategyChannelProductV1.model_validate(decoded)
         elif DETAIL_FILE_RE.fullmatch(filename):
             OpportunityCandidateDetailShardV1.model_validate(decoded)
         else:
@@ -727,7 +813,9 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
         *( {MARKET_INTELLIGENCE_FILE} if manifest.snapshot_contract_version in {"1.5", "1.6", "1.7"} else set() ),
         *( {OPPORTUNITY_CANDIDATES_FILE} if manifest.snapshot_contract_version in {"1.6", "1.7"} else set() ),
         *( {MARKET_INTELLIGENCE_FILE, OPPORTUNITY_CANDIDATE_SUMMARY_FILE, *manifest.candidate_detail_files}
-            if manifest.snapshot_contract_version == "1.8" else set() ),
+            if manifest.snapshot_contract_version in {"1.8", "1.9"} else set() ),
+        *( {CANDIDATE_STRATEGY_CHANNELS_FILE}
+            if manifest.snapshot_contract_version == "1.9" else set() ),
     }
     actual_files = {item.name for item in private_dir.iterdir()}
     if actual_files != expected_files:
@@ -744,16 +832,17 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             raise DashboardSnapshotError("snapshot file checksum mismatch")
     if manifest.access_classification != "private" or manifest.contains_credentials or manifest.contains_raw_provider_data:
         raise DashboardSnapshotError("snapshot manifest violates access boundary")
-    if manifest.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8"}:
+    if manifest.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"}:
         overview = DashboardOverviewResponse.model_validate_json((private_dir / manifest.overview_file).read_text(encoding="utf-8"))
         if overview.contract_version != "2.1" or sum(len(item.funnel) for item in overview.universes) != 20:
             raise DashboardSnapshotError("snapshot formal Funnel contract mismatch")
         fingerprints = {stage.source_fingerprint for item in overview.universes for stage in item.funnel}
         if fingerprints != {manifest.funnel_source_fingerprint}:
             raise DashboardSnapshotError("snapshot Funnel source fingerprint mismatch")
-    if manifest.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8"}:
+    if manifest.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9"}:
         expected_dashboard = (
-            "2.5" if manifest.snapshot_contract_version == "1.8"
+            "2.6" if manifest.snapshot_contract_version == "1.9"
+            else "2.5" if manifest.snapshot_contract_version == "1.8"
             else "2.4" if manifest.snapshot_contract_version == "1.7"
             else "2.3" if manifest.snapshot_contract_version == "1.6"
             else "2.2"
@@ -840,7 +929,7 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             != manifest.entry_lane_consumer_parameter_fingerprint
         ):
             raise DashboardSnapshotError("snapshot entry-geometry reference mismatch")
-    if manifest.snapshot_contract_version == "1.8":
+    if manifest.snapshot_contract_version in {"1.8", "1.9"}:
         summary_path = private_dir / OPPORTUNITY_CANDIDATE_SUMMARY_FILE
         if summary_path.is_symlink() or not summary_path.is_file():
             raise DashboardSnapshotError("snapshot Candidate summary file is missing")
@@ -899,6 +988,46 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             != manifest.candidate_secondary_display_count
         ):
             raise DashboardSnapshotError("snapshot split Candidate binding differs")
+    if manifest.snapshot_contract_version == "1.9":
+        strategy_path = private_dir / CANDIDATE_STRATEGY_CHANNELS_FILE
+        if strategy_path.is_symlink() or not strategy_path.is_file():
+            raise DashboardSnapshotError(
+                "snapshot Candidate strategy-channel file is missing"
+            )
+        _validate_json_file(strategy_path, CANDIDATE_STRATEGY_CHANNELS_FILE)
+        if sha256_file(strategy_path) != manifest.file_sha256.get(
+            CANDIDATE_STRATEGY_CHANNELS_FILE
+        ):
+            raise DashboardSnapshotError(
+                "snapshot Candidate strategy-channel checksum mismatch"
+            )
+        strategy = CandidateStrategyChannelProductV1.model_validate_json(
+            strategy_path.read_text(encoding="utf-8")
+        )
+        if (
+            strategy.contract_version
+            != manifest.candidate_strategy_contract_version
+            or strategy.logical_fingerprint
+            != manifest.candidate_strategy_logical_fingerprint
+            or strategy.source.strategy_audit_manifest_sha256
+            != manifest.candidate_strategy_audit_manifest_sha256
+            or strategy.source.strategy_audit_logical_fingerprint
+            != manifest.candidate_strategy_audit_logical_fingerprint
+            or strategy.source.strategy_parameter_fingerprint
+            != manifest.candidate_strategy_parameter_fingerprint
+            or strategy.source.candidate_analytics_logical_fingerprint
+            != manifest.candidate_analytics_logical_fingerprint
+            or strategy.source.candidate_audit_logical_fingerprint
+            != manifest.candidate_audit_logical_fingerprint
+            or strategy.source.entry_geometry_audit_logical_fingerprint
+            != manifest.entry_geometry_audit_logical_fingerprint
+            or strategy.default_universe_id != manifest.default_universe_id
+            or strategy.universe_order != manifest.available_universe_ids
+            or strategy.as_of_session.isoformat() != manifest.current_session_date
+        ):
+            raise DashboardSnapshotError(
+                "snapshot Candidate strategy-channel binding differs"
+            )
     return manifest
 
 

@@ -173,8 +173,13 @@ read or used.
   both source audits and returned zero mismatch for both Universes with input-
   permutation equivalence.
   Technical reversal, fundamental value reversal, and defensive rotation
-  remain explicitly unavailable. There is no product payload, frontend
-  integration, publication, deployment, or Production effect.
+  remain explicitly unavailable. ADR 0057 now adds a separate 195,211-byte
+  product payload, Snapshot 1.9 / Dashboard 2.6 review projection, strict web
+  parser, and bilingual lazy-loaded Strategy Channels workspace. A real `/tmp`
+  build formally reread the exact strategy-audit lineage and retained the
+  496/532 Candidate counts. This is not published or deployed and has no
+  Production effect; publication-plan, bundle, and activation support remain
+  deliberately absent.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -221,9 +226,10 @@ permission/coverage/pricing inquiry packet is prepared but has not been sent.
 No concrete source policy, adapter, history, or operational authority exists.
 Repository development has therefore returned to explainable Candidate
 strategy channels. The fixed offline preview, bounded consumer, independent
-Oracle, and formal temporary-root audit described above are implemented;
-additive product integration remains next, while real validation is still
-blocked on adequate point-in-time history.
+Oracle, formal temporary-root audit, additive product projection, and
+bilingual lazy consumer are implemented. Real chronological validation remains
+blocked on adequate point-in-time history; publication/deployment is a separate
+authorization.
 
 ## Next candidate work
 
@@ -498,8 +504,10 @@ The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing
 Candidate publication 1.1: the real 8/26 first-load file is 1.49 MB (92.68%
 smaller), with 32 detail shards and exact full-publication reconstruction.
-This development candidate is not published or deployed; active Production
-remains Snapshot 1.7 / Dashboard 2.4. Dell remains
+Snapshot 1.9 / Dashboard 2.6 now adds the independently audited strategy
+product as one lazy 195,211-byte file without changing the default Candidate
+transfer. Both development candidates are not published or deployed; active
+Production remains Snapshot 1.7 / Dashboard 2.4. Dell remains
 the sole heavy-compute, historical-storage, and data-governance authority;
 OCI is only the static serving/Session boundary. The optimized full and
 incremental Candidate calculations retain serial state/order custody. Cold

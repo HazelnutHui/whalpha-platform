@@ -149,6 +149,12 @@ from .candidate_strategy_channel import (
     StrategyMarketFit,
     strategy_channel_logical_fingerprint,
 )
+from .candidate_strategy_product import (
+    STRATEGY_CHANNEL_PRODUCT_CONTRACT_VERSION,
+    CandidateStrategyChannelProductSourceV1,
+    CandidateStrategyChannelProductV1,
+    strategy_product_logical_fingerprint,
+)
 from .candidate_strategy_evaluation import (
     STRATEGY_EVALUATION_POLICY_FINGERPRINT,
     STRATEGY_EVALUATION_POLICY_VERSION,
@@ -292,6 +298,10 @@ __all__ = [
     "StrategyEvidenceSource",
     "StrategyMarketFit",
     "strategy_channel_logical_fingerprint",
+    "STRATEGY_CHANNEL_PRODUCT_CONTRACT_VERSION",
+    "CandidateStrategyChannelProductSourceV1",
+    "CandidateStrategyChannelProductV1",
+    "strategy_product_logical_fingerprint",
     "STRATEGY_EVALUATION_POLICY_FINGERPRINT",
     "STRATEGY_EVALUATION_POLICY_VERSION",
     "STRATEGY_OUTCOME_CONTRACT_VERSION",

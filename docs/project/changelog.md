@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-28 — Lazy Candidate strategy-channel product and UI
+
+- Accepted ADR 0057 and added the source-bound
+  `candidate-strategy-channel-product/1.0` projection. It retains complete
+  counts and at most eight Advance/Watch explanations per channel without
+  enlarging the default Candidate summary or copying full deprioritized rows.
+- Added repository build/read support for Snapshot 1.9 / Dashboard 2.6. The new
+  strategy file binds the exact Candidate publication, Entry Geometry,
+  strategy audit, parameters, consumers, and zero-mismatch independent Oracle.
+- Added a strict browser parser and bilingual lazy Strategy Channels workspace.
+  Rankings are visibly same-channel only; reasons, first rejection risk,
+  counterevidence, review conditions, invalidation, manual event/options checks,
+  and unavailable channels remain explicit. Guest and credential Sessions use
+  the same capability contract.
+- A Dell-local temporary-root build formally reread the 195,211-byte product
+  with logical fingerprint
+  `45bad6eb7fd014c0cc36b1244be7274dc98b92d23fa57d9ddcabe10b271ca3cd`
+  and unchanged 496/532 Candidate counts. This is mechanics evidence only.
+- No provider, credential, `/data`, publication, activation, bundle, deployment,
+  scheduler, or Production state changed. Publication-path support remains a
+  separate authorization.
+
 ## 2026-08-28 — Explainable Candidate strategy-channel preview
 
 - Accepted ADR 0056 and replaced the taxonomy-only strategy shadow with a

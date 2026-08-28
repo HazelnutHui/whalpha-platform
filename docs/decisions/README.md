@@ -79,3 +79,4 @@ Each ADR should include:
 - [0054: Gate Data Sources by Explicit Use Permission](0054-gate-data-sources-by-explicit-use-permission.md)
 - [0055: Resolve Canonical Facts by Family-Specific Source Policy](0055-resolve-canonical-facts-by-family-specific-source-policy.md)
 - [0056: Prototype Explainable Strategy Channels Offline](0056-prototype-explainable-strategy-channels-offline.md)
+- [0057: Add a Lazy Strategy-Channel Product Payload](0057-add-lazy-strategy-channel-product-payload.md)

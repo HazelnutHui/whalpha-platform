@@ -246,6 +246,12 @@ export interface SnapshotManifestResponse {
   candidate_summary_logical_fingerprint?: string | null;
   candidate_detail_contract_version?: string | null;
   candidate_detail_files?: string[];
+  candidate_strategy_file?: string | null;
+  candidate_strategy_contract_version?: string | null;
+  candidate_strategy_audit_manifest_sha256?: string | null;
+  candidate_strategy_audit_logical_fingerprint?: string | null;
+  candidate_strategy_parameter_fingerprint?: string | null;
+  candidate_strategy_logical_fingerprint?: string | null;
   review_mode?: boolean;
   review_contract_version?: string | null;
   review_approved_as_of_session?: string | null;

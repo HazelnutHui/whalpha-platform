@@ -98,7 +98,7 @@ export interface OpportunityCandidateResponse {
   universe: CandidateUniverse; warnings: string[]; logical_fingerprint: string;
   publication_contract_version: 'opportunity-candidate-publication/1.0' | 'opportunity-candidate-publication/1.1';
   snapshot_contract_version: 'opportunity-candidate-snapshot/1.0' | 'opportunity-candidate-snapshot/1.1' | 'opportunity-candidate-summary-snapshot/1.0';
-  publication_id: string; detail_files: string[];
+  publication_id: string; detail_files: string[]; strategy_available?: boolean;
 }
 
 const MODES: CandidateRiskMode[] = ['conservative', 'balanced', 'aggressive'];
@@ -334,9 +334,9 @@ function parseEntryGeometry(value: unknown, item: Record<string, unknown>, unive
 export async function getOpportunityCandidates(universeId: string | undefined, signal?: AbortSignal): Promise<OpportunityCandidateResponse> {
   if (import.meta.env.VITE_MARKET_DATA_MODE !== 'snapshot') throw new Error('Candidate API is not enabled');
   const manifest = parseSnapshotManifest(await fetchJson<unknown>('/private-data/v1/manifest.json', signal));
-  if (!['1.6', '1.7', '1.8'].includes(manifest.snapshot_contract_version)
-    || manifest.dashboard_contract_version !== ({ '1.6': '2.3', '1.7': '2.4', '1.8': '2.5' }[manifest.snapshot_contract_version])
-    || manifest.opportunity_candidates_file !== (manifest.snapshot_contract_version === '1.8' ? 'opportunity-candidates-summary.json' : 'opportunity-candidates.json')) throw new Error('Candidate snapshot is unavailable');
+  if (!['1.6', '1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version)
+    || manifest.dashboard_contract_version !== ({ '1.6': '2.3', '1.7': '2.4', '1.8': '2.5', '1.9': '2.6' }[manifest.snapshot_contract_version])
+    || manifest.opportunity_candidates_file !== (['1.8', '1.9'].includes(manifest.snapshot_contract_version) ? 'opportunity-candidates-summary.json' : 'opportunity-candidates.json')) throw new Error('Candidate snapshot is unavailable');
   const raw = await fetchJson<unknown>(`/private-data/v1/${manifest.opportunity_candidates_file}`, signal);
   const envelope = record(raw, 'snapshot');
   if (envelope.publication_id !== manifest.market_intelligence_publication_id
@@ -366,7 +366,7 @@ export async function getOpportunityCandidates(universeId: string | undefined, s
     || source.entry_geometry_parameter_fingerprint !== manifest.entry_geometry_parameter_fingerprint
     || source.entry_lane_consumer_parameter_fingerprint !== manifest.entry_lane_consumer_parameter_fingerprint
   )) throw new Error('Candidate Snapshot entry-geometry binding differs');
-  if (manifest.snapshot_contract_version === '1.8') {
+  if (['1.8', '1.9'].includes(manifest.snapshot_contract_version)) {
     const detailFiles = manifest.candidate_detail_files ?? [];
     if (envelope.contract_version !== 'opportunity-candidate-summary-snapshot/1.0'
       || analytics.contract_version !== manifest.candidate_summary_contract_version
@@ -382,9 +382,12 @@ export async function getOpportunityCandidates(universeId: string | undefined, s
       || analytics.detail_shards.some((value) => !detailFiles.includes(String(record(value, 'detail descriptor').filename)))) {
       throw new Error('Candidate Snapshot split binding differs');
     }
-    return parseOpportunityCandidateSummarySnapshot(raw, universeId);
+    return {
+      ...parseOpportunityCandidateSummarySnapshot(raw, universeId),
+      strategy_available: manifest.snapshot_contract_version === '1.9',
+    };
   }
-  return parseOpportunityCandidateSnapshot(raw, universeId);
+  return { ...parseOpportunityCandidateSnapshot(raw, universeId), strategy_available: false };
 }
 
 export async function getOpportunityCandidateDetail(

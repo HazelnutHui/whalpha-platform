@@ -303,10 +303,16 @@ and standing authorization also remain inactive by exact-revision mismatch.
   calculator. The immutable `/tmp` audit fingerprint is
   `1c2036a6266647482de12d1ed7a1f9adf0f41311bc886979324ba3a0859c2877`;
   both Universes have zero mismatches and input-permutation equivalence. It has
-  no Market Intelligence, Snapshot, frontend, publication, deployment, or
-  Production effect. Technical reversal, fundamental value
-  reversal, and defensive rotation remain explicitly unavailable rather than
-  being synthesized from proxies.
+  no publication, deployment, or Production effect. ADR 0057 adds a separate
+  lazy `candidate-strategy-channels.json` product and bilingual Strategy
+  Channels workspace. A real temporary-root Snapshot 1.9 / Dashboard 2.6 build
+  formally reread the product: 195,211 bytes, logical fingerprint
+  `45bad6eb7fd014c0cc36b1244be7274dc98b92d23fa57d9ddcabe10b271ca3cd`,
+  with unchanged 496/532 Candidate counts and 8/8/8/0/0/0 displayed records
+  per Universe. Repository build/read and browser support exist; publication-
+  plan, bundle, activation, and deployment support do not. Technical reversal,
+  fundamental value reversal, and defensive rotation remain explicitly
+  unavailable rather than being synthesized from proxies.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-
   dated signals are sealed without outcomes, and 1/3/5-session underlying-
   stock labels may be attached only later under a fixed no-random-split,

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import json
+from datetime import UTC, datetime
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 from pydantic import ValidationError
@@ -24,6 +26,19 @@ from tip_api.services.opportunity_candidate_publication import (
     build_opportunity_candidate_publication,
 )
 from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
+from tip_api.services.candidate_strategy_channel_audit import (
+    write_candidate_strategy_channel_audit,
+)
+from tip_api.services.candidate_strategy_channel_product import (
+    build_candidate_strategy_channel_product,
+)
+from tip_api.services.candidate_strategy_channels import (
+    build_candidate_strategy_channel_consumer,
+    calculate_candidate_strategy_channels,
+)
+from tip_api.services.candidate_strategy_channels_oracle import (
+    compare_with_independent_strategy_channel_oracle,
+)
 from tip_api.services.opportunity_candidate_snapshot_split import (
     build_split_candidate_snapshot,
     reconstruct_full_candidate_publication,
@@ -184,3 +199,102 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
     } == {
         f"opportunity-candidate-details-{item.shard_id}.json" for item in shards
     }
+
+    strategy_batches = tuple(
+        calculate_candidate_strategy_channels(
+            candidate_batch=batch,
+            entry_geometry_batch=entry_batch,
+        )
+        for batch, entry_batch in zip(batches, entry_batches, strict=True)
+    )
+    strategy_consumers = tuple(
+        build_candidate_strategy_channel_consumer(batch)
+        for batch in strategy_batches
+    )
+    strategy_oracles = tuple(
+        compare_with_independent_strategy_channel_oracle(
+            candidate_batch=batch,
+            entry_geometry_batch=entry_batch,
+            actual=strategy_batch,
+        )
+        for batch, entry_batch, strategy_batch in zip(
+            batches, entry_batches, strategy_batches, strict=True
+        )
+    )
+    strategy_source = tmp_path / "strategy-source"
+    candidate_source = strategy_source / "candidate"
+    entry_source = strategy_source / "entry"
+    candidate_source.mkdir(parents=True)
+    entry_source.mkdir()
+    strategy_candidate_manifest = {
+        "logical_content_fingerprint": manifest["logical_content_fingerprint"],
+        "as_of_session": panel.as_of_session.isoformat(),
+        "universe_ids": [fixture.PRIMARY, fixture.SECONDARY],
+        "candidate_batch_fingerprints": [
+            row.logical_fingerprint for row in batches
+        ],
+    }
+    strategy_entry_manifest = {
+        "logical_content_fingerprint": entry_manifest[
+            "logical_content_fingerprint"
+        ],
+        "as_of_session": panel.as_of_session.isoformat(),
+        "universe_ids": [fixture.PRIMARY, fixture.SECONDARY],
+        "batch_fingerprints": [
+            row.logical_fingerprint for row in entry_batches
+        ],
+    }
+    (candidate_source / "candidate-audit-manifest.json").write_text(
+        json.dumps(
+            strategy_candidate_manifest,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n"
+    )
+    (entry_source / "entry-geometry-audit-manifest.json").write_text(
+        json.dumps(
+            strategy_entry_manifest,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        + "\n"
+    )
+    strategy_output = Path("/tmp") / f"strategy-product-test-{uuid4().hex}"
+    try:
+        strategy_manifest = write_candidate_strategy_channel_audit(
+            output_dir=strategy_output,
+            candidate_audit_dir=candidate_source,
+            candidate_audit_manifest=strategy_candidate_manifest,
+            entry_geometry_audit_dir=entry_source,
+            entry_geometry_audit_manifest=strategy_entry_manifest,
+            batches=strategy_batches,
+            consumers=strategy_consumers,
+            oracle_reports=strategy_oracles,
+            generated_at=datetime(2026, 8, 28, tzinfo=UTC),
+        )
+        product = build_candidate_strategy_channel_product(
+            strategy_audit_dir=strategy_output,
+            candidate_analytics=entry_publication,
+        )
+
+        assert product.as_of_session == panel.as_of_session
+        assert product.universe_order == (fixture.PRIMARY, fixture.SECONDARY)
+        assert product.source.strategy_audit_logical_fingerprint == (
+            strategy_manifest["logical_content_fingerprint"]
+        )
+        assert product.source.strategy_oracle_mismatch_count == 0
+        assert product.fixed_baseline_not_chronologically_validated is True
+        assert product.cross_channel_score_comparison_prohibited is True
+        assert product.guest_and_credential_capability_identical is True
+        assert all(
+            len(view.displayed_records) <= 8
+            for universe in product.universes
+            for view in universe.channels
+        )
+    finally:
+        if strategy_output.exists():
+            for path in strategy_output.iterdir():
+                path.chmod(0o600)
+                path.unlink()
+            strategy_output.rmdir()

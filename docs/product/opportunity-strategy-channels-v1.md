@@ -112,19 +112,23 @@ temporary-root audit passed both Universes with zero mismatch and input-
 permutation equivalence.
 
 The fixed weights are transparent provisional mechanics, not chronologically
-validated parameters. Market/sector fit remains separate and unvalidated. The
-preview is not connected to Market Intelligence, Snapshot, frontend,
-publication, deployment, or Production. See
+validated parameters. Market/sector fit remains separate and unvalidated. ADR
+0057 now projects the formal audit into one bounded Snapshot 1.9 payload and a
+bilingual lazy Strategy Channels workspace. It does not recalculate in the
+browser and remains unpublished and undeployed. See
 [Candidate Strategy Channel Preview V1](../data-contracts/candidate-strategy-channel-preview-v1.md)
-and the [2026-08-28 offline review](../audits/candidate-strategy-channel-preview-2026-08-28.md).
+the [Candidate Strategy Channel Product V1](../data-contracts/candidate-strategy-channel-product-v1.md),
+the [2026-08-28 offline review](../audits/candidate-strategy-channel-preview-2026-08-28.md),
+and the [product/Snapshot review](../audits/candidate-strategy-product-snapshot-review-2026-08-28.md).
 
 ## Planned implementation sequence
 
 1. Evaluate the three formulas chronologically after the point-in-time panel
    and outcome ledger are physically ready; revise parameters only through a
    new version.
-2. Design an additive bilingual product payload only after explanation and
-   signal-volume review; keep the display cap at eight per channel.
+2. Review the implemented additive bilingual payload/UI with the user; keep the
+   display cap at eight per channel and make any behavior change through a new
+   explicit contract/version.
 3. Add reversal-specific stabilization facts and evaluate technical reversal.
 4. Complete security taxonomy/defensive mapping and evaluate defensive
    rotation across Regimes.
