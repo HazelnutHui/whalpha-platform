@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `eeccc2242a3414aba3b761915c4e146022b3b9fe` |
+| Deployed bundle source commit | `2737f8171c3c47247568fc8de818b005a2355697` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -333,7 +333,9 @@ and standing authorization also remain inactive by exact-revision mismatch.
   strategy channel in the URL, removes the unrelated risk-mode control from
   strategy mode, and makes evidence-incomplete channels explicit; 94 frontend
   tests and the Snapshot-mode build pass. Human visual acceptance remains
-  pending. ADR 0059 now records the user's exact 2026-08-26 stale-review
+  pending. The parameter-bound explanation and URL continuity changes are now
+  deployed in OCI release `2026-08-28T162136Z-2737f81`. ADR 0059 now records
+  the user's exact 2026-08-26 stale-review
   acknowledgement and adds a separate versioned authorization without
   changing historical 1.0 reads. The exact Apply and postflight are complete;
   the authorization is not reusable or standing. Technical reversal,
@@ -349,8 +351,8 @@ and standing authorization also remain inactive by exact-revision mismatch.
   qualifying breakout and pullback row in both Universes (Primary union 425,
   Secondary union 451). It therefore remains a broad provisional trend filter,
   not a validated independent setup. The diagnostic compares membership sets,
-  never channel scores or outcomes. These ADR 0061 source/UI changes are not
-  deployed.
+  never channel scores or outcomes. These ADR 0061 source/UI changes are now
+  deployed in OCI release `2026-08-28T162136Z-2737f81`.
 - ADR 0062 adds a repository-only, descriptive continuation fact contract and
   pure Dell calculator for path continuity, trend persistence, recent/prior
   structure, volatility, high-position, and volume context. It produces no
@@ -360,7 +362,8 @@ and standing authorization also remain inactive by exact-revision mismatch.
   zero Oracle mismatch and permutation equivalence. Information discreteness
   and largest-day path share barely separated the existing continuation
   groups, while structure facts mostly restated the frozen filter. No current
-  weight changed; Snapshot, Dashboard, and Production are unchanged. See the
+  weight changed; Snapshot and the published strategy payload are unchanged.
+  See the
   [dated review](../audits/candidate-continuation-facts-review-2026-08-28.md).
 - ADR 0063 now gives those facts an immutable tmp-only audit, formal reader,
   and network-prohibited CLI. A bounded current Candidate projection retains
@@ -374,6 +377,15 @@ and standing authorization also remain inactive by exact-revision mismatch.
   seconds. This profile does not justify changing the Candidate main-audit
   schema for a new current-batch shard. See the
   [formal audit](../audits/candidate-continuation-facts-formal-audit-2026-08-28.md).
+- ADR 0064 advances the descriptive layer to Continuation Facts 1.1 with six
+  t-1-normalized breakout-anatomy facts. The real 2026-08-26 formal audit
+  assessed 3,543 rows with zero unavailable facts, zero independent-Oracle
+  mismatch, exact permutation equivalence, and audit fingerprint
+  `6e4b996cd7b75d49bf5f60fda94dfb6942da33d049c9b8589eb5f5fe455247a8`.
+  The Production UI now labels Momentum Breakout records as confirmed,
+  near-trigger, or extended/reset-first and explicitly states that Advance +
+  Watch is not a completed-breakout list. The new facts remain shadow-only and
+  do not change the published score, status, rank, or Snapshot payload.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-
   dated signals are sealed without outcomes, and 1/3/5-session underlying-
   stock labels may be attached only later under a fixed no-random-split,
@@ -478,8 +490,8 @@ and standing authorization also remain inactive by exact-revision mismatch.
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-28T132100Z-eeccc22`, built from deployed source commit
-`eeccc2242a3414aba3b761915c4e146022b3b9fe` and bound to the active Snapshot
+`2026-08-28T162136Z-2737f81`, built from deployed source commit
+`2737f8171c3c47247568fc8de818b005a2355697` and bound to the active Snapshot
 and Market Intelligence publication. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.

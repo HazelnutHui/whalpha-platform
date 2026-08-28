@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-28 — Deploy explicit Momentum Breakout stages
+
+- Built and deployed the 50-file OCI release
+  `2026-08-28T162136Z-2737f81` from source commit
+  `2737f8171c3c47247568fc8de818b005a2355697`, reusing the existing audited
+  Snapshot 1.9 / Dashboard 2.6 stale-review payload without any `/data`,
+  publication, Snapshot, EOD, Identity, or Activation write.
+- The live Momentum Breakout list now distinguishes confirmed, near-trigger,
+  and extended/reset-first stages; exact formula and contribution explanations
+  from ADR 0061 are also included.
+- Remote dry-run, atomic Apply, temporary equal-capability guest Session
+  postflight, checksums, Nginx/Auth health, unauthenticated protection, logout,
+  and post-logout protection passed. Public `/` returns 200, unauthenticated
+  Dashboard redirects, private data returns 401, and no staging residue exists.
+- Password-based login and human visual acceptance remain manual checks. No
+  credential content was read or printed.
+
 ## 2026-08-28 — Separate breakout stage and add breakout-anatomy facts
 
 - Accepted ADR 0064. The Momentum Breakout UI now distinguishes a confirmed

@@ -60,7 +60,7 @@ relative-performance proxies, never actual fund flow.
 - Active Dashboard Snapshot is
   `2026-08-28T132100Z-eeccc22`, contract 1.9 / Dashboard 2.6.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-28T132100Z-eeccc22` from source commit `eeccc2242a34`.
+  `2026-08-28T162136Z-2737f81` from source commit `2737f8171c3c`.
 
 The active analytics and Snapshot are an explicitly authorized review release:
 actual/analysis session 2026-08-26, expected session 2026-08-27, lag one,
@@ -582,7 +582,7 @@ one effective Oracle worker. Provider requests retain their fixed serial
 request gates.
 
 ADR 0064 now separates Momentum Breakout stage language from strategy status.
-The repository UI renders confirmed, near-trigger, and extended/reset-first
+The deployed UI renders confirmed, near-trigger, and extended/reset-first
 records distinctly and explicitly says that Advance + Watch is not a list of
 completed breakouts. The frozen Strategy Preview score, status, rank, and
 published payload are unchanged. Continuation Facts 1.1 adds six t-1-normalized
