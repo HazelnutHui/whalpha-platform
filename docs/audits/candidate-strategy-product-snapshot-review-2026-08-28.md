@@ -16,7 +16,9 @@ deployment, or Production change occurred.
   `45bad6eb7fd014c0cc36b1244be7274dc98b92d23fa57d9ddcabe10b271ca3cd`
 - Product file: 195,211 bytes; SHA-256
   `d3e699f6c79204924e3d4d7beedce6b2032b76aa9fdf48d471e77b0826c87f04`
-- Review release: `2026-08-26T120000Z-1302ce0db630`
+- Review release: `2026-08-26T130000Z-352452abb067`
+- Exact implementation commit:
+  `352452abb06798d8c06b48e2d04e1c6a3eed670e`
 - Contracts: Snapshot 1.9 / Dashboard 2.6
 - Candidate display counts retained: Primary 496 / Secondary 532
 - Per-Universe displayed strategy counts by fixed channel order: 8 / 8 / 8 /
