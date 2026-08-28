@@ -2,7 +2,9 @@
 
 from tip_api.contracts.data_governance.v1.record_classification import (
     STANDARD_DATA_FAMILY_REGISTRY_V1,
+    STANDARD_DATA_FAMILY_REGISTRY_FINGERPRINT_V1,
     SHARED_CONTENT_ACCESS_POLICY_V1,
+    SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1,
     ContentScope,
     CoverageStatus,
     DataFamilyDefinitionV1,
@@ -20,7 +22,9 @@ from tip_api.contracts.data_governance.v1.record_classification import (
 
 __all__ = [
     "STANDARD_DATA_FAMILY_REGISTRY_V1",
+    "STANDARD_DATA_FAMILY_REGISTRY_FINGERPRINT_V1",
     "SHARED_CONTENT_ACCESS_POLICY_V1",
+    "SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1",
     "ContentScope",
     "CoverageStatus",
     "DataFamilyDefinitionV1",

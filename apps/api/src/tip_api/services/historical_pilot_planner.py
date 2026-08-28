@@ -267,6 +267,38 @@ def plan_historical_research_pilot(
     )
 
 
+def select_preceding_historical_pilot_sessions(
+    *,
+    completed_eod_sessions: tuple[date, ...],
+    calendar: MarketSessionCalendar | None = None,
+) -> tuple[date, ...]:
+    """Select the three XNYS sessions immediately before a contiguous inventory."""
+
+    session_calendar = calendar or ExchangeCalendar()
+    _validate_sessions(
+        completed_eod_sessions,
+        name="completed EOD sessions",
+        calendar=session_calendar,
+        allow_empty=False,
+    )
+    if any(
+        session_calendar.next_session(previous) != current
+        for previous, current in zip(
+            completed_eod_sessions,
+            completed_eod_sessions[1:],
+        )
+    ):
+        raise HistoricalPilotPlannerError(
+            "preceding pilot selection requires contiguous EOD inventory"
+        )
+    selected: list[date] = []
+    cursor = completed_eod_sessions[0]
+    for _ in range(MAX_TARGET_SESSIONS):
+        cursor = session_calendar.previous_session(cursor)
+        selected.append(cursor)
+    return tuple(reversed(selected))
+
+
 def _request_lines(
     *,
     request: HistoricalPilotRequestV1,

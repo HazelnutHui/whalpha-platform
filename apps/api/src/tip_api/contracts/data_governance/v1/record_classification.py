@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 from datetime import datetime
 from enum import StrEnum
@@ -499,6 +501,22 @@ STANDARD_DATA_FAMILY_REGISTRY_V1 = tuple(
 
 SHARED_CONTENT_ACCESS_POLICY_V1 = SharedContentAccessPolicyV1()
 validate_governance_registry(STANDARD_DATA_FAMILY_REGISTRY_V1)
+STANDARD_DATA_FAMILY_REGISTRY_FINGERPRINT_V1 = hashlib.sha256(
+    json.dumps(
+        [item.model_dump(mode="json") for item in STANDARD_DATA_FAMILY_REGISTRY_V1],
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode("utf-8")
+).hexdigest()
+SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1 = hashlib.sha256(
+    json.dumps(
+        SHARED_CONTENT_ACCESS_POLICY_V1.model_dump(mode="json"),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode("utf-8")
+).hexdigest()
 
 
 def _normalized_strings(value: Any, *, field_name: str) -> tuple[str, ...]:

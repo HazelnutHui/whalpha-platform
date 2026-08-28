@@ -201,6 +201,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Synthetic Massive split/dividend mapping and adjustment invariants
 - [x] Credential-free read-only exact historical pilot planner
 - [x] Cross-family Data Record Governance V1 and equal-capability serving policy
+- [x] Default-deny historical Pilot approval-review package
 
 ## Next Small Target
 
@@ -219,9 +220,12 @@ unverified, and full lifecycle sources are absent.
 
 The credential-free read-only pilot planner is complete: it binds exact
 requested sessions and caller inventory, endpoint/page ceilings, deterministic
-future `/tmp` paths, source gaps, and a permanent default-deny result. Next
-re-review equal-capability source permission, account endpoint entitlement,
-missing lifecycle sources, and one exact live-pilot authorization. Product
+future `/tmp` paths, source gaps, and a permanent default-deny result. The
+approval-review boundary is also complete and selects 2026-07-14 through
+2026-07-16 as the deterministic preliminary window with a 75-request ceiling
+and no unnamed Ticker Events. Re-review equal-capability source permission,
+account endpoint entitlement, missing lifecycle sources, and a fresh exact
+inventory before one exact live-pilot authorization. Product
 posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.

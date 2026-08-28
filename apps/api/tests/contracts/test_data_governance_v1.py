@@ -8,7 +8,9 @@ from pydantic import ValidationError
 from tip_api.contracts.common import QualityStatus
 from tip_api.contracts.data_governance.v1 import (
     SHARED_CONTENT_ACCESS_POLICY_V1,
+    SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1,
     STANDARD_DATA_FAMILY_REGISTRY_V1,
+    STANDARD_DATA_FAMILY_REGISTRY_FINGERPRINT_V1,
     ContentScope,
     CoverageStatus,
     DataFamilyDefinitionV1,
@@ -79,6 +81,8 @@ def test_standard_registry_is_unique_ordered_and_covers_core_data_families() -> 
 
     assert ids == tuple(sorted(ids))
     assert len(ids) == len(set(ids))
+    assert len(STANDARD_DATA_FAMILY_REGISTRY_FINGERPRINT_V1) == 64
+    assert len(SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1) == 64
     assert {
         "eod_price_bar",
         "point_in_time_identity",

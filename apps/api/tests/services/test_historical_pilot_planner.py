@@ -14,6 +14,7 @@ from tip_api.services.historical_pilot_planner import (
     PilotNextAction,
     PilotRequestKind,
     plan_historical_research_pilot,
+    select_preceding_historical_pilot_sessions,
 )
 
 
@@ -151,6 +152,23 @@ def test_proposed_canonical_paths_do_not_invent_action_year_or_coverage_id() -> 
         "<derived-after-formal-reread>" in path
         for path in plan.unresolved_canonical_path_templates
     )
+
+
+def test_preceding_selector_uses_the_three_sessions_before_contiguous_inventory() -> None:
+    sessions = tuple(
+        date(2026, 7, day)
+        for day in (17, 20, 21, 22)
+    )
+    assert select_preceding_historical_pilot_sessions(
+        completed_eod_sessions=sessions,
+    ) == (date(2026, 7, 14), date(2026, 7, 15), date(2026, 7, 16))
+
+
+def test_preceding_selector_rejects_gapped_inventory() -> None:
+    with pytest.raises(HistoricalPilotPlannerError, match="contiguous"):
+        select_preceding_historical_pilot_sessions(
+            completed_eod_sessions=(date(2026, 7, 17), date(2026, 7, 21)),
+        )
 
 
 @pytest.mark.parametrize(

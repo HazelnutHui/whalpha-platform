@@ -443,9 +443,12 @@ request, credential access, or write and permanently returns `not_authorized`.
 ADR 0052 and Data Record Governance V1 now add one executable cross-family
 registry and orthogonal disposition, evidence, quality, coverage, point-in-time,
 retention, content-scope, and serving dimensions. They do not rewrite existing
-records. The next transition is external review of equal-capability source
-permission, account entitlement, missing lifecycle sources, and one exact
-live-pilot authorization.
+records. ADR 0053 now adds a default-deny approval review and deterministic
+preceding-window selector. The preliminary dates are 2026-07-14 through
+2026-07-16 with a 75-request ceiling and no unnamed Ticker Events. It emits no
+acknowledgement while source permission, entitlement, lifecycle coverage, and
+a fresh exact inventory fingerprint remain unresolved. The next transition is
+external evidence review, not acquisition.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

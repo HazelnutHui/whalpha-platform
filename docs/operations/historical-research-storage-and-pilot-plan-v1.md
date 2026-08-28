@@ -113,10 +113,14 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 6. **Complete:** add a read-only pilot planner that calculates exact sessions,
    request ceilings, expected paths, and caller-supplied current inventory
    without credential access or storage scanning.
-7. Re-review terms/account entitlement and obtain exact pilot authorization.
+7. **Complete:** add a default-deny approval review that binds the exact plan,
+   repository evidence, unified data-governance policy, and external gates
+   without creating an authorization.
+8. Re-review source permission/account entitlement/lifecycle coverage, bind a
+   fresh inventory report, and obtain exact pilot authorization.
 
-Steps 1–6 are repository work and can proceed without provider access or
-`/data` writes. Step 7 is a separate external transition.
+Steps 1–7 are repository work and can proceed without provider access or
+`/data` writes. Step 8 is a separate external transition.
 
 ## Implemented read-only planner boundary
 
@@ -141,6 +145,30 @@ observations and formal reread exist. The planner always returns
 `not_authorized`, `review_plan_only`, zero external requests, and zero data
 writes. It has no transition that can grant acquisition, Apply, publication,
 deployment, or scheduler authority.
+
+## Implemented approval-review boundary
+
+`historical-research-pilot-approval-review/1.0` binds the plan and inventory to
+the exact implementation revision, synthetic mapping/adjustment evidence, the
+Data Record Governance registry, equal-capability serving policy, `/tmp`
+package boundary, and four external gates. It returns either `blocked` or
+`ready_for_exact_user_authorization_review`; both have zero authority, requests,
+and writes. An exact acknowledgement string exists only in the latter state and
+still requires a separate user decision and a separately implemented custody
+boundary. Satisfied inventory and account evidence expires after at most 24
+hours, lifecycle-source review after 30 days, and source-permission review after
+90 days; stale evidence fails closed.
+
+The deterministic first-window candidate is 2026-07-14 through 2026-07-16,
+the three XNYS sessions immediately before the documented contiguous inventory
+starts on 2026-07-17. With no named experimental Ticker Events, its preliminary
+ceiling is 75 serial requests and 1,125 transport seconds at 15 seconds/request.
+The unused five-request allowance cannot be filled later without regenerating
+the plan and review binding.
+
+No real approval package is yet complete: the current inventory must receive a
+fresh exact fingerprint, and equal-capability source permission, live endpoint
+entitlement, and lifecycle-source coverage remain unresolved.
 
 ## Proposed first live pilot after gates clear
 

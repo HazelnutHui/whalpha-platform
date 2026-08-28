@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-28 — Default-deny historical Pilot approval review
+
+- Accepted ADR 0053 and added a pure approval-review package that binds the
+  implementation revision, exact plan/inventory, unified governance and access
+  policy, repository fixture evidence, request details, and four external gates.
+- Required effective-dated external evidence: inventory and account entitlement
+  remain valid for at most 24 hours, lifecycle review for 30 days, and source-
+  permission review for 90 days. Stale evidence cannot generate acknowledgement.
+- Added deterministic selection of the three XNYS sessions immediately before
+  a contiguous EOD inventory. The documented 29-session boundary selects
+  2026-07-14 through 2026-07-16; without named Ticker Events the preliminary
+  ceiling is 75 serial requests and 1,125 transport seconds.
+- Review output can only be `blocked` or ready to request a separate exact user
+  authorization. It always records zero authority, provider requests, writes,
+  publication, deployment, and scheduler capability. Unnamed requests cannot
+  be inserted after review.
+- Current external gates remain unresolved and no real acknowledgement is
+  emitted. No provider, credential, `/data`, `/tmp`, authentication,
+  publication, deployment, or OCI state changed.
+
 ## 2026-08-28 — Unified record governance and shared-content parity
 
 - Accepted ADR 0052 and added Data Record Governance V1 with separate data-

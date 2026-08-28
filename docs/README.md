@@ -139,6 +139,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0050: Seal strategy signals before outcomes](decisions/0050-seal-strategy-signals-before-forward-outcomes.md): separates contemporaneous point-in-time signals from later stock outcomes and prohibits random-split leakage.
 - [ADR 0051: Require a point-in-time historical research foundation](decisions/0051-require-point-in-time-historical-research-foundation.md): requires governed membership, actions, lifecycle, adjustments, and coverage before formula evaluation.
 - [ADR 0052: Unify cross-family data record governance](decisions/0052-unify-data-record-governance-classification.md): keeps domain states separate while enforcing one executable family registry and shared-content parity.
+- [ADR 0053: Separate historical Pilot review from authorization](decisions/0053-separate-historical-pilot-approval-review-from-authorization.md): binds exact scope and external gates without granting acquisition or Apply authority.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.

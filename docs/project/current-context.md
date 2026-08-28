@@ -348,6 +348,11 @@ and standing authorization also remain inactive by exact-revision mismatch.
   registry plus separate layer, disposition, evidence, quality, coverage,
   point-in-time, retention, content-scope, and serving dimensions. Existing
   domain states remain authoritative and no dataset was rewritten.
+- ADR 0053 adds the pure historical Pilot approval review. The deterministic
+  preliminary window is 2026-07-14 through 2026-07-16, immediately before the
+  documented retained boundary, with 75 serial requests and no unnamed Ticker
+  Events. The current review remains blocked and produces no acknowledgement;
+  no provider, credential, `/data`, `/tmp`, publication, or deployment changed.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
