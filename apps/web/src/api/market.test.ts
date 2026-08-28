@@ -139,11 +139,20 @@ describe('market API runtime validation', () => {
     expect(() => parseSnapshotManifest({ ...base, market_intelligence_payload_sha256: 12 })).toThrow('market_intelligence_payload_sha256');
     expect(() => parseSnapshotManifest({ ...base, snapshot_contract_version: '1.6', dashboard_contract_version: '2.3' })).toThrow('Candidate metadata');
     expect(() => parseSnapshotManifest({ ...base, market_intelligence_publication_id: undefined })).toThrow('Market Intelligence metadata');
+
+    expect(parseSnapshotManifest({
+      ...base,
+      current_session_date: '2026-08-26', actual_latest_completed_session: '2026-08-26',
+      expected_latest_completed_session: '2026-08-27',
+      review_contract_version: 'production-review-deployment/1.1',
+      review_approved_as_of_session: '2026-08-26', review_expected_latest_session: '2026-08-27',
+    }).review_contract_version).toBe('production-review-deployment/1.1');
   });
 
   it('accepts the explicit stale-review overview and rejects unknown status or contract values', () => {
     const review = formalDashboardOverview();
     review.contract_version = '2.1';
+    review.current_session_date = '2026-08-24';
     review.data_status = 'stale_review';
     review.review_mode = true;
     review.review_contract_version = 'production-review-deployment/1.0';
@@ -159,6 +168,14 @@ describe('market API runtime validation', () => {
     expect(() => parseDashboardOverview({ ...review, contract_version: '2.2' })).toThrow('Unsupported market Dashboard contract');
     expect(() => parseDashboardOverview({ ...review, review_mode: false, review_contract_version: null,
       review_approved_as_of_session: null, review_expected_latest_session: null, review_expected_lag_sessions: null })).toThrow('unexpected review deployment');
+
+    review.current_session_date = '2026-08-26';
+    review.actual_latest_completed_session = '2026-08-26';
+    review.expected_latest_completed_session = '2026-08-27';
+    review.review_contract_version = 'production-review-deployment/1.1';
+    review.review_approved_as_of_session = '2026-08-26';
+    review.review_expected_latest_session = '2026-08-27';
+    expect(parseDashboardOverview(review).review_contract_version).toBe('production-review-deployment/1.1');
   });
 
   it('rejects synthetic Dashboard responses at the formal API boundary', () => {

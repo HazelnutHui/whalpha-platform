@@ -34,6 +34,12 @@ full-file plan SHA, session/revision, and current-state fingerprint. The lock
 recomputes formal freshness and requires actual `2026-08-24`, expected
 `2026-08-25`, `stale`, and lag one. There is no generic stale flag.
 
+ADR 0059 adds a second exact `production-review-deployment/1.1` exception for
+actual/analysis `2026-08-26`, expected `2026-08-27`, lag one, and
+`I_ACKNOWLEDGE_2026_08_26_STALE_REVIEW_LAG_1`. The two versions remain
+independent; apply uses the acknowledgement embedded in the approved plan and
+rejects any cross-version or freshness drift.
+
 ## Apply, recovery, and rollback
 
 Apply requires `--apply`, exact data root/session/revision, absolute approved

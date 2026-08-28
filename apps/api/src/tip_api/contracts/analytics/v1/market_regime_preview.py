@@ -14,7 +14,7 @@ from .etf_relationship import (
 )
 from .market_regime import ExplanationLedgerEntryV1, MarketRegimeCompositeV1
 from .market_regime_state import MarketRegimeStateExplanationV1, MarketRegimeStateRecordV1
-from .review_deployment import ReviewDeploymentAuthorizationV1
+from .review_deployment import ReviewDeploymentAuthorization
 
 
 PREVIEW_SCHEMA_VERSION = "1.0"
@@ -240,7 +240,7 @@ class MarketRegimeOpportunityMapResponseV1(BaseModel):
     bundle_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     as_of_session: date
     data_status: Literal["degraded_short_history", "stale_review"]
-    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
+    review_deployment: ReviewDeploymentAuthorization | None = None
     input_first_session: date
     input_last_session: date
     input_session_count: int

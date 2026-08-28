@@ -17,8 +17,7 @@ from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotApprovalPlanV2_4,
 )
 from tip_api.contracts.analytics.v1 import (
-    REVIEW_ACKNOWLEDGEMENT,
-    ReviewDeploymentAuthorizationV1,
+    ReviewDeploymentAuthorization,
     approved_review_authorization,
 )
 from tip_api.persistence.parquet.dashboard_snapshot_active import (
@@ -199,7 +198,7 @@ def _formal_freshness_gate() -> None:
         raise DashboardSnapshotPublicationError("Production snapshot apply blocked by stale EOD")
 
 
-def _review_authorization_from_args(args: argparse.Namespace) -> ReviewDeploymentAuthorizationV1 | None:
+def _review_authorization_from_args(args: argparse.Namespace) -> ReviewDeploymentAuthorization | None:
     values=(args.review_approved_as_of_session,args.review_expected_latest_session,
             args.review_expected_lag_sessions,args.review_acknowledgement)
     if args.review_deployment != all(value is not None for value in values):
@@ -228,7 +227,6 @@ def _approved_freshness_validator(plan: DashboardSnapshotApprovalPlanV2,args: ar
         return _formal_freshness_gate
     review=plan.review_deployment
     if (not plan.activation_allowed_by_review_authorization or review is None
-        or args.review_acknowledgement != REVIEW_ACKNOWLEDGEMENT
         or args.review_acknowledgement != review.explicit_user_acknowledgement):
         raise DashboardSnapshotPublicationError(
             "approved stale review requires the exact explicit acknowledgement"

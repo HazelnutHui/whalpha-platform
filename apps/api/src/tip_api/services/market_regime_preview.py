@@ -35,7 +35,7 @@ from tip_api.contracts.analytics.v1 import (
     PreviewSourceLogicalFingerprintsV1,
     PreviewUniverseAnalyticsV1,
     PreviewUniverseDefinitionV1,
-    ReviewDeploymentAuthorizationV1,
+    ReviewDeploymentAuthorization,
 )
 from tip_api.contracts.analytics.v1.market_regime_preview import (
     PREVIEW_MANIFEST_FILE,
@@ -257,7 +257,7 @@ class MarketRegimePreviewService:
         self._payload = completed.payload
         self._universes = {item.definition.universe_id: item for item in completed.payload.universes}
         self._relationships = {item.definition.pair_id: item for item in completed.payload.relationships}
-        self._review_deployment: ReviewDeploymentAuthorizationV1 | None = None
+        self._review_deployment: ReviewDeploymentAuthorization | None = None
 
     @classmethod
     def from_bundle(cls, path: Path) -> "MarketRegimePreviewService":
@@ -268,7 +268,7 @@ class MarketRegimePreviewService:
         cls,
         payload: MarketRegimePreviewPayloadV1,
         generated_at: datetime,
-        review_deployment: ReviewDeploymentAuthorizationV1 | None = None,
+        review_deployment: ReviewDeploymentAuthorization | None = None,
     ) -> "MarketRegimePreviewService":
         """Build the same immutable API view from a formal publication payload."""
 

@@ -268,6 +268,12 @@ and OCI deployment each remain separately authorized actions; defer
 performance claims and threshold calibration until the point-in-time
 historical foundation is physically ready.
 
+The user has supplied the exact ADR 0059 acknowledgement for a visibly stale
+2026-08-26 review release. The immediate bounded action is therefore the
+review-only MI 1.2 and Snapshot 1.9 plan/apply sequence, followed by one clean
+bundle build and the already requested OCI deployment. Any freshness or source
+state drift requires regeneration rather than reuse.
+
 ## Phase 2 — Intraday and Options
 
 - [ ] Delayed/intraday upgrades

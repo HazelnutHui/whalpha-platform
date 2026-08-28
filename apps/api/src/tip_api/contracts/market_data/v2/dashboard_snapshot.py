@@ -7,7 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-from tip_api.contracts.analytics.v1.review_deployment import ReviewDeploymentAuthorizationV1
+from tip_api.contracts.analytics.v1.review_deployment import ReviewDeploymentAuthorization
 
 
 class DashboardSnapshotFileReferenceV2(BaseModel):
@@ -93,7 +93,7 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     review_mode: bool = False
     normal_freshness: bool = False
     activation_allowed_by_review_authorization: bool = False
-    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
+    review_deployment: ReviewDeploymentAuthorization | None = None
     activation_pointer_fingerprint: str
     activation_logical_fingerprint: str
     expected_current_state_fingerprint: str

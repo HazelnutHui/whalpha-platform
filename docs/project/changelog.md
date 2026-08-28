@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-28 — Second exact stale-review authorization
+
+- Accepted ADR 0059 after the user supplied the exact
+  `I_ACKNOWLEDGE_2026_08_26_STALE_REVIEW_LAG_1` acknowledgement for actual and
+  analysis session 2026-08-26, expected session 2026-08-27, and lag one.
+- Added `production-review-deployment/1.1` without changing or invalidating the
+  historical 1.0 authorization. Backend contracts, plans, readers, freshness
+  gates, Snapshot validation, and browser parsers accept only the two exact
+  version/date/acknowledgement combinations.
+- This change authorizes the bounded review publication path only; it does not
+  claim fresh data, authorize provider acquisition, or by itself publish,
+  activate, bundle, upload, or deploy anything.
+
 ## 2026-08-28 — Candidate strategy workspace continuity review
 
 - Made Candidate subview and strategy-channel selection URL-addressable, so

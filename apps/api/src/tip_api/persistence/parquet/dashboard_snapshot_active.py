@@ -22,8 +22,8 @@ from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotFileReferenceV2, DashboardSnapshotTargetReferenceV2,
 )
 from tip_api.contracts.analytics.v1.review_deployment import (
-    REVIEW_ACKNOWLEDGEMENT,
-    ReviewDeploymentAuthorizationV1,
+    approved_review_authorization,
+    review_acknowledgement_for_contract,
 )
 from tip_api.persistence.parquet.dashboard_universe_activation_active import (
     _fsync_directory, _mkdir_parents_durable, _reject_symlink_chain, _validated_root,
@@ -167,11 +167,13 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
     )
     review = None
     if manifest.review_mode:
-        review = ReviewDeploymentAuthorizationV1(
+        review = approved_review_authorization(
             approved_as_of_session=manifest.review_approved_as_of_session,
             expected_latest_session=manifest.review_expected_latest_session,
             expected_lag_sessions=manifest.review_expected_lag_sessions,
-            explicit_user_acknowledgement=REVIEW_ACKNOWLEDGEMENT,
+            explicit_user_acknowledgement=review_acknowledgement_for_contract(
+                manifest.review_contract_version or ""
+            ),
         )
     review_allowed = review is not None and (
         manifest.current_session_date == review.approved_as_of_session.isoformat()

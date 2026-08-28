@@ -1,4 +1,5 @@
 import { fetchJson } from './client';
+import { parseReviewDeployment, type ReviewDeployment } from './reviewDeployment';
 
 export interface PreviewUniverseDefinition {
   universe_id: string; display_name: string; catalog_order: number; is_default: boolean;
@@ -64,13 +65,6 @@ export interface MarketRegimePreviewResponse {
   quality_gates: Array<{ gate_id: string; status: string; reason_codes: string[] }>;
   review_deployment?: ReviewDeployment | null;
 }
-export interface ReviewDeployment {
-  contract_version: 'production-review-deployment/1.0'; review_mode: true;
-  normal_freshness: false; data_status: 'stale_review'; approved_as_of_session: string;
-  expected_latest_session: string; expected_lag_sessions: 1;
-  explicit_user_acknowledgement: string;
-}
-
 const DECIMAL = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
 function object(value: unknown, label: string): Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new Error(`Invalid Market Regime payload: ${label}`);
@@ -84,11 +78,8 @@ export function parseMarketRegimePreview(value: unknown): MarketRegimePreviewRes
   const root = object(value, 'root');
   if (root.schema_version !== '1.0' || root.contract_version !== 'market-regime-opportunity-map-api/1.0') throw new Error('Unsupported Market Regime API contract');
   if (root.data_status === 'stale_review') {
-    const review = object(root.review_deployment, 'review deployment');
-    if (review.contract_version !== 'production-review-deployment/1.0' || review.review_mode !== true
-      || review.approved_as_of_session !== root.as_of_session || review.expected_lag_sessions !== 1) {
-      throw new Error('Invalid Market Regime review deployment contract');
-    }
+    try { parseReviewDeployment(root.review_deployment, root.as_of_session); }
+    catch { throw new Error('Invalid Market Regime review deployment contract'); }
   } else if (root.review_deployment !== null && root.review_deployment !== undefined) {
     throw new Error('Normal Market Regime response carries review metadata');
   }

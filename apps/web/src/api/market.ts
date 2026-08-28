@@ -1,5 +1,6 @@
 import { fetchJson } from './client';
 import type { DashboardData, DashboardOverviewResponse, DashboardUniverseAuditResponse, DashboardUniverseDefinitionResponse, DashboardUniverseFunnelStageResponse, DashboardUniverseViewResponse, EodReturnResponse, LiquidityMapNodeResponse, LiquidityMapResponse, MarketBenchmarkResponse, MarketSummaryResponse, MoversResponse, SectorBenchmarkEtfResponse, SnapshotManifestResponse } from './types';
+import { reviewMetadataMatches } from './reviewDeployment';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -324,7 +325,12 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     if (manifest.review_mode) {
       if (
         manifest.data_status !== 'stale_review'
-        || manifest.review_contract_version !== 'production-review-deployment/1.0'
+        || !reviewMetadataMatches(
+          manifest.review_contract_version,
+          manifest.review_approved_as_of_session,
+          manifest.review_expected_latest_session,
+          manifest.review_expected_lag_sessions,
+        )
         || manifest.review_approved_as_of_session !== manifest.current_session_date
         || manifest.review_approved_as_of_session !== manifest.actual_latest_completed_session
         || manifest.review_expected_latest_session !== manifest.expected_latest_completed_session
@@ -534,7 +540,7 @@ export function parseDashboardOverview(value: unknown): DashboardOverviewRespons
   const reviewLag = value.review_expected_lag_sessions === undefined ? null : requireNullableNumber(value, 'review_expected_lag_sessions');
   if (reviewMode && (
     dataStatus !== 'stale_review'
-    || reviewContract !== 'production-review-deployment/1.0'
+    || !reviewMetadataMatches(reviewContract, reviewAsOf, reviewExpected, reviewLag)
     || reviewAsOf === null
     || reviewExpected === null
     || reviewLag !== 1

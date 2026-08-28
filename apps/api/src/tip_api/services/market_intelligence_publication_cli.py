@@ -13,11 +13,10 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 from tip_api.contracts.analytics.v1 import (
-    REVIEW_ACKNOWLEDGEMENT,
     MarketIntelligenceApprovalPlanV1,
     MarketIntelligenceApprovalPlanV1_1,
     MarketIntelligenceApprovalPlanV1_2,
-    ReviewDeploymentAuthorizationV1,
+    ReviewDeploymentAuthorization,
     approved_review_authorization,
 )
 from tip_api.contracts.analytics.v1.market_intelligence import MARKET_INTELLIGENCE_REVISION
@@ -358,7 +357,7 @@ def _freshness_gate(root: Path) -> None:
 
 def _review_authorization_from_plan_args(
     args: argparse.Namespace,
-) -> ReviewDeploymentAuthorizationV1 | None:
+) -> ReviewDeploymentAuthorization | None:
     if not args.review_deployment:
         return None
     try:
@@ -387,7 +386,6 @@ def _approved_freshness_validator(
     if (
         not plan.activation_allowed_by_review_authorization
         or review is None
-        or args.review_acknowledgement != REVIEW_ACKNOWLEDGEMENT
         or args.review_acknowledgement != review.explicit_user_acknowledgement
     ):
         raise MarketIntelligencePublicationError(

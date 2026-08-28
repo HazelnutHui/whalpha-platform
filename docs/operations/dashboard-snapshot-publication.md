@@ -36,7 +36,10 @@ boundary are recorded in
 
 ## Safety boundary
 
-The publisher and rollback tools are offline administrator workflows. They do not fetch EOD or provider data. Never run apply while canonical freshness is stale.
+The publisher and rollback tools are offline administrator workflows. They do
+not fetch EOD or provider data. Never run apply while canonical freshness is
+stale unless one of the versioned exact review contracts matches every bound
+field and acknowledgement.
 
 ```bash
 scripts/admin/publish-dashboard-snapshot-v2.sh --help
@@ -66,3 +69,9 @@ canonical plan plus full-file SHA, current-state fingerprint, exact analysis
 session, and acknowledgement. The formal XNYS state is checked before and
 inside the lock; any session/lag/expected-date drift fails closed. Ordinary
 stale snapshots remain ineligible.
+
+ADR 0059 adds the separately approved
+`production-review-deployment/1.1` binding for actual/analysis 2026-08-26,
+expected 2026-08-27, lag one, and the exact acknowledgement
+`I_ACKNOWLEDGE_2026_08_26_STALE_REVIEW_LAG_1`. Version 1.0 remains readable and
+cannot be mixed with this binding. There is still no generic stale switch.

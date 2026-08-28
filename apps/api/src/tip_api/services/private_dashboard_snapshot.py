@@ -22,7 +22,7 @@ from tip_api.contracts.analytics.v1 import (
     OpportunityCandidatePublicationV1_1,
     PreviewUniverseDefinitionV1,
 )
-from tip_api.contracts.analytics.v1.review_deployment import REVIEW_ACKNOWLEDGEMENT
+from tip_api.contracts.analytics.v1.review_deployment import review_acknowledgement_for_contract
 from tip_api.contracts.analytics.v1.opportunity_candidate_snapshot import (
     DETAIL_FILE_RE,
     DETAIL_SHARD_CONTRACT_VERSION,
@@ -876,7 +876,9 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
                 "approved_as_of_session": manifest.review_approved_as_of_session,
                 "expected_latest_session": manifest.review_expected_latest_session,
                 "expected_lag_sessions": manifest.review_expected_lag_sessions,
-                "explicit_user_acknowledgement": REVIEW_ACKNOWLEDGEMENT,
+                "explicit_user_acknowledgement": review_acknowledgement_for_contract(
+                    manifest.review_contract_version or ""
+                ),
             }
             if manifest.review_mode
             else None

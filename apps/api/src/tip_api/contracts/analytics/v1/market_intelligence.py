@@ -14,7 +14,7 @@ from .market_regime_preview import (
     PreviewSourceLogicalFingerprintsV1,
     PreviewUniverseDefinitionV1,
 )
-from .review_deployment import ReviewDeploymentAuthorizationV1
+from .review_deployment import ReviewDeploymentAuthorization
 from .opportunity_candidate_publication import (
     OpportunityCandidatePublicationSourceV1,
     OpportunityCandidatePublicationSourceV1_1,
@@ -126,7 +126,7 @@ class MarketIntelligencePayloadV1(FrozenModel):
     analytics: MarketRegimePreviewPayloadV1
     language_neutral: Literal[True] = True
     supported_interface_locales: tuple[Literal["en", "zh"], ...] = ("en", "zh")
-    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
+    review_deployment: ReviewDeploymentAuthorization | None = None
     logical_fingerprint: str
 
     @field_validator("publication_id")
@@ -223,7 +223,7 @@ class MarketIntelligenceManifestV1(FrozenModel):
     etf_count: Literal[30] = 30
     relationship_count: Literal[16] = 16
     relationship_history_count: Literal[336] = 336
-    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
+    review_deployment: ReviewDeploymentAuthorization | None = None
     external_request_count: Literal[0] = 0
     contains_credentials: Literal[False] = False
     contains_raw_provider_data: Literal[False] = False
@@ -306,7 +306,7 @@ class MarketIntelligenceTargetReferenceV1(FrozenModel):
     analytics_logical_fingerprint: str
     manifest_sha256: str
     aggregate_sha256: str
-    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
+    review_deployment: ReviewDeploymentAuthorization | None = None
 
     @field_validator("publication_id")
     @classmethod
@@ -389,7 +389,7 @@ class MarketIntelligenceApprovalPlanV1(FrozenModel):
     review_mode: bool = False
     normal_freshness: bool = False
     activation_allowed_by_review_authorization: bool = False
-    review_deployment: ReviewDeploymentAuthorizationV1 | None = None
+    review_deployment: ReviewDeploymentAuthorization | None = None
     inventory_change_file_count: Literal[3] = 3
     inventory_change_bytes: int = Field(gt=0)
     recovery_boundary: str

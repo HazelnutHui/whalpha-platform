@@ -33,7 +33,7 @@ from tip_api.contracts.analytics.v1 import (
     MarketIntelligenceSourceBindingV1,
     MarketIntelligenceTargetReferenceV1,
     PreviewUniverseDefinitionV1,
-    ReviewDeploymentAuthorizationV1,
+    ReviewDeploymentAuthorization,
 )
 from tip_api.contracts.analytics.v1.market_intelligence import (
     MARKET_INTELLIGENCE_MANIFEST_FILE,
@@ -147,7 +147,7 @@ def build_market_intelligence_candidate(
     candidate_path: Path,
     candidate_audit_path: Path | None = None,
     entry_geometry_audit_path: Path | None = None,
-    review_deployment: ReviewDeploymentAuthorizationV1 | None = None,
+    review_deployment: ReviewDeploymentAuthorization | None = None,
 ) -> CompletedMarketIntelligence:
     """Create one language-neutral candidate from explicit verified sources."""
 

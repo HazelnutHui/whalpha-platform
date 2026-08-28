@@ -77,6 +77,13 @@ English and Chinese render the same authorization and analytics payload. This
 sub-contract is not an `allow-stale` switch and cannot authorize any other
 session or future release.
 
+Contract `production-review-deployment/1.1` is a second independent exact
+exception. It accepts only actual/analysis session `2026-08-26`, expected
+session `2026-08-27`, lag one, and
+`I_ACKNOWLEDGE_2026_08_26_STALE_REVIEW_LAG_1`. Version 1.0 remains readable;
+the two acknowledgements and dates cannot be mixed. This is not a general
+extension of stale eligibility.
+
 ## Contract 1.1 Candidate extension
 
 Production implements `market-intelligence-publication/1.1` while

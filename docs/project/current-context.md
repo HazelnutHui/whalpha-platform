@@ -317,7 +317,10 @@ and standing authorization also remain inactive by exact-revision mismatch.
   strategy channel in the URL, removes the unrelated risk-mode control from
   strategy mode, and makes evidence-incomplete channels explicit; 91 frontend
   tests and the Snapshot-mode build pass. Human visual acceptance remains
-  pending. Technical reversal,
+  pending. ADR 0059 now records the user's exact 2026-08-26 stale-review
+  acknowledgement and adds a separate versioned authorization without
+  changing historical 1.0 reads. No new publication or deployment should be
+  claimed until the exact apply and postflight finish. Technical reversal,
   fundamental value reversal, and defensive rotation remain explicitly
   unavailable rather than being synthesized from proxies.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-

@@ -188,6 +188,11 @@ read or used.
   explicitly labels evidence-incomplete channels. All 91 frontend tests and a
   Snapshot-mode build pass. A Dell-local real-payload preview is available for
   human review; this is not user acceptance or deployment.
+  The user has now supplied ADR 0059's exact 2026-08-26 stale-review
+  acknowledgement. Repository source adds the separate
+  `production-review-deployment/1.1` contract while preserving historical 1.0
+  reads. Publication and OCI state do not change until the exact plans, apply,
+  bundle, deployment, and postflight complete.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and

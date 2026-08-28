@@ -16,6 +16,7 @@ describe('Market Regime API parser', () => {
 
   it('accepts only coherent stale-review metadata', () => {
     const payload = marketRegimeFixture();
+    payload.as_of_session = '2026-08-24';
     payload.data_status = 'stale_review';
     payload.review_deployment = {
       contract_version: 'production-review-deployment/1.0', review_mode: true,
@@ -26,6 +27,22 @@ describe('Market Regime API parser', () => {
     };
     expect(parseMarketRegimePreview(payload).data_status).toBe('stale_review');
     payload.review_deployment.expected_lag_sessions = 2 as 1;
+    expect(() => parseMarketRegimePreview(payload)).toThrow(/review deployment/);
+  });
+
+  it('accepts only the exact second stale-review authorization', () => {
+    const payload = marketRegimeFixture();
+    payload.as_of_session = '2026-08-26';
+    payload.data_status = 'stale_review';
+    payload.review_deployment = {
+      contract_version: 'production-review-deployment/1.1', review_mode: true,
+      normal_freshness: false, data_status: 'stale_review',
+      approved_as_of_session: '2026-08-26', expected_latest_session: '2026-08-27',
+      expected_lag_sessions: 1,
+      explicit_user_acknowledgement: 'I_ACKNOWLEDGE_2026_08_26_STALE_REVIEW_LAG_1',
+    };
+    expect(parseMarketRegimePreview(payload).data_status).toBe('stale_review');
+    payload.review_deployment.explicit_user_acknowledgement = 'I_ACKNOWLEDGE_2026_08_24_STALE_REVIEW_LAG_1';
     expect(() => parseMarketRegimePreview(payload)).toThrow(/review deployment/);
   });
 

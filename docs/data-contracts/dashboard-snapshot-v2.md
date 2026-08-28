@@ -69,6 +69,12 @@ case its overview, analytics envelope, manifest, and plan all report
 one. The normal lag-zero gate is unchanged; review plan/apply requires the
 same explicit acknowledgement and rejects changed freshness under lock.
 
+All later supported Snapshot pairs may also carry the separately approved
+`production-review-deployment/1.1` binding only for actual/analysis
+`2026-08-26`, expected `2026-08-27`, lag one, and its exact acknowledgement.
+The browser, formal reader, plan, and apply gate validate the same binding;
+version 1.0 remains rollback-readable.
+
 ## Contract 1.6 Candidate extension
 
 The active Snapshot 1.6 / Dashboard 2.3 is an additive
