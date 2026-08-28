@@ -168,7 +168,11 @@ these completed datasets.
 Repository source adds Snapshot 1.8 / Dashboard 2.5 as a consumer-only
 Candidate delivery optimization: a compact list projection and stable-ID
 detail shards formally reconstruct the unchanged Candidate publication 1.1.
-It is not yet the active Production snapshot.
+Snapshot 1.9 / Dashboard 2.6 adds one lazy, source-bound strategy-channel
+product. Approval Plan 2.4 and OCI bundle/postflight validation carry its exact
+audit, parameter, product, and equal-capability Session bindings without
+changing computation or authentication. Neither development contract is yet
+the active Production snapshot.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 
@@ -319,9 +323,10 @@ ADR 0049 adds a repository-only strategy-channel shadow boundary above the
 existing Candidate and entry-geometry facts. Six fixed archetypes produce
 independent assessments and within-channel ranks; there is no cross-channel
 score. Market fit, event context, and future option expression remain separate
-axes. This taxonomy is not connected to Market Intelligence, Snapshot, React,
-or Production until channel-specific formulas pass chronological evaluation
-and separate activation review.
+axes. ADR 0057 now supplies the bounded lazy product and bilingual React
+consumer; ADR 0058 carries its exact identity through Approval Plan 2.4 and OCI
+bundle/postflight validation. These remain unpublished and do not make the
+fixed baseline chronologically validated.
 
 ADR 0050 separates future evaluation into sealed, outcome-free signal records
 and later-maturing forward-outcome records. Only point-in-time membership may

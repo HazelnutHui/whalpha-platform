@@ -126,6 +126,7 @@ ranks, and changed guest/credential capability policy.
 
 The browser requests this file only when Strategy Channels is selected. It
 renders no synthetic fallback and performs no scoring. Repository build/read
-and bilingual browser support are implemented; publication-plan, bundle,
-activation, and deployment support are intentionally not authorized by this
-slice. Snapshot 1.8 and older releases remain readable unchanged.
+and bilingual browser support are implemented. ADR 0058 additionally implements
+Approval Plan 2.4 and OCI bundle/postflight validation while preserving every
+older plan and contract. No 1.9 plan has been approved/applied and no bundle
+has been deployed. Snapshot 1.8 and older releases remain readable unchanged.

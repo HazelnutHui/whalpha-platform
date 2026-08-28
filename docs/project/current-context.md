@@ -309,8 +309,11 @@ and standing authorization also remain inactive by exact-revision mismatch.
   formally reread the product: 195,211 bytes, logical fingerprint
   `45bad6eb7fd014c0cc36b1244be7274dc98b92d23fa57d9ddcabe10b271ca3cd`,
   with unchanged 496/532 Candidate counts and 8/8/8/0/0/0 displayed records
-  per Universe. Repository build/read and browser support exist; publication-
-  plan, bundle, activation, and deployment support do not. Technical reversal,
+  per Universe. ADR 0058 now adds Approval Plan 2.4, strict OCI bundle
+  validation, and temporary-guest postflight validation. A local 50-file
+  bundle build passed without OCI access and carried the same product/audit
+  fingerprints. No plan was approved/applied and no activation or deployment
+  occurred. Technical reversal,
   fundamental value reversal, and defensive rotation remain explicitly
   unavailable rather than being synthesized from proxies.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-

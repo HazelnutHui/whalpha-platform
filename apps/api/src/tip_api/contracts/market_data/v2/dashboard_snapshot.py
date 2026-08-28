@@ -82,8 +82,8 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     plan_version: Literal["2.0"] = "2.0"
     revision_id: Literal["universe-funnel-v2"] = "universe-funnel-v2"
     release_id: str
-    snapshot_contract_version: Literal["1.4", "1.5", "1.6", "1.7", "1.8"] = "1.4"
-    dashboard_contract_version: Literal["2.1", "2.2", "2.3", "2.4", "2.5"] = "2.1"
+    snapshot_contract_version: Literal["1.4", "1.5", "1.6", "1.7", "1.8", "1.9"] = "1.4"
+    dashboard_contract_version: Literal["2.1", "2.2", "2.3", "2.4", "2.5", "2.6"] = "2.1"
     generated_at: datetime
     analysis_session: date
     expected_latest_completed_session: date
@@ -157,9 +157,10 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
             self.market_intelligence_payload_sha256,
             self.market_intelligence_logical_fingerprint,
         )
-        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8"}:
+        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9"}:
             expected = (
-                "2.5" if self.snapshot_contract_version == "1.8"
+                "2.6" if self.snapshot_contract_version == "1.9"
+                else "2.5" if self.snapshot_contract_version == "1.8"
                 else "2.4" if self.snapshot_contract_version == "1.7"
                 else "2.3" if self.snapshot_contract_version == "1.6"
                 else "2.2"
@@ -272,6 +273,32 @@ class DashboardSnapshotApprovalPlanV2_3(DashboardSnapshotApprovalPlanV2_2):
         ):
             raise ValueError("Candidate detail files must be non-empty, unique, and ordered")
         return self
+
+
+class DashboardSnapshotApprovalPlanV2_4(DashboardSnapshotApprovalPlanV2_3):
+    """Snapshot 1.9 approval plan with exact strategy-channel bindings."""
+
+    plan_version: Literal["2.4"] = "2.4"
+    snapshot_contract_version: Literal["1.9"] = "1.9"
+    dashboard_contract_version: Literal["2.6"] = "2.6"
+    candidate_strategy_file: Literal["candidate-strategy-channels.json"]
+    candidate_strategy_contract_version: Literal[
+        "candidate-strategy-channel-product/1.0"
+    ]
+    candidate_strategy_audit_manifest_sha256: str
+    candidate_strategy_audit_logical_fingerprint: str
+    candidate_strategy_parameter_fingerprint: str
+    candidate_strategy_logical_fingerprint: str
+
+    @field_validator(
+        "candidate_strategy_audit_manifest_sha256",
+        "candidate_strategy_audit_logical_fingerprint",
+        "candidate_strategy_parameter_fingerprint",
+        "candidate_strategy_logical_fingerprint",
+    )
+    @classmethod
+    def strategy_digests(cls, value: str) -> str:
+        return _sha(value)
 
 
 def _sha(value: str) -> str:

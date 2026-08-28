@@ -178,8 +178,10 @@ read or used.
   parser, and bilingual lazy-loaded Strategy Channels workspace. A real `/tmp`
   build formally reread the exact strategy-audit lineage and retained the
   496/532 Candidate counts. This is not published or deployed and has no
-  Production effect; publication-plan, bundle, and activation support remain
-  deliberately absent.
+  Production effect. ADR 0058 now adds Approval Plan 2.4 plus strict OCI
+  bundle and guest-postflight validation. A local 50-file bundle build passed
+  exact strategy hash/lineage/count/rank/boundary checks. No plan was approved
+  or applied, no OCI connection occurred, and Production remains unchanged.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -227,9 +229,10 @@ No concrete source policy, adapter, history, or operational authority exists.
 Repository development has therefore returned to explainable Candidate
 strategy channels. The fixed offline preview, bounded consumer, independent
 Oracle, formal temporary-root audit, additive product projection, and
-bilingual lazy consumer are implemented. Real chronological validation remains
-blocked on adequate point-in-time history; publication/deployment is a separate
-authorization.
+bilingual lazy consumer are implemented. Approval Plan 2.4 and local bundle/
+postflight validators are also implemented, without apply or deployment. Real
+chronological validation remains blocked on adequate point-in-time history;
+Production publication/deployment is a separate authorization.
 
 ## Next candidate work
 

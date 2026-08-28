@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -120,6 +121,71 @@ def test_plan_is_deterministic_and_binds_fresh_funnel(monkeypatch, tmp_path):
     assert len(plan.files) == 6
     assert plan.expected_latest_completed_session == plan.actual_latest_completed_session
     assert plan.freshness_status == "fresh"
+
+
+def test_plan_2_4_freezes_and_rechecks_strategy_channel_bindings(monkeypatch, tmp_path):
+    root, legacy, candidate, _ = _setup(monkeypatch, tmp_path)
+    real_validate = repo.validate_snapshot_release
+    base = real_validate(candidate)
+    digest = "9" * 64
+    strategy_manifest = base.model_copy(update={
+        "snapshot_contract_version": "1.9",
+        "dashboard_contract_version": "2.6",
+        "market_intelligence_publication_id": "2026-08-20T110000Z-abcdef0",
+        "market_intelligence_payload_sha256": digest,
+        "market_intelligence_logical_fingerprint": digest,
+        "market_intelligence_analytics_logical_fingerprint": digest,
+        "candidate_contract_version": "opportunity-candidate/1.1",
+        "candidate_analytics_logical_fingerprint": digest,
+        "candidate_audit_logical_fingerprint": digest,
+        "candidate_parameter_fingerprint": digest,
+        "candidate_state_parameter_fingerprint": digest,
+        "candidate_primary_display_count": 1,
+        "candidate_secondary_display_count": 1,
+        "candidate_publication_contract_version": "opportunity-candidate-publication/1.1",
+        "entry_geometry_contract_version": "candidate-entry-geometry/1.0",
+        "entry_geometry_audit_logical_fingerprint": digest,
+        "entry_geometry_parameter_fingerprint": digest,
+        "entry_lane_consumer_parameter_fingerprint": digest,
+        "opportunity_candidates_file": "opportunity-candidates-summary.json",
+        "candidate_summary_contract_version": "opportunity-candidate-summary/1.0",
+        "candidate_summary_logical_fingerprint": digest,
+        "candidate_detail_contract_version": "opportunity-candidate-detail-shard/1.0",
+        "candidate_detail_files": ("opportunity-candidate-details-u0-0.json",),
+        "candidate_strategy_file": "candidate-strategy-channels.json",
+        "candidate_strategy_contract_version": "candidate-strategy-channel-product/1.0",
+        "candidate_strategy_audit_manifest_sha256": digest,
+        "candidate_strategy_audit_logical_fingerprint": digest,
+        "candidate_strategy_parameter_fingerprint": digest,
+        "candidate_strategy_logical_fingerprint": digest,
+    })
+    selected = [strategy_manifest]
+
+    def validate(path):
+        return selected[0] if path == candidate else real_validate(path)
+
+    monkeypatch.setattr(repo, "validate_snapshot_release", validate)
+    plan = repo.build_approval_plan(
+        root=root, legacy_root=legacy, candidate=candidate,
+        activation_logical_fingerprint=ACTIVATION_LOGICAL, generated_at=AT,
+    )
+    assert isinstance(plan, repo.DashboardSnapshotApprovalPlanV2_4)
+    assert (plan.plan_version, plan.snapshot_contract_version, plan.dashboard_contract_version) == (
+        "2.4", "1.9", "2.6",
+    )
+    assert plan.candidate_strategy_file == "candidate-strategy-channels.json"
+    assert plan.candidate_strategy_logical_fingerprint == digest
+    repo.validate_plan(plan)
+    plan_path = tmp_path / "snapshot-plan-2.4.json"
+    plan_path.write_text(plan.model_dump_json(), encoding="utf-8")
+    loaded = cli._load_plan(plan_path, hashlib.sha256(plan_path.read_bytes()).hexdigest())
+    assert loaded == plan
+
+    selected[0] = strategy_manifest.model_copy(
+        update={"candidate_strategy_logical_fingerprint": "8" * 64}
+    )
+    with pytest.raises(repo.DashboardSnapshotPublicationError, match="strategy-channel binding"):
+        repo.validate_plan(plan)
 
 
 def test_atomic_publish_formal_reread_and_replay_rejected(monkeypatch, tmp_path):

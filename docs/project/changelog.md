@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-28 — Carry strategy identity through publication and bundle
+
+- Accepted ADR 0058 and added Approval Plan 2.4 exclusively for Snapshot 1.9 /
+  Dashboard 2.6. It extends every 1.8 binding with exact strategy product,
+  audit-manifest, audit, parameter, and filename identity.
+- Plan construction, CLI loading, formal revalidation, apply, and verify-then-
+  link now fail closed on changed strategy bindings while Plans 2.0–2.3 remain
+  readable.
+- Extended the OCI bundle validator through 1.9/2.6. It independently checks
+  the strategy file hash and logical identity, source lineage, fixed Universe/
+  channel order, complete counts, bounded contiguous ranks, zero-mismatch
+  Oracle evidence, and research-only/equal-capability boundaries.
+- Extended deployment postflight to retrieve and validate the protected
+  strategy resource through a temporary guest Session. Added an explicit test
+  that guest and credential entry create the same role-free Session shape.
+- A Dell-local 1.9 bundle build and extracted guest-postflight validator passed
+  without OCI access. No plan approval/apply, `/data` write, upload, deployment,
+  rollback, provider request, or Production change occurred.
+
 ## 2026-08-28 — Lazy Candidate strategy-channel product and UI
 
 - Accepted ADR 0057 and added the source-bound

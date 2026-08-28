@@ -9,18 +9,17 @@ project changelog, not in this current runbook.
 
 ## Live-verified state
 
-Verified through the `whalpha-oci` SSH alias and deployment postflight on
-2026-08-26 without reading credentials:
+The authoritative operational state is maintained in
+[current-context](../project/current-context.md). Its 2026-08-27 post-deployment
+reconciliation records, without reading credentials:
 
-- `/srv/whalpha/current` resolves to
-  `/srv/whalpha/releases/2026-08-26T151600Z-1f3eb5512eb0`;
+- `/srv/whalpha/current` and the matching local immutable bundle resolve to
+  release `2026-08-26T053233Z-6c60502e4473`;
 - the release is built from source commit
-  `1f3eb5512eb0d1ba67112395450c2783221596da`;
-- it binds Market Intelligence `2026-08-24T142500Z-1f3eb5512eb0` and
-  Snapshot `2026-08-24T144500Z-1f3eb5512eb0`;
-- it serves Snapshot 1.6 / Dashboard 2.3, the bounded Stock Candidate
-  workspace, `en` and `zh`, English by default, and the exact one-session-lag
-  `stale_review` payload;
+  `6c60502e4473a7ee7512b720f71a135a665f2f34` and binds Market Intelligence
+  `2026-08-26T050254Z-6c60502e4473`;
+- it serves ordinary fresh Snapshot 1.7 / Dashboard 2.4, Candidate publication
+  1.1, `en` and `zh`, with English as the first-visit default;
 - the deployment manifest declares no credentials, raw payload, or Parquet;
 - Nginx and `whalpha-dashboard-auth.service` are active and enabled;
 - the Auth Service listens only on `127.0.0.1:8010`;
@@ -28,12 +27,9 @@ Verified through the `whalpha-oci` SSH alias and deployment postflight on
   `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
   `/auth/status`, and returns 404 for external `/auth/internal-verify`;
 - deployment postflight creates a temporary guest Session, verifies the same
-  Dashboard and Snapshot 1.6 Candidate payload are readable, logs out, and
+  Dashboard and Snapshot 1.7 Candidate payload are readable, logs out, and
   removes the local cookie jar without printing it;
-- no staging or partial release residue exists; and
-- the current release, prior releases `2026-08-26T103119Z-f344a589a8c9` and
-  `2026-08-26T094339Z-f9711d5403f6`, and deliberate older selectable-Universe
-  fallback `2026-08-19T083341Z-7ed7fdc21686` are retained.
+- no staging or partial release residue exists.
 
 Authenticated browser behavior was not tested because the verification did not
 read or use the user's password.
@@ -42,7 +38,7 @@ read or use the user's password.
 
 The builder requires an explicit immutable Snapshot path and Market
 Intelligence publication. It accepts only the exact Snapshot 1.5 / Dashboard
-2.2 through Snapshot 1.8 / Dashboard 2.5 supported pairs and rejects identity mismatch,
+2.2 through Snapshot 1.9 / Dashboard 2.6 supported pairs and rejects identity mismatch,
 missing analytics, or fewer than 16 registered relationships. For 1.6 it also
 freezes and validates Candidate audit/parameter/display bindings and the
 underlying-stock/price-proxy disclosure boundaries. It freezes locales `en`
@@ -53,6 +49,12 @@ leadership rank, and the reference-support-not-stop-price boundary.
 For 1.8 it additionally validates the summary fingerprint, ordered detail
 shards, full-Candidate identity, and guest access to both the summary and one
 declared detail shard.
+For 1.9 it additionally validates the strategy file hash/logical identity,
+audit and parameter lineage, fixed Universe/channel order, complete counts,
+bounded contiguous ranks, zero-mismatch Oracle gates, research-only decision
+boundaries, and role-free guest/credential capability. Deployment postflight
+retrieves and validates the same protected strategy resource through a
+temporary guest Session; password-based login remains a manual check.
 
 The production React graph contains no static dependency on the synthetic
 Dashboard fixture. Development demo mode loads it lazily only behind the Vite

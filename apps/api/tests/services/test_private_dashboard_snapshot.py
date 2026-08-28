@@ -312,7 +312,9 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "private-dashboard-v2/revision=universe-funnel-v2" in build_script.read_text()
     assert "release_id=*" in build_script.read_text()
     assert "--market-intelligence-publication" in build_script.read_text()
-    assert "supported Snapshot 1.5-1.8 / Dashboard 2.2-2.5 pair" in build_script.read_text()
+    assert "supported Snapshot 1.5-1.9 / Dashboard 2.2-2.6 pair" in build_script.read_text()
+    assert "candidate-strategy-channel-product/1.0" in build_script.read_text()
+    assert "guest_and_credential_capability_identical" in build_script.read_text()
     assert "login-i18n.js" in build_script.read_text()
     assert "'default_locale': 'en'" in build_script.read_text()
     text = nginx_template.read_text()
@@ -326,6 +328,8 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "Access-Control-Allow-Origin" not in text
     assert "Content-Security-Policy" in text
     deploy_text = deploy_script.read_text()
+    assert "candidate-strategy-channels.json" in deploy_text
+    assert "guest Candidate strategy-channel binding is invalid" in deploy_text
     assert "root route returned placeholder body" in deploy_text
     assert "login compatibility redirect status" in deploy_text
     assert "auth status unauth status" in deploy_text

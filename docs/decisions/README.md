@@ -80,3 +80,4 @@ Each ADR should include:
 - [0055: Resolve Canonical Facts by Family-Specific Source Policy](0055-resolve-canonical-facts-by-family-specific-source-policy.md)
 - [0056: Prototype Explainable Strategy Channels Offline](0056-prototype-explainable-strategy-channels-offline.md)
 - [0057: Add a Lazy Strategy-Channel Product Payload](0057-add-lazy-strategy-channel-product-payload.md)
+- [0058: Carry Strategy Bindings Through Publication and Bundle](0058-carry-strategy-bindings-through-publication-and-bundle.md)

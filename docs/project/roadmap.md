@@ -204,6 +204,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Fixed explainable three-channel offline preview and bounded consumer
 - [x] Independent strategy-channel Oracle and immutable temporary-root audit
 - [x] Lazy strategy-channel product projection and bilingual review consumer
+- [x] Snapshot 1.9 Approval Plan 2.4 and local OCI bundle/postflight validation
 - [x] Sealed-signal/later-outcome chronological evaluation contract
 - [x] Read-only historical strategy-evaluation readiness audit
 - [x] Point-in-time historical research foundation and source capability gap matrix
@@ -243,8 +244,9 @@ posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
 Do not select formulas or thresholds from one-session distributions. Keep
-Snapshot 1.8/1.9 undeployed until their exact bundle and browser behavior are
-separately reviewed. Keep SMTP and SEC B2 paused.
+Snapshot 1.8/1.9 undeployed. Snapshot 1.9's local bundle mechanics are now
+reviewed; manual browser review and exact activation/deployment authorization
+remain separate. Keep SMTP and SEC B2 paused.
 
 The general historical governance design pass is complete. Pilot approval 1.1
 is bound to fresh exact source-permission assessments; the durable fixture-only
@@ -257,10 +259,11 @@ The first explainable Candidate strategy-channel preview, bounded consumer,
 independent Oracle, formal temporary-root audit, additive bilingual product,
 and Snapshot 1.9 browser review are now implemented. Keep market fit and event
 context separate, expose entry/chase risk, cap the first view at eight per
-channel, and prohibit a cross-strategy total. The next product action is human
-UI review followed by separately authorized publication-path support; defer
-performance claims and threshold calibration until the point-in-time
-historical foundation is physically ready.
+channel, and prohibit a cross-strategy total. Approval Plan 2.4 and local OCI
+bundle/postflight validation are complete. The next product action is human UI
+review followed by separately authorized Snapshot apply, bundle rebuild from a
+clean exact commit, and OCI deployment; defer performance claims and threshold
+calibration until the point-in-time historical foundation is physically ready.
 
 ## Phase 2 — Intraday and Options
 

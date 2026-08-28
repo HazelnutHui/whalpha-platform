@@ -23,6 +23,13 @@ closed on any missing shard or summary/detail drift. Approval plan 2.3 freezes
 the ordered shard list and summary identity. This support is development-only;
 the active Production release remains 1.7/2.4.
 
+Repository source now also supports Snapshot 1.9 / Dashboard 2.6 through
+Approval Plan 2.4. It extends every 1.8 binding and additionally freezes the
+strategy filename, product contract/fingerprint, audit-manifest hash, audit
+fingerprint, and parameter fingerprint. Plan creation, approved apply, and
+verify-then-link all revalidate those fields. This is repository/local-review
+support only; no 1.9 plan has been approved or applied.
+
 ## Safety boundary
 
 The publisher and rollback tools are offline administrator workflows. They do not fetch EOD or provider data. Never run apply while canonical freshness is stale.

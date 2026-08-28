@@ -267,6 +267,27 @@ def test_guest_session_uses_same_opaque_cookie_and_safe_next() -> None:
         thread.join(timeout=5)
 
 
+def test_guest_and_credential_sessions_have_identical_role_free_capability() -> None:
+    state = auth.AuthState(credential(), now=lambda: 1000.0)
+    server, thread = run_server(state)
+    try:
+        login_status, login_headers, _ = json_login(
+            server,
+            {"username": "hui", "password": "correct-password", "next": "/dashboard/"},
+        )
+        guest_status, guest_headers, _ = json_guest(server, {"next": "/dashboard/"})
+        assert login_status == guest_status == 200
+        login_token = login_headers["Set-Cookie"].split("=", 1)[1].split(";", 1)[0]
+        guest_token = guest_headers["Set-Cookie"].split("=", 1)[1].split(";", 1)[0]
+        assert set(vars(state.sessions[login_token])) == set(vars(state.sessions[guest_token])) == {
+            "session_id", "expires_at",
+        }
+        assert state.check_session(login_token) and state.check_session(guest_token)
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
 def test_guest_rejects_cross_origin_and_unknown_fields() -> None:
     server, thread = run_server(auth.AuthState(credential(), now=lambda: 1000.0))
     try:
