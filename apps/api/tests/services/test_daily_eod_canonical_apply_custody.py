@@ -11,6 +11,7 @@ from tip_api.providers.massive.same_day_catchup import (
 )
 from tip_api.services.daily_eod_acquisition_custody import (
     acquisition_attempts_from_events,
+    acquisition_operator_reviews_from_events,
 )
 from tip_api.services.daily_eod_automation import (
     ArtifactObservation,
@@ -27,7 +28,13 @@ from tip_api.services.daily_eod_canonical_apply_custody import (
     recover_canonical_apply,
     reserve_canonical_apply,
 )
-from tip_api.services.daily_eod_readiness import plan_daily_eod_readiness
+from tip_api.services.daily_eod_readiness import (
+    AcquisitionOperatorReview,
+    OperatorReviewDisposition,
+    OperatorReviewEvidenceCode,
+    OperatorReviewPurpose,
+    plan_daily_eod_readiness,
+)
 from tip_api.services.daily_eod_run_journal import (
     locked_daily_eod_run_journal,
     new_attempt_id,
@@ -156,7 +163,102 @@ def readiness_fingerprint(cfg: DailyEodCanonicalApplyConfig) -> str:
             target_session=TARGET,
             acquisition_action=cfg.acquisition_action,
         ),
+        operator_reviews=acquisition_operator_reviews_from_events(
+            events,
+            target_session=TARGET,
+            acquisition_action=cfg.acquisition_action,
+        ),
     ).logical_content_fingerprint
+
+
+def setup_reviewed_retry_completed_acquisition(
+    cfg: DailyEodCanonicalApplyConfig,
+) -> tuple:
+    first_started_at = datetime(2026, 8, 27, 20, 31, tzinfo=UTC)
+    reviewed_at = datetime(2026, 8, 27, 20, 32, tzinfo=UTC)
+    retry_at = datetime(2026, 8, 27, 20, 46, tzinfo=UTC)
+    with locked_daily_eod_run_journal(
+        run_root=cfg.run_root,
+        target_session=TARGET,
+    ) as journal:
+        first_attempt_id = new_attempt_id(
+            target_session=TARGET,
+            plan_fingerprint="a" * 64,
+            sequence=1,
+        )
+        journal.append(
+            event_type="acquisition_started",
+            attempt_id=first_attempt_id,
+            observed_at=first_started_at,
+            details={
+                "acquisition_action": cfg.acquisition_action.value,
+                "attempt_number": 1,
+                "package_path": str(cfg.package_path),
+            },
+        )
+        failure = journal.append(
+            event_type="acquisition_permanent_failed",
+            attempt_id=first_attempt_id,
+            observed_at=reviewed_at,
+            details={"request_count": 1},
+        )
+        review = AcquisitionOperatorReview(
+            purpose=OperatorReviewPurpose.TERMINAL_FAILURE_RETRY,
+            acquisition_action=cfg.acquisition_action,
+            attempt_sequence=1,
+            reviewed_at=reviewed_at,
+            not_before=retry_at,
+            disposition=OperatorReviewDisposition.AUTHORIZE_ONE_FETCH_AFTER,
+            evidence_code=(
+                OperatorReviewEvidenceCode.LOCAL_CONFIGURATION_CORRECTED
+            ),
+            source_event_fingerprint=failure.event_fingerprint,
+        )
+        review_id = new_attempt_id(
+            target_session=TARGET,
+            plan_fingerprint=review.logical_fingerprint,
+            sequence=3,
+        )
+        journal.append(
+            event_type="acquisition_operator_reviewed",
+            attempt_id=review_id,
+            observed_at=reviewed_at,
+            details={
+                "acquisition_action": cfg.acquisition_action.value,
+                "purpose": review.purpose.value,
+                "attempt_sequence": review.attempt_sequence,
+                "disposition": review.disposition.value,
+                "evidence_code": review.evidence_code.value,
+                "not_before": review.not_before.isoformat(),
+                "source_event_fingerprint": review.source_event_fingerprint,
+                "review_fingerprint": review.logical_fingerprint,
+            },
+        )
+        second_attempt_id = new_attempt_id(
+            target_session=TARGET,
+            plan_fingerprint="b" * 64,
+            sequence=4,
+        )
+        journal.append(
+            event_type="acquisition_started",
+            attempt_id=second_attempt_id,
+            observed_at=retry_at,
+            details={
+                "acquisition_action": cfg.acquisition_action.value,
+                "attempt_number": 2,
+                "package_path": str(cfg.package_path),
+            },
+        )
+        journal.append(
+            event_type="acquisition_package_ready",
+            attempt_id=second_attempt_id,
+            observed_at=datetime(2026, 8, 27, 20, 47, tzinfo=UTC),
+            details={
+                "package_manifest_sha256": PACKAGE_MANIFEST,
+                "package_content_sha256": PACKAGE_CONTENT,
+            },
+        )
+        return journal.read_events()
 
 
 def automation_plan(*, completed: bool) -> DailyEodAutomationPlan:
@@ -231,6 +333,27 @@ def test_reservation_binds_completed_acquisition_plan_and_inventory(
     assert result.event.details["authorization_content_sha256"] == "b" * 64
     with locked_daily_eod_run_journal(run_root=root, target_session=TARGET) as journal:
         assert unresolved_started_event(journal.read_events()) == result.event
+
+
+def test_reservation_accepts_completed_retry_with_exact_operator_review(
+    tmp_path: Path,
+) -> None:
+    root = run_root(tmp_path)
+    cfg = replace(
+        config(tmp_path, root),
+        acquisition_action=NextAction.PREPARE_EOD_CATCHUP,
+    )
+    setup_reviewed_retry_completed_acquisition(cfg)
+    evidence = plan_evidence(
+        cfg,
+        tmp_path / "canonical-target",
+        operation="eod",
+    )
+
+    result = reserve(cfg, evidence)
+
+    assert result.outcome == "reserved"
+    assert result.plan_evidence == evidence
 
 
 def test_reservation_rejects_stale_readiness_or_changed_inventory(tmp_path: Path) -> None:

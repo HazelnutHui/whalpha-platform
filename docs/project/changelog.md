@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-28 — Reconcile reviewed fetch retries in Apply custody
+
+- Fixed canonical Apply reservation to project immutable acquisition operator
+  reviews from the same journal evidence already used by the coordinator and
+  acquisition custody.
+- This closes the fail-closed integration gap where a reviewed terminal
+  failure followed by a successful retry was Apply-reviewable to the
+  coordinator but rejected by the second custody check.
+- Added a regression covering permanent failure, exact terminal review,
+  bounded successful retry, and canonical Apply reservation. The focused
+  readiness/coordinator/capability/custody suite passes all 59 tests.
+- The rejected real invocation created no Apply reservation, canonical target,
+  provider request, or Production write. Apply remains separately bound to the
+  user's exact authorization and a fresh exact-revision runtime control.
+
 ## 2026-08-28 — Complete the 2026-08-27 EOD offline Apply Plan
 
 - Built and formally reread the offline plan from the frozen one-request

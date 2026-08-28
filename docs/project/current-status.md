@@ -80,6 +80,13 @@ two-file / 1,056,432-byte inventory change. Canonical Apply still requires a
 separate exact authorization. The short-lived fetch controls are not reusable
 authority after documentation changes, a later commit, or expiry.
 
+The first authorized Apply invocation failed closed before reservation because
+canonical Apply custody did not project the journal's ADR 0047 operator-review
+events even though the coordinator did. No target or `/data` change occurred.
+The minimal integration fix now passes the exact reviewed-retry regression and
+related 59-test suite; fresh exact-revision controls are still required before
+the already authorized Apply can be exercised.
+
 ## Market Regime
 
 - Primary: 57.8456, Balanced.

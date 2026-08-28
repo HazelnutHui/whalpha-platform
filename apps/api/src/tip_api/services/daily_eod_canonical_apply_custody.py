@@ -19,6 +19,7 @@ from tip_api.providers.massive.same_day_catchup import (
 from tip_api.services.daily_eod_acquisition_custody import (
     EVENT_OUTCOME,
     acquisition_attempts_from_events,
+    acquisition_operator_reviews_from_events,
 )
 from tip_api.services.daily_eod_automation import (
     ArtifactStatus,
@@ -143,6 +144,11 @@ def reserve_canonical_apply(
             latest_canonical_session=config.latest_canonical_session,
             acquisition_action=config.acquisition_action,
             attempts=acquisition_attempts_from_events(
+                events,
+                target_session=config.target_session,
+                acquisition_action=config.acquisition_action,
+            ),
+            operator_reviews=acquisition_operator_reviews_from_events(
                 events,
                 target_session=config.target_session,
                 acquisition_action=config.acquisition_action,

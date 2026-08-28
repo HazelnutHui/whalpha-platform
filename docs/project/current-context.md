@@ -277,6 +277,15 @@ IDs, and only the target session. The canonical target remains absent and no
 Apply authority has been granted. See
 [the exact plan audit](../audits/daily-eod-apply-plan-2026-08-28.md).
 
+The first authorized Apply invocation then failed closed before reservation:
+the coordinator passed journal operator reviews into readiness, while canonical
+Apply custody omitted them during its independent recheck. The journal still
+ends at `acquisition_package_ready`, the target remains absent, and `/data` is
+unchanged. The minimal fix now projects the same immutable reviews in both
+layers and adds a permanent-failure/review/successful-retry reservation
+regression. It changes neither policy nor Apply scope. Fresh exact-revision
+controls remain required to exercise the user's existing one-Apply authority.
+
 ## Analytics and presentation
 
 - Market Regime: Primary 57.8456 Balanced; Secondary 57.9041 Balanced.
