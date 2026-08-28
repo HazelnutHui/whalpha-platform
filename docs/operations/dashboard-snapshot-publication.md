@@ -30,6 +30,10 @@ fingerprint, and parameter fingerprint. Plan creation, approved apply, and
 verify-then-link all revalidate those fields. This is repository/local-review
 support only; no 1.9 plan has been approved or applied.
 
+The Dell-local publication/bundle evidence and its explicit Production
+boundary are recorded in
+[Candidate Strategy Publication / Bundle Review](../audits/candidate-strategy-publication-bundle-review-2026-08-28.md).
+
 ## Safety boundary
 
 The publisher and rollback tools are offline administrator workflows. They do not fetch EOD or provider data. Never run apply while canonical freshness is stale.

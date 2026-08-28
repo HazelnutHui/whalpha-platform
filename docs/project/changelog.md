@@ -16,8 +16,12 @@
   strategy resource through a temporary guest Session. Added an explicit test
   that guest and credential entry create the same role-free Session shape.
 - A Dell-local 1.9 bundle build and extracted guest-postflight validator passed
-  without OCI access. No plan approval/apply, `/data` write, upload, deployment,
-  rollback, provider request, or Production change occurred.
+  without OCI access. A real read-only formal dry-run then completed in about
+  285 seconds and correctly returned `stale_blocked` at actual 2026-08-26 versus
+  expected 2026-08-27, lag one, with zero Production writes. No plan
+  approval/apply, `/data` write, upload, deployment, rollback, provider request,
+  or Production change occurred. See the
+  [publication/bundle review](../audits/candidate-strategy-publication-bundle-review-2026-08-28.md).
 
 ## 2026-08-28 — Lazy Candidate strategy-channel product and UI
 
