@@ -602,8 +602,9 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Execute and formally review the offline 2026-08-27 Phase 1a calculation;
-   keep every later analytics and serving transition separately bounded.
+1. Execute and formally review only the offline 2026-08-27 incremental Phase
+   1b calculation; keep every later analytics and serving transition separately
+   bounded.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
@@ -659,5 +660,13 @@ The target was absent at plan review. After the reviewed-retry custody fix at
 `6256bf3`, the separately authorized apply-only transition completed with zero
 external requests. The 9,945-row canonical partition formally rereads, the
 journal ends in `canonical_apply_succeeded`, and the next action is offline
-`calculate_phase1a`. No analytics calculation, publication, Snapshot, bundle,
-deployment, notification, or scheduler action followed.
+`calculate_phase1a`. At that Apply boundary, no analytics calculation,
+publication, Snapshot, bundle, deployment, notification, or scheduler action
+had followed.
+
+The later one-transition Phase 1a action completed in 218.315399 seconds with
+zero requests/writes, zero missing metrics, and zero Oracle mismatch. Its audit
+fingerprint is
+`887024c4847ef74a28a713c439359f3a4d8d93e49269ab58f2f0177c61159c53`.
+The journal closed normally and the planner now selects only
+`calculate_phase1b_incremental`; no later stage has run.

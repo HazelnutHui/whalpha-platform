@@ -75,8 +75,17 @@ produced a frozen 12,552-result 2026-08-27 package with zero Production writes.
 The separately authorized canonical Apply is complete. The approved 9,945-row
 partition matches its plan, has zero duplicate business keys and zero orphan
 references, and advanced `/data` by the exact two files / 1,056,432 bytes.
-The next automation action is offline `calculate_phase1a`; active analytics and
-the public Dashboard remain on the 2026-08-26 stale-review release.
+At that Apply boundary, the next automation action was offline
+`calculate_phase1a`; active analytics and the public Dashboard remained on the
+2026-08-26 stale-review release.
+
+Offline 2026-08-27 Phase 1a is now complete with audit fingerprint
+`887024c4847ef74a28a713c439359f3a4d8d93e49269ab58f2f0177c61159c53`.
+Primary/Secondary composites are 67.4134 / 67.5471, all configured weight is
+available, no metric is missing, and the independent Oracle has zero mismatch.
+This is not a final Regime classification: incremental Phase 1b remains the
+next exact action. `/data`, Market Intelligence, Snapshot, Dashboard, and OCI
+remain unchanged.
 
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review

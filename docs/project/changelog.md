@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-28 — Complete 2026-08-27 daily Phase 1a
+
+- Executed exactly one socket-guarded Dell-local `calculate_phase1a` action
+  through the daily coordinator. It made zero external requests and zero
+  Production writes and closed its journal event normally.
+- The 26-session audit has zero missing metrics, 100% configured weight, and
+  zero independent-Oracle mismatch. Primary/Secondary composites are 67.4134 /
+  67.5471; Phase 1b state classification remains pending.
+- Wrote and formally reread the content-addressed 257,202-bar panel cache for
+  reuse by later stages. Phase 1a took 218.315399 seconds and peaked at
+  1,838,572 KiB.
+- The planner now selects only `calculate_phase1b_incremental`. `/data`, active
+  analytics, Snapshot, Dashboard, OCI, notification, and scheduler state remain
+  unchanged. The related suite passes all 114 tests.
+
 ## 2026-08-28 — Complete authorized 2026-08-27 canonical EOD Apply
 
 - Exercised the user's exact `AUTHORIZE_2026_08_27_EOD_CANONICAL_APPLY`

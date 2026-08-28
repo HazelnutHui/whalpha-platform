@@ -295,8 +295,22 @@ content hashes. The journal ends in `canonical_apply_succeeded` with no
 unresolved event. `/data` is now 392 files / 203,931,663 bytes at fingerprint
 `ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749`,
 with zero symlink/staging/partial residue. The next exact automation action is
-offline `calculate_phase1a`; no downstream action has run. See
+offline `calculate_phase1a`; no downstream action had run at that Apply
+boundary. See
 [the canonical Apply audit](../audits/daily-eod-canonical-apply-2026-08-28.md).
+
+The next explicitly continued one-transition action completed offline Phase 1a
+for 2026-08-27. Its formal audit fingerprint is
+`887024c4847ef74a28a713c439359f3a4d8d93e49269ab58f2f0177c61159c53`,
+with zero Oracle mismatch, zero missing metrics, and 100% configured weight
+available. Primary/Secondary composites are 67.4134 / 67.5471. Trend,
+volatility, and leadership/dispersion support the composite, while breadth and
+liquidity/participation conflict. These are not final state labels; Phase 1b
+hysteresis remains pending. The 257,202-bar formal panel cache is available at
+key `5dfa32ea7b447feef752f490b7141aefe9ace53b20bb62e76631cf8eee142cca`.
+The planner now selects only `calculate_phase1b_incremental`. `/data` and all
+active serving artifacts remain unchanged. See
+[the Phase 1a audit](../audits/daily-eod-phase1a-2026-08-28.md).
 
 ## Analytics and presentation
 
