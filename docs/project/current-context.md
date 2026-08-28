@@ -314,8 +314,11 @@ and standing authorization also remain inactive by exact-revision mismatch.
   Foundation V1. The design separates raw EOD, point-in-time Identity, daily
   membership, corporate actions, lifecycle/terminal evidence, and explicit
   adjustment ledgers; 252 sessions is the acquisition floor and 504 is
-  preferred. This adds no physical dataset, provider verification, `/data`
-  write, formula, publication, or deployment.
+  preferred. Provider-neutral Pydantic row/manifest contracts now enforce
+  three clocks, stable-ID lineage, tri-state membership, distinct split/total-
+  return factors, and a 252-session research-ready floor using synthetic
+  fixtures. This adds no PyArrow repository, physical dataset, provider
+  verification, `/data` write, formula, publication, or deployment.
 - That 2026-08-28 public-source/storage review is now complete. Massive Basic's
   documented EOD, point-in-time reference, split, and dividend shapes are
   technically plausible, and projected Dell storage is small. A real pilot is
@@ -323,7 +326,8 @@ and standing authorization also remain inactive by exact-revision mismatch.
   successor/terminal evidence is missing, and official individual-use terms
   conflict with equal-capability friend/guest access and raise a separate non-
   display/derived-use question. No access, data, or deployment state changed.
-  The next safe slice is fixture-only physical contracts/readers.
+  The next safe slice is fixture-only PyArrow schemas and temporary-root
+  Parquet writers/readers.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

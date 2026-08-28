@@ -6,7 +6,13 @@ Corporate Action V1 records source facts about actions that affect instrument id
 
 ## Status
 
-Accepted Logical Contract — Not Yet Implemented
+Partially Implemented — Typed Source Observation Only
+
+The provider-neutral historical source-observation record implements the
+action scope, source revision/correction state, three clocks, stable-ID
+resolution, evidence quality, and action-specific validation. Canonical event
+IDs, PyArrow persistence, completed coverage, and provider adapters remain
+unimplemented.
 
 ## Grain
 
@@ -87,13 +93,13 @@ Provider corporate-action records map into this logical contract. Adjustment fac
 
 ## Historical Implementation Prerequisites
 
-Before physical implementation, a versioned contract revision must add or bind
-the source-observation metadata required by the
+The historical typed boundary now binds the source-observation metadata
+required by the
 [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md):
 first observed/ingested time, source-published or source-available time when
 provided, evidence quality, ambiguity reasons, cancellation/correction state,
-and the exact source revision. These fields are not implied by the current V1
-field list and must not be hidden in free-form notes.
+and the exact source revision. Physical schemas and repositories must preserve
+those fields rather than hiding them in free-form notes.
 
 Corporate-action coverage needs its own completion manifest. A missing event
 row is not proof that no action occurred unless the declared source/range

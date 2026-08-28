@@ -6,7 +6,13 @@ Universe Membership V1 records universe definitions and point-in-time daily memb
 
 ## Status
 
-Accepted Logical Contract — Not Yet Implemented
+Partially Implemented — Typed Daily Decision Only
+
+The provider-neutral historical daily-decision record implements explicit
+included/excluded/quarantined disposition, methodology and origin, exact
+evaluated-base/source fingerprints, cutoff/evaluation timing, and reason/quality
+state. Universe Definition, partition manifests, PyArrow persistence, and a
+real historical builder remain unimplemented.
 
 ## Grain
 
@@ -112,12 +118,13 @@ Provider reference, price, market cap, and volume inputs may support membership 
 
 ## Historical Implementation Prerequisites
 
-Before physical implementation, a versioned contract revision must bind the
-evaluated-base fingerprint/count, every source dataset fingerprint, origin
+The historical typed boundary now binds the evaluated-base fingerprint, every
+source dataset fingerprint, origin
 (`as_operated` or `reconstructed_point_in_time`), and included/excluded/
 quarantined disposition totals required by the
 [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
-Every instrument in the declared evaluated base needs an explicit disposition;
+The future partition manifest must also bind the evaluated-base count and
+disposition totals. Every instrument in the declared evaluated base needs an explicit disposition;
 omission is not exclusion, and missing critical evidence is not silently
 converted to `is_member=false`.
 

@@ -12,7 +12,14 @@ This document defines the accepted V1 logical contract boundary for normalized E
 
 Partially Implemented
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests. A minimal synchronous provider boundary can return these canonical contracts, and a mocked-only Massive adapter skeleton maps local fixture responses into them. EOD Price Bar V1 now has an explicit PyArrow Parquet schema and mocked-fixture one-session repository tests. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only. A first production canonical EOD Price Bar Parquet partition exists for 2026-08-13 under the approved project data root. Corporate Action V1, Classification V1, and Universe Membership V1 remain accepted logical contracts only; no SQL tables, historical ingestion jobs, analytics, or Dashboard data APIs exist yet.
+Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral
+Python/Pydantic contracts with PyArrow persistence and formal readers. The
+bounded Massive workflows have published the canonical sequence recorded in
+current status. Corporate Action V1 and Universe Membership V1 now have
+provider-neutral typed historical row boundaries, but no PyArrow repositories,
+provider adapters, or completed datasets. Classification V1 has its separately
+documented security-evidence implementation state. No SQL database or general
+historical backfill job exists.
 
 ## Shared Contract Principles
 

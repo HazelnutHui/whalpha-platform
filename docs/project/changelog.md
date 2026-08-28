@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-28 — Historical research typed foundation contracts
+
+- Added immutable provider-neutral Pydantic records for corporate-action
+  source revisions, effective-dated instrument lifecycle evidence, explicit
+  included/excluded/quarantined daily Universe decisions, adjustment-ledger
+  entries, dataset references, and bounded coverage readiness.
+- Enforced stable-ID resolution, action-specific evidence, correction lineage,
+  effective/source-available/first-observed/ingested timing, Decimal-only
+  financial factors, separate split and total-return semantics, and null
+  factors for unavailable or quarantined adjustments.
+- `research_ready` now requires at least 252 sessions, all six completed
+  families covering the declared interval, and a mature-signal count bounded
+  by feature warm-up and forward horizon. Synthetic contract tests cover valid,
+  ambiguous, incomplete, and prohibited states.
+- No PyArrow schema, Parquet repository, provider adapter/request, credential
+  access, `/data` write, formula, publication, deployment, scheduler, or
+  notification occurred.
+
 ## 2026-08-28 — Massive historical source and Dell pilot review
 
 - Rechecked official public Stocks Basic pricing, Grouped Daily, All Tickers,

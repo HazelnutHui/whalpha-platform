@@ -7,6 +7,7 @@
 - [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
 - [Same-Day Identity and EOD Catch-Up V1](same-day-identity-eod-catchup-v1.md)
+- [Historical Research Foundation Contracts V1](historical-research-foundation-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
 
@@ -26,8 +27,10 @@ Implemented as Python/Pydantic contracts:
 - [Reviewed Eligibility Override V1](reviewed-eligibility-override-v1.md)
 - [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
+- [Historical Research Foundation Contracts V1](historical-research-foundation-v1.md)
 
-Accepted logical contracts only:
+Accepted logical contracts only or only partially represented by the
+historical typed boundary:
 
 - [Market Regime & Opportunity Map V1](market-regime-opportunity-map-v1.md)
 - [Corporate Action V1](corporate-action-v1.md)
@@ -35,17 +38,20 @@ Accepted logical contracts only:
 - [Universe Membership V1](universe-membership-v1.md)
 
 These documents are not JSON Schema, SQL DDL, sample production data, or
-provider adapters. EOD Price Bar V1 and the point-in-time Instrument/Provider
+provider adapters. The historical foundation now has provider-neutral
+Pydantic row/manifest contracts and synthetic validation, but no PyArrow
+schema or physical repository. EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
 The initial blocked live attempts remain historical audit evidence; corrected
 bounded operations subsequently published the current canonical sequence. The
-remaining listed logical-only contracts have no physical storage.
+remaining logical or partial contracts have no physical storage.
 
 The EOD and point-in-time Identity persistence boundaries now hold 29 completed
 canonical EOD sessions through 2026-08-26 and 30 Identity snapshots through
-2026-08-27. Universe Membership V1 and Corporate Action V1 remain logical-only
-and have no physical dataset. Their required historical composition is defined
-in [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
+2026-08-27. Universe Membership V1 and Corporate Action V1 now have partial
+provider-neutral historical row contracts but no physical dataset, complete
+partition manifest, or adapter. Their required historical composition is
+defined in [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
 
 ## Public Python Import Path
 

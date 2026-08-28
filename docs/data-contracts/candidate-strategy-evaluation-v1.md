@@ -77,7 +77,7 @@ strictly later than the signal.
 These are underlying-stock price outcomes, not total return, alpha, or option
 returns. Dividends, splits, mergers, delistings, and other corporate actions
 require explicit governed treatment; affected results stay quarantined while
-Corporate Action V1 remains unimplemented.
+Corporate Action V1 has no completed canonical dataset.
 
 ## Required evaluation reports
 
@@ -93,8 +93,8 @@ publish only an average return or only favorable regimes.
 - Canonical history is 29 EOD sessions, below the 252-session minimum.
 - Existing analytics replay current-as-of membership; implemented daily
   point-in-time Universe history is still absent.
-- Corporate Action V1 remains a logical contract rather than a completed
-  canonical dataset.
+- Corporate Action V1 has a typed source-observation boundary but no completed
+  canonical dataset or adjustment reconciliation.
 - Fundamental, valuation, point-in-time sector/industry, and option-chain data
   remain absent.
 - No channel formula, frozen formula parameter set, signal writer, outcome

@@ -91,7 +91,8 @@ Implementation direction:
 - Prefer current non-deprecated Splits and Dividends endpoints when implementing a future adapter.
 - Do not use deprecated split/dividend endpoints as the first implementation target.
 - Ticker Events may help identity continuity, but the endpoint is marked experimental.
-- Corporate Action V1 remains logical-only; the Python contract is not implemented yet.
+- Corporate Action V1 now has a provider-neutral typed source-observation
+  contract, but no Massive adapter, PyArrow repository, or completed dataset.
 - The provider Protocol is not expanded in this evaluation.
 
 ## Adjustment Semantics

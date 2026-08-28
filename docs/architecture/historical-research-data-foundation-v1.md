@@ -7,6 +7,10 @@ must be satisfied before WH Alpha builds a performance-eligible Candidate
 strategy panel. It is a design boundary, not a physical dataset or acquisition
 authorization.
 
+The provider-neutral Python/Pydantic row and coverage contracts are now
+implemented with synthetic tests. Physical PyArrow schemas, Parquet
+repositories, canonical data, and provider mappings remain absent.
+
 The immediate objective is not “more bars.” It is a history that can answer,
 for each signal session, which instrument existed, which Universe decision was
 valid, what the market knew, how later corporate actions affect the price path,
@@ -273,7 +277,7 @@ The first authorized operation should be a small representative pilot, not a
 ## Deferred work
 
 - Exact provider selection and live entitlement verification
-- Physical Pydantic/Arrow contracts and repositories
+- Physical PyArrow contracts and Parquet repositories
 - Corporate-action and lifecycle adapters
 - Adjustment formulas and reconciliation fixtures
 - Historical membership builder
