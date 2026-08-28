@@ -223,11 +223,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Stop for a separate exact canonical-Apply authorization on the formally
-reviewed 2026-08-27 EOD plan. The plan converts 12,552 raw results into 9,945
-canonical rows with zero duplicate business keys and zero orphan references.
-Canonical EOD and active analytics remain at 2026-08-26; no downstream action
-is implied by plan success.
+Run and formally review only the offline 2026-08-27 Phase 1a calculation. The
+authorized canonical Apply is complete with 9,945 rows and aligned same-day
+Identity; active analytics and the public Dashboard remain at 2026-08-26.
+Phase 1b, Candidate, Entry Geometry, publication, Snapshot, bundle, and
+deployment remain later separate transitions.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

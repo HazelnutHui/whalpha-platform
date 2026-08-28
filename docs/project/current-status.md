@@ -45,12 +45,11 @@ relative-performance proxies, never actual fund flow.
 
 ## Active data and publications
 
-- Canonical EOD is completed through 2026-08-26; latest canonical Identity is
-  2026-08-27, so Identity is one session ahead of EOD.
-- Latest EOD contains 9,953 rows. Latest Identity contains 9,982 canonical
-  instruments, 13,148 provider observations, and 9,982 resolver rows. The
-  Identity snapshot bound to latest EOD remains 2026-08-26 with 9,974 / 13,141
-  / 9,974 rows respectively.
+- Canonical EOD and canonical Identity are both completed through 2026-08-27
+  and formally aligned.
+- Latest EOD contains 9,945 rows. Latest Identity and the Identity snapshot
+  bound to EOD contain 9,982 canonical instruments, 13,148 provider
+  observations, and 9,982 resolver rows.
 - Activation V2 is active with Common Shares as the sole default:
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
@@ -73,19 +72,20 @@ The exact failed EOD terminal has one immutable offline operator review. After
 its conservative 2026-08-28T16:00:00Z boundary, the user separately authorized
 one exact EOD-only retry. At revision `dd314db`, one request succeeded and
 produced a frozen 12,552-result 2026-08-27 package with zero Production writes.
-Formal readiness is now `ready_for_apply_review`; canonical EOD remains
-2026-08-26. The offline Apply Plan now formally passes with 9,945 canonical
-rows, zero duplicate business keys, zero orphan references, and an expected
-two-file / 1,056,432-byte inventory change. Canonical Apply still requires a
-separate exact authorization. The short-lived fetch controls are not reusable
-authority after documentation changes, a later commit, or expiry.
+The separately authorized canonical Apply is complete. The approved 9,945-row
+partition matches its plan, has zero duplicate business keys and zero orphan
+references, and advanced `/data` by the exact two files / 1,056,432 bytes.
+The next automation action is offline `calculate_phase1a`; active analytics and
+the public Dashboard remain on the 2026-08-26 stale-review release.
 
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review
 events even though the coordinator did. No target or `/data` change occurred.
-The minimal integration fix now passes the exact reviewed-retry regression and
-related 59-test suite; fresh exact-revision controls are still required before
-the already authorized Apply can be exercised.
+The minimal integration fix passes the exact reviewed-retry regression and
+related 59-test suite. Fresh apply-only controls at `6256bf3` then completed
+one canonical transition with zero provider requests. The journal ends in
+`canonical_apply_succeeded`, no unresolved event remains, and no downstream
+calculation or serving action has run.
 
 ## Market Regime
 
@@ -460,15 +460,22 @@ terminal does not retain the numeric HTTP status, so its exact cause remains
 unverified. A later separately authorized retry at revision `dd314db` made
 exactly one request and produced a formally readable 12,552-result EOD package.
 At that fetch-only boundary, no approval plan or canonical 2026-08-27 EOD
-target existed. Canonical EOD remains 2026-08-26, while Identity and the
-fetched EOD package are 2026-08-27.
+target existed. Canonical EOD was still 2026-08-26, while Identity and the
+fetched EOD package were 2026-08-27.
 
 The subsequent offline EOD Apply Plan formally rereads at file SHA-256
 `76ac1c50a016b82772ce8ac391f8d67e107c8433caae0e1f6364b311deb23bc5`.
 It binds the unchanged `/data` inventory and same-day Identity, produces 9,945
 canonical rows with zero duplicate business keys and zero orphan references,
-and proposes exactly two files under the absent 2026-08-27 EOD partition. No
-canonical Apply has occurred.
+and proposes exactly two files under the then-absent 2026-08-27 EOD partition.
+
+After the reviewed-retry custody fix at `6256bf3`, fresh apply-only controls
+executed the user's exact authorization. Canonical EOD 2026-08-27 completed
+with 9,945 rows; Identity/EOD alignment is now `aligned`. `/data` is 392 files
+and 203,931,663 bytes at fingerprint
+`ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749`,
+with zero symlink or staging/partial residue. The next planner action is
+`calculate_phase1a`.
 
 ADR 0045 adds bounded request-count and numeric HTTP-status evidence for future
 failures without retaining response content or changing failure classification.

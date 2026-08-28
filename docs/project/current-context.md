@@ -35,15 +35,15 @@ after deployment.
 
 | Boundary | Active verified value |
 | --- | --- |
-| Canonical EOD | 29 sessions, 2026-07-17 through 2026-08-26 |
-| Latest EOD | 2026-08-26, 9,953 rows |
-| EOD content fingerprint | `60de33ca6d37501387cc1d233d999a16f176197c185cb844dcc0fa3bee592466` |
-| EOD Parquet SHA-256 | `50d19945be381d845ad9b2badad9a433797d242ca4388de73a880f6f16357db3` |
+| Canonical EOD | 30 sessions, 2026-07-17 through 2026-08-27 |
+| Latest EOD | 2026-08-27, 9,945 rows |
+| EOD content fingerprint | `5e2338a6fc0e4ccc84b746a324ceed6b7e5e60d06d1561c3490c07855ba2ca87` |
+| EOD Parquet SHA-256 | `57cb590c6a8b49970c91fe3b48eadbffc922e08352c3ac339af67f05efa64e72` |
 | Latest canonical Identity | 2026-08-27: 9,982 instruments / 13,148 provider identities / 9,982 resolvers |
 | Latest Identity logical fingerprint | `a4db78888d19799f7e38485cfceeb3e6d4611ab2f1cb3d6785a8fc90e6f295ad` |
-| Latest-EOD-bound Identity | 2026-08-26: 9,974 instruments / 13,141 provider identities / 9,974 resolvers |
-| EOD-bound Identity logical fingerprint | `3f9fe19f4f57cb16552443d5bdd45d5ca6367409dddf5e675d2a32d08fad7acf` |
-| Identity/EOD alignment | `identity_ahead_of_eod` |
+| Latest-EOD-bound Identity | 2026-08-27: 9,982 instruments / 13,148 provider identities / 9,982 resolvers |
+| EOD-bound Identity logical fingerprint | `a4db78888d19799f7e38485cfceeb3e6d4611ab2f1cb3d6785a8fc90e6f295ad` |
+| Identity/EOD alignment | `aligned` |
 | Activation analysis session | 2026-08-19 |
 | Activation pointer fingerprint | `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168` |
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
@@ -57,9 +57,9 @@ after deployment.
 | Contracts | Snapshot 1.9 / Dashboard 2.6 |
 | Snapshot pointer fingerprint | `e2b52f319894786d2e6fc628472bfdecd2078e85bbbec3e02be223a4ba9b0203` |
 | Active review metadata | `production-review-deployment/1.1`; 2026-08-26 actual, 2026-08-27 expected, lag one, `stale_review` |
-| Current post-close pipeline freshness | expected 2026-08-27, canonical EOD 2026-08-26, lag one; active UI is explicitly stale-review |
-| `/data` inventory | 390 files / 202,875,231 bytes after MI and Snapshot publication |
-| `/data` inventory fingerprint | `7d66bc02fe88410a4ed6f000f74875aa135e11d10318ff010a148d03ba08a0de` |
+| Current post-close pipeline freshness | expected/canonical EOD 2026-08-27, lag zero; active UI remains the earlier 2026-08-26 stale-review analysis |
+| `/data` inventory | 392 files / 203,931,663 bytes after canonical 2026-08-27 EOD Apply |
+| `/data` inventory fingerprint | `ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -273,18 +273,30 @@ It binds the same package, 2026-08-27 Identity, and unchanged current inventory;
 it yields 9,945 canonical rows, zero duplicate business keys, zero orphan
 references, and exactly two planned files totaling 1,056,432 bytes. Independent
 Parquet inspection confirms 9,945 unique business keys, zero null instrument
-IDs, and only the target session. The canonical target remains absent and no
-Apply authority has been granted. See
+IDs, and only the target session. At that plan-review boundary, the canonical
+target was absent and no Apply authority had been granted. See
 [the exact plan audit](../audits/daily-eod-apply-plan-2026-08-28.md).
 
 The first authorized Apply invocation then failed closed before reservation:
 the coordinator passed journal operator reviews into readiness, while canonical
-Apply custody omitted them during its independent recheck. The journal still
-ends at `acquisition_package_ready`, the target remains absent, and `/data` is
-unchanged. The minimal fix now projects the same immutable reviews in both
-layers and adds a permanent-failure/review/successful-retry reservation
-regression. It changes neither policy nor Apply scope. Fresh exact-revision
-controls remain required to exercise the user's existing one-Apply authority.
+Apply custody omitted them during its independent recheck. At that rejected-
+invocation boundary, the journal still ended at `acquisition_package_ready`,
+the target remained absent, and `/data` was unchanged. The minimal fix projects
+the same immutable reviews in both layers and adds a permanent-failure/review/
+successful-retry reservation regression. It changes neither policy nor Apply
+scope. Fresh exact-revision controls were still required to exercise the
+user's existing one-Apply authority.
+
+Fresh controls bound only `apply_eod` at fix revision `6256bf3`. The second
+invocation completed one canonical transition with zero external requests and
+formal reason `canonical_stage_completed_and_replanned`. The 2026-08-27
+partition contains 9,945 rows and matches the approved Parquet, manifest, and
+content hashes. The journal ends in `canonical_apply_succeeded` with no
+unresolved event. `/data` is now 392 files / 203,931,663 bytes at fingerprint
+`ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749`,
+with zero symlink/staging/partial residue. The next exact automation action is
+offline `calculate_phase1a`; no downstream action has run. See
+[the canonical Apply audit](../audits/daily-eod-canonical-apply-2026-08-28.md).
 
 ## Analytics and presentation
 
@@ -554,9 +566,9 @@ and cannot replace this separately authorized OCI check.
 
 ## Explicitly not authorized by this context
 
-The completed one-request 2026-08-27 EOD fetch is evidence, not continuing
-authority. This handoff does not authorize further provider or SEC access,
-credential inspection, EOD or Identity acquisition, canonical Apply,
+The completed one-request fetch and one canonical Apply are evidence, not
+continuing authority. This handoff does not authorize further provider or SEC
+access, credential inspection, EOD or Identity acquisition, another canonical Apply,
 scheduler changes, Activation, publication,
 Snapshot creation, bundle generation, OCI deployment or rollback, guest
 access, further UI implementation, another quantitative feature, or guest/

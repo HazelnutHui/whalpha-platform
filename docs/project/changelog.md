@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-28 — Complete authorized 2026-08-27 canonical EOD Apply
+
+- Exercised the user's exact `AUTHORIZE_2026_08_27_EOD_CANONICAL_APPLY`
+  boundary after the reviewed-retry custody correction. Fresh controls allowed
+  only `apply_eod` at revision `6256bf3`.
+- One canonical transition completed with zero external requests. The exact
+  9,945-row Parquet and manifest match the reviewed plan hashes, and the journal
+  ends in `canonical_apply_succeeded` with no unresolved event.
+- Latest EOD and Identity are now both 2026-08-27 and aligned. `/data` contains
+  392 files / 203,931,663 bytes at fingerprint
+  `ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749`,
+  with zero symlink/staging/partial residue.
+- The planner now selects only offline `calculate_phase1a`. No analytics,
+  publication, Snapshot, bundle, deployment, notification, or scheduler action
+  followed. All 1,569 backend tests pass; only two existing dependency
+  deprecation warnings remain.
+
 ## 2026-08-28 — Reconcile reviewed fetch retries in Apply custody
 
 - Fixed canonical Apply reservation to project immutable acquisition operator

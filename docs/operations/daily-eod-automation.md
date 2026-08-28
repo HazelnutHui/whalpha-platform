@@ -602,8 +602,8 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Make a separate exact canonical-Apply authorization decision for the
-   formally reviewed 2026-08-27 EOD plan.
+1. Execute and formally review the offline 2026-08-27 Phase 1a calculation;
+   keep every later analytics and serving transition separately bounded.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
@@ -655,4 +655,9 @@ The later offline plan now formally passes with 9,945 canonical rows, zero
 duplicate business keys, zero orphan references, and two planned files totaling
 1,056,432 bytes. Its file SHA-256 is
 `76ac1c50a016b82772ce8ac391f8d67e107c8433caae0e1f6364b311deb23bc5`.
-The target remains absent and canonical Apply remains separately unauthorized.
+The target was absent at plan review. After the reviewed-retry custody fix at
+`6256bf3`, the separately authorized apply-only transition completed with zero
+external requests. The 9,945-row canonical partition formally rereads, the
+journal ends in `canonical_apply_succeeded`, and the next action is offline
+`calculate_phase1a`. No analytics calculation, publication, Snapshot, bundle,
+deployment, notification, or scheduler action followed.
