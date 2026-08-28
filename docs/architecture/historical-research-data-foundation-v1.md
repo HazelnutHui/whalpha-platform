@@ -278,7 +278,8 @@ The first authorized operation should be a small representative pilot, not a
 
 - Exact provider selection and live entitlement verification
 - Corporate-action and lifecycle adapters
-- Adjustment formulas and reconciliation fixtures
+- Canonical multi-event adjustment construction beyond the completed isolated
+  split/dividend fixture invariants
 - Historical membership builder
 - Backfill planner and request estimates
 - Backup and deletion policy

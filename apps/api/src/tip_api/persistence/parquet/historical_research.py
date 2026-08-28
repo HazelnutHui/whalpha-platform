@@ -35,6 +35,7 @@ from tip_api.persistence.historical_research import (
 from tip_api.persistence.parquet.manifest import decimal_to_string
 
 SCHEMA_VERSION = "1.0"
+CORPORATE_ACTION_OBSERVATION_SCHEMA_VERSION = "1.1"
 SCHEMA_VERSION_PARTITION = "1"
 MANIFEST_VERSION = "1.0"
 PARQUET_FILE_NAME = "part-00000.parquet"
@@ -72,6 +73,14 @@ CORPORATE_ACTION_OBSERVATION_ARROW_SCHEMA = pa.schema(
         pa.field("split_ratio_to", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), nullable=True),
         pa.field("cash_amount", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), nullable=True),
         pa.field("currency", pa.string(), nullable=True),
+        pa.field(
+            "provider_historical_adjustment_factor",
+            pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE),
+            nullable=True,
+        ),
+        pa.field("provider_split_adjusted_cash_amount", pa.decimal128(DECIMAL_PRECISION, DECIMAL_SCALE), nullable=True),
+        pa.field("distribution_type", pa.string(), nullable=True),
+        pa.field("frequency", pa.int32(), nullable=True),
         pa.field("new_ticker", pa.string(), nullable=True),
         pa.field("successor_instrument_id", pa.string(), nullable=True),
         pa.field("related_instrument_id", pa.string(), nullable=True),
@@ -161,6 +170,7 @@ class _FamilySpec:
     family: HistoricalDatasetFamily
     model: type[BaseModel]
     schema: pa.Schema
+    schema_version: str
     directory_name: str
     partition_keys: tuple[str, ...]
     sort_key: Callable[[Any], tuple[Any, ...]]
@@ -172,6 +182,7 @@ _SPECS = {
         family=HistoricalDatasetFamily.CORPORATE_ACTION_SOURCE_OBSERVATION,
         model=CorporateActionSourceObservationV1,
         schema=CORPORATE_ACTION_OBSERVATION_ARROW_SCHEMA,
+        schema_version=CORPORATE_ACTION_OBSERVATION_SCHEMA_VERSION,
         directory_name="provider-corporate-action-observation",
         partition_keys=("provider_id", "event_year"),
         sort_key=lambda row: (row.provider, row.source_action_id, row.source_revision),
@@ -181,6 +192,7 @@ _SPECS = {
         family=HistoricalDatasetFamily.INSTRUMENT_LIFECYCLE,
         model=InstrumentLifecycleObservationV1,
         schema=INSTRUMENT_LIFECYCLE_ARROW_SCHEMA,
+        schema_version=SCHEMA_VERSION,
         directory_name="instrument-lifecycle",
         partition_keys=("as_of_date",),
         sort_key=lambda row: (
@@ -195,6 +207,7 @@ _SPECS = {
         family=HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP,
         model=UniverseMembershipDecisionV1,
         schema=UNIVERSE_MEMBERSHIP_ARROW_SCHEMA,
+        schema_version=SCHEMA_VERSION,
         directory_name="universe-membership",
         partition_keys=("methodology_version", "session_date"),
         sort_key=lambda row: (
@@ -208,6 +221,7 @@ _SPECS = {
         family=HistoricalDatasetFamily.ADJUSTMENT_LEDGER,
         model=AdjustmentLedgerEntryV1,
         schema=ADJUSTMENT_LEDGER_ARROW_SCHEMA,
+        schema_version=SCHEMA_VERSION,
         directory_name="adjustment-ledger",
         partition_keys=("methodology_version", "basis_session"),
         sort_key=lambda row: (
@@ -393,7 +407,7 @@ class ParquetHistoricalResearchRepository:
             manifest = {
                 "manifest_version": MANIFEST_VERSION,
                 "family": family.value,
-                "schema_version": SCHEMA_VERSION,
+                "schema_version": spec.schema_version,
                 "partition": dict(partition_values),
                 "record_count": len(ordered),
                 "logical_fingerprint": logical_fingerprint,
@@ -482,7 +496,7 @@ def _read_partition(
     required_manifest = {
         "manifest_version": MANIFEST_VERSION,
         "family": spec.family.value,
-        "schema_version": SCHEMA_VERSION,
+        "schema_version": spec.schema_version,
         "parquet_file": PARQUET_FILE_NAME,
         "completion_status": COMPLETION_STATUS,
     }

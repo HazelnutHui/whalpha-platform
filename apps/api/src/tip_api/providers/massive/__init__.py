@@ -15,6 +15,12 @@ from tip_api.providers.massive.credential import (
     MassiveCredentialFileError,
     load_massive_provider_config_from_file,
 )
+from tip_api.providers.massive.corporate_action_mapping import (
+    MassiveCorporateActionMappingBatch,
+    MassiveCorporateActionMappingIssue,
+    MassiveCorporateActionPayloadKind,
+    map_massive_corporate_action_payloads,
+)
 from tip_api.providers.massive.mapping import stable_massive_instrument_id
 from tip_api.providers.massive.transport import (
     MassiveHttpTransport,
@@ -33,6 +39,9 @@ __all__ = [
     "MASSIVE_BASE_URL_ENV",
     "MASSIVE_TIMEOUT_ENV",
     "MASSIVE_ENV_FILE_ENV",
+    "MassiveCorporateActionMappingBatch",
+    "MassiveCorporateActionMappingIssue",
+    "MassiveCorporateActionPayloadKind",
     "MassiveCredentialFileError",
     "MassiveHttpTransport",
     "MassiveMarketDataProvider",
@@ -43,5 +52,6 @@ __all__ = [
     "MassiveTransportUnavailableError",
     "MassiveUrllibTransport",
     "load_massive_provider_config_from_file",
+    "map_massive_corporate_action_payloads",
     "stable_massive_instrument_id",
 ]

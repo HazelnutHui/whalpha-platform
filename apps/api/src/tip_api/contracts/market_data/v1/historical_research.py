@@ -116,7 +116,7 @@ class FrozenContract(BaseModel):
 class CorporateActionSourceObservationV1(FrozenContract):
     """One source revision of a corporate-action event before canonical resolution."""
 
-    schema_version: Literal["1.0"] = "1.0"
+    schema_version: Literal["1.1"] = "1.1"
     provider: str
     source_action_id: str
     source_revision: int = Field(ge=1)
@@ -135,6 +135,10 @@ class CorporateActionSourceObservationV1(FrozenContract):
     split_ratio_to: Decimal | None = None
     cash_amount: Decimal | None = None
     currency: str | None = None
+    provider_historical_adjustment_factor: Decimal | None = None
+    provider_split_adjusted_cash_amount: Decimal | None = None
+    distribution_type: str | None = None
+    frequency: int | None = Field(default=None, ge=0)
     new_ticker: str | None = None
     successor_instrument_id: UUID | None = None
     related_instrument_id: UUID | None = None
@@ -165,7 +169,12 @@ class CorporateActionSourceObservationV1(FrozenContract):
     def required_text(cls, value: str, info: Any) -> str:
         return normalize_required_string(value, field_name=info.field_name)
 
-    @field_validator("supersedes_source_action_id", "termination_reason", mode="before")
+    @field_validator(
+        "supersedes_source_action_id",
+        "termination_reason",
+        "distribution_type",
+        mode="before",
+    )
     @classmethod
     def optional_text(cls, value: str | None, info: Any) -> str | None:
         return normalize_optional_string(value, field_name=info.field_name)
@@ -189,12 +198,25 @@ class CorporateActionSourceObservationV1(FrozenContract):
             raise ValueError("currency must be an ISO alpha-3 code")
         return normalized
 
-    @field_validator("split_ratio_from", "split_ratio_to", "cash_amount", mode="before")
+    @field_validator(
+        "split_ratio_from",
+        "split_ratio_to",
+        "cash_amount",
+        "provider_historical_adjustment_factor",
+        "provider_split_adjusted_cash_amount",
+        mode="before",
+    )
     @classmethod
     def reject_float_decimals(cls, value: Any, info: Any) -> Any:
         return reject_float_decimal_input(value, field_name=info.field_name)
 
-    @field_validator("split_ratio_from", "split_ratio_to", "cash_amount")
+    @field_validator(
+        "split_ratio_from",
+        "split_ratio_to",
+        "cash_amount",
+        "provider_historical_adjustment_factor",
+        "provider_split_adjusted_cash_amount",
+    )
     @classmethod
     def positive_decimals(cls, value: Decimal | None, info: Any) -> Decimal | None:
         if value is None:
@@ -253,6 +275,15 @@ class CorporateActionSourceObservationV1(FrozenContract):
                 raise ValueError("cash dividend requires cash amount, currency, and ex_date")
         elif self.cash_amount is not None or self.currency is not None:
             raise ValueError("non-cash-dividend action cannot carry cash distribution fields")
+        if self.action_type is not CorporateActionType.CASH_DIVIDEND and any(
+            value is not None
+            for value in (
+                self.provider_split_adjusted_cash_amount,
+                self.distribution_type,
+                self.frequency,
+            )
+        ):
+            raise ValueError("non-cash-dividend action cannot carry dividend metadata")
         if (
             strict_action_fields
             and self.action_type is CorporateActionType.SYMBOL_CHANGE

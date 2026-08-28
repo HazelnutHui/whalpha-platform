@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-28 — Synthetic Massive action mapping and adjustment invariants
+
+- Rechecked the current public Massive Stocks V1 Splits and Dividends response
+  shapes and added saved synthetic fixtures; no account endpoint, API request,
+  credential, or real response was accessed.
+- Advanced only the corporate-action source-observation contract to 1.1 for
+  separately named provider adjustment/distribution evidence; the other
+  historical row contracts remain 1.0.
+- Added a transport-free mapper for split, reverse-split, stock-dividend, and
+  cash-dividend observations with point-in-time stable-ID resolution,
+  first-observed-only knowledge, Decimal normalization, deterministic fallback
+  IDs, and explicit typed quarantine or safe unmapped issues.
+- Preserved provider cumulative adjustment factors only as source evidence.
+  Added independent split price/volume direction, cash-dividend backward
+  continuity, composition, reverse-to-raw, and explicitly same-basis provider
+  reconciliation invariants.
+- No provider capability, canonical Corporate Action, real Adjustment Ledger,
+  `/data` write, formula tuning, publication, deployment, scheduler, or
+  notification occurred.
+
 ## 2026-08-28 — Historical fixture Parquet repositories
 
 - Added explicit PyArrow schemas and immutable Parquet partition repositories

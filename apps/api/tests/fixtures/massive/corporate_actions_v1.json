@@ -1,0 +1,49 @@
+{
+  "fixture_version": "1.0",
+  "source_shape": "synthetic_current_massive_stocks_v1",
+  "splits": [
+    {
+      "adjustment_type": "forward_split",
+      "execution_date": "2026-06-15",
+      "historical_adjustment_factor": 0.25,
+      "id": "synthetic-split-forward-aaa",
+      "split_from": 1,
+      "split_to": 4,
+      "ticker": "AAA"
+    },
+    {
+      "adjustment_type": "reverse_split",
+      "execution_date": "2026-07-01",
+      "historical_adjustment_factor": 10,
+      "id": "synthetic-split-reverse-bbb",
+      "split_from": 10,
+      "split_to": 1,
+      "ticker": "BBB"
+    },
+    {
+      "adjustment_type": "stock_dividend",
+      "execution_date": "2026-07-20",
+      "historical_adjustment_factor": 0.9523809524,
+      "id": "synthetic-stock-dividend-ccc",
+      "split_from": 1,
+      "split_to": 1.05,
+      "ticker": "CCC"
+    }
+  ],
+  "dividends": [
+    {
+      "cash_amount": 0.35,
+      "currency": "USD",
+      "declaration_date": "2026-07-23",
+      "distribution_type": "recurring",
+      "ex_dividend_date": "2026-08-07",
+      "frequency": 4,
+      "historical_adjustment_factor": 0.9965,
+      "id": "synthetic-dividend-aaa",
+      "pay_date": "2026-08-14",
+      "record_date": "2026-08-07",
+      "split_adjusted_cash_amount": 0.35,
+      "ticker": "AAA"
+    }
+  ]
+}

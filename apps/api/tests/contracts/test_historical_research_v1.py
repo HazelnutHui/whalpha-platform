@@ -197,6 +197,33 @@ def test_cash_dividend_requires_amount_currency_and_ex_date() -> None:
         )
 
 
+def test_provider_adjustment_evidence_stays_separate_and_decimal_only() -> None:
+    dividend = CorporateActionSourceObservationV1.model_validate(
+        action_payload(
+            action_type=CorporateActionType.CASH_DIVIDEND,
+            split_ratio_from=None,
+            split_ratio_to=None,
+            ex_date=date(2026, 8, 27),
+            cash_amount=Decimal("0.25"),
+            currency="USD",
+            provider_historical_adjustment_factor=Decimal("0.9975"),
+            provider_split_adjusted_cash_amount=Decimal("0.25"),
+            distribution_type="recurring",
+            frequency=4,
+        )
+    )
+    assert dividend.provider_historical_adjustment_factor == Decimal("0.9975")
+
+    with pytest.raises(ValidationError):
+        CorporateActionSourceObservationV1.model_validate(
+            action_payload(provider_historical_adjustment_factor=0.5)
+        )
+    with pytest.raises(ValidationError):
+        CorporateActionSourceObservationV1.model_validate(
+            action_payload(distribution_type="recurring", frequency=4)
+        )
+
+
 def test_unresolved_action_cannot_carry_stable_id_and_requires_flags() -> None:
     with pytest.raises(ValidationError):
         CorporateActionSourceObservationV1.model_validate(

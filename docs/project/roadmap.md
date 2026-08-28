@@ -59,9 +59,10 @@
   coverage contracts now enforce the point-in-time boundary with synthetic
   tests, and the four new row families have explicit temporary-root Parquet
   writers/readers with immutable completion evidence. The next repository-safe
-  step is saved synthetic provider-response mapping and independent adjustment
-  invariants; real provider work remains blocked on permission, entitlement,
-  and lifecycle-source review.
+  step has also completed saved synthetic split/dividend response mapping and
+  independent Decimal adjustment invariants. Next is the credential-free,
+  read-only exact pilot planner; real provider work remains blocked on
+  permission, entitlement, and lifecycle-source review.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -197,6 +198,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Point-in-time historical research foundation and source capability gap matrix
 - [x] Provider-neutral historical row and coverage/readiness contracts
 - [x] Historical PyArrow schemas and temporary-root Parquet repositories
+- [x] Synthetic Massive split/dividend mapping and adjustment invariants
 
 ## Next Small Target
 
@@ -213,9 +215,9 @@ compatible with the documented owner-only terms, owner non-display/derived use
 needs clarification, live historical/corporate-action entitlement is
 unverified, and full lifecycle sources are absent.
 
-Next implement Massive corporate-action mapping against saved synthetic
-responses only, followed by independent split/dividend adjustment and reverse-
-to-raw invariants. Do not access credentials, acquire, or write history
+Next implement the credential-free read-only pilot planner: exact requested
+sessions, endpoint/page ceilings, deterministic paths, source gaps, and a
+default-deny authorization result. Do not access credentials, acquire, or write history
 until source permission, product posture, account entitlement, and an exact
 pilot are separately reviewed. Do not select formulas or thresholds from one-
 session distributions. Keep Snapshot 1.8 undeployed until its exact bundle and

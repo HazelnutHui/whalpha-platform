@@ -330,8 +330,12 @@ and standing authorization also remain inactive by exact-revision mismatch.
   successor/terminal evidence is missing, and official individual-use terms
   conflict with equal-capability friend/guest access and raise a separate non-
   display/derived-use question. No access, data, or deployment state changed.
-  The next safe slice is saved synthetic provider-response mapping, followed by
-  independent split/dividend adjustment invariants.
+  Saved synthetic current-endpoint split/dividend mapping and independent
+  Decimal adjustment invariants are now also implemented. Missing or ambiguous
+  stable IDs and incomplete evidence quarantine; unanchored rows become
+  explicit safe issues. Provider cumulative adjustment evidence is never
+  treated as a single-event factor without a declared common basis. The next
+  safe slice is a credential-free, read-only exact pilot planner.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

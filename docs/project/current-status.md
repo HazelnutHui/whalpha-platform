@@ -428,8 +428,9 @@ about 1.66 GB before new families, so disk is not the blocker; historical
 Identity pagination would take roughly 28–40 serial hours from the current
 29-session base. Provider permission, live endpoint entitlement, and missing
 merger/successor/terminal sources block a real pilot. The next repository-safe
-work is saved synthetic provider-response mapping, then independent split and
-dividend adjustment invariants; neither step uses credentials or `/data`.
+work completed saved synthetic Massive split/dividend mapping and independent
+Decimal adjustment invariants without credentials or `/data`. The next safe
+step is a read-only exact pilot planner; it grants no acquisition authority.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

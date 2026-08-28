@@ -83,6 +83,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Massive Adapter Boundary](providers/massive-adapter-boundary.md): Configuration, credential, transport, smoke-test, and mapping boundary.
 - [Historical Research Source Capability V1](providers/historical-research-source-capability-v1.md): Repository-evidenced source, entitlement, implementation, and gap matrix for 252/504-session history.
 - [2026-08-28 Massive Historical Research Review](providers/massive-historical-research-review-2026-08-28.md): Current official plan, endpoint, licensing, guest-compatibility, and entitlement gates.
+- [Massive Corporate Action Fixture Mapping V1](providers/massive-corporate-action-fixture-mapping-v1.md): Network-free split/dividend source mapping, quarantine rules, and adjustment-factor invariants.
 
 ## API
 

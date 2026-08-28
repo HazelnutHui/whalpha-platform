@@ -16,7 +16,7 @@ Data Foundation V1 architecture.
 
 ## Implemented records
 
-### Corporate action source observation
+### Corporate action source observation (`1.1`)
 
 One provider revision of a split, reverse split, cash dividend, stock
 dividend, symbol change, merger, spinoff, or delisting. It preserves source
@@ -24,6 +24,9 @@ identifier and revision, stable-ID resolution, action-specific facts,
 effective/source-available/first-observed/ingested timing, correction or
 cancellation lineage, and explicit quality state. Incomplete action fields are
 accepted only as quarantined evidence; heuristics never establish an action.
+Provider-reported cumulative adjustment factor, split-adjusted dividend cash,
+distribution type, and frequency remain separately named source evidence and
+never become canonical ledger factors by field reuse.
 This source family is explicitly distinct from the required canonical
 `corporate_action` family and cannot substitute for it in `research_ready`.
 A completed source partition may contain zero rows so a valid no-event result
@@ -107,8 +110,8 @@ decisions, and adjustment entries have exact Arrow schemas. Their repository:
 - rejects unsafe path segments, symlink boundaries, incomplete partitions,
   corruption, and conflicting reruns.
 
-All repository tests use isolated temporary roots. The next safe slice is
-provider mapping against saved synthetic response fixtures, followed by
-independent split/dividend adjustment invariants. A real pilot remains blocked
-by source permission, account entitlement, lifecycle-source coverage, and an
-exact authorized acquisition plan.
+All repository tests use isolated temporary roots. Saved synthetic Massive
+split/dividend mapping and independent adjustment invariants are now complete.
+The next safe slice is a credential-free, read-only exact pilot planner. A real
+pilot remains blocked by source permission, account entitlement, lifecycle-
+source coverage, and an exact authorized acquisition plan.

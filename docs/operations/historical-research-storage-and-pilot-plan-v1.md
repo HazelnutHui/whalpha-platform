@@ -106,8 +106,8 @@ queried only for a small set of unresolved stable IDs, never the entire base.
    quarantined physical decision with evaluated-base lineage.
 3. **Complete:** add PyArrow schemas, deterministic fingerprints, temporary-root writers,
    formal readers, and tamper/conflict tests.
-4. Implement Massive response mapping against saved synthetic fixtures only.
-5. Implement independent split/dividend factor fixtures and reverse-to-raw
+4. **Complete:** implement Massive response mapping against saved synthetic fixtures only.
+5. **Complete:** implement independent split/dividend factor fixtures and reverse-to-raw
    invariants.
 6. Add a read-only pilot planner that calculates exact sessions, request
    ceilings, expected paths, and current inventory without credential access.
@@ -161,6 +161,6 @@ gaps require an additional source or a formally accepted quarantine boundary.
 - Current account entitlement for historical/corporate-action endpoints is not
   live-verified.
 - Merger/spinoff/successor and terminal-outcome source remains missing.
-- Provider response mapping and action-factor reconciliation fixtures remain
-  repository work; the physical row repositories themselves are complete for
-  the current fixture boundary.
+- Provider response mapping and action-factor reconciliation fixtures are now
+  complete for the network-free repository boundary. The read-only exact pilot
+  planner remains before any external review or authorization.
