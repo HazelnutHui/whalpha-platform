@@ -35,7 +35,9 @@ It additionally freezes:
 
 Plan construction, formal validation, apply, and verify-then-link must reject
 any changed strategy binding. The CLI must parse Plan 2.4 explicitly; older
-plans remain readable unchanged.
+plans remain readable unchanged. Plan creation must also receive the exact
+strategy audit through an explicit temporary-root CLI input; approved Apply
+must rely only on the frozen Plan 2.4 and reject that build-time input.
 
 The OCI bundle builder may accept the exact 1.9/2.6 pair only after validating
 the strategy file and its manifest/source bindings, fixed Universe/channel

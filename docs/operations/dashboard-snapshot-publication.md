@@ -27,8 +27,10 @@ Repository source now also supports Snapshot 1.9 / Dashboard 2.6 through
 Approval Plan 2.4. It extends every 1.8 binding and additionally freezes the
 strategy filename, product contract/fingerprint, audit-manifest hash, audit
 fingerprint, and parameter fingerprint. Plan creation, approved apply, and
-verify-then-link all revalidate those fields. This is repository/local-review
-support only; no 1.9 plan has been approved or applied.
+verify-then-link all revalidate those fields. A 1.9 dry-run receives the exact
+strategy audit through `--candidate-strategy-audit`; that input must be a
+regular directory under `/tmp`, and the resulting Plan 2.4 freezes its content
+identity before Apply. No 1.9 plan has yet been approved or applied.
 
 The Dell-local publication/bundle evidence and its explicit Production
 boundary are recorded in

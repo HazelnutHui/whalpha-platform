@@ -70,6 +70,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--approved-plan-sha256")
     p.add_argument("--expected-current-state-fingerprint")
     p.add_argument("--market-intelligence-publication-id")
+    p.add_argument("--candidate-strategy-audit", type=Path)
     p.add_argument("--analysis-session",type=date.fromisoformat)
     p.add_argument("--review-deployment",action="store_true")
     p.add_argument("--review-approved-as-of-session",type=date.fromisoformat)
@@ -83,7 +84,7 @@ def main(argv: list[str]|None=None) -> int:
     args=_parser().parse_args(argv)
     approved_mode=args.apply or args.verify_then_link
     if approved_mode:
-        if not all((args.approved_plan,args.approved_plan_sha256,args.expected_current_state_fingerprint,args.analysis_session)) or any((args.approval_package,args.output_root,args.release_id,args.generated_at,args.market_intelligence_publication_id,args.review_deployment,args.review_approved_as_of_session,args.review_expected_latest_session,args.review_expected_lag_sessions)):
+        if not all((args.approved_plan,args.approved_plan_sha256,args.expected_current_state_fingerprint,args.analysis_session)) or any((args.approval_package,args.output_root,args.release_id,args.generated_at,args.market_intelligence_publication_id,args.candidate_strategy_audit,args.review_deployment,args.review_approved_as_of_session,args.review_expected_latest_session,args.review_expected_lag_sessions)):
             _parser().error("approved operation requires plan, plan SHA-256, analysis session and expected current-state fingerprint only")
         plan=_load_plan(args.approved_plan,args.approved_plan_sha256)
         if plan.expected_current_state_fingerprint!=args.expected_current_state_fingerprint or plan.analysis_session!=args.analysis_session:
@@ -108,6 +109,17 @@ def main(argv: list[str]|None=None) -> int:
     review=_review_authorization_from_args(args)
     if args.approval_package is not None and args.output_root is None:
         _parser().error("--approval-package requires an explicit persistent --output-root under /tmp")
+    if args.candidate_strategy_audit is not None:
+        strategy_audit = args.candidate_strategy_audit
+        if (
+            not strategy_audit.is_absolute()
+            or not strategy_audit.resolve(strict=True).is_relative_to(Path("/tmp"))
+            or strategy_audit.is_symlink()
+            or not strategy_audit.is_dir()
+        ):
+            raise DashboardSnapshotPublicationError(
+                "candidate strategy audit must be a regular /tmp directory"
+            )
     generated=datetime.fromisoformat(args.generated_at.replace("Z","+00:00")) if args.generated_at else datetime.now(UTC)
     live_freshness = _formal_freshness()
     output=args.output_root
@@ -140,7 +152,8 @@ def main(argv: list[str]|None=None) -> int:
             )
     candidate=build_private_dashboard_snapshot(data_root=ROOT,output_root=output,allowed_output_root=output,
         release_id=args.release_id,generated_at=generated,dashboard_activation=activation,
-        market_intelligence=market_intelligence)
+        market_intelligence=market_intelligence,
+        candidate_strategy_audit_path=args.candidate_strategy_audit)
     manifest=candidate.manifest
     response={"status":"dry_run_ready","candidate_path":str(candidate.output_dir),
               "freshness_status":manifest.freshness_status,"session_lag":manifest.session_lag,

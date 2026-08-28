@@ -374,10 +374,13 @@ def test_cli_current_freshness_cannot_be_spoofed_by_generated_at(monkeypatch, tm
         "read_dashboard_universe_activation_pointer",
         lambda *a, **k: SimpleNamespace(active=SimpleNamespace(analysis_session=date(2026, 8, 13))),
     )
-    monkeypatch.setattr(
-        cli, "build_private_dashboard_snapshot",
-        lambda **kwargs: SimpleNamespace(output_dir=candidate, manifest=manifest),
-    )
+    strategy_audit = tmp_path / "strategy-audit"
+    strategy_audit.mkdir()
+    build_arguments = {}
+    def build_candidate(**kwargs):
+        build_arguments.update(kwargs)
+        return SimpleNamespace(output_dir=candidate, manifest=manifest)
+    monkeypatch.setattr(cli, "build_private_dashboard_snapshot", build_candidate)
     monkeypatch.setattr(
         cli, "build_approval_plan",
         lambda **kwargs: (_ for _ in ()).throw(AssertionError("stale state reached plan builder")),
@@ -387,7 +390,9 @@ def test_cli_current_freshness_cannot_be_spoofed_by_generated_at(monkeypatch, tm
         "--release-id", "2026-08-19T120000Z-abcdef0",
         "--generated-at", "2026-08-19T12:00:00Z",
         "--analysis-session", manifest.current_session_date,
+        "--candidate-strategy-audit", str(strategy_audit),
     ]) == 0
+    assert build_arguments["candidate_strategy_audit_path"] == strategy_audit
     payload = __import__("json").loads(capsys.readouterr().out)
     assert payload["status"] == "stale_blocked"
     assert payload["session_lag"] == 2
