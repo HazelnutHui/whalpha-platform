@@ -375,6 +375,19 @@ and standing authorization also remain inactive by exact-revision mismatch.
   idempotency, corruption/conflict/partial-target rejection, and symlink
   safety. It has no default `/data` root, CLI, active pointer, provider client,
   page bodies, or credentials; only temporary-directory fixtures exist.
+- ADR 0055 and Source Resolution Governance V1 now make source composition
+  mechanical per family and fact scope. Policies bind exact permission-review
+  fingerprints, source roles, precedence, and matching thresholds while
+  structurally disabling ticker joins and first-non-null selection. Any usable
+  contradiction quarantines without majority vote; missing required evidence
+  remains unavailable. Only synthetic facts were resolved and every decision
+  has zero operational authority.
+- The exact Source Selection and Permission Inquiry Packet V1 is prepared but
+  not sent. It covers equal-capability display/browser delivery, Dell
+  retention/derivation, termination deletion, history/lifecycle coverage,
+  adjustments/corrections, availability, attribution, and pricing. General
+  pre-feature data-governance design is now closed; source selection, real
+  adapters, acquisition, and evaluation remain separately gated.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

@@ -92,3 +92,6 @@ directory fsync, atomic rename, and formal reread. Identical reruns are
 idempotent; conflicts, corruption, partial targets, cross-review assessments,
 and symlink paths fail closed. Current verification uses pytest temporary
 directories only; no canonical physical review has been published.
+
+After permission is established, canonical fact choice is separately governed
+by [Source Resolution Governance V1](source-resolution-governance-v1.md).

@@ -31,6 +31,17 @@ from tip_api.contracts.data_governance.v1.source_permission import (
     assess_source_uses,
     source_permission_review_fingerprint,
 )
+from tip_api.contracts.data_governance.v1.source_resolution import (
+    DataFamilySourceResolutionPolicyV1,
+    SourceEvidenceRole,
+    SourceFactEvidenceV1,
+    SourceResolutionBindingV1,
+    SourceResolutionDecisionV1,
+    SourceResolutionMode,
+    SourceResolutionStatus,
+    resolve_source_facts,
+    source_resolution_policy_fingerprint,
+)
 
 __all__ = [
     "STANDARD_DATA_FAMILY_REGISTRY_V1",
@@ -60,4 +71,13 @@ __all__ = [
     "SourceUsePermissionV1",
     "assess_source_uses",
     "source_permission_review_fingerprint",
+    "DataFamilySourceResolutionPolicyV1",
+    "SourceEvidenceRole",
+    "SourceFactEvidenceV1",
+    "SourceResolutionBindingV1",
+    "SourceResolutionDecisionV1",
+    "SourceResolutionMode",
+    "SourceResolutionStatus",
+    "resolve_source_facts",
+    "source_resolution_policy_fingerprint",
 ]

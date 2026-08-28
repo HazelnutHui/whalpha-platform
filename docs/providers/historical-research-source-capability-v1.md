@@ -82,18 +82,23 @@ One provider need not supply every family. The canonical design permits:
 - a separately governed lifecycle reconciliation layer;
 - WH Alpha-derived adjustment ledgers with independent cross-source checks.
 
-Provider priority is never resolved by “first non-null value.” Every canonical
-family needs source precedence, contradiction handling, evidence quality, and
-quarantine rules before physical publication.
+Provider priority is never resolved by “first non-null value.” The executable
+[Source Resolution Governance V1](../data-contracts/source-resolution-governance-v1.md)
+now binds precedence, evidence roles, permission-review fingerprints,
+corroboration thresholds, and fail-closed conflict handling per family and fact
+scope. No real source policy is selected or activated.
 
 Free sources should be evaluated before paid expansion, but this document does
 not guess which free source is complete enough. A paid source should later plug
 into the same provider-neutral observations and must expand coverage rather
 than replace canonical identities or rewrite history.
 
-## Required next review packet
+## Prepared next review packet
 
-Before a pilot, produce one bounded packet containing:
+The repository now contains a
+[Source Selection and Permission Inquiry Packet V1](source-selection-permission-inquiry-packet-v1.md)
+covering the commercial and open-source questions below. It remains
+`PREPARED_NOT_SENT`. Before a pilot, the reviewed response must contain:
 
 - official source URLs and review timestamp;
 - current account plan and endpoint entitlement without exposing credentials;

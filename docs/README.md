@@ -72,6 +72,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Historical Research Foundation Contracts V1](data-contracts/historical-research-foundation-v1.md)
 - [Data Record Governance V1](data-contracts/data-record-governance-v1.md): Cross-family layer, disposition, evidence, quality, coverage, point-in-time, retention, content-scope, and equal-capability serving classification.
 - [Source Permission Governance V1](data-contracts/source-permission-governance-v1.md): Effective-dated, use-specific source permission reviews and default-deny equal-capability assessment.
+- [Source Resolution Governance V1](data-contracts/source-resolution-governance-v1.md): Family/fact-specific evidence roles, corroboration, and fail-closed conflict resolution.
 - [Provider Instrument Identity V1](data-contracts/provider-instrument-identity-v1.md)
 - [Provider Ticker Resolver V1](data-contracts/provider-ticker-resolver-v1.md)
 - [Trailing Liquidity Shadow Publication V1](data-contracts/trailing-liquidity-shadow-v1.md)
@@ -86,6 +87,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Historical Research Source Capability V1](providers/historical-research-source-capability-v1.md): Repository-evidenced source, entitlement, implementation, and gap matrix for 252/504-session history.
 - [2026-08-28 Massive Historical Research Review](providers/massive-historical-research-review-2026-08-28.md): Current official plan, endpoint, licensing, guest-compatibility, and entitlement gates.
 - [2026-08-28 Equal-Capability Historical Source Review](providers/equal-capability-historical-source-review-2026-08-28.md): Official-source role, permission, coverage, and hybrid-composition decision.
+- [Source Selection and Permission Inquiry Packet V1](providers/source-selection-permission-inquiry-packet-v1.md): Prepared, unsent questions for exact shared-product permission, retention, coverage, and pricing.
 - [Massive Corporate Action Fixture Mapping V1](providers/massive-corporate-action-fixture-mapping-v1.md): Network-free split/dividend source mapping, quarantine rules, and adjustment-factor invariants.
 
 ## API
@@ -141,6 +143,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0050: Seal strategy signals before outcomes](decisions/0050-seal-strategy-signals-before-forward-outcomes.md): separates contemporaneous point-in-time signals from later stock outcomes and prohibits random-split leakage.
 - [ADR 0051: Require a point-in-time historical research foundation](decisions/0051-require-point-in-time-historical-research-foundation.md): requires governed membership, actions, lifecycle, adjustments, and coverage before formula evaluation.
 - [ADR 0054: Gate data sources by explicit use permission](decisions/0054-gate-data-sources-by-explicit-use-permission.md): requires evidence-backed acquisition, retention, derived-use, display, and delivery permission without weakening guest parity.
+- [ADR 0055: Resolve canonical facts by family-specific source policy](decisions/0055-resolve-canonical-facts-by-family-specific-source-policy.md): prohibits first-non-null, ticker joins, and silent conflict precedence.
 - [ADR 0052: Unify cross-family data record governance](decisions/0052-unify-data-record-governance-classification.md): keeps domain states separate while enforcing one executable family registry and shared-content parity.
 - [ADR 0053: Separate historical Pilot review from authorization](decisions/0053-separate-historical-pilot-approval-review-from-authorization.md): binds exact scope and external gates without granting acquisition or Apply authority.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.

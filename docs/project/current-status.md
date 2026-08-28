@@ -205,6 +205,17 @@ idempotency, conflict/corruption/partial-target rejection, and symlink safety
 for reviews and assessments. It has only been exercised under test temporary
 directories; no `/data` permission package or active allowlist exists.
 
+ADR 0055 now closes the planned general source-composition design pass. Source
+Resolution Governance V1 binds exact data family/fact scopes, permission-
+review fingerprints, evidence roles, precedence, and corroboration thresholds.
+Ticker joins and first-non-null selection are disabled; any usable conflict
+quarantines and missing required evidence stays unavailable. The provider
+permission/coverage/pricing inquiry packet is prepared but has not been sent.
+No concrete source policy, adapter, history, or operational authority exists.
+The next authorized repository development may therefore return to explainable
+Candidate strategy channels; real validation remains blocked on adequate
+point-in-time history.
+
 ## Next candidate work
 
 The first Candidate performance slice is implemented without changing results:

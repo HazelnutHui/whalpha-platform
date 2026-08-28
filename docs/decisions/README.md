@@ -77,3 +77,4 @@ Each ADR should include:
 - [0052: Unify Cross-Family Data Record Governance Classification](0052-unify-data-record-governance-classification.md)
 - [0053: Separate Historical Pilot Approval Review from Authorization](0053-separate-historical-pilot-approval-review-from-authorization.md)
 - [0054: Gate Data Sources by Explicit Use Permission](0054-gate-data-sources-by-explicit-use-permission.md)
+- [0055: Resolve Canonical Facts by Family-Specific Source Policy](0055-resolve-canonical-facts-by-family-specific-source-policy.md)

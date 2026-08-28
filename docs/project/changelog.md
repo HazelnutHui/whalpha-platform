@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-28 — Family-specific source resolution closure
+
+- Accepted ADR 0055 and added executable Source Resolution Governance V1.
+  Exact family/fact policies now bind source roles, contiguous precedence,
+  permission-review fingerprints, and matching thresholds while structurally
+  prohibiting ticker joins and first-non-null selection.
+- Added a pure stable-ID/fact-fingerprint resolver. Missing anchors or required
+  corroboration return unavailable; any usable resolving contradiction
+  quarantines without majority vote; crosswalk-only and unresolved-quality
+  evidence cannot establish a canonical fact. Resolution grants no operation.
+- Prepared—but did not send—the exact provider permission, retention,
+  deletion, coverage, correction, availability, and pricing inquiry packet for
+  EOD, lifecycle/action, SEC evidence, and identifier-crosswalk lanes.
+- This closes the planned general data-governance design pass before Candidate
+  feature development. Concrete sources, real adapters, physical historical
+  acquisition, and performance claims remain gated by permission and coverage.
+- No provider, credential, `/data`, publication, deployment, scheduler, or
+  Production state changed.
+
 ## 2026-08-28 — Source permission governance and official-source composition
 
 - Added ADR 0054 and executable Source Permission Governance V1. Source reviews

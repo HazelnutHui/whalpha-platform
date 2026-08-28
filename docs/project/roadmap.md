@@ -63,6 +63,12 @@
   independent Decimal adjustment invariants, and the credential-free read-only
   exact pilot planner. Real provider work remains blocked on permission/product
   posture, entitlement, lifecycle-source review, and exact authorization.
+  ADR 0054/0055 now complete the intended general permission and family/fact
+  source-resolution boundary, and the exact provider inquiry packet is
+  prepared but unsent. Stop expanding generic governance here. The next
+  repository product slice is explainable Candidate strategy-channel evidence
+  and entry/chase-risk presentation; historical performance calibration waits
+  for permission-cleared point-in-time data.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -203,6 +209,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Cross-family Data Record Governance V1 and equal-capability serving policy
 - [x] Default-deny historical Pilot approval-review package
 - [x] Official equal-capability multi-source review and use-specific source-permission governance
+- [x] Family/fact-specific source resolution and prepared provider inquiry packet
 
 ## Next Small Target
 
@@ -234,14 +241,19 @@ Do not select formulas or thresholds from one-session distributions. Keep
 Snapshot 1.8 undeployed until its exact bundle and browser behavior are
 separately reviewed. Keep SMTP and SEC B2 paused.
 
-The next historical-foundation implementation target is not another provider
-adapter. Pilot approval 1.1 is now bound to fresh exact source-permission
-assessments, and the durable fixture-only permission-review repository is
-complete. Next obtain written candidate-plan answers and publish a real review
-package only under separate exact authorization; only a separately authorized
-pilot may follow. SEC/GLEIF/OpenFIGI
-fixture adapters can be designed independently afterward, without treating
-their open identifiers or filings as complete security/lifecycle evidence.
+The general historical governance design pass is complete. Pilot approval 1.1
+is bound to fresh exact source-permission assessments; the durable fixture-only
+review repository, family/fact-specific conflict resolver, and unsent provider
+inquiry packet are complete. Written candidate-plan answers and a real review
+package require separate authorization; only a separately authorized pilot may
+follow. Do not build provider adapters merely to continue governance work.
+
+The next repository product target is the first explainable Candidate strategy-
+channel consumer: show why a name belongs or does not belong in a same-archetype
+channel, keep market fit and event context separate, and expose entry location
+and chase risk without a cross-strategy total score. Use fixed provisional
+mechanics only; defer performance claims and threshold calibration until the
+point-in-time historical foundation is physically ready.
 
 ## Phase 2 — Intraday and Options
 
