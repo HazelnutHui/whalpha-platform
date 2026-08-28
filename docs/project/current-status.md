@@ -427,10 +427,15 @@ Tickers, Splits, and Dividends shapes. A 504-session EOD+Identity projection is
 about 1.66 GB before new families, so disk is not the blocker; historical
 Identity pagination would take roughly 28–40 serial hours from the current
 29-session base. Provider permission, live endpoint entitlement, and missing
-merger/successor/terminal sources block a real pilot. The next repository-safe
-work completed saved synthetic Massive split/dividend mapping and independent
-Decimal adjustment invariants without credentials or `/data`. The next safe
-step is a read-only exact pilot planner; it grants no acquisition authority.
+merger/successor/terminal sources block a real pilot. Repository-safe work now
+includes saved synthetic Massive split/dividend mapping, independent Decimal
+adjustment invariants, and `historical-research-pilot-plan/1.0`. The planner
+accepts only caller-supplied fingerprinted inventory, subtracts existing exact
+sessions, enforces the 80-request/zero-retry/15-second-serial boundary, and
+derives deterministic future `/tmp` package paths. It performs no storage scan,
+request, credential access, or write and permanently returns `not_authorized`.
+The next transition is external review of terms/product posture, account
+entitlement, missing lifecycle sources, and one exact live-pilot authorization.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

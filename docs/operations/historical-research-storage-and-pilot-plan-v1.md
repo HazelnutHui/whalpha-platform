@@ -2,7 +2,8 @@
 
 ## Status
 
-Fixture-only physical foundation implemented; provider pilot not authorized.
+Fixture-only physical foundation and read-only exact planner implemented;
+provider pilot not authorized.
 
 This plan turns ADR 0051 into a bounded Dell physical direction. It does not
 create a dataset, call a provider, inspect credentials, write `/data`, or grant
@@ -109,12 +110,37 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 4. **Complete:** implement Massive response mapping against saved synthetic fixtures only.
 5. **Complete:** implement independent split/dividend factor fixtures and reverse-to-raw
    invariants.
-6. Add a read-only pilot planner that calculates exact sessions, request
-   ceilings, expected paths, and current inventory without credential access.
+6. **Complete:** add a read-only pilot planner that calculates exact sessions,
+   request ceilings, expected paths, and caller-supplied current inventory
+   without credential access or storage scanning.
 7. Re-review terms/account entitlement and obtain exact pilot authorization.
 
 Steps 1–6 are repository work and can proceed without provider access or
 `/data` writes. Step 7 is a separate external transition.
+
+## Implemented read-only planner boundary
+
+`historical-research-pilot-plan/1.0` is a pure function. It accepts an exact,
+fingerprinted inventory summary from its caller; it does not read credentials,
+scan `/data`, call a provider, or write a package. It validates one to three
+ordered XNYS target sessions, subtracts already completed EOD and same-session
+Identity partitions, and calculates six endpoint-class ceilings.
+
+The reviewed maximum is exactly 80 requests: 3 Grouped Daily, 60 active All
+Tickers, 6 inactive All Tickers, 2 Splits, 4 Dividends, and 5 targeted
+experimental Ticker Events requests. Every line is serial, has zero automatic
+retry, and uses no faster than the existing 15-second pace. At the maximum,
+the transport-only estimate is 1,200 seconds; this is not an execution or
+completion promise.
+
+The output deterministically binds the inventory fingerprint, missing
+sessions, request lines, source gaps, proposed canonical partition candidates,
+and exact relative paths below a required future `/tmp` package root. Action
+event years and the final Coverage ID remain explicit templates until validated
+observations and formal reread exist. The planner always returns
+`not_authorized`, `review_plan_only`, zero external requests, and zero data
+writes. It has no transition that can grant acquisition, Apply, publication,
+deployment, or scheduler authority.
 
 ## Proposed first live pilot after gates clear
 
@@ -161,6 +187,7 @@ gaps require an additional source or a formally accepted quarantine boundary.
 - Current account entitlement for historical/corporate-action endpoints is not
   live-verified.
 - Merger/spinoff/successor and terminal-outcome source remains missing.
-- Provider response mapping and action-factor reconciliation fixtures are now
-  complete for the network-free repository boundary. The read-only exact pilot
-  planner remains before any external review or authorization.
+- Provider response mapping, action-factor reconciliation fixtures, and the
+  read-only exact planner are complete for the network-free repository
+  boundary. Terms/product posture, account entitlement, lifecycle-source
+  coverage, and an exact live-pilot authorization remain before acquisition.

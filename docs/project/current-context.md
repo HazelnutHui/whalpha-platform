@@ -335,7 +335,13 @@ and standing authorization also remain inactive by exact-revision mismatch.
   stable IDs and incomplete evidence quarantine; unanchored rows become
   explicit safe issues. Provider cumulative adjustment evidence is never
   treated as a single-event factor without a declared common basis. The next
-  safe slice is a credential-free, read-only exact pilot planner.
+  safe slice is now complete as `historical-research-pilot-plan/1.0`: a pure
+  caller-inventory planner that enforces one-to-three exact XNYS sessions, the
+  reviewed 80-request ceiling, zero retry, serial pacing, deterministic future
+  `/tmp` package paths, and permanent `not_authorized` output. It does not scan
+  `/data`, access credentials, call a provider, or write data. A real pilot
+  remains blocked on terms/product posture, account entitlement, lifecycle
+  source coverage, and separate exact authorization.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

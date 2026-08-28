@@ -59,10 +59,10 @@
   coverage contracts now enforce the point-in-time boundary with synthetic
   tests, and the four new row families have explicit temporary-root Parquet
   writers/readers with immutable completion evidence. The next repository-safe
-  step has also completed saved synthetic split/dividend response mapping and
-  independent Decimal adjustment invariants. Next is the credential-free,
-  read-only exact pilot planner; real provider work remains blocked on
-  permission, entitlement, and lifecycle-source review.
+  step has also completed saved synthetic split/dividend response mapping,
+  independent Decimal adjustment invariants, and the credential-free read-only
+  exact pilot planner. Real provider work remains blocked on permission/product
+  posture, entitlement, lifecycle-source review, and exact authorization.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -199,6 +199,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Provider-neutral historical row and coverage/readiness contracts
 - [x] Historical PyArrow schemas and temporary-root Parquet repositories
 - [x] Synthetic Massive split/dividend mapping and adjustment invariants
+- [x] Credential-free read-only exact historical pilot planner
 
 ## Next Small Target
 
@@ -215,13 +216,15 @@ compatible with the documented owner-only terms, owner non-display/derived use
 needs clarification, live historical/corporate-action entitlement is
 unverified, and full lifecycle sources are absent.
 
-Next implement the credential-free read-only pilot planner: exact requested
-sessions, endpoint/page ceilings, deterministic paths, source gaps, and a
-default-deny authorization result. Do not access credentials, acquire, or write history
-until source permission, product posture, account entitlement, and an exact
-pilot are separately reviewed. Do not select formulas or thresholds from one-
-session distributions. Keep Snapshot 1.8 undeployed until its exact bundle and
-browser behavior are separately reviewed. Keep SMTP and SEC B2 paused.
+The credential-free read-only pilot planner is complete: it binds exact
+requested sessions and caller inventory, endpoint/page ceilings, deterministic
+future `/tmp` paths, source gaps, and a permanent default-deny result. Next
+re-review source permission, guest/friend product posture, account endpoint
+entitlement, missing lifecycle sources, and one exact live-pilot authorization.
+Do not access credentials, acquire, or write history before those gates clear.
+Do not select formulas or thresholds from one-session distributions. Keep
+Snapshot 1.8 undeployed until its exact bundle and browser behavior are
+separately reviewed. Keep SMTP and SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

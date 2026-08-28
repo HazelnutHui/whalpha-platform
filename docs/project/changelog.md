@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-28 — Read-only historical pilot planner
+
+- Added `historical-research-pilot-plan/1.0`, a pure planner that accepts only
+  caller-supplied fingerprinted inventory and exact XNYS target sessions; it
+  performs no filesystem scan, credential access, provider call, or write.
+- Enforced one-to-three targets, the reviewed 80-request hard ceiling, zero
+  automatic retry, no faster than 15-second serial pacing, bounded action and
+  experimental lifecycle scopes, and automatic subtraction of completed EOD
+  and same-session Identity inputs.
+- Added deterministic fingerprints, inventory summaries, request-class
+  ceilings, transport-time estimates, exact future `/tmp` package-relative
+  paths, proposed canonical partition candidates, and explicit unresolved
+  action-year/Coverage-ID templates.
+- The planner permanently returns `not_authorized`, `review_plan_only`, zero
+  external requests, and zero data writes. It cannot authorize acquisition,
+  Apply, publication, deployment, or scheduling. A real pilot remains blocked
+  on terms/product posture, entitlement, lifecycle-source coverage, and a
+  separate exact authorization.
+
 ## 2026-08-28 — Synthetic Massive action mapping and adjustment invariants
 
 - Rechecked the current public Massive Stocks V1 Splits and Dividends response
