@@ -202,6 +202,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Credential-free read-only exact historical pilot planner
 - [x] Cross-family Data Record Governance V1 and equal-capability serving policy
 - [x] Default-deny historical Pilot approval-review package
+- [x] Official equal-capability multi-source review and use-specific source-permission governance
 
 ## Next Small Target
 
@@ -232,6 +233,15 @@ Do not access credentials, acquire, or write history before those gates clear.
 Do not select formulas or thresholds from one-session distributions. Keep
 Snapshot 1.8 undeployed until its exact bundle and browser behavior are
 separately reviewed. Keep SMTP and SEC B2 paused.
+
+The next historical-foundation implementation target is not another provider
+adapter. Pilot approval 1.1 is now bound to fresh exact source-permission
+assessments, and the durable fixture-only permission-review repository is
+complete. Next obtain written candidate-plan answers and publish a real review
+package only under separate exact authorization; only a separately authorized
+pilot may follow. SEC/GLEIF/OpenFIGI
+fixture adapters can be designed independently afterward, without treating
+their open identifiers or filings as complete security/lifecycle evidence.
 
 ## Phase 2 — Intraday and Options
 

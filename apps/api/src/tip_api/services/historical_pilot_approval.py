@@ -10,8 +10,15 @@ from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 
 from tip_api.contracts.data_governance.v1 import (
+    EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1,
     SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1,
+    SOURCE_PERMISSION_POLICY_FINGERPRINT_V1,
     STANDARD_DATA_FAMILY_REGISTRY_FINGERPRINT_V1,
+    SourcePermissionReviewV1,
+    SourceUseAssessmentStatus,
+    SourceUseAssessmentV1,
+    assess_source_uses,
+    source_permission_review_fingerprint,
 )
 from tip_api.services.historical_pilot_planner import (
     DEFAULT_SERIAL_PACE_SECONDS,
@@ -23,7 +30,7 @@ from tip_api.services.historical_pilot_planner import (
 )
 
 
-CONTRACT_VERSION = "historical-research-pilot-approval-review/1.0"
+CONTRACT_VERSION = "historical-research-pilot-approval-review/1.1"
 _SHA256 = re.compile(r"[0-9a-f]{64}")
 _REVISION = re.compile(r"[0-9a-f]{7,64}")
 _SAFE_CODE = re.compile(r"[a-z][a-z0-9_]{1,95}")
@@ -47,14 +54,17 @@ class PilotApprovalGateId(StrEnum):
 
 EXTERNAL_GATE_ORDER = (
     PilotApprovalGateId.ACCOUNT_ENDPOINT_ENTITLEMENT,
-    PilotApprovalGateId.EQUAL_CAPABILITY_SOURCE_PERMISSION,
     PilotApprovalGateId.EXACT_CURRENT_INVENTORY,
     PilotApprovalGateId.LIFECYCLE_SOURCE_COVERAGE,
+)
+REQUIRED_PILOT_SOURCE_FAMILY_IDS = (
+    "corporate_action_source_observation",
+    "eod_price_bar",
+    "point_in_time_identity",
 )
 ALL_GATE_ORDER = tuple(PilotApprovalGateId)
 EXTERNAL_GATE_MAXIMUM_VALIDITY = {
     PilotApprovalGateId.ACCOUNT_ENDPOINT_ENTITLEMENT: timedelta(hours=24),
-    PilotApprovalGateId.EQUAL_CAPABILITY_SOURCE_PERMISSION: timedelta(days=90),
     PilotApprovalGateId.EXACT_CURRENT_INVENTORY: timedelta(hours=24),
     PilotApprovalGateId.LIFECYCLE_SOURCE_COVERAGE: timedelta(days=30),
 }
@@ -116,6 +126,11 @@ class HistoricalPilotApprovalReviewV1:
     inventory_fingerprint: str
     standard_data_family_registry_fingerprint: str
     shared_content_access_policy_fingerprint: str
+    source_permission_policy_fingerprint: str
+    source_permission_review_fingerprint: str
+    source_permission_source_id: str
+    source_permission_family_ids: tuple[str, ...]
+    source_permission_assessment_statuses: tuple[str, ...]
     target_sessions: tuple[str, ...]
     request_summary: tuple[HistoricalPilotRequestApprovalSummaryV1, ...]
     planned_request_ceiling: int
@@ -145,6 +160,8 @@ def build_historical_pilot_approval_review(
     plan: HistoricalPilotPlanV1,
     repository_evidence: HistoricalPilotRepositoryEvidenceV1,
     external_gate_evidence: tuple[PilotApprovalGateEvidenceV1, ...],
+    source_permission_review: SourcePermissionReviewV1,
+    source_permission_assessments: tuple[SourceUseAssessmentV1, ...],
     reviewed_at: datetime,
 ) -> HistoricalPilotApprovalReviewV1:
     """Build an in-memory review package; never grant or execute authority."""
@@ -158,6 +175,16 @@ def build_historical_pilot_approval_review(
         reviewed_at=checked,
     )
     by_gate = {item.gate_id: item for item in external}
+    permission_gate = _validate_gate(
+        _source_permission_gate(
+            source_permission_review,
+            source_permission_assessments,
+            reviewed_at=checked,
+        ),
+        reviewed_at=checked,
+        maximum_validity=timedelta(days=90),
+    )
+    by_gate[permission_gate.gate_id] = permission_gate
     by_gate.update(
         _internal_gate_results(
             plan=plan,
@@ -206,6 +233,19 @@ def build_historical_pilot_approval_review(
         "shared_content_access_policy_fingerprint": (
             SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1
         ),
+        "source_permission_policy_fingerprint": (
+            SOURCE_PERMISSION_POLICY_FINGERPRINT_V1
+        ),
+        "source_permission_review_fingerprint": (
+            source_permission_review_fingerprint(source_permission_review)
+        ),
+        "source_permission_source_id": source_permission_review.source_id,
+        "source_permission_family_ids": [
+            item.data_family_id for item in source_permission_assessments
+        ],
+        "source_permission_assessment_statuses": [
+            item.status.value for item in source_permission_assessments
+        ],
         "target_sessions": list(plan.target_sessions),
         "request_summary": [_jsonable(asdict(item)) for item in request_summary],
         "planned_request_ceiling": plan.planned_request_ceiling,
@@ -248,6 +288,19 @@ def build_historical_pilot_approval_review(
         ),
         shared_content_access_policy_fingerprint=(
             SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1
+        ),
+        source_permission_policy_fingerprint=(
+            SOURCE_PERMISSION_POLICY_FINGERPRINT_V1
+        ),
+        source_permission_review_fingerprint=(
+            source_permission_review_fingerprint(source_permission_review)
+        ),
+        source_permission_source_id=source_permission_review.source_id,
+        source_permission_family_ids=tuple(
+            item.data_family_id for item in source_permission_assessments
+        ),
+        source_permission_assessment_statuses=tuple(
+            item.status.value for item in source_permission_assessments
         ),
         target_sessions=plan.target_sessions,
         request_summary=request_summary,
@@ -349,6 +402,122 @@ def _validate_external_gates(
     ):
         raise HistoricalPilotApprovalError("inventory gate does not bind the pilot inventory")
     return normalized
+
+
+def _source_permission_gate(
+    review: SourcePermissionReviewV1,
+    assessments: tuple[SourceUseAssessmentV1, ...],
+    *,
+    reviewed_at: datetime,
+) -> PilotApprovalGateEvidenceV1:
+    try:
+        checked_review = SourcePermissionReviewV1.model_validate(
+            review.model_dump(mode="json")
+        )
+        checked_assessments = tuple(
+            SourceUseAssessmentV1.model_validate(item.model_dump(mode="json"))
+            for item in assessments
+        )
+    except Exception as exc:
+        raise HistoricalPilotApprovalError(
+            "source permission review package is malformed"
+        ) from exc
+    assessments = checked_assessments
+    family_ids = tuple(item.data_family_id for item in assessments)
+    if family_ids != REQUIRED_PILOT_SOURCE_FAMILY_IDS:
+        raise HistoricalPilotApprovalError(
+            "source permission assessments must cover exact pilot families in order"
+        )
+    if len({item.source_id for item in assessments}) != 1:
+        raise HistoricalPilotApprovalError("pilot source permission must bind one source")
+    expected_review_fingerprint = source_permission_review_fingerprint(checked_review)
+    if (
+        any(item.source_id != checked_review.source_id for item in assessments)
+        or any(
+            item.permission_review_fingerprint != expected_review_fingerprint
+            for item in assessments
+        )
+    ):
+        raise HistoricalPilotApprovalError(
+            "pilot source permission assessments must bind one review"
+        )
+    if any(item.assessed_at != reviewed_at for item in assessments):
+        raise HistoricalPilotApprovalError(
+            "source permission assessments must be fresh at review time"
+        )
+    if any(
+        item.required_use_cases != EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1
+        for item in assessments
+    ):
+        raise HistoricalPilotApprovalError(
+            "pilot source permission must assess every equal-capability use"
+        )
+    expected_assessments = tuple(
+        assess_source_uses(
+            checked_review,
+            data_family_id=family_id,
+            required_use_cases=EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1,
+            assessed_at=reviewed_at,
+        )
+        for family_id in REQUIRED_PILOT_SOURCE_FAMILY_IDS
+    )
+    if assessments != expected_assessments:
+        raise HistoricalPilotApprovalError(
+            "source permission assessments were not derived from the bound review"
+        )
+
+    evidence_fingerprint = _fingerprint(
+        {
+            "source_permission_policy_fingerprint": (
+                SOURCE_PERMISSION_POLICY_FINGERPRINT_V1
+            ),
+            "assessments": [item.model_dump(mode="json") for item in assessments],
+        }
+    )
+    statuses = tuple(item.status for item in assessments)
+    if all(
+        item is SourceUseAssessmentStatus.ELIGIBLE_FOR_REQUIRED_USES
+        for item in statuses
+    ):
+        valid_until = min(item.permission_review_valid_until for item in assessments)
+        valid_until = min(valid_until, reviewed_at + timedelta(days=90))
+        if valid_until <= reviewed_at:
+            raise HistoricalPilotApprovalError(
+                "eligible source permission has no remaining validity"
+            )
+        return PilotApprovalGateEvidenceV1(
+            gate_id=PilotApprovalGateId.EQUAL_CAPABILITY_SOURCE_PERMISSION,
+            state=PilotApprovalGateState.SATISFIED,
+            evidence_fingerprint=evidence_fingerprint,
+            reason_codes=(),
+            observed_at=reviewed_at,
+            valid_until=valid_until,
+        )
+
+    state = (
+        PilotApprovalGateState.UNSATISFIED
+        if any(
+            item is SourceUseAssessmentStatus.BLOCKED_BY_PERMISSION
+            for item in statuses
+        )
+        else PilotApprovalGateState.UNVERIFIED
+    )
+    reasons = tuple(
+        sorted(
+            {
+                f"{assessment.data_family_id}_{assessment.status.value}"
+                for assessment in assessments
+                if assessment.status
+                is not SourceUseAssessmentStatus.ELIGIBLE_FOR_REQUIRED_USES
+            }
+        )
+    )
+    return PilotApprovalGateEvidenceV1(
+        gate_id=PilotApprovalGateId.EQUAL_CAPABILITY_SOURCE_PERMISSION,
+        state=state,
+        evidence_fingerprint=evidence_fingerprint,
+        reason_codes=reasons,
+    )
 
 
 def _validate_gate(

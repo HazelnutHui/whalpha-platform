@@ -21,7 +21,7 @@ not select attractive or convenient dates after seeing results.
 
 ## Decision
 
-Adopt `historical-research-pilot-approval-review/1.0` as a pure, in-memory
+Adopt `historical-research-pilot-approval-review/1.1` as a pure, in-memory
 review package between planning and any future authorization capability.
 
 The review binds:
@@ -29,13 +29,26 @@ The review binds:
 - exact implementation revision;
 - exact pilot-plan and inventory fingerprints;
 - Data Record Governance V1 registry and equal-capability access-policy
-  fingerprints;
+  fingerprints plus the Source Permission Governance V1 policy fingerprint;
 - exact target sessions, endpoint classes, scopes, parameters, page limits,
   request ceiling, retry zero, and serial-only behavior;
 - synthetic action-mapping and adjustment-invariant evidence;
 - the required `/tmp` package and separate Apply boundary; and
-- four external gates: equal-capability source permission, live account
-  endpoint entitlement, exact current inventory, and lifecycle-source coverage.
+- three caller-supplied external gates: live account endpoint entitlement,
+  exact current inventory, and lifecycle-source coverage; and
+- one mechanically derived equal-capability source-permission gate.
+
+The source-permission gate cannot be hand-authored. It requires exact current
+assessments for `eod_price_bar`, `point_in_time_identity`, and
+`corporate_action_source_observation`, all bound to one source and one official
+review. Each family must assess all six Source Permission Governance uses:
+Dell acquisition, raw retention, derived analysis, equal-capability raw and
+derived display, and machine delivery. The assessment time must equal the
+approval-review time. Blocked, unresolved, stale, unsupported, partial-use,
+cross-source, or cross-review input fails closed.
+The approval builder revalidates the bound review and recomputes every
+assessment from its six conclusions; caller-supplied cleared assessments cannot
+override a blocked review even if their outer fields are forged to match.
 
 Satisfied external evidence is effective-dated and must still be valid at
 review time. Inventory and live account entitlement are bounded to at most 24
@@ -65,6 +78,8 @@ requires a regenerated plan and new binding.
 ## Consequences
 
 - Technical readiness cannot conceal licensing or lifecycle gaps.
+- A caller cannot convert a provider permission assertion into a satisfied
+  gate without exact typed assessment evidence.
 - A stale inventory fingerprint invalidates the exact review boundary.
 - User acknowledgement cannot silently expand dates, tickers, endpoints,
   requests, retry, writes, or downstream publication.

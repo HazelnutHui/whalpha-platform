@@ -76,3 +76,4 @@ Each ADR should include:
 - [0051: Require a Point-in-Time Historical Research Foundation](0051-require-point-in-time-historical-research-foundation.md)
 - [0052: Unify Cross-Family Data Record Governance Classification](0052-unify-data-record-governance-classification.md)
 - [0053: Separate Historical Pilot Approval Review from Authorization](0053-separate-historical-pilot-approval-review-from-authorization.md)
+- [0054: Gate Data Sources by Explicit Use Permission](0054-gate-data-sources-by-explicit-use-permission.md)

@@ -13,6 +13,11 @@ data, classification, Universe decisions, corporate actions, analytics,
 research, and product publications. It is a crosswalk, not a replacement for
 domain-specific contracts.
 
+External-source permission is governed separately by
+[Source Permission Governance V1](source-permission-governance-v1.md). A
+record cannot become shared-product eligible merely because its record
+classification passes; the exact upstream uses must also be cleared.
+
 ## Orthogonal dimensions
 
 | Dimension | Question answered |

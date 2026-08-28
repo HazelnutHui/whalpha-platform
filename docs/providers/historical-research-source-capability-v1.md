@@ -12,6 +12,11 @@ Massive pricing, endpoint, flat-file, and Market Data Terms pages on
 Externally controlled plan, endpoint, price, rate-limit, history, and licensing
 facts must still be rechecked before acquisition.
 
+The broader official-source comparison is recorded in the dated
+[Equal-Capability Historical Source Review](equal-capability-historical-source-review-2026-08-28.md).
+It found no single cleared source and recommends provider-neutral source
+composition under Source Permission Governance V1.
+
 ## Status meanings
 
 - `verified_current`: exercised by the bounded current pipeline.

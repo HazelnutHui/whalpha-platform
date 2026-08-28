@@ -19,6 +19,18 @@ from tip_api.contracts.data_governance.v1.record_classification import (
     WebServingPolicy,
     validate_governance_registry,
 )
+from tip_api.contracts.data_governance.v1.source_permission import (
+    EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1,
+    SOURCE_PERMISSION_POLICY_FINGERPRINT_V1,
+    SourcePermissionConclusion,
+    SourcePermissionReviewV1,
+    SourceUseAssessmentStatus,
+    SourceUseAssessmentV1,
+    SourceUseCase,
+    SourceUsePermissionV1,
+    assess_source_uses,
+    source_permission_review_fingerprint,
+)
 
 __all__ = [
     "STANDARD_DATA_FAMILY_REGISTRY_V1",
@@ -38,4 +50,14 @@ __all__ = [
     "StableKeyKind",
     "WebServingPolicy",
     "validate_governance_registry",
+    "EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1",
+    "SOURCE_PERMISSION_POLICY_FINGERPRINT_V1",
+    "SourcePermissionConclusion",
+    "SourcePermissionReviewV1",
+    "SourceUseAssessmentStatus",
+    "SourceUseAssessmentV1",
+    "SourceUseCase",
+    "SourceUsePermissionV1",
+    "assess_source_uses",
+    "source_permission_review_fingerprint",
 ]

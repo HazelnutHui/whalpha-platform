@@ -148,16 +148,20 @@ deployment, or scheduler authority.
 
 ## Implemented approval-review boundary
 
-`historical-research-pilot-approval-review/1.0` binds the plan and inventory to
+`historical-research-pilot-approval-review/1.1` binds the plan and inventory to
 the exact implementation revision, synthetic mapping/adjustment evidence, the
-Data Record Governance registry, equal-capability serving policy, `/tmp`
-package boundary, and four external gates. It returns either `blocked` or
+Data Record Governance registry, equal-capability serving policy, Source
+Permission Governance policy, `/tmp` package boundary, three caller-supplied
+external gates, and one mechanically derived permission gate. It returns either `blocked` or
 `ready_for_exact_user_authorization_review`; both have zero authority, requests,
 and writes. An exact acknowledgement string exists only in the latter state and
 still requires a separate user decision and a separately implemented custody
 boundary. Satisfied inventory and account evidence expires after at most 24
 hours, lifecycle-source review after 30 days, and source-permission review after
-90 days; stale evidence fails closed.
+90 days; stale evidence fails closed. Permission requires exact same-time
+assessments for EOD, point-in-time Identity, and corporate-action source
+observations, with all six Dell/equal-capability uses covered by one source and
+one review. The caller cannot submit a manual satisfied permission gate.
 
 The deterministic first-window candidate is 2026-07-14 through 2026-07-16,
 the three XNYS sessions immediately before the documented contiguous inventory

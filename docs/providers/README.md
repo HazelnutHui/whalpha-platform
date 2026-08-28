@@ -8,6 +8,7 @@ Provider evaluations record official-source review, technical fit, entitlement a
 - [Massive Adapter Boundary](massive-adapter-boundary.md): Adapter configuration, credential loader, HTTPS transport, smoke-test, and mocked mapping boundary.
 - [Historical Research Source Capability V1](historical-research-source-capability-v1.md): Evidence-scoped capability and gap matrix for the future point-in-time research foundation.
 - [2026-08-28 Massive Historical Research Review](massive-historical-research-review-2026-08-28.md): Official public plan/endpoint/terms review and provider-pilot blockers.
+- [2026-08-28 Equal-Capability Historical Source Review](equal-capability-historical-source-review-2026-08-28.md): Official SEC, exchange, open-identifier, and representative market-data source compatibility review.
 
 ## Rules
 

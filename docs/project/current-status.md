@@ -143,6 +143,15 @@ read or used.
   require clarification. Product posture is now resolved in favor of equal-
   capability Sessions; compatible source permission remains unresolved. No
   access or deployment change has been authorized.
+- The broader 2026-08-28 official-source review found no single source that is
+  both complete for the historical foundation and cleared for the confirmed
+  equal-capability product. SEC is suitable open filing/fundamental/event
+  evidence; GLEIF and OpenFIGI are open identifier/crosswalk candidates; the
+  Nasdaq Daily List is a licensed corporate-action candidate; and raw EOD still
+  needs a separately display/derived/delivery-compatible provider. Twelve Data
+  has an explicit redistribution add-on path but is not selected or currently
+  cleared. Alpha Vantage, Alpaca customer data, and current Massive individual
+  terms do not supply a cleared shared-product fallback.
 - Historical analytics replay current-as-of membership and are not a
   survivorship-free backtest.
 - The OCI bundle helper's `--snapshot-release` shortcut still resolves the
@@ -180,6 +189,21 @@ read or used.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
+
+Repository source now implements ADR 0054 Source Permission Governance V1.
+Every source review must separately conclude Dell acquisition, raw retention,
+derived analysis, equal-capability raw display, derived display, and machine
+delivery. Missing, stale, separate-agreement, blocked, or unsupported use fails
+closed, and even an eligible assessment carries zero operational authority.
+Historical Pilot approval review 1.1 now binds this policy and derives its
+permission gate from exact same-time assessments for EOD, point-in-time
+Identity, and corporate-action observations. The caller can no longer provide
+a standalone satisfied permission assertion or override a blocked review with
+forged cleared assessments.
+An immutable caller-root repository now provides atomic publish, formal reread,
+idempotency, conflict/corruption/partial-target rejection, and symlink safety
+for reviews and assessments. It has only been exercised under test temporary
+directories; no `/data` permission package or active allowlist exists.
 
 ## Next candidate work
 
@@ -443,12 +467,12 @@ request, credential access, or write and permanently returns `not_authorized`.
 ADR 0052 and Data Record Governance V1 now add one executable cross-family
 registry and orthogonal disposition, evidence, quality, coverage, point-in-time,
 retention, content-scope, and serving dimensions. They do not rewrite existing
-records. ADR 0053 now adds a default-deny approval review and deterministic
+records. ADR 0053 now adds a default-deny approval review 1.1 and deterministic
 preceding-window selector. The preliminary dates are 2026-07-14 through
 2026-07-16 with a 75-request ceiling and no unnamed Ticker Events. It emits no
 acknowledgement while source permission, entitlement, lifecycle coverage, and
 a fresh exact inventory fingerprint remain unresolved. The next transition is
-external evidence review, not acquisition.
+written external permission evidence, not acquisition.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

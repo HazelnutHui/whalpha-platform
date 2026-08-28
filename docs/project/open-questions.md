@@ -31,6 +31,12 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Which written permission, license, or alternate source will support the
   confirmed equal-capability guest/credential shared product? Owner-only
   market-analysis serving is not a permitted fallback.
+- Which exact raw EOD plan clears all six Source Permission Governance uses,
+  including indefinite canonical retention and browser/API delivery, and what
+  deletion obligation remains after termination?
+- Which all-exchange lifecycle composition supplements Nasdaq Daily List for
+  non-Nasdaq delistings, merger consideration, successor identity, spinoffs,
+  and last-tradable-session evidence?
 - What account-specific permission supports owner non-display calculations,
   derived strategy research, retained history, and required deletion on
   provider termination?

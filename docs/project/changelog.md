@@ -1,10 +1,40 @@
 # Changelog
 
+## 2026-08-28 — Source permission governance and official-source composition
+
+- Added ADR 0054 and executable Source Permission Governance V1. Source reviews
+  now independently cover Dell acquisition, raw retention, derived analysis,
+  equal-capability raw/derived display, and machine delivery. Missing, stale,
+  blocked, separate-agreement, or unsupported uses fail closed; assessment
+  never grants operational authority.
+- Added a dated official-source compatibility review. It found no single
+  complete and cleared source, selected a provider-neutral hybrid direction,
+  separated SEC filing evidence and open identifiers from security/lifecycle
+  completeness, and kept current Massive, Alpha Vantage, and Alpaca standard
+  paths out of the equal-capability shared product. Twelve Data remains only a
+  future permission/pricing inquiry.
+- Added synthetic tests for full clearance, blocked shared display, separate-
+  agreement ambiguity, review expiry, family coverage, complete use matrices,
+  and safe public evidence URLs. No account, provider request, credential,
+  `/data`, publication, deployment, or scheduler changed.
+- Upgraded Historical Pilot approval review to 1.1. The source-permission gate
+  is now derived from exact same-time assessments for EOD, point-in-time
+  Identity, and corporate-action source observations, all covering the six
+  Dell/equal-capability uses under one source and review. Callers cannot submit
+  a manual satisfied permission gate or override a blocked review with forged
+  cleared assessments; passing still grants zero authority.
+- Added an immutable explicit-root repository for typed source reviews and
+  assessments. It uses content-addressed partitions, atomic rename, fsync,
+  formal reread, and idempotency, while rejecting conflicts, corruption,
+  partial targets, cross-review bindings, and symlink paths. Tests use only
+  temporary directories; no `/data` review or allowlist was created.
+
 ## 2026-08-28 — Default-deny historical Pilot approval review
 
 - Accepted ADR 0053 and added a pure approval-review package that binds the
   implementation revision, exact plan/inventory, unified governance and access
-  policy, repository fixture evidence, request details, and four external gates.
+  policy, repository fixture evidence, request details, three caller-supplied
+  external gates, and one derived source-permission gate.
 - Required effective-dated external evidence: inventory and account entitlement
   remain valid for at most 24 hours, lifecycle review for 30 days, and source-
   permission review for 90 days. Stale evidence cannot generate acknowledgement.

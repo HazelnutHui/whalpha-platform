@@ -6,11 +6,20 @@ from datetime import UTC, date, datetime, timedelta
 import pytest
 
 from tip_api.contracts.data_governance.v1 import (
+    EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1,
     SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1,
+    SOURCE_PERMISSION_POLICY_FINGERPRINT_V1,
     STANDARD_DATA_FAMILY_REGISTRY_FINGERPRINT_V1,
+    SourcePermissionConclusion,
+    SourcePermissionReviewV1,
+    SourceUseAssessmentStatus,
+    SourceUsePermissionV1,
+    assess_source_uses,
+    source_permission_review_fingerprint,
 )
 from tip_api.services.historical_pilot_approval import (
     EXTERNAL_GATE_ORDER,
+    REQUIRED_PILOT_SOURCE_FAMILY_IDS,
     HistoricalPilotApprovalError,
     HistoricalPilotRepositoryEvidenceV1,
     PilotApprovalGateEvidenceV1,
@@ -92,14 +101,6 @@ def _blocked_gates() -> tuple[PilotApprovalGateEvidenceV1, ...]:
             valid_until=NOW + timedelta(hours=1),
         ),
         _gate(
-            PilotApprovalGateId.EQUAL_CAPABILITY_SOURCE_PERMISSION,
-            PilotApprovalGateState.UNSATISFIED,
-            SOURCE_EVIDENCE,
-            "equal_capability_permission_not_cleared",
-            observed_at=NOW,
-            valid_until=NOW + timedelta(days=30),
-        ),
-        _gate(
             PilotApprovalGateId.EXACT_CURRENT_INVENTORY,
             PilotApprovalGateState.SATISFIED,
             INVENTORY,
@@ -120,7 +121,6 @@ def _blocked_gates() -> tuple[PilotApprovalGateEvidenceV1, ...]:
 def _ready_gates() -> tuple[PilotApprovalGateEvidenceV1, ...]:
     evidence = {
         PilotApprovalGateId.ACCOUNT_ENDPOINT_ENTITLEMENT: ENTITLEMENT_EVIDENCE,
-        PilotApprovalGateId.EQUAL_CAPABILITY_SOURCE_PERMISSION: SOURCE_EVIDENCE,
         PilotApprovalGateId.EXACT_CURRENT_INVENTORY: INVENTORY,
         PilotApprovalGateId.LIFECYCLE_SOURCE_COVERAGE: LIFECYCLE_EVIDENCE,
     }
@@ -144,11 +144,53 @@ def _ready_gates() -> tuple[PilotApprovalGateEvidenceV1, ...]:
     )
 
 
-def _review(gates=None, plan=None):
+def _source_package(
+    conclusion: SourcePermissionConclusion,
+    *,
+    assessed_at: datetime = NOW,
+):
+    permissions = tuple(
+        SourceUsePermissionV1(
+            use_case=use_case,
+            conclusion=conclusion,
+            reason_codes=("terms_gate",)
+            if conclusion is not SourcePermissionConclusion.CLEARED
+            else (),
+            evidence_fingerprints=(SOURCE_EVIDENCE,),
+        )
+        for use_case in EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1
+    )
+    review = SourcePermissionReviewV1(
+        source_id="example_historical_source",
+        source_display_name="Example Historical Source",
+        reviewed_at=NOW,
+        valid_until=NOW + timedelta(days=30),
+        supported_data_family_ids=REQUIRED_PILOT_SOURCE_FAMILY_IDS,
+        official_evidence_urls=("https://example.com/official-terms",),
+        permissions=permissions,
+    )
+    assessments = tuple(
+        assess_source_uses(
+            review,
+            data_family_id=family_id,
+            required_use_cases=EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1,
+            assessed_at=assessed_at,
+        )
+        for family_id in REQUIRED_PILOT_SOURCE_FAMILY_IDS
+    )
+    return review, assessments
+
+
+def _review(gates=None, plan=None, permission_package=None):
+    review, assessments = permission_package or _source_package(
+        SourcePermissionConclusion.BLOCKED
+    )
     return build_historical_pilot_approval_review(
         plan=plan or _plan(),
         repository_evidence=_repository_evidence(),
         external_gate_evidence=gates or _blocked_gates(),
+        source_permission_review=review,
+        source_permission_assessments=assessments,
         reviewed_at=NOW,
     )
 
@@ -185,7 +227,10 @@ def test_current_preliminary_review_is_blocked_and_performs_nothing() -> None:
 
 
 def test_all_external_gates_only_make_review_ready_for_separate_user_authorization() -> None:
-    review = _review(_ready_gates())
+    review = _review(
+        _ready_gates(),
+        permission_package=_source_package(SourcePermissionConclusion.CLEARED),
+    )
 
     assert review.review_status is (
         PilotApprovalReviewStatus.READY_FOR_EXACT_USER_AUTHORIZATION_REVIEW
@@ -214,6 +259,14 @@ def test_review_binds_unified_registry_access_policy_inventory_and_revision() ->
         review.shared_content_access_policy_fingerprint
         == SHARED_CONTENT_ACCESS_POLICY_FINGERPRINT_V1
     )
+    assert review.source_permission_policy_fingerprint == (
+        SOURCE_PERMISSION_POLICY_FINGERPRINT_V1
+    )
+    assert review.source_permission_family_ids == REQUIRED_PILOT_SOURCE_FAMILY_IDS
+    assert review.source_permission_assessment_statuses == (
+        SourceUseAssessmentStatus.BLOCKED_BY_PERMISSION.value,
+    ) * 3
+    assert review.source_permission_source_id == "example_historical_source"
     assert review.as_dict()["review_status"] == "blocked"
     assert review.as_dict()["gate_results"][0]["observed_at"].endswith("+00:00")
     assert len(review.logical_content_fingerprint) == 64
@@ -229,7 +282,7 @@ def test_external_gates_must_be_exact_ordered_and_inventory_bound() -> None:
         _review(tuple(reversed(gates)))
 
     wrong_inventory = list(gates)
-    wrong_inventory[2] = _gate(
+    wrong_inventory[1] = _gate(
         PilotApprovalGateId.EXACT_CURRENT_INVENTORY,
         PilotApprovalGateState.SATISFIED,
         "9" * 64,
@@ -273,6 +326,12 @@ def test_malformed_repository_evidence_and_naive_review_time_fail_closed() -> No
                 implementation_revision="not-a-revision",
             ),
             external_gate_evidence=_blocked_gates(),
+            source_permission_review=_source_package(
+                SourcePermissionConclusion.BLOCKED
+            )[0],
+            source_permission_assessments=_source_package(
+                SourcePermissionConclusion.BLOCKED
+            )[1],
             reviewed_at=NOW,
         )
 
@@ -290,7 +349,7 @@ def test_satisfied_external_gate_must_be_current_and_bounded() -> None:
         _review(tuple(stale))
 
     too_long = list(_ready_gates())
-    too_long[2] = _gate(
+    too_long[1] = _gate(
         PilotApprovalGateId.EXACT_CURRENT_INVENTORY,
         PilotApprovalGateState.SATISFIED,
         INVENTORY,
@@ -304,6 +363,12 @@ def test_satisfied_external_gate_must_be_current_and_bounded() -> None:
             plan=_plan(),
             repository_evidence=_repository_evidence(),
             external_gate_evidence=_blocked_gates(),
+            source_permission_review=_source_package(
+                SourcePermissionConclusion.BLOCKED
+            )[0],
+            source_permission_assessments=_source_package(
+                SourcePermissionConclusion.BLOCKED
+            )[1],
             reviewed_at=NOW.replace(tzinfo=None),
         )
 
@@ -318,3 +383,53 @@ def test_plan_count_or_tmp_path_tampering_is_rejected() -> None:
                 temporary_package_relative_paths=("/tmp/escaped",) * 78,
             )
         )
+
+
+def test_source_permission_must_bind_exact_families_uses_review_and_time() -> None:
+    review, ready = _source_package(SourcePermissionConclusion.CLEARED)
+    with pytest.raises(HistoricalPilotApprovalError, match="exact pilot families"):
+        _review(permission_package=(review, tuple(reversed(ready))))
+
+    wrong_source = list(ready)
+    wrong_source[1] = wrong_source[1].model_copy(
+        update={"source_id": "different_source"}
+    )
+    with pytest.raises(HistoricalPilotApprovalError, match="one source"):
+        _review(permission_package=(review, tuple(wrong_source)))
+
+    partial_uses = list(ready)
+    partial_uses[1] = partial_uses[1].model_copy(
+        update={
+            "required_use_cases": (
+                EQUAL_CAPABILITY_MARKET_SOURCE_USES_V1[0],
+            )
+        }
+    )
+    with pytest.raises(HistoricalPilotApprovalError, match="every equal-capability use"):
+        _review(permission_package=(review, tuple(partial_uses)))
+
+    stale_time = _source_package(
+        SourcePermissionConclusion.CLEARED,
+        assessed_at=NOW + timedelta(seconds=1),
+    )
+    with pytest.raises(HistoricalPilotApprovalError, match="fresh at review time"):
+        _review(permission_package=stale_time)
+
+
+def test_cleared_assessments_cannot_override_a_blocked_bound_review() -> None:
+    blocked_review, _ = _source_package(SourcePermissionConclusion.BLOCKED)
+    _, cleared_assessments = _source_package(SourcePermissionConclusion.CLEARED)
+    forged = tuple(
+        item.model_copy(
+            update={
+                "source_id": blocked_review.source_id,
+                "permission_review_fingerprint": source_permission_review_fingerprint(
+                    blocked_review
+                ),
+                "permission_review_valid_until": blocked_review.valid_until,
+            }
+        )
+        for item in cleared_assessments
+    )
+    with pytest.raises(HistoricalPilotApprovalError, match="not derived"):
+        _review(permission_package=(blocked_review, forged))

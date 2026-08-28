@@ -353,6 +353,28 @@ and standing authorization also remain inactive by exact-revision mismatch.
   documented retained boundary, with 75 serial requests and no unnamed Ticker
   Events. The current review remains blocked and produces no acknowledgement;
   no provider, credential, `/data`, `/tmp`, publication, or deployment changed.
+- The broader dated official-source review now returns
+  `NO_SINGLE_SOURCE_CLEARED` and `HYBRID_SOURCE_PATH_RECOMMENDED`. SEC is the
+  preferred open filing/fundamental/event evidence lane; GLEIF and OpenFIGI
+  are identifier crosswalk candidates; Nasdaq Daily List is a licensed action/
+  listing candidate; and EOD requires a separately licensed raw/derived/
+  delivery-compatible source. Twelve Data has a possible paid redistribution
+  path but is neither selected nor cleared. ADR 0054 and executable Source
+  Permission Governance V1 now make six uses independent: Dell acquisition,
+  raw retention, derived analysis, equal-capability raw display, derived
+  display, and machine delivery. Any missing, stale, blocked, or unresolved use
+  fails closed and every result has zero operational authority. No provider,
+  data, deployment, or `/data` state changed.
+- Historical Pilot approval review is now contract 1.1. Its permission gate is
+  derived from exact EOD, point-in-time Identity, and corporate-action source-
+  observation assessments covering all six uses, from one source/review at the
+  exact approval time. Callers cannot submit a manual satisfied permission
+  gate. The package remains blocked and grants no acquisition or write.
+- Source permission reviews and assessments now also have an immutable,
+  content-addressed caller-root repository with atomic publish, formal reread,
+  idempotency, corruption/conflict/partial-target rejection, and symlink
+  safety. It has no default `/data` root, CLI, active pointer, provider client,
+  page bodies, or credentials; only temporary-directory fixtures exist.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
