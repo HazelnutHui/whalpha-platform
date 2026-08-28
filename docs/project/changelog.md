@@ -16,6 +16,13 @@
   product completed in 11.29 seconds at 1,097,512 KiB and retained the exact
   `286d4eebcb2e0489f33b03894bec8c7c58c1641f113719a014f296db42c2f07a`
   fingerprint and 496/532 counts.
+- Extended the same boundary to MI source custody. Publication now rehashes
+  the completed Phase 1a 26-session EOD ledger and validates its EOD/Identity
+  manifests without rebuilding price rows, and rereads immutable Activation
+  membership without replaying its historical liquidity calculation. The real
+  source-binding step fell from 53.74 to 2.98 seconds with unchanged source
+  and preview fingerprints; whole-`/data` inventory CAS and the optional deep
+  context-report validation remain intact.
 - This repository change has not yet published, activated, uploaded, or
   deployed anything.
 

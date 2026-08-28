@@ -297,6 +297,14 @@ and standing authorization also remain inactive by exact-revision mismatch.
   typed rows. On the real 2026-08-26 audit, custody-only validation took 1.55
   seconds and the complete bounded Candidate 1.1 projection took 11.29 seconds
   with unchanged 496/532 counts and Candidate publication fingerprint.
+- ADR 0060 also separates completed source-audit custody from calculation
+  replay. The real 2026-08-26 MI source binding now rehashes all 26 declared
+  EOD Parquet files, validates EOD/Identity manifests and immutable Activation
+  membership, but does not rebuild the price panel or replay Activation's
+  historical liquidity calculation. It fell from 53.74 to 2.98 seconds with
+  unchanged Phase 1a history and preview fingerprints; Plan/Apply retain the
+  whole-`/data` inventory CAS, and full source replay remains available through
+  the read-only context report's explicit option.
 - Repository source also contains ADR 0049's typed strategy-channel shadow
   taxonomy for momentum breakout, strong-stock pullback, trend continuation,
   technical reversal, fundamental value reversal, and defensive rotation.

@@ -61,7 +61,7 @@ from tip_api.services.market_regime_preview import (
     CompletedPreviewBundle,
     read_market_regime_preview_bundle,
 )
-from tip_api.services.market_regime_sources import load_formal_market_regime_panel
+from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
 from tip_api.services.opportunity_candidate_publication import (
     build_opportunity_candidate_publication,
@@ -371,9 +371,6 @@ def validate_source_binding(
     ):
         raise MarketIntelligencePublicationError("calculation parameter fingerprint changed")
 
-    panel = load_formal_market_regime_panel(
-        data_root=_validated_root(data_root), as_of_session=analysis_session
-    )
     phase1a_input = _read_json(phase1a_audit_path / "input-manifest.json")
     if (
         phase1a_input.get("logical_content_fingerprint")
@@ -384,40 +381,24 @@ def validate_source_binding(
         )
     ):
         raise MarketIntelligencePublicationError("Phase 1a input manifest identity changed")
-    if (
-        phase1a_input.get("history_source_fingerprint") != panel.history_source_fingerprint
-        or phase1a_input.get("eod_content_fingerprint") != panel.eod_content_fingerprint
-        or phase1a_input.get("eod_business_key_fingerprint")
-        != panel.eod_business_key_fingerprint
-        or phase1a_input.get("identity_logical_fingerprint")
-        != panel.identity_logical_fingerprint
-        or phase1a_input.get("activation_pointer_fingerprint")
-        != panel.activation_pointer_fingerprint
-    ):
-        raise MarketIntelligencePublicationError("formal source panel differs from Phase 1a audit")
-    source_sessions = phase1a_input.get("source_sessions")
-    if not isinstance(source_sessions, list) or len(source_sessions) != len(panel.source_sessions):
-        raise MarketIntelligencePublicationError("Phase 1a source-session ledger is incomplete")
-    actual_session_rows = [
-        {
-            "session_date": item.session_date.isoformat(),
-            "dataset_path": item.dataset_path,
-            "record_count": item.record_count,
-            "content_fingerprint": item.content_fingerprint,
-            "parquet_sha256": item.parquet_sha256,
-            "identity_snapshot_date": item.identity_snapshot_date.isoformat(),
-            "identity_snapshot_fingerprint": item.identity_snapshot_fingerprint,
-        }
-        for item in panel.source_sessions
-    ]
-    if actual_session_rows != source_sessions:
-        raise MarketIntelligencePublicationError("formal EOD history differs from approved audit")
+    safe_root = _validated_root(data_root)
+    source_sessions = _validate_phase1a_source_custody(
+        safe_root,
+        analysis_session=analysis_session,
+        phase1a_input=phase1a_input,
+    )
 
     pointer = read_dashboard_universe_activation_pointer(data_root)
     if pointer is None:
         raise MarketIntelligencePublicationError("Activation V2 pointer is required")
     activation = read_active_dashboard_universe_activation(
-        data_root, analysis_session=pointer.active.analysis_session, validate_sources=True
+        data_root,
+        analysis_session=pointer.active.analysis_session,
+        # The immutable Activation artifact, source membership publication, and
+        # membership fingerprints are reread here. Its historical liquidity/EOD
+        # calculation was already completion-audited at Activation publication;
+        # the approval plan's whole-/data inventory CAS protects those bytes.
+        validate_sources=False,
     )
     activation_universes = tuple(
         PreviewUniverseDefinitionV1(
@@ -433,24 +414,25 @@ def validate_source_binding(
     preview_universes = tuple(item.definition for item in preview.payload.universes)
     if activation_universes != preview_universes:
         raise MarketIntelligencePublicationError("formal Activation differs from preview Universes")
-    last = panel.source_sessions[-1]
-    manifest_path = data_root / last.dataset_path / "manifest.json"
+    last = source_sessions[-1]
+    history_sessions = tuple(date.fromisoformat(value) for value in phase1a_input["history_sessions"])
+    manifest_path = safe_root / last["dataset_path"] / "manifest.json"
     preview_payload_path = preview.path / "market-regime-opportunity-map.json"
     preview_manifest_path = preview.path / "preview-manifest.json"
     source = MarketIntelligenceSourceBindingV1(
         eod=MarketIntelligenceEodSourceV1(
-            dataset_path=last.dataset_path,
-            session_date=last.session_date,
-            record_count=last.record_count,
-            content_fingerprint=last.content_fingerprint,
-            business_key_fingerprint=panel.eod_business_key_fingerprint,
-            parquet_sha256=last.parquet_sha256,
+            dataset_path=last["dataset_path"],
+            session_date=date.fromisoformat(last["session_date"]),
+            record_count=last["record_count"],
+            content_fingerprint=last["content_fingerprint"],
+            business_key_fingerprint=phase1a_input["eod_business_key_fingerprint"],
+            parquet_sha256=last["parquet_sha256"],
             manifest_sha256=file_sha256(manifest_path),
-            identity_logical_fingerprint=panel.identity_logical_fingerprint,
-            history_first_session=panel.sessions[0],
-            history_last_session=panel.sessions[-1],
-            history_session_count=len(panel.sessions),
-            history_source_fingerprint=panel.history_source_fingerprint,
+            identity_logical_fingerprint=phase1a_input["identity_logical_fingerprint"],
+            history_first_session=history_sessions[0],
+            history_last_session=history_sessions[-1],
+            history_session_count=len(history_sessions),
+            history_source_fingerprint=phase1a_input["history_source_fingerprint"],
         ),
         activation=MarketIntelligenceActivationSourceV1(
             pointer_fingerprint=active_pointer_state_fingerprint(data_root),
@@ -1009,15 +991,37 @@ def _reference(
 def _validate_completed_source_binding(
     data_root: Path, source: MarketIntelligenceSourceBindingV1, analysis_session: date
 ) -> None:
-    panel = load_formal_market_regime_panel(
-        data_root=_validated_root(data_root), as_of_session=analysis_session
+    safe_root = _validated_root(data_root)
+    eod = source.eod
+    expected_sessions = (
+        ExchangeCalendar().sessions_before(analysis_session, 25) + (analysis_session,)
     )
-    last = panel.source_sessions[-1]
+    if (
+        eod.session_date != analysis_session
+        or eod.history_first_session != expected_sessions[0]
+        or eod.history_last_session != expected_sessions[-1]
+        or eod.history_session_count != len(expected_sessions)
+    ):
+        raise MarketIntelligencePublicationError("formal Market Intelligence session changed")
+    _validate_eod_source_row(
+        safe_root,
+        {
+            "session_date": eod.session_date.isoformat(),
+            "dataset_path": eod.dataset_path,
+            "record_count": eod.record_count,
+            "content_fingerprint": eod.content_fingerprint,
+            "parquet_sha256": eod.parquet_sha256,
+            "identity_snapshot_date": eod.session_date.isoformat(),
+            "identity_snapshot_fingerprint": eod.identity_logical_fingerprint,
+        },
+    )
     pointer = read_dashboard_universe_activation_pointer(data_root)
     if pointer is None:
         raise MarketIntelligencePublicationError("Activation pointer is absent")
     activation = read_active_dashboard_universe_activation(
-        data_root, analysis_session=pointer.active.analysis_session, validate_sources=True
+        data_root,
+        analysis_session=pointer.active.analysis_session,
+        validate_sources=False,
     )
     actual_universes = tuple(
         PreviewUniverseDefinitionV1(
@@ -1030,24 +1034,175 @@ def _validate_completed_source_binding(
         )
         for index, item in enumerate(activation.universes)
     )
-    eod = source.eod
     if (
-        eod.session_date != last.session_date
-        or eod.record_count != last.record_count
-        or eod.content_fingerprint != panel.eod_content_fingerprint
-        or eod.business_key_fingerprint != panel.eod_business_key_fingerprint
-        or eod.parquet_sha256 != last.parquet_sha256
-        or eod.identity_logical_fingerprint != panel.identity_logical_fingerprint
-        or eod.history_first_session != panel.sessions[0]
-        or eod.history_last_session != panel.sessions[-1]
-        or eod.history_session_count != len(panel.sessions)
-        or eod.history_source_fingerprint != panel.history_source_fingerprint
-        or eod.manifest_sha256 != file_sha256(data_root / eod.dataset_path / "manifest.json")
+        eod.manifest_sha256 != file_sha256(safe_root / eod.dataset_path / "manifest.json")
         or source.activation.pointer_fingerprint != active_pointer_state_fingerprint(data_root)
         or source.activation.logical_fingerprint != activation.manifest.logical_content_fingerprint
         or source.activation.universes != actual_universes
     ):
         raise MarketIntelligencePublicationError("formal Market Intelligence source changed")
+
+
+def _validate_phase1a_source_custody(
+    root: Path,
+    *,
+    analysis_session: date,
+    phase1a_input: Mapping[str, object],
+) -> tuple[dict[str, object], ...]:
+    expected_sessions = (
+        ExchangeCalendar().sessions_before(analysis_session, 25) + (analysis_session,)
+    )
+    expected_session_values = tuple(item.isoformat() for item in expected_sessions)
+    history_sessions = phase1a_input.get("history_sessions")
+    source_sessions = phase1a_input.get("source_sessions")
+    if (
+        not isinstance(history_sessions, list)
+        or tuple(history_sessions) != expected_session_values
+        or not isinstance(source_sessions, list)
+        or len(source_sessions) != len(expected_sessions)
+        or not all(isinstance(item, dict) for item in source_sessions)
+    ):
+        raise MarketIntelligencePublicationError(
+            "Phase 1a source-session ledger is incomplete"
+        )
+    rows = tuple(dict(item) for item in source_sessions)
+    if tuple(item.get("session_date") for item in rows) != expected_session_values:
+        raise MarketIntelligencePublicationError(
+            "Phase 1a source-session order differs"
+        )
+    for row in rows:
+        _validate_eod_source_row(root, row)
+    if (
+        canonical_fingerprint(list(rows))
+        != phase1a_input.get("history_source_fingerprint")
+        or rows[-1].get("content_fingerprint")
+        != phase1a_input.get("eod_content_fingerprint")
+        or rows[-1].get("identity_snapshot_fingerprint")
+        != phase1a_input.get("identity_logical_fingerprint")
+        or not _is_sha256(phase1a_input.get("eod_business_key_fingerprint"))
+        or not _is_sha256(phase1a_input.get("activation_pointer_fingerprint"))
+    ):
+        raise MarketIntelligencePublicationError(
+            "formal source custody differs from Phase 1a audit"
+        )
+    return rows
+
+
+def _validate_eod_source_row(root: Path, row: Mapping[str, object]) -> None:
+    try:
+        session = date.fromisoformat(str(row["session_date"]))
+        identity_session = date.fromisoformat(str(row["identity_snapshot_date"]))
+    except (KeyError, ValueError) as exc:
+        raise MarketIntelligencePublicationError("EOD source ledger date is malformed") from exc
+    expected_path = (
+        "market-data/eod-price-bars/schema_version=1/session_date="
+        f"{session.isoformat()}"
+    )
+    if row.get("dataset_path") != expected_path or identity_session > session:
+        raise MarketIntelligencePublicationError("EOD source ledger path is malformed")
+    partition = root / expected_path
+    _reject_symlink_chain(root, partition)
+    manifest_path = partition / "manifest.json"
+    parquet_path = partition / "part-00000.parquet"
+    if (
+        partition.is_symlink()
+        or not partition.is_dir()
+        or manifest_path.is_symlink()
+        or parquet_path.is_symlink()
+        or not manifest_path.is_file()
+        or not parquet_path.is_file()
+    ):
+        raise MarketIntelligencePublicationError("EOD source custody is incomplete")
+    manifest = _read_json(manifest_path)
+    identity = manifest.get("identity_snapshot")
+    if (
+        manifest.get("dataset_name") != "eod-price-bars"
+        or manifest.get("schema_version") != "1.0"
+        or manifest.get("completion_status") != "completed"
+        or manifest.get("session_date") != session.isoformat()
+        or manifest.get("parquet_file") != "part-00000.parquet"
+        or manifest.get("record_count") != row.get("record_count")
+        or manifest.get("content_sha256") != row.get("content_fingerprint")
+        or file_sha256(parquet_path) != row.get("parquet_sha256")
+        or not isinstance(identity, dict)
+        or identity.get("as_of_date") != identity_session.isoformat()
+        or identity.get("snapshot_content_sha256")
+        != row.get("identity_snapshot_fingerprint")
+    ):
+        raise MarketIntelligencePublicationError("EOD source custody changed")
+    _validate_identity_snapshot_manifest(
+        root,
+        identity_session=identity_session,
+        provider_id=identity.get("provider_id"),
+        expected_fingerprint=row.get("identity_snapshot_fingerprint"),
+    )
+
+
+def _validate_identity_snapshot_manifest(
+    root: Path,
+    *,
+    identity_session: date,
+    provider_id: object,
+    expected_fingerprint: object,
+) -> None:
+    path = (
+        root
+        / "market-data/snapshots/instrument-master"
+        / f"as_of_date={identity_session.isoformat()}"
+        / "manifest.json"
+    )
+    _reject_symlink_chain(root, path)
+    if path.is_symlink() or not path.is_file():
+        raise MarketIntelligencePublicationError("Identity source custody is incomplete")
+    manifest = _read_json(path)
+    if (
+        manifest.get("completion_status") != "completed"
+        or manifest.get("provider_id") != provider_id
+        or manifest.get("as_of_date") != identity_session.isoformat()
+        or manifest.get("snapshot_content_sha256") != expected_fingerprint
+    ):
+        raise MarketIntelligencePublicationError("Identity source custody changed")
+    for path_key, fingerprint_key in (
+        ("identity_partition_path", "identity_content_sha256"),
+        ("instrument_partition_path", "instrument_content_sha256"),
+        ("resolver_partition_path", "resolver_content_sha256"),
+    ):
+        raw_partition = manifest.get(path_key)
+        if not isinstance(raw_partition, str):
+            raise MarketIntelligencePublicationError("Identity partition path is malformed")
+        partition = Path(raw_partition)
+        if (
+            not partition.is_absolute()
+            or not partition.is_relative_to(root)
+            or partition.is_symlink()
+            or not partition.is_dir()
+        ):
+            raise MarketIntelligencePublicationError("Identity partition custody is unsafe")
+        partition_manifest_path = partition / "manifest.json"
+        partition_parquet = partition / "part-00000.parquet"
+        if (
+            partition_manifest_path.is_symlink()
+            or partition_parquet.is_symlink()
+            or not partition_manifest_path.is_file()
+            or not partition_parquet.is_file()
+        ):
+            raise MarketIntelligencePublicationError("Identity partition custody is incomplete")
+        partition_manifest = _read_json(partition_manifest_path)
+        if (
+            partition_manifest.get("completion_status") != "completed"
+            or partition_manifest.get("as_of_date") != identity_session.isoformat()
+            or partition_manifest.get("content_sha256") != manifest.get(fingerprint_key)
+            or partition_manifest.get("parquet_file") != "part-00000.parquet"
+        ):
+            raise MarketIntelligencePublicationError("Identity partition custody changed")
+
+
+def _is_sha256(value: object) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value)
+    )
 
 
 def _validate_plan_sources(

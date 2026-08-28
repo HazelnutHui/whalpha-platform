@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -25,6 +27,137 @@ from tests.services.test_market_regime_preview import PRIMARY, SECONDARY, SESSIO
 
 AT = datetime(2026, 8, 25, 11, tzinfo=UTC)
 STATE = "c" * 64
+
+
+def _write_json(path: Path, value: object) -> None:
+    path.write_text(json.dumps(value, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def _phase1a_source_custody(root: Path) -> dict[str, object]:
+    sessions = repo.ExchangeCalendar().sessions_before(SESSION, 25) + (SESSION,)
+    rows: list[dict[str, object]] = []
+    for session in sessions:
+        session_value = session.isoformat()
+        identity_fingerprint = hashlib.sha256(
+            f"identity:{session_value}".encode()
+        ).hexdigest()
+        partition_fingerprints: dict[str, str] = {}
+        partition_paths: dict[str, str] = {}
+        for name, path_key, fingerprint_key in (
+            ("provider-instrument-identity", "identity_partition_path", "identity_content_sha256"),
+            ("instrument-master", "instrument_partition_path", "instrument_content_sha256"),
+            ("provider-ticker-resolver", "resolver_partition_path", "resolver_content_sha256"),
+        ):
+            partition = root / "identity" / name / f"as_of_date={session_value}"
+            partition.mkdir(parents=True)
+            parquet = partition / "part-00000.parquet"
+            parquet.write_bytes(f"{name}:{session_value}".encode())
+            fingerprint = hashlib.sha256(
+                f"content:{name}:{session_value}".encode()
+            ).hexdigest()
+            _write_json(
+                partition / "manifest.json",
+                {
+                    "completion_status": "completed",
+                    "as_of_date": session_value,
+                    "content_sha256": fingerprint,
+                    "parquet_file": "part-00000.parquet",
+                },
+            )
+            partition_paths[path_key] = str(partition)
+            partition_fingerprints[fingerprint_key] = fingerprint
+        snapshot = (
+            root
+            / "market-data/snapshots/instrument-master"
+            / f"as_of_date={session_value}"
+        )
+        snapshot.mkdir(parents=True)
+        _write_json(
+            snapshot / "manifest.json",
+            {
+                "completion_status": "completed",
+                "provider_id": "provider",
+                "as_of_date": session_value,
+                "snapshot_content_sha256": identity_fingerprint,
+                **partition_paths,
+                **partition_fingerprints,
+            },
+        )
+        relative = (
+            "market-data/eod-price-bars/schema_version=1/session_date="
+            f"{session_value}"
+        )
+        eod = root / relative
+        eod.mkdir(parents=True)
+        parquet = eod / "part-00000.parquet"
+        parquet.write_bytes(f"eod:{session_value}".encode())
+        parquet_sha256 = repo.file_sha256(parquet)
+        content_fingerprint = hashlib.sha256(
+            f"logical:{session_value}".encode()
+        ).hexdigest()
+        _write_json(
+            eod / "manifest.json",
+            {
+                "dataset_name": "eod-price-bars",
+                "schema_version": "1.0",
+                "completion_status": "completed",
+                "session_date": session_value,
+                "parquet_file": "part-00000.parquet",
+                "record_count": 1,
+                "content_sha256": content_fingerprint,
+                "identity_snapshot": {
+                    "as_of_date": session_value,
+                    "provider_id": "provider",
+                    "snapshot_content_sha256": identity_fingerprint,
+                },
+            },
+        )
+        rows.append(
+            {
+                "session_date": session_value,
+                "dataset_path": relative,
+                "record_count": 1,
+                "content_fingerprint": content_fingerprint,
+                "parquet_sha256": parquet_sha256,
+                "identity_snapshot_date": session_value,
+                "identity_snapshot_fingerprint": identity_fingerprint,
+            }
+        )
+    return {
+        "history_sessions": [item.isoformat() for item in sessions],
+        "source_sessions": rows,
+        "history_source_fingerprint": repo.canonical_fingerprint(rows),
+        "eod_content_fingerprint": rows[-1]["content_fingerprint"],
+        "eod_business_key_fingerprint": "b" * 64,
+        "identity_logical_fingerprint": rows[-1]["identity_snapshot_fingerprint"],
+        "activation_pointer_fingerprint": "a" * 64,
+    }
+
+
+def test_phase1a_source_custody_validates_files_without_rebuilding_price_panel(tmp_path):
+    root = tmp_path / "data"
+    root.mkdir()
+    source = _phase1a_source_custody(root)
+
+    rows = repo._validate_phase1a_source_custody(
+        root, analysis_session=SESSION, phase1a_input=source
+    )
+
+    assert len(rows) == 26
+    assert rows[-1]["session_date"] == SESSION.isoformat()
+
+
+def test_phase1a_source_custody_rejects_historical_parquet_tamper(tmp_path):
+    root = tmp_path / "data"
+    root.mkdir()
+    source = _phase1a_source_custody(root)
+    first = source["source_sessions"][0]
+    (root / first["dataset_path"] / "part-00000.parquet").write_bytes(b"tampered")
+
+    with pytest.raises(repo.MarketIntelligencePublicationError, match="custody changed"):
+        repo._validate_phase1a_source_custody(
+            root, analysis_session=SESSION, phase1a_input=source
+        )
 
 
 def _source(payload):

@@ -256,6 +256,16 @@ the bounded Candidate + Entry Geometry projection took 11.29 seconds at
 496/532 counts. The interrupted old Plan made no Production write; deployment
 remains pending the optimized plan and normal release gates.
 
+The second publication bottleneck is also closed in repository source. MI
+source binding now rehashes the completed Phase 1a 26-session EOD ledger and
+validates EOD/Identity manifest custody instead of reconstructing price rows;
+it rereads immutable Activation membership without replaying that artifact's
+historical liquidity calculation. On the same real inputs this step fell from
+53.74 seconds and 365,016 KiB peak RSS to 2.98 seconds and 215,908 KiB with
+unchanged history/preview fingerprints. Approval still freezes the complete
+Production inventory, and `report-current-context.sh --full-source-validation`
+remains the independent deep-reconciliation path.
+
 The first Candidate performance slice is implemented without changing results:
 physical per-stage runtime evidence, a worktree-safe Dell Python runner,
 overlapping-panel shared reads, one stable-ID state bar index per panel, and
