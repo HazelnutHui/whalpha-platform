@@ -157,7 +157,8 @@ read or used.
   Production now serves the 1.49 MB Candidate first-load summary plus 32
   on-demand detail shards instead of the 20.4 MB monolith; workspace code
   splitting remains required before substantially expanding the UI.
-- Repository source defines six independent Candidate strategy channels and
+- Repository source defines six distinct Candidate strategy research questions
+  and
   now implements a fixed, unvalidated offline preview for momentum breakout,
   strong-stock pullback, and trend continuation. Each has a separate formula,
   reasons, counterevidence, invalidation, missing-data state, within-channel
@@ -179,7 +180,7 @@ read or used.
   A subsequent UI continuity pass makes the Candidate subview and exact
   strategy channel URL-addressable, removes irrelevant risk-mode controls from
   strategy mode, uses the Advance + Watch population in its headline, and
-  explicitly labels evidence-incomplete channels. All 91 frontend tests and a
+  explicitly labels evidence-incomplete channels. All 94 frontend tests and a
   Snapshot-mode build pass. A Dell-local real-payload preview is available for
   human review; this is not user acceptance or deployment.
   The user has now supplied ADR 0059's exact 2026-08-26 stale-review
@@ -187,6 +188,17 @@ read or used.
   `production-review-deployment/1.1` contract while preserving historical 1.0
   reads. The exact review publication and deployment completed on 2026-08-28;
   this remains a narrow stale-review authorization, not a standing permission.
+  ADR 0061 now makes the exact technical-channel formulas, underlying input
+  definitions, gates, ranking order, and per-security weighted contributions
+  visible and independently
+  reconstructs each displayed score in the browser. Its full-population set
+  diagnostic found that the current trend-continuation qualifying population
+  contains every qualifying breakout and pullback member in both Universes.
+  Continuation is therefore explicitly a broad provisional trend filter, not a
+  validated independent setup. New consolidation/contraction and trend-
+  efficiency facts plus chronological validation are required before revising
+  it under a new parameter version. These ADR 0061 changes are repository-only
+  and not deployed.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -234,12 +246,20 @@ No concrete source policy, adapter, history, or operational authority exists.
 Repository development has therefore returned to explainable Candidate
 strategy channels. The fixed offline preview, bounded consumer, independent
 Oracle, formal temporary-root audit, additive product projection, and
-bilingual lazy consumer are implemented. Approval Plan 2.4 and local bundle/
-postflight validators are also implemented, without apply or deployment. Real
-chronological validation remains blocked on adequate point-in-time history;
-Production publication/deployment is a separate authorization.
+bilingual lazy consumer are implemented and the first Strategy Channels
+product is active in the current stale-review release. Later repository source
+adds exact formula/contribution display and channel-overlap diagnostics; those
+later changes are not deployed. Real chronological validation remains blocked
+on adequate point-in-time history; every future publication/deployment remains
+a separate authorization.
 
 ## Next candidate work
+
+Keep the currently deployed strategy formulas frozen. Add governed
+continuation-specific facts for trend efficiency, consolidation/volatility
+contraction, pullback depth, and recovery quality, then define a new parameter
+version for chronological evaluation. Do not reduce the observed overlap by
+tuning thresholds against the single 2026-08-26 cross-section.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is
@@ -247,8 +267,9 @@ rehash-validated without rebuilding historical typed objects at MI Plan and
 Apply. On the real audit, custody validation took 1.55 seconds at 145,632 KiB;
 the bounded Candidate + Entry Geometry projection took 11.29 seconds at
 1,097,512 KiB and retained the exact Production Candidate fingerprint and
-496/532 counts. The interrupted old Plan made no Production write; deployment
-remains pending the optimized plan and normal release gates.
+496/532 counts. The interrupted old Plan made no Production write; the later
+optimized Plan/Apply and deployment passed and produced the active release
+recorded above.
 
 The second publication bottleneck is also closed in repository source. MI
 source binding now rehashes the completed Phase 1a 26-session EOD ledger and

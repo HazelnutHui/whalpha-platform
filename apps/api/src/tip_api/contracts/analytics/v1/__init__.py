@@ -163,6 +163,13 @@ from .candidate_strategy_product import (
     CandidateStrategyChannelProductV1,
     strategy_product_logical_fingerprint,
 )
+from .candidate_strategy_diagnostics import (
+    STRATEGY_DIAGNOSTICS_CONTRACT_VERSION,
+    TECHNICAL_CHANNEL_ORDER,
+    CandidateStrategyChannelDiagnosticsV1,
+    StrategyChannelPairOverlapV1,
+    strategy_diagnostics_fingerprint,
+)
 from .candidate_strategy_evaluation import (
     STRATEGY_EVALUATION_POLICY_FINGERPRINT,
     STRATEGY_EVALUATION_POLICY_VERSION,
@@ -318,6 +325,11 @@ __all__ = [
     "CandidateStrategyChannelProductSourceV1",
     "CandidateStrategyChannelProductV1",
     "strategy_product_logical_fingerprint",
+    "STRATEGY_DIAGNOSTICS_CONTRACT_VERSION",
+    "TECHNICAL_CHANNEL_ORDER",
+    "CandidateStrategyChannelDiagnosticsV1",
+    "StrategyChannelPairOverlapV1",
+    "strategy_diagnostics_fingerprint",
     "STRATEGY_EVALUATION_POLICY_FINGERPRINT",
     "STRATEGY_EVALUATION_POLICY_VERSION",
     "STRATEGY_OUTCOME_CONTRACT_VERSION",

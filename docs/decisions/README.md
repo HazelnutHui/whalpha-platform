@@ -83,3 +83,4 @@ Each ADR should include:
 - [0058: Carry Strategy Bindings Through Publication and Bundle](0058-carry-strategy-bindings-through-publication-and-bundle.md)
 - [0059: Authorize a Second Exact Stale Review](0059-authorize-second-exact-stale-review.md)
 - [0060: Reuse Candidate Completion Evidence for Publication](0060-reuse-candidate-completion-evidence-for-publication.md)
+- [0061: Bind Displayed Strategy Methods and Audit Channel Overlap](0061-bind-displayed-strategy-methods-and-audit-channel-overlap.md)

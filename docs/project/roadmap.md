@@ -243,10 +243,11 @@ inventory before one exact live-pilot authorization. Product
 posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
-Do not select formulas or thresholds from one-session distributions. Keep
-Snapshot 1.8/1.9 undeployed. Snapshot 1.9's local bundle mechanics are now
-reviewed; manual browser review and exact activation/deployment authorization
-remain separate. Keep SMTP and SEC B2 paused.
+Do not select formulas or thresholds from one-session distributions. Snapshot
+1.9 / Dashboard 2.6 is now active as the explicitly acknowledged 2026-08-26
+stale-review release. Later repository changes remain undeployed; every
+further publication or deployment requires fresh exact review and
+authorization. Keep SMTP and SEC B2 paused.
 
 The general historical governance design pass is complete. Pilot approval 1.1
 is bound to fresh exact source-permission assessments; the durable fixture-only
@@ -255,24 +256,20 @@ inquiry packet are complete. Written candidate-plan answers and a real review
 package require separate authorization; only a separately authorized pilot may
 follow. Do not build provider adapters merely to continue governance work.
 
-The first explainable Candidate strategy-channel preview, bounded consumer,
-independent Oracle, formal temporary-root audit, additive bilingual product,
-and Snapshot 1.9 browser review are now implemented. Keep market fit and event
-context separate, expose entry/chase risk, cap the first view at eight per
-channel, and prohibit a cross-strategy total. Approval Plan 2.4 and local OCI
-bundle/postflight validation are complete. The next product action is human UI
-review. Its local candidate now preserves the selected Candidate subview and
-strategy channel in the URL and makes unavailable evidence explicit. After
-human acceptance, Snapshot apply, bundle rebuild from a clean exact commit,
-and OCI deployment each remain separately authorized actions; defer
-performance claims and threshold calibration until the point-in-time
-historical foundation is physically ready.
+The first explainable Candidate strategy-channel product is active. Repository
+source now adds exact formula/gate/contribution display and a full-population
+overlap diagnostic. Keep market fit and event context separate, expose entry/
+chase risk, cap the first view at eight per channel, and prohibit a cross-
+strategy total. Trend continuation is currently a broad superset, so the next
+model action is to add continuation-specific consolidation/contraction and
+trend-efficiency facts under a new version, not tune the current weights from
+one session. Defer performance claims and threshold calibration until the
+point-in-time historical foundation is physically ready.
 
-The user has supplied the exact ADR 0059 acknowledgement for a visibly stale
-2026-08-26 review release. The immediate bounded action is therefore the
-review-only MI 1.2 and Snapshot 1.9 plan/apply sequence, followed by one clean
-bundle build and the already requested OCI deployment. Any freshness or source
-state drift requires regeneration rather than reuse.
+The user supplied ADR 0059's exact acknowledgement and the resulting review-
+only MI 1.2, Snapshot 1.9, clean bundle, and OCI deployment completed. That
+authorization was consumed and is not standing. Any later deployment requires
+a newly verified source state and fresh exact authorization.
 
 ## Phase 2 — Intraday and Options
 

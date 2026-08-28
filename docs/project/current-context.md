@@ -331,7 +331,7 @@ and standing authorization also remain inactive by exact-revision mismatch.
   remote switch, and temporary-guest validation with the same product/audit
   fingerprints. The subsequent UI continuity pass preserves Candidate view and
   strategy channel in the URL, removes the unrelated risk-mode control from
-  strategy mode, and makes evidence-incomplete channels explicit; 91 frontend
+  strategy mode, and makes evidence-incomplete channels explicit; 94 frontend
   tests and the Snapshot-mode build pass. Human visual acceptance remains
   pending. ADR 0059 now records the user's exact 2026-08-26 stale-review
   acknowledgement and adds a separate versioned authorization without
@@ -339,6 +339,18 @@ and standing authorization also remain inactive by exact-revision mismatch.
   the authorization is not reusable or standing. Technical reversal,
   fundamental value reversal, and defensive rotation remain explicitly
   unavailable rather than being synthesized from proxies.
+- ADR 0061 adds an exact parameter-bound browser explanation for the three
+  implemented technical channels: formula weights, underlying component
+  definitions, entry-geometry mapping, status gates, ranking order, and per-
+  security weighted contributions. The
+  browser reconstructs each displayed score with fixed-point round-half-even
+  arithmetic and fails closed on parameter or score drift. A separate Dell-
+  side full-population diagnostic found that trend continuation contains every
+  qualifying breakout and pullback row in both Universes (Primary union 425,
+  Secondary union 451). It therefore remains a broad provisional trend filter,
+  not a validated independent setup. The diagnostic compares membership sets,
+  never channel scores or outcomes. These ADR 0061 source/UI changes are not
+  deployed.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-
   dated signals are sealed without outcomes, and 1/3/5-session underlying-
   stock labels may be attached only later under a fixed no-random-split,

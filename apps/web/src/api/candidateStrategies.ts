@@ -1,4 +1,5 @@
 import { fetchJson } from './client';
+import { strategyMethod, strategyScoreBreakdown } from './candidateStrategyMethods';
 import { parseSnapshotManifest } from './market';
 
 export type StrategyChannel = 'momentum_breakout' | 'strong_stock_pullback' | 'trend_continuation' | 'technical_reversal' | 'fundamental_value_reversal' | 'defensive_rotation';
@@ -15,6 +16,7 @@ export interface StrategyAssessment {
   as_of_session: string; universe_id: string; instrument_id: string; ticker: string;
   security_type: 'CS' | 'ADRC'; channel: StrategyChannel; status: StrategyChannelStatus;
   channel_score: string | null; within_channel_rank: number | null;
+  parameter_fingerprint: string;
   market_fit: StrategyMarketFit; market_fit_reason_codes: string[];
   evidence: StrategyEvidence[]; missing_required_evidence_codes: string[];
   why_surfaced_codes: string[]; first_rejection_code: string;
@@ -31,7 +33,8 @@ export interface StrategyUniverse {
 }
 export interface CandidateStrategyResponse {
   as_of_session: string; default_universe_id: string; selected_universe_id: string;
-  universe_order: string[]; channel_order: StrategyChannel[]; source: Record<string, unknown>;
+  universe_order: string[]; channel_order: StrategyChannel[];
+  source: Record<string, unknown> & { strategy_parameter_fingerprint: string };
   universe: StrategyUniverse; warnings: string[]; logical_fingerprint: string;
   fixed_baseline_not_chronologically_validated: true;
 }
@@ -111,6 +114,7 @@ export function parseCandidateStrategyProduct(value: unknown, universeId?: strin
     || source.strategy_oracle_mismatch_count !== 0 || source.strategy_input_permutation_match !== true
     || source.strategy_oracle_production_calculator_imported !== false
     || source.external_request_count !== 0 || source.production_write_count !== 0) throw new Error('Strategy-channel source gates differ');
+  strategyMethod('momentum_breakout', source.strategy_parameter_fingerprint);
   const order = strings(product.universe_order, 'Universe order');
   const channelOrder = strings(product.channel_order, 'channel order') as StrategyChannel[];
   if (order.length !== 2 || product.default_universe_id !== order[0]
@@ -123,20 +127,20 @@ export function parseCandidateStrategyProduct(value: unknown, universeId?: strin
     ...batchFingerprints, ...consumerFingerprints,
   ].forEach((item) => digest(item, 'source list'));
   if (batchFingerprints.length !== 2 || consumerFingerprints.length !== 2 || !Array.isArray(product.universes) || product.universes.length !== 2) throw new Error('Strategy-channel Universe sources are incomplete');
-  const universes = product.universes.map((item, index) => parseUniverse(item, order[index], String(product.as_of_session), batchFingerprints[index], consumerFingerprints[index]));
+  const universes = product.universes.map((item, index) => parseUniverse(item, order[index], String(product.as_of_session), batchFingerprints[index], consumerFingerprints[index], String(source.strategy_parameter_fingerprint)));
   const selected = universeId ?? String(product.default_universe_id);
   const universe = universes.find((item) => item.universe_id === selected);
   if (!universe) throw new Error('Selected strategy-channel Universe is unavailable');
   return {
     as_of_session: String(product.as_of_session), default_universe_id: String(product.default_universe_id),
     selected_universe_id: selected, universe_order: order, channel_order: CHANNELS,
-    source, universe, warnings: strings(product.warnings, 'warnings'),
+    source: source as Record<string, unknown> & { strategy_parameter_fingerprint: string }, universe, warnings: strings(product.warnings, 'warnings'),
     logical_fingerprint: String(product.logical_fingerprint),
     fixed_baseline_not_chronologically_validated: true,
   };
 }
 
-function parseUniverse(value: unknown, universeId: string, session: string, batchFingerprint: string, consumerFingerprint: string): StrategyUniverse {
+function parseUniverse(value: unknown, universeId: string, session: string, batchFingerprint: string, consumerFingerprint: string, parameterFingerprint: string): StrategyUniverse {
   const universe = record(value, 'Universe');
   if (universe.schema_version !== '1.0' || universe.contract_version !== 'candidate-strategy-channel-consumer/1.0'
     || universe.universe_id !== universeId || universe.as_of_session !== session
@@ -146,11 +150,11 @@ function parseUniverse(value: unknown, universeId: string, session: string, batc
   if (universe.logical_fingerprint !== consumerFingerprint) throw new Error('Strategy-channel consumer fingerprint differs');
   const order = strings(universe.channel_order, 'consumer channel order');
   if (order.join('|') !== CHANNELS.join('|') || !Array.isArray(universe.channels) || universe.channels.length !== CHANNELS.length) throw new Error('Strategy-channel consumer order differs');
-  const channels = universe.channels.map((item, index) => parseChannel(item, CHANNELS[index], universeId, session));
+  const channels = universe.channels.map((item, index) => parseChannel(item, CHANNELS[index], universeId, session, parameterFingerprint));
   return { universe_id: universeId, channels, logical_fingerprint: String(universe.logical_fingerprint) };
 }
 
-function parseChannel(value: unknown, channel: StrategyChannel, universeId: string, session: string): StrategyChannelView {
+function parseChannel(value: unknown, channel: StrategyChannel, universeId: string, session: string, parameterFingerprint: string): StrategyChannelView {
   const view = record(value, 'channel view'); const counts = record(view.status_counts, 'status counts');
   if (view.schema_version !== '1.0' || view.channel !== channel || view.display_cap !== 8 || !Array.isArray(view.displayed_records)) throw new Error('Strategy-channel view differs');
   digest(view.logical_fingerprint, 'channel view');
@@ -158,11 +162,11 @@ function parseChannel(value: unknown, channel: StrategyChannel, universeId: stri
   const qualifying = count(view.qualifying_count, 'qualifying count');
   if (qualifying !== Number(counts.advance_to_research ?? 0) + Number(counts.watch_for_trigger ?? 0)
     || view.displayed_records.length !== Math.min(qualifying, 8)) throw new Error('Strategy-channel display count differs');
-  const displayed = view.displayed_records.map((item, index) => parseAssessment(item, channel, universeId, session, index + 1));
+  const displayed = view.displayed_records.map((item, index) => parseAssessment(item, channel, universeId, session, index + 1, parameterFingerprint));
   return { channel, status_counts: counts as Record<string, number>, qualifying_count: qualifying, display_cap: 8, displayed_records: displayed, logical_fingerprint: String(view.logical_fingerprint) };
 }
 
-function parseAssessment(value: unknown, channel: StrategyChannel, universeId: string, session: string, rank: number): StrategyAssessment {
+function parseAssessment(value: unknown, channel: StrategyChannel, universeId: string, session: string, rank: number, parameterFingerprint: string): StrategyAssessment {
   const item = record(value, 'assessment');
   if (item.schema_version !== '1.0' || item.contract_version !== 'candidate-strategy-channel-shadow/1.0'
     || item.as_of_session !== session || item.universe_id !== universeId || item.channel !== channel
@@ -174,10 +178,11 @@ function parseAssessment(value: unknown, channel: StrategyChannel, universeId: s
     || item.score_meaning !== 'within_channel_research_priority_not_return_probability'
     || item.market_fit_separate_from_channel_score !== true || item.first_rejection_is_risk_not_status_reason !== true) throw new Error('Strategy assessment identity or decision boundary differs');
   digest(item.parameter_fingerprint, 'assessment parameter'); digest(item.source_candidate_fingerprint, 'assessment Candidate'); digest(item.source_entry_geometry_fingerprint, 'assessment entry'); digest(item.logical_fingerprint, 'assessment');
+  if (item.parameter_fingerprint !== parameterFingerprint) throw new Error('Strategy assessment parameter binding differs');
   if (typeof item.first_rejection_code !== 'string' || !DISPLAY_REASON_CODES.has(item.first_rejection_code)
     || !Array.isArray(item.evidence)) throw new Error('Strategy assessment explanation is incomplete');
   const evidence = item.evidence.map((value) => parseEvidence(value));
-  return {
+  const parsed = {
     ...(item as unknown as StrategyAssessment), evidence,
     market_fit_reason_codes: displayCodes(item.market_fit_reason_codes, 'market fit reasons'),
     missing_required_evidence_codes: displayCodes(item.missing_required_evidence_codes, 'missing evidence'),
@@ -187,6 +192,8 @@ function parseAssessment(value: unknown, channel: StrategyChannel, universeId: s
     required_manual_check_codes: displayCodes(item.required_manual_check_codes, 'manual checks'),
     warning_codes: displayCodes(item.warning_codes, 'warnings'),
   };
+  strategyScoreBreakdown(parsed, parameterFingerprint);
+  return parsed;
 }
 
 function parseEvidence(value: unknown): StrategyEvidence {

@@ -119,21 +119,33 @@ browser. Candidate view/channel state is URL-addressable and restores on
 refresh or browser history navigation. Strategy mode removes the unrelated
 risk-mode control, uses Advance + Watch as its headline population, and marks
 evidence-incomplete channels unavailable rather than presenting an unexplained
-zero. The UI remains unpublished and undeployed; user visual acceptance is
-still required. See
+zero. Snapshot 1.9 / Dashboard 2.6 and this first strategy product are deployed
+in the current stale-review release.
+
+ADR 0061 now binds the UI to the exact parameter fingerprint and exposes the
+formula, underlying component definitions, geometry mapping, status gates,
+deterministic ranking order, and each displayed security's weighted
+contributions. The browser independently
+reconstructs the published score and fails closed on drift; it does not
+recalculate status or rank. A full-population overlap diagnostic found that
+the current trend-continuation qualifying set contains every qualifying
+breakout and pullback member in both Universes. The interface therefore labels
+channel distinctness as unvalidated and treats continuation as a broad trend
+filter pending continuation-specific facts and chronological validation. These
+ADR 0061 source changes are not yet deployed. See
 [Candidate Strategy Channel Preview V1](../data-contracts/candidate-strategy-channel-preview-v1.md),
 the [Candidate Strategy Channel Product V1](../data-contracts/candidate-strategy-channel-product-v1.md),
 the [2026-08-28 offline review](../audits/candidate-strategy-channel-preview-2026-08-28.md),
-and the [product/Snapshot review](../audits/candidate-strategy-product-snapshot-review-2026-08-28.md).
+the [product/Snapshot review](../audits/candidate-strategy-product-snapshot-review-2026-08-28.md),
+and the [channel-overlap review](../audits/candidate-strategy-channel-overlap-2026-08-28.md).
 
 ## Planned implementation sequence
 
-1. Evaluate the three formulas chronologically after the point-in-time panel
+1. Add continuation-specific trend-efficiency, consolidation/contraction,
+   pullback-depth, and recovery facts; keep the existing baseline provisional.
+2. Evaluate the three formulas chronologically after the point-in-time panel
    and outcome ledger are physically ready; revise parameters only through a
    new version.
-2. Complete user visual review of the implemented additive bilingual payload/
-   UI; keep the display cap at eight per channel and make any payload behavior
-   change through a new explicit contract/version.
 3. Add reversal-specific stabilization facts and evaluate technical reversal.
 4. Complete security taxonomy/defensive mapping and evaluate defensive
    rotation across Regimes.

@@ -19,6 +19,7 @@ const channels = [
   'momentum_breakout', 'strong_stock_pullback', 'trend_continuation',
   'technical_reversal', 'fundamental_value_reversal', 'defensive_rotation',
 ] as const;
+const parameterFingerprint = '13312df3e5b132223878582b8cd3af533a880e9f2f0d520f8520b46b97138ac9';
 
 describe('strategy-channel workspace', () => {
   beforeEach(() => {
@@ -46,7 +47,7 @@ describe('strategy-channel workspace', () => {
       as_of_session: '2026-08-26', default_universe_id: 'provider_classified_common_shares_v1',
       selected_universe_id: 'provider_classified_common_shares_v1',
       universe_order: ['provider_classified_common_shares_v1', 'provider_classified_common_shares_plus_adrs_v1'],
-      channel_order: channels, source: {}, warnings: [], logical_fingerprint: 'e'.repeat(64),
+      channel_order: channels, source: { strategy_parameter_fingerprint: parameterFingerprint }, warnings: [], logical_fingerprint: 'e'.repeat(64),
       fixed_baseline_not_chronologically_validated: true,
       universe: {
         universe_id: 'provider_classified_common_shares_v1', logical_fingerprint: 'f'.repeat(64),
@@ -57,8 +58,15 @@ describe('strategy-channel workspace', () => {
           displayed_records: channel === 'momentum_breakout' ? [{
             as_of_session: '2026-08-26', universe_id: 'provider_classified_common_shares_v1',
             instrument_id: '11111111-1111-4111-8111-111111111111', ticker: 'ABCD', security_type: 'CS',
-            channel, status: 'advance_to_research', channel_score: '82.5', within_channel_rank: 1,
-            market_fit: 'neutral', market_fit_reason_codes: [], evidence: [], missing_required_evidence_codes: [],
+            channel, status: 'advance_to_research', channel_score: '85.0000', within_channel_rank: 1,
+            parameter_fingerprint: parameterFingerprint,
+            market_fit: 'neutral', market_fit_reason_codes: [], evidence: [
+              ...['stock_relative_strength', 'trend_quality', 'volume_participation'].map((component) => ({
+                evidence_id: `component_${component}`, evidence_kind: 'supporting', role: 'primary', source_kind: 'price_volume', evidence_type: 'statistical_inference', availability: 'available', observed_value: '80.0000', raw_unit: 'component_score_0_100', source_session: '2026-08-26', missing_reason_code: null, reason_codes: [],
+              })),
+              { evidence_id: 'entry_technical_setup', evidence_kind: 'supporting', role: 'primary', source_kind: 'price_volume', evidence_type: 'statistical_inference', availability: 'available', observed_value: 'breakout_confirmed', raw_unit: 'technical_setup', source_session: '2026-08-26', missing_reason_code: null, reason_codes: [] },
+              { evidence_id: 'entry_extension_risk', evidence_kind: 'counterevidence', role: 'primary', source_kind: 'price_volume', evidence_type: 'statistical_inference', availability: 'available', observed_value: 'low', raw_unit: 'extension_risk', source_session: '2026-08-26', missing_reason_code: null, reason_codes: [] },
+            ], missing_required_evidence_codes: [],
             why_surfaced_codes: ['bounded_breakout_confirmed'], first_rejection_code: 'breakout_may_fail_or_reverse',
             what_would_make_researchable_codes: [], invalidation_codes: [], required_manual_check_codes: [],
             warning_codes: [], logical_fingerprint: '2'.repeat(64),
@@ -84,9 +92,17 @@ describe('strategy-channel workspace', () => {
     expect(screen.getByText('Compare like with like')).toBeInTheDocument();
     expect(screen.getByText('Human review remains required')).toBeInTheDocument();
     expect(screen.getAllByText('Momentum breakout').length).toBeGreaterThan(1);
+    fireEvent.click(screen.getByText('How this channel ranks'));
+    expect(screen.getByText('35%')).toBeInTheDocument();
+    expect(screen.getByText(/current trend-continuation baseline overlaps heavily/)).toBeInTheDocument();
+    expect(screen.getByText(/45% normalized 5-session stock return versus SPY/)).toBeInTheDocument();
+    expect(screen.getByText('All Advance results come before all Watch results. Within each status: channel score descending, then ticker and stable instrument ID as deterministic tie-breakers.')).toBeInTheDocument();
     fireEvent.click(screen.getByText('ABCD').closest('button')!);
     expect(screen.getByRole('dialog')).toHaveTextContent('ABCD · Momentum breakout');
     expect(screen.getByRole('dialog')).toHaveTextContent('The breakout can fail or reverse.');
+    expect(screen.getByRole('dialog')).toHaveTextContent('Why this exact score');
+    expect(screen.getByRole('dialog')).toHaveTextContent('Position / chase-risk review');
+    expect(screen.getByRole('dialog')).toHaveTextContent('The browser independently reconstructs the published score');
   });
 
   it('restores a directly linked strategy channel and makes unavailable evidence explicit', async () => {

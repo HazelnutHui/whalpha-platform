@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-08-28 — Bind strategy explanations and audit channel distinctness
+
+- Accepted ADR 0061 and bound the browser methodology renderer to the exact
+  frozen strategy parameter fingerprint. The UI now exposes formula weights,
+  underlying component definitions, entry-geometry mapping, Advance/Watch
+  gates, deterministic ranking order, and each displayed security's input,
+  weight, and weighted contribution.
+- Added fixed-point, round-half-even browser reconstruction of every displayed
+  channel score. Unknown parameters, missing evidence, malformed inputs, or a
+  score mismatch fail closed; status and rank remain Dell-calculated facts.
+- Moved extension into a neutral position/chase-risk review block so a low
+  extension label is not presented as automatic counterevidence. Published
+  contracts, evidence rows, scores, and strategy calculations are unchanged.
+- Added a deterministic full-population overlap diagnostic. On 2026-08-26,
+  every qualifying breakout and pullback member was also in trend continuation
+  in both Universes. Continuation is now explicitly labelled a broad
+  provisional trend filter pending continuation-specific facts and
+  chronological validation. No channel scores or outcomes were compared.
+- All 1,558 backend and 94 frontend tests and the frontend Production build
+  pass. The current Dell-published strategy payload also passes the new exact
+  parameter and score reconstruction path for both Universes.
+  No `/data`, publication, deployment, provider, credential, scheduler, or
+  Production state changed.
+
 ## 2026-08-28 — Publish and deploy Snapshot 1.9 / Dashboard 2.6 review release
 
 - Used the user's exact `production-review-deployment/1.1` authorization to
