@@ -223,11 +223,12 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Run and formally review only the offline 2026-08-27 incremental Phase 1b
-calculation. Phase 1a is complete with zero missing metrics and zero Oracle
-mismatch; its Primary/Secondary composites are 67.4134 / 67.5471 but have no
-final state label until Phase 1b. Candidate, Entry Geometry, publication,
-Snapshot, bundle, and deployment remain later separate transitions.
+Run and formally review only the offline 2026-08-27 daily Candidate
+calculation. Phase 1a and corrected-lineage incremental Phase 1b are complete
+with zero missing metrics and zero Oracle mismatch; Primary/Secondary are
+confirmed Balanced at composites 67.4134 / 67.5471. Entry Geometry,
+publication, Snapshot, bundle, and deployment remain later separate
+transitions.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

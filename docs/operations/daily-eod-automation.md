@@ -668,5 +668,17 @@ The later one-transition Phase 1a action completed in 218.315399 seconds with
 zero requests/writes, zero missing metrics, and zero Oracle mismatch. Its audit
 fingerprint is
 `887024c4847ef74a28a713c439359f3a4d8d93e49269ab58f2f0177c61159c53`.
-The journal closed normally and the planner now selects only
-`calculate_phase1b_incremental`; no later stage has run.
+The journal closed normally and the planner selected
+`calculate_phase1b_incremental`.
+
+The first Phase 1b invocation used the legacy Production-bound V1.0.0 prior
+audit and failed closed before creating its target. The daily chain must use
+the corrected stable-prefix V1.0.1 lineage, not whichever older audit happens
+to back the active publication. Replanning with the formally verified
+V1.0.1 2026-08-26 incremental audit produced plan fingerprint
+`06da4f7f1853dfe872929f895e685c34ec020d5971d93f89ac0ac0daf395f935`.
+That single action completed with audit fingerprint
+`6a3a530280dbe9eea6617d76e980ed453b47e087d9e35fe588e8f7b6fe630801`,
+zero Oracle mismatch, and confirmed Balanced state for both Universes. The
+journal ends in `action_succeeded`, no unresolved event remains, and the next
+action is only `calculate_candidate_daily`. No later stage has run.

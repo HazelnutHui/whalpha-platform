@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-28 — Complete 2026-08-27 incremental Phase 1b
+
+- Formally rejected the legacy Production-bound V1.0.0 prior audit as an
+  ineligible prefix; the failed attempt created no target and left no
+  unresolved event.
+- Replanned against the corrected V1.0.1 2026-08-26 incremental audit and
+  completed exactly one Dell-local `calculate_phase1b_incremental` action with
+  zero external requests and zero Production writes.
+- The new audit fingerprint is
+  `6a3a530280dbe9eea6617d76e980ed453b47e087d9e35fe588e8f7b6fe630801`.
+  Primary/Secondary remain confirmed Balanced at composites 67.4134 / 67.5471,
+  with zero independent-Oracle mismatch and all prefix/restart/source gates.
+- `/data` remains exactly 392 files / 203,931,663 bytes at fingerprint
+  `ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749`.
+  The planner now selects only `calculate_candidate_daily`; the focused suite
+  passes all 92 tests.
+
 ## 2026-08-28 — Complete 2026-08-27 daily Phase 1a
 
 - Executed exactly one socket-guarded Dell-local `calculate_phase1a` action

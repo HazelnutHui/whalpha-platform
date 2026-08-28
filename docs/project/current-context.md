@@ -308,9 +308,17 @@ volatility, and leadership/dispersion support the composite, while breadth and
 liquidity/participation conflict. These are not final state labels; Phase 1b
 hysteresis remains pending. The 257,202-bar formal panel cache is available at
 key `5dfa32ea7b447feef752f490b7141aefe9ace53b20bb62e76631cf8eee142cca`.
-The planner now selects only `calculate_phase1b_incremental`. `/data` and all
-active serving artifacts remain unchanged. See
+Phase 1b then appended 2026-08-27 from the corrected V1.0.1 2026-08-26 audit.
+Its audit fingerprint is
+`6a3a530280dbe9eea6617d76e980ed453b47e087d9e35fe588e8f7b6fe630801`.
+Both Universes remain confirmed Balanced at composites 67.4134 / 67.5471;
+the independent Oracle has zero mismatch and all prefix/restart/source gates
+pass. An initial invocation correctly rejected the legacy Production-bound
+V1.0.0 prior path and created no target; the corrected lineage then completed
+normally. The planner now selects only `calculate_candidate_daily`. `/data`
+and all active serving artifacts remain unchanged. See
 [the Phase 1a audit](../audits/daily-eod-phase1a-2026-08-28.md).
+See also [the Phase 1b audit](../audits/daily-eod-phase1b-2026-08-28.md).
 
 ## Analytics and presentation
 

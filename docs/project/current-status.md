@@ -83,9 +83,15 @@ Offline 2026-08-27 Phase 1a is now complete with audit fingerprint
 `887024c4847ef74a28a713c439359f3a4d8d93e49269ab58f2f0177c61159c53`.
 Primary/Secondary composites are 67.4134 / 67.5471, all configured weight is
 available, no metric is missing, and the independent Oracle has zero mismatch.
-This is not a final Regime classification: incremental Phase 1b remains the
-next exact action. `/data`, Market Intelligence, Snapshot, Dashboard, and OCI
-remain unchanged.
+Incremental Phase 1b is also complete from the corrected V1.0.1 prior lineage,
+with audit fingerprint
+`6a3a530280dbe9eea6617d76e980ed453b47e087d9e35fe588e8f7b6fe630801`.
+Primary/Secondary remain confirmed Balanced at those composites, the
+independent Oracle has zero mismatch, and every incremental prefix/restart/
+source gate passes. The first attempt safely rejected a legacy V1.0.0 prior
+path without creating a target; the corrected path completed normally. The
+next exact action is `calculate_candidate_daily`. `/data`, Market Intelligence,
+Snapshot, Dashboard, and OCI remain unchanged.
 
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review
