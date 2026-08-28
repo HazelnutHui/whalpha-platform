@@ -223,10 +223,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Build and inspect the 2026-08-27 EOD approval plan offline, then stop for a
-separate exact canonical-Apply authorization. The fetched package contains
-12,552 results, while canonical EOD and active analytics remain at 2026-08-26.
-No downstream action is implied by fetch success.
+Stop for a separate exact canonical-Apply authorization on the formally
+reviewed 2026-08-27 EOD plan. The plan converts 12,552 raw results into 9,945
+canonical rows with zero duplicate business keys and zero orphan references.
+Canonical EOD and active analytics remain at 2026-08-26; no downstream action
+is implied by plan success.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

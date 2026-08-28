@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-28 — Complete the 2026-08-27 EOD offline Apply Plan
+
+- Built and formally reread the offline plan from the frozen one-request
+  package and exact same-day Identity. No network request or `/data` write
+  occurred.
+- The plan converts 12,552 raw results into 9,945 canonical rows with zero
+  duplicate business keys and zero orphan references. It proposes two files
+  totaling 1,056,432 bytes under the absent 2026-08-27 EOD partition.
+- Independent Parquet inspection confirmed 9,945 unique business keys, zero
+  null instrument IDs, and only session 2026-08-27. Manifest and plan content
+  fingerprints agree.
+- Canonical Apply, analytics, publication, Snapshot, bundle, deployment,
+  notification, and scheduler actions remain separately unauthorized.
+
 ## 2026-08-28 — Complete one authorized 2026-08-27 EOD fetch retry
 
 - After the immutable terminal review boundary, exercised the user's separate

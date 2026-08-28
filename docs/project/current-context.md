@@ -262,9 +262,20 @@ formally contains 12,552 results and has manifest/content SHA-256 values
 and `17545f3479fe532b425419c5a83f2fa0e54c58693d1d61e5c5ec5a5751088ae6`.
 The `/data` inventory remains unchanged at fingerprint
 `7d66bc02fe88410a4ed6f000f74875aa135e11d10318ff010a148d03ba08a0de`;
-the 2026-08-27 canonical EOD target and Apply plan remain absent. Readiness is
-now `ready_for_apply_review`. See
+at that fetch-only boundary, the 2026-08-27 canonical EOD target and Apply plan
+were absent. Readiness advanced to `ready_for_apply_review`. See
 [the exact retry audit](../audits/daily-eod-fetch-retry-2026-08-28.md).
+
+The later offline Apply Plan is now complete and formally reread at file
+SHA-256
+`76ac1c50a016b82772ce8ac391f8d67e107c8433caae0e1f6364b311deb23bc5`.
+It binds the same package, 2026-08-27 Identity, and unchanged current inventory;
+it yields 9,945 canonical rows, zero duplicate business keys, zero orphan
+references, and exactly two planned files totaling 1,056,432 bytes. Independent
+Parquet inspection confirms 9,945 unique business keys, zero null instrument
+IDs, and only the target session. The canonical target remains absent and no
+Apply authority has been granted. See
+[the exact plan audit](../audits/daily-eod-apply-plan-2026-08-28.md).
 
 ## Analytics and presentation
 

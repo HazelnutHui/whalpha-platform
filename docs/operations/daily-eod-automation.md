@@ -602,8 +602,8 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Formally build and inspect the offline 2026-08-27 EOD approval plan, then
-   make a separate exact canonical-Apply authorization decision.
+1. Make a separate exact canonical-Apply authorization decision for the
+   formally reviewed 2026-08-27 EOD plan.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
@@ -650,4 +650,9 @@ unknown, and the review granted no retry authority by itself. The user later
 authorized one exact EOD-only retry at `dd314db`; one request succeeded with a
 12,552-result frozen package and zero Production writes. The journal ends in
 `acquisition_package_ready`, readiness is `ready_for_apply_review`, and no
-approval plan or canonical 2026-08-27 EOD target exists.
+approval plan or canonical 2026-08-27 EOD target existed at that retry boundary.
+The later offline plan now formally passes with 9,945 canonical rows, zero
+duplicate business keys, zero orphan references, and two planned files totaling
+1,056,432 bytes. Its file SHA-256 is
+`76ac1c50a016b82772ce8ac391f8d67e107c8433caae0e1f6364b311deb23bc5`.
+The target remains absent and canonical Apply remains separately unauthorized.

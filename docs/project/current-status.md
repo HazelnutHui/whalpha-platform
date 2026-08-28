@@ -74,9 +74,11 @@ its conservative 2026-08-28T16:00:00Z boundary, the user separately authorized
 one exact EOD-only retry. At revision `dd314db`, one request succeeded and
 produced a frozen 12,552-result 2026-08-27 package with zero Production writes.
 Formal readiness is now `ready_for_apply_review`; canonical EOD remains
-2026-08-26 until a separately reviewed plan and Apply are authorized. The
-short-lived fetch controls are not reusable authority after documentation
-changes, a later commit, or expiry.
+2026-08-26. The offline Apply Plan now formally passes with 9,945 canonical
+rows, zero duplicate business keys, zero orphan references, and an expected
+two-file / 1,056,432-byte inventory change. Canonical Apply still requires a
+separate exact authorization. The short-lived fetch controls are not reusable
+authority after documentation changes, a later commit, or expiry.
 
 ## Market Regime
 
@@ -450,9 +452,16 @@ The next EOD fetch made one request but terminated `permanent_failure`; the old
 terminal does not retain the numeric HTTP status, so its exact cause remains
 unverified. A later separately authorized retry at revision `dd314db` made
 exactly one request and produced a formally readable 12,552-result EOD package.
-No approval plan or canonical 2026-08-27 EOD target exists. Canonical EOD
-therefore remains 2026-08-26, while Identity and the fetched EOD package are
-2026-08-27.
+At that fetch-only boundary, no approval plan or canonical 2026-08-27 EOD
+target existed. Canonical EOD remains 2026-08-26, while Identity and the
+fetched EOD package are 2026-08-27.
+
+The subsequent offline EOD Apply Plan formally rereads at file SHA-256
+`76ac1c50a016b82772ce8ac391f8d67e107c8433caae0e1f6364b311deb23bc5`.
+It binds the unchanged `/data` inventory and same-day Identity, produces 9,945
+canonical rows with zero duplicate business keys and zero orphan references,
+and proposes exactly two files under the absent 2026-08-27 EOD partition. No
+canonical Apply has occurred.
 
 ADR 0045 adds bounded request-count and numeric HTTP-status evidence for future
 failures without retaining response content or changing failure classification.
