@@ -167,6 +167,7 @@ def _plan(args: argparse.Namespace) -> int:
         phase2_audit_path=args.phase2_audit,
         candidate_audit_path=args.candidate_audit,
         entry_geometry_audit_path=args.entry_geometry_audit,
+        validated_candidate_evidence=completed.candidate_validation_evidence,
         expected_current_state_fingerprint=args.expected_current_state_fingerprint,
         expected_latest_completed_session=freshness.expected_latest_completed_session,
         actual_latest_completed_session=freshness.actual_latest_completed_session,

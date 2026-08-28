@@ -290,6 +290,13 @@ and standing authorization also remain inactive by exact-revision mismatch.
   produced and validated approval plan 2.3 without applying it. This is not
   published or deployed; active Production remains Snapshot 1.7 / Dashboard
   2.4. Guest and credential Sessions remain capability-identical by contract.
+- ADR 0060 separates full Candidate research validation from MI publication
+  custody. The immutable completion manifest, every artifact SHA/size,
+  parameters, zero-mismatch Oracle, equivalence gates, and Entry Geometry
+  lineage remain mandatory, while Plan/Apply no longer recreate all historical
+  typed rows. On the real 2026-08-26 audit, custody-only validation took 1.55
+  seconds and the complete bounded Candidate 1.1 projection took 11.29 seconds
+  with unchanged 496/532 counts and Candidate publication fingerprint.
 - Repository source also contains ADR 0049's typed strategy-channel shadow
   taxonomy for momentum breakout, strong-stock pullback, trend continuation,
   technical reversal, fundamental value reversal, and defensive rotation.

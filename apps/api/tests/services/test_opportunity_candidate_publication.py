@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import UTC, datetime
 from pathlib import Path
+from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
@@ -83,8 +84,11 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
         "candidate_state_parameter_fingerprint": CANDIDATE_STATE_PARAMETER_FINGERPRINT,
     }
     monkeypatch.setattr(
-        "tip_api.services.opportunity_candidate_publication.read_opportunity_candidate_audit",
-        lambda _: manifest,
+        "tip_api.services.opportunity_candidate_publication.read_opportunity_candidate_publication_evidence",
+        lambda _: SimpleNamespace(
+            manifest=manifest,
+            manifest_sha256=__import__("hashlib").sha256(b"{}\n").hexdigest(),
+        ),
     )
     (tmp_path / "candidate-audit-manifest.json").write_text("{}\n")
     (tmp_path / "candidate-score-history.json").write_text(

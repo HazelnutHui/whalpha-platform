@@ -100,6 +100,15 @@ class OpportunityCandidateAuditContents:
     validation_ledger: Mapping[str, Any] | None
 
 
+@dataclass(frozen=True, slots=True)
+class OpportunityCandidatePublicationEvidence:
+    """Hash-verified audit custody suitable for an already-built publication."""
+
+    path: Path
+    manifest: Mapping[str, Any]
+    manifest_sha256: str
+
+
 class OpportunityCandidateAuditError(RuntimeError):
     """Raised when a Candidate audit cannot preserve its custody boundary."""
 
@@ -422,6 +431,90 @@ def read_opportunity_candidate_audit(output_dir: Path) -> dict[str, Any]:
 
     manifest, _, _, _, _, _ = _read_opportunity_candidate_audit(output_dir)
     return manifest
+
+
+def read_opportunity_candidate_publication_evidence(
+    output_dir: Path,
+) -> OpportunityCandidatePublicationEvidence:
+    """Verify immutable audit bytes without reparsing historical business rows.
+
+    A publication must first have been built by the full audit reader. This
+    lighter reread is only for proving that the exact approved artifact set has
+    not changed between publication construction, planning, and Apply.
+    """
+
+    target = _safe_completed_directory(output_dir)
+    names = {item.name for item in target.iterdir()}
+    if CANDIDATE_AUDIT_MANIFEST not in names:
+        raise OpportunityCandidateAuditError("audit file set is incomplete or contains extras")
+    manifest_path = target / CANDIDATE_AUDIT_MANIFEST
+    manifest_sha256 = _file_sha256(manifest_path)
+    manifest = _read_canonical_json(
+        manifest_path,
+        physical_sha256=manifest_sha256,
+    )
+    artifact_files = _artifact_files_for_manifest(manifest)
+    expected = set(artifact_files) | {CANDIDATE_AUDIT_MANIFEST}
+    if names != expected:
+        raise OpportunityCandidateAuditError("audit file set is incomplete or contains extras")
+    _validate_pending_manifest(
+        manifest,
+        artifact_files=artifact_files,
+        artifacts=manifest.get("artifacts", ()),
+    )
+    for descriptor, name in zip(manifest["artifacts"], artifact_files, strict=True):
+        path = target / name
+        metadata = path.stat()
+        if (
+            descriptor.get("name") != name
+            or path.is_symlink()
+            or not path.is_file()
+            or metadata.st_uid != os.geteuid()
+            or stat.S_IMODE(metadata.st_mode) != 0o400
+            or metadata.st_size != descriptor.get("bytes")
+            or _file_sha256(path) != descriptor.get("sha256")
+        ):
+            raise OpportunityCandidateAuditError(
+                f"audit artifact custody mismatch: {name}"
+            )
+    _validate_parameter_contract(target, manifest)
+    required_flags = (
+        REQUIRED_INCREMENTAL_EQUIVALENCE_FLAGS
+        if manifest.get("schema_version") == "1.1"
+        else REQUIRED_EQUIVALENCE_FLAGS
+    )
+    flags = manifest.get("equivalence_flags")
+    if (
+        not isinstance(flags, Mapping)
+        or any(flags.get(name) is not True for name in required_flags)
+        or any(type(value) is not bool or value is not True for value in flags.values())
+        or manifest.get("oracle_mismatch_count") != 0
+        or manifest.get("shared_raw_fact_match") is not True
+        or manifest.get("input_permutation_match") is not True
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate publication evidence gates did not pass"
+        )
+    try:
+        date.fromisoformat(str(manifest["as_of_session"]))
+    except (KeyError, ValueError) as exc:
+        raise OpportunityCandidateAuditError(
+            "Candidate publication evidence session is malformed"
+        ) from exc
+    universe_ids = manifest.get("universe_ids")
+    if (
+        not isinstance(universe_ids, list)
+        or len(universe_ids) != 2
+        or len(set(universe_ids)) != 2
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate publication evidence Universe order is malformed"
+        )
+    return OpportunityCandidatePublicationEvidence(
+        path=target,
+        manifest=manifest,
+        manifest_sha256=manifest_sha256,
+    )
 
 
 def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCandidateAuditContents:

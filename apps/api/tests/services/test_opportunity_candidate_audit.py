@@ -21,6 +21,7 @@ from tip_api.services.opportunity_candidate_audit import (
     _canonical_bytes,
     _fingerprint,
     read_opportunity_candidate_audit,
+    read_opportunity_candidate_publication_evidence,
     validate_tmp_output_dir,
     write_opportunity_candidate_audit,
 )
@@ -301,6 +302,28 @@ def test_canonical_tmp_audit_round_trip_and_manifest_bindings() -> None:
             assert json.dumps(
                 json.loads(raw), sort_keys=True, separators=(",", ":"), ensure_ascii=True
             ).encode() + b"\n" == raw
+    finally:
+        shutil.rmtree(target, ignore_errors=True)
+
+
+def test_publication_evidence_rehashes_bytes_without_business_row_reparse() -> None:
+    target = Path(tempfile.mkdtemp(prefix="mrom-candidate-publication-evidence-", dir="/tmp"))
+    try:
+        manifest = _write(target)
+        evidence = read_opportunity_candidate_publication_evidence(target)
+        assert evidence.manifest["logical_content_fingerprint"] == manifest[
+            "logical_content_fingerprint"
+        ]
+        assert evidence.manifest_sha256 == hashlib.sha256(
+            (target / CANDIDATE_AUDIT_MANIFEST).read_bytes()
+        ).hexdigest()
+
+        artifact = target / "raw-candidate-facts.json"
+        artifact.chmod(0o600)
+        artifact.write_bytes(artifact.read_bytes() + b" ")
+        artifact.chmod(0o400)
+        with pytest.raises(OpportunityCandidateAuditError, match="custody mismatch"):
+            read_opportunity_candidate_publication_evidence(target)
     finally:
         shutil.rmtree(target, ignore_errors=True)
 

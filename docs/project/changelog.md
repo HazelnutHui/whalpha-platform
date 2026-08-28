@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-28 — Reuse Candidate completion evidence during publication
+
+- Accepted ADR 0060 and separated research validation from publication
+  custody validation. Candidate audit finalization retains full semantic and
+  Oracle validation; MI build/Plan/Apply now rehash the immutable artifact
+  ledger and parse only bounded publication inputs instead of recreating all
+  historical typed rows three times.
+- MI 1.1/1.2 plan creation requires an exact in-process evidence object from
+  candidate construction. Apply still rechecks every artifact SHA/size,
+  parameters, Oracle/equivalence gates, Entry Geometry lineage, frozen MI
+  output, Production inventory/freshness, target absence, and pointer state.
+- On the real 2026-08-26 audit, custody-only validation completed in 1.55
+  seconds at 145,632 KiB peak RSS. The complete Candidate 1.1 + Entry Geometry
+  product completed in 11.29 seconds at 1,097,512 KiB and retained the exact
+  `286d4eebcb2e0489f33b03894bec8c7c58c1641f113719a014f296db42c2f07a`
+  fingerprint and 496/532 counts.
+- This repository change has not yet published, activated, uploaded, or
+  deployed anything.
+
 ## 2026-08-28 — Second exact stale-review authorization
 
 - Accepted ADR 0059 after the user supplied the exact

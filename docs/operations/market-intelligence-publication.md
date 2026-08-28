@@ -13,6 +13,11 @@ Phase 1a/1b/2 audits, the completed Candidate audit, optional bound entry-
 geometry audit, output/plan paths, UTC timestamp, and expected Production
 inventory fingerprint. It formally rereads EOD, same-day Identity, Activation,
 and source custody before emitting two candidate files and one canonical plan.
+Under ADR 0060, Candidate research semantics are fully validated when the
+immutable audit is finalized. MI publication then streams every declared
+artifact SHA/size, validates the completion manifest, parameters, Oracle and
+equivalence gates, and parses only the bounded current-session product inputs.
+Plan creation requires the exact in-process evidence returned by that build.
 Candidate publication 1.0 produces MI/plan 1.1; the additive entry consumer
 requires `--entry-geometry-audit` and produces MI/plan 1.2.
 

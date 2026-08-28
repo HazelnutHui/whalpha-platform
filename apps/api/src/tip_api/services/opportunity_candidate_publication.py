@@ -45,7 +45,9 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import RISK_MODE_PARAMETE
 from tip_api.services.candidate_entry_geometry_audit import (
     read_candidate_entry_geometry_audit,
 )
-from tip_api.services.opportunity_candidate_audit import read_opportunity_candidate_audit
+from tip_api.services.opportunity_candidate_audit import (
+    read_opportunity_candidate_publication_evidence,
+)
 
 
 class OpportunityCandidatePublicationError(RuntimeError):
@@ -58,7 +60,8 @@ def build_opportunity_candidate_publication(
 ) -> OpportunityCandidatePublicationV1 | OpportunityCandidatePublicationV1_1:
     """Reread one immutable audit and project only bounded, current-session product facts."""
 
-    manifest = read_opportunity_candidate_audit(audit_path)
+    audit_evidence = read_opportunity_candidate_publication_evidence(audit_path)
+    manifest = audit_evidence.manifest
     as_of_session = manifest["as_of_session"]
     batches = tuple(
         OpportunityCandidateBatchV1.model_validate(row)
@@ -136,7 +139,7 @@ def build_opportunity_candidate_publication(
     )
     flags = manifest["equivalence_flags"]
     source_fields = dict(
-        candidate_audit_manifest_sha256=_sha256(audit_path / "candidate-audit-manifest.json"),
+        candidate_audit_manifest_sha256=audit_evidence.manifest_sha256,
         candidate_audit_logical_fingerprint=manifest["logical_content_fingerprint"],
         candidate_history_fingerprint=manifest["candidate_history_fingerprint"],
         candidate_state_history_fingerprint=manifest["candidate_state_history_fingerprint"],

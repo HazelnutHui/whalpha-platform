@@ -247,6 +247,15 @@ Production publication/deployment is a separate authorization.
 
 ## Next candidate work
 
+ADR 0060 now also closes the publication-side repetition exposed during the
+authorized 2026-08-26 deployment attempt. Candidate completion evidence is
+rehash-validated without rebuilding historical typed objects at MI Plan and
+Apply. On the real audit, custody validation took 1.55 seconds at 145,632 KiB;
+the bounded Candidate + Entry Geometry projection took 11.29 seconds at
+1,097,512 KiB and retained the exact Production Candidate fingerprint and
+496/532 counts. The interrupted old Plan made no Production write; deployment
+remains pending the optimized plan and normal release gates.
+
 The first Candidate performance slice is implemented without changing results:
 physical per-stage runtime evidence, a worktree-safe Dell Python runner,
 overlapping-panel shared reads, one stable-ID state bar index per panel, and

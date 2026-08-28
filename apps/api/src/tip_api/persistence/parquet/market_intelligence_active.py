@@ -66,6 +66,12 @@ from tip_api.services.market_regime_state_audit import read_market_regime_state_
 from tip_api.services.opportunity_candidate_publication import (
     build_opportunity_candidate_publication,
 )
+from tip_api.services.opportunity_candidate_audit import (
+    read_opportunity_candidate_publication_evidence,
+)
+from tip_api.services.candidate_entry_geometry_audit import (
+    read_candidate_entry_geometry_audit,
+)
 
 
 MARKET_INTELLIGENCE_BASE = "market-data/analytics/market-intelligence"
@@ -86,12 +92,26 @@ class MarketIntelligenceUnavailable(MarketIntelligencePublicationError):
 
 
 @dataclass(frozen=True, slots=True)
+class CandidatePublicationValidationEvidence:
+    """In-process proof that verified Candidate completion evidence built the payload."""
+
+    candidate_audit_path: Path
+    candidate_audit_manifest_sha256: str
+    candidate_audit_logical_fingerprint: str
+    candidate_publication_logical_fingerprint: str
+    entry_geometry_audit_path: Path | None = None
+    entry_geometry_audit_manifest_sha256: str | None = None
+    entry_geometry_audit_logical_fingerprint: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
 class CompletedMarketIntelligence:
     path: Path
     manifest: MarketIntelligenceManifestV1 | MarketIntelligenceManifestV1_1 | MarketIntelligenceManifestV1_2
     payload: MarketIntelligencePayloadV1 | MarketIntelligencePayloadV1_1 | MarketIntelligencePayloadV1_2
     reference: MarketIntelligenceTargetReferenceV1
     pointer: MarketIntelligenceActivePointerV1 | None = None
+    candidate_validation_evidence: CandidatePublicationValidationEvidence | None = None
 
 
 def target_path(root: Path, analysis_session: date, publication_id: str) -> Path:
@@ -286,7 +306,38 @@ def build_market_intelligence_candidate(
         if target.exists() and not target.is_symlink():
             shutil.rmtree(target)
         raise
-    return completed
+    if candidate_analytics is None:
+        return completed
+    candidate_source = candidate_analytics.source
+    evidence = CandidatePublicationValidationEvidence(
+        candidate_audit_path=candidate_audit_path,
+        candidate_audit_manifest_sha256=(
+            candidate_source.candidate_audit_manifest_sha256
+        ),
+        candidate_audit_logical_fingerprint=(
+            candidate_source.candidate_audit_logical_fingerprint
+        ),
+        candidate_publication_logical_fingerprint=candidate_analytics.logical_fingerprint,
+        entry_geometry_audit_path=entry_geometry_audit_path,
+        entry_geometry_audit_manifest_sha256=(
+            candidate_source.entry_geometry_audit_manifest_sha256
+            if entry_geometry_audit_path is not None
+            else None
+        ),
+        entry_geometry_audit_logical_fingerprint=(
+            candidate_source.entry_geometry_audit_logical_fingerprint
+            if entry_geometry_audit_path is not None
+            else None
+        ),
+    )
+    return CompletedMarketIntelligence(
+        path=completed.path,
+        manifest=completed.manifest,
+        payload=completed.payload,
+        reference=completed.reference,
+        pointer=completed.pointer,
+        candidate_validation_evidence=evidence,
+    )
 
 
 def validate_source_binding(
@@ -562,6 +613,7 @@ def build_approval_plan(
     phase2_audit_path: Path,
     candidate_audit_path: Path | None = None,
     entry_geometry_audit_path: Path | None = None,
+    validated_candidate_evidence: CandidatePublicationValidationEvidence | None = None,
     expected_current_state_fingerprint: str,
     expected_latest_completed_session: date | None,
     actual_latest_completed_session: date,
@@ -587,16 +639,18 @@ def build_approval_plan(
             raise MarketIntelligencePublicationError(
                 "MI 1.2 plan requires Candidate and entry-geometry audit paths"
             )
-        candidate_analytics = build_opportunity_candidate_publication(
-            candidate_audit_path, entry_geometry_audit_path
-        )
-        if (
-            candidate_analytics != completed.payload.candidate_analytics
-            or candidate_analytics.source != completed.payload.candidate_source
-        ):
+        if validated_candidate_evidence is None:
             raise MarketIntelligencePublicationError(
-                "Candidate entry-geometry audit binding changed"
+                "MI 1.2 plan requires in-process publication-validation evidence"
             )
+        candidate_analytics = completed.payload.candidate_analytics
+        _validate_candidate_publication_evidence(
+            candidate_audit_path=candidate_audit_path,
+            entry_geometry_audit_path=entry_geometry_audit_path,
+            candidate_source=completed.payload.candidate_source,
+            candidate_analytics_logical_fingerprint=candidate_analytics.logical_fingerprint,
+            full_validation_evidence=validated_candidate_evidence,
+        )
     elif isinstance(completed.payload, MarketIntelligencePayloadV1_1):
         if candidate_audit_path is None:
             raise MarketIntelligencePublicationError("MI 1.1 plan requires Candidate audit path")
@@ -604,12 +658,18 @@ def build_approval_plan(
             raise MarketIntelligencePublicationError(
                 "MI 1.1 plan cannot silently ignore an entry-geometry audit"
             )
-        candidate_analytics = build_opportunity_candidate_publication(candidate_audit_path)
-        if (
-            candidate_analytics != completed.payload.candidate_analytics
-            or candidate_analytics.source != completed.payload.candidate_source
-        ):
-            raise MarketIntelligencePublicationError("Candidate audit binding changed")
+        if validated_candidate_evidence is None:
+            raise MarketIntelligencePublicationError(
+                "MI 1.1 plan requires in-process publication-validation evidence"
+            )
+        candidate_analytics = completed.payload.candidate_analytics
+        _validate_candidate_publication_evidence(
+            candidate_audit_path=candidate_audit_path,
+            entry_geometry_audit_path=None,
+            candidate_source=completed.payload.candidate_source,
+            candidate_analytics_logical_fingerprint=candidate_analytics.logical_fingerprint,
+            full_validation_evidence=validated_candidate_evidence,
+        )
     elif candidate_audit_path is not None or entry_geometry_audit_path is not None:
         raise MarketIntelligencePublicationError("MI 1.0 plan cannot bind a Candidate audit")
     actual_inventory = inventory_fingerprint(safe_root)
@@ -1005,17 +1065,130 @@ def _validate_plan_sources(
     if actual != plan.source or preview.payload.logical_fingerprint != plan.analytics_logical_fingerprint:
         raise MarketIntelligencePublicationConflict("approved source binding changed")
     if isinstance(plan, MarketIntelligenceApprovalPlanV1_1):
-        candidate = build_opportunity_candidate_publication(
-            Path(plan.candidate_audit_path),
-            Path(plan.entry_geometry_audit_path)
-            if isinstance(plan, MarketIntelligenceApprovalPlanV1_2)
-            else None,
+        _validate_candidate_publication_evidence(
+            candidate_audit_path=Path(plan.candidate_audit_path),
+            entry_geometry_audit_path=(
+                Path(plan.entry_geometry_audit_path)
+                if isinstance(plan, MarketIntelligenceApprovalPlanV1_2)
+                else None
+            ),
+            candidate_source=plan.candidate_source,
+            candidate_analytics_logical_fingerprint=(
+                plan.candidate_analytics_logical_fingerprint
+            ),
+            full_validation_evidence=None,
         )
-        if (
-            candidate.source != plan.candidate_source
-            or candidate.logical_fingerprint != plan.candidate_analytics_logical_fingerprint
-        ):
-            raise MarketIntelligencePublicationConflict("approved Candidate audit binding changed")
+
+
+def _validate_candidate_publication_evidence(
+    *,
+    candidate_audit_path: Path,
+    entry_geometry_audit_path: Path | None,
+    candidate_source,
+    candidate_analytics_logical_fingerprint: str,
+    full_validation_evidence: CandidatePublicationValidationEvidence | None,
+) -> None:
+    evidence = read_opportunity_candidate_publication_evidence(candidate_audit_path)
+    manifest = evidence.manifest
+    flags = manifest["equivalence_flags"]
+    universe_count = len(manifest["universe_ids"])
+    expected = {
+        "candidate_audit_manifest_sha256": evidence.manifest_sha256,
+        "candidate_audit_logical_fingerprint": manifest["logical_content_fingerprint"],
+        "candidate_history_fingerprint": manifest["candidate_history_fingerprint"],
+        "candidate_state_history_fingerprint": manifest[
+            "candidate_state_history_fingerprint"
+        ],
+        "risk_results_fingerprint": manifest["risk_results_fingerprint"],
+        "oracle_fingerprint": manifest["oracle_fingerprint"],
+        "oracle_mismatch_count": 0,
+        "shared_raw_fact_match": True,
+        "input_permutation_match": True,
+        "append_full_replay_match": flags["append_full_replay_match"],
+        "restart_replay_match": flags["restart_replay_match"],
+        "future_prefix_stable": flags["future_prefix_stable"],
+        "candidate_contract_version": manifest["candidate_contract_version"],
+        "candidate_calculation_version": manifest["candidate_calculation_version"],
+        "candidate_parameter_set_id": manifest["candidate_parameter_set_id"],
+        "candidate_parameter_fingerprint": manifest["candidate_parameter_fingerprint"],
+        "candidate_state_contract_version": manifest[
+            "candidate_state_contract_version"
+        ],
+        "candidate_state_calculation_version": manifest[
+            "candidate_state_calculation_version"
+        ],
+        "candidate_state_parameter_set_id": manifest[
+            "candidate_state_parameter_set_id"
+        ],
+        "candidate_state_parameter_fingerprint": manifest[
+            "candidate_state_parameter_fingerprint"
+        ],
+        "current_candidate_batch_fingerprints": tuple(
+            manifest["candidate_batch_fingerprints"][-universe_count:]
+        ),
+        "current_risk_result_fingerprints": tuple(
+            manifest["risk_result_fingerprints"]
+        ),
+    }
+    actual = candidate_source.model_dump(mode="python")
+    if any(actual.get(key) != value for key, value in expected.items()):
+        raise MarketIntelligencePublicationConflict(
+            "approved Candidate publication evidence changed"
+        )
+    entry_manifest = None
+    if entry_geometry_audit_path is not None:
+        entry_manifest = read_candidate_entry_geometry_audit(entry_geometry_audit_path)
+        entry_expected = {
+            "entry_geometry_audit_manifest_sha256": file_sha256(
+                entry_geometry_audit_path / "entry-geometry-audit-manifest.json"
+            ),
+            "entry_geometry_audit_logical_fingerprint": entry_manifest[
+                "logical_content_fingerprint"
+            ],
+            "entry_geometry_contract_version": entry_manifest["contract_version"],
+            "entry_geometry_calculation_version": entry_manifest["calculation_version"],
+            "entry_geometry_parameter_set_id": entry_manifest["parameter_set_id"],
+            "entry_geometry_parameter_fingerprint": entry_manifest[
+                "parameter_fingerprint"
+            ],
+            "entry_geometry_oracle_mismatch_count": 0,
+            "entry_geometry_input_permutation_match": True,
+            "entry_geometry_batch_fingerprints": tuple(
+                entry_manifest["batch_fingerprints"]
+            ),
+        }
+        if any(actual.get(key) != value for key, value in entry_expected.items()):
+            raise MarketIntelligencePublicationConflict(
+                "approved entry-geometry publication evidence changed"
+            )
+    if full_validation_evidence is None:
+        return
+    if (
+        full_validation_evidence.candidate_audit_path != candidate_audit_path
+        or full_validation_evidence.candidate_audit_manifest_sha256
+        != evidence.manifest_sha256
+        or full_validation_evidence.candidate_audit_logical_fingerprint
+        != manifest["logical_content_fingerprint"]
+        or full_validation_evidence.candidate_publication_logical_fingerprint
+        != candidate_analytics_logical_fingerprint
+        or full_validation_evidence.entry_geometry_audit_path
+        != entry_geometry_audit_path
+        or full_validation_evidence.entry_geometry_audit_manifest_sha256
+        != (
+            None
+            if entry_manifest is None
+            else file_sha256(
+                entry_geometry_audit_path / "entry-geometry-audit-manifest.json"
+            )
+        )
+        or full_validation_evidence.entry_geometry_audit_logical_fingerprint
+        != (
+            None if entry_manifest is None else entry_manifest["logical_content_fingerprint"]
+        )
+    ):
+        raise MarketIntelligencePublicationError(
+            "Candidate plan is missing its exact publication-validation evidence"
+        )
 
 
 def _read_reference(
