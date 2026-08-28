@@ -351,6 +351,17 @@ and standing authorization also remain inactive by exact-revision mismatch.
   not a validated independent setup. The diagnostic compares membership sets,
   never channel scores or outcomes. These ADR 0061 source/UI changes are not
   deployed.
+- ADR 0062 adds a repository-only, descriptive continuation fact contract and
+  pure Dell calculator for path continuity, trend persistence, recent/prior
+  structure, volatility, high-position, and volume context. It produces no
+  score, status, rank, threshold, or outcome claim, and an independent raw-
+  panel Oracle does not import its calculator. A real read-only 2026-08-26 run
+  covered 1,715/1,715 Primary and 1,828/1,828 Secondary Candidate rows with
+  zero Oracle mismatch and permutation equivalence. Information discreteness
+  and largest-day path share barely separated the existing continuation
+  groups, while structure facts mostly restated the frozen filter. No current
+  weight changed; Snapshot, Dashboard, and Production are unchanged. See the
+  [dated review](../audits/candidate-continuation-facts-review-2026-08-28.md).
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-
   dated signals are sealed without outcomes, and 1/3/5-session underlying-
   stock labels may be attached only later under a fixed no-random-split,

@@ -170,6 +170,13 @@ from .candidate_strategy_diagnostics import (
     StrategyChannelPairOverlapV1,
     strategy_diagnostics_fingerprint,
 )
+from .candidate_continuation_facts import (
+    CandidateContinuationFactsBatchV1,
+    CandidateContinuationFactsV1,
+    CandidateContinuationMetricsV1,
+    ContinuationFactAvailability,
+    continuation_facts_fingerprint,
+)
 from .candidate_strategy_evaluation import (
     STRATEGY_EVALUATION_POLICY_FINGERPRINT,
     STRATEGY_EVALUATION_POLICY_VERSION,
@@ -330,6 +337,11 @@ __all__ = [
     "CandidateStrategyChannelDiagnosticsV1",
     "StrategyChannelPairOverlapV1",
     "strategy_diagnostics_fingerprint",
+    "CandidateContinuationFactsBatchV1",
+    "CandidateContinuationFactsV1",
+    "CandidateContinuationMetricsV1",
+    "ContinuationFactAvailability",
+    "continuation_facts_fingerprint",
     "STRATEGY_EVALUATION_POLICY_FINGERPRINT",
     "STRATEGY_EVALUATION_POLICY_VERSION",
     "STRATEGY_OUTCOME_CONTRACT_VERSION",

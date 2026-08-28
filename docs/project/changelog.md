@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-28 — Add a descriptive continuation fact layer
+
+- Accepted ADR 0062 and added a frozen source-bound contract for twelve
+  separate continuation facts covering path continuity, trend persistence,
+  recent/preceding price structure, volatility, position, and volume context.
+  The facts carry no combined score, status, rank, threshold, or outcome claim.
+- Added a pure Dell-local calculator plus an independent raw-panel Oracle that
+  does not import the Production calculator. Missing or invalid history fails
+  closed, every value uses fixed Decimal arithmetic, and input permutation is
+  tested explicitly.
+- A real offline 2026-08-26 review assessed all 1,715 Primary and 1,828
+  Secondary Candidate rows with zero unavailable facts, zero Oracle mismatch,
+  and exact permutation equivalence. Path discreteness and largest-day share
+  barely separated the frozen continuation groups, while trend structure did;
+  no parameter was selected from this cross-section.
+- Existing Strategy Preview 1.0, Snapshot, Dashboard, and Production remain
+  unchanged. No `/data`, provider, credential, publication, deployment, or
+  scheduler action occurred. All 1,565 backend tests pass.
+
 ## 2026-08-28 — Bind strategy explanations and audit channel distinctness
 
 - Accepted ADR 0061 and bound the browser methodology renderer to the exact

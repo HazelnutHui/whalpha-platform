@@ -199,6 +199,15 @@ read or used.
   efficiency facts plus chronological validation are required before revising
   it under a new parameter version. These ADR 0061 changes are repository-only
   and not deployed.
+  ADR 0062 now adds a separate source-bound descriptive fact layer for return-
+  path continuity, trend persistence, recent/prior structure, volatility,
+  closing-high position, and volume context. It has no score, status, rank, or
+  threshold and is not a Strategy Preview 1.0 input. A real read-only
+  2026-08-26 pass covered all 1,715 Primary and 1,828 Secondary rows with zero
+  unavailable values, zero independent-Oracle mismatch, and permutation
+  equivalence. The cross-section did not support promoting information
+  discreteness, largest-day share, or volatility contraction into current
+  weights. This fact layer is repository-only and not deployed.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -255,11 +264,13 @@ a separate authorization.
 
 ## Next candidate work
 
-Keep the currently deployed strategy formulas frozen. Add governed
-continuation-specific facts for trend efficiency, consolidation/volatility
-contraction, pullback depth, and recovery quality, then define a new parameter
-version for chronological evaluation. Do not reduce the observed overlap by
-tuning thresholds against the single 2026-08-26 cross-section.
+Keep the currently deployed strategy formulas frozen. The first governed
+continuation-specific descriptive facts and independent Oracle now exist.
+Next, preserve them as shadow evidence and define preregistered competing
+continuation hypotheses only after the point-in-time historical foundation can
+support chronological evaluation. Do not reduce the observed overlap or
+select contraction/path thresholds against the single 2026-08-26 cross-
+section.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is
