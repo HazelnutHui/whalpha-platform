@@ -161,6 +161,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [2026-08-27 Candidate Snapshot Split Audit](audits/candidate-snapshot-split-2026-08-27.md): Real 8/26 payload size, shard distribution, lossless reconstruction, and Production-isolation evidence.
 - [2026-08-27 Strategy Evaluation Readiness Audit](audits/strategy-evaluation-readiness-2026-08-27.md): EOD/Identity/benchmark coverage, membership/adjustment/lifecycle gaps, and the formal not-ready result.
 - [2026-08-28 Candidate Strategy Channel Preview Review](audits/candidate-strategy-channel-preview-2026-08-28.md): Offline fixed-formula mechanics, independent Oracle, immutable audit, full-population counts, bounded views, and validation limits.
+- [2026-08-28 Stale-Review Publication and OCI Deployment](audits/stale-review-publication-deployment-2026-08-28.md): Exact authorization, MI/Snapshot plans and applies, 1.9/2.6 bundle deployment, guest postflight, timings, and post-deployment reconciliation.
 - [2026-08-14 Instrument Snapshot Audit](operations/data-audits/2026-08-14-instrument-snapshot-audit.md): Accepted integrity audit with an explicit provenance exception.
 - [2026-08-14 Grouped Daily Run Report](operations/data-audits/2026-08-14-grouped-daily-run.md): Non-sensitive single-request quality and publication record.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.

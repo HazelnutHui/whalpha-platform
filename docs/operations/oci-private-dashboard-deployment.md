@@ -10,16 +10,17 @@ project changelog, not in this current runbook.
 ## Live-verified state
 
 The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-08-27 post-deployment
+[current-context](../project/current-context.md). Its 2026-08-28 post-deployment
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching local immutable bundle resolve to
-  release `2026-08-26T053233Z-6c60502e4473`;
+  release `2026-08-28T132100Z-eeccc22`;
 - the release is built from source commit
-  `6c60502e4473a7ee7512b720f71a135a665f2f34` and binds Market Intelligence
-  `2026-08-26T050254Z-6c60502e4473`;
-- it serves ordinary fresh Snapshot 1.7 / Dashboard 2.4, Candidate publication
-  1.1, `en` and `zh`, with English as the first-visit default;
+  `eeccc2242a3414aba3b761915c4e146022b3b9fe` and binds Market Intelligence
+  `2026-08-28T131700Z-eeccc22`;
+- it serves explicitly stale-review Snapshot 1.9 / Dashboard 2.6, Candidate
+  publication 1.1, the strategy-channel product, `en` and `zh`, with English
+  as the first-visit default;
 - the deployment manifest declares no credentials, raw payload, or Parquet;
 - Nginx and `whalpha-dashboard-auth.service` are active and enabled;
 - the Auth Service listens only on `127.0.0.1:8010`;
@@ -27,8 +28,8 @@ reconciliation records, without reading credentials:
   `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
   `/auth/status`, and returns 404 for external `/auth/internal-verify`;
 - deployment postflight creates a temporary guest Session, verifies the same
-  Dashboard and Snapshot 1.7 Candidate payload are readable, logs out, and
-  removes the local cookie jar without printing it;
+  Dashboard, Snapshot 1.9 Candidate summary/detail, and strategy payload are
+  readable, logs out, and removes the local cookie jar without printing it;
 - no staging or partial release residue exists.
 
 Authenticated browser behavior was not tested because the verification did not

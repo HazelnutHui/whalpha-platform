@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-28 — Publish and deploy Snapshot 1.9 / Dashboard 2.6 review release
+
+- Used the user's exact `production-review-deployment/1.1` authorization to
+  publish MI `2026-08-28T131700Z-eeccc22` and Snapshot
+  `2026-08-28T132100Z-eeccc22` for actual 2026-08-26 versus expected
+  2026-08-27, lag one. The active payload explicitly reports `stale_review`;
+  no 2026-08-27 EOD freshness is claimed.
+- Deployed OCI release `2026-08-28T132100Z-eeccc22` from source commit
+  `eeccc2242a3414aba3b761915c4e146022b3b9fe`. Snapshot 1.9 / Dashboard 2.6,
+  the Candidate summary/detail split, and strategy-channel product are now
+  active; the prior 1.7/2.4 Snapshot remains the rollback target.
+- Remote preflight, atomic switch, checksums, Nginx and service checks,
+  unauthenticated protection, temporary equal-capability guest Session,
+  Candidate summary/detail, strategy lineage, logout, and post-logout
+  protection all passed. Password login and human visual acceptance remain
+  manual checks; no credential content was read.
+- Post-deployment local reconciliation found a clean source repository, 390
+  `/data` files / 202,875,231 bytes, inventory fingerprint
+  `7d66bc02fe88410a4ed6f000f74875aa135e11d10318ff010a148d03ba08a0de`,
+  zero symlinks, and zero publication residue. See the
+  [deployment audit](../audits/stale-review-publication-deployment-2026-08-28.md).
+
 ## 2026-08-28 — Reuse Candidate completion evidence during publication
 
 - Accepted ADR 0060 and separated research validation from publication

@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-08-27 UTC
+Operational state verified at: 2026-08-28 UTC
 
 Repository development context updated at: 2026-08-28 UTC
 
@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `6c60502e4473a7ee7512b720f71a135a665f2f34` |
+| Deployed bundle source commit | `eeccc2242a3414aba3b761915c4e146022b3b9fe` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -28,10 +28,10 @@ recorded by a deployed bundle.
 
 ## Formal local state
 
-The 2026-08-27 reconciliation used the project readers after the separately
-approved 2026-08-26 Identity/EOD publication and ordinary lag-zero analytics,
-Snapshot, bundle, and OCI deployment. It reread the full local inventory and
-active custody/contracts after deployment.
+The 2026-08-28 reconciliation used the project readers after the separately
+authorized 2026-08-26 stale-review analytics, Snapshot, bundle, and OCI
+deployment. It reread the full local inventory and active custody/contracts
+after deployment.
 
 | Boundary | Active verified value |
 | --- | --- |
@@ -49,17 +49,17 @@ active custody/contracts after deployment.
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
 | Primary | 1,718 CS; fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978` |
 | Secondary | 1,831 = 1,718 CS + 113 ADRC; fingerprint `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295` |
-| Market Intelligence | `2026-08-26T050254Z-6c60502e4473`, contract 1.2 |
-| Market Intelligence payload SHA-256 | `e0d92f2ace261cb9963a134486f096f2e7ca423688c3a2fb36977b1b2a174252` |
-| Market Intelligence logical fingerprint | `dfa538a9a00ea1749053fc022622b7bd1913df2fa195d3e6dcce0472c78426c2` |
+| Market Intelligence | `2026-08-28T131700Z-eeccc22`, contract 1.2 |
+| Market Intelligence payload SHA-256 | `03a7f53f590b1b50dd13ae5947f685eb48e349938d1a3bd0cd7e4f78bad6a9bc` |
+| Market Intelligence logical fingerprint | `49bbb4564ff9520a807a7cc8dc4cc02e5be309893b50a1556e44d7fc228707e1` |
 | Candidate publication | 496 Primary / 532 Secondary records; fingerprint `286d4eebcb2e0489f33b03894bec8c7c58c1641f113719a014f296db42c2f07a` |
-| Dashboard Snapshot | `2026-08-26T053233Z-6c60502e4473` |
-| Contracts | Snapshot 1.7 / Dashboard 2.4 |
-| Snapshot pointer fingerprint | `5c6a5cce3e40c8ab07f3634fec05a1ffe02e8045d2d14c471ab5dc71d43bf122` |
-| Active review metadata | none; ordinary fresh release |
-| Current post-close pipeline freshness | expected 2026-08-27, canonical EOD 2026-08-26, lag one; no new analytics/Snapshot publication |
-| `/data` inventory | 347 files / 158,668,614 bytes after the 2026-08-27 Identity Apply |
-| `/data` inventory fingerprint | not recomputed by the post-Identity report; prior 340-file fingerprint `ee241ca8e89fe5a010d67a5bd654852293fbbf1c6a3c80090222e8d1eb3879b8` is historical only |
+| Dashboard Snapshot | `2026-08-28T132100Z-eeccc22` |
+| Contracts | Snapshot 1.9 / Dashboard 2.6 |
+| Snapshot pointer fingerprint | `e2b52f319894786d2e6fc628472bfdecd2078e85bbbec3e02be223a4ba9b0203` |
+| Active review metadata | `production-review-deployment/1.1`; 2026-08-26 actual, 2026-08-27 expected, lag one, `stale_review` |
+| Current post-close pipeline freshness | expected 2026-08-27, canonical EOD 2026-08-26, lag one; active UI is explicitly stale-review |
+| `/data` inventory | 390 files / 202,875,231 bytes after MI and Snapshot publication |
+| `/data` inventory fingerprint | `7d66bc02fe88410a4ed6f000f74875aa135e11d10318ff010a148d03ba08a0de` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -264,10 +264,11 @@ and standing authorization also remain inactive by exact-revision mismatch.
   protected Session and load the same product payload.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
-- Production contains Candidate publication 1.1, MI 1.2, Snapshot 1.7 /
-  Dashboard 2.4, the independent Candidate and Entry Geometry Oracles, strict
-  frontend parsing, and the bilingual entry-location view. Leadership rank and
-  entry location remain separate axes.
+- Production contains Candidate publication 1.1, MI 1.2, Snapshot 1.9 /
+  Dashboard 2.6, the independent Candidate, Entry Geometry, and Strategy
+  Oracles, strict frontend parsing, lazy Candidate detail/strategy products,
+  and the bilingual entry-location view. Leadership rank and entry location
+  remain separate axes.
 - The active formal Candidate audit is
   `/tmp/whalpha-candidate-phase5c-20260826`, fingerprint
   `34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`.
@@ -287,9 +288,9 @@ and standing authorization also remain inactive by exact-revision mismatch.
   summary plus 32 stable-ID detail shards of 474,940–1,028,834 bytes. A real
   `/tmp` 2026-08-26 build formally reconstructed the unchanged full Candidate
   1.1 publication with the same 496/532 counts. A separate lag-zero build
-  produced and validated approval plan 2.3 without applying it. This is not
-  published or deployed; active Production remains Snapshot 1.7 / Dashboard
-  2.4. Guest and credential Sessions remain capability-identical by contract.
+  produced and validated approval plan 2.3 without applying it. The later
+  authorized 1.9/2.6 release publishes this lossless split; guest and
+  credential Sessions remain capability-identical by contract.
 - ADR 0060 separates full Candidate research validation from MI publication
   custody. The immutable completion manifest, every artifact SHA/size,
   parameters, zero-mismatch Oracle, equivalence gates, and Entry Geometry
@@ -325,17 +326,17 @@ and standing authorization also remain inactive by exact-revision mismatch.
   `45bad6eb7fd014c0cc36b1244be7274dc98b92d23fa57d9ddcabe10b271ca3cd`,
   with unchanged 496/532 Candidate counts and 8/8/8/0/0/0 displayed records
   per Universe. ADR 0058 now adds Approval Plan 2.4, strict OCI bundle
-  validation, and temporary-guest postflight validation. A local 50-file
-  bundle build passed without OCI access and carried the same product/audit
-  fingerprints. No plan was approved/applied and no activation or deployment
-  occurred. The subsequent UI continuity pass preserves Candidate view and
+  validation, and temporary-guest postflight validation. The authorized
+  2026-08-28 release passed Plan 2.4, Apply, the 50-file OCI bundle checks,
+  remote switch, and temporary-guest validation with the same product/audit
+  fingerprints. The subsequent UI continuity pass preserves Candidate view and
   strategy channel in the URL, removes the unrelated risk-mode control from
   strategy mode, and makes evidence-incomplete channels explicit; 91 frontend
   tests and the Snapshot-mode build pass. Human visual acceptance remains
   pending. ADR 0059 now records the user's exact 2026-08-26 stale-review
   acknowledgement and adds a separate versioned authorization without
-  changing historical 1.0 reads. No new publication or deployment should be
-  claimed until the exact apply and postflight finish. Technical reversal,
+  changing historical 1.0 reads. The exact Apply and postflight are complete;
+  the authorization is not reusable or standing. Technical reversal,
   fundamental value reversal, and defensive rotation remain explicitly
   unavailable rather than being synthesized from proxies.
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-
@@ -442,16 +443,17 @@ and standing authorization also remain inactive by exact-revision mismatch.
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-26T053233Z-6c60502e4473`, built from deployed source commit
-`6c60502e4473a7ee7512b720f71a135a665f2f34` and bound to the active Snapshot
+`2026-08-28T132100Z-eeccc22`, built from deployed source commit
+`eeccc2242a3414aba3b761915c4e146022b3b9fe` and bound to the active Snapshot
 and Market Intelligence publication. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-27 deployment passed remote preflight, Nginx configuration checks,
+The 2026-08-28 deployment passed remote preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
-guest Session postflight against the exact Snapshot 1.7 payload. No credential
-or cookie content was printed or retained. Password-based and visual browser
+guest Session postflight against the exact Snapshot 1.9 payload and strategy
+resource. No credential or cookie content was printed or retained.
+Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.
 

@@ -55,21 +55,19 @@ relative-performance proxies, never actual fund flow.
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
 - Active Market Intelligence publication is
-  `2026-08-26T050254Z-6c60502e4473`, contract 1.2, with 496 Primary and 532
+  `2026-08-28T131700Z-eeccc22`, contract 1.2, with 496 Primary and 532
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-26T053233Z-6c60502e4473`, contract 1.7 / Dashboard 2.4.
+  `2026-08-28T132100Z-eeccc22`, contract 1.9 / Dashboard 2.6.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-26T053233Z-6c60502e4473` from source commit `6c60502e4473`.
+  `2026-08-28T132100Z-eeccc22` from source commit `eeccc2242a34`.
 
-The active analytics and Snapshot were published as the ordinary fresh
-2026-08-26 release: expected and actual session were both 2026-08-26, lag was
-zero, data status was `complete`, and review mode was false. After the
-2026-08-27 close, canonical EOD now lags the expected session by one because
-the controlled EOD request failed. No new analytics or Snapshot was published,
-and the static active payload does not dynamically rewrite its publication-
-time freshness metadata. The prior narrowly bound 2026-08-24 `stale_review`
-release remains historical evidence only; it did not weaken the normal gate.
+The active analytics and Snapshot are an explicitly authorized review release:
+actual/analysis session 2026-08-26, expected session 2026-08-27, lag one,
+status `stale_review`, and review contract
+`production-review-deployment/1.1`. This does not claim fresh 2026-08-27 EOD
+or weaken ordinary lag-zero publication. The prior ordinary-fresh 1.7/2.4
+Snapshot remains the local rollback target.
 
 The exact failed EOD terminal now has one immutable offline operator review.
 The current readiness state is `waiting_to_retry` until
@@ -111,7 +109,7 @@ deployment. Exact displayed scores are publication facts, not trade signals.
   owner-only market-analysis tier. Future personal records require a separate
   identity boundary and do not change shared analytics parity.
 
-The 2026-08-27 deployment passed remote preflight, Nginx configuration checks,
+The 2026-08-28 deployment passed remote preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the temporary equal-capability
 guest Session postflight defined by the deployment tool. Password-based and
 visual browser behavior remains a manual user check because no password was
@@ -119,11 +117,9 @@ read or used.
 
 ## Current limitations and risks
 
-- The active static 2026-08-26 payload still carries its publication-time
-  `complete` metadata even though the post-close 2026-08-27 pipeline is now one
-  session behind. No later stale-review or fresh release was published; users
-  must rely on the displayed analysis/session date until the daily chain is
-  repaired.
+- The active static payload is explicitly `stale_review`: it analyzes
+  2026-08-26 while the expected session is 2026-08-27. It is suitable for the
+  authorized UI/product review, not a claim that the daily chain is current.
 - The analytics history is only 29 EOD sessions and the active calculations
   use 26 sessions. This is contract and implementation evidence, not enough
   history for predictive validation or stable threshold calibration.
@@ -140,9 +136,9 @@ read or used.
   equal-capability guest path serves the same provider-derived payload to other
   users. Session protection and non-commercial friend use do not establish
   permission. Owner-only non-display/derivative calculation and retention also
-  require clarification. Product posture is now resolved in favor of equal-
-  capability Sessions; compatible source permission remains unresolved. No
-  access or deployment change has been authorized.
+  require clarification. Product posture is resolved in favor of equal-
+  capability Sessions; compatible source permission remains unresolved. The
+  current review deployment does not resolve or waive that source-policy risk.
 - The broader 2026-08-28 official-source review found no single source that is
   both complete for the historical foundation and cleared for the confirmed
   equal-capability product. SEC is suitable open filing/fundamental/event
@@ -157,11 +153,10 @@ read or used.
 - The OCI bundle helper's `--snapshot-release` shortcut still resolves the
   legacy local snapshot directory; current V2 snapshots require the supported
   explicit `--snapshot-path` plus `--bundle-release` form until this is fixed.
-- The frontend production build still reports a JavaScript chunk above 500 KB,
-  and active Production still serves the 20.4 MB monolithic Candidate JSON.
-  Repository source has completed summary/detail payload separation but has not
-  deployed it; workspace code splitting remains required before substantially
-  expanding the UI.
+- The frontend production build still reports a JavaScript chunk above 500 KB.
+  Production now serves the 1.49 MB Candidate first-load summary plus 32
+  on-demand detail shards instead of the 20.4 MB monolith; workspace code
+  splitting remains required before substantially expanding the UI.
 - Repository source defines six independent Candidate strategy channels and
   now implements a fixed, unvalidated offline preview for momentum breakout,
   strong-stock pullback, and trend continuation. Each has a separate formula,
@@ -177,11 +172,10 @@ read or used.
   product payload, Snapshot 1.9 / Dashboard 2.6 review projection, strict web
   parser, and bilingual lazy-loaded Strategy Channels workspace. A real `/tmp`
   build formally reread the exact strategy-audit lineage and retained the
-  496/532 Candidate counts. This is not published or deployed and has no
-  Production effect. ADR 0058 now adds Approval Plan 2.4 plus strict OCI
-  bundle and guest-postflight validation. A local 50-file bundle build passed
-  exact strategy hash/lineage/count/rank/boundary checks. No plan was approved
-  or applied, no OCI connection occurred, and Production remains unchanged.
+  496/532 Candidate counts. ADR 0058 adds Approval Plan 2.4 plus strict OCI
+  bundle and guest-postflight validation. The authorized 2026-08-28 Plan,
+  Apply, 50-file bundle, OCI switch, and temporary-guest postflight all passed;
+  Snapshot 1.9 / Dashboard 2.6 and the strategy product are now active.
   A subsequent UI continuity pass makes the Candidate subview and exact
   strategy channel URL-addressable, removes irrelevant risk-mode controls from
   strategy mode, uses the Advance + Watch population in its headline, and
@@ -191,8 +185,8 @@ read or used.
   The user has now supplied ADR 0059's exact 2026-08-26 stale-review
   acknowledgement. Repository source adds the separate
   `production-review-deployment/1.1` contract while preserving historical 1.0
-  reads. Publication and OCI state do not change until the exact plans, apply,
-  bundle, deployment, and postflight complete.
+  reads. The exact review publication and deployment completed on 2026-08-28;
+  this remains a narrow stale-review authorization, not a standing permission.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -279,7 +273,8 @@ artifact. Real validation exposed a legacy Phase 1b rolling-window defect that
 reinitialized historical state when the 26-session window advanced. State
 calculation V1.0.1 now preserves a stable canonical left boundary while each
 Composite retains its trailing 26-session source window. Legacy V1.0.0 audits
-remain readable and Production remains unchanged.
+remain readable; the active review publication uses the corrected chain while
+retaining the exact Candidate publication fingerprint.
 
 On corrected 2026-08-26 development inputs, Candidate incremental time before
 writing was 309.02 seconds versus 461.67 seconds cold. Repository source now
@@ -454,7 +449,7 @@ seven-component parameter set, pure 26-session scoring, missingness and anomaly
 quarantine, separate Conservative/Balanced/Aggressive eligibility/ranking,
 chronological Watch/Prepare/Enter/invalidated replay, independent Oracles,
 canonical `/tmp` audit/reread boundaries, Candidate publication 1.1, MI 1.2,
-Snapshot 1.7 / Dashboard 2.4, and strict frontend parsing. Earlier contracts
+Snapshot 1.9 / Dashboard 2.6, and strict frontend parsing. Earlier contracts
 remain readable rollback boundaries.
 
 Candidate Entry Geometry V1 remains separate from leadership score/state/rank.
@@ -533,15 +528,15 @@ acknowledgement while source permission, entitlement, lifecycle coverage, and
 a fresh exact inventory fingerprint remain unresolved. The next transition is
 written external permission evidence, not acquisition.
 
-The active Candidate JSON is about 20.4 MB. Repository source now implements
-Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing
-Candidate publication 1.1: the real 8/26 first-load file is 1.49 MB (92.68%
-smaller), with 32 detail shards and exact full-publication reconstruction.
-Snapshot 1.9 / Dashboard 2.6 now adds the independently audited strategy
-product as one lazy 195,211-byte file without changing the default Candidate
-transfer. Both development candidates are not published or deployed; active
-Production remains Snapshot 1.7 / Dashboard 2.4. Dell remains
-the sole heavy-compute, historical-storage, and data-governance authority;
+The source MI Candidate product is about 20.4 MB. Production Snapshot delivery
+now uses the Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail projection
+without changing Candidate publication 1.1: the real 8/26 first-load file is
+1.49 MB (92.68% smaller), with 32 detail shards and exact full-publication
+reconstruction. Snapshot 1.9 / Dashboard 2.6 adds the independently audited
+strategy product as one lazy 195,211-byte file without changing the default
+Candidate transfer. The authorized 2026-08-28 release publishes both
+projections; Dell remains the sole heavy-compute, historical-storage, and
+data-governance authority;
 OCI is only the static serving/Session boundary. The optimized full and
 incremental Candidate calculations retain serial state/order custody. Cold
 replay alone may use the bounded session-Oracle process pool; daily append uses
