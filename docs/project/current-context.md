@@ -362,6 +362,18 @@ and standing authorization also remain inactive by exact-revision mismatch.
   groups, while structure facts mostly restated the frozen filter. No current
   weight changed; Snapshot, Dashboard, and Production are unchanged. See the
   [dated review](../audits/candidate-continuation-facts-review-2026-08-28.md).
+- ADR 0063 now gives those facts an immutable tmp-only audit, formal reader,
+  and network-prohibited CLI. A bounded current Candidate projection retains
+  complete file-custody and selected typed-row validation without rebuilding
+  unrelated historical Candidate objects. The real optimized 2026-08-26 stage
+  completed in 24.15 seconds, assessed 3,543 rows with zero unavailable and
+  zero Oracle mismatch, and produced audit fingerprint
+  `3e1226c676f19d95876c8bda96a4739ec551d4be83cfe83cbc1854cf5fafe976`.
+  Candidate current projection took 7.16 seconds, panel reread 8.83 seconds,
+  facts plus independent Oracle 6.65 seconds, and audit write/reread 0.52
+  seconds. This profile does not justify changing the Candidate main-audit
+  schema for a new current-batch shard. See the
+  [formal audit](../audits/candidate-continuation-facts-formal-audit-2026-08-28.md).
 - ADR 0050 adds the repository-only chronological evaluation boundary: source-
   dated signals are sealed without outcomes, and 1/3/5-session underlying-
   stock labels may be attached only later under a fixed no-random-split,

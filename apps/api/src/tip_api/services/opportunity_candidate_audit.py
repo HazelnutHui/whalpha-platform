@@ -109,6 +109,16 @@ class OpportunityCandidatePublicationEvidence:
     manifest_sha256: str
 
 
+@dataclass(frozen=True, slots=True)
+class OpportunityCandidateCurrentBatchEvidence:
+    """Hash-verified current Candidate batches without historical row replay."""
+
+    manifest: Mapping[str, Any]
+    manifest_sha256: str
+    source_panel: Mapping[str, Any]
+    candidate_batches: tuple[OpportunityCandidateBatchV1, ...]
+
+
 class OpportunityCandidateAuditError(RuntimeError):
     """Raised when a Candidate audit cannot preserve its custody boundary."""
 
@@ -537,6 +547,99 @@ def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCa
         raw_facts=tuple(raw),
         normalization_ledger=tuple(normalization),
         validation_ledger=(None if validation_payload is None else validation_payload["record"]),
+    )
+
+
+def read_opportunity_candidate_current_batches(
+    output_dir: Path,
+    *,
+    as_of_session: date,
+) -> OpportunityCandidateCurrentBatchEvidence:
+    """Read only the exact current batches after rehashing completed custody.
+
+    This projection deliberately avoids reconstructing raw facts, state history,
+    transitions, normalization rows, and risk results. It is suitable only for
+    downstream work that binds the immutable completed Candidate audit.
+    """
+
+    evidence = read_opportunity_candidate_publication_evidence(output_dir)
+    manifest = evidence.manifest
+    if manifest.get("as_of_session") != as_of_session.isoformat():
+        raise OpportunityCandidateAuditError(
+            "current Candidate projection requires the audit as-of session"
+        )
+    target = evidence.path
+    # Publication evidence immediately above already verifies the immutable
+    # manifest, exact file set, owner/mode, byte counts, and physical hashes.
+    # Re-encoding the 196 MB score history only to prove canonical bytes again
+    # adds no new custody evidence at this downstream projection boundary.
+    score_payload = _read_custodied_json(
+        target / "candidate-score-history.json",
+        label="Candidate score history",
+    )
+    source_payload = _read_custodied_json(
+        target / "source-input-manifest.json",
+        label="Candidate source manifest",
+    )
+    score_rows = score_payload.get("records")
+    source_rows = source_payload.get("panels")
+    if (
+        not isinstance(score_rows, list)
+        or not all(isinstance(item, dict) for item in score_rows)
+        or not isinstance(source_rows, list)
+        or not all(isinstance(item, dict) for item in source_rows)
+    ):
+        raise OpportunityCandidateAuditError(
+            "current Candidate projection source payload is malformed"
+        )
+    batches = tuple(
+        OpportunityCandidateBatchV1.model_validate(item)
+        for item in score_rows
+        if item.get("as_of_session") == as_of_session.isoformat()
+    )
+    universe_ids = tuple(manifest.get("universe_ids", ()))
+    if (
+        not batches
+        or tuple(item.universe_id for item in batches) != universe_ids
+        or tuple(manifest.get("candidate_batch_fingerprints", ())[-len(batches) :])
+        != tuple(item.logical_fingerprint for item in batches)
+    ):
+        raise OpportunityCandidateAuditError(
+            "current Candidate projection batch ledger differs"
+        )
+    _validate_typed_fingerprints(batches=batches, states=(), risks=())
+    matching_panels = tuple(
+        item
+        for item in source_rows
+        if item.get("as_of_session") == as_of_session.isoformat()
+    )
+    panel_universes = (
+        matching_panels[0].get("universes", ()) if len(matching_panels) == 1 else ()
+    )
+    panel_universe_by_id = {
+        item.get("universe_id"): item
+        for item in panel_universes
+        if isinstance(item, Mapping)
+    }
+    if len(matching_panels) != 1 or any(
+        batch.history_source_fingerprint
+        != matching_panels[0].get("history_source_fingerprint")
+        or batch.membership_fingerprint
+        != panel_universe_by_id.get(batch.universe_id, {}).get(
+            "membership_fingerprint"
+        )
+        or batch.universe_member_count
+        != panel_universe_by_id.get(batch.universe_id, {}).get("member_count")
+        for batch in batches
+    ):
+        raise OpportunityCandidateAuditError(
+            "current Candidate projection panel lineage differs"
+        )
+    return OpportunityCandidateCurrentBatchEvidence(
+        manifest=manifest,
+        manifest_sha256=evidence.manifest_sha256,
+        source_panel=matching_panels[0],
+        candidate_batches=batches,
     )
 
 
@@ -1644,6 +1747,18 @@ def _read_canonical_json(path: Path, *, physical_sha256: str | None = None) -> d
         raise OpportunityCandidateAuditError(f"non-canonical audit JSON: {path.name}")
     if not isinstance(value, dict):
         raise OpportunityCandidateAuditError("audit artifact must be an object")
+    return value
+
+
+def _read_custodied_json(path: Path, *, label: str) -> dict[str, Any]:
+    """Parse bytes whose exact physical hash was just verified by the caller."""
+
+    try:
+        value = json.loads(path.read_bytes())
+    except Exception as exc:
+        raise OpportunityCandidateAuditError(f"{label} is malformed") from exc
+    if not isinstance(value, dict):
+        raise OpportunityCandidateAuditError(f"{label} must be an object")
     return value
 
 

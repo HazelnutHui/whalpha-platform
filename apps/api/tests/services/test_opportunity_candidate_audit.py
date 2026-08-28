@@ -21,6 +21,7 @@ from tip_api.services.opportunity_candidate_audit import (
     _canonical_bytes,
     _fingerprint,
     read_opportunity_candidate_audit,
+    read_opportunity_candidate_current_batches,
     read_opportunity_candidate_publication_evidence,
     validate_tmp_output_dir,
     write_opportunity_candidate_audit,
@@ -324,6 +325,46 @@ def test_publication_evidence_rehashes_bytes_without_business_row_reparse() -> N
         artifact.chmod(0o400)
         with pytest.raises(OpportunityCandidateAuditError, match="custody mismatch"):
             read_opportunity_candidate_publication_evidence(target)
+    finally:
+        shutil.rmtree(target, ignore_errors=True)
+
+
+def test_current_batch_projection_rehashes_custody_without_historical_replay(
+    monkeypatch,
+) -> None:
+    target = Path(tempfile.mkdtemp(prefix="mrom-candidate-current-projection-", dir="/tmp"))
+    try:
+        manifest = _write(target)
+
+        def reject_full_replay(*args, **kwargs):
+            raise AssertionError("current projection must not invoke the full audit reader")
+
+        monkeypatch.setattr(
+            candidate_audit,
+            "_read_opportunity_candidate_audit",
+            reject_full_replay,
+        )
+        evidence = read_opportunity_candidate_current_batches(
+            target,
+            as_of_session=_panel().as_of_session,
+        )
+
+        assert evidence.manifest_sha256 == hashlib.sha256(
+            (target / CANDIDATE_AUDIT_MANIFEST).read_bytes()
+        ).hexdigest()
+        assert tuple(item.universe_id for item in evidence.candidate_batches) == (
+            PRIMARY,
+            SECONDARY,
+        )
+        assert [item.logical_fingerprint for item in evidence.candidate_batches] == (
+            manifest["candidate_batch_fingerprints"][-2:]
+        )
+        assert evidence.source_panel["as_of_session"] == manifest["as_of_session"]
+        with pytest.raises(OpportunityCandidateAuditError, match="as-of session"):
+            read_opportunity_candidate_current_batches(
+                target,
+                as_of_session=_panel().as_of_session - timedelta(days=1),
+            )
     finally:
         shutil.rmtree(target, ignore_errors=True)
 

@@ -1,8 +1,13 @@
 from __future__ import annotations
 
 import inspect
+import json
+import tempfile
 from dataclasses import replace
+from datetime import UTC, datetime
 from decimal import Decimal
+from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
@@ -10,6 +15,11 @@ from tip_api.contracts.analytics.v1 import ContinuationFactAvailability
 from tip_api.services.candidate_continuation_facts import (
     CandidateContinuationFactsCalculationError,
     calculate_candidate_continuation_facts,
+)
+from tip_api.services.candidate_continuation_facts_audit import (
+    CandidateContinuationFactsAuditError,
+    read_candidate_continuation_facts_audit,
+    write_candidate_continuation_facts_audit,
 )
 from tip_api.services.candidate_continuation_facts_oracle import (
     compare_with_independent_continuation_facts_oracle,
@@ -186,3 +196,104 @@ def test_independent_continuation_oracle_rejects_parameter_drift() -> None:
     )
 
     assert comparison.mismatches == ("parameter_fingerprint_mismatch",)
+
+
+def test_continuation_fact_audit_atomically_writes_and_formally_rereads() -> None:
+    panel, candidates, entry = _inputs()
+    batch = calculate_candidate_continuation_facts(
+        panel=panel,
+        candidate_batch=candidates,
+        entry_geometry_batch=entry,
+    )
+    oracle = compare_with_independent_continuation_facts_oracle(
+        panel=panel,
+        candidate_batch=candidates,
+        entry_geometry_batch=entry,
+        actual=batch,
+    )
+    candidate_source = Path(
+        tempfile.mkdtemp(prefix="continuation-candidate-source-", dir="/tmp")
+    )
+    entry_source = Path(
+        tempfile.mkdtemp(prefix="continuation-entry-source-", dir="/tmp")
+    )
+    panel_source = Path(
+        tempfile.mkdtemp(prefix="continuation-panel-source-", dir="/tmp")
+    )
+    output = Path("/tmp") / f"continuation-audit-test-{uuid4().hex}"
+    candidate_manifest = {
+        "logical_content_fingerprint": "1" * 64,
+        "as_of_session": candidates.as_of_session.isoformat(),
+        "universe_ids": [candidates.universe_id],
+        "candidate_batch_fingerprints": [candidates.logical_fingerprint],
+    }
+    entry_manifest = {
+        "logical_content_fingerprint": "2" * 64,
+        "as_of_session": entry.as_of_session.isoformat(),
+        "universe_ids": [entry.universe_id],
+        "batch_fingerprints": [entry.logical_fingerprint],
+    }
+    universe = panel.select_universe(candidates.universe_id)
+    panel_manifest = {
+        "logical_content_fingerprint": "3" * 64,
+        "source_boundary": {
+            "as_of_session": panel.as_of_session.isoformat(),
+            "history_source_fingerprint": panel.history_source_fingerprint,
+            "universes": [{"universe_id": universe.universe_id}],
+        },
+    }
+
+    def write_source(directory: Path, name: str, value: dict) -> None:
+        (directory / name).write_bytes(
+            (json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n").encode()
+        )
+
+    write_source(candidate_source, "candidate-audit-manifest.json", candidate_manifest)
+    write_source(entry_source, "entry-geometry-audit-manifest.json", entry_manifest)
+    write_source(panel_source, "manifest.json", panel_manifest)
+    try:
+        manifest = write_candidate_continuation_facts_audit(
+            output_dir=output,
+            candidate_audit_dir=candidate_source,
+            candidate_audit_manifest=candidate_manifest,
+            entry_geometry_audit_dir=entry_source,
+            entry_geometry_audit_manifest=entry_manifest,
+            panel_cache_entry_dir=panel_source,
+            panel_cache_manifest=panel_manifest,
+            batches=(batch,),
+            oracle_reports=(oracle,),
+            generated_at=datetime(2026, 8, 28, tzinfo=UTC),
+        )
+
+        assert manifest["completion_status"] == "completed"
+        assert manifest["oracle_mismatch_count"] == 0
+        assert manifest["assessed_count"] == len(candidates.candidates)
+        assert manifest["strategy_score_input"] is False
+        assert read_candidate_continuation_facts_audit(output) == manifest
+        assert {path.stat().st_mode & 0o777 for path in output.iterdir()} == {0o400}
+        with pytest.raises(CandidateContinuationFactsAuditError, match="already exist"):
+            write_candidate_continuation_facts_audit(
+                output_dir=output,
+                candidate_audit_dir=candidate_source,
+                candidate_audit_manifest=candidate_manifest,
+                entry_geometry_audit_dir=entry_source,
+                entry_geometry_audit_manifest=entry_manifest,
+                panel_cache_entry_dir=panel_source,
+                panel_cache_manifest=panel_manifest,
+                batches=(batch,),
+                oracle_reports=(oracle,),
+                generated_at=datetime(2026, 8, 28, tzinfo=UTC),
+            )
+        artifact = output / "continuation-facts-batches.json"
+        artifact.chmod(0o600)
+        artifact.write_bytes(artifact.read_bytes() + b" ")
+        artifact.chmod(0o400)
+        with pytest.raises(CandidateContinuationFactsAuditError, match="custody"):
+            read_candidate_continuation_facts_audit(output)
+    finally:
+        for directory in (output, candidate_source, entry_source, panel_source):
+            if directory.exists():
+                for path in directory.iterdir():
+                    path.chmod(0o600)
+                    path.unlink()
+                directory.rmdir()

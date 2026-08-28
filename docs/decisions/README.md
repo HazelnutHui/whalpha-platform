@@ -85,3 +85,4 @@ Each ADR should include:
 - [0060: Reuse Candidate Completion Evidence for Publication](0060-reuse-candidate-completion-evidence-for-publication.md)
 - [0061: Bind Displayed Strategy Methods and Audit Channel Overlap](0061-bind-displayed-strategy-methods-and-audit-channel-overlap.md)
 - [0062: Add Descriptive Continuation Facts Before Rescoring](0062-add-descriptive-continuation-facts-before-rescoring.md)
+- [0063: Formalize Continuation Fact Audit with a Bounded Current Read](0063-formalize-continuation-fact-audit-with-bounded-current-read.md)

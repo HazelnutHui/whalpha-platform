@@ -205,6 +205,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Independent strategy-channel Oracle and immutable temporary-root audit
 - [x] Source-bound descriptive continuation facts and independent raw-panel
   Oracle
+- [x] Immutable Continuation Facts audit and bounded current Candidate reader
 - [x] Lazy strategy-channel product projection and bilingual review consumer
 - [x] Snapshot 1.9 Approval Plan 2.4 and local OCI bundle/postflight validation
 - [x] Sealed-signal/later-outcome chronological evaluation contract
@@ -264,8 +265,11 @@ overlap diagnostic. Keep market fit and event context separate, expose entry/
 chase risk, cap the first view at eight per channel, and prohibit a cross-
 strategy total. Trend continuation is currently a broad superset, so the next
 model action has begun with a source-bound descriptive continuation fact layer
-and independent raw-panel Oracle. Keep those facts in shadow: the real
-2026-08-26 review showed that several plausible path facts did not materially
+and independent raw-panel Oracle. Its formal tmp-only audit and bounded current
+Candidate reader now complete in 24.15 seconds on the real session, so no
+Candidate main-audit shard is currently justified. Keep those facts in shadow:
+the real 2026-08-26 review showed that several plausible path facts did not
+materially
 separate the current groups and that qualifying names did not exhibit a
 universal volatility-contraction pattern. Do not create a new score version or
 tune current weights from one session. Defer competing-hypothesis selection,

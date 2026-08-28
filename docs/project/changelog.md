@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-28 — Formalize and profile the continuation-fact audit
+
+- Accepted ADR 0063 and added an immutable tmp-only Continuation Facts audit,
+  formal reader, and offline CLI. Candidate, Entry Geometry, panel-cache,
+  parameter, fact-batch, and independent-Oracle identities are bound before an
+  atomic completion marker is delivered.
+- Added a bounded current Candidate projection that rehashes completed custody
+  and validates only the exact current typed batches and panel lineage instead
+  of reconstructing unrelated historical Candidate objects.
+- The optimized real 2026-08-26 audit completed in 24.15 seconds versus 33.59
+  seconds before removal of duplicate 196 MB canonical re-encoding. Candidate
+  projection fell from 16.48 to 7.16 seconds; facts plus independent Oracle
+  took 6.65 seconds and audit write/formal reread took 0.52 seconds.
+- The real audit assessed 3,543 rows with zero unavailable facts, zero Oracle
+  mismatch, exact permutation equivalence, and logical fingerprint
+  `3e1226c676f19d95876c8bda96a4739ec551d4be83cfe83cbc1854cf5fafe976`.
+  No Candidate main-audit schema change is justified by the remaining profile.
+- No `/data`, Strategy Preview, publication, Snapshot, Dashboard, deployment,
+  provider, credential, scheduler, or Production change occurred. All 1,567
+  backend tests pass.
+
 ## 2026-08-28 — Add a descriptive continuation fact layer
 
 - Accepted ADR 0062 and added a frozen source-bound contract for twelve

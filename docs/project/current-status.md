@@ -208,6 +208,11 @@ read or used.
   equivalence. The cross-section did not support promoting information
   discreteness, largest-day share, or volatility contraction into current
   weights. This fact layer is repository-only and not deployed.
+  ADR 0063 adds its immutable tmp-only audit, formal reader, offline CLI, and a
+  bounded current Candidate projection. The optimized real stage takes 24.15
+  seconds end to end with the exact fact-batch fingerprints above, zero Oracle
+  mismatch, and no partial residue. The remaining seven-second current-batch
+  read does not justify changing the upstream Candidate audit schema yet.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
   or outcome dataset exists. Current history is 29 sessions versus the fixed
   252-session research minimum; daily point-in-time Universe membership and
@@ -265,7 +270,8 @@ a separate authorization.
 ## Next candidate work
 
 Keep the currently deployed strategy formulas frozen. The first governed
-continuation-specific descriptive facts and independent Oracle now exist.
+continuation-specific descriptive facts, independent Oracle, and formal
+temporary audit now exist.
 Next, preserve them as shadow evidence and define preregistered competing
 continuation hypotheses only after the point-in-time historical foundation can
 support chronological evaluation. Do not reduce the observed overlap or
