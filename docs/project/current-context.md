@@ -253,6 +253,19 @@ Grouped Daily REST release guarantee or a provider-completeness assertion.
 The review does not itself authorize a fetch. The old `c3af030` Host Runtime
 and standing authorization also remain inactive by exact-revision mismatch.
 
+At 2026-08-28T17:06:00Z, the user separately authorized exactly one
+2026-08-27 EOD fetch-only retry. Short-lived owner-only controls permitted only
+`fetch_eod` at exact revision `dd314db`; the coordinator made one request and
+returned `fetch_package_ready` with zero Production writes. The frozen package
+formally contains 12,552 results and has manifest/content SHA-256 values
+`bd9a664e4a3df54cb4b39344893d6662d8fa8b51055b31d02af1ce6a02807d06`
+and `17545f3479fe532b425419c5a83f2fa0e54c58693d1d61e5c5ec5a5751088ae6`.
+The `/data` inventory remains unchanged at fingerprint
+`7d66bc02fe88410a4ed6f000f74875aa135e11d10318ff010a148d03ba08a0de`;
+the 2026-08-27 canonical EOD target and Apply plan remain absent. Readiness is
+now `ready_for_apply_review`. See
+[the exact retry audit](../audits/daily-eod-fetch-retry-2026-08-28.md).
+
 ## Analytics and presentation
 
 - Market Regime: Primary 57.8456 Balanced; Secondary 57.9041 Balanced.
@@ -521,8 +534,10 @@ and cannot replace this separately authorized OCI check.
 
 ## Explicitly not authorized by this context
 
-This handoff does not authorize provider or SEC access, credential inspection,
-EOD or Identity acquisition, scheduler changes, Activation, publication,
+The completed one-request 2026-08-27 EOD fetch is evidence, not continuing
+authority. This handoff does not authorize further provider or SEC access,
+credential inspection, EOD or Identity acquisition, canonical Apply,
+scheduler changes, Activation, publication,
 Snapshot creation, bundle generation, OCI deployment or rollback, guest
 access, further UI implementation, another quantitative feature, or guest/
 source licensing remediation. The

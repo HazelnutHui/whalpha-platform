@@ -69,13 +69,14 @@ status `stale_review`, and review contract
 or weaken ordinary lag-zero publication. The prior ordinary-fresh 1.7/2.4
 Snapshot remains the local rollback target.
 
-The exact failed EOD terminal now has one immutable offline operator review.
-The current readiness state is `waiting_to_retry` until
-2026-08-28T16:00:00Z, with one attempt, one review, no alert, zero external
-requests, and zero Production writes in the review decision. This boundary is
-a conservative operator choice, not a verified REST release time. It grants
-no provider-fetch authority; the old exact-revision Host Runtime and standing
-authorization are inactive after later commits.
+The exact failed EOD terminal has one immutable offline operator review. After
+its conservative 2026-08-28T16:00:00Z boundary, the user separately authorized
+one exact EOD-only retry. At revision `dd314db`, one request succeeded and
+produced a frozen 12,552-result 2026-08-27 package with zero Production writes.
+Formal readiness is now `ready_for_apply_review`; canonical EOD remains
+2026-08-26 until a separately reviewed plan and Apply are authorized. The
+short-lived fetch controls are not reusable authority after documentation
+changes, a later commit, or expiry.
 
 ## Market Regime
 
@@ -445,11 +446,13 @@ That review was later explicitly authorized. At exact revision `c3af030`, the
 installed seven-day data-only external controls passed preflight. Same-day
 Identity fetched in 14 requests and canonical Identity 2026-08-27 formally
 completed: 13,148 provider-identity rows and 9,982 instrument/resolver rows.
-The next EOD fetch made one request but terminated `permanent_failure`; no EOD
-package, staging residue, approval plan, or canonical 2026-08-27 EOD target
-exists. The old terminal does not retain the numeric HTTP status, so the exact
-cause is unverified and no retry occurred. Canonical EOD therefore remains
-2026-08-26, while Identity is now 2026-08-27.
+The next EOD fetch made one request but terminated `permanent_failure`; the old
+terminal does not retain the numeric HTTP status, so its exact cause remains
+unverified. A later separately authorized retry at revision `dd314db` made
+exactly one request and produced a formally readable 12,552-result EOD package.
+No approval plan or canonical 2026-08-27 EOD target exists. Canonical EOD
+therefore remains 2026-08-26, while Identity and the fetched EOD package are
+2026-08-27.
 
 ADR 0045 adds bounded request-count and numeric HTTP-status evidence for future
 failures without retaining response content or changing failure classification.
@@ -468,9 +471,10 @@ a first current-session EOD request. A permanent/quality terminal can be
 released for exactly one later bounded fetch review only by an event tied to
 its exact terminal fingerprint. The review CLI is offline and grants no fetch,
 Apply, scheduler, publication, or deployment authority. It has now appended
-one real review tied to the exact 2026-08-27 terminal. Readiness remains
-`waiting_to_retry` until 2026-08-28T16:00:00Z and no retry is authorized by
-the review itself; the legacy HTTP status remains unknown.
+one real review tied to the exact 2026-08-27 terminal. The review did not itself
+authorize a retry. After its boundary, the user's separate one-fetch approval
+was exercised successfully and readiness advanced to `ready_for_apply_review`.
+The legacy first-attempt HTTP status remains unknown.
 
 The information-hierarchy and current-payload change layer are implemented in
 repository source: first-level workspaces, shared controls, an opaque sticky

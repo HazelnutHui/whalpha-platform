@@ -30,9 +30,10 @@
   before a package existed. ADR 0045 now preserves safe status/request evidence
   for future attempts. ADR 0047 makes readiness plan-aware and adds a bounded,
   immutable operator-review path without changing the old unknown HTTP status.
-  One real offline review binds that terminal to a conservative
-  2026-08-28T16:00:00Z boundary without authorizing a retry. Recheck readiness
-  only at or after that time before any retry or scheduler consideration.
+  One real offline review bound that terminal to a conservative
+  2026-08-28T16:00:00Z boundary without authorizing a retry. A later separate
+  one-fetch approval succeeded with a frozen 2026-08-27 EOD package and zero
+  Production writes. Readiness now stops at separate Apply review.
   Publication, Snapshot, bundle, and OCI remain separate authorizations.
 - Next product-validation step: review the implemented additive Candidate
   consumer that presents leadership quality and entry location as separate
@@ -222,10 +223,10 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Keep the 2026-08-27 EOD attempt paused until its immutable
-2026-08-28T16:00:00Z boundary. The offline review does not authorize a retry
-after that time, and the old exact-revision controls remain inactive. Product
-development may continue from the formally completed 2026-08-26 inputs.
+Build and inspect the 2026-08-27 EOD approval plan offline, then stop for a
+separate exact canonical-Apply authorization. The fetched package contains
+12,552 results, while canonical EOD and active analytics remain at 2026-08-26.
+No downstream action is implied by fetch success.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

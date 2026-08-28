@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-28 — Complete one authorized 2026-08-27 EOD fetch retry
+
+- After the immutable terminal review boundary, exercised the user's separate
+  `AUTHORIZE_ONE_2026_08_27_EOD_FETCH_ONLY` approval at exact revision
+  `dd314db3074934f5ee20a4f03f3c46c5187ebacc`.
+- Installed short-lived owner-only controls limited to `fetch_eod`; one Massive
+  request returned a formally readable 12,552-result grouped-daily package.
+- The session journal ends in `acquisition_package_ready` with no unresolved
+  start. Formal readiness is now `ready_for_apply_review`.
+- `/data` remains unchanged at 390 files, 202,875,231 bytes, and inventory
+  fingerprint `7d66bc02fe88410a4ed6f000f74875aa135e11d10318ff010a148d03ba08a0de`.
+  No Apply plan, canonical EOD write, analytics, publication, deployment,
+  notification, additional provider request, or scheduler action occurred.
+
 ## 2026-08-28 — Deploy explicit Momentum Breakout stages
 
 - Built and deployed the 50-file OCI release

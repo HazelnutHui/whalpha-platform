@@ -602,16 +602,12 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Diagnose the status-unknown 2026-08-27 EOD terminal without replay and
-   reconcile the Stocks Basic current-session availability boundary.
-2. Plan-aware readiness and immutable operator review are now implemented and
-   tested under ADR 0047. Decide whether the available diagnosis is sufficient
-   to append a real review before provisioning fresh exact-revision controls.
-   SMTP may remain deferred.
-3. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
+1. Formally build and inspect the offline 2026-08-27 EOD approval plan, then
+   make a separate exact canonical-Apply authorization decision.
+2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
-4. Make separate authorization decisions for any EOD retry, analytics continuation,
+3. Make separate authorization decisions for canonical Apply, analytics continuation,
    publication, Snapshot/bundle, OCI deployment, and finally scheduler
    activation.
 
@@ -645,10 +641,13 @@ provider-identity rows and 9,982 instrument/resolver rows, and one canonical
 Identity Apply completed. The subsequent EOD fetch made one request and
 formally ended `permanent_failure`, leaving package, staging, approval plan,
 and canonical EOD targets absent. The old 1.0 terminal did not retain the
-numeric HTTP status. No retry, EOD Apply, analytics calculation, publication,
-deployment, notification, or scheduler activation followed.
+numeric HTTP status. No EOD Apply, analytics calculation, publication,
+deployment, notification, or scheduler activation followed that attempt.
 ADR 0047's plan-aware readiness and operator-review path are repository-tested.
 One real offline review event was appended for the exact old terminal and set
 a conservative 2026-08-28T16:00:00Z boundary. Its legacy HTTP status remains
-unknown, the current state is `waiting_to_retry`, and the review grants no
-retry authority.
+unknown, and the review granted no retry authority by itself. The user later
+authorized one exact EOD-only retry at `dd314db`; one request succeeded with a
+12,552-result frozen package and zero Production writes. The journal ends in
+`acquisition_package_ready`, readiness is `ready_for_apply_review`, and no
+approval plan or canonical 2026-08-27 EOD target exists.
