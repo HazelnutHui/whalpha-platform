@@ -51,9 +51,11 @@
   chronological evaluation panel before any score or threshold is selected.
   ADR 0050 now fixes its sealed-signal/later-outcome and anti-leakage contract;
   the read-only historical audit is complete and returns
-  `NOT_READY_FOR_PERFORMANCE_EVALUATION`. The next step is source and retention
-  design for daily membership, corporate actions/lifecycle, adjustment
-  reconciliation, and a separately authorized 252-session minimum backfill.
+  `NOT_READY_FOR_PERFORMANCE_EVALUATION`. ADR 0051 and Historical Research Data
+  Foundation V1 now complete the source-neutral retention design for daily
+  membership, corporate actions/lifecycle, adjustment reconciliation, and the
+  252/504-session boundary. The next step is a current provider/entitlement and
+  physical-storage review packet before any separately authorized pilot.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -186,20 +188,25 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Sealed-signal/later-outcome chronological evaluation contract
 - [x] Read-only historical strategy-evaluation readiness audit
+- [x] Point-in-time historical research foundation and source capability gap matrix
 
 ## Next Small Target
 
 Keep the 2026-08-27 EOD attempt paused until its immutable
-2026-08-28T16:00:00Z boundary. Product development may continue from the
-formally completed 2026-08-26 inputs. The six-channel typed shadow contract and
-the evaluation boundary and read-only readiness audit are complete. Next define
-the source-neutral retention requirements for daily point-in-time membership,
-corporate actions/lifecycle, explicit adjustment factors, and a 252-session
-minimum backfill. Do not acquire or write that history until provider scope,
-entitlement, request/storage plan, and authorization are separately reviewed.
-Do not select formulas or thresholds from one-session distributions. Keep
-Snapshot 1.8 undeployed until its exact bundle and browser behavior are
-separately reviewed. Keep SMTP and SEC B2 paused.
+2026-08-28T16:00:00Z boundary. The offline review does not authorize a retry
+after that time, and the old exact-revision controls remain inactive. Product
+development may continue from the formally completed 2026-08-26 inputs.
+
+ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
+source capability matrix are complete. Next produce a bounded current
+provider/entitlement and physical-storage review packet: exact endpoint/date
+scope, licensing/retention, request count and pacing, expected rows/bytes,
+source mapping, completion gates, and a small representative pilot. Do not
+access credentials, acquire, or write history until that packet and exact
+authorization are separately reviewed. Do not select formulas or thresholds
+from one-session distributions. Keep Snapshot 1.8 undeployed until its exact
+bundle and browser behavior are separately reviewed. Keep SMTP and SEC B2
+paused.
 
 ## Phase 2 — Intraday and Options
 

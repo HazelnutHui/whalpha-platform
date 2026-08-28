@@ -308,8 +308,15 @@ and standing authorization also remain inactive by exact-revision mismatch.
   coverage, and same-session Identity binding, but found no daily Universe
   membership or corporate-action dataset, all bars flagged with unverified
   all-one adjustment factors, and no retained inactive/delisted Identity rows.
-  The next safe work is source/retention design, not formula tuning or a
-  physical backtest dataset.
+  It established source/retention design—not formula tuning or a physical
+  backtest dataset—as the next safe work at that audit point.
+- Repository source now also accepts ADR 0051 and Historical Research Data
+  Foundation V1. The design separates raw EOD, point-in-time Identity, daily
+  membership, corporate actions, lifecycle/terminal evidence, and explicit
+  adjustment ledgers; 252 sessions is the acquisition floor and 504 is
+  preferred. This adds no physical dataset, provider verification, `/data`
+  write, formula, publication, or deployment. The next work is a bounded
+  current provider/entitlement and physical-storage review packet.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default

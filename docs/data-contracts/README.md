@@ -34,7 +34,18 @@ Accepted logical contracts only:
 - [Classification V1](classification-v1.md)
 - [Universe Membership V1](universe-membership-v1.md)
 
-These documents are not JSON Schema, SQL DDL, sample production data, or provider adapters. EOD Price Bar V1 has an implemented PyArrow Parquet persistence boundary for mocked one-session fixtures only. Provider Instrument Identity V1 has an implemented point-in-time snapshot contract and Parquet persistence boundary, but the first live Massive snapshot did not publish because quality gates failed. The remaining contracts remain logical-only for physical storage.
+These documents are not JSON Schema, SQL DDL, sample production data, or
+provider adapters. EOD Price Bar V1 and the point-in-time Instrument/Provider
+Identity contracts have implemented PyArrow persistence and formal readers.
+The initial blocked live attempts remain historical audit evidence; corrected
+bounded operations subsequently published the current canonical sequence. The
+remaining listed logical-only contracts have no physical storage.
+
+The EOD and point-in-time Identity persistence boundaries now hold 29 completed
+canonical EOD sessions through 2026-08-26 and 30 Identity snapshots through
+2026-08-27. Universe Membership V1 and Corporate Action V1 remain logical-only
+and have no physical dataset. Their required historical composition is defined
+in [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
 
 ## Public Python Import Path
 

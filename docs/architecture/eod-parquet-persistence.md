@@ -6,7 +6,12 @@ This document records the implemented V1 physical persistence boundary for canon
 
 ## Status
 
-Implemented for EOD Price Bar V1. The first production canonical EOD session for 2026-08-13 has been published after Decimal aggregate volume correction. No historical backfill, scheduler, analytics, database, or Dashboard data API is implemented. A default-disabled private read/query API now reads completed canonical EOD sessions for local/private verification.
+Implemented for EOD Price Bar V1. Bounded operations published 29 canonical
+XNYS sessions from 2026-07-17 through 2026-08-26. Canonical readers, private
+analytics, Snapshot publication, and the protected Dashboard consumer are
+implemented. A 252/504-session research backfill, corporate-action adjustment
+reconciliation, database/catalog service, and unattended scheduler are not
+implemented.
 
 ## Implemented Boundary
 
@@ -121,11 +126,10 @@ The refined repository now also publishes `provider-ticker-resolver` as part of 
 - Massive API calls
 - credential loading
 - raw provider payload persistence
-- historical backfill
 - scheduler, cron, or systemd
-- retry or rate-limit implementation
 - corporate-action adjustment reconciliation
-- analytics or public Dashboard data APIs
+- general 252/504-session research backfill
+- public unauthenticated provider-data APIs
 - database or catalog integration
 
 ## Read Boundary

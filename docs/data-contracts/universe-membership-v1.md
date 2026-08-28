@@ -110,6 +110,17 @@ Universe methodology changes create new methodology versions. Daily membership h
 
 Provider reference, price, market cap, and volume inputs may support membership evaluation, but the universe contract records the canonical membership decision and audit facts.
 
+## Historical Implementation Prerequisites
+
+Before physical implementation, a versioned contract revision must bind the
+evaluated-base fingerprint/count, every source dataset fingerprint, origin
+(`as_operated` or `reconstructed_point_in_time`), and included/excluded/
+quarantined disposition totals required by the
+[Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
+Every instrument in the declared evaluated base needs an explicit disposition;
+omission is not exclusion, and missing critical evidence is not silently
+converted to `is_member=false`.
+
 ## Deferred Fields
 
 - exact S&P 500/index constituent source

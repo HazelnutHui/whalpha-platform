@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-27
+Status date: 2026-08-28
 
 This document is the concise current-state summary. Exact publication IDs,
 fingerprints, verification scope, and cross-device handoff are maintained in
@@ -158,6 +158,10 @@ read or used.
   Universe membership, corporate actions, adjustment reconciliation, and
   terminal/delisting identity are absent. Every one of 286,652 retained bars
   carries `adjustment_factors_unverified` and all adjustment factors are one.
+- ADR 0051 now defines the source-neutral historical foundation and retention
+  boundary, but it is design-only. Daily membership, corporate actions,
+  lifecycle/terminal evidence, adjustment ledgers, and 252/504-session history
+  remain physically absent.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.
@@ -400,6 +404,14 @@ contain only `active` records; 84 first-snapshot IDs disappear and 187 latest-
 snapshot IDs are new, with zero inactive/delisted rows or terminal trade dates.
 With a 26-session feature window, the panel can mature at most 3 one-session,
 1 three-session, and 0 five-session signal dates. Use it only for mechanics.
+
+ADR 0051, Historical Research Data Foundation V1, and its repository-evidenced
+source capability matrix are now accepted. They require separate raw EOD,
+point-in-time Identity, daily membership, corporate-action, lifecycle, and
+adjustment families; preserve effective/source-available/ingested clocks; and
+set 252 sessions as the acquisition floor with 504 preferred. The next bounded
+work is a current provider/entitlement and physical-storage review packet, not
+a provider call, `/data` write, bulk backfill, or formula selection.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

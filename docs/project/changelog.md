@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-28 — Point-in-time historical research foundation
+
+- Accepted ADR 0051 and defined the six-family source-neutral foundation:
+  unadjusted EOD, point-in-time Identity, daily Universe membership, corporate
+  actions, lifecycle/terminal evidence, and explicit adjustment ledgers with a
+  separate coverage manifest.
+- Required effective, source-available, and ingested clocks; unknown historical
+  availability cannot become a sealed-signal feature. Current constituents,
+  current classifications, ticker resolvers, and successor maps cannot be
+  projected backward.
+- Fixed 252 sessions as the acquisition floor and 504 as the preferred first
+  target while making feature warm-up, outcome maturity, membership,
+  lifecycle, adjustment, and quarantine coverage separate readiness gates.
+- Added the repository-evidenced source capability matrix. Existing Massive
+  Identity/Grouped Daily mechanics are verified, but historical entitlement,
+  corporate actions, delisting/lineage completeness, and governed adjustments
+  remain unverified or missing.
+- No network/provider request, credential access, `/data` write, backfill,
+  physical dataset, formula, publication, deployment, scheduler, or deletion
+  occurred.
+
 ## 2026-08-27 — Strategy-evaluation historical readiness audit
 
 - Formally read all 29 canonical EOD sessions and their same-date Identity

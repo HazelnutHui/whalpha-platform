@@ -26,8 +26,10 @@ The following decisions remain open. Final workstation storage layout, frontend 
 
 - Final credential rotation and service-injection mechanism beyond the protected local credential file
 - Rate limiter implementation
-- Historical backfill strategy
-- Adjustment reconciliation
+- Exact current provider entitlement, endpoint mix, and pilot scope for the
+  accepted 252/504-session historical foundation
+- Exact adjustment formulas, basis convention, and independent split/dividend
+  reconciliation fixtures before Adjustment Ledger implementation
 - Identity resolution methodology
 - Rejected Massive reference type mapping policy
 - Duplicate ticker handling policy for point-in-time reference snapshots
@@ -45,7 +47,8 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Cloudflare proxy state
 - Cleanup of obsolete OCI port rules
 - OCI swap strategy
-- Data backup and retention policy
+- Backup and recovery policy for no-expiry canonical history; rebuildable panel
+  caches have a 90-day minimum direction but no deletion job is authorized
 - Automatic relationship discovery methodology
 - Parquet compaction strategy
 - Source revision reconciliation policy
@@ -54,7 +57,8 @@ The following decisions remain open. Final workstation storage layout, frontend 
 - Physical Decimal representation in Parquet for future datasets beyond EOD Price Bar V1
 - Exact provider revision reconciliation behavior
 - Operational ownership and update cadence for the accepted offline XNYS calendar dependency
-- Raw provider payload retention policy
+- Whether any future source requires bounded raw-response retention; the
+  accepted default is no raw provider response-body retention
 - Production data-root publish review process for future datasets
 - Formal multi-user authentication and authorization mechanism beyond the personal-prototype session login
 

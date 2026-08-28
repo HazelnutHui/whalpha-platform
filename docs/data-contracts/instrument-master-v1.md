@@ -134,7 +134,12 @@ Provider Instrument Identity V1 and a bounded Instrument Master snapshot ingesti
 
 - Provider-neutral Pydantic model implemented.
 - Validation and serialization tests implemented.
-- No provider mapping implemented.
-- No persistence implemented.
-- No Parquet writer implemented.
-- No market-data ingestion implemented.
+- Massive point-in-time provider mapping is implemented behind the
+  provider-neutral contract.
+- Deterministic Parquet snapshot persistence, a logical completion marker, and
+  formal readers are implemented.
+- Thirty canonical Identity snapshots through 2026-08-27 have been published
+  by bounded operations.
+- Complete historical inactive/delisted coverage, lifecycle/lineage
+  reconciliation, issuer identity, and a 252/504-session research backfill are
+  not implemented.

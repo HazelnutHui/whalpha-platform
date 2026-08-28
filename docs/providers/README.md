@@ -6,6 +6,7 @@ Provider evaluations record official-source review, technical fit, entitlement a
 
 - [Massive Stocks Basic Evaluation](massive-stocks-basic-evaluation.md): Accepted first private EOD development provider.
 - [Massive Adapter Boundary](massive-adapter-boundary.md): Adapter configuration, credential loader, HTTPS transport, smoke-test, and mocked mapping boundary.
+- [Historical Research Source Capability V1](historical-research-source-capability-v1.md): Evidence-scoped capability and gap matrix for the future point-in-time research foundation.
 
 ## Rules
 

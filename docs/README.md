@@ -55,6 +55,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Dashboard Universe Activation](architecture/dashboard-universe-activation.md): Formal reader, analytics, snapshot, and selector boundary.
 - [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md): Implemented read repository, query service, and default-disabled private API boundary.
 - [EOD Return Analytics](architecture/eod-return-analytics.md): Close-to-close returns, Market Summary V1, movers, and Liquidity Map V1 semantics.
+- [Historical Research Data Foundation V1](architecture/historical-research-data-foundation-v1.md): Point-in-time membership, corporate-action/lifecycle, adjustment, coverage, and retention requirements before strategy evaluation.
 - [Instrument Identity Resolution](architecture/instrument-identity-resolution.md): Deterministic provider identity mapping and current Instrument Master snapshot gate result.
 - [Data Boundaries](architecture/data-boundaries.md): Market Data Provider boundary and data authorization rules.
 - [Event Layer](architecture/event-layer.md): Lightweight event positioning and deferred long-term model.
@@ -79,6 +80,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Provider Evaluations](providers/README.md)
 - [Massive Stocks Basic Evaluation](providers/massive-stocks-basic-evaluation.md): Accepted first private EOD development provider.
 - [Massive Adapter Boundary](providers/massive-adapter-boundary.md): Configuration, credential, transport, smoke-test, and mapping boundary.
+- [Historical Research Source Capability V1](providers/historical-research-source-capability-v1.md): Repository-evidenced source, entitlement, implementation, and gap matrix for 252/504-session history.
 
 ## API
 
@@ -130,6 +132,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0048: Split Candidate summary/detail delivery](decisions/0048-split-candidate-summary-from-on-demand-detail.md): reduces first-load Candidate bytes while preserving lossless, on-demand explanation and full source binding.
 - [ADR 0049: Separate Candidate strategy channels](decisions/0049-separate-candidate-strategy-channels.md): fixes independent same-archetype research channels and prohibits a cross-strategy total score.
 - [ADR 0050: Seal strategy signals before outcomes](decisions/0050-seal-strategy-signals-before-forward-outcomes.md): separates contemporaneous point-in-time signals from later stock outcomes and prohibits random-split leakage.
+- [ADR 0051: Require a point-in-time historical research foundation](decisions/0051-require-point-in-time-historical-research-foundation.md): requires governed membership, actions, lifecycle, adjustments, and coverage before formula evaluation.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md): Approval, atomic publication, recovery, rollback, and downstream order.
 - [2026-08-19 Dashboard Universe Activation Audit](audits/dashboard-universe-activation-2026-08-19.md): Completed two-Universe publication and integrity evidence.
 - [2026-08-20 Selectable Universe Deployment Audit](audits/selectable-universe-dashboard-deployment-2026-08-20.md): Snapshot, bundle, OCI, and unauthenticated protection evidence.

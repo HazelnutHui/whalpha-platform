@@ -126,9 +126,18 @@ is separate from the Identity snapshot bound into latest EOD.
 Readiness 1.1 is now plan-aware: the active Stocks Basic EOD profile requires
 an immutable operator availability review before a first current-session EOD
 request. Journal 1.3 is repository-tested for 1.2 compatibility and supports
-one exact terminal-bound operator review without deleting history. This path
-is repository-tested only; no real review, retry, new external control,
+one exact terminal-bound operator review without deleting history. One real
+offline review now binds the 2026-08-27 terminal to a conservative
+2026-08-28T16:00:00Z boundary. It authorizes no retry; no new external control,
 scheduler, publication, or deployment has been authorized.
+
+Repository source also defines six independent Candidate strategy channels,
+sealed-signal/later-outcome evaluation contracts, and ADR 0051's point-in-time
+historical research foundation. The 29-session history remains mechanics-only.
+Daily membership, corporate actions, lifecycle/terminal evidence, explicit
+adjustments, and 252/504-session history are still physically absent; the next
+work is a provider/entitlement and physical-storage review packet, not formula
+tuning or bulk acquisition.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

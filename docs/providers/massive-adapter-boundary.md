@@ -20,7 +20,7 @@ This document records the implemented Massive Stocks adapter skeleton boundary. 
 
 ## Status
 
-Implemented Credential and Transport Boundary — Smoke-Test Verified
+Implemented Bounded Identity and EOD Boundary
 
 Implemented:
 
@@ -35,20 +35,17 @@ Implemented:
 - Massive Grouped Daily and Custom Bars mapping to EOD Price Bar V1
 - deterministic internal UUID strategy for mocked mapping
 - local mocked-response tests
+- bounded point-in-time Identity and Grouped Daily acquisition/Apply workflows
+- fixed serial pacing, request-count evidence, and immutable attempt custody at
+  the administrator workflow layer
 
 Not implemented:
 
-- storing a real API key in Git
-- historical EOD backfill
-- production EOD serving workflow
-- scheduling
-- rate limiter
-- retry policy
-- complete pagination/backfill
-- split/dividend reconciliation
-- production identity master
-- private access control
-- OCI deployment
+- corporate-action and lifecycle adapters
+- verified split/dividend/total-return adjustment ledgers
+- general 252/504-session historical research backfill
+- unattended scheduler activation
+- complete inactive/delisted and successor reconciliation
 
 ## Configuration Environment-Variable Contract
 
@@ -123,9 +120,12 @@ The adapter does not sleep, retry, or expose raw response bodies.
 
 ## Pagination and Rate-Limit Boundary
 
-The adapter includes minimal pagination support for deterministic mocked tests. It strips `apiKey` from `next_url` query params, validates the next URL host against the configured base URL, detects pagination loops, and enforces a page limit.
-
-A real rate limiter is not implemented. The live smoke test is limited to one read-only reference request and does not retry. Future adapter work must respect the Basic plan's 5 calls/minute limit with central pacing, no concurrency burst, resumable backfill, and request audit without secrets.
+The adapter strips `apiKey` from `next_url` query params, validates the next URL
+host against the configured base URL, detects pagination loops, and enforces a
+page limit. Bounded administrator ingestion applies fixed serial pacing and no
+concurrency burst; the adapter itself still does not sleep or retry. A future
+252/504-session planner must preserve central pacing, bounded `Retry-After`,
+resumability, idempotency, and request audit without secrets.
 
 ## Real-Network Activation Prerequisites
 
@@ -146,10 +146,9 @@ Before any additional Massive request:
 A bounded All Tickers pagination path now exists for point-in-time Instrument Master snapshot ingestion. It uses the existing credential and transport boundary and does not store raw provider payloads. The first live run completed 14 reference requests for 2026-08-13 but did not publish because the initial gates were too broad. After refining expected exclusions, eligible coverage, and ticker ambiguity handling, the second run published the point-in-time Instrument Master, identity, and ticker resolver snapshots.
 
 - storing, printing, logging, or committing a real API key
-- making ingestion, backfill, analytics, or bulk data API calls
-- historical EOD backfill
 - writing database records
-- implementing scheduling, retries, or full backfill
 - implementing corporate actions
-- implementing real identity resolution
+- implementing complete lifecycle/lineage resolution
+- implementing a general research-history backfill
+- activating an unattended scheduler
 - exposing provider-backed data publicly

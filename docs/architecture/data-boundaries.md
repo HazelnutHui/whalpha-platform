@@ -25,14 +25,33 @@ The Initial EOD data boundary is now documented as accepted logical contracts:
 - [Normalized Market Data Contracts](normalized-market-data-contracts.md)
 - [Data Contracts](../data-contracts/README.md)
 
-Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic validation models. The remaining contracts are logical-only. EOD Price Bar V1 now has an explicit PyArrow Parquet schema and mocked-fixture persistence tests. The remaining contracts are not implemented as Parquet schemas, provider adapters, or database tables.
+Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic
+validation models with point-in-time/per-session PyArrow persistence, formal
+manifests, and canonical readers. Provider Identity and ticker resolution are
+also physically implemented. Universe Membership V1, Corporate Action V1, and
+the other listed logical-only contracts are not implemented as physical
+Parquet datasets, provider adapters, or database tables.
 
 
 ## Implemented Provider Boundary
 
 The minimal synchronous provider boundary is implemented in `tip_api.providers.market_data` and documented in [Market Data Provider Boundary](market-data-provider-boundary.md). It currently supports only Instrument Master and EOD Price Bar retrieval through canonical contracts.
 
-The Massive adapter boundary now implements configuration validation, credential redaction, secure credential-file loading, a minimal standard-library HTTPS transport, injected fake transport tests, and local response mapping tests. One read-only Stocks reference smoke test has verified authentication and reference entitlement. A mocked-fixture EOD Price Bar ingestion and Parquet persistence slice exists for temporary test roots. The first 2026-08-13 Grouped Daily canonical EOD partition is published. A provider-neutral read repository and default-disabled private query API can read completed canonical sessions locally. Analytics, Dashboard data flow, formal authentication, public provider-backed routes, and provider-backed deployment are not implemented.
+The Massive boundary implements configuration validation, credential
+redaction, protected credential loading, bounded HTTPS transport, fake-
+transport tests, All Tickers pagination, Grouped Daily mapping, canonical
+Identity/EOD Apply workflows, and request custody. Bounded operations produced
+the current 30 Identity snapshots and 29 EOD partitions. Provider-neutral
+readers, private analytics, protected Snapshot serving, Session authentication,
+and deployment exist outside the adapter. Corporate actions, lifecycle,
+verified adjustments, general historical research backfill, and unattended
+scheduling remain unimplemented.
+
+The future performance-evaluation boundary is defined separately in
+[Historical Research Data Foundation V1](historical-research-data-foundation-v1.md).
+It requires point-in-time daily membership, corporate actions, lifecycle and
+terminal evidence, explicit adjustment ledgers, and bounded coverage manifests
+before a historical panel can be declared research ready.
 
 ## Provider Selection Status
 
