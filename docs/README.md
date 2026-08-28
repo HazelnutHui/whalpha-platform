@@ -81,6 +81,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Massive Stocks Basic Evaluation](providers/massive-stocks-basic-evaluation.md): Accepted first private EOD development provider.
 - [Massive Adapter Boundary](providers/massive-adapter-boundary.md): Configuration, credential, transport, smoke-test, and mapping boundary.
 - [Historical Research Source Capability V1](providers/historical-research-source-capability-v1.md): Repository-evidenced source, entitlement, implementation, and gap matrix for 252/504-session history.
+- [2026-08-28 Massive Historical Research Review](providers/massive-historical-research-review-2026-08-28.md): Current official plan, endpoint, licensing, guest-compatibility, and entitlement gates.
 
 ## API
 
@@ -109,6 +110,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md): Sealed point-in-time signals, separately matured stock outcomes, and anti-leakage evaluation policy.
 - [Candidate Entry Geometry V1](data-contracts/candidate-entry-geometry-v1.md): Offline source audit and additive consumer contract separating leadership quality from entry location and chase risk.
 - [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md): Dell-only compute/data authority, worktree-safe runner, measured baseline, and deterministic optimization sequence.
+- [Historical Research Storage and Pilot Plan V1](operations/historical-research-storage-and-pilot-plan-v1.md): Dell capacity, physical families, request estimates, fixture sequence, and bounded pilot gates.
 - [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): XNYS/provider readiness, bounded retry, provider-attempt custody, exact-session planning, single-action offline execution, interruption recovery, and remaining unattended-operation gates.
 - [ADR 0022: Verified-prior Candidate increment](decisions/0022-bind-daily-candidate-calculation-to-a-verified-prior-audit.md): separates daily append validation from the cold full-replay reference.
 - [ADR 0030: Single-action daily custody](decisions/0030-custody-one-offline-daily-action-at-a-time.md): binds one offline action to an unchanged plan, immutable journal, lock, post-action re-plan, and inspection-only recovery.

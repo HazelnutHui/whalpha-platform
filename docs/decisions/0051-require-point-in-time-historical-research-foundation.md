@@ -56,7 +56,9 @@ the preferred first research target. Session count alone never grants
 performance eligibility: feature warm-up, forward-outcome maturity, membership
 coverage, lifecycle coverage, adjustment reconciliation, and quarantine rates
 must also pass. Until a separate deletion policy is accepted, canonical facts,
-superseded revisions, and completion manifests have no automatic expiry.
+superseded revisions, and completion manifests have no automatic expiry while
+their source permission remains valid. Provider termination/deletion duties
+override this direction.
 
 No provider is selected as the exclusive source. The repository-evidenced
 capability matrix is recorded in

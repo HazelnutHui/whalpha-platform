@@ -6,10 +6,11 @@ This matrix separates repository-verified capability, publicly documented
 potential, live entitlement, and missing implementation for the historical
 research foundation.
 
-It uses only evidence already recorded in the repository through 2026-08-27.
-No documentation site, provider, credential, or network endpoint was accessed
-for this matrix. Externally controlled plan, endpoint, price, rate-limit,
-history, and licensing facts must be freshly reviewed before acquisition.
+Repository evidence through 2026-08-27 was reconciled with official public
+Massive pricing, endpoint, flat-file, and Market Data Terms pages on
+2026-08-28. No account endpoint, credential, or provider data was accessed.
+Externally controlled plan, endpoint, price, rate-limit, history, and licensing
+facts must still be rechecked before acquisition.
 
 ## Status meanings
 
@@ -25,12 +26,12 @@ history, and licensing facts must be freshly reviewed before acquisition.
 
 | Required family | Repository evidence | Massive potential recorded in repository | Live/physical state | Current conclusion |
 | --- | --- | --- | --- | --- |
-| Broad-market daily unadjusted OHLCV | Grouped Daily `adjusted=false` published 29 sessions | Grouped Daily and Custom Bars documented; Basic previously listed two years history | Grouped Daily current-session path verified; Custom Bars and broad historical entitlement unverified | `verified_current` for bounded daily sessions; `documented_unverified` for 252/504 backfill |
-| Point-in-time reference Identity | All Tickers pagination produced 30 dated snapshots | Date query, active/inactive fields, identifiers, delisting metadata documented as potential inputs | Current dated snapshots verified; historical inactive/delisted completeness not verified | `verified_current` for snapshot mechanics; insufficient for lifecycle history |
+| Broad-market daily unadjusted OHLCV | Grouped Daily `adjusted=false` published 29 sessions | Official page shows Basic access, two-year history, one date per request, and unadjusted option | Grouped Daily current-session path verified; broad historical account entitlement unverified | `verified_current` for bounded daily sessions; `documented_unverified` for 252/504 backfill |
+| Point-in-time reference Identity | All Tickers pagination produced 30 dated snapshots | Official page shows Basic/two-year access, date query, active/inactive filter, identifiers, max 1,000/page | Current active snapshots verified; historical and inactive/delisted completeness not verified | `verified_current` for snapshot mechanics; insufficient for lifecycle history |
 | Daily Universe Membership | One active Activation and one full-base decision session | No provider response can replace WH Alpha methodology | No physical daily dataset | `derived_required` and a hard blocker |
 | Historical security-form evidence | One provider evidence date | Point-in-time reference/type endpoints may supply observations | Historical coverage and revision semantics unverified | `documented_unverified`; cannot backcast current evidence |
-| Splits/reverse splits | Corporate actions listed in recorded Basic plan/docs | Current Splits endpoint documented | No adapter, request, entitlement test, or dataset | `documented_unverified` |
-| Cash/stock dividends | Corporate actions listed in recorded Basic plan/docs | Current Dividends endpoint documented | No adapter, request, entitlement test, or dataset | `documented_unverified` |
+| Splits/reverse splits | Corporate actions listed in Basic | Official current endpoint shows all-plan access, two-year Basic history, max 5,000/page, ratios and adjustment fields | No adapter, authenticated request, or dataset | `documented_unverified` |
+| Cash/stock dividends | Corporate actions listed in Basic | Official current endpoint shows all-plan access, two-year Basic history, max 5,000/page, event dates/cash/adjustment fields | No adapter, authenticated request, or dataset | `documented_unverified` |
 | Ticker events/symbol continuity | Ticker Events documentation recorded as experimental | May support symbol changes | No request, mapping, or reliability review | `documented_unverified`; cannot be sole lineage source |
 | Merger/spinoff/successor lineage | Corporate Action V1 permits relationships | No complete source established | No canonical source or dataset | `missing` |
 | Delisting and terminal outcome | Current snapshots expose no retained inactive/delisted rows or terminal dates | All Tickers may expose status and delisting metadata | Completeness, cash consideration, last tradable session, and successor coverage unverified | `missing` as an evaluation-ready source |
@@ -54,11 +55,17 @@ Grouped Daily mechanics. It does not yet prove:
 - that stored history may be retained or displayed beyond the existing private
   personal-use boundary.
 
-The recorded Basic-plan history claim was two years as of 2026-08-27. That
+The current public Basic-plan history claim remained two years on 2026-08-28. That
 could cover the 252-session floor and approach the 504-session target if the
 exact date boundary, entitlement, endpoint behavior, retention, and
 completeness are verified. It is not enough for long-cycle research and is not
-a current entitlement assertion.
+a current account-entitlement assertion.
+
+The current Market Data Terms add a separate hard product gate: individual-use
+data is described as owner-only, third-party Market Data/Derived Works display
+is restricted, non-display/derivative use may require a separate license, and
+account termination requires deletion. See the dated
+[Massive Historical Research Review](massive-historical-research-review-2026-08-28.md).
 
 ## Source composition direction
 

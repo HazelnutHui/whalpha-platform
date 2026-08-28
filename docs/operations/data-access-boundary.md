@@ -42,11 +42,19 @@ remains a data-free login surface.
 
 
 
-The current personal prototype may be used by the owner and a small circle of
-friends through equal-capability guest or credential Sessions. This engineering
-decision does not establish provider public-display or redistribution rights;
-terms and account entitlement must be rechecked before broader promotion or
-commercial use.
+The equal-capability guest Session is technically implemented and currently
+loads the same provider-derived payload as credential login. The 2026-08-28
+official-terms review found that Massive individual-use data is described as
+owner-only and cannot be used for an application intended for other end users
+or displayed as Market Data/Derived Works to third parties without permission.
+Therefore a small circle of friends is not cleared merely because the site is
+Session protected or non-commercial. No further Massive-backed guest/friend
+expansion is allowed until express permission, a suitable license, or an
+alternate display-compatible source is documented.
+
+This finding does not itself authorize an access change, data deletion, or
+deployment. The active guest posture requires a separate user decision and
+operational action.
 
 Required properties:
 

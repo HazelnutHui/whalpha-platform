@@ -54,8 +54,10 @@
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. ADR 0051 and Historical Research Data
   Foundation V1 now complete the source-neutral retention design for daily
   membership, corporate actions/lifecycle, adjustment reconciliation, and the
-  252/504-session boundary. The next step is a current provider/entitlement and
-  physical-storage review packet before any separately authorized pilot.
+  252/504-session boundary. The current public provider review and Dell
+  storage/request plan are also complete. The next repository-safe step is
+  fixture-only physical contracts/readers; real provider work remains blocked
+  on permission, entitlement, and lifecycle-source review.
 
 This roadmap is a proposed sequence, not a commitment or date plan.
 
@@ -198,15 +200,20 @@ after that time, and the old exact-revision controls remain inactive. Product
 development may continue from the formally completed 2026-08-26 inputs.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
-source capability matrix are complete. Next produce a bounded current
-provider/entitlement and physical-storage review packet: exact endpoint/date
-scope, licensing/retention, request count and pacing, expected rows/bytes,
-source mapping, completion gates, and a small representative pilot. Do not
-access credentials, acquire, or write history until that packet and exact
-authorization are separately reviewed. Do not select formulas or thresholds
-from one-session distributions. Keep Snapshot 1.8 undeployed until its exact
-bundle and browser behavior are separately reviewed. Keep SMTP and SEC B2
-paused.
+source capability matrix are complete. The 2026-08-28 official-source review
+and physical storage/request plan are also complete and return
+`NOT_READY_FOR_PROVIDER_PILOT_AUTHORIZATION`: equal-capability guest use is not
+compatible with the documented owner-only terms, owner non-display/derived use
+needs clarification, live historical/corporate-action entitlement is
+unverified, and full lifecycle sources are absent.
+
+Next implement only provider-neutral physical contracts, temporary-root
+Parquet writers/readers, and synthetic corporate-action/lifecycle/adjustment/
+membership fixtures. Do not access credentials, acquire, or write history
+until source permission, product posture, account entitlement, and an exact
+pilot are separately reviewed. Do not select formulas or thresholds from one-
+session distributions. Keep Snapshot 1.8 undeployed until its exact bundle and
+browser behavior are separately reviewed. Keep SMTP and SEC B2 paused.
 
 ## Phase 2 — Intraday and Options
 

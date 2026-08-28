@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-28 — Massive historical source and Dell pilot review
+
+- Rechecked official public Stocks Basic pricing, Grouped Daily, All Tickers,
+  Splits, Dividends, experimental Ticker Events, Day Aggregates flat files, and
+  Market Data Terms without accessing an account endpoint or credential.
+- Confirmed the public Basic shape: five calls/minute, two years history,
+  end-of-day/reference/corporate actions, no flat files; Grouped Daily is one
+  date/request, All Tickers is point-in-time with 1,000/page, and current
+  Splits/Dividends allow 5,000/page.
+- Recorded `NOT_READY_FOR_PROVIDER_PILOT_AUTHORIZATION`. Official individual-
+  use terms describe owner-only application use, restrict third-party Market
+  Data/Derived Works display and non-display/derivative use, and require
+  deletion on termination. This conflicts with equal-capability guest/friend
+  use and requires account-specific clarification for retained research.
+- Measured current Dell families and projected EOD plus Identity at about
+  0.83 GB for 252 sessions and 1.66 GB for 504. Identity pagination dominates:
+  roughly 13–19 serial hours for the missing 223-session floor or 28–40 hours
+  for the missing 475-session target under observed/ceiling page counts.
+- Added a proposed 10 GiB canonical plus 10 GiB staging budget, physical family
+  layout, fixture-first implementation order, and an 80-request maximum future
+  pilot. No provider request, credential access, `/data` write, access change,
+  deletion, publication, deployment, or scheduler action occurred.
+
 ## 2026-08-28 — Point-in-time historical research foundation
 
 - Accepted ADR 0051 and defined the six-family source-neutral foundation:

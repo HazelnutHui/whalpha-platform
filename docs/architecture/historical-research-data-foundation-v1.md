@@ -211,16 +211,18 @@ Universe.
 
 | Data class | Initial retention direction | Reason |
 | --- | --- | --- |
-| Canonical EOD, Identity, Membership | No automatic expiry; 504-session initial operating target | Reproducible point-in-time research |
-| Corporate actions and lifecycle | Append-only, no automatic expiry | Sparse events affect all later interpretation |
-| Adjustment revisions and manifests | No automatic expiry | Reproduce prior labels and methodology |
+| Canonical EOD, Identity, Membership | No automatic expiry while source permission remains valid; 504-session initial operating target | Reproducible point-in-time research |
+| Corporate actions and lifecycle | Append-only while source permission remains valid | Sparse events affect all later interpretation |
+| Adjustment revisions and manifests | No automatic expiry while their source facts may lawfully be retained | Reproduce prior labels and methodology |
 | Sealed signals and matured outcomes | No automatic expiry after implementation | Preserve genuine out-of-sample evidence |
 | Rebuildable panel caches | At least 90 days; content-addressed and safely disposable only by a future policy | Runtime efficiency, not canonical evidence |
 | Staging and partial acquisition files | Operation-bounded; cleanup only after formal terminal classification | Avoid ambiguous partial state |
 | Raw provider response bodies | Do not retain by default | Licensing, sensitive content, and unnecessary duplication; revisit explicitly |
 
-This direction creates no deletion job. A future retention change must account
-for provider terms, backup, recovery, and evaluation reproducibility.
+This direction creates no deletion job. Source-specific termination or deletion
+obligations override the no-expiry direction. A future retention change must
+account for provider terms, account termination, backup, recovery, and
+evaluation reproducibility through a separately reviewed deletion procedure.
 
 ## History depth
 

@@ -145,7 +145,10 @@ does not establish issuer structure or domicile. There is no automated daily
 ingestion, database/catalog service, general production API, point-in-time
 sector taxonomy, fundamentals, valuation, or options dataset. Equal-capability
 guest Session entry is implemented in repository source; it does not create a
-role or a second data surface.
+role or a second data surface. The 2026-08-28 official Massive terms review
+found that this guest/friend posture is not cleared for the provider-derived
+payload under the documented owner-only boundary; no access change has yet
+been authorized.
 See the [authoritative current context](docs/project/current-context.md) for
 the exact active publications, fingerprints, verification boundary, and next
 authorized work.

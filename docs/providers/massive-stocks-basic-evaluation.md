@@ -10,7 +10,7 @@ Accepted for Private EOD Development — Bounded Identity and EOD Workflows Veri
 
 ## Last Reviewed
 
-2026-08-27
+2026-08-28
 
 ## Official Sources
 
@@ -147,21 +147,37 @@ The Day Aggregates Flat Files documentation lists Stocks Basic as not included. 
 
 Operational Interpretation — Not Legal Advice.
 
-Massive Market Data Terms restrict Market Data use to personal, non-business, non-commercial, non-transferable use under the applicable agreement and restrict unauthorized redistribution or public display. The restrictions also cover charts, analytics, research, and other derived works based on Market Data.
+Massive Market Data Terms restrict Market Data use to personal, non-business,
+non-commercial, non-transferable use under the applicable agreement. The
+2026-08-28 review found explicit language prohibiting an application intended
+for end users other than the subscriber and third-party display/transfer of
+Market Data or Derived Works. The terms also restrict non-display/derivative
+use unless licensed and require deletion of Market Data after account
+termination.
 
 Accepted engineering boundary:
 
 - Massive-backed real-data pages are private-owner only unless a suitable authorization or license is obtained.
+- Session protection or a “friends only” guest link does not make another end
+  user an owner-only use.
 - Provider-backed API responses must be protected before deployment.
 - Public static exports must not contain restricted provider data or provider-derived analytics.
 - Public demos must use synthetic/demo fixtures or data with explicit public-display rights.
 - Public release requires terms review and, where appropriate, legal/compliance review.
+- Owner-only research calculation and long-term retention require
+  account-specific permission clarification before historical expansion.
 
 ## Deployment Implications
 
 The workstation remains the source of truth for provider access, data processing, and derived results. OCI remains a lightweight public serving layer.
 
-The personal-prototype path subsequently selected and implemented a private server-side session boundary for static Dashboard snapshots. Git records successful deployment verification, but this document does not grant public display rights or assert current live OCI health. Any broader public or commercial use still requires a fresh terms and authorization review.
+The personal-prototype path subsequently selected and implemented a server-side
+Session boundary plus equal-capability guest entry for static Dashboard
+snapshots. The guest behavior is technically active but is not compatible with
+the currently documented owner-only Massive boundary absent express permission
+or an alternate source. This document authorizes no access or deployment
+change. See the dated
+[historical research review](massive-historical-research-review-2026-08-28.md).
 
 ## Public Demo Boundary
 

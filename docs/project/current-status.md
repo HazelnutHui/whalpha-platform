@@ -131,6 +131,12 @@ read or used.
   valuation model, options chain, implied volatility, Greeks, open interest,
   true fund-flow data, automated daily ingestion, scheduler, database/catalog
   service, or general production API exists.
+- The 2026-08-28 official Massive terms review found a material product/source
+  conflict: individual-use data is described as owner-only, while the active
+  equal-capability guest path serves the same provider-derived payload to other
+  users. Session protection and non-commercial friend use do not establish
+  permission. Owner-only non-display/derivative calculation and retention also
+  require clarification. No access or deployment change has been authorized.
 - Historical analytics replay current-as-of membership and are not a
   survivorship-free backtest.
 - The OCI bundle helper's `--snapshot-release` shortcut still resolves the
@@ -409,9 +415,17 @@ ADR 0051, Historical Research Data Foundation V1, and its repository-evidenced
 source capability matrix are now accepted. They require separate raw EOD,
 point-in-time Identity, daily membership, corporate-action, lifecycle, and
 adjustment families; preserve effective/source-available/ingested clocks; and
-set 252 sessions as the acquisition floor with 504 preferred. The next bounded
-work is a current provider/entitlement and physical-storage review packet, not
-a provider call, `/data` write, bulk backfill, or formula selection.
+set 252 sessions as the acquisition floor with 504 preferred.
+
+The 2026-08-28 public-source review and Dell storage/request plan are now
+complete. Basic publicly advertises five calls/minute, two years of EOD,
+reference, and corporate-action history with the required Grouped Daily, All
+Tickers, Splits, and Dividends shapes. A 504-session EOD+Identity projection is
+about 1.66 GB before new families, so disk is not the blocker; historical
+Identity pagination would take roughly 28–40 serial hours from the current
+29-session base. Provider permission, live endpoint entitlement, and missing
+merger/successor/terminal sources block a real pilot. The next repository-safe
+work is physical contracts/readers and synthetic-fixture validation only.
 
 The active Candidate JSON is about 20.4 MB. Repository source now implements
 Snapshot 1.8 / Dashboard 2.5 summary/on-demand-detail delivery without changing

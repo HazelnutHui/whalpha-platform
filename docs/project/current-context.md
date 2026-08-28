@@ -315,8 +315,15 @@ and standing authorization also remain inactive by exact-revision mismatch.
   membership, corporate actions, lifecycle/terminal evidence, and explicit
   adjustment ledgers; 252 sessions is the acquisition floor and 504 is
   preferred. This adds no physical dataset, provider verification, `/data`
-  write, formula, publication, or deployment. The next work is a bounded
-  current provider/entitlement and physical-storage review packet.
+  write, formula, publication, or deployment.
+- That 2026-08-28 public-source/storage review is now complete. Massive Basic's
+  documented EOD, point-in-time reference, split, and dividend shapes are
+  technically plausible, and projected Dell storage is small. A real pilot is
+  not authorized: current account entitlement is unverified, complete merger/
+  successor/terminal evidence is missing, and official individual-use terms
+  conflict with equal-capability friend/guest access and raise a separate non-
+  display/derived-use question. No access, data, or deployment state changed.
+  The next safe slice is fixture-only physical contracts/readers.
 - Production contains the tested first-level workspace
   shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
   Market Regime & Opportunities is the first navigation item and default
@@ -362,7 +369,8 @@ and cannot replace this separately authorized OCI check.
 This handoff does not authorize provider or SEC access, credential inspection,
 EOD or Identity acquisition, scheduler changes, Activation, publication,
 Snapshot creation, bundle generation, OCI deployment or rollback, guest
-access, further UI implementation, or another quantitative feature. The
+access, further UI implementation, another quantitative feature, or guest/
+source licensing remediation. The
 completed 2026-08-26 publication and deployment described above are evidence,
 not continuing authorization.
 

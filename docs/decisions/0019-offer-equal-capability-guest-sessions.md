@@ -78,3 +78,17 @@ Session rather than implying a particular identity.
 - role-based data, language, Universe, precision, or feature differences
 - automated trading or brokerage access
 - changing provider acquisition or data-publication rights
+
+## 2026-08-28 provider compatibility finding
+
+The equal-capability implementation remains an accurate product decision, but
+the current official Massive individual-use terms describe Market Data as
+owner-only, prohibit an application intended for other end users, and restrict
+third-party display of Market Data and Derived Works. Session protection and
+non-commercial friend access do not resolve that source-permission gap.
+
+This ADR does not override provider terms. Massive-backed guest/friend use is
+blocked as a supported data-source posture until the user obtains compatible
+permission/license or selects an alternate display-compatible source. The
+finding does not itself authorize disabling guest access, changing payloads,
+deleting data, or deploying a replacement.
