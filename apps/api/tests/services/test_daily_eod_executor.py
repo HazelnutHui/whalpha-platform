@@ -41,6 +41,7 @@ def _paths(tmp_path: Path) -> DailyEodAutomationPaths:
         market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
         snapshot_output_root=Path(f"/tmp/{suffix}-snapshot-output"),
         snapshot_approval_plan=Path(f"/tmp/{suffix}-snapshot-plan.json"),
+        serving_bundle_root=Path(f"/tmp/{suffix}-serving-bundle"),
     )
 
 
@@ -412,6 +413,7 @@ def test_recovery_rejects_paths_that_differ_from_started_attempt(tmp_path) -> No
         market_intelligence_approval_plan=config.paths.market_intelligence_approval_plan,
         snapshot_output_root=config.paths.snapshot_output_root,
         snapshot_approval_plan=config.paths.snapshot_approval_plan,
+        serving_bundle_root=config.paths.serving_bundle_root,
     )
     changed = executor.DailyEodExecutionConfig(
         target_session=config.target_session,
@@ -587,3 +589,49 @@ def test_default_runner_invokes_only_the_selected_offline_administrator(
         assert value in argv
     assert evidence.summary_bytes > 0
     assert len(evidence.summary_sha256) == 64
+
+
+def test_bundle_runner_uses_exact_snapshot_and_offline_build_inputs(
+    monkeypatch, tmp_path
+) -> None:
+    config = replace(
+        _config(tmp_path),
+        bundle_built_at=datetime(2026, 8, 29, 12, 0, tzinfo=UTC),
+    )
+    release_id = "2026-08-29T120000Z-abcdef012345"
+    approval = SimpleNamespace(
+        release_id=release_id,
+        target_path="/data/trading-intelligence-platform/snapshot",
+        market_intelligence_publication_id=release_id,
+    )
+    calls = []
+    monkeypatch.setattr(
+        executor, "read_dashboard_snapshot_approval_plan", lambda _path: approval
+    )
+    monkeypatch.setattr(executor, "_source_repository_root", lambda: tmp_path)
+    monkeypatch.setattr(
+        executor.subprocess,
+        "run",
+        lambda command, **kwargs: calls.append((command, kwargs))
+        or SimpleNamespace(returncode=0),
+    )
+    monkeypatch.setattr(
+        executor,
+        "read_oci_dashboard_serving_bundle",
+        lambda *_args, **_kwargs: SimpleNamespace(
+            bundle_logical_fingerprint="c" * 64,
+            checksum_file_count=50,
+        ),
+    )
+
+    evidence = executor.run_offline_action(
+        NextAction.BUILD_SERVING_BUNDLE, config
+    )
+
+    command, kwargs = calls[0]
+    assert command[0].endswith("scripts/admin/build-oci-dashboard-bundle.sh")
+    assert command[command.index("--snapshot-path") + 1] == approval.target_path
+    assert command[command.index("--bundle-release") + 1] == release_id
+    assert command[command.index("--build-timestamp") + 1] == "2026-08-29T12:00:00Z"
+    assert kwargs["env"]["npm_config_offline"] == "true"
+    assert evidence.output_path == str(config.paths.serving_bundle_root / release_id)

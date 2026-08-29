@@ -94,3 +94,4 @@ Each ADR should include:
 - [0069: Custody One-Shot Market Intelligence Apply](0069-custody-one-shot-market-intelligence-apply.md)
 - [0070: Custody the Daily Dashboard Snapshot Plan](0070-custody-daily-dashboard-snapshot-plan.md)
 - [0071: Custody One-Shot Dashboard Snapshot Apply](0071-custody-one-shot-dashboard-snapshot-apply.md)
+- [0072: Custody Daily Serving-Bundle Construction](0072-custody-daily-serving-bundle-construction.md)

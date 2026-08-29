@@ -52,7 +52,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.9"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.10"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -66,6 +66,7 @@ class CoordinatorStatus(StrEnum):
     READY_FOR_OFFLINE_EXECUTION = "ready_for_offline_execution"
     TRANSITION_EXECUTED = "transition_executed"
     PUBLICATION_REVIEW_READY = "publication_review_ready"
+    DEPLOYMENT_REVIEW_READY = "deployment_review_ready"
     BLOCKED = "blocked"
 
 
@@ -82,6 +83,7 @@ class DailyEodCoordinatorConfig:
     publication_created_at: datetime | None = None
     publication_expected_current_state_fingerprint: str | None = None
     snapshot_generated_at: datetime | None = None
+    bundle_built_at: datetime | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -257,8 +259,20 @@ def coordinate_daily_eod_transition(
         if plan.next_action not in {
             NextAction.REVIEW_PUBLICATION,
             NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+            NextAction.REVIEW_BUNDLE_DEPLOYMENT,
         }:
             raise DailyEodCoordinatorError("analytics-ready plan has an invalid action")
+        if plan.next_action is NextAction.REVIEW_BUNDLE_DEPLOYMENT:
+            if apply_market_intelligence or apply_dashboard_snapshot:
+                raise DailyEodCoordinatorError(
+                    "publication Apply cannot run after bundle construction"
+                )
+            return _result(
+                status=CoordinatorStatus.DEPLOYMENT_REVIEW_READY,
+                next_action=NextAction.REVIEW_BUNDLE_DEPLOYMENT.value,
+                reasons=plan.reason_codes,
+                plan=plan,
+            )
         if plan.next_action is NextAction.REVIEW_SNAPSHOT_PUBLICATION:
             if apply_market_intelligence:
                 raise DailyEodCoordinatorError(
@@ -358,6 +372,20 @@ def coordinate_daily_eod_transition(
                 next_action=plan.next_action.value,
                 reasons=("offline_execution_requires_explicit_invocation",),
                 plan=plan,
+            )
+        if (
+            plan.next_action is NextAction.BUILD_SERVING_BUNDLE
+            and config.bundle_built_at is None
+        ):
+            raise DailyEodCoordinatorError(
+                "serving bundle construction requires an explicit UTC timestamp"
+            )
+        if (
+            plan.next_action is not NextAction.BUILD_SERVING_BUNDLE
+            and config.bundle_built_at is not None
+        ):
+            raise DailyEodCoordinatorError(
+                "serving bundle timestamp is only valid for bundle construction"
             )
         execution = offline_executor(
             config=_execution_config(config),
@@ -728,6 +756,7 @@ def _execution_config(config: DailyEodCoordinatorConfig) -> DailyEodExecutionCon
             config.publication_expected_current_state_fingerprint
         ),
         snapshot_generated_at=config.snapshot_generated_at,
+        bundle_built_at=config.bundle_built_at,
     )
 
 
@@ -808,6 +837,14 @@ def _validate_config(config: DailyEodCoordinatorConfig) -> None:
         raise DailyEodCoordinatorError(
             "Snapshot planning timestamp must be explicit UTC"
         )
+    if config.bundle_built_at is not None and (
+        config.bundle_built_at.tzinfo is None
+        or config.bundle_built_at.utcoffset() is None
+        or config.bundle_built_at.utcoffset().total_seconds() != 0
+    ):
+        raise DailyEodCoordinatorError(
+            "serving bundle timestamp must be explicit UTC"
+        )
 
 
 def _validate_plan(
@@ -831,6 +868,7 @@ def _validate_plan(
             *OFFLINE_ACTIONS,
             NextAction.REVIEW_PUBLICATION,
             NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+            NextAction.REVIEW_BUNDLE_DEPLOYMENT,
         }
         and config.latest_canonical_session != config.target_session
     ):

@@ -20,6 +20,10 @@ from tip_api.persistence.parquet.market_intelligence_active import (
     read_market_intelligence_approval_plan,
 )
 from tip_api.persistence.parquet.dashboard_snapshot_active import (
+    DashboardSnapshotPublicationError,
+    aggregate_sha as dashboard_snapshot_aggregate_sha,
+    file_references as dashboard_snapshot_file_references,
+    read_dashboard_snapshot_pointer,
     read_dashboard_snapshot_approval_plan,
 )
 from tip_api.providers.massive.grouped_daily_ingestion import load_identity_snapshot
@@ -42,9 +46,17 @@ from tip_api.services.market_regime_state_audit import (
 from tip_api.services.opportunity_candidate_audit import (
     read_opportunity_candidate_planning_evidence,
 )
+from tip_api.services.oci_dashboard_serving_bundle import (
+    read_oci_dashboard_serving_bundle,
+)
+from tip_api.services.private_dashboard_snapshot import (
+    DashboardSnapshotError,
+    sha256_file,
+    validate_snapshot_release,
+)
 
 
-CONTRACT_VERSION = "daily-eod-automation-plan/1.3"
+CONTRACT_VERSION = "daily-eod-automation-plan/1.4"
 
 
 class DailyEodAutomationError(RuntimeError):
@@ -79,6 +91,8 @@ class NextAction(StrEnum):
     REVIEW_PUBLICATION = "review_publication"
     PREPARE_DASHBOARD_SNAPSHOT_PLAN = "prepare_dashboard_snapshot_plan"
     REVIEW_SNAPSHOT_PUBLICATION = "review_snapshot_publication"
+    BUILD_SERVING_BUNDLE = "build_serving_bundle"
+    REVIEW_BUNDLE_DEPLOYMENT = "review_bundle_deployment"
     OPERATOR_DIAGNOSIS = "operator_diagnosis"
 
 
@@ -98,6 +112,7 @@ class DailyEodAutomationPaths:
     market_intelligence_approval_plan: Path
     snapshot_output_root: Path
     snapshot_approval_plan: Path
+    serving_bundle_root: Path
 
 
 @dataclass(frozen=True, slots=True)
@@ -690,12 +705,171 @@ def plan_daily_eod_automation(
             observations,
             "snapshot_plan_source_binding_mismatch",
         )
+    try:
+        snapshot_pointer = read_dashboard_snapshot_pointer(paths.data_root)
+    except (OSError, DashboardSnapshotPublicationError):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "dashboard_snapshot_active_state_invalid",
+        )
+    if (
+        snapshot_pointer is None
+        or snapshot_pointer.pointer_content_fingerprint
+        != snapshot_plan.planned_pointer_fingerprint
+    ):
+        observations.append(
+            ArtifactObservation(
+                stage="dashboard_snapshot_active",
+                status=ArtifactStatus.MISSING,
+                path=snapshot_plan.pointer_path,
+                reason_codes=("approved_snapshot_not_active",),
+            )
+        )
+        return _build_plan(
+            target_session=target_session,
+            prior_session=prior_session,
+            status=PlanStatus.ANALYTICS_READY,
+            next_action=NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+            reason_codes=("snapshot_plan_ready_for_review",),
+            observations=observations,
+        )
+    active_reference = snapshot_pointer.active
+    if (
+        active_reference.release_id != snapshot_plan.release_id
+        or active_reference.logical_path != snapshot_plan.target_logical_path
+        or active_reference.snapshot_contract_version
+        != snapshot_plan.snapshot_contract_version
+        or active_reference.dashboard_contract_version
+        != snapshot_plan.dashboard_contract_version
+        or active_reference.aggregate_sha256 != snapshot_plan.aggregate_sha256
+        or active_reference.manifest_sha256 != snapshot_plan.manifest_sha256
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "dashboard_snapshot_active_state_mismatch",
+        )
+    active_snapshot_path = Path(snapshot_plan.target_path)
+    try:
+        active_snapshot = validate_snapshot_release(active_snapshot_path)
+        active_snapshot_files = dashboard_snapshot_file_references(
+            active_snapshot_path
+        )
+    except (OSError, DashboardSnapshotError):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "dashboard_snapshot_active_target_invalid",
+        )
+    if (
+        active_snapshot.release_id != snapshot_plan.release_id
+        or active_snapshot.current_session_date != target_session.isoformat()
+        or active_snapshot.market_intelligence_publication_id
+        != snapshot_plan.market_intelligence_publication_id
+        or dashboard_snapshot_aggregate_sha(active_snapshot_files)
+        != snapshot_plan.aggregate_sha256
+        or sha256_file(active_snapshot_path / "private-data/v1/manifest.json")
+        != snapshot_plan.manifest_sha256
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "dashboard_snapshot_active_target_mismatch",
+        )
+    observations.append(
+        ArtifactObservation(
+            stage="dashboard_snapshot_active",
+            status=ArtifactStatus.COMPLETED,
+            path=str(active_snapshot_path),
+            as_of_session=target_session.isoformat(),
+            logical_fingerprint=snapshot_pointer.pointer_content_fingerprint,
+        )
+    )
+
+    bundle_path = paths.serving_bundle_root / snapshot_plan.release_id
+    staging_path = paths.serving_bundle_root / f".{snapshot_plan.release_id}.staging"
+    if not _lexists(paths.serving_bundle_root):
+        observations.append(
+            ArtifactObservation(
+                stage="serving_bundle",
+                status=ArtifactStatus.MISSING,
+                path=str(bundle_path),
+                reason_codes=("artifact_absent",),
+            )
+        )
+        return _build_plan(
+            target_session=target_session,
+            prior_session=prior_session,
+            status=PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            next_action=NextAction.BUILD_SERVING_BUNDLE,
+            reason_codes=("serving_bundle_required",),
+            observations=observations,
+        )
+    if (
+        paths.serving_bundle_root.is_symlink()
+        or not paths.serving_bundle_root.is_dir()
+        or _lexists(staging_path)
+        or not _lexists(bundle_path)
+        or {item.name for item in paths.serving_bundle_root.iterdir()}
+        != {snapshot_plan.release_id}
+    ):
+        observations.append(
+            ArtifactObservation(
+                stage="serving_bundle",
+                status=ArtifactStatus.INVALID,
+                path=str(bundle_path),
+                reason_codes=("partial_or_unexpected_bundle_artifacts",),
+            )
+        )
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "serving_bundle_partial",
+        )
+    bundle = _inspect(
+        stage="serving_bundle",
+        path=bundle_path,
+        reader=lambda: read_oci_dashboard_serving_bundle(
+            bundle_path,
+            expected_snapshot_path=active_snapshot_path,
+        ),
+        session=lambda value: value.snapshot_manifest.current_session_date,
+        fingerprint=lambda value: value.bundle_logical_fingerprint,
+    )
+    observations.append(bundle.observation)
+    if bundle.observation.status is not ArtifactStatus.COMPLETED:
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "serving_bundle_invalid",
+        )
+    if (
+        bundle.payload.deployment_manifest.release_id
+        != snapshot_plan.release_id
+        or bundle.payload.deployment_manifest.snapshot_aggregate_sha256
+        != snapshot_plan.aggregate_sha256
+        or bundle.payload.deployment_manifest.snapshot_manifest_sha256
+        != snapshot_plan.manifest_sha256
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "serving_bundle_source_binding_mismatch",
+        )
     return _build_plan(
         target_session=target_session,
         prior_session=prior_session,
         status=PlanStatus.ANALYTICS_READY,
-        next_action=NextAction.REVIEW_SNAPSHOT_PUBLICATION,
-        reason_codes=("snapshot_plan_ready_for_review",),
+        next_action=NextAction.REVIEW_BUNDLE_DEPLOYMENT,
+        reason_codes=("serving_bundle_ready_for_deployment_review",),
         observations=observations,
     )
 
@@ -876,6 +1050,7 @@ def _stage_locations(target_session: date, paths: DailyEodAutomationPaths) -> di
         "publication_plan": paths.market_intelligence_approval_plan,
         "snapshot_output": paths.snapshot_output_root,
         "snapshot_plan": paths.snapshot_approval_plan,
+        "serving_bundle": paths.serving_bundle_root,
     }
 
 
@@ -894,6 +1069,7 @@ def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str
         "publication_plan",
         "snapshot_output",
         "snapshot_plan",
+        "serving_bundle",
     )
     index = order.index(stage)
     return tuple(item for item in order[index + 1 :] if _lexists(locations[item]))
@@ -916,6 +1092,7 @@ def _validate_paths(paths: DailyEodAutomationPaths) -> None:
         paths.market_intelligence_approval_plan,
         paths.snapshot_output_root,
         paths.snapshot_approval_plan,
+        paths.serving_bundle_root,
     )
     if len(set(artifacts)) != len(artifacts):
         raise DailyEodAutomationError("daily artifact paths must be distinct")

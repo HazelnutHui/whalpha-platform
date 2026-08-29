@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-29 — Custody exact active-Snapshot serving-bundle construction
+
+- Accepted ADR 0072 and added `build_serving_bundle` as the tenth offline daily
+  action only after the exact planned Dashboard Snapshot pointer is active.
+- Added Serving Bundle 1.0 formal validation for clean source/release identity,
+  exact Snapshot aggregate and manifest hashes, full checksum inventory,
+  analytics lineage, bilingual policy, equal guest/credential capability, and
+  prohibited-content flags.
+- Made build time and a new direct-child `/tmp` bundle root explicit custody
+  inputs; added partial/staging, changed-source, symlink, unchecksummed-file,
+  postcondition, and no-implicit-deployment gates.
+- Removed the obsolete `--snapshot-release` builder shortcut. The builder now
+  accepts only an exact immutable V2 Snapshot path, cleans bounded staging on
+  ordinary failure, and runs the frontend build with a minimal offline
+  environment.
+- Planner/executor/coordinator/recovery contracts advance to
+  1.4/1.4/1.10/1.2, preserve the exact bundle build time through recovery, and
+  stop at `review_bundle_deployment`. No OCI capability or scheduler was added.
+- No real candidate bundle, `/data` write, network request, deployment,
+  rollback, or scheduler operation ran.
+- All 1,633 backend tests and all 94 frontend tests pass; the snapshot-mode
+  production build passes with the existing greater-than-500-KB chunk warning.
+
 ## 2026-08-29 — Add default-off one-shot Dashboard Snapshot Apply custody
 
 - Accepted ADR 0071 and extended the daily run journal to backward-readable

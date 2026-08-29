@@ -82,6 +82,7 @@ def main(argv: list[str] | None = None) -> int:
         market_intelligence_approval_plan=args.market_intelligence_approval_plan,
         snapshot_output_root=args.snapshot_output_root,
         snapshot_approval_plan=args.snapshot_approval_plan,
+        serving_bundle_root=args.serving_bundle_root,
     )
     coordinator_config = DailyEodCoordinatorConfig(
         target_session=args.target_session,
@@ -97,6 +98,7 @@ def main(argv: list[str] | None = None) -> int:
             args.publication_expected_current_state_fingerprint
         ),
         snapshot_generated_at=args.snapshot_generated_at,
+        bundle_built_at=args.bundle_built_at,
     )
     result = None
     try:
@@ -440,9 +442,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--market-intelligence-approval-plan", required=True, type=Path)
     parser.add_argument("--snapshot-output-root", required=True, type=Path)
     parser.add_argument("--snapshot-approval-plan", required=True, type=Path)
+    parser.add_argument("--serving-bundle-root", required=True, type=Path)
     parser.add_argument("--publication-created-at", type=datetime.fromisoformat)
     parser.add_argument("--publication-expected-current-state-fingerprint")
     parser.add_argument("--snapshot-generated-at", type=datetime.fromisoformat)
+    parser.add_argument("--bundle-built-at", type=datetime.fromisoformat)
     parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--candidate-work-dir", type=Path)
     parser.add_argument("--execute-offline", action="store_true")
@@ -493,6 +497,7 @@ def _validate_arguments(
         "market_intelligence_approval_plan",
         "snapshot_output_root",
         "snapshot_approval_plan",
+        "serving_bundle_root",
         "panel_cache_root",
         "candidate_work_dir",
     )
@@ -540,6 +545,12 @@ def _validate_arguments(
     ) and args.snapshot_generated_at is not None:
         parser.error(
             "publication Apply cannot accept Snapshot Plan preparation bindings"
+        )
+    if (
+        args.apply_market_intelligence or args.apply_dashboard_snapshot
+    ) and args.bundle_built_at is not None:
+        parser.error(
+            "publication Apply cannot accept serving-bundle build bindings"
         )
     if any(value is not None for value in publication_values) and not all(
         value is not None for value in publication_values

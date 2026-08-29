@@ -31,6 +31,7 @@ Implemented locally:
 - snapshot exporter
 - frontend `snapshot` mode
 - versioned OCI bundle builder
+- Serving Bundle 1.0 whole-file reader and daily local construction custody
 - Nginx configuration template using session `auth_request`
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
@@ -42,6 +43,7 @@ Implemented locally:
 Not implemented:
 
 - automatic daily publication
+- one-shot daily OCI deployment custody
 
 ## Architecture
 

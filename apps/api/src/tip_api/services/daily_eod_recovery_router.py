@@ -54,7 +54,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-recovery/1.1"
+CONTRACT_VERSION = "daily-eod-one-transition-recovery/1.2"
 
 
 class DailyEodRecoveryRouterError(RuntimeError):
@@ -195,6 +195,7 @@ def recover_one_daily_eod_transition(
                     config.publication_expected_current_state_fingerprint
                 ),
                 snapshot_generated_at=config.snapshot_generated_at,
+                bundle_built_at=config.bundle_built_at,
             ),
             planner=planner,
         )

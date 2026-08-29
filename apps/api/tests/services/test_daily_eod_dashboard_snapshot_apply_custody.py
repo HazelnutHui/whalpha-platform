@@ -64,6 +64,7 @@ def setup(tmp_path):
         market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
         snapshot_output_root=Path(f"/tmp/{suffix}-snapshot-output"),
         snapshot_approval_plan=plan_path,
+        serving_bundle_root=Path(f"/tmp/{suffix}-serving-bundle"),
     )
     release_id = "2026-08-28T210000Z-abcdef012345"
     approval = DashboardSnapshotApprovalPlanV2_4.model_construct(

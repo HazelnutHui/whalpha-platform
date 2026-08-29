@@ -59,6 +59,7 @@ def paths() -> DailyEodAutomationPaths:
         market_intelligence_approval_plan=Path("/tmp/mi-plan.json"),
         snapshot_output_root=Path("/tmp/snapshot-output"),
         snapshot_approval_plan=Path("/tmp/snapshot-plan.json"),
+        serving_bundle_root=Path("/tmp/tip-serving-bundle"),
     )
 
 
@@ -93,6 +94,7 @@ def plan(
                 NextAction.CALCULATE_STRATEGY_CHANNELS,
                 NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
                 NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
+                NextAction.BUILD_SERVING_BUNDLE,
             }
             else PlanStatus.WAITING_FOR_AUTHORIZED_INPUT
         )
@@ -769,6 +771,26 @@ def test_snapshot_review_is_a_separate_nonexecuting_stop() -> None:
     assert result.next_action == "review_snapshot_publication"
     assert result.production_write_count == 0
     assert result.publication_authorized is False
+
+
+def test_completed_bundle_is_a_nonexecuting_deployment_review_stop() -> None:
+    result = coordinate_daily_eod_transition(
+        config=config(latest=TARGET),
+        checked_at=AFTER_STABILIZATION,
+        planner=planner(
+            plan(
+                NextAction.REVIEW_BUNDLE_DEPLOYMENT,
+                status=PlanStatus.ANALYTICS_READY,
+            )
+        ),
+        journal_reader=journal(),
+    )
+
+    assert result.status is CoordinatorStatus.DEPLOYMENT_REVIEW_READY
+    assert result.next_action == "review_bundle_deployment"
+    assert result.production_write_count == 0
+    assert result.publication_authorized is False
+    assert result.deployment_authorized is False
 
 
 def test_dashboard_snapshot_apply_requires_exact_one_shot_capability() -> None:

@@ -71,10 +71,11 @@ zero symlinks, and zero publication residue.
 
 ### Daily automation development state
 
-The repository daily planner/executor now governs nine ordered offline daily
+The repository daily planner/executor now governs ten ordered offline daily
 stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry, ETF
 Relationships, Market Preview, Strategy Channels, Market Intelligence
-approval-plan preparation, and Dashboard Snapshot approval-plan preparation.
+approval-plan preparation, Dashboard Snapshot approval-plan preparation, and
+exact active-Snapshot serving-bundle construction.
 Every invocation still performs at most one transition. The latter stages
 require the exact target session and upstream logical fingerprints. The MI
 Plan action additionally binds an explicit UTC
@@ -83,11 +84,15 @@ creation time and expected `/data` inventory fingerprint, writes only two new
 After a separately invoked MI Apply makes that exact publication active, the
 Snapshot Plan action binds an explicit UTC time, exact active MI and same-
 session Strategy Channel audit, writes only new `/tmp` artifacts, formally
-rereads Plan 2.4, and stops at Snapshot publication review. `analytics_ready`
-therefore describes a reviewed boundary, not write authority; it grants no MI
-Apply, Snapshot Apply, bundle, deployment, `/data`, credential, or scheduler
-authority. No scheduler or unattended Production publication/deployment chain
-has been enabled.
+rereads Plan 2.4, and stops at Snapshot publication review. After separately
+invoked Snapshot Apply proves the planned pointer active, the bundle action
+requires an explicit UTC time and clean matching Dell source, builds only
+beneath a new `/tmp` candidate root, formally rereads every file and exact
+Snapshot binding, and stops at deployment review. `analytics_ready` therefore
+describes a reviewed boundary, not write authority; it grants no MI Apply,
+Snapshot Apply, OCI deployment, `/data`, credential, or scheduler authority.
+No scheduler or unattended Production publication/deployment chain has been
+enabled.
 
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
@@ -116,9 +121,22 @@ Snapshot, immutable target, contracts, aggregate, manifest, session, and
 planned pointer to formally reread. Recovery never applies or links; it only
 reconciles exact success, proves untouched state, or blocks partial/changed/
 ambiguous state. The port remains uninstalled and uninvoked and has not changed
-the active Snapshot or `/data`. Bundle construction/review custody is the next
-missing control-plane boundary; OCI deployment and scheduler activation remain
-later and separately unauthorized.
+the active Snapshot or `/data`.
+
+ADR 0072 advances the planner/executor/coordinator/recovery contracts to
+1.4/1.4/1.10/1.2
+and adds the tenth offline action only after exact Snapshot activation. The
+Serving Bundle 1.0 reader binds the clean source commit, Snapshot aggregate and
+manifest hashes, MI/Candidate/Strategy lineage, complete checksum inventory,
+English/Chinese policy, equal guest/credential capability, and prohibited-
+content flags. It rejects symlinks, source maps, unchecksummed or unexpected
+files, partial staging, changed Snapshot bytes, and source/release drift.
+Completion stops at `review_bundle_deployment`; no network path or OCI
+capability is installed. The legacy `--snapshot-release` builder shortcut is
+removed in favor of an exact immutable absolute Snapshot path. This repository-
+only change has not built a real candidate or changed `/data`, the active
+Snapshot, local retained bundles, OCI, or a scheduler. One-shot OCI deployment
+custody and scheduler activation remain later and separately unauthorized.
 
 ### Historical 2026-08-27 recovery and pipeline evidence
 
@@ -294,9 +312,6 @@ read or used.
   terms do not supply a cleared shared-product fallback.
 - Historical analytics replay current-as-of membership and are not a
   survivorship-free backtest.
-- The OCI bundle helper's `--snapshot-release` shortcut still resolves the
-  legacy local snapshot directory; current V2 snapshots require the supported
-  explicit `--snapshot-path` plus `--bundle-release` form until this is fixed.
 - The frontend production build still reports a JavaScript chunk above 500 KB.
   Production now serves the 1.49 MB Candidate first-load summary plus 32
   on-demand detail shards instead of the 20.4 MB monolith; workspace code

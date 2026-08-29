@@ -7,9 +7,9 @@ executor, and separately explicit one-shot Market Intelligence and Dashboard
 Snapshot Apply ports.
 The planner formally reconciles one exact target session and reports one safe
 next action. The executor can consume one unchanged plan fingerprint and run
-only one of nine offline daily actions under durable Dell custody: seven
-analytics calculations plus MI and Dashboard Snapshot approval-plan
-preparation. Both publication ports are absent by default and cannot be
+only one of ten offline daily actions under durable Dell custody: seven
+analytics calculations, MI and Dashboard Snapshot approval-plan preparation,
+and exact active-Snapshot serving-bundle construction. Both publication ports are absent by default and cannot be
 inferred from readiness. None of these parts enables a timer.
 
 The action order is:
@@ -30,13 +30,15 @@ same-day Identity
   -> Dashboard Snapshot approval plan
   -> Snapshot publication review
   -> separately invoked Dashboard Snapshot Apply
+  -> exact active-Snapshot serving bundle
+  -> deployment review
 ```
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
 Market Intelligence and Dashboard Snapshot publication are separate one-shot
-authorization boundaries. Snapshot planning is offline and review-only.
-Bundle, OCI deployment, and scheduler activation remain outside the
-coordinator.
+authorization boundaries. Snapshot planning and bundle construction are
+offline and review-only. OCI deployment and scheduler activation remain
+outside the coordinator.
 
 ## Session and provider readiness
 
@@ -589,16 +591,17 @@ scripts/admin/plan-daily-eod-automation.sh \
   --market-intelligence-output-root /tmp/<new-mi-output-root> \
   --market-intelligence-approval-plan /tmp/<new-mi-plan>.json \
   --snapshot-output-root /tmp/<new-snapshot-output-root> \
-  --snapshot-approval-plan /tmp/<new-snapshot-plan>.json
+  --snapshot-approval-plan /tmp/<new-snapshot-plan>.json \
+  --serving-bundle-root /tmp/<new-serving-bundle-root>
 ```
 
 The JSON result has one of four statuses:
 
 - `waiting_for_authorized_input`: prepare the exact Identity or EOD catch-up;
 - `ready_for_offline_calculation`: run only the named offline daily step;
-- `analytics_ready`: the chain is stopped at either formal MI publication
-  review or formal Snapshot publication review; the exact `next_action`
-  identifies which one and conveys no Apply authority;
+- `analytics_ready`: the chain is stopped at formal MI publication review,
+  Snapshot publication review, or bundle deployment review; the exact
+  `next_action` identifies which one and conveys no Apply/deployment authority;
 - `blocked`: stop and diagnose; do not overwrite or skip the failed boundary.
 
 `blocked` exits 1. The other planning states exit 0 because they are valid
@@ -651,6 +654,7 @@ scripts/admin/execute-daily-eod-offline-action.sh \
   --market-intelligence-approval-plan /tmp/<new-mi-plan>.json \
   --snapshot-output-root /tmp/<new-snapshot-output-root> \
   --snapshot-approval-plan /tmp/<new-snapshot-plan>.json \
+  --serving-bundle-root /tmp/<new-serving-bundle-root> \
   --run-root /home/hui/.local/state/trading-intelligence-platform/daily-eod \
   --panel-cache-root /tmp/<immutable-panel-cache> \
   --candidate-work-dir /tmp/<owner-controlled-candidate-recovery> \
@@ -661,8 +665,9 @@ scripts/admin/execute-daily-eod-offline-action.sh \
 Only `calculate_phase1a`, `calculate_phase1b_incremental`,
 `calculate_candidate_daily`, `calculate_entry_geometry`,
 `calculate_etf_relationships`, `build_market_preview`,
-`calculate_strategy_channels`, `prepare_market_intelligence_plan`, and
-`prepare_dashboard_snapshot_plan` are executable. The calculation and planning
+`calculate_strategy_channels`, `prepare_market_intelligence_plan`,
+`prepare_dashboard_snapshot_plan`, and `build_serving_bundle` are executable.
+The calculation, planning, and local-build
 stages consume the same-session fingerprints already verified by their
 prerequisites; they do not authorize publication or deployment.
 The Candidate work directory is required only for the Candidate action. The
@@ -678,7 +683,7 @@ The MI Plan action additionally requires:
 Both values are bound into the immutable action identity. The action invokes
 only Market Intelligence `--plan`, creates the two explicit `/tmp` targets,
 and returns to `review_publication`. It never invokes Apply. Omit these two
-arguments for the other eight actions. Recovery of an interrupted MI Plan must
+arguments for the other nine actions. Recovery of an interrupted MI Plan must
 reuse both exact values.
 
 The Snapshot Plan action additionally requires:
@@ -693,7 +698,25 @@ same-session Strategy Channel audit, and the two explicit new `/tmp` Snapshot
 paths. Formal completion requires current Approval Plan 2.4 and exact MI,
 strategy, session, and path bindings, then returns to
 `review_snapshot_publication`. It never invokes Snapshot Apply. Omit this
-timestamp for the other eight actions; interrupted recovery must reuse it.
+timestamp for the other nine actions; interrupted recovery must reuse it.
+
+The Serving Bundle action additionally requires:
+
+```bash
+--bundle-built-at <explicit-UTC-timestamp>
+```
+
+It is selectable only after the exact pointer from Snapshot Plan 2.4 is active.
+It invokes the Dell-local builder with the exact immutable V2 Snapshot path and
+new `/tmp` bundle root. The source repository must be clean `main`, and the
+Snapshot release suffix must identify the full current commit. The builder uses
+a minimal offline frontend environment, cleans its bounded staging directory on
+ordinary failure, and the formal reader then verifies every checksummed file,
+the source Snapshot aggregate and bytes, contracts, analytics lineage, locales,
+equal guest/credential capability, and prohibited-content flags. Completion
+returns only to `review_bundle_deployment`; no OCI command exists in this
+action. Omit the timestamp for the other nine actions; interrupted recovery
+must reuse it.
 
 The executor acquires one global non-blocking lock, re-plans under the lock,
 records an immutable start event, invokes exactly one existing offline command,
@@ -748,9 +771,9 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Add exact-input construction/review custody for the public-serving bundle
-   bound to the exact active Snapshot. Snapshot Plan and Apply custody are
-   complete in repository source.
+1. Add a separately enabled one-shot OCI deployment custody boundary bound to
+   the exact reviewed Serving Bundle 1.0 artifact. Bundle construction/review
+   custody is complete in repository source.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.

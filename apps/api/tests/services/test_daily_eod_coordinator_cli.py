@@ -72,6 +72,8 @@ def arguments() -> list[str]:
         "/tmp/snapshot-output",
         "--snapshot-approval-plan",
         "/tmp/snapshot-plan.json",
+        "--serving-bundle-root",
+        "/tmp/tip-serving-bundle",
     ]
 
 

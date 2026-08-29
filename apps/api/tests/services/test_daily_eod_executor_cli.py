@@ -29,6 +29,7 @@ def _argv(tmp_path: Path) -> list[str]:
         "--market-intelligence-approval-plan", "/tmp/executor-mi-plan.json",
         "--snapshot-output-root", "/tmp/executor-snapshot-output",
         "--snapshot-approval-plan", "/tmp/executor-snapshot-plan.json",
+        "--serving-bundle-root", "/tmp/tip-executor-serving-bundle",
     ]
 
 
@@ -72,6 +73,24 @@ def test_cli_requires_timestamp_for_snapshot_plan_action(monkeypatch, tmp_path) 
                 *_argv(tmp_path),
                 "--execute-action",
                 "prepare_dashboard_snapshot_plan",
+                "--expected-plan-fingerprint",
+                "a" * 64,
+            ]
+        )
+
+
+def test_cli_requires_timestamp_for_serving_bundle_action(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(
+        cli,
+        "execute_daily_eod_action",
+        lambda **kwargs: pytest.fail("executor must not run"),
+    )
+    with pytest.raises(SystemExit):
+        cli.main(
+            [
+                *_argv(tmp_path),
+                "--execute-action",
+                "build_serving_bundle",
                 "--expected-plan-fingerprint",
                 "a" * 64,
             ]

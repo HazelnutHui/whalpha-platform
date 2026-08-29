@@ -54,6 +54,7 @@ def paths() -> DailyEodAutomationPaths:
         market_intelligence_approval_plan=Path("/tmp/mi-plan.json"),
         snapshot_output_root=Path("/tmp/snapshot-output"),
         snapshot_approval_plan=Path("/tmp/snapshot-plan.json"),
+        serving_bundle_root=Path("/tmp/tip-serving-bundle"),
     )
 
 
@@ -68,6 +69,7 @@ def config() -> DailyEodCoordinatorConfig:
         panel_cache_root=Path("/tmp/panel-cache"),
         candidate_work_dir=Path("/tmp/candidate-work"),
         snapshot_generated_at=NOW,
+        bundle_built_at=NOW,
     )
 
 
@@ -228,6 +230,7 @@ def test_routes_offline_recovery_without_replaying_action() -> None:
     assert len(calls) == 1
     assert calls[0]["config"].panel_cache_root == Path("/tmp/panel-cache")
     assert calls[0]["config"].snapshot_generated_at == NOW
+    assert calls[0]["config"].bundle_built_at == NOW
     assert evidence.action_replayed is False
 
 

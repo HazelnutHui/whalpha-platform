@@ -4,29 +4,24 @@ set -euo pipefail
 script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd -- "${script_dir}/../.." && pwd)
 web_dir="${repo_root}/apps/web"
-snapshot_root="${repo_root}/build/private-dashboard"
 snapshot_v2_root="/data/trading-intelligence-platform/market-data/snapshots/private-dashboard-v2/revision=universe-funnel-v2"
 bundle_root="${repo_root}/build/oci-dashboard"
 
 usage() {
   cat <<MSG
-Usage: $0 (--snapshot-release RELEASE_ID | --snapshot-path ABSOLUTE_PATH) --market-intelligence-publication PUBLICATION_ID [--bundle-release RELEASE_ID]
+Usage: $0 --snapshot-path ABSOLUTE_PATH --market-intelligence-publication PUBLICATION_ID --bundle-release RELEASE_ID [--bundle-root ABSOLUTE_PATH] [--build-timestamp UTC]
 
 Build a versioned OCI dashboard bundle from an existing private dashboard snapshot.
 No upload or deployment is performed.
 MSG
 }
 
-snapshot_release=""
 snapshot_path=""
 bundle_release=""
 market_intelligence_publication=""
+build_timestamp=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --snapshot-release)
-      snapshot_release="${2:-}"
-      shift 2
-      ;;
     --snapshot-path)
       snapshot_path="${2:-}"
       shift 2
@@ -37,6 +32,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --market-intelligence-publication)
       market_intelligence_publication="${2:-}"
+      shift 2
+      ;;
+    --bundle-root)
+      bundle_root="${2:-}"
+      shift 2
+      ;;
+    --build-timestamp)
+      build_timestamp="${2:-}"
       shift 2
       ;;
     --help|-h)
@@ -51,20 +54,13 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -n "${snapshot_release}" && -n "${snapshot_path}" ]] || [[ -z "${snapshot_release}" && -z "${snapshot_path}" ]]; then
-  echo "exactly one of --snapshot-release or --snapshot-path is required" >&2
+if [[ -z "${snapshot_path}" ]]; then
+  echo "--snapshot-path is required" >&2
   usage >&2
   exit 2
 fi
-if [[ -n "${snapshot_release}" && ! "${snapshot_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
-  echo "Unsafe snapshot release id" >&2
-  exit 2
-fi
-if [[ -z "${bundle_release}" && -n "${snapshot_release}" ]]; then
-  bundle_release="${snapshot_release}"
-fi
 if [[ -z "${bundle_release}" ]]; then
-  echo "--bundle-release is required with --snapshot-path" >&2
+  echo "--bundle-release is required" >&2
   exit 2
 fi
 if [[ -z "${market_intelligence_publication}" ]] || [[ ! "${market_intelligence_publication}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
@@ -76,18 +72,28 @@ if [[ ! "${bundle_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,
   exit 2
 fi
 
-if [[ -n "${snapshot_path}" ]]; then
-  if [[ "${snapshot_path}" != /* ]]; then
-    echo "--snapshot-path must be absolute" >&2
+if [[ "${snapshot_path}" != /* ]]; then
+  echo "--snapshot-path must be absolute" >&2
+  exit 2
+fi
+snapshot_dir=$(realpath -e -- "${snapshot_path}")
+if [[ "${snapshot_dir}" != "${snapshot_path}" || "${snapshot_dir}" != "${snapshot_v2_root}"/release_id=* ]]; then
+  echo "Snapshot path is outside the approved immutable V2 namespace or contains a symlink" >&2
+  exit 2
+fi
+if [[ "${bundle_root}" != /* ]]; then
+  echo "--bundle-root must be absolute" >&2
+  exit 2
+fi
+if [[ "${bundle_root}" != "${repo_root}/build/oci-dashboard" ]]; then
+  if [[ "$(dirname -- "${bundle_root}")" != "/tmp" || ! "$(basename -- "${bundle_root}")" =~ ^tip-[A-Za-z0-9._-]+$ ]]; then
+    echo "Explicit bundle root must be one safe direct child of /tmp" >&2
     exit 2
   fi
-  snapshot_dir=$(realpath -e -- "${snapshot_path}")
-  if [[ "${snapshot_dir}" != "${snapshot_path}" || "${snapshot_dir}" != "${snapshot_v2_root}"/release_id=* ]]; then
-    echo "Snapshot path is outside the approved immutable V2 namespace or contains a symlink" >&2
-    exit 2
-  fi
-else
-  snapshot_dir="${snapshot_root}/${snapshot_release}"
+fi
+if [[ -n "${build_timestamp}" && ! "${build_timestamp}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
+  echo "--build-timestamp must be exact UTC second precision" >&2
+  exit 2
 fi
 if [[ ! -f "${snapshot_dir}/private-data/v1/manifest.json" ]]; then
   echo "Completed snapshot manifest was not found" >&2
@@ -100,16 +106,47 @@ fi
 
 bundle_dir="${bundle_root}/${bundle_release}"
 staging_dir="${bundle_root}/.${bundle_release}.staging"
-if [[ -e "${bundle_dir}" || -e "${staging_dir}" ]]; then
+build_log="${bundle_root}/.${bundle_release}.build.log"
+if [[ -e "${bundle_dir}" || -e "${staging_dir}" || -e "${build_log}" ]]; then
   echo "Bundle release or staging directory already exists" >&2
   exit 1
 fi
 
-mkdir -p "${bundle_root}"
+cd "${repo_root}"
+[[ "$(hostname)" == "dell5820" ]] || { echo "must run on dell5820" >&2; exit 1; }
+[[ "$(whoami)" == "hui" ]] || { echo "must run as hui" >&2; exit 1; }
+[[ "$(git branch --show-current)" == "main" ]] || { echo "must run on main" >&2; exit 1; }
+[[ -z "$(git status --short)" ]] || { echo "working tree must be clean" >&2; exit 1; }
+git_commit=$(git rev-parse HEAD)
+release_commit="${bundle_release##*-}"
+[[ "${git_commit}" == "${release_commit}"* ]] || { echo "bundle release does not identify current HEAD" >&2; exit 1; }
+
+root_created="false"
+if [[ ! -e "${bundle_root}" ]]; then
+  mkdir -p "${bundle_root}"
+  root_created="true"
+fi
+[[ ! -L "${bundle_root}" && -d "${bundle_root}" ]] || { echo "bundle root is unsafe" >&2; exit 1; }
 mkdir -p "${staging_dir}/dashboard" "${staging_dir}/login" "${staging_dir}/private-data"
+cleanup_staging() {
+  rm -rf -- "${staging_dir}"
+  rm -f -- "${build_log}"
+  if [[ "${root_created}" == "true" ]]; then
+    rmdir -- "${bundle_root}" 2>/dev/null || true
+  fi
+}
+trap cleanup_staging EXIT
 
 cd "${web_dir}"
-VITE_MARKET_DATA_MODE=snapshot VITE_DASHBOARD_BASE=/dashboard/ npm run build >/tmp/tip_dashboard_build.log
+env -i \
+  HOME="${HOME}" \
+  PATH="${PATH}" \
+  LANG="${LANG:-C.UTF-8}" \
+  CI=1 \
+  npm_config_offline=true \
+  VITE_MARKET_DATA_MODE=snapshot \
+  VITE_DASHBOARD_BASE=/dashboard/ \
+  npm run build >"${build_log}"
 cp -a "${web_dir}/dist/." "${staging_dir}/dashboard/"
 find "${staging_dir}/dashboard" -name '*.map' -delete
 cp "${web_dir}/static/login/index.html" "${staging_dir}/login/index.html"
@@ -118,14 +155,16 @@ cp "${web_dir}/static/login/login.js" "${staging_dir}/login/login.js"
 cp "${web_dir}/static/login/login-i18n.js" "${staging_dir}/login/login-i18n.js"
 cp -a "${snapshot_dir}/private-data/." "${staging_dir}/private-data/"
 
-git_commit=$(cd "${repo_root}" && git rev-parse HEAD)
-build_timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+if [[ -z "${build_timestamp}" ]]; then
+  build_timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+fi
 file_count=$(find "${staging_dir}" -type f | wc -l)
-python3 - "${staging_dir}" "${bundle_release}" "${git_commit}" "${build_timestamp}" "${file_count}" "${market_intelligence_publication}" <<'PY'
+python3 - "${staging_dir}" "${bundle_release}" "${git_commit}" "${build_timestamp}" "${file_count}" "${market_intelligence_publication}" "${snapshot_dir}" <<'PY'
 import hashlib, json, sys
 from pathlib import Path
 root=Path(sys.argv[1])
 manifest=json.loads((root/'private-data/v1/manifest.json').read_text())
+source_snapshot=Path(sys.argv[7])
 contract=(manifest.get('snapshot_contract_version'), manifest.get('dashboard_contract_version'))
 if contract not in {('1.5','2.2'),('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6')}:
   raise SystemExit('OCI bundle requires a supported Snapshot 1.5-1.9 / Dashboard 2.2-2.6 pair')
@@ -278,19 +317,31 @@ if contract == ('1.9','2.6'):
             or item.get('market_fit_separate_from_channel_score') is not True
             or item.get('first_rejection_is_risk_not_status_reason') is not True):
           raise SystemExit('Snapshot 1.9 strategy-channel rank or decision boundary is invalid')
+source_files=[]
+for path in sorted(source_snapshot.rglob('*')):
+  if path.is_symlink():
+    raise SystemExit('Source Snapshot contains a symlink')
+  if path.is_file():
+    source_files.append({'relative_path':path.relative_to(source_snapshot).as_posix(),'size':path.stat().st_size,'sha256':hashlib.sha256(path.read_bytes()).hexdigest()})
+snapshot_aggregate_sha256=hashlib.sha256(json.dumps(source_files,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode()).hexdigest()
 payload={
+  'bundle_contract_version': 'oci-dashboard-serving-bundle/1.0',
   'release_id': sys.argv[2],
   'git_commit': sys.argv[3],
+  'source_tree_clean': True,
   'build_timestamp': sys.argv[4],
   'frontend_mode': 'snapshot',
   'dashboard_base': '/dashboard/',
   'default_locale': 'en',
   'supported_locales': ['en','zh'],
+  'guest_and_credential_capability_identical': True,
   'market_intelligence_publication_id': sys.argv[6],
   'market_intelligence_payload_sha256': manifest['market_intelligence_payload_sha256'],
   'market_intelligence_logical_fingerprint': manifest['market_intelligence_logical_fingerprint'],
   'snapshot_contract_version': contract[0],
   'dashboard_contract_version': contract[1],
+  'snapshot_aggregate_sha256': snapshot_aggregate_sha256,
+  'snapshot_manifest_sha256': hashlib.sha256((source_snapshot/'private-data/v1/manifest.json').read_bytes()).hexdigest(),
   'candidate_analytics_logical_fingerprint': candidate_fingerprint,
   'candidate_audit_logical_fingerprint': candidate_audit_fingerprint,
   'candidate_strategy_logical_fingerprint': strategy_fingerprint,
@@ -301,13 +352,17 @@ payload={
   'contains_credentials': False,
   'contains_raw_provider_data': False,
   'contains_parquet': False,
+  'deployment_authorized': False,
 }
+payload['bundle_logical_fingerprint']=hashlib.sha256(json.dumps(payload,sort_keys=True,separators=(',',':'),ensure_ascii=True).encode()).hexdigest()
 (root/'deployment-manifest.json').write_text(json.dumps(payload, sort_keys=True, separators=(',', ':'))+'\n')
 PY
 
 (cd "${staging_dir}" && find . -type f ! -name checksums.sha256 -print0 | sort -z | xargs -0 sha256sum > checksums.sha256)
 (cd "${staging_dir}" && sha256sum -c checksums.sha256 >/dev/null)
 mv "${staging_dir}" "${bundle_dir}"
+rm -f -- "${build_log}"
+trap - EXIT
 printf 'bundle_release=%s\n' "${bundle_release}"
 printf 'bundle_dir=%s\n' "${bundle_dir}"
 printf 'file_count=%s\n' "$(find "${bundle_dir}" -type f | wc -l)"

@@ -108,10 +108,11 @@ planner is now implemented. A real 2026-08-26 rehearsal formally reconciled
 the corrected incremental chain and selected `calculate_entry_geometry` as its
 sole next action, with zero external requests and Production writes. A
 single-action executor and durable Dell run-custody implementation now consume
-only an exact unchanged plan for one of nine offline daily actions. The first
+only an exact unchanged plan for one of ten offline daily actions. The first
 seven are analytics actions; the eighth prepares an MI approval plan and the
-ninth prepares a Dashboard Snapshot approval plan, both without a Production
-write. The executor holds a global lock, journals start/terminal
+ninth prepares a Dashboard Snapshot approval plan; the tenth constructs and
+formally rereads an exact active-Snapshot serving bundle. All remain without a
+Production write or network authority. The executor holds a global lock, journals start/terminal
 events in an immutable
 cross-session hash chain, validates output evidence, and re-plans before
 recording success. Interrupted-attempt recovery only classifies formal state
@@ -172,7 +173,19 @@ pointer to formally reread. Recovery never applies or links. The same change
 preserves `snapshot_generated_at` when routing an interrupted Snapshot Plan
 recovery. This repository-only boundary is uninstalled and uninvoked; it has
 not changed `/data`, the active Snapshot, bundle, OCI release, or scheduler
-state. Bundle construction/review is the next missing custody boundary.
+state.
+ADR 0072 advances the offline planner/executor/coordinator/recovery contracts
+to 1.4/1.4/1.10/1.2 and
+adds exact active-Snapshot serving-bundle construction as the tenth action. It
+requires a clean matching Dell `main` revision, explicit UTC and `/tmp`
+candidate root, exact Snapshot aggregate/manifest and source-byte bindings,
+complete file checksums, fixed locale and equal Session capability, preserved
+bundle build-time recovery identity, and a
+strict Serving Bundle 1.0 formal reader. It removes the ambiguous legacy
+Snapshot-release shortcut and stops at `review_bundle_deployment`. This code
+is uninvoked; no real candidate, OCI request, switch, reload, rollback, or
+scheduler change occurred. One-shot OCI deployment custody is now the next
+missing control boundary.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

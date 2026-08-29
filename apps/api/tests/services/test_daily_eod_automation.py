@@ -47,6 +47,7 @@ def _paths(tmp_path: Path) -> automation.DailyEodAutomationPaths:
         market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
         snapshot_output_root=Path(f"/tmp/{suffix}-snapshot-output"),
         snapshot_approval_plan=Path(f"/tmp/{suffix}-snapshot-plan.json"),
+        serving_bundle_root=Path(f"/tmp/{suffix}-serving-bundle"),
     )
 
 
@@ -383,6 +384,8 @@ def test_snapshot_plan_2_4_advances_to_separate_snapshot_review(
             market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
             market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
             candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+            pointer_path=str(paths.data_root / "snapshot-active.json"),
+            planned_pointer_fingerprint="1" * 64,
         ),
     )
 
@@ -394,6 +397,157 @@ def test_snapshot_plan_2_4_advances_to_separate_snapshot_review(
     assert plan.status is automation.PlanStatus.ANALYTICS_READY
     assert plan.next_action is automation.NextAction.REVIEW_SNAPSHOT_PUBLICATION
     assert plan.reason_codes == ("snapshot_plan_ready_for_review",)
+
+
+def _install_active_snapshot(monkeypatch, paths, *, release_id="2026-08-26T210000Z-abcdef0"):
+    target_path = paths.data_root / "snapshot" / release_id
+    pointer_fingerprint = "1" * 64
+    aggregate = "2" * 64
+    manifest_sha = "3" * 64
+    monkeypatch.setattr(
+        automation,
+        "read_dashboard_snapshot_approval_plan",
+        lambda _path: SimpleNamespace(
+            plan_version="2.4",
+            analysis_session=TARGET,
+            plan_content_fingerprint="0" * 64,
+            candidate_path=str(paths.snapshot_output_root / release_id),
+            market_intelligence_publication_id=MI_PUBLICATION_ID,
+            market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
+            market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
+            candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+            pointer_path=str(paths.data_root / "snapshot-active.json"),
+            planned_pointer_fingerprint=pointer_fingerprint,
+            release_id=release_id,
+            target_path=str(target_path),
+            target_logical_path=f"snapshot/{release_id}",
+            snapshot_contract_version="1.9",
+            dashboard_contract_version="2.6",
+            aggregate_sha256=aggregate,
+            manifest_sha256=manifest_sha,
+        ),
+    )
+    monkeypatch.setattr(
+        automation,
+        "read_dashboard_snapshot_pointer",
+        lambda _root: SimpleNamespace(
+            pointer_content_fingerprint=pointer_fingerprint,
+            active=SimpleNamespace(
+                release_id=release_id,
+                logical_path=f"snapshot/{release_id}",
+                snapshot_contract_version="1.9",
+                dashboard_contract_version="2.6",
+                aggregate_sha256=aggregate,
+                manifest_sha256=manifest_sha,
+            ),
+        ),
+    )
+    monkeypatch.setattr(
+        automation,
+        "validate_snapshot_release",
+        lambda _path: SimpleNamespace(
+            release_id=release_id,
+            current_session_date=TARGET.isoformat(),
+            market_intelligence_publication_id=MI_PUBLICATION_ID,
+        ),
+    )
+    monkeypatch.setattr(
+        automation, "dashboard_snapshot_file_references", lambda _path: ()
+    )
+    monkeypatch.setattr(
+        automation,
+        "dashboard_snapshot_aggregate_sha",
+        lambda _files: aggregate,
+    )
+    monkeypatch.setattr(automation, "sha256_file", lambda _path: manifest_sha)
+    return target_path, release_id, aggregate, manifest_sha
+
+
+def test_exact_active_snapshot_advances_to_one_bundle_build(monkeypatch, tmp_path) -> None:
+    paths = _paths(tmp_path)
+    locations = automation._stage_locations(TARGET, paths)
+    existing = {
+        path for stage, path in locations.items() if stage != "serving_bundle"
+    }
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    _install_active_market_intelligence(monkeypatch, paths)
+    _install_active_snapshot(monkeypatch, paths)
+
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+
+    assert plan.status is automation.PlanStatus.READY_FOR_OFFLINE_CALCULATION
+    assert plan.next_action is automation.NextAction.BUILD_SERVING_BUNDLE
+    assert plan.reason_codes == ("serving_bundle_required",)
+    assert plan.observations[-2].stage == "dashboard_snapshot_active"
+    assert plan.observations[-1].stage == "serving_bundle"
+    assert plan.deployment_authorized is False
+
+
+def test_completed_bundle_stops_at_deployment_review(monkeypatch, tmp_path) -> None:
+    paths = replace(
+        _paths(tmp_path),
+        serving_bundle_root=tmp_path / "serving-bundle",
+    )
+    monkeypatch.setattr(automation, "_validate_paths", lambda _paths: None)
+    paths.serving_bundle_root.mkdir()
+    _target, release_id, aggregate, manifest_sha = _install_active_snapshot(
+        monkeypatch, paths
+    )
+    (paths.serving_bundle_root / release_id).mkdir()
+    existing = set(automation._stage_locations(TARGET, paths).values())
+    existing.add(paths.serving_bundle_root / release_id)
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    _install_active_market_intelligence(monkeypatch, paths)
+    monkeypatch.setattr(
+        automation,
+        "read_oci_dashboard_serving_bundle",
+        lambda *_args, **_kwargs: SimpleNamespace(
+            snapshot_manifest=SimpleNamespace(current_session_date=TARGET.isoformat()),
+            bundle_logical_fingerprint="4" * 64,
+            deployment_manifest=SimpleNamespace(
+                release_id=release_id,
+                snapshot_aggregate_sha256=aggregate,
+                snapshot_manifest_sha256=manifest_sha,
+            ),
+        ),
+    )
+
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+
+    assert plan.status is automation.PlanStatus.ANALYTICS_READY
+    assert plan.next_action is automation.NextAction.REVIEW_BUNDLE_DEPLOYMENT
+    assert plan.reason_codes == ("serving_bundle_ready_for_deployment_review",)
+    assert plan.deployment_authorized is False
+
+
+def test_bundle_staging_residue_blocks(monkeypatch, tmp_path) -> None:
+    paths = replace(
+        _paths(tmp_path),
+        serving_bundle_root=tmp_path / "serving-bundle",
+    )
+    monkeypatch.setattr(automation, "_validate_paths", lambda _paths: None)
+    paths.serving_bundle_root.mkdir()
+    _target, release_id, _aggregate, _manifest_sha = _install_active_snapshot(
+        monkeypatch, paths
+    )
+    (paths.serving_bundle_root / release_id).mkdir()
+    staging = paths.serving_bundle_root / f".{release_id}.staging"
+    staging.mkdir()
+    existing = set(automation._stage_locations(TARGET, paths).values())
+    existing.add(paths.serving_bundle_root / release_id)
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    _install_active_market_intelligence(monkeypatch, paths)
+    original_lexists = automation._lexists
+    monkeypatch.setattr(
+        automation,
+        "_lexists",
+        lambda path: True if path == staging else original_lexists(path),
+    )
+
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.reason_codes == ("serving_bundle_partial",)
 
 
 def test_missing_identity_reports_authorized_catchup_as_only_next_action(monkeypatch, tmp_path) -> None:
@@ -703,6 +857,7 @@ def test_audit_paths_must_be_distinct_direct_tmp_children(tmp_path) -> None:
         market_intelligence_approval_plan=paths.market_intelligence_approval_plan,
         snapshot_output_root=paths.snapshot_output_root,
         snapshot_approval_plan=paths.snapshot_approval_plan,
+        serving_bundle_root=paths.serving_bundle_root,
     )
     with pytest.raises(automation.DailyEodAutomationError, match="distinct"):
         automation.plan_daily_eod_automation(target_session=TARGET, paths=duplicate)

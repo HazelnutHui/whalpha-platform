@@ -29,6 +29,7 @@ def _argv(tmp_path: Path) -> list[str]:
         "--market-intelligence-approval-plan", "/tmp/mi-plan-test.json",
         "--snapshot-output-root", "/tmp/snapshot-output-test",
         "--snapshot-approval-plan", "/tmp/snapshot-plan-test.json",
+        "--serving-bundle-root", "/tmp/tip-serving-bundle-test",
     ]
 
 

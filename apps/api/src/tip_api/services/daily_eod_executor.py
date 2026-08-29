@@ -5,6 +5,8 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import os
+import subprocess
 from contextlib import redirect_stdout
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -19,6 +21,9 @@ from tip_api.contracts.market_data.v2.dashboard_universe_activation import (
 )
 from tip_api.persistence.parquet.market_intelligence_active import (
     read_market_intelligence_approval_plan,
+)
+from tip_api.persistence.parquet.dashboard_snapshot_active import (
+    read_dashboard_snapshot_approval_plan,
 )
 from tip_api.services import (
     candidate_entry_geometry_cli,
@@ -46,9 +51,12 @@ from tip_api.services.daily_eod_run_journal import (
     new_attempt_id,
     unresolved_started_event,
 )
+from tip_api.services.oci_dashboard_serving_bundle import (
+    read_oci_dashboard_serving_bundle,
+)
 
 
-EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.3"
+EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.4"
 OFFLINE_ACTIONS = (
     NextAction.CALCULATE_PHASE1A,
     NextAction.CALCULATE_PHASE1B_INCREMENTAL,
@@ -59,6 +67,7 @@ OFFLINE_ACTIONS = (
     NextAction.CALCULATE_STRATEGY_CHANNELS,
     NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
     NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
+    NextAction.BUILD_SERVING_BUNDLE,
 )
 ACTION_STAGE = {
     NextAction.CALCULATE_PHASE1A: "phase1a",
@@ -70,6 +79,7 @@ ACTION_STAGE = {
     NextAction.CALCULATE_STRATEGY_CHANNELS: "strategy_channels",
     NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN: "publication_plan",
     NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN: "snapshot_plan",
+    NextAction.BUILD_SERVING_BUNDLE: "serving_bundle",
 }
 
 
@@ -87,6 +97,7 @@ class DailyEodExecutionConfig:
     publication_created_at: datetime | None = None
     publication_expected_current_state_fingerprint: str | None = None
     snapshot_generated_at: datetime | None = None
+    bundle_built_at: datetime | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -193,6 +204,20 @@ def execute_daily_eod_action(
     ):
         raise DailyEodExecutorError(
             "Dashboard Snapshot planning requires an explicit UTC timestamp"
+        )
+    if (
+        expected_action is NextAction.BUILD_SERVING_BUNDLE
+        and config.bundle_built_at is None
+    ):
+        raise DailyEodExecutorError(
+            "serving bundle construction requires an explicit UTC timestamp"
+        )
+    if (
+        expected_action is not NextAction.BUILD_SERVING_BUNDLE
+        and config.bundle_built_at is not None
+    ):
+        raise DailyEodExecutorError(
+            "serving bundle timestamp is only valid for bundle construction"
         )
     with locked_daily_eod_run_journal(
         run_root=config.run_root,
@@ -549,6 +574,70 @@ def run_offline_action(
             session,
         ]
         summary = _invoke_main(dashboard_snapshot_v2_cli.main, argv)
+    elif action is NextAction.BUILD_SERVING_BUNDLE:
+        if config.bundle_built_at is None:
+            raise DailyEodExecutorError(
+                "serving bundle construction requires an explicit UTC timestamp"
+            )
+        snapshot_plan = read_dashboard_snapshot_approval_plan(
+            config.paths.snapshot_approval_plan
+        )
+        output = config.paths.serving_bundle_root / snapshot_plan.release_id
+        repository_root = _source_repository_root()
+        command = [
+            str(repository_root / "scripts/admin/build-oci-dashboard-bundle.sh"),
+            "--snapshot-path",
+            snapshot_plan.target_path,
+            "--market-intelligence-publication",
+            snapshot_plan.market_intelligence_publication_id,
+            "--bundle-release",
+            snapshot_plan.release_id,
+            "--bundle-root",
+            str(config.paths.serving_bundle_root),
+            "--build-timestamp",
+            config.bundle_built_at.astimezone(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        ]
+        environment = {
+            name: os.environ[name]
+            for name in ("HOME", "PATH", "LANG")
+            if name in os.environ
+        }
+        environment.update(
+            {
+                "CI": "1",
+                "npm_config_offline": "true",
+            }
+        )
+        completed = subprocess.run(
+            command,
+            cwd=repository_root,
+            env=environment,
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=300,
+        )
+        if completed.returncode != 0:
+            raise DailyEodExecutorError(
+                "serving bundle administrator reported failure"
+            )
+        bundle = read_oci_dashboard_serving_bundle(
+            output,
+            expected_snapshot_path=Path(snapshot_plan.target_path),
+        )
+        summary = json.dumps(
+            {
+                "status": "completed",
+                "release_id": snapshot_plan.release_id,
+                "bundle_logical_fingerprint": bundle.bundle_logical_fingerprint,
+                "checksum_file_count": bundle.checksum_file_count,
+                "deployment_authorized": False,
+                "external_request_count": 0,
+                "production_write_count": 0,
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        )
     else:
         raise DailyEodExecutorError("unsupported offline daily action")
     raw = summary.encode("utf-8")
@@ -636,6 +725,11 @@ def _action_output_path(action: NextAction, config: DailyEodExecutionConfig) -> 
         return config.paths.market_intelligence_approval_plan
     if action is NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN:
         return config.paths.snapshot_approval_plan
+    if action is NextAction.BUILD_SERVING_BUNDLE:
+        approval = read_dashboard_snapshot_approval_plan(
+            config.paths.snapshot_approval_plan
+        )
+        return config.paths.serving_bundle_root / approval.release_id
     raise DailyEodExecutorError("unsupported offline daily action")
 
 
@@ -680,6 +774,14 @@ def _validate_execution_config(config: DailyEodExecutionConfig) -> None:
         raise DailyEodExecutorError(
             "Snapshot planning timestamp must be explicit UTC"
         )
+    if config.bundle_built_at is not None and (
+        config.bundle_built_at.tzinfo is None
+        or config.bundle_built_at.utcoffset() is None
+        or config.bundle_built_at.utcoffset().total_seconds() != 0
+    ):
+        raise DailyEodExecutorError(
+            "serving bundle timestamp must be explicit UTC"
+        )
 
 
 def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
@@ -705,6 +807,7 @@ def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
             ),
             "snapshot_output_root": str(config.paths.snapshot_output_root),
             "snapshot_approval_plan": str(config.paths.snapshot_approval_plan),
+            "serving_bundle_root": str(config.paths.serving_bundle_root),
             "panel_cache_root": (
                 None if config.panel_cache_root is None else str(config.panel_cache_root)
             ),
@@ -724,6 +827,11 @@ def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
                 if config.snapshot_generated_at is None
                 else config.snapshot_generated_at.isoformat()
             ),
+            "bundle_built_at": (
+                None
+                if config.bundle_built_at is None
+                else config.bundle_built_at.isoformat()
+            ),
         },
     }
     return hashlib.sha256(
@@ -739,6 +847,13 @@ def _is_within(path: Path, root: Path) -> bool:
         return True
     except ValueError:
         return False
+
+
+def _source_repository_root() -> Path:
+    for candidate in Path(__file__).resolve().parents:
+        if (candidate / ".git").exists() and (candidate / "AGENTS.md").is_file():
+            return candidate
+    raise DailyEodExecutorError("executing source repository root is unavailable")
 
 
 def _is_fingerprint(value: object) -> bool:

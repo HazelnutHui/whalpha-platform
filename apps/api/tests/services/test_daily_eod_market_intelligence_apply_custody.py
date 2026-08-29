@@ -59,6 +59,7 @@ def _paths(tmp_path: Path) -> DailyEodAutomationPaths:
         market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
         snapshot_output_root=Path(f"/tmp/{suffix}-snapshot-output"),
         snapshot_approval_plan=Path(f"/tmp/{suffix}-snapshot-plan.json"),
+        serving_bundle_root=Path(f"/tmp/{suffix}-serving-bundle"),
     )
 
 

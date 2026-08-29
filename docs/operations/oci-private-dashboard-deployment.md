@@ -83,6 +83,13 @@ The snapshot exporter and bundle builder write ignored artifacts beneath
 `build/private-dashboard/` and `build/oci-dashboard/`. Follow the
 [build and release retention policy](local-build-artifact-retention.md).
 
+ADR 0072's custody-tracked daily path instead supplies a new direct-child
+`/tmp` bundle root and explicit UTC build time. Its Serving Bundle 1.0 formal
+reader binds every file to the exact active Snapshot and clean source revision
+before stopping at deployment review. This local result grants no remote
+preflight or Apply authority; OCI deployment remains outside the daily
+executor.
+
 ## Apply flow
 
 An authorized apply must:
