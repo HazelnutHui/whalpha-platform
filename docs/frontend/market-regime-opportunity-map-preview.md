@@ -23,8 +23,9 @@ The refined page contains:
    codes, and contribution reconciliation remain in the audit expansion;
 4. six decision-lane relationship highlights that preserve fixed economic
    coverage, show both ETF returns, relative spread, current-versus-prior state,
-   and a deterministic natural-language comparison; returns never select or
-   rank a pair;
+   retained state-run duration, one-/five-session rolling-spread change, and a
+   deterministic natural-language comparison; returns never select or rank a
+   pair;
 5. one consolidated short-history reliability warning instead of a repeated
    warning on every relationship;
 6. all 16 relationship rows retained in a collapsed-by-default audit table
@@ -68,6 +69,9 @@ warnings, source identities, and analytics fingerprints stay identical. See
 - A relative spread is always visible beside the relationship state, including
   cases such as IGV/QQQ where a synchronous label alone would hide relative
   resilience.
+- Additive change evidence identifies the current leader and whether its
+  rolling advantage strengthened, weakened, reversed, emerged, or faded. It is
+  descriptive only and old Snapshots fall back to prior-state text.
 - Missing 60-session ratio statistics say that at least 60 sessions are
   required; they never render as zero.
 - The page says explicitly that relationship statistics are non-causal,

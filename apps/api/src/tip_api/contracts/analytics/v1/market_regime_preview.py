@@ -89,6 +89,51 @@ class PreviewEtfPairDefinitionV1(BaseModel):
     regime_orientation: str
 
 
+class PreviewEtfRelationshipWindowChangeV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    window_sessions: Literal[5, 10, 20]
+    current_relative_return: str | None
+    prior_1_session_relative_return: str | None
+    change_1_session: str | None
+    prior_5_session_relative_return: str | None
+    change_5_sessions: str | None
+    leadership_change_1: Literal[
+        "strengthening", "weakening", "reversed", "new_leadership",
+        "leadership_faded", "unchanged", "unavailable",
+    ]
+    leadership_change_5: Literal[
+        "strengthening", "weakening", "reversed", "new_leadership",
+        "leadership_faded", "unchanged", "unavailable",
+    ]
+
+
+class PreviewEtfRelationshipChangeSummaryV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    contract_version: Literal["relationship-change-summary/1.0"] = (
+        "relationship-change-summary/1.0"
+    )
+    pair_id: str
+    as_of_session: date
+    current_state_run_started_session: date
+    current_state_run_session_count: int = Field(ge=1)
+    state_run_reaches_history_start: bool
+    state_changed_this_session: bool
+    current_5_session_leader: Literal["left", "right", "tied", "unavailable"]
+    windows: tuple[PreviewEtfRelationshipWindowChangeV1, ...]
+    reason_codes: tuple[str, ...]
+    disclaimer: Literal["descriptive_change_not_predictive_signal"] = (
+        "descriptive_change_not_predictive_signal"
+    )
+
+    @model_validator(mode="after")
+    def fixed_windows(self) -> "PreviewEtfRelationshipChangeSummaryV1":
+        if tuple(item.window_sessions for item in self.windows) != (5, 10, 20):
+            raise ValueError("relationship change summary requires fixed window order")
+        return self
+
+
 class PreviewEtfRelationshipV1(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -108,6 +153,12 @@ class PreviewEtfRelationshipV1(BaseModel):
         if self.current.relationship_family != self.definition.relationship_family:
             raise ValueError("preview ETF family differs from registry")
         return self
+
+
+class PreviewEtfRelationshipViewV1(PreviewEtfRelationshipV1):
+    """Additive API/Snapshot view; immutable source payload remains unchanged."""
+
+    change_summary: PreviewEtfRelationshipChangeSummaryV1
 
 
 class PreviewSourceLogicalFingerprintsV1(BaseModel):
@@ -251,7 +302,7 @@ class MarketRegimeOpportunityMapResponseV1(BaseModel):
     parameter_fingerprints: PreviewParameterFingerprintsV1
     source_logical_fingerprints: PreviewSourceLogicalFingerprintsV1
     regime: PreviewUniverseAnalyticsV1
-    relationships: tuple[PreviewEtfRelationshipV1, ...]
+    relationships: tuple[PreviewEtfRelationshipViewV1, ...]
     relationship_comparisons: tuple[MarketRegimeRelationshipComparisonV1, ...]
     warnings: tuple[str, ...]
     quality_gates: tuple[PreviewQualityGateV1, ...]
@@ -277,6 +328,6 @@ class MarketRegimeRelationshipDetailResponseV1(BaseModel):
     as_of_session: date
     selected_universe_id: str
     source_logical_fingerprints: PreviewSourceLogicalFingerprintsV1
-    relationship: PreviewEtfRelationshipV1
+    relationship: PreviewEtfRelationshipViewV1
     comparison: MarketRegimeRelationshipComparisonV1
     history: tuple[EtfRelationshipRecordV1, ...]

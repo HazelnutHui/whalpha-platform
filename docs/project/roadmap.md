@@ -12,8 +12,10 @@
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
-- Product: preserve leadership quality and entry location as separate axes;
-  next improve relationship duration/acceleration and visual decision context.
+- Product: preserve leadership quality and entry location as separate axes.
+  Relationship duration and rolling-spread acceleration are now implemented in
+  repository source; next consider a compact state timeline and standardized
+  ratio view only when the history gates support them.
 
 ## Implemented sequencing record
 

@@ -51,6 +51,9 @@ function percent(t: Translate, value: string | null): string {
 function percentagePoints(t: Translate, value: string | null): string {
   return value === null ? t('common.unavailable') : Math.abs(Number(value) * 100).toFixed(2);
 }
+function signedPercentagePoints(t: Translate, value: string | null): string {
+  return value === null ? t('common.unavailable') : `${Number(value) >= 0 ? '+' : ''}${(Number(value) * 100).toFixed(2)}`;
+}
 function signed(t: Translate, value: string | null, digits = 2): string {
   return value === null ? t('common.unavailable') : `${Number(value) >= 0 ? '+' : ''}${Number(value).toFixed(digits)}`;
 }
@@ -151,10 +154,37 @@ function relationshipChanged(item: Relationship): boolean {
     && item.current.previous_relationship_state !== item.current.relationship_state;
 }
 function relationshipPersistence(t: Translate, item: Relationship): string {
+  const summary = item.change_summary;
   const previous = item.current.previous_relationship_state;
   if (previous === undefined || previous === null) return t('regime.stateHistoryUnavailable');
+  if (previous === item.current.relationship_state && summary) return t(
+    summary.state_run_reaches_history_start ? 'regime.stateRunsAtLeast' : 'regime.stateRuns',
+    { count: summary.current_state_run_session_count, session: summary.current_state_run_started_session },
+  );
   if (previous === item.current.relationship_state) return t('regime.stateContinues');
   return t('regime.stateChangedFrom', { state: relationshipName(t, previous) });
+}
+function leadershipChangeName(t: Translate, value: string): string {
+  if (value === 'strengthening') return t('regime.leadershipStrengthening');
+  if (value === 'weakening') return t('regime.leadershipWeakening');
+  if (value === 'reversed') return t('regime.leadershipReversed');
+  if (value === 'new_leadership') return t('regime.leadershipNew');
+  if (value === 'leadership_faded') return t('regime.leadershipFaded');
+  if (value === 'unchanged') return t('regime.leadershipUnchanged');
+  return t('common.unavailable');
+}
+function relationshipMomentum(t: Translate, item: Relationship, windowSize: WindowSize): string | null {
+  const summary = item.change_summary;
+  const change = summary?.windows.find((row) => row.window_sessions === windowSize);
+  if (!summary || !change) return null;
+  const relativeReturn = change.current_relative_return === null ? null : Number(change.current_relative_return);
+  const leader = relativeReturn === null || relativeReturn === 0 ? t('regime.noClearLeader')
+    : relativeReturn > 0 ? item.definition.left_ticker : item.definition.right_ticker;
+  return t('regime.relationshipMomentum', {
+    leader, movement: leadershipChangeName(t, change.leadership_change_1),
+    one: signedPercentagePoints(t, change.change_1_session),
+    five: signedPercentagePoints(t, change.change_5_sessions),
+  });
 }
 function selectDecisionHighlights(items: Relationship[]): Relationship[] {
   const selected: Relationship[] = [];
@@ -224,12 +254,13 @@ function Dimensions({ data }: { data: MarketRegimePreviewResponse }): JSX.Elemen
 }
 
 function RelationshipCard({ item, windowSize, onOpen }: { item: Relationship; windowSize: WindowSize; onOpen: () => void }): JSX.Element {
-  const { t } = useI18n(); const metric = metricFor(item, windowSize); const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`;
+  const { t } = useI18n(); const metric = metricFor(item, windowSize); const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`; const momentum = relationshipMomentum(t, item, windowSize);
   return <button type="button" className="relationship-highlight" title={t('regime.openPair', { pair })} onClick={onOpen}>
     <span className="highlight-family">{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</span><div className="highlight-title"><strong>{pair}</strong><StateMark state={item.current.relationship_state} /></div>
     <span className={`relationship-change ${relationshipChanged(item) ? 'changed' : ''}`}>{relationshipPersistence(t, item)}</span>
     <div className="highlight-returns"><span><small>{item.definition.left_ticker}</small><b>{percent(t, metric.left_return)}</b></span><span><small>{item.definition.right_ticker}</small><b>{percent(t, metric.right_return)}</b></span><span className="highlight-spread"><small>{t('regime.relativeSpread')}</small><b>{percent(t, metric.relative_return)}</b></span></div>
     <p>{directionSentence(t, metric, windowSize)} {relativeSentence(t, item, metric)}</p>
+    {momentum ? <small className="relationship-momentum">{momentum}</small> : null}
   </button>;
 }
 function WindowMetric({ relationship, windowSize }: { relationship: Relationship; windowSize: WindowSize }): JSX.Element {
@@ -237,10 +268,11 @@ function WindowMetric({ relationship, windowSize }: { relationship: Relationship
   return <><span className="return-cell"><small>{relationship.definition.left_ticker}</small><b className={metric.left_return && Number(metric.left_return) >= 0 ? 'positive-text' : 'negative-text'}>{percent(t, metric.left_return)}</b></span><span className="return-cell"><small>{relationship.definition.right_ticker}</small><b className={metric.right_return && Number(metric.right_return) >= 0 ? 'positive-text' : 'negative-text'}>{percent(t, metric.right_return)}</b></span><span className="spread-cell"><small>{t('common.spread')}</small><strong>{percent(t, metric.relative_return)}</strong></span><span className="correlation-cell"><small>{t('common.correlation')}</small><b>{number(t, metric.rolling_correlation, 2)}</b></span></>;
 }
 function PairDetail({ item, windowSize, onClose }: { item: Relationship; windowSize: WindowSize; onClose: () => void }): JSX.Element {
-  const { t } = useI18n(); const metric = metricFor(item, windowSize); const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`;
+  const { t } = useI18n(); const metric = metricFor(item, windowSize); const pair = `${item.definition.left_ticker} / ${item.definition.right_ticker}`; const momentum = relationshipMomentum(t, item, windowSize);
   return <aside className="relationship-drawer" role="dialog" aria-modal="false" aria-labelledby="pair-detail-title"><div className="detail-header"><div><p className="eyebrow">{familyName(t, item.definition.relationship_family)}</p><h2 id="pair-detail-title">{pair}</h2><p>{pairText(t, item.definition.pair_id, 'rationale', item.definition.economic_rationale)}</p></div><button className="drawer-close" type="button" onClick={onClose} aria-label={t('regime.closePair', { pair })}><span aria-hidden="true">×</span> {t('common.close')}</button></div>
     <div className="drawer-observation"><span>{t('regime.currentRead', { count: windowSize })}</span><strong>{directionSentence(t, metric, windowSize)}</strong><strong>{relativeSentence(t, item, metric)}</strong><p>{crossWindowSentence(t, item)} {t('regime.shortReliability')}</p></div>
     <div className="drawer-summary"><div><span>{t('regime.relationshipState')}</span><StateMark state={item.current.relationship_state} /></div><div><span>{t('regime.relativeResult')}</span><strong>{percent(t, metric.relative_return)}</strong><small>{t('regime.leads', { ticker: Number(metric.relative_return ?? 0) >= 0 ? item.definition.left_ticker : item.definition.right_ticker })}</small></div><div><span>{t('regime.reliability')}</span><strong>{confidenceName(t, item.current.confidence)}</strong><small>{t('regime.reliabilityMeaning')}</small></div></div>
+    {momentum ? <div className="relationship-change-detail"><strong>{relationshipPersistence(t, item)}</strong><span>{momentum}</span><small>{t('regime.changeIsDescriptive')}</small></div> : null}
     <div className="pair-window-detail"><div className="pair-window-head"><span>{t('common.window')}</span><span>{item.definition.left_ticker}</span><span>{item.definition.right_ticker}</span><span>{t('common.spread')}</span><span>{t('common.correlation')}</span></div>{item.current.windows.map((row) => <div className={row.window_sessions === windowSize ? 'selected-window' : ''} key={row.window_sessions}><strong>{t('regime.windowSessions', { count: row.window_sessions })}</strong><span>{percent(t, row.left_return)}</span><span>{percent(t, row.right_return)}</span><span>{percent(t, row.relative_return)}</span><span>{number(t, row.rolling_correlation, 2)}</span></div>)}</div>
     <div className="evidence-columns"><section><h3>{t('regime.supportingEvidence')}</h3><ul>{item.explanation.supporting_evidence.map((line) => <li key={line}>{reasonText(t, line)}</li>)}</ul></section><section><h3>{t('regime.counterevidence')}</h3>{item.explanation.counterevidence.length ? <ul>{item.explanation.counterevidence.map((line) => <li key={line}>{reasonText(t, line)}</li>)}</ul> : <p>{t('regime.noCounterevidence')}</p>}</section></div>
     <details className="technical-diagnostics"><summary>{t('regime.technical')}</summary><dl className="drawer-stats"><div><dt>{t('regime.correlationChange')}</dt><dd>{signed(t, item.current.correlation_change_5, 2)}</dd></div><div><dt>{t('regime.ratioLevel')}</dt><dd>{number(t, item.current.ratio_level, 3)}</dd></div><div><dt>{t('regime.ratioRobust')}</dt><dd>{item.current.ratio_robust_z === null && item.current.ratio_percentile === null ? t('regime.needs60') : `${number(t, item.current.ratio_robust_z, 2)} / ${number(t, item.current.ratio_percentile, 2)}`}</dd></div></dl><p><b>{t('common.reasonCodes')}:</b> {item.current.reason_codes.join(' · ')}</p><p>{pairText(t, item.definition.pair_id, 'expected', item.definition.expected_interpretation)}</p><p>{pairText(t, item.definition.pair_id, 'forbidden', item.definition.forbidden_interpretation)}</p></details>

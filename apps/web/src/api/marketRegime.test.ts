@@ -11,12 +11,20 @@ describe('Market Regime API parser', () => {
   it('accepts the complete stable 16-pair contract', () => {
     const result = parseMarketRegimePreview(marketRegimeFixture());
     expect(result.relationships).toHaveLength(16);
+    expect(result.relationships[0].change_summary?.current_state_run_session_count).toBe(3);
     expect(result.regime.composite.dimensions).toHaveLength(5);
+  });
+
+  it('rejects malformed additive relationship change evidence', () => {
+    const payload = marketRegimeFixture();
+    payload.relationships[0].change_summary!.windows[0].leadership_change_1 = 'invalid' as 'strengthening';
+    expect(() => parseMarketRegimePreview(payload)).toThrow(/window change/);
   });
 
   it('accepts only coherent stale-review metadata', () => {
     const payload = marketRegimeFixture();
     payload.as_of_session = '2026-08-24';
+    payload.relationships.forEach((item) => { item.change_summary!.as_of_session = payload.as_of_session; });
     payload.data_status = 'stale_review';
     payload.review_deployment = {
       contract_version: 'production-review-deployment/1.0', review_mode: true,
@@ -33,6 +41,7 @@ describe('Market Regime API parser', () => {
   it('accepts only the exact second stale-review authorization', () => {
     const payload = marketRegimeFixture();
     payload.as_of_session = '2026-08-26';
+    payload.relationships.forEach((item) => { item.change_summary!.as_of_session = payload.as_of_session; });
     payload.data_status = 'stale_review';
     payload.review_deployment = {
       contract_version: 'production-review-deployment/1.1', review_mode: true,

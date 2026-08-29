@@ -209,6 +209,12 @@ revision pin, the final candidate must be rendered after the final clean commit
 and must not be persisted or activated without separate review.
 All 1,653 backend tests pass for this final repository implementation; no
 frontend source changed.
+ADR 0074 subsequently adds a repository-only, additive relationship-change
+view derived from the retained Phase 2 history. It exposes state-run duration
+and exact rolling relative-return changes without modifying source payloads,
+formulas, thresholds, rankings, or Production. It remains undeployed.
+All 1,654 backend tests and 95 frontend tests pass for this additive boundary,
+and the frontend production build succeeds.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

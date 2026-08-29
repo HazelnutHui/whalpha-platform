@@ -16,6 +16,20 @@ function relationship(index: number): Relationship {
       ratio_level: '1.1000000000', ratio_robust_z: null, ratio_percentile: null, correlation_20_prior_5: '0.6000000000', correlation_change_5: '-0.1000000000', reason_codes: ['short_history_low_confidence'], warnings: ['short_history'],
     },
     explanation: { left_observation: 'Left leg moved.', right_observation: 'Right leg moved.', relative_strength_observation: 'The left leg was relatively stronger.', correlation_observation: 'Correlation declined.', cross_window_observation: 'Windows agree.', supporting_evidence: ['Relative spread is positive.'], counterevidence: index % 3 ? [] : ['History is short.'], reason_codes: ['short_history_low_confidence'], disclaimers: ['statistical_relationship_not_causal'] },
+    change_summary: {
+      contract_version: 'relationship-change-summary/1.0', pair_id: pairId,
+      as_of_session: '2026-08-21', current_state_run_started_session: '2026-08-19',
+      current_state_run_session_count: 3, state_run_reaches_history_start: false,
+      state_changed_this_session: index % 5 === 0, current_5_session_leader: 'left',
+      windows: ([5, 10, 20] as const).map((window) => ({
+        window_sessions: window, current_relative_return: '0.0200000000',
+        prior_1_session_relative_return: '0.0150000000', change_1_session: '0.0050000000',
+        prior_5_session_relative_return: '0.0100000000', change_5_sessions: '0.0100000000',
+        leadership_change_1: 'strengthening', leadership_change_5: 'strengthening',
+      })),
+      reason_codes: ['state_run_derived_from_retained_relationship_history'],
+      disclaimer: 'descriptive_change_not_predictive_signal',
+    },
   };
 }
 

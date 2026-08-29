@@ -41,6 +41,20 @@ export interface RelationshipWindow {
   rolling_correlation: string | null; daily_return_observation_count: number; direction_combination: string | null;
   availability: string; missing_reason: string | null; reason_codes: string[];
 }
+export type LeadershipChange = 'strengthening' | 'weakening' | 'reversed' | 'new_leadership' | 'leadership_faded' | 'unchanged' | 'unavailable';
+export interface RelationshipWindowChange {
+  window_sessions: 5 | 10 | 20; current_relative_return: string | null;
+  prior_1_session_relative_return: string | null; change_1_session: string | null;
+  prior_5_session_relative_return: string | null; change_5_sessions: string | null;
+  leadership_change_1: LeadershipChange; leadership_change_5: LeadershipChange;
+}
+export interface RelationshipChangeSummary {
+  contract_version: 'relationship-change-summary/1.0'; pair_id: string; as_of_session: string;
+  current_state_run_started_session: string; current_state_run_session_count: number;
+  state_run_reaches_history_start: boolean; state_changed_this_session: boolean;
+  current_5_session_leader: 'left' | 'right' | 'tied' | 'unavailable'; windows: RelationshipWindowChange[];
+  reason_codes: string[]; disclaimer: 'descriptive_change_not_predictive_signal';
+}
 export interface Relationship {
   definition: { pair_id: string; registry_order: number; left_ticker: string; right_ticker: string;
     relationship_family: string; economic_rationale: string; expected_interpretation: string;
@@ -53,6 +67,7 @@ export interface Relationship {
   explanation: { left_observation: string; right_observation: string; relative_strength_observation: string;
     correlation_observation: string; cross_window_observation: string; supporting_evidence: string[];
     counterevidence: string[]; reason_codes: string[]; disclaimers: string[] };
+  change_summary?: RelationshipChangeSummary;
 }
 export interface RegimeRelationshipComparison { pair_id: string; alignment: string; reason_codes: string[] }
 export interface MarketRegimePreviewResponse {
@@ -99,6 +114,33 @@ export function parseMarketRegimePreview(value: unknown): MarketRegimePreviewRes
       decimal(row.left_return, 'left_return'); decimal(row.right_return, 'right_return');
       decimal(row.relative_return, 'relative_return'); decimal(row.rolling_correlation, 'rolling_correlation');
     });
+    if (relationship.change_summary !== undefined) {
+      const summary = object(relationship.change_summary, 'relationship change summary');
+      if (summary.contract_version !== 'relationship-change-summary/1.0'
+        || summary.pair_id !== definition.pair_id || summary.as_of_session !== root.as_of_session
+        || !Number.isInteger(summary.current_state_run_session_count)
+        || Number(summary.current_state_run_session_count) < 1
+        || typeof summary.state_run_reaches_history_start !== 'boolean'
+        || typeof summary.state_changed_this_session !== 'boolean'
+        || !['left', 'right', 'tied', 'unavailable'].includes(String(summary.current_5_session_leader))
+        || summary.disclaimer !== 'descriptive_change_not_predictive_signal'
+        || !Array.isArray(summary.windows) || summary.windows.length !== 3) {
+        throw new Error('Market Regime relationship change summary is invalid');
+      }
+      summary.windows.forEach((change, index) => {
+        const row = object(change, 'relationship window change');
+        if (row.window_sessions !== [5, 10, 20][index]
+          || !['strengthening', 'weakening', 'reversed', 'new_leadership', 'leadership_faded', 'unchanged', 'unavailable'].includes(String(row.leadership_change_1))
+          || !['strengthening', 'weakening', 'reversed', 'new_leadership', 'leadership_faded', 'unchanged', 'unavailable'].includes(String(row.leadership_change_5))) {
+          throw new Error('Market Regime relationship window change is invalid');
+        }
+        decimal(row.current_relative_return, 'current relative return');
+        decimal(row.prior_1_session_relative_return, 'prior one-session relative return');
+        decimal(row.change_1_session, 'one-session relationship change');
+        decimal(row.prior_5_session_relative_return, 'prior five-session relative return');
+        decimal(row.change_5_sessions, 'five-session relationship change');
+      });
+    }
   });
   const regime = object(root.regime, 'regime'); const composite = object(regime.composite, 'composite');
   decimal(composite.regime_score, 'regime_score');

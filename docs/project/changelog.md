@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-29 — Add descriptive ETF relationship persistence and acceleration
+
+- Accepted ADR 0074 and added a compact API/Snapshot change summary derived
+  from the existing formally bound Phase 2 history.
+- Added current-state run start/count with explicit history-boundary handling,
+  plus exact one-/five-session changes for rolling 5/10/20 relative returns and
+  threshold-free strengthening/weakening/reversal descriptions.
+- Added strict frontend validation and bilingual presentation in relationship
+  highlights and detail. Old Snapshots without the additive field retain the
+  prior-state fallback.
+- Verified 1,654 backend tests and 95 frontend tests, plus the frontend
+  production build. The two backend warnings are pre-existing dependency
+  deprecations.
+- No relationship formula, state, threshold, score, rank, highlight order,
+  Market Intelligence source payload, `/data`, network, deployment, or
+  scheduler state changed.
+
 ## 2026-08-29 — Reconcile current deployment and retention documentation
 
 - Re-ran the credential-free full-source context reader on clean Dell `main`.

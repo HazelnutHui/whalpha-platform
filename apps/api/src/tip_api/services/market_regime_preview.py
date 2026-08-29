@@ -30,6 +30,7 @@ from tip_api.contracts.analytics.v1 import (
     PreviewEtfBasketEntryV1,
     PreviewEtfPairDefinitionV1,
     PreviewEtfRelationshipV1,
+    PreviewEtfRelationshipViewV1,
     PreviewParameterFingerprintsV1,
     PreviewQualityGateV1,
     PreviewSourceLogicalFingerprintsV1,
@@ -44,6 +45,7 @@ from tip_api.contracts.analytics.v1.market_regime_preview import (
 from tip_api.services.etf_relationship_audit import read_etf_relationship_audit
 from tip_api.services.market_regime_audit import read_market_regime_audit
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
+from tip_api.services.relationship_change_summary import build_relationship_change_summary
 
 
 EXPECTED_FILES = (PREVIEW_PAYLOAD_FILE, PREVIEW_MANIFEST_FILE)
@@ -257,6 +259,7 @@ class MarketRegimePreviewService:
         self._payload = completed.payload
         self._universes = {item.definition.universe_id: item for item in completed.payload.universes}
         self._relationships = {item.definition.pair_id: item for item in completed.payload.relationships}
+        self._relationship_views = _build_relationship_views(completed.payload)
         self._review_deployment: ReviewDeploymentAuthorization | None = None
 
     @classmethod
@@ -281,6 +284,7 @@ class MarketRegimePreviewService:
         instance._relationships = {
             item.definition.pair_id: item for item in payload.relationships
         }
+        instance._relationship_views = _build_relationship_views(payload)
         instance._review_deployment = review_deployment
         return instance
 
@@ -310,7 +314,10 @@ class MarketRegimePreviewService:
             parameter_fingerprints=self._payload.parameter_fingerprints,
             source_logical_fingerprints=self._payload.source_logical_fingerprints,
             regime=regime,
-            relationships=self._payload.relationships,
+            relationships=tuple(
+                self._relationship_views[item.definition.pair_id]
+                for item in self._payload.relationships
+            ),
             relationship_comparisons=comparisons,
             warnings=self._payload.warnings,
             quality_gates=self._payload.quality_gates,
@@ -334,10 +341,28 @@ class MarketRegimePreviewService:
             as_of_session=self._payload.as_of_session,
             selected_universe_id=selected,
             source_logical_fingerprints=self._payload.source_logical_fingerprints,
-            relationship=relationship,
+            relationship=self._relationship_views[pair_id],
             comparison=comparison,
             history=history,
         )
+
+
+def _build_relationship_views(
+    payload: MarketRegimePreviewPayloadV1,
+) -> dict[str, PreviewEtfRelationshipViewV1]:
+    history_by_pair: dict[str, list[EtfRelationshipRecordV1]] = {}
+    for item in payload.relationship_history:
+        history_by_pair.setdefault(item.pair_id, []).append(item)
+    return {
+        item.definition.pair_id: PreviewEtfRelationshipViewV1(
+            **item.model_dump(mode="python"),
+            change_summary=build_relationship_change_summary(
+                current=item.current,
+                history=history_by_pair.get(item.definition.pair_id, ()),
+            ),
+        )
+        for item in payload.relationships
+    }
 
 
 def _write_and_read_bundle(

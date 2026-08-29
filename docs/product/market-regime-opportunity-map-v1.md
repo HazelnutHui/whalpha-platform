@@ -476,6 +476,12 @@ rationale, a plausible reverse explanation, sample size, confidence, and
 invalidation. It always carries: “Statistical relationship; not evidence of
 causality.”
 
+The presentation projection additionally shows how many retained sessions the
+current state has persisted and whether the rolling relative-return advantage
+expanded, narrowed, reversed, newly appeared, or faded over one and five
+sessions. These are descriptive changes in overlapping rolling windows—not a
+new relationship score, causal attribution, or predictive signal.
+
 ## C. Opportunity Transmission
 
 The intended path is:

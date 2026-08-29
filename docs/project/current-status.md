@@ -162,6 +162,15 @@ remote inspection or Apply has run. All 1,653 backend tests pass; the exact
 post-commit candidate review belongs to the completing report because another
 documentation commit would invalidate its revision pin.
 
+ADR 0074 now adds repository-only descriptive ETF relationship change views.
+The retained Phase 2 history is projected into current-state run duration and
+exact one-/five-session changes in rolling 5/10/20 relative returns. The
+bilingual UI presents who leads and whether that advantage is strengthening,
+weakening, reversing, emerging, or fading. No Phase 2 record, Market
+Intelligence payload, state formula, threshold, ranking, or highlight selection
+changes. All 1,654 backend tests and 95 frontend tests pass, and the frontend
+production build succeeds. This addition is not deployed.
+
 ### Historical 2026-08-27 recovery and pipeline evidence
 
 The following details are retained as historical recovery and performance

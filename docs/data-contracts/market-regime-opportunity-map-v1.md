@@ -374,6 +374,15 @@ fingerprint. `relationship_break_candidate`, `rotation_candidate`, `divergence`,
 `unavailable` are the only state values. State priority and thresholds are the
 product contract; runtime data cannot alter them.
 
+The additive API/Snapshot view may also contain
+`relationship-change-summary/1.0`. It is derived from the already bound
+chronological history and does not alter the source row or fingerprint. It
+contains the current consecutive-state run start/count, an explicit retained-
+history-boundary flag, and one-/five-session changes in the rolling 5/10/20
+relative-return spreads. Strengthening/weakening/reversal labels compare exact
+signed magnitudes without fitted thresholds. These fields must not feed state
+classification, ranking, highlight selection, or trading claims.
+
 The Market Regime comparison record is deliberately separate. It references
 the Phase 1b state row and classifies the contemporaneous narrative as
 `consistent`, `conflict`, or `neutral` using fixed pair orientation. It cannot

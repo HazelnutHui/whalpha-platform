@@ -43,6 +43,7 @@ from tip_api.services.market_regime_preview import (
     _write_and_read_bundle,
     read_market_regime_preview_bundle,
 )
+from tip_api.services.relationship_change_summary import build_relationship_change_summary
 from tip_api.services.market_regime_preview_cli import main as preview_cli_main
 
 
@@ -220,6 +221,8 @@ def test_preview_round_trip_is_deterministic_and_query_is_isolated():
         assert primary.regime.composite.regime_score == "63.9102" and secondary.regime.composite.regime_score == "64.8167"
         assert [item.current.logical_fingerprint for item in primary.relationships] == [item.current.logical_fingerprint for item in secondary.relationships]
         assert len(primary.relationships) == 16 and len(service.relationship_detail("pair_00").history) == 1
+        assert primary.relationships[0].change_summary.current_state_run_session_count == 1
+        assert primary.relationships[0].change_summary.state_run_reaches_history_start is True
     finally:
         _cleanup(first); _cleanup(second)
 
@@ -274,6 +277,33 @@ def test_api_is_absent_by_default_and_enabled_bundle_is_read_only():
         assert enabled.get("/api/v1/private/market-regime/relationships/pair_00").status_code == 200
     finally:
         _cleanup(target)
+
+
+def test_relationship_change_summary_uses_retained_history_without_thresholds():
+    base = _relationship(0).current
+    values = ("0.0100000000", "0.0000000000", "0.0050000000", "0.0100000000", "0.0150000000", "0.0200000000")
+    history = []
+    for index, value in enumerate(values):
+        windows = tuple(
+            item.model_copy(update={"relative_return": value}) for item in base.windows
+        )
+        history.append(base.model_copy(update={
+            "as_of_session": date(2026, 8, 16 + index),
+            "windows": windows,
+            "relationship_state": "neutral" if index == 0 else "synchronous_strengthening",
+            "logical_fingerprint": f"{index + 1:064x}",
+        }))
+    summary = build_relationship_change_summary(current=history[-1], history=history)
+    five = summary.windows[0]
+    assert summary.current_state_run_started_session == date(2026, 8, 17)
+    assert summary.current_state_run_session_count == 5
+    assert summary.state_run_reaches_history_start is False
+    assert summary.state_changed_this_session is False
+    assert summary.current_5_session_leader == "left"
+    assert five.change_1_session == "0.0050000000"
+    assert five.change_5_sessions == "0.0100000000"
+    assert five.leadership_change_1 == "strengthening"
+    assert five.leadership_change_5 == "strengthening"
 
 
 def test_cli_rejects_apply_and_config_requires_explicit_absolute_bundle():
