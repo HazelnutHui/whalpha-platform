@@ -16,7 +16,10 @@ from tip_api.contracts.market_data.v2.dashboard_universe_activation import (
 )
 from tip_api.services import (
     candidate_entry_geometry_cli,
+    candidate_strategy_channel_cli,
+    etf_relationship_cli,
     market_regime_cli,
+    market_regime_preview_cli,
     market_regime_state_cli,
     opportunity_candidate_cli,
 )
@@ -37,18 +40,24 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.0"
+EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.1"
 OFFLINE_ACTIONS = (
     NextAction.CALCULATE_PHASE1A,
     NextAction.CALCULATE_PHASE1B_INCREMENTAL,
     NextAction.CALCULATE_CANDIDATE_DAILY,
     NextAction.CALCULATE_ENTRY_GEOMETRY,
+    NextAction.CALCULATE_ETF_RELATIONSHIPS,
+    NextAction.BUILD_MARKET_PREVIEW,
+    NextAction.CALCULATE_STRATEGY_CHANNELS,
 )
 ACTION_STAGE = {
     NextAction.CALCULATE_PHASE1A: "phase1a",
     NextAction.CALCULATE_PHASE1B_INCREMENTAL: "phase1b",
     NextAction.CALCULATE_CANDIDATE_DAILY: "candidate",
     NextAction.CALCULATE_ENTRY_GEOMETRY: "entry_geometry",
+    NextAction.CALCULATE_ETF_RELATIONSHIPS: "phase2",
+    NextAction.BUILD_MARKET_PREVIEW: "preview",
+    NextAction.CALCULATE_STRATEGY_CHANNELS: "strategy_channels",
 }
 
 
@@ -405,6 +414,49 @@ def run_offline_action(
             str(output),
         ]
         summary = _invoke_main(candidate_entry_geometry_cli.main, argv)
+    elif action is NextAction.CALCULATE_ETF_RELATIONSHIPS:
+        output = config.paths.phase2_audit
+        argv = [
+            "--as-of-session",
+            session,
+            "--data-root",
+            str(config.paths.data_root),
+            "--phase1a-audit",
+            str(config.paths.phase1a_audit),
+            "--phase1b-audit",
+            str(config.paths.phase1b_audit),
+            "--output-dir",
+            str(output),
+        ]
+        summary = _invoke_main(etf_relationship_cli.main, argv)
+    elif action is NextAction.BUILD_MARKET_PREVIEW:
+        output = config.paths.preview_bundle
+        argv = [
+            "--as-of-session",
+            session,
+            "--phase1a-audit",
+            str(config.paths.phase1a_audit),
+            "--phase1b-audit",
+            str(config.paths.phase1b_audit),
+            "--phase2-audit",
+            str(config.paths.phase2_audit),
+            "--output-dir",
+            str(output),
+        ]
+        summary = _invoke_main(market_regime_preview_cli.main, argv)
+    elif action is NextAction.CALCULATE_STRATEGY_CHANNELS:
+        output = config.paths.strategy_channel_audit
+        argv = [
+            "--as-of-session",
+            session,
+            "--candidate-audit",
+            str(config.paths.candidate_audit),
+            "--entry-geometry-audit",
+            str(config.paths.entry_geometry_audit),
+            "--output-dir",
+            str(output),
+        ]
+        summary = _invoke_main(candidate_strategy_channel_cli.main, argv)
     else:
         raise DailyEodExecutorError("unsupported offline daily action")
     raw = summary.encode("utf-8")
@@ -482,6 +534,12 @@ def _action_output_path(action: NextAction, config: DailyEodExecutionConfig) -> 
         return config.paths.candidate_audit
     if action is NextAction.CALCULATE_ENTRY_GEOMETRY:
         return config.paths.entry_geometry_audit
+    if action is NextAction.CALCULATE_ETF_RELATIONSHIPS:
+        return config.paths.phase2_audit
+    if action is NextAction.BUILD_MARKET_PREVIEW:
+        return config.paths.preview_bundle
+    if action is NextAction.CALCULATE_STRATEGY_CHANNELS:
+        return config.paths.strategy_channel_audit
     raise DailyEodExecutorError("unsupported offline daily action")
 
 
@@ -515,6 +573,9 @@ def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
             "prior_candidate_audit": str(config.paths.prior_candidate_audit),
             "candidate_audit": str(config.paths.candidate_audit),
             "entry_geometry_audit": str(config.paths.entry_geometry_audit),
+            "phase2_audit": str(config.paths.phase2_audit),
+            "preview_bundle": str(config.paths.preview_bundle),
+            "strategy_channel_audit": str(config.paths.strategy_channel_audit),
             "panel_cache_root": (
                 None if config.panel_cache_root is None else str(config.panel_cache_root)
             ),

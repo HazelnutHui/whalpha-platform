@@ -29,6 +29,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--prior-candidate-audit", required=True, type=Path)
     parser.add_argument("--candidate-audit", required=True, type=Path)
     parser.add_argument("--entry-geometry-audit", required=True, type=Path)
+    parser.add_argument("--phase2-audit", required=True, type=Path)
+    parser.add_argument("--preview-bundle", required=True, type=Path)
+    parser.add_argument("--strategy-channel-audit", required=True, type=Path)
     args = parser.parse_args(argv)
     for name in (
         "data_root",
@@ -38,6 +41,9 @@ def main(argv: list[str] | None = None) -> int:
         "prior_candidate_audit",
         "candidate_audit",
         "entry_geometry_audit",
+        "phase2_audit",
+        "preview_bundle",
+        "strategy_channel_audit",
     ):
         if not getattr(args, name).is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
@@ -53,6 +59,9 @@ def main(argv: list[str] | None = None) -> int:
                     prior_candidate_audit=args.prior_candidate_audit,
                     candidate_audit=args.candidate_audit,
                     entry_geometry_audit=args.entry_geometry_audit,
+                    phase2_audit=args.phase2_audit,
+                    preview_bundle=args.preview_bundle,
+                    strategy_channel_audit=args.strategy_channel_audit,
                 ),
             )
     except DailyEodAutomationError as exc:

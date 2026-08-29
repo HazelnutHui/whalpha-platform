@@ -22,6 +22,9 @@ def _argv(tmp_path: Path) -> list[str]:
         "--prior-candidate-audit", "/tmp/executor-prior-candidate",
         "--candidate-audit", "/tmp/executor-candidate",
         "--entry-geometry-audit", "/tmp/executor-entry",
+        "--phase2-audit", "/tmp/executor-phase2",
+        "--preview-bundle", "/tmp/executor-preview",
+        "--strategy-channel-audit", "/tmp/executor-strategy",
     ]
 
 

@@ -16,7 +16,7 @@ from tip_api.contracts.analytics.v1.etf_relationship import (
     RelationshipState,
 )
 from tip_api.parameters.market_regime.relationship_v1_0_0 import ETF_BASKET, ETF_PAIRS, RELATIONSHIP_PARAMETER_FINGERPRINT
-from tip_api.services.etf_relationship_audit import read_etf_relationship_audit, write_etf_relationship_audit
+from tip_api.services.etf_relationship_audit import read_etf_relationship_audit, read_etf_relationship_planning_evidence, write_etf_relationship_audit
 from tip_api.services.etf_relationship_oracle import _oracle_state, compare_with_independent_relationship_oracle
 from tip_api.services.etf_relationship_cli import _equivalence_checks, _first_available_sessions
 from tip_api.services.etf_relationships import (
@@ -165,6 +165,10 @@ def test_explanations_and_canonical_audit_round_trip(panel):
         manifest=write_etf_relationship_audit(output_dir=target,panel=panel,phase1a_manifest={"logical_content_fingerprint":"7"*64,"composite_fingerprints":[]},phase1b_manifest={"logical_content_fingerprint":"8"*64,"history_logical_fingerprints":{}},history=history,current=current,explanations=explanations,regime_comparisons=comparisons,oracle_report=oracle,first_available_sessions={"window_5":panel.sessions[5].isoformat(),"window_10":panel.sessions[10].isoformat(),"window_20":panel.sessions[20].isoformat()},generated_at=datetime.now(UTC),timings={"test":"0.1"},peak_memory_kib=1)
         reread=read_etf_relationship_audit(target)
         assert reread["logical_content_fingerprint"]==manifest["logical_content_fingerprint"]
+        planning=read_etf_relationship_planning_evidence(target)
+        assert planning.manifest==manifest
+        assert planning.source_manifest["phase1a_audit_logical_fingerprint"]=="7"*64
+        assert planning.source_manifest["phase1b_audit_logical_fingerprint"]=="8"*64
     finally:
         for item in target.iterdir(): item.chmod(0o600)
         for item in target.iterdir(): item.unlink()

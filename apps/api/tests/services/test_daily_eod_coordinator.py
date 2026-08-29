@@ -48,6 +48,9 @@ def paths() -> DailyEodAutomationPaths:
         prior_candidate_audit=Path("/tmp/prior-candidate"),
         candidate_audit=Path("/tmp/candidate"),
         entry_geometry_audit=Path("/tmp/entry"),
+        phase2_audit=Path("/tmp/phase2"),
+        preview_bundle=Path("/tmp/preview"),
+        strategy_channel_audit=Path("/tmp/strategy"),
     )
 
 
@@ -77,11 +80,14 @@ def plan(
                 NextAction.CALCULATE_PHASE1B_INCREMENTAL,
                 NextAction.CALCULATE_CANDIDATE_DAILY,
                 NextAction.CALCULATE_ENTRY_GEOMETRY,
+                NextAction.CALCULATE_ETF_RELATIONSHIPS,
+                NextAction.BUILD_MARKET_PREVIEW,
+                NextAction.CALCULATE_STRATEGY_CHANNELS,
             }
             else PlanStatus.WAITING_FOR_AUTHORIZED_INPUT
         )
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.0",
+        contract_version="daily-eod-automation-plan/1.1",
         target_session=TARGET.isoformat(),
         prior_session=LATEST.isoformat(),
         status=selected_status,

@@ -9,7 +9,7 @@ import stat
 import unicodedata
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Mapping, Sequence
+from typing import Any, Mapping, NamedTuple, Sequence
 
 from tip_api.contracts.analytics.v1.etf_relationship import (
     EtfRelationshipExplanationV1,
@@ -45,6 +45,11 @@ RELATIONSHIP_AUDIT_MANIFEST = "relationship-audit-manifest.json"
 
 class EtfRelationshipAuditError(RuntimeError):
     pass
+
+
+class EtfRelationshipPlanningEvidence(NamedTuple):
+    manifest: Mapping[str, Any]
+    source_manifest: Mapping[str, Any]
 
 
 def write_etf_relationship_audit(
@@ -168,6 +173,19 @@ def read_etf_relationship_audit(output_dir: Path) -> dict[str, Any]:
     oracle=_read_canonical_json(target/"relationship-oracle-report.json")
     EtfRelationshipOracleComparisonV1.model_validate(oracle["record"])
     return manifest
+
+
+def read_etf_relationship_planning_evidence(
+    output_dir: Path,
+) -> EtfRelationshipPlanningEvidence:
+    """Return the completed manifest plus its hash-verified source binding."""
+
+    manifest = read_etf_relationship_audit(output_dir)
+    source_manifest = _read_canonical_json(output_dir / "source-input-manifest.json")
+    return EtfRelationshipPlanningEvidence(
+        manifest=manifest,
+        source_manifest=source_manifest,
+    )
 
 
 def validate_tmp_output_dir(output_dir: Path) -> Path:

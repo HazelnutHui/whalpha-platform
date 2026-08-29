@@ -37,33 +37,32 @@ The platform should help answer:
 
 Documentation, infrastructure, storage, the application stack, canonical
 EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
-MI 1.2, Snapshot 1.7 / Dashboard 2.4, entry-location consumers, bilingual
-presentation, equal-capability guest Sessions, and Session-protected static
-publication are implemented. The deployed product includes the audited Stock
-Candidate pipeline and third Candidate workspace. Canonical sessions cover
-every XNYS session from 2026-07-17 through 2026-08-27. The active Dashboard is
-the explicitly authorized 2026-08-26 stale-review release. The complete
-8/27 offline Regime, Candidate, Entry Geometry, Phase 2, and preview chain now
-passes, but its MI review plan is blocked because the formal calendar expects
-8/28. No later Production analytics/Snapshot release exists.
+MI 1.2, Snapshot 1.9 / Dashboard 2.6, entry-location and strategy-channel
+consumers, bilingual presentation, equal-capability guest Sessions, and
+Session-protected static publication are implemented. The deployed product
+includes the audited Stock Candidate pipeline and third Candidate workspace.
+Canonical sessions cover every XNYS session from 2026-07-17 through
+2026-08-28. The active Dashboard is the fresh, lag-zero 2026-08-28 release.
 
 Repository source implements verified-prior one-session append for both
 Candidate and corrected V1.0.1 Market Regime state. The state daily path
 formally consumes current Phase 1a plus prior Phase 1b audits without reopening
-canonical EOD. The completed 8/27 offline chain is not deployed.
+canonical EOD. Historical 8/27 recovery evidence is retained in the project
+changelog; the active deployed release is the complete 8/28 round above.
 
 Repository development source also contains an exact-session read-only daily
-planner and a single-action executor for the four offline analytics stages.
+planner and a single-action executor for seven offline analytics stages.
 Execution is bound to an unchanged plan fingerprint, global Dell lock,
 immutable hash-chained journal, validated output evidence, and post-action
-formal re-plan. It has now run the real 8/27 Identity/EOD acquisition and Apply
-under exact authorization and all four offline analytics actions through Entry
-Geometry. Phase 2, preview, Strategy Channels, publication, and Snapshot remain
-outside that four-action coordinator; publication, deployment, and scheduler
-activation remain separately unauthorized.
+formal re-plan. The original controlled 8/27 run exercised Identity/EOD
+acquisition and Apply plus the first four offline actions through Entry
+Geometry. ADR 0067 adds ETF Relationships, Market Preview, and Strategy
+Channels to the same one-transition custody chain. Publication, Snapshot,
+bundle, deployment, and scheduler activation remain outside that executor and
+separately unauthorized.
 
-The next repository-only control slice separates XNYS close from provider
-readiness. It applies a provisional post-close stabilization window, bounded
+The control plane also separates XNYS close from provider readiness. It
+applies a provisional post-close stabilization window, bounded
 retry and `Retry-After`, explicit alert state, and oldest-missing-session
 recovery without making a provider request or completeness claim. Durable
 acquisition-attempt custody is now implemented through fresh readiness reservation,

@@ -37,6 +37,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--prior-candidate-audit", required=True, type=Path)
     parser.add_argument("--candidate-audit", required=True, type=Path)
     parser.add_argument("--entry-geometry-audit", required=True, type=Path)
+    parser.add_argument("--phase2-audit", required=True, type=Path)
+    parser.add_argument("--preview-bundle", required=True, type=Path)
+    parser.add_argument("--strategy-channel-audit", required=True, type=Path)
     parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--candidate-work-dir", type=Path)
     mode = parser.add_mutually_exclusive_group(required=True)
@@ -56,6 +59,9 @@ def main(argv: list[str] | None = None) -> int:
         "prior_candidate_audit",
         "candidate_audit",
         "entry_geometry_audit",
+        "phase2_audit",
+        "preview_bundle",
+        "strategy_channel_audit",
         "panel_cache_root",
         "candidate_work_dir",
     ):
@@ -77,6 +83,9 @@ def main(argv: list[str] | None = None) -> int:
             prior_candidate_audit=args.prior_candidate_audit,
             candidate_audit=args.candidate_audit,
             entry_geometry_audit=args.entry_geometry_audit,
+            phase2_audit=args.phase2_audit,
+            preview_bundle=args.preview_bundle,
+            strategy_channel_audit=args.strategy_channel_audit,
         ),
         run_root=args.run_root,
         panel_cache_root=args.panel_cache_root,

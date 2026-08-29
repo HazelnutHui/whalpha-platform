@@ -69,6 +69,18 @@ found 444 files / 267,872,129 bytes under `/data`, inventory fingerprint
 `15de69875692824412df3da29afc9dad12e470c326cec2936633dee5dcae1ea3`,
 zero symlinks, and zero publication residue.
 
+### Daily automation development state
+
+The repository daily planner/executor now governs seven ordered offline
+analytics stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry,
+ETF Relationships, Market Preview, and Strategy Channels. Every invocation
+still performs at most one transition. The three new latter-half stages require
+the exact target session and exact upstream logical fingerprints before the
+planner can advance. `analytics_ready` now means all seven artifacts formally
+reread; it still grants no publication, Snapshot, bundle, deployment, `/data`,
+credential, or scheduler authority. No scheduler or unattended Production
+publication/deployment chain has been enabled.
+
 ### Historical 2026-08-27 recovery and pipeline evidence
 
 The following details are retained as historical recovery and performance
@@ -154,12 +166,13 @@ review is now complete. The planner selects only `prepare_identity_catchup`;
 readiness is `missed_session_recovery` / `review_fetch_authorization`, with
 zero attempts, requests, writes, or provider-completeness assertion. Every
 proposed 8/28 target is absent, `/data` and active serving state are unchanged,
-and no daily timer or service is installed. No current-revision external
-control was supplied or preflighted. The next possible boundary is a
+and no daily timer or service was installed at that historical boundary. No
+current-revision external control was supplied or preflighted. The next possible boundary is a
 separately authorized single 2026-08-28 Identity fetch, then its own canonical
-Apply review. The coordinator still does not include Phase 2, preview,
-Strategy Channels, publication, or Snapshot, which blocks unattended end-to-
-end operation.
+Apply review. ADR 0067 later added Phase 2, preview, and Strategy Channels to
+the offline coordinator. Publication, Snapshot, bundle, deployment, and
+scheduler activation remain separate and still block unattended end-to-end
+operation.
 
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review

@@ -32,6 +32,9 @@ def _paths(tmp_path: Path) -> DailyEodAutomationPaths:
         prior_candidate_audit=Path(f"/tmp/{suffix}-prior-candidate"),
         candidate_audit=Path(f"/tmp/{suffix}-candidate"),
         entry_geometry_audit=Path(f"/tmp/{suffix}-entry"),
+        phase2_audit=Path(f"/tmp/{suffix}-phase2"),
+        preview_bundle=Path(f"/tmp/{suffix}-preview"),
+        strategy_channel_audit=Path(f"/tmp/{suffix}-strategy"),
     )
 
 
@@ -57,7 +60,7 @@ def _plan(
     stage_status: ArtifactStatus,
 ) -> DailyEodAutomationPlan:
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.0",
+        contract_version="daily-eod-automation-plan/1.1",
         target_session=SESSION.isoformat(),
         prior_session="2026-08-26",
         status=status,
@@ -378,6 +381,9 @@ def test_recovery_rejects_paths_that_differ_from_started_attempt(tmp_path) -> No
         prior_candidate_audit=config.paths.prior_candidate_audit,
         candidate_audit=config.paths.candidate_audit,
         entry_geometry_audit=config.paths.entry_geometry_audit,
+        phase2_audit=config.paths.phase2_audit,
+        preview_bundle=config.paths.preview_bundle,
+        strategy_channel_audit=config.paths.strategy_channel_audit,
     )
     changed = executor.DailyEodExecutionConfig(
         target_session=config.target_session,
@@ -477,6 +483,21 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
             "candidate_entry_geometry_cli",
             ("--candidate-audit", "--output-dir"),
         ),
+        (
+            NextAction.CALCULATE_ETF_RELATIONSHIPS,
+            "etf_relationship_cli",
+            ("--phase1a-audit", "--phase1b-audit", "--output-dir"),
+        ),
+        (
+            NextAction.BUILD_MARKET_PREVIEW,
+            "market_regime_preview_cli",
+            ("--phase1a-audit", "--phase2-audit", "--output-dir"),
+        ),
+        (
+            NextAction.CALCULATE_STRATEGY_CHANNELS,
+            "candidate_strategy_channel_cli",
+            ("--candidate-audit", "--entry-geometry-audit", "--output-dir"),
+        ),
     ],
 )
 def test_default_runner_invokes_only_the_selected_offline_administrator(
@@ -495,6 +516,9 @@ def test_default_runner_invokes_only_the_selected_offline_administrator(
         "market_regime_state_cli",
         "opportunity_candidate_cli",
         "candidate_entry_geometry_cli",
+        "etf_relationship_cli",
+        "market_regime_preview_cli",
+        "candidate_strategy_channel_cli",
     ):
         module = getattr(executor, name)
         monkeypatch.setattr(

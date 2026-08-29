@@ -68,6 +68,9 @@ def automation_paths(tmp_path: Path) -> DailyEodAutomationPaths:
         prior_candidate_audit=tmp_path / "prior-candidate",
         candidate_audit=tmp_path / "candidate",
         entry_geometry_audit=tmp_path / "entry",
+        phase2_audit=tmp_path / "phase2",
+        preview_bundle=tmp_path / "preview",
+        strategy_channel_audit=tmp_path / "strategy",
     )
 
 
@@ -270,7 +273,7 @@ def automation_plan(*, completed: bool) -> DailyEodAutomationPlan:
         logical_fingerprint="7" * 64 if completed else None,
     )
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.0",
+        contract_version="daily-eod-automation-plan/1.1",
         target_session=TARGET.isoformat(),
         prior_session=LATEST.isoformat(),
         status=(

@@ -17,8 +17,15 @@ from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.services.candidate_entry_geometry_audit import (
     read_candidate_entry_geometry_audit,
 )
+from tip_api.services.candidate_strategy_channel_audit import (
+    read_candidate_strategy_channel_audit,
+)
+from tip_api.services.etf_relationship_audit import (
+    read_etf_relationship_planning_evidence,
+)
 from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.market_regime_audit import read_market_regime_audit_contents
+from tip_api.services.market_regime_preview import read_market_regime_preview_bundle
 from tip_api.services.market_regime_state_audit import (
     read_market_regime_state_audit_contents,
 )
@@ -27,7 +34,7 @@ from tip_api.services.opportunity_candidate_audit import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-automation-plan/1.0"
+CONTRACT_VERSION = "daily-eod-automation-plan/1.1"
 
 
 class DailyEodAutomationError(RuntimeError):
@@ -55,6 +62,9 @@ class NextAction(StrEnum):
     CALCULATE_PHASE1B_INCREMENTAL = "calculate_phase1b_incremental"
     CALCULATE_CANDIDATE_DAILY = "calculate_candidate_daily"
     CALCULATE_ENTRY_GEOMETRY = "calculate_entry_geometry"
+    CALCULATE_ETF_RELATIONSHIPS = "calculate_etf_relationships"
+    BUILD_MARKET_PREVIEW = "build_market_preview"
+    CALCULATE_STRATEGY_CHANNELS = "calculate_strategy_channels"
     REVIEW_PUBLICATION = "review_publication"
     OPERATOR_DIAGNOSIS = "operator_diagnosis"
 
@@ -68,6 +78,9 @@ class DailyEodAutomationPaths:
     prior_candidate_audit: Path
     candidate_audit: Path
     entry_geometry_audit: Path
+    phase2_audit: Path
+    preview_bundle: Path
+    strategy_channel_audit: Path
 
 
 @dataclass(frozen=True, slots=True)
@@ -322,6 +335,104 @@ def plan_daily_eod_automation(
         != candidate.observation.logical_fingerprint
     ):
         return _blocked(target_session, prior_session, observations, "entry_candidate_binding_mismatch")
+
+    phase2 = _inspect(
+        stage="phase2",
+        path=paths.phase2_audit,
+        reader=lambda: read_etf_relationship_planning_evidence(paths.phase2_audit),
+        session=lambda value: str(value.manifest["as_of_session"]),
+        fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
+    )
+    observations.append(phase2.observation)
+    if phase2.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="phase2",
+            failed=phase2.observation,
+            observations=observations,
+            locations=locations,
+        )
+    if phase2.observation.as_of_session != target_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "phase2_session_mismatch")
+    if (
+        phase2.payload.source_manifest.get("phase1a_audit_logical_fingerprint")
+        != phase1a.observation.logical_fingerprint
+        or phase2.payload.source_manifest.get("phase1b_audit_logical_fingerprint")
+        != phase1b.observation.logical_fingerprint
+    ):
+        return _blocked(target_session, prior_session, observations, "phase2_source_binding_mismatch")
+
+    preview = _inspect(
+        stage="preview",
+        path=paths.preview_bundle,
+        reader=lambda: read_market_regime_preview_bundle(paths.preview_bundle),
+        session=lambda value: value.payload.as_of_session.isoformat(),
+        fingerprint=lambda value: value.payload.logical_fingerprint,
+    )
+    observations.append(preview.observation)
+    if preview.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="preview",
+            failed=preview.observation,
+            observations=observations,
+            locations=locations,
+        )
+    if preview.observation.as_of_session != target_session.isoformat():
+        return _blocked(target_session, prior_session, observations, "preview_session_mismatch")
+    preview_sources = preview.payload.payload.source_logical_fingerprints
+    if (
+        preview_sources.phase1a != phase1a.observation.logical_fingerprint
+        or preview_sources.phase1b != phase1b.observation.logical_fingerprint
+        or preview_sources.phase2 != phase2.observation.logical_fingerprint
+    ):
+        return _blocked(target_session, prior_session, observations, "preview_source_binding_mismatch")
+
+    strategy = _inspect(
+        stage="strategy_channels",
+        path=paths.strategy_channel_audit,
+        reader=lambda: read_candidate_strategy_channel_audit(
+            paths.strategy_channel_audit
+        ),
+        session=lambda value: str(value["as_of_session"]),
+        fingerprint=lambda value: str(value["logical_content_fingerprint"]),
+    )
+    observations.append(strategy.observation)
+    if strategy.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="strategy_channels",
+            failed=strategy.observation,
+            observations=observations,
+            locations=locations,
+        )
+    if strategy.observation.as_of_session != target_session.isoformat():
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "strategy_channels_session_mismatch",
+        )
+    strategy_source = strategy.payload.get("source", {})
+    if (
+        strategy_source.get("candidate_audit", {}).get(
+            "logical_content_fingerprint"
+        )
+        != candidate.observation.logical_fingerprint
+        or strategy_source.get("entry_geometry_audit", {}).get(
+            "logical_content_fingerprint"
+        )
+        != entry.observation.logical_fingerprint
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "strategy_channels_source_binding_mismatch",
+        )
     return _build_plan(
         target_session=target_session,
         prior_session=prior_session,
@@ -412,6 +523,18 @@ def _stop_before_stage(
             PlanStatus.READY_FOR_OFFLINE_CALCULATION,
             NextAction.CALCULATE_ENTRY_GEOMETRY,
         ),
+        "phase2": (
+            PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            NextAction.CALCULATE_ETF_RELATIONSHIPS,
+        ),
+        "preview": (
+            PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            NextAction.BUILD_MARKET_PREVIEW,
+        ),
+        "strategy_channels": (
+            PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            NextAction.CALCULATE_STRATEGY_CHANNELS,
+        ),
     }
     status, action = action_by_stage[stage]
     return _build_plan(
@@ -489,11 +612,24 @@ def _stage_locations(target_session: date, paths: DailyEodAutomationPaths) -> di
         "phase1b": paths.phase1b_audit,
         "candidate": paths.candidate_audit,
         "entry_geometry": paths.entry_geometry_audit,
+        "phase2": paths.phase2_audit,
+        "preview": paths.preview_bundle,
+        "strategy_channels": paths.strategy_channel_audit,
     }
 
 
 def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str, ...]:
-    order = ("identity", "eod", "phase1a", "phase1b", "candidate", "entry_geometry")
+    order = (
+        "identity",
+        "eod",
+        "phase1a",
+        "phase1b",
+        "candidate",
+        "entry_geometry",
+        "phase2",
+        "preview",
+        "strategy_channels",
+    )
     index = order.index(stage)
     return tuple(item for item in order[index + 1 :] if _lexists(locations[item]))
 
@@ -508,6 +644,9 @@ def _validate_paths(paths: DailyEodAutomationPaths) -> None:
         paths.prior_candidate_audit,
         paths.candidate_audit,
         paths.entry_geometry_audit,
+        paths.phase2_audit,
+        paths.preview_bundle,
+        paths.strategy_channel_audit,
     )
     if len(set(audits)) != len(audits):
         raise DailyEodAutomationError("daily audit paths must be distinct")

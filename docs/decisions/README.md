@@ -89,3 +89,4 @@ Each ADR should include:
 - [0064: Separate Breakout Stage from Breakout Quality](0064-separate-breakout-stage-from-breakout-quality.md)
 - [0065: Reuse Candidate Completion Evidence in Daily Planning](0065-reuse-candidate-completion-evidence-in-daily-planning.md)
 - [0066: Project Incremental Candidate Evidence into Publication](0066-project-incremental-candidate-evidence-into-publication.md)
+- [0067: Extend the Daily Offline Analysis Chain](0067-extend-daily-offline-analysis-chain.md)

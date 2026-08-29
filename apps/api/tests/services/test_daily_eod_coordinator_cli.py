@@ -58,6 +58,12 @@ def arguments() -> list[str]:
         "/tmp/candidate.json",
         "--entry-geometry-audit",
         "/tmp/entry.json",
+        "--phase2-audit",
+        "/tmp/phase2.json",
+        "--preview-bundle",
+        "/tmp/preview.json",
+        "--strategy-channel-audit",
+        "/tmp/strategy.json",
     ]
 
 

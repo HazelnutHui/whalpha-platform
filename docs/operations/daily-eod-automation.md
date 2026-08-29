@@ -6,7 +6,7 @@ The daily control plane now has two deliberately separate, credential-free
 parts: a read-only planner and a single-action offline executor. The planner
 formally reconciles one exact target session and reports one safe next action.
 The executor can consume one unchanged plan fingerprint and run only one of
-the four offline analytics actions under durable Dell custody. Neither part
+the seven offline analytics actions under durable Dell custody. Neither part
 enables a timer.
 
 The action order is:
@@ -18,6 +18,9 @@ same-day Identity
   -> verified-prior Phase 1b
   -> daily verified-prior Candidate
   -> Candidate entry geometry
+  -> ETF relationships (Phase 2)
+  -> Market Regime preview
+  -> Candidate strategy channels
   -> publication review
 ```
 
@@ -483,7 +486,10 @@ scripts/admin/plan-daily-eod-automation.sh \
   --phase1b-audit /tmp/<current-phase1b> \
   --prior-candidate-audit /tmp/<immediately-prior-candidate> \
   --candidate-audit /tmp/<current-candidate> \
-  --entry-geometry-audit /tmp/<current-entry-geometry>
+  --entry-geometry-audit /tmp/<current-entry-geometry> \
+  --phase2-audit /tmp/<current-phase2> \
+  --preview-bundle /tmp/<current-preview> \
+  --strategy-channel-audit /tmp/<current-strategy-channels>
 ```
 
 The JSON result has one of four statuses:
@@ -537,6 +543,9 @@ scripts/admin/execute-daily-eod-offline-action.sh \
   --prior-candidate-audit /tmp/<immediately-prior-candidate> \
   --candidate-audit /tmp/<current-candidate> \
   --entry-geometry-audit /tmp/<current-entry-geometry> \
+  --phase2-audit /tmp/<current-phase2> \
+  --preview-bundle /tmp/<current-preview> \
+  --strategy-channel-audit /tmp/<current-strategy-channels> \
   --run-root /home/hui/.local/state/trading-intelligence-platform/daily-eod \
   --panel-cache-root /tmp/<immutable-panel-cache> \
   --candidate-work-dir /tmp/<owner-controlled-candidate-recovery> \
@@ -545,7 +554,11 @@ scripts/admin/execute-daily-eod-offline-action.sh \
 ```
 
 Only `calculate_phase1a`, `calculate_phase1b_incremental`,
-`calculate_candidate_daily`, and `calculate_entry_geometry` are executable.
+`calculate_candidate_daily`, `calculate_entry_geometry`,
+`calculate_etf_relationships`, `build_market_preview`, and
+`calculate_strategy_channels` are executable. The latter three consume the
+same-session fingerprints already verified by their prerequisites; they do
+not authorize publication or deployment.
 The Candidate work directory is required only for the Candidate action. The
 panel cache is optional and must remain outside `/data`.
 
@@ -728,15 +741,15 @@ full cumulative Candidate score history solely to select the current 3,541
 records, but must preserve exact custody, typed rows, ordering, and Oracle
 semantics.
 
-The subsequent publication review exposed that `analytics_ready` currently
-means only the four coordinator-owned offline actions are complete. Phase 2,
-preview, Strategy Channels, MI publication, and Snapshot are not coordinator
-actions. The missing 2026-08-27 Phase 2/preview were completed manually under
-their offline tmp-only boundaries, but the final MI Plan correctly returned
-`freshness_blocked` because expected session advanced to 2026-08-28. Before
-unattended operation, extend the governed sequence to cover these dependencies
-without combining their separate Apply/deployment authorizations or weakening
-freshness checks.
+The subsequent publication review exposed that the then-current
+`analytics_ready` boundary meant only four coordinator-owned offline actions
+were complete. The missing 2026-08-27 Phase 2/preview were completed manually
+under their offline tmp-only boundaries, and the final MI Plan correctly
+returned `freshness_blocked` because expected session advanced to 2026-08-28.
+ADR 0067 closes that calculation-custody gap: Phase 2, preview, and Strategy
+Channels are now the fifth through seventh one-transition actions. MI
+publication, Snapshot, bundle, deployment, and scheduler activation remain
+outside the coordinator and require their own reviews and authorizations.
 
 The 2026-08-29 network-free review then reconciled 2026-08-28 as the oldest
 missing session. The automation plan selects only `prepare_identity_catchup`;

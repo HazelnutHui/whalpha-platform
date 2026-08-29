@@ -183,6 +183,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Candidate daily/periodic/code-change validation tiers
 - [x] Deterministic cold-replay Candidate Oracle process parallelism with serial equivalence
 - [x] Exact-session daily planner and single-action offline executor with durable run custody
+- [x] Extend single-action offline custody through ETF Relationships, Market
+  Preview, and Strategy Channels
 - [x] XNYS-close-aware readiness, bounded retry, alert state, and oldest-gap recovery policy
 - [x] Shared-lock durable provider-attempt reservation, outcome, and recovery custody
 - [x] Expiring, externally SHA-pinned standing Identity/EOD data-authorization contract

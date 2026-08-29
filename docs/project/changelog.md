@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-29 — Extend daily custody through all offline publication inputs
+
+- Accepted ADR 0067 and extended the fixed daily offline order from four to
+  seven stages: ETF Relationships, Market Preview, and Strategy Channels now
+  follow Entry Geometry before publication review.
+- Added exact-session and source-fingerprint lineage gates for all three new
+  stages. Missing artifacts select one exact offline action; invalid, stale,
+  mismatched, or out-of-order artifacts fail closed.
+- Reused the existing offline administrators under the same Dell global lock,
+  immutable run journal, unchanged-plan check, one-action postcondition, and
+  no-replay recovery model.
+- `analytics_ready` now requires all seven offline artifacts. Publication,
+  Snapshot, bundle, OCI deployment, `/data` writes, credentials, and scheduler
+  activation remain outside this change and unauthorized.
+
 ## 2026-08-29 — Complete and deploy the 2026-08-28 daily round
 
 - Completed and formally aligned canonical Identity and EOD through 2026-08-28:

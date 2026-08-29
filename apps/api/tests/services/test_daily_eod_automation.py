@@ -20,6 +20,9 @@ PHASE1B_FP = "5" * 64
 PRIOR_CANDIDATE_FP = "6" * 64
 CANDIDATE_FP = "7" * 64
 ENTRY_FP = "8" * 64
+PHASE2_FP = "9" * 64
+PREVIEW_FP = "a" * 64
+STRATEGY_FP = "b" * 64
 
 
 def _paths(tmp_path: Path) -> automation.DailyEodAutomationPaths:
@@ -32,6 +35,9 @@ def _paths(tmp_path: Path) -> automation.DailyEodAutomationPaths:
         prior_candidate_audit=Path(f"/tmp/{suffix}-prior-candidate"),
         candidate_audit=Path(f"/tmp/{suffix}-candidate"),
         entry_geometry_audit=Path(f"/tmp/{suffix}-entry"),
+        phase2_audit=Path(f"/tmp/{suffix}-phase2"),
+        preview_bundle=Path(f"/tmp/{suffix}-preview"),
+        strategy_channel_audit=Path(f"/tmp/{suffix}-strategy"),
     )
 
 
@@ -131,6 +137,51 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
             "source": {"candidate_audit_logical_fingerprint": CANDIDATE_FP},
         },
     )
+    monkeypatch.setattr(
+        automation,
+        "read_etf_relationship_planning_evidence",
+        lambda path: SimpleNamespace(
+            manifest={
+                "as_of_session": TARGET.isoformat(),
+                "logical_content_fingerprint": PHASE2_FP,
+            },
+            source_manifest={
+                "phase1a_audit_logical_fingerprint": PHASE1A_FP,
+                "phase1b_audit_logical_fingerprint": PHASE1B_FP,
+            },
+        ),
+    )
+    monkeypatch.setattr(
+        automation,
+        "read_market_regime_preview_bundle",
+        lambda path: SimpleNamespace(
+            payload=SimpleNamespace(
+                as_of_session=TARGET,
+                logical_fingerprint=PREVIEW_FP,
+                source_logical_fingerprints=SimpleNamespace(
+                    phase1a=PHASE1A_FP,
+                    phase1b=PHASE1B_FP,
+                    phase2=PHASE2_FP,
+                ),
+            )
+        ),
+    )
+    monkeypatch.setattr(
+        automation,
+        "read_candidate_strategy_channel_audit",
+        lambda path: {
+            "as_of_session": TARGET.isoformat(),
+            "logical_content_fingerprint": STRATEGY_FP,
+            "source": {
+                "candidate_audit": {
+                    "logical_content_fingerprint": CANDIDATE_FP,
+                },
+                "entry_geometry_audit": {
+                    "logical_content_fingerprint": ENTRY_FP,
+                },
+            },
+        },
+    )
 
 
 def test_all_formal_analytics_are_ready_for_separate_publication_review(monkeypatch, tmp_path) -> None:
@@ -155,6 +206,9 @@ def test_all_formal_analytics_are_ready_for_separate_publication_review(monkeypa
         "prior_candidate",
         "candidate",
         "entry_geometry",
+        "phase2",
+        "preview",
+        "strategy_channels",
     ]
 
 
@@ -192,6 +246,93 @@ def test_verified_prior_makes_missing_phase1b_ready_for_incremental_calculation(
     assert plan.status is automation.PlanStatus.READY_FOR_OFFLINE_CALCULATION
     assert plan.next_action is automation.NextAction.CALCULATE_PHASE1B_INCREMENTAL
     assert plan.reason_codes == ("phase1b_required",)
+
+
+@pytest.mark.parametrize(
+    ("missing_stage", "expected_action"),
+    [
+        ("phase2", automation.NextAction.CALCULATE_ETF_RELATIONSHIPS),
+        ("preview", automation.NextAction.BUILD_MARKET_PREVIEW),
+        ("strategy_channels", automation.NextAction.CALCULATE_STRATEGY_CHANNELS),
+    ],
+)
+def test_missing_latter_half_stage_selects_one_exact_offline_action(
+    monkeypatch, tmp_path, missing_stage, expected_action
+) -> None:
+    paths = _paths(tmp_path)
+    locations = automation._stage_locations(TARGET, paths)
+    stage_order = tuple(locations)
+    missing_index = stage_order.index(missing_stage)
+    existing = {locations[name] for name in stage_order[:missing_index]}
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+    assert plan.status is automation.PlanStatus.READY_FOR_OFFLINE_CALCULATION
+    assert plan.next_action is expected_action
+    assert plan.reason_codes == (f"{missing_stage}_required",)
+    assert plan.publication_authorized is False
+    assert plan.deployment_authorized is False
+
+
+@pytest.mark.parametrize(
+    ("reader_name", "replacement", "reason_code"),
+    [
+        (
+            "read_etf_relationship_planning_evidence",
+            lambda path: SimpleNamespace(
+                manifest={
+                    "as_of_session": TARGET.isoformat(),
+                    "logical_content_fingerprint": PHASE2_FP,
+                },
+                source_manifest={
+                    "phase1a_audit_logical_fingerprint": "f" * 64,
+                    "phase1b_audit_logical_fingerprint": PHASE1B_FP,
+                },
+            ),
+            "phase2_source_binding_mismatch",
+        ),
+        (
+            "read_market_regime_preview_bundle",
+            lambda path: SimpleNamespace(
+                payload=SimpleNamespace(
+                    as_of_session=TARGET,
+                    logical_fingerprint=PREVIEW_FP,
+                    source_logical_fingerprints=SimpleNamespace(
+                        phase1a=PHASE1A_FP,
+                        phase1b=PHASE1B_FP,
+                        phase2="f" * 64,
+                    ),
+                )
+            ),
+            "preview_source_binding_mismatch",
+        ),
+        (
+            "read_candidate_strategy_channel_audit",
+            lambda path: {
+                "as_of_session": TARGET.isoformat(),
+                "logical_content_fingerprint": STRATEGY_FP,
+                "source": {
+                    "candidate_audit": {
+                        "logical_content_fingerprint": CANDIDATE_FP,
+                    },
+                    "entry_geometry_audit": {
+                        "logical_content_fingerprint": "f" * 64,
+                    },
+                },
+            },
+            "strategy_channels_source_binding_mismatch",
+        ),
+    ],
+)
+def test_latter_half_source_lineage_mismatch_blocks(
+    monkeypatch, tmp_path, reader_name, replacement, reason_code
+) -> None:
+    paths = _paths(tmp_path)
+    _install_completed_readers(monkeypatch, paths)
+    monkeypatch.setattr(automation, reader_name, replacement)
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.next_action is automation.NextAction.OPERATOR_DIAGNOSIS
+    assert plan.reason_codes == (reason_code,)
 
 
 def test_existing_candidate_that_fails_formal_reader_blocks(monkeypatch, tmp_path) -> None:
@@ -294,6 +435,9 @@ def test_audit_paths_must_be_distinct_direct_tmp_children(tmp_path) -> None:
         prior_candidate_audit=paths.prior_candidate_audit,
         candidate_audit=paths.candidate_audit,
         entry_geometry_audit=paths.entry_geometry_audit,
+        phase2_audit=paths.phase2_audit,
+        preview_bundle=paths.preview_bundle,
+        strategy_channel_audit=paths.strategy_channel_audit,
     )
     with pytest.raises(automation.DailyEodAutomationError, match="distinct"):
         automation.plan_daily_eod_automation(target_session=TARGET, paths=duplicate)

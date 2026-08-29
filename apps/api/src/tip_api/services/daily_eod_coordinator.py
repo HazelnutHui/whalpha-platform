@@ -44,7 +44,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.4"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.5"
 
 
 class DailyEodCoordinatorError(RuntimeError):
