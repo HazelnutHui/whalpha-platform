@@ -72,7 +72,9 @@ default-off one-shot OCI deployment boundary, and the controlled 2026-08-28
 round has now exercised the complete path. ADR 0076 adds a credential-free
 scheduler-wake plan that selects only the oldest missing XNYS session and never
 invokes the coordinator during review. No timer or unattended chain is
-installed.
+installed. ADR 0077 adds the still-default-off bridge for at most one explicit
+coordinator call and prohibits in-wake retry, recovery, alert delivery,
+publication, or deployment.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

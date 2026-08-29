@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-29 — Compose one default-off scheduled wake
+
+- Accepted ADR 0077 and added an exact-plan bridge that can call one supplied
+  coordinator callable only when both the wake candidate and invocation are
+  explicitly enabled.
+- Recomputed the complete wake-plan fingerprint before the call and the formal
+  coordinator-result fingerprint afterward, retained the accepted result
+  identity, and rejected content or target drift plus scheduler/publication/
+  deployment authority drift.
+- Added five separate credential-free synthetic wakes for current,
+  oldest-missing, retry-wait, unresolved-interruption, and alert-required
+  states. No scenario retried, routed recovery, delivered an alert, or invoked
+  the coordinator more than once.
+- The rehearsal made zero real credential accesses, network requests,
+  filesystem writes, and Production writes. No systemd unit or timer was
+  created, installed, or enabled. All 1,690 backend tests and 63 focused
+  coordinator/scheduler tests pass.
+
 ## 2026-08-29 — Add a default-off daily scheduler-wake plan
 
 - Accepted ADR 0076 and added a credential-free plan that selects the oldest

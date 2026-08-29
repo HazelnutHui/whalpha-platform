@@ -104,8 +104,20 @@ review at 2026-08-29T14:30:00Z completed in about 2.8 seconds, reported current
 EOD through 2026-08-28, next target 2026-08-31, and next check 20:30 UTC.
 Default and explicitly enabled-candidate reviews both invoked no coordinator,
 read no credential, used no network, and wrote no file or Production state.
-All 1,671 backend tests pass. No service or timer is installed; repeated
-distinct-wake rehearsal is next.
+All 1,690 backend tests pass. No service or timer is installed; repeated
+distinct-wake handling is recorded in ADR 0077 below.
+
+ADR 0077 adds the default-off bridge from one exact enabled-candidate wake plan
+to at most one supplied coordinator call. It recomputes both the full plan
+content fingerprint and the returned coordinator-result fingerprint, rejects
+content/target/authority drift, retains the accepted result identity, and never
+retries, routes recovery, or delivers an alert in-process. The credential-free
+synthetic rehearsal
+covered current, oldest-missing, retry-wait, unresolved-interruption, and
+alert-required wakes. It made four fake coordinator calls across five separate
+scenarios, never more than one per wake, and zero real credential, network,
+filesystem, or Production activity. No systemd candidate is yet created or
+installed.
 
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact

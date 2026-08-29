@@ -240,8 +240,17 @@ the existing stabilization policy. On current Dell state at
 `up_to_date`, latest 2026-08-28, next target 2026-08-31, and next check
 2026-08-31T20:30:00Z. Both disabled and explicitly enabled-candidate reviews
 recorded zero coordinator invocation, credential access, networking, file
-write, or Production write. All 1,671 backend tests pass. No scheduler service
+write, or Production write. All 1,690 backend tests pass. No scheduler service
 or timer is installed.
+ADR 0077 subsequently adds the default-off one-transition wake bridge. It
+recomputes the complete ADR 0076 plan fingerprint before a call, accepts only
+an explicitly enabled ready candidate plus a separate invocation flag, and
+recomputes and retains the coordinator-result fingerprint before rejecting any
+result content, target, or authority drift. A synthetic five-wake report
+fingerprint `4b533e1ab3b6bff01767e0a574a7f7dc3c7c3e0d49512f4072a2bee1a817b6d8`
+records four total fake coordinator calls, maximum one per wake, no automatic
+retry/recovery or alert delivery, and zero credential, network, filesystem, or
+Production activity. It installs no service or timer.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

@@ -897,10 +897,38 @@ def _result(
         "scheduler_enabled": False,
         "contract_version": CONTRACT_VERSION,
     }
-    return DailyEodCoordinatorResult(
+    result = DailyEodCoordinatorResult(
         **base,
         logical_content_fingerprint=_fingerprint(base),
     )
+    verify_daily_eod_coordinator_result(result)
+    return result
+
+
+def daily_eod_coordinator_result_fingerprint(
+    result: DailyEodCoordinatorResult,
+) -> str:
+    """Recompute the canonical logical identity of one coordinator result."""
+
+    logical = asdict(result)
+    logical.pop("logical_content_fingerprint")
+    return _fingerprint(logical)
+
+
+def verify_daily_eod_coordinator_result(
+    result: DailyEodCoordinatorResult,
+) -> None:
+    """Reject a malformed or field-tampered coordinator result."""
+
+    if (
+        not isinstance(result, DailyEodCoordinatorResult)
+        or result.contract_version != CONTRACT_VERSION
+        or result.logical_content_fingerprint
+        != daily_eod_coordinator_result_fingerprint(result)
+    ):
+        raise DailyEodCoordinatorError(
+            "coordinator result content fingerprint mismatch"
+        )
 
 
 def _validate_config(config: DailyEodCoordinatorConfig) -> None:

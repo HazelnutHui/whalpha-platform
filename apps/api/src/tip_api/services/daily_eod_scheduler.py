@@ -150,7 +150,7 @@ def plan_daily_eod_scheduler_wake(
         "filesystem_write_count": 0,
         "production_write_count": 0,
     }
-    return DailyEodSchedulerWakePlan(
+    result = DailyEodSchedulerWakePlan(
         contract_version=CONTRACT_VERSION,
         checked_at=checked.isoformat(),
         status=status,
@@ -176,6 +176,24 @@ def plan_daily_eod_scheduler_wake(
         production_write_count=0,
         logical_content_fingerprint=_fingerprint(logical),
     )
+    verify_daily_eod_scheduler_wake_plan(result)
+    return result
+
+
+def verify_daily_eod_scheduler_wake_plan(
+    plan: DailyEodSchedulerWakePlan,
+) -> None:
+    """Recompute every plan field before a later boundary trusts its identity."""
+
+    logical = asdict(plan)
+    logical["status"] = plan.status.value
+    logical["next_action"] = plan.next_action.value
+    logical.pop("logical_content_fingerprint")
+    if (
+        plan.contract_version != CONTRACT_VERSION
+        or plan.logical_content_fingerprint != _fingerprint(logical)
+    ):
+        raise DailyEodSchedulerError("scheduler wake plan content fingerprint mismatch")
 
 
 def _validate_completed_sessions(

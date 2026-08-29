@@ -7,9 +7,9 @@
   authorization.
 - Reliability: the first default-off scheduler-wake plan is complete and
   chooses the oldest missing XNYS session in about 2.8 seconds on current Dell
-  state. Next rehearse distinct missed-session, retry, interruption, and alert
-  wakes before designing or installing a systemd unit/timer. SMTP may remain
-  unset.
+  state. The default-off one-transition bridge and five-scenario synthetic
+  rehearsal are also complete. Next design a write-free exact systemd
+  unit/timer candidate; do not install it. SMTP may remain unset.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -269,10 +269,15 @@ that exact authorization.
 ADR 0076 now adds the first credential-free scheduler-wake plan. Current Dell
 state was planned in about 2.8 seconds as `up_to_date`, with next target
 2026-08-31 and next check 20:30 UTC. Default and explicitly enabled-candidate
-reviews both made zero coordinator calls and zero writes. Next compose repeated
-distinct-wake rehearsals through the existing coordinator for missed-session,
-retry-wait, interruption, and alert-required states. Do not install or enable
-a real timer yet.
+reviews both made zero coordinator calls and zero writes. The following
+distinct-wake handling scope covers missed-session, retry-wait, interruption,
+and alert-required states; ADR 0077 below now consumes those review inputs.
+
+ADR 0077 now completes that repository-only composition. Five independent
+synthetic wakes proved zero calls when current, exactly one fake coordinator
+call for each ready scenario, no automatic retry/recovery, and no alert
+delivery. The next bounded target is exact host/runtime custody plus a
+write-free systemd service/timer candidate. Do not install or enable it yet.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

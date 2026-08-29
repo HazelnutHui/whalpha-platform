@@ -638,6 +638,31 @@ assert provider completeness. Retry, interruption recovery, publication,
 deployment, and alert behavior remain inside their existing coordinator/
 custody boundaries and cannot be replayed by this planner.
 
+## Default-off one-transition wake bridge
+
+ADR 0077 composes one exact unchanged enabled-candidate wake plan with one
+separately supplied coordinator callable. Default review still calls nothing.
+An explicit invocation calls the coordinator at most once, validates the target
+and returned authority fields, recomputes the formal coordinator-result
+fingerprint, retains that exact result identity, records the returned state,
+and exits. Waiting, recovery-required, and alert-required results do not trigger
+a second call, recovery route, or notification delivery. Malformed or
+field-tampered results and results claiming scheduler, publication, or
+deployment authority are rejected.
+
+Run the credential-free synthetic five-wake rehearsal:
+
+```bash
+scripts/admin/review-daily-eod-scheduler-rehearsal.sh
+```
+
+The scenarios are current/up-to-date, oldest missing, retry waiting,
+unresolved interruption, and alert required. Coordinator results are synthetic
+and make no provider or Production claim. The report must show five scenarios,
+four total fake coordinator calls, no more than one call per wake, no automatic
+retry/recovery or alert delivery, and zero credential, network, filesystem, or
+Production activity.
+
 ## Offline entry step
 
 The worktree-safe administrator entry is:
@@ -821,9 +846,9 @@ the already completed and deployed 2026-08-26 publication chain.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
-3. Rehearse several distinct default-off wakes covering current, missed,
-   retry-wait, unresolved-interruption, and alert-required states. Then review
-   exact systemd unit/timer custody and installation separately.
+3. The synthetic distinct-wake rehearsal is complete. Next review exact
+   host/runtime configuration and a write-free systemd unit/timer candidate,
+   then rehearse it without installation.
 4. Keep separate authorization decisions for acquisition/canonical Apply, MI
    publication, Snapshot, bundle, OCI deployment, and finally scheduler
    activation.
