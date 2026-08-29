@@ -31,7 +31,9 @@ zero-mismatch current-session independent Oracle. Its legacy compatibility
 booleans represent that complete chain proof, not a same-run cold replay. The
 payload therefore adds explicit warning codes for verified-prior incremental
 validation and the absence of a same-run cold replay. Periodic and change-
-triggered cold validation remain separate mandatory controls.
+triggered cold validation remain separate mandatory controls. Candidate
+construction and MI Plan/Apply evidence rechecks use the same projection;
+neither boundary may independently reinterpret the audit flags.
 
 The current session, Primary-first Universe order, memberships, EOD, Identity,
 and Activation lineage must match the enclosing Market Intelligence

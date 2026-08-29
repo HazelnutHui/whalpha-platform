@@ -19,17 +19,20 @@ still read only the cold-audit keys `append_full_replay_match` and
 
 The first real 2026-08-27 MI Plan therefore failed closed with a `KeyError`
 after source custody passed but before an approval plan or any Production
-write. Requiring a new cold full replay for every daily publication would
-discard the verified-prior design and repeat already validated history. Simply
-setting the old fields to true without retaining the incremental lineage would
-misrepresent the evidence.
+write. The first correction exposed the same duplicated assumption in the MI
+approval-evidence recheck, which also failed before plan creation. Requiring a
+new cold full replay for every daily publication would discard the verified-
+prior design and repeat already validated history. Simply setting the old
+fields to true without retaining the incremental lineage would misrepresent
+the evidence.
 
 ## Decision
 
-Candidate publication consumes the bounded planning/lineage evidence reader,
-not only the completion manifest. For a legacy schema 1.0 cold audit, the
-existing append/full-replay, restart, and future-prefix gates remain mandatory
-and the resulting payload is unchanged.
+Candidate product construction and the independent MI approval-evidence
+recheck consume the same bounded planning/lineage evidence reader and the same
+mode-aware projection function, not only the completion manifest. For a legacy
+schema 1.0 cold audit, the existing append/full-replay, restart, and future-
+prefix gates remain mandatory and the resulting payload is unchanged.
 
 For schema 1.1, publication is eligible only when all of these hold:
 

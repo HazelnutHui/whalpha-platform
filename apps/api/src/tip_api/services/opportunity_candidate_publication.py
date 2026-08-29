@@ -137,7 +137,7 @@ def build_opportunity_candidate_publication(
         )
         for universe_id in universe_order
     )
-    flags, validation_warnings = _publication_equivalence_evidence(
+    flags, validation_warnings = publication_equivalence_evidence(
         manifest=manifest,
         validation_ledger=audit_evidence.validation_ledger,
     )
@@ -238,7 +238,7 @@ def build_opportunity_candidate_publication(
     )
 
 
-def _publication_equivalence_evidence(
+def publication_equivalence_evidence(
     *,
     manifest: Mapping[str, Any],
     validation_ledger: Mapping[str, Any] | None,

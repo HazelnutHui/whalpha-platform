@@ -25,8 +25,8 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import (
 )
 from tip_api.services.opportunity_candidate_publication import (
     OpportunityCandidatePublicationError,
-    _publication_equivalence_evidence,
     build_opportunity_candidate_publication,
+    publication_equivalence_evidence,
 )
 from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
 from tip_api.services.candidate_strategy_channel_audit import (
@@ -308,7 +308,7 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
 
 
 def test_incremental_publication_evidence_is_explicit_about_validation_mode() -> None:
-    projected, warnings = _publication_equivalence_evidence(
+    projected, warnings = publication_equivalence_evidence(
         manifest={
             "schema_version": "1.1",
             "execution_mode": "verified_prior_incremental",
@@ -338,7 +338,7 @@ def test_incremental_publication_evidence_is_explicit_about_validation_mode() ->
         OpportunityCandidatePublicationError,
         match="incremental publication equivalence gates did not pass",
     ):
-        _publication_equivalence_evidence(
+        publication_equivalence_evidence(
             manifest={
                 "schema_version": "1.1",
                 "execution_mode": "verified_prior_incremental",

@@ -65,9 +65,10 @@ from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
 from tip_api.services.opportunity_candidate_publication import (
     build_opportunity_candidate_publication,
+    publication_equivalence_evidence,
 )
 from tip_api.services.opportunity_candidate_audit import (
-    read_opportunity_candidate_publication_evidence,
+    read_opportunity_candidate_planning_evidence,
 )
 from tip_api.services.candidate_entry_geometry_audit import (
     read_candidate_entry_geometry_audit,
@@ -1243,9 +1244,12 @@ def _validate_candidate_publication_evidence(
     candidate_analytics_logical_fingerprint: str,
     full_validation_evidence: CandidatePublicationValidationEvidence | None,
 ) -> None:
-    evidence = read_opportunity_candidate_publication_evidence(candidate_audit_path)
+    evidence = read_opportunity_candidate_planning_evidence(candidate_audit_path)
     manifest = evidence.manifest
-    flags = manifest["equivalence_flags"]
+    flags, _ = publication_equivalence_evidence(
+        manifest=manifest,
+        validation_ledger=evidence.validation_ledger,
+    )
     universe_count = len(manifest["universe_ids"])
     expected = {
         "candidate_audit_manifest_sha256": evidence.manifest_sha256,

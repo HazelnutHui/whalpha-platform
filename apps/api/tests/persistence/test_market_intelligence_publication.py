@@ -549,3 +549,93 @@ def test_config_rejects_preview_and_formal_routes_together():
             market_regime_preview_bundle=Path("/tmp/bundle"),
             enable_market_intelligence_routes=True,
         )
+
+
+def test_plan_evidence_accepts_formally_validated_incremental_candidate(
+    monkeypatch, tmp_path
+):
+    digest = "a" * 64
+    batch_fingerprints = ["b" * 64, "c" * 64, "d" * 64, "e" * 64]
+    risk_fingerprints = [character * 64 for character in "123456"]
+    manifest = {
+        "schema_version": "1.1",
+        "execution_mode": "verified_prior_incremental",
+        "universe_ids": [PRIMARY, SECONDARY],
+        "logical_content_fingerprint": digest,
+        "candidate_history_fingerprint": "f" * 64,
+        "candidate_state_history_fingerprint": "0" * 64,
+        "risk_results_fingerprint": "1" * 64,
+        "oracle_fingerprint": "2" * 64,
+        "oracle_mismatch_count": 0,
+        "shared_raw_fact_match": True,
+        "input_permutation_match": True,
+        "equivalence_flags": {
+            "prior_prefix_preserved": True,
+            "incremental_restart_match": True,
+            "future_prefix_stable": True,
+            "input_permutation_match": True,
+        },
+        "candidate_contract_version": "opportunity-candidate/1.1",
+        "candidate_calculation_version": (
+            "market-regime-opportunity-candidate-v1.1.1"
+        ),
+        "candidate_parameter_set_id": "mrom-candidate-v1-fixed-baseline-3",
+        "candidate_parameter_fingerprint": "3" * 64,
+        "candidate_state_contract_version": "opportunity-candidate-state/1.0",
+        "candidate_state_calculation_version": (
+            "market-regime-opportunity-candidate-state-v1.0.0"
+        ),
+        "candidate_state_parameter_set_id": "mrom-candidate-state-v1-fixed-baseline-1",
+        "candidate_state_parameter_fingerprint": "4" * 64,
+        "candidate_batch_fingerprints": batch_fingerprints,
+        "risk_result_fingerprints": risk_fingerprints,
+    }
+    ledger = {
+        "validation_scope": "verified_prior_plus_current_session_oracle"
+    }
+    manifest_sha = "5" * 64
+    monkeypatch.setattr(
+        repo,
+        "read_opportunity_candidate_planning_evidence",
+        lambda _: SimpleNamespace(
+            manifest=manifest,
+            manifest_sha256=manifest_sha,
+            validation_ledger=ledger,
+        ),
+    )
+    actual = {
+        "candidate_audit_manifest_sha256": manifest_sha,
+        "candidate_audit_logical_fingerprint": digest,
+        "candidate_history_fingerprint": "f" * 64,
+        "candidate_state_history_fingerprint": "0" * 64,
+        "risk_results_fingerprint": "1" * 64,
+        "oracle_fingerprint": "2" * 64,
+        "oracle_mismatch_count": 0,
+        "shared_raw_fact_match": True,
+        "input_permutation_match": True,
+        "append_full_replay_match": True,
+        "restart_replay_match": True,
+        "future_prefix_stable": True,
+        "candidate_contract_version": "opportunity-candidate/1.1",
+        "candidate_calculation_version": (
+            "market-regime-opportunity-candidate-v1.1.1"
+        ),
+        "candidate_parameter_set_id": "mrom-candidate-v1-fixed-baseline-3",
+        "candidate_parameter_fingerprint": "3" * 64,
+        "candidate_state_contract_version": "opportunity-candidate-state/1.0",
+        "candidate_state_calculation_version": (
+            "market-regime-opportunity-candidate-state-v1.0.0"
+        ),
+        "candidate_state_parameter_set_id": "mrom-candidate-state-v1-fixed-baseline-1",
+        "candidate_state_parameter_fingerprint": "4" * 64,
+        "current_candidate_batch_fingerprints": tuple(batch_fingerprints[-2:]),
+        "current_risk_result_fingerprints": tuple(risk_fingerprints),
+    }
+
+    repo._validate_candidate_publication_evidence(
+        candidate_audit_path=tmp_path,
+        entry_geometry_audit_path=None,
+        candidate_source=SimpleNamespace(model_dump=lambda mode: actual),
+        candidate_analytics_logical_fingerprint="6" * 64,
+        full_validation_evidence=None,
+    )
