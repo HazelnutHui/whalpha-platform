@@ -48,7 +48,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.7"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.8"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -77,6 +77,7 @@ class DailyEodCoordinatorConfig:
     candidate_work_dir: Path | None = None
     publication_created_at: datetime | None = None
     publication_expected_current_state_fingerprint: str | None = None
+    snapshot_generated_at: datetime | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -242,8 +243,22 @@ def coordinate_daily_eod_transition(
             alert=True,
         )
     if plan.status is PlanStatus.ANALYTICS_READY:
-        if plan.next_action is not NextAction.REVIEW_PUBLICATION:
+        if plan.next_action not in {
+            NextAction.REVIEW_PUBLICATION,
+            NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+        }:
             raise DailyEodCoordinatorError("analytics-ready plan has an invalid action")
+        if plan.next_action is NextAction.REVIEW_SNAPSHOT_PUBLICATION:
+            if apply_market_intelligence:
+                raise DailyEodCoordinatorError(
+                    "MI Apply cannot run after the planner advanced to Snapshot review"
+                )
+            return _result(
+                status=CoordinatorStatus.PUBLICATION_REVIEW_READY,
+                next_action=NextAction.REVIEW_SNAPSHOT_PUBLICATION.value,
+                reasons=plan.reason_codes,
+                plan=plan,
+            )
         if not apply_market_intelligence:
             return _result(
                 status=CoordinatorStatus.PUBLICATION_REVIEW_READY,
@@ -602,6 +617,7 @@ def _execution_config(config: DailyEodCoordinatorConfig) -> DailyEodExecutionCon
         publication_expected_current_state_fingerprint=(
             config.publication_expected_current_state_fingerprint
         ),
+        snapshot_generated_at=config.snapshot_generated_at,
     )
 
 
@@ -674,6 +690,14 @@ def _validate_config(config: DailyEodCoordinatorConfig) -> None:
             raise DailyEodCoordinatorError(
                 "publication planning inputs must be complete UTC/fingerprint bindings"
             )
+    if config.snapshot_generated_at is not None and (
+        config.snapshot_generated_at.tzinfo is None
+        or config.snapshot_generated_at.utcoffset() is None
+        or config.snapshot_generated_at.utcoffset().total_seconds() != 0
+    ):
+        raise DailyEodCoordinatorError(
+            "Snapshot planning timestamp must be explicit UTC"
+        )
 
 
 def _validate_plan(
@@ -692,7 +716,12 @@ def _validate_plan(
     ):
         raise DailyEodCoordinatorError("automation plan differs from coordinator boundary")
     if (
-        plan.next_action in {*OFFLINE_ACTIONS, NextAction.REVIEW_PUBLICATION}
+        plan.next_action
+        in {
+            *OFFLINE_ACTIONS,
+            NextAction.REVIEW_PUBLICATION,
+            NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+        }
         and config.latest_canonical_session != config.target_session
     ):
         raise DailyEodCoordinatorError("canonical session is stale for downstream work")

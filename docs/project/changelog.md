@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-29 — Add custody-tracked daily Snapshot Plan preparation
+
+- Accepted ADR 0070 and added `prepare_dashboard_snapshot_plan` as the ninth
+  one-transition offline action after exact MI activation.
+- The planner now distinguishes an MI plan ready for Apply from that exact
+  planned publication being active. Only the latter can advance to Snapshot
+  planning; older/absent active MI stays at publication review and mismatched
+  active state blocks.
+- Reused the existing offline Snapshot V2 administrator with exact UTC time,
+  target session, active MI publication, same-session Strategy Channel audit,
+  and new `/tmp` output/Approval Plan paths.
+- Added a public strict reader for canonical, owner-controlled, read-only
+  Snapshot plans and required Plan 2.4 plus exact MI/strategy lineage before
+  stopping at `review_snapshot_publication`.
+- No real Snapshot, `/data` write, Apply, bundle, deployment, or scheduler
+  operation ran.
+- All 1,610 backend tests pass; the only output is two existing dependency
+  deprecation warnings.
+
 ## 2026-08-29 — Add default-off one-shot MI Apply custody
 
 - Accepted ADR 0069 and extended the daily run journal to backward-readable

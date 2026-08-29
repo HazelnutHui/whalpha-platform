@@ -108,9 +108,10 @@ planner is now implemented. A real 2026-08-26 rehearsal formally reconciled
 the corrected incremental chain and selected `calculate_entry_geometry` as its
 sole next action, with zero external requests and Production writes. A
 single-action executor and durable Dell run-custody implementation now consume
-only an exact unchanged plan for one of eight offline daily actions. The first
-seven are analytics actions; the eighth prepares an MI approval plan without a
-Production write. The executor holds a global lock, journals start/terminal
+only an exact unchanged plan for one of nine offline daily actions. The first
+seven are analytics actions; the eighth prepares an MI approval plan and the
+ninth prepares a Dashboard Snapshot approval plan, both without a Production
+write. The executor holds a global lock, journals start/terminal
 events in an immutable
 cross-session hash chain, validates output evidence, and re-plans before
 recording success. Interrupted-attempt recovery only classifies formal state
@@ -151,6 +152,16 @@ networking prohibited. Success requires the exact active publication/pointer
 to formally reread. Recovery never applies or links. This boundary is
 repository-tested only and has not changed the active 2026-08-28 publication,
 `/data`, Snapshot, bundle, OCI release, or scheduler state.
+ADR 0070 advances the planner/executor/coordinator contracts to 1.3/1.3/1.8
+and adds Snapshot Plan preparation only after the formal daily MI plan matches
+the exact active MI publication. It binds explicit UTC, new direct-child
+`/tmp` output/plan paths, the same-session Strategy Channel audit, and exact MI
+payload/logical fingerprints. A strict public Plan 2.4 reader verifies
+canonical owner-controlled read-only custody and the complete candidate
+lineage. Completion stops at `review_snapshot_publication`; Snapshot Apply,
+bundle, OCI deployment, and scheduler activation remain separate and
+unauthorized. This repository-only change has not created or activated a real
+Snapshot.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

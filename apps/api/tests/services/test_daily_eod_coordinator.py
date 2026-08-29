@@ -57,6 +57,8 @@ def paths() -> DailyEodAutomationPaths:
         strategy_channel_audit=Path("/tmp/strategy"),
         market_intelligence_output_root=Path("/tmp/mi-output"),
         market_intelligence_approval_plan=Path("/tmp/mi-plan.json"),
+        snapshot_output_root=Path("/tmp/snapshot-output"),
+        snapshot_approval_plan=Path("/tmp/snapshot-plan.json"),
     )
 
 
@@ -90,6 +92,7 @@ def plan(
                 NextAction.BUILD_MARKET_PREVIEW,
                 NextAction.CALCULATE_STRATEGY_CHANNELS,
                 NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
+                NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
             }
             else PlanStatus.WAITING_FOR_AUTHORIZED_INPUT
         )
@@ -747,6 +750,25 @@ def test_market_intelligence_apply_flag_without_capability_fails_closed() -> Non
             ),
             journal_reader=journal(),
         )
+
+
+def test_snapshot_review_is_a_separate_nonexecuting_stop() -> None:
+    result = coordinate_daily_eod_transition(
+        config=config(latest=TARGET),
+        checked_at=AFTER_STABILIZATION,
+        planner=planner(
+            plan(
+                NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+                status=PlanStatus.ANALYTICS_READY,
+            )
+        ),
+        journal_reader=journal(),
+    )
+
+    assert result.status is CoordinatorStatus.PUBLICATION_REVIEW_READY
+    assert result.next_action == "review_snapshot_publication"
+    assert result.production_write_count == 0
+    assert result.publication_authorized is False
 
 
 def test_elapsed_daily_deadline_propagates_alert_requirement() -> None:

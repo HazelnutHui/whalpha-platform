@@ -42,8 +42,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--strategy-channel-audit", required=True, type=Path)
     parser.add_argument("--market-intelligence-output-root", required=True, type=Path)
     parser.add_argument("--market-intelligence-approval-plan", required=True, type=Path)
+    parser.add_argument("--snapshot-output-root", required=True, type=Path)
+    parser.add_argument("--snapshot-approval-plan", required=True, type=Path)
     parser.add_argument("--publication-created-at", type=datetime.fromisoformat)
     parser.add_argument("--publication-expected-current-state-fingerprint")
+    parser.add_argument("--snapshot-generated-at", type=datetime.fromisoformat)
     parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--candidate-work-dir", type=Path)
     mode = parser.add_mutually_exclusive_group(required=True)
@@ -68,6 +71,8 @@ def main(argv: list[str] | None = None) -> int:
         "strategy_channel_audit",
         "market_intelligence_output_root",
         "market_intelligence_approval_plan",
+        "snapshot_output_root",
+        "snapshot_approval_plan",
         "panel_cache_root",
         "candidate_work_dir",
     ):
@@ -86,6 +91,10 @@ def main(argv: list[str] | None = None) -> int:
     publication_action = (
         args.execute_action == NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN.value
     )
+    snapshot_action = (
+        args.execute_action
+        == NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN.value
+    )
     if publication_action and not all(
         value is not None for value in publication_values
     ):
@@ -96,6 +105,16 @@ def main(argv: list[str] | None = None) -> int:
         value is not None for value in publication_values
     ):
         parser.error("publication bindings require the publication-plan action")
+    if snapshot_action and args.snapshot_generated_at is None:
+        parser.error("Snapshot planning requires --snapshot-generated-at")
+    if (
+        args.execute_action is not None
+        and not snapshot_action
+        and args.snapshot_generated_at is not None
+    ):
+        parser.error(
+            "--snapshot-generated-at requires the Snapshot plan action"
+        )
     if args.recover_incomplete and any(
         value is not None for value in publication_values
     ) and not all(value is not None for value in publication_values):
@@ -115,6 +134,8 @@ def main(argv: list[str] | None = None) -> int:
             strategy_channel_audit=args.strategy_channel_audit,
             market_intelligence_output_root=args.market_intelligence_output_root,
             market_intelligence_approval_plan=args.market_intelligence_approval_plan,
+            snapshot_output_root=args.snapshot_output_root,
+            snapshot_approval_plan=args.snapshot_approval_plan,
         ),
         run_root=args.run_root,
         panel_cache_root=args.panel_cache_root,
@@ -123,6 +144,7 @@ def main(argv: list[str] | None = None) -> int:
         publication_expected_current_state_fingerprint=(
             args.publication_expected_current_state_fingerprint
         ),
+        snapshot_generated_at=args.snapshot_generated_at,
     )
     try:
         with _offline_socket_guard():

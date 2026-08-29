@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import shutil
+import stat
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
@@ -380,6 +381,65 @@ def validate_plan(plan: DashboardSnapshotApprovalPlanV2 | DashboardSnapshotAppro
         or manifest.review_expected_lag_sessions != review.expected_lag_sessions
     ):
         raise DashboardSnapshotPublicationError("snapshot approval review binding changed")
+
+
+def read_dashboard_snapshot_approval_plan(
+    path: Path,
+) -> (
+    DashboardSnapshotApprovalPlanV2
+    | DashboardSnapshotApprovalPlanV2_1
+    | DashboardSnapshotApprovalPlanV2_2
+    | DashboardSnapshotApprovalPlanV2_3
+    | DashboardSnapshotApprovalPlanV2_4
+):
+    """Formally read one immutable canonical Snapshot approval plan."""
+
+    try:
+        resolved = path.resolve(strict=True)
+    except OSError as exc:
+        raise DashboardSnapshotPublicationError(
+            "snapshot approval plan is unavailable"
+        ) from exc
+    if (
+        not path.is_absolute()
+        or resolved != path
+        or not resolved.is_relative_to(Path("/tmp"))
+        or path.is_symlink()
+        or not path.is_file()
+    ):
+        raise DashboardSnapshotPublicationError(
+            "snapshot approval plan must be a regular /tmp file"
+        )
+    metadata = resolved.stat()
+    if metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o444:
+        raise DashboardSnapshotPublicationError(
+            "snapshot approval plan custody mismatch"
+        )
+    raw = resolved.read_bytes()
+    try:
+        value = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise DashboardSnapshotPublicationError(
+            "snapshot approval plan JSON is malformed"
+        ) from exc
+    if not isinstance(value, dict) or deterministic_json_bytes(value) != raw:
+        raise DashboardSnapshotPublicationError(
+            "snapshot approval plan JSON is non-canonical"
+        )
+    plan_type = {
+        "2.0": DashboardSnapshotApprovalPlanV2,
+        "2.1": DashboardSnapshotApprovalPlanV2_1,
+        "2.2": DashboardSnapshotApprovalPlanV2_2,
+        "2.3": DashboardSnapshotApprovalPlanV2_3,
+        "2.4": DashboardSnapshotApprovalPlanV2_4,
+    }.get(value.get("plan_version"))
+    if plan_type is None:
+        raise DashboardSnapshotPublicationError(
+            "unsupported snapshot plan version"
+        )
+    plan = plan_type.model_validate(value)
+    validate_plan(plan)
+    return plan
 
 
 def _planned_pointer(plan: DashboardSnapshotApprovalPlanV2) -> DashboardSnapshotActivePointerV2:

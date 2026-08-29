@@ -24,6 +24,10 @@ PHASE2_FP = "9" * 64
 PREVIEW_FP = "a" * 64
 STRATEGY_FP = "b" * 64
 MI_PLAN_FP = "c" * 64
+MI_POINTER_FP = "d" * 64
+MI_PAYLOAD_SHA = "e" * 64
+MI_LOGICAL_FP = "f" * 64
+MI_PUBLICATION_ID = "2026-08-26T210000Z-abcdef0"
 
 
 def _paths(tmp_path: Path) -> automation.DailyEodAutomationPaths:
@@ -41,6 +45,8 @@ def _paths(tmp_path: Path) -> automation.DailyEodAutomationPaths:
         strategy_channel_audit=Path(f"/tmp/{suffix}-strategy"),
         market_intelligence_output_root=Path(f"/tmp/{suffix}-mi-output"),
         market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
+        snapshot_output_root=Path(f"/tmp/{suffix}-snapshot-output"),
+        snapshot_approval_plan=Path(f"/tmp/{suffix}-snapshot-plan.json"),
     )
 
 
@@ -48,6 +54,13 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
     existing_paths = set(existing or automation._stage_locations(TARGET, paths).values())
     existing_paths.update((paths.prior_phase1b_audit, paths.prior_candidate_audit))
     monkeypatch.setattr(automation, "_lexists", lambda path: path in existing_paths)
+    monkeypatch.setattr(
+        automation,
+        "read_active_market_intelligence",
+        lambda *args, **kwargs: (_ for _ in ()).throw(
+            automation.MarketIntelligenceUnavailable("not active")
+        ),
+    )
     monkeypatch.setattr(
         automation,
         "load_identity_snapshot",
@@ -216,6 +229,13 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
             ),
             entry_geometry_audit_logical_fingerprint=ENTRY_FP,
             activation_allowed=True,
+            activation_allowed_by_review_authorization=False,
+            publication_id=MI_PUBLICATION_ID,
+            planned_pointer_fingerprint=MI_POINTER_FP,
+            target_path=str(
+                paths.data_root
+                / "market-data/analytics/market-intelligence/target"
+            ),
         ),
     )
 
@@ -246,7 +266,134 @@ def test_all_formal_analytics_are_ready_for_separate_publication_review(monkeypa
         "preview",
         "strategy_channels",
         "publication_plan",
+        "market_intelligence_active",
     ]
+
+
+def _install_active_market_intelligence(
+    monkeypatch,
+    paths,
+    *,
+    pointer_fingerprint: str = MI_POINTER_FP,
+) -> None:
+    target = (
+        paths.data_root
+        / "market-data/analytics/market-intelligence/target"
+    )
+    monkeypatch.setattr(
+        automation,
+        "read_active_market_intelligence",
+        lambda *args, **kwargs: SimpleNamespace(
+            pointer=SimpleNamespace(
+                pointer_content_fingerprint=pointer_fingerprint,
+            ),
+            payload=SimpleNamespace(
+                publication_id=MI_PUBLICATION_ID,
+                analysis_session=TARGET,
+                logical_fingerprint=MI_LOGICAL_FP,
+            ),
+            manifest=SimpleNamespace(payload_sha256=MI_PAYLOAD_SHA),
+            path=target,
+        ),
+    )
+
+
+def test_active_mi_advances_to_snapshot_plan_preparation(monkeypatch, tmp_path) -> None:
+    paths = _paths(tmp_path)
+    locations = automation._stage_locations(TARGET, paths)
+    existing = {
+        path
+        for stage, path in locations.items()
+        if stage not in {"snapshot_output", "snapshot_plan"}
+    }
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    _install_active_market_intelligence(monkeypatch, paths)
+
+    plan = automation.plan_daily_eod_automation(
+        target_session=TARGET,
+        paths=paths,
+    )
+
+    assert plan.status is automation.PlanStatus.READY_FOR_OFFLINE_CALCULATION
+    assert (
+        plan.next_action
+        is automation.NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN
+    )
+    assert plan.observations[-2].stage == "market_intelligence_active"
+    assert plan.observations[-2].status is automation.ArtifactStatus.COMPLETED
+    assert plan.observations[-1].stage == "snapshot_plan"
+
+
+def test_active_mi_must_match_the_formal_daily_plan(monkeypatch, tmp_path) -> None:
+    paths = _paths(tmp_path)
+    _install_completed_readers(monkeypatch, paths)
+    _install_active_market_intelligence(
+        monkeypatch,
+        paths,
+        pointer_fingerprint="1" * 64,
+    )
+
+    plan = automation.plan_daily_eod_automation(
+        target_session=TARGET,
+        paths=paths,
+    )
+
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.reason_codes == ("market_intelligence_active_state_mismatch",)
+
+
+def test_partial_snapshot_plan_artifacts_fail_closed(monkeypatch, tmp_path) -> None:
+    paths = _paths(tmp_path)
+    locations = automation._stage_locations(TARGET, paths)
+    existing = {
+        path
+        for stage, path in locations.items()
+        if stage != "snapshot_plan"
+    }
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    _install_active_market_intelligence(monkeypatch, paths)
+
+    plan = automation.plan_daily_eod_automation(
+        target_session=TARGET,
+        paths=paths,
+    )
+
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.reason_codes == ("snapshot_plan_partial",)
+
+
+def test_snapshot_plan_2_4_advances_to_separate_snapshot_review(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    paths = _paths(tmp_path)
+    _install_completed_readers(monkeypatch, paths)
+    _install_active_market_intelligence(monkeypatch, paths)
+    monkeypatch.setattr(
+        automation,
+        "read_dashboard_snapshot_approval_plan",
+        lambda _path: SimpleNamespace(
+            plan_version="2.4",
+            analysis_session=TARGET,
+            plan_content_fingerprint="0" * 64,
+            candidate_path=str(
+                paths.snapshot_output_root / "2026-08-26T210000Z-abcdef0"
+            ),
+            market_intelligence_publication_id=MI_PUBLICATION_ID,
+            market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
+            market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
+            candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+        ),
+    )
+
+    plan = automation.plan_daily_eod_automation(
+        target_session=TARGET,
+        paths=paths,
+    )
+
+    assert plan.status is automation.PlanStatus.ANALYTICS_READY
+    assert plan.next_action is automation.NextAction.REVIEW_SNAPSHOT_PUBLICATION
+    assert plan.reason_codes == ("snapshot_plan_ready_for_review",)
 
 
 def test_missing_identity_reports_authorized_catchup_as_only_next_action(monkeypatch, tmp_path) -> None:
@@ -554,6 +701,8 @@ def test_audit_paths_must_be_distinct_direct_tmp_children(tmp_path) -> None:
         strategy_channel_audit=paths.strategy_channel_audit,
         market_intelligence_output_root=paths.market_intelligence_output_root,
         market_intelligence_approval_plan=paths.market_intelligence_approval_plan,
+        snapshot_output_root=paths.snapshot_output_root,
+        snapshot_approval_plan=paths.snapshot_approval_plan,
     )
     with pytest.raises(automation.DailyEodAutomationError, match="distinct"):
         automation.plan_daily_eod_automation(target_session=TARGET, paths=duplicate)

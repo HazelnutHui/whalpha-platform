@@ -51,8 +51,9 @@ canonical EOD. Historical 8/27 recovery evidence is retained in the project
 changelog; the active deployed release is the complete 8/28 round above.
 
 Repository development source also contains an exact-session read-only daily
-planner and a single-action executor for eight offline daily stages: seven
-analytics stages plus Market Intelligence approval-plan preparation.
+planner and a single-action executor for nine offline daily stages: seven
+analytics stages plus Market Intelligence and Dashboard Snapshot approval-plan
+preparation.
 Execution is bound to an unchanged plan fingerprint, global Dell lock,
 immutable hash-chained journal, validated output evidence, and post-action
 formal re-plan. The original controlled 8/27 run exercised Identity/EOD
@@ -62,8 +63,9 @@ Channels to the same one-transition custody chain. ADR 0068 then adds the
 no-Production-write MI Plan step and stops at human publication review.
 ADR 0069 adds a separate, default-off one-shot MI Apply port with exact plan/
 state bindings, active-state proof, and no-write interruption recovery.
-Snapshot, bundle, deployment, and scheduler activation remain outside that
-executor and separately unauthorized.
+ADR 0070 adds Snapshot approval-plan preparation only after the exact planned
+MI publication is active. Snapshot Apply, bundle, deployment, and scheduler
+activation remain outside that executor and separately unauthorized.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

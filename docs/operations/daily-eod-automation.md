@@ -6,10 +6,10 @@ The daily control plane has a read-only planner, a single-action offline
 executor, and a separately explicit one-shot Market Intelligence Apply port.
 The planner formally reconciles one exact target session and reports one safe
 next action. The executor can consume one unchanged plan fingerprint and run
-only one of eight offline daily actions under durable Dell custody: seven
-analytics calculations plus MI approval-plan preparation. The publication
-port is absent by default and cannot be inferred from readiness. None of these
-parts enables a timer.
+only one of nine offline daily actions under durable Dell custody: seven
+analytics calculations plus MI and Dashboard Snapshot approval-plan
+preparation. The publication port is absent by default and cannot be inferred
+from readiness. None of these parts enables a timer.
 
 The action order is:
 
@@ -26,12 +26,14 @@ same-day Identity
   -> Market Intelligence approval plan
   -> publication review
   -> separately invoked Market Intelligence Apply
+  -> Dashboard Snapshot approval plan
+  -> Snapshot publication review
 ```
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
 Market Intelligence publication is a separate one-shot authorization boundary.
-Snapshot, bundle, OCI deployment, and scheduler activation remain outside the
-coordinator.
+Snapshot planning is offline and review-only. Snapshot Apply, bundle, OCI
+deployment, and scheduler activation remain outside the coordinator.
 
 ## Session and provider readiness
 
@@ -538,15 +540,18 @@ scripts/admin/plan-daily-eod-automation.sh \
   --preview-bundle /tmp/<current-preview> \
   --strategy-channel-audit /tmp/<current-strategy-channels> \
   --market-intelligence-output-root /tmp/<new-mi-output-root> \
-  --market-intelligence-approval-plan /tmp/<new-mi-plan>.json
+  --market-intelligence-approval-plan /tmp/<new-mi-plan>.json \
+  --snapshot-output-root /tmp/<new-snapshot-output-root> \
+  --snapshot-approval-plan /tmp/<new-snapshot-plan>.json
 ```
 
 The JSON result has one of four statuses:
 
 - `waiting_for_authorized_input`: prepare the exact Identity or EOD catch-up;
 - `ready_for_offline_calculation`: run only the named offline daily step;
-- `analytics_ready`: all current analytics and the MI approval plan formally
-  reread; publication may be reviewed separately;
+- `analytics_ready`: the chain is stopped at either formal MI publication
+  review or formal Snapshot publication review; the exact `next_action`
+  identifies which one and conveys no Apply authority;
 - `blocked`: stop and diagnose; do not overwrite or skip the failed boundary.
 
 `blocked` exits 1. The other planning states exit 0 because they are valid
@@ -597,6 +602,8 @@ scripts/admin/execute-daily-eod-offline-action.sh \
   --strategy-channel-audit /tmp/<current-strategy-channels> \
   --market-intelligence-output-root /tmp/<new-mi-output-root> \
   --market-intelligence-approval-plan /tmp/<new-mi-plan>.json \
+  --snapshot-output-root /tmp/<new-snapshot-output-root> \
+  --snapshot-approval-plan /tmp/<new-snapshot-plan>.json \
   --run-root /home/hui/.local/state/trading-intelligence-platform/daily-eod \
   --panel-cache-root /tmp/<immutable-panel-cache> \
   --candidate-work-dir /tmp/<owner-controlled-candidate-recovery> \
@@ -607,10 +614,10 @@ scripts/admin/execute-daily-eod-offline-action.sh \
 Only `calculate_phase1a`, `calculate_phase1b_incremental`,
 `calculate_candidate_daily`, `calculate_entry_geometry`,
 `calculate_etf_relationships`, `build_market_preview`,
-`calculate_strategy_channels`, and `prepare_market_intelligence_plan` are
-executable. The latter analytics consume the
-same-session fingerprints already verified by their prerequisites; they do
-not authorize publication or deployment.
+`calculate_strategy_channels`, `prepare_market_intelligence_plan`, and
+`prepare_dashboard_snapshot_plan` are executable. The calculation and planning
+stages consume the same-session fingerprints already verified by their
+prerequisites; they do not authorize publication or deployment.
 The Candidate work directory is required only for the Candidate action. The
 panel cache is optional and must remain outside `/data`.
 
@@ -624,8 +631,22 @@ The MI Plan action additionally requires:
 Both values are bound into the immutable action identity. The action invokes
 only Market Intelligence `--plan`, creates the two explicit `/tmp` targets,
 and returns to `review_publication`. It never invokes Apply. Omit these two
-arguments for the other seven actions. Recovery of an interrupted MI Plan must
+arguments for the other eight actions. Recovery of an interrupted MI Plan must
 reuse both exact values.
+
+The Snapshot Plan action additionally requires:
+
+```bash
+--snapshot-generated-at <explicit-UTC-timestamp>
+```
+
+It is selectable only after the exact publication named by the formal MI plan
+is active. It invokes the existing Snapshot dry-run with that active MI, the
+same-session Strategy Channel audit, and the two explicit new `/tmp` Snapshot
+paths. Formal completion requires current Approval Plan 2.4 and exact MI,
+strategy, session, and path bindings, then returns to
+`review_snapshot_publication`. It never invokes Snapshot Apply. Omit this
+timestamp for the other eight actions; interrupted recovery must reuse it.
 
 The executor acquires one global non-blocking lock, re-plans under the lock,
 records an immutable start event, invokes exactly one existing offline command,
@@ -680,8 +701,8 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Add equivalent exact-plan, postcondition, and no-replay custody for Snapshot
-   plan/Apply after a newly active MI publication.
+1. Add a separate default-off exact-plan, postcondition, and no-write recovery
+   custody boundary for Snapshot Apply. Snapshot Plan custody is complete.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.

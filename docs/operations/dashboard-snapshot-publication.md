@@ -37,6 +37,24 @@ The Dell-local publication/bundle evidence and its explicit Production
 boundary are recorded in
 [Candidate Strategy Publication / Bundle Review](../audits/candidate-strategy-publication-bundle-review-2026-08-28.md).
 
+## Daily control-plane custody
+
+ADR 0070 adds only Snapshot Approval Plan preparation to the Dell daily
+executor. The read-only planner advances to
+`prepare_dashboard_snapshot_plan` only when the exact Market Intelligence
+publication named by the formal daily MI plan is active. The one action binds
+an explicit UTC generation time, new direct-child `/tmp` output and plan paths,
+the exact active MI payload/logical fingerprints, the target session, and the
+same-session Strategy Channel audit.
+
+The resulting current Plan 2.4 is formally reread through strict canonical,
+owner-controlled, regular-file, non-symlink, mode `0444` custody and the full
+existing candidate/plan validation. Successful preparation stops at
+`review_snapshot_publication`. It creates no `/data` target or active pointer
+and conveys no Apply, bundle, deployment, rollback, or scheduler authority.
+Snapshot Apply remains a separate unimplemented daily write-custody boundary;
+use of the existing manual publisher still requires its own explicit approval.
+
 ## Safety boundary
 
 The publisher and rollback tools are offline administrator workflows. They do

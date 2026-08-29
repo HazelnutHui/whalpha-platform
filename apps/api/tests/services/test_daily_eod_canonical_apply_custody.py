@@ -73,6 +73,8 @@ def automation_paths(tmp_path: Path) -> DailyEodAutomationPaths:
         strategy_channel_audit=tmp_path / "strategy",
         market_intelligence_output_root=tmp_path / "mi-output",
         market_intelligence_approval_plan=tmp_path / "mi-plan.json",
+        snapshot_output_root=tmp_path / "snapshot-output",
+        snapshot_approval_plan=tmp_path / "snapshot-plan.json",
     )
 
 

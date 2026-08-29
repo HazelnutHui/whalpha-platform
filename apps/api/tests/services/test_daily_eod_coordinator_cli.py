@@ -68,6 +68,10 @@ def arguments() -> list[str]:
         "/tmp/mi-output",
         "--market-intelligence-approval-plan",
         "/tmp/mi-plan.json",
+        "--snapshot-output-root",
+        "/tmp/snapshot-output",
+        "--snapshot-approval-plan",
+        "/tmp/snapshot-plan.json",
     ]
 
 

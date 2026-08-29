@@ -13,7 +13,14 @@ from typing import Callable, Mapping
 
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.market_intelligence_active import (
+    MarketIntelligencePublicationError,
+    MarketIntelligenceUnavailable,
+    pointer_path as market_intelligence_pointer_path,
+    read_active_market_intelligence,
     read_market_intelligence_approval_plan,
+)
+from tip_api.persistence.parquet.dashboard_snapshot_active import (
+    read_dashboard_snapshot_approval_plan,
 )
 from tip_api.providers.massive.grouped_daily_ingestion import load_identity_snapshot
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
@@ -37,7 +44,7 @@ from tip_api.services.opportunity_candidate_audit import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-automation-plan/1.2"
+CONTRACT_VERSION = "daily-eod-automation-plan/1.3"
 
 
 class DailyEodAutomationError(RuntimeError):
@@ -70,6 +77,8 @@ class NextAction(StrEnum):
     CALCULATE_STRATEGY_CHANNELS = "calculate_strategy_channels"
     PREPARE_MARKET_INTELLIGENCE_PLAN = "prepare_market_intelligence_plan"
     REVIEW_PUBLICATION = "review_publication"
+    PREPARE_DASHBOARD_SNAPSHOT_PLAN = "prepare_dashboard_snapshot_plan"
+    REVIEW_SNAPSHOT_PUBLICATION = "review_snapshot_publication"
     OPERATOR_DIAGNOSIS = "operator_diagnosis"
 
 
@@ -87,6 +96,8 @@ class DailyEodAutomationPaths:
     strategy_channel_audit: Path
     market_intelligence_output_root: Path
     market_intelligence_approval_plan: Path
+    snapshot_output_root: Path
+    snapshot_approval_plan: Path
 
 
 @dataclass(frozen=True, slots=True)
@@ -538,21 +549,153 @@ def plan_daily_eod_automation(
             observations,
             "publication_plan_source_binding_mismatch",
         )
+    try:
+        active_market_intelligence = read_active_market_intelligence(
+            paths.data_root,
+            validate_sources=False,
+        )
+    except MarketIntelligenceUnavailable:
+        active_market_intelligence = None
+    except (OSError, MarketIntelligencePublicationError):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "market_intelligence_active_state_invalid",
+        )
+    if (
+        active_market_intelligence is None
+        or active_market_intelligence.pointer is None
+        or active_market_intelligence.payload.publication_id
+        != plan.publication_id
+    ):
+        observations.append(
+            ArtifactObservation(
+                stage="market_intelligence_active",
+                status=ArtifactStatus.MISSING,
+                path=str(market_intelligence_pointer_path(paths.data_root)),
+                reason_codes=("approved_publication_not_active",),
+            )
+        )
+        return _build_plan(
+            target_session=target_session,
+            prior_session=prior_session,
+            status=PlanStatus.ANALYTICS_READY,
+            next_action=NextAction.REVIEW_PUBLICATION,
+            reason_codes=(
+                (
+                    "publication_plan_ready_for_review"
+                    if (
+                        plan.activation_allowed
+                        or plan.activation_allowed_by_review_authorization
+                    )
+                    else "publication_plan_freshness_blocked"
+                ),
+            ),
+            observations=observations,
+        )
+    if (
+        active_market_intelligence.pointer.pointer_content_fingerprint
+        != plan.planned_pointer_fingerprint
+        or active_market_intelligence.payload.analysis_session != target_session
+        or active_market_intelligence.path != Path(plan.target_path)
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "market_intelligence_active_state_mismatch",
+        )
+    observations.append(
+        ArtifactObservation(
+            stage="market_intelligence_active",
+            status=ArtifactStatus.COMPLETED,
+            path=str(market_intelligence_pointer_path(paths.data_root)),
+            as_of_session=target_session.isoformat(),
+            logical_fingerprint=(
+                active_market_intelligence.pointer.pointer_content_fingerprint
+            ),
+        )
+    )
+
+    snapshot_output_exists = _lexists(paths.snapshot_output_root)
+    snapshot_plan_exists = _lexists(paths.snapshot_approval_plan)
+    if not snapshot_output_exists and not snapshot_plan_exists:
+        observations.append(
+            ArtifactObservation(
+                stage="snapshot_plan",
+                status=ArtifactStatus.MISSING,
+                path=str(paths.snapshot_approval_plan),
+                reason_codes=("artifact_absent",),
+            )
+        )
+        return _build_plan(
+            target_session=target_session,
+            prior_session=prior_session,
+            status=PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            next_action=NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
+            reason_codes=("snapshot_plan_required",),
+            observations=observations,
+        )
+    if snapshot_output_exists != snapshot_plan_exists:
+        observations.append(
+            ArtifactObservation(
+                stage="snapshot_plan",
+                status=ArtifactStatus.INVALID,
+                path=str(paths.snapshot_approval_plan),
+                reason_codes=("partial_plan_artifacts",),
+            )
+        )
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "snapshot_plan_partial",
+        )
+    snapshot = _inspect(
+        stage="snapshot_plan",
+        path=paths.snapshot_approval_plan,
+        reader=lambda: read_dashboard_snapshot_approval_plan(
+            paths.snapshot_approval_plan
+        ),
+        session=lambda value: value.analysis_session.isoformat(),
+        fingerprint=lambda value: value.plan_content_fingerprint,
+    )
+    observations.append(snapshot.observation)
+    if snapshot.observation.status is not ArtifactStatus.COMPLETED:
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "snapshot_plan_invalid",
+        )
+    snapshot_plan = snapshot.payload
+    if (
+        snapshot_plan.plan_version != "2.4"
+        or snapshot_plan.analysis_session != target_session
+        or Path(snapshot_plan.candidate_path).parent
+        != paths.snapshot_output_root
+        or snapshot_plan.market_intelligence_publication_id
+        != plan.publication_id
+        or snapshot_plan.market_intelligence_payload_sha256
+        != active_market_intelligence.manifest.payload_sha256
+        or snapshot_plan.market_intelligence_logical_fingerprint
+        != active_market_intelligence.payload.logical_fingerprint
+        or snapshot_plan.candidate_strategy_audit_logical_fingerprint
+        != strategy.observation.logical_fingerprint
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "snapshot_plan_source_binding_mismatch",
+        )
     return _build_plan(
         target_session=target_session,
         prior_session=prior_session,
         status=PlanStatus.ANALYTICS_READY,
-        next_action=NextAction.REVIEW_PUBLICATION,
-        reason_codes=(
-            (
-                "publication_plan_ready_for_review"
-                if (
-                    plan.activation_allowed
-                    or plan.activation_allowed_by_review_authorization
-                )
-                else "publication_plan_freshness_blocked"
-            ),
-        ),
+        next_action=NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+        reason_codes=("snapshot_plan_ready_for_review",),
         observations=observations,
     )
 
@@ -731,6 +874,8 @@ def _stage_locations(target_session: date, paths: DailyEodAutomationPaths) -> di
         "strategy_channels": paths.strategy_channel_audit,
         "publication_output": paths.market_intelligence_output_root,
         "publication_plan": paths.market_intelligence_approval_plan,
+        "snapshot_output": paths.snapshot_output_root,
+        "snapshot_plan": paths.snapshot_approval_plan,
     }
 
 
@@ -747,6 +892,8 @@ def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str
         "strategy_channels",
         "publication_output",
         "publication_plan",
+        "snapshot_output",
+        "snapshot_plan",
     )
     index = order.index(stage)
     return tuple(item for item in order[index + 1 :] if _lexists(locations[item]))
@@ -767,6 +914,8 @@ def _validate_paths(paths: DailyEodAutomationPaths) -> None:
         paths.strategy_channel_audit,
         paths.market_intelligence_output_root,
         paths.market_intelligence_approval_plan,
+        paths.snapshot_output_root,
+        paths.snapshot_approval_plan,
     )
     if len(set(artifacts)) != len(artifacts):
         raise DailyEodAutomationError("daily artifact paths must be distinct")

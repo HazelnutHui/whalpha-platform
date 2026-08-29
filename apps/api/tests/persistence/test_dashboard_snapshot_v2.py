@@ -177,9 +177,28 @@ def test_plan_2_4_freezes_and_rechecks_strategy_channel_bindings(monkeypatch, tm
     assert plan.candidate_strategy_logical_fingerprint == digest
     repo.validate_plan(plan)
     plan_path = tmp_path / "snapshot-plan-2.4.json"
-    plan_path.write_text(plan.model_dump_json(), encoding="utf-8")
+    plan_path.write_bytes(
+        snapshot.deterministic_json_bytes(plan.model_dump(mode="json"))
+    )
+    plan_path.chmod(0o444)
     loaded = cli._load_plan(plan_path, hashlib.sha256(plan_path.read_bytes()).hexdigest())
     assert loaded == plan
+
+    plan_path.chmod(0o644)
+    with pytest.raises(repo.DashboardSnapshotPublicationError, match="custody mismatch"):
+        repo.read_dashboard_snapshot_approval_plan(plan_path)
+    plan_path.chmod(0o444)
+
+    noncanonical_path = tmp_path / "snapshot-plan-2.4-noncanonical.json"
+    noncanonical_path.write_bytes(plan_path.read_bytes() + b"\n")
+    noncanonical_path.chmod(0o444)
+    with pytest.raises(repo.DashboardSnapshotPublicationError, match="non-canonical"):
+        repo.read_dashboard_snapshot_approval_plan(noncanonical_path)
+
+    symlink_path = tmp_path / "snapshot-plan-2.4-symlink.json"
+    symlink_path.symlink_to(plan_path)
+    with pytest.raises(repo.DashboardSnapshotPublicationError, match="regular /tmp file"):
+        repo.read_dashboard_snapshot_approval_plan(symlink_path)
 
     selected[0] = strategy_manifest.model_copy(
         update={"candidate_strategy_logical_fingerprint": "8" * 64}

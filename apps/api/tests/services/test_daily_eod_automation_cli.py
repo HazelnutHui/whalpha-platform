@@ -27,6 +27,8 @@ def _argv(tmp_path: Path) -> list[str]:
         "--strategy-channel-audit", "/tmp/strategy-test",
         "--market-intelligence-output-root", "/tmp/mi-output-test",
         "--market-intelligence-approval-plan", "/tmp/mi-plan-test.json",
+        "--snapshot-output-root", "/tmp/snapshot-output-test",
+        "--snapshot-approval-plan", "/tmp/snapshot-plan-test.json",
     ]
 
 

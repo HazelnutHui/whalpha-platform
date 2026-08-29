@@ -92,3 +92,4 @@ Each ADR should include:
 - [0067: Extend the Daily Offline Analysis Chain](0067-extend-daily-offline-analysis-chain.md)
 - [0068: Custody the Daily Market Intelligence Plan](0068-custody-daily-market-intelligence-plan.md)
 - [0069: Custody One-Shot Market Intelligence Apply](0069-custody-one-shot-market-intelligence-apply.md)
+- [0070: Custody the Daily Dashboard Snapshot Plan](0070-custody-daily-dashboard-snapshot-plan.md)

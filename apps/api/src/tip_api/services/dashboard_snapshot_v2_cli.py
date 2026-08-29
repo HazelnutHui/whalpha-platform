@@ -22,7 +22,8 @@ from tip_api.contracts.analytics.v1 import (
 )
 from tip_api.persistence.parquet.dashboard_snapshot_active import (
     DashboardSnapshotPublicationError, build_approval_plan, current_state_fingerprint,
-    publish_and_activate, read_active_dashboard_snapshot, rollback, validate_plan, verify_then_link,
+    publish_and_activate, read_active_dashboard_snapshot,
+    read_dashboard_snapshot_approval_plan, rollback, verify_then_link,
 )
 from tip_api.persistence.parquet.dashboard_universe_activation_active import (
     read_active_dashboard_universe_activation,
@@ -42,20 +43,8 @@ def _sha(path: Path) -> str:
 
 
 def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3 | DashboardSnapshotApprovalPlanV2_4:
-    if not path.is_absolute() or not path.resolve(strict=True).is_relative_to(Path("/tmp")) or path.is_symlink():
-        raise DashboardSnapshotPublicationError("approved plan must be a regular /tmp file")
     if _sha(path)!=digest: raise DashboardSnapshotPublicationError("approved plan SHA-256 mismatch")
-    value=json.loads(path.read_text())
-    plan_type={
-        "2.0": DashboardSnapshotApprovalPlanV2,
-        "2.1": DashboardSnapshotApprovalPlanV2_1,
-        "2.2": DashboardSnapshotApprovalPlanV2_2,
-        "2.3": DashboardSnapshotApprovalPlanV2_3,
-        "2.4": DashboardSnapshotApprovalPlanV2_4,
-    }.get(value.get("plan_version"))
-    if plan_type is None:
-        raise DashboardSnapshotPublicationError("unsupported snapshot plan version")
-    plan=plan_type.model_validate(value);validate_plan(plan);return plan
+    return read_dashboard_snapshot_approval_plan(path)
 
 
 def _parser() -> argparse.ArgumentParser:

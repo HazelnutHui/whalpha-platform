@@ -34,6 +34,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--strategy-channel-audit", required=True, type=Path)
     parser.add_argument("--market-intelligence-output-root", required=True, type=Path)
     parser.add_argument("--market-intelligence-approval-plan", required=True, type=Path)
+    parser.add_argument("--snapshot-output-root", required=True, type=Path)
+    parser.add_argument("--snapshot-approval-plan", required=True, type=Path)
     args = parser.parse_args(argv)
     for name in (
         "data_root",
@@ -48,6 +50,8 @@ def main(argv: list[str] | None = None) -> int:
         "strategy_channel_audit",
         "market_intelligence_output_root",
         "market_intelligence_approval_plan",
+        "snapshot_output_root",
+        "snapshot_approval_plan",
     ):
         if not getattr(args, name).is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
@@ -72,6 +76,8 @@ def main(argv: list[str] | None = None) -> int:
                     market_intelligence_approval_plan=(
                         args.market_intelligence_approval_plan
                     ),
+                    snapshot_output_root=args.snapshot_output_root,
+                    snapshot_approval_plan=args.snapshot_approval_plan,
                 ),
             )
     except DailyEodAutomationError as exc:

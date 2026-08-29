@@ -71,18 +71,23 @@ zero symlinks, and zero publication residue.
 
 ### Daily automation development state
 
-The repository daily planner/executor now governs eight ordered offline daily
+The repository daily planner/executor now governs nine ordered offline daily
 stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry, ETF
-Relationships, Market Preview, Strategy Channels, and Market Intelligence
-approval-plan preparation. Every invocation still performs at most one
-transition. The latter stages require the exact target session and upstream
-logical fingerprints. The MI Plan action additionally binds an explicit UTC
+Relationships, Market Preview, Strategy Channels, Market Intelligence
+approval-plan preparation, and Dashboard Snapshot approval-plan preparation.
+Every invocation still performs at most one transition. The latter stages
+require the exact target session and upstream logical fingerprints. The MI
+Plan action additionally binds an explicit UTC
 creation time and expected `/data` inventory fingerprint, writes only two new
 `/tmp` artifacts, formally rereads them, and stops at publication review.
-`analytics_ready` therefore means all seven analytics artifacts plus the MI
-plan are verified; it grants no MI Apply, Snapshot, bundle, deployment,
-`/data`, credential, or scheduler authority. No scheduler or unattended
-Production publication/deployment chain has been enabled.
+After a separately invoked MI Apply makes that exact publication active, the
+Snapshot Plan action binds an explicit UTC time, exact active MI and same-
+session Strategy Channel audit, writes only new `/tmp` artifacts, formally
+rereads Plan 2.4, and stops at Snapshot publication review. `analytics_ready`
+therefore describes a reviewed boundary, not write authority; it grants no MI
+Apply, Snapshot Apply, bundle, deployment, `/data`, credential, or scheduler
+authority. No scheduler or unattended Production publication/deployment chain
+has been enabled.
 
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
@@ -93,6 +98,14 @@ required for success, and interruption recovery never writes or links. This
 code has not been invoked against the current Production plan or `/data`.
 Snapshot Apply, bundle, OCI deployment, and scheduler activation remain
 outside the daily transition.
+
+ADR 0070 extends the repository-only offline chain to a ninth action after MI
+Apply: prepare Dashboard Snapshot Approval Plan 2.4 from the exact active MI
+publication and same-session Strategy Channel audit. It uses explicit UTC and
+new `/tmp` paths, formally rereads the full Snapshot candidate/plan, and stops
+at `review_snapshot_publication`. This new action has not been invoked and has
+not generated or applied a real Snapshot. Snapshot Apply remains the next
+missing write-custody boundary.
 
 ### Historical 2026-08-27 recovery and pipeline evidence
 

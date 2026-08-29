@@ -17,9 +17,13 @@ from tip_api.contracts.analytics.v1.market_intelligence import (
 from tip_api.contracts.market_data.v2.dashboard_universe_activation import (
     PUBLIC_UNIVERSE_ORDER,
 )
+from tip_api.persistence.parquet.market_intelligence_active import (
+    read_market_intelligence_approval_plan,
+)
 from tip_api.services import (
     candidate_entry_geometry_cli,
     candidate_strategy_channel_cli,
+    dashboard_snapshot_v2_cli,
     etf_relationship_cli,
     market_regime_cli,
     market_regime_preview_cli,
@@ -44,7 +48,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.2"
+EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.3"
 OFFLINE_ACTIONS = (
     NextAction.CALCULATE_PHASE1A,
     NextAction.CALCULATE_PHASE1B_INCREMENTAL,
@@ -54,6 +58,7 @@ OFFLINE_ACTIONS = (
     NextAction.BUILD_MARKET_PREVIEW,
     NextAction.CALCULATE_STRATEGY_CHANNELS,
     NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
+    NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
 )
 ACTION_STAGE = {
     NextAction.CALCULATE_PHASE1A: "phase1a",
@@ -64,6 +69,7 @@ ACTION_STAGE = {
     NextAction.BUILD_MARKET_PREVIEW: "preview",
     NextAction.CALCULATE_STRATEGY_CHANNELS: "strategy_channels",
     NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN: "publication_plan",
+    NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN: "snapshot_plan",
 }
 
 
@@ -80,6 +86,7 @@ class DailyEodExecutionConfig:
     candidate_work_dir: Path | None = None
     publication_created_at: datetime | None = None
     publication_expected_current_state_fingerprint: str | None = None
+    snapshot_generated_at: datetime | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -179,6 +186,13 @@ def execute_daily_eod_action(
     ):
         raise DailyEodExecutorError(
             "Market Intelligence planning requires explicit review inputs"
+        )
+    if (
+        expected_action is NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN
+        and config.snapshot_generated_at is None
+    ):
+        raise DailyEodExecutorError(
+            "Dashboard Snapshot planning requires an explicit UTC timestamp"
         )
     with locked_daily_eod_run_journal(
         run_root=config.run_root,
@@ -511,6 +525,30 @@ def run_offline_action(
             config.publication_expected_current_state_fingerprint,
         ]
         summary = _invoke_main(market_intelligence_publication_cli.main, argv)
+    elif action is NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN:
+        if config.snapshot_generated_at is None:
+            raise DailyEodExecutorError(
+                "Dashboard Snapshot planning requires an explicit UTC timestamp"
+            )
+        market_intelligence = read_market_intelligence_approval_plan(
+            config.paths.market_intelligence_approval_plan
+        )
+        output = config.paths.snapshot_approval_plan
+        argv = [
+            "--approval-package",
+            str(config.paths.snapshot_approval_plan),
+            "--output-root",
+            str(config.paths.snapshot_output_root),
+            "--generated-at",
+            config.snapshot_generated_at.astimezone(UTC).isoformat(),
+            "--market-intelligence-publication-id",
+            market_intelligence.publication_id,
+            "--candidate-strategy-audit",
+            str(config.paths.strategy_channel_audit),
+            "--analysis-session",
+            session,
+        ]
+        summary = _invoke_main(dashboard_snapshot_v2_cli.main, argv)
     else:
         raise DailyEodExecutorError("unsupported offline daily action")
     raw = summary.encode("utf-8")
@@ -596,6 +634,8 @@ def _action_output_path(action: NextAction, config: DailyEodExecutionConfig) -> 
         return config.paths.strategy_channel_audit
     if action is NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN:
         return config.paths.market_intelligence_approval_plan
+    if action is NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN:
+        return config.paths.snapshot_approval_plan
     raise DailyEodExecutorError("unsupported offline daily action")
 
 
@@ -632,6 +672,14 @@ def _validate_execution_config(config: DailyEodExecutionConfig) -> None:
             raise DailyEodExecutorError(
                 "publication planning inputs must be complete UTC/fingerprint bindings"
             )
+    if config.snapshot_generated_at is not None and (
+        config.snapshot_generated_at.tzinfo is None
+        or config.snapshot_generated_at.utcoffset() is None
+        or config.snapshot_generated_at.utcoffset().total_seconds() != 0
+    ):
+        raise DailyEodExecutorError(
+            "Snapshot planning timestamp must be explicit UTC"
+        )
 
 
 def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
@@ -655,6 +703,8 @@ def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
             "market_intelligence_approval_plan": str(
                 config.paths.market_intelligence_approval_plan
             ),
+            "snapshot_output_root": str(config.paths.snapshot_output_root),
+            "snapshot_approval_plan": str(config.paths.snapshot_approval_plan),
             "panel_cache_root": (
                 None if config.panel_cache_root is None else str(config.panel_cache_root)
             ),
@@ -668,6 +718,11 @@ def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
             ),
             "publication_expected_current_state_fingerprint": (
                 config.publication_expected_current_state_fingerprint
+            ),
+            "snapshot_generated_at": (
+                None
+                if config.snapshot_generated_at is None
+                else config.snapshot_generated_at.isoformat()
             ),
         },
     }

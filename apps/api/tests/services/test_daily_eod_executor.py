@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -38,6 +39,8 @@ def _paths(tmp_path: Path) -> DailyEodAutomationPaths:
         strategy_channel_audit=Path(f"/tmp/{suffix}-strategy"),
         market_intelligence_output_root=Path(f"/tmp/{suffix}-mi-output"),
         market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
+        snapshot_output_root=Path(f"/tmp/{suffix}-snapshot-output"),
+        snapshot_approval_plan=Path(f"/tmp/{suffix}-snapshot-plan.json"),
     )
 
 
@@ -53,6 +56,7 @@ def _config(tmp_path: Path) -> executor.DailyEodExecutionConfig:
         candidate_work_dir=Path(f"/tmp/{tmp_path.name}-candidate-work"),
         publication_created_at=datetime(2026, 8, 27, 21, 0, tzinfo=UTC),
         publication_expected_current_state_fingerprint="e" * 64,
+        snapshot_generated_at=datetime(2026, 8, 27, 21, 1, tzinfo=UTC),
     )
 
 
@@ -406,6 +410,8 @@ def test_recovery_rejects_paths_that_differ_from_started_attempt(tmp_path) -> No
         strategy_channel_audit=config.paths.strategy_channel_audit,
         market_intelligence_output_root=config.paths.market_intelligence_output_root,
         market_intelligence_approval_plan=config.paths.market_intelligence_approval_plan,
+        snapshot_output_root=config.paths.snapshot_output_root,
+        snapshot_approval_plan=config.paths.snapshot_approval_plan,
     )
     changed = executor.DailyEodExecutionConfig(
         target_session=config.target_session,
@@ -529,6 +535,15 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
                 "--approval-package",
             ),
         ),
+        (
+            NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
+            "dashboard_snapshot_v2_cli",
+            (
+                "--approval-package",
+                "--market-intelligence-publication-id",
+                "--candidate-strategy-audit",
+            ),
+        ),
     ],
 )
 def test_default_runner_invokes_only_the_selected_offline_administrator(
@@ -551,6 +566,7 @@ def test_default_runner_invokes_only_the_selected_offline_administrator(
         "market_regime_preview_cli",
         "candidate_strategy_channel_cli",
         "market_intelligence_publication_cli",
+        "dashboard_snapshot_v2_cli",
     ):
         module = getattr(executor, name)
         monkeypatch.setattr(
@@ -558,6 +574,11 @@ def test_default_runner_invokes_only_the_selected_offline_administrator(
             "main",
             selected_main if name == module_name else lambda argv: pytest.fail("wrong action ran"),
         )
+    monkeypatch.setattr(
+        executor,
+        "read_market_intelligence_approval_plan",
+        lambda _path: SimpleNamespace(publication_id="publication-1"),
+    )
     evidence = executor.run_offline_action(action, config)
     assert evidence.action is action
     assert len(calls) == 1

@@ -72,6 +72,8 @@ def main(argv: list[str] | None = None) -> int:
         strategy_channel_audit=args.strategy_channel_audit,
         market_intelligence_output_root=args.market_intelligence_output_root,
         market_intelligence_approval_plan=args.market_intelligence_approval_plan,
+        snapshot_output_root=args.snapshot_output_root,
+        snapshot_approval_plan=args.snapshot_approval_plan,
     )
     coordinator_config = DailyEodCoordinatorConfig(
         target_session=args.target_session,
@@ -86,6 +88,7 @@ def main(argv: list[str] | None = None) -> int:
         publication_expected_current_state_fingerprint=(
             args.publication_expected_current_state_fingerprint
         ),
+        snapshot_generated_at=args.snapshot_generated_at,
     )
     result = None
     try:
@@ -368,8 +371,11 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--strategy-channel-audit", required=True, type=Path)
     parser.add_argument("--market-intelligence-output-root", required=True, type=Path)
     parser.add_argument("--market-intelligence-approval-plan", required=True, type=Path)
+    parser.add_argument("--snapshot-output-root", required=True, type=Path)
+    parser.add_argument("--snapshot-approval-plan", required=True, type=Path)
     parser.add_argument("--publication-created-at", type=datetime.fromisoformat)
     parser.add_argument("--publication-expected-current-state-fingerprint")
+    parser.add_argument("--snapshot-generated-at", type=datetime.fromisoformat)
     parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--candidate-work-dir", type=Path)
     parser.add_argument("--execute-offline", action="store_true")
@@ -412,6 +418,8 @@ def _validate_arguments(
         "strategy_channel_audit",
         "market_intelligence_output_root",
         "market_intelligence_approval_plan",
+        "snapshot_output_root",
+        "snapshot_approval_plan",
         "panel_cache_root",
         "candidate_work_dir",
     )
