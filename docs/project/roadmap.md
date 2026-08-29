@@ -223,8 +223,10 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Perform a network-free readiness review for 2026-08-28, then request separate
-exact acquisition/Apply authorization if the user wants the latest session.
+The network-free readiness review for 2026-08-28 is complete and selects only
+`prepare_identity_catchup` / `review_fetch_authorization`. If the user wants
+the latest session, request separate exact authorization for one 2026-08-28
+Identity fetch, stop for its canonical Apply review, and only then review EOD.
 The completed 2026-08-27 MI Plan is correctly `freshness_blocked` and must not
 be applied. After 8/28 canonical data exists, run the latest-session analytics
 chain and add Phase 2, preview, and Strategy Channels to the governed daily

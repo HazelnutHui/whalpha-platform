@@ -28,7 +28,7 @@ recorded by a deployed bundle.
 
 ## Formal local state
 
-The 2026-08-28 reconciliation used the project readers after the separately
+The 2026-08-29 reconciliation used the project readers after the separately
 authorized 2026-08-26 stale-review analytics, Snapshot, bundle, and OCI
 deployment. It reread the full local inventory and active custody/contracts
 after deployment.
@@ -387,6 +387,22 @@ one, with no applicable review authorization. Apply did not run. No same-day
 correct data boundary is 8/28 acquisition review rather than completing an
 already non-activatable serving chain. See
 [the publication review audit](../audits/daily-eod-publication-review-2026-08-29.md).
+
+The subsequent network-free 2026-08-28 readiness review formally selected
+`prepare_identity_catchup` at automation-plan fingerprint
+`3bf65e5b57284b48df6fb6cfd26b983f035cdfd5505cb380877ad57cf94821c2`.
+At `2026-08-29T06:12:50+00:00`, readiness was
+`missed_session_recovery` / `review_fetch_authorization`, fingerprint
+`4e26699abd653a611e3f2e1f4e117b099789dd6da92fd538da992ea6a7959e69`,
+because the daily deadline had elapsed and 2026-08-28 was the oldest missing
+session. Attempt and operator-review counts were zero; provider completeness
+was not asserted. Every proposed 8/28 acquisition, Apply-plan, analytics, and
+run-journal target was absent, and no matching timer, service, or residual
+calculation process existed. Full readers reconfirmed the unchanged 392-file
+`/data` fingerprint and active MI/Snapshot. No current-revision external
+control was supplied or preflighted. The next possible authorization is only
+one exact 2026-08-28 Identity fetch, followed by a separate Apply review. See
+[the readiness audit](../audits/daily-eod-readiness-2026-08-29.md).
 
 ## Analytics and presentation
 

@@ -145,11 +145,17 @@ expected 2026-08-28, lag one. No applicable exact review authorization exists,
 so neither MI Apply nor Snapshot/bundle/deployment ran. ADR 0066 fixes two
 duplicated cold-only Candidate evidence lookups discovered by the first real
 daily-schema Plan attempts; both failed before plan creation or Production
-write. All 1,573 backend tests pass. The next correct data boundary is review
-and separately authorize 2026-08-28 acquisition, then run the full latest-
-session analytics chain. The coordinator still does not include Phase 2,
-preview, Strategy Channels, publication, or Snapshot, which blocks unattended
-end-to-end operation.
+write. All 1,573 backend tests pass. The network-free 2026-08-28 readiness
+review is now complete. The planner selects only `prepare_identity_catchup`;
+readiness is `missed_session_recovery` / `review_fetch_authorization`, with
+zero attempts, requests, writes, or provider-completeness assertion. Every
+proposed 8/28 target is absent, `/data` and active serving state are unchanged,
+and no daily timer or service is installed. No current-revision external
+control was supplied or preflighted. The next possible boundary is a
+separately authorized single 2026-08-28 Identity fetch, then its own canonical
+Apply review. The coordinator still does not include Phase 2, preview,
+Strategy Channels, publication, or Snapshot, which blocks unattended end-to-
+end operation.
 
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review

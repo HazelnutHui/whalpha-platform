@@ -737,3 +737,12 @@ their offline tmp-only boundaries, but the final MI Plan correctly returned
 unattended operation, extend the governed sequence to cover these dependencies
 without combining their separate Apply/deployment authorizations or weakening
 freshness checks.
+
+The 2026-08-29 network-free review then reconciled 2026-08-28 as the oldest
+missing session. The automation plan selects only `prepare_identity_catchup`;
+readiness is `missed_session_recovery` / `review_fetch_authorization` because
+the daily deadline elapsed. There are zero attempts and no 2026-08-28 package,
+canonical target, downstream audit, or run-journal directory. No current-HEAD
+external control was supplied or preflighted. The next possible boundary is
+one separately authorized Identity fetch followed by its own Apply review;
+EOD and every downstream stage remain out of scope until Identity completes.

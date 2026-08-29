@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-29 — Review 2026-08-28 acquisition readiness
+
+- The exact-session planner selected only `prepare_identity_catchup` for the
+  oldest missing XNYS session, 2026-08-28. Its fingerprint is
+  `3bf65e5b57284b48df6fb6cfd26b983f035cdfd5505cb380877ad57cf94821c2`.
+- At `2026-08-29T06:12:50+00:00`, the network-free readiness plan returned
+  `missed_session_recovery` / `review_fetch_authorization`, with zero attempts,
+  requests, writes, or provider-completeness assertion. Its fingerprint is
+  `4e26699abd653a611e3f2e1f4e117b099789dd6da92fd538da992ea6a7959e69`.
+- Full local readers reconfirmed aligned 2026-08-27 Identity/EOD, the unchanged
+  392-file `/data` inventory, and unchanged active MI/Snapshot. Every proposed
+  8/28 target and journal directory is absent; no matching timer, service, or
+  residual calculation process exists.
+- No current-revision external control was supplied or preflighted. The next
+  possible authorization is exactly one 2026-08-28 Identity fetch followed by
+  a separate canonical Apply review; EOD and downstream work remain outside
+  that boundary.
+
 ## 2026-08-29 — Review 2026-08-27 publication and fail closed on freshness
 
 - Completed and formally reread the missing 2026-08-27 Phase 2 and preview.
