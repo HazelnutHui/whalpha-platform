@@ -13,6 +13,9 @@ from typing import Callable
 from tip_api.persistence.parquet.market_intelligence_active import (
     read_market_intelligence_approval_plan,
 )
+from tip_api.persistence.parquet.dashboard_snapshot_active import (
+    read_dashboard_snapshot_approval_plan,
+)
 from tip_api.services.daily_eod_acquisition_custody import (
     DailyEodAcquisitionConfig,
     acquisition_attempts_from_events,
@@ -40,6 +43,7 @@ from tip_api.services.daily_eod_readiness import (
 from tip_api.services.daily_eod_run_journal import (
     ACQUISITION_START_EVENT,
     CANONICAL_APPLY_START_EVENT,
+    DASHBOARD_SNAPSHOT_APPLY_START_EVENT,
     MARKET_INTELLIGENCE_APPLY_START_EVENT,
     START_EVENT,
     DailyEodRunEvent,
@@ -48,7 +52,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.8"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.9"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -191,19 +195,26 @@ def coordinate_daily_eod_transition(
     execute_offline: bool = False,
     recover_unresolved: bool = False,
     apply_market_intelligence: bool = False,
+    apply_dashboard_snapshot: bool = False,
     fetch_capability: AuthorizedCapability | None = None,
     apply_capability: AuthorizedCapability | None = None,
     recovery_capability: RecoveryCapability | None = None,
     publication_capability: PublicationCapability | None = None,
+    snapshot_publication_capability: PublicationCapability | None = None,
     planner: Planner = plan_daily_eod_automation,
     journal_reader: JournalReader | None = None,
     offline_executor: OfflineExecutor = execute_daily_eod_action,
     publication_plan_reader: PublicationPlanReader = read_market_intelligence_approval_plan,
+    snapshot_plan_reader: PublicationPlanReader = read_dashboard_snapshot_approval_plan,
 ) -> DailyEodCoordinatorResult:
     """Return or execute at most one exact transition; never loop or retry."""
 
     checked = _aware_utc(checked_at)
     _validate_config(config)
+    if apply_market_intelligence and apply_dashboard_snapshot:
+        raise DailyEodCoordinatorError(
+            "MI Apply and Snapshot Apply are mutually exclusive"
+        )
     plan = planner(target_session=config.target_session, paths=config.paths)
     _validate_plan(plan, config)
     events = (journal_reader or _read_journal_events)(
@@ -253,11 +264,50 @@ def coordinate_daily_eod_transition(
                 raise DailyEodCoordinatorError(
                     "MI Apply cannot run after the planner advanced to Snapshot review"
                 )
-            return _result(
-                status=CoordinatorStatus.PUBLICATION_REVIEW_READY,
-                next_action=NextAction.REVIEW_SNAPSHOT_PUBLICATION.value,
-                reasons=plan.reason_codes,
-                plan=plan,
+            if not apply_dashboard_snapshot:
+                return _result(
+                    status=CoordinatorStatus.PUBLICATION_REVIEW_READY,
+                    next_action=NextAction.REVIEW_SNAPSHOT_PUBLICATION.value,
+                    reasons=plan.reason_codes,
+                    plan=plan,
+                )
+            if snapshot_publication_capability is None:
+                raise DailyEodCoordinatorError(
+                    "Snapshot Apply requires an explicit one-shot publication capability"
+                )
+            approval = snapshot_plan_reader(config.paths.snapshot_approval_plan)
+            if (
+                getattr(approval, "analysis_session", None)
+                != config.target_session
+                or getattr(approval, "plan_content_fingerprint", None)
+                != _snapshot_plan_fingerprint(plan)
+                or not isinstance(getattr(approval, "release_id", None), str)
+                or not isinstance(getattr(approval, "files", None), tuple)
+            ):
+                raise DailyEodCoordinatorError(
+                    "reviewed Snapshot approval plan differs from automation evidence"
+                )
+            evidence = snapshot_publication_capability(
+                PublicationTransitionContext(
+                    coordinator=config,
+                    automation_plan=plan,
+                    checked_at=checked,
+                    operation="apply_dashboard_snapshot",
+                    publication_id=approval.release_id,
+                    approval_plan_content_fingerprint=(
+                        approval.plan_content_fingerprint
+                    ),
+                )
+            )
+            return _snapshot_publication_result(
+                plan,
+                evidence,
+                approval.release_id,
+                expected_write_count=len(approval.files) + 1,
+            )
+        if apply_dashboard_snapshot:
+            raise DailyEodCoordinatorError(
+                "Snapshot Apply cannot run before Snapshot publication review"
             )
         if not apply_market_intelligence:
             return _result(
@@ -295,6 +345,10 @@ def coordinate_daily_eod_transition(
             )
         )
         return _publication_result(plan, evidence, approval.publication_id)
+    if apply_market_intelligence or apply_dashboard_snapshot:
+        raise DailyEodCoordinatorError(
+            "requested publication Apply is not at its review boundary"
+        )
     if plan.next_action in OFFLINE_ACTIONS:
         if plan.status is not PlanStatus.READY_FOR_OFFLINE_CALCULATION:
             raise DailyEodCoordinatorError("offline action is not calculation-ready")
@@ -502,6 +556,19 @@ def _publication_plan_fingerprint(plan: DailyEodAutomationPlan) -> str:
     return str(matches[0])
 
 
+def _snapshot_plan_fingerprint(plan: DailyEodAutomationPlan) -> str:
+    matches = tuple(
+        observation.logical_fingerprint
+        for observation in plan.observations
+        if observation.stage == "snapshot_plan"
+    )
+    if len(matches) != 1 or not _is_fingerprint(matches[0]):
+        raise DailyEodCoordinatorError(
+            "automation plan lacks exact Snapshot approval-plan evidence"
+        )
+    return str(matches[0])
+
+
 def _publication_result(
     plan: DailyEodAutomationPlan,
     evidence: PublicationTransitionEvidence,
@@ -532,6 +599,39 @@ def _publication_result(
     )
 
 
+def _snapshot_publication_result(
+    plan: DailyEodAutomationPlan,
+    evidence: PublicationTransitionEvidence,
+    release_id: str,
+    *,
+    expected_write_count: int,
+) -> DailyEodCoordinatorResult:
+    if (
+        not isinstance(evidence, PublicationTransitionEvidence)
+        or evidence.operation != "apply_dashboard_snapshot"
+        or evidence.target_session != plan.target_session
+        or evidence.precondition_fingerprint != plan.logical_content_fingerprint
+        or evidence.outcome != "succeeded"
+        or evidence.publication_id != release_id
+        or not _is_fingerprint(evidence.event_fingerprint)
+        or evidence.external_request_count != 0
+        or evidence.production_write_count != expected_write_count
+        or expected_write_count < 2
+        or not evidence.reason_code
+    ):
+        raise DailyEodCoordinatorError(
+            "Snapshot publication capability evidence is invalid"
+        )
+    return _result(
+        status=CoordinatorStatus.TRANSITION_EXECUTED,
+        next_action="apply_dashboard_snapshot",
+        reasons=(evidence.reason_code,),
+        plan=plan,
+        transition_fingerprint=_fingerprint(asdict(evidence)),
+        writes=evidence.production_write_count,
+    )
+
+
 def _pending_recovery(pending: DailyEodRunEvent) -> tuple[str, str]:
     if pending.event_type == ACQUISITION_START_EVENT:
         return "recover_acquisition_attempt", "unresolved_acquisition_attempt"
@@ -543,6 +643,11 @@ def _pending_recovery(pending: DailyEodRunEvent) -> tuple[str, str]:
         return (
             "recover_market_intelligence_apply",
             "unresolved_market_intelligence_apply",
+        )
+    if pending.event_type == DASHBOARD_SNAPSHOT_APPLY_START_EVENT:
+        return (
+            "recover_dashboard_snapshot_apply",
+            "unresolved_dashboard_snapshot_apply",
         )
     raise DailyEodCoordinatorError("unrecognized unresolved journal event")
 
@@ -570,6 +675,11 @@ def _recovery_result(
             "recovery_blocked",
         },
         "recover_market_intelligence_apply": {
+            "recovered_succeeded",
+            "recovered_not_completed",
+            "recovery_blocked",
+        },
+        "recover_dashboard_snapshot_apply": {
             "recovered_succeeded",
             "recovered_not_completed",
             "recovery_blocked",

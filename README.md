@@ -64,8 +64,10 @@ no-Production-write MI Plan step and stops at human publication review.
 ADR 0069 adds a separate, default-off one-shot MI Apply port with exact plan/
 state bindings, active-state proof, and no-write interruption recovery.
 ADR 0070 adds Snapshot approval-plan preparation only after the exact planned
-MI publication is active. Snapshot Apply, bundle, deployment, and scheduler
-activation remain outside that executor and separately unauthorized.
+MI publication is active. ADR 0071 adds a separate, default-off one-shot
+Snapshot Apply port with exact plan/state bindings, active-state proof, and
+no-write interruption recovery. Bundle, deployment, and scheduler activation
+remain outside that executor and separately unauthorized.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

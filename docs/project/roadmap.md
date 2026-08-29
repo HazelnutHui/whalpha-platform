@@ -191,6 +191,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   active-state proof, and no-write interruption recovery
 - [x] Add custody-tracked Dashboard Snapshot approval-plan preparation after
   exact Market Intelligence activation
+- [x] Add default-off one-shot Dashboard Snapshot Apply reservation, exact
+  active-state proof, and no-write interruption recovery
 - [x] XNYS-close-aware readiness, bounded retry, alert state, and oldest-gap recovery policy
 - [x] Shared-lock durable provider-attempt reservation, outcome, and recovery custody
 - [x] Expiring, externally SHA-pinned standing Identity/EOD data-authorization contract
@@ -235,12 +237,13 @@ The complete 2026-08-28 round is already active and deployed. Repository
 automation now reaches an explicitly reviewed, one-shot MI Apply with durable
 no-replay custody and, once that exact planned MI is active, a separately
 reviewable Snapshot Approval Plan 2.4 bound to same-session Strategy Channels.
-Both additions remain repository-only and have not changed Production. The
-next control-plane target is default-off Snapshot Apply custody. Bundle
-construction, OCI deployment, and scheduler activation must remain subsequent
-separate transitions. Do not schedule the chain until each remaining write
-boundary has equivalent exact-input, postcondition, and interruption recovery
-semantics.
+The Snapshot Plan and default-off one-shot Snapshot Apply custody are now also
+complete in repository source. These additions remain uninstalled and have not
+changed Production. The next control-plane target is bundle construction and
+review custody bound to the exact active Snapshot. OCI deployment and scheduler
+activation must remain subsequent separate transitions. Do not schedule the
+chain until each remaining write boundary has equivalent exact-input,
+postcondition, and interruption recovery semantics.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

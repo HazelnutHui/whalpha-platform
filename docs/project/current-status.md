@@ -96,16 +96,29 @@ acknowledgement. The default path still stops at publication review. A separate
 journal 1.4 event family reserves before Apply, formal active-state reread is
 required for success, and interruption recovery never writes or links. This
 code has not been invoked against the current Production plan or `/data`.
-Snapshot Apply, bundle, OCI deployment, and scheduler activation remain
-outside the daily transition.
+At that boundary, Snapshot Apply, bundle, OCI deployment, and scheduler
+activation remained outside the daily transition.
 
 ADR 0070 extends the repository-only offline chain to a ninth action after MI
 Apply: prepare Dashboard Snapshot Approval Plan 2.4 from the exact active MI
 publication and same-session Strategy Channel audit. It uses explicit UTC and
 new `/tmp` paths, formally rereads the full Snapshot candidate/plan, and stops
 at `review_snapshot_publication`. This new action has not been invoked and has
-not generated or applied a real Snapshot. Snapshot Apply remains the next
-missing write-custody boundary.
+not generated or applied a real Snapshot.
+
+ADR 0071 adds the next repository-only write boundary: an explicit,
+host-pinned, default-off one-shot Dashboard Snapshot Apply port under
+coordinator 1.9 and backward-readable journal 1.5. Reservation binds the exact
+unchanged Snapshot-review plan, Plan 2.4 whole-file SHA, current Snapshot
+state, Activation pointer, target/staging absence, current freshness or exact
+review acknowledgement hash, and all paths. Success requires the exact active
+Snapshot, immutable target, contracts, aggregate, manifest, session, and
+planned pointer to formally reread. Recovery never applies or links; it only
+reconciles exact success, proves untouched state, or blocks partial/changed/
+ambiguous state. The port remains uninstalled and uninvoked and has not changed
+the active Snapshot or `/data`. Bundle construction/review custody is the next
+missing control-plane boundary; OCI deployment and scheduler activation remain
+later and separately unauthorized.
 
 ### Historical 2026-08-27 recovery and pipeline evidence
 

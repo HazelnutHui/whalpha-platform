@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-08-29 — Add default-off one-shot Dashboard Snapshot Apply custody
+
+- Accepted ADR 0071 and extended the daily run journal to backward-readable
+  1.5 with a separate Dashboard Snapshot Apply start/terminal family; prior MI
+  Apply events under journal 1.4 remain readable.
+- Added exact reservation gates for the unchanged Snapshot-review plan, strict
+  Plan 2.4 whole-file SHA, current Snapshot and Activation state, freshness or
+  exact review acknowledgement hash, and absent target/staging state.
+- Added an explicit, mutually exclusive coordinator/CLI capability that invokes
+  the existing atomic Snapshot publisher and records success only after the
+  exact active release and planned pointer formally reread.
+- Added inspection-only interruption recovery. It never applies or links;
+  exact active state reconciles, provably untouched state closes safely, and
+  inactive/partial/changed/ambiguous state blocks.
+- Preserved `snapshot_generated_at` when routing recovery for an interrupted
+  offline Snapshot Plan action.
+- The capability remains uninstalled and uninvoked. No real Snapshot plan,
+  `/data` write, publication, bundle, deployment, or scheduler change ran.
+- All 1,622 backend tests pass; the only output is two existing dependency
+  deprecation warnings.
+
 ## 2026-08-29 — Add custody-tracked daily Snapshot Plan preparation
 
 - Accepted ADR 0070 and added `prepare_dashboard_snapshot_plan` as the ninth

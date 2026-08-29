@@ -3,13 +3,14 @@
 ## Current scope
 
 The daily control plane has a read-only planner, a single-action offline
-executor, and a separately explicit one-shot Market Intelligence Apply port.
+executor, and separately explicit one-shot Market Intelligence and Dashboard
+Snapshot Apply ports.
 The planner formally reconciles one exact target session and reports one safe
 next action. The executor can consume one unchanged plan fingerprint and run
 only one of nine offline daily actions under durable Dell custody: seven
 analytics calculations plus MI and Dashboard Snapshot approval-plan
-preparation. The publication port is absent by default and cannot be inferred
-from readiness. None of these parts enables a timer.
+preparation. Both publication ports are absent by default and cannot be
+inferred from readiness. None of these parts enables a timer.
 
 The action order is:
 
@@ -28,12 +29,14 @@ same-day Identity
   -> separately invoked Market Intelligence Apply
   -> Dashboard Snapshot approval plan
   -> Snapshot publication review
+  -> separately invoked Dashboard Snapshot Apply
 ```
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
-Market Intelligence publication is a separate one-shot authorization boundary.
-Snapshot planning is offline and review-only. Snapshot Apply, bundle, OCI
-deployment, and scheduler activation remain outside the coordinator.
+Market Intelligence and Dashboard Snapshot publication are separate one-shot
+authorization boundaries. Snapshot planning is offline and review-only.
+Bundle, OCI deployment, and scheduler activation remain outside the
+coordinator.
 
 ## Session and provider readiness
 
@@ -306,7 +309,8 @@ ADR 0037 adds `daily-eod-host-runtime-config/1.0` and
 session and artifact paths and calls the coordinator once. Authorized ports are
 absent by default, and a socket guard remains active in that mode.
 
-Installing the ports requires `--enable-authorized-capabilities`, an absolute
+Installing the standing Identity/EOD ports requires
+`--enable-authorized-capabilities`, an absolute
 external host-config path, and its exact external whole-file SHA. The canonical
 owner-only config must also enable capabilities and match the actual Dell
 hostname, executing repository source, completely clean Git HEAD, current
@@ -332,10 +336,10 @@ execution, standing Identity/EOD capabilities, and unresolved recovery.
 Networking remains prohibited. Default invocation continues to stop at
 `review_publication`.
 
-The CLI never loops and never gains Snapshot, deployment, or scheduler
+The CLI never loops and never gains bundle, deployment, or scheduler
 authority. ADR 0038 adds mutually exclusive `--recover-unresolved`: it
 formally rereads the one exact pending event and invokes only its acquisition,
-canonical-Apply, offline-action, or MI-Apply recovery boundary. The socket
+canonical-Apply, offline-action, MI-Apply, or Snapshot-Apply recovery boundary. The socket
 guard remains active; recovery never requests provider data, performs Apply or
 linking, replays a calculation, retries, or loops. Exceptions without formal
 terminal evidence report request/write counts as unknown, never as assumed
@@ -365,6 +369,49 @@ If the process stops or throws after the start, run only
 Recovery never calls Apply or `verify-then-link`. A complete inactive target
 requires diagnosis and a later separately explicit existing publication
 recovery procedure.
+
+ADR 0071 separately permits one Dashboard Snapshot publication only with all
+of:
+
+```bash
+--apply-dashboard-snapshot \
+--dashboard-snapshot-approved-plan-sha256 <exact-full-file-sha256> \
+--dashboard-snapshot-expected-current-state-fingerprint <exact-active-state-sha256>
+```
+
+Snapshot Apply requires the same externally SHA-pinned enabled Host Runtime
+inputs. An approved stale-review plan additionally requires
+`--dashboard-snapshot-review-acknowledgement` with the exact acknowledgement
+embedded in Plan 2.4. This mode is mutually exclusive with MI Apply, offline
+execution, standing Identity/EOD capabilities, recovery, and email delivery.
+It does not accept MI or Snapshot Plan generation inputs and networking remains
+prohibited. Default invocation continues to stop at
+`review_snapshot_publication`.
+
+### Dashboard Snapshot Apply interruption boundary
+
+Journal 1.5 adds `dashboard_snapshot_apply_started` and a fifth disjoint
+terminal family while continuing to read journal 1.2–1.4, including MI Apply
+events written under 1.4. Reservation requires the unchanged Snapshot-review
+automation fingerprint, formal Plan 2.4/candidate and whole-file SHA, current
+freshness or exact review exception, unchanged active Snapshot state and
+Activation pointer, and absent target/staging state. The existing Snapshot
+publication lock then performs the staged copy, immutable target rename, and
+active-pointer update.
+
+Success is journaled only after the formal active reader proves the exact
+release, target, contracts, aggregate, manifest, session, and planned pointer.
+If the process stops after the start, run only `--recover-unresolved` with the
+same session and artifact paths. Recovery:
+
+- reconciles success only when that exact active Snapshot is readable;
+- records not-completed only when target/staging are absent and Snapshot plus
+  Activation state remain unchanged; and
+- blocks every inactive target, staging residue, changed state, invalid plan,
+  partial, or ambiguous outcome.
+
+Recovery never calls Apply or `verify-then-link`. A complete inactive target
+requires diagnosis and a later separately explicit existing recovery review.
 
 ## Alert intent boundary
 
@@ -701,8 +748,9 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Add a separate default-off exact-plan, postcondition, and no-write recovery
-   custody boundary for Snapshot Apply. Snapshot Plan custody is complete.
+1. Add exact-input construction/review custody for the public-serving bundle
+   bound to the exact active Snapshot. Snapshot Plan and Apply custody are
+   complete in repository source.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.

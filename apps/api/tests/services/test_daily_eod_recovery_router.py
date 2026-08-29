@@ -20,6 +20,9 @@ from tip_api.services.daily_eod_coordinator import (
 from tip_api.services.daily_eod_canonical_apply_custody import (
     CanonicalApplyCustodyResult,
 )
+from tip_api.services.daily_eod_dashboard_snapshot_apply_custody import (
+    DashboardSnapshotApplyCustodyResult,
+)
 from tip_api.services.daily_eod_executor import DailyEodRecoveryResult
 from tip_api.services.daily_eod_market_intelligence_apply_custody import (
     MarketIntelligenceApplyCustodyResult,
@@ -64,6 +67,7 @@ def config() -> DailyEodCoordinatorConfig:
         approval_plan_path=Path("/tmp/daily-plan.json"),
         panel_cache_root=Path("/tmp/panel-cache"),
         candidate_work_dir=Path("/tmp/candidate-work"),
+        snapshot_generated_at=NOW,
     )
 
 
@@ -223,6 +227,7 @@ def test_routes_offline_recovery_without_replaying_action() -> None:
 
     assert len(calls) == 1
     assert calls[0]["config"].panel_cache_root == Path("/tmp/panel-cache")
+    assert calls[0]["config"].snapshot_generated_at == NOW
     assert evidence.action_replayed is False
 
 
@@ -261,6 +266,46 @@ def test_routes_market_intelligence_apply_from_hashed_start_bindings() -> None:
     assert recovery_config.approval_plan_path == Path("/tmp/mi-plan.json")
     assert recovery_config.approved_plan_sha256 == "e" * 64
     assert recovery_config.review_acknowledgement_sha256 == "9" * 64
+    assert evidence.outcome == "recovered_not_completed"
+    assert evidence.production_write_count == 0
+
+
+def test_routes_dashboard_snapshot_apply_from_hashed_start_bindings() -> None:
+    pending = event(
+        "dashboard_snapshot_apply_started",
+        {
+            "operation": "dashboard_snapshot_publication",
+            "approval_plan_sha256": "e" * 64,
+            "expected_current_state_fingerprint": "f" * 64,
+            "review_acknowledgement_sha256": "9" * 64,
+        },
+    )
+    calls = []
+
+    def recoverer(**kwargs):
+        calls.append(kwargs)
+        return DashboardSnapshotApplyCustodyResult(
+            outcome="recovered_not_completed",
+            attempt_id=pending.attempt_id,
+            event=terminal(
+                "dashboard_snapshot_apply_recovered_not_completed"
+            ),
+            approval_plan=None,
+            active_snapshot=None,
+            reason_code="no_dashboard_snapshot_production_write_detected",
+        )
+
+    evidence = recover_one_daily_eod_transition(
+        context(pending, "recover_dashboard_snapshot_apply"),
+        journal_reader=journal(pending),
+        dashboard_snapshot_apply_recoverer=recoverer,
+    )
+
+    recovery_config = calls[0]["config"]
+    assert recovery_config.approval_plan_path == Path("/tmp/snapshot-plan.json")
+    assert recovery_config.approved_plan_sha256 == "e" * 64
+    assert recovery_config.review_acknowledgement_sha256 == "9" * 64
+    assert recovery_config.legacy_root.name == "private-dashboard"
     assert evidence.outcome == "recovered_not_completed"
     assert evidence.production_write_count == 0
 

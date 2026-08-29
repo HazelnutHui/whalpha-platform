@@ -162,6 +162,17 @@ lineage. Completion stops at `review_snapshot_publication`; Snapshot Apply,
 bundle, OCI deployment, and scheduler activation remain separate and
 unauthorized. This repository-only change has not created or activated a real
 Snapshot.
+ADR 0071 advances the coordinator, backward-readable daily journal, and
+recovery router to 1.9/1.5/1.1 and adds a default-off, one-shot Snapshot Apply
+port. It requires the
+exact Plan 2.4 SHA, expected active Snapshot state, host-runtime pin, unchanged
+Activation pointer, target/staging absence, and any exact plan-bound stale-
+review acknowledgement. Success requires the exact active release and planned
+pointer to formally reread. Recovery never applies or links. The same change
+preserves `snapshot_generated_at` when routing an interrupted Snapshot Plan
+recovery. This repository-only boundary is uninstalled and uninvoked; it has
+not changed `/data`, the active Snapshot, bundle, OCI release, or scheduler
+state. Bundle construction/review is the next missing custody boundary.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

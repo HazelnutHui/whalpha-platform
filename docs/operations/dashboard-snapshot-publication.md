@@ -52,8 +52,18 @@ owner-controlled, regular-file, non-symlink, mode `0444` custody and the full
 existing candidate/plan validation. Successful preparation stops at
 `review_snapshot_publication`. It creates no `/data` target or active pointer
 and conveys no Apply, bundle, deployment, rollback, or scheduler authority.
-Snapshot Apply remains a separate unimplemented daily write-custody boundary;
-use of the existing manual publisher still requires its own explicit approval.
+ADR 0071 adds the separate default-off daily write-custody boundary. It is
+reachable only through an explicit, host-pinned one-shot invocation carrying
+the exact Plan 2.4 whole-file SHA and current Snapshot state fingerprint plus
+any exact stale-review acknowledgement. Default planning still stops here.
+
+The one-shot port reserves `dashboard_snapshot_apply_started` before invoking
+the existing publisher and records success only after the exact active release,
+contracts, aggregate, manifest, session, target, and planned pointer formally
+reread. Recovery never applies or links: exact active state reconciles success;
+absent target/staging with unchanged Snapshot and Activation state proves no
+write; everything partial, changed, or ambiguous blocks. The port is
+repository-only, uninstalled, and has never been invoked against Production.
 
 ## Safety boundary
 

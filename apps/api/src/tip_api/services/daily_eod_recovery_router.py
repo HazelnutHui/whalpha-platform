@@ -25,6 +25,11 @@ from tip_api.services.daily_eod_coordinator import (
     RecoveryTransitionContext,
     RecoveryTransitionEvidence,
 )
+from tip_api.services.daily_eod_dashboard_snapshot_apply_custody import (
+    DashboardSnapshotApplyCustodyResult,
+    DailyEodDashboardSnapshotApplyConfig,
+    recover_dashboard_snapshot_apply,
+)
 from tip_api.services.daily_eod_executor import (
     OFFLINE_ACTIONS,
     DailyEodExecutionConfig,
@@ -40,6 +45,7 @@ from tip_api.services.daily_eod_readiness import ACQUISITION_ACTIONS
 from tip_api.services.daily_eod_run_journal import (
     ACQUISITION_START_EVENT,
     CANONICAL_APPLY_START_EVENT,
+    DASHBOARD_SNAPSHOT_APPLY_START_EVENT,
     MARKET_INTELLIGENCE_APPLY_START_EVENT,
     START_EVENT,
     DailyEodRunEvent,
@@ -48,7 +54,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-recovery/1.0"
+CONTRACT_VERSION = "daily-eod-one-transition-recovery/1.1"
 
 
 class DailyEodRecoveryRouterError(RuntimeError):
@@ -61,6 +67,7 @@ JournalReader = Callable[[Path, date], tuple[DailyEodRunEvent, ...]]
 AcquisitionRecoverer = Callable[..., AcquisitionCustodyResult]
 ApplyRecoverer = Callable[..., CanonicalApplyCustodyResult]
 MarketIntelligenceApplyRecoverer = Callable[..., MarketIntelligenceApplyCustodyResult]
+DashboardSnapshotApplyRecoverer = Callable[..., DashboardSnapshotApplyCustodyResult]
 OfflineRecoverer = Callable[..., DailyEodRecoveryResult]
 
 
@@ -74,6 +81,9 @@ def recover_one_daily_eod_transition(
     apply_recoverer: ApplyRecoverer = recover_canonical_apply,
     market_intelligence_apply_recoverer: MarketIntelligenceApplyRecoverer = (
         recover_market_intelligence_apply
+    ),
+    dashboard_snapshot_apply_recoverer: DashboardSnapshotApplyRecoverer = (
+        recover_dashboard_snapshot_apply
     ),
     offline_recoverer: OfflineRecoverer = recover_daily_eod_action,
 ) -> RecoveryTransitionEvidence:
@@ -184,6 +194,7 @@ def recover_one_daily_eod_transition(
                 publication_expected_current_state_fingerprint=(
                     config.publication_expected_current_state_fingerprint
                 ),
+                snapshot_generated_at=config.snapshot_generated_at,
             ),
             planner=planner,
         )
@@ -255,6 +266,55 @@ def recover_one_daily_eod_transition(
             },
         )
 
+    if pending.event_type == DASHBOARD_SNAPSHOT_APPLY_START_EVENT:
+        _require_action(
+            context.recovery_action,
+            "recover_dashboard_snapshot_apply",
+        )
+        if pending.details.get("operation") != "dashboard_snapshot_publication":
+            raise DailyEodRecoveryRouterError(
+                "pending Snapshot Apply operation is inconsistent"
+            )
+        result = dashboard_snapshot_apply_recoverer(
+            config=DailyEodDashboardSnapshotApplyConfig(
+                target_session=config.target_session,
+                approval_plan_path=config.paths.snapshot_approval_plan,
+                approved_plan_sha256=_detail_fingerprint(
+                    pending,
+                    "approval_plan_sha256",
+                ),
+                expected_current_state_fingerprint=_detail_fingerprint(
+                    pending,
+                    "expected_current_state_fingerprint",
+                ),
+                review_acknowledgement_sha256=_optional_detail_fingerprint(
+                    pending,
+                    "review_acknowledgement_sha256",
+                ),
+                data_root=config.paths.data_root,
+                legacy_root=_snapshot_legacy_root(),
+                run_root=config.run_root,
+                automation_paths=config.paths,
+            ),
+            clock=clock,
+        )
+        return _evidence(
+            context,
+            result=result,
+            result_type=DashboardSnapshotApplyCustodyResult,
+            outcome_events={
+                "recovered_succeeded": (
+                    "dashboard_snapshot_apply_recovered_succeeded"
+                ),
+                "recovered_not_completed": (
+                    "dashboard_snapshot_apply_recovered_not_completed"
+                ),
+                "recovery_blocked": (
+                    "dashboard_snapshot_apply_recovery_blocked"
+                ),
+            },
+        )
+
     raise DailyEodRecoveryRouterError("pending event family is unsupported")
 
 
@@ -267,6 +327,10 @@ def _read_journal_events(
         target_session=target_session,
     ) as journal:
         return journal.read_events()
+
+
+def _snapshot_legacy_root() -> Path:
+    return Path(__file__).resolve().parents[5] / "build/private-dashboard"
 
 
 def _acquisition_action(pending: DailyEodRunEvent) -> NextAction:
@@ -287,7 +351,7 @@ def _detail_fingerprint(pending: DailyEodRunEvent, name: str) -> str:
     value = pending.details.get(name)
     if not _is_fingerprint(value):
         raise DailyEodRecoveryRouterError(
-            f"pending canonical Apply {name} is malformed"
+            f"pending Apply {name} is malformed"
         )
     return value
 
@@ -299,7 +363,7 @@ def _optional_detail_fingerprint(
     value = pending.details.get(name)
     if value is not None and not _is_fingerprint(value):
         raise DailyEodRecoveryRouterError(
-            f"pending MI Apply {name} is malformed"
+            f"pending publication Apply {name} is malformed"
         )
     return value
 

@@ -771,6 +771,79 @@ def test_snapshot_review_is_a_separate_nonexecuting_stop() -> None:
     assert result.publication_authorized is False
 
 
+def test_dashboard_snapshot_apply_requires_exact_one_shot_capability() -> None:
+    approval_fingerprint = "7" * 64
+    ready_plan = replace(
+        plan(
+            NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+            status=PlanStatus.ANALYTICS_READY,
+        ),
+        observations=(
+            ArtifactObservation(
+                stage="snapshot_plan",
+                status=ArtifactStatus.COMPLETED,
+                path="/tmp/snapshot-plan.json",
+                as_of_session=TARGET.isoformat(),
+                logical_fingerprint=approval_fingerprint,
+            ),
+        ),
+    )
+    calls = []
+
+    def capability(context):
+        calls.append(context)
+        return PublicationTransitionEvidence(
+            operation="apply_dashboard_snapshot",
+            target_session=TARGET.isoformat(),
+            precondition_fingerprint=ready_plan.logical_content_fingerprint,
+            outcome="succeeded",
+            event_fingerprint="8" * 64,
+            external_request_count=0,
+            production_write_count=3,
+            publication_id="snapshot-1",
+            reason_code="dashboard_snapshot_active_state_formally_proven",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(latest=TARGET),
+        checked_at=AFTER_STABILIZATION,
+        apply_dashboard_snapshot=True,
+        snapshot_publication_capability=capability,
+        planner=planner(ready_plan),
+        journal_reader=journal(),
+        snapshot_plan_reader=lambda _path: SimpleNamespace(
+            analysis_session=TARGET,
+            plan_content_fingerprint=approval_fingerprint,
+            release_id="snapshot-1",
+            files=(SimpleNamespace(), SimpleNamespace()),
+        ),
+    )
+
+    assert len(calls) == 1
+    assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
+    assert result.next_action == "apply_dashboard_snapshot"
+    assert result.production_write_count == 3
+    assert result.publication_authorized is False
+    assert result.deployment_authorized is False
+    assert result.scheduler_enabled is False
+
+
+def test_dashboard_snapshot_apply_without_capability_fails_closed() -> None:
+    with pytest.raises(DailyEodCoordinatorError, match="one-shot"):
+        coordinate_daily_eod_transition(
+            config=config(latest=TARGET),
+            checked_at=AFTER_STABILIZATION,
+            apply_dashboard_snapshot=True,
+            planner=planner(
+                plan(
+                    NextAction.REVIEW_SNAPSHOT_PUBLICATION,
+                    status=PlanStatus.ANALYTICS_READY,
+                )
+            ),
+            journal_reader=journal(),
+        )
+
+
 def test_elapsed_daily_deadline_propagates_alert_requirement() -> None:
     result = coordinate_daily_eod_transition(
         config=config(),
