@@ -168,6 +168,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [2026-08-28 Stale-Review Publication and OCI Deployment](audits/stale-review-publication-deployment-2026-08-28.md): Exact authorization, MI/Snapshot plans and applies, 1.9/2.6 bundle deployment, guest postflight, timings, and post-deployment reconciliation.
 - [2026-08-29 Daily Publication Review](audits/daily-eod-publication-review-2026-08-29.md): Same-session Phase 2/preview completion, incremental Candidate publication correction, freshness-blocked MI Plan, and unchanged Production state.
 - [2026-08-29 Daily Readiness Review](audits/daily-eod-readiness-2026-08-29.md): Network-free 2026-08-28 gap reconciliation, unchanged canonical/Production custody, and exact Identity-first authorization boundary.
+- [2026-08-29 ETF Relationship Explanation Deployment](audits/etf-relationship-explanation-deployment-2026-08-29.md): backward-compatible Snapshot publication, 50-file OCI deployment, independent guest/service/residue postflight, and final Dell inventory.
 - [2026-08-14 Instrument Snapshot Audit](operations/data-audits/2026-08-14-instrument-snapshot-audit.md): Accepted integrity audit with an explicit provenance exception.
 - [2026-08-14 Grouped Daily Run Report](operations/data-audits/2026-08-14-grouped-daily-run.md): Non-sensitive single-request quality and publication record.
 - [Storage Provisioning](operations/storage-provisioning.md): Completed workstation storage implementation record and historical procedure.

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-29 — Deploy ETF relationship change evidence and timeline
+
+- Corrected prior-Snapshot backend compatibility after the first write-free
+  candidate preflight stopped before Plan creation; the failed `/tmp` candidate
+  was removed and no Production state had changed.
+- Activated fresh Snapshot 1.9 / Dashboard 2.6
+  `2026-08-29T133847Z-1490b37f25b3` from unchanged 2026-08-28 Market
+  Intelligence, then built and deployed the matching 50-file OCI release.
+- Independent postflight matched local/remote manifest and checksum hashes,
+  proved Nginx/Auth health, localhost-only Auth, protected routes, temporary
+  guest access, role-free guest/credential parity, and zero residue.
+- Fixed the read-only inspector for the remote Python version by using
+  `datetime.timezone.utc`; no redeployment was needed. Password login and human
+  visual acceptance remain manual. See the
+  [deployment audit](../audits/etf-relationship-explanation-deployment-2026-08-29.md).
+
 ## 2026-08-29 — Add a bounded ETF relationship state timeline
 
 - Accepted ADR 0075 and projected the latest ten frozen Phase 2 state records

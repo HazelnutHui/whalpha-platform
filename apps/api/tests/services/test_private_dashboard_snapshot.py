@@ -309,6 +309,8 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     nginx_template = repo_root / "deploy" / "oci" / "nginx" / "whalpha-private-dashboard.conf.template"
     assert "dry-run" in deploy_script.read_text()
     assert "--apply" in deploy_script.read_text()
+    assert "datetime.timezone.utc" in inspect_script.read_text()
+    assert "datetime.UTC" not in inspect_script.read_text()
     assert "VITE_MARKET_DATA_MODE=snapshot" in build_script.read_text()
     assert "--snapshot-path" in build_script.read_text()
     assert "--snapshot-release" not in build_script.read_text()

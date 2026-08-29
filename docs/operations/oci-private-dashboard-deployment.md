@@ -14,9 +14,9 @@ The authoritative operational state is maintained in
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching local immutable bundle resolve to
-  release `2026-08-29T080928Z-785ab49dfedd`;
+  release `2026-08-29T133847Z-1490b37f25b3`;
 - the release is built from source commit
-  `785ab49dfeddf3c3c6622316326b07b2947ea5d8` and binds Market Intelligence
+  `1490b37f25b3cc48c80fcf0a79c091767eff69ad` and binds Market Intelligence
   `2026-08-29T080431Z-785ab49dfedd`;
 - it serves ordinary-fresh, lag-zero 2026-08-28 analytics through Snapshot 1.9 /
   Dashboard 2.6, Candidate publication 1.1, the strategy-channel product,
@@ -31,6 +31,11 @@ reconciliation records, without reading credentials:
   Dashboard, Snapshot 1.9 Candidate summary/detail, and strategy payload are
   readable, logs out, and removes the local cookie jar without printing it;
 - no staging or partial release residue exists.
+
+The release additionally serves relationship persistence/acceleration evidence
+and the bounded ten-point relationship state timeline. Independent postflight
+matched the exact local/remote manifest and checksum identities. The inspector
+uses `datetime.timezone.utc` for compatibility with the remote Python runtime.
 
 Authenticated browser behavior was not tested because the verification did not
 read or use the user's password.

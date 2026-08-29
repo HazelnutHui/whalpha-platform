@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `785ab49dfeddf3c3c6622316326b07b2947ea5d8` |
+| Deployed bundle source commit | `1490b37f25b3cc48c80fcf0a79c091767eff69ad` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -53,13 +53,13 @@ custody/contracts after deployment.
 | Market Intelligence payload SHA-256 | `9b345d531942ad6f6eeae79ae22de3c578020b14b779281d4616cc3aa680b930` |
 | Market Intelligence logical fingerprint | `9b2842fb9611184f0d2887ad10da7820edbb5d11785ba5083f998314452e696f` |
 | Candidate publication | 686 Primary / 744 Secondary records; fingerprint `eff5ce68400ff90456cd0363bc04d625a80ca6a132b54545bb37d5e6463d5841` |
-| Dashboard Snapshot | `2026-08-29T080928Z-785ab49dfedd` |
+| Dashboard Snapshot | `2026-08-29T133847Z-1490b37f25b3` |
 | Contracts | Snapshot 1.9 / Dashboard 2.6 |
-| Snapshot pointer fingerprint | `a3ab05d42f11421540cc3b702078c33f6cf15f25a9392f81851a86f9d321d00b` |
+| Snapshot pointer fingerprint | `76f499d976b3e1e87a5b84dd6cad0875d9baadf555b0e2c6d81d42d99e9d7a60` |
 | Active review metadata | none; ordinary fresh publication |
 | Current post-close pipeline freshness | expected 2026-08-28; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-28; lag zero |
-| `/data` inventory | 444 files / 267,872,129 bytes after the complete 2026-08-28 round |
-| `/data` inventory fingerprint | `15de69875692824412df3da29afc9dad12e470c326cec2936633dee5dcae1ea3` |
+| `/data` inventory | 485 files / 299,111,361 bytes after the relationship-explanation Snapshot |
+| `/data` inventory fingerprint | `3daa2dcd66d607769f10320cfb99f4fd92dbcb0979d927fe03acef4b4a7da269` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -150,9 +150,9 @@ backward-readable daily journal 1.4. It requires the exact plan SHA, expected
 Production inventory, host-runtime pin, and any exact plan-bound stale-review
 acknowledgement; it is mutually exclusive with other execution modes and keeps
 networking prohibited. Success requires the exact active publication/pointer
-to formally reread. Recovery never applies or links. This boundary is
-repository-tested only and has not changed the active 2026-08-28 publication,
-`/data`, Snapshot, bundle, OCI release, or scheduler state.
+to formally reread. Recovery never applies or links. At that implementation
+boundary the port was repository-tested only; later controlled publication is
+recorded in the active-state table and deployment audit below.
 ADR 0070 advances the planner/executor/coordinator contracts to 1.3/1.3/1.8
 and adds Snapshot Plan preparation only after the formal daily MI plan matches
 the exact active MI publication. It binds explicit UTC, new direct-child
@@ -161,8 +161,8 @@ payload/logical fingerprints. A strict public Plan 2.4 reader verifies
 canonical owner-controlled read-only custody and the complete candidate
 lineage. Completion stops at `review_snapshot_publication`; Snapshot Apply,
 bundle, OCI deployment, and scheduler activation remain separate and
-unauthorized. This repository-only change has not created or activated a real
-Snapshot.
+unauthorized. At that implementation boundary it had not created or activated
+a real Snapshot; later controlled use is recorded below.
 ADR 0071 advances the coordinator, backward-readable daily journal, and
 recovery router to 1.9/1.5/1.1 and adds a default-off, one-shot Snapshot Apply
 port. It requires the
@@ -171,9 +171,9 @@ Activation pointer, target/staging absence, and any exact plan-bound stale-
 review acknowledgement. Success requires the exact active release and planned
 pointer to formally reread. Recovery never applies or links. The same change
 preserves `snapshot_generated_at` when routing an interrupted Snapshot Plan
-recovery. This repository-only boundary is uninstalled and uninvoked; it has
-not changed `/data`, the active Snapshot, bundle, OCI release, or scheduler
-state.
+recovery. At that implementation boundary the port was uninstalled and
+uninvoked; later controlled Snapshot publication is recorded below. It still
+grants no standing or unattended publication authority.
 ADR 0072 advances the offline planner/executor/coordinator/recovery contracts
 to 1.4/1.4/1.10/1.2 and
 adds exact active-Snapshot serving-bundle construction as the tenth action. It
@@ -182,10 +182,11 @@ candidate root, exact Snapshot aggregate/manifest and source-byte bindings,
 complete file checksums, fixed locale and equal Session capability, preserved
 bundle build-time recovery identity, and a
 strict Serving Bundle 1.0 formal reader. It removes the ambiguous legacy
-Snapshot-release shortcut and stops at `review_bundle_deployment`. This code
-is uninvoked; no real candidate, OCI request, switch, reload, rollback, or
-scheduler change occurred. One-shot OCI deployment custody was the next missing
-control boundary at that commit.
+Snapshot-release shortcut and stops at `review_bundle_deployment`. At that
+implementation boundary it had not built a real candidate or made an OCI
+request; later controlled bundle construction and deployment are recorded
+below. One-shot OCI deployment custody was the next missing control boundary
+at that commit.
 ADR 0073 advances coordinator/recovery/journal contracts to 1.11/1.3/1.6 and
 implements that boundary behind a separately SHA-pinned, owner-only, default-
 disabled deployment config. One invocation binds the exact Serving Bundle and
@@ -195,9 +196,10 @@ credential values and explicitly records that password login was not tested.
 Recovery performs one read-only inspection and never invokes Apply; unchanged,
 exactly completed, and partial/ambiguous states remain disjoint. The deployer
 also rejects changed current release, staging/failed residue, and a preexisting
-target stage immediately before mutation. This code is uninstalled and
-uninvoked; no OCI connection, Production write, switch, reload, rollback,
-credential access, or scheduler change occurred.
+target stage immediately before mutation. At that implementation boundary the
+capability was uninstalled and uninvoked; the later separately authorized OCI
+deployment and independent inspection are recorded below. No scheduler or
+standing deployment authority was enabled.
 The composed coordinator/capability/custody/journal path now also has a complete
 fake-transport rehearsal with exact healthy pre-state, one simulated Apply,
 independent exact post-state, and the expected start/success hash-chain events.
@@ -212,21 +214,24 @@ frontend source changed.
 ADR 0074 subsequently adds a repository-only, additive relationship-change
 view derived from the retained Phase 2 history. It exposes state-run duration
 and exact rolling relative-return changes without modifying source payloads,
-formulas, thresholds, rankings, or Production. It remains undeployed.
+formulas, thresholds, rankings, or source Market Intelligence.
 All 1,654 backend tests and 95 frontend tests pass for this additive boundary,
-and the frontend production build succeeds.
+and the frontend production build succeeds. This boundary is now deployed in
+release `2026-08-29T133847Z-1490b37f25b3`.
 ADR 0075 subsequently adds a repository-only ten-point relationship state path
 with explicit retained-history boundaries and selected-window relative returns.
-It does not alter Phase 2, formulas, rankings, Market Intelligence, `/data`, or
-Production. All 1,656 backend tests and 96 frontend tests pass, the frontend
+It does not alter Phase 2, formulas, rankings, or source Market Intelligence.
+All 1,656 backend tests and 96 frontend tests pass, the frontend
 production build succeeds, and the formal active-publication reader reconciles
 all 16 pairs against 21 retained 2026-08-28 relationship sessions without a
-write. This boundary remains undeployed.
+write. This boundary is deployed in release
+`2026-08-29T133847Z-1490b37f25b3`.
 The first write-free publication preflight then caught a backend compatibility
 defect when rereading the active pre-projection Snapshot. Repository source now
 accepts missing additive fields while newly rendered responses still include
 them. The failed preflight stopped with only a `/tmp` candidate and made no
-`/data`, OCI, or Production change.
+`/data`, OCI, or Production change. The correction was then applied before the
+successful Snapshot and OCI deployment.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.
@@ -587,7 +592,7 @@ recorded in the active-state table and
   strategy mode, and makes evidence-incomplete channels explicit; 94 frontend
   tests and the Snapshot-mode build pass. Human visual acceptance remains
   pending. The parameter-bound explanation and URL continuity changes are now
-  deployed in OCI release `2026-08-29T080928Z-785ab49dfedd`. ADR 0059 now records
+  deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`. ADR 0059 now records
   the user's exact 2026-08-26 stale-review
   acknowledgement and adds a separate versioned authorization without
   changing historical 1.0 reads. The exact Apply and postflight are complete;
@@ -605,7 +610,7 @@ recorded in the active-state table and
   Secondary union 451). It therefore remains a broad provisional trend filter,
   not a validated independent setup. The diagnostic compares membership sets,
   never channel scores or outcomes. These ADR 0061 source/UI changes are now
-  deployed in OCI release `2026-08-29T080928Z-785ab49dfedd`.
+  deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`.
 - ADR 0062 adds a repository-only, descriptive continuation fact contract and
   pure Dell calculator for path continuity, trend persistence, recent/prior
   structure, volatility, high-position, and volume context. It produces no
@@ -743,16 +748,21 @@ recorded in the active-state table and
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-29T080928Z-785ab49dfedd`, built from deployed source commit
-`785ab49dfeddf3c3c6622316326b07b2947ea5d8` and bound to Market Intelligence
+`2026-08-29T133847Z-1490b37f25b3`, built from deployed source commit
+`1490b37f25b3cc48c80fcf0a79c091767eff69ad` and bound to Market Intelligence
 `2026-08-29T080431Z-785ab49dfedd`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-29 deployment passed remote preflight, Nginx configuration checks,
+The 2026-08-29 relationship-explanation deployment passed remote preflight,
+Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
 guest Session postflight against the exact Snapshot 1.9 payload and strategy
 resource. No credential or cookie content was printed or retained.
+The independent remote-state report also matched local manifest/checksum
+hashes, found zero failed units or staging/failed residue, and recorded state
+fingerprint
+`9385e063a8f1b1cb166c38dcd2b375e7e91aae81721e8a9750e9bdf5fca8f47b`.
 Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.

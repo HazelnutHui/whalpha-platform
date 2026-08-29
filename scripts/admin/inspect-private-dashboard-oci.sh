@@ -160,7 +160,7 @@ import datetime,hashlib,json,sys
 boolean=lambda value: value == "true"
 base={
  "contract_version":"oci-dashboard-remote-state/1.0",
- "inspected_at":datetime.datetime.now(datetime.UTC).replace(microsecond=0).isoformat().replace("+00:00","Z"),
+ "inspected_at":datetime.datetime.now(datetime.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z"),
  "inspected_target_release":target,
  "remote_host":"hui",
  "remote_user":"ubuntu",
