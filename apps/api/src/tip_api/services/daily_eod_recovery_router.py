@@ -31,10 +31,16 @@ from tip_api.services.daily_eod_executor import (
     DailyEodRecoveryResult,
     recover_daily_eod_action,
 )
+from tip_api.services.daily_eod_market_intelligence_apply_custody import (
+    DailyEodMarketIntelligenceApplyConfig,
+    MarketIntelligenceApplyCustodyResult,
+    recover_market_intelligence_apply,
+)
 from tip_api.services.daily_eod_readiness import ACQUISITION_ACTIONS
 from tip_api.services.daily_eod_run_journal import (
     ACQUISITION_START_EVENT,
     CANONICAL_APPLY_START_EVENT,
+    MARKET_INTELLIGENCE_APPLY_START_EVENT,
     START_EVENT,
     DailyEodRunEvent,
     locked_daily_eod_run_journal,
@@ -54,6 +60,7 @@ Planner = Callable[..., DailyEodAutomationPlan]
 JournalReader = Callable[[Path, date], tuple[DailyEodRunEvent, ...]]
 AcquisitionRecoverer = Callable[..., AcquisitionCustodyResult]
 ApplyRecoverer = Callable[..., CanonicalApplyCustodyResult]
+MarketIntelligenceApplyRecoverer = Callable[..., MarketIntelligenceApplyCustodyResult]
 OfflineRecoverer = Callable[..., DailyEodRecoveryResult]
 
 
@@ -65,6 +72,9 @@ def recover_one_daily_eod_transition(
     journal_reader: JournalReader | None = None,
     acquisition_recoverer: AcquisitionRecoverer = recover_acquisition_attempt,
     apply_recoverer: ApplyRecoverer = recover_canonical_apply,
+    market_intelligence_apply_recoverer: MarketIntelligenceApplyRecoverer = (
+        recover_market_intelligence_apply
+    ),
     offline_recoverer: OfflineRecoverer = recover_daily_eod_action,
 ) -> RecoveryTransitionEvidence:
     """Recover one exact pending family; never fetch, apply, or replay an action."""
@@ -195,6 +205,56 @@ def recover_one_daily_eod_transition(
             },
         )
 
+    if pending.event_type == MARKET_INTELLIGENCE_APPLY_START_EVENT:
+        _require_action(
+            context.recovery_action,
+            "recover_market_intelligence_apply",
+        )
+        if pending.details.get("operation") != "market_intelligence_publication":
+            raise DailyEodRecoveryRouterError(
+                "pending MI Apply operation is inconsistent"
+            )
+        result = market_intelligence_apply_recoverer(
+            config=DailyEodMarketIntelligenceApplyConfig(
+                target_session=config.target_session,
+                approval_plan_path=(
+                    config.paths.market_intelligence_approval_plan
+                ),
+                approved_plan_sha256=_detail_fingerprint(
+                    pending,
+                    "approval_plan_sha256",
+                ),
+                expected_current_state_fingerprint=_detail_fingerprint(
+                    pending,
+                    "expected_current_state_fingerprint",
+                ),
+                review_acknowledgement_sha256=_optional_detail_fingerprint(
+                    pending,
+                    "review_acknowledgement_sha256",
+                ),
+                data_root=config.paths.data_root,
+                run_root=config.run_root,
+                automation_paths=config.paths,
+            ),
+            clock=clock,
+        )
+        return _evidence(
+            context,
+            result=result,
+            result_type=MarketIntelligenceApplyCustodyResult,
+            outcome_events={
+                "recovered_succeeded": (
+                    "market_intelligence_apply_recovered_succeeded"
+                ),
+                "recovered_not_completed": (
+                    "market_intelligence_apply_recovered_not_completed"
+                ),
+                "recovery_blocked": (
+                    "market_intelligence_apply_recovery_blocked"
+                ),
+            },
+        )
+
     raise DailyEodRecoveryRouterError("pending event family is unsupported")
 
 
@@ -228,6 +288,18 @@ def _detail_fingerprint(pending: DailyEodRunEvent, name: str) -> str:
     if not _is_fingerprint(value):
         raise DailyEodRecoveryRouterError(
             f"pending canonical Apply {name} is malformed"
+        )
+    return value
+
+
+def _optional_detail_fingerprint(
+    pending: DailyEodRunEvent,
+    name: str,
+) -> str | None:
+    value = pending.details.get(name)
+    if value is not None and not _is_fingerprint(value):
+        raise DailyEodRecoveryRouterError(
+            f"pending MI Apply {name} is malformed"
         )
     return value
 

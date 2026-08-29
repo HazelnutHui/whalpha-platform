@@ -84,6 +84,16 @@ plan are verified; it grants no MI Apply, Snapshot, bundle, deployment,
 `/data`, credential, or scheduler authority. No scheduler or unattended
 Production publication/deployment chain has been enabled.
 
+ADR 0069 now adds the next repository-only control boundary: MI Apply can be
+performed by exactly one explicit, host-pinned CLI invocation with the exact
+plan SHA, Production-state fingerprint, and any plan-bound review
+acknowledgement. The default path still stops at publication review. A separate
+journal 1.4 event family reserves before Apply, formal active-state reread is
+required for success, and interruption recovery never writes or links. This
+code has not been invoked against the current Production plan or `/data`.
+Snapshot Apply, bundle, OCI deployment, and scheduler activation remain
+outside the daily transition.
+
 ### Historical 2026-08-27 recovery and pipeline evidence
 
 The following details are retained as historical recovery and performance

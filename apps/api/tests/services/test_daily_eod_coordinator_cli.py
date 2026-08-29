@@ -131,6 +131,8 @@ def test_default_invocation_does_not_read_host_config_or_install_capabilities(
     assert captured[0]["apply_capability"] is None
     assert captured[0]["recover_unresolved"] is False
     assert captured[0]["recovery_capability"] is None
+    assert captured[0]["apply_market_intelligence"] is False
+    assert captured[0]["publication_capability"] is None
 
 
 def test_capability_enablement_requires_external_config_and_sha() -> None:
@@ -235,6 +237,99 @@ def test_apply_bindings_must_be_complete_and_capabilities_enabled() -> None:
                 "--approved-plan-sha256",
                 "d" * 64,
                 "--expected-current-state-fingerprint",
+                "e" * 64,
+            ]
+        )
+
+
+def test_explicit_market_intelligence_apply_installs_only_one_shot_port(
+    monkeypatch,
+    capsys,
+) -> None:
+    source_root = cli._source_repository_root()
+    host_config = enabled_host_config(source_root)
+    captured = []
+
+    class Capability:
+        def __init__(self, *, config):
+            captured.append(config)
+
+        def apply(self, _context):
+            return None
+
+    def coordinate(**kwargs):
+        captured.append(kwargs)
+        assert kwargs["apply_market_intelligence"] is True
+        assert kwargs["publication_capability"] is not None
+        assert kwargs["fetch_capability"] is None
+        assert kwargs["apply_capability"] is None
+        with pytest.raises(RuntimeError, match="network is prohibited"):
+            socket.create_connection(("example.invalid", 443))
+        return result(CoordinatorStatus.TRANSITION_EXECUTED)
+
+    monkeypatch.setattr(cli, "read_host_runtime_config", lambda **_kwargs: host_config)
+    monkeypatch.setattr(
+        cli,
+        "verify_dell_runtime",
+        lambda **_kwargs: VerifiedDellRuntime(
+            host="dell5820",
+            repository_root=str(source_root),
+            implementation_revision=REVISION,
+            readiness_policy_fingerprint=POLICY,
+            worktree_clean=True,
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "DailyEodMarketIntelligenceApplyCapability",
+        Capability,
+    )
+    monkeypatch.setattr(cli, "coordinate_daily_eod_transition", coordinate)
+
+    invocation = arguments() + [
+        "--apply-market-intelligence",
+        "--host-config",
+        "/etc/trading-intelligence-platform/runtime/host.json",
+        "--host-config-sha256",
+        "c" * 64,
+        "--market-intelligence-approved-plan-sha256",
+        "d" * 64,
+        "--market-intelligence-expected-current-state-fingerprint",
+        "e" * 64,
+    ]
+    assert cli.main(invocation) == 0
+    assert json.loads(capsys.readouterr().out)["status"] == "transition_executed"
+    assert captured[0].approved_plan_sha256 == "d" * 64
+    assert captured[0].expected_current_state_fingerprint == "e" * 64
+
+
+def test_market_intelligence_apply_bindings_are_exact_and_exclusive() -> None:
+    with pytest.raises(SystemExit):
+        cli.main(arguments() + ["--apply-market-intelligence"])
+    with pytest.raises(SystemExit):
+        cli.main(
+            arguments()
+            + [
+                "--market-intelligence-approved-plan-sha256",
+                "d" * 64,
+            ]
+        )
+    with pytest.raises(SystemExit):
+        cli.main(
+            arguments()
+            + [
+                "--apply-market-intelligence",
+                "--enable-authorized-capabilities",
+            ]
+        )
+    with pytest.raises(SystemExit):
+        cli.main(
+            arguments()
+            + [
+                "--apply-market-intelligence",
+                "--publication-created-at",
+                CHECKED,
+                "--publication-expected-current-state-fingerprint",
                 "e" * 64,
             ]
         )

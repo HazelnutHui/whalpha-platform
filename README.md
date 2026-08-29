@@ -60,8 +60,10 @@ acquisition and Apply plus the first four offline actions through Entry
 Geometry. ADR 0067 adds ETF Relationships, Market Preview, and Strategy
 Channels to the same one-transition custody chain. ADR 0068 then adds the
 no-Production-write MI Plan step and stops at human publication review.
-Publication Apply, Snapshot, bundle, deployment, and scheduler activation
-remain outside that executor and separately unauthorized.
+ADR 0069 adds a separate, default-off one-shot MI Apply port with exact plan/
+state bindings, active-state proof, and no-write interruption recovery.
+Snapshot, bundle, deployment, and scheduler activation remain outside that
+executor and separately unauthorized.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

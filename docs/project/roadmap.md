@@ -187,6 +187,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   Preview, and Strategy Channels
 - [x] Add custody-tracked Market Intelligence approval-plan preparation before
   publication review
+- [x] Add default-off one-shot Market Intelligence Apply reservation, exact
+  active-state proof, and no-write interruption recovery
 - [x] XNYS-close-aware readiness, bounded retry, alert state, and oldest-gap recovery policy
 - [x] Shared-lock durable provider-attempt reservation, outcome, and recovery custody
 - [x] Expiring, externally SHA-pinned standing Identity/EOD data-authorization contract
@@ -227,15 +229,15 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-The network-free readiness review for 2026-08-28 is complete and selects only
-`prepare_identity_catchup` / `review_fetch_authorization`. If the user wants
-the latest session, request separate exact authorization for one 2026-08-28
-Identity fetch, stop for its canonical Apply review, and only then review EOD.
-The completed 2026-08-27 MI Plan is correctly `freshness_blocked` and must not
-be applied. After 8/28 canonical data exists, run the latest-session analytics
-chain and add Phase 2, preview, and Strategy Channels to the governed daily
-sequence before considering unattended scheduling. Publication Apply,
-Snapshot, bundle, and deployment remain separate explicit transitions.
+The complete 2026-08-28 round is already active and deployed. Repository
+automation now reaches an explicitly reviewed, one-shot MI Apply with durable
+no-replay custody, but that new port is uninstalled and has not changed
+Production. The next control-plane target is Snapshot plan/Apply custody bound
+to the newly active MI publication and same-session Strategy Channels. Bundle
+construction, OCI deployment, and scheduler activation must remain subsequent
+separate transitions. Do not schedule the chain until each remaining write
+boundary has equivalent exact-input, postcondition, and interruption recovery
+semantics.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

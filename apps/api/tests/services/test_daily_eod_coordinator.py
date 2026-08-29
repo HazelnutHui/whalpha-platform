@@ -3,10 +3,13 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from tip_api.services.daily_eod_automation import (
+    ArtifactObservation,
+    ArtifactStatus,
     DailyEodAutomationPaths,
     DailyEodAutomationPlan,
     NextAction,
@@ -18,6 +21,7 @@ from tip_api.services.daily_eod_coordinator import (
     DailyEodCoordinatorConfig,
     DailyEodCoordinatorError,
     RecoveryTransitionEvidence,
+    PublicationTransitionEvidence,
     coordinate_daily_eod_transition,
 )
 from tip_api.services.daily_eod_executor import (
@@ -671,6 +675,78 @@ def test_blocked_and_publication_ready_states_never_execute() -> None:
     assert ready.publication_authorized is False
     assert ready.deployment_authorized is False
     assert ready.scheduler_enabled is False
+
+
+def test_market_intelligence_apply_requires_explicit_flag_and_exact_capability() -> None:
+    approval_fingerprint = "7" * 64
+    ready_plan = replace(
+        plan(
+            NextAction.REVIEW_PUBLICATION,
+            status=PlanStatus.ANALYTICS_READY,
+        ),
+        observations=(
+            ArtifactObservation(
+                stage="publication_plan",
+                status=ArtifactStatus.COMPLETED,
+                path="/tmp/mi-plan.json",
+                as_of_session=TARGET.isoformat(),
+                logical_fingerprint=approval_fingerprint,
+            ),
+        ),
+    )
+    calls = []
+
+    def capability(context):
+        calls.append(context)
+        return PublicationTransitionEvidence(
+            operation="apply_market_intelligence",
+            target_session=TARGET.isoformat(),
+            precondition_fingerprint=ready_plan.logical_content_fingerprint,
+            outcome="succeeded",
+            event_fingerprint="8" * 64,
+            external_request_count=0,
+            production_write_count=3,
+            publication_id="publication-1",
+            reason_code="market_intelligence_active_state_formally_proven",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(latest=TARGET),
+        checked_at=AFTER_STABILIZATION,
+        apply_market_intelligence=True,
+        publication_capability=capability,
+        planner=planner(ready_plan),
+        journal_reader=journal(),
+        publication_plan_reader=lambda _path: SimpleNamespace(
+            analysis_session=TARGET,
+            plan_content_fingerprint=approval_fingerprint,
+            publication_id="publication-1",
+        ),
+    )
+
+    assert len(calls) == 1
+    assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
+    assert result.next_action == "apply_market_intelligence"
+    assert result.production_write_count == 3
+    assert result.publication_authorized is False
+    assert result.deployment_authorized is False
+    assert result.scheduler_enabled is False
+
+
+def test_market_intelligence_apply_flag_without_capability_fails_closed() -> None:
+    with pytest.raises(DailyEodCoordinatorError, match="one-shot"):
+        coordinate_daily_eod_transition(
+            config=config(latest=TARGET),
+            checked_at=AFTER_STABILIZATION,
+            apply_market_intelligence=True,
+            planner=planner(
+                plan(
+                    NextAction.REVIEW_PUBLICATION,
+                    status=PlanStatus.ANALYTICS_READY,
+                )
+            ),
+            journal_reader=journal(),
+        )
 
 
 def test_elapsed_daily_deadline_propagates_alert_requirement() -> None:

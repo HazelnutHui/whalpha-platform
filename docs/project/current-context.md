@@ -143,6 +143,14 @@ action after those seven artifacts. `analytics_ready` now requires the formal
 MI plan and immutable candidate as well. These development changes do not
 enable a scheduler and do not authorize MI Apply, Snapshot, bundle,
 deployment, credentials, or `/data` writes.
+ADR 0069 adds a default-off, one-shot MI Apply port under coordinator 1.7 and
+backward-readable daily journal 1.4. It requires the exact plan SHA, expected
+Production inventory, host-runtime pin, and any exact plan-bound stale-review
+acknowledgement; it is mutually exclusive with other execution modes and keeps
+networking prohibited. Success requires the exact active publication/pointer
+to formally reread. Recovery never applies or links. This boundary is
+repository-tested only and has not changed the active 2026-08-28 publication,
+`/data`, Snapshot, bundle, OCI release, or scheduler state.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

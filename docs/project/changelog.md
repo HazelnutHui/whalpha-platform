@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-29 — Add default-off one-shot MI Apply custody
+
+- Accepted ADR 0069 and extended the daily run journal to backward-readable
+  1.4 with a separate Market Intelligence Apply start/terminal family.
+- Added exact reservation gates for the unchanged publication-review plan,
+  whole-file MI plan SHA, current inventory and consumer state, current
+  freshness or exact stale-review acknowledgement hash, and absent target/
+  staging state.
+- Added an explicit, mutually exclusive coordinator/CLI capability that uses
+  the existing offline publication administrator and records success only
+  after the exact active pointer and publication formally reread.
+- Added inspection-only interruption recovery. It never applies or links;
+  exact active state reconciles, provably untouched state permits a later
+  separately authorized retry, and partial/changed/ambiguous state blocks.
+- The capability remains uninstalled and uninvoked. No real plan, `/data`
+  write, publication, Snapshot, bundle, deployment, or scheduler change ran.
+- All 1,603 backend tests pass; the only output is two existing dependency
+  deprecation warnings.
+
 ## 2026-08-29 — Add custody-tracked daily MI Plan preparation
 
 - Accepted ADR 0068 and added `prepare_market_intelligence_plan` as the eighth

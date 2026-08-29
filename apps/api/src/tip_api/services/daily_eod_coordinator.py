@@ -10,6 +10,9 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Callable
 
+from tip_api.persistence.parquet.market_intelligence_active import (
+    read_market_intelligence_approval_plan,
+)
 from tip_api.services.daily_eod_acquisition_custody import (
     DailyEodAcquisitionConfig,
     acquisition_attempts_from_events,
@@ -37,6 +40,7 @@ from tip_api.services.daily_eod_readiness import (
 from tip_api.services.daily_eod_run_journal import (
     ACQUISITION_START_EVENT,
     CANONICAL_APPLY_START_EVENT,
+    MARKET_INTELLIGENCE_APPLY_START_EVENT,
     START_EVENT,
     DailyEodRunEvent,
     locked_daily_eod_run_journal,
@@ -44,7 +48,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.6"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.7"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -118,6 +122,29 @@ class RecoveryTransitionEvidence:
 
 
 @dataclass(frozen=True, slots=True)
+class PublicationTransitionContext:
+    coordinator: DailyEodCoordinatorConfig
+    automation_plan: DailyEodAutomationPlan
+    checked_at: datetime
+    operation: str
+    publication_id: str
+    approval_plan_content_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
+class PublicationTransitionEvidence:
+    operation: str
+    target_session: str
+    precondition_fingerprint: str
+    outcome: str
+    event_fingerprint: str
+    external_request_count: int
+    production_write_count: int
+    publication_id: str
+    reason_code: str
+
+
+@dataclass(frozen=True, slots=True)
 class DailyEodCoordinatorResult:
     status: CoordinatorStatus
     target_session: str
@@ -149,7 +176,11 @@ AuthorizedCapability = Callable[
 RecoveryCapability = Callable[
     [RecoveryTransitionContext], RecoveryTransitionEvidence
 ]
+PublicationCapability = Callable[
+    [PublicationTransitionContext], PublicationTransitionEvidence
+]
 OfflineExecutor = Callable[..., DailyEodExecutionResult]
+PublicationPlanReader = Callable[[Path], object]
 
 
 def coordinate_daily_eod_transition(
@@ -158,12 +189,15 @@ def coordinate_daily_eod_transition(
     checked_at: datetime,
     execute_offline: bool = False,
     recover_unresolved: bool = False,
+    apply_market_intelligence: bool = False,
     fetch_capability: AuthorizedCapability | None = None,
     apply_capability: AuthorizedCapability | None = None,
     recovery_capability: RecoveryCapability | None = None,
+    publication_capability: PublicationCapability | None = None,
     planner: Planner = plan_daily_eod_automation,
     journal_reader: JournalReader | None = None,
     offline_executor: OfflineExecutor = execute_daily_eod_action,
+    publication_plan_reader: PublicationPlanReader = read_market_intelligence_approval_plan,
 ) -> DailyEodCoordinatorResult:
     """Return or execute at most one exact transition; never loop or retry."""
 
@@ -210,12 +244,42 @@ def coordinate_daily_eod_transition(
     if plan.status is PlanStatus.ANALYTICS_READY:
         if plan.next_action is not NextAction.REVIEW_PUBLICATION:
             raise DailyEodCoordinatorError("analytics-ready plan has an invalid action")
-        return _result(
-            status=CoordinatorStatus.PUBLICATION_REVIEW_READY,
-            next_action=NextAction.REVIEW_PUBLICATION.value,
-            reasons=plan.reason_codes,
-            plan=plan,
+        if not apply_market_intelligence:
+            return _result(
+                status=CoordinatorStatus.PUBLICATION_REVIEW_READY,
+                next_action=NextAction.REVIEW_PUBLICATION.value,
+                reasons=plan.reason_codes,
+                plan=plan,
+            )
+        if publication_capability is None:
+            raise DailyEodCoordinatorError(
+                "MI Apply requires an explicit one-shot publication capability"
+            )
+        approval = publication_plan_reader(
+            config.paths.market_intelligence_approval_plan
         )
+        if (
+            getattr(approval, "analysis_session", None) != config.target_session
+            or getattr(approval, "plan_content_fingerprint", None)
+            != _publication_plan_fingerprint(plan)
+            or not isinstance(getattr(approval, "publication_id", None), str)
+        ):
+            raise DailyEodCoordinatorError(
+                "reviewed MI approval plan differs from automation evidence"
+            )
+        evidence = publication_capability(
+            PublicationTransitionContext(
+                coordinator=config,
+                automation_plan=plan,
+                checked_at=checked,
+                operation="apply_market_intelligence",
+                publication_id=approval.publication_id,
+                approval_plan_content_fingerprint=(
+                    approval.plan_content_fingerprint
+                ),
+            )
+        )
+        return _publication_result(plan, evidence, approval.publication_id)
     if plan.next_action in OFFLINE_ACTIONS:
         if plan.status is not PlanStatus.READY_FOR_OFFLINE_CALCULATION:
             raise DailyEodCoordinatorError("offline action is not calculation-ready")
@@ -410,6 +474,49 @@ def _offline_result(
     )
 
 
+def _publication_plan_fingerprint(plan: DailyEodAutomationPlan) -> str:
+    matches = tuple(
+        observation.logical_fingerprint
+        for observation in plan.observations
+        if observation.stage == "publication_plan"
+    )
+    if len(matches) != 1 or not _is_fingerprint(matches[0]):
+        raise DailyEodCoordinatorError(
+            "automation plan lacks exact MI approval-plan evidence"
+        )
+    return str(matches[0])
+
+
+def _publication_result(
+    plan: DailyEodAutomationPlan,
+    evidence: PublicationTransitionEvidence,
+    publication_id: str,
+) -> DailyEodCoordinatorResult:
+    if (
+        not isinstance(evidence, PublicationTransitionEvidence)
+        or evidence.operation != "apply_market_intelligence"
+        or evidence.target_session != plan.target_session
+        or evidence.precondition_fingerprint != plan.logical_content_fingerprint
+        or evidence.outcome != "succeeded"
+        or evidence.publication_id != publication_id
+        or not _is_fingerprint(evidence.event_fingerprint)
+        or evidence.external_request_count != 0
+        or evidence.production_write_count != 3
+        or not evidence.reason_code
+    ):
+        raise DailyEodCoordinatorError(
+            "MI publication capability evidence is invalid"
+        )
+    return _result(
+        status=CoordinatorStatus.TRANSITION_EXECUTED,
+        next_action="apply_market_intelligence",
+        reasons=(evidence.reason_code,),
+        plan=plan,
+        transition_fingerprint=_fingerprint(asdict(evidence)),
+        writes=evidence.production_write_count,
+    )
+
+
 def _pending_recovery(pending: DailyEodRunEvent) -> tuple[str, str]:
     if pending.event_type == ACQUISITION_START_EVENT:
         return "recover_acquisition_attempt", "unresolved_acquisition_attempt"
@@ -417,6 +524,11 @@ def _pending_recovery(pending: DailyEodRunEvent) -> tuple[str, str]:
         return "recover_offline_action", "unresolved_offline_attempt"
     if pending.event_type == CANONICAL_APPLY_START_EVENT:
         return "recover_canonical_apply", "unresolved_canonical_apply"
+    if pending.event_type == MARKET_INTELLIGENCE_APPLY_START_EVENT:
+        return (
+            "recover_market_intelligence_apply",
+            "unresolved_market_intelligence_apply",
+        )
     raise DailyEodCoordinatorError("unrecognized unresolved journal event")
 
 
@@ -438,6 +550,11 @@ def _recovery_result(
             "recovery_blocked",
         },
         "recover_offline_action": {
+            "recovered_succeeded",
+            "recovered_not_completed",
+            "recovery_blocked",
+        },
+        "recover_market_intelligence_apply": {
             "recovered_succeeded",
             "recovered_not_completed",
             "recovery_blocked",

@@ -91,3 +91,4 @@ Each ADR should include:
 - [0066: Project Incremental Candidate Evidence into Publication](0066-project-incremental-candidate-evidence-into-publication.md)
 - [0067: Extend the Daily Offline Analysis Chain](0067-extend-daily-offline-analysis-chain.md)
 - [0068: Custody the Daily Market Intelligence Plan](0068-custody-daily-market-intelligence-plan.md)
+- [0069: Custody One-Shot Market Intelligence Apply](0069-custody-one-shot-market-intelligence-apply.md)

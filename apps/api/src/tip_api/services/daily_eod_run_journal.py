@@ -15,9 +15,13 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 
-JOURNAL_CONTRACT = "daily-eod-run-journal/1.3"
+JOURNAL_CONTRACT = "daily-eod-run-journal/1.4"
 READABLE_JOURNAL_CONTRACTS = frozenset(
-    {"daily-eod-run-journal/1.2", JOURNAL_CONTRACT}
+    {
+        "daily-eod-run-journal/1.2",
+        "daily-eod-run-journal/1.3",
+        JOURNAL_CONTRACT,
+    }
 )
 LOCK_FILE = ".daily-eod.lock"
 EVENT_NAME = re.compile(r"event-(\d{6})\.json")
@@ -54,14 +58,32 @@ CANONICAL_APPLY_TERMINAL_EVENTS = frozenset(
         "canonical_apply_recovery_blocked",
     }
 )
+MARKET_INTELLIGENCE_APPLY_START_EVENT = "market_intelligence_apply_started"
+MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS = frozenset(
+    {
+        "market_intelligence_apply_succeeded",
+        "market_intelligence_apply_recovered_succeeded",
+        "market_intelligence_apply_recovered_not_completed",
+        "market_intelligence_apply_recovery_blocked",
+    }
+)
 START_EVENTS = frozenset(
-    {START_EVENT, ACQUISITION_START_EVENT, CANONICAL_APPLY_START_EVENT}
+    {
+        START_EVENT,
+        ACQUISITION_START_EVENT,
+        CANONICAL_APPLY_START_EVENT,
+        MARKET_INTELLIGENCE_APPLY_START_EVENT,
+    }
 )
 ACQUISITION_REVIEW_EVENT = "acquisition_operator_reviewed"
+ACQUISITION_REVIEW_CONTRACTS = frozenset(
+    {"daily-eod-run-journal/1.3", JOURNAL_CONTRACT}
+)
 TERMINAL_EVENTS = (
     ACTION_TERMINAL_EVENTS
     | ACQUISITION_TERMINAL_EVENTS
     | CANONICAL_APPLY_TERMINAL_EVENTS
+    | MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS
 )
 EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS | {ACQUISITION_REVIEW_EVENT}
 
@@ -300,6 +322,15 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
         or sequence < 1
     ):
         raise DailyEodRunJournalError("daily run journal event fields are malformed")
+    if (
+        event_type
+        in {MARKET_INTELLIGENCE_APPLY_START_EVENT}
+        | MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS
+        and contract_version != JOURNAL_CONTRACT
+    ):
+        raise DailyEodRunJournalError(
+            "MI Apply event predates its journal contract"
+        )
     return DailyEodRunEvent(
         sequence=sequence,
         event_type=str(event_type),
@@ -321,7 +352,10 @@ def _validate_event_state_machine(events: tuple[DailyEodRunEvent, ...]) -> None:
                 raise DailyEodRunJournalError("daily run journal has overlapping attempts")
             pending = event
         elif event.event_type == ACQUISITION_REVIEW_EVENT:
-            if pending is not None or event.contract_version != JOURNAL_CONTRACT:
+            if (
+                pending is not None
+                or event.contract_version not in ACQUISITION_REVIEW_CONTRACTS
+            ):
                 raise DailyEodRunJournalError(
                     "daily run operator review is not safely placed"
                 )
@@ -365,6 +399,8 @@ def _terminal_matches_start(start_type: str, terminal_type: str) -> bool:
         return terminal_type in ACQUISITION_TERMINAL_EVENTS
     if start_type == CANONICAL_APPLY_START_EVENT:
         return terminal_type in CANONICAL_APPLY_TERMINAL_EVENTS
+    if start_type == MARKET_INTELLIGENCE_APPLY_START_EVENT:
+        return terminal_type in MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS
     return False
 
 

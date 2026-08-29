@@ -139,6 +139,35 @@ def test_canonical_apply_terminal_family_cannot_cross(tmp_path) -> None:
         )
 
 
+def test_market_intelligence_apply_terminal_family_cannot_cross(tmp_path) -> None:
+    root = _root(tmp_path)
+    with journal.locked_daily_eod_run_journal(
+        run_root=root,
+        target_session=SESSION,
+    ) as locked:
+        attempt = journal.new_attempt_id(
+            target_session=SESSION,
+            plan_fingerprint=PLAN_FP,
+            sequence=1,
+        )
+        locked.append(
+            event_type="market_intelligence_apply_started",
+            attempt_id=attempt,
+            details={"operation": "market_intelligence_publication"},
+        )
+        with pytest.raises(journal.DailyEodRunJournalError, match="does not match"):
+            locked.append(
+                event_type="canonical_apply_succeeded",
+                attempt_id=attempt,
+                details={"reason_code": "wrong_family"},
+            )
+        locked.append(
+            event_type="market_intelligence_apply_recovery_blocked",
+            attempt_id=attempt,
+            details={"reason_code": "test"},
+        )
+
+
 def test_event_time_must_be_aware_and_monotonic(tmp_path) -> None:
     root = _root(tmp_path)
     with journal.locked_daily_eod_run_journal(run_root=root, target_session=SESSION) as locked:
@@ -193,7 +222,7 @@ def test_tampered_event_fails_closed(tmp_path) -> None:
             pass
 
 
-def test_legacy_1_2_event_remains_readable_and_new_events_use_1_3(tmp_path) -> None:
+def test_legacy_1_2_event_remains_readable_and_new_events_use_1_4(tmp_path) -> None:
     root = _root(tmp_path)
     with journal.locked_daily_eod_run_journal(
         run_root=root,
@@ -232,8 +261,45 @@ def test_legacy_1_2_event_remains_readable_and_new_events_use_1_3(tmp_path) -> N
             observed_at=datetime(2026, 8, 27, 2, tzinfo=UTC),
         )
 
-    assert terminal.contract_version == "daily-eod-run-journal/1.3"
+    assert terminal.contract_version == "daily-eod-run-journal/1.4"
     assert terminal.previous_event_fingerprint == legacy.event_fingerprint
+
+
+def test_legacy_1_3_operator_review_remains_readable(tmp_path) -> None:
+    root = _root(tmp_path)
+    with journal.locked_daily_eod_run_journal(
+        run_root=root,
+        target_session=SESSION,
+    ) as locked:
+        review_id = journal.new_attempt_id(
+            target_session=SESSION,
+            plan_fingerprint=PLAN_FP,
+            sequence=1,
+        )
+        locked.append(
+            event_type="acquisition_operator_reviewed",
+            attempt_id=review_id,
+            details={"review_fingerprint": PLAN_FP},
+            observed_at=datetime(2026, 8, 27, 1, tzinfo=UTC),
+        )
+    event_path = root / "session=2026-08-27" / "event-000001.json"
+    event_path.chmod(0o600)
+    payload = json.loads(event_path.read_bytes())
+    payload["contract_version"] = "daily-eod-run-journal/1.3"
+    logical = {
+        key: value for key, value in payload.items() if key != "event_fingerprint"
+    }
+    payload["event_fingerprint"] = journal._fingerprint(logical)
+    event_path.write_bytes(journal._canonical_bytes(payload))
+    event_path.chmod(0o400)
+
+    with journal.locked_daily_eod_run_journal(
+        run_root=root,
+        target_session=SESSION,
+    ) as locked:
+        assert locked.read_events()[0].contract_version == (
+            "daily-eod-run-journal/1.3"
+        )
 
 
 def test_unknown_root_entry_and_unsafe_permissions_fail_closed(tmp_path) -> None:

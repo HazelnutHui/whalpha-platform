@@ -21,6 +21,9 @@ from tip_api.services.daily_eod_canonical_apply_custody import (
     CanonicalApplyCustodyResult,
 )
 from tip_api.services.daily_eod_executor import DailyEodRecoveryResult
+from tip_api.services.daily_eod_market_intelligence_apply_custody import (
+    MarketIntelligenceApplyCustodyResult,
+)
 from tip_api.services.daily_eod_recovery_router import (
     DailyEodRecoveryRouterError,
     recover_one_daily_eod_transition,
@@ -219,6 +222,45 @@ def test_routes_offline_recovery_without_replaying_action() -> None:
     assert len(calls) == 1
     assert calls[0]["config"].panel_cache_root == Path("/tmp/panel-cache")
     assert evidence.action_replayed is False
+
+
+def test_routes_market_intelligence_apply_from_hashed_start_bindings() -> None:
+    pending = event(
+        "market_intelligence_apply_started",
+        {
+            "operation": "market_intelligence_publication",
+            "approval_plan_sha256": "e" * 64,
+            "expected_current_state_fingerprint": "f" * 64,
+            "review_acknowledgement_sha256": "9" * 64,
+        },
+    )
+    calls = []
+
+    def recoverer(**kwargs):
+        calls.append(kwargs)
+        return MarketIntelligenceApplyCustodyResult(
+            outcome="recovered_not_completed",
+            attempt_id=pending.attempt_id,
+            event=terminal(
+                "market_intelligence_apply_recovered_not_completed"
+            ),
+            approval_plan=None,
+            active_publication=None,
+            reason_code="no_market_intelligence_production_write_detected",
+        )
+
+    evidence = recover_one_daily_eod_transition(
+        context(pending, "recover_market_intelligence_apply"),
+        journal_reader=journal(pending),
+        market_intelligence_apply_recoverer=recoverer,
+    )
+
+    recovery_config = calls[0]["config"]
+    assert recovery_config.approval_plan_path == Path("/tmp/mi-plan.json")
+    assert recovery_config.approved_plan_sha256 == "e" * 64
+    assert recovery_config.review_acknowledgement_sha256 == "9" * 64
+    assert evidence.outcome == "recovered_not_completed"
+    assert evidence.production_write_count == 0
 
 
 def test_rejects_changed_pending_event_before_calling_recovery() -> None:

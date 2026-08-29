@@ -2,13 +2,14 @@
 
 ## Current scope
 
-The daily control plane now has two deliberately separate, credential-free
-parts: a read-only planner and a single-action offline executor. The planner
-formally reconciles one exact target session and reports one safe next action.
-The executor can consume one unchanged plan fingerprint and run only one of
-eight offline daily actions under durable Dell custody: seven analytics
-calculations plus MI approval-plan preparation. Neither part
-enables a timer.
+The daily control plane has a read-only planner, a single-action offline
+executor, and a separately explicit one-shot Market Intelligence Apply port.
+The planner formally reconciles one exact target session and reports one safe
+next action. The executor can consume one unchanged plan fingerprint and run
+only one of eight offline daily actions under durable Dell custody: seven
+analytics calculations plus MI approval-plan preparation. The publication
+port is absent by default and cannot be inferred from readiness. None of these
+parts enables a timer.
 
 The action order is:
 
@@ -24,11 +25,13 @@ same-day Identity
   -> Candidate strategy channels
   -> Market Intelligence approval plan
   -> publication review
+  -> separately invoked Market Intelligence Apply
 ```
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
-Publication, Snapshot, bundle, OCI deployment, and scheduler activation are
-outside both commands.
+Market Intelligence publication is a separate one-shot authorization boundary.
+Snapshot, bundle, OCI deployment, and scheduler activation remain outside the
+coordinator.
 
 ## Session and provider readiness
 
@@ -309,16 +312,57 @@ readiness policy, data/run roots, authorization SHA, and credential path. The
 credential is not read during host-runtime verification. Approved-plan and
 expected-state fingerprints must be provided together before Apply.
 
-The CLI may opt into one existing offline calculation with `--execute-offline`,
-but never loops and never gains publication, deployment, or scheduler
+The CLI may opt into one existing offline calculation with `--execute-offline`
+or, under ADR 0069, one MI publication with all of:
+
+```bash
+--apply-market-intelligence \
+--market-intelligence-approved-plan-sha256 <exact-full-file-sha256> \
+--market-intelligence-expected-current-state-fingerprint <exact-inventory-sha256>
+```
+
+MI Apply also requires the externally SHA-pinned enabled Host Runtime inputs.
+An approved stale-review plan additionally requires
+`--market-intelligence-review-acknowledgement` with the exact acknowledgement
+embedded in the plan. The acknowledgement is not written to the journal; only
+its SHA-256 is retained. This mode is mutually exclusive with offline
+execution, standing Identity/EOD capabilities, and unresolved recovery.
+Networking remains prohibited. Default invocation continues to stop at
+`review_publication`.
+
+The CLI never loops and never gains Snapshot, deployment, or scheduler
 authority. ADR 0038 adds mutually exclusive `--recover-unresolved`: it
 formally rereads the one exact pending event and invokes only its acquisition,
-canonical-Apply, or offline-action recovery boundary. The socket guard remains
-active; recovery never requests provider data, performs Apply, replays a
-calculation, retries, or loops. Exceptions without formal
+canonical-Apply, offline-action, or MI-Apply recovery boundary. The socket
+guard remains active; recovery never requests provider data, performs Apply or
+linking, replays a calculation, retries, or loops. Exceptions without formal
 terminal evidence report request/write counts as unknown, never as assumed
-zero. No real host/runtime config,
-CLI invocation, service, timer, or scheduler was created.
+zero. ADR 0069 created no new external Host Runtime artifact, real MI Apply
+invocation, service, timer, or scheduler state.
+
+### MI Apply interruption boundary
+
+Journal 1.4 adds `market_intelligence_apply_started` and a disjoint terminal
+family. Reservation requires the unchanged `review_publication` automation
+fingerprint, formal plan/candidate and whole-file SHA, current freshness or
+exact plan-bound review exception, unchanged full inventory and MI consumer
+pointer, and absent target/staging state. The existing publication lock then
+performs the copy, target rename, and pointer compare-and-swap.
+
+Success is journaled only after the formal active reader proves the exact
+publication, target, payload/aggregate hashes, session, and planned pointer.
+If the process stops or throws after the start, run only
+`--recover-unresolved` with the same session and path arguments. Recovery:
+
+- reconciles success only when that exact active state is readable;
+- records not-completed only when target absence plus unchanged inventory and
+  consumer state prove zero Production write; and
+- blocks every inactive target, staging residue, changed state, invalid plan,
+  or ambiguous outcome.
+
+Recovery never calls Apply or `verify-then-link`. A complete inactive target
+requires diagnosis and a later separately explicit existing publication
+recovery procedure.
 
 ## Alert intent boundary
 
@@ -636,14 +680,13 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Review the completed 2026-08-27 analytics chain, then keep publication
-   Apply, Snapshot/bundle, and deployment as separately authorized
-   transitions.
+1. Add equivalent exact-plan, postcondition, and no-replay custody for Snapshot
+   plan/Apply after a newly active MI publication.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
-3. Make separate authorization decisions for future acquisition/canonical
-   Apply, publication, Snapshot/bundle, OCI deployment, and finally scheduler
+3. Keep separate authorization decisions for acquisition/canonical Apply, MI
+   publication, Snapshot, bundle, OCI deployment, and finally scheduler
    activation.
 
 The executor, journal, readiness planner, standing authorization, capability
