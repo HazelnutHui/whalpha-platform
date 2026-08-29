@@ -99,8 +99,8 @@ fingerprint
 It passed the current-session independent Oracle and every incremental
 equivalence gate. Current batches contain 1,714 Primary and 1,827 Secondary
 comparable securities; all active members remain represented in the state
-ledger with four unavailable in each Universe. The exact next operational
-action is `calculate_entry_geometry`; no publication or deployment followed.
+ledger with four unavailable in each Universe. At that boundary the exact next
+operational action was `calculate_entry_geometry`.
 The 422.8 MB cumulative JSON audit made the performance boundary concrete:
 business work before write took 152.94 seconds, while repeated full formal
 rereads expanded the journaled action to 576.03 seconds and post-plan memory
@@ -115,8 +115,20 @@ rebuilding cumulative historical business rows. Candidate calculation retains
 its full typed prior-input validation. On the real current audit, planning now
 takes 9.45 seconds at 221,640 KiB maximum RSS and returns the unchanged plan
 fingerprint and `calculate_entry_geometry` next action. All 157 related tests
-and all 1,571 backend tests pass; no analytics, `/data`, publication, or
-deployment state changed.
+and all 1,571 backend tests pass.
+
+The 2026-08-27 Entry Geometry action then completed with audit fingerprint
+`3aa78cb694a4c06835f19fb6165cd721e62b7fe16f921240ce8a601fcd83c11a`.
+All 1,714 / 1,827 current comparable rows were assessed; Oracle mismatch is
+zero and input-permutation equivalence is true. Primary/Secondary technical-
+review-ready counts are 70 / 73, while 104 / 110 strong-but-extended or other
+rows are routed to wait-for-reset. The action is shadow-only and changes no
+score/rank, `/data`, active publication, Snapshot, Dashboard, bundle, or OCI
+state. Journal event 21 is successful, the post-plan status is
+`analytics_ready`, and the next boundary is `review_publication`. Publication
+and deployment remain separately unauthorized. The 338.217438-second action
+also identifies current-batch Candidate reading as the next safe performance
+target; the present audit remains formally valid. All 98 focused tests pass.
 
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review

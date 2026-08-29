@@ -602,14 +602,14 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Execute and formally review only the offline 2026-08-27 incremental Phase
-   1b calculation; keep every later analytics and serving transition separately
-   bounded.
+1. Review the completed 2026-08-27 analytics chain, then keep publication
+   Apply, Snapshot/bundle, and deployment as separately authorized
+   transitions.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
-3. Make separate authorization decisions for canonical Apply, analytics continuation,
-   publication, Snapshot/bundle, OCI deployment, and finally scheduler
+3. Make separate authorization decisions for future acquisition/canonical
+   Apply, publication, Snapshot/bundle, OCI deployment, and finally scheduler
    activation.
 
 The executor, journal, readiness planner, standing authorization, capability
@@ -617,8 +617,9 @@ adapters, Host Runtime, and coordinator have now had their first controlled
 real use. Owner-only controls and the run root were installed at `c3af030`;
 Identity fetch and canonical Apply completed, then EOD failed before package or
 Apply. The next source revision invalidates those exact-revision controls.
-No offline analytics action or recovery event has run. No service, timer, or
-scheduler exists.
+The later reviewed retry, canonical Apply, and four offline analytics actions
+completed as recorded below. No recovery event, service, timer, or scheduler
+exists.
 
 Canonical Apply reservation and no-write recovery remain available. Journal
 1.3 reads the immutable 1.2 history and adds only standalone operator-review
@@ -710,4 +711,19 @@ Candidate action itself continues to fully reconstruct its prior append input.
 The exact 2026-08-27 plan now takes 9.45 seconds at 221,640 KiB maximum RSS,
 keeps plan fingerprint
 `eb19d7790605fae6d2467f6996b9411fb5fc6653f28f27b6e60c9fdd6b41811f`,
-and selects only `calculate_entry_geometry`.
+and selects only `calculate_entry_geometry` at that boundary.
+
+The one-transition coordinator subsequently completed that Entry Geometry
+action. Formal audit fingerprint
+`3aa78cb694a4c06835f19fb6165cd721e62b7fe16f921240ce8a601fcd83c11a`
+binds the same-session Candidate audit, assesses 1,714 / 1,827 current rows,
+and passes zero-mismatch Oracle and input-permutation gates. It is shadow-only
+with zero requests and Production writes. Journal event 21 is
+`action_succeeded`; post-plan fingerprint
+`f6fe6ddd5b4e561724088147d9dda361d270b548f2a7ff4d3df1b5b974958ff9`
+has status `analytics_ready` and next boundary `review_publication`.
+Publication and serving remain unchanged and separately unauthorized. The
+action took 338.217438 seconds; a later optimization may avoid rebuilding the
+full cumulative Candidate score history solely to select the current 3,541
+records, but must preserve exact custody, typed rows, ordering, and Oracle
+semantics.

@@ -344,9 +344,25 @@ the one full typed prior-prefix read. On the exact 422,786,554-byte current
 audit, formal planning takes 9.45 seconds and 221,640 KiB maximum RSS while
 preserving plan fingerprint
 `eb19d7790605fae6d2467f6996b9411fb5fc6653f28f27b6e60c9fdd6b41811f`
-and sole next action `calculate_entry_geometry`. No analytics or serving state
-changed. See
+and sole next action `calculate_entry_geometry` at that boundary.
+
+The resulting 2026-08-27 Entry Geometry shadow audit is now complete at
+fingerprint
+`3aa78cb694a4c06835f19fb6165cd721e62b7fe16f921240ce8a601fcd83c11a`.
+It assesses all 1,714 / 1,827 current comparable Candidate rows, has zero
+Oracle mismatch, preserves input-permutation equivalence, and makes zero
+external requests or Production writes. Primary/Secondary technical-review-
+ready counts are 70 / 73; monitor-for-trigger 1,303 / 1,393; wait-for-reset
+104 / 110; and deprioritized 237 / 251. Journal event 21 closes normally. The
+post-plan is `analytics_ready` at fingerprint
+`f6fe6ddd5b4e561724088147d9dda361d270b548f2a7ff4d3df1b5b974958ff9`;
+the next boundary is `review_publication`, not an authorized publication or
+deployment. The action took 338.217438 seconds and exposed a remaining current-
+batch read optimization opportunity, but its result and custody are valid.
+See
 [the planning optimization audit](../audits/daily-candidate-planning-optimization-2026-08-29.md).
+See also
+[the daily Entry Geometry audit](../audits/daily-eod-entry-geometry-2026-08-29.md).
 
 ## Analytics and presentation
 

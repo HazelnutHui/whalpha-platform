@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-29 — Complete 2026-08-27 daily Entry Geometry
+
+- Executed exactly one Dell-local `calculate_entry_geometry` transition from
+  the completed same-session Candidate audit, with zero external requests and
+  zero Production writes.
+- Audit fingerprint
+  `3aa78cb694a4c06835f19fb6165cd721e62b7fe16f921240ce8a601fcd83c11a`
+  assesses all 1,714 Primary / 1,827 Secondary current comparable rows, passes
+  both independent Oracles with zero mismatch, and preserves input-permutation
+  equivalence.
+- Primary/Secondary technical-review-ready counts are 70 / 73; monitor-for-
+  trigger 1,303 / 1,393; wait-for-reset 104 / 110; and deprioritized 237 / 251.
+  Entry Geometry remains a shadow entry-location/chase-risk axis and does not
+  alter Candidate score/rank or claim option returns.
+- Journal event 21 is successful. The post-plan is `analytics_ready` with sole
+  next boundary `review_publication`; no publication, Snapshot, bundle,
+  deployment, notification, or scheduler action followed.
+- The action took 338.217438 seconds and reached an observed 4,418,900 KiB
+  high-water RSS. Current-session extraction from the cumulative Candidate
+  score artifact is the next bounded performance opportunity. `/data` remains
+  unchanged and all 98 focused tests pass.
+
 ## 2026-08-29 — Bound daily planning to Candidate completion evidence
 
 - Accepted ADR 0065 and replaced planner/postcondition full Candidate history
