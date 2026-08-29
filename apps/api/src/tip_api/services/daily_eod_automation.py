@@ -23,7 +23,7 @@ from tip_api.services.market_regime_state_audit import (
     read_market_regime_state_audit_contents,
 )
 from tip_api.services.opportunity_candidate_audit import (
-    read_opportunity_candidate_audit_contents,
+    read_opportunity_candidate_planning_evidence,
 )
 
 
@@ -247,7 +247,9 @@ def plan_daily_eod_automation(
     prior_candidate = _inspect(
         stage="prior_candidate",
         path=paths.prior_candidate_audit,
-        reader=lambda: read_opportunity_candidate_audit_contents(paths.prior_candidate_audit),
+        reader=lambda: read_opportunity_candidate_planning_evidence(
+            paths.prior_candidate_audit
+        ),
         session=lambda value: str(value.manifest["as_of_session"]),
         fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
     )
@@ -260,7 +262,9 @@ def plan_daily_eod_automation(
     candidate = _inspect(
         stage="candidate",
         path=paths.candidate_audit,
-        reader=lambda: read_opportunity_candidate_audit_contents(paths.candidate_audit),
+        reader=lambda: read_opportunity_candidate_planning_evidence(
+            paths.candidate_audit
+        ),
         session=lambda value: str(value.manifest["as_of_session"]),
         fingerprint=lambda value: str(value.manifest["logical_content_fingerprint"]),
     )

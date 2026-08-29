@@ -701,3 +701,13 @@ transition, reuse an appropriately scoped custody/current-session proof at
 planner and postcondition boundaries while retaining the full prior append
 input read inside Candidate calculation. Do not replace exact locked plan
 identity, hashes, typed current rows, or Oracle gates with existence checks.
+
+ADR 0065 implements the planner/postcondition side of that correction. The
+planner now uses completed Candidate planning evidence: it streams hashes for
+the full immutable file set, checks completion/parameters/Oracle/equivalence,
+and canonically validates only the small incremental lineage ledger. The
+Candidate action itself continues to fully reconstruct its prior append input.
+The exact 2026-08-27 plan now takes 9.45 seconds at 221,640 KiB maximum RSS,
+keeps plan fingerprint
+`eb19d7790605fae6d2467f6996b9411fb5fc6653f28f27b6e60c9fdd6b41811f`,
+and selects only `calculate_entry_geometry`.

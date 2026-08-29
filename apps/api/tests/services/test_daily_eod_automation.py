@@ -119,7 +119,9 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
             },
         )
 
-    monkeypatch.setattr(automation, "read_opportunity_candidate_audit_contents", candidate_reader)
+    monkeypatch.setattr(
+        automation, "read_opportunity_candidate_planning_evidence", candidate_reader
+    )
     monkeypatch.setattr(
         automation,
         "read_candidate_entry_geometry_audit",
@@ -197,7 +199,7 @@ def test_existing_candidate_that_fails_formal_reader_blocks(monkeypatch, tmp_pat
     _install_completed_readers(monkeypatch, paths)
     monkeypatch.setattr(
         automation,
-        "read_opportunity_candidate_audit_contents",
+        "read_opportunity_candidate_planning_evidence",
         lambda path: (
             SimpleNamespace(
                 manifest={
@@ -241,7 +243,9 @@ def test_wrong_candidate_prior_fingerprint_blocks(monkeypatch, tmp_path) -> None
             },
         )
 
-    monkeypatch.setattr(automation, "read_opportunity_candidate_audit_contents", candidate_reader)
+    monkeypatch.setattr(
+        automation, "read_opportunity_candidate_planning_evidence", candidate_reader
+    )
     plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
     assert plan.status is automation.PlanStatus.BLOCKED
     assert plan.reason_codes == ("candidate_prior_binding_mismatch",)
@@ -272,7 +276,9 @@ def test_candidate_without_explicit_daily_validation_tier_blocks(monkeypatch, tm
             },
         )
 
-    monkeypatch.setattr(automation, "read_opportunity_candidate_audit_contents", candidate_reader)
+    monkeypatch.setattr(
+        automation, "read_opportunity_candidate_planning_evidence", candidate_reader
+    )
     plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
     assert plan.status is automation.PlanStatus.BLOCKED
     assert plan.reason_codes == ("candidate_daily_validation_missing",)

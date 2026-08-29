@@ -109,6 +109,15 @@ reconstruction is the next engineering priority; it must retain one full
 append-input validation, exact custody, typed current-session evidence, locked
 plan identity, and fail-closed postconditions.
 
+ADR 0065 implements that bounded optimization. The daily planner now rehashes
+all Candidate bytes and validates the small incremental lineage ledger without
+rebuilding cumulative historical business rows. Candidate calculation retains
+its full typed prior-input validation. On the real current audit, planning now
+takes 9.45 seconds at 221,640 KiB maximum RSS and returns the unchanged plan
+fingerprint and `calculate_entry_geometry` next action. All 157 related tests
+and all 1,571 backend tests pass; no analytics, `/data`, publication, or
+deployment state changed.
+
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review
 events even though the coordinator did. No target or `/data` change occurred.

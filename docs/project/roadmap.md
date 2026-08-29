@@ -223,14 +223,11 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Optimize the Candidate control path before its next coordinated consumer.
-The 2026-08-27 daily Candidate append is complete with zero Oracle mismatch,
-but its 152.94-second pre-write business work became a 576.03-second action
-because multiple layers fully reconstruct the 422.8 MB cumulative audit.
-Retain full append-input and Oracle validation while using exact custody plus
-typed current-session evidence for planner/postcondition roles. Then run and
-formally review only `calculate_entry_geometry`. Publication, Snapshot,
-bundle, and deployment remain later separate transitions.
+Run and formally review only 2026-08-27 `calculate_entry_geometry`. ADR 0065's
+planner optimization is complete: exact Candidate custody and lineage now
+plan in 9.45 seconds while full Candidate append-input and Oracle validation
+remain intact. Publication, Snapshot, bundle, and deployment remain later
+separate transitions.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

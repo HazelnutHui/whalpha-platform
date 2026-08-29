@@ -22,6 +22,7 @@ from tip_api.services.opportunity_candidate_audit import (
     _fingerprint,
     read_opportunity_candidate_audit,
     read_opportunity_candidate_current_batches,
+    read_opportunity_candidate_planning_evidence,
     read_opportunity_candidate_publication_evidence,
     validate_tmp_output_dir,
     write_opportunity_candidate_audit,
@@ -327,6 +328,80 @@ def test_publication_evidence_rehashes_bytes_without_business_row_reparse() -> N
             read_opportunity_candidate_publication_evidence(target)
     finally:
         shutil.rmtree(target, ignore_errors=True)
+
+
+def test_planning_evidence_uses_completed_custody_without_full_business_replay(
+    monkeypatch,
+) -> None:
+    target = Path(tempfile.mkdtemp(prefix="mrom-candidate-planning-evidence-", dir="/tmp"))
+    try:
+        manifest = _write(target)
+
+        def reject_full_replay(*args, **kwargs):
+            raise AssertionError("planning evidence must not invoke the full audit reader")
+
+        monkeypatch.setattr(
+            candidate_audit,
+            "_read_opportunity_candidate_audit",
+            reject_full_replay,
+        )
+        evidence = read_opportunity_candidate_planning_evidence(target)
+        assert evidence.manifest["logical_content_fingerprint"] == manifest[
+            "logical_content_fingerprint"
+        ]
+        assert evidence.validation_ledger is None
+    finally:
+        shutil.rmtree(target, ignore_errors=True)
+
+
+def test_planning_validation_requires_daily_lineage_and_current_oracle() -> None:
+    prior_fingerprint = "1" * 64
+    oracle_fingerprint = "2" * 64
+    manifest = {
+        "as_of_session": "2026-08-26",
+        "prior_as_of_session": "2026-08-25",
+        "prior_audit_logical_fingerprint": prior_fingerprint,
+    }
+    record = {
+        "validation_tier": "daily",
+        "validation_scope": "verified_prior_plus_current_session_oracle",
+        "current_as_of_session": "2026-08-26",
+        "prior_as_of_session": "2026-08-25",
+        "prior_audit_logical_fingerprint": prior_fingerprint,
+        "current_session_oracle_fingerprint": oracle_fingerprint,
+        "reuse_checks": {"prior_audit_formally_reread": True},
+        "validation_segments": [
+            {
+                "scope": "current_session_independent_oracle",
+                "session": "2026-08-26",
+                "oracle_fingerprint": oracle_fingerprint,
+                "oracle_mismatch_count": 0,
+            }
+        ],
+    }
+    candidate_audit._validate_planning_validation_record(record, manifest=manifest)
+    candidate_audit._validate_planning_validation_record(
+        {**record, "validation_tier": None}, manifest=manifest
+    )
+
+    with pytest.raises(OpportunityCandidateAuditError, match="reuse gates"):
+        candidate_audit._validate_planning_validation_record(
+            {**record, "reuse_checks": {"prior_audit_formally_reread": False}},
+            manifest=manifest,
+        )
+    with pytest.raises(OpportunityCandidateAuditError, match="Oracle binding"):
+        candidate_audit._validate_planning_validation_record(
+            {
+                **record,
+                "validation_segments": [
+                    {
+                        **record["validation_segments"][0],
+                        "oracle_mismatch_count": 1,
+                    }
+                ],
+            },
+            manifest=manifest,
+        )
 
 
 def test_current_batch_projection_rehashes_custody_without_historical_replay(

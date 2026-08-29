@@ -110,6 +110,16 @@ class OpportunityCandidatePublicationEvidence:
 
 
 @dataclass(frozen=True, slots=True)
+class OpportunityCandidatePlanningEvidence:
+    """Hash-verified completion and bounded lineage evidence for daily planning."""
+
+    path: Path
+    manifest: Mapping[str, Any]
+    manifest_sha256: str
+    validation_ledger: Mapping[str, Any] | None
+
+
+@dataclass(frozen=True, slots=True)
 class OpportunityCandidateCurrentBatchEvidence:
     """Hash-verified current Candidate batches without historical row replay."""
 
@@ -527,6 +537,76 @@ def read_opportunity_candidate_publication_evidence(
     )
 
 
+def read_opportunity_candidate_planning_evidence(
+    output_dir: Path,
+) -> OpportunityCandidatePlanningEvidence:
+    """Verify completed custody and only the lineage needed by the daily planner.
+
+    Candidate calculation remains responsible for fully reconstructing a prior
+    append input. Planning only proves that an already finalized audit is the
+    same immutable, zero-Oracle artifact and, for incremental output, that its
+    small validation ledger is bound to the completion manifest.
+    """
+
+    evidence = read_opportunity_candidate_publication_evidence(output_dir)
+    manifest = evidence.manifest
+    validation: Mapping[str, Any] | None = None
+    if manifest.get("schema_version") == "1.1":
+        descriptors = {
+            item.get("name"): item
+            for item in manifest.get("artifacts", ())
+            if isinstance(item, Mapping)
+        }
+        descriptor = descriptors.get(CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT)
+        if not isinstance(descriptor, Mapping):
+            raise OpportunityCandidateAuditError(
+                "Candidate planning validation descriptor is missing"
+            )
+        payload = _read_canonical_json(
+            evidence.path / CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT,
+            physical_sha256=str(descriptor.get("sha256")),
+        )
+        logical_fingerprint = payload.pop("logical_content_fingerprint", None)
+        if (
+            _fingerprint(payload) != logical_fingerprint
+            or logical_fingerprint != descriptor.get("logical_content_fingerprint")
+        ):
+            raise OpportunityCandidateAuditError(
+                "Candidate planning validation logical fingerprint mismatch"
+            )
+        base_keys = (
+            "schema_version",
+            "candidate_contract_version",
+            "candidate_calculation_version",
+            "candidate_parameter_set_id",
+            "candidate_parameter_fingerprint",
+            "candidate_state_contract_version",
+            "candidate_state_calculation_version",
+            "candidate_state_parameter_set_id",
+            "candidate_state_parameter_fingerprint",
+            "as_of_session",
+            "universe_ids",
+            "execution_mode",
+        )
+        if any(payload.get(key) != manifest.get(key) for key in base_keys):
+            raise OpportunityCandidateAuditError(
+                "Candidate planning validation contract differs from manifest"
+            )
+        record = payload.get("record")
+        if not isinstance(record, Mapping):
+            raise OpportunityCandidateAuditError(
+                "Candidate planning validation ledger is malformed"
+            )
+        _validate_planning_validation_record(record, manifest=manifest)
+        validation = record
+    return OpportunityCandidatePlanningEvidence(
+        path=evidence.path,
+        manifest=manifest,
+        manifest_sha256=evidence.manifest_sha256,
+        validation_ledger=validation,
+    )
+
+
 def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCandidateAuditContents:
     """Formally reread an audit and return the cumulative append inputs."""
 
@@ -548,6 +628,60 @@ def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCa
         normalization_ledger=tuple(normalization),
         validation_ledger=(None if validation_payload is None else validation_payload["record"]),
     )
+
+
+def _validate_planning_validation_record(
+    record: Mapping[str, Any], *, manifest: Mapping[str, Any]
+) -> None:
+    if (
+        record.get("validation_tier") not in {None, "daily"}
+        or record.get("validation_scope")
+        != "verified_prior_plus_current_session_oracle"
+        or record.get("current_as_of_session") != manifest.get("as_of_session")
+        or record.get("prior_as_of_session") != manifest.get("prior_as_of_session")
+        or record.get("prior_audit_logical_fingerprint")
+        != manifest.get("prior_audit_logical_fingerprint")
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate planning validation lineage is incompatible"
+        )
+    oracle_fingerprint = record.get("current_session_oracle_fingerprint")
+    if (
+        not isinstance(oracle_fingerprint, str)
+        or len(oracle_fingerprint) != 64
+        or any(character not in "0123456789abcdef" for character in oracle_fingerprint)
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate planning validation Oracle fingerprint is malformed"
+        )
+    reuse_checks = record.get("reuse_checks")
+    if not isinstance(reuse_checks, Mapping) or not reuse_checks or any(
+        type(value) is not bool or value is not True for value in reuse_checks.values()
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate planning validation reuse gates did not pass"
+        )
+    segments = record.get("validation_segments")
+    current_segments = (
+        [
+            item
+            for item in segments
+            if isinstance(item, Mapping)
+            and item.get("session") == manifest.get("as_of_session")
+        ]
+        if isinstance(segments, list)
+        else []
+    )
+    if (
+        len(current_segments) != 1
+        or current_segments[0].get("scope")
+        != "current_session_independent_oracle"
+        or current_segments[0].get("oracle_fingerprint") != oracle_fingerprint
+        or current_segments[0].get("oracle_mismatch_count") != 0
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate planning validation current-session Oracle binding differs"
+        )
 
 
 def read_opportunity_candidate_current_batches(

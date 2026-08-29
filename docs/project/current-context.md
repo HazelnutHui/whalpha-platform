@@ -337,6 +337,17 @@ weakening the append-input or Oracle gates before running the next large
 postcondition chain. See
 [the daily Candidate audit](../audits/daily-eod-candidate-2026-08-29.md).
 
+ADR 0065 now closes that planner/postcondition repetition. Planning rehashes
+every immutable Candidate artifact but reconstructs only the small lineage
+ledger needed for the planning decision; Candidate calculation still performs
+the one full typed prior-prefix read. On the exact 422,786,554-byte current
+audit, formal planning takes 9.45 seconds and 221,640 KiB maximum RSS while
+preserving plan fingerprint
+`eb19d7790605fae6d2467f6996b9411fb5fc6653f28f27b6e60c9fdd6b41811f`
+and sole next action `calculate_entry_geometry`. No analytics or serving state
+changed. See
+[the planning optimization audit](../audits/daily-candidate-planning-optimization-2026-08-29.md).
+
 ## Analytics and presentation
 
 - Market Regime: Primary 57.8456 Balanced; Secondary 57.9041 Balanced.

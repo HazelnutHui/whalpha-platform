@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-29 — Bound daily planning to Candidate completion evidence
+
+- Accepted ADR 0065 and replaced planner/postcondition full Candidate history
+  reconstruction with exact immutable artifact hashing plus canonical parsing
+  of the small incremental lineage ledger.
+- Candidate calculation retains the full typed prior append-input reader;
+  current output still requires daily tier, zero current-session Oracle
+  mismatch, all-true reuse/equivalence gates, parameters, hashes, and exact
+  prior/current lineage.
+- The real 422,786,554-byte current audit now plans in 9.45 seconds at 221,640
+  KiB maximum RSS while preserving plan fingerprint
+  `eb19d7790605fae6d2467f6996b9411fb5fc6653f28f27b6e60c9fdd6b41811f`
+  and sole next action `calculate_entry_geometry`.
+- The initial legacy-tier compatibility mismatch failed closed with no state
+  change. Historical `None`/`daily` reads now match the existing full-reader
+  contract while current daily advancement still requires explicit `daily`.
+  All 157 related and all 1,571 backend tests pass; no analytics, `/data`,
+  publication, deployment, or scheduler state changed.
+
 ## 2026-08-29 — Complete 2026-08-27 daily Candidate append
 
 - Executed exactly one Dell-local `calculate_candidate_daily` transition from
