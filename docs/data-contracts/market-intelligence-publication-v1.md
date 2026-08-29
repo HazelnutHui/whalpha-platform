@@ -3,11 +3,12 @@
 ## Status and scope
 
 Implemented as an approval-bound Production contract. Active publication
-`2026-08-24T142500Z-1f3eb5512eb0` uses contract 1.1 and is the exact
-user-approved 2026-08-24
-`stale_review`: expected session 2026-08-25, lag one. It is not an ordinary
-fresh publication and does not authorize reuse of the exception for another
-session or release.
+`2026-08-28T131700Z-eeccc22` uses contract 1.2 and is the exact user-approved
+2026-08-26 `stale_review`: its immutable review tuple expects 2026-08-27 at
+lag one. As of the 2026-08-29 review, the formal calendar expects 2026-08-28,
+so the active analysis is now two sessions behind current expectation. It is
+not an ordinary fresh publication and does not authorize reuse of the
+exception for another session or release.
 
 The publication contains one language-neutral Market Regime & Opportunity Map
 payload shared by the English and Simplified Chinese interfaces. Locale never
@@ -95,9 +96,9 @@ adds a mandatory language-neutral Candidate source binding and bounded
 The plan version becomes 1.1 and freezes the exact `/tmp` Candidate audit,
 audit/Oracle/equivalence lineage, and Candidate analytics fingerprint. Apply
 and verify-then-link reread that approved audit under the existing guarded
-publication flow. A 1.0 plan cannot activate a 1.1 payload. The active
-Production publication is 1.1 under its own exact 2026-08-24 stale-review
-authorization; the exception is not inherited by another release.
+publication flow. A 1.0 plan cannot activate a 1.1 payload. The former 1.1
+2026-08-24 stale-review release remains readable historical evidence; its
+exception is not inherited by another release.
 
 ## Contract 1.2 entry-location extension
 
@@ -110,7 +111,7 @@ analytics fingerprint.
 
 Approval plan 1.2 rereads both audits and rejects missing, changed, mismatched,
 or silently ignored entry sources. The normal freshness gate is unchanged:
-the locally verified 2026-08-25 candidate may be built for review, but it
-cannot be activated while expected completed XNYS session is 2026-08-26 unless
-a new exact review contract is explicitly authorized. The historical 2026-08-24
-review acknowledgement cannot be reused.
+the formally reviewed 2026-08-27 candidate can be built, but it cannot be
+activated while expected completed XNYS session is 2026-08-28 unless a new
+exact review contract is explicitly authorized. Neither historical review
+acknowledgement can be reused.

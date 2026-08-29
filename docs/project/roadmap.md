@@ -223,14 +223,13 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Formally review the completed 2026-08-27 analytics chain for publication. The
-Entry Geometry audit now passes exact custody, typed reconciliation, zero-
-mismatch Oracle, and input-permutation gates, and the daily post-plan is
-`analytics_ready`. This is a review boundary only: publication Apply,
-Snapshot, bundle, and deployment remain separate explicit transitions. In a
-later performance slice, evaluate a source-bound or streamed current-Candidate
-reader for Entry Geometry without changing its model, source custody, or
-Oracle semantics.
+Perform a network-free readiness review for 2026-08-28, then request separate
+exact acquisition/Apply authorization if the user wants the latest session.
+The completed 2026-08-27 MI Plan is correctly `freshness_blocked` and must not
+be applied. After 8/28 canonical data exists, run the latest-session analytics
+chain and add Phase 2, preview, and Strategy Channels to the governed daily
+sequence before considering unattended scheduling. Publication Apply,
+Snapshot, bundle, and deployment remain separate explicit transitions.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

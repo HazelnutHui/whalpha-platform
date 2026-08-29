@@ -41,23 +41,25 @@ MI 1.2, Snapshot 1.7 / Dashboard 2.4, entry-location consumers, bilingual
 presentation, equal-capability guest Sessions, and Session-protected static
 publication are implemented. The deployed product includes the audited Stock
 Candidate pipeline and third Candidate workspace. Canonical sessions cover
-every XNYS session from 2026-07-17 through 2026-08-26. The active Dashboard was
-published as the ordinary fresh 2026-08-26 lag-zero release; after the
-2026-08-27 close the canonical pipeline is one session behind and no later
-analytics/Snapshot release exists.
+every XNYS session from 2026-07-17 through 2026-08-27. The active Dashboard is
+the explicitly authorized 2026-08-26 stale-review release. The complete
+8/27 offline Regime, Candidate, Entry Geometry, Phase 2, and preview chain now
+passes, but its MI review plan is blocked because the formal calendar expects
+8/28. No later Production analytics/Snapshot release exists.
 
-Repository development source adds verified-prior one-session append for both
+Repository source implements verified-prior one-session append for both
 Candidate and corrected V1.0.1 Market Regime state. The state daily path
 formally consumes current Phase 1a plus prior Phase 1b audits without reopening
-canonical EOD. These changes are offline development work and are not deployed.
+canonical EOD. The completed 8/27 offline chain is not deployed.
 
 Repository development source also contains an exact-session read-only daily
 planner and a single-action executor for the four offline analytics stages.
 Execution is bound to an unchanged plan fingerprint, global Dell lock,
 immutable hash-chained journal, validated output evidence, and post-action
-formal re-plan. This boundary has not yet run the real daily analytics stages.
-Its acquisition/Apply controls completed same-day Identity once; EOD stopped
-at a failed fetch before Apply. Publication, deployment, and scheduler
+formal re-plan. It has now run the real 8/27 Identity/EOD acquisition and Apply
+under exact authorization and all four offline analytics actions through Entry
+Geometry. Phase 2, preview, Strategy Channels, publication, and Snapshot remain
+outside that four-action coordinator; publication, deployment, and scheduler
 activation remain separately unauthorized.
 
 The next repository-only control slice separates XNYS close from provider
@@ -170,7 +172,7 @@ authorized work.
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
 - First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential/HTTPS transport, bounded All Tickers identity ingestion, Grouped Daily publication, and provider security evidence workflows are verified.
-- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-26.
+- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-27.
 - Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
 - Market summary analytics use the latest two formally completed sessions and support close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.

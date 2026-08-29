@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-08-28 UTC
+Operational state verified at: 2026-08-29 UTC
 
-Repository development context updated at: 2026-08-28 UTC
+Repository development context updated at: 2026-08-29 UTC
 
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
@@ -57,7 +57,7 @@ after deployment.
 | Contracts | Snapshot 1.9 / Dashboard 2.6 |
 | Snapshot pointer fingerprint | `e2b52f319894786d2e6fc628472bfdecd2078e85bbbec3e02be223a4ba9b0203` |
 | Active review metadata | `production-review-deployment/1.1`; 2026-08-26 actual, 2026-08-27 expected, lag one, `stale_review` |
-| Current post-close pipeline freshness | expected/canonical EOD 2026-08-27, lag zero; active UI remains the earlier 2026-08-26 stale-review analysis |
+| Current post-close pipeline freshness | expected 2026-08-28; canonical EOD/complete offline analytics 2026-08-27, lag one; active UI analyzes 2026-08-26 and is now two sessions behind the current expectation |
 | `/data` inventory | 392 files / 203,931,663 bytes after canonical 2026-08-27 EOD Apply |
 | `/data` inventory fingerprint | `ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749` |
 | `/data` symlink/staging/partial residue | zero |
@@ -363,6 +363,30 @@ See
 [the planning optimization audit](../audits/daily-candidate-planning-optimization-2026-08-29.md).
 See also
 [the daily Entry Geometry audit](../audits/daily-eod-entry-geometry-2026-08-29.md).
+
+The publication review then completed the missing 2026-08-27 Phase 2 and
+preview chain. Phase 2 fingerprint
+`1d0efadf75579c2487696fe5933bccfcdc56e40680433a790a9600b3776ec41f`
+has zero Oracle mismatch and all replay/permutation/prefix gates. Preview
+payload fingerprint is
+`da5b9364ab4e84955c82d3c8666b125e293108dd0093c692830bfef2ccf3d52c`.
+Two initial MI Plan attempts failed closed before plan creation because the
+schema 1.1 daily Candidate evidence was still interpreted through duplicated
+cold-only field access. ADR 0066 and commits `54b1d09` / `211c1a5` now make
+Candidate construction and MI approval recheck use one explicit mode-aware
+projection; the complete backend suite passes 1,573 tests.
+
+The final formal MI 1.2 review plan SHA-256 is
+`a5732db20555cc0e873fb184302e401e825fab9f65d81e7e6d6bbdecd472e2ea`.
+It passes full source validation and projects 558 / 599 Candidate records at
+fingerprint
+`d81479e4e332865f5d4c6312033a66095febe3b018a8e54376668d3e8f36ac47`,
+but returns `freshness_blocked`: actual 2026-08-27, expected 2026-08-28, lag
+one, with no applicable review authorization. Apply did not run. No same-day
+8/27 Strategy audit was generated; Snapshot 1.9 would require one, but the next
+correct data boundary is 8/28 acquisition review rather than completing an
+already non-activatable serving chain. See
+[the publication review audit](../audits/daily-eod-publication-review-2026-08-29.md).
 
 ## Analytics and presentation
 

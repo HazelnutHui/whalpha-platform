@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-08-29 — Review 2026-08-27 publication and fail closed on freshness
+
+- Completed and formally reread the missing 2026-08-27 Phase 2 and preview.
+  Phase 2 fingerprint is
+  `1d0efadf75579c2487696fe5933bccfcdc56e40680433a790a9600b3776ec41f`,
+  with zero Oracle mismatch and all replay/permutation/prefix gates; preview
+  payload fingerprint is
+  `da5b9364ab4e84955c82d3c8666b125e293108dd0093c692830bfef2ccf3d52c`.
+- The first two MI Plan attempts found duplicated cold-only Candidate evidence
+  field access and failed before approval-plan creation or Production write.
+  ADR 0066 now shares one explicit verified-prior/current-Oracle projection
+  between Candidate construction and MI approval recheck. Commits `54b1d09`
+  and `211c1a5` pass all 1,573 backend tests.
+- The final MI 1.2 review plan SHA-256 is
+  `a5732db20555cc0e873fb184302e401e825fab9f65d81e7e6d6bbdecd472e2ea`.
+  It passes full source validation and contains 558 / 599 Candidate records at
+  fingerprint
+  `d81479e4e332865f5d4c6312033a66095febe3b018a8e54376668d3e8f36ac47`.
+- Activation is correctly blocked: actual 2026-08-27, expected 2026-08-28,
+  lag one, and no applicable exact review authorization. No MI Apply,
+  Snapshot, bundle, deployment, acquisition, notification, or scheduler action
+  ran. Active serving remains the 2026-08-26 stale-review release and `/data`
+  remains unchanged.
+- The review exposed an end-to-end automation gap: the four-action daily
+  coordinator stops at Entry Geometry and does not include Phase 2, preview,
+  Strategy Channels, publication, or Snapshot.
+
 ## 2026-08-29 — Complete 2026-08-27 daily Entry Geometry
 
 - Executed exactly one Dell-local `calculate_entry_geometry` transition from

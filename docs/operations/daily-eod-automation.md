@@ -727,3 +727,13 @@ action took 338.217438 seconds; a later optimization may avoid rebuilding the
 full cumulative Candidate score history solely to select the current 3,541
 records, but must preserve exact custody, typed rows, ordering, and Oracle
 semantics.
+
+The subsequent publication review exposed that `analytics_ready` currently
+means only the four coordinator-owned offline actions are complete. Phase 2,
+preview, Strategy Channels, MI publication, and Snapshot are not coordinator
+actions. The missing 2026-08-27 Phase 2/preview were completed manually under
+their offline tmp-only boundaries, but the final MI Plan correctly returned
+`freshness_blocked` because expected session advanced to 2026-08-28. Before
+unattended operation, extend the governed sequence to cover these dependencies
+without combining their separate Apply/deployment authorizations or weakening
+freshness checks.

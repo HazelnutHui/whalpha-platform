@@ -21,6 +21,13 @@ Plan creation requires the exact in-process evidence returned by that build.
 Candidate publication 1.0 produces MI/plan 1.1; the additive entry consumer
 requires `--entry-geometry-audit` and produces MI/plan 1.2.
 
+ADR 0066 makes schema 1.1 daily Candidate evidence explicit and mode-aware.
+Candidate construction and MI Plan/Apply rechecks use one shared projection of
+the formally bound verified-prior lineage, all-true incremental/reuse gates,
+and current-session independent Oracle. The Candidate payload warns that no
+same-run cold replay occurred. Missing lineage or false gates fail closed;
+periodic and change-triggered cold validation remain mandatory.
+
 The plan freezes source hashes, current inventory and consumer state, target
 absence, artifact paths/hashes/sizes, aggregate hash, publication/pointer
 identity, freshness, inventory delta, recovery, and rollback. The future

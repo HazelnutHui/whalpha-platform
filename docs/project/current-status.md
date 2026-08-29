@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-28
+Status date: 2026-08-29
 
 This document is the concise current-state summary. Exact publication IDs,
 fingerprints, verification scope, and cross-device handoff are maintained in
@@ -66,7 +66,10 @@ actual/analysis session 2026-08-26, expected session 2026-08-27, lag one,
 status `stale_review`, and review contract
 `production-review-deployment/1.1`. This does not claim fresh 2026-08-27 EOD
 or weaken ordinary lag-zero publication. The prior ordinary-fresh 1.7/2.4
-Snapshot remains the local rollback target.
+Snapshot remains the local rollback target. As of the current 2026-08-29
+review, the formal calendar expects 2026-08-28, so the active UI analysis is
+now two sessions behind current expectation even though its immutable embedded
+review tuple remains unchanged.
 
 The exact failed EOD terminal has one immutable offline operator review. After
 its conservative 2026-08-28T16:00:00Z boundary, the user separately authorized
@@ -130,6 +133,24 @@ and deployment remain separately unauthorized. The 338.217438-second action
 also identifies current-batch Candidate reading as the next safe performance
 target; the present audit remains formally valid. All 98 focused tests pass.
 
+The missing same-session Phase 2 and preview are now complete for 2026-08-27.
+Phase 2 fingerprint
+`1d0efadf75579c2487696fe5933bccfcdc56e40680433a790a9600b3776ec41f`
+passes zero-mismatch Oracle and all replay/permutation/prefix gates; preview
+payload fingerprint is
+`da5b9364ab4e84955c82d3c8666b125e293108dd0093c692830bfef2ccf3d52c`.
+The final MI 1.2 review plan passes full source validation and projects 558 /
+599 Candidate records, but is `freshness_blocked`: actual 2026-08-27,
+expected 2026-08-28, lag one. No applicable exact review authorization exists,
+so neither MI Apply nor Snapshot/bundle/deployment ran. ADR 0066 fixes two
+duplicated cold-only Candidate evidence lookups discovered by the first real
+daily-schema Plan attempts; both failed before plan creation or Production
+write. All 1,573 backend tests pass. The next correct data boundary is review
+and separately authorize 2026-08-28 acquisition, then run the full latest-
+session analytics chain. The coordinator still does not include Phase 2,
+preview, Strategy Channels, publication, or Snapshot, which blocks unattended
+end-to-end operation.
+
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review
 events even though the coordinator did. No target or `/data` change occurred.
@@ -179,9 +200,10 @@ read or used.
 
 ## Current limitations and risks
 
-- The active static payload is explicitly `stale_review`: it analyzes
-  2026-08-26 while the expected session is 2026-08-27. It is suitable for the
-  authorized UI/product review, not a claim that the daily chain is current.
+- The active static payload is explicitly `stale_review`: its immutable review
+  tuple analyzes 2026-08-26 against expected 2026-08-27. The current formal
+  calendar now expects 2026-08-28, so it is two sessions behind and remains
+  suitable only for the authorized UI/product review.
 - The analytics history is only 29 EOD sessions and the active calculations
   use 26 sessions. This is contract and implementation evidence, not enough
   history for predictive validation or stable threshold calibration.
