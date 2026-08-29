@@ -101,3 +101,4 @@ Each ADR should include:
 - [0076: Plan a Default-Off Daily Scheduler Wake](0076-plan-default-off-daily-scheduler-wake.md)
 - [0077: Compose One Default-Off Scheduled Wake](0077-compose-one-default-off-scheduled-wake.md)
 - [0078: Render a Non-Installed Read-Only systemd Wake](0078-render-non-installed-read-only-systemd-wake.md)
+- [0079: Install the Read-Only User Scheduler](0079-install-read-only-user-scheduler.md)

@@ -51,8 +51,12 @@ review must therefore report a missing prerequisite.
 The review only emits canonical JSON and exact unit text. It performs no unit
 file write, installation, daemon reload, enablement, start, credential access,
 network request, coordinator call, `/data` write, publication, or deployment.
-The service proposal also uses a read-only filesystem view, private network,
-no new privileges, an empty capability set, and an exact 120-second bound.
+The service proposal also uses a read-only filesystem view, the planner's
+socket guard plus an `AF_UNIX` address-family restriction, no new privileges,
+and an exact 120-second bound. User-manager runtime rehearsal subsequently
+showed that `PrivateNetwork`, `PrivateDevices`, and an explicit empty
+capability set are not supported on this Dell user manager; they are excluded
+instead of being presented as effective hardening.
 
 ## Consequences
 

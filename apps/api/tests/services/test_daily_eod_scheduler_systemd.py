@@ -79,7 +79,13 @@ def test_candidate_is_exact_read_only_and_default_disabled(tmp_path) -> None:
         f"--expected-python-executable {Path(sys.executable).resolve()}" in service
     )
     assert "--review-enabled-candidate" not in service
-    assert "PrivateNetwork=true" in service
+    assert "NoNewPrivileges=true" in service
+    assert "ProtectSystem=strict" in service
+    assert "ProtectHome=read-only" in service
+    assert "RestrictAddressFamilies=AF_UNIX" in service
+    assert "PrivateNetwork=" not in service
+    assert "PrivateDevices=" not in service
+    assert "CapabilityBoundingSet=" not in service
     assert "OnCalendar=Mon..Fri *-*-* 13:30:00 America/New_York" in timer
     assert "OnCalendar=Mon..Fri *-*-* 16:30:00 America/New_York" in timer
     assert "Persistent=true" in timer

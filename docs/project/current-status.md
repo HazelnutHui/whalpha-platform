@@ -124,11 +124,22 @@ planner entrypoint, two New York calendar expressions, and future service/timer
 SHA-256 identities. It fixes and rechecks the project Python interpreter rather
 than inheriting runtime overrides. The proposed service independently rechecks
 host, user, branch, clean revision, and uses the system UTC clock; it cannot
-invoke the coordinator or load capabilities. Dell inspection found systemd 255
-and a running user manager, but `hui` has `linger=no`, so an enabled candidate
-is not ready for unattended logout/reboot operation. No unit file, daemon
-reload, timer enable/start, linger change, credential/network access, or
-Production write occurred.
+invoke the coordinator or load capabilities. At that review boundary Dell had
+systemd 255 and a running user manager but `hui` had `linger=no`; no installation
+or host change had yet occurred.
+
+ADR 0079 records the separately authorized host change. `hui` linger is now
+enabled and the owner-only read-only user service/timer are installed. The
+first controlled start failed before the process with `218/CAPABILITIES`:
+`PrivateNetwork`, explicit capability bounding, and capability-changing
+`PrivateDevices` are unsupported by this user manager. The timer remained
+stopped during diagnosis. The compatible unit retains the exact revision and
+Python bindings, read-only system/home, `NoNewPrivileges`, `AF_UNIX`, socket
+guard, and timeout. Its controlled start then succeeded in about three seconds,
+reporting EOD current through 2026-08-28 and zero coordinator, credential,
+network, filesystem-write, or Production-write activity. The timer is enabled
+only for read-only planning; no data transition, publication, or deployment is
+scheduled.
 
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact

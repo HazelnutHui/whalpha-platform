@@ -8,10 +8,10 @@
 - Reliability: the first default-off scheduler-wake plan is complete and
   chooses the oldest missing XNYS session in about 2.8 seconds on current Dell
   state. The default-off one-transition bridge and five-scenario synthetic
-  rehearsal are also complete. The write-free exact user-systemd candidate is
-  complete and remains uninstalled; Dell `linger=no` is an explicit blocker.
-  Next choose the host persistence model before any controlled read-only timer
-  installation. SMTP may remain unset.
+  rehearsal are also complete. The exact user-systemd candidate, `hui` linger,
+  owner-only installation, and controlled read-only service start are complete.
+  Next observe one real calendar-triggered wake before composing any real
+  coordinator transition. SMTP may remain unset.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -280,9 +280,11 @@ synthetic wakes proved zero calls when current, exactly one fake coordinator
 call for each ready scenario, no automatic retry/recovery, and no alert
 delivery. ADR 0078 now renders the exact user-systemd service/timer candidate
 at clean-revision custody and connects it only to the read-only planner. Dell
-systemd 255 and the current user manager are available, but `hui` linger is
-disabled. Do not install or enable it, change linger, or connect the real
-coordinator until those remain separate reviewed decisions.
+systemd 255 and the current user manager are available. ADR 0079 records the
+separately authorized `hui` linger enablement and read-only user-timer
+installation. The compatible service passed a controlled systemd start after
+unsupported user-manager capability/namespace directives were removed. Next
+observe a real scheduled wake; do not connect the coordinator yet.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

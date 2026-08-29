@@ -71,14 +71,14 @@ formal whole-bundle reread, and a deployment-review stop. ADR 0073 supplies the
 default-off one-shot OCI deployment boundary, and the controlled 2026-08-28
 round has now exercised the complete path. ADR 0076 adds a credential-free
 scheduler-wake plan that selects only the oldest missing XNYS session and never
-invokes the coordinator during review. No timer or unattended chain is
+invokes the coordinator during review. No unattended data-transition chain is
 installed. ADR 0077 adds the still-default-off bridge for at most one explicit
 coordinator call and prohibits in-wake retry, recovery, alert delivery,
 publication, or deployment. ADR 0078 adds an exact Dell/hui user-systemd
-candidate that remains uninstalled and can run only the read-only wake planner
-at 13:30 and 16:30 New York time. It pins clean `main` source and future unit
-hashes; current `linger=no` remains an explicit prerequisite, and no real
-coordinator or scheduler transition is connected.
+candidate that can run only the read-only wake planner at 13:30 and 16:30 New
+York time. ADR 0079 records the separately authorized user-level installation:
+linger is enabled, the read-only timer is enabled, and a controlled systemd
+start passed. No real coordinator or data-transition scheduler is connected.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

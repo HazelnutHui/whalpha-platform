@@ -696,6 +696,38 @@ chooses and separately authorizes either linger or a system-level service.
 Do not install unit files, enable linger, reload systemd, or enable/start the
 timer from this review.
 
+### Controlled read-only installation state
+
+ADR 0079 records the separately authorized Dell installation. `hui` linger is
+enabled; the owner-only user service/timer are installed, loaded, and the timer
+is enabled. The first controlled start showed that this user manager cannot
+apply `PrivateNetwork`, `PrivateDevices`, or explicit capability bounding.
+Those directives were removed from the template and installed unit. The
+remaining hardening uses a read-only filesystem view, `NoNewPrivileges`,
+`AF_UNIX` restriction, the planner's socket guard, clean revision/Python
+bindings, and the existing timeout.
+
+The corrected controlled service start returned `up_to_date` through
+2026-08-28 with exit status zero in about three seconds. It made zero
+coordinator calls, credential accesses, external requests, filesystem writes,
+or Production writes. The next checkpoint is a real calendar-triggered wake.
+Do not add `--review-enabled-candidate` or any coordinator/capability arguments
+to the installed unit.
+
+Read-only inspection:
+
+```bash
+systemctl --user status whalpha-daily-eod-wake-review.timer
+systemctl --user list-timers whalpha-daily-eod-wake-review.timer
+journalctl --user -u whalpha-daily-eod-wake-review.service
+```
+
+Emergency stop is reversible and does not change data:
+
+```bash
+systemctl --user disable --now whalpha-daily-eod-wake-review.timer
+```
+
 ## Offline entry step
 
 The worktree-safe administrator entry is:

@@ -256,11 +256,17 @@ candidate for the read-only planner only. It pins clean `main`, Git revision,
 canonical data root, entrypoint, New York 13:30/16:30 weekday calendars, and
 both future unit hashes. It clears inherited Python overrides and pins/rechecks
 the project interpreter. Runtime must reprove the exact Dell source and current
-UTC clock before planning. Dell inspection found systemd 255 and a running
-user manager, but `linger=no`; enabled-candidate review therefore remains a
-prerequisite-missing state. No unit, daemon reload, activation, coordinator
-call, credential, network request, filesystem write, or Production write was
-performed.
+UTC clock before planning. At that candidate boundary Dell systemd 255 and the
+user manager were available, but `linger=no` remained prerequisite-missing.
+ADR 0079 now records the separately authorized installation: `hui` linger is
+enabled and the owner-only read-only user timer is installed. An initial
+`218/CAPABILITIES` start proved three proposed directives incompatible with the
+Dell user manager; the timer stayed stopped while `PrivateNetwork`,
+`PrivateDevices`, and explicit capability bounding were removed. The retained
+read-only/`NoNewPrivileges`/`AF_UNIX` unit then passed a controlled start in
+about three seconds and reported current 2026-08-28 state with zero coordinator,
+credential, external request, filesystem write, or Production write. No real
+data transition, publication, or deployment is scheduled.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

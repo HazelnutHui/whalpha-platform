@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-29 — Install the read-only user scheduler
+
+- Accepted ADR 0079 after the user explicitly selected user-systemd persistence.
+  Enabled `hui` linger and installed the owner-only read-only service/timer;
+  no coordinator or data-transition capability was connected.
+- The first controlled start failed before project execution with systemd
+  `218/CAPABILITIES`. Kept the timer stopped while removing unsupported
+  `PrivateNetwork`, capability-changing `PrivateDevices`, and explicit empty
+  capability bounding from the candidate and installed unit.
+- The compatible unit retained exact revision/Python custody, read-only
+  system/home, `NoNewPrivileges`, `AF_UNIX`, the planner socket guard, and the
+  timeout. A controlled start then passed in about three seconds with EOD
+  current through 2026-08-28 and zero coordinator, credential, external
+  request, filesystem-write, or Production-write activity. The timer is enabled
+  only for future read-only calendar wakes.
+
 ## 2026-08-29 — Render a non-installed read-only systemd wake
 
 - Accepted ADR 0078 and added an exact Dell/hui user-systemd candidate whose
