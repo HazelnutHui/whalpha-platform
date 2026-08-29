@@ -73,8 +73,9 @@ in-dataset release and therefore fails closed on rollback.
 
 ## Downstream order
 
-After a separately authorized MI 1.2 publication: build Snapshot 1.7 /
-Dashboard 2.4 with the explicit publication ID; separately approve/apply Snapshot; then
-build OCI with both the explicit Snapshot and
-`--market-intelligence-publication`. OCI deployment remains another authorization.
-The MI 1.1 -> Snapshot 1.6 / Dashboard 2.3 path remains rollback-compatible.
+After a separately authorized MI 1.2 publication: build Snapshot 1.9 /
+Dashboard 2.6 with the explicit publication ID and exact same-session Strategy
+Channel audit; separately approve/apply Snapshot; then build OCI with both the
+explicit Snapshot and `--market-intelligence-publication`. OCI deployment
+remains another authorization. Older MI/Snapshot pairs remain readable
+rollback-compatible boundaries.

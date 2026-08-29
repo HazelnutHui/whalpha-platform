@@ -45,31 +45,35 @@ relative-performance proxies, never actual fund flow.
 
 ## Active data and publications
 
-- Canonical EOD and canonical Identity are both completed through 2026-08-27
+- Canonical EOD and canonical Identity are both completed through 2026-08-28
   and formally aligned.
-- Latest EOD contains 9,945 rows. Latest Identity and the Identity snapshot
-  bound to EOD contain 9,982 canonical instruments, 13,148 provider
-  observations, and 9,982 resolver rows.
+- Latest EOD contains 9,942 rows. Latest Identity and the Identity snapshot
+  bound to EOD contain 9,981 canonical instruments, 13,151 provider
+  observations, and 9,981 resolver rows.
 - Activation V2 is active with Common Shares as the sole default:
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
 - Active Market Intelligence publication is
-  `2026-08-28T131700Z-eeccc22`, contract 1.2, with 496 Primary and 532
+  `2026-08-29T080431Z-785ab49dfedd`, contract 1.2, with 686 Primary and 744
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-28T132100Z-eeccc22`, contract 1.9 / Dashboard 2.6.
+  `2026-08-29T080928Z-785ab49dfedd`, contract 1.9 / Dashboard 2.6.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-28T162136Z-2737f81` from source commit `2737f8171c3c`.
+  `2026-08-29T080928Z-785ab49dfedd` from source commit `785ab49dfedd`.
 
-The active analytics and Snapshot are an explicitly authorized review release:
-actual/analysis session 2026-08-26, expected session 2026-08-27, lag one,
-status `stale_review`, and review contract
-`production-review-deployment/1.1`. This does not claim fresh 2026-08-27 EOD
-or weaken ordinary lag-zero publication. The prior ordinary-fresh 1.7/2.4
-Snapshot remains the local rollback target. As of the current 2026-08-29
-review, the formal calendar expects 2026-08-28, so the active UI analysis is
-now two sessions behind current expectation even though its immutable embedded
-review tuple remains unchanged.
+The active analytics and Snapshot are ordinary fresh publications for
+2026-08-28: actual and expected session match, lag is zero, review mode is
+false, and no stale-review exception was used. The prior 2026-08-26 Snapshot
+remains the explicit rollback target. The 2026-08-29 post-deployment reader
+found 444 files / 267,872,129 bytes under `/data`, inventory fingerprint
+`15de69875692824412df3da29afc9dad12e470c326cec2936633dee5dcae1ea3`,
+zero symlinks, and zero publication residue.
+
+### Historical 2026-08-27 recovery and pipeline evidence
+
+The following details are retained as historical recovery and performance
+evidence. They no longer describe the active publication or next operational
+action.
 
 The exact failed EOD terminal has one immutable offline operator review. After
 its conservative 2026-08-28T16:00:00Z boundary, the user separately authorized
@@ -168,16 +172,16 @@ calculation or serving action has run.
 
 ## Market Regime
 
-- Primary: 57.8456, Balanced.
-- Secondary: 57.9041, Balanced.
+- Primary: 47.3666, Balanced; instantaneous candidate state Defensive.
+- Secondary: 47.6047, Balanced; instantaneous candidate state Defensive.
 - Fixed basket: 30 ETFs.
 - Preregistered relationships: 16.
 - Windows: 5, 10, and 20 XNYS sessions.
 - Relationship-history rows: 336.
-- History depth: 26 sessions, so relationship confidence remains low and is
-  implementation evidence rather than predictive validation.
+- History depth: 26 calculation sessions, so relationship confidence remains
+  low and is implementation evidence rather than predictive validation.
 
-The underlying active publication was formally reread after the 2026-08-27
+The underlying active publication was formally reread after the 2026-08-29
 deployment. Exact displayed scores are publication facts, not trade signals.
 
 ## Access and deployment boundary
@@ -198,7 +202,7 @@ deployment. Exact displayed scores are publication facts, not trade signals.
   owner-only market-analysis tier. Future personal records require a separate
   identity boundary and do not change shared analytics parity.
 
-The 2026-08-28 deployment passed remote preflight, Nginx configuration checks,
+The 2026-08-29 deployment passed remote preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the temporary equal-capability
 guest Session postflight defined by the deployment tool. Password-based and
 visual browser behavior remains a manual user check because no password was
@@ -206,11 +210,9 @@ read or used.
 
 ## Current limitations and risks
 
-- The active static payload is explicitly `stale_review`: its immutable review
-  tuple analyzes 2026-08-26 against expected 2026-08-27. The current formal
-  calendar now expects 2026-08-28, so it is two sessions behind and remains
-  suitable only for the authorized UI/product review.
-- The analytics history is only 29 EOD sessions and the active calculations
+- The active static payload is fresh through 2026-08-28, but freshness only
+  establishes same-session custody; it does not validate predictive quality.
+- The retained history is only 31 EOD sessions and the active calculations
   use 26 sessions. This is contract and implementation evidence, not enough
   history for predictive validation or stable threshold calibration.
 - Provider security form does not prove issuer operating structure or
@@ -351,9 +353,9 @@ Repository development has therefore returned to explainable Candidate
 strategy channels. The fixed offline preview, bounded consumer, independent
 Oracle, formal temporary-root audit, additive product projection, and
 bilingual lazy consumer are implemented and the first Strategy Channels
-product is active in the current stale-review release. Later repository source
-adds exact formula/contribution display and channel-overlap diagnostics; those
-later changes are not deployed. Real chronological validation remains blocked
+product is active in the current ordinary-fresh 2026-08-28 analysis release.
+Exact formula/contribution display and channel-overlap diagnostics are also
+deployed. Real chronological validation remains blocked
 on adequate point-in-time history; every future publication/deployment remains
 a separate authorization.
 
@@ -604,15 +606,15 @@ setup. The active UI selects fixed review-now, watch-trigger, wait-reset, and
 other-research lanes from the complete hard-risk-qualified population; it does
 not convert stock-price structure into an option-return claim.
 
-The formal 2026-08-26 Candidate audit is
-`/tmp/whalpha-candidate-phase5c-20260826`, fingerprint
-`34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`;
-the bound entry audit is `/tmp/whalpha-candidate-entry-20260826`, fingerprint
-`b3e54546f297bcca9e9a23bb011e0137342777dedc979eca1b4cda71f173ff46`.
+The formal 2026-08-28 Candidate audit is
+`/tmp/whalpha-candidate-phase5c-20260828`, fingerprint
+`39f26ded1dbdd5359eca9d6f3c49dc0b1286531f31a5a61845c0a955ad145412`;
+the bound entry audit is `/tmp/whalpha-candidate-entry-20260828`, fingerprint
+`fb072d180744d951a052d8a48235a205258078effe7a53ec1d74ff3f5f96e63d`.
 Both formal rereads passed with zero Oracle mismatch and zero network or
 Production writes; entry input-permutation equivalence is true. Primary has
-53 technical-review-ready, 1,250 monitor-for-trigger, 109 wait-for-reset, and
-303 deprioritized records. It has 98 strong-but-extended setups, so strength
+59 technical-review-ready, 1,173 monitor-for-trigger, 54 wait-for-reset, and
+428 deprioritized records. It has 52 strong-but-extended setups, so strength
 does not automatically become an entry instruction.
 
 ADR 0049 now defines a repository-only six-channel Candidate shadow contract:

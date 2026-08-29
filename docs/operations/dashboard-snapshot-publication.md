@@ -2,7 +2,7 @@
 
 ## Market Intelligence consumer binding
 
-The active release is Snapshot 1.7 / Dashboard 2.4. Repository source also
+The active release is Snapshot 1.9 / Dashboard 2.6. Repository source also
 supports Snapshot 1.8 / Dashboard 2.5 for split Candidate delivery. Its
 dry-run receives an explicit `--market-intelligence-publication-id`, formally
 reads the active immutable publication, and freezes that reference in candidate
@@ -20,8 +20,8 @@ Snapshot 1.8 keeps MI 1.2 and Candidate publication 1.1 unchanged. It emits a
 compact summary plus deterministic stable-ID detail shards. The reader validates
 every file, reconstructs the original full Candidate publication, and fails
 closed on any missing shard or summary/detail drift. Approval plan 2.3 freezes
-the ordered shard list and summary identity. This support is development-only;
-the active Production release remains 1.7/2.4.
+the ordered shard list and summary identity. Snapshot 1.8 remains a readable
+compatibility boundary; active Production uses the additive 1.9/2.6 pair.
 
 Repository source now also supports Snapshot 1.9 / Dashboard 2.6 through
 Approval Plan 2.4. It extends every 1.8 binding and additionally freezes the
@@ -30,7 +30,8 @@ fingerprint, and parameter fingerprint. Plan creation, approved apply, and
 verify-then-link all revalidate those fields. A 1.9 dry-run receives the exact
 strategy audit through `--candidate-strategy-audit`; that input must be a
 regular directory under `/tmp`, and the resulting Plan 2.4 freezes its content
-identity before Apply. No 1.9 plan has yet been approved or applied.
+identity before Apply. The active 2026-08-28 analysis release passed Plan 2.4,
+Apply, formal reread, bundle validation, and OCI guest postflight.
 
 The Dell-local publication/bundle evidence and its explicit Production
 boundary are recorded in

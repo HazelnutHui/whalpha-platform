@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `2737f8171c3c47247568fc8de818b005a2355697` |
+| Deployed bundle source commit | `785ab49dfeddf3c3c6622316326b07b2947ea5d8` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -29,37 +29,37 @@ recorded by a deployed bundle.
 ## Formal local state
 
 The 2026-08-29 reconciliation used the project readers after the separately
-authorized 2026-08-26 stale-review analytics, Snapshot, bundle, and OCI
-deployment. It reread the full local inventory and active custody/contracts
-after deployment.
+authorized complete 2026-08-28 Identity/EOD, analytics, publication, Snapshot,
+bundle, and OCI deployment round. It reread the full local inventory and active
+custody/contracts after deployment.
 
 | Boundary | Active verified value |
 | --- | --- |
-| Canonical EOD | 30 sessions, 2026-07-17 through 2026-08-27 |
-| Latest EOD | 2026-08-27, 9,945 rows |
-| EOD content fingerprint | `5e2338a6fc0e4ccc84b746a324ceed6b7e5e60d06d1561c3490c07855ba2ca87` |
-| EOD Parquet SHA-256 | `57cb590c6a8b49970c91fe3b48eadbffc922e08352c3ac339af67f05efa64e72` |
-| Latest canonical Identity | 2026-08-27: 9,982 instruments / 13,148 provider identities / 9,982 resolvers |
-| Latest Identity logical fingerprint | `a4db78888d19799f7e38485cfceeb3e6d4611ab2f1cb3d6785a8fc90e6f295ad` |
-| Latest-EOD-bound Identity | 2026-08-27: 9,982 instruments / 13,148 provider identities / 9,982 resolvers |
-| EOD-bound Identity logical fingerprint | `a4db78888d19799f7e38485cfceeb3e6d4611ab2f1cb3d6785a8fc90e6f295ad` |
+| Canonical EOD | 31 sessions, 2026-07-17 through 2026-08-28 |
+| Latest EOD | 2026-08-28, 9,942 rows |
+| EOD content fingerprint | `d02dd3bca07331087934b947bc3e724f6d1ca64113615515f08951e46bb5c803` |
+| EOD Parquet SHA-256 | `f3d57d29a947bcf4ed11b14f8c2ee3686b84f5eaa9f8d3b6762c3b93c5005a18` |
+| Latest canonical Identity | 2026-08-28: 9,981 instruments / 13,151 provider identities / 9,981 resolvers |
+| Latest Identity logical fingerprint | `becf17b05b22a9f89de0d8f96094d83cabb568eaf0c32121eaf2c0daba21189b` |
+| Latest-EOD-bound Identity | 2026-08-28: 9,981 instruments / 13,151 provider identities / 9,981 resolvers |
+| EOD-bound Identity logical fingerprint | `becf17b05b22a9f89de0d8f96094d83cabb568eaf0c32121eaf2c0daba21189b` |
 | Identity/EOD alignment | `aligned` |
 | Activation analysis session | 2026-08-19 |
 | Activation pointer fingerprint | `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168` |
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
 | Primary | 1,718 CS; fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978` |
 | Secondary | 1,831 = 1,718 CS + 113 ADRC; fingerprint `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295` |
-| Market Intelligence | `2026-08-28T131700Z-eeccc22`, contract 1.2 |
-| Market Intelligence payload SHA-256 | `03a7f53f590b1b50dd13ae5947f685eb48e349938d1a3bd0cd7e4f78bad6a9bc` |
-| Market Intelligence logical fingerprint | `49bbb4564ff9520a807a7cc8dc4cc02e5be309893b50a1556e44d7fc228707e1` |
-| Candidate publication | 496 Primary / 532 Secondary records; fingerprint `286d4eebcb2e0489f33b03894bec8c7c58c1641f113719a014f296db42c2f07a` |
-| Dashboard Snapshot | `2026-08-28T132100Z-eeccc22` |
+| Market Intelligence | `2026-08-29T080431Z-785ab49dfedd`, contract 1.2 |
+| Market Intelligence payload SHA-256 | `9b345d531942ad6f6eeae79ae22de3c578020b14b779281d4616cc3aa680b930` |
+| Market Intelligence logical fingerprint | `9b2842fb9611184f0d2887ad10da7820edbb5d11785ba5083f998314452e696f` |
+| Candidate publication | 686 Primary / 744 Secondary records; fingerprint `eff5ce68400ff90456cd0363bc04d625a80ca6a132b54545bb37d5e6463d5841` |
+| Dashboard Snapshot | `2026-08-29T080928Z-785ab49dfedd` |
 | Contracts | Snapshot 1.9 / Dashboard 2.6 |
-| Snapshot pointer fingerprint | `e2b52f319894786d2e6fc628472bfdecd2078e85bbbec3e02be223a4ba9b0203` |
-| Active review metadata | `production-review-deployment/1.1`; 2026-08-26 actual, 2026-08-27 expected, lag one, `stale_review` |
-| Current post-close pipeline freshness | expected 2026-08-28; canonical EOD/complete offline analytics 2026-08-27, lag one; active UI analyzes 2026-08-26 and is now two sessions behind the current expectation |
-| `/data` inventory | 392 files / 203,931,663 bytes after canonical 2026-08-27 EOD Apply |
-| `/data` inventory fingerprint | `ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749` |
+| Snapshot pointer fingerprint | `a3ab05d42f11421540cc3b702078c33f6cf15f25a9392f81851a86f9d321d00b` |
+| Active review metadata | none; ordinary fresh publication |
+| Current post-close pipeline freshness | expected 2026-08-28; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-28; lag zero |
+| `/data` inventory | 444 files / 267,872,129 bytes after the complete 2026-08-28 round |
+| `/data` inventory fingerprint | `15de69875692824412df3da29afc9dad12e470c326cec2936633dee5dcae1ea3` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -399,14 +399,19 @@ session. Attempt and operator-review counts were zero; provider completeness
 was not asserted. Every proposed 8/28 acquisition, Apply-plan, analytics, and
 run-journal target was absent, and no matching timer, service, or residual
 calculation process existed. Full readers reconfirmed the unchanged 392-file
-`/data` fingerprint and active MI/Snapshot. No current-revision external
-control was supplied or preflighted. The next possible authorization is only
-one exact 2026-08-28 Identity fetch, followed by a separate Apply review. See
+`/data` fingerprint and then-active MI/Snapshot. No current-revision external
+control was supplied or preflighted. At that historical boundary, the next
+possible authorization was one exact 2026-08-28 Identity fetch followed by a
+separate Apply review. The authorized round was subsequently completed as
+recorded in the active-state table and
+[complete audit](../audits/daily-eod-complete-deployment-2026-08-29.md). See
 [the readiness audit](../audits/daily-eod-readiness-2026-08-29.md).
 
 ## Analytics and presentation
 
-- Market Regime: Primary 57.8456 Balanced; Secondary 57.9041 Balanced.
+- Market Regime: Primary 47.3666 Balanced; Secondary 47.6047 Balanced. Both
+  instantaneous candidates are Defensive, but the confirmed state remains
+  Balanced under the frozen hysteresis rule.
 - Fixed registry: 30 ETFs and 16 relationships with 5/10/20-session windows.
 - Relationship history: 336 rows over 26 sessions; confidence is low.
 - English and Simplified Chinese use one language-neutral payload. English is
@@ -421,20 +426,21 @@ one exact 2026-08-28 Identity fetch, followed by a separate Apply review. See
   and the bilingual entry-location view. Leadership rank and entry location
   remain separate axes.
 - The active formal Candidate audit is
-  `/tmp/whalpha-candidate-phase5c-20260826`, fingerprint
-  `34e97758863658bfd710e74b312481e5d9f0d170396882dcf2b9c5c63f7eb6d7`.
+  `/tmp/whalpha-candidate-phase5c-20260828`, fingerprint
+  `39f26ded1dbdd5359eca9d6f3c49dc0b1286531f31a5a61845c0a955ad145412`.
   The bound Entry Geometry audit is
-  `/tmp/whalpha-candidate-entry-20260826`, fingerprint
-  `b3e54546f297bcca9e9a23bb011e0137342777dedc979eca1b4cda71f173ff46`.
+  `/tmp/whalpha-candidate-entry-20260828`, fingerprint
+  `fb072d180744d951a052d8a48235a205258078effe7a53ec1d74ff3f5f96e63d`.
   Both formal rereads have zero Oracle mismatch and no external or Production
   writes; Entry Geometry input-permutation equivalence is true.
-- Primary Entry Geometry assesses 1,715 securities: 53 technical-review-ready,
-  1,250 monitor-for-trigger, 109 wait-for-reset, and 303 deprioritized. Its 98
+- Primary Entry Geometry assesses 1,714 securities: 59 technical-review-ready,
+  1,173 monitor-for-trigger, 54 wait-for-reset, and 428 deprioritized. Its 52
   strong-but-extended results demonstrate that strong leadership does not
   automatically become an entry instruction. This is distribution evidence,
   not outcome validation.
-- The active Candidate payload has 496 Primary and 532 Secondary records and
-  is about 20.4 MB. Repository source now adds ADR 0048's Snapshot 1.8 /
+- The active Candidate payload has 686 Primary and 744 Secondary records. Its
+  Snapshot 1.9 first-load summary is 2,061,314 bytes and retains 32 on-demand
+  detail shards. Repository source now adds ADR 0048's Snapshot 1.8 /
   Dashboard 2.5 lossless delivery projection: a 1,490,756-byte first-load
   summary plus 32 stable-ID detail shards of 474,940–1,028,834 bytes. A real
   `/tmp` 2026-08-26 build formally reconstructed the unchanged full Candidate
@@ -464,18 +470,19 @@ one exact 2026-08-28 Identity fetch, followed by a separate Apply review. See
   event context, entry geometry, and future option expression remain separate.
   ADR 0056 now adds a fixed, unvalidated Dell/offline preview for the first
   three technical channels and an eight-record-per-channel bounded consumer.
-  A 2026-08-26 offline calculation produced reconciled full-population counts
+  The active 2026-08-28 offline calculation produced reconciled full-
+  population counts
   and deterministic batch/consumer fingerprints. Its independent Oracle
   recomputed score, status, and rank without importing the Production
   calculator. The immutable `/tmp` audit fingerprint is
-  `1c2036a6266647482de12d1ed7a1f9adf0f41311bc886979324ba3a0859c2877`;
+  `2f254623c9da96f36e57c9066bba406b688dee6c884cd3351fb8f5beaa517256`;
   both Universes have zero mismatches and input-permutation equivalence. It has
-  no publication, deployment, or Production effect. ADR 0057 adds a separate
+  no direct score/rank effect. ADR 0057 adds a separate
   lazy `candidate-strategy-channels.json` product and bilingual Strategy
   Channels workspace. A real temporary-root Snapshot 1.9 / Dashboard 2.6 build
-  formally reread the product: 195,211 bytes, logical fingerprint
-  `45bad6eb7fd014c0cc36b1244be7274dc98b92d23fa57d9ddcabe10b271ca3cd`,
-  with unchanged 496/532 Candidate counts and 8/8/8/0/0/0 displayed records
+  formally reread the product: 195,425 bytes, logical fingerprint
+  `d4d8ea9a1ae7ae896d0569996810e2cabbca1f02641ee9193583db0ca29dee4b`,
+  with 686/744 Candidate counts and 8/8/8/0/0/0 displayed records
   per Universe. ADR 0058 now adds Approval Plan 2.4, strict OCI bundle
   validation, and temporary-guest postflight validation. The authorized
   2026-08-28 release passed Plan 2.4, Apply, the 50-file OCI bundle checks,
@@ -485,7 +492,7 @@ one exact 2026-08-28 Identity fetch, followed by a separate Apply review. See
   strategy mode, and makes evidence-incomplete channels explicit; 94 frontend
   tests and the Snapshot-mode build pass. Human visual acceptance remains
   pending. The parameter-bound explanation and URL continuity changes are now
-  deployed in OCI release `2026-08-28T162136Z-2737f81`. ADR 0059 now records
+  deployed in OCI release `2026-08-29T080928Z-785ab49dfedd`. ADR 0059 now records
   the user's exact 2026-08-26 stale-review
   acknowledgement and adds a separate versioned authorization without
   changing historical 1.0 reads. The exact Apply and postflight are complete;
@@ -503,7 +510,7 @@ one exact 2026-08-28 Identity fetch, followed by a separate Apply review. See
   Secondary union 451). It therefore remains a broad provisional trend filter,
   not a validated independent setup. The diagnostic compares membership sets,
   never channel scores or outcomes. These ADR 0061 source/UI changes are now
-  deployed in OCI release `2026-08-28T162136Z-2737f81`.
+  deployed in OCI release `2026-08-29T080928Z-785ab49dfedd`.
 - ADR 0062 adds a repository-only, descriptive continuation fact contract and
   pure Dell calculator for path continuity, trend persistence, recent/prior
   structure, volatility, high-position, and volume context. It produces no
@@ -641,13 +648,13 @@ one exact 2026-08-28 Identity fetch, followed by a separate Apply review. See
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-28T162136Z-2737f81`, built from deployed source commit
-`2737f8171c3c47247568fc8de818b005a2355697` and bound to the active Snapshot
-and Market Intelligence publication. A later repository HEAD does not
+`2026-08-29T080928Z-785ab49dfedd`, built from deployed source commit
+`785ab49dfeddf3c3c6622316326b07b2947ea5d8` and bound to Market Intelligence
+`2026-08-29T080431Z-785ab49dfedd`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-28 deployment passed remote preflight, Nginx configuration checks,
+The 2026-08-29 deployment passed remote preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
 guest Session postflight against the exact Snapshot 1.9 payload and strategy
 resource. No credential or cookie content was printed or retained.
@@ -672,14 +679,15 @@ and cannot replace this separately authorized OCI check.
 
 ## Explicitly not authorized by this context
 
-The completed one-request fetch and one canonical Apply are evidence, not
+The completed 2026-08-28 acquisition, canonical Apply, publication, Snapshot,
+bundle, and deployment actions are evidence, not
 continuing authority. This handoff does not authorize further provider or SEC
 access, credential inspection, EOD or Identity acquisition, another canonical Apply,
 scheduler changes, Activation, publication,
 Snapshot creation, bundle generation, OCI deployment or rollback, guest
 access, further UI implementation, another quantitative feature, or guest/
 source licensing remediation. The
-completed 2026-08-26 publication and deployment described above are evidence,
+completed 2026-08-28 publication and deployment described above are evidence,
 not continuing authorization.
 
 ## Cross-device continuity

@@ -3,13 +3,11 @@
 ## Status
 
 Implemented. Active Production Snapshot
-`2026-08-26T053233Z-6c60502e4473` uses Snapshot 1.7 / Dashboard 2.4 and binds
-Market Intelligence `2026-08-26T050254Z-6c60502e4473`. It was published under
-ordinary lag-zero freshness. Repository source additionally implements the
-undeployed Snapshot 1.8 / Dashboard 2.5 split Candidate consumer. Snapshot
-1.9 / Dashboard 2.6 is also implemented in repository source as an undeployed
-additive lazy strategy-channel review consumer. Snapshot 1.3–1.6 releases
-remain historical/rollback contracts, not the active state.
+`2026-08-29T080928Z-785ab49dfedd` uses Snapshot 1.9 / Dashboard 2.6 and binds
+Market Intelligence `2026-08-29T080431Z-785ab49dfedd`. It was published under
+ordinary lag-zero freshness. It includes the split Candidate consumer and the
+additive lazy strategy-channel product. Earlier releases remain immutable,
+readable historical/rollback contracts, not the active state.
 
 ## Contracts
 
@@ -134,5 +132,6 @@ The browser requests this file only when Strategy Channels is selected. It
 renders no synthetic fallback and performs no scoring. Repository build/read
 and bilingual browser support are implemented. ADR 0058 additionally implements
 Approval Plan 2.4 and OCI bundle/postflight validation while preserving every
-older plan and contract. No 1.9 plan has been approved/applied and no bundle
-has been deployed. Snapshot 1.8 and older releases remain readable unchanged.
+older plan and contract. The active 2026-08-28 analysis release passed Plan
+2.4, Apply, bundle validation, OCI deployment, and guest postflight. Snapshot
+1.8 and older releases remain readable unchanged.

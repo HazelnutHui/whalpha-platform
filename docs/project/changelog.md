@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-08-29 — Complete and deploy the 2026-08-28 daily round
+
+- Completed and formally aligned canonical Identity and EOD through 2026-08-28:
+  9,981 instruments, 13,151 provider identity rows, 9,981 resolvers, and 9,942
+  canonical EOD rows.
+- Completed same-session Phase 1a/1b, Candidate, Entry Geometry, all 16 ETF
+  relationships, Market preview, and Strategy Channels. Every declared Oracle
+  returned zero mismatch; offline analytics made zero external requests and
+  zero Production writes.
+- Published fresh, lag-zero Market Intelligence
+  `2026-08-29T080431Z-785ab49dfedd` and Snapshot 1.9 / Dashboard 2.6
+  `2026-08-29T080928Z-785ab49dfedd`, with 686 / 744 bounded Candidate records,
+  32 detail shards, and the lazy strategy-channel product.
+- Built and deployed the 50-file OCI release
+  `2026-08-29T080928Z-785ab49dfedd` from source commit `785ab49dfed`. Remote
+  preflight, Nginx validation, atomic switch, protected routes, and the
+  equal-capability temporary guest Session postflight passed. Human browser
+  visual acceptance remains pending.
+- The final credential-free reader reports 444 files / 267,872,129 bytes,
+  inventory fingerprint
+  `15de69875692824412df3da29afc9dad12e470c326cec2936633dee5dcae1ea3`,
+  zero symlinks, and zero publication residue. No scheduler or standing access
+  was enabled. See the
+  [complete audit](../audits/daily-eod-complete-deployment-2026-08-29.md).
+
 ## 2026-08-29 — Review 2026-08-28 acquisition readiness
 
 - The exact-session planner selected only `prepare_identity_catchup` for the

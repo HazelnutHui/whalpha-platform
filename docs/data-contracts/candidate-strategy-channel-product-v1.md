@@ -3,8 +3,9 @@
 ## Status
 
 Implemented in repository source as an additive, language-neutral, read-only
-projection of the formally audited Candidate strategy-channel preview. It is
-not published, activated, bundled, or deployed.
+projection of the formally audited Candidate strategy-channel preview. The
+2026-08-28 analysis product is active in Snapshot 1.9 / Dashboard 2.6 and the
+matching OCI release.
 
 ## Contract
 
@@ -39,15 +40,15 @@ Universe-order, channel-order, count, rank, and decision-boundary validation.
 It never recalculates financial logic.
 
 Snapshot 1.8 and older releases remain readable and cannot silently acquire
-the strategy product. Repository build/read support does not grant publication,
-bundle, activation, or deployment authority.
+the strategy product. The completed publication does not grant standing
+publication, bundle, activation, or deployment authority.
 
 ## Validation evidence
 
-The 2026-08-28 temporary-root review built and formally reread Snapshot 1.9 /
-Dashboard 2.6 from the active 2026-08-26 Market Intelligence publication and
-strategy audit. The strategy file is 195,211 bytes, its logical fingerprint is
-`45bad6eb7fd014c0cc36b1244be7274dc98b92d23fa57d9ddcabe10b271ca3cd`,
+The 2026-08-29 publication built and formally reread Snapshot 1.9 / Dashboard
+2.6 from the active 2026-08-28 Market Intelligence publication and strategy
+audit. The strategy file is 195,425 bytes, its logical fingerprint is
+`d4d8ea9a1ae7ae896d0569996810e2cabbca1f02641ee9193583db0ca29dee4b`,
 and it binds audit fingerprint
-`1c2036a6266647482de12d1ed7a1f9adf0f41311bc886979324ba3a0859c2877`.
+`2f254623c9da96f36e57c9066bba406b688dee6c884cd3351fb8f5beaa517256`.
 This proves projection mechanics only, not historical performance.

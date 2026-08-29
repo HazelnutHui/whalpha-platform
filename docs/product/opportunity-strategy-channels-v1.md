@@ -120,7 +120,7 @@ refresh or browser history navigation. Strategy mode removes the unrelated
 risk-mode control, uses Advance + Watch as its headline population, and marks
 evidence-incomplete channels unavailable rather than presenting an unexplained
 zero. Snapshot 1.9 / Dashboard 2.6 and this first strategy product are deployed
-in the current stale-review release.
+in the current ordinary-fresh 2026-08-28 analysis release.
 
 ADR 0061 now binds the UI to the exact parameter fingerprint and exposes the
 formula, underlying component definitions, geometry mapping, status gates,
@@ -132,7 +132,7 @@ the current trend-continuation qualifying set contains every qualifying
 breakout and pullback member in both Universes. The interface therefore labels
 channel distinctness as unvalidated and treats continuation as a broad trend
 filter pending continuation-specific facts and chronological validation. These
-ADR 0061 source changes are not yet deployed. See
+ADR 0061 source changes are deployed in the current OCI release. See
 [Candidate Strategy Channel Preview V1](../data-contracts/candidate-strategy-channel-preview-v1.md),
 the [Candidate Strategy Channel Product V1](../data-contracts/candidate-strategy-channel-product-v1.md),
 the [2026-08-28 offline review](../audits/candidate-strategy-channel-preview-2026-08-28.md),
