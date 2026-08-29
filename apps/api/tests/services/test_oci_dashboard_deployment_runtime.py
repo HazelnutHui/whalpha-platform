@@ -45,7 +45,7 @@ def test_owner_pinned_config_rereads_and_runtime_requires_clean_main(tmp_path):
     root = tmp_path / "config"
     root.mkdir(mode=0o700)
     path = root / "oci-deployment.json"
-    raw = runtime._canonical_bytes(config.model_dump(mode="json"))
+    raw = runtime.canonical_deployment_runtime_bytes(config)
     path.write_bytes(raw)
     path.chmod(0o400)
     reread = runtime.read_deployment_runtime(

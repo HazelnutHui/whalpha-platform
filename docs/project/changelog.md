@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-29 — Rehearse composed OCI custody and review runtime candidate
+
+- Added a true coordinator-to-capability-to-custody-to-journal integration
+  rehearsal using temporary local custody, exact structured pre/post states,
+  and a fake transport. It proves inspect/reserve/Apply/inspect ordering and the
+  exact `oci_deployment_started` / `oci_deployment_succeeded` hash-chain events.
+- Added a network- and write-prohibited runtime-candidate review service and
+  CLI. It discovers the clean Dell `main` revision, validates the two reviewed
+  scripts, emits the exact future config-file SHA, and defaults the candidate to
+  `capability_enabled=false`.
+- `--review-enabled-candidate` changes only the in-memory review candidate. The
+  report still records zero installation, credentials, external requests,
+  filesystem or Production writes, deployment/rollback authority, and
+  scheduler enablement.
+- No external config was installed and no OCI/public-site connection, upload,
+  switch, reload, rollback, credential access, `/data` write, Production
+  mutation, or scheduler action ran.
+- All 1,653 backend tests pass with only the two existing deprecation warnings;
+  no frontend source changed.
+
 ## 2026-08-29 — Custody one exact OCI Dashboard deployment
 
 - Accepted ADR 0073 and added a default-off one-shot OCI deployment capability

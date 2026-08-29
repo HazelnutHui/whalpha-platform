@@ -108,6 +108,20 @@ external owner-only deployment config and its file SHA must be explicitly
 installed and supplied; repository presence alone grants no deployment
 authority.
 
+Review a candidate without writing or installing it:
+
+```bash
+scripts/admin/review-oci-dashboard-deployment-runtime.sh \
+  --config-id <review-id> \
+  --run-root <owner-controlled-daily-run-root>
+```
+
+The default candidate has `capability_enabled=false`. Adding
+`--review-enabled-candidate` changes only the emitted in-memory candidate; it
+still performs no installation, authorization, network request, credential
+access, or write. Its candidate-file SHA is valid only for the exact clean
+source revision in that report.
+
 ## Apply flow
 
 An authorized apply must:

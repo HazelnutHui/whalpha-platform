@@ -304,6 +304,7 @@ def test_output_symlink_and_traversal_rejected(tmp_path):
 def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__file__).resolve().parents[4]):
     deploy_script = repo_root / "scripts" / "admin" / "deploy-private-dashboard-oci.sh"
     inspect_script = repo_root / "scripts" / "admin" / "inspect-private-dashboard-oci.sh"
+    review_script = repo_root / "scripts" / "admin" / "review-oci-dashboard-deployment-runtime.sh"
     build_script = repo_root / "scripts" / "admin" / "build-oci-dashboard-bundle.sh"
     nginx_template = repo_root / "deploy" / "oci" / "nginx" / "whalpha-private-dashboard.conf.template"
     assert "dry-run" in deploy_script.read_text()
@@ -354,6 +355,14 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "DEPLOY_FAILED" in inspect_text
     subprocess.run(["bash", "-n", str(deploy_script)], check=True)
     subprocess.run(["bash", "-n", str(inspect_script)], check=True)
+    subprocess.run(["bash", "-n", str(review_script)], check=True)
+    review_help = subprocess.run(
+        [str(review_script), "--help"],
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    assert "--review-enabled-candidate" in review_help.stdout
 
 
 def test_password_rotation_script_safety(tmp_path: Path, repo_root: Path = Path(__file__).resolve().parents[4]):

@@ -113,6 +113,14 @@ def build_deployment_runtime_candidate(
     )
 
 
+def canonical_deployment_runtime_bytes(
+    config: OciDashboardDeploymentRuntimeV1,
+) -> bytes:
+    """Return the exact bytes an external owner-controlled file must contain."""
+
+    return _canonical_bytes(config.model_dump(mode="json"))
+
+
 def read_deployment_runtime(
     *,
     config_path: Path,
@@ -156,7 +164,7 @@ def read_deployment_runtime(
         config = OciDashboardDeploymentRuntimeV1.model_validate_json(raw)
     except ValueError as exc:
         raise OciDashboardDeploymentRuntimeError("deployment config is invalid") from exc
-    canonical = _canonical_bytes(config.model_dump(mode="json"))
+    canonical = canonical_deployment_runtime_bytes(config)
     if raw != canonical or Path(config.repository_root) != repository_root:
         raise OciDashboardDeploymentRuntimeError("deployment config identity mismatch")
     return config

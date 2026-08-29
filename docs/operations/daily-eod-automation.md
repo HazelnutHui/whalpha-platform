@@ -727,6 +727,10 @@ inspection, durable reservation, exactly one Apply command, and an independent
 read-only post-state inspection. An interrupted deployment recovery performs
 only the inspection and reports one external read, zero writes, and no replay.
 The capability is absent when the external config is missing or disabled.
+The separate `review-oci-dashboard-deployment-runtime.sh` command can render a
+SHA-bound config candidate without installing it. Its default is disabled; an
+explicit enabled-candidate review still grants no deployment authority and
+performs zero writes or network requests.
 
 The executor acquires one global non-blocking lock, re-plans under the lock,
 records an immutable start event, invokes exactly one existing offline command,
@@ -781,9 +785,10 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Run the complete deployment path with fake transport and temporary custody,
-   then separately review an exact external deployment-config candidate before
-   any real OCI invocation. The repository boundary is complete but uninstalled.
+1. The complete deployment path has passed a fake-transport, temporary-custody
+   rehearsal. After any final source commit, render and review a fresh exact
+   external deployment-config candidate; do not install it or invoke real OCI
+   without separate user authorization.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.

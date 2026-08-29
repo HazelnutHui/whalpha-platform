@@ -39,6 +39,14 @@ The transition requires:
   access, and absence of staging, failed-release, or unexpected-listener
   residue.
 
+Before any external config is installed, a separate write-free review command
+may render either the default-disabled candidate or, only with an explicit
+review flag, an enabled candidate. It discovers and verifies the current clean
+Dell `main` revision, emits the exact future-file SHA-256, and always reports
+zero installation, credential access, network requests, writes, deployment
+authority, rollback authority, and scheduler enablement. Rendering an enabled
+candidate is not installation or authorization.
+
 The existing deployer gains an explicit bundle path and expected-current-
 release guard. It repeats that guard in the remote mutation session immediately
 before creating the new release. The deployment capability remains absent by
@@ -69,6 +77,8 @@ unauthorized.
   zero remote writes and `action_replayed=false`.
 - A new source commit invalidates a previously prepared external deployment
   config and requires explicit review and repinning.
+- The full coordinator-to-journal path is rehearsed with a fake transport and
+  exact pre/post state objects before any real external configuration exists.
 
 ## Alternatives Considered
 

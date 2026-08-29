@@ -242,11 +242,12 @@ complete in repository source. ADR 0072 completes exact active-Snapshot bundle
 construction and formal local review custody. ADR 0073 completes the default-
 off one-shot OCI deployment boundary with exact remote pre/post inspection and
 no-replay recovery. These additions remain uninstalled and have not changed
-Production. The next control-plane target is a fully offline fake-transport
-rehearsal of the composed path, followed by a separately reviewed external
-deployment-config candidate and one controlled real invocation only if the
-user explicitly authorizes it. Scheduler activation remains subsequent; do
-not schedule the chain before that controlled rehearsal and operational review.
+Production. The full offline fake-transport rehearsal and write-free config-
+candidate review entry are now complete. After the final clean commit, render a
+fresh candidate bound to that exact revision. Installing an enabled candidate
+and one controlled real invocation remain separate user authorizations.
+Scheduler activation remains subsequent; do not schedule the chain before a
+controlled real deployment and operational review.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

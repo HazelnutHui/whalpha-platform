@@ -198,6 +198,17 @@ also rejects changed current release, staging/failed residue, and a preexisting
 target stage immediately before mutation. This code is uninstalled and
 uninvoked; no OCI connection, Production write, switch, reload, rollback,
 credential access, or scheduler change occurred.
+The composed coordinator/capability/custody/journal path now also has a complete
+fake-transport rehearsal with exact healthy pre-state, one simulated Apply,
+independent exact post-state, and the expected start/success hash-chain events.
+A separate review CLI renders an exact external deployment runtime candidate
+and future-file SHA entirely in memory. It defaults disabled; even its explicit
+enabled-candidate mode records zero installation, authorization, credentials,
+networking, or writes. Because every source commit invalidates the candidate's
+revision pin, the final candidate must be rendered after the final clean commit
+and must not be persisted or activated without separate review.
+All 1,653 backend tests pass for this final repository implementation; no
+frontend source changed.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

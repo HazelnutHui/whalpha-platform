@@ -153,6 +153,15 @@ and uninvoked: no OCI connection, upload, switch, reload, rollback, `/data`
 write, credential access, Production change, or scheduler action occurred.
 All 1,647 backend tests pass; no frontend source changed in this boundary.
 
+The repository now includes a full coordinator-to-journal rehearsal using
+only temporary custody and a fake OCI transport, plus a network- and write-free
+runtime-candidate review command. The default candidate is disabled; an
+explicit enabled-candidate review still installs nothing and grants no
+deployment authority. No external candidate has been installed and no real
+remote inspection or Apply has run. All 1,653 backend tests pass; the exact
+post-commit candidate review belongs to the completing report because another
+documentation commit would invalidate its revision pin.
+
 ### Historical 2026-08-27 recovery and pipeline evidence
 
 The following details are retained as historical recovery and performance
