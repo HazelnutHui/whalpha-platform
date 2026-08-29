@@ -7,7 +7,7 @@ import json
 from collections import Counter, defaultdict
 from decimal import ROUND_FLOOR, Decimal
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from tip_api.contracts.analytics.v1 import (
     CandidateOpportunityStage,
@@ -46,7 +46,7 @@ from tip_api.services.candidate_entry_geometry_audit import (
     read_candidate_entry_geometry_audit,
 )
 from tip_api.services.opportunity_candidate_audit import (
-    read_opportunity_candidate_publication_evidence,
+    read_opportunity_candidate_planning_evidence,
 )
 
 
@@ -60,7 +60,7 @@ def build_opportunity_candidate_publication(
 ) -> OpportunityCandidatePublicationV1 | OpportunityCandidatePublicationV1_1:
     """Reread one immutable audit and project only bounded, current-session product facts."""
 
-    audit_evidence = read_opportunity_candidate_publication_evidence(audit_path)
+    audit_evidence = read_opportunity_candidate_planning_evidence(audit_path)
     manifest = audit_evidence.manifest
     as_of_session = manifest["as_of_session"]
     batches = tuple(
@@ -137,7 +137,10 @@ def build_opportunity_candidate_publication(
         )
         for universe_id in universe_order
     )
-    flags = manifest["equivalence_flags"]
+    flags, validation_warnings = _publication_equivalence_evidence(
+        manifest=manifest,
+        validation_ledger=audit_evidence.validation_ledger,
+    )
     source_fields = dict(
         candidate_audit_manifest_sha256=audit_evidence.manifest_sha256,
         candidate_audit_logical_fingerprint=manifest["logical_content_fingerprint"],
@@ -214,6 +217,7 @@ def build_opportunity_candidate_publication(
             "research_candidate_not_trade_recommendation",
             "underlying_stock_result_not_option_return",
             "price_volume_proxies_not_fund_flow",
+            *validation_warnings,
             *(("entry_location_separate_from_leadership_rank",) if has_entry else ()),
             *(("entry_lane_not_trade_recommendation",) if has_entry else ()),
             *(("reference_support_not_stop_price",) if has_entry else ()),
@@ -231,6 +235,68 @@ def build_opportunity_candidate_publication(
     return publication_type(
         **body,
         logical_fingerprint=_fingerprint(body),
+    )
+
+
+def _publication_equivalence_evidence(
+    *,
+    manifest: Mapping[str, Any],
+    validation_ledger: Mapping[str, Any] | None,
+) -> tuple[dict[str, bool], tuple[str, ...]]:
+    """Project mode-appropriate Candidate gates into the stable V1 source shape.
+
+    The V1 consumer predates verified-prior incremental audits and therefore
+    retains legacy field names.  For schema 1.1, the completed audit plus its
+    formally validated lineage ledger prove a preserved prior prefix, a
+    deterministic incremental restart, and an independent current-session
+    Oracle.  This is deliberately disclosed as an incremental chain; it is not
+    represented to users as a same-run cold replay.
+    """
+
+    flags = manifest.get("equivalence_flags")
+    if not isinstance(flags, Mapping):
+        raise OpportunityCandidatePublicationError(
+            "Candidate publication equivalence evidence is malformed"
+        )
+    if manifest.get("schema_version") == "1.0":
+        required = (
+            "append_full_replay_match",
+            "restart_replay_match",
+            "future_prefix_stable",
+        )
+        if any(flags.get(name) is not True for name in required):
+            raise OpportunityCandidatePublicationError(
+                "Candidate cold publication equivalence gates did not pass"
+            )
+        return ({name: True for name in required}, ())
+    if (
+        manifest.get("schema_version") != "1.1"
+        or manifest.get("execution_mode") != "verified_prior_incremental"
+        or not isinstance(validation_ledger, Mapping)
+        or validation_ledger.get("validation_scope")
+        != "verified_prior_plus_current_session_oracle"
+        or any(
+            flags.get(name) is not True
+            for name in (
+                "prior_prefix_preserved",
+                "incremental_restart_match",
+                "future_prefix_stable",
+            )
+        )
+    ):
+        raise OpportunityCandidatePublicationError(
+            "Candidate incremental publication equivalence gates did not pass"
+        )
+    return (
+        {
+            "append_full_replay_match": True,
+            "restart_replay_match": True,
+            "future_prefix_stable": True,
+        },
+        (
+            "verified_prior_incremental_validation",
+            "current_session_independent_oracle_without_same_run_cold_replay",
+        ),
     )
 
 

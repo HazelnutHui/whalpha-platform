@@ -24,6 +24,8 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import (
     CANDIDATE_STATE_PARAMETER_SET_ID,
 )
 from tip_api.services.opportunity_candidate_publication import (
+    OpportunityCandidatePublicationError,
+    _publication_equivalence_evidence,
     build_opportunity_candidate_publication,
 )
 from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
@@ -58,6 +60,7 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
             single = batch.model_copy(update={"candidates": (candidate,)})
             states.extend(fixture._state_case(panel, single).actual_records)
     manifest = {
+        "schema_version": "1.0",
         "as_of_session": panel.as_of_session.isoformat(),
         "universe_ids": [fixture.PRIMARY, fixture.SECONDARY],
         "logical_content_fingerprint": "1" * 64,
@@ -84,10 +87,11 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
         "candidate_state_parameter_fingerprint": CANDIDATE_STATE_PARAMETER_FINGERPRINT,
     }
     monkeypatch.setattr(
-        "tip_api.services.opportunity_candidate_publication.read_opportunity_candidate_publication_evidence",
+        "tip_api.services.opportunity_candidate_publication.read_opportunity_candidate_planning_evidence",
         lambda _: SimpleNamespace(
             manifest=manifest,
             manifest_sha256=__import__("hashlib").sha256(b"{}\n").hexdigest(),
+            validation_ledger=None,
         ),
     )
     (tmp_path / "candidate-audit-manifest.json").write_text("{}\n")
@@ -203,7 +207,6 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
     } == {
         f"opportunity-candidate-details-{item.shard_id}.json" for item in shards
     }
-
     strategy_batches = tuple(
         calculate_candidate_strategy_channels(
             candidate_batch=batch,
@@ -302,3 +305,50 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
                 path.chmod(0o600)
                 path.unlink()
             strategy_output.rmdir()
+
+
+def test_incremental_publication_evidence_is_explicit_about_validation_mode() -> None:
+    projected, warnings = _publication_equivalence_evidence(
+        manifest={
+            "schema_version": "1.1",
+            "execution_mode": "verified_prior_incremental",
+            "equivalence_flags": {
+                "prior_prefix_preserved": True,
+                "incremental_restart_match": True,
+                "future_prefix_stable": True,
+                "input_permutation_match": True,
+            },
+        },
+        validation_ledger={
+            "validation_scope": "verified_prior_plus_current_session_oracle"
+        },
+    )
+
+    assert projected == {
+        "append_full_replay_match": True,
+        "restart_replay_match": True,
+        "future_prefix_stable": True,
+    }
+    assert warnings == (
+        "verified_prior_incremental_validation",
+        "current_session_independent_oracle_without_same_run_cold_replay",
+    )
+
+    with pytest.raises(
+        OpportunityCandidatePublicationError,
+        match="incremental publication equivalence gates did not pass",
+    ):
+        _publication_equivalence_evidence(
+            manifest={
+                "schema_version": "1.1",
+                "execution_mode": "verified_prior_incremental",
+                "equivalence_flags": {
+                    "prior_prefix_preserved": True,
+                    "incremental_restart_match": False,
+                    "future_prefix_stable": True,
+                },
+            },
+            validation_ledger={
+                "validation_scope": "verified_prior_plus_current_session_oracle"
+            },
+        )

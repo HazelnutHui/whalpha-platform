@@ -23,6 +23,16 @@ equivalence gates; EOD, Identity, history, Activation, current batch, and six
 current risk-result fingerprints. Any false Oracle/equivalence gate or changed
 typed audit record fails before a consumer payload exists.
 
+ADR 0066 makes those gates validation-mode aware without changing the V1
+shape. A schema 1.0 cold source uses its direct append/full-replay and restart
+gates. A schema 1.1 daily source must additionally bind the canonical
+verified-prior lineage ledger, all-true reuse and incremental gates, and the
+zero-mismatch current-session independent Oracle. Its legacy compatibility
+booleans represent that complete chain proof, not a same-run cold replay. The
+payload therefore adds explicit warning codes for verified-prior incremental
+validation and the absence of a same-run cold replay. Periodic and change-
+triggered cold validation remain separate mandatory controls.
+
 The current session, Primary-first Universe order, memberships, EOD, Identity,
 and Activation lineage must match the enclosing Market Intelligence
 publication. Stable `instrument_id` is the join key; ticker remains display

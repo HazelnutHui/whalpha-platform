@@ -113,6 +113,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Dashboard Universe Activation](operations/dashboard-universe-activation.md): Dry-run, one-apply, verification, and rollback boundary.
 - [Market Intelligence Publication V1](data-contracts/market-intelligence-publication-v1.md): Immutable language-neutral analytics and reader contract.
 - [Opportunity Candidate Publication V1](data-contracts/opportunity-candidate-publication-v1.md): Bounded, language-neutral Candidate consumer and lineage contract.
+- [ADR 0066: Incremental Candidate publication evidence](decisions/0066-project-incremental-candidate-evidence-into-publication.md): Projects the formally bound verified-prior/current-Oracle chain into the stable Candidate source shape with explicit validation-mode warnings.
 - [Opportunity Strategy Channels V1](product/opportunity-strategy-channels-v1.md): Independent Candidate archetypes, evidence boundaries, within-channel ranking, and temporal-validation requirements.
 - [Candidate Strategy Channel Preview V1](data-contracts/candidate-strategy-channel-preview-v1.md): Fixed offline formulas, explicit unavailable channels, explanations, bounded consumer, independent Oracle, and immutable temporary-root audit.
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md): Sealed point-in-time signals, separately matured stock outcomes, and anti-leakage evaluation policy.
