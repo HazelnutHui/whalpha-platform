@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-29 — Render a non-installed read-only systemd wake
+
+- Accepted ADR 0078 and added an exact Dell/hui user-systemd candidate whose
+  oneshot service can execute only the credential-free ADR 0076 planner.
+- Pinned clean `main`, exact Git revision, canonical data root, planner
+  entrypoint, unit names/content hashes, and New York 13:30/16:30 weekday
+  calendars. The planner CLI now supports the actual UTC system clock and an
+  exact Dell runtime-verification mode. The service clears inherited Python
+  overrides and pins/rechecks the project launcher and resolved interpreter.
+- Default and explicitly enabled candidate review perform no installation,
+  activation, coordinator call, credential access, networking, filesystem or
+  Production write, publication, or deployment. Dell systemd 255 and the user
+  manager are available, but `hui` linger remains disabled and was not changed.
+  All 1,701 backend tests and 44 focused scheduler/systemd tests pass, including
+  parsing both rendered units with Dell's systemd 255 parser.
+
 ## 2026-08-29 — Compose one default-off scheduled wake
 
 - Accepted ADR 0077 and added an exact-plan bridge that can call one supplied

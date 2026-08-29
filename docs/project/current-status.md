@@ -104,7 +104,7 @@ review at 2026-08-29T14:30:00Z completed in about 2.8 seconds, reported current
 EOD through 2026-08-28, next target 2026-08-31, and next check 20:30 UTC.
 Default and explicitly enabled-candidate reviews both invoked no coordinator,
 read no credential, used no network, and wrote no file or Production state.
-All 1,690 backend tests pass. No service or timer is installed; repeated
+All 1,701 backend tests pass. No service or timer is installed; repeated
 distinct-wake handling is recorded in ADR 0077 below.
 
 ADR 0077 adds the default-off bridge from one exact enabled-candidate wake plan
@@ -116,8 +116,19 @@ synthetic rehearsal
 covered current, oldest-missing, retry-wait, unresolved-interruption, and
 alert-required wakes. It made four fake coordinator calls across five separate
 scenarios, never more than one per wake, and zero real credential, network,
-filesystem, or Production activity. No systemd candidate is yet created or
-installed.
+filesystem, or Production activity.
+
+ADR 0078 now adds the exact non-installed user-systemd candidate. It binds
+Dell/hui, clean `main`, an exact Git revision, canonical `/data`, the read-only
+planner entrypoint, two New York calendar expressions, and future service/timer
+SHA-256 identities. It fixes and rechecks the project Python interpreter rather
+than inheriting runtime overrides. The proposed service independently rechecks
+host, user, branch, clean revision, and uses the system UTC clock; it cannot
+invoke the coordinator or load capabilities. Dell inspection found systemd 255
+and a running user manager, but `hui` has `linger=no`, so an enabled candidate
+is not ready for unattended logout/reboot operation. No unit file, daemon
+reload, timer enable/start, linger change, credential/network access, or
+Production write occurred.
 
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact

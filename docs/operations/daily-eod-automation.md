@@ -663,6 +663,39 @@ four total fake coordinator calls, no more than one call per wake, no automatic
 retry/recovery or alert delivery, and zero credential, network, filesystem, or
 Production activity.
 
+## Non-installed read-only systemd candidate
+
+ADR 0078 renders exact future user-unit bytes without writing or installing
+them:
+
+```bash
+scripts/admin/review-daily-eod-scheduler-systemd.sh \
+  --config-id dell-read-only-wake-v1
+```
+
+The default candidate is disabled. Adding `--review-enabled-candidate` changes
+only the review artifact; it does not write the user-unit directory, reload
+systemd, enable/start a timer, or call the coordinator. The review requires
+Dell/hui, clean `main`, an executable exact planner entrypoint, systemd 255 or
+newer, a running user manager, and systemd-accepted calendar expressions. It
+records exact candidate, service, and timer fingerprints.
+
+The proposed service calls the planner without `--checked-at`, causing it to
+use the current timezone-aware UTC clock. It pins that invocation to the exact
+Git revision and never passes `--review-enabled-candidate`; therefore the unit
+also clears inherited Python overrides, pins the project launcher and resolved
+interpreter, and can only report the disabled ADR 0076 plan. Proposed New York
+wake times are 13:30 and 16:30 on weekdays, covering the 30-minute stabilization
+window after early and normal XNYS closes while the exchange calendar remains
+authoritative.
+
+Dell currently reports a running user manager but `linger=no`. An enabled
+candidate must therefore remain `review_ready_prerequisite_missing`.
+`Persistent=true` is not sufficient across logout or reboot until the user
+chooses and separately authorizes either linger or a system-level service.
+Do not install unit files, enable linger, reload systemd, or enable/start the
+timer from this review.
+
 ## Offline entry step
 
 The worktree-safe administrator entry is:

@@ -100,3 +100,4 @@ Each ADR should include:
 - [0075: Project a Bounded ETF Relationship State Timeline](0075-project-bounded-etf-relationship-state-timeline.md)
 - [0076: Plan a Default-Off Daily Scheduler Wake](0076-plan-default-off-daily-scheduler-wake.md)
 - [0077: Compose One Default-Off Scheduled Wake](0077-compose-one-default-off-scheduled-wake.md)
+- [0078: Render a Non-Installed Read-Only systemd Wake](0078-render-non-installed-read-only-systemd-wake.md)

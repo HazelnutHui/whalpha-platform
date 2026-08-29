@@ -240,7 +240,7 @@ the existing stabilization policy. On current Dell state at
 `up_to_date`, latest 2026-08-28, next target 2026-08-31, and next check
 2026-08-31T20:30:00Z. Both disabled and explicitly enabled-candidate reviews
 recorded zero coordinator invocation, credential access, networking, file
-write, or Production write. All 1,690 backend tests pass. No scheduler service
+write, or Production write. All 1,701 backend tests pass. No scheduler service
 or timer is installed.
 ADR 0077 subsequently adds the default-off one-transition wake bridge. It
 recomputes the complete ADR 0076 plan fingerprint before a call, accepts only
@@ -251,6 +251,16 @@ fingerprint `4b533e1ab3b6bff01767e0a574a7f7dc3c7c3e0d49512f4072a2bee1a817b6d8`
 records four total fake coordinator calls, maximum one per wake, no automatic
 retry/recovery or alert delivery, and zero credential, network, filesystem, or
 Production activity. It installs no service or timer.
+ADR 0078 subsequently adds an exact, non-installed Dell/hui user-systemd
+candidate for the read-only planner only. It pins clean `main`, Git revision,
+canonical data root, entrypoint, New York 13:30/16:30 weekday calendars, and
+both future unit hashes. It clears inherited Python overrides and pins/rechecks
+the project interpreter. Runtime must reprove the exact Dell source and current
+UTC clock before planning. Dell inspection found systemd 255 and a running
+user manager, but `linger=no`; enabled-candidate review therefore remains a
+prerequisite-missing state. No unit, daemon reload, activation, coordinator
+call, credential, network request, filesystem write, or Production write was
+performed.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

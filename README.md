@@ -74,7 +74,11 @@ scheduler-wake plan that selects only the oldest missing XNYS session and never
 invokes the coordinator during review. No timer or unattended chain is
 installed. ADR 0077 adds the still-default-off bridge for at most one explicit
 coordinator call and prohibits in-wake retry, recovery, alert delivery,
-publication, or deployment.
+publication, or deployment. ADR 0078 adds an exact Dell/hui user-systemd
+candidate that remains uninstalled and can run only the read-only wake planner
+at 13:30 and 16:30 New York time. It pins clean `main` source and future unit
+hashes; current `linger=no` remains an explicit prerequisite, and no real
+coordinator or scheduler transition is connected.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded
