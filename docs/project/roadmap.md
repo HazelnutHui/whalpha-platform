@@ -2,13 +2,14 @@
 
 ## Current priorities
 
-- Operational: use the current default-off daily chain for one controlled
-  end-to-end run on the next eligible XNYS session. Do not rebuild the already
-  active 2026-08-28 Snapshot under a later source commit, and do not install
-  deployment controls or access OCI without separate exact authorization.
-- Reliability: only after that controlled real deployment and operational
-  review, prepare a default-off scheduler candidate and rehearse missed-session,
-  retry, interruption, and alert behavior. SMTP may remain unset.
+- Operational: preserve the complete controlled 2026-08-28 deployment as the
+  active baseline; later source revisions do not inherit publication or OCI
+  authorization.
+- Reliability: the first default-off scheduler-wake plan is complete and
+  chooses the oldest missing XNYS session in about 2.8 seconds on current Dell
+  state. Next rehearse distinct missed-session, retry, interruption, and alert
+  wakes before designing or installing a systemd unit/timer. SMTP may remain
+  unset.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -261,13 +262,17 @@ The Snapshot Plan and default-off one-shot Snapshot Apply custody are now also
 complete in repository source. ADR 0072 completes exact active-Snapshot bundle
 construction and formal local review custody. ADR 0073 completes the default-
 off one-shot OCI deployment boundary with exact remote pre/post inspection and
-no-replay recovery. These additions remain uninstalled and have not changed
-Production. The full offline fake-transport rehearsal and write-free config-
-candidate review entry are now complete. After the final clean commit, render a
-fresh candidate bound to that exact revision. Installing an enabled candidate
-and one controlled real invocation remain separate user authorizations.
-Scheduler activation remains subsequent; do not schedule the chain before a
-controlled real deployment and operational review.
+no-replay recovery. A separately authorized real invocation and independent
+postflight deployed release `2026-08-29T133847Z-1490b37f25b3`; this consumed
+that exact authorization.
+
+ADR 0076 now adds the first credential-free scheduler-wake plan. Current Dell
+state was planned in about 2.8 seconds as `up_to_date`, with next target
+2026-08-31 and next check 20:30 UTC. Default and explicitly enabled-candidate
+reviews both made zero coordinator calls and zero writes. Next compose repeated
+distinct-wake rehearsals through the existing coordinator for missed-session,
+retry-wait, interruption, and alert-required states. Do not install or enable
+a real timer yet.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

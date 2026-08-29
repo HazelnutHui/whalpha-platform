@@ -67,8 +67,12 @@ ADR 0070 adds Snapshot approval-plan preparation only after the exact planned
 MI publication is active. ADR 0071 adds a separate, default-off one-shot
 Snapshot Apply port with exact plan/state bindings, active-state proof, and
 no-write interruption recovery. ADR 0072 adds Dell-local bundle construction,
-formal whole-bundle reread, and a deployment-review stop. OCI deployment and
-scheduler activation remain outside that executor and separately unauthorized.
+formal whole-bundle reread, and a deployment-review stop. ADR 0073 supplies the
+default-off one-shot OCI deployment boundary, and the controlled 2026-08-28
+round has now exercised the complete path. ADR 0076 adds a credential-free
+scheduler-wake plan that selects only the oldest missing XNYS session and never
+invokes the coordinator during review. No timer or unattended chain is
+installed.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

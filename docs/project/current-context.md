@@ -232,6 +232,16 @@ accepts missing additive fields while newly rendered responses still include
 them. The failed preflight stopped with only a `/tmp` candidate and made no
 `/data`, OCI, or Production change. The correction was then applied before the
 successful Snapshot and OCI deployment.
+ADR 0076 subsequently adds a credential-free, read-only scheduler-wake plan.
+It binds a lightweight completion-manifest index to a full formal reread of the
+latest EOD partition, selects only the oldest missing XNYS session, and reuses
+the existing stabilization policy. On current Dell state at
+2026-08-29T14:30:00Z it completed in about 2.8 seconds and returned
+`up_to_date`, latest 2026-08-28, next target 2026-08-31, and next check
+2026-08-31T20:30:00Z. Both disabled and explicitly enabled-candidate reviews
+recorded zero coordinator invocation, credential access, networking, file
+write, or Production write. All 1,671 backend tests pass. No scheduler service
+or timer is installed.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

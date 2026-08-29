@@ -17,6 +17,7 @@ def test_lists_completed_sessions_and_reads_joined_bars(tmp_path: Path) -> None:
     publish_completed_eod_dataset(tmp_path)
     repository = CanonicalEodReadRepository(tmp_path)
 
+    assert repository.list_session_index() == (SESSION_DATE,)
     sessions = repository.list_sessions()
     assert [item.session_date for item in sessions] == [SESSION_DATE]
     assert sessions[0].record_count == 3
@@ -45,9 +46,20 @@ def test_incomplete_partition_is_ignored_in_listing(tmp_path: Path) -> None:
     assert CanonicalEodReadRepository(tmp_path).list_sessions() == ()
 
 
+def test_incomplete_partition_is_rejected_by_scheduler_completion_index(
+    tmp_path: Path,
+) -> None:
+    base = tmp_path / "market-data" / "eod-price-bars" / "schema_version=1" / f"session_date={SESSION_DATE.isoformat()}"
+    base.mkdir(parents=True)
+    with pytest.raises(EodDatasetUnavailableError, match="completion index is incomplete"):
+        CanonicalEodReadRepository(tmp_path).list_session_index()
+
+
 def test_corrupted_manifest_is_rejected(tmp_path: Path) -> None:
     publish_completed_eod_dataset(tmp_path)
     eod_manifest_path(tmp_path).write_text("[]\n", encoding="utf-8")
+    with pytest.raises(EodDatasetUnavailableError):
+        CanonicalEodReadRepository(tmp_path).list_session_index()
     with pytest.raises(EodDatasetUnavailableError):
         CanonicalEodReadRepository(tmp_path).read_bars(SESSION_DATE)
 

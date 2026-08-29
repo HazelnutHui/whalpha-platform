@@ -98,3 +98,4 @@ Each ADR should include:
 - [0073: Custody One OCI Dashboard Deployment](0073-custody-one-oci-dashboard-deployment.md)
 - [0074: Project Descriptive ETF Relationship Change](0074-project-descriptive-etf-relationship-change.md)
 - [0075: Project a Bounded ETF Relationship State Timeline](0075-project-bounded-etf-relationship-state-timeline.md)
+- [0076: Plan a Default-Off Daily Scheduler Wake](0076-plan-default-off-daily-scheduler-wake.md)

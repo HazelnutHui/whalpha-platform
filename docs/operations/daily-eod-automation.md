@@ -41,6 +41,12 @@ authorization boundaries. Snapshot planning and bundle construction are
 offline and review-only. OCI deployment is a separate default-off coordinator
 capability; scheduler activation remains outside the coordinator.
 
+ADR 0076 now adds a read-only scheduler-wake plan before any host timer. It
+uses a small completion-manifest index plus a full formal reread of the latest
+EOD partition, selects only the oldest missing XNYS session, and returns the
+next close-plus-stabilization review time. The default candidate is disabled;
+an enabled-candidate review still performs no coordinator invocation or write.
+
 ## Session and provider readiness
 
 Market close is not provider readiness. Massive documents Stocks Basic as EOD
@@ -564,10 +570,11 @@ config/repository/data/run/alert root. The preflight intentionally does not
 test credential existence or inspect their metadata. Do not pass credential
 paths or values on the command line.
 
-No real external artifacts currently exist, so this command has not been run
-against an installed configuration. Its tests use only owner-only temporary
-config files, absent synthetic credential paths, a fake verified runtime, and
-the active socket guard.
+At ADR 0042's initial implementation boundary this command had not been run
+against an installed configuration. A later data-only preflight was used for
+the controlled 2026-08-27 round as recorded below. Exact-revision external
+controls do not remain valid after later source commits and must be reread and
+separately repinned before any future capability use.
 
 ## Read-only plan
 
@@ -607,6 +614,29 @@ The JSON result has one of four statuses:
 
 `blocked` exits 1. The other planning states exit 0 because they are valid
 states, not completed actions.
+
+## Default-off scheduler wake review
+
+Review the next scheduler wake without installing a service or timer:
+
+```bash
+scripts/admin/plan-daily-eod-scheduler.sh \
+  --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --data-root /data/trading-intelligence-platform
+```
+
+The default reports `scheduler_candidate_enabled=false`. The explicit
+`--review-enabled-candidate` flag changes only the in-memory candidate and may
+propose `invoke_one_transition` when a target is ready. Both forms always
+report `scheduler_installed=false`, coordinator invocation count zero, and zero
+credential access, network requests, filesystem writes, and Production writes.
+
+The wake planner validates the small completion manifest for every canonical
+session, fully rereads only the latest EOD Parquet/Identity binding, and uses
+the XNYS calendar plus the current readiness stabilization delay. It does not
+assert provider completeness. Retry, interruption recovery, publication,
+deployment, and alert behavior remain inside their existing coordinator/
+custody boundaries and cannot be replayed by this planner.
 
 ## Offline entry step
 
@@ -785,14 +815,16 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. The complete deployment path has passed a fake-transport, temporary-custody
-   rehearsal. After any final source commit, render and review a fresh exact
-   external deployment-config candidate; do not install it or invoke real OCI
-   without separate user authorization.
+1. The complete deployment path has now passed a controlled real invocation
+   and independent postflight. Later source revisions still require a fresh
+   exact deployment-config review and separate deployment authorization.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
-3. Keep separate authorization decisions for acquisition/canonical Apply, MI
+3. Rehearse several distinct default-off wakes covering current, missed,
+   retry-wait, unresolved-interruption, and alert-required states. Then review
+   exact systemd unit/timer custody and installation separately.
+4. Keep separate authorization decisions for acquisition/canonical Apply, MI
    publication, Snapshot, bundle, OCI deployment, and finally scheduler
    activation.
 

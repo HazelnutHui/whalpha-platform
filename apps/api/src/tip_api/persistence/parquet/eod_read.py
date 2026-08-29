@@ -36,6 +36,45 @@ class CanonicalEodReadRepository:
 
     root: Path
 
+    def list_session_index(self) -> tuple[date, ...]:
+        """Read the bounded completion index without reopening every Parquet file."""
+
+        root = self._validated_root()
+        base = root / "market-data" / "eod-price-bars" / f"schema_version={SCHEMA_VERSION_PARTITION}"
+        if not base.exists():
+            return ()
+        if base.is_symlink() or not base.is_dir():
+            raise EodDatasetUnavailableError("EOD session directory is unavailable")
+        sessions: list[date] = []
+        for partition in sorted(base.glob("session_date=*")):
+            if partition.is_symlink() or not partition.is_dir():
+                raise EodDatasetUnavailableError("EOD session partition is unavailable")
+            try:
+                session_date = date.fromisoformat(partition.name.removeprefix("session_date="))
+            except ValueError as exc:
+                raise EodDatasetUnavailableError("EOD session partition name is invalid") from exc
+            manifest_path = partition / MANIFEST_FILE_NAME
+            parquet_path = partition / PARQUET_FILE_NAME
+            if (
+                manifest_path.is_symlink()
+                or parquet_path.is_symlink()
+                or not manifest_path.is_file()
+                or not parquet_path.is_file()
+            ):
+                raise EodDatasetUnavailableError("EOD session completion index is incomplete")
+            manifest = _read_json(manifest_path)
+            expected = {
+                "dataset_name": "eod-price-bars",
+                "schema_version": SCHEMA_VERSION,
+                "session_date": session_date.isoformat(),
+                "completion_status": COMPLETION_STATUS,
+                "parquet_file": PARQUET_FILE_NAME,
+            }
+            if any(manifest.get(key) != value for key, value in expected.items()):
+                raise EodDatasetUnavailableError("EOD session completion index is inconsistent")
+            sessions.append(session_date)
+        return tuple(sessions)
+
     def list_sessions(self) -> tuple[EodSessionDescriptor, ...]:
         root = self._validated_root()
         base = root / "market-data" / "eod-price-bars" / f"schema_version={SCHEMA_VERSION_PARTITION}"

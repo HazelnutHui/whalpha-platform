@@ -96,6 +96,17 @@ Snapshot Apply, OCI deployment, `/data`, credential, or scheduler authority.
 No scheduler or unattended Production publication/deployment chain has been
 enabled.
 
+ADR 0076 adds the first read-only scheduler-wake plan. It validates every
+small canonical EOD completion manifest, fully rereads only the latest
+Parquet/Identity binding, and uses the XNYS calendar to select the oldest
+missing session and next close-plus-stabilization review time. A real Dell
+review at 2026-08-29T14:30:00Z completed in about 2.8 seconds, reported current
+EOD through 2026-08-28, next target 2026-08-31, and next check 20:30 UTC.
+Default and explicitly enabled-candidate reviews both invoked no coordinator,
+read no credential, used no network, and wrote no file or Production state.
+All 1,671 backend tests pass. No service or timer is installed; repeated
+distinct-wake rehearsal is next.
+
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
 plan SHA, Production-state fingerprint, and any plan-bound review

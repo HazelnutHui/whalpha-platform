@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-29 — Add a default-off daily scheduler-wake plan
+
+- Accepted ADR 0076 and added a credential-free plan that selects the oldest
+  missing XNYS session and the next close-plus-stabilization review time.
+- Added a lightweight canonical EOD completion index and retained a full
+  formal Parquet/Identity reread for the latest session, avoiding full-history
+  Parquet reconstruction on frequent scheduler reviews.
+- Current Dell review fell from more than 30 seconds with the first full-list
+  prototype to about 2.8 seconds and returned current through 2026-08-28, next
+  target 2026-08-31, and next check 20:30 UTC.
+- Default and explicitly enabled-candidate reviews both made zero coordinator
+  calls, credential reads, network requests, filesystem writes, and Production
+  writes. No service or timer was installed or enabled. All 1,671 backend tests
+  and the 28 focused persistence/scheduler tests pass.
+
 ## 2026-08-29 — Deploy ETF relationship change evidence and timeline
 
 - Corrected prior-Snapshot backend compatibility after the first write-free
