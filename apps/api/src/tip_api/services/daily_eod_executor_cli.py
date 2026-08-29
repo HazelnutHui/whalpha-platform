@@ -6,7 +6,7 @@ import argparse
 import json
 import socket
 from contextlib import contextmanager
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 
 from tip_api.services.daily_eod_automation import (
@@ -40,6 +40,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--phase2-audit", required=True, type=Path)
     parser.add_argument("--preview-bundle", required=True, type=Path)
     parser.add_argument("--strategy-channel-audit", required=True, type=Path)
+    parser.add_argument("--market-intelligence-output-root", required=True, type=Path)
+    parser.add_argument("--market-intelligence-approval-plan", required=True, type=Path)
+    parser.add_argument("--publication-created-at", type=datetime.fromisoformat)
+    parser.add_argument("--publication-expected-current-state-fingerprint")
     parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--candidate-work-dir", type=Path)
     mode = parser.add_mutually_exclusive_group(required=True)
@@ -62,6 +66,8 @@ def main(argv: list[str] | None = None) -> int:
         "phase2_audit",
         "preview_bundle",
         "strategy_channel_audit",
+        "market_intelligence_output_root",
+        "market_intelligence_approval_plan",
         "panel_cache_root",
         "candidate_work_dir",
     ):
@@ -73,6 +79,27 @@ def main(argv: list[str] | None = None) -> int:
             parser.error("--execute-action requires --expected-plan-fingerprint SHA-256")
     elif args.expected_plan_fingerprint is not None:
         parser.error("--expected-plan-fingerprint is only valid with --execute-action")
+    publication_values = (
+        args.publication_created_at,
+        args.publication_expected_current_state_fingerprint,
+    )
+    publication_action = (
+        args.execute_action == NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN.value
+    )
+    if publication_action and not all(
+        value is not None for value in publication_values
+    ):
+        parser.error(
+            "Market Intelligence planning requires both publication bindings"
+        )
+    if args.execute_action is not None and not publication_action and any(
+        value is not None for value in publication_values
+    ):
+        parser.error("publication bindings require the publication-plan action")
+    if args.recover_incomplete and any(
+        value is not None for value in publication_values
+    ) and not all(value is not None for value in publication_values):
+        parser.error("publication recovery bindings must be supplied together")
     config = DailyEodExecutionConfig(
         target_session=args.as_of_session,
         paths=DailyEodAutomationPaths(
@@ -86,10 +113,16 @@ def main(argv: list[str] | None = None) -> int:
             phase2_audit=args.phase2_audit,
             preview_bundle=args.preview_bundle,
             strategy_channel_audit=args.strategy_channel_audit,
+            market_intelligence_output_root=args.market_intelligence_output_root,
+            market_intelligence_approval_plan=args.market_intelligence_approval_plan,
         ),
         run_root=args.run_root,
         panel_cache_root=args.panel_cache_root,
         candidate_work_dir=args.candidate_work_dir,
+        publication_created_at=args.publication_created_at,
+        publication_expected_current_state_fingerprint=(
+            args.publication_expected_current_state_fingerprint
+        ),
     )
     try:
         with _offline_socket_guard():

@@ -71,6 +71,8 @@ def automation_paths(tmp_path: Path) -> DailyEodAutomationPaths:
         phase2_audit=tmp_path / "phase2",
         preview_bundle=tmp_path / "preview",
         strategy_channel_audit=tmp_path / "strategy",
+        market_intelligence_output_root=tmp_path / "mi-output",
+        market_intelligence_approval_plan=tmp_path / "mi-plan.json",
     )
 
 
@@ -273,7 +275,7 @@ def automation_plan(*, completed: bool) -> DailyEodAutomationPlan:
         logical_fingerprint="7" * 64 if completed else None,
     )
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.1",
+        contract_version="daily-eod-automation-plan/1.2",
         target_session=TARGET.isoformat(),
         prior_session=LATEST.isoformat(),
         status=(

@@ -71,15 +71,18 @@ zero symlinks, and zero publication residue.
 
 ### Daily automation development state
 
-The repository daily planner/executor now governs seven ordered offline
-analytics stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry,
-ETF Relationships, Market Preview, and Strategy Channels. Every invocation
-still performs at most one transition. The three new latter-half stages require
-the exact target session and exact upstream logical fingerprints before the
-planner can advance. `analytics_ready` now means all seven artifacts formally
-reread; it still grants no publication, Snapshot, bundle, deployment, `/data`,
-credential, or scheduler authority. No scheduler or unattended Production
-publication/deployment chain has been enabled.
+The repository daily planner/executor now governs eight ordered offline daily
+stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry, ETF
+Relationships, Market Preview, Strategy Channels, and Market Intelligence
+approval-plan preparation. Every invocation still performs at most one
+transition. The latter stages require the exact target session and upstream
+logical fingerprints. The MI Plan action additionally binds an explicit UTC
+creation time and expected `/data` inventory fingerprint, writes only two new
+`/tmp` artifacts, formally rereads them, and stops at publication review.
+`analytics_ready` therefore means all seven analytics artifacts plus the MI
+plan are verified; it grants no MI Apply, Snapshot, bundle, deployment,
+`/data`, credential, or scheduler authority. No scheduler or unattended
+Production publication/deployment chain has been enabled.
 
 ### Historical 2026-08-27 recovery and pipeline evidence
 

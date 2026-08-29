@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-29 — Add custody-tracked daily MI Plan preparation
+
+- Accepted ADR 0068 and added `prepare_market_intelligence_plan` as the eighth
+  one-transition daily action after all seven analytics artifacts.
+- Reused the existing offline MI `--plan` administrator. The action binds an
+  explicit UTC creation time, expected `/data` inventory fingerprint, exact
+  source paths, and a new `/tmp` output root/approval-plan pair; it performs
+  zero external requests and zero Production writes.
+- The planner formally rereads MI plan 1.2 and its immutable candidate, checks
+  the exact session, paths, Phase 1a/1b/2, preview, Candidate, and Entry
+  Geometry fingerprints, and distinguishes freshness-ready from freshness-
+  blocked review evidence.
+- Partial output, invalid custody, source/path drift, or missing execution
+  bindings fail closed. Completion stops at `review_publication`; MI Apply,
+  Snapshot, bundle, deployment, rollback, and scheduler remain unauthorized.
+
 ## 2026-08-29 — Extend daily custody through all offline publication inputs
 
 - Accepted ADR 0067 and extended the fixed daily offline order from four to
@@ -11,9 +27,10 @@
 - Reused the existing offline administrators under the same Dell global lock,
   immutable run journal, unchanged-plan check, one-action postcondition, and
   no-replay recovery model.
-- `analytics_ready` now requires all seven offline artifacts. Publication,
-  Snapshot, bundle, OCI deployment, `/data` writes, credentials, and scheduler
-  activation remain outside this change and unauthorized.
+- At this historical boundary, `analytics_ready` required all seven offline
+  analytics artifacts. Publication, Snapshot, bundle, OCI deployment, `/data`
+  writes, credentials, and scheduler activation remained outside that change
+  and unauthorized.
 
 ## 2026-08-29 — Complete and deploy the 2026-08-28 daily round
 

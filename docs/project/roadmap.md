@@ -185,6 +185,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Exact-session daily planner and single-action offline executor with durable run custody
 - [x] Extend single-action offline custody through ETF Relationships, Market
   Preview, and Strategy Channels
+- [x] Add custody-tracked Market Intelligence approval-plan preparation before
+  publication review
 - [x] XNYS-close-aware readiness, bounded retry, alert state, and oldest-gap recovery policy
 - [x] Shared-lock durable provider-attempt reservation, outcome, and recovery custody
 - [x] Expiring, externally SHA-pinned standing Identity/EOD data-authorization contract

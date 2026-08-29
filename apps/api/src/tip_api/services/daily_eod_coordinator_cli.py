@@ -62,6 +62,8 @@ def main(argv: list[str] | None = None) -> int:
         phase2_audit=args.phase2_audit,
         preview_bundle=args.preview_bundle,
         strategy_channel_audit=args.strategy_channel_audit,
+        market_intelligence_output_root=args.market_intelligence_output_root,
+        market_intelligence_approval_plan=args.market_intelligence_approval_plan,
     )
     coordinator_config = DailyEodCoordinatorConfig(
         target_session=args.target_session,
@@ -72,6 +74,10 @@ def main(argv: list[str] | None = None) -> int:
         approval_plan_path=args.approval_plan,
         panel_cache_root=args.panel_cache_root,
         candidate_work_dir=args.candidate_work_dir,
+        publication_created_at=args.publication_created_at,
+        publication_expected_current_state_fingerprint=(
+            args.publication_expected_current_state_fingerprint
+        ),
     )
     result = None
     try:
@@ -294,6 +300,10 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--phase2-audit", required=True, type=Path)
     parser.add_argument("--preview-bundle", required=True, type=Path)
     parser.add_argument("--strategy-channel-audit", required=True, type=Path)
+    parser.add_argument("--market-intelligence-output-root", required=True, type=Path)
+    parser.add_argument("--market-intelligence-approval-plan", required=True, type=Path)
+    parser.add_argument("--publication-created-at", type=datetime.fromisoformat)
+    parser.add_argument("--publication-expected-current-state-fingerprint")
     parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--candidate-work-dir", type=Path)
     parser.add_argument("--execute-offline", action="store_true")
@@ -328,6 +338,8 @@ def _validate_arguments(
         "phase2_audit",
         "preview_bundle",
         "strategy_channel_audit",
+        "market_intelligence_output_root",
+        "market_intelligence_approval_plan",
         "panel_cache_root",
         "candidate_work_dir",
     )
@@ -341,6 +353,21 @@ def _validate_arguments(
         )
     if args.recover_unresolved and args.execute_offline:
         parser.error("--recover-unresolved cannot be combined with --execute-offline")
+    publication_values = (
+        args.publication_created_at,
+        args.publication_expected_current_state_fingerprint,
+    )
+    if any(value is not None for value in publication_values) and not all(
+        value is not None for value in publication_values
+    ):
+        parser.error("publication planning bindings must be supplied together")
+    if (
+        args.publication_expected_current_state_fingerprint is not None
+        and not _is_fingerprint(
+            args.publication_expected_current_state_fingerprint
+        )
+    ):
+        parser.error("publication current-state binding must be SHA-256")
     host_values = (args.host_config, args.host_config_sha256)
     host_required = (
         args.enable_authorized_capabilities or args.deliver_alert_email

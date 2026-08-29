@@ -170,6 +170,10 @@ def recover_one_daily_eod_transition(
                 run_root=config.run_root,
                 panel_cache_root=config.panel_cache_root,
                 candidate_work_dir=config.candidate_work_dir,
+                publication_created_at=config.publication_created_at,
+                publication_expected_current_state_fingerprint=(
+                    config.publication_expected_current_state_fingerprint
+                ),
             ),
             planner=planner,
         )

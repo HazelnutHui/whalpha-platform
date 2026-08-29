@@ -90,3 +90,4 @@ Each ADR should include:
 - [0065: Reuse Candidate Completion Evidence in Daily Planning](0065-reuse-candidate-completion-evidence-in-daily-planning.md)
 - [0066: Project Incremental Candidate Evidence into Publication](0066-project-incremental-candidate-evidence-into-publication.md)
 - [0067: Extend the Daily Offline Analysis Chain](0067-extend-daily-offline-analysis-chain.md)
+- [0068: Custody the Daily Market Intelligence Plan](0068-custody-daily-market-intelligence-plan.md)

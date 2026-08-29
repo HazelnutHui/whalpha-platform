@@ -44,7 +44,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.5"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.6"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -71,6 +71,8 @@ class DailyEodCoordinatorConfig:
     approval_plan_path: Path
     panel_cache_root: Path | None = None
     candidate_work_dir: Path | None = None
+    publication_created_at: datetime | None = None
+    publication_expected_current_state_fingerprint: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -479,6 +481,10 @@ def _execution_config(config: DailyEodCoordinatorConfig) -> DailyEodExecutionCon
         run_root=config.run_root,
         panel_cache_root=config.panel_cache_root,
         candidate_work_dir=config.candidate_work_dir,
+        publication_created_at=config.publication_created_at,
+        publication_expected_current_state_fingerprint=(
+            config.publication_expected_current_state_fingerprint
+        ),
     )
 
 
@@ -534,6 +540,23 @@ def _validate_config(config: DailyEodCoordinatorConfig) -> None:
             raise DailyEodCoordinatorError("coordinator custody path is invalid")
     if config.package_path == config.approval_plan_path:
         raise DailyEodCoordinatorError("coordinator package and plan paths must differ")
+    publication_values = (
+        config.publication_created_at,
+        config.publication_expected_current_state_fingerprint,
+    )
+    if any(value is not None for value in publication_values):
+        if (
+            config.publication_created_at is None
+            or config.publication_created_at.tzinfo is None
+            or config.publication_created_at.utcoffset() is None
+            or config.publication_created_at.utcoffset().total_seconds() != 0
+            or not _is_fingerprint(
+                config.publication_expected_current_state_fingerprint
+            )
+        ):
+            raise DailyEodCoordinatorError(
+                "publication planning inputs must be complete UTC/fingerprint bindings"
+            )
 
 
 def _validate_plan(

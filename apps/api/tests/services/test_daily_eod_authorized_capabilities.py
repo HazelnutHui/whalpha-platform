@@ -73,6 +73,8 @@ def paths() -> DailyEodAutomationPaths:
         phase2_audit=Path("/tmp/phase2.json"),
         preview_bundle=Path("/tmp/preview.json"),
         strategy_channel_audit=Path("/tmp/strategy.json"),
+        market_intelligence_output_root=Path("/tmp/mi-output"),
+        market_intelligence_approval_plan=Path("/tmp/mi-plan.json"),
     )
 
 
@@ -113,7 +115,7 @@ def authorization(*, expires_at: datetime = NOW + timedelta(days=30)):
 
 def automation_plan(action: NextAction) -> DailyEodAutomationPlan:
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.1",
+        contract_version="daily-eod-automation-plan/1.2",
         target_session=TARGET.isoformat(),
         prior_session=LATEST.isoformat(),
         status=PlanStatus.WAITING_FOR_AUTHORIZED_INPUT,

@@ -58,6 +58,10 @@ Snapshot, build or deploy an OCI bundle, access credentials, update `/data`,
 or enable a scheduler. Those remain separate review and authorization
 boundaries.
 
+ADR 0068 later adds the no-Production-write Market Intelligence Plan as an
+eighth custody-tracked preparation action. It does not change this ADR's seven
+analytics stages or authorize publication.
+
 ## Consequences
 
 - A daily run can advance through every offline input needed by publication

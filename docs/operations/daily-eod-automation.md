@@ -6,7 +6,8 @@ The daily control plane now has two deliberately separate, credential-free
 parts: a read-only planner and a single-action offline executor. The planner
 formally reconciles one exact target session and reports one safe next action.
 The executor can consume one unchanged plan fingerprint and run only one of
-the seven offline analytics actions under durable Dell custody. Neither part
+eight offline daily actions under durable Dell custody: seven analytics
+calculations plus MI approval-plan preparation. Neither part
 enables a timer.
 
 The action order is:
@@ -21,6 +22,7 @@ same-day Identity
   -> ETF relationships (Phase 2)
   -> Market Regime preview
   -> Candidate strategy channels
+  -> Market Intelligence approval plan
   -> publication review
 ```
 
@@ -473,7 +475,8 @@ the active socket guard.
 
 ## Read-only plan
 
-Every audit path is explicit and must be a distinct direct child of `/tmp`.
+Every daily artifact path is explicit and must be a distinct direct child of
+`/tmp`.
 The previous Phase 1b and Candidate paths must be the immediately preceding
 XNYS session. No `latest` lookup is allowed.
 
@@ -489,15 +492,17 @@ scripts/admin/plan-daily-eod-automation.sh \
   --entry-geometry-audit /tmp/<current-entry-geometry> \
   --phase2-audit /tmp/<current-phase2> \
   --preview-bundle /tmp/<current-preview> \
-  --strategy-channel-audit /tmp/<current-strategy-channels>
+  --strategy-channel-audit /tmp/<current-strategy-channels> \
+  --market-intelligence-output-root /tmp/<new-mi-output-root> \
+  --market-intelligence-approval-plan /tmp/<new-mi-plan>.json
 ```
 
 The JSON result has one of four statuses:
 
 - `waiting_for_authorized_input`: prepare the exact Identity or EOD catch-up;
-- `ready_for_offline_calculation`: run only the named offline analytics step;
-- `analytics_ready`: all current analytics formally reread and publication may
-  be reviewed separately;
+- `ready_for_offline_calculation`: run only the named offline daily step;
+- `analytics_ready`: all current analytics and the MI approval plan formally
+  reread; publication may be reviewed separately;
 - `blocked`: stop and diagnose; do not overwrite or skip the failed boundary.
 
 `blocked` exits 1. The other planning states exit 0 because they are valid
@@ -546,6 +551,8 @@ scripts/admin/execute-daily-eod-offline-action.sh \
   --phase2-audit /tmp/<current-phase2> \
   --preview-bundle /tmp/<current-preview> \
   --strategy-channel-audit /tmp/<current-strategy-channels> \
+  --market-intelligence-output-root /tmp/<new-mi-output-root> \
+  --market-intelligence-approval-plan /tmp/<new-mi-plan>.json \
   --run-root /home/hui/.local/state/trading-intelligence-platform/daily-eod \
   --panel-cache-root /tmp/<immutable-panel-cache> \
   --candidate-work-dir /tmp/<owner-controlled-candidate-recovery> \
@@ -555,12 +562,26 @@ scripts/admin/execute-daily-eod-offline-action.sh \
 
 Only `calculate_phase1a`, `calculate_phase1b_incremental`,
 `calculate_candidate_daily`, `calculate_entry_geometry`,
-`calculate_etf_relationships`, `build_market_preview`, and
-`calculate_strategy_channels` are executable. The latter three consume the
+`calculate_etf_relationships`, `build_market_preview`,
+`calculate_strategy_channels`, and `prepare_market_intelligence_plan` are
+executable. The latter analytics consume the
 same-session fingerprints already verified by their prerequisites; they do
 not authorize publication or deployment.
 The Candidate work directory is required only for the Candidate action. The
 panel cache is optional and must remain outside `/data`.
+
+The MI Plan action additionally requires:
+
+```bash
+--publication-created-at <explicit-UTC-timestamp> \
+--publication-expected-current-state-fingerprint <64-hex-data-inventory>
+```
+
+Both values are bound into the immutable action identity. The action invokes
+only Market Intelligence `--plan`, creates the two explicit `/tmp` targets,
+and returns to `review_publication`. It never invokes Apply. Omit these two
+arguments for the other seven actions. Recovery of an interrupted MI Plan must
+reuse both exact values.
 
 The executor acquires one global non-blocking lock, re-plans under the lock,
 records an immutable start event, invokes exactly one existing offline command,

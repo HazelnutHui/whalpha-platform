@@ -25,6 +25,8 @@ def _argv(tmp_path: Path) -> list[str]:
         "--phase2-audit", "/tmp/executor-phase2",
         "--preview-bundle", "/tmp/executor-preview",
         "--strategy-channel-audit", "/tmp/executor-strategy",
+        "--market-intelligence-output-root", "/tmp/executor-mi-output",
+        "--market-intelligence-approval-plan", "/tmp/executor-mi-plan.json",
     ]
 
 
@@ -36,6 +38,24 @@ def test_cli_requires_plan_fingerprint_for_execution(monkeypatch, tmp_path) -> N
     )
     with pytest.raises(SystemExit):
         cli.main([*_argv(tmp_path), "--execute-action", "calculate_phase1a"])
+
+
+def test_cli_requires_publication_review_bindings_for_plan_action(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(
+        cli,
+        "execute_daily_eod_action",
+        lambda **kwargs: pytest.fail("executor must not run"),
+    )
+    with pytest.raises(SystemExit):
+        cli.main(
+            [
+                *_argv(tmp_path),
+                "--execute-action",
+                "prepare_market_intelligence_plan",
+                "--expected-plan-fingerprint",
+                "a" * 64,
+            ]
+        )
 
 
 def test_cli_executes_exact_action_and_prints_machine_result(monkeypatch, tmp_path, capsys) -> None:

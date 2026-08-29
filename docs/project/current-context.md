@@ -108,8 +108,10 @@ planner is now implemented. A real 2026-08-26 rehearsal formally reconciled
 the corrected incremental chain and selected `calculate_entry_geometry` as its
 sole next action, with zero external requests and Production writes. A
 single-action executor and durable Dell run-custody implementation now consume
-only an exact unchanged plan for one of seven offline analytics actions. The
-executor holds a global lock, journals start/terminal events in an immutable
+only an exact unchanged plan for one of eight offline daily actions. The first
+seven are analytics actions; the eighth prepares an MI approval plan without a
+Production write. The executor holds a global lock, journals start/terminal
+events in an immutable
 cross-session hash chain, validates output evidence, and re-plans before
 recording success. Interrupted-attempt recovery only classifies formal state
 and never re-executes. Before the first controlled 2026-08-27 rehearsal, this
@@ -136,9 +138,11 @@ ADR 0067 extends the ordered offline calculation boundary after Entry Geometry
 through ETF Relationships, Market Preview, and Strategy Channels. Each new
 stage formally binds the exact same-session upstream logical fingerprints and
 uses the existing one-transition journal, lock, postcondition, and recovery
-semantics. `analytics_ready` now requires all seven offline artifacts. This
-development change does not enable a scheduler and does not authorize MI
-publication, Snapshot, bundle, deployment, credentials, or `/data` writes.
+semantics. ADR 0068 adds the exact-inventory, exact-UTC MI Plan preparation
+action after those seven artifacts. `analytics_ready` now requires the formal
+MI plan and immutable candidate as well. These development changes do not
+enable a scheduler and do not authorize MI Apply, Snapshot, bundle,
+deployment, credentials, or `/data` writes.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

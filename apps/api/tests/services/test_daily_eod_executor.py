@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from datetime import date
+from dataclasses import replace
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pytest
@@ -35,6 +36,8 @@ def _paths(tmp_path: Path) -> DailyEodAutomationPaths:
         phase2_audit=Path(f"/tmp/{suffix}-phase2"),
         preview_bundle=Path(f"/tmp/{suffix}-preview"),
         strategy_channel_audit=Path(f"/tmp/{suffix}-strategy"),
+        market_intelligence_output_root=Path(f"/tmp/{suffix}-mi-output"),
+        market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
     )
 
 
@@ -48,6 +51,8 @@ def _config(tmp_path: Path) -> executor.DailyEodExecutionConfig:
         run_root=run_root,
         panel_cache_root=tmp_path / "panel-cache",
         candidate_work_dir=Path(f"/tmp/{tmp_path.name}-candidate-work"),
+        publication_created_at=datetime(2026, 8, 27, 21, 0, tzinfo=UTC),
+        publication_expected_current_state_fingerprint="e" * 64,
     )
 
 
@@ -60,7 +65,7 @@ def _plan(
     stage_status: ArtifactStatus,
 ) -> DailyEodAutomationPlan:
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.1",
+        contract_version="daily-eod-automation-plan/1.2",
         target_session=SESSION.isoformat(),
         prior_session="2026-08-26",
         status=status,
@@ -172,6 +177,21 @@ def test_stale_fingerprint_or_different_action_writes_no_attempt(
         target_session=SESSION,
     ) as journal:
         assert journal.read_events() == ()
+
+
+def test_publication_plan_action_requires_explicit_review_bindings(tmp_path) -> None:
+    config = replace(
+        _config(tmp_path),
+        publication_created_at=None,
+        publication_expected_current_state_fingerprint=None,
+    )
+    with pytest.raises(executor.DailyEodExecutorError, match="explicit review"):
+        executor.execute_daily_eod_action(
+            config=config,
+            expected_plan_fingerprint=PRE_FP,
+            expected_action=NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
+            planner=lambda **kwargs: pytest.fail("planner must not run"),
+        )
 
 
 def test_runner_failure_is_terminal_and_retryable(tmp_path) -> None:
@@ -384,6 +404,8 @@ def test_recovery_rejects_paths_that_differ_from_started_attempt(tmp_path) -> No
         phase2_audit=config.paths.phase2_audit,
         preview_bundle=config.paths.preview_bundle,
         strategy_channel_audit=config.paths.strategy_channel_audit,
+        market_intelligence_output_root=config.paths.market_intelligence_output_root,
+        market_intelligence_approval_plan=config.paths.market_intelligence_approval_plan,
     )
     changed = executor.DailyEodExecutionConfig(
         target_session=config.target_session,
@@ -498,6 +520,15 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
             "candidate_strategy_channel_cli",
             ("--candidate-audit", "--entry-geometry-audit", "--output-dir"),
         ),
+        (
+            NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
+            "market_intelligence_publication_cli",
+            (
+                "--plan",
+                "--expected-current-state-fingerprint",
+                "--approval-package",
+            ),
+        ),
     ],
 )
 def test_default_runner_invokes_only_the_selected_offline_administrator(
@@ -519,6 +550,7 @@ def test_default_runner_invokes_only_the_selected_offline_administrator(
         "etf_relationship_cli",
         "market_regime_preview_cli",
         "candidate_strategy_channel_cli",
+        "market_intelligence_publication_cli",
     ):
         module = getattr(executor, name)
         monkeypatch.setattr(

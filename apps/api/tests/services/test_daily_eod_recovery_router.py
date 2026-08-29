@@ -44,6 +44,8 @@ def paths() -> DailyEodAutomationPaths:
         phase2_audit=Path("/tmp/phase2"),
         preview_bundle=Path("/tmp/preview"),
         strategy_channel_audit=Path("/tmp/strategy"),
+        market_intelligence_output_root=Path("/tmp/mi-output"),
+        market_intelligence_approval_plan=Path("/tmp/mi-plan.json"),
     )
 
 
@@ -62,7 +64,7 @@ def config() -> DailyEodCoordinatorConfig:
 
 def plan() -> DailyEodAutomationPlan:
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.1",
+        contract_version="daily-eod-automation-plan/1.2",
         target_session=TARGET.isoformat(),
         prior_session="2026-08-26",
         status=PlanStatus.WAITING_FOR_AUTHORIZED_INPUT,

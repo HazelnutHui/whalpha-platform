@@ -23,6 +23,7 @@ ENTRY_FP = "8" * 64
 PHASE2_FP = "9" * 64
 PREVIEW_FP = "a" * 64
 STRATEGY_FP = "b" * 64
+MI_PLAN_FP = "c" * 64
 
 
 def _paths(tmp_path: Path) -> automation.DailyEodAutomationPaths:
@@ -38,6 +39,8 @@ def _paths(tmp_path: Path) -> automation.DailyEodAutomationPaths:
         phase2_audit=Path(f"/tmp/{suffix}-phase2"),
         preview_bundle=Path(f"/tmp/{suffix}-preview"),
         strategy_channel_audit=Path(f"/tmp/{suffix}-strategy"),
+        market_intelligence_output_root=Path(f"/tmp/{suffix}-mi-output"),
+        market_intelligence_approval_plan=Path(f"/tmp/{suffix}-mi-plan.json"),
     )
 
 
@@ -182,6 +185,39 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
             },
         },
     )
+    monkeypatch.setattr(
+        automation,
+        "read_market_intelligence_approval_plan",
+        lambda path: SimpleNamespace(
+            analysis_session=TARGET,
+            plan_content_fingerprint=MI_PLAN_FP,
+            plan_version="1.2",
+            data_root=str(paths.data_root),
+            preview_bundle_path=str(paths.preview_bundle),
+            phase1a_audit_path=str(paths.phase1a_audit),
+            phase1b_audit_path=str(paths.phase1b_audit),
+            phase2_audit_path=str(paths.phase2_audit),
+            candidate_audit_path=str(paths.candidate_audit),
+            entry_geometry_audit_path=str(paths.entry_geometry_audit),
+            candidate_path=str(
+                paths.market_intelligence_output_root
+                / "market-intelligence.plan.artifacts"
+            ),
+            source=SimpleNamespace(
+                phase_logical_fingerprints=SimpleNamespace(
+                    phase1a=PHASE1A_FP,
+                    phase1b=PHASE1B_FP,
+                    phase2=PHASE2_FP,
+                ),
+                preview_payload_logical_fingerprint=PREVIEW_FP,
+            ),
+            candidate_source=SimpleNamespace(
+                candidate_audit_logical_fingerprint=CANDIDATE_FP,
+            ),
+            entry_geometry_audit_logical_fingerprint=ENTRY_FP,
+            activation_allowed=True,
+        ),
+    )
 
 
 def test_all_formal_analytics_are_ready_for_separate_publication_review(monkeypatch, tmp_path) -> None:
@@ -209,6 +245,7 @@ def test_all_formal_analytics_are_ready_for_separate_publication_review(monkeypa
         "phase2",
         "preview",
         "strategy_channels",
+        "publication_plan",
     ]
 
 
@@ -271,6 +308,83 @@ def test_missing_latter_half_stage_selects_one_exact_offline_action(
     assert plan.reason_codes == (f"{missing_stage}_required",)
     assert plan.publication_authorized is False
     assert plan.deployment_authorized is False
+
+
+def test_missing_publication_plan_selects_one_exact_review_preparation(monkeypatch, tmp_path) -> None:
+    paths = _paths(tmp_path)
+    locations = automation._stage_locations(TARGET, paths)
+    existing = {
+        path
+        for stage, path in locations.items()
+        if stage not in {"publication_output", "publication_plan"}
+    }
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+    assert plan.status is automation.PlanStatus.READY_FOR_OFFLINE_CALCULATION
+    assert (
+        plan.next_action
+        is automation.NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN
+    )
+    assert plan.reason_codes == ("publication_plan_required",)
+    assert plan.observations[-1].stage == "publication_plan"
+    assert plan.observations[-1].status is automation.ArtifactStatus.MISSING
+
+
+@pytest.mark.parametrize("present_stage", ("publication_output", "publication_plan"))
+def test_partial_publication_plan_artifacts_block(monkeypatch, tmp_path, present_stage) -> None:
+    paths = _paths(tmp_path)
+    locations = automation._stage_locations(TARGET, paths)
+    existing = {
+        path
+        for stage, path in locations.items()
+        if stage not in {"publication_output", "publication_plan"}
+    }
+    existing.add(locations[present_stage])
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.reason_codes == ("publication_plan_partial",)
+
+
+def test_publication_plan_source_lineage_mismatch_blocks(monkeypatch, tmp_path) -> None:
+    paths = _paths(tmp_path)
+    _install_completed_readers(monkeypatch, paths)
+    monkeypatch.setattr(
+        automation,
+        "read_market_intelligence_approval_plan",
+        lambda path: SimpleNamespace(
+            analysis_session=TARGET,
+            plan_content_fingerprint=MI_PLAN_FP,
+            plan_version="1.2",
+            data_root=str(paths.data_root),
+            preview_bundle_path=str(paths.preview_bundle),
+            phase1a_audit_path=str(paths.phase1a_audit),
+            phase1b_audit_path=str(paths.phase1b_audit),
+            phase2_audit_path=str(paths.phase2_audit),
+            candidate_audit_path=str(paths.candidate_audit),
+            entry_geometry_audit_path=str(paths.entry_geometry_audit),
+            candidate_path=str(
+                paths.market_intelligence_output_root
+                / "market-intelligence.plan.artifacts"
+            ),
+            source=SimpleNamespace(
+                phase_logical_fingerprints=SimpleNamespace(
+                    phase1a=PHASE1A_FP,
+                    phase1b=PHASE1B_FP,
+                    phase2="f" * 64,
+                ),
+                preview_payload_logical_fingerprint=PREVIEW_FP,
+            ),
+            candidate_source=SimpleNamespace(
+                candidate_audit_logical_fingerprint=CANDIDATE_FP,
+            ),
+            entry_geometry_audit_logical_fingerprint=ENTRY_FP,
+            activation_allowed=True,
+        ),
+    )
+    plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.reason_codes == ("publication_plan_source_binding_mismatch",)
 
 
 @pytest.mark.parametrize(
@@ -438,6 +552,8 @@ def test_audit_paths_must_be_distinct_direct_tmp_children(tmp_path) -> None:
         phase2_audit=paths.phase2_audit,
         preview_bundle=paths.preview_bundle,
         strategy_channel_audit=paths.strategy_channel_audit,
+        market_intelligence_output_root=paths.market_intelligence_output_root,
+        market_intelligence_approval_plan=paths.market_intelligence_approval_plan,
     )
     with pytest.raises(automation.DailyEodAutomationError, match="distinct"):
         automation.plan_daily_eod_automation(target_session=TARGET, paths=duplicate)

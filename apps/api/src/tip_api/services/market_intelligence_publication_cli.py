@@ -27,8 +27,8 @@ from tip_api.persistence.parquet.market_intelligence_active import (
     build_market_intelligence_candidate,
     canonical_bytes,
     publish_and_activate,
+    read_market_intelligence_approval_plan,
     rollback,
-    validate_plan,
     verify_then_link,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
@@ -310,32 +310,24 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
 def _load_plan(
     path: Path, expected_sha256: str
 ) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2:
+    try:
+        resolved = path.resolve(strict=True)
+    except OSError as exc:
+        raise MarketIntelligencePublicationError("approved plan is unavailable") from exc
     if (
         not path.is_absolute()
-        or not path.resolve(strict=True).is_relative_to(Path("/tmp"))
+        or resolved != path
+        or not resolved.is_relative_to(Path("/tmp"))
         or path.is_symlink()
         or not path.is_file()
     ):
-        raise MarketIntelligencePublicationError("approved plan must be a regular /tmp file")
-    raw = path.read_bytes()
+        raise MarketIntelligencePublicationError(
+            "approved plan must be a regular /tmp file"
+        )
+    raw = resolved.read_bytes()
     if hashlib.sha256(raw).hexdigest() != expected_sha256:
         raise MarketIntelligencePublicationError("approved plan full-file SHA-256 mismatch")
-    try:
-        value = json.loads(raw)
-    except Exception as exc:
-        raise MarketIntelligencePublicationError("approved plan JSON is malformed") from exc
-    if canonical_bytes(value) != raw:
-        raise MarketIntelligencePublicationError("approved plan JSON is non-canonical")
-    plan_type = {
-        "1.0": MarketIntelligenceApprovalPlanV1,
-        "1.1": MarketIntelligenceApprovalPlanV1_1,
-        "1.2": MarketIntelligenceApprovalPlanV1_2,
-    }.get(value.get("plan_version"))
-    if plan_type is None:
-        raise MarketIntelligencePublicationError("unsupported Market Intelligence plan version")
-    plan = plan_type.model_validate(value)
-    validate_plan(plan)
-    return plan
+    return read_market_intelligence_approval_plan(path)
 
 
 def _freshness(root: Path, checked_at: datetime):

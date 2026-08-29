@@ -825,6 +825,61 @@ def validate_plan(
     return completed
 
 
+def read_market_intelligence_approval_plan(
+    path: Path,
+) -> (
+    MarketIntelligenceApprovalPlanV1
+    | MarketIntelligenceApprovalPlanV1_1
+    | MarketIntelligenceApprovalPlanV1_2
+):
+    """Formally read one immutable, canonical approval plan and its candidate."""
+
+    try:
+        resolved = path.resolve(strict=True)
+    except OSError as exc:
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence approval plan is unavailable"
+        ) from exc
+    if (
+        not path.is_absolute()
+        or resolved != path
+        or not resolved.is_relative_to(Path("/tmp"))
+        or path.is_symlink()
+        or not path.is_file()
+    ):
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence approval plan must be a regular /tmp file"
+        )
+    metadata = resolved.stat()
+    if metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o444:
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence approval plan custody mismatch"
+        )
+    raw = resolved.read_bytes()
+    try:
+        value = json.loads(raw)
+    except Exception as exc:
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence approval plan JSON is malformed"
+        ) from exc
+    if not isinstance(value, dict) or canonical_bytes(value) != raw:
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence approval plan JSON is non-canonical"
+        )
+    plan_type = {
+        "1.0": MarketIntelligenceApprovalPlanV1,
+        "1.1": MarketIntelligenceApprovalPlanV1_1,
+        "1.2": MarketIntelligenceApprovalPlanV1_2,
+    }.get(value.get("plan_version"))
+    if plan_type is None:
+        raise MarketIntelligencePublicationError(
+            "unsupported Market Intelligence plan version"
+        )
+    plan = plan_type.model_validate(value)
+    validate_plan(plan)
+    return plan
+
+
 def publish_and_activate(
     *,
     root: Path,

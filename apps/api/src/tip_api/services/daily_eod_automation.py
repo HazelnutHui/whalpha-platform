@@ -12,6 +12,9 @@ from pathlib import Path
 from typing import Callable, Mapping
 
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
+from tip_api.persistence.parquet.market_intelligence_active import (
+    read_market_intelligence_approval_plan,
+)
 from tip_api.providers.massive.grouped_daily_ingestion import load_identity_snapshot
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.services.candidate_entry_geometry_audit import (
@@ -34,7 +37,7 @@ from tip_api.services.opportunity_candidate_audit import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-automation-plan/1.1"
+CONTRACT_VERSION = "daily-eod-automation-plan/1.2"
 
 
 class DailyEodAutomationError(RuntimeError):
@@ -65,6 +68,7 @@ class NextAction(StrEnum):
     CALCULATE_ETF_RELATIONSHIPS = "calculate_etf_relationships"
     BUILD_MARKET_PREVIEW = "build_market_preview"
     CALCULATE_STRATEGY_CHANNELS = "calculate_strategy_channels"
+    PREPARE_MARKET_INTELLIGENCE_PLAN = "prepare_market_intelligence_plan"
     REVIEW_PUBLICATION = "review_publication"
     OPERATOR_DIAGNOSIS = "operator_diagnosis"
 
@@ -81,6 +85,8 @@ class DailyEodAutomationPaths:
     phase2_audit: Path
     preview_bundle: Path
     strategy_channel_audit: Path
+    market_intelligence_output_root: Path
+    market_intelligence_approval_plan: Path
 
 
 @dataclass(frozen=True, slots=True)
@@ -433,12 +439,120 @@ def plan_daily_eod_automation(
             observations,
             "strategy_channels_source_binding_mismatch",
         )
+
+    publication_candidate = (
+        paths.market_intelligence_output_root
+        / "market-intelligence.plan.artifacts"
+    )
+    output_exists = _lexists(paths.market_intelligence_output_root)
+    plan_exists = _lexists(paths.market_intelligence_approval_plan)
+    if not output_exists and not plan_exists:
+        observations.append(
+            ArtifactObservation(
+                stage="publication_plan",
+                status=ArtifactStatus.MISSING,
+                path=str(paths.market_intelligence_approval_plan),
+                reason_codes=("artifact_absent",),
+            )
+        )
+        return _build_plan(
+            target_session=target_session,
+            prior_session=prior_session,
+            status=PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            next_action=NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
+            reason_codes=("publication_plan_required",),
+            observations=observations,
+        )
+    if output_exists != plan_exists:
+        observations.append(
+            ArtifactObservation(
+                stage="publication_plan",
+                status=ArtifactStatus.INVALID,
+                path=str(paths.market_intelligence_approval_plan),
+                reason_codes=("partial_plan_artifacts",),
+            )
+        )
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "publication_plan_partial",
+        )
+    publication = _inspect(
+        stage="publication_plan",
+        path=paths.market_intelligence_approval_plan,
+        reader=lambda: read_market_intelligence_approval_plan(
+            paths.market_intelligence_approval_plan
+        ),
+        session=lambda value: value.analysis_session.isoformat(),
+        fingerprint=lambda value: value.plan_content_fingerprint,
+    )
+    observations.append(publication.observation)
+    if publication.observation.status is not ArtifactStatus.COMPLETED:
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "publication_plan_invalid",
+        )
+    plan = publication.payload
+    if publication.observation.as_of_session != target_session.isoformat():
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "publication_plan_session_mismatch",
+        )
+    if (
+        getattr(plan, "plan_version", None) != "1.2"
+        or Path(plan.data_root) != paths.data_root
+        or Path(plan.preview_bundle_path) != paths.preview_bundle
+        or Path(plan.phase1a_audit_path) != paths.phase1a_audit
+        or Path(plan.phase1b_audit_path) != paths.phase1b_audit
+        or Path(plan.phase2_audit_path) != paths.phase2_audit
+        or Path(plan.candidate_audit_path) != paths.candidate_audit
+        or Path(plan.entry_geometry_audit_path) != paths.entry_geometry_audit
+        or Path(plan.candidate_path) != publication_candidate
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "publication_plan_path_binding_mismatch",
+        )
+    phase_sources = plan.source.phase_logical_fingerprints
+    if (
+        phase_sources.phase1a != phase1a.observation.logical_fingerprint
+        or phase_sources.phase1b != phase1b.observation.logical_fingerprint
+        or phase_sources.phase2 != phase2.observation.logical_fingerprint
+        or plan.source.preview_payload_logical_fingerprint
+        != preview.observation.logical_fingerprint
+        or plan.candidate_source.candidate_audit_logical_fingerprint
+        != candidate.observation.logical_fingerprint
+        or plan.entry_geometry_audit_logical_fingerprint
+        != entry.observation.logical_fingerprint
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "publication_plan_source_binding_mismatch",
+        )
     return _build_plan(
         target_session=target_session,
         prior_session=prior_session,
         status=PlanStatus.ANALYTICS_READY,
         next_action=NextAction.REVIEW_PUBLICATION,
-        reason_codes=("all_daily_analytics_formally_verified",),
+        reason_codes=(
+            (
+                "publication_plan_ready_for_review"
+                if (
+                    plan.activation_allowed
+                    or plan.activation_allowed_by_review_authorization
+                )
+                else "publication_plan_freshness_blocked"
+            ),
+        ),
         observations=observations,
     )
 
@@ -615,6 +729,8 @@ def _stage_locations(target_session: date, paths: DailyEodAutomationPaths) -> di
         "phase2": paths.phase2_audit,
         "preview": paths.preview_bundle,
         "strategy_channels": paths.strategy_channel_audit,
+        "publication_output": paths.market_intelligence_output_root,
+        "publication_plan": paths.market_intelligence_approval_plan,
     }
 
 
@@ -629,6 +745,8 @@ def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str
         "phase2",
         "preview",
         "strategy_channels",
+        "publication_output",
+        "publication_plan",
     )
     index = order.index(stage)
     return tuple(item for item in order[index + 1 :] if _lexists(locations[item]))
@@ -637,7 +755,7 @@ def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str
 def _validate_paths(paths: DailyEodAutomationPaths) -> None:
     if not paths.data_root.is_absolute():
         raise DailyEodAutomationError("data root must be absolute")
-    audits = (
+    artifacts = (
         paths.phase1a_audit,
         paths.prior_phase1b_audit,
         paths.phase1b_audit,
@@ -647,11 +765,15 @@ def _validate_paths(paths: DailyEodAutomationPaths) -> None:
         paths.phase2_audit,
         paths.preview_bundle,
         paths.strategy_channel_audit,
+        paths.market_intelligence_output_root,
+        paths.market_intelligence_approval_plan,
     )
-    if len(set(audits)) != len(audits):
-        raise DailyEodAutomationError("daily audit paths must be distinct")
-    if any(not item.is_absolute() or item.parent != Path("/tmp") for item in audits):
-        raise DailyEodAutomationError("daily audits must be direct children of /tmp")
+    if len(set(artifacts)) != len(artifacts):
+        raise DailyEodAutomationError("daily artifact paths must be distinct")
+    if any(not item.is_absolute() or item.parent != Path("/tmp") for item in artifacts):
+        raise DailyEodAutomationError(
+            "daily artifacts must be direct children of /tmp"
+        )
 
 
 def _validate_observation(observation: ArtifactObservation) -> None:

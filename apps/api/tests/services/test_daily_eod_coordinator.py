@@ -51,6 +51,8 @@ def paths() -> DailyEodAutomationPaths:
         phase2_audit=Path("/tmp/phase2"),
         preview_bundle=Path("/tmp/preview"),
         strategy_channel_audit=Path("/tmp/strategy"),
+        market_intelligence_output_root=Path("/tmp/mi-output"),
+        market_intelligence_approval_plan=Path("/tmp/mi-plan.json"),
     )
 
 
@@ -83,11 +85,12 @@ def plan(
                 NextAction.CALCULATE_ETF_RELATIONSHIPS,
                 NextAction.BUILD_MARKET_PREVIEW,
                 NextAction.CALCULATE_STRATEGY_CHANNELS,
+                NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
             }
             else PlanStatus.WAITING_FOR_AUTHORIZED_INPUT
         )
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.1",
+        contract_version="daily-eod-automation-plan/1.2",
         target_session=TARGET.isoformat(),
         prior_session=LATEST.isoformat(),
         status=selected_status,
@@ -591,6 +594,51 @@ def test_opt_in_offline_execution_calls_existing_executor_once() -> None:
     assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
     assert result.external_request_count == 0
     assert result.production_write_count == 0
+
+
+def test_publication_plan_execution_carries_exact_review_bindings() -> None:
+    calls = []
+    pre_plan = plan(NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN)
+    bound_config = replace(
+        config(latest=TARGET),
+        publication_created_at=AFTER_STABILIZATION,
+        publication_expected_current_state_fingerprint="7" * 64,
+    )
+
+    def execute(**kwargs):
+        calls.append(kwargs)
+        return DailyEodExecutionResult(
+            outcome="succeeded",
+            action=NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
+            attempt_id="b" * 64,
+            event=event(2, "action_succeeded"),
+            pre_plan=pre_plan,
+            post_plan=plan(
+                NextAction.REVIEW_PUBLICATION,
+                status=PlanStatus.ANALYTICS_READY,
+                fingerprint="9" * 64,
+            ),
+            stage_evidence=StageExecutionEvidence(
+                action=NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
+                output_path="/tmp/mi-plan.json",
+                summary_sha256="8" * 64,
+                summary_bytes=10,
+            ),
+            reason_code="offline_action_completed_and_replanned",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=bound_config,
+        checked_at=AFTER_STABILIZATION,
+        execute_offline=True,
+        planner=planner(pre_plan),
+        journal_reader=journal(),
+        offline_executor=execute,
+    )
+    execution_config = calls[0]["config"]
+    assert execution_config.publication_created_at == AFTER_STABILIZATION
+    assert execution_config.publication_expected_current_state_fingerprint == "7" * 64
+    assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
 
 
 def test_blocked_and_publication_ready_states_never_execute() -> None:

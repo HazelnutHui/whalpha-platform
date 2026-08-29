@@ -7,10 +7,13 @@ import io
 import json
 from contextlib import redirect_stdout
 from dataclasses import dataclass
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Callable, Mapping
 
+from tip_api.contracts.analytics.v1.market_intelligence import (
+    MARKET_INTELLIGENCE_REVISION,
+)
 from tip_api.contracts.market_data.v2.dashboard_universe_activation import (
     PUBLIC_UNIVERSE_ORDER,
 )
@@ -21,6 +24,7 @@ from tip_api.services import (
     market_regime_cli,
     market_regime_preview_cli,
     market_regime_state_cli,
+    market_intelligence_publication_cli,
     opportunity_candidate_cli,
 )
 from tip_api.services.daily_eod_automation import (
@@ -40,7 +44,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.1"
+EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.2"
 OFFLINE_ACTIONS = (
     NextAction.CALCULATE_PHASE1A,
     NextAction.CALCULATE_PHASE1B_INCREMENTAL,
@@ -49,6 +53,7 @@ OFFLINE_ACTIONS = (
     NextAction.CALCULATE_ETF_RELATIONSHIPS,
     NextAction.BUILD_MARKET_PREVIEW,
     NextAction.CALCULATE_STRATEGY_CHANNELS,
+    NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
 )
 ACTION_STAGE = {
     NextAction.CALCULATE_PHASE1A: "phase1a",
@@ -58,6 +63,7 @@ ACTION_STAGE = {
     NextAction.CALCULATE_ETF_RELATIONSHIPS: "phase2",
     NextAction.BUILD_MARKET_PREVIEW: "preview",
     NextAction.CALCULATE_STRATEGY_CHANNELS: "strategy_channels",
+    NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN: "publication_plan",
 }
 
 
@@ -72,6 +78,8 @@ class DailyEodExecutionConfig:
     run_root: Path
     panel_cache_root: Path | None = None
     candidate_work_dir: Path | None = None
+    publication_created_at: datetime | None = None
+    publication_expected_current_state_fingerprint: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -164,7 +172,14 @@ def execute_daily_eod_action(
 
     _validate_execution_config(config)
     if expected_action not in OFFLINE_ACTIONS:
-        raise DailyEodExecutorError("only offline analytics actions may execute")
+        raise DailyEodExecutorError("only governed offline daily actions may execute")
+    if expected_action is NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN and (
+        config.publication_created_at is None
+        or config.publication_expected_current_state_fingerprint is None
+    ):
+        raise DailyEodExecutorError(
+            "Market Intelligence planning requires explicit review inputs"
+        )
     with locked_daily_eod_run_journal(
         run_root=config.run_root,
         target_session=config.target_session,
@@ -457,6 +472,45 @@ def run_offline_action(
             str(output),
         ]
         summary = _invoke_main(candidate_strategy_channel_cli.main, argv)
+    elif action is NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN:
+        if (
+            config.publication_created_at is None
+            or config.publication_expected_current_state_fingerprint is None
+        ):
+            raise DailyEodExecutorError(
+                "Market Intelligence planning requires timestamp and inventory binding"
+            )
+        output = config.paths.market_intelligence_approval_plan
+        argv = [
+            "--plan",
+            "--data-root",
+            str(config.paths.data_root),
+            "--analysis-session",
+            session,
+            "--revision",
+            MARKET_INTELLIGENCE_REVISION,
+            "--preview-bundle",
+            str(config.paths.preview_bundle),
+            "--phase1a-audit",
+            str(config.paths.phase1a_audit),
+            "--phase1b-audit",
+            str(config.paths.phase1b_audit),
+            "--phase2-audit",
+            str(config.paths.phase2_audit),
+            "--candidate-audit",
+            str(config.paths.candidate_audit),
+            "--entry-geometry-audit",
+            str(config.paths.entry_geometry_audit),
+            "--output-root",
+            str(config.paths.market_intelligence_output_root),
+            "--approval-package",
+            str(config.paths.market_intelligence_approval_plan),
+            "--created-at",
+            config.publication_created_at.astimezone(UTC).isoformat(),
+            "--expected-current-state-fingerprint",
+            config.publication_expected_current_state_fingerprint,
+        ]
+        summary = _invoke_main(market_intelligence_publication_cli.main, argv)
     else:
         raise DailyEodExecutorError("unsupported offline daily action")
     raw = summary.encode("utf-8")
@@ -540,6 +594,8 @@ def _action_output_path(action: NextAction, config: DailyEodExecutionConfig) -> 
         return config.paths.preview_bundle
     if action is NextAction.CALCULATE_STRATEGY_CHANNELS:
         return config.paths.strategy_channel_audit
+    if action is NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN:
+        return config.paths.market_intelligence_approval_plan
     raise DailyEodExecutorError("unsupported offline daily action")
 
 
@@ -559,6 +615,23 @@ def _validate_execution_config(config: DailyEodExecutionConfig) -> None:
         or config.candidate_work_dir.parent != Path("/tmp")
     ):
         raise DailyEodExecutorError("Candidate work directory must be a direct child of /tmp")
+    publication_values = (
+        config.publication_created_at,
+        config.publication_expected_current_state_fingerprint,
+    )
+    if any(value is not None for value in publication_values):
+        if (
+            config.publication_created_at is None
+            or config.publication_created_at.tzinfo is None
+            or config.publication_created_at.utcoffset() is None
+            or config.publication_created_at.utcoffset().total_seconds() != 0
+            or not _is_fingerprint(
+                config.publication_expected_current_state_fingerprint
+            )
+        ):
+            raise DailyEodExecutorError(
+                "publication planning inputs must be complete UTC/fingerprint bindings"
+            )
 
 
 def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
@@ -576,11 +649,25 @@ def _execution_input_fingerprint(config: DailyEodExecutionConfig) -> str:
             "phase2_audit": str(config.paths.phase2_audit),
             "preview_bundle": str(config.paths.preview_bundle),
             "strategy_channel_audit": str(config.paths.strategy_channel_audit),
+            "market_intelligence_output_root": str(
+                config.paths.market_intelligence_output_root
+            ),
+            "market_intelligence_approval_plan": str(
+                config.paths.market_intelligence_approval_plan
+            ),
             "panel_cache_root": (
                 None if config.panel_cache_root is None else str(config.panel_cache_root)
             ),
             "candidate_work_dir": (
                 None if config.candidate_work_dir is None else str(config.candidate_work_dir)
+            ),
+            "publication_created_at": (
+                None
+                if config.publication_created_at is None
+                else config.publication_created_at.isoformat()
+            ),
+            "publication_expected_current_state_fingerprint": (
+                config.publication_expected_current_state_fingerprint
             ),
         },
     }

@@ -538,8 +538,17 @@ def test_cli_naked_apply_missing_binding_wrong_sha_and_network_guard(tmp_path):
 def test_cli_plan_loader_rejects_wrong_full_file_sha(tmp_path):
     plan_path = tmp_path / "plan.json"
     plan_path.write_text("{}\n")
+    plan_path.chmod(0o444)
     with pytest.raises(repo.MarketIntelligencePublicationError, match="full-file"):
         cli._load_plan(plan_path, "0" * 64)
+
+
+def test_formal_approval_plan_reader_reconciles_immutable_candidate(monkeypatch, tmp_path):
+    _, _, plan = _setup(monkeypatch, tmp_path)
+    plan_path = tmp_path / "approval-plan.json"
+    plan_path.write_bytes(repo.canonical_bytes(plan.model_dump(mode="json")))
+    plan_path.chmod(0o444)
+    assert repo.read_market_intelligence_approval_plan(plan_path) == plan
 
 
 def test_config_rejects_preview_and_formal_routes_together():

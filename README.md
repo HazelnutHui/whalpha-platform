@@ -51,15 +51,17 @@ canonical EOD. Historical 8/27 recovery evidence is retained in the project
 changelog; the active deployed release is the complete 8/28 round above.
 
 Repository development source also contains an exact-session read-only daily
-planner and a single-action executor for seven offline analytics stages.
+planner and a single-action executor for eight offline daily stages: seven
+analytics stages plus Market Intelligence approval-plan preparation.
 Execution is bound to an unchanged plan fingerprint, global Dell lock,
 immutable hash-chained journal, validated output evidence, and post-action
 formal re-plan. The original controlled 8/27 run exercised Identity/EOD
 acquisition and Apply plus the first four offline actions through Entry
 Geometry. ADR 0067 adds ETF Relationships, Market Preview, and Strategy
-Channels to the same one-transition custody chain. Publication, Snapshot,
-bundle, deployment, and scheduler activation remain outside that executor and
-separately unauthorized.
+Channels to the same one-transition custody chain. ADR 0068 then adds the
+no-Production-write MI Plan step and stops at human publication review.
+Publication Apply, Snapshot, bundle, deployment, and scheduler activation
+remain outside that executor and separately unauthorized.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded
