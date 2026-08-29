@@ -32,9 +32,9 @@ Confirmed:
 
 ## OCI
 
-Live-verified through the `whalpha-oci` SSH alias on 2026-08-28 without reading
+Live-verified through the `whalpha-oci` SSH alias on 2026-08-29 without reading
 credentials. The active Dashboard release is
-`2026-08-28T132100Z-eeccc22`; `/` is the data-free branded credential/guest
+`2026-08-29T080928Z-785ab49dfedd`; `/` is the data-free branded credential/guest
 Session entry, and `/dashboard/` and `/private-data/` share the server-side
 Session boundary.
 
@@ -54,8 +54,8 @@ Confirmed infrastructure facts:
 - the Auth Service listens only on `127.0.0.1:8010`
 - loopback HTTPS checks passed the unauthenticated route boundary, and a
   temporary guest Session read the same Dashboard and Snapshot before logout
-- the current release, two prior reviewed releases, and one deliberate older
-  fallback remain
+- the active release passed exact remote preflight and postflight; the complete
+  remote retained-release inventory must be reread before any cleanup
 - no release staging/partial residue exists
 - no production FastAPI market-data service was deployed to OCI
 

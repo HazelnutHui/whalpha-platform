@@ -10,17 +10,17 @@ project changelog, not in this current runbook.
 ## Live-verified state
 
 The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-08-28 post-deployment
+[current-context](../project/current-context.md). Its 2026-08-29 post-deployment
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching local immutable bundle resolve to
-  release `2026-08-28T132100Z-eeccc22`;
+  release `2026-08-29T080928Z-785ab49dfedd`;
 - the release is built from source commit
-  `eeccc2242a3414aba3b761915c4e146022b3b9fe` and binds Market Intelligence
-  `2026-08-28T131700Z-eeccc22`;
-- it serves explicitly stale-review Snapshot 1.9 / Dashboard 2.6, Candidate
-  publication 1.1, the strategy-channel product, `en` and `zh`, with English
-  as the first-visit default;
+  `785ab49dfeddf3c3c6622316326b07b2947ea5d8` and binds Market Intelligence
+  `2026-08-29T080431Z-785ab49dfedd`;
+- it serves ordinary-fresh, lag-zero 2026-08-28 analytics through Snapshot 1.9 /
+  Dashboard 2.6, Candidate publication 1.1, the strategy-channel product,
+  `en` and `zh`, with English as the first-visit default;
 - the deployment manifest declares no credentials, raw payload, or Parquet;
 - Nginx and `whalpha-dashboard-auth.service` are active and enabled;
 - the Auth Service listens only on `127.0.0.1:8010`;

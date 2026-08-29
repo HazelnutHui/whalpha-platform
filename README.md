@@ -143,7 +143,8 @@ scheduler, publication, or deployment has been authorized.
 
 Repository source also defines six independent Candidate strategy channels,
 sealed-signal/later-outcome evaluation contracts, and ADR 0051's point-in-time
-historical research foundation. The 29-session history remains mechanics-only.
+historical research foundation. The original 29-session readiness audit and
+current 31-session canonical history remain mechanics-only.
 Daily membership, corporate actions, lifecycle/terminal evidence, explicit
 adjustments, and 252/504-session history are still physically absent; the next
 work is a provider/entitlement and physical-storage review packet, not formula
@@ -180,7 +181,7 @@ authorized work.
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
 - First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential/HTTPS transport, bounded All Tickers identity ingestion, Grouped Daily publication, and provider security evidence workflows are verified.
-- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-27.
+- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-28.
 - Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
 - Market summary analytics use the latest two formally completed sessions and support close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.

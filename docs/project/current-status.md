@@ -380,8 +380,9 @@ read or used.
   Continuation is therefore explicitly a broad provisional trend filter, not a
   validated independent setup. New consolidation/contraction and trend-
   efficiency facts plus chronological validation are required before revising
-  it under a new parameter version. These ADR 0061 changes are repository-only
-  and not deployed.
+  it under a new parameter version. These ADR 0061 explanation and diagnostic
+  changes were later included in the deployed 2026-08-28 UI release and remain
+  present in the active 2026-08-29 release.
   ADR 0062 now adds a separate source-bound descriptive fact layer for return-
   path continuity, trend persistence, recent/prior structure, volatility,
   closing-high position, and volume context. It has no score, status, rank, or
@@ -397,10 +398,11 @@ read or used.
   mismatch, and no partial residue. The remaining seven-second current-batch
   read does not justify changing the upstream Candidate audit schema yet.
 - ADR 0050 now defines the anti-look-ahead evaluation contracts, but no signal
-  or outcome dataset exists. Current history is 29 sessions versus the fixed
-  252-session research minimum; daily point-in-time Universe membership and
-  completed corporate-action governance are also missing. Current-constituent
-  replay is explicitly ineligible for performance claims.
+  or outcome dataset exists. The historical-readiness audit used 29 sessions;
+  canonical retention is now 31 sessions versus the fixed 252-session research
+  minimum. Daily point-in-time Universe membership and completed corporate-
+  action governance are also missing. Current-constituent replay is explicitly
+  ineligible for performance claims.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

@@ -1,7 +1,25 @@
 # Roadmap
 
-- Next operational step: continue the Dell-only daily pipeline optimization
-  after the verified Candidate append and Phase 1b stable-prefix correction:
+## Current priorities
+
+- Operational: use the current default-off daily chain for one controlled
+  end-to-end run on the next eligible XNYS session. Do not rebuild the already
+  active 2026-08-28 Snapshot under a later source commit, and do not install
+  deployment controls or access OCI without separate exact authorization.
+- Reliability: only after that controlled real deployment and operational
+  review, prepare a default-off scheduler candidate and rehearse missed-session,
+  retry, interruption, and alert behavior. SMTP may remain unset.
+- Research data: keep formulas frozen until permission-cleared point-in-time
+  membership, lifecycle, corporate-action, and adjustment evidence support a
+  chronological 252-session minimum.
+- Product: preserve leadership quality and entry location as separate axes;
+  next improve relationship duration/acceleration and visual decision context.
+
+## Implemented sequencing record
+
+- Implemented operational sequence: continue the Dell-only daily pipeline
+  optimization after the verified Candidate append and Phase 1b stable-prefix
+  correction:
   verified-prior Phase 1b append, immutable panel-stage reuse, and streaming/
   resumable Candidate audit output, explicit validation tiers, and bounded
   deterministic cold-Oracle process parallelism are complete. The exact-
@@ -35,7 +53,7 @@
   one-fetch approval succeeded with a frozen 2026-08-27 EOD package and zero
   Production writes. Readiness now stops at separate Apply review.
   Publication, Snapshot, bundle, and OCI remain separate authorizations.
-- Next product-validation step: review the implemented additive Candidate
+- Implemented product-validation sequence: review the additive Candidate
   consumer that presents leadership quality and entry location as separate
   axes with review-now, watch-trigger, wait-reset, and other lanes.
   Do not tune the frozen shadow thresholds from the one-session distribution;
@@ -268,11 +286,11 @@ inventory before one exact live-pilot authorization. Product
 posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
-Do not select formulas or thresholds from one-session distributions. Snapshot
-1.9 / Dashboard 2.6 is now active as the explicitly acknowledged 2026-08-26
-stale-review release. Later repository changes remain undeployed; every
-further publication or deployment requires fresh exact review and
-authorization. Keep SMTP and SEC B2 paused.
+Do not select formulas or thresholds from one-session distributions. The
+ordinary-fresh, lag-zero 2026-08-28 Snapshot 1.9 / Dashboard 2.6 release is
+active. Later control-plane changes remain undeployed; every further
+publication or deployment requires fresh exact review and authorization. Keep
+SMTP and SEC B2 paused.
 
 The general historical governance design pass is complete. Pilot approval 1.1
 is bound to fresh exact source-permission assessments; the durable fixture-only

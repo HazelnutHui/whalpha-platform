@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-29 — Reconcile current deployment and retention documentation
+
+- Re-ran the credential-free full-source context reader on clean Dell `main`.
+  It reconfirmed aligned 2026-08-28 Identity/EOD, 31 canonical sessions, the
+  active fresh MI/Snapshot lineage, 444 `/data` files, and zero symlink or
+  publication residue without networking or writes.
+- Corrected README, current-status, infrastructure, OCI runbook, retention, and
+  roadmap text that still described older 2026-08-26/28 releases or the
+  29-session audit as current. The roadmap now stops before a next-session
+  controlled deployment and keeps scheduler activation subsequent to its
+  operational review.
+- Verified all eight retained local OCI bundles against their checksum
+  inventories. Their combined size is below 110 MiB, so no reviewed rollback
+  evidence was deleted merely for cosmetic cleanup. Remote inventory was not
+  inferred from local names and OCI was not accessed.
+- No source behavior, `/data`, Snapshot, bundle, deployment, external config,
+  credential, network, scheduler, or Production state changed.
+
 ## 2026-08-29 — Rehearse composed OCI custody and review runtime candidate
 
 - Added a true coordinator-to-capability-to-custody-to-journal integration
