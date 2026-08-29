@@ -315,10 +315,27 @@ Both Universes remain confirmed Balanced at composites 67.4134 / 67.5471;
 the independent Oracle has zero mismatch and all prefix/restart/source gates
 pass. An initial invocation correctly rejected the legacy Production-bound
 V1.0.0 prior path and created no target; the corrected lineage then completed
-normally. The planner now selects only `calculate_candidate_daily`. `/data`
-and all active serving artifacts remain unchanged. See
+normally. At that Phase 1b boundary, the planner selected only
+`calculate_candidate_daily`. `/data` and all active serving artifacts remained
+unchanged. See
 [the Phase 1a audit](../audits/daily-eod-phase1a-2026-08-28.md).
 See also [the Phase 1b audit](../audits/daily-eod-phase1b-2026-08-28.md).
+
+The 2026-08-27 daily Candidate append is now also complete at audit fingerprint
+`0fa85ae742ef47e7278c444c12f05f2082e38a5071068a5787655a11271eb4e4`.
+It reused four sessions, added one session across both Universes, used the
+formal panel-cache hit, and passed the independent Oracle and every incremental
+equivalence gate. Current score batches contain 1,714 Primary and 1,827
+Secondary comparable securities; the complete state ledger preserves all
+1,718 / 1,831 active members with four unavailable in each. The journal ends
+normally and the formal next operational action is
+`calculate_entry_geometry`. The 422,786,554-byte cumulative audit exposed a
+material control-path inefficiency: the 152.944168-second pre-write business
+path became a 576.027031-second journaled action because multiple layers fully
+reconstruct historical JSON. Optimize those redundant rereads without
+weakening the append-input or Oracle gates before running the next large
+postcondition chain. See
+[the daily Candidate audit](../audits/daily-eod-candidate-2026-08-29.md).
 
 ## Analytics and presentation
 

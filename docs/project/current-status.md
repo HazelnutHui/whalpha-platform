@@ -89,9 +89,25 @@ with audit fingerprint
 Primary/Secondary remain confirmed Balanced at those composites, the
 independent Oracle has zero mismatch, and every incremental prefix/restart/
 source gate passes. The first attempt safely rejected a legacy V1.0.0 prior
-path without creating a target; the corrected path completed normally. The
-next exact action is `calculate_candidate_daily`. `/data`, Market Intelligence,
-Snapshot, Dashboard, and OCI remain unchanged.
+path without creating a target; the corrected path completed normally. At that
+Phase 1b boundary, the next exact action was `calculate_candidate_daily`.
+`/data`, Market Intelligence, Snapshot, Dashboard, and OCI remained unchanged.
+
+The 2026-08-27 verified-prior daily Candidate append is now complete with audit
+fingerprint
+`0fa85ae742ef47e7278c444c12f05f2082e38a5071068a5787655a11271eb4e4`.
+It passed the current-session independent Oracle and every incremental
+equivalence gate. Current batches contain 1,714 Primary and 1,827 Secondary
+comparable securities; all active members remain represented in the state
+ledger with four unavailable in each Universe. The exact next operational
+action is `calculate_entry_geometry`; no publication or deployment followed.
+The 422.8 MB cumulative JSON audit made the performance boundary concrete:
+business work before write took 152.94 seconds, while repeated full formal
+rereads expanded the journaled action to 576.03 seconds and post-plan memory
+to roughly 6.1 GB RSS. Removing redundant control-layer historical
+reconstruction is the next engineering priority; it must retain one full
+append-input validation, exact custody, typed current-session evidence, locked
+plan identity, and fail-closed postconditions.
 
 The first authorized Apply invocation failed closed before reservation because
 canonical Apply custody did not project the journal's ADR 0047 operator-review

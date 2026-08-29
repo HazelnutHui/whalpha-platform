@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-29 — Complete 2026-08-27 daily Candidate append
+
+- Executed exactly one Dell-local `calculate_candidate_daily` transition from
+  the corrected Phase 1b and verified-prior Candidate lineage, with a panel-
+  cache hit, zero external requests, and zero Production writes.
+- Audit fingerprint
+  `0fa85ae742ef47e7278c444c12f05f2082e38a5071068a5787655a11271eb4e4`
+  passes the current-session independent Oracle and every daily incremental
+  prefix/restart/permutation gate. Current batches contain 1,714 Primary and
+  1,827 Secondary comparable securities.
+- The cumulative audit is 422,786,554 bytes. Business work before write took
+  152.944168 seconds and streaming write took 22.201208 seconds, but repeated
+  full formal rereads expanded the journaled action to 576.027031 seconds and
+  about 6.1 GB observed post-plan RSS.
+- Publication-level immutable custody reread the same completed audit in 1.8
+  seconds. The next engineering priority is eliminating redundant planner and
+  postcondition historical reconstruction without weakening full append-input,
+  typed-current, Oracle, lock, hash, or fail-closed gates.
+- The journal ends in `action_succeeded`, the planner advances only to
+  `calculate_entry_geometry`, `/data` remains unchanged, and all 135 related
+  tests pass.
+
 ## 2026-08-28 — Complete 2026-08-27 incremental Phase 1b
 
 - Formally rejected the legacy Production-bound V1.0.0 prior audit as an

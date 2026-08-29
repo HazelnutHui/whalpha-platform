@@ -223,12 +223,14 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 
 ## Next Small Target
 
-Run and formally review only the offline 2026-08-27 daily Candidate
-calculation. Phase 1a and corrected-lineage incremental Phase 1b are complete
-with zero missing metrics and zero Oracle mismatch; Primary/Secondary are
-confirmed Balanced at composites 67.4134 / 67.5471. Entry Geometry,
-publication, Snapshot, bundle, and deployment remain later separate
-transitions.
+Optimize the Candidate control path before its next coordinated consumer.
+The 2026-08-27 daily Candidate append is complete with zero Oracle mismatch,
+but its 152.94-second pre-write business work became a 576.03-second action
+because multiple layers fully reconstruct the 422.8 MB cumulative audit.
+Retain full append-input and Oracle validation while using exact custody plus
+typed current-session evidence for planner/postcondition roles. Then run and
+formally review only `calculate_entry_geometry`. Publication, Snapshot,
+bundle, and deployment remain later separate transitions.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

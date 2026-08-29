@@ -682,3 +682,22 @@ That single action completed with audit fingerprint
 zero Oracle mismatch, and confirmed Balanced state for both Universes. The
 journal ends in `action_succeeded`, no unresolved event remains, and the next
 action is only `calculate_candidate_daily`. No later stage has run.
+
+The following single Candidate transition completed from the exact corrected
+Phase 1b and verified-prior Candidate lineage. Audit fingerprint
+`0fa85ae742ef47e7278c444c12f05f2082e38a5071068a5787655a11271eb4e4`
+has zero Oracle mismatch and all daily prefix/restart/permutation gates true.
+The action produced no `/data` or Production write and advanced the plan only
+to `calculate_entry_geometry`.
+
+This real run also exposed a control-path scaling problem. The daily business
+path reached audit write in 152.944168 seconds and streaming write took
+22.201208 seconds, but the journaled action took 576.027031 seconds. The
+422,786,554-byte cumulative JSON audit is fully reconstructed by multiple
+planner, finalization, and postcondition layers; post-plan RSS reached about
+6.1 GB. ADR 0060's lighter immutable publication-evidence reader verified the
+same completed custody in 1.8 seconds. Before the next large coordinated
+transition, reuse an appropriately scoped custody/current-session proof at
+planner and postcondition boundaries while retaining the full prior append
+input read inside Candidate calculation. Do not replace exact locked plan
+identity, hashes, typed current rows, or Oracle gates with existence checks.
