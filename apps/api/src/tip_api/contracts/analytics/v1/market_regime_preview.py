@@ -230,21 +230,26 @@ class PreviewEtfRelationshipV1(BaseModel):
 class PreviewEtfRelationshipViewV1(PreviewEtfRelationshipV1):
     """Additive API/Snapshot view; immutable source payload remains unchanged."""
 
-    change_summary: PreviewEtfRelationshipChangeSummaryV1
-    state_timeline: PreviewEtfRelationshipStateTimelineV1
+    change_summary: PreviewEtfRelationshipChangeSummaryV1 | None = None
+    state_timeline: PreviewEtfRelationshipStateTimelineV1 | None = None
 
     @model_validator(mode="after")
     def projections_reconcile(self) -> "PreviewEtfRelationshipViewV1":
         pair_id = self.definition.pair_id
         current_session = self.current.as_of_session
-        if self.change_summary.pair_id != pair_id or self.state_timeline.pair_id != pair_id:
+        if self.change_summary is not None and self.change_summary.pair_id != pair_id:
             raise ValueError("relationship projection identity differs")
-        if (
-            self.change_summary.as_of_session != current_session
-            or self.state_timeline.as_of_session != current_session
-        ):
+        if self.state_timeline is not None and self.state_timeline.pair_id != pair_id:
+            raise ValueError("relationship projection identity differs")
+        if self.change_summary is not None and self.change_summary.as_of_session != current_session:
             raise ValueError("relationship projection session differs")
-        if self.state_timeline.points[-1].relationship_state != self.current.relationship_state:
+        if self.state_timeline is not None and self.state_timeline.as_of_session != current_session:
+            raise ValueError("relationship projection session differs")
+        if (
+            self.state_timeline is not None
+            and self.state_timeline.points[-1].relationship_state
+            != self.current.relationship_state
+        ):
             raise ValueError("relationship timeline current state differs")
         return self
 

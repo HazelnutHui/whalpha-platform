@@ -7,7 +7,7 @@
 - Added a bilingual horizontal relationship path with session, state-change
   marker, and selected-window relative return. Retained count/start and older-
   point compaction are explicit.
-- Verified 1,655 backend tests and 96 frontend tests, plus the frontend
+- Verified 1,656 backend tests and 96 frontend tests, plus the frontend
   production build. The dependency deprecation and bundle-size warnings are
   unchanged.
 - The formal read-only active-publication reader also projected all 16 pairs
@@ -15,6 +15,12 @@
   retained sessions and reconciled its final session/state to current.
 - No state recomputation, formula, threshold, score, rank, Market Intelligence
   payload, `/data`, network, deployment, or scheduler state changed.
+- A write-free publication preflight exposed and corrected a backend reader
+  compatibility defect: prior Snapshots may omit both additive relationship
+  projections, while newly rendered responses still contain them. The failed
+  preflight stopped after `/tmp` candidate generation and made no Production
+  or `/data` write and no OCI request. The corrected contract passed the full
+  backend suite and a formal reread of the active pre-projection Snapshot.
 
 ## 2026-08-29 — Add descriptive ETF relationship persistence and acceleration
 

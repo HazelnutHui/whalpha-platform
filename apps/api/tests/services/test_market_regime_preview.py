@@ -20,6 +20,7 @@ from tip_api.contracts.analytics.v1 import (
     MarketRegimeCompositeV1,
     MarketRegimeDimensionV1,
     MarketRegimeMetricV1,
+    MarketRegimeOpportunityMapResponseV1,
     MarketRegimePreviewPayloadV1,
     MarketRegimeRelationshipComparisonV1,
     MarketRegimeStateExplanationV1,
@@ -338,6 +339,28 @@ def test_relationship_state_timeline_is_bounded_current_and_window_complete():
     assert tuple(item.window_sessions for item in timeline.points[-1].windows) == (5, 10, 20)
     with pytest.raises(RelationshipChangeSummaryError, match="display limit"):
         build_relationship_state_timeline(current=history[-1], history=history, display_limit=11)
+
+
+def test_response_contract_reads_snapshots_created_before_additive_relationship_views():
+    target = _new_dir()
+    try:
+        payload = _payload()
+        completed = _write_and_read_bundle(
+            target,
+            payload,
+            datetime(2026, 8, 25, tzinfo=UTC),
+            payload.source_logical_fingerprints,
+        )
+        response = MarketRegimePreviewService(completed).overview()
+        legacy = response.model_dump(mode="json")
+        for relationship in legacy["relationships"]:
+            relationship.pop("change_summary")
+            relationship.pop("state_timeline")
+        restored = MarketRegimeOpportunityMapResponseV1.model_validate(legacy)
+        assert restored.relationships[0].change_summary is None
+        assert restored.relationships[0].state_timeline is None
+    finally:
+        _cleanup(target)
 
 
 def test_cli_rejects_apply_and_config_requires_explicit_absolute_bundle():

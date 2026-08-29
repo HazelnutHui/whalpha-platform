@@ -175,10 +175,14 @@ ADR 0075 now adds a repository-only bounded relationship state timeline. It
 projects at most the latest ten frozen Phase 2 rows per pair, including state,
 confidence, prior-session change, and existing 5/10/20 relative returns. The
 bilingual detail view exposes retained-history boundaries and never recomputes
-states in the browser. All 1,655 backend tests and 96 frontend tests pass, and
+states in the browser. All 1,656 backend tests and 96 frontend tests pass, and
 the frontend production build succeeds. A formal read-only construction from
 the active 2026-08-28 Market Intelligence payload reconciles all 16 pairs,
 showing 10 of 21 retained relationship sessions. This addition is not deployed.
+The first write-free publication preflight found that the backend reader also
+needed to accept prior Snapshots without the additive fields. That compatibility
+is corrected and regression-covered; the failed preflight created only a
+bounded `/tmp` candidate and changed neither `/data` nor Production.
 
 ### Historical 2026-08-27 recovery and pipeline evidence
 

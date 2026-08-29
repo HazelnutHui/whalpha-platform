@@ -218,10 +218,15 @@ and the frontend production build succeeds.
 ADR 0075 subsequently adds a repository-only ten-point relationship state path
 with explicit retained-history boundaries and selected-window relative returns.
 It does not alter Phase 2, formulas, rankings, Market Intelligence, `/data`, or
-Production. All 1,655 backend tests and 96 frontend tests pass, the frontend
+Production. All 1,656 backend tests and 96 frontend tests pass, the frontend
 production build succeeds, and the formal active-publication reader reconciles
 all 16 pairs against 21 retained 2026-08-28 relationship sessions without a
 write. This boundary remains undeployed.
+The first write-free publication preflight then caught a backend compatibility
+defect when rereading the active pre-projection Snapshot. Repository source now
+accepts missing additive fields while newly rendered responses still include
+them. The failed preflight stopped with only a `/tmp` candidate and made no
+`/data`, OCI, or Production change.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.
