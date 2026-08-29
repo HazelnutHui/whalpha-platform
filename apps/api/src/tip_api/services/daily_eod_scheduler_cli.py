@@ -91,7 +91,7 @@ def main(argv: list[str] | None = None) -> int:
                     "error_type": type(exc).__name__,
                     "runtime_verified": False,
                     "scheduler_candidate_enabled": False,
-                    "scheduler_installed": False,
+                    "scheduler_installation_performed": False,
                     "coordinator_invocation_count": 0,
                     "credential_access_count": 0,
                     "external_request_count": 0,

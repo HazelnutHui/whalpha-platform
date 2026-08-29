@@ -36,7 +36,8 @@ def test_default_cli_reviews_disabled_candidate_without_writes(
     payload = json.loads(capsys.readouterr().out)
     assert payload["status"] == "up_to_date"
     assert payload["scheduler_candidate_enabled"] is False
-    assert payload["scheduler_installed"] is False
+    assert payload["scheduler_installation_performed"] is False
+    assert "scheduler_installed" not in payload
     assert payload["coordinator_invocation_count"] == 0
     assert payload["credential_access_count"] == 0
     assert payload["external_request_count"] == 0
@@ -100,7 +101,7 @@ def test_enabled_review_changes_candidate_only(monkeypatch, capsys) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["next_action"] == "invoke_one_transition"
     assert payload["scheduler_candidate_enabled"] is True
-    assert payload["scheduler_installed"] is False
+    assert payload["scheduler_installation_performed"] is False
     assert payload["coordinator_invocation_count"] == 0
 
 
@@ -120,7 +121,7 @@ def test_cli_fails_closed_on_unavailable_canonical_state(monkeypatch, capsys) ->
     assert cli.main(["--checked-at", CHECKED_AT, "--data-root", str(DATA_ROOT)]) == 1
     payload = json.loads(capsys.readouterr().out)
     assert payload["status"] == "rejected"
-    assert payload["scheduler_installed"] is False
+    assert payload["scheduler_installation_performed"] is False
     assert payload["external_request_count"] == 0
     assert payload["production_write_count"] == 0
 
@@ -144,7 +145,7 @@ def test_cli_fails_closed_when_latest_formal_read_differs_from_index(
     assert cli.main(["--checked-at", CHECKED_AT, "--data-root", str(DATA_ROOT)]) == 1
     payload = json.loads(capsys.readouterr().out)
     assert payload["status"] == "rejected"
-    assert payload["scheduler_installed"] is False
+    assert payload["scheduler_installation_performed"] is False
     assert payload["coordinator_invocation_count"] == 0
 
 

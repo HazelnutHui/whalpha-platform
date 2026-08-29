@@ -241,7 +241,8 @@ the existing stabilization policy. On current Dell state at
 2026-08-31T20:30:00Z. Both disabled and explicitly enabled-candidate reviews
 recorded zero coordinator invocation, credential access, networking, file
 write, or Production write. All 1,701 backend tests pass. No scheduler service
-or timer is installed.
+or timer was installed at the ADR 0076 planning boundary; ADR 0079 records the
+later host installation below.
 ADR 0077 subsequently adds the default-off one-transition wake bridge. It
 recomputes the complete ADR 0076 plan fingerprint before a call, accepts only
 an explicitly enabled ready candidate plus a separate invocation flag, and
@@ -267,6 +268,13 @@ read-only/`NoNewPrivileges`/`AF_UNIX` unit then passed a controlled start in
 about three seconds and reported current 2026-08-28 state with zero coordinator,
 credential, external request, filesystem write, or Production write. No real
 data transition, publication, or deployment is scheduled.
+ADR 0080 now separates operation evidence from host state. Current planner,
+scheduled-wake, and rehearsal 1.1 outputs report
+`scheduler_installation_performed=false`, meaning that the invocation made no
+unit change. They no longer emit `scheduler_installed`. The installed/enabled
+timer and `hui` linger state remain separately established by read-only host
+inspection. The updated five-wake rehearsal fingerprint is
+`51133b39e01eeb5aacdc0686eb00b612180a7a4ba45a448802de99b859759412`.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

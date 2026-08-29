@@ -79,6 +79,9 @@ candidate that can run only the read-only wake planner at 13:30 and 16:30 New
 York time. ADR 0079 records the separately authorized user-level installation:
 linger is enabled, the read-only timer is enabled, and a controlled systemd
 start passed. No real coordinator or data-transition scheduler is connected.
+ADR 0080 removes the misleading planner-level `scheduler_installed` field:
+planner output now states only that the current operation performed no
+installation, while actual host state is verified separately through systemd.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

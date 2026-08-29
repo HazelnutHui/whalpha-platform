@@ -21,7 +21,7 @@ from tip_api.services.daily_eod_scheduler import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-scheduled-wake/1.0"
+CONTRACT_VERSION = "daily-eod-scheduled-wake/1.1"
 
 
 class DailyEodScheduledWakeError(RuntimeError):
@@ -53,7 +53,7 @@ class DailyEodScheduledWakeResult:
     automatic_recovery_enabled: bool
     publication_authorized: bool
     deployment_authorized: bool
-    scheduler_installed: bool
+    scheduler_installation_performed: bool
     transition_outcome_formally_known: bool
     logical_content_fingerprint: str
 
@@ -126,7 +126,7 @@ def _validate_plan(
     ):
         raise DailyEodScheduledWakeError("scheduler wake plan fingerprint mismatch")
     if (
-        plan.scheduler_installed
+        plan.scheduler_installation_performed
         or plan.coordinator_invocation_limit != 1
         or plan.coordinator_invocation_count != 0
         or plan.automatic_retry_enabled
@@ -210,7 +210,7 @@ def _result(
         "automatic_recovery_enabled": False,
         "publication_authorized": False,
         "deployment_authorized": False,
-        "scheduler_installed": False,
+        "scheduler_installation_performed": False,
         "transition_outcome_formally_known": coordinator_result is not None,
     }
     return DailyEodScheduledWakeResult(
@@ -231,7 +231,7 @@ def _result(
         automatic_recovery_enabled=False,
         publication_authorized=False,
         deployment_authorized=False,
-        scheduler_installed=False,
+        scheduler_installation_performed=False,
         transition_outcome_formally_known=coordinator_result is not None,
         logical_content_fingerprint=_fingerprint(logical),
     )

@@ -42,7 +42,6 @@ def main(argv: list[str] | None = None) -> int:
                     "error_type": type(exc).__name__,
                     "installation_performed": False,
                     "activation_performed": False,
-                    "scheduler_installed": False,
                     "coordinator_invocation_count": 0,
                     "credential_access_count": 0,
                     "external_request_count": 0,

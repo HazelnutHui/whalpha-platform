@@ -12,7 +12,7 @@ from tip_api.services.daily_eod_readiness import DailyEodReadinessPolicy
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
 
 
-CONTRACT_VERSION = "daily-eod-scheduler-wake-plan/1.0"
+CONTRACT_VERSION = "daily-eod-scheduler-wake-plan/1.1"
 
 
 class DailyEodSchedulerError(RuntimeError):
@@ -45,7 +45,7 @@ class DailyEodSchedulerWakePlan:
     reason_codes: tuple[str, ...]
     readiness_policy_fingerprint: str
     scheduler_candidate_enabled: bool
-    scheduler_installed: bool
+    scheduler_installation_performed: bool
     coordinator_invocation_limit: int
     coordinator_invocation_count: int
     automatic_retry_enabled: bool
@@ -138,7 +138,7 @@ def plan_daily_eod_scheduler_wake(
         "reason_codes": list(reasons),
         "readiness_policy_fingerprint": selected_policy.logical_fingerprint,
         "scheduler_candidate_enabled": review_enabled_candidate,
-        "scheduler_installed": False,
+        "scheduler_installation_performed": False,
         "coordinator_invocation_limit": 1,
         "coordinator_invocation_count": 0,
         "automatic_retry_enabled": False,
@@ -163,7 +163,7 @@ def plan_daily_eod_scheduler_wake(
         reason_codes=reasons,
         readiness_policy_fingerprint=selected_policy.logical_fingerprint,
         scheduler_candidate_enabled=review_enabled_candidate,
-        scheduler_installed=False,
+        scheduler_installation_performed=False,
         coordinator_invocation_limit=1,
         coordinator_invocation_count=0,
         automatic_retry_enabled=False,

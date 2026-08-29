@@ -10,6 +10,8 @@
   state. The default-off one-transition bridge and five-scenario synthetic
   rehearsal are also complete. The exact user-systemd candidate, `hui` linger,
   owner-only installation, and controlled read-only service start are complete.
+  Planner-operation evidence is now explicitly separated from installed host
+  state under ADR 0080.
   Next observe one real calendar-triggered wake before composing any real
   coordinator transition. SMTP may remain unset.
 - Research data: keep formulas frozen until permission-cleared point-in-time
@@ -284,7 +286,9 @@ systemd 255 and the current user manager are available. ADR 0079 records the
 separately authorized `hui` linger enablement and read-only user-timer
 installation. The compatible service passed a controlled systemd start after
 unsupported user-manager capability/namespace directives were removed. Next
-observe a real scheduled wake; do not connect the coordinator yet.
+observe a real scheduled wake; do not connect the coordinator yet. ADR 0080
+also completes the contract cleanup that distinguishes a no-install operation
+from the separately verified installed timer.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

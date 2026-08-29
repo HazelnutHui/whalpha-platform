@@ -18,10 +18,9 @@ def test_cli_is_network_and_write_free(monkeypatch, capsys, tmp_path) -> None:
             socket.create_connection(("example.invalid", 443))
         return SimpleNamespace(
             as_dict=lambda: {
-                "contract_version": "daily-eod-scheduler-systemd-review/1.0",
+                "contract_version": "daily-eod-scheduler-systemd-review/1.1",
                 "status": "review_ready_prerequisite_missing",
                 "installation_performed": False,
-                "scheduler_installed": False,
             }
         )
 
@@ -37,7 +36,7 @@ def test_cli_is_network_and_write_free(monkeypatch, capsys, tmp_path) -> None:
     ) == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["installation_performed"] is False
-    assert payload["scheduler_installed"] is False
+    assert "scheduler_installed" not in payload
     assert captured[0]["activation_candidate_enabled"] is True
 
 

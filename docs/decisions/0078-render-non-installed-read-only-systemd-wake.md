@@ -64,8 +64,9 @@ instead of being presented as effective hardening.
   the Dell host timezone, which remains UTC.
 - A later source commit invalidates the candidate until it is regenerated at
   the new clean revision.
-- `Persistent=true` does not conceal the current `linger=no` prerequisite.
-  Enabling linger or choosing a system-level unit is a separate host decision.
+- At this candidate-review boundary, `Persistent=true` did not conceal the
+  observed `linger=no` prerequisite. Enabling linger or choosing a system-level
+  unit remained a separate host decision later resolved by ADR 0079.
 - Installing this candidate would still run only read-only planning. Repeated
   retry/transition cadence and composition with the real coordinator remain a
   later separately reviewed boundary.

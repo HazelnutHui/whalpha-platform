@@ -93,8 +93,9 @@ beneath a new `/tmp` candidate root, formally rereads every file and exact
 Snapshot binding, and stops at deployment review. `analytics_ready` therefore
 describes a reviewed boundary, not write authority; it grants no MI Apply,
 Snapshot Apply, OCI deployment, `/data`, credential, or scheduler authority.
-No scheduler or unattended Production publication/deployment chain has been
-enabled.
+No data-transition scheduler or unattended Production publication/deployment
+chain has been enabled. The separately installed timer runs only the read-only
+planner described below.
 
 ADR 0076 adds the first read-only scheduler-wake plan. It validates every
 small canonical EOD completion manifest, fully rereads only the latest
@@ -104,8 +105,9 @@ review at 2026-08-29T14:30:00Z completed in about 2.8 seconds, reported current
 EOD through 2026-08-28, next target 2026-08-31, and next check 20:30 UTC.
 Default and explicitly enabled-candidate reviews both invoked no coordinator,
 read no credential, used no network, and wrote no file or Production state.
-All 1,701 backend tests pass. No service or timer is installed; repeated
-distinct-wake handling is recorded in ADR 0077 below.
+All 1,701 backend tests pass. No service or timer was installed at that ADR
+0076 boundary; repeated distinct-wake handling is recorded in ADR 0077 and the
+later host installation in ADR 0079 below.
 
 ADR 0077 adds the default-off bridge from one exact enabled-candidate wake plan
 to at most one supplied coordinator call. It recomputes both the full plan
@@ -140,6 +142,13 @@ reporting EOD current through 2026-08-28 and zero coordinator, credential,
 network, filesystem-write, or Production-write activity. The timer is enabled
 only for read-only planning; no data transition, publication, or deployment is
 scheduled.
+
+ADR 0080 removes the remaining semantic ambiguity from current contracts.
+Planner, scheduled-wake, and rehearsal 1.1 now report only
+`scheduler_installation_performed=false`; this proves that the invocation did
+not change unit state and is not a claim that the host timer is absent. The
+systemd candidate review 1.1 likewise reports operation facts only. Actual
+installed/enabled state remains a separate read-only host inspection.
 
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact

@@ -16,7 +16,7 @@ from tip_api.services.daily_eod_scheduled_wake import run_one_scheduled_wake
 from tip_api.services.daily_eod_scheduler import plan_daily_eod_scheduler_wake
 
 
-CONTRACT_VERSION = "daily-eod-scheduler-rehearsal/1.0"
+CONTRACT_VERSION = "daily-eod-scheduler-rehearsal/1.1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,7 +40,7 @@ class DailyEodSchedulerRehearsalReport:
     total_coordinator_invocation_count: int
     maximum_coordinator_invocations_per_wake: int
     synthetic_coordinator_results: bool
-    scheduler_installed: bool
+    scheduler_installation_performed: bool
     credential_access_count: int
     external_request_count: int
     filesystem_write_count: int
@@ -137,7 +137,7 @@ def review_daily_eod_scheduler_rehearsal() -> DailyEodSchedulerRehearsalReport:
             item.coordinator_invocation_count for item in scenarios
         ),
         "synthetic_coordinator_results": True,
-        "scheduler_installed": False,
+        "scheduler_installation_performed": False,
         "credential_access_count": 0,
         "external_request_count": 0,
         "filesystem_write_count": 0,
@@ -156,7 +156,7 @@ def review_daily_eod_scheduler_rehearsal() -> DailyEodSchedulerRehearsalReport:
             logical["maximum_coordinator_invocations_per_wake"]
         ),
         synthetic_coordinator_results=True,
-        scheduler_installed=False,
+        scheduler_installation_performed=False,
         credential_access_count=0,
         external_request_count=0,
         filesystem_write_count=0,

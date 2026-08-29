@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-29 — Separate scheduler operation from installed host state
+
+- Accepted ADR 0080 and replaced the misleading planner-level
+  `scheduler_installed=false` with
+  `scheduler_installation_performed=false`. The latter proves only that the
+  current invocation performed no installation; it does not claim the Dell
+  timer is absent.
+- Advanced the planner, scheduled-wake, rehearsal, and systemd-review
+  contracts to 1.1, removed the redundant host-state-like review field, and
+  added regressions that reject its return.
+- The five-scenario rehearsal now has fingerprint
+  `51133b39e01eeb5aacdc0686eb00b612180a7a4ba45a448802de99b859759412`
+  with the same four fake calls, one-call maximum, and zero credential,
+  network, filesystem-write, or Production-write activity.
+- No coordinator, provider, `/data`, publication, deployment, or Production
+  capability changed. Installed/enabled timer state remains separately
+  verified through read-only host inspection.
+
 ## 2026-08-29 — Install the read-only user scheduler
 
 - Accepted ADR 0079 after the user explicitly selected user-systemd persistence.

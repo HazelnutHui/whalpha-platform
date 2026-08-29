@@ -628,8 +628,12 @@ scripts/admin/plan-daily-eod-scheduler.sh \
 The default reports `scheduler_candidate_enabled=false`. The explicit
 `--review-enabled-candidate` flag changes only the in-memory candidate and may
 propose `invoke_one_transition` when a target is ready. Both forms always
-report `scheduler_installed=false`, coordinator invocation count zero, and zero
+report `scheduler_installation_performed=false`, coordinator invocation count
+zero, and zero
 credential access, network requests, filesystem writes, and Production writes.
+That field describes only the side effects of the current invocation. It does
+not inspect or report whether a unit is already installed on the host. Read
+actual host state through the systemd inspection commands below.
 
 The wake planner validates the small completion manifest for every canonical
 session, fully rereads only the latest EOD Parquet/Identity binding, and uses
@@ -689,12 +693,12 @@ wake times are 13:30 and 16:30 on weekdays, covering the 30-minute stabilization
 window after early and normal XNYS closes while the exchange calendar remains
 authoritative.
 
-Dell currently reports a running user manager but `linger=no`. An enabled
-candidate must therefore remain `review_ready_prerequisite_missing`.
-`Persistent=true` is not sufficient across logout or reboot until the user
-chooses and separately authorizes either linger or a system-level service.
-Do not install unit files, enable linger, reload systemd, or enable/start the
-timer from this review.
+At the ADR 0078 candidate-review boundary Dell reported a running user manager
+but `linger=no`, so the enabled candidate correctly returned
+`review_ready_prerequisite_missing`. ADR 0079 later records the separately
+authorized user-level installation and linger change. The review command
+itself still must not install units, change linger, reload systemd, or
+enable/start the timer.
 
 ### Controlled read-only installation state
 
@@ -713,6 +717,13 @@ coordinator calls, credential accesses, external requests, filesystem writes,
 or Production writes. The next checkpoint is a real calendar-triggered wake.
 Do not add `--review-enabled-candidate` or any coordinator/capability arguments
 to the installed unit.
+
+ADR 0080 defines the reporting boundary after installation. Planner and
+rehearsal contract 1.1 use `scheduler_installation_performed=false`; this means
+the invocation did not install or alter a unit. It is not host-state evidence.
+The systemd review 1.1 reports only whether that review performed installation
+or activation, while the commands below remain authoritative for current host
+state.
 
 Read-only inspection:
 

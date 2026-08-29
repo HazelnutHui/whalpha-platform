@@ -143,7 +143,7 @@ def test_enabled_review_reports_missing_linger_without_installing(tmp_path) -> N
     assert review.installation_prerequisites_satisfied is False
     assert review.installation_performed is False
     assert review.activation_performed is False
-    assert review.scheduler_installed is False
+    assert "scheduler_installed" not in review.as_dict()
     assert review.coordinator_invocation_count == 0
     assert review.credential_access_count == 0
     assert review.external_request_count == 0
@@ -164,7 +164,7 @@ def test_linger_ready_candidate_still_requires_separate_installation(tmp_path) -
 
     assert review.status == "review_ready"
     assert review.installation_prerequisites_satisfied is True
-    assert review.scheduler_installed is False
+    assert review.installation_performed is False
     assert review.reason_code == (
         "enabled_candidate_requires_separate_installation_review"
     )
@@ -214,7 +214,7 @@ def test_review_tamper_is_rejected(tmp_path) -> None:
         command_runner=runner(),
     )
     with pytest.raises(systemd.DailyEodSchedulerSystemdError, match="boundary"):
-        systemd.candidate_from_review(replace(review, scheduler_installed=True))
+        systemd.candidate_from_review(replace(review, installation_performed=True))
 
     changed = replace(
         review,

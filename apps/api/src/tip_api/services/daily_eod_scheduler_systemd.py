@@ -21,7 +21,7 @@ from tip_api.services.daily_eod_standing_authorization import (
 
 
 CONTRACT_VERSION = "daily-eod-scheduler-systemd-candidate/1.0"
-REVIEW_CONTRACT_VERSION = "daily-eod-scheduler-systemd-review/1.0"
+REVIEW_CONTRACT_VERSION = "daily-eod-scheduler-systemd-review/1.1"
 SERVICE_UNIT_NAME = "whalpha-daily-eod-wake-review.service"
 TIMER_UNIT_NAME = "whalpha-daily-eod-wake-review.timer"
 CALENDAR_EXPRESSIONS = (
@@ -130,7 +130,6 @@ class DailyEodSchedulerSystemdReview:
     activation_candidate_enabled: bool
     installation_performed: bool
     activation_performed: bool
-    scheduler_installed: bool
     coordinator_invocation_count: int
     credential_access_count: int
     external_request_count: int
@@ -300,7 +299,6 @@ def review_scheduler_systemd_candidate(
         "activation_candidate_enabled": activation_candidate_enabled,
         "installation_performed": False,
         "activation_performed": False,
-        "scheduler_installed": False,
         "coordinator_invocation_count": 0,
         "credential_access_count": 0,
         "external_request_count": 0,
@@ -327,7 +325,6 @@ def candidate_from_review(
         or review.contract_version != REVIEW_CONTRACT_VERSION
         or review.installation_performed
         or review.activation_performed
-        or review.scheduler_installed
         or review.coordinator_invocation_count != 0
         or review.credential_access_count != 0
         or review.external_request_count != 0

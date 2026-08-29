@@ -26,7 +26,7 @@ def test_current_canonical_state_waits_for_next_session_stabilization() -> None:
     assert plan.next_check_at == "2026-08-31T20:30:00+00:00"
     assert plan.missing_session_count == 0
     assert plan.scheduler_candidate_enabled is False
-    assert plan.scheduler_installed is False
+    assert plan.scheduler_installation_performed is False
 
 
 def test_current_missing_session_waits_through_stabilization() -> None:
@@ -52,7 +52,7 @@ def test_enabled_candidate_can_only_propose_one_coordinator_invocation() -> None
     assert plan.status is SchedulerWakeStatus.READY_FOR_WAKE
     assert plan.next_action is SchedulerWakeAction.INVOKE_ONE_TRANSITION
     assert plan.scheduler_candidate_enabled is True
-    assert plan.scheduler_installed is False
+    assert plan.scheduler_installation_performed is False
     assert plan.coordinator_invocation_limit == 1
     assert plan.coordinator_invocation_count == 0
     assert plan.automatic_retry_enabled is False
