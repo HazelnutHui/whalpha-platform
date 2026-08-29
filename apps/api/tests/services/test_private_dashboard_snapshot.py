@@ -303,6 +303,7 @@ def test_output_symlink_and_traversal_rejected(tmp_path):
 
 def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__file__).resolve().parents[4]):
     deploy_script = repo_root / "scripts" / "admin" / "deploy-private-dashboard-oci.sh"
+    inspect_script = repo_root / "scripts" / "admin" / "inspect-private-dashboard-oci.sh"
     build_script = repo_root / "scripts" / "admin" / "build-oci-dashboard-bundle.sh"
     nginx_template = repo_root / "deploy" / "oci" / "nginx" / "whalpha-private-dashboard.conf.template"
     assert "dry-run" in deploy_script.read_text()
@@ -342,7 +343,17 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "auth status unauth status" in deploy_text
     assert "guest Dashboard status" in deploy_text and "guest private-data status" in deploy_text
     assert "remote_password_rotation_path" in deploy_text
+    assert "--expected-current-release" in deploy_text
+    assert "--bundle-path" in deploy_text
+    assert "target staging path already exists" in deploy_text
+    assert "remote failed-release residue appeared before mutation" in deploy_text
+    inspect_text = inspect_script.read_text()
+    assert "oci-dashboard-remote-state/1.0" in inspect_text
+    assert "credential_login_tested" in inspect_text
+    assert "guest_and_credential_route_policy_identical" in inspect_text
+    assert "DEPLOY_FAILED" in inspect_text
     subprocess.run(["bash", "-n", str(deploy_script)], check=True)
+    subprocess.run(["bash", "-n", str(inspect_script)], check=True)
 
 
 def test_password_rotation_script_safety(tmp_path: Path, repo_root: Path = Path(__file__).resolve().parents[4]):

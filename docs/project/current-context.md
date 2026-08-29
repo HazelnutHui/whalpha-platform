@@ -184,8 +184,20 @@ bundle build-time recovery identity, and a
 strict Serving Bundle 1.0 formal reader. It removes the ambiguous legacy
 Snapshot-release shortcut and stops at `review_bundle_deployment`. This code
 is uninvoked; no real candidate, OCI request, switch, reload, rollback, or
-scheduler change occurred. One-shot OCI deployment custody is now the next
-missing control boundary.
+scheduler change occurred. One-shot OCI deployment custody was the next missing
+control boundary at that commit.
+ADR 0073 advances coordinator/recovery/journal contracts to 1.11/1.3/1.6 and
+implements that boundary behind a separately SHA-pinned, owner-only, default-
+disabled deployment config. One invocation binds the exact Serving Bundle and
+fresh remote pre-state, reserves before mutation, invokes Apply once, and
+requires a separate structured post-state inspection. The report contains no
+credential values and explicitly records that password login was not tested.
+Recovery performs one read-only inspection and never invokes Apply; unchanged,
+exactly completed, and partial/ambiguous states remain disjoint. The deployer
+also rejects changed current release, staging/failed residue, and a preexisting
+target stage immediately before mutation. This code is uninstalled and
+uninvoked; no OCI connection, Production write, switch, reload, rollback,
+credential access, or scheduler change occurred.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

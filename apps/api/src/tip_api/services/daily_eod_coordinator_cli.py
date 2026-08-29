@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import socket
+from functools import partial
 from contextlib import contextmanager
 from datetime import date, datetime
 from pathlib import Path
@@ -55,6 +56,23 @@ from tip_api.services.daily_eod_market_intelligence_apply_capability import (
 )
 from tip_api.services.daily_eod_market_intelligence_apply_custody import (
     DailyEodMarketIntelligenceApplyCustodyError,
+)
+from tip_api.services.daily_eod_oci_deployment_capability import (
+    DailyEodOciDeploymentCapability,
+    DailyEodOciDeploymentCapabilityConfig,
+    DailyEodOciDeploymentCapabilityError,
+    ReviewedShellOciDeploymentTransport,
+)
+from tip_api.services.daily_eod_oci_deployment_custody import (
+    DailyEodOciDeploymentCustodyError,
+)
+from tip_api.services.oci_dashboard_deployment_runtime import (
+    OciDashboardDeploymentRuntimeError,
+    read_deployment_runtime,
+    verify_deployment_runtime,
+)
+from tip_api.services.oci_dashboard_deployment_state import (
+    OciDashboardDeploymentStateError,
 )
 from tip_api.services.daily_eod_recovery_router import (
     DailyEodRecoveryRouterError,
@@ -117,10 +135,39 @@ def main(argv: list[str] | None = None) -> int:
             if args.apply_dashboard_snapshot
             else None
         )
+        deployment = (
+            _load_oci_deployment(args, automation_paths)
+            if args.deploy_oci_dashboard
+            else None
+        )
+        recovery_transport = (
+            _load_oci_recovery_transport(args)
+            if args.recover_unresolved and args.deployment_config is not None
+            else None
+        )
         email_delivery = (
             _load_email_delivery(args) if args.deliver_alert_email else None
         )
-        with _network_boundary(enabled=capabilities is not None):
+        with _network_boundary(
+            enabled=(
+                capabilities is not None
+                or deployment is not None
+                or recovery_transport is not None
+            )
+        ):
+            recovery_capability = None
+            if args.recover_unresolved:
+                recovery_capability = (
+                    recover_one_daily_eod_transition
+                    if recovery_transport is None
+                    else partial(
+                        recover_one_daily_eod_transition,
+                        oci_state_inspector=recovery_transport.inspect,
+                        oci_deployment_config_file_sha256=(
+                            args.deployment_config_sha256
+                        ),
+                    )
+                )
             result = coordinate_daily_eod_transition(
                 config=coordinator_config,
                 checked_at=args.checked_at,
@@ -128,13 +175,10 @@ def main(argv: list[str] | None = None) -> int:
                 recover_unresolved=args.recover_unresolved,
                 apply_market_intelligence=args.apply_market_intelligence,
                 apply_dashboard_snapshot=args.apply_dashboard_snapshot,
+                deploy_oci_dashboard=args.deploy_oci_dashboard,
                 fetch_capability=(None if capabilities is None else capabilities.fetch),
                 apply_capability=(None if capabilities is None else capabilities.apply),
-                recovery_capability=(
-                    recover_one_daily_eod_transition
-                    if args.recover_unresolved
-                    else None
-                ),
+                recovery_capability=recovery_capability,
                 publication_capability=(
                     None
                     if publication_capability is None
@@ -144,6 +188,9 @@ def main(argv: list[str] | None = None) -> int:
                     None
                     if snapshot_publication_capability is None
                     else snapshot_publication_capability.apply
+                ),
+                deployment_capability=(
+                    None if deployment is None else deployment.deploy
                 ),
             )
             payload = result.as_dict()
@@ -178,8 +225,12 @@ def main(argv: list[str] | None = None) -> int:
         DailyEodDashboardSnapshotApplyCustodyError,
         DailyEodMarketIntelligenceApplyCapabilityError,
         DailyEodMarketIntelligenceApplyCustodyError,
+        DailyEodOciDeploymentCapabilityError,
+        DailyEodOciDeploymentCustodyError,
         DailyEodRecoveryRouterError,
         DailyEodRunJournalError,
+        OciDashboardDeploymentRuntimeError,
+        OciDashboardDeploymentStateError,
         OSError,
         RuntimeError,
         ValueError,
@@ -416,6 +467,55 @@ def _load_dashboard_snapshot_apply_capability(
     )
 
 
+def _load_oci_runtime(args: argparse.Namespace):  # type: ignore[no-untyped-def]
+    source_root = _source_repository_root()
+    config = read_deployment_runtime(
+        config_path=args.deployment_config,
+        config_root=args.deployment_config.parent,
+        repository_root=source_root,
+        expected_file_sha256=args.deployment_config_sha256,
+    )
+    if not config.capability_enabled:
+        raise OciDashboardDeploymentRuntimeError(
+            "OCI deployment capability is disabled"
+        )
+    if Path(config.run_root) != args.run_root:
+        raise OciDashboardDeploymentRuntimeError(
+            "OCI deployment run root differs from coordinator"
+        )
+    return verify_deployment_runtime(config)
+
+
+def _load_oci_deployment(
+    args: argparse.Namespace,
+    automation_paths: DailyEodAutomationPaths,
+) -> DailyEodOciDeploymentCapability:
+    runtime = _load_oci_runtime(args)
+    transport = ReviewedShellOciDeploymentTransport(runtime)
+    return DailyEodOciDeploymentCapability(
+        config=DailyEodOciDeploymentCapabilityConfig(
+            run_root=args.run_root,
+            automation_paths=automation_paths,
+            bundle_path=args.approved_serving_bundle_path,
+            approved_bundle_logical_fingerprint=(
+                args.approved_serving_bundle_logical_fingerprint
+            ),
+            expected_remote_state_fingerprint=(
+                args.expected_oci_remote_state_fingerprint
+            ),
+            expected_current_release=args.expected_current_oci_release,
+            deployment_config_file_sha256=args.deployment_config_sha256,
+        ),
+        transport=transport,
+    )
+
+
+def _load_oci_recovery_transport(
+    args: argparse.Namespace,
+) -> ReviewedShellOciDeploymentTransport:
+    return ReviewedShellOciDeploymentTransport(_load_oci_runtime(args))
+
+
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Coordinate exactly one Dell daily EOD transition without looping."
@@ -453,6 +553,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--recover-unresolved", action="store_true")
     parser.add_argument("--apply-market-intelligence", action="store_true")
     parser.add_argument("--apply-dashboard-snapshot", action="store_true")
+    parser.add_argument("--deploy-oci-dashboard", action="store_true")
     parser.add_argument("--emit-alert-intent", action="store_true")
     parser.add_argument("--deliver-alert-email", action="store_true")
     parser.add_argument("--enable-authorized-capabilities", action="store_true")
@@ -472,6 +573,12 @@ def _parser() -> argparse.ArgumentParser:
         "--dashboard-snapshot-expected-current-state-fingerprint"
     )
     parser.add_argument("--dashboard-snapshot-review-acknowledgement")
+    parser.add_argument("--deployment-config", type=Path)
+    parser.add_argument("--deployment-config-sha256")
+    parser.add_argument("--approved-serving-bundle-path", type=Path)
+    parser.add_argument("--approved-serving-bundle-logical-fingerprint")
+    parser.add_argument("--expected-oci-remote-state-fingerprint")
+    parser.add_argument("--expected-current-oci-release")
     return parser
 
 
@@ -500,6 +607,8 @@ def _validate_arguments(
         "serving_bundle_root",
         "panel_cache_root",
         "candidate_work_dir",
+        "deployment_config",
+        "approved_serving_bundle_path",
     )
     for name in path_names:
         value = getattr(args, name)
@@ -530,24 +639,41 @@ def _validate_arguments(
         parser.error(
             "--apply-dashboard-snapshot cannot be combined with another execution mode"
         )
+    if args.deploy_oci_dashboard and (
+        args.recover_unresolved
+        or args.execute_offline
+        or args.enable_authorized_capabilities
+        or args.deliver_alert_email
+        or args.apply_market_intelligence
+        or args.apply_dashboard_snapshot
+    ):
+        parser.error(
+            "--deploy-oci-dashboard cannot be combined with another execution mode"
+        )
     publication_values = (
         args.publication_created_at,
         args.publication_expected_current_state_fingerprint,
     )
-    if (args.apply_market_intelligence or args.apply_dashboard_snapshot) and any(
-        value is not None for value in publication_values
-    ):
+    if (
+        args.apply_market_intelligence
+        or args.apply_dashboard_snapshot
+        or args.deploy_oci_dashboard
+    ) and any(value is not None for value in publication_values):
         parser.error(
             "publication Apply cannot accept MI Plan preparation bindings"
         )
     if (
-        args.apply_market_intelligence or args.apply_dashboard_snapshot
+        args.apply_market_intelligence
+        or args.apply_dashboard_snapshot
+        or args.deploy_oci_dashboard
     ) and args.snapshot_generated_at is not None:
         parser.error(
             "publication Apply cannot accept Snapshot Plan preparation bindings"
         )
     if (
-        args.apply_market_intelligence or args.apply_dashboard_snapshot
+        args.apply_market_intelligence
+        or args.apply_dashboard_snapshot
+        or args.deploy_oci_dashboard
     ) and args.bundle_built_at is not None:
         parser.error(
             "publication Apply cannot accept serving-bundle build bindings"
@@ -641,6 +767,49 @@ def _validate_arguments(
         parser.error(
             "Snapshot Apply bindings require --apply-dashboard-snapshot"
         )
+    deployment_config_values = (
+        args.deployment_config,
+        args.deployment_config_sha256,
+    )
+    deployment_config_required = args.deploy_oci_dashboard or (
+        args.recover_unresolved and args.deployment_config is not None
+    )
+    if deployment_config_required:
+        if (
+            args.deployment_config is None
+            or not args.deployment_config.is_absolute()
+            or not _is_fingerprint(args.deployment_config_sha256)
+        ):
+            parser.error(
+                "OCI deployment or its recovery inspection requires an absolute "
+                "--deployment-config and exact --deployment-config-sha256"
+            )
+    elif any(value is not None for value in deployment_config_values):
+        parser.error(
+            "deployment config arguments require OCI deployment or explicit recovery"
+        )
+    deployment_values = (
+        args.approved_serving_bundle_path,
+        args.approved_serving_bundle_logical_fingerprint,
+        args.expected_oci_remote_state_fingerprint,
+        args.expected_current_oci_release,
+    )
+    if args.deploy_oci_dashboard:
+        if (
+            args.approved_serving_bundle_path is None
+            or not args.approved_serving_bundle_path.is_absolute()
+            or not all(
+                _is_fingerprint(value)
+                for value in (
+                    args.approved_serving_bundle_logical_fingerprint,
+                    args.expected_oci_remote_state_fingerprint,
+                )
+            )
+            or not isinstance(args.expected_current_oci_release, str)
+        ):
+            parser.error("OCI deployment requires all exact bundle and remote bindings")
+    elif any(value is not None for value in deployment_values):
+        parser.error("OCI deployment bindings require --deploy-oci-dashboard")
 
 
 def _source_repository_root() -> Path:

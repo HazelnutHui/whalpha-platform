@@ -74,9 +74,11 @@ scripts/admin/build-oci-dashboard-bundle.sh \
   --market-intelligence-publication <publication-id> \
   --bundle-release <release-id>
 scripts/admin/deploy-private-dashboard-oci.sh \
-  --bundle-release <release-id> --dry-run
+  --bundle-release <release-id> \
+  --expected-current-release <current-release-id> --dry-run
 scripts/admin/deploy-private-dashboard-oci.sh \
-  --bundle-release <release-id> --apply
+  --bundle-release <release-id> \
+  --expected-current-release <current-release-id> --apply
 ```
 
 The snapshot exporter and bundle builder write ignored artifacts beneath
@@ -89,6 +91,22 @@ reader binds every file to the exact active Snapshot and clean source revision
 before stopping at deployment review. This local result grants no remote
 preflight or Apply authority; OCI deployment remains outside the daily
 executor.
+
+ADR 0073 adds a separately enabled one-shot coordinator capability. Its daily
+bundle lives under an explicit direct-child `/tmp` root, so the deployer also
+accepts the exact `--bundle-path`. Before any mutation, the capability runs:
+
+```bash
+scripts/admin/inspect-private-dashboard-oci.sh \
+  --target-release <release-id>
+```
+
+The canonical non-secret report binds the approved current release, target
+absence, services, listeners, route protection, temporary guest Session, and
+residue state. A second independent report is mandatory after Apply. The
+external owner-only deployment config and its file SHA must be explicitly
+installed and supplied; repository presence alone grants no deployment
+authority.
 
 ## Apply flow
 
@@ -107,6 +125,12 @@ An authorized apply must:
    private Snapshot, log it out, and prove the asset is protected again;
 8. leave password-based browser login as a manual user check; and
 9. retain the prior reviewed rollback release until a later exact cleanup.
+
+An interrupted custody-tracked deployment is never replayed. One separately
+enabled read-only inspection classifies exact success, unchanged/not completed,
+or partial/changed/ambiguous state requiring operator review. Credential login
+remains untested unless the user performs the manual browser check; the
+structured report does not claim otherwise.
 
 Deployment, rollback, password rotation, publication, Snapshot creation, and
 bundle creation are separate explicit approvals.

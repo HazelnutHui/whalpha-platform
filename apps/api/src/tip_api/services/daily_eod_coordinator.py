@@ -45,6 +45,7 @@ from tip_api.services.daily_eod_run_journal import (
     CANONICAL_APPLY_START_EVENT,
     DASHBOARD_SNAPSHOT_APPLY_START_EVENT,
     MARKET_INTELLIGENCE_APPLY_START_EVENT,
+    OCI_DEPLOYMENT_START_EVENT,
     START_EVENT,
     DailyEodRunEvent,
     locked_daily_eod_run_journal,
@@ -52,7 +53,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.10"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.11"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -152,6 +153,30 @@ class PublicationTransitionEvidence:
 
 
 @dataclass(frozen=True, slots=True)
+class DeploymentTransitionContext:
+    coordinator: DailyEodCoordinatorConfig
+    automation_plan: DailyEodAutomationPlan
+    checked_at: datetime
+    operation: str
+    bundle_path: Path
+    release_id: str
+    bundle_logical_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
+class DeploymentTransitionEvidence:
+    operation: str
+    target_session: str
+    precondition_fingerprint: str
+    outcome: str
+    event_fingerprint: str
+    external_request_count: int
+    production_write_count: int
+    release_id: str
+    reason_code: str
+
+
+@dataclass(frozen=True, slots=True)
 class DailyEodCoordinatorResult:
     status: CoordinatorStatus
     target_session: str
@@ -186,6 +211,9 @@ RecoveryCapability = Callable[
 PublicationCapability = Callable[
     [PublicationTransitionContext], PublicationTransitionEvidence
 ]
+DeploymentCapability = Callable[
+    [DeploymentTransitionContext], DeploymentTransitionEvidence
+]
 OfflineExecutor = Callable[..., DailyEodExecutionResult]
 PublicationPlanReader = Callable[[Path], object]
 
@@ -198,11 +226,13 @@ def coordinate_daily_eod_transition(
     recover_unresolved: bool = False,
     apply_market_intelligence: bool = False,
     apply_dashboard_snapshot: bool = False,
+    deploy_oci_dashboard: bool = False,
     fetch_capability: AuthorizedCapability | None = None,
     apply_capability: AuthorizedCapability | None = None,
     recovery_capability: RecoveryCapability | None = None,
     publication_capability: PublicationCapability | None = None,
     snapshot_publication_capability: PublicationCapability | None = None,
+    deployment_capability: DeploymentCapability | None = None,
     planner: Planner = plan_daily_eod_automation,
     journal_reader: JournalReader | None = None,
     offline_executor: OfflineExecutor = execute_daily_eod_action,
@@ -213,9 +243,9 @@ def coordinate_daily_eod_transition(
 
     checked = _aware_utc(checked_at)
     _validate_config(config)
-    if apply_market_intelligence and apply_dashboard_snapshot:
+    if sum((apply_market_intelligence, apply_dashboard_snapshot, deploy_oci_dashboard)) > 1:
         raise DailyEodCoordinatorError(
-            "MI Apply and Snapshot Apply are mutually exclusive"
+            "publication Apply and OCI deployment modes are mutually exclusive"
         )
     plan = planner(target_session=config.target_session, paths=config.paths)
     _validate_plan(plan, config)
@@ -267,12 +297,31 @@ def coordinate_daily_eod_transition(
                 raise DailyEodCoordinatorError(
                     "publication Apply cannot run after bundle construction"
                 )
-            return _result(
-                status=CoordinatorStatus.DEPLOYMENT_REVIEW_READY,
-                next_action=NextAction.REVIEW_BUNDLE_DEPLOYMENT.value,
-                reasons=plan.reason_codes,
-                plan=plan,
+            if not deploy_oci_dashboard:
+                return _result(
+                    status=CoordinatorStatus.DEPLOYMENT_REVIEW_READY,
+                    next_action=NextAction.REVIEW_BUNDLE_DEPLOYMENT.value,
+                    reasons=plan.reason_codes,
+                    plan=plan,
+                )
+            observation = _serving_bundle_observation(plan)
+            release_id = Path(observation.path).name
+            if deployment_capability is None:
+                raise DailyEodCoordinatorError(
+                    "OCI deployment requires an explicit one-shot capability"
+                )
+            evidence = deployment_capability(
+                DeploymentTransitionContext(
+                    coordinator=config,
+                    automation_plan=plan,
+                    checked_at=checked,
+                    operation="deploy_oci_dashboard",
+                    bundle_path=Path(observation.path),
+                    release_id=release_id,
+                    bundle_logical_fingerprint=observation.logical_fingerprint,
+                )
             )
+            return _deployment_result(plan, evidence, release_id)
         if plan.next_action is NextAction.REVIEW_SNAPSHOT_PUBLICATION:
             if apply_market_intelligence:
                 raise DailyEodCoordinatorError(
@@ -359,7 +408,7 @@ def coordinate_daily_eod_transition(
             )
         )
         return _publication_result(plan, evidence, approval.publication_id)
-    if apply_market_intelligence or apply_dashboard_snapshot:
+    if apply_market_intelligence or apply_dashboard_snapshot or deploy_oci_dashboard:
         raise DailyEodCoordinatorError(
             "requested publication Apply is not at its review boundary"
         )
@@ -660,6 +709,52 @@ def _snapshot_publication_result(
     )
 
 
+def _serving_bundle_observation(plan: DailyEodAutomationPlan):  # type: ignore[no-untyped-def]
+    matches = tuple(
+        observation
+        for observation in plan.observations
+        if observation.stage == "serving_bundle"
+    )
+    if (
+        len(matches) != 1
+        or not Path(matches[0].path).is_absolute()
+        or not _is_fingerprint(matches[0].logical_fingerprint)
+    ):
+        raise DailyEodCoordinatorError(
+            "automation plan lacks exact Serving Bundle evidence"
+        )
+    return matches[0]
+
+
+def _deployment_result(
+    plan: DailyEodAutomationPlan,
+    evidence: DeploymentTransitionEvidence,
+    release_id: str,
+) -> DailyEodCoordinatorResult:
+    if (
+        not isinstance(evidence, DeploymentTransitionEvidence)
+        or evidence.operation != "deploy_oci_dashboard"
+        or evidence.target_session != plan.target_session
+        or evidence.precondition_fingerprint != plan.logical_content_fingerprint
+        or evidence.outcome != "succeeded"
+        or evidence.release_id != release_id
+        or not _is_fingerprint(evidence.event_fingerprint)
+        or evidence.external_request_count != 3
+        or evidence.production_write_count != 1
+        or not evidence.reason_code
+    ):
+        raise DailyEodCoordinatorError("OCI deployment capability evidence is invalid")
+    return _result(
+        status=CoordinatorStatus.TRANSITION_EXECUTED,
+        next_action="deploy_oci_dashboard",
+        reasons=(evidence.reason_code,),
+        plan=plan,
+        transition_fingerprint=_fingerprint(asdict(evidence)),
+        requests=evidence.external_request_count,
+        writes=evidence.production_write_count,
+    )
+
+
 def _pending_recovery(pending: DailyEodRunEvent) -> tuple[str, str]:
     if pending.event_type == ACQUISITION_START_EVENT:
         return "recover_acquisition_attempt", "unresolved_acquisition_attempt"
@@ -676,6 +771,11 @@ def _pending_recovery(pending: DailyEodRunEvent) -> tuple[str, str]:
         return (
             "recover_dashboard_snapshot_apply",
             "unresolved_dashboard_snapshot_apply",
+        )
+    if pending.event_type == OCI_DEPLOYMENT_START_EVENT:
+        return (
+            "recover_oci_deployment",
+            "unresolved_oci_deployment",
         )
     raise DailyEodCoordinatorError("unrecognized unresolved journal event")
 
@@ -712,6 +812,11 @@ def _recovery_result(
             "recovered_not_completed",
             "recovery_blocked",
         },
+        "recover_oci_deployment": {
+            "recovered_succeeded",
+            "recovered_not_completed",
+            "recovery_blocked",
+        },
     }
     if (
         not isinstance(evidence, RecoveryTransitionEvidence)
@@ -721,7 +826,8 @@ def _recovery_result(
         or recovery_action not in allowed_outcomes
         or evidence.outcome not in allowed_outcomes[recovery_action]
         or not _is_fingerprint(evidence.event_fingerprint)
-        or evidence.external_request_count != 0
+        or evidence.external_request_count
+        != (1 if recovery_action == "recover_oci_deployment" else 0)
         or evidence.production_write_count != 0
         or evidence.action_replayed
         or not evidence.reason_code
@@ -740,6 +846,7 @@ def _recovery_result(
         reasons=(evidence.reason_code,),
         plan=plan,
         transition_fingerprint=_fingerprint(asdict(evidence)),
+        requests=evidence.external_request_count,
         alert=blocked,
     )
 

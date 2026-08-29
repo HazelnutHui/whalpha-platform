@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-08-29 — Custody one exact OCI Dashboard deployment
+
+- Accepted ADR 0073 and added a default-off one-shot OCI deployment capability
+  after exact Serving Bundle review.
+- Added a canonical non-secret remote-state inspection contract covering the
+  current/target release identities, remote manifest and checksum hashes,
+  service/listener health, protected routes, temporary role-free guest access,
+  and staging/failed-release residue. Password login is explicitly not tested.
+- Added an owner-only external deployment runtime contract pinned to clean Dell
+  `hui`, `main`, the exact source revision, run root, `whalpha-oci`, and the two
+  reviewed scripts. Absence or `capability_enabled=false` keeps deployment
+  unavailable.
+- Extended the deployer with exact direct-child `/tmp` bundle-path and expected-
+  current-release guards. It now rejects any preexisting staging/failed residue
+  and never silently removes an ambiguous target stage before mutation.
+- Corrected the Serving Bundle reader's source-revision validator to accept the
+  repository's real 40-character Git SHA-1 (and Git SHA-256) instead of
+  incorrectly requiring a 64-character content fingerprint; the fixture now
+  uses the real revision shape.
+- Advanced coordinator/recovery/journal contracts to 1.11/1.3/1.6. The journal
+  reserves before remote mutation; success requires an independent post-state
+  proof. Recovery performs one read-only inspection, never replays Apply, and
+  separates exact success, unchanged/not completed, and partial/ambiguous
+  blocked state.
+- No OCI/public-site connection, upload, switch, reload, rollback, credential
+  access, `/data` write, Production mutation, external config installation, or
+  scheduler action ran.
+- All 1,647 backend tests pass; the only warnings are the existing Python
+  `crypt` and Starlette/httpx deprecations. No frontend source changed.
+
 ## 2026-08-29 — Custody exact active-Snapshot serving-bundle construction
 
 - Accepted ADR 0072 and added `build_serving_bundle` as the tenth offline daily

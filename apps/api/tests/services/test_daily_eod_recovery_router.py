@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -26,6 +27,9 @@ from tip_api.services.daily_eod_dashboard_snapshot_apply_custody import (
 from tip_api.services.daily_eod_executor import DailyEodRecoveryResult
 from tip_api.services.daily_eod_market_intelligence_apply_custody import (
     MarketIntelligenceApplyCustodyResult,
+)
+from tip_api.services.daily_eod_oci_deployment_custody import (
+    OciDeploymentCustodyResult,
 )
 from tip_api.services.daily_eod_recovery_router import (
     DailyEodRecoveryRouterError,
@@ -311,6 +315,47 @@ def test_routes_dashboard_snapshot_apply_from_hashed_start_bindings() -> None:
     assert recovery_config.legacy_root.name == "private-dashboard"
     assert evidence.outcome == "recovered_not_completed"
     assert evidence.production_write_count == 0
+
+
+def test_routes_oci_recovery_through_one_read_only_inspection() -> None:
+    pending = event(
+        "oci_deployment_started",
+        {
+            "operation": "deploy_oci_dashboard",
+            "bundle_path": "/tmp/tip-serving-bundle/release",
+            "release_id": "2026-08-29T120000Z-aaaaaaaaaaaa",
+            "bundle_logical_fingerprint": "e" * 64,
+            "expected_remote_state_fingerprint": "f" * 64,
+            "expected_current_release": "2026-08-28T120000Z-bbbbbbbbbbbb",
+            "deployment_config_file_sha256": "9" * 64,
+        },
+    )
+    state = SimpleNamespace(name="read-only")
+    calls = []
+
+    def recoverer(**kwargs):
+        calls.append(kwargs)
+        return OciDeploymentCustodyResult(
+            outcome="recovered_not_completed",
+            attempt_id=pending.attempt_id,
+            event=terminal("oci_deployment_recovered_not_completed"),
+            binding=None,
+            remote_state=state,
+            reason_code="unchanged",
+        )
+
+    evidence = recover_one_daily_eod_transition(
+        context(pending, "recover_oci_deployment"),
+        journal_reader=journal(pending),
+        oci_state_inspector=lambda **_kwargs: state,
+        oci_deployment_config_file_sha256="9" * 64,
+        oci_deployment_recoverer=recoverer,
+    )
+
+    assert calls[0]["remote_state"] is state
+    assert evidence.external_request_count == 1
+    assert evidence.production_write_count == 0
+    assert evidence.action_replayed is False
 
 
 def test_rejects_changed_pending_event_before_calling_recovery() -> None:

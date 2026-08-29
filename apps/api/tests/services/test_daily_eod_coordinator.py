@@ -20,6 +20,7 @@ from tip_api.services.daily_eod_coordinator import (
     CoordinatorStatus,
     DailyEodCoordinatorConfig,
     DailyEodCoordinatorError,
+    DeploymentTransitionEvidence,
     RecoveryTransitionEvidence,
     PublicationTransitionEvidence,
     coordinate_daily_eod_transition,
@@ -791,6 +792,55 @@ def test_completed_bundle_is_a_nonexecuting_deployment_review_stop() -> None:
     assert result.production_write_count == 0
     assert result.publication_authorized is False
     assert result.deployment_authorized is False
+
+
+def test_explicit_oci_deployment_requires_exact_bundle_evidence_and_capability() -> None:
+    bundle_path = "/tmp/tip-serving-bundle/2026-08-29T120000Z-aaaaaaaaaaaa"
+    ready = replace(
+        plan(
+            NextAction.REVIEW_BUNDLE_DEPLOYMENT,
+            status=PlanStatus.ANALYTICS_READY,
+        ),
+        observations=(
+            ArtifactObservation(
+                stage="serving_bundle",
+                status=ArtifactStatus.COMPLETED,
+                path=bundle_path,
+                as_of_session=TARGET.isoformat(),
+                logical_fingerprint="7" * 64,
+            ),
+        ),
+    )
+    calls = []
+
+    def capability(context):
+        calls.append(context)
+        return DeploymentTransitionEvidence(
+            operation="deploy_oci_dashboard",
+            target_session=TARGET.isoformat(),
+            precondition_fingerprint=ready.logical_content_fingerprint,
+            outcome="succeeded",
+            event_fingerprint="8" * 64,
+            external_request_count=3,
+            production_write_count=1,
+            release_id=Path(bundle_path).name,
+            reason_code="exact_remote_postcondition_proven",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(latest=TARGET),
+        checked_at=AFTER_STABILIZATION,
+        deploy_oci_dashboard=True,
+        deployment_capability=capability,
+        planner=planner(ready),
+        journal_reader=journal(),
+    )
+
+    assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
+    assert result.next_action == "deploy_oci_dashboard"
+    assert result.external_request_count == 3
+    assert result.production_write_count == 1
+    assert calls[0].bundle_logical_fingerprint == "7" * 64
 
 
 def test_dashboard_snapshot_apply_requires_exact_one_shot_capability() -> None:

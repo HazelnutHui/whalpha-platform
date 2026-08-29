@@ -19,8 +19,10 @@ remote_password_rotation_path="${remote_admin_dir}/rotate-whalpha-dashboard-pass
 
 usage() {
   cat <<MSG
-Usage: $0 --bundle-release RELEASE_ID [--dry-run]
-       $0 --bundle-release RELEASE_ID --apply
+Usage: $0 --bundle-release RELEASE_ID [--bundle-path ABSOLUTE_PATH] \
+          --expected-current-release RELEASE_ID [--dry-run]
+       $0 --bundle-release RELEASE_ID [--bundle-path ABSOLUTE_PATH] \
+          --expected-current-release RELEASE_ID --apply
 
 Default is dry-run. Apply uploads one completed static Dashboard bundle, the
 localhost-only Session Auth Service, and the password-rotation admin helper to
@@ -32,11 +34,21 @@ MSG
 }
 
 bundle_release=""
+bundle_path=""
+expected_current_release=""
 apply="false"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --bundle-release)
       bundle_release="${2:-}"
+      shift 2
+      ;;
+    --bundle-path)
+      bundle_path="${2:-}"
+      shift 2
+      ;;
+    --expected-current-release)
+      expected_current_release="${2:-}"
       shift 2
       ;;
     --dry-run)
@@ -68,6 +80,10 @@ if [[ ! "${bundle_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,
   echo "Unsafe bundle release id" >&2
   exit 2
 fi
+if [[ ! "${expected_current_release}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{6}Z-[0-9a-f]{7,40}$ ]]; then
+  echo "Unsafe expected current release id" >&2
+  exit 2
+fi
 
 cd "${repo_root}"
 [[ "$(hostname)" == "dell5820" ]] || { echo "must run on dell5820" >&2; exit 1; }
@@ -78,7 +94,17 @@ cd "${repo_root}"
 [[ -f "${auth_service_source}" ]] || { echo "Auth service source missing" >&2; exit 1; }
 [[ -f "${password_rotation_source}" ]] || { echo "password rotation script missing" >&2; exit 1; }
 
-bundle_dir="${bundle_root}/${bundle_release}"
+if [[ -n "${bundle_path}" ]]; then
+  [[ "${bundle_path}" == /* ]] || { echo "bundle path must be absolute" >&2; exit 1; }
+  bundle_dir="${bundle_path}"
+  [[ "$(basename -- "${bundle_dir}")" == "${bundle_release}" ]] || { echo "bundle path and release differ" >&2; exit 1; }
+  bundle_parent=$(dirname -- "${bundle_dir}")
+  [[ "${bundle_parent}" == /tmp/* && "$(dirname -- "${bundle_parent}")" == "/tmp" ]] || { echo "explicit bundle path must use a direct-child /tmp root" >&2; exit 1; }
+  [[ ! -L "${bundle_parent}" && ! -L "${bundle_dir}" ]] || { echo "bundle path symlink is rejected" >&2; exit 1; }
+  [[ "$(realpath -- "${bundle_dir}")" == "${bundle_dir}" ]] || { echo "bundle path must already be canonical" >&2; exit 1; }
+else
+  bundle_dir="${bundle_root}/${bundle_release}"
+fi
 [[ -f "${bundle_dir}/deployment-manifest.json" ]] || { echo "bundle manifest missing" >&2; exit 1; }
 [[ -f "${bundle_dir}/checksums.sha256" ]] || { echo "bundle checksums missing" >&2; exit 1; }
 (cd "${bundle_dir}" && sha256sum -c checksums.sha256 >/dev/null)
@@ -89,12 +115,14 @@ current_commit=$(git rev-parse HEAD)
 
 echo "mode=$([[ "${apply}" == "true" ]] && echo apply || echo dry-run)"
 echo "bundle_release=${bundle_release}"
+echo "expected_current_release=${expected_current_release}"
 echo "remote_alias=${remote_alias}"
 
-ssh "${remote_alias}" bash -s -- "${auth_file}" "${remote_base}" <<'REMOTE'
+ssh "${remote_alias}" bash -s -- "${auth_file}" "${remote_base}" "${expected_current_release}" <<'REMOTE'
 set -euo pipefail
 auth_file="$1"
 remote_base="$2"
+expected_current_release="$3"
 [[ "$(hostname)" == "hui" ]] || { echo "remote hostname mismatch" >&2; exit 1; }
 [[ "$(whoami)" == "ubuntu" ]] || { echo "remote user mismatch" >&2; exit 1; }
 sudo -n true >/dev/null
@@ -109,6 +137,17 @@ esac
 sudo test -s "${auth_file}"
 if [[ -e "${remote_base}/current" && ! -L "${remote_base}/current" ]]; then
   echo "unexpected non-symlink current path" >&2
+  exit 1
+fi
+[[ -L "${remote_base}/current" ]] || { echo "remote current release is absent" >&2; exit 1; }
+current_path=$(readlink -f "${remote_base}/current")
+[[ "${current_path}" == "${remote_base}/releases/${expected_current_release}" ]] || { echo "remote current release differs from approval" >&2; exit 1; }
+if sudo find "${remote_base}" -maxdepth 1 -mindepth 1 -name '.staging-*' -print -quit | grep -q .; then
+  echo "remote staging residue exists" >&2
+  exit 1
+fi
+if sudo find "${remote_base}/releases" -mindepth 2 -maxdepth 2 -type f -name DEPLOY_FAILED -print -quit | grep -q .; then
+  echo "remote failed-release residue exists" >&2
   exit 1
 fi
 if ss -ltn | awk '{print $4}' | grep -Eq ':(8000|8001)$'; then
@@ -138,7 +177,7 @@ scp "${auth_service_source}" "${remote_alias}:${remote_auth_service}" >/dev/null
 scp "${password_rotation_source}" "${remote_alias}:${remote_password_rotation}" >/dev/null
 rm -f "${local_tar}"
 
-ssh "${remote_alias}" bash -s -- "${bundle_release}" "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_password_rotation}" "${remote_base}" "${remote_site_available}" "${remote_site_enabled}" "${auth_service_path}" "${auth_unit_path}" "${auth_file}" "${remote_admin_dir}" "${remote_password_rotation_path}" <<'REMOTE'
+ssh "${remote_alias}" bash -s -- "${bundle_release}" "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_password_rotation}" "${remote_base}" "${remote_site_available}" "${remote_site_enabled}" "${auth_service_path}" "${auth_unit_path}" "${auth_file}" "${remote_admin_dir}" "${remote_password_rotation_path}" "${expected_current_release}" <<'REMOTE'
 set -euo pipefail
 release_id="$1"
 remote_tar="$2"
@@ -153,6 +192,7 @@ auth_unit_path="${10}"
 auth_file="${11}"
 remote_admin_dir="${12}"
 remote_password_rotation_path="${13}"
+expected_current_release="${14}"
 release_dir="${remote_base}/releases/${release_id}"
 stage_dir="${remote_base}/.staging-${release_id}"
 extract_dir="/tmp/whalpha-dashboard-${release_id}.extract"
@@ -186,7 +226,18 @@ trap rollback EXIT
 
 [[ "$(hostname)" == "hui" ]]
 [[ "$(whoami)" == "ubuntu" ]]
+[[ -L "${remote_base}/current" ]] || { echo "remote current release is absent before mutation" >&2; exit 1; }
+[[ "$(readlink -f "${remote_base}/current")" == "${remote_base}/releases/${expected_current_release}" ]] || { echo "remote current release changed before mutation" >&2; exit 1; }
 [[ ! -e "${release_dir}" ]] || { echo "target release already exists" >&2; exit 1; }
+[[ ! -e "${stage_dir}" && ! -L "${stage_dir}" ]] || { echo "target staging path already exists" >&2; exit 1; }
+if sudo find "${remote_base}" -maxdepth 1 -mindepth 1 -name '.staging-*' -print -quit | grep -q .; then
+  echo "remote staging residue appeared before mutation" >&2
+  exit 1
+fi
+if sudo find "${remote_base}/releases" -mindepth 2 -maxdepth 2 -type f -name DEPLOY_FAILED -print -quit | grep -q .; then
+  echo "remote failed-release residue appeared before mutation" >&2
+  exit 1
+fi
 rm -rf "${extract_dir}"
 mkdir -p "${extract_dir}"
 tar -xzf "${remote_tar}" -C "${extract_dir}"
@@ -207,7 +258,6 @@ sudo mkdir -p "${remote_base}/releases"
 if [[ -L "${remote_base}/current" ]]; then
   previous_current=$(readlink -f "${remote_base}/current")
 fi
-sudo rm -rf "${stage_dir}"
 sudo mkdir -p "${stage_dir}"
 sudo cp -a "${extract_dir}/." "${stage_dir}/"
 sudo chown -R root:www-data "${stage_dir}"
@@ -486,5 +536,5 @@ echo "apply=ok"
 echo "deployment_status=deployed_pending_manual_authenticated_visual_verification"
 trap - EXIT
 rm -rf "${extract_dir}"
-rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}"
+rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_password_rotation}"
 REMOTE

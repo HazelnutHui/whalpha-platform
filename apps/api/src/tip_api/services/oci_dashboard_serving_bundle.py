@@ -83,7 +83,6 @@ class OciDashboardDeploymentManifest(BaseModel):
     bundle_logical_fingerprint: str
 
     @field_validator(
-        "git_commit",
         "market_intelligence_payload_sha256",
         "market_intelligence_logical_fingerprint",
         "snapshot_aggregate_sha256",
@@ -98,6 +97,16 @@ class OciDashboardDeploymentManifest(BaseModel):
     def fingerprints(cls, value: str) -> str:
         if len(value) != 64 or any(character not in "0123456789abcdef" for character in value):
             raise ValueError("bundle fingerprint must be lowercase SHA-256")
+        return value
+
+    @field_validator("git_commit")
+    @classmethod
+    def source_revision(cls, value: str) -> str:
+        if (
+            len(value) not in {40, 64}
+            or any(character not in "0123456789abcdef" for character in value)
+        ):
+            raise ValueError("bundle Git revision must be lowercase SHA-1 or SHA-256")
         return value
 
     @model_validator(mode="after")

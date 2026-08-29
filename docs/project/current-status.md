@@ -136,7 +136,22 @@ capability is installed. The legacy `--snapshot-release` builder shortcut is
 removed in favor of an exact immutable absolute Snapshot path. This repository-
 only change has not built a real candidate or changed `/data`, the active
 Snapshot, local retained bundles, OCI, or a scheduler. One-shot OCI deployment
-custody and scheduler activation remain later and separately unauthorized.
+custody and scheduler activation remained later and separately unauthorized at
+that boundary.
+
+ADR 0073 advances coordinator/recovery/journal contracts to 1.11/1.3/1.6 and
+adds a default-off one-shot OCI deployment port after exact bundle review. It
+binds an owner-only external config SHA, clean Dell `hui`/`main` revision,
+exact local bundle fingerprints and source commit, a fresh approved remote
+pre-state, and the expected current release. The deployer repeats the current-
+release and residue gates immediately before mutation; success is recorded
+only after a separate structured inspection proves the exact remote manifest/
+checksum identities, service/listener health, protected routes, role-free guest
+access, and zero staging/failed residue. Recovery performs one read-only
+inspection and never replays Apply. This repository capability is uninstalled
+and uninvoked: no OCI connection, upload, switch, reload, rollback, `/data`
+write, credential access, Production change, or scheduler action occurred.
+All 1,647 backend tests pass; no frontend source changed in this boundary.
 
 ### Historical 2026-08-27 recovery and pipeline evidence
 

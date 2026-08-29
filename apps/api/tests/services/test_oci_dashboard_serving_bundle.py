@@ -9,7 +9,7 @@ from tip_api.services import oci_dashboard_serving_bundle as bundle
 
 
 RELEASE = "2026-08-29T120000Z-aaaaaaaaaaaa"
-COMMIT = "a" * 64
+COMMIT = "a" * 40
 SHA = "b" * 64
 
 

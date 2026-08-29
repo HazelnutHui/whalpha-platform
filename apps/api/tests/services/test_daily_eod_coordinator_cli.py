@@ -436,6 +436,38 @@ def test_dashboard_snapshot_apply_bindings_are_exact_and_exclusive() -> None:
         )
 
 
+def test_oci_deployment_bindings_are_default_absent_exact_and_exclusive() -> None:
+    with pytest.raises(SystemExit):
+        cli.main(arguments() + ["--deploy-oci-dashboard"])
+    with pytest.raises(SystemExit):
+        cli.main(
+            arguments()
+            + [
+                "--approved-serving-bundle-path",
+                "/tmp/tip-serving-bundle/release",
+            ]
+        )
+    exact = [
+        "--deploy-oci-dashboard",
+        "--deployment-config",
+        "/etc/trading-intelligence-platform/deployment/oci.json",
+        "--deployment-config-sha256",
+        "a" * 64,
+        "--approved-serving-bundle-path",
+        "/tmp/tip-serving-bundle/2026-08-29T120000Z-aaaaaaaaaaaa",
+        "--approved-serving-bundle-logical-fingerprint",
+        "b" * 64,
+        "--expected-oci-remote-state-fingerprint",
+        "c" * 64,
+        "--expected-current-oci-release",
+        "2026-08-28T120000Z-bbbbbbbbbbbb",
+    ]
+    with pytest.raises(SystemExit):
+        cli.main(arguments() + exact + ["--execute-offline"])
+    with pytest.raises(SystemExit):
+        cli.main(arguments() + exact + ["--apply-dashboard-snapshot"])
+
+
 def test_recovery_required_returns_nonzero(monkeypatch, capsys) -> None:
     monkeypatch.setattr(
         cli,

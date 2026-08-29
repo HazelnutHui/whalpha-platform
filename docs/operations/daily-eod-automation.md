@@ -32,13 +32,14 @@ same-day Identity
   -> separately invoked Dashboard Snapshot Apply
   -> exact active-Snapshot serving bundle
   -> deployment review
+  -> separately enabled one-shot OCI deployment
 ```
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
 Market Intelligence and Dashboard Snapshot publication are separate one-shot
 authorization boundaries. Snapshot planning and bundle construction are
-offline and review-only. OCI deployment and scheduler activation remain
-outside the coordinator.
+offline and review-only. OCI deployment is a separate default-off coordinator
+capability; scheduler activation remains outside the coordinator.
 
 ## Session and provider readiness
 
@@ -718,6 +719,15 @@ returns only to `review_bundle_deployment`; no OCI command exists in this
 action. Omit the timestamp for the other nine actions; interrupted recovery
 must reuse it.
 
+ADR 0073's deployment mode is mutually exclusive with every other execution
+mode. It requires an exact owner-only deployment-config file SHA, the reviewed
+bundle path/logical fingerprint, approved remote-state fingerprint, and
+expected current OCI release. One invocation performs a read-only pre-state
+inspection, durable reservation, exactly one Apply command, and an independent
+read-only post-state inspection. An interrupted deployment recovery performs
+only the inspection and reports one external read, zero writes, and no replay.
+The capability is absent when the external config is missing or disabled.
+
 The executor acquires one global non-blocking lock, re-plans under the lock,
 records an immutable start event, invokes exactly one existing offline command,
 validates its evidence, formally re-plans, and records a terminal event. A
@@ -771,9 +781,9 @@ the already completed and deployed 2026-08-26 publication chain.
 
 ## Still required before unattended operation
 
-1. Add a separately enabled one-shot OCI deployment custody boundary bound to
-   the exact reviewed Serving Bundle 1.0 artifact. Bundle construction/review
-   custody is complete in repository source.
+1. Run the complete deployment path with fake transport and temporary custody,
+   then separately review an exact external deployment-config candidate before
+   any real OCI invocation. The repository boundary is complete but uninstalled.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.

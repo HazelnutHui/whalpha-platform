@@ -238,13 +238,15 @@ automation now reaches an explicitly reviewed, one-shot MI Apply with durable
 no-replay custody and, once that exact planned MI is active, a separately
 reviewable Snapshot Approval Plan 2.4 bound to same-session Strategy Channels.
 The Snapshot Plan and default-off one-shot Snapshot Apply custody are now also
-complete in repository source. ADR 0072 additionally completes exact active-
-Snapshot bundle construction and formal local review custody. These additions
-remain uninstalled and have not changed Production. The next control-plane
-target is a separately enabled, one-shot OCI deployment boundary bound to the
-reviewed bundle. Scheduler activation must remain subsequent. Do not schedule
-the chain until the remaining remote-write boundary has equivalent exact-
-input, postcondition, and interruption-recovery semantics.
+complete in repository source. ADR 0072 completes exact active-Snapshot bundle
+construction and formal local review custody. ADR 0073 completes the default-
+off one-shot OCI deployment boundary with exact remote pre/post inspection and
+no-replay recovery. These additions remain uninstalled and have not changed
+Production. The next control-plane target is a fully offline fake-transport
+rehearsal of the composed path, followed by a separately reviewed external
+deployment-config candidate and one controlled real invocation only if the
+user explicitly authorizes it. Scheduler activation remains subsequent; do
+not schedule the chain before that controlled rehearsal and operational review.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

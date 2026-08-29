@@ -15,12 +15,13 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 
-JOURNAL_CONTRACT = "daily-eod-run-journal/1.5"
+JOURNAL_CONTRACT = "daily-eod-run-journal/1.6"
 READABLE_JOURNAL_CONTRACTS = frozenset(
     {
         "daily-eod-run-journal/1.2",
         "daily-eod-run-journal/1.3",
         "daily-eod-run-journal/1.4",
+        "daily-eod-run-journal/1.5",
         JOURNAL_CONTRACT,
     }
 )
@@ -69,7 +70,7 @@ MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS = frozenset(
     }
 )
 MARKET_INTELLIGENCE_APPLY_CONTRACTS = frozenset(
-    {"daily-eod-run-journal/1.4", JOURNAL_CONTRACT}
+    {"daily-eod-run-journal/1.4", "daily-eod-run-journal/1.5", JOURNAL_CONTRACT}
 )
 DASHBOARD_SNAPSHOT_APPLY_START_EVENT = "dashboard_snapshot_apply_started"
 DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS = frozenset(
@@ -80,6 +81,18 @@ DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS = frozenset(
         "dashboard_snapshot_apply_recovery_blocked",
     }
 )
+DASHBOARD_SNAPSHOT_APPLY_CONTRACTS = frozenset(
+    {"daily-eod-run-journal/1.5", JOURNAL_CONTRACT}
+)
+OCI_DEPLOYMENT_START_EVENT = "oci_deployment_started"
+OCI_DEPLOYMENT_TERMINAL_EVENTS = frozenset(
+    {
+        "oci_deployment_succeeded",
+        "oci_deployment_recovered_succeeded",
+        "oci_deployment_recovered_not_completed",
+        "oci_deployment_recovery_blocked",
+    }
+)
 START_EVENTS = frozenset(
     {
         START_EVENT,
@@ -87,6 +100,7 @@ START_EVENTS = frozenset(
         CANONICAL_APPLY_START_EVENT,
         MARKET_INTELLIGENCE_APPLY_START_EVENT,
         DASHBOARD_SNAPSHOT_APPLY_START_EVENT,
+        OCI_DEPLOYMENT_START_EVENT,
     }
 )
 ACQUISITION_REVIEW_EVENT = "acquisition_operator_reviewed"
@@ -94,6 +108,7 @@ ACQUISITION_REVIEW_CONTRACTS = frozenset(
     {
         "daily-eod-run-journal/1.3",
         "daily-eod-run-journal/1.4",
+        "daily-eod-run-journal/1.5",
         JOURNAL_CONTRACT,
     }
 )
@@ -103,6 +118,7 @@ TERMINAL_EVENTS = (
     | CANONICAL_APPLY_TERMINAL_EVENTS
     | MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS
     | DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS
+    | OCI_DEPLOYMENT_TERMINAL_EVENTS
 )
 EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS | {ACQUISITION_REVIEW_EVENT}
 
@@ -354,11 +370,16 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
         event_type
         in {DASHBOARD_SNAPSHOT_APPLY_START_EVENT}
         | DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS
-        and contract_version != JOURNAL_CONTRACT
+        and contract_version not in DASHBOARD_SNAPSHOT_APPLY_CONTRACTS
     ):
         raise DailyEodRunJournalError(
             "Snapshot Apply event predates its journal contract"
         )
+    if (
+        event_type in {OCI_DEPLOYMENT_START_EVENT} | OCI_DEPLOYMENT_TERMINAL_EVENTS
+        and contract_version != JOURNAL_CONTRACT
+    ):
+        raise DailyEodRunJournalError("OCI deployment event predates its journal contract")
     return DailyEodRunEvent(
         sequence=sequence,
         event_type=str(event_type),
@@ -431,6 +452,8 @@ def _terminal_matches_start(start_type: str, terminal_type: str) -> bool:
         return terminal_type in MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS
     if start_type == DASHBOARD_SNAPSHOT_APPLY_START_EVENT:
         return terminal_type in DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS
+    if start_type == OCI_DEPLOYMENT_START_EVENT:
+        return terminal_type in OCI_DEPLOYMENT_TERMINAL_EVENTS
     return False
 
 

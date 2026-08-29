@@ -41,12 +41,19 @@ from tip_api.services.daily_eod_market_intelligence_apply_custody import (
     MarketIntelligenceApplyCustodyResult,
     recover_market_intelligence_apply,
 )
+from tip_api.services.daily_eod_oci_deployment_custody import (
+    DailyEodOciDeploymentConfig,
+    OciDeploymentCustodyResult,
+    recover_oci_deployment,
+)
+from tip_api.services.oci_dashboard_deployment_state import OciDashboardRemoteStateV1
 from tip_api.services.daily_eod_readiness import ACQUISITION_ACTIONS
 from tip_api.services.daily_eod_run_journal import (
     ACQUISITION_START_EVENT,
     CANONICAL_APPLY_START_EVENT,
     DASHBOARD_SNAPSHOT_APPLY_START_EVENT,
     MARKET_INTELLIGENCE_APPLY_START_EVENT,
+    OCI_DEPLOYMENT_START_EVENT,
     START_EVENT,
     DailyEodRunEvent,
     locked_daily_eod_run_journal,
@@ -54,7 +61,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-recovery/1.2"
+CONTRACT_VERSION = "daily-eod-one-transition-recovery/1.3"
 
 
 class DailyEodRecoveryRouterError(RuntimeError):
@@ -69,6 +76,8 @@ ApplyRecoverer = Callable[..., CanonicalApplyCustodyResult]
 MarketIntelligenceApplyRecoverer = Callable[..., MarketIntelligenceApplyCustodyResult]
 DashboardSnapshotApplyRecoverer = Callable[..., DashboardSnapshotApplyCustodyResult]
 OfflineRecoverer = Callable[..., DailyEodRecoveryResult]
+OciDeploymentRecoverer = Callable[..., OciDeploymentCustodyResult]
+OciStateInspector = Callable[..., OciDashboardRemoteStateV1]
 
 
 def recover_one_daily_eod_transition(
@@ -86,6 +95,9 @@ def recover_one_daily_eod_transition(
         recover_dashboard_snapshot_apply
     ),
     offline_recoverer: OfflineRecoverer = recover_daily_eod_action,
+    oci_deployment_recoverer: OciDeploymentRecoverer = recover_oci_deployment,
+    oci_state_inspector: OciStateInspector | None = None,
+    oci_deployment_config_file_sha256: str | None = None,
 ) -> RecoveryTransitionEvidence:
     """Recover one exact pending family; never fetch, apply, or replay an action."""
 
@@ -316,6 +328,53 @@ def recover_one_daily_eod_transition(
             },
         )
 
+    if pending.event_type == OCI_DEPLOYMENT_START_EVENT:
+        _require_action(context.recovery_action, "recover_oci_deployment")
+        if (
+            pending.details.get("operation") != "deploy_oci_dashboard"
+            or oci_state_inspector is None
+            or oci_deployment_config_file_sha256
+            != pending.details.get("deployment_config_file_sha256")
+        ):
+            raise DailyEodRecoveryRouterError(
+                "OCI recovery requires its exact read-only inspection capability"
+            )
+        release_id = _detail_string(pending, "release_id")
+        remote_state = oci_state_inspector(target_release=release_id)
+        result = oci_deployment_recoverer(
+            config=DailyEodOciDeploymentConfig(
+                target_session=config.target_session,
+                bundle_path=Path(_detail_string(pending, "bundle_path")),
+                approved_bundle_logical_fingerprint=_detail_fingerprint(
+                    pending, "bundle_logical_fingerprint"
+                ),
+                expected_remote_state_fingerprint=_detail_fingerprint(
+                    pending, "expected_remote_state_fingerprint"
+                ),
+                expected_current_release=_detail_string(
+                    pending, "expected_current_release"
+                ),
+                deployment_config_file_sha256=_detail_fingerprint(
+                    pending, "deployment_config_file_sha256"
+                ),
+                run_root=config.run_root,
+                automation_paths=config.paths,
+            ),
+            remote_state=remote_state,
+            clock=clock,
+        )
+        return _evidence(
+            context,
+            result=result,
+            result_type=OciDeploymentCustodyResult,
+            outcome_events={
+                "recovered_succeeded": "oci_deployment_recovered_succeeded",
+                "recovered_not_completed": "oci_deployment_recovered_not_completed",
+                "recovery_blocked": "oci_deployment_recovery_blocked",
+            },
+            external_request_count=1,
+        )
+
     raise DailyEodRecoveryRouterError("pending event family is unsupported")
 
 
@@ -369,6 +428,13 @@ def _optional_detail_fingerprint(
     return value
 
 
+def _detail_string(pending: DailyEodRunEvent, name: str) -> str:
+    value = pending.details.get(name)
+    if not isinstance(value, str) or not value or "\n" in value:
+        raise DailyEodRecoveryRouterError(f"pending deployment {name} is malformed")
+    return value
+
+
 def _offline_action(pending: DailyEodRunEvent) -> NextAction:
     try:
         action = NextAction(str(pending.details["action"]))
@@ -392,6 +458,7 @@ def _evidence(
     result: object,
     result_type: type[object],
     outcome_events: dict[str, str],
+    external_request_count: int = 0,
 ) -> RecoveryTransitionEvidence:
     event = getattr(result, "event", None)
     outcome = getattr(result, "outcome", None)
@@ -416,7 +483,7 @@ def _evidence(
         pending_event_fingerprint=context.pending_event.event_fingerprint,
         outcome=outcome,
         event_fingerprint=event.event_fingerprint,
-        external_request_count=0,
+        external_request_count=external_request_count,
         production_write_count=0,
         action_replayed=False,
         reason_code=reason_code,

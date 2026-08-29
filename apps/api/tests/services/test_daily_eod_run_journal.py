@@ -197,6 +197,35 @@ def test_dashboard_snapshot_apply_terminal_family_cannot_cross(tmp_path) -> None
         )
 
 
+def test_oci_deployment_terminal_family_cannot_cross(tmp_path) -> None:
+    root = _root(tmp_path)
+    with journal.locked_daily_eod_run_journal(
+        run_root=root,
+        target_session=SESSION,
+    ) as locked:
+        attempt = journal.new_attempt_id(
+            target_session=SESSION,
+            plan_fingerprint=PLAN_FP,
+            sequence=1,
+        )
+        locked.append(
+            event_type="oci_deployment_started",
+            attempt_id=attempt,
+            details={"operation": "deploy_oci_dashboard"},
+        )
+        with pytest.raises(journal.DailyEodRunJournalError, match="does not match"):
+            locked.append(
+                event_type="dashboard_snapshot_apply_succeeded",
+                attempt_id=attempt,
+                details={"reason_code": "wrong_family"},
+            )
+        locked.append(
+            event_type="oci_deployment_recovery_blocked",
+            attempt_id=attempt,
+            details={"reason_code": "test"},
+        )
+
+
 def test_event_time_must_be_aware_and_monotonic(tmp_path) -> None:
     root = _root(tmp_path)
     with journal.locked_daily_eod_run_journal(run_root=root, target_session=SESSION) as locked:
@@ -251,7 +280,7 @@ def test_tampered_event_fails_closed(tmp_path) -> None:
             pass
 
 
-def test_legacy_1_2_event_remains_readable_and_new_events_use_1_5(tmp_path) -> None:
+def test_legacy_1_2_event_remains_readable_and_new_events_use_1_6(tmp_path) -> None:
     root = _root(tmp_path)
     with journal.locked_daily_eod_run_journal(
         run_root=root,
@@ -290,7 +319,7 @@ def test_legacy_1_2_event_remains_readable_and_new_events_use_1_5(tmp_path) -> N
             observed_at=datetime(2026, 8, 27, 2, tzinfo=UTC),
         )
 
-    assert terminal.contract_version == "daily-eod-run-journal/1.5"
+    assert terminal.contract_version == "daily-eod-run-journal/1.6"
     assert terminal.previous_event_fingerprint == legacy.event_fingerprint
 
 
