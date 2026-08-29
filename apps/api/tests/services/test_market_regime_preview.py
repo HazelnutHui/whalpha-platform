@@ -43,7 +43,11 @@ from tip_api.services.market_regime_preview import (
     _write_and_read_bundle,
     read_market_regime_preview_bundle,
 )
-from tip_api.services.relationship_change_summary import build_relationship_change_summary
+from tip_api.services.relationship_change_summary import (
+    RelationshipChangeSummaryError,
+    build_relationship_change_summary,
+    build_relationship_state_timeline,
+)
 from tip_api.services.market_regime_preview_cli import main as preview_cli_main
 
 
@@ -223,6 +227,8 @@ def test_preview_round_trip_is_deterministic_and_query_is_isolated():
         assert len(primary.relationships) == 16 and len(service.relationship_detail("pair_00").history) == 1
         assert primary.relationships[0].change_summary.current_state_run_session_count == 1
         assert primary.relationships[0].change_summary.state_run_reaches_history_start is True
+        assert primary.relationships[0].state_timeline.displayed_session_count == 1
+        assert primary.relationships[0].state_timeline.truncated_before is False
     finally:
         _cleanup(first); _cleanup(second)
 
@@ -304,6 +310,34 @@ def test_relationship_change_summary_uses_retained_history_without_thresholds():
     assert five.change_5_sessions == "0.0100000000"
     assert five.leadership_change_1 == "strengthening"
     assert five.leadership_change_5 == "strengthening"
+
+
+def test_relationship_state_timeline_is_bounded_current_and_window_complete():
+    base = _relationship(0).current
+    history = []
+    for index in range(12):
+        windows = tuple(
+            item.model_copy(update={"relative_return": f"{index / 100:.10f}"})
+            for item in base.windows
+        )
+        history.append(base.model_copy(update={
+            "as_of_session": date(2026, 8, 1 + index),
+            "windows": windows,
+            "relationship_state": "neutral" if index < 8 else "divergence",
+            "confidence": "low",
+            "logical_fingerprint": f"{index + 1:064x}",
+        }))
+    timeline = build_relationship_state_timeline(current=history[-1], history=history)
+    assert timeline.retained_first_session == date(2026, 8, 1)
+    assert timeline.retained_session_count == 12
+    assert timeline.displayed_session_count == 10
+    assert timeline.truncated_before is True
+    assert timeline.points[0].as_of_session == date(2026, 8, 3)
+    assert timeline.points[-1].as_of_session == date(2026, 8, 12)
+    assert timeline.points[6].changed_from_prior_retained_session is True
+    assert tuple(item.window_sessions for item in timeline.points[-1].windows) == (5, 10, 20)
+    with pytest.raises(RelationshipChangeSummaryError, match="display limit"):
+        build_relationship_state_timeline(current=history[-1], history=history, display_limit=11)
 
 
 def test_cli_rejects_apply_and_config_requires_explicit_absolute_bundle():

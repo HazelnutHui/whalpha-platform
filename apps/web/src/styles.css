@@ -432,6 +432,26 @@ body {
 .relationship-change-detail { display: grid; gap: 4px; margin: 10px 0; padding: 10px 12px; border-left: 3px solid var(--accent); background: var(--surface-2); }
 .relationship-change-detail span { color: var(--text); font-size: .76rem; }
 .relationship-change-detail small { color: var(--muted); }
+.relationship-timeline { margin: 14px 0; padding: 11px; border: 1px solid var(--border); background: var(--surface-2); }
+.relationship-timeline-heading { display: flex; justify-content: space-between; align-items: end; gap: 10px; margin-bottom: 9px; }
+.relationship-timeline-heading > div { display: grid; gap: 3px; }
+.relationship-timeline-heading span { color: var(--accent); font-size: .68rem; font-weight: 800; text-transform: uppercase; }
+.relationship-timeline-heading strong { font-size: .78rem; }
+.relationship-timeline-heading small { color: var(--muted); font-size: .64rem; }
+.relationship-timeline-track { display: grid; grid-template-columns: repeat(10, minmax(92px, 1fr)); overflow-x: auto; padding-bottom: 4px; }
+.relationship-timeline-point { position: relative; min-width: 92px; display: grid; justify-items: center; gap: 4px; padding: 5px 5px 7px; border-top: 2px solid var(--border-strong); text-align: center; }
+.relationship-timeline-point::before { content: ''; position: absolute; top: -5px; left: 0; width: 1px; height: 8px; background: var(--border-strong); }
+.relationship-timeline-point > i { width: 9px; height: 9px; margin-top: -10px; border: 2px solid var(--surface-2); border-radius: 50%; background: var(--neutral); }
+.relationship-timeline-point.state-synchronous_strengthening > i { background: var(--positive); }
+.relationship-timeline-point.state-rotation_candidate > i, .relationship-timeline-point.state-divergence > i { background: var(--warning); }
+.relationship-timeline-point.state-relationship_break_candidate > i, .relationship-timeline-point.state-synchronous_weakening > i { background: var(--negative); }
+.relationship-timeline-point.state-neutral > i { background: var(--accent); }
+.relationship-timeline-point time { color: var(--muted); font-size: .6rem; font-variant-numeric: tabular-nums; }
+.relationship-timeline-point small { min-height: 28px; color: var(--muted); font-size: .58rem; line-height: 1.2; }
+.relationship-timeline-point b { font-size: .68rem; font-variant-numeric: tabular-nums; }
+.relationship-timeline-point em { color: var(--warning); font-size: .56rem; font-style: normal; }
+.relationship-timeline-point.timeline-state-change { background: rgba(210,169,93,.06); }
+.relationship-timeline > p { margin: 8px 0 0; font-size: .64rem; }
 .relationship-drawer .detail-header { align-items: start; }
 .relationship-drawer .detail-header p { margin: 4px 0 0; }
 .drawer-close { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }

@@ -30,6 +30,23 @@ function relationship(index: number): Relationship {
       reason_codes: ['state_run_derived_from_retained_relationship_history'],
       disclaimer: 'descriptive_change_not_predictive_signal',
     },
+    state_timeline: {
+      contract_version: 'relationship-state-timeline/1.0', pair_id: pairId,
+      as_of_session: '2026-08-21', retained_first_session: '2026-07-24',
+      retained_session_count: 21, displayed_session_count: 10, truncated_before: true,
+      points: Array.from({ length: 10 }, (_, pointIndex) => ({
+        as_of_session: `2026-08-${String(12 + pointIndex).padStart(2, '0')}`,
+        relationship_state: pointIndex < 7 ? 'neutral' : state,
+        confidence: 'low', changed_from_prior_retained_session: pointIndex === 0
+          ? false : pointIndex === 7 && state !== 'neutral',
+        windows: ([5, 10, 20] as const).map((window) => ({
+          window_sessions: window, relative_return: ((pointIndex - 7) / 100).toFixed(10),
+          availability: 'available',
+        })),
+      })),
+      reason_codes: ['recent_points_derived_from_retained_relationship_history', 'older_points_compacted'],
+      disclaimer: 'descriptive_history_not_predictive_signal',
+    },
   };
 }
 

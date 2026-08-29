@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-29 — Add a bounded ETF relationship state timeline
+
+- Accepted ADR 0075 and projected the latest ten frozen Phase 2 state records
+  per pair into an additive API/Snapshot presentation contract.
+- Added a bilingual horizontal relationship path with session, state-change
+  marker, and selected-window relative return. Retained count/start and older-
+  point compaction are explicit.
+- Verified 1,655 backend tests and 96 frontend tests, plus the frontend
+  production build. The dependency deprecation and bundle-size warnings are
+  unchanged.
+- The formal read-only active-publication reader also projected all 16 pairs
+  from the 2026-08-28 Market Intelligence payload: each exposed 10 of 21
+  retained sessions and reconciled its final session/state to current.
+- No state recomputation, formula, threshold, score, rank, Market Intelligence
+  payload, `/data`, network, deployment, or scheduler state changed.
+
 ## 2026-08-29 — Add descriptive ETF relationship persistence and acceleration
 
 - Accepted ADR 0074 and added a compact API/Snapshot change summary derived

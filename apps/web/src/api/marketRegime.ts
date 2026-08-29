@@ -55,6 +55,17 @@ export interface RelationshipChangeSummary {
   current_5_session_leader: 'left' | 'right' | 'tied' | 'unavailable'; windows: RelationshipWindowChange[];
   reason_codes: string[]; disclaimer: 'descriptive_change_not_predictive_signal';
 }
+export interface RelationshipTimelinePoint {
+  as_of_session: string; relationship_state: string; confidence: string;
+  changed_from_prior_retained_session: boolean | null;
+  windows: Array<{ window_sessions: 5 | 10 | 20; relative_return: string | null; availability: string }>;
+}
+export interface RelationshipStateTimeline {
+  contract_version: 'relationship-state-timeline/1.0'; pair_id: string; as_of_session: string;
+  retained_first_session: string; retained_session_count: number; displayed_session_count: number;
+  truncated_before: boolean; points: RelationshipTimelinePoint[]; reason_codes: string[];
+  disclaimer: 'descriptive_history_not_predictive_signal';
+}
 export interface Relationship {
   definition: { pair_id: string; registry_order: number; left_ticker: string; right_ticker: string;
     relationship_family: string; economic_rationale: string; expected_interpretation: string;
@@ -68,6 +79,7 @@ export interface Relationship {
     correlation_observation: string; cross_window_observation: string; supporting_evidence: string[];
     counterevidence: string[]; reason_codes: string[]; disclaimers: string[] };
   change_summary?: RelationshipChangeSummary;
+  state_timeline?: RelationshipStateTimeline;
 }
 export interface RegimeRelationshipComparison { pair_id: string; alignment: string; reason_codes: string[] }
 export interface MarketRegimePreviewResponse {
@@ -81,6 +93,7 @@ export interface MarketRegimePreviewResponse {
   review_deployment?: ReviewDeployment | null;
 }
 const DECIMAL = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 function object(value: unknown, label: string): Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new Error(`Invalid Market Regime payload: ${label}`);
   return value as Record<string, unknown>;
@@ -139,6 +152,68 @@ export function parseMarketRegimePreview(value: unknown): MarketRegimePreviewRes
         decimal(row.change_1_session, 'one-session relationship change');
         decimal(row.prior_5_session_relative_return, 'prior five-session relative return');
         decimal(row.change_5_sessions, 'five-session relationship change');
+      });
+    }
+    if (relationship.state_timeline !== undefined) {
+      const timeline = object(relationship.state_timeline, 'relationship state timeline');
+      const points = timeline.points;
+      if (timeline.contract_version !== 'relationship-state-timeline/1.0'
+        || timeline.pair_id !== definition.pair_id || timeline.as_of_session !== root.as_of_session
+        || !Number.isInteger(timeline.retained_session_count) || Number(timeline.retained_session_count) < 1
+        || !Number.isInteger(timeline.displayed_session_count) || Number(timeline.displayed_session_count) < 1
+        || Number(timeline.displayed_session_count) > 10 || typeof timeline.truncated_before !== 'boolean'
+        || typeof timeline.retained_first_session !== 'string' || !ISO_DATE.test(timeline.retained_first_session)
+        || timeline.disclaimer !== 'descriptive_history_not_predictive_signal'
+        || !Array.isArray(points) || points.length !== timeline.displayed_session_count
+        || Number(timeline.retained_session_count) < points.length
+        || timeline.truncated_before !== (Number(timeline.retained_session_count) > points.length)) {
+        throw new Error('Market Regime relationship state timeline is invalid');
+      }
+      let priorSession = '';
+      points.forEach((point, pointIndex) => {
+        const row = object(point, 'relationship timeline point'); const pointWindows = row.windows;
+        if (typeof row.as_of_session !== 'string' || !ISO_DATE.test(row.as_of_session) || row.as_of_session <= priorSession
+          || !['relationship_break_candidate', 'rotation_candidate', 'divergence', 'synchronous_strengthening', 'synchronous_weakening', 'neutral', 'unavailable'].includes(String(row.relationship_state))
+          || !['insufficient', 'low', 'medium', 'high'].includes(String(row.confidence))
+          || (row.changed_from_prior_retained_session !== null && typeof row.changed_from_prior_retained_session !== 'boolean')
+          || !Array.isArray(pointWindows) || pointWindows.length !== 3) {
+          throw new Error('Market Regime relationship timeline point is invalid');
+        }
+        if (pointIndex === points.length - 1 && row.as_of_session !== root.as_of_session) {
+          throw new Error('Market Regime relationship timeline is not current');
+        }
+        if (pointIndex === points.length - 1 && row.relationship_state !== current.relationship_state) {
+          throw new Error('Market Regime relationship timeline current state differs');
+        }
+        if (pointIndex === 0) {
+          if (timeline.truncated_before
+            ? typeof row.changed_from_prior_retained_session !== 'boolean'
+            : row.changed_from_prior_retained_session !== null) {
+            throw new Error('Market Regime relationship timeline boundary is invalid');
+          }
+          if (timeline.truncated_before
+            ? String(timeline.retained_first_session) >= row.as_of_session
+            : String(timeline.retained_first_session) !== row.as_of_session) {
+            throw new Error('Market Regime relationship retained boundary is invalid');
+          }
+        } else {
+          const previousPoint = object(points[pointIndex - 1], 'prior relationship timeline point');
+          if (row.changed_from_prior_retained_session
+            !== (row.relationship_state !== previousPoint.relationship_state)) {
+            throw new Error('Market Regime relationship timeline state-change marker differs');
+          }
+        }
+        priorSession = row.as_of_session;
+        pointWindows.forEach((timelineWindow, index) => {
+          const windowRow = object(timelineWindow, 'relationship timeline window');
+          if (windowRow.window_sessions !== [5, 10, 20][index]) {
+            throw new Error('Market Regime relationship timeline window is invalid');
+          }
+          if (!['available', 'partial', 'unavailable'].includes(String(windowRow.availability))) {
+            throw new Error('Market Regime relationship timeline availability is invalid');
+          }
+          decimal(windowRow.relative_return, 'timeline relative return');
+        });
       });
     }
   });

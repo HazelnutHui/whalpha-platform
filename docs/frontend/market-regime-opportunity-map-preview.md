@@ -72,6 +72,10 @@ warnings, source identities, and analytics fingerprints stay identical. See
 - Additive change evidence identifies the current leader and whether its
   rolling advantage strengthened, weakened, reversed, emerged, or faded. It is
   descriptive only and old Snapshots fall back to prior-state text.
+- Relationship detail may show the latest ten frozen state points as a compact
+  horizontal path. The selected window changes only the displayed relative
+  return under each point; it never recomputes the historical state. Retained
+  count/start and older-point compaction remain explicit.
 - Missing 60-session ratio statistics say that at least 60 sessions are
   required; they never render as zero.
 - The page says explicitly that relationship statistics are non-causal,

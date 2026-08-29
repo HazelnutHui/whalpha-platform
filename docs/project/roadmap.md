@@ -13,9 +13,9 @@
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
 - Product: preserve leadership quality and entry location as separate axes.
-  Relationship duration and rolling-spread acceleration are now implemented in
-  repository source; next consider a compact state timeline and standardized
-  ratio view only when the history gates support them.
+  Relationship duration, rolling-spread acceleration, and a bounded state
+  timeline are now implemented in repository source. Consider a standardized
+  ratio view only after its 60-session history gate is actually satisfied.
 
 ## Implemented sequencing record
 

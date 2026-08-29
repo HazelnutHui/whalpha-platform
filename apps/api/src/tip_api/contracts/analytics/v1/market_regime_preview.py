@@ -11,6 +11,9 @@ from .etf_relationship import (
     EtfRelationshipExplanationV1,
     EtfRelationshipRecordV1,
     MarketRegimeRelationshipComparisonV1,
+    RelationshipAvailability,
+    RelationshipConfidence,
+    RelationshipState,
 )
 from .market_regime import ExplanationLedgerEntryV1, MarketRegimeCompositeV1
 from .market_regime_state import MarketRegimeStateExplanationV1, MarketRegimeStateRecordV1
@@ -134,6 +137,75 @@ class PreviewEtfRelationshipChangeSummaryV1(BaseModel):
         return self
 
 
+class PreviewEtfRelationshipTimelineWindowV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    window_sessions: Literal[5, 10, 20]
+    relative_return: str | None
+    availability: RelationshipAvailability
+
+
+class PreviewEtfRelationshipTimelinePointV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    as_of_session: date
+    relationship_state: RelationshipState
+    confidence: RelationshipConfidence
+    changed_from_prior_retained_session: bool | None
+    windows: tuple[PreviewEtfRelationshipTimelineWindowV1, ...]
+
+    @model_validator(mode="after")
+    def fixed_windows(self) -> "PreviewEtfRelationshipTimelinePointV1":
+        if tuple(item.window_sessions for item in self.windows) != (5, 10, 20):
+            raise ValueError("relationship timeline point requires fixed window order")
+        return self
+
+
+class PreviewEtfRelationshipStateTimelineV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    contract_version: Literal["relationship-state-timeline/1.0"] = (
+        "relationship-state-timeline/1.0"
+    )
+    pair_id: str
+    as_of_session: date
+    retained_first_session: date
+    retained_session_count: int = Field(ge=1)
+    displayed_session_count: int = Field(ge=1, le=10)
+    truncated_before: bool
+    points: tuple[PreviewEtfRelationshipTimelinePointV1, ...]
+    reason_codes: tuple[str, ...]
+    disclaimer: Literal["descriptive_history_not_predictive_signal"] = (
+        "descriptive_history_not_predictive_signal"
+    )
+
+    @model_validator(mode="after")
+    def timeline_reconciles(self) -> "PreviewEtfRelationshipStateTimelineV1":
+        if len(self.points) != self.displayed_session_count:
+            raise ValueError("relationship timeline displayed count differs")
+        if self.retained_session_count < len(self.points):
+            raise ValueError("relationship timeline exceeds retained count")
+        sessions = tuple(item.as_of_session for item in self.points)
+        if sessions != tuple(sorted(sessions)) or sessions[-1] != self.as_of_session:
+            raise ValueError("relationship timeline must be ascending and current")
+        if self.truncated_before != (self.retained_session_count > len(self.points)):
+            raise ValueError("relationship timeline truncation flag differs")
+        if self.truncated_before:
+            if self.retained_first_session >= sessions[0]:
+                raise ValueError("compacted timeline requires an earlier retained boundary")
+            if self.points[0].changed_from_prior_retained_session is None:
+                raise ValueError("compacted timeline first point requires prior comparison")
+        elif self.retained_first_session != sessions[0]:
+            raise ValueError("complete timeline must start at retained boundary")
+        elif self.points[0].changed_from_prior_retained_session is not None:
+            raise ValueError("first retained point cannot report a prior comparison")
+        for previous, current in zip(self.points, self.points[1:]):
+            expected = previous.relationship_state != current.relationship_state
+            if current.changed_from_prior_retained_session != expected:
+                raise ValueError("relationship timeline state-change marker differs")
+        return self
+
+
 class PreviewEtfRelationshipV1(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -159,6 +231,22 @@ class PreviewEtfRelationshipViewV1(PreviewEtfRelationshipV1):
     """Additive API/Snapshot view; immutable source payload remains unchanged."""
 
     change_summary: PreviewEtfRelationshipChangeSummaryV1
+    state_timeline: PreviewEtfRelationshipStateTimelineV1
+
+    @model_validator(mode="after")
+    def projections_reconcile(self) -> "PreviewEtfRelationshipViewV1":
+        pair_id = self.definition.pair_id
+        current_session = self.current.as_of_session
+        if self.change_summary.pair_id != pair_id or self.state_timeline.pair_id != pair_id:
+            raise ValueError("relationship projection identity differs")
+        if (
+            self.change_summary.as_of_session != current_session
+            or self.state_timeline.as_of_session != current_session
+        ):
+            raise ValueError("relationship projection session differs")
+        if self.state_timeline.points[-1].relationship_state != self.current.relationship_state:
+            raise ValueError("relationship timeline current state differs")
+        return self
 
 
 class PreviewSourceLogicalFingerprintsV1(BaseModel):

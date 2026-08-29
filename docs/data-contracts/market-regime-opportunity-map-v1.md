@@ -383,6 +383,15 @@ relative-return spreads. Strengthening/weakening/reversal labels compare exact
 signed magnitudes without fitted thresholds. These fields must not feed state
 classification, ranking, highlight selection, or trading claims.
 
+The additive API/Snapshot view may separately contain
+`relationship-state-timeline/1.0`. It projects no more than the latest ten
+chronological Phase 2 rows per pair and includes each frozen state, confidence,
+prior-retained-session change flag, and already calculated 5/10/20 relative
+returns. It also reports the first/count of all retained rows and whether older
+points were compacted. The final point must equal the response session; window
+order remains exactly 5/10/20. This bounded view is not the complete audit
+ledger and must not cause browser-side state reconstruction.
+
 The Market Regime comparison record is deliberately separate. It references
 the Phase 1b state row and classifies the contemporaneous narrative as
 `consistent`, `conflict`, or `neutral` using fixed pair orientation. It cannot

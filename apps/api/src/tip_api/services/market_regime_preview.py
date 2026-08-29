@@ -45,7 +45,10 @@ from tip_api.contracts.analytics.v1.market_regime_preview import (
 from tip_api.services.etf_relationship_audit import read_etf_relationship_audit
 from tip_api.services.market_regime_audit import read_market_regime_audit
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
-from tip_api.services.relationship_change_summary import build_relationship_change_summary
+from tip_api.services.relationship_change_summary import (
+    build_relationship_change_summary,
+    build_relationship_state_timeline,
+)
 
 
 EXPECTED_FILES = (PREVIEW_PAYLOAD_FILE, PREVIEW_MANIFEST_FILE)
@@ -357,6 +360,10 @@ def _build_relationship_views(
         item.definition.pair_id: PreviewEtfRelationshipViewV1(
             **item.model_dump(mode="python"),
             change_summary=build_relationship_change_summary(
+                current=item.current,
+                history=history_by_pair.get(item.definition.pair_id, ()),
+            ),
+            state_timeline=build_relationship_state_timeline(
                 current=item.current,
                 history=history_by_pair.get(item.definition.pair_id, ()),
             ),

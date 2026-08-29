@@ -46,6 +46,10 @@ describe('Market Regime Opportunity Map desktop preview', () => {
     expect(screen.getAllByText(/IGV held up 2.00 percentage points better than QQQ/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(/IGV leadership is strengthening/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(/State held for 3 sessions/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Recent relationship path')).toBeInTheDocument();
+    expect(screen.getByText('10 shown · 21 retained sessions')).toBeInTheDocument();
+    expect(screen.getAllByText('State change').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('20-session relative return')).toBeInTheDocument();
     expect(screen.getAllByText('Synchronous Weakening').length).toBeGreaterThan(0);
     expect(screen.getByRole('button', { name: 'Close IGV / QQQ details' })).toBeInTheDocument();
     expect(screen.getByText(/needs at least 60 sessions/)).toBeInTheDocument();

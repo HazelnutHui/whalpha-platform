@@ -12,6 +12,7 @@ describe('Market Regime API parser', () => {
     const result = parseMarketRegimePreview(marketRegimeFixture());
     expect(result.relationships).toHaveLength(16);
     expect(result.relationships[0].change_summary?.current_state_run_session_count).toBe(3);
+    expect(result.relationships[0].state_timeline?.points).toHaveLength(10);
     expect(result.regime.composite.dimensions).toHaveLength(5);
   });
 
@@ -21,10 +22,20 @@ describe('Market Regime API parser', () => {
     expect(() => parseMarketRegimePreview(payload)).toThrow(/window change/);
   });
 
+  it('rejects a relationship timeline that is not current', () => {
+    const payload = marketRegimeFixture();
+    payload.relationships[0].state_timeline!.points[9].as_of_session = '2026-08-20';
+    expect(() => parseMarketRegimePreview(payload)).toThrow(/timeline/);
+  });
+
   it('accepts only coherent stale-review metadata', () => {
     const payload = marketRegimeFixture();
     payload.as_of_session = '2026-08-24';
     payload.relationships.forEach((item) => { item.change_summary!.as_of_session = payload.as_of_session; });
+    payload.relationships.forEach((item) => {
+      item.state_timeline!.as_of_session = payload.as_of_session;
+      item.state_timeline!.points[9].as_of_session = payload.as_of_session;
+    });
     payload.data_status = 'stale_review';
     payload.review_deployment = {
       contract_version: 'production-review-deployment/1.0', review_mode: true,
@@ -42,6 +53,10 @@ describe('Market Regime API parser', () => {
     const payload = marketRegimeFixture();
     payload.as_of_session = '2026-08-26';
     payload.relationships.forEach((item) => { item.change_summary!.as_of_session = payload.as_of_session; });
+    payload.relationships.forEach((item) => {
+      item.state_timeline!.as_of_session = payload.as_of_session;
+      item.state_timeline!.points[9].as_of_session = payload.as_of_session;
+    });
     payload.data_status = 'stale_review';
     payload.review_deployment = {
       contract_version: 'production-review-deployment/1.1', review_mode: true,

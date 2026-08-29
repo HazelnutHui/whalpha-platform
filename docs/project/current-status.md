@@ -171,6 +171,15 @@ Intelligence payload, state formula, threshold, ranking, or highlight selection
 changes. All 1,654 backend tests and 95 frontend tests pass, and the frontend
 production build succeeds. This addition is not deployed.
 
+ADR 0075 now adds a repository-only bounded relationship state timeline. It
+projects at most the latest ten frozen Phase 2 rows per pair, including state,
+confidence, prior-session change, and existing 5/10/20 relative returns. The
+bilingual detail view exposes retained-history boundaries and never recomputes
+states in the browser. All 1,655 backend tests and 96 frontend tests pass, and
+the frontend production build succeeds. A formal read-only construction from
+the active 2026-08-28 Market Intelligence payload reconciles all 16 pairs,
+showing 10 of 21 retained relationship sessions. This addition is not deployed.
+
 ### Historical 2026-08-27 recovery and pipeline evidence
 
 The following details are retained as historical recovery and performance

@@ -482,6 +482,12 @@ expanded, narrowed, reversed, newly appeared, or faded over one and five
 sessions. These are descriptive changes in overlapping rolling windows—not a
 new relationship score, causal attribution, or predictive signal.
 
+Relationship detail also uses a bounded ten-point state path to distinguish a
+stable condition from frequent switching. Each point shows its frozen state
+and the selected-window relative return. The retained-history start/count and
+any older-point compaction are explicit, so the visual cannot imply that the
+displayed first point began the economic relationship.
+
 ## C. Opportunity Transmission
 
 The intended path is:

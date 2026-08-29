@@ -9,6 +9,9 @@ from typing import Literal, Sequence
 from tip_api.contracts.analytics.v1.etf_relationship import EtfRelationshipRecordV1
 from tip_api.contracts.analytics.v1.market_regime_preview import (
     PreviewEtfRelationshipChangeSummaryV1,
+    PreviewEtfRelationshipStateTimelineV1,
+    PreviewEtfRelationshipTimelinePointV1,
+    PreviewEtfRelationshipTimelineWindowV1,
     PreviewEtfRelationshipWindowChangeV1,
 )
 
@@ -33,21 +36,7 @@ def build_relationship_change_summary(
     current: EtfRelationshipRecordV1,
     history: Sequence[EtfRelationshipRecordV1],
 ) -> PreviewEtfRelationshipChangeSummaryV1:
-    supplied = tuple(history)
-    if not supplied or any(item.pair_id != current.pair_id for item in supplied):
-        raise RelationshipChangeSummaryError("relationship history identity mismatch")
-    by_session: dict[date, EtfRelationshipRecordV1] = {}
-    for item in supplied:
-        existing = by_session.get(item.as_of_session)
-        if existing is not None and existing.logical_fingerprint != item.logical_fingerprint:
-            raise RelationshipChangeSummaryError(
-                "relationship history contains conflicting duplicate sessions"
-            )
-        by_session[item.as_of_session] = item
-    ordered = tuple(sorted(by_session.values(), key=lambda item: item.as_of_session))
-    if ordered[-1].logical_fingerprint != current.logical_fingerprint:
-        raise RelationshipChangeSummaryError("relationship history tail differs from current")
-
+    ordered = _ordered_history(current=current, history=history)
     run_count = 0
     for item in reversed(ordered):
         if item.relationship_state != current.relationship_state:
@@ -89,6 +78,74 @@ def build_relationship_change_summary(
             else "state_run_start_observed",
         ),
     )
+
+
+def build_relationship_state_timeline(
+    *,
+    current: EtfRelationshipRecordV1,
+    history: Sequence[EtfRelationshipRecordV1],
+    display_limit: int = 10,
+) -> PreviewEtfRelationshipStateTimelineV1:
+    if display_limit < 1 or display_limit > 10:
+        raise RelationshipChangeSummaryError("timeline display limit must be 1 through 10")
+    ordered = _ordered_history(current=current, history=history)
+    start_index = max(0, len(ordered) - display_limit)
+    displayed = ordered[start_index:]
+    points = tuple(
+        PreviewEtfRelationshipTimelinePointV1(
+            as_of_session=item.as_of_session,
+            relationship_state=item.relationship_state,
+            confidence=item.confidence,
+            changed_from_prior_retained_session=(
+                None
+                if index == 0
+                else ordered[index - 1].relationship_state != item.relationship_state
+            ),
+            windows=tuple(
+                PreviewEtfRelationshipTimelineWindowV1(
+                    window_sessions=window.window_sessions,
+                    relative_return=window.relative_return,
+                    availability=window.availability,
+                )
+                for window in item.windows
+            ),
+        )
+        for index, item in enumerate(ordered)
+        if index >= start_index
+    )
+    return PreviewEtfRelationshipStateTimelineV1(
+        pair_id=current.pair_id,
+        as_of_session=current.as_of_session,
+        retained_first_session=ordered[0].as_of_session,
+        retained_session_count=len(ordered),
+        displayed_session_count=len(points),
+        truncated_before=len(ordered) > len(points),
+        points=points,
+        reason_codes=(
+            "recent_points_derived_from_retained_relationship_history",
+            "older_points_compacted" if len(ordered) > len(points) else "full_retained_history_shown",
+        ),
+    )
+
+
+def _ordered_history(
+    *, current: EtfRelationshipRecordV1, history: Sequence[EtfRelationshipRecordV1],
+) -> tuple[EtfRelationshipRecordV1, ...]:
+    supplied = tuple(history)
+    if not supplied or any(item.pair_id != current.pair_id for item in supplied):
+        raise RelationshipChangeSummaryError("relationship history identity mismatch")
+    by_session: dict[date, EtfRelationshipRecordV1] = {}
+    for item in supplied:
+        existing = by_session.get(item.as_of_session)
+        if existing is not None and existing.logical_fingerprint != item.logical_fingerprint:
+            raise RelationshipChangeSummaryError(
+                "relationship history contains conflicting duplicate sessions"
+            )
+        by_session[item.as_of_session] = item
+    ordered = tuple(sorted(by_session.values(), key=lambda item: item.as_of_session))
+    if ordered[-1].logical_fingerprint != current.logical_fingerprint:
+        raise RelationshipChangeSummaryError("relationship history tail differs from current")
+    return ordered
 
 
 def _windows(record: EtfRelationshipRecordV1 | None) -> dict[int, str | None]:
