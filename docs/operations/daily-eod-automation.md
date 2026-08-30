@@ -17,7 +17,7 @@ The action order is:
 ```text
 same-day Identity
   -> canonical EOD
-  -> Phase 1a
+  -> Phase 1a plus same-process Sector ETF Rotation audit
   -> verified-prior Phase 1b
   -> daily verified-prior Candidate
   -> Candidate entry geometry
@@ -657,6 +657,13 @@ outside `/tmp`, canonical `/data`, and the repository. It creates nothing.
 Existing direct `/tmp` children remain accepted only for historical and
 controlled one-shot compatibility. No persistent root, repeated cadence,
 coordinator capability, or new systemd unit is installed by ADR 0081.
+
+Repository source now emits Automation Plan 1.5. It observes the distinct
+Sector Rotation audit derived beside Phase 1a, validates its exact session,
+Phase 1a fingerprint, and history source, and requires MI Approval Plan 1.3 to
+freeze the same audit and product fingerprints. Missing or mismatched evidence
+stops at operator diagnosis; the planner does not repair, replay, publish, or
+skip it. Historical Automation Plan 1.4 records remain historical evidence.
 
 ### Repository-only bounded cadence candidate
 

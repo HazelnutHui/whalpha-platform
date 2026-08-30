@@ -190,7 +190,7 @@ def _paths(tmp_path: Path, bundle_root: Path) -> DailyEodAutomationPaths:
 
 def _plan(bundle_path: Path) -> DailyEodAutomationPlan:
     return DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.4",
+        contract_version="daily-eod-automation-plan/1.5",
         target_session=SESSION.isoformat(),
         prior_session="2026-08-27",
         status=PlanStatus.ANALYTICS_READY,

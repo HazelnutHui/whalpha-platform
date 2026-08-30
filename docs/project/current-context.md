@@ -859,6 +859,15 @@ recorded in the active-state table and
   one later capability along a central visual path. The page makes the
   explain-before-ranking, counterevidence, context, fund-flow terminology, and
   stock-versus-option-return guardrails visible before entry.
+- Repository source now carries the score-free 11-record Sector ETF Rotation
+  product through Market Intelligence 1.3 and Approval Plan 1.3 with strict
+  typed audit reread, Phase 1a/history lineage, zero-Oracle, and Apply-time
+  source revalidation. Automation Plan 1.5 observes the second Phase 1a output
+  and fails closed if it is missing, invalid, or mismatched. A real
+  2026-08-28 tmp-only MI 1.3 plan rehearsal passed with freshness `fresh`, lag
+  zero, and zero Production writes. Active Production remains MI 1.2 and
+  Snapshot 1.10 / Dashboard 2.7; Snapshot 1.11 / Dashboard 2.8 is the next
+  unimplemented projection boundary.
 
 ## OCI production state
 

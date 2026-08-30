@@ -3,9 +3,11 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -22,11 +24,80 @@ from tip_api.main import create_app
 from tip_api.persistence.parquet import market_intelligence_active as repo
 from tip_api.services import market_intelligence_publication_cli as cli
 from tip_api.services.market_regime_preview import _fingerprint, _write_and_read_bundle
+from tip_api.services.sector_etf_rotation import calculate_sector_etf_rotation
+from tip_api.services.sector_etf_rotation_audit import (
+    AUDIT_MANIFEST as SECTOR_ROTATION_AUDIT_MANIFEST,
+    SectorEtfRotationAuditContents,
+)
+from tip_api.services.sector_etf_rotation_oracle import (
+    compare_with_independent_sector_rotation_oracle,
+)
 from tests.services.test_market_regime_preview import PRIMARY, SECONDARY, SESSION, _payload
+from tests.services.test_sector_etf_rotation import _panel as _sector_panel
 
 
 AT = datetime(2026, 8, 25, 11, tzinfo=UTC)
 STATE = "c" * 64
+
+
+def test_sector_rotation_publication_source_is_typed_and_phase1a_bound(
+    monkeypatch,
+) -> None:
+    panel = _sector_panel()
+    product = calculate_sector_etf_rotation(panel=panel)
+    oracle = compare_with_independent_sector_rotation_oracle(
+        panel=panel,
+        product=product,
+    )
+    phase1a_fingerprint = "a" * 64
+    audit_path = Path("/tmp") / f"mi-sector-source-{uuid4().hex}"
+    audit_path.mkdir(mode=0o700)
+    manifest_path = audit_path / SECTOR_ROTATION_AUDIT_MANIFEST
+    manifest_path.write_text("{}\n", encoding="utf-8")
+    manifest_path.chmod(0o400)
+    manifest = {
+        "audit_contract_version": "sector-etf-rotation-audit/1.0",
+        "as_of_session": product.as_of_session.isoformat(),
+        "logical_content_fingerprint": "b" * 64,
+        "product_contract_version": product.contract_version,
+        "calculation_version": product.calculation_version,
+        "parameter_fingerprint": product.parameter_fingerprint,
+        "product_logical_fingerprint": product.logical_fingerprint,
+        "record_count": 11,
+        "oracle_mismatch_count": 0,
+        "theme_status": product.theme_status,
+        "source": {
+            "phase1a_audit_logical_fingerprint": phase1a_fingerprint,
+            "phase1a_manifest_sha256": "c" * 64,
+            "history_source_fingerprint": product.source_history_fingerprint,
+        },
+    }
+    contents = SectorEtfRotationAuditContents(manifest, product, oracle)
+    monkeypatch.setattr(
+        repo,
+        "read_sector_etf_rotation_audit_contents",
+        lambda _: contents,
+    )
+    try:
+        source, reread = repo._sector_rotation_source_and_contents(
+            audit_path,
+            analysis_session=product.as_of_session,
+            phase1a_audit_logical_fingerprint=phase1a_fingerprint,
+            history_source_fingerprint=product.source_history_fingerprint,
+        )
+        assert reread is contents
+        assert source.product_logical_fingerprint == product.logical_fingerprint
+        assert source.audit_manifest_sha256 == repo.file_sha256(manifest_path)
+        with pytest.raises(repo.MarketIntelligencePublicationError, match="differs"):
+            repo._sector_rotation_source_and_contents(
+                audit_path,
+                analysis_session=product.as_of_session,
+                phase1a_audit_logical_fingerprint="d" * 64,
+                history_source_fingerprint=product.source_history_fingerprint,
+            )
+    finally:
+        manifest_path.chmod(0o600)
+        shutil.rmtree(audit_path)
 
 
 def _write_json(path: Path, value: object) -> None:

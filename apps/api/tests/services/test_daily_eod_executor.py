@@ -539,6 +539,7 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
                 "--plan",
                 "--expected-current-state-fingerprint",
                 "--approval-package",
+                "--sector-rotation-audit",
             ),
         ),
         (

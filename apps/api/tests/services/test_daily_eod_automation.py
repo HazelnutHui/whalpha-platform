@@ -15,6 +15,9 @@ PRIOR = date(2026, 8, 25)
 IDENTITY_FP = "1" * 64
 EOD_FP = "2" * 64
 PHASE1A_FP = "3" * 64
+SECTOR_ROTATION_FP = "0" * 64
+SECTOR_ROTATION_PRODUCT_FP = "1" * 64
+HISTORY_SOURCE_FP = "2" * 64
 PRIOR_PHASE1B_FP = "4" * 64
 PHASE1B_FP = "5" * 64
 PRIOR_CANDIDATE_FP = "6" * 64
@@ -94,7 +97,25 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
             input_manifest={
                 "identity_logical_fingerprint": IDENTITY_FP,
                 "eod_content_fingerprint": EOD_FP,
+                "history_source_fingerprint": HISTORY_SOURCE_FP,
             },
+        ),
+    )
+    monkeypatch.setattr(
+        automation,
+        "read_sector_etf_rotation_audit_contents",
+        lambda path: SimpleNamespace(
+            manifest={
+                "as_of_session": TARGET.isoformat(),
+                "logical_content_fingerprint": SECTOR_ROTATION_FP,
+                "source": {
+                    "phase1a_audit_logical_fingerprint": PHASE1A_FP,
+                },
+            },
+            product=SimpleNamespace(
+                source_history_fingerprint=HISTORY_SOURCE_FP,
+                logical_fingerprint=SECTOR_ROTATION_PRODUCT_FP,
+            ),
         ),
     )
 
@@ -205,7 +226,7 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
         lambda path: SimpleNamespace(
             analysis_session=TARGET,
             plan_content_fingerprint=MI_PLAN_FP,
-            plan_version="1.2",
+            plan_version="1.3",
             data_root=str(paths.data_root),
             preview_bundle_path=str(paths.preview_bundle),
             phase1a_audit_path=str(paths.phase1a_audit),
@@ -213,6 +234,9 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
             phase2_audit_path=str(paths.phase2_audit),
             candidate_audit_path=str(paths.candidate_audit),
             entry_geometry_audit_path=str(paths.entry_geometry_audit),
+            sector_rotation_audit_path=str(
+                automation._sector_rotation_output_path(paths.phase1a_audit)
+            ),
             candidate_path=str(
                 paths.market_intelligence_output_root
                 / "market-intelligence.plan.artifacts"
@@ -229,6 +253,12 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
                 candidate_audit_logical_fingerprint=CANDIDATE_FP,
             ),
             entry_geometry_audit_logical_fingerprint=ENTRY_FP,
+            sector_rotation_source=SimpleNamespace(
+                audit_logical_fingerprint=SECTOR_ROTATION_FP,
+            ),
+            sector_rotation_product_logical_fingerprint=(
+                SECTOR_ROTATION_PRODUCT_FP
+            ),
             activation_allowed=True,
             activation_allowed_by_review_authorization=False,
             publication_id=MI_PUBLICATION_ID,
@@ -258,6 +288,7 @@ def test_all_formal_analytics_are_ready_for_separate_publication_review(monkeypa
         "identity",
         "eod",
         "phase1a",
+        "sector_rotation",
         "prior_phase1b",
         "phase1b",
         "prior_candidate",
@@ -578,12 +609,41 @@ def test_missing_phase1a_with_existing_downstream_artifact_blocks(monkeypatch, t
 def test_verified_prior_makes_missing_phase1b_ready_for_incremental_calculation(monkeypatch, tmp_path) -> None:
     paths = _paths(tmp_path)
     locations = automation._stage_locations(TARGET, paths)
-    existing = {locations["identity"], locations["eod"], locations["phase1a"]}
+    existing = {
+        locations["identity"],
+        locations["eod"],
+        locations["phase1a"],
+        locations["sector_rotation"],
+    }
     _install_completed_readers(monkeypatch, paths, existing=existing)
     plan = automation.plan_daily_eod_automation(target_session=TARGET, paths=paths)
     assert plan.status is automation.PlanStatus.READY_FOR_OFFLINE_CALCULATION
     assert plan.next_action is automation.NextAction.CALCULATE_PHASE1B_INCREMENTAL
     assert plan.reason_codes == ("phase1b_required",)
+
+
+def test_missing_sector_rotation_after_phase1a_fails_closed(
+    monkeypatch, tmp_path
+) -> None:
+    paths = _paths(tmp_path)
+    locations = automation._stage_locations(TARGET, paths)
+    existing = {
+        locations["identity"],
+        locations["eod"],
+        locations["phase1a"],
+    }
+    _install_completed_readers(monkeypatch, paths, existing=existing)
+
+    plan = automation.plan_daily_eod_automation(
+        target_session=TARGET,
+        paths=paths,
+    )
+
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.next_action is automation.NextAction.OPERATOR_DIAGNOSIS
+    assert plan.reason_codes == (
+        "sector_rotation_missing_or_invalid_after_phase1a",
+    )
 
 
 @pytest.mark.parametrize(
@@ -656,7 +716,7 @@ def test_publication_plan_source_lineage_mismatch_blocks(monkeypatch, tmp_path) 
         lambda path: SimpleNamespace(
             analysis_session=TARGET,
             plan_content_fingerprint=MI_PLAN_FP,
-            plan_version="1.2",
+            plan_version="1.3",
             data_root=str(paths.data_root),
             preview_bundle_path=str(paths.preview_bundle),
             phase1a_audit_path=str(paths.phase1a_audit),
@@ -664,6 +724,9 @@ def test_publication_plan_source_lineage_mismatch_blocks(monkeypatch, tmp_path) 
             phase2_audit_path=str(paths.phase2_audit),
             candidate_audit_path=str(paths.candidate_audit),
             entry_geometry_audit_path=str(paths.entry_geometry_audit),
+            sector_rotation_audit_path=str(
+                automation._sector_rotation_output_path(paths.phase1a_audit)
+            ),
             candidate_path=str(
                 paths.market_intelligence_output_root
                 / "market-intelligence.plan.artifacts"
@@ -680,6 +743,12 @@ def test_publication_plan_source_lineage_mismatch_blocks(monkeypatch, tmp_path) 
                 candidate_audit_logical_fingerprint=CANDIDATE_FP,
             ),
             entry_geometry_audit_logical_fingerprint=ENTRY_FP,
+            sector_rotation_source=SimpleNamespace(
+                audit_logical_fingerprint=SECTOR_ROTATION_FP,
+            ),
+            sector_rotation_product_logical_fingerprint=(
+                SECTOR_ROTATION_PRODUCT_FP
+            ),
             activation_allowed=True,
         ),
     )

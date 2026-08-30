@@ -61,7 +61,7 @@ def _fixture(tmp_path):
     run_root.mkdir(mode=0o700)
     paths = _paths(bundle_path, tmp_path)
     plan = DailyEodAutomationPlan(
-        contract_version="daily-eod-automation-plan/1.4",
+        contract_version="daily-eod-automation-plan/1.5",
         target_session=TARGET_SESSION.isoformat(),
         prior_session="2026-08-27",
         status=PlanStatus.ANALYTICS_READY,

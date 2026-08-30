@@ -684,15 +684,25 @@ Oracle mismatches. The stable rotation product fingerprint remained
 `bce93211b6aec748d41db7a4c7f2e34226941e2a4f4ceee29b7a7d6adf51bbf7`;
 the source-bound audit fingerprint was
 `060932af8da939d30f0c59482ed525387fc007b1fdde78a0f272eb2e04dfbce7`.
-All files were owner-only `0400` and no partial residue remained. The next
-bounded slice is Market Intelligence 1.3 contract integration. No publication
-or deployment is authorized by the current repository work.
+All files were owner-only `0400` and no partial residue remained. Repository
+source now completes the next bounded slice: Market Intelligence 1.3 strictly
+rereads and binds that exact audit, Phase 1a lineage, history source, product
+fingerprint, 11-record cardinality, and zero-mismatch Oracle. Approval Plan 1.3
+freezes the same evidence and revalidates it before Apply. A real tmp-only
+2026-08-28 plan rehearsal produced publication candidate
+`2026-08-28T120000Z-39e95dce121f`, freshness `fresh`, lag zero, and zero
+Production writes; its plan fingerprint is
+`8555bd9d27bdab99fc9006d3945b0b2f35c5dfa12a1ec050aba1591698753181`.
+The candidate remains review evidence only and was not published.
 
-The Automation Plan does not yet expose Sector Rotation as its own observed
-recovery stage. A process interruption after Phase 1a custody but before the
-second audit would therefore stop later integration rather than automatically
-repair or skip it. MI 1.3 must require the audit and fail closed; explicit
-recovery custody remains a later automation-hardening slice.
+Automation Plan 1.5 now observes the derived Sector Rotation audit immediately
+after Phase 1a, requires its exact same-session/Phase-1a/history binding, and
+requires MI Approval Plan 1.3 to name the same audit and product. A missing,
+invalid, or mismatched second audit stops at operator diagnosis instead of
+allowing downstream publication planning. This is fail-closed observation,
+not automatic repair or replay. No publication or deployment is authorized by
+the current repository work. The next bounded product slice is Snapshot 1.11 /
+Dashboard 2.8 lazy projection.
 
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal

@@ -19,7 +19,11 @@ artifact SHA/size, validates the completion manifest, parameters, Oracle and
 equivalence gates, and parses only the bounded current-session product inputs.
 Plan creation requires the exact in-process evidence returned by that build.
 Candidate publication 1.0 produces MI/plan 1.1; the additive entry consumer
-requires `--entry-geometry-audit` and produces MI/plan 1.2.
+requires `--entry-geometry-audit` and produces MI/plan 1.2. The current
+repository planning path additionally requires `--sector-rotation-audit`,
+strictly rereads its complete typed custody and zero-mismatch Oracle, and
+produces MI/plan 1.3. It binds the exact Phase 1a audit, history source,
+calculation parameters, 11-record product, and Theme-unavailable state.
 
 ADR 0066 makes schema 1.1 daily Candidate evidence explicit and mode-aware.
 Candidate construction and MI Plan/Apply rechecks use one shared projection of
@@ -73,9 +77,12 @@ in-dataset release and therefore fails closed on rollback.
 
 ## Downstream order
 
-After a separately authorized MI 1.2 publication: build Snapshot 1.9 /
-Dashboard 2.6 with the explicit publication ID and exact same-session Strategy
-Channel audit; separately approve/apply Snapshot; then build OCI with both the
-explicit Snapshot and `--market-intelligence-publication`. OCI deployment
-remains another authorization. Older MI/Snapshot pairs remain readable
-rollback-compatible boundaries.
+The active Production path remains MI 1.2 with Snapshot 1.10 / Dashboard 2.7.
+MI 1.3 must not be applied until Snapshot 1.11 / Dashboard 2.8 is implemented
+to preserve the Sector Rotation product instead of silently dropping it.
+After that consumer exists, use the explicit publication ID and exact
+same-session Strategy Channel audit, separately approve/apply Snapshot, then
+build OCI with both the explicit Snapshot and
+`--market-intelligence-publication`. OCI deployment remains another
+authorization. Older MI/Snapshot pairs remain readable rollback-compatible
+boundaries.

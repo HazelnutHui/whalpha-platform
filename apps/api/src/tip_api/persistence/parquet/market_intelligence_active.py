@@ -22,18 +22,22 @@ from tip_api.contracts.analytics.v1 import (
     MarketIntelligenceApprovalPlanV1,
     MarketIntelligenceApprovalPlanV1_1,
     MarketIntelligenceApprovalPlanV1_2,
+    MarketIntelligenceApprovalPlanV1_3,
     MarketIntelligenceEodSourceV1,
     MarketIntelligenceFileReferenceV1,
     MarketIntelligenceManifestV1,
     MarketIntelligenceManifestV1_1,
     MarketIntelligenceManifestV1_2,
+    MarketIntelligenceManifestV1_3,
     MarketIntelligencePayloadV1,
     MarketIntelligencePayloadV1_1,
     MarketIntelligencePayloadV1_2,
+    MarketIntelligencePayloadV1_3,
     MarketIntelligenceSourceBindingV1,
     MarketIntelligenceTargetReferenceV1,
     PreviewUniverseDefinitionV1,
     ReviewDeploymentAuthorization,
+    SectorEtfRotationPublicationSourceV1,
 )
 from tip_api.contracts.analytics.v1.market_intelligence import (
     MARKET_INTELLIGENCE_MANIFEST_FILE,
@@ -73,6 +77,11 @@ from tip_api.services.opportunity_candidate_audit import (
 from tip_api.services.candidate_entry_geometry_audit import (
     read_candidate_entry_geometry_audit,
 )
+from tip_api.services.sector_etf_rotation_audit import (
+    AUDIT_MANIFEST as SECTOR_ROTATION_AUDIT_MANIFEST,
+    SectorEtfRotationAuditContents,
+    read_sector_etf_rotation_audit_contents,
+)
 
 
 MARKET_INTELLIGENCE_BASE = "market-data/analytics/market-intelligence"
@@ -106,13 +115,36 @@ class CandidatePublicationValidationEvidence:
 
 
 @dataclass(frozen=True, slots=True)
+class SectorRotationPublicationValidationEvidence:
+    """In-process proof that typed Sector Rotation custody built the payload."""
+
+    audit_path: Path
+    audit_manifest_sha256: str
+    audit_logical_fingerprint: str
+    product_logical_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
 class CompletedMarketIntelligence:
     path: Path
-    manifest: MarketIntelligenceManifestV1 | MarketIntelligenceManifestV1_1 | MarketIntelligenceManifestV1_2
-    payload: MarketIntelligencePayloadV1 | MarketIntelligencePayloadV1_1 | MarketIntelligencePayloadV1_2
+    manifest: (
+        MarketIntelligenceManifestV1
+        | MarketIntelligenceManifestV1_1
+        | MarketIntelligenceManifestV1_2
+        | MarketIntelligenceManifestV1_3
+    )
+    payload: (
+        MarketIntelligencePayloadV1
+        | MarketIntelligencePayloadV1_1
+        | MarketIntelligencePayloadV1_2
+        | MarketIntelligencePayloadV1_3
+    )
     reference: MarketIntelligenceTargetReferenceV1
     pointer: MarketIntelligenceActivePointerV1 | None = None
     candidate_validation_evidence: CandidatePublicationValidationEvidence | None = None
+    sector_rotation_validation_evidence: (
+        SectorRotationPublicationValidationEvidence | None
+    ) = None
 
 
 def target_path(root: Path, analysis_session: date, publication_id: str) -> Path:
@@ -168,6 +200,7 @@ def build_market_intelligence_candidate(
     candidate_path: Path,
     candidate_audit_path: Path | None = None,
     entry_geometry_audit_path: Path | None = None,
+    sector_rotation_audit_path: Path | None = None,
     review_deployment: ReviewDeploymentAuthorization | None = None,
 ) -> CompletedMarketIntelligence:
     """Create one language-neutral candidate from explicit verified sources."""
@@ -193,6 +226,22 @@ def build_market_intelligence_candidate(
         if candidate_audit_path is not None
         else None
     )
+    if sector_rotation_audit_path is not None and entry_geometry_audit_path is None:
+        raise MarketIntelligencePublicationError(
+            "Sector Rotation publication requires Candidate publication 1.1"
+        )
+    sector_rotation = (
+        _sector_rotation_source_and_contents(
+            sector_rotation_audit_path,
+            analysis_session=analysis_session,
+            phase1a_audit_logical_fingerprint=(
+                source.phase_logical_fingerprints.phase1a
+            ),
+            history_source_fingerprint=source.eod.history_source_fingerprint,
+        )
+        if sector_rotation_audit_path is not None
+        else None
+    )
     payload_fields = {
         "publication_id": publication_id,
         "analysis_session": analysis_session,
@@ -203,7 +252,15 @@ def build_market_intelligence_candidate(
         "logical_fingerprint": "0" * 64,
     }
     payload_candidate = (
-        MarketIntelligencePayloadV1_2(
+        MarketIntelligencePayloadV1_3(
+            **payload_fields,
+            candidate_source=candidate_analytics.source,
+            candidate_analytics=candidate_analytics,
+            sector_rotation_source=sector_rotation[0],
+            sector_rotation=sector_rotation[1].product,
+        )
+        if sector_rotation is not None
+        else MarketIntelligencePayloadV1_2(
             **payload_fields,
             candidate_source=candidate_analytics.source,
             candidate_analytics=candidate_analytics,
@@ -277,8 +334,23 @@ def build_market_intelligence_candidate(
                 ),
             }
         )
+    if sector_rotation is not None:
+        rotation_source, rotation_contents = sector_rotation
+        manifest_body.update(
+            {
+                "sector_rotation_source": rotation_source.model_dump(mode="json"),
+                "sector_rotation_product_logical_fingerprint": (
+                    rotation_contents.product.logical_fingerprint
+                ),
+                "sector_rotation_record_count": len(
+                    rotation_contents.product.records
+                ),
+            }
+        )
     manifest_type = (
-        MarketIntelligenceManifestV1_2
+        MarketIntelligenceManifestV1_3
+        if sector_rotation is not None
+        else MarketIntelligenceManifestV1_2
         if entry_geometry_audit_path is not None
         else MarketIntelligenceManifestV1_1
         if candidate_analytics is not None
@@ -331,6 +403,18 @@ def build_market_intelligence_candidate(
             else None
         ),
     )
+    rotation_evidence = (
+        SectorRotationPublicationValidationEvidence(
+            audit_path=sector_rotation_audit_path,
+            audit_manifest_sha256=sector_rotation[0].audit_manifest_sha256,
+            audit_logical_fingerprint=sector_rotation[0].audit_logical_fingerprint,
+            product_logical_fingerprint=(
+                sector_rotation[0].product_logical_fingerprint
+            ),
+        )
+        if sector_rotation is not None and sector_rotation_audit_path is not None
+        else None
+    )
     return CompletedMarketIntelligence(
         path=completed.path,
         manifest=completed.manifest,
@@ -338,6 +422,7 @@ def build_market_intelligence_candidate(
         reference=completed.reference,
         pointer=completed.pointer,
         candidate_validation_evidence=evidence,
+        sector_rotation_validation_evidence=rotation_evidence,
     )
 
 
@@ -449,6 +534,57 @@ def validate_source_binding(
     return source, preview
 
 
+def _sector_rotation_source_and_contents(
+    audit_path: Path,
+    *,
+    analysis_session: date,
+    phase1a_audit_logical_fingerprint: str,
+    history_source_fingerprint: str,
+) -> tuple[SectorEtfRotationPublicationSourceV1, SectorEtfRotationAuditContents]:
+    contents = read_sector_etf_rotation_audit_contents(audit_path)
+    manifest = contents.manifest
+    product = contents.product
+    source = manifest.get("source")
+    if not isinstance(source, Mapping):
+        raise MarketIntelligencePublicationError(
+            "Sector Rotation audit source binding is malformed"
+        )
+    if (
+        manifest.get("as_of_session") != analysis_session.isoformat()
+        or product.as_of_session != analysis_session
+        or source.get("phase1a_audit_logical_fingerprint")
+        != phase1a_audit_logical_fingerprint
+        or source.get("history_source_fingerprint")
+        != history_source_fingerprint
+        or manifest.get("oracle_mismatch_count") != 0
+        or contents.oracle_report.mismatch_count != 0
+        or contents.oracle_report.mismatches
+    ):
+        raise MarketIntelligencePublicationError(
+            "Sector Rotation audit differs from Market Intelligence sources"
+        )
+    binding = SectorEtfRotationPublicationSourceV1(
+        audit_contract_version=manifest["audit_contract_version"],
+        audit_manifest_sha256=file_sha256(
+            audit_path / SECTOR_ROTATION_AUDIT_MANIFEST
+        ),
+        audit_logical_fingerprint=manifest["logical_content_fingerprint"],
+        phase1a_audit_logical_fingerprint=source[
+            "phase1a_audit_logical_fingerprint"
+        ],
+        phase1a_manifest_sha256=source["phase1a_manifest_sha256"],
+        product_contract_version=manifest["product_contract_version"],
+        calculation_version=manifest["calculation_version"],
+        parameter_fingerprint=manifest["parameter_fingerprint"],
+        history_source_fingerprint=source["history_source_fingerprint"],
+        product_logical_fingerprint=manifest["product_logical_fingerprint"],
+        record_count=manifest["record_count"],
+        oracle_mismatch_count=manifest["oracle_mismatch_count"],
+        theme_status=manifest["theme_status"],
+    )
+    return binding, contents
+
+
 def read_market_intelligence_release(
     path: Path, *, validate_sources: bool = False, data_root: Path | None = None
 ) -> CompletedMarketIntelligence:
@@ -482,6 +618,9 @@ def read_market_intelligence_release(
     elif contract_version == "market-intelligence-publication/1.2":
         payload = MarketIntelligencePayloadV1_2.model_validate(payload_json)
         manifest = MarketIntelligenceManifestV1_2.model_validate(manifest_json)
+    elif contract_version == "market-intelligence-publication/1.3":
+        payload = MarketIntelligencePayloadV1_3.model_validate(payload_json)
+        manifest = MarketIntelligenceManifestV1_3.model_validate(manifest_json)
     else:
         raise MarketIntelligencePublicationError(
             "unsupported Market Intelligence publication contract"
@@ -515,6 +654,17 @@ def read_market_intelligence_release(
     ):
         raise MarketIntelligencePublicationError(
             "Market Intelligence entry-geometry custody mismatch"
+        )
+    if isinstance(payload, MarketIntelligencePayloadV1_3) and (
+        not isinstance(manifest, MarketIntelligenceManifestV1_3)
+        or payload.sector_rotation_source != manifest.sector_rotation_source
+        or payload.sector_rotation.logical_fingerprint
+        != manifest.sector_rotation_product_logical_fingerprint
+        or len(payload.sector_rotation.records)
+        != manifest.sector_rotation_record_count
+    ):
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence Sector Rotation custody mismatch"
         )
     if canonical_fingerprint(
         payload.model_dump(
@@ -596,14 +746,23 @@ def build_approval_plan(
     phase2_audit_path: Path,
     candidate_audit_path: Path | None = None,
     entry_geometry_audit_path: Path | None = None,
+    sector_rotation_audit_path: Path | None = None,
     validated_candidate_evidence: CandidatePublicationValidationEvidence | None = None,
+    validated_sector_rotation_evidence: (
+        SectorRotationPublicationValidationEvidence | None
+    ) = None,
     expected_current_state_fingerprint: str,
     expected_latest_completed_session: date | None,
     actual_latest_completed_session: date,
     freshness_status: str,
     session_lag: int | None,
     created_at: datetime,
-) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2:
+) -> (
+    MarketIntelligenceApprovalPlanV1
+    | MarketIntelligenceApprovalPlanV1_1
+    | MarketIntelligenceApprovalPlanV1_2
+    | MarketIntelligenceApprovalPlanV1_3
+):
     safe_root = _validated_root(root)
     completed = read_market_intelligence_release(candidate, validate_sources=False)
     source, preview = validate_source_binding(
@@ -655,6 +814,46 @@ def build_approval_plan(
         )
     elif candidate_audit_path is not None or entry_geometry_audit_path is not None:
         raise MarketIntelligencePublicationError("MI 1.0 plan cannot bind a Candidate audit")
+    if isinstance(completed.payload, MarketIntelligencePayloadV1_3):
+        if (
+            sector_rotation_audit_path is None
+            or validated_sector_rotation_evidence is None
+        ):
+            raise MarketIntelligencePublicationError(
+                "MI 1.3 plan requires Sector Rotation audit evidence"
+            )
+        rotation_source, rotation_contents = _sector_rotation_source_and_contents(
+            sector_rotation_audit_path,
+            analysis_session=completed.payload.analysis_session,
+            phase1a_audit_logical_fingerprint=(
+                completed.payload.source.phase_logical_fingerprints.phase1a
+            ),
+            history_source_fingerprint=(
+                completed.payload.source.eod.history_source_fingerprint
+            ),
+        )
+        if (
+            rotation_source != completed.payload.sector_rotation_source
+            or rotation_contents.product != completed.payload.sector_rotation
+            or validated_sector_rotation_evidence.audit_path
+            != sector_rotation_audit_path
+            or validated_sector_rotation_evidence.audit_manifest_sha256
+            != rotation_source.audit_manifest_sha256
+            or validated_sector_rotation_evidence.audit_logical_fingerprint
+            != rotation_source.audit_logical_fingerprint
+            or validated_sector_rotation_evidence.product_logical_fingerprint
+            != rotation_source.product_logical_fingerprint
+        ):
+            raise MarketIntelligencePublicationError(
+                "MI 1.3 Sector Rotation validation evidence differs"
+            )
+    elif (
+        sector_rotation_audit_path is not None
+        or validated_sector_rotation_evidence is not None
+    ):
+        raise MarketIntelligencePublicationError(
+            "MI before 1.3 cannot bind a Sector Rotation audit"
+        )
     actual_inventory = inventory_fingerprint(safe_root)
     if actual_inventory != expected_current_state_fingerprint:
         raise MarketIntelligencePublicationConflict("Production inventory differs from expected state")
@@ -669,7 +868,10 @@ def build_approval_plan(
     current_pointer = read_market_intelligence_pointer(safe_root)
     current_consumer = consumer_state_fingerprint(safe_root)
     reference = _reference(
-        candidate, manifest=completed.manifest, payload=completed.payload, logical_path=target.relative_to(safe_root).as_posix()
+        candidate,
+        manifest=completed.manifest,
+        payload=completed.payload,
+        logical_path=target.relative_to(safe_root).as_posix(),
     )
     pointer = _pointer_for(
         active=reference,
@@ -692,7 +894,9 @@ def build_approval_plan(
     )
     payload = {
         "plan_version": (
-            "1.2"
+            "1.3"
+            if isinstance(completed.payload, MarketIntelligencePayloadV1_3)
+            else "1.2"
             if isinstance(completed.payload, MarketIntelligencePayloadV1_2)
             else "1.1"
             if candidate_analytics is not None
@@ -771,8 +975,22 @@ def build_approval_plan(
                 ),
             }
         )
+    if isinstance(completed.payload, MarketIntelligencePayloadV1_3):
+        payload.update(
+            {
+                "sector_rotation_audit_path": str(sector_rotation_audit_path),
+                "sector_rotation_source": (
+                    completed.payload.sector_rotation_source.model_dump(mode="json")
+                ),
+                "sector_rotation_product_logical_fingerprint": (
+                    completed.payload.sector_rotation.logical_fingerprint
+                ),
+            }
+        )
     plan_type = (
-        MarketIntelligenceApprovalPlanV1_2
+        MarketIntelligenceApprovalPlanV1_3
+        if isinstance(completed.payload, MarketIntelligencePayloadV1_3)
+        else MarketIntelligenceApprovalPlanV1_2
         if isinstance(completed.payload, MarketIntelligencePayloadV1_2)
         else MarketIntelligenceApprovalPlanV1_1
         if candidate_analytics is not None
@@ -784,7 +1002,12 @@ def build_approval_plan(
 
 
 def validate_plan(
-    plan: MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2,
+    plan: (
+        MarketIntelligenceApprovalPlanV1
+        | MarketIntelligenceApprovalPlanV1_1
+        | MarketIntelligenceApprovalPlanV1_2
+        | MarketIntelligenceApprovalPlanV1_3
+    ),
 ) -> CompletedMarketIntelligence:
     if canonical_fingerprint(
         plan.model_dump(mode="json", exclude={"plan_content_fingerprint"})
@@ -822,6 +1045,16 @@ def validate_plan(
         != plan.entry_lane_consumer_parameter_fingerprint
     ):
         raise MarketIntelligencePublicationError("MI 1.2 entry-geometry plan changed")
+    if isinstance(plan, MarketIntelligenceApprovalPlanV1_3) and (
+        not isinstance(completed.payload, MarketIntelligencePayloadV1_3)
+        or completed.payload.sector_rotation_source
+        != plan.sector_rotation_source
+        or completed.payload.sector_rotation.logical_fingerprint
+        != plan.sector_rotation_product_logical_fingerprint
+    ):
+        raise MarketIntelligencePublicationError(
+            "MI 1.3 Sector Rotation plan changed"
+        )
     return completed
 
 
@@ -831,6 +1064,7 @@ def read_market_intelligence_approval_plan(
     MarketIntelligenceApprovalPlanV1
     | MarketIntelligenceApprovalPlanV1_1
     | MarketIntelligenceApprovalPlanV1_2
+    | MarketIntelligenceApprovalPlanV1_3
 ):
     """Formally read one immutable, canonical approval plan and its candidate."""
 
@@ -870,6 +1104,7 @@ def read_market_intelligence_approval_plan(
         "1.0": MarketIntelligenceApprovalPlanV1,
         "1.1": MarketIntelligenceApprovalPlanV1_1,
         "1.2": MarketIntelligenceApprovalPlanV1_2,
+        "1.3": MarketIntelligenceApprovalPlanV1_3,
     }.get(value.get("plan_version"))
     if plan_type is None:
         raise MarketIntelligencePublicationError(
@@ -1020,8 +1255,18 @@ def aggregate_sha256(files: tuple[MarketIntelligenceFileReferenceV1, ...]) -> st
 def _reference(
     path: Path,
     *,
-    manifest: MarketIntelligenceManifestV1 | MarketIntelligenceManifestV1_1 | MarketIntelligenceManifestV1_2,
-    payload: MarketIntelligencePayloadV1 | MarketIntelligencePayloadV1_1 | MarketIntelligencePayloadV1_2,
+    manifest: (
+        MarketIntelligenceManifestV1
+        | MarketIntelligenceManifestV1_1
+        | MarketIntelligenceManifestV1_2
+        | MarketIntelligenceManifestV1_3
+    ),
+    payload: (
+        MarketIntelligencePayloadV1
+        | MarketIntelligencePayloadV1_1
+        | MarketIntelligencePayloadV1_2
+        | MarketIntelligencePayloadV1_3
+    ),
     logical_path: str | None = None,
 ) -> MarketIntelligenceTargetReferenceV1:
     files = file_references(path)
@@ -1263,7 +1508,12 @@ def _is_sha256(value: object) -> bool:
 
 def _validate_plan_sources(
     root: Path,
-    plan: MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2,
+    plan: (
+        MarketIntelligenceApprovalPlanV1
+        | MarketIntelligenceApprovalPlanV1_1
+        | MarketIntelligenceApprovalPlanV1_2
+        | MarketIntelligenceApprovalPlanV1_3
+    ),
 ) -> None:
     actual, preview = validate_source_binding(
         data_root=root,
@@ -1289,6 +1539,23 @@ def _validate_plan_sources(
             ),
             full_validation_evidence=None,
         )
+    if isinstance(plan, MarketIntelligenceApprovalPlanV1_3):
+        rotation_source, rotation_contents = _sector_rotation_source_and_contents(
+            Path(plan.sector_rotation_audit_path),
+            analysis_session=plan.analysis_session,
+            phase1a_audit_logical_fingerprint=(
+                plan.source.phase_logical_fingerprints.phase1a
+            ),
+            history_source_fingerprint=plan.source.eod.history_source_fingerprint,
+        )
+        if (
+            rotation_source != plan.sector_rotation_source
+            or rotation_contents.product.logical_fingerprint
+            != plan.sector_rotation_product_logical_fingerprint
+        ):
+            raise MarketIntelligencePublicationConflict(
+                "approved Sector Rotation source binding changed"
+            )
 
 
 def _validate_candidate_publication_evidence(

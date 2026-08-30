@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-30 — Bind Sector Rotation into Market Intelligence 1.3
+
+- Added Market Intelligence payload/manifest and Approval Plan 1.3 with one
+  market-wide Sector ETF Rotation product. The builder accepts only the strict
+  typed audit reader and binds its Phase 1a/history lineage, calculation and
+  parameter identity, 11 records, product fingerprint, Theme-unavailable
+  state, and zero-mismatch Oracle.
+- Apply-time source validation formally rereads the same audit and rejects
+  custody or lineage drift. Older Market Intelligence 1.0–1.2 publications
+  remain readable.
+- Advanced the daily Automation Plan to 1.5. It now observes the derived
+  Sector Rotation audit after Phase 1a and fails closed on missing, invalid,
+  or mismatched evidence; MI planning must return Approval Plan 1.3 bound to
+  the same audit and product.
+- A real read-only 2026-08-28 `/tmp` rehearsal produced a fresh, lag-zero MI
+  1.3 candidate and Plan 1.3 with plan fingerprint
+  `8555bd9d27bdab99fc9006d3945b0b2f35c5dfa12a1ec050aba1591698753181`,
+  11 Sector records, zero Oracle mismatch, and zero Production writes. Nothing
+  was applied or published.
+- Snapshot 1.11 / Dashboard 2.8 remains the required next consumer. Active
+  Production stays on MI 1.2 and Snapshot 1.10 / Dashboard 2.7.
+
 ## 2026-08-30 — Reuse Phase 1a for the Sector Rotation audit
 
 - The normal Phase 1a administrator CLI now requires a distinct Sector ETF

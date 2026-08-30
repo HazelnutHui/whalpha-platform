@@ -46,6 +46,9 @@ from tip_api.services.market_regime_state_audit import (
 from tip_api.services.opportunity_candidate_audit import (
     read_opportunity_candidate_planning_evidence,
 )
+from tip_api.services.sector_etf_rotation_audit import (
+    read_sector_etf_rotation_audit_contents,
+)
 from tip_api.services.oci_dashboard_serving_bundle import (
     read_oci_dashboard_serving_bundle,
 )
@@ -56,7 +59,7 @@ from tip_api.services.private_dashboard_snapshot import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-automation-plan/1.4"
+CONTRACT_VERSION = "daily-eod-automation-plan/1.5"
 
 
 class DailyEodAutomationError(RuntimeError):
@@ -240,6 +243,42 @@ def plan_daily_eod_automation(
         != eod.observation.logical_fingerprint
     ):
         return _blocked(target_session, prior_session, observations, "phase1a_source_fingerprint_mismatch")
+
+    sector_rotation_path = _sector_rotation_output_path(paths.phase1a_audit)
+    sector_rotation = _inspect(
+        stage="sector_rotation",
+        path=sector_rotation_path,
+        reader=lambda: read_sector_etf_rotation_audit_contents(
+            sector_rotation_path
+        ),
+        session=lambda value: str(value.manifest["as_of_session"]),
+        fingerprint=lambda value: str(
+            value.manifest["logical_content_fingerprint"]
+        ),
+    )
+    observations.append(sector_rotation.observation)
+    if sector_rotation.observation.status is not ArtifactStatus.COMPLETED:
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "sector_rotation_missing_or_invalid_after_phase1a",
+        )
+    if (
+        sector_rotation.observation.as_of_session != target_session.isoformat()
+        or sector_rotation.payload.manifest["source"][
+            "phase1a_audit_logical_fingerprint"
+        ]
+        != phase1a.observation.logical_fingerprint
+        or sector_rotation.payload.product.source_history_fingerprint
+        != phase1a.payload.input_manifest.get("history_source_fingerprint")
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "sector_rotation_phase1a_binding_mismatch",
+        )
 
     prior_phase1b = _inspect(
         stage="prior_phase1b",
@@ -530,7 +569,7 @@ def plan_daily_eod_automation(
             "publication_plan_session_mismatch",
         )
     if (
-        getattr(plan, "plan_version", None) != "1.2"
+        getattr(plan, "plan_version", None) != "1.3"
         or Path(plan.data_root) != paths.data_root
         or Path(plan.preview_bundle_path) != paths.preview_bundle
         or Path(plan.phase1a_audit_path) != paths.phase1a_audit
@@ -538,6 +577,7 @@ def plan_daily_eod_automation(
         or Path(plan.phase2_audit_path) != paths.phase2_audit
         or Path(plan.candidate_audit_path) != paths.candidate_audit
         or Path(plan.entry_geometry_audit_path) != paths.entry_geometry_audit
+        or Path(plan.sector_rotation_audit_path) != sector_rotation_path
         or Path(plan.candidate_path) != publication_candidate
     ):
         return _blocked(
@@ -557,6 +597,10 @@ def plan_daily_eod_automation(
         != candidate.observation.logical_fingerprint
         or plan.entry_geometry_audit_logical_fingerprint
         != entry.observation.logical_fingerprint
+        or plan.sector_rotation_source.audit_logical_fingerprint
+        != sector_rotation.observation.logical_fingerprint
+        or plan.sector_rotation_product_logical_fingerprint
+        != sector_rotation.payload.product.logical_fingerprint
     ):
         return _blocked(
             target_session,
@@ -1040,6 +1084,7 @@ def _stage_locations(target_session: date, paths: DailyEodAutomationPaths) -> di
         "identity": paths.data_root / "market-data" / "snapshots" / "instrument-master" / f"as_of_date={session}",
         "eod": paths.data_root / "market-data" / "eod-price-bars" / "schema_version=1" / f"session_date={session}",
         "phase1a": paths.phase1a_audit,
+        "sector_rotation": _sector_rotation_output_path(paths.phase1a_audit),
         "phase1b": paths.phase1b_audit,
         "candidate": paths.candidate_audit,
         "entry_geometry": paths.entry_geometry_audit,
@@ -1059,6 +1104,7 @@ def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str
         "identity",
         "eod",
         "phase1a",
+        "sector_rotation",
         "phase1b",
         "candidate",
         "entry_geometry",
@@ -1080,6 +1126,7 @@ def _validate_paths(paths: DailyEodAutomationPaths) -> None:
         raise DailyEodAutomationError("data root must be absolute")
     artifacts = (
         paths.phase1a_audit,
+        _sector_rotation_output_path(paths.phase1a_audit),
         paths.prior_phase1b_audit,
         paths.phase1b_audit,
         paths.prior_candidate_audit,
@@ -1124,6 +1171,10 @@ def _validate_observation(observation: ArtifactObservation) -> None:
         or any(character not in "0123456789abcdef" for character in fingerprint)
     ):
         raise DailyEodAutomationError("completed artifact fingerprint is malformed")
+
+
+def _sector_rotation_output_path(phase1a_audit: Path) -> Path:
+    return phase1a_audit.with_name(f"{phase1a_audit.name}-sector-etf-rotation")
 
 
 def _lexists(path: Path) -> bool:

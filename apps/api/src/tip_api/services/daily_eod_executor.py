@@ -547,6 +547,8 @@ def run_offline_action(
             str(config.paths.candidate_audit),
             "--entry-geometry-audit",
             str(config.paths.entry_geometry_audit),
+            "--sector-rotation-audit",
+            str(_sector_rotation_output_path(config.paths.phase1a_audit)),
             "--output-root",
             str(config.paths.market_intelligence_output_root),
             "--approval-package",

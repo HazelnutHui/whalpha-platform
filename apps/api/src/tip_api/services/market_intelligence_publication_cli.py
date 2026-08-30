@@ -16,6 +16,7 @@ from tip_api.contracts.analytics.v1 import (
     MarketIntelligenceApprovalPlanV1,
     MarketIntelligenceApprovalPlanV1_1,
     MarketIntelligenceApprovalPlanV1_2,
+    MarketIntelligenceApprovalPlanV1_3,
     ReviewDeploymentAuthorization,
     approved_review_authorization,
 )
@@ -55,6 +56,7 @@ def _parser() -> argparse.ArgumentParser:
     parser.add_argument("--phase2-audit", type=Path)
     parser.add_argument("--candidate-audit", type=Path)
     parser.add_argument("--entry-geometry-audit", type=Path)
+    parser.add_argument("--sector-rotation-audit", type=Path)
     parser.add_argument("--output-root", type=Path)
     parser.add_argument("--approval-package", type=Path)
     parser.add_argument("--publication-id")
@@ -154,6 +156,7 @@ def _plan(args: argparse.Namespace) -> int:
         phase2_audit_path=args.phase2_audit,
         candidate_audit_path=args.candidate_audit,
         entry_geometry_audit_path=args.entry_geometry_audit,
+        sector_rotation_audit_path=args.sector_rotation_audit,
         candidate_path=candidate,
         review_deployment=review,
     )
@@ -167,7 +170,11 @@ def _plan(args: argparse.Namespace) -> int:
         phase2_audit_path=args.phase2_audit,
         candidate_audit_path=args.candidate_audit,
         entry_geometry_audit_path=args.entry_geometry_audit,
+        sector_rotation_audit_path=args.sector_rotation_audit,
         validated_candidate_evidence=completed.candidate_validation_evidence,
+        validated_sector_rotation_evidence=(
+            completed.sector_rotation_validation_evidence
+        ),
         expected_current_state_fingerprint=args.expected_current_state_fingerprint,
         expected_latest_completed_session=freshness.expected_latest_completed_session,
         actual_latest_completed_session=freshness.actual_latest_completed_session,
@@ -224,6 +231,8 @@ def _require_plan_arguments(parser: argparse.ArgumentParser, args: argparse.Name
         args.phase1b_audit,
         args.phase2_audit,
         args.candidate_audit,
+        args.entry_geometry_audit,
+        args.sector_rotation_audit,
         args.output_root,
         args.approval_package,
         args.expected_current_state_fingerprint,
@@ -263,6 +272,7 @@ def _require_approved_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.phase2_audit,
         args.candidate_audit,
         args.entry_geometry_audit,
+        args.sector_rotation_audit,
         args.output_root,
         args.approval_package,
         args.publication_id,
@@ -290,6 +300,7 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
         args.phase2_audit,
         args.candidate_audit,
         args.entry_geometry_audit,
+        args.sector_rotation_audit,
         args.output_root,
         args.approval_package,
         args.publication_id,
@@ -309,7 +320,12 @@ def _require_rollback_arguments(parser: argparse.ArgumentParser, args: argparse.
 
 def _load_plan(
     path: Path, expected_sha256: str
-) -> MarketIntelligenceApprovalPlanV1 | MarketIntelligenceApprovalPlanV1_1 | MarketIntelligenceApprovalPlanV1_2:
+) -> (
+    MarketIntelligenceApprovalPlanV1
+    | MarketIntelligenceApprovalPlanV1_1
+    | MarketIntelligenceApprovalPlanV1_2
+    | MarketIntelligenceApprovalPlanV1_3
+):
     try:
         resolved = path.resolve(strict=True)
     except OSError as exc:

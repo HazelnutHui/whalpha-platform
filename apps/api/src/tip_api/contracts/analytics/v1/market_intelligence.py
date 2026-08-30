@@ -15,6 +15,7 @@ from .market_regime_preview import (
     PreviewUniverseDefinitionV1,
 )
 from .review_deployment import ReviewDeploymentAuthorization
+from .sector_etf_rotation import SectorEtfRotationSnapshotV1
 from .opportunity_candidate_publication import (
     OpportunityCandidatePublicationSourceV1,
     OpportunityCandidatePublicationSourceV1_1,
@@ -27,6 +28,7 @@ MARKET_INTELLIGENCE_SCHEMA_VERSION = "1.0"
 MARKET_INTELLIGENCE_CONTRACT_VERSION = "market-intelligence-publication/1.0"
 MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_1 = "market-intelligence-publication/1.1"
 MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_2 = "market-intelligence-publication/1.2"
+MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_3 = "market-intelligence-publication/1.3"
 MARKET_INTELLIGENCE_POINTER_VERSION = "1.0"
 MARKET_INTELLIGENCE_PLAN_VERSION = "1.0"
 MARKET_INTELLIGENCE_REVISION = "market-regime-opportunity-map-v1"
@@ -202,6 +204,67 @@ class MarketIntelligencePayloadV1_2(MarketIntelligencePayloadV1_1):
     candidate_analytics: OpportunityCandidatePublicationV1_1
 
 
+class SectorEtfRotationPublicationSourceV1(FrozenModel):
+    audit_contract_version: Literal["sector-etf-rotation-audit/1.0"]
+    audit_manifest_sha256: str
+    audit_logical_fingerprint: str
+    phase1a_audit_logical_fingerprint: str
+    phase1a_manifest_sha256: str
+    product_contract_version: Literal["sector-etf-rotation/1.0"]
+    calculation_version: Literal["sector-etf-rotation-v1.0.0"]
+    parameter_fingerprint: str
+    history_source_fingerprint: str
+    product_logical_fingerprint: str
+    record_count: Literal[11]
+    oracle_mismatch_count: Literal[0]
+    theme_status: Literal["unavailable_no_governed_membership"]
+
+    @field_validator(
+        "audit_manifest_sha256",
+        "audit_logical_fingerprint",
+        "phase1a_audit_logical_fingerprint",
+        "phase1a_manifest_sha256",
+        "parameter_fingerprint",
+        "history_source_fingerprint",
+        "product_logical_fingerprint",
+    )
+    @classmethod
+    def digests(cls, value: str) -> str:
+        return _sha(value)
+
+
+class MarketIntelligencePayloadV1_3(MarketIntelligencePayloadV1_2):
+    """Market Intelligence 1.3 adds one market-wide Sector ETF product."""
+
+    contract_version: Literal["market-intelligence-publication/1.3"] = (
+        MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_3
+    )
+    sector_rotation_source: SectorEtfRotationPublicationSourceV1
+    sector_rotation: SectorEtfRotationSnapshotV1
+
+    @model_validator(mode="after")
+    def sector_rotation_lineage_reconciles(self) -> "MarketIntelligencePayloadV1_3":
+        rotation = self.sector_rotation
+        source = self.sector_rotation_source
+        if (
+            rotation.as_of_session != self.analysis_session
+            or source.phase1a_audit_logical_fingerprint
+            != self.source.phase_logical_fingerprints.phase1a
+            or source.history_source_fingerprint
+            != self.source.eod.history_source_fingerprint
+            or source.product_contract_version != rotation.contract_version
+            or source.calculation_version != rotation.calculation_version
+            or source.parameter_fingerprint != rotation.parameter_fingerprint
+            or source.history_source_fingerprint
+            != rotation.source_history_fingerprint
+            or source.product_logical_fingerprint != rotation.logical_fingerprint
+            or source.record_count != len(rotation.records)
+            or source.theme_status != rotation.theme_status
+        ):
+            raise ValueError("Market Intelligence Sector Rotation lineage differs")
+        return self
+
+
 class MarketIntelligenceManifestV1(FrozenModel):
     schema_version: Literal["1.0"] = MARKET_INTELLIGENCE_SCHEMA_VERSION
     contract_version: Literal["market-intelligence-publication/1.0"] = (
@@ -276,6 +339,20 @@ class MarketIntelligenceManifestV1_2(MarketIntelligenceManifestV1_1):
     )
     @classmethod
     def entry_digests(cls, value: str) -> str:
+        return _sha(value)
+
+
+class MarketIntelligenceManifestV1_3(MarketIntelligenceManifestV1_2):
+    contract_version: Literal["market-intelligence-publication/1.3"] = (
+        MARKET_INTELLIGENCE_CONTRACT_VERSION_V1_3
+    )
+    sector_rotation_source: SectorEtfRotationPublicationSourceV1
+    sector_rotation_product_logical_fingerprint: str
+    sector_rotation_record_count: Literal[11]
+
+    @field_validator("sector_rotation_product_logical_fingerprint")
+    @classmethod
+    def sector_rotation_digest(cls, value: str) -> str:
         return _sha(value)
 
 
@@ -526,6 +603,34 @@ class MarketIntelligenceApprovalPlanV1_2(MarketIntelligenceApprovalPlanV1_1):
     )
     @classmethod
     def entry_fingerprints(cls, value: str) -> str:
+        return _sha(value)
+
+
+class MarketIntelligenceApprovalPlanV1_3(MarketIntelligenceApprovalPlanV1_2):
+    """Approval plan that freezes the Sector ETF Rotation audit consumer."""
+
+    plan_version: Literal["1.3"] = "1.3"
+    sector_rotation_audit_path: str
+    sector_rotation_source: SectorEtfRotationPublicationSourceV1
+    sector_rotation_product_logical_fingerprint: str
+
+    @field_validator("sector_rotation_audit_path")
+    @classmethod
+    def sector_rotation_tmp_source_path(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if (
+            not path.is_absolute()
+            or not path.is_relative_to(PurePosixPath("/tmp"))
+            or ".." in path.parts
+        ):
+            raise ValueError(
+                "Sector Rotation audit path must be a normalized absolute /tmp path"
+            )
+        return value
+
+    @field_validator("sector_rotation_product_logical_fingerprint")
+    @classmethod
+    def sector_rotation_fingerprint(cls, value: str) -> str:
         return _sha(value)
 
 
