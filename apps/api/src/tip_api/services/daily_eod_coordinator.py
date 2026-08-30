@@ -53,7 +53,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.11"
+CONTRACT_VERSION = "daily-eod-one-transition-coordinator/1.12"
 
 
 class DailyEodCoordinatorError(RuntimeError):
@@ -187,6 +187,7 @@ class DailyEodCoordinatorResult:
     transition_fingerprint: str | None
     external_request_count: int
     production_write_count: int
+    next_check_at: str | None = None
     alert_required: bool = False
     publication_authorized: bool = False
     deployment_authorized: bool = False
@@ -587,15 +588,29 @@ def _capability_result(
         or not evidence.reason_code
     ):
         raise DailyEodCoordinatorError("authorized capability evidence is invalid")
+    status = {
+        "succeeded": CoordinatorStatus.TRANSITION_EXECUTED,
+        "waiting": CoordinatorStatus.WAITING,
+        "failed": CoordinatorStatus.BLOCKED,
+    }[evidence.outcome]
     return _result(
-        status=CoordinatorStatus.TRANSITION_EXECUTED,
-        next_action=operation,
+        status=status,
+        next_action=(
+            operation
+            if evidence.outcome == "succeeded"
+            else (
+                ReadinessNextAction.WAIT.value
+                if evidence.outcome == "waiting"
+                else NextAction.OPERATOR_DIAGNOSIS.value
+            )
+        ),
         reasons=(evidence.reason_code,),
         plan=plan,
         readiness=readiness,
         transition_fingerprint=_fingerprint(asdict(evidence)),
         requests=evidence.external_request_count,
         writes=evidence.production_write_count,
+        alert=evidence.outcome == "failed",
     )
 
 
@@ -609,14 +624,38 @@ def _offline_result(
         or execution.pre_plan.logical_content_fingerprint
         != plan.logical_content_fingerprint
         or not _is_fingerprint(execution.event.event_fingerprint)
+        or execution.outcome not in {"succeeded", "failed"}
+        or (
+            execution.outcome == "succeeded"
+            and (
+                execution.event.event_type != "action_succeeded"
+                or execution.post_plan is None
+                or execution.stage_evidence is None
+                or execution.post_plan.logical_content_fingerprint
+                == plan.logical_content_fingerprint
+            )
+        )
+        or (
+            execution.outcome == "failed"
+            and execution.event.event_type != "action_failed"
+        )
     ):
         raise DailyEodCoordinatorError("offline executor evidence is invalid")
     return _result(
-        status=CoordinatorStatus.TRANSITION_EXECUTED,
-        next_action=plan.next_action.value,
+        status=(
+            CoordinatorStatus.TRANSITION_EXECUTED
+            if execution.outcome == "succeeded"
+            else CoordinatorStatus.BLOCKED
+        ),
+        next_action=(
+            plan.next_action.value
+            if execution.outcome == "succeeded"
+            else NextAction.OPERATOR_DIAGNOSIS.value
+        ),
         reasons=(execution.reason_code,),
         plan=plan,
         transition_fingerprint=execution.event.event_fingerprint,
+        alert=execution.outcome == "failed",
     )
 
 
@@ -891,6 +930,7 @@ def _result(
         "transition_fingerprint": transition_fingerprint,
         "external_request_count": requests,
         "production_write_count": writes,
+        "next_check_at": None if readiness is None else readiness.next_check_at,
         "alert_required": alert,
         "publication_authorized": False,
         "deployment_authorized": False,

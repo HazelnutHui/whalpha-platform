@@ -90,6 +90,10 @@ ADR 0082 adds a non-installed bounded-cadence candidate above that plan. It
 limits one session to 16 distinct transition wakes over four hours with a
 five-minute completion-to-next-start floor, and stops at failure, unknown
 outcome, blocked state, or manual review. It still invokes nothing.
+ADR 0083 reuses the existing owner-only run journal for full cadence-plan and
+known-result evidence instead of adding another store. It also prevents
+provider/offline failures from being reported as successful transitions. No
+runtime or timer consumes this evidence yet.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

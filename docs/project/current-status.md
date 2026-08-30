@@ -172,6 +172,15 @@ publication, or deployment is part of this repository boundary. The installed
 timer remains the unchanged read-only planner. All 1,731 backend tests pass
 with the two existing dependency warnings.
 
+ADR 0083 now reuses the existing owner-only daily run journal as the sole
+cadence evidence store. Journal 1.7 retains the complete enabled cadence plan
+and known Evidence 1.2 in a standalone event only when no action is unresolved;
+old 1.2–1.6 events remain readable. Coordinator 1.12 distinguishes successful,
+waiting, and failed provider/offline outcomes, and strict adapters project them
+without inferring progress. No real journal event, directory, runtime bridge,
+unit/timer change, request, `/data` write, publication, or deployment occurred.
+All 1,746 backend tests pass with the two existing dependency warnings.
+
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
 plan SHA, Production-state fingerprint, and any plan-bound review

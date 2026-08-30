@@ -286,6 +286,14 @@ installed read-only timer. A natural timer wake and separate owner-only runtime
 custody remain prerequisites before any activation decision.
 All 1,731 backend tests pass with the two existing dependency warnings at this
 boundary.
+ADR 0083 subsequently reuses run journal 1.7 as the single owner-only cadence
+evidence store. It retains complete enabled cadence plans and known Evidence
+1.1, so cadence start and budgets cannot reset across tasks or restart.
+Coordinator 1.12 now maps provider waiting to waiting and provider/offline
+failure to blocked instead of calling every return an executed transition.
+Exact adapters project results but invoke nothing; no real cadence event or
+runtime integration exists yet. All 1,746 backend tests pass with the two
+existing dependency warnings at this boundary.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

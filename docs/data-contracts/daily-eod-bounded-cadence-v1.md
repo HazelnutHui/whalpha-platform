@@ -12,15 +12,17 @@ an offline action.
 - timezone-aware UTC observation and explicit cadence-start times;
 - one complete, semantically verified Pipeline Wake Plan 2.0 observed at the
   exact same time;
-- zero or more contiguous `daily-eod-cadence-wake-evidence/1.0` records for the
+- zero or more contiguous `daily-eod-cadence-wake-evidence/1.2` records for the
   same target session; and
 - the fixed default policy or a strictly narrower policy.
 
-Each evidence record binds its sequence, target, start/completion time, exact
-pipeline-plan fingerprint, invocation action, formal outcome, one-invocation
-count, and result fingerprint. Failed or unknown outcomes terminate the chain.
-The future runtime must persist these records under separate owner-only
-custody; the current planner creates no file.
+Each evidence record binds its sequence, target, immutable cadence start,
+start/completion time, exact cadence-plan and pipeline-plan fingerprints,
+invocation action, formal outcome, one-invocation count, and result
+fingerprint. A formal readiness `next_check_at` is retained and takes
+precedence over the five-minute floor. Failed or unknown outcomes terminate the chain. ADR 0083 retains
+known evidence plus the complete enabled cadence plan in the existing
+owner-only run journal 1.7; the planner itself still creates no file.
 
 ## Candidate limits
 
@@ -62,8 +64,8 @@ semantically incompatible Pipeline V2 or cadence state is rejected.
 
 ## Not implemented or authorized
 
-- evidence persistence or filesystem provisioning;
-- data/offline result adapters or an execution bridge;
+- real filesystem provisioning;
+- an execution bridge composing the implemented result adapters with a call;
 - process locking beyond existing action-level custody;
 - a repeated systemd service/timer;
 - credentials, provider/OCI access, canonical writes, publication, deployment,

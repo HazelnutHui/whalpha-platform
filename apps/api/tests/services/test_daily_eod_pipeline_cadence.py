@@ -89,17 +89,21 @@ def _evidence(
     started_at: datetime,
     outcome: cadence.CadenceWakeOutcome = cadence.CadenceWakeOutcome.ADVANCED,
     plan=None,
+    cadence_started_at: datetime = STARTED,
 ):
     selected = plan or _data_plan(started_at, enabled=True)
     known = outcome is not cadence.CadenceWakeOutcome.UNKNOWN
     return cadence.record_cadence_wake_evidence(
         sequence=sequence,
         target_session=selected.target_session,
+        cadence_started_at=cadence_started_at,
         started_at=started_at,
         completed_at=started_at + timedelta(seconds=30) if known else None,
+        cadence_plan_fingerprint="f" * 64,
         pipeline_plan_fingerprint=selected.logical_content_fingerprint,
         pipeline_action=selected.next_action.value,
         outcome=outcome,
+        next_eligible_at=None,
         result_fingerprint=(f"{sequence % 10}" * 64 if known else None),
     )
 
@@ -221,6 +225,7 @@ def test_offline_fault_or_unknown_outcome_stops_without_replay(
         started_at=OFFLINE_BASE,
         outcome=outcome,
         plan=prior_plan,
+        cadence_started_at=OFFLINE_BASE - timedelta(minutes=30),
     )
     checked = OFFLINE_BASE + timedelta(minutes=6)
     plan = cadence.plan_bounded_pipeline_cadence(

@@ -15,13 +15,14 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 
-JOURNAL_CONTRACT = "daily-eod-run-journal/1.6"
+JOURNAL_CONTRACT = "daily-eod-run-journal/1.7"
 READABLE_JOURNAL_CONTRACTS = frozenset(
     {
         "daily-eod-run-journal/1.2",
         "daily-eod-run-journal/1.3",
         "daily-eod-run-journal/1.4",
         "daily-eod-run-journal/1.5",
+        "daily-eod-run-journal/1.6",
         JOURNAL_CONTRACT,
     }
 )
@@ -93,6 +94,9 @@ OCI_DEPLOYMENT_TERMINAL_EVENTS = frozenset(
         "oci_deployment_recovery_blocked",
     }
 )
+OCI_DEPLOYMENT_CONTRACTS = frozenset(
+    {"daily-eod-run-journal/1.6", JOURNAL_CONTRACT}
+)
 START_EVENTS = frozenset(
     {
         START_EVENT,
@@ -104,6 +108,7 @@ START_EVENTS = frozenset(
     }
 )
 ACQUISITION_REVIEW_EVENT = "acquisition_operator_reviewed"
+CADENCE_WAKE_RECORDED_EVENT = "cadence_wake_recorded"
 ACQUISITION_REVIEW_CONTRACTS = frozenset(
     {
         "daily-eod-run-journal/1.3",
@@ -120,7 +125,10 @@ TERMINAL_EVENTS = (
     | DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS
     | OCI_DEPLOYMENT_TERMINAL_EVENTS
 )
-EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS | {ACQUISITION_REVIEW_EVENT}
+STANDALONE_EVENTS = frozenset(
+    {ACQUISITION_REVIEW_EVENT, CADENCE_WAKE_RECORDED_EVENT}
+)
+EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS | STANDALONE_EVENTS
 
 
 class DailyEodRunJournalError(RuntimeError):
@@ -260,6 +268,15 @@ def unresolved_started_event(
     return None
 
 
+def verify_daily_eod_run_event(event: DailyEodRunEvent) -> None:
+    """Recompute one event's standalone schema and content identity."""
+
+    if not isinstance(event, DailyEodRunEvent):
+        raise DailyEodRunJournalError("daily run event contract is invalid")
+    if _event_from_payload(event.as_dict()) != event:
+        raise DailyEodRunJournalError("daily run event content differs")
+
+
 def new_attempt_id(*, target_session: date, plan_fingerprint: str, sequence: int) -> str:
     if not _is_fingerprint(plan_fingerprint) or sequence < 1:
         raise DailyEodRunJournalError("daily attempt identity input is invalid")
@@ -377,9 +394,14 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
         )
     if (
         event_type in {OCI_DEPLOYMENT_START_EVENT} | OCI_DEPLOYMENT_TERMINAL_EVENTS
-        and contract_version != JOURNAL_CONTRACT
+        and contract_version not in OCI_DEPLOYMENT_CONTRACTS
     ):
         raise DailyEodRunJournalError("OCI deployment event predates its journal contract")
+    if (
+        event_type == CADENCE_WAKE_RECORDED_EVENT
+        and contract_version != JOURNAL_CONTRACT
+    ):
+        raise DailyEodRunJournalError("cadence evidence predates its journal contract")
     return DailyEodRunEvent(
         sequence=sequence,
         event_type=str(event_type),
@@ -400,13 +422,16 @@ def _validate_event_state_machine(events: tuple[DailyEodRunEvent, ...]) -> None:
             if pending is not None:
                 raise DailyEodRunJournalError("daily run journal has overlapping attempts")
             pending = event
-        elif event.event_type == ACQUISITION_REVIEW_EVENT:
+        elif event.event_type in STANDALONE_EVENTS:
             if (
                 pending is not None
-                or event.contract_version not in ACQUISITION_REVIEW_CONTRACTS
+                or (
+                    event.event_type == ACQUISITION_REVIEW_EVENT
+                    and event.contract_version not in ACQUISITION_REVIEW_CONTRACTS
+                )
             ):
                 raise DailyEodRunJournalError(
-                    "daily run operator review is not safely placed"
+                    "daily run standalone evidence is not safely placed"
                 )
         else:
             if (
@@ -424,10 +449,10 @@ def _validate_next_event(
     if event_type not in EVENT_TYPES or not _is_fingerprint(attempt_id):
         raise DailyEodRunJournalError("daily run next event is invalid")
     pending = unresolved_started_event(events)
-    if event_type == ACQUISITION_REVIEW_EVENT:
+    if event_type in STANDALONE_EVENTS:
         if pending is not None:
             raise DailyEodRunJournalError(
-                "daily run operator review cannot overlap an attempt"
+                "daily run standalone evidence cannot overlap an attempt"
             )
         return
     if event_type in START_EVENTS:

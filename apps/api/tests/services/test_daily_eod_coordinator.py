@@ -212,6 +212,7 @@ def test_waits_without_calling_a_capability_before_stabilization() -> None:
 
     assert result.status is CoordinatorStatus.WAITING
     assert result.next_action == "wait"
+    assert result.next_check_at == "2026-08-27T20:30:00+00:00"
     assert calls == []
     assert result.external_request_count == 0
     assert result.production_write_count == 0
@@ -390,6 +391,44 @@ def test_apply_capability_is_called_once_and_bounded_to_one_write() -> None:
     assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
     assert result.external_request_count == 0
     assert result.production_write_count == 1
+
+
+@pytest.mark.parametrize(
+    ("outcome", "expected_status", "expected_action", "alert_required"),
+    (
+        ("waiting", CoordinatorStatus.WAITING, "wait", False),
+        ("failed", CoordinatorStatus.BLOCKED, "operator_diagnosis", True),
+    ),
+)
+def test_capability_non_success_is_not_reported_as_transition_executed(
+    outcome, expected_status, expected_action, alert_required
+) -> None:
+    def fetch(context):
+        return AuthorizedTransitionEvidence(
+            operation=context.operation,
+            target_session=TARGET.isoformat(),
+            precondition_fingerprint=context.readiness_plan.logical_content_fingerprint,
+            outcome=outcome,
+            event_fingerprint="f" * 64,
+            external_request_count=1,
+            production_write_count=0,
+            reason_code=f"fetch_{outcome}",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(),
+        checked_at=AFTER_STABILIZATION,
+        planner=planner(plan(NextAction.PREPARE_IDENTITY_CATCHUP)),
+        journal_reader=journal(),
+        fetch_capability=fetch,
+    )
+
+    assert result.status is expected_status
+    assert result.next_action == expected_action
+    assert result.alert_required is alert_required
+    assert result.transition_fingerprint is not None
+    assert result.external_request_count == 1
+    assert result.production_write_count == 0
 
 
 @pytest.mark.parametrize(
@@ -649,6 +688,36 @@ def test_publication_plan_execution_carries_exact_review_bindings() -> None:
     assert execution_config.publication_created_at == AFTER_STABILIZATION
     assert execution_config.publication_expected_current_state_fingerprint == "7" * 64
     assert result.status is CoordinatorStatus.TRANSITION_EXECUTED
+
+
+def test_failed_offline_execution_is_blocked_not_transition_executed() -> None:
+    pre_plan = plan(NextAction.CALCULATE_PHASE1A)
+
+    def execute(**kwargs):
+        return DailyEodExecutionResult(
+            outcome="failed",
+            action=NextAction.CALCULATE_PHASE1A,
+            attempt_id="b" * 64,
+            event=event(2, "action_failed"),
+            pre_plan=pre_plan,
+            post_plan=None,
+            stage_evidence=None,
+            reason_code="offline_action_raised",
+        )
+
+    result = coordinate_daily_eod_transition(
+        config=config(latest=TARGET),
+        checked_at=AFTER_STABILIZATION,
+        execute_offline=True,
+        planner=planner(pre_plan),
+        journal_reader=journal(),
+        offline_executor=execute,
+    )
+
+    assert result.status is CoordinatorStatus.BLOCKED
+    assert result.next_action == "operator_diagnosis"
+    assert result.alert_required is True
+    assert result.transition_fingerprint == event(2, "action_failed").event_fingerprint
 
 
 def test_blocked_and_publication_ready_states_never_execute() -> None:

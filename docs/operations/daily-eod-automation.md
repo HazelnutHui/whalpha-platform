@@ -674,6 +674,19 @@ candidate creates no evidence store, runtime bridge, persistent root, service,
 timer, capability, credential access, request, or Production write. Do not
 bind it to the installed read-only timer.
 
+ADR 0083 subsequently reuses the existing owner-only run journal rather than
+creating a second cadence store. Journal 1.7 adds a standalone
+`cadence_wake_recorded` event only after all action attempts are terminal. It
+retains the full enabled cadence plan and Evidence 1.2, including the immutable
+cadence start, formal next-eligible time, both plan fingerprints, result identity, timing, and budget
+sequence. Old 1.2–1.6 journal events remain readable.
+
+Coordinator 1.12 now preserves result meaning: provider `waiting` is waiting,
+provider/ offline failure is blocked, and only formally evidenced success is
+`transition_executed`. The cadence adapters project those results without
+executing them. No real cadence event, persistent root, runtime bridge, or unit
+was created by this repository implementation.
+
 ## Default-off one-transition wake bridge
 
 ADR 0077 composes one exact unchanged enabled-candidate wake plan with one

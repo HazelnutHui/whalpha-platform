@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-30 — Reuse run journal for cadence evidence
+
+- Accepted ADR 0083; extended the existing owner-only run journal to 1.7 with
+  a standalone cadence evidence event while preserving 1.2–1.6 readability.
+- Evidence 1.2 now binds the immutable cadence start, formal next-eligible time,
+  and exact enabled cadence and Pipeline plans; the journal retains and rereads
+  the complete cadence plan rather than only an opaque hash.
+- Added exact coordinator/offline result adapters and fail-closed persistence
+  for sequence, duplication, interval, four-hour, 16-wake, terminal-failure,
+  unknown-outcome, and unresolved-action boundaries.
+- Advanced coordinator to 1.12: provider waiting remains waiting, and known
+  provider/offline failure is blocked rather than reported as executed.
+- No second store, real journal event/root, runtime bridge, timer change,
+  request, `/data` write, publication, deployment, or Production change was
+  made. All 1,746 backend tests pass with the two existing dependency warnings.
+
 ## 2026-08-30 — Bound distinct pipeline wake cadence
 
 - Accepted ADR 0082 and added a pure, non-installed bounded-cadence contract

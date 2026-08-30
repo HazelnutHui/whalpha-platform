@@ -25,7 +25,9 @@ do not prove an appropriate Production cadence.
 ## Decision
 
 Add repository-only contracts for one bounded cadence plan and its prior-wake
-evidence chain. Each planner invocation consumes a freshly verified Pipeline
+evidence chain, subsequently advanced to evidence 1.2 by ADR 0083 to bind the
+immutable cadence start, formal next-eligible time, and exact cadence plan.
+Each planner invocation consumes a freshly verified Pipeline
 Wake Plan 2.0 plus immutable evidence from earlier distinct process wakes. It
 never loops or invokes a transition itself.
 
@@ -51,7 +53,7 @@ Strengthen Pipeline Scheduler V2 verification at the same boundary so a
 maliciously changed and re-fingerprinted plan cannot combine incompatible
 status, phase, action, scope, enablement, or authority fields.
 
-No evidence store, runtime bridge, service, timer, capability, workspace,
+At this ADR boundary no evidence store, runtime bridge, service, timer, capability, workspace,
 credential, request, `/data` write, publication, or deployment is created or
 changed. The already installed read-only timer is not rebound. A natural timer
 wake remains required evidence before any later installation decision.
@@ -64,8 +66,9 @@ wake remains required evidence before any later installation decision.
   into automatic retry or replay.
 - The candidate exposes its limits, usage, remaining budget, evidence-chain
   identity, and every zero-authority field instead of hiding them in one hash.
-- Future runtime work must define owner-only evidence persistence, exact result
-  adapters, overlap prevention, and systemd custody before this can run.
+- ADR 0083 subsequently reuses the existing owner-only run journal for exact
+  result adapters, persistence, and overlap prevention. Runtime/systemd custody
+  remains future work.
 - Production interval and window values still require measured Dell timing and
   natural-trigger evidence; these candidate limits are not activated policy.
 

@@ -17,8 +17,9 @@
 - Automation design: ADR 0081's repository-only Pipeline Scheduler V2 and
   persistent per-session workspace contract are complete. ADR 0082's
   non-installed bounded distinct-wake cadence and fail-closed evidence model
-  are also complete. Next validate one natural timer wake, then design the
-  owner-only evidence store/result adapters before any runtime candidate.
+  are also complete. ADR 0083 reuses the existing owner-only journal for full
+  plan/result retention and fixes coordinator failure semantics. Next validate
+  one natural timer wake, then design a non-installed runtime bridge.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -306,6 +307,12 @@ transition wakes over four hours, separated by at least five minutes after
 completion. Known failure, unknown outcome, manual review, blocked state, and
 either budget stop. The planner invokes nothing and creates no evidence store.
 Natural-trigger evidence and owner-only runtime custody remain prerequisites.
+
+ADR 0083 completes owner-only cadence evidence custody without creating a
+second store. Journal 1.7 retains full enabled cadence plans and known results;
+coordinator 1.12 no longer labels provider/offline failure as an executed
+transition. The next code boundary is a non-installed, one-invocation runtime
+bridge after natural-trigger review.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

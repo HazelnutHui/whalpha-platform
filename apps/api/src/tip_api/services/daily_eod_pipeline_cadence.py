@@ -19,7 +19,7 @@ from tip_api.services.daily_eod_pipeline_scheduler import (
 
 
 CONTRACT_VERSION = "daily-eod-bounded-cadence-plan/1.0"
-EVIDENCE_CONTRACT_VERSION = "daily-eod-cadence-wake-evidence/1.0"
+EVIDENCE_CONTRACT_VERSION = "daily-eod-cadence-wake-evidence/1.2"
 MAXIMUM_WAKE_LIMIT = 16
 MAXIMUM_WINDOW_SECONDS = 4 * 60 * 60
 MINIMUM_INTERVAL_FLOOR_SECONDS = 5 * 60
@@ -72,11 +72,14 @@ class CadenceWakeEvidence:
     contract_version: str
     sequence: int
     target_session: str
+    cadence_started_at: str
     started_at: str
     completed_at: str | None
+    cadence_plan_fingerprint: str
     pipeline_plan_fingerprint: str
     pipeline_action: str
     outcome: CadenceWakeOutcome
+    next_eligible_at: str | None
     transition_invocation_count: int
     result_fingerprint: str | None
     logical_content_fingerprint: str
@@ -132,26 +135,38 @@ def record_cadence_wake_evidence(
     *,
     sequence: int,
     target_session: str,
+    cadence_started_at: datetime,
     started_at: datetime,
     completed_at: datetime | None,
+    cadence_plan_fingerprint: str,
     pipeline_plan_fingerprint: str,
     pipeline_action: str,
     outcome: CadenceWakeOutcome,
+    next_eligible_at: datetime | None,
     result_fingerprint: str | None,
 ) -> CadenceWakeEvidence:
     """Build immutable evidence for one already completed distinct wake."""
 
+    cadence_started = _aware_utc(cadence_started_at)
     started = _aware_utc(started_at)
     completed = None if completed_at is None else _aware_utc(completed_at)
+    next_eligible = (
+        None if next_eligible_at is None else _aware_utc(next_eligible_at)
+    )
     logical = {
         "contract_version": EVIDENCE_CONTRACT_VERSION,
         "sequence": sequence,
         "target_session": target_session,
+        "cadence_started_at": cadence_started.isoformat(),
         "started_at": started.isoformat(),
         "completed_at": None if completed is None else completed.isoformat(),
+        "cadence_plan_fingerprint": cadence_plan_fingerprint,
         "pipeline_plan_fingerprint": pipeline_plan_fingerprint,
         "pipeline_action": pipeline_action,
         "outcome": outcome.value,
+        "next_eligible_at": (
+            None if next_eligible is None else next_eligible.isoformat()
+        ),
         "transition_invocation_count": 1,
         "result_fingerprint": result_fingerprint,
     }
@@ -159,11 +174,16 @@ def record_cadence_wake_evidence(
         contract_version=EVIDENCE_CONTRACT_VERSION,
         sequence=sequence,
         target_session=target_session,
+        cadence_started_at=cadence_started.isoformat(),
         started_at=started.isoformat(),
         completed_at=None if completed is None else completed.isoformat(),
+        cadence_plan_fingerprint=cadence_plan_fingerprint,
         pipeline_plan_fingerprint=pipeline_plan_fingerprint,
         pipeline_action=pipeline_action,
         outcome=outcome,
+        next_eligible_at=(
+            None if next_eligible is None else next_eligible.isoformat()
+        ),
         transition_invocation_count=1,
         result_fingerprint=result_fingerprint,
         logical_content_fingerprint=_fingerprint(logical),
@@ -185,6 +205,7 @@ def verify_cadence_wake_evidence(evidence: CadenceWakeEvidence) -> None:
         raise DailyEodPipelineCadenceError(
             "cadence wake evidence fingerprint mismatch"
         )
+    cadence_started = _parse_utc(evidence.cadence_started_at)
     started = _parse_utc(evidence.started_at)
     completed = (
         None
@@ -192,6 +213,11 @@ def verify_cadence_wake_evidence(evidence: CadenceWakeEvidence) -> None:
         else _parse_utc(evidence.completed_at)
     )
     known = evidence.outcome is not CadenceWakeOutcome.UNKNOWN
+    next_eligible = (
+        None
+        if evidence.next_eligible_at is None
+        else _parse_utc(evidence.next_eligible_at)
+    )
     try:
         date.fromisoformat(evidence.target_session)
         pipeline_action = PipelineWakeAction(evidence.pipeline_action)
@@ -202,6 +228,8 @@ def verify_cadence_wake_evidence(evidence: CadenceWakeEvidence) -> None:
     if (
         evidence.sequence < 1
         or not evidence.target_session
+        or cadence_started > started
+        or not _is_fingerprint(evidence.cadence_plan_fingerprint)
         or not _is_fingerprint(evidence.pipeline_plan_fingerprint)
         or not evidence.pipeline_action
         or pipeline_action
@@ -213,6 +241,14 @@ def verify_cadence_wake_evidence(evidence: CadenceWakeEvidence) -> None:
         or known != (completed is not None)
         or known != _is_fingerprint(evidence.result_fingerprint)
         or (completed is not None and completed < started)
+        or (
+            next_eligible is not None
+            and (
+                evidence.outcome is not CadenceWakeOutcome.NO_CHANGE
+                or completed is None
+                or next_eligible < completed
+            )
+        )
     ):
         raise DailyEodPipelineCadenceError(
             "cadence wake evidence fields conflict"
@@ -675,6 +711,7 @@ def _validate_evidence_chain(
         if (
             item.sequence != index
             or item.target_session != target_session
+            or item.cadence_started_at != cadence_started_at.isoformat()
             or item_started < cadence_started_at
             or item_started > checked_at
             or (item_completed is not None and item_completed > checked_at)
@@ -705,8 +742,16 @@ def _interval_boundary(
 ) -> datetime | None:
     if evidence is None or evidence.completed_at is None:
         return None
-    return _parse_utc(evidence.completed_at) + timedelta(
+    minimum = _parse_utc(evidence.completed_at) + timedelta(
         seconds=policy.minimum_interval_seconds
+    )
+    return max(
+        minimum,
+        (
+            minimum
+            if evidence.next_eligible_at is None
+            else _parse_utc(evidence.next_eligible_at)
+        ),
     )
 
 

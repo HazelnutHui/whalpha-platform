@@ -105,3 +105,4 @@ Each ADR should include:
 - [0080: Separate Scheduler Operation from Host State](0080-separate-scheduler-operation-from-host-state.md)
 - [0081: Make Scheduler Wakes Pipeline-Aware](0081-make-scheduler-wakes-pipeline-aware.md)
 - [0082: Bound Distinct Pipeline Wake Cadence](0082-bound-distinct-pipeline-wake-cadence.md)
+- [0083: Reuse the Run Journal for Cadence Evidence](0083-reuse-run-journal-for-cadence-evidence.md)
