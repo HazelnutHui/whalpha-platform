@@ -750,9 +750,13 @@ nine final directories were `0700`, all files were `0400`, no symlink or
 partial/recovery residue remained, and every stage reported zero Oracle
 mismatch, external request, and Production write.
 
-This still does not make the unattended chain operational. MI planning,
-Snapshot planning, serving-bundle construction, and their formal readers have
-not yet crossed the same persistent boundary. Automation Plan 1.7 therefore
+MI 1.3 candidate/Plan 1.3 and Snapshot 1.10/Plan 2.5 candidate/plan writers,
+contracts, and formal readers have now separately crossed the persistent
+boundary in real zero-write rehearsals. The active MI 1.2 correctly rejects
+the new persistent Candidate lineage, so a complete one-lineage Snapshot and
+serving bundle cannot be proven without separately authorized MI and Snapshot
+Apply. Serving-bundle root custody also remains unreconciled. Automation Plan
+1.7 therefore
 continues to stop at `persistent_workspace_cli_custody_unreconciled`; removing
 the block now would overstate the proof. The installed timer remains read-only
 and no MI 1.3 publication or Snapshot 1.11 deployment is authorized. Repeated

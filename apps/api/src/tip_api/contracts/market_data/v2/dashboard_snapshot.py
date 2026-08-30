@@ -145,8 +145,27 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     @classmethod
     def candidate(cls, value: str) -> str:
         path = PurePosixPath(value)
-        if not path.is_absolute() or not path.is_relative_to(PurePosixPath("/tmp")) or ".." in path.parts:
-            raise ValueError("candidate path must be an absolute /tmp path")
+        if (
+            not path.is_absolute()
+            or ".." in path.parts
+            or path.as_posix() != value
+        ):
+            raise ValueError("candidate path must be normalized and absolute")
+        if path.is_relative_to(PurePosixPath("/tmp")):
+            return value
+        parts = path.parts
+        if (
+            len(parts) < 6
+            or parts[-2] != "dashboard-snapshot"
+            or parts[-4] != "sessions"
+            or parts[-5] != "daily-eod"
+            or not parts[-3].startswith("session_date=")
+        ):
+            raise ValueError("candidate path is outside governed custody")
+        try:
+            date.fromisoformat(parts[-3].removeprefix("session_date="))
+        except ValueError as exc:
+            raise ValueError("candidate path session is malformed") from exc
         return value
 
     @field_validator("market_intelligence_payload_sha256", "market_intelligence_logical_fingerprint")

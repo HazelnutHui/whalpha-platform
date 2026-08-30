@@ -510,19 +510,25 @@ class MarketIntelligenceApprovalPlanV1(FrozenModel):
             raise ValueError("approved paths must be normalized and absolute")
         return value
 
-    @field_validator(
-        "preview_bundle_path", "phase1a_audit_path", "phase1b_audit_path", "phase2_audit_path"
-    )
+    @field_validator("preview_bundle_path")
     @classmethod
-    def tmp_source_paths(cls, value: str) -> str:
-        path = PurePosixPath(value)
-        if (
-            not path.is_absolute()
-            or not path.is_relative_to(PurePosixPath("/tmp"))
-            or ".." in path.parts
-        ):
-            raise ValueError("approval source paths must be normalized absolute /tmp paths")
-        return value
+    def preview_source_path(cls, value: str) -> str:
+        return _offline_source_path(value, "market-preview")
+
+    @field_validator("phase1a_audit_path")
+    @classmethod
+    def phase1a_source_path(cls, value: str) -> str:
+        return _offline_source_path(value, "market-regime-phase1a")
+
+    @field_validator("phase1b_audit_path")
+    @classmethod
+    def phase1b_source_path(cls, value: str) -> str:
+        return _offline_source_path(value, "market-regime-phase1b")
+
+    @field_validator("phase2_audit_path")
+    @classmethod
+    def phase2_source_path(cls, value: str) -> str:
+        return _offline_source_path(value, "etf-relationships")
 
     @model_validator(mode="after")
     def freshness_authorization_reconciles(self) -> "MarketIntelligenceApprovalPlanV1":
@@ -561,14 +567,7 @@ class MarketIntelligenceApprovalPlanV1_1(MarketIntelligenceApprovalPlanV1):
     @field_validator("candidate_audit_path")
     @classmethod
     def candidate_tmp_source_path(cls, value: str) -> str:
-        path = PurePosixPath(value)
-        if (
-            not path.is_absolute()
-            or not path.is_relative_to(PurePosixPath("/tmp"))
-            or ".." in path.parts
-        ):
-            raise ValueError("Candidate audit path must be a normalized absolute /tmp path")
-        return value
+        return _offline_source_path(value, "opportunity-candidate")
 
     @field_validator("candidate_analytics_logical_fingerprint")
     @classmethod
@@ -588,14 +587,7 @@ class MarketIntelligenceApprovalPlanV1_2(MarketIntelligenceApprovalPlanV1_1):
     @field_validator("entry_geometry_audit_path")
     @classmethod
     def entry_geometry_tmp_source_path(cls, value: str) -> str:
-        path = PurePosixPath(value)
-        if (
-            not path.is_absolute()
-            or not path.is_relative_to(PurePosixPath("/tmp"))
-            or ".." in path.parts
-        ):
-            raise ValueError("entry-geometry audit path must be a normalized absolute /tmp path")
-        return value
+        return _offline_source_path(value, "entry-geometry")
 
     @field_validator(
         "entry_geometry_audit_logical_fingerprint",
@@ -617,16 +609,10 @@ class MarketIntelligenceApprovalPlanV1_3(MarketIntelligenceApprovalPlanV1_2):
     @field_validator("sector_rotation_audit_path")
     @classmethod
     def sector_rotation_tmp_source_path(cls, value: str) -> str:
-        path = PurePosixPath(value)
-        if (
-            not path.is_absolute()
-            or not path.is_relative_to(PurePosixPath("/tmp"))
-            or ".." in path.parts
-        ):
-            raise ValueError(
-                "Sector Rotation audit path must be a normalized absolute /tmp path"
-            )
-        return value
+        return _offline_source_path(
+            value,
+            "market-regime-phase1a-sector-etf-rotation",
+        )
 
     @field_validator("sector_rotation_product_logical_fingerprint")
     @classmethod
@@ -639,6 +625,32 @@ def _sha(value: str) -> str:
     if len(normalized) != 64 or any(character not in "0123456789abcdef" for character in normalized):
         raise ValueError("value must be SHA-256 hexadecimal")
     return normalized
+
+
+def _offline_source_path(value: str, persistent_name: str) -> str:
+    path = PurePosixPath(value)
+    if (
+        not path.is_absolute()
+        or ".." in path.parts
+        or path.as_posix() != value
+    ):
+        raise ValueError("approval source path must be normalized and absolute")
+    if path.is_relative_to(PurePosixPath("/tmp")):
+        return value
+    parts = path.parts
+    if (
+        len(parts) < 5
+        or parts[-1] != persistent_name
+        or parts[-3] != "sessions"
+        or parts[-4] != "daily-eod"
+        or not parts[-2].startswith("session_date=")
+    ):
+        raise ValueError("approval source path is outside governed custody")
+    try:
+        date.fromisoformat(parts[-2].removeprefix("session_date="))
+    except ValueError as exc:
+        raise ValueError("approval source session is malformed") from exc
+    return value
 
 
 def _relative_path(value: str) -> str:

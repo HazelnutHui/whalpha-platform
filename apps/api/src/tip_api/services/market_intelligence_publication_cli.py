@@ -33,6 +33,10 @@ from tip_api.persistence.parquet.market_intelligence_active import (
     verify_then_link,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 DEFAULT_ROOT = Path("/data/trading-intelligence-platform")
@@ -435,21 +439,37 @@ def _repo_head_short() -> str:
 
 
 def _new_tmp_directory(path: Path) -> Path:
-    if not path.is_absolute() or not path.is_relative_to(Path("/tmp")) or path.exists():
-        raise MarketIntelligencePublicationError("output root must be a new absolute /tmp path")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-intelligence"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketIntelligencePublicationError(
+            f"output root custody differs: {exc}"
+        ) from exc
+    if path.exists():
+        raise MarketIntelligencePublicationError("output root must be new")
     path.mkdir(mode=0o700, parents=False)
     return path
 
 
 def _new_tmp_file(path: Path, raw: bytes, mode: int) -> None:
-    if (
-        not path.is_absolute()
-        or not path.is_relative_to(Path("/tmp"))
-        or path.exists()
-        or path.parent.is_symlink()
-        or not path.parent.is_dir()
-    ):
-        raise MarketIntelligencePublicationError("approval package must be a new /tmp file")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-intelligence-plan.json"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketIntelligencePublicationError(
+            f"approval package custody differs: {exc}"
+        ) from exc
+    if path.exists() or path.parent.is_symlink() or not path.parent.is_dir():
+        raise MarketIntelligencePublicationError(
+            "approval package must be a new governed file"
+        )
     descriptor = os.open(
         path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0), mode
     )

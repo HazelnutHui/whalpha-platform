@@ -22,6 +22,16 @@
 - Static checks passed and the complete backend suite passes 1,811 tests. The
   two warnings remain the existing Python `crypt` and Starlette TestClient
   deprecations.
+- Extended the same boundary through MI 1.3 candidate/Plan 1.3 and Snapshot
+  1.10/Plan 2.5 candidate/plan contracts and formal readers. Real persistent
+  rehearsals produced MI plan fingerprint `d943ea1cbe13118418112550e5c7c5c9edc259e69782cbbc7d532eb61f272a84`
+  and Snapshot plan fingerprint `b555e488f1623df091dd89935c4ef94607097ca0810e2c032af2c3b201f05c5b`,
+  both fresh with zero Production writes. Snapshot persistent files are sealed
+  `0400` under `0700` directories.
+- The active MI 1.2 correctly rejected Strategy/Visual evidence from the new
+  persistent Candidate lineage. A second Snapshot rehearsal used its exact
+  legacy-bound audits only to prove Snapshot custody. No MI/Snapshot Apply was
+  inferred, so one-lineage bundle construction remains blocked.
 
 ## 2026-08-30 — Block unproven persistent-workspace execution
 

@@ -197,7 +197,7 @@ def test_plan_2_4_freezes_and_rechecks_strategy_channel_bindings(monkeypatch, tm
 
     symlink_path = tmp_path / "snapshot-plan-2.4-symlink.json"
     symlink_path.symlink_to(plan_path)
-    with pytest.raises(repo.DashboardSnapshotPublicationError, match="regular /tmp file"):
+    with pytest.raises(repo.DashboardSnapshotPublicationError, match="symlink"):
         repo.read_dashboard_snapshot_approval_plan(symlink_path)
 
     selected[0] = strategy_manifest.model_copy(

@@ -53,10 +53,18 @@ were respectively
 and
 `fe1df7fe0d6a05d6e7a7417944c34e5bb7a3a49eda7f1be95dad24fa1bb49510`.
 
+Market Intelligence 1.3 candidate/Plan 1.3 and Snapshot 1.10/Plan 2.5
+candidate/plan writers, contracts, and formal plan readers now also accept the
+exact persistent session paths. Separate real Dell rehearsals passed with zero
+Production writes. The MI rehearsal used the complete persistent analytics
+chain. The Snapshot rehearsal used the exact legacy audits bound to the
+currently active MI 1.2, because mixing the new persistent audits with that
+older active publication correctly failed lineage validation.
+
 Automation Plan 1.7 remains blocked. The ADR 0094 stop may be removed only
-after Market Intelligence planning, Snapshot planning, serving-bundle
-construction, and all their formal readers use the same policy and the whole
-chain passes a real rehearsal.
+after separately authorized MI and Snapshot Apply make one exact persistent
+lineage active, serving-bundle construction accepts its persistent bundle
+root, and the complete chain passes a real rehearsal.
 
 ## Consequences
 
@@ -65,8 +73,8 @@ chain passes a real rehearsal.
 - Legacy `/tmp` reviews remain backward compatible.
 - Exact names and owner-only parents prevent a generic writable workspace.
 - The Candidate recovery/final boundary is explicit and testable.
-- MI, Snapshot, bundle, publication, deployment, `/data`, provider, credential,
-  and scheduler authority are unchanged.
+- MI/Snapshot Apply, bundle, publication, deployment, `/data`, provider,
+  credential, and scheduler authority are unchanged.
 - Repeated full Candidate rereads remain a measured performance problem; this
   decision does not weaken formal verification to hide that cost.
 
@@ -81,4 +89,3 @@ and bundle writer/reader boundaries before an unattended action can be safe.
 
 Rejected because ownership alone does not bind session, layout, Git exclusion,
 or the artifact's operational role.
-

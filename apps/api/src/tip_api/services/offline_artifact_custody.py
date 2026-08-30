@@ -17,13 +17,16 @@ def validate_offline_artifact_location(
     path: Path,
     *,
     persistent_names: Collection[str],
+    allow_tmp_descendants: bool = False,
 ) -> Path:
     """Accept one direct /tmp child or one exact persistent session child."""
 
     if not path.is_absolute() or path.name in {"", ".", ".."}:
         raise OfflineArtifactCustodyError("offline artifact path must be absolute")
     _reject_existing_symlink_components(path)
-    if path.parent == Path("/tmp"):
+    if path.parent == Path("/tmp") or (
+        allow_tmp_descendants and path.is_relative_to(Path("/tmp"))
+    ):
         return path
     if path.name not in persistent_names:
         raise OfflineArtifactCustodyError(
@@ -66,6 +69,31 @@ def validate_offline_artifact_location(
             raise OfflineArtifactCustodyError(
                 "persistent offline artifact parent custody differs"
             )
+    return path
+
+
+def validate_offline_artifact_child(
+    path: Path,
+    *,
+    parent_name: str,
+    child_names: Collection[str],
+) -> Path:
+    """Accept one exact child of a governed tmp or persistent artifact root."""
+
+    if not path.is_absolute() or path.name in {"", ".", ".."}:
+        raise OfflineArtifactCustodyError("offline artifact child must be absolute")
+    _reject_existing_symlink_components(path)
+    if path.is_relative_to(Path("/tmp")):
+        return path
+    if path.name not in child_names:
+        raise OfflineArtifactCustodyError(
+            "offline artifact child name is not governed"
+        )
+    validate_offline_artifact_location(
+        path.parent,
+        persistent_names={parent_name},
+        allow_tmp_descendants=True,
+    )
     return path
 
 

@@ -82,6 +82,11 @@ from tip_api.services.sector_etf_rotation_audit import (
     SectorEtfRotationAuditContents,
     read_sector_etf_rotation_audit_contents,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_child,
+    validate_offline_artifact_location,
+)
 
 
 MARKET_INTELLIGENCE_BASE = "market-data/analytics/market-intelligence"
@@ -1074,15 +1079,19 @@ def read_market_intelligence_approval_plan(
         raise MarketIntelligencePublicationError(
             "Market Intelligence approval plan is unavailable"
         ) from exc
-    if (
-        not path.is_absolute()
-        or resolved != path
-        or not resolved.is_relative_to(Path("/tmp"))
-        or path.is_symlink()
-        or not path.is_file()
-    ):
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-intelligence-plan.json"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
         raise MarketIntelligencePublicationError(
-            "Market Intelligence approval plan must be a regular /tmp file"
+            f"Market Intelligence approval plan custody differs: {exc}"
+        ) from exc
+    if resolved != path or path.is_symlink() or not path.is_file():
+        raise MarketIntelligencePublicationError(
+            "Market Intelligence approval plan must be a regular governed file"
         )
     metadata = resolved.stat()
     if metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o444:
@@ -1804,20 +1813,21 @@ def _exclusive_lock(root: Path):
 
 
 def _safe_new_tmp_directory(path: Path) -> Path:
-    if not path.is_absolute() or not path.is_relative_to(Path("/tmp")):
-        raise MarketIntelligencePublicationError("candidate must be under /tmp")
-    current = Path("/")
-    for part in path.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise MarketIntelligencePublicationError("symlink candidate path is rejected")
+    try:
+        validate_offline_artifact_child(
+            path,
+            parent_name="market-intelligence",
+            child_names={"market-intelligence.plan.artifacts"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketIntelligencePublicationError(
+            f"candidate custody differs: {exc}"
+        ) from exc
     if path.exists():
         raise MarketIntelligencePublicationError("candidate path already exists")
     parent = path.parent
     if not parent.exists() or parent.is_symlink() or not parent.is_dir():
         raise MarketIntelligencePublicationError("candidate parent must already exist")
-    if not parent.resolve(strict=True).is_relative_to(Path("/tmp")):
-        raise MarketIntelligencePublicationError("candidate parent escapes /tmp")
     return path
 
 

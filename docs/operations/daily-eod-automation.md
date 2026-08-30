@@ -41,8 +41,9 @@ stage with exact Candidate, Entry Geometry, history, panel-cache, and Oracle
 bindings. ADR 0095 now gives every analytics writer and reader one shared
 legacy-`/tmp` or exact persistent-session custody policy, and a real Dell
 2026-08-28 rehearsal completed all nine analytics directories. MI planning,
-Snapshot planning, serving-bundle construction, and their formal readers have
-not yet been proven in the persistent workspace. The installed timer must
+MI and Snapshot planning now have separate real persistent zero-write proofs,
+but one exact active lineage and serving-bundle construction do not. The
+installed timer must
 therefore remain read-only and the unattended calculation chain must not be
 described as enabled. Automation Plan 1.7 continues to stop at
 `persistent_workspace_cli_custody_unreconciled` before action reservation.

@@ -34,6 +34,10 @@ from tip_api.persistence.parquet.dashboard_universe_activation_active import (
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.market_intelligence_active import read_active_market_intelligence
 from tip_api.services.private_dashboard_snapshot import build_private_dashboard_snapshot, deterministic_json_bytes
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 ROOT=Path("/data/trading-intelligence-platform")
 REPO_ROOT=Path(__file__).resolve().parents[5]
@@ -103,26 +107,32 @@ def main(argv: list[str]|None=None) -> int:
         _parser().error("--approval-package requires an explicit persistent --output-root under /tmp")
     if args.candidate_strategy_audit is not None:
         strategy_audit = args.candidate_strategy_audit
-        if (
-            not strategy_audit.is_absolute()
-            or not strategy_audit.resolve(strict=True).is_relative_to(Path("/tmp"))
-            or strategy_audit.is_symlink()
-            or not strategy_audit.is_dir()
-        ):
-            raise DashboardSnapshotPublicationError(
-                "candidate strategy audit must be a regular /tmp directory"
+        try:
+            validate_offline_artifact_location(
+                strategy_audit,
+                persistent_names={"strategy-channels"},
+                allow_tmp_descendants=True,
             )
+        except OfflineArtifactCustodyError as exc:
+            raise DashboardSnapshotPublicationError(
+                f"candidate strategy audit custody differs: {exc}"
+            ) from exc
+        if strategy_audit.is_symlink() or not strategy_audit.is_dir():
+            raise DashboardSnapshotPublicationError("candidate strategy audit is unsafe")
     if args.candidate_visual_context_audit is not None:
         visual_audit = args.candidate_visual_context_audit
-        if (
-            not visual_audit.is_absolute()
-            or not visual_audit.resolve(strict=True).is_relative_to(Path("/tmp"))
-            or visual_audit.is_symlink()
-            or not visual_audit.is_dir()
-        ):
-            raise DashboardSnapshotPublicationError(
-                "candidate visual-context audit must be a regular /tmp directory"
+        try:
+            validate_offline_artifact_location(
+                visual_audit,
+                persistent_names={"opportunity-candidate-visual-context"},
+                allow_tmp_descendants=True,
             )
+        except OfflineArtifactCustodyError as exc:
+            raise DashboardSnapshotPublicationError(
+                f"candidate visual-context audit custody differs: {exc}"
+            ) from exc
+        if visual_audit.is_symlink() or not visual_audit.is_dir():
+            raise DashboardSnapshotPublicationError("candidate visual-context audit is unsafe")
     generated=datetime.fromisoformat(args.generated_at.replace("Z","+00:00")) if args.generated_at else datetime.now(UTC)
     live_freshness = _formal_freshness()
     output=args.output_root
@@ -130,8 +140,16 @@ def main(argv: list[str]|None=None) -> int:
     if output is None:
         temporary=tempfile.TemporaryDirectory(prefix="tip-dashboard-snapshot-v2-dryrun-",dir="/tmp")
         output=Path(temporary.name)
-    if not output.is_absolute() or not output.resolve(strict=False).is_relative_to(Path("/tmp")):
-        raise DashboardSnapshotPublicationError("dry-run output root must be under /tmp")
+    try:
+        validate_offline_artifact_location(
+            output,
+            persistent_names={"dashboard-snapshot"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise DashboardSnapshotPublicationError(
+            f"dry-run output root custody differs: {exc}"
+        ) from exc
     activation_pointer=read_dashboard_universe_activation_pointer(ROOT)
     if activation_pointer is None:
         raise DashboardSnapshotPublicationError("Activation V2 pointer is required")
@@ -158,6 +176,8 @@ def main(argv: list[str]|None=None) -> int:
         market_intelligence=market_intelligence,
         candidate_strategy_audit_path=args.candidate_strategy_audit,
         candidate_visual_context_audit_path=args.candidate_visual_context_audit)
+    if not output.is_relative_to(Path("/tmp")):
+        _seal_persistent_snapshot_candidate(output)
     manifest=candidate.manifest
     response={"status":"dry_run_ready","candidate_path":str(candidate.output_dir),
               "freshness_status":manifest.freshness_status,"session_lag":manifest.session_lag,
@@ -194,8 +214,18 @@ def main(argv: list[str]|None=None) -> int:
     response.update(plan=plan.model_dump(mode="json"),expected_current_state_fingerprint=plan.expected_current_state_fingerprint)
     if args.approval_package:
         package=args.approval_package
-        if not package.is_absolute() or not package.resolve(strict=False).is_relative_to(Path("/tmp")) or package.exists():
-            raise DashboardSnapshotPublicationError("approval package must be a new /tmp file")
+        try:
+            validate_offline_artifact_location(
+                package,
+                persistent_names={"dashboard-snapshot-plan.json"},
+                allow_tmp_descendants=True,
+            )
+        except OfflineArtifactCustodyError as exc:
+            raise DashboardSnapshotPublicationError(
+                f"approval package custody differs: {exc}"
+            ) from exc
+        if package.exists():
+            raise DashboardSnapshotPublicationError("approval package must be new")
         package.write_bytes(deterministic_json_bytes(plan.model_dump(mode="json")))
         with package.open("rb") as handle: os.fsync(handle.fileno())
         package.chmod(0o444); response["approval_package"]=str(package);response["approval_package_sha256"]=_sha(package)
@@ -207,6 +237,17 @@ def _formal_freshness():
     sessions=CanonicalEodReadRepository(ROOT).list_sessions()
     actual=sorted(sessions,key=lambda item:item.session_date)[-1].session_date
     return evaluate_market_data_freshness(calendar=ExchangeCalendar(),actual_latest_completed_session=actual,checked_at=datetime.now(UTC))
+
+
+def _seal_persistent_snapshot_candidate(root: Path) -> None:
+    for path in root.rglob("*"):
+        if path.is_symlink() or not (path.is_dir() or path.is_file()):
+            raise DashboardSnapshotPublicationError(
+                "persistent Snapshot candidate contains an unsafe entry"
+            )
+    for path in sorted(root.rglob("*"), key=lambda item: len(item.parts), reverse=True):
+        path.chmod(0o700 if path.is_dir() else 0o400)
+    root.chmod(0o700)
 
 
 def _formal_freshness_gate() -> None:

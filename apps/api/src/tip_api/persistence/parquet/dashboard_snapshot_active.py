@@ -36,6 +36,10 @@ from tip_api.services.private_dashboard_snapshot import (
     DashboardSnapshotError, DashboardSnapshotManifest, deterministic_json_bytes,
     sha256_file, validate_snapshot_release,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 SNAPSHOT_V2_BASE = "market-data/snapshots/private-dashboard-v2"
 SNAPSHOT_POINTER = "market-data/snapshots/private-dashboard-active/active.json"
@@ -484,15 +488,19 @@ def read_dashboard_snapshot_approval_plan(
         raise DashboardSnapshotPublicationError(
             "snapshot approval plan is unavailable"
         ) from exc
-    if (
-        not path.is_absolute()
-        or resolved != path
-        or not resolved.is_relative_to(Path("/tmp"))
-        or path.is_symlink()
-        or not path.is_file()
-    ):
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"dashboard-snapshot-plan.json"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
         raise DashboardSnapshotPublicationError(
-            "snapshot approval plan must be a regular /tmp file"
+            f"snapshot approval plan custody differs: {exc}"
+        ) from exc
+    if resolved != path or path.is_symlink() or not path.is_file():
+        raise DashboardSnapshotPublicationError(
+            "snapshot approval plan must be a regular governed file"
         )
     metadata = resolved.stat()
     if metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o444:

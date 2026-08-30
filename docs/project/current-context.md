@@ -877,8 +877,11 @@ recorded in the active-state table and
   custody policy across every analytics writer and reader. A real 2026-08-28
   persistent Dell rehearsal completed all nine analytics directories with
   owner-only custody, no residue, zero Oracle mismatch, zero request, and zero
-  Production write. MI, Snapshot, and serving-bundle persistent paths remain
-  unreconciled, so Automation Plan 1.7 still reports
+  Production write. MI 1.3/Plan 1.3 and Snapshot 1.10/Plan 2.5 persistent
+  writers/contracts/readers also passed separate zero-write rehearsals. They
+  cannot form one active lineage without separately authorized MI/Snapshot
+  Apply, and serving-bundle persistent custody remains unreconciled, so
+  Automation Plan 1.7 still reports
   `persistent_workspace_cli_custody_unreconciled` before any offline action
   reservation. Active Production remains MI 1.2 and Snapshot
   1.10 / Dashboard 2.7; the new workspace is not deployed.
