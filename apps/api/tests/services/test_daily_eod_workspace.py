@@ -77,7 +77,7 @@ def test_workspace_paths_are_accepted_by_existing_automation_plan(tmp_path) -> N
     assert wake.status is PipelineWakeStatus.BLOCKED
 
 
-def test_current_canonical_workspace_blocks_before_unproven_real_cli_custody(
+def test_current_canonical_workspace_advances_to_first_missing_offline_stage(
     monkeypatch,
     tmp_path,
 ) -> None:
@@ -121,10 +121,15 @@ def test_current_canonical_workspace_blocks_before_unproven_real_cli_custody(
 
     plan = plan_daily_eod_automation(target_session=TARGET, paths=paths)
 
-    assert plan.status is PlanStatus.BLOCKED
-    assert plan.reason_codes == (
-        "persistent_workspace_cli_custody_unreconciled",
-    )
+    assert plan.contract_version == "daily-eod-automation-plan/1.8"
+    assert plan.status is PlanStatus.READY_FOR_OFFLINE_CALCULATION
+    assert plan.next_action.value == "calculate_phase1a"
+    assert plan.reason_codes == ("phase1a_required",)
+    assert plan.publication_authorized is False
+    assert plan.deployment_authorized is False
+    assert plan.scheduler_enabled is False
+    assert plan.external_request_count == 0
+    assert plan.production_write_count == 0
 
 
 def test_workspace_layout_rejects_overlap_and_ephemeral_root(tmp_path) -> None:

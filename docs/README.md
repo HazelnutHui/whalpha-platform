@@ -126,6 +126,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): XNYS/provider readiness, bounded retry, provider-attempt custody, exact-session planning, single-action offline execution, interruption recovery, and remaining unattended-operation gates.
 - [Daily EOD Pipeline Scheduler V2](data-contracts/daily-eod-pipeline-scheduler-v2.md): pipeline-aware wake phases and deterministic Dell-local per-session workspace contract.
 - [ADR 0095: Shared persistent analytics custody](decisions/0095-share-offline-artifact-custody-across-persistent-analytics.md): exact owner-only dated-session policy, legacy `/tmp` compatibility, and real nine-stage analytics proof.
+- [ADR 0096: Resume persistent workspace planning](decisions/0096-resume-persistent-workspace-planning-after-proof.md): Plan 1.8 removal of the superseded early stop after deterministic real-lineage proof, without publication, deployment, or scheduler authority.
 - [Daily EOD Bounded Cadence V1](data-contracts/daily-eod-bounded-cadence-v1.md): finite distinct-wake planning, evidence-chain, timing, failure, and manual-stop contract.
 - [Daily EOD Cadence Diagnosis V1](data-contracts/daily-eod-cadence-diagnosis-v1.md): read-only unresolved-wake classification without replay, retry, recovery, or inferred resolution.
 - [ADR 0083: Cadence Evidence in the Run Journal](decisions/0083-reuse-run-journal-for-cadence-evidence.md): single-store owner-only retention and exact coordinator/offline result projection.

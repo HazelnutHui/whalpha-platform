@@ -37,7 +37,8 @@ The platform should help answer:
 
 Documentation, infrastructure, storage, the application stack, canonical
 EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
-MI 1.2, Snapshot 1.10 / Dashboard 2.7, entry-location, strategy-channel, and
+MI 1.3, Snapshot 1.11 / Dashboard 2.8, entry-location, strategy-channel, Sector
+ETF Rotation, and
 Candidate Visual Context consumers, bilingual presentation, equal-capability
 guest Sessions, and
 Session-protected static publication are implemented. The deployed product
@@ -52,7 +53,7 @@ canonical EOD. Historical 8/27 recovery evidence is retained in the project
 changelog; the active deployed release is the complete 8/28 round above.
 
 Repository development source also contains an exact-session read-only daily
-planner and a single-action executor for ten offline daily stages: seven
+planner and a single-action executor for eleven offline daily stages: eight
 analytics stages, Market Intelligence and Dashboard Snapshot approval-plan
 preparation, and exact active-Snapshot serving-bundle construction.
 Execution is bound to an unchanged plan fingerprint, global Dell lock,

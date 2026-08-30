@@ -61,12 +61,10 @@ chain. The Snapshot rehearsal used the exact legacy audits bound to the
 currently active MI 1.2, because mixing the new persistent audits with that
 older active publication correctly failed lineage validation.
 
-Automation Plan 1.7 remains blocked. The ADR 0094 stop may be removed only
-after separately authorized MI and Snapshot Apply make one exact persistent
-lineage active and the complete chain passes a real rehearsal. Serving-bundle
-construction now accepts and seals the exact persistent bundle root, but its
-real rehearsal still requires an applied Snapshot target under the immutable
-`/data` namespace.
+At this decision point, Automation Plan 1.7 remained blocked pending one exact
+persistent lineage through MI/Snapshot Apply and serving-bundle reread. That
+condition was subsequently met; ADR 0096 records the separate reviewed Plan
+1.8 removal while preserving all operational authority boundaries.
 
 ## Consequences
 

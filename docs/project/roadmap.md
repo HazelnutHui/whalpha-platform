@@ -165,7 +165,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Bind Sector ETF Rotation into Market Intelligence 1.3 and Automation Plan 1.5
 - [x] Project Sector ETF Rotation through Snapshot 1.11 / Dashboard 2.8
 - [x] Integrate Candidate Visual Context into daily planning and tmp-only execution
-- [ ] Reconcile and prove persistent-workspace custody for real audit CLIs
+- [x] Reconcile and prove persistent-workspace custody for real audit CLIs
 - [x] Define normalized EOD logical contracts
 - [x] Instrument Master V1 model and validation tests
 - [x] EOD Price Bar V1 model and validation tests

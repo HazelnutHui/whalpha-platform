@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Superseded by [ADR 0096](0096-resume-persistent-workspace-planning-after-proof.md)
 
 ## Date
 

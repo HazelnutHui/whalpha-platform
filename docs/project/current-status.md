@@ -754,11 +754,14 @@ MI 1.3 candidate/Plan 1.3 and Snapshot 1.11/Plan 2.6 writers, contracts, formal
 readers, Applies, and both standard and persistent serving bundles have now
 crossed one exact persistent lineage. The persistent bundle has the same
 logical fingerprint as the deployed local bundle, `0700` directories, `0400`
-files, and no residue. Automation Plan 1.7 still stops at
-`persistent_workspace_cli_custody_unreconciled` because that conservative
-ADR 0094 code gate has not yet been revised; the empirical prerequisite for a
-separate reviewed removal is now satisfied. The installed timer remains
-read-only. Repeated full Candidate rereads remain a measured performance
+files, and no residue. ADR 0096 advances the read-only planner to Plan 1.8 and
+removes only the superseded persistent-workspace early stop. Two real,
+socket-guarded 2026-08-28 replays reread all 18 current/prior observations and
+deterministically reached `review_bundle_deployment` with plan fingerprint
+`0782f8793a8564b7b17f354eb81e602afe49c1fe8154bcc371e39ebacee51d83`,
+zero requests and writes, and no publication, deployment, or scheduler
+authority. The installed timer remains read-only and is not connected to the
+coordinator. Repeated full Candidate rereads remain a measured performance
 hotspot to optimize without weakening source, hash, typed-contract, or Oracle
 gates.
 
@@ -774,8 +777,8 @@ section.
 For P4, Visual Context product integration and deployment are complete. The
 next step is human browser acceptance, followed by only evidence-driven visual
 refinement. Repository automation now generates it as a strict stage; durable
-persistent-workspace CLI custody still requires the separate reconciliation
-described above.
+persistent-workspace CLI custody and read-only planning are now reconciled and
+physically proven. This does not enable unattended execution.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is

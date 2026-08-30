@@ -36,17 +36,17 @@ same-day Identity
   -> separately enabled one-shot OCI deployment
 ```
 
-Automation Plan 1.6 and Single-action Executor 1.5 add the Visual Context
+Automation Plan 1.8 and Single-action Executor 1.5 include the Visual Context
 stage with exact Candidate, Entry Geometry, history, panel-cache, and Oracle
 bindings. ADR 0095 now gives every analytics writer and reader one shared
 legacy-`/tmp` or exact persistent-session custody policy, and a real Dell
 2026-08-28 rehearsal completed all nine analytics directories. MI planning,
-MI and Snapshot planning now have separate real persistent zero-write proofs,
-but one exact active lineage and serving-bundle construction do not. The
-installed timer must
-therefore remain read-only and the unattended calculation chain must not be
-described as enabled. Automation Plan 1.7 continues to stop at
-`persistent_workspace_cli_custody_unreconciled` before action reservation.
+MI and Snapshot planning, their separately authorized Applies, and standard and
+persistent serving-bundle construction now have one exact real lineage proof.
+ADR 0096 removes the superseded persistent-workspace early stop: two real
+socket-guarded Plan 1.8 reads deterministically reached deployment review with
+zero requests, writes, or authority. The installed timer remains read-only and
+the unattended calculation chain must not be described as enabled.
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
 Market Intelligence and Dashboard Snapshot publication are separate one-shot

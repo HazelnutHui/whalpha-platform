@@ -880,10 +880,13 @@ recorded in the active-state table and
   2.6 Applies then formed one exact active lineage. Both the standard and
   persistent 52-checksummed-file bundles formally reread with identical bundle
   fingerprint `6e2e08f1e3e9c3d06c3c069e751fce1b9ac2433837952aa2f95186f27c1721e0`;
-  persistent directories are `0700` and files `0400`. Automation Plan 1.7
-  still contains its conservative ADR 0094 stop until a separately reviewed
-  contract revision removes it; the factual custody prerequisite is now
-  satisfied. Active Production is MI 1.3 and Snapshot 1.11 / Dashboard 2.8.
+  persistent directories are `0700` and files `0400`. ADR 0096 advances the
+  read-only planner to Plan 1.8 and removes only the superseded ADR 0094 stop.
+  Two real 2026-08-28 replays reread all 18 current/prior observations and
+  deterministically reached deployment review with fingerprint
+  `0782f8793a8564b7b17f354eb81e602afe49c1fe8154bcc371e39ebacee51d83`,
+  zero requests/writes, and no publication, deployment, or scheduler authority.
+  Active Production is MI 1.3 and Snapshot 1.11 / Dashboard 2.8.
 
 ## OCI production state
 

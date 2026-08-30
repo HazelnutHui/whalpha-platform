@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-08-30 — Resume persistent-workspace planning after physical proof
+
+- Accepted ADR 0096 and advanced the read-only Automation Plan contract to
+  1.8. It removes only the superseded
+  `persistent_workspace_cli_custody_unreconciled` early stop after the exact
+  persistent lineage crossed analytics, MI/Snapshot Apply, formal bundle
+  reread, OCI deployment, and postflight.
+- Preserved the exact workspace validator, all stage readers and lineage gates,
+  the single-next-action result, and the separate publication, deployment, and
+  scheduler authority boundaries. No provider request, `/data` write,
+  publication, deployment, or scheduler transition was performed by this
+  revision.
+- Formally reread the retained 2026-08-27 Phase 1b and Candidate evidence into
+  the exact owner-only prior-session workspace. Two socket-guarded real
+  2026-08-28 Plan 1.8 replays then reread all 18 current/prior observations and
+  deterministically returned `analytics_ready` /
+  `review_bundle_deployment`, fingerprint
+  `0782f8793a8564b7b17f354eb81e602afe49c1fe8154bcc371e39ebacee51d83`,
+  with zero external requests, Production writes, or operational authority.
+- The focused planner, workspace, pipeline scheduler, cadence, executor, and
+  coordinator regression passed 119 tests before the real replay. The
+  complete backend regression then passed 1,813 tests with only the two known
+  deprecation warnings. The installed timer remains read-only and is not
+  connected to the coordinator.
+
 ## 2026-08-30 — Prove persistent custody through the analytics chain
 
 - Accepted ADR 0095 and added one shared offline-artifact custody policy that
