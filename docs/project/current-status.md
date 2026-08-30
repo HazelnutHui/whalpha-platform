@@ -744,7 +744,10 @@ This does not yet make the unattended chain operational. The persistent daily
 workspace is outside `/tmp`, while several older audit CLIs still require
 direct-child `/tmp` output and some formal readers enforce the same boundary.
 Earlier planner and mocked-executor tests did not prove real persistent CLI
-execution. This custody-policy mismatch is now the next automation blocker;
+execution. Automation Plan 1.7 now exposes this as
+`persistent_workspace_cli_custody_unreconciled` immediately after verified
+Identity/EOD instead of proposing a predictably failing action. This is the
+next automation blocker;
 the installed timer remains read-only and no MI 1.3 publication or Snapshot
 1.11 deployment is authorized.
 

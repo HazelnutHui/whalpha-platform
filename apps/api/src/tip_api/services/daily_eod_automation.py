@@ -62,7 +62,7 @@ from tip_api.services.private_dashboard_snapshot import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-automation-plan/1.6"
+CONTRACT_VERSION = "daily-eod-automation-plan/1.7"
 
 
 class DailyEodAutomationError(RuntimeError):
@@ -219,6 +219,13 @@ def plan_daily_eod_automation(
             prior_session,
             observations,
             "eod_identity_fingerprint_mismatch",
+        )
+    if paths.phase1a_audit.parent != Path("/tmp"):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "persistent_workspace_cli_custody_unreconciled",
         )
 
     phase1a = _inspect(

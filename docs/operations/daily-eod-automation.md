@@ -43,6 +43,8 @@ is intentionally outside `/tmp`, while several older audit CLIs still enforce
 direct-child `/tmp` custody. Until one shared persistent-artifact policy and a
 real CLI rehearsal close that mismatch, the installed timer must remain read-
 only and the unattended calculation chain must not be described as enabled.
+Automation Plan 1.7 makes the stop explicit as
+`persistent_workspace_cli_custody_unreconciled` before action reservation.
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
 Market Intelligence and Dashboard Snapshot publication are separate one-shot

@@ -116,3 +116,4 @@ Each ADR should include:
 - [0091: Custody Sector ETF Rotation After Phase 1a](0091-custody-sector-etf-rotation-after-phase1a.md)
 - [0092: Project Sector Rotation as Lazy Market Intelligence](0092-project-sector-rotation-as-lazy-market-intelligence.md)
 - [0093: Integrate Candidate Visual Context into Daily Planning](0093-integrate-candidate-visual-context-into-daily-planning.md)
+- [0094: Block Unreconciled Persistent Workspace Execution](0094-block-unreconciled-persistent-workspace-execution.md)

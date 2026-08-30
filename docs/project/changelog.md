@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-08-30 — Block unproven persistent-workspace execution
+
+- Accepted ADR 0094 and advanced Automation/Coordinator contracts to 1.7/1.14.
+- After exact Identity and canonical EOD verification, a persistent-workspace
+  plan now stops with `persistent_workspace_cli_custody_unreconciled` instead
+  of proposing a real CLI action that older `/tmp`-only custody would reject.
+- Direct-child `/tmp` review workflows remain available. No path policy was
+  loosened and no persistent directory, `/data` write, network request,
+  publication, deployment, or scheduler capability was created.
+
 ## 2026-08-30 — Add Candidate Visual Context to daily planning
 
 - Accepted ADR 0093 and advanced the daily planner/executor/coordinator

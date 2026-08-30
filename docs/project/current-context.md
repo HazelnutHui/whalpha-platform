@@ -875,7 +875,9 @@ recorded in the active-state table and
   a real 3,541-row `/tmp` executor rehearsal reproduced the prior fingerprint
   with zero Oracle mismatch. Persistent-workspace execution is not yet proven
   because older audit CLIs still enforce direct `/tmp` custody, so unattended
-  activation remains blocked. Active Production remains MI 1.2 and Snapshot
+  activation remains blocked. Automation Plan 1.7 reports the explicit
+  `persistent_workspace_cli_custody_unreconciled` stop before any offline
+  action reservation. Active Production remains MI 1.2 and Snapshot
   1.10 / Dashboard 2.7; the new workspace is not deployed.
 
 ## OCI production state

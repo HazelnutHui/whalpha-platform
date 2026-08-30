@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
@@ -74,6 +75,56 @@ def test_workspace_paths_are_accepted_by_existing_automation_plan(tmp_path) -> N
         latest_pipeline_plan=plan,
     )
     assert wake.status is PipelineWakeStatus.BLOCKED
+
+
+def test_current_canonical_workspace_blocks_before_unproven_real_cli_custody(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    layout = _layout(tmp_path)
+    paths = layout.as_automation_paths()
+    identity_path = (
+        paths.data_root
+        / "market-data/snapshots/instrument-master/as_of_date=2026-08-28"
+    )
+    eod_path = (
+        paths.data_root
+        / "market-data/eod-price-bars/schema_version=1/session_date=2026-08-28"
+    )
+    monkeypatch.setattr(
+        "tip_api.services.daily_eod_automation._lexists",
+        lambda path: path in {identity_path, eod_path},
+    )
+    monkeypatch.setattr(
+        "tip_api.services.daily_eod_automation.load_identity_snapshot",
+        lambda *args, **kwargs: SimpleNamespace(
+            as_of_date=TARGET,
+            manifest={"snapshot_content_sha256": "a" * 64},
+        ),
+    )
+
+    class EodRepository:
+        def __init__(self, root):
+            self.root = root
+
+        def inspect_session(self, session):
+            return SimpleNamespace(
+                session_date=session,
+                content_fingerprint="b" * 64,
+                identity_snapshot_fingerprint="a" * 64,
+            )
+
+    monkeypatch.setattr(
+        "tip_api.services.daily_eod_automation.CanonicalEodReadRepository",
+        EodRepository,
+    )
+
+    plan = plan_daily_eod_automation(target_session=TARGET, paths=paths)
+
+    assert plan.status is PlanStatus.BLOCKED
+    assert plan.reason_codes == (
+        "persistent_workspace_cli_custody_unreconciled",
+    )
 
 
 def test_workspace_layout_rejects_overlap_and_ephemeral_root(tmp_path) -> None:
