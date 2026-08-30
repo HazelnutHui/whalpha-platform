@@ -4,7 +4,6 @@
 
 ## Security Type Governance
 
-- Should the reviewed full-base 1,719 CS / 1,831 CS+ADRC shadow replace the currently activated conservative 1,641/1,747 sets after human set-diff and edge-record review?
 - Should `material_return_outlier_review` remain an overlapping display/analytics review signal, or become a future versioned Universe quarantine policy after corporate-action evidence exists?
 
 - What authoritative issuer/domicile evidence coverage threshold should eventually gate Core/Broad production activation after Phase B2B evidence is reviewed?

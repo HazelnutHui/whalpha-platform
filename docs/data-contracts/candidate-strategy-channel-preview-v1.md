@@ -4,9 +4,9 @@
 
 Implemented in repository source as a pure Dell/offline shadow calculation,
 bounded consumer, independent Oracle, and immutable temporary-root audit. It is
-fixed but not chronologically validated, published, or deployed. An additive
-repository-only product projection and bilingual UI now consume its formal
-audit without changing this shadow calculation.
+fixed but not chronologically validated. Its formally validated projection is
+published in the active Snapshot 1.9 / Dashboard 2.6 bilingual product without
+changing the shadow calculation or claiming validated performance.
 
 ## Inputs and custody
 
@@ -93,8 +93,9 @@ audits, requires exact current-session Universe order and source fingerprints,
 and runs with outbound sockets disabled. It atomically writes a direct child of
 `/tmp`, binds both source manifest hashes, records zero external requests and
 zero Production writes, makes artifacts read-only, and formally rereads typed
-batches and consumers before success. The audit remains disposable shadow
-evidence, not a publication input.
+batches and consumers before success. The audit remains disposable Dell-local
+shadow evidence; only its formally bound, bounded projection enters the
+Snapshot publication path.
 
 ## Remaining activation gates
 
@@ -102,6 +103,7 @@ evidence, not a publication input.
    corporate-action/lifecycle-safe outcomes.
 2. Review by Regime, industry, liquidity, volatility, turnover, chase, false
    positives, and missed opportunities.
-3. Additive product payload and bilingual UI review. **Completed mechanically;
-   not published or deployed.**
-4. Separate publication and deployment authorization.
+3. Additive product payload and bilingual UI review. **Completed and deployed
+   for the current provisional mechanics.**
+4. Separate publication and deployment authorization for any future formula
+   version that passes chronological validation.
