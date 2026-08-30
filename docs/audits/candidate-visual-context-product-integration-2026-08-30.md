@@ -28,8 +28,10 @@ published, or deployed. Production remains Snapshot 1.9 / Dashboard 2.6.
 - Every 1.1 detail shard binds the same Candidate and visual stable-ID order,
   exact per-row Candidate score fingerprint, exact Entry Geometry fingerprint,
   and one Visual Context audit fingerprint.
-- The generated plan is version 2.5 and its content fingerprint is
-  `0d8f64e4e3caf69af11c7c1716e6cdb446e267a8aba62782fc94d9c626d0430d`.
+- The final clean-source preview is
+  `2026-08-30T080500Z-5dc9a87`; its generated plan is version 2.5 with content
+  fingerprint
+  `b744bca017eb999c39af1d4db470fe6d2acff22b0db880affc843600c076aba1`.
 
 ## Performance and safety
 
@@ -40,3 +42,6 @@ source/overview read path and remains a separate optimization target.
 The run made zero Production writes. It did not apply the plan, create a `/data`
 target, switch a pointer, build or transfer a bundle, access OCI, or change the
 website. The temporary preview is evidence only and carries no authorization.
+The existing bundle builder correctly rejected this `/tmp` preview because it
+accepts only an already-published immutable `/data` Snapshot from a clean
+`main`; that boundary was not weakened.
