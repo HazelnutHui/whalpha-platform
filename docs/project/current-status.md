@@ -672,9 +672,12 @@ audit fingerprint
 `df02d96806a7681380f4c79c609771c26009b8f0e988c62c3af6da7a01947bbb`,
 Oracle mismatch zero, four owner-only `0400` files, and no partial residue.
 That run measured 200.729 seconds panel load, 0.012 seconds calculation, and
-0.008 seconds Oracle. The next bounded slice is a review of additive Market
-Intelligence/Snapshot projection; no publication or deployment is authorized
-by the current repository work.
+0.008 seconds Oracle. ADR 0092 now fixes the additive projection boundary:
+Market Intelligence 1.3 carries one market-wide product and Snapshot 1.11 /
+Dashboard 2.8 exposes a dedicated file fetched only when the Sector Rotation
+workspace opens. The next bounded slice is normal-path Phase 1a emission of the
+bound audit. No publication or deployment is authorized by the current
+repository work.
 
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal

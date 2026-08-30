@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-30 — Define the lazy Sector Rotation publication boundary
+
+- Accepted ADR 0092: one market-wide Sector ETF Rotation product will extend
+  Market Intelligence 1.3 rather than create another active publication or
+  duplicate output by Universe.
+- Snapshot 1.11 / Dashboard 2.8 will expose a dedicated
+  `sector-etf-rotation.json` file that the browser fetches only when its
+  workspace opens. Guest and credential Sessions remain identical.
+- The UI contract retains separate 5/10/20-session facts, acceleration,
+  leadership duration, descriptive quadrants, and explicit proxy warnings. It
+  adds no total score, fund-flow claim, or provisional Theme membership.
+- Normal daily Phase 1a emission of the formally bound audit is a prerequisite;
+  this decision does not authorize publication Apply, Snapshot activation,
+  bundle creation, or deployment.
+
 ## 2026-08-30 — Add immutable Sector ETF Rotation audit custody
 
 - Accepted ADR 0091 and added atomic tmp-only

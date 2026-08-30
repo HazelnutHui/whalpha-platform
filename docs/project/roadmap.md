@@ -36,10 +36,11 @@
   ADR 0090 starts the missing sector/theme layer with a score-free, fixed
   11-sector ETF proxy contract and deterministic 5/10/20-session calculation.
   ADR 0091 now adds immutable tmp-only audit custody and makes in-process
-  Phase 1a panel reuse a required integration boundary. Next review the
-  smallest additive Market Intelligence/Snapshot projection before navigation
-  or Production integration; Themes remain unavailable until governed
-  effective-dated membership exists.
+  Phase 1a panel reuse a required integration boundary. ADR 0092 fixes the
+  minimal projection as one Market Intelligence 1.3 product and a lazy
+  Snapshot 1.11 / Dashboard 2.8 file. Next make normal daily Phase 1a emit the
+  bound audit before implementing those contract additions; Themes remain
+  unavailable until governed effective-dated membership exists.
 
 ## Implemented sequencing record
 
@@ -137,6 +138,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Score-free Sector ETF Rotation V1 contract, deterministic calculation,
   and independent raw-panel Oracle
 - [x] Atomic tmp-only Sector ETF Rotation audit bound to formal Phase 1a
+- [x] Define lazy Market Intelligence/Snapshot projection for Sector ETF Rotation
 - [x] Define normalized EOD logical contracts
 - [x] Instrument Master V1 model and validation tests
 - [x] EOD Price Bar V1 model and validation tests
