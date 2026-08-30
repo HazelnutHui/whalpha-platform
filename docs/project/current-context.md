@@ -873,11 +873,14 @@ recorded in the active-state table and
   with zero Production writes. Automation Plan 1.6 and Executor 1.5 now add a
   strict Candidate Visual Context stage and pass its exact audit into Plan 2.6;
   a real 3,541-row `/tmp` executor rehearsal reproduced the prior fingerprint
-  with zero Oracle mismatch. Persistent-workspace execution is not yet proven
-  because older audit CLIs still enforce direct `/tmp` custody, so unattended
-  activation remains blocked. Automation Plan 1.7 reports the explicit
-  `persistent_workspace_cli_custody_unreconciled` stop before any offline
-  action reservation. Active Production remains MI 1.2 and Snapshot
+  with zero Oracle mismatch. ADR 0095 now shares one exact `/tmp`/persistent
+  custody policy across every analytics writer and reader. A real 2026-08-28
+  persistent Dell rehearsal completed all nine analytics directories with
+  owner-only custody, no residue, zero Oracle mismatch, zero request, and zero
+  Production write. MI, Snapshot, and serving-bundle persistent paths remain
+  unreconciled, so Automation Plan 1.7 still reports
+  `persistent_workspace_cli_custody_unreconciled` before any offline action
+  reservation. Active Production remains MI 1.2 and Snapshot
   1.10 / Dashboard 2.7; the new workspace is not deployed.
 
 ## OCI production state

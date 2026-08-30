@@ -1,4 +1,4 @@
-"""Atomic, tmp-only custody for Sector ETF Rotation V1."""
+"""Atomic governed custody for Sector ETF Rotation V1."""
 
 from __future__ import annotations
 
@@ -18,6 +18,10 @@ from tip_api.contracts.analytics.v1.sector_etf_rotation import (
 )
 from tip_api.services.market_regime_audit import read_market_regime_audit_contents
 from tip_api.services.market_regime_sources import MarketRegimeInputPanel
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 AUDIT_CONTRACT_VERSION = "sector-etf-rotation-audit/1.0"
@@ -255,26 +259,34 @@ def _validate_lineage(*, panel, product, oracle_report, phase1a_manifest, phase1
 
 
 def _validate_new_tmp_dir(path: Path) -> Path:
-    if not path.is_absolute() or path.parent != Path("/tmp") or path.name in {"", ".", ".."}:
-        raise SectorEtfRotationAuditError("sector rotation output must be a new direct child of /tmp")
-    current = Path("/")
-    for part in path.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise SectorEtfRotationAuditError("sector rotation output symlink is rejected")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-regime-phase1a-sector-etf-rotation"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise SectorEtfRotationAuditError(
+            "sector rotation output custody differs"
+        ) from exc
     if path.exists():
         raise SectorEtfRotationAuditError("sector rotation output already exists")
     return path
 
 
 def _safe_completed_dir(path: Path) -> Path:
-    if not path.is_absolute() or path.is_symlink():
-        raise SectorEtfRotationAuditError("sector rotation audit path is unsafe")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-regime-phase1a-sector-etf-rotation"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise SectorEtfRotationAuditError(
+            "sector rotation audit path is unsafe"
+        ) from exc
     target = path.resolve(strict=True)
     metadata = target.stat()
     if (
         not target.is_dir()
-        or target.parent != Path("/tmp")
         or metadata.st_uid != os.geteuid()
         or stat.S_IMODE(metadata.st_mode) != 0o700
     ):

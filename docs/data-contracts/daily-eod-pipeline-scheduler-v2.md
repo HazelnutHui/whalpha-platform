@@ -36,8 +36,10 @@ The planner itself still performs zero coordinator calls.
   sessions/
     session_date=YYYY-MM-DD/
       market-regime-phase1a/
+      market-regime-phase1a-sector-etf-rotation/
       market-regime-phase1b/
       opportunity-candidate/
+      opportunity-candidate-visual-context/
       entry-geometry/
       etf-relationships/
       market-preview/
@@ -54,9 +56,11 @@ The planner itself still performs zero coordinator calls.
   cache/panels/
 ```
 
-The layout contract only derives paths; it does not create them. Runtime
-provisioning, ownership/mode checks, retention, cleanup, and systemd write
-allow-listing remain later operations work.
+The layout contract only derives paths; it does not create them. ADR 0095 now
+requires the `daily-eod`, `sessions`, and exact session directories to be
+pre-provisioned as owner-only `0700` custody before an analytics writer or
+reader may use these paths. Retention, cleanup, and systemd write allow-listing
+remain later operations work.
 
 ## Explicit exclusions
 

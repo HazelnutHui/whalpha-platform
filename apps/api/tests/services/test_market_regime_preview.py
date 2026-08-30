@@ -255,7 +255,7 @@ def test_preview_reader_rejects_extra_corrupt_missing_and_unsafe_paths():
             read_market_regime_preview_bundle(source_dir)
         nested = Path(tempfile.mkdtemp(prefix="nested-preview-", dir="/tmp")) / "child"
         nested.mkdir()
-        with pytest.raises(MarketRegimePreviewError, match="direct child"):
+        with pytest.raises(MarketRegimePreviewError, match="custody differs"):
             read_market_regime_preview_bundle(nested)
         nested.rmdir(); nested.parent.rmdir()
     finally:
@@ -372,5 +372,5 @@ def test_cli_rejects_apply_and_config_requires_explicit_absolute_bundle():
     with pytest.raises(ValueError, match="absolute"):
         AppConfig(market_regime_preview_bundle=Path("relative"))
     for unsafe in (Path("/data/market-preview"), Path.cwd() / "market-preview"):
-        with pytest.raises(MarketRegimePreviewError, match="direct child of /tmp"):
+        with pytest.raises(MarketRegimePreviewError, match="custody differs"):
             _safe_new_output_dir(unsafe)

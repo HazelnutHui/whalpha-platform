@@ -740,16 +740,24 @@ Oracle mismatch, requests, and Production writes. It reproduced the existing
 logical fingerprint
 `3b8ddbf3cc7d35cf0ea2b8f257939d23cec6f1d463e0d16efce9b5fb1f23961f`.
 
-This does not yet make the unattended chain operational. The persistent daily
-workspace is outside `/tmp`, while several older audit CLIs still require
-direct-child `/tmp` output and some formal readers enforce the same boundary.
-Earlier planner and mocked-executor tests did not prove real persistent CLI
-execution. Automation Plan 1.7 now exposes this as
-`persistent_workspace_cli_custody_unreconciled` immediately after verified
-Identity/EOD instead of proposing a predictably failing action. This is the
-next automation blocker;
-the installed timer remains read-only and no MI 1.3 publication or Snapshot
-1.11 deployment is authorized.
+ADR 0095 now reconciles and physically proves the persistent analytics portion
+of that chain. One shared policy accepts legacy direct-child `/tmp` or exact
+named artifacts under an existing owner-only dated `daily-eod` session outside
+`/tmp` and Git. A real Dell 2026-08-28 rehearsal completed Phase 1a, Sector ETF
+Rotation, Phase 1b, Candidate, Entry Geometry, ETF Relationships, Market
+Preview, Strategy Channels, and Candidate Visual Context in that layout. All
+nine final directories were `0700`, all files were `0400`, no symlink or
+partial/recovery residue remained, and every stage reported zero Oracle
+mismatch, external request, and Production write.
+
+This still does not make the unattended chain operational. MI planning,
+Snapshot planning, serving-bundle construction, and their formal readers have
+not yet crossed the same persistent boundary. Automation Plan 1.7 therefore
+continues to stop at `persistent_workspace_cli_custody_unreconciled`; removing
+the block now would overstate the proof. The installed timer remains read-only
+and no MI 1.3 publication or Snapshot 1.11 deployment is authorized. Repeated
+full Candidate rereads are also a measured performance hotspot to optimize
+without weakening source, hash, typed-contract, or Oracle gates.
 
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal

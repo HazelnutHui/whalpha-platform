@@ -55,6 +55,10 @@ from tip_api.services.daily_eod_run_journal import (
 from tip_api.services.oci_dashboard_serving_bundle import (
     read_oci_dashboard_serving_bundle,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.5"
@@ -802,11 +806,16 @@ def _validate_execution_config(config: DailyEodExecutionConfig) -> None:
         config.panel_cache_root, config.paths.data_root
     ):
         raise DailyEodExecutorError("panel cache must remain outside the data root")
-    if config.candidate_work_dir is not None and (
-        not config.candidate_work_dir.is_absolute()
-        or config.candidate_work_dir.parent != Path("/tmp")
-    ):
-        raise DailyEodExecutorError("Candidate work directory must be a direct child of /tmp")
+    if config.candidate_work_dir is not None:
+        try:
+            validate_offline_artifact_location(
+                config.candidate_work_dir,
+                persistent_names={"candidate-work"},
+            )
+        except OfflineArtifactCustodyError as exc:
+            raise DailyEodExecutorError(
+                "Candidate work directory custody differs"
+            ) from exc
     publication_values = (
         config.publication_created_at,
         config.publication_expected_current_state_fingerprint,

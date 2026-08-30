@@ -38,12 +38,13 @@ same-day Identity
 
 Automation Plan 1.6 and Single-action Executor 1.5 add the Visual Context
 stage with exact Candidate, Entry Geometry, history, panel-cache, and Oracle
-bindings. A real direct-child `/tmp` rehearsal passed. The persistent workspace
-is intentionally outside `/tmp`, while several older audit CLIs still enforce
-direct-child `/tmp` custody. Until one shared persistent-artifact policy and a
-real CLI rehearsal close that mismatch, the installed timer must remain read-
-only and the unattended calculation chain must not be described as enabled.
-Automation Plan 1.7 makes the stop explicit as
+bindings. ADR 0095 now gives every analytics writer and reader one shared
+legacy-`/tmp` or exact persistent-session custody policy, and a real Dell
+2026-08-28 rehearsal completed all nine analytics directories. MI planning,
+Snapshot planning, serving-bundle construction, and their formal readers have
+not yet been proven in the persistent workspace. The installed timer must
+therefore remain read-only and the unattended calculation chain must not be
+described as enabled. Automation Plan 1.7 continues to stop at
 `persistent_workspace_cli_custody_unreconciled` before action reservation.
 
 Acquisition and canonical `/data` apply remain authorization boundaries.

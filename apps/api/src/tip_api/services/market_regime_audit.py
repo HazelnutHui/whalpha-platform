@@ -1,4 +1,4 @@
-"""Canonical tmp-only audit artifacts and formal reread for Market Regime Phase 1a."""
+"""Canonical governed audit and formal reread for Market Regime Phase 1a."""
 
 from __future__ import annotations
 
@@ -26,6 +26,10 @@ from tip_api.parameters.market_regime.v1_0_0 import (
     parameter_payload,
 )
 from tip_api.services.market_regime_sources import MarketRegimeInputPanel
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 ARTIFACT_FILES = (
@@ -250,17 +254,21 @@ def read_market_regime_audit_contents(output_dir: Path) -> MarketRegimeAuditCont
 def _read_market_regime_audit(
     output_dir: Path,
 ) -> tuple[dict[str, Any], dict[str, dict[str, Any]], tuple[MarketRegimeCompositeV1, ...]]:
-    if output_dir.is_symlink():
-        raise MarketRegimeAuditError("symlink audit directory is rejected")
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"market-regime-phase1a"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketRegimeAuditError("audit directory custody differs") from exc
     target = output_dir.resolve(strict=True)
     if (
         target.is_symlink()
         or not target.is_dir()
-        or target.parent != Path("/tmp")
         or target.stat().st_uid != os.geteuid()
         or stat.S_IMODE(target.stat().st_mode) != 0o700
     ):
-        raise MarketRegimeAuditError("audit directory must be a regular direct child of /tmp")
+        raise MarketRegimeAuditError("audit directory custody differs")
     expected = set(ARTIFACT_FILES) | {AUDIT_MANIFEST}
     actual = {item.name for item in target.iterdir()}
     if actual != expected or any(
@@ -322,16 +330,13 @@ def _read_market_regime_audit(
 
 
 def validate_tmp_output_dir(output_dir: Path) -> Path:
-    if not output_dir.is_absolute():
-        raise MarketRegimeAuditError("output directory must be absolute")
-    lexical = output_dir
-    if lexical.parent != Path("/tmp") or lexical.name in {"", ".", ".."}:
-        raise MarketRegimeAuditError("output directory must be a direct child of /tmp")
-    current = Path("/")
-    for part in lexical.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise MarketRegimeAuditError("symlink output path is rejected")
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"market-regime-phase1a"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketRegimeAuditError("output directory custody differs") from exc
     if output_dir.exists():
         if output_dir.is_symlink() or not output_dir.is_dir():
             raise MarketRegimeAuditError("existing output path is unsafe")

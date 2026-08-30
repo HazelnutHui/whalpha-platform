@@ -1,4 +1,4 @@
-"""Canonical, tmp-only Phase 5C opportunity-candidate audit artifacts."""
+"""Canonical governed Phase 5C opportunity-candidate audit artifacts."""
 
 from __future__ import annotations
 
@@ -39,6 +39,10 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import (
 from tip_api.services.market_regime_sources import MarketRegimeInputPanel
 from tip_api.services.opportunity_candidate_oracle import CandidateOracleComparisonV1
 from tip_api.services.opportunity_candidate_state import opportunity_candidate_state_history_fingerprint
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 CANDIDATE_ARTIFACT_FILES = (
@@ -881,16 +885,28 @@ def finalize_resumable_candidate_audit(work_dir: Path, output_dir: Path) -> dict
         if names:
             raise OpportunityCandidateAuditError("resumable work directory lost its recovery journal")
         return None
-    manifest = read_opportunity_candidate_audit(target)
+    manifest, _, _, _, _, _ = _read_opportunity_candidate_audit(
+        target,
+        persistent_names={"candidate-work"},
+    )
     os.rename(target, final_target)
     _fsync_directory(final_target.parent)
     return manifest
 
 
-def _read_opportunity_candidate_audit(output_dir: Path):
+def _read_opportunity_candidate_audit(
+    output_dir: Path,
+    *,
+    persistent_names: frozenset[str] | set[str] = frozenset(
+        {"opportunity-candidate"}
+    ),
+):
     """Internal verified reread that retains canonical artifact payloads."""
 
-    target = _safe_completed_directory(output_dir)
+    target = _safe_completed_directory(
+        output_dir,
+        persistent_names=persistent_names,
+    )
     names = {item.name for item in target.iterdir()}
     if any(
         item.is_symlink()
@@ -1145,7 +1161,6 @@ def _safe_candidate_audit_work_dir(work_dir: Path, *, final_target: Path) -> Pat
     metadata = target.stat()
     if (
         not target.is_dir()
-        or target.parent != Path("/tmp")
         or metadata.st_uid != os.geteuid()
         or stat.S_IMODE(metadata.st_mode) != 0o700
     ):
@@ -1393,23 +1408,27 @@ def _fsync_directory(path: Path) -> None:
 
 
 def _validate_direct_tmp_path(path: Path, *, label: str) -> None:
-    if not path.is_absolute() or path.parent != Path("/tmp") or path.name in {"", ".", ".."}:
-        raise OpportunityCandidateAuditError(f"{label} must be a direct child of /tmp")
-    current = Path("/")
-    for part in path.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise OpportunityCandidateAuditError(f"symlink {label} path is rejected")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"candidate-work"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise OpportunityCandidateAuditError(
+            f"{label} custody differs: {exc}"
+        ) from exc
 
 
 def validate_tmp_output_dir(output_dir: Path) -> Path:
-    if not output_dir.is_absolute() or output_dir.parent != Path("/tmp") or output_dir.name in {"", ".", ".."}:
-        raise OpportunityCandidateAuditError("output directory must be a direct child of /tmp")
-    current = Path("/")
-    for part in output_dir.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise OpportunityCandidateAuditError("symlink output path is rejected")
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"opportunity-candidate"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise OpportunityCandidateAuditError(
+            f"output directory custody differs: {exc}"
+        ) from exc
     if output_dir.exists():
         if output_dir.is_symlink() or not output_dir.is_dir() or any(output_dir.iterdir()):
             raise OpportunityCandidateAuditError("existing output path is unsafe or non-empty")
@@ -1787,14 +1806,26 @@ def _transition_row(item: OpportunityCandidateStateRecordV1) -> dict[str, Any]:
     }
 
 
-def _safe_completed_directory(path: Path) -> Path:
-    if path.is_symlink():
-        raise OpportunityCandidateAuditError("symlink audit directory is rejected")
+def _safe_completed_directory(
+    path: Path,
+    *,
+    persistent_names: frozenset[str] | set[str] = frozenset(
+        {"opportunity-candidate"}
+    ),
+) -> Path:
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names=persistent_names,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise OpportunityCandidateAuditError(
+            f"audit directory custody mismatch: {exc}"
+        ) from exc
     target = path.resolve(strict=True)
     metadata = target.stat()
     if (
         not target.is_dir()
-        or target.parent != Path("/tmp")
         or metadata.st_uid != os.geteuid()
         or stat.S_IMODE(metadata.st_mode) != 0o700
     ):

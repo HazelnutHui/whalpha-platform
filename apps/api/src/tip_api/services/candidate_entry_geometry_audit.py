@@ -1,4 +1,4 @@
-"""Canonical tmp-only audit for the Candidate entry-geometry shadow layer."""
+"""Canonical governed audit for the Candidate entry-geometry shadow layer."""
 
 from __future__ import annotations
 
@@ -21,6 +21,10 @@ from tip_api.parameters.market_regime.candidate_entry_v1_0_0 import (
 )
 from tip_api.services.candidate_entry_geometry_oracle import (
     CandidateEntryGeometryOracleComparisonV1,
+)
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
 )
 
 
@@ -212,13 +216,15 @@ def read_candidate_entry_geometry_audit(output_dir: Path) -> dict[str, Any]:
 
 
 def validate_entry_geometry_tmp_output_dir(output_dir: Path) -> Path:
-    if not output_dir.is_absolute() or output_dir.parent != Path("/tmp") or output_dir.name in {"", ".", ".."}:
-        raise CandidateEntryGeometryAuditError("output directory must be a direct child of /tmp")
-    current = Path("/")
-    for part in output_dir.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise CandidateEntryGeometryAuditError("symlink output path is rejected")
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"entry-geometry"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise CandidateEntryGeometryAuditError(
+            f"output directory custody differs: {exc}"
+        ) from exc
     if output_dir.exists():
         if output_dir.is_symlink() or not output_dir.is_dir() or any(output_dir.iterdir()):
             raise CandidateEntryGeometryAuditError("existing output path is unsafe or non-empty")
@@ -229,8 +235,15 @@ def validate_entry_geometry_tmp_output_dir(output_dir: Path) -> Path:
 
 
 def _safe_completed_directory(path: Path) -> Path:
-    if not path.is_absolute() or path.is_symlink():
-        raise CandidateEntryGeometryAuditError("audit directory must be absolute and cannot be a symlink")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"entry-geometry"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise CandidateEntryGeometryAuditError(
+            f"audit directory custody differs: {exc}"
+        ) from exc
     target = path.resolve(strict=True)
     metadata = target.stat()
     if not target.is_dir() or metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o700:

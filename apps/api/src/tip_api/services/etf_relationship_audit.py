@@ -1,4 +1,4 @@
-"""Canonical tmp-only Phase 2 ETF relationship artifacts and formal reread."""
+"""Canonical governed Phase 2 ETF relationship artifacts and formal reread."""
 
 from __future__ import annotations
 
@@ -28,6 +28,10 @@ from tip_api.parameters.market_regime.relationship_v1_0_0 import (
 )
 from tip_api.services.etf_relationships import relationship_history_fingerprint
 from tip_api.services.market_regime_sources import MarketRegimeInputPanel
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 RELATIONSHIP_ARTIFACT_FILES = (
@@ -189,12 +193,15 @@ def read_etf_relationship_planning_evidence(
 
 
 def validate_tmp_output_dir(output_dir: Path) -> Path:
-    if not output_dir.is_absolute() or output_dir.parent != Path("/tmp") or output_dir.name in {"",".",".."}:
-        raise EtfRelationshipAuditError("output directory must be a direct child of /tmp")
-    current=Path("/")
-    for part in output_dir.parts[1:]:
-        current/=part
-        if current.exists() and current.is_symlink(): raise EtfRelationshipAuditError("symlink output path is rejected")
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"etf-relationships"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise EtfRelationshipAuditError(
+            f"output directory custody differs: {exc}"
+        ) from exc
     if output_dir.exists():
         if output_dir.is_symlink() or not output_dir.is_dir() or any(output_dir.iterdir()):
             raise EtfRelationshipAuditError("existing output path is unsafe or non-empty")
@@ -205,9 +212,17 @@ def validate_tmp_output_dir(output_dir: Path) -> Path:
 
 
 def _safe_completed_directory(path: Path) -> Path:
-    if path.is_symlink(): raise EtfRelationshipAuditError("symlink audit directory rejected")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"etf-relationships"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise EtfRelationshipAuditError(
+            f"audit directory custody differs: {exc}"
+        ) from exc
     target=path.resolve(strict=True); meta=target.stat()
-    if not target.is_dir() or target.parent!=Path("/tmp") or meta.st_uid!=os.geteuid() or stat.S_IMODE(meta.st_mode)!=0o700:
+    if not target.is_dir() or meta.st_uid!=os.geteuid() or stat.S_IMODE(meta.st_mode)!=0o700:
         raise EtfRelationshipAuditError("audit directory custody mismatch")
     return target
 

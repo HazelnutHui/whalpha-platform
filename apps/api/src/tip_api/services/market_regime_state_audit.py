@@ -1,4 +1,4 @@
-"""Canonical tmp-only Phase 1b state artifacts and formal offline reader."""
+"""Canonical governed Phase 1b state artifacts and formal offline reader."""
 
 from __future__ import annotations
 
@@ -35,6 +35,10 @@ from tip_api.parameters.market_regime.state_v1_0_0 import (
 )
 from tip_api.services.market_regime_state import state_history_fingerprint
 from tip_api.services.market_regime_sources import MarketRegimeInputPanel
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 STATE_ARTIFACT_FILES = (
@@ -638,16 +642,22 @@ def _is_fingerprint(value: object) -> bool:
 
 
 def _safe_completed_directory(output_dir: Path) -> Path:
-    if output_dir.is_symlink():
-        raise MarketRegimeStateAuditError("symlink state audit directory is rejected")
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"market-regime-phase1b"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketRegimeStateAuditError(
+            "state audit directory custody differs"
+        ) from exc
     target = output_dir.resolve(strict=True)
     if (
         not target.is_dir()
-        or target.parent != Path("/tmp")
         or target.stat().st_uid != os.geteuid()
         or stat.S_IMODE(target.stat().st_mode) != 0o700
     ):
-        raise MarketRegimeStateAuditError("state audit directory must be a caller-owned direct /tmp child")
+        raise MarketRegimeStateAuditError("state audit directory custody differs")
     if any(
         item.is_symlink()
         or not item.is_file()
@@ -660,13 +670,15 @@ def _safe_completed_directory(output_dir: Path) -> Path:
 
 
 def _validate_tmp_output_dir(output_dir: Path) -> Path:
-    if not output_dir.is_absolute() or output_dir.parent != Path("/tmp") or output_dir.name in {"", ".", ".."}:
-        raise MarketRegimeStateAuditError("output directory must be a direct child of /tmp")
-    current = Path("/")
-    for part in output_dir.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise MarketRegimeStateAuditError("symlink output path is rejected")
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"market-regime-phase1b"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketRegimeStateAuditError(
+            "output directory custody differs"
+        ) from exc
     if output_dir.exists():
         if output_dir.is_symlink() or not output_dir.is_dir() or any(output_dir.iterdir()):
             raise MarketRegimeStateAuditError("existing output path must be an empty safe directory")

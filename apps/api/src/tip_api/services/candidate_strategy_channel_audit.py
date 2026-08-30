@@ -1,4 +1,4 @@
-"""Atomic, tmp-only audit for the Candidate strategy-channel shadow preview."""
+"""Atomic governed audit for the Candidate strategy-channel shadow preview."""
 
 from __future__ import annotations
 
@@ -26,6 +26,10 @@ from tip_api.parameters.market_regime.candidate_strategy_preview_v1_0_0 import (
 )
 from tip_api.services.candidate_strategy_channels_oracle import (
     CandidateStrategyChannelOracleComparisonV1,
+)
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
 )
 
 
@@ -359,19 +363,15 @@ def read_candidate_strategy_channel_audit(output_dir: Path) -> dict[str, Any]:
 
 
 def validate_strategy_channel_tmp_output_dir(output_dir: Path) -> Path:
-    if (
-        not output_dir.is_absolute()
-        or output_dir.parent != Path("/tmp")
-        or output_dir.name in {"", ".", ".."}
-    ):
-        raise CandidateStrategyChannelAuditError(
-            "output directory must be a direct child of /tmp"
+    try:
+        validate_offline_artifact_location(
+            output_dir,
+            persistent_names={"strategy-channels"},
         )
-    current = Path("/")
-    for part in output_dir.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise CandidateStrategyChannelAuditError("symlink output path is rejected")
+    except OfflineArtifactCustodyError as exc:
+        raise CandidateStrategyChannelAuditError(
+            f"output directory custody differs: {exc}"
+        ) from exc
     if output_dir.exists():
         raise CandidateStrategyChannelAuditError(
             "strategy audit output path must not already exist"
@@ -401,10 +401,15 @@ def _source_binding(*, directory, filename, supplied, label):
 
 
 def _safe_completed_directory(path: Path) -> Path:
-    if not path.is_absolute() or path.is_symlink():
-        raise CandidateStrategyChannelAuditError(
-            "strategy audit directory must be absolute and not a symlink"
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"strategy-channels"},
         )
+    except OfflineArtifactCustodyError as exc:
+        raise CandidateStrategyChannelAuditError(
+            f"strategy audit directory custody differs: {exc}"
+        ) from exc
     target = path.resolve(strict=True)
     metadata = target.stat()
     if (

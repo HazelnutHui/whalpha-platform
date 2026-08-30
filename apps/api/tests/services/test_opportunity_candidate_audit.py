@@ -708,9 +708,11 @@ def test_reread_rejects_extra_symlink_and_artifact_tampering(tmp_path: Path) -> 
         shutil.rmtree(target, ignore_errors=True)
 
 
-def test_output_boundary_rejects_non_tmp_nested_nonempty_and_symlink(tmp_path: Path) -> None:
+def test_output_boundary_rejects_ungoverned_nested_nonempty_and_symlink(
+    tmp_path: Path,
+) -> None:
     for unsafe in (Path("relative"), Path("/data/candidate-audit"), tmp_path / "nested"):
-        with pytest.raises(OpportunityCandidateAuditError, match="direct child"):
+        with pytest.raises(OpportunityCandidateAuditError, match="custody differs"):
             validate_tmp_output_dir(unsafe)
 
     nonempty = Path(tempfile.mkdtemp(prefix="mrom-candidate-nonempty-", dir="/tmp"))

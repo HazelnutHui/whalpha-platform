@@ -117,3 +117,4 @@ Each ADR should include:
 - [0092: Project Sector Rotation as Lazy Market Intelligence](0092-project-sector-rotation-as-lazy-market-intelligence.md)
 - [0093: Integrate Candidate Visual Context into Daily Planning](0093-integrate-candidate-visual-context-into-daily-planning.md)
 - [0094: Block Unreconciled Persistent Workspace Execution](0094-block-unreconciled-persistent-workspace-execution.md)
+- [0095: Share Offline Artifact Custody Across Persistent Analytics](0095-share-offline-artifact-custody-across-persistent-analytics.md)

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-30 — Prove persistent custody through the analytics chain
+
+- Accepted ADR 0095 and added one shared offline-artifact custody policy that
+  preserves direct-child `/tmp` reviews while permitting only exact named
+  artifacts under an owner-only dated `daily-eod` session outside `/tmp` and
+  Git.
+- Migrated Phase 1a, Sector ETF Rotation, Phase 1b, Candidate recovery/final,
+  Entry Geometry, ETF Relationships, Market Preview, Strategy Channels, and
+  Candidate Visual Context writers and formal readers.
+- A real Dell 2026-08-28 persistent rehearsal completed all nine analytics
+  outputs with `0700` directories, `0400` files, no symlink or recovery
+  residue, zero Oracle mismatch, zero external request, and zero Production
+  write. An initial Candidate finalization rejection exposed and fixed the
+  exact distinction between internal `candidate-work` reread and public final
+  `opportunity-candidate` reread without rerunning the completed calculation.
+- Automation Plan 1.7 intentionally remains blocked until MI, Snapshot, and
+  serving-bundle paths and readers are reconciled and physically rehearsed.
+  No `/data`, publication, deployment, provider, credential, scheduler, or
+  Production state changed.
+- Static checks passed and the complete backend suite passes 1,811 tests. The
+  two warnings remain the existing Python `crypt` and Starlette TestClient
+  deprecations.
+
 ## 2026-08-30 — Block unproven persistent-workspace execution
 
 - Accepted ADR 0094 and advanced Automation/Coordinator contracts to 1.7/1.14.

@@ -1,4 +1,4 @@
-"""Build and serve a strictly validated, tmp-only Market Regime preview bundle."""
+"""Build and serve a strictly validated, governed Market Regime preview bundle."""
 
 from __future__ import annotations
 
@@ -45,6 +45,10 @@ from tip_api.contracts.analytics.v1.market_regime_preview import (
 from tip_api.services.etf_relationship_audit import read_etf_relationship_audit
 from tip_api.services.market_regime_audit import read_market_regime_audit
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 from tip_api.services.relationship_change_summary import (
     build_relationship_change_summary,
     build_relationship_state_timeline,
@@ -428,13 +432,15 @@ def _unique_by(records: tuple[Any, ...], key: str) -> dict[str, Any]:
 
 
 def _safe_new_output_dir(path: Path) -> Path:
-    if not path.is_absolute() or path.parent != Path("/tmp") or path.name in {"", ".", ".."}:
-        raise MarketRegimePreviewError("output directory must be a direct child of /tmp")
-    current = Path("/")
-    for part in path.parts[1:]:
-        current /= part
-        if current.exists() and current.is_symlink():
-            raise MarketRegimePreviewError("symlink output path is rejected")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-preview"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketRegimePreviewError(
+            f"output directory custody differs: {exc}"
+        ) from exc
     if path.exists():
         metadata = path.stat()
         if path.is_symlink() or not path.is_dir() or any(path.iterdir()):
@@ -446,12 +452,19 @@ def _safe_new_output_dir(path: Path) -> Path:
 
 
 def _safe_bundle_dir(path: Path) -> Path:
-    if path.is_symlink():
-        raise MarketRegimePreviewError("symlink preview bundle directory is rejected")
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-preview"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketRegimePreviewError(
+            f"preview bundle custody differs: {exc}"
+        ) from exc
     target = path.resolve(strict=True)
     metadata = target.stat()
-    if not target.is_dir() or target.parent != Path("/tmp"):
-        raise MarketRegimePreviewError("preview bundle must be a direct child of /tmp")
+    if not target.is_dir():
+        raise MarketRegimePreviewError("preview bundle must be a directory")
     if metadata.st_uid != os.geteuid() or stat.S_IMODE(metadata.st_mode) != 0o700:
         raise MarketRegimePreviewError("preview bundle directory custody mismatch")
     return target
