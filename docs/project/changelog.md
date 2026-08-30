@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-08-30 — Unify the authenticated and guest workspace identity
+
+- Aligned all three first-level workspaces with the public WH Alpha entry:
+  deep navy surfaces, cyan/green signal accents, a persistent WH mark,
+  translucent utility navigation, and consistent cards, tables, drawers, and
+  mobile navigation. The first viewport remains a dense decision workspace,
+  not a marketing hero.
+- Kept credential and guest Sessions on the same application shell with no
+  role branches or capability difference. Analytics, ranking logic, data
+  contracts, and fail-closed behavior are unchanged.
+- All 103 frontend tests and the Production build passed. The existing large-
+  chunk advisory remains an explicit later performance optimization.
+- Published ordinary-fresh Snapshot 1.10 / Dashboard 2.7 as
+  `2026-08-30T092455Z-1894b9c9b95e` through Plan 2.5 and exact `/data` Apply,
+  then formally reread the source-bound 51-file OCI bundle with logical
+  fingerprint
+  `caf507a04fc3be7609a0880223f363c7da13d25a49d6295fed2b69c0e4146cd2`.
+- OCI preflight, atomic deployment, temporary guest Session postflight,
+  public entry/redirect checks, and independent remote inspection passed with
+  identical guest/credential route policy and zero staging/failed residue.
+  Remote state fingerprint:
+  `794795e03fa939816ed3a9b6537747a8d306c1e3f67eecdc280e29b074432f5f`.
+- The post-deployment Dell report recorded 608 files / 404,002,859 bytes,
+  inventory fingerprint
+  `be0846beeee56bbac1856056ab23b2c03c26c4972d479d7fcc44e2e2e64a3db6`,
+  zero symlinks, and zero publication residue. Password-based and browser
+  visual verification remain manual checks.
+
 ## 2026-08-30 — Redesign and deploy the public WH Alpha entry
 
 - Replaced the compact authentication split-screen with a mature bilingual

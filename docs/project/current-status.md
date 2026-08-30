@@ -48,6 +48,12 @@ capabilities, and one later position-management capability; planned work is
 never presented as available functionality. Product principles and the full
 market-to-position decision chain are visible before Session entry.
 
+The post-entry workspace now uses the same deep-navy, cyan, and restrained
+green identity across the shared sidebar, utility header, first-screen briefs,
+cards, tables, drawers, and mobile navigation. The WH mark is present in the
+persistent product lockup. Guest and credential Sessions render this exact
+same application shell and retain identical data and capabilities.
+
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
 relative-performance proxies, never actual fund flow.
@@ -66,17 +72,17 @@ relative-performance proxies, never actual fund flow.
   `2026-08-29T080431Z-785ab49dfedd`, contract 1.2, with 686 Primary and 744
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-30T085601Z-6c732e9cd602`, contract 1.10 / Dashboard 2.7.
+  `2026-08-30T092455Z-1894b9c9b95e`, contract 1.10 / Dashboard 2.7.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-30T085601Z-6c732e9cd602` from source commit `6c732e9cd602`.
+  `2026-08-30T092455Z-1894b9c9b95e` from source commit `1894b9c9b95e`.
 
 The active analytics and Snapshot are ordinary fresh publications for
 2026-08-28: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
-`2026-08-30T082200Z-6a8a37e79970` is the exact planned rollback reference. The
-2026-08-30 post-deployment reader found 567 files / 369,039,027 bytes under
+`2026-08-30T085601Z-6c732e9cd602` is the exact planned rollback reference. The
+2026-08-30 post-deployment reader found 608 files / 404,002,859 bytes under
 `/data`, inventory fingerprint
-`97eb5503f1bbba0a38767cb76b055c3b1cfdf950b54b75cb51b8ece186f3eb5a`,
+`be0846beeee56bbac1856056ab23b2c03c26c4972d479d7fcc44e2e2e64a3db6`,
 zero symlinks, and zero publication residue.
 
 ### Daily automation development state

@@ -252,7 +252,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   Entry Geometry facts, without fabricating price history or signal age
 - [x] Source-bound 20-session Candidate visual context, observed-state age,
   independent Oracle, and formal tmp-only real-data audit
-- [ ] Bind visual context into lazy Candidate detail shards and render the true
+- [x] Bind visual context into lazy Candidate detail shards and render the true
   20-session path without increasing first-load payload
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Fixed explainable three-channel offline preview and bounded consumer
@@ -349,7 +349,7 @@ posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
 Do not select formulas or thresholds from one-session distributions. The
-ordinary-fresh, lag-zero 2026-08-28 Snapshot 1.9 / Dashboard 2.6 release is
+ordinary-fresh, lag-zero 2026-08-28 Snapshot 1.10 / Dashboard 2.7 release is
 active. Later control-plane changes remain undeployed; every further
 publication or deployment requires fresh exact review and authorization. Keep
 SMTP and SEC B2 paused.

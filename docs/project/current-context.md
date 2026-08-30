@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `6c732e9cd60219f83fa730b882cb148bdf540de0` |
+| Deployed bundle source commit | `1894b9c9b95efe73d2b58389119d01ed90a4012d` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -53,13 +53,13 @@ custody/contracts after deployment.
 | Market Intelligence payload SHA-256 | `9b345d531942ad6f6eeae79ae22de3c578020b14b779281d4616cc3aa680b930` |
 | Market Intelligence logical fingerprint | `9b2842fb9611184f0d2887ad10da7820edbb5d11785ba5083f998314452e696f` |
 | Candidate publication | 686 Primary / 744 Secondary records; fingerprint `eff5ce68400ff90456cd0363bc04d625a80ca6a132b54545bb37d5e6463d5841` |
-| Dashboard Snapshot | `2026-08-30T085601Z-6c732e9cd602` |
+| Dashboard Snapshot | `2026-08-30T092455Z-1894b9c9b95e` |
 | Contracts | Snapshot 1.10 / Dashboard 2.7 |
-| Snapshot pointer fingerprint | `676f5cf36dc516ed44351d0fbe220a6663037742a6514fbd120f44b40a8f22a6` |
+| Snapshot pointer fingerprint | `8779d390634e99b53a21a3c33121c332759d602b1133a0b47e253a5a9f0104f1` |
 | Active review metadata | none; ordinary fresh publication |
 | Current post-close pipeline freshness | expected 2026-08-28; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-28; lag zero |
-| `/data` inventory | 567 files / 369,039,027 bytes after the branded-entry Snapshot |
-| `/data` inventory fingerprint | `97eb5503f1bbba0a38767cb76b055c3b1cfdf950b54b75cb51b8ece186f3eb5a` |
+| `/data` inventory | 608 files / 404,002,859 bytes after the unified-workspace Snapshot |
+| `/data` inventory fingerprint | `be0846beeee56bbac1856056ab23b2c03c26c4972d479d7fcc44e2e2e64a3db6` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -863,13 +863,13 @@ recorded in the active-state table and
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-30T085601Z-6c732e9cd602`, built from deployed source commit
-`6c732e9cd60219f83fa730b882cb148bdf540de0` and bound to Market Intelligence
+`2026-08-30T092455Z-1894b9c9b95e`, built from deployed source commit
+`1894b9c9b95efe73d2b58389119d01ed90a4012d` and bound to Market Intelligence
 `2026-08-29T080431Z-785ab49dfedd`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-30 branded-entry deployment passed formal Snapshot Plan 2.5,
+The 2026-08-30 unified-workspace deployment passed formal Snapshot Plan 2.5,
 ordinary-fresh Snapshot Apply, exact 51-file serving-bundle reread, remote
 preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
@@ -881,7 +881,7 @@ No credential or cookie content was printed or retained.
 The independent remote-state report also matched local manifest/checksum
 hashes, found zero failed units or staging/failed residue, and recorded state
 fingerprint
-`b21cf8883e971ee6ad55161c4380c975177faf2427c19bafc2d525bb9080e598`.
+`794795e03fa939816ed3a9b6537747a8d306c1e3f67eecdc280e29b074432f5f`.
 Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.

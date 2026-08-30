@@ -14,9 +14,9 @@ The authoritative operational state is maintained in
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching local immutable bundle resolve to
-  release `2026-08-30T085601Z-6c732e9cd602`;
+  release `2026-08-30T092455Z-1894b9c9b95e`;
 - the release is built from source commit
-  `6c732e9cd60219f83fa730b882cb148bdf540de0` and binds Market
+  `1894b9c9b95efe73d2b58389119d01ed90a4012d` and binds Market
   Intelligence
   `2026-08-29T080431Z-785ab49dfedd`;
 - it serves ordinary-fresh, lag-zero 2026-08-28 analytics through Snapshot
@@ -33,6 +33,11 @@ reconciliation records, without reading credentials:
   Dashboard, Snapshot 1.10 Candidate summary/detail, and strategy payload are
   readable, logs out, and removes the local cookie jar without printing it;
 - no staging or partial release residue exists.
+
+The deployed React workspaces share the public entry's deep-navy/cyan visual
+identity and persistent WH product mark. This is a presentation-only change:
+guest/credential parity, analytics, scoring, contracts, and fail-closed API
+behavior are unchanged.
 
 The release additionally serves relationship persistence/acceleration evidence
 and the bounded ten-point relationship state timeline. Independent postflight
