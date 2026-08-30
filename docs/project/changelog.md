@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-30 — Start score-free Sector ETF Rotation V1
+
+- Accepted ADR 0090 and added a fixed 11-sector ETF proxy registry with SPY as
+  the comparison benchmark. The contract exposes separate 5/10/20-session ETF,
+  benchmark, and arithmetic relative returns and within-window ranks; it has no
+  aggregate score.
+- Added five-session relative acceleration, leadership-run duration, and the
+  factual four-quadrant posture: leading/improving, leading/weakening,
+  lagging/improving, or lagging/weakening. Missing data is not imputed and is
+  excluded only from the affected rank.
+- Added an independent raw-panel Oracle and shared the fixed registry with the
+  existing one-session Dashboard sector ETF list. Forty-seven related Sector,
+  Dashboard, ETF Relationship, and Market Regime tests pass; the complete
+  backend suite passes 1,794 tests.
+- A read-only real 2026-08-28 review returned all 11 records. Formal panel
+  loading took 215.446 seconds and the rotation calculation took 0.012777
+  seconds, so future integration must reuse Phase 1a rather than rescan
+  canonical history.
+- This development slice does not create an audit publication, Snapshot/API
+  resource, new navigation item, or Production deployment. Themes remain
+  unavailable without governed effective-dated membership.
+
 ## 2026-08-30 — Unify the authenticated and guest workspace identity
 
 - Aligned all three first-level workspaces with the public WH Alpha entry:

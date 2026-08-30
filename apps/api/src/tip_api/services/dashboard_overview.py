@@ -9,6 +9,7 @@ from decimal import Decimal
 from typing import Callable, Iterable
 
 from tip_api.contracts.market_data.v1 import InstrumentType, QualityStatus
+from tip_api.parameters.sector_etf_rotation_v1_0_0 import SECTOR_ETFS
 from tip_api.persistence.eod_read import EodSessionNotFoundError
 from tip_api.read_models.market import EodReturnReadModel, LiquidityMapNodeV1, LiquidityMapV1, MarketSummaryV1, MoversV1
 from tip_api.services.eod_market_data import EodMarketDataQueryService, EodQueryValidationError
@@ -30,19 +31,7 @@ TRADABLE_UNIVERSE_ID = "tradable_us_listed_equities_v1"
 OPERATING_UNIVERSE_ID = "all_operating_equities"
 ELIGIBLE_UNIVERSE_ID = "all_eligible_instruments"
 
-SECTOR_BENCHMARKS = (
-    ("XLC", "Communication Services"),
-    ("XLY", "Consumer Discretionary"),
-    ("XLP", "Consumer Staples"),
-    ("XLE", "Energy"),
-    ("XLF", "Financials"),
-    ("XLV", "Health Care"),
-    ("XLI", "Industrials"),
-    ("XLB", "Materials"),
-    ("XLRE", "Real Estate"),
-    ("XLK", "Information Technology"),
-    ("XLU", "Utilities"),
-)
+SECTOR_BENCHMARKS = tuple((item.ticker, item.sector) for item in SECTOR_ETFS)
 
 MARKET_BENCHMARKS = (
     ("SPY", "S&P 500 ETF"),

@@ -33,6 +33,11 @@
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized
   ratio view only after its 60-session history gate is actually satisfied.
+  ADR 0090 starts the missing sector/theme layer with a score-free, fixed
+  11-sector ETF proxy contract and deterministic 5/10/20-session calculation.
+  Next add immutable audit custody and pipeline reuse before any Snapshot,
+  navigation, or Production integration; Themes remain unavailable until
+  governed effective-dated membership exists.
 
 ## Implemented sequencing record
 
@@ -127,6 +132,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Local frontend/backend development toolchain
 - [x] Define Initial EOD Universe
 - [x] Define Sector/Industry, Theme, and Analytical Group boundary
+- [x] Score-free Sector ETF Rotation V1 contract, deterministic calculation,
+  and independent raw-panel Oracle
 - [x] Define normalized EOD logical contracts
 - [x] Instrument Master V1 model and validation tests
 - [x] EOD Price Bar V1 model and validation tests

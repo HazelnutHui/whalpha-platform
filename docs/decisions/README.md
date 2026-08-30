@@ -109,3 +109,7 @@ Each ADR should include:
 - [0084: Reserve One Pipeline Wake Before Invocation](0084-reserve-one-pipeline-wake-before-invocation.md)
 - [0085: Diagnose Unresolved Cadence Wakes Without Replay](0085-diagnose-unresolved-cadence-wakes-without-replay.md)
 - [0086: Physically Prove Point-in-Time Universe Membership](0086-physically-prove-point-in-time-universe-membership.md)
+- [0087: Visualize Candidate Position Without Inventing Price History](0087-visualize-candidate-position-without-inventing-price-history.md)
+- [0088: Bind Candidate Visual Context to Real Dell History](0088-bind-candidate-visual-context-to-real-dell-history.md)
+- [0089: Publish Candidate Visual Context in Lazy Detail Shards](0089-publish-candidate-visual-context-in-lazy-detail-shards.md)
+- [0090: Build Sector ETF Rotation Without a Composite Score](0090-build-sector-etf-rotation-without-a-composite-score.md)

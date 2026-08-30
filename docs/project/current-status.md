@@ -652,6 +652,23 @@ PNG favicon are active in Production.
 
 ## Next candidate work
 
+ADR 0090 begins the next product layer as a strictly labeled Sector ETF proxy,
+not a completed Sector/Theme workspace. Repository source now has a fixed
+11-sector registry, independent 5/10/20-session return and relative-rank axes,
+five-session relative acceleration, leadership-run duration, a four-quadrant
+descriptive posture, and an independent raw-panel Oracle. It has no composite
+score and does not claim constituent breadth, fund flow, alpha, causality, or
+official sector membership. Theme output remains explicitly unavailable.
+
+The real read-only 2026-08-28 Dell review produced all 11 records from the
+formal 26-session Market Regime input. Panel loading took 215.446 seconds while
+the new calculation took 0.012777 seconds. This proves that formal integration
+must reuse the already validated Phase 1a panel/audit and must not add another
+canonical-history scan. The next bounded slice is immutable temporary-root
+audit custody with this Oracle, followed by a review of additive Market
+Intelligence/Snapshot projection; no publication or deployment is authorized
+by the current repository work.
+
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal
 temporary audit now exist.

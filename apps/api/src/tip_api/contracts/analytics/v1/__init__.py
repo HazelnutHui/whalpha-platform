@@ -29,6 +29,14 @@ from .etf_relationship import (
     RelationshipConfidence,
     RelationshipState,
 )
+from .sector_etf_rotation import (
+    SectorEtfRotationSnapshotV1,
+    SectorRotationAvailability,
+    SectorRotationOracleComparisonV1,
+    SectorRotationPosture,
+    SectorRotationRecordV1,
+    SectorRotationWindowV1,
+)
 from .market_regime_preview import (
     MarketRegimeOpportunityMapResponseV1,
     MarketRegimePreviewManifestV1,
