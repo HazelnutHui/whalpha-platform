@@ -19,6 +19,7 @@ from tip_api.persistence.instrument_master import (
     InstrumentMasterSnapshotConflictError,
     InstrumentMasterSnapshotCorruptionError,
     InstrumentMasterSnapshotPersistenceError,
+    InstrumentMasterSnapshotReadResult,
     InstrumentMasterSnapshotWriteResult,
 )
 
@@ -124,6 +125,123 @@ class ParquetInstrumentMasterSnapshotRepository:
 
     root: Path
     created_at: datetime | None = None
+
+    def inspect_snapshot(self, as_of_date: date) -> InstrumentMasterSnapshotReadResult:
+        """Formally reread one snapshot without creating directories or files."""
+
+        root = _require_read_root(self.root)
+        snapshot_directory = _snapshot_manifest_dir(root, as_of_date)
+        _require_safe_directory(root, snapshot_directory)
+        if {item.name for item in snapshot_directory.iterdir()} != {MANIFEST_FILE_NAME}:
+            raise InstrumentMasterSnapshotCorruptionError(
+                "snapshot manifest file set is inconsistent"
+            )
+        snapshot_manifest_path = snapshot_directory / MANIFEST_FILE_NAME
+        _require_safe_file(root, snapshot_manifest_path)
+        manifest = _read_json(snapshot_manifest_path)
+        expected_header = {
+            "dataset_name": "instrument-master-logical-snapshot",
+            "schema_version": SCHEMA_VERSION,
+            "as_of_date": as_of_date.isoformat(),
+            "completion_status": COMPLETION_STATUS,
+        }
+        if any(manifest.get(key) != value for key, value in expected_header.items()):
+            raise InstrumentMasterSnapshotCorruptionError(
+                "snapshot manifest identity is inconsistent"
+            )
+        provider_id = _normalize_provider_id(manifest.get("provider_id"))
+        instrument_count = _required_nonnegative_int(manifest, "instrument_count")
+        identity_count = _required_nonnegative_int(manifest, "identity_count")
+        resolver_count = _required_nonnegative_int(manifest, "resolver_count")
+        if instrument_count == 0 or identity_count == 0 or resolver_count == 0:
+            raise InstrumentMasterSnapshotCorruptionError(
+                "completed snapshot must contain every identity family"
+            )
+        instrument_sha = _required_sha(manifest, "instrument_content_sha256")
+        identity_sha = _required_sha(manifest, "identity_content_sha256")
+        resolver_sha = _required_sha(manifest, "resolver_content_sha256")
+        snapshot_sha = _required_sha(manifest, "snapshot_content_sha256")
+        expected_snapshot_sha = records_fingerprint(
+            [{
+                "instrument_content_sha256": instrument_sha,
+                "identity_content_sha256": identity_sha,
+                "resolver_content_sha256": resolver_sha,
+            }]
+        )
+        if snapshot_sha != expected_snapshot_sha:
+            raise InstrumentMasterSnapshotCorruptionError(
+                "snapshot logical fingerprint is inconsistent"
+            )
+        created_at = _required_utc_datetime(manifest, "created_at")
+        instrument_partition = _instrument_partition_path(root, as_of_date)
+        identity_partition = _identity_partition_path(root, provider_id, as_of_date)
+        resolver_partition = _resolver_partition_path(root, provider_id, as_of_date)
+        expected_paths = {
+            "instrument_partition_path": str(instrument_partition),
+            "identity_partition_path": str(identity_partition),
+            "resolver_partition_path": str(resolver_partition),
+        }
+        if any(manifest.get(key) != value for key, value in expected_paths.items()):
+            raise InstrumentMasterSnapshotCorruptionError(
+                "snapshot partition reference is inconsistent"
+            )
+        instrument_table = _validate_read_partition(
+            root,
+            instrument_partition,
+            dataset_name="instrument-master",
+            as_of_date=as_of_date,
+            provider_id=provider_id,
+            expected_schema=INSTRUMENT_MASTER_ARROW_SCHEMA,
+            expected_fingerprint=instrument_sha,
+            expected_count=instrument_count,
+            table_to_rows=_instrument_table_to_rows,
+        )
+        identity_table = _validate_read_partition(
+            root,
+            identity_partition,
+            dataset_name="provider-instrument-identity",
+            as_of_date=as_of_date,
+            provider_id=provider_id,
+            expected_schema=PROVIDER_IDENTITY_ARROW_SCHEMA,
+            expected_fingerprint=identity_sha,
+            expected_count=identity_count,
+            table_to_rows=_identity_table_to_rows,
+        )
+        resolver_table = _validate_read_partition(
+            root,
+            resolver_partition,
+            dataset_name="provider-ticker-resolver",
+            as_of_date=as_of_date,
+            provider_id=provider_id,
+            expected_schema=PROVIDER_TICKER_RESOLVER_ARROW_SCHEMA,
+            expected_fingerprint=resolver_sha,
+            expected_count=resolver_count,
+            table_to_rows=_resolver_table_to_rows,
+        )
+        _validate_read_snapshot_relationships(
+            instrument_table=instrument_table,
+            identity_table=identity_table,
+            resolver_table=resolver_table,
+            as_of_date=as_of_date,
+            provider_id=provider_id,
+        )
+        return InstrumentMasterSnapshotReadResult(
+            schema_version=SCHEMA_VERSION,
+            as_of_date=as_of_date,
+            provider_id=provider_id,
+            instrument_count=instrument_count,
+            identity_count=identity_count,
+            resolver_count=resolver_count,
+            instrument_partition_path=instrument_partition,
+            identity_partition_path=identity_partition,
+            resolver_partition_path=resolver_partition,
+            snapshot_manifest_path=snapshot_manifest_path,
+            instrument_content_sha256=instrument_sha,
+            identity_content_sha256=identity_sha,
+            resolver_content_sha256=resolver_sha,
+            snapshot_content_sha256=snapshot_sha,
+            created_at=created_at,
+        )
 
     def publish_snapshot(
         self,
@@ -474,7 +592,96 @@ def _validate_existing_partition(path: Path, *, expected_schema: pa.Schema, expe
     _validate_parquet(path / PARQUET_FILE_NAME, expected_schema=expected_schema, expected_fingerprint=expected_fingerprint, expected_count=expected_count, table_to_rows=table_to_rows)
 
 
-def _validate_parquet(path: Path, *, expected_schema: pa.Schema, expected_fingerprint: str, expected_count: int, table_to_rows: Any) -> None:
+def _validate_read_partition(
+    root: Path,
+    path: Path,
+    *,
+    dataset_name: str,
+    as_of_date: date,
+    provider_id: str,
+    expected_schema: pa.Schema,
+    expected_fingerprint: str,
+    expected_count: int,
+    table_to_rows: Any,
+) -> pa.Table:
+    _require_safe_directory(root, path)
+    if {item.name for item in path.iterdir()} != {MANIFEST_FILE_NAME, PARQUET_FILE_NAME}:
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot partition file set is inconsistent"
+        )
+    manifest_path = path / MANIFEST_FILE_NAME
+    parquet_path = path / PARQUET_FILE_NAME
+    _require_safe_file(root, manifest_path)
+    _require_safe_file(root, parquet_path)
+    manifest = _read_json(manifest_path)
+    expected = {
+        "dataset_name": dataset_name,
+        "schema_version": SCHEMA_VERSION,
+        "as_of_date": as_of_date.isoformat(),
+        "provider_id": provider_id,
+        "record_count": expected_count,
+        "content_sha256": expected_fingerprint,
+        "parquet_file": PARQUET_FILE_NAME,
+        "completion_status": COMPLETION_STATUS,
+    }
+    if any(manifest.get(key) != value for key, value in expected.items()):
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot partition manifest is inconsistent"
+        )
+    return _validate_parquet(
+        parquet_path,
+        expected_schema=expected_schema,
+        expected_fingerprint=expected_fingerprint,
+        expected_count=expected_count,
+        table_to_rows=table_to_rows,
+    )
+
+
+def _validate_read_snapshot_relationships(
+    *,
+    instrument_table: pa.Table,
+    identity_table: pa.Table,
+    resolver_table: pa.Table,
+    as_of_date: date,
+    provider_id: str,
+) -> None:
+    instrument_rows = instrument_table.to_pylist()
+    instrument_ids = [str(row["instrument_id"]) for row in instrument_rows]
+    if len(instrument_ids) != len(set(instrument_ids)) or any(
+        row["as_of_date"] != as_of_date or row["source"] != provider_id
+        for row in instrument_rows
+    ):
+        raise InstrumentMasterSnapshotCorruptionError(
+            "Instrument Master snapshot relationships are inconsistent"
+        )
+    known_instrument_ids = set(instrument_ids)
+    identity_rows = identity_table.to_pylist()
+    if any(
+        row["as_of_date"] != as_of_date
+        or row["provider"] != provider_id
+        or (
+            row["canonical_instrument_id"] is not None
+            and str(row["canonical_instrument_id"]) not in known_instrument_ids
+        )
+        for row in identity_rows
+    ):
+        raise InstrumentMasterSnapshotCorruptionError(
+            "provider Identity snapshot relationships are inconsistent"
+        )
+    resolver_rows = resolver_table.to_pylist()
+    resolver_tickers = [str(row["provider_ticker"]) for row in resolver_rows]
+    if len(resolver_tickers) != len(set(resolver_tickers)) or any(
+        row["as_of_date"] != as_of_date
+        or row["provider"] != provider_id
+        or str(row["canonical_instrument_id"]) not in known_instrument_ids
+        for row in resolver_rows
+    ):
+        raise InstrumentMasterSnapshotCorruptionError(
+            "ticker resolver snapshot relationships are inconsistent"
+        )
+
+
+def _validate_parquet(path: Path, *, expected_schema: pa.Schema, expected_fingerprint: str, expected_count: int, table_to_rows: Any) -> pa.Table:
     try:
         table = pq.ParquetFile(path).read()
     except Exception as exc:
@@ -485,6 +692,7 @@ def _validate_parquet(path: Path, *, expected_schema: pa.Schema, expected_finger
         raise InstrumentMasterSnapshotCorruptionError("parquet row count mismatch")
     if records_fingerprint(table_to_rows(table)) != expected_fingerprint:
         raise InstrumentMasterSnapshotCorruptionError("parquet content fingerprint mismatch")
+    return table
 
 
 def _dataset_manifest(*, dataset_name: str, schema_version: str, as_of_date: date, provider_id: str, record_count: int, content_sha256: str, created_at: datetime, quality_summary: dict[str, object]) -> dict[str, object]:
@@ -536,6 +744,14 @@ def _prepare_root(root: Path) -> Path:
     return resolved
 
 
+def _require_read_root(root: Path) -> Path:
+    if not root.is_absolute() or not root.exists() or not root.is_dir() or root.is_symlink():
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot root is missing or unsafe"
+        )
+    return root.absolute()
+
+
 def _instrument_partition_path(root: Path, as_of_date: date) -> Path:
     return _contained_path(root, root / "market-data" / "instrument-master" / f"schema_version={SCHEMA_VERSION_PARTITION}" / f"as_of_date={as_of_date.isoformat()}")
 
@@ -560,13 +776,88 @@ def _contained_path(root: Path, path: Path) -> Path:
     return path
 
 
-def _normalize_provider_id(provider_id: str) -> str:
+def _require_safe_directory(root: Path, path: Path) -> Path:
+    _reject_symlink_ancestry(root, path)
+    if not path.is_dir() or path.is_symlink():
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot directory is missing or unsafe"
+        )
+    return path
+
+
+def _require_safe_file(root: Path, path: Path) -> Path:
+    _reject_symlink_ancestry(root, path)
+    if not path.is_file() or path.is_symlink():
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot file is missing or unsafe"
+        )
+    return path
+
+
+def _reject_symlink_ancestry(root: Path, path: Path) -> None:
+    absolute_root = root.absolute()
+    absolute_path = path.absolute()
+    if absolute_path == absolute_root or absolute_root not in absolute_path.parents:
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot path escaped repository root"
+        )
+    current = absolute_path
+    while current != absolute_root:
+        if current.exists() and current.is_symlink():
+            raise InstrumentMasterSnapshotCorruptionError(
+                "snapshot path contains a symlink"
+            )
+        current = current.parent
+
+
+def _normalize_provider_id(provider_id: object) -> str:
     if not isinstance(provider_id, str):
         raise InstrumentMasterSnapshotPersistenceError("provider_id must be a string")
     normalized = provider_id.strip()
     if not normalized:
         raise InstrumentMasterSnapshotPersistenceError("provider_id must not be empty")
     return normalized
+
+
+def _required_nonnegative_int(manifest: dict[str, object], field: str) -> int:
+    value = manifest.get(field)
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot count is invalid"
+        )
+    return value
+
+
+def _required_sha(manifest: dict[str, object], field: str) -> str:
+    value = manifest.get(field)
+    if (
+        not isinstance(value, str)
+        or len(value) != 64
+        or any(character not in "0123456789abcdef" for character in value)
+    ):
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot fingerprint is invalid"
+        )
+    return value
+
+
+def _required_utc_datetime(manifest: dict[str, object], field: str) -> datetime:
+    value = manifest.get(field)
+    if not isinstance(value, str):
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot timestamp is invalid"
+        )
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot timestamp is invalid"
+        ) from exc
+    if parsed.tzinfo is None or parsed.utcoffset() is None:
+        raise InstrumentMasterSnapshotCorruptionError(
+            "snapshot timestamp is invalid"
+        )
+    return parsed.astimezone(UTC)
 
 
 def write_json_atomic(path: Path, payload: dict[str, object]) -> None:
@@ -597,4 +888,3 @@ def _fsync_directory(path: Path) -> None:
         os.fsync(fd)
     finally:
         os.close(fd)
-

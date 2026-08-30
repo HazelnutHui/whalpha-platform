@@ -773,6 +773,16 @@ recorded in the active-state table and
   manifest. The readiness CLI accepts an exact coverage ID only. A 252-session
   six-family temporary-root fixture reaches review-only readiness, but real
   `/data` has no Historical Coverage directory and remains `data_blocked`.
+- ADR 0100 bridges the current real bytes into that boundary without a data
+  transition. The socket-guarded 2026-08-30 command formally reread 31 EOD and
+  31 EOD-bound Identity artifacts, then transitively validated deterministic
+  unpublished evidence fingerprints
+  `d7def47ee1fba89760a016ba52d79313bf3729aed2fee421c4e05a2596299cd5`
+  and
+  `a69530ea830f448ecb90949c3f2a4a871a87ae015d2c2d8e0e6ae0582e5d4e76`.
+  It counted 306,539 EOD rows and 307,466 canonical Identity instrument rows.
+  `/data` stayed exactly 694 files / 503,568,026 bytes; evidence/Coverage
+  directories remain absent and readiness remains 31/252 `data_blocked`.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

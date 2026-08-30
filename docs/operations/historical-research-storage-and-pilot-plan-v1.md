@@ -119,15 +119,24 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 8. **Complete:** add immutable family-evidence and Historical Coverage
    publication repositories whose formal reader transitively verifies source
    completion manifests and payload hashes under temporary roots.
-9. Re-review source permission/account entitlement/lifecycle coverage, bind a
+9. **Complete:** adapt the current canonical EOD and EOD-bound Identity bytes
+   into deterministic in-memory family evidence and transitively validate all
+   source manifests/payload hashes without publishing to `/data`.
+10. Re-review source permission/account entitlement/lifecycle coverage, bind a
    fresh inventory report, and obtain exact pilot authorization.
 
-Steps 1–8 are repository work and can proceed without provider access or
-`/data` writes. Step 9 is a separate external transition.
+Steps 1–9 are repository work and can proceed without provider access or
+`/data` writes. Step 10 is a separate external transition.
 
 The current `/data` root has no `market-data/historical-coverage` directory.
 Strategy readiness therefore remains `data_blocked`; fixture-only publication
 mechanics do not supply missing canonical facts.
+
+ADR 0100's 2026-08-30 real read-only pass validated 31 current EOD artifacts
+(306,539 rows) and 31 EOD-bound Identity artifacts (307,466 canonical
+instrument rows) as proposed family evidence. Both remain
+`validated_not_published`. The run preserved the exact 694-file / 503,568,026-
+byte root and also confirmed that `historical-coverage-evidence` is absent.
 
 ## Implemented read-only planner boundary
 

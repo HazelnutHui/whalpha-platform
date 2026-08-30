@@ -122,3 +122,4 @@ Each ADR should include:
 - [0097: Preregister Personal Strategy Research Before Backtesting](0097-preregister-personal-strategy-research-before-backtesting.md)
 - [0098: Bind Strategy Development to Formal Readiness Evidence](0098-bind-strategy-development-to-formal-readiness-evidence.md)
 - [0099: Require Transitive Physical Evidence for Historical Coverage](0099-require-transitive-physical-evidence-for-historical-coverage.md)
+- [0100: Adapt Current EOD and Identity Without Publishing Coverage](0100-adapt-current-eod-and-identity-without-publishing-coverage.md)

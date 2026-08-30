@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from typing import Literal, Protocol
 
@@ -46,6 +46,28 @@ class InstrumentMasterSnapshotWriteResult:
     status: Literal["published", "already_present"]
 
 
+@dataclass(frozen=True)
+class InstrumentMasterSnapshotReadResult:
+    """Validated, non-mutating view of one completed logical snapshot."""
+
+    schema_version: str
+    as_of_date: date
+    provider_id: str
+    instrument_count: int
+    identity_count: int
+    resolver_count: int
+    instrument_partition_path: Path
+    identity_partition_path: Path
+    resolver_partition_path: Path
+    snapshot_manifest_path: Path
+    instrument_content_sha256: str
+    identity_content_sha256: str
+    resolver_content_sha256: str
+    snapshot_content_sha256: str
+    created_at: datetime
+    status: Literal["reread"] = "reread"
+
+
 class InstrumentMasterSnapshotRepository(Protocol):
     """Repository boundary for point-in-time Instrument Master snapshots."""
 
@@ -61,4 +83,3 @@ class InstrumentMasterSnapshotRepository(Protocol):
     ) -> InstrumentMasterSnapshotWriteResult:
         """Publish one logical snapshot and return non-sensitive audit metadata."""
         ...
-

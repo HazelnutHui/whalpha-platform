@@ -583,6 +583,17 @@ read or used.
   The readiness command accepts only an exact coverage ID, never a manifest
   path. This is fixture-proven only: `/data` contains no Historical Coverage
   publication, so the 31/252-session `data_blocked` result is unchanged.
+- ADR 0100 now formally adapts the current canonical EOD and EOD-bound Identity
+  into the same family-evidence chain without publishing it. A socket-guarded
+  Dell run validated 31 EOD artifacts / 306,539 rows at fingerprint
+  `d7def47ee1fba89760a016ba52d79313bf3729aed2fee421c4e05a2596299cd5`
+  and 31 Identity artifacts / 307,466 canonical instrument rows at fingerprint
+  `a69530ea830f448ecb90949c3f2a4a871a87ae015d2c2d8e0e6ae0582e5d4e76`.
+  Report fingerprint is
+  `6ef8da023b0b92c96147e9e11f530c361a3c24a23ff4b6c8a39ec38d6bc12228`.
+  Both are `validated_not_published`; `/data` remained 694 files / 503,568,026
+  bytes and contains neither evidence nor Coverage publication. The 221-session
+  gap plus membership, action, lifecycle, and adjustment blockers remain.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

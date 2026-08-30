@@ -98,6 +98,11 @@ def test_explicit_arrow_schemas_and_round_trip(tmp_path):
     assert (result.instrument_partition_path / "part-00000.parquet").exists()
     assert (result.identity_partition_path / "part-00000.parquet").exists()
 
+    reread = repo.inspect_snapshot(AS_OF)
+    assert reread.status == "reread"
+    assert reread.instrument_count == 2
+    assert reread.snapshot_content_sha256 == result.snapshot_content_sha256
+
 
 def test_fingerprint_input_order_independent():
     records_a = (instrument(ID1, "TESTA"), instrument(ID2, "TESTB"))
@@ -153,3 +158,23 @@ def test_symlink_root_rejected(tmp_path):
             quality_summary={},
         )
 
+
+def test_read_only_snapshot_inspection_rejects_partition_manifest_drift(tmp_path):
+    repo = ParquetInstrumentMasterSnapshotRepository(tmp_path, created_at=INGESTED_AT)
+    result = repo.publish_snapshot(
+        instruments=(instrument(),),
+        identities=(identity(),),
+        resolvers=(resolver(),),
+        as_of_date=AS_OF,
+        provider_id="massive_stocks_basic",
+        quality_summary={},
+    )
+    manifest_path = result.instrument_partition_path / "manifest.json"
+    contents = manifest_path.read_text(encoding="utf-8")
+    manifest_path.write_text(
+        contents.replace('"record_count": 1', '"record_count": 2'),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(InstrumentMasterSnapshotCorruptionError, match="manifest"):
+        repo.inspect_snapshot(AS_OF)

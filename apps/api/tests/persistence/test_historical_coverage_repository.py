@@ -56,6 +56,51 @@ def _source_artifact(
 ) -> HistoricalCoverageArtifactEvidenceV1:
     directory = root / "source" / family.value
     directory.mkdir(parents=True)
+    if family is HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY:
+        payload_paths = []
+        partition_paths = {}
+        for field in ("instrument", "identity", "resolver"):
+            partition = root / "source" / family.value / field
+            partition.mkdir()
+            partition_paths[field] = partition
+            for name in ("manifest.json", "part-00000.parquet"):
+                path = partition / name
+                path.write_bytes(f"fixture:{family.value}:{field}:{name}".encode())
+                payload_paths.append(path)
+        logical = f"{index:x}" * 64
+        manifest_path = directory / "manifest.json"
+        manifest_path.write_text(
+            json.dumps(
+                {
+                    "dataset_name": "instrument-master-logical-snapshot",
+                    "completion_status": "completed",
+                    "instrument_count": 1,
+                    "snapshot_content_sha256": logical,
+                    "instrument_partition_path": str(partition_paths["instrument"]),
+                    "identity_partition_path": str(partition_paths["identity"]),
+                    "resolver_partition_path": str(partition_paths["resolver"]),
+                },
+                sort_keys=True,
+            ),
+            encoding="utf-8",
+        )
+        return HistoricalCoverageArtifactEvidenceV1(
+            completion_manifest=HistoricalCoverageFileReferenceV1(
+                path=manifest_path.relative_to(root).as_posix(),
+                physical_sha256=_sha(manifest_path),
+            ),
+            payload_files=tuple(
+                HistoricalCoverageFileReferenceV1(
+                    path=path.relative_to(root).as_posix(),
+                    physical_sha256=_sha(path),
+                )
+                for path in sorted(payload_paths)
+            ),
+            first_session=sessions[0],
+            last_session=sessions[-1],
+            record_count=1,
+            logical_fingerprint=logical,
+        )
     payload_path = directory / "part-00000.parquet"
     payload_path.write_bytes(f"fixture:{family.value}".encode("utf-8"))
     logical = f"{index:x}" * 64
@@ -63,6 +108,11 @@ def _source_artifact(
     manifest_path.write_text(
         json.dumps(
             {
+                "dataset_name": (
+                    "eod-price-bars"
+                    if family is HistoricalDatasetFamily.EOD_PRICE_BAR
+                    else family.value
+                ),
                 "completion_status": "completed",
                 "record_count": 1,
                 "logical_fingerprint": logical,
@@ -197,6 +247,36 @@ def test_dataset_evidence_round_trip_is_immutable_and_source_bound(tmp_path) -> 
     assert reread.evidence == evidence
     assert reread.physical_sha256 == published.physical_sha256
     assert again.status == "already_present"
+
+
+def test_dataset_evidence_can_be_transitively_validated_without_publication(
+    tmp_path,
+) -> None:
+    sessions = _sessions(3)
+    repository = ParquetHistoricalCoverageRepository(tmp_path)
+    artifact = _source_artifact(
+        tmp_path,
+        HistoricalDatasetFamily.EOD_PRICE_BAR,
+        sessions,
+        1,
+    )
+    evidence = build_historical_dataset_coverage_evidence(
+        family=HistoricalDatasetFamily.EOD_PRICE_BAR,
+        sessions=sessions,
+        artifacts=(artifact,),
+        record_count=1,
+        quarantined_record_count=0,
+        created_at=CREATED_AT,
+    )
+    before = tuple(sorted(path.relative_to(tmp_path) for path in tmp_path.rglob("*")))
+
+    result = repository.validate_dataset_evidence(evidence)
+
+    after = tuple(sorted(path.relative_to(tmp_path) for path in tmp_path.rglob("*")))
+    assert result.status == "validated_not_published"
+    assert result.publication_exists is False
+    assert not result.proposed_evidence_path.exists()
+    assert before == after
 
 
 def test_dataset_evidence_rejects_payload_tamper(tmp_path) -> None:

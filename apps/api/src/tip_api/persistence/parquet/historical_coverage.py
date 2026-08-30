@@ -16,6 +16,7 @@ from tip_api.contracts.market_data.v1 import (
     HistoricalCoverageArtifactEvidenceV1,
     HistoricalCoverageManifestV1,
     HistoricalDatasetCoverageEvidenceV1,
+    HistoricalDatasetFamily,
     historical_coverage_manifest_fingerprint,
 )
 from tip_api.persistence.historical_research import (
@@ -44,6 +45,17 @@ class HistoricalDatasetEvidenceWriteResult:
 
 
 @dataclass(frozen=True, slots=True)
+class HistoricalDatasetEvidenceValidationResult:
+    """Read-only validation result for evidence that may not be published."""
+
+    evidence: HistoricalDatasetCoverageEvidenceV1
+    proposed_evidence_path: Path
+    physical_sha256: str
+    publication_exists: bool
+    status: str
+
+
+@dataclass(frozen=True, slots=True)
 class HistoricalCoverageWriteResult:
     coverage: HistoricalCoverageManifestV1
     partition_path: Path
@@ -58,6 +70,39 @@ class ParquetHistoricalCoverageRepository:
     """Publish and formally reread historical coverage without copying facts."""
 
     root: Path
+
+    def validate_dataset_evidence(
+        self,
+        evidence: HistoricalDatasetCoverageEvidenceV1,
+    ) -> HistoricalDatasetEvidenceValidationResult:
+        """Transitively validate source bytes without publishing evidence."""
+
+        root = _require_read_root(self.root)
+        _validate_dataset_artifacts(root, evidence)
+        evidence_path = _dataset_evidence_path(root, evidence)
+        payload = _canonical_json_bytes(evidence.model_dump(mode="json"))
+        physical_sha256 = _bytes_sha256(payload)
+        if evidence_path.exists() or evidence_path.is_symlink():
+            existing, existing_sha = _read_dataset_evidence_file(root, evidence_path)
+            if existing.logical_fingerprint != evidence.logical_fingerprint:
+                raise HistoricalResearchConflictError(
+                    "immutable dataset coverage evidence differs"
+                )
+            return HistoricalDatasetEvidenceValidationResult(
+                evidence=existing,
+                proposed_evidence_path=evidence_path,
+                physical_sha256=existing_sha,
+                publication_exists=True,
+                status="already_present",
+            )
+        _reject_symlink_ancestry(root, evidence_path.parent)
+        return HistoricalDatasetEvidenceValidationResult(
+            evidence=evidence,
+            proposed_evidence_path=evidence_path,
+            physical_sha256=physical_sha256,
+            publication_exists=False,
+            status="validated_not_published",
+        )
 
     def publish_dataset_evidence(
         self,
@@ -314,11 +359,12 @@ def _validate_dataset_artifacts(
                 raise HistoricalResearchCorruptionError(
                     "dataset evidence physical file hash differs"
                 )
-        _validate_source_completion_manifest(root, artifact)
+        _validate_source_completion_manifest(root, evidence.family, artifact)
 
 
 def _validate_source_completion_manifest(
     root: Path,
+    family: HistoricalDatasetFamily,
     artifact: HistoricalCoverageArtifactEvidenceV1,
 ) -> None:
     manifest_path = root / PurePosixPath(artifact.completion_manifest.path)
@@ -327,7 +373,12 @@ def _validate_source_completion_manifest(
         raise HistoricalResearchCorruptionError(
             "source completion manifest is not completed"
         )
-    if manifest.get("record_count") != artifact.record_count:
+    count_field = (
+        "instrument_count"
+        if family is HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY
+        else "record_count"
+    )
+    if manifest.get(count_field) != artifact.record_count:
         raise HistoricalResearchCorruptionError(
             "source completion record count differs"
         )
@@ -340,6 +391,13 @@ def _validate_source_completion_manifest(
         raise HistoricalResearchCorruptionError(
             "source completion logical fingerprint differs"
         )
+    if family is HistoricalDatasetFamily.EOD_PRICE_BAR:
+        if manifest.get("dataset_name") != "eod-price-bars":
+            raise HistoricalResearchCorruptionError(
+                "EOD source completion family differs"
+            )
+    if family is HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY:
+        _validate_identity_snapshot_payload_bindings(root, artifact, manifest)
     named_payload = manifest.get("parquet_file")
     if isinstance(named_payload, str):
         expected_path = (
@@ -358,6 +416,44 @@ def _validate_source_completion_manifest(
             raise HistoricalResearchCorruptionError(
                 "source completion payload hash differs"
             )
+
+
+def _validate_identity_snapshot_payload_bindings(
+    root: Path,
+    artifact: HistoricalCoverageArtifactEvidenceV1,
+    manifest: dict[str, Any],
+) -> None:
+    if manifest.get("dataset_name") != "instrument-master-logical-snapshot":
+        raise HistoricalResearchCorruptionError(
+            "Identity source completion family differs"
+        )
+    required_payloads: set[str] = set()
+    for field in (
+        "instrument_partition_path",
+        "identity_partition_path",
+        "resolver_partition_path",
+    ):
+        raw_path = manifest.get(field)
+        if not isinstance(raw_path, str):
+            raise HistoricalResearchCorruptionError(
+                "Identity snapshot partition reference is invalid"
+            )
+        partition = Path(raw_path)
+        if not partition.is_absolute():
+            raise HistoricalResearchCorruptionError(
+                "Identity snapshot partition reference is invalid"
+            )
+        absolute = partition.absolute()
+        _reject_symlink_ancestry(root, absolute)
+        for name in (COMPLETION_FILE_NAME, "part-00000.parquet"):
+            required_payloads.add(
+                (PurePosixPath(absolute.relative_to(root).as_posix()) / name).as_posix()
+            )
+    actual_payloads = {item.path for item in artifact.payload_files}
+    if actual_payloads != required_payloads:
+        raise HistoricalResearchCorruptionError(
+            "Identity snapshot payload set is not fully evidence-bound"
+        )
 
 
 def _validate_coverage_fingerprint(coverage: HistoricalCoverageManifestV1) -> None:

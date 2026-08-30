@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-08-30 — Adapt current EOD and Identity into unpublished family evidence
+
+- Accepted ADR 0100 and added a formal read-only Identity snapshot reader that
+  validates the logical snapshot, all three component manifests, exact file
+  sets, Arrow schemas, counts, and recalculated content fingerprints.
+- Added `current-historical-mechanics-evidence/1.0` and a socket-guarded CLI.
+  It converts formally read current EOD and EOD-bound Identity into deterministic
+  in-memory family evidence and transitively validates every completion
+  manifest and payload SHA without publishing.
+- The real Dell run covered 31 sessions from 2026-07-17 through 2026-08-28:
+  EOD has 306,539 rows and evidence fingerprint
+  `d7def47ee1fba89760a016ba52d79313bf3729aed2fee421c4e05a2596299cd5`;
+  Identity has 307,466 canonical instrument rows and fingerprint
+  `a69530ea830f448ecb90949c3f2a4a871a87ae015d2c2d8e0e6ae0582e5d4e76`.
+  The combined report fingerprint is
+  `6ef8da023b0b92c96147e9e11f530c361a3c24a23ff4b6c8a39ec38d6bc12228`.
+- Both families are `validated_not_published`. `/data` remained exactly 694
+  files / 503,568,026 bytes and contains neither family-evidence nor Historical
+  Coverage directories. No network, provider request, `/data` write, model
+  run, publication, deployment, or scheduler change occurred.
+- Focused adapter/persistence regression passed 19 tests, and the complete
+  backend regression passed 1,845 tests with only the two existing dependency
+  deprecation warnings.
+
 ## 2026-08-30 — Bind Historical Coverage to transitive physical evidence
 
 - Accepted ADR 0099 and added self-fingerprinted Dataset Coverage Evidence 1.0

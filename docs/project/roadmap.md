@@ -318,6 +318,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   31/252-session data-blocked baseline
 - [x] Transitive physical Historical Coverage evidence/publication repository,
   formal reader, and exact-ID-only readiness bridge under temporary roots
+- [x] Read-only current EOD/Identity family-evidence adapters with real Dell
+  31-session transitive validation and no publication
 
 ## Next Small Target
 

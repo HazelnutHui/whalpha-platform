@@ -4,8 +4,9 @@
 
 Implemented as provider-neutral, immutable Python/Pydantic row and manifest
 contracts plus explicit PyArrow schemas and temporary-root Parquet repositories
-with synthetic tests. No provider adapter, canonical dataset, `/data` write,
-or research result exists.
+with synthetic tests. ADR 0100 also adapts the existing canonical Dell EOD and
+Identity families into deterministic, read-only, unpublished family evidence.
+No missing-family backfill, `/data` write, or research result exists.
 
 ## Purpose
 
@@ -131,4 +132,6 @@ entitlement, lifecycle-source coverage, and an exact authorized acquisition
 plan. Cross-family state is now governed by Data Record Governance V1 without
 replacing the domain statuses in this contract.
 No physical family evidence or Historical Coverage publication currently
-exists under `/data`; the new repository boundary is fixture-only.
+exists under `/data`. The publication boundary remains fixture-only, while the
+current 31 EOD/Identity sessions now pass the same transitive validation in
+memory under `current-historical-mechanics-evidence/1.0`.

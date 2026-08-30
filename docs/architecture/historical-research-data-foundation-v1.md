@@ -11,15 +11,20 @@ The provider-neutral Python/Pydantic row and coverage contracts plus explicit
 PyArrow schemas and temporary-root Parquet repositories are now implemented
 with synthetic tests. Saved synthetic split/dividend mapping, independent
 adjustment invariants, and the default-deny exact pilot planner are also
-implemented. Canonical historical data remains absent. Data Record Governance
-V1 supplies the cross-family state vocabulary without replacing these domain
-contracts.
+implemented. A complete canonical historical research foundation remains
+absent; the retained 31-session EOD/Identity mechanics are only two of the six
+required families. Data Record Governance V1 supplies the cross-family state
+vocabulary without replacing these domain contracts.
 
-ADR 0099 also implements the fixture-only physical Historical Coverage layer.
-It stores no duplicate facts: each family evidence manifest transitively binds
+ADR 0099 also implements the physical Historical Coverage layer, with all
+publication tests limited to fixtures. It stores no duplicate facts: each
+family evidence manifest transitively binds
 the original completion manifest and payload hashes, and the final Coverage
 reader refuses to return a typed claim if any referenced byte or boundary has
-drifted. No such evidence or coverage publication exists under `/data` yet.
+drifted. ADR 0100 adds a no-write adapter that formally rereads current
+canonical EOD and all three Identity payload families, then transitively
+validates proposed in-memory family evidence. No such evidence or coverage
+publication exists under `/data` yet.
 
 The immediate objective is not “more bars.” It is a history that can answer,
 for each signal session, which instrument existed, which Universe decision was
@@ -28,15 +33,18 @@ and whether the security reached a governed terminal outcome.
 
 ## Current readiness
 
-The 2026-08-27 audit found:
+The earlier 2026-08-27 audit found 29 EOD sessions. Current 2026-08-30 formal
+mechanics evidence now finds:
 
-- 29 completed EOD sessions and 30 Identity snapshots;
+- 31 completed EOD sessions and 31 EOD-bound Identity snapshots;
 - same-session Identity binding for every retained EOD partition;
 - no physical daily Universe Membership dataset;
 - no corporate-action or lifecycle dataset;
 - unverified all-one adjustment factors on every bar;
 - no retained inactive/delisted Identity rows or terminal dates;
-- 252 sessions required and 504 preferred by evaluation policy.
+- 252 sessions required and 504 preferred by evaluation policy;
+- both current families are `validated_not_published`, with 221 sessions and
+  four other required data families still missing.
 
 The formal state therefore remains
 `NOT_READY_FOR_PERFORMANCE_EVALUATION`.
