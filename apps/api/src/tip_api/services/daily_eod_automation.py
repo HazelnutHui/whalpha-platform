@@ -34,6 +34,9 @@ from tip_api.services.candidate_entry_geometry_audit import (
 from tip_api.services.candidate_strategy_channel_audit import (
     read_candidate_strategy_channel_audit,
 )
+from tip_api.services.candidate_visual_context_audit import (
+    read_candidate_visual_context_batches,
+)
 from tip_api.services.etf_relationship_audit import (
     read_etf_relationship_planning_evidence,
 )
@@ -59,7 +62,7 @@ from tip_api.services.private_dashboard_snapshot import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-automation-plan/1.5"
+CONTRACT_VERSION = "daily-eod-automation-plan/1.6"
 
 
 class DailyEodAutomationError(RuntimeError):
@@ -90,6 +93,7 @@ class NextAction(StrEnum):
     CALCULATE_ETF_RELATIONSHIPS = "calculate_etf_relationships"
     BUILD_MARKET_PREVIEW = "build_market_preview"
     CALCULATE_STRATEGY_CHANNELS = "calculate_strategy_channels"
+    CALCULATE_CANDIDATE_VISUAL_CONTEXT = "calculate_candidate_visual_context"
     PREPARE_MARKET_INTELLIGENCE_PLAN = "prepare_market_intelligence_plan"
     REVIEW_PUBLICATION = "review_publication"
     PREPARE_DASHBOARD_SNAPSHOT_PLAN = "prepare_dashboard_snapshot_plan"
@@ -505,6 +509,65 @@ def plan_daily_eod_automation(
             "strategy_channels_source_binding_mismatch",
         )
 
+    visual_context_path = _candidate_visual_context_output_path(
+        paths.candidate_audit
+    )
+    visual_context = _inspect(
+        stage="visual_context",
+        path=visual_context_path,
+        reader=lambda: read_candidate_visual_context_batches(
+            visual_context_path
+        ),
+        session=lambda value: str(value[0]["as_of_session"]),
+        fingerprint=lambda value: str(
+            value[0]["logical_content_fingerprint"]
+        ),
+    )
+    observations.append(visual_context.observation)
+    if visual_context.observation.status is not ArtifactStatus.COMPLETED:
+        return _stop_before_stage(
+            target_session=target_session,
+            prior_session=prior_session,
+            stage="visual_context",
+            failed=visual_context.observation,
+            observations=observations,
+            locations=locations,
+        )
+    visual_manifest, visual_batches = visual_context.payload
+    if visual_context.observation.as_of_session != target_session.isoformat():
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "visual_context_session_mismatch",
+        )
+    visual_source = visual_manifest.get("source", {})
+    if (
+        visual_source.get("candidate_audit", {}).get(
+            "logical_content_fingerprint"
+        )
+        != candidate.observation.logical_fingerprint
+        or visual_source.get("entry_geometry_audit", {}).get(
+            "logical_content_fingerprint"
+        )
+        != entry.observation.logical_fingerprint
+        or tuple(batch.universe_id for batch in visual_batches)
+        != tuple(candidate_manifest.get("universe_ids", ()))
+        or any(
+            batch.source_history_fingerprint
+            != phase1a.payload.input_manifest.get(
+                "history_source_fingerprint"
+            )
+            for batch in visual_batches
+        )
+    ):
+        return _blocked(
+            target_session,
+            prior_session,
+            observations,
+            "visual_context_source_binding_mismatch",
+        )
+
     publication_candidate = (
         paths.market_intelligence_output_root
         / "market-intelligence.plan.artifacts"
@@ -742,6 +805,8 @@ def plan_daily_eod_automation(
         != active_market_intelligence.payload.logical_fingerprint
         or snapshot_plan.candidate_strategy_audit_logical_fingerprint
         != strategy.observation.logical_fingerprint
+        or snapshot_plan.candidate_visual_context_audit_logical_fingerprint
+        != visual_context.observation.logical_fingerprint
         or snapshot_plan.sector_rotation_audit_logical_fingerprint
         != sector_rotation.observation.logical_fingerprint
         or snapshot_plan.sector_rotation_product_logical_fingerprint
@@ -1014,6 +1079,10 @@ def _stop_before_stage(
             PlanStatus.READY_FOR_OFFLINE_CALCULATION,
             NextAction.CALCULATE_STRATEGY_CHANNELS,
         ),
+        "visual_context": (
+            PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+            NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT,
+        ),
     }
     status, action = action_by_stage[stage]
     return _build_plan(
@@ -1095,6 +1164,9 @@ def _stage_locations(target_session: date, paths: DailyEodAutomationPaths) -> di
         "phase2": paths.phase2_audit,
         "preview": paths.preview_bundle,
         "strategy_channels": paths.strategy_channel_audit,
+        "visual_context": _candidate_visual_context_output_path(
+            paths.candidate_audit
+        ),
         "publication_output": paths.market_intelligence_output_root,
         "publication_plan": paths.market_intelligence_approval_plan,
         "snapshot_output": paths.snapshot_output_root,
@@ -1115,6 +1187,7 @@ def _downstream_existing(stage: str, locations: Mapping[str, Path]) -> tuple[str
         "phase2",
         "preview",
         "strategy_channels",
+        "visual_context",
         "publication_output",
         "publication_plan",
         "snapshot_output",
@@ -1139,6 +1212,7 @@ def _validate_paths(paths: DailyEodAutomationPaths) -> None:
         paths.phase2_audit,
         paths.preview_bundle,
         paths.strategy_channel_audit,
+        _candidate_visual_context_output_path(paths.candidate_audit),
         paths.market_intelligence_output_root,
         paths.market_intelligence_approval_plan,
         paths.snapshot_output_root,
@@ -1179,6 +1253,10 @@ def _validate_observation(observation: ArtifactObservation) -> None:
 
 def _sector_rotation_output_path(phase1a_audit: Path) -> Path:
     return phase1a_audit.with_name(f"{phase1a_audit.name}-sector-etf-rotation")
+
+
+def _candidate_visual_context_output_path(candidate_audit: Path) -> Path:
+    return candidate_audit.with_name(f"{candidate_audit.name}-visual-context")
 
 
 def _lexists(path: Path) -> bool:

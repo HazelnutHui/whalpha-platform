@@ -26,6 +26,7 @@ ENTRY_FP = "8" * 64
 PHASE2_FP = "9" * 64
 PREVIEW_FP = "a" * 64
 STRATEGY_FP = "b" * 64
+VISUAL_FP = "c" * 64
 MI_PLAN_FP = "c" * 64
 MI_POINTER_FP = "d" * 64
 MI_PAYLOAD_SHA = "e" * 64
@@ -156,6 +157,7 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
                 "execution_mode": "verified_prior_incremental",
                 "prior_as_of_session": PRIOR.isoformat(),
                 "prior_audit_logical_fingerprint": PRIOR_CANDIDATE_FP,
+                "universe_ids": ["us_equity_primary", "us_equity_secondary"],
             },
             validation_ledger={
                 "validation_tier": "daily",
@@ -219,6 +221,34 @@ def _install_completed_readers(monkeypatch, paths, *, existing=None) -> None:
                 },
             },
         },
+    )
+    monkeypatch.setattr(
+        automation,
+        "read_candidate_visual_context_batches",
+        lambda path: (
+            {
+                "as_of_session": TARGET.isoformat(),
+                "logical_content_fingerprint": VISUAL_FP,
+                "source": {
+                    "candidate_audit": {
+                        "logical_content_fingerprint": CANDIDATE_FP,
+                    },
+                    "entry_geometry_audit": {
+                        "logical_content_fingerprint": ENTRY_FP,
+                    },
+                },
+            },
+            (
+                SimpleNamespace(
+                    universe_id="us_equity_primary",
+                    source_history_fingerprint=HISTORY_SOURCE_FP,
+                ),
+                SimpleNamespace(
+                    universe_id="us_equity_secondary",
+                    source_history_fingerprint=HISTORY_SOURCE_FP,
+                ),
+            ),
+        ),
     )
     monkeypatch.setattr(
         automation,
@@ -297,6 +327,7 @@ def test_all_formal_analytics_are_ready_for_separate_publication_review(monkeypa
         "phase2",
         "preview",
         "strategy_channels",
+        "visual_context",
         "publication_plan",
         "market_intelligence_active",
     ]
@@ -415,6 +446,7 @@ def test_snapshot_plan_2_6_advances_to_separate_snapshot_review(
             market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
             market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
             candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+            candidate_visual_context_audit_logical_fingerprint=VISUAL_FP,
             sector_rotation_audit_logical_fingerprint=SECTOR_ROTATION_FP,
             sector_rotation_product_logical_fingerprint=(
                 SECTOR_ROTATION_PRODUCT_FP
@@ -434,6 +466,46 @@ def test_snapshot_plan_2_6_advances_to_separate_snapshot_review(
     assert plan.reason_codes == ("snapshot_plan_ready_for_review",)
 
 
+def test_snapshot_plan_must_bind_the_exact_visual_context_audit(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    paths = _paths(tmp_path)
+    _install_completed_readers(monkeypatch, paths)
+    _install_active_market_intelligence(monkeypatch, paths)
+    monkeypatch.setattr(
+        automation,
+        "read_dashboard_snapshot_approval_plan",
+        lambda _path: SimpleNamespace(
+            plan_version="2.6",
+            analysis_session=TARGET,
+            plan_content_fingerprint="0" * 64,
+            candidate_path=str(
+                paths.snapshot_output_root / "2026-08-26T210000Z-abcdef0"
+            ),
+            market_intelligence_publication_id=MI_PUBLICATION_ID,
+            market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
+            market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
+            candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+            candidate_visual_context_audit_logical_fingerprint="f" * 64,
+            sector_rotation_audit_logical_fingerprint=SECTOR_ROTATION_FP,
+            sector_rotation_product_logical_fingerprint=(
+                SECTOR_ROTATION_PRODUCT_FP
+            ),
+            pointer_path=str(paths.data_root / "snapshot-active.json"),
+            planned_pointer_fingerprint="1" * 64,
+        ),
+    )
+
+    plan = automation.plan_daily_eod_automation(
+        target_session=TARGET,
+        paths=paths,
+    )
+
+    assert plan.status is automation.PlanStatus.BLOCKED
+    assert plan.reason_codes == ("snapshot_plan_source_binding_mismatch",)
+
+
 def _install_active_snapshot(monkeypatch, paths, *, release_id="2026-08-26T210000Z-abcdef0"):
     target_path = paths.data_root / "snapshot" / release_id
     pointer_fingerprint = "1" * 64
@@ -451,6 +523,7 @@ def _install_active_snapshot(monkeypatch, paths, *, release_id="2026-08-26T21000
             market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
             market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
             candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+            candidate_visual_context_audit_logical_fingerprint=VISUAL_FP,
             sector_rotation_audit_logical_fingerprint=SECTOR_ROTATION_FP,
             sector_rotation_product_logical_fingerprint=(
                 SECTOR_ROTATION_PRODUCT_FP
@@ -660,6 +733,10 @@ def test_missing_sector_rotation_after_phase1a_fails_closed(
         ("phase2", automation.NextAction.CALCULATE_ETF_RELATIONSHIPS),
         ("preview", automation.NextAction.BUILD_MARKET_PREVIEW),
         ("strategy_channels", automation.NextAction.CALCULATE_STRATEGY_CHANNELS),
+        (
+            "visual_context",
+            automation.NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT,
+        ),
     ],
 )
 def test_missing_latter_half_stage_selects_one_exact_offline_action(
@@ -812,6 +889,34 @@ def test_publication_plan_source_lineage_mismatch_blocks(monkeypatch, tmp_path) 
                 },
             },
             "strategy_channels_source_binding_mismatch",
+        ),
+        (
+            "read_candidate_visual_context_batches",
+            lambda path: (
+                {
+                    "as_of_session": TARGET.isoformat(),
+                    "logical_content_fingerprint": VISUAL_FP,
+                    "source": {
+                        "candidate_audit": {
+                            "logical_content_fingerprint": CANDIDATE_FP,
+                        },
+                        "entry_geometry_audit": {
+                            "logical_content_fingerprint": "f" * 64,
+                        },
+                    },
+                },
+                (
+                    SimpleNamespace(
+                        universe_id="us_equity_primary",
+                        source_history_fingerprint=HISTORY_SOURCE_FP,
+                    ),
+                    SimpleNamespace(
+                        universe_id="us_equity_secondary",
+                        source_history_fingerprint=HISTORY_SOURCE_FP,
+                    ),
+                ),
+            ),
+            "visual_context_source_binding_mismatch",
         ),
     ],
 )

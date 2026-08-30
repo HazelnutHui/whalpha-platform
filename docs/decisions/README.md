@@ -115,3 +115,4 @@ Each ADR should include:
 - [0090: Build Sector ETF Rotation Without a Composite Score](0090-build-sector-etf-rotation-without-a-composite-score.md)
 - [0091: Custody Sector ETF Rotation After Phase 1a](0091-custody-sector-etf-rotation-after-phase1a.md)
 - [0092: Project Sector Rotation as Lazy Market Intelligence](0092-project-sector-rotation-as-lazy-market-intelligence.md)
+- [0093: Integrate Candidate Visual Context into Daily Planning](0093-integrate-candidate-visual-context-into-daily-planning.md)

@@ -35,9 +35,12 @@ known result. The planner itself still creates no file.
 | Completion-to-next-start interval | 5 minutes minimum | Prevents an in-process or rapid cross-process loop |
 | Invocations per planner/process | 0 | The planner only proposes; Runtime 1.0 may perform at most one in a separate process boundary |
 
-The transition ceiling is derived from the current five-attempt provider
-policy, separate canonical Apply, and ten offline actions. It is conservative
-review capacity, not expected workload or approved Production timing.
+The original transition ceiling was derived from the five-attempt provider
+policy, separate canonical Apply, and ten offline actions. The pipeline now has
+an eleventh Visual Context action, but the ceiling remains 16 rather than being
+silently widened. A worst-case session may therefore stop for later review
+before every offline action completes. It is conservative review capacity, not
+expected workload or approved Production timing.
 
 ## Outcomes
 

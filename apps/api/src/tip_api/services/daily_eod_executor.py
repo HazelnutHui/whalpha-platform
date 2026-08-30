@@ -28,6 +28,7 @@ from tip_api.persistence.parquet.dashboard_snapshot_active import (
 from tip_api.services import (
     candidate_entry_geometry_cli,
     candidate_strategy_channel_cli,
+    candidate_visual_context_cli,
     dashboard_snapshot_v2_cli,
     etf_relationship_cli,
     market_regime_cli,
@@ -56,7 +57,7 @@ from tip_api.services.oci_dashboard_serving_bundle import (
 )
 
 
-EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.4"
+EXECUTOR_CONTRACT = "daily-eod-single-action-executor/1.5"
 OFFLINE_ACTIONS = (
     NextAction.CALCULATE_PHASE1A,
     NextAction.CALCULATE_PHASE1B_INCREMENTAL,
@@ -65,6 +66,7 @@ OFFLINE_ACTIONS = (
     NextAction.CALCULATE_ETF_RELATIONSHIPS,
     NextAction.BUILD_MARKET_PREVIEW,
     NextAction.CALCULATE_STRATEGY_CHANNELS,
+    NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT,
     NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
     NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
     NextAction.BUILD_SERVING_BUNDLE,
@@ -77,6 +79,7 @@ ACTION_STAGE = {
     NextAction.CALCULATE_ETF_RELATIONSHIPS: "phase2",
     NextAction.BUILD_MARKET_PREVIEW: "preview",
     NextAction.CALCULATE_STRATEGY_CHANNELS: "strategy_channels",
+    NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT: "visual_context",
     NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN: "publication_plan",
     NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN: "snapshot_plan",
     NextAction.BUILD_SERVING_BUNDLE: "serving_bundle",
@@ -191,6 +194,13 @@ def execute_daily_eod_action(
     _validate_execution_config(config)
     if expected_action not in OFFLINE_ACTIONS:
         raise DailyEodExecutorError("only governed offline daily actions may execute")
+    if (
+        expected_action is NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT
+        and config.panel_cache_root is None
+    ):
+        raise DailyEodExecutorError(
+            "Candidate Visual Context requires the exact panel cache root"
+        )
     if expected_action is NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN and (
         config.publication_created_at is None
         or config.publication_expected_current_state_fingerprint is None
@@ -518,6 +528,27 @@ def run_offline_action(
             str(output),
         ]
         summary = _invoke_main(candidate_strategy_channel_cli.main, argv)
+    elif action is NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT:
+        if config.panel_cache_root is None:
+            raise DailyEodExecutorError(
+                "Candidate Visual Context requires the exact panel cache root"
+            )
+        output = _candidate_visual_context_output_path(
+            config.paths.candidate_audit
+        )
+        argv = [
+            "--as-of-session",
+            session,
+            "--candidate-audit",
+            str(config.paths.candidate_audit),
+            "--entry-geometry-audit",
+            str(config.paths.entry_geometry_audit),
+            "--panel-cache-root",
+            str(config.panel_cache_root),
+            "--output-dir",
+            str(output),
+        ]
+        summary = _invoke_main(candidate_visual_context_cli.main, argv)
     elif action is NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN:
         if (
             config.publication_created_at is None
@@ -579,6 +610,12 @@ def run_offline_action(
             market_intelligence.publication_id,
             "--candidate-strategy-audit",
             str(config.paths.strategy_channel_audit),
+            "--candidate-visual-context-audit",
+            str(
+                _candidate_visual_context_output_path(
+                    config.paths.candidate_audit
+                )
+            ),
             "--analysis-session",
             session,
         ]
@@ -730,6 +767,10 @@ def _action_output_path(action: NextAction, config: DailyEodExecutionConfig) -> 
         return config.paths.preview_bundle
     if action is NextAction.CALCULATE_STRATEGY_CHANNELS:
         return config.paths.strategy_channel_audit
+    if action is NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT:
+        return _candidate_visual_context_output_path(
+            config.paths.candidate_audit
+        )
     if action is NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN:
         return config.paths.market_intelligence_approval_plan
     if action is NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN:
@@ -744,6 +785,10 @@ def _action_output_path(action: NextAction, config: DailyEodExecutionConfig) -> 
 
 def _sector_rotation_output_path(phase1a_audit: Path) -> Path:
     return phase1a_audit.with_name(f"{phase1a_audit.name}-sector-etf-rotation")
+
+
+def _candidate_visual_context_output_path(candidate_audit: Path) -> Path:
+    return candidate_audit.with_name(f"{candidate_audit.name}-visual-context")
 
 
 def _validate_execution_config(config: DailyEodExecutionConfig) -> None:

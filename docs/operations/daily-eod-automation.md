@@ -7,7 +7,7 @@ executor, and separately explicit one-shot Market Intelligence and Dashboard
 Snapshot Apply ports.
 The planner formally reconciles one exact target session and reports one safe
 next action. The executor can consume one unchanged plan fingerprint and run
-only one of ten offline daily actions under durable Dell custody: seven
+only one of eleven offline daily actions under durable Dell custody: eight
 analytics calculations, MI and Dashboard Snapshot approval-plan preparation,
 and exact active-Snapshot serving-bundle construction. Both publication ports are absent by default and cannot be
 inferred from readiness. None of these parts enables a timer.
@@ -24,6 +24,7 @@ same-day Identity
   -> ETF relationships (Phase 2)
   -> Market Regime preview
   -> Candidate strategy channels
+  -> Candidate Visual Context
   -> Market Intelligence approval plan
   -> publication review
   -> separately invoked Market Intelligence Apply
@@ -34,6 +35,14 @@ same-day Identity
   -> deployment review
   -> separately enabled one-shot OCI deployment
 ```
+
+Automation Plan 1.6 and Single-action Executor 1.5 add the Visual Context
+stage with exact Candidate, Entry Geometry, history, panel-cache, and Oracle
+bindings. A real direct-child `/tmp` rehearsal passed. The persistent workspace
+is intentionally outside `/tmp`, while several older audit CLIs still enforce
+direct-child `/tmp` custody. Until one shared persistent-artifact policy and a
+real CLI rehearsal close that mismatch, the installed timer must remain read-
+only and the unattended calculation chain must not be described as enabled.
 
 Acquisition and canonical `/data` apply remain authorization boundaries.
 Market Intelligence and Dashboard Snapshot publication are separate one-shot
@@ -658,12 +667,14 @@ Existing direct `/tmp` children remain accepted only for historical and
 controlled one-shot compatibility. No persistent root, repeated cadence,
 coordinator capability, or new systemd unit is installed by ADR 0081.
 
-Repository source now emits Automation Plan 1.5. It observes the distinct
-Sector Rotation audit derived beside Phase 1a, validates its exact session,
+Repository source now emits Automation Plan 1.6. It retains Plan 1.5's
+distinct Sector Rotation audit derived beside Phase 1a, validates its exact session,
 Phase 1a fingerprint, and history source, and requires MI Approval Plan 1.3 to
 freeze the same audit and product fingerprints. Missing or mismatched evidence
 stops at operator diagnosis; the planner does not repair, replay, publish, or
-skip it. Historical Automation Plan 1.4 records remain historical evidence.
+skip it. Plan 1.6 additionally requires the source-bound Candidate Visual
+Context stage before MI planning. Historical Automation Plan 1.4/1.5 records
+remain historical evidence.
 
 ### Repository-only bounded cadence candidate
 

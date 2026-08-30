@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-30 — Add Candidate Visual Context to daily planning
+
+- Accepted ADR 0093 and advanced the daily planner/executor/coordinator
+  contracts to 1.6/1.5/1.13. Candidate Visual Context is now a distinct stage
+  after Strategy Channels and before MI planning.
+- The planner strictly rereads same-session Candidate, Entry Geometry, ordered
+  Universe, Phase 1a history, and zero-Oracle evidence. Snapshot planning
+  passes the exact audit and requires Plan 2.6 to bind its fingerprint.
+- A real Dell `/tmp` executor-stage run completed 3,541 rows in about 27
+  seconds, made zero external requests and Production writes, and reproduced
+  logical fingerprint
+  `3b8ddbf3cc7d35cf0ea2b8f257939d23cec6f1d463e0d16efce9b5fb1f23961f`.
+- The persistent-workspace path policy remains incompatible with several
+  older real audit CLIs. Planner/mock execution did not prove that boundary;
+  it is explicitly blocking unattended activation rather than being hidden.
+
 ## 2026-08-30 — Project Sector Rotation through Snapshot 1.11 / Dashboard 2.8
 
 - Added Snapshot 1.11 / Dashboard 2.8 and Approval Plan 2.6. The immutable

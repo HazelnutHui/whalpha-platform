@@ -93,6 +93,7 @@ def plan(
                 NextAction.CALCULATE_ETF_RELATIONSHIPS,
                 NextAction.BUILD_MARKET_PREVIEW,
                 NextAction.CALCULATE_STRATEGY_CHANNELS,
+                NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT,
                 NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
                 NextAction.PREPARE_DASHBOARD_SNAPSHOT_PLAN,
                 NextAction.BUILD_SERVING_BUNDLE,

@@ -108,10 +108,11 @@ planner is now implemented. A real 2026-08-26 rehearsal formally reconciled
 the corrected incremental chain and selected `calculate_entry_geometry` as its
 sole next action, with zero external requests and Production writes. A
 single-action executor and durable Dell run-custody implementation now consume
-only an exact unchanged plan for one of ten offline daily actions. The first
-seven are analytics actions; the eighth prepares an MI approval plan and the
-ninth prepares a Dashboard Snapshot approval plan; the tenth constructs and
-formally rereads an exact active-Snapshot serving bundle. All remain without a
+only an exact unchanged plan for one of eleven offline daily actions. Eight
+are analytics actions, including Candidate Visual Context; the ninth prepares
+an MI approval plan, the tenth prepares a Dashboard Snapshot approval plan,
+and the eleventh constructs and formally rereads an exact active-Snapshot
+serving bundle. All remain without a
 Production write or network authority. The executor holds a global lock, journals start/terminal
 events in an immutable
 cross-session hash chain, validates output evidence, and re-plans before
@@ -869,10 +870,13 @@ recorded in the active-state table and
   workspace lazily loads the checksum-bound file and keeps 5/10/20-session
   relative leadership, acceleration, and persistence separate. A real
   2026-08-28 tmp-only MI 1.3 rehearsal and Snapshot 1.11/Plan 2.6 build passed
-  with zero Production writes. The unattended executor still lacks automatic
-  Candidate Visual Context generation, so it cannot yet prepare the required
-  Plan 2.6 from an MI 1.3 session without stopping. Active Production remains
-  MI 1.2 and Snapshot 1.10 / Dashboard 2.7; the new workspace is not deployed.
+  with zero Production writes. Automation Plan 1.6 and Executor 1.5 now add a
+  strict Candidate Visual Context stage and pass its exact audit into Plan 2.6;
+  a real 3,541-row `/tmp` executor rehearsal reproduced the prior fingerprint
+  with zero Oracle mismatch. Persistent-workspace execution is not yet proven
+  because older audit CLIs still enforce direct `/tmp` custody, so unattended
+  activation remains blocked. Active Production remains MI 1.2 and Snapshot
+  1.10 / Dashboard 2.7; the new workspace is not deployed.
 
 ## OCI production state
 

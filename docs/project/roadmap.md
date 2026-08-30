@@ -43,10 +43,12 @@
   now strictly bind it, while Automation Plan 1.5 observes the second output
   and fails closed on absence or lineage drift. Snapshot 1.11 / Dashboard 2.8,
   Plan 2.6, strict lazy browser delivery, and OCI bundle validation are now
-  implemented and passed a real tmp-only Dell rehearsal. Next integrate
-  Candidate Visual Context as a governed unattended stage so the daily
-  executor can produce the complete Plan 2.6 without weakening Snapshot 1.11.
-  Themes remain unavailable until governed effective-dated membership exists.
+  implemented and passed a real tmp-only Dell rehearsal. Automation Plan 1.6
+  and Executor 1.5 now add Candidate Visual Context as a governed stage and
+  passed a real 3,541-row tmp-only rehearsal. Next reconcile the older audit
+  CLIs with the exact persistent daily workspace and prove the real CLI chain;
+  do not infer completion from mocked execution. Themes remain unavailable
+  until governed effective-dated membership exists.
 
 ## Implemented sequencing record
 
@@ -148,7 +150,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Reuse the normal Phase 1a in-memory panel for Sector ETF Rotation audit
 - [x] Bind Sector ETF Rotation into Market Intelligence 1.3 and Automation Plan 1.5
 - [x] Project Sector ETF Rotation through Snapshot 1.11 / Dashboard 2.8
-- [ ] Integrate Candidate Visual Context into the unattended daily chain
+- [x] Integrate Candidate Visual Context into daily planning and tmp-only execution
+- [ ] Reconcile and prove persistent-workspace custody for real audit CLIs
 - [x] Define normalized EOD logical contracts
 - [x] Instrument Master V1 model and validation tests
 - [x] EOD Price Bar V1 model and validation tests

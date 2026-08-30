@@ -89,9 +89,10 @@ zero symlinks, and zero publication residue.
 
 ### Daily automation development state
 
-The repository daily planner/executor now governs ten ordered offline daily
+The repository daily planner/executor now governs eleven ordered offline daily
 stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry, ETF
-Relationships, Market Preview, Strategy Channels, Market Intelligence
+Relationships, Market Preview, Strategy Channels, Candidate Visual Context,
+Market Intelligence
 approval-plan preparation, Dashboard Snapshot approval-plan preparation, and
 exact active-Snapshot serving-bundle construction.
 Every invocation still performs at most one transition. The latter stages
@@ -729,13 +730,23 @@ This was tmp-only verification: no `/data` Apply, active pointer, OCI bundle,
 or deployment occurred. Production therefore remains MI 1.2, Snapshot 1.10 /
 Dashboard 2.7 and does not yet expose the new workspace.
 
-One automation gap is now explicit. Snapshot 1.11 correctly requires the
-same-session Candidate Visual Context audit, but the unattended daily executor
-does not yet calculate or pass that audit. Its planner recognizes Plan 2.6,
-but a real MI 1.3 run would stop before Snapshot planning until Visual Context
-becomes a governed automatic stage. Do not bypass that requirement or silently
-drop Visual Context. Closing this stage is the next reliability task before
-any MI 1.3 publication or Snapshot 1.11 deployment.
+ADR 0093 closes the logical Visual Context stage gap. Automation Plan 1.6 now
+observes the same-session audit after Strategy Channels and before MI planning;
+Single-action Executor 1.5 requires the exact panel cache and invokes the
+existing socket-guarded calculation. Snapshot planning passes that audit, and
+Plan 2.6 must bind the same logical fingerprint. A real 2026-08-28 Dell `/tmp`
+executor-stage rehearsal completed 3,541 rows in about 27 seconds with zero
+Oracle mismatch, requests, and Production writes. It reproduced the existing
+logical fingerprint
+`3b8ddbf3cc7d35cf0ea2b8f257939d23cec6f1d463e0d16efce9b5fb1f23961f`.
+
+This does not yet make the unattended chain operational. The persistent daily
+workspace is outside `/tmp`, while several older audit CLIs still require
+direct-child `/tmp` output and some formal readers enforce the same boundary.
+Earlier planner and mocked-executor tests did not prove real persistent CLI
+execution. This custody-policy mismatch is now the next automation blocker;
+the installed timer remains read-only and no MI 1.3 publication or Snapshot
+1.11 deployment is authorized.
 
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal
@@ -748,9 +759,9 @@ section.
 
 For P4, Visual Context product integration and deployment are complete. The
 next step is human browser acceptance, followed by only evidence-driven visual
-refinement. The unattended daily chain still does not generate Visual Context
-as an automatic stage; do not silently make a missing visual audit block the
-current daily pipeline.
+refinement. Repository automation now generates it as a strict stage; durable
+persistent-workspace CLI custody still requires the separate reconciliation
+described above.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is

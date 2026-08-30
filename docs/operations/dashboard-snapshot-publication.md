@@ -46,7 +46,7 @@ unchanged. Plan 2.5 freezes the visual audit manifest hash, logical fingerprint,
 batch fingerprints, and all shard hashes. Direct publication, OCI bundle
 validation, and the active Production release support this pair, but the
 unattended daily control plane remains
-on Plan 2.4 until visual-audit generation is explicitly integrated and tested.
+on Plan 2.4 at that historical boundary.
 
 Repository source now also supports Snapshot 1.11 / Dashboard 2.8 through
 Approval Plan 2.6. It requires MI 1.3 and therefore the exact Sector ETF
@@ -70,10 +70,10 @@ same-session Strategy Channel audit.
 
 The current planner recognizes Plan 2.6 and formally rereads it through strict
 canonical, owner-controlled, regular-file, non-symlink, mode `0444` custody
-and the full existing candidate/plan validation. The executor does not yet
-generate or pass the required Candidate Visual Context audit, so a real MI 1.3
-chain must stop before Plan 2.6 preparation until that governed stage is
-integrated. Successful preparation stops at
+and the full existing candidate/plan validation. Automation Plan 1.6 and
+Executor 1.5 now generate and pass the exact Candidate Visual Context audit.
+Persistent-workspace compatibility for the older audit CLIs remains a separate
+activation blocker. Successful preparation stops at
 `review_snapshot_publication`. It creates no `/data` target or active pointer
 and conveys no Apply, bundle, deployment, rollback, or scheduler authority.
 ADR 0071 adds the separate default-off daily write-custody boundary. It is

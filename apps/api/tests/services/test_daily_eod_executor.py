@@ -199,6 +199,19 @@ def test_publication_plan_action_requires_explicit_review_bindings(tmp_path) -> 
         )
 
 
+def test_visual_context_action_requires_the_exact_panel_cache_root(
+    tmp_path,
+) -> None:
+    config = replace(_config(tmp_path), panel_cache_root=None)
+    with pytest.raises(executor.DailyEodExecutorError, match="panel cache"):
+        executor.execute_daily_eod_action(
+            config=config,
+            expected_plan_fingerprint=PRE_FP,
+            expected_action=NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT,
+            planner=lambda **kwargs: pytest.fail("planner must not run"),
+        )
+
+
 def test_runner_failure_is_terminal_and_retryable(tmp_path) -> None:
     config = _config(tmp_path)
     action = NextAction.CALCULATE_PHASE1A
@@ -533,6 +546,16 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
             ("--candidate-audit", "--entry-geometry-audit", "--output-dir"),
         ),
         (
+            NextAction.CALCULATE_CANDIDATE_VISUAL_CONTEXT,
+            "candidate_visual_context_cli",
+            (
+                "--candidate-audit",
+                "--entry-geometry-audit",
+                "--panel-cache-root",
+                "--output-dir",
+            ),
+        ),
+        (
             NextAction.PREPARE_MARKET_INTELLIGENCE_PLAN,
             "market_intelligence_publication_cli",
             (
@@ -549,6 +572,7 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
                 "--approval-package",
                 "--market-intelligence-publication-id",
                 "--candidate-strategy-audit",
+                "--candidate-visual-context-audit",
             ),
         ),
     ],
@@ -570,9 +594,10 @@ def test_default_runner_invokes_only_the_selected_offline_administrator(
         "opportunity_candidate_cli",
         "candidate_entry_geometry_cli",
         "etf_relationship_cli",
-        "market_regime_preview_cli",
-        "candidate_strategy_channel_cli",
-        "market_intelligence_publication_cli",
+            "market_regime_preview_cli",
+            "candidate_strategy_channel_cli",
+            "candidate_visual_context_cli",
+            "market_intelligence_publication_cli",
         "dashboard_snapshot_v2_cli",
     ):
         module = getattr(executor, name)
