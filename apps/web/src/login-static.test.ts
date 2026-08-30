@@ -51,6 +51,27 @@ describe('static login client', () => {
     }
   });
 
+  it('presents the public platform story without blurring live and planned capabilities', () => {
+    expect(loginHtml).toContain('<img src="/favicon.png" alt="WH Alpha"');
+    expect(loginHtml).toContain('id="platform-roadmap"');
+    expect(loginHtml).toContain('class="capability-roadmap"');
+    expect(loginHtml.match(/data-state="live"/g)).toHaveLength(4);
+    expect(loginHtml.match(/data-state="planned"/g)).toHaveLength(4);
+    expect(loginHtml.match(/data-state="later"/g)).toHaveLength(1);
+    expect(loginHtml).toContain('data-i18n="guestNote"');
+    expect(loginHtml).toContain('data-i18n="principleHonestyText"');
+  });
+
+  it('defines both locales for every public-page translation key', () => {
+    runLoginI18nScript();
+    const loginI18n = (window as unknown as { __whalphaLoginI18n: { messages: Record<'en' | 'zh', Record<string, string>> } }).__whalphaLoginI18n;
+    const referencedKeys = new Set(Array.from(loginHtml.matchAll(/data-i18n(?:-aria)?="([^"]+)"/g), (match) => match[1]));
+    for (const key of referencedKeys) {
+      expect(loginI18n.messages.en[key], `missing English login copy for ${key}`).toBeTruthy();
+      expect(loginI18n.messages.zh[key], `missing Chinese login copy for ${key}`).toBeTruthy();
+    }
+  });
+
   it('submits JSON to relative auth endpoint and prevents native navigation', async () => {
     const fetchMock = vi
       .fn()

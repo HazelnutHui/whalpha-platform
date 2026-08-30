@@ -13,54 +13,109 @@
     <script defer src="/login/login.js"></script>
   </head>
   <body>
-    <main class="login-page">
+    <header class="site-header">
+      <a class="brand-lockup" href="#top" aria-label="WH Alpha">
+        <img src="/favicon.png" alt="" width="44" height="44" />
+        <span><strong>WH Alpha</strong><small data-i18n="brandDescriptor">Market Intelligence</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Page navigation" data-i18n-aria="navigationAria">
+        <a href="#platform-roadmap" data-i18n="navPlatform">Platform</a>
+        <a href="#principles" data-i18n="navPrinciples">Principles</a>
+        <a class="nav-access" href="#access" data-i18n="navAccess">Enter workspace</a>
+      </nav>
       <div class="login-language" role="group" aria-label="Interface language" data-i18n-aria="languageAria">
         <span data-i18n="languageLabel">Language</span>
-        <button type="button" data-locale="en">English</button>
+        <button type="button" data-locale="en">EN</button>
         <button type="button" data-locale="zh">中文</button>
       </div>
-      <section class="login-hero" aria-labelledby="brand-title">
-        <div class="login-brand">
-          <p class="eyebrow">WH Alpha</p>
-          <h1 id="brand-title">WH Alpha</h1>
-          <h2 data-i18n="platform">Quantitative Market Structure &amp; Trading Intelligence Platform</h2>
-          <p data-i18n="description">A private U.S. equity market intelligence workspace for market breadth, cross-sectional strength, liquidity structure, and daily market analysis.</p>
-          <div class="login-tags" aria-label="Workspace scope" data-i18n-aria="workspaceAria">
-            <span data-i18n="tagEod">End-of-Day Market Structure</span>
-            <span data-i18n="tagPrivate">Private Research Workspace</span>
-            <span data-i18n="tagData">Data-Driven Market Intelligence</span>
-          </div>
-          <div class="market-matrix" aria-hidden="true">
-            <span></span><span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span><span></span><span></span><span></span>
+    </header>
+
+    <main id="top" class="login-page">
+      <section class="hero-section" aria-labelledby="brand-title">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow--one" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow--two" aria-hidden="true"></div>
+        <div class="login-hero">
+          <div class="login-brand">
+            <div class="hero-mark"><img src="/favicon.png" alt="WH Alpha" width="104" height="104" /></div>
+            <p class="eyebrow" data-i18n="heroEyebrow">Decision intelligence, not black-box signals</p>
+            <h1 id="brand-title" data-i18n="heroTitle">Read the market. Find the setup. Manage the decision.</h1>
+            <h2 data-i18n="platform">Quantitative Market Structure &amp; Trading Intelligence Platform</h2>
+            <p class="hero-description" data-i18n="description">A practical U.S. equity intelligence workspace that connects market state, relative strength, actionable candidates, and the evidence behind every judgment.</p>
+            <div class="decision-path" aria-label="Decision workflow" data-i18n-aria="workflowAria">
+              <span data-i18n="pathMarket">Market state</span><i aria-hidden="true"></i>
+              <span data-i18n="pathDirection">Direction</span><i aria-hidden="true"></i>
+              <span data-i18n="pathCandidate">Candidate</span><i aria-hidden="true"></i>
+              <span data-i18n="pathDecision">Decision</span>
+            </div>
           </div>
         </div>
+        <section class="login-panel-wrap" id="access" aria-labelledby="login-title">
+          <form class="login-panel" method="post" action="/auth/login" autocomplete="on">
+            <div class="panel-kicker"><span class="status-dot" aria-hidden="true"></span><span data-i18n="workspaceReady">Workspace ready</span></div>
+            <h2 id="login-title" data-i18n="signIn">Enter the workspace</h2>
+            <p data-i18n="continue">Sign in with your private credentials, or open the complete workspace as a guest.</p>
+            <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
+            <input id="next" name="next" type="hidden" value="/dashboard/" />
+            <div class="login-field">
+              <label for="username" data-i18n="username">Username</label>
+              <input id="username" name="username" type="text" autocomplete="username" inputmode="text" required autofocus />
+            </div>
+            <div class="login-field">
+              <label for="password" data-i18n="password">Password</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required />
+            </div>
+            <button class="login-submit" type="submit"><span data-i18n="submit">Sign in</span><span aria-hidden="true">↗</span></button>
+            <div class="login-divider"><span data-i18n="or">or</span></div>
+            <button class="guest-submit" type="button"><span data-i18n="guestSubmit">Continue as guest</span><span aria-hidden="true">→</span></button>
+            <p id="guest-error" class="login-error" role="alert" data-i18n="guestError">Guest access is temporarily unavailable.</p>
+            <p class="guest-note" data-i18n="guestNote">Guest and signed-in sessions receive the same data, tools, language options, Universe choices, and analysis.</p>
+          </form>
+        </section>
+        <a class="scroll-cue" href="#platform-roadmap"><span data-i18n="explorePlatform">Explore the platform</span><i aria-hidden="true"></i></a>
       </section>
-      <section class="login-panel-wrap" aria-labelledby="login-title">
-        <form class="login-panel" method="post" action="/auth/login" autocomplete="on">
-          <h2 id="login-title" data-i18n="signIn">Sign in</h2>
-          <p data-i18n="continue">Use your private dashboard credentials to continue.</p>
-          <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
-          <input id="next" name="next" type="hidden" value="/dashboard/" />
-          <div class="login-field">
-            <label for="username" data-i18n="username">Username</label>
-            <input id="username" name="username" type="text" autocomplete="username" inputmode="text" required autofocus />
-          </div>
-          <div class="login-field">
-            <label for="password" data-i18n="password">Password</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required />
-          </div>
-          <button class="login-submit" type="submit" data-i18n="submit">Sign In</button>
-          <div class="login-divider"><span data-i18n="or">or</span></div>
-          <button class="guest-submit" type="button" data-i18n="guestSubmit">Continue as guest</button>
-          <p id="guest-error" class="login-error" role="alert" data-i18n="guestError">Guest access is temporarily unavailable.</p>
-          <p class="guest-note" data-i18n="guestNote">Guest and signed-in sessions receive the same data, tools, language options, Universe choices, and analysis.</p>
-        </form>
+
+      <section class="platform-intro" id="platform-roadmap" aria-labelledby="roadmap-title">
+        <p class="section-kicker" data-i18n="roadmapKicker">The intelligence path</p>
+        <h2 id="roadmap-title" data-i18n="roadmapTitle">One decision system, built in connected layers.</h2>
+        <p data-i18n="roadmapIntro">WH Alpha is organized around the questions a trader actually asks. Each layer narrows the next decision while keeping evidence, counterevidence, and uncertainty visible.</p>
+        <div class="full-decision-chain" aria-label="Complete decision chain" data-i18n-aria="fullWorkflowAria">
+          <span data-i18n="chainMarket">Market state</span><b>→</b><span data-i18n="chainStrength">Strength direction</span><b>→</b><span data-i18n="chainSector">Sector / theme</span><b>→</b><span data-i18n="chainStock">Stock candidate</span><b>→</b><span data-i18n="chainPrepare">Trade preparation</span><b>→</b><span data-i18n="chainEntry">Entry / invalidation</span><b>→</b><span data-i18n="chainManage">Position management</span>
+        </div>
       </section>
+
+      <section class="capability-section" aria-label="Platform capabilities" data-i18n-aria="capabilitiesAria">
+        <div class="roadmap-rail" aria-hidden="true">
+          <svg viewBox="0 0 120 1800" preserveAspectRatio="none">
+            <path class="rail-shadow" d="M60 0 C8 110 112 180 60 300 S8 500 60 600 S112 800 60 900 S8 1100 60 1200 S112 1400 60 1500 S8 1690 60 1800" />
+            <path class="rail-signal" d="M60 0 C8 110 112 180 60 300 S8 500 60 600 S112 800 60 900 S8 1100 60 1200 S112 1400 60 1500 S8 1690 60 1800" />
+          </svg>
+        </div>
+        <ol class="capability-roadmap">
+          <li class="capability-step capability-step--left" data-state="live"><article><div class="capability-meta"><span data-i18n="liveNow">Live now</span><em>01</em></div><h3 data-i18n="capRegimeTitle">Market Regime &amp; Opportunities</h3><p data-i18n="capRegimeText">Determine whether the market truly supports broad risk-taking through regime, directional strength, ETF relationships, and counterevidence.</p><ul><li data-i18n="capRegimePoint1">Primary and Secondary Universe views</li><li data-i18n="capRegimePoint2">5 / 10 / 20-session relationships</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--right" data-state="live"><article><div class="capability-meta"><span data-i18n="liveNow">Live now</span><em>02</em></div><h3 data-i18n="capStructureTitle">Market Structure &amp; Activity</h3><p data-i18n="capStructureText">Explain what changed today through breadth, advancing and declining participation, benchmark structure, and industry proxies.</p><ul><li data-i18n="capStructurePoint1">Participation—not claimed capital flow</li><li data-i18n="capStructurePoint2">Current state plus historical path</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--left" data-state="live"><article><div class="capability-meta"><span data-i18n="liveNow">Live now</span><em>03</em></div><h3 data-i18n="capCandidatesTitle">Stock Candidates</h3><p data-i18n="capCandidatesText">Compare stocks inside distinct strategy channels, then show why each candidate ranks, where it sits, and what would invalidate the setup.</p><ul><li data-i18n="capCandidatesPoint1">Momentum, pullback, continuation, reversal, and defensive channels</li><li data-i18n="capCandidatesPoint2">Ranking reasons before a single total score</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--right" data-state="live"><article><div class="capability-meta"><span data-i18n="liveNow">Live now</span><em>04</em></div><h3 data-i18n="capEvidenceTitle">Evidence &amp; Decision Context</h3><p data-i18n="capEvidenceText">Keep raw values, parameters, contributions, supporting evidence, counterevidence, signal age, and recent price path open to inspection.</p><ul><li data-i18n="capEvidencePoint1">Explainable by design</li><li data-i18n="capEvidencePoint2">Fail closed when formal data is unavailable</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--left" data-state="planned"><article><div class="capability-meta"><span data-i18n="plannedNext">Planned next</span><em>05</em></div><h3 data-i18n="capRotationTitle">Sector &amp; Theme Rotation</h3><p data-i18n="capRotationText">Track leadership, persistence, relative strength, diffusion, and changing opportunity across sectors and themes.</p><ul><li data-i18n="capRotationPoint1">Leadership and deterioration</li><li data-i18n="capRotationPoint2">Context for defensive and counter-market opportunities</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--right" data-state="planned"><article><div class="capability-meta"><span data-i18n="plannedNext">Planned next</span><em>06</em></div><h3 data-i18n="capPreparationTitle">Watchlist &amp; Trade Preparation</h3><p data-i18n="capPreparationText">Turn an interesting stock into a monitored setup with trigger, pullback zone, support, resistance, threshold distance, signal age, and invalidation.</p><ul><li data-i18n="capPreparationPoint1">Position and timing before action</li><li data-i18n="capPreparationPoint2">Fewer, more deliberate alerts</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--left" data-state="planned"><article><div class="capability-meta"><span data-i18n="planned">Planned</span><em>07</em></div><h3 data-i18n="capOptionsTitle">Options Expression</h3><p data-i18n="capOptionsText">Compare how to express a stock view through calls, puts, debit spreads, covered calls, moneyness, and DTE—without treating stock returns as option returns.</p><ul><li data-i18n="capOptionsPoint1">Liquidity, spread, OI, IV, Greeks, and event risk</li><li data-i18n="capOptionsPoint2">Payoff and time-decay trade-offs</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--right" data-state="planned"><article><div class="capability-meta"><span data-i18n="planned">Planned</span><em>08</em></div><h3 data-i18n="capFundamentalsTitle">Fundamentals, Valuation &amp; Events</h3><p data-i18n="capFundamentalsText">Add point-in-time financials, earnings quality, relative valuation, catalysts, and event context to price-based evidence.</p><ul><li data-i18n="capFundamentalsPoint1">No hindsight-contaminated fundamentals</li><li data-i18n="capFundamentalsPoint2">No false surprise model without expectations data</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+          <li class="capability-step capability-step--left" data-state="later"><article><div class="capability-meta"><span data-i18n="plannedLater">Planned later</span><em>09</em></div><h3 data-i18n="capPortfolioTitle">Position Management</h3><p data-i18n="capPortfolioText">Reassess an open position as evidence changes: thesis health, invalidation, event exposure, concentration, and post-entry risk.</p><ul><li data-i18n="capPortfolioPoint1">Decision support, never automatic execution</li><li data-i18n="capPortfolioPoint2">IBKR-first integration when this phase begins</li></ul></article><span class="roadmap-node" aria-hidden="true"></span></li>
+        </ol>
+      </section>
+
+      <section class="principles-section" id="principles" aria-labelledby="principles-title">
+        <div class="principles-heading"><p class="section-kicker" data-i18n="principlesKicker">How WH Alpha thinks</p><h2 id="principles-title" data-i18n="principlesTitle">Built for judgment, not obedience.</h2><p data-i18n="principlesIntro">The platform should make a human decision clearer—not hide uncertainty behind a confident label.</p></div>
+        <div class="principle-grid">
+          <article><span>01</span><h3 data-i18n="principleExplainTitle">Explain before ranking</h3><p data-i18n="principleExplainText">A high or low rank must reveal the inputs, position, and trade-offs that produced it.</p></article>
+          <article><span>02</span><h3 data-i18n="principleCounterTitle">Counterevidence is first-class</h3><p data-i18n="principleCounterText">Every constructive view should show what argues against it and what would make it fail.</p></article>
+          <article><span>03</span><h3 data-i18n="principleContextTitle">Context changes meaning</h3><p data-i18n="principleContextText">The same setup can mean something different under a different market regime or sector environment.</p></article>
+          <article><span>04</span><h3 data-i18n="principleHonestyTitle">Different instruments, different outcomes</h3><p data-i18n="principleHonestyText">Price and volume are not capital flow, and a stock signal is not an options-return prediction.</p></article>
+        </div>
+      </section>
+
+      <section class="closing-section"><img src="/favicon.png" alt="" width="72" height="72" /><p class="section-kicker">WH Alpha</p><h2 data-i18n="closingTitle">See the evidence. Keep the decision yours.</h2><p data-i18n="closingText">Open the complete workspace through either access path.</p><a href="#access" data-i18n="closingAction">Enter workspace</a></section>
     </main>
+    <footer class="site-footer"><span>WH Alpha</span><span data-i18n="footerText">Practical U.S. equity market intelligence.</span></footer>
   </body>
 </html>
