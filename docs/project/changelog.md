@@ -14,6 +14,9 @@
 - Normal daily Phase 1a emission of the formally bound audit is a prerequisite;
   this decision does not authorize publication Apply, Snapshot activation,
   bundle creation, or deployment.
+- Added one strict downstream reader that returns the typed rotation product
+  and Oracle only after complete file custody, fingerprints, lineage, and zero
+  mismatch have been reread. Publication code will not parse loose audit JSON.
 
 ## 2026-08-30 — Add immutable Sector ETF Rotation audit custody
 

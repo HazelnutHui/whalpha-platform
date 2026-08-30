@@ -32,6 +32,7 @@ from tip_api.services import sector_etf_rotation_audit as rotation_audit
 from tip_api.services.sector_etf_rotation_audit import (
     SectorEtfRotationAuditError,
     read_sector_etf_rotation_audit,
+    read_sector_etf_rotation_audit_contents,
     write_sector_etf_rotation_audit,
 )
 
@@ -204,6 +205,10 @@ def test_tmp_audit_is_atomic_canonical_and_formally_rereadable(monkeypatch) -> N
             timings={"calculation_seconds": "0.010000"},
         )
         assert manifest == read_sector_etf_rotation_audit(output)
+        contents = read_sector_etf_rotation_audit_contents(output)
+        assert contents.manifest == manifest
+        assert contents.product == product
+        assert contents.oracle_report == oracle
         assert manifest["product_logical_fingerprint"] == product.logical_fingerprint
         assert manifest["oracle_mismatch_count"] == 0
         assert manifest["source"]["canonical_rescan_performed_by_audit_writer"] is False

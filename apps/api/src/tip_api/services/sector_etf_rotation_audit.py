@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import stat
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Mapping
@@ -30,6 +31,15 @@ AUDIT_MANIFEST = "sector-rotation-audit-manifest.json"
 
 class SectorEtfRotationAuditError(RuntimeError):
     """Raised when Sector ETF Rotation audit custody or lineage is invalid."""
+
+
+@dataclass(frozen=True, slots=True)
+class SectorEtfRotationAuditContents:
+    """Typed, formally reread inputs for downstream publication consumers."""
+
+    manifest: dict[str, Any]
+    product: SectorEtfRotationSnapshotV1
+    oracle_report: SectorRotationOracleComparisonV1
 
 
 def write_sector_etf_rotation_audit(
@@ -141,6 +151,14 @@ def write_sector_etf_rotation_audit(
 
 
 def read_sector_etf_rotation_audit(output_dir: Path) -> dict[str, Any]:
+    return read_sector_etf_rotation_audit_contents(output_dir).manifest
+
+
+def read_sector_etf_rotation_audit_contents(
+    output_dir: Path,
+) -> SectorEtfRotationAuditContents:
+    """Reread complete custody once and return only validated typed records."""
+
     target = _safe_completed_dir(output_dir)
     expected = set(AUDIT_FILES) | {AUDIT_MANIFEST}
     if {item.name for item in target.iterdir()} != expected:
@@ -203,7 +221,11 @@ def read_sector_etf_rotation_audit(output_dir: Path) -> dict[str, Any]:
         != manifest.get("source", {}).get("history_source_fingerprint")
     ):
         raise SectorEtfRotationAuditError("sector rotation typed product or Oracle differs")
-    return manifest
+    return SectorEtfRotationAuditContents(
+        manifest=manifest,
+        product=product,
+        oracle_report=oracle,
+    )
 
 
 def _validate_lineage(*, panel, product, oracle_report, phase1a_manifest, phase1a_input):
