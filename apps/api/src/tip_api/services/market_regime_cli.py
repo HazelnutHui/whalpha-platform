@@ -21,11 +21,23 @@ from tip_api.services.market_regime_audit import (
 from tip_api.services.market_regime_oracle import compare_with_independent_oracle
 from tip_api.services.market_regime_panel_cache import write_market_regime_panel_cache
 from tip_api.services.market_regime_sources import load_formal_market_regime_panel
+from tip_api.services.sector_etf_rotation import calculate_sector_etf_rotation
+from tip_api.services.sector_etf_rotation_audit import (
+    read_sector_etf_rotation_audit,
+    validate_sector_etf_rotation_audit_output,
+    write_sector_etf_rotation_audit,
+)
+from tip_api.services.sector_etf_rotation_oracle import (
+    compare_with_independent_sector_rotation_oracle,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Calculate Market Regime V1 Phase 1a offline and write a canonical /tmp audit ledger."
+        description=(
+            "Calculate Market Regime V1 Phase 1a and Sector ETF Rotation "
+            "offline from one panel, then write canonical /tmp audit ledgers."
+        )
     )
     parser.add_argument("--as-of-session", required=True, type=date.fromisoformat)
     parser.add_argument(
@@ -38,6 +50,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument(
+        "--sector-rotation-output-dir",
+        required=True,
+        type=Path,
+        help="Distinct direct-child /tmp audit written from the same in-memory panel.",
+    )
+    parser.add_argument(
         "--panel-cache-root",
         type=Path,
         help="Optional owner-controlled Dell-local content-addressed panel cache.",
@@ -48,6 +66,10 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--data-root must be absolute")
     if not args.output_dir.is_absolute():
         parser.error("--output-dir must be absolute")
+    if not args.sector_rotation_output_dir.is_absolute():
+        parser.error("--sector-rotation-output-dir must be absolute")
+    if args.sector_rotation_output_dir == args.output_dir:
+        parser.error("Phase 1a and Sector Rotation outputs must be distinct")
     if args.panel_cache_root is not None and not args.panel_cache_root.is_absolute():
         parser.error("--panel-cache-root must be absolute")
     if tuple(args.universe_id) != tuple(dict.fromkeys(args.universe_id)):
@@ -57,10 +79,25 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--universe-id values must use Primary-first catalog order")
     if args.verify_output:
         manifest = read_market_regime_audit(args.output_dir)
-        print(json.dumps(_summary(manifest, args.output_dir), sort_keys=True, separators=(",", ":")))
+        sector_manifest = read_sector_etf_rotation_audit(
+            args.sector_rotation_output_dir
+        )
+        print(
+            json.dumps(
+                _summary(
+                    manifest,
+                    args.output_dir,
+                    sector_manifest=sector_manifest,
+                    sector_output_dir=args.sector_rotation_output_dir,
+                ),
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+        )
         return 0
 
     validate_tmp_output_dir(args.output_dir)
+    validate_sector_etf_rotation_audit_output(args.sector_rotation_output_dir)
     started = time.monotonic()
     with _offline_socket_guard():
         panel = load_formal_market_regime_panel(data_root=args.data_root, as_of_session=args.as_of_session)
@@ -90,7 +127,37 @@ def main(argv: list[str] | None = None) -> int:
             elapsed_seconds=elapsed,
             peak_memory_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         )
-    summary = _summary(manifest, args.output_dir)
+        sector_calculation_started = time.monotonic()
+        sector_product = calculate_sector_etf_rotation(panel=panel)
+        sector_calculation_seconds = format(
+            DecimalTime(time.monotonic() - sector_calculation_started), ".6f"
+        )
+        sector_oracle_started = time.monotonic()
+        sector_oracle = compare_with_independent_sector_rotation_oracle(
+            panel=panel,
+            product=sector_product,
+        )
+        sector_oracle_seconds = format(
+            DecimalTime(time.monotonic() - sector_oracle_started), ".6f"
+        )
+        sector_manifest = write_sector_etf_rotation_audit(
+            output_dir=args.sector_rotation_output_dir,
+            phase1a_audit_dir=args.output_dir,
+            panel=panel,
+            product=sector_product,
+            oracle_report=sector_oracle,
+            generated_at=datetime.now(UTC),
+            timings={
+                "calculation_seconds": sector_calculation_seconds,
+                "oracle_seconds": sector_oracle_seconds,
+            },
+        )
+    summary = _summary(
+        manifest,
+        args.output_dir,
+        sector_manifest=sector_manifest,
+        sector_output_dir=args.sector_rotation_output_dir,
+    )
     if cache_manifest is not None:
         summary["panel_cache_key"] = cache_manifest["cache_key"]
         summary["panel_cache_logical_fingerprint"] = cache_manifest[
@@ -104,7 +171,13 @@ class DecimalTime(float):
     """Formatting marker; runtime is physical audit metadata, never fingerprint input."""
 
 
-def _summary(manifest: dict[str, object], output_dir: Path) -> dict[str, object]:
+def _summary(
+    manifest: dict[str, object],
+    output_dir: Path,
+    *,
+    sector_manifest: dict[str, object],
+    sector_output_dir: Path,
+) -> dict[str, object]:
     return {
         "status": "completed" if manifest.get("oracle_mismatch_count") == 0 else "oracle_mismatch",
         "as_of_session": manifest.get("as_of_session"),
@@ -113,6 +186,17 @@ def _summary(manifest: dict[str, object], output_dir: Path) -> dict[str, object]
         "logical_content_fingerprint": manifest.get("logical_content_fingerprint"),
         "composite_fingerprints": manifest.get("composite_fingerprints"),
         "oracle_mismatch_count": manifest.get("oracle_mismatch_count"),
+        "sector_rotation_output_dir": str(sector_output_dir),
+        "sector_rotation_logical_fingerprint": sector_manifest.get(
+            "logical_content_fingerprint"
+        ),
+        "sector_rotation_product_fingerprint": sector_manifest.get(
+            "product_logical_fingerprint"
+        ),
+        "sector_rotation_oracle_mismatch_count": sector_manifest.get(
+            "oracle_mismatch_count"
+        ),
+        "source_panel_load_count": 1,
         "external_request_count": 0,
         "production_write_count": 0,
     }

@@ -496,7 +496,11 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
         (
             NextAction.CALCULATE_PHASE1A,
             "market_regime_cli",
-            ("--panel-cache-root", "--output-dir"),
+            (
+                "--panel-cache-root",
+                "--output-dir",
+                "--sector-rotation-output-dir",
+            ),
         ),
         (
             NextAction.CALCULATE_PHASE1B_INCREMENTAL,
@@ -587,6 +591,13 @@ def test_default_runner_invokes_only_the_selected_offline_administrator(
     argv = calls[0]
     for value in required_arguments:
         assert value in argv
+    if action is NextAction.CALCULATE_PHASE1A:
+        sector_index = argv.index("--sector-rotation-output-dir")
+        assert argv[sector_index + 1] == str(
+            config.paths.phase1a_audit.with_name(
+                f"{config.paths.phase1a_audit.name}-sector-etf-rotation"
+            )
+        )
     assert evidence.summary_bytes > 0
     assert len(evidence.summary_sha256) == 64
 

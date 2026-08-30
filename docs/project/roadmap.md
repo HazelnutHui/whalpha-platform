@@ -38,9 +38,10 @@
   ADR 0091 now adds immutable tmp-only audit custody and makes in-process
   Phase 1a panel reuse a required integration boundary. ADR 0092 fixes the
   minimal projection as one Market Intelligence 1.3 product and a lazy
-  Snapshot 1.11 / Dashboard 2.8 file. Next make normal daily Phase 1a emit the
-  bound audit before implementing those contract additions; Themes remain
-  unavailable until governed effective-dated membership exists.
+  Snapshot 1.11 / Dashboard 2.8 file. Normal Phase 1a now emits the bound audit
+  from its one in-memory panel. Next implement Market Intelligence 1.3 and its
+  strict source binding; Themes remain unavailable until governed
+  effective-dated membership exists.
 
 ## Implemented sequencing record
 
@@ -139,6 +140,7 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   and independent raw-panel Oracle
 - [x] Atomic tmp-only Sector ETF Rotation audit bound to formal Phase 1a
 - [x] Define lazy Market Intelligence/Snapshot projection for Sector ETF Rotation
+- [x] Reuse the normal Phase 1a in-memory panel for Sector ETF Rotation audit
 - [x] Define normalized EOD logical contracts
 - [x] Instrument Master V1 model and validation tests
 - [x] EOD Price Bar V1 model and validation tests

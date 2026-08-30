@@ -410,7 +410,14 @@ def run_offline_action(
         argv.extend(("--data-root", str(config.paths.data_root)))
         if config.panel_cache_root is not None:
             argv.extend(("--panel-cache-root", str(config.panel_cache_root)))
-        argv.extend(("--output-dir", str(output)))
+        argv.extend(
+            (
+                "--output-dir",
+                str(output),
+                "--sector-rotation-output-dir",
+                str(_sector_rotation_output_path(config.paths.phase1a_audit)),
+            )
+        )
         summary = _invoke_main(market_regime_cli.main, argv)
     elif action is NextAction.CALCULATE_PHASE1B_INCREMENTAL:
         output = config.paths.phase1b_audit
@@ -731,6 +738,10 @@ def _action_output_path(action: NextAction, config: DailyEodExecutionConfig) -> 
         )
         return config.paths.serving_bundle_root / approval.release_id
     raise DailyEodExecutorError("unsupported offline daily action")
+
+
+def _sector_rotation_output_path(phase1a_audit: Path) -> Path:
+    return phase1a_audit.with_name(f"{phase1a_audit.name}-sector-etf-rotation")
 
 
 def _validate_execution_config(config: DailyEodExecutionConfig) -> None:

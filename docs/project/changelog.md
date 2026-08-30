@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-08-30 — Reuse Phase 1a for the Sector Rotation audit
+
+- The normal Phase 1a administrator CLI now requires a distinct Sector ETF
+  Rotation audit target. It calculates the product and independent Oracle from
+  the already loaded formal panel after Phase 1a custody completes.
+- The offline daily executor supplies that exact second target automatically.
+  The command summary records one source-panel load and both audit/product
+  fingerprints; verify-only mode formally rereads both completed audits.
+- Both targets are preflighted before the expensive source load. The new path
+  performs no second canonical scan, external request, `/data` write,
+  publication, Snapshot activation, bundle, or deployment.
+- The real 2026-08-28 combined run recorded one panel load, Phase 1a elapsed
+  time 204.085 seconds, rotation calculation 0.012778 seconds, and rotation
+  Oracle 0.008185 seconds. Formal reread found zero mismatches, all files
+  owner-only `0400`, and no partial residue. The stable product fingerprint is
+  `bce93211b6aec748d41db7a4c7f2e34226941e2a4f4ceee29b7a7d6adf51bbf7`;
+  the exact source-bound audit fingerprint is
+  `060932af8da939d30f0c59482ed525387fc007b1fdde78a0f272eb2e04dfbce7`.
+- The complete backend suite passes 1,797 tests. The two warnings remain the
+  pre-existing Python `crypt` and Starlette TestClient deprecations.
+- The normal path is complete, but the Automation Plan does not yet model the
+  second audit as a separately recoverable observed stage. An interruption in
+  the narrow two-audit gap must stop at the future MI gate; automatic repair or
+  skipping is not inferred.
+
 ## 2026-08-30 — Define the lazy Sector Rotation publication boundary
 
 - Accepted ADR 0092: one market-wide Sector ETF Rotation product will extend

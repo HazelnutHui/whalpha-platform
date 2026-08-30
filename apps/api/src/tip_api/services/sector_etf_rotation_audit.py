@@ -52,7 +52,7 @@ def write_sector_etf_rotation_audit(
     generated_at: datetime,
     timings: Mapping[str, str],
 ) -> dict[str, Any]:
-    target = _validate_new_tmp_dir(output_dir)
+    target = validate_sector_etf_rotation_audit_output(output_dir)
     source = read_market_regime_audit_contents(phase1a_audit_dir)
     phase1a_input_file = _read_canonical_json(phase1a_audit_dir / "input-manifest.json")
     _validate_lineage(
@@ -148,6 +148,12 @@ def write_sector_etf_rotation_audit(
             staging.rmdir()
         raise
     return read_sector_etf_rotation_audit(target)
+
+
+def validate_sector_etf_rotation_audit_output(output_dir: Path) -> Path:
+    """Validate a new direct-child /tmp target before expensive calculation."""
+
+    return _validate_new_tmp_dir(output_dir)
 
 
 def read_sector_etf_rotation_audit(output_dir: Path) -> dict[str, Any]:

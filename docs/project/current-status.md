@@ -675,9 +675,24 @@ That run measured 200.729 seconds panel load, 0.012 seconds calculation, and
 0.008 seconds Oracle. ADR 0092 now fixes the additive projection boundary:
 Market Intelligence 1.3 carries one market-wide product and Snapshot 1.11 /
 Dashboard 2.8 exposes a dedicated file fetched only when the Sector Rotation
-workspace opens. The next bounded slice is normal-path Phase 1a emission of the
-bound audit. No publication or deployment is authorized by the current
-repository work.
+workspace opens. The normal Phase 1a CLI and offline executor now require a
+distinct Sector Rotation audit target and calculate it from the same in-memory
+panel, reporting a single panel load. A real 2026-08-28 combined run formally
+reread both audits with Phase 1a elapsed time 204.085 seconds, rotation
+calculation 0.012778 seconds, rotation Oracle 0.008185 seconds, and zero
+Oracle mismatches. The stable rotation product fingerprint remained
+`bce93211b6aec748d41db7a4c7f2e34226941e2a4f4ceee29b7a7d6adf51bbf7`;
+the source-bound audit fingerprint was
+`060932af8da939d30f0c59482ed525387fc007b1fdde78a0f272eb2e04dfbce7`.
+All files were owner-only `0400` and no partial residue remained. The next
+bounded slice is Market Intelligence 1.3 contract integration. No publication
+or deployment is authorized by the current repository work.
+
+The Automation Plan does not yet expose Sector Rotation as its own observed
+recovery stage. A process interruption after Phase 1a custody but before the
+second audit would therefore stop later integration rather than automatically
+repair or skip it. MI 1.3 must require the audit and fail closed; explicit
+recovery custody remains a later automation-hardening slice.
 
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal

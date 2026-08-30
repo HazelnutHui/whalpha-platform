@@ -50,7 +50,8 @@ scripts/admin/calculate-market-regime-offline.sh \
   --universe-id provider_classified_common_shares_plus_adrs_v1 \
   --data-root /data/trading-intelligence-platform \
   --panel-cache-root /tmp/<owner-controlled-panel-cache> \
-  --output-dir /tmp/<new-empty-phase1a-audit>
+  --output-dir /tmp/<new-empty-phase1a-audit> \
+  --sector-rotation-output-dir /tmp/<new-empty-sector-rotation-audit>
 
 scripts/admin/calculate-opportunity-candidates-offline.sh \
   --as-of-session YYYY-MM-DD \
@@ -68,6 +69,12 @@ Identity, Activation, and ordered-Universe source ledger. An absent exact
 entry invokes the unchanged formal reader and populates the cache. A present
 unsafe, malformed, or mismatched entry fails closed. The cache has no `latest`
 pointer, never belongs in OCI, and does not authorize `/data` writes.
+
+The Phase 1a command also calculates and independently checks Sector ETF
+Rotation from the same in-memory panel. It formally binds the second audit to
+the completed Phase 1a audit and reports `source_panel_load_count=1`; it must
+not perform another canonical-history scan. Both audit targets must be
+distinct, new direct children of `/tmp`.
 
 `--audit-work-dir` enables exact restart and memory-separated finalization. It
 must be a distinct, new, owner-controlled direct child of `/tmp`. Completed
