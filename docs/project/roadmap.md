@@ -1,9 +1,9 @@
 # Roadmap
 
-## Quant Strategy Lab direction
+## Quant Research Lab direction
 
 After the current durable daily-pipeline boundary is closed, the next primary
-product research workspace is **Quant Strategy Lab / 量化策略实验室**. It will
+product research workspace is **Quant Research Lab / 量化研究实验室**. It will
 separate broad research baselines from **WH Alpha personal proprietary research
 models**. Every model must expose ownership, version, intended Universe,
 market-regime scope, parameters, validation state, known failure modes, and
@@ -314,6 +314,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Family/fact-specific source resolution and prepared provider inquiry packet
 - [x] Quant Research Lab V1 product boundary and first Strong-Leader Pullback
   preregistration with bounded parameter grid and decision gates
+- [x] Source-bound Strategy Research Readiness V1 assessment and Dell-local
+  31/252-session data-blocked baseline
 
 ## Next Small Target
 

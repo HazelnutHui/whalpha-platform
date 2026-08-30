@@ -754,9 +754,18 @@ recorded in the active-state table and
   signal controls, fixes three sessions as the primary horizon, and bounds
   development to 24 combinations before locked validation and untouched
   holdout. Fingerprint
-  `afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41`
+  `1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f`
   is `preregistered_data_blocked`; no performance result, runtime, page, or
   Production authority exists.
+- ADR 0098 adds the deterministic Dell-local Strategy Research Readiness 1.0
+  check. Its 2026-08-30 socket-guarded formal reread covers 31 canonical
+  EOD/Identity sessions through 2026-08-28 and returns `data_blocked`, logical
+  fingerprint
+  `4d3b5a1b472f710638f024443e2ad6c1dea1f4dd25920c2cd9eb1d3a51802116`.
+  The 252-session minimum and complete membership/action/lifecycle/adjustment/
+  matured-window evidence remain unmet. Even a future complete result permits
+  only a separate development review, never automatic tuning or performance
+  claims.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-30 — Bind strategy development to formal readiness evidence
+
+- Accepted ADR 0098 and added deterministic, network-prohibited Strategy
+  Research Readiness 1.0. It binds the frozen experiment to formally read
+  canonical EOD/Identity evidence and typed Historical Coverage requirements;
+  it never grants development or performance-claim authority.
+- Corrected the adjusted-OHLCV feature warm-up from 252 to 20 sessions. The
+  separate total research-history floor remains 252 sessions. The frozen
+  experiment fingerprint is now
+  `1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f`.
+- A real socket-guarded Dell read-only assessment reread 31 sessions through
+  2026-08-28 and returned `data_blocked`: daily membership, corporate actions,
+  lifecycle, adjustment reconciliation, and mature outcome coverage remain
+  unproven. Result fingerprint is
+  `4d3b5a1b472f710638f024443e2ad6c1dea1f4dd25920c2cd9eb1d3a51802116`.
+- The operational command accepts no arbitrary coverage JSON; a future formal
+  physical reader must provide that evidence. No network request, `/data`
+  write, model run, publication, deployment, or scheduler change occurred.
+- Focused contract/readiness coverage passed 42 tests, and the complete backend
+  regression passed 1,830 tests with only the two existing deprecation
+  warnings.
+
 ## 2026-08-30 — Preregister the first personal quantitative research program
 
 - Accepted ADR 0097 and named the future first-class workspace Quant Research
@@ -16,7 +38,7 @@
   result boundary. Contract identity is
   `3ab7175302bbcfb6894233d1db05534aa69bbab83935fa5d31dc9a916002b5d0`;
   logical fingerprint is
-  `afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41`.
+  `1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f`.
 - The experiment remains `preregistered_data_blocked`. It creates no provider
   request, `/data` write, backtest result, signal/outcome dataset, page,
   publication, deployment, or scheduler transition.

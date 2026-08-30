@@ -90,10 +90,18 @@ costs, user interpretation, monitoring, decay triggers, and rollback.
 
 ## Current state
 
-Repository source contains the immutable first preregistration only. It is
+Repository source contains the immutable first preregistration and its
+readiness gate, but no strategy evaluator. The experiment is
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a
 research-ready adjustment ledger are absent. No signal writer, outcome
 maturer, evaluator, Production consumer, page, publication, or deployment is
 created by this product definition.
 
+ADR 0098 now makes that boundary executable without starting a backtest. The
+socket-guarded Dell-local assessment rereads canonical EOD and its bound
+Identity evidence and reports every research prerequisite separately. On
+2026-08-30 it returned `data_blocked` through 2026-08-28 with 31 of 252 required
+sessions and no research-ready Historical Coverage Manifest. The result cannot
+authorize development or performance claims. Even a future complete result may
+advance only to a separate development-activation review.

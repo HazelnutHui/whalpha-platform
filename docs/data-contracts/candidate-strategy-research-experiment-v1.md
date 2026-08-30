@@ -14,7 +14,7 @@ The first registration is `strong-stock-pullback-research/1.0`:
 - experiment ID:
   `3ab7175302bbcfb6894233d1db05534aa69bbab83935fa5d31dc9a916002b5d0`;
 - logical fingerprint:
-  `afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41`;
+  `1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f`;
 - evaluation-policy fingerprint:
   `982929516dac7f963b1113c871ee63c78f440d39922561c8654cc4165865563a`.
 

@@ -70,6 +70,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Classification V1](data-contracts/classification-v1.md)
 - [Universe Membership V1](data-contracts/universe-membership-v1.md)
 - [Historical Research Foundation Contracts V1](data-contracts/historical-research-foundation-v1.md)
+- [Candidate Strategy Research Experiment V1](data-contracts/candidate-strategy-research-experiment-v1.md)
+- [Strategy Research Readiness V1](data-contracts/strategy-research-readiness-v1.md)
 - [Data Record Governance V1](data-contracts/data-record-governance-v1.md): Cross-family layer, disposition, evidence, quality, coverage, point-in-time, retention, content-scope, and equal-capability serving classification.
 - [Source Permission Governance V1](data-contracts/source-permission-governance-v1.md): Effective-dated, use-specific source permission reviews and default-deny equal-capability assessment.
 - [Source Resolution Governance V1](data-contracts/source-resolution-governance-v1.md): Family/fact-specific evidence roles, corroboration, and fail-closed conflict resolution.

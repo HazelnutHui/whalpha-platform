@@ -39,6 +39,13 @@ def test_first_pullback_experiment_is_preregistered_and_data_blocked() -> None:
     assert experiment.model_may_decay_or_fail is True
     assert experiment.underlying_stock_result_not_option_return is True
     assert "canonical_252_session_history_absent" in experiment.activation_blocker_codes
+    adjusted_panel = next(
+        item
+        for item in experiment.feature_requirements
+        if item.feature_id == "adjusted_ohlcv_panel"
+    )
+    assert adjusted_panel.minimum_lookback_sessions == 20
+    assert experiment.minimum_research_history_sessions == 252
 
 
 def test_first_pullback_experiment_is_deterministic() -> None:

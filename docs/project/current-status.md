@@ -565,9 +565,18 @@ read or used.
   in-time eligible-leader non-signals, uses three sessions as the primary
   horizon, and caps development at 24 preregistered parameter combinations.
   Its immutable logical fingerprint is
-  `afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41`.
+  `1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f`.
   Status is `preregistered_data_blocked`; this is not a backtest result,
   recommendation, option-return model, Production consumer, or deployed page.
+- ADR 0098 adds the source-bound `strategy-research-readiness/1.0` transition
+  check. A real socket-guarded Dell reread on 2026-08-30 verified 31 canonical
+  EOD/Identity sessions through 2026-08-28 and returned `data_blocked`, result
+  fingerprint
+  `4d3b5a1b472f710638f024443e2ad6c1dea1f4dd25920c2cd9eb1d3a51802116`.
+  The remaining 221-session depth plus daily membership, corporate actions,
+  lifecycle, adjustment reconciliation, and matured-window coverage are hard
+  blockers. The command cannot accept a self-asserted manifest, use network,
+  write Production, authorize development, or authorize performance claims.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

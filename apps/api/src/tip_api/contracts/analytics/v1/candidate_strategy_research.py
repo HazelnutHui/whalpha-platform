@@ -28,7 +28,7 @@ STRONG_STOCK_PULLBACK_EXPERIMENT_ID = (
     "3ab7175302bbcfb6894233d1db05534aa69bbab83935fa5d31dc9a916002b5d0"
 )
 STRONG_STOCK_PULLBACK_RESEARCH_FINGERPRINT = (
-    "afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41"
+    "1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f"
 )
 
 
@@ -301,7 +301,7 @@ def strong_stock_pullback_research_experiment_v1() -> CandidateStrategyResearchE
                 "feature_id": "adjusted_ohlcv_panel",
                 "role": "population",
                 "source_family": "historical-research-adjustment-ledger-v1",
-                "minimum_lookback_sessions": 252,
+                "minimum_lookback_sessions": 20,
                 "point_in_time_required": True,
                 "required_for_primary_test": True,
                 "definition_code": "split_reconciled_raw_price_volume_panel",
