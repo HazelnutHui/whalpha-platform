@@ -6,14 +6,18 @@ Universe Membership V1 records universe definitions and point-in-time daily memb
 
 ## Status
 
-Partially Implemented — Typed Daily Decision Only
+Partially Implemented — Daily Physical Contract and One Real Reconstruction Pilot
 
 The provider-neutral historical daily-decision record implements explicit
 included/excluded/quarantined disposition, methodology and origin, exact
 evaluated-base/source fingerprints, cutoff/evaluation timing, and reason/quality
-state plus fixture-only PyArrow persistence. Universe Definition, complete
-evaluated-base/disposition partition manifests, and a real historical builder
-remain unimplemented.
+state. Immutable PyArrow persistence now uses membership manifest `1.1`, which
+proves the exact evaluated stable-ID base and complete three-state totals for
+every Universe in the partition. A formal adapter reconstructs the reviewed
+2026-08-19 full-base Primary/Secondary source as
+`reconstructed_point_in_time`; the real Dell read-only pilot writes only to
+`/tmp`. Universe Definition, multi-session canonical publication, and a source
+for every retained historical date remain unimplemented.
 
 ## Grain
 
@@ -124,10 +128,23 @@ source dataset fingerprint, origin
 (`as_operated` or `reconstructed_point_in_time`), and included/excluded/
 quarantined disposition totals required by the
 [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
-The future partition manifest must also bind the evaluated-base count and
-disposition totals. Every instrument in the declared evaluated base needs an explicit disposition;
+The physical partition manifest binds the evaluated-base count, exact stable-ID
+set fingerprint, source fingerprints, and per-Universe disposition totals.
+Every instrument in the declared evaluated base needs an explicit disposition;
 omission is not exclusion, and missing critical evidence is not silently
 converted to `is_member=false`.
+
+The stable-ID base fingerprint is SHA-256 over compact JSON containing the
+unique UUID strings in lexical order. Every Universe in one partition must
+cover exactly that same base. A source policy's missing current/previous bar,
+insufficient history, invalid input, outlier quarantine, or reviewed quarantine
+maps to `quarantined`; explicit type, exchange, price, liquidity, or reviewed
+exclusion maps to `excluded`.
+
+When the retained source cutoff follows the evaluated session, every otherwise
+valid reconstructed row is quality `warning` and carries
+`reconstruction_source_cutoff_after_session`. Such a partition proves mechanics
+but is not eligible as a no-look-ahead signal population.
 
 ## Deferred Fields
 
@@ -142,4 +159,4 @@ converted to `is_member=false`.
 - live portfolio ingestion
 - market-data source of truth for price or volume
 - provider adapter implementation
-- physical Parquet schema implementation
+- canonical `/data` publication or active-pointer semantics

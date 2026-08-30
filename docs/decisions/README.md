@@ -108,3 +108,4 @@ Each ADR should include:
 - [0083: Reuse the Run Journal for Cadence Evidence](0083-reuse-run-journal-for-cadence-evidence.md)
 - [0084: Reserve One Pipeline Wake Before Invocation](0084-reserve-one-pipeline-wake-before-invocation.md)
 - [0085: Diagnose Unresolved Cadence Wakes Without Replay](0085-diagnose-unresolved-cadence-wakes-without-replay.md)
+- [0086: Physically Prove Point-in-Time Universe Membership](0086-physically-prove-point-in-time-universe-membership.md)

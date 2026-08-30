@@ -554,7 +554,16 @@ read or used.
   daily membership, adjustment entries, and bounded coverage/readiness.
   Explicit PyArrow schemas and immutable temporary-root Parquet repositories
   now pass synthetic round-trip, hash, conflict, corruption, and path-safety
-  tests. Real rows and 252/504-session history remain physically absent.
+  tests. ADR 0086 adds Membership manifest `1.1`, complete same-base coverage
+  gates, and a formal reviewed-full-base reconstruction adapter. Its real
+  2026-08-19 `/tmp` pilot contains 9,130 explicit rows over 4,565 stable IDs:
+  Primary 1,718 included / 2,775 excluded / 72 quarantined and Secondary 1,831
+  / 2,645 / 89. It is `reconstructed_point_in_time`, not `as_operated`.
+  Its 2026-08-21 source cutoff follows the 2026-08-19 session, so all otherwise
+  valid rows are warning-quality and the pilot is mechanics-only for
+  chronological evaluation.
+  Canonical multi-session rows and 252/504-session history remain physically
+  absent; `/data` and Production were unchanged.
 - Stock forward returns must not be described as option returns.
 - Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
   classifications remain quarantined.

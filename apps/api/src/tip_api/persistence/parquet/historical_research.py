@@ -25,6 +25,9 @@ from tip_api.contracts.market_data.v1 import (
     HistoricalDatasetFamily,
     InstrumentLifecycleObservationV1,
     UniverseMembershipDecisionV1,
+    UniverseMembershipDisposition,
+    UniverseMembershipDispositionSummaryV1,
+    UniverseMembershipPartitionManifestV1,
 )
 from tip_api.persistence.historical_research import (
     HistoricalResearchConflictError,
@@ -38,6 +41,7 @@ SCHEMA_VERSION = "1.0"
 CORPORATE_ACTION_OBSERVATION_SCHEMA_VERSION = "1.1"
 SCHEMA_VERSION_PARTITION = "1"
 MANIFEST_VERSION = "1.0"
+UNIVERSE_MEMBERSHIP_MANIFEST_VERSION = "1.1"
 PARQUET_FILE_NAME = "part-00000.parquet"
 MANIFEST_FILE_NAME = "manifest.json"
 COMPLETION_STATUS = "completed"
@@ -237,7 +241,7 @@ _SPECS = {
 
 @dataclass(frozen=True)
 class ParquetHistoricalResearchRepository:
-    """Publish and formally reread immutable historical fixture partitions."""
+    """Publish and formally reread immutable historical research partitions."""
 
     root: Path
     created_at: datetime | None = None
@@ -370,6 +374,11 @@ class ParquetHistoricalResearchRepository:
         ordered = _ordered_records(records, spec)
         _reject_duplicate_business_keys(ordered, spec)
         logical_fingerprint = _records_fingerprint(ordered, spec)
+        membership_manifest = (
+            _membership_manifest_fields(ordered)
+            if family is HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP
+            else {}
+        )
         root = _prepare_root(self.root)
         partition_path = _partition_path(root, spec, partition_values)
 
@@ -405,7 +414,11 @@ class ParquetHistoricalResearchRepository:
             physical_sha256 = _file_sha256(parquet_path)
             created_at = normalize_utc_datetime(self.created_at or datetime.now(UTC))
             manifest = {
-                "manifest_version": MANIFEST_VERSION,
+                "manifest_version": (
+                    UNIVERSE_MEMBERSHIP_MANIFEST_VERSION
+                    if family is HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP
+                    else MANIFEST_VERSION
+                ),
                 "family": family.value,
                 "schema_version": spec.schema_version,
                 "partition": dict(partition_values),
@@ -415,6 +428,7 @@ class ParquetHistoricalResearchRepository:
                 "parquet_file": PARQUET_FILE_NAME,
                 "created_at": created_at.isoformat(),
                 "completion_status": COMPLETION_STATUS,
+                **membership_manifest,
             }
             _write_json_atomic(staging_path / MANIFEST_FILE_NAME, manifest)
             _read_partition(staging_path, spec)
@@ -494,7 +508,11 @@ def _read_partition(
         raise HistoricalResearchCorruptionError("partition files are missing or unsafe")
     manifest = _read_json(manifest_path)
     required_manifest = {
-        "manifest_version": MANIFEST_VERSION,
+        "manifest_version": (
+            UNIVERSE_MEMBERSHIP_MANIFEST_VERSION
+            if spec.family is HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP
+            else MANIFEST_VERSION
+        ),
         "family": spec.family.value,
         "schema_version": spec.schema_version,
         "parquet_file": PARQUET_FILE_NAME,
@@ -503,6 +521,11 @@ def _read_partition(
     if any(manifest.get(key) != value for key, value in required_manifest.items()):
         raise HistoricalResearchCorruptionError("partition manifest contract differs")
     _validate_manifest_shape(manifest)
+    if spec.family is HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP:
+        try:
+            UniverseMembershipPartitionManifestV1.model_validate(manifest)
+        except (ValidationError, ValueError, TypeError) as exc:
+            raise HistoricalResearchCorruptionError("membership coverage manifest is invalid") from exc
     physical_sha256 = _file_sha256(parquet_path)
     if manifest.get("physical_sha256") != physical_sha256:
         raise HistoricalResearchCorruptionError("Parquet physical hash differs")
@@ -524,7 +547,85 @@ def _read_partition(
     if _records_fingerprint(records, spec) != manifest.get("logical_fingerprint"):
         raise HistoricalResearchCorruptionError("logical fingerprint differs")
     _reject_duplicate_business_keys(records, spec, corruption=True)
+    if spec.family is HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP:
+        expected_membership = _membership_manifest_fields(records)
+        if any(manifest.get(key) != value for key, value in expected_membership.items()):
+            raise HistoricalResearchCorruptionError("membership coverage manifest differs from rows")
     return records, manifest
+
+
+def _membership_manifest_fields(records: tuple[HistoricalRecord, ...]) -> dict[str, Any]:
+    membership_records = tuple(
+        record for record in records if isinstance(record, UniverseMembershipDecisionV1)
+    )
+    if len(membership_records) != len(records) or not membership_records:
+        raise HistoricalResearchPersistenceError("membership partition must contain membership decisions")
+    methodology_versions = {record.methodology_version for record in membership_records}
+    session_dates = {record.session_date for record in membership_records}
+    origins = {record.origin for record in membership_records}
+    base_fingerprints = {record.evaluated_base_fingerprint for record in membership_records}
+    source_fingerprint_sets = {record.source_fingerprints for record in membership_records}
+    source_cutoffs = {record.source_data_cutoff for record in membership_records}
+    evaluated_times = {record.evaluated_at for record in membership_records}
+    if any(len(values) != 1 for values in (
+        methodology_versions,
+        session_dates,
+        origins,
+        base_fingerprints,
+        source_fingerprint_sets,
+        source_cutoffs,
+        evaluated_times,
+    )):
+        raise HistoricalResearchPersistenceError("membership partition provenance must be uniform")
+    universe_ids = tuple(sorted({record.universe_id for record in membership_records}))
+    base_by_universe = {
+        universe_id: frozenset(
+            record.instrument_id for record in membership_records if record.universe_id == universe_id
+        )
+        for universe_id in universe_ids
+    }
+    first_base = base_by_universe[universe_ids[0]]
+    if any(ids != first_base for ids in base_by_universe.values()):
+        raise HistoricalResearchPersistenceError("each Universe must cover the same evaluated base")
+    actual_base_fingerprint = _stable_id_set_fingerprint(first_base)
+    declared_base_fingerprint = next(iter(base_fingerprints))
+    if actual_base_fingerprint != declared_base_fingerprint:
+        raise HistoricalResearchPersistenceError("evaluated-base fingerprint differs from row coverage")
+    source_fingerprints = next(iter(source_fingerprint_sets))
+    if source_fingerprints != tuple(sorted(set(source_fingerprints))):
+        raise HistoricalResearchPersistenceError("membership source fingerprints must be unique and sorted")
+    summaries = []
+    for universe_id in universe_ids:
+        rows = tuple(record for record in membership_records if record.universe_id == universe_id)
+        summaries.append(
+            UniverseMembershipDispositionSummaryV1(
+                universe_id=universe_id,
+                included_count=sum(record.disposition is UniverseMembershipDisposition.INCLUDED for record in rows),
+                excluded_count=sum(record.disposition is UniverseMembershipDisposition.EXCLUDED for record in rows),
+                quarantined_count=sum(record.disposition is UniverseMembershipDisposition.QUARANTINED for record in rows),
+            ).model_dump(mode="json")
+        )
+    return {
+        "methodology_version": next(iter(methodology_versions)),
+        "session_date": next(iter(session_dates)).isoformat(),
+        "origin": next(iter(origins)).value,
+        "universe_ids": list(universe_ids),
+        "evaluated_base_count": len(first_base),
+        "evaluated_base_fingerprint": actual_base_fingerprint,
+        "disposition_summaries": summaries,
+        "source_fingerprints": list(source_fingerprints),
+        "source_data_cutoff": next(iter(source_cutoffs)).isoformat(),
+        "evaluated_at": next(iter(evaluated_times)).isoformat(),
+    }
+
+
+def _stable_id_set_fingerprint(instrument_ids: frozenset[UUID]) -> str:
+    payload = json.dumps(
+        [str(item) for item in sorted(instrument_ids, key=str)],
+        separators=(",", ":"),
+        ensure_ascii=True,
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _ordered_records(

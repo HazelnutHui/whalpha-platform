@@ -25,7 +25,10 @@
   separately operator-approved disposition and any installed runtime binding.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
-  chronological 252-session minimum.
+  chronological 252-session minimum. ADR 0086 now completes the physical Daily
+  Universe Membership manifest and a real tmp-only 2026-08-19 reconstruction;
+  next extend only when a same-session reviewed source exists, never by
+  projecting current Activation backward.
 - Product: preserve leadership quality and entry location as separate axes.
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized

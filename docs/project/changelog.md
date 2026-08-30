@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-08-30 — Prove one point-in-time Daily Universe Membership partition
+
+- Accepted ADR 0086 and advanced the membership-only physical manifest to
+  `1.1`, binding the exact stable-ID evaluated base, complete per-Universe
+  included/excluded/quarantined totals, sorted source fingerprints, origin, and
+  cutoff/evaluation clocks.
+- Added a formal adapter from completed reviewed full-base decisions. It rejects
+  omitted/extra IDs and future-dated evidence, maps missing critical inputs to
+  quarantine, and never projects current Activation backward.
+- A real Dell read-only 2026-08-19 pilot wrote only `/tmp` and formally reread
+  9,130 decisions over 4,565 IDs: Primary 1,718 included / 2,775 excluded / 72
+  quarantined; Secondary 1,831 / 2,645 / 89.
+- No provider or credential was accessed; no `/data`, active artifact, website,
+  scheduler, publication, bundle, deployment, or Production state changed.
+- The reviewed source cutoff is 2026-08-21, after the 2026-08-19 session;
+  therefore all otherwise valid rows carry an explicit later-known-source
+  warning and the output is mechanics-only for chronological evaluation.
+- All 1,771 backend tests pass with the two existing dependency warnings.
+
 ## 2026-08-30 — Diagnose unresolved cadence wakes without replay
 
 - Accepted ADR 0085 and added pure Cadence Diagnosis 1.0 over an already-read,

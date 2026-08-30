@@ -504,6 +504,105 @@ class UniverseMembershipDecisionV1(FrozenContract):
         return self
 
 
+class UniverseMembershipDispositionSummaryV1(FrozenContract):
+    """Complete three-state totals for one Universe in one daily partition."""
+
+    universe_id: str
+    included_count: int = Field(ge=0)
+    excluded_count: int = Field(ge=0)
+    quarantined_count: int = Field(ge=0)
+
+    @field_validator("universe_id", mode="before")
+    @classmethod
+    def required_universe_id(cls, value: str) -> str:
+        return normalize_required_string(value, field_name="universe_id")
+
+    @property
+    def evaluated_count(self) -> int:
+        return self.included_count + self.excluded_count + self.quarantined_count
+
+
+class UniverseMembershipPartitionManifestV1(FrozenContract):
+    """Completion marker proving full evaluated-base coverage for one daily partition."""
+
+    manifest_version: Literal["1.1"] = "1.1"
+    family: Literal["universe_membership"] = "universe_membership"
+    schema_version: Literal["1.0"] = "1.0"
+    partition: dict[str, str]
+    record_count: int = Field(ge=1)
+    logical_fingerprint: str
+    physical_sha256: str
+    parquet_file: Literal["part-00000.parquet"] = "part-00000.parquet"
+    created_at: datetime
+    completion_status: Literal["completed"] = "completed"
+    methodology_version: str
+    session_date: date
+    origin: UniverseMembershipOrigin
+    universe_ids: tuple[str, ...] = Field(min_length=1)
+    evaluated_base_count: int = Field(ge=1)
+    evaluated_base_fingerprint: str
+    disposition_summaries: tuple[UniverseMembershipDispositionSummaryV1, ...] = Field(min_length=1)
+    source_fingerprints: tuple[str, ...] = Field(min_length=1)
+    source_data_cutoff: datetime
+    evaluated_at: datetime
+
+    @field_validator("logical_fingerprint", "physical_sha256", "evaluated_base_fingerprint")
+    @classmethod
+    def hashes(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @field_validator("source_fingerprints", mode="before")
+    @classmethod
+    def source_hashes(cls, value: Any) -> tuple[str, ...]:
+        if not isinstance(value, (tuple, list)):
+            raise ValueError("source_fingerprints must be an ordered collection")
+        hashes = tuple(_sha(item, "source_fingerprints") for item in value)
+        if not hashes or hashes != tuple(sorted(set(hashes))):
+            raise ValueError("source_fingerprints must be unique and sorted")
+        return hashes
+
+    @field_validator("methodology_version", mode="before")
+    @classmethod
+    def methodology(cls, value: str) -> str:
+        return normalize_required_string(value, field_name="methodology_version")
+
+    @field_validator("universe_ids", mode="before")
+    @classmethod
+    def universes(cls, value: Any) -> tuple[str, ...]:
+        if not isinstance(value, (tuple, list)):
+            raise ValueError("universe_ids must be an ordered collection")
+        normalized = tuple(normalize_required_string(item, field_name="universe_ids") for item in value)
+        if not normalized or normalized != tuple(sorted(set(normalized))):
+            raise ValueError("universe_ids must be unique and sorted")
+        return normalized
+
+    @field_validator("created_at", "source_data_cutoff", "evaluated_at")
+    @classmethod
+    def utc_times(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @model_validator(mode="after")
+    def reconcile(self) -> "UniverseMembershipPartitionManifestV1":
+        expected_partition = {
+            "methodology_version": self.methodology_version,
+            "session_date": self.session_date.isoformat(),
+        }
+        if self.partition != expected_partition:
+            raise ValueError("membership partition values do not match manifest fields")
+        summary_ids = tuple(item.universe_id for item in self.disposition_summaries)
+        if summary_ids != self.universe_ids:
+            raise ValueError("disposition summaries must be complete and Universe-sorted")
+        if any(item.evaluated_count != self.evaluated_base_count for item in self.disposition_summaries):
+            raise ValueError("each Universe must explicitly cover the evaluated base")
+        if self.record_count != self.evaluated_base_count * len(self.universe_ids):
+            raise ValueError("record_count does not reconcile with complete Universe coverage")
+        if self.source_data_cutoff > self.evaluated_at:
+            raise ValueError("source_data_cutoff must not follow evaluated_at")
+        if self.created_at < self.evaluated_at:
+            raise ValueError("partition creation must not precede membership evaluation")
+        return self
+
+
 class AdjustmentLedgerEntryV1(FrozenContract):
     """One explicit adjustment projection from a raw session to a basis session."""
 

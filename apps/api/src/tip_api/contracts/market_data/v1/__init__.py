@@ -60,7 +60,9 @@ from tip_api.contracts.market_data.v1.historical_research import (
     RESEARCH_REQUIRED_DATASET_FAMILIES,
     UniverseMembershipDecisionV1,
     UniverseMembershipDisposition,
+    UniverseMembershipDispositionSummaryV1,
     UniverseMembershipOrigin,
+    UniverseMembershipPartitionManifestV1,
 )
 
 __all__ = [
@@ -113,5 +115,7 @@ __all__ = [
     "RESEARCH_REQUIRED_DATASET_FAMILIES",
     "UniverseMembershipDecisionV1",
     "UniverseMembershipDisposition",
+    "UniverseMembershipDispositionSummaryV1",
     "UniverseMembershipOrigin",
+    "UniverseMembershipPartitionManifestV1",
 ]

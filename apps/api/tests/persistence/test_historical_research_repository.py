@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID
@@ -42,6 +43,14 @@ OBSERVED_AT = datetime(2026, 8, 27, 20, 0, tzinfo=UTC)
 INGESTED_AT = OBSERVED_AT + timedelta(minutes=2)
 ID1 = UUID("11111111-1111-4111-8111-111111111111")
 ID2 = UUID("22222222-2222-4222-8222-222222222222")
+
+
+def evaluated_base_fingerprint(*instrument_ids: UUID) -> str:
+    payload = json.dumps(
+        [str(item) for item in sorted(set(instrument_ids), key=str)],
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def action(
@@ -116,7 +125,7 @@ def membership(
         disposition=disposition,
         is_member=is_member,
         reason_codes=("provider_cs",),
-        evaluated_base_fingerprint="a" * 64,
+        evaluated_base_fingerprint=evaluated_base_fingerprint(ID1, ID2),
         source_fingerprints=("b" * 64, "c" * 64),
         source_data_cutoff=OBSERVED_AT,
         evaluated_at=INGESTED_AT,
@@ -227,6 +236,49 @@ def test_membership_round_trip_preserves_explicit_three_state(tmp_path) -> None:
     assert reread[0].is_member is True
     assert reread[1].disposition is UniverseMembershipDisposition.QUARANTINED
     assert reread[1].is_member is None
+    manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
+    assert manifest["manifest_version"] == "1.1"
+    assert manifest["evaluated_base_count"] == 2
+    assert manifest["universe_ids"] == ["primary"]
+    assert manifest["disposition_summaries"] == [
+        {
+            "excluded_count": 0,
+            "included_count": 1,
+            "quarantined_count": 1,
+            "universe_id": "primary",
+        }
+    ]
+
+
+def test_membership_partition_rejects_incomplete_cross_universe_coverage(tmp_path) -> None:
+    repository = ParquetHistoricalResearchRepository(tmp_path, created_at=INGESTED_AT)
+    primary = membership(ID1)
+    secondary = membership(ID2).model_copy(update={"universe_id": "secondary"})
+
+    with pytest.raises(HistoricalResearchPersistenceError, match="same evaluated base"):
+        repository.publish_universe_membership(
+            (primary, secondary),
+            methodology_version="provider-form-primary-v1",
+            session_date=AS_OF,
+        )
+
+
+def test_membership_reader_rejects_tampered_coverage_manifest(tmp_path) -> None:
+    repository = ParquetHistoricalResearchRepository(tmp_path, created_at=INGESTED_AT)
+    result = repository.publish_universe_membership(
+        (
+            membership(ID1, UniverseMembershipDisposition.INCLUDED),
+            membership(ID2, UniverseMembershipDisposition.EXCLUDED),
+        ),
+        methodology_version="provider-form-primary-v1",
+        session_date=AS_OF,
+    )
+    manifest = json.loads(result.manifest_path.read_text(encoding="utf-8"))
+    manifest["disposition_summaries"][0]["excluded_count"] = 0
+    result.manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    with pytest.raises(HistoricalResearchCorruptionError, match="coverage manifest"):
+        repository.read_universe_membership(result.partition_path)
 
 
 def test_adjustment_round_trip_keeps_price_volume_and_total_return_distinct(tmp_path) -> None:

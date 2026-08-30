@@ -750,6 +750,18 @@ recorded in the active-state table and
   observations cannot substitute for canonical Corporate Action coverage.
   This adds no canonical dataset, provider verification, `/data` write,
   formula, publication, or deployment.
+- ADR 0086 now advances Daily Universe Membership from fixture-only persistence
+  to a complete physical partition contract. Manifest `1.1` proves one exact
+  stable-ID evaluated base, complete Primary/Secondary three-state ledgers,
+  uniform point-in-time provenance, and source fingerprints. A real read-only
+  Dell pilot formally reread the completed 2026-08-19 reviewed full-base source
+  and wrote only `/tmp`: 4,565 evaluated IDs per Universe, 9,130 rows, Primary
+  1,718 included / 2,775 excluded / 72 quarantined, and Secondary 1,831 /
+  2,645 / 89. Its origin is `reconstructed_point_in_time`; no other date was
+  inferred. The reviewed source completed on 2026-08-21, after the analysis
+  session, so every non-quarantined row carries a later-known-source warning
+  and the pilot is mechanics-only for anti-look-ahead evaluation. Canonical
+  `/data`, active analytics, and Production were unchanged.
 - That 2026-08-28 public-source/storage review is now complete. Massive Basic's
   documented EOD, point-in-time reference, split, and dividend shapes are
   technically plausible, and projected Dell storage is small. A real pilot is
