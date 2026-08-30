@@ -52,6 +52,14 @@
   Sector Rotation resource through the temporary guest Session. The exact
   failed remote release was removed only after rollback and manifest identity
   were verified; the prior release remained active throughout correction.
+- The regenerated source-bound release
+  `2026-08-28T141747Z-83f9b629279c` then passed OCI dry-run, atomic Apply,
+  temporary-guest Candidate/Strategy/Sector Rotation postflight, logout, and
+  independent remote inspection. Standard and persistent bundles share logical
+  fingerprint `6e2e08f1e3e9c3d06c3c069e751fce1b9ac2433837952aa2f95186f27c1721e0`.
+  Final `/data` contains 694 files / 503,568,026 bytes with fingerprint
+  `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`,
+  zero symlinks, and zero publication residue.
 
 ## 2026-08-30 — Block unproven persistent-workspace execution
 

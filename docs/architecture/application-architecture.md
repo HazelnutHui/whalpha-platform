@@ -161,7 +161,7 @@ the not-yet-published SEC evidence boundary. Corporate Action V1 and broader
 issuer classification remain incomplete. The production data root contains
 completed point-in-time Identity and canonical EOD sessions through 2026-08-28,
 active provider-form Primary/Secondary Universe memberships, immutable Market
-Intelligence 1.2, and Snapshot 1.10 / Dashboard 2.7. Exact volatile release,
+Intelligence 1.3, and Snapshot 1.11 / Dashboard 2.8. Exact volatile release,
 session, and inventory evidence belongs in
 [current-context](../project/current-context.md). Default-disabled read/query
 APIs, EOD analytics, Dashboard Overview, and private Snapshot export consume
@@ -172,12 +172,11 @@ Candidate delivery optimization: a compact list projection and stable-ID
 detail shards formally reconstruct the unchanged Candidate publication 1.1.
 Snapshot 1.9 / Dashboard 2.6 adds one lazy, source-bound strategy-channel
 product. Snapshot 1.10 / Dashboard 2.7 carries Visual Context in detail-shard
-1.1 while the first-load summary remains unchanged; it is active in
-Production. Repository source additionally implements Snapshot 1.11 /
+1.1 while the first-load summary remains unchanged. Snapshot 1.11 /
 Dashboard 2.8. It projects the MI 1.3 market-wide Sector ETF Rotation product
 into one dedicated checksum-bound lazy file and freezes the exact source and
 product lineage through Approval Plan 2.6 and OCI validation. This newer pair
-is not active in Production.
+is active in Production.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 

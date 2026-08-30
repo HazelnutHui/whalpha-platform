@@ -388,7 +388,7 @@ posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
 Do not select formulas or thresholds from one-session distributions. The
-ordinary-fresh, lag-zero 2026-08-28 Snapshot 1.10 / Dashboard 2.7 release is
+ordinary-fresh, lag-zero 2026-08-28 Snapshot 1.11 / Dashboard 2.8 release is
 active. Later control-plane changes remain undeployed; every further
 publication or deployment requires fresh exact review and authorization. Keep
 SMTP and SEC B2 paused.

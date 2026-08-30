@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `1894b9c9b95efe73d2b58389119d01ed90a4012d` |
+| Deployed bundle source commit | `83f9b629279c0e7e949cf01b454ebfda60b35900` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -49,17 +49,17 @@ custody/contracts after deployment.
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
 | Primary | 1,718 CS; fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978` |
 | Secondary | 1,831 = 1,718 CS + 113 ADRC; fingerprint `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295` |
-| Market Intelligence | `2026-08-29T080431Z-785ab49dfedd`, contract 1.2 |
-| Market Intelligence payload SHA-256 | `9b345d531942ad6f6eeae79ae22de3c578020b14b779281d4616cc3aa680b930` |
-| Market Intelligence logical fingerprint | `9b2842fb9611184f0d2887ad10da7820edbb5d11785ba5083f998314452e696f` |
-| Candidate publication | 686 Primary / 744 Secondary records; fingerprint `eff5ce68400ff90456cd0363bc04d625a80ca6a132b54545bb37d5e6463d5841` |
-| Dashboard Snapshot | `2026-08-30T092455Z-1894b9c9b95e` |
-| Contracts | Snapshot 1.10 / Dashboard 2.7 |
-| Snapshot pointer fingerprint | `8779d390634e99b53a21a3c33121c332759d602b1133a0b47e253a5a9f0104f1` |
+| Market Intelligence | `2026-08-28T135850Z-f483d6999a3e`, contract 1.3 |
+| Market Intelligence payload SHA-256 | `bb58287454ddc79955e045f3341c35873961a16e692ee9146d9519f4837351fc` |
+| Market Intelligence logical fingerprint | `7f1e6b9c065999939a2f43f397f8af4a94dc342f65ad6dc3624d4c6d6b507f74` |
+| Candidate publication | 686 Primary / 744 Secondary records; fingerprint `96c37e7a1e35c55e67422a1b4638e7ad1f5a69d6edc5a8124344ae4a0f7cf758` |
+| Dashboard Snapshot | `2026-08-28T141747Z-83f9b629279c` |
+| Contracts | Snapshot 1.11 / Dashboard 2.8 |
+| Snapshot pointer fingerprint | `cd78a18de7fe102b694fbf624315b37c7648f4d0034e59c6d130e6a965ed9468` |
 | Active review metadata | none; ordinary fresh publication |
 | Current post-close pipeline freshness | expected 2026-08-28; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-28; lag zero |
-| `/data` inventory | 608 files / 404,002,859 bytes after the unified-workspace Snapshot |
-| `/data` inventory fingerprint | `be0846beeee56bbac1856056ab23b2c03c26c4972d479d7fcc44e2e2e64a3db6` |
+| `/data` inventory | 694 files / 503,568,026 bytes after MI 1.3 and the final Snapshot 1.11 publication |
+| `/data` inventory fingerprint | `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -686,8 +686,8 @@ recorded in the active-state table and
   Snapshot 1.10 / Dashboard 2.7, and Approval Plan 2.5. The browser renders the
   exact path and left-censor-aware observed age through the existing one-request
   lazy detail flow. A real `/tmp` preview kept the 2,061,314-byte summary
-  unchanged and added 3,724,116 bytes across the 32 lazy shards. It is not
-  published or deployed; active Production remains 1.9/2.6. The parameter-
+  unchanged and added 3,724,116 bytes across the 32 lazy shards. It was later
+  published through Snapshot 1.10 and remains included in active 1.11. The parameter-
   bound explanation and URL continuity changes are now
   deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`. ADR 0059 now records
   the user's exact 2026-08-26 stale-review
@@ -856,10 +856,9 @@ recorded in the active-state table and
 - The public data-free Session entry is now a bilingual product introduction,
   not only an authentication panel. It uses the dark WH mark, keeps credential
   and equal-capability guest entry in the first viewport, presents the complete
-  decision chain, and in active Production separates four live capabilities
-  from four planned and one later capability along a central visual path.
-  Repository source now truthfully promotes Sector ETF Rotation, producing
-  five live and three planned capabilities, but that source is not deployed.
+  decision chain, and in active Production separates five live capabilities
+  from three planned and one later capability along a central visual path.
+  Sector ETF Rotation is now one of those live capabilities.
   The page makes the
   explain-before-ranking, counterevidence, context, fund-flow terminology, and
   stock-versus-option-return guardrails visible before entry.
@@ -877,38 +876,35 @@ recorded in the active-state table and
   custody policy across every analytics writer and reader. A real 2026-08-28
   persistent Dell rehearsal completed all nine analytics directories with
   owner-only custody, no residue, zero Oracle mismatch, zero request, and zero
-  Production write. MI 1.3/Plan 1.3 and Snapshot 1.10/Plan 2.5 persistent
-  writers/contracts/readers also passed separate zero-write rehearsals. They
-  cannot form one active lineage without separately authorized MI/Snapshot
-  Apply. Serving-bundle persistent custody is implemented but cannot be
-  rehearsed before the immutable Snapshot target exists, so
-  Automation Plan 1.7 still reports
-  `persistent_workspace_cli_custody_unreconciled` before any offline action
-  reservation. Active Production remains MI 1.2 and Snapshot
-  1.10 / Dashboard 2.7; the new workspace is not deployed.
+  Production write. The separately authorized MI 1.3 and Snapshot 1.11 / Plan
+  2.6 Applies then formed one exact active lineage. Both the standard and
+  persistent 52-checksummed-file bundles formally reread with identical bundle
+  fingerprint `6e2e08f1e3e9c3d06c3c069e751fce1b9ac2433837952aa2f95186f27c1721e0`;
+  persistent directories are `0700` and files `0400`. Automation Plan 1.7
+  still contains its conservative ADR 0094 stop until a separately reviewed
+  contract revision removes it; the factual custody prerequisite is now
+  satisfied. Active Production is MI 1.3 and Snapshot 1.11 / Dashboard 2.8.
 
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-30T092455Z-1894b9c9b95e`, built from deployed source commit
-`1894b9c9b95efe73d2b58389119d01ed90a4012d` and bound to Market Intelligence
-`2026-08-29T080431Z-785ab49dfedd`. A later repository HEAD does not
+`2026-08-28T141747Z-83f9b629279c`, built from deployed source commit
+`83f9b629279c0e7e949cf01b454ebfda60b35900` and bound to Market Intelligence
+`2026-08-28T135850Z-f483d6999a3e`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-30 unified-workspace deployment passed formal Snapshot Plan 2.5,
-ordinary-fresh Snapshot Apply, exact 51-file serving-bundle reread, remote
+The 2026-08-30 Sector Rotation deployment passed formal Snapshot Plan 2.6,
+ordinary-fresh Snapshot Apply, exact 52-checksummed-file serving-bundle reread, remote
 preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
-guest Session postflight against the exact Snapshot 1.10 payload, strategy
-resource, and root PNG favicon. The public favicon returned `image/png` and
-matched the Dell source SHA-256
-`9645feb8261c234e6efd644960f50ac1431191dba37b19026242c5bc299e0e00`.
+guest Session postflight against the exact Snapshot 1.11 payload, Candidate,
+Strategy, Sector Rotation resources, and root PNG favicon.
 No credential or cookie content was printed or retained.
 The independent remote-state report also matched local manifest/checksum
 hashes, found zero failed units or staging/failed residue, and recorded state
 fingerprint
-`794795e03fa939816ed3a9b6537747a8d306c1e3f67eecdc280e29b074432f5f`.
+`50781e2bb39fa6ec56667c34b3455a9c9c60fcfe0c40ad323a1fb1397509bfcf`.
 Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.

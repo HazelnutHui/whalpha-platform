@@ -43,10 +43,9 @@ deployed in the current OCI release.
 The public data-free entry now uses the dark WH mark in a mature full-page
 brand experience. Credential and guest entry remain immediately available in
 the first viewport and open the same workspace. Below them, a bilingual
-alternating capability path distinguishes four live capabilities, four planned
+alternating capability path distinguishes five live capabilities, three planned
 capabilities, and one later position-management capability in active
-Production. Repository source promotes Sector ETF Rotation to live, producing
-five live and three planned capabilities, but that revision is not deployed.
+Production. Sector ETF Rotation is one of the live capabilities.
 Planned work is never presented as available functionality. Product principles and the full
 market-to-position decision chain are visible before Session entry.
 
@@ -71,20 +70,20 @@ relative-performance proxies, never actual fund flow.
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
 - Active Market Intelligence publication is
-  `2026-08-29T080431Z-785ab49dfedd`, contract 1.2, with 686 Primary and 744
+  `2026-08-28T135850Z-f483d6999a3e`, contract 1.3, with 686 Primary and 744
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-30T092455Z-1894b9c9b95e`, contract 1.10 / Dashboard 2.7.
+  `2026-08-28T141747Z-83f9b629279c`, contract 1.11 / Dashboard 2.8.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-30T092455Z-1894b9c9b95e` from source commit `1894b9c9b95e`.
+  `2026-08-28T141747Z-83f9b629279c` from source commit `83f9b629279c`.
 
 The active analytics and Snapshot are ordinary fresh publications for
 2026-08-28: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
-`2026-08-30T085601Z-6c732e9cd602` is the exact planned rollback reference. The
-2026-08-30 post-deployment reader found 608 files / 404,002,859 bytes under
+`2026-08-28T140332Z-f483d6999a3e` is the exact planned rollback reference. The
+2026-08-30 post-deployment reader found 694 files / 503,568,026 bytes under
 `/data`, inventory fingerprint
-`be0846beeee56bbac1856056ab23b2c03c26c4972d479d7fcc44e2e2e64a3db6`,
+`b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`,
 zero symlinks, and zero publication residue.
 
 ### Daily automation development state
@@ -624,8 +623,8 @@ SMA20, prior five-session close high/low, and selected reference support on one
 shared scale, plus explicit threshold distances and Candidate-state
 confirmation progress. It changes no model or payload. The view deliberately
 does not fabricate a historical price path, call confirmation count signal age,
-or call reference support a stop. All 98 frontend tests and the Production build
-pass; this source change is not deployed.
+or call reference support a stop. It was subsequently carried through Visual
+Context and remains active in the current Production release.
 
 ADR 0088 now implements the separate Candidate Visual Context 1.0 source layer:
 exact 20-session canonical close paths, copied Entry Geometry reference levels,
@@ -726,9 +725,10 @@ and unchanged Rotation product fingerprint
 `bce93211b6aec748d41db7a4c7f2e34226941e2a4f4ceee29b7a7d6adf51bbf7`.
 The formally reread 42-file Plan 2.6 fingerprint is
 `d31e9c487665cc14fd5cdec7b0a7ccae46a532565e13da1b31e3f0f2afcb24e9`.
-This was tmp-only verification: no `/data` Apply, active pointer, OCI bundle,
-or deployment occurred. Production therefore remains MI 1.2, Snapshot 1.10 /
-Dashboard 2.7 and does not yet expose the new workspace.
+That first build was tmp-only verification. The later authorized persistent
+MI 1.3 and Snapshot 1.11 / Dashboard 2.8 Applies, exact bundle construction,
+OCI switch, temporary-guest postflight, and independent remote inspection all
+passed; Sector ETF Rotation is now active in Production.
 
 ADR 0093 closes the logical Visual Context stage gap. Automation Plan 1.6 now
 observes the same-session audit after Strategy Channels and before MI planning;
@@ -750,20 +750,17 @@ nine final directories were `0700`, all files were `0400`, no symlink or
 partial/recovery residue remained, and every stage reported zero Oracle
 mismatch, external request, and Production write.
 
-MI 1.3 candidate/Plan 1.3 and Snapshot 1.10/Plan 2.5 candidate/plan writers,
-contracts, and formal readers have now separately crossed the persistent
-boundary in real zero-write rehearsals. The active MI 1.2 correctly rejects
-the new persistent Candidate lineage, so a complete one-lineage Snapshot and
-serving bundle cannot be proven without separately authorized MI and Snapshot
-Apply. Serving-bundle persistent root custody is implemented and tested, but
-cannot be physically rehearsed before that immutable Snapshot exists.
-Automation Plan
-1.7 therefore
-continues to stop at `persistent_workspace_cli_custody_unreconciled`; removing
-the block now would overstate the proof. The installed timer remains read-only
-and no MI 1.3 publication or Snapshot 1.11 deployment is authorized. Repeated
-full Candidate rereads are also a measured performance hotspot to optimize
-without weakening source, hash, typed-contract, or Oracle gates.
+MI 1.3 candidate/Plan 1.3 and Snapshot 1.11/Plan 2.6 writers, contracts, formal
+readers, Applies, and both standard and persistent serving bundles have now
+crossed one exact persistent lineage. The persistent bundle has the same
+logical fingerprint as the deployed local bundle, `0700` directories, `0400`
+files, and no residue. Automation Plan 1.7 still stops at
+`persistent_workspace_cli_custody_unreconciled` because that conservative
+ADR 0094 code gate has not yet been revised; the empirical prerequisite for a
+separate reviewed removal is now satisfied. The installed timer remains
+read-only. Repeated full Candidate rereads remain a measured performance
+hotspot to optimize without weakening source, hash, typed-contract, or Oracle
+gates.
 
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal

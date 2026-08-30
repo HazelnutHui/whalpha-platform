@@ -32,9 +32,9 @@ Confirmed:
 
 ## OCI
 
-Live-verified through the `whalpha-oci` SSH alias on 2026-08-29 without reading
+Live-verified through the `whalpha-oci` SSH alias on 2026-08-30 without reading
 credentials. The active Dashboard release is
-`2026-08-29T080928Z-785ab49dfedd`; `/` is the data-free branded credential/guest
+`2026-08-28T141747Z-83f9b629279c`; `/` is the data-free branded credential/guest
 Session entry, and `/dashboard/` and `/private-data/` share the server-side
 Session boundary.
 

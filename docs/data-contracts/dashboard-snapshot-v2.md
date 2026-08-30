@@ -3,11 +3,12 @@
 ## Status
 
 Implemented. Active Production Snapshot
-`2026-08-29T133847Z-1490b37f25b3` uses Snapshot 1.9 / Dashboard 2.6 and binds
-Market Intelligence `2026-08-29T080431Z-785ab49dfedd`. It was published under
-ordinary lag-zero freshness. It includes the split Candidate consumer and the
-additive lazy strategy-channel product. Earlier releases remain immutable,
-readable historical/rollback contracts, not the active state.
+`2026-08-28T141747Z-83f9b629279c` uses Snapshot 1.11 / Dashboard 2.8 and binds
+Market Intelligence `2026-08-28T135850Z-f483d6999a3e`. It was published under
+ordinary lag-zero freshness. It includes the split Candidate consumer, lazy
+strategy-channel and Visual Context products, and the lazy Sector Rotation
+resource. Earlier releases remain immutable, readable historical/rollback
+contracts, not the active state.
 
 ## Contracts
 
@@ -148,5 +149,6 @@ The manifest and Approval Plan 2.5 freeze the Visual Context contract, audit-
 manifest SHA-256, audit logical fingerprint, two batch fingerprints, detail
 contract, filenames, and every file hash. Formal reread requires exact stable-
 ID coverage and per-row Candidate/Entry Geometry lineage. OCI bundle and guest
-postflight validators understand 1.10/2.7; publication and deployment remain
-separately authorized. Active Production remains 1.9/2.6.
+postflight validators understand 1.10/2.7. Snapshot 1.11 / Dashboard 2.8 adds
+the separately bound Sector Rotation resource and is the active Production
+pair; publication and deployment remain separately authorized operations.
