@@ -783,6 +783,17 @@ recorded in the active-state table and
   It counted 306,539 EOD rows and 307,466 canonical Identity instrument rows.
   `/data` stayed exactly 694 files / 503,568,026 bytes; evidence/Coverage
   directories remain absent and readiness remains 31/252 `data_blocked`.
+- ADR 0101 produces the first current, clean-main Historical Pilot baseline.
+  It binds revision `017ab5657edaa4bf3bd90ac2437448a7486f7b4b`, the exact
+  inventory fingerprint
+  `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`,
+  and proposed sessions 2026-07-14 through 2026-07-16. The 75-request plan
+  fingerprint is
+  `ea6faae1d7f5cd3cd80ce349915a8094bc9e78e7e201f72638a06773f4e01899`;
+  the baseline fingerprint is
+  `7a8ab595707844fb57f4e64651a9e2db16f16246984a945cce3897ee031d7f28`.
+  It is blocked by account entitlement, equal-capability permission, and
+  lifecycle/terminal coverage; acknowledgement is null and no action occurred.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

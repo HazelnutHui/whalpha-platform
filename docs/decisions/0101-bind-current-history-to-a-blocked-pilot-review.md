@@ -74,6 +74,33 @@ The plan may still describe the bounded hypothetical request scope because
 scope review and execution authority are separate facts. Resolving a gate
 requires new evidence; it cannot be changed by a command-line flag.
 
+## Real Dell Evidence
+
+The first clean-main run was reviewed at 2026-08-30T17:02:52Z against
+implementation revision `017ab5657edaa4bf3bd90ac2437448a7486f7b4b`.
+
+- current mechanics fingerprint:
+  `6ef8da023b0b92c96147e9e11f530c361a3c24a23ff4b6c8a39ec38d6bc12228`;
+- exact 694-file / 503,568,026-byte inventory fingerprint:
+  `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`;
+- target sessions: 2026-07-14, 2026-07-15, and 2026-07-16;
+- plan fingerprint:
+  `ea6faae1d7f5cd3cd80ce349915a8094bc9e78e7e201f72638a06773f4e01899`;
+- typed permission-review fingerprint:
+  `4294c5e8f56c2f623ac4d9587650e88b21cafb5f7eb6884c93da21c5a09b4dae`;
+- final baseline fingerprint:
+  `7a8ab595707844fb57f4e64651a9e2db16f16246984a945cce3897ee031d7f28`.
+
+The hypothetical ceiling is 75 serial requests: 3 Grouped Daily, 60 active
+All Tickers, 6 inactive All Tickers, 2 Splits, 4 Dividends, and zero Ticker
+Events. At the fixed 15-second pace the transport-only floor is 1,125 seconds.
+
+The exact unresolved gates are `account_endpoint_entitlement`,
+`equal_capability_source_permission`, and `lifecycle_source_coverage`. All
+three source-family permission assessments are `blocked_by_permission`.
+Status is `blocked`, acknowledgement is null, and every operational authority
+remains false with zero requests and zero writes.
+
 ## Consequences
 
 - The next user decision will be based on one exact current report rather than

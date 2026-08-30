@@ -594,6 +594,16 @@ read or used.
   Both are `validated_not_published`; `/data` remained 694 files / 503,568,026
   bytes and contains neither evidence nor Coverage publication. The 221-session
   gap plus membership, action, lifecycle, and adjustment blockers remain.
+- ADR 0101 binds those mechanics to the current full inventory and a typed
+  blocked pilot review. The exact hypothetical window is 2026-07-14 through
+  2026-07-16, plan fingerprint
+  `ea6faae1d7f5cd3cd80ce349915a8094bc9e78e7e201f72638a06773f4e01899`,
+  with 75 serial requests / 1,125 transport seconds at ceiling. Baseline
+  fingerprint is
+  `7a8ab595707844fb57f4e64651a9e2db16f16246984a945cce3897ee031d7f28`.
+  Status is `blocked`; account entitlement, equal-capability source permission,
+  and lifecycle/terminal coverage remain unresolved. No acknowledgement exists
+  and every operational authority is false.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

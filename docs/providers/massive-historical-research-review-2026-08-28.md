@@ -148,3 +148,10 @@ provider pilot remains blocked until equal-capability source permission and
 exact account entitlement are reviewed. The product posture is now resolved:
 guest and credential shared content remain identical, and owner-only market
 analysis is not a fallback.
+
+ADR 0101 now projects this unchanged dated conclusion into a typed current
+pilot baseline. The first 2026-08-30 real run remains `blocked`: all three
+requested Massive families are `blocked_by_permission`, account historical
+endpoint entitlement is unverified, and complete lifecycle/terminal coverage
+is absent. The mechanically bounded 75-request plan is not authorization and
+no request was made.

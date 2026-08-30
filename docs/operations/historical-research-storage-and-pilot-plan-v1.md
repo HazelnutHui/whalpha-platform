@@ -122,7 +122,7 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 9. **Complete:** adapt the current canonical EOD and EOD-bound Identity bytes
    into deterministic in-memory family evidence and transitively validate all
    source manifests/payload hashes without publishing to `/data`.
-10. **Complete in repository source:** join current mechanics, full inventory,
+10. **Complete:** join current mechanics, full inventory,
    exact preceding sessions, repository evidence, and dated Massive permission
    conclusions into one blocked, network-prohibited pilot baseline.
 11. Re-review source permission/account entitlement/lifecycle coverage, bind a
@@ -140,6 +140,14 @@ ADR 0100's 2026-08-30 real read-only pass validated 31 current EOD artifacts
 instrument rows) as proposed family evidence. Both remain
 `validated_not_published`. The run preserved the exact 694-file / 503,568,026-
 byte root and also confirmed that `historical-coverage-evidence` is absent.
+
+ADR 0101's first real clean-main baseline binds that same mechanics evidence to
+inventory `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`
+and exact hypothetical targets 2026-07-14 through 2026-07-16. Plan fingerprint
+is `ea6faae1d7f5cd3cd80ce349915a8094bc9e78e7e201f72638a06773f4e01899`;
+baseline fingerprint is
+`7a8ab595707844fb57f4e64651a9e2db16f16246984a945cce3897ee031d7f28`.
+It is `blocked`, has no acknowledgement, and made zero requests/writes.
 
 ## Implemented read-only planner boundary
 

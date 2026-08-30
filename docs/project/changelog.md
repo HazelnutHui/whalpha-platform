@@ -17,6 +17,15 @@
   passed 1,853 tests with only the two existing dependency deprecation warnings.
   No network request, data write, pilot execution, publication, deployment, or
   scheduler change occurred.
+- The first clean-main real run at 2026-08-30T17:02:52Z bound revision
+  `017ab5657edaa4bf3bd90ac2437448a7486f7b4b`, inventory fingerprint
+  `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`,
+  and exact targets 2026-07-14 through 2026-07-16. The 75-request plan
+  fingerprint is
+  `ea6faae1d7f5cd3cd80ce349915a8094bc9e78e7e201f72638a06773f4e01899`;
+  the blocked baseline fingerprint is
+  `7a8ab595707844fb57f4e64651a9e2db16f16246984a945cce3897ee031d7f28`.
+  No acknowledgement was generated; requests and writes remained zero.
 
 ## 2026-08-30 — Adapt current EOD and Identity into unpublished family evidence
 
