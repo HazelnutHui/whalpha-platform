@@ -730,7 +730,7 @@ def plan_daily_eod_automation(
         )
     snapshot_plan = snapshot.payload
     if (
-        snapshot_plan.plan_version != "2.4"
+        snapshot_plan.plan_version != "2.6"
         or snapshot_plan.analysis_session != target_session
         or Path(snapshot_plan.candidate_path).parent
         != paths.snapshot_output_root
@@ -742,6 +742,10 @@ def plan_daily_eod_automation(
         != active_market_intelligence.payload.logical_fingerprint
         or snapshot_plan.candidate_strategy_audit_logical_fingerprint
         != strategy.observation.logical_fingerprint
+        or snapshot_plan.sector_rotation_audit_logical_fingerprint
+        != sector_rotation.observation.logical_fingerprint
+        or snapshot_plan.sector_rotation_product_logical_fingerprint
+        != sector_rotation.payload.product.logical_fingerprint
     ):
         return _blocked(
             target_session,

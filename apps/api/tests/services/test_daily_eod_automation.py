@@ -394,7 +394,7 @@ def test_partial_snapshot_plan_artifacts_fail_closed(monkeypatch, tmp_path) -> N
     assert plan.reason_codes == ("snapshot_plan_partial",)
 
 
-def test_snapshot_plan_2_4_advances_to_separate_snapshot_review(
+def test_snapshot_plan_2_6_advances_to_separate_snapshot_review(
     monkeypatch,
     tmp_path,
 ) -> None:
@@ -405,7 +405,7 @@ def test_snapshot_plan_2_4_advances_to_separate_snapshot_review(
         automation,
         "read_dashboard_snapshot_approval_plan",
         lambda _path: SimpleNamespace(
-            plan_version="2.4",
+            plan_version="2.6",
             analysis_session=TARGET,
             plan_content_fingerprint="0" * 64,
             candidate_path=str(
@@ -415,6 +415,10 @@ def test_snapshot_plan_2_4_advances_to_separate_snapshot_review(
             market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
             market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
             candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+            sector_rotation_audit_logical_fingerprint=SECTOR_ROTATION_FP,
+            sector_rotation_product_logical_fingerprint=(
+                SECTOR_ROTATION_PRODUCT_FP
+            ),
             pointer_path=str(paths.data_root / "snapshot-active.json"),
             planned_pointer_fingerprint="1" * 64,
         ),
@@ -439,7 +443,7 @@ def _install_active_snapshot(monkeypatch, paths, *, release_id="2026-08-26T21000
         automation,
         "read_dashboard_snapshot_approval_plan",
         lambda _path: SimpleNamespace(
-            plan_version="2.4",
+            plan_version="2.6",
             analysis_session=TARGET,
             plan_content_fingerprint="0" * 64,
             candidate_path=str(paths.snapshot_output_root / release_id),
@@ -447,13 +451,17 @@ def _install_active_snapshot(monkeypatch, paths, *, release_id="2026-08-26T21000
             market_intelligence_payload_sha256=MI_PAYLOAD_SHA,
             market_intelligence_logical_fingerprint=MI_LOGICAL_FP,
             candidate_strategy_audit_logical_fingerprint=STRATEGY_FP,
+            sector_rotation_audit_logical_fingerprint=SECTOR_ROTATION_FP,
+            sector_rotation_product_logical_fingerprint=(
+                SECTOR_ROTATION_PRODUCT_FP
+            ),
             pointer_path=str(paths.data_root / "snapshot-active.json"),
             planned_pointer_fingerprint=pointer_fingerprint,
             release_id=release_id,
             target_path=str(target_path),
             target_logical_path=f"snapshot/{release_id}",
-            snapshot_contract_version="1.9",
-            dashboard_contract_version="2.6",
+            snapshot_contract_version="1.11",
+            dashboard_contract_version="2.8",
             aggregate_sha256=aggregate,
             manifest_sha256=manifest_sha,
         ),
@@ -466,8 +474,8 @@ def _install_active_snapshot(monkeypatch, paths, *, release_id="2026-08-26T21000
             active=SimpleNamespace(
                 release_id=release_id,
                 logical_path=f"snapshot/{release_id}",
-                snapshot_contract_version="1.9",
-                dashboard_contract_version="2.6",
+                snapshot_contract_version="1.11",
+                dashboard_contract_version="2.8",
                 aggregate_sha256=aggregate,
                 manifest_sha256=manifest_sha,
             ),

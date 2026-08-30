@@ -16,6 +16,7 @@ from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotApprovalPlanV2_3,
     DashboardSnapshotApprovalPlanV2_4,
     DashboardSnapshotApprovalPlanV2_5,
+    DashboardSnapshotApprovalPlanV2_6,
 )
 from tip_api.contracts.analytics.v1 import (
     ReviewDeploymentAuthorization,
@@ -43,7 +44,7 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3 | DashboardSnapshotApprovalPlanV2_4 | DashboardSnapshotApprovalPlanV2_5:
+def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3 | DashboardSnapshotApprovalPlanV2_4 | DashboardSnapshotApprovalPlanV2_5 | DashboardSnapshotApprovalPlanV2_6:
     if _sha(path)!=digest: raise DashboardSnapshotPublicationError("approved plan SHA-256 mismatch")
     return read_dashboard_snapshot_approval_plan(path)
 

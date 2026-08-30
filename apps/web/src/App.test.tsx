@@ -13,6 +13,9 @@ vi.mock('./pages/MarketRegimeOpportunityMapPage', () => ({
 vi.mock('./pages/OpportunityCandidatesPage', () => ({
   OpportunityCandidatesPage: () => <main data-testid="candidate-workspace">candidates</main>,
 }));
+vi.mock('./pages/SectorRotationPage', () => ({
+  SectorRotationPage: () => <main data-testid="sector-workspace">sector</main>,
+}));
 
 describe('primary workspace shell', () => {
   beforeEach(() => {
@@ -31,7 +34,8 @@ describe('primary workspace shell', () => {
     const workspaceButtons = screen.getByRole('navigation', { name: 'Primary workspaces' }).querySelectorAll('button');
     expect(workspaceButtons[0]).toHaveTextContent('Regime & Opportunities');
     expect(screen.getByRole('button', { name: /Regime & Opportunities/ })).toHaveAttribute('aria-current', 'page');
-    expect(workspaceButtons[2]).toHaveTextContent('Stock Candidates');
+    expect(workspaceButtons[1]).toHaveTextContent('Sector Rotation');
+    expect(workspaceButtons[3]).toHaveTextContent('Stock Candidates');
     expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
     expect(screen.getByText('Protected Session')).toBeInTheDocument();
@@ -53,6 +57,13 @@ describe('primary workspace shell', () => {
     });
     expect(screen.getByTestId('regime-workspace')).toBeInTheDocument();
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
+  });
+
+  it('opens Sector Rotation as the second market-wide workspace', () => {
+    render(<I18nProvider><App /></I18nProvider>);
+    fireEvent.click(screen.getByRole('button', { name: /Sector Rotation/ }));
+    expect(screen.getByTestId('sector-workspace')).toBeInTheDocument();
+    expect(new URLSearchParams(window.location.search).get('view')).toBe('sector');
   });
 
   it('uses the natural Chinese workspace name without changing query state', () => {

@@ -207,6 +207,101 @@ def test_plan_2_4_freezes_and_rechecks_strategy_channel_bindings(monkeypatch, tm
         repo.validate_plan(plan)
 
 
+def test_plan_2_6_freezes_and_rechecks_sector_rotation_bindings(
+    monkeypatch, tmp_path
+):
+    root, legacy, candidate, _ = _setup(monkeypatch, tmp_path)
+    real_validate = repo.validate_snapshot_release
+    base = real_validate(candidate)
+    digest = "9" * 64
+    manifest = base.model_copy(update={
+        "snapshot_contract_version": "1.11",
+        "dashboard_contract_version": "2.8",
+        "market_intelligence_publication_id": "2026-08-20T110000Z-abcdef0",
+        "market_intelligence_payload_sha256": digest,
+        "market_intelligence_logical_fingerprint": digest,
+        "analytics_payload_logical_fingerprint": digest,
+        "candidate_contract_version": "opportunity-candidate/1.1",
+        "candidate_analytics_logical_fingerprint": digest,
+        "candidate_audit_logical_fingerprint": digest,
+        "candidate_parameter_fingerprint": digest,
+        "candidate_state_parameter_fingerprint": digest,
+        "candidate_primary_display_count": 1,
+        "candidate_secondary_display_count": 1,
+        "candidate_publication_contract_version": "opportunity-candidate-publication/1.1",
+        "entry_geometry_contract_version": "candidate-entry-geometry/1.0",
+        "entry_geometry_audit_logical_fingerprint": digest,
+        "entry_geometry_parameter_fingerprint": digest,
+        "entry_lane_consumer_parameter_fingerprint": digest,
+        "opportunity_candidates_file": "opportunity-candidates-summary.json",
+        "candidate_summary_contract_version": "opportunity-candidate-summary/1.0",
+        "candidate_summary_logical_fingerprint": digest,
+        "candidate_detail_contract_version": "opportunity-candidate-detail-shard/1.1",
+        "candidate_detail_files": ("opportunity-candidate-details-u0-0.json",),
+        "candidate_strategy_file": "candidate-strategy-channels.json",
+        "candidate_strategy_contract_version": "candidate-strategy-channel-product/1.0",
+        "candidate_strategy_audit_manifest_sha256": digest,
+        "candidate_strategy_audit_logical_fingerprint": digest,
+        "candidate_strategy_parameter_fingerprint": digest,
+        "candidate_strategy_logical_fingerprint": digest,
+        "candidate_visual_context_contract_version": "candidate-visual-context/1.0",
+        "candidate_visual_context_audit_manifest_sha256": digest,
+        "candidate_visual_context_audit_logical_fingerprint": digest,
+        "candidate_visual_context_batch_fingerprints": (digest, digest),
+        "sector_rotation_file": "sector-etf-rotation.json",
+        "sector_rotation_snapshot_contract_version": (
+            "sector-etf-rotation-dashboard-snapshot/1.0"
+        ),
+        "sector_rotation_snapshot_logical_fingerprint": digest,
+        "sector_rotation_audit_manifest_sha256": digest,
+        "sector_rotation_audit_logical_fingerprint": digest,
+        "sector_rotation_parameter_fingerprint": digest,
+        "sector_rotation_history_source_fingerprint": digest,
+        "sector_rotation_product_logical_fingerprint": digest,
+    })
+    selected = [manifest]
+
+    monkeypatch.setattr(
+        repo,
+        "validate_snapshot_release",
+        lambda path: selected[0] if path == candidate else real_validate(path),
+    )
+    plan = repo.build_approval_plan(
+        root=root,
+        legacy_root=legacy,
+        candidate=candidate,
+        activation_logical_fingerprint=ACTIVATION_LOGICAL,
+        generated_at=AT,
+    )
+
+    assert isinstance(plan, repo.DashboardSnapshotApprovalPlanV2_6)
+    assert (
+        plan.plan_version,
+        plan.snapshot_contract_version,
+        plan.dashboard_contract_version,
+    ) == ("2.6", "1.11", "2.8")
+    assert plan.sector_rotation_file == "sector-etf-rotation.json"
+    assert plan.sector_rotation_product_logical_fingerprint == digest
+    repo.validate_plan(plan)
+
+    plan_path = tmp_path / "snapshot-plan-2.6.json"
+    plan_path.write_bytes(
+        snapshot.deterministic_json_bytes(plan.model_dump(mode="json"))
+    )
+    plan_path.chmod(0o444)
+    loaded = cli._load_plan(
+        plan_path,
+        hashlib.sha256(plan_path.read_bytes()).hexdigest(),
+    )
+    assert loaded == plan
+
+    selected[0] = manifest.model_copy(
+        update={"sector_rotation_product_logical_fingerprint": "8" * 64}
+    )
+    with pytest.raises(repo.DashboardSnapshotPublicationError, match="Sector Rotation"):
+        repo.validate_plan(plan)
+
+
 def test_atomic_publish_formal_reread_and_replay_rejected(monkeypatch, tmp_path):
     root, legacy, _, plan = _setup(monkeypatch, tmp_path)
     result = repo.publish_and_activate(

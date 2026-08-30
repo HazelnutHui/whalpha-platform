@@ -82,8 +82,12 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
     plan_version: Literal["2.0"] = "2.0"
     revision_id: Literal["universe-funnel-v2"] = "universe-funnel-v2"
     release_id: str
-    snapshot_contract_version: Literal["1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10"] = "1.4"
-    dashboard_contract_version: Literal["2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7"] = "2.1"
+    snapshot_contract_version: Literal[
+        "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11"
+    ] = "1.4"
+    dashboard_contract_version: Literal[
+        "2.1", "2.2", "2.3", "2.4", "2.5", "2.6", "2.7", "2.8"
+    ] = "2.1"
     generated_at: datetime
     analysis_session: date
     expected_latest_completed_session: date
@@ -157,9 +161,12 @@ class DashboardSnapshotApprovalPlanV2(BaseModel):
             self.market_intelligence_payload_sha256,
             self.market_intelligence_logical_fingerprint,
         )
-        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9", "1.10"}:
+        if self.snapshot_contract_version in {
+            "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11"
+        }:
             expected = (
-                "2.7" if self.snapshot_contract_version == "1.10"
+                "2.8" if self.snapshot_contract_version == "1.11"
+                else "2.7" if self.snapshot_contract_version == "1.10"
                 else "2.6" if self.snapshot_contract_version == "1.9"
                 else "2.5" if self.snapshot_contract_version == "1.8"
                 else "2.4" if self.snapshot_contract_version == "1.7"
@@ -332,6 +339,36 @@ class DashboardSnapshotApprovalPlanV2_5(DashboardSnapshotApprovalPlanV2_4):
         if len(values) != 2:
             raise ValueError("two Candidate visual-context batch fingerprints are required")
         return tuple(_sha(value) for value in values)
+
+
+class DashboardSnapshotApprovalPlanV2_6(DashboardSnapshotApprovalPlanV2_5):
+    """Snapshot 1.11 approval plan with lazy Sector Rotation bindings."""
+
+    plan_version: Literal["2.6"] = "2.6"
+    snapshot_contract_version: Literal["1.11"] = "1.11"
+    dashboard_contract_version: Literal["2.8"] = "2.8"
+    sector_rotation_file: Literal["sector-etf-rotation.json"]
+    sector_rotation_snapshot_contract_version: Literal[
+        "sector-etf-rotation-dashboard-snapshot/1.0"
+    ]
+    sector_rotation_snapshot_logical_fingerprint: str
+    sector_rotation_audit_manifest_sha256: str
+    sector_rotation_audit_logical_fingerprint: str
+    sector_rotation_parameter_fingerprint: str
+    sector_rotation_history_source_fingerprint: str
+    sector_rotation_product_logical_fingerprint: str
+
+    @field_validator(
+        "sector_rotation_snapshot_logical_fingerprint",
+        "sector_rotation_audit_manifest_sha256",
+        "sector_rotation_audit_logical_fingerprint",
+        "sector_rotation_parameter_fingerprint",
+        "sector_rotation_history_source_fingerprint",
+        "sector_rotation_product_logical_fingerprint",
+    )
+    @classmethod
+    def sector_rotation_digests(cls, value: str) -> str:
+        return _sha(value)
 
 
 def _sha(value: str) -> str:

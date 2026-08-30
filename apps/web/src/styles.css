@@ -313,6 +313,45 @@ body {
 .workspace-account button { padding: 4px 10px; border-color: var(--border-strong); }
 .workspace-account button:hover { border-color: var(--accent); color: var(--accent); }
 
+.sector-page { max-width: 1500px; margin: 0 auto; padding: 30px 34px 64px; color: var(--text); }
+.sector-message { min-height: 55vh; display: grid; place-content: center; text-align: center; }
+.sector-message h1 { margin-bottom: 8px; }
+.sector-message p, .sector-message small { color: var(--muted); }
+.sector-hero { display: flex; justify-content: space-between; gap: 28px; align-items: flex-end; padding: 28px; border: 1px solid var(--border); border-radius: 18px; background: radial-gradient(circle at 90% 10%, rgba(28, 201, 219, .13), transparent 34%), linear-gradient(145deg, rgba(10, 34, 55, .96), rgba(5, 22, 38, .98)); box-shadow: 0 22px 60px rgba(0, 0, 0, .2); }
+.sector-hero h1 { margin: 7px 0 9px; font-size: clamp(2rem, 4vw, 3.7rem); letter-spacing: -.045em; }
+.sector-hero p { max-width: 780px; margin: 0; color: var(--muted); line-height: 1.65; }
+.sector-asof { min-width: 190px; display: grid; gap: 4px; padding: 15px 18px; border-left: 2px solid var(--accent); background: rgba(3, 18, 31, .45); }
+.sector-asof span, .sector-asof small, .sector-brief-grid article > span, .sector-section-heading span, .sector-limits-grid article > span { color: var(--muted-2); font-size: .66rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.sector-asof strong { font: 700 1.05rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+.sector-brief-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.sector-brief-grid article, .sector-map-card, .sector-ranking-card, .sector-limits-grid article, .sector-method { border: 1px solid var(--border); border-radius: 14px; background: linear-gradient(145deg, rgba(10, 31, 49, .92), rgba(6, 23, 38, .94)); }
+.sector-brief-grid article { min-height: 145px; padding: 18px; display: grid; align-content: start; gap: 8px; }
+.sector-brief-grid strong { color: var(--accent); font-size: 1.55rem; letter-spacing: -.03em; }
+.sector-brief-grid p { margin: 0; color: var(--muted); font-size: .77rem; line-height: 1.5; }
+.sector-brief-grid .sector-boundary-card strong { color: var(--warning); }
+.sector-map-card, .sector-ranking-card { padding: 22px; margin-top: 18px; }
+.sector-section-heading { display: flex; justify-content: space-between; align-items: end; gap: 20px; margin-bottom: 18px; }
+.sector-section-heading h2 { margin: 5px 0 0; font-size: 1.35rem; }
+.sector-section-heading > p { max-width: 580px; margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.5; text-align: right; }
+.sector-quadrant { position: relative; min-height: 410px; overflow: hidden; border: 1px solid var(--border); border-radius: 12px; background: linear-gradient(90deg, rgba(230, 101, 108, .035) 0 50%, rgba(55, 202, 159, .04) 50%), linear-gradient(0deg, rgba(230, 101, 108, .025) 0 50%, rgba(70, 190, 216, .035) 50%), #061522; }
+.sector-axis { position: absolute; z-index: 1; background: rgba(162, 195, 210, .22); }
+.sector-axis-x { left: 5%; right: 5%; top: 50%; height: 1px; }
+.sector-axis-y { top: 7%; bottom: 7%; left: 50%; width: 1px; }
+.sector-quadrant-label { position: absolute; z-index: 1; color: rgba(158, 190, 204, .52); font-size: .64rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+.sector-quadrant-label.top-left { top: 14px; left: 16px; }.sector-quadrant-label.top-right { top: 14px; right: 16px; }.sector-quadrant-label.bottom-left { bottom: 14px; left: 16px; }.sector-quadrant-label.bottom-right { bottom: 14px; right: 16px; }
+.sector-dot { position: absolute; z-index: 2; left: var(--x); top: var(--y); transform: translate(-50%, -50%); width: 43px; height: 43px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.2); border-radius: 50%; color: #eaffff; background: #176a78; box-shadow: 0 8px 20px rgba(0,0,0,.35); }
+.sector-dot b { font-size: .67rem; letter-spacing: .02em; }.sector-dot.posture-leading_improving { background: #14866f; }.sector-dot.posture-leading_weakening { background: #816f31; }.sector-dot.posture-lagging_improving { background: #286a8c; }.sector-dot.posture-lagging_weakening { background: #8b414d; }
+.sector-axis-caption { display: flex; justify-content: space-between; margin-top: 9px; color: var(--muted-2); font-size: .68rem; }
+.sector-table-wrap { overflow-x: auto; }
+.sector-table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+.sector-table th { padding: 10px 12px; border-bottom: 1px solid var(--border-strong); color: var(--muted-2); text-align: left; font-size: .64rem; letter-spacing: .05em; text-transform: uppercase; }
+.sector-table td { padding: 13px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.sector-table td:first-child { color: var(--accent); font-weight: 800; }.sector-table td strong { display: block; }.sector-table td small { display: block; max-width: 380px; margin-top: 4px; color: var(--muted-2); line-height: 1.4; }
+.sector-table .positive { color: var(--positive); }.sector-table .negative { color: var(--negative); }
+.sector-posture { display: inline-flex; padding: 4px 8px; border: 1px solid var(--border-strong); border-radius: 999px; white-space: nowrap; font-size: .68rem; }.sector-posture.posture-leading_improving { color: var(--positive); }.sector-posture.posture-lagging_weakening { color: var(--negative); }
+.sector-limits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 18px; }.sector-limits-grid article { padding: 22px; }.sector-limits-grid h2 { margin: 7px 0; font-size: 1.05rem; }.sector-limits-grid p { margin: 0; color: var(--muted); line-height: 1.6; font-size: .8rem; }
+.sector-method { margin-top: 18px; padding: 16px 20px; color: var(--muted); font-size: .76rem; }.sector-method summary { cursor: pointer; color: var(--text); font-weight: 800; }.sector-method p { line-height: 1.6; }.sector-method dl { display: grid; gap: 8px; }.sector-method dl div { display: grid; grid-template-columns: 160px minmax(0, 1fr); gap: 10px; }.sector-method dt { color: var(--muted-2); }.sector-method dd { margin: 0; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .67rem; }
+
 .regime-shell { display: grid; gap: 12px; }
 .review-deployment-banner {
   padding: 10px 14px;
@@ -566,7 +605,7 @@ body {
 @media (max-width: 760px) {
   .workspace-layout { grid-template-columns: 1fr; }
   .workspace-sidebar { position: static; height: auto; grid-template-rows: auto auto; gap: 12px; padding: 14px 16px; border-right: 0; border-bottom: 1px solid var(--border); }
-  .workspace-navigation { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .workspace-navigation { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .workspace-navigation button { padding: 10px; }
   .workspace-navigation small { display: none; }
   .workspace-brand img { width: 42px; height: 42px; }
@@ -576,6 +615,8 @@ body {
   .workspace-universe select { flex: 1; max-width: none; }
   .language-selector { margin-left: 0; }
   .workspace-account { margin-left: auto; }
+  .sector-page { padding: 22px 18px 48px; }
+  .sector-brief-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .regime-topbar, .decision-brief-heading, .hero-heading, .hero-transition { align-items: start; flex-direction: column; }
   .regime-hero { grid-template-columns: 1fr; }
   .hero-heading, .hero-evidence, .hero-transition, .regime-hero-meta { grid-column: 1; }
@@ -594,6 +635,11 @@ body {
   .workspace-navigation { grid-template-columns: 1fr; }
   .workspace-navigation small { display: block; }
   .workspace-account > span, .workspace-account > strong { display: none; }
+  .sector-hero, .sector-section-heading { align-items: stretch; flex-direction: column; }
+  .sector-asof { min-width: 0; }
+  .sector-brief-grid, .sector-limits-grid { grid-template-columns: 1fr; }
+  .sector-quadrant { min-height: 330px; }
+  .sector-section-heading > p { text-align: left; }
   .app-shell { width: min(100% - 24px, 1540px); }
 }
 @media (min-width: 1100px) and (max-height: 820px) {

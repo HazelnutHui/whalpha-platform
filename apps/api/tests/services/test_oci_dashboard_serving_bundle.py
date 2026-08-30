@@ -169,3 +169,22 @@ def test_demo_marker_fails_closed_before_checksum_trust(tmp_path, monkeypatch) -
         bundle.read_oci_dashboard_serving_bundle(
             target, expected_snapshot_path=source
         )
+
+
+def test_snapshot_1_11_bundle_requires_visual_and_sector_bindings(
+    tmp_path, monkeypatch
+) -> None:
+    target, _source = _fixture(tmp_path, monkeypatch)
+    payload = json.loads((target / "deployment-manifest.json").read_text())
+    payload.update(
+        snapshot_contract_version="1.11",
+        dashboard_contract_version="2.8",
+        candidate_visual_context_audit_logical_fingerprint=SHA,
+        sector_rotation_product_logical_fingerprint=SHA,
+    )
+    parsed = bundle.OciDashboardDeploymentManifest.model_validate(payload)
+    assert parsed.sector_rotation_product_logical_fingerprint == SHA
+
+    payload.pop("sector_rotation_product_logical_fingerprint")
+    with pytest.raises(ValueError, match="fixed boundary"):
+        bundle.OciDashboardDeploymentManifest.model_validate(payload)

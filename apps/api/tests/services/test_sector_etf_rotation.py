@@ -13,6 +13,11 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
+from tip_api.contracts.analytics.v1 import (
+    SectorEtfRotationDashboardSnapshotV1,
+    SectorEtfRotationPublicationSourceV1,
+    sector_rotation_dashboard_snapshot_fingerprint,
+)
 from tip_api.parameters.sector_etf_rotation_v1_0_0 import SECTOR_ETFS
 from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.market_regime_sources import (
@@ -90,6 +95,47 @@ def test_product_has_fixed_sector_registry_independent_window_ranks_and_no_score
     assert "price_return_not_fund_flow" in result.warnings
     oracle = compare_with_independent_sector_rotation_oracle(panel=_panel(), product=result)
     assert oracle.mismatch_count == 0, oracle.mismatches
+
+
+def test_lazy_dashboard_snapshot_binds_market_intelligence_and_audit_lineage() -> None:
+    product = calculate_sector_etf_rotation(panel=_panel())
+    source = SectorEtfRotationPublicationSourceV1(
+        audit_contract_version="sector-etf-rotation-audit/1.0",
+        audit_manifest_sha256="1" * 64,
+        audit_logical_fingerprint="2" * 64,
+        phase1a_audit_logical_fingerprint="3" * 64,
+        phase1a_manifest_sha256="4" * 64,
+        product_contract_version=product.contract_version,
+        calculation_version=product.calculation_version,
+        parameter_fingerprint=product.parameter_fingerprint,
+        history_source_fingerprint=product.source_history_fingerprint,
+        product_logical_fingerprint=product.logical_fingerprint,
+        record_count=11,
+        oracle_mismatch_count=0,
+        theme_status=product.theme_status,
+    )
+    fields = {
+        "publication_id": "2026-08-28T120000Z-abcdef0",
+        "payload_sha256": "5" * 64,
+        "payload_logical_fingerprint": "6" * 64,
+        "source": source,
+        "product": product,
+    }
+    result = SectorEtfRotationDashboardSnapshotV1(
+        **fields,
+        logical_fingerprint=sector_rotation_dashboard_snapshot_fingerprint(fields),
+    )
+
+    assert result.contract_version == "sector-etf-rotation-dashboard-snapshot/1.0"
+    assert result.source.record_count == len(result.product.records) == 11
+    assert result.fixed_sector_etf_proxy_only is True
+    assert result.theme_membership_unavailable is True
+    assert "score" not in result.model_dump(mode="json")
+
+    changed = result.model_dump(mode="json")
+    changed["source"]["history_source_fingerprint"] = "7" * 64
+    with pytest.raises(ValidationError, match="lineage differs"):
+        SectorEtfRotationDashboardSnapshotV1.model_validate(changed)
 
 
 def test_quadrant_is_explainable_from_twenty_day_relative_return_and_acceleration() -> None:

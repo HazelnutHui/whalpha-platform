@@ -48,6 +48,16 @@ validation, and the active Production release support this pair, but the
 unattended daily control plane remains
 on Plan 2.4 until visual-audit generation is explicitly integrated and tested.
 
+Repository source now also supports Snapshot 1.11 / Dashboard 2.8 through
+Approval Plan 2.6. It requires MI 1.3 and therefore the exact Sector ETF
+Rotation audit/product binding, while retaining every Snapshot 1.10 Strategy
+and Visual Context requirement. The builder writes one dedicated checksum-
+bound `sector-etf-rotation.json`; strict reread and Apply validation reject
+lineage, record-order, window, Oracle, Theme-unavailable, or proxy-disclosure
+drift. The browser retrieves this file only when the Sector Rotation workspace
+opens. A real 2026-08-28 tmp-only Snapshot and Plan 2.6 rehearsal passed, but
+neither was applied or deployed.
+
 ## Daily control-plane custody
 
 ADR 0070 adds only Snapshot Approval Plan preparation to the Dell daily
@@ -58,14 +68,17 @@ an explicit UTC generation time, new direct-child `/tmp` output and plan paths,
 the exact active MI payload/logical fingerprints, the target session, and the
 same-session Strategy Channel audit.
 
-The resulting current Plan 2.4 is formally reread through strict canonical,
-owner-controlled, regular-file, non-symlink, mode `0444` custody and the full
-existing candidate/plan validation. Successful preparation stops at
+The current planner recognizes Plan 2.6 and formally rereads it through strict
+canonical, owner-controlled, regular-file, non-symlink, mode `0444` custody
+and the full existing candidate/plan validation. The executor does not yet
+generate or pass the required Candidate Visual Context audit, so a real MI 1.3
+chain must stop before Plan 2.6 preparation until that governed stage is
+integrated. Successful preparation stops at
 `review_snapshot_publication`. It creates no `/data` target or active pointer
 and conveys no Apply, bundle, deployment, rollback, or scheduler authority.
 ADR 0071 adds the separate default-off daily write-custody boundary. It is
 reachable only through an explicit, host-pinned one-shot invocation carrying
-the exact Plan 2.4 whole-file SHA and current Snapshot state fingerprint plus
+the exact Plan 2.6 whole-file SHA and current Snapshot state fingerprint plus
 any exact stale-review acknowledgement. Default planning still stops here.
 
 The one-shot port reserves `dashboard_snapshot_apply_started` before invoking

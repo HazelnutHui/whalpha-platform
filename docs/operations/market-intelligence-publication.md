@@ -78,9 +78,10 @@ in-dataset release and therefore fails closed on rollback.
 ## Downstream order
 
 The active Production path remains MI 1.2 with Snapshot 1.10 / Dashboard 2.7.
-MI 1.3 must not be applied until Snapshot 1.11 / Dashboard 2.8 is implemented
-to preserve the Sector Rotation product instead of silently dropping it.
-After that consumer exists, use the explicit publication ID and exact
+Repository source implements the required Snapshot 1.11 / Dashboard 2.8
+consumer, but it has not been applied or deployed. MI 1.3 may only advance
+together with that complete consumer; never pair it with an older Snapshot
+that would silently drop Sector Rotation. Use the explicit publication ID and exact
 same-session Strategy Channel audit, separately approve/apply Snapshot, then
 build OCI with both the explicit Snapshot and
 `--market-intelligence-publication`. OCI deployment remains another

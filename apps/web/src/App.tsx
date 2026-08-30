@@ -3,11 +3,12 @@ import { useEffect, useState } from 'react';
 import { MarketDashboardPage } from './pages/MarketDashboardPage';
 import { MarketRegimeOpportunityMapPage } from './pages/MarketRegimeOpportunityMapPage';
 import { OpportunityCandidatesPage } from './pages/OpportunityCandidatesPage';
+import { SectorRotationPage } from './pages/SectorRotationPage';
 import { LanguageSelector } from './i18n/LanguageSelector';
 import { useI18n } from './i18n/I18nProvider';
 import { universeName } from './i18n/domain';
 
-type Workspace = 'market' | 'regime' | 'candidates';
+type Workspace = 'market' | 'regime' | 'sector' | 'candidates';
 
 const PRIMARY_UNIVERSE = 'provider_classified_common_shares_v1';
 const SECONDARY_UNIVERSE = 'provider_classified_common_shares_plus_adrs_v1';
@@ -16,7 +17,7 @@ type UniverseId = (typeof UNIVERSES)[number];
 
 function requestedWorkspace(): Workspace {
   const value = new URLSearchParams(window.location.search).get('view');
-  return value === 'market' || value === 'candidates' ? value : 'regime';
+  return value === 'market' || value === 'sector' || value === 'candidates' ? value : 'regime';
 }
 
 function isUniverse(value: string | null): value is UniverseId {
@@ -89,13 +90,18 @@ export default function App(): JSX.Element {
             <strong>{t('app.regimeMap')}</strong>
             <small>{t('app.regimeMapDescription')}</small>
           </button>
-          <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onClick={() => navigate('market')}>
+          <button type="button" className={workspace === 'sector' ? 'active' : ''} aria-current={workspace === 'sector' ? 'page' : undefined} onClick={() => navigate('sector')}>
             <span className="workspace-index">02</span>
+            <strong>{t('app.sectorRotation')}</strong>
+            <small>{t('app.sectorRotationDescription')}</small>
+          </button>
+          <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onClick={() => navigate('market')}>
+            <span className="workspace-index">03</span>
             <strong>{t('app.marketDashboard')}</strong>
             <small>{t('app.marketDashboardDescription')}</small>
           </button>
           <button type="button" className={workspace === 'candidates' ? 'active' : ''} aria-current={workspace === 'candidates' ? 'page' : undefined} onClick={() => navigate('candidates')}>
-            <span className="workspace-index">03</span>
+            <span className="workspace-index">04</span>
             <strong>{t('app.stockCandidates')}</strong>
             <small>{t('app.stockCandidatesDescription')}</small>
           </button>
@@ -117,7 +123,7 @@ export default function App(): JSX.Element {
             {snapshotMode ? <button type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
           </div>
         </header>
-        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : <OpportunityCandidatesPage />}
+        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : <OpportunityCandidatesPage />}
       </div>
     </div>
   );

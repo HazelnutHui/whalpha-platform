@@ -51,7 +51,7 @@ read or use the user's password.
 
 The builder requires an explicit immutable Snapshot path and Market
 Intelligence publication. It accepts only the exact Snapshot 1.5 / Dashboard
-2.2 through Snapshot 1.10 / Dashboard 2.7 supported pairs and rejects identity
+2.2 through Snapshot 1.11 / Dashboard 2.8 supported pairs and rejects identity
 mismatch,
 missing analytics, or fewer than 16 registered relationships. For 1.6 it also
 freezes and validates Candidate audit/parameter/display bindings and the
@@ -73,6 +73,11 @@ For 1.10 it additionally binds Candidate Visual Context audit lineage and
 detail-shard 1.1 rows to the exact Candidate score and Entry Geometry
 fingerprints. Public entry HTML, CSS, bilingual copy, and the shared favicon
 are checksum-bound bundle assets; they contain no provider payload.
+For 1.11 it additionally requires MI 1.3, validates the dedicated Sector ETF
+Rotation file, exact audit/product fingerprints, fixed proxy and window sets,
+zero Oracle mismatches, Theme-unavailable state, and all no-score/no-flow/no-
+membership disclosure guards. Deployment postflight must fetch that protected
+lazy resource through the same equal-capability Session boundary.
 
 The production React graph contains no static dependency on the synthetic
 Dashboard fixture. Development demo mode loads it lazily only behind the Vite

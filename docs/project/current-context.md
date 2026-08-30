@@ -855,19 +855,24 @@ recorded in the active-state table and
 - The public data-free Session entry is now a bilingual product introduction,
   not only an authentication panel. It uses the dark WH mark, keeps credential
   and equal-capability guest entry in the first viewport, presents the complete
-  decision chain, and separates four live capabilities from four planned and
-  one later capability along a central visual path. The page makes the
+  decision chain, and in active Production separates four live capabilities
+  from four planned and one later capability along a central visual path.
+  Repository source now truthfully promotes Sector ETF Rotation, producing
+  five live and three planned capabilities, but that source is not deployed.
+  The page makes the
   explain-before-ranking, counterevidence, context, fund-flow terminology, and
   stock-versus-option-return guardrails visible before entry.
 - Repository source now carries the score-free 11-record Sector ETF Rotation
-  product through Market Intelligence 1.3 and Approval Plan 1.3 with strict
-  typed audit reread, Phase 1a/history lineage, zero-Oracle, and Apply-time
-  source revalidation. Automation Plan 1.5 observes the second Phase 1a output
-  and fails closed if it is missing, invalid, or mismatched. A real
-  2026-08-28 tmp-only MI 1.3 plan rehearsal passed with freshness `fresh`, lag
-  zero, and zero Production writes. Active Production remains MI 1.2 and
-  Snapshot 1.10 / Dashboard 2.7; Snapshot 1.11 / Dashboard 2.8 is the next
-  unimplemented projection boundary.
+  product through Market Intelligence 1.3, Snapshot 1.11 / Dashboard 2.8, and
+  OCI bundle validation. Approval Plans 1.3 and 2.6 bind the exact audit,
+  product, history, Strategy, and Visual Context lineage. A dedicated browser
+  workspace lazily loads the checksum-bound file and keeps 5/10/20-session
+  relative leadership, acceleration, and persistence separate. A real
+  2026-08-28 tmp-only MI 1.3 rehearsal and Snapshot 1.11/Plan 2.6 build passed
+  with zero Production writes. The unattended executor still lacks automatic
+  Candidate Visual Context generation, so it cannot yet prepare the required
+  Plan 2.6 from an MI 1.3 session without stopping. Active Production remains
+  MI 1.2 and Snapshot 1.10 / Dashboard 2.7; the new workspace is not deployed.
 
 ## OCI production state
 

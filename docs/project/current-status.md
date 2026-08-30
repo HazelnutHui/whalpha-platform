@@ -44,8 +44,10 @@ The public data-free entry now uses the dark WH mark in a mature full-page
 brand experience. Credential and guest entry remain immediately available in
 the first viewport and open the same workspace. Below them, a bilingual
 alternating capability path distinguishes four live capabilities, four planned
-capabilities, and one later position-management capability; planned work is
-never presented as available functionality. Product principles and the full
+capabilities, and one later position-management capability in active
+Production. Repository source promotes Sector ETF Rotation to live, producing
+five live and three planned capabilities, but that revision is not deployed.
+Planned work is never presented as available functionality. Product principles and the full
 market-to-position decision chain are visible before Session entry.
 
 The post-entry workspace now uses the same deep-navy, cyan, and restrained
@@ -650,7 +652,7 @@ in total to a 671,118–1,432,204-byte range. Plan 2.5, Snapshot Apply, the
 and independent remote inspection all passed. Visual Context and the dark WH
 PNG favicon are active in Production.
 
-## Next candidate work
+## Current product work
 
 ADR 0090 begins the next product layer as a strictly labeled Sector ETF proxy,
 not a completed Sector/Theme workspace. Repository source now has a fixed
@@ -701,8 +703,39 @@ requires MI Approval Plan 1.3 to name the same audit and product. A missing,
 invalid, or mismatched second audit stops at operator diagnosis instead of
 allowing downstream publication planning. This is fail-closed observation,
 not automatic repair or replay. No publication or deployment is authorized by
-the current repository work. The next bounded product slice is Snapshot 1.11 /
-Dashboard 2.8 lazy projection.
+the current repository work.
+
+Repository source now completes the Snapshot 1.11 / Dashboard 2.8 consumer
+slice. Approval Plan 2.6 freezes the exact Sector Rotation audit and product
+fingerprints in addition to the full Snapshot 1.10 Strategy and Visual Context
+chain. The Snapshot writes one checksum-bound `sector-etf-rotation.json`; the
+browser fetches it only when the dedicated Sector Rotation workspace opens and
+strictly rejects source, product, record-order, window, Oracle, Theme, or proxy-
+claim drift. The workspace keeps 5/10/20-session results separate and renders
+20-session leadership against five-session acceleration, persistence, and
+descriptive posture without a composite score.
+
+A real Dell `/tmp` build from the reviewed 2026-08-28 MI 1.3 candidate passed
+as Snapshot 1.11 / Dashboard 2.8 with 40 checksummed product files. Its Sector
+Rotation file is 19,729 bytes with SHA-256
+`78c81ac5419f54606e9b6df6317b70ee4f3ad66b709054c97c7193788e01e95b`,
+Snapshot logical fingerprint
+`6560e0d7d991063c9fcf4829460639ae9dcf328372113a7bd291958642105814`,
+and unchanged Rotation product fingerprint
+`bce93211b6aec748d41db7a4c7f2e34226941e2a4f4ceee29b7a7d6adf51bbf7`.
+The formally reread 42-file Plan 2.6 fingerprint is
+`d31e9c487665cc14fd5cdec7b0a7ccae46a532565e13da1b31e3f0f2afcb24e9`.
+This was tmp-only verification: no `/data` Apply, active pointer, OCI bundle,
+or deployment occurred. Production therefore remains MI 1.2, Snapshot 1.10 /
+Dashboard 2.7 and does not yet expose the new workspace.
+
+One automation gap is now explicit. Snapshot 1.11 correctly requires the
+same-session Candidate Visual Context audit, but the unattended daily executor
+does not yet calculate or pass that audit. Its planner recognizes Plan 2.6,
+but a real MI 1.3 run would stop before Snapshot planning until Visual Context
+becomes a governed automatic stage. Do not bypass that requirement or silently
+drop Visual Context. Closing this stage is the next reliability task before
+any MI 1.3 publication or Snapshot 1.11 deployment.
 
 Keep the currently deployed strategy formulas frozen. The first governed
 continuation-specific descriptive facts, independent Oracle, and formal

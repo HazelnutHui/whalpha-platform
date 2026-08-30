@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-30 — Project Sector Rotation through Snapshot 1.11 / Dashboard 2.8
+
+- Added Snapshot 1.11 / Dashboard 2.8 and Approval Plan 2.6. The immutable
+  Snapshot binds the exact MI 1.3 Sector Rotation audit/product lineage and
+  writes one checksum-bound lazy `sector-etf-rotation.json` while preserving
+  the complete Strategy and Candidate Visual Context chain from Snapshot 1.10.
+- Added strict browser parsing and a bilingual Sector Rotation workspace. It
+  shows separate 5/10/20-session ETF-relative views, 20-session leadership
+  versus five-session acceleration, persistence, and descriptive posture; it
+  exposes no composite score, fund-flow claim, constituent breadth, official
+  sector membership, or Theme output.
+- Extended OCI bundle validation and the public product story to recognize the
+  new pair. Guest and credential Sessions retain identical capabilities.
+- A real Dell tmp-only build produced 40 checksummed product files and a
+  formally reread 42-file Plan 2.6 with fingerprint
+  `d31e9c487665cc14fd5cdec7b0a7ccae46a532565e13da1b31e3f0f2afcb24e9`.
+  No `/data` Apply, bundle, deployment, or network action occurred; active
+  Production remains Snapshot 1.10 / Dashboard 2.7.
+- The unattended executor still lacks Candidate Visual Context generation.
+  This is now an explicit fail-closed blocker for complete MI 1.3 to Snapshot
+  1.11 automation, not permission to omit the visual evidence.
+
 ## 2026-08-30 — Bind Sector Rotation into Market Intelligence 1.3
 
 - Added Market Intelligence payload/manifest and Approval Plan 1.3 with one

@@ -256,6 +256,14 @@ export interface SnapshotManifestResponse {
   candidate_visual_context_audit_manifest_sha256?: string | null;
   candidate_visual_context_audit_logical_fingerprint?: string | null;
   candidate_visual_context_batch_fingerprints?: string[];
+  sector_rotation_file?: string | null;
+  sector_rotation_snapshot_contract_version?: string | null;
+  sector_rotation_snapshot_logical_fingerprint?: string | null;
+  sector_rotation_audit_manifest_sha256?: string | null;
+  sector_rotation_audit_logical_fingerprint?: string | null;
+  sector_rotation_parameter_fingerprint?: string | null;
+  sector_rotation_history_source_fingerprint?: string | null;
+  sector_rotation_product_logical_fingerprint?: string | null;
   review_mode?: boolean;
   review_contract_version?: string | null;
   review_approved_as_of_session?: string | null;

@@ -55,8 +55,8 @@ describe('static login client', () => {
     expect(loginHtml).toContain('<img src="/favicon.png" alt="WH Alpha"');
     expect(loginHtml).toContain('id="platform-roadmap"');
     expect(loginHtml).toContain('class="capability-roadmap"');
-    expect(loginHtml.match(/data-state="live"/g)).toHaveLength(4);
-    expect(loginHtml.match(/data-state="planned"/g)).toHaveLength(4);
+    expect(loginHtml.match(/data-state="live"/g)).toHaveLength(5);
+    expect(loginHtml.match(/data-state="planned"/g)).toHaveLength(3);
     expect(loginHtml.match(/data-state="later"/g)).toHaveLength(1);
     expect(loginHtml).toContain('data-i18n="guestNote"');
     expect(loginHtml).toContain('data-i18n="principleHonestyText"');
