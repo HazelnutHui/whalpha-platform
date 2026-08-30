@@ -699,6 +699,16 @@ deploys. No CLI, real cadence event/root, capability, service, timer binding,
 credential access, request, `/data` write, publication, deployment, or
 Production invocation was added or performed.
 
+ADR 0085 adds a pure Cadence Diagnosis 1.0 contract for an unresolved runtime
+reservation. Given an already-read exact-session journal chain, it distinguishes
+no nested action evidence, a nested action that still needs its existing
+no-replay recovery, a matching formal terminal that is only ready for later
+cadence-disposition review, and conflicting evidence that remains blocked.
+Terminal labels are candidates rather than inferred cadence outcomes; the
+diagnostic never invents a coordinator result or provider retry boundary. It
+performs zero reads outside its supplied event tuple and zero writes, requests,
+replays, retries, recoveries, or resolutions. No CLI or timer binding exists.
+
 ## Default-off one-transition wake bridge
 
 ADR 0077 composes one exact unchanged enabled-candidate wake plan with one
@@ -982,7 +992,8 @@ the already completed and deployed 2026-08-26 publication chain.
 3. The read-only timer installation, synthetic distinct-wake rehearsal,
    owner-only cadence custody, and non-installed one-invocation runtime bridge
    are complete. Next observe a natural calendar trigger, then separately
-   review unresolved-reservation diagnosis and any runtime installation.
+   review a separate operator-approved unresolved-reservation disposition and
+   any runtime installation.
 4. Keep separate authorization decisions for acquisition/canonical Apply, MI
    publication, Snapshot, bundle, OCI deployment, and finally scheduler
    activation.

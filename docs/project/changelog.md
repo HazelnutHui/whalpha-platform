@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-30 — Diagnose unresolved cadence wakes without replay
+
+- Accepted ADR 0085 and added pure Cadence Diagnosis 1.0 over an already-read,
+  exact-session run-journal chain.
+- It separates no nested action evidence, an unresolved action routed only to
+  existing no-replay recovery, a matching formal terminal exposed only as a
+  later disposition candidate, and unsupported/conflicting blocked evidence.
+- The report fingerprints its evidence and declares zero request, write,
+  replay, retry, recovery, automatic-resolution, publication, deployment, and
+  scheduler authority. It never infers a coordinator result or retry time.
+- No CLI, real journal read/event, capability, timer change, request, `/data`
+  write, publication, deployment, or Production operation occurred. All 1,764
+  backend tests pass with the two existing dependency warnings.
+
 ## 2026-08-30 — Reserve and compose one pipeline wake
 
 - Accepted ADR 0084; advanced the owner-only run journal to 1.8 and cadence

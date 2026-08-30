@@ -107,3 +107,4 @@ Each ADR should include:
 - [0082: Bound Distinct Pipeline Wake Cadence](0082-bound-distinct-pipeline-wake-cadence.md)
 - [0083: Reuse the Run Journal for Cadence Evidence](0083-reuse-run-journal-for-cadence-evidence.md)
 - [0084: Reserve One Pipeline Wake Before Invocation](0084-reserve-one-pipeline-wake-before-invocation.md)
+- [0085: Diagnose Unresolved Cadence Wakes Without Replay](0085-diagnose-unresolved-cadence-wakes-without-replay.md)

@@ -303,6 +303,14 @@ remains default-off, non-looping, and uninstalled. Old journal 1.2–1.7 evidenc
 remains readable. No real reservation, capability, CLI, timer binding, request,
 `/data` write, publication, deployment, or Production invocation occurred. All
 1,754 backend tests pass with the two existing dependency warnings.
+ADR 0085 adds pure Cadence Diagnosis 1.0 over a supplied exact-session journal
+chain. It separates an unknown invocation boundary, existing no-replay action
+recovery, a formal terminal that is only ready for later disposition review,
+and conflicting evidence. It performs and authorizes no read outside the
+supplied tuple, write, replay, retry, recovery, or automatic resolution. No CLI,
+real journal access/event, timer binding, request, `/data` write, publication,
+deployment, or Production operation occurred. All 1,764 backend tests pass
+with the two existing dependency warnings.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

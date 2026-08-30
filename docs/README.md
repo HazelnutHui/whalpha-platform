@@ -123,6 +123,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): XNYS/provider readiness, bounded retry, provider-attempt custody, exact-session planning, single-action offline execution, interruption recovery, and remaining unattended-operation gates.
 - [Daily EOD Pipeline Scheduler V2](data-contracts/daily-eod-pipeline-scheduler-v2.md): pipeline-aware wake phases and deterministic Dell-local per-session workspace contract.
 - [Daily EOD Bounded Cadence V1](data-contracts/daily-eod-bounded-cadence-v1.md): finite distinct-wake planning, evidence-chain, timing, failure, and manual-stop contract.
+- [Daily EOD Cadence Diagnosis V1](data-contracts/daily-eod-cadence-diagnosis-v1.md): read-only unresolved-wake classification without replay, retry, recovery, or inferred resolution.
 - [ADR 0083: Cadence Evidence in the Run Journal](decisions/0083-reuse-run-journal-for-cadence-evidence.md): single-store owner-only retention and exact coordinator/offline result projection.
 - [ADR 0080: Scheduler operation versus host state](decisions/0080-separate-scheduler-operation-from-host-state.md): prevents read-only planner output from being mistaken for an observation of installed systemd state.
 - [ADR 0073: One-shot OCI deployment custody](decisions/0073-custody-one-oci-dashboard-deployment.md): binds exact Serving Bundle and remote pre/post state, reserves before one Apply, and classifies interruption without replay.

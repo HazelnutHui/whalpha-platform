@@ -194,6 +194,16 @@ No CLI, real cadence event/root, capability, unit/timer change, request, `/data`
 write, publication, deployment, or Production invocation occurred. All 1,754
 backend tests pass with the two existing dependency warnings.
 
+ADR 0085 now adds the read-only Cadence Diagnosis 1.0 contract for an open
+runtime reservation. It verifies the supplied same-session hash chain and
+distinguishes no nested evidence, an unresolved action routed only to existing
+no-replay recovery, a formal terminal exposed only as a later disposition
+candidate, and blocked conflicting evidence. It never infers a coordinator
+result or retry time and has zero request/write/replay/retry/recovery/resolution
+authority. No CLI, real journal read/event, timer change, request, `/data`
+write, publication, deployment, or Production operation occurred. All 1,764
+backend tests pass with the two existing dependency warnings.
+
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
 plan SHA, Production-state fingerprint, and any plan-bound review

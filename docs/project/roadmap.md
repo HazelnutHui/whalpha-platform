@@ -20,8 +20,9 @@
   are also complete. ADR 0083 reuses the existing owner-only journal for full
   plan/result retention and fixes coordinator failure semantics. ADR 0084's
   default-off, non-installed one-invocation runtime bridge and durable wake
-  reservation are complete. Next validate one natural timer wake, then review
-  unresolved-reservation diagnosis and any installed runtime binding.
+  reservation are complete. ADR 0085's read-only unresolved-reservation
+  diagnosis is complete. Next validate one natural timer wake, then design a
+  separately operator-approved disposition and any installed runtime binding.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -316,7 +317,8 @@ coordinator 1.12 no longer labels provider/offline failure as an executed
 transition. ADR 0084 adds the non-installed, one-invocation runtime bridge with
 a durable pre-invocation reservation and fail-closed interruption semantics.
 The next operational boundary remains natural-trigger review; unresolved-wake
-diagnosis and any installed runtime binding follow as separate decisions.
+diagnosis is complete, while reviewed disposition and any installed runtime
+binding remain separate decisions.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review
