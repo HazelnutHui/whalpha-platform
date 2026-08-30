@@ -2,7 +2,7 @@
 
 ## Market Intelligence consumer binding
 
-The active release is Snapshot 1.9 / Dashboard 2.6. Repository source also
+The active release is Snapshot 1.10 / Dashboard 2.7. Repository source also
 supports Snapshot 1.8 / Dashboard 2.5 for split Candidate delivery. Its
 dry-run receives an explicit `--market-intelligence-publication-id`, formally
 reads the active immutable publication, and freezes that reference in candidate
@@ -21,7 +21,7 @@ compact summary plus deterministic stable-ID detail shards. The reader validates
 every file, reconstructs the original full Candidate publication, and fails
 closed on any missing shard or summary/detail drift. Approval plan 2.3 freezes
 the ordered shard list and summary identity. Snapshot 1.8 remains a readable
-compatibility boundary; active Production uses the additive 1.9/2.6 pair.
+compatibility boundary; active Production uses the additive 1.10/2.7 pair.
 
 Repository source now also supports Snapshot 1.9 / Dashboard 2.6 through
 Approval Plan 2.4. It extends every 1.8 binding and additionally freezes the
@@ -43,8 +43,9 @@ Strategy audit and the exact Visual Context audit using
 `--candidate-visual-context-audit`. The builder formally rereads that `/tmp`
 audit once and embeds its records into detail-shard 1.1; the summary remains
 unchanged. Plan 2.5 freezes the visual audit manifest hash, logical fingerprint,
-batch fingerprints, and all shard hashes. Direct publication and OCI bundle
-validation support this pair, but the unattended daily control plane remains
+batch fingerprints, and all shard hashes. Direct publication, OCI bundle
+validation, and the active Production release support this pair, but the
+unattended daily control plane remains
 on Plan 2.4 until visual-audit generation is explicitly integrated and tested.
 
 ## Daily control-plane custody

@@ -40,6 +40,14 @@ one-/five-session change, and a bounded ten-point state path; the short-history
 warning is consolidated. These changes and equal-capability guest entry are
 deployed in the current OCI release.
 
+The public data-free entry now uses the dark WH mark in a mature full-page
+brand experience. Credential and guest entry remain immediately available in
+the first viewport and open the same workspace. Below them, a bilingual
+alternating capability path distinguishes four live capabilities, four planned
+capabilities, and one later position-management capability; planned work is
+never presented as available functionality. Product principles and the full
+market-to-position decision chain are visible before Session entry.
+
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
 relative-performance proxies, never actual fund flow.
@@ -58,17 +66,17 @@ relative-performance proxies, never actual fund flow.
   `2026-08-29T080431Z-785ab49dfedd`, contract 1.2, with 686 Primary and 744
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-30T082200Z-6a8a37e79970`, contract 1.10 / Dashboard 2.7.
+  `2026-08-30T085601Z-6c732e9cd602`, contract 1.10 / Dashboard 2.7.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-30T082200Z-6a8a37e79970` from source commit `6a8a37e79970`.
+  `2026-08-30T085601Z-6c732e9cd602` from source commit `6c732e9cd602`.
 
 The active analytics and Snapshot are ordinary fresh publications for
 2026-08-28: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
-`2026-08-29T133847Z-1490b37f25b3` is the exact planned rollback reference. The
-2026-08-30 post-deployment reader found 526 files / 334,075,194 bytes under
+`2026-08-30T082200Z-6a8a37e79970` is the exact planned rollback reference. The
+2026-08-30 post-deployment reader found 567 files / 369,039,027 bytes under
 `/data`, inventory fingerprint
-`ab62e0f35a9c3f696a42521da9a41f3e6ca5cfee8309c07f818310d52a770cec`,
+`97eb5503f1bbba0a38767cb76b055c3b1cfdf950b54b75cb51b8ece186f3eb5a`,
 zero symlinks, and zero publication residue.
 
 ### Daily automation development state
@@ -498,7 +506,8 @@ read or used.
   496/532 Candidate counts. ADR 0058 adds Approval Plan 2.4 plus strict OCI
   bundle and guest-postflight validation. The authorized 2026-08-28 Plan,
   Apply, 50-file bundle, OCI switch, and temporary-guest postflight all passed;
-  Snapshot 1.9 / Dashboard 2.6 and the strategy product are now active.
+  Snapshot 1.9 / Dashboard 2.6 introduced the strategy product now retained by
+  the active additive 1.10 / 2.7 release.
   A subsequent UI continuity pass makes the Candidate subview and exact
   strategy channel URL-addressable, removes irrelevant risk-mode controls from
   strategy mode, uses the Advance + Watch population in its headline, and
@@ -963,9 +972,10 @@ without changing Candidate publication 1.1: the real 8/26 first-load file is
 1.49 MB (92.68% smaller), with 32 detail shards and exact full-publication
 reconstruction. Snapshot 1.9 / Dashboard 2.6 adds the independently audited
 strategy product as one lazy 195,211-byte file without changing the default
-Candidate transfer. The authorized 2026-08-28 release publishes both
-projections; Dell remains the sole heavy-compute, historical-storage, and
-data-governance authority;
+Candidate transfer. Snapshot 1.10 / Dashboard 2.7 further adds the formally
+bound Candidate Visual Context rows. The authorized 2026-08-28 analytics now
+serve through the active 1.10 release with all three projections; Dell remains
+the sole heavy-compute, historical-storage, and data-governance authority;
 OCI is only the static serving/Session boundary. The optimized full and
 incremental Candidate calculations retain serial state/order custody. Cold
 replay alone may use the bounded session-Oracle process pool; daily append uses

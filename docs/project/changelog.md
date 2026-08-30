@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-08-30 — Redesign and deploy the public WH Alpha entry
+
+- Replaced the compact authentication split-screen with a mature bilingual
+  public brand entry using the selected dark WH mark, institutional navy/cyan
+  visual language, and immediate credential or equal-capability guest access.
+- Added a data-free product narrative around the complete decision chain. A
+  central alternating signal path separates four live capabilities, four
+  planned capabilities, and later position management; planned features are
+  explicitly unavailable rather than implied to be live.
+- Made explainability, counterevidence, market context, participation-versus-
+  fund-flow terminology, and stock-versus-option-return boundaries visible on
+  the public page. Added locale-completeness and live/planned status tests.
+- Published ordinary-fresh Snapshot 1.10 / Dashboard 2.7 as
+  `2026-08-30T085601Z-6c732e9cd602` through Plan 2.5 and exact `/data` Apply,
+  then built and formally reread the source-bound 51-file bundle with logical
+  fingerprint
+  `04b4063c21fdc53a7ff7d1a88d8be33d1d2d8d13364031cd69279c94f4b8541e`.
+- OCI preflight, atomic deployment, guest Session postflight, direct public
+  content verification, and independent remote inspection passed with no
+  staging/failed residue. The remote state fingerprint is
+  `b21cf8883e971ee6ad55161c4380c975177faf2427c19bafc2d525bb9080e598`.
+- All 102 frontend tests and the Production build pass. Password-based and
+  visual browser verification remain a manual user check.
+
 ## 2026-08-30 — Publish WH Alpha favicon and Candidate Visual Context
 
 - Adopted the user-selected dark-background WH mark as the default browser,

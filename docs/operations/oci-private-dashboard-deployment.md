@@ -10,16 +10,18 @@ project changelog, not in this current runbook.
 ## Live-verified state
 
 The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-08-29 post-deployment
+[current-context](../project/current-context.md). Its 2026-08-30 post-deployment
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching local immutable bundle resolve to
-  release `2026-08-29T133847Z-1490b37f25b3`;
+  release `2026-08-30T085601Z-6c732e9cd602`;
 - the release is built from source commit
-  `1490b37f25b3cc48c80fcf0a79c091767eff69ad` and binds Market Intelligence
+  `6c732e9cd60219f83fa730b882cb148bdf540de0` and binds Market
+  Intelligence
   `2026-08-29T080431Z-785ab49dfedd`;
-- it serves ordinary-fresh, lag-zero 2026-08-28 analytics through Snapshot 1.9 /
-  Dashboard 2.6, Candidate publication 1.1, the strategy-channel product,
+- it serves ordinary-fresh, lag-zero 2026-08-28 analytics through Snapshot
+  1.10 / Dashboard 2.7, Candidate publication 1.1, the strategy-channel and
+  Candidate Visual Context products,
   `en` and `zh`, with English as the first-visit default;
 - the deployment manifest declares no credentials, raw payload, or Parquet;
 - Nginx and `whalpha-dashboard-auth.service` are active and enabled;
@@ -28,7 +30,7 @@ reconciliation records, without reading credentials:
   `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
   `/auth/status`, and returns 404 for external `/auth/internal-verify`;
 - deployment postflight creates a temporary guest Session, verifies the same
-  Dashboard, Snapshot 1.9 Candidate summary/detail, and strategy payload are
+  Dashboard, Snapshot 1.10 Candidate summary/detail, and strategy payload are
   readable, logs out, and removes the local cookie jar without printing it;
 - no staging or partial release residue exists.
 
@@ -44,7 +46,8 @@ read or use the user's password.
 
 The builder requires an explicit immutable Snapshot path and Market
 Intelligence publication. It accepts only the exact Snapshot 1.5 / Dashboard
-2.2 through Snapshot 1.9 / Dashboard 2.6 supported pairs and rejects identity mismatch,
+2.2 through Snapshot 1.10 / Dashboard 2.7 supported pairs and rejects identity
+mismatch,
 missing analytics, or fewer than 16 registered relationships. For 1.6 it also
 freezes and validates Candidate audit/parameter/display bindings and the
 underlying-stock/price-proxy disclosure boundaries. It freezes locales `en`
@@ -61,6 +64,10 @@ bounded contiguous ranks, zero-mismatch Oracle gates, research-only decision
 boundaries, and role-free guest/credential capability. Deployment postflight
 retrieves and validates the same protected strategy resource through a
 temporary guest Session; password-based login remains a manual check.
+For 1.10 it additionally binds Candidate Visual Context audit lineage and
+detail-shard 1.1 rows to the exact Candidate score and Entry Geometry
+fingerprints. Public entry HTML, CSS, bilingual copy, and the shared favicon
+are checksum-bound bundle assets; they contain no provider payload.
 
 The production React graph contains no static dependency on the synthetic
 Dashboard fixture. Development demo mode loads it lazily only behind the Vite

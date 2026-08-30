@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `6a8a37e79970c770df66f88c3a8ba83826ba3a63` |
+| Deployed bundle source commit | `6c732e9cd60219f83fa730b882cb148bdf540de0` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -53,13 +53,13 @@ custody/contracts after deployment.
 | Market Intelligence payload SHA-256 | `9b345d531942ad6f6eeae79ae22de3c578020b14b779281d4616cc3aa680b930` |
 | Market Intelligence logical fingerprint | `9b2842fb9611184f0d2887ad10da7820edbb5d11785ba5083f998314452e696f` |
 | Candidate publication | 686 Primary / 744 Secondary records; fingerprint `eff5ce68400ff90456cd0363bc04d625a80ca6a132b54545bb37d5e6463d5841` |
-| Dashboard Snapshot | `2026-08-30T082200Z-6a8a37e79970` |
+| Dashboard Snapshot | `2026-08-30T085601Z-6c732e9cd602` |
 | Contracts | Snapshot 1.10 / Dashboard 2.7 |
-| Snapshot pointer fingerprint | `898387e870288320ceaea04dd946f091dc1210a99e57bd0101c47aa4eaaf4fa0` |
+| Snapshot pointer fingerprint | `676f5cf36dc516ed44351d0fbe220a6663037742a6514fbd120f44b40a8f22a6` |
 | Active review metadata | none; ordinary fresh publication |
 | Current post-close pipeline freshness | expected 2026-08-28; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-28; lag zero |
-| `/data` inventory | 526 files / 334,075,194 bytes after the Visual Context Snapshot |
-| `/data` inventory fingerprint | `ab62e0f35a9c3f696a42521da9a41f3e6ca5cfee8309c07f818310d52a770cec` |
+| `/data` inventory | 567 files / 369,039,027 bytes after the branded-entry Snapshot |
+| `/data` inventory fingerprint | `97eb5503f1bbba0a38767cb76b055c3b1cfdf950b54b75cb51b8ece186f3eb5a` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -599,9 +599,10 @@ recorded in the active-state table and
   protected Session and load the same product payload.
 - Production bundles exclude synthetic Dashboard data and fail closed on API
   or Snapshot failure.
-- Production contains Candidate publication 1.1, MI 1.2, Snapshot 1.9 /
-  Dashboard 2.6, the independent Candidate, Entry Geometry, and Strategy
-  Oracles, strict frontend parsing, lazy Candidate detail/strategy products,
+- Production contains Candidate publication 1.1, MI 1.2, Snapshot 1.10 /
+  Dashboard 2.7, the independent Candidate, Entry Geometry, and Strategy
+  Oracles, formally bound Visual Context, strict frontend parsing, lazy
+  Candidate detail/strategy products,
   and the bilingual entry-location view. Leadership rank and entry location
   remain separate axes.
 - The active formal Candidate audit is
@@ -618,7 +619,7 @@ recorded in the active-state table and
   automatically become an entry instruction. This is distribution evidence,
   not outcome validation.
 - The active Candidate payload has 686 Primary and 744 Secondary records. Its
-  Snapshot 1.9 first-load summary is 2,061,314 bytes and retains 32 on-demand
+  Snapshot 1.10 first-load summary is 2,061,314 bytes and retains 32 on-demand
   detail shards. Repository source now adds ADR 0048's Snapshot 1.8 /
   Dashboard 2.5 lossless delivery projection: a 1,490,756-byte first-load
   summary plus 32 stable-ID detail shards of 474,940–1,028,834 bytes. A real
@@ -851,17 +852,25 @@ recorded in the active-state table and
   market-structure summary, Daily Decision Brief, decision-lane relationship
   selection, prior-state markers, consolidated reliability warning, and
   collapsed 16-pair audit table.
+- The public data-free Session entry is now a bilingual product introduction,
+  not only an authentication panel. It uses the dark WH mark, keeps credential
+  and equal-capability guest entry in the first viewport, presents the complete
+  decision chain, and separates four live capabilities from four planned and
+  one later capability along a central visual path. The page makes the
+  explain-before-ranking, counterevidence, context, fund-flow terminology, and
+  stock-versus-option-return guardrails visible before entry.
 
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-30T082200Z-6a8a37e79970`, built from deployed source commit
-`6a8a37e79970c770df66f88c3a8ba83826ba3a63` and bound to Market Intelligence
+`2026-08-30T085601Z-6c732e9cd602`, built from deployed source commit
+`6c732e9cd60219f83fa730b882cb148bdf540de0` and bound to Market Intelligence
 `2026-08-29T080431Z-785ab49dfedd`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-30 Visual Context and WH Alpha favicon deployment passed remote
+The 2026-08-30 branded-entry deployment passed formal Snapshot Plan 2.5,
+ordinary-fresh Snapshot Apply, exact 51-file serving-bundle reread, remote
 preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
 guest Session postflight against the exact Snapshot 1.10 payload, strategy
@@ -872,7 +881,7 @@ No credential or cookie content was printed or retained.
 The independent remote-state report also matched local manifest/checksum
 hashes, found zero failed units or staging/failed residue, and recorded state
 fingerprint
-`324e4f8faae5678f21e6c6d6d18baaba2e024c0a415f0d8f602d9133b682748d`.
+`b21cf8883e971ee6ad55161c4380c975177faf2427c19bafc2d525bb9080e598`.
 Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.
