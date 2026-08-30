@@ -315,6 +315,7 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "--snapshot-path" in build_script.read_text()
     assert "--snapshot-release" not in build_script.read_text()
     assert "--bundle-root" in build_script.read_text()
+    assert "offline_artifact_custody_cli" in build_script.read_text()
     assert "--build-timestamp" in build_script.read_text()
     assert "private-dashboard-v2/revision=universe-funnel-v2" in build_script.read_text()
     assert "release_id=*" in build_script.read_text()

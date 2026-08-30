@@ -63,8 +63,10 @@ older active publication correctly failed lineage validation.
 
 Automation Plan 1.7 remains blocked. The ADR 0094 stop may be removed only
 after separately authorized MI and Snapshot Apply make one exact persistent
-lineage active, serving-bundle construction accepts its persistent bundle
-root, and the complete chain passes a real rehearsal.
+lineage active and the complete chain passes a real rehearsal. Serving-bundle
+construction now accepts and seals the exact persistent bundle root, but its
+real rehearsal still requires an applied Snapshot target under the immutable
+`/data` namespace.
 
 ## Consequences
 

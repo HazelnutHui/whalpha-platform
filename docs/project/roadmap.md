@@ -1,5 +1,19 @@
 # Roadmap
 
+## Quant Strategy Lab direction
+
+After the current durable daily-pipeline boundary is closed, the next primary
+product research workspace is **Quant Strategy Lab / 量化策略实验室**. It will
+separate broad research baselines from **WH Alpha personal proprietary research
+models**. Every model must expose ownership, version, intended Universe,
+market-regime scope, parameters, validation state, known failure modes, and
+decay risk. Research/backtest/out-of-sample/paper-tracking states must remain
+visibly distinct from validated decision support. Personal ownership never
+permits black-box conclusions: formulas, evidence, counterevidence, and
+invalidation remain reviewable. Initial research should compare momentum
+breakout, strong-stock pullback, and trend continuation before adding technical
+reversal, defensive rotation, fundamentals, or option-expression results.
+
 ## Current priorities
 
 - Operational: preserve the complete controlled 2026-08-28 deployment as the

@@ -86,9 +86,15 @@ if [[ "${bundle_root}" != /* ]]; then
   exit 2
 fi
 if [[ "${bundle_root}" != "${repo_root}/build/oci-dashboard" ]]; then
-  if [[ "$(dirname -- "${bundle_root}")" != "/tmp" || ! "$(basename -- "${bundle_root}")" =~ ^tip-[A-Za-z0-9._-]+$ ]]; then
-    echo "Explicit bundle root must be one safe direct child of /tmp" >&2
-    exit 2
+  if [[ "$(dirname -- "${bundle_root}")" == "/tmp" ]]; then
+    if [[ ! "$(basename -- "${bundle_root}")" =~ ^tip-[A-Za-z0-9._-]+$ ]]; then
+      echo "Explicit /tmp bundle root name is unsafe" >&2
+      exit 2
+    fi
+  else
+    "${repo_root}/scripts/dev/run-project-python.sh" \
+      -m tip_api.services.offline_artifact_custody_cli \
+      --serving-bundle-root "${bundle_root}" >/dev/null
   fi
 fi
 if [[ -n "${build_timestamp}" && ! "${build_timestamp}" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$ ]]; then
@@ -127,6 +133,7 @@ if [[ ! -e "${bundle_root}" ]]; then
   root_created="true"
 fi
 [[ ! -L "${bundle_root}" && -d "${bundle_root}" ]] || { echo "bundle root is unsafe" >&2; exit 1; }
+chmod 0700 "${bundle_root}"
 mkdir -p "${staging_dir}/dashboard" "${staging_dir}/login" "${staging_dir}/private-data"
 cleanup_staging() {
   rm -rf -- "${staging_dir}"
@@ -426,6 +433,8 @@ PY
 
 (cd "${staging_dir}" && find . -type f ! -name checksums.sha256 -print0 | sort -z | xargs -0 sha256sum > checksums.sha256)
 (cd "${staging_dir}" && sha256sum -c checksums.sha256 >/dev/null)
+find "${staging_dir}" -type d -exec chmod 0700 {} +
+find "${staging_dir}" -type f -exec chmod 0400 {} +
 mv "${staging_dir}" "${bundle_dir}"
 rm -f -- "${build_log}"
 trap - EXIT

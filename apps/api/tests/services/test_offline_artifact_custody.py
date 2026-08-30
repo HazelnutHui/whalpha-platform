@@ -8,6 +8,7 @@ import pytest
 
 from tip_api.services.offline_artifact_custody import (
     OfflineArtifactCustodyError,
+    validate_offline_artifact_child,
     validate_offline_artifact_location,
 )
 
@@ -77,6 +78,27 @@ def test_rejects_dangling_symlink_and_git_workspace() -> None:
             validate_offline_artifact_location(
                 session / "market-regime-phase1a",
                 persistent_names={"market-regime-phase1a"},
+            )
+    finally:
+        shutil.rmtree(owner)
+
+
+def test_accepts_exact_persistent_child_but_rejects_wrong_child() -> None:
+    owner, session = _persistent_session()
+    try:
+        root = session / "market-intelligence"
+        root.mkdir(mode=0o700)
+        child = root / "market-intelligence.plan.artifacts"
+        assert validate_offline_artifact_child(
+            child,
+            parent_name="market-intelligence",
+            child_names={"market-intelligence.plan.artifacts"},
+        ) == child
+        with pytest.raises(OfflineArtifactCustodyError, match="child name"):
+            validate_offline_artifact_child(
+                root / "unexpected",
+                parent_name="market-intelligence",
+                child_names={"market-intelligence.plan.artifacts"},
             )
     finally:
         shutil.rmtree(owner)

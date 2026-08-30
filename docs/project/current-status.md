@@ -755,7 +755,9 @@ contracts, and formal readers have now separately crossed the persistent
 boundary in real zero-write rehearsals. The active MI 1.2 correctly rejects
 the new persistent Candidate lineage, so a complete one-lineage Snapshot and
 serving bundle cannot be proven without separately authorized MI and Snapshot
-Apply. Serving-bundle root custody also remains unreconciled. Automation Plan
+Apply. Serving-bundle persistent root custody is implemented and tested, but
+cannot be physically rehearsed before that immutable Snapshot exists.
+Automation Plan
 1.7 therefore
 continues to stop at `persistent_workspace_cli_custody_unreconciled`; removing
 the block now would overstate the proof. The installed timer remains read-only

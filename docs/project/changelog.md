@@ -32,6 +32,11 @@
   persistent Candidate lineage. A second Snapshot rehearsal used its exact
   legacy-bound audits only to prove Snapshot custody. No MI/Snapshot Apply was
   inferred, so one-lineage bundle construction remains blocked.
+- Added a narrow shared-custody preflight to the OCI bundle administrator. An
+  exact persistent `serving-bundle` root is accepted alongside the existing
+  repository and safe `/tmp` roots; completed persistent bundle directories
+  are sealed `0700` with `0400` files. Real bundle rehearsal remains gated by
+  the separately authorized Snapshot Apply that creates its immutable source.
 
 ## 2026-08-30 — Block unproven persistent-workspace execution
 
