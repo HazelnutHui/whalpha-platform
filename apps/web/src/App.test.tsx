@@ -35,6 +35,7 @@ describe('primary workspace shell', () => {
     expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
     expect(screen.getByText('Protected Session')).toBeInTheDocument();
+    expect(document.querySelector('.workspace-brand img')).toHaveAttribute('src', '/favicon.png');
   });
 
   it('preserves Universe across workspace navigation and browser history', () => {

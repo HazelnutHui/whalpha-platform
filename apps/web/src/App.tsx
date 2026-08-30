@@ -77,8 +77,11 @@ export default function App(): JSX.Element {
     <div className="workspace-layout">
       <aside className="workspace-sidebar">
         <div className="workspace-brand">
-          <strong>WH Alpha</strong>
-          <span>{t('app.productLabel')}</span>
+          <img src="/favicon.png" alt="" width="48" height="48" />
+          <div>
+            <strong>WH Alpha</strong>
+            <span>{t('app.productLabel')}</span>
+          </div>
         </div>
         <nav className="workspace-navigation" aria-label={t('app.navAria')}>
           <button type="button" className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onClick={() => navigate('regime')}>
