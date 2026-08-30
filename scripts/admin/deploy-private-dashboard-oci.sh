@@ -219,7 +219,7 @@ rollback() {
   fi
   rm -rf "${extract_dir}"
   rm -f "${remote_tar}" "${remote_template}" "${remote_auth_service}" "${remote_password_rotation}"
-  rm -f "${guest_headers:-}" "${guest_body:-}" "${guest_cookie_jar:-}" "${guest_dashboard_body:-}" "${guest_private_body:-}" "${guest_candidate_body:-}" "${guest_candidate_detail_body:-}" "${guest_strategy_body:-}"
+  rm -f "${guest_headers:-}" "${guest_body:-}" "${guest_cookie_jar:-}" "${guest_dashboard_body:-}" "${guest_private_body:-}" "${guest_candidate_body:-}" "${guest_candidate_detail_body:-}" "${guest_strategy_body:-}" "${guest_sector_rotation_body:-}"
   exit ${status}
 }
 trap rollback EXIT
@@ -429,6 +429,7 @@ guest_private_body=$(mktemp)
 guest_candidate_body=$(mktemp)
 guest_candidate_detail_body=$(mktemp)
 guest_strategy_body=$(mktemp)
+guest_sector_rotation_body=$(mktemp)
 guest_code=$(curl -sS -c "${guest_cookie_jar}" -o "${guest_body}" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Origin: https://whalpha.com' --data '{"next":"/dashboard/?view=regime&lang=en"}' https://whalpha.com/auth/guest)
 [[ "${guest_code}" == "200" ]] || { echo "public guest Session status ${guest_code}" >&2; exit 1; }
 grep -q '"authenticated":true' "${guest_body}" || { echo "public guest Session response mismatch" >&2; exit 1; }
@@ -438,22 +439,22 @@ grep -q '<div id="root"></div>' "${guest_dashboard_body}" || { echo "guest Dashb
 grep -q 'rel="icon"' "${guest_dashboard_body}" || { echo "guest Dashboard missing favicon declaration" >&2; exit 1; }
 guest_private_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${guest_private_code}" == "200" ]] || { echo "guest private-data status ${guest_private_code}" >&2; exit 1; }
-grep -Eq '"snapshot_contract_version":"1\.(5|6|7|8|9|10)"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }
-if grep -Eq '"snapshot_contract_version":"1\.(6|7|8|9|10)"' "${guest_private_body}"; then
+grep -Eq '"snapshot_contract_version":"1\.(5|6|7|8|9|10|11)"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }
+if grep -Eq '"snapshot_contract_version":"1\.(6|7|8|9|10|11)"' "${guest_private_body}"; then
   grep -q '"candidate_contract_version":"opportunity-candidate/1.1"' "${guest_private_body}" || { echo "guest Candidate manifest contract mismatch" >&2; exit 1; }
   guest_candidate_filename=opportunity-candidates.json
-  if grep -Eq '"snapshot_contract_version":"1\.(8|9|10)"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(8|9|10|11)"' "${guest_private_body}"; then
     guest_candidate_filename=opportunity-candidates-summary.json
   fi
   guest_candidate_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_candidate_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/${guest_candidate_filename}")
   [[ "${guest_candidate_code}" == "200" ]] || { echo "guest Candidate data status ${guest_candidate_code}" >&2; exit 1; }
   grep -Eq '"contract_version":"(opportunity-candidate-snapshot/1\.(0|1)|opportunity-candidate-summary-snapshot/1\.0)"' "${guest_candidate_body}" || { echo "guest Candidate contract mismatch" >&2; exit 1; }
   grep -q '"underlying_stock_result_not_option_return":true' "${guest_candidate_body}" || { echo "guest Candidate decision boundary missing" >&2; exit 1; }
-  if grep -Eq '"snapshot_contract_version":"1\.(7|8|9|10)"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(7|8|9|10|11)"' "${guest_private_body}"; then
     grep -q '"entry_location_separate_from_leadership":true' "${guest_candidate_body}" || { echo "guest entry-geometry boundary missing" >&2; exit 1; }
     grep -q '"leadership_rank_preserved":true' "${guest_candidate_body}" || { echo "guest leadership-rank boundary missing" >&2; exit 1; }
   fi
-  if grep -Eq '"snapshot_contract_version":"1\.(8|9|10)"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(8|9|10|11)"' "${guest_private_body}"; then
     guest_detail_filename=$(python3 - "${guest_private_body}" <<'PY'
 import json,sys
 value=json.load(open(sys.argv[1],encoding='utf-8'))
@@ -465,12 +466,12 @@ PY
     guest_detail_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_candidate_detail_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/${guest_detail_filename}")
     [[ "${guest_detail_code}" == "200" ]] || { echo "guest Candidate detail status ${guest_detail_code}" >&2; exit 1; }
     grep -Eq '"contract_version":"opportunity-candidate-detail-shard/1\.(0|1)"' "${guest_candidate_detail_body}" || { echo "guest Candidate detail contract mismatch" >&2; exit 1; }
-    if grep -q '"snapshot_contract_version":"1.10"' "${guest_private_body}"; then
+    if grep -Eq '"snapshot_contract_version":"1\.(10|11)"' "${guest_private_body}"; then
       grep -q '"visual_context_contract_version":"candidate-visual-context/1.0"' "${guest_candidate_detail_body}" || { echo "guest Candidate visual-context contract mismatch" >&2; exit 1; }
       grep -q '"price_path_availability":"available"' "${guest_candidate_detail_body}" || { echo "guest Candidate visual path missing" >&2; exit 1; }
     fi
   fi
-  if grep -Eq '"snapshot_contract_version":"1\.(9|10)"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(9|10|11)"' "${guest_private_body}"; then
     guest_strategy_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_strategy_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/candidate-strategy-channels.json")
     [[ "${guest_strategy_code}" == "200" ]] || { echo "guest Candidate strategy-channel status ${guest_strategy_code}" >&2; exit 1; }
     python3 - "${guest_private_body}" "${guest_strategy_body}" <<'PY'
@@ -491,10 +492,32 @@ if (manifest.get('candidate_strategy_file') != 'candidate-strategy-channels.json
   raise SystemExit('guest Candidate strategy-channel binding is invalid')
 PY
   fi
+  if grep -q '"snapshot_contract_version":"1.11"' "${guest_private_body}"; then
+    guest_sector_rotation_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_sector_rotation_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/sector-etf-rotation.json")
+    [[ "${guest_sector_rotation_code}" == "200" ]] || { echo "guest Sector Rotation status ${guest_sector_rotation_code}" >&2; exit 1; }
+    python3 - "${guest_private_body}" "${guest_sector_rotation_body}" <<'PY'
+import json,sys
+manifest=json.load(open(sys.argv[1],encoding='utf-8'))
+rotation=json.load(open(sys.argv[2],encoding='utf-8'))
+source=rotation.get('source',{})
+if (manifest.get('dashboard_contract_version') != '2.8'
+    or manifest.get('sector_rotation_file') != 'sector-etf-rotation.json'
+    or rotation.get('contract_version') != 'sector-etf-rotation-dashboard-snapshot/1.0'
+    or rotation.get('logical_fingerprint') != manifest.get('sector_rotation_snapshot_logical_fingerprint')
+    or source.get('audit_logical_fingerprint') != manifest.get('sector_rotation_audit_logical_fingerprint')
+    or source.get('parameter_fingerprint') != manifest.get('sector_rotation_parameter_fingerprint')
+    or source.get('history_source_fingerprint') != manifest.get('sector_rotation_history_source_fingerprint')
+    or source.get('product_logical_fingerprint') != manifest.get('sector_rotation_product_logical_fingerprint')
+    or source.get('oracle_mismatch_count') != 0
+    or rotation.get('fund_flow_claim_prohibited') is not True
+    or rotation.get('guest_and_credential_capability_identical') is not True):
+  raise SystemExit('guest Sector Rotation binding is invalid')
+PY
+  fi
 fi
 guest_logout_code=$(curl -sS -b "${guest_cookie_jar}" -o /dev/null -w '%{http_code}' -X POST https://whalpha.com/auth/logout)
 [[ "${guest_logout_code}" == "303" ]] || { echo "guest logout status ${guest_logout_code}" >&2; exit 1; }
-rm -f "${guest_cookie_jar}" "${guest_body}" "${guest_dashboard_body}" "${guest_private_body}" "${guest_candidate_body}" "${guest_candidate_detail_body}" "${guest_strategy_body}"
+rm -f "${guest_cookie_jar}" "${guest_body}" "${guest_dashboard_body}" "${guest_private_body}" "${guest_candidate_body}" "${guest_candidate_detail_body}" "${guest_strategy_body}" "${guest_sector_rotation_body}"
 guest_cookie_jar=""
 guest_body=""
 guest_dashboard_body=""
@@ -502,6 +525,7 @@ guest_private_body=""
 guest_candidate_body=""
 guest_candidate_detail_body=""
 guest_strategy_body=""
+guest_sector_rotation_body=""
 private_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${private_code}" == "401" ]] || { echo "private-data unauth status ${private_code}" >&2; exit 1; }
 if grep -q '"current_session_date"\|"release_id"\|"nodes"' "${private_body}"; then

@@ -43,6 +43,15 @@
   the same governed-location validator as the writer and reader while retaining
   exact-path, regular-file, immutable-mode, full-file SHA, and canonical Plan
   checks. Focused publication and custody regressions pass.
+- The authorized MI 1.3 and Snapshot 1.11 / Dashboard 2.8 Applies then
+  completed from the same persistent lineage. The first OCI switch was safely
+  rolled back by postflight because its shell validator still stopped at
+  Snapshot 1.10; review also found that the Candidate and Strategy browser
+  adapters stopped at 1.10. All three consumers now accept the exact 1.11/2.8
+  pair, and deployment postflight additionally fetches and source-binds the
+  Sector Rotation resource through the temporary guest Session. The exact
+  failed remote release was removed only after rollback and manifest identity
+  were verified; the prior release remained active throughout correction.
 
 ## 2026-08-30 — Block unproven persistent-workspace execution
 

@@ -213,8 +213,9 @@ function parseEvidence(value: unknown): StrategyEvidence {
 export async function getCandidateStrategies(universeId?: string, signal?: AbortSignal): Promise<CandidateStrategyResponse> {
   if (import.meta.env.VITE_MARKET_DATA_MODE !== 'snapshot') throw new Error('Strategy-channel API is not enabled');
   const manifest = parseSnapshotManifest(await fetchJson<unknown>('/private-data/v1/manifest.json', signal));
-  if (!['1.9', '1.10'].includes(manifest.snapshot_contract_version)
-    || manifest.dashboard_contract_version !== (manifest.snapshot_contract_version === '1.10' ? '2.7' : '2.6')
+  if (!['1.9', '1.10', '1.11'].includes(manifest.snapshot_contract_version)
+    || manifest.dashboard_contract_version !== (manifest.snapshot_contract_version === '1.11'
+      ? '2.8' : manifest.snapshot_contract_version === '1.10' ? '2.7' : '2.6')
     || manifest.candidate_strategy_file !== 'candidate-strategy-channels.json') throw new Error('Strategy-channel snapshot is unavailable');
   const raw = await fetchJson<unknown>(`/private-data/v1/${manifest.candidate_strategy_file}`, signal);
   const parsed = parseCandidateStrategyProduct(raw, universeId);

@@ -351,9 +351,9 @@ function parseEntryGeometry(value: unknown, item: Record<string, unknown>, unive
 export async function getOpportunityCandidates(universeId: string | undefined, signal?: AbortSignal): Promise<OpportunityCandidateResponse> {
   if (import.meta.env.VITE_MARKET_DATA_MODE !== 'snapshot') throw new Error('Candidate API is not enabled');
   const manifest = parseSnapshotManifest(await fetchJson<unknown>('/private-data/v1/manifest.json', signal));
-  if (!['1.6', '1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)
-    || manifest.dashboard_contract_version !== ({ '1.6': '2.3', '1.7': '2.4', '1.8': '2.5', '1.9': '2.6', '1.10': '2.7' }[manifest.snapshot_contract_version])
-    || manifest.opportunity_candidates_file !== (['1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version) ? 'opportunity-candidates-summary.json' : 'opportunity-candidates.json')) throw new Error('Candidate snapshot is unavailable');
+  if (!['1.6', '1.7', '1.8', '1.9', '1.10', '1.11'].includes(manifest.snapshot_contract_version)
+    || manifest.dashboard_contract_version !== ({ '1.6': '2.3', '1.7': '2.4', '1.8': '2.5', '1.9': '2.6', '1.10': '2.7', '1.11': '2.8' }[manifest.snapshot_contract_version])
+    || manifest.opportunity_candidates_file !== (['1.8', '1.9', '1.10', '1.11'].includes(manifest.snapshot_contract_version) ? 'opportunity-candidates-summary.json' : 'opportunity-candidates.json')) throw new Error('Candidate snapshot is unavailable');
   const raw = await fetchJson<unknown>(`/private-data/v1/${manifest.opportunity_candidates_file}`, signal);
   const envelope = record(raw, 'snapshot');
   if (envelope.publication_id !== manifest.market_intelligence_publication_id
@@ -383,7 +383,7 @@ export async function getOpportunityCandidates(universeId: string | undefined, s
     || source.entry_geometry_parameter_fingerprint !== manifest.entry_geometry_parameter_fingerprint
     || source.entry_lane_consumer_parameter_fingerprint !== manifest.entry_lane_consumer_parameter_fingerprint
   )) throw new Error('Candidate Snapshot entry-geometry binding differs');
-  if (['1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
+  if (['1.8', '1.9', '1.10', '1.11'].includes(manifest.snapshot_contract_version)) {
     const detailFiles = manifest.candidate_detail_files ?? [];
     if (envelope.contract_version !== 'opportunity-candidate-summary-snapshot/1.0'
       || analytics.contract_version !== manifest.candidate_summary_contract_version
@@ -393,21 +393,21 @@ export async function getOpportunityCandidates(universeId: string | undefined, s
       || source.entry_geometry_audit_logical_fingerprint !== manifest.entry_geometry_audit_logical_fingerprint
       || source.entry_geometry_parameter_fingerprint !== manifest.entry_geometry_parameter_fingerprint
       || source.entry_lane_consumer_parameter_fingerprint !== manifest.entry_lane_consumer_parameter_fingerprint
-      || manifest.candidate_detail_contract_version !== (manifest.snapshot_contract_version === '1.10'
+      || manifest.candidate_detail_contract_version !== (['1.10', '1.11'].includes(manifest.snapshot_contract_version)
         ? 'opportunity-candidate-detail-shard/1.1' : 'opportunity-candidate-detail-shard/1.0')
       || !Array.isArray(analytics.detail_shards)
       || analytics.detail_shards.length !== detailFiles.length
       || analytics.detail_shards.some((value) => !detailFiles.includes(String(record(value, 'detail descriptor').filename)))) {
       throw new Error('Candidate Snapshot split binding differs');
     }
-    if (manifest.snapshot_contract_version === '1.10' && (
+    if (['1.10', '1.11'].includes(manifest.snapshot_contract_version) && (
       manifest.candidate_visual_context_contract_version !== 'candidate-visual-context/1.0'
       || typeof manifest.candidate_visual_context_audit_logical_fingerprint !== 'string'
       || !SHA.test(manifest.candidate_visual_context_audit_logical_fingerprint)
     )) throw new Error('Candidate visual-context Snapshot binding differs');
     return {
       ...parseOpportunityCandidateSummarySnapshot(raw, universeId),
-      strategy_available: ['1.9', '1.10'].includes(manifest.snapshot_contract_version),
+      strategy_available: ['1.9', '1.10', '1.11'].includes(manifest.snapshot_contract_version),
       candidate_detail_contract_version: manifest.candidate_detail_contract_version as OpportunityCandidateResponse['candidate_detail_contract_version'],
       visual_context_contract_version: manifest.candidate_visual_context_contract_version as OpportunityCandidateResponse['visual_context_contract_version'],
       visual_context_audit_logical_fingerprint: manifest.candidate_visual_context_audit_logical_fingerprint ?? undefined,

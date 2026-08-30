@@ -345,6 +345,9 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     deploy_text = deploy_script.read_text()
     assert "candidate-strategy-channels.json" in deploy_text
     assert "guest Candidate strategy-channel binding is invalid" in deploy_text
+    assert 'snapshot_contract_version\":\"1\\.(5|6|7|8|9|10|11)' in deploy_text
+    assert "sector-etf-rotation.json" in deploy_text
+    assert "guest Sector Rotation binding is invalid" in deploy_text
     assert "root route returned placeholder body" in deploy_text
     assert "public favicon status" in deploy_text
     assert "login compatibility redirect status" in deploy_text
