@@ -614,6 +614,36 @@ def test_cli_plan_loader_rejects_wrong_full_file_sha(tmp_path):
         cli._load_plan(plan_path, "0" * 64)
 
 
+def test_cli_plan_loader_uses_shared_governed_custody(monkeypatch, tmp_path):
+    plan_path = tmp_path / "market-intelligence-plan.json"
+    plan_path.write_text("{}\n")
+    plan_path.chmod(0o444)
+    calls = []
+    monkeypatch.setattr(
+        cli,
+        "validate_offline_artifact_location",
+        lambda path, **kwargs: calls.append((path, kwargs)),
+    )
+    monkeypatch.setattr(
+        cli, "read_market_intelligence_approval_plan", lambda path: "loaded"
+    )
+
+    loaded = cli._load_plan(
+        plan_path, hashlib.sha256(plan_path.read_bytes()).hexdigest()
+    )
+
+    assert loaded == "loaded"
+    assert calls == [
+        (
+            plan_path,
+            {
+                "persistent_names": {"market-intelligence-plan.json"},
+                "allow_tmp_descendants": True,
+            },
+        )
+    ]
+
+
 def test_formal_approval_plan_reader_reconciles_immutable_candidate(monkeypatch, tmp_path):
     _, _, plan = _setup(monkeypatch, tmp_path)
     plan_path = tmp_path / "approval-plan.json"

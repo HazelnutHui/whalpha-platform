@@ -334,15 +334,24 @@ def _load_plan(
         resolved = path.resolve(strict=True)
     except OSError as exc:
         raise MarketIntelligencePublicationError("approved plan is unavailable") from exc
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"market-intelligence-plan.json"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise MarketIntelligencePublicationError(
+            f"approved plan custody differs: {exc}"
+        ) from exc
     if (
         not path.is_absolute()
         or resolved != path
-        or not resolved.is_relative_to(Path("/tmp"))
         or path.is_symlink()
         or not path.is_file()
     ):
         raise MarketIntelligencePublicationError(
-            "approved plan must be a regular /tmp file"
+            "approved plan must be a regular governed file"
         )
     raw = resolved.read_bytes()
     if hashlib.sha256(raw).hexdigest() != expected_sha256:

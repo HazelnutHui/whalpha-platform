@@ -37,6 +37,12 @@
   repository and safe `/tmp` roots; completed persistent bundle directories
   are sealed `0700` with `0400` files. Real bundle rehearsal remains gated by
   the separately authorized Snapshot Apply that creates its immutable source.
+- A first real persistent MI Apply attempt stopped before any Production write
+  because the CLI loader still imposed its superseded `/tmp`-only check after
+  the formal Plan 1.3 reader had adopted shared custody. The loader now uses
+  the same governed-location validator as the writer and reader while retaining
+  exact-path, regular-file, immutable-mode, full-file SHA, and canonical Plan
+  checks. Focused publication and custody regressions pass.
 
 ## 2026-08-30 — Block unproven persistent-workspace execution
 
