@@ -181,6 +181,10 @@ Daily membership, corporate actions, lifecycle/terminal evidence, explicit
 adjustments, and 252/504-session history are still physically absent; the next
 work is a provider/entitlement and physical-storage review packet, not formula
 tuning or bulk acquisition.
+ADR 0102 now supplies a provider-neutral, exact-plan-bound `/tmp` source-package
+boundary for any future authorized historical transport. It is fixture-only,
+performs no request, and grants no canonical Apply or Production authority;
+the Massive permission/entitlement inquiry is prepared but not sent.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

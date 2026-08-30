@@ -72,6 +72,14 @@ from tip_api.contracts.market_data.v1.historical_coverage import (
     historical_coverage_manifest_fingerprint,
     historical_dataset_coverage_evidence_fingerprint,
 )
+from tip_api.contracts.market_data.v1.historical_source_package import (
+    HistoricalSourceArtifactV1,
+    HistoricalSourcePackageManifestV1,
+    HistoricalSourceRequestKind,
+    HistoricalSourceScopeReceiptV1,
+    build_historical_source_package_manifest,
+    historical_source_package_fingerprint,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -132,4 +140,10 @@ __all__ = [
     "build_historical_dataset_coverage_evidence",
     "historical_coverage_manifest_fingerprint",
     "historical_dataset_coverage_evidence_fingerprint",
+    "HistoricalSourceArtifactV1",
+    "HistoricalSourcePackageManifestV1",
+    "HistoricalSourceRequestKind",
+    "HistoricalSourceScopeReceiptV1",
+    "build_historical_source_package_manifest",
+    "historical_source_package_fingerprint",
 ]

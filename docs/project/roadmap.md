@@ -43,6 +43,11 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   Universe Membership manifest and a real tmp-only 2026-08-19 reconstruction;
   next extend only when a same-session reviewed source exists, never by
   projecting current Activation backward.
+  ADR 0102 now completes the provider-neutral temporary source-package seam:
+  a future authorized adapter must freeze and formally reread exact-plan
+  response bytes before mapping. The next external step is still a written
+  source/account/lifecycle resolution, not a provider request. The concise
+  Massive inquiry is prepared but remains unsent.
 - Product: preserve leadership quality and entry location as separate axes.
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized
@@ -322,6 +327,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   31-session transitive validation and no publication
 - [x] Current-inventory historical pilot baseline with exact provider binding,
   dated permission evidence, and default-blocked authority
+- [x] Provider-neutral exact-plan Historical Source Package with atomic `/tmp`
+  custody and full formal reread
 
 ## Next Small Target
 
@@ -397,6 +404,11 @@ inventory before one exact live-pilot authorization. Product
 posture is no longer open: guest and credential shared content stay identical,
 and owner-only market analysis is not a fallback.
 Do not access credentials, acquire, or write history before those gates clear.
+ADR 0102's provider-neutral source-package seam is also complete and tested
+with synthetic temporary data. It is the required first custody destination
+after any future authorized transport, but it is not itself a transport,
+provider adapter, permission decision, or Apply authority. The concise Massive
+inquiry is prepared for manual sending and has not been sent.
 Do not select formulas or thresholds from one-session distributions. The
 ordinary-fresh, lag-zero 2026-08-28 Snapshot 1.11 / Dashboard 2.8 release is
 active. Later control-plane changes remain undeployed; every further

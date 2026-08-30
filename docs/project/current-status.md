@@ -604,6 +604,14 @@ read or used.
   Status is `blocked`; account entitlement, equal-capability source permission,
   and lifecycle/terminal coverage remain unresolved. No acknowledgement exists
   and every operational authority is false.
+- ADR 0102 adds the missing provider-neutral Historical Source Package 1.0
+  isolation boundary. A future authorized transport can hand already captured,
+  sanitized JSON into an exact-plan `/tmp` package; every non-empty planned
+  scope, request ceiling, response hash, and permission/entitlement/lifecycle/
+  authorization evidence fingerprint is bound and formally reread. The current
+  implementation uses synthetic fixtures only and exposes no provider client,
+  credential loader, CLI, default root, `/data` Apply, publication, deployment,
+  or scheduler authority. The current Pilot remains blocked.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily
@@ -661,6 +669,11 @@ Exact formula/contribution display and channel-overlap diagnostics are also
 deployed. Real chronological validation remains blocked
 on adequate point-in-time history; every future publication/deployment remains
 a separate authorization.
+
+The general provider inquiry packet now also has a concise Massive-specific
+send-ready draft. It has not been sent. A future response must still be reduced
+to a dated Source Permission review and exact account-entitlement evidence;
+support correspondence cannot be treated as operational authority by itself.
 
 ADR 0087 adds the first repository-only P4 decision-visualization slice to the
 Candidate lazy detail drawer. It displays the published current close, SMA10,

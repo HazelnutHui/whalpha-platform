@@ -125,11 +125,14 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 10. **Complete:** join current mechanics, full inventory,
    exact preceding sessions, repository evidence, and dated Massive permission
    conclusions into one blocked, network-prohibited pilot baseline.
-11. Re-review source permission/account entitlement/lifecycle coverage, bind a
+11. **Complete:** add a provider-neutral, exact-plan-bound temporary source
+   package with per-scope completion, request ceilings, artifact hashes,
+   sensitive-field rejection, atomic publication, and full formal reread.
+12. Re-review source permission/account entitlement/lifecycle coverage, bind a
    fresh inventory report, and obtain exact pilot authorization.
 
-Steps 1–10 are repository work and can proceed without provider access or
-`/data` writes. Step 11 is a separate external transition.
+Steps 1–11 are repository work and can proceed without provider access or
+`/data` writes. Step 12 is a separate external transition.
 
 The current `/data` root has no `market-data/historical-coverage` directory.
 Strategy readiness therefore remains `data_blocked`; fixture-only publication
@@ -200,6 +203,13 @@ the plan and review binding.
 No real approval package is yet complete: the current inventory must receive a
 fresh exact fingerprint, and equal-capability source permission, live endpoint
 entitlement, and lifecycle-source coverage remain unresolved.
+
+The source-neutral `historical-source-package/1.0` custody mechanics are now
+fixture-tested. They accept only already captured sanitized JSON, require every
+non-empty Pilot scope to complete within its exact ceiling, bind permission,
+entitlement, lifecycle-review, and authorization fingerprints, and atomically
+freeze every byte below the exact `/tmp` plan directory. This code has no
+transport, credential loader, CLI, default root, or canonical Apply authority.
 
 ## Proposed first live pilot after gates clear
 

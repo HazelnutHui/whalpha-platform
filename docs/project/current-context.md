@@ -794,6 +794,14 @@ recorded in the active-state table and
   `7a8ab595707844fb57f4e64651a9e2db16f16246984a945cce3897ee031d7f28`.
   It is blocked by account entitlement, equal-capability permission, and
   lifecycle/terminal coverage; acknowledgement is null and no action occurred.
+- ADR 0102 now implements the provider-neutral temporary source-package seam
+  that a future authorized Pilot transport must use before canonical mapping.
+  It freezes already captured sanitized JSON below the exact `/tmp` Pilot plan,
+  binds permission, entitlement, lifecycle-review, and authorization evidence,
+  enforces every planned scope and request ceiling, and formally rereads every
+  byte. The implementation is synthetic-fixture-only and has no transport,
+  credential loader, CLI, default root, `/data` Apply, publication, deployment,
+  or scheduler authority. A concise Massive inquiry is prepared but not sent.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe
@@ -985,6 +993,10 @@ access, further UI implementation, another quantitative feature, or guest/
 source licensing remediation. The
 completed 2026-08-28 publication and deployment described above are evidence,
 not continuing authorization.
+
+ADR 0102's fixture-only source-package writer is repository development, not a
+new authorization. It does not change the blocked Pilot result or permit the
+prepared Massive inquiry to be sent automatically.
 
 ## Cross-device continuity
 

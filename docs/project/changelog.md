@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-30 — Freeze provider-neutral Historical Source packages
+
+- Accepted ADR 0102 and added `historical-source-package/1.0` as the immutable
+  `/tmp` boundary between a future authorized provider transport and canonical
+  historical-data mapping.
+- The package binds the exact Pilot plan/inventory, permission, account-
+  entitlement, lifecycle-review, and authorization fingerprints; every
+  non-empty planned scope must complete within its request ceiling and every
+  response byte is content-addressed.
+- Added atomic owner-only publication and complete formal reread. Unplanned or
+  incomplete scopes, credential-bearing fields/URLs, budget excess, path drift,
+  writable files, symlinks, extra files, and byte changes fail closed.
+- Prepared a concise Massive permission and entitlement inquiry for manual user
+  sending. It asks separately about Dell acquisition/retention/derivation,
+  equal guest/login display and browser delivery, historical endpoint
+  entitlement, lifecycle coverage, deletion duties, and fees. It was not sent.
+- The focused source-package suite passes 6 tests and the complete backend
+  suite passes 1,859 tests with only the two existing dependency deprecation
+  warnings. Only synthetic JSON and pytest temporary directories were used; no
+  provider, credential, `/data`, canonical Apply, publication, deployment, or
+  scheduler state changed.
+
 ## 2026-08-30 — Bind current history to a blocked pilot review
 
 - Accepted ADR 0101 and added `current-historical-pilot-baseline/1.0`. The
