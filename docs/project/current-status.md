@@ -181,6 +181,19 @@ without inferring progress. No real journal event, directory, runtime bridge,
 unit/timer change, request, `/data` write, publication, or deployment occurred.
 All 1,746 backend tests pass with the two existing dependency warnings.
 
+ADR 0084 closes the remaining invoke-then-record crash gap without a second
+store or lock hierarchy. Journal 1.8 and cadence custody 1.1 reserve one exact
+enabled wake before its side-effect boundary, allow the existing action custody
+to run once, and close only with a formally known matching result. Exceptions,
+invalid results, interruption, or retention failure leave an unresolved
+reservation that blocks replay and later sessions. Pipeline Runtime 1.0 is
+default-off and repository-only; it requires both exact plan fingerprints and
+one scope-matched capability, and never loops, retries, recovers, publishes, or
+deploys. Old journal 1.2–1.7 and direct cadence 1.7 evidence remain readable.
+No CLI, real cadence event/root, capability, unit/timer change, request, `/data`
+write, publication, deployment, or Production invocation occurred. All 1,754
+backend tests pass with the two existing dependency warnings.
+
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
 plan SHA, Production-state fingerprint, and any plan-bound review

@@ -288,12 +288,21 @@ All 1,731 backend tests pass with the two existing dependency warnings at this
 boundary.
 ADR 0083 subsequently reuses run journal 1.7 as the single owner-only cadence
 evidence store. It retains complete enabled cadence plans and known Evidence
-1.1, so cadence start and budgets cannot reset across tasks or restart.
+1.2, so cadence start and budgets cannot reset across tasks or restart.
 Coordinator 1.12 now maps provider waiting to waiting and provider/offline
 failure to blocked instead of calling every return an executed transition.
 Exact adapters project results but invoke nothing; no real cadence event or
 runtime integration exists yet. All 1,746 backend tests pass with the two
 existing dependency warnings at this boundary.
+ADR 0084 advances the journal to 1.8 and cadence custody to 1.1. A full unknown
+wake reservation is now retained before one action; only a matching known
+result closes it. Crash, invalid result, or retention ambiguity leaves it open
+and blocks replay plus later-session custody. Repository-only Pipeline Runtime
+1.0 composes this with exactly one scope-matched data/offline capability and
+remains default-off, non-looping, and uninstalled. Old journal 1.2–1.7 evidence
+remains readable. No real reservation, capability, CLI, timer binding, request,
+`/data` write, publication, deployment, or Production invocation occurred. All
+1,754 backend tests pass with the two existing dependency warnings.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.

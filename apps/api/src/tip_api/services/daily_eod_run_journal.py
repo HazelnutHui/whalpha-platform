@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any, Iterator, Mapping
 
 
-JOURNAL_CONTRACT = "daily-eod-run-journal/1.7"
+JOURNAL_CONTRACT = "daily-eod-run-journal/1.8"
 READABLE_JOURNAL_CONTRACTS = frozenset(
     {
         "daily-eod-run-journal/1.2",
@@ -23,6 +23,7 @@ READABLE_JOURNAL_CONTRACTS = frozenset(
         "daily-eod-run-journal/1.4",
         "daily-eod-run-journal/1.5",
         "daily-eod-run-journal/1.6",
+        "daily-eod-run-journal/1.7",
         JOURNAL_CONTRACT,
     }
 )
@@ -71,7 +72,13 @@ MARKET_INTELLIGENCE_APPLY_TERMINAL_EVENTS = frozenset(
     }
 )
 MARKET_INTELLIGENCE_APPLY_CONTRACTS = frozenset(
-    {"daily-eod-run-journal/1.4", "daily-eod-run-journal/1.5", JOURNAL_CONTRACT}
+    {
+        "daily-eod-run-journal/1.4",
+        "daily-eod-run-journal/1.5",
+        "daily-eod-run-journal/1.6",
+        "daily-eod-run-journal/1.7",
+        JOURNAL_CONTRACT,
+    }
 )
 DASHBOARD_SNAPSHOT_APPLY_START_EVENT = "dashboard_snapshot_apply_started"
 DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS = frozenset(
@@ -83,7 +90,12 @@ DASHBOARD_SNAPSHOT_APPLY_TERMINAL_EVENTS = frozenset(
     }
 )
 DASHBOARD_SNAPSHOT_APPLY_CONTRACTS = frozenset(
-    {"daily-eod-run-journal/1.5", JOURNAL_CONTRACT}
+    {
+        "daily-eod-run-journal/1.5",
+        "daily-eod-run-journal/1.6",
+        "daily-eod-run-journal/1.7",
+        JOURNAL_CONTRACT,
+    }
 )
 OCI_DEPLOYMENT_START_EVENT = "oci_deployment_started"
 OCI_DEPLOYMENT_TERMINAL_EVENTS = frozenset(
@@ -95,7 +107,7 @@ OCI_DEPLOYMENT_TERMINAL_EVENTS = frozenset(
     }
 )
 OCI_DEPLOYMENT_CONTRACTS = frozenset(
-    {"daily-eod-run-journal/1.6", JOURNAL_CONTRACT}
+    {"daily-eod-run-journal/1.6", "daily-eod-run-journal/1.7", JOURNAL_CONTRACT}
 )
 START_EVENTS = frozenset(
     {
@@ -109,11 +121,17 @@ START_EVENTS = frozenset(
 )
 ACQUISITION_REVIEW_EVENT = "acquisition_operator_reviewed"
 CADENCE_WAKE_RECORDED_EVENT = "cadence_wake_recorded"
+CADENCE_WAKE_RESERVED_EVENT = "cadence_wake_reserved"
+CADENCE_WAKE_RECORDED_CONTRACTS = frozenset(
+    {"daily-eod-run-journal/1.7", JOURNAL_CONTRACT}
+)
 ACQUISITION_REVIEW_CONTRACTS = frozenset(
     {
         "daily-eod-run-journal/1.3",
         "daily-eod-run-journal/1.4",
         "daily-eod-run-journal/1.5",
+        "daily-eod-run-journal/1.6",
+        "daily-eod-run-journal/1.7",
         JOURNAL_CONTRACT,
     }
 )
@@ -126,7 +144,11 @@ TERMINAL_EVENTS = (
     | OCI_DEPLOYMENT_TERMINAL_EVENTS
 )
 STANDALONE_EVENTS = frozenset(
-    {ACQUISITION_REVIEW_EVENT, CADENCE_WAKE_RECORDED_EVENT}
+    {
+        ACQUISITION_REVIEW_EVENT,
+        CADENCE_WAKE_RESERVED_EVENT,
+        CADENCE_WAKE_RECORDED_EVENT,
+    }
 )
 EVENT_TYPES = START_EVENTS | TERMINAL_EVENTS | STANDALONE_EVENTS
 
@@ -268,6 +290,19 @@ def unresolved_started_event(
     return None
 
 
+def unresolved_cadence_reservation(
+    events: tuple[DailyEodRunEvent, ...],
+) -> DailyEodRunEvent | None:
+    pending: DailyEodRunEvent | None = None
+    for event in events:
+        if event.event_type == CADENCE_WAKE_RESERVED_EVENT:
+            pending = event
+        elif event.event_type == CADENCE_WAKE_RECORDED_EVENT and pending is not None:
+            if event.attempt_id == pending.attempt_id:
+                pending = None
+    return pending
+
+
 def verify_daily_eod_run_event(event: DailyEodRunEvent) -> None:
     """Recompute one event's standalone schema and content identity."""
 
@@ -277,12 +312,22 @@ def verify_daily_eod_run_event(event: DailyEodRunEvent) -> None:
         raise DailyEodRunJournalError("daily run event content differs")
 
 
-def new_attempt_id(*, target_session: date, plan_fingerprint: str, sequence: int) -> str:
-    if not _is_fingerprint(plan_fingerprint) or sequence < 1:
+def new_attempt_id(
+    *,
+    target_session: date,
+    plan_fingerprint: str,
+    sequence: int,
+    contract_version: str = JOURNAL_CONTRACT,
+) -> str:
+    if (
+        not _is_fingerprint(plan_fingerprint)
+        or sequence < 1
+        or contract_version not in READABLE_JOURNAL_CONTRACTS
+    ):
         raise DailyEodRunJournalError("daily attempt identity input is invalid")
     return _fingerprint(
         {
-            "contract_version": JOURNAL_CONTRACT,
+            "contract_version": contract_version,
             "target_session": target_session.isoformat(),
             "plan_fingerprint": plan_fingerprint,
             "start_event_sequence": sequence,
@@ -397,9 +442,11 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
         and contract_version not in OCI_DEPLOYMENT_CONTRACTS
     ):
         raise DailyEodRunJournalError("OCI deployment event predates its journal contract")
+    if event_type == CADENCE_WAKE_RESERVED_EVENT and contract_version != JOURNAL_CONTRACT:
+        raise DailyEodRunJournalError("cadence reservation predates its journal contract")
     if (
         event_type == CADENCE_WAKE_RECORDED_EVENT
-        and contract_version != JOURNAL_CONTRACT
+        and contract_version not in CADENCE_WAKE_RECORDED_CONTRACTS
     ):
         raise DailyEodRunJournalError("cadence evidence predates its journal contract")
     return DailyEodRunEvent(
@@ -417,7 +464,23 @@ def _event_from_payload(payload: Mapping[str, Any]) -> DailyEodRunEvent:
 
 def _validate_event_state_machine(events: tuple[DailyEodRunEvent, ...]) -> None:
     pending: DailyEodRunEvent | None = None
+    pending_cadence: DailyEodRunEvent | None = None
     for event in events:
+        if event.event_type == CADENCE_WAKE_RESERVED_EVENT:
+            if pending_cadence is not None:
+                raise DailyEodRunJournalError(
+                    "daily run journal has overlapping cadence reservations"
+                )
+            pending_cadence = event
+        elif (
+            event.event_type == CADENCE_WAKE_RECORDED_EVENT
+            and pending_cadence is not None
+        ):
+            if event.attempt_id != pending_cadence.attempt_id:
+                raise DailyEodRunJournalError(
+                    "daily run cadence result does not match its reservation"
+                )
+            pending_cadence = None
         if event.event_type in START_EVENTS:
             if pending is not None:
                 raise DailyEodRunJournalError("daily run journal has overlapping attempts")
@@ -449,10 +512,26 @@ def _validate_next_event(
     if event_type not in EVENT_TYPES or not _is_fingerprint(attempt_id):
         raise DailyEodRunJournalError("daily run next event is invalid")
     pending = unresolved_started_event(events)
+    pending_cadence = unresolved_cadence_reservation(events)
     if event_type in STANDALONE_EVENTS:
         if pending is not None:
             raise DailyEodRunJournalError(
                 "daily run standalone evidence cannot overlap an attempt"
+            )
+        if (
+            event_type == CADENCE_WAKE_RESERVED_EVENT
+            and pending_cadence is not None
+        ):
+            raise DailyEodRunJournalError(
+                "daily run has an unresolved cadence reservation"
+            )
+        if (
+            event_type == CADENCE_WAKE_RECORDED_EVENT
+            and pending_cadence is not None
+            and attempt_id != pending_cadence.attempt_id
+        ):
+            raise DailyEodRunJournalError(
+                "daily run cadence result does not match its reservation"
             )
         return
     if event_type in START_EVENTS:
@@ -528,8 +607,13 @@ def _validate_run_root_entries(
         )
         if events:
             previous_event_fingerprint = events[-1].event_fingerprint
-        if session != active_session and unresolved_started_event(events) is not None:
-            raise DailyEodRunJournalError("an earlier daily session has an unresolved action")
+        if session != active_session and (
+            unresolved_started_event(events) is not None
+            or unresolved_cadence_reservation(events) is not None
+        ):
+            raise DailyEodRunJournalError(
+                "an earlier daily session has an unresolved action or cadence wake"
+            )
     return (
         active_chain_start
         if any(session == active_session for session, _ in session_paths)

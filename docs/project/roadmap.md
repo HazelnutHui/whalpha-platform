@@ -18,8 +18,10 @@
   persistent per-session workspace contract are complete. ADR 0082's
   non-installed bounded distinct-wake cadence and fail-closed evidence model
   are also complete. ADR 0083 reuses the existing owner-only journal for full
-  plan/result retention and fixes coordinator failure semantics. Next validate
-  one natural timer wake, then design a non-installed runtime bridge.
+  plan/result retention and fixes coordinator failure semantics. ADR 0084's
+  default-off, non-installed one-invocation runtime bridge and durable wake
+  reservation are complete. Next validate one natural timer wake, then review
+  unresolved-reservation diagnosis and any installed runtime binding.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -311,8 +313,10 @@ Natural-trigger evidence and owner-only runtime custody remain prerequisites.
 ADR 0083 completes owner-only cadence evidence custody without creating a
 second store. Journal 1.7 retains full enabled cadence plans and known results;
 coordinator 1.12 no longer labels provider/offline failure as an executed
-transition. The next code boundary is a non-installed, one-invocation runtime
-bridge after natural-trigger review.
+transition. ADR 0084 adds the non-installed, one-invocation runtime bridge with
+a durable pre-invocation reservation and fail-closed interruption semantics.
+The next operational boundary remains natural-trigger review; unresolved-wake
+diagnosis and any installed runtime binding follow as separate decisions.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

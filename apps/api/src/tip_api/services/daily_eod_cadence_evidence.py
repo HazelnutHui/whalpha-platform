@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Mapping
@@ -36,6 +37,7 @@ from tip_api.services.daily_eod_pipeline_scheduler import (
 )
 from tip_api.services.daily_eod_run_journal import (
     CADENCE_WAKE_RECORDED_EVENT,
+    CADENCE_WAKE_RESERVED_EVENT,
     DailyEodRunEvent,
     DailyEodRunJournalError,
     locked_daily_eod_run_journal,
@@ -44,7 +46,10 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-cadence-evidence-custody/1.0"
+CONTRACT_VERSION = "daily-eod-cadence-evidence-custody/1.1"
+READABLE_CONTRACTS = frozenset(
+    {"daily-eod-cadence-evidence-custody/1.0", CONTRACT_VERSION}
+)
 INVOKE_ACTIONS = {
     PipelineWakeAction.INVOKE_ONE_DATA_TRANSITION,
     PipelineWakeAction.INVOKE_ONE_OFFLINE_TRANSITION,
@@ -61,6 +66,14 @@ DATA_TRANSITION_ACTIONS = {
 
 class DailyEodCadenceEvidenceError(RuntimeError):
     """Raised when wake evidence cannot be projected or retained exactly."""
+
+
+@dataclass(frozen=True, slots=True)
+class CadenceWakeJournalState:
+    completed: tuple[CadenceWakeEvidence, ...]
+    pending_plan: DailyEodBoundedCadencePlan | None
+    pending_evidence: CadenceWakeEvidence | None
+    pending_event: DailyEodRunEvent | None
 
 
 def cadence_evidence_from_coordinator_result(
@@ -244,6 +257,160 @@ def unknown_cadence_wake_evidence(
     )
 
 
+def reserve_cadence_wake(
+    *,
+    run_root: Path,
+    target_session: date,
+    cadence_plan: DailyEodBoundedCadencePlan,
+    pipeline_plan: DailyEodPipelineWakePlan,
+    started_at: datetime,
+) -> tuple[DailyEodRunEvent, CadenceWakeEvidence]:
+    """Durably reserve one invocation before its side effects may begin."""
+
+    try:
+        with locked_daily_eod_run_journal(
+            run_root=run_root,
+            target_session=target_session,
+        ) as journal:
+            events = journal.read_events()
+            state = cadence_wake_state_from_events(
+                events,
+                target_session=target_session,
+            )
+            if state.pending_event is not None:
+                raise DailyEodCadenceEvidenceError(
+                    "a cadence wake already has an unknown outcome"
+                )
+            sequence = len(state.completed) + 1
+            evidence = unknown_cadence_wake_evidence(
+                sequence=sequence,
+                started_at=started_at,
+                cadence_plan=cadence_plan,
+                pipeline_plan=pipeline_plan,
+            )
+            _validate_retention_boundary(state.completed, evidence)
+            _validate_retained_cadence_plan(
+                cadence_plan,
+                evidence=evidence,
+                prior_count=len(state.completed),
+            )
+            event_sequence = len(events) + 1
+            event = journal.append(
+                event_type=CADENCE_WAKE_RESERVED_EVENT,
+                attempt_id=new_attempt_id(
+                    target_session=target_session,
+                    plan_fingerprint=evidence.logical_content_fingerprint,
+                    sequence=event_sequence,
+                ),
+                details={
+                    "custody_contract": CONTRACT_VERSION,
+                    "cadence_plan": cadence_plan.as_dict(),
+                    "cadence_evidence": evidence.as_dict(),
+                },
+                observed_at=started_at,
+            )
+            reread = cadence_wake_state_from_events(
+                journal.read_events(),
+                target_session=target_session,
+            )
+            if (
+                reread.completed != state.completed
+                or reread.pending_event != event
+                or reread.pending_evidence != evidence
+            ):
+                raise DailyEodCadenceEvidenceError(
+                    "cadence wake reservation did not formally reread"
+                )
+            return event, evidence
+    except DailyEodRunJournalError as exc:
+        raise DailyEodCadenceEvidenceError(
+            "daily run journal rejected cadence reservation"
+        ) from exc
+
+
+def resolve_cadence_wake(
+    *,
+    run_root: Path,
+    target_session: date,
+    cadence_plan: DailyEodBoundedCadencePlan,
+    evidence: CadenceWakeEvidence,
+    reservation_event_fingerprint: str,
+) -> DailyEodRunEvent:
+    """Close one exact reservation with a formally known result."""
+
+    try:
+        verify_cadence_wake_evidence(evidence)
+    except DailyEodPipelineCadenceError as exc:
+        raise DailyEodCadenceEvidenceError(
+            "cadence evidence content is invalid"
+        ) from exc
+    if (
+        evidence.target_session != target_session.isoformat()
+        or evidence.outcome is CadenceWakeOutcome.UNKNOWN
+        or evidence.completed_at is None
+        or cadence_plan.logical_content_fingerprint
+        != evidence.cadence_plan_fingerprint
+        or not _is_fingerprint(reservation_event_fingerprint)
+    ):
+        raise DailyEodCadenceEvidenceError(
+            "only a known result may resolve an exact cadence reservation"
+        )
+    try:
+        with locked_daily_eod_run_journal(
+            run_root=run_root,
+            target_session=target_session,
+        ) as journal:
+            state = cadence_wake_state_from_events(
+                journal.read_events(),
+                target_session=target_session,
+            )
+            pending = state.pending_event
+            pending_evidence = state.pending_evidence
+            if (
+                pending is None
+                or pending_evidence is None
+                or pending.event_fingerprint != reservation_event_fingerprint
+                or evidence.sequence != pending_evidence.sequence
+                or evidence.started_at != pending_evidence.started_at
+                or evidence.cadence_started_at != pending_evidence.cadence_started_at
+                or evidence.cadence_plan_fingerprint
+                != pending_evidence.cadence_plan_fingerprint
+                or evidence.pipeline_plan_fingerprint
+                != pending_evidence.pipeline_plan_fingerprint
+                or evidence.pipeline_action != pending_evidence.pipeline_action
+            ):
+                raise DailyEodCadenceEvidenceError(
+                    "cadence result differs from its unresolved reservation"
+                )
+            event = journal.append(
+                event_type=CADENCE_WAKE_RECORDED_EVENT,
+                attempt_id=pending.attempt_id,
+                details={
+                    "custody_contract": CONTRACT_VERSION,
+                    "cadence_plan": cadence_plan.as_dict(),
+                    "cadence_evidence": evidence.as_dict(),
+                },
+                observed_at=datetime.fromisoformat(evidence.completed_at),
+            )
+            reread = cadence_wake_state_from_events(
+                journal.read_events(),
+                target_session=target_session,
+            )
+            if (
+                reread.pending_event is not None
+                or len(reread.completed) != evidence.sequence
+                or reread.completed[-1] != evidence
+            ):
+                raise DailyEodCadenceEvidenceError(
+                    "resolved cadence evidence did not formally reread"
+                )
+            return event
+    except DailyEodRunJournalError as exc:
+        raise DailyEodCadenceEvidenceError(
+            "daily run journal rejected cadence resolution"
+        ) from exc
+
+
 def append_cadence_wake_evidence(
     *,
     run_root: Path,
@@ -275,10 +442,15 @@ def append_cadence_wake_evidence(
             target_session=target_session,
         ) as journal:
             events = journal.read_events()
-            retained = cadence_evidence_from_events(
+            state = cadence_wake_state_from_events(
                 events,
                 target_session=target_session,
             )
+            if state.pending_event is not None:
+                raise DailyEodCadenceEvidenceError(
+                    "cadence evidence cannot bypass an unresolved reservation"
+                )
+            retained = state.completed
             if evidence.sequence != len(retained) + 1 or any(
                 item.result_fingerprint == evidence.result_fingerprint
                 for item in retained
@@ -329,9 +501,28 @@ def cadence_evidence_from_events(
 ) -> tuple[CadenceWakeEvidence, ...]:
     """Project only formally retained cadence records from one session journal."""
 
+    return cadence_wake_state_from_events(
+        events,
+        target_session=target_session,
+    ).completed
+
+
+def cadence_wake_state_from_events(
+    events: tuple[DailyEodRunEvent, ...],
+    *,
+    target_session: date,
+) -> CadenceWakeJournalState:
+    """Project completed wakes plus at most one unresolved reservation."""
+
     projected: list[CadenceWakeEvidence] = []
+    pending_plan: DailyEodBoundedCadencePlan | None = None
+    pending_evidence: CadenceWakeEvidence | None = None
+    pending_event: DailyEodRunEvent | None = None
     for event in events:
-        if event.event_type != CADENCE_WAKE_RECORDED_EVENT:
+        if event.event_type not in {
+            CADENCE_WAKE_RESERVED_EVENT,
+            CADENCE_WAKE_RECORDED_EVENT,
+        }:
             continue
         try:
             verify_daily_eod_run_event(event)
@@ -340,16 +531,31 @@ def cadence_evidence_from_events(
             raise DailyEodCadenceEvidenceError(
                 "retained cadence evidence is invalid"
             ) from exc
-        expected_attempt = new_attempt_id(
-            target_session=target_session,
-            plan_fingerprint=evidence.logical_content_fingerprint,
-            sequence=event.sequence,
+        is_reservation = event.event_type == CADENCE_WAKE_RESERVED_EVENT
+        expected_attempt = (
+            new_attempt_id(
+                target_session=target_session,
+                plan_fingerprint=evidence.logical_content_fingerprint,
+                sequence=event.sequence,
+                contract_version=event.contract_version,
+            )
+            if is_reservation or pending_event is None
+            else pending_event.attempt_id
+        )
+        expected_observed_at = (
+            evidence.started_at if is_reservation else evidence.completed_at
         )
         if (
             evidence.sequence != len(projected) + 1
             or evidence.target_session != target_session.isoformat()
-            or evidence.completed_at != event.observed_at
-            or evidence.outcome is CadenceWakeOutcome.UNKNOWN
+            or expected_observed_at != event.observed_at
+        ):
+            raise DailyEodCadenceEvidenceError(
+                "retained cadence evidence timing conflicts"
+            )
+        if (
+            (is_reservation and evidence.outcome is not CadenceWakeOutcome.UNKNOWN)
+            or (not is_reservation and evidence.outcome is CadenceWakeOutcome.UNKNOWN)
             or event.attempt_id != expected_attempt
             or cadence_plan.logical_content_fingerprint
             != evidence.cadence_plan_fingerprint
@@ -368,8 +574,40 @@ def cadence_evidence_from_events(
             evidence=evidence,
             prior_count=len(projected),
         )
+        if is_reservation:
+            if pending_event is not None:
+                raise DailyEodCadenceEvidenceError(
+                    "cadence wake reservations overlap"
+                )
+            pending_plan = cadence_plan
+            pending_evidence = evidence
+            pending_event = event
+            continue
+        if pending_event is not None:
+            if (
+                pending_plan != cadence_plan
+                or pending_evidence is None
+                or evidence.started_at != pending_evidence.started_at
+                or evidence.cadence_started_at != pending_evidence.cadence_started_at
+                or evidence.cadence_plan_fingerprint
+                != pending_evidence.cadence_plan_fingerprint
+                or evidence.pipeline_plan_fingerprint
+                != pending_evidence.pipeline_plan_fingerprint
+                or evidence.pipeline_action != pending_evidence.pipeline_action
+            ):
+                raise DailyEodCadenceEvidenceError(
+                    "cadence result does not close its reservation"
+                )
+            pending_plan = None
+            pending_evidence = None
+            pending_event = None
         projected.append(evidence)
-    return tuple(projected)
+    return CadenceWakeJournalState(
+        completed=tuple(projected),
+        pending_plan=pending_plan,
+        pending_evidence=pending_evidence,
+        pending_event=pending_event,
+    )
 
 
 def _evidence_from_details(
@@ -379,9 +617,7 @@ def _evidence_from_details(
         "custody_contract",
         "cadence_plan",
         "cadence_evidence",
-    } or (
-        details.get("custody_contract") != CONTRACT_VERSION
-    ):
+    } or details.get("custody_contract") not in READABLE_CONTRACTS:
         raise DailyEodCadenceEvidenceError(
             "cadence custody details are malformed"
         )

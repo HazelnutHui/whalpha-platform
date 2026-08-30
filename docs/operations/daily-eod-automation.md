@@ -675,17 +675,29 @@ timer, capability, credential access, request, or Production write. Do not
 bind it to the installed read-only timer.
 
 ADR 0083 subsequently reuses the existing owner-only run journal rather than
-creating a second cadence store. Journal 1.7 adds a standalone
-`cadence_wake_recorded` event only after all action attempts are terminal. It
-retains the full enabled cadence plan and Evidence 1.2, including the immutable
-cadence start, formal next-eligible time, both plan fingerprints, result identity, timing, and budget
-sequence. Old 1.2–1.6 journal events remain readable.
+creating a second cadence store. Journal 1.7 added standalone known-result
+evidence. ADR 0084 advances the journal to 1.8 and cadence custody to 1.1: one
+`cadence_wake_reserved` event is durably written before invocation, and the
+matching `cadence_wake_recorded` event closes it only after a known result. The
+pair retains the full enabled cadence plan and Evidence 1.2, including the
+immutable cadence start, formal next-eligible time, both plan fingerprints,
+result identity, timing, and budget sequence. Old 1.2–1.7 journal events and
+direct 1.7 cadence evidence remain readable.
 
 Coordinator 1.12 now preserves result meaning: provider `waiting` is waiting,
 provider/ offline failure is blocked, and only formally evidenced success is
 `transition_executed`. The cadence adapters project those results without
-executing them. No real cadence event, persistent root, runtime bridge, or unit
-was created by this repository implementation.
+inferring hidden success.
+
+The repository-only Pipeline Runtime 1.0 now composes one exact enabled
+Pipeline plan, one exact enabled cadence plan, one reservation, one matching
+data or offline capability call, and one known-result record. The default path
+invokes nothing. Exceptions, invalid results, interruptions, or result-custody
+failure leave the reservation unresolved; a second reservation and a later
+session both fail closed. It never loops, retries, recovers, publishes, or
+deploys. No CLI, real cadence event/root, capability, service, timer binding,
+credential access, request, `/data` write, publication, deployment, or
+Production invocation was added or performed.
 
 ## Default-off one-transition wake bridge
 
@@ -967,10 +979,10 @@ the already completed and deployed 2026-08-26 publication chain.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
-3. The read-only timer installation and synthetic distinct-wake rehearsal are
-   complete. Next observe a natural calendar trigger, then separately review
-   owner-only cadence-evidence custody, result adapters, and a non-installed
-   runtime candidate.
+3. The read-only timer installation, synthetic distinct-wake rehearsal,
+   owner-only cadence custody, and non-installed one-invocation runtime bridge
+   are complete. Next observe a natural calendar trigger, then separately
+   review unresolved-reservation diagnosis and any runtime installation.
 4. Keep separate authorization decisions for acquisition/canonical Apply, MI
    publication, Snapshot, bundle, OCI deployment, and finally scheduler
    activation.

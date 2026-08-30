@@ -106,3 +106,4 @@ Each ADR should include:
 - [0081: Make Scheduler Wakes Pipeline-Aware](0081-make-scheduler-wakes-pipeline-aware.md)
 - [0082: Bound Distinct Pipeline Wake Cadence](0082-bound-distinct-pipeline-wake-cadence.md)
 - [0083: Reuse the Run Journal for Cadence Evidence](0083-reuse-run-journal-for-cadence-evidence.md)
+- [0084: Reserve One Pipeline Wake Before Invocation](0084-reserve-one-pipeline-wake-before-invocation.md)

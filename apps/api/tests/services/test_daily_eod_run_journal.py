@@ -280,7 +280,7 @@ def test_tampered_event_fails_closed(tmp_path) -> None:
             pass
 
 
-def test_legacy_1_2_event_remains_readable_and_new_events_use_1_7(tmp_path) -> None:
+def test_legacy_1_2_event_remains_readable_and_new_events_use_1_8(tmp_path) -> None:
     root = _root(tmp_path)
     with journal.locked_daily_eod_run_journal(
         run_root=root,
@@ -319,7 +319,7 @@ def test_legacy_1_2_event_remains_readable_and_new_events_use_1_7(tmp_path) -> N
             observed_at=datetime(2026, 8, 27, 2, tzinfo=UTC),
         )
 
-    assert terminal.contract_version == "daily-eod-run-journal/1.7"
+    assert terminal.contract_version == "daily-eod-run-journal/1.8"
     assert terminal.previous_event_fingerprint == legacy.event_fingerprint
 
 

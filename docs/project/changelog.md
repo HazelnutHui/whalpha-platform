@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-30 — Reserve and compose one pipeline wake
+
+- Accepted ADR 0084; advanced the owner-only run journal to 1.8 and cadence
+  custody to 1.1 with a durable pre-invocation reservation and matching known
+  terminal record.
+- Added default-off Pipeline Runtime 1.0. Exact enabled Pipeline/cadence plans
+  may invoke exactly one scope-matched supplied capability; there is no loop,
+  retry, recovery, publication, deployment, or inferred success.
+- Exceptions, invalid results, interruptions, and retention ambiguity leave an
+  unresolved reservation that blocks replay and later sessions. Existing
+  action custody runs between reservation and resolution without nested locks.
+- Preserved readable journal 1.2–1.7 and direct 1.7 cadence evidence, including
+  intermediate-version MI, Snapshot, OCI, and operator-review events.
+- No CLI, real cadence event/root, capability, timer change, credential,
+  request, `/data` write, publication, deployment, or Production invocation was
+  added or performed. All 1,754 backend tests pass with the two existing
+  dependency warnings.
+
 ## 2026-08-30 — Reuse run journal for cadence evidence
 
 - Accepted ADR 0083; extended the existing owner-only run journal to 1.7 with

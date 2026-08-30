@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, replace
 from datetime import UTC, date, datetime, timedelta
 
@@ -357,6 +358,47 @@ def test_known_evidence_appends_to_existing_owner_only_journal(tmp_path) -> None
     ) == (evidence,)
     assert retained_event.event_type == journal.CADENCE_WAKE_RECORDED_EVENT
     assert (root / "session=2026-08-28" / "event-000001.json").stat().st_mode & 0o777 == 0o400
+
+
+def test_legacy_1_7_cadence_evidence_remains_projectable(tmp_path) -> None:
+    root = _root(tmp_path)
+    evidence, cadence_plan = _known_evidence()
+    custody.append_cadence_wake_evidence(
+        run_root=root,
+        target_session=TARGET,
+        cadence_plan=cadence_plan,
+        evidence=evidence,
+    )
+    path = root / "session=2026-08-28" / "event-000001.json"
+    path.chmod(0o600)
+    payload = json.loads(path.read_bytes())
+    payload["contract_version"] = "daily-eod-run-journal/1.7"
+    payload["attempt_id"] = journal.new_attempt_id(
+        target_session=TARGET,
+        plan_fingerprint=evidence.logical_content_fingerprint,
+        sequence=1,
+        contract_version="daily-eod-run-journal/1.7",
+    )
+    payload["details"]["custody_contract"] = (
+        "daily-eod-cadence-evidence-custody/1.0"
+    )
+    logical = {
+        key: value for key, value in payload.items() if key != "event_fingerprint"
+    }
+    payload["event_fingerprint"] = journal._fingerprint(logical)
+    path.write_bytes(journal._canonical_bytes(payload))
+    path.chmod(0o400)
+
+    with journal.locked_daily_eod_run_journal(
+        run_root=root,
+        target_session=TARGET,
+    ) as locked:
+        retained = custody.cadence_evidence_from_events(
+            locked.read_events(),
+            target_session=TARGET,
+        )
+
+    assert retained == (evidence,)
 
 
 def test_two_advanced_wakes_retain_one_cadence_start_and_exact_budget(tmp_path) -> None:
