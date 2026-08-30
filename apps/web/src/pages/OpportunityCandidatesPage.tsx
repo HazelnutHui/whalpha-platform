@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   getOpportunityCandidates,
   getOpportunityCandidateDetail,
+  type CandidateEntryGeometry,
   type CandidateEntryLane,
   type CandidateEntryPosture,
   type CandidateExtensionRisk,
@@ -90,6 +91,55 @@ function money(value: string | null): string {
   if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(1)}M`; return `$${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
 }
 
+type PositionLevel = { id: string; label: string; value: number; tone: 'current' | 'resistance' | 'support' | 'context' };
+
+function candidatePositionLevels(t: Translate, entry: CandidateEntryGeometry): PositionLevel[] {
+  const metrics = entry.metrics;
+  const candidates: Array<[string, string, string | null, PositionLevel['tone']]> = [
+    ['current', t('candidate.visual.currentClose'), metrics.close, 'current'],
+    ['prior-high', t('candidate.visual.priorHigh'), metrics.prior_five_session_close_high, 'resistance'],
+    ['sma10', t('candidate.visual.sma10'), metrics.sma_10, 'context'],
+    ['sma20', t('candidate.visual.sma20'), metrics.sma_20, 'context'],
+    ['prior-low', t('candidate.visual.priorLow'), metrics.prior_five_session_close_low, 'support'],
+    ['support', t('candidate.visual.referenceSupport'), metrics.reference_support_value, 'support'],
+  ];
+  return candidates.flatMap(([id, label, raw, tone]) => {
+    if (raw === null) return [];
+    const value = Number(raw);
+    return Number.isFinite(value) && value > 0 ? [{ id, label, value, tone }] : [];
+  });
+}
+
+export function CandidatePositionMap({ entry, state }: {
+  entry: CandidateEntryGeometry;
+  state: CandidateItem['state'];
+}): JSX.Element {
+  const { t } = useI18n();
+  const levels = candidatePositionLevels(t, entry);
+  if (entry.metrics.availability !== 'available' || levels.length < 2) {
+    return <section className="candidate-position-map candidate-position-unavailable" aria-label={t('candidate.visual.title')}>
+      <h3>{t('candidate.visual.title')}</h3><p>{t('candidate.visual.unavailable')}</p>
+    </section>;
+  }
+  const values = levels.map((level) => level.value); const observedMin = Math.min(...values); const observedMax = Math.max(...values);
+  const span = Math.max(observedMax - observedMin, observedMax * 0.01); const min = Math.max(0, observedMin - span * 0.12); const max = observedMax + span * 0.12;
+  const position = (value: number): number => ((value - min) / (max - min)) * 100;
+  return <section className="candidate-position-map" aria-labelledby="candidate-position-title">
+    <div className="candidate-position-heading"><div><p className="eyebrow">{t('candidate.visual.eyebrow')}</p><h3 id="candidate-position-title">{t('candidate.visual.title')}</h3></div><small>{t('candidate.visual.summaryBoundary')}</small></div>
+    <div className="candidate-position-axis" aria-hidden="true"><span>${number(String(min), 2)}</span><i /><span>${number(String(max), 2)}</span></div>
+    <div className="candidate-position-levels">{levels.map((level) => <div className={`candidate-position-level candidate-position-${level.tone}`} key={level.id}>
+      <span>{level.label}</span><div aria-hidden="true"><i style={{ left: `${position(level.value)}%` }} /></div><strong>${number(String(level.value), 2)}</strong>
+    </div>)}</div>
+    <div className="candidate-threshold-grid">
+      <div><span>{t('candidate.visual.breakoutDistance')}</span><strong>{number(entry.metrics.breakout_distance_atr, 2)} ATR</strong><small>{t('candidate.visual.breakoutDistanceNote')}</small></div>
+      <div><span>{t('candidate.visual.supportDistance')}</span><strong>{percent(entry.metrics.reference_support_distance_pct)}</strong><small>{t('candidate.visual.supportDistanceNote')}</small></div>
+      <div><span>{t('candidate.visual.sma20Distance')}</span><strong>{number(entry.metrics.close_to_sma_20_atr, 2)} ATR</strong><small>{t('candidate.visual.sma20DistanceNote')}</small></div>
+      <div><span>{t('candidate.visual.confirmation')}</span><strong>{state.stage_confirmation_count} / {state.required_confirmation_sessions}</strong><small>{t('candidate.visual.confirmationNote')}</small></div>
+    </div>
+    <p className="candidate-position-boundary">{t('candidate.visual.boundary')}</p>
+  </section>;
+}
+
 function CandidateDetail({ item, mode, onClose }: { item: CandidateItem; mode: CandidateRiskMode; onClose: () => void }): JSX.Element {
   const { t } = useI18n(); const disposition = item.risk_dispositions.find((row) => row.risk_mode === mode); const entry = item.entry_geometry;
   const supports = item.evidence.filter((row) => row.evidence_kind === 'supporting'); const counters = item.evidence.filter((row) => row.evidence_kind === 'counterevidence');
@@ -98,6 +148,7 @@ function CandidateDetail({ item, mode, onClose }: { item: CandidateItem; mode: C
     <header><div><p className="eyebrow">{t('candidate.detailEyebrow')}</p><h2 id="candidate-detail-title">{item.ticker} · {entry ? postureName(t, entry.review_posture) : stageName(t, item.state.final_stage)}</h2><p>{item.instrument_id} · {item.security_type}</p></div><button type="button" onClick={onClose} aria-label={t('common.close')}>×</button></header>
     <div className="candidate-detail-summary"><div><span>{t('candidate.baseScore')}</span><strong>{number(item.base_score)}</strong></div><div><span>{t('candidate.dataSupport')}</span><strong>{percent(item.confidence.confidence)}</strong></div><div><span>{t('candidate.formalRank')}</span><strong>{disposition?.risk_adjusted_rank ?? t('candidate.entry.fullPool')}</strong></div><div><span>{t('candidate.latestPrice')}</span><strong>${number(item.latest_price, 2)}</strong></div></div>
     <p className="candidate-boundary">{t('candidate.researchBoundary')}</p>
+    {entry ? <CandidatePositionMap entry={entry} state={item.state} /> : null}
     {entry ? <section className="candidate-entry-detail"><div className="candidate-entry-verdict"><span className={`candidate-entry-posture candidate-entry-posture-${entry.review_posture}`}>{postureName(t, entry.review_posture)}</span><strong>{setupName(t, entry.technical_setup)}</strong><small>{t('candidate.entry.extensionLabel')} · {extensionName(t, entry.extension_risk)}</small></div>
       <h3>{t('candidate.entry.locationTitle')}</h3><div className="candidate-facts"><span>{t('candidate.entry.sma20Distance')} <strong>{number(entry.metrics.close_to_sma_20_atr, 2)} ATR</strong></span><span>{t('candidate.entry.move5')} <strong>{number(entry.metrics.move_5_volatility_units, 2)}×</strong></span><span>{t('candidate.entry.gap')} <strong>{number(entry.metrics.current_gap_atr, 2)} ATR</strong></span><span>{t('candidate.entry.upSessions')} <strong>{entry.metrics.consecutive_up_sessions ?? '—'}</strong></span><span>{t('candidate.volumeRatio')} <strong>{number(entry.metrics.current_volume_ratio, 2)}×</strong></span><span>{t('candidate.entry.supportDistance')} <strong>{percent(entry.metrics.reference_support_distance_pct)}</strong></span></div>
       <div className="candidate-entry-reason-grid"><div><h4>{t('candidate.entry.whyNow')}</h4>{entry.why_now_codes.map((code) => <p key={code}>+ {entryCode(t, code)}</p>)}</div><div><h4>{t('candidate.entry.counter')}</h4>{entry.counterevidence_codes.map((code) => <p key={code}>− {entryCode(t, code)}</p>)}</div><div><h4>{t('candidate.entry.reviewable')}</h4>{entry.what_would_make_reviewable_codes.map((code) => <p key={code}>→ {entryCode(t, code)}</p>)}</div></div>

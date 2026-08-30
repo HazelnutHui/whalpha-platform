@@ -670,7 +670,13 @@ recorded in the active-state table and
   strategy channel in the URL, removes the unrelated risk-mode control from
   strategy mode, and makes evidence-incomplete channels explicit; 94 frontend
   tests and the Snapshot-mode build pass. Human visual acceptance remains
-  pending. The parameter-bound explanation and URL continuity changes are now
+  pending. Repository source now also adds ADR 0087's bilingual Candidate
+  decision-position map. It visualizes only the published close, SMA10/SMA20,
+  prior-five-session high/low, reference support, threshold distances, and
+  state-confirmation progress. It changes no model or payload and is not
+  deployed. A true daily price path and state age still require a separate
+  source-bound Dell visual-context contract. The parameter-bound explanation
+  and URL continuity changes are now
   deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`. ADR 0059 now records
   the user's exact 2026-08-26 stale-review
   acknowledgement and adds a separate versioned authorization without

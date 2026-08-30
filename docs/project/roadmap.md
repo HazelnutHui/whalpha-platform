@@ -248,6 +248,9 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Context report separates latest Identity from EOD-bound Identity
 - [x] Plan-aware Basic EOD readiness and immutable single-use operator review
 - [x] Lossless Candidate summary/on-demand-detail Snapshot projection
+- [x] Truthful Candidate reference-level position map from existing published
+  Entry Geometry facts, without fabricating price history or signal age
+- [ ] Source-bound 20-session Candidate visual context and lazy price path
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Fixed explainable three-channel offline preview and bounded consumer
 - [x] Independent strategy-channel Oracle and immutable temporary-root audit

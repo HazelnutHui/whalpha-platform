@@ -86,6 +86,28 @@
 .candidate-detail-summary span { display: block; color: var(--muted); font-size: .72rem; }
 .candidate-detail-summary strong { display: block; margin-top: 5px; font-size: 1.15rem; }
 .candidate-boundary { padding: 12px 14px; border-left: 3px solid var(--warning); background: var(--surface-2); }
+.candidate-position-map { padding: 18px; border: 1px solid var(--border); border-radius: 11px; background: linear-gradient(145deg, color-mix(in srgb, var(--surface-2) 88%, var(--accent)), var(--surface-2)); }
+.candidate-position-heading { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; }
+.candidate-position-heading h3 { margin: 3px 0 0; }
+.candidate-position-heading > small { max-width: 235px; color: var(--muted); text-align: right; }
+.candidate-position-axis { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; margin: 18px 0 10px; color: var(--muted); font-size: .7rem; font-variant-numeric: tabular-nums; }
+.candidate-position-axis i { height: 1px; background: var(--border); }
+.candidate-position-levels { display: grid; gap: 7px; }
+.candidate-position-level { display: grid; grid-template-columns: 185px 1fr 74px; align-items: center; gap: 10px; font-size: .76rem; }
+.candidate-position-level > span { color: var(--muted); }
+.candidate-position-level > strong { text-align: right; font-variant-numeric: tabular-nums; }
+.candidate-position-level > div { position: relative; height: 7px; border-radius: 5px; background: color-mix(in srgb, var(--border) 65%, transparent); }
+.candidate-position-level > div i { position: absolute; top: 50%; width: 11px; height: 11px; border: 2px solid var(--surface); border-radius: 50%; background: var(--muted); transform: translate(-50%, -50%); }
+.candidate-position-current > div i { width: 15px; height: 15px; background: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
+.candidate-position-resistance > div i { background: var(--warning); }
+.candidate-position-support > div i { background: var(--positive); }
+.candidate-threshold-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 18px; }
+.candidate-threshold-grid > div { padding: 11px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.candidate-threshold-grid span, .candidate-threshold-grid small { display: block; color: var(--muted); }
+.candidate-threshold-grid strong { display: block; margin: 5px 0; font-variant-numeric: tabular-nums; }
+.candidate-threshold-grid small { line-height: 1.35; }
+.candidate-position-boundary { margin: 13px 0 0; color: var(--muted); font-size: .72rem; line-height: 1.45; }
+.candidate-position-unavailable p { color: var(--muted); }
 .candidate-entry-detail { padding: 18px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-2); }
 .candidate-entry-verdict { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px 14px; }
 .candidate-entry-verdict > strong { font-size: 1.12rem; }
@@ -167,6 +189,10 @@
   .candidate-axis-explainer b { display: none; }
   .candidate-lanes { grid-template-columns: 1fr 1fr; margin-inline: 12px; }
   .candidate-entry-reason-grid { grid-template-columns: 1fr; }
+  .candidate-position-heading { display: block; }
+  .candidate-position-heading > small { display: block; margin-top: 6px; text-align: left; }
+  .candidate-position-level { grid-template-columns: 125px 1fr 65px; font-size: .7rem; }
+  .candidate-threshold-grid { grid-template-columns: 1fr; }
   .candidate-evidence-grid { grid-template-columns: 1fr; }
   .candidate-contributions > div { grid-template-columns: 130px 1fr 55px; }
   .candidate-drawer { width: 100vw; padding: 20px; }

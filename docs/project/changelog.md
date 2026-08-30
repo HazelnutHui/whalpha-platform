@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-30 — Add a truthful Candidate decision-position map
+
+- Accepted ADR 0087 and added a bilingual position map to the lazy Candidate
+  detail drawer using only already-published Entry Geometry facts.
+- The map compares current close, SMA10/SMA20, prior five-session close
+  high/low, and selected reference support on one price scale, followed by
+  explicit breakout/support/SMA20 distances and state-confirmation progress.
+- It explicitly distinguishes a reference-level map from price history,
+  Candidate confirmation from signal age, reference support from a stop price,
+  and underlying-stock position from return or option-performance prediction.
+- Missing geometry fails closed. No score, rank, state, strategy, API contract,
+  data, publication, deployment, or Production state changed. All 98 frontend
+  tests and the Production-mode frontend build pass.
+
 ## 2026-08-30 — Prove one point-in-time Daily Universe Membership partition
 
 - Accepted ADR 0086 and advanced the membership-only physical manifest to

@@ -600,6 +600,15 @@ deployed. Real chronological validation remains blocked
 on adequate point-in-time history; every future publication/deployment remains
 a separate authorization.
 
+ADR 0087 adds the first repository-only P4 decision-visualization slice to the
+Candidate lazy detail drawer. It displays the published current close, SMA10,
+SMA20, prior five-session close high/low, and selected reference support on one
+shared scale, plus explicit threshold distances and Candidate-state
+confirmation progress. It changes no model or payload. The view deliberately
+does not fabricate a historical price path, call confirmation count signal age,
+or call reference support a stop. All 98 frontend tests and the Production build
+pass; this source change is not deployed.
+
 ## Next candidate work
 
 Keep the currently deployed strategy formulas frozen. The first governed
@@ -610,6 +619,13 @@ continuation hypotheses only after the point-in-time historical foundation can
 support chronological evaluation. Do not reduce the observed overlap or
 select contraction/path thresholds against the single 2026-08-26 cross-
 section.
+
+For P4, the next honest increment is a separate source-bound visual-context
+contract containing exact daily sessions and closes from the formal Dell panel,
+plus consecutive Candidate-state history. Only after formal lineage, missing-
+history behavior, and bounded lazy delivery are verified may the UI add a real
+20-session price path and state age. The current reference-level map must not be
+silently relabelled as either.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is
