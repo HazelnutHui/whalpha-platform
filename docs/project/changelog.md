@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-30 — Bound distinct pipeline wake cadence
+
+- Accepted ADR 0082 and added a pure, non-installed bounded-cadence contract
+  above Pipeline Scheduler V2.
+- The widest candidate permits 16 distinct transition wakes over four hours
+  with a five-minute completion-to-next-start floor; callers may only narrow
+  those limits.
+- Added immutable prior-wake evidence, exact budget reporting, two-layer
+  candidate enablement, and terminal handling for known failure, unknown
+  outcome, manual review, blocked state, and exhausted budgets.
+- Strengthened Pipeline Scheduler V2 verification to reject re-fingerprinted
+  semantic and authority conflicts.
+- No evidence store, runtime bridge, scheduler installation/change,
+  coordinator/offline invocation, credential, request, `/data` write,
+  publication, deployment, or Production change was made. All 1,731 backend
+  tests pass with the two existing dependency warnings.
+
 ## 2026-08-30 — Add pipeline-aware wake and persistent workspace contracts
 
 - Accepted ADR 0081 and added a repository-only Pipeline Scheduler V2 plan

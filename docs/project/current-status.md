@@ -160,6 +160,18 @@ no creation, migration, invocation, installation, activation, publication, or
 deployment; the installed timer remains on the read-only 1.1 planner. All
 1,718 backend tests pass with the two existing dependency warnings.
 
+ADR 0082 now adds a repository-only bounded distinct-wake cadence above V2.
+The widest candidate permits at most 16 transition wakes in four hours and
+requires five minutes from one completion to the next start. It consumes a
+fingerprinted evidence chain, requires both candidate layers before proposing
+one invocation, and stops at known failure, unknown outcome, manual review,
+blocked state, or either budget. V2 verification now also rejects
+re-fingerprinted semantic or authority conflicts. No evidence store, runtime
+bridge, unit, timer change, invocation, credential, request, `/data` write,
+publication, or deployment is part of this repository boundary. The installed
+timer remains the unchanged read-only planner. All 1,731 backend tests pass
+with the two existing dependency warnings.
+
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
 plan SHA, Production-state fingerprint, and any plan-bound review

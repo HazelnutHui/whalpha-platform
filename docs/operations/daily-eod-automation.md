@@ -658,6 +658,22 @@ Existing direct `/tmp` children remain accepted only for historical and
 controlled one-shot compatibility. No persistent root, repeated cadence,
 coordinator capability, or new systemd unit is installed by ADR 0081.
 
+### Repository-only bounded cadence candidate
+
+ADR 0082 adds `daily-eod-bounded-cadence-plan/1.0`. It consumes one freshly
+verified Pipeline Wake Plan 2.0 and a contiguous chain of prior distinct-wake
+evidence. The default and widest candidate allows at most 16 transition wakes
+over four hours, with five minutes from one completion to the next start. Each
+planner process still invokes nothing. Both the cadence and pipeline candidate
+must be enabled before the result can propose one invocation.
+
+The cadence stops at manual review, blocked state, known failure, unknown
+outcome, or either budget. A formally returned `no_change` may only lead to a
+later fresh observation after the interval; it does not authorize replay. The
+candidate creates no evidence store, runtime bridge, persistent root, service,
+timer, capability, credential access, request, or Production write. Do not
+bind it to the installed read-only timer.
+
 ## Default-off one-transition wake bridge
 
 ADR 0077 composes one exact unchanged enabled-candidate wake plan with one
@@ -938,9 +954,10 @@ the already completed and deployed 2026-08-26 publication chain.
 2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
    EOD review time from non-sensitive evidence; do not treat the 30-minute
    Identity point as EOD availability.
-3. The synthetic distinct-wake rehearsal is complete. Next review exact
-   host/runtime configuration and a write-free systemd unit/timer candidate,
-   then rehearse it without installation.
+3. The read-only timer installation and synthetic distinct-wake rehearsal are
+   complete. Next observe a natural calendar trigger, then separately review
+   owner-only cadence-evidence custody, result adapters, and a non-installed
+   runtime candidate.
 4. Keep separate authorization decisions for acquisition/canonical Apply, MI
    publication, Snapshot, bundle, OCI deployment, and finally scheduler
    activation.
@@ -950,9 +967,11 @@ adapters, Host Runtime, and coordinator have now had their first controlled
 real use. Owner-only controls and the run root were installed at `c3af030`;
 Identity fetch and canonical Apply completed, then EOD failed before package or
 Apply. The next source revision invalidates those exact-revision controls.
-The later reviewed retry, canonical Apply, and four offline analytics actions
-completed as recorded below. No recovery event, service, timer, or scheduler
-exists.
+At that historical boundary, no recovery event or scheduled transition
+service existed. The later reviewed retry, canonical Apply, and four offline
+analytics actions completed as recorded below. No real recovery event was
+appended. The read-only timer described above was installed later and still
+performs no transition.
 
 Canonical Apply reservation and no-write recovery remain available. Journal
 1.3 reads the immutable 1.2 history and adds only standalone operator-review

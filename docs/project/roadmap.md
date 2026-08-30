@@ -15,9 +15,10 @@
   Next observe one real calendar-triggered wake before composing any real
   coordinator transition. SMTP may remain unset.
 - Automation design: ADR 0081's repository-only Pipeline Scheduler V2 and
-  persistent per-session workspace contract are complete. Next validate one
-  natural timer wake, then add a non-installed bounded repeated-cadence
-  candidate that can consume this plan without crossing manual review gates.
+  persistent per-session workspace contract are complete. ADR 0082's
+  non-installed bounded distinct-wake cadence and fail-closed evidence model
+  are also complete. Next validate one natural timer wake, then design the
+  owner-only evidence store/result adapters before any runtime candidate.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -299,6 +300,12 @@ as canonical EOD became current. Its V2 plan continues to one same-session
 offline action and stops at MI/Snapshot/deployment review. Its persistent
 workspace layout is derivation-only; provisioning, retention, installed
 cadence, and capability enablement remain later separate boundaries.
+
+ADR 0082 adds the next non-installed planning boundary: at most 16 distinct
+transition wakes over four hours, separated by at least five minutes after
+completion. Known failure, unknown outcome, manual review, blocked state, and
+either budget stop. The planner invokes nothing and creates no evidence store.
+Natural-trigger evidence and owner-only runtime custody remain prerequisites.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

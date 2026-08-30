@@ -86,6 +86,10 @@ ADR 0081 adds a repository-only pipeline-aware wake plan and deterministic
 Dell-local per-session workspace layout. It fixes the design gap where current
 canonical EOD could hide unfinished downstream analytics, but it is not yet
 connected to or installed in the Production timer.
+ADR 0082 adds a non-installed bounded-cadence candidate above that plan. It
+limits one session to 16 distinct transition wakes over four hours with a
+five-minute completion-to-next-start floor, and stops at failure, unknown
+outcome, blocked state, or manual review. It still invokes nothing.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

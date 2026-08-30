@@ -219,15 +219,103 @@ def plan_daily_eod_pipeline_wake(
 
 
 def verify_daily_eod_pipeline_wake_plan(plan: DailyEodPipelineWakePlan) -> None:
+    if not isinstance(plan, DailyEodPipelineWakePlan):
+        raise DailyEodPipelineSchedulerError(
+            "pipeline wake plan contract is invalid"
+        )
     logical = asdict(plan)
     logical.pop("logical_content_fingerprint")
     if (
-        not isinstance(plan, DailyEodPipelineWakePlan)
-        or plan.contract_version != CONTRACT_VERSION
+        plan.contract_version != CONTRACT_VERSION
         or plan.logical_content_fingerprint != _fingerprint(_jsonable(logical))
     ):
         raise DailyEodPipelineSchedulerError(
             "pipeline wake plan content fingerprint mismatch"
+        )
+    _verify_plan_semantics(plan)
+
+
+def _verify_plan_semantics(plan: DailyEodPipelineWakePlan) -> None:
+    if (
+        not isinstance(plan.status, PipelineWakeStatus)
+        or not isinstance(plan.phase, PipelineWakePhase)
+        or not isinstance(plan.next_action, PipelineWakeAction)
+    ):
+        raise DailyEodPipelineSchedulerError(
+            "pipeline wake plan enum fields are invalid"
+        )
+    expected_pairs = {
+        PipelineWakeStatus.WAITING: {
+            (PipelineWakePhase.CANONICAL_DATA, PipelineWakeAction.WAIT),
+        },
+        PipelineWakeStatus.READY_FOR_WAKE: {
+            (
+                PipelineWakePhase.CANONICAL_DATA,
+                PipelineWakeAction.REVIEW_ONE_DATA_TRANSITION,
+            ),
+            (
+                PipelineWakePhase.CANONICAL_DATA,
+                PipelineWakeAction.INVOKE_ONE_DATA_TRANSITION,
+            ),
+            (
+                PipelineWakePhase.OFFLINE_PIPELINE,
+                PipelineWakeAction.REVIEW_ONE_OFFLINE_TRANSITION,
+            ),
+            (
+                PipelineWakePhase.OFFLINE_PIPELINE,
+                PipelineWakeAction.INVOKE_ONE_OFFLINE_TRANSITION,
+            ),
+        },
+        PipelineWakeStatus.REVIEW_REQUIRED: {
+            (
+                PipelineWakePhase.MANUAL_REVIEW,
+                PipelineWakeAction.REVIEW_MANUAL_BOUNDARY,
+            ),
+        },
+        PipelineWakeStatus.BLOCKED: {
+            (
+                PipelineWakePhase.BLOCKED,
+                PipelineWakeAction.OPERATOR_DIAGNOSIS,
+            ),
+        },
+    }
+    if (plan.phase, plan.next_action) not in expected_pairs[plan.status]:
+        raise DailyEodPipelineSchedulerError(
+            "pipeline wake plan status and action conflict"
+        )
+    invoke_actions = {
+        PipelineWakeAction.INVOKE_ONE_DATA_TRANSITION,
+        PipelineWakeAction.INVOKE_ONE_OFFLINE_TRANSITION,
+    }
+    expected_scope = {
+        PipelineWakePhase.CANONICAL_DATA: (
+            "none" if plan.status is PipelineWakeStatus.WAITING else "data"
+        ),
+        PipelineWakePhase.OFFLINE_PIPELINE: "offline",
+        PipelineWakePhase.MANUAL_REVIEW: "none",
+        PipelineWakePhase.BLOCKED: "none",
+    }[plan.phase]
+    if (
+        plan.coordinator_invocation_scope != expected_scope
+        or (
+            plan.status is PipelineWakeStatus.READY_FOR_WAKE
+            and (plan.next_action in invoke_actions)
+            != plan.scheduler_candidate_enabled
+        )
+        or plan.scheduler_installation_performed
+        or plan.coordinator_invocation_limit != 1
+        or plan.coordinator_invocation_count != 0
+        or plan.automatic_retry_enabled
+        or plan.automatic_recovery_enabled
+        or plan.publication_authorized
+        or plan.deployment_authorized
+        or plan.credential_access_count != 0
+        or plan.external_request_count != 0
+        or plan.filesystem_write_count != 0
+        or plan.production_write_count != 0
+    ):
+        raise DailyEodPipelineSchedulerError(
+            "pipeline wake plan exceeds planning authority"
         )
 
 

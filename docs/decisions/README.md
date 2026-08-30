@@ -104,3 +104,4 @@ Each ADR should include:
 - [0079: Install the Read-Only User Scheduler](0079-install-read-only-user-scheduler.md)
 - [0080: Separate Scheduler Operation from Host State](0080-separate-scheduler-operation-from-host-state.md)
 - [0081: Make Scheduler Wakes Pipeline-Aware](0081-make-scheduler-wakes-pipeline-aware.md)
+- [0082: Bound Distinct Pipeline Wake Cadence](0082-bound-distinct-pipeline-wake-cadence.md)

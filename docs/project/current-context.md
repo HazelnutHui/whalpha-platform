@@ -275,6 +275,17 @@ unit change. They no longer emit `scheduler_installed`. The installed/enabled
 timer and `hui` linger state remain separately established by read-only host
 inspection. The updated five-wake rehearsal fingerprint is
 `51133b39e01eeb5aacdc0686eb00b612180a7a4ba45a448802de99b859759412`.
+ADR 0081 adds a repository-only Pipeline Wake Plan 2.0 and deterministic
+Dell-local per-session workspace derivation, so current canonical EOD no longer
+conceals unfinished offline analytics. ADR 0082 adds the non-installed bounded
+cadence above it: at most 16 distinct transition wakes over four hours with a
+five-minute completion-to-next-start floor. Known failure, unknown outcome,
+manual review, blocked state, and budget exhaustion all stop. These layers
+create no workspace or evidence store, invoke nothing, and do not alter the
+installed read-only timer. A natural timer wake and separate owner-only runtime
+custody remain prerequisites before any activation decision.
+All 1,731 backend tests pass with the two existing dependency warnings at this
+boundary.
 ADR 0034 now implements the repository-only coordinator core: it joins exact
 planning, journal recovery, readiness, authorization review, one opt-in offline
 action, diagnosis, and the publication-review stop while never looping.
