@@ -113,3 +113,4 @@ Each ADR should include:
 - [0088: Bind Candidate Visual Context to Real Dell History](0088-bind-candidate-visual-context-to-real-dell-history.md)
 - [0089: Publish Candidate Visual Context in Lazy Detail Shards](0089-publish-candidate-visual-context-in-lazy-detail-shards.md)
 - [0090: Build Sector ETF Rotation Without a Composite Score](0090-build-sector-etf-rotation-without-a-composite-score.md)
+- [0091: Custody Sector ETF Rotation After Phase 1a](0091-custody-sector-etf-rotation-after-phase1a.md)

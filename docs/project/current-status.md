@@ -660,12 +660,19 @@ descriptive posture, and an independent raw-panel Oracle. It has no composite
 score and does not claim constituent breadth, fund flow, alpha, causality, or
 official sector membership. Theme output remains explicitly unavailable.
 
-The real read-only 2026-08-28 Dell review produced all 11 records from the
+The first read-only 2026-08-28 Dell review produced all 11 records from the
 formal 26-session Market Regime input. Panel loading took 215.446 seconds while
-the new calculation took 0.012777 seconds. This proves that formal integration
-must reuse the already validated Phase 1a panel/audit and must not add another
-canonical-history scan. The next bounded slice is immutable temporary-root
-audit custody with this Oracle, followed by a review of additive Market
+the new calculation took 0.012777 seconds. ADR 0091 now implements the required
+reuse boundary and atomic `sector-etf-rotation-audit/1.0`: it formally binds
+Phase 1a input/calculation custody, the product, all record fingerprints, and
+the independent Oracle without scanning canonical data itself. The real audit
+completed under `/tmp` with product fingerprint
+`bce93211b6aec748d41db7a4c7f2e34226941e2a4f4ceee29b7a7d6adf51bbf7`,
+audit fingerprint
+`df02d96806a7681380f4c79c609771c26009b8f0e988c62c3af6da7a01947bbb`,
+Oracle mismatch zero, four owner-only `0400` files, and no partial residue.
+That run measured 200.729 seconds panel load, 0.012 seconds calculation, and
+0.008 seconds Oracle. The next bounded slice is a review of additive Market
 Intelligence/Snapshot projection; no publication or deployment is authorized
 by the current repository work.
 

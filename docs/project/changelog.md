@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-30 — Add immutable Sector ETF Rotation audit custody
+
+- Accepted ADR 0091 and added atomic tmp-only
+  `sector-etf-rotation-audit/1.0`. It formally rereads Phase 1a, freezes source
+  manifest hashes/fingerprints, the product and all 11 record fingerprints,
+  and the independent Oracle result.
+- The audit writer accepts the already loaded Phase 1a panel and explicitly
+  performs no canonical rescan, external request, `/data` write, publication,
+  or Snapshot integration. Completed canonical JSON files are owner-only
+  `0400` and appear only after an atomic staging rename.
+- The real 2026-08-28 audit passed formal independent reread with product
+  fingerprint
+  `bce93211b6aec748d41db7a4c7f2e34226941e2a4f4ceee29b7a7d6adf51bbf7`,
+  audit fingerprint
+  `df02d96806a7681380f4c79c609771c26009b8f0e988c62c3af6da7a01947bbb`,
+  Oracle mismatch zero, four `0400` files, and zero partial residue.
+- The run measured 200.729 seconds for the deliberately standalone formal
+  panel load, 0.012 seconds for calculation, and 0.008 seconds for the Oracle.
+  Daily integration must reuse Phase 1a in process; repeated loading is not an
+  accepted implementation.
+- The complete backend suite passes 1,796 tests. The two warnings remain the
+  pre-existing Python `crypt` and Starlette TestClient deprecations.
+
 ## 2026-08-30 — Start score-free Sector ETF Rotation V1
 
 - Accepted ADR 0090 and added a fixed 11-sector ETF proxy registry with SPY as

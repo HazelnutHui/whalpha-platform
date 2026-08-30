@@ -1,9 +1,14 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from datetime import date
+from datetime import UTC, date, datetime
 from decimal import Decimal, ROUND_DOWN, ROUND_HALF_EVEN, ROUND_UP, localcontext
+import json
+from pathlib import Path
+import shutil
+from types import SimpleNamespace
 from uuid import UUID, uuid5
+from uuid import uuid4
 
 import pytest
 from pydantic import ValidationError
@@ -22,6 +27,12 @@ from tip_api.services.sector_etf_rotation import (
 )
 from tip_api.services.sector_etf_rotation_oracle import (
     compare_with_independent_sector_rotation_oracle,
+)
+from tip_api.services import sector_etf_rotation_audit as rotation_audit
+from tip_api.services.sector_etf_rotation_audit import (
+    SectorEtfRotationAuditError,
+    read_sector_etf_rotation_audit,
+    write_sector_etf_rotation_audit,
 )
 
 
@@ -169,3 +180,116 @@ def test_decimal_context_does_not_change_output(precision: int, rounding: str) -
     assert tuple(item.logical_fingerprint for item in actual.records) == tuple(
         item.logical_fingerprint for item in expected.records
     )
+
+
+def test_tmp_audit_is_atomic_canonical_and_formally_rereadable(monkeypatch) -> None:
+    panel = _panel()
+    product = calculate_sector_etf_rotation(panel=panel)
+    oracle = compare_with_independent_sector_rotation_oracle(panel=panel, product=product)
+    phase_dir, phase_manifest, phase_input = _fake_phase1a_source(panel)
+    output = Path("/tmp") / f"sector-rotation-audit-{uuid4().hex}"
+    monkeypatch.setattr(
+        rotation_audit,
+        "read_market_regime_audit_contents",
+        lambda _: SimpleNamespace(manifest=phase_manifest, input_manifest=phase_input),
+    )
+    try:
+        manifest = write_sector_etf_rotation_audit(
+            output_dir=output,
+            phase1a_audit_dir=phase_dir,
+            panel=panel,
+            product=product,
+            oracle_report=oracle,
+            generated_at=datetime(2026, 8, 30, tzinfo=UTC),
+            timings={"calculation_seconds": "0.010000"},
+        )
+        assert manifest == read_sector_etf_rotation_audit(output)
+        assert manifest["product_logical_fingerprint"] == product.logical_fingerprint
+        assert manifest["oracle_mismatch_count"] == 0
+        assert manifest["source"]["canonical_rescan_performed_by_audit_writer"] is False
+        assert all(path.stat().st_mode & 0o777 == 0o400 for path in output.iterdir())
+    finally:
+        _remove_readonly_tree(output)
+        _remove_readonly_tree(phase_dir)
+
+
+def test_tmp_audit_rejects_failed_oracle_and_detects_artifact_tampering(monkeypatch) -> None:
+    panel = _panel()
+    product = calculate_sector_etf_rotation(panel=panel)
+    oracle = compare_with_independent_sector_rotation_oracle(panel=panel, product=product)
+    phase_dir, phase_manifest, phase_input = _fake_phase1a_source(panel)
+    monkeypatch.setattr(
+        rotation_audit,
+        "read_market_regime_audit_contents",
+        lambda _: SimpleNamespace(manifest=phase_manifest, input_manifest=phase_input),
+    )
+    failed = oracle.model_copy(update={"mismatch_count": 1, "mismatches": ("XLK:rank",)})
+    rejected = Path("/tmp") / f"sector-rotation-rejected-{uuid4().hex}"
+    output = Path("/tmp") / f"sector-rotation-tamper-{uuid4().hex}"
+    try:
+        with pytest.raises(SectorEtfRotationAuditError, match="lineage"):
+            write_sector_etf_rotation_audit(
+                output_dir=rejected,
+                phase1a_audit_dir=phase_dir,
+                panel=panel,
+                product=product,
+                oracle_report=failed,
+                generated_at=datetime(2026, 8, 30, tzinfo=UTC),
+                timings={},
+            )
+        write_sector_etf_rotation_audit(
+            output_dir=output,
+            phase1a_audit_dir=phase_dir,
+            panel=panel,
+            product=product,
+            oracle_report=oracle,
+            generated_at=datetime(2026, 8, 30, tzinfo=UTC),
+            timings={},
+        )
+        target = output / "sector-rotation-product.json"
+        target.chmod(0o600)
+        target.write_bytes(target.read_bytes() + b" ")
+        target.chmod(0o400)
+        with pytest.raises(SectorEtfRotationAuditError, match="custody"):
+            read_sector_etf_rotation_audit(output)
+    finally:
+        _remove_readonly_tree(rejected)
+        _remove_readonly_tree(output)
+        _remove_readonly_tree(phase_dir)
+
+
+def _fake_phase1a_source(panel: MarketRegimeInputPanel):
+    directory = Path("/tmp") / f"sector-rotation-phase1a-{uuid4().hex}"
+    directory.mkdir(mode=0o700)
+    phase_input = {
+        "as_of_session": panel.as_of_session.isoformat(),
+        "history_sessions": [item.isoformat() for item in panel.sessions],
+        "history_source_fingerprint": panel.history_source_fingerprint,
+        "logical_content_fingerprint": "2" * 64,
+    }
+    phase_manifest = {
+        "as_of_session": panel.as_of_session.isoformat(),
+        "completion_status": "completed",
+        "oracle_mismatch_count": 0,
+        "logical_content_fingerprint": "3" * 64,
+    }
+    for name, payload in (
+        ("calculation-manifest.json", phase_manifest),
+        ("input-manifest.json", phase_input),
+    ):
+        path = directory / name
+        path.write_text(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
+        path.chmod(0o400)
+    return directory, phase_manifest, phase_input
+
+
+def _remove_readonly_tree(path: Path) -> None:
+    if not path.exists() and not path.is_symlink():
+        return
+    if path.is_dir() and not path.is_symlink():
+        for child in path.iterdir():
+            child.chmod(0o600)
+    shutil.rmtree(path, ignore_errors=True)
