@@ -29,6 +29,7 @@ from tip_api.services.opportunity_candidate_publication import (
     publication_equivalence_evidence,
 )
 from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
+from tip_api.services.candidate_visual_context import calculate_candidate_visual_context
 from tip_api.services.candidate_strategy_channel_audit import (
     write_candidate_strategy_channel_audit,
 )
@@ -207,6 +208,35 @@ def test_bounded_publication_uses_stable_id_ranks_and_structured_evidence(
     } == {
         f"opportunity-candidate-details-{item.shard_id}.json" for item in shards
     }
+    visual_batches = tuple(
+        calculate_candidate_visual_context(
+            panel=panel,
+            candidate_batch=batch,
+            entry_geometry_batch=entry_batch,
+            state_history=tuple(
+                row for row in states if row.universe_id == batch.universe_id
+            ),
+        )
+        for batch, entry_batch in zip(batches, entry_batches, strict=True)
+    )
+    visual_summary, visual_shards = build_split_candidate_snapshot(
+        candidate_analytics=entry_publication,
+        publication_id="2026-08-24T120000Z-abcdef0",
+        payload_sha256="7" * 64,
+        payload_logical_fingerprint="8" * 64,
+        visual_context_batches=visual_batches,
+        visual_context_audit_logical_fingerprint="9" * 64,
+    )
+    assert reconstruct_full_candidate_publication(
+        visual_summary, visual_shards
+    ) == entry_publication
+    assert all(
+        shard.contract_version == "opportunity-candidate-detail-shard/1.1"
+        and shard.visual_context_audit_logical_fingerprint == "9" * 64
+        and tuple(str(row.instrument_id) for row in shard.visual_contexts)
+        == tuple(str(row.instrument_id) for row in shard.candidates)
+        for shard in visual_shards
+    )
     strategy_batches = tuple(
         calculate_candidate_strategy_channels(
             candidate_batch=batch,

@@ -29,11 +29,16 @@ from .candidate_entry_geometry import (
     CandidateExtensionRisk,
     CandidateTechnicalSetup,
 )
+from .candidate_visual_context import (
+    VISUAL_CONTEXT_CONTRACT_VERSION,
+    CandidateVisualContextV1,
+)
 
 
 SUMMARY_SNAPSHOT_CONTRACT_VERSION = "opportunity-candidate-summary-snapshot/1.0"
 SUMMARY_ANALYTICS_CONTRACT_VERSION = "opportunity-candidate-summary/1.0"
 DETAIL_SHARD_CONTRACT_VERSION = "opportunity-candidate-detail-shard/1.0"
+DETAIL_SHARD_CONTRACT_VERSION_V1_1 = "opportunity-candidate-detail-shard/1.1"
 DETAIL_FILE_RE = re.compile(r"^opportunity-candidate-details-u[01]-[0-9a-f]\.json$")
 
 
@@ -250,4 +255,56 @@ class OpportunityCandidateDetailShardV1(FrozenModel):
         raw = self.model_dump(mode="json", exclude={"logical_fingerprint"})
         if logical_fingerprint(raw) != self.logical_fingerprint:
             raise ValueError("Candidate detail shard logical fingerprint mismatch")
+        return self
+
+
+class OpportunityCandidateDetailShardV1_1(FrozenModel):
+    """Candidate detail shard with exact source-bound visual context."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    contract_version: Literal[DETAIL_SHARD_CONTRACT_VERSION_V1_1] = (
+        DETAIL_SHARD_CONTRACT_VERSION_V1_1
+    )
+    publication_id: str
+    candidate_analytics_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    visual_context_contract_version: Literal[VISUAL_CONTEXT_CONTRACT_VERSION] = (
+        VISUAL_CONTEXT_CONTRACT_VERSION
+    )
+    visual_context_audit_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    shard_id: str = Field(pattern=r"^u[01]-[0-9a-f]$")
+    universe_id: str
+    stable_id_prefix: str = Field(pattern=r"^[0-9a-f]$")
+    candidates: tuple[OpportunityCandidatePublicationItemV1_1, ...]
+    visual_contexts: tuple[CandidateVisualContextV1, ...]
+    item_count: int = Field(gt=0)
+    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def shard_reconciles(self) -> "OpportunityCandidateDetailShardV1_1":
+        candidate_ids = tuple(str(row.instrument_id) for row in self.candidates)
+        visual_ids = tuple(str(row.instrument_id) for row in self.visual_contexts)
+        if (
+            self.shard_id[-1] != self.stable_id_prefix
+            or self.item_count != len(self.candidates)
+            or candidate_ids != tuple(sorted(candidate_ids))
+            or candidate_ids != visual_ids
+            or len(candidate_ids) != len(set(candidate_ids))
+            or any(value[0] != self.stable_id_prefix for value in candidate_ids)
+            or any(row.entry_geometry.universe_id != self.universe_id for row in self.candidates)
+            or any(row.universe_id != self.universe_id for row in self.visual_contexts)
+            or any(
+                visual.source_candidate_fingerprint != candidate.score_logical_fingerprint
+                or visual.source_entry_geometry_fingerprint
+                != candidate.entry_geometry.logical_fingerprint
+                for candidate, visual in zip(
+                    self.candidates,
+                    self.visual_contexts,
+                    strict=True,
+                )
+            )
+        ):
+            raise ValueError("Candidate visual detail shard contents differ")
+        raw = self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        if logical_fingerprint(raw) != self.logical_fingerprint:
+            raise ValueError("Candidate visual detail shard logical fingerprint mismatch")
         return self

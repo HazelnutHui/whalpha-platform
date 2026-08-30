@@ -15,9 +15,14 @@ from tip_api.contracts.analytics.v1.opportunity_candidate_snapshot import (
     CandidateSummaryItemV1,
     CandidateSummaryUniverseV1,
     OpportunityCandidateDetailShardV1,
+    OpportunityCandidateDetailShardV1_1,
     OpportunityCandidateSummaryAnalyticsV1,
     OpportunityCandidateSummarySnapshotV1,
     logical_fingerprint,
+)
+from tip_api.contracts.analytics.v1.candidate_visual_context import (
+    CandidateVisualContextBatchV1,
+    CandidateVisualContextV1,
 )
 
 
@@ -31,11 +36,52 @@ def build_split_candidate_snapshot(
     publication_id: str,
     payload_sha256: str,
     payload_logical_fingerprint: str,
+    visual_context_batches: tuple[CandidateVisualContextBatchV1, ...] | None = None,
+    visual_context_audit_logical_fingerprint: str | None = None,
 ) -> tuple[
     OpportunityCandidateSummarySnapshotV1,
-    tuple[OpportunityCandidateDetailShardV1, ...],
+    tuple[OpportunityCandidateDetailShardV1 | OpportunityCandidateDetailShardV1_1, ...],
 ]:
-    shards: list[OpportunityCandidateDetailShardV1] = []
+    if (visual_context_batches is None) != (
+        visual_context_audit_logical_fingerprint is None
+    ):
+        raise OpportunityCandidateSnapshotSplitError(
+            "Candidate visual-context batches and audit binding must be supplied together"
+        )
+    visual_by_universe: dict[str, dict[str, CandidateVisualContextV1]] = {}
+    if visual_context_batches is not None:
+        if (
+            tuple(batch.universe_id for batch in visual_context_batches)
+            != candidate_analytics.universe_order
+            or tuple(
+                batch.source_candidate_batch_fingerprint
+                for batch in visual_context_batches
+            )
+            != candidate_analytics.source.current_candidate_batch_fingerprints
+            or tuple(
+                batch.source_entry_geometry_batch_fingerprint
+                for batch in visual_context_batches
+            )
+            != candidate_analytics.source.entry_geometry_batch_fingerprints
+            or any(
+                batch.as_of_session != candidate_analytics.as_of_session
+                for batch in visual_context_batches
+            )
+        ):
+            raise OpportunityCandidateSnapshotSplitError(
+                "Candidate visual-context batch lineage differs from publication"
+            )
+        for batch in visual_context_batches:
+            mapping = {str(row.instrument_id): row for row in batch.records}
+            if len(mapping) != len(batch.records):
+                raise OpportunityCandidateSnapshotSplitError(
+                    "Candidate visual-context stable IDs are duplicated"
+                )
+            visual_by_universe[batch.universe_id] = mapping
+
+    shards: list[
+        OpportunityCandidateDetailShardV1 | OpportunityCandidateDetailShardV1_1
+    ] = []
     descriptors: list[CandidateDetailShardDescriptorV1] = []
     summary_universes: list[CandidateSummaryUniverseV1] = []
 
@@ -45,9 +91,13 @@ def build_split_candidate_snapshot(
             grouped[str(item.instrument_id)[0]].append(item)
         for prefix in sorted(grouped):
             shard_id = f"u{universe_index}-{prefix}"
-            base = {
+            base: dict[str, object] = {
                 "schema_version": "1.0",
-                "contract_version": "opportunity-candidate-detail-shard/1.0",
+                "contract_version": (
+                    "opportunity-candidate-detail-shard/1.1"
+                    if visual_context_batches is not None
+                    else "opportunity-candidate-detail-shard/1.0"
+                ),
                 "publication_id": publication_id,
                 "candidate_analytics_logical_fingerprint": (
                     candidate_analytics.logical_fingerprint
@@ -58,18 +108,34 @@ def build_split_candidate_snapshot(
                 "candidates": tuple(grouped[prefix]),
                 "item_count": len(grouped[prefix]),
             }
-            serialized = {
-                key: (
-                    [item.model_dump(mode="json") for item in value]
-                    if key == "candidates"
-                    else value
+            if visual_context_batches is not None:
+                visual_mapping = visual_by_universe[universe.universe_id]
+                visual_contexts = tuple(
+                    visual_mapping.get(str(item.instrument_id))
+                    for item in grouped[prefix]
                 )
-                for key, value in base.items()
-            }
-            shard = OpportunityCandidateDetailShardV1(
-                **base,
-                logical_fingerprint=logical_fingerprint(serialized),
-            )
+                if any(item is None for item in visual_contexts):
+                    raise OpportunityCandidateSnapshotSplitError(
+                        "Candidate visual context does not cover every published detail"
+                    )
+                base.update(
+                    {
+                        "visual_context_contract_version": "candidate-visual-context/1.0",
+                        "visual_context_audit_logical_fingerprint": (
+                            visual_context_audit_logical_fingerprint
+                        ),
+                        "visual_contexts": visual_contexts,
+                    }
+                )
+                shard = OpportunityCandidateDetailShardV1_1(
+                    **base,
+                    logical_fingerprint=logical_fingerprint(_jsonable(base)),
+                )
+            else:
+                shard = OpportunityCandidateDetailShardV1(
+                    **base,
+                    logical_fingerprint=logical_fingerprint(_jsonable(base)),
+                )
             shards.append(shard)
             descriptors.append(
                 CandidateDetailShardDescriptorV1(
@@ -150,7 +216,9 @@ def build_split_candidate_snapshot(
 
 def reconstruct_full_candidate_publication(
     summary: OpportunityCandidateSummarySnapshotV1,
-    shards: Iterable[OpportunityCandidateDetailShardV1],
+    shards: Iterable[
+        OpportunityCandidateDetailShardV1 | OpportunityCandidateDetailShardV1_1
+    ],
 ) -> OpportunityCandidatePublicationV1_1:
     shard_by_id = {item.shard_id: item for item in shards}
     descriptors = {item.shard_id: item for item in summary.analytics.detail_shards}

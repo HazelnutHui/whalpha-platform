@@ -3,7 +3,7 @@
 ## Status
 
 Implemented. Active Production Snapshot
-`2026-08-29T080928Z-785ab49dfedd` uses Snapshot 1.9 / Dashboard 2.6 and binds
+`2026-08-29T133847Z-1490b37f25b3` uses Snapshot 1.9 / Dashboard 2.6 and binds
 Market Intelligence `2026-08-29T080431Z-785ab49dfedd`. It was published under
 ordinary lag-zero freshness. It includes the split Candidate consumer and the
 additive lazy strategy-channel product. Earlier releases remain immutable,
@@ -135,3 +135,18 @@ Approval Plan 2.4 and OCI bundle/postflight validation while preserving every
 older plan and contract. The active 2026-08-28 analysis release passed Plan
 2.4, Apply, bundle validation, OCI deployment, and guest postflight. Snapshot
 1.8 and older releases remain readable unchanged.
+
+## Contract 1.10 lazy visual-context delivery
+
+Repository Snapshot 1.10 pairs Dashboard 2.7 with the unchanged Candidate
+summary and strategy product. It upgrades only the 32 detail shards to
+`opportunity-candidate-detail-shard/1.1`, placing each exact source-bound Visual
+Context record beside its matching Candidate row. The summary remains 1.0 and
+contains no historical arrays.
+
+The manifest and Approval Plan 2.5 freeze the Visual Context contract, audit-
+manifest SHA-256, audit logical fingerprint, two batch fingerprints, detail
+contract, filenames, and every file hash. Formal reread requires exact stable-
+ID coverage and per-row Candidate/Entry Geometry lineage. OCI bundle and guest
+postflight validators understand 1.10/2.7; publication and deployment remain
+separately authorized. Active Production remains 1.9/2.6.

@@ -620,8 +620,19 @@ complete. The real 2026-08-28 audit at
 All 3,541 Candidate rows have complete paths; observed age is available for
 3,382, while 159 unavailable/stale current states remain empty. Both Oracles
 have zero mismatch. The optimized 38.81-second offline run made zero requests
-and zero Production writes; all 1,778 backend tests pass. The source layer is
-not yet bound into Snapshot or deployed.
+and zero Production writes. ADR 0089 now completes the additive product
+boundary in repository source. Detail-shard 1.1 carries each Visual Context row
+beside its exact Candidate; Snapshot 1.10 / Dashboard 2.7 and Approval Plan 2.5
+freeze audit, batch, row-lineage, and file identities. The bilingual drawer
+renders the real path and honest `N`/`>=N` observed age without browser
+recomputation.
+
+A real Dell `/tmp` 1.10/2.7 dry-run formally passed against the active 8/28 MI,
+Candidate, Entry Geometry, Strategy, and Visual audits. The first-load summary
+remained exactly 2,061,314 bytes; 32 lazy detail shards grew by 3,724,116 bytes
+in total to a 671,118–1,432,204-byte range. It produced Plan 2.5 and zero
+Production writes. It was not applied, bundled, published, or deployed; active
+Production remains Snapshot 1.9 / Dashboard 2.6.
 
 ## Next candidate work
 
@@ -634,12 +645,11 @@ support chronological evaluation. Do not reduce the observed overlap or
 select contraction/path thresholds against the single 2026-08-26 cross-
 section.
 
-For P4, the next increment is additive product integration: bind the completed
-Visual Context audit into versioned lazy Candidate detail shards, preserve the
-small first-load summary, and render the true 20-session close path plus
-left-censor-aware observed state age. Publication and Snapshot must validate
-the visual audit once; neither the browser nor the serving boundary may reread
-or reconstruct the large Candidate parent audit. This remains undeployed.
+For P4, product integration is complete in repository source. The next gated
+step is final offline bundle review and human visual acceptance before any
+separately authorized Snapshot Apply or OCI deployment. The unattended daily
+chain remains on 1.9/2.6 until Visual Context generation is added explicitly;
+do not silently make a missing visual audit block the current daily pipeline.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is

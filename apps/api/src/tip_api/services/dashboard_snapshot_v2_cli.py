@@ -15,6 +15,7 @@ from tip_api.contracts.market_data.v2.dashboard_snapshot import (
     DashboardSnapshotApprovalPlanV2_2,
     DashboardSnapshotApprovalPlanV2_3,
     DashboardSnapshotApprovalPlanV2_4,
+    DashboardSnapshotApprovalPlanV2_5,
 )
 from tip_api.contracts.analytics.v1 import (
     ReviewDeploymentAuthorization,
@@ -42,7 +43,7 @@ def _sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3 | DashboardSnapshotApprovalPlanV2_4:
+def _load_plan(path: Path, digest: str) -> DashboardSnapshotApprovalPlanV2 | DashboardSnapshotApprovalPlanV2_1 | DashboardSnapshotApprovalPlanV2_2 | DashboardSnapshotApprovalPlanV2_3 | DashboardSnapshotApprovalPlanV2_4 | DashboardSnapshotApprovalPlanV2_5:
     if _sha(path)!=digest: raise DashboardSnapshotPublicationError("approved plan SHA-256 mismatch")
     return read_dashboard_snapshot_approval_plan(path)
 
@@ -60,6 +61,7 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--expected-current-state-fingerprint")
     p.add_argument("--market-intelligence-publication-id")
     p.add_argument("--candidate-strategy-audit", type=Path)
+    p.add_argument("--candidate-visual-context-audit", type=Path)
     p.add_argument("--analysis-session",type=date.fromisoformat)
     p.add_argument("--review-deployment",action="store_true")
     p.add_argument("--review-approved-as-of-session",type=date.fromisoformat)
@@ -73,7 +75,7 @@ def main(argv: list[str]|None=None) -> int:
     args=_parser().parse_args(argv)
     approved_mode=args.apply or args.verify_then_link
     if approved_mode:
-        if not all((args.approved_plan,args.approved_plan_sha256,args.expected_current_state_fingerprint,args.analysis_session)) or any((args.approval_package,args.output_root,args.release_id,args.generated_at,args.market_intelligence_publication_id,args.candidate_strategy_audit,args.review_deployment,args.review_approved_as_of_session,args.review_expected_latest_session,args.review_expected_lag_sessions)):
+        if not all((args.approved_plan,args.approved_plan_sha256,args.expected_current_state_fingerprint,args.analysis_session)) or any((args.approval_package,args.output_root,args.release_id,args.generated_at,args.market_intelligence_publication_id,args.candidate_strategy_audit,args.candidate_visual_context_audit,args.review_deployment,args.review_approved_as_of_session,args.review_expected_latest_session,args.review_expected_lag_sessions)):
             _parser().error("approved operation requires plan, plan SHA-256, analysis session and expected current-state fingerprint only")
         plan=_load_plan(args.approved_plan,args.approved_plan_sha256)
         if plan.expected_current_state_fingerprint!=args.expected_current_state_fingerprint or plan.analysis_session!=args.analysis_session:
@@ -109,6 +111,17 @@ def main(argv: list[str]|None=None) -> int:
             raise DashboardSnapshotPublicationError(
                 "candidate strategy audit must be a regular /tmp directory"
             )
+    if args.candidate_visual_context_audit is not None:
+        visual_audit = args.candidate_visual_context_audit
+        if (
+            not visual_audit.is_absolute()
+            or not visual_audit.resolve(strict=True).is_relative_to(Path("/tmp"))
+            or visual_audit.is_symlink()
+            or not visual_audit.is_dir()
+        ):
+            raise DashboardSnapshotPublicationError(
+                "candidate visual-context audit must be a regular /tmp directory"
+            )
     generated=datetime.fromisoformat(args.generated_at.replace("Z","+00:00")) if args.generated_at else datetime.now(UTC)
     live_freshness = _formal_freshness()
     output=args.output_root
@@ -142,7 +155,8 @@ def main(argv: list[str]|None=None) -> int:
     candidate=build_private_dashboard_snapshot(data_root=ROOT,output_root=output,allowed_output_root=output,
         release_id=args.release_id,generated_at=generated,dashboard_activation=activation,
         market_intelligence=market_intelligence,
-        candidate_strategy_audit_path=args.candidate_strategy_audit)
+        candidate_strategy_audit_path=args.candidate_strategy_audit,
+        candidate_visual_context_audit_path=args.candidate_visual_context_audit)
     manifest=candidate.manifest
     response={"status":"dry_run_ready","candidate_path":str(candidate.output_dir),
               "freshness_status":manifest.freshness_status,"session_lag":manifest.session_lag,

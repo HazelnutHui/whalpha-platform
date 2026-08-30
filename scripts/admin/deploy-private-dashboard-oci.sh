@@ -429,22 +429,22 @@ guest_dashboard_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_dashboard_b
 grep -q '<div id="root"></div>' "${guest_dashboard_body}" || { echo "guest Dashboard shell mismatch" >&2; exit 1; }
 guest_private_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${guest_private_code}" == "200" ]] || { echo "guest private-data status ${guest_private_code}" >&2; exit 1; }
-grep -Eq '"snapshot_contract_version":"1\.(5|6|7|8|9)"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }
-if grep -Eq '"snapshot_contract_version":"1\.(6|7|8|9)"' "${guest_private_body}"; then
+grep -Eq '"snapshot_contract_version":"1\.(5|6|7|8|9|10)"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }
+if grep -Eq '"snapshot_contract_version":"1\.(6|7|8|9|10)"' "${guest_private_body}"; then
   grep -q '"candidate_contract_version":"opportunity-candidate/1.1"' "${guest_private_body}" || { echo "guest Candidate manifest contract mismatch" >&2; exit 1; }
   guest_candidate_filename=opportunity-candidates.json
-  if grep -Eq '"snapshot_contract_version":"1\.(8|9)"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(8|9|10)"' "${guest_private_body}"; then
     guest_candidate_filename=opportunity-candidates-summary.json
   fi
   guest_candidate_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_candidate_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/${guest_candidate_filename}")
   [[ "${guest_candidate_code}" == "200" ]] || { echo "guest Candidate data status ${guest_candidate_code}" >&2; exit 1; }
   grep -Eq '"contract_version":"(opportunity-candidate-snapshot/1\.(0|1)|opportunity-candidate-summary-snapshot/1\.0)"' "${guest_candidate_body}" || { echo "guest Candidate contract mismatch" >&2; exit 1; }
   grep -q '"underlying_stock_result_not_option_return":true' "${guest_candidate_body}" || { echo "guest Candidate decision boundary missing" >&2; exit 1; }
-  if grep -Eq '"snapshot_contract_version":"1\.(7|8|9)"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(7|8|9|10)"' "${guest_private_body}"; then
     grep -q '"entry_location_separate_from_leadership":true' "${guest_candidate_body}" || { echo "guest entry-geometry boundary missing" >&2; exit 1; }
     grep -q '"leadership_rank_preserved":true' "${guest_candidate_body}" || { echo "guest leadership-rank boundary missing" >&2; exit 1; }
   fi
-  if grep -Eq '"snapshot_contract_version":"1\.(8|9)"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(8|9|10)"' "${guest_private_body}"; then
     guest_detail_filename=$(python3 - "${guest_private_body}" <<'PY'
 import json,sys
 value=json.load(open(sys.argv[1],encoding='utf-8'))
@@ -455,9 +455,13 @@ PY
 )
     guest_detail_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_candidate_detail_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/${guest_detail_filename}")
     [[ "${guest_detail_code}" == "200" ]] || { echo "guest Candidate detail status ${guest_detail_code}" >&2; exit 1; }
-    grep -q '"contract_version":"opportunity-candidate-detail-shard/1.0"' "${guest_candidate_detail_body}" || { echo "guest Candidate detail contract mismatch" >&2; exit 1; }
+    grep -Eq '"contract_version":"opportunity-candidate-detail-shard/1\.(0|1)"' "${guest_candidate_detail_body}" || { echo "guest Candidate detail contract mismatch" >&2; exit 1; }
+    if grep -q '"snapshot_contract_version":"1.10"' "${guest_private_body}"; then
+      grep -q '"visual_context_contract_version":"candidate-visual-context/1.0"' "${guest_candidate_detail_body}" || { echo "guest Candidate visual-context contract mismatch" >&2; exit 1; }
+      grep -q '"price_path_availability":"available"' "${guest_candidate_detail_body}" || { echo "guest Candidate visual path missing" >&2; exit 1; }
+    fi
   fi
-  if grep -q '"snapshot_contract_version":"1.9"' "${guest_private_body}"; then
+  if grep -Eq '"snapshot_contract_version":"1\.(9|10)"' "${guest_private_body}"; then
     guest_strategy_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_strategy_body}" -w '%{http_code}' "https://whalpha.com/private-data/v1/candidate-strategy-channels.json")
     [[ "${guest_strategy_code}" == "200" ]] || { echo "guest Candidate strategy-channel status ${guest_strategy_code}" >&2; exit 1; }
     python3 - "${guest_private_body}" "${guest_strategy_body}" <<'PY'

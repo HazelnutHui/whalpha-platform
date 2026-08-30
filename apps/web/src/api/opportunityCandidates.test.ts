@@ -149,4 +149,37 @@ describe('Opportunity Candidate snapshot parser', () => {
     const drift = { ...shard, universe_id: PRIMARY };
     expect(() => parseOpportunityCandidateDetailShard(drift, response, item)).toThrow('binding');
   });
+
+  it('accepts source-bound visual context only in the 1.1 detail shard', () => {
+    const response = { ...parseOpportunityCandidateSummarySnapshot(summaryFixture(), SECONDARY),
+      candidate_detail_contract_version: 'opportunity-candidate-detail-shard/1.1' as const,
+      visual_context_contract_version: 'candidate-visual-context/1.0' as const,
+      visual_context_audit_logical_fingerprint: 'a'.repeat(64) };
+    const item = response.universe.candidates[0]; const full = entryFixture();
+    const detail = full.analytics.universes[1].candidates[0] as Record<string, any>;
+    const dates = Array.from({ length: 20 }, (_, index) => `2026-08-${String(index + 5).padStart(2, '0')}`);
+    const visual = { schema_version: '1.0', contract_version: 'candidate-visual-context/1.0',
+      calculation_version: 'candidate-visual-context-v1.0.0', as_of_session: '2026-08-24', universe_id: SECONDARY,
+      instrument_id: detail.instrument_id, ticker: detail.ticker, security_type: detail.security_type,
+      source_candidate_fingerprint: detail.score_logical_fingerprint,
+      source_entry_geometry_fingerprint: detail.entry_geometry.logical_fingerprint,
+      price_path_availability: 'available', price_path: dates.map((session_date, index) => ({ session_date, close: index === 19 ? '25.0000000000' : `${23 + index / 10}` })),
+      reference_levels: { current_close: '25.0000000000', sma_10: '24.0000000000', sma_20: '23.0000000000',
+        prior_five_session_close_high: '24.5000000000', prior_five_session_close_low: '22.0000000000',
+        reference_support_kind: 'sma20', reference_support_value: '23.0000000000' }, price_path_missing_reason_codes: [],
+      state_age_availability: 'available', observed_state_age: { final_stage: 'watch', first_observed_session: '2026-08-22',
+        observed_age_sessions: 3, left_censored: false, current_state_fingerprint: 'b'.repeat(64) },
+      state_age_missing_reason_codes: [], warnings: [], logical_fingerprint: 'd'.repeat(64) };
+    const shard = { schema_version: '1.0', contract_version: 'opportunity-candidate-detail-shard/1.1',
+      publication_id: response.publication_id, candidate_analytics_logical_fingerprint: response.logical_fingerprint,
+      visual_context_contract_version: response.visual_context_contract_version,
+      visual_context_audit_logical_fingerprint: response.visual_context_audit_logical_fingerprint,
+      shard_id: item.detail_shard_id, universe_id: SECONDARY, stable_id_prefix: '1', candidates: [detail],
+      visual_contexts: [visual], item_count: 1, logical_fingerprint: '8'.repeat(64) };
+    const parsed = parseOpportunityCandidateDetailShard(shard, response, item);
+    expect(parsed.visual_context?.price_path).toHaveLength(20);
+    expect(parsed.visual_context?.observed_state_age?.observed_age_sessions).toBe(3);
+    expect(() => parseOpportunityCandidateDetailShard({ ...shard,
+      visual_context_audit_logical_fingerprint: '0'.repeat(64) }, response, item)).toThrow('visual-context shard binding');
+  });
 });

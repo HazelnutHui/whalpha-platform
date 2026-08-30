@@ -119,6 +119,8 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md): Sealed point-in-time signals, separately matured stock outcomes, and anti-leakage evaluation policy.
 - [Candidate Entry Geometry V1](data-contracts/candidate-entry-geometry-v1.md): Offline source audit and additive consumer contract separating leadership quality from entry location and chase risk.
 - [Candidate Visual Context V1](data-contracts/candidate-visual-context-v1.md): Source-bound real 20-session close paths and left-censor-aware observed Candidate-state age for future lazy details.
+- [ADR 0089: Lazy Candidate Visual Context publication](decisions/0089-publish-candidate-visual-context-in-lazy-detail-shards.md): Snapshot 1.10/detail-shard 1.1 binding with unchanged first-load summary.
+- [2026-08-30 Candidate Visual Context Product Integration Audit](audits/candidate-visual-context-product-integration-2026-08-30.md): real Dell tmp-only Snapshot 1.10, Plan 2.5, size, lineage, and no-Production-write evidence.
 - [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md): Dell-only compute/data authority, worktree-safe runner, measured baseline, and deterministic optimization sequence.
 - [Historical Research Storage and Pilot Plan V1](operations/historical-research-storage-and-pilot-plan-v1.md): Dell capacity, physical families, request estimates, fixture sequence, and bounded pilot gates.
 - [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): XNYS/provider readiness, bounded retry, provider-attempt custody, exact-session planning, single-action offline execution, interruption recovery, and remaining unattended-operation gates.

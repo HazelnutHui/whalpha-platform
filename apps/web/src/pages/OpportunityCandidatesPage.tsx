@@ -12,6 +12,7 @@ import {
   type CandidateRiskMode,
   type CandidateStage,
   type CandidateTechnicalSetup,
+  type CandidateVisualContext,
   type OpportunityCandidateResponse,
 } from '../api/opportunityCandidates';
 import type {
@@ -140,6 +141,37 @@ export function CandidatePositionMap({ entry, state }: {
   </section>;
 }
 
+export function CandidatePricePathChart({ visual }: { visual: CandidateVisualContext }): JSX.Element {
+  const { t } = useI18n();
+  if (visual.price_path_availability !== 'available' || visual.price_path.length !== 20 || visual.reference_levels === null) {
+    return <section className="candidate-price-path candidate-position-unavailable" aria-label={t('candidate.visual.pathTitle')}>
+      <h3>{t('candidate.visual.pathTitle')}</h3><p>{t('candidate.visual.pathUnavailable')}</p>
+    </section>;
+  }
+  const width = 600; const height = 190; const padX = 18; const padY = 18;
+  const closes = visual.price_path.map((point) => Number(point.close));
+  const referenceValues = [Number(visual.reference_levels.prior_five_session_close_high), Number(visual.reference_levels.sma_20)];
+  if (visual.reference_levels.reference_support_value !== null) referenceValues.push(Number(visual.reference_levels.reference_support_value));
+  const low = Math.min(...closes, ...referenceValues); const high = Math.max(...closes, ...referenceValues);
+  const margin = Math.max((high - low) * 0.08, high * 0.005); const min = low - margin; const max = high + margin;
+  const x = (index: number): number => padX + index * ((width - padX * 2) / (visual.price_path.length - 1));
+  const y = (value: number): number => padY + (max - value) * ((height - padY * 2) / (max - min));
+  const points = closes.map((close, index) => `${x(index)},${y(close)}`).join(' ');
+  const age = visual.observed_state_age;
+  return <section className="candidate-price-path" aria-labelledby="candidate-price-path-title">
+    <div className="candidate-position-heading"><div><p className="eyebrow">{t('candidate.visual.pathEyebrow')}</p><h3 id="candidate-price-path-title">{t('candidate.visual.pathTitle')}</h3></div><small>{t('candidate.visual.pathBoundary')}</small></div>
+    <svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={t('candidate.visual.pathAria')}>
+      <line x1={padX} x2={width - padX} y1={y(Number(visual.reference_levels.prior_five_session_close_high))} y2={y(Number(visual.reference_levels.prior_five_session_close_high))} className="candidate-path-prior-high" />
+      <line x1={padX} x2={width - padX} y1={y(Number(visual.reference_levels.sma_20))} y2={y(Number(visual.reference_levels.sma_20))} className="candidate-path-sma20" />
+      <polyline points={points} className="candidate-path-line" />
+      <circle cx={x(closes.length - 1)} cy={y(closes[closes.length - 1])} r="4" className="candidate-path-current" />
+    </svg>
+    <div className="candidate-path-meta"><span>{visual.price_path[0].session_date}</span><span>{t('candidate.visual.priorHigh')} · ${number(visual.reference_levels.prior_five_session_close_high, 2)}</span><span>{t('candidate.visual.sma20')} · ${number(visual.reference_levels.sma_20, 2)}</span><span>{visual.as_of_session}</span></div>
+    <div className="candidate-path-age"><span>{t('candidate.visual.observedAge')}</span><strong>{age ? `${age.left_censored ? '≥' : ''}${age.observed_age_sessions}` : '—'}</strong><small>{age ? t('candidate.visual.observedAgeFrom').replace('{session}', age.first_observed_session) : t('candidate.visual.ageUnavailable')}</small></div>
+    <p className="candidate-position-boundary">{t('candidate.visual.pathDisclaimer')}</p>
+  </section>;
+}
+
 function CandidateDetail({ item, mode, onClose }: { item: CandidateItem; mode: CandidateRiskMode; onClose: () => void }): JSX.Element {
   const { t } = useI18n(); const disposition = item.risk_dispositions.find((row) => row.risk_mode === mode); const entry = item.entry_geometry;
   const supports = item.evidence.filter((row) => row.evidence_kind === 'supporting'); const counters = item.evidence.filter((row) => row.evidence_kind === 'counterevidence');
@@ -148,6 +180,7 @@ function CandidateDetail({ item, mode, onClose }: { item: CandidateItem; mode: C
     <header><div><p className="eyebrow">{t('candidate.detailEyebrow')}</p><h2 id="candidate-detail-title">{item.ticker} · {entry ? postureName(t, entry.review_posture) : stageName(t, item.state.final_stage)}</h2><p>{item.instrument_id} · {item.security_type}</p></div><button type="button" onClick={onClose} aria-label={t('common.close')}>×</button></header>
     <div className="candidate-detail-summary"><div><span>{t('candidate.baseScore')}</span><strong>{number(item.base_score)}</strong></div><div><span>{t('candidate.dataSupport')}</span><strong>{percent(item.confidence.confidence)}</strong></div><div><span>{t('candidate.formalRank')}</span><strong>{disposition?.risk_adjusted_rank ?? t('candidate.entry.fullPool')}</strong></div><div><span>{t('candidate.latestPrice')}</span><strong>${number(item.latest_price, 2)}</strong></div></div>
     <p className="candidate-boundary">{t('candidate.researchBoundary')}</p>
+    {item.visual_context ? <CandidatePricePathChart visual={item.visual_context} /> : null}
     {entry ? <CandidatePositionMap entry={entry} state={item.state} /> : null}
     {entry ? <section className="candidate-entry-detail"><div className="candidate-entry-verdict"><span className={`candidate-entry-posture candidate-entry-posture-${entry.review_posture}`}>{postureName(t, entry.review_posture)}</span><strong>{setupName(t, entry.technical_setup)}</strong><small>{t('candidate.entry.extensionLabel')} · {extensionName(t, entry.extension_risk)}</small></div>
       <h3>{t('candidate.entry.locationTitle')}</h3><div className="candidate-facts"><span>{t('candidate.entry.sma20Distance')} <strong>{number(entry.metrics.close_to_sma_20_atr, 2)} ATR</strong></span><span>{t('candidate.entry.move5')} <strong>{number(entry.metrics.move_5_volatility_units, 2)}×</strong></span><span>{t('candidate.entry.gap')} <strong>{number(entry.metrics.current_gap_atr, 2)} ATR</strong></span><span>{t('candidate.entry.upSessions')} <strong>{entry.metrics.consecutive_up_sessions ?? '—'}</strong></span><span>{t('candidate.volumeRatio')} <strong>{number(entry.metrics.current_volume_ratio, 2)}×</strong></span><span>{t('candidate.entry.supportDistance')} <strong>{percent(entry.metrics.reference_support_distance_pct)}</strong></span></div>

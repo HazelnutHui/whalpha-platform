@@ -1,9 +1,9 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import type { CandidateEntryGeometry, CandidateItem } from '../api/opportunityCandidates';
+import type { CandidateEntryGeometry, CandidateItem, CandidateVisualContext } from '../api/opportunityCandidates';
 import { I18nProvider } from '../i18n/I18nProvider';
-import { CandidatePositionMap } from './OpportunityCandidatesPage';
+import { CandidatePositionMap, CandidatePricePathChart } from './OpportunityCandidatesPage';
 
 const entry = {
   as_of_session: '2026-08-28', universe_id: 'provider_classified_common_shares_v1',
@@ -51,5 +51,24 @@ describe('CandidatePositionMap', () => {
     render(<I18nProvider><CandidatePositionMap entry={unavailable} state={state} /></I18nProvider>);
     expect(screen.getByText('The published facts are not sufficient to draw a reliable position map.')).toBeInTheDocument();
     expect(screen.queryByText('Prior 5-session close high')).not.toBeInTheDocument();
+  });
+
+  it('draws the exact 20-session path and labels a left-censored observed age', () => {
+    const visual = {
+      as_of_session: '2026-08-28', universe_id: entry.universe_id, instrument_id: entry.instrument_id,
+      ticker: entry.ticker, security_type: 'CS', price_path_availability: 'available',
+      price_path: Array.from({ length: 20 }, (_, index) => ({ session_date: `2026-08-${String(index + 9).padStart(2, '0')}`, close: String(95 + index / 2) })),
+      reference_levels: { current_close: '104.5', sma_10: '101', sma_20: '98', prior_five_session_close_high: '103',
+        prior_five_session_close_low: '99', reference_support_kind: 'sma20', reference_support_value: '98' },
+      price_path_missing_reason_codes: [], state_age_availability: 'available',
+      observed_state_age: { final_stage: 'prepare', first_observed_session: '2026-08-21', observed_age_sessions: 6,
+        left_censored: true, current_state_fingerprint: state.logical_fingerprint }, state_age_missing_reason_codes: [],
+      warnings: [], logical_fingerprint: 'c'.repeat(64),
+    } satisfies CandidateVisualContext;
+    render(<I18nProvider><CandidatePricePathChart visual={visual} /></I18nProvider>);
+    expect(screen.getByRole('heading', { name: 'How price arrived here' })).toBeInTheDocument();
+    expect(screen.getByText('≥6')).toBeInTheDocument();
+    expect(screen.getByText(/not total return/)).toBeInTheDocument();
+    expect(document.querySelector('.candidate-path-line')).toBeInTheDocument();
   });
 });

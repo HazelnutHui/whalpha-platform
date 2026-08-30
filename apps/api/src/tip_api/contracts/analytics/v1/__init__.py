@@ -134,11 +134,13 @@ from .candidate_entry_geometry import (
     EntryGeometryAvailability,
 )
 from .opportunity_candidate_snapshot import (
+    DETAIL_SHARD_CONTRACT_VERSION_V1_1,
     CandidateDetailShardDescriptorV1,
     CandidateEntrySummaryV1,
     CandidateSummaryItemV1,
     CandidateSummaryUniverseV1,
     OpportunityCandidateDetailShardV1,
+    OpportunityCandidateDetailShardV1_1,
     OpportunityCandidateSummaryAnalyticsV1,
     OpportunityCandidateSummarySnapshotV1,
 )
@@ -324,10 +326,12 @@ __all__ = [
     "CandidateTechnicalSetup",
     "EntryGeometryAvailability",
     "CandidateDetailShardDescriptorV1",
+    "DETAIL_SHARD_CONTRACT_VERSION_V1_1",
     "CandidateEntrySummaryV1",
     "CandidateSummaryItemV1",
     "CandidateSummaryUniverseV1",
     "OpportunityCandidateDetailShardV1",
+    "OpportunityCandidateDetailShardV1_1",
     "OpportunityCandidateSummaryAnalyticsV1",
     "OpportunityCandidateSummarySnapshotV1",
     "STRATEGY_CHANNEL_CALCULATION_VERSION",

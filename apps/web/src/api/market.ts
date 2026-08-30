@@ -252,6 +252,10 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     candidate_strategy_audit_logical_fingerprint: optionalNullableString(value, 'candidate_strategy_audit_logical_fingerprint'),
     candidate_strategy_parameter_fingerprint: optionalNullableString(value, 'candidate_strategy_parameter_fingerprint'),
     candidate_strategy_logical_fingerprint: optionalNullableString(value, 'candidate_strategy_logical_fingerprint'),
+    candidate_visual_context_contract_version: optionalNullableString(value, 'candidate_visual_context_contract_version'),
+    candidate_visual_context_audit_manifest_sha256: optionalNullableString(value, 'candidate_visual_context_audit_manifest_sha256'),
+    candidate_visual_context_audit_logical_fingerprint: optionalNullableString(value, 'candidate_visual_context_audit_logical_fingerprint'),
+    candidate_visual_context_batch_fingerprints: value.candidate_visual_context_batch_fingerprints === undefined ? undefined : requireStringArray(value, 'candidate_visual_context_batch_fingerprints'),
     review_mode: value.review_mode === undefined ? undefined : requireBoolean(value, 'review_mode'),
     review_contract_version: optionalNullableString(value, 'review_contract_version'),
     review_approved_as_of_session: optionalNullableString(value, 'review_approved_as_of_session'),
@@ -262,7 +266,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     contains_raw_provider_data: requireBoolean(value, 'contains_raw_provider_data'),
     contains_credentials: requireBoolean(value, 'contains_credentials'),
   };
-  if (!['1', '1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
+  if (!['1', '1.1', '1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version) || manifest.access_classification !== 'private') {
     throw new Error('Unsupported private dashboard snapshot');
   }
   if (manifest.snapshot_contract_version === '1.1' && (
@@ -282,7 +286,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
   )) {
     throw new Error('Private dashboard snapshot is missing governance metadata');
   }
-  if (['1.3', '1.4', '1.5', '1.6', '1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version)) {
+  if (['1.3', '1.4', '1.5', '1.6', '1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
     const ids = value.available_universe_ids;
     if (!Array.isArray(ids) || ids.length !== 2 || ids.some((item) => typeof item !== 'string')) throw new Error('Private dashboard snapshot activation catalog is invalid');
     manifest.selected_universe_id = requireString(value, 'selected_universe_id');
@@ -290,12 +294,12 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     manifest.activation_fingerprint = requireString(value, 'activation_fingerprint');
     manifest.membership_evidence_as_of = requireString(value, 'membership_evidence_as_of');
   }
-  if (['1.4', '1.5', '1.6', '1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version) && (
+  if (['1.4', '1.5', '1.6', '1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version) && (
     manifest.funnel_stage_count !== 20 ||
     !manifest.funnel_source_fingerprint ||
     !/^[0-9a-f]{64}$/.test(manifest.funnel_source_fingerprint)
   )) throw new Error('Private dashboard snapshot Funnel metadata is invalid');
-  if (['1.5', '1.6', '1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version)) {
+  if (['1.5', '1.6', '1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
     const intelligenceHashes = [
       manifest.market_intelligence_payload_sha256,
       manifest.market_intelligence_logical_fingerprint,
@@ -303,7 +307,8 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     ];
     if (
       manifest.dashboard_contract_version !== (
-        manifest.snapshot_contract_version === '1.9' ? '2.6'
+        manifest.snapshot_contract_version === '1.10' ? '2.7'
+          : manifest.snapshot_contract_version === '1.9' ? '2.6'
           : manifest.snapshot_contract_version === '1.8' ? '2.5'
           : manifest.snapshot_contract_version === '1.7' ? '2.4'
           : manifest.snapshot_contract_version === '1.6' ? '2.3' : '2.2'
@@ -342,7 +347,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
       throw new Error('Private dashboard snapshot review deployment is unexpected');
     }
   }
-  if (['1.6', '1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version)) {
+  if (['1.6', '1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
     const candidateHashes = [
       manifest.candidate_analytics_logical_fingerprint,
       manifest.candidate_audit_logical_fingerprint,
@@ -351,7 +356,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
     ];
     if (
       manifest.opportunity_candidates_file !== (
-        ['1.8', '1.9'].includes(manifest.snapshot_contract_version)
+        ['1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)
           ? 'opportunity-candidates-summary.json'
           : 'opportunity-candidates.json'
       )
@@ -362,7 +367,7 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
       || !manifest.file_sha256[manifest.opportunity_candidates_file]
     ) throw new Error('Private dashboard snapshot Candidate metadata is invalid');
   }
-  if (['1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version)) {
+  if (['1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
     const entryHashes = [
       manifest.entry_geometry_audit_logical_fingerprint,
       manifest.entry_geometry_parameter_fingerprint,
@@ -374,20 +379,21 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
       || entryHashes.some((item) => typeof item !== 'string' || !/^[0-9a-f]{64}$/.test(item))
     ) throw new Error('Private dashboard snapshot entry-geometry metadata is invalid');
   }
-  if (['1.8', '1.9'].includes(manifest.snapshot_contract_version)) {
+  if (['1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
     const detailFiles = manifest.candidate_detail_files;
     if (
       manifest.candidate_summary_contract_version !== 'opportunity-candidate-summary/1.0'
       || typeof manifest.candidate_summary_logical_fingerprint !== 'string'
       || !/^[0-9a-f]{64}$/.test(manifest.candidate_summary_logical_fingerprint)
-      || manifest.candidate_detail_contract_version !== 'opportunity-candidate-detail-shard/1.0'
+      || manifest.candidate_detail_contract_version !== (manifest.snapshot_contract_version === '1.10'
+        ? 'opportunity-candidate-detail-shard/1.1' : 'opportunity-candidate-detail-shard/1.0')
       || !Array.isArray(detailFiles) || detailFiles.length === 0
       || detailFiles.some((item) => !/^opportunity-candidate-details-u[01]-[0-9a-f]\.json$/.test(item) || !manifest.file_sha256[item])
       || new Set(detailFiles).size !== detailFiles.length
       || [...detailFiles].sort().join('|') !== detailFiles.join('|')
     ) throw new Error('Private dashboard snapshot split Candidate metadata is invalid');
   }
-  if (manifest.snapshot_contract_version === '1.9') {
+  if (['1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
     const strategyHashes = [
       manifest.candidate_strategy_audit_manifest_sha256,
       manifest.candidate_strategy_audit_logical_fingerprint,
@@ -400,6 +406,18 @@ export function parseSnapshotManifest(value: unknown): SnapshotManifestResponse 
       || strategyHashes.some((item) => typeof item !== 'string' || !/^[0-9a-f]{64}$/.test(item))
       || !manifest.file_sha256['candidate-strategy-channels.json']
     ) throw new Error('Private dashboard snapshot strategy-channel metadata is invalid');
+  }
+  if (manifest.snapshot_contract_version === '1.10') {
+    const visualHashes = [
+      manifest.candidate_visual_context_audit_manifest_sha256,
+      manifest.candidate_visual_context_audit_logical_fingerprint,
+      ...(manifest.candidate_visual_context_batch_fingerprints ?? []),
+    ];
+    if (manifest.candidate_visual_context_contract_version !== 'candidate-visual-context/1.0'
+      || manifest.candidate_visual_context_batch_fingerprints?.length !== 2
+      || visualHashes.some((item) => typeof item !== 'string' || !/^[0-9a-f]{64}$/.test(item))) {
+      throw new Error('Private dashboard snapshot Candidate visual-context metadata is invalid');
+    }
   }
   if (manifest.contains_credentials || manifest.contains_raw_provider_data) {
     throw new Error('Unsafe private dashboard snapshot');

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-30 — Integrate Candidate visual context into lazy product delivery
+
+- Accepted ADR 0089 and added detail-shard 1.1, Snapshot 1.10 / Dashboard 2.7,
+  Approval Plan 2.5, strict web parsing, bilingual 20-session path/state-age
+  rendering, and OCI bundle/postflight validation.
+- The summary contract remains unchanged and opening one Candidate still makes
+  one detail request. Every visual row binds the matching stable ID, Candidate
+  score fingerprint, Entry Geometry fingerprint, and formal visual audit.
+- A real Dell `/tmp` dry-run produced a formally readable 1.10/2.7 candidate
+  and Plan 2.5 with zero Production writes. The 2,061,314-byte first-load
+  summary had zero byte growth; 32 lazy shards increased by 3,724,116 bytes in
+  total to a 671,118–1,432,204-byte range.
+- All 1,778 backend tests and all 100 frontend tests pass; the Production-mode
+  frontend build also passes. Nothing was published or deployed, and active
+  Production remains 1.9/2.6.
+
 ## 2026-08-30 — Bind Candidate visual context to real Dell history
 
 - Accepted ADR 0088 and implemented Candidate Visual Context 1.0 with exact

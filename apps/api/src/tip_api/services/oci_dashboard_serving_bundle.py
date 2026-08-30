@@ -22,7 +22,7 @@ from tip_api.services.private_dashboard_snapshot import (
 
 
 CONTRACT_VERSION = "oci-dashboard-serving-bundle/1.0"
-SUPPORTED_CONTRACTS = {("1.9", "2.6")}
+SUPPORTED_CONTRACTS = {("1.9", "2.6"), ("1.10", "2.7")}
 EXPECTED_TOP_LEVEL = {
     "checksums.sha256",
     "dashboard",
@@ -73,6 +73,7 @@ class OciDashboardDeploymentManifest(BaseModel):
     candidate_audit_logical_fingerprint: str
     candidate_strategy_logical_fingerprint: str
     candidate_strategy_audit_logical_fingerprint: str
+    candidate_visual_context_audit_logical_fingerprint: str | None = None
     current_session_date: str
     previous_session_date: str
     file_count: int = Field(ge=1)
@@ -91,13 +92,22 @@ class OciDashboardDeploymentManifest(BaseModel):
         "candidate_audit_logical_fingerprint",
         "candidate_strategy_logical_fingerprint",
         "candidate_strategy_audit_logical_fingerprint",
-        "bundle_logical_fingerprint",
     )
     @classmethod
     def fingerprints(cls, value: str) -> str:
         if len(value) != 64 or any(character not in "0123456789abcdef" for character in value):
             raise ValueError("bundle fingerprint must be lowercase SHA-256")
         return value
+
+    @field_validator("candidate_visual_context_audit_logical_fingerprint")
+    @classmethod
+    def optional_visual_fingerprint(cls, value: str | None) -> str | None:
+        return cls.fingerprints(value) if value is not None else None
+
+    @field_validator("bundle_logical_fingerprint")
+    @classmethod
+    def bundle_fingerprint(cls, value: str) -> str:
+        return cls.fingerprints(value)
 
     @field_validator("git_commit")
     @classmethod
@@ -129,6 +139,14 @@ class OciDashboardDeploymentManifest(BaseModel):
             or self.build_timestamp.utcoffset() is None
             or self.build_timestamp.utcoffset().total_seconds() != 0
             or self.build_timestamp.microsecond != 0
+            or (
+                self.snapshot_contract_version == "1.10"
+                and self.candidate_visual_context_audit_logical_fingerprint is None
+            )
+            or (
+                self.snapshot_contract_version == "1.9"
+                and self.candidate_visual_context_audit_logical_fingerprint is not None
+            )
         ):
             raise ValueError("serving bundle fixed boundary mismatch")
         suffix = self.release_id.rpartition("-")[2]
@@ -202,7 +220,7 @@ def read_oci_dashboard_serving_bundle(
             "serving bundle deployment manifest is invalid"
         ) from exc
     logical_payload = deployment.model_dump(
-        mode="json", exclude={"bundle_logical_fingerprint"}
+        mode="json", exclude={"bundle_logical_fingerprint"}, exclude_none=True
     )
     if _fingerprint(logical_payload) != deployment.bundle_logical_fingerprint:
         raise OciDashboardServingBundleError(
@@ -230,6 +248,10 @@ def read_oci_dashboard_serving_bundle(
         != deployment.candidate_strategy_logical_fingerprint
         or snapshot.candidate_strategy_audit_logical_fingerprint
         != deployment.candidate_strategy_audit_logical_fingerprint
+        or getattr(
+            snapshot, "candidate_visual_context_audit_logical_fingerprint", None
+        )
+        != deployment.candidate_visual_context_audit_logical_fingerprint
         or snapshot.current_session_date != deployment.current_session_date
         or snapshot.previous_session_date != deployment.previous_session_date
         or sha256_file(bundle / "private-data" / "v1" / "manifest.json")

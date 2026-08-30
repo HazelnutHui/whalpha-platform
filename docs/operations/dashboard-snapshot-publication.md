@@ -37,6 +37,16 @@ The Dell-local publication/bundle evidence and its explicit Production
 boundary are recorded in
 [Candidate Strategy Publication / Bundle Review](../audits/candidate-strategy-publication-bundle-review-2026-08-28.md).
 
+Repository source additionally supports Snapshot 1.10 / Dashboard 2.7 through
+Approval Plan 2.5. A dry-run must provide both the existing same-session
+Strategy audit and the exact Visual Context audit using
+`--candidate-visual-context-audit`. The builder formally rereads that `/tmp`
+audit once and embeds its records into detail-shard 1.1; the summary remains
+unchanged. Plan 2.5 freezes the visual audit manifest hash, logical fingerprint,
+batch fingerprints, and all shard hashes. Direct publication and OCI bundle
+validation support this pair, but the unattended daily control plane remains
+on Plan 2.4 until visual-audit generation is explicitly integrated and tested.
+
 ## Daily control-plane custody
 
 ADR 0070 adds only Snapshot Approval Plan preparation to the Dell daily

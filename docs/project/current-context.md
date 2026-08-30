@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-08-29 UTC
 
-Repository development context updated at: 2026-08-29 UTC
+Repository development context updated at: 2026-08-30 UTC
 
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
@@ -680,8 +680,13 @@ recorded in the active-state table and
   Candidate rows and left-censor-aware observed state age for 3,382; 159
   current unavailable/stale states remain empty. Its audit fingerprint is
   `3b8ddbf3cc7d35cf0ea2b8f257939d23cec6f1d463e0d16efce9b5fb1f23961f`.
-  It is not yet part of Snapshot or Production. The parameter-bound explanation
-  and URL continuity changes are now
+  ADR 0089 now binds that audit into repository-only detail-shard 1.1,
+  Snapshot 1.10 / Dashboard 2.7, and Approval Plan 2.5. The browser renders the
+  exact path and left-censor-aware observed age through the existing one-request
+  lazy detail flow. A real `/tmp` preview kept the 2,061,314-byte summary
+  unchanged and added 3,724,116 bytes across the 32 lazy shards. It is not
+  published or deployed; active Production remains 1.9/2.6. The parameter-
+  bound explanation and URL continuity changes are now
   deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`. ADR 0059 now records
   the user's exact 2026-08-26 stale-review
   acknowledgement and adds a separate versioned authorization without

@@ -50,6 +50,19 @@ export interface CandidateEntryGeometry {
     reference_support_value: string | null; reference_support_distance_pct: string | null;
     missing_reason_codes: string[] };
 }
+export interface CandidateVisualContext {
+  as_of_session: string; universe_id: string; instrument_id: string; ticker: string;
+  security_type: 'CS' | 'ADRC'; price_path_availability: 'available' | 'unavailable';
+  price_path: Array<{ session_date: string; close: string }>;
+  reference_levels: { current_close: string; sma_10: string; sma_20: string;
+    prior_five_session_close_high: string; prior_five_session_close_low: string;
+    reference_support_kind: 'sma20' | 'prior_five_session_close_low' | null;
+    reference_support_value: string | null } | null;
+  price_path_missing_reason_codes: string[]; state_age_availability: 'available' | 'unavailable';
+  observed_state_age: { final_stage: CandidateStage; first_observed_session: string;
+    observed_age_sessions: number; left_censored: boolean; current_state_fingerprint: string } | null;
+  state_age_missing_reason_codes: string[]; warnings: string[]; logical_fingerprint: string;
+}
 export interface CandidateListItem {
   instrument_id: string; ticker: string; security_type: 'CS' | 'ADRC'; base_score: string | null;
   confidence: CandidateConfidence; latest_price: string; median_dollar_volume_20: string | null;
@@ -77,6 +90,7 @@ export interface CandidateItem extends CandidateListItem {
       actual_value: string | null; threshold: string | null; boundary_operator: string | null;
       reason_codes: string[] }>; reason_codes: string[]; logical_fingerprint: string };
   entry_geometry: CandidateEntryGeometry;
+  visual_context?: CandidateVisualContext;
 }
 export interface CandidateRiskResult {
   risk_mode: CandidateRiskMode; eligible_count: number; rejected_count: number; display_cap: number;
@@ -99,6 +113,9 @@ export interface OpportunityCandidateResponse {
   publication_contract_version: 'opportunity-candidate-publication/1.0' | 'opportunity-candidate-publication/1.1';
   snapshot_contract_version: 'opportunity-candidate-snapshot/1.0' | 'opportunity-candidate-snapshot/1.1' | 'opportunity-candidate-summary-snapshot/1.0';
   publication_id: string; detail_files: string[]; strategy_available?: boolean;
+  candidate_detail_contract_version?: 'opportunity-candidate-detail-shard/1.0' | 'opportunity-candidate-detail-shard/1.1';
+  visual_context_contract_version?: 'candidate-visual-context/1.0';
+  visual_context_audit_logical_fingerprint?: string;
 }
 
 const MODES: CandidateRiskMode[] = ['conservative', 'balanced', 'aggressive'];
@@ -334,9 +351,9 @@ function parseEntryGeometry(value: unknown, item: Record<string, unknown>, unive
 export async function getOpportunityCandidates(universeId: string | undefined, signal?: AbortSignal): Promise<OpportunityCandidateResponse> {
   if (import.meta.env.VITE_MARKET_DATA_MODE !== 'snapshot') throw new Error('Candidate API is not enabled');
   const manifest = parseSnapshotManifest(await fetchJson<unknown>('/private-data/v1/manifest.json', signal));
-  if (!['1.6', '1.7', '1.8', '1.9'].includes(manifest.snapshot_contract_version)
-    || manifest.dashboard_contract_version !== ({ '1.6': '2.3', '1.7': '2.4', '1.8': '2.5', '1.9': '2.6' }[manifest.snapshot_contract_version])
-    || manifest.opportunity_candidates_file !== (['1.8', '1.9'].includes(manifest.snapshot_contract_version) ? 'opportunity-candidates-summary.json' : 'opportunity-candidates.json')) throw new Error('Candidate snapshot is unavailable');
+  if (!['1.6', '1.7', '1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)
+    || manifest.dashboard_contract_version !== ({ '1.6': '2.3', '1.7': '2.4', '1.8': '2.5', '1.9': '2.6', '1.10': '2.7' }[manifest.snapshot_contract_version])
+    || manifest.opportunity_candidates_file !== (['1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version) ? 'opportunity-candidates-summary.json' : 'opportunity-candidates.json')) throw new Error('Candidate snapshot is unavailable');
   const raw = await fetchJson<unknown>(`/private-data/v1/${manifest.opportunity_candidates_file}`, signal);
   const envelope = record(raw, 'snapshot');
   if (envelope.publication_id !== manifest.market_intelligence_publication_id
@@ -366,7 +383,7 @@ export async function getOpportunityCandidates(universeId: string | undefined, s
     || source.entry_geometry_parameter_fingerprint !== manifest.entry_geometry_parameter_fingerprint
     || source.entry_lane_consumer_parameter_fingerprint !== manifest.entry_lane_consumer_parameter_fingerprint
   )) throw new Error('Candidate Snapshot entry-geometry binding differs');
-  if (['1.8', '1.9'].includes(manifest.snapshot_contract_version)) {
+  if (['1.8', '1.9', '1.10'].includes(manifest.snapshot_contract_version)) {
     const detailFiles = manifest.candidate_detail_files ?? [];
     if (envelope.contract_version !== 'opportunity-candidate-summary-snapshot/1.0'
       || analytics.contract_version !== manifest.candidate_summary_contract_version
@@ -376,15 +393,24 @@ export async function getOpportunityCandidates(universeId: string | undefined, s
       || source.entry_geometry_audit_logical_fingerprint !== manifest.entry_geometry_audit_logical_fingerprint
       || source.entry_geometry_parameter_fingerprint !== manifest.entry_geometry_parameter_fingerprint
       || source.entry_lane_consumer_parameter_fingerprint !== manifest.entry_lane_consumer_parameter_fingerprint
-      || manifest.candidate_detail_contract_version !== 'opportunity-candidate-detail-shard/1.0'
+      || manifest.candidate_detail_contract_version !== (manifest.snapshot_contract_version === '1.10'
+        ? 'opportunity-candidate-detail-shard/1.1' : 'opportunity-candidate-detail-shard/1.0')
       || !Array.isArray(analytics.detail_shards)
       || analytics.detail_shards.length !== detailFiles.length
       || analytics.detail_shards.some((value) => !detailFiles.includes(String(record(value, 'detail descriptor').filename)))) {
       throw new Error('Candidate Snapshot split binding differs');
     }
+    if (manifest.snapshot_contract_version === '1.10' && (
+      manifest.candidate_visual_context_contract_version !== 'candidate-visual-context/1.0'
+      || typeof manifest.candidate_visual_context_audit_logical_fingerprint !== 'string'
+      || !SHA.test(manifest.candidate_visual_context_audit_logical_fingerprint)
+    )) throw new Error('Candidate visual-context Snapshot binding differs');
     return {
       ...parseOpportunityCandidateSummarySnapshot(raw, universeId),
-      strategy_available: manifest.snapshot_contract_version === '1.9',
+      strategy_available: ['1.9', '1.10'].includes(manifest.snapshot_contract_version),
+      candidate_detail_contract_version: manifest.candidate_detail_contract_version as OpportunityCandidateResponse['candidate_detail_contract_version'],
+      visual_context_contract_version: manifest.candidate_visual_context_contract_version as OpportunityCandidateResponse['visual_context_contract_version'],
+      visual_context_audit_logical_fingerprint: manifest.candidate_visual_context_audit_logical_fingerprint ?? undefined,
     };
   }
   return { ...parseOpportunityCandidateSnapshot(raw, universeId), strategy_available: false };
@@ -422,7 +448,8 @@ export function parseOpportunityCandidateDetailShard(
   item: CandidateListItem,
 ): CandidateItem {
   const shard = record(value, 'Candidate detail shard');
-  if (shard.schema_version !== '1.0' || shard.contract_version !== 'opportunity-candidate-detail-shard/1.0'
+  const expectedContract = response.candidate_detail_contract_version ?? 'opportunity-candidate-detail-shard/1.0';
+  if (shard.schema_version !== '1.0' || shard.contract_version !== expectedContract
     || shard.publication_id !== response.publication_id
     || shard.candidate_analytics_logical_fingerprint !== response.logical_fingerprint
     || shard.universe_id !== response.selected_universe_id
@@ -437,5 +464,73 @@ export function parseOpportunityCandidateDetailShard(
   if (detail.ticker !== item.ticker || detail.security_type !== item.security_type
     || detail.base_score !== item.base_score || detail.score_logical_fingerprint !== item.score_logical_fingerprint
     || detail.entry_geometry.logical_fingerprint !== item.entry_geometry_logical_fingerprint) throw new Error('Candidate summary and detail differ');
+  if (expectedContract === 'opportunity-candidate-detail-shard/1.1') {
+    if (shard.visual_context_contract_version !== response.visual_context_contract_version
+      || shard.visual_context_audit_logical_fingerprint !== response.visual_context_audit_logical_fingerprint
+      || !Array.isArray(shard.visual_contexts) || shard.visual_contexts.length !== shard.item_count) {
+      throw new Error('Candidate visual-context shard binding differs');
+    }
+    const visual = shard.visual_contexts.find((candidate) => record(candidate, 'visual Candidate').instrument_id === item.instrument_id);
+    if (!visual) throw new Error('Candidate visual context is unavailable');
+    detail.visual_context = parseCandidateVisualContext(visual, detail, response);
+  }
   return detail;
+}
+
+function parseCandidateVisualContext(
+  value: unknown,
+  detail: CandidateItem,
+  response: OpportunityCandidateResponse,
+): CandidateVisualContext {
+  const visual = record(value, 'Candidate visual context');
+  if (visual.schema_version !== '1.0' || visual.contract_version !== 'candidate-visual-context/1.0'
+    || visual.calculation_version !== 'candidate-visual-context-v1.0.0'
+    || visual.as_of_session !== response.as_of_session || visual.universe_id !== response.selected_universe_id
+    || visual.instrument_id !== detail.instrument_id || visual.ticker !== detail.ticker
+    || visual.security_type !== detail.security_type
+    || visual.source_candidate_fingerprint !== detail.score_logical_fingerprint
+    || visual.source_entry_geometry_fingerprint !== detail.entry_geometry.logical_fingerprint) {
+    throw new Error('Candidate visual-context source binding differs');
+  }
+  digest(visual.logical_fingerprint, 'visual context');
+  const path = Array.isArray(visual.price_path) ? visual.price_path.map((value) => {
+    const point = record(value, 'visual price point'); decimal(point.close, 'visual close');
+    if (typeof point.session_date !== 'string' || Number(point.close) <= 0) throw new Error('Candidate visual price point differs');
+    return { session_date: point.session_date, close: String(point.close) };
+  }) : [];
+  const priceAvailable = visual.price_path_availability === 'available';
+  const missingPrice = strings(visual.price_path_missing_reason_codes, 'visual price missing reasons');
+  let levels: CandidateVisualContext['reference_levels'] = null;
+  if (visual.reference_levels !== null) {
+    const source = record(visual.reference_levels, 'visual reference levels');
+    ['current_close', 'sma_10', 'sma_20', 'prior_five_session_close_high', 'prior_five_session_close_low'].forEach((key) => decimal(source[key], `visual ${key}`));
+    decimal(source.reference_support_value, 'visual support', true);
+    if (![null, 'sma20', 'prior_five_session_close_low'].includes(source.reference_support_kind as never)) throw new Error('Candidate visual support kind differs');
+    levels = source as unknown as CandidateVisualContext['reference_levels'];
+  }
+  if (priceAvailable ? (path.length !== 20 || levels === null || missingPrice.length > 0
+    || path[path.length - 1]?.session_date !== response.as_of_session
+    || path[path.length - 1]?.close !== levels.current_close
+    || path.some((point, index) => index > 0 && point.session_date <= path[index - 1].session_date))
+    : (path.length > 0 || levels !== null || missingPrice.length === 0)) throw new Error('Candidate visual price path is incomplete');
+  const ageAvailable = visual.state_age_availability === 'available';
+  const missingAge = strings(visual.state_age_missing_reason_codes, 'visual age missing reasons');
+  let age: CandidateVisualContext['observed_state_age'] = null;
+  if (visual.observed_state_age !== null) {
+    const source = record(visual.observed_state_age, 'observed state age');
+    if (!STAGES.has(String(source.final_stage)) || typeof source.first_observed_session !== 'string'
+      || typeof source.left_censored !== 'boolean') throw new Error('Candidate observed state age differs');
+    number(source.observed_age_sessions, 'observed state age'); digest(source.current_state_fingerprint, 'observed state');
+    age = source as unknown as CandidateVisualContext['observed_state_age'];
+  }
+  if (ageAvailable ? (age === null || missingAge.length > 0 || age.final_stage !== detail.state.final_stage
+    || age.current_state_fingerprint !== detail.state.logical_fingerprint)
+    : (age !== null || missingAge.length === 0)) throw new Error('Candidate observed state age is incomplete');
+  return { as_of_session: String(visual.as_of_session), universe_id: String(visual.universe_id),
+    instrument_id: String(visual.instrument_id), ticker: String(visual.ticker), security_type: visual.security_type as 'CS' | 'ADRC',
+    price_path_availability: visual.price_path_availability as 'available' | 'unavailable', price_path: path,
+    reference_levels: levels, price_path_missing_reason_codes: missingPrice,
+    state_age_availability: visual.state_age_availability as 'available' | 'unavailable', observed_state_age: age,
+    state_age_missing_reason_codes: missingAge, warnings: strings(visual.warnings, 'visual warnings'),
+    logical_fingerprint: String(visual.logical_fingerprint) };
 }

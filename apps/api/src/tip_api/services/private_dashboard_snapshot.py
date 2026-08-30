@@ -26,9 +26,11 @@ from tip_api.contracts.analytics.v1.review_deployment import review_acknowledgem
 from tip_api.contracts.analytics.v1.opportunity_candidate_snapshot import (
     DETAIL_FILE_RE,
     DETAIL_SHARD_CONTRACT_VERSION,
+    DETAIL_SHARD_CONTRACT_VERSION_V1_1,
     SUMMARY_ANALYTICS_CONTRACT_VERSION,
     SUMMARY_SNAPSHOT_CONTRACT_VERSION,
     OpportunityCandidateDetailShardV1,
+    OpportunityCandidateDetailShardV1_1,
     OpportunityCandidateSummarySnapshotV1,
 )
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
@@ -45,6 +47,10 @@ from tip_api.services.opportunity_candidate_snapshot_split import (
 )
 from tip_api.services.candidate_strategy_channel_product import (
     build_candidate_strategy_channel_product,
+)
+from tip_api.services.candidate_visual_context_audit import (
+    VISUAL_CONTEXT_AUDIT_MANIFEST,
+    read_candidate_visual_context_batches,
 )
 
 SNAPSHOT_CONTRACT_VERSION = "1.8"
@@ -68,7 +74,7 @@ class DashboardSnapshotError(RuntimeError):
 class DashboardSnapshotManifest(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    snapshot_contract_version: str = Field(pattern=r"^1(?:\.[123456789])?$")
+    snapshot_contract_version: str = Field(pattern=r"^1(?:\.(?:[1-9]|10))?$")
     release_id: str
     generated_at: str
     current_session_date: str
@@ -131,6 +137,10 @@ class DashboardSnapshotManifest(BaseModel):
     candidate_strategy_audit_logical_fingerprint: str | None = None
     candidate_strategy_parameter_fingerprint: str | None = None
     candidate_strategy_logical_fingerprint: str | None = None
+    candidate_visual_context_contract_version: str | None = None
+    candidate_visual_context_audit_manifest_sha256: str | None = None
+    candidate_visual_context_audit_logical_fingerprint: str | None = None
+    candidate_visual_context_batch_fingerprints: tuple[str, ...] = ()
     review_mode: bool = False
     review_contract_version: str | None = None
     review_approved_as_of_session: str | None = None
@@ -146,6 +156,30 @@ class DashboardSnapshotManifest(BaseModel):
     def release_id_is_safe(cls, value: str) -> str:
         validate_release_id(value)
         return value
+
+    @field_validator(
+        "candidate_visual_context_audit_manifest_sha256",
+        "candidate_visual_context_audit_logical_fingerprint",
+    )
+    @classmethod
+    def optional_visual_digests(cls, value: str | None) -> str | None:
+        if value is not None and (
+            len(value) != 64
+            or any(character not in "0123456789abcdef" for character in value)
+        ):
+            raise ValueError("Candidate visual-context fingerprint must be SHA-256")
+        return value
+
+    @field_validator("candidate_visual_context_batch_fingerprints")
+    @classmethod
+    def visual_batch_digests(cls, values: tuple[str, ...]) -> tuple[str, ...]:
+        if any(
+            len(value) != 64
+            or any(character not in "0123456789abcdef" for character in value)
+            for value in values
+        ):
+            raise ValueError("Candidate visual-context batch fingerprint must be SHA-256")
+        return values
 
     @model_validator(mode="after")
     def freshness_contract_is_complete(self) -> DashboardSnapshotManifest:
@@ -163,17 +197,17 @@ class DashboardSnapshotManifest(BaseModel):
             raise ValueError("snapshot freshness fields are required for contract 1.1")
         if self.snapshot_contract_version == "1.2" and self.classification_as_of_date is None:
             raise ValueError("snapshot governance fields are required for contract 1.2")
-        if self.snapshot_contract_version in {"1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9"} and (
+        if self.snapshot_contract_version in {"1.3", "1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10"} and (
             self.classification_as_of_date is None or self.selected_universe_id is None or
             len(self.available_universe_ids) != 2 or self.activation_fingerprint is None or
             self.membership_evidence_as_of is None
         ):
             raise ValueError("snapshot activation fields are required for contract 1.3+")
-        if self.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"} and (
+        if self.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10"} and (
             self.funnel_stage_count != 20 or self.funnel_source_fingerprint is None
         ):
             raise ValueError("snapshot Funnel fields are required for contract 1.4")
-        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9"} and any(
+        if self.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9", "1.10"} and any(
             value is None
             for value in (
                 self.market_intelligence_file,
@@ -194,12 +228,13 @@ class DashboardSnapshotManifest(BaseModel):
             self.candidate_primary_display_count,
             self.candidate_secondary_display_count,
         )
-        if self.snapshot_contract_version in {"1.6", "1.7", "1.8", "1.9"}:
+        if self.snapshot_contract_version in {"1.6", "1.7", "1.8", "1.9", "1.10"}:
             expected_dashboard = {
                 "1.6": "2.3",
                 "1.7": "2.4",
                 "1.8": "2.5",
                 "1.9": "2.6",
+                "1.10": "2.7",
             }[self.snapshot_contract_version]
             if self.dashboard_contract_version != expected_dashboard or any(
                 value is None for value in candidate_values
@@ -216,7 +251,7 @@ class DashboardSnapshotManifest(BaseModel):
             self.entry_geometry_parameter_fingerprint,
             self.entry_lane_consumer_parameter_fingerprint,
         )
-        if self.snapshot_contract_version in {"1.7", "1.8", "1.9"}:
+        if self.snapshot_contract_version in {"1.7", "1.8", "1.9", "1.10"}:
             if (
                 any(value is None for value in entry_values)
                 or self.candidate_publication_contract_version
@@ -231,13 +266,17 @@ class DashboardSnapshotManifest(BaseModel):
             self.candidate_summary_logical_fingerprint,
             self.candidate_detail_contract_version,
         )
-        if self.snapshot_contract_version in {"1.8", "1.9"}:
+        if self.snapshot_contract_version in {"1.8", "1.9", "1.10"}:
             if (
                 self.opportunity_candidates_file != OPPORTUNITY_CANDIDATE_SUMMARY_FILE
                 or self.candidate_summary_contract_version
                 != SUMMARY_ANALYTICS_CONTRACT_VERSION
                 or self.candidate_detail_contract_version
-                != DETAIL_SHARD_CONTRACT_VERSION
+                != (
+                    DETAIL_SHARD_CONTRACT_VERSION_V1_1
+                    if self.snapshot_contract_version == "1.10"
+                    else DETAIL_SHARD_CONTRACT_VERSION
+                )
                 or self.candidate_summary_logical_fingerprint is None
                 or not self.candidate_detail_files
                 or tuple(self.candidate_detail_files)
@@ -259,7 +298,7 @@ class DashboardSnapshotManifest(BaseModel):
             self.candidate_strategy_parameter_fingerprint,
             self.candidate_strategy_logical_fingerprint,
         )
-        if self.snapshot_contract_version == "1.9":
+        if self.snapshot_contract_version in {"1.9", "1.10"}:
             if (
                 any(value is None for value in strategy_values)
                 or self.candidate_strategy_file != CANDIDATE_STRATEGY_CHANNELS_FILE
@@ -272,6 +311,25 @@ class DashboardSnapshotManifest(BaseModel):
         elif any(value is not None for value in strategy_values):
             raise ValueError(
                 "Snapshot before 1.9 cannot carry strategy-channel bindings"
+            )
+        visual_values = (
+            self.candidate_visual_context_contract_version,
+            self.candidate_visual_context_audit_manifest_sha256,
+            self.candidate_visual_context_audit_logical_fingerprint,
+        )
+        if self.snapshot_contract_version == "1.10":
+            if (
+                any(value is None for value in visual_values)
+                or self.candidate_visual_context_contract_version
+                != "candidate-visual-context/1.0"
+                or len(self.candidate_visual_context_batch_fingerprints) != 2
+            ):
+                raise ValueError(
+                    "Snapshot 1.10 requires complete Candidate visual-context bindings"
+                )
+        elif any(value is not None for value in visual_values) or self.candidate_visual_context_batch_fingerprints:
+            raise ValueError(
+                "Snapshot before 1.10 cannot carry Candidate visual-context bindings"
             )
         review_values = (
             self.review_contract_version,
@@ -330,6 +388,7 @@ def build_private_dashboard_snapshot(
     dashboard_activation: ActiveDashboardUniverseActivation | None = None,
     market_intelligence: CompletedMarketIntelligence | None = None,
     candidate_strategy_audit_path: Path | None = None,
+    candidate_visual_context_audit_path: Path | None = None,
 ) -> DashboardSnapshotResult:
     safe_data_root = _validate_existing_root(data_root, label="data_root")
     safe_output_root = _validate_output_root(output_root, allowed_output_root=allowed_output_root)
@@ -406,8 +465,20 @@ def build_private_dashboard_snapshot(
         market_payload: Mapping[str, Any] | None = None
         candidate_payload: Mapping[str, Any] | None = None
         candidate_summary: OpportunityCandidateSummarySnapshotV1 | None = None
-        candidate_detail_shards: tuple[OpportunityCandidateDetailShardV1, ...] = ()
+        candidate_detail_shards: tuple[
+            OpportunityCandidateDetailShardV1 | OpportunityCandidateDetailShardV1_1, ...
+        ] = ()
         candidate_strategy: CandidateStrategyChannelProductV1 | None = None
+        visual_manifest: dict[str, Any] | None = None
+        visual_batches = None
+        if candidate_visual_context_audit_path is not None:
+            if candidate_strategy_audit_path is None:
+                raise DashboardSnapshotError(
+                    "visual-context Snapshot requires strategy-channel binding"
+                )
+            visual_manifest, visual_batches = read_candidate_visual_context_batches(
+                candidate_visual_context_audit_path
+            )
         if candidate_strategy_audit_path is not None and not isinstance(
             candidate_mi_payload, MarketIntelligencePayloadV1_2
         ):
@@ -470,6 +541,12 @@ def build_private_dashboard_snapshot(
                         payload_logical_fingerprint=(
                             market_intelligence.payload.logical_fingerprint
                         ),
+                        visual_context_batches=visual_batches,
+                        visual_context_audit_logical_fingerprint=(
+                            visual_manifest["logical_content_fingerprint"]
+                            if visual_manifest is not None
+                            else None
+                        ),
                     )
                     candidate_payload = candidate_summary.model_dump(mode="json")
                     payloads[OPPORTUNITY_CANDIDATE_SUMMARY_FILE] = candidate_summary
@@ -512,7 +589,9 @@ def build_private_dashboard_snapshot(
 
         funnel_stage_count = sum(len(item.funnel) for item in overview.universes)
         snapshot_contract_version = (
-            "1.9"
+            "1.10"
+            if visual_manifest is not None
+            else "1.9"
             if candidate_strategy is not None
             else SNAPSHOT_CONTRACT_VERSION
             if funnel_stage_count == 20
@@ -552,7 +631,9 @@ def build_private_dashboard_snapshot(
             warning_count=summary.quality_warning_count,
             default_universe_id=overview.default_universe_id,
             dashboard_contract_version=(
-                "2.6"
+                "2.7"
+                if snapshot_contract_version == "1.10"
+                else "2.6"
                 if snapshot_contract_version == "1.9"
                 else "2.5"
                 if snapshot_contract_version == "1.8"
@@ -573,12 +654,12 @@ def build_private_dashboard_snapshot(
             membership_evidence_as_of=overview.classification_as_of_date.isoformat(),
             funnel_stage_count=(
                 funnel_stage_count
-                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"}
+                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10"}
                 else None
             ),
             funnel_source_fingerprint=(
                 next(item.funnel[0].source_fingerprint for item in overview.universes if item.funnel)
-                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"} else None
+                if snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10"} else None
             ),
             market_intelligence_file=(
                 MARKET_INTELLIGENCE_FILE if market_intelligence is not None else None
@@ -681,7 +762,9 @@ def build_private_dashboard_snapshot(
                 else None
             ),
             candidate_detail_contract_version=(
-                DETAIL_SHARD_CONTRACT_VERSION if candidate_detail_shards else None
+                candidate_detail_shards[0].contract_version
+                if candidate_detail_shards
+                else None
             ),
             candidate_detail_files=tuple(
                 sorted(
@@ -718,6 +801,29 @@ def build_private_dashboard_snapshot(
                 candidate_strategy.logical_fingerprint
                 if candidate_strategy is not None
                 else None
+            ),
+            candidate_visual_context_contract_version=(
+                visual_manifest["contract_version"]
+                if visual_manifest is not None
+                else None
+            ),
+            candidate_visual_context_audit_manifest_sha256=(
+                sha256_file(
+                    candidate_visual_context_audit_path
+                    / VISUAL_CONTEXT_AUDIT_MANIFEST
+                )
+                if candidate_visual_context_audit_path is not None
+                else None
+            ),
+            candidate_visual_context_audit_logical_fingerprint=(
+                visual_manifest["logical_content_fingerprint"]
+                if visual_manifest is not None
+                else None
+            ),
+            candidate_visual_context_batch_fingerprints=(
+                tuple(visual_manifest["batch_fingerprints"])
+                if visual_manifest is not None
+                else ()
             ),
             review_mode=review is not None,
             review_contract_version=(review.contract_version if review is not None else None),
@@ -793,7 +899,10 @@ def _validate_json_file(path: Path, filename: str) -> None:
         elif filename == CANDIDATE_STRATEGY_CHANNELS_FILE:
             CandidateStrategyChannelProductV1.model_validate(decoded)
         elif DETAIL_FILE_RE.fullmatch(filename):
-            OpportunityCandidateDetailShardV1.model_validate(decoded)
+            if decoded.get("contract_version") == DETAIL_SHARD_CONTRACT_VERSION_V1_1:
+                OpportunityCandidateDetailShardV1_1.model_validate(decoded)
+            else:
+                OpportunityCandidateDetailShardV1.model_validate(decoded)
         else:
             raise DashboardSnapshotError(f"unexpected snapshot file {filename}")
     except DashboardSnapshotError:
@@ -813,9 +922,9 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
         *( {MARKET_INTELLIGENCE_FILE} if manifest.snapshot_contract_version in {"1.5", "1.6", "1.7"} else set() ),
         *( {OPPORTUNITY_CANDIDATES_FILE} if manifest.snapshot_contract_version in {"1.6", "1.7"} else set() ),
         *( {MARKET_INTELLIGENCE_FILE, OPPORTUNITY_CANDIDATE_SUMMARY_FILE, *manifest.candidate_detail_files}
-            if manifest.snapshot_contract_version in {"1.8", "1.9"} else set() ),
+            if manifest.snapshot_contract_version in {"1.8", "1.9", "1.10"} else set() ),
         *( {CANDIDATE_STRATEGY_CHANNELS_FILE}
-            if manifest.snapshot_contract_version == "1.9" else set() ),
+            if manifest.snapshot_contract_version in {"1.9", "1.10"} else set() ),
     }
     actual_files = {item.name for item in private_dir.iterdir()}
     if actual_files != expected_files:
@@ -832,16 +941,17 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             raise DashboardSnapshotError("snapshot file checksum mismatch")
     if manifest.access_classification != "private" or manifest.contains_credentials or manifest.contains_raw_provider_data:
         raise DashboardSnapshotError("snapshot manifest violates access boundary")
-    if manifest.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9"}:
+    if manifest.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10"}:
         overview = DashboardOverviewResponse.model_validate_json((private_dir / manifest.overview_file).read_text(encoding="utf-8"))
         if overview.contract_version != "2.1" or sum(len(item.funnel) for item in overview.universes) != 20:
             raise DashboardSnapshotError("snapshot formal Funnel contract mismatch")
         fingerprints = {stage.source_fingerprint for item in overview.universes for stage in item.funnel}
         if fingerprints != {manifest.funnel_source_fingerprint}:
             raise DashboardSnapshotError("snapshot Funnel source fingerprint mismatch")
-    if manifest.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9"}:
+    if manifest.snapshot_contract_version in {"1.5", "1.6", "1.7", "1.8", "1.9", "1.10"}:
         expected_dashboard = (
-            "2.6" if manifest.snapshot_contract_version == "1.9"
+            "2.7" if manifest.snapshot_contract_version == "1.10"
+            else "2.6" if manifest.snapshot_contract_version == "1.9"
             else "2.5" if manifest.snapshot_contract_version == "1.8"
             else "2.4" if manifest.snapshot_contract_version == "1.7"
             else "2.3" if manifest.snapshot_contract_version == "1.6"
@@ -931,7 +1041,7 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             != manifest.entry_lane_consumer_parameter_fingerprint
         ):
             raise DashboardSnapshotError("snapshot entry-geometry reference mismatch")
-    if manifest.snapshot_contract_version in {"1.8", "1.9"}:
+    if manifest.snapshot_contract_version in {"1.8", "1.9", "1.10"}:
         summary_path = private_dir / OPPORTUNITY_CANDIDATE_SUMMARY_FILE
         if summary_path.is_symlink() or not summary_path.is_file():
             raise DashboardSnapshotError("snapshot Candidate summary file is missing")
@@ -943,7 +1053,9 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
         summary = OpportunityCandidateSummarySnapshotV1.model_validate_json(
             summary_path.read_text(encoding="utf-8")
         )
-        shards: list[OpportunityCandidateDetailShardV1] = []
+        shards: list[
+            OpportunityCandidateDetailShardV1 | OpportunityCandidateDetailShardV1_1
+        ] = []
         for filename in manifest.candidate_detail_files:
             path = private_dir / filename
             if path.is_symlink() or not path.is_file():
@@ -951,11 +1063,12 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             _validate_json_file(path, filename)
             if sha256_file(path) != manifest.file_sha256.get(filename):
                 raise DashboardSnapshotError("snapshot Candidate detail checksum mismatch")
-            shards.append(
-                OpportunityCandidateDetailShardV1.model_validate_json(
-                    path.read_text(encoding="utf-8")
-                )
+            shard_type = (
+                OpportunityCandidateDetailShardV1_1
+                if manifest.snapshot_contract_version == "1.10"
+                else OpportunityCandidateDetailShardV1
             )
+            shards.append(shard_type.model_validate_json(path.read_text(encoding="utf-8")))
         analytics = reconstruct_full_candidate_publication(summary, tuple(shards))
         if (
             summary.publication_id != manifest.market_intelligence_publication_id
@@ -990,7 +1103,18 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             != manifest.candidate_secondary_display_count
         ):
             raise DashboardSnapshotError("snapshot split Candidate binding differs")
-    if manifest.snapshot_contract_version == "1.9":
+        if manifest.snapshot_contract_version == "1.10" and any(
+            not isinstance(shard, OpportunityCandidateDetailShardV1_1)
+            or shard.visual_context_contract_version
+            != manifest.candidate_visual_context_contract_version
+            or shard.visual_context_audit_logical_fingerprint
+            != manifest.candidate_visual_context_audit_logical_fingerprint
+            for shard in shards
+        ):
+            raise DashboardSnapshotError(
+                "snapshot Candidate visual-context binding differs"
+            )
+    if manifest.snapshot_contract_version in {"1.9", "1.10"}:
         strategy_path = private_dir / CANDIDATE_STRATEGY_CHANNELS_FILE
         if strategy_path.is_symlink() or not strategy_path.is_file():
             raise DashboardSnapshotError(

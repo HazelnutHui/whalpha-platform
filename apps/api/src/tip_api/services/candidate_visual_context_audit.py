@@ -314,6 +314,30 @@ def read_candidate_visual_context_audit(output_dir: Path) -> dict[str, Any]:
     return manifest
 
 
+def read_candidate_visual_context_batches(
+    output_dir: Path,
+) -> tuple[dict[str, Any], tuple[CandidateVisualContextBatchV1, ...]]:
+    """Formally reread the audit and return its two typed current batches."""
+
+    manifest = read_candidate_visual_context_audit(output_dir)
+    target = _safe_completed_directory(output_dir)
+    payload = _read_canonical_json(target / "visual-context-batches.json")
+    batches = tuple(
+        CandidateVisualContextBatchV1.model_validate(item)
+        for item in payload.get("records", ())
+    )
+    if (
+        tuple(batch.universe_id for batch in batches)
+        != tuple(manifest.get("universe_ids", ()))
+        or [batch.logical_fingerprint for batch in batches]
+        != manifest.get("batch_fingerprints")
+    ):
+        raise CandidateVisualContextAuditError(
+            "visual-context batch projection differs from formal audit"
+        )
+    return manifest, batches
+
+
 def validate_visual_context_tmp_output_dir(output_dir: Path) -> Path:
     if not output_dir.is_absolute() or output_dir.parent != Path("/tmp") or output_dir.name in {"", ".", ".."}:
         raise CandidateVisualContextAuditError(

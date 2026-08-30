@@ -166,8 +166,8 @@ root=Path(sys.argv[1])
 manifest=json.loads((root/'private-data/v1/manifest.json').read_text())
 source_snapshot=Path(sys.argv[7])
 contract=(manifest.get('snapshot_contract_version'), manifest.get('dashboard_contract_version'))
-if contract not in {('1.5','2.2'),('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6')}:
-  raise SystemExit('OCI bundle requires a supported Snapshot 1.5-1.9 / Dashboard 2.2-2.6 pair')
+if contract not in {('1.5','2.2'),('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6'),('1.10','2.7')}:
+  raise SystemExit('OCI bundle requires a supported Snapshot 1.5-1.10 / Dashboard 2.2-2.7 pair')
 if manifest.get('market_intelligence_publication_id') != sys.argv[6]:
   raise SystemExit('snapshot Market Intelligence publication differs from explicit OCI binding')
 analytics_path=root/'private-data/v1/market-regime-overviews.json'
@@ -182,8 +182,8 @@ candidate_fingerprint=None
 candidate_audit_fingerprint=None
 strategy_fingerprint=None
 strategy_audit_fingerprint=None
-split_candidate=contract in {('1.8','2.5'),('1.9','2.6')}
-if contract in {('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6')}:
+split_candidate=contract in {('1.8','2.5'),('1.9','2.6'),('1.10','2.7')}
+if contract in {('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6'),('1.10','2.7')}:
   candidate_path=root/'private-data/v1'/('opportunity-candidates-summary.json' if split_candidate else 'opportunity-candidates.json')
   if not candidate_path.is_file():
     raise SystemExit('Candidate payload is missing')
@@ -206,7 +206,7 @@ if contract in {('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6')}:
       or candidate_analytics.get('underlying_stock_result_not_option_return') is not True
       or candidate_analytics.get('price_volume_not_fund_flow') is not True):
     raise SystemExit('Candidate binding is invalid')
-  if contract in {('1.7','2.4'),('1.8','2.5'),('1.9','2.6')} and (
+  if contract in {('1.7','2.4'),('1.8','2.5'),('1.9','2.6'),('1.10','2.7')} and (
       candidate.get('contract_version') != ('opportunity-candidate-summary-snapshot/1.0' if split_candidate else 'opportunity-candidate-snapshot/1.1')
       or candidate_analytics.get('contract_version') != ('opportunity-candidate-summary/1.0' if split_candidate else 'opportunity-candidate-publication/1.1')
       or candidate_analytics.get('leadership_rank_preserved') is not True
@@ -220,14 +220,14 @@ if contract in {('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6')}:
     descriptors=candidate_analytics.get('detail_shards',[])
     if (manifest.get('candidate_summary_logical_fingerprint') != candidate_analytics.get('logical_fingerprint')
         or manifest.get('candidate_summary_contract_version') != 'opportunity-candidate-summary/1.0'
-        or manifest.get('candidate_detail_contract_version') != 'opportunity-candidate-detail-shard/1.0'
+        or manifest.get('candidate_detail_contract_version') != ('opportunity-candidate-detail-shard/1.1' if contract == ('1.10','2.7') else 'opportunity-candidate-detail-shard/1.0')
         or not detail_files or sorted(detail_files) != detail_files
         or sorted(item.get('filename') for item in descriptors) != detail_files
         or any(not (root/'private-data/v1'/name).is_file() for name in detail_files)):
       raise SystemExit('Snapshot 1.8+ split Candidate binding is invalid')
     for descriptor in descriptors:
       detail=json.loads((root/'private-data/v1'/descriptor['filename']).read_text())
-      if (detail.get('contract_version') != 'opportunity-candidate-detail-shard/1.0'
+      if (detail.get('contract_version') != ('opportunity-candidate-detail-shard/1.1' if contract == ('1.10','2.7') else 'opportunity-candidate-detail-shard/1.0')
           or detail.get('publication_id') != sys.argv[6]
           or detail.get('candidate_analytics_logical_fingerprint') != candidate_fingerprint
           or detail.get('shard_id') != descriptor.get('shard_id')
@@ -237,7 +237,18 @@ if contract in {('1.6','2.3'),('1.7','2.4'),('1.8','2.5'),('1.9','2.6')}:
           or detail.get('logical_fingerprint') != descriptor.get('logical_fingerprint')
           or len(detail.get('candidates',[])) != descriptor.get('item_count')):
         raise SystemExit('Snapshot 1.8+ Candidate detail binding is invalid')
-if contract == ('1.9','2.6'):
+      if contract == ('1.10','2.7'):
+        visuals=detail.get('visual_contexts',[])
+        candidates=detail.get('candidates',[])
+        if (detail.get('visual_context_contract_version') != 'candidate-visual-context/1.0'
+            or detail.get('visual_context_audit_logical_fingerprint') != manifest.get('candidate_visual_context_audit_logical_fingerprint')
+            or len(visuals) != len(candidates)
+            or [item.get('instrument_id') for item in visuals] != [item.get('instrument_id') for item in candidates]
+            or any(visual.get('source_candidate_fingerprint') != candidate.get('score_logical_fingerprint')
+                   or visual.get('source_entry_geometry_fingerprint') != candidate.get('entry_geometry',{}).get('logical_fingerprint')
+                   for visual,candidate in zip(visuals,candidates,strict=True))):
+          raise SystemExit('Snapshot 1.10 Candidate visual-context detail binding is invalid')
+if contract in {('1.9','2.6'),('1.10','2.7')}:
   strategy_file=manifest.get('candidate_strategy_file')
   strategy_path=root/'private-data/v1'/str(strategy_file)
   if strategy_file != 'candidate-strategy-channels.json' or not strategy_path.is_file():
@@ -317,6 +328,15 @@ if contract == ('1.9','2.6'):
             or item.get('market_fit_separate_from_channel_score') is not True
             or item.get('first_rejection_is_risk_not_status_reason') is not True):
           raise SystemExit('Snapshot 1.9 strategy-channel rank or decision boundary is invalid')
+if contract == ('1.10','2.7'):
+  visual_fingerprints=manifest.get('candidate_visual_context_batch_fingerprints',[])
+  if (manifest.get('candidate_visual_context_contract_version') != 'candidate-visual-context/1.0'
+      or not isinstance(visual_fingerprints,list) or len(visual_fingerprints) != 2
+      or any(not isinstance(value,str) or len(value) != 64 for value in [
+        manifest.get('candidate_visual_context_audit_manifest_sha256'),
+        manifest.get('candidate_visual_context_audit_logical_fingerprint'),
+        *visual_fingerprints])):
+    raise SystemExit('Snapshot 1.10 Candidate visual-context manifest binding is invalid')
 source_files=[]
 for path in sorted(source_snapshot.rglob('*')):
   if path.is_symlink():
@@ -346,6 +366,7 @@ payload={
   'candidate_audit_logical_fingerprint': candidate_audit_fingerprint,
   'candidate_strategy_logical_fingerprint': strategy_fingerprint,
   'candidate_strategy_audit_logical_fingerprint': strategy_audit_fingerprint,
+  'candidate_visual_context_audit_logical_fingerprint': manifest.get('candidate_visual_context_audit_logical_fingerprint'),
   'current_session_date': manifest['current_session_date'],
   'previous_session_date': manifest['previous_session_date'],
   'file_count': int(sys.argv[5]),

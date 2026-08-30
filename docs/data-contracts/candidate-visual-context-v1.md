@@ -4,8 +4,9 @@
 
 `candidate-visual-context/1.0` is implemented as an offline, shadow-only Dell
 contract, calculator, independent validator, formal `/tmp` audit, and
-network-prohibited CLI. It is not yet part of Market Intelligence, Snapshot,
-the public bundle, or Production.
+network-prohibited CLI. Repository source can project it into Snapshot 1.10
+lazy Candidate detail shards. It is not part of Market Intelligence and is not
+active in Production.
 
 It supplies visual evidence for a Candidate detail view. It changes no score,
 rank, risk eligibility, Candidate state, Entry Geometry result, or strategy
@@ -73,3 +74,13 @@ All files are canonical JSON, hash/fingerprint bound, owner-read-only, and
 inside one owner-controlled direct child of `/tmp`. Formal reread requires zero
 Oracle mismatch, input-permutation equivalence, no production-calculator import
 by the Oracle, zero external requests, and zero Production writes.
+
+## Lazy product projection
+
+`opportunity-candidate-detail-shard/1.1` adds an ordered `visual_contexts`
+collection beside the matching Candidate rows. Stable IDs must be identical and
+ordered, and every visual record must bind that row's score and Entry Geometry
+fingerprints. Snapshot 1.10 / Dashboard 2.7 freezes the visual audit manifest
+hash, logical fingerprint, two batch fingerprints, and all 32 shard hashes.
+The Candidate summary contract remains unchanged, so the browser downloads
+visual history only when a detail shard is opened.

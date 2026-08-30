@@ -169,10 +169,11 @@ Repository source adds Snapshot 1.8 / Dashboard 2.5 as a consumer-only
 Candidate delivery optimization: a compact list projection and stable-ID
 detail shards formally reconstruct the unchanged Candidate publication 1.1.
 Snapshot 1.9 / Dashboard 2.6 adds one lazy, source-bound strategy-channel
-product. Approval Plan 2.4 and OCI bundle/postflight validation carry its exact
-audit, parameter, product, and equal-capability Session bindings without
-changing computation or authentication. Neither development contract is yet
-the active Production snapshot.
+product and is active in Production. Repository source now adds Snapshot 1.10 /
+Dashboard 2.7: Visual Context is carried in detail-shard 1.1 while the first-
+load summary remains unchanged. Approval Plan 2.5 and OCI bundle/postflight
+validation freeze its exact audit and row lineage. Snapshot 1.10 is not active
+in Production.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 

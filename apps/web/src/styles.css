@@ -108,6 +108,19 @@
 .candidate-threshold-grid small { line-height: 1.35; }
 .candidate-position-boundary { margin: 13px 0 0; color: var(--muted); font-size: .72rem; line-height: 1.45; }
 .candidate-position-unavailable p { color: var(--muted); }
+.candidate-price-path { margin-bottom: 12px; padding: 18px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-2); }
+.candidate-price-path svg { display: block; width: 100%; height: auto; margin-top: 14px; overflow: visible; }
+.candidate-price-path svg line { vector-effect: non-scaling-stroke; stroke-width: 1; stroke-dasharray: 5 5; }
+.candidate-path-prior-high { stroke: var(--warning); }
+.candidate-path-sma20 { stroke: var(--muted); }
+.candidate-path-line { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.candidate-path-current { fill: var(--accent); stroke: var(--surface-2); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.candidate-path-meta { display: grid; grid-template-columns: auto 1fr 1fr auto; gap: 10px; color: var(--muted); font-size: .68rem; }
+.candidate-path-meta span:nth-child(2), .candidate-path-meta span:nth-child(3) { text-align: center; }
+.candidate-path-age { display: grid; grid-template-columns: 1fr auto; gap: 3px 12px; align-items: baseline; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+.candidate-path-age > span { color: var(--muted); font-size: .76rem; }
+.candidate-path-age > strong { font-size: 1.2rem; }
+.candidate-path-age > small { grid-column: 1 / -1; color: var(--muted); line-height: 1.45; }
 .candidate-entry-detail { padding: 18px; border: 1px solid var(--border); border-radius: 11px; background: var(--surface-2); }
 .candidate-entry-verdict { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 8px 14px; }
 .candidate-entry-verdict > strong { font-size: 1.12rem; }
