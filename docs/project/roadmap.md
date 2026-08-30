@@ -320,6 +320,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   formal reader, and exact-ID-only readiness bridge under temporary roots
 - [x] Read-only current EOD/Identity family-evidence adapters with real Dell
   31-session transitive validation and no publication
+- [x] Current-inventory historical pilot baseline with exact provider binding,
+  dated permission evidence, and default-blocked authority
 
 ## Next Small Target
 

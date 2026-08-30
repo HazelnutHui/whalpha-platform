@@ -71,6 +71,12 @@ callers cannot manually mark it satisfied or pair cleared assessments with a
 blocked review. No physical
 provider access or acquisition integration exists.
 
+ADR 0101 adds one read-only current-pilot consumer. It converts the unchanged
+2026-08-28 Massive review documents into an in-memory typed blocked review,
+binds their exact file-set fingerprint and repository-record time, and rejects
+any later byte drift until a new explicit review is recorded. This does not
+publish a permission review or make Massive eligible.
+
 ## Immutable repository boundary
 
 Repository source now includes an explicit caller-root review repository. It

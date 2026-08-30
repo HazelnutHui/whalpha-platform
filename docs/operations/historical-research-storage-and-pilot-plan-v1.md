@@ -122,11 +122,14 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 9. **Complete:** adapt the current canonical EOD and EOD-bound Identity bytes
    into deterministic in-memory family evidence and transitively validate all
    source manifests/payload hashes without publishing to `/data`.
-10. Re-review source permission/account entitlement/lifecycle coverage, bind a
+10. **Complete in repository source:** join current mechanics, full inventory,
+   exact preceding sessions, repository evidence, and dated Massive permission
+   conclusions into one blocked, network-prohibited pilot baseline.
+11. Re-review source permission/account entitlement/lifecycle coverage, bind a
    fresh inventory report, and obtain exact pilot authorization.
 
-Steps 1–9 are repository work and can proceed without provider access or
-`/data` writes. Step 10 is a separate external transition.
+Steps 1–10 are repository work and can proceed without provider access or
+`/data` writes. Step 11 is a separate external transition.
 
 The current `/data` root has no `market-data/historical-coverage` directory.
 Strategy readiness therefore remains `data_blocked`; fixture-only publication

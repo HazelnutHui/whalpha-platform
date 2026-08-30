@@ -175,6 +175,10 @@ def build_historical_pilot_approval_review(
         reviewed_at=checked,
     )
     by_gate = {item.gate_id: item for item in external}
+    if source_permission_review.source_id != plan.provider_id:
+        raise HistoricalPilotApprovalError(
+            "source permission review must match the pilot provider"
+        )
     permission_gate = _validate_gate(
         _source_permission_gate(
             source_permission_review,

@@ -123,3 +123,4 @@ Each ADR should include:
 - [0098: Bind Strategy Development to Formal Readiness Evidence](0098-bind-strategy-development-to-formal-readiness-evidence.md)
 - [0099: Require Transitive Physical Evidence for Historical Coverage](0099-require-transitive-physical-evidence-for-historical-coverage.md)
 - [0100: Adapt Current EOD and Identity Without Publishing Coverage](0100-adapt-current-eod-and-identity-without-publishing-coverage.md)
+- [0101: Bind Current History to a Blocked Pilot Review](0101-bind-current-history-to-a-blocked-pilot-review.md)

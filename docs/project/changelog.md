@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-08-30 — Bind current history to a blocked pilot review
+
+- Accepted ADR 0101 and added `current-historical-pilot-baseline/1.0`. The
+  network-prohibited command joins formally validated current EOD/Identity,
+  the complete physical inventory, exact preceding XNYS sessions, repository
+  mapping/invariant evidence, and dated Massive permission conclusions.
+- Closed a cross-source trust gap: Historical Pilot Approval 1.1 now requires
+  the permission-review `source_id` to equal the plan `provider_id`. The current
+  plan uses `massive_stocks_basic` consistently.
+- The baseline can satisfy only a fresh exact-inventory gate. It cannot emit an
+  authorization acknowledgement while account endpoint entitlement,
+  equal-capability source permission, and complete lifecycle/terminal coverage
+  remain unresolved.
+- Focused pilot regression passed 40 tests, and the complete backend regression
+  passed 1,853 tests with only the two existing dependency deprecation warnings.
+  No network request, data write, pilot execution, publication, deployment, or
+  scheduler change occurred.
+
 ## 2026-08-30 — Adapt current EOD and Identity into unpublished family evidence
 
 - Accepted ADR 0100 and added a formal read-only Identity snapshot reader that

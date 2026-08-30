@@ -60,6 +60,7 @@ def _plan():
             target_sessions=TARGETS,
             inactive_identity_anchor_dates=TARGETS,
             targeted_ticker_event_scopes=(),
+            provider_id="example_historical_source",
         ),
     )
 
@@ -414,6 +415,14 @@ def test_source_permission_must_bind_exact_families_uses_review_and_time() -> No
     )
     with pytest.raises(HistoricalPilotApprovalError, match="fresh at review time"):
         _review(permission_package=stale_time)
+
+
+def test_source_permission_review_must_match_plan_provider() -> None:
+    mismatched = _plan()
+    mismatched = replace(mismatched, provider_id="different_source")
+
+    with pytest.raises(HistoricalPilotApprovalError, match="match the pilot provider"):
+        _review(plan=mismatched)
 
 
 def test_cleared_assessments_cannot_override_a_blocked_bound_review() -> None:
