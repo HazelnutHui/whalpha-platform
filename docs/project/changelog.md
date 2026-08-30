@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-30 — Preregister the first personal quantitative research program
+
+- Accepted ADR 0097 and named the future first-class workspace Quant Research
+  Lab / 量化研究实验室, explicitly separate from current Strategy Channels and
+  Production ranking.
+- Added immutable Candidate Strategy Research Experiment 1.0 and the first
+  Strong-Leader Pullback registration. It asks whether an orderly pullback and
+  close-based recovery add information beyond prior leadership, using a same-
+  session eligible-leader non-signal control, three sessions as the primary
+  horizon, and one/five sessions as secondary views.
+- Froze 8 feature requirements, a maximum 24-combination development-only
+  parameter grid, validation multiplicity control, untouched holdout gates,
+  personal-model ownership, model-decay warnings, and the stock-versus-option
+  result boundary. Contract identity is
+  `3ab7175302bbcfb6894233d1db05534aa69bbab83935fa5d31dc9a916002b5d0`;
+  logical fingerprint is
+  `afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41`.
+- The experiment remains `preregistered_data_blocked`. It creates no provider
+  request, `/data` write, backtest result, signal/outcome dataset, page,
+  publication, deployment, or scheduler transition.
+- The focused strategy-contract suite passed 23 tests and the complete backend
+  suite passed 1,820 tests with only the two existing deprecation warnings.
+
 ## 2026-08-30 — Resume persistent-workspace planning after physical proof
 
 - Accepted ADR 0096 and advanced the read-only Automation Plan contract to

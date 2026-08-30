@@ -559,6 +559,15 @@ read or used.
   minimum. Daily point-in-time Universe membership and completed corporate-
   action governance are also missing. Current-constituent replay is explicitly
   ineligible for performance claims.
+- ADR 0097 now defines the future Quant Research Lab and freezes the first
+  personal Strong-Leader Pullback research registration before outcomes can
+  influence it. The experiment compares setup signals with same-session point-
+  in-time eligible-leader non-signals, uses three sessions as the primary
+  horizon, and caps development at 24 preregistered parameter combinations.
+  Its immutable logical fingerprint is
+  `afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41`.
+  Status is `preregistered_data_blocked`; this is not a backtest result,
+  recommendation, option-return model, Production consumer, or deployed page.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

@@ -172,6 +172,11 @@ Repository source also defines six independent Candidate strategy channels,
 sealed-signal/later-outcome evaluation contracts, and ADR 0051's point-in-time
 historical research foundation. The original 29-session readiness audit and
 current 31-session canonical history remain mechanics-only.
+ADR 0097 now names the future Quant Research Lab / 量化研究实验室 and freezes
+the first Strong-Leader Pullback preregistration before any outcome review. Its
+24-combination development grid, leader-control comparison, validation gates,
+personal-model ownership, and decay/risk disclosures are repository-only and
+explicitly data-blocked; no backtest result or Production signal exists.
 Daily membership, corporate actions, lifecycle/terminal evidence, explicit
 adjustments, and 252/504-session history are still physically absent; the next
 work is a provider/entitlement and physical-storage review packet, not formula

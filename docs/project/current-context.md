@@ -748,6 +748,15 @@ recorded in the active-state table and
   performance-eligible. No evaluation dataset or result exists; 29 sessions,
   missing daily point-in-time membership, and incomplete corporate-action
   governance remain hard blockers.
+- ADR 0097 names the future Quant Research Lab / 量化研究实验室 and adds the
+  immutable first `strong-stock-pullback-research/1.0` preregistration. It
+  compares pullback/recovery signals with same-session eligible-leader non-
+  signal controls, fixes three sessions as the primary horizon, and bounds
+  development to 24 combinations before locked validation and untouched
+  holdout. Fingerprint
+  `afc9b38f435484996e614f956b541c20f71b2506f7cff6252042af4da7211a41`
+  is `preregistered_data_blocked`; no performance result, runtime, page, or
+  Production authority exists.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

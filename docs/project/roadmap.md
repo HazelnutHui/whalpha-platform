@@ -312,6 +312,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Default-deny historical Pilot approval-review package
 - [x] Official equal-capability multi-source review and use-specific source-permission governance
 - [x] Family/fact-specific source resolution and prepared provider inquiry packet
+- [x] Quant Research Lab V1 product boundary and first Strong-Leader Pullback
+  preregistration with bounded parameter grid and decision gates
 
 ## Next Small Target
 
