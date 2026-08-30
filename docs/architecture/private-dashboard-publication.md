@@ -1,15 +1,15 @@
 # Private Dashboard Publication
 
-## Active Snapshot 1.5 / Dashboard 2.2 boundary
+## Active Snapshot 1.10 / Dashboard 2.7 boundary
 
 The [Dashboard Snapshot V2 contract](../data-contracts/dashboard-snapshot-v2.md)
 and [operations boundary](../operations/dashboard-snapshot-publication.md)
-define the formal 20-record Universe Funnel, immutable releases,
+define the formal Universe Funnel, immutable releases,
 approval-plan-bound atomic publication, active-pointer compatibility fallback,
 verify-then-link recovery, separate rollback, and lock-time XNYS freshness
-gate. Active Snapshot `2026-08-24T045652Z-aee1a6ab0f67` uses contract 1.5 /
-Dashboard 2.2 and binds the exact approved `stale_review` Market Intelligence
-publication. Ordinary publication remains lag-zero only.
+gate. Active Snapshot `2026-08-30T082200Z-6a8a37e79970` uses contract 1.10 /
+Dashboard 2.7 and binds the exact ordinary-fresh 2026-08-28 Market Intelligence,
+Candidate, Strategy Channel, and Candidate Visual Context sources.
 
 ## Classification Phase Boundary
 
@@ -35,15 +35,14 @@ Implemented locally:
 - Nginx configuration template using session `auth_request`
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
-- deployed OCI release `2026-08-26T103119Z-f344a589a8c9`, built from source
-  commit `f344a589a8c93e527e63470335d88d293141aee1`
+- deployed OCI release `2026-08-30T082200Z-6a8a37e79970`, built from source
+  commit `6a8a37e79970c770df66f88c3a8ba83826ba3a63`
 - branded credential-or-guest `/` entry, `/login/` compatibility redirect, and
   localhost-only Auth Service
 
 Not implemented:
 
-- automatic daily publication
-- one-shot daily OCI deployment custody
+- automatic daily publication and deployment
 
 ## Architecture
 
@@ -101,8 +100,10 @@ API mode remains the default for workstation local development. Demo mode remain
 
 ```text
 build/oci-dashboard/<release-id>/
+  favicon.png
   dashboard/
     index.html
+    favicon.png
     assets/...
   private-data/v1/
     manifest.json
@@ -123,7 +124,14 @@ The bundle excludes source maps, credentials, `.env`, raw payloads, Parquet file
 
 The existing htpasswd file remains the server-side credential store for the owner login. Browser-native Basic Auth is replaced by a branded entry page, opaque in-memory Sessions, and an HttpOnly `__Host-whalpha_session` cookie. `POST /auth/guest` creates the same role-free Session without accepting a credential; guest and credential Sessions have no data or capability difference.
 
-The deployment verifies that public `/` remains data-free, `/login/` redirects to `/`, unauthenticated `/dashboard/` redirects to `/?next=/dashboard/`, and unauthenticated `/private-data/` returns 401. It also creates a temporary guest Session, reads the same Dashboard and private Snapshot through it, logs it out, and removes the local cookie jar without printing the token. Password-based visual verification remains a user browser check; Codex does not know or handle the password.
+The deployment verifies that public `/` remains data-free, public
+`/favicon.png` is a valid PNG, `/login/` redirects to `/`, unauthenticated
+`/dashboard/` redirects to `/?next=/dashboard/`, and unauthenticated
+`/private-data/` returns 401. It also creates a temporary guest Session, reads
+the same Dashboard and private Snapshot through it, logs it out, and removes
+the local cookie jar without printing the token. Password-based visual
+verification remains a user browser check; Codex does not know or handle the
+password.
 
 ## Login Route Verification
 

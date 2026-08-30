@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-08-29 UTC
+Operational state verified at: 2026-08-30 UTC
 
 Repository development context updated at: 2026-08-30 UTC
 
@@ -17,7 +17,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `1490b37f25b3cc48c80fcf0a79c091767eff69ad` |
+| Deployed bundle source commit | `6a8a37e79970c770df66f88c3a8ba83826ba3a63` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -28,7 +28,7 @@ recorded by a deployed bundle.
 
 ## Formal local state
 
-The 2026-08-29 reconciliation used the project readers after the separately
+The 2026-08-30 reconciliation used the project readers after the separately
 authorized complete 2026-08-28 Identity/EOD, analytics, publication, Snapshot,
 bundle, and OCI deployment round. It reread the full local inventory and active
 custody/contracts after deployment.
@@ -53,13 +53,13 @@ custody/contracts after deployment.
 | Market Intelligence payload SHA-256 | `9b345d531942ad6f6eeae79ae22de3c578020b14b779281d4616cc3aa680b930` |
 | Market Intelligence logical fingerprint | `9b2842fb9611184f0d2887ad10da7820edbb5d11785ba5083f998314452e696f` |
 | Candidate publication | 686 Primary / 744 Secondary records; fingerprint `eff5ce68400ff90456cd0363bc04d625a80ca6a132b54545bb37d5e6463d5841` |
-| Dashboard Snapshot | `2026-08-29T133847Z-1490b37f25b3` |
-| Contracts | Snapshot 1.9 / Dashboard 2.6 |
-| Snapshot pointer fingerprint | `76f499d976b3e1e87a5b84dd6cad0875d9baadf555b0e2c6d81d42d99e9d7a60` |
+| Dashboard Snapshot | `2026-08-30T082200Z-6a8a37e79970` |
+| Contracts | Snapshot 1.10 / Dashboard 2.7 |
+| Snapshot pointer fingerprint | `898387e870288320ceaea04dd946f091dc1210a99e57bd0101c47aa4eaaf4fa0` |
 | Active review metadata | none; ordinary fresh publication |
 | Current post-close pipeline freshness | expected 2026-08-28; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-28; lag zero |
-| `/data` inventory | 485 files / 299,111,361 bytes after the relationship-explanation Snapshot |
-| `/data` inventory fingerprint | `3daa2dcd66d607769f10320cfb99f4fd92dbcb0979d927fe03acef4b4a7da269` |
+| `/data` inventory | 526 files / 334,075,194 bytes after the Visual Context Snapshot |
+| `/data` inventory fingerprint | `ab62e0f35a9c3f696a42521da9a41f3e6ca5cfee8309c07f818310d52a770cec` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -855,21 +855,24 @@ recorded in the active-state table and
 ## OCI production state
 
 The active remote release and matching local immutable bundle are
-`2026-08-29T133847Z-1490b37f25b3`, built from deployed source commit
-`1490b37f25b3cc48c80fcf0a79c091767eff69ad` and bound to Market Intelligence
+`2026-08-30T082200Z-6a8a37e79970`, built from deployed source commit
+`6a8a37e79970c770df66f88c3a8ba83826ba3a63` and bound to Market Intelligence
 `2026-08-29T080431Z-785ab49dfedd`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-29 relationship-explanation deployment passed remote preflight,
-Nginx configuration checks,
+The 2026-08-30 Visual Context and WH Alpha favicon deployment passed remote
+preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
-guest Session postflight against the exact Snapshot 1.9 payload and strategy
-resource. No credential or cookie content was printed or retained.
+guest Session postflight against the exact Snapshot 1.10 payload, strategy
+resource, and root PNG favicon. The public favicon returned `image/png` and
+matched the Dell source SHA-256
+`9645feb8261c234e6efd644960f50ac1431191dba37b19026242c5bc299e0e00`.
+No credential or cookie content was printed or retained.
 The independent remote-state report also matched local manifest/checksum
 hashes, found zero failed units or staging/failed residue, and recorded state
 fingerprint
-`9385e063a8f1b1cb166c38dcd2b375e7e91aae81721e8a9750e9bdf5fca8f47b`.
+`324e4f8faae5678f21e6c6d6d18baaba2e024c0a415f0d8f602d9133b682748d`.
 Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.

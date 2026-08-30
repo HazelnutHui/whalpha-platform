@@ -37,8 +37,9 @@ The platform should help answer:
 
 Documentation, infrastructure, storage, the application stack, canonical
 EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
-MI 1.2, Snapshot 1.9 / Dashboard 2.6, entry-location and strategy-channel
-consumers, bilingual presentation, equal-capability guest Sessions, and
+MI 1.2, Snapshot 1.10 / Dashboard 2.7, entry-location, strategy-channel, and
+Candidate Visual Context consumers, bilingual presentation, equal-capability
+guest Sessions, and
 Session-protected static publication are implemented. The deployed product
 includes the audited Stock Candidate pipeline and third Candidate workspace.
 Canonical sessions cover every XNYS session from 2026-07-17 through

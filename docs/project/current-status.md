@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-29
+Status date: 2026-08-30
 
 This document is the concise current-state summary. Exact publication IDs,
 fingerprints, verification scope, and cross-device handoff are maintained in
@@ -58,17 +58,17 @@ relative-performance proxies, never actual fund flow.
   `2026-08-29T080431Z-785ab49dfedd`, contract 1.2, with 686 Primary and 744
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-29T133847Z-1490b37f25b3`, contract 1.9 / Dashboard 2.6.
+  `2026-08-30T082200Z-6a8a37e79970`, contract 1.10 / Dashboard 2.7.
 - The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-29T133847Z-1490b37f25b3` from source commit `1490b37f25b3`.
+  `2026-08-30T082200Z-6a8a37e79970` from source commit `6a8a37e79970`.
 
 The active analytics and Snapshot are ordinary fresh publications for
 2026-08-28: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
-`2026-08-29T080928Z-785ab49dfedd` is the exact planned rollback reference. The
-2026-08-29 post-deployment reader found 485 files / 299,111,361 bytes under
+`2026-08-29T133847Z-1490b37f25b3` is the exact planned rollback reference. The
+2026-08-30 post-deployment reader found 526 files / 334,075,194 bytes under
 `/data`, inventory fingerprint
-`3daa2dcd66d607769f10320cfb99f4fd92dbcb0979d927fe03acef4b4a7da269`,
+`ab62e0f35a9c3f696a42521da9a41f3e6ca5cfee8309c07f818310d52a770cec`,
 zero symlinks, and zero publication residue.
 
 ### Daily automation development state
@@ -627,12 +627,13 @@ freeze audit, batch, row-lineage, and file identities. The bilingual drawer
 renders the real path and honest `N`/`>=N` observed age without browser
 recomputation.
 
-A real Dell `/tmp` 1.10/2.7 dry-run formally passed against the active 8/28 MI,
+A real Dell 1.10/2.7 build formally passed against the active 8/28 MI,
 Candidate, Entry Geometry, Strategy, and Visual audits. The first-load summary
 remained exactly 2,061,314 bytes; 32 lazy detail shards grew by 3,724,116 bytes
-in total to a 671,118–1,432,204-byte range. It produced Plan 2.5 and zero
-Production writes. It was not applied, bundled, published, or deployed; active
-Production remains Snapshot 1.9 / Dashboard 2.6.
+in total to a 671,118–1,432,204-byte range. Plan 2.5, Snapshot Apply, the
+51-checksummed-file serving bundle, OCI atomic switch, temporary guest Session,
+and independent remote inspection all passed. Visual Context and the dark WH
+PNG favicon are active in Production.
 
 ## Next candidate work
 
@@ -645,11 +646,11 @@ support chronological evaluation. Do not reduce the observed overlap or
 select contraction/path thresholds against the single 2026-08-26 cross-
 section.
 
-For P4, product integration is complete in repository source. The next gated
-step is final offline bundle review and human visual acceptance before any
-separately authorized Snapshot Apply or OCI deployment. The unattended daily
-chain remains on 1.9/2.6 until Visual Context generation is added explicitly;
-do not silently make a missing visual audit block the current daily pipeline.
+For P4, Visual Context product integration and deployment are complete. The
+next step is human browser acceptance, followed by only evidence-driven visual
+refinement. The unattended daily chain still does not generate Visual Context
+as an automatic stage; do not silently make a missing visual audit block the
+current daily pipeline.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-08-30 — Publish WH Alpha favicon and Candidate Visual Context
+
+- Adopted the user-selected dark-background WH mark as the default browser,
+  bookmark, Apple touch, and search-result favicon. The mark is optically
+  enlarged for small display while retaining the white WH, cyan rising line,
+  and dark navy field.
+- Added one shared PNG source to the login and Dashboard metadata, a public
+  `/favicon.png` route, branded search description and theme color, exact
+  bundle custody, square/minimum-size validation, identical root/Dashboard
+  hashes, and live deployment checks for HTTP status, MIME type, and PNG
+  signature.
+- Published ordinary-fresh Snapshot 1.10 / Dashboard 2.7 as
+  `2026-08-30T082200Z-6a8a37e79970`, including the previously reviewed
+  Candidate Visual Context path and state-age detail. Plan 2.5 fingerprint is
+  `bea5e854002ef956eaa14ee8a65e396cd0dcd42288c9ced3d08759d3b0c6dd7b`.
+- Built and formally reread the 51-checksummed-file serving bundle with logical
+  fingerprint
+  `c32fa8b9f58291b1231b8e42dc5d1e5ee3ce45436845b23d4882488adfda3fc2`,
+  then passed OCI preflight, atomic Apply, guest Session postflight, and an
+  independent remote inspection with zero staging/failed residue.
+- The public favicon SHA-256 is
+  `9645feb8261c234e6efd644960f50ac1431191dba37b19026242c5bc299e0e00`.
+  All 1,779 backend tests and 101 frontend tests pass; the Production-mode
+  frontend build passes with the existing chunk-size advisory only.
+
 ## 2026-08-30 — Integrate Candidate visual context into lazy product delivery
 
 - Accepted ADR 0089 and added detail-shard 1.1, Snapshot 1.10 / Dashboard 2.7,
