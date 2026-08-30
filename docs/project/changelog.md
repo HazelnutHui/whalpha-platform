@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-08-30 — Add pipeline-aware wake and persistent workspace contracts
+
+- Accepted ADR 0081 and added a repository-only Pipeline Scheduler V2 plan
+  that combines the canonical-session wake with an exact same-session
+  Automation Plan 1.4.
+- Current canonical EOD with a missing offline stage now proposes one bounded
+  offline transition instead of incorrectly waiting for the next session.
+  MI, Snapshot, deployment, blocked, and inconsistent states still stop for
+  review or diagnosis.
+- Added a deterministic Dell-local per-session workspace layout outside Git,
+  canonical `/data`, and `/tmp`. It derives paths only and preserves the old
+  direct-`/tmp` validation boundary for prior controlled runs.
+- No directory, timer, coordinator capability, credential, request, `/data`
+  write, publication, deployment, or Production state was created or changed.
+  All 1,718 backend tests pass with the two existing dependency warnings.
+
 ## 2026-08-29 — Separate scheduler operation from installed host state
 
 - Accepted ADR 0080 and replaced the misleading planner-level

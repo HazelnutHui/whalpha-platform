@@ -14,6 +14,10 @@
   state under ADR 0080.
   Next observe one real calendar-triggered wake before composing any real
   coordinator transition. SMTP may remain unset.
+- Automation design: ADR 0081's repository-only Pipeline Scheduler V2 and
+  persistent per-session workspace contract are complete. Next validate one
+  natural timer wake, then add a non-installed bounded repeated-cadence
+  candidate that can consume this plan without crossing manual review gates.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum.
@@ -289,6 +293,12 @@ unsupported user-manager capability/namespace directives were removed. Next
 observe a real scheduled wake; do not connect the coordinator yet. ADR 0080
 also completes the contract cleanup that distinguishes a no-install operation
 from the separately verified installed timer.
+
+ADR 0081 closes the planning gap that would otherwise stop automation as soon
+as canonical EOD became current. Its V2 plan continues to one same-session
+offline action and stops at MI/Snapshot/deployment review. Its persistent
+workspace layout is derivation-only; provisioning, retention, installed
+cadence, and capability enablement remain later separate boundaries.
 
 ADR 0051, Historical Research Data Foundation V1, and the repository-evidenced
 source capability matrix are complete. The 2026-08-28 official-source review

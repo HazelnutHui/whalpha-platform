@@ -642,6 +642,22 @@ assert provider completeness. Retry, interruption recovery, publication,
 deployment, and alert behavior remain inside their existing coordinator/
 custody boundaries and cannot be replayed by this planner.
 
+### Repository-only pipeline-aware wake
+
+ADR 0081 adds `daily-eod-pipeline-wake-plan/2.0` above the installed planner.
+When canonical EOD is missing it preserves the existing stabilization and
+oldest-gap behavior. When canonical EOD is current it requires the exact
+same-session Automation Plan 1.4 and can distinguish an unfinished offline
+stage from MI, Snapshot, or deployment review. An enabled candidate may only
+propose one data or offline transition; every manual review and blocked state
+stops.
+
+The companion `daily-eod-workspace-layout/1.0` derives stable session paths
+outside `/tmp`, canonical `/data`, and the repository. It creates nothing.
+Existing direct `/tmp` children remain accepted only for historical and
+controlled one-shot compatibility. No persistent root, repeated cadence,
+coordinator capability, or new systemd unit is installed by ADR 0081.
+
 ## Default-off one-transition wake bridge
 
 ADR 0077 composes one exact unchanged enabled-candidate wake plan with one

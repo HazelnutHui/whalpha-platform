@@ -1096,10 +1096,22 @@ def _validate_paths(paths: DailyEodAutomationPaths) -> None:
     )
     if len(set(artifacts)) != len(artifacts):
         raise DailyEodAutomationError("daily artifact paths must be distinct")
-    if any(not item.is_absolute() or item.parent != Path("/tmp") for item in artifacts):
-        raise DailyEodAutomationError(
-            "daily artifacts must be direct children of /tmp"
+    if any(not item.is_absolute() for item in artifacts):
+        raise DailyEodAutomationError("daily artifact paths must be absolute")
+    if all(item.parent == Path("/tmp") for item in artifacts):
+        return
+    try:
+        from tip_api.services.daily_eod_workspace import (
+            DailyEodWorkspaceError,
+            validate_workspace_automation_paths,
         )
+
+        validate_workspace_automation_paths(paths)
+    except DailyEodWorkspaceError as exc:
+        raise DailyEodAutomationError(
+            "daily artifacts must be direct children of /tmp or one exact "
+            "persistent workspace layout"
+        ) from exc
 
 
 def _validate_observation(observation: ArtifactObservation) -> None:

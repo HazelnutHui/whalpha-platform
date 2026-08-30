@@ -82,6 +82,10 @@ start passed. No real coordinator or data-transition scheduler is connected.
 ADR 0080 removes the misleading planner-level `scheduler_installed` field:
 planner output now states only that the current operation performed no
 installation, while actual host state is verified separately through systemd.
+ADR 0081 adds a repository-only pipeline-aware wake plan and deterministic
+Dell-local per-session workspace layout. It fixes the design gap where current
+canonical EOD could hide unfinished downstream analytics, but it is not yet
+connected to or installed in the Production timer.
 
 The control plane also separates XNYS close from provider readiness. It
 applies a provisional post-close stabilization window, bounded

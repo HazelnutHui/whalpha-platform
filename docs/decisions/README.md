@@ -103,3 +103,4 @@ Each ADR should include:
 - [0078: Render a Non-Installed Read-Only systemd Wake](0078-render-non-installed-read-only-systemd-wake.md)
 - [0079: Install the Read-Only User Scheduler](0079-install-read-only-user-scheduler.md)
 - [0080: Separate Scheduler Operation from Host State](0080-separate-scheduler-operation-from-host-state.md)
+- [0081: Make Scheduler Wakes Pipeline-Aware](0081-make-scheduler-wakes-pipeline-aware.md)

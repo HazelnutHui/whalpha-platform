@@ -150,6 +150,16 @@ not change unit state and is not a claim that the host timer is absent. The
 systemd candidate review 1.1 likewise reports operation facts only. Actual
 installed/enabled state remains a separate read-only host inspection.
 
+ADR 0081 now adds the repository-only Pipeline Scheduler V2 planning boundary.
+It combines scheduler plan 1.1 with a fully fingerprinted same-session
+Automation Plan 1.4, so current canonical EOD cannot conceal an unfinished
+offline pipeline. A deterministic persistent-workspace contract derives
+per-session artifacts plus shared journal/cache roots outside `/tmp`, `/data`,
+and Git while preserving legacy `/tmp` plan compatibility. This code performs
+no creation, migration, invocation, installation, activation, publication, or
+deployment; the installed timer remains on the read-only 1.1 planner. All
+1,718 backend tests pass with the two existing dependency warnings.
+
 ADR 0069 now adds the next repository-only control boundary: MI Apply can be
 performed by exactly one explicit, host-pinned CLI invocation with the exact
 plan SHA, Production-state fingerprint, and any plan-bound review
