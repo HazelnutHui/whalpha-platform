@@ -384,10 +384,18 @@ grep -q 'name="username"' "${public_body}" || { echo "root login missing usernam
 grep -q 'name="password"' "${public_body}" || { echo "root login missing password field" >&2; exit 1; }
 grep -q 'class="guest-submit"' "${public_body}" || { echo "root login missing guest entry" >&2; exit 1; }
 grep -q 'Sign In' "${public_body}" || { echo "root login missing sign-in button" >&2; exit 1; }
+grep -q 'rel="icon" type="image/png" href="/favicon.png"' "${public_body}" || { echo "root login missing favicon declaration" >&2; exit 1; }
 if grep -q 'New platform under development' "${public_body}"; then
   echo "root route returned placeholder body" >&2
   exit 1
 fi
+favicon_headers=$(mktemp)
+favicon_body=$(mktemp)
+favicon_code=$(curl -sS -H 'Cache-Control: no-cache' -D "${favicon_headers}" -o "${favicon_body}" -w '%{http_code}' https://whalpha.com/favicon.png)
+[[ "${favicon_code}" == "200" ]] || { echo "public favicon status ${favicon_code}" >&2; exit 1; }
+grep -Eiq '^Content-Type:.*image/png' "${favicon_headers}" || { echo "public favicon content type mismatch" >&2; exit 1; }
+[[ "$(od -An -t x1 -N8 "${favicon_body}" | tr -d ' \n')" == "89504e470d0a1a0a" ]] || { echo "public favicon PNG signature mismatch" >&2; exit 1; }
+rm -f "${favicon_headers}" "${favicon_body}"
 dashboard_code=$(curl -sS -o "${private_body}" -w '%{http_code}' https://whalpha.com/dashboard/)
 [[ "${dashboard_code}" == "302" ]] || { echo "dashboard unauth status ${dashboard_code}" >&2; exit 1; }
 login_headers=$(mktemp)
@@ -427,6 +435,7 @@ grep -q '"authenticated":true' "${guest_body}" || { echo "public guest Session r
 guest_dashboard_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_dashboard_body}" -w '%{http_code}' https://whalpha.com/dashboard/)
 [[ "${guest_dashboard_code}" == "200" ]] || { echo "guest Dashboard status ${guest_dashboard_code}" >&2; exit 1; }
 grep -q '<div id="root"></div>' "${guest_dashboard_body}" || { echo "guest Dashboard shell mismatch" >&2; exit 1; }
+grep -q 'rel="icon"' "${guest_dashboard_body}" || { echo "guest Dashboard missing favicon declaration" >&2; exit 1; }
 guest_private_code=$(curl -sS -b "${guest_cookie_jar}" -o "${guest_private_body}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json)
 [[ "${guest_private_code}" == "200" ]] || { echo "guest private-data status ${guest_private_code}" >&2; exit 1; }
 grep -Eq '"snapshot_contract_version":"1\.(5|6|7|8|9|10)"' "${guest_private_body}" || { echo "guest private-data contract mismatch" >&2; exit 1; }

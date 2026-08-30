@@ -28,6 +28,9 @@ def _fixture(tmp_path: Path, monkeypatch):
     ):
         path.mkdir(parents=True, exist_ok=True)
     (target / "dashboard" / "index.html").write_text("dashboard", encoding="utf-8")
+    favicon = b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR" + (48).to_bytes(4, "big") * 2
+    (target / "favicon.png").write_bytes(favicon)
+    (target / "dashboard" / "favicon.png").write_bytes(favicon)
     for name in bundle.EXPECTED_LOGIN_FILES:
         (target / "login" / name).write_text(name, encoding="utf-8")
     for root in (target, source):
@@ -78,7 +81,7 @@ def _fixture(tmp_path: Path, monkeypatch):
         "candidate_strategy_audit_logical_fingerprint": SHA,
         "current_session_date": "2026-08-28",
         "previous_session_date": "2026-08-27",
-        "file_count": 6,
+        "file_count": 8,
         "contains_credentials": False,
         "contains_raw_provider_data": False,
         "contains_parquet": False,
@@ -110,7 +113,7 @@ def test_formal_reader_binds_every_file_to_exact_snapshot(tmp_path, monkeypatch)
     )
 
     assert completed.deployment_manifest.release_id == RELEASE
-    assert completed.checksum_file_count == 7
+    assert completed.checksum_file_count == 9
     assert completed.bundle_logical_fingerprint == completed.deployment_manifest.bundle_logical_fingerprint
 
 
@@ -119,6 +122,16 @@ def test_unchecksummed_file_fails_closed(tmp_path, monkeypatch) -> None:
     (target / "dashboard" / "extra.js").write_text("changed", encoding="utf-8")
 
     with pytest.raises(bundle.OciDashboardServingBundleError, match="checksum inventory"):
+        bundle.read_oci_dashboard_serving_bundle(
+            target, expected_snapshot_path=source
+        )
+
+
+def test_invalid_favicon_fails_closed(tmp_path, monkeypatch) -> None:
+    target, source = _fixture(tmp_path, monkeypatch)
+    (target / "favicon.png").write_bytes(b"not-a-png")
+
+    with pytest.raises(bundle.OciDashboardServingBundleError, match="favicon"):
         bundle.read_oci_dashboard_serving_bundle(
             target, expected_snapshot_path=source
         )

@@ -27,6 +27,7 @@ EXPECTED_TOP_LEVEL = {
     "checksums.sha256",
     "dashboard",
     "deployment-manifest.json",
+    "favicon.png",
     "login",
     "private-data",
 }
@@ -179,6 +180,21 @@ def read_oci_dashboard_serving_bundle(
         raise OciDashboardServingBundleError("serving bundle login file set mismatch")
     if not (bundle / "dashboard" / "index.html").is_file():
         raise OciDashboardServingBundleError("serving bundle Dashboard entry is missing")
+    favicon_path = bundle / "favicon.png"
+    dashboard_favicon_path = bundle / "dashboard" / "favicon.png"
+    if not favicon_path.is_file() or not dashboard_favicon_path.is_file():
+        raise OciDashboardServingBundleError("serving bundle favicon is missing or invalid")
+    favicon = favicon_path.read_bytes()
+    if (
+        len(favicon) < 24
+        or favicon[:8] != b"\x89PNG\r\n\x1a\n"
+        or favicon[12:16] != b"IHDR"
+        or int.from_bytes(favicon[16:20], "big")
+        != int.from_bytes(favicon[20:24], "big")
+        or int.from_bytes(favicon[16:20], "big") < 48
+        or sha256_file(dashboard_favicon_path) != sha256_file(favicon_path)
+    ):
+        raise OciDashboardServingBundleError("serving bundle favicon is missing or invalid")
     for item in bundle.rglob("*"):
         if not item.is_file():
             continue

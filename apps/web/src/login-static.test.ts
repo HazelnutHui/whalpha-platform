@@ -1,4 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import dashboardHtml from '../index.html?raw';
+import loginHtml from '../static/login/index.html?raw';
 import loginScript from '../static/login/login.js?raw';
 import loginI18nScript from '../static/login/login-i18n.js?raw';
 
@@ -38,6 +40,15 @@ describe('static login client', () => {
     delete (window as unknown as { __whalphaLoginI18n?: unknown }).__whalphaLoginI18n;
     delete (window as unknown as { __whalphaNavigate?: unknown }).__whalphaNavigate;
     renderLogin();
+  });
+
+  it('declares the same public PNG favicon and branded search metadata on both entries', () => {
+    for (const html of [dashboardHtml, loginHtml]) {
+      expect(html).toContain('rel="icon" type="image/png" href="/favicon.png"');
+      expect(html).toContain('rel="apple-touch-icon" href="/favicon.png"');
+      expect(html).toContain('name="theme-color" content="#061b33"');
+      expect(html).toContain('WH Alpha is a practical U.S. equity market structure');
+    }
   });
 
   it('submits JSON to relative auth endpoint and prevents native navigation', async () => {

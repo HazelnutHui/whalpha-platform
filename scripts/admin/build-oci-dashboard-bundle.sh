@@ -153,6 +153,7 @@ cp "${web_dir}/static/login/index.html" "${staging_dir}/login/index.html"
 cp "${web_dir}/static/login/login.css" "${staging_dir}/login/login.css"
 cp "${web_dir}/static/login/login.js" "${staging_dir}/login/login.js"
 cp "${web_dir}/static/login/login-i18n.js" "${staging_dir}/login/login-i18n.js"
+cp "${web_dir}/public/favicon.png" "${staging_dir}/favicon.png"
 cp -a "${snapshot_dir}/private-data/." "${staging_dir}/private-data/"
 
 if [[ -z "${build_timestamp}" ]]; then

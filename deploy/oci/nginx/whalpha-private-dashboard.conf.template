@@ -40,6 +40,15 @@ server {
         try_files /login/index.html =404;
     }
 
+    location = /favicon.png {
+        root /srv/whalpha/current;
+        add_header Cache-Control "public, max-age=86400" always;
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "no-referrer" always;
+        try_files /favicon.png =404;
+    }
+
     location / {
         return 404;
     }

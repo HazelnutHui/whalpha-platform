@@ -323,6 +323,7 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "candidate-strategy-channel-product/1.0" in build_script.read_text()
     assert "guest_and_credential_capability_identical" in build_script.read_text()
     assert "login-i18n.js" in build_script.read_text()
+    assert 'public/favicon.png" "${staging_dir}/favicon.png' in build_script.read_text()
     assert "'default_locale': 'en'" in build_script.read_text()
     assert "oci-dashboard-serving-bundle/1.0" in build_script.read_text()
     assert "guest_and_credential_capability_identical" in build_script.read_text()
@@ -331,6 +332,7 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     text = nginx_template.read_text()
     assert "location /dashboard/" in text and "auth_request /auth/internal-verify" in text
     assert "location = / {" in text and "try_files /login/index.html =404" in text
+    assert "location = /favicon.png" in text and "try_files /favicon.png =404" in text
     assert "location = /login/" in text and "return 302 /$is_args$args" in text
     assert "location = /auth/status" in text
     assert "location /login/" in text and "root /srv/whalpha/current" in text and "location = /auth/login" in text
@@ -342,6 +344,7 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "candidate-strategy-channels.json" in deploy_text
     assert "guest Candidate strategy-channel binding is invalid" in deploy_text
     assert "root route returned placeholder body" in deploy_text
+    assert "public favicon status" in deploy_text
     assert "login compatibility redirect status" in deploy_text
     assert "auth status unauth status" in deploy_text
     assert "guest Dashboard status" in deploy_text and "guest private-data status" in deploy_text
