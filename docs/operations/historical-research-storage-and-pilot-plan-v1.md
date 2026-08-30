@@ -116,11 +116,18 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 7. **Complete:** add a default-deny approval review that binds the exact plan,
    repository evidence, unified data-governance policy, and external gates
    without creating an authorization.
-8. Re-review source permission/account entitlement/lifecycle coverage, bind a
+8. **Complete:** add immutable family-evidence and Historical Coverage
+   publication repositories whose formal reader transitively verifies source
+   completion manifests and payload hashes under temporary roots.
+9. Re-review source permission/account entitlement/lifecycle coverage, bind a
    fresh inventory report, and obtain exact pilot authorization.
 
-Steps 1–7 are repository work and can proceed without provider access or
-`/data` writes. Step 8 is a separate external transition.
+Steps 1–8 are repository work and can proceed without provider access or
+`/data` writes. Step 9 is a separate external transition.
+
+The current `/data` root has no `market-data/historical-coverage` directory.
+Strategy readiness therefore remains `data_blocked`; fixture-only publication
+mechanics do not supply missing canonical facts.
 
 ## Implemented read-only planner boundary
 

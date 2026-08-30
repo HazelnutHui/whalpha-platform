@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-08-30 — Bind Historical Coverage to transitive physical evidence
+
+- Accepted ADR 0099 and added self-fingerprinted Dataset Coverage Evidence 1.0
+  plus immutable Historical Coverage publication and formal reread custody.
+  Each family evidence binds source completion manifests and every payload file
+  by safe relative path and physical SHA-256; one changed byte fails closed.
+- The strategy-readiness CLI may now select an exact immutable `coverage_id`
+  below the canonical root. It still accepts no arbitrary manifest path and
+  advances only after complete transitive reread.
+- A 252-session six-family fixture proved the complete mechanics through
+  `ready_for_development_review` while retaining both development and
+  performance-claim authority as false. All physical tests used temporary
+  roots.
+- A real socket-guarded Dell reread confirmed that `/data` has no Historical
+  Coverage publication and current state remains the same 31/252-session
+  `data_blocked` result, fingerprint
+  `4d3b5a1b472f710638f024443e2ad6c1dea1f4dd25920c2cd9eb1d3a51802116`.
+  No network request, `/data` write, backfill, model run, deployment, or
+  scheduler change occurred.
+- Focused coverage/readiness regression passed 43 tests, and the complete
+  backend regression passed 1,838 tests with only the two existing dependency
+  deprecation warnings.
+
 ## 2026-08-30 — Bind strategy development to formal readiness evidence
 
 - Accepted ADR 0098 and added deterministic, network-prohibited Strategy

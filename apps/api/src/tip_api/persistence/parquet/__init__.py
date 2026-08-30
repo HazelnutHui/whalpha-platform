@@ -4,6 +4,9 @@ from tip_api.persistence.parquet.eod_bars import ParquetEodPriceBarRepository
 from tip_api.persistence.parquet.historical_research import (
     ParquetHistoricalResearchRepository,
 )
+from tip_api.persistence.parquet.historical_coverage import (
+    ParquetHistoricalCoverageRepository,
+)
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     ParquetInstrumentMasterSnapshotRepository,
 )
@@ -11,5 +14,6 @@ from tip_api.persistence.parquet.instrument_master_snapshot import (
 __all__ = [
     "ParquetEodPriceBarRepository",
     "ParquetHistoricalResearchRepository",
+    "ParquetHistoricalCoverageRepository",
     "ParquetInstrumentMasterSnapshotRepository",
 ]

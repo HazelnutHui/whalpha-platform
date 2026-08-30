@@ -15,6 +15,12 @@ implemented. Canonical historical data remains absent. Data Record Governance
 V1 supplies the cross-family state vocabulary without replacing these domain
 contracts.
 
+ADR 0099 also implements the fixture-only physical Historical Coverage layer.
+It stores no duplicate facts: each family evidence manifest transitively binds
+the original completion manifest and payload hashes, and the final Coverage
+reader refuses to return a typed claim if any referenced byte or boundary has
+drifted. No such evidence or coverage publication exists under `/data` yet.
+
 The immediate objective is not “more bars.” It is a history that can answer,
 for each signal session, which instrument existed, which Universe decision was
 valid, what the market knew, how later corporate actions affect the price path,

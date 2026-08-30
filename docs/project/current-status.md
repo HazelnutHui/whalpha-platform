@@ -577,6 +577,12 @@ read or used.
   lifecycle, adjustment reconciliation, and matured-window coverage are hard
   blockers. The command cannot accept a self-asserted manifest, use network,
   write Production, authorize development, or authorize performance claims.
+- ADR 0099 closes the physical trust gap with self-fingerprinted family
+  evidence and an immutable Historical Coverage publication whose formal
+  reader verifies every source completion manifest and payload SHA transitively.
+  The readiness command accepts only an exact coverage ID, never a manifest
+  path. This is fixture-proven only: `/data` contains no Historical Coverage
+  publication, so the 31/252-session `data_blocked` result is unchanged.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

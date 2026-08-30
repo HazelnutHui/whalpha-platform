@@ -14,12 +14,14 @@ or authorize any operational action.
 - the immutable `candidate-strategy-research-experiment/1.0` registration;
 - canonical EOD session descriptors formally reread from Dell, including each
   session's bound point-in-time Identity date; and
-- optionally, a typed `HistoricalCoverageManifestV1` supplied by a future
-  formal physical reader.
+- optionally, a typed `HistoricalCoverageManifestV1` supplied by the ADR 0099
+  transitive formal physical reader.
 
-The current offline command intentionally has no coverage-manifest argument.
-Until a formal reader exists, a standalone JSON claim cannot satisfy physical
-historical coverage.
+The offline command intentionally has no coverage-manifest path argument. It
+may accept only an exact `--coverage-id`; the reader derives its immutable path
+below the canonical root and verifies all family evidence, source completion
+manifests, and payload hashes before returning the typed coverage. A standalone
+JSON claim cannot satisfy physical historical coverage.
 
 ## Required observations
 

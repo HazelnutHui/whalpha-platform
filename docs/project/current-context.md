@@ -766,6 +766,13 @@ recorded in the active-state table and
   matured-window evidence remain unmet. Even a future complete result permits
   only a separate development review, never automatic tuning or performance
   claims.
+- ADR 0099 adds the missing physical-evidence boundary. Immutable per-family
+  evidence binds exact source completion manifests and payload files; the final
+  Historical Coverage reader verifies safe paths, self-fingerprints, file sets,
+  counts, logical identities, and every physical SHA before returning a typed
+  manifest. The readiness CLI accepts an exact coverage ID only. A 252-session
+  six-family temporary-root fixture reaches review-only readiness, but real
+  `/data` has no Historical Coverage directory and remains `data_blocked`.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

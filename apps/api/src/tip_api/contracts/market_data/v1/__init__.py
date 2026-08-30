@@ -64,6 +64,14 @@ from tip_api.contracts.market_data.v1.historical_research import (
     UniverseMembershipOrigin,
     UniverseMembershipPartitionManifestV1,
 )
+from tip_api.contracts.market_data.v1.historical_coverage import (
+    HistoricalCoverageArtifactEvidenceV1,
+    HistoricalCoverageFileReferenceV1,
+    HistoricalDatasetCoverageEvidenceV1,
+    build_historical_dataset_coverage_evidence,
+    historical_coverage_manifest_fingerprint,
+    historical_dataset_coverage_evidence_fingerprint,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -118,4 +126,10 @@ __all__ = [
     "UniverseMembershipDispositionSummaryV1",
     "UniverseMembershipOrigin",
     "UniverseMembershipPartitionManifestV1",
+    "HistoricalCoverageArtifactEvidenceV1",
+    "HistoricalCoverageFileReferenceV1",
+    "HistoricalDatasetCoverageEvidenceV1",
+    "build_historical_dataset_coverage_evidence",
+    "historical_coverage_manifest_fingerprint",
+    "historical_dataset_coverage_evidence_fingerprint",
 ]

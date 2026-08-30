@@ -75,8 +75,21 @@ adjustment families. `research_ready` requires:
 - no blocker reason codes.
 
 Other readiness states require explicit reasons. The typed contract alone
-cannot prove XNYS continuity, source permission, physical file validity, or
-semantic completeness; future readers must do so.
+cannot prove XNYS continuity, source permission, or semantic completeness.
+ADR 0099 now adds the missing physical-validity layer:
+
+- `HistoricalDatasetCoverageEvidenceV1` binds one required family and exact
+  sessions to source completion manifests plus every payload file hash;
+- evidence self-fingerprints, session coverage, record totals, unique sorted
+  paths, safe relative paths, and quarantine counts are validated;
+- the immutable Historical Coverage publication binds the typed manifest to a
+  separate physical completion envelope; and
+- formal reread walks transitively through every family evidence manifest,
+  source completion manifest, and payload file before returning the typed
+  coverage.
+
+The strategy-readiness CLI can select only an exact coverage ID below the
+canonical root; it still cannot accept an arbitrary file path.
 
 ## Numeric and temporal safeguards
 
@@ -117,3 +130,5 @@ pilot remains blocked by equal-capability source permission, account
 entitlement, lifecycle-source coverage, and an exact authorized acquisition
 plan. Cross-family state is now governed by Data Record Governance V1 without
 replacing the domain statuses in this contract.
+No physical family evidence or Historical Coverage publication currently
+exists under `/data`; the new repository boundary is fixture-only.

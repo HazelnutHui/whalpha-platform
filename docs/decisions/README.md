@@ -121,3 +121,4 @@ Each ADR should include:
 - [0096: Resume Persistent Workspace Planning After Proof](0096-resume-persistent-workspace-planning-after-proof.md)
 - [0097: Preregister Personal Strategy Research Before Backtesting](0097-preregister-personal-strategy-research-before-backtesting.md)
 - [0098: Bind Strategy Development to Formal Readiness Evidence](0098-bind-strategy-development-to-formal-readiness-evidence.md)
+- [0099: Require Transitive Physical Evidence for Historical Coverage](0099-require-transitive-physical-evidence-for-historical-coverage.md)

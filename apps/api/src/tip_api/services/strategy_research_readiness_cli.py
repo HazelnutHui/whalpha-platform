@@ -13,6 +13,9 @@ from tip_api.contracts.analytics.v1 import (
 )
 from tip_api.persistence.eod_read import EodReadError
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
+from tip_api.persistence.parquet.historical_coverage import (
+    ParquetHistoricalCoverageRepository,
+)
 from tip_api.services.strategy_research_readiness import (
     StrategyResearchReadinessError,
     assess_strategy_research_readiness,
@@ -27,14 +30,29 @@ def main(argv: list[str] | None = None) -> int:
         )
     )
     parser.add_argument("--data-root", required=True, type=Path)
+    parser.add_argument(
+        "--coverage-id",
+        help=(
+            "Exact immutable coverage ID under the canonical data root; arbitrary "
+            "manifest paths are not accepted."
+        ),
+    )
     args = parser.parse_args(argv)
     try:
         with _offline_socket_guard():
             descriptors = CanonicalEodReadRepository(args.data_root).list_sessions()
             canonical = canonical_eod_identity_evidence(descriptors)
+            coverage = (
+                None
+                if args.coverage_id is None
+                else ParquetHistoricalCoverageRepository(args.data_root)
+                .read_coverage(args.coverage_id)
+                .coverage
+            )
             assessment = assess_strategy_research_readiness(
                 experiment=strong_stock_pullback_research_experiment_v1(),
                 canonical_evidence=canonical,
+                coverage_manifest=coverage,
             )
     except (
         EodReadError,

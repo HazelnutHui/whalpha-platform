@@ -316,6 +316,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   preregistration with bounded parameter grid and decision gates
 - [x] Source-bound Strategy Research Readiness V1 assessment and Dell-local
   31/252-session data-blocked baseline
+- [x] Transitive physical Historical Coverage evidence/publication repository,
+  formal reader, and exact-ID-only readiness bridge under temporary roots
 
 ## Next Small Target
 
