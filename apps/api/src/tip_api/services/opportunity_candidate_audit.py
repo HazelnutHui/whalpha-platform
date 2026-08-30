@@ -777,6 +777,36 @@ def read_opportunity_candidate_current_batches(
     )
 
 
+def read_opportunity_candidate_state_history(
+    output_dir: Path,
+) -> tuple[OpportunityCandidateStateRecordV1, ...]:
+    """Read the cumulative typed state ledger after completed custody validation."""
+
+    evidence = read_opportunity_candidate_publication_evidence(output_dir)
+    payload = _read_custodied_json(
+        evidence.path / "candidate-state-history.json",
+        label="Candidate state history",
+    )
+    rows = payload.get("records")
+    if not isinstance(rows, list) or not all(isinstance(item, dict) for item in rows):
+        raise OpportunityCandidateAuditError(
+            "Candidate state-history projection source is malformed"
+        )
+    states = tuple(OpportunityCandidateStateRecordV1.model_validate(item) for item in rows)
+    manifest = evidence.manifest
+    if (
+        opportunity_candidate_state_history_fingerprint(states)
+        != manifest.get("candidate_state_history_fingerprint")
+        or [item.logical_fingerprint for item in states]
+        != manifest.get("candidate_state_record_fingerprints")
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate state-history projection fingerprint differs"
+        )
+    _validate_typed_fingerprints(batches=(), states=states, risks=())
+    return states
+
+
 def read_opportunity_candidate_business_fingerprints(
     output_dir: Path,
 ) -> tuple[dict[str, Any], dict[str, str]]:

@@ -674,8 +674,13 @@ recorded in the active-state table and
   decision-position map. It visualizes only the published close, SMA10/SMA20,
   prior-five-session high/low, reference support, threshold distances, and
   state-confirmation progress. It changes no model or payload and is not
-  deployed. A true daily price path and state age still require a separate
-  source-bound Dell visual-context contract. The parameter-bound explanation
+  deployed. ADR 0088 now completes the separate source-bound Dell Visual
+  Context 1.0 calculation, independent validator, and formal `/tmp` audit. The
+  real 2026-08-28 result provides complete exact 20-session paths for all 3,541
+  Candidate rows and left-censor-aware observed state age for 3,382; 159
+  current unavailable/stale states remain empty. Its audit fingerprint is
+  `3b8ddbf3cc7d35cf0ea2b8f257939d23cec6f1d463e0d16efce9b5fb1f23961f`.
+  It is not yet part of Snapshot or Production. The parameter-bound explanation
   and URL continuity changes are now
   deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`. ADR 0059 now records
   the user's exact 2026-08-26 stale-review

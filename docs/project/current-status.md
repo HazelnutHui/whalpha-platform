@@ -609,6 +609,20 @@ does not fabricate a historical price path, call confirmation count signal age,
 or call reference support a stop. All 98 frontend tests and the Production build
 pass; this source change is not deployed.
 
+ADR 0088 now implements the separate Candidate Visual Context 1.0 source layer:
+exact 20-session canonical close paths, copied Entry Geometry reference levels,
+and an observed Candidate-state age that stops at changes/missing/stale rows and
+marks retained-history left truncation. The independent raw-source validator,
+permutation gate, owner-read-only `/tmp` audit, and socket-guarded CLI are
+complete. The real 2026-08-28 audit at
+`/tmp/whalpha-candidate-visual-context-20260828` has fingerprint
+`3b8ddbf3cc7d35cf0ea2b8f257939d23cec6f1d463e0d16efce9b5fb1f23961f`.
+All 3,541 Candidate rows have complete paths; observed age is available for
+3,382, while 159 unavailable/stale current states remain empty. Both Oracles
+have zero mismatch. The optimized 38.81-second offline run made zero requests
+and zero Production writes; all 1,778 backend tests pass. The source layer is
+not yet bound into Snapshot or deployed.
+
 ## Next candidate work
 
 Keep the currently deployed strategy formulas frozen. The first governed
@@ -620,12 +634,12 @@ support chronological evaluation. Do not reduce the observed overlap or
 select contraction/path thresholds against the single 2026-08-26 cross-
 section.
 
-For P4, the next honest increment is a separate source-bound visual-context
-contract containing exact daily sessions and closes from the formal Dell panel,
-plus consecutive Candidate-state history. Only after formal lineage, missing-
-history behavior, and bounded lazy delivery are verified may the UI add a real
-20-session price path and state age. The current reference-level map must not be
-silently relabelled as either.
+For P4, the next increment is additive product integration: bind the completed
+Visual Context audit into versioned lazy Candidate detail shards, preserve the
+small first-load summary, and render the true 20-session close path plus
+left-censor-aware observed state age. Publication and Snapshot must validate
+the visual audit once; neither the browser nor the serving boundary may reread
+or reconstruct the large Candidate parent audit. This remains undeployed.
 
 ADR 0060 now also closes the publication-side repetition exposed during the
 authorized 2026-08-26 deployment attempt. Candidate completion evidence is

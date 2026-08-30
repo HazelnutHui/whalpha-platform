@@ -7,7 +7,7 @@
 - [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Candidate Strategy Channel Product V1](candidate-strategy-channel-product-v1.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
-- [Candidate Strategy Channel Product V1](candidate-strategy-channel-product-v1.md)
+- [Candidate Visual Context V1](candidate-visual-context-v1.md)
 - [Same-Day Identity and EOD Catch-Up V1](same-day-identity-eod-catchup-v1.md)
 - [Historical Research Foundation Contracts V1](historical-research-foundation-v1.md)
 - [Data Record Governance V1](data-record-governance-v1.md)
@@ -31,6 +31,7 @@ Implemented as Python/Pydantic contracts:
 - [Reviewed Eligibility Override V1](reviewed-eligibility-override-v1.md)
 - [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
+- [Candidate Visual Context V1](candidate-visual-context-v1.md)
 - [Historical Research Foundation Contracts V1](historical-research-foundation-v1.md)
 - [Data Record Governance V1](data-record-governance-v1.md)
 - [Source Permission Governance V1](source-permission-governance-v1.md)
@@ -52,9 +53,9 @@ The initial blocked live attempts remain historical audit evidence; corrected
 bounded operations subsequently published the current canonical sequence. The
 remaining logical or partial contracts have no physical storage.
 
-The EOD and point-in-time Identity persistence boundaries now hold 29 completed
-canonical EOD sessions through 2026-08-26 and 30 Identity snapshots through
-2026-08-27. Universe Membership V1 and Corporate Action V1 now have partial
+The EOD and point-in-time Identity persistence boundaries now hold 31 completed
+canonical EOD sessions and aligned Identity snapshots through 2026-08-28.
+Universe Membership V1 and Corporate Action V1 now have partial
 provider-neutral historical row contracts but no physical dataset, complete
 partition manifest, or adapter. Their required historical composition is
 defined in [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).

@@ -250,7 +250,10 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Lossless Candidate summary/on-demand-detail Snapshot projection
 - [x] Truthful Candidate reference-level position map from existing published
   Entry Geometry facts, without fabricating price history or signal age
-- [ ] Source-bound 20-session Candidate visual context and lazy price path
+- [x] Source-bound 20-session Candidate visual context, observed-state age,
+  independent Oracle, and formal tmp-only real-data audit
+- [ ] Bind visual context into lazy Candidate detail shards and render the true
+  20-session path without increasing first-load payload
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Fixed explainable three-channel offline preview and bounded consumer
 - [x] Independent strategy-channel Oracle and immutable temporary-root audit

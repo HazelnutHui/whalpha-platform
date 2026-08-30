@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-08-30 — Bind Candidate visual context to real Dell history
+
+- Accepted ADR 0088 and implemented Candidate Visual Context 1.0 with exact
+  20-session canonical close paths, Entry Geometry reference levels, and
+  left-censor-aware observed Candidate-state age.
+- Added an independent raw-source validator, input-permutation gate, formal
+  owner-read-only `/tmp` audit, network-prohibited CLI, and a bounded formal
+  Candidate state-history reader.
+- The real 2026-08-28 Dell audit assessed 3,541 Candidate rows: all have complete
+  paths; 3,382 have observed state age and 159 current unavailable/stale states
+  remain explicitly unavailable. Both Oracles have zero mismatch.
+- The optimized 38.81-second run made zero external requests and zero Production writes.
+  No score, rank, state, strategy, `/data`, publication, Snapshot, bundle,
+  deployment, OCI, or scheduler state changed. All 1,778 backend tests pass.
+
 ## 2026-08-30 — Add a truthful Candidate decision-position map
 
 - Accepted ADR 0087 and added a bilingual position map to the lazy Candidate
