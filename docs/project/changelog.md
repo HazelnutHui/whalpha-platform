@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-31 — Independently reproduce research inference
+
+- Accepted ADR 0108 and extended the independent Oracle beyond descriptive
+  statistics to the fixed circular moving-block Bootstrap, percentile interval,
+  centered-null probability and Holm adjustment.
+- The Oracle uses an independently implemented integer MT19937 state machine
+  and separate Decimal accumulation/quantile code; it does not call the primary
+  evaluator, private Bootstrap helpers or Python `random.Random`.
+- Exact outputs match on nonconstant series of 1, 2, 5, 20, 37 and 53
+  observations, the full 72-summary development family, and all 24 validation
+  Holm values. Final partial blocks are explicitly covered.
+- This is fixture-only implementation evidence. No real input, `/data` write,
+  model result, parameter change, stage transition, performance claim,
+  publication, deployment or scheduler state changed.
+- The complete backend suite passes 1,890 tests with only the two existing
+  dependency deprecation warnings.
+
 ## 2026-08-31 — Reserve the sealed holdout before evaluation
 
 - Accepted ADR 0107 and added `candidate-strategy-holdout-custody/1.0` as a

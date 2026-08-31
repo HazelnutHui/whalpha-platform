@@ -70,9 +70,9 @@ The synthetic adversarial suite must cover at least:
   floor.
 - One extreme day cannot rescue a non-positive median after the fixed cost
   scenario.
-- The Oracle does not independently prove the moving-block bootstrap algorithm
-  for every arbitrary series. That limitation is explicit; a future formal
-  inferential Oracle may be added before real development activation.
+- At this decision boundary the Oracle did not independently prove the moving-
+  block Bootstrap for arbitrary series. ADR 0108 subsequently closes that
+  implementation-audit gap with an independent exact reference.
 - No real data, stage transition or performance claim is created.
 
 ## Alternatives Considered

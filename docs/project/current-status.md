@@ -645,8 +645,9 @@ read or used.
   revealed that visible coverage was not itself a transition gate, so
   validation now requires complete evidence across the whole 24-member Holm
   family, while holdout requires `1.0000` available coverage in both locked
-  signal and control cohorts. The independent Oracle does not reproduce arbitrary-
-  series bootstrap inference. ADR 0107 now adds external durable single-use
+  signal and control cohorts. ADR 0108 now extends the independent Oracle to
+  exact arbitrary-series Bootstrap, interval, probability and Holm
+  reproduction using a separate MT19937 and arithmetic path. ADR 0107 adds external durable single-use
   custody: it reserves before evaluation and prohibits replay after completion,
   failure, invalid evidence or ambiguous interruption. That mechanism is
   fixture-proven only and grants no real-data or performance authority.

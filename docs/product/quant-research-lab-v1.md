@@ -118,6 +118,11 @@ sealed holdout. Completion, failure and ambiguous interruption all prevent a
 second capability invocation for the same validation/lock identity. This is
 fixture-proven custody only; it creates no real result or activation authority.
 
+ADR 0108 closes the remaining implementation-audit gap by independently
+reproducing the registered moving-block Bootstrap, 90% interval, one-sided
+probability and 24-family Holm correction on arbitrary nonconstant fixtures.
+This verifies mechanics, not alpha or future validity.
+
 The experiment remains
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a

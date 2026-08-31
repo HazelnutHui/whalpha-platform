@@ -832,9 +832,11 @@ recorded in the active-state table and
   require complete three-session inferential/coverage evidence for the entire
   24-member validation family and `1.0000` coverage for the locked holdout
   signal/control cohorts.
-  A formal inferential Oracle remains absent. ADR 0107 now supplies external
-  durable one-use holdout custody with reserve-before-evaluation and no-replay
-  semantics, proven only with fixtures under temporary roots.
+  ADR 0108 now supplies the formal independent inferential Oracle for arbitrary
+  nonconstant fixtures: exact Bootstrap bounds/probability and all-24 Holm
+  values reconcile through a separate MT19937/arithmetic implementation. ADR
+  0107 supplies external durable one-use holdout custody with
+  reserve-before-evaluation and no-replay semantics. Both remain fixture-only.
 - ADR 0106 adds the bilingual method/readiness-only Lab page to repository
   source. The 31/252 indicator is data coverage rather than confidence; all
   performance panels remain unavailable and no deployment occurred.

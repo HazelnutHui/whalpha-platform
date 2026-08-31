@@ -28,12 +28,15 @@ from tip_api.services.candidate_strategy_research_execution import (
 )
 from tip_api.services.candidate_strategy_research_statistics import (
     CandidateStrategyResearchStatisticsError,
+    _block_bootstrap,
     build_fixture_cohort_outcome,
     evaluate_development_statistics_fixture,
     evaluate_holdout_statistics_fixture,
     evaluate_validation_statistics_fixture,
 )
 from tip_api.services.candidate_strategy_research_statistics_oracle import (
+    calculate_block_bootstrap_inference_oracle,
+    calculate_holm_adjustment_oracle,
     calculate_research_statistics_oracle,
 )
 from tip_api.services.candidate_strategy_holdout_custody import (
@@ -621,6 +624,58 @@ def test_independent_oracle_reproduces_every_descriptive_development_value(
             actual.session_balanced_mean_contrast
             == expected.session_balanced_mean_contrast
         )
+        assert actual.contrast_lower_90pct == expected.contrast_lower_90pct
+        assert actual.contrast_upper_90pct == expected.contrast_upper_90pct
+        assert actual.one_sided_raw_p_value == expected.one_sided_raw_p_value
+        assert actual.bootstrap_replicates == expected.bootstrap_replicates
+
+
+@pytest.mark.parametrize("count", [1, 2, 5, 20, 37, 53])
+def test_independent_inference_oracle_matches_arbitrary_nonconstant_series(
+    count: int,
+) -> None:
+    values = tuple(
+        (
+            Decimal(((index * 17) % 29) - 14) / Decimal("1000")
+            + Decimal(index % 3) / Decimal("10000")
+        )
+        for index in range(count)
+    )
+    seed_material = f"validation:arbitrary-series-{count}:3"
+
+    expected = calculate_block_bootstrap_inference_oracle(
+        values,
+        seed_material=seed_material,
+    )
+    actual_lower, actual_upper, actual_probability = _block_bootstrap(
+        values,
+        seed_material=seed_material,
+    )
+
+    assert expected.lower_90pct == actual_lower
+    assert expected.upper_90pct == actual_upper
+    assert expected.one_sided_p_value == actual_probability
+    assert expected.replicate_count == 2_000
+
+
+def test_independent_holm_oracle_matches_full_validation_family(
+    completed_fixture,
+) -> None:
+    _, validation, _ = completed_fixture
+    primary = {
+        item.parameter_combination_id: Decimal(item.one_sided_raw_p_value)
+        for item in validation.summaries
+        if item.horizon_sessions == 3 and item.one_sided_raw_p_value is not None
+    }
+    expected = calculate_holm_adjustment_oracle(primary)
+
+    assert len(expected) == 24
+    for item in validation.summaries:
+        if item.horizon_sessions == 3:
+            assert item.holm_adjusted_p_value is not None
+            assert Decimal(item.holm_adjusted_p_value) == expected[
+                item.parameter_combination_id
+            ].quantize(Decimal("0.000001"))
 
 
 @pytest.mark.parametrize("validation_return", ["0.0000000000", "-0.0200000000"])

@@ -47,6 +47,12 @@ prior-stage report, and declares `fixture_only=true`,
 `stage_transition_authorized=false`, and
 `performance_claim_authorized=false`.
 
+ADR 0108 extends the separate Oracle to independently reproduce the fixed
+circular-block Bootstrap, percentile interval, add-one centered-null
+probability and full-family Holm adjustment. The Oracle uses its own MT19937
+and arithmetic path and compares exact Decimal outputs; it does not grant
+authority or assert that the statistical method is economically sufficient.
+
 `holdout_consumed=true` means that one report contains holdout fixture results;
 it is not durable single-use custody. The current report explicitly declares
 that such custody is not implemented, so repeated fixture calls must not be

@@ -29,5 +29,6 @@ not duplicate the primary pseudorandom bootstrap implementation.
 The fixture mechanics pass this bounded audit after adding the complete cohort-
 outcome coverage gate. This is not evidence that the research hypothesis works.
 It proves only that the current synthetic execution rejects the registered
-failure patterns. Durable one-use holdout custody and a formal independent
-inferential Oracle remain unimplemented.
+failure patterns. At this audit boundary, durable one-use holdout custody and a
+formal independent inferential Oracle remained unimplemented; ADRs 0107 and
+0108 subsequently add both controls using fixture-only evidence.
