@@ -837,6 +837,10 @@ recorded in the active-state table and
   values reconcile through a separate MT19937/arithmetic implementation. ADR
   0107 supplies external durable one-use holdout custody with
   reserve-before-evaluation and no-replay semantics. Both remain fixture-only.
+- ADR 0109 adds the review-only development-activation decision. Current
+  31/252 readiness cannot produce authorization; complete synthetic readiness
+  can only prepare an exact evidence-bound acknowledgement, never run real
+  evaluation or select parameters.
 - ADR 0106 adds the bilingual method/readiness-only Lab page to repository
   source. The 31/252 indicator is data coverage rather than confidence; all
   performance panels remain unavailable and no deployment occurred.

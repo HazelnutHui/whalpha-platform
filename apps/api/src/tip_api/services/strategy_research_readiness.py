@@ -221,6 +221,55 @@ def assess_strategy_research_readiness(
     )
 
 
+def validate_strategy_research_readiness_assessment(
+    assessment: StrategyResearchReadinessAssessment,
+) -> None:
+    """Formally recheck one in-memory readiness result before downstream review."""
+
+    required = tuple(
+        item for item in assessment.observations if item.required_for_development
+    )
+    ready = bool(required) and all(
+        item.state is ResearchRequirementState.SATISFIED for item in required
+    )
+    expected_status = (
+        StrategyResearchReadinessStatus.READY_FOR_DEVELOPMENT_REVIEW
+        if ready
+        else StrategyResearchReadinessStatus.DATA_BLOCKED
+    )
+    expected_next = (
+        StrategyResearchReadinessNextAction.REVIEW_DEVELOPMENT_ACTIVATION
+        if ready
+        else StrategyResearchReadinessNextAction.COMPLETE_HISTORICAL_FOUNDATION
+    )
+    expected_reasons = (
+        ("separate_development_activation_review_required",)
+        if ready
+        else tuple(
+            f"requirement_not_satisfied:{item.requirement_id}"
+            for item in assessment.observations
+            if item.required_for_development
+            and item.state is not ResearchRequirementState.SATISFIED
+        )
+    )
+    payload = assessment.as_dict()
+    actual_fingerprint = payload.pop("logical_content_fingerprint")
+    if (
+        assessment.contract_version != CONTRACT_VERSION
+        or assessment.status is not expected_status
+        or assessment.next_action is not expected_next
+        or assessment.reason_codes != expected_reasons
+        or assessment.development_authorized
+        or assessment.performance_claims_authorized
+        or assessment.external_request_count != 0
+        or assessment.production_write_count != 0
+        or actual_fingerprint != _fingerprint(payload)
+    ):
+        raise StrategyResearchReadinessError(
+            "strategy research readiness assessment does not formally reconcile"
+        )
+
+
 def _observations(
     experiment: CandidateStrategyResearchExperimentV1,
     canonical: CanonicalEodIdentityEvidence,

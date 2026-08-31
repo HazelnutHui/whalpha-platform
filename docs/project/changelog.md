@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-31 — Separate data readiness from research activation
+
+- Accepted ADR 0109 and added
+  `strategy-research-development-activation-review/1.0`.
+- The review formally reconciles readiness and binds the experiment,
+  Historical Coverage, code revision, execution/statistics versions,
+  independent inference Oracle, single-use holdout custody and zero prior real
+  results/activations/holdout uses.
+- Current 31/252 readiness remains blocked and produces no authorization text.
+  A complete synthetic fixture only prepares an exact fingerprint-bound user
+  acknowledgement; activation, real evaluation, parameter selection, holdout
+  access and performance authority remain false.
+- No CLI, real adapter, result, `/data` write, provider call, activation,
+  publication, deployment or scheduler state changed.
+- The complete backend suite passes 1,899 tests with only the two existing
+  dependency deprecation warnings.
+
 ## 2026-08-31 — Independently reproduce research inference
 
 - Accepted ADR 0108 and extended the independent Oracle beyond descriptive

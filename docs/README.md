@@ -72,6 +72,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Historical Research Foundation Contracts V1](data-contracts/historical-research-foundation-v1.md)
 - [Candidate Strategy Research Experiment V1](data-contracts/candidate-strategy-research-experiment-v1.md)
 - [Strategy Research Readiness V1](data-contracts/strategy-research-readiness-v1.md)
+- [Strategy Research Development Activation Review V1](data-contracts/strategy-research-development-activation-review-v1.md): Separates complete data evidence from exact user authorization and any later real-evaluation capability.
 - [Data Record Governance V1](data-contracts/data-record-governance-v1.md): Cross-family layer, disposition, evidence, quality, coverage, point-in-time, retention, content-scope, and equal-capability serving classification.
 - [Source Permission Governance V1](data-contracts/source-permission-governance-v1.md): Effective-dated, use-specific source permission reviews and default-deny equal-capability assessment.
 - [Source Resolution Governance V1](data-contracts/source-resolution-governance-v1.md): Family/fact-specific evidence roles, corroboration, and fail-closed conflict resolution.
@@ -148,6 +149,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [ADR 0106: Expose research readiness without performance](decisions/0106-expose-research-readiness-without-performance.md): adds the bilingual first-level Lab page while keeping real and fixture performance unavailable.
 - [ADR 0107: Reserve holdout before evaluation](decisions/0107-reserve-holdout-before-evaluation.md): adds durable no-replay custody without connecting real inputs or granting performance authority.
 - [ADR 0108: Independently reproduce research inference](decisions/0108-independently-reproduce-research-inference.md): exact independent moving-block Bootstrap, percentile, probability, and Holm verification for arbitrary nonconstant fixtures.
+- [ADR 0109: Separate research readiness from development authorization](decisions/0109-separate-research-readiness-from-development-authorization.md): keeps 252-session readiness review-only and binds any future authorization to exact unchanged controls.
 - [2026-08-31 Quant Research Statistics Adversarial Audit](audits/quant-research-statistics-adversarial-audit-2026-08-31.md): synthetic null, reversal, crowding, outlier, missingness and stage-isolation evidence.
 - [2026-08-31 Quant Research Inference Oracle Audit](audits/quant-research-inference-oracle-audit-2026-08-31.md): independent exact inference equivalence across nonconstant series and the full validation family.
 - [Daily EOD Bounded Cadence V1](data-contracts/daily-eod-bounded-cadence-v1.md): finite distinct-wake planning, evidence-chain, timing, failure, and manual-stop contract.

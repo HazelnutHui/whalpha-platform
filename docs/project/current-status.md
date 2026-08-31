@@ -651,6 +651,12 @@ read or used.
   custody: it reserves before evaluation and prohibits replay after completion,
   failure, invalid evidence or ambiguous interruption. That mechanism is
   fixture-proven only and grants no real-data or performance authority.
+- ADR 0109 now defines the missing development-activation review. It formally
+  reconciles readiness and binds exact experiment, code, execution/statistics,
+  inference-Oracle and holdout-custody evidence plus zero prior real-research
+  state. Current 31/252 readiness is blocked and produces no acknowledgement;
+  even a complete fixture only prepares exact user authorization and cannot
+  activate or execute research.
 - ADR 0106 adds the bilingual method/readiness-only Lab page to repository
   source. It labels 31/252 as data coverage, leaves performance panels
   unavailable, preserves equal guest/credential capability, and introduces no

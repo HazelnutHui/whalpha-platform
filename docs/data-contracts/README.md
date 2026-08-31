@@ -10,6 +10,7 @@
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 - [Candidate Strategy Holdout Custody V1](candidate-strategy-holdout-custody-v1.md)
 - [Strategy Research Readiness V1](strategy-research-readiness-v1.md)
+- [Strategy Research Development Activation Review V1](strategy-research-development-activation-review-v1.md)
 - [Candidate Strategy Channel Product V1](candidate-strategy-channel-product-v1.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
 - [Candidate Visual Context V1](candidate-visual-context-v1.md)

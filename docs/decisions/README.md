@@ -131,3 +131,4 @@ Each ADR should include:
 - [0106: Expose Research Readiness Without Performance](0106-expose-research-readiness-without-performance.md)
 - [0107: Reserve Holdout Before Evaluation](0107-reserve-holdout-before-evaluation.md)
 - [0108: Independently Reproduce Research Inference](0108-independently-reproduce-research-inference.md)
+- [0109: Separate Research Readiness from Development Authorization](0109-separate-research-readiness-from-development-authorization.md)

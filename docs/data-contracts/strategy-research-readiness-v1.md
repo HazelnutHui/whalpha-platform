@@ -54,6 +54,11 @@ Both results always set `development_authorized=false`,
 `performance_claims_authorized=false`, `external_request_count=0`, and
 `production_write_count=0`.
 
+ADR 0109 defines the next review-only step. A complete result may feed an exact
+development-activation review, but that review still cannot activate or
+execute research; it can only prepare an evidence-bound user-authorization
+decision.
+
 ## Fingerprints
 
 The result binds the experiment, evaluation policy, canonical EOD/Identity

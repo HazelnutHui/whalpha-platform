@@ -123,6 +123,12 @@ reproducing the registered moving-block Bootstrap, 90% interval, one-sided
 probability and 24-family Holm correction on arbitrary nonconstant fixtures.
 This verifies mechanics, not alpha or future validity.
 
+ADR 0109 defines the separate development-activation review. Even complete
+252-session readiness cannot start real evaluation: the unchanged experiment,
+code, inference Oracle, holdout custody and zero prior real-research state must
+first produce an exact review, followed by separate user authorization and a
+future activation capability.
+
 The experiment remains
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a

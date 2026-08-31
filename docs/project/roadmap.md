@@ -66,6 +66,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   completes exact independent Bootstrap and Holm reproduction for arbitrary
   nonconstant fixtures. Neither item is a reason to connect incomplete real
   data now.
+- Research activation: ADR 0109 now separates complete readiness from exact
+  user authorization and any future real-evaluation capability. Current
+  31/252 state remains blocked; do not implement an activation executor until
+  real Historical Coverage is formally ready and a fresh review is warranted.
 - Product: preserve leadership quality and entry location as separate axes.
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized
