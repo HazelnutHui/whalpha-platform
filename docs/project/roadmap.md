@@ -49,8 +49,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   source/account/lifecycle resolution, not a provider request. The concise
   Massive inquiry is prepared but remains unsent.
   ADR 0110 separately adds a four-request, non-retaining technical account
-  capability probe. Its repository implementation is complete but no real
-  probe has run; execution requires a clean-revision exact acknowledgement.
+  capability probe. Its first exact run confirmed technical access to Grouped
+  Daily, active Tickers, Splits and Dividends. Next review inactive-Ticker and
+  lifecycle coverage before preparing any Historical Pilot; do not infer full
+  coverage from the deliberately limited endpoint checks.
 - Research mechanics: ADR 0103 now freezes and synthetic-tests the exact
   chronological split, boundary exclusions, all 24 combinations, same-session
   eligible-leader controls, and delayed underlying-stock labels. Do not connect

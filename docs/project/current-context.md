@@ -1043,7 +1043,16 @@ prepared Massive inquiry to be sent automatically.
 ADR 0110 adds a separately authorized four-request Massive account capability
 probe for Grouped Daily, point-in-time active Tickers, Splits and Dividends.
 It retains no response body, writes no data, and grants no permission or Pilot
-authority. Its simulated tests pass; no real probe has run.
+authority. Its simulated tests pass.
+
+The exact 2026-08-31 authorization then ran that probe once from clean revision
+`df178b21266ebe733d937fed4f71a5b50176e1d6` for 2026-07-16. Grouped Daily
+returned 12,454 rows; active Tickers, Splits and Dividends each returned one
+deliberately limited result. All were accessible, with four requests, zero
+retained bodies and zero writes. Fingerprint is
+`34b4eafc8500b24a7d1625ee8fcc24c94509743f05be356c76ab774a58ff09d6`.
+Inactive/lifecycle coverage, pagination, historical depth, permission and the
+Historical Pilot remain unverified or unauthorized.
 
 ## Cross-device continuity
 

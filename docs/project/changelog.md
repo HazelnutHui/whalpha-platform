@@ -10,6 +10,12 @@
   coverage. No credential was read and no real provider request was made.
 - Full backend regression passed: 1,905 tests with two unchanged deprecation
   warnings.
+- The subsequently authorized clean-main probe made exactly four requests for
+  2026-07-16. All four endpoint classes were accessible: unadjusted Grouped
+  Daily returned 12,454 rows, while active Tickers, Splits and Dividends each
+  returned one deliberately limited result. No body was retained and no data
+  was written. This is technical entitlement evidence, not coverage or
+  permission evidence.
 
 ## 2026-08-31 — Separate data readiness from research activation
 

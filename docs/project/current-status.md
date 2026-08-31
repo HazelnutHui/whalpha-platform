@@ -1226,7 +1226,13 @@ chronological validation.
 ADR 0110 adds a distinct Massive historical endpoint capability probe. It is
 bounded to four zero-retry requests for one exact session, retains no response
 body, writes no data, and cannot conclude permission or authorize a Historical
-Pilot. Repository tests pass; no credential access or real probe has occurred.
+Pilot. Repository tests pass.
+
+One exact clean-main probe subsequently ran for 2026-07-16. Grouped Daily,
+active point-in-time Tickers, Splits and Dividends were all technically
+accessible; request count was four and data-write/response-retention counts
+were zero. The latter three used `limit=1`. This does not clear inactive-
+security/lifecycle coverage, pagination, source permission or Pilot authority.
 
 ## Verification entry point
 
