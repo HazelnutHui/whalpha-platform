@@ -396,11 +396,13 @@ class StrongLeaderPullbackStatisticsReportV1(FrozenModel):
         expected_gate_ids = {
             ResearchStatisticsStage.DEVELOPMENT: (),
             ResearchStatisticsStage.VALIDATION: (
+                "complete_validation_family_evidence",
                 "familywise_adjusted_parameter_evidence",
                 "net_primary_median_positive",
                 "regime_observation_floor",
             ),
             ResearchStatisticsStage.HOLDOUT: (
+                "complete_cohort_outcome_coverage",
                 "holdout_primary_contrast_positive",
                 "net_primary_median_positive",
                 "regime_observation_floor",

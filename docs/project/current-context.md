@@ -816,6 +816,16 @@ recorded in the active-state table and
   development lock, immutable validation, and selected-only holdout. Sparse
   evidence is inconclusive, failed validation blocks holdout, and all reports
   deny stage-transition and performance-claim authority. No real result exists.
+- ADR 0105 adds an independently implemented descriptive Oracle and a bounded
+  adversarial suite. All 72 development summaries reconcile on counts,
+  coverage, Regime cells and descriptive/session-balanced values. Null and
+  reversing validation, one-session crowding, one extreme session, cross-split
+  evidence, unlocked holdout and failed-validation holdout fail closed. The
+  audit exposed differential missingness as a gap; validation and holdout now
+  require complete three-session inferential/coverage evidence for the entire
+  24-member validation family and `1.0000` coverage for the locked holdout
+  signal/control cohorts.
+  Durable one-use holdout custody and a formal inferential Oracle remain absent.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

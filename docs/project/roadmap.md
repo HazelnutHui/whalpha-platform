@@ -58,6 +58,12 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   cost sensitivity and selected-only holdout access using fixtures. The next
   research implementation must not connect real inputs until formal readiness
   and a separate development activation both pass.
+- Research falsification: ADR 0105 now independently reconciles descriptive
+  statistics and adversarially rejects null/reversal, one-day crowding,
+  outlier, missingness and stage-leakage fixtures. Complete signal/control
+  outcome coverage is now a validation/holdout quality gate. A formal
+  inferential Oracle and durable one-use holdout custody remain later controls,
+  not reasons to connect incomplete real data now.
 - Product: preserve leadership quality and entry location as separate axes.
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized
@@ -343,6 +349,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   leader controls, and delayed 1/3/5-session stock labels
 - [x] Fixture-only session-balanced research statistics, development lock,
   24-family validation correction, and selected-only holdout gate
+- [x] Independent descriptive Oracle and adversarial null/reversal/crowding/
+  outlier/missingness audit with complete-label quality gate
 
 ## Next Small Target
 

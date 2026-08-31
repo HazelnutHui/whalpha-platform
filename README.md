@@ -194,6 +194,10 @@ ADR 0104 now fixes the complementary fixture-only statistics: session-balanced
 signal/control contrasts, five-session block inference, 24-family validation
 correction, cost sensitivity, one development parameter lock and selected-only
 holdout access. It still creates no real backtest or performance authority.
+ADR 0105 now independently checks the descriptive statistics and attacks the
+fixture with null, reversal, crowding, outlier, missingness and stage-leakage
+cases. Validation and holdout require complete signal/control outcome coverage;
+the audit remains synthetic and does not support a model-performance claim.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

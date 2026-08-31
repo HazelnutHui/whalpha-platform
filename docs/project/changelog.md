@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-31 — Adversarially audit research statistics
+
+- Accepted ADR 0105 and added an independent descriptive Oracle that does not
+  call the primary evaluator or its private helpers. It reproduces counts,
+  dispositions, coverage, paired sessions, Regime cells, evidence floors,
+  return summaries, hit rate, MFE/MAE and session-balanced contrasts.
+- Added synthetic stable, null, validation-reversal, one-session-crowding,
+  one-extreme-session, differential-missingness, cross-split, unlocked-holdout
+  and failed-validation-holdout cases. The Oracle reconciles all 72 development
+  summaries; constant-series bootstrap expectations and adversarial inference
+  behavior are checked without duplicating the random bootstrap implementation.
+- The audit found that missing labels were visible but not independently
+  transition-blocking. Validation and holdout now add a fail-closed complete-
+  evidence quality gates: the full 24-member validation family must have
+  complete three-session inference and signal/control coverage, and the locked
+  holdout contrast must have `1.0000` signal/control outcome coverage.
+- Durable single-use holdout custody and a formal arbitrary-series inferential
+  Oracle remain explicitly unimplemented. No real data, `/data` write, provider
+  call, model result, UI, publication, deployment or scheduler state changed.
+  The complete backend suite passes 1,880 tests with only the two existing
+  dependency deprecation warnings.
+
 ## 2026-08-31 — Freeze session-balanced research statistics
 
 - Accepted ADR 0104 and added

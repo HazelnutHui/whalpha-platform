@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 from datetime import date
+from decimal import Decimal
 from uuid import UUID
 
 import pytest
@@ -29,6 +30,9 @@ from tip_api.services.candidate_strategy_research_statistics import (
     evaluate_development_statistics_fixture,
     evaluate_holdout_statistics_fixture,
     evaluate_validation_statistics_fixture,
+)
+from tip_api.services.candidate_strategy_research_statistics_oracle import (
+    calculate_research_statistics_oracle,
 )
 from tip_api.services.market_calendar import ExchangeCalendar
 
@@ -362,3 +366,291 @@ def test_fixture_label_fingerprint_detects_business_value_tampering(
 
     with pytest.raises(ValidationError, match="label fingerprint"):
         StrongLeaderPullbackCohortOutcomeV1.model_validate(payload)
+
+
+def test_independent_oracle_reproduces_every_descriptive_development_value(
+    research_fixture,
+    completed_fixture,
+) -> None:
+    _, observations, mechanics = research_fixture
+    development, _, _ = completed_fixture
+    outcomes = _outcomes(
+        mechanics,
+        split=StrategyEvaluationSplit.DEVELOPMENT,
+    )
+    oracle = calculate_research_statistics_oracle(
+        mechanics=mechanics,
+        observations=observations,
+        outcomes=outcomes,
+        split=StrategyEvaluationSplit.DEVELOPMENT,
+    )
+    actual_by_key = {
+        (item.parameter_combination_id, item.horizon_sessions): item
+        for item in development.summaries
+    }
+
+    for expected in oracle:
+        actual = actual_by_key[
+            (expected.parameter_combination_id, expected.horizon_sessions)
+        ]
+        assert actual.signal_assigned_count == expected.signal_assigned_count
+        assert actual.control_assigned_count == expected.control_assigned_count
+        assert actual.signal_available_count == expected.signal_available_count
+        assert actual.control_available_count == expected.control_available_count
+        assert actual.signal_quarantined_count == expected.signal_quarantined_count
+        assert actual.control_quarantined_count == expected.control_quarantined_count
+        assert (
+            actual.signal_unavailable_or_pending_count
+            == expected.signal_other_count
+        )
+        assert (
+            actual.control_unavailable_or_pending_count
+            == expected.control_other_count
+        )
+        assert actual.signal_coverage_ratio == expected.signal_coverage_ratio
+        assert actual.control_coverage_ratio == expected.control_coverage_ratio
+        assert actual.paired_session_count == expected.paired_session_count
+        assert (
+            actual.signal_market_regime_counts
+            == expected.signal_market_regime_counts
+        )
+        assert (
+            actual.inference_status is ResearchInferenceStatus.AVAILABLE
+        ) == expected.evidence_floor_met
+        assert (
+            actual.signal_mean_underlying_return
+            == expected.signal_mean_underlying_return
+        )
+        assert (
+            actual.signal_median_underlying_return
+            == expected.signal_median_underlying_return
+        )
+        assert (
+            actual.signal_median_spy_relative_return
+            == expected.signal_median_spy_relative_return
+        )
+        assert actual.signal_hit_rate == expected.signal_hit_rate
+        assert (
+            actual.signal_mean_maximum_favorable_excursion
+            == expected.signal_mean_maximum_favorable_excursion
+        )
+        assert (
+            actual.signal_mean_maximum_adverse_excursion
+            == expected.signal_mean_maximum_adverse_excursion
+        )
+        assert (
+            actual.session_balanced_mean_contrast
+            == expected.session_balanced_mean_contrast
+        )
+
+
+@pytest.mark.parametrize("validation_return", ["0.0000000000", "-0.0200000000"])
+def test_null_or_reversing_validation_cannot_reach_holdout(
+    validation_return,
+    research_fixture,
+    completed_fixture,
+) -> None:
+    _, observations, mechanics = research_fixture
+    development, _, _ = completed_fixture
+    validation = evaluate_validation_statistics_fixture(
+        mechanics=mechanics,
+        observations=observations,
+        outcomes=_outcomes(
+            mechanics,
+            split=StrategyEvaluationSplit.VALIDATION,
+            signal_return=validation_return,
+        ),
+        development_report=development,
+    )
+
+    assert validation.all_required_gates_passed is False
+    assert any(
+        item.status is ResearchGateStatus.FAIL
+        for item in validation.gate_evaluations
+    )
+    with pytest.raises(CandidateStrategyResearchStatisticsError, match="every"):
+        evaluate_holdout_statistics_fixture(
+            mechanics=mechanics,
+            observations=observations,
+            outcomes=(),
+            validation_report=validation,
+        )
+
+
+def test_single_session_crowding_is_inconclusive_despite_many_assignments(
+    research_fixture,
+) -> None:
+    _, observations, mechanics = research_fixture
+    all_outcomes = _outcomes(
+        mechanics,
+        split=StrategyEvaluationSplit.DEVELOPMENT,
+    )
+    assignment_by_fingerprint = {
+        item.logical_fingerprint: item for item in mechanics.assignments
+    }
+    first_session = min(
+        assignment_by_fingerprint[item.assignment_fingerprint].as_of_session
+        for item in all_outcomes
+    )
+    crowded = tuple(
+        item
+        for item in all_outcomes
+        if assignment_by_fingerprint[item.assignment_fingerprint].as_of_session
+        == first_session
+    )
+    report = evaluate_development_statistics_fixture(
+        mechanics=mechanics,
+        observations=observations,
+        outcomes=crowded,
+    )
+
+    assert report.parameter_lock is None
+    assert all(
+        item.inference_status is ResearchInferenceStatus.INCONCLUSIVE
+        for item in report.summaries
+    )
+    assert max(item.paired_session_count for item in report.summaries) == 1
+
+
+def test_one_extreme_session_does_not_rescue_validation(
+    research_fixture,
+    completed_fixture,
+) -> None:
+    _, observations, mechanics = research_fixture
+    development, _, _ = completed_fixture
+    eligible = [
+        item
+        for item in mechanics.assignments
+        if item.evaluation_split is StrategyEvaluationSplit.VALIDATION
+        and item.universe_id == "primary"
+        and item.cohort_role
+        in {
+            StrongLeaderPullbackCohortRole.SIGNAL,
+            StrongLeaderPullbackCohortRole.ELIGIBLE_LEADER_CONTROL,
+        }
+    ]
+    extreme_session = min(item.as_of_session for item in eligible)
+    outcomes = []
+    for assignment in eligible:
+        extreme_signal = (
+            assignment.cohort_role is StrongLeaderPullbackCohortRole.SIGNAL
+            and assignment.as_of_session == extreme_session
+        )
+        stock_return = "1.0000000000" if extreme_signal else "0.0000000000"
+        outcomes.append(
+            build_fixture_cohort_outcome(
+                assignment=assignment,
+                horizon_sessions=3,
+                status=StrategyOutcomeStatus.AVAILABLE,
+                underlying_price_return=stock_return,
+                benchmark_price_return="0.0000000000",
+                relative_to_benchmark_return=stock_return,
+                maximum_favorable_excursion=(
+                    "1.0000000000" if extreme_signal else "0.0100000000"
+                ),
+                maximum_adverse_excursion="-0.0100000000",
+                source_eod_fingerprint=hashlib.sha256(
+                    assignment.logical_fingerprint.encode("ascii")
+                ).hexdigest(),
+            )
+        )
+    validation = evaluate_validation_statistics_fixture(
+        mechanics=mechanics,
+        observations=observations,
+        outcomes=tuple(outcomes),
+        development_report=development,
+    )
+    selected = next(
+        item
+        for item in validation.summaries
+        if item.parameter_combination_id
+        == validation.selected_parameter_combination_id
+        and item.horizon_sessions == 3
+    )
+
+    assert Decimal(selected.session_balanced_mean_contrast or "0") > 0
+    assert selected.signal_median_spy_relative_return == "0.0000000000"
+    assert validation.all_required_gates_passed is False
+    assert next(
+        item.status
+        for item in validation.gate_evaluations
+        if item.gate_id == "net_primary_median_positive"
+    ) is ResearchGateStatus.FAIL
+
+
+def test_differential_missingness_is_visible_and_never_authoritative(
+    research_fixture,
+) -> None:
+    _, observations, mechanics = research_fixture
+    assignment_by_fingerprint = {
+        item.logical_fingerprint: item for item in mechanics.assignments
+    }
+    complete = _outcomes(
+        mechanics,
+        split=StrategyEvaluationSplit.DEVELOPMENT,
+    )
+    signal_seen = 0
+    retained = []
+    for outcome in complete:
+        assignment = assignment_by_fingerprint[outcome.assignment_fingerprint]
+        if assignment.cohort_role is StrongLeaderPullbackCohortRole.SIGNAL:
+            signal_seen += 1
+            if signal_seen % 10 == 0:
+                continue
+        retained.append(outcome)
+    report = evaluate_development_statistics_fixture(
+        mechanics=mechanics,
+        observations=observations,
+        outcomes=tuple(retained),
+    )
+    selected = next(
+        item
+        for item in report.summaries
+        if item.parameter_combination_id
+        == report.selected_parameter_combination_id
+        and item.horizon_sessions == 3
+    )
+
+    assert Decimal(selected.signal_coverage_ratio) < 1
+    assert "signal_outcome_coverage_incomplete" in selected.reason_codes
+    assert report.stage_transition_authorized is False
+    assert report.performance_claim_authorized is False
+
+
+def test_incomplete_validation_coverage_fails_independent_quality_gate(
+    research_fixture,
+    completed_fixture,
+) -> None:
+    _, observations, mechanics = research_fixture
+    development, _, _ = completed_fixture
+    assignment_by_fingerprint = {
+        item.logical_fingerprint: item for item in mechanics.assignments
+    }
+    complete = _outcomes(
+        mechanics,
+        split=StrategyEvaluationSplit.VALIDATION,
+    )
+    signal_seen = 0
+    retained = []
+    for outcome in complete:
+        assignment = assignment_by_fingerprint[outcome.assignment_fingerprint]
+        if assignment.cohort_role is StrongLeaderPullbackCohortRole.SIGNAL:
+            signal_seen += 1
+            if signal_seen % 10 == 0:
+                continue
+        retained.append(outcome)
+    validation = evaluate_validation_statistics_fixture(
+        mechanics=mechanics,
+        observations=observations,
+        outcomes=tuple(retained),
+        development_report=development,
+    )
+    coverage_gate = next(
+        item
+        for item in validation.gate_evaluations
+        if item.gate_id == "complete_validation_family_evidence"
+    )
+
+    assert coverage_gate.status is ResearchGateStatus.FAIL
+    assert Decimal(coverage_gate.observed_value or "1") < 1
+    assert validation.all_required_gates_passed is False

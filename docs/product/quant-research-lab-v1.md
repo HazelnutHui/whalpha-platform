@@ -106,6 +106,13 @@ parameter lock. Validation cannot change the lock, and holdout exposes only the
 locked combination after every validation gate passes. All reports explicitly
 deny stage-transition and performance-claim authority.
 
+ADR 0105 adds an independent descriptive Oracle and adversarial fixtures for
+null effects, validation reversal, date crowding, extreme values, missing
+labels and stage leakage. The audit found that visible missingness alone was
+not sufficient protection, so validation and holdout now require complete
+available outcome coverage in both signal and control cohorts. This remains a
+synthetic mechanics result, not evidence for the hypothesis.
+
 The experiment remains
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a

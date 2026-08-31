@@ -629,6 +629,15 @@ read or used.
   validation gate passes. This is an analysis-plan fixture, not a real
   backtest; every report denies transition and performance authority. Durable
   single-use holdout custody is explicitly not implemented.
+- ADR 0105 adds an independent descriptive statistics Oracle plus adversarial
+  null, reversal, crowding, outlier, missingness and stage-isolation fixtures.
+  The Oracle reproduces every descriptive field across all 72 development
+  summaries without calling the primary evaluator. Differential missingness
+  revealed that visible coverage was not itself a transition gate, so
+  validation now requires complete evidence across the whole 24-member Holm
+  family, while holdout requires `1.0000` available coverage in both locked
+  signal and control cohorts. The independent Oracle does not reproduce arbitrary-
+  series bootstrap inference, and durable single-use holdout custody is absent.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

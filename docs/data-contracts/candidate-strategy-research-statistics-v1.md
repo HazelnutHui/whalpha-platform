@@ -36,9 +36,11 @@ observations or 20 comparable sessions. Descriptive coverage is not discarded.
 - Development returns 24 combinations × 3 horizons and may produce one
   immutable parameter lock.
 - Validation returns the same bounded family, applies Holm across all 24
-  primary-horizon hypotheses, and cannot change the lock.
+  primary-horizon hypotheses, requires complete inferential and signal/control
+  outcome evidence for the whole corrected family, and cannot change the lock.
 - Holdout returns only the locked combination × 3 horizons and is inaccessible
-  unless all validation gates pass.
+  unless all validation gates pass. Its own locked contrast also requires
+  complete signal/control outcome coverage.
 
 Every report is self-fingerprinted, binds the outcome-free mechanics batch and
 prior-stage report, and declares `fixture_only=true`,

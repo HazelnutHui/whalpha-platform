@@ -127,3 +127,4 @@ Each ADR should include:
 - [0102: Freeze Provider-Neutral Historical Source Packages](0102-freeze-provider-neutral-historical-source-packages.md)
 - [0103: Separate Chronological Research Mechanics from Performance](0103-separate-chronological-research-mechanics-from-performance.md)
 - [0104: Freeze Session-Balanced Research Statistics Before Real Labels](0104-freeze-session-balanced-research-statistics.md)
+- [0105: Require Adversarial Statistics Audit and Complete Labels](0105-require-adversarial-statistics-audit-and-complete-labels.md)

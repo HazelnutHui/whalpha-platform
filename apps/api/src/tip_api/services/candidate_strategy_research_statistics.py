@@ -196,7 +196,10 @@ def evaluate_validation_statistics_fixture(
     )
     selected = development_report.selected_parameter_combination_id
     primary = _selected_primary_summary(summaries, selected)
-    gates = _validation_gates(primary)
+    gates = _validation_gates(
+        primary,
+        tuple(item for item in summaries if item.horizon_sessions == 3),
+    )
     return _build_report(
         mechanics=mechanics,
         stage=ResearchStatisticsStage.VALIDATION,
@@ -363,6 +366,16 @@ def _build_summary(
         reasons.append("control_observation_floor_not_met")
     if len(session_contrasts) < MINIMUM_COMPARABLE_SESSIONS:
         reasons.append("comparable_session_floor_not_met")
+    if len(signal_available) < len(by_role[StrongLeaderPullbackCohortRole.SIGNAL]):
+        reasons.append("signal_outcome_coverage_incomplete")
+    if len(control_available) < len(
+        by_role[StrongLeaderPullbackCohortRole.ELIGIBLE_LEADER_CONTROL]
+    ):
+        reasons.append("control_outcome_coverage_incomplete")
+    if signal["quarantined"]:
+        reasons.append("signal_outcomes_quarantined")
+    if control["quarantined"]:
+        reasons.append("control_outcomes_quarantined")
     signal_returns = [
         Decimal(outcome.underlying_price_return or "0")
         for _, outcome in signal_available
@@ -554,8 +567,10 @@ def _holm_adjusted_values(
 
 def _validation_gates(
     summary: ResearchParameterSummaryV1,
+    primary_summaries: tuple[ResearchParameterSummaryV1, ...],
 ) -> tuple[ResearchGateEvaluationV1, ...]:
     return (
+        _validation_family_evidence_gate(primary_summaries),
         _numeric_gate(
             gate_id="familywise_adjusted_parameter_evidence",
             metric_id="block_bootstrap_holm_adjusted_p_value",
@@ -580,6 +595,7 @@ def _holdout_gates(
     summary: ResearchParameterSummaryV1,
 ) -> tuple[ResearchGateEvaluationV1, ...]:
     return (
+        _coverage_gate(summary, StrategyEvaluationSplit.HOLDOUT),
         _numeric_gate(
             gate_id="holdout_primary_contrast_positive",
             metric_id="block_bootstrap_lower_90pct_primary_3s_contrast",
@@ -622,6 +638,52 @@ def _numeric_gate(*, gate_id, metric_id, split, value, threshold, comparison):
         observed_value=value,
         threshold=threshold,
         reason_codes=("registered_gate_passed" if passed else "registered_gate_failed",),
+    )
+
+
+def _coverage_gate(summary, split):
+    minimum = min(
+        Decimal(summary.signal_coverage_ratio),
+        Decimal(summary.control_coverage_ratio),
+    )
+    passed = minimum == Decimal("1")
+    reason = (
+        "research_outcome_coverage_complete"
+        if passed
+        else "research_outcome_coverage_incomplete"
+    )
+    return ResearchGateEvaluationV1(
+        gate_id="complete_cohort_outcome_coverage",
+        metric_id="minimum_signal_control_outcome_coverage",
+        evaluation_split=split,
+        status=ResearchGateStatus.PASS if passed else ResearchGateStatus.FAIL,
+        observed_value=format(minimum.quantize(COVERAGE_QUANTUM), "f"),
+        threshold="1.0000",
+        reason_codes=(reason,),
+    )
+
+
+def _validation_family_evidence_gate(primary_summaries):
+    complete_count = sum(
+        item.inference_status is ResearchInferenceStatus.AVAILABLE
+        and item.signal_coverage_ratio == "1.0000"
+        and item.control_coverage_ratio == "1.0000"
+        for item in primary_summaries
+    )
+    ratio = Decimal(complete_count) / Decimal(24)
+    passed = len(primary_summaries) == 24 and complete_count == 24
+    return ResearchGateEvaluationV1(
+        gate_id="complete_validation_family_evidence",
+        metric_id="complete_24_family_inference_and_outcome_coverage",
+        evaluation_split=StrategyEvaluationSplit.VALIDATION,
+        status=ResearchGateStatus.PASS if passed else ResearchGateStatus.FAIL,
+        observed_value=format(ratio.quantize(COVERAGE_QUANTUM), "f"),
+        threshold="1.0000",
+        reason_codes=(
+            "validation_family_evidence_complete"
+            if passed
+            else "validation_family_evidence_incomplete",
+        ),
     )
 
 
