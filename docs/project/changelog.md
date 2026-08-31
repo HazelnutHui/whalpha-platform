@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-31 — Freeze chronological research execution mechanics
+
+- Accepted ADR 0103 and added
+  `candidate-strategy-research-execution/1.0` for the exact preregistered
+  Strong-Leader Pullback experiment.
+- The fixture-only executor enforces 252 contiguous XNYS sessions, fixed
+  50/25/25 chronology, 20-session warm-up, five-session purge and embargo,
+  final five-session outcome maturity, and all 24 frozen combinations.
+- Signal assignments compare only point-in-time leaders with same-session
+  eligible-leader non-signals and are sealed without outcomes. Pending 1/3/5-
+  session labels mature only from the exact later path; corporate-action review
+  is quarantined without numeric values. Results remain explicitly underlying-
+  stock outcomes, not option returns.
+- Independent synthetic tests rederive every cohort role and exact outcome
+  arithmetic. The complete backend suite passes 1,866 tests with only the two
+  existing dependency deprecation warnings. No real data, `/data` write,
+  provider call, canonical dataset, model selection, performance result, page,
+  publication, deployment, or scheduler state was created. The experiment
+  remains 31/252 `data_blocked`.
+
 ## 2026-08-30 — Freeze provider-neutral Historical Source packages
 
 - Accepted ADR 0102 and added `historical-source-package/1.0` as the immutable

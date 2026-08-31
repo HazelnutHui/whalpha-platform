@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-08-30 UTC
 
-Repository development context updated at: 2026-08-30 UTC
+Repository development context updated at: 2026-08-31 UTC
 
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
@@ -802,6 +802,13 @@ recorded in the active-state table and
   byte. The implementation is synthetic-fixture-only and has no transport,
   credential loader, CLI, default root, `/data` Apply, publication, deployment,
   or scheduler authority. A concise Massive inquiry is prepared but not sent.
+- ADR 0103 now implements the frozen experiment's fixture-only chronological
+  mechanics. It deterministically assigns 50/25/25 splits, 20-session warm-up,
+  five-session purge/embargo, final-label maturity exclusions, all 24 registered
+  parameter combinations, same-session eligible-leader controls, and later
+  1/3/5-session underlying-stock labels. It has no real data adapter, canonical
+  writer, CLI, statistic selection, performance claim, page, publication, or
+  deployment. The real experiment remains 31/252 `data_blocked`.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

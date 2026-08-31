@@ -90,13 +90,21 @@ costs, user interpretation, monitoring, decay triggers, and rollback.
 
 ## Current state
 
-Repository source contains the immutable first preregistration and its
-readiness gate, but no strategy evaluator. The experiment is
+Repository source contains the immutable first preregistration, readiness gate,
+and fixture-only chronological execution mechanics. The mechanics
+deterministically assign the 50/25/25 split, warm-up, purge/embargo and label-
+maturity exclusions; enumerate all 24 registered combinations; separate same-
+session leader signals from eligible-leader controls before outcomes; and
+mature exact 1/3/5-session underlying-stock labels only after the future path
+is known. They create no performance statistic or claim.
+
+The experiment remains
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a
 research-ready adjustment ledger are absent. No signal writer, outcome
 maturer, evaluator, Production consumer, page, publication, or deployment is
-created by this product definition.
+created by this product definition. There is still no canonical research input
+adapter, persistence, CLI, real strategy evaluator, result report, or page.
 
 ADR 0098 now makes that boundary executable without starting a backtest. The
 socket-guarded Dell-local assessment rereads canonical EOD and its bound

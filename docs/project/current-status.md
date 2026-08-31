@@ -612,6 +612,14 @@ read or used.
   implementation uses synthetic fixtures only and exposes no provider client,
   credential loader, CLI, default root, `/data` Apply, publication, deployment,
   or scheduler authority. The current Pilot remains blocked.
+- ADR 0103 adds fixture-only `candidate-strategy-research-execution/1.0`.
+  The pure executor enforces contiguous XNYS chronology, fixed 50/25/25 splits,
+  20-session warm-up, five-session purge and embargo, final five-session label
+  maturity, all 24 registered parameter combinations, point-in-time leader
+  controls, and pending-then-mature 1/3/5-session stock outcomes. Corporate-
+  action review is quarantined without numeric claims. No real research input,
+  canonical writer, CLI, backtest statistic, result, page, publication, or
+  deployment exists; readiness remains 31/252 `data_blocked`.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

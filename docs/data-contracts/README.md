@@ -6,6 +6,7 @@
 - [Opportunity Candidate Publication V1](opportunity-candidate-publication-v1.md)
 - [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
+- [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Strategy Research Readiness V1](strategy-research-readiness-v1.md)
 - [Candidate Strategy Channel Product V1](candidate-strategy-channel-product-v1.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)
@@ -39,6 +40,7 @@ Implemented as Python/Pydantic contracts:
 - [Data Record Governance V1](data-record-governance-v1.md)
 - [Source Permission Governance V1](source-permission-governance-v1.md)
 - [Historical Source Package V1](historical-source-package-v1.md)
+- [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 
 Accepted logical contracts only or only partially represented by the
 historical typed boundary:

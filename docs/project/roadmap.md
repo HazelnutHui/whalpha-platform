@@ -48,6 +48,11 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   response bytes before mapping. The next external step is still a written
   source/account/lifecycle resolution, not a provider request. The concise
   Massive inquiry is prepared but remains unsent.
+- Research mechanics: ADR 0103 now freezes and synthetic-tests the exact
+  chronological split, boundary exclusions, all 24 combinations, same-session
+  eligible-leader controls, and delayed underlying-stock labels. Do not connect
+  it to real data or select a specification until formal readiness reaches a
+  separately reviewed development boundary.
 - Product: preserve leadership quality and entry location as separate axes.
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized
@@ -329,6 +334,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   dated permission evidence, and default-blocked authority
 - [x] Provider-neutral exact-plan Historical Source Package with atomic `/tmp`
   custody and full formal reread
+- [x] Fixture-only chronological research mechanics with purge/embargo,
+  leader controls, and delayed 1/3/5-session stock labels
 
 ## Next Small Target
 

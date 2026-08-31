@@ -185,6 +185,11 @@ ADR 0102 now supplies a provider-neutral, exact-plan-bound `/tmp` source-package
 boundary for any future authorized historical transport. It is fixture-only,
 performs no request, and grants no canonical Apply or Production authority;
 the Massive permission/entitlement inquiry is prepared but not sent.
+ADR 0103 now adds fixture-only chronological execution mechanics for the
+frozen first experiment: exact 50/25/25 time splits, purge/embargo, all 24
+registered combinations, same-session leader controls, and later-matured
+underlying-stock outcomes. It is not a real backtest, performance result,
+Production signal, page, publication, or deployment.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

@@ -246,6 +246,19 @@ from .candidate_strategy_research import (
     strategy_research_fingerprint,
     strong_stock_pullback_research_experiment_v1,
 )
+from .candidate_strategy_research_execution import (
+    RESEARCH_EXECUTION_CONTRACT_VERSION,
+    STRONG_LEADER_PULLBACK_OBSERVATION_VERSION,
+    CandidateStrategyChronologicalPlanV1,
+    ResearchSessionExclusionCode,
+    StrategyResearchSessionAssignmentV1,
+    StrongLeaderPullbackCohortAssignmentV1,
+    StrongLeaderPullbackCohortRole,
+    StrongLeaderPullbackMechanicsBatchV1,
+    StrongLeaderPullbackObservationV1,
+    StrongLeaderPullbackParameterCombinationV1,
+    research_execution_fingerprint,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -447,4 +460,15 @@ __all__ = [
     "strategy_research_experiment_id",
     "strategy_research_fingerprint",
     "strong_stock_pullback_research_experiment_v1",
+    "RESEARCH_EXECUTION_CONTRACT_VERSION",
+    "STRONG_LEADER_PULLBACK_OBSERVATION_VERSION",
+    "CandidateStrategyChronologicalPlanV1",
+    "ResearchSessionExclusionCode",
+    "StrategyResearchSessionAssignmentV1",
+    "StrongLeaderPullbackCohortAssignmentV1",
+    "StrongLeaderPullbackCohortRole",
+    "StrongLeaderPullbackMechanicsBatchV1",
+    "StrongLeaderPullbackObservationV1",
+    "StrongLeaderPullbackParameterCombinationV1",
+    "research_execution_fingerprint",
 ]
