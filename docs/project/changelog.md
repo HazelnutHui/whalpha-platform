@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-08-31 — Freeze session-balanced research statistics
+
+- Accepted ADR 0104 and added
+  `candidate-strategy-research-statistics/1.0` as a fixture-only analysis-plan
+  addendum to the unchanged first Strong-Leader Pullback preregistration.
+- The evaluator compares equal-weight signal and control means within each
+  session, then applies a deterministic five-session moving-block bootstrap
+  with 2,000 replicates. Inference requires 60 available signal observations,
+  60 controls and 20 comparable sessions; sparse results retain descriptive
+  coverage but remain inconclusive.
+- Development evaluates the fixed 24 combinations and locks at most one using
+  the primary three-session 90% contrast lower bound. Validation cannot change
+  the lock and applies Holm-Bonferroni across all 24 hypotheses. Holdout can
+  expose only the locked combination and only after every validation gate
+  passes.
+- Reports include quarantine/unavailable coverage, underlying/SPY-relative
+  returns, hit rate, MFE/MAE and 0/10/25/50 bps-per-side scenarios. Fixture
+  labels have separate content and record fingerprints; cross-split inputs,
+  unlocked holdout records and failed-validation holdout access fail closed.
+- No real label, model selection, `/data` write, provider call, canonical
+  dataset, UI, publication, deployment or scheduler state was created. The
+  complete backend suite passes 1,873 tests with only the two existing
+  dependency deprecation warnings. The experiment remains 31/252
+  `data_blocked` and every report denies transition and performance-claim
+  authority.
+
 ## 2026-08-31 — Freeze chronological research execution mechanics
 
 - Accepted ADR 0103 and added

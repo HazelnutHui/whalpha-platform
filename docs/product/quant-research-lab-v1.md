@@ -98,6 +98,14 @@ session leader signals from eligible-leader controls before outcomes; and
 mature exact 1/3/5-session underlying-stock labels only after the future path
 is known. They create no performance statistic or claim.
 
+ADR 0104 adds a fixture-only statistics layer before any real labels exist. It
+uses session-balanced signal-versus-control differences, a deterministic five-
+session block bootstrap, 90% intervals, 24-family Holm correction, fixed cost
+scenarios, explicit coverage/quarantine counts and one immutable development
+parameter lock. Validation cannot change the lock, and holdout exposes only the
+locked combination after every validation gate passes. All reports explicitly
+deny stage-transition and performance-claim authority.
+
 The experiment remains
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a

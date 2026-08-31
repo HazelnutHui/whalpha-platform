@@ -259,6 +259,23 @@ from .candidate_strategy_research_execution import (
     StrongLeaderPullbackParameterCombinationV1,
     research_execution_fingerprint,
 )
+from .candidate_strategy_research_statistics import (
+    MINIMUM_COMPARABLE_SESSIONS,
+    MINIMUM_SIGNAL_OBSERVATIONS,
+    RESEARCH_BLOCK_LENGTH_SESSIONS,
+    RESEARCH_BOOTSTRAP_REPLICATES,
+    RESEARCH_STATISTICS_CONTRACT_VERSION,
+    ResearchCostScenarioV1,
+    ResearchGateEvaluationV1,
+    ResearchGateStatus,
+    ResearchInferenceStatus,
+    ResearchParameterLockV1,
+    ResearchParameterSummaryV1,
+    ResearchStatisticsStage,
+    StrongLeaderPullbackCohortOutcomeV1,
+    StrongLeaderPullbackStatisticsReportV1,
+    research_statistics_fingerprint,
+)
 
 __all__ = [
     "AvailabilityStatus",
@@ -471,4 +488,19 @@ __all__ = [
     "StrongLeaderPullbackObservationV1",
     "StrongLeaderPullbackParameterCombinationV1",
     "research_execution_fingerprint",
+    "MINIMUM_COMPARABLE_SESSIONS",
+    "MINIMUM_SIGNAL_OBSERVATIONS",
+    "RESEARCH_BLOCK_LENGTH_SESSIONS",
+    "RESEARCH_BOOTSTRAP_REPLICATES",
+    "RESEARCH_STATISTICS_CONTRACT_VERSION",
+    "ResearchCostScenarioV1",
+    "ResearchGateEvaluationV1",
+    "ResearchGateStatus",
+    "ResearchInferenceStatus",
+    "ResearchParameterLockV1",
+    "ResearchParameterSummaryV1",
+    "ResearchStatisticsStage",
+    "StrongLeaderPullbackCohortOutcomeV1",
+    "StrongLeaderPullbackStatisticsReportV1",
+    "research_statistics_fingerprint",
 ]

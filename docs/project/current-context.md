@@ -809,6 +809,13 @@ recorded in the active-state table and
   1/3/5-session underlying-stock labels. It has no real data adapter, canonical
   writer, CLI, statistic selection, performance claim, page, publication, or
   deployment. The real experiment remains 31/252 `data_blocked`.
+- ADR 0104 now freezes the fixture-only statistical analysis plan before real
+  labels exist: session-balanced signal/control contrast, five-session moving-
+  block bootstrap with 2,000 replicates, 90% intervals, all-24 Holm correction,
+  0/10/25/50 bps-per-side views, explicit coverage/quarantine evidence, one
+  development lock, immutable validation, and selected-only holdout. Sparse
+  evidence is inconclusive, failed validation blocks holdout, and all reports
+  deny stage-transition and performance-claim authority. No real result exists.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

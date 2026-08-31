@@ -53,6 +53,11 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   eligible-leader controls, and delayed underlying-stock labels. Do not connect
   it to real data or select a specification until formal readiness reaches a
   separately reviewed development boundary.
+- Research statistics: ADR 0104 now fixes session-balanced contrasts, evidence
+  floors, deterministic block inference, full-family validation correction,
+  cost sensitivity and selected-only holdout access using fixtures. The next
+  research implementation must not connect real inputs until formal readiness
+  and a separate development activation both pass.
 - Product: preserve leadership quality and entry location as separate axes.
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized
@@ -336,6 +341,8 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   custody and full formal reread
 - [x] Fixture-only chronological research mechanics with purge/embargo,
   leader controls, and delayed 1/3/5-session stock labels
+- [x] Fixture-only session-balanced research statistics, development lock,
+  24-family validation correction, and selected-only holdout gate
 
 ## Next Small Target
 

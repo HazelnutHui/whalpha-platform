@@ -190,6 +190,10 @@ frozen first experiment: exact 50/25/25 time splits, purge/embargo, all 24
 registered combinations, same-session leader controls, and later-matured
 underlying-stock outcomes. It is not a real backtest, performance result,
 Production signal, page, publication, or deployment.
+ADR 0104 now fixes the complementary fixture-only statistics: session-balanced
+signal/control contrasts, five-session block inference, 24-family validation
+correction, cost sensitivity, one development parameter lock and selected-only
+holdout access. It still creates no real backtest or performance authority.
 
 Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
 Common Shares plus 113 ADRCs. Provider security form remains provisional and

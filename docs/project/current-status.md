@@ -620,6 +620,15 @@ read or used.
   action review is quarantined without numeric claims. No real research input,
   canonical writer, CLI, backtest statistic, result, page, publication, or
   deployment exists; readiness remains 31/252 `data_blocked`.
+- ADR 0104 adds fixture-only `candidate-strategy-research-statistics/1.0`.
+  It aggregates the primary contrast by session, uses fixed five-session blocks
+  and 2,000 deterministic bootstrap replicates, requires 60 signal and control
+  observations plus 20 comparable sessions for inference, applies Holm across
+  all 24 validation hypotheses, preserves the 0/10/25/50 bps cost views, and
+  permits holdout only for the development-locked parameter after every
+  validation gate passes. This is an analysis-plan fixture, not a real
+  backtest; every report denies transition and performance authority. Durable
+  single-use holdout custody is explicitly not implemented.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily
