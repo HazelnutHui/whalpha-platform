@@ -16,6 +16,9 @@ vi.mock('./pages/OpportunityCandidatesPage', () => ({
 vi.mock('./pages/SectorRotationPage', () => ({
   SectorRotationPage: () => <main data-testid="sector-workspace">sector</main>,
 }));
+vi.mock('./pages/QuantResearchLabPage', () => ({
+  QuantResearchLabPage: () => <main data-testid="research-workspace">research</main>,
+}));
 
 describe('primary workspace shell', () => {
   beforeEach(() => {
@@ -36,10 +39,19 @@ describe('primary workspace shell', () => {
     expect(screen.getByRole('button', { name: /Regime & Opportunities/ })).toHaveAttribute('aria-current', 'page');
     expect(workspaceButtons[1]).toHaveTextContent('Sector Rotation');
     expect(workspaceButtons[3]).toHaveTextContent('Stock Candidates');
+    expect(workspaceButtons[4]).toHaveTextContent('Quant Research Lab');
     expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
     expect(screen.getByText('Protected Session')).toBeInTheDocument();
     expect(document.querySelector('.workspace-brand img')).toHaveAttribute('src', '/favicon.png');
+  });
+
+  it('opens the research workspace through the same shell without an account-role branch', () => {
+    render(<I18nProvider><App /></I18nProvider>);
+    fireEvent.click(screen.getByRole('button', { name: /Quant Research Lab/ }));
+    expect(screen.getByTestId('research-workspace')).toBeInTheDocument();
+    expect(new URLSearchParams(window.location.search).get('view')).toBe('research');
+    expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
   });
 
   it('preserves Universe across workspace navigation and browser history', () => {
@@ -70,6 +82,7 @@ describe('primary workspace shell', () => {
     render(<I18nProvider><App /></I18nProvider>);
     fireEvent.click(screen.getByRole('button', { name: '中文' }));
     expect(screen.getByRole('button', { name: /市场风向与机会/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /量化研究实验室/ })).toBeInTheDocument();
     expect(screen.getByLabelText('当前股票池')).toHaveValue('provider_classified_common_shares_v1');
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh');
   });

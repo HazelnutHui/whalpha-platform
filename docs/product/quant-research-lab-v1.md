@@ -117,9 +117,12 @@ The experiment remains
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a
 research-ready adjustment ledger are absent. No signal writer, outcome
-maturer, evaluator, Production consumer, page, publication, or deployment is
-created by this product definition. There is still no canonical research input
-adapter, persistence, CLI, real strategy evaluator, result report, or page.
+maturer, real evaluator, Production consumer, result publication, or deployment
+is created by this product definition. ADR 0106 adds a bilingual first-level
+page that exposes this blocked state and the registered method while leaving
+every performance area unavailable and never projecting fixture results. There
+is still no canonical research input adapter, persistence, CLI, real strategy
+evaluator, or result report.
 
 ADR 0098 now makes that boundary executable without starting a backtest. The
 socket-guarded Dell-local assessment rereads canonical EOD and its bound

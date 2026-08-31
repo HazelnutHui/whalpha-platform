@@ -55,6 +55,15 @@ cards, tables, drawers, and mobile navigation. The WH mark is present in the
 persistent product lockup. Guest and credential Sessions render this exact
 same application shell and retain identical data and capabilities.
 
+Repository source now also adds Quant Research Lab / 量化研究实验室 as the
+fifth first-level workspace. It exposes the preregistered Strong-Leader
+Pullback question, chronology, fixed 24-combination family, advancement gates
+and missing data foundations. It remains explicitly `data_blocked` at 31/252;
+coverage is readiness rather than confidence, and performance panels remain
+unavailable. The page uses no synthetic result, changes no model or data
+contract, preserves identical guest/credential capability, and has not been
+bundled or deployed.
+
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
 relative-performance proxies, never actual fund flow.
@@ -559,7 +568,7 @@ read or used.
   minimum. Daily point-in-time Universe membership and completed corporate-
   action governance are also missing. Current-constituent replay is explicitly
   ineligible for performance claims.
-- ADR 0097 now defines the future Quant Research Lab and freezes the first
+- ADR 0097 defines Quant Research Lab and freezes the first
   personal Strong-Leader Pullback research registration before outcomes can
   influence it. The experiment compares setup signals with same-session point-
   in-time eligible-leader non-signals, uses three sessions as the primary
@@ -638,6 +647,10 @@ read or used.
   family, while holdout requires `1.0000` available coverage in both locked
   signal and control cohorts. The independent Oracle does not reproduce arbitrary-
   series bootstrap inference, and durable single-use holdout custody is absent.
+- ADR 0106 adds the bilingual method/readiness-only Lab page to repository
+  source. It labels 31/252 as data coverage, leaves performance panels
+  unavailable, preserves equal guest/credential capability, and introduces no
+  real result, publication, bundle or deployment.
 - The 2026-08-27 historical-readiness audit formally returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`: 29 EOD sessions and same-date Identity
   binding are mechanically sound, and SPY covers 29/29 sessions, but daily

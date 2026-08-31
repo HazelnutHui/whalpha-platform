@@ -1,8 +1,8 @@
 # Trading Intelligence Web
 
-The React application has three first-level workspaces: Market Regime &
-Opportunities (`市场风向与机会`), Market Dashboard, and Stock Candidates
-(`个股候选`). Desktop navigation uses a
+The React application has five first-level workspaces: Market Regime &
+Opportunities (`市场风向与机会`), Sector Rotation, Market Dashboard, Stock
+Candidates (`个股候选`), and Quant Research Lab (`量化研究实验室`). Desktop navigation uses a
 persistent left rail, with Market Regime & Opportunities first and selected by
 default; Universe, language, and private Session controls share an
 opaque sticky utility header. The Universe selector exposes only `Common
@@ -52,6 +52,8 @@ Candidate consumer from MI 1.1 without browser-side score recomputation.
 - Market Regime five-dimension evidence and six highlighted ETF relationships
 - Complete 16-pair relationship table and detail drawer
 - Language-neutral, risk-mode-specific Stock Candidate ranking and evidence drawer
+- Bilingual Quant Research Lab readiness and preregistered-method workspace;
+  real result areas remain locked while the experiment is 31/252 data-blocked
 - Logout in snapshot mode
 - loading, error, empty, and retry states
 
@@ -84,6 +86,7 @@ npm run build
 - No sector/industry grouping
 - No theme rotation
 - No intraday or real-time data
+- No real Quant Research Lab performance or research-stage activation
 
 ## Dashboard V1.1
 

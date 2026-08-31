@@ -4,11 +4,12 @@ import { MarketDashboardPage } from './pages/MarketDashboardPage';
 import { MarketRegimeOpportunityMapPage } from './pages/MarketRegimeOpportunityMapPage';
 import { OpportunityCandidatesPage } from './pages/OpportunityCandidatesPage';
 import { SectorRotationPage } from './pages/SectorRotationPage';
+import { QuantResearchLabPage } from './pages/QuantResearchLabPage';
 import { LanguageSelector } from './i18n/LanguageSelector';
 import { useI18n } from './i18n/I18nProvider';
 import { universeName } from './i18n/domain';
 
-type Workspace = 'market' | 'regime' | 'sector' | 'candidates';
+type Workspace = 'market' | 'regime' | 'sector' | 'candidates' | 'research';
 
 const PRIMARY_UNIVERSE = 'provider_classified_common_shares_v1';
 const SECONDARY_UNIVERSE = 'provider_classified_common_shares_plus_adrs_v1';
@@ -17,7 +18,7 @@ type UniverseId = (typeof UNIVERSES)[number];
 
 function requestedWorkspace(): Workspace {
   const value = new URLSearchParams(window.location.search).get('view');
-  return value === 'market' || value === 'sector' || value === 'candidates' ? value : 'regime';
+  return value === 'market' || value === 'sector' || value === 'candidates' || value === 'research' ? value : 'regime';
 }
 
 function isUniverse(value: string | null): value is UniverseId {
@@ -105,6 +106,11 @@ export default function App(): JSX.Element {
             <strong>{t('app.stockCandidates')}</strong>
             <small>{t('app.stockCandidatesDescription')}</small>
           </button>
+          <button type="button" className={workspace === 'research' ? 'active' : ''} aria-current={workspace === 'research' ? 'page' : undefined} onClick={() => navigate('research')}>
+            <span className="workspace-index">05</span>
+            <strong>{t('app.quantResearch')}</strong>
+            <small>{t('app.quantResearchDescription')}</small>
+          </button>
         </nav>
         <p className="workspace-boundary">{t('app.researchBoundary')}</p>
       </aside>
@@ -123,7 +129,7 @@ export default function App(): JSX.Element {
             {snapshotMode ? <button type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
           </div>
         </header>
-        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : <OpportunityCandidatesPage />}
+        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
       </div>
     </div>
   );

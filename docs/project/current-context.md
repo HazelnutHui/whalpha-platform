@@ -4,6 +4,12 @@ Operational state verified at: 2026-08-30 UTC
 
 Repository development context updated at: 2026-08-31 UTC
 
+Repository source after ADR 0106 includes a bilingual Quant Research Lab as a
+fifth first-level workspace. It presents only the registered Strong-Leader
+Pullback method and formal 31/252 `data_blocked` readiness state. Result panels
+are deliberately unavailable; no fixture performance, research publication,
+stage transition, `/data` write, bundle or deployment was introduced.
+
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
 in the [changelog](changelog.md) and dated audits. Proposed sequencing remains
@@ -755,8 +761,9 @@ recorded in the active-state table and
   development to 24 combinations before locked validation and untouched
   holdout. Fingerprint
   `1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f`
-  is `preregistered_data_blocked`; no performance result, runtime, page, or
-  Production authority exists.
+  is `preregistered_data_blocked`; no performance result, research runtime, or
+  Production authority exists. ADR 0106 later adds a method/readiness-only
+  page without exposing fixture performance.
 - ADR 0098 adds the deterministic Dell-local Strategy Research Readiness 1.0
   check. Its 2026-08-30 socket-guarded formal reread covers 31 canonical
   EOD/Identity sessions through 2026-08-28 and returns `data_blocked`, logical
@@ -826,6 +833,9 @@ recorded in the active-state table and
   24-member validation family and `1.0000` coverage for the locked holdout
   signal/control cohorts.
   Durable one-use holdout custody and a formal inferential Oracle remain absent.
+- ADR 0106 adds the bilingual method/readiness-only Lab page to repository
+  source. The 31/252 indicator is data coverage rather than confidence; all
+  performance panels remain unavailable and no deployment occurred.
 - A credential-free 2026-08-27 historical-readiness audit returns
   `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
   coverage, and same-session Identity binding, but found no daily Universe

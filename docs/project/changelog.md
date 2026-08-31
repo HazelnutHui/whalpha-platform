@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-08-31 — Expose Quant Research Lab without performance claims
+
+- Accepted ADR 0106 and added Quant Research Lab / 量化研究实验室 as the
+  fifth bilingual first-level workspace with equal guest and credential
+  Session capability.
+- The page displays the preregistered Strong-Leader Pullback hypothesis,
+  lifecycle, chronological design, fixed 24-combination family, comparison
+  group, outcome horizons, advancement gates and missing foundations.
+- The current 31/252 state is explicitly data coverage rather than model
+  confidence. Result panels remain unavailable and contain no synthetic
+  returns, win rate, chart or implied performance.
+- No research API, real evaluator, data contract, `/data` write, publication,
+  bundle, deployment, scheduler or Production state changed.
+
 ## 2026-08-31 — Adversarially audit research statistics
 
 - Accepted ADR 0105 and added an independent descriptive Oracle that does not
