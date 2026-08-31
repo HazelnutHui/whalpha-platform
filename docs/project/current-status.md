@@ -1223,6 +1223,11 @@ equivalence, and logical fingerprint
 These facts do not enter Strategy, publication, Snapshot, or Dashboard pending
 chronological validation.
 
+ADR 0110 adds a distinct Massive historical endpoint capability probe. It is
+bounded to four zero-retry requests for one exact session, retains no response
+body, writes no data, and cannot conclude permission or authorize a Historical
+Pilot. Repository tests pass; no credential access or real probe has occurred.
+
 ## Verification entry point
 
 Run the local, credential-free report from the repository root:

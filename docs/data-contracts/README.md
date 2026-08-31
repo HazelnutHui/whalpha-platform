@@ -1,5 +1,7 @@
 # Data Contracts
 
+- [Massive Historical Entitlement Probe V1](massive-historical-entitlement-probe-v1.md)
+
 - [Market Regime Local Preview Bundle V1](market-regime-preview-bundle-v1.md)
 
 - [Dashboard Snapshot V2](dashboard-snapshot-v2.md)

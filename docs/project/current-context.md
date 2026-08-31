@@ -1040,6 +1040,11 @@ ADR 0102's fixture-only source-package writer is repository development, not a
 new authorization. It does not change the blocked Pilot result or permit the
 prepared Massive inquiry to be sent automatically.
 
+ADR 0110 adds a separately authorized four-request Massive account capability
+probe for Grouped Daily, point-in-time active Tickers, Splits and Dividends.
+It retains no response body, writes no data, and grants no permission or Pilot
+authority. Its simulated tests pass; no real probe has run.
+
 ## Cross-device continuity
 
 - Windows already has its own dedicated passwordless SSH key and saved Dell

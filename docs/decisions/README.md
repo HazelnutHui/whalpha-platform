@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0110](0110-probe-account-entitlement-separately-from-historical-acquisition.md): Separate a four-request, non-retaining account capability probe from Historical Pilot acquisition and permission conclusions.
+
 ADRs record material project decisions and their context.
 
 ## Status Values

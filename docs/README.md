@@ -1,5 +1,7 @@
 # Documentation Index
 
+- [Massive Historical Entitlement Probe V1](data-contracts/massive-historical-entitlement-probe-v1.md): exact-revision, four-request technical account capability review with no response retention or acquisition authority.
+
 - [Authoritative current context](project/current-context.md): compact,
   evidence-scoped handoff for new tasks and devices.
 - [Current status](project/current-status.md): current product and operational

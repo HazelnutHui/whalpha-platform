@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-08-31 — Historical endpoint entitlement probe boundary
+
+- Added a four-request, exact-session Massive technical capability probe for
+  Grouped Daily, active point-in-time Tickers, Splits and Dividends.
+- Added exact clean-revision acknowledgement review, safe status-only output,
+  no response retention, zero writes and zero Historical Pilot authority.
+- Added ADR 0110, contract documentation and deterministic fake-transport
+  coverage. No credential was read and no real provider request was made.
+- Full backend regression passed: 1,905 tests with two unchanged deprecation
+  warnings.
+
 ## 2026-08-31 — Separate data readiness from research activation
 
 - Accepted ADR 0109 and added
