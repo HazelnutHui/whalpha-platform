@@ -636,8 +636,8 @@ read or used.
   all 24 validation hypotheses, preserves the 0/10/25/50 bps cost views, and
   permits holdout only for the development-locked parameter after every
   validation gate passes. This is an analysis-plan fixture, not a real
-  backtest; every report denies transition and performance authority. Durable
-  single-use holdout custody is explicitly not implemented.
+  backtest; every report denies transition and performance authority. The V1
+  report itself still truthfully declares that custody is external, not built in.
 - ADR 0105 adds an independent descriptive statistics Oracle plus adversarial
   null, reversal, crowding, outlier, missingness and stage-isolation fixtures.
   The Oracle reproduces every descriptive field across all 72 development
@@ -646,7 +646,10 @@ read or used.
   validation now requires complete evidence across the whole 24-member Holm
   family, while holdout requires `1.0000` available coverage in both locked
   signal and control cohorts. The independent Oracle does not reproduce arbitrary-
-  series bootstrap inference, and durable single-use holdout custody is absent.
+  series bootstrap inference. ADR 0107 now adds external durable single-use
+  custody: it reserves before evaluation and prohibits replay after completion,
+  failure, invalid evidence or ambiguous interruption. That mechanism is
+  fixture-proven only and grants no real-data or performance authority.
 - ADR 0106 adds the bilingual method/readiness-only Lab page to repository
   source. It labels 31/252 as data coverage, leaves performance panels
   unavailable, preserves equal guest/credential capability, and introduces no

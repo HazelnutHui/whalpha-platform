@@ -52,6 +52,12 @@ it is not durable single-use custody. The current report explicitly declares
 that such custody is not implemented, so repeated fixture calls must not be
 misrepresented as an untouched real holdout process.
 
+ADR 0107 now adds a separate external custody seam that reserves the exact
+validation/lock identity before invoking a holdout capability and prohibits
+replay after completion, failure or ambiguous interruption. It does not change
+this fixture report field or make the evaluator authoritative. A future real
+adapter must route exclusively through the custody seam or a reviewed successor.
+
 ## Current boundary
 
 Only pure Python contracts, calculations and synthetic fixtures exist. There

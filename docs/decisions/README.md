@@ -129,3 +129,4 @@ Each ADR should include:
 - [0104: Freeze Session-Balanced Research Statistics Before Real Labels](0104-freeze-session-balanced-research-statistics.md)
 - [0105: Require Adversarial Statistics Audit and Complete Labels](0105-require-adversarial-statistics-audit-and-complete-labels.md)
 - [0106: Expose Research Readiness Without Performance](0106-expose-research-readiness-without-performance.md)
+- [0107: Reserve Holdout Before Evaluation](0107-reserve-holdout-before-evaluation.md)

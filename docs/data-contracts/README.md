@@ -8,6 +8,7 @@
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
+- [Candidate Strategy Holdout Custody V1](candidate-strategy-holdout-custody-v1.md)
 - [Strategy Research Readiness V1](strategy-research-readiness-v1.md)
 - [Candidate Strategy Channel Product V1](candidate-strategy-channel-product-v1.md)
 - [Candidate Entry Geometry V1](candidate-entry-geometry-v1.md)

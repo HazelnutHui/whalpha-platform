@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-31 — Reserve the sealed holdout before evaluation
+
+- Accepted ADR 0107 and added `candidate-strategy-holdout-custody/1.0` as a
+  durable external seam around future holdout evaluation.
+- Custody binds the experiment, mechanics, passed validation report, immutable
+  parameter lock and selected combination, then writes its reservation before
+  invoking a capability.
+- Completion is reread without reevaluation; failure, invalid evidence and an
+  interrupted/ambiguous reservation permanently prohibit replay. Owner-only
+  permissions, symlink rejection, exact inventory and chained fingerprints
+  fail closed.
+- Current proof remains fixture-only under temporary roots. No real label,
+  `/data` write, provider call, CLI, installed custody root, stage transition,
+  performance claim, publication, deployment or scheduler state changed.
+- The complete backend suite passes 1,883 tests with only the two existing
+  dependency deprecation warnings.
+
 ## 2026-08-31 — Expose Quant Research Lab without performance claims
 
 - Accepted ADR 0106 and added Quant Research Lab / 量化研究实验室 as the

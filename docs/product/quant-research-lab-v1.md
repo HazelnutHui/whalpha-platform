@@ -113,6 +113,11 @@ not sufficient protection, so validation and holdout now require complete
 available outcome coverage in both signal and control cohorts. This remains a
 synthetic mechanics result, not evidence for the hypothesis.
 
+ADR 0107 adds a durable external reserve-before-evaluation seam for the future
+sealed holdout. Completion, failure and ambiguous interruption all prevent a
+second capability invocation for the same validation/lock identity. This is
+fixture-proven custody only; it creates no real result or activation authority.
+
 The experiment remains
 `preregistered_data_blocked`: current 31-session mechanics are insufficient,
 and canonical daily membership, complete corporate actions, lifecycle, and a

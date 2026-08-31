@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import date
+from dataclasses import asdict
+from datetime import UTC, date, datetime
 from decimal import Decimal
+from pathlib import Path
 from uuid import UUID
 
 import pytest
@@ -33,6 +35,12 @@ from tip_api.services.candidate_strategy_research_statistics import (
 )
 from tip_api.services.candidate_strategy_research_statistics_oracle import (
     calculate_research_statistics_oracle,
+)
+from tip_api.services.candidate_strategy_holdout_custody import (
+    CandidateStrategyHoldoutCustodyError,
+    HoldoutCustodyConfig,
+    HoldoutEvaluationEvidence,
+    consume_locked_holdout_once,
 )
 from tip_api.services.market_calendar import ExchangeCalendar
 
@@ -252,6 +260,177 @@ def test_holdout_exposes_only_locked_parameter_and_remains_non_authoritative(
     assert holdout.stage_transition_authorized is False
     assert holdout.performance_claim_authorized is False
     assert holdout.single_use_holdout_custody_implemented is False
+
+
+def _holdout_config(tmp_path: Path) -> HoldoutCustodyConfig:
+    root = tmp_path / "holdout-custody"
+    root.mkdir(mode=0o700, parents=True)
+    return HoldoutCustodyConfig(
+        holdout_root=root,
+        repository_root=Path(__file__).parents[3],
+        data_root=Path("/data/trading-intelligence-platform"),
+    )
+
+
+def test_external_holdout_custody_consumes_exact_lock_once(
+    tmp_path: Path,
+    completed_fixture,
+) -> None:
+    _, validation, holdout = completed_fixture
+    calls = []
+
+    def capability(context):
+        calls.append(context)
+        return HoldoutEvaluationEvidence(
+            **asdict(context),
+            result_report_fingerprint=holdout.logical_fingerprint,
+            outcome="completed",
+            reason_code="fixture_holdout_completed",
+        )
+
+    times = iter(
+        (
+            datetime(2026, 8, 31, 9, 0, tzinfo=UTC),
+            datetime(2026, 8, 31, 9, 1, tzinfo=UTC),
+        )
+    )
+    config = _holdout_config(tmp_path)
+    first = consume_locked_holdout_once(
+        config=config,
+        validation_report=validation,
+        capability=capability,
+        clock=lambda: next(times),
+    )
+    second = consume_locked_holdout_once(
+        config=config,
+        validation_report=validation,
+        capability=lambda _context: pytest.fail("holdout evaluated twice"),
+    )
+
+    assert len(calls) == 1
+    assert first.outcome == "completed"
+    assert first.holdout_evaluated_by_invocation is True
+    assert first.custody_event_write_count == 2
+    assert first.production_write_count == 0
+    assert first.external_request_count == 0
+    assert first.stage_transition_authorized is False
+    assert first.performance_claim_authorized is False
+    assert second.outcome == "already_consumed"
+    assert second.holdout_evaluated_by_invocation is False
+    assert second.custody_event_write_count == 0
+    assert second.result_report_fingerprint == holdout.logical_fingerprint
+
+
+def test_holdout_interruption_and_invalid_evidence_permanently_block_replay(
+    tmp_path: Path,
+    completed_fixture,
+) -> None:
+    _, validation, holdout = completed_fixture
+    interrupted = _holdout_config(tmp_path / "interrupted")
+    with pytest.raises(RuntimeError, match="evaluation crashed"):
+        consume_locked_holdout_once(
+            config=interrupted,
+            validation_report=validation,
+            capability=lambda _context: (_ for _ in ()).throw(
+                RuntimeError("evaluation crashed")
+            ),
+            clock=lambda: datetime(2026, 8, 31, 9, 0, tzinfo=UTC),
+        )
+    with pytest.raises(CandidateStrategyHoldoutCustodyError, match="unknown"):
+        consume_locked_holdout_once(
+            config=interrupted,
+            validation_report=validation,
+            capability=lambda _context: pytest.fail("ambiguous holdout replayed"),
+        )
+
+    invalid = _holdout_config(tmp_path / "invalid")
+    with pytest.raises(CandidateStrategyHoldoutCustodyError, match="binding differs"):
+        consume_locked_holdout_once(
+            config=invalid,
+            validation_report=validation,
+            capability=lambda context: HoldoutEvaluationEvidence(
+                **{
+                    **asdict(context),
+                    "parameter_combination_id": "f" * 64,
+                },
+                result_report_fingerprint=holdout.logical_fingerprint,
+                outcome="completed",
+                reason_code="fixture_holdout_completed",
+            ),
+            clock=lambda: datetime(2026, 8, 31, 9, 0, tzinfo=UTC),
+        )
+    with pytest.raises(CandidateStrategyHoldoutCustodyError, match="unknown"):
+        consume_locked_holdout_once(
+            config=invalid,
+            validation_report=validation,
+            capability=lambda _context: pytest.fail("invalid evidence retried"),
+        )
+
+    failed = _holdout_config(tmp_path / "failed")
+    failed_times = iter(
+        (
+            datetime(2026, 8, 31, 9, 0, tzinfo=UTC),
+            datetime(2026, 8, 31, 9, 1, tzinfo=UTC),
+        )
+    )
+    failure = consume_locked_holdout_once(
+        config=failed,
+        validation_report=validation,
+        capability=lambda context: HoldoutEvaluationEvidence(
+            **asdict(context),
+            result_report_fingerprint=None,
+            outcome="failed",
+            reason_code="fixture_evaluation_failed",
+        ),
+        clock=lambda: next(failed_times),
+    )
+    assert failure.outcome == "failed"
+    with pytest.raises(CandidateStrategyHoldoutCustodyError, match="prior.*failed"):
+        consume_locked_holdout_once(
+            config=failed,
+            validation_report=validation,
+            capability=lambda _context: pytest.fail("failed holdout replayed"),
+        )
+
+
+def test_holdout_custody_rejects_nonvalidation_and_tampered_journal(
+    tmp_path: Path,
+    completed_fixture,
+) -> None:
+    development, validation, holdout = completed_fixture
+    config = _holdout_config(tmp_path)
+    with pytest.raises(CandidateStrategyHoldoutCustodyError, match="validation"):
+        consume_locked_holdout_once(
+            config=config,
+            validation_report=development,
+            capability=lambda _context: pytest.fail("development opened holdout"),
+        )
+
+    times = iter(
+        (
+            datetime(2026, 8, 31, 9, 0, tzinfo=UTC),
+            datetime(2026, 8, 31, 9, 1, tzinfo=UTC),
+        )
+    )
+    result = consume_locked_holdout_once(
+        config=config,
+        validation_report=validation,
+        capability=lambda context: HoldoutEvaluationEvidence(
+            **asdict(context),
+            result_report_fingerprint=holdout.logical_fingerprint,
+            outcome="completed",
+            reason_code="fixture_holdout_completed",
+        ),
+        clock=lambda: next(times),
+    )
+    event = config.holdout_root / f"holdout={result.custody_id}" / "event-000002.json"
+    event.chmod(0o644)
+    with pytest.raises(CandidateStrategyHoldoutCustodyError, match="custody"):
+        consume_locked_holdout_once(
+            config=config,
+            validation_report=validation,
+            capability=lambda _context: pytest.fail("tampered custody reused"),
+        )
 
 
 def test_failed_validation_gate_prevents_holdout_consumption(

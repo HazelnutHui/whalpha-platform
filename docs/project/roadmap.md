@@ -61,9 +61,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
 - Research falsification: ADR 0105 now independently reconciles descriptive
   statistics and adversarially rejects null/reversal, one-day crowding,
   outlier, missingness and stage-leakage fixtures. Complete signal/control
-  outcome coverage is now a validation/holdout quality gate. A formal
-  inferential Oracle and durable one-use holdout custody remain later controls,
-  not reasons to connect incomplete real data now.
+  outcome coverage is now a validation/holdout quality gate. ADR 0107 completes
+  the external durable one-use holdout reservation seam with fixtures. A formal
+  inferential Oracle remains a later control; neither item is a reason to
+  connect incomplete real data now.
 - Product: preserve leadership quality and entry location as separate axes.
   Relationship duration, rolling-spread acceleration, and a bounded state
   timeline are now implemented in repository source. Consider a standardized
