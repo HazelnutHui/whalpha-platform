@@ -4,6 +4,15 @@ Operational state verified at: 2026-09-01 UTC
 
 Repository development context updated at: 2026-09-01 UTC
 
+Repository source now replaces the ambiguous Candidate component bars with a
+bilingual contribution ledger. It reconciles the seven published contribution
+points to the unchanged base score, separates largest score support from the
+largest weighted shortfall, shows available configured evidence, and keeps raw
+and normalized metric facts in a folded audit view. It does not recalculate or
+change a score, rank, formula, parameter, contract, or Production publication.
+The active Snapshot 1.11 / Dashboard 2.8 release was fully reread by the formal
+reader and is compatible; this UI-only source change is not yet deployed.
+
 Repository source after ADR 0106 includes a bilingual Quant Research Lab as a
 fifth first-level workspace. It presents only the registered Strong-Leader
 Pullback method and formal 31/252 `data_blocked` readiness state. Result panels

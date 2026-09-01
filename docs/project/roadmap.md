@@ -355,6 +355,9 @@ This roadmap is a proposed sequence, not a commitment or date plan.
   independent Oracle, and formal tmp-only real-data audit
 - [x] Bind visual context into lazy Candidate detail shards and render the true
   20-session path without increasing first-load payload
+- [x] Replace ambiguous Candidate score bars with an exact published-point
+  contribution ledger, strongest-support/weighted-shortfall summary, and
+  folded raw/normalized metric evidence without changing the model
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Fixed explainable three-channel offline preview and bounded consumer
 - [x] Independent strategy-channel Oracle and immutable temporary-root audit
@@ -473,7 +476,7 @@ after any future authorized transport, but it is not itself a transport,
 provider adapter, permission decision, or Apply authority. The concise Massive
 inquiry is prepared for manual sending and has not been sent.
 Do not select formulas or thresholds from one-session distributions. The
-ordinary-fresh, lag-zero 2026-08-28 Snapshot 1.11 / Dashboard 2.8 release is
+ordinary-fresh, lag-zero 2026-08-31 Snapshot 1.11 / Dashboard 2.8 release is
 active. Later control-plane changes remain undeployed; every further
 publication or deployment requires fresh exact review and authorization. Keep
 SMTP and SEC B2 paused.

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-01 — Make Candidate score contributions decision-readable
+
+- Replaced the Candidate drawer's ambiguous component bars with a bilingual
+  ledger whose widths and labels explicitly represent published contribution
+  points relative to each component's effective maximum.
+- Added an exact base-score reconciliation, largest score support, largest
+  weighted shortfall, configured evidence availability, and a folded ledger of
+  raw and normalized submetrics. “Shortfall” is explicitly not a causal claim
+  or trade signal.
+- Preserved all Candidate formulas, weights, ranks, risk modes, contracts and
+  guest/authenticated capability parity. The active 2026-08-31 Snapshot 1.11 /
+  Dashboard 2.8 release passed formal reread compatibility.
+- Full frontend regression passed 111 tests and the production build passed.
+  The source change is not yet bundled or deployed.
+
 ## 2026-09-01 — Bound Snapshot session discovery to the completion index
 
 - Accepted ADR 0118. Snapshot Overview and CLI freshness now select session

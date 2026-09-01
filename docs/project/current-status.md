@@ -55,6 +55,14 @@ cards, tables, drawers, and mobile navigation. The WH mark is present in the
 persistent product lockup. Guest and credential Sessions render this exact
 same application shell and retain identical data and capabilities.
 
+Repository source now makes the Stock Candidate detail explanation materially
+more decision-useful without changing the model. Its seven-component ledger
+reconciles published contribution points to the base score, identifies the
+largest score support and largest weighted shortfall, shows evidence-weight
+availability, and folds the raw and normalized submetrics beneath the concise
+view. The active Snapshot 1.11 / Dashboard 2.8 release formally validates with
+all required fields. This UI-only change is tested but not yet deployed.
+
 Repository source now also adds Quant Research Lab / 量化研究实验室 as the
 fifth first-level workspace. It exposes the preregistered Strong-Leader
 Pullback question, chronology, fixed 24-combination family, advancement gates
