@@ -1249,8 +1249,14 @@ requests, no retained body/identifier and zero writes.
 ADR 0112 now implements a separate six-page inactive pagination census bound
 to the existing Historical Pilot ceiling. It does not alter the earlier
 two-page contract and cannot turn pagination completion into lifecycle or Pilot
-authority. Simulated completion, truncation and failure cases pass; no real
-census request has run.
+authority. Simulated completion, truncation and failure cases pass.
+
+One exact real census subsequently filled all six pages/6,000 inactive rows for
+2026-07-16 and stopped `truncated_at_ceiling` with another page present.
+`delisted_utc` was present for 5,879 rows, update time for all rows, and 48
+duplicate ticker occurrences again reject ticker-only history. The existing
+six-request Pilot allocation is insufficient. Six requests made no retained
+body/identifier and zero writes.
 
 ## Verification entry point
 

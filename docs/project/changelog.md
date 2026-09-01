@@ -10,6 +10,11 @@
   coverage. No real census request has run.
 - Full backend regression passed: 1,917 tests with two unchanged deprecation
   warnings.
+- The subsequently authorized census filled all six pages/6,000 inactive rows
+  and still had another page. All rows were explicitly inactive; 5,879 had a
+  delisting date, all had update times, and 48 ticker duplicates reinforced the
+  stable-ID requirement. The existing Pilot allocation is therefore
+  insufficient. No body/identifier was retained and no data was written.
 
 ## 2026-09-01 — Inactive-security lifecycle coverage probe boundary
 

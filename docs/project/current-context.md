@@ -1073,7 +1073,17 @@ evaluation-ready lifecycle facts remain incomplete.
 ADR 0112 now adds the distinct six-page inactive pagination census within the
 existing Pilot ceiling. It preserves the two-page historical contract, exact
 anchor, no retry, serial pacing, aggregate-only output and zero-write boundary.
-It is simulation-tested; no real census has run.
+It is simulation-tested.
+
+The exact 2026-09-01 authorization then ran the census once from clean revision
+`65395d7deca9eef6a2bd75e524f06d478aea1c35` for 2026-07-16. All six pages
+were full and another page remained, so status was `truncated_at_ceiling` at
+6,000 inactive rows. Delisting-date coverage was 5,879, update-time coverage
+6,000, CIK 5,017, Composite FIGI 1,508 and Share Class FIGI 1,348; 48 duplicate
+ticker occurrences reinforce stable-ID/effective-date governance. Fingerprint
+is `f6643417832e931f6928d28279e92750b441e5b970212af17ae23dd790d940cb`.
+No body/identifier was retained and no data was written. The existing six-
+request Pilot allocation cannot complete the inactive collection.
 
 ## Cross-device continuity
 
