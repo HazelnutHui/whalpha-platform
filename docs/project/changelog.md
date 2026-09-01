@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-01 — Plan an immutable Dell scheduler runtime
+
+- Accepted ADR 0114 and added
+  `daily-eod-scheduler-runtime-plan/1.0` for an exact detached Git worktree on
+  Dell, using the canonical project Python environment.
+- The deterministic plan fixes revision, paths, proposed worktree command,
+  required post-creation checks and a logical fingerprint while granting no
+  creation, data, credential, systemd, network or Production authority.
+- No runtime directory was created and no timer, service, `/data`, provider,
+  publication or deployment state changed.
+- Full backend regression passed: 1,933 tests with two unchanged deprecation
+  warnings.
+
 ## 2026-09-01 — Recoverable degraded user-systemd review
 
 - The 2026-08-31 natural timer trigger correctly rejected its stale pinned

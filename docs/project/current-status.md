@@ -175,6 +175,16 @@ not change unit state and is not a claim that the host timer is absent. The
 systemd candidate review 1.1 likewise reports operation facts only. Actual
 installed/enabled state remains a separate read-only host inspection.
 
+The first natural 2026-08-31 trigger later rejected a stale exact revision with
+zero requests and writes. ADR 0113 made the resulting degraded user manager
+reviewable, and one authorized rebind plus controlled read-only start passed.
+The subsequent documentation commit advanced canonical `main`, making that
+exact installed pin stale again. ADR 0114 therefore defines a deterministic V1
+plan for a detached exact-commit Dell runtime. The planner itself creates no
+worktree, changes no systemd state, reads no data or credential, and grants no
+installation authority. Runtime creation, verification and timer migration
+remain unperformed.
+
 ADR 0081 now adds the repository-only Pipeline Scheduler V2 planning boundary.
 It combines scheduler plan 1.1 with a fully fingerprinted same-session
 Automation Plan 1.4, so current canonical EOD cannot conceal an unfinished

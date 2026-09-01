@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0114](0114-run-the-read-only-scheduler-from-an-immutable-worktree.md): Separate the read-only scheduler from moving `main` with an exact detached Dell worktree.
+
 - [ADR 0113](0113-treat-degraded-user-systemd-as-review-available.md): Permit exact repair review when the reachable user manager is degraded by a failed pinned oneshot.
 
 - [ADR 0112](0112-census-inactive-pagination-within-the-pilot-ceiling.md): Determine whether inactive history completes within the existing six-request Pilot ceiling without starting acquisition.

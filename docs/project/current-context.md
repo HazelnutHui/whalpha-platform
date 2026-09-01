@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-08-30 UTC
 
-Repository development context updated at: 2026-08-31 UTC
+Repository development context updated at: 2026-09-01 UTC
 
 Repository source after ADR 0106 includes a bilingual Quant Research Lab as a
 fifth first-level workspace. It presents only the registered Strong-Leader
@@ -31,6 +31,15 @@ The repository HEAD is intentionally not frozen in this document because a
 documentation or code commit legitimately advances it. The read-only report
 must show the current HEAD and cleanliness separately from the immutable commit
 recorded by a deployed bundle.
+
+The installed read-only scheduler service is presently revision-pinned to an
+earlier clean `main` commit and therefore rejects the newer canonical `main`
+fail closed. ADR 0114 now defines a deterministic, write-free plan for moving
+that service to an exact detached Dell worktree so ordinary development commits
+cannot invalidate the next wake. No runtime worktree has been created and no
+service or timer has been migrated under that plan. Runtime creation,
+post-creation verification and systemd migration remain separate future
+custody transitions.
 
 ## Formal local state
 
