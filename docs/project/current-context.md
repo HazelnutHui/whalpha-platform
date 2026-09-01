@@ -1087,6 +1087,14 @@ request Pilot allocation cannot complete the inactive collection.
 
 ## Cross-device continuity
 
+The natural 2026-08-31 20:30 UTC read-only timer trigger failed closed because
+its installed service remained pinned to revision
+`fb96b49f404e4f7abbd11f1822b281acafce7888` while main had advanced. It made
+zero coordinator calls, credential accesses, external requests or writes. The
+failure left the reachable user manager `degraded`; ADR 0113 fixes candidate
+review to permit an exact repair review in that state. No reinstall or restart
+has yet occurred, and canonical data remains through 2026-08-28.
+
 - Windows already has its own dedicated passwordless SSH key and saved Dell
   remote project.
 - For Mac, first join the same Tailscale network, then generate a new Mac-only

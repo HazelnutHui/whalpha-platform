@@ -28,7 +28,9 @@ def repository(tmp_path: Path) -> Path:
     return root
 
 
-def runner(*, linger: str = "no", status: str = ""):
+def runner(
+    *, linger: str = "no", status: str = "", manager_state: str = "running"
+):
     def run(command, **_kwargs):
         if command[0] == "/usr/bin/git":
             if "rev-parse" in command:
@@ -44,7 +46,7 @@ def runner(*, linger: str = "no", status: str = ""):
             "--user",
             "is-system-running",
         ]:
-            output = "running\n"
+            output = manager_state + "\n"
         elif command[0] == "/usr/bin/loginctl":
             output = linger + "\n"
         elif command[:2] == ["/usr/bin/systemd-analyze", "calendar"]:
@@ -168,6 +170,53 @@ def test_linger_ready_candidate_still_requires_separate_installation(tmp_path) -
     assert review.reason_code == (
         "enabled_candidate_requires_separate_installation_review"
     )
+
+
+def test_degraded_user_manager_remains_available_for_repair_review(tmp_path) -> None:
+    review = systemd.review_scheduler_systemd_candidate(
+        config_id="dell-systemd-degraded-repair",
+        repository_root=repository(tmp_path),
+        activation_candidate_enabled=True,
+        hostname_reader=lambda: "dell5820",
+        user_reader=lambda: "hui",
+        command_runner=runner(linger="yes", manager_state="degraded"),
+    )
+
+    assert review.status == "review_ready"
+    assert review.user_manager_running is True
+    assert review.installation_prerequisites_satisfied is True
+    assert review.installation_performed is False
+
+
+@pytest.mark.parametrize("manager_state", ["starting", "maintenance", "offline"])
+def test_non_operational_user_manager_states_are_not_ready(
+    tmp_path, manager_state: str
+) -> None:
+    with pytest.raises(
+        systemd.DailyEodSchedulerSystemdError,
+        match="runtime prerequisites",
+    ):
+        systemd.review_scheduler_systemd_candidate(
+            config_id="dell-systemd-not-ready",
+            repository_root=repository(tmp_path),
+            hostname_reader=lambda: "dell5820",
+            user_reader=lambda: "hui",
+            command_runner=runner(linger="yes", manager_state=manager_state),
+        )
+
+
+def test_unknown_user_manager_state_is_rejected(tmp_path) -> None:
+    with pytest.raises(
+        systemd.DailyEodSchedulerSystemdError,
+        match="state is invalid",
+    ):
+        systemd.review_scheduler_systemd_candidate(
+            config_id="dell-systemd-unknown-state",
+            repository_root=repository(tmp_path),
+            hostname_reader=lambda: "dell5820",
+            user_reader=lambda: "hui",
+            command_runner=runner(linger="yes", manager_state="mystery"),
+        )
 
 
 def test_review_rejects_dirty_tree_or_wrong_host(tmp_path) -> None:

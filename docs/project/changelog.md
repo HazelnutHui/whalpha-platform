@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-09-01 — Recoverable degraded user-systemd review
+
+- The 2026-08-31 natural timer trigger correctly rejected its stale pinned
+  revision with zero requests or writes, leaving the user manager degraded.
+- Candidate review now treats reachable `running` and `degraded` managers as
+  review-available while rejecting non-operational and unknown states.
+- Added ADR 0113 and regression coverage. No unit, timer, credential, provider
+  or Production state was changed.
+- Full backend regression passed: 1,922 tests with two unchanged deprecation
+  warnings.
+
 ## 2026-09-01 — Six-page inactive lifecycle pagination census
 
 - Added a distinct six-page census within the Historical Pilot's existing

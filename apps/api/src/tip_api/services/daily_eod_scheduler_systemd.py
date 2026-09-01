@@ -493,17 +493,22 @@ def _systemd_version(*, command_runner: CommandRunner) -> int:
 
 def _user_manager_running(*, command_runner: CommandRunner) -> bool:
     try:
-        value = command_runner(
+        result = command_runner(
             ["/usr/bin/systemctl", "--user", "is-system-running"],
-            check=True,
+            check=False,
             capture_output=True,
             text=True,
-        ).stdout.strip()
+        )
+        value = result.stdout.strip()
     except (OSError, subprocess.SubprocessError) as exc:
         raise DailyEodSchedulerSystemdError(
             "user systemd manager is unavailable"
         ) from exc
-    return value == "running"
+    if value in {"running", "degraded"}:
+        return True
+    if value in {"initializing", "starting", "maintenance", "stopping", "offline"}:
+        return False
+    raise DailyEodSchedulerSystemdError("user systemd manager state is invalid")
 
 
 def _linger_enabled(*, command_runner: CommandRunner) -> bool:

@@ -28,6 +28,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   state under ADR 0080.
   Next observe one real calendar-triggered wake before composing any real
   coordinator transition. SMTP may remain unset.
+  The first natural 2026-08-31 trigger failed closed on its stale revision pin,
+  with zero requests/writes. ADR 0113 removes the resulting degraded-manager
+  review deadlock. Next render and separately authorize an exact read-only unit
+  rebind before any data transition.
 - Automation design: ADR 0081's repository-only Pipeline Scheduler V2 and
   persistent per-session workspace contract are complete. ADR 0082's
   non-installed bounded distinct-wake cadence and fail-closed evidence model

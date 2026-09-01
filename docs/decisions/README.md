@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0113](0113-treat-degraded-user-systemd-as-review-available.md): Permit exact repair review when the reachable user manager is degraded by a failed pinned oneshot.
+
 - [ADR 0112](0112-census-inactive-pagination-within-the-pilot-ceiling.md): Determine whether inactive history completes within the existing six-request Pilot ceiling without starting acquisition.
 
 - [ADR 0111](0111-bound-inactive-security-lifecycle-coverage-probing.md): Bound inactive-Tickers pagination and lifecycle-field probing without retaining identifiers or granting coverage authority.
