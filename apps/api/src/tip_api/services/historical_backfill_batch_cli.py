@@ -80,3 +80,7 @@ def _clean_revision() -> str:
         capture_output=True,
         text=True,
     ).stdout.strip()
+
+
+if __name__ == "__main__":  # pragma: no cover
+    raise SystemExit(main())
