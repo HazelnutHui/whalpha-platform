@@ -1,14 +1,15 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-08-30 UTC
+Operational state verified at: 2026-09-01 UTC
 
 Repository development context updated at: 2026-09-01 UTC
 
 Repository source after ADR 0106 includes a bilingual Quant Research Lab as a
 fifth first-level workspace. It presents only the registered Strong-Leader
 Pullback method and formal 31/252 `data_blocked` readiness state. Result panels
-are deliberately unavailable; no fixture performance, research publication,
-stage transition, `/data` write, bundle or deployment was introduced.
+are deliberately unavailable and no fixture performance or research stage
+transition is presented. The data-blocked workspace is included in the current
+deployed UI without changing the model or publishing research results.
 
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
@@ -23,7 +24,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `83f9b629279c0e7e949cf01b454ebfda60b35900` |
+| Deployed bundle source commit | `44b052419be8bcc9cd7c433c85e5381a4499ddc7` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -54,48 +55,45 @@ is 2026-09-01 17:30 UTC.
 
 ## Formal local state
 
-One authorized 2026-08-31 Identity fetch-only operation now exists outside
-`/data` as a frozen owner-only `/tmp` package: 14 complete pages, 13,141
-records, package content fingerprint
-`d9c8019618a791fdbad8f8c057eddf4895e55d04a5a116915516cc5ab56831d8`.
-The first offline plan correctly blocked on one collision group/two ambiguous
-observations. ADR 0116 keeps both quarantined and permits only a total collision
-ratio at or below 0.1%; the real package has not yet been replanned from a
-committed source revision. Canonical Identity/EOD therefore remain unchanged
-through 2026-08-28.
+The 2026-08-31 Identity package completed 14 pages/13,141 observations. Its
+first plan correctly blocked on one collision group/two ambiguous observations;
+ADR 0116 keeps both absent from Instrument/Resolver output while allowing the
+observed 0.018% collision ratio below the 0.1% gate. The committed rule then
+produced and applied 9,965 canonical instruments/resolvers. The separately
+authorized EOD package and Apply produced 9,939 aligned bars.
 
-The 2026-08-30 reconciliation used the project readers after the separately
-authorized complete 2026-08-28 Identity/EOD, analytics, publication, Snapshot,
-bundle, and OCI deployment round. It reread the full local inventory and active
+The 2026-09-01 reconciliation used the project readers after the complete
+2026-08-31 Identity/EOD, analytics, publication, Snapshot, bundle, and OCI
+deployment round. It reread the full local inventory and active
 custody/contracts after deployment.
 
 | Boundary | Active verified value |
 | --- | --- |
-| Canonical EOD | 31 sessions, 2026-07-17 through 2026-08-28 |
-| Latest EOD | 2026-08-28, 9,942 rows |
-| EOD content fingerprint | `d02dd3bca07331087934b947bc3e724f6d1ca64113615515f08951e46bb5c803` |
-| EOD Parquet SHA-256 | `f3d57d29a947bcf4ed11b14f8c2ee3686b84f5eaa9f8d3b6762c3b93c5005a18` |
-| Latest canonical Identity | 2026-08-28: 9,981 instruments / 13,151 provider identities / 9,981 resolvers |
-| Latest Identity logical fingerprint | `becf17b05b22a9f89de0d8f96094d83cabb568eaf0c32121eaf2c0daba21189b` |
-| Latest-EOD-bound Identity | 2026-08-28: 9,981 instruments / 13,151 provider identities / 9,981 resolvers |
-| EOD-bound Identity logical fingerprint | `becf17b05b22a9f89de0d8f96094d83cabb568eaf0c32121eaf2c0daba21189b` |
+| Canonical EOD | 32 sessions, 2026-07-17 through 2026-08-31 |
+| Latest EOD | 2026-08-31, 9,939 rows |
+| EOD content fingerprint | `bf047e2654ee64be6ecc7a828486d9655fcc21a8a5ac07c45647fe17cb581011` |
+| EOD Parquet SHA-256 | `103d1cbeb3e6c535a4c695d4c324db8b7f0b8d96364446d01d21e69024b2abf0` |
+| Latest canonical Identity | 2026-08-31: 9,965 instruments / 13,141 provider identities / 9,965 resolvers |
+| Latest Identity logical fingerprint | `451cbe0f7c8be554e64c604a4466186818a8a2c7023dc992a9286c949a8c792a` |
+| Latest-EOD-bound Identity | 2026-08-31: 9,965 instruments / 13,141 provider identities / 9,965 resolvers |
+| EOD-bound Identity logical fingerprint | `451cbe0f7c8be554e64c604a4466186818a8a2c7023dc992a9286c949a8c792a` |
 | Identity/EOD alignment | `aligned` |
 | Activation analysis session | 2026-08-19 |
 | Activation pointer fingerprint | `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168` |
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
 | Primary | 1,718 CS; fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978` |
 | Secondary | 1,831 = 1,718 CS + 113 ADRC; fingerprint `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295` |
-| Market Intelligence | `2026-08-28T135850Z-f483d6999a3e`, contract 1.3 |
-| Market Intelligence payload SHA-256 | `bb58287454ddc79955e045f3341c35873961a16e692ee9146d9519f4837351fc` |
-| Market Intelligence logical fingerprint | `7f1e6b9c065999939a2f43f397f8af4a94dc342f65ad6dc3624d4c6d6b507f74` |
-| Candidate publication | 686 Primary / 744 Secondary records; fingerprint `96c37e7a1e35c55e67422a1b4638e7ad1f5a69d6edc5a8124344ae4a0f7cf758` |
-| Dashboard Snapshot | `2026-08-28T141747Z-83f9b629279c` |
+| Market Intelligence | `2026-08-31T101550Z-44b052419be8`, contract 1.3 |
+| Market Intelligence payload SHA-256 | `deb32a316cf761fd712ba8455ba400a4d0ff7aa0fc862f77c5d8692516c0041c` |
+| Market Intelligence logical fingerprint | `916ecf708b6892c662fc399e8cba2bca619c70335d0b2c743e62f11540c408e4` |
+| Candidate publication | 715 Primary / 765 Secondary records; fingerprint `330c894813e745de1e213f04c2d68ed221593decbe2253bfa1d18062cccbb6ba` |
+| Dashboard Snapshot | `2026-08-31T102009Z-44b052419be8` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
-| Snapshot pointer fingerprint | `cd78a18de7fe102b694fbf624315b37c7648f4d0034e59c6d130e6a965ed9468` |
+| Snapshot pointer fingerprint | `9921272d5e749a8cf547e3f8da760cfd89844fdaaede3191fe24405e3c4c717b` |
 | Active review metadata | none; ordinary fresh publication |
-| Current post-close pipeline freshness | expected 2026-08-28; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-28; lag zero |
-| `/data` inventory | 694 files / 503,568,026 bytes after MI 1.3 and the final Snapshot 1.11 publication |
-| `/data` inventory fingerprint | `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca` |
+| Current post-close pipeline freshness | expected 2026-08-31; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-31; lag zero |
+| `/data` inventory | 747 files / 573,552,760 bytes after MI 1.3 and Snapshot 1.11 publication |
+| `/data` inventory fingerprint | `7a0e31ff52dc5e60bb8325e50653961803f9c59628ed0824ca083c5928557365` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -1016,14 +1014,14 @@ recorded in the active-state table and
 
 ## OCI production state
 
-The active remote release and matching local immutable bundle are
-`2026-08-28T141747Z-83f9b629279c`, built from deployed source commit
-`83f9b629279c0e7e949cf01b454ebfda60b35900` and bound to Market Intelligence
-`2026-08-28T135850Z-f483d6999a3e`. A later repository HEAD does not
+The active remote release and matching verified Dell immutable bundle are
+`2026-08-31T102009Z-44b052419be8`, built from deployed source commit
+`44b052419be8bcc9cd7c433c85e5381a4499ddc7` and bound to Market Intelligence
+`2026-08-31T101550Z-44b052419be8`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
 
-The 2026-08-30 Sector Rotation deployment passed formal Snapshot Plan 2.6,
+The 2026-09-01 deployment passed formal Snapshot Plan 2.6,
 ordinary-fresh Snapshot Apply, exact 52-checksummed-file serving-bundle reread, remote
 preflight, Nginx configuration checks,
 atomic apply, unauthenticated protection, and the deployment tool's temporary
@@ -1033,7 +1031,7 @@ No credential or cookie content was printed or retained.
 The independent remote-state report also matched local manifest/checksum
 hashes, found zero failed units or staging/failed residue, and recorded state
 fingerprint
-`50781e2bb39fa6ec56667c34b3455a9c9c60fcfe0c40ad323a1fb1397509bfcf`.
+`338a657b567cda38b597ccbc36361c276c72040428dac33bb18be1dc793f2f65`.
 Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.
@@ -1053,18 +1051,23 @@ and cannot replace this separately authorized OCI check.
   but active provider-form Universes remain provisional until authoritative
   issuer evidence satisfies the documented gates.
 
-## Explicitly not authorized by this context
+## Authorization boundary
 
-The completed 2026-08-28 acquisition, canonical Apply, publication, Snapshot,
-bundle, and deployment actions are evidence, not
-continuing authority. This handoff does not authorize further provider or SEC
-access, credential inspection, EOD or Identity acquisition, another canonical Apply,
-scheduler changes, Activation, publication,
-Snapshot creation, bundle generation, OCI deployment or rollback, guest
-access, further UI implementation, another quantitative feature, or guest/
-source licensing remediation. The
-completed 2026-08-28 publication and deployment described above are evidence,
-not continuing authorization.
+On 2026-09-01 the operator directed future routine daily Identity/EOD fetch,
+guarded canonical Apply, existing offline analytics, standard publication,
+Snapshot, bundle, and OCI deployment to proceed without separate chat
+confirmation at every stage. Every existing date, fingerprint, quality,
+freshness, custody, clean-source, CAS, and postflight gate remains mandatory;
+a failed gate stops the chain rather than broadening this direction. This is
+operator workflow authority for agent-run routine updates, not an installed
+unattended standing-authorization artifact and not scheduler publication or
+deployment authority.
+
+Historical backfill, SEC access, new provider endpoints, credential inspection
+or change, model/Universe rule changes, rollback, deletion, scheduler mutation,
+orders, and materially new data or product scope remain separately bounded.
+The completed 2026-08-31 round is evidence of one successful guarded chain,
+not permission to bypass any of those controls.
 
 ADR 0102's fixture-only source-package writer is repository development, not a
 new authorization. It does not change the blocked Pilot result or permit the

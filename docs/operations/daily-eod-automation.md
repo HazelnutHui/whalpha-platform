@@ -613,7 +613,7 @@ scripts/admin/plan-daily-eod-automation.sh \
   --market-intelligence-approval-plan /tmp/<new-mi-plan>.json \
   --snapshot-output-root /tmp/<new-snapshot-output-root> \
   --snapshot-approval-plan /tmp/<new-snapshot-plan>.json \
-  --serving-bundle-root /tmp/<new-serving-bundle-root>
+  --serving-bundle-root /tmp/tip-<new-serving-bundle-root>
 ```
 
 The JSON result has one of four statuses:
@@ -875,7 +875,7 @@ scripts/admin/execute-daily-eod-offline-action.sh \
   --market-intelligence-approval-plan /tmp/<new-mi-plan>.json \
   --snapshot-output-root /tmp/<new-snapshot-output-root> \
   --snapshot-approval-plan /tmp/<new-snapshot-plan>.json \
-  --serving-bundle-root /tmp/<new-serving-bundle-root> \
+  --serving-bundle-root /tmp/tip-<new-serving-bundle-root> \
   --run-root /home/hui/.local/state/trading-intelligence-platform/daily-eod \
   --panel-cache-root /tmp/<immutable-panel-cache> \
   --candidate-work-dir /tmp/<owner-controlled-candidate-recovery> \
@@ -926,6 +926,9 @@ The Serving Bundle action additionally requires:
 ```bash
 --bundle-built-at <explicit-UTC-timestamp>
 ```
+
+For direct `/tmp` custody, the bundle-root basename must begin with `tip-`;
+the lower-level OCI builder rejects other `/tmp` names before frontend build.
 
 It is selectable only after the exact pointer from Snapshot Plan 2.4 is active.
 It invokes the Dell-local builder with the exact immutable V2 Snapshot path and

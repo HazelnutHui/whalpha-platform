@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-09-01 — Complete and deploy the 2026-08-31 daily chain
+
+- Replanned and applied the frozen 13,141-observation Identity package under
+  committed ADR 0116. The two stable-identity collision observations remained
+  quarantined; 9,965 instruments/resolvers were published.
+- Made exactly one custody-reserved 2026-08-31 Grouped Daily request and
+  published 9,939 canonical EOD rows with zero duplicate business keys and
+  zero orphan references. Identity and EOD now align through 2026-08-31.
+- Completed the eleven ordered Dell-local offline stages, including Candidate,
+  Entry Geometry, ETF Relationships, Strategy Channels, Candidate Visual
+  Context, Sector ETF Rotation, MI and Snapshot planning. Candidate and
+  Snapshot-plan execution remained visible single-core performance hotspots.
+- Published fresh MI `2026-08-31T101550Z-44b052419be8` and Snapshot 1.11 /
+  Dashboard 2.8 release `2026-08-31T102009Z-44b052419be8`.
+- The first serving-bundle attempt failed before build because its direct
+  `/tmp` basename lacked the lower-level builder's required `tip-` prefix; it
+  left no residue. A newly planned compliant path built and formally reread.
+- Remote preflight observed the actual prior release
+  `2026-08-28T141747Z-83f9b629279c`, then one CAS-bound OCI Apply deployed the
+  new release. Independent postflight verified source revision, manifest and
+  checksums, Nginx/Auth health, localhost-only listener, protected routes,
+  equal-capability guest Session, and zero staging/failed residue. Credential
+  login and browser visual inspection remain manual.
+
 ## 2026-09-01 — Quarantine isolated stable-identity collisions
 
 - One separately authorized 2026-08-31 Identity fetch-only operation completed

@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-08-30
+Status date: 2026-09-01
 
 This document is the concise current-state summary. Exact publication IDs,
 fingerprints, verification scope, and cross-device handoff are maintained in
@@ -61,8 +61,8 @@ Pullback question, chronology, fixed 24-combination family, advancement gates
 and missing data foundations. It remains explicitly `data_blocked` at 31/252;
 coverage is readiness rather than confidence, and performance panels remain
 unavailable. The page uses no synthetic result, changes no model or data
-contract, preserves identical guest/credential capability, and has not been
-bundled or deployed.
+contract, preserves identical guest/credential capability, and is deployed in
+the current OCI release.
 
 The interface supports human decisions. It does not issue orders, model option
 returns, or claim causality. Price and volume analytics are participation or
@@ -70,37 +70,33 @@ relative-performance proxies, never actual fund flow.
 
 ## Active data and publications
 
-- A frozen 2026-08-31 Identity fetch package is custody-recorded under `/tmp`
-  with 14 complete pages/13,141 records. Its first Apply plan failed closed on
-  two quarantined stable-identity collision observations. ADR 0116 replaces the
-  absolute-zero gate with a maximum 0.1% collision-observation ratio while
-  keeping every collision absent from canonical Instrument/Resolver output.
-  The package has not yet been replanned under committed source; `/data`
-  remains unchanged.
-- Canonical EOD and canonical Identity are both completed through 2026-08-28
-  and formally aligned.
-- Latest EOD contains 9,942 rows. Latest Identity and the Identity snapshot
-  bound to EOD contain 9,981 canonical instruments, 13,151 provider
-  observations, and 9,981 resolver rows.
+- The custody-recorded 2026-08-31 Identity package completed 14 pages/13,141
+  observations. ADR 0116 quarantined its one collision group/two ambiguous
+  observations within the 0.1% gate; canonical Identity therefore contains
+  9,965 instruments and resolvers and no row for either collision observation.
+- Canonical EOD and canonical Identity are both completed through 2026-08-31
+  and formally aligned across 32 EOD sessions.
+- Latest EOD contains 9,939 rows and binds the same 2026-08-31 Identity logical
+  fingerprint.
 - Activation V2 is active with Common Shares as the sole default:
   - Primary: 1,718 CS.
   - Secondary: 1,831 = 1,718 CS + 113 ADRC.
 - Active Market Intelligence publication is
-  `2026-08-28T135850Z-f483d6999a3e`, contract 1.3, with 686 Primary and 744
+  `2026-08-31T101550Z-44b052419be8`, contract 1.3, with 715 Primary and 765
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-28T141747Z-83f9b629279c`, contract 1.11 / Dashboard 2.8.
-- The locally retained OCI bundle and live-verified deployed release are
-  `2026-08-28T141747Z-83f9b629279c` from source commit `83f9b629279c`.
+  `2026-08-31T102009Z-44b052419be8`, contract 1.11 / Dashboard 2.8.
+- The verified Dell serving bundle and live OCI release are
+  `2026-08-31T102009Z-44b052419be8` from source commit `44b052419be8`.
 
 The active analytics and Snapshot are ordinary fresh publications for
-2026-08-28: actual and expected session match, lag is zero, review mode is
+2026-08-31: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
-`2026-08-28T140332Z-f483d6999a3e` is the exact planned rollback reference. The
-2026-08-30 post-deployment reader found 694 files / 503,568,026 bytes under
+`2026-08-28T141747Z-83f9b629279c` is the exact rollback reference. The
+2026-09-01 post-deployment reader found 747 files / 573,552,760 bytes under
 `/data`, inventory fingerprint
-`b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`,
-zero symlinks, and zero publication residue.
+`7a0e31ff52dc5e60bb8325e50653961803f9c59628ed0824ca083c5928557365`,
+and zero symlinks.
 
 ### Daily automation development state
 
