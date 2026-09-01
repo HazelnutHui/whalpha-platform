@@ -358,6 +358,9 @@ This roadmap is a proposed sequence, not a commitment or date plan.
 - [x] Replace ambiguous Candidate score bars with an exact published-point
   contribution ledger, strongest-support/weighted-shortfall summary, and
   folded raw/normalized metric evidence without changing the model
+- [x] Link current Candidate evidence into a market-to-proxy-to-stock-to-entry-
+  to-invalidation path and separate technical re-underwrite from eligibility
+  failure without inferring sector membership
 - [x] Independent Candidate strategy-channel shadow taxonomy and contract
 - [x] Fixed explainable three-channel offline preview and bounded consumer
 - [x] Independent strategy-channel Oracle and immutable temporary-root audit

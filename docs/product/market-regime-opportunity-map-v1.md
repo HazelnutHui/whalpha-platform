@@ -606,6 +606,9 @@ The drawer contains:
 - candidate/position context, current stage, raw base score, risk-adjusted rank,
   confidence, and missingness;
 - all component raw values, normalized values, weights, and contributions;
+- a linked market-context, registered ETF price-proxy, stock-leadership,
+  entry-location, and re-underwrite path that never promotes the price proxy
+  into formal sector membership;
 - “why now,” supporting evidence, counterevidence, reason codes, and
   invalidation conditions;
 - one-to-five-session attention window, explicitly not a holding instruction;

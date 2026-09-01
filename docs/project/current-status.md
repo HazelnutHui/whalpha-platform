@@ -64,6 +64,13 @@ view. The active Snapshot 1.11 / Dashboard 2.8 release formally validates with
 all required fields. This UI-only change is tested and deployed with identical
 guest and authenticated capability.
 
+The next UI-only source change links Market context, the registered ETF price
+proxy, stock leadership, entry posture, and re-underwrite boundary into one
+vertical evidence path. It keeps the ETF relationship explicitly separate
+from formal sector membership and separates technical re-underwrite from
+Candidate eligibility failure. Full frontend regression and active Snapshot
+compatibility pass; this follow-on path is not yet deployed.
+
 Repository source now also adds Quant Research Lab / 量化研究实验室 as the
 fifth first-level workspace. It exposes the preregistered Strong-Leader
 Pullback question, chronology, fixed 24-combination family, advancement gates

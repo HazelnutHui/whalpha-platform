@@ -24,6 +24,7 @@ import type {
 } from '../api/candidateStrategies';
 import { strategyMethod, strategyScoreBreakdown } from '../api/candidateStrategyMethods';
 import { CandidateContributionLedger } from '../components/candidates/CandidateContributionLedger';
+import { CandidateDecisionChain } from '../components/candidates/CandidateDecisionChain';
 import { useI18n, type Translate } from '../i18n/I18nProvider';
 import { localizeClientError, universeName } from '../i18n/domain';
 
@@ -181,6 +182,7 @@ function CandidateDetail({ item, mode, onClose }: { item: CandidateItem; mode: C
     <header><div><p className="eyebrow">{t('candidate.detailEyebrow')}</p><h2 id="candidate-detail-title">{item.ticker} · {entry ? postureName(t, entry.review_posture) : stageName(t, item.state.final_stage)}</h2><p>{item.instrument_id} · {item.security_type}</p></div><button type="button" onClick={onClose} aria-label={t('common.close')}>×</button></header>
     <div className="candidate-detail-summary"><div><span>{t('candidate.baseScore')}</span><strong>{number(item.base_score)}</strong></div><div><span>{t('candidate.dataSupport')}</span><strong>{percent(item.confidence.confidence)}</strong></div><div><span>{t('candidate.formalRank')}</span><strong>{disposition?.risk_adjusted_rank ?? t('candidate.entry.fullPool')}</strong></div><div><span>{t('candidate.latestPrice')}</span><strong>${number(item.latest_price, 2)}</strong></div></div>
     <p className="candidate-boundary">{t('candidate.researchBoundary')}</p>
+    <CandidateDecisionChain item={item} />
     {item.visual_context ? <CandidatePricePathChart visual={item.visual_context} /> : null}
     {entry ? <CandidatePositionMap entry={entry} state={item.state} /> : null}
     {entry ? <section className="candidate-entry-detail"><div className="candidate-entry-verdict"><span className={`candidate-entry-posture candidate-entry-posture-${entry.review_posture}`}>{postureName(t, entry.review_posture)}</span><strong>{setupName(t, entry.technical_setup)}</strong><small>{t('candidate.entry.extensionLabel')} · {extensionName(t, entry.extension_risk)}</small></div>
@@ -189,7 +191,7 @@ function CandidateDetail({ item, mode, onClose }: { item: CandidateItem; mode: C
     </section> : null}
     <CandidateContributionLedger item={item} />
     <section className="candidate-evidence-grid"><div><h3>{t('candidate.supporting')}</h3>{supports.map((row) => <p key={`${row.evidence_id}-${row.component_id}`}>+ {componentName(t, row.component_id)}{row.observed_value ? ` · ${row.observed_value}` : ''}</p>)}</div><div><h3>{t('candidate.counter')}</h3>{counters.map((row) => <p key={`${row.evidence_id}-${row.component_id}`}>− {componentName(t, row.component_id)}{row.observed_value ? ` · ${row.observed_value}` : ''}</p>)}</div></section>
-    <section><h3>{t('candidate.invalidation')}</h3><ul>{item.invalidation_condition_codes.map((code) => <li key={code}>{t(`candidate.invalidation.${code}` as never)}</li>)}</ul></section>
+    <section className="candidate-invalidation-ledger"><h3>{t('candidate.invalidation')}</h3><p>{t('candidate.invalidation.boundary')}</p><div><div><h4>{t('candidate.invalidation.technical')}</h4><ul>{entry.technical_invalidation_codes.map((code) => <li key={code}>{entryCode(t, code)}</li>)}</ul></div><div><h4>{t('candidate.invalidation.eligibility')}</h4><ul>{item.invalidation_condition_codes.map((code) => <li key={code}>{t(`candidate.invalidation.${code}` as never)}</li>)}</ul></div></div></section>
     <section><h3>{t('candidate.rawFacts')}</h3><div className="candidate-facts"><span>{t('candidate.liquidity')} <strong>{money(item.median_dollar_volume_20)}</strong></span><span>{t('candidate.volatility')} <strong>{percent(item.annualized_volatility_10)}</strong></span><span>{t('candidate.maxGap')} <strong>{percent(item.maximum_absolute_open_gap_5)}</strong></span><span>{t('candidate.volumeRatio')} <strong>{number(item.current_volume_ratio, 2)}×</strong></span><span>{t('candidate.etfProxy')} <strong>{item.primary_driver_ticker ?? '—'}</strong></span><span>{t('common.correlation')} <strong>{number(item.driver_correlation_20, 2)}</strong></span></div></section>
     <section><h3>{t('candidate.manualChecks')}</h3><p>{t('candidate.manualChecksBody')}</p></section>
   </aside></div>;

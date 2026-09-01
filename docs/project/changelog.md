@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-01 — Link Candidate evidence into a decision path
+
+- Added a bilingual five-step Candidate detail path from Market context through
+  the registered ETF price proxy, stock leadership and entry posture to an
+  explicit re-underwrite boundary.
+- Kept the ETF relationship labelled as price-derived rather than sector
+  membership or fund flow, and fails closed instead of inventing a sector when
+  no registered proxy qualifies.
+- Separated technical re-underwrite conditions from Candidate eligibility
+  failures. The most actionable published support/trend condition is summarized
+  first, while the complete ledgers remain visible; no condition is presented
+  as an automatic sell order.
+- Full frontend regression passed 113 tests, the production build passed, and
+  the active Snapshot 1.11 / Dashboard 2.8 release passed formal reread
+  compatibility. The UI-only source change is not yet deployed.
+
 ## 2026-09-01 — Make Candidate score contributions decision-readable
 
 - Replaced the Candidate drawer's ambiguous component bars with a bilingual

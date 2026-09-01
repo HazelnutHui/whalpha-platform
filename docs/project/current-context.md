@@ -4,6 +4,15 @@ Operational state verified at: 2026-09-01 UTC
 
 Repository development context updated at: 2026-09-01 UTC
 
+Repository source now also links the Candidate detail facts into one bilingual
+five-step evidence path: Market context, registered ETF price proxy, stock
+leadership, current entry posture, and a re-underwrite boundary. The ETF node
+remains explicitly price-derived and cannot establish sector membership or
+fund flow. Technical re-underwrite conditions are now separated from basic
+Candidate eligibility failures; neither is an automatic sell instruction. The
+active Snapshot 1.11 / Dashboard 2.8 release formally rereads with every field
+required by this UI-only change, which is tested but not yet deployed.
+
 Repository source now replaces the ambiguous Candidate component bars with a
 bilingual contribution ledger. It reconciles the seven published contribution
 points to the unchanged base score, separates largest score support from the
