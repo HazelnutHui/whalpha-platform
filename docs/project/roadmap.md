@@ -33,11 +33,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   complete, but a later documentation commit demonstrated that binding the
   service to moving `main` repeats the same failure. ADR 0114 planned an
   immutable detached-worktree runtime. That runtime and its runtime-bound
-  service candidate are now created,
-  verified and `review_ready`. Migrate the service binding only after exact
-  authorization and perform one controlled read-only start. Then review one
-  2026-08-31 data transition; the timer remains review-only and invokes no
-  coordinator.
+  service candidate are now created and verified. The exact service migration
+  and controlled read-only start are also complete; timer bytes remained
+  unchanged. Next separately review one 2026-08-31 data transition; the timer
+  remains review-only and invokes no coordinator.
 - Automation design: ADR 0081's repository-only Pipeline Scheduler V2 and
   persistent per-session workspace contract are complete. ADR 0082's
   non-installed bounded distinct-wake cadence and fail-closed evidence model
@@ -49,7 +48,7 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   separately operator-approved disposition. ADR 0114's immutable runtime plan
   is complete and ADR 0115 closes the detached verification/rendering code
   gap. Exact runtime creation and live verification are complete; installed
-  runtime binding remains separate.
+  runtime binding and a controlled read-only start are now also complete.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum. ADR 0086 now completes the physical Daily

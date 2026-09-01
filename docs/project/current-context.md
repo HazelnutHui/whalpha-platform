@@ -44,8 +44,13 @@ Its tree is owner-only. ADR 0115's network- and write-free systemd candidate
 `0e96fc999ea858ff753f570de5c8821c6ea0c1357d62b7518c3ffd8ece3b98ab`
 and unchanged timer SHA-256
 `19347d553ad3300c01a03f56337bd31ee9bd9e0b7e16b05b95b58b983512da0b`.
-The installed service still has its earlier stale `main` binding; migration
-and a controlled runtime start remain separate future custody transitions.
+The separately authorized service migration is now complete. Installed
+service SHA-256 matches the candidate, timer bytes remain unchanged, and one
+controlled start exited successfully with `runtime_verified=true`. It selected
+missing session 2026-08-31 and stopped at read-only transition review with zero
+coordinator calls, credential reads, external requests, filesystem writes or
+Production writes. The timer remains enabled/active; the next observed trigger
+is 2026-09-01 17:30 UTC.
 
 ## Formal local state
 

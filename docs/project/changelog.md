@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-01 — Migrate the read-only timer to the immutable runtime
+
+- The exact systemd review fingerprint was separately authorized. Only the
+  owner-only user service bytes changed; the enabled timer bytes and calendar
+  remained unchanged.
+- Installed service SHA-256 is
+  `0e96fc999ea858ff753f570de5c8821c6ea0c1357d62b7518c3ffd8ece3b98ab`;
+  timer SHA-256 remains
+  `19347d553ad3300c01a03f56337bd31ee9bd9e0b7e16b05b95b58b983512da0b`.
+- A controlled start from detached runtime revision
+  `fe90cd4d105620a67ad1104bac3cb426586ad29f` exited successfully with
+  `runtime_verified=true`, selected missing 2026-08-31, and stopped at
+  `review_one_transition_wake`.
+- Coordinator, credential, external-request, filesystem-write and
+  Production-write counts were all zero. The timer remains enabled/active;
+  its next observed trigger is 2026-09-01 17:30 UTC.
+
 ## 2026-09-01 — Create and verify the immutable scheduler runtime
 
 - The exact fingerprint-bound runtime plan was separately authorized and
