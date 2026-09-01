@@ -4,8 +4,11 @@ from datetime import date
 
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.historical_lifecycle_probe import (
+    CENSUS_CONTRACT_VERSION,
     LifecycleProbeStatus,
+    census_massive_historical_lifecycle_pagination,
     probe_massive_historical_lifecycle_coverage,
+    required_lifecycle_census_acknowledgement,
     required_lifecycle_probe_acknowledgement,
 )
 from tip_api.providers.massive.transport import MassiveTransportResponseError
@@ -134,3 +137,62 @@ def test_acknowledgement_binds_date_and_revision() -> None:
     assert first != required_lifecycle_probe_acknowledgement(
         anchor_date=date(2026, 7, 16), revision="b" * 40
     )
+
+
+def test_six_page_census_can_complete_without_changing_two_page_contract() -> None:
+    pages = [
+        {
+            "results": [{"ticker": f"OLD{index}", "active": False}],
+            "next_url": (
+                "https://api.massive.com/v3/reference/tickers?"
+                f"cursor={index + 1}"
+            ),
+        }
+        for index in range(5)
+    ]
+    pages.append({"results": [{"ticker": "OLD5", "active": False}]})
+
+    result = census_massive_historical_lifecycle_pagination(
+        config=_config(),
+        transport=FakeTransport(pages),  # type: ignore[arg-type]
+        anchor_date=date(2026, 7, 16),
+    )
+
+    assert result.contract_version == CENSUS_CONTRACT_VERSION
+    assert result.status is LifecycleProbeStatus.COMPLETED
+    assert result.request_count == 6
+    assert result.page_count == 6
+    assert result.pagination_complete
+    assert result.result_count == 6
+
+
+def test_six_page_census_reports_truncation_at_unchanged_ceiling() -> None:
+    pages = [
+        {
+            "results": [{"ticker": f"OLD{index}", "active": False}],
+            "next_url": (
+                "https://api.massive.com/v3/reference/tickers?"
+                f"cursor={index + 1}"
+            ),
+        }
+        for index in range(6)
+    ]
+    result = census_massive_historical_lifecycle_pagination(
+        config=_config(),
+        transport=FakeTransport(pages),  # type: ignore[arg-type]
+        anchor_date=date(2026, 7, 16),
+    )
+    assert result.status is LifecycleProbeStatus.TRUNCATED_AT_CEILING
+    assert result.request_count == 6
+    assert not result.pagination_complete
+
+
+def test_census_acknowledgement_differs_from_two_page_probe() -> None:
+    census = required_lifecycle_census_acknowledgement(
+        anchor_date=date(2026, 7, 16), revision="a" * 40
+    )
+    probe = required_lifecycle_probe_acknowledgement(
+        anchor_date=date(2026, 7, 16), revision="a" * 40
+    )
+    assert census.startswith("I_AUTHORIZE_MASSIVE_LIFECYCLE_CENSUS_")
+    assert census != probe

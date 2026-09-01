@@ -1246,6 +1246,12 @@ confirm that ticker-only history is unsafe. Full pagination plus last-tradable,
 reason, consideration and successor facts remain unresolved. There were two
 requests, no retained body/identifier and zero writes.
 
+ADR 0112 now implements a separate six-page inactive pagination census bound
+to the existing Historical Pilot ceiling. It does not alter the earlier
+two-page contract and cannot turn pagination completion into lifecycle or Pilot
+authority. Simulated completion, truncation and failure cases pass; no real
+census request has run.
+
 ## Verification entry point
 
 Run the local, credential-free report from the repository root:

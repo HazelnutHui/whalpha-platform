@@ -21,9 +21,11 @@ from tip_api.providers.massive.transport import (
 )
 
 CONTRACT_VERSION = "massive-historical-lifecycle-coverage-probe/1.0"
+CENSUS_CONTRACT_VERSION = "massive-historical-lifecycle-pagination-census/1.0"
 ALL_TICKERS_PATH = "/v3/reference/tickers"
 PAGE_LIMIT = 1_000
 MAXIMUM_REQUEST_COUNT = 2
+CENSUS_MAXIMUM_REQUEST_COUNT = 6
 _LIFECYCLE_FIELDS = (
     "delisted_utc",
     "last_updated_utc",
@@ -98,6 +100,65 @@ def probe_massive_historical_lifecycle_coverage(
 ) -> MassiveHistoricalLifecycleProbeV1:
     """Inspect at most two inactive-Ticker pages and retain aggregate facts only."""
 
+    return _probe(
+        config=config,
+        transport=transport,
+        anchor_date=anchor_date,
+        before_request=before_request,
+        contract_version=CONTRACT_VERSION,
+        maximum_request_count=MAXIMUM_REQUEST_COUNT,
+    )
+
+
+def required_lifecycle_census_acknowledgement(
+    *, anchor_date: date, revision: str
+) -> str:
+    normalized = revision.strip().lower()
+    if len(normalized) != 40 or any(
+        character not in "0123456789abcdef" for character in normalized
+    ):
+        raise ValueError("revision must be a full 40-character Git SHA")
+    binding = _fingerprint(
+        {
+            "anchor_date": anchor_date.isoformat(),
+            "contract_version": CENSUS_CONTRACT_VERSION,
+            "maximum_request_count": CENSUS_MAXIMUM_REQUEST_COUNT,
+            "page_limit": PAGE_LIMIT,
+            "revision": normalized,
+        }
+    )
+    return f"I_AUTHORIZE_MASSIVE_LIFECYCLE_CENSUS_{binding}"
+
+
+def census_massive_historical_lifecycle_pagination(
+    *,
+    config: MassiveProviderConfig,
+    transport: MassiveHttpTransport,
+    anchor_date: date,
+    before_request: Callable[[int], None] | None = None,
+) -> MassiveHistoricalLifecycleProbeV1:
+    """Count at most six inactive-Ticker pages and retain aggregate facts only."""
+
+    return _probe(
+        config=config,
+        transport=transport,
+        anchor_date=anchor_date,
+        before_request=before_request,
+        contract_version=CENSUS_CONTRACT_VERSION,
+        maximum_request_count=CENSUS_MAXIMUM_REQUEST_COUNT,
+    )
+
+
+def _probe(
+    *,
+    config: MassiveProviderConfig,
+    transport: MassiveHttpTransport,
+    anchor_date: date,
+    before_request: Callable[[int], None] | None,
+    contract_version: str,
+    maximum_request_count: int,
+) -> MassiveHistoricalLifecycleProbeV1:
+
     path = ALL_TICKERS_PATH
     params: dict[str, MassiveParamValue] = {
         "market": "stocks",
@@ -117,7 +178,7 @@ def probe_massive_historical_lifecycle_coverage(
     status = LifecycleProbeStatus.COMPLETED
     pagination_complete = False
     try:
-        for index in range(MAXIMUM_REQUEST_COUNT):
+        for index in range(maximum_request_count):
             request_key = (path, tuple(sorted(params.items())))
             if request_key in seen_requests:
                 raise MassiveTransportDataError("Massive pagination loop detected")
@@ -139,7 +200,7 @@ def probe_massive_historical_lifecycle_coverage(
             if next_url is None:
                 pagination_complete = True
                 break
-            if index == MAXIMUM_REQUEST_COUNT - 1:
+            if index == maximum_request_count - 1:
                 status = LifecycleProbeStatus.TRUNCATED_AT_CEILING
                 break
             path, params = _next_page(
@@ -162,7 +223,7 @@ def probe_massive_historical_lifecycle_coverage(
 
     summary = _summarize(rows)
     payload = {
-        "contract_version": CONTRACT_VERSION,
+        "contract_version": contract_version,
         "anchor_date": anchor_date.isoformat(),
         "status": status.value,
         "request_count": request_count,
@@ -177,7 +238,7 @@ def probe_massive_historical_lifecycle_coverage(
         "pilot_authorized": False,
     }
     return MassiveHistoricalLifecycleProbeV1(
-        contract_version=CONTRACT_VERSION,
+        contract_version=contract_version,
         anchor_date=anchor_date.isoformat(),
         status=status,
         request_count=request_count,
@@ -200,7 +261,9 @@ def probe_massive_historical_lifecycle_coverage(
 
 def _results(page: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
     value = page.get("results")
-    if not isinstance(value, list) or any(not isinstance(item, Mapping) for item in value):
+    if not isinstance(value, list) or any(
+        not isinstance(item, Mapping) for item in value
+    ):
         raise MassiveTransportDataError("Massive results are malformed")
     return tuple(value)
 

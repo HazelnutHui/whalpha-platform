@@ -1,5 +1,7 @@
 # Data Contracts
 
+- [Massive Historical Lifecycle Pagination Census V1](massive-historical-lifecycle-pagination-census-v1.md)
+
 - [Massive Historical Lifecycle Coverage Probe V1](massive-historical-lifecycle-coverage-probe-v1.md)
 
 - [Massive Historical Entitlement Probe V1](massive-historical-entitlement-probe-v1.md)

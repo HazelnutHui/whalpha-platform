@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-09-01 — Six-page inactive lifecycle pagination census
+
+- Added a distinct six-page census within the Historical Pilot's existing
+  inactive-request ceiling while preserving the two-page ADR 0111 contract.
+- Added independently bound exact authorization, same-host/path pagination,
+  15-second serial pacing, no retries and aggregate-only output.
+- Added ADR 0112, contract documentation and completed/ceiling/error simulated
+  coverage. No real census request has run.
+- Full backend regression passed: 1,917 tests with two unchanged deprecation
+  warnings.
+
 ## 2026-09-01 — Inactive-security lifecycle coverage probe boundary
 
 - Added an exact-revision, exact-date two-page inactive All Tickers probe with

@@ -58,6 +58,8 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   another page, so the collection is not complete. Next determine the exact
   bounded full-page count within the Pilot's existing six-request ceiling and
   keep terminal/successor evidence as a separate unresolved family.
+  ADR 0112 now implements that six-page census as a separately authorized,
+  aggregate-only operation. It is simulation-tested; no real census has run.
 - Research mechanics: ADR 0103 now freezes and synthetic-tests the exact
   chronological split, boundary exclusions, all 24 combinations, same-session
   eligible-leader controls, and delayed underlying-stock labels. Do not connect

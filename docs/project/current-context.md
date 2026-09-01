@@ -1070,6 +1070,11 @@ stable-ID/effective-date boundary. Fingerprint is
 No body/identifier was retained and no data was written. Full pagination and
 evaluation-ready lifecycle facts remain incomplete.
 
+ADR 0112 now adds the distinct six-page inactive pagination census within the
+existing Pilot ceiling. It preserves the two-page historical contract, exact
+anchor, no retry, serial pacing, aggregate-only output and zero-write boundary.
+It is simulation-tested; no real census has run.
+
 ## Cross-device continuity
 
 - Windows already has its own dedicated passwordless SSH key and saved Dell
