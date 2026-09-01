@@ -1057,7 +1057,18 @@ Historical Pilot remain unverified or unauthorized.
 ADR 0111 adds the next exact-review boundary: one historical `active=false`
 anchor, at most two 1,000-row pages, same-host/path pagination, aggregate
 lifecycle-field counts only, no retained identifiers/body and zero writes. It
-is simulation-tested; no real lifecycle probe has run.
+is simulation-tested.
+
+The exact 2026-09-01 authorization then ran the probe once from clean revision
+`64a35b61da304bb412230c00d697155de41c6d9d` for 2026-07-16. Both 1,000-row
+pages were full and another page remained, so status was
+`truncated_at_ceiling`. All 2,000 rows were explicitly inactive; delisting date
+coverage was 1,965, update-time coverage 2,000, CIK 1,724, Composite FIGI 533
+and Share Class FIGI 469. Fourteen duplicate ticker occurrences reinforce the
+stable-ID/effective-date boundary. Fingerprint is
+`8fa2c864851f43fdc24c321922f41d2d41c8bf180d384e6485126d3acd8ce2cd`.
+No body/identifier was retained and no data was written. Full pagination and
+evaluation-ready lifecycle facts remain incomplete.
 
 ## Cross-device continuity
 

@@ -54,7 +54,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   lifecycle coverage before preparing any Historical Pilot; do not infer full
   coverage from the deliberately limited endpoint checks.
   ADR 0111 now implements that next bounded inactive-Tickers review at a
-  two-page ceiling. It is simulation-tested but has not made a real request.
+  two-page ceiling. Its first real run found 2,000 inactive observations and
+  another page, so the collection is not complete. Next determine the exact
+  bounded full-page count within the Pilot's existing six-request ceiling and
+  keep terminal/successor evidence as a separate unresolved family.
 - Research mechanics: ADR 0103 now freezes and synthetic-tests the exact
   chronological split, boundary exclusions, all 24 combinations, same-session
   eligible-leader controls, and delayed underlying-stock labels. Do not connect

@@ -10,6 +10,11 @@
   request has run under this boundary.
 - Full backend regression passed: 1,912 tests with two unchanged deprecation
   warnings.
+- The subsequently authorized 2026-07-16 probe read two pages/2,000 inactive
+  rows and stopped `truncated_at_ceiling` with another page present. All rows
+  were explicitly inactive; 1,965 had delisting dates, all had update times,
+  and 14 ticker duplicates reinforced the stable-ID boundary. No body or
+  identifier was retained and no data was written.
 
 ## 2026-08-31 — Historical endpoint entitlement probe boundary
 

@@ -1237,7 +1237,14 @@ security/lifecycle coverage, pagination, source permission or Pilot authority.
 ADR 0111 now implements a separately authorized inactive-security lifecycle
 coverage probe. It is limited to two 1,000-row pages for one historical anchor,
 retains aggregate counts only, and cannot claim complete lifecycle evidence or
-authorize acquisition. Seven simulated tests pass; no real request has run.
+authorize acquisition. Seven simulated tests pass.
+
+One exact real probe subsequently consumed two full pages/2,000 inactive rows
+for 2026-07-16 and stopped `truncated_at_ceiling`. `delisted_utc` was present
+for 1,965 rows and update time for all rows; 14 duplicate ticker occurrences
+confirm that ticker-only history is unsafe. Full pagination plus last-tradable,
+reason, consideration and successor facts remain unresolved. There were two
+requests, no retained body/identifier and zero writes.
 
 ## Verification entry point
 
