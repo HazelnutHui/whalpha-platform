@@ -15,7 +15,7 @@ policy and must never be deleted through local build cleanup.
 
 The 2026-09-01 read-only inventory found one legacy private-Dashboard fallback
 and 14 historical directories beneath `build/oci-dashboard`. None is the
-current remote release `2026-09-01T121730Z-52934c47db45`; the current immutable
+current remote release `2026-09-01T123500Z-579a26759a9e`; the current immutable
 Snapshot is retained under `/data`, and the source bundle was built and
 formally reread in governed `/tmp` custody before deployment. A temporary
 bundle is reproducible deployment evidence, not a durable rollback authority.
@@ -47,7 +47,7 @@ rollback solely from its name.
 ## OCI retained set
 
 The 2026-09-01 independent read-only OCI inspection verified
-`/srv/whalpha/releases/2026-09-01T121730Z-52934c47db45` as the active release
+`/srv/whalpha/releases/2026-09-01T123500Z-579a26759a9e` as the active release
 selected by `/srv/whalpha/current`. It also verified the exact source revision,
 manifest/checksum fingerprints, service/listener health, equal guest and
 credential route policy, a temporary guest Session, and zero staging/failed

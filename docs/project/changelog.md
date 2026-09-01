@@ -14,7 +14,12 @@
   as an automatic sell order.
 - Full frontend regression passed 113 tests, the production build passed, and
   the active Snapshot 1.11 / Dashboard 2.8 release passed formal reread
-  compatibility. The UI-only source change is not yet deployed.
+  compatibility.
+- Fresh lag-zero Snapshot and OCI release
+  `2026-09-01T123500Z-579a26759a9e` now bind exact source commit
+  `579a26759a9e24c6faf246be343af9e68b9b5ed9`. Formal bundle reread, remote
+  preflight, atomic Apply, deployment postflight and independent read-only OCI
+  inspection all passed; guest Session and protected routes were verified.
 
 ## 2026-09-01 — Make Candidate score contributions decision-readable
 

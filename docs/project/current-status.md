@@ -69,7 +69,8 @@ proxy, stock leadership, entry posture, and re-underwrite boundary into one
 vertical evidence path. It keeps the ETF relationship explicitly separate
 from formal sector membership and separates technical re-underwrite from
 Candidate eligibility failure. Full frontend regression and active Snapshot
-compatibility pass; this follow-on path is not yet deployed.
+compatibility pass; this follow-on path is deployed with identical guest and
+authenticated capability.
 
 Repository source now also adds Quant Research Lab / 量化研究实验室 as the
 fifth first-level workspace. It exposes the preregistered Strong-Leader
@@ -101,17 +102,17 @@ relative-performance proxies, never actual fund flow.
   `2026-08-31T101550Z-44b052419be8`, contract 1.3, with 715 Primary and 765
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-09-01T121730Z-52934c47db45`, contract 1.11 / Dashboard 2.8.
+  `2026-09-01T123500Z-579a26759a9e`, contract 1.11 / Dashboard 2.8.
 - The verified Dell serving bundle and live OCI release are
-  `2026-09-01T121730Z-52934c47db45` from source commit `52934c47db45`.
+  `2026-09-01T123500Z-579a26759a9e` from source commit `579a26759a9e`.
 
 The active analytics and Snapshot are ordinary fresh publications for
 2026-08-31: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
-`2026-08-31T102009Z-44b052419be8` is the exact rollback reference. The
-2026-09-01 post-deployment reader found 789 files / 609,684,167 bytes under
+`2026-09-01T121730Z-52934c47db45` is the exact rollback reference. The
+2026-09-01 post-deployment reader found 831 files / 645,815,574 bytes under
 `/data`, inventory fingerprint
-`1bab9bec3f76780baf5c23a28e7f799571a70b6fc7de503e4ae04cbe2af62087`,
+`547cb7e4e5cdf70048293509fac597bfe3a6d1594af9bc30d63168dbddb7fcbc`,
 and zero symlinks.
 
 ### Daily automation development state
