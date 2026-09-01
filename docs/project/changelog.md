@@ -10,6 +10,10 @@
   or Production state was changed.
 - Full backend regression passed: 1,922 tests with two unchanged deprecation
   warnings.
+- The exact reviewed candidate was subsequently authorized and installed by
+  changing only the stale service revision pin; timer bytes were unchanged.
+  One controlled read-only start succeeded, selected missing 2026-08-31, and
+  stopped before coordination with zero credentials, requests or writes.
 
 ## 2026-09-01 — Six-page inactive lifecycle pagination census
 

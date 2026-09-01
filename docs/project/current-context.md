@@ -1092,8 +1092,14 @@ its installed service remained pinned to revision
 `fb96b49f404e4f7abbd11f1822b281acafce7888` while main had advanced. It made
 zero coordinator calls, credential accesses, external requests or writes. The
 failure left the reachable user manager `degraded`; ADR 0113 fixes candidate
-review to permit an exact repair review in that state. No reinstall or restart
-has yet occurred, and canonical data remains through 2026-08-28.
+review to permit an exact repair review in that state. The exact candidate was
+then authorized and installed at revision
+`23ae1430c53b4b24d669729c7e104fd3adbe3a89`; service/timer hashes are
+`1e67228cd50c8eea2fcaaffaf269783dc41e54ce1f24f696356fec174073e6f7` and
+`19347d553ad3300c01a03f56337bd31ee9bd9e0b7e16b05b95b58b983512da0b`.
+The controlled read-only start succeeded and selected missing 2026-08-31 with
+zero coordinator calls, credentials, requests or writes. Timer remains enabled;
+canonical data remains through 2026-08-28.
 
 - Windows already has its own dedicated passwordless SSH key and saved Dell
   remote project.

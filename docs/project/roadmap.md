@@ -26,12 +26,12 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   owner-only installation, and controlled read-only service start are complete.
   Planner-operation evidence is now explicitly separated from installed host
   state under ADR 0080.
-  Next observe one real calendar-triggered wake before composing any real
-  coordinator transition. SMTP may remain unset.
+  The first real calendar-triggered wake is now observed. SMTP may remain unset.
   The first natural 2026-08-31 trigger failed closed on its stale revision pin,
   with zero requests/writes. ADR 0113 removes the resulting degraded-manager
-  review deadlock. Next render and separately authorize an exact read-only unit
-  rebind before any data transition.
+  review deadlock. The exact read-only unit rebind and controlled start are now
+  complete. Next separately review one 2026-08-31 data transition; the timer
+  itself remains review-only and invokes no coordinator.
 - Automation design: ADR 0081's repository-only Pipeline Scheduler V2 and
   persistent per-session workspace contract are complete. ADR 0082's
   non-installed bounded distinct-wake cadence and fail-closed evidence model

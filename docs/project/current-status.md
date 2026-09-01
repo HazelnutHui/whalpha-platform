@@ -1262,9 +1262,13 @@ body/identifier and zero writes.
 
 The natural 2026-08-31 read-only timer trigger rejected its stale revision pin
 and performed no coordinator call, credential access, request or write. The
-installed user timer remains enabled, but its service is failed and main data
-remains through 2026-08-28. ADR 0113 permits exact candidate review while the
-reachable user manager is `degraded`; reinstall/restart remains separate.
+installed user timer remains enabled and main data remains through 2026-08-28.
+ADR 0113 permitted exact candidate review while the
+reachable user manager was `degraded`; the resulting candidate was authorized
+and rebound to revision `23ae1430c53b4b24d669729c7e104fd3adbe3a89`.
+One controlled read-only start succeeded and selected missing 2026-08-31 with
+zero coordinator calls, credential access, requests or writes. Timer is enabled
+and user manager has returned to `running`.
 
 Run the local, credential-free report from the repository root:
 
