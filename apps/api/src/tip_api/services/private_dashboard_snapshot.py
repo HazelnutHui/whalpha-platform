@@ -660,7 +660,6 @@ def build_private_dashboard_snapshot(
             path = staging_private / filename
             value = payload.model_dump(mode="json") if isinstance(payload, BaseModel) else payload
             _write_json(path, value)
-            _validate_json_file(path, filename)
             hashes[filename] = sha256_file(path)
 
         funnel_stage_count = sum(len(item.funnel) for item in overview.universes)
@@ -998,33 +997,42 @@ def _write_json(path: Path, payload: Mapping[str, Any]) -> None:
     os.replace(tmp, path)
 
 
-def _validate_json_file(path: Path, filename: str) -> None:
+def _validate_json_file(path: Path, filename: str) -> Any:
+    """Validate one snapshot artifact and return its decoded contract value.
+
+    Callers that need the payload for cross-file binding checks must reuse this
+    return value.  Re-reading a multi-megabyte Candidate artifact immediately
+    after contract validation adds no custody evidence and used to double the
+    parsing cost of every full snapshot validation.
+    """
+
     try:
         raw = path.read_bytes()
         decoded = json.loads(raw.decode("utf-8"))
         if filename == SNAPSHOT_FILES["summary_file"]:
-            MarketSummaryResponse.model_validate(decoded)
+            return MarketSummaryResponse.model_validate(decoded)
         elif filename == SNAPSHOT_FILES["overview_file"]:
-            DashboardOverviewResponse.model_validate(decoded)
+            return DashboardOverviewResponse.model_validate(decoded)
         elif filename == SNAPSHOT_FILES["movers_file"]:
-            MoversResponse.model_validate(decoded)
+            return MoversResponse.model_validate(decoded)
         elif filename == SNAPSHOT_FILES["liquidity_map_file"]:
-            LiquidityMapResponse.model_validate(decoded)
+            return LiquidityMapResponse.model_validate(decoded)
         elif filename == MARKET_INTELLIGENCE_FILE:
             _validate_market_intelligence_snapshot(decoded)
+            return decoded
         elif filename == OPPORTUNITY_CANDIDATES_FILE:
             _validate_opportunity_candidate_snapshot(decoded)
+            return decoded
         elif filename == OPPORTUNITY_CANDIDATE_SUMMARY_FILE:
-            OpportunityCandidateSummarySnapshotV1.model_validate(decoded)
+            return OpportunityCandidateSummarySnapshotV1.model_validate(decoded)
         elif filename == CANDIDATE_STRATEGY_CHANNELS_FILE:
-            CandidateStrategyChannelProductV1.model_validate(decoded)
+            return CandidateStrategyChannelProductV1.model_validate(decoded)
         elif filename == SECTOR_ETF_ROTATION_FILE:
-            SectorEtfRotationDashboardSnapshotV1.model_validate(decoded)
+            return SectorEtfRotationDashboardSnapshotV1.model_validate(decoded)
         elif DETAIL_FILE_RE.fullmatch(filename):
             if decoded.get("contract_version") == DETAIL_SHARD_CONTRACT_VERSION_V1_1:
-                OpportunityCandidateDetailShardV1_1.model_validate(decoded)
-            else:
-                OpportunityCandidateDetailShardV1.model_validate(decoded)
+                return OpportunityCandidateDetailShardV1_1.model_validate(decoded)
+            return OpportunityCandidateDetailShardV1.model_validate(decoded)
         else:
             raise DashboardSnapshotError(f"unexpected snapshot file {filename}")
     except DashboardSnapshotError:
@@ -1053,6 +1061,7 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
     actual_files = {item.name for item in private_dir.iterdir()}
     if actual_files != expected_files:
         raise DashboardSnapshotError("snapshot private-data file set is incomplete or has extras")
+    validated_files: dict[str, Any] = {}
     for field, filename in SNAPSHOT_FILES.items():
         expected = getattr(manifest, field)
         if expected != filename:
@@ -1060,13 +1069,13 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
         file_path = private_dir / filename
         if file_path.is_symlink() or not file_path.is_file():
             raise DashboardSnapshotError("snapshot file is missing or unsafe")
-        _validate_json_file(file_path, filename)
+        validated_files[filename] = _validate_json_file(file_path, filename)
         if sha256_file(file_path) != manifest.file_sha256[filename]:
             raise DashboardSnapshotError("snapshot file checksum mismatch")
     if manifest.access_classification != "private" or manifest.contains_credentials or manifest.contains_raw_provider_data:
         raise DashboardSnapshotError("snapshot manifest violates access boundary")
     if manifest.snapshot_contract_version in {"1.4", "1.5", "1.6", "1.7", "1.8", "1.9", "1.10", "1.11"}:
-        overview = DashboardOverviewResponse.model_validate_json((private_dir / manifest.overview_file).read_text(encoding="utf-8"))
+        overview = validated_files[manifest.overview_file]
         if overview.contract_version != "2.1" or sum(len(item.funnel) for item in overview.universes) != 20:
             raise DashboardSnapshotError("snapshot formal Funnel contract mismatch")
         fingerprints = {stage.source_fingerprint for item in overview.universes for stage in item.funnel}
@@ -1089,10 +1098,9 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
         analytics_path = private_dir / MARKET_INTELLIGENCE_FILE
         if analytics_path.is_symlink() or not analytics_path.is_file():
             raise DashboardSnapshotError("snapshot Market Intelligence file is missing")
-        _validate_json_file(analytics_path, MARKET_INTELLIGENCE_FILE)
+        analytics = _validate_json_file(analytics_path, MARKET_INTELLIGENCE_FILE)
         if sha256_file(analytics_path) != manifest.file_sha256.get(MARKET_INTELLIGENCE_FILE):
             raise DashboardSnapshotError("snapshot Market Intelligence checksum mismatch")
-        analytics = json.loads(analytics_path.read_bytes())
         if (
             analytics["publication_id"] != manifest.market_intelligence_publication_id
             or analytics["payload_sha256"] != manifest.market_intelligence_payload_sha256
@@ -1123,10 +1131,9 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
         candidate_path = private_dir / OPPORTUNITY_CANDIDATES_FILE
         if candidate_path.is_symlink() or not candidate_path.is_file():
             raise DashboardSnapshotError("snapshot Candidate file is missing")
-        _validate_json_file(candidate_path, OPPORTUNITY_CANDIDATES_FILE)
+        candidate = _validate_json_file(candidate_path, OPPORTUNITY_CANDIDATES_FILE)
         if sha256_file(candidate_path) != manifest.file_sha256.get(OPPORTUNITY_CANDIDATES_FILE):
             raise DashboardSnapshotError("snapshot Candidate checksum mismatch")
-        candidate = json.loads(candidate_path.read_bytes())
         analytics_type = (
             OpportunityCandidatePublicationV1_1
             if manifest.snapshot_contract_version == "1.7"
@@ -1170,14 +1177,13 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
         summary_path = private_dir / OPPORTUNITY_CANDIDATE_SUMMARY_FILE
         if summary_path.is_symlink() or not summary_path.is_file():
             raise DashboardSnapshotError("snapshot Candidate summary file is missing")
-        _validate_json_file(summary_path, OPPORTUNITY_CANDIDATE_SUMMARY_FILE)
+        summary = _validate_json_file(
+            summary_path, OPPORTUNITY_CANDIDATE_SUMMARY_FILE
+        )
         if sha256_file(summary_path) != manifest.file_sha256.get(
             OPPORTUNITY_CANDIDATE_SUMMARY_FILE
         ):
             raise DashboardSnapshotError("snapshot Candidate summary checksum mismatch")
-        summary = OpportunityCandidateSummarySnapshotV1.model_validate_json(
-            summary_path.read_text(encoding="utf-8")
-        )
         shards: list[
             OpportunityCandidateDetailShardV1 | OpportunityCandidateDetailShardV1_1
         ] = []
@@ -1185,7 +1191,7 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             path = private_dir / filename
             if path.is_symlink() or not path.is_file():
                 raise DashboardSnapshotError("snapshot Candidate detail shard is missing")
-            _validate_json_file(path, filename)
+            shard = _validate_json_file(path, filename)
             if sha256_file(path) != manifest.file_sha256.get(filename):
                 raise DashboardSnapshotError("snapshot Candidate detail checksum mismatch")
             shard_type = (
@@ -1193,7 +1199,11 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
                 if manifest.snapshot_contract_version in {"1.10", "1.11"}
                 else OpportunityCandidateDetailShardV1
             )
-            shards.append(shard_type.model_validate_json(path.read_text(encoding="utf-8")))
+            if not isinstance(shard, shard_type):
+                raise DashboardSnapshotError(
+                    "snapshot Candidate detail contract version mismatch"
+                )
+            shards.append(shard)
         analytics = reconstruct_full_candidate_publication(summary, tuple(shards))
         if (
             summary.publication_id != manifest.market_intelligence_publication_id
@@ -1245,16 +1255,15 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             raise DashboardSnapshotError(
                 "snapshot Candidate strategy-channel file is missing"
             )
-        _validate_json_file(strategy_path, CANDIDATE_STRATEGY_CHANNELS_FILE)
+        strategy = _validate_json_file(
+            strategy_path, CANDIDATE_STRATEGY_CHANNELS_FILE
+        )
         if sha256_file(strategy_path) != manifest.file_sha256.get(
             CANDIDATE_STRATEGY_CHANNELS_FILE
         ):
             raise DashboardSnapshotError(
                 "snapshot Candidate strategy-channel checksum mismatch"
             )
-        strategy = CandidateStrategyChannelProductV1.model_validate_json(
-            strategy_path.read_text(encoding="utf-8")
-        )
         if (
             strategy.contract_version
             != manifest.candidate_strategy_contract_version
@@ -1285,16 +1294,13 @@ def _validate_snapshot_dir(private_dir: Path) -> DashboardSnapshotManifest:
             raise DashboardSnapshotError(
                 "snapshot Sector Rotation file is missing"
             )
-        _validate_json_file(rotation_path, SECTOR_ETF_ROTATION_FILE)
+        rotation = _validate_json_file(rotation_path, SECTOR_ETF_ROTATION_FILE)
         if sha256_file(rotation_path) != manifest.file_sha256.get(
             SECTOR_ETF_ROTATION_FILE
         ):
             raise DashboardSnapshotError(
                 "snapshot Sector Rotation checksum mismatch"
             )
-        rotation = SectorEtfRotationDashboardSnapshotV1.model_validate_json(
-            rotation_path.read_text(encoding="utf-8")
-        )
         if (
             rotation.contract_version
             != manifest.sector_rotation_snapshot_contract_version

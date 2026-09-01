@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-01 — Remove duplicate daily Candidate and Snapshot validation work
+
+- Accepted ADR 0117. The daily Candidate append now rehashes the complete
+  immutable prior audit, then parses those verified bytes once instead of
+  repeating canonical serialization and every already-finalized historical
+  fingerprint derivation. Finalization and periodic/code-change full
+  validation remain unchanged.
+- The real 2026-08-31 prior-audit read fell from 133.871 seconds to 28.18
+  seconds while preserving the exact audit fingerprint and append-input row
+  counts.
+- Snapshot validation now reuses decoded contract values for cross-file checks
+  and removes the redundant per-file validation immediately before complete
+  staging validation. Staging/post-rename validation and SHA-256 gates remain.
+- Focused backend regression passed 72 tests; the full backend regression
+  passed 1,938 tests with two unchanged dependency deprecation warnings. No
+  `/data`, scheduler, provider, publication, bundle, OCI, formula, parameter,
+  or product-state change was made.
+
 ## 2026-09-01 — Complete and deploy the 2026-08-31 daily chain
 
 - Replanned and applied the frozen 13,141-observation Identity package under

@@ -100,6 +100,14 @@ and zero symlinks.
 
 ### Daily automation development state
 
+ADR 0117 now removes repeated historical fingerprint derivation from the
+hash-verified prior-Candidate daily read and removes duplicate Snapshot JSON
+parsing without weakening finalization, periodic/code-change validation,
+file-set, SHA-256, contract, Oracle, session, Universe, or lineage gates. The
+real 2026-08-31 prior-audit read measured 28.18 seconds versus the recorded
+133.871 seconds; active 32-shard Snapshot validation measured 5.40 seconds.
+The next complete daily run must measure the end-to-end effect.
+
 The repository daily planner/executor now governs eleven ordered offline daily
 stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry, ETF
 Relationships, Market Preview, Strategy Channels, Candidate Visual Context,

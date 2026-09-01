@@ -16,9 +16,11 @@ reversal, defensive rotation, fundamentals, or option-expression results.
 
 ## Current priorities
 
-- Operational: preserve the complete controlled 2026-08-28 deployment as the
-  active baseline; later source revisions do not inherit publication or OCI
-  authorization.
+- Operational: preserve the complete controlled 2026-08-31 deployment as the
+  active baseline. ADR 0117 reduces the real prior-Candidate read from 133.871
+  to 28.18 seconds; next measure one complete daily chain before selecting the
+  next performance hotspot. Later source revisions do not inherit publication
+  or OCI authorization.
 - Reliability: the first default-off scheduler-wake plan is complete and
   chooses the oldest missing XNYS session in about 2.8 seconds on current Dell
   state. The default-off one-transition bridge and five-scenario synthetic
@@ -49,11 +51,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   is complete and ADR 0115 closes the detached verification/rendering code
   gap. Exact runtime creation and live verification are complete; installed
   runtime binding and a controlled read-only start are now also complete.
-- Daily data: the authorized 2026-08-31 Identity package is frozen and custody-
-  recorded. ADR 0116 safely quarantines its two collision observations without
-  choosing a ticker. Next replan the same package from committed source and,
-  only if all gates pass, separately authorize canonical Identity Apply before
-  any EOD request.
+- Daily data: canonical Identity and EOD are aligned through 2026-08-31, and
+  the complete same-session analytics/publication/deployment chain is active.
+  Continue with the next completed XNYS session through the unchanged guarded
+  daily workflow; do not backfill or change provider scope implicitly.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum. ADR 0086 now completes the physical Daily

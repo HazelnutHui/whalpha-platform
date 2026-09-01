@@ -20,6 +20,7 @@ from tip_api.services.opportunity_candidate_audit import (
     OpportunityCandidateAuditError,
     read_opportunity_candidate_business_fingerprints,
     read_opportunity_candidate_audit_contents,
+    read_opportunity_candidate_incremental_source,
     write_opportunity_candidate_audit,
 )
 from tip_api.services.market_regime_sources import (
@@ -607,6 +608,15 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
             peak_memory_kib=1,
         )
         prior = read_opportunity_candidate_audit_contents(prior_dir)
+        incremental_source = read_opportunity_candidate_incremental_source(prior_dir)
+        assert incremental_source.manifest == prior.manifest
+        assert incremental_source.source_panels == prior.source_panels
+        assert incremental_source.candidate_batches == prior.candidate_batches
+        assert incremental_source.state_history == prior.state_history
+        assert incremental_source.risk_results == prior.risk_results
+        assert incremental_source.raw_facts == prior.raw_facts
+        assert incremental_source.normalization_ledger == prior.normalization_ledger
+        assert incremental_source.validation_ledger == prior.validation_ledger
         incremental = cli._calculate_incremental(
             data_root=tmp_path,
             candidate_sessions=tuple(item.as_of_session for item in panels),

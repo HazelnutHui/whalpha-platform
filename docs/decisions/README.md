@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0117](0117-reuse-finalized-candidate-evidence-and-parse-snapshots-once.md): Reuse exact finalized Candidate bytes for daily append inputs and parse each Snapshot artifact once per full validation.
+
 - [ADR 0116](0116-quarantine-low-ratio-stable-identity-collisions.md): Permit only a bounded low ratio of fully quarantined stable-identity conflicts without choosing a winner.
 
 - [ADR 0115](0115-bind-systemd-review-to-the-immutable-runtime.md): Verify and render exact detached-runtime scheduler service candidates without installing them.
@@ -146,3 +148,11 @@ Each ADR should include:
 - [0107: Reserve Holdout Before Evaluation](0107-reserve-holdout-before-evaluation.md)
 - [0108: Independently Reproduce Research Inference](0108-independently-reproduce-research-inference.md)
 - [0109: Separate Research Readiness from Development Authorization](0109-separate-research-readiness-from-development-authorization.md)
+- [0110: Probe Account Entitlement Separately from Historical Acquisition](0110-probe-account-entitlement-separately-from-historical-acquisition.md)
+- [0111: Bound Inactive Security Lifecycle Coverage Probing](0111-bound-inactive-security-lifecycle-coverage-probing.md)
+- [0112: Census Inactive Pagination Within the Pilot Ceiling](0112-census-inactive-pagination-within-the-pilot-ceiling.md)
+- [0113: Treat Degraded User systemd as Review Available](0113-treat-degraded-user-systemd-as-review-available.md)
+- [0114: Run the Read-Only Scheduler from an Immutable Worktree](0114-run-the-read-only-scheduler-from-an-immutable-worktree.md)
+- [0115: Bind systemd Review to the Immutable Runtime](0115-bind-systemd-review-to-the-immutable-runtime.md)
+- [0116: Quarantine Low-Ratio Stable-Identity Collisions](0116-quarantine-low-ratio-stable-identity-collisions.md)
+- [0117: Reuse Finalized Candidate Evidence and Parse Snapshots Once](0117-reuse-finalized-candidate-evidence-and-parse-snapshots-once.md)

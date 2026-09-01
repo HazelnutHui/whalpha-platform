@@ -634,6 +634,215 @@ def read_opportunity_candidate_audit_contents(output_dir: Path) -> OpportunityCa
     )
 
 
+def read_opportunity_candidate_incremental_source(
+    output_dir: Path,
+) -> OpportunityCandidateAuditContents:
+    """Load a finalized prior audit for the next verified daily append.
+
+    The audit was fully reconstructed before finalization.  At this later
+    boundary, publication evidence first rehashes the immutable manifest and
+    every exact artifact.  We can therefore parse the hash-verified bytes once
+    without repeating canonical JSON serialization and every finalized
+    historical fingerprint derivation for hundreds of megabytes.  Typed
+    contracts, manifest record ledgers, session/Universe bindings, Oracle
+    gates, and the finalized incremental lineage binding remain mandatory.
+    """
+
+    evidence = read_opportunity_candidate_publication_evidence(output_dir)
+    manifest = evidence.manifest
+    target = evidence.path
+    artifact_files = _artifact_files_for_manifest(manifest)
+    descriptors = {
+        item.get("name"): item
+        for item in manifest.get("artifacts", ())
+        if isinstance(item, Mapping)
+    }
+    payloads: dict[str, dict[str, Any]] = {}
+    for name in artifact_files:
+        if name in {
+            "candidate-parameter-contract.json",
+            "candidate-transition-ledger.json",
+        }:
+            continue
+        payload = _read_custodied_json(
+            target / name,
+            label=f"Candidate incremental source {name}",
+        )
+        descriptor = descriptors.get(name)
+        embedded_fingerprint = payload.pop("logical_content_fingerprint", None)
+        if (
+            not isinstance(descriptor, Mapping)
+            or embedded_fingerprint != descriptor.get("logical_content_fingerprint")
+        ):
+            raise OpportunityCandidateAuditError(
+                f"Candidate incremental source fingerprint binding differs: {name}"
+            )
+        payloads[name] = payload
+
+    base_keys = (
+        "schema_version",
+        "candidate_contract_version",
+        "candidate_calculation_version",
+        "candidate_parameter_set_id",
+        "candidate_parameter_fingerprint",
+        "candidate_state_contract_version",
+        "candidate_state_calculation_version",
+        "candidate_state_parameter_set_id",
+        "candidate_state_parameter_fingerprint",
+        "as_of_session",
+        "universe_ids",
+    )
+    if manifest.get("schema_version") == "1.1":
+        base_keys = (*base_keys, "execution_mode")
+    if any(
+        any(payload.get(key) != manifest.get(key) for key in base_keys)
+        for payload in payloads.values()
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate incremental source contract differs from manifest"
+        )
+
+    source_panels = payloads["source-input-manifest.json"].get("panels")
+    raw = payloads["raw-candidate-facts.json"].get("records")
+    normalization = payloads["cross-section-normalization-ledger.json"].get(
+        "records"
+    )
+    if (
+        not isinstance(source_panels, list)
+        or not source_panels
+        or not all(isinstance(item, dict) for item in source_panels)
+        or not isinstance(raw, list)
+        or not all(isinstance(item, dict) for item in raw)
+        or not isinstance(normalization, list)
+        or not all(isinstance(item, dict) for item in normalization)
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate incremental source ledgers are malformed"
+        )
+    source_sessions = [item.get("as_of_session") for item in source_panels]
+    if source_sessions != sorted(source_sessions) or len(source_sessions) != len(
+        set(source_sessions)
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate incremental source panels are not unique and ascending"
+        )
+    if [
+        item.get("universe_id") for item in source_panels[-1].get("universes", [])
+    ] != manifest.get("universe_ids"):
+        raise OpportunityCandidateAuditError(
+            "Candidate incremental source Universe order differs"
+        )
+
+    batch_payload = payloads["candidate-score-history.json"]
+    state_payload = payloads["candidate-state-history.json"]
+    risk_payload = payloads["current-risk-mode-results.json"]
+    batches = tuple(
+        OpportunityCandidateBatchV1.model_validate(item)
+        for item in batch_payload.get("records", ())
+    )
+    states = tuple(
+        OpportunityCandidateStateRecordV1.model_validate(item)
+        for item in state_payload.get("records", ())
+    )
+    risks = tuple(
+        CandidateRiskModeResultV1.model_validate(item)
+        for item in risk_payload.get("records", ())
+    )
+    oracle = _oracle_from_record(payloads["candidate-oracle-report.json"]["record"])
+
+    _require_equal(
+        batch_payload.get("candidate_history_fingerprint"),
+        manifest.get("candidate_history_fingerprint"),
+        "candidate incremental source artifact history",
+    )
+    _require_equal(
+        state_payload.get("candidate_state_history_fingerprint"),
+        manifest.get("candidate_state_history_fingerprint"),
+        "candidate incremental source state artifact history",
+    )
+    _require_equal(
+        risk_payload.get("risk_results_fingerprint"),
+        manifest.get("risk_results_fingerprint"),
+        "candidate incremental source risk artifact results",
+    )
+    _require_equal(
+        [item.logical_fingerprint for item in batches],
+        manifest.get("candidate_batch_fingerprints"),
+        "candidate incremental source batch ledger",
+    )
+    _require_equal(
+        [item.logical_fingerprint for item in states],
+        manifest.get("candidate_state_record_fingerprints"),
+        "candidate incremental source state ledger",
+    )
+    _require_equal(
+        [item.logical_fingerprint for item in risks],
+        manifest.get("risk_result_fingerprints"),
+        "candidate incremental source risk ledger",
+    )
+    _require_equal(
+        oracle.oracle_fingerprint,
+        manifest.get("oracle_fingerprint"),
+        "candidate incremental source Oracle",
+    )
+    _validate_reread_session_and_universe_bindings(
+        manifest=manifest,
+        source_panels=source_panels,
+        batches=batches,
+        states=states,
+        risks=risks,
+    )
+    flags = manifest.get("equivalence_flags")
+    required_flags = (
+        REQUIRED_INCREMENTAL_EQUIVALENCE_FLAGS
+        if manifest.get("schema_version") == "1.1"
+        else REQUIRED_EQUIVALENCE_FLAGS
+    )
+    if (
+        not isinstance(flags, dict)
+        or any(flags.get(name) is not True for name in required_flags)
+        or any(type(value) is not bool or value is not True for value in flags.values())
+        or oracle.mismatch_count != 0
+        or oracle.mismatches
+        or not oracle.shared_raw_fact_match
+        or not oracle.input_permutation_match
+    ):
+        raise OpportunityCandidateAuditError(
+            "Candidate incremental source equivalence gates did not pass"
+        )
+
+    validation_payload = payloads.get(CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT)
+    validation: Mapping[str, Any] | None = None
+    if validation_payload is not None:
+        validation = validation_payload.get("record")
+        if not isinstance(validation, Mapping):
+            raise OpportunityCandidateAuditError(
+                "Candidate incremental source validation ledger is malformed"
+            )
+        _validate_planning_validation_record(validation, manifest=manifest)
+        _require_equal(
+            manifest.get("prior_audit_logical_fingerprint"),
+            validation.get("prior_audit_logical_fingerprint"),
+            "candidate incremental source prior audit",
+        )
+        _require_equal(
+            manifest.get("prior_as_of_session"),
+            validation.get("prior_as_of_session"),
+            "candidate incremental source prior session",
+        )
+
+    return OpportunityCandidateAuditContents(
+        manifest=manifest,
+        source_panels=tuple(source_panels),
+        candidate_batches=batches,
+        state_history=states,
+        risk_results=risks,
+        raw_facts=tuple(raw),
+        normalization_ledger=tuple(normalization),
+        validation_ledger=validation,
+    )
+
+
 def _validate_planning_validation_record(
     record: Mapping[str, Any], *, manifest: Mapping[str, Any]
 ) -> None:

@@ -11,6 +11,13 @@ are deliberately unavailable and no fixture performance or research stage
 transition is presented. The data-blocked workspace is included in the current
 deployed UI without changing the model or publishing research results.
 
+ADR 0117 now optimizes the Dell-local daily computation boundary without a
+model or Production change. The real 2026-08-31 prior-Candidate audit read fell
+from 133.871 seconds to 28.18 seconds while preserving its exact immutable
+identity and append inputs. Snapshot validation now parses each contract file
+once per complete validation; the active 32-shard release validated in 5.40
+seconds. The next complete daily chain must supply the end-to-end measurement.
+
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains
 in the [changelog](changelog.md) and dated audits. Proposed sequencing remains
@@ -33,11 +40,9 @@ documentation or code commit legitimately advances it. The read-only report
 must show the current HEAD and cleanliness separately from the immutable commit
 recorded by a deployed bundle.
 
-The installed read-only scheduler service is presently revision-pinned to an
-earlier clean `main` commit and therefore rejects the newer canonical `main`
-fail closed. ADR 0114 now defines a deterministic, write-free plan for moving
-that service to an exact detached Dell worktree so ordinary development commits
-cannot invalidate the next wake. The separately authorized runtime now exists
+The installed read-only scheduler service is intentionally bound to an exact
+detached Dell worktree so ordinary development commits cannot invalidate the
+next wake. The separately authorized runtime exists
 at exact detached revision `fe90cd4d105620a67ad1104bac3cb426586ad29f` and
 passed clean-checkout, path, entrypoint, Python and runtime-import verification.
 Its tree is owner-only. ADR 0115's network- and write-free systemd candidate

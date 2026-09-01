@@ -202,8 +202,34 @@ development results; `/data` and Production were unchanged.
 
 ## Next performance sequence
 
-1. Split Candidate public summary and on-demand detail payloads. This changes
-   neither guest/credential capability parity nor the Dell/OCI boundary.
+1. Measure the next complete daily run with ADR 0117 active. Do not infer the
+   full end-to-end saving from an isolated reader benchmark.
+2. Profile Snapshot source-product construction separately from its now-bounded
+   5.40-second full validator before changing any calculation or contract.
+3. Keep the daily inner Oracle serial unless a new workload measurement proves
+   deterministic process parallelism is faster.
+
+## 2026-09-01 finalized-evidence reuse result
+
+ADR 0117 separates immutable prior-audit reuse from audit creation and periodic
+validation. The daily append first rehashes the exact completed manifest and
+all artifacts, verifies custody and completion gates, then parses the verified
+bytes once for typed append inputs. It no longer repeats canonical JSON
+serialization or re-derives every finalized historical fingerprint.
+
+On the real 2026-08-31 prior audit, the measured read fell from the manifest's
+133.871-second stage to 28.18 seconds, about 79% faster. The result preserved
+the exact audit logical fingerprint, 14 Candidate batches, 24,843 state rows,
+12,793 raw rows and 24,795 normalization rows. A more conservative first
+prototype that retained the redundant derivations took 103.22 seconds and was
+rejected.
+
+Snapshot validation now reuses each decoded, contract-validated value for its
+cross-file bindings and removes the immediately redundant validation after
+write. Staging and post-rename full validations, file-set checks, checksums and
+all contract bindings remain. A read-only full validation of the active
+Snapshot 1.11 / Dashboard 2.8 release with 32 detail shards took 5.40 seconds.
+These measurements changed no `/data` or Production state.
 
 ## 2026-08-27 deterministic process-parallel result
 

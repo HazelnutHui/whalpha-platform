@@ -413,9 +413,11 @@ def _audit_api():
 
 
 def _read_prior_candidate_audit(path: Path):
-    from tip_api.services.opportunity_candidate_audit import read_opportunity_candidate_audit_contents
+    from tip_api.services.opportunity_candidate_audit import (
+        read_opportunity_candidate_incremental_source,
+    )
 
-    return read_opportunity_candidate_audit_contents(path)
+    return read_opportunity_candidate_incremental_source(path)
 
 
 def _read_candidate_business_fingerprints(path: Path):
