@@ -1,5 +1,7 @@
 # Documentation Index
 
+- [Historical Research Backfill Plan ADR](decisions/0119-plan-a-resumable-300-session-historical-foundation.md): exact 300-session target, resumable batching, request/time/storage projections, and non-authorizing Pilot boundary.
+
 - [Massive Historical Lifecycle Pagination Census V1](data-contracts/massive-historical-lifecycle-pagination-census-v1.md): six-page aggregate-only census within the Historical Pilot ceiling.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.

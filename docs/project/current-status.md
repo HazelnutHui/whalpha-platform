@@ -7,6 +7,17 @@ fingerprints, verification scope, and cross-device handoff are maintained in
 the [authoritative current context](current-context.md). Historical execution
 detail belongs in the [changelog](changelog.md) and dated audits, not here.
 
+Repository source now contains ADR 0119's exact, non-authorizing 300-session
+Historical Research Backfill Plan. Its first real read-only Dell run fixes the
+target to 2025-06-23 through 2026-08-31, with 268 missing sessions in 90
+three-session-or-smaller batches. The first batch remains the separately
+governed 2026-07-14 through 2026-07-16 Pilot. The exact plan fingerprint is
+`8bb9087fa1fa91b4f8754291d804e11e7a4c7d768093344952d8d9d38e4eb4aa`.
+It performed no network request or Production write. Bulk acquisition remains
+blocked until the representative Pilot's source-permission and complete
+lifecycle/terminal gates are resolved; 300 EOD/Identity sessions alone would
+still not establish research readiness.
+
 ## Current product
 
 WH Alpha is a Session-protected, bilingual U.S. equity market-intelligence

@@ -159,3 +159,4 @@ Each ADR should include:
 - [0116: Quarantine Low-Ratio Stable-Identity Collisions](0116-quarantine-low-ratio-stable-identity-collisions.md)
 - [0117: Reuse Finalized Candidate Evidence and Parse Snapshots Once](0117-reuse-finalized-candidate-evidence-and-parse-snapshots-once.md)
 - [0118: Use the Completion Index for Current Snapshot Session Selection](0118-use-the-completion-index-for-current-snapshot-session-selection.md)
+- [0119: Plan a Resumable 300-Session Historical Foundation](0119-plan-a-resumable-300-session-historical-foundation.md)

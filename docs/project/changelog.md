@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-09-01 — Exact 300-session historical backfill plan
+
+- Added ADR 0119 and `historical-research-backfill-plan/1.0`.
+- Fixed the first operating interval to 2025-06-23 through 2026-08-31 from the
+  formally reread 32-session Dell inventory.
+- Partitioned 268 missing sessions into 90 deterministic, resumable batches;
+  the existing 2026-07-14 through 2026-07-16 Pilot remains first.
+- Added a socket-guarded, write-free operator CLI and deterministic tests.
+- The real plan made zero external requests and zero Production writes and
+  remains blocked on permission and complete lifecycle/research families.
+
 ## 2026-09-01 — Link Candidate evidence into a decision path
 
 - Added a bilingual five-step Candidate detail path from Market context through

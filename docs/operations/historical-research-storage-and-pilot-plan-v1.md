@@ -2,8 +2,8 @@
 
 ## Status
 
-Fixture-only physical foundation and read-only exact planner implemented;
-provider pilot not authorized.
+Fixture-only physical foundation, exact three-session Pilot planner, and exact
+300-session bulk-plan boundary implemented; provider pilot not authorized.
 
 This plan turns ADR 0051 into a bounded Dell physical direction. It does not
 create a dataset, call a provider, inspect credentials, write `/data`, or grant
@@ -210,6 +210,32 @@ non-empty Pilot scope to complete within its exact ceiling, bind permission,
 entitlement, lifecycle-review, and authorization fingerprints, and atomically
 freeze every byte below the exact `/tmp` plan directory. This code has no
 transport, credential loader, CLI, default root, or canonical Apply authority.
+
+## Exact 300-session backfill plan
+
+ADR 0119 adds a separate non-authorizing bulk-plan boundary above the existing
+three-session Pilot. Against the formally reread 2026-09-01 Dell inventory it
+produces:
+
+| Fact | Exact value |
+| --- | ---: |
+| Current completed EOD/Identity sessions | 32 |
+| Target interval | 2025-06-23 through 2026-08-31 |
+| Target / missing sessions | 300 / 268 |
+| Three-session-or-smaller batches | 90 |
+| First representative Pilot | 2026-07-14 through 2026-07-16 |
+| Grouped Daily requests | 268 |
+| Total requests at observed 14 Identity pages/session | 4,020 |
+| Total requests at 20-page Identity ceiling | 5,628 |
+| Serial transport at observed / ceiling pagination | 60,300 / 84,420 seconds |
+| Estimated incremental canonical EOD/Identity bytes | 880,745,820 |
+| Recommended staging reserve | 1,761,491,640 bytes |
+
+The exact plan fingerprint is
+`8bb9087fa1fa91b4f8754291d804e11e7a4c7d768093344952d8d9d38e4eb4aa`.
+It orders batches from the current-history boundary backward, so every applied
+batch extends one contiguous interval. It does not run the batches, and it
+does not weaken the Pilot's source permission or lifecycle gates.
 
 ## Proposed first live pilot after gates clear
 

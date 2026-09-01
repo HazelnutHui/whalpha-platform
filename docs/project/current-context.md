@@ -4,6 +4,20 @@ Operational state verified at: 2026-09-01 UTC
 
 Repository development context updated at: 2026-09-01 UTC
 
+ADR 0119 now adds a credential-free, socket-guarded 300-session Historical
+Research Backfill Plan. A real Dell formal reread binds the current 32-session
+inventory fingerprint `547cb7e4e5cdf70048293509fac597bfe3a6d1594af9bc30d63168dbddb7fcbc`
+to a 2025-06-23 through 2026-08-31 target: 268 missing sessions in 90
+backward-extending batches, beginning with the existing 2026-07-14 through
+2026-07-16 representative Pilot. The observed active-Identity projection is
+4,020 total requests / 60,300 transport seconds; the hard page ceiling is
+5,628 / 84,420 seconds. Estimated incremental canonical EOD/Identity storage
+is 880,745,820 bytes with a 1,761,491,640-byte staging reserve. Plan fingerprint
+is `8bb9087fa1fa91b4f8754291d804e11e7a4c7d768093344952d8d9d38e4eb4aa`.
+It made zero requests and writes and remains `blocked_pending_pilot` on source
+permission, lifecycle/terminal, membership, canonical action, adjustment and
+Historical Coverage gates. No historical data was acquired or applied.
+
 Repository source now also links the Candidate detail facts into one bilingual
 five-step evidence path: Market context, registered ETF price proxy, stock
 leadership, current entry posture, and a re-underwrite boundary. The ETF node

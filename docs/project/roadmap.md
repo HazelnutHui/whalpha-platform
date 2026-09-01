@@ -83,6 +83,12 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   Next separate a reusable immutable inactive/lifecycle baseline review from
   the three-session 80-request Pilot; do not silently enlarge or rebalance that
   Pilot before the new boundary is reviewed.
+  ADR 0119 now fixes the requested first operating target at 300 sessions and
+  divides the current 268-session gap into 90 deterministic backward-extending
+  batches. Its exact Dell plan is `blocked_pending_pilot` and grants no request
+  or Apply authority. Next implement the separately reviewable reusable
+  inactive/lifecycle baseline and resolve source permission before enabling
+  the first three-session transport; do not loop the daily ingestion command.
 - Research mechanics: ADR 0103 now freezes and synthetic-tests the exact
   chronological split, boundary exclusions, all 24 combinations, same-session
   eligible-leader controls, and delayed underlying-stock labels. Do not connect
