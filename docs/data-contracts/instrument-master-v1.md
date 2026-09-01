@@ -132,6 +132,13 @@ Validation tests cover valid common stock and ETF records, optional issuer/FIGI/
 
 Provider Instrument Identity V1 and a bounded Instrument Master snapshot ingestion path now exist. The first live Massive All Tickers run for 2026-08-13 did not publish an Instrument Master snapshot because quality gates failed. Instrument Master V1 remains the canonical contract for resolved instruments only; unresolved provider identities are tracked separately.
 
+ADR 0116 adds a bounded provider-quality rule without changing this canonical
+boundary. Stable-identifier collisions remain ambiguous Provider Instrument
+Identity observations and never produce Instrument Master or Resolver rows.
+They now enter the eligible coverage denominator, and the full snapshot may
+continue only when their observation ratio is no greater than 0.1%; a higher
+ratio fails the snapshot.
+
 - Provider-neutral Pydantic model implemented.
 - Validation and serialization tests implemented.
 - Massive point-in-time provider mapping is implemented behind the

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-01 — Quarantine isolated stable-identity collisions
+
+- One separately authorized 2026-08-31 Identity fetch-only operation completed
+  14 serial pages/13,141 records and produced a frozen owner-only `/tmp`
+  package. Custody recorded the package as ready; no `/data` write occurred.
+- Offline planning failed closed on one stable-identifier collision group/two
+  observations. Aggregate diagnosis showed identical stable identifiers,
+  exchange and status but old/new ticker/name observations; no identifier or
+  ticker was output.
+- Accepted ADR 0116. Collisions remain ambiguous and produce no Instrument or
+  Resolver row. They now enter coverage, and only a collision-observation ratio
+  at or below 0.1% may be quarantined without blocking unrelated securities.
+- Focused Identity/Catch-Up regression passed: 20 tests; full backend
+  regression passed 1,938 tests with two unchanged deprecation warnings. The frozen real
+  package has not yet been replanned under the new committed rule, and Apply,
+  EOD, analytics, publication and deployment remain unauthorized.
+
 ## 2026-09-01 — Migrate the read-only timer to the immutable runtime
 
 - The exact systemd review fingerprint was separately authorized. Only the

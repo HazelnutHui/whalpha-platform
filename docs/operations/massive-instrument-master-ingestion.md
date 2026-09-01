@@ -58,6 +58,11 @@ The corrected V1 classification distinguishes:
 
 Expected exclusions are not counted as malformed records and are not included in the eligible identity coverage denominator.
 
+Stable-identifier collisions are included in the eligible identity denominator
+but remain quarantined from Instrument and Resolver outputs. ADR 0116 permits
+only an observation ratio no greater than 0.1%; it never selects a conflicting
+ticker or infers lifecycle facts.
+
 ## Live Execution Result
 
 Execution date: 2026-08-14

@@ -49,6 +49,11 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   is complete and ADR 0115 closes the detached verification/rendering code
   gap. Exact runtime creation and live verification are complete; installed
   runtime binding and a controlled read-only start are now also complete.
+- Daily data: the authorized 2026-08-31 Identity package is frozen and custody-
+  recorded. ADR 0116 safely quarantines its two collision observations without
+  choosing a ticker. Next replan the same package from committed source and,
+  only if all gates pass, separately authorize canonical Identity Apply before
+  any EOD request.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum. ADR 0086 now completes the physical Daily

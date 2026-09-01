@@ -70,6 +70,13 @@ relative-performance proxies, never actual fund flow.
 
 ## Active data and publications
 
+- A frozen 2026-08-31 Identity fetch package is custody-recorded under `/tmp`
+  with 14 complete pages/13,141 records. Its first Apply plan failed closed on
+  two quarantined stable-identity collision observations. ADR 0116 replaces the
+  absolute-zero gate with a maximum 0.1% collision-observation ratio while
+  keeping every collision absent from canonical Instrument/Resolver output.
+  The package has not yet been replanned under committed source; `/data`
+  remains unchanged.
 - Canonical EOD and canonical Identity are both completed through 2026-08-28
   and formally aligned.
 - Latest EOD contains 9,942 rows. Latest Identity and the Identity snapshot

@@ -150,6 +150,121 @@ def test_quality_gate_failure_does_not_publish(tmp_path):
     assert not (tmp_path / "market-data").exists()
 
 
+def test_low_ratio_stable_collisions_remain_ambiguous_but_do_not_block_snapshot(
+    tmp_path,
+):
+    ordinary = tuple(
+        payload(
+            f"TEST{index:03d}",
+            share=f"SHARE{index:03d}",
+            composite=f"COMP{index:03d}",
+        )
+        for index in range(100)
+    )
+    collision = (
+        payload("OLDSYM", share="COLLISION", composite="COLLISION-COMP"),
+        payload("NEWSYM", share="COLLISION", composite="COLLISION-COMP"),
+    )
+    build = build_snapshot_from_payloads(
+        payloads=ordinary + collision,
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+    service = InstrumentMasterSnapshotIngestionService(
+        repository=ParquetInstrumentMasterSnapshotRepository(tmp_path),
+        gates=InstrumentMasterSnapshotQualityGates(
+            minimum_raw_records=0,
+            maximum_stable_identifier_collision_ratio=0.02,
+        ),
+    )
+
+    result = service.publish_snapshot(
+        as_of_date=AS_OF,
+        provider_id="massive_stocks_basic",
+        instruments=build.instruments,
+        identities=build.identities,
+        resolvers=build.resolvers,
+        request_count=build.request_count,
+        raw_record_count=build.raw_record_count,
+        eligible_record_count=build.eligible_record_count,
+        expected_exclusion_count=build.expected_exclusion_count,
+        malformed_rejected_count=build.malformed_rejected_count,
+        resolved_eligible_count=build.resolved_eligible_count,
+        unresolved_eligible_count=build.unresolved_eligible_count,
+        ambiguous_ticker_record_count=build.ambiguous_ticker_record_count,
+        stable_identifier_collision_count=build.stable_identifier_collision_count,
+        unique_provider_ticker_count=build.unique_provider_ticker_count,
+        duplicate_provider_ticker_count=build.duplicate_provider_ticker_count,
+    )
+
+    assert build.eligible_record_count == 102
+    assert result.status == "published"
+    assert result.quality_gate_passed is True
+    assert result.stable_identifier_collision_count == 2
+    assert result.stable_identifier_collision_ratio == pytest.approx(2 / 102)
+    assert result.canonical_instrument_count == 100
+    assert sum(
+        identity.resolution_status is ResolutionStatus.AMBIGUOUS
+        for identity in build.identities
+    ) == 2
+
+
+def test_stable_collision_ratio_above_gate_still_blocks_snapshot(tmp_path):
+    ordinary = tuple(
+        payload(
+            f"TEST{index:03d}",
+            share=f"SHARE{index:03d}",
+            composite=f"COMP{index:03d}",
+        )
+        for index in range(100)
+    )
+    build = build_snapshot_from_payloads(
+        payloads=ordinary
+        + (
+            payload("OLDSYM", share="COLLISION", composite="COLLISION-COMP"),
+            payload("NEWSYM", share="COLLISION", composite="COLLISION-COMP"),
+        ),
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+    service = InstrumentMasterSnapshotIngestionService(
+        repository=ParquetInstrumentMasterSnapshotRepository(tmp_path),
+        gates=InstrumentMasterSnapshotQualityGates(
+            minimum_raw_records=0,
+            maximum_stable_identifier_collision_ratio=0.01,
+        ),
+    )
+
+    result = service.publish_snapshot(
+        as_of_date=AS_OF,
+        provider_id="massive_stocks_basic",
+        instruments=build.instruments,
+        identities=build.identities,
+        resolvers=build.resolvers,
+        request_count=build.request_count,
+        raw_record_count=build.raw_record_count,
+        eligible_record_count=build.eligible_record_count,
+        expected_exclusion_count=build.expected_exclusion_count,
+        malformed_rejected_count=build.malformed_rejected_count,
+        resolved_eligible_count=build.resolved_eligible_count,
+        unresolved_eligible_count=build.unresolved_eligible_count,
+        ambiguous_ticker_record_count=build.ambiguous_ticker_record_count,
+        stable_identifier_collision_count=build.stable_identifier_collision_count,
+        unique_provider_ticker_count=build.unique_provider_ticker_count,
+        duplicate_provider_ticker_count=build.duplicate_provider_ticker_count,
+    )
+
+    assert result.status == "quality_gate_failed"
+    assert result.quality_gate_failures == (
+        "stable_identifier_collision_ratio_above_gate",
+    )
+    assert not (tmp_path / "market-data").exists()
+
+
 def test_parse_as_of_date_accepts_completed_historical_dates():
     assert parse_as_of_date("2026-08-12") == date(2026, 8, 12)
 
@@ -170,4 +285,3 @@ def test_unit_type_is_rejected():
     )
     assert result.expected_exclusion_count == 1
     assert result.resolved_eligible_count == 0
-

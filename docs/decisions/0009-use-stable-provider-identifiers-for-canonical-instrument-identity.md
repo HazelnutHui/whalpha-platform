@@ -75,7 +75,7 @@ Failed gates block publication.
 
 ## Clarification: Quality Gates
 
-Expected V1 universe exclusions are not malformed provider data and do not enter the eligible identity coverage denominator. Ticker-level ambiguity is tracked separately from stable-identifier collision. Stable-identifier collision remains a hard failure; a small ticker ambiguity ratio may be isolated from the resolver without blocking unrelated instruments.
+Expected V1 universe exclusions are not malformed provider data and do not enter the eligible identity coverage denominator. Ticker-level ambiguity is tracked separately from stable-identifier collision. ADR 0116 narrowly supersedes the original absolute-zero collision gate: every collision remains quarantined, but a collision-observation ratio no greater than 0.1% may be isolated from Instrument/Resolver output without blocking unrelated instruments. A higher ratio remains a hard failure.
 
 
 - Canonical identity is stable across reruns for the same stable identifier.
@@ -101,4 +101,3 @@ Expected V1 universe exclusions are not malformed provider data and do not enter
 - Dashboard data API
 - scheduling or backfill
 - OCI deployment
-

@@ -54,6 +54,16 @@ is 2026-09-01 17:30 UTC.
 
 ## Formal local state
 
+One authorized 2026-08-31 Identity fetch-only operation now exists outside
+`/data` as a frozen owner-only `/tmp` package: 14 complete pages, 13,141
+records, package content fingerprint
+`d9c8019618a791fdbad8f8c057eddf4895e55d04a5a116915516cc5ab56831d8`.
+The first offline plan correctly blocked on one collision group/two ambiguous
+observations. ADR 0116 keeps both quarantined and permits only a total collision
+ratio at or below 0.1%; the real package has not yet been replanned from a
+committed source revision. Canonical Identity/EOD therefore remain unchanged
+through 2026-08-28.
+
 The 2026-08-30 reconciliation used the project readers after the separately
 authorized complete 2026-08-28 Identity/EOD, analytics, publication, Snapshot,
 bundle, and OCI deployment round. It reread the full local inventory and active

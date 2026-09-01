@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0116](0116-quarantine-low-ratio-stable-identity-collisions.md): Permit only a bounded low ratio of fully quarantined stable-identity conflicts without choosing a winner.
+
 - [ADR 0115](0115-bind-systemd-review-to-the-immutable-runtime.md): Verify and render exact detached-runtime scheduler service candidates without installing them.
 
 - [ADR 0114](0114-run-the-read-only-scheduler-from-an-immutable-worktree.md): Separate the read-only scheduler from moving `main` with an exact detached Dell worktree.

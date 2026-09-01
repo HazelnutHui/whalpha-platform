@@ -209,7 +209,12 @@ def build_snapshot_from_payloads(
     stable_collision_records = sum(1 for identity in identities if "stable_identifier_collision" in identity.quality_flags)
     malformed = sum(1 for identity in identities if identity.resolution_status is ResolutionStatus.REJECTED)
     excluded = sum(1 for identity in identities if identity.resolution_status is ResolutionStatus.EXCLUDED)
-    eligible = resolved_eligible + unresolved_eligible + ambiguous_ticker_records
+    eligible = (
+        resolved_eligible
+        + unresolved_eligible
+        + ambiguous_ticker_records
+        + stable_collision_records
+    )
     return ReferenceSnapshotBuildResult(
         instruments=tuple(sorted(instruments, key=lambda record: (str(record.instrument_id), record.ticker))),
         identities=tuple(sorted(identities, key=lambda record: (record.provider_ticker, record.provider_instrument_id or "", record.composite_figi or "", record.share_class_figi or ""))),
