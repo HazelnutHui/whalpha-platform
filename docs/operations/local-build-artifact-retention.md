@@ -13,44 +13,47 @@ policy and must never be deleted through local build cleanup.
 
 ## Current local retained set
 
-The 2026-08-29 post-deployment reconciliation found nine checksum-valid OCI
-deployment bundles plus one legacy private-Dashboard fallback. The OCI bundle
-root occupies 142,835,721 bytes (about 136 MiB), so deleting reviewed rollback
-evidence still provides no meaningful workstation-capacity benefit. Retain:
+The 2026-09-01 read-only inventory found one legacy private-Dashboard fallback
+and 14 historical directories beneath `build/oci-dashboard`. None is the
+current remote release `2026-09-01T121730Z-52934c47db45`; the current immutable
+Snapshot is retained under `/data`, and the source bundle was built and
+formally reread in governed `/tmp` custody before deployment. A temporary
+bundle is reproducible deployment evidence, not a durable rollback authority.
 
-1. `build/private-dashboard/2026-08-19T083341Z-7ed7fdc21686`, because the
-   active Snapshot reader names it as the exact pre-pointer legacy fallback;
-2. `build/oci-dashboard/2026-08-19T083341Z-7ed7fdc21686`, as the deliberate
-   selectable-Universe rollback bundle;
-3. `build/oci-dashboard/2026-08-26T053233Z-6c60502e4473`, as the last retained
-   ordinary-fresh 2026-08-26 baseline;
-4. `build/oci-dashboard/2026-08-26T094339Z-f9711d5403f6`,
-   `build/oci-dashboard/2026-08-26T103119Z-f344a589a8c9`, and
-   `build/oci-dashboard/2026-08-26T151600Z-1f3eb5512eb0`, as reviewed product
-   progression and rollback evidence;
-5. `build/oci-dashboard/2026-08-28T132100Z-eeccc22`, as the first Snapshot 1.9 /
-   Dashboard 2.6 stale-review release;
-6. `build/oci-dashboard/2026-08-28T162136Z-2737f81`, as the immediate prior
-   deployed UI release;
-7. `build/oci-dashboard/2026-08-29T080928Z-785ab49dfedd`, as the immediate
-   ordinary-fresh rollback release; and
-8. `build/oci-dashboard/2026-08-29T133847Z-1490b37f25b3`, as the active
-   relationship-explanation release.
+Retain the legacy fallback
+`build/private-dashboard/2026-08-19T083341Z-7ed7fdc21686`. Do not delete any of
+the 14 historical OCI directories until a separate exact checksum and rollback-
+role audit reclassifies them. Their names are:
 
-The active Snapshot 1.9 release is formally retained under `/data`; a duplicate
-`build/private-dashboard` copy is not required. Historical bundles validate
-against their own checksum inventories, while only the current active bundle
-is expected to match the active Snapshot/Market Intelligence lineage.
+- `2026-08-19T083341Z-7ed7fdc21686`;
+- `2026-08-26T053233Z-6c60502e4473`;
+- `2026-08-26T094339Z-f9711d5403f6`;
+- `2026-08-26T103119Z-f344a589a8c9`;
+- `2026-08-26T151600Z-1f3eb5512eb0`;
+- `2026-08-28T132100Z-eeccc22`;
+- `2026-08-28T140332Z-f483d6999a3e`;
+- `2026-08-28T141747Z-83f9b629279c`;
+- `2026-08-28T162136Z-2737f81`;
+- `2026-08-29T080928Z-785ab49dfedd`;
+- `2026-08-29T133847Z-1490b37f25b3`;
+- `2026-08-30T082200Z-6a8a37e79970`;
+- `2026-08-30T085601Z-6c732e9cd602`; and
+- `2026-08-30T092455Z-1894b9c9b95e`.
+
+Historical bundles must validate against their own checksum inventories. Do
+not assume any historical local directory still exists remotely or is a valid
+rollback solely from its name.
 
 ## OCI retained set
 
-The 2026-08-29 deployment verified
-`/srv/whalpha/releases/2026-08-29T133847Z-1490b37f25b3` as the active release
-selected by `/srv/whalpha/current`. An independent read-only OCI inspection
-also verified that exact current release, service/listener health, and zero
-staging/failed residue. The report did not enumerate a complete list of prior
-remote releases, so reread the exact remote inventory and rollback roles before
-proposing any remote deletion.
+The 2026-09-01 independent read-only OCI inspection verified
+`/srv/whalpha/releases/2026-09-01T121730Z-52934c47db45` as the active release
+selected by `/srv/whalpha/current`. It also verified the exact source revision,
+manifest/checksum fingerprints, service/listener health, equal guest and
+credential route policy, a temporary guest Session, and zero staging/failed
+residue. The report did not enumerate a complete list of prior remote releases,
+so reread the exact remote inventory and rollback roles before proposing any
+remote deletion.
 
 Remote cleanup requires separate exact path, type, symlink, active-pointer,
 service, and rollback verification. It must never infer remote state from a

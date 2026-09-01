@@ -11,7 +11,8 @@ largest weighted shortfall, shows available configured evidence, and keeps raw
 and normalized metric facts in a folded audit view. It does not recalculate or
 change a score, rank, formula, parameter, contract, or Production publication.
 The active Snapshot 1.11 / Dashboard 2.8 release was fully reread by the formal
-reader and is compatible; this UI-only source change is not yet deployed.
+reader and is compatible. The exact source-bound Snapshot and OCI bundle are
+now deployed; postflight preserved equal guest/credential route capability.
 
 Repository source after ADR 0106 includes a bilingual Quant Research Lab as a
 fifth first-level workspace. It presents only the registered Strong-Leader
@@ -44,7 +45,7 @@ in the [roadmap](roadmap.md).
 | User | `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main` |
-| Deployed bundle source commit | `44b052419be8bcc9cd7c433c85e5381a4499ddc7` |
+| Deployed bundle source commit | `52934c47db454adc2708b6d2dd9c300d85321ca2` |
 
 Codex-created worktrees may be detached at the same commit. Always verify the
 main repository separately before treating a worktree as the source of truth.
@@ -105,13 +106,13 @@ custody/contracts after deployment.
 | Market Intelligence payload SHA-256 | `deb32a316cf761fd712ba8455ba400a4d0ff7aa0fc862f77c5d8692516c0041c` |
 | Market Intelligence logical fingerprint | `916ecf708b6892c662fc399e8cba2bca619c70335d0b2c743e62f11540c408e4` |
 | Candidate publication | 715 Primary / 765 Secondary records; fingerprint `330c894813e745de1e213f04c2d68ed221593decbe2253bfa1d18062cccbb6ba` |
-| Dashboard Snapshot | `2026-08-31T102009Z-44b052419be8` |
+| Dashboard Snapshot | `2026-09-01T121730Z-52934c47db45` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
-| Snapshot pointer fingerprint | `9921272d5e749a8cf547e3f8da760cfd89844fdaaede3191fe24405e3c4c717b` |
+| Snapshot pointer fingerprint | `2ec7e373dc346d61f12a75db2bff73ad3023eceab7dbbae10f860cbc6fc6935b` |
 | Active review metadata | none; ordinary fresh publication |
 | Current post-close pipeline freshness | expected 2026-08-31; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-31; lag zero |
-| `/data` inventory | 747 files / 573,552,760 bytes after MI 1.3 and Snapshot 1.11 publication |
-| `/data` inventory fingerprint | `7a0e31ff52dc5e60bb8325e50653961803f9c59628ed0824ca083c5928557365` |
+| `/data` inventory | 789 files / 609,684,167 bytes after the source-bound Snapshot 1.11 publication |
+| `/data` inventory fingerprint | `1bab9bec3f76780baf5c23a28e7f799571a70b6fc7de503e4ae04cbe2af62087` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project
@@ -1032,9 +1033,9 @@ recorded in the active-state table and
 
 ## OCI production state
 
-The active remote release and matching verified Dell immutable bundle are
-`2026-08-31T102009Z-44b052419be8`, built from deployed source commit
-`44b052419be8bcc9cd7c433c85e5381a4499ddc7` and bound to Market Intelligence
+The active remote release is `2026-09-01T121730Z-52934c47db45`. Its source
+bundle was formally reread on Dell before deployment and was built from commit
+`52934c47db454adc2708b6d2dd9c300d85321ca2` and bound to Market Intelligence
 `2026-08-31T101550Z-44b052419be8`. A later repository HEAD does not
 invalidate this immutable lineage; the report exposes whether the two commits
 match rather than hiding the bundle.
@@ -1049,7 +1050,7 @@ No credential or cookie content was printed or retained.
 The independent remote-state report also matched local manifest/checksum
 hashes, found zero failed units or staging/failed residue, and recorded state
 fingerprint
-`338a657b567cda38b597ccbc36361c276c72040428dac33bb18be1dc793f2f65`.
+`5e97498630754669ebd6de0544384eb453a06232dedeede63fae3a0500b19b19`.
 Password-based and visual browser
 behavior remains a manual user check. The local report remains network-free
 and cannot replace this separately authorized OCI check.

@@ -61,7 +61,8 @@ reconciles published contribution points to the base score, identifies the
 largest score support and largest weighted shortfall, shows evidence-weight
 availability, and folds the raw and normalized submetrics beneath the concise
 view. The active Snapshot 1.11 / Dashboard 2.8 release formally validates with
-all required fields. This UI-only change is tested but not yet deployed.
+all required fields. This UI-only change is tested and deployed with identical
+guest and authenticated capability.
 
 Repository source now also adds Quant Research Lab / 量化研究实验室 as the
 fifth first-level workspace. It exposes the preregistered Strong-Leader
@@ -93,17 +94,17 @@ relative-performance proxies, never actual fund flow.
   `2026-08-31T101550Z-44b052419be8`, contract 1.3, with 715 Primary and 765
   Secondary bounded Candidate research records across the fixed entry lanes.
 - Active Dashboard Snapshot is
-  `2026-08-31T102009Z-44b052419be8`, contract 1.11 / Dashboard 2.8.
+  `2026-09-01T121730Z-52934c47db45`, contract 1.11 / Dashboard 2.8.
 - The verified Dell serving bundle and live OCI release are
-  `2026-08-31T102009Z-44b052419be8` from source commit `44b052419be8`.
+  `2026-09-01T121730Z-52934c47db45` from source commit `52934c47db45`.
 
 The active analytics and Snapshot are ordinary fresh publications for
 2026-08-31: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
-`2026-08-28T141747Z-83f9b629279c` is the exact rollback reference. The
-2026-09-01 post-deployment reader found 747 files / 573,552,760 bytes under
+`2026-08-31T102009Z-44b052419be8` is the exact rollback reference. The
+2026-09-01 post-deployment reader found 789 files / 609,684,167 bytes under
 `/data`, inventory fingerprint
-`7a0e31ff52dc5e60bb8325e50653961803f9c59628ed0824ca083c5928557365`,
+`1bab9bec3f76780baf5c23a28e7f799571a70b6fc7de503e4ae04cbe2af62087`,
 and zero symlinks.
 
 ### Daily automation development state

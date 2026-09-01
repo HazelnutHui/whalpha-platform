@@ -476,8 +476,9 @@ after any future authorized transport, but it is not itself a transport,
 provider adapter, permission decision, or Apply authority. The concise Massive
 inquiry is prepared for manual sending and has not been sent.
 Do not select formulas or thresholds from one-session distributions. The
-ordinary-fresh, lag-zero 2026-08-31 Snapshot 1.11 / Dashboard 2.8 release is
-active. Later control-plane changes remain undeployed; every further
+ordinary-fresh, lag-zero 2026-09-01 source-bound Snapshot 1.11 / Dashboard 2.8
+release is active for the 2026-08-31 session. Later control-plane changes
+remain undeployed; every further
 publication or deployment requires fresh exact review and authorization. Keep
 SMTP and SEC B2 paused.
 

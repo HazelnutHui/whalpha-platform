@@ -4,7 +4,8 @@
 
 - Replaced the Candidate drawer's ambiguous component bars with a bilingual
   ledger whose widths and labels explicitly represent published contribution
-  points relative to each component's effective maximum.
+  points relative to each component's effective weight, including any explicit
+  published score cap.
 - Added an exact base-score reconciliation, largest score support, largest
   weighted shortfall, configured evidence availability, and a folded ledger of
   raw and normalized submetrics. “Shortfall” is explicitly not a causal claim
@@ -13,7 +14,16 @@
   guest/authenticated capability parity. The active 2026-08-31 Snapshot 1.11 /
   Dashboard 2.8 release passed formal reread compatibility.
 - Full frontend regression passed 111 tests and the production build passed.
-  The source change is not yet bundled or deployed.
+  Fresh lag-zero Snapshot and OCI release
+  `2026-09-01T121730Z-52934c47db45` now bind exact source commit
+  `52934c47db454adc2708b6d2dd9c300d85321ca2` without changing the 8/31
+  business fingerprints.
+- The first local bundle candidate used a release ID different from its source
+  Snapshot and the independent formal reader rejected it before remote access.
+  The corrected same-ID bundle passed complete reread, remote preflight, one
+  atomic Apply, deployment postflight, and an independent read-only remote
+  inspection. Guest Session and protected-route checks passed; credential and
+  visual browser checks remain manual.
 
 ## 2026-09-01 — Bound Snapshot session discovery to the completion index
 
