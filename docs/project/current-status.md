@@ -7,16 +7,14 @@ fingerprints, verification scope, and cross-device handoff are maintained in
 the [authoritative current context](current-context.md). Historical execution
 detail belongs in the [changelog](changelog.md) and dated audits, not here.
 
-Repository source now contains ADR 0119's exact, non-authorizing 300-session
-Historical Research Backfill Plan. Its first real read-only Dell run fixes the
-target to 2025-06-23 through 2026-08-31, with 268 missing sessions in 90
-three-session-or-smaller batches. The first batch remains the separately
-governed 2026-07-14 through 2026-07-16 Pilot. The exact plan fingerprint is
-`8bb9087fa1fa91b4f8754291d804e11e7a4c7d768093344952d8d9d38e4eb4aa`.
-It performed no network request or Production write. Bulk acquisition remains
-blocked until the representative Pilot's source-permission and complete
-lifecycle/terminal gates are resolved; 300 EOD/Identity sessions alone would
-still not establish research readiness.
+ADR 0119's 300-session plan has passed its first three-session live Pilot.
+Canonical EOD and Identity now cover 35 contiguous sessions from 2026-07-14
+through 2026-08-31. ADR 0120 converts missing Massive written permission from a
+Dell-local acquisition blocker into an explicit non-publication limitation by
+the user's direction; it does not claim provider permission. ADR 0121 adds the
+newest-to-oldest, fail-stop and canonical-state-resumable batch runner for the
+remaining history. Lifecycle/terminal, membership, action, adjustment and
+Historical Coverage families still block research readiness.
 
 ## Current product
 
@@ -102,8 +100,8 @@ relative-performance proxies, never actual fund flow.
   observations. ADR 0116 quarantined its one collision group/two ambiguous
   observations within the 0.1% gate; canonical Identity therefore contains
   9,965 instruments and resolvers and no row for either collision observation.
-- Canonical EOD and canonical Identity are both completed through 2026-08-31
-  and formally aligned across 32 EOD sessions.
+- Canonical EOD and EOD-bound Identity are formally aligned across 35 sessions
+  from 2026-07-14 through 2026-08-31.
 - Latest EOD contains 9,939 rows and binds the same 2026-08-31 Identity logical
   fingerprint.
 - Activation V2 is active with Common Shares as the sole default:
@@ -121,10 +119,10 @@ The active analytics and Snapshot are ordinary fresh publications for
 2026-08-31: actual and expected session match, lag is zero, review mode is
 false, and no stale-review exception was used. Snapshot
 `2026-09-01T121730Z-52934c47db45` is the exact rollback reference. The
-2026-09-01 post-deployment reader found 831 files / 645,815,574 bytes under
-`/data`, inventory fingerprint
-`547cb7e4e5cdf70048293509fac597bfe3a6d1594af9bc30d63168dbddb7fcbc`,
-and zero symlinks.
+The post-Pilot reader found 858 files / 655,639,204 bytes under `/data`,
+inventory fingerprint
+`f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`,
+zero symlinks and zero publication residue.
 
 ### Daily automation development state
 

@@ -25,11 +25,14 @@ DEFAULT_IDENTITY_BYTES_PER_SESSION = 2_235_974
 REQUIRED_BLOCKER_CODES = (
     "canonical_corporate_action_coverage_absent",
     "daily_point_in_time_membership_absent",
-    "equal_capability_source_permission_unresolved",
     "historical_coverage_publication_absent",
     "instrument_lifecycle_terminal_coverage_incomplete",
     "reconciled_adjustment_ledger_absent",
     "representative_historical_pilot_incomplete",
+)
+SOURCE_LIMITATION_CODES = (
+    "massive_written_permission_not_established",
+    "automatic_oci_historical_publication_not_authorized",
 )
 
 _SHA256 = re.compile(r"[0-9a-f]{64}")
@@ -74,6 +77,7 @@ class HistoricalBackfillRequestV1:
 class HistoricalBackfillBatchV1:
     execution_sequence: int
     target_sessions: tuple[str, ...]
+    execution_sessions: tuple[str, ...]
     missing_eod_sessions: tuple[str, ...]
     missing_identity_sessions: tuple[str, ...]
     is_representative_pilot: bool
@@ -115,6 +119,7 @@ class HistoricalBackfillPlanV1:
     provider_requests_serial_only: bool
     offline_parallelism_permitted_after_source_custody: bool
     blocker_codes: tuple[str, ...]
+    limitation_codes: tuple[str, ...]
     status: HistoricalBackfillStatus
     next_action: HistoricalBackfillNextAction
     acquisition_authorized: bool
@@ -213,6 +218,7 @@ def plan_historical_research_backfill(
         "estimated_incremental_canonical_bytes": canonical_bytes,
         "recommended_staging_reserve_bytes": canonical_bytes * 2,
         "blocker_codes": requested.blocker_codes,
+        "limitation_codes": SOURCE_LIMITATION_CODES,
         "status": HistoricalBackfillStatus.BLOCKED_PENDING_PILOT.value,
         "next_action": HistoricalBackfillNextAction.RESOLVE_EXTERNAL_GATES.value,
         "authorization_status": "not_authorized",
@@ -249,6 +255,7 @@ def plan_historical_research_backfill(
         provider_requests_serial_only=True,
         offline_parallelism_permitted_after_source_custody=True,
         blocker_codes=requested.blocker_codes,
+        limitation_codes=SOURCE_LIMITATION_CODES,
         status=HistoricalBackfillStatus.BLOCKED_PENDING_PILOT,
         next_action=HistoricalBackfillNextAction.RESOLVE_EXTERNAL_GATES,
         acquisition_authorized=False,
@@ -261,6 +268,42 @@ def plan_historical_research_backfill(
         production_write_count=0,
         logical_content_fingerprint=fingerprint,
     )
+
+
+def select_next_historical_backfill_session(
+    *,
+    completed_sessions: tuple[date, ...],
+    target_session_count: int = DEFAULT_TARGET_SESSIONS,
+    calendar: MarketSessionCalendar | None = None,
+) -> date | None:
+    """Select the nearest missing prefix session without scanning other state."""
+
+    session_calendar = calendar or ExchangeCalendar()
+    _validate_contiguous_sessions(
+        completed_sessions, "completed sessions", session_calendar
+    )
+    if not MINIMUM_TARGET_SESSIONS <= target_session_count <= MAXIMUM_TARGET_SESSIONS:
+        raise HistoricalBackfillPlannerError(
+            "target session count must be between 252 and 504"
+        )
+    target = _target_sessions(
+        end_session=completed_sessions[-1],
+        count=target_session_count,
+        calendar=session_calendar,
+    )
+    completed = frozenset(completed_sessions)
+    if not completed.issubset(frozenset(target)):
+        raise HistoricalBackfillPlannerError(
+            "current inventory extends outside the requested target interval"
+        )
+    missing = tuple(item for item in target if item not in completed)
+    if not missing:
+        return None
+    if session_calendar.next_session(missing[-1]) != completed_sessions[0]:
+        raise HistoricalBackfillPlannerError(
+            "missing history must be one contiguous prefix adjacent to current history"
+        )
+    return missing[-1]
 
 
 def _target_sessions(
@@ -292,6 +335,9 @@ def _build_batches(
             HistoricalBackfillBatchV1(
                 execution_sequence=sequence,
                 target_sessions=tuple(item.isoformat() for item in chunk),
+                execution_sessions=tuple(
+                    item.isoformat() for item in reversed(chunk)
+                ),
                 missing_eod_sessions=tuple(item.isoformat() for item in chunk),
                 missing_identity_sessions=tuple(item.isoformat() for item in chunk),
                 is_representative_pilot=sequence == 1,

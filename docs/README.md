@@ -1,6 +1,8 @@
 # Documentation Index
 
 - [Historical Research Backfill Plan ADR](decisions/0119-plan-a-resumable-300-session-historical-foundation.md): exact 300-session target, resumable batching, request/time/storage projections, and non-authorizing Pilot boundary.
+- [Dell-local Massive history decision](decisions/0120-allow-dell-local-massive-history-without-written-permission.md): user-directed acquisition posture without a false permission or public-serving claim.
+- [Historical Backfill Batch Runner ADR](decisions/0121-run-history-newest-to-oldest-with-canonical-resume.md): newest-to-oldest execution, canonical resume, shared pacing, and fail-stop behavior.
 
 - [Massive Historical Lifecycle Pagination Census V1](data-contracts/massive-historical-lifecycle-pagination-census-v1.md): six-page aggregate-only census within the Historical Pilot ceiling.
 

@@ -6,11 +6,13 @@ import pytest
 
 from tip_api.services.historical_backfill_planner import (
     REQUIRED_BLOCKER_CODES,
+    SOURCE_LIMITATION_CODES,
     HistoricalBackfillInventoryV1,
     HistoricalBackfillPlannerError,
     HistoricalBackfillRequestV1,
     HistoricalBackfillStatus,
     plan_historical_research_backfill,
+    select_next_historical_backfill_session,
 )
 from tip_api.services.market_calendar import ExchangeCalendar
 
@@ -53,7 +55,13 @@ def test_current_32_session_inventory_produces_exact_300_session_plan() -> None:
     )
     assert plan.batches[0].is_representative_pilot
     assert not plan.batches[0].depends_on_prior_batch_completion
+    assert plan.batches[0].execution_sessions == (
+        "2026-07-16",
+        "2026-07-15",
+        "2026-07-14",
+    )
     assert plan.batches[-1].target_sessions == ("2025-06-23",)
+    assert plan.batches[-1].execution_sessions == ("2025-06-23",)
     assert plan.batches[-1].depends_on_prior_batch_completion
 
 
@@ -79,6 +87,9 @@ def test_plan_is_deterministic_and_never_authorizes() -> None:
     assert first.logical_content_fingerprint == second.logical_content_fingerprint
     assert first.status is HistoricalBackfillStatus.BLOCKED_PENDING_PILOT
     assert first.blocker_codes == REQUIRED_BLOCKER_CODES
+    assert first.limitation_codes == SOURCE_LIMITATION_CODES
+    assert "massive_written_permission_not_established" in first.limitation_codes
+    assert all("permission" not in code for code in first.blocker_codes)
     assert first.provider_requests_serial_only
     assert first.offline_parallelism_permitted_after_source_custody
     assert not any(
@@ -135,3 +146,15 @@ def test_inventory_must_be_contiguous_and_identity_aligned() -> None:
                 completed_identity_sessions=sessions[:-1],
             )
         )
+
+
+def test_next_session_selector_extends_the_left_boundary_one_day_at_a_time() -> None:
+    current = _sessions_ending(date(2026, 8, 31), 35)
+
+    assert select_next_historical_backfill_session(
+        completed_sessions=current
+    ) == date(2026, 7, 13)
+    extended = (date(2026, 7, 13),) + current
+    assert select_next_historical_backfill_session(
+        completed_sessions=extended
+    ) == date(2026, 7, 10)

@@ -40,6 +40,7 @@ Add a credential-free `historical-research-backfill-plan/1.0` boundary. It:
   batches of at most three sessions;
 - orders execution from the batch adjacent to current history backward so each
   completed Apply can extend one contiguous boundary;
+- orders sessions inside each batch from newest to oldest for the same reason;
 - identifies the first batch as the representative Pilot and keeps every later
   batch dependent on its formal completion;
 - separately projects Grouped Daily calls and observed/ceiling active-Identity

@@ -4,19 +4,27 @@ Operational state verified at: 2026-09-01 UTC
 
 Repository development context updated at: 2026-09-01 UTC
 
-ADR 0119 now adds a credential-free, socket-guarded 300-session Historical
-Research Backfill Plan. A real Dell formal reread binds the current 32-session
-inventory fingerprint `547cb7e4e5cdf70048293509fac597bfe3a6d1594af9bc30d63168dbddb7fcbc`
-to a 2025-06-23 through 2026-08-31 target: 268 missing sessions in 90
-backward-extending batches, beginning with the existing 2026-07-14 through
-2026-07-16 representative Pilot. The observed active-Identity projection is
-4,020 total requests / 60,300 transport seconds; the hard page ceiling is
-5,628 / 84,420 seconds. Estimated incremental canonical EOD/Identity storage
-is 880,745,820 bytes with a 1,761,491,640-byte staging reserve. Plan fingerprint
-is `8bb9087fa1fa91b4f8754291d804e11e7a4c7d768093344952d8d9d38e4eb4aa`.
-It made zero requests and writes and remains `blocked_pending_pilot` on source
-permission, lifecycle/terminal, membership, canonical action, adjustment and
-Historical Coverage gates. No historical data was acquired or applied.
+ADR 0119 added the exact 300-session Historical Research Backfill Plan. The
+first 2026-07-14 through 2026-07-16 representative Pilot is now complete:
+every date fetched 14 complete active-Identity pages plus one unadjusted
+Grouped Daily response, then passed separate offline plans, exact inventory
+CAS, atomic Apply and formal reread. Canonical EOD/Identity now contains 35
+contiguous sessions from 2026-07-14 through 2026-08-31. The three new EOD
+partitions contain 9,843 / 9,852 / 9,854 rows with zero duplicate business keys
+and zero orphan references. The post-Pilot inventory is 858 files / 655,639,204
+bytes at fingerprint
+`f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`,
+with zero symlinks or publication residue. Active analytics and OCI remain
+unchanged on 2026-08-31.
+
+ADR 0120 records the user's explicit direction that absent Massive written
+permission no longer blocks Dell-local history acquisition; the unverified
+permission remains a limitation and grants no automatic OCI/publication right.
+ADR 0121 adds the resumable batch runner. It selects only the session directly
+before the current canonical left boundary, processes Identity before EOD,
+shares one 15-second limiter, reuses formally readable interrupted packages,
+and stops without retry on any failure. The remaining history must execute
+newest-to-oldest so every completed EOD Apply preserves a contiguous inventory.
 
 Repository source now also links the Candidate detail facts into one bilingual
 five-step evidence path: Market context, registered ETF price proxy, stock
@@ -112,7 +120,7 @@ custody/contracts after deployment.
 
 | Boundary | Active verified value |
 | --- | --- |
-| Canonical EOD | 32 sessions, 2026-07-17 through 2026-08-31 |
+| Canonical EOD | 35 sessions, 2026-07-14 through 2026-08-31 |
 | Latest EOD | 2026-08-31, 9,939 rows |
 | EOD content fingerprint | `bf047e2654ee64be6ecc7a828486d9655fcc21a8a5ac07c45647fe17cb581011` |
 | EOD Parquet SHA-256 | `103d1cbeb3e6c535a4c695d4c324db8b7f0b8d96364446d01d21e69024b2abf0` |
@@ -135,8 +143,8 @@ custody/contracts after deployment.
 | Snapshot pointer fingerprint | `5e38259e9ff9681695ba9c818cb075c8bb73c3ebb35f5a51e3d20ad15691c924` |
 | Active review metadata | none; ordinary fresh publication |
 | Current post-close pipeline freshness | expected 2026-08-31; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-31; lag zero |
-| `/data` inventory | 831 files / 645,815,574 bytes after the latest source-bound Snapshot 1.11 publication |
-| `/data` inventory fingerprint | `547cb7e4e5cdf70048293509fac597bfe3a6d1594af9bc30d63168dbddb7fcbc` |
+| `/data` inventory | 858 files / 655,639,204 bytes after the three-session Historical Pilot |
+| `/data` inventory fingerprint | `f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb` |
 | `/data` symlink/staging/partial residue | zero |
 
 Workstation listener review found no Python, Node, Vite, Uvicorn, or project

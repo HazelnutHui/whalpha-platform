@@ -160,3 +160,5 @@ Each ADR should include:
 - [0117: Reuse Finalized Candidate Evidence and Parse Snapshots Once](0117-reuse-finalized-candidate-evidence-and-parse-snapshots-once.md)
 - [0118: Use the Completion Index for Current Snapshot Session Selection](0118-use-the-completion-index-for-current-snapshot-session-selection.md)
 - [0119: Plan a Resumable 300-Session Historical Foundation](0119-plan-a-resumable-300-session-historical-foundation.md)
+- [0120: Allow Dell-Local Massive History Without Written Permission](0120-allow-dell-local-massive-history-without-written-permission.md)
+- [0121: Run History Newest-to-Oldest with Canonical Resume](0121-run-history-newest-to-oldest-with-canonical-resume.md)

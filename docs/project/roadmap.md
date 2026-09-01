@@ -85,10 +85,12 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   Pilot before the new boundary is reviewed.
   ADR 0119 now fixes the requested first operating target at 300 sessions and
   divides the current 268-session gap into 90 deterministic backward-extending
-  batches. Its exact Dell plan is `blocked_pending_pilot` and grants no request
-  or Apply authority. Next implement the separately reviewable reusable
-  inactive/lifecycle baseline and resolve source permission before enabling
-  the first three-session transport; do not loop the daily ingestion command.
+  batches. The first 2026-07-14 through 2026-07-16 live Pilot is complete and
+  canonical history now contains 35 contiguous sessions. ADR 0120 applies the
+  user's Dell-local source-risk decision without claiming provider permission
+  or public-serving authority. ADR 0121 adds newest-to-oldest canonical resume.
+  Continue in bounded invocations while separately implementing the reusable
+  inactive/lifecycle baseline; do not loop the daily ingestion command.
 - Research mechanics: ADR 0103 now freezes and synthetic-tests the exact
   chronological split, boundary exclusions, all 24 combinations, same-session
   eligible-leader controls, and delayed underlying-stock labels. Do not connect

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-01 — Complete the three-session Historical Pilot
+
+- Applied the user's ADR 0120 direction: missing written Massive permission no
+  longer blocks Dell-local acquisition and remains a non-publication
+  limitation rather than a false cleared-permission claim.
+- Fetched, planned, atomically applied and formally reread point-in-time
+  Identity plus unadjusted EOD for 2026-07-14, 2026-07-15 and 2026-07-16.
+- Identity completed in 14 pages each day. Canonical EOD contains 9,843 / 9,852
+  / 9,854 rows with zero duplicate keys and zero orphan references.
+- Canonical history is now 35 contiguous sessions through 2026-08-31; `/data`
+  is 858 files / 655,639,204 bytes at fingerprint
+  `f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`.
+- Added ADR 0121's newest-to-oldest, fail-stop and canonical-resume batch runner
+  before continuing the remaining history.
+
 ## 2026-09-01 — Exact 300-session historical backfill plan
 
 - Added ADR 0119 and `historical-research-backfill-plan/1.0`.
