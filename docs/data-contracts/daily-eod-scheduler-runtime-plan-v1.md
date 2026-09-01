@@ -40,7 +40,9 @@ Before a separately authorized timer migration, a future installer must prove:
 
 Creation, post-creation verification, systemd candidate rendering and timer
 migration remain separate custody transitions. The current V1 planner performs
-none of them.
+none of them. Repository source now supports the detached-mode runtime check
+and systemd candidate 1.1 rendering that will be used after creation; neither
+operation has been run against a real runtime.
 
 ## Why the runtime is immutable
 

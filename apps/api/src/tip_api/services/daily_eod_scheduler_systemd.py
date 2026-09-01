@@ -18,9 +18,13 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from tip_api.services.daily_eod_standing_authorization import (
     APPROVED_CANONICAL_DATA_ROOT,
 )
+from tip_api.services.daily_eod_scheduler_runtime_plan import (
+    APPROVED_PYTHON_LAUNCHER,
+    APPROVED_RUNTIME_PARENT,
+)
 
 
-CONTRACT_VERSION = "daily-eod-scheduler-systemd-candidate/1.0"
+CONTRACT_VERSION = "daily-eod-scheduler-systemd-candidate/1.1"
 REVIEW_CONTRACT_VERSION = "daily-eod-scheduler-systemd-review/1.1"
 SERVICE_UNIT_NAME = "whalpha-daily-eod-wake-review.service"
 TIMER_UNIT_NAME = "whalpha-daily-eod-wake-review.timer"
@@ -40,7 +44,7 @@ class DailyEodSchedulerSystemdCandidateV1(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    contract_version: Literal["daily-eod-scheduler-systemd-candidate/1.0"] = (
+    contract_version: Literal["daily-eod-scheduler-systemd-candidate/1.1"] = (
         CONTRACT_VERSION
     )
     config_id: str = Field(
@@ -51,7 +55,7 @@ class DailyEodSchedulerSystemdCandidateV1(BaseModel):
     host: Literal["dell5820"]
     user: Literal["hui"]
     repository_root: str
-    branch: Literal["main"]
+    branch: Literal["main", "detached"]
     implementation_revision: str
     data_root: str
     entrypoint: str
@@ -82,12 +86,20 @@ class DailyEodSchedulerSystemdCandidateV1(BaseModel):
         python_launcher = Path(self.python_launcher)
         python_executable = Path(self.python_executable)
         unit_root = Path(self.user_unit_root)
+        expected_python_launcher = (
+            repository / ".venv/bin/python"
+            if self.branch == "main"
+            else APPROVED_PYTHON_LAUNCHER
+        )
+        runtime_path_valid = self.branch == "main" or repository == (
+            APPROVED_RUNTIME_PARENT / f"revision={self.implementation_revision}"
+        )
         if (
             not repository.is_absolute()
             or data_root != APPROVED_CANONICAL_DATA_ROOT
             or entrypoint
             != repository / "scripts/admin/plan-daily-eod-scheduler.sh"
-            or python_launcher != repository / ".venv/bin/python"
+            or python_launcher != expected_python_launcher
             or not python_executable.is_absolute()
             or unit_root != Path("/home/hui/.config/systemd/user")
             or not _is_safe_unit_path(repository)
@@ -95,6 +107,7 @@ class DailyEodSchedulerSystemdCandidateV1(BaseModel):
             or not _is_safe_unit_path(python_launcher)
             or not _is_safe_unit_path(python_executable)
             or not _is_revision(self.implementation_revision)
+            or not runtime_path_valid
             or self.calendar_expressions != CALENDAR_EXPRESSIONS
             or not _is_fingerprint(self.service_unit_sha256)
             or not _is_fingerprint(self.timer_unit_sha256)
@@ -154,6 +167,7 @@ def build_scheduler_systemd_candidate(
     repository_root: Path,
     implementation_revision: str,
     python_executable: Path,
+    checkout_mode: Literal["main", "detached"] = "main",
     activation_candidate_enabled: bool = False,
 ) -> DailyEodSchedulerSystemdCandidateV1:
     base: dict[str, object] = {
@@ -162,13 +176,17 @@ def build_scheduler_systemd_candidate(
         "host": "dell5820",
         "user": "hui",
         "repository_root": str(repository_root),
-        "branch": "main",
+        "branch": checkout_mode,
         "implementation_revision": implementation_revision,
         "data_root": str(APPROVED_CANONICAL_DATA_ROOT),
         "entrypoint": str(
             repository_root / "scripts/admin/plan-daily-eod-scheduler.sh"
         ),
-        "python_launcher": str(repository_root / ".venv/bin/python"),
+        "python_launcher": str(
+            repository_root / ".venv/bin/python"
+            if checkout_mode == "main"
+            else APPROVED_PYTHON_LAUNCHER
+        ),
         "python_executable": str(python_executable),
         "installation_scope": "user",
         "user_unit_root": "/home/hui/.config/systemd/user",
@@ -233,12 +251,33 @@ def review_scheduler_systemd_candidate(
         repository_root,
         command_runner=command_runner,
     )
-    if not _is_revision(revision) or branch != "main" or status:
+    checkout_mode: Literal["main", "detached"]
+    if branch == "main":
+        checkout_mode = "main"
+    elif branch == "":
+        checkout_mode = "detached"
+    else:
         raise DailyEodSchedulerSystemdError(
-            "scheduler systemd review requires clean pinned main"
+            "scheduler systemd review requires main or detached checkout"
+        )
+    if (
+        not _is_revision(revision)
+        or status
+        or (
+            checkout_mode == "detached"
+            and repository_root
+            != APPROVED_RUNTIME_PARENT / f"revision={revision}"
+        )
+    ):
+        raise DailyEodSchedulerSystemdError(
+            "scheduler systemd review requires clean pinned checkout"
         )
     entrypoint = repository_root / "scripts/admin/plan-daily-eod-scheduler.sh"
-    python_launcher = repository_root / ".venv/bin/python"
+    python_launcher = (
+        repository_root / ".venv/bin/python"
+        if checkout_mode == "main"
+        else APPROVED_PYTHON_LAUNCHER
+    )
     python_executable = Path(sys.executable).resolve()
     if (
         entrypoint.is_symlink()
@@ -267,6 +306,7 @@ def review_scheduler_systemd_candidate(
         repository_root=repository_root,
         implementation_revision=revision,
         python_executable=python_executable,
+        checkout_mode=checkout_mode,
         activation_candidate_enabled=activation_candidate_enabled,
     )
     service = render_service_unit(candidate)
@@ -398,7 +438,8 @@ def _service_unit(values: dict[str, object]) -> str:
             f"{values['entrypoint']} --data-root {values['data_root']} "
             "--verify-dell-runtime "
             f"--expected-revision {values['implementation_revision']} "
-            f"--expected-python-executable {values['python_executable']}",
+            f"--expected-python-executable {values['python_executable']} "
+            f"--expected-checkout-mode {values['branch']}",
             "Environment=PYTHONDONTWRITEBYTECODE=1",
             "UMask=0077",
             "NoNewPrivileges=true",
@@ -574,5 +615,5 @@ def _is_revision(value: object) -> bool:
 
 def _is_safe_unit_path(path: Path) -> bool:
     return path.is_absolute() and all(
-        character.isalnum() or character in "/._-" for character in str(path)
+        character.isalnum() or character in "/._-=" for character in str(path)
     )

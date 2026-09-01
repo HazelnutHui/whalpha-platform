@@ -176,6 +176,15 @@ def test_runtime_verification_requires_paired_exact_revision() -> None:
         cli.main(
             ["--data-root", str(DATA_ROOT), "--expected-python-executable", python]
         )
+    with pytest.raises(SystemExit):
+        cli.main(
+            [
+                "--data-root",
+                str(DATA_ROOT),
+                "--expected-checkout-mode",
+                "detached",
+            ]
+        )
 
 
 def test_runtime_verification_requires_clean_dell_main(monkeypatch, tmp_path) -> None:
@@ -219,4 +228,78 @@ def test_runtime_verification_requires_clean_dell_main(monkeypatch, tmp_path) ->
             expected_revision=revision,
             expected_python_executable=Path(sys.executable).resolve(),
             command_runner=dirty_runner,
+        )
+
+
+def test_runtime_verification_accepts_only_exact_detached_runtime(
+    monkeypatch, tmp_path
+) -> None:
+    revision = "b" * 40
+    runtime_parent = tmp_path / "runtime"
+    repository = runtime_parent / f"revision={revision}"
+    repository.mkdir(parents=True)
+    monkeypatch.setattr(cli, "APPROVED_RUNTIME_PARENT", runtime_parent)
+    monkeypatch.setattr(cli, "_source_repository_root", lambda: repository)
+    monkeypatch.setattr(cli.socket, "gethostname", lambda: "dell5820")
+    monkeypatch.setattr(
+        cli.pwd,
+        "getpwuid",
+        lambda _uid: SimpleNamespace(pw_name="hui"),
+    )
+
+    def detached_runner(command, **_kwargs):
+        output = revision if "rev-parse" in command else ""
+        return subprocess.CompletedProcess(command, 0, stdout=output, stderr="")
+
+    cli._verify_dell_runtime(
+        expected_revision=revision,
+        expected_python_executable=Path(sys.executable).resolve(),
+        expected_checkout_mode="detached",
+        command_runner=detached_runner,
+    )
+
+    unexpected = runtime_parent / "unexpected"
+    unexpected.mkdir()
+    monkeypatch.setattr(
+        cli,
+        "_source_repository_root",
+        lambda: unexpected,
+    )
+    with pytest.raises(cli.DailyEodSchedulerError, match="path mismatch"):
+        cli._verify_dell_runtime(
+            expected_revision=revision,
+            expected_python_executable=Path(sys.executable).resolve(),
+            expected_checkout_mode="detached",
+            command_runner=detached_runner,
+        )
+
+
+def test_runtime_verification_rejects_branch_in_detached_mode(
+    monkeypatch, tmp_path
+) -> None:
+    revision = "c" * 40
+    runtime_parent = tmp_path / "runtime"
+    repository = runtime_parent / f"revision={revision}"
+    repository.mkdir(parents=True)
+    monkeypatch.setattr(cli, "APPROVED_RUNTIME_PARENT", runtime_parent)
+    monkeypatch.setattr(cli, "_source_repository_root", lambda: repository)
+    monkeypatch.setattr(cli.socket, "gethostname", lambda: "dell5820")
+    monkeypatch.setattr(
+        cli.pwd,
+        "getpwuid",
+        lambda _uid: SimpleNamespace(pw_name="hui"),
+    )
+
+    def branch_runner(command, **_kwargs):
+        output = revision if "rev-parse" in command else (
+            "main" if "branch" in command else ""
+        )
+        return subprocess.CompletedProcess(command, 0, stdout=output, stderr="")
+
+    with pytest.raises(cli.DailyEodSchedulerError, match="clean pinned detached"):
+        cli._verify_dell_runtime(
+            expected_revision=revision,
+            expected_python_executable=Path(sys.executable).resolve(),
+            expected_checkout_mode="detached",
+            command_runner=branch_runner,
         )

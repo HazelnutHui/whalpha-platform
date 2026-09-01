@@ -80,6 +80,7 @@ def test_candidate_is_exact_read_only_and_default_disabled(tmp_path) -> None:
     assert (
         f"--expected-python-executable {Path(sys.executable).resolve()}" in service
     )
+    assert "--expected-checkout-mode main" in service
     assert "--review-enabled-candidate" not in service
     assert "NoNewPrivileges=true" in service
     assert "ProtectSystem=strict" in service
@@ -170,6 +171,58 @@ def test_linger_ready_candidate_still_requires_separate_installation(tmp_path) -
     assert review.reason_code == (
         "enabled_candidate_requires_separate_installation_review"
     )
+
+
+def test_detached_runtime_candidate_uses_fixed_runtime_and_shared_python(
+    monkeypatch, tmp_path
+) -> None:
+    runtime_parent = tmp_path / "runtime"
+    root = runtime_parent / f"revision={REVISION}"
+    entrypoint = root / "scripts/admin/plan-daily-eod-scheduler.sh"
+    entrypoint.parent.mkdir(parents=True)
+    entrypoint.write_text("#!/usr/bin/env bash\n", encoding="utf-8")
+    entrypoint.chmod(0o755)
+    python_launcher = tmp_path / "canonical/.venv/bin/python"
+    python_launcher.parent.mkdir(parents=True)
+    python_launcher.symlink_to(Path(sys.executable).resolve())
+    monkeypatch.setattr(systemd, "APPROVED_RUNTIME_PARENT", runtime_parent)
+    monkeypatch.setattr(systemd, "APPROVED_PYTHON_LAUNCHER", python_launcher)
+
+    def detached_runner(command, **_kwargs):
+        if command[0] == "/usr/bin/git":
+            output = REVISION if "rev-parse" in command else ""
+        elif command[:2] == ["/usr/bin/systemd", "--version"]:
+            output = "systemd 255 (test)\n"
+        elif command[:3] == [
+            "/usr/bin/systemctl",
+            "--user",
+            "is-system-running",
+        ]:
+            output = "running\n"
+        elif command[0] == "/usr/bin/loginctl":
+            output = "yes\n"
+        elif command[:2] == ["/usr/bin/systemd-analyze", "calendar"]:
+            output = "Normalized form: test\n"
+        else:  # pragma: no cover
+            raise AssertionError(command)
+        return SimpleNamespace(stdout=output)
+
+    review = systemd.review_scheduler_systemd_candidate(
+        config_id="dell-systemd-detached-runtime",
+        repository_root=root,
+        activation_candidate_enabled=True,
+        hostname_reader=lambda: "dell5820",
+        user_reader=lambda: "hui",
+        command_runner=detached_runner,
+    )
+    candidate = systemd.candidate_from_review(review)
+
+    assert candidate.branch == "detached"
+    assert candidate.repository_root == str(root)
+    assert candidate.python_launcher == str(python_launcher)
+    assert "--expected-checkout-mode detached" in review.service_unit
+    assert review.installation_performed is False
+    assert review.activation_performed is False
 
 
 def test_degraded_user_manager_remains_available_for_repair_review(tmp_path) -> None:

@@ -20,6 +20,9 @@ from tip_api.services.daily_eod_scheduler import (
     DailyEodSchedulerError,
     plan_daily_eod_scheduler_wake,
 )
+from tip_api.services.daily_eod_scheduler_runtime_plan import (
+    APPROVED_RUNTIME_PARENT,
+)
 from tip_api.services.market_calendar import MarketCalendarError
 
 
@@ -33,6 +36,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--verify-dell-runtime", action="store_true")
     parser.add_argument("--expected-revision")
     parser.add_argument("--expected-python-executable", type=Path)
+    parser.add_argument(
+        "--expected-checkout-mode",
+        choices=("main", "detached"),
+    )
     args = parser.parse_args(argv)
     if not args.data_root.is_absolute():
         parser.error("--data-root must be absolute")
@@ -40,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
         not args.verify_dell_runtime
         and args.expected_revision is None
         and args.expected_python_executable is None
+        and args.expected_checkout_mode is None
     ) or (
         args.verify_dell_runtime
         and args.expected_revision is not None
@@ -62,6 +70,7 @@ def main(argv: list[str] | None = None) -> int:
                 _verify_dell_runtime(
                     expected_revision=args.expected_revision,
                     expected_python_executable=args.expected_python_executable,
+                    expected_checkout_mode=args.expected_checkout_mode or "main",
                 )
             repository = CanonicalEodReadRepository(args.data_root)
             sessions = repository.list_session_index()
@@ -119,9 +128,10 @@ def _verify_dell_runtime(
     *,
     expected_revision: str,
     expected_python_executable: Path,
+    expected_checkout_mode: str = "main",
     command_runner: CommandRunner = subprocess.run,
 ) -> None:
-    """Fail closed unless this is clean Dell main at the pinned revision."""
+    """Fail closed unless Dell runs the exact clean planned checkout."""
 
     root = _source_repository_root()
     if (
@@ -135,6 +145,12 @@ def _verify_dell_runtime(
         or Path(sys.executable).resolve() != expected_python_executable.resolve()
     ):
         raise DailyEodSchedulerError("scheduler runtime host identity mismatch")
+    if expected_checkout_mode not in {"main", "detached"}:
+        raise DailyEodSchedulerError("scheduler checkout mode is invalid")
+    if expected_checkout_mode == "detached" and root != (
+        APPROVED_RUNTIME_PARENT / f"revision={expected_revision}"
+    ):
+        raise DailyEodSchedulerError("scheduler detached runtime path mismatch")
     commands = (
         ["/usr/bin/git", "--no-optional-locks", "-C", str(root), "rev-parse", "HEAD"],
         [
@@ -169,9 +185,10 @@ def _verify_dell_runtime(
         raise DailyEodSchedulerError(
             "scheduler runtime repository identity is unavailable"
         ) from exc
-    if revision != expected_revision or branch != "main" or status:
+    expected_branch = "main" if expected_checkout_mode == "main" else ""
+    if revision != expected_revision or branch != expected_branch or status:
         raise DailyEodSchedulerError(
-            "scheduler runtime requires clean pinned main revision"
+            f"scheduler runtime requires clean pinned {expected_checkout_mode} revision"
         )
 
 

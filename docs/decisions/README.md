@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0115](0115-bind-systemd-review-to-the-immutable-runtime.md): Verify and render exact detached-runtime scheduler service candidates without installing them.
+
 - [ADR 0114](0114-run-the-read-only-scheduler-from-an-immutable-worktree.md): Separate the read-only scheduler from moving `main` with an exact detached Dell worktree.
 
 - [ADR 0113](0113-treat-degraded-user-systemd-as-review-available.md): Permit exact repair review when the reachable user manager is degraded by a failed pinned oneshot.

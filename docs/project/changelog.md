@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-09-01 — Bind scheduler verification to the immutable runtime
+
+- Accepted ADR 0115 and advanced the systemd candidate to 1.1 with explicit
+  `main` or `detached` checkout mode.
+- Detached verification requires the exact revision-derived runtime path,
+  detached HEAD, clean worktree, exact commit and canonical Python executable;
+  the expected mode is rendered into the service invocation.
+- Main-mode compatibility remains. No runtime was created and no service,
+  timer, `/data`, credential, network, publication or deployment state changed.
+- Full backend regression passed: 1,936 tests with two unchanged deprecation
+  warnings.
+
 ## 2026-09-01 — Plan an immutable Dell scheduler runtime
 
 - Accepted ADR 0114 and added

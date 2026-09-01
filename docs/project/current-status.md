@@ -183,7 +183,10 @@ exact installed pin stale again. ADR 0114 therefore defines a deterministic V1
 plan for a detached exact-commit Dell runtime. The planner itself creates no
 worktree, changes no systemd state, reads no data or credential, and grants no
 installation authority. Runtime creation, verification and timer migration
-remain unperformed.
+remain unperformed. ADR 0115 now adds the missing repository support: the
+runtime verifier and systemd candidate 1.1 accept an explicitly expected
+detached checkout only at the exact revision-derived runtime path. Main-mode
+compatibility remains, and no host state changed.
 
 ADR 0081 now adds the repository-only Pipeline Scheduler V2 planning boundary.
 It combines scheduler plan 1.1 with a fully fingerprinted same-session

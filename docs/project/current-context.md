@@ -39,7 +39,9 @@ that service to an exact detached Dell worktree so ordinary development commits
 cannot invalidate the next wake. No runtime worktree has been created and no
 service or timer has been migrated under that plan. Runtime creation,
 post-creation verification and systemd migration remain separate future
-custody transitions.
+custody transitions. ADR 0115 now makes repository runtime verification and
+systemd candidate 1.1 explicitly detached-aware; this is code readiness, not
+evidence that the planned runtime exists or that installed unit bytes changed.
 
 ## Formal local state
 
