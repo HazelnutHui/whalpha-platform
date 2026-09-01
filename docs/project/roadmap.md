@@ -31,11 +31,11 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   with zero requests/writes. ADR 0113 removes the resulting degraded-manager
   review deadlock. The exact read-only unit rebind and controlled start are now
   complete, but a later documentation commit demonstrated that binding the
-  service to moving `main` repeats the same failure. ADR 0114 now plans an
-  immutable detached-worktree runtime without creating it. Next separately
-  create and verify that exact runtime; ADR 0115 now supports rendering its
-  runtime-bound unit candidate. Migrate the timer only after exact
-  authorization. Then review one
+  service to moving `main` repeats the same failure. ADR 0114 planned an
+  immutable detached-worktree runtime. That runtime and its runtime-bound
+  service candidate are now created,
+  verified and `review_ready`. Migrate the service binding only after exact
+  authorization and perform one controlled read-only start. Then review one
   2026-08-31 data transition; the timer remains review-only and invokes no
   coordinator.
 - Automation design: ADR 0081's repository-only Pipeline Scheduler V2 and
@@ -48,8 +48,8 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   diagnosis is complete. Next validate one natural timer wake, then design a
   separately operator-approved disposition. ADR 0114's immutable runtime plan
   is complete and ADR 0115 closes the detached verification/rendering code
-  gap; creation, live verification and installed runtime binding remain
-  separate.
+  gap. Exact runtime creation and live verification are complete; installed
+  runtime binding remains separate.
 - Research data: keep formulas frozen until permission-cleared point-in-time
   membership, lifecycle, corporate-action, and adjustment evidence support a
   chronological 252-session minimum. ADR 0086 now completes the physical Daily

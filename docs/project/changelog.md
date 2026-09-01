@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-01 — Create and verify the immutable scheduler runtime
+
+- The exact fingerprint-bound runtime plan was separately authorized and
+  created as a detached Git worktree at revision
+  `fe90cd4d105620a67ad1104bac3cb426586ad29f`.
+- Post-creation inspection proved the exact revision, detached HEAD, clean
+  worktree, runtime-local imports, executable entrypoint, canonical Python
+  resolution and detached runtime verification. Runtime custody was tightened
+  to owner-only directories/files without changing Git content.
+- A network- and write-free systemd candidate 1.1 review returned
+  `review_ready`: service SHA-256
+  `0e96fc999ea858ff753f570de5c8821c6ea0c1357d62b7518c3ffd8ece3b98ab`;
+  unchanged timer SHA-256
+  `19347d553ad3300c01a03f56337bd31ee9bd9e0b7e16b05b95b58b983512da0b`.
+- No service or timer was changed or started. No `/data`, credential, provider,
+  publication or deployment action occurred.
+
 ## 2026-09-01 — Bind scheduler verification to the immutable runtime
 
 - Accepted ADR 0115 and advanced the systemd candidate to 1.1 with explicit

@@ -36,12 +36,16 @@ The installed read-only scheduler service is presently revision-pinned to an
 earlier clean `main` commit and therefore rejects the newer canonical `main`
 fail closed. ADR 0114 now defines a deterministic, write-free plan for moving
 that service to an exact detached Dell worktree so ordinary development commits
-cannot invalidate the next wake. No runtime worktree has been created and no
-service or timer has been migrated under that plan. Runtime creation,
-post-creation verification and systemd migration remain separate future
-custody transitions. ADR 0115 now makes repository runtime verification and
-systemd candidate 1.1 explicitly detached-aware; this is code readiness, not
-evidence that the planned runtime exists or that installed unit bytes changed.
+cannot invalidate the next wake. The separately authorized runtime now exists
+at exact detached revision `fe90cd4d105620a67ad1104bac3cb426586ad29f` and
+passed clean-checkout, path, entrypoint, Python and runtime-import verification.
+Its tree is owner-only. ADR 0115's network- and write-free systemd candidate
+1.1 review is `review_ready`, with service SHA-256
+`0e96fc999ea858ff753f570de5c8821c6ea0c1357d62b7518c3ffd8ece3b98ab`
+and unchanged timer SHA-256
+`19347d553ad3300c01a03f56337bd31ee9bd9e0b7e16b05b95b58b983512da0b`.
+The installed service still has its earlier stale `main` binding; migration
+and a controlled runtime start remain separate future custody transitions.
 
 ## Formal local state
 
