@@ -1234,6 +1234,11 @@ accessible; request count was four and data-write/response-retention counts
 were zero. The latter three used `limit=1`. This does not clear inactive-
 security/lifecycle coverage, pagination, source permission or Pilot authority.
 
+ADR 0111 now implements a separately authorized inactive-security lifecycle
+coverage probe. It is limited to two 1,000-row pages for one historical anchor,
+retains aggregate counts only, and cannot claim complete lifecycle evidence or
+authorize acquisition. Seven simulated tests pass; no real request has run.
+
 ## Verification entry point
 
 Run the local, credential-free report from the repository root:

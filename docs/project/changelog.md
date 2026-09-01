@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-09-01 — Inactive-security lifecycle coverage probe boundary
+
+- Added an exact-revision, exact-date two-page inactive All Tickers probe with
+  same-host/path pagination enforcement and 15-second serial pacing.
+- Output contains aggregate status/field-presence counts only; no response body,
+  ticker or identifier is retained, and no data or Production state is written.
+- Added ADR 0111, contract documentation and seven simulated tests. No real
+  request has run under this boundary.
+- Full backend regression passed: 1,912 tests with two unchanged deprecation
+  warnings.
+
 ## 2026-08-31 — Historical endpoint entitlement probe boundary
 
 - Added a four-request, exact-session Massive technical capability probe for

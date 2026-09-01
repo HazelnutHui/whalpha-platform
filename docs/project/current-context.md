@@ -1054,6 +1054,11 @@ retained bodies and zero writes. Fingerprint is
 Inactive/lifecycle coverage, pagination, historical depth, permission and the
 Historical Pilot remain unverified or unauthorized.
 
+ADR 0111 adds the next exact-review boundary: one historical `active=false`
+anchor, at most two 1,000-row pages, same-host/path pagination, aggregate
+lifecycle-field counts only, no retained identifiers/body and zero writes. It
+is simulation-tested; no real lifecycle probe has run.
+
 ## Cross-device continuity
 
 - Windows already has its own dedicated passwordless SSH key and saved Dell

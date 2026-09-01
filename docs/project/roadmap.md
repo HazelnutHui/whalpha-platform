@@ -53,6 +53,8 @@ reversal, defensive rotation, fundamentals, or option-expression results.
   Daily, active Tickers, Splits and Dividends. Next review inactive-Ticker and
   lifecycle coverage before preparing any Historical Pilot; do not infer full
   coverage from the deliberately limited endpoint checks.
+  ADR 0111 now implements that next bounded inactive-Tickers review at a
+  two-page ceiling. It is simulation-tested but has not made a real request.
 - Research mechanics: ADR 0103 now freezes and synthetic-tests the exact
   chronological split, boundary exclusions, all 24 combinations, same-session
   eligible-leader controls, and delayed underlying-stock labels. Do not connect
