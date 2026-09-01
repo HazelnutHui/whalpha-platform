@@ -231,6 +231,27 @@ all contract bindings remain. A read-only full validation of the active
 Snapshot 1.11 / Dashboard 2.8 release with 32 detail shards took 5.40 seconds.
 These measurements changed no `/data` or Production state.
 
+## 2026-09-01 Snapshot completion-index result
+
+ADR 0118 removes two full historical Parquet scans that were used only to
+discover the latest completed session dates. The canonical completion index
+still verifies each partition's bounded directory, completion manifest,
+session/schema/status fields, symlink boundary, and required files. The chosen
+current and previous partitions are then read and validated in full by the
+unchanged Dashboard calculation.
+
+On the exact same 2026-08-31 Activation, active Market Intelligence, Strategy
+Channel, and Visual Context inputs, deployed source `44b052419be8` completed
+Snapshot candidate plus approval-plan construction in 251.79 seconds. The
+indexed path completed in 121.43 seconds, a 130.36-second or 51.8% reduction.
+All business payloads were byte-identical; Market Overview also matched after
+excluding its deliberately different generation/freshness timestamps.
+
+A separately measured same-process Activation reuse prototype reached 119.65
+seconds, only 1.5% beyond the indexed result. It was removed because that small
+gain did not justify coupling the Activation and MI formal readers. No
+Production state changed during any benchmark.
+
 ## 2026-08-27 deterministic process-parallel result
 
 ADR 0028 adds bounded 1–8 worker execution for independent full-session

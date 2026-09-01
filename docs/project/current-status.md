@@ -107,6 +107,11 @@ file-set, SHA-256, contract, Oracle, session, Universe, or lineage gates. The
 real 2026-08-31 prior-audit read measured 28.18 seconds versus the recorded
 133.871 seconds; active 32-shard Snapshot validation measured 5.40 seconds.
 The next complete daily run must measure the end-to-end effect.
+ADR 0118 also replaces two all-history EOD scans used only for Snapshot date
+selection with the existing bounded completion index. The current and previous
+input partitions still receive full validation. The real 8/31 Snapshot
+candidate-and-plan path measured 121.43 seconds versus 251.79 seconds on the
+deployed source, with exact business-output equivalence.
 
 The repository daily planner/executor now governs eleven ordered offline daily
 stages: Phase 1a, incremental Phase 1b, Candidate, Entry Geometry, ETF

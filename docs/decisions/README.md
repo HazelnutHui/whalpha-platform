@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0118](0118-use-the-completion-index-for-current-snapshot-session-selection.md): Select the two current Snapshot sessions from the bounded completion index, then fully validate only the partitions actually consumed.
+
 - [ADR 0117](0117-reuse-finalized-candidate-evidence-and-parse-snapshots-once.md): Reuse exact finalized Candidate bytes for daily append inputs and parse each Snapshot artifact once per full validation.
 
 - [ADR 0116](0116-quarantine-low-ratio-stable-identity-collisions.md): Permit only a bounded low ratio of fully quarantined stable-identity conflicts without choosing a winner.
@@ -156,3 +158,4 @@ Each ADR should include:
 - [0115: Bind systemd Review to the Immutable Runtime](0115-bind-systemd-review-to-the-immutable-runtime.md)
 - [0116: Quarantine Low-Ratio Stable-Identity Collisions](0116-quarantine-low-ratio-stable-identity-collisions.md)
 - [0117: Reuse Finalized Candidate Evidence and Parse Snapshots Once](0117-reuse-finalized-candidate-evidence-and-parse-snapshots-once.md)
+- [0118: Use the Completion Index for Current Snapshot Session Selection](0118-use-the-completion-index-for-current-snapshot-session-selection.md)

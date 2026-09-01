@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-01 — Bound Snapshot session discovery to the completion index
+
+- Accepted ADR 0118. Snapshot Overview and CLI freshness now select session
+  dates through the canonical completion index instead of fully reconstructing
+  all historical Parquet partitions twice. Current and previous input
+  partitions still receive the unchanged complete validation.
+- On identical real 2026-08-31 inputs, deployed source took 251.79 seconds and
+  the indexed path took 121.43 seconds, a 51.8% reduction. Business payloads
+  were exact across both outputs.
+- A same-process Activation reuse prototype saved only another 1.78 seconds
+  and was removed to preserve simpler independent reader boundaries.
+- Focused Snapshot/Overview regression passed 42 tests; the full backend
+  regression passed 1,939 tests with two unchanged dependency deprecation
+  warnings.
+- No `/data`, pointer, provider, scheduler, publication, bundle, OCI, frontend,
+  formula, parameter, Universe, or contract change was made.
+
 ## 2026-09-01 — Remove duplicate daily Candidate and Snapshot validation work
 
 - Accepted ADR 0117. The daily Candidate append now rehashes the complete

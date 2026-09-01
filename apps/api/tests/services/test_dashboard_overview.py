@@ -59,6 +59,14 @@ class FakeRepo(EodReadRepository):
             raise EodSessionNotFoundError("missing") from exc
 
 
+class IndexedFakeRepo(FakeRepo):
+    def list_session_index(self):
+        return tuple(sorted(self.sessions))
+
+    def list_sessions(self):
+        raise AssertionError("the bounded completion index should be preferred")
+
+
 def service(current, previous):
     activated=datetime(2026,8,15,tzinfo=UTC); sha="a"*64
     records=(
@@ -72,6 +80,14 @@ def service(current, previous):
         activation,
         clock=lambda: datetime(2026, 8, 15, 18, tzinfo=UTC),
     )
+
+
+def test_latest_session_pair_prefers_bounded_completion_index():
+    repository = IndexedFakeRepo({PREVIOUS: (), CURRENT: ()})
+    query_service = EodMarketDataQueryService(repository)
+    overview_service = DashboardOverviewService(query_service, object())
+
+    assert overview_service.get_latest_session_pair() == (CURRENT, PREVIOUS)
 
 
 def base_rows():

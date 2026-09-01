@@ -18,9 +18,10 @@ reversal, defensive rotation, fundamentals, or option-expression results.
 
 - Operational: preserve the complete controlled 2026-08-31 deployment as the
   active baseline. ADR 0117 reduces the real prior-Candidate read from 133.871
-  to 28.18 seconds; next measure one complete daily chain before selecting the
-  next performance hotspot. Later source revisions do not inherit publication
-  or OCI authorization.
+  to 28.18 seconds, and ADR 0118 reduces the real Snapshot candidate/plan path
+  from 251.79 to 121.43 seconds. Next measure one complete daily chain before
+  selecting another performance hotspot. Later source revisions do not inherit
+  publication or OCI authorization.
 - Reliability: the first default-off scheduler-wake plan is complete and
   chooses the oldest missing XNYS session in about 2.8 seconds on current Dell
   state. The default-off one-transition bridge and five-scenario synthetic

@@ -471,6 +471,24 @@ def test_cli_rejects_naked_apply_and_approval_arguments(capsys):
         assert error.value.code == 2
 
 
+def test_cli_freshness_prefers_bounded_completion_index(monkeypatch):
+    class IndexedRepository:
+        def __init__(self, root):
+            self.root = root
+
+        def list_session_index(self):
+            return (date(2026, 8, 28), date(2026, 8, 31))
+
+        def list_sessions(self):
+            raise AssertionError("freshness must not reconstruct historical sessions")
+
+    monkeypatch.setattr(cli, "CanonicalEodReadRepository", IndexedRepository)
+
+    freshness = cli._formal_freshness()
+
+    assert freshness.actual_latest_completed_session == date(2026, 8, 31)
+
+
 def test_cli_current_freshness_cannot_be_spoofed_by_generated_at(monkeypatch, tmp_path, capsys):
     root, legacy, candidate, _ = _setup(monkeypatch, tmp_path)
     manifest = snapshot.validate_snapshot_release(candidate)

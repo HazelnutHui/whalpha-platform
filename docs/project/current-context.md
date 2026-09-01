@@ -17,6 +17,10 @@ from 133.871 seconds to 28.18 seconds while preserving its exact immutable
 identity and append inputs. Snapshot validation now parses each contract file
 once per complete validation; the active 32-shard release validated in 5.40
 seconds. The next complete daily chain must supply the end-to-end measurement.
+ADR 0118 additionally reduces real 8/31 Snapshot candidate and plan construction
+from 251.79 to 121.43 seconds by selecting dates from the canonical completion
+index and fully validating only the current/previous partitions actually used.
+Business payloads remained exact; `/data` and Production were unchanged.
 
 This is the authoritative compact handoff for new Codex tasks and new devices.
 It records current facts and their evidence boundary. Product history remains

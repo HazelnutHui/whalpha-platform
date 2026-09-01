@@ -234,8 +234,10 @@ def main(argv: list[str]|None=None) -> int:
 
 def _formal_freshness():
     from tip_api.services.market_calendar import ExchangeCalendar,evaluate_market_data_freshness
-    sessions=CanonicalEodReadRepository(ROOT).list_sessions()
-    actual=sorted(sessions,key=lambda item:item.session_date)[-1].session_date
+    sessions=CanonicalEodReadRepository(ROOT).list_session_index()
+    if not sessions:
+        raise DashboardSnapshotPublicationError("canonical EOD session index is empty")
+    actual=sorted(sessions)[-1]
     return evaluate_market_data_freshness(calendar=ExchangeCalendar(),actual_latest_completed_session=actual,checked_at=datetime.now(UTC))
 
 
