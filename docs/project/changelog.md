@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-02 — Chain bounded historical batches to the exact target
+
+- Added a finite Dell-local continuous controller and shell entrypoint so one
+  explicit start can run through the remaining 300-session EOD/Identity target
+  without manual restarts every 20 dates.
+- Preserved the 20-session internal ceiling, one shared serial provider limiter,
+  per-date atomic Apply/formal reread, canonical resume authority and ADR 0122
+  transient-retry limits.
+- Added flushed revision-bound JSON checkpoints after every completed batch,
+  final aggregate completion, safe partial-batch stop evidence, zero-progress
+  rejection and a target-derived finite loop bound.
+- Added simulated cross-batch, already-complete, failure-resume, CLI redaction,
+  shell and provider-boundary regression coverage. No provider request,
+  `/data` write, analytics, publication, bundle or deployment occurred during
+  implementation and testing.
+
 ## 2026-09-02 — Bound transient recovery inside historical batches
 
 - Advanced the Historical Backfill result contract to 1.1 and added at most

@@ -255,9 +255,16 @@ pagination, quality, custody, inventory, plan, Apply, and reread failures still
 stop immediately. Exhaustion emits safe structured progress and the failed
 session, then exits nonzero; it does not schedule another invocation.
 
-This source change does not alter an already-running service. A service started
-from pre-ADR-0122 `main` retains the prior zero-retry behavior until a separate
-reviewed runtime transition.
+ADR 0123 adds a finite continuous controller above that batch runner. One
+external start can now chain healthy batches until the exact target is
+complete. The 20-session ceiling remains inside the process, every completed
+batch flushes a revision-bound checkpoint, and the same provider transport and
+serial limiter are reused. A true failure still stops the process and requires
+diagnosis; there is no unbounded daemon or automatic restart after exhaustion.
+
+The last pre-ADR-0122 service completed normally at its 20-session ceiling.
+Later continuous execution must start from a clean revision containing ADRs
+0122 and 0123; running source is never changed in place.
 
 ## Historical Pilot proposal (superseded by the completed Pilot)
 

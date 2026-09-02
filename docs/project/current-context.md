@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-02T07:35:08Z
+Operational state verified at: 2026-09-02T09:09:53Z
 
 Repository development context updated at: 2026-09-02 UTC
 
@@ -13,12 +13,14 @@ duplicate business keys and zero orphan references. Its historical post-Pilot
 inventory was 858 files / 655,639,204 bytes at fingerprint
 `f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`.
 
-Subsequent bounded batches are extending that canonical interval backward. A
-read-only observation at 2026-09-02T07:35:08Z found the current clean-main
-service active and canonical EOD/Identity at 133 contiguous sessions from
-2026-02-20 through 2026-08-31. This is an in-progress checkpoint; it is not a
-fresh whole-inventory fingerprint or a completed 300-session claim. Active
-analytics and OCI were not changed by this historical acquisition.
+Subsequent bounded batches extended that canonical interval backward. The last
+pre-ADR-0122 service reached its exact 20-session ceiling and exited
+successfully at 2026-09-02T08:27:43Z. A read-only observation at
+2026-09-02T09:09:53Z found 147 contiguous canonical EOD sessions from
+2026-01-30 through 2026-08-31, with 2026-01-29 next and 153 sessions remaining.
+This is a canonical-session-index checkpoint, not a fresh whole-inventory
+fingerprint or a completed 300-session claim. Active analytics and OCI were not
+changed by this historical acquisition.
 
 ADR 0120 records the user's explicit direction that absent Massive written
 permission no longer blocks Dell-local history acquisition; the unverified
@@ -32,8 +34,10 @@ zero-retry rule in worktree source: timeout and provider-unavailable failures
 may retry the same date twice after 30 and 90 seconds, every request attempt is
 counted, and exhaustion emits safe structured resume evidence. 429/other HTTP,
 data, quality, custody, inventory, plan, Apply and reread failures still stop
-immediately. The currently running clean-main service predates ADR 0122 and was
-not modified in place.
+immediately. ADR 0123 adds a finite continuous controller above the bounded
+runner. It retains 20-session revision-bound checkpoints and one shared serial
+limiter while removing manual starts between successful batches. At this
+checkpoint it is tested worktree source pending a clean-main runtime transition.
 
 Repository source now also links the Candidate detail facts into one bilingual
 five-step evidence path: Market context, registered ETF price proxy, stock
@@ -129,7 +133,7 @@ custody/contracts after deployment.
 
 | Boundary | Active verified value |
 | --- | --- |
-| Canonical EOD | 133 sessions, 2026-02-20 through 2026-08-31 at the 2026-09-02T07:35:08Z in-progress checkpoint |
+| Canonical EOD | 147 sessions, 2026-01-30 through 2026-08-31 at the 2026-09-02T09:09:53Z completed-batch checkpoint |
 | Latest EOD | 2026-08-31, 9,939 rows |
 | EOD content fingerprint | `bf047e2654ee64be6ecc7a828486d9655fcc21a8a5ac07c45647fe17cb581011` |
 | EOD Parquet SHA-256 | `103d1cbeb3e6c535a4c695d4c324db8b7f0b8d96364446d01d21e69024b2abf0` |

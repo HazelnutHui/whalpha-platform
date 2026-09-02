@@ -163,3 +163,4 @@ Each ADR should include:
 - [0120: Allow Dell-Local Massive History Without Written Permission](0120-allow-dell-local-massive-history-without-written-permission.md)
 - [0121: Run History Newest-to-Oldest with Canonical Resume](0121-run-history-newest-to-oldest-with-canonical-resume.md)
 - [0122: Bound Transient Retries Inside Historical Batches](0122-bound-transient-retries-inside-historical-batches.md)
+- [0123: Chain Bounded History Batches to a Finite Target](0123-chain-bounded-history-batches-to-a-finite-target.md)
