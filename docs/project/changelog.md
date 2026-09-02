@@ -15,6 +15,12 @@
   shell and provider-boundary regression coverage. No provider request,
   `/data` write, analytics, publication, bundle or deployment occurred during
   implementation and testing.
+- Fast-forwarded the three reviewed branch commits to clean `main` at
+  `e7d3cf3bdf6ac4eda97a965133c3c4e84343dd7f` after 1,970 API tests passed.
+  Started one transient user service at 2026-09-02T09:31:19Z for the exact
+  300-session target from the 147-session checkpoint. Immediate verification
+  found it active/running; no analytics, publication, bundle or OCI deployment
+  is part of that service.
 
 ## 2026-09-02 — Bound transient recovery inside historical batches
 

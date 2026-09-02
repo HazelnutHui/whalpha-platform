@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-02T09:09:53Z
+Operational state verified at: 2026-09-02T09:31:20Z
 
 Repository development context updated at: 2026-09-02 UTC
 
@@ -36,8 +36,14 @@ counted, and exhaustion emits safe structured resume evidence. 429/other HTTP,
 data, quality, custody, inventory, plan, Apply and reread failures still stop
 immediately. ADR 0123 adds a finite continuous controller above the bounded
 runner. It retains 20-session revision-bound checkpoints and one shared serial
-limiter while removing manual starts between successful batches. At this
-checkpoint it is tested worktree source pending a clean-main runtime transition.
+limiter while removing manual starts between successful batches. Revision
+`e7d3cf3bdf6ac4eda97a965133c3c4e84343dd7f` passed 1,970 API tests and was
+fast-forwarded to clean `main`. The transient user unit
+`whalpha-historical-backfill-continuous-20260902-01.service` started from that
+revision at 2026-09-02T09:31:19Z with target 300, internal batch size 20 and
+the 147-session canonical checkpoint; immediate verification found it
+active/running. The unit is collected after completion, while its journal
+retains each flushed checkpoint and final result.
 
 Repository source now also links the Candidate detail facts into one bilingual
 five-step evidence path: Market context, registered ETF price proxy, stock

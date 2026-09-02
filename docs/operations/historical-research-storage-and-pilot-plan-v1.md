@@ -266,6 +266,15 @@ The last pre-ADR-0122 service completed normally at its 20-session ceiling.
 Later continuous execution must start from a clean revision containing ADRs
 0122 and 0123; running source is never changed in place.
 
+The first continuous execution started at 2026-09-02T09:31:19Z from clean
+revision `e7d3cf3bdf6ac4eda97a965133c3c4e84343dd7f` under transient user unit
+`whalpha-historical-backfill-continuous-20260902-01.service`. Its exact target
+is 300 sessions, internal batch size is 20, and its starting canonical boundary
+is 147 sessions from 2026-01-30 through 2026-08-31 with 2026-01-29 next. It was
+active/running at immediate post-start verification. The unit is collected
+after completion; use its retained journal checkpoints and the canonical
+reader rather than unit-file existence as completion evidence.
+
 ## Historical Pilot proposal (superseded by the completed Pilot)
 
 The following preregistered ceiling and gates are retained as the review basis

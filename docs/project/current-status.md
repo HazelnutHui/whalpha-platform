@@ -21,9 +21,13 @@ direction; it does not claim provider permission. ADR 0122 adds two bounded
 same-session retries for transport timeout/provider-unavailable failures while
 leaving every other failure fail-stop. ADR 0123 adds one finite continuous
 controller that retains 20-session internal checkpoints but removes manual
-starts between healthy batches. The controller is repository source pending a
-clean-main runtime transition. Lifecycle/terminal, membership, action,
-adjustment and Historical Coverage families still block research readiness.
+starts between healthy batches. Clean revision
+`e7d3cf3bdf6ac4eda97a965133c3c4e84343dd7f` is now running the exact
+300-session target from the 147-session checkpoint under the transient user
+unit `whalpha-historical-backfill-continuous-20260902-01.service`; it started at
+2026-09-02T09:31:19Z and was active/running at post-start verification.
+Lifecycle/terminal, membership, action, adjustment and Historical Coverage
+families still block research readiness.
 
 ## Current product
 
