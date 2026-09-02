@@ -37,6 +37,10 @@
 
 This directory is the project knowledge base. It separates confirmed facts from proposals and deferred work.
 
+## Research
+
+- [Professional Quantitative Research Action Framework V1](research/professional-quantitative-research-action-framework-v1.md): standalone, source-neutral manual covering point-in-time data, feature engineering, labels, backtesting, costs, anti-overfitting, portfolio construction, options research, promotion gates, monitoring, and retirement. A [PDF edition](research/professional-quantitative-research-action-framework-v1.pdf) is maintained beside the source.
+
 ## Product
 
 - [Market Regime & Opportunities V1](product/market-regime-opportunity-map-v1.md): Transparent regime, registered ETF relationships, opportunity stages, risk modes, and validation design.
