@@ -2,7 +2,8 @@
 
 ## Status
 
-Accepted
+Accepted; zero-retry consequence amended by
+[ADR 0122](0122-bound-transient-retries-inside-historical-batches.md)
 
 ## Date
 
@@ -49,6 +50,8 @@ writers remain the only mutation implementations.
 - A crash after Identity but before EOD resumes that same date and does not
   fetch or rewrite Identity again.
 - A crash after a frozen package reuses its formally reread bytes.
-- There is no automatic retry; a failed invocation stops for diagnosis.
+- At this decision boundary there was no automatic retry. ADR 0122 later
+  permits only two bounded transient transport retries inside the same exact
+  session and invocation; every other failure remains fail-stop.
 - Full-inventory hashing remains intentionally conservative and adds offline
   overhead. It may be optimized later without weakening exact pre-state binds.

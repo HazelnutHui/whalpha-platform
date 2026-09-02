@@ -6,6 +6,7 @@ import argparse
 import json
 import subprocess
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
 from tip_api.providers.massive.credential import (
@@ -14,7 +15,9 @@ from tip_api.providers.massive.credential import (
 )
 from tip_api.providers.massive.transport import MassiveUrllibTransport
 from tip_api.services.historical_backfill_batch_runner import (
+    CONTRACT_VERSION,
     HistoricalBackfillBatchRunnerError,
+    HistoricalBackfillBatchStoppedError,
     run_historical_backfill_batch,
 )
 from tip_api.services.historical_backfill_planner import DEFAULT_TARGET_SESSIONS
@@ -42,6 +45,34 @@ def main(argv: list[str] | None = None) -> int:
             maximum_sessions=args.maximum_sessions,
             target_session_count=args.target_session_count,
         )
+    except HistoricalBackfillBatchStoppedError as exc:
+        print(
+            json.dumps(
+                {
+                    "contract_version": CONTRACT_VERSION,
+                    "status": "stopped_transient_retries_exhausted",
+                    "implementation_revision": revision,
+                    "failed_session": exc.failed_session.isoformat(),
+                    "failure_code": exc.failure_code,
+                    "completed_session_count": len(exc.completed_sessions),
+                    "completed_sessions": [
+                        asdict(item) for item in exc.completed_sessions
+                    ],
+                    "external_request_count": exc.external_request_count,
+                    "transient_retry_count": exc.transient_retry_count,
+                    "transient_failure_count": exc.transient_failure_count,
+                    "safe_resume_from_canonical": True,
+                    "automatic_retry": False,
+                    "analytics_execution_count": 0,
+                    "publication_count": 0,
+                    "deployment_count": 0,
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            ),
+            file=sys.stderr,
+        )
+        return 1
     except (MassiveCredentialFileError, OSError, RuntimeError, ValueError) as exc:
         print(
             json.dumps(

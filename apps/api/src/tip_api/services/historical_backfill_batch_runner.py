@@ -5,10 +5,14 @@ from __future__ import annotations
 import json
 import os
 import stat
-from dataclasses import asdict, dataclass
+import time
+from dataclasses import asdict, dataclass, replace
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
-from typing import Literal
+from typing import Callable, Literal
+
+from pydantic import SecretStr
 
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.instrument_master_snapshot import (
@@ -27,15 +31,26 @@ from tip_api.providers.massive.same_day_catchup import (
     read_catchup_approval_plan_evidence,
     read_fetch_package_evidence,
 )
-from tip_api.providers.massive.transport import MassiveHttpTransport
+from tip_api.providers.massive.transport import (
+    MassiveHttpTransport,
+    MassiveJson,
+    MassiveParams,
+    MassiveTransportTimeoutError,
+    MassiveTransportUnavailableError,
+)
 from tip_api.services.historical_backfill_planner import (
     DEFAULT_TARGET_SESSIONS,
     select_next_historical_backfill_session,
 )
 
 
-CONTRACT_VERSION = "historical-research-backfill-batch-result/1.0"
+CONTRACT_VERSION = "historical-research-backfill-batch-result/1.1"
 MAXIMUM_SESSIONS_PER_INVOCATION = 20
+DEFAULT_TRANSIENT_RETRY_DELAYS_SECONDS = (30, 90)
+MAXIMUM_TRANSIENT_RETRIES_PER_SESSION = 2
+MAXIMUM_TRANSIENT_RETRY_DELAY_SECONDS = 5 * 60
+
+TransientFailureCode = Literal["transport_timeout", "transport_unavailable"]
 
 
 class HistoricalBackfillBatchRunnerError(RuntimeError):
@@ -57,6 +72,33 @@ class HistoricalBackfillSessionResultV1:
     eod_status: str
     canonical_session_count_after: int
     canonical_first_session_after: str
+    provider_request_attempt_count: int
+    transient_retry_count: int
+    transient_failure_codes: tuple[TransientFailureCode, ...]
+
+
+class HistoricalBackfillBatchStoppedError(HistoricalBackfillBatchRunnerError):
+    """A bounded transient retry sequence stopped with resumable evidence."""
+
+    def __init__(
+        self,
+        *,
+        failed_session: date,
+        failure_code: TransientFailureCode,
+        completed_sessions: tuple[HistoricalBackfillSessionResultV1, ...],
+        external_request_count: int,
+        transient_retry_count: int,
+        transient_failure_count: int,
+    ) -> None:
+        self.failed_session = failed_session
+        self.failure_code = failure_code
+        self.completed_sessions = completed_sessions
+        self.external_request_count = external_request_count
+        self.transient_retry_count = transient_retry_count
+        self.transient_failure_count = transient_failure_count
+        super().__init__(
+            "historical backfill stopped after bounded transient retries"
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -68,6 +110,8 @@ class HistoricalBackfillBatchResultV1:
     status: str
     next_session: str | None
     external_request_count: int
+    transient_retry_count: int
+    transient_retry_delays_seconds: tuple[int, ...]
     production_session_count: int
     analytics_execution_count: int
     publication_count: int
@@ -86,6 +130,10 @@ def run_historical_backfill_batch(
     maximum_sessions: int,
     target_session_count: int = DEFAULT_TARGET_SESSIONS,
     rate_limiter: FixedIntervalRateLimiter | None = None,
+    transient_retry_delays_seconds: tuple[
+        int, ...
+    ] = DEFAULT_TRANSIENT_RETRY_DELAYS_SECONDS,
+    sleep: Callable[[float], None] = time.sleep,
 ) -> HistoricalBackfillBatchResultV1:
     """Acquire and apply at most ``maximum_sessions`` adjacent history dates."""
 
@@ -93,9 +141,13 @@ def run_historical_backfill_batch(
         raise HistoricalBackfillBatchRunnerError(
             "maximum sessions must be between one and twenty"
         )
+    retry_delays = _validate_transient_retry_delays(
+        transient_retry_delays_seconds
+    )
     root = _validate_data_root(data_root)
     packages = _prepare_package_root(package_root)
     limiter = rate_limiter or FixedIntervalRateLimiter()
+    counting_transport = _RequestCountingTransport(transport)
     completed: list[HistoricalBackfillSessionResultV1] = []
     for _ in range(maximum_sessions):
         current = CanonicalEodReadRepository(root).list_session_index()
@@ -105,14 +157,59 @@ def run_historical_backfill_batch(
         )
         if target is None:
             break
+        session_request_start = counting_transport.request_count
+        failure_codes: list[TransientFailureCode] = []
+        for attempt_number in range(len(retry_delays) + 1):
+            try:
+                session_result = _process_session(
+                    config=config,
+                    transport=counting_transport,
+                    data_root=root,
+                    package_root=packages,
+                    session_date=target,
+                    rate_limiter=limiter,
+                )
+            except (
+                MassiveTransportTimeoutError,
+                MassiveTransportUnavailableError,
+            ) as exc:
+                failure_code = _transient_failure_code(exc)
+                failure_codes.append(failure_code)
+                if attempt_number == len(retry_delays):
+                    raise HistoricalBackfillBatchStoppedError(
+                        failed_session=target,
+                        failure_code=failure_code,
+                        completed_sessions=tuple(completed),
+                        external_request_count=counting_transport.request_count,
+                        transient_retry_count=(
+                            sum(item.transient_retry_count for item in completed)
+                            + len(failure_codes)
+                            - 1
+                        ),
+                        transient_failure_count=(
+                            sum(
+                                len(item.transient_failure_codes)
+                                for item in completed
+                            )
+                            + len(failure_codes)
+                        ),
+                    ) from exc
+                sleep(retry_delays[attempt_number])
+                continue
+            break
+        observed_request_attempts = (
+            counting_transport.request_count - session_request_start
+        )
+        if observed_request_attempts == 0:
+            observed_request_attempts = (
+                session_result.provider_request_attempt_count
+            )
         completed.append(
-            _process_session(
-                config=config,
-                transport=transport,
-                data_root=root,
-                package_root=packages,
-                session_date=target,
-                rate_limiter=limiter,
+            replace(
+                session_result,
+                provider_request_attempt_count=observed_request_attempts,
+                transient_retry_count=len(failure_codes),
+                transient_failure_codes=tuple(failure_codes),
             )
         )
     final_sessions = CanonicalEodReadRepository(root).list_session_index()
@@ -128,8 +225,12 @@ def run_historical_backfill_batch(
         status="target_complete" if next_session is None else "batch_complete",
         next_session=next_session.isoformat() if next_session is not None else None,
         external_request_count=sum(
-            item.identity_request_count + item.eod_request_count for item in completed
+            item.provider_request_attempt_count for item in completed
         ),
+        transient_retry_count=sum(
+            item.transient_retry_count for item in completed
+        ),
+        transient_retry_delays_seconds=retry_delays,
         production_session_count=len(completed),
         analytics_execution_count=0,
         publication_count=0,
@@ -266,7 +367,61 @@ def _process_session(
         eod_status="reused" if eod_exists else "published_and_verified",
         canonical_session_count_after=len(sessions),
         canonical_first_session_after=sessions[0].isoformat(),
+        provider_request_attempt_count=identity_requests + eod_requests,
+        transient_retry_count=0,
+        transient_failure_codes=(),
     )
+
+
+class _RequestCountingTransport:
+    """Count every provider call, including failed transient attempts."""
+
+    def __init__(self, delegate: MassiveHttpTransport) -> None:
+        self._delegate = delegate
+        self.request_count = 0
+
+    def get_json(
+        self,
+        path: str,
+        *,
+        params: MassiveParams,
+        api_key: SecretStr,
+        timeout_seconds: Decimal,
+        base_url: str,
+    ) -> MassiveJson:
+        self.request_count += 1
+        return self._delegate.get_json(
+            path,
+            params=params,
+            api_key=api_key,
+            timeout_seconds=timeout_seconds,
+            base_url=base_url,
+        )
+
+
+def _validate_transient_retry_delays(values: tuple[int, ...]) -> tuple[int, ...]:
+    if (
+        not isinstance(values, tuple)
+        or len(values) > MAXIMUM_TRANSIENT_RETRIES_PER_SESSION
+        or any(
+            type(value) is not int
+            or value <= 0
+            or value > MAXIMUM_TRANSIENT_RETRY_DELAY_SECONDS
+            for value in values
+        )
+    ):
+        raise HistoricalBackfillBatchRunnerError(
+            "transient retry delays exceed the bounded policy"
+        )
+    return values
+
+
+def _transient_failure_code(
+    error: MassiveTransportTimeoutError | MassiveTransportUnavailableError,
+) -> TransientFailureCode:
+    if isinstance(error, MassiveTransportTimeoutError):
+        return "transport_timeout"
+    return "transport_unavailable"
 
 
 def _ensure_plan(

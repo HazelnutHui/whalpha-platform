@@ -237,11 +237,37 @@ It orders batches from the current-history boundary backward, so every applied
 batch extends one contiguous interval. It does not run the batches, and it
 does not weaken the Pilot's source permission or lifecycle gates.
 
-## Proposed first live pilot after gates clear
+## Current resumable batch operation
 
-The first pilot should cover three historical sessions and representative
-action/lifecycle cases discovered from the approved date range. Proposed hard
-ceiling: 80 serial requests, zero automatic retry.
+The representative Pilot is complete and ADR 0121's Dell-local batch runner is
+the active acquisition mechanism for the remaining EOD/Identity history. Each
+invocation selects only the XNYS session adjacent to the canonical left
+boundary, processes Identity before unadjusted EOD, freezes source packages,
+binds plans to the exact inventory, applies atomically, and formally rereads
+the result. Canonical state and formally readable packages are the only resume
+authority.
+
+ADR 0122 adds a narrowly bounded transient-failure policy to repository source.
+Only transport timeout and transport-unavailable errors may retry, at most
+twice for the same date after default 30- and 90-second delays. Every actual
+provider attempt is counted. HTTP response errors including 429, data,
+pagination, quality, custody, inventory, plan, Apply, and reread failures still
+stop immediately. Exhaustion emits safe structured progress and the failed
+session, then exits nonzero; it does not schedule another invocation.
+
+This source change does not alter an already-running service. A service started
+from pre-ADR-0122 `main` retains the prior zero-retry behavior until a separate
+reviewed runtime transition.
+
+## Historical Pilot proposal (superseded by the completed Pilot)
+
+The following preregistered ceiling and gates are retained as the review basis
+for the completed 2026-07-14 through 2026-07-16 Pilot. They are historical
+evidence, not a statement that the Pilot is still awaiting authorization.
+
+The proposed first Pilot was to cover three historical sessions and
+representative action/lifecycle cases discovered from the approved date range.
+Its proposed hard ceiling was 80 serial requests with zero automatic retry.
 
 - at most 3 Grouped Daily requests;
 - at most 60 active All Tickers pages using the existing 20-page/session cap;
@@ -254,7 +280,7 @@ ceiling: 80 serial requests, zero automatic retry.
 Fetch writes only a hashed package below `/tmp`. Offline plan and validation
 must complete before any separately approved canonical Apply.
 
-## Pilot success gates
+## Historical Pilot success gates
 
 - exact request count and endpoint allowlist match the approved plan;
 - every page completes without pagination loops or host drift;
@@ -275,14 +301,16 @@ Even a successful pilot cannot prove complete merger, spinoff, successor, or
 terminal-outcome coverage. It cannot activate performance evaluation. Those
 gaps require an additional source or a formally accepted quarantine boundary.
 
-## Current blockers
+## Remaining limitations after the Pilot
 
-- Massive individual-use/derived-use and guest/friend compatibility is not
-  cleared.
-- Current account entitlement for historical/corporate-action endpoints is not
-  live-verified.
+- Massive individual-use/derived-use and guest/friend compatibility remains
+  unverified and therefore limits publication claims, not the user-directed
+  Dell-local acquisition allowed by ADR 0120.
+- Grouped Daily and active point-in-time Tickers access has been demonstrated
+  by the Pilot. Small exact probes also reached Splits and Dividends. Inactive
+  Tickers pagination exceeded the six-page census ceiling and is incomplete.
 - Merger/spinoff/successor and terminal-outcome source remains missing.
-- Provider response mapping, action-factor reconciliation fixtures, and the
-  read-only exact planner are complete for the network-free repository
-  boundary. Equal-capability source permission, account entitlement, lifecycle-source
-  coverage, and an exact live-pilot authorization remain before acquisition.
+- The running 300-session batch acquires only EOD and active Identity. It does
+  not complete membership, corporate-action, lifecycle, adjustment, terminal
+  outcome, or Historical Coverage families and therefore cannot activate
+  strategy performance research by itself.

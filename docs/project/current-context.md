@@ -1,30 +1,39 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-01 UTC
+Operational state verified at: 2026-09-02T07:35:08Z
 
-Repository development context updated at: 2026-09-01 UTC
+Repository development context updated at: 2026-09-02 UTC
 
 ADR 0119 added the exact 300-session Historical Research Backfill Plan. The
-first 2026-07-14 through 2026-07-16 representative Pilot is now complete:
-every date fetched 14 complete active-Identity pages plus one unadjusted
-Grouped Daily response, then passed separate offline plans, exact inventory
-CAS, atomic Apply and formal reread. Canonical EOD/Identity now contains 35
-contiguous sessions from 2026-07-14 through 2026-08-31. The three new EOD
-partitions contain 9,843 / 9,852 / 9,854 rows with zero duplicate business keys
-and zero orphan references. The post-Pilot inventory is 858 files / 655,639,204
-bytes at fingerprint
-`f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`,
-with zero symlinks or publication residue. Active analytics and OCI remain
-unchanged on 2026-08-31.
+first 2026-07-14 through 2026-07-16 representative Pilot completed with 14
+active-Identity pages plus one unadjusted Grouped Daily response per date,
+separate offline plans, exact inventory CAS, atomic Apply and formal reread.
+The three Pilot EOD partitions contain 9,843 / 9,852 / 9,854 rows with zero
+duplicate business keys and zero orphan references. Its historical post-Pilot
+inventory was 858 files / 655,639,204 bytes at fingerprint
+`f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`.
+
+Subsequent bounded batches are extending that canonical interval backward. A
+read-only observation at 2026-09-02T07:35:08Z found the current clean-main
+service active and canonical EOD/Identity at 133 contiguous sessions from
+2026-02-20 through 2026-08-31. This is an in-progress checkpoint; it is not a
+fresh whole-inventory fingerprint or a completed 300-session claim. Active
+analytics and OCI were not changed by this historical acquisition.
 
 ADR 0120 records the user's explicit direction that absent Massive written
 permission no longer blocks Dell-local history acquisition; the unverified
 permission remains a limitation and grants no automatic OCI/publication right.
 ADR 0121 adds the resumable batch runner. It selects only the session directly
 before the current canonical left boundary, processes Identity before EOD,
-shares one 15-second limiter, reuses formally readable interrupted packages,
-and stops without retry on any failure. The remaining history must execute
-newest-to-oldest so every completed EOD Apply preserves a contiguous inventory.
+shares one 15-second limiter, and reuses formally readable interrupted
+packages. The remaining history must execute newest-to-oldest so every
+completed EOD Apply preserves a contiguous inventory. ADR 0122 amends only its
+zero-retry rule in worktree source: timeout and provider-unavailable failures
+may retry the same date twice after 30 and 90 seconds, every request attempt is
+counted, and exhaustion emits safe structured resume evidence. 429/other HTTP,
+data, quality, custody, inventory, plan, Apply and reread failures still stop
+immediately. The currently running clean-main service predates ADR 0122 and was
+not modified in place.
 
 Repository source now also links the Candidate detail facts into one bilingual
 five-step evidence path: Market context, registered ETF price proxy, stock
@@ -120,7 +129,7 @@ custody/contracts after deployment.
 
 | Boundary | Active verified value |
 | --- | --- |
-| Canonical EOD | 35 sessions, 2026-07-14 through 2026-08-31 |
+| Canonical EOD | 133 sessions, 2026-02-20 through 2026-08-31 at the 2026-09-02T07:35:08Z in-progress checkpoint |
 | Latest EOD | 2026-08-31, 9,939 rows |
 | EOD content fingerprint | `bf047e2654ee64be6ecc7a828486d9655fcc21a8a5ac07c45647fe17cb581011` |
 | EOD Parquet SHA-256 | `103d1cbeb3e6c535a4c695d4c324db8b7f0b8d96364446d01d21e69024b2abf0` |

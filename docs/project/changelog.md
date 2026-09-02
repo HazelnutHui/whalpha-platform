@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-09-02 — Bound transient recovery inside historical batches
+
+- Advanced the Historical Backfill result contract to 1.1 and added at most
+  two same-session retries for transport timeout or provider-unavailable
+  failures, with default 30- and 90-second delays.
+- Counted every provider-call attempt, including failed calls, and added safe
+  structured stop evidence containing completed-session details and the exact
+  resumable failed session when the retry budget is exhausted.
+- Kept 429/other HTTP responses, data, pagination, quality, custody, inventory,
+  plan, Apply and formal-reread failures at zero retry. Added ADR 0122 and
+  regression coverage for recovery, exhaustion, non-retry errors, policy
+  bounds and secret-free CLI output.
+- This is worktree source only. It did not alter the currently running
+  clean-main backfill service, make a provider request, write `/data`, run
+  analytics, publish, bundle, or deploy.
+
+## 2026-09-02 — Establish the professional quantitative research action framework
+
+- Added a standalone, source-neutral action manual for the complete research
+  lifecycle from point-in-time data, feature and label governance through
+  chronological validation, costs, capacity, portfolio construction, shadow
+  operation, monitoring and retirement.
+- Separated stock signal research from option-expression research, fixed the
+  role of cross-asset variables as a separately validated condition layer, and
+  made paid-data selection depend on measurable uncertainty reduction rather
+  than a free-source constraint.
+- Included practical research, data-source, model-report and promotion
+  templates plus a staged strategy queue. The maintained Markdown source and
+  print-ready PDF are documentation artifacts only; they change no runtime,
+  data, model, publication or deployment state.
+
 ## 2026-09-01 — Complete the three-session Historical Pilot
 
 - Applied the user's ADR 0120 direction: missing written Massive permission no

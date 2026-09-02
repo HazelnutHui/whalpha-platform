@@ -1,20 +1,27 @@
 # Current Status
 
-Status date: 2026-09-01
+Status date: 2026-09-02
 
 This document is the concise current-state summary. Exact publication IDs,
 fingerprints, verification scope, and cross-device handoff are maintained in
 the [authoritative current context](current-context.md). Historical execution
 detail belongs in the [changelog](changelog.md) and dated audits, not here.
 
-ADR 0119's 300-session plan has passed its first three-session live Pilot.
-Canonical EOD and Identity now cover 35 contiguous sessions from 2026-07-14
-through 2026-08-31. ADR 0120 converts missing Massive written permission from a
-Dell-local acquisition blocker into an explicit non-publication limitation by
-the user's direction; it does not claim provider permission. ADR 0121 adds the
-newest-to-oldest, fail-stop and canonical-state-resumable batch runner for the
-remaining history. Lifecycle/terminal, membership, action, adjustment and
-Historical Coverage families still block research readiness.
+ADR 0119's 300-session plan has passed its first three-session live Pilot and
+is now executing through ADR 0121's newest-to-oldest, canonical-state-resumable
+batch runner. A read-only observation at 2026-09-02T07:35:08Z found the current
+clean-main service still running and canonical EOD/Identity at 133 contiguous
+sessions from 2026-02-20 through 2026-08-31. This is an in-progress checkpoint,
+not a completion claim, and may advance after the observation.
+
+ADR 0120 converts missing Massive written permission from a Dell-local
+acquisition blocker into an explicit non-publication limitation by the user's
+direction; it does not claim provider permission. ADR 0122 adds two bounded
+same-session retries for transport timeout/provider-unavailable failures to
+worktree source while leaving every other failure fail-stop. It has not changed
+the already-running clean-main process, which retains the earlier zero-retry
+runtime. Lifecycle/terminal, membership, action, adjustment and Historical
+Coverage families still block research readiness.
 
 ## Current product
 
@@ -100,8 +107,10 @@ relative-performance proxies, never actual fund flow.
   observations. ADR 0116 quarantined its one collision group/two ambiguous
   observations within the 0.1% gate; canonical Identity therefore contains
   9,965 instruments and resolvers and no row for either collision observation.
-- Canonical EOD and EOD-bound Identity are formally aligned across 35 sessions
-  from 2026-07-14 through 2026-08-31.
+- The latest in-progress backfill checkpoint observed 133 contiguous canonical
+  EOD sessions from 2026-02-20 through 2026-08-31. The running batch may advance
+  this count; the 2026-09-01 full-state reconciliation covered the prior
+  35-session Pilot boundary.
 - Latest EOD contains 9,939 rows and binds the same 2026-08-31 Identity logical
   fingerprint.
 - Activation V2 is active with Common Shares as the sole default:
