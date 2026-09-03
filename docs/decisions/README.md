@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0124](0124-exclude-catalog-known-etv-without-inferring-etf.md): Treat catalog-known ETV as unsupported and excluded without inferring ETF or weakening the malformed-data gate.
+
 - [ADR 0118](0118-use-the-completion-index-for-current-snapshot-session-selection.md): Select the two current Snapshot sessions from the bounded completion index, then fully validate only the partitions actually consumed.
 
 - [ADR 0117](0117-reuse-finalized-candidate-evidence-and-parse-snapshots-once.md): Reuse exact finalized Candidate bytes for daily append inputs and parse each Snapshot artifact once per full validation.
@@ -164,3 +166,4 @@ Each ADR should include:
 - [0121: Run History Newest-to-Oldest with Canonical Resume](0121-run-history-newest-to-oldest-with-canonical-resume.md)
 - [0122: Bound Transient Retries Inside Historical Batches](0122-bound-transient-retries-inside-historical-batches.md)
 - [0123: Chain Bounded History Batches to a Finite Target](0123-chain-bounded-history-batches-to-a-finite-target.md)
+- [0124: Exclude Catalog-Known ETV Without Inferring ETF](0124-exclude-catalog-known-etv-without-inferring-etf.md)

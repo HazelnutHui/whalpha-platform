@@ -285,3 +285,42 @@ def test_unit_type_is_rejected():
     )
     assert result.expected_exclusion_count == 1
     assert result.resolved_eligible_count == 0
+
+
+def test_etv_is_an_expected_exclusion_and_never_inferred_to_be_an_etf():
+    result = build_snapshot_from_payloads(
+        payloads=(payload("TESTV", type="ETV"),),
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+
+    assert result.expected_exclusion_count == 1
+    assert result.malformed_rejected_count == 0
+    assert result.eligible_record_count == 0
+    assert result.instruments == ()
+    assert result.resolvers == ()
+    assert result.identities[0].resolution_status is ResolutionStatus.EXCLUDED
+    assert result.identities[0].quality_flags == ("exchange_traded_vehicle",)
+
+
+def test_missing_provider_type_remains_malformed_and_quarantined():
+    record = payload("TESTM")
+    del record["type"]
+
+    result = build_snapshot_from_payloads(
+        payloads=(record,),
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+
+    assert result.expected_exclusion_count == 0
+    assert result.malformed_rejected_count == 1
+    assert result.eligible_record_count == 0
+    assert result.instruments == ()
+    assert result.resolvers == ()
+    assert result.identities[0].resolution_status is ResolutionStatus.REJECTED
+    assert result.identities[0].quality_flags == ("missing_provider_type",)

@@ -7,6 +7,7 @@ import pytest
 
 from tip_api.contracts.market_data.v1 import ResolutionStatus
 from tip_api.contracts.security_classification.v1 import (
+    ClassificationStatus,
     ProviderObservationStatus,
     SecurityForm,
     UniverseDisposition,
@@ -213,6 +214,18 @@ def test_explicit_special_security_codes_are_excluded(code: str, form: SecurityF
     item = build([payload(type=code)], codes=((code, f"{code} description"),)).evidence[0]
     assert item.security_form_evidence is form
     assert item.universe_disposition is UniverseDisposition.EXCLUDED
+
+
+def test_known_unsupported_etv_is_excluded_without_inferring_etf_form() -> None:
+    item = build(
+        [payload(type="ETV")],
+        codes=(("ETV", "Exchange Traded Vehicle"),),
+    ).evidence[0]
+
+    assert item.security_form_evidence is SecurityForm.UNKNOWN
+    assert item.classification_status is ClassificationStatus.EXCLUDED_RESOLVED
+    assert item.universe_disposition is UniverseDisposition.EXCLUDED
+    assert "provider_security_form_excluded" in item.decision_flags
 
 
 def test_adr_and_generic_fund_remain_conservative() -> None:

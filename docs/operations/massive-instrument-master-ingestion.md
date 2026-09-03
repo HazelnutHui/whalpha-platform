@@ -105,7 +105,12 @@ Provider type counts:
 - UNIT: 307
 - WARRANT: 443
 
-`ETV` remains an unknown/malformed provider type pending taxonomy review. The malformed ratio remained below the V1 Candidate Gate.
+At this historical 2026-08-13 execution boundary, `ETV` was treated as an
+unknown/malformed provider type and the malformed ratio remained below the V1
+Candidate Gate. ADR 0124 later resolved the prospective mapping policy:
+catalog-known `ETV` is now an unsupported expected exclusion, without inferring
+ETF or another canonical security form. Completed immutable snapshots are not
+rewritten; missing provider type remains malformed and quarantined.
 
 ## Published Paths
 

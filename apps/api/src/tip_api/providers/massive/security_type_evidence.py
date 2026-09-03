@@ -85,7 +85,14 @@ EXPLICIT_FORMS: dict[str, SecurityForm] = {
     "STRUCT": SecurityForm.STRUCTURED_PRODUCT,
     "SP": SecurityForm.STRUCTURED_PRODUCT,
 }
-EXCLUDED_CODES = frozenset(EXPLICIT_FORMS) - {"CS", "COMMON_STOCK", "ADRC"}
+# Catalog-known codes that are outside the supported equity Universe but whose
+# provider label is not specific enough to infer a canonical SecurityForm.
+KNOWN_UNSUPPORTED_CODES = frozenset({"ETV"})
+EXCLUDED_CODES = (frozenset(EXPLICIT_FORMS) | KNOWN_UNSUPPORTED_CODES) - {
+    "CS",
+    "COMMON_STOCK",
+    "ADRC",
+}
 NAME_REVIEW_TERMS = ("ACQUISITION", "DEPOSITARY", "FUND", "PREFERRED", "RIGHT", "TRUST", "UNIT", "WARRANT")
 
 

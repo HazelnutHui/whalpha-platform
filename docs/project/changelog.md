@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-09-03 — Exclude catalog-known ETV without inferring ETF
+
+- Diagnosed the Historical Research Backfill stop at the 2025-09-09 Identity
+  quality gate: 68 catalog-known `ETV` observations plus 113 missing-type
+  observations had jointly exceeded the unchanged 1% malformed threshold.
+- Added ADR 0124's prospective rule that `ETV` is a known unsupported expected
+  exclusion, while its canonical security form remains unknown and no
+  Instrument, Resolver, or Universe eligibility can be created from it.
+- Kept missing provider type malformed/quarantined and retained every existing
+  quality threshold. Completed immutable historical snapshots are not
+  rewritten.
+
 ## 2026-09-02 — Chain bounded historical batches to the exact target
 
 - Added a finite Dell-local continuous controller and shell entrypoint so one

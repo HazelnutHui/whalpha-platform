@@ -421,7 +421,7 @@ def _type_decision(raw_type: str):
         "WARRANT": "warrant", "WRT": "warrant", "RIGHT": "right", "RIGHTS": "right", "UNIT": "unit",
         "BOND": "bond", "STRUCT": "structured_product", "SP": "structured_product",
         "CEF": "closed_end_fund", "FUND": "fund", "MF": "mutual_fund", "MMF": "money_market_fund",
-        "ETN": "etn", "ETS": "etn", "TRUST": "trust_or_partnership", "LP": "trust_or_partnership", "MLP": "trust_or_partnership",
+        "ETN": "etn", "ETS": "etn", "ETV": "exchange_traded_vehicle", "TRUST": "trust_or_partnership", "LP": "trust_or_partnership", "MLP": "trust_or_partnership",
         "INDEX": "non_equity", "TEST": "test_or_placeholder",
     }
     if raw_type in exclusions:
