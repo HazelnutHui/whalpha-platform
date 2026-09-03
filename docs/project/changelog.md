@@ -11,6 +11,14 @@
 - Kept missing provider type malformed/quarantined and retained every existing
   quality threshold. Completed immutable historical snapshots are not
   rewritten.
+- Passed all 1,973 API tests and three-date offline replay, fast-forwarded clean
+  revision `4d820c7205f090d4d8602435a4da41f400d87261` to `main`, and resumed the
+  finite 300-session process from 245/300 under transient unit
+  `whalpha-historical-backfill-continuous-20260903-02.service`.
+- Formal readers verified the formerly failing 2025-09-09 Identity and its
+  8,836-row EOD partition; canonical history reached 246/300 while the service
+  remained active. No analytics, publication, Snapshot, bundle, or deployment
+  was performed.
 
 ## 2026-09-02 — Chain bounded historical batches to the exact target
 

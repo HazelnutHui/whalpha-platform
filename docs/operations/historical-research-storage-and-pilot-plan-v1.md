@@ -275,6 +275,17 @@ active/running at immediate post-start verification. The unit is collected
 after completion; use its retained journal checkpoints and the canonical
 reader rather than unit-file existence as completion evidence.
 
+That first continuous process advanced to 245 sessions and then failed closed
+at the 2025-09-09 Identity quality gate. ADR 0124 separates catalog-known ETV
+from genuinely malformed missing-type records without inferring ETF or
+changing the 1% gate. After full regression and offline replay, clean revision
+`4d820c7205f090d4d8602435a4da41f400d87261` resumed the exact target under
+`whalpha-historical-backfill-continuous-20260903-02.service` at
+2026-09-03T17:28:30Z. Formal readers verified the formerly failing date's
+Identity and 8,836-row EOD before the process continued to the remaining 54
+sessions. The same canonical-resume, per-date atomicity, serial provider and
+no-publication boundaries remain in force.
+
 ## Historical Pilot proposal (superseded by the completed Pilot)
 
 The following preregistered ceiling and gates are retained as the review basis

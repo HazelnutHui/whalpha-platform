@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-02
+Status date: 2026-09-03
 
 This document is the concise current-state summary. Exact publication IDs,
 fingerprints, verification scope, and cross-device handoff are maintained in
@@ -9,11 +9,11 @@ detail belongs in the [changelog](changelog.md) and dated audits, not here.
 
 ADR 0119's 300-session plan has passed its first three-session live Pilot and
 is executing through ADR 0121's newest-to-oldest, canonical-state-resumable
-batch runner. The last pre-ADR-0122 service completed its exact 20-session
-ceiling successfully at 2026-09-02T08:27:43Z. A read-only observation at
-2026-09-02T09:09:53Z found 147 contiguous canonical EOD sessions from
-2026-01-30 through 2026-08-31; the next session is 2026-01-29 and 153 remain to
-the exact 300-session target.
+batch runner. The first ADR 0123 continuous process advanced canonical history
+from 147 to 245 contiguous sessions, then failed closed while planning
+2025-09-09 Identity: 68 catalog-known `ETV` observations plus 113 observations
+with missing provider type exceeded the unchanged 1% malformed gate when both
+were classified as malformed.
 
 ADR 0120 converts missing Massive written permission from a Dell-local
 acquisition blocker into an explicit non-publication limitation by the user's
@@ -21,11 +21,18 @@ direction; it does not claim provider permission. ADR 0122 adds two bounded
 same-session retries for transport timeout/provider-unavailable failures while
 leaving every other failure fail-stop. ADR 0123 adds one finite continuous
 controller that retains 20-session internal checkpoints but removes manual
-starts between healthy batches. Clean revision
-`e7d3cf3bdf6ac4eda97a965133c3c4e84343dd7f` is now running the exact
-300-session target from the 147-session checkpoint under the transient user
-unit `whalpha-historical-backfill-continuous-20260902-01.service`; it started at
-2026-09-02T09:31:19Z and was active/running at post-start verification.
+starts between healthy batches. ADR 0124 now treats catalog-known `ETV` as an
+unsupported expected exclusion without inferring ETF or another security
+form; missing provider type remains malformed and the 1% gate is unchanged.
+Revision `4d820c7205f090d4d8602435a4da41f400d87261` passed 1,973 API tests,
+three-date offline replay, and a formal 2025-09-09 Identity-plan reread. The
+new transient unit
+`whalpha-historical-backfill-continuous-20260903-02.service` started at
+2026-09-03T17:28:30Z from the 245-session checkpoint. By
+2026-09-03T17:30:16Z, formal readers verified 2025-09-09 Identity (8,864
+Instruments and Resolvers) and EOD (8,836 rows), advancing canonical history to
+246 contiguous sessions from 2025-09-09 through 2026-08-31. The unit remained
+active/running with 54 sessions left to the exact target.
 Lifecycle/terminal, membership, action, adjustment and Historical Coverage
 families still block research readiness.
 

@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-02T09:31:20Z
+Operational state verified at: 2026-09-03T17:30:16Z
 
-Repository development context updated at: 2026-09-02 UTC
+Repository development context updated at: 2026-09-03 UTC
 
 ADR 0119 added the exact 300-session Historical Research Backfill Plan. The
 first 2026-07-14 through 2026-07-16 representative Pilot completed with 14
@@ -13,14 +13,14 @@ duplicate business keys and zero orphan references. Its historical post-Pilot
 inventory was 858 files / 655,639,204 bytes at fingerprint
 `f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`.
 
-Subsequent bounded batches extended that canonical interval backward. The last
-pre-ADR-0122 service reached its exact 20-session ceiling and exited
-successfully at 2026-09-02T08:27:43Z. A read-only observation at
-2026-09-02T09:09:53Z found 147 contiguous canonical EOD sessions from
-2026-01-30 through 2026-08-31, with 2026-01-29 next and 153 sessions remaining.
-This is a canonical-session-index checkpoint, not a fresh whole-inventory
-fingerprint or a completed 300-session claim. Active analytics and OCI were not
-changed by this historical acquisition.
+Subsequent bounded batches extended that canonical interval backward. The
+first ADR 0123 continuous process advanced from 147 to 245 contiguous sessions
+through four complete 20-session checkpoints plus 18 sessions, then failed
+closed while planning 2025-09-09 Identity. Its complete frozen package had
+11,714 records: 68 catalog-known `ETV` observations and 113 missing-type
+observations jointly produced a 1.5452% malformed ratio under the prior mapping
+and exceeded the unchanged 1% gate. No partial 2025-09-09 Identity or EOD
+existed at that stop.
 
 ADR 0120 records the user's explicit direction that absent Massive written
 permission no longer blocks Dell-local history acquisition; the unverified
@@ -44,6 +44,32 @@ revision at 2026-09-02T09:31:19Z with target 300, internal batch size 20 and
 the 147-session canonical checkpoint; immediate verification found it
 active/running. The unit is collected after completion, while its journal
 retains each flushed checkpoint and final result.
+
+ADR 0124 resolves that exact taxonomy boundary without weakening a quality
+gate. The formally retained provider catalog defines `ETV` as “Exchange Traded
+Vehicle” and defines ETF separately, so `ETV` is now a known unsupported
+expected exclusion while `SecurityForm` remains unknown. It cannot create an
+Instrument, Resolver, or Universe member. Missing type remains malformed and
+quarantined, and completed immutable snapshots are not rewritten. Exact
+2025-09-09 offline replay reduced malformed observations to the 113 genuinely
+missing types (0.9647%), excluded all 68 ETV observations, created zero ETV
+Instruments, passed the unchanged gate and produced a formally readable
+Identity plan. Adjacent 2025-09-10 and 2025-09-11 replays reconciled and also
+excluded every ETV observation. All 1,973 API tests passed.
+
+Clean revision `4d820c7205f090d4d8602435a4da41f400d87261` was fast-forwarded to
+`main`. A network-free full historical plan then verified 245 sessions from
+2025-09-10 through 2026-08-31, 55 remaining sessions and inventory fingerprint
+`bd464bd2f98f7a26be144249cb71d5b38709f708653c11e087b7f768c75a3695`.
+The replacement transient unit
+`whalpha-historical-backfill-continuous-20260903-02.service` started at
+2026-09-03T17:28:30Z with the same target, package root and 20-session internal
+batch size. At 2026-09-03T17:30:16Z it was active/running; formal readers had
+already verified 2025-09-09 Identity with 8,864 Instruments and 8,864
+Resolvers, then EOD with 8,836 rows. Canonical history was therefore 246
+contiguous sessions from 2025-09-09 through 2026-08-31, with 54 sessions
+remaining. No analytics, publication, Snapshot, bundle, or OCI deployment is
+part of this acquisition.
 
 Repository source now also links the Candidate detail facts into one bilingual
 five-step evidence path: Market context, registered ETF price proxy, stock
