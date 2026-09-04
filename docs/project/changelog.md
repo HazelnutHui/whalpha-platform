@@ -19,6 +19,11 @@
 - The first real attempt failed closed because date concatenation changed V1's
   whole-history canonical raw-fact order. The final format records exact source
   ordinals and restored exact equality; no comparison gate was relaxed.
+- A separate V1/current-checkpoint sufficiency audit found exact panel,
+  batches, 3,549 states, six risks, and all Primary 1,718 / Secondary 1,831
+  prior-state support rows. Only the cumulative V1 state-history fingerprint
+  differed. It is evidence identity rather than a score/state input, but must
+  receive an explicit chain/version contract before any append cutover.
 - Candidate audit/shadow focused tests passed 27 checks, and all 1,996 backend
   tests passed with the two unchanged dependency warnings.
 - All real work was offline and under `/tmp`, with zero external requests and

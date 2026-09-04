@@ -68,6 +68,14 @@ replace the mature V1 boundary.
   with 855,712 KiB peak RSS and returned the exact two Candidate batches,
   3,549 current state rows, and six risk results. The existing V1 full semantic
   reread took 228.285 seconds and 8,737,080 KiB on the same business state.
+- A separate append-input sufficiency comparison found the source panel,
+  current batches, current state rows, and risk results exact. For Primary
+  1,718 and Secondary 1,831 instruments, the prior-state source session and
+  every numerical/state support row were exact. Only V1's cumulative canonical
+  `state_history_fingerprint` differed when built from the current checkpoint.
+  That fingerprint is embedded evidence in the batch identity; a future chain
+  fingerprint must therefore receive an explicit calculation/parameter
+  version rather than silently reusing V1 semantics.
 - The first real reconstruction correctly rejected a changed ordering in raw
   facts. Preserving each raw fact's exact V1 global ordinal made the second
   proof exact; the comparison was not weakened to unordered equality.

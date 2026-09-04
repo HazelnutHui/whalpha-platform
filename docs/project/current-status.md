@@ -145,8 +145,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
 4. Continue ADR 0130's default-disconnected segmented Candidate proof. The real
    ten-session shadow reconstructed all eight V1 business projections exactly;
    its bounded current read took 16.53 seconds versus 228.285 seconds for V1
-   full semantics. Next prove a current-state/chain append input, recovery, and
-   periodic cold equivalence before considering cutover.
+   full semantics. Current panel, batches, states, risks, and all 1,718/1,831
+   prior-state support rows are exact; only the cumulative V1 history
+   fingerprint requires a new versioned chain identity. Next design that
+   identity, recovery, and periodic cold equivalence before considering
+   cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
 6. Connect the 303-session canonical foundation to a governed point-in-time

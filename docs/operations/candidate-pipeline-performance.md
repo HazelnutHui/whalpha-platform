@@ -386,6 +386,16 @@ Candidate batches, 3,549 state rows, and six risk results. This compares with
 justifies a later append-input prototype; it does not yet replace V1 or prove
 O(current-session) calculation, write, recovery, or publication.
 
+A separate full-V1 versus current-checkpoint comparison completed in 257.46
+seconds and 8,737,524 KiB peak RSS. Source panel, current batches, 3,549 current
+states, and six risks were exact. The Primary 1,718- and Secondary 1,831-row
+prior support sets were also exact, including prior stage, confirmation count,
+and source state-record fingerprint. Only the cumulative V1 state-history
+fingerprint differed. That value does not affect component scores or the state
+runtime, but it is part of the Candidate batch's logical evidence. A fast
+append therefore requires an explicit versioned state-chain identity; changing
+the V1 meaning in place is prohibited.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

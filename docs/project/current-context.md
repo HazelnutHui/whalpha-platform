@@ -220,9 +220,12 @@ separately bounded.
    shadow: all eight V1 business projections reconstructed exactly, and its
    current-checkpoint reader took 16.53 seconds versus 228.285 seconds for V1
    full semantics. V1 remains authoritative until append-input, recovery,
-   periodic cold comparison, and downstream compatibility pass. Measure the
-   next complete daily chain and add reuse, vectorization, or safe process
-   parallelism only where evidence justifies it and outputs remain exact.
+   periodic cold comparison, and downstream compatibility pass. The current
+   checkpoint reproduces all 1,718/1,831 prior-state support rows exactly; only
+   the cumulative V1 history fingerprint needs an explicitly versioned chain
+   identity. Measure the next complete daily chain and add reuse,
+   vectorization, or safe process parallelism only where evidence justifies it
+   and outputs remain exact.
 2. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

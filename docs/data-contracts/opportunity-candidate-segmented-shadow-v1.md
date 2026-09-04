@@ -81,3 +81,11 @@ reader rehashed every segment while parsing only the latest one in 16.53
 seconds and 855,712 KiB peak RSS. It returned two Candidate batches, 3,549
 current state rows, and six current risk results. These measurements establish
 the storage/read boundary only; no daily append or cutover claim follows.
+
+An independent comparison against the complete V1 state ledger showed that
+the latest segment reproduces both Universe support sets, prior stages,
+confirmation counts, and source state-record fingerprints exactly. V1's
+whole-history canonical fingerprint cannot be reproduced from only the latest
+checkpoint. A future append contract must name and version a segmented chain
+fingerprint; the shadow must not place that value into the V1 field while
+claiming unchanged identity.
