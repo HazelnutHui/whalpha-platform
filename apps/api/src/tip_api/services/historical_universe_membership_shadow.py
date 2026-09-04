@@ -8,7 +8,7 @@ from collections import defaultdict
 from dataclasses import dataclass, replace
 from datetime import date, datetime
 from pathlib import Path
-from typing import Literal, Mapping
+from typing import Mapping
 from uuid import UUID
 
 from tip_api.contracts.common import QualityStatus, normalize_utc_datetime
@@ -63,6 +63,12 @@ from tip_api.services.eod_history import (
     fixed_scale_coefficient,
 )
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
+from tip_api.services.historical_identity_rebuild_profile_map import (
+    CURRENT_IDENTITY_REBUILD_PROFILE,
+    PRE_ETV_IDENTITY_REBUILD_PROFILE,
+    HistoricalIdentityRebuildProfile,
+    HistoricalIdentityRebuildProfileBindingV1,
+)
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
 from tip_api.services.security_classification import SUPPORTED_EXCHANGES
 from tip_api.services.universe_membership_reconstruction import (
@@ -73,12 +79,6 @@ from tip_api.services.universe_membership_reconstruction import (
 
 HISTORICAL_METHODOLOGY_VERSION = "provider-form-complete-base-point-in-time-v2"
 MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS = 5
-CURRENT_IDENTITY_REBUILD_PROFILE = "current_v1"
-PRE_ETV_IDENTITY_REBUILD_PROFILE = "pre_etv_governance_v1"
-HistoricalIdentityRebuildProfile = Literal[
-    "current_v1",
-    "pre_etv_governance_v1",
-]
 _LOCALIZABLE_EVIDENCE_FAILURES = frozenset(
     {
         "ambiguous_mapping_nonzero",
@@ -132,6 +132,8 @@ class HistoricalIdentityPackageEquivalence:
 class HistoricalUniverseMembershipShadow:
     reconstruction: UniverseMembershipReconstruction
     source_decisions: tuple[FullBaseDecisionV1, ...]
+    identity_rebuild_profile: HistoricalIdentityRebuildProfile
+    identity_profile_binding_fingerprint: str
     history_descriptor_fingerprint: str
     identity_snapshot_fingerprint: str
     package_manifest_fingerprint: str
@@ -368,12 +370,20 @@ def build_historical_universe_membership_shadow(
     session_date: date,
     catalog_as_of_date: date,
     evaluated_at: datetime,
+    identity_profile_binding: HistoricalIdentityRebuildProfileBindingV1,
     calendar: MarketSessionCalendar | None = None,
     eod_panel: HistoricalUniverseMembershipEodPanel | None = None,
     security_snapshot: CompletedSecurityEvidenceSnapshot | None = None,
 ) -> HistoricalUniverseMembershipShadow:
     """Build one complete, tmp-ready daily ledger without network or data writes."""
 
+    if not isinstance(
+        identity_profile_binding,
+        HistoricalIdentityRebuildProfileBindingV1,
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "historical membership requires a validated Identity profile binding"
+        )
     evaluated_at = normalize_utc_datetime(evaluated_at)
     calendar = calendar or ExchangeCalendar()
     data_root = data_root.resolve(strict=True)
@@ -383,6 +393,7 @@ def build_historical_universe_membership_shadow(
         data_root=data_root,
         package_path=package_path,
         session_date=session_date,
+        rebuild_profile=identity_profile_binding.rebuild_profile,
     )
     if not equivalence.exact_match:
         raise HistoricalUniverseMembershipIdentityMismatchError(
@@ -391,6 +402,12 @@ def build_historical_universe_membership_shadow(
     identity = equivalence.identity
     package = equivalence.package
     rebuilt_identity = equivalence.rebuilt_identity
+    _validate_identity_profile_binding(
+        binding=identity_profile_binding,
+        package_path=package_path,
+        equivalence=equivalence,
+        session_date=session_date,
+    )
     payloads = _flatten_reference_pages(package.pages)
     indexes = build_identity_indexes(
         identities=rebuilt_identity.identities,
@@ -497,6 +514,7 @@ def build_historical_universe_membership_shadow(
                 descriptor.fingerprint,
                 evidence_fingerprint,
                 eod_source_fingerprint,
+                identity_profile_binding.logical_fingerprint,
             }
         )
     )
@@ -531,6 +549,10 @@ def build_historical_universe_membership_shadow(
     return HistoricalUniverseMembershipShadow(
         reconstruction=reconstruction,
         source_decisions=source_decisions,
+        identity_rebuild_profile=identity_profile_binding.rebuild_profile,
+        identity_profile_binding_fingerprint=(
+            identity_profile_binding.logical_fingerprint
+        ),
         history_descriptor_fingerprint=descriptor.fingerprint,
         identity_snapshot_fingerprint=identity.snapshot_content_sha256,
         package_manifest_fingerprint=package.package_manifest_sha256,
@@ -546,6 +568,52 @@ def build_historical_universe_membership_shadow(
         ),
         evidence_quality_gate_failures=evidence_result.quality_gate_failures,
     )
+
+
+def _validate_identity_profile_binding(
+    *,
+    binding: HistoricalIdentityRebuildProfileBindingV1,
+    package_path: Path,
+    equivalence: HistoricalIdentityPackageEquivalence,
+    session_date: date,
+) -> None:
+    package = equivalence.package
+    identity = equivalence.identity
+    source_locator_sha256 = hashlib.sha256(
+        str(package_path.resolve(strict=True)).encode("utf-8")
+    ).hexdigest()
+    if binding.session_date != session_date:
+        raise HistoricalUniverseMembershipShadowError(
+            "historical Identity profile binding session mismatch"
+        )
+    if binding.rebuild_profile != equivalence.rebuild_profile:
+        raise HistoricalUniverseMembershipShadowError(
+            "historical Identity profile binding rebuild profile mismatch"
+        )
+    if (
+        binding.source_locator_sha256 != source_locator_sha256
+        or binding.package_manifest_sha256 != package.package_manifest_sha256
+        or binding.package_content_sha256
+        != package.manifest.package_content_sha256
+        or normalize_utc_datetime(binding.package_fetched_at)
+        != normalize_utc_datetime(package.manifest.fetched_at)
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "historical Identity profile binding package custody mismatch"
+        )
+    if (
+        binding.canonical_snapshot_fingerprint
+        != identity.snapshot_content_sha256
+        or binding.canonical_instrument_fingerprint
+        != identity.instrument_content_sha256
+        or binding.canonical_identity_fingerprint
+        != identity.identity_content_sha256
+        or binding.canonical_resolver_fingerprint
+        != identity.resolver_content_sha256
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "historical Identity profile binding canonical snapshot mismatch"
+        )
 
 
 def _panel_window(

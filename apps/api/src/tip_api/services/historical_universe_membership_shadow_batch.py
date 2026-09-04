@@ -18,6 +18,11 @@ from tip_api.persistence.parquet.security_evidence import (
 )
 from tip_api.persistence.security_evidence import SecurityEvidenceCorruptionError
 from tip_api.providers.massive.same_day_catchup import SameDayCatchupError
+from tip_api.services.historical_identity_rebuild_profile_map import (
+    HistoricalIdentityRebuildProfile,
+    HistoricalIdentityRebuildProfileMapV1,
+    profile_binding_for_session,
+)
 from tip_api.services.historical_universe_membership_shadow import (
     MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS,
     HistoricalUniverseMembershipShadowError,
@@ -41,6 +46,8 @@ class HistoricalUniverseMembershipShadowBatchError(RuntimeError):
 @dataclass(frozen=True, slots=True)
 class HistoricalUniverseMembershipShadowBatchSession:
     session_date: str
+    identity_rebuild_profile: HistoricalIdentityRebuildProfile
+    identity_profile_binding_fingerprint: str
     status: BatchSessionStatus
     failure_code: str | None
     evaluated_base_count: int | None
@@ -54,6 +61,7 @@ class HistoricalUniverseMembershipShadowBatchSession:
 
 @dataclass(frozen=True, slots=True)
 class HistoricalUniverseMembershipShadowBatchResult:
+    identity_profile_map_fingerprint: str
     requested_session_count: int
     completed_session_count: int
     failed_session_count: int
@@ -74,10 +82,15 @@ def run_historical_universe_membership_shadow_batch(
     catalog_as_of_date: date,
     evaluated_at: datetime,
     output_root: Path,
+    identity_profile_map: HistoricalIdentityRebuildProfileMapV1,
     calendar: MarketSessionCalendar | None = None,
 ) -> HistoricalUniverseMembershipShadowBatchResult:
     """Build one to five adjacent shadows with one shared formal EOD panel."""
 
+    if not isinstance(identity_profile_map, HistoricalIdentityRebuildProfileMapV1):
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "batch requires a formally validated Identity profile map"
+        )
     session_calendar = calendar or ExchangeCalendar()
     source_root, target_root, resolved_packages = _validate_batch_paths(
         data_root=data_root,
@@ -85,6 +98,10 @@ def run_historical_universe_membership_shadow_batch(
         package_paths=package_paths,
     )
     sessions = tuple(sorted(resolved_packages))
+    identity_profile_bindings = {
+        session: profile_binding_for_session(identity_profile_map, session)
+        for session in sessions
+    }
     panel = prepare_historical_universe_membership_eod_panel(
         data_root=source_root,
         analysis_sessions=sessions,
@@ -108,6 +125,7 @@ def run_historical_universe_membership_shadow_batch(
                 session_date=session,
                 catalog_as_of_date=catalog_as_of_date,
                 evaluated_at=evaluated_at,
+                identity_profile_binding=identity_profile_bindings[session],
                 calendar=session_calendar,
                 eod_panel=panel,
                 security_snapshot=security_snapshot,
@@ -121,6 +139,12 @@ def run_historical_universe_membership_shadow_batch(
             results.append(
                 HistoricalUniverseMembershipShadowBatchSession(
                     session_date=session.isoformat(),
+                    identity_rebuild_profile=(
+                        identity_profile_bindings[session].rebuild_profile
+                    ),
+                    identity_profile_binding_fingerprint=(
+                        identity_profile_bindings[session].logical_fingerprint
+                    ),
                     status="source_validation_failed",
                     failure_code=_source_failure_code(exc),
                     evaluated_base_count=None,
@@ -148,6 +172,10 @@ def run_historical_universe_membership_shadow_batch(
         results.append(
             HistoricalUniverseMembershipShadowBatchSession(
                 session_date=session.isoformat(),
+                identity_rebuild_profile=shadow.identity_rebuild_profile,
+                identity_profile_binding_fingerprint=(
+                    shadow.identity_profile_binding_fingerprint
+                ),
                 status=published.status,
                 failure_code=None,
                 evaluated_base_count=reconstruction.evaluated_base_count,
@@ -165,6 +193,7 @@ def run_historical_universe_membership_shadow_batch(
         item.status == "source_validation_failed" for item in output
     )
     return HistoricalUniverseMembershipShadowBatchResult(
+        identity_profile_map_fingerprint=identity_profile_map.logical_fingerprint,
         requested_session_count=len(sessions),
         completed_session_count=len(sessions) - failed_count,
         failed_session_count=failed_count,

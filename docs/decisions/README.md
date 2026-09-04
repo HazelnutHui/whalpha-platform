@@ -204,3 +204,4 @@ Each ADR should include:
 - [0133: Reuse Bounded EOD Panels for Membership Shadow Batches](0133-reuse-bounded-eod-panels-for-membership-shadow-batches.md)
 - [0134: Census Historical Identity Package Equivalence Before Reconstruction](0134-census-historical-identity-package-equivalence.md)
 - [0135: Reconstruct Legacy ETV Identity Semantics by Explicit Version](0135-reconstruct-legacy-etv-identity-semantics-by-version.md)
+- [0136: Bind Historical Identity Rebuild Profiles by Fingerprint](0136-bind-historical-identity-rebuild-profile-by-fingerprint.md)

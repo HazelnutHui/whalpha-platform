@@ -7,6 +7,9 @@ from types import SimpleNamespace
 import pytest
 
 from tip_api.services import historical_universe_membership_shadow_batch as module
+from tip_api.services.historical_identity_rebuild_profile_map import (
+    HistoricalIdentityRebuildProfileMapV1,
+)
 from tip_api.services.historical_universe_membership_shadow import (
     HistoricalUniverseMembershipIdentityMismatchError,
 )
@@ -58,6 +61,21 @@ def test_batch_paths_must_be_tmp_disjoint_and_bounded(tmp_path: Path) -> None:
         )
 
 
+def test_batch_requires_a_formally_validated_profile_map(tmp_path: Path) -> None:
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowBatchError,
+        match="formally validated",
+    ):
+        run_historical_universe_membership_shadow_batch(
+            data_root=tmp_path,
+            package_paths={},
+            catalog_as_of_date=FIRST,
+            evaluated_at=NOW,
+            output_root=tmp_path / "output",
+            identity_profile_map=SimpleNamespace(),
+        )
+
+
 def test_batch_reuses_shared_inputs_and_localizes_package_failure(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
@@ -70,6 +88,20 @@ def test_batch_reuses_shared_inputs_and_localizes_package_failure(
     output_root = Path("/tmp") / f"membership-batch-test-{tmp_path.name}"
     panel = SimpleNamespace(session_reads=(1, 2, 3))
     snapshot = object()
+    first_binding = SimpleNamespace(
+        session_date=FIRST,
+        rebuild_profile="current_v1",
+        logical_fingerprint="c" * 64,
+    )
+    second_binding = SimpleNamespace(
+        session_date=SECOND,
+        rebuild_profile="pre_etv_governance_v1",
+        logical_fingerprint="d" * 64,
+    )
+    profile_map = HistoricalIdentityRebuildProfileMapV1.model_construct(
+        bindings=(first_binding, second_binding),
+        logical_fingerprint="e" * 64,
+    )
     calls: list[tuple[str, object]] = []
 
     monkeypatch.setattr(
@@ -98,11 +130,19 @@ def test_batch_reuses_shared_inputs_and_localizes_package_failure(
         calls.append(("build", kwargs["session_date"]))
         assert kwargs["eod_panel"] is panel
         assert kwargs["security_snapshot"] is snapshot
+        expected_binding = (
+            first_binding if kwargs["session_date"] == FIRST else second_binding
+        )
+        assert kwargs["identity_profile_binding"] is expected_binding
         if kwargs["session_date"] == FIRST:
             raise HistoricalUniverseMembershipIdentityMismatchError(
                 "fixture source failure"
             )
-        return SimpleNamespace(reconstruction=reconstruction)
+        return SimpleNamespace(
+            reconstruction=reconstruction,
+            identity_rebuild_profile=second_binding.rebuild_profile,
+            identity_profile_binding_fingerprint=second_binding.logical_fingerprint,
+        )
 
     monkeypatch.setattr(
         module,
@@ -136,9 +176,11 @@ def test_batch_reuses_shared_inputs_and_localizes_package_failure(
         catalog_as_of_date=date(2026, 8, 14),
         evaluated_at=NOW,
         output_root=output_root,
+        identity_profile_map=profile_map,
         calendar=object(),
     )
 
+    assert result.identity_profile_map_fingerprint == "e" * 64
     assert result.status == "completed_with_source_failures"
     assert result.requested_session_count == 2
     assert result.completed_session_count == 1
@@ -150,6 +192,8 @@ def test_batch_reuses_shared_inputs_and_localizes_package_failure(
     ]
     assert result.sessions[0].status == "source_validation_failed"
     assert result.sessions[0].failure_code == "identity_snapshot_mismatch"
+    assert result.sessions[0].identity_rebuild_profile == "current_v1"
+    assert result.sessions[1].identity_rebuild_profile == "pre_etv_governance_v1"
     assert result.sessions[1].logical_fingerprint == "a" * 64
     assert [item[0] for item in calls].count("panel") == 1
     assert [item[0] for item in calls].count("catalog") == 1

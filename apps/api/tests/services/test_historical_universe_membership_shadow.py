@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import hashlib
 import socket
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
+from types import SimpleNamespace
 from uuid import UUID
 
 import pytest
@@ -28,9 +30,15 @@ from tip_api.providers.massive.instrument_master_snapshot import (
     build_snapshot_from_payloads,
 )
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
-from tip_api.services.historical_universe_membership_shadow import (
+from tip_api.services.historical_identity_rebuild_profile_map import (
+    HistoricalIdentityRebuildProfileBindingV1,
     PRE_ETV_IDENTITY_REBUILD_PROFILE,
+    historical_identity_profile_fingerprint,
+)
+from tip_api.services.historical_universe_membership_shadow import (
+    HistoricalUniverseMembershipShadowError,
     _apply_historical_identity_rebuild_profile,
+    _validate_identity_profile_binding,
     _validate_policy_relationship,
     build_complete_point_in_time_source_decisions,
 )
@@ -71,6 +79,62 @@ def test_legacy_etv_profile_changes_only_the_versioned_noninstrument_identity() 
     assert legacy.malformed_rejected_count == current.malformed_rejected_count + 1
     assert dict(legacy.category_counts) == {"malformed": 1}
     assert dict(legacy.unknown_type_counts) == {"ETV": 1}
+
+
+def test_membership_rejects_package_that_differs_from_profile_binding(
+    tmp_path: Path,
+) -> None:
+    package_path = tmp_path / "identity-package"
+    package_path.mkdir()
+    binding_values = {
+        "session_date": SESSION.isoformat(),
+        "rebuild_profile": PRE_ETV_IDENTITY_REBUILD_PROFILE,
+        "source_locator_sha256": hashlib.sha256(
+            str(package_path.resolve()).encode("utf-8")
+        ).hexdigest(),
+        "package_manifest_sha256": "1" * 64,
+        "package_content_sha256": "2" * 64,
+        "package_fetched_at": "2026-09-04T00:00:00Z",
+        "canonical_snapshot_fingerprint": "3" * 64,
+        "canonical_instrument_fingerprint": "4" * 64,
+        "canonical_identity_fingerprint": "5" * 64,
+        "canonical_resolver_fingerprint": "6" * 64,
+    }
+    binding = HistoricalIdentityRebuildProfileBindingV1.model_validate(
+        {
+            **binding_values,
+            "logical_fingerprint": historical_identity_profile_fingerprint(
+                binding_values
+            ),
+        }
+    )
+    equivalence = SimpleNamespace(
+        rebuild_profile=PRE_ETV_IDENTITY_REBUILD_PROFILE,
+        package=SimpleNamespace(
+            package_manifest_sha256="9" * 64,
+            manifest=SimpleNamespace(
+                package_content_sha256="2" * 64,
+                fetched_at=datetime(2026, 9, 4, tzinfo=UTC),
+            ),
+        ),
+        identity=SimpleNamespace(
+            snapshot_content_sha256="3" * 64,
+            instrument_content_sha256="4" * 64,
+            identity_content_sha256="5" * 64,
+            resolver_content_sha256="6" * 64,
+        ),
+    )
+
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowError,
+        match="package custody mismatch",
+    ):
+        _validate_identity_profile_binding(
+            binding=binding,
+            package_path=package_path,
+            equivalence=equivalence,
+            session_date=SESSION,
+        )
 
 
 def iid(number: int) -> UUID:

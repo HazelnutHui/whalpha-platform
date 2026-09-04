@@ -119,8 +119,15 @@ ADR 0135's explicit legacy profile now reconstructs all 221 and mismatches the
 58 current-profile sessions. The two exact sets are disjoint and cover all 279
 retained packages; both identify the same 24 physical gaps. Every retained
 package therefore has one fingerprint-proven accepted profile. This is still
-`/tmp` source readiness—not daily membership or Historical Coverage—and the
-session-to-profile mapping is not yet connected to membership batches.
+`/tmp` source readiness—not daily membership or Historical Coverage.
+
+ADR 0136 now binds all 279 retained sessions in a formally reread owner-only
+map; 58 use `current_v1`, 221 use `pre_etv_governance_v1`, and the same 24
+physical gaps remain unbound. Single and bounded membership paths require this
+map and revalidate package locator/custody/time plus accepted Identity-family
+fingerprints. A repeated real 2025-09-09/10 boundary batch produced identical
+manifests and Parquet bytes under the two correct profiles. Durable custody,
+the 24 gaps, broad daily membership, and Historical Coverage remain open.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
@@ -193,10 +200,10 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. Materialize the fingerprint-proven 279-session profile map and pass it into
-   the completed shared-panel membership path. Keep the 24 physical gaps and
-   durable source custody as separate work before canonical review.
-7. Connect the 303-session canonical foundation to a governed point-in-time
+6. Define and prove durable minimal custody for the 279 profile-bound source
+   packages, keeping the 24 physical gaps separate; then run and reconcile
+   broad disconnected membership batches before any canonical review.
+7. Connect the complete point-in-time foundation to a governed historical
    research dataset and reconcile the 26-session analytics limitation.
 8. Only then begin real preregistered chronological strategy research.
 9. Continue decision-useful visualization in parallel where it does not change

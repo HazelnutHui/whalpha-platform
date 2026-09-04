@@ -27,10 +27,12 @@ from tip_api.providers.massive.same_day_catchup import (
     FetchPackageManifestV1,
     SameDayCatchupError,
 )
-from tip_api.services.historical_universe_membership_shadow import (
+from tip_api.services.historical_identity_rebuild_profile_map import (
     CURRENT_IDENTITY_REBUILD_PROFILE,
     PRE_ETV_IDENTITY_REBUILD_PROFILE,
     HistoricalIdentityRebuildProfile,
+)
+from tip_api.services.historical_universe_membership_shadow import (
     HistoricalUniverseMembershipShadowError,
     inspect_historical_identity_package_equivalence,
 )

@@ -87,14 +87,16 @@ Current membership implementation sequence:
    current-builder mismatches. Together with the 58 current-profile sessions it
    forms a disjoint exact cover of all 279 retained packages; none should be
    reacquired as corrupt.
-5. Bind each retained session to its exact fingerprint-matching profile and
-   pass that explicit map into disconnected membership batches. Never select a
-   profile from session date alone.
-6. Define durable, minimal source custody without copying raw provider bodies,
-   then resolve the 24 physically missing sessions; never project current
-   Activation backward.
-7. Run all accepted-profile-equivalent sessions into disconnected `/tmp` batches, reconcile
-   completeness and timing, then separately review canonical publication.
+5. The owner-only profile map now binds all 279 retained sessions to exact
+   package and accepted-family fingerprints. A repeated real boundary batch
+   crossed current/legacy profiles with byte-identical outputs; no date or
+   operator profile selection remains.
+6. Define durable, minimal source custody without losing the sanitized source
+   facts, then resolve the 24 physically missing sessions separately; never
+   project current Activation backward.
+7. Run all accepted-profile-bound sessions into disconnected `/tmp` batches,
+   reconcile completeness and timing, then separately review canonical
+   publication.
 
 ## Priority 3 — First real strategy research
 

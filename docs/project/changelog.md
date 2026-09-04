@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-09-04 — Bind historical Identity profiles before membership
+
+- Accepted ADR 0136 and added the typed, owner-only
+  `historical-identity-rebuild-profile-map/1.0` contract. The builder formally
+  parses the complete current/legacy census reports, independently recomputes
+  their canonical-session and package-inventory fingerprints, requires one
+  complementary exact profile per retained session, and keeps common missing
+  sessions unbound.
+- The real map binds 279/303 sessions: 58 to `current_v1`, 221 to
+  `pre_etv_governance_v1`, and the same 24 physical gaps to neither. Its
+  276,471-byte owner-only report has physical SHA-256
+  `4fcc1a5eb23c9615e3478ad1b9dd477c906e587cf760cff3ac4b74383030c289`
+  and logical fingerprint
+  `20e8b8f5b360d8a4ad4a78f0add69fb5eb88e1bc3ab5c6059dd87ca1035e0028`.
+- Single-session and bounded membership commands now require the validated map
+  and have no free-form profile override. The calculation path revalidates the
+  selected profile, package locator/manifest/content/observation bindings, and
+  all accepted Identity-family fingerprints; binding provenance enters every
+  reconstructed record's source fingerprints.
+- A real adjacent 2025-09-09/10 batch crossed from current to legacy profile,
+  read 22 shared EOD partitions, and completed 17,728/17,764 records in 2:03.60
+  with zero failures. An independently generated-map repeat produced identical
+  binding fingerprints, manifests, logical fingerprints, and Parquet bytes.
+- External requests and canonical writes were zero. `/data`, Production,
+  scheduler state, active pointers, analytics, and research readiness did not
+  change. Durable package custody, 24 source gaps, broad membership, and
+  Historical Coverage remain separate gates.
+- Eighteen focused checks and all 2,023 backend tests passed with the two
+  unchanged dependency warnings.
+
 ## 2026-09-04 — Prove versioned legacy ETV Identity compatibility
 
 - Accepted ADR 0135 and added the explicit `pre_etv_governance_v1` historical

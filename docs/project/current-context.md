@@ -152,6 +152,14 @@ accepted profile and none of the 221 requires reacquisition. Profile choice
 must be fingerprint-bound per session—not inferred from date—because the
 historical backfill ran in descending order across the policy change.
 
+ADR 0136 materializes that proof as an owner-only, formally reread profile map.
+It binds all 279 retained sessions to profile, package locator/custody/time, and
+accepted Identity-family fingerprints; 24 missing sessions remain explicitly
+unbound. A real adjacent 2025-09-09/10 batch crossed from `current_v1` to
+`pre_etv_governance_v1`, produced 17,728 and 17,764 membership records, and was
+byte-identical on repeat. Single and batch tools now require the map and expose
+its binding provenance; no operator profile override or date inference exists.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -284,12 +292,11 @@ separately bounded.
    identity. Measure the next complete daily chain and add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
-2. **Historical Universe foundation:** the shared-panel batch and two-profile
-   Identity equivalence proof are complete. Bind each of the 279 retained
-   sessions to its fingerprint-matching profile, pass that explicit mapping to
-   disconnected membership batches, retain durable source custody, and keep
-   the 24 physically missing reference sessions separate before any canonical
-   membership review.
+2. **Historical Universe foundation:** the shared-panel batch, two-profile
+   Identity equivalence proof, and 279-session fingerprint-bound routing map
+   are complete. Define durable source custody, resolve the 24 physically
+   missing reference sessions separately, and only then run/reconcile broad
+   disconnected membership batches before any canonical review.
 3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

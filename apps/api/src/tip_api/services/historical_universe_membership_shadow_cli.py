@@ -12,6 +12,10 @@ from pathlib import Path
 from tip_api.persistence.parquet.historical_research import (
     ParquetHistoricalResearchRepository,
 )
+from tip_api.services.historical_identity_rebuild_profile_map import (
+    profile_binding_for_session,
+    read_historical_identity_rebuild_profile_map,
+)
 from tip_api.services.historical_universe_membership_shadow import (
     build_historical_universe_membership_shadow,
 )
@@ -23,6 +27,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--data-root", type=Path, required=True)
     parser.add_argument("--identity-package", type=Path, required=True)
+    parser.add_argument("--identity-profile-map", type=Path, required=True)
     parser.add_argument("--session-date", type=date.fromisoformat, required=True)
     parser.add_argument("--catalog-as-of-date", type=date.fromisoformat, required=True)
     parser.add_argument("--evaluated-at", type=datetime.fromisoformat, required=True)
@@ -31,20 +36,30 @@ def main(argv: list[str] | None = None) -> int:
 
     data_root = args.data_root.resolve(strict=True)
     package_path = args.identity_package.resolve(strict=True)
+    profile_map_path = args.identity_profile_map.resolve(strict=True)
     output_root = args.output_root.resolve(strict=False)
     temporary_root = Path("/tmp").resolve(strict=True)
     if temporary_root not in output_root.parents:
         parser.error("--output-root must be a child of /tmp")
-    if any(_paths_overlap(output_root, item) for item in (data_root, package_path)):
+    if any(
+        _paths_overlap(output_root, item)
+        for item in (data_root, package_path, profile_map_path)
+    ):
         parser.error("source and output paths must be disjoint")
 
     with _network_disabled():
+        profile_map = read_historical_identity_rebuild_profile_map(profile_map_path)
+        identity_profile_binding = profile_binding_for_session(
+            profile_map,
+            args.session_date,
+        )
         shadow = build_historical_universe_membership_shadow(
             data_root=data_root,
             package_path=package_path,
             session_date=args.session_date,
             catalog_as_of_date=args.catalog_as_of_date,
             evaluated_at=args.evaluated_at,
+            identity_profile_binding=identity_profile_binding,
         )
         reconstruction = shadow.reconstruction
         repository = ParquetHistoricalResearchRepository(
@@ -67,6 +82,11 @@ def main(argv: list[str] | None = None) -> int:
                 "session_date": reconstruction.session_date.isoformat(),
                 "origin": "reconstructed_point_in_time",
                 "methodology_version": reconstruction.methodology_version,
+                "identity_rebuild_profile": shadow.identity_rebuild_profile,
+                "identity_profile_binding_fingerprint": (
+                    shadow.identity_profile_binding_fingerprint
+                ),
+                "identity_profile_map_fingerprint": profile_map.logical_fingerprint,
                 "evaluated_base_count": reconstruction.evaluated_base_count,
                 "evaluated_base_fingerprint": reconstruction.evaluated_base_fingerprint,
                 "record_count": result.record_count,
