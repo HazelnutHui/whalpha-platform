@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-04 — Complete 9/1–9/3 catch-up and deploy fresh 9/3 state
+
+- Completed canonical Identity/EOD for 2026-09-01, 2026-09-02, and 2026-09-03.
+  The formal reader now reports 303 contiguous XNYS sessions from 2025-06-23
+  through 2026-09-03; latest EOD contains 9,956 rows and is aligned to the
+  same-day 9,979-Instrument Identity snapshot.
+- Completed the full 9/3 analytics chain and activated Market Intelligence
+  `2026-09-03T070700Z-f506e025475e`, fresh with zero lag. It publishes MI 1.3,
+  16 registered ETF relationships, Candidate 1.1, Strategy Channels, Candidate
+  Visual Context, and Sector ETF Rotation.
+- Activated final Snapshot `2026-09-03T090150Z-a4f10a02b6ae`, Snapshot 1.11 /
+  Dashboard 2.8, then built and checksum-validated its 51-file OCI bundle.
+- Deployed that exact bundle after correcting the failed-unit gate described
+  below. Independent postflight matched the local and remote manifest/checksum
+  hashes, verified equal-capability guest access and all protected lazy
+  resources, and found no staging or failed-release residue.
+- Replaced the oversized, historically mixed current-context/current-status
+  files with compact authoritative current-state baselines. Historical detail
+  remains in this changelog, ADRs, and dated audits.
+
 ## 2026-09-04 — Scope OCI failed-unit postflight to deployment regressions
 
 - A 2026-09-03 release deployment passed local validation and remote preflight

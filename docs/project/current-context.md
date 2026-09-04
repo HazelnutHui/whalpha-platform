@@ -1,1255 +1,250 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-03T17:30:16Z
+Operational state verified at: 2026-09-04T09:20:37Z
 
-Repository development context updated at: 2026-09-03 UTC
+Repository context updated at: 2026-09-04 UTC
 
-ADR 0119 added the exact 300-session Historical Research Backfill Plan. The
-first 2026-07-14 through 2026-07-16 representative Pilot completed with 14
-active-Identity pages plus one unadjusted Grouped Daily response per date,
-separate offline plans, exact inventory CAS, atomic Apply and formal reread.
-The three Pilot EOD partitions contain 9,843 / 9,852 / 9,854 rows with zero
-duplicate business keys and zero orphan references. Its historical post-Pilot
-inventory was 858 files / 655,639,204 bytes at fingerprint
-`f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb`.
+This is the compact source of truth for a new Codex task or device. Historical
+execution detail belongs in the [changelog](changelog.md), dated audits, and
+ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 
-Subsequent bounded batches extended that canonical interval backward. The
-first ADR 0123 continuous process advanced from 147 to 245 contiguous sessions
-through four complete 20-session checkpoints plus 18 sessions, then failed
-closed while planning 2025-09-09 Identity. Its complete frozen package had
-11,714 records: 68 catalog-known `ETV` observations and 113 missing-type
-observations jointly produced a 1.5452% malformed ratio under the prior mapping
-and exceeded the unchanged 1% gate. No partial 2025-09-09 Identity or EOD
-existed at that stop.
-
-ADR 0120 records the user's explicit direction that absent Massive written
-permission no longer blocks Dell-local history acquisition; the unverified
-permission remains a limitation and grants no automatic OCI/publication right.
-ADR 0121 adds the resumable batch runner. It selects only the session directly
-before the current canonical left boundary, processes Identity before EOD,
-shares one 15-second limiter, and reuses formally readable interrupted
-packages. The remaining history must execute newest-to-oldest so every
-completed EOD Apply preserves a contiguous inventory. ADR 0122 amends only its
-zero-retry rule in worktree source: timeout and provider-unavailable failures
-may retry the same date twice after 30 and 90 seconds, every request attempt is
-counted, and exhaustion emits safe structured resume evidence. 429/other HTTP,
-data, quality, custody, inventory, plan, Apply and reread failures still stop
-immediately. ADR 0123 adds a finite continuous controller above the bounded
-runner. It retains 20-session revision-bound checkpoints and one shared serial
-limiter while removing manual starts between successful batches. Revision
-`e7d3cf3bdf6ac4eda97a965133c3c4e84343dd7f` passed 1,970 API tests and was
-fast-forwarded to clean `main`. The transient user unit
-`whalpha-historical-backfill-continuous-20260902-01.service` started from that
-revision at 2026-09-02T09:31:19Z with target 300, internal batch size 20 and
-the 147-session canonical checkpoint; immediate verification found it
-active/running. The unit is collected after completion, while its journal
-retains each flushed checkpoint and final result.
-
-ADR 0124 resolves that exact taxonomy boundary without weakening a quality
-gate. The formally retained provider catalog defines `ETV` as “Exchange Traded
-Vehicle” and defines ETF separately, so `ETV` is now a known unsupported
-expected exclusion while `SecurityForm` remains unknown. It cannot create an
-Instrument, Resolver, or Universe member. Missing type remains malformed and
-quarantined, and completed immutable snapshots are not rewritten. Exact
-2025-09-09 offline replay reduced malformed observations to the 113 genuinely
-missing types (0.9647%), excluded all 68 ETV observations, created zero ETV
-Instruments, passed the unchanged gate and produced a formally readable
-Identity plan. Adjacent 2025-09-10 and 2025-09-11 replays reconciled and also
-excluded every ETV observation. All 1,973 API tests passed.
-
-Clean revision `4d820c7205f090d4d8602435a4da41f400d87261` was fast-forwarded to
-`main`. A network-free full historical plan then verified 245 sessions from
-2025-09-10 through 2026-08-31, 55 remaining sessions and inventory fingerprint
-`bd464bd2f98f7a26be144249cb71d5b38709f708653c11e087b7f768c75a3695`.
-The replacement transient unit
-`whalpha-historical-backfill-continuous-20260903-02.service` started at
-2026-09-03T17:28:30Z with the same target, package root and 20-session internal
-batch size. At 2026-09-03T17:30:16Z it was active/running; formal readers had
-already verified 2025-09-09 Identity with 8,864 Instruments and 8,864
-Resolvers, then EOD with 8,836 rows. Canonical history was therefore 246
-contiguous sessions from 2025-09-09 through 2026-08-31, with 54 sessions
-remaining. No analytics, publication, Snapshot, bundle, or OCI deployment is
-part of this acquisition.
-
-Repository source now also links the Candidate detail facts into one bilingual
-five-step evidence path: Market context, registered ETF price proxy, stock
-leadership, current entry posture, and a re-underwrite boundary. The ETF node
-remains explicitly price-derived and cannot establish sector membership or
-fund flow. Technical re-underwrite conditions are now separated from basic
-Candidate eligibility failures; neither is an automatic sell instruction. The
-active Snapshot 1.11 / Dashboard 2.8 release formally rereads with every field
-required by this UI-only change. The exact source-bound Snapshot and OCI
-release are now deployed with equal guest/credential route capability.
-
-Repository source now replaces the ambiguous Candidate component bars with a
-bilingual contribution ledger. It reconciles the seven published contribution
-points to the unchanged base score, separates largest score support from the
-largest weighted shortfall, shows available configured evidence, and keeps raw
-and normalized metric facts in a folded audit view. It does not recalculate or
-change a score, rank, formula, parameter, contract, or Production publication.
-The active Snapshot 1.11 / Dashboard 2.8 release was fully reread by the formal
-reader and is compatible. The exact source-bound Snapshot and OCI bundle are
-now deployed; postflight preserved equal guest/credential route capability.
-
-Repository source after ADR 0106 includes a bilingual Quant Research Lab as a
-fifth first-level workspace. It presents only the registered Strong-Leader
-Pullback method and formal 31/252 `data_blocked` readiness state. Result panels
-are deliberately unavailable and no fixture performance or research stage
-transition is presented. The data-blocked workspace is included in the current
-deployed UI without changing the model or publishing research results.
-
-ADR 0117 now optimizes the Dell-local daily computation boundary without a
-model or Production change. The real 2026-08-31 prior-Candidate audit read fell
-from 133.871 seconds to 28.18 seconds while preserving its exact immutable
-identity and append inputs. Snapshot validation now parses each contract file
-once per complete validation; the active 32-shard release validated in 5.40
-seconds. The next complete daily chain must supply the end-to-end measurement.
-ADR 0118 additionally reduces real 8/31 Snapshot candidate and plan construction
-from 251.79 to 121.43 seconds by selecting dates from the canonical completion
-index and fully validating only the current/previous partitions actually used.
-Business payloads remained exact; `/data` and Production were unchanged.
-
-This is the authoritative compact handoff for new Codex tasks and new devices.
-It records current facts and their evidence boundary. Product history remains
-in the [changelog](changelog.md) and dated audits. Proposed sequencing remains
-in the [roadmap](roadmap.md).
-
-## Repository
+## Repository and infrastructure
 
 | Field | Verified value |
 | --- | --- |
-| Workstation | `dell5820` |
-| User | `hui` |
+| Workstation / user | `dell5820` / `hui` |
 | Source-of-truth repository | `/home/hui/projects/trading-intelligence-platform` |
-| Branch | `main` |
-| Deployed bundle source commit | `579a26759a9e24c6faf246be343af9e68b9b5ed9` |
+| Branch | `main`; verify current HEAD and cleanliness with the report rather than freezing them here |
+| Public site | `https://whalpha.com/` |
+| OCI alias | `whalpha-oci` |
+| Deployed OCI release | `2026-09-03T090150Z-a4f10a02b6ae` |
+| Deployed source commit | `a4f10a02b6ae8bc5dea64fda7ea90267cfca305b` |
 
-Codex-created worktrees may be detached at the same commit. Always verify the
-main repository separately before treating a worktree as the source of truth.
-The repository HEAD is intentionally not frozen in this document because a
-documentation or code commit legitimately advances it. The read-only report
-must show the current HEAD and cleanliness separately from the immutable commit
-recorded by a deployed bundle.
+Dell is the authority for code, data, development, and heavy computation. OCI
+is only the static web-serving, localhost Auth Service, and public Session
+boundary. Windows and future Mac systems are remote entry points, not data or
+compute authorities. A later clean repository commit does not invalidate an
+older immutable deployed bundle; compare both identities explicitly.
 
-The installed read-only scheduler service is intentionally bound to an exact
-detached Dell worktree so ordinary development commits cannot invalidate the
-next wake. The separately authorized runtime exists
-at exact detached revision `fe90cd4d105620a67ad1104bac3cb426586ad29f` and
-passed clean-checkout, path, entrypoint, Python and runtime-import verification.
-Its tree is owner-only. ADR 0115's network- and write-free systemd candidate
-1.1 review is `review_ready`, with service SHA-256
-`0e96fc999ea858ff753f570de5c8821c6ea0c1357d62b7518c3ffd8ece3b98ab`
-and unchanged timer SHA-256
-`19347d553ad3300c01a03f56337bd31ee9bd9e0b7e16b05b95b58b983512da0b`.
-The separately authorized service migration is now complete. Installed
-service SHA-256 matches the candidate, timer bytes remain unchanged, and one
-controlled start exited successfully with `runtime_verified=true`. It selected
-missing session 2026-08-31 and stopped at read-only transition review with zero
-coordinator calls, credential reads, external requests, filesystem writes or
-Production writes. The timer remains enabled/active; the next observed trigger
-is 2026-09-01 17:30 UTC.
+## Formal Dell data state
 
-## Formal local state
+The network-free current-context reader completed at validation level
+`active_custody_and_contracts`.
 
-The 2026-08-31 Identity package completed 14 pages/13,141 observations. Its
-first plan correctly blocked on one collision group/two ambiguous observations;
-ADR 0116 keeps both absent from Instrument/Resolver output while allowing the
-observed 0.018% collision ratio below the 0.1% gate. The committed rule then
-produced and applied 9,965 canonical instruments/resolvers. The separately
-authorized EOD package and Apply produced 9,939 aligned bars.
-
-The 2026-09-01 reconciliation used the project readers after the complete
-2026-08-31 Identity/EOD, analytics, publication, Snapshot, bundle, and OCI
-deployment round. It reread the full local inventory and active
-custody/contracts after deployment.
-
-| Boundary | Active verified value |
+| Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | 147 sessions, 2026-01-30 through 2026-08-31 at the 2026-09-02T09:09:53Z completed-batch checkpoint |
-| Latest EOD | 2026-08-31, 9,939 rows |
-| EOD content fingerprint | `bf047e2654ee64be6ecc7a828486d9655fcc21a8a5ac07c45647fe17cb581011` |
-| EOD Parquet SHA-256 | `103d1cbeb3e6c535a4c695d4c324db8b7f0b8d96364446d01d21e69024b2abf0` |
-| Latest canonical Identity | 2026-08-31: 9,965 instruments / 13,141 provider identities / 9,965 resolvers |
-| Latest Identity logical fingerprint | `451cbe0f7c8be554e64c604a4466186818a8a2c7023dc992a9286c949a8c792a` |
-| Latest-EOD-bound Identity | 2026-08-31: 9,965 instruments / 13,141 provider identities / 9,965 resolvers |
-| EOD-bound Identity logical fingerprint | `451cbe0f7c8be554e64c604a4466186818a8a2c7023dc992a9286c949a8c792a` |
-| Identity/EOD alignment | `aligned` |
-| Activation analysis session | 2026-08-19 |
+| Canonical EOD | 303 contiguous XNYS sessions, 2025-06-23 through 2026-09-03 |
+| Latest EOD | 2026-09-03; 9,956 rows |
+| Latest EOD fingerprint | `9eb9c445d8032c151af009d7dc342d70ad567b473d9a51f8f72b2c80e7436e69` |
+| Latest EOD Parquet SHA-256 | `ead984bbb60478c5d2bbe388f9886ebf764458b6d0e03bf2c2e8108544fc0bbd` |
+| Latest Identity | 2026-09-03; 9,979 Instruments / 13,153 provider identities / 9,979 Resolvers |
+| Latest Identity fingerprint | `5c8e377e22ef15b6a5dfd91a9548327d148e26a47c002690117dcd009d966855` |
+| Identity/EOD alignment | aligned on 2026-09-03 |
+| `/data` inventory | 3,356 files / 1,597,544,378 bytes |
+| `/data` inventory fingerprint | `2928d804ea48cf076b0a589d09b0e150cf07810dc4dd0cef503121d53d95d794` |
+| `/data` symlinks | zero |
+| Publication staging/partial residue | zero |
+
+The exact 300-session historical target through 2026-08-31 is complete. The
+three following daily sessions, 2026-09-01 through 2026-09-03, are also
+canonical. No historical-backfill transient service or computation process is
+running.
+
+### Active Universe
+
+The active Activation V2 remains provisional provider-form evidence from
+analysis session 2026-08-19.
+
+| Universe | Verified value |
+| --- | --- |
+| Primary | 1,718 CS; membership fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978` |
+| Secondary | 1,831 = 1,718 CS + 113 ADRC; membership fingerprint `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295` |
 | Activation pointer fingerprint | `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168` |
 | Activation logical fingerprint | `6ea818cb3079bb77fd5fe1b8000530d2c8e2d1127fcccd40be68ac590678c7a5` |
-| Primary | 1,718 CS; fingerprint `c3665203965b96528c9be07db3c49d18023104e346da16050f1170d4fe148978` |
-| Secondary | 1,831 = 1,718 CS + 113 ADRC; fingerprint `2dce08e728774510878c47dc80898e10236952dacd146990ad344c4dcb75a295` |
-| Market Intelligence | `2026-08-31T101550Z-44b052419be8`, contract 1.3 |
-| Market Intelligence payload SHA-256 | `deb32a316cf761fd712ba8455ba400a4d0ff7aa0fc862f77c5d8692516c0041c` |
-| Market Intelligence logical fingerprint | `916ecf708b6892c662fc399e8cba2bca619c70335d0b2c743e62f11540c408e4` |
-| Candidate publication | 715 Primary / 765 Secondary records; fingerprint `330c894813e745de1e213f04c2d68ed221593decbe2253bfa1d18062cccbb6ba` |
-| Dashboard Snapshot | `2026-09-01T123500Z-579a26759a9e` |
+
+Provider security form does not prove issuer operating structure or domicile.
+Core remains the intended future default and Broad the future secondary only
+after authoritative issuer-structure evidence passes the documented gates.
+
+## Active analytics and Snapshot
+
+| Boundary | Verified value |
+| --- | --- |
+| Market Intelligence | `2026-09-03T070700Z-f506e025475e`; contract 1.3 |
+| MI payload SHA-256 | `fbb0309e02d2798b558f05720d3eeb4c3f92060b0455b590feaee45d494a00e7` |
+| MI logical fingerprint | `8db1d95b97bad6d34ebd3dad9a102a26907f2294bede33025fcf9b114945de74` |
+| Dashboard Snapshot | `2026-09-03T090150Z-a4f10a02b6ae` |
+| Snapshot pointer fingerprint | `e8548194c8b16e73f793507fb23927e2789fcbf2f7cccb1a6e09913c738a33f9` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
-| Snapshot pointer fingerprint | `5e38259e9ff9681695ba9c818cb075c8bb73c3ebb35f5a51e3d20ad15691c924` |
-| Active review metadata | none; ordinary fresh publication |
-| Current post-close pipeline freshness | expected 2026-08-31; canonical EOD, analytics, active Snapshot, and deployed UI all analyze 2026-08-31; lag zero |
-| `/data` inventory | 858 files / 655,639,204 bytes after the three-session Historical Pilot |
-| `/data` inventory fingerprint | `f00bf90a1cac51a1ce35950cafe0417d33a62b2adfe260012b3015523b60fdcb` |
-| `/data` symlink/staging/partial residue | zero |
+| Freshness | expected 2026-09-03; actual 2026-09-03; lag zero; review mode false |
+| Immediate local Snapshot rollback | `2026-09-03T083901Z-f506e025475e` |
 
-Workstation listener review found no Python, Node, Vite, Uvicorn, or project
-application process and no unexpected project listener. Normal SSH, DNS, and
-Tailscale listeners were present.
+Market Regime is Balanced in both Universes: Primary 59.7744 and Secondary
+60.5223. Market Intelligence contains 16 preregistered ETF relationships, 336
+bounded relationship-history rows, 30 ETF observations, and 5/10/20-session
+views. Candidate publication 1.1 exposes 857 Primary and 928 Secondary display
+records. These are eligible bounded Candidate records, not Universe sizes.
 
-Development, canonical data, research, replay, and heavy recomputation use
-Dell as the source of truth. OCI is the static web-serving, Session-auth, and
-public-read boundary; Windows and future Mac clients are remote work entry
-points, not independent compute/data authorities. Dell has a Xeon W-2145 with
-8 physical cores / 16 threads. The Candidate pipeline now shares overlapping
-immutable panel reads, uses stable-ID state indexes, and supports a verified-
-prior one-session append with an additive audit schema. Real append/cold
-comparison exposed a legacy Phase 1b rolling-window state-prefix defect;
-repository source corrects it with state calculation V1.0.1 and a stable
-canonical left boundary. Phase 1b audit schema 1.1 now formally rereads the
-current Phase 1a and immediately prior Phase 1b audits, appends one session,
-and runs an independent current-session state Oracle without reopening
-`/data`. On real 2026-08-26 inputs it matched the V1.0.1 cold state,
-explanation, transition, summary, and history outputs exactly: 0.237 seconds
-before writing versus 302.736 seconds cold, with zero Oracle mismatch. This is
-development-only and has not changed active Production. Repository source now
-also implements optional content-addressed reuse of the formally validated
-Phase 1a panel in the daily Candidate append. On real 2026-08-26 development
-inputs it reduced panel loading from 217.409 to 8.837 seconds and total time
-before writing from 310.008 to 101.792 seconds; all nine business/Oracle files
-were byte-identical and both paths had zero Oracle mismatch. Repository source
-now also streams and resumes source-bound Candidate artifacts under ADR 0026.
-The final real 2026-08-26 development run recorded 111.636 seconds before
-writing, 17.921 seconds for ten streamed artifacts, a 3,343,112 KiB process
-peak, and an approximately 164-second work-directory-to-delivery boundary.
-Its nine source/business/Oracle files were byte-identical to the earlier
-panel-cache audit, all four equivalence gates were true, and Oracle mismatch
-was zero. Repository source now explicitly enforces `daily`, `periodic`, and
-`code_change` validation tiers under ADR 0027. A real same-version
-2026-08-26 periodic cold reference took 597.70 seconds and the formal
-incremental-versus-cold comparison took 197.20 seconds; all eight comparable
-business projections matched and both audits had zero Oracle mismatch.
-Repository source now also applies ADR 0028's bounded process parallelism only
-to independent cold-replay session Oracles. Four workers reduced the same cold
-Oracle stage from 117.09 to 76.23 seconds and end-to-end time from 597.70 to
-560.02 seconds; all nine business/Oracle files and both aggregate fingerprints
-were exact. A measured inner-daily parallel prototype was slower, so daily
-keeps one effective Oracle worker. ADR 0029's exact-session, read-only daily
-planner is now implemented. A real 2026-08-26 rehearsal formally reconciled
-the corrected incremental chain and selected `calculate_entry_geometry` as its
-sole next action, with zero external requests and Production writes. A
-single-action executor and durable Dell run-custody implementation now consume
-only an exact unchanged plan for one of eleven offline daily actions. Eight
-are analytics actions, including Candidate Visual Context; the ninth prepares
-an MI approval plan, the tenth prepares a Dashboard Snapshot approval plan,
-and the eleventh constructs and formally rereads an exact active-Snapshot
-serving bundle. All remain without a
-Production write or network authority. The executor holds a global lock, journals start/terminal
-events in an immutable
-cross-session hash chain, validates output evidence, and re-plans before
-recording success. Interrupted-attempt recovery only classifies formal state
-and never re-executes. Before the first controlled 2026-08-27 rehearsal, this
-boundary was repository-tested only; no scheduler is enabled. Session-
-readiness/retry policy and provider acquisition/apply standing
-authorization were the next boundary. ADR 0031 now implements the first half
-as a pure, network-free readiness plan with actual XNYS close/early-close
-handling, a provisional 30-minute stabilization window, and bounded
-15/30/60/120-minute retry,
-five-attempt and six-hour limits, explicit alert state, and oldest-missing-
-session recovery. It never asserts provider completeness or performs a fetch,
-apply, notification, or scheduler action. Durable acquisition-attempt custody
-now shares the global lock and cross-session journal with offline execution,
-reserves only a fresh exact readiness fingerprint, records bounded outcomes,
-formally binds completed package evidence, and recovers interruption without a
-request. Before the first controlled rehearsal, journal 1.2 had not been
-provisioned for a real run and no fetch had executed. Provider fetch/canonical-apply
-standing authorization is now defined by ADR 0033 as an expiring, exact-
-revision, externally SHA-pinned contract for only Identity/EOD fetch and
-canonical apply. Its reader and transition verifier were initially repository-
-tested only; the later controlled state is recorded below. Publication and
-public-serving operations stay outside this scope.
-ADR 0067 extends the ordered offline calculation boundary after Entry Geometry
-through ETF Relationships, Market Preview, and Strategy Channels. Each new
-stage formally binds the exact same-session upstream logical fingerprints and
-uses the existing one-transition journal, lock, postcondition, and recovery
-semantics. ADR 0068 adds the exact-inventory, exact-UTC MI Plan preparation
-action after those seven artifacts. `analytics_ready` now requires the formal
-MI plan and immutable candidate as well. These development changes do not
-enable a scheduler and do not authorize MI Apply, Snapshot, bundle,
-deployment, credentials, or `/data` writes.
-ADR 0069 adds a default-off, one-shot MI Apply port under coordinator 1.7 and
-backward-readable daily journal 1.4. It requires the exact plan SHA, expected
-Production inventory, host-runtime pin, and any exact plan-bound stale-review
-acknowledgement; it is mutually exclusive with other execution modes and keeps
-networking prohibited. Success requires the exact active publication/pointer
-to formally reread. Recovery never applies or links. At that implementation
-boundary the port was repository-tested only; later controlled publication is
-recorded in the active-state table and deployment audit below.
-ADR 0070 advances the planner/executor/coordinator contracts to 1.3/1.3/1.8
-and adds Snapshot Plan preparation only after the formal daily MI plan matches
-the exact active MI publication. It binds explicit UTC, new direct-child
-`/tmp` output/plan paths, the same-session Strategy Channel audit, and exact MI
-payload/logical fingerprints. A strict public Plan 2.4 reader verifies
-canonical owner-controlled read-only custody and the complete candidate
-lineage. Completion stops at `review_snapshot_publication`; Snapshot Apply,
-bundle, OCI deployment, and scheduler activation remain separate and
-unauthorized. At that implementation boundary it had not created or activated
-a real Snapshot; later controlled use is recorded below.
-ADR 0071 advances the coordinator, backward-readable daily journal, and
-recovery router to 1.9/1.5/1.1 and adds a default-off, one-shot Snapshot Apply
-port. It requires the
-exact Plan 2.4 SHA, expected active Snapshot state, host-runtime pin, unchanged
-Activation pointer, target/staging absence, and any exact plan-bound stale-
-review acknowledgement. Success requires the exact active release and planned
-pointer to formally reread. Recovery never applies or links. The same change
-preserves `snapshot_generated_at` when routing an interrupted Snapshot Plan
-recovery. At that implementation boundary the port was uninstalled and
-uninvoked; later controlled Snapshot publication is recorded below. It still
-grants no standing or unattended publication authority.
-ADR 0072 advances the offline planner/executor/coordinator/recovery contracts
-to 1.4/1.4/1.10/1.2 and
-adds exact active-Snapshot serving-bundle construction as the tenth action. It
-requires a clean matching Dell `main` revision, explicit UTC and `/tmp`
-candidate root, exact Snapshot aggregate/manifest and source-byte bindings,
-complete file checksums, fixed locale and equal Session capability, preserved
-bundle build-time recovery identity, and a
-strict Serving Bundle 1.0 formal reader. It removes the ambiguous legacy
-Snapshot-release shortcut and stops at `review_bundle_deployment`. At that
-implementation boundary it had not built a real candidate or made an OCI
-request; later controlled bundle construction and deployment are recorded
-below. One-shot OCI deployment custody was the next missing control boundary
-at that commit.
-ADR 0073 advances coordinator/recovery/journal contracts to 1.11/1.3/1.6 and
-implements that boundary behind a separately SHA-pinned, owner-only, default-
-disabled deployment config. One invocation binds the exact Serving Bundle and
-fresh remote pre-state, reserves before mutation, invokes Apply once, and
-requires a separate structured post-state inspection. The report contains no
-credential values and explicitly records that password login was not tested.
-Recovery performs one read-only inspection and never invokes Apply; unchanged,
-exactly completed, and partial/ambiguous states remain disjoint. The deployer
-also rejects changed current release, staging/failed residue, and a preexisting
-target stage immediately before mutation. At that implementation boundary the
-capability was uninstalled and uninvoked; the later separately authorized OCI
-deployment and independent inspection are recorded below. No scheduler or
-standing deployment authority was enabled.
-The composed coordinator/capability/custody/journal path now also has a complete
-fake-transport rehearsal with exact healthy pre-state, one simulated Apply,
-independent exact post-state, and the expected start/success hash-chain events.
-A separate review CLI renders an exact external deployment runtime candidate
-and future-file SHA entirely in memory. It defaults disabled; even its explicit
-enabled-candidate mode records zero installation, authorization, credentials,
-networking, or writes. Because every source commit invalidates the candidate's
-revision pin, the final candidate must be rendered after the final clean commit
-and must not be persisted or activated without separate review.
-All 1,653 backend tests pass for this final repository implementation; no
-frontend source changed.
-ADR 0074 subsequently adds a repository-only, additive relationship-change
-view derived from the retained Phase 2 history. It exposes state-run duration
-and exact rolling relative-return changes without modifying source payloads,
-formulas, thresholds, rankings, or source Market Intelligence.
-All 1,654 backend tests and 95 frontend tests pass for this additive boundary,
-and the frontend production build succeeds. This boundary is now deployed in
-release `2026-08-29T133847Z-1490b37f25b3`.
-ADR 0075 subsequently adds a repository-only ten-point relationship state path
-with explicit retained-history boundaries and selected-window relative returns.
-It does not alter Phase 2, formulas, rankings, or source Market Intelligence.
-All 1,656 backend tests and 96 frontend tests pass, the frontend
-production build succeeds, and the formal active-publication reader reconciles
-all 16 pairs against 21 retained 2026-08-28 relationship sessions without a
-write. This boundary is deployed in release
-`2026-08-29T133847Z-1490b37f25b3`.
-The first write-free publication preflight then caught a backend compatibility
-defect when rereading the active pre-projection Snapshot. Repository source now
-accepts missing additive fields while newly rendered responses still include
-them. The failed preflight stopped with only a `/tmp` candidate and made no
-`/data`, OCI, or Production change. The correction was then applied before the
-successful Snapshot and OCI deployment.
-ADR 0076 subsequently adds a credential-free, read-only scheduler-wake plan.
-It binds a lightweight completion-manifest index to a full formal reread of the
-latest EOD partition, selects only the oldest missing XNYS session, and reuses
-the existing stabilization policy. On current Dell state at
-2026-08-29T14:30:00Z it completed in about 2.8 seconds and returned
-`up_to_date`, latest 2026-08-28, next target 2026-08-31, and next check
-2026-08-31T20:30:00Z. Both disabled and explicitly enabled-candidate reviews
-recorded zero coordinator invocation, credential access, networking, file
-write, or Production write. All 1,701 backend tests pass. No scheduler service
-or timer was installed at the ADR 0076 planning boundary; ADR 0079 records the
-later host installation below.
-ADR 0077 subsequently adds the default-off one-transition wake bridge. It
-recomputes the complete ADR 0076 plan fingerprint before a call, accepts only
-an explicitly enabled ready candidate plus a separate invocation flag, and
-recomputes and retains the coordinator-result fingerprint before rejecting any
-result content, target, or authority drift. A synthetic five-wake report
-fingerprint `4b533e1ab3b6bff01767e0a574a7f7dc3c7c3e0d49512f4072a2bee1a817b6d8`
-records four total fake coordinator calls, maximum one per wake, no automatic
-retry/recovery or alert delivery, and zero credential, network, filesystem, or
-Production activity. It installs no service or timer.
-ADR 0078 subsequently adds an exact, non-installed Dell/hui user-systemd
-candidate for the read-only planner only. It pins clean `main`, Git revision,
-canonical data root, entrypoint, New York 13:30/16:30 weekday calendars, and
-both future unit hashes. It clears inherited Python overrides and pins/rechecks
-the project interpreter. Runtime must reprove the exact Dell source and current
-UTC clock before planning. At that candidate boundary Dell systemd 255 and the
-user manager were available, but `linger=no` remained prerequisite-missing.
-ADR 0079 now records the separately authorized installation: `hui` linger is
-enabled and the owner-only read-only user timer is installed. An initial
-`218/CAPABILITIES` start proved three proposed directives incompatible with the
-Dell user manager; the timer stayed stopped while `PrivateNetwork`,
-`PrivateDevices`, and explicit capability bounding were removed. The retained
-read-only/`NoNewPrivileges`/`AF_UNIX` unit then passed a controlled start in
-about three seconds and reported current 2026-08-28 state with zero coordinator,
-credential, external request, filesystem write, or Production write. No real
-data transition, publication, or deployment is scheduled.
-ADR 0080 now separates operation evidence from host state. Current planner,
-scheduled-wake, and rehearsal 1.1 outputs report
-`scheduler_installation_performed=false`, meaning that the invocation made no
-unit change. They no longer emit `scheduler_installed`. The installed/enabled
-timer and `hui` linger state remain separately established by read-only host
-inspection. The updated five-wake rehearsal fingerprint is
-`51133b39e01eeb5aacdc0686eb00b612180a7a4ba45a448802de99b859759412`.
-ADR 0081 adds a repository-only Pipeline Wake Plan 2.0 and deterministic
-Dell-local per-session workspace derivation, so current canonical EOD no longer
-conceals unfinished offline analytics. ADR 0082 adds the non-installed bounded
-cadence above it: at most 16 distinct transition wakes over four hours with a
-five-minute completion-to-next-start floor. Known failure, unknown outcome,
-manual review, blocked state, and budget exhaustion all stop. These layers
-create no workspace or evidence store, invoke nothing, and do not alter the
-installed read-only timer. A natural timer wake and separate owner-only runtime
-custody remain prerequisites before any activation decision.
-All 1,731 backend tests pass with the two existing dependency warnings at this
-boundary.
-ADR 0083 subsequently reuses run journal 1.7 as the single owner-only cadence
-evidence store. It retains complete enabled cadence plans and known Evidence
-1.2, so cadence start and budgets cannot reset across tasks or restart.
-Coordinator 1.12 now maps provider waiting to waiting and provider/offline
-failure to blocked instead of calling every return an executed transition.
-Exact adapters project results but invoke nothing; no real cadence event or
-runtime integration exists yet. All 1,746 backend tests pass with the two
-existing dependency warnings at this boundary.
-ADR 0084 advances the journal to 1.8 and cadence custody to 1.1. A full unknown
-wake reservation is now retained before one action; only a matching known
-result closes it. Crash, invalid result, or retention ambiguity leaves it open
-and blocks replay plus later-session custody. Repository-only Pipeline Runtime
-1.0 composes this with exactly one scope-matched data/offline capability and
-remains default-off, non-looping, and uninstalled. Old journal 1.2–1.7 evidence
-remains readable. No real reservation, capability, CLI, timer binding, request,
-`/data` write, publication, deployment, or Production invocation occurred. All
-1,754 backend tests pass with the two existing dependency warnings.
-ADR 0085 adds pure Cadence Diagnosis 1.0 over a supplied exact-session journal
-chain. It separates an unknown invocation boundary, existing no-replay action
-recovery, a formal terminal that is only ready for later disposition review,
-and conflicting evidence. It performs and authorizes no read outside the
-supplied tuple, write, replay, retry, recovery, or automatic resolution. No CLI,
-real journal access/event, timer binding, request, `/data` write, publication,
-deployment, or Production operation occurred. All 1,764 backend tests pass
-with the two existing dependency warnings.
-ADR 0034 now implements the repository-only coordinator core: it joins exact
-planning, journal recovery, readiness, authorization review, one opt-in offline
-action, diagnosis, and the publication-review stop while never looping.
-Provider/apply capability ports are absent by default; that coordinator slice
-introduced no CLI, authorization activation, request, or write.
-ADR 0035 adds exact canonical-Apply reservation, success proof, and no-write
-recovery under a third disjoint journal family. It binds completed acquisition
-hashes, the formal plan, current inventory, absent targets, and exact paths;
-unknown or partial outcomes remain unresolved or blocked. No real Apply
-reservation, recovery, or `/data` write occurred through this layer.
-ADR 0036 now supplies repository-tested, explicitly installed fetch/Apply
-adapters that compose the external authorization SHA, acquisition/Apply
-custody, real Massive boundaries, and formal terminal evidence. Request 1.1
-binds Apply to `canonical_apply_started`; ADR 0036's coordinator 1.1 accepts
-Identity's actual bounded 1–20 HTTP requests; and the authorized canonical root
-is `/data/trading-intelligence-platform`. That implementation slice created no
-real authorization artifact, host pin, credential read, provider request,
-reservation, Apply, CLI, or scheduler entry; later controlled use is recorded
-below.
-ADR 0037 now adds the repository-tested one-transition CLI and external
-host-runtime config contract. Authorized ports stay absent unless an externally
-SHA-pinned owner-only config enables them and the invocation opts in. Runtime
-derives the actual Dell hostname, executing source root, clean Git HEAD, and
-current readiness-policy fingerprint rather than trusting asserted strings.
-That implementation slice created no real Host artifact or transition. No
-service, timer, alert, or scheduler exists. ADR 0038 now routes one explicitly
-requested unresolved acquisition, canonical-Apply, or offline-action event to
-its existing recovery boundary after an exact locked journal reread. Recovery
-keeps networking disabled, never performs Apply or replays calculation, and
-never loops. This is
-repository-tested only; no real recovery or run-journal transition occurred.
-ADR 0039 now carries alert-required state through coordinator 1.3 and can emit
-one stable, channel-neutral alert intent with a deterministic deduplication key.
-It explicitly records that delivery was not attempted. No alert outbox,
-transport, channel credential, retry, receipt, or real notification exists.
-Because host and standing authorization bind exact Git revision, external
-artifacts remain deliberately unprovisioned until control-plane code is stable.
-ADR 0040 now adds repository-tested, at-most-once alert delivery custody under
-a separate immutable journal. It records `delivery_started` before an explicit
-transport call, deduplicates formally delivered intents, and blocks automatic
-retry after known failure or crash-ambiguous outcome. ADR 0041 now supplies a
-repository-tested, default-disabled SMTP adapter behind that custody boundary.
-It uses whole-file SHA-pinned external config, exact Dell/runtime/root binding,
-owner-only two-key credential custody, verified implicit TLS or STARTTLS, and a
-deterministic bilingual message. No external email config, credential, alert
-root, network request, delivery, service, timer, or scheduler exists. ADR 0042
-now adds a repository-tested read-only joint preflight command for the host,
-standing-authorization, and email artifacts. It prohibits networking and
-reports configuration consistency without credential access, writes, or
-rehearsal authority. ADR 0043 now composes the intent, immutable delivery
-custody, and SMTP adapter after one formal coordinator result when the CLI has
-an explicit delivery flag and exact Host/email SHA pins. Normal states perform
-no credential access or alert write. No real external artifact has been
-created or preflighted, and no delivery route has been invoked.
-ADR 0044 advances external preflight to 1.1 with an explicit
-`daily_data_only` mode because SMTP is deferred. The mode never reads email
-config and retains the complete Host/Identity/EOD authorization checks.
+The active analytics status remains `degraded_short_history`: the published MI
+path currently consumes 26 sessions even though canonical EOD now contains 303.
+The Quant Research Lab must therefore remain research-only/data-blocked until
+historical analytics inputs and the missing point-in-time lifecycle,
+membership, corporate-action, adjustment, and evaluation families are wired
+and validated. Canonical price history alone is not backtest readiness.
 
-At 2026-08-27T20:18:05Z, a fresh network-free Dell report still showed latest
-Identity/EOD 2026-08-26 and a clean repository at `353b5d1`. The exact
-2026-08-27 automation plan selected `prepare_identity_catchup`. Readiness was
-`stabilizing` until 20:30Z with zero attempts, requests, or writes. The proposed
-daily run and alert roots were absent and no matching user timer was active.
-An in-memory seven-day Host/standing-authorization candidate was reviewed but
-not written; its revision became intentionally obsolete when ADR 0044 work
-began.
+## OCI production proof
 
-After ADR 0044 was committed as `e4fdee0`, a fresh network-free readiness check
-at exactly 2026-08-27T20:30:00Z returned `ready_for_fetch_review` with
-`next_action=review_fetch_authorization` for the same 2026-08-27 Identity
-catch-up. It recorded zero attempts, external requests, and Production writes;
-no provider fetch or authorization followed.
+The final independent remote inspector matched the exact Dell bundle:
 
-The user subsequently authorized the controlled data-only rehearsal. External
-owner-only Host Runtime, standing authorization, and daily run roots were
-installed at exact revision `c3af030`, valid through
-2026-09-03T20:49:28Z. Preflight 1.1 returned
-`configuration_consistent` / `daily_data_only` with zero credential reads,
-network requests, and Production writes. The 2026-08-27 Identity fetch then
-made 14 requests; its offline plan validated 13,148 provider-identity rows and
-9,982 instrument/resolver rows, and canonical Identity Apply completed with one
-Production transition.
+| Evidence | Verified value |
+| --- | --- |
+| Bundle logical fingerprint | `b4d7ab72481d07d5b8add31669c558ea6459794346fea3954906b4ef056f5c61` |
+| Manifest SHA-256 | `953f56f1a98da84fc661ea2303da8714a6d145c0e54cfc6b918bfb6e36831d51` |
+| Checksums file SHA-256 | `82a086ac395cb552e327f38490b2069b684c53a408b65ecebdc2f770f5244629` |
+| Remote-state fingerprint | `70753f36342d441767c0c262625c6f65c329498bb8f7e9ffef38067f5399d3db` |
+| Bundle files | 51; checksum validation passed |
+| Locales | English default; English and Simplified Chinese supported |
+| Access capability | guest and credential Sessions are identical |
+| Sensitive/provider payload | no credentials, raw provider data, or Parquet |
 
-The following 2026-08-27 EOD fetch made exactly one request and terminated
-`permanent_failure`. It left the package, staging path, approval plan, and
-canonical EOD target absent. The original acquisition-custody 1.0 event did not
-retain the numeric HTTP status; local code proves only that it was neither 404
-nor 429. No retry or later stage was run. ADR 0045 adds safe status/request-
-count evidence for future attempts without changing retry policy. Any new
-commit also invalidates the installed exact-revision controls until they are
-separately reviewed and reprovisioned.
+Nginx and `whalpha-dashboard-auth.service` are active and enabled. The Auth
+Service listens only on `127.0.0.1:8010`. Public entry, favicon, compatibility
+redirect, protected routes, invalid-login handling, temporary guest Session,
+Dashboard, Snapshot, Candidate summary/detail, Strategy Channels, Sector ETF
+Rotation, logout, and renewed protection all passed postflight. There is no
+staging or failed-release residue. Password-based login and final visual
+inspection remain manual user checks.
 
-ADR 0046 corrects the handoff view exposed by context report 1.0. Report 1.1
-now shows latest canonical Identity 2026-08-27 separately from latest EOD
-2026-08-26 and its bound Identity 2026-08-26, with
-`identity_eod_alignment=identity_ahead_of_eod`.
+OCI has one pre-existing unrelated failed unit, `fwupd-refresh.service`. It was
+not changed. Deployment now records the failed-unit baseline and rejects only a
+new failed unit while separately requiring Nginx and WH Alpha Auth health. The
+first 9/3 deployment attempt exposed the prior inconsistent global-zero gate,
+rolled back to the 9/1 release, and left one marked failed release; that exact
+non-current residue was verified and deleted before the successful deployment.
 
-ADR 0047 now makes readiness explicitly plan-aware. The active default profile
-is `massive_stocks_basic_end_of_day`; Identity retains the provisional
-30-minute first-review point, while a first current-session Basic EOD request
-requires an immutable operator review and bounded `not_before`. Journal 1.3's
-reader is repository-tested against immutable 1.2 event bytes and can append a
-standalone review bound to the exact prior terminal fingerprint. This repository-only
-path performs and authorizes no fetch, Apply, scheduler, publication, or
-deployment. At 2026-08-27T22:24:36.997840Z, the offline command appended one
-real terminal-failure review bound to event fingerprint
-`cb8cf64d212fe5da269e7936eb18b7f2a354962db27dfd8fd127760f7cfee297`.
-The review event fingerprint is
-`83b641f17c3897544f6c1a962add51f27d7e63b9097825618a7c70db2de01489`
-and its logical review fingerprint is
-`61a5c1b559b83d10f15dd675910eee7f657980d1523e50fedae9dde03ca1a499`.
-It records `authorize_one_fetch_after` with `not_before=2026-08-28T16:00:00Z`.
-A subsequent offline reread returned `waiting_to_retry` / `wait`, reason
-`operator_review_not_before_pending`, one attempt, one review, no alert, zero
-external requests, and zero Production writes. The time is a conservative
-operator boundary inferred from public plan/endpoint documentation and the
-provider's separate next-day flat-file completion guidance; it is not a
-Grouped Daily REST release guarantee or a provider-completeness assertion.
-The review does not itself authorize a fetch. The old `c3af030` Host Runtime
-and standing authorization also remain inactive by exact-revision mismatch.
+## Current product boundary
 
-At 2026-08-28T17:06:00Z, the user separately authorized exactly one
-2026-08-27 EOD fetch-only retry. Short-lived owner-only controls permitted only
-`fetch_eod` at exact revision `dd314db`; the coordinator made one request and
-returned `fetch_package_ready` with zero Production writes. The frozen package
-formally contains 12,552 results and has manifest/content SHA-256 values
-`bd9a664e4a3df54cb4b39344893d6662d8fa8b51055b31d02af1ce6a02807d06`
-and `17545f3479fe532b425419c5a83f2fa0e54c58693d1d61e5c5ec5a5751088ae6`.
-The `/data` inventory remains unchanged at fingerprint
-`7d66bc02fe88410a4ed6f000f74875aa135e11d10318ff010a148d03ba08a0de`;
-at that fetch-only boundary, the 2026-08-27 canonical EOD target and Apply plan
-were absent. Readiness advanced to `ready_for_apply_review`. See
-[the exact retry audit](../audits/daily-eod-fetch-retry-2026-08-28.md).
+WH Alpha is a Session-protected, bilingual U.S. equity market-intelligence and
+research platform for discretionary decisions. The product chain is:
 
-The later offline Apply Plan is now complete and formally reread at file
-SHA-256
-`76ac1c50a016b82772ce8ac391f8d67e107c8433caae0e1f6364b311deb23bc5`.
-It binds the same package, 2026-08-27 Identity, and unchanged current inventory;
-it yields 9,945 canonical rows, zero duplicate business keys, zero orphan
-references, and exactly two planned files totaling 1,056,432 bytes. Independent
-Parquet inspection confirms 9,945 unique business keys, zero null instrument
-IDs, and only the target session. At that plan-review boundary, the canonical
-target was absent and no Apply authority had been granted. See
-[the exact plan audit](../audits/daily-eod-apply-plan-2026-08-28.md).
+```text
+market state -> strength direction -> sector/theme -> stock candidate
+-> trade preparation -> entry/invalidation -> position management
+```
 
-The first authorized Apply invocation then failed closed before reservation:
-the coordinator passed journal operator reviews into readiness, while canonical
-Apply custody omitted them during its independent recheck. At that rejected-
-invocation boundary, the journal still ended at `acquisition_package_ready`,
-the target remained absent, and `/data` was unchanged. The minimal fix projects
-the same immutable reviews in both layers and adds a permanent-failure/review/
-successful-retry reservation regression. It changes neither policy nor Apply
-scope. Fresh exact-revision controls were still required to exercise the
-user's existing one-Apply authority.
+Live first-level workspaces include Market Regime & Opportunities
+(`市场风向与机会`), Market Structure & Activity, Sector ETF Rotation, Stock
+Candidates (`个股候选`), and the explicitly research-only Quant Research Lab
+(`量化研究实验室`). The landing page and in-app shell share the dark navy/cyan
+WH identity and favicon. Planned capabilities are labeled as planned, not live.
 
-Fresh controls bound only `apply_eod` at fix revision `6256bf3`. The second
-invocation completed one canonical transition with zero external requests and
-formal reason `canonical_stage_completed_and_replanned`. The 2026-08-27
-partition contains 9,945 rows and matches the approved Parquet, manifest, and
-content hashes. The journal ends in `canonical_apply_succeeded` with no
-unresolved event. `/data` is now 392 files / 203,931,663 bytes at fingerprint
-`ddbe1ab03d5b945e9c3e2be975218c830f10e1ca615571e9616e131c847c7749`,
-with zero symlink/staging/partial residue. The next exact automation action is
-offline `calculate_phase1a`; no downstream action had run at that Apply
-boundary. See
-[the canonical Apply audit](../audits/daily-eod-canonical-apply-2026-08-28.md).
+Stock Candidates provide explainable evidence rather than a black-box verdict:
+seven component contributions reconcile to the unchanged base score; strategy
+channels are not compared by one cross-strategy score; leadership, entry
+position, risk, evidence, counterevidence, invalidation, parameters, raw facts,
+and lineage remain inspectable. Candidate stock outcomes are never represented
+as option returns.
 
-The next explicitly continued one-transition action completed offline Phase 1a
-for 2026-08-27. Its formal audit fingerprint is
-`887024c4847ef74a28a713c439359f3a4d8d93e49269ab58f2f0177c61159c53`,
-with zero Oracle mismatch, zero missing metrics, and 100% configured weight
-available. Primary/Secondary composites are 67.4134 / 67.5471. Trend,
-volatility, and leadership/dispersion support the composite, while breadth and
-liquidity/participation conflict. These are not final state labels; Phase 1b
-hysteresis remains pending. The 257,202-bar formal panel cache is available at
-key `5dfa32ea7b447feef752f490b7141aefe9ace53b20bb62e76631cf8eee142cca`.
-Phase 1b then appended 2026-08-27 from the corrected V1.0.1 2026-08-26 audit.
-Its audit fingerprint is
-`6a3a530280dbe9eea6617d76e980ed453b47e087d9e35fe588e8f7b6fe630801`.
-Both Universes remain confirmed Balanced at composites 67.4134 / 67.5471;
-the independent Oracle has zero mismatch and all prefix/restart/source gates
-pass. An initial invocation correctly rejected the legacy Production-bound
-V1.0.0 prior path and created no target; the corrected lineage then completed
-normally. At that Phase 1b boundary, the planner selected only
-`calculate_candidate_daily`. `/data` and all active serving artifacts remained
-unchanged. See
-[the Phase 1a audit](../audits/daily-eod-phase1a-2026-08-28.md).
-See also [the Phase 1b audit](../audits/daily-eod-phase1b-2026-08-28.md).
+Guest and credential Sessions must remain identical in data, features,
+language, Universe, and analysis until the user explicitly changes that policy.
+The project is personal/friends use, but engineering, data governance,
+validation, security, and research standards should be commercial-grade.
 
-The 2026-08-27 daily Candidate append is now also complete at audit fingerprint
-`0fa85ae742ef47e7278c444c12f05f2082e38a5071068a5787655a11271eb4e4`.
-It reused four sessions, added one session across both Universes, used the
-formal panel-cache hit, and passed the independent Oracle and every incremental
-equivalence gate. Current score batches contain 1,714 Primary and 1,827
-Secondary comparable securities; the complete state ledger preserves all
-1,718 / 1,831 active members with four unavailable in each. The journal ends
-normally and the formal next operational action is
-`calculate_entry_geometry`. The 422,786,554-byte cumulative audit exposed a
-material control-path inefficiency: the 152.944168-second pre-write business
-path became a 576.027031-second journaled action because multiple layers fully
-reconstruct historical JSON. Optimize those redundant rereads without
-weakening the append-input or Oracle gates before running the next large
-postcondition chain. See
-[the daily Candidate audit](../audits/daily-eod-candidate-2026-08-29.md).
+## Product and research guardrails
 
-ADR 0065 now closes that planner/postcondition repetition. Planning rehashes
-every immutable Candidate artifact but reconstructs only the small lineage
-ledger needed for the planning decision; Candidate calculation still performs
-the one full typed prior-prefix read. On the exact 422,786,554-byte current
-audit, formal planning takes 9.45 seconds and 221,640 KiB maximum RSS while
-preserving plan fingerprint
-`eb19d7790605fae6d2467f6996b9411fb5fc6653f28f27b6e60c9fdd6b41811f`
-and sole next action `calculate_entry_geometry` at that boundary.
-
-The resulting 2026-08-27 Entry Geometry shadow audit is now complete at
-fingerprint
-`3aa78cb694a4c06835f19fb6165cd721e62b7fe16f921240ce8a601fcd83c11a`.
-It assesses all 1,714 / 1,827 current comparable Candidate rows, has zero
-Oracle mismatch, preserves input-permutation equivalence, and makes zero
-external requests or Production writes. Primary/Secondary technical-review-
-ready counts are 70 / 73; monitor-for-trigger 1,303 / 1,393; wait-for-reset
-104 / 110; and deprioritized 237 / 251. Journal event 21 closes normally. The
-post-plan is `analytics_ready` at fingerprint
-`f6fe6ddd5b4e561724088147d9dda361d270b548f2a7ff4d3df1b5b974958ff9`;
-the next boundary is `review_publication`, not an authorized publication or
-deployment. The action took 338.217438 seconds and exposed a remaining current-
-batch read optimization opportunity, but its result and custody are valid.
-See
-[the planning optimization audit](../audits/daily-candidate-planning-optimization-2026-08-29.md).
-See also
-[the daily Entry Geometry audit](../audits/daily-eod-entry-geometry-2026-08-29.md).
-
-The publication review then completed the missing 2026-08-27 Phase 2 and
-preview chain. Phase 2 fingerprint
-`1d0efadf75579c2487696fe5933bccfcdc56e40680433a790a9600b3776ec41f`
-has zero Oracle mismatch and all replay/permutation/prefix gates. Preview
-payload fingerprint is
-`da5b9364ab4e84955c82d3c8666b125e293108dd0093c692830bfef2ccf3d52c`.
-Two initial MI Plan attempts failed closed before plan creation because the
-schema 1.1 daily Candidate evidence was still interpreted through duplicated
-cold-only field access. ADR 0066 and commits `54b1d09` / `211c1a5` now make
-Candidate construction and MI approval recheck use one explicit mode-aware
-projection; the complete backend suite passes 1,573 tests.
-
-The final formal MI 1.2 review plan SHA-256 is
-`a5732db20555cc0e873fb184302e401e825fab9f65d81e7e6d6bbdecd472e2ea`.
-It passes full source validation and projects 558 / 599 Candidate records at
-fingerprint
-`d81479e4e332865f5d4c6312033a66095febe3b018a8e54376668d3e8f36ac47`,
-but returns `freshness_blocked`: actual 2026-08-27, expected 2026-08-28, lag
-one, with no applicable review authorization. Apply did not run. No same-day
-8/27 Strategy audit was generated; Snapshot 1.9 would require one, but the next
-correct data boundary is 8/28 acquisition review rather than completing an
-already non-activatable serving chain. See
-[the publication review audit](../audits/daily-eod-publication-review-2026-08-29.md).
-
-The subsequent network-free 2026-08-28 readiness review formally selected
-`prepare_identity_catchup` at automation-plan fingerprint
-`3bf65e5b57284b48df6fb6cfd26b983f035cdfd5505cb380877ad57cf94821c2`.
-At `2026-08-29T06:12:50+00:00`, readiness was
-`missed_session_recovery` / `review_fetch_authorization`, fingerprint
-`4e26699abd653a611e3f2e1f4e117b099789dd6da92fd538da992ea6a7959e69`,
-because the daily deadline had elapsed and 2026-08-28 was the oldest missing
-session. Attempt and operator-review counts were zero; provider completeness
-was not asserted. Every proposed 8/28 acquisition, Apply-plan, analytics, and
-run-journal target was absent, and no matching timer, service, or residual
-calculation process existed. Full readers reconfirmed the unchanged 392-file
-`/data` fingerprint and then-active MI/Snapshot. No current-revision external
-control was supplied or preflighted. At that historical boundary, the next
-possible authorization was one exact 2026-08-28 Identity fetch followed by a
-separate Apply review. The authorized round was subsequently completed as
-recorded in the active-state table and
-[complete audit](../audits/daily-eod-complete-deployment-2026-08-29.md). See
-[the readiness audit](../audits/daily-eod-readiness-2026-08-29.md).
-
-## Analytics and presentation
-
-- Market Regime: Primary 47.3666 Balanced; Secondary 47.6047 Balanced. Both
-  instantaneous candidates are Defensive, but the confirmed state remains
-  Balanced under the frozen hysteresis rule.
-- Fixed registry: 30 ETFs and 16 relationships with 5/10/20-session windows.
-- Relationship history: 336 rows over 26 sessions; confidence is low.
-- English and Simplified Chinese use one language-neutral payload. English is
-  the first-visit default.
-- Credential and equal-capability guest entry both create the same role-free
-  protected Session and load the same product payload.
-- Production bundles exclude synthetic Dashboard data and fail closed on API
-  or Snapshot failure.
-- Production contains Candidate publication 1.1, MI 1.2, Snapshot 1.10 /
-  Dashboard 2.7, the independent Candidate, Entry Geometry, and Strategy
-  Oracles, formally bound Visual Context, strict frontend parsing, lazy
-  Candidate detail/strategy products,
-  and the bilingual entry-location view. Leadership rank and entry location
-  remain separate axes.
-- The active formal Candidate audit is
-  `/tmp/whalpha-candidate-phase5c-20260828`, fingerprint
-  `39f26ded1dbdd5359eca9d6f3c49dc0b1286531f31a5a61845c0a955ad145412`.
-  The bound Entry Geometry audit is
-  `/tmp/whalpha-candidate-entry-20260828`, fingerprint
-  `fb072d180744d951a052d8a48235a205258078effe7a53ec1d74ff3f5f96e63d`.
-  Both formal rereads have zero Oracle mismatch and no external or Production
-  writes; Entry Geometry input-permutation equivalence is true.
-- Primary Entry Geometry assesses 1,714 securities: 59 technical-review-ready,
-  1,173 monitor-for-trigger, 54 wait-for-reset, and 428 deprioritized. Its 52
-  strong-but-extended results demonstrate that strong leadership does not
-  automatically become an entry instruction. This is distribution evidence,
-  not outcome validation.
-- The active Candidate payload has 686 Primary and 744 Secondary records. Its
-  Snapshot 1.10 first-load summary is 2,061,314 bytes and retains 32 on-demand
-  detail shards. Repository source now adds ADR 0048's Snapshot 1.8 /
-  Dashboard 2.5 lossless delivery projection: a 1,490,756-byte first-load
-  summary plus 32 stable-ID detail shards of 474,940–1,028,834 bytes. A real
-  `/tmp` 2026-08-26 build formally reconstructed the unchanged full Candidate
-  1.1 publication with the same 496/532 counts. A separate lag-zero build
-  produced and validated approval plan 2.3 without applying it. The later
-  authorized 1.9/2.6 release publishes this lossless split; guest and
-  credential Sessions remain capability-identical by contract.
-- ADR 0060 separates full Candidate research validation from MI publication
-  custody. The immutable completion manifest, every artifact SHA/size,
-  parameters, zero-mismatch Oracle, equivalence gates, and Entry Geometry
-  lineage remain mandatory, while Plan/Apply no longer recreate all historical
-  typed rows. On the real 2026-08-26 audit, custody-only validation took 1.55
-  seconds and the complete bounded Candidate 1.1 projection took 11.29 seconds
-  with unchanged 496/532 counts and Candidate publication fingerprint.
-- ADR 0060 also separates completed source-audit custody from calculation
-  replay. The real 2026-08-26 MI source binding now rehashes all 26 declared
-  EOD Parquet files, validates EOD/Identity manifests and immutable Activation
-  membership, but does not rebuild the price panel or replay Activation's
-  historical liquidity calculation. It fell from 53.74 to 2.98 seconds with
-  unchanged Phase 1a history and preview fingerprints; Plan/Apply retain the
-  whole-`/data` inventory CAS, and full source replay remains available through
-  the read-only context report's explicit option.
-- Repository source also contains ADR 0049's typed strategy-channel shadow
-  taxonomy for momentum breakout, strong-stock pullback, trend continuation,
-  technical reversal, fundamental value reversal, and defensive rotation.
-  Scores/ranks are restricted to same-channel research priority; market fit,
-  event context, entry geometry, and future option expression remain separate.
-  ADR 0056 now adds a fixed, unvalidated Dell/offline preview for the first
-  three technical channels and an eight-record-per-channel bounded consumer.
-  The active 2026-08-28 offline calculation produced reconciled full-
-  population counts
-  and deterministic batch/consumer fingerprints. Its independent Oracle
-  recomputed score, status, and rank without importing the Production
-  calculator. The immutable `/tmp` audit fingerprint is
-  `2f254623c9da96f36e57c9066bba406b688dee6c884cd3351fb8f5beaa517256`;
-  both Universes have zero mismatches and input-permutation equivalence. It has
-  no direct score/rank effect. ADR 0057 adds a separate
-  lazy `candidate-strategy-channels.json` product and bilingual Strategy
-  Channels workspace. A real temporary-root Snapshot 1.9 / Dashboard 2.6 build
-  formally reread the product: 195,425 bytes, logical fingerprint
-  `d4d8ea9a1ae7ae896d0569996810e2cabbca1f02641ee9193583db0ca29dee4b`,
-  with 686/744 Candidate counts and 8/8/8/0/0/0 displayed records
-  per Universe. ADR 0058 now adds Approval Plan 2.4, strict OCI bundle
-  validation, and temporary-guest postflight validation. The authorized
-  2026-08-28 release passed Plan 2.4, Apply, the 50-file OCI bundle checks,
-  remote switch, and temporary-guest validation with the same product/audit
-  fingerprints. The subsequent UI continuity pass preserves Candidate view and
-  strategy channel in the URL, removes the unrelated risk-mode control from
-  strategy mode, and makes evidence-incomplete channels explicit; 94 frontend
-  tests and the Snapshot-mode build pass. Human visual acceptance remains
-  pending. Repository source now also adds ADR 0087's bilingual Candidate
-  decision-position map. It visualizes only the published close, SMA10/SMA20,
-  prior-five-session high/low, reference support, threshold distances, and
-  state-confirmation progress. It changes no model or payload and is not
-  deployed. ADR 0088 now completes the separate source-bound Dell Visual
-  Context 1.0 calculation, independent validator, and formal `/tmp` audit. The
-  real 2026-08-28 result provides complete exact 20-session paths for all 3,541
-  Candidate rows and left-censor-aware observed state age for 3,382; 159
-  current unavailable/stale states remain empty. Its audit fingerprint is
-  `3b8ddbf3cc7d35cf0ea2b8f257939d23cec6f1d463e0d16efce9b5fb1f23961f`.
-  ADR 0089 now binds that audit into repository-only detail-shard 1.1,
-  Snapshot 1.10 / Dashboard 2.7, and Approval Plan 2.5. The browser renders the
-  exact path and left-censor-aware observed age through the existing one-request
-  lazy detail flow. A real `/tmp` preview kept the 2,061,314-byte summary
-  unchanged and added 3,724,116 bytes across the 32 lazy shards. It was later
-  published through Snapshot 1.10 and remains included in active 1.11. The parameter-
-  bound explanation and URL continuity changes are now
-  deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`. ADR 0059 now records
-  the user's exact 2026-08-26 stale-review
-  acknowledgement and adds a separate versioned authorization without
-  changing historical 1.0 reads. The exact Apply and postflight are complete;
-  the authorization is not reusable or standing. Technical reversal,
-  fundamental value reversal, and defensive rotation remain explicitly
-  unavailable rather than being synthesized from proxies.
-- ADR 0061 adds an exact parameter-bound browser explanation for the three
-  implemented technical channels: formula weights, underlying component
-  definitions, entry-geometry mapping, status gates, ranking order, and per-
-  security weighted contributions. The
-  browser reconstructs each displayed score with fixed-point round-half-even
-  arithmetic and fails closed on parameter or score drift. A separate Dell-
-  side full-population diagnostic found that trend continuation contains every
-  qualifying breakout and pullback row in both Universes (Primary union 425,
-  Secondary union 451). It therefore remains a broad provisional trend filter,
-  not a validated independent setup. The diagnostic compares membership sets,
-  never channel scores or outcomes. These ADR 0061 source/UI changes are now
-  deployed in OCI release `2026-08-29T133847Z-1490b37f25b3`.
-- ADR 0062 adds a repository-only, descriptive continuation fact contract and
-  pure Dell calculator for path continuity, trend persistence, recent/prior
-  structure, volatility, high-position, and volume context. It produces no
-  score, status, rank, threshold, or outcome claim, and an independent raw-
-  panel Oracle does not import its calculator. A real read-only 2026-08-26 run
-  covered 1,715/1,715 Primary and 1,828/1,828 Secondary Candidate rows with
-  zero Oracle mismatch and permutation equivalence. Information discreteness
-  and largest-day path share barely separated the existing continuation
-  groups, while structure facts mostly restated the frozen filter. No current
-  weight changed; Snapshot and the published strategy payload are unchanged.
-  See the
-  [dated review](../audits/candidate-continuation-facts-review-2026-08-28.md).
-- ADR 0063 now gives those facts an immutable tmp-only audit, formal reader,
-  and network-prohibited CLI. A bounded current Candidate projection retains
-  complete file-custody and selected typed-row validation without rebuilding
-  unrelated historical Candidate objects. The real optimized 2026-08-26 stage
-  completed in 24.15 seconds, assessed 3,543 rows with zero unavailable and
-  zero Oracle mismatch, and produced audit fingerprint
-  `3e1226c676f19d95876c8bda96a4739ec551d4be83cfe83cbc1854cf5fafe976`.
-  Candidate current projection took 7.16 seconds, panel reread 8.83 seconds,
-  facts plus independent Oracle 6.65 seconds, and audit write/reread 0.52
-  seconds. This profile does not justify changing the Candidate main-audit
-  schema for a new current-batch shard. See the
-  [formal audit](../audits/candidate-continuation-facts-formal-audit-2026-08-28.md).
-- ADR 0064 advances the descriptive layer to Continuation Facts 1.1 with six
-  t-1-normalized breakout-anatomy facts. The real 2026-08-26 formal audit
-  assessed 3,543 rows with zero unavailable facts, zero independent-Oracle
-  mismatch, exact permutation equivalence, and audit fingerprint
-  `6e4b996cd7b75d49bf5f60fda94dfb6942da33d049c9b8589eb5f5fe455247a8`.
-  The Production UI now labels Momentum Breakout records as confirmed,
-  near-trigger, or extended/reset-first and explicitly states that Advance +
-  Watch is not a completed-breakout list. The new facts remain shadow-only and
-  do not change the published score, status, rank, or Snapshot payload.
-- ADR 0050 adds the repository-only chronological evaluation boundary: source-
-  dated signals are sealed without outcomes, and 1/3/5-session underlying-
-  stock labels may be attached only later under a fixed no-random-split,
-  five-session purge/embargo policy. Current-constituent replay is not
-  performance-eligible. No evaluation dataset or result exists; 29 sessions,
-  missing daily point-in-time membership, and incomplete corporate-action
-  governance remain hard blockers.
-- ADR 0097 names the future Quant Research Lab / 量化研究实验室 and adds the
-  immutable first `strong-stock-pullback-research/1.0` preregistration. It
-  compares pullback/recovery signals with same-session eligible-leader non-
-  signal controls, fixes three sessions as the primary horizon, and bounds
-  development to 24 combinations before locked validation and untouched
-  holdout. Fingerprint
-  `1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f`
-  is `preregistered_data_blocked`; no performance result, research runtime, or
-  Production authority exists. ADR 0106 later adds a method/readiness-only
-  page without exposing fixture performance.
-- ADR 0098 adds the deterministic Dell-local Strategy Research Readiness 1.0
-  check. Its 2026-08-30 socket-guarded formal reread covers 31 canonical
-  EOD/Identity sessions through 2026-08-28 and returns `data_blocked`, logical
-  fingerprint
-  `4d3b5a1b472f710638f024443e2ad6c1dea1f4dd25920c2cd9eb1d3a51802116`.
-  The 252-session minimum and complete membership/action/lifecycle/adjustment/
-  matured-window evidence remain unmet. Even a future complete result permits
-  only a separate development review, never automatic tuning or performance
-  claims.
-- ADR 0099 adds the missing physical-evidence boundary. Immutable per-family
-  evidence binds exact source completion manifests and payload files; the final
-  Historical Coverage reader verifies safe paths, self-fingerprints, file sets,
-  counts, logical identities, and every physical SHA before returning a typed
-  manifest. The readiness CLI accepts an exact coverage ID only. A 252-session
-  six-family temporary-root fixture reaches review-only readiness, but real
-  `/data` has no Historical Coverage directory and remains `data_blocked`.
-- ADR 0100 bridges the current real bytes into that boundary without a data
-  transition. The socket-guarded 2026-08-30 command formally reread 31 EOD and
-  31 EOD-bound Identity artifacts, then transitively validated deterministic
-  unpublished evidence fingerprints
-  `d7def47ee1fba89760a016ba52d79313bf3729aed2fee421c4e05a2596299cd5`
-  and
-  `a69530ea830f448ecb90949c3f2a4a871a87ae015d2c2d8e0e6ae0582e5d4e76`.
-  It counted 306,539 EOD rows and 307,466 canonical Identity instrument rows.
-  `/data` stayed exactly 694 files / 503,568,026 bytes; evidence/Coverage
-  directories remain absent and readiness remains 31/252 `data_blocked`.
-- ADR 0101 produces the first current, clean-main Historical Pilot baseline.
-  It binds revision `017ab5657edaa4bf3bd90ac2437448a7486f7b4b`, the exact
-  inventory fingerprint
-  `b32d70ae94098bf753282ff2eaa89f241bedc469995bfcd2ac97c2568ddb35ca`,
-  and proposed sessions 2026-07-14 through 2026-07-16. The 75-request plan
-  fingerprint is
-  `ea6faae1d7f5cd3cd80ce349915a8094bc9e78e7e201f72638a06773f4e01899`;
-  the baseline fingerprint is
-  `7a8ab595707844fb57f4e64651a9e2db16f16246984a945cce3897ee031d7f28`.
-  It is blocked by account entitlement, equal-capability permission, and
-  lifecycle/terminal coverage; acknowledgement is null and no action occurred.
-- ADR 0102 now implements the provider-neutral temporary source-package seam
-  that a future authorized Pilot transport must use before canonical mapping.
-  It freezes already captured sanitized JSON below the exact `/tmp` Pilot plan,
-  binds permission, entitlement, lifecycle-review, and authorization evidence,
-  enforces every planned scope and request ceiling, and formally rereads every
-  byte. The implementation is synthetic-fixture-only and has no transport,
-  credential loader, CLI, default root, `/data` Apply, publication, deployment,
-  or scheduler authority. A concise Massive inquiry is prepared but not sent.
-- ADR 0103 now implements the frozen experiment's fixture-only chronological
-  mechanics. It deterministically assigns 50/25/25 splits, 20-session warm-up,
-  five-session purge/embargo, final-label maturity exclusions, all 24 registered
-  parameter combinations, same-session eligible-leader controls, and later
-  1/3/5-session underlying-stock labels. It has no real data adapter, canonical
-  writer, CLI, statistic selection, performance claim, page, publication, or
-  deployment. The real experiment remains 31/252 `data_blocked`.
-- ADR 0104 now freezes the fixture-only statistical analysis plan before real
-  labels exist: session-balanced signal/control contrast, five-session moving-
-  block bootstrap with 2,000 replicates, 90% intervals, all-24 Holm correction,
-  0/10/25/50 bps-per-side views, explicit coverage/quarantine evidence, one
-  development lock, immutable validation, and selected-only holdout. Sparse
-  evidence is inconclusive, failed validation blocks holdout, and all reports
-  deny stage-transition and performance-claim authority. No real result exists.
-- ADR 0105 adds an independently implemented descriptive Oracle and a bounded
-  adversarial suite. All 72 development summaries reconcile on counts,
-  coverage, Regime cells and descriptive/session-balanced values. Null and
-  reversing validation, one-session crowding, one extreme session, cross-split
-  evidence, unlocked holdout and failed-validation holdout fail closed. The
-  audit exposed differential missingness as a gap; validation and holdout now
-  require complete three-session inferential/coverage evidence for the entire
-  24-member validation family and `1.0000` coverage for the locked holdout
-  signal/control cohorts.
-  ADR 0108 now supplies the formal independent inferential Oracle for arbitrary
-  nonconstant fixtures: exact Bootstrap bounds/probability and all-24 Holm
-  values reconcile through a separate MT19937/arithmetic implementation. ADR
-  0107 supplies external durable one-use holdout custody with
-  reserve-before-evaluation and no-replay semantics. Both remain fixture-only.
-- ADR 0109 adds the review-only development-activation decision. Current
-  31/252 readiness cannot produce authorization; complete synthetic readiness
-  can only prepare an exact evidence-bound acknowledgement, never run real
-  evaluation or select parameters.
-- ADR 0106 adds the bilingual method/readiness-only Lab page to repository
-  source. The 31/252 indicator is data coverage rather than confidence; all
-  performance panels remain unavailable and no deployment occurred.
-- A credential-free 2026-08-27 historical-readiness audit returns
-  `NOT_READY_FOR_PERFORMANCE_EVALUATION`. It verified 286,652 bars, 29/29 SPY
-  coverage, and same-session Identity binding, but found no daily Universe
-  membership or corporate-action dataset, all bars flagged with unverified
-  all-one adjustment factors, and no retained inactive/delisted Identity rows.
-  It established source/retention design—not formula tuning or a physical
-  backtest dataset—as the next safe work at that audit point.
-- Repository source now also accepts ADR 0051 and Historical Research Data
-  Foundation V1. The design separates raw EOD, point-in-time Identity, daily
-  membership, corporate actions, lifecycle/terminal evidence, and explicit
-  adjustment ledgers; 252 sessions is the acquisition floor and 504 is
-  preferred. Provider-neutral Pydantic row/manifest contracts now enforce
-  three clocks, stable-ID lineage, tri-state membership, distinct split/total-
-  return factors, and a 252-session research-ready floor using synthetic
-  fixtures. Explicit Arrow schemas and immutable temporary-root Parquet
-  repositories now cover source action observations, lifecycle, membership,
-  and adjustments with formal reread and tamper/conflict gates. Provider source
-  observations cannot substitute for canonical Corporate Action coverage.
-  This adds no canonical dataset, provider verification, `/data` write,
-  formula, publication, or deployment.
-- ADR 0086 now advances Daily Universe Membership from fixture-only persistence
-  to a complete physical partition contract. Manifest `1.1` proves one exact
-  stable-ID evaluated base, complete Primary/Secondary three-state ledgers,
-  uniform point-in-time provenance, and source fingerprints. A real read-only
-  Dell pilot formally reread the completed 2026-08-19 reviewed full-base source
-  and wrote only `/tmp`: 4,565 evaluated IDs per Universe, 9,130 rows, Primary
-  1,718 included / 2,775 excluded / 72 quarantined, and Secondary 1,831 /
-  2,645 / 89. Its origin is `reconstructed_point_in_time`; no other date was
-  inferred. The reviewed source completed on 2026-08-21, after the analysis
-  session, so every non-quarantined row carries a later-known-source warning
-  and the pilot is mechanics-only for anti-look-ahead evaluation. Canonical
-  `/data`, active analytics, and Production were unchanged.
-- That 2026-08-28 public-source/storage review is now complete. Massive Basic's
-  documented EOD, point-in-time reference, split, and dividend shapes are
-  technically plausible, and projected Dell storage is small. A real pilot is
-  not authorized: current account entitlement is unverified, complete merger/
-  successor/terminal evidence is missing, and official individual-use terms
-  conflict with equal-capability friend/guest access and raise a separate non-
-  display/derived-use question. No access, data, or deployment state changed.
-  Saved synthetic current-endpoint split/dividend mapping and independent
-  Decimal adjustment invariants are now also implemented. Missing or ambiguous
-  stable IDs and incomplete evidence quarantine; unanchored rows become
-  explicit safe issues. Provider cumulative adjustment evidence is never
-  treated as a single-event factor without a declared common basis. The next
-  safe slice is now complete as `historical-research-pilot-plan/1.0`: a pure
-  caller-inventory planner that enforces one-to-three exact XNYS sessions, the
-  reviewed 80-request ceiling, zero retry, serial pacing, deterministic future
-  `/tmp` package paths, and permanent `not_authorized` output. It does not scan
-  `/data`, access credentials, call a provider, or write data. A real pilot
-  remains blocked on equal-capability source permission, account entitlement,
-  lifecycle source coverage, and separate exact authorization. The user has
-  resolved product posture: guest and credential shared content remain
-  identical; incompatible sources are not converted into an owner-only tier.
-- ADR 0052 and Data Record Governance V1 now define one executable family
-  registry plus separate layer, disposition, evidence, quality, coverage,
-  point-in-time, retention, content-scope, and serving dimensions. Existing
-  domain states remain authoritative and no dataset was rewritten.
-- ADR 0053 adds the pure historical Pilot approval review. The deterministic
-  preliminary window is 2026-07-14 through 2026-07-16, immediately before the
-  documented retained boundary, with 75 serial requests and no unnamed Ticker
-  Events. The current review remains blocked and produces no acknowledgement;
-  no provider, credential, `/data`, `/tmp`, publication, or deployment changed.
-- The broader dated official-source review now returns
-  `NO_SINGLE_SOURCE_CLEARED` and `HYBRID_SOURCE_PATH_RECOMMENDED`. SEC is the
-  preferred open filing/fundamental/event evidence lane; GLEIF and OpenFIGI
-  are identifier crosswalk candidates; Nasdaq Daily List is a licensed action/
-  listing candidate; and EOD requires a separately licensed raw/derived/
-  delivery-compatible source. Twelve Data has a possible paid redistribution
-  path but is neither selected nor cleared. ADR 0054 and executable Source
-  Permission Governance V1 now make six uses independent: Dell acquisition,
-  raw retention, derived analysis, equal-capability raw display, derived
-  display, and machine delivery. Any missing, stale, blocked, or unresolved use
-  fails closed and every result has zero operational authority. No provider,
-  data, deployment, or `/data` state changed.
-- Historical Pilot approval review is now contract 1.1. Its permission gate is
-  derived from exact EOD, point-in-time Identity, and corporate-action source-
-  observation assessments covering all six uses, from one source/review at the
-  exact approval time. Callers cannot submit a manual satisfied permission
-  gate. The package remains blocked and grants no acquisition or write.
-- Source permission reviews and assessments now also have an immutable,
-  content-addressed caller-root repository with atomic publish, formal reread,
-  idempotency, corruption/conflict/partial-target rejection, and symlink
-  safety. It has no default `/data` root, CLI, active pointer, provider client,
-  page bodies, or credentials; only temporary-directory fixtures exist.
-- ADR 0055 and Source Resolution Governance V1 now make source composition
-  mechanical per family and fact scope. Policies bind exact permission-review
-  fingerprints, source roles, precedence, and matching thresholds while
-  structurally disabling ticker joins and first-non-null selection. Any usable
-  contradiction quarantines without majority vote; missing required evidence
-  remains unavailable. Only synthetic facts were resolved and every decision
-  has zero operational authority.
-- The exact Source Selection and Permission Inquiry Packet V1 is prepared but
-  not sent. It covers equal-capability display/browser delivery, Dell
-  retention/derivation, termination deletion, history/lifecycle coverage,
-  adjustments/corrections, availability, attribution, and pricing. General
-  pre-feature data-governance design is now closed; source selection, real
-  adapters, acquisition, and evaluation remain separately gated.
-- Production contains the tested first-level workspace
-  shell and user-facing `Market Regime & Opportunities` / `市场风向与机会` name.
-  Market Regime & Opportunities is the first navigation item and default
-  workspace; Market Structure & Activity is second.
-  It centralizes Universe/language/Session controls, adds a factual first-screen
-  market-structure summary, Daily Decision Brief, decision-lane relationship
-  selection, prior-state markers, consolidated reliability warning, and
-  collapsed 16-pair audit table.
-- The public data-free Session entry is now a bilingual product introduction,
-  not only an authentication panel. It uses the dark WH mark, keeps credential
-  and equal-capability guest entry in the first viewport, presents the complete
-  decision chain, and in active Production separates five live capabilities
-  from three planned and one later capability along a central visual path.
-  Sector ETF Rotation is now one of those live capabilities.
-  The page makes the
-  explain-before-ranking, counterevidence, context, fund-flow terminology, and
-  stock-versus-option-return guardrails visible before entry.
-- Repository source now carries the score-free 11-record Sector ETF Rotation
-  product through Market Intelligence 1.3, Snapshot 1.11 / Dashboard 2.8, and
-  OCI bundle validation. Approval Plans 1.3 and 2.6 bind the exact audit,
-  product, history, Strategy, and Visual Context lineage. A dedicated browser
-  workspace lazily loads the checksum-bound file and keeps 5/10/20-session
-  relative leadership, acceleration, and persistence separate. A real
-  2026-08-28 tmp-only MI 1.3 rehearsal and Snapshot 1.11/Plan 2.6 build passed
-  with zero Production writes. Automation Plan 1.6 and Executor 1.5 now add a
-  strict Candidate Visual Context stage and pass its exact audit into Plan 2.6;
-  a real 3,541-row `/tmp` executor rehearsal reproduced the prior fingerprint
-  with zero Oracle mismatch. ADR 0095 now shares one exact `/tmp`/persistent
-  custody policy across every analytics writer and reader. A real 2026-08-28
-  persistent Dell rehearsal completed all nine analytics directories with
-  owner-only custody, no residue, zero Oracle mismatch, zero request, and zero
-  Production write. The separately authorized MI 1.3 and Snapshot 1.11 / Plan
-  2.6 Applies then formed one exact active lineage. Both the standard and
-  persistent 52-checksummed-file bundles formally reread with identical bundle
-  fingerprint `6e2e08f1e3e9c3d06c3c069e751fce1b9ac2433837952aa2f95186f27c1721e0`;
-  persistent directories are `0700` and files `0400`. ADR 0096 advances the
-  read-only planner to Plan 1.8 and removes only the superseded ADR 0094 stop.
-  Two real 2026-08-28 replays reread all 18 current/prior observations and
-  deterministically reached deployment review with fingerprint
-  `0782f8793a8564b7b17f354eb81e602afe49c1fe8154bcc371e39ebacee51d83`,
-  zero requests/writes, and no publication, deployment, or scheduler authority.
-  Active Production is MI 1.3 and Snapshot 1.11 / Dashboard 2.8.
-
-## OCI production state
-
-The active remote release is `2026-09-01T123500Z-579a26759a9e`. Its source
-bundle was formally reread on Dell before deployment and was built from commit
-`579a26759a9e24c6faf246be343af9e68b9b5ed9` and bound to Market Intelligence
-`2026-08-31T101550Z-44b052419be8`. A later repository HEAD does not
-invalidate this immutable lineage; the report exposes whether the two commits
-match rather than hiding the bundle.
-
-The 2026-09-01 deployment passed formal Snapshot Plan 2.6,
-ordinary-fresh Snapshot Apply, exact 52-checksummed-file serving-bundle reread, remote
-preflight, Nginx configuration checks,
-atomic apply, unauthenticated protection, and the deployment tool's temporary
-guest Session postflight against the exact Snapshot 1.11 payload, Candidate,
-Strategy, Sector Rotation resources, and root PNG favicon.
-No credential or cookie content was printed or retained.
-The independent remote-state report also matched local manifest/checksum
-hashes, found zero failed units or staging/failed residue, and recorded state
-fingerprint
-`f0c800532ad844180627b33aa6b968a3bf8d1318d26224538f0231d45ffa6d1b`.
-Password-based and visual browser
-behavior remains a manual user check. The local report remains network-free
-and cannot replace this separately authorized OCI check.
-
-## Product guardrails
-
-- Decision support, not automated trading, execution, or prediction.
-- Conclusion first, with raw values, parameters, contributions, evidence,
-  counterevidence, and market-state adjustment available for inspection.
+- Decision support, not automated trading or order execution.
+- Human investment meaning first; algorithm labels second.
+- Show conclusion, source values, parameters, contributions, supporting and
+  contrary evidence, market adjustment, and invalidation conditions.
 - Never call price/volume proxies actual fund flow.
 - Never call underlying-stock forward return an option return.
 - Keep security form, issuer structure, listing scope, evidence, and Universe
   disposition separate and effective-dated by stable `instrument_id`.
 - Quarantine unknown, ambiguous, malformed, heuristic-only, and insufficient-
   evidence records.
-- Core remains the future policy goal and Broad the future secondary policy,
-  but active provider-form Universes remain provisional until authoritative
-  issuer evidence satisfies the documented gates.
+- Prevent look-ahead, survivorship, revision, selection, and leakage bias.
+- Keep research, validation, shadow, and Production stages explicit. Models and
+  parameters may be personal/proprietary, but their risk and validation status
+  must be visible.
 
-## Authorization boundary
+Priority strategy families are Momentum Breakout, Strong-Leader Pullback,
+Trend Continuation, Oversold Technical Reversal, and Fundamental Value
+Reversal. Defensive/anti-market context is a regime-conditioned opportunity
+layer. Earnings, macro, and news are mainly risk/context inputs rather than a
+claim of first-information advantage. Option expression is a separate later
+layer covering long Calls/Puts, debit spreads, covered calls, moneyness and DTE;
+naked short-option strategies are outside the intended scope.
 
-On 2026-09-01 the operator directed future routine daily Identity/EOD fetch,
-guarded canonical Apply, existing offline analytics, standard publication,
-Snapshot, bundle, and OCI deployment to proceed without separate chat
-confirmation at every stage. Every existing date, fingerprint, quality,
-freshness, custody, clean-source, CAS, and postflight gate remains mandatory;
-a failed gate stops the chain rather than broadening this direction. This is
-operator workflow authority for agent-run routine updates, not an installed
-unattended standing-authorization artifact and not scheduler publication or
-deployment authority.
+## Automation and runtime state
 
-Historical backfill, SEC access, new provider endpoints, credential inspection
-or change, model/Universe rule changes, rollback, deletion, scheduler mutation,
-orders, and materially new data or product scope remain separately bounded.
-The completed 2026-08-31 round is evidence of one successful guarded chain,
-not permission to bypass any of those controls.
+The installed `whalpha-daily-eod-wake-review.timer` is active/waiting; its
+service is inactive between wakes. It is read-only and credential-free. It does
+not fetch, apply, calculate, publish, deploy, retry, or send alerts. No
+unattended data-transition scheduler is installed.
 
-ADR 0102's fixture-only source-package writer is repository development, not a
-new authorization. It does not change the blocked Pilot result or permit the
-prepared Massive inquiry to be sent automatically.
+Routine daily Identity/EOD fetch, guarded canonical Apply, existing analytics,
+standard MI publication, Snapshot, bundle, and OCI deployment may proceed
+without a separate chat confirmation at every stage under the user's standing
+workflow direction. Every date, fingerprint, quality, freshness, custody,
+clean-source, CAS, residue, and postflight gate remains mandatory. A failed
+gate stops the chain and requires diagnosis; it does not broaden authority.
 
-ADR 0110 adds a separately authorized four-request Massive account capability
-probe for Grouped Daily, point-in-time active Tickers, Splits and Dividends.
-It retains no response body, writes no data, and grants no permission or Pilot
-authority. Its simulated tests pass.
+SMTP code exists but no provider, sender, recipient, or credential is
+configured; no email can currently be sent. SEC access, new providers/endpoints,
+credential inspection/change, model or Universe rule changes, rollback,
+scheduler mutation, orders, and materially new data/product scope remain
+separately bounded.
 
-The exact 2026-08-31 authorization then ran that probe once from clean revision
-`df178b21266ebe733d937fed4f71a5b50176e1d6` for 2026-07-16. Grouped Daily
-returned 12,454 rows; active Tickers, Splits and Dividends each returned one
-deliberately limited result. All were accessible, with four requests, zero
-retained bodies and zero writes. Fingerprint is
-`34b4eafc8500b24a7d1625ee8fcc24c94509743f05be356c76ab774a58ff09d6`.
-Inactive/lifecycle coverage, pagination, historical depth, permission and the
-Historical Pilot remain unverified or unauthorized.
+## Immediate risks and next work
 
-ADR 0111 adds the next exact-review boundary: one historical `active=false`
-anchor, at most two 1,000-row pages, same-host/path pagination, aggregate
-lifecycle-field counts only, no retained identifiers/body and zero writes. It
-is simulation-tested.
+1. **Daily-chain performance:** the 9/1-9/3 run proved that Phase 1a,
+   Candidate, Entry Geometry, ETF Relationships, MI planning/Apply, repeated
+   planner reviews, and the context report remain CPU-heavy and mainly
+   single-core. Profile first, then add content-addressed verified caches,
+   incremental reads, vectorization, and safe process-level parallelism without
+   changing model outputs or validation gates.
+2. **Historical analytics consumption:** connect the 303-session canonical
+   foundation to research/analytics through point-in-time governed inputs;
+   reconcile the current 26-session MI history and research-readiness display.
+3. **Research foundation:** complete lifecycle/terminal, membership, actions,
+   adjustments, costs, and sealed chronological evaluation before interpreting
+   strategy performance.
+4. **Strategy research:** validate one preregistered strategy family at a time,
+   beginning with Strong-Leader Pullback; compare against same-opportunity-set
+   controls and preserve holdout discipline.
+5. **Product visualization:** add only decision-answering charts for price path,
+   entry position, threshold distance, signal age, contribution, regime-to-
+   sector-to-stock linkage, persistence, and invalidation.
+6. **Later data/product layers:** options expression, fundamentals/valuation,
+   point-in-time event analysis, then portfolio/IBKR integration.
 
-The exact 2026-09-01 authorization then ran the probe once from clean revision
-`64a35b61da304bb412230c00d697155de41c6d9d` for 2026-07-16. Both 1,000-row
-pages were full and another page remained, so status was
-`truncated_at_ceiling`. All 2,000 rows were explicitly inactive; delisting date
-coverage was 1,965, update-time coverage 2,000, CIK 1,724, Composite FIGI 533
-and Share Class FIGI 469. Fourteen duplicate ticker occurrences reinforce the
-stable-ID/effective-date boundary. Fingerprint is
-`8fa2c864851f43fdc24c321922f41d2d41c8bf180d384e6485126d3acd8ce2cd`.
-No body/identifier was retained and no data was written. Full pagination and
-evaluation-ready lifecycle facts remain incomplete.
-
-ADR 0112 now adds the distinct six-page inactive pagination census within the
-existing Pilot ceiling. It preserves the two-page historical contract, exact
-anchor, no retry, serial pacing, aggregate-only output and zero-write boundary.
-It is simulation-tested.
-
-The exact 2026-09-01 authorization then ran the census once from clean revision
-`65395d7deca9eef6a2bd75e524f06d478aea1c35` for 2026-07-16. All six pages
-were full and another page remained, so status was `truncated_at_ceiling` at
-6,000 inactive rows. Delisting-date coverage was 5,879, update-time coverage
-6,000, CIK 5,017, Composite FIGI 1,508 and Share Class FIGI 1,348; 48 duplicate
-ticker occurrences reinforce stable-ID/effective-date governance. Fingerprint
-is `f6643417832e931f6928d28279e92750b441e5b970212af17ae23dd790d940cb`.
-No body/identifier was retained and no data was written. The existing six-
-request Pilot allocation cannot complete the inactive collection.
+Do not start new formulas, thresholds, paid-data acquisition, or UI scope merely
+because the data catch-up and deployment are complete. First establish the
+performance profile and the governed research dataset contract.
 
 ## Cross-device continuity
 
-The natural 2026-08-31 20:30 UTC read-only timer trigger failed closed because
-its installed service remained pinned to revision
-`fb96b49f404e4f7abbd11f1822b281acafce7888` while main had advanced. It made
-zero coordinator calls, credential accesses, external requests or writes. The
-failure left the reachable user manager `degraded`; ADR 0113 fixes candidate
-review to permit an exact repair review in that state. The exact candidate was
-then authorized and installed at revision
-`23ae1430c53b4b24d669729c7e104fd3adbe3a89`; service/timer hashes are
-`1e67228cd50c8eea2fcaaffaf269783dc41e54ce1f24f696356fec174073e6f7` and
-`19347d553ad3300c01a03f56337bd31ee9bd9e0b7e16b05b95b58b983512da0b`.
-The controlled read-only start succeeded and selected missing 2026-08-31 with
-zero coordinator calls, credentials, requests or writes. Timer remains enabled;
-canonical data remains through 2026-08-28.
-
 - Windows already has its own dedicated passwordless SSH key and saved Dell
   remote project.
-- For Mac, first join the same Tailscale network, then generate a new Mac-only
-  SSH key. Never copy the Windows private key.
-- Add only the Mac public key to Dell, configure the `dell5820` SSH alias, save
+- For Mac, join the same Tailscale network and generate a new Mac-only SSH key;
+  never copy the Windows private key.
+- Add only the Mac public key to Dell, configure SSH alias `dell5820`, save
   `/home/hui/projects/trading-intelligence-platform` in Codex Desktop, and run
-  the read-only context report before continuing work.
-- Never place literal server addresses, private-key paths, or credentials in
-  repository documentation.
+  the read-only context report before continuing.
+- Never place literal server addresses, private-key paths, credentials, or
+  Session material in repository documentation or chat.
 
 ## Recovery procedure for a new task
 
 1. Read `AGENTS.md`, `README.md`, `docs/README.md`, this document, and
-   `current-status.md`.
-2. Run `scripts/admin/report-current-context.sh` from the source-of-truth
-   repository.
-3. Compare repository, deployed-source commit, EOD, Identity, Activation,
-   Market Intelligence, Snapshot, inventory, and residue fields with this
-   baseline. A newer clean repository HEAD is not itself a deployment mismatch.
-4. Classify differences before making changes. Do not silently rewrite an
-   active pointer, rerun acquisition, or deploy.
-5. Read only the product, architecture, operation, ADR, and audit documents
-   relevant to the selected single objective.
+   `current-status.md` in that order.
+2. Run `scripts/admin/report-current-context.sh` from the source-of-truth main
+   repository. Expect it to be slow until the reporting path is optimized.
+3. Compare repository, EOD, Identity, Activation, MI, Snapshot, inventory, and
+   residue with this baseline.
+4. If deployment state matters, run the non-secret OCI inspector separately;
+   the local context report is intentionally network-free.
+5. Classify differences before mutation. Never silently rewrite an active
+   pointer, rerun acquisition, deploy, or clean a remote release.
+6. Read only the architecture, operations, ADR, and audit documents relevant to
+   the selected single objective.

@@ -77,13 +77,11 @@ in-dataset release and therefore fails closed on rollback.
 
 ## Downstream order
 
-The active Production path remains MI 1.2 with Snapshot 1.10 / Dashboard 2.7.
-Repository source implements the required Snapshot 1.11 / Dashboard 2.8
-consumer, but it has not been applied or deployed. MI 1.3 may only advance
-together with that complete consumer; never pair it with an older Snapshot
-that would silently drop Sector Rotation. Use the explicit publication ID and exact
-same-session Strategy Channel audit, separately approve/apply Snapshot, then
-build OCI with both the explicit Snapshot and
-`--market-intelligence-publication`. OCI deployment remains another
-authorization. Older MI/Snapshot pairs remain readable rollback-compatible
+The active Production path is MI 1.3 with Snapshot 1.11 / Dashboard 2.8. MI
+1.3 must advance only with that complete consumer; never pair it with an older
+Snapshot that would silently drop Sector Rotation. Use the explicit publication
+ID and exact same-session Strategy Channel audit, separately approve/apply
+Snapshot, then build OCI with both the explicit Snapshot and
+`--market-intelligence-publication`. OCI deployment remains a separate guarded
+operation. Older MI/Snapshot pairs remain readable rollback-compatible
 boundaries.

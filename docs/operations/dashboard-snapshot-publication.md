@@ -2,8 +2,9 @@
 
 ## Market Intelligence consumer binding
 
-The active release is Snapshot 1.10 / Dashboard 2.7. Repository source also
-supports Snapshot 1.8 / Dashboard 2.5 for split Candidate delivery. Its
+The active release is Snapshot 1.11 / Dashboard 2.8. Repository source also
+supports older readable pairs, including Snapshot 1.8 / Dashboard 2.5 for
+split Candidate delivery. Its
 dry-run receives an explicit `--market-intelligence-publication-id`, formally
 reads the active immutable publication, and freezes that reference in candidate
 and plan. It never discovers a latest analytics directory. Analytics and
@@ -21,7 +22,7 @@ compact summary plus deterministic stable-ID detail shards. The reader validates
 every file, reconstructs the original full Candidate publication, and fails
 closed on any missing shard or summary/detail drift. Approval plan 2.3 freezes
 the ordered shard list and summary identity. Snapshot 1.8 remains a readable
-compatibility boundary; active Production uses the additive 1.10/2.7 pair.
+compatibility boundary; active Production uses the additive 1.11/2.8 pair.
 
 Repository source now also supports Snapshot 1.9 / Dashboard 2.6 through
 Approval Plan 2.4. It extends every 1.8 binding and additionally freezes the
@@ -44,9 +45,8 @@ Strategy audit and the exact Visual Context audit using
 audit once and embeds its records into detail-shard 1.1; the summary remains
 unchanged. Plan 2.5 freezes the visual audit manifest hash, logical fingerprint,
 batch fingerprints, and all shard hashes. Direct publication, OCI bundle
-validation, and the active Production release support this pair, but the
-unattended daily control plane remains
-on Plan 2.4 at that historical boundary.
+validation, and the active Production release remain backward-compatible with
+this pair; no unattended write-capable daily control plane is installed.
 
 Repository source now also supports Snapshot 1.11 / Dashboard 2.8 through
 Approval Plan 2.6. It requires MI 1.3 and therefore the exact Sector ETF
@@ -55,8 +55,7 @@ and Visual Context requirement. The builder writes one dedicated checksum-
 bound `sector-etf-rotation.json`; strict reread and Apply validation reject
 lineage, record-order, window, Oracle, Theme-unavailable, or proxy-disclosure
 drift. The browser retrieves this file only when the Sector Rotation workspace
-opens. A real 2026-08-28 tmp-only Snapshot and Plan 2.6 rehearsal passed, but
-neither was applied or deployed.
+opens. The active 2026-09-03 Snapshot and OCI release use this exact pair.
 
 ## Daily control-plane custody
 
@@ -70,7 +69,7 @@ same-session Strategy Channel audit.
 
 The current planner recognizes Plan 2.6 and formally rereads it through strict
 canonical, owner-controlled, regular-file, non-symlink, mode `0444` custody
-and the full existing candidate/plan validation. Automation Plan 1.6 and
+and the full existing candidate/plan validation. Automation Plan 1.8 and
 Executor 1.5 now generate and pass the exact Candidate Visual Context audit.
 Persistent-workspace compatibility for the older audit CLIs remains a separate
 activation blocker. Successful preparation stops at
@@ -86,8 +85,8 @@ the existing publisher and records success only after the exact active release,
 contracts, aggregate, manifest, session, target, and planned pointer formally
 reread. Recovery never applies or links: exact active state reconciles success;
 absent target/staging with unchanged Snapshot and Activation state proves no
-write; everything partial, changed, or ambiguous blocks. The port is
-repository-only, uninstalled, and has never been invoked against Production.
+write; everything partial, changed, or ambiguous blocks. The custody boundary
+reserved and formally recorded the active 2026-09-03 Snapshot Apply.
 
 ## Safety boundary
 

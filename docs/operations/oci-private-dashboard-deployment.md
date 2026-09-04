@@ -10,16 +10,16 @@ project changelog, not in this current runbook.
 ## Live-verified state
 
 The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-09-01 post-deployment
+[current-context](../project/current-context.md). Its 2026-09-04 post-deployment
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-08-31T102009Z-44b052419be8`;
+  to release `2026-09-03T090150Z-a4f10a02b6ae`;
 - the release is built from source commit
-  `44b052419be8bcc9cd7c433c85e5381a4499ddc7` and binds Market
+  `a4f10a02b6ae8bc5dea64fda7ea90267cfca305b` and binds Market
   Intelligence
-  `2026-08-31T101550Z-44b052419be8`;
-- it serves ordinary-fresh, lag-zero 2026-08-31 analytics through Snapshot
+  `2026-09-03T070700Z-f506e025475e`;
+- it serves ordinary-fresh, lag-zero 2026-09-03 analytics through Snapshot
   1.11 / Dashboard 2.8, Candidate publication 1.1, the strategy-channel and
   Candidate Visual Context products,
   `en` and `zh`, with English as the first-visit default;
@@ -30,9 +30,11 @@ reconciliation records, without reading credentials:
   `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
   `/auth/status`, and returns 404 for external `/auth/internal-verify`;
 - deployment postflight creates a temporary guest Session, verifies the same
-  Dashboard, Snapshot 1.11 Candidate summary/detail, and strategy payload are
-  readable, logs out, and removes the local cookie jar without printing it;
-- no staging, failed, or partial release residue exists.
+  Dashboard, Snapshot 1.11 Candidate summary/detail, strategy, and Sector ETF
+  Rotation payloads are readable, logs out, and removes the local cookie jar
+  without printing it;
+- no staging, failed, or partial release residue exists; and
+- one unrelated pre-existing failed `fwupd-refresh.service` remains untouched.
 
 The deployed React workspaces share the public entry's deep-navy/cyan visual
 identity and persistent WH product mark. This is a presentation-only change:

@@ -35,22 +35,23 @@ The platform should help answer:
 
 ## Current Phase
 
-Documentation, infrastructure, storage, the application stack, canonical
-EOD/Identity, private analytics, Activation V2, immutable Market Intelligence,
-MI 1.3, Snapshot 1.11 / Dashboard 2.8, entry-location, strategy-channel, Sector
-ETF Rotation, and
-Candidate Visual Context consumers, bilingual presentation, equal-capability
-guest Sessions, and
-Session-protected static publication are implemented. The deployed product
-includes the audited Stock Candidate pipeline and third Candidate workspace.
-Canonical sessions cover every XNYS session from 2026-07-17 through
-2026-08-28. The active Dashboard is the fresh, lag-zero 2026-08-28 release.
+Documentation, infrastructure, storage, the application stack, 303 contiguous
+canonical EOD/Identity sessions, private analytics, Activation V2, immutable
+Market Intelligence 1.3, Snapshot 1.11 / Dashboard 2.8, entry location,
+strategy channels, Sector ETF Rotation, Candidate Visual Context, bilingual
+presentation, equal-capability guest Sessions, and Session-protected static
+publication are implemented. Canonical EOD covers every XNYS session from
+2025-06-23 through 2026-09-03. The active Dashboard and OCI release are fresh,
+lag-zero 2026-09-03 publications.
 
 Repository source implements verified-prior one-session append for both
-Candidate and corrected V1.0.1 Market Regime state. The state daily path
-formally consumes current Phase 1a plus prior Phase 1b audits without reopening
-canonical EOD. Historical 8/27 recovery evidence is retained in the project
-changelog; the active deployed release is the complete 8/28 round above.
+Candidate and corrected V1.0.1 Market Regime state. The complete guarded daily
+chain through OCI postflight has been exercised for 2026-09-03. Active Market
+Intelligence still consumes only 26 sessions and reports
+
+`degraded_short_history`; research remains data-blocked until the historical
+analytics and missing point-in-time lifecycle/action/adjustment inputs are
+governed and connected.
 
 Repository development source also contains an exact-session read-only daily
 planner and a single-action executor for eleven offline daily stages: eight
@@ -70,7 +71,7 @@ MI publication is active. ADR 0071 adds a separate, default-off one-shot
 Snapshot Apply port with exact plan/state bindings, active-state proof, and
 no-write interruption recovery. ADR 0072 adds Dell-local bundle construction,
 formal whole-bundle reread, and a deployment-review stop. ADR 0073 supplies the
-default-off one-shot OCI deployment boundary, and the controlled 2026-08-28
+default-off one-shot OCI deployment boundary, and the controlled 2026-09-03
 round has now exercised the complete path. ADR 0076 adds a credential-free
 scheduler-wake plan that selects only the oldest missing XNYS session and never
 invokes the coordinator during review. No unattended data-transition chain is
@@ -152,7 +153,7 @@ has an explicit `daily_data_only` mode. It keeps the complete four-operation
 Identity/EOD scope while omitting all email inputs and claims. It was initially
 repository-tested only; the first installed use is recorded below.
 
-The first controlled data-only rehearsal installed seven-day external controls
+The historical first controlled data-only rehearsal installed seven-day external controls
 at `c3af030` and completed 2026-08-27 Identity. The single EOD request then
 failed closed as a status-unknown non-404/non-429 provider client response;
 there was no EOD package or canonical EOD write. ADR 0045 adds safe status and
@@ -171,7 +172,9 @@ scheduler, publication, or deployment has been authorized.
 Repository source also defines six independent Candidate strategy channels,
 sealed-signal/later-outcome evaluation contracts, and ADR 0051's point-in-time
 historical research foundation. The original 29-session readiness audit and
-current 31-session canonical history remain mechanics-only.
+31-session analytics baseline remain mechanics-only. Canonical EOD now has 303
+sessions, but active analytics still uses 26 and the missing point-in-time data
+families continue to block real strategy evaluation.
 ADR 0097 now names the future Quant Research Lab / 量化研究实验室 and freezes
 the first Strong-Leader Pullback preregistration before any outcome review. Its
 24-combination development grid, leader-control comparison, validation gates,
@@ -230,7 +233,7 @@ authorized work.
 - Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
 - Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
 - First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential/HTTPS transport, bounded All Tickers identity ingestion, Grouped Daily publication, and provider security evidence workflows are verified.
-- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2026-07-17 through 2026-08-28.
+- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2025-06-23 through 2026-09-03.
 - Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
 - Market summary analytics use the latest two formally completed sessions and support close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
 - Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.
