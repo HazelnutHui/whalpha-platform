@@ -160,7 +160,9 @@ An authorized apply must:
 7. create a bounded guest Session, prove it opens both Dashboard and the same
    private Snapshot, log it out, and prove the asset is protected again;
 8. leave password-based browser login as a manual user check; and
-9. retain the prior reviewed rollback release until a later exact cleanup.
+9. reject any system unit that newly enters failed state during deployment,
+   while leaving unrelated pre-existing failed units untouched; and
+10. retain the prior reviewed rollback release until a later exact cleanup.
 
 An interrupted custody-tracked deployment is never replayed. One separately
 enabled read-only inspection classifies exact success, unchanged/not completed,

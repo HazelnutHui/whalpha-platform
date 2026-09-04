@@ -226,6 +226,9 @@ trap rollback EXIT
 
 [[ "$(hostname)" == "hui" ]]
 [[ "$(whoami)" == "ubuntu" ]]
+failed_units_before=$(systemctl --failed --no-legend --plain \
+  | awk '{print $1}' \
+  | LC_ALL=C sort -u)
 [[ -L "${remote_base}/current" ]] || { echo "remote current release is absent before mutation" >&2; exit 1; }
 [[ "$(readlink -f "${remote_base}/current")" == "${remote_base}/releases/${expected_current_release}" ]] || { echo "remote current release changed before mutation" >&2; exit 1; }
 [[ ! -e "${release_dir}" ]] || { echo "target release already exists" >&2; exit 1; }
@@ -559,7 +562,16 @@ grep -qi '^Cache-Control:.*no-store' "${private_headers}" || { echo "private-dat
 rm -f "${dashboard_headers}" "${private_headers}"
 rm -f "${public_body}" "${private_body}" "${login_body}" "${local_root_body}"
 systemctl is-active --quiet nginx
-[[ "$(systemctl --failed --no-legend | wc -l)" == "0" ]]
+failed_units_after=$(systemctl --failed --no-legend --plain \
+  | awk '{print $1}' \
+  | LC_ALL=C sort -u)
+new_failed_units=$(comm -13 \
+  <(printf '%s\n' "${failed_units_before}" | sed '/^$/d') \
+  <(printf '%s\n' "${failed_units_after}" | sed '/^$/d'))
+[[ -z "${new_failed_units}" ]] || {
+  echo "deployment introduced a new failed system unit" >&2
+  exit 1
+}
 if ss -ltn | awk '{print $4}' | grep -Eq ':(8000|8001)$'; then
   echo "unexpected private backend listener after deploy" >&2
   exit 1

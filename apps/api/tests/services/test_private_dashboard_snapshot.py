@@ -358,6 +358,10 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "--bundle-path" in deploy_text
     assert "target staging path already exists" in deploy_text
     assert "remote failed-release residue appeared before mutation" in deploy_text
+    assert "failed_units_before" in deploy_text
+    assert "failed_units_after" in deploy_text
+    assert "deployment introduced a new failed system unit" in deploy_text
+    assert 'systemctl --failed --no-legend | wc -l' not in deploy_text
     inspect_text = inspect_script.read_text()
     assert "oci-dashboard-remote-state/1.0" in inspect_text
     assert "credential_login_tested" in inspect_text

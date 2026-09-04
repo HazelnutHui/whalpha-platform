@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-04 — Scope OCI failed-unit postflight to deployment regressions
+
+- A 2026-09-03 release deployment passed local validation and remote preflight
+  but rolled back at the final postflight because OCI already had the unrelated
+  failed `fwupd-refresh.service`; the deployer had allowed that baseline before
+  mutation but required globally zero failed units afterward.
+- Corrected the postflight to reject any newly failed system unit while still
+  requiring Nginx and the WH Alpha Auth Service to be healthy through their
+  existing dedicated checks. The deployment does not reset, restart, or alter
+  unrelated failed units.
+- Added regression assertions and retained the existing rollback, release
+  residue, listener, route, guest-session, checksum, and service gates.
+
 ## 2026-09-04 — Preserve unavailable Candidate state in Visual Context
 
 - The first post-backfill 2026-09-01 daily replay exposed two current
