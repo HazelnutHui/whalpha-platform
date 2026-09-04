@@ -83,13 +83,19 @@ is not. Active Market Intelligence still reports
 point-in-time membership, corporate actions, adjustments, costs, and sealed
 evaluation datasets are not yet fully wired.
 
-Current-context contract 1.3 now makes this family-specific: the 303-session
+Current-context contract 1.4 now makes this family-specific: the 303-session
 price floor and all 303 same-date Identity completion manifests are present,
 but neither has a published Historical Coverage claim. The provider-action,
 canonical-action, daily-membership, lifecycle, adjustment-ledger, and
 Historical Coverage evidence/final roots are absent. Real cost/liquidity,
 complete revision lineage, chronological evaluation, and sealed-holdout inputs
 also remain absent or fixture-only.
+
+The report now projects normalized Identity source observations as a separate
+record layer: 279 canonical partitions, 3,399,877 records, 3,536 source-page
+artifacts, and the exact 24 missing EOD sessions. It explicitly remains
+`canonical_partitions_observed_not_coverage_validated`, so source custody is
+visible without being promoted to Historical Coverage or research readiness.
 
 The first complete-base daily membership adapter is now proven only in
 `/tmp`. A read-only census found 279/303 custody-valid retained Identity

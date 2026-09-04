@@ -8,12 +8,17 @@ import hashlib
 import json
 import os
 import socket
+import stat
 import subprocess
 from contextlib import contextmanager
 from datetime import date
 from pathlib import Path
 from typing import Any, Iterator
 
+from tip_api.contracts.market_data.v1.historical_identity_source_custody import (
+    DATASET_NAME as HISTORICAL_IDENTITY_SOURCE_DATASET,
+    HistoricalIdentitySourceCustodyManifestV1,
+)
 from tip_api.persistence.parquet.dashboard_snapshot_active import (
     read_active_dashboard_snapshot,
 )
@@ -25,6 +30,7 @@ from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.market_intelligence_active import (
     read_active_market_intelligence,
 )
+from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.same_day_catchup import inventory_fingerprint
 from tip_api.services.private_dashboard_snapshot import validate_snapshot_release
 
@@ -184,7 +190,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.3",
+        "report_contract": "tip-current-context-report/1.4",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -377,6 +383,10 @@ def _historical_research_readiness(
         for session in identity_dates
         if session not in eod_date_set
     )
+    identity_source_observation = _identity_source_observation_inventory(
+        root,
+        session_dates=session_dates,
+    )
 
     physical = tuple(
         _research_family_inventory(root, family, directory, pattern)
@@ -394,6 +404,17 @@ def _historical_research_readiness(
             "point_in_time_identity_not_formally_coverage_validated",
         )
     )
+    if identity_source_observation["partition_count"] == 0:
+        blocker_codes.append("point_in_time_identity_source_observation_absent")
+    elif (
+        identity_source_observation["missing_eod_session_dates"]
+        or identity_source_observation["source_only_session_dates"]
+    ):
+        blocker_codes.append("point_in_time_identity_source_observation_incomplete")
+    else:
+        blocker_codes.append(
+            "point_in_time_identity_source_observation_not_formally_coverage_validated"
+        )
     blocker_by_family = {
         "corporate_action_source_observation": (
             "corporate_action_source_observation_absent"
@@ -454,6 +475,7 @@ def _historical_research_readiness(
                 "identity_only_dates": identity_only_dates,
                 "research_ready": False,
             },
+            identity_source_observation,
             *physical,
         ),
         "supporting_requirements": (
@@ -481,6 +503,165 @@ def _historical_research_readiness(
         "blocker_codes": tuple(blocker_codes),
         "ready_for_strategy_development_review": False,
         "performance_claims_authorized": False,
+    }
+
+
+def _identity_source_observation_inventory(
+    root: Path,
+    *,
+    session_dates: tuple[date, ...],
+) -> dict[str, Any]:
+    base = root / "market-data" / HISTORICAL_IDENTITY_SOURCE_DATASET
+    provider_root = (
+        base
+        / "schema_version=1"
+        / f"provider={MASSIVE_PROVIDER_ID}"
+    )
+    absent = {
+        "family": "point_in_time_identity_source_observation",
+        "data_family_id": "point_in_time_identity",
+        "record_layer": "source_observation",
+        "custody_state": "absent",
+        "partition_count": 0,
+        "manifest_count": 0,
+        "parquet_count": 0,
+        "covered_session_count": 0,
+        "record_count": 0,
+        "source_artifact_count": 0,
+        "first_session": None,
+        "last_session": None,
+        "missing_eod_session_dates": tuple(
+            item.isoformat() for item in session_dates
+        ),
+        "source_only_session_dates": (),
+        "validation_scope": "typed_partition_manifests_and_file_custody",
+        "research_ready": False,
+    }
+    if not base.exists() and not base.is_symlink():
+        return absent
+    if (
+        base.is_symlink()
+        or not base.is_dir()
+        or base.resolve(strict=True) != base
+        or stat.S_IMODE(base.stat().st_mode) & 0o002
+    ):
+        raise CurrentContextReportError(
+            "historical Identity source root is unsafe"
+        )
+    for path in (base / "schema_version=1", provider_root):
+        if not path.exists() and not path.is_symlink():
+            return {
+                **absent,
+                "custody_state": "root_present_without_partitions",
+            }
+        if (
+            path.is_symlink()
+            or not path.is_dir()
+            or path.resolve(strict=True) != path
+            or stat.S_IMODE(path.stat().st_mode) & 0o002
+        ):
+            raise CurrentContextReportError(
+                "historical Identity source root is unsafe"
+            )
+    if any(
+        not item.name.startswith("as_of_date=")
+        for item in provider_root.iterdir()
+    ):
+        raise CurrentContextReportError(
+            "historical Identity source provider inventory differs"
+        )
+    partitions = tuple(sorted(provider_root.glob("as_of_date=*")))
+    dates: list[date] = []
+    record_count = 0
+    source_artifact_count = 0
+    for partition in partitions:
+        if (
+            partition.is_symlink()
+            or not partition.is_dir()
+            or stat.S_IMODE(partition.stat().st_mode) != 0o755
+        ):
+            raise CurrentContextReportError(
+                "historical Identity source partition is unsafe"
+            )
+        try:
+            session_date = date.fromisoformat(
+                partition.name.removeprefix("as_of_date=")
+            )
+        except ValueError as exc:
+            raise CurrentContextReportError(
+                "historical Identity source session is malformed"
+            ) from exc
+        entries = {item.name for item in partition.iterdir()}
+        if entries != {"manifest.json", "part-00000.parquet"}:
+            raise CurrentContextReportError(
+                "historical Identity source partition file set differs"
+            )
+        manifest_path = partition / "manifest.json"
+        parquet_path = partition / "part-00000.parquet"
+        for path in (manifest_path, parquet_path):
+            if (
+                path.is_symlink()
+                or not path.is_file()
+                or stat.S_IMODE(path.stat().st_mode) != 0o644
+            ):
+                raise CurrentContextReportError(
+                    "historical Identity source artifact is unsafe"
+                )
+        try:
+            manifest = HistoricalIdentitySourceCustodyManifestV1.model_validate_json(
+                manifest_path.read_bytes()
+            )
+        except Exception as exc:
+            raise CurrentContextReportError(
+                "historical Identity source manifest is invalid"
+            ) from exc
+        if (
+            manifest.as_of_date != session_date
+            or manifest.provider != MASSIVE_PROVIDER_ID
+            or manifest.dataset_name != HISTORICAL_IDENTITY_SOURCE_DATASET
+            or manifest.parquet_file != parquet_path.name
+        ):
+            raise CurrentContextReportError(
+                "historical Identity source manifest identity differs"
+            )
+        dates.append(session_date)
+        record_count += manifest.record_count
+        source_artifact_count += len(manifest.source_artifacts)
+    ordered_dates = tuple(sorted(dates))
+    if tuple(dates) != ordered_dates or len(ordered_dates) != len(set(ordered_dates)):
+        raise CurrentContextReportError(
+            "historical Identity source sessions are not unique and ordered"
+        )
+    eod_dates = set(session_dates)
+    source_dates = set(ordered_dates)
+    missing_dates = tuple(
+        item.isoformat() for item in session_dates if item not in source_dates
+    )
+    source_only_dates = tuple(
+        item.isoformat() for item in ordered_dates if item not in eod_dates
+    )
+    if not ordered_dates:
+        return {
+            **absent,
+            "custody_state": "root_present_without_partitions",
+        }
+    return {
+        **absent,
+        "custody_state": "canonical_partitions_observed_not_coverage_validated",
+        "partition_count": len(ordered_dates),
+        "manifest_count": len(ordered_dates),
+        "parquet_count": len(ordered_dates),
+        "covered_session_count": len(eod_dates & source_dates),
+        "record_count": record_count,
+        "source_artifact_count": source_artifact_count,
+        "first_session": (
+            ordered_dates[0].isoformat() if ordered_dates else None
+        ),
+        "last_session": (
+            ordered_dates[-1].isoformat() if ordered_dates else None
+        ),
+        "missing_eod_session_dates": missing_dates,
+        "source_only_session_dates": source_only_dates,
     }
 
 

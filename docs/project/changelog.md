@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-04 — Expose canonical Identity source custody in current context
+
+- Accepted ADR 0140 and advanced the network-prohibited current-context report
+  to contract 1.4. It now projects the `point_in_time_identity` source-
+  observation layer separately from resolved canonical Identity snapshots.
+- The routine reader validates fixed dataset/provider/session paths, canonical
+  modes, exact two-file partition custody, typed self-consistent manifests,
+  unique ordered dates, and alignment to the canonical EOD session index. It
+  does not repeat the multi-minute full Parquet semantic pass during ordinary
+  task recovery.
+- The real Dell report identified 279 partitions, 279 manifests, 279 Parquet
+  files, 3,399,877 rows, 3,536 source artifacts, zero source-only dates, and
+  the exact 24 missing EOD sessions. State remains
+  `canonical_partitions_observed_not_coverage_validated` with a distinct
+  incompleteness blocker.
+- Seventeen focused current-context tests and all 2,043 backend tests passed
+  with the same two dependency warnings. `/data`, research readiness,
+  Membership, Historical Coverage, scheduling, Production, publication, and
+  deployment did not change during this reporting step.
+
 ## 2026-09-04 — Apply 279 historical Identity source partitions canonically
 
 - Revalidated clean Dell main commit `3d73ccd1f62e6c7f0df011312456c327fbc4623b`,

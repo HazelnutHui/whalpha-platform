@@ -81,6 +81,11 @@ The final network-free current-context report recorded 3,914 files,
 1,855,938,896 bytes, zero symlinks, zero publication residue, and the exact
 post-state fingerprint. No matching Apply/custody process remained.
 
+ADR 0140 subsequently advanced the read-only current-context report to 1.4.
+Its real Dell run projected the same 279 manifests/Parquet partitions,
+3,399,877 rows, 3,536 source artifacts, zero source-only dates, and all 24
+missing EOD sessions while retaining an explicit incompleteness blocker.
+
 ## Remaining boundary
 
 Canonical source custody is complete only for the 279 retained packages. The

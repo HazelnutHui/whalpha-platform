@@ -262,13 +262,108 @@ def test_historical_research_readiness_separates_acquired_from_ready(
     assert state["canonical_price_depth_satisfied"] is False
     assert families["eod_price_bar"]["partition_count"] == 2
     assert families["point_in_time_identity"]["covered_session_count"] == 2
+    assert (
+        families["point_in_time_identity_source_observation"]["custody_state"]
+        == "absent"
+    )
     assert families["universe_membership"]["custody_state"] == "absent"
     assert "daily_point_in_time_membership_absent" in state["blocker_codes"]
     assert (
         "corporate_action_source_observation_absent" in state["blocker_codes"]
     )
+    assert (
+        "point_in_time_identity_source_observation_absent"
+        in state["blocker_codes"]
+    )
     assert state["ready_for_strategy_development_review"] is False
     assert state["performance_claims_authorized"] is False
+
+
+def test_identity_source_observation_inventory_is_layered_and_gap_explicit(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "data"
+    first = date(2026, 8, 27)
+    second = date(2026, 8, 28)
+    partition = (
+        root
+        / "market-data/provider-identity-reference-observation"
+        / "schema_version=1/provider=massive_stocks_basic"
+        / f"as_of_date={first.isoformat()}"
+    )
+    partition.mkdir(parents=True)
+    partition.chmod(0o755)
+    manifest_path = partition / "manifest.json"
+    parquet_path = partition / "part-00000.parquet"
+    manifest_path.write_text("{}", encoding="utf-8")
+    parquet_path.write_bytes(b"parquet")
+    manifest_path.chmod(0o644)
+    parquet_path.chmod(0o644)
+    monkeypatch.setattr(
+        report,
+        "HistoricalIdentitySourceCustodyManifestV1",
+        SimpleNamespace(
+            model_validate_json=lambda _: SimpleNamespace(
+                as_of_date=first,
+                provider="massive_stocks_basic",
+                dataset_name="provider-identity-reference-observation",
+                parquet_file="part-00000.parquet",
+                record_count=11,
+                source_artifacts=(object(), object()),
+            )
+        ),
+    )
+
+    state = report._identity_source_observation_inventory(
+        root,
+        session_dates=(first, second),
+    )
+
+    assert state == {
+        "family": "point_in_time_identity_source_observation",
+        "data_family_id": "point_in_time_identity",
+        "record_layer": "source_observation",
+        "custody_state": (
+            "canonical_partitions_observed_not_coverage_validated"
+        ),
+        "partition_count": 1,
+        "manifest_count": 1,
+        "parquet_count": 1,
+        "covered_session_count": 1,
+        "record_count": 11,
+        "source_artifact_count": 2,
+        "first_session": "2026-08-27",
+        "last_session": "2026-08-27",
+        "missing_eod_session_dates": ("2026-08-28",),
+        "source_only_session_dates": (),
+        "validation_scope": "typed_partition_manifests_and_file_custody",
+        "research_ready": False,
+    }
+
+
+def test_identity_source_observation_inventory_rejects_inexact_file_custody(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "data"
+    session = date(2026, 8, 28)
+    partition = (
+        root
+        / "market-data/provider-identity-reference-observation"
+        / "schema_version=1/provider=massive_stocks_basic"
+        / f"as_of_date={session.isoformat()}"
+    )
+    partition.mkdir(parents=True)
+    partition.chmod(0o755)
+    manifest_path = partition / "manifest.json"
+    manifest_path.write_text("{}", encoding="utf-8")
+    manifest_path.chmod(0o644)
+
+    with pytest.raises(report.CurrentContextReportError, match="file set"):
+        report._identity_source_observation_inventory(
+            root,
+            session_dates=(session,),
+        )
 
 
 def test_historical_research_readiness_does_not_promote_observed_partition(

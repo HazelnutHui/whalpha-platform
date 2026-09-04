@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-04T20:33:09Z
+Operational state verified at: 2026-09-04T20:47:35Z
 
 Repository context updated at: 2026-09-04 UTC
 
@@ -28,7 +28,7 @@ older immutable deployed bundle; compare both identities explicitly.
 
 ## Formal Dell data state
 
-The network-free current-context reader uses report contract 1.3. Normal
+The network-free current-context reader uses report contract 1.4. Normal
 recovery completed at validation level `active_custody_and_contracts` with
 `completion_index_plus_latest_partition`; the explicit all-303-partition mode
 also completed successfully during the ADR 0125 validation.
@@ -97,7 +97,7 @@ and validated. Canonical price history alone is not backtest readiness.
 
 ### Historical research readiness
 
-The 2026-09-04 contract-1.3 current-context run now exposes family-specific
+The 2026-09-04 contract-1.4 current-context run now exposes family-specific
 progress rather than treating all historical inputs as one missing block:
 
 - the 252-session price-depth floor is satisfied by 303 contiguous EOD
@@ -117,6 +117,14 @@ The report status is therefore `data_blocked`, with
 `performance_claims_authorized=false`. Directory presence alone can never
 change those results; future partitions remain unvalidated until the existing
 transitive formal Coverage reader proves them.
+
+ADR 0140 now exposes the normalized source-observation layer separately from
+resolved Identity snapshots. Its routine typed custody read reports 279
+canonical partitions, 279 manifests, 279 Parquet files, 3,399,877 rows, 3,536
+source-page artifacts, no source-only sessions, and the exact 24 missing EOD
+sessions. Its state is
+`canonical_partitions_observed_not_coverage_validated`; the explicit
+incompleteness blocker remains and no readiness gate changes.
 
 An offline source census and complete-base shadow now narrow the membership
 gap without changing that status. Normalized Identity source observations are

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0140](0140-expose-canonical-identity-source-custody-in-current-context.md): project canonical historical Identity source-observation inventory and exact session gaps separately from resolved snapshots without weakening Historical Coverage gates.
+
 - [ADR 0139](0139-apply-historical-identity-source-custody-atomically.md): publish an exact reviewed historical Identity source plan through immutable per-session renames, shared locking, full formal reread, and non-destructive verify-then-complete recovery.
 
 - [ADR 0138](0138-bind-historical-identity-source-apply-plan.md): combine the complete normalized-source census and immutable-copy mapping in one no-write plan bound to candidate bytes, absent targets, and the current `/data` inventory.
@@ -214,3 +216,4 @@ Each ADR should include:
 - [0137: Normalize Historical Identity Source Custody](0137-normalize-historical-identity-source-custody.md)
 - [0138: Bind Historical Identity Source Apply Planning](0138-bind-historical-identity-source-apply-plan.md)
 - [0139: Apply Historical Identity Source Custody Atomically](0139-apply-historical-identity-source-custody-atomically.md)
+- [0140: Expose Canonical Identity Source Custody in Current Context](0140-expose-canonical-identity-source-custody-in-current-context.md)
