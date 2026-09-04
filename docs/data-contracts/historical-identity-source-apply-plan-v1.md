@@ -50,5 +50,7 @@ closed.
 `status=ready_for_separate_review` means only that the prospective immutable
 copy set is internally reconciled against the observed pre-state. The plan
 sets `apply_authorized=false` and records zero canonical writes. A later Apply
-requires its own decision, crash/recovery semantics, fresh compare-and-swap
-checks, and post-write formal reread.
+uses the separate
+[Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
+boundary, including its own reviewed invocation, crash/recovery semantics,
+fresh compare-and-swap checks, and post-write formal reread.

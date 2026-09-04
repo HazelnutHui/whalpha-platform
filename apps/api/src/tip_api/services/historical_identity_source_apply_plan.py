@@ -55,6 +55,7 @@ class HistoricalIdentitySourceApplyPlanEvidence:
 
 
 InventoryReader = Callable[[Path], str]
+RecoveryInventoryReader = Callable[[Path, tuple[Path, ...]], str]
 
 
 @dataclass(frozen=True, slots=True)
@@ -220,7 +221,9 @@ def read_historical_identity_source_apply_plan(
     *,
     plan_path: Path,
     approved_plan_sha256: str | None = None,
+    verify_then_complete: bool = False,
     inventory_reader: InventoryReader = inventory_fingerprint,
+    recovery_inventory_reader: RecoveryInventoryReader | None = None,
 ) -> HistoricalIdentitySourceApplyPlanEvidence:
     """Reread a plan and revalidate every source byte and the canonical pre-state."""
 
@@ -246,6 +249,7 @@ def read_historical_identity_source_apply_plan(
             "historical source Apply-plan target root differs"
         )
     expected_artifacts: list[HistoricalIdentitySourcePlanArtifactV1] = []
+    target_partitions: list[Path] = []
     for session in plan.sessions:
         source_partition = _partition_path(
             _dataset_root(candidate_root),
@@ -255,12 +259,15 @@ def read_historical_identity_source_apply_plan(
             expected_dataset_root,
             session.session_date.isoformat(),
         )
+        target_partitions.append(target_partition)
         _owner_only_directory(source_partition, candidate_root)
         _reject_symlink_chain(canonical_root, target_partition)
         if os.path.lexists(target_partition):
-            raise HistoricalIdentitySourceApplyPlanError(
-                "historical source target partition is no longer absent"
-            )
+            if not verify_then_complete:
+                raise HistoricalIdentitySourceApplyPlanError(
+                    "historical source target partition is no longer absent"
+                )
+            _validate_completed_target(target_partition, session)
         for file_name, size, sha256 in (
             (MANIFEST_FILE, session.manifest_bytes, session.manifest_sha256),
             (PARQUET_FILE, session.parquet_bytes, session.parquet_sha256),
@@ -300,7 +307,19 @@ def read_historical_identity_source_apply_plan(
         raise HistoricalIdentitySourceApplyPlanError(
             "historical source Apply-plan session index differs"
         )
-    if inventory_reader(canonical_root) != plan.expected_current_state_fingerprint:
+    if verify_then_complete:
+        recovery_reader = (
+            recovery_inventory_reader
+            if recovery_inventory_reader is not None
+            else _recovery_inventory_fingerprint
+        )
+        current_inventory = recovery_reader(
+            canonical_root,
+            tuple(target_partitions),
+        )
+    else:
+        current_inventory = inventory_reader(canonical_root)
+    if current_inventory != plan.expected_current_state_fingerprint:
         raise HistoricalIdentitySourceApplyPlanError(
             "canonical inventory changed after historical source planning"
         )
@@ -386,6 +405,51 @@ def _candidate_inventory_fingerprint(
     return historical_identity_source_fingerprint(
         [item.model_dump(mode="json") for item in artifacts]
     )
+
+
+def _validate_completed_target(
+    target: Path,
+    session: HistoricalIdentitySourcePlanSessionV1,
+) -> None:
+    if (
+        target.is_symlink()
+        or not target.is_dir()
+        or stat.S_IMODE(target.stat().st_mode) != 0o755
+    ):
+        raise HistoricalIdentitySourceApplyPlanError(
+            "completed historical source target directory differs"
+        )
+    entries = {item.name for item in target.iterdir()}
+    if entries != {MANIFEST_FILE, PARQUET_FILE}:
+        raise HistoricalIdentitySourceApplyPlanError(
+            "completed historical source target file set differs"
+        )
+    for file_name, size, sha256 in (
+        (MANIFEST_FILE, session.manifest_bytes, session.manifest_sha256),
+        (PARQUET_FILE, session.parquet_bytes, session.parquet_sha256),
+    ):
+        path = target / file_name
+        if path.is_symlink() or not path.is_file():
+            raise HistoricalIdentitySourceApplyPlanError(
+                "completed historical source target artifact is unavailable"
+            )
+        metadata = path.stat()
+        if (
+            not stat.S_ISREG(metadata.st_mode)
+            or stat.S_IMODE(metadata.st_mode) != 0o644
+            or metadata.st_size != size
+            or _file_sha256(path) != sha256
+        ):
+            raise HistoricalIdentitySourceApplyPlanError(
+                "completed historical source target artifact differs"
+            )
+
+
+def _recovery_inventory_fingerprint(
+    root: Path,
+    targets: tuple[Path, ...],
+) -> str:
+    return inventory_fingerprint(root, exclude_prefixes=targets)
 
 
 def _dataset_root(root: Path) -> Path:

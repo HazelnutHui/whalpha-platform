@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-04 — Prove atomic historical Identity source Apply and recovery
+
+- Accepted ADR 0139 and added an explicitly invoked executor for the exact
+  `historical-identity-source-apply-plan/1.0` boundary. It requires the plan
+  file SHA-256, logical fingerprint, expected `/data` pre-state, and approved
+  root; repeats all plan/source/inventory checks under the shared publication
+  lock; prohibits network access; and never overwrites canonical targets.
+- Added immutable same-parent staging, canonical modes, fsync/hash checks,
+  atomic per-session rename, a strict canonical typed reader, and complete
+  post-publication formal reread with bounded local process parallelism.
+- Added explicit `verify_then_complete` recovery. It accepts only exact
+  completed or absent planned partitions, compares the inventory outside the
+  complete planned target set to the original pre-state, reuses exact targets,
+  and publishes only absent ones. Partial, changed, extra-file, symlinked,
+  wrong-mode, staging-residue, and unrelated-drift states fail closed without
+  overwriting or deleting evidence.
+- Disposable `/tmp` tests proved ordinary Apply, exact CLI binding, pre-write
+  drift rejection, an injected post-rename interruption, mixed completed/absent
+  recovery, ordinary replay refusal, partial-target preservation,
+  staging-residue preservation, and parallel canonical reread.
+- A post-implementation real no-write preflight revalidated the 279-session
+  plan, all 558 candidate files, all absent targets, and the unchanged `/data`
+  pre-state in 4.76 seconds; status remained `ready_for_separate_review` with
+  `apply_authorized=false`.
+- The focused historical-Identity suite passed 32 tests and all 2,041 backend
+  tests passed with the same two dependency warnings. The real 279-session
+  plan was not invoked: `/data`, Production, scheduling, membership, Historical
+  Coverage, research readiness, and deployment remain unchanged.
+
 ## 2026-09-04 — Normalize and plan durable historical Identity source custody
 
 - Accepted ADRs 0137–0138 and added typed complete-result source observations,

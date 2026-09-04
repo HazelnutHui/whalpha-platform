@@ -47,8 +47,10 @@ Exact current price-session depth belongs in
 for stronger Regime review remains a future depth target, not a prerequisite
 that can replace the missing point-in-time families.
 
-ADRs 0137–0138 now prove a complete normalized source-observation candidate
-for 279 profile-bound Identity sessions and one inventory-bound no-write plan.
+ADRs 0137–0139 now prove a complete normalized source-observation candidate
+for 279 profile-bound Identity sessions, one inventory-bound no-write plan,
+and an atomic non-destructive Apply/recovery executor in `/tmp` simulations.
+The real plan remains unapplied and no canonical source partition exists.
 The candidate is eligible only for outcome reconciliation because Dell
 observed the backfilled packages after their historical sessions. It remains
 below `/tmp`; until a separately reviewed immutable Apply and formal canonical
@@ -81,7 +83,7 @@ The formal state therefore remains
 | Family | Grain | Authority | Required role |
 | --- | --- | --- | --- |
 | Canonical EOD Price Bar | instrument, session, source, revision | Implemented canonical fact | Raw OHLCV and outcome path |
-| Point-in-time Identity | source observation and resolved instrument as of date | Implemented resolved snapshots; 279-session normalized source candidate and no-write plan proven | Stable-ID/ticker/exchange/status evidence |
+| Point-in-time Identity | source observation and resolved instrument as of date | Implemented resolved snapshots; 279-session normalized source candidate, no-write plan, and tmp-only Apply/recovery mechanics proven; real source Apply pending | Stable-ID/ticker/exchange/status evidence |
 | Daily Universe Membership | universe, instrument, session, methodology | Derived canonical decision | Performance-eligible historical population |
 | Corporate Action | instrument, action, source, revision | Canonical event fact | Splits, distributions, reorganizations, symbol changes, delistings |
 | Instrument Lifecycle | instrument validity interval or lineage event, source, revision | Canonical identity fact | Active/inactive/delisted state, ticker history, predecessor/successor evidence |

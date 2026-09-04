@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-04T19:48:28Z
+Operational state verified at: 2026-09-04T20:13:51Z
 
 Repository context updated at: 2026-09-04 UTC
 
@@ -182,6 +182,17 @@ byte-identical output. Status is only `ready_for_separate_review`;
 `apply_authorized=false`, `/data` remains unchanged, and the 24 gaps remain
 separate.
 
+ADR 0139 implements the pinned-plan executor without changing that state. It
+uses the same Dell publication lock as the daily writer, immutable same-parent
+partition renames, exact canonical modes and hashes, full typed canonical
+reread, and a separately selected non-destructive `verify_then_complete`
+recovery path. Disposable `/tmp` simulations passed ordinary Apply, an injected
+post-rename interruption, exact-partition reuse, continued publication of the
+remaining absent partition, inventory drift rejection, ordinary replay
+refusal, partial-target rejection, staging-residue rejection, parallel formal
+reread, and CLI binding. No real plan invocation occurred; the 279 canonical
+targets remain absent and the recorded `/data` inventory is unchanged.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -317,9 +328,10 @@ separately bounded.
 2. **Historical Universe foundation:** the shared-panel batch, two-profile
    Identity equivalence proof, 279-session fingerprint-bound routing map,
    complete normalized source-custody candidate, and inventory-bound no-write
-   Apply plan are complete. Next design and prove the separately reviewed
-   immutable Apply/recovery boundary; after durable source custody, resolve the
-   24 physically missing reference sessions separately and only then
+   Apply plan are complete. ADR 0139's immutable Apply/recovery implementation
+   is proven only against disposable roots. Next separately review the pinned
+   real invocation; after successful formal durable custody, resolve the 24
+   physically missing reference sessions separately and only then
    run/reconcile broad disconnected membership batches before canonical
    membership review.
 3. **Historical analytics consumption:** connect the 303-session canonical

@@ -60,5 +60,5 @@ stronger claim.
 
 The data family is `point_in_time_identity`, layer `source_observation`, scope
 `internal_only`, and retention `canonical_no_auto_expiry`. Durable publication
-will require a separate inventory-bound Apply plan; this contract alone
-creates no canonical presence claim.
+requires the separate inventory-bound plan and atomic Apply/recovery boundary;
+this contract alone creates no canonical presence claim.

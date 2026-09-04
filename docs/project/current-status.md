@@ -144,6 +144,16 @@ It is `ready_for_separate_review`, not authorized or applied. Parallel plan
 construction is byte-identical to serial and reduces measured wall time from
 5:17.38 to 1:30.46.
 
+ADR 0139 now implements the exact-plan atomic Apply boundary and its explicit
+`verify_then_complete` recovery mode. Disposable `/tmp` canonical-root tests
+prove ordinary publication, canonical modes and typed reread, refusal to
+replay an existing target, pre-state drift rejection, interruption after an
+atomic rename, reuse of exact completed partitions, continuation of absent
+partitions, and fail-closed handling of partial targets and staging residue.
+The CLI requires the plan SHA-256, logical fingerprint, expected pre-state,
+and exact root. This is implementation evidence only: it did not invoke the
+real plan, `/data` remains unchanged, and no source partition is canonical yet.
+
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
 price history. The first intended registered study remains Strong-Leader
@@ -215,10 +225,13 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. Design and prove the separately reviewed immutable Apply/recovery boundary
-   for the complete 279-session normalized source candidate. The candidate and
-   inventory-bound no-write plan are complete, but `/data` is unchanged.
-7. After durable source custody, resolve the 24 physical gaps separately, then
+6. **Implementation proof complete:** ADR 0139's exact-plan immutable
+   Apply/recovery executor passes ordinary, interruption, mixed-state recovery,
+   drift, partial-target, staging-residue, canonical-reread, and CLI tests.
+   Separately review the pinned 279-session invocation before any real write;
+   `/data` is unchanged.
+7. After a successful and formally reread durable source Apply, resolve the 24
+   physical gaps separately, then
    run and reconcile broad disconnected membership batches before canonical
    membership review.
 8. Connect the complete point-in-time foundation to a governed historical

@@ -95,9 +95,13 @@ Current membership implementation sequence:
    normalized into 558 typed, immutable `/tmp` files. Their combined census /
    Apply plan binds every byte, absent target, and the current `/data`
    inventory without writing canonical state.
-7. Design and prove a separately reviewed immutable Apply/recovery boundary;
-   after durable source custody, resolve the 24 physically missing sessions
-   separately. Never project current Activation backward.
+7. **Repository proof complete:** ADR 0139 implements the separately invoked,
+   exact-plan immutable Apply/recovery boundary and proves ordinary,
+   interrupted, mixed-state, drift, partial-target, residue, and canonical-read
+   behavior in disposable roots. The real plan remains unapplied. Separately
+   review that invocation; after durable source custody, resolve the 24
+   physically missing sessions separately. Never project current Activation
+   backward.
 8. Run all accepted-profile-bound sessions into disconnected `/tmp` batches,
    reconcile completeness and timing, then separately review canonical
    publication.

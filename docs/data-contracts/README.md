@@ -30,6 +30,7 @@
 - [Historical Source Package V1](historical-source-package-v1.md)
 - [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
 - [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
+- [Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
 
@@ -56,6 +57,7 @@ Implemented as Python/Pydantic contracts:
 - [Historical Source Package V1](historical-source-package-v1.md)
 - [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
 - [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
+- [Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 
@@ -69,8 +71,10 @@ historical typed boundary:
 
 These documents are not JSON Schema, SQL DDL, sample production data, or
 provider adapters. The historical foundation now has provider-neutral
-Pydantic row/manifest contracts, explicit PyArrow schemas, and temporary-root
-Parquet repository validation, but no canonical dataset. EOD Price Bar V1 and the point-in-time Instrument/Provider
+Pydantic row/manifest contracts, explicit PyArrow schemas, temporary-root
+Parquet repository validation, and a tested but unapplied atomic source-custody
+executor. It still has no canonical historical source or Membership dataset.
+EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
 The initial blocked live attempts remain historical audit evidence; corrected
 bounded operations subsequently published the current canonical sequence. The

@@ -548,6 +548,48 @@ def read_historical_identity_source_custody_candidate(
         raise HistoricalIdentitySourceCustodyError(
             "historical Identity source-custody partition is not owner-only"
         )
+    return _read_historical_identity_source_custody_partition(
+        partition=partition,
+        provider=provider,
+        session_date=session_date,
+        expected_file_mode=0o400,
+    )
+
+
+def read_historical_identity_source_custody(
+    *,
+    data_root: Path,
+    provider: str,
+    session_date: date,
+) -> HistoricalIdentitySourceCustodyReadResult:
+    """Formally reread one canonical Dell historical source partition."""
+
+    canonical_root = _validated_canonical_data_root(data_root)
+    partition = _partition_path(
+        canonical_root,
+        provider=provider,
+        session_date=session_date,
+    )
+    _canonical_directory_chain(partition, canonical_root)
+    if stat.S_IMODE(partition.stat().st_mode) != 0o755:
+        raise HistoricalIdentitySourceCustodyError(
+            "canonical historical source partition mode differs"
+        )
+    return _read_historical_identity_source_custody_partition(
+        partition=partition,
+        provider=provider,
+        session_date=session_date,
+        expected_file_mode=0o644,
+    )
+
+
+def _read_historical_identity_source_custody_partition(
+    *,
+    partition: Path,
+    provider: str,
+    session_date: date,
+    expected_file_mode: int,
+) -> HistoricalIdentitySourceCustodyReadResult:
     entries = {item.name for item in partition.iterdir()}
     if entries != {PARQUET_FILE, MANIFEST_FILE}:
         raise HistoricalIdentitySourceCustodyError(
@@ -556,7 +598,7 @@ def read_historical_identity_source_custody_candidate(
     manifest_path = partition / MANIFEST_FILE
     parquet_path = partition / PARQUET_FILE
     for path in (manifest_path, parquet_path):
-        _regular_owner_read_only_file(path)
+        _regular_file_with_mode(path, expected_file_mode)
     try:
         manifest = HistoricalIdentitySourceCustodyManifestV1.model_validate_json(
             manifest_path.read_bytes()
@@ -1058,6 +1100,19 @@ def _validated_tmp_output_root(path: Path) -> Path:
     return resolved
 
 
+def _validated_canonical_data_root(path: Path) -> Path:
+    if not path.is_absolute() or path.is_symlink() or not path.is_dir():
+        raise HistoricalIdentitySourceCustodyError(
+            "canonical data root is unavailable"
+        )
+    resolved = path.resolve(strict=True)
+    if resolved != APPROVED_DATA_ROOT or resolved != path:
+        raise HistoricalIdentitySourceCustodyError(
+            "canonical data root is not the approved Dell root"
+        )
+    return resolved
+
+
 def _read_if_present(
     root: Path,
     partition: Path,
@@ -1115,6 +1170,10 @@ def _reject_symlink_chain(path: Path, root: Path) -> None:
 
 
 def _regular_owner_read_only_file(path: Path) -> None:
+    _regular_file_with_mode(path, 0o400)
+
+
+def _regular_file_with_mode(path: Path, expected_mode: int) -> None:
     if path.is_symlink() or not path.is_file():
         raise HistoricalIdentitySourceCustodyError(
             "source-custody artifact is not a regular file"
@@ -1122,10 +1181,10 @@ def _regular_owner_read_only_file(path: Path) -> None:
     metadata = path.stat()
     if (
         not stat.S_ISREG(metadata.st_mode)
-        or stat.S_IMODE(metadata.st_mode) != 0o400
+        or stat.S_IMODE(metadata.st_mode) != expected_mode
     ):
         raise HistoricalIdentitySourceCustodyError(
-            "source-custody artifact is not owner-read-only"
+            "source-custody artifact mode differs"
         )
 
 
@@ -1136,6 +1195,19 @@ def _owner_only_directory_chain(path: Path, root: Path) -> None:
         if not current.is_dir() or stat.S_IMODE(current.stat().st_mode) != 0o700:
             raise HistoricalIdentitySourceCustodyError(
                 "source-custody directory chain is not owner-only"
+            )
+        if current == root:
+            return
+        current = current.parent
+
+
+def _canonical_directory_chain(path: Path, root: Path) -> None:
+    _reject_symlink_chain(path, root)
+    current = path
+    while True:
+        if not current.is_dir() or stat.S_IMODE(current.stat().st_mode) & 0o002:
+            raise HistoricalIdentitySourceCustodyError(
+                "canonical historical source directory chain is unsafe"
             )
         if current == root:
             return

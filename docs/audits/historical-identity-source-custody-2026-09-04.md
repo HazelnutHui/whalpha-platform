@@ -10,8 +10,13 @@ Identity, and Provider Resolver fingerprints under its bound profile.
 
 A combined census and prospective Apply plan also formally rereads. It binds
 all 558 candidate files, all 279 absent target partitions, and the unchanged
-whole-`/data` pre-state. No Apply executor exists and no canonical write was
-performed.
+whole-`/data` pre-state. At the time of this proof no Apply executor existed,
+and no canonical write was performed.
+
+Subsequent same-day status: ADR 0139 later implemented and tested the executor
+only against disposable roots. The no-write result recorded by this audit and
+the unapplied real plan remain unchanged; see the separate
+[Apply/recovery audit](historical-identity-source-apply-recovery-2026-09-04.md).
 
 ## Audited source boundary
 
@@ -105,8 +110,9 @@ the resulting logical and physical plan bytes stayed identical.
 - `/data`, Production, Universes, analytics, formulas, active pointers,
   scheduler state, publication, deployment, and research readiness did not
   change.
-- The candidate is still temporary. Durable custody requires a separately
-  designed and reviewed bulk Apply/recovery boundary using this pinned plan.
+- The candidate is still temporary. ADR 0139 subsequently supplied and tested
+  the bulk Apply/recovery boundary, but durable custody still requires a
+  separately reviewed real invocation using this pinned plan.
 - The 24 missing sessions remain a separate source-resolution queue. No
   current-universe replay or silent gap fill is allowed.
 - Daily point-in-time Universe Membership reconstruction and Historical

@@ -23,8 +23,13 @@ from tip_api.services.historical_identity_rebuild_profile_map import (
     HistoricalIdentityRebuildProfileMapV1,
     historical_identity_profile_fingerprint,
 )
+from tip_api.services.historical_identity_source_apply_plan import (
+    HistoricalIdentitySourceApplyPlanEvidence,
+)
 from tip_api.services import historical_identity_source_custody as custody
 from tip_api.services import historical_identity_source_apply_plan as apply_plan
+from tip_api.services import historical_identity_source_apply as source_apply
+from tip_api.services import historical_identity_source_apply_cli as source_apply_cli
 
 
 SESSION = date(2026, 9, 3)
@@ -36,29 +41,35 @@ def _profile_map(
     package_path: Path,
     *,
     package_manifest_sha256: str = "1" * 64,
+    session_dates: tuple[date, ...] = (SESSION,),
 ) -> HistoricalIdentityRebuildProfileMapV1:
-    binding_values = {
-        "session_date": SESSION.isoformat(),
-        "rebuild_profile": CURRENT_IDENTITY_REBUILD_PROFILE,
-        "source_locator_sha256": hashlib.sha256(
-            str(package_path.resolve()).encode("utf-8")
-        ).hexdigest(),
-        "package_manifest_sha256": package_manifest_sha256,
-        "package_content_sha256": "2" * 64,
-        "package_fetched_at": "2026-09-04T01:00:00Z",
-        "canonical_snapshot_fingerprint": "3" * 64,
-        "canonical_instrument_fingerprint": "4" * 64,
-        "canonical_identity_fingerprint": "5" * 64,
-        "canonical_resolver_fingerprint": "6" * 64,
-    }
-    binding = HistoricalIdentityRebuildProfileBindingV1.model_validate(
-        {
-            **binding_values,
-            "logical_fingerprint": historical_identity_profile_fingerprint(
-                binding_values
-            ),
+    source_locator_sha256 = hashlib.sha256(
+        str(package_path.resolve()).encode("utf-8")
+    ).hexdigest()
+    bindings = []
+    for session_date in session_dates:
+        binding_values = {
+            "session_date": session_date.isoformat(),
+            "rebuild_profile": CURRENT_IDENTITY_REBUILD_PROFILE,
+            "source_locator_sha256": source_locator_sha256,
+            "package_manifest_sha256": package_manifest_sha256,
+            "package_content_sha256": "2" * 64,
+            "package_fetched_at": "2026-09-04T01:00:00Z",
+            "canonical_snapshot_fingerprint": "3" * 64,
+            "canonical_instrument_fingerprint": "4" * 64,
+            "canonical_identity_fingerprint": "5" * 64,
+            "canonical_resolver_fingerprint": "6" * 64,
         }
-    )
+        bindings.append(
+            HistoricalIdentityRebuildProfileBindingV1.model_validate(
+                {
+                    **binding_values,
+                    "logical_fingerprint": (
+                        historical_identity_profile_fingerprint(binding_values)
+                    ),
+                }
+            )
+        )
     map_values = {
         "contract_version": "historical-identity-rebuild-profile-map/1.0",
         "generated_at": "2026-09-04T01:30:00Z",
@@ -66,27 +77,32 @@ def _profile_map(
         "current_census_report_sha256": "7" * 64,
         "legacy_census_contract_version": "1.1",
         "legacy_census_report_sha256": "8" * 64,
-        "canonical_session_count": 1,
-        "bound_session_count": 1,
+        "canonical_session_count": len(session_dates),
+        "bound_session_count": len(session_dates),
         "missing_session_dates": (),
         "profile_counts": (
-            (CURRENT_IDENTITY_REBUILD_PROFILE, 1),
+            (CURRENT_IDENTITY_REBUILD_PROFILE, len(session_dates)),
             (PRE_ETV_IDENTITY_REBUILD_PROFILE, 0),
         ),
-        "canonical_session_index_fingerprint": "9" * 64,
+        "canonical_session_index_fingerprint": (
+            historical_identity_profile_fingerprint(
+                [item.isoformat() for item in session_dates]
+            )
+        ),
         "discovered_package_inventory_fingerprint": (
             historical_identity_profile_fingerprint(
                 [
                     {
-                        "session_date": SESSION.isoformat(),
+                        "session_date": session_date.isoformat(),
                         "package_manifest_sha256": package_manifest_sha256,
                         "package_content_sha256": "2" * 64,
-                        "source_locator_sha256": binding.source_locator_sha256,
+                        "source_locator_sha256": source_locator_sha256,
                     }
+                    for session_date in session_dates
                 ]
             )
         ),
-        "bindings": (binding,),
+        "bindings": tuple(bindings),
         "external_request_count": 0,
         "canonical_data_write_count": 0,
     }
@@ -96,7 +112,9 @@ def _profile_map(
             "logical_fingerprint": historical_identity_profile_fingerprint(
                 {
                     **map_values,
-                    "bindings": [binding.model_dump(mode="json")],
+                    "bindings": [
+                        binding.model_dump(mode="json") for binding in bindings
+                    ],
                     "profile_counts": [
                         list(item) for item in map_values["profile_counts"]
                     ],
@@ -107,7 +125,11 @@ def _profile_map(
     )
 
 
-def _equivalence(*, package_manifest_sha256: str = "1" * 64) -> SimpleNamespace:
+def _equivalence(
+    *,
+    package_manifest_sha256: str = "1" * 64,
+    session_date: date = SESSION,
+) -> SimpleNamespace:
     results = [
         {
             "active": True,
@@ -150,7 +172,7 @@ def _equivalence(*, package_manifest_sha256: str = "1" * 64) -> SimpleNamespace:
     )
     manifest = FetchPackageManifestV1(
         package_type="identity_reference",
-        session_date=SESSION,
+        session_date=session_date,
         endpoint_class="/v3/reference/tickers",
         adjusted=None,
         request_count=1,
@@ -306,7 +328,7 @@ def test_normalized_custody_reader_rejects_relaxed_mode(
 
     with pytest.raises(
         custody.HistoricalIdentitySourceCustodyError,
-        match="owner-read-only",
+        match="mode differs",
     ):
         custody.read_historical_identity_source_custody_candidate(
             root=root,
@@ -527,3 +549,330 @@ def test_apply_plan_reread_rejects_candidate_permission_drift(
             approved_plan_sha256=evidence.plan_sha256,
             inventory_reader=lambda _: "a" * 64,
         )
+
+
+def _apply_fixture(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    candidate, root, profile_map, _, data_root = _build(tmp_path, monkeypatch)
+    monkeypatch.setattr(apply_plan, "APPROVED_DATA_ROOT", data_root.resolve())
+    monkeypatch.setattr(source_apply, "APPROVED_DATA_ROOT", data_root.resolve())
+    plan_path = tmp_path / "historical-source-apply-plan.json"
+    evidence = apply_plan.build_historical_identity_source_apply_plan(
+        data_root=data_root,
+        candidate_root=root,
+        profile_map=profile_map,
+        created_at=MATERIALIZED_AT,
+        plan_path=plan_path,
+    )
+    return candidate, data_root, plan_path, evidence
+
+
+def _two_session_apply_fixture(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    session_dates = (date(2026, 9, 2), SESSION)
+    data_root = tmp_path / "canonical"
+    data_root.mkdir()
+    package_path = tmp_path / "package"
+    package_path.mkdir()
+    candidate_root = tmp_path / "candidate"
+    candidate_root.mkdir(mode=0o700)
+    candidate_root.chmod(0o700)
+    profile_map = _profile_map(
+        package_path,
+        session_dates=session_dates,
+    )
+    monkeypatch.setattr(custody, "APPROVED_DATA_ROOT", data_root.resolve())
+    monkeypatch.setattr(apply_plan, "APPROVED_DATA_ROOT", data_root.resolve())
+    monkeypatch.setattr(source_apply, "APPROVED_DATA_ROOT", data_root.resolve())
+    monkeypatch.setattr(
+        custody,
+        "inspect_historical_identity_package_equivalence",
+        lambda **kwargs: _equivalence(session_date=kwargs["session_date"]),
+    )
+    monkeypatch.setattr(
+        custody,
+        "inspect_historical_identity_source_custody_equivalence",
+        lambda **_: SimpleNamespace(exact_match=True),
+    )
+    for session_date in session_dates:
+        custody.build_historical_identity_source_custody_candidate(
+            data_root=data_root,
+            package_path=package_path,
+            output_root=candidate_root,
+            profile_map=profile_map,
+            session_date=session_date,
+            materialized_at=MATERIALIZED_AT,
+        )
+    plan_path = tmp_path / "two-session-historical-source-apply-plan.json"
+    evidence = apply_plan.build_historical_identity_source_apply_plan(
+        data_root=data_root,
+        candidate_root=candidate_root,
+        profile_map=profile_map,
+        created_at=MATERIALIZED_AT,
+        plan_path=plan_path,
+    )
+    return data_root, plan_path, evidence
+
+
+def _apply(
+    *,
+    data_root: Path,
+    plan_path: Path,
+    evidence: HistoricalIdentitySourceApplyPlanEvidence,
+    verify_then_complete: bool = False,
+    formal_read_workers: int = 1,
+):
+    return source_apply.apply_approved_historical_identity_source_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=evidence.plan_sha256,
+        expected_plan_logical_fingerprint=evidence.plan.logical_fingerprint,
+        expected_current_state_fingerprint=(
+            evidence.plan.expected_current_state_fingerprint
+        ),
+        data_root=data_root,
+        verify_then_complete=verify_then_complete,
+        formal_read_workers=formal_read_workers,
+    )
+
+
+def _inject_post_publish_failure(monkeypatch: pytest.MonkeyPatch) -> None:
+    publish = source_apply._publish_partition
+
+    def interrupted_publish(**kwargs) -> None:
+        publish(**kwargs)
+        raise source_apply.HistoricalIdentitySourceApplyError(
+            "injected failure after completed historical source partition"
+        )
+
+    monkeypatch.setattr(source_apply, "_publish_partition", interrupted_publish)
+
+
+def test_approved_apply_publishes_and_formally_rereads_without_overwrite(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    candidate, data_root, plan_path, evidence = _apply_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    result = _apply(
+        data_root=data_root,
+        plan_path=plan_path,
+        evidence=evidence,
+    )
+
+    target = Path(evidence.plan.artifacts[0].target_path).parent
+    assert result.status == "applied"
+    assert result.published_partition_count == 1
+    assert result.reused_partition_count == 0
+    assert result.published_file_count == 2
+    assert result.published_bytes == evidence.plan.inventory_change_bytes
+    assert result.formal_reread_session_count == 1
+    assert result.overwritten_partition_count == 0
+    assert result.deleted_partition_count == 0
+    assert target.stat().st_mode & 0o777 == 0o755
+    assert (target / "manifest.json").stat().st_mode & 0o777 == 0o644
+    assert (target / "part-00000.parquet").stat().st_mode & 0o777 == 0o644
+    assert candidate.partition_path.exists()
+
+    canonical = custody.read_historical_identity_source_custody(
+        data_root=data_root,
+        provider="massive_stocks_basic",
+        session_date=SESSION,
+    )
+    assert canonical.manifest == candidate.manifest
+
+
+def test_approved_apply_cli_requires_and_reports_exact_execution_binding(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    _, data_root, plan_path, evidence = _apply_fixture(tmp_path, monkeypatch)
+
+    exit_code = source_apply_cli.main(
+        [
+            "--plan-path",
+            str(plan_path),
+            "--approved-plan-sha256",
+            evidence.plan_sha256,
+            "--expected-plan-logical-fingerprint",
+            evidence.plan.logical_fingerprint,
+            "--expected-current-state-fingerprint",
+            evidence.plan.expected_current_state_fingerprint,
+            "--data-root",
+            str(data_root),
+            "--formal-read-workers",
+            "1",
+        ]
+    )
+
+    report = json.loads(capsys.readouterr().out)
+    assert exit_code == 0
+    assert report["status"] == "applied"
+    assert report["plan_sha256"] == evidence.plan_sha256
+    assert report["session_count"] == 1
+    assert report["published_partition_count"] == 1
+    assert report["external_request_count"] == 0
+
+
+def test_approved_apply_rejects_inventory_drift_before_writing(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, data_root, plan_path, evidence = _apply_fixture(tmp_path, monkeypatch)
+    unrelated = data_root / "unrelated.txt"
+    unrelated.write_text("changed", encoding="utf-8")
+    target = Path(evidence.plan.artifacts[0].target_path).parent
+
+    with pytest.raises(
+        source_apply.HistoricalIdentitySourceApplyError,
+        match="failed formal reread",
+    ):
+        _apply(
+            data_root=data_root,
+            plan_path=plan_path,
+            evidence=evidence,
+        )
+    assert not target.exists()
+
+
+def test_interrupted_apply_reuses_exact_completed_partition(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, data_root, plan_path, evidence = _apply_fixture(tmp_path, monkeypatch)
+
+    with monkeypatch.context() as fault:
+        _inject_post_publish_failure(fault)
+        with pytest.raises(
+            source_apply.HistoricalIdentitySourceApplyError,
+            match="injected failure",
+        ):
+            _apply(
+                data_root=data_root,
+                plan_path=plan_path,
+                evidence=evidence,
+            )
+
+    recovered = _apply(
+        data_root=data_root,
+        plan_path=plan_path,
+        evidence=evidence,
+        verify_then_complete=True,
+        formal_read_workers=2,
+    )
+    assert recovered.status == "verified_then_completed"
+    assert recovered.published_partition_count == 0
+    assert recovered.reused_partition_count == 1
+    assert recovered.formal_reread_session_count == 1
+
+
+def test_interrupted_apply_reuses_completed_and_publishes_absent_partition(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    data_root, plan_path, evidence = _two_session_apply_fixture(
+        tmp_path,
+        monkeypatch,
+    )
+
+    with monkeypatch.context() as fault:
+        _inject_post_publish_failure(fault)
+        with pytest.raises(
+            source_apply.HistoricalIdentitySourceApplyError,
+            match="injected failure",
+        ):
+            _apply(
+                data_root=data_root,
+                plan_path=plan_path,
+                evidence=evidence,
+            )
+
+    recovered = _apply(
+        data_root=data_root,
+        plan_path=plan_path,
+        evidence=evidence,
+        verify_then_complete=True,
+    )
+    assert recovered.status == "verified_then_completed"
+    assert recovered.session_count == 2
+    assert recovered.published_partition_count == 1
+    assert recovered.reused_partition_count == 1
+    assert recovered.published_file_count == 2
+    assert recovered.formal_reread_session_count == 2
+
+
+def test_ordinary_apply_never_treats_existing_target_as_replayable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, data_root, plan_path, evidence = _apply_fixture(tmp_path, monkeypatch)
+    _apply(
+        data_root=data_root,
+        plan_path=plan_path,
+        evidence=evidence,
+    )
+
+    with pytest.raises(
+        source_apply.HistoricalIdentitySourceApplyError,
+        match="failed formal reread",
+    ):
+        _apply(
+            data_root=data_root,
+            plan_path=plan_path,
+            evidence=evidence,
+        )
+
+
+def test_recovery_blocks_partial_target_without_deleting_it(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, data_root, plan_path, evidence = _apply_fixture(tmp_path, monkeypatch)
+    target = Path(evidence.plan.artifacts[0].target_path).parent
+    target.mkdir(parents=True, mode=0o755)
+    partial = target / "manifest.json"
+    partial.write_text("partial", encoding="utf-8")
+    partial.chmod(0o644)
+
+    with pytest.raises(
+        source_apply.HistoricalIdentitySourceApplyError,
+        match="failed formal reread",
+    ):
+        _apply(
+            data_root=data_root,
+            plan_path=plan_path,
+            evidence=evidence,
+            verify_then_complete=True,
+        )
+    assert partial.read_text(encoding="utf-8") == "partial"
+
+
+def test_recovery_blocks_staging_residue_without_deleting_it(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    _, data_root, plan_path, evidence = _apply_fixture(tmp_path, monkeypatch)
+    target = Path(evidence.plan.artifacts[0].target_path).parent
+    staging = target.parent / (
+        f".{target.name}.staging.{evidence.plan.logical_fingerprint[:16]}"
+    )
+    staging.mkdir(parents=True, mode=0o755)
+
+    with pytest.raises(
+        source_apply.HistoricalIdentitySourceApplyError,
+        match="staging path already exists",
+    ):
+        _apply(
+            data_root=data_root,
+            plan_path=plan_path,
+            evidence=evidence,
+            verify_then_complete=True,
+        )
+    assert staging.is_dir()
