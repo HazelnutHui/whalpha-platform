@@ -83,13 +83,17 @@ Current membership implementation sequence:
 3. The complete read-only current-builder census is done: 58 sessions are
    exact, 221 retain exact Instrument/Resolver but differ in Provider Identity,
    and 24 are physically missing. All retained-package custody passed.
-4. Prove the narrowly versioned legacy ETV classification profile across all
-   221 mismatches before treating them as accepted-profile equivalent. Do not
-   reacquire these sources based on a current-builder mismatch alone.
-5. Define durable, minimal source custody without copying raw provider bodies,
+4. The narrowly versioned legacy ETV profile is proven across all 221
+   current-builder mismatches. Together with the 58 current-profile sessions it
+   forms a disjoint exact cover of all 279 retained packages; none should be
+   reacquired as corrupt.
+5. Bind each retained session to its exact fingerprint-matching profile and
+   pass that explicit map into disconnected membership batches. Never select a
+   profile from session date alone.
+6. Define durable, minimal source custody without copying raw provider bodies,
    then resolve the 24 physically missing sessions; never project current
    Activation backward.
-6. Run all accepted-profile-equivalent sessions into disconnected `/tmp` batches, reconcile
+7. Run all accepted-profile-equivalent sessions into disconnected `/tmp` batches, reconcile
    completeness and timing, then separately review canonical publication.
 
 ## Priority 3 — First real strategy research

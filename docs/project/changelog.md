@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-04 — Prove versioned legacy ETV Identity compatibility
+
+- Accepted ADR 0135 and added the explicit `pre_etv_governance_v1` historical
+  comparison profile without changing the default current builder. It changes
+  only strictly validated non-instrument ETV Identity rows from the current
+  excluded representation to the prior rejected representation and keeps
+  Instrument Master and Resolver records unchanged.
+- The real serial positive/negative sample made 2025-09-10 and 2026-08-31
+  exact while correctly rejecting legacy equivalence for current-rule 9/3. A
+  two-worker repeat was byte-identical after excluding only worker metadata and
+  reduced wall time from 29.57 to 19.93 seconds.
+- The four-worker full legacy census completed 303 sessions in 12:22.98 at
+  398% CPU: 221 exact, 58 Identity-only mismatches, and 24 missing. All 279
+  packages passed custody; all other failure classes were zero. The 443,879-
+  byte report SHA-256 is
+  `ac68b70a7119c1d88c6bda9ce3b10f352f3eaa4ebb550200d0d16dc306735776`.
+- Current and legacy exact sets are disjoint and cover all 279 retained
+  packages exactly. Current mismatches equal the legacy exact set, current
+  exact sessions equal legacy mismatches, and both missing sets are the same 24
+  dates. Profile selection must be fingerprint-bound rather than date-based.
+- External requests and canonical writes were zero. `/data`, Production,
+  scheduler, analytics, formulas, current ETV classification, Universes, and
+  research readiness did not change.
+- Thirteen focused checks and all 2,018 backend tests passed with the two
+  unchanged dependency warnings.
+
 ## 2026-09-04 — Census retained Identity package equivalence
 
 - Accepted ADR 0134 and added a network-disabled, read-only census that

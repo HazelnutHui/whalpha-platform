@@ -113,9 +113,14 @@ Provider Identity mismatch, and 24 are physically missing. All 279 discovered
 packages passed custody; duplicate, unroutable, outside-index, and canonical-
 snapshot failures are zero. Four representative row-level comparisons found
 only the governed ETV change from unknown/rejected to excluded, matching the
-ETV row count exactly. The all-221 row-level compatibility proof is still
-required, so the 221 retained packages must not yet feed broad reconstruction
-and should not be reacquired or discarded as corrupt.
+ETV row count exactly.
+
+ADR 0135's explicit legacy profile now reconstructs all 221 and mismatches the
+58 current-profile sessions. The two exact sets are disjoint and cover all 279
+retained packages; both identify the same 24 physical gaps. Every retained
+package therefore has one fingerprint-proven accepted profile. This is still
+`/tmp` source readiness—not daily membership or Historical Coverage—and the
+session-to-profile mapping is not yet connected to membership batches.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
@@ -188,10 +193,9 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. Prove a versioned legacy-ETV compatibility reconstruction across all 221
-   current-builder Identity mismatches, then run only accepted-profile sources
-   through the completed shared-panel membership path. Keep the 24 physical
-   gaps and durable source custody as separate work before canonical review.
+6. Materialize the fingerprint-proven 279-session profile map and pass it into
+   the completed shared-panel membership path. Keep the 24 physical gaps and
+   durable source custody as separate work before canonical review.
 7. Connect the 303-session canonical foundation to a governed point-in-time
    research dataset and reconcile the 26-session analytics limitation.
 8. Only then begin real preregistered chronological strategy research.

@@ -141,10 +141,16 @@ Identity family, and 24 are missing; package custody, duplicate-source, and
 canonical-Identity failures are all zero. Every mismatch retains exact
 Instrument Master and Resolver fingerprints. Four representative row-level
 checks attribute every changed row to the 2026-09-03 governed ETV transition
-from unknown/rejected to exchange-traded-vehicle/excluded. That is strong but
-not yet all-session row-level proof, so the 221 packages must receive a
-narrowly versioned compatibility census before reconstruction; they must not
-be discarded or reacquired as if corrupt.
+from unknown/rejected to exchange-traded-vehicle/excluded.
+
+ADR 0135 now completes the all-session proof without changing current rules.
+The explicit `pre_etv_governance_v1` profile exactly reconstructs those same
+221 sessions and mismatches the 58 current-profile sessions. The two exact sets
+are disjoint and their union is all 279 retained packages; their 24-session
+missing sets are identical. Thus every retained source has exactly one
+accepted profile and none of the 221 requires reacquisition. Profile choice
+must be fingerprint-bound per session—not inferred from date—because the
+historical backfill ran in descending order across the policy change.
 
 ## OCI production proof
 
@@ -278,11 +284,12 @@ separately bounded.
    identity. Measure the next complete daily chain and add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
-2. **Historical Universe foundation:** the shared-panel batch and current-
-   builder equivalence census are complete. Prove the legacy ETV-only
-   compatibility profile across all 221 mismatches, retain durable source
-   custody, and keep the 24 physically missing reference sessions separate
-   before any broad shadow or canonical membership review.
+2. **Historical Universe foundation:** the shared-panel batch and two-profile
+   Identity equivalence proof are complete. Bind each of the 279 retained
+   sessions to its fingerprint-matching profile, pass that explicit mapping to
+   disconnected membership batches, retain durable source custody, and keep
+   the 24 physically missing reference sessions separate before any canonical
+   membership review.
 3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

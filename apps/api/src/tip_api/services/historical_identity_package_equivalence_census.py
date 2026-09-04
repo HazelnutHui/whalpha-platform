@@ -28,11 +28,14 @@ from tip_api.providers.massive.same_day_catchup import (
     SameDayCatchupError,
 )
 from tip_api.services.historical_universe_membership_shadow import (
+    CURRENT_IDENTITY_REBUILD_PROFILE,
+    PRE_ETV_IDENTITY_REBUILD_PROFILE,
+    HistoricalIdentityRebuildProfile,
     HistoricalUniverseMembershipShadowError,
     inspect_historical_identity_package_equivalence,
 )
 
-CENSUS_CONTRACT_VERSION = "1.0"
+CENSUS_CONTRACT_VERSION = "1.1"
 MAXIMUM_CENSUS_WORKERS = 4
 
 CandidateStatus = Literal[
@@ -87,6 +90,7 @@ class HistoricalIdentityPackageSessionResult:
 @dataclass(frozen=True, slots=True)
 class HistoricalIdentityPackageEquivalenceCensusResult:
     contract_version: str
+    rebuild_profile: HistoricalIdentityRebuildProfile
     scope: CensusScope
     evaluated_at: str
     canonical_session_count: int
@@ -132,6 +136,7 @@ def run_historical_identity_package_equivalence_census(
     package_roots: tuple[Path, ...],
     evaluated_at: datetime,
     sample_sessions: tuple[date, ...] | None = None,
+    rebuild_profile: HistoricalIdentityRebuildProfile = CURRENT_IDENTITY_REBUILD_PROFILE,
     workers: int = 1,
     progress: Callable[[int, int, date, SessionStatus], None] | None = None,
 ) -> HistoricalIdentityPackageEquivalenceCensusResult:
@@ -141,6 +146,13 @@ def run_historical_identity_package_equivalence_census(
     if not 1 <= workers <= MAXIMUM_CENSUS_WORKERS:
         raise HistoricalIdentityPackageEquivalenceCensusError(
             "census workers must be between one and four"
+        )
+    if rebuild_profile not in {
+        CURRENT_IDENTITY_REBUILD_PROFILE,
+        PRE_ETV_IDENTITY_REBUILD_PROFILE,
+    }:
+        raise HistoricalIdentityPackageEquivalenceCensusError(
+            "unsupported historical Identity rebuild profile"
         )
     root = data_root.resolve(strict=True)
     resolved_package_roots = _validate_package_roots(package_roots)
@@ -188,6 +200,7 @@ def run_historical_identity_package_equivalence_census(
                 data_root=root,
                 session=session,
                 candidates=candidates,
+                rebuild_profile=rebuild_profile,
             )
             results.append(session_result)
             if progress is not None:
@@ -205,6 +218,7 @@ def run_historical_identity_package_equivalence_census(
                     data_root=root,
                     session=session,
                     candidates=candidates,
+                    rebuild_profile=rebuild_profile,
                 ): session
                 for session, candidates in jobs
             }
@@ -231,6 +245,7 @@ def run_historical_identity_package_equivalence_census(
     )
     return HistoricalIdentityPackageEquivalenceCensusResult(
         contract_version=CENSUS_CONTRACT_VERSION,
+        rebuild_profile=rebuild_profile,
         scope=(
             "bounded_sample" if sample_sessions is not None else "full_canonical_index"
         ),
@@ -263,6 +278,7 @@ def _inspect_session(
     data_root: Path,
     session: date,
     candidates: tuple[_DiscoveredIdentityPackage, ...],
+    rebuild_profile: HistoricalIdentityRebuildProfile,
 ) -> HistoricalIdentityPackageSessionResult:
     identity_repository = ParquetInstrumentMasterSnapshotRepository(data_root)
     try:
@@ -286,6 +302,7 @@ def _inspect_session(
             session=session,
             identity=identity,
             candidate=candidate,
+            rebuild_profile=rebuild_profile,
         )
         for candidate in candidates
     )
@@ -376,6 +393,7 @@ def _inspect_candidate(
     session: date,
     identity: InstrumentMasterSnapshotReadResult,
     candidate: _DiscoveredIdentityPackage,
+    rebuild_profile: HistoricalIdentityRebuildProfile,
 ) -> HistoricalIdentityPackageCandidateResult:
     common = {
         "source_locator_sha256": candidate.source_locator_sha256,
@@ -391,6 +409,7 @@ def _inspect_candidate(
             package_path=candidate.path,
             session_date=session,
             identity=identity,
+            rebuild_profile=rebuild_profile,
         )
     except (SameDayCatchupError, HistoricalUniverseMembershipShadowError):
         return HistoricalIdentityPackageCandidateResult(

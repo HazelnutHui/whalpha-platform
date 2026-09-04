@@ -15,6 +15,10 @@ from tip_api.services.historical_identity_package_equivalence_census import (
 from tip_api.services.historical_universe_membership_shadow_cli import (
     _network_disabled,
 )
+from tip_api.services.historical_universe_membership_shadow import (
+    CURRENT_IDENTITY_REBUILD_PROFILE,
+    PRE_ETV_IDENTITY_REBUILD_PROFILE,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -41,6 +45,14 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--progress-every", type=int, default=10)
     parser.add_argument("--workers", type=int, default=1)
+    parser.add_argument(
+        "--rebuild-profile",
+        choices=(
+            CURRENT_IDENTITY_REBUILD_PROFILE,
+            PRE_ETV_IDENTITY_REBUILD_PROFILE,
+        ),
+        default=CURRENT_IDENTITY_REBUILD_PROFILE,
+    )
     args = parser.parse_args(argv)
     if args.progress_every < 1:
         parser.error("--progress-every must be positive")
@@ -74,6 +86,7 @@ def main(argv: list[str] | None = None) -> int:
             sample_sessions=(
                 tuple(args.sample_session) if args.sample_session is not None else None
             ),
+            rebuild_profile=args.rebuild_profile,
             workers=args.workers,
             progress=progress,
         )
@@ -88,6 +101,7 @@ def main(argv: list[str] | None = None) -> int:
                 "canonical_session_count": result.canonical_session_count,
                 "evaluated_session_count": result.evaluated_session_count,
                 "scope": result.scope,
+                "rebuild_profile": result.rebuild_profile,
                 "worker_count": result.worker_count,
                 "discovered_identity_package_count": (
                     result.discovered_identity_package_count

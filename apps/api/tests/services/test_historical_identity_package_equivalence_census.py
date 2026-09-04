@@ -150,6 +150,7 @@ def test_census_keeps_source_failure_classes_and_duplicates_separate(
     assert result.canonical_session_count == 6
     assert result.evaluated_session_count == 6
     assert result.scope == "full_canonical_index"
+    assert result.rebuild_profile == "current_v1"
     assert result.worker_count == 1
     assert result.discovered_identity_package_count == 7
     assert result.ignored_non_identity_package_count == 1

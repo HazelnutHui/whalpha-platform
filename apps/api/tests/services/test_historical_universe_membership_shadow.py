@@ -24,8 +24,13 @@ from tip_api.contracts.security_classification.v1 import (
     UniverseDisposition,
 )
 from tip_api.read_models.eod import EodMarketBarReadModel
+from tip_api.providers.massive.instrument_master_snapshot import (
+    build_snapshot_from_payloads,
+)
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
 from tip_api.services.historical_universe_membership_shadow import (
+    PRE_ETV_IDENTITY_REBUILD_PROFILE,
+    _apply_historical_identity_rebuild_profile,
     _validate_policy_relationship,
     build_complete_point_in_time_source_decisions,
 )
@@ -38,6 +43,34 @@ SESSION = date(2026, 9, 3)
 PREVIOUS = date(2026, 9, 2)
 NOW = datetime(2026, 9, 4, tzinfo=UTC)
 SHA = "a" * 64
+
+
+def test_legacy_etv_profile_changes_only_the_versioned_noninstrument_identity() -> None:
+    current = build_snapshot_from_payloads(
+        payloads=({"ticker": "TESTV", "type": "ETV"},),
+        as_of_date=SESSION,
+        ingested_at=NOW,
+        request_count=1,
+        pagination_complete=True,
+    )
+
+    legacy = _apply_historical_identity_rebuild_profile(
+        current,
+        rebuild_profile=PRE_ETV_IDENTITY_REBUILD_PROFILE,
+    )
+
+    assert current.identities[0].resolution_status.value == "excluded"
+    assert current.identities[0].quality_status.value == "warning"
+    assert current.identities[0].quality_flags == ("exchange_traded_vehicle",)
+    assert legacy.instruments == current.instruments == ()
+    assert legacy.resolvers == current.resolvers == ()
+    assert legacy.identities[0].resolution_status.value == "rejected"
+    assert legacy.identities[0].quality_status.value == "rejected"
+    assert legacy.identities[0].quality_flags == ("unknown_provider_type_etv",)
+    assert legacy.expected_exclusion_count == current.expected_exclusion_count - 1
+    assert legacy.malformed_rejected_count == current.malformed_rejected_count + 1
+    assert dict(legacy.category_counts) == {"malformed": 1}
+    assert dict(legacy.unknown_type_counts) == {"ETV": 1}
 
 
 def iid(number: int) -> UUID:

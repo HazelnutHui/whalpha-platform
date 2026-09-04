@@ -5,18 +5,21 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date, datetime
 from pathlib import Path
-from typing import Mapping
+from typing import Literal, Mapping
 from uuid import UUID
 
-from tip_api.contracts.common import normalize_utc_datetime
+from tip_api.contracts.common import QualityStatus, normalize_utc_datetime
 from tip_api.contracts.market_data.v1 import (
     EodHistoryWindowDescriptorV1,
     EodSessionIntegrityV1,
     FullBaseDecisionV1,
     FullBaseDisposition,
+    ProviderInstrumentIdentityV1,
+    ResolutionMethod,
+    ResolutionStatus,
     TrailingLiquidityEligibilityStatus,
     TrailingLiquidityResultV1,
 )
@@ -70,6 +73,12 @@ from tip_api.services.universe_membership_reconstruction import (
 
 HISTORICAL_METHODOLOGY_VERSION = "provider-form-complete-base-point-in-time-v2"
 MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS = 5
+CURRENT_IDENTITY_REBUILD_PROFILE = "current_v1"
+PRE_ETV_IDENTITY_REBUILD_PROFILE = "pre_etv_governance_v1"
+HistoricalIdentityRebuildProfile = Literal[
+    "current_v1",
+    "pre_etv_governance_v1",
+]
 _LOCALIZABLE_EVIDENCE_FAILURES = frozenset(
     {
         "ambiguous_mapping_nonzero",
@@ -106,6 +115,7 @@ class HistoricalIdentityPackageEquivalence:
     identity: InstrumentMasterSnapshotReadResult
     package: ValidatedIdentityReferencePackage
     rebuilt_identity: ReferenceSnapshotBuildResult
+    rebuild_profile: HistoricalIdentityRebuildProfile
     rebuilt_instrument_fingerprint: str
     rebuilt_identity_fingerprint: str
     rebuilt_resolver_fingerprint: str
@@ -142,6 +152,7 @@ def inspect_historical_identity_package_equivalence(
     package_path: Path,
     session_date: date,
     identity: InstrumentMasterSnapshotReadResult | None = None,
+    rebuild_profile: HistoricalIdentityRebuildProfile = CURRENT_IDENTITY_REBUILD_PROFILE,
 ) -> HistoricalIdentityPackageEquivalence:
     """Formally rebuild one retained package and compare all Identity families."""
 
@@ -164,6 +175,10 @@ def inspect_historical_identity_package_equivalence(
         request_count=package.manifest.request_count,
         pagination_complete=package.manifest.pagination_complete,
     )
+    rebuilt = _apply_historical_identity_rebuild_profile(
+        rebuilt,
+        rebuild_profile=rebuild_profile,
+    )
     rebuilt_instrument_fingerprint = instrument_content_fingerprint(
         rebuilt.instruments
     )
@@ -177,6 +192,7 @@ def inspect_historical_identity_package_equivalence(
         identity=accepted,
         package=package,
         rebuilt_identity=rebuilt,
+        rebuild_profile=rebuild_profile,
         rebuilt_instrument_fingerprint=rebuilt_instrument_fingerprint,
         rebuilt_identity_fingerprint=rebuilt_identity_fingerprint,
         rebuilt_resolver_fingerprint=rebuilt_resolver_fingerprint,
@@ -190,6 +206,103 @@ def inspect_historical_identity_package_equivalence(
             rebuilt_resolver_fingerprint == accepted.resolver_content_sha256
         ),
     )
+
+
+def _apply_historical_identity_rebuild_profile(
+    result: ReferenceSnapshotBuildResult,
+    *,
+    rebuild_profile: HistoricalIdentityRebuildProfile,
+) -> ReferenceSnapshotBuildResult:
+    if rebuild_profile == CURRENT_IDENTITY_REBUILD_PROFILE:
+        return result
+    if rebuild_profile != PRE_ETV_IDENTITY_REBUILD_PROFILE:
+        raise HistoricalUniverseMembershipShadowError(
+            "unsupported historical Identity rebuild profile"
+        )
+
+    identities: list[ProviderInstrumentIdentityV1] = []
+    etv_count = 0
+    for item in result.identities:
+        if item.quality_flags != ("exchange_traded_vehicle",):
+            identities.append(item)
+            continue
+        if (
+            item.resolution_status is not ResolutionStatus.EXCLUDED
+            or item.resolution_method is not ResolutionMethod.UNRESOLVED
+            or item.canonical_instrument_id is not None
+            or item.quality_status is not QualityStatus.WARNING
+        ):
+            raise HistoricalUniverseMembershipShadowError(
+                "ETV compatibility source row has unexpected semantics"
+            )
+        values = item.model_dump()
+        values.update(
+            {
+                "resolution_status": ResolutionStatus.REJECTED,
+                "quality_status": QualityStatus.REJECTED,
+                "quality_flags": ("unknown_provider_type_etv",),
+            }
+        )
+        identities.append(ProviderInstrumentIdentityV1.model_validate(values))
+        etv_count += 1
+
+    category_counts = _move_named_count(
+        result.category_counts,
+        source="excluded",
+        target="malformed",
+        count=etv_count,
+    )
+    unknown_type_counts = _add_named_count(
+        result.unknown_type_counts,
+        name="ETV",
+        count=etv_count,
+    )
+    if result.expected_exclusion_count < etv_count:
+        raise HistoricalUniverseMembershipShadowError(
+            "ETV compatibility count exceeds expected exclusions"
+        )
+    return replace(
+        result,
+        identities=tuple(identities),
+        expected_exclusion_count=result.expected_exclusion_count - etv_count,
+        malformed_rejected_count=result.malformed_rejected_count + etv_count,
+        category_counts=category_counts,
+        unknown_type_counts=unknown_type_counts,
+    )
+
+
+def _move_named_count(
+    values: tuple[tuple[str, int], ...],
+    *,
+    source: str,
+    target: str,
+    count: int,
+) -> tuple[tuple[str, int], ...]:
+    if count == 0:
+        return values
+    counts = dict(values)
+    if counts.get(source, 0) < count:
+        raise HistoricalUniverseMembershipShadowError(
+            "historical Identity profile category count is inconsistent"
+        )
+    counts[source] -= count
+    if counts[source] == 0:
+        del counts[source]
+    counts[target] = counts.get(target, 0) + count
+    return tuple(sorted(counts.items()))
+
+
+def _add_named_count(
+    values: tuple[tuple[str, int], ...],
+    *,
+    name: str,
+    count: int,
+) -> tuple[tuple[str, int], ...]:
+    if count == 0:
+        return values
+    counts = dict(values)
+    counts[name] = counts.get(name, 0) + count
+    return tuple(sorted(counts.items()))
 
 
 def prepare_historical_universe_membership_eod_panel(
