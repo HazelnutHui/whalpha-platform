@@ -354,6 +354,38 @@ ETF Relationships (15.36 seconds) are bounded and are not immediate
 optimization targets. A complete same-session chain measurement remains
 necessary because isolated times do not capture orchestration overhead.
 
+## 2026-09-04 segmented Candidate shadow proof
+
+The last three V1 Candidate audits contain 674,868,781, 758,853,957, and
+842,945,142 bytes, an observed increase of approximately 84 MB per Candidate
+session. Extending the self-contained format to 303 Candidate sessions would
+put the latest audit near 25.5 GB; retaining every cumulative daily version
+would approach 3.9 TB. The more immediate problem is repeated projection,
+fingerprinting, writing, and parsing, not Dell capacity.
+
+ADR 0130 adds a default-disconnected segmented shadow. The real 2026-09-03 V1
+audit converted into ten immutable session files totaling 840,642,650 bytes
+plus a 17,534-byte manifest. Conversion, complete typed reread, and exact
+eight-projection comparison took 548.57 seconds and 11,008,352 KiB peak RSS.
+The shadow logical fingerprint is
+`f2f253f14deeca3ee4d8eebb60c1ee0b1edbbaab82934cadde7b35ed71e4fc8e`;
+its source is the unchanged V1 fingerprint
+`b6945f58b4766fd2e110415a7fa45816447205a61caf1085f9fe759c2d89f12f`.
+
+The first real reconstruction failed closed only on the raw-fact projection:
+V1 sorts those records canonically across the entire history, so concatenating
+date segments changed order. The accepted shadow records exact V1 source
+ordinals and restores that order; all eight projections then matched without
+using unordered or approximate equality.
+
+The bounded current-checkpoint reader rehashes every immutable segment but
+parses typed records only from the latest 86,537,118-byte segment. It completed
+in 16.53 seconds with 855,712 KiB peak RSS and returned the exact two current
+Candidate batches, 3,549 state rows, and six risk results. This compares with
+228.285 seconds and 8,737,080 KiB for a complete V1 semantic reread. The result
+justifies a later append-input prototype; it does not yet replace V1 or prove
+O(current-session) calculation, write, recovery, or publication.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

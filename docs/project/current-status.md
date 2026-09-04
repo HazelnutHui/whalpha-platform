@@ -142,9 +142,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
 3. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
    Snapshot is now 121.57 seconds and its largest remaining input is the
    necessary formal Activation read rather than duplicate active-state reads.
-4. Decide separately whether segmented/delta Candidate custody justifies its
-   contract, recovery, retention, and compaction complexity; do not weaken
-   cumulative prefix validation as a micro-optimization.
+4. Continue ADR 0130's default-disconnected segmented Candidate proof. The real
+   ten-session shadow reconstructed all eight V1 business projections exactly;
+   its bounded current read took 16.53 seconds versus 228.285 seconds for V1
+   full semantics. Next prove a current-state/chain append input, recovery, and
+   periodic cold equivalence before considering cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
 6. Connect the 303-session canonical foundation to a governed point-in-time

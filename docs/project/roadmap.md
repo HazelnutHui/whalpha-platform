@@ -40,8 +40,10 @@ Next:
    negligible.
 3. Retain the completed current-code ranking: MI is bounded at 53.84 seconds;
    Snapshot is 121.57 seconds after removing its duplicate active read.
-4. Decide separately whether segmented/delta Candidate custody warrants its
-   contract, recovery, retention, and compaction complexity.
+4. Advance ADR 0130's disconnected segmented Candidate shadow from exact V1
+   reconstruction to current-state/chain append, interruption recovery, and
+   periodic cold equivalence. Do not cut over the V1 daily or publication path
+   until those gates pass.
 5. Remove any remaining repeated evidence reconstruction only where the new
    complete-chain measurement justifies it.
 6. Vectorize or process-parallelize only independent CPU-heavy work after exact

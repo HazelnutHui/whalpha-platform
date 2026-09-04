@@ -21,6 +21,7 @@ from tip_api.services.opportunity_candidate_audit import (
     _canonical_bytes,
     _fingerprint,
     read_opportunity_candidate_audit,
+    read_opportunity_candidate_business_fingerprints,
     read_opportunity_candidate_current_batches,
     read_opportunity_candidate_planning_evidence,
     read_opportunity_candidate_publication_evidence,
@@ -48,6 +49,13 @@ from tip_api.services.opportunity_candidate_oracle import (
 )
 from tip_api.services.opportunity_candidate_state import replay_opportunity_candidate_state_history
 from tip_api.services.opportunity_candidates import calculate_opportunity_candidate_scores, rank_opportunity_candidates
+from tip_api.services.opportunity_candidate_segmented_shadow import (
+    SHADOW_MANIFEST,
+    CandidateSegmentedShadowError,
+    read_candidate_segmented_shadow,
+    read_candidate_segmented_shadow_current,
+    write_candidate_segmented_shadow,
+)
 
 
 PRIMARY = "provider_classified_common_shares_v1"
@@ -271,6 +279,163 @@ def _write(
         work_dir=work_dir,
         defer_finalization=defer_finalization,
     )
+
+
+def _write_segmentable_source(target: Path) -> dict[str, object]:
+    panel, batches, states, risks, oracle, _, normalization = _inputs()
+    candidate = batches[0].candidates[0]
+    return write_opportunity_candidate_audit(
+        output_dir=target,
+        panels=(panel,),
+        candidate_batches=batches,
+        state_history=states,
+        risk_results=risks,
+        oracle_comparison=oracle,
+        equivalence_flags={
+            "append_full_replay_match": True,
+            "restart_replay_match": True,
+            "future_prefix_stable": True,
+            "input_permutation_match": True,
+        },
+        raw_facts=(
+            {
+                "as_of_session": panel.as_of_session.isoformat(),
+                "universe_id": batches[0].universe_id,
+                "instrument_id": str(candidate.instrument_id),
+                "latest_price": candidate.latest_price,
+            },
+        ),
+        normalization_ledger=normalization,
+        generated_at=datetime(2026, 9, 4, tzinfo=UTC),
+        timings={"total": "0.1"},
+        peak_memory_kib=512,
+    )
+
+
+def test_segmented_shadow_round_trip_reconstructs_v1_business() -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    target = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    shutil.rmtree(source)
+    shutil.rmtree(target)
+    try:
+        source_manifest = _write_segmentable_source(source)
+        _, source_business = read_opportunity_candidate_business_fingerprints(source)
+        manifest = write_candidate_segmented_shadow(
+            source_audit=source,
+            output_dir=target,
+        )
+        reread = read_candidate_segmented_shadow(target)
+
+        assert manifest["source_audit_logical_fingerprint"] == source_manifest[
+            "logical_content_fingerprint"
+        ]
+        assert manifest["session_count"] == 1
+        assert manifest["publication_authorized"] is False
+        assert manifest["external_request_count"] == 0
+        assert manifest["production_write_count"] == 0
+        assert reread.business_projection_fingerprints == source_business
+        assert reread.manifest == manifest
+        assert stat.S_IMODE(target.stat().st_mode) == 0o700
+        assert stat.S_IMODE((target / "segments").stat().st_mode) == 0o700
+        for path in target.rglob("*"):
+            if path.is_file():
+                assert stat.S_IMODE(path.stat().st_mode) == 0o400
+        assert {path.name for path in target.iterdir()} == {
+            SHADOW_MANIFEST,
+            "segments",
+        }
+    finally:
+        shutil.rmtree(source, ignore_errors=True)
+        shutil.rmtree(target, ignore_errors=True)
+
+
+def test_segmented_shadow_rejects_changed_segment_bytes() -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    target = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    shutil.rmtree(source)
+    shutil.rmtree(target)
+    try:
+        _write_segmentable_source(source)
+        manifest = write_candidate_segmented_shadow(
+            source_audit=source,
+            output_dir=target,
+        )
+        segment = target / manifest["segments"][0]["relative_path"]
+        segment.chmod(0o600)
+        value = json.loads(segment.read_text())
+        value["candidate_batches"] = []
+        segment.write_text(
+            json.dumps(value, sort_keys=True, separators=(",", ":")) + "\n"
+        )
+        segment.chmod(0o400)
+
+        with pytest.raises(
+            CandidateSegmentedShadowError,
+            match="physical descriptor",
+        ):
+            read_candidate_segmented_shadow(target)
+    finally:
+        shutil.rmtree(source, ignore_errors=True)
+        shutil.rmtree(target, ignore_errors=True)
+
+
+def test_segmented_shadow_current_reader_avoids_full_semantic_reconstruction(
+    monkeypatch,
+) -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    target = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    shutil.rmtree(source)
+    shutil.rmtree(target)
+    try:
+        _write_segmentable_source(source)
+        manifest = write_candidate_segmented_shadow(
+            source_audit=source,
+            output_dir=target,
+        )
+
+        def reject_full_reconstruction(*args, **kwargs):
+            raise AssertionError("current evidence must not invoke full reconstruction")
+
+        monkeypatch.setattr(
+            "tip_api.services.opportunity_candidate_segmented_shadow.read_candidate_segmented_shadow",
+            reject_full_reconstruction,
+        )
+        current = read_candidate_segmented_shadow_current(target)
+        assert current.manifest["logical_content_fingerprint"] == manifest[
+            "logical_content_fingerprint"
+        ]
+        assert tuple(item.universe_id for item in current.candidate_batches) == (
+            PRIMARY,
+            SECONDARY,
+        )
+        assert current.state_records
+        assert len(current.risk_results) == 6
+    finally:
+        shutil.rmtree(source, ignore_errors=True)
+        shutil.rmtree(target, ignore_errors=True)
+
+
+def test_segmented_shadow_rejects_extra_file_and_non_tmp_output() -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    target = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    shutil.rmtree(source)
+    shutil.rmtree(target)
+    try:
+        _write_segmentable_source(source)
+        write_candidate_segmented_shadow(source_audit=source, output_dir=target)
+        extra = target / "unexpected.json"
+        extra.write_text("{}\n")
+        extra.chmod(0o400)
+        with pytest.raises(CandidateSegmentedShadowError, match="file set"):
+            read_candidate_segmented_shadow(target)
+        with pytest.raises(CandidateSegmentedShadowError, match="direct child"):
+            write_candidate_segmented_shadow(
+                source_audit=source,
+                output_dir=target / "nested",
+            )
+    finally:
+        shutil.rmtree(source, ignore_errors=True)
+        shutil.rmtree(target, ignore_errors=True)
 
 
 def test_canonical_tmp_audit_round_trip_and_manifest_bindings() -> None:

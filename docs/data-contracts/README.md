@@ -12,6 +12,7 @@
 
 - [Dashboard Snapshot V2](dashboard-snapshot-v2.md)
 - [Opportunity Candidate Publication V1](opportunity-candidate-publication-v1.md)
+- [Opportunity Candidate Segmented Shadow V1](opportunity-candidate-segmented-shadow-v1.md)
 - [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)

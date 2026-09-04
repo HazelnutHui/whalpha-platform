@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-04 — Prove lossless segmented Candidate shadow custody
+
+- Accepted ADR 0130 and added a socket-free, `/tmp`-only segmented-shadow
+  writer, full equivalence reader, bounded current-checkpoint reader, admin
+  CLI, custody/tamper tests, and an explicit non-authority contract. Candidate
+  V1 remains the sole daily, planning, publication, and Production input.
+- The real 842,945,142-byte 2026-09-03 V1 audit converted into ten immutable
+  session segments plus a manifest. The 840,660,184-byte shadow has logical
+  fingerprint
+  `f2f253f14deeca3ee4d8eebb60c1ee0b1edbbaab82934cadde7b35ed71e4fc8e`
+  and reconstructed all eight V1 business projections exactly.
+- Complete conversion and reread took 548.57 seconds and 11,008,352 KiB peak
+  RSS. The bounded current reader rehashed all segment bytes, parsed only the
+  86,537,118-byte current segment, and completed in 16.53 seconds with 855,712
+  KiB peak RSS. It returned two Candidate batches, 3,549 current state rows,
+  and six risk results.
+- The first real attempt failed closed because date concatenation changed V1's
+  whole-history canonical raw-fact order. The final format records exact source
+  ordinals and restored exact equality; no comparison gate was relaxed.
+- Candidate audit/shadow focused tests passed 27 checks, and all 1,996 backend
+  tests passed with the two unchanged dependency warnings.
+- All real work was offline and under `/tmp`, with zero external requests and
+  Production writes. No `/data`, MI, Snapshot, scheduler, bundle, deployment,
+  formula, parameter, rank, Universe, or active state changed.
+
 ## 2026-09-04 — Bind Snapshot rollback and CAS to one active observation
 
 - Accepted ADR 0129. Snapshot approval planning now derives its rollback

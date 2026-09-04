@@ -216,10 +216,13 @@ separately bounded.
    reduced Snapshot candidate plus plan from 135.00 to 121.57 seconds by
    deriving rollback and CAS from one formal active observation; all 42 output
    files and all non-path plan bindings matched exactly, while Apply retains a
-   fresh CAS read. Measure the next complete daily chain before separately
-   deciding whether a segmented Candidate custody design is worth its contract
-   and recovery complexity. Add reuse, vectorization, or safe process
-   parallelism only where measurement justifies it and outputs remain exact.
+   fresh CAS read. ADR 0130 then proved a disconnected ten-session Candidate
+   shadow: all eight V1 business projections reconstructed exactly, and its
+   current-checkpoint reader took 16.53 seconds versus 228.285 seconds for V1
+   full semantics. V1 remains authoritative until append-input, recovery,
+   periodic cold comparison, and downstream compatibility pass. Measure the
+   next complete daily chain and add reuse, vectorization, or safe process
+   parallelism only where evidence justifies it and outputs remain exact.
 2. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
