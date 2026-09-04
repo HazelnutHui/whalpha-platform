@@ -24,6 +24,7 @@ from tip_api.contracts.security_classification.v1 import (
     ProviderInstrumentSecurityEvidenceV1,
 )
 from tip_api.persistence.eod_read import EodHistorySessionRead
+from tip_api.persistence.instrument_master import InstrumentMasterSnapshotReadResult
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     ParquetInstrumentMasterSnapshotRepository,
@@ -36,9 +37,11 @@ from tip_api.persistence.parquet.security_evidence import (
 )
 from tip_api.persistence.security_evidence import CompletedSecurityEvidenceSnapshot
 from tip_api.providers.massive.same_day_catchup import (
+    ValidatedIdentityReferencePackage,
     read_identity_reference_package,
 )
 from tip_api.providers.massive.instrument_master_snapshot import (
+    ReferenceSnapshotBuildResult,
     build_snapshot_from_payloads,
 )
 from tip_api.providers.massive.security_type_evidence import (
@@ -97,6 +100,25 @@ class HistoricalUniverseMembershipEodPanel:
 
 
 @dataclass(frozen=True, slots=True)
+class HistoricalIdentityPackageEquivalence:
+    """Formal package rebuild compared with one accepted same-day Identity."""
+
+    identity: InstrumentMasterSnapshotReadResult
+    package: ValidatedIdentityReferencePackage
+    rebuilt_identity: ReferenceSnapshotBuildResult
+    rebuilt_instrument_fingerprint: str
+    rebuilt_identity_fingerprint: str
+    rebuilt_resolver_fingerprint: str
+    instrument_match: bool
+    identity_match: bool
+    resolver_match: bool
+
+    @property
+    def exact_match(self) -> bool:
+        return self.instrument_match and self.identity_match and self.resolver_match
+
+
+@dataclass(frozen=True, slots=True)
 class HistoricalUniverseMembershipShadow:
     reconstruction: UniverseMembershipReconstruction
     source_decisions: tuple[FullBaseDecisionV1, ...]
@@ -112,6 +134,62 @@ class HistoricalUniverseMembershipShadow:
     canonical_evidence_count: int
     source_quarantined_instrument_count: int
     evidence_quality_gate_failures: tuple[str, ...]
+
+
+def inspect_historical_identity_package_equivalence(
+    *,
+    data_root: Path,
+    package_path: Path,
+    session_date: date,
+    identity: InstrumentMasterSnapshotReadResult | None = None,
+) -> HistoricalIdentityPackageEquivalence:
+    """Formally rebuild one retained package and compare all Identity families."""
+
+    root = data_root.resolve(strict=True)
+    accepted = identity or ParquetInstrumentMasterSnapshotRepository(
+        root
+    ).inspect_snapshot(session_date)
+    if accepted.as_of_date != session_date:
+        raise HistoricalUniverseMembershipShadowError(
+            "accepted Identity snapshot session mismatch"
+        )
+    package = read_identity_reference_package(
+        package_path=package_path,
+        expected_session=session_date,
+    )
+    rebuilt = build_snapshot_from_payloads(
+        payloads=_flatten_reference_pages(package.pages),
+        as_of_date=session_date,
+        ingested_at=package.manifest.fetched_at,
+        request_count=package.manifest.request_count,
+        pagination_complete=package.manifest.pagination_complete,
+    )
+    rebuilt_instrument_fingerprint = instrument_content_fingerprint(
+        rebuilt.instruments
+    )
+    rebuilt_identity_fingerprint = identity_content_fingerprint(
+        rebuilt.identities
+    )
+    rebuilt_resolver_fingerprint = resolver_content_fingerprint(
+        rebuilt.resolvers
+    )
+    return HistoricalIdentityPackageEquivalence(
+        identity=accepted,
+        package=package,
+        rebuilt_identity=rebuilt,
+        rebuilt_instrument_fingerprint=rebuilt_instrument_fingerprint,
+        rebuilt_identity_fingerprint=rebuilt_identity_fingerprint,
+        rebuilt_resolver_fingerprint=rebuilt_resolver_fingerprint,
+        instrument_match=(
+            rebuilt_instrument_fingerprint == accepted.instrument_content_sha256
+        ),
+        identity_match=(
+            rebuilt_identity_fingerprint == accepted.identity_content_sha256
+        ),
+        resolver_match=(
+            rebuilt_resolver_fingerprint == accepted.resolver_content_sha256
+        ),
+    )
 
 
 def prepare_historical_universe_membership_eod_panel(
@@ -188,32 +266,19 @@ def build_historical_universe_membership_shadow(
     data_root = data_root.resolve(strict=True)
     eod_repository = CanonicalEodReadRepository(data_root)
 
-    identity = ParquetInstrumentMasterSnapshotRepository(data_root).inspect_snapshot(
-        session_date
-    )
-    package = read_identity_reference_package(
+    equivalence = inspect_historical_identity_package_equivalence(
+        data_root=data_root,
         package_path=package_path,
-        expected_session=session_date,
+        session_date=session_date,
     )
-    payloads = _flatten_reference_pages(package.pages)
-    rebuilt_identity = build_snapshot_from_payloads(
-        payloads=payloads,
-        as_of_date=session_date,
-        ingested_at=package.manifest.fetched_at,
-        request_count=package.manifest.request_count,
-        pagination_complete=package.manifest.pagination_complete,
-    )
-    if (
-        instrument_content_fingerprint(rebuilt_identity.instruments)
-        != identity.instrument_content_sha256
-        or identity_content_fingerprint(rebuilt_identity.identities)
-        != identity.identity_content_sha256
-        or resolver_content_fingerprint(rebuilt_identity.resolvers)
-        != identity.resolver_content_sha256
-    ):
+    if not equivalence.exact_match:
         raise HistoricalUniverseMembershipIdentityMismatchError(
             "Identity package does not exactly reconstruct the accepted snapshot"
         )
+    identity = equivalence.identity
+    package = equivalence.package
+    rebuilt_identity = equivalence.rebuilt_identity
+    payloads = _flatten_reference_pages(package.pages)
     indexes = build_identity_indexes(
         identities=rebuilt_identity.identities,
         resolvers=rebuilt_identity.resolvers,

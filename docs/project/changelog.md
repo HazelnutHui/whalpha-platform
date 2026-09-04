@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-04 — Census retained Identity package equivalence
+
+- Accepted ADR 0134 and added a network-disabled, read-only census that
+  formally inspects canonical same-day Identity, rereads every retained package
+  artifact, rebuilds all three Identity families, and refuses to choose among
+  duplicate sources. Reports are atomic, owner-only, `/tmp`-only, and contain
+  no payload rows, tickers, credentials, or source paths.
+- A serial three-session real sample correctly separated missing 7/17,
+  mismatched 8/31, and exact 9/3. A two-worker repeat was byte-identical after
+  excluding only declared worker-count metadata and reduced wall time from
+  26.09 to 15.99 seconds.
+- The four-worker full census completed 303 sessions in 12:25.56 at 399% CPU:
+  58 exact, 221 current-builder Provider Identity mismatches, and 24 missing.
+  All 279 discovered Identity packages passed custody; duplicate, unroutable,
+  outside-index, and canonical-snapshot failures were zero. Every mismatch
+  preserved exact Instrument Master and Resolver fingerprints.
+- Four representative row-level checks found stable keys equal and changed-row
+  counts exactly equal to ETV counts. The sole sampled transition was the
+  governed 2026-09-03 ETV change from unknown/rejected to exchange-traded-
+  vehicle/excluded. The 221 packages are therefore retained for a full
+  versioned compatibility proof rather than being discarded or reacquired.
+- The 447,255-byte report has SHA-256
+  `e07ee30c025467950942f734546ededcd2904f7ed939e5b56423addf02c3c79d`.
+  External requests and canonical writes were zero; `/data`, Production,
+  scheduling, analytics, formulas, Universes, and research readiness did not
+  change.
+- Twelve focused checks and all 2,017 backend tests passed with the two
+  unchanged dependency warnings.
+
 ## 2026-09-04 — Bound and accelerate historical membership shadows
 
 - Accepted ADR 0133 and replaced the single-session duplicate EOD inspection /

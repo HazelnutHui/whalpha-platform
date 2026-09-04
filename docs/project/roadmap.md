@@ -80,13 +80,16 @@ Current membership implementation sequence:
 2. The bounded shared-panel runner is proven for one, two, and five adjacent
    sessions. It preserves exact daily outputs while removing duplicate EOD,
    Identity-index, and catalog reads.
-3. Run a complete read-only exact-equivalence census. The prior 279/303 figure
-   counts custody-valid retained packages; 2026-08-28 and 2026-08-31 already
-   prove that this is not the same as reconstructable source coverage.
-4. Define durable, minimal source custody without copying raw provider bodies,
-   then resolve every physically missing or exact-mismatched session; never
-   project current Activation backward.
-5. Run all exact-equivalent sessions into disconnected `/tmp` batches, reconcile
+3. The complete read-only current-builder census is done: 58 sessions are
+   exact, 221 retain exact Instrument/Resolver but differ in Provider Identity,
+   and 24 are physically missing. All retained-package custody passed.
+4. Prove the narrowly versioned legacy ETV classification profile across all
+   221 mismatches before treating them as accepted-profile equivalent. Do not
+   reacquire these sources based on a current-builder mismatch alone.
+5. Define durable, minimal source custody without copying raw provider bodies,
+   then resolve the 24 physically missing sessions; never project current
+   Activation backward.
+6. Run all accepted-profile-equivalent sessions into disconnected `/tmp` batches, reconcile
    completeness and timing, then separately review canonical publication.
 
 ## Priority 3 — First real strategy research

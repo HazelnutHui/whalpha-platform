@@ -120,7 +120,7 @@ transitive formal Coverage reader proves them.
 An offline source census and complete-base shadow now narrow the membership
 gap without changing that status. Custody-validated sanitized Identity
 reference packages remain in `/tmp` for 279/303 canonical sessions; the exact
-24-session gap is 2026-07-17 through 2026-08-19. The real 2026-09-03 shadow
+24-session physical gap is 2026-07-17 through 2026-08-19. The real 2026-09-03 shadow
 evaluated all 9,979 same-day stable IDs for both Universes, localized one
 source collision, and formally reread 19,958 three-state decisions. Its source
 cutoff is after the evaluated session and its output is `/tmp`-only, so it is a
@@ -132,9 +132,19 @@ sessions. The exact 9/3 single replay fell from 149.72 to 111.18 seconds; the
 9/2–9/3 batch completed in 139.71 seconds and both dates matched independent
 logical and physical fingerprints. A five-session audit peaked at about 1.24
 GiB and isolated two source failures: the custody-valid 8/28 and 8/31 packages
-do not exactly rebuild their accepted same-day Identity families. Thus 279 is
-only retained-package custody coverage. Exact-equivalent source coverage is
-not yet known and must be censused before a broad reconstruction run.
+do not exactly rebuild their accepted same-day Identity families.
+
+ADR 0134 then completed the full 303-session exact-equivalence census in 12
+minutes 25.56 seconds with four local workers and zero requests/writes. Under
+the current builder, 58 sessions are exact, 221 mismatch only the Provider
+Identity family, and 24 are missing; package custody, duplicate-source, and
+canonical-Identity failures are all zero. Every mismatch retains exact
+Instrument Master and Resolver fingerprints. Four representative row-level
+checks attribute every changed row to the 2026-09-03 governed ETV transition
+from unknown/rejected to exchange-traded-vehicle/excluded. That is strong but
+not yet all-session row-level proof, so the 221 packages must receive a
+narrowly versioned compatibility census before reconstruction; they must not
+be discarded or reacquired as if corrupt.
 
 ## OCI production proof
 
@@ -268,10 +278,11 @@ separately bounded.
    identity. Measure the next complete daily chain and add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
-2. **Historical Universe foundation:** convert the complete-base shadow into an
-   efficient shared-panel multi-session design, resolve durable source custody,
-   and acquire only the exact 24 missing reference sessions before any
-   separately reviewed canonical membership publication.
+2. **Historical Universe foundation:** the shared-panel batch and current-
+   builder equivalence census are complete. Prove the legacy ETV-only
+   compatibility profile across all 221 mismatches, retain durable source
+   custody, and keep the 24 physically missing reference sessions separate
+   before any broad shadow or canonical membership review.
 3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

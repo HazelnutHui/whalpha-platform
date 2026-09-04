@@ -105,7 +105,17 @@ seconds for the measured independent optimized paths. A five-session audit
 completed 9/1–9/3 but correctly rejected the custody-valid 8/28 and 8/31
 packages because they did not exactly reproduce accepted same-day Identity
 fingerprints. The 279-package count must therefore not be represented as 279
-reconstructable sessions. The exact-equivalence census remains pending.
+reconstructable sessions under the current builder.
+
+The full ADR 0134 census is now complete: 58/303 sessions are exactly
+reconstructable under current code, 221 have exact Instrument/Resolver but a
+Provider Identity mismatch, and 24 are physically missing. All 279 discovered
+packages passed custody; duplicate, unroutable, outside-index, and canonical-
+snapshot failures are zero. Four representative row-level comparisons found
+only the governed ETV change from unknown/rejected to excluded, matching the
+ETV row count exactly. The all-221 row-level compatibility proof is still
+required, so the 221 retained packages must not yet feed broad reconstruction
+and should not be reacquired or discarded as corrupt.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
@@ -178,9 +188,10 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. Advance complete-base historical membership from one-day shadow to a
-   shared-panel multi-session implementation; resolve durable source custody
-   and only the exact 24 missing reference sessions before canonical review.
+6. Prove a versioned legacy-ETV compatibility reconstruction across all 221
+   current-builder Identity mismatches, then run only accepted-profile sources
+   through the completed shared-panel membership path. Keep the 24 physical
+   gaps and durable source custody as separate work before canonical review.
 7. Connect the 303-session canonical foundation to a governed point-in-time
    research dataset and reconcile the 26-session analytics limitation.
 8. Only then begin real preregistered chronological strategy research.
