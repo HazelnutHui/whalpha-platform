@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-04 — Expose family-specific historical research readiness
+
+- Accepted ADR 0131 and advanced the authoritative, network-free current-context
+  report to contract 1.3 with an explicit `research_readiness` section.
+- The real Dell report confirms that the 252-session price floor is satisfied:
+  all 303 contiguous EOD dates from 2025-06-23 through 2026-09-03 have
+  same-date completed Identity manifests. Both remain acquired canonical facts,
+  not published Historical Coverage evidence.
+- Provider-action, canonical-action, daily-membership, lifecycle,
+  adjustment-ledger, and Historical Coverage evidence/final roots are absent
+  from `/data`.
+  Costs/liquidity, complete revision lineage, real chronological evaluation,
+  and sealed real holdout remain absent or fixture-only.
+- Updated stale Pilot/backfill wording without rewriting dated ADR evidence or
+  changing the fingerprinted, superseded Pilot-plan contract.
+- The report remains `data_blocked`, never promotes partition presence to
+  readiness, and grants no research-development or performance authority. No
+  provider request, `/data` write, research run, publication, deployment, or
+  scheduler action occurred.
+
 ## 2026-09-04 — Prove lossless segmented Candidate shadow custody
 
 - Accepted ADR 0130 and added a socket-free, `/tmp`-only segmented-shadow

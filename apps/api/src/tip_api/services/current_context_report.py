@@ -33,6 +33,45 @@ DATA_ROOT = Path("/data/trading-intelligence-platform")
 REPOSITORY_ROOT = Path("/home/hui/projects/trading-intelligence-platform")
 EXPECTED_HOST = "dell5820"
 EXPECTED_USER = "hui"
+RESEARCH_SESSION_FLOOR = 252
+
+_RESEARCH_PHYSICAL_FAMILIES = (
+    (
+        "corporate_action_source_observation",
+        "provider-corporate-action-observation",
+        "schema_version=1/provider_id=*/event_year=*",
+    ),
+    (
+        "corporate_action",
+        "corporate-actions",
+        "schema_version=1/event_year=*",
+    ),
+    (
+        "universe_membership",
+        "universe-membership",
+        "schema_version=1/methodology_version=*/session_date=*",
+    ),
+    (
+        "instrument_lifecycle",
+        "instrument-lifecycle",
+        "schema_version=1/as_of_date=*",
+    ),
+    (
+        "adjustment_ledger",
+        "adjustment-ledger",
+        "schema_version=1/methodology_version=*/basis_session=*",
+    ),
+    (
+        "historical_coverage_evidence",
+        "historical-coverage-evidence",
+        "schema_version=1/family=*/evidence_id=*",
+    ),
+    (
+        "historical_coverage",
+        "historical-coverage",
+        "schema_version=1/coverage_id=*",
+    ),
+)
 
 
 class CurrentContextReportError(RuntimeError):
@@ -145,7 +184,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.2",
+        "report_contract": "tip-current-context-report/1.3",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -187,6 +226,15 @@ def build_report(
         },
         "identity": identity,
         "identity_eod_alignment": identity_eod_alignment,
+        "research_readiness": _historical_research_readiness(
+            data,
+            session_dates=session_dates,
+            history_validation_scope=(
+                "all_completed_partitions"
+                if full_history_validation
+                else "completion_index_plus_latest_partition"
+            ),
+        ),
         "activation": {
             "analysis_session": activation.manifest.analysis_session.isoformat(),
             "pointer_fingerprint": activation_pointer.pointer_content_fingerprint,
@@ -299,6 +347,208 @@ def _completed_session_dates(
             "completed canonical EOD sessions are not unique and ordered"
         )
     return dates
+
+
+def _historical_research_readiness(
+    root: Path,
+    *,
+    session_dates: tuple[date, ...],
+    history_validation_scope: str,
+) -> dict[str, Any]:
+    """Report exact family progress without turning inventory into readiness."""
+
+    if not session_dates or session_dates != tuple(sorted(set(session_dates))):
+        raise CurrentContextReportError(
+            "research-readiness EOD sessions must be unique and ordered"
+        )
+    identity_dates = _identity_completion_dates(root)
+    eod_date_set = set(session_dates)
+    identity_date_set = set(identity_dates)
+    aligned_dates = tuple(
+        session for session in session_dates if session in identity_date_set
+    )
+    missing_identity_dates = tuple(
+        session.isoformat()
+        for session in session_dates
+        if session not in identity_date_set
+    )
+    identity_only_dates = tuple(
+        session.isoformat()
+        for session in identity_dates
+        if session not in eod_date_set
+    )
+
+    physical = tuple(
+        _research_family_inventory(root, family, directory, pattern)
+        for family, directory, pattern in _RESEARCH_PHYSICAL_FAMILIES
+    )
+    by_family = {item["family"]: item for item in physical}
+    blocker_codes = []
+    if len(session_dates) < RESEARCH_SESSION_FLOOR:
+        blocker_codes.append("canonical_price_session_floor_not_met")
+    if missing_identity_dates:
+        blocker_codes.append("same_session_identity_completion_incomplete")
+    blocker_codes.extend(
+        (
+            "eod_price_bar_not_formally_coverage_validated",
+            "point_in_time_identity_not_formally_coverage_validated",
+        )
+    )
+    blocker_by_family = {
+        "corporate_action_source_observation": (
+            "corporate_action_source_observation_absent"
+        ),
+        "corporate_action": "canonical_corporate_action_coverage_absent",
+        "universe_membership": "daily_point_in_time_membership_absent",
+        "instrument_lifecycle": "instrument_lifecycle_coverage_absent",
+        "adjustment_ledger": "adjustment_ledger_reconciliation_absent",
+        "historical_coverage_evidence": (
+            "historical_coverage_evidence_publication_absent"
+        ),
+        "historical_coverage": "historical_coverage_publication_absent",
+    }
+    for family, blocker in blocker_by_family.items():
+        if by_family[family]["partition_count"] == 0:
+            blocker_codes.append(blocker)
+        else:
+            blocker_codes.append(f"{family}_not_formally_coverage_validated")
+    blocker_codes.extend(
+        (
+            "research_cost_and_liquidity_model_absent",
+            "complete_source_availability_and_revision_lineage_absent",
+            "real_chronological_evaluation_dataset_absent",
+            "sealed_real_holdout_absent",
+        )
+    )
+
+    return {
+        "status": "data_blocked",
+        "required_session_floor": RESEARCH_SESSION_FLOOR,
+        "canonical_price_depth_satisfied": (
+            len(session_dates) >= RESEARCH_SESSION_FLOOR
+        ),
+        "families": (
+            {
+                "family": "eod_price_bar",
+                "custody_state": "canonical_acquired_coverage_unpublished",
+                "partition_count": len(session_dates),
+                "covered_session_count": len(session_dates),
+                "first_session": session_dates[0].isoformat(),
+                "last_session": session_dates[-1].isoformat(),
+                "validation_scope": history_validation_scope,
+                "research_ready": False,
+            },
+            {
+                "family": "point_in_time_identity",
+                "custody_state": "canonical_acquired_coverage_unpublished",
+                "partition_count": len(identity_dates),
+                "covered_session_count": len(aligned_dates),
+                "first_session": (
+                    identity_dates[0].isoformat() if identity_dates else None
+                ),
+                "last_session": (
+                    identity_dates[-1].isoformat() if identity_dates else None
+                ),
+                "validation_scope": "completion_manifests",
+                "missing_eod_session_dates": missing_identity_dates,
+                "identity_only_dates": identity_only_dates,
+                "research_ready": False,
+            },
+            *physical,
+        ),
+        "supporting_requirements": (
+            {
+                "requirement": "costs_and_liquidity",
+                "state": "not_implemented",
+                "note": "price_volume_proxies_do_not_establish_execution_costs",
+            },
+            {
+                "requirement": "source_availability_and_revision_lineage",
+                "state": "partial_family_specific",
+                "note": "eod_identity_custody_does_not_complete_missing_families",
+            },
+            {
+                "requirement": "chronological_evaluation",
+                "state": "fixture_mechanics_only",
+                "note": "no_real_performance_eligible_dataset_connected",
+            },
+            {
+                "requirement": "holdout_custody",
+                "state": "fixture_mechanics_only",
+                "note": "no_real_holdout_reserved_or_consumed",
+            },
+        ),
+        "blocker_codes": tuple(blocker_codes),
+        "ready_for_strategy_development_review": False,
+        "performance_claims_authorized": False,
+    }
+
+
+def _identity_completion_dates(root: Path) -> tuple[date, ...]:
+    snapshot_root = root / "market-data/snapshots/instrument-master"
+    if (
+        snapshot_root.is_symlink()
+        or not snapshot_root.is_dir()
+        or snapshot_root.resolve(strict=True) != snapshot_root
+    ):
+        raise CurrentContextReportError("Identity snapshot root is unavailable")
+    dates = []
+    for path in snapshot_root.iterdir():
+        if not path.name.startswith("as_of_date="):
+            continue
+        if path.is_symlink() or not path.is_dir():
+            raise CurrentContextReportError("Identity snapshot path is unsafe")
+        try:
+            as_of_date = date.fromisoformat(path.name.removeprefix("as_of_date="))
+        except ValueError as exc:
+            raise CurrentContextReportError(
+                "Identity snapshot date is malformed"
+            ) from exc
+        _identity_state(root, as_of_date)
+        dates.append(as_of_date)
+    ordered = tuple(sorted(dates))
+    if ordered != tuple(sorted(set(ordered))):
+        raise CurrentContextReportError("Identity snapshot dates are duplicated")
+    return ordered
+
+
+def _research_family_inventory(
+    root: Path,
+    family: str,
+    directory: str,
+    pattern: str,
+) -> dict[str, Any]:
+    base = root / "market-data" / directory
+    if base.is_symlink():
+        raise CurrentContextReportError(f"{family} research root is unsafe")
+    if not base.exists():
+        return {
+            "family": family,
+            "custody_state": "absent",
+            "partition_count": 0,
+            "manifest_count": 0,
+            "research_ready": False,
+        }
+    if not base.is_dir() or base.resolve(strict=True) != base:
+        raise CurrentContextReportError(f"{family} research root is unsafe")
+    if any(path.is_symlink() for path in base.rglob("*")):
+        raise CurrentContextReportError(f"{family} research inventory is unsafe")
+    partitions = tuple(sorted(base.glob(pattern)))
+    if any(path.is_symlink() or not path.is_dir() for path in partitions):
+        raise CurrentContextReportError(f"{family} research partition is unsafe")
+    manifests = tuple(path for path in base.rglob("manifest.json") if path.is_file())
+    state = (
+        "root_present_without_partitions"
+        if not partitions
+        else "partitions_observed_not_coverage_validated"
+    )
+    return {
+        "family": family,
+        "custody_state": state,
+        "partition_count": len(partitions),
+        "manifest_count": len(manifests),
+        "research_ready": False,
+    }
 
 
 def _validated_directory(path: Path, label: str) -> Path:

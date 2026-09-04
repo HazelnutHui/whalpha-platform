@@ -256,14 +256,19 @@ evaluation reproducibility through a separately reviewed deletion procedure.
   feature warm-up and maximum five-session outcome horizon reduce usable dates.
 - A future formula with a longer lookback raises the required acquisition
   range; it cannot silently consume the evaluation interval as warm-up.
-- The 29-session sequence remains mechanics-only.
+- The original 29-session sequence was mechanics-only. Canonical EOD/Identity
+  now exceeds the 252-session floor, but the full research foundation remains
+  blocked by the other required families and Coverage publication.
 
 ## Physical storage direction
 
 V1 remains Parquet-first under the approved Dell data root, with one explicit
 schema-version directory, bounded partitions, deterministic ordering,
 content fingerprints, physical file hashes, manifests, and atomic completion.
-Exact paths and partition keys belong to the next physical design and pilot.
+EOD/Identity paths are canonical. Fixture-tested paths for membership,
+source-action, lifecycle, adjustment, and Coverage are frozen by their current
+repositories but have not been populated under `/data`; the canonical
+Corporate Action projection still requires a physical implementation.
 
 The design should prefer:
 
@@ -290,8 +295,9 @@ Before any historical provider request or `/data` write, review and freeze:
 7. idempotency, conflict, recovery, and rollback behavior;
 8. pilot size and explicit authorization.
 
-The first authorized operation should be a small representative pilot, not a
-252-session bulk run.
+The completed EOD/Identity acquisition followed a small representative Pilot.
+Any first acquisition for a new missing family or provider must likewise begin
+with its own bounded representative Pilot rather than a bulk run.
 
 ## Deferred work
 
@@ -300,6 +306,7 @@ The first authorized operation should be a small representative pilot, not a
 - Canonical multi-event adjustment construction beyond the completed isolated
   split/dividend fixture invariants
 - Historical membership builder
-- Approved live-pilot execution and later bulk-backfill orchestration
+- Canonical membership, action, lifecycle, adjustment, cost, and evaluation
+  acquisition/build orchestration
 - Backup and deletion policy
 - Formula selection, signal generation, and performance evaluation

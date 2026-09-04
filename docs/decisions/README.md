@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0131](0131-expose-family-specific-research-readiness.md): Expose exact acquired-versus-missing historical input families in the authoritative read-only context report without weakening formal Coverage gates.
+
 - [ADR 0130](0130-prove-segmented-candidate-custody-before-cutover.md): Prove a lossless per-session Candidate shadow before any change to the V1 daily or publication boundary.
 
 - [ADR 0129](0129-bind-snapshot-rollback-and-cas-to-one-active-read.md): Bind one Snapshot plan's rollback reference and expected current-state fingerprint to the same fully validated active read while preserving fresh Apply checks.
@@ -55,6 +57,7 @@ Each ADR should include:
 
 ## Records
 
+- [0131: Expose Family-Specific Research Readiness](0131-expose-family-specific-research-readiness.md)
 - [0130: Prove Segmented Candidate Custody Before Cutover](0130-prove-segmented-candidate-custody-before-cutover.md)
 - [0129: Bind Snapshot Rollback and CAS to One Active Read](0129-bind-snapshot-rollback-and-cas-to-one-active-read.md)
 - [0128: Separate Daily Candidate Commit from Periodic Semantic Reread](0128-separate-daily-candidate-commit-from-periodic-semantic-reread.md)

@@ -81,6 +81,14 @@ is not. Active Market Intelligence still reports
 point-in-time membership, corporate actions, adjustments, costs, and sealed
 evaluation datasets are not yet fully wired.
 
+Current-context contract 1.3 now makes this family-specific: the 303-session
+price floor and all 303 same-date Identity completion manifests are present,
+but neither has a published Historical Coverage claim. The provider-action,
+canonical-action, daily-membership, lifecycle, adjustment-ledger, and
+Historical Coverage evidence/final roots are absent. Real cost/liquidity,
+complete revision lineage, chronological evaluation, and sealed-holdout inputs
+also remain absent or fixture-only.
+
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
 price history. The first intended registered study remains Strong-Leader

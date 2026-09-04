@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-04T09:20:37Z
+Operational state verified at: 2026-09-04T14:27:38Z
 
 Repository context updated at: 2026-09-04 UTC
 
@@ -28,7 +28,7 @@ older immutable deployed bundle; compare both identities explicitly.
 
 ## Formal Dell data state
 
-The network-free current-context reader uses report contract 1.2. Normal
+The network-free current-context reader uses report contract 1.3. Normal
 recovery completed at validation level `active_custody_and_contracts` with
 `completion_index_plus_latest_partition`; the explicit all-303-partition mode
 also completed successfully during the ADR 0125 validation.
@@ -93,6 +93,29 @@ The Quant Research Lab must therefore remain research-only/data-blocked until
 historical analytics inputs and the missing point-in-time lifecycle,
 membership, corporate-action, adjustment, and evaluation families are wired
 and validated. Canonical price history alone is not backtest readiness.
+
+### Historical research readiness
+
+The 2026-09-04 contract-1.3 current-context run now exposes family-specific
+progress rather than treating all historical inputs as one missing block:
+
+- the 252-session price-depth floor is satisfied by 303 contiguous EOD
+  partitions;
+- all 303 EOD dates have exact same-date completed Identity manifests;
+- both families are canonical and acquired but have not been promoted through
+  a formal Historical Coverage publication;
+- provider corporate-action observations, canonical corporate actions, daily
+  point-in-time membership, lifecycle, adjustment ledger, and Historical
+  Coverage evidence/final roots are absent from `/data`;
+- a real cost/liquidity model, complete availability/revision lineage, real
+  chronological evaluation dataset, and sealed real holdout are also absent or
+  fixture-only.
+
+The report status is therefore `data_blocked`, with
+`ready_for_strategy_development_review=false` and
+`performance_claims_authorized=false`. Directory presence alone can never
+change those results; future partitions remain unvalidated until the existing
+transitive formal Coverage reader proves them.
 
 ## OCI production proof
 

@@ -225,6 +225,181 @@ def test_completed_session_dates_rejects_unordered_index() -> None:
         report._completed_session_dates(Repository(), full_history_validation=False)
 
 
+def test_historical_research_readiness_separates_acquired_from_ready(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "data"
+    sessions = (date(2026, 8, 27), date(2026, 8, 28))
+    for session in sessions:
+        target = (
+            root
+            / "market-data/snapshots/instrument-master"
+            / f"as_of_date={session.isoformat()}"
+            / "manifest.json"
+        )
+        target.parent.mkdir(parents=True)
+        target.write_text(
+            json.dumps(
+                {
+                    "completion_status": "completed",
+                    "as_of_date": session.isoformat(),
+                    "instrument_count": 10,
+                    "identity_count": 12,
+                    "resolver_count": 10,
+                    "snapshot_content_sha256": "a" * 64,
+                }
+            )
+        )
+
+    state = report._historical_research_readiness(
+        root,
+        session_dates=sessions,
+        history_validation_scope="completion_index_plus_latest_partition",
+    )
+    families = {item["family"]: item for item in state["families"]}
+
+    assert state["status"] == "data_blocked"
+    assert state["canonical_price_depth_satisfied"] is False
+    assert families["eod_price_bar"]["partition_count"] == 2
+    assert families["point_in_time_identity"]["covered_session_count"] == 2
+    assert families["universe_membership"]["custody_state"] == "absent"
+    assert "daily_point_in_time_membership_absent" in state["blocker_codes"]
+    assert (
+        "corporate_action_source_observation_absent" in state["blocker_codes"]
+    )
+    assert state["ready_for_strategy_development_review"] is False
+    assert state["performance_claims_authorized"] is False
+
+
+def test_historical_research_readiness_does_not_promote_observed_partition(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "data"
+    session = date(2026, 8, 28)
+    identity_manifest = (
+        root
+        / "market-data/snapshots/instrument-master"
+        / f"as_of_date={session.isoformat()}"
+        / "manifest.json"
+    )
+    identity_manifest.parent.mkdir(parents=True)
+    identity_manifest.write_text(
+        json.dumps(
+            {
+                "completion_status": "completed",
+                "as_of_date": session.isoformat(),
+                "instrument_count": 10,
+                "identity_count": 12,
+                "resolver_count": 10,
+                "snapshot_content_sha256": "a" * 64,
+            }
+        )
+    )
+    membership = (
+        root
+        / "market-data/universe-membership/schema_version=1"
+        / "methodology_version=test/session_date=2026-08-28"
+    )
+    membership.mkdir(parents=True)
+    (membership / "manifest.json").write_text("{}")
+
+    state = report._historical_research_readiness(
+        root,
+        session_dates=(session,),
+        history_validation_scope="all_completed_partitions",
+    )
+    families = {item["family"]: item for item in state["families"]}
+
+    assert families["universe_membership"] == {
+        "family": "universe_membership",
+        "custody_state": "partitions_observed_not_coverage_validated",
+        "partition_count": 1,
+        "manifest_count": 1,
+        "research_ready": False,
+    }
+    assert (
+        "universe_membership_not_formally_coverage_validated"
+        in state["blocker_codes"]
+    )
+
+
+def test_historical_research_readiness_reports_missing_same_day_identity(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "data"
+    first = date(2026, 8, 27)
+    second = date(2026, 8, 28)
+    identity_manifest = (
+        root
+        / "market-data/snapshots/instrument-master"
+        / f"as_of_date={first.isoformat()}"
+        / "manifest.json"
+    )
+    identity_manifest.parent.mkdir(parents=True)
+    identity_manifest.write_text(
+        json.dumps(
+            {
+                "completion_status": "completed",
+                "as_of_date": first.isoformat(),
+                "instrument_count": 10,
+                "identity_count": 12,
+                "resolver_count": 10,
+                "snapshot_content_sha256": "a" * 64,
+            }
+        )
+    )
+
+    state = report._historical_research_readiness(
+        root,
+        session_dates=(first, second),
+        history_validation_scope="completion_index_plus_latest_partition",
+    )
+    families = {item["family"]: item for item in state["families"]}
+
+    assert families["point_in_time_identity"]["covered_session_count"] == 1
+    assert families["point_in_time_identity"]["missing_eod_session_dates"] == (
+        "2026-08-28",
+    )
+    assert "same_session_identity_completion_incomplete" in state["blocker_codes"]
+
+
+def test_historical_research_readiness_rejects_broken_family_symlink(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "data"
+    session = date(2026, 8, 28)
+    identity_manifest = (
+        root
+        / "market-data/snapshots/instrument-master"
+        / f"as_of_date={session.isoformat()}"
+        / "manifest.json"
+    )
+    identity_manifest.parent.mkdir(parents=True)
+    identity_manifest.write_text(
+        json.dumps(
+            {
+                "completion_status": "completed",
+                "as_of_date": session.isoformat(),
+                "instrument_count": 10,
+                "identity_count": 12,
+                "resolver_count": 10,
+                "snapshot_content_sha256": "a" * 64,
+            }
+        )
+    )
+    (root / "market-data/universe-membership").symlink_to(
+        tmp_path / "missing-target",
+        target_is_directory=True,
+    )
+
+    with pytest.raises(report.CurrentContextReportError, match="research root is unsafe"):
+        report._historical_research_readiness(
+            root,
+            session_dates=(session,),
+            history_validation_scope="completion_index_plus_latest_partition",
+        )
+
+
 def test_matching_bundle_binds_publication_and_snapshot_but_not_current_head(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:

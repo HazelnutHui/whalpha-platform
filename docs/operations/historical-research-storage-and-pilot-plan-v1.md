@@ -2,12 +2,13 @@
 
 ## Status
 
-Fixture-only physical foundation, exact three-session Pilot planner, and exact
-300-session bulk-plan boundary implemented; provider pilot not authorized.
+Fixture-only research-family repositories and Coverage publication mechanics
+are implemented. The representative Pilot and 300-session EOD/Identity
+acquisition are complete; the remaining research families are not.
 
-This plan turns ADR 0051 into a bounded Dell physical direction. It does not
-create a dataset, call a provider, inspect credentials, write `/data`, or grant
-standing authorization.
+This plan turns ADR 0051 into a bounded Dell physical direction and retains the
+historical acquisition design. Reading it does not authorize another provider
+request, `/data` write, publication, research run, or standing operation.
 
 ## Read-only Dell capacity evidence
 
@@ -128,11 +129,14 @@ queried only for a small set of unresolved stable IDs, never the entire base.
 11. **Complete:** add a provider-neutral, exact-plan-bound temporary source
    package with per-scope completion, request ceilings, artifact hashes,
    sensitive-field rejection, atomic publication, and full formal reread.
-12. Re-review source permission/account entitlement/lifecycle coverage, bind a
-   fresh inventory report, and obtain exact pilot authorization.
+12. **Completed for the bounded EOD/Identity acquisition under ADRs 0120–0124:**
+   bind user-directed Dell-local scope, prove the representative Pilot, and
+   finish the resumable 300-session target. This did not complete or authorize
+   the remaining research families.
 
-Steps 1–11 are repository work and can proceed without provider access or
-`/data` writes. Step 12 is a separate external transition.
+Steps 1–11 were repository mechanics. Step 12 was the separately governed
+historical EOD/Identity transition and is retained as execution history, not a
+pending authorization instruction.
 
 The current `/data` root has no `market-data/historical-coverage` directory.
 Strategy readiness therefore remains `data_blocked`; fixture-only publication
@@ -200,9 +204,12 @@ ceiling is 75 serial requests and 1,125 transport seconds at 15 seconds/request.
 The unused five-request allowance cannot be filled later without regenerating
 the plan and review binding.
 
-No real approval package is yet complete: the current inventory must receive a
-fresh exact fingerprint, and equal-capability source permission, live endpoint
-entitlement, and lifecycle-source coverage remain unresolved.
+At the original ADR 0101 checkpoint, no real approval package was complete:
+the then-current inventory required a fresh exact fingerprint, while
+equal-capability source permission, endpoint entitlement, and lifecycle-source
+coverage were unresolved. The later user-directed Dell-local Pilot and
+EOD/Identity acquisition proceeded under ADR 0120 without converting that
+dated review into a general permission or completing lifecycle coverage.
 
 The source-neutral `historical-source-package/1.0` custody mechanics are now
 fixture-tested. They accept only already captured sanitized JSON, require every
