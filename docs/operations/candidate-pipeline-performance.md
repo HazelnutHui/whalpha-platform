@@ -242,6 +242,29 @@ new CLI reports Candidate/state reread, panel load, calculation/Oracle, audit
 write/reread, total elapsed, cache status, and peak RSS in its physical stdout
 summary. Runtime evidence remains outside business logical fingerprints.
 
+## 2026-09-04 bounded Strategy input result
+
+ADR 0127 applies the existing finalized current-Candidate projection to
+Strategy Channels, which consumes only the two batches for its requested
+session. On the unchanged 2026-09-03 audit, the prior complete Candidate read
+alone took 225.978 seconds and peaked at 8,737,108 KiB RSS while reconstructing
+20 batches, 35,490 states, 18,269 raw rows, and 35,408 normalization rows.
+
+The optimized complete Strategy process took 33.82 seconds and peaked at
+2,538,356 KiB. Its current-Candidate projection took 12.588 seconds, Entry
+reread 0.771 seconds, calculation plus independent Oracle 9.884 seconds, and
+audit write plus reread 9.360 seconds. All four Strategy business artifacts
+were byte-identical, audit logical fingerprint
+`440fb9db9d1d3b09bf53a5ba5677f2461c881c45642ccc94720c107c82096e28`
+was unchanged, Oracle mismatch was zero, and permutation passed.
+
+Candidate Visual Context was measured rather than modified. It completed in
+51.11 seconds: governed Candidate/state reread 34.208 seconds, exact panel
+cache reread 8.719 seconds, calculation plus Oracle 4.573 seconds, and audit
+write plus reread 1.178 seconds. Both business artifacts were byte-identical
+to the prior audit and logical fingerprint remained unchanged. This bounded
+path is not a current optimization target.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

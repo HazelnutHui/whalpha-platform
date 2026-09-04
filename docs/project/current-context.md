@@ -204,10 +204,11 @@ separately bounded.
    and finalized current Candidate evidence in downstream Entry/ETF stages. On
    unchanged 9/3 inputs, Entry completed in 49.67 seconds and ETF in 15.36
    seconds with byte-identical business artifacts and unchanged zero-mismatch
-   Oracles. Measure the next complete daily chain before selecting a remaining
-   Candidate, Strategy/Visual Context, MI, or Snapshot hotspot. Add reuse,
-   vectorization, or safe process parallelism only where measurement justifies
-   it and outputs remain exact.
+   Oracles. ADR 0127 similarly reduced Strategy Channels to 33.82 seconds;
+   Visual Context was measured at 51.11 seconds and left unchanged. Measure the
+   next complete daily chain before selecting a remaining Candidate, MI, or
+   Snapshot hotspot. Add reuse, vectorization, or safe process parallelism only
+   where measurement justifies it and outputs remain exact.
 2. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

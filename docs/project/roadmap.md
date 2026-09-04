@@ -22,11 +22,11 @@ the [changelog](changelog.md) and ADRs.
 
 ## Priority 1 — Daily-chain performance and reliability
 
-The first two measured reuse optimizations are complete under ADRs 0125 and
-0126: date-only control paths use the immutable completion index, while Entry
-Geometry and ETF Relationships reuse the exact formal panel and finalized
-current Candidate evidence. Consumed inputs and explicit full audits retain
-their deep validation boundaries.
+The first measured reuse optimizations are complete under ADRs 0125–0127:
+date-only control paths use the immutable completion index; Entry Geometry and
+ETF Relationships reuse the exact formal panel and finalized current Candidate
+evidence; Strategy Channels reads only its finalized current batches. Consumed
+inputs and explicit full audits retain their deep validation boundaries.
 
 Next:
 

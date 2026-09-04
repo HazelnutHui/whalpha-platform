@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-04 — Bound Strategy Channels to current Candidate evidence
+
+- Accepted ADR 0127. Strategy Channels now uses the finalized current-batch
+  projection instead of reconstructing cumulative Candidate batches, states,
+  raw facts, and normalization rows that the stage does not consume.
+- On unchanged 2026-09-03 Dell inputs, the prior complete Candidate read alone
+  took 225.978 seconds and peaked at 8,737,108 KiB. The optimized complete
+  Strategy replay took 33.82 seconds and peaked at 2,538,356 KiB; its current-
+  batch projection took 12.588 seconds.
+- All four Strategy business artifacts were byte-identical, audit logical
+  fingerprint remained
+  `440fb9db9d1d3b09bf53a5ba5677f2461c881c45642ccc94720c107c82096e28`,
+  Oracle mismatch remained zero, and the permutation gate passed.
+- Candidate Visual Context was independently replayed at 51.11 seconds and
+  left unchanged. Its two business artifacts were byte-identical and its
+  logical fingerprint and zero-mismatch Oracle matched the prior audit.
+- The focused 56-test set, source compilation, and all 1,986 backend tests
+  passed with the two unchanged dependency warnings. No `/data`, Production,
+  scheduler, publication, Snapshot, bundle, OCI, formula, parameter, or
+  Universe change occurred.
+
 ## 2026-09-04 — Reuse exact panel and current Candidate evidence downstream
 
 - Accepted ADR 0126. Entry Geometry and ETF Relationships now receive the

@@ -112,13 +112,18 @@ completed in 49.67 seconds instead of an approximately 19-minute
 uninstrumented stage interval, and ETF Relationships completed in 15.36
 seconds instead of 155.34 seconds after ADR 0125. Every business artifact was
 byte-identical, logical fingerprints matched, and Oracles remained at zero.
-These were `/tmp` development replays; Production and `/data` did not change.
+ADR 0127 then reduced Strategy Channels to 33.82 seconds by replacing a
+225.978-second complete Candidate reconstruction with a 12.588-second exact
+current-batch projection. Its four business artifacts were also byte-identical
+and its Oracle remained at zero. Visual Context was measured at 51.11 seconds
+and left unchanged. These were `/tmp` development replays; Production and
+`/data` did not change.
 
 ## Next priority
 
 1. Measure the next complete daily chain on Dell with ADRs 0125 and 0126 active.
-2. Rank the remaining Candidate, Strategy/Visual Context, MI, and Snapshot
-   hotspots before introducing further reuse.
+2. Rank the remaining Candidate, MI, and Snapshot hotspots before introducing
+   further reuse; Visual Context is currently a bounded 51.11-second stage.
 3. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
 4. Connect the 303-session canonical foundation to a governed point-in-time
