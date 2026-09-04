@@ -91,17 +91,13 @@ Current membership implementation sequence:
    package and accepted-family fingerprints. A repeated real boundary batch
    crossed current/legacy profiles with byte-identical outputs; no date or
    operator profile selection remains.
-6. **Candidate and no-write plan complete:** 279 profile-bound packages are
-   normalized into 558 typed, immutable `/tmp` files. Their combined census /
-   Apply plan binds every byte, absent target, and the current `/data`
-   inventory without writing canonical state.
-7. **Repository proof complete:** ADR 0139 implements the separately invoked,
-   exact-plan immutable Apply/recovery boundary and proves ordinary,
-   interrupted, mixed-state, drift, partial-target, residue, and canonical-read
-   behavior in disposable roots. The real plan remains unapplied. Separately
-   review that invocation; after durable source custody, resolve the 24
-   physically missing sessions separately. Never project current Activation
-   backward.
+6. **Canonical source custody complete for retained packages:** 279
+   profile-bound packages were normalized, bound by one exact inventory plan,
+   and published as 558 immutable canonical files. The ordinary Apply and an
+   independent zero-write recovery postflight formally reread all 279 sessions
+   with no overwrite or deletion.
+7. Resolve the 24 physically missing source sessions separately. Never project
+   current Activation backward or silently fill a missing historical source.
 8. Run all accepted-profile-bound sessions into disconnected `/tmp` batches,
    reconcile completeness and timing, then separately review canonical
    publication.

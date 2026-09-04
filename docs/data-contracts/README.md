@@ -72,8 +72,9 @@ historical typed boundary:
 These documents are not JSON Schema, SQL DDL, sample production data, or
 provider adapters. The historical foundation now has provider-neutral
 Pydantic row/manifest contracts, explicit PyArrow schemas, temporary-root
-Parquet repository validation, and a tested but unapplied atomic source-custody
-executor. It still has no canonical historical source or Membership dataset.
+Parquet repository validation, and an applied atomic source-custody executor.
+Normalized historical Identity source observations are canonical for 279/303
+sessions; the remaining 24 and the entire Membership dataset are absent.
 EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
 The initial blocked live attempts remain historical audit evidence; corrected

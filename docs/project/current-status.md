@@ -41,7 +41,9 @@ health; it does not alter unrelated services.
 - Latest EOD has 9,956 rows and is aligned to the 2026-09-03 Identity snapshot.
 - Latest Identity contains 9,979 Instruments, 13,153 provider identities, and
   9,979 Resolvers.
-- `/data` contains 3,356 files / 1,597,544,378 bytes, with zero symlinks and
+- Canonical normalized historical Identity source custody now contains 279
+  partitions / 3,399,877 rows; the 24-session source gap remains explicit.
+- `/data` contains 3,914 files / 1,855,938,896 bytes, with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -127,8 +129,8 @@ physical gaps remain unbound. Single and bounded membership paths require this
 map and revalidate package locator/custody/time plus accepted Identity-family
 fingerprints. A repeated real 2025-09-09/10 boundary batch produced identical
 manifests and Parquet bytes under the two correct profiles. Durable canonical
-source custody, the 24 gaps, broad daily membership, and Historical Coverage
-remain open.
+source custody is complete for those 279 packages; the 24 gaps, broad daily
+membership, and Historical Coverage remain open.
 
 ADRs 0137 and 0138 now preserve those 279 bound sources in one complete
 normalized `/tmp` candidate and bind them into one no-write prospective Apply
@@ -140,9 +142,10 @@ zero symlinks or staging residue remain. The plan binds all 558 files, all 279
 absent target partitions, candidate inventory, and current `/data` inventory.
 Its SHA-256 is
 `97e22c62bc8554f1229a41925970a365d189a5ad05bbf802e984fc9f3885c1a0`.
-It is `ready_for_separate_review`, not authorized or applied. Parallel plan
-construction is byte-identical to serial and reduces measured wall time from
-5:17.38 to 1:30.46.
+Its immutable self-status remains `ready_for_separate_review` with
+`apply_authorized=false`; the separate user-directed execution is now complete.
+Parallel plan construction was byte-identical to serial and reduced measured
+wall time from 5:17.38 to 1:30.46.
 
 ADR 0139 now implements the exact-plan atomic Apply boundary and its explicit
 `verify_then_complete` recovery mode. Disposable `/tmp` canonical-root tests
@@ -151,8 +154,12 @@ replay an existing target, pre-state drift rejection, interruption after an
 atomic rename, reuse of exact completed partitions, continuation of absent
 partitions, and fail-closed handling of partial targets and staging residue.
 The CLI requires the plan SHA-256, logical fingerprint, expected pre-state,
-and exact root. This is implementation evidence only: it did not invoke the
-real plan, `/data` remains unchanged, and no source partition is canonical yet.
+and exact root. The real ordinary Apply subsequently published all 279
+partitions and formally reread every session with zero overwrites/deletions. A
+separate recovery postflight reused all 279, wrote zero bytes, and repeated
+post-state fingerprint
+`27dccc3039aed87dce903f41b55f488bd0b07a67c47885449b957c98b4ad49f5`.
+This changes source custody only; research readiness remains blocked.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
@@ -225,15 +232,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. **Implementation proof complete:** ADR 0139's exact-plan immutable
-   Apply/recovery executor passes ordinary, interruption, mixed-state recovery,
-   drift, partial-target, staging-residue, canonical-reread, and CLI tests.
-   Separately review the pinned 279-session invocation before any real write;
-   `/data` is unchanged.
-7. After a successful and formally reread durable source Apply, resolve the 24
-   physical gaps separately, then
-   run and reconcile broad disconnected membership batches before canonical
-   membership review.
+6. **Canonical source custody complete for retained packages:** ADR 0139's
+   exact 279-session Apply and independent zero-write recovery postflight both
+   passed. Resolve the 24 physical gaps separately.
+7. Run and reconcile the broad disconnected membership batches before
+   canonical membership review.
 8. Connect the complete point-in-time foundation to a governed historical
    research dataset and reconcile the 26-session analytics limitation.
 9. Only then begin real preregistered chronological strategy research.

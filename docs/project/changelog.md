@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-04 — Apply 279 historical Identity source partitions canonically
+
+- Revalidated clean Dell main commit `3d73ccd1f62e6c7f0df011312456c327fbc4623b`,
+  the exact plan SHA/logical/pre-state bindings, all 558 owner-only candidate
+  files, all 279 absent targets, zero matching concurrent jobs, and more than
+  729 GB available before executing the separately directed transition.
+- The ordinary atomic Apply published 279 immutable partitions, 558 files, and
+  258,394,518 bytes in 2:01.79 at 306% CPU. All 279 partitions passed the
+  canonical typed reader. External requests, overwrites, and deletions were
+  zero.
+- Physical postflight found 279 manifests plus 279 Parquet files with exact
+  bytes and modes, zero symlinks, and zero staging residue. A separate
+  `verify_then_complete` pass formally reread all sessions, reused all 279,
+  wrote zero files/bytes, and again reported zero overwrites/deletions.
+- `/data` now contains 3,914 files / 1,855,938,896 bytes with inventory
+  fingerprint
+  `27dccc3039aed87dce903f41b55f488bd0b07a67c47885449b957c98b4ad49f5`.
+  The exact 24-session source gap remains. Research readiness stays
+  `data_blocked`; Membership, Historical Coverage, performance, scheduling,
+  Production, publication, and deployment did not change.
+
 ## 2026-09-04 — Prove atomic historical Identity source Apply and recovery
 
 - Accepted ADR 0139 and added an explicitly invoked executor for the exact

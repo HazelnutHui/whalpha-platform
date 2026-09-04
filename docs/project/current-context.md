@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-04T20:13:51Z
+Operational state verified at: 2026-09-04T20:33:09Z
 
 Repository context updated at: 2026-09-04 UTC
 
@@ -42,8 +42,9 @@ also completed successfully during the ADR 0125 validation.
 | Latest Identity | 2026-09-03; 9,979 Instruments / 13,153 provider identities / 9,979 Resolvers |
 | Latest Identity fingerprint | `5c8e377e22ef15b6a5dfd91a9548327d148e26a47c002690117dcd009d966855` |
 | Identity/EOD alignment | aligned on 2026-09-03 |
-| `/data` inventory | 3,356 files / 1,597,544,378 bytes |
-| `/data` inventory fingerprint | `2928d804ea48cf076b0a589d09b0e150cf07810dc4dd0cef503121d53d95d794` |
+| Canonical historical Identity source | 279 immutable source-observation partitions / 3,399,877 rows; 24 source sessions absent |
+| `/data` inventory | 3,914 files / 1,855,938,896 bytes |
+| `/data` inventory fingerprint | `27dccc3039aed87dce903f41b55f488bd0b07a67c47885449b957c98b4ad49f5` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -118,9 +119,9 @@ change those results; future partitions remain unvalidated until the existing
 transitive formal Coverage reader proves them.
 
 An offline source census and complete-base shadow now narrow the membership
-gap without changing that status. Custody-validated sanitized Identity
-reference packages remain in `/tmp` for 279/303 canonical sessions; the exact
-24-session physical gap is 2026-07-17 through 2026-08-19. The real 2026-09-03 shadow
+gap without changing that status. Normalized Identity source observations are
+canonical for 279/303 sessions; the exact 24-session physical gap is
+2026-07-17 through 2026-08-19. The real 2026-09-03 shadow
 evaluated all 9,979 same-day stable IDs for both Universes, localized one
 source collision, and formally reread 19,958 three-state decisions. Its source
 cutoff is after the evaluated session and its output is `/tmp`-only, so it is a
@@ -160,8 +161,8 @@ unbound. A real adjacent 2025-09-09/10 batch crossed from `current_v1` to
 byte-identical on repeat. Single and batch tools now require the map and expose
 its binding provenance; no operator profile override or date inference exists.
 
-ADRs 0137 and 0138 now prove the next no-write custody boundary. All 279 bound
-packages were normalized into typed source-observation Parquet below `/tmp`,
+ADRs 0137 and 0138 produced the reviewed source-custody transition. All 279
+bound packages were normalized into typed source-observation Parquet,
 preserving 3,399,877 complete provider result rows and 3,536 per-page evidence
 records without response envelopes, URLs, request IDs, or credentials. The
 candidate contains 279 Parquet and 279 manifest files totaling 258,394,518
@@ -178,11 +179,12 @@ inventory `a75a421ce8daf3b4170dfa06e61b86c2200ce3d371de9e37f36a89a19cd69881`,
 and unchanged `/data` inventory
 `2928d804ea48cf076b0a589d09b0e150cf07810dc4dd0cef503121d53d95d794`.
 Four-process planning reduced wall time from 5:17.38 to 1:30.46 with
-byte-identical output. Status is only `ready_for_separate_review`;
-`apply_authorized=false`, `/data` remains unchanged, and the 24 gaps remain
-separate.
+byte-identical output. The immutable plan remains
+`ready_for_separate_review` with `apply_authorized=false` because it cannot
+authorize itself; its separately directed canonical transition is now
+complete, while the 24 gaps remain separate.
 
-ADR 0139 implements the pinned-plan executor without changing that state. It
+ADR 0139 implements the pinned-plan executor and recovery boundary. It
 uses the same Dell publication lock as the daily writer, immutable same-parent
 partition renames, exact canonical modes and hashes, full typed canonical
 reread, and a separately selected non-destructive `verify_then_complete`
@@ -190,8 +192,15 @@ recovery path. Disposable `/tmp` simulations passed ordinary Apply, an injected
 post-rename interruption, exact-partition reuse, continued publication of the
 remaining absent partition, inventory drift rejection, ordinary replay
 refusal, partial-target rejection, staging-residue rejection, parallel formal
-reread, and CLI binding. No real plan invocation occurred; the 279 canonical
-targets remain absent and the recorded `/data` inventory is unchanged.
+reread, and CLI binding.
+
+The real Apply then published all 279 partitions / 558 files / 258,394,518
+bytes in 2:01.79, formally reread every session, and reported zero external
+requests, overwrites, or deletions. An independent physical census passed, and
+a second `verify_then_complete` pass reused all 279 partitions, wrote zero
+bytes, and repeated the same post-state fingerprint. This completes durable
+custody for the retained sources only; it does not fill the 24 gaps or create
+Membership or Historical Coverage.
 
 ## OCI production proof
 
@@ -327,10 +336,8 @@ separately bounded.
    and outputs remain exact.
 2. **Historical Universe foundation:** the shared-panel batch, two-profile
    Identity equivalence proof, 279-session fingerprint-bound routing map,
-   complete normalized source-custody candidate, and inventory-bound no-write
-   Apply plan are complete. ADR 0139's immutable Apply/recovery implementation
-   is proven only against disposable roots. Next separately review the pinned
-   real invocation; after successful formal durable custody, resolve the 24
+   normalized source-custody candidate, inventory-bound plan, atomic canonical
+   Apply, and zero-write recovery postflight are complete. Next resolve the 24
    physically missing reference sessions separately and only then
    run/reconcile broad disconnected membership batches before canonical
    membership review.

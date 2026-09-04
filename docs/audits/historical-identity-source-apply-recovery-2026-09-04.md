@@ -11,6 +11,11 @@ The real 279-session plan was not invoked. No file was written to `/data`, no
 canonical historical Identity source partition exists, and research readiness
 did not change.
 
+Subsequent same-day status: after this implementation-only proof was committed,
+the exact plan was separately directed, applied, and independently reread. See
+the [canonical Apply audit](historical-identity-source-canonical-apply-2026-09-04.md).
+The statements above remain the historical boundary of this earlier proof.
+
 ## Exact real plan retained for separate review
 
 | Binding | Value |
