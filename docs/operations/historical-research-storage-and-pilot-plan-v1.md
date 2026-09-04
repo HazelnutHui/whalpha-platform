@@ -138,6 +138,14 @@ Steps 1–11 were repository mechanics. Step 12 was the separately governed
 historical EOD/Identity transition and is retained as execution history, not a
 pending authorization instruction.
 
+ADRs 0137–0138 add a later no-write custody step for the 279 retained
+historical Identity reference packages. The complete typed `/tmp` candidate
+contains 3,399,877 result rows in 558 files totaling 258,394,518 bytes. Its
+combined census and prospective Apply plan binds the candidate bytes, all
+absent targets, and whole-`/data` inventory, but contains no Apply executor and
+does not change the blocked readiness state. The 24 missing source sessions
+remain a separate gate.
+
 The current `/data` root has no `market-data/historical-coverage` directory.
 Strategy readiness therefore remains `data_blocked`; fixture-only publication
 mechanics do not supply missing canonical facts.

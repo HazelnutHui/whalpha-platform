@@ -80,6 +80,19 @@ from tip_api.contracts.market_data.v1.historical_source_package import (
     build_historical_source_package_manifest,
     historical_source_package_fingerprint,
 )
+from tip_api.contracts.market_data.v1.historical_identity_source_apply_plan import (
+    HistoricalIdentitySourceApplyPlanV1,
+    HistoricalIdentitySourcePlanArtifactV1,
+    HistoricalIdentitySourcePlanSessionV1,
+)
+from tip_api.contracts.market_data.v1.historical_identity_source_custody import (
+    HistoricalIdentityReferenceObservationV1,
+    HistoricalIdentitySourceArtifactV1,
+    HistoricalIdentitySourceCustodyManifestV1,
+    build_historical_identity_reference_observation,
+    historical_identity_source_content_fingerprint,
+    historical_identity_source_fingerprint,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -146,4 +159,13 @@ __all__ = [
     "HistoricalSourceScopeReceiptV1",
     "build_historical_source_package_manifest",
     "historical_source_package_fingerprint",
+    "HistoricalIdentitySourceApplyPlanV1",
+    "HistoricalIdentitySourcePlanArtifactV1",
+    "HistoricalIdentitySourcePlanSessionV1",
+    "HistoricalIdentityReferenceObservationV1",
+    "HistoricalIdentitySourceArtifactV1",
+    "HistoricalIdentitySourceCustodyManifestV1",
+    "build_historical_identity_reference_observation",
+    "historical_identity_source_content_fingerprint",
+    "historical_identity_source_fingerprint",
 ]

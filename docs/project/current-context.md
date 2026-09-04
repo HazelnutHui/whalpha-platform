@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-04T14:27:38Z
+Operational state verified at: 2026-09-04T19:48:28Z
 
 Repository context updated at: 2026-09-04 UTC
 
@@ -160,6 +160,28 @@ unbound. A real adjacent 2025-09-09/10 batch crossed from `current_v1` to
 byte-identical on repeat. Single and batch tools now require the map and expose
 its binding provenance; no operator profile override or date inference exists.
 
+ADRs 0137 and 0138 now prove the next no-write custody boundary. All 279 bound
+packages were normalized into typed source-observation Parquet below `/tmp`,
+preserving 3,399,877 complete provider result rows and 3,536 per-page evidence
+records without response envelopes, URLs, request IDs, or credentials. The
+candidate contains 279 Parquet and 279 manifest files totaling 258,394,518
+bytes; every directory/file mode, hash, schema, row fingerprint, aggregate,
+and accepted Identity reconstruction passed. A separate full formal-reader
+pass and two current/legacy boundary repeats agreed exactly.
+
+The combined candidate census and no-write Apply plan is 639,375 bytes with
+SHA-256 `97e22c62bc8554f1229a41925970a365d189a5ad05bbf802e984fc9f3885c1a0`
+and logical fingerprint
+`6310b845d83ead27e949d66bae158c021be010ccd7565b724f55e5a20d20f87d`.
+It binds 558 source/target files, 279 absent target partitions, candidate
+inventory `a75a421ce8daf3b4170dfa06e61b86c2200ce3d371de9e37f36a89a19cd69881`,
+and unchanged `/data` inventory
+`2928d804ea48cf076b0a589d09b0e150cf07810dc4dd0cef503121d53d95d794`.
+Four-process planning reduced wall time from 5:17.38 to 1:30.46 with
+byte-identical output. Status is only `ready_for_separate_review`;
+`apply_authorized=false`, `/data` remains unchanged, and the 24 gaps remain
+separate.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -293,10 +315,13 @@ separately bounded.
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
 2. **Historical Universe foundation:** the shared-panel batch, two-profile
-   Identity equivalence proof, and 279-session fingerprint-bound routing map
-   are complete. Define durable source custody, resolve the 24 physically
-   missing reference sessions separately, and only then run/reconcile broad
-   disconnected membership batches before any canonical review.
+   Identity equivalence proof, 279-session fingerprint-bound routing map,
+   complete normalized source-custody candidate, and inventory-bound no-write
+   Apply plan are complete. Next design and prove the separately reviewed
+   immutable Apply/recovery boundary; after durable source custody, resolve the
+   24 physically missing reference sessions separately and only then
+   run/reconcile broad disconnected membership batches before canonical
+   membership review.
 3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

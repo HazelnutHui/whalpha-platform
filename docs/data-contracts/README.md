@@ -28,6 +28,8 @@
 - [Data Record Governance V1](data-record-governance-v1.md)
 - [Source Permission Governance V1](source-permission-governance-v1.md)
 - [Historical Source Package V1](historical-source-package-v1.md)
+- [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
+- [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
 
@@ -52,6 +54,8 @@ Implemented as Python/Pydantic contracts:
 - [Data Record Governance V1](data-record-governance-v1.md)
 - [Source Permission Governance V1](source-permission-governance-v1.md)
 - [Historical Source Package V1](historical-source-package-v1.md)
+- [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
+- [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 

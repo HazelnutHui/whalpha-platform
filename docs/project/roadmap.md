@@ -91,10 +91,14 @@ Current membership implementation sequence:
    package and accepted-family fingerprints. A repeated real boundary batch
    crossed current/legacy profiles with byte-identical outputs; no date or
    operator profile selection remains.
-6. Define durable, minimal source custody without losing the sanitized source
-   facts, then resolve the 24 physically missing sessions separately; never
-   project current Activation backward.
-7. Run all accepted-profile-bound sessions into disconnected `/tmp` batches,
+6. **Candidate and no-write plan complete:** 279 profile-bound packages are
+   normalized into 558 typed, immutable `/tmp` files. Their combined census /
+   Apply plan binds every byte, absent target, and the current `/data`
+   inventory without writing canonical state.
+7. Design and prove a separately reviewed immutable Apply/recovery boundary;
+   after durable source custody, resolve the 24 physically missing sessions
+   separately. Never project current Activation backward.
+8. Run all accepted-profile-bound sessions into disconnected `/tmp` batches,
    reconcile completeness and timing, then separately review canonical
    publication.
 

@@ -126,8 +126,23 @@ map; 58 use `current_v1`, 221 use `pre_etv_governance_v1`, and the same 24
 physical gaps remain unbound. Single and bounded membership paths require this
 map and revalidate package locator/custody/time plus accepted Identity-family
 fingerprints. A repeated real 2025-09-09/10 boundary batch produced identical
-manifests and Parquet bytes under the two correct profiles. Durable custody,
-the 24 gaps, broad daily membership, and Historical Coverage remain open.
+manifests and Parquet bytes under the two correct profiles. Durable canonical
+source custody, the 24 gaps, broad daily membership, and Historical Coverage
+remain open.
+
+ADRs 0137 and 0138 now preserve those 279 bound sources in one complete
+normalized `/tmp` candidate and bind them into one no-write prospective Apply
+plan. The candidate contains 3,399,877 complete result rows in 279 Parquet plus
+279 manifest files, totaling 258,394,518 bytes versus 1,006,791,465 represented
+source-response bytes. All hashes, modes, schemas, page/row counts, record
+fingerprints, profile bindings, and accepted Identity reconstructions passed;
+zero symlinks or staging residue remain. The plan binds all 558 files, all 279
+absent target partitions, candidate inventory, and current `/data` inventory.
+Its SHA-256 is
+`97e22c62bc8554f1229a41925970a365d189a5ad05bbf802e984fc9f3885c1a0`.
+It is `ready_for_separate_review`, not authorized or applied. Parallel plan
+construction is byte-identical to serial and reduces measured wall time from
+5:17.38 to 1:30.46.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
@@ -200,15 +215,18 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. Define and prove durable minimal custody for the 279 profile-bound source
-   packages, keeping the 24 physical gaps separate; then run and reconcile
-   broad disconnected membership batches before any canonical review.
-7. Connect the complete point-in-time foundation to a governed historical
+6. Design and prove the separately reviewed immutable Apply/recovery boundary
+   for the complete 279-session normalized source candidate. The candidate and
+   inventory-bound no-write plan are complete, but `/data` is unchanged.
+7. After durable source custody, resolve the 24 physical gaps separately, then
+   run and reconcile broad disconnected membership batches before canonical
+   membership review.
+8. Connect the complete point-in-time foundation to a governed historical
    research dataset and reconcile the 26-session analytics limitation.
-8. Only then begin real preregistered chronological strategy research.
-9. Continue decision-useful visualization in parallel where it does not change
+9. Only then begin real preregistered chronological strategy research.
+10. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
-10. Add options expression, fundamentals/valuation, events, and later
+11. Add options expression, fundamentals/valuation, events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune new formulas or claim backtest results before the governed research

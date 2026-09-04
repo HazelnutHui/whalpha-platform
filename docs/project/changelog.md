@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-09-04 — Normalize and plan durable historical Identity source custody
+
+- Accepted ADRs 0137–0138 and added typed complete-result source observations,
+  immutable owner-only Parquet custody, formal readers, a bounded socket-free
+  batch runner, and one combined complete-candidate census / no-write Apply
+  plan. Raw response envelopes, URLs, request IDs, credentials, and
+  Authorization material are not promoted.
+- The four-process real candidate completed all 279 profile-bound sessions in
+  26:11.52 at 399% CPU and 486,728 KiB peak RSS. It preserves 3,399,877 rows
+  and 3,536 page records in 279 Parquet plus 279 manifest files totaling
+  258,394,518 bytes, 25.49% of the represented 1,006,791,465 response bytes.
+  All files, modes, schemas, row/page counts, fingerprints, profile bindings,
+  accepted Identity reconstructions, and an independent full reader pass
+  reconciled; symlink, staging, and forbidden-flag counts are zero.
+- The inventory-bound plan binds all 558 candidate files, 279 absent targets,
+  candidate inventory
+  `a75a421ce8daf3b4170dfa06e61b86c2200ce3d371de9e37f36a89a19cd69881`,
+  and `/data` inventory
+  `2928d804ea48cf076b0a589d09b0e150cf07810dc4dd0cef503121d53d95d794`.
+  Its 639,375-byte file SHA-256 is
+  `97e22c62bc8554f1229a41925970a365d189a5ad05bbf802e984fc9f3885c1a0`
+  and logical fingerprint is
+  `6310b845d83ead27e949d66bae158c021be010ccd7565b724f55e5a20d20f87d`.
+- Four-process plan construction reduced wall time from 5:17.38 to 1:30.46
+  while producing byte-identical plan files. The CLI now reports bounded
+  aggregates instead of emitting hundreds of per-session rows.
+- The plan is only `ready_for_separate_review`; Apply authorization is false.
+  External requests, `/data` writes, membership writes, Production,
+  scheduling, formulas, Universes, research readiness, publication, and
+  deployment did not change. The 24 physical source gaps remain separate.
+- Twenty-four related focused tests and all 2,033 backend tests passed with
+  only the two unchanged dependency warnings.
+
 ## 2026-09-04 — Bind historical Identity profiles before membership
 
 - Accepted ADR 0136 and added the typed, owner-only

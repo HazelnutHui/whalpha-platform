@@ -1,5 +1,9 @@
 # Architecture Decision Records
 
+- [ADR 0138](0138-bind-historical-identity-source-apply-plan.md): combine the complete normalized-source census and immutable-copy mapping in one no-write plan bound to candidate bytes, absent targets, and the current `/data` inventory.
+
+- [ADR 0137](0137-normalize-historical-identity-source-custody.md): preserve the complete audited Identity result facts in typed source-observation Parquet without promoting raw response envelopes.
+
 - [ADR 0133](0133-reuse-bounded-eod-panels-for-membership-shadow-batches.md): reuse one formally validated, memory-bounded EOD panel across adjacent historical membership shadow sessions.
 
 - [ADR 0132](0132-reconstruct-complete-base-historical-universe-membership.md): reconstruct complete same-day Identity bases into source-bound, three-state historical Universe shadows without treating local mapping conflicts as whole-day loss.
@@ -205,3 +209,5 @@ Each ADR should include:
 - [0134: Census Historical Identity Package Equivalence Before Reconstruction](0134-census-historical-identity-package-equivalence.md)
 - [0135: Reconstruct Legacy ETV Identity Semantics by Explicit Version](0135-reconstruct-legacy-etv-identity-semantics-by-version.md)
 - [0136: Bind Historical Identity Rebuild Profiles by Fingerprint](0136-bind-historical-identity-rebuild-profile-by-fingerprint.md)
+- [0137: Normalize Historical Identity Source Custody](0137-normalize-historical-identity-source-custody.md)
+- [0138: Bind Historical Identity Source Apply Planning](0138-bind-historical-identity-source-apply-plan.md)

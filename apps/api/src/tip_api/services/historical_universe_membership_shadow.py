@@ -177,7 +177,7 @@ def inspect_historical_identity_package_equivalence(
         request_count=package.manifest.request_count,
         pagination_complete=package.manifest.pagination_complete,
     )
-    rebuilt = _apply_historical_identity_rebuild_profile(
+    rebuilt = apply_historical_identity_rebuild_profile(
         rebuilt,
         rebuild_profile=rebuild_profile,
     )
@@ -210,7 +210,7 @@ def inspect_historical_identity_package_equivalence(
     )
 
 
-def _apply_historical_identity_rebuild_profile(
+def apply_historical_identity_rebuild_profile(
     result: ReferenceSnapshotBuildResult,
     *,
     rebuild_profile: HistoricalIdentityRebuildProfile,
@@ -271,6 +271,13 @@ def _apply_historical_identity_rebuild_profile(
         category_counts=category_counts,
         unknown_type_counts=unknown_type_counts,
     )
+
+
+# Compatibility for existing focused tests and any local review tooling. New
+# callers should use the public name above.
+_apply_historical_identity_rebuild_profile = (
+    apply_historical_identity_rebuild_profile
+)
 
 
 def _move_named_count(
