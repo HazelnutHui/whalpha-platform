@@ -2,10 +2,11 @@
 
 ## Purpose and boundary
 
-`historical-identity-source-apply-plan/1.0` is the combined complete-candidate
-census and no-write plan for moving normalized historical Identity source
+`historical-identity-source-apply-plan/1.0` is the combined candidate census
+and no-write plan for moving normalized historical Identity source
 observations from an owner-only `/tmp` root to the fixed Dell `/data` layout.
-It has no Apply capability and grants no data, research, publication,
+It supports either every binding in a profile map or one explicit append-only
+subset. It has no Apply capability and grants no data, research, publication,
 deployment, or scheduler authority.
 
 ## Required bindings
@@ -13,7 +14,7 @@ deployment, or scheduler authority.
 The plan binds:
 
 - the validated historical Identity rebuild profile-map fingerprint;
-- one ordered summary for every bound session, including profile, row/page
+- one ordered summary for every selected session, including profile, row/page
   counts, source and normalized bytes, content/physical/manifest/logical
   fingerprints, and accepted canonical Identity fingerprints;
 - exactly two ordered file references per session, mapping immutable candidate
@@ -22,10 +23,16 @@ The plan binds:
 - complete aggregate counts and date bounds; and
 - a fresh whole-`/data` inventory fingerprint.
 
-Plan construction formally reads every candidate partition. The plan reader
+Plan construction formally reads every selected candidate partition. The plan reader
 then rehashes every referenced source file, verifies owner-read-only custody,
 reconciles all paths and aggregates, requires all targets to remain absent, and
 requires `/data` to retain the bound pre-state.
+
+Without an explicit session selection, the original complete-profile-map
+behavior is retained. An explicit selection must be nonempty, unique,
+ascending, and profile-bound. Only selected candidate files enter the plan;
+only their canonical targets must be absent. Existing unselected canonical
+partitions remain inside the whole-`/data` pre-state and are never replayed.
 
 ## Physical policy
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-04 — Support explicit append-only Identity source plans
+
+- Accepted ADR 0142 and extended the existing no-write source Apply planner
+  with an optional exact session selection. The original all-profile-bindings
+  behavior is unchanged when no selection is supplied.
+- Explicit selections must be nonempty, unique, ascending, and profile-bound.
+  Only selected candidates and absent targets enter the plan; existing
+  unselected canonical partitions remain immutable and stay inside the fresh
+  whole-`/data` compare-and-swap pre-state.
+- A two-session fixture proved that a one-session candidate can be planned
+  while another profile-bound session is already canonical and never becomes
+  a target. Invalid empty, unordered, duplicate, and unbound selections fail
+  closed.
+- All 2,058 backend tests passed with the same two dependency warnings.
+
 ## 2026-09-04 — Add a bounded Identity source-gap fetch boundary
 
 - Accepted ADR 0141 and added a Dell-only source-gap fetcher for an explicit,

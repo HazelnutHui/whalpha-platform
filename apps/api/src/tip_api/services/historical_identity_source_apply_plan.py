@@ -10,7 +10,7 @@ import socket
 import stat
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Callable
 
@@ -72,9 +72,10 @@ def build_historical_identity_source_apply_plan(
     created_at: datetime,
     plan_path: Path,
     workers: int = 1,
+    sessions: tuple[date, ...] | None = None,
     inventory_reader: InventoryReader = inventory_fingerprint,
 ) -> HistoricalIdentitySourceApplyPlanEvidence:
-    """Create one complete candidate census and no-write Apply plan."""
+    """Create one complete or explicit append-only no-write Apply plan."""
 
     canonical_root = _validated_data_root(data_root)
     source_root = _validated_candidate_root(candidate_root)
@@ -91,9 +92,10 @@ def build_historical_identity_source_apply_plan(
                 "historical source profile map contains a duplicate session"
             )
         seen_dates.add(binding.session_date)
+    selected_bindings = _selected_bindings(profile_map, sessions)
     jobs = tuple(
         (source_root, binding, profile_map.logical_fingerprint)
-        for binding in profile_map.bindings
+        for binding in selected_bindings
     )
     if workers == 1:
         candidate_rows = [_read_candidate_for_plan(job) for job in jobs]
@@ -106,7 +108,7 @@ def build_historical_identity_source_apply_plan(
         ) as executor:
             candidate_rows = list(executor.map(_read_candidate_for_plan, jobs))
     candidate_rows.sort(key=lambda item: item.session.session_date)
-    sessions: list[HistoricalIdentitySourcePlanSessionV1] = []
+    planned_sessions: list[HistoricalIdentitySourcePlanSessionV1] = []
     artifacts: list[HistoricalIdentitySourcePlanArtifactV1] = []
     for candidate in candidate_rows:
         session = candidate.session
@@ -121,7 +123,7 @@ def build_historical_identity_source_apply_plan(
             )
         manifest_path = candidate.source_partition / MANIFEST_FILE
         parquet_path = candidate.source_partition / PARQUET_FILE
-        sessions.append(session)
+        planned_sessions.append(session)
         artifacts.extend(
             (
                 HistoricalIdentitySourcePlanArtifactV1(
@@ -142,11 +144,11 @@ def build_historical_identity_source_apply_plan(
                 ),
             )
         )
-    if len(sessions) != profile_map.bound_session_count:
+    if len(planned_sessions) != len(selected_bindings):
         raise HistoricalIdentitySourceApplyPlanError(
-            "historical source candidate session count differs from profile map"
+            "historical source candidate session count differs from selection"
         )
-    session_rows = tuple(sessions)
+    session_rows = tuple(planned_sessions)
     artifact_rows = tuple(artifacts)
     dates = [item.session_date.isoformat() for item in session_rows]
     base = {
@@ -215,6 +217,30 @@ def build_historical_identity_source_apply_plan(
         approved_plan_sha256=_file_sha256(target),
         inventory_reader=inventory_reader,
     )
+
+
+def _selected_bindings(
+    profile_map: HistoricalIdentityRebuildProfileMapV1,
+    sessions: tuple[date, ...] | None,
+) -> tuple[HistoricalIdentityRebuildProfileBindingV1, ...]:
+    if sessions is None:
+        return profile_map.bindings
+    if (
+        not sessions
+        or sessions != tuple(sorted(sessions))
+        or len(sessions) != len(set(sessions))
+    ):
+        raise HistoricalIdentitySourceApplyPlanError(
+            "explicit sessions must be nonempty, unique, and ordered"
+        )
+    binding_by_session = {
+        binding.session_date: binding for binding in profile_map.bindings
+    }
+    if set(sessions) - set(binding_by_session):
+        raise HistoricalIdentitySourceApplyPlanError(
+            "explicit session is not profile-bound"
+        )
+    return tuple(binding_by_session[session] for session in sessions)
 
 
 def read_historical_identity_source_apply_plan(

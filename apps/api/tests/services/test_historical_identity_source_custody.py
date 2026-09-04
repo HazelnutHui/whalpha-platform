@@ -493,6 +493,93 @@ def test_apply_plan_is_complete_inventory_bound_and_no_write(
     assert parallel.plan_sha256 == evidence.plan_sha256
 
 
+def test_apply_plan_can_bind_an_explicit_append_only_candidate_subset(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    session_dates = (date(2026, 9, 2), SESSION)
+    selected_session = session_dates[1]
+    data_root = tmp_path / "canonical"
+    data_root.mkdir()
+    package_path = tmp_path / "package"
+    package_path.mkdir()
+    candidate_root = tmp_path / "candidate"
+    candidate_root.mkdir(mode=0o700)
+    candidate_root.chmod(0o700)
+    profile_map = _profile_map(package_path, session_dates=session_dates)
+    monkeypatch.setattr(custody, "APPROVED_DATA_ROOT", data_root.resolve())
+    monkeypatch.setattr(apply_plan, "APPROVED_DATA_ROOT", data_root.resolve())
+    monkeypatch.setattr(
+        custody,
+        "inspect_historical_identity_package_equivalence",
+        lambda **kwargs: _equivalence(session_date=kwargs["session_date"]),
+    )
+    monkeypatch.setattr(
+        custody,
+        "inspect_historical_identity_source_custody_equivalence",
+        lambda **_: SimpleNamespace(exact_match=True),
+    )
+    custody.build_historical_identity_source_custody_candidate(
+        data_root=data_root,
+        package_path=package_path,
+        output_root=candidate_root,
+        profile_map=profile_map,
+        session_date=selected_session,
+        materialized_at=MATERIALIZED_AT,
+    )
+    existing_unselected_target = (
+        data_root
+        / "market-data"
+        / "provider-identity-reference-observation"
+        / "schema_version=1"
+        / "provider=massive_stocks_basic"
+        / f"as_of_date={session_dates[0].isoformat()}"
+    )
+    existing_unselected_target.mkdir(parents=True)
+
+    evidence = apply_plan.build_historical_identity_source_apply_plan(
+        data_root=data_root,
+        candidate_root=candidate_root,
+        profile_map=profile_map,
+        created_at=MATERIALIZED_AT,
+        plan_path=tmp_path / "append-only-plan.json",
+        sessions=(selected_session,),
+        inventory_reader=lambda _: "a" * 64,
+    )
+
+    assert evidence.plan.session_count == 1
+    assert evidence.plan.sessions[0].session_date == selected_session
+    assert evidence.plan.target_absent_partition_count == 1
+    assert all(
+        artifact.session_date == selected_session
+        for artifact in evidence.plan.artifacts
+    )
+
+
+@pytest.mark.parametrize(
+    "sessions",
+    (
+        (),
+        (SESSION, date(2026, 9, 2)),
+        (SESSION, SESSION),
+        (date(2026, 9, 1),),
+    ),
+)
+def test_apply_plan_rejects_invalid_explicit_session_selection(
+    sessions: tuple[date, ...],
+    tmp_path: Path,
+) -> None:
+    package_path = tmp_path / "package"
+    package_path.mkdir()
+    profile_map = _profile_map(
+        package_path,
+        session_dates=(date(2026, 9, 2), SESSION),
+    )
+
+    with pytest.raises(apply_plan.HistoricalIdentitySourceApplyPlanError):
+        apply_plan._selected_bindings(profile_map, sessions)
+
+
 def test_apply_plan_rejects_existing_target(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

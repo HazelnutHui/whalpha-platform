@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 from tip_api.services.historical_identity_rebuild_profile_map import (
@@ -31,6 +31,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--created-at", type=datetime.fromisoformat, required=True)
     parser.add_argument("--plan-path", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument("--session", type=date.fromisoformat, action="append")
     args = parser.parse_args(argv)
 
     with _network_disabled():
@@ -42,6 +43,7 @@ def main(argv: list[str] | None = None) -> int:
             created_at=args.created_at,
             plan_path=args.plan_path,
             workers=args.workers,
+            sessions=None if args.session is None else tuple(args.session),
         )
     plan = evidence.plan
     print(
