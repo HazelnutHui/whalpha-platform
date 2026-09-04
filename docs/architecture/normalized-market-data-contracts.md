@@ -20,8 +20,11 @@ action source-observation repository and a daily Universe-decision repository;
 the source observation does not substitute for canonical Corporate Action V1.
 Neither family has a provider adapter or completed canonical dataset.
 Classification V1 has its separately
-documented security-evidence implementation state. No SQL database or general
-historical backfill job exists.
+documented security-evidence implementation state. The bounded 300-session EOD
+and point-in-time Identity acquisition is complete; this does not supply the
+missing historical membership, lifecycle, corporate-action, adjustment or
+coverage families. No SQL database exists. Exact volatile state belongs in
+[current context](../project/current-context.md).
 
 ## Shared Contract Principles
 

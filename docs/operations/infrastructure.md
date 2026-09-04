@@ -32,11 +32,11 @@ Confirmed:
 
 ## OCI
 
-Live-verified through the `whalpha-oci` SSH alias on 2026-08-30 without reading
-credentials. The active Dashboard release is
-`2026-08-28T141747Z-83f9b629279c`; `/` is the data-free branded credential/guest
-Session entry, and `/dashboard/` and `/private-data/` share the server-side
-Session boundary.
+The `whalpha-oci` alias reaches the lightweight serving boundary. Exact current
+release, health and postflight evidence belong in
+[current context](../project/current-context.md); `/` is the data-free branded
+credential/guest Session entry, and `/dashboard/` and `/private-data/` share
+the server-side Session boundary.
 
 Confirmed infrastructure facts:
 
@@ -56,7 +56,7 @@ Confirmed infrastructure facts:
   temporary guest Session read the same Dashboard and Snapshot before logout
 - the active release passed exact remote preflight and postflight; the complete
   remote retained-release inventory must be reread before any cleanup
-- no release staging/partial residue exists
+- the latest recorded verification found no release staging/partial residue
 - no production FastAPI market-data service was deployed to OCI
 
 Do not record literal public IP addresses, SSH key material, password hashes, or

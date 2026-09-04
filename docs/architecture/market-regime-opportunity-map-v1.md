@@ -13,12 +13,11 @@ independent approval and rollback domains.
 
 ## Status
 
-Status: **Implemented through Phase 7, including active MI 1.2, Snapshot 1.7 /
-Dashboard 2.4, the bilingual Candidate workspace, entry-location consumer, and
-their explicitly bound OCI release. The active 2026-08-26 payload is ordinary
-fresh. Repository development adds verified-prior Candidate and Phase 1b
-append paths plus a versioned Phase 1b cross-as-of state-prefix correction;
-none of those development changes is deployed.**
+Status: **Implemented through MI 1.3 and the additive Snapshot 1.11 /
+Dashboard 2.8 consumer boundary, including the bilingual Candidate, Strategy
+Channel, Visual Context, and Sector ETF Rotation workspaces. Exact active
+publication, release and freshness evidence belongs in
+[current context](../project/current-context.md).**
 
 This document sequences the design in
 [Market Regime & Opportunity Map V1](../product/market-regime-opportunity-map-v1.md)

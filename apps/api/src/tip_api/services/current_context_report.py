@@ -55,6 +55,14 @@ def _parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--full-history-validation",
+        action="store_true",
+        help=(
+            "reconstruct every completed EOD partition instead of using the "
+            "completion index plus a full latest-partition inspection"
+        ),
+    )
+    parser.add_argument(
         "--skip-inventory",
         action="store_true",
         help="skip the full /data content-and-metadata inventory fingerprint",
@@ -67,6 +75,7 @@ def main(argv: list[str] | None = None) -> int:
     with _network_guard():
         report = build_report(
             full_source_validation=args.full_source_validation,
+            full_history_validation=args.full_history_validation,
             include_inventory=not args.skip_inventory,
         )
     print(json.dumps(report, sort_keys=True, indent=2, ensure_ascii=True))
@@ -74,7 +83,10 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def build_report(
-    *, full_source_validation: bool = False, include_inventory: bool = True
+    *,
+    full_source_validation: bool = False,
+    full_history_validation: bool = False,
+    include_inventory: bool = True,
 ) -> dict[str, Any]:
     """Build one report from exact fixed roots without changing either root."""
 
@@ -83,20 +95,23 @@ def build_report(
     repository = _repository_state(repo)
 
     eod_repository = CanonicalEodReadRepository(data)
-    sessions = eod_repository.list_sessions()
-    if not sessions:
+    session_dates = _completed_session_dates(
+        eod_repository,
+        full_history_validation=full_history_validation,
+    )
+    if not session_dates:
         raise CurrentContextReportError("no completed canonical EOD session exists")
-    latest_descriptor = sessions[-1]
-    latest_integrity = eod_repository.inspect_session(latest_descriptor.session_date)
+    latest_session = session_dates[-1]
+    latest_integrity = eod_repository.inspect_session(latest_session)
     if full_source_validation:
-        latest_rows = len(eod_repository.read_bars(latest_descriptor.session_date))
-        if latest_rows != latest_descriptor.record_count:
+        latest_rows = len(eod_repository.read_bars(latest_session))
+        if latest_rows != latest_integrity.record_count:
             raise CurrentContextReportError("latest EOD row count changed during full reread")
 
     identity = _latest_identity_state(data)
     identity_eod_alignment = _identity_eod_alignment(
         latest_identity_date=date.fromisoformat(identity["as_of_date"]),
-        latest_eod_session=latest_descriptor.session_date,
+        latest_eod_session=latest_session,
         eod_bound_identity_date=latest_integrity.identity_snapshot_date,
     )
     activation_pointer = read_dashboard_universe_activation_pointer(data)
@@ -130,13 +145,22 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.1",
+        "report_contract": "tip-current-context-report/1.2",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
-            "active_sources_reread"
+            "full_history_and_active_sources_reread"
+            if full_history_validation and full_source_validation
+            else "full_history_custody_and_contracts"
+            if full_history_validation
+            else "active_sources_reread"
             if full_source_validation
             else "active_custody_and_contracts"
+        ),
+        "history_validation_scope": (
+            "all_completed_partitions"
+            if full_history_validation
+            else "completion_index_plus_latest_partition"
         ),
         "host": {
             "hostname": socket.gethostname(),
@@ -150,10 +174,10 @@ def build_report(
         "inventory": inventory,
         "publication_residue": publication_residue,
         "eod": {
-            "session_count": len(sessions),
-            "first_session": sessions[0].session_date.isoformat(),
-            "latest_session": latest_descriptor.session_date.isoformat(),
-            "latest_record_count": latest_descriptor.record_count,
+            "session_count": len(session_dates),
+            "first_session": session_dates[0].isoformat(),
+            "latest_session": latest_session.isoformat(),
+            "latest_record_count": latest_integrity.record_count,
             "latest_content_fingerprint": latest_integrity.content_fingerprint,
             "latest_parquet_sha256": latest_integrity.parquet_sha256,
             "identity_snapshot_date": latest_integrity.identity_snapshot_date.isoformat(),
@@ -258,6 +282,23 @@ def build_report(
         market_intelligence_publication=market_intelligence.manifest.publication_id,
     )
     return report
+
+
+def _completed_session_dates(
+    repository: CanonicalEodReadRepository,
+    *,
+    full_history_validation: bool,
+) -> tuple[date, ...]:
+    dates = (
+        tuple(item.session_date for item in repository.list_sessions())
+        if full_history_validation
+        else repository.list_session_index()
+    )
+    if dates != tuple(sorted(set(dates))):
+        raise CurrentContextReportError(
+            "completed canonical EOD sessions are not unique and ordered"
+        )
+    return dates
 
 
 def _validated_directory(path: Path, label: str) -> Path:

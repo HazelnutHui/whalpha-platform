@@ -175,19 +175,10 @@ class DashboardOverviewService:
     clock: Callable[[], datetime] = field(default=lambda: datetime.now(UTC), repr=False)
 
     def get_latest_session_pair(self) -> tuple[date, date]:
-        list_session_index = getattr(
-            self.query_service.repository, "list_session_index", None
-        )
-        if callable(list_session_index):
-            session_dates = tuple(list_session_index())
-        else:
-            session_dates = tuple(
-                item.session_date for item in self.query_service.list_sessions()
-            )
+        session_dates = self.query_service.list_session_dates()
         if len(session_dates) < 2:
             raise EodSessionNotFoundError("at least two completed EOD sessions are required")
-        ordered = tuple(sorted(session_dates))
-        return ordered[-1], ordered[-2]
+        return session_dates[-1], session_dates[-2]
 
     def get_latest_returns_for_universe(self, universe_id: str | None = None) -> tuple[tuple[EodReturnReadModel, ...], object]:
         current_date, previous_date = self.get_latest_session_pair()

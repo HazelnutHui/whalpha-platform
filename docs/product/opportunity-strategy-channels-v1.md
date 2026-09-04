@@ -119,8 +119,9 @@ browser. Candidate view/channel state is URL-addressable and restores on
 refresh or browser history navigation. Strategy mode removes the unrelated
 risk-mode control, uses Advance + Watch as its headline population, and marks
 evidence-incomplete channels unavailable rather than presenting an unexplained
-zero. Snapshot 1.9 / Dashboard 2.6 and this first strategy product are deployed
-in the current ordinary-fresh 2026-08-28 analysis release.
+zero. Snapshot 1.9 / Dashboard 2.6 first deployed this strategy product; later
+additive Dashboard contracts retain it. Exact active release and analysis
+session belong in [current context](../project/current-context.md).
 
 ADR 0061 now binds the UI to the exact parameter fingerprint and exposes the
 formula, underlying component definitions, geometry mapping, status gates,

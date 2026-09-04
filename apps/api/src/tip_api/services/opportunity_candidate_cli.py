@@ -527,7 +527,7 @@ def _validate_calculated_tier(tier: str, manifest: Mapping[str, Any]) -> dict[st
 
 
 def _list_available_eod_sessions(data_root: Path) -> tuple[date, ...]:
-    return tuple(item.session_date for item in CanonicalEodReadRepository(data_root).list_sessions())
+    return CanonicalEodReadRepository(data_root).list_session_index()
 
 
 def _read_phase1b_payloads(

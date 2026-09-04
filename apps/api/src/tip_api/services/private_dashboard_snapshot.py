@@ -450,7 +450,17 @@ def build_private_dashboard_snapshot(
     query_service = EodMarketDataQueryService(CanonicalEodReadRepository(safe_data_root))
     analytics = EodReturnAnalyticsService(query_service)
     generated = generated_at or datetime.now(UTC)
-    activation = dashboard_activation or read_active_dashboard_universe_activation(safe_data_root, analysis_session=query_service.list_sessions()[-1].session_date, validate_sources=True)
+    if dashboard_activation is not None:
+        activation = dashboard_activation
+    else:
+        session_dates = query_service.list_session_dates()
+        if not session_dates:
+            raise DashboardSnapshotError("no completed EOD session exists")
+        activation = read_active_dashboard_universe_activation(
+            safe_data_root,
+            analysis_session=session_dates[-1],
+            validate_sources=True,
+        )
     overview = DashboardOverviewResponse.from_model(
         DashboardOverviewService(query_service, activation).get_latest_overview(checked_at=generated)
     ).model_copy(

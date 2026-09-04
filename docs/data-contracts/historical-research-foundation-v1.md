@@ -6,7 +6,8 @@ Implemented as provider-neutral, immutable Python/Pydantic row and manifest
 contracts plus explicit PyArrow schemas and temporary-root Parquet repositories
 with synthetic tests. ADR 0100 also adapts the existing canonical Dell EOD and
 Identity families into deterministic, read-only, unpublished family evidence.
-No missing-family backfill, `/data` write, or research result exists.
+No canonical membership, corporate-action, lifecycle, adjustment, or
+Historical Coverage publication exists, and no research result exists.
 
 ## Purpose
 
@@ -125,13 +126,14 @@ decisions, and adjustment entries have exact Arrow schemas. Their repository:
   corruption, and conflicting reruns.
 
 All repository tests use isolated temporary roots. Saved synthetic Massive
-split/dividend mapping and independent adjustment invariants are now complete.
-The credential-free, read-only exact pilot planner is also complete. A real
-pilot remains blocked by equal-capability source permission, account
-entitlement, lifecycle-source coverage, and an exact authorized acquisition
-plan. Cross-family state is now governed by Data Record Governance V1 without
+split/dividend mapping and independent adjustment invariants are complete. The
+credential-free planner and the bounded EOD/Identity Pilot mechanics are also
+complete. Cross-family state is governed by Data Record Governance V1 without
 replacing the domain statuses in this contract.
-No physical family evidence or Historical Coverage publication currently
-exists under `/data`. The publication boundary remains fixture-only, while the
-current 31 EOD/Identity sessions now pass the same transitive validation in
-memory under `current-historical-mechanics-evidence/1.0`.
+
+No physical required-family evidence or Historical Coverage publication
+currently exists under `/data`. The publication boundary remains fixture-only.
+The 2026-08-30 assessment proved transitive in-memory validation for its then
+31 EOD/Identity sessions; current canonical price depth is recorded separately
+in [current context](../project/current-context.md) and does not replace the
+missing families.

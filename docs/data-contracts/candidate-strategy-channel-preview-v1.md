@@ -5,8 +5,10 @@
 Implemented in repository source as a pure Dell/offline shadow calculation,
 bounded consumer, independent Oracle, and immutable temporary-root audit. It is
 fixed but not chronologically validated. Its formally validated projection is
-published in the active Snapshot 1.9 / Dashboard 2.6 bilingual product without
-changing the shadow calculation or claiming validated performance.
+published through the Snapshot 1.9 / Dashboard 2.6 boundary and remains
+supported by later additive Dashboard contracts without changing the shadow
+calculation or claiming validated performance. Exact active state belongs in
+[current context](../project/current-context.md).
 
 ## Inputs and custody
 

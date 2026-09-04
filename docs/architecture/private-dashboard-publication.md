@@ -1,15 +1,15 @@
 # Private Dashboard Publication
 
-## Active Snapshot 1.10 / Dashboard 2.7 boundary
+## Current deployed boundary
 
 The [Dashboard Snapshot V2 contract](../data-contracts/dashboard-snapshot-v2.md)
 and [operations boundary](../operations/dashboard-snapshot-publication.md)
 define the formal Universe Funnel, immutable releases,
 approval-plan-bound atomic publication, active-pointer compatibility fallback,
 verify-then-link recovery, separate rollback, and lock-time XNYS freshness
-gate. Active Snapshot `2026-08-30T082200Z-6a8a37e79970` uses contract 1.10 /
-Dashboard 2.7 and binds the exact ordinary-fresh 2026-08-28 Market Intelligence,
-Candidate, Strategy Channel, and Candidate Visual Context sources.
+gate. Production supports the additive Snapshot 1.11 / Dashboard 2.8 boundary;
+exact active release, source bindings and health evidence belong in
+[current context](../project/current-context.md).
 
 ## Classification Phase Boundary
 
@@ -35,8 +35,7 @@ Implemented locally:
 - Nginx configuration template using session `auth_request`
 - deployment script with dry-run and reviewed apply mode
 - dedicated dell5820-to-OCI deployment SSH key
-- deployed OCI release `2026-08-30T082200Z-6a8a37e79970`, built from source
-  commit `6a8a37e79970c770df66f88c3a8ba83826ba3a63`
+- versioned OCI releases bound to exact clean source commits
 - branded credential-or-guest `/` entry, `/login/` compatibility redirect, and
   localhost-only Auth Service
 

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0125](0125-separate-session-discovery-from-partition-validation.md): Use the immutable completion index for date-only control paths while retaining deep validation for consumed partitions and explicit full-history audits.
+
 - [ADR 0124](0124-exclude-catalog-known-etv-without-inferring-etf.md): Treat catalog-known ETV as unsupported and excluded without inferring ETF or weakening the malformed-data gate.
 
 - [ADR 0118](0118-use-the-completion-index-for-current-snapshot-session-selection.md): Select the two current Snapshot sessions from the bounded completion index, then fully validate only the partitions actually consumed.
@@ -167,3 +169,4 @@ Each ADR should include:
 - [0122: Bound Transient Retries Inside Historical Batches](0122-bound-transient-retries-inside-historical-batches.md)
 - [0123: Chain Bounded History Batches to a Finite Target](0123-chain-bounded-history-batches-to-a-finite-target.md)
 - [0124: Exclude Catalog-Known ETV Without Inferring ETF](0124-exclude-catalog-known-etv-without-inferring-etf.md)
+- [0125: Separate Session Discovery from Partition Validation](0125-separate-session-discovery-from-partition-validation.md)

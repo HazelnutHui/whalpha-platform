@@ -129,10 +129,11 @@ code, inference Oracle, holdout custody and zero prior real-research state must
 first produce an exact review, followed by separate user authorization and a
 future activation capability.
 
-The experiment remains
-`preregistered_data_blocked`: current 31-session mechanics are insufficient,
-and canonical daily membership, complete corporate actions, lifecycle, and a
-research-ready adjustment ledger are absent. No signal writer, outcome
+The experiment remains `preregistered_data_blocked`. The original 31-session
+assessment is historical; canonical price depth has since advanced, while
+canonical daily membership, complete corporate actions, lifecycle, a
+research-ready adjustment ledger, and an immutable Historical Coverage
+publication remain absent. No signal writer, outcome
 maturer, real evaluator, Production consumer, result publication, or deployment
 is created by this product definition. ADR 0106 adds a bilingual first-level
 page that exposes this blocked state and the registered method while leaving
@@ -144,6 +145,7 @@ ADR 0098 now makes that boundary executable without starting a backtest. The
 socket-guarded Dell-local assessment rereads canonical EOD and its bound
 Identity evidence and reports every research prerequisite separately. On
 2026-08-30 it returned `data_blocked` through 2026-08-28 with 31 of 252 required
-sessions and no research-ready Historical Coverage Manifest. The result cannot
+sessions and no research-ready Historical Coverage Manifest. That count is a
+dated result, not the current canonical depth. The result cannot
 authorize development or performance claims. Even a future complete result may
 advance only to a separate development-activation review.

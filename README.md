@@ -1,331 +1,117 @@
 # Trading Intelligence Platform
 
-## Security Type Governance
+WH Alpha is a personal U.S. equity market-intelligence and quantitative
+research platform. It supports discretionary decisions through the chain:
 
-The repository implements a provider-neutral, effective-dated Security
-Classification boundary keyed by stable `instrument_id`. Security form, issuer
-structure, listing scope, evidence quality, and Universe disposition remain
-separate. Unknown, ambiguous, malformed, heuristic-only, and insufficient-
-evidence records are quarantined.
+```text
+market state -> strength direction -> sector/theme -> stock candidate
+-> trade preparation -> entry/invalidation -> position management
+```
 
-The active provisional Dashboard Universe uses the reviewed Activation V2
-publication: 1,718 provider-classified Common Shares as Primary and those same
-1,718 plus 113 ADRCs as Secondary. This is not evidence that every member is a
-U.S.-domestic operating company. Core remains the future default policy and
-Broad the future secondary policy only after authoritative issuer-structure
-and domicile evidence satisfies the documented gates.
+It is not an automated trading or order-execution system. Conclusions must
+remain explainable through source facts, parameters, contributions, supporting
+and contrary evidence, market context, and invalidation conditions.
 
-Phase B1 provider evidence is completed. SEC Phase B2 transport and fail-closed
-publication boundaries are implemented, but no completed SEC evidence
-publication exists and B2 is paused. See the [classification audit](docs/audits/security-type-classification-2026-08-14.md),
-[provider-evidence audit](docs/audits/security-type-provider-evidence-2026-08-14.md),
-[Universe activation architecture](docs/architecture/dashboard-universe-activation.md),
-and [SEC evidence architecture](docs/architecture/sec-issuer-structure-evidence.md).
+## Current state
 
-Trading Intelligence Platform is a personal single-user prototype for U.S. equity market intelligence. It is designed to help the user understand market structure, sector and theme rotation, stock strength, breadth, options structure, relationship shifts, and significant market developments quickly enough to support discretionary research and trading decisions.
+The live product includes bilingual Market Regime & Opportunities, Market
+Structure & Activity, Sector ETF Rotation, Stock Candidates, and an explicitly
+research-only Quant Research Lab. Guest and credential Sessions intentionally
+receive identical data and capabilities.
 
-The platform should help answer:
+Dell is the authority for code, data, and computation. OCI serves only bounded
+static product artifacts and the localhost authentication boundary. The
+guarded daily chain has been exercised end to end, but the installed timer is
+read-only and no unattended write-capable scheduler is active.
 
-- What is the market structure today?
-- Which sectors and themes are strengthening or weakening?
-- Is risk appetite expanding or contracting?
-- Which stocks show genuine relative strength?
-- What relationships or rotations deserve further investigation?
-- What developments are significant enough for human review?
+Do not copy volatile session dates, releases, fingerprints, or current next
+steps from this README. Read:
 
-## Current Phase
-
-Documentation, infrastructure, storage, the application stack, 303 contiguous
-canonical EOD/Identity sessions, private analytics, Activation V2, immutable
-Market Intelligence 1.3, Snapshot 1.11 / Dashboard 2.8, entry location,
-strategy channels, Sector ETF Rotation, Candidate Visual Context, bilingual
-presentation, equal-capability guest Sessions, and Session-protected static
-publication are implemented. Canonical EOD covers every XNYS session from
-2025-06-23 through 2026-09-03. The active Dashboard and OCI release are fresh,
-lag-zero 2026-09-03 publications.
-
-Repository source implements verified-prior one-session append for both
-Candidate and corrected V1.0.1 Market Regime state. The complete guarded daily
-chain through OCI postflight has been exercised for 2026-09-03. Active Market
-Intelligence still consumes only 26 sessions and reports
-
-`degraded_short_history`; research remains data-blocked until the historical
-analytics and missing point-in-time lifecycle/action/adjustment inputs are
-governed and connected.
-
-Repository development source also contains an exact-session read-only daily
-planner and a single-action executor for eleven offline daily stages: eight
-analytics stages, Market Intelligence and Dashboard Snapshot approval-plan
-preparation, and exact active-Snapshot serving-bundle construction.
-Execution is bound to an unchanged plan fingerprint, global Dell lock,
-immutable hash-chained journal, validated output evidence, and post-action
-formal re-plan. The original controlled 8/27 run exercised Identity/EOD
-acquisition and Apply plus the first four offline actions through Entry
-Geometry. ADR 0067 adds ETF Relationships, Market Preview, and Strategy
-Channels to the same one-transition custody chain. ADR 0068 then adds the
-no-Production-write MI Plan step and stops at human publication review.
-ADR 0069 adds a separate, default-off one-shot MI Apply port with exact plan/
-state bindings, active-state proof, and no-write interruption recovery.
-ADR 0070 adds Snapshot approval-plan preparation only after the exact planned
-MI publication is active. ADR 0071 adds a separate, default-off one-shot
-Snapshot Apply port with exact plan/state bindings, active-state proof, and
-no-write interruption recovery. ADR 0072 adds Dell-local bundle construction,
-formal whole-bundle reread, and a deployment-review stop. ADR 0073 supplies the
-default-off one-shot OCI deployment boundary, and the controlled 2026-09-03
-round has now exercised the complete path. ADR 0076 adds a credential-free
-scheduler-wake plan that selects only the oldest missing XNYS session and never
-invokes the coordinator during review. No unattended data-transition chain is
-installed. ADR 0077 adds the still-default-off bridge for at most one explicit
-coordinator call and prohibits in-wake retry, recovery, alert delivery,
-publication, or deployment. ADR 0078 adds an exact Dell/hui user-systemd
-candidate that can run only the read-only wake planner at 13:30 and 16:30 New
-York time. ADR 0079 records the separately authorized user-level installation:
-linger is enabled, the read-only timer is enabled, and a controlled systemd
-start passed. No real coordinator or data-transition scheduler is connected.
-ADR 0080 removes the misleading planner-level `scheduler_installed` field:
-planner output now states only that the current operation performed no
-installation, while actual host state is verified separately through systemd.
-ADR 0081 adds a repository-only pipeline-aware wake plan and deterministic
-Dell-local per-session workspace layout. It fixes the design gap where current
-canonical EOD could hide unfinished downstream analytics, but it is not yet
-connected to or installed in the Production timer.
-ADR 0082 adds a non-installed bounded-cadence candidate above that plan. It
-limits one session to 16 distinct transition wakes over four hours with a
-five-minute completion-to-next-start floor, and stops at failure, unknown
-outcome, blocked state, or manual review. It still invokes nothing.
-ADR 0083 reuses the existing owner-only run journal for full cadence-plan and
-known-result evidence instead of adding another store. It also prevents
-provider/offline failures from being reported as successful transitions. No
-runtime or timer consumes this evidence yet.
-
-The control plane also separates XNYS close from provider readiness. It
-applies a provisional post-close stabilization window, bounded
-retry and `Retry-After`, explicit alert state, and oldest-missing-session
-recovery without making a provider request or completeness claim. Durable
-acquisition-attempt custody is now implemented through fresh readiness reservation,
-persistent bounded outcomes, exact frozen-package evidence, and no-request
-interruption recovery under the same Dell global lock and hash chain.
-The repository now also defines an expiring, exact-revision standing data-
-authorization contract for Identity/EOD fetch and canonical apply. It is
-default-deny: the first external artifact was pinned only to `c3af030`, expires
-after seven days, and becomes inactive on any source-revision change.
-The one-transition coordinator core now joins wait, recovery, authorization
-review, offline execution, diagnosis, and publication-review states without
-looping. Canonical Identity/EOD Apply now also has exact reservation and no-
-write interruption recovery under a third disjoint journal family. Explicit
-standing-authorized fetch/Apply adapters now compose those boundaries and
-preserve actual Identity pagination request counts. Their first controlled use
-completed Identity and stopped on the subsequent EOD failure. Notification
-delivery and scheduler activation remain uninstalled. A one-transition CLI and
-externally SHA-pinned host-runtime contract are also repository-tested:
-capability ports remain absent unless an
-external owner-only config enables them, the invocation explicitly opts in,
-and actual Dell/source/clean-HEAD/policy identity all match. The first Host
-config and CLI transitions were pinned to `c3af030`. Explicit one-transition
-recovery routing now covers the acquisition, canonical-Apply, and offline-
-action journal families. It
-formally rereads the exact pending event, keeps the socket guard active, and
-never fetches, applies canonical data, replays calculation, or loops. No real
-recovery invocation has occurred.
-Repository source now also preserves alert-required coordinator states and can
-explicitly emit a channel-neutral, deterministic alert intent. Intent creation
-does not persist or deliver notifications. External channel configuration,
-credentials, retry policy, and delivery receipts remain uninstalled. Data
-authorization is exact-revision and must be reprovisioned after control-plane
-code changes.
-Repository source now also contains a separate immutable, at-most-once alert
-delivery custody boundary. It records a start before invoking an explicitly
-supplied transport, deduplicates formally delivered intents, and blocks known
-failed or crash-ambiguous retries. A default-disabled SMTP adapter now provides
-the first concrete channel through externally SHA-pinned config, separate
-owner-only credentials, verified TLS, exact runtime/root bindings, and one
-deterministic bilingual message. No real email config, credential, alert root,
-network request, delivery, service, timer, or scheduler exists. A read-only
-joint external-control preflight command now reconciles host, standing data-
-authorization, and email config at one clean Dell revision without touching
-credentials or granting rehearsal authority. No real external artifact has
-been created or preflighted. The one-transition CLI now also has an explicit
-post-coordination route from a non-null alert intent through immutable custody
-to SMTP. Default invocation and normal no-alert results remain zero-delivery;
-the route has only fake-transport tests and has never sent real email.
-Because SMTP is deliberately deferred, external-control preflight 1.1 now also
-has an explicit `daily_data_only` mode. It keeps the complete four-operation
-Identity/EOD scope while omitting all email inputs and claims. It was initially
-repository-tested only; the first installed use is recorded below.
-
-The historical first controlled data-only rehearsal installed seven-day external controls
-at `c3af030` and completed 2026-08-27 Identity. The single EOD request then
-failed closed as a status-unknown non-404/non-429 provider client response;
-there was no EOD package or canonical EOD write. ADR 0045 adds safe status and
-request-count evidence for future failures but does not authorize a retry.
-Context report 1.1 now represents this partial state directly: latest Identity
-is separate from the Identity snapshot bound into latest EOD.
-
-Readiness 1.1 is now plan-aware: the active Stocks Basic EOD profile requires
-an immutable operator availability review before a first current-session EOD
-request. Journal 1.3 is repository-tested for 1.2 compatibility and supports
-one exact terminal-bound operator review without deleting history. One real
-offline review now binds the 2026-08-27 terminal to a conservative
-2026-08-28T16:00:00Z boundary. It authorizes no retry; no new external control,
-scheduler, publication, or deployment has been authorized.
-
-Repository source also defines six independent Candidate strategy channels,
-sealed-signal/later-outcome evaluation contracts, and ADR 0051's point-in-time
-historical research foundation. The original 29-session readiness audit and
-31-session analytics baseline remain mechanics-only. Canonical EOD now has 303
-sessions, but active analytics still uses 26 and the missing point-in-time data
-families continue to block real strategy evaluation.
-ADR 0097 now names the future Quant Research Lab / 量化研究实验室 and freezes
-the first Strong-Leader Pullback preregistration before any outcome review. Its
-24-combination development grid, leader-control comparison, validation gates,
-personal-model ownership, and decay/risk disclosures are repository-only and
-explicitly data-blocked; no backtest result or Production signal exists.
-Daily membership, corporate actions, lifecycle/terminal evidence, explicit
-adjustments, and 252/504-session history are still physically absent; the next
-work is a provider/entitlement and physical-storage review packet, not formula
-tuning or bulk acquisition.
-ADR 0102 now supplies a provider-neutral, exact-plan-bound `/tmp` source-package
-boundary for any future authorized historical transport. It is fixture-only,
-performs no request, and grants no canonical Apply or Production authority;
-the Massive permission/entitlement inquiry is prepared but not sent.
-ADR 0103 now adds fixture-only chronological execution mechanics for the
-frozen first experiment: exact 50/25/25 time splits, purge/embargo, all 24
-registered combinations, same-session leader controls, and later-matured
-underlying-stock outcomes. It is not a real backtest, performance result,
-Production signal, page, publication, or deployment.
-ADR 0104 now fixes the complementary fixture-only statistics: session-balanced
-signal/control contrasts, five-session block inference, 24-family validation
-correction, cost sensitivity, one development parameter lock and selected-only
-holdout access. It still creates no real backtest or performance authority.
-ADR 0105 now independently checks the descriptive statistics and attacks the
-fixture with null, reversal, crowding, outlier, missingness and stage-leakage
-cases. Validation and holdout require complete signal/control outcome coverage;
-the audit remains synthetic and does not support a model-performance claim.
-
-Primary is 1,718 Common Shares. Secondary is 1,831 securities: the same 1,718
-Common Shares plus 113 ADRCs. Provider security form remains provisional and
-does not establish issuer structure or domicile. There is no automated daily
-ingestion, database/catalog service, general production API, point-in-time
-sector taxonomy, fundamentals, valuation, or options dataset. Equal-capability
-guest Session entry is implemented in repository source; it does not create a
-role or a second data surface. The 2026-08-28 official Massive terms review
-found that this guest/friend posture is not cleared for the provider-derived
-payload under the documented owner-only boundary; no access change has yet
-been authorized.
-See the [authoritative current context](docs/project/current-context.md) for
-the exact active publications, fingerprints, verification boundary, and next
-authorized work.
-
-## Application Entry Points
-
-- Backend scaffold: [apps/api](apps/api/README.md)
-- Frontend dashboard: [apps/web](apps/web/README.md)
-- Local development guide: [docs/development/local-development.md](docs/development/local-development.md)
-
-## Accepted Application Stack
-
-- Frontend: React, TypeScript, Vite, Apache ECharts, and lightweight CSS.
-- Backend/API boundary: Python 3.12, FastAPI, and Pydantic.
-- Analytics: Pandas and NumPy.
-- Initial storage path: EOD-first Parquet datasets under `/data/trading-intelligence-platform`.
-- Data access: MarketDataProvider / adapter boundary before domain calculations.
-- Initial EOD data foundation: accepted universe, classification, and normalized logical contract boundaries.
-- Implemented data contracts: Instrument Master V1 and EOD Price Bar V1 Python/Pydantic models.
-- Implemented provider boundary: synchronous MarketDataProvider Protocol, query models, capabilities, and errors.
-- First EOD development provider: Massive Stocks Basic for private, personal EOD development only; secure credential/HTTPS transport, bounded All Tickers identity ingestion, Grouped Daily publication, and provider security evidence workflows are verified.
-- Initial persistence: Instrument Master, provider identity, ticker resolver, provider security evidence, EOD Price Bar, and Trailing Liquidity shadow Parquet repositories use manifests, deterministic fingerprints, idempotency, conflict checks, and logical completion markers. Canonical EOD covers every XNYS session from 2025-06-23 through 2026-09-03.
-- Initial private read API: default-disabled canonical EOD query routes can list completed sessions, summarize completed sessions, and return paginated joined bars with Decimal values serialized as strings.
-- Market summary analytics use the latest two formally completed sessions and support close-to-close returns, Market Summary V1, liquidity-screened movers, and Trading Activity Map private responses.
-- Market-session freshness: an offline XNYS exchange calendar distinguishes expected completed sessions from actual completed datasets and from file/schema consistency validation.
-- Initial local dashboard: React Market Dashboard V1 renders Market Pulse, breadth, up/down volume, liquidity-screened movers, a Trading Activity Map, market/sector benchmarks, and categorized data details from default-disabled private APIs.
-- Static deployment: the workstation exports protected Dashboard JSON snapshots
-  and versioned `/dashboard/` React bundles. Git records OCI deployments with
-  `/` as the branded credential/guest Session entry; live OCI state is not
-  implied without a current check.
-- Protected Session entry: the OCI design uses a localhost-only Auth Service,
-  opaque HttpOnly Session cookies, owner credential login, equal-capability
-  guest entry, and an interactive password-rotation helper. Guest and
-  credential Sessions load the same product. Git records the design and
-  verification gates; current service health remains an operational check.
-
-- Access boundary: provider-backed data and derived analytics must not be publicly exposed without an accepted authorization and access-control gate.
-
-See [ADR 0005](docs/decisions/0005-application-technology-stack.md) and [Application Architecture](docs/architecture/application-architecture.md) for the authoritative decision details.
-
-## Phase 1 Success Criteria
-
-Phase 1 succeeds when the project delivers a usable Market Dashboard MVP that can show:
-
-- Market Structure Summary
-- Market Risk Regime
-- Standard Market Heatmap / Treemap
-- Market Breadth
-- Index & Style Strength
-- Sector / Theme Rotation
-- Dynamic Relationship & Rotation Monitor
-- Key Market Developments
-
-## Core Modules
-
-- Market Structure
-- Sector / Theme Rotation
-- Stock Strength
-- Market Breadth
-- Options Structure
-- Dynamic Relationship & Rotation Monitor
-- Lightweight Event Layer
-
-## Explicitly Not Doing Now
-
-- Automated trading
-- Order execution
-- HFT
-- Complex ML or deep learning
-- Large microservice systems
-- Kubernetes
-- Large Event Knowledge Base
-
-## Public and Data-Licensing Boundary
-
-This project is a personal single-user prototype. It may be reachable over the public internet, but it is not currently a commercial market-data redistribution product. Public access and data licensing must be reassessed before broader promotion or commercial use.
-
-## Documentation Entry Points
-
-- [Agent instructions](AGENTS.md)
-- [Documentation index](docs/README.md)
-- [Current status](docs/project/current-status.md)
 - [Authoritative current context](docs/project/current-context.md)
-- [Dashboard V1](docs/product/dashboard-v1.md)
-- [Application architecture](docs/architecture/application-architecture.md)
-- [Initial EOD Universe](docs/product/initial-eod-universe.md)
-- [Classification Boundary](docs/architecture/classification-boundary.md)
-- [Normalized Market Data Contracts](docs/architecture/normalized-market-data-contracts.md)
-- [Market Data Provider Boundary](docs/architecture/market-data-provider-boundary.md)
-- [Massive Stocks Basic Evaluation](docs/providers/massive-stocks-basic-evaluation.md)
-- [Massive Adapter Boundary](docs/providers/massive-adapter-boundary.md)
-- [Massive Credential Provisioning](docs/operations/massive-credential-provisioning.md)
-- [Massive Grouped Daily Inspection](docs/operations/massive-grouped-daily-inspection.md)
-- [Massive Grouped Daily Ingestion](docs/operations/massive-grouped-daily-ingestion.md)
-- [Massive Instrument Master Ingestion](docs/operations/massive-instrument-master-ingestion.md)
-- [Instrument Identity Resolution](docs/architecture/instrument-identity-resolution.md)
-- [EOD Parquet Persistence](docs/architecture/eod-parquet-persistence.md)
-- [Trailing Liquidity Shadow Publication](docs/architecture/trailing-liquidity-shadow-publication.md)
-- [Dashboard Universe Activation](docs/architecture/dashboard-universe-activation.md)
-- [Canonical Market Data Query Boundary](docs/architecture/canonical-market-data-query-boundary.md)
-- [Private EOD Market Data API V1](docs/api/private-eod-market-data-v1.md)
-- [Private Market Summary API V1](docs/api/private-market-summary-v1.md)
-- [EOD Return Analytics](docs/architecture/eod-return-analytics.md)
-- [Frontend Market Dashboard V1](docs/frontend/market-dashboard-v1.md)
-- [Private Dashboard Publication](docs/architecture/private-dashboard-publication.md)
-- [OCI Private Dashboard Deployment](docs/operations/oci-private-dashboard-deployment.md)
-- [Private Dashboard Access](docs/operations/private-dashboard-access.md)
+- [Current status](docs/project/current-status.md)
+- [Roadmap](docs/project/roadmap.md)
+- [Changelog](docs/project/changelog.md)
 
-- [Data Access Boundary](docs/operations/data-access-boundary.md)
-- [Data Contracts](docs/data-contracts/README.md)
-- [System context](docs/architecture/system-context.md)
-- [Deployment boundary](docs/operations/deployment-boundary.md)
-- [Architecture decisions](docs/decisions/README.md)
+## Security and Universe governance
 
-## Current Dashboard
+Classification is provider-neutral, effective-dated, and keyed by stable
+`instrument_id`; ticker is display metadata rather than permanent identity.
+Security form, issuer structure, listing scope, evidence quality, and Universe
+disposition remain separate. Unknown, ambiguous, malformed, heuristic-only,
+and insufficient-evidence records are quarantined.
 
-Dashboard Universe V1 uses `Common Shares` as the default and `Common Shares + ADRs` as the optional view. All Universe-dependent modules share the activated stable-ID membership; Legacy is retained internally for rollback and is not an ordinary selector option. Provider-backed data remains private.
+The active Primary/Secondary Universes use provisional provider security-form
+evidence. Provider form does not prove issuer operating structure or domicile.
+Core remains the intended future default and Broad the future secondary only
+after authoritative issuer-structure evidence satisfies the documented gates.
+
+See:
+
+- [Classification boundary](docs/architecture/classification-boundary.md)
+- [Dashboard Universe activation](docs/architecture/dashboard-universe-activation.md)
+- [Instrument identity resolution](docs/architecture/instrument-identity-resolution.md)
+- [Data Record Governance V1](docs/data-contracts/data-record-governance-v1.md)
+
+## Architecture
+
+- Frontend: React, TypeScript, Vite, and Apache ECharts.
+- Backend and contracts: Python 3.12, FastAPI, and Pydantic.
+- Analytics: Pandas, NumPy, and exact Decimal boundaries where required.
+- Canonical storage: partitioned Parquet under Dell `/data` with immutable
+  manifests, content fingerprints, atomic completion, and fail-closed readers.
+- Publication: immutable Market Intelligence and Dashboard Snapshot contracts,
+  lazy Candidate detail shards, checksum-bound OCI serving bundles, and
+  independent postflight inspection.
+- Access: opaque HttpOnly Sessions; guest and credential routes share one
+  capability surface until explicitly changed.
+
+The repository prefers bounded files and explicit contracts over a new service
+or database when the existing manifests already provide the required evidence.
+
+## Data and research boundary
+
+Canonical EOD history alone is not sufficient for a professional backtest.
+Point-in-time membership, lifecycle/terminal evidence, corporate actions,
+adjustment reconciliation, realistic costs, chronological splits, sealed
+holdout access, and complete outcome coverage are required before performance
+claims.
+
+Candidate stock outcomes must never be described as option returns. Price and
+volume proxies must never be described as actual fund flow. Research,
+validation, shadow, Production, and retired states remain visibly distinct.
+
+See:
+
+- [Professional Quantitative Research Action Framework](docs/research/professional-quantitative-research-action-framework-v1.md)
+- [Historical Research Data Foundation](docs/architecture/historical-research-data-foundation-v1.md)
+- [Quant Research Lab V1](docs/product/quant-research-lab-v1.md)
+- [Candidate Strategy Evaluation V1](docs/data-contracts/candidate-strategy-evaluation-v1.md)
+
+## Application entry points
+
+- Backend: [apps/api](apps/api/README.md)
+- Frontend: [apps/web](apps/web/README.md)
+- Local development: [docs/development/local-development.md](docs/development/local-development.md)
+- Documentation index: [docs/README.md](docs/README.md)
+- ADR index: [docs/decisions/README.md](docs/decisions/README.md)
+
+Use the repository-aware backend runner from any linked checkout:
+
+```bash
+scripts/dev/run-project-python.sh -m pytest apps/api/tests
+```
+
+Before material work, follow [AGENTS.md](AGENTS.md) and recover state through
+the authoritative current-context reader. Network, credentials, canonical
+Apply, publication, deployment, scheduler mutation, and destructive cleanup
+remain explicit operational boundaries.
+
+## Explicitly outside the current scope
+
+- automated trading and order execution;
+- HFT;
+- ungoverned prediction engines or complex ML;
+- large microservice or Kubernetes architectures;
+- synthetic Production analytics;
+- role-based guest restrictions before the user changes the equal-capability
+  policy.

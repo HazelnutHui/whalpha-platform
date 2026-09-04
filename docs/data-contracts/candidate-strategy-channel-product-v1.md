@@ -4,8 +4,9 @@
 
 Implemented in repository source as an additive, language-neutral, read-only
 projection of the formally audited Candidate strategy-channel preview. The
-2026-08-28 analysis product is active in Snapshot 1.9 / Dashboard 2.6 and the
-matching OCI release.
+product entered Production with Snapshot 1.9 / Dashboard 2.6 and remains
+supported by later additive contracts. Exact active release and contract state
+belong in [current context](../project/current-context.md).
 
 ## Contract
 
@@ -46,7 +47,7 @@ publication, bundle, activation, or deployment authority.
 ## Validation evidence
 
 The 2026-08-29 publication built and formally reread Snapshot 1.9 / Dashboard
-2.6 from the active 2026-08-28 Market Intelligence publication and strategy
+2.6 from the then-active 2026-08-28 Market Intelligence publication and strategy
 audit. The strategy file is 195,425 bytes, its logical fingerprint is
 `d4d8ea9a1ae7ae896d0569996810e2cabbca1f02641ee9193583db0ca29dee4b`,
 and it binds audit fingerprint

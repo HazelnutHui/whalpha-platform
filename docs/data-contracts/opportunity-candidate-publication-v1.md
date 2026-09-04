@@ -2,11 +2,12 @@
 
 ## Status and purpose
 
-Implemented, published, and deployed through the completed 2026-08-26
-Candidate and Entry Geometry audits, MI 1.2, Snapshot 1.7 / Dashboard 2.4, and
-the bound OCI release. Repository source adds an undeployed Snapshot 1.8 /
-Dashboard 2.5 delivery projection. Future publication sequences remain
-separately approved.
+Implemented, published, and deployed initially through the 2026-08-26
+Candidate and Entry Geometry audits and later extended with split Candidate
+delivery, Strategy Channels, Visual Context, and Sector ETF Rotation. Exact
+active MI, Snapshot, Dashboard and OCI release state belongs in
+[current context](../project/current-context.md). Future publication sequences
+remain separately governed.
 
 Contract `opportunity-candidate-publication/1.0` is a bounded,
 language-neutral consumer projection of the much larger canonical Candidate

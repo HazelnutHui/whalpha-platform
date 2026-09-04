@@ -20,11 +20,10 @@ class EodReturnAnalyticsService:
     query_service: EodMarketDataQueryService
 
     def get_latest_session_pair(self) -> tuple[date, date]:
-        sessions = self.query_service.list_sessions()
-        if len(sessions) < 2:
+        session_dates = self.query_service.list_session_dates()
+        if len(session_dates) < 2:
             raise EodSessionNotFoundError("at least two completed EOD sessions are required")
-        ordered = tuple(sorted(sessions, key=lambda item: item.session_date))
-        return ordered[-1].session_date, ordered[-2].session_date
+        return session_dates[-1], session_dates[-2]
 
     def compute_returns(self, *, current_session_date: date, previous_session_date: date) -> tuple[EodReturnReadModel, ...]:
         current = self.query_service.repository.read_bars(current_session_date)

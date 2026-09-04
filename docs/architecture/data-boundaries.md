@@ -41,11 +41,13 @@ The Massive boundary implements configuration validation, credential
 redaction, protected credential loading, bounded HTTPS transport, fake-
 transport tests, All Tickers pagination, Grouped Daily mapping, canonical
 Identity/EOD Apply workflows, and request custody. Bounded operations produced
-the current 30 Identity snapshots and 29 EOD partitions. Provider-neutral
+the completed canonical EOD and point-in-time Identity sequence recorded in
+[current context](../project/current-context.md). Provider-neutral
 readers, private analytics, protected Snapshot serving, Session authentication,
-and deployment exist outside the adapter. Corporate actions, lifecycle,
-verified adjustments, general historical research backfill, and unattended
-scheduling remain unimplemented.
+and deployment exist outside the adapter. Historical price acquisition is
+complete, but corporate actions, lifecycle, verified adjustments and a
+research-ready coverage publication remain incomplete. A read-only wake timer
+exists; unattended write-capable daily scheduling is not installed.
 
 The future performance-evaluation boundary is defined separately in
 [Historical Research Data Foundation V1](historical-research-data-foundation-v1.md).

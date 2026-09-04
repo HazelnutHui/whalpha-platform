@@ -90,7 +90,8 @@ def main(argv: list[str] | None = None) -> int:
     # artifact fingerprint reproducible across dry-run and later apply.
     created_at = REVIEW_TIMESTAMP
     repo = CanonicalEodReadRepository(ROOT)
-    if max(item.session_date for item in repo.list_sessions()) != ANALYSIS_SESSION:
+    session_dates = repo.list_session_index()
+    if not session_dates or session_dates[-1] != ANALYSIS_SESSION:
         raise RuntimeError("latest canonical EOD differs from the frozen analysis session")
     descriptor, integrity = plan_eod_history_window(analysis_session=ANALYSIS_SESSION, calendar=ExchangeCalendar(), repository=repo)
     if descriptor.fingerprint != EXPECTED_DESCRIPTOR or descriptor.readiness_status.value != "ready" or ANALYSIS_SESSION in descriptor.expected_sessions:

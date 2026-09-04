@@ -68,5 +68,10 @@ adapter must route exclusively through the custody seam or a reviewed successor.
 
 Only pure Python contracts, calculations and synthetic fixtures exist. There
 is no canonical reader/writer, CLI, real label panel, research result, UI,
-publication, deployment or scheduler integration. The real experiment remains
-31/252 `data_blocked`.
+publication, deployment or scheduler integration. The original 2026-08-30
+assessment was 31/252 `data_blocked`; that count is historical evidence, not a
+live status field. Canonical price depth has since advanced, while the governed
+Historical Coverage, lifecycle, membership, corporate-action, adjustment and
+evaluation inputs remain incomplete. The real experiment therefore remains
+research-only and blocked; see
+[current context](../project/current-context.md).

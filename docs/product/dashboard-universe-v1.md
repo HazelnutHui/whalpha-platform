@@ -2,25 +2,34 @@
 
 ## Activation V2 and formal Funnel boundary
 
-Production Activation V2 now resolves 1,718 Common Shares and 1,831 Common Shares + ADRs (1,718 CS plus 113 ADRC); Primary remains first/default and Legacy remains hidden with rollback retained. The deployed snapshot still contains the prior 1,641/1,747 payload. Snapshot contract 1.4 / Dashboard contract 2.1 will carry the [formal source-backed Funnel](dashboard-universe-funnel.md), but freshness currently blocks publication.
+Production Activation V2 resolves 1,718 Common Shares and 1,831 Common Shares + ADRs (1,718 CS plus 113 ADRC); Primary remains first/default and Legacy remains hidden with rollback retained. The active Snapshot carries this catalog and the [formal source-backed Funnel](dashboard-universe-funnel.md). Exact pointer and release evidence belongs in [current context](../project/current-context.md).
 
 ## Reviewed HSAI correction
 
-The authoritative revision is now the active Universe source: HSAI has been an ADS since its 2023-02-09 Nasdaq listing and is excluded from Common Shares while retained in Common Shares + ADRs after the same quantitative gates. AKR, UNIT, and DFNS manual warnings remain accepted as non-blocking. Snapshot and OCI still show the prior activation until separately refreshed.
+The authoritative revision is the active Universe source: HSAI has been an ADS since its 2023-02-09 Nasdaq listing and is excluded from Common Shares while retained in Common Shares + ADRs after the same quantitative gates. AKR, UNIT, and DFNS manual warnings remain accepted as non-blocking.
 
-## Governance Status
+## Historical Activation V1
 
-Dashboard Universe Activation V1 makes the 1,641-member Provider-Classified Common Shares (Provisional) set the default and the 1,747-member CS+ADRC set the optional secondary view for analysis session 2026-08-19. Legacy 1,864 remains formally readable for rollback but is absent from the ordinary selector. Provider security form does not prove issuer domicile or operating-company structure.
+Dashboard Universe Activation V1 made the 1,641-member Provider-Classified Common Shares (Provisional) set the default and the 1,747-member CS+ADRC set the optional secondary view for analysis session 2026-08-19. It is retained as readable rollback history and has been superseded by Activation V2. Provider security form does not prove issuer domicile or operating-company structure.
 
 The authenticated desktop selector was manually verified after deployment: the two options, counts, URL persistence, refresh behavior, browser history, and Universe-dependent module switching worked as expected. Mobile, tablet, and keyboard acceptance remain unverified.
 
 ## Phase A Security Classification Audit
 
-Production still uses the legacy binary common-stock/ETF rule. Phase A proved it insufficient: non-ETF records were treated as operating equities, allowing the closed-end fund VCX into the default set. Security Classification V1 separates legal form, issuer structure, listing scope, evidence, and eligibility but is not connected to production analytics. The [2026-08-14 audit](../audits/security-type-classification-2026-08-14.md) documents non-production Core and Broad candidates.
+Phase A proved the prior legacy binary common-stock/ETF rule insufficient:
+non-ETF records were treated as operating equities, allowing the closed-end
+fund VCX into the default set. Security Classification V1 separates legal
+form, issuer structure, listing scope, evidence, and eligibility. The current
+provider-form Activation remains provisional; Core/Broad issuer-structure
+activation is still deferred. The [2026-08-14 audit](../audits/security-type-classification-2026-08-14.md) documents non-production Core and Broad candidates.
 
 ## Accepted Product Policy
 
-`Common Shares` is the default short label for `provider_classified_common_shares_v1`. `Common Shares + ADRs` selects `provider_classified_common_shares_plus_adrs_v1`. The primary has 1,641 CS; the secondary adds 106 qualifying ADRCs. These are activation-session facts, not permanent constants. Legacy is compatibility/rollback only.
+`Common Shares` is the first/default label; `Common Shares + ADRs` is the
+secondary view. Activation V2 currently contains 1,718 CS and adds 113 ADRCs
+for 1,831 total. These are activation-session facts, not permanent constants.
+Exact fingerprints belong in [current context](../project/current-context.md),
+and Legacy remains compatibility/rollback only.
 
 ## Purpose
 

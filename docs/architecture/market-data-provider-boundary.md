@@ -8,7 +8,7 @@ This document records the implemented minimal provider-neutral market-data provi
 
 Implemented Provider-Neutral Boundary — Massive Bounded Workflows Published
 
-The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is the first private EOD development provider. Its adapter boundary includes secure credential-file loading, standard-library HTTPS transport, bounded All Tickers and Grouped Daily workflows, canonical mapping, and atomic Parquet persistence outside the Protocol itself. Completed identity/EOD datasets and default-disabled private Dashboard APIs exist. Automated scheduling, historical backfill, and unrestricted public provider-backed serving do not.
+The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is the first private EOD development provider. Its adapter boundary includes secure credential-file loading, standard-library HTTPS transport, bounded All Tickers and Grouped Daily workflows, canonical mapping, and atomic Parquet persistence outside the Protocol itself. Completed Identity/EOD datasets, the bounded 300-session acquisition, and default-disabled private Dashboard APIs exist. A read-only wake timer is installed; unattended write-capable scheduling and unrestricted provider-backed serving authorization do not exist.
 
 ## Synchronous V1 Boundary
 
@@ -126,8 +126,8 @@ The provider-neutral boundary has no credential fields and does not require raw 
 
 ## Deferred Concerns
 
-- automated daily EOD ingestion
-- historical backfill
+- unattended write-capable daily EOD execution
+- future history repairs or expansion beyond the completed bounded acquisition
 - rate limiter implementation
 - async support
 - reusable pagination beyond the bounded Massive workflows
@@ -149,4 +149,4 @@ The provider-neutral boundary has no credential fields and does not require raw 
 
 ## Implementation Status
 
-Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. Massive-specific configuration, credential, transport, adapter, inspection, identity, Grouped Daily, and security-evidence workflows live under `tip_api.providers.massive`; persistence remains behind provider-neutral repositories. Bounded live operations published completed point-in-time identity, EOD, and provider security evidence datasets. Default-disabled private analytics/Dashboard endpoints and a protected static snapshot deployment path consume canonical outputs. No automated ingestion, historical backfill, production API service, or unrestricted public provider-backed display exists.
+Implemented in `tip_api.providers.market_data` with tests under `apps/api/tests/providers`. Massive-specific configuration, credential, transport, adapter, inspection, identity, Grouped Daily, and security-evidence workflows live under `tip_api.providers.massive`; persistence remains behind provider-neutral repositories. Bounded live operations published completed point-in-time Identity, EOD, and provider security-evidence datasets, including the completed 300-session price acquisition. Default-disabled private analytics/Dashboard endpoints and a protected static Snapshot deployment path consume canonical outputs. No unattended write-capable ingestion, production API service, or unrestricted provider-backed display authorization exists. Exact volatile state belongs in [current context](../project/current-context.md).

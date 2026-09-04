@@ -219,7 +219,7 @@ produces:
 
 | Fact | Exact value |
 | --- | ---: |
-| Current completed EOD/Identity sessions | 32 |
+| Completed EOD/Identity sessions at plan creation | 32 |
 | Target interval | 2025-06-23 through 2026-08-31 |
 | Target / missing sessions | 300 / 268 |
 | Three-session-or-smaller batches | 90 |
@@ -237,10 +237,10 @@ It orders batches from the current-history boundary backward, so every applied
 batch extends one contiguous interval. It does not run the batches, and it
 does not weaken the Pilot's source permission or lifecycle gates.
 
-## Current resumable batch operation
+## Completed resumable batch operation
 
-The representative Pilot is complete and ADR 0121's Dell-local batch runner is
-the active acquisition mechanism for the remaining EOD/Identity history. Each
+The representative Pilot is complete and ADR 0121's Dell-local batch runner
+was the acquisition mechanism for the remaining EOD/Identity history. Each
 invocation selects only the XNYS session adjacent to the canonical left
 boundary, processes Identity before unadjusted EOD, freezes source packages,
 binds plans to the exact inventory, applies atomically, and formally rereads
@@ -285,6 +285,12 @@ changing the 1% gate. After full regression and offline replay, clean revision
 Identity and 8,836-row EOD before the process continued to the remaining 54
 sessions. The same canonical-resume, per-date atomicity, serial provider and
 no-publication boundaries remain in force.
+
+The resumed process subsequently completed the exact 300-session target
+through 2026-08-31. Later ordinary daily runs extended the canonical sequence;
+exact current range and inventory belong in
+[current context](../project/current-context.md). No historical-backfill
+transient process remains active.
 
 ## Historical Pilot proposal (superseded by the completed Pilot)
 
@@ -337,7 +343,7 @@ gaps require an additional source or a formally accepted quarantine boundary.
   by the Pilot. Small exact probes also reached Splits and Dividends. Inactive
   Tickers pagination exceeded the six-page census ceiling and is incomplete.
 - Merger/spinoff/successor and terminal-outcome source remains missing.
-- The running 300-session batch acquires only EOD and active Identity. It does
+- The completed 300-session batch acquired only EOD and active Identity. It did
   not complete membership, corporate-action, lifecycle, adjustment, terminal
   outcome, or Historical Coverage families and therefore cannot activate
   strategy performance research by itself.

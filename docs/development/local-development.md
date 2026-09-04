@@ -143,7 +143,9 @@ This build has been verified after `npm install` succeeded.
 ## Current Limitations
 
 - Private routes are default-disabled and have no formal multi-user API authentication.
-- Historical backfill and automated daily ingestion are not implemented.
+- The bounded historical EOD/Identity acquisition is complete. The guarded
+  daily chain is agent-runnable and has a read-only wake timer; unattended
+  write-capable execution is not installed.
 - There is no database, corporate-action reconciliation, point-in-time sector taxonomy, or market-cap dataset.
 - Theme/relationship analytics, Options ingestion, and the full Event Engine remain deferred.
 - The production deployment design is static snapshot based; no production FastAPI service is deployed.

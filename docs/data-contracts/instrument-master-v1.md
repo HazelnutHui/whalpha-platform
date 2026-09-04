@@ -145,8 +145,9 @@ ratio fails the snapshot.
   provider-neutral contract.
 - Deterministic Parquet snapshot persistence, a logical completion marker, and
   formal readers are implemented.
-- Thirty canonical Identity snapshots through 2026-08-27 have been published
-  by bounded operations.
+- The completed point-in-time Identity sequence recorded in
+  [current context](../project/current-context.md) has been published by
+  bounded operations.
 - Complete historical inactive/delisted coverage, lifecycle/lineage
-  reconciliation, issuer identity, and a 252/504-session research backfill are
+  reconciliation, issuer identity, and research-ready Historical Coverage are
   not implemented.

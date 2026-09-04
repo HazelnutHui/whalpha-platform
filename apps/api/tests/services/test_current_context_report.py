@@ -146,8 +146,14 @@ def test_main_is_network_guarded_and_outputs_only_report(
 ) -> None:
     observed = {}
 
-    def fake_build_report(*, full_source_validation: bool, include_inventory: bool):
+    def fake_build_report(
+        *,
+        full_source_validation: bool,
+        full_history_validation: bool,
+        include_inventory: bool,
+    ):
         observed["full"] = full_source_validation
+        observed["history"] = full_history_validation
         observed["inventory"] = include_inventory
         return {"status": "ok"}
 
@@ -155,7 +161,68 @@ def test_main_is_network_guarded_and_outputs_only_report(
 
     assert report.main(["--skip-inventory"]) == 0
     assert json.loads(capsys.readouterr().out) == {"status": "ok"}
-    assert observed == {"full": False, "inventory": False}
+    assert observed == {"full": False, "history": False, "inventory": False}
+
+
+def test_main_exposes_explicit_full_history_validation(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    observed = {}
+
+    def fake_build_report(**kwargs):
+        observed.update(kwargs)
+        return {"status": "ok"}
+
+    monkeypatch.setattr(report, "build_report", fake_build_report)
+
+    assert report.main(["--full-history-validation", "--skip-inventory"]) == 0
+    assert json.loads(capsys.readouterr().out) == {"status": "ok"}
+    assert observed == {
+        "full_source_validation": False,
+        "full_history_validation": True,
+        "include_inventory": False,
+    }
+
+
+def test_completed_session_dates_separates_index_from_full_history() -> None:
+    first = date(2026, 8, 27)
+    second = date(2026, 8, 28)
+
+    class Repository:
+        def __init__(self) -> None:
+            self.index_calls = 0
+            self.full_calls = 0
+
+        def list_session_index(self):
+            self.index_calls += 1
+            return (first, second)
+
+        def list_sessions(self):
+            self.full_calls += 1
+            return (
+                SimpleNamespace(session_date=first),
+                SimpleNamespace(session_date=second),
+            )
+
+    repository = Repository()
+    assert report._completed_session_dates(
+        repository, full_history_validation=False
+    ) == (first, second)
+    assert (repository.index_calls, repository.full_calls) == (1, 0)
+
+    assert report._completed_session_dates(
+        repository, full_history_validation=True
+    ) == (first, second)
+    assert (repository.index_calls, repository.full_calls) == (1, 1)
+
+
+def test_completed_session_dates_rejects_unordered_index() -> None:
+    class Repository:
+        def list_session_index(self):
+            return (date(2026, 8, 28), date(2026, 8, 27))
+
+    with pytest.raises(report.CurrentContextReportError, match="unique and ordered"):
+        report._completed_session_dates(Repository(), full_history_validation=False)
 
 
 def test_matching_bundle_binds_publication_and_snapshot_but_not_current_head(

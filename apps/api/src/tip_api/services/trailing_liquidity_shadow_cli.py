@@ -43,7 +43,10 @@ def main(argv: list[str] | None = None) -> int:
     root = args.data_root
     repository = CanonicalEodReadRepository(root)
     calendar = ExchangeCalendar()
-    actual = max(item.session_date for item in repository.list_sessions())
+    session_dates = repository.list_session_index()
+    if not session_dates:
+        raise RuntimeError("no completed canonical EOD session exists")
+    actual = session_dates[-1]
     freshness = evaluate_market_data_freshness(
         calendar=calendar,
         actual_latest_completed_session=actual,

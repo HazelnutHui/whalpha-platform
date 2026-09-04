@@ -29,14 +29,17 @@ Confirmed current state:
 - Massive Stocks Basic is accepted as the first private EOD development provider.
 - Massive configuration, credential redaction, transport Protocol, and mocked adapter mapping skeleton are implemented.
 - Mocked-fixture and bounded live EOD ingestion paths are implemented with Parquet persistence and logical manifests.
-- Completed Instrument Master, provider identity, ticker resolver, and EOD datasets exist for 2026-08-12 through 2026-08-14; provider security evidence exists for 2026-08-14.
 - Massive credential provisioning, production HTTPS transport, reference smoke test, bounded All Tickers ingestion, and bounded Grouped Daily publication are complete.
 - Default-disabled canonical EOD query APIs, close-to-close analytics, Dashboard Overview, snapshot export, and bundle publication paths are implemented.
-- The initial 29-session EOD historical window through 2026-08-26 is
-  implemented; broader backfill and automated daily ingestion are not.
+- The bounded 300-session EOD and point-in-time Identity acquisition is
+  complete. The guarded daily chain is implemented for agent-run operation; a
+  read-only wake timer is installed, but unattended write-capable execution is
+  not.
 - No production API is deployed.
 - No database exists.
-- The last OCI deployment recorded in Git is a private session-protected static Dashboard with a branded root login; this document does not assert current live health.
+- A session-protected static Dashboard with a branded root login is deployed;
+  exact current release and health evidence belong in
+  [current context](../project/current-context.md).
 
 ## System Responsibilities
 
@@ -159,24 +162,14 @@ validation models. Bounded Parquet repositories exist for Instrument Master,
 provider identity, ticker resolver, EOD bars, provider security evidence, and
 the not-yet-published SEC evidence boundary. Corporate Action V1 and broader
 issuer classification remain incomplete. The production data root contains
-completed point-in-time Identity and canonical EOD sessions through 2026-08-28,
-active provider-form Primary/Secondary Universe memberships, immutable Market
-Intelligence 1.3, and Snapshot 1.11 / Dashboard 2.8. Exact volatile release,
-session, and inventory evidence belongs in
-[current-context](../project/current-context.md). Default-disabled read/query
-APIs, EOD analytics, Dashboard Overview, and private Snapshot export consume
-these completed datasets.
-
-Repository source adds Snapshot 1.8 / Dashboard 2.5 as a consumer-only
-Candidate delivery optimization: a compact list projection and stable-ID
-detail shards formally reconstruct the unchanged Candidate publication 1.1.
-Snapshot 1.9 / Dashboard 2.6 adds one lazy, source-bound strategy-channel
-product. Snapshot 1.10 / Dashboard 2.7 carries Visual Context in detail-shard
-1.1 while the first-load summary remains unchanged. Snapshot 1.11 /
-Dashboard 2.8. It projects the MI 1.3 market-wide Sector ETF Rotation product
-into one dedicated checksum-bound lazy file and freezes the exact source and
-product lineage through Approval Plan 2.6 and OCI validation. This newer pair
-is active in Production.
+the completed point-in-time Identity and canonical EOD sequence, active
+provider-form Universe memberships, immutable Market Intelligence, and an
+active Dashboard Snapshot. Exact volatile release, contract, session and
+inventory evidence belongs in
+[current context](../project/current-context.md). Version evolution belongs in
+ADRs and the changelog. Default-disabled read/query APIs, EOD analytics,
+Dashboard Overview, and private Snapshot export consume these completed
+datasets.
 
 A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
 
@@ -195,12 +188,13 @@ Provider direction:
 - IBKR is best positioned for portfolio, account-aware information, selected instrument checks, and brokerage-related integration.
 - Options data source remains an open question.
 
-Bounded Grouped Daily publications produced completed canonical sessions from
-2026-07-17 through 2026-08-26. Close-to-close analytics, default-disabled
-private Dashboard APIs, immutable Market Intelligence, private snapshots, and
-versioned deployment tooling are implemented. Automated daily ingestion,
-unrestricted public provider-backed display, and a production API service are
-not implemented.
+Bounded Grouped Daily publications produced the completed canonical sequence
+recorded in [current context](../project/current-context.md). Close-to-close
+analytics, default-disabled private Dashboard APIs, immutable Market
+Intelligence, private Snapshots, and versioned deployment tooling are
+implemented. The guarded daily chain is agent-runnable and has a read-only wake
+timer; unattended write-capable execution, unrestricted public
+provider-backed display, and a production API service are not implemented.
 
 ## Dashboard V1 Functional Areas
 

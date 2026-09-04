@@ -5,9 +5,15 @@ from pathlib import Path
 import pytest
 
 from tip_api.contracts.market_data.v1 import InstrumentType
-from tip_api.persistence.eod_read import EodSessionNotFoundError
+from tip_api.persistence.eod_read import (
+    EodDatasetUnavailableError,
+    EodSessionNotFoundError,
+)
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
-from tip_api.services.eod_market_data import EodMarketDataQueryService, EodQueryValidationError
+from tip_api.services.eod_market_data import (
+    EodMarketDataQueryService,
+    EodQueryValidationError,
+)
 from tests.support.eod_read_dataset import SESSION_DATE, publish_completed_eod_dataset
 
 
@@ -32,6 +38,28 @@ def test_latest_session_and_summary(tmp_path: Path) -> None:
     assert summary.quality_warning_count == 2
     assert not hasattr(summary, "daily_return")
     assert not hasattr(summary, "breadth")
+
+
+def test_session_dates_prefer_completion_index() -> None:
+    class Repository:
+        def list_session_index(self):
+            return (SESSION_DATE,)
+
+        def list_sessions(self):
+            raise AssertionError("deep session reconstruction must not run")
+
+    assert EodMarketDataQueryService(Repository()).list_session_dates() == (
+        SESSION_DATE,
+    )
+
+
+def test_session_dates_reject_unordered_index() -> None:
+    class Repository:
+        def list_session_index(self):
+            return (SESSION_DATE, SESSION_DATE.replace(day=12))
+
+    with pytest.raises(EodDatasetUnavailableError, match="unique and ordered"):
+        EodMarketDataQueryService(Repository()).list_session_dates()
 
 
 def test_get_bars_page_default_pagination_and_order(tmp_path: Path) -> None:

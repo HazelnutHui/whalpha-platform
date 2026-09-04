@@ -65,10 +65,17 @@ The result binds the experiment, evaluation policy, canonical EOD/Identity
 evidence, optional Historical Coverage Manifest, ordered observations, status,
 and reasons in one deterministic logical content fingerprint.
 
-## Current Dell result
+## Recorded Dell assessment
 
 The 2026-08-30 socket-guarded read-only assessment formally reread 31 canonical
 sessions through 2026-08-28. Its status is `data_blocked`; the exact result
 fingerprint is
 `4d3b5a1b472f710638f024443e2ad6c1dea1f4dd25920c2cd9eb1d3a51802116`.
 It made zero external requests and zero Production writes.
+
+That result is retained as dated evidence, not current state. Canonical price
+history has since advanced beyond the observation minimum, but there is still
+no research-ready Historical Coverage publication and the required
+point-in-time families remain incomplete. See
+[current context](../project/current-context.md); price-session count alone
+must never be interpreted as research readiness.

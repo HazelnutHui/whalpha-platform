@@ -2,13 +2,12 @@
 
 ## Status and scope
 
-Implemented as an approval-bound Production contract. Active publication
-`2026-08-28T131700Z-eeccc22` uses contract 1.2 and is the exact user-approved
-2026-08-26 `stale_review`: its immutable review tuple expects 2026-08-27 at
-lag one. As of the 2026-08-29 review, the formal calendar expects 2026-08-28,
-so the active analysis is now two sessions behind current expectation. It is
-not an ordinary fresh publication and does not authorize reuse of the
-exception for another session or release.
+Implemented as an approval-bound Production contract with backward-compatible
+readers. Exact active publication, contract, session, freshness and source
+fingerprints belong in [current context](../project/current-context.md). The
+2026-08-28 publication `2026-08-28T131700Z-eeccc22` is retained as historical
+evidence of an explicitly approved 2026-08-26 `stale_review`; its exception
+does not authorize reuse for another session or release.
 
 The publication contains one language-neutral Market Regime & Opportunity Map
 payload shared by the English and Simplified Chinese interfaces. Locale never

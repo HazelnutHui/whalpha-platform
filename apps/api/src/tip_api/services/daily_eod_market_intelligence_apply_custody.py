@@ -327,14 +327,14 @@ def validate_approved_market_intelligence_freshness(
 ) -> None:
     """Recompute the exact normal or review freshness promised by a plan."""
 
-    sessions = CanonicalEodReadRepository(root).list_sessions()
-    if not sessions:
+    session_dates = CanonicalEodReadRepository(root).list_session_index()
+    if not session_dates:
         raise DailyEodMarketIntelligenceApplyCustodyError(
             "no completed EOD session exists for MI Apply"
         )
     freshness = evaluate_market_data_freshness(
         calendar=ExchangeCalendar(),
-        actual_latest_completed_session=max(item.session_date for item in sessions),
+        actual_latest_completed_session=session_dates[-1],
         checked_at=_aware_utc(checked_at),
     )
     if plan.activation_allowed:

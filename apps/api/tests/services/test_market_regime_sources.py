@@ -59,7 +59,10 @@ class _FixtureRepository:
         self.business_key_requests = []
 
     def list_sessions(self):
-        return tuple(SimpleNamespace(session_date=item) for item in self.sessions)
+        raise AssertionError("date-only source discovery must use the completion index")
+
+    def list_session_index(self):
+        return tuple(self.sessions)
 
     def read_history_sessions(self, requested):
         self.history_requests.append(requested)

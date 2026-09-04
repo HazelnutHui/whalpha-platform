@@ -71,8 +71,11 @@ The initial blocked live attempts remain historical audit evidence; corrected
 bounded operations subsequently published the current canonical sequence. The
 remaining logical or partial contracts have no physical storage.
 
-The EOD and point-in-time Identity persistence boundaries now hold 31 completed
-canonical EOD sessions and aligned Identity snapshots through 2026-08-28.
+The EOD and point-in-time Identity persistence boundaries hold the completed
+canonical sequence recorded in
+[current context](../project/current-context.md). The 300-session historical
+price target is complete, but that does not complete a research-ready
+Historical Coverage publication.
 Universe Membership V1 and Corporate Action V1 now have partial
 provider-neutral historical row contracts but no physical dataset, complete
 partition manifest, or adapter. Their required historical composition is

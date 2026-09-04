@@ -28,8 +28,10 @@ older immutable deployed bundle; compare both identities explicitly.
 
 ## Formal Dell data state
 
-The network-free current-context reader completed at validation level
-`active_custody_and_contracts`.
+The network-free current-context reader uses report contract 1.2. Normal
+recovery completed at validation level `active_custody_and_contracts` with
+`completion_index_plus_latest_partition`; the explicit all-303-partition mode
+also completed successfully during the ADR 0125 validation.
 
 | Boundary | Verified value |
 | --- | --- |
@@ -197,12 +199,14 @@ separately bounded.
 
 ## Immediate risks and next work
 
-1. **Daily-chain performance:** the 9/1-9/3 run proved that Phase 1a,
-   Candidate, Entry Geometry, ETF Relationships, MI planning/Apply, repeated
-   planner reviews, and the context report remain CPU-heavy and mainly
-   single-core. Profile first, then add content-addressed verified caches,
-   incremental reads, vectorization, and safe process-level parallelism without
-   changing model outputs or validation gates.
+1. **Daily-chain performance:** ADR 0125 removed full-history reconstruction
+   from date-only control paths. The normal current-context report fell from
+   roughly 7–8 minutes to 27.65 seconds on the same 303-session state, while an
+   explicit full-history mode preserves the prior deep audit. Measure the next
+   complete daily chain before selecting the remaining Phase 1a, Candidate,
+   Entry Geometry, ETF Relationships, MI, or Snapshot hotspot. Add reuse,
+   vectorization, or safe process parallelism only where measurement justifies
+   it and outputs remain exact.
 2. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
@@ -239,7 +243,9 @@ performance profile and the governed research dataset contract.
 1. Read `AGENTS.md`, `README.md`, `docs/README.md`, this document, and
    `current-status.md` in that order.
 2. Run `scripts/admin/report-current-context.sh` from the source-of-truth main
-   repository. Expect it to be slow until the reporting path is optimized.
+   repository. It uses the completion index and fully validates the latest EOD
+   partition plus current artifacts. Use `--full-history-validation` only for a
+   periodic or investigative all-partition audit.
 3. Compare repository, EOD, Identity, Activation, MI, Snapshot, inventory, and
    residue with this baseline.
 4. If deployment state matters, run the non-secret OCI inspector separately;

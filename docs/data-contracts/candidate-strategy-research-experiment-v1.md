@@ -65,7 +65,7 @@ valid research outcome and must not be repaired by editing V1.
 
 The fixed stage is `preregistered_data_blocked`, with explicit blockers for:
 
-- 252-session canonical history;
+- research-ready Historical Coverage over at least 252 sessions;
 - daily point-in-time membership;
 - corporate-action coverage;
 - instrument lifecycle/terminal coverage; and

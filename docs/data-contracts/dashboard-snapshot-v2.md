@@ -133,7 +133,7 @@ The browser requests this file only when Strategy Channels is selected. It
 renders no synthetic fallback and performs no scoring. Repository build/read
 and bilingual browser support are implemented. ADR 0058 additionally implements
 Approval Plan 2.4 and OCI bundle/postflight validation while preserving every
-older plan and contract. The active 2026-08-28 analysis release passed Plan
+older plan and contract. The historical 2026-08-28 analysis release passed Plan
 2.4, Apply, bundle validation, OCI deployment, and guest postflight. Snapshot
 1.8 and older releases remain readable unchanged.
 

@@ -33,5 +33,9 @@ and Production writes are always zero.
 
 The pure contract and fixture tests exist in repository source. No operational
 reader, CLI, acknowledgement consumer, activation writer or real research
-adapter exists. Current Dell readiness is 31/252 `data_blocked`, so it cannot
-produce an authorization review.
+adapter exists. The recorded 2026-08-30 readiness assessment was 31/252
+`data_blocked`. Canonical price history has since advanced, but no
+research-ready Historical Coverage publication exists and the other required
+point-in-time families remain incomplete. Consult
+[current context](../project/current-context.md) for the current boundary; a
+session count alone cannot produce an authorization review.

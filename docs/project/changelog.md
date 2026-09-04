@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-04 — Separate session discovery from deep partition validation
+
+- Added ADR 0125 and advanced the network-free current-context report to 1.2.
+  Normal recovery now validates the immutable completion index and fully
+  inspects the latest EOD partition; `--full-history-validation` retains the
+  explicit all-partition audit.
+- Replaced deep all-history reads only where MI/Snapshot freshness, Candidate
+  discovery, Market Regime window presence, application activation, or return
+  analytics needs completed dates. Partitions that feed calculations and the
+  descriptor/research evidence boundaries still receive full validation.
+- On the unchanged 303-session Dell state, the default context report completed
+  in 27.65 seconds instead of the observed 7–8 minutes. The explicit deep mode
+  completed in 478.01 seconds and reproduced the same current data facts.
+- Passed all 1,983 backend tests with the two unchanged dependency warnings.
+  No formula, parameter, Universe, canonical `/data`, publication, Snapshot,
+  scheduler, bundle, OCI release, or access-capability change occurred.
+- Replaced the historically accumulated README and Roadmap execution narratives
+  with compact current-purpose and forward-sequencing documents. Historical
+  implementation evidence remains in this changelog and the ADRs.
+- Removed stale "current" 29/31-session, pre-Activation, and older Snapshot/MI
+  claims from long-lived product, architecture, contract, frontend, provider,
+  and operations documents. Stable rules remain local to those documents;
+  volatile operational facts now link to the authoritative current context.
+  Dated audits and historical ADR evidence were not rewritten.
+
 ## 2026-09-04 — Complete 9/1–9/3 catch-up and deploy fresh 9/3 state
 
 - Completed canonical Identity/EOD for 2026-09-01, 2026-09-02, and 2026-09-03.

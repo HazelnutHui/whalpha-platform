@@ -1,6 +1,8 @@
 # Open Questions
 
-- Should the reviewed HSAI ADR/ADS superseding shadow revision `authoritative-security-form-v2` (planned 1,718/1,831, security-form effective 2023-02-09) receive a separate bounded publication authorization after manual review of its four-source ledger and complete decision ledger?
+Only unresolved decisions belong here. Resolved rationale and implementation
+history remain in ADRs, the changelog, and the relevant architecture or
+operations document.
 
 ## Security Type Governance
 
@@ -17,16 +19,13 @@
 - What approval and retirement workflow should govern future rows in the now-completed Reviewed Eligibility Override V1 dataset?
 - What operational cadence should create a new activation after membership evidence, EOD session, or reviewed overrides advance?
 - What reviewed evidence would permit a historical session to use an identity snapshot other than the same date without introducing latest-resolver or survivorship bias?
-- After a one-session pilot, what operational evidence should gate each proposed three-session historical batch?
-- Phase A candidates (Core 0, Broad 1) are evidence-limited and are not realistic market-universe estimates.
-- The four failed-run ambiguities are resolved, and the corrected bounded run published 9,939 canonical evidence records with zero ambiguity/collision/conflict. The remaining governance gap is authoritative issuer structure and domicile, not provider identity linkage.
 
-The following decisions remain open. Final workstation storage layout, frontend framework, backend framework, charting library, initial storage format, initial repository application layout, local frontend toolchain availability, Initial EOD Universe structure, classification boundary, normalized EOD logical contract boundary, minimal provider Protocol shape, synchronous EOD V1 boundary, minimal provider error taxonomy, first real EOD development provider, general public/private data boundary, unrestricted public display under the selected individual plan, Massive adapter configuration contract shape, mocked transport boundary, mocked mapping boundary, protected credential-file loader, standard-library HTTPS transport choice, actual Stocks reference entitlement smoke test, minimal live reference request boundary, initial EOD Price Bar Parquet physical layout, mocked-fixture one-session ingestion service shape, content fingerprint behavior, idempotent partition publish behavior, first canonical EOD read/query service shape, default-disabled private route exposure, Decimal response serialization, close-to-close return calculation boundary, and the personal-prototype session login mechanism are no longer open. See [Infrastructure](../operations/infrastructure.md), [Storage Provisioning](../operations/storage-provisioning.md), [ADR 0005](../decisions/0005-application-technology-stack.md), [ADR 0006](../decisions/0006-initial-eod-data-model-and-universe-boundaries.md), [ADR 0007](../decisions/0007-use-massive-for-private-eod-development.md), [Application Architecture](../architecture/application-architecture.md), [Initial EOD Universe](../product/initial-eod-universe.md), [Classification Boundary](../architecture/classification-boundary.md), [Normalized Market Data Contracts](../architecture/normalized-market-data-contracts.md), [Market Data Provider Boundary](../architecture/market-data-provider-boundary.md), [Massive Stocks Basic Evaluation](../providers/massive-stocks-basic-evaluation.md), and [Data Access Boundary](../operations/data-access-boundary.md).
+## Data and operations
 
 - Final credential rotation and service-injection mechanism beyond the protected local credential file
-- Rate limiter implementation
-- Exact current provider entitlement, endpoint mix, and pilot scope for the
-  accepted 252/504-session historical foundation
+- Provider-wide rate limiter beyond the bounded historical runner
+- Exact current provider entitlement and permitted endpoint/use scope for
+  retained history, future repairs, and new datasets
 - Which written permission, license, or alternate source will support the
   confirmed equal-capability guest/credential shared product? Owner-only
   market-analysis serving is not a permitted fallback.
@@ -43,15 +42,12 @@ The following decisions remain open. Final workstation storage layout, frontend 
   provider termination?
 - Exact adjustment formulas, basis convention, and independent split/dividend
   reconciliation fixtures before Adjustment Ledger implementation
-- Identity resolution methodology
 - Rejected Massive reference type mapping policy
 - Duplicate ticker handling policy for point-in-time reference snapshots
 - Massive plan upgrade threshold
-- Public demo data source
 - Business/display/redistribution license threshold
 - Candidate Discovery thresholds after real coverage evaluation
 - Exact S&P 500/index constituent source
-- Exact canonical traditional taxonomy source or mapping methodology
 - Initial curated Theme list and membership methodology
 - Initial Analytical Group basket definitions
 - Options data source
@@ -63,22 +59,21 @@ The following decisions remain open. Final workstation storage layout, frontend 
   caches have a 90-day minimum direction but no deletion job is authorized
 - Automatic relationship discovery methodology
 - Parquet compaction strategy
-- Source revision reconciliation policy
+- Source/provider revision reconciliation policy
 - Issuer Master introduction threshold
 - Whether public contract identifiers remain UUID-based across persistence
 - Physical Decimal representation in Parquet for future datasets beyond EOD Price Bar V1
-- Exact provider revision reconciliation behavior
 - Operational ownership and update cadence for the accepted offline XNYS calendar dependency
 - Whether any future source requires bounded raw-response retention; the
   accepted default is no raw provider response-body retention
 - Production data-root publish review process for future datasets
 - Formal multi-user authentication and authorization mechanism beyond the personal-prototype session login
 
-- Traditional Market-Cap Sector Heatmap source requirements: market cap, sector taxonomy, point-in-time classification, and licensing boundary
-- Post-deployment visual/runtime defect list, if any
+## Product inputs
 
+- Traditional Market-Cap Sector Heatmap sources: market cap, canonical sector
+  taxonomy, point-in-time classification, constituents, and licensing boundary
 - Point-in-time sector taxonomy and constituent breadth/rotation policy for both activated universes
 - Explicit ADR/common-stock distinction if Instrument Master can support it
-- Point-in-time sector constituent source and market-cap source for traditional heatmap
 - Whether Trading Activity Map should later use a documented display transform for concentrated activity weights while preserving raw close-times-volume tooltip values
 - Corporate-action verification source and adjustment reconciliation workflow for high-price or high-activity names such as SNDK

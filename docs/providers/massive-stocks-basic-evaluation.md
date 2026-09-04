@@ -204,11 +204,13 @@ A one-request Grouped Daily inspection for 2026-08-13 verified access and payloa
 - minimal standard-library HTTPS transport implemented
 - one read-only Stocks reference smoke test succeeded
 - bounded All Tickers Instrument Master, provider identity, and ticker resolver publication implemented
-- bounded Grouped Daily publication implemented; completed EOD sessions cover 2026-07-17 through 2026-08-26
+- bounded Grouped Daily publication implemented; the completed canonical range
+  is recorded in [current context](../project/current-context.md)
 - provider security-type catalog, observation, canonical evidence, and logical completion implemented for 2026-08-14
 - canonical Parquet persistence, private analytics APIs, Dashboard snapshots, and versioned static bundle workflow implemented
 - Git records private authenticated static Dashboard deployments; current OCI health was not checked for this status reconciliation
-- no automated daily ingestion, corporate-action ingestion, or unrestricted public provider-backed serving
+- no unattended write-capable daily ingestion, corporate-action ingestion, or
+  unrestricted provider-backed serving authorization
 
 ## Risks
 

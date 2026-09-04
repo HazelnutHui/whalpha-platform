@@ -99,10 +99,9 @@ Provider bar records map into this contract. Analytics should consume canonical 
 
 Parquet-first. EOD Price Bar V1 has an explicit PyArrow schema and a bounded
 per-session partition layout documented in
-[EOD Parquet Persistence](../architecture/eod-parquet-persistence.md). Current
-implementation writes deterministic partitions and the canonical sequence now
-covers 29 XNYS sessions from 2026-07-17 through 2026-08-26 under the approved
-project data root.
+[EOD Parquet Persistence](../architecture/eod-parquet-persistence.md). The
+implementation writes deterministic partitions; exact current session depth
+and range belong in [current context](../project/current-context.md).
 
 ## Deferred Fields
 
@@ -140,9 +139,12 @@ Validation tests cover valid bars, nullable fields, zero volume, revision bounds
 - Real Grouped Daily ingestion entrypoint implemented with strict quality gates.
 - Real 2026-08-13 Grouped Daily ingestion passed V1 quality gates after Decimal volume correction.
 - First production EOD Price Bar `/data` partition exists for 2026-08-13 with 9,901 canonical records.
-- Bounded historical and daily canonical publication has produced 29 completed
-  sessions through 2026-08-26.
+- Bounded historical and daily canonical publication has produced the
+  completed sequence recorded in
+  [current context](../project/current-context.md), including the completed
+  300-session historical price target.
 - Canonical readers, private analytics, Snapshot publication, and the protected
   Dashboard consumer are implemented.
-- Corporate-action adjustment calculation, a 252/504-session research
-  backfill, and unattended scheduling are not implemented.
+- Corporate-action adjustment calculation and research-ready Historical
+  Coverage remain incomplete. A read-only wake timer exists; unattended
+  write-capable scheduling is not installed.

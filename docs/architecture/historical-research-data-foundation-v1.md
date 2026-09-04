@@ -12,9 +12,9 @@ PyArrow schemas and temporary-root Parquet repositories are now implemented
 with synthetic tests. Saved synthetic split/dividend mapping, independent
 adjustment invariants, and the default-deny exact pilot planner are also
 implemented. A complete canonical historical research foundation remains
-absent; the retained 31-session EOD/Identity mechanics are only two of the six
-required families. Data Record Governance V1 supplies the cross-family state
-vocabulary without replacing these domain contracts.
+absent. The completed EOD/Identity price-history acquisition supplies only two
+of the six required families. Data Record Governance V1 supplies the
+cross-family state vocabulary without replacing these domain contracts.
 
 ADR 0099 also implements the physical Historical Coverage layer, with all
 publication tests limited to fixtures. It stores no duplicate facts: each
@@ -33,18 +33,19 @@ and whether the security reached a governed terminal outcome.
 
 ## Current readiness
 
-The earlier 2026-08-27 audit found 29 EOD sessions. Current 2026-08-30 formal
-mechanics evidence now finds:
+The 2026-08-27 and 2026-08-30 audits retained the earlier 29- and 31-session
+mechanics evidence. Canonical EOD/Identity depth has since exceeded the
+252-session observation minimum, but the research foundation still has:
 
-- 31 completed EOD sessions and 31 EOD-bound Identity snapshots;
-- same-session Identity binding for every retained EOD partition;
 - no physical daily Universe Membership dataset;
-- no corporate-action or lifecycle dataset;
-- unverified all-one adjustment factors on every bar;
-- no retained inactive/delisted Identity rows or terminal dates;
-- 252 sessions required and 504 preferred by evaluation policy;
-- both current families are `validated_not_published`, with 221 sessions and
-  four other required data families still missing.
+- no complete canonical corporate-action or lifecycle dataset;
+- no governed adjustment ledger or terminal-outcome coverage; and
+- no immutable Historical Coverage publication binding all required families.
+
+Exact current price-session depth belongs in
+[current context](../project/current-context.md). The 504-session preference
+for stronger Regime review remains a future depth target, not a prerequisite
+that can replace the missing point-in-time families.
 
 The formal state therefore remains
 `NOT_READY_FOR_PERFORMANCE_EVALUATION`.

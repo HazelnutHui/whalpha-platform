@@ -202,12 +202,46 @@ development results; `/data` and Production were unchanged.
 
 ## Next performance sequence
 
-1. Measure the next complete daily run with ADR 0117 active. Do not infer the
-   full end-to-end saving from an isolated reader benchmark.
-2. Profile Snapshot source-product construction separately from its now-bounded
-   5.40-second full validator before changing any calculation or contract.
+1. Measure the next complete daily run with ADR 0125 active. Do not infer the
+   full end-to-end saving from the isolated control-path benchmark below.
+2. Attribute the remaining time separately across Phase 1a, Candidate, Entry
+   Geometry, ETF Relationships, MI plan/Apply, and Snapshot source-product
+   construction before changing another calculation or contract.
 3. Keep the daily inner Oracle serial unless a new workload measurement proves
    deterministic process parallelism is faster.
+
+## 2026-09-04 session-discovery validation tiers
+
+ADR 0125 extends ADR 0118's completion-index boundary to operational paths
+that need only completed dates, current-session selection, freshness, or a
+bounded-window presence check. It does not change `list_sessions()` itself.
+Explicit descriptor APIs and research evidence builders retain the deep reader,
+and every partition consumed by calculation is still fully validated.
+
+On the unchanged 303-session Dell state:
+
+| Read | Elapsed | Validation scope |
+| --- | ---: | --- |
+| Pre-change current-context report | about 443 s | all historical partitions, latest/current artifacts, whole inventory |
+| Pre-change report without inventory fingerprint | 478.23 s | all historical partitions and latest/current artifacts |
+| Whole `/data` inventory fingerprint alone | 3.77 s | all 3,356 files / 1.60 GB |
+| Completion index plus latest EOD inspection alone | 2.14 s | all completion manifests and full latest partition |
+| ADR 0125 default current-context report | 27.65 s | completion index, full latest partition, current artifacts, whole inventory |
+| ADR 0125 explicit full-history report without inventory fingerprint | 478.01 s | every completed EOD partition and current artifacts |
+
+Run-to-run cache effects make the two pre-change measurements unsuitable for
+subtraction, but both show that whole-history reconstruction dominates. The
+new default report was about 94% faster than the observed 443-second default
+baseline. It reproduced the same EOD, Identity, Activation, Market
+Intelligence, Snapshot, inventory, symlink, and residue facts. Report contract
+1.2 adds `history_validation_scope`; `--full-history-validation` preserves the
+old all-partition proof explicitly.
+
+The same date-only selection rule now covers MI plan/Apply freshness, Snapshot
+Apply freshness, Candidate available-session discovery, normal Market Regime
+window presence, application activation selection, and latest-session return
+analytics. No end-to-end saving is claimed for those stages until the next real
+daily chain is measured.
 
 ## 2026-09-01 finalized-evidence reuse result
 

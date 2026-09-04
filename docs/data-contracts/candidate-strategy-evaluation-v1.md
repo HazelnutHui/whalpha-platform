@@ -2,8 +2,9 @@
 
 ## Status
 
-Repository-only typed shadow contract. No evaluation dataset has been written,
-no channel formula has been selected, and no performance result exists.
+Repository-only typed shadow contract. Display-oriented Strategy Channels and
+the first preregistered research formula exist, but no performance-eligible
+evaluation dataset has been written and no performance result exists.
 
 ## Purpose
 
@@ -90,15 +91,18 @@ publish only an average return or only favorable regimes.
 
 ## Current blockers
 
-- Canonical history is 29 EOD sessions, below the 252-session minimum.
+- Canonical EOD price history exceeds the 252-session observation minimum, but
+  no research-ready Historical Coverage publication binds all required
+  point-in-time families.
 - Existing analytics replay current-as-of membership; implemented daily
   point-in-time Universe history is still absent.
 - Corporate Action V1 has a typed source-observation boundary but no completed
   canonical dataset or adjustment reconciliation.
 - Fundamental, valuation, point-in-time sector/industry, and option-chain data
   remain absent.
-- No channel formula, frozen formula parameter set, signal writer, outcome
-  maturer, evaluation runner, or Production consumer exists.
+- The preregistered Strong-Leader Pullback formula and synthetic-only mechanics
+  exist. No canonical signal writer, outcome maturer, real evaluation runner,
+  or Production research consumer exists.
 
 Dell remains the only approved compute, storage, and data-governance boundary
 for future evaluation work. This contract does not authorize a `/data` write,

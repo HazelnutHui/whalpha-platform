@@ -61,8 +61,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     created_at = datetime.now(UTC)
     repo = CanonicalEodReadRepository(ROOT)
-    sessions = repo.list_sessions()
-    if max(item.session_date for item in sessions) != ANALYSIS_SESSION:
+    session_dates = repo.list_session_index()
+    if not session_dates or session_dates[-1] != ANALYSIS_SESSION:
         raise RuntimeError("latest canonical EOD is not the frozen analysis session")
     descriptor, integrity = plan_eod_history_window(analysis_session=ANALYSIS_SESSION, calendar=ExchangeCalendar(), repository=repo)
     if descriptor.fingerprint != EXPECTED_DESCRIPTOR or descriptor.readiness_status.value != "ready":

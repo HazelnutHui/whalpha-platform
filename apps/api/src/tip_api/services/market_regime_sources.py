@@ -132,8 +132,8 @@ def load_formal_market_regime_history_panel(
         raise MarketRegimeSourceError("data root must be an absolute regular directory")
     safe_root = data_root.resolve(strict=True)
     calendar = ExchangeCalendar()
-    descriptors = CanonicalEodReadRepository(safe_root).list_sessions()
-    sessions = tuple(item.session_date for item in descriptors if item.session_date <= as_of_session)
+    session_index = CanonicalEodReadRepository(safe_root).list_session_index()
+    sessions = tuple(item for item in session_index if item <= as_of_session)
     if len(sessions) < 26 or sessions[-1] != as_of_session:
         raise MarketRegimeSourceError("stable-prefix history requires at least 26 sessions through as-of")
     if any(calendar.previous_session(right) != left for left, right in zip(sessions, sessions[1:])):
@@ -226,9 +226,10 @@ def load_formal_market_regime_panels(
     )
 
     repository = CanonicalEodReadRepository(safe_root)
-    descriptors = repository.list_sessions()
-    descriptor_dates = {item.session_date for item in descriptors}
-    missing_sessions = tuple(item for item in required_sessions if item not in descriptor_dates)
+    completed_sessions = frozenset(repository.list_session_index())
+    missing_sessions = tuple(
+        item for item in required_sessions if item not in completed_sessions
+    )
     if missing_sessions:
         raise MarketRegimeSourceError(
             "required completed EOD sessions are missing: "

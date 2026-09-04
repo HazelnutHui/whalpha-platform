@@ -360,12 +360,14 @@ def _load_plan(
 
 
 def _freshness(root: Path, checked_at: datetime):
-    sessions = CanonicalEodReadRepository(root).list_sessions()
-    if not sessions:
+    session_dates = CanonicalEodReadRepository(root).list_session_index()
+    if not session_dates:
         raise MarketIntelligencePublicationError("no completed EOD session exists")
-    actual = max(item.session_date for item in sessions)
+    actual = session_dates[-1]
     return evaluate_market_data_freshness(
-        calendar=ExchangeCalendar(), actual_latest_completed_session=actual, checked_at=checked_at
+        calendar=ExchangeCalendar(),
+        actual_latest_completed_session=actual,
+        checked_at=checked_at,
     )
 
 

@@ -104,16 +104,19 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 ```
 
 The 9/1-9/3 catch-up proved correctness but also showed material performance
-debt. Several stages and repeated review readers are CPU-heavy and mainly
-single-core. MI Apply alone took more than ten minutes; context reporting still
-rescans all history and takes several minutes.
+debt. ADR 0125 now separates date-only completion discovery from deep partition
+validation. On the same 303-session Dell state, the normal current-context
+report fell from roughly 7–8 minutes to 27.65 seconds; the explicit full-history
+mode still reconstructs all partitions. Several calculation stages remain
+CPU-heavy and mainly single-core and require a new end-to-end measurement.
 
 ## Next priority
 
-1. Profile the complete daily chain on Dell.
-2. Remove repeated evidence reconstruction through hash-bound cache/reuse.
-3. Vectorize or safely parallelize Phase 1a, Candidate, Entry Geometry, ETF
-   Relationships, and publication validation without changing outputs.
+1. Measure the next complete daily chain on Dell with ADR 0125 active.
+2. Rank the remaining measured hotspots before introducing further reuse.
+3. Vectorize or safely parallelize only independently measurable Phase 1a,
+   Candidate, Entry Geometry, ETF Relationships, or publication work without
+   changing outputs.
 4. Connect the 303-session canonical foundation to a governed point-in-time
    research dataset and reconcile the 26-session analytics limitation.
 5. Only then begin real preregistered chronological strategy research.

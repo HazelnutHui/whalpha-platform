@@ -19,11 +19,13 @@ Phase A does not change the Dashboard. A future Phase B must make Market Pulse, 
 
 The V1.3 response labels unchanged legacy calculations as provisional and carries `universe_definition_id`, `universe_version`, `governance_status`, `classification_as_of_date`, and `evidence_coverage_status`. The UI displays an amber `Provisional classification` state and a material evidence warning. Published provider security-form evidence does not connect Core/Broad candidates to metrics or remove the issuer-structure limitation.
 
-The active release `2026-08-26T103119Z-f344a589a8c9` deploys the activated
-Primary/Secondary Universes, Market Intelligence, bilingual interface, and the
-exact 2026-08-24 `stale_review` Snapshot. Guest Session access is verified;
-password-based visual confirmation remains a user-run check because automated
-verification does not use the user's password.
+The deployed product includes the activated Primary/Secondary Universes,
+Market Intelligence, bilingual interface, and equal-capability guest and
+credential Sessions. Exact active release, Snapshot, session, freshness and
+postflight evidence belong in
+[current context](../project/current-context.md). Password-based visual
+confirmation remains a user-run check because automated verification does not
+use the user's password.
 
 ## Purpose
 
@@ -33,9 +35,9 @@ It helps answer whether the completed EOD session was broadly up or down, whethe
 
 ## Status
 
-Implemented for private static production and local development. The deployed
-Snapshot uses the completed 2026-08-24 current session and 2026-08-21 previous
-session, with expected session 2026-08-25 and explicit lag one.
+Implemented for protected static production and local development. Exact
+deployed Snapshot and freshness state belong in
+[current context](../project/current-context.md).
 
 The static OCI release is deployed behind a branded credential/guest entry and
 server-side Sessions for the personal prototype. Both entry paths load the same

@@ -6,8 +6,17 @@ from dataclasses import dataclass
 from datetime import date
 
 from tip_api.contracts.market_data.v1 import InstrumentType
-from tip_api.persistence.eod_read import EodReadRepository, EodSessionNotFoundError
-from tip_api.read_models.eod import EodMarketBarReadModel, EodSessionDescriptor, EodSessionPage, EodSessionSummary
+from tip_api.persistence.eod_read import (
+    EodDatasetUnavailableError,
+    EodReadRepository,
+    EodSessionNotFoundError,
+)
+from tip_api.read_models.eod import (
+    EodMarketBarReadModel,
+    EodSessionDescriptor,
+    EodSessionPage,
+    EodSessionSummary,
+)
 
 
 class EodQueryValidationError(ValueError):
@@ -20,6 +29,21 @@ class EodMarketDataQueryService:
 
     def list_sessions(self) -> tuple[EodSessionDescriptor, ...]:
         return self.repository.list_sessions()
+
+    def list_session_dates(self) -> tuple[date, ...]:
+        """Return bounded completed dates without deep-reading all partitions."""
+
+        list_session_index = getattr(self.repository, "list_session_index", None)
+        dates = (
+            tuple(list_session_index())
+            if callable(list_session_index)
+            else tuple(item.session_date for item in self.list_sessions())
+        )
+        if dates != tuple(sorted(set(dates))):
+            raise EodDatasetUnavailableError(
+                "completed EOD session dates are not unique and ordered"
+            )
+        return dates
 
     def get_latest_session(self) -> EodSessionDescriptor:
         sessions = self.list_sessions()
