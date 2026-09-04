@@ -157,7 +157,13 @@ def _calculate(*, panel, candidate_batch, entry_geometry_batch, state_history):
         if (
             entry.source_candidate_fingerprint != candidate.logical_fingerprint
             or entry.source_state_fingerprint != current_state.logical_fingerprint
-            or current_state.source_candidate_fingerprint != candidate.logical_fingerprint
+            or current_state.source_candidate_fingerprint
+            != (
+                candidate.logical_fingerprint
+                if current_state.state_availability
+                is CandidateStateAvailability.AVAILABLE
+                else None
+            )
             or entry.ticker != candidate.ticker
             or current_state.ticker != candidate.ticker
             or entry.security_type != candidate.security_type

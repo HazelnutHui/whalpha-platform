@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-04 — Preserve unavailable Candidate state in Visual Context
+
+- The first post-backfill 2026-09-01 daily replay exposed two current
+  Candidate rows whose state was correctly unavailable after a prior
+  stable-identity quarantine. Their state records therefore carried no live
+  Candidate fingerprint, as required by the state contract.
+- Corrected Candidate Visual Context to require the exact Candidate fingerprint
+  only for available state and to require `null` for unavailable state. Price
+  path evidence remains descriptive while observed state age remains explicitly
+  unavailable; available-state lineage checks are unchanged.
+- Added regression coverage for that boundary. The focused 65-test set and all
+  1,974 API tests passed with the two unchanged dependency warnings. The failed
+  daily action left no target or staging residue; no publication, Snapshot,
+  bundle, deployment, formula, Universe, or canonical-data change was made by
+  this fix.
+
 ## 2026-09-03 — Exclude catalog-known ETV without inferring ETF
 
 - Diagnosed the Historical Research Backfill stop at the 2025-09-09 Identity

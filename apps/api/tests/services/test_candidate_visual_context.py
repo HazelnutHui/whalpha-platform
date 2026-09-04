@@ -14,6 +14,7 @@ import pytest
 
 from tip_api.contracts.analytics.v1 import (
     CandidateOpportunityStage,
+    CandidateStateAvailability,
     VisualContextAvailability,
 )
 from tip_api.services.candidate_entry_geometry import calculate_candidate_entry_geometry
@@ -143,6 +144,56 @@ def test_visual_context_fails_closed_for_missing_price_path_without_losing_state
         "missing_contiguous_twenty_session_close_history",
     )
     assert record.state_age_availability is VisualContextAvailability.AVAILABLE
+
+
+def test_visual_context_preserves_an_explicitly_unavailable_current_state() -> None:
+    panel, candidates, _, states = _inputs()
+    target = candidates.candidates[0].instrument_id
+    current_session = panel.as_of_session
+    current = next(
+        row
+        for row in states
+        if row.instrument_id == target and row.as_of_session == current_session
+    )
+    unavailable = current.model_copy(
+        update={
+            "base_score": None,
+            "confidence": None,
+            "source_candidate_fingerprint": None,
+            "state_availability": CandidateStateAvailability.UNAVAILABLE,
+            "stale_state": True,
+            "consecutive_missing_sessions": 1,
+            "logical_fingerprint": _fingerprint("unavailable-current-state"),
+        }
+    )
+    unavailable_states = tuple(
+        unavailable
+        if row.instrument_id == target and row.as_of_session == current_session
+        else row
+        for row in states
+    )
+    entry = calculate_candidate_entry_geometry(
+        panel=panel,
+        candidate_batch=candidates,
+        state_records=tuple(
+            row for row in unavailable_states if row.as_of_session == current_session
+        ),
+    )
+
+    result = calculate_candidate_visual_context(
+        panel=panel,
+        candidate_batch=candidates,
+        entry_geometry_batch=entry,
+        state_history=unavailable_states,
+    )
+
+    record = next(row for row in result.records if row.instrument_id == target)
+    assert record.price_path_availability is VisualContextAvailability.AVAILABLE
+    assert record.state_age_availability is VisualContextAvailability.UNAVAILABLE
+    assert record.observed_state_age is None
+    assert record.state_age_missing_reason_codes == (
+        "current_candidate_state_unavailable_or_stale",
+    )
 
 
 def test_visual_context_is_input_permutation_invariant() -> None:
