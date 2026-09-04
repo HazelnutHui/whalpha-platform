@@ -117,6 +117,16 @@ The report status is therefore `data_blocked`, with
 change those results; future partitions remain unvalidated until the existing
 transitive formal Coverage reader proves them.
 
+An offline source census and complete-base shadow now narrow the membership
+gap without changing that status. Custody-validated sanitized Identity
+reference packages remain in `/tmp` for 279/303 canonical sessions; the exact
+24-session gap is 2026-07-17 through 2026-08-19. The real 2026-09-03 shadow
+evaluated all 9,979 same-day stable IDs for both Universes, localized one
+source collision, and formally reread 19,958 three-state decisions. Its source
+cutoff is after the evaluated session and its output is `/tmp`-only, so it is a
+mechanics proof—not canonical membership, Historical Coverage, or research
+authority.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -249,19 +259,23 @@ separately bounded.
    identity. Measure the next complete daily chain and add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
-2. **Historical analytics consumption:** connect the 303-session canonical
+2. **Historical Universe foundation:** convert the complete-base shadow into an
+   efficient shared-panel multi-session design, resolve durable source custody,
+   and acquire only the exact 24 missing reference sessions before any
+   separately reviewed canonical membership publication.
+3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
-3. **Research foundation:** complete lifecycle/terminal, membership, actions,
+4. **Research foundation:** complete lifecycle/terminal, membership, actions,
    adjustments, costs, and sealed chronological evaluation before interpreting
    strategy performance.
-4. **Strategy research:** validate one preregistered strategy family at a time,
+5. **Strategy research:** validate one preregistered strategy family at a time,
    beginning with Strong-Leader Pullback; compare against same-opportunity-set
    controls and preserve holdout discipline.
-5. **Product visualization:** add only decision-answering charts for price path,
+6. **Product visualization:** add only decision-answering charts for price path,
    entry position, threshold distance, signal age, contribution, regime-to-
    sector-to-stock linkage, persistence, and invalidation.
-6. **Later data/product layers:** options expression, fundamentals/valuation,
+7. **Later data/product layers:** options expression, fundamentals/valuation,
    point-in-time event analysis, then portfolio/IBKR integration.
 
 Do not start new formulas, thresholds, paid-data acquisition, or UI scope merely

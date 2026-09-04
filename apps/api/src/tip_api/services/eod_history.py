@@ -118,12 +118,23 @@ def audit_trailing_liquidity(
     descriptor: EodHistoryWindowDescriptorV1,
     repository: EodReadRepository,
     instrument_ids: frozenset[UUID],
+    session_reads: tuple[EodHistorySessionRead, ...] | None = None,
 ) -> TrailingLiquidityCoverageAudit:
     if descriptor.methodology_mode is not METHODOLOGY_MODE:
         raise ValueError("point-in-time historical panel is defined but not implemented")
     if descriptor.corrupt_or_unavailable_sessions:
         raise EodDatasetUnavailableError("corrupt history window cannot be audited")
-    reads = repository.read_history_sessions(descriptor.completed_sessions)
+    reads = (
+        repository.read_history_sessions(descriptor.completed_sessions)
+        if session_reads is None
+        else session_reads
+    )
+    if tuple(item.integrity.session_date for item in reads) != tuple(
+        sorted(descriptor.completed_sessions)
+    ):
+        raise EodDatasetUnavailableError(
+            "preloaded history sessions do not match the completed descriptor"
+        )
     by_instrument: dict[UUID, dict[date, EodMarketBarReadModel]] = defaultdict(dict)
     source_fingerprints: dict[date, str] = {}
     for session_read in reads:

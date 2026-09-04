@@ -6,7 +6,7 @@ Universe Membership V1 records universe definitions and point-in-time daily memb
 
 ## Status
 
-Partially Implemented — Daily Physical Contract and One Real Reconstruction Pilot
+Partially Implemented — Daily Physical Contract and Complete-Base Shadow Pilot
 
 The provider-neutral historical daily-decision record implements explicit
 included/excluded/quarantined disposition, methodology and origin, exact
@@ -16,8 +16,18 @@ proves the exact evaluated stable-ID base and complete three-state totals for
 every Universe in the partition. A formal adapter reconstructs the reviewed
 2026-08-19 full-base Primary/Secondary source as
 `reconstructed_point_in_time`; the real Dell read-only pilot writes only to
-`/tmp`. Universe Definition, multi-session canonical publication, and a source
-for every retained historical date remain unimplemented.
+`/tmp`.
+
+Methodology `provider-form-complete-base-point-in-time-v2` additionally
+reconstructs every stable ID in an exact same-day Identity snapshot from a
+custody-validated, sanitized reference package. Its real 2026-09-03 Dell
+shadow covered 9,979 IDs in both Universes and formally reread all 19,958 rows.
+Primary produced 1,682 included / 8,235 excluded / 62 quarantined; Secondary
+produced 1,797 / 8,107 / 75. One source collision was localized to one stable
+ID instead of invalidating unrelated decisions. This remains `/tmp` evidence:
+Universe Definition, durable source custody, multi-session canonical
+publication, and a source for every retained historical date remain
+unimplemented.
 
 ## Grain
 
@@ -145,6 +155,15 @@ When the retained source cutoff follows the evaluated session, every otherwise
 valid reconstructed row is quality `warning` and carries
 `reconstruction_source_cutoff_after_session`. Such a partition proves mechanics
 but is not eligible as a no-look-ahead signal population.
+
+The current offline census found validated retained reference packages for 279
+of 303 canonical sessions. The exact 24-session gap spans the XNYS sessions
+from 2026-07-17 through 2026-08-19. Retained `/tmp` packages are not canonical
+source custody and are never copied into `/data` by the shadow. Known
+non-target security forms, unsupported exchanges, price failures, and
+liquidity failures are explicit exclusions. Missing/conflicting form evidence,
+missing bars, insufficient history, material data-quality flags, and material
+one-session return outliers are quarantined.
 
 ## Deferred Fields
 

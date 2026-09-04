@@ -17,6 +17,7 @@ import socket
 import stat
 import sys
 from contextlib import contextmanager
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, Literal, Mapping
@@ -124,6 +125,15 @@ class FetchPackageEvidenceV1(FrozenModel):
     fetched_at: datetime
     package_manifest_sha256: str
     package_content_sha256: str
+
+
+@dataclass(frozen=True, slots=True)
+class ValidatedIdentityReferencePackage:
+    """In-memory view of one fully custody-validated, credential-free package."""
+
+    manifest: FetchPackageManifestV1
+    pages: tuple[Mapping[str, object], ...]
+    package_manifest_sha256: str
 
 
 class CatchupApprovalPlanEvidenceV1(FrozenModel):
@@ -292,6 +302,30 @@ def read_fetch_package_evidence(
         fetched_at=manifest.fetched_at,
         package_manifest_sha256=file_sha256(package_path / "package.json"),
         package_content_sha256=manifest.package_content_sha256,
+    )
+
+
+def read_identity_reference_package(
+    *,
+    package_path: Path,
+    expected_session: date,
+) -> ValidatedIdentityReferencePackage:
+    """Read sanitized Identity payloads after complete package custody validation.
+
+    The payloads are intentionally returned only in memory.  Callers must not
+    log them or copy them into canonical storage.
+    """
+
+    manifest, pages = _read_fetch_package(
+        package_path,
+        expected_type="identity_reference",
+    )
+    if manifest.session_date != expected_session:
+        raise SameDayCatchupError("fetch package session mismatch")
+    return ValidatedIdentityReferencePackage(
+        manifest=manifest,
+        pages=pages,
+        package_manifest_sha256=file_sha256(package_path / "package.json"),
     )
 
 

@@ -252,6 +252,26 @@ def test_permutation_is_deterministic_for_candidate_coverage(calendar: ExchangeC
     assert first.fingerprint == second.fingerprint
 
 
+def test_preloaded_formal_reads_avoid_duplicate_partition_reads(calendar: ExchangeCalendar) -> None:
+    instrument = iid("PRELOADED")
+    repository = complete_repository(calendar, instrument)
+    descriptor = descriptor_for(repository, calendar)
+    reads = tuple(
+        EodHistorySessionRead(integrity(day), repository.sessions[day])
+        for day in descriptor.completed_sessions
+    )
+
+    audit = audit_trailing_liquidity(
+        descriptor=descriptor,
+        repository=repository,
+        instrument_ids=frozenset({instrument}),
+        session_reads=reads,
+    )
+
+    assert repository.requested == ()
+    assert audit.results[0].eligibility_status is TrailingLiquidityEligibilityStatus.PASSED
+
+
 def test_backfill_plan_is_chronological_batched_and_never_uses_latest_resolver(calendar: ExchangeCalendar) -> None:
     repository = FakeRepository({date(2026, 8, 12): (), date(2026, 8, 13): ()})
     descriptor = descriptor_for(repository, calendar)

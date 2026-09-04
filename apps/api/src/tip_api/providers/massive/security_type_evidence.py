@@ -137,6 +137,7 @@ class EvidenceBuildResult:
     type_counts: tuple[tuple[str, int], ...]
     category_counts: tuple[tuple[str, int], ...]
     quality_gate_failures: tuple[str, ...]
+    quarantined_instrument_reasons: tuple[tuple[UUID, tuple[str, ...]], ...]
 
     @property
     def publish_ready(self) -> bool:
@@ -174,6 +175,7 @@ class _Resolution:
     instrument_id: UUID | None
     method: str
     reasons: tuple[str, ...]
+    candidate_instrument_ids: tuple[UUID, ...] = ()
 
 
 @dataclass(slots=True)
@@ -290,6 +292,7 @@ def build_instrument_evidence(
         grouped_payloads[signature] = (payload, 1 if current is None else current[1] + 1)
 
     observations: list[ProviderSecurityObservationV1] = []
+    quarantined_instrument_reasons: dict[UUID, set[str]] = defaultdict(set)
     exact_duplicate = 0
     for signature in sorted(grouped_payloads, key=lambda value: json.dumps(value, separators=(",", ":"))):
         payload, occurrence_count = grouped_payloads[signature]
@@ -298,6 +301,12 @@ def build_instrument_evidence(
         if type_code:
             type_counts[type_code] += occurrence_count
         resolution = _resolve_observation(payload, indexes)
+        if resolution.status in {
+            ProviderObservationStatus.AMBIGUOUS,
+            ProviderObservationStatus.COLLISION,
+        }:
+            for instrument_id in resolution.candidate_instrument_ids:
+                quarantined_instrument_reasons[instrument_id].update(resolution.reasons)
         observations.append(
             _to_observation(
                 payload,
@@ -339,6 +348,16 @@ def build_instrument_evidence(
         )
 
     if conflict_observation_ids:
+        for values in evidence_by_key.values():
+            if any(
+                observation_id in conflict_observation_ids
+                for value in values
+                for observation_id in value.provider_observation_ids
+            ):
+                for value in values:
+                    quarantined_instrument_reasons[value.instrument_id].add(
+                        "canonical_evidence_conflict"
+                    )
         observations = [
             observation.model_copy(
                 update={
@@ -411,6 +430,13 @@ def build_instrument_evidence(
         type_counts=tuple(sorted(type_counts.items())),
         category_counts=categories,
         quality_gate_failures=tuple(failures),
+        quarantined_instrument_reasons=tuple(
+            (instrument_id, tuple(sorted(reasons)))
+            for instrument_id, reasons in sorted(
+                quarantined_instrument_reasons.items(),
+                key=lambda item: str(item[0]),
+            )
+        ),
     )
 
 
@@ -632,15 +658,28 @@ def _resolve_observation(payload: Mapping[str, object], indexes: IdentityIndexes
             if item.resolution_status is ResolutionStatus.RESOLVED and item.canonical_instrument_id is not None
         }
         if len(canonical_ids) > 1:
-            return _Resolution(ProviderObservationStatus.COLLISION, None, "unresolved", (f"{method}_collision",))
+            return _Resolution(
+                ProviderObservationStatus.COLLISION,
+                None,
+                "unresolved",
+                (f"{method}_collision",),
+                tuple(sorted(canonical_ids, key=str)),
+            )
         if len(references) > 1:
-            return _Resolution(ProviderObservationStatus.COLLISION, None, "unresolved", (f"{method}_not_unique",))
+            return _Resolution(
+                ProviderObservationStatus.COLLISION,
+                None,
+                "unresolved",
+                (f"{method}_not_unique",),
+                tuple(sorted(canonical_ids, key=str)),
+            )
         if len(canonical_ids) == 1:
             return _Resolution(
                 ProviderObservationStatus.CANONICAL_MAPPED,
                 next(iter(canonical_ids)),
                 method,
                 (f"{method}_join",),
+                tuple(canonical_ids),
             )
         return _Resolution(
             ProviderObservationStatus.EXPECTED_UNJOINED,
@@ -656,21 +695,50 @@ def _resolve_observation(payload: Mapping[str, object], indexes: IdentityIndexes
         if item.resolution_status is ResolutionStatus.RESOLVED and item.canonical_instrument_id is not None
     }
     if len(resolved_ids) > 1:
-        return _Resolution(ProviderObservationStatus.AMBIGUOUS, None, "unresolved", ("ticker_maps_multiple_canonical_instruments",))
+        return _Resolution(
+            ProviderObservationStatus.AMBIGUOUS,
+            None,
+            "unresolved",
+            ("ticker_maps_multiple_canonical_instruments",),
+            tuple(sorted(resolved_ids, key=str)),
+        )
     if not ticker_references:
         return _Resolution(ProviderObservationStatus.AMBIGUOUS, None, "unresolved", ("identity_snapshot_no_match",))
     if len(ticker_references) != 1:
-        return _Resolution(ProviderObservationStatus.EXPECTED_UNJOINED, None, "unresolved", ("duplicate_ticker_requires_stable_identifier",))
+        return _Resolution(
+            ProviderObservationStatus.EXPECTED_UNJOINED,
+            None,
+            "unresolved",
+            ("duplicate_ticker_requires_stable_identifier",),
+            tuple(sorted(resolved_ids, key=str)),
+        )
     reference = ticker_references[0]
     resolver_id = indexes.ticker_resolver.get(ticker)
     if reference.resolution_status is not ResolutionStatus.RESOLVED or reference.canonical_instrument_id is None:
         return _Resolution(ProviderObservationStatus.EXPECTED_UNJOINED, None, "unresolved", ("identity_not_canonical_eligible",))
     if resolver_id is None or resolver_id != reference.canonical_instrument_id:
-        return _Resolution(ProviderObservationStatus.AMBIGUOUS, None, "unresolved", ("ticker_resolver_conflict",))
+        candidates = {
+            item
+            for item in (resolver_id, reference.canonical_instrument_id)
+            if item is not None
+        }
+        return _Resolution(
+            ProviderObservationStatus.AMBIGUOUS,
+            None,
+            "unresolved",
+            ("ticker_resolver_conflict",),
+            tuple(sorted(candidates, key=str)),
+        )
     reason = "point_in_time_ticker_resolver_join"
     if supplied_identifier:
         reason = "unmatched_identifier_then_unique_ticker_resolver_join"
-    return _Resolution(ProviderObservationStatus.CANONICAL_MAPPED, resolver_id, "point_in_time_ticker_resolver", (reason,))
+    return _Resolution(
+        ProviderObservationStatus.CANONICAL_MAPPED,
+        resolver_id,
+        "point_in_time_ticker_resolver",
+        (reason,),
+        (resolver_id,),
+    )
 
 
 def _provider_observation_signature(payload: Mapping[str, object]) -> tuple[object, ...]:

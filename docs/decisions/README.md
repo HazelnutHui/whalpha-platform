@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0132](0132-reconstruct-complete-base-historical-universe-membership.md): reconstruct complete same-day Identity bases into source-bound, three-state historical Universe shadows without treating local mapping conflicts as whole-day loss.
+
 - [ADR 0131](0131-expose-family-specific-research-readiness.md): Expose exact acquired-versus-missing historical input families in the authoritative read-only context report without weakening formal Coverage gates.
 
 - [ADR 0130](0130-prove-segmented-candidate-custody-before-cutover.md): Prove a lossless per-session Candidate shadow before any change to the V1 daily or publication boundary.

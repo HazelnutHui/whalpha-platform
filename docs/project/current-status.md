@@ -89,6 +89,15 @@ Historical Coverage evidence/final roots are absent. Real cost/liquidity,
 complete revision lineage, chronological evaluation, and sealed-holdout inputs
 also remain absent or fixture-only.
 
+The first complete-base daily membership adapter is now proven only in
+`/tmp`. A read-only census found 279/303 custody-valid retained Identity
+reference packages, with an exact 24-session gap from 2026-07-17 through
+2026-08-19. The 2026-09-03 shadow evaluated all 9,979 same-day stable IDs for
+both Universes and isolated one source collision while formally rereading all
+19,958 decisions. Because its source was observed after the session and no
+membership partition exists in `/data`, this does not change research
+readiness.
+
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
 price history. The first intended registered study remains Strong-Leader
@@ -160,12 +169,15 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. Connect the 303-session canonical foundation to a governed point-in-time
+6. Advance complete-base historical membership from one-day shadow to a
+   shared-panel multi-session implementation; resolve durable source custody
+   and only the exact 24 missing reference sessions before canonical review.
+7. Connect the 303-session canonical foundation to a governed point-in-time
    research dataset and reconcile the 26-session analytics limitation.
-7. Only then begin real preregistered chronological strategy research.
-8. Continue decision-useful visualization in parallel where it does not change
+8. Only then begin real preregistered chronological strategy research.
+9. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
-9. Add options expression, fundamentals/valuation, events, and later
+10. Add options expression, fundamentals/valuation, events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune new formulas or claim backtest results before the governed research

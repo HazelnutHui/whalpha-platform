@@ -98,6 +98,10 @@ def test_ticker_only_two_resolved_canonical_ids_is_ambiguous() -> None:
     result = build([payload("DUP", share=None, composite=None)], identity_indexes=make_indexes(*values, resolver={}))
     assert result.ambiguous_count == 1
     assert "ambiguous_mapping_nonzero" in result.quality_gate_failures
+    assert result.quarantined_instrument_reasons == (
+        (ID1, ("ticker_maps_multiple_canonical_instruments",)),
+        (ID2, ("ticker_maps_multiple_canonical_instruments",)),
+    )
 
 
 def test_share_class_figi_precedes_conflicting_ticker() -> None:
@@ -112,6 +116,10 @@ def test_composite_figi_requires_unique_match() -> None:
     duplicate = make_indexes(reference(share=None), reference("OTHER", ID2, share=None, composite="COMP1"), resolver={})
     collision = build([payload(share=None)], identity_indexes=duplicate)
     assert collision.collision_count == 1
+    assert collision.quarantined_instrument_reasons == (
+        (ID1, ("composite_figi_collision",)),
+        (ID2, ("composite_figi_collision",)),
+    )
 
 
 def test_provider_stable_id_join() -> None:
@@ -186,6 +194,9 @@ def test_identical_canonical_evidence_dedupes_and_conflicting_evidence_fails() -
     assert conflict.business_key_conflict_count == 2
     assert conflict.ambiguous_count == 2
     assert "canonical_business_key_conflict_nonzero" in conflict.quality_gate_failures
+    assert conflict.quarantined_instrument_reasons == (
+        (ID1, ("canonical_evidence_conflict",)),
+    )
 
 
 def test_exact_duplicate_and_malformed_reconcile_without_silent_drop() -> None:

@@ -33,6 +33,7 @@ from tip_api.providers.massive.same_day_catchup import (
     inventory_fingerprint,
     read_catchup_approval_plan_evidence,
     read_fetch_package_evidence,
+    read_identity_reference_package,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
 
@@ -154,6 +155,20 @@ def test_public_fetch_package_evidence_formally_rereads_without_payload(tmp_path
     assert len(evidence.package_manifest_sha256) == 64
     assert len(evidence.package_content_sha256) == 64
     assert "results" not in evidence.model_dump()
+
+
+def test_validated_identity_reference_package_exposes_only_sanitized_pages(tmp_path) -> None:
+    session = date(2026, 8, 21)
+    package, _ = fetch_identity(tmp_path, session)
+    validated = read_identity_reference_package(
+        package_path=package,
+        expected_session=session,
+    )
+
+    assert validated.manifest.session_date == session
+    assert len(validated.pages) == validated.manifest.request_count == 2
+    assert len(validated.package_manifest_sha256) == 64
+    assert all("apiKey" not in str(page) for page in validated.pages)
 
 
 def plan_and_apply_identity(tmp_path: Path, root: Path, session: date):

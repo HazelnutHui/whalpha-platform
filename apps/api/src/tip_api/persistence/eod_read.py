@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from typing import Protocol
 
 from tip_api.contracts.market_data.v1 import EodSessionIntegrityV1
@@ -28,6 +28,7 @@ class EodHistorySessionRead:
 
     integrity: EodSessionIntegrityV1
     bars: tuple[EodMarketBarReadModel, ...]
+    available_at: datetime | None = None
 
 
 class EodReadRepository(Protocol):

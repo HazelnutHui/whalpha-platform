@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-04 — Prove complete-base historical Universe reconstruction
+
+- Accepted ADR 0132 and added a network-disabled, `/tmp`-only adapter from a
+  custody-validated sanitized Identity reference package to complete same-day
+  Primary/Secondary membership ledgers.
+- The adapter formally rereads same-session Identity and EOD, reuses the
+  provider-type catalog only as a code dictionary, exactly rebuilds all three
+  accepted Identity-family fingerprints from the retained package, applies
+  current/previous bar and 20-session liquidity gates, and covers every
+  canonical stable ID.
+  Known policy failures are explicit exclusions; missing, conflicting,
+  incomplete, material-quality, and material-return inputs are quarantined.
+- Record-level ambiguity/collision is localized while non-localizable source
+  failures remain whole-session blockers. The 2026-09-03 real Dell shadow
+  covered 9,979 IDs and formally reread 19,958 rows: Primary 1,682 included /
+  8,235 excluded / 62 quarantined; Secondary 1,797 / 8,107 / 75. One source
+  collision affected one stable ID and did not invalidate unrelated records.
+- The offline package census found 279/303 available sessions and an exact
+  24-session gap from 2026-07-17 through 2026-08-19. Retained packages remain
+  ephemeral evidence, not canonical custody. The real output remains
+  mechanics-only because the source cutoff follows the session.
+- Folded 21 EOD component hashes into one deterministic source-envelope
+  fingerprint and added reusable formal history reads so the liquidity audit
+  does not reopen the same partitions. No provider request, credential read,
+  raw-body copy, `/data` write, publication, deployment, or scheduler change
+  occurred.
+- Source compilation, focused shadow regressions, and all 2,008 backend tests
+  passed with the two unchanged dependency warnings.
+
 ## 2026-09-04 — Expose family-specific historical research readiness
 
 - Accepted ADR 0131 and advanced the authoritative, network-free current-context

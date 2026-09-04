@@ -159,7 +159,13 @@ class CanonicalEodReadRepository:
             identity_as_of_date, _ = self._identity_reference(manifest)
             instruments = self._read_instruments(root, as_of_date=identity_as_of_date)
             bars = self._bars_from_table(table, instruments)
-            result.append(EodHistorySessionRead(self._integrity(root, session_date, manifest, table), bars))
+            result.append(
+                EodHistorySessionRead(
+                    self._integrity(root, session_date, manifest, table),
+                    bars,
+                    _parse_utc_datetime(manifest.get("created_at"), "manifest created_at"),
+                )
+            )
         return tuple(result)
 
     def _bars_from_table(

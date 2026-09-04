@@ -73,6 +73,18 @@ Canonical price coverage can satisfy a time-length requirement while research
 remains blocked by these missing families. Coverage claims must stay
 family-specific.
 
+Current membership implementation sequence:
+
+1. Complete-base single-session shadow is proven on 2026-09-03 with 9,979
+   stable IDs, two full three-state ledgers, and localized conflict quarantine.
+2. Replace repeated single-day reads with one formally validated shared EOD
+   panel and deterministic rolling 20-session calculations.
+3. Define durable, minimal source custody without copying raw provider bodies.
+4. Acquire or independently resolve only the exact 24 missing reference
+   sessions; never project current Activation backward.
+5. Run all available sessions into a disconnected `/tmp` batch, reconcile
+   completeness and timing, then separately review canonical publication.
+
 ## Priority 3 — First real strategy research
 
 Begin with the preregistered Strong-Leader Pullback study after formal data
