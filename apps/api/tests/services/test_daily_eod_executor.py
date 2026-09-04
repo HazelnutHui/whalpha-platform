@@ -528,12 +528,17 @@ def test_panel_cache_cannot_be_inside_data_root(tmp_path) -> None:
         (
             NextAction.CALCULATE_ENTRY_GEOMETRY,
             "candidate_entry_geometry_cli",
-            ("--candidate-audit", "--output-dir"),
+            ("--candidate-audit", "--panel-cache-root", "--output-dir"),
         ),
         (
             NextAction.CALCULATE_ETF_RELATIONSHIPS,
             "etf_relationship_cli",
-            ("--phase1a-audit", "--phase1b-audit", "--output-dir"),
+            (
+                "--phase1a-audit",
+                "--phase1b-audit",
+                "--panel-cache-root",
+                "--output-dir",
+            ),
         ),
         (
             NextAction.BUILD_MARKET_PREVIEW,

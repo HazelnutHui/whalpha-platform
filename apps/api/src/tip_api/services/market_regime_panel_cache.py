@@ -23,6 +23,7 @@ from tip_api.services.market_regime_sources import (
     MarketRegimeInputPanel,
     MarketRegimeSourceSession,
     MarketRegimeUniverseSource,
+    load_formal_market_regime_panel,
 )
 
 
@@ -150,6 +151,44 @@ def read_market_regime_panel_cache(
     if panel_source_boundary(panel) != source_boundary:
         raise MarketRegimePanelCacheError("reconstructed panel source boundary mismatch")
     return panel, manifest
+
+
+def load_market_regime_panel_with_cache(
+    *,
+    data_root: Path,
+    as_of_session: date,
+    cache_root: Path | None,
+    expected_source: Mapping[str, Any],
+) -> tuple[MarketRegimeInputPanel, str, str | None]:
+    """Load an exact cache entry or prove the same boundary through the cold reader."""
+
+    expected_boundary = normalize_source_boundary(expected_source)
+    if expected_boundary["as_of_session"] != as_of_session.isoformat():
+        raise MarketRegimePanelCacheError(
+            "panel cache expected source session differs"
+        )
+    if cache_root is not None and cache_root.exists():
+        try:
+            panel, manifest = read_market_regime_panel_cache(
+                cache_root=cache_root,
+                expected_source=expected_boundary,
+            )
+            return panel, "hit", manifest["logical_content_fingerprint"]
+        except MarketRegimePanelCacheMiss:
+            pass
+
+    panel = load_formal_market_regime_panel(
+        data_root=data_root,
+        as_of_session=as_of_session,
+    )
+    if panel_source_boundary(panel) != expected_boundary:
+        raise MarketRegimePanelCacheError(
+            "formal panel does not match the expected source boundary"
+        )
+    if cache_root is None:
+        return panel, "disabled", None
+    manifest = write_market_regime_panel_cache(cache_root=cache_root, panel=panel)
+    return panel, "populated", manifest["logical_content_fingerprint"]
 
 
 def panel_source_boundary(panel: MarketRegimeInputPanel) -> dict[str, Any]:

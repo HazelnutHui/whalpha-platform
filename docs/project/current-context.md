@@ -200,11 +200,12 @@ separately bounded.
 ## Immediate risks and next work
 
 1. **Daily-chain performance:** ADR 0125 removed full-history reconstruction
-   from date-only control paths. The normal current-context report fell from
-   roughly 7–8 minutes to 27.65 seconds on the same 303-session state, while an
-   explicit full-history mode preserves the prior deep audit. Measure the next
-   complete daily chain before selecting the remaining Phase 1a, Candidate,
-   Entry Geometry, ETF Relationships, MI, or Snapshot hotspot. Add reuse,
+   from date-only control paths. ADR 0126 reuses the same exact formal panel
+   and finalized current Candidate evidence in downstream Entry/ETF stages. On
+   unchanged 9/3 inputs, Entry completed in 49.67 seconds and ETF in 15.36
+   seconds with byte-identical business artifacts and unchanged zero-mismatch
+   Oracles. Measure the next complete daily chain before selecting a remaining
+   Candidate, Strategy/Visual Context, MI, or Snapshot hotspot. Add reuse,
    vectorization, or safe process parallelism only where measurement justifies
    it and outputs remain exact.
 2. **Historical analytics consumption:** connect the 303-session canonical

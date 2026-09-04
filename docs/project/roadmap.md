@@ -22,16 +22,18 @@ the [changelog](changelog.md) and ADRs.
 
 ## Priority 1 — Daily-chain performance and reliability
 
-The first session-discovery optimization is complete under ADR 0125: date-only
-control paths use the immutable completion index, while consumed partitions
-and explicit full-history audits retain deep validation.
+The first two measured reuse optimizations are complete under ADRs 0125 and
+0126: date-only control paths use the immutable completion index, while Entry
+Geometry and ETF Relationships reuse the exact formal panel and finalized
+current Candidate evidence. Consumed inputs and explicit full audits retain
+their deep validation boundaries.
 
 Next:
 
-1. Measure one complete post-ADR-0125 daily chain on Dell.
+1. Measure one complete post-ADR-0125/0126 daily chain on Dell.
 2. Attribute remaining wall time, CPU, I/O, and memory by stage.
-3. Remove repeated evidence reconstruction through immutable-byte reuse or
-   content-bound indexes where measurement justifies it.
+3. Remove any remaining repeated evidence reconstruction only where the new
+   complete-chain measurement justifies it.
 4. Vectorize or process-parallelize only independent CPU-heavy work after exact
    serial equivalence is proven.
 5. Preserve every custody, freshness, source, CAS, Oracle, residue, and

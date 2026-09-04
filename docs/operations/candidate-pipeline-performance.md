@@ -40,8 +40,8 @@ The command is socket-guarded, writes no Production state, and requires an
 owner-controlled new `/tmp` target. Publication and deployment remain separate
 approval-bound operations.
 
-Phase 1a and the daily Candidate append may share an explicit Dell-local panel
-cache:
+Phase 1a and the downstream daily analytics may share an explicit Dell-local
+panel cache:
 
 ```bash
 scripts/admin/calculate-market-regime-offline.sh \
@@ -69,6 +69,15 @@ Identity, Activation, and ordered-Universe source ledger. An absent exact
 entry invokes the unchanged formal reader and populates the cache. A present
 unsafe, malformed, or mismatched entry fails closed. The cache has no `latest`
 pointer, never belongs in OCI, and does not authorize `/data` writes.
+
+Entry Geometry and ETF Relationships receive the same cache root from the
+daily executor. Entry selects its exact entry from the formally reread current
+Candidate source panel; ETF Relationships selects it from the formally reread
+Phase 1a input manifest. Both retain the formal cold-reader fallback and must
+prove exact source-boundary equality before using or populating a missing
+entry. Entry also uses the finalized current-Candidate and governed state
+projections rather than reconstructing the complete cumulative Candidate
+audit before reading the same histories again.
 
 The Phase 1a command also calculates and independently checks Sector ETF
 Rotation from the same in-memory panel. It formally binds the second audit to
@@ -202,13 +211,36 @@ development results; `/data` and Production were unchanged.
 
 ## Next performance sequence
 
-1. Measure the next complete daily run with ADR 0125 active. Do not infer the
-   full end-to-end saving from the isolated control-path benchmark below.
-2. Attribute the remaining time separately across Phase 1a, Candidate, Entry
-   Geometry, ETF Relationships, MI plan/Apply, and Snapshot source-product
-   construction before changing another calculation or contract.
+1. Measure the next complete daily run with ADRs 0125 and 0126 active. Do not
+   infer the full end-to-end saving from isolated stage replays.
+2. Attribute the remaining time separately across Candidate, Strategy
+   Channels, Candidate Visual Context, MI plan/Apply, and Snapshot
+   source-product construction before changing another calculation or
+   contract.
 3. Keep the daily inner Oracle serial unless a new workload measurement proves
    deterministic process parallelism is faster.
+
+## 2026-09-04 downstream finalized-evidence reuse
+
+ADR 0126 extends the existing ADR 0025 panel cache and ADR 0117 finalized-
+Candidate boundary; it does not create another cache or weaken formal source
+validation. All measurements used the unchanged 2026-09-03 Dell inputs and
+wrote development audits only under `/tmp`.
+
+| Stage/read | Prior evidence | Optimized replay | Result |
+| --- | ---: | ---: | --- |
+| Phase 1a pre-write | 621.184 s | 164.447 s after ADR 0125 | same composites, raw metrics, Oracle, and logical fingerprint |
+| Current Candidate batches + governed state ledger | complete reconstruction followed by duplicate history reads | 34.410 s | 2 exact current batches, 35,490 typed states, unchanged Candidate audit fingerprint |
+| Entry Geometry end-to-end | roughly 19-minute uninstrumented stage interval | 49.67 s outer / 48.335 s instrumented | all 3 business artifacts byte-identical; same logical fingerprint; zero Oracle mismatch |
+| ETF panel load | 148.666 s after ADR 0125 | 8.423 s | exact cache hit bound to Phase 1a input evidence |
+| ETF pre-write | 154.178 s after ADR 0125 | 14.193 s | all 8 business artifacts byte-identical; same audit/history fingerprints and zero Oracle mismatch |
+| ETF outer process | 155.34 s after ADR 0125 | 15.36 s | no network or Production write |
+
+The original Entry stage did not record internal timings, so its prior value is
+an audit-directory timestamp interval rather than an exact process timer. The
+new CLI reports Candidate/state reread, panel load, calculation/Oracle, audit
+write/reread, total elapsed, cache status, and peak RSS in its physical stdout
+summary. Runtime evidence remains outside business logical fingerprints.
 
 ## 2026-09-04 session-discovery validation tiers
 

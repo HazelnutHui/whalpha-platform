@@ -27,8 +27,11 @@ from tip_api.services.etf_relationships import (
     compare_relationships_with_regime,
     current_relationship_records,
 )
-from tip_api.services.market_regime_audit import read_market_regime_audit
-from tip_api.services.market_regime_sources import load_formal_market_regime_panel
+from tip_api.services.market_regime_audit import read_market_regime_audit_contents
+from tip_api.services.market_regime_panel_cache import (
+    MarketRegimePanelCacheError,
+    load_market_regime_panel_with_cache,
+)
 from tip_api.services.market_regime_state_audit import read_market_regime_state_audit
 
 
@@ -48,11 +51,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--phase1a-audit", required=True, type=Path)
     parser.add_argument("--phase1b-audit", required=True, type=Path)
+    parser.add_argument("--panel-cache-root", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--verify-output", action="store_true")
     args = parser.parse_args(argv)
-    for name in ("data_root", "phase1a_audit", "phase1b_audit", "output_dir"):
-        if not getattr(args, name).is_absolute():
+    for name in (
+        "data_root",
+        "phase1a_audit",
+        "phase1b_audit",
+        "panel_cache_root",
+        "output_dir",
+    ):
+        value = getattr(args, name)
+        if value is not None and not value.is_absolute():
             parser.error(f"--{name.replace('_','-')} must be absolute")
     if args.verify_output:
         manifest = read_etf_relationship_audit(args.output_dir)
@@ -61,13 +72,26 @@ def main(argv: list[str] | None = None) -> int:
     validate_tmp_output_dir(args.output_dir)
     total_started=time.monotonic(); timings={}
     with _offline_socket_guard():
-        load_started=time.monotonic()
-        phase1a=read_market_regime_audit(args.phase1a_audit)
+        audit_started=time.monotonic()
+        phase1a_contents=read_market_regime_audit_contents(args.phase1a_audit)
+        phase1a=phase1a_contents.manifest
         phase1b=read_market_regime_state_audit(args.phase1b_audit)
         _validate_phase_audits(phase1a,phase1b,args.as_of_session)
         regime_summaries=_read_regime_summaries(args.phase1b_audit)
-        panel=load_formal_market_regime_panel(data_root=args.data_root,as_of_session=args.as_of_session)
-        timings["panel_load_seconds"]=_seconds(time.monotonic()-load_started)
+        timings["phase_audit_reread_seconds"]=_seconds(time.monotonic()-audit_started)
+        panel_started=time.monotonic()
+        try:
+            panel,cache_status,cache_fingerprint=load_market_regime_panel_with_cache(
+                data_root=args.data_root,
+                as_of_session=args.as_of_session,
+                cache_root=args.panel_cache_root,
+                expected_source=phase1a_contents.input_manifest,
+            )
+        except MarketRegimePanelCacheError as exc:
+            raise RuntimeError(
+                "ETF relationship panel cache failed formal validation"
+            ) from exc
+        timings["panel_load_seconds"]=_seconds(time.monotonic()-panel_started)
         calculation_started=time.monotonic()
         history=calculate_etf_relationship_history(panel=panel)
         current=current_relationship_records(history,as_of_session=args.as_of_session)
@@ -95,7 +119,10 @@ def main(argv: list[str] | None = None) -> int:
             generated_at=datetime.now(UTC),timings=timings,
             peak_memory_kib=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
         )
-    print(json.dumps(_summary(manifest,args.output_dir),sort_keys=True,separators=(",",":")))
+    print(json.dumps({**_summary(manifest,args.output_dir),
+                      "panel_cache_status":cache_status,
+                      "panel_cache_logical_fingerprint":cache_fingerprint},
+                     sort_keys=True,separators=(",",":")))
     return 1 if manifest["oracle_mismatch_count"] or not all(flags.values()) else 0
 
 

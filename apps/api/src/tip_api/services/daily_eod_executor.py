@@ -488,6 +488,8 @@ def run_offline_action(
             "--output-dir",
             str(output),
         ]
+        if config.panel_cache_root is not None:
+            argv.extend(("--panel-cache-root", str(config.panel_cache_root)))
         summary = _invoke_main(candidate_entry_geometry_cli.main, argv)
     elif action is NextAction.CALCULATE_ETF_RELATIONSHIPS:
         output = config.paths.phase2_audit
@@ -503,6 +505,8 @@ def run_offline_action(
             "--output-dir",
             str(output),
         ]
+        if config.panel_cache_root is not None:
+            argv.extend(("--panel-cache-root", str(config.panel_cache_root)))
         summary = _invoke_main(etf_relationship_cli.main, argv)
     elif action is NextAction.BUILD_MARKET_PREVIEW:
         output = config.paths.preview_bundle

@@ -10,9 +10,11 @@ from uuid import UUID, uuid5
 
 import pytest
 
+import tip_api.services.market_regime_panel_cache as panel_cache
 from tip_api.services.market_regime_panel_cache import (
     MarketRegimePanelCacheError,
     MarketRegimePanelCacheMiss,
+    load_market_regime_panel_with_cache,
     panel_source_boundary,
     read_market_regime_panel_cache,
     write_market_regime_panel_cache,
@@ -152,3 +154,61 @@ def test_panel_cache_rejects_duplicate_bar_before_creating_root() -> None:
     with pytest.raises(MarketRegimePanelCacheError, match="unique complete"):
         write_market_regime_panel_cache(cache_root=root, panel=malformed)
     assert not root.exists()
+
+
+def test_exact_panel_loader_hits_cache_without_cold_read(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    panel = _panel()
+    root = Path(tempfile.mkdtemp(prefix="mrom-panel-cache-loader-", dir="/tmp"))
+    root.chmod(0o700)
+    try:
+        manifest = write_market_regime_panel_cache(cache_root=root, panel=panel)
+        monkeypatch.setattr(
+            panel_cache,
+            "load_formal_market_regime_panel",
+            lambda **kwargs: pytest.fail("cold reader must not run on an exact hit"),
+        )
+        loaded, status, fingerprint = load_market_regime_panel_with_cache(
+            data_root=Path("/data/not-read"),
+            as_of_session=panel.as_of_session,
+            cache_root=root,
+            expected_source=panel_source_boundary(panel),
+        )
+        assert loaded == panel
+        assert status == "hit"
+        assert fingerprint == manifest["logical_content_fingerprint"]
+    finally:
+        shutil.rmtree(root, ignore_errors=True)
+
+
+def test_exact_panel_loader_populates_miss_and_rejects_cold_source_drift(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    panel = _panel()
+    root = tmp_path / "cache"
+    monkeypatch.setattr(
+        panel_cache,
+        "load_formal_market_regime_panel",
+        lambda **kwargs: panel,
+    )
+    loaded, status, fingerprint = load_market_regime_panel_with_cache(
+        data_root=tmp_path / "data",
+        as_of_session=panel.as_of_session,
+        cache_root=root,
+        expected_source=panel_source_boundary(panel),
+    )
+    assert loaded == panel
+    assert status == "populated"
+    assert fingerprint is not None
+
+    changed = panel_source_boundary(panel)
+    changed["history_source_fingerprint"] = "2" * 64
+    with pytest.raises(MarketRegimePanelCacheError, match="does not match"):
+        load_market_regime_panel_with_cache(
+            data_root=tmp_path / "data",
+            as_of_session=panel.as_of_session,
+            cache_root=None,
+            expected_source=changed,
+        )

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0126](0126-reuse-exact-panel-and-current-candidate-evidence-downstream.md): Reuse the exact formal panel cache and finalized current Candidate evidence in downstream daily stages without changing business outputs.
+
 - [ADR 0125](0125-separate-session-discovery-from-partition-validation.md): Use the immutable completion index for date-only control paths while retaining deep validation for consumed partitions and explicit full-history audits.
 
 - [ADR 0124](0124-exclude-catalog-known-etv-without-inferring-etf.md): Treat catalog-known ETV as unsupported and excluded without inferring ETF or weakening the malformed-data gate.
@@ -45,6 +47,7 @@ Each ADR should include:
 
 ## Records
 
+- [0126: Reuse Exact Panel and Current Candidate Evidence Downstream](0126-reuse-exact-panel-and-current-candidate-evidence-downstream.md)
 - [0001: Use the Workstation as the Project Source of Truth](0001-workstation-source-of-truth.md)
 - [0002: Separate Compute and Public Web Serving](0002-separate-compute-and-web-serving.md)
 - [0003: Introduce a Market Data Provider Boundary](0003-market-data-provider-boundary.md)

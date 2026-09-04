@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-04 — Reuse exact panel and current Candidate evidence downstream
+
+- Accepted ADR 0126. Entry Geometry and ETF Relationships now receive the
+  existing content-addressed formal panel cache from the daily executor and
+  select an entry only through a formally reread upstream source ledger. A
+  cache miss retains the formal cold reader and exact source comparison;
+  malformed or mismatched cache evidence fails closed.
+- Entry Geometry now consumes the finalized current-Candidate and governed
+  state projections instead of fully reconstructing the cumulative Candidate
+  audit and then decoding the large histories again. No Candidate or Entry
+  formula, parameter, contract, rank, or source binding changed.
+- On unchanged 2026-09-03 Dell inputs, Entry completed in 49.67 seconds versus
+  an approximately 19-minute prior uninstrumented stage interval. All three
+  business artifacts were byte-identical, the audit logical fingerprint
+  remained `0e2f024489e2c77a6368e2d5af744405c0a1e37dd40c38a4d92021b182e6975f`,
+  and Oracle mismatch remained zero.
+- ETF completed in 15.36 seconds; its pre-write time fell from 154.178 to
+  14.193 seconds and panel loading from 148.666 to 8.423 seconds. All eight
+  business artifacts were byte-identical, audit/history logical fingerprints
+  remained unchanged, and all equivalence and Oracle gates passed.
+- The focused 31-test set, source compilation, difference checks, and all 1,985
+  backend tests passed with the two unchanged dependency warnings. These were
+  offline `/tmp` replays with no canonical `/data`, Production, scheduler,
+  publication, Snapshot, bundle, OCI, formula, or Universe change.
+
 ## 2026-09-04 — Separate session discovery from deep partition validation
 
 - Added ADR 0125 and advanced the network-free current-context report to 1.2.

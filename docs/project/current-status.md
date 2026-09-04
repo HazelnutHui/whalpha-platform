@@ -104,19 +104,23 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 ```
 
 The 9/1-9/3 catch-up proved correctness but also showed material performance
-debt. ADR 0125 now separates date-only completion discovery from deep partition
-validation. On the same 303-session Dell state, the normal current-context
-report fell from roughly 7–8 minutes to 27.65 seconds; the explicit full-history
-mode still reconstructs all partitions. Several calculation stages remain
-CPU-heavy and mainly single-core and require a new end-to-end measurement.
+debt. ADR 0125 separates date-only discovery from deep partition validation;
+the normal current-context report fell from roughly 7–8 minutes to 27.65
+seconds. ADR 0126 now reuses the exact formal panel and finalized current
+Candidate evidence downstream. On unchanged 9/3 inputs, Entry Geometry
+completed in 49.67 seconds instead of an approximately 19-minute
+uninstrumented stage interval, and ETF Relationships completed in 15.36
+seconds instead of 155.34 seconds after ADR 0125. Every business artifact was
+byte-identical, logical fingerprints matched, and Oracles remained at zero.
+These were `/tmp` development replays; Production and `/data` did not change.
 
 ## Next priority
 
-1. Measure the next complete daily chain on Dell with ADR 0125 active.
-2. Rank the remaining measured hotspots before introducing further reuse.
-3. Vectorize or safely parallelize only independently measurable Phase 1a,
-   Candidate, Entry Geometry, ETF Relationships, or publication work without
-   changing outputs.
+1. Measure the next complete daily chain on Dell with ADRs 0125 and 0126 active.
+2. Rank the remaining Candidate, Strategy/Visual Context, MI, and Snapshot
+   hotspots before introducing further reuse.
+3. Vectorize or safely parallelize only independently measurable CPU-heavy
+   work after exact serial output equivalence is proven.
 4. Connect the 303-session canonical foundation to a governed point-in-time
    research dataset and reconcile the 26-session analytics limitation.
 5. Only then begin real preregistered chronological strategy research.
