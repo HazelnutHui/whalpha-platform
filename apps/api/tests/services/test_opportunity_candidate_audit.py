@@ -645,6 +645,71 @@ def test_deferred_finalization_preserves_work_until_separate_formal_reread() -> 
         shutil.rmtree(work, ignore_errors=True)
 
 
+def test_daily_finalization_uses_completed_write_custody_without_full_reread(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    output = Path(tempfile.mkdtemp(prefix="mrom-candidate-daily-output-", dir="/tmp"))
+    work = Path(tempfile.mkdtemp(prefix="mrom-candidate-daily-work-", dir="/tmp"))
+    shutil.rmtree(output)
+    shutil.rmtree(work)
+    try:
+        prepared = _write(output, work_dir=work, defer_finalization=True)
+        monkeypatch.setattr(
+            candidate_audit,
+            "_read_opportunity_candidate_audit",
+            lambda *args, **kwargs: pytest.fail(
+                "daily finalization must not run the full semantic reader"
+            ),
+        )
+        completed = candidate_audit.finalize_resumable_candidate_audit(
+            work,
+            output,
+            validation_scope=candidate_audit.CANDIDATE_FINALIZATION_DAILY,
+        )
+        assert completed is not None
+        assert (
+            completed["logical_content_fingerprint"]
+            == prepared["logical_content_fingerprint"]
+        )
+        assert output.is_dir() and not work.exists()
+        evidence = candidate_audit.read_opportunity_candidate_publication_evidence(
+            output
+        )
+        assert evidence.manifest == completed
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def test_daily_finalization_rejects_changed_artifact_and_unknown_scope() -> None:
+    output = Path(tempfile.mkdtemp(prefix="mrom-candidate-daily-tamper-output-", dir="/tmp"))
+    work = Path(tempfile.mkdtemp(prefix="mrom-candidate-daily-tamper-work-", dir="/tmp"))
+    shutil.rmtree(output)
+    shutil.rmtree(work)
+    try:
+        _write(output, work_dir=work, defer_finalization=True)
+        artifact = work / CANDIDATE_ARTIFACT_FILES[0]
+        artifact.chmod(0o600)
+        artifact.write_bytes(artifact.read_bytes() + b" ")
+        artifact.chmod(0o400)
+        with pytest.raises(OpportunityCandidateAuditError, match="custody"):
+            candidate_audit.finalize_resumable_candidate_audit(
+                work,
+                output,
+                validation_scope=candidate_audit.CANDIDATE_FINALIZATION_DAILY,
+            )
+        assert not output.exists()
+        with pytest.raises(OpportunityCandidateAuditError, match="scope"):
+            candidate_audit.finalize_resumable_candidate_audit(
+                work,
+                output,
+                validation_scope="unknown",
+            )
+    finally:
+        shutil.rmtree(output, ignore_errors=True)
+        shutil.rmtree(work, ignore_errors=True)
+
+
 @pytest.mark.parametrize("gate", ["mismatch", "shared", "permutation"])
 def test_writer_rejects_failed_oracle_gate(gate: str) -> None:
     target = Path(tempfile.mkdtemp(prefix="mrom-candidate-reject-", dir="/tmp"))

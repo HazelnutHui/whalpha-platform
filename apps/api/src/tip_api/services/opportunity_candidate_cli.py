@@ -234,7 +234,11 @@ def main(argv: list[str] | None = None) -> int:
 
     validate_output(args.output_dir)
     if args.audit_work_dir is not None:
-        completed = _finalize_resumable_audit(args.audit_work_dir, args.output_dir)
+        completed = _finalize_resumable_audit(
+            args.audit_work_dir,
+            args.output_dir,
+            validation_tier=validation_tier,
+        )
         if completed is not None:
             tier_evidence = _validate_calculated_tier(validation_tier, completed)
             print(
@@ -338,6 +342,12 @@ def main(argv: list[str] | None = None) -> int:
             "candidate_session_count": len(candidate_sessions),
             f"candidate_validation_tier_{validation_tier}_count": 1,
             "candidate_oracle_requested_max_workers": args.max_workers,
+            "candidate_finalization_validated_write_plus_physical_custody_count": int(
+                validation_tier == "daily"
+            ),
+            "candidate_finalization_full_semantic_reread_count": int(
+                validation_tier != "daily"
+            ),
         }
         incremental_kwargs = {}
         if prior_audit is not None:
@@ -381,7 +391,11 @@ def main(argv: list[str] | None = None) -> int:
             prepared_fingerprint = manifest["logical_content_fingerprint"]
             del run, prior_audit, raw_facts, normalization_ledger, incremental_kwargs
             gc.collect()
-            completed = _finalize_resumable_audit(args.audit_work_dir, args.output_dir)
+            completed = _finalize_resumable_audit(
+                args.audit_work_dir,
+                args.output_dir,
+                validation_tier=validation_tier,
+            )
             if completed is None or completed.get("logical_content_fingerprint") != prepared_fingerprint:
                 raise RuntimeError("resumable Candidate audit did not complete its formal finalization")
             manifest = completed
@@ -428,10 +442,28 @@ def _read_candidate_business_fingerprints(path: Path):
     return read_opportunity_candidate_business_fingerprints(path)
 
 
-def _finalize_resumable_audit(work_dir: Path, output_dir: Path):
-    from tip_api.services.opportunity_candidate_audit import finalize_resumable_candidate_audit
+def _finalize_resumable_audit(
+    work_dir: Path,
+    output_dir: Path,
+    *,
+    validation_tier: str,
+):
+    from tip_api.services.opportunity_candidate_audit import (
+        CANDIDATE_FINALIZATION_DAILY,
+        CANDIDATE_FINALIZATION_FULL,
+        finalize_resumable_candidate_audit,
+    )
 
-    return finalize_resumable_candidate_audit(work_dir, output_dir)
+    validation_scope = (
+        CANDIDATE_FINALIZATION_DAILY
+        if validation_tier == "daily"
+        else CANDIDATE_FINALIZATION_FULL
+    )
+    return finalize_resumable_candidate_audit(
+        work_dir,
+        output_dir,
+        validation_scope=validation_scope,
+    )
 
 
 def _resolve_validation_tier(parser: argparse.ArgumentParser, args) -> str | None:

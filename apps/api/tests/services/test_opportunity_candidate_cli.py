@@ -257,7 +257,9 @@ def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp
     monkeypatch.setattr(
         cli,
         "_finalize_resumable_audit",
-        lambda work_dir, output_dir: calls.append(("finalize", work_dir, output_dir))
+        lambda work_dir, output_dir, *, validation_tier: calls.append(
+            ("finalize", work_dir, output_dir, validation_tier)
+        )
         or {"schema_version": "1.0", "as_of_session": "2026-08-24", "oracle_mismatch_count": 0},
     )
     monkeypatch.setattr(cli, "read_market_regime_state_audit", lambda path: pytest.fail("Phase1b must not be read"))
@@ -268,8 +270,46 @@ def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp
         "--output-dir", str(output),
         "--audit-work-dir", str(work),
     ]) == 0
-    assert calls == [("validate", output), ("finalize", work, output)]
+    assert calls == [
+        ("validate", output),
+        ("finalize", work, output, "code_change"),
+    ]
     assert '"status":"completed"' in capsys.readouterr().out
+
+
+@pytest.mark.parametrize(
+    ("validation_tier", "expected_scope"),
+    [
+        ("daily", "validated_write_plus_physical_custody"),
+        ("periodic", "full_semantic_reread"),
+        ("code_change", "full_semantic_reread"),
+    ],
+)
+def test_candidate_finalization_scope_is_validation_tier_bound(
+    monkeypatch,
+    tmp_path,
+    validation_tier,
+    expected_scope,
+) -> None:
+    import tip_api.services.opportunity_candidate_audit as audit
+
+    calls = []
+    monkeypatch.setattr(
+        audit,
+        "finalize_resumable_candidate_audit",
+        lambda work_dir, output_dir, *, validation_scope: calls.append(
+            (work_dir, output_dir, validation_scope)
+        )
+        or {"completion_status": "completed"},
+    )
+    work = tmp_path / "work"
+    output = tmp_path / "output"
+    assert cli._finalize_resumable_audit(
+        work,
+        output,
+        validation_tier=validation_tier,
+    ) == {"completion_status": "completed"}
+    assert calls == [(work, output, expected_scope)]
 
 
 def test_socket_guard_blocks_network_allows_local_process_ipc_and_restores(tmp_path) -> None:

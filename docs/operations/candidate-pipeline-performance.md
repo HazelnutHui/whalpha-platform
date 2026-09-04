@@ -265,6 +265,37 @@ write plus reread 1.178 seconds. Both business artifacts were byte-identical
 to the prior audit and logical fingerprint remained unchanged. This bounded
 path is not a current optimization target.
 
+## 2026-09-04 daily Candidate finalization result
+
+ADR 0128 separates the daily commit gate from the periodic semantic audit.
+The writer still validates the full cumulative typed evidence, source and
+prefix lineage, parameters, transition/equivalence gates, and independent
+current-session Oracle before it prepares the completed manifest. Daily
+finalization then rehashes every immutable artifact and validates exact files,
+ownership, modes, sizes, manifest identity, parameters, session, Universe,
+equivalence, and zero-Oracle gates before the atomic directory rename.
+`periodic`, `code_change`, and the direct finalizer default retain the complete
+post-write semantic reconstruction.
+
+On unchanged 2026-09-03 inputs, the prior daily replay took 521.21 seconds and
+peaked at 8,886,376 KiB. The daily-scope replay took 294.99 seconds and peaked
+at 7,534,432 KiB, saving 226.22 seconds or 43.4%. The baseline recorded 95.365
+seconds before audit write and 44.104 seconds for stream write; the daily-scope
+run recorded comparable 94.770- and 44.095-second stages. All ten business
+artifacts were byte-identical to the prior audit; logical fingerprint
+`b6945f58b4766fd2e110415a7fa45816447205a61caf1085f9fe759c2d89f12f`
+was unchanged and Oracle mismatch remained zero.
+
+The bounded physical completion reader alone took 1.595 seconds and peaked at
+152,816 KiB. A separate full semantic reread of the delivered fast audit then
+passed in 228.285 seconds with 8,737,080 KiB peak RSS, the same logical
+fingerprint, zero Oracle mismatches, and completed status. Roughly 154 seconds
+of the fast process remain outside the current named calculation, stream-write,
+and physical-completion measurements; that interval must be profiled before
+further Candidate changes rather than attributed by inference. These were
+Dell `/tmp` replays only. No `/data`, Production, scheduler, publication,
+Snapshot, bundle, OCI, formula, parameter, rank, contract, or Universe changed.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

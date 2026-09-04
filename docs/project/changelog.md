@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-04 — Separate daily Candidate commit from semantic audit
+
+- Accepted ADR 0128. Daily verified-prior Candidate completion now combines
+  the writer's complete semantic/source/Oracle validation with post-write
+  physical custody and atomic delivery. Periodic, code-change, and direct
+  finalization retain the complete semantic reread by default.
+- On unchanged 2026-09-03 Dell inputs, completion fell from 521.21 seconds and
+  8,886,376 KiB peak RSS to 294.99 seconds and 7,534,432 KiB, a 226.22-second
+  or 43.4% wall-time reduction. All ten business artifacts were byte-identical,
+  logical fingerprint remained
+  `b6945f58b4766fd2e110415a7fa45816447205a61caf1085f9fe759c2d89f12f`,
+  and Oracle mismatch remained zero.
+- A separate explicit full semantic reread of the optimized audit passed in
+  228.285 seconds with 8,737,080 KiB peak RSS, the same logical fingerprint,
+  zero Oracle mismatches, and completed status. The bounded custody reader
+  alone took 1.595 seconds and peaked at 152,816 KiB.
+- Candidate-focused 45 tests, source compilation, difference checks, and all
+  1,991 backend tests passed with the two unchanged dependency warnings.
+- No `/data`, Production, scheduler, publication, Snapshot, bundle, OCI,
+  formula, parameter, rank, contract, or Universe change occurred.
+
 ## 2026-09-04 — Bound Strategy Channels to current Candidate evidence
 
 - Accepted ADR 0127. Strategy Channels now uses the finalized current-batch

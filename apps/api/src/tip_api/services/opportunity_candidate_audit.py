@@ -61,6 +61,12 @@ CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT = "incremental-validation-ledger.json"
 CANDIDATE_AUDIT_RESUME_CONTRACT = "opportunity-candidate-audit-resume/1.0"
 CANDIDATE_AUDIT_RESUME_FILE = "candidate-audit-resume.json"
 CANDIDATE_AUDIT_PENDING_MANIFEST = f"{CANDIDATE_AUDIT_MANIFEST}.partial"
+CANDIDATE_FINALIZATION_FULL = "full_semantic_reread"
+CANDIDATE_FINALIZATION_DAILY = "validated_write_plus_physical_custody"
+CANDIDATE_FINALIZATION_SCOPES = {
+    CANDIDATE_FINALIZATION_FULL,
+    CANDIDATE_FINALIZATION_DAILY,
+}
 CANDIDATE_INCREMENTAL_ARTIFACT_FILES = (
     *CANDIDATE_ARTIFACT_FILES,
     CANDIDATE_INCREMENTAL_VALIDATION_ARTIFACT,
@@ -467,7 +473,22 @@ def read_opportunity_candidate_publication_evidence(
     not changed between publication construction, planning, and Apply.
     """
 
-    target = _safe_completed_directory(output_dir)
+    return _read_opportunity_candidate_completion_evidence(output_dir)
+
+
+def _read_opportunity_candidate_completion_evidence(
+    output_dir: Path,
+    *,
+    persistent_names: frozenset[str] | set[str] = frozenset(
+        {"opportunity-candidate"}
+    ),
+) -> OpportunityCandidatePublicationEvidence:
+    """Verify completed physical custody and manifest gates without history replay."""
+
+    target = _safe_completed_directory(
+        output_dir,
+        persistent_names=persistent_names,
+    )
     names = {item.name for item in target.iterdir()}
     if CANDIDATE_AUDIT_MANIFEST not in names:
         raise OpportunityCandidateAuditError("audit file set is incomplete or contains extras")
@@ -1037,9 +1058,18 @@ def read_opportunity_candidate_business_fingerprints(
     return manifest, projections
 
 
-def finalize_resumable_candidate_audit(work_dir: Path, output_dir: Path) -> dict[str, Any] | None:
+def finalize_resumable_candidate_audit(
+    work_dir: Path,
+    output_dir: Path,
+    *,
+    validation_scope: str = CANDIDATE_FINALIZATION_FULL,
+) -> dict[str, Any] | None:
     """Finalize a fully written work directory without rerunning Candidate calculation."""
 
+    if validation_scope not in CANDIDATE_FINALIZATION_SCOPES:
+        raise OpportunityCandidateAuditError(
+            "Candidate finalization validation scope is unsupported"
+        )
     final_target = validate_tmp_output_dir(output_dir)
     if final_target.exists():
         raise OpportunityCandidateAuditError("resumable output directory must not already exist")
@@ -1094,10 +1124,16 @@ def finalize_resumable_candidate_audit(work_dir: Path, output_dir: Path) -> dict
         if names:
             raise OpportunityCandidateAuditError("resumable work directory lost its recovery journal")
         return None
-    manifest, _, _, _, _, _ = _read_opportunity_candidate_audit(
-        target,
-        persistent_names={"candidate-work"},
-    )
+    if validation_scope == CANDIDATE_FINALIZATION_FULL:
+        manifest, _, _, _, _, _ = _read_opportunity_candidate_audit(
+            target,
+            persistent_names={"candidate-work"},
+        )
+    else:
+        manifest = _read_opportunity_candidate_completion_evidence(
+            target,
+            persistent_names={"candidate-work"},
+        ).manifest
     os.rename(target, final_target)
     _fsync_directory(final_target.parent)
     return manifest

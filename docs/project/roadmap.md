@@ -22,21 +22,25 @@ the [changelog](changelog.md) and ADRs.
 
 ## Priority 1 — Daily-chain performance and reliability
 
-The first measured reuse optimizations are complete under ADRs 0125–0127:
+The first measured reuse optimizations are complete under ADRs 0125–0128:
 date-only control paths use the immutable completion index; Entry Geometry and
 ETF Relationships reuse the exact formal panel and finalized current Candidate
-evidence; Strategy Channels reads only its finalized current batches. Consumed
-inputs and explicit full audits retain their deep validation boundaries.
+evidence; Strategy Channels reads only its finalized current batches; daily
+Candidate commit uses validated write plus complete physical custody while
+periodic and code-change tiers retain full semantic reread. Consumed inputs and
+explicit full audits retain their deep validation boundaries.
 
 Next:
 
-1. Measure one complete post-ADR-0125/0126 daily chain on Dell.
-2. Attribute remaining wall time, CPU, I/O, and memory by stage.
-3. Remove any remaining repeated evidence reconstruction only where the new
+1. Measure one complete post-ADR-0125–0128 daily chain on Dell.
+2. Profile Candidate's remaining uninstrumented interval and attribute wall
+   time, CPU, I/O, and memory before changing that path again.
+3. Rank MI and Snapshot wall time using the same complete-chain evidence.
+4. Remove any remaining repeated evidence reconstruction only where the new
    complete-chain measurement justifies it.
-4. Vectorize or process-parallelize only independent CPU-heavy work after exact
+5. Vectorize or process-parallelize only independent CPU-heavy work after exact
    serial equivalence is proven.
-5. Preserve every custody, freshness, source, CAS, Oracle, residue, and
+6. Preserve every custody, freshness, source, CAS, Oracle, residue, and
    postflight gate.
 
 Do not reconnect the write-capable scheduler as part of performance work. The

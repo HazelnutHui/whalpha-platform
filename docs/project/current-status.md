@@ -116,22 +116,29 @@ ADR 0127 then reduced Strategy Channels to 33.82 seconds by replacing a
 225.978-second complete Candidate reconstruction with a 12.588-second exact
 current-batch projection. Its four business artifacts were also byte-identical
 and its Oracle remained at zero. Visual Context was measured at 51.11 seconds
-and left unchanged. These were `/tmp` development replays; Production and
+and left unchanged. ADR 0128 reduced daily Candidate completion from 521.21 to
+294.99 seconds by using the already validated write plus complete physical
+custody for the daily commit gate. All ten business files were byte-identical;
+the unchanged logical fingerprint and Oracle passed a separate 228.285-second
+full semantic reread. These were `/tmp` development replays; Production and
 `/data` did not change.
 
 ## Next priority
 
-1. Measure the next complete daily chain on Dell with ADRs 0125 and 0126 active.
-2. Rank the remaining Candidate, MI, and Snapshot hotspots before introducing
-   further reuse; Visual Context is currently a bounded 51.11-second stage.
-3. Vectorize or safely parallelize only independently measurable CPU-heavy
+1. Measure the next complete daily chain on Dell with ADRs 0125–0128 active.
+2. Profile Candidate's roughly 154-second interval not yet covered by named
+   calculation, stream-write, or physical-completion timers; do not infer its
+   cause from wall time alone.
+3. Rank the remaining MI and Snapshot hotspots before introducing further
+   reuse; Visual Context is currently a bounded 51.11-second stage.
+4. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-4. Connect the 303-session canonical foundation to a governed point-in-time
+5. Connect the 303-session canonical foundation to a governed point-in-time
    research dataset and reconcile the 26-session analytics limitation.
-5. Only then begin real preregistered chronological strategy research.
-6. Continue decision-useful visualization in parallel where it does not change
+6. Only then begin real preregistered chronological strategy research.
+7. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
-7. Add options expression, fundamentals/valuation, events, and later
+8. Add options expression, fundamentals/valuation, events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune new formulas or claim backtest results before the governed research

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0128](0128-separate-daily-candidate-commit-from-periodic-semantic-reread.md): Commit daily Candidate output through validated write plus complete physical custody while retaining full semantic reread for periodic and code-change tiers.
+
 - [ADR 0127](0127-bound-strategy-input-to-current-candidate-evidence.md): Read only finalized current Candidate batches for Strategy Channels instead of reconstructing unused cumulative Candidate histories.
 
 - [ADR 0126](0126-reuse-exact-panel-and-current-candidate-evidence-downstream.md): Reuse the exact formal panel cache and finalized current Candidate evidence in downstream daily stages without changing business outputs.
@@ -49,6 +51,7 @@ Each ADR should include:
 
 ## Records
 
+- [0128: Separate Daily Candidate Commit from Periodic Semantic Reread](0128-separate-daily-candidate-commit-from-periodic-semantic-reread.md)
 - [0127: Bound Strategy Input to Current Candidate Evidence](0127-bound-strategy-input-to-current-candidate-evidence.md)
 - [0126: Reuse Exact Panel and Current Candidate Evidence Downstream](0126-reuse-exact-panel-and-current-candidate-evidence-downstream.md)
 - [0001: Use the Workstation as the Project Source of Truth](0001-workstation-source-of-truth.md)
