@@ -33,14 +33,17 @@ explicit full audits retain their deep validation boundaries.
 Next:
 
 1. Measure one complete post-ADR-0125–0128 daily chain on Dell.
-2. Profile Candidate's remaining uninstrumented interval and attribute wall
-   time, CPU, I/O, and memory before changing that path again.
+2. Use the completed Candidate attribution: the cumulative writer is the
+   remaining hotspot, while finalization and explicit garbage collection are
+   negligible.
 3. Rank MI and Snapshot wall time using the same complete-chain evidence.
-4. Remove any remaining repeated evidence reconstruction only where the new
+4. Decide separately whether segmented/delta Candidate custody warrants its
+   contract, recovery, retention, and compaction complexity.
+5. Remove any remaining repeated evidence reconstruction only where the new
    complete-chain measurement justifies it.
-5. Vectorize or process-parallelize only independent CPU-heavy work after exact
+6. Vectorize or process-parallelize only independent CPU-heavy work after exact
    serial equivalence is proven.
-6. Preserve every custody, freshness, source, CAS, Oracle, residue, and
+7. Preserve every custody, freshness, source, CAS, Oracle, residue, and
    postflight gate.
 
 Do not reconnect the write-capable scheduler as part of performance work. The

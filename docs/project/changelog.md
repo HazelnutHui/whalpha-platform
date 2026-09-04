@@ -18,6 +18,13 @@
   alone took 1.595 seconds and peaked at 152,816 KiB.
 - Candidate-focused 45 tests, source compilation, difference checks, and all
   1,991 backend tests passed with the two unchanged dependency warnings.
+- Follow-up instrumentation assigned 193.525 seconds of a 294.30-second replay
+  to the cumulative audit writer, including 88.528 seconds across overlapping
+  fingerprint calls. Finalization was only 1.739 seconds and explicit garbage
+  collection 0.061 seconds. A separate prefix decomposition found all four
+  prior business fingerprints still matched and confirmed that cumulative
+  canonical projection/fingerprinting, not the finalizer, is the scaling
+  boundary.
 - No `/data`, Production, scheduler, publication, Snapshot, bundle, OCI,
   formula, parameter, rank, contract, or Universe change occurred.
 

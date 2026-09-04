@@ -296,6 +296,28 @@ further Candidate changes rather than attributed by inference. These were
 Dell `/tmp` replays only. No `/data`, Production, scheduler, publication,
 Snapshot, bundle, OCI, formula, parameter, rank, contract, or Universe changed.
 
+A follow-up instrumented replay completed in 294.30 seconds and narrowed the
+remaining cost. The complete audit writer occupied 193.525 seconds, while the
+daily finalizer occupied 1.739 seconds and explicit garbage collection only
+0.061 seconds. Nested inside the writer, all logical-fingerprint calls totaled
+88.528 seconds, the incremental-prefix validator 45.918 seconds, external-
+record normalization/sorting 17.569 seconds, and the ten artifact logical-
+fingerprint wrappers 38.963 seconds. These nested counters overlap and must not
+be summed as independent stages.
+
+The prefix validator was then decomposed against the exact completed output.
+Reading its source took 34.715 seconds; the already matching 18-batch prefix
+used 7.387 seconds for model projection and 20.463 seconds for its aggregate
+fingerprint, while the matching 31,941-state, 16,445-raw-row, and 31,873-
+normalization-row fingerprints took 8.759, 5.009, and 1.225 seconds. All four
+matched their bound prior evidence. The next optimization is therefore not
+finalization, garbage collection, or indiscriminate multicore execution. The
+remaining scaling cost is canonical projection and re-fingerprinting of a
+self-contained cumulative audit. A segmented or delta custody design may
+address that growth, but it requires a separate architecture decision and
+must preserve byte-logical prefix proof, recovery, retention, and periodic
+cold comparison rather than silently weakening those gates.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

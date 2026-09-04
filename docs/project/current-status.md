@@ -126,19 +126,23 @@ full semantic reread. These were `/tmp` development replays; Production and
 ## Next priority
 
 1. Measure the next complete daily chain on Dell with ADRs 0125–0128 active.
-2. Profile Candidate's roughly 154-second interval not yet covered by named
-   calculation, stream-write, or physical-completion timers; do not infer its
-   cause from wall time alone.
+2. Treat Candidate's cumulative writer as the measured remaining hotspot:
+   follow-up instrumentation assigned it 193.525 seconds, including 88.528
+   seconds across overlapping fingerprint calls, versus 1.739 seconds for
+   finalization and 0.061 seconds for explicit garbage collection.
 3. Rank the remaining MI and Snapshot hotspots before introducing further
    reuse; Visual Context is currently a bounded 51.11-second stage.
-4. Vectorize or safely parallelize only independently measurable CPU-heavy
+4. Decide separately whether segmented/delta Candidate custody justifies its
+   contract, recovery, retention, and compaction complexity; do not weaken
+   cumulative prefix validation as a micro-optimization.
+5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-5. Connect the 303-session canonical foundation to a governed point-in-time
+6. Connect the 303-session canonical foundation to a governed point-in-time
    research dataset and reconcile the 26-session analytics limitation.
-6. Only then begin real preregistered chronological strategy research.
-7. Continue decision-useful visualization in parallel where it does not change
+7. Only then begin real preregistered chronological strategy research.
+8. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
-8. Add options expression, fundamentals/valuation, events, and later
+9. Add options expression, fundamentals/valuation, events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune new formulas or claim backtest results before the governed research
