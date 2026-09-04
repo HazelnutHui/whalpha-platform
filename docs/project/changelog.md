@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-04 — Add a bounded Identity source-gap fetch boundary
+
+- Accepted ADR 0141 and added a Dell-only source-gap fetcher for an explicit,
+  ascending set of at most 24 historical dates. It preflights canonical EOD,
+  same-day Identity, and absent normalized source custody before the first
+  provider request.
+- The operation reuses the existing credential boundary, sanitized immutable
+  package writer, custody reader, endpoint/page/record limits, and one shared
+  serial 15-second limiter. Only timeout/unavailable failures receive the
+  existing bounded 30/90-second retry policy; safe checkpoints omit source
+  bodies, URLs, request identifiers, exception text, and secrets.
+- The resumable output remains owner-only below `/tmp` and performs zero
+  canonical, normalized-custody, membership, analytics, publication, or
+  deployment writes. New packages still require independent current/legacy
+  exact-equivalence proof before profile binding or normalization.
+- Ten focused tests, the existing Same-Day fetch suite, and all 2,053 backend
+  tests passed with the same two dependency warnings. No provider request or
+  `/data` write occurred during implementation and validation.
+
 ## 2026-09-04 — Expose canonical Identity source custody in current context
 
 - Accepted ADR 0140 and advanced the network-prohibited current-context report

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0141](0141-fetch-historical-identity-source-gaps-without-canonical-writes.md): recover exact missing historical Identity reference packages through one serial, checkpointed, `/tmp`-only operation before independent dual-profile proof.
+
 - [ADR 0140](0140-expose-canonical-identity-source-custody-in-current-context.md): project canonical historical Identity source-observation inventory and exact session gaps separately from resolved snapshots without weakening Historical Coverage gates.
 
 - [ADR 0139](0139-apply-historical-identity-source-custody-atomically.md): publish an exact reviewed historical Identity source plan through immutable per-session renames, shared locking, full formal reread, and non-destructive verify-then-complete recovery.
@@ -69,6 +71,7 @@ Each ADR should include:
 
 ## Records
 
+- [0141: Fetch Historical Identity Source Gaps Without Canonical Writes](0141-fetch-historical-identity-source-gaps-without-canonical-writes.md)
 - [0133: Reuse Bounded EOD Panels for Membership Shadow Batches](0133-reuse-bounded-eod-panels-for-membership-shadow-batches.md)
 - [0132: Reconstruct Complete-Base Historical Universe Membership](0132-reconstruct-complete-base-historical-universe-membership.md)
 - [0131: Expose Family-Specific Research Readiness](0131-expose-family-specific-research-readiness.md)
