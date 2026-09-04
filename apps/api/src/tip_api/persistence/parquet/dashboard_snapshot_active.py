@@ -152,10 +152,14 @@ def read_active_dashboard_snapshot(root: Path, legacy_root: Path) -> ActiveDashb
     return ActiveDashboardSnapshot(active.reference,active.release_path,active.manifest,pointer)
 
 
-def current_state_fingerprint(root: Path, legacy_root: Path) -> str:
-    active=read_active_dashboard_snapshot(root,legacy_root)
-    if active.pointer is not None: return active.pointer.pointer_content_fingerprint
+def _active_state_fingerprint(active: ActiveDashboardSnapshot) -> str:
+    if active.pointer is not None:
+        return active.pointer.pointer_content_fingerprint
     return canonical_sha({"mode":"legacy_fallback","reference":active.reference.model_dump(mode="json")})
+
+
+def current_state_fingerprint(root: Path, legacy_root: Path) -> str:
+    return _active_state_fingerprint(read_active_dashboard_snapshot(root,legacy_root))
 
 
 def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
@@ -243,7 +247,7 @@ def build_approval_plan(*, root: Path, legacy_root: Path, candidate: Path,
         "review_deployment":review.model_dump(mode="json") if review is not None else None,
         "activation_pointer_fingerprint":activation_pointer.pointer_content_fingerprint,
         "activation_logical_fingerprint":activation_logical_fingerprint,
-        "expected_current_state_fingerprint":current_state_fingerprint(root,legacy_root),
+        "expected_current_state_fingerprint":_active_state_fingerprint(current),
         "target_path":str(target),"target_logical_path":target.relative_to(root).as_posix(),
         "pointer_path":str(pointer),
         "candidate_path":str(candidate),"files":[item.model_dump(mode="json") for item in files],

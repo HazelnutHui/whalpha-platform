@@ -123,6 +123,34 @@ def test_plan_is_deterministic_and_binds_fresh_funnel(monkeypatch, tmp_path):
     assert plan.freshness_status == "fresh"
 
 
+def test_plan_binds_rollback_and_cas_to_one_validated_active_read(
+    monkeypatch, tmp_path
+):
+    root, legacy, candidate, _ = _setup(monkeypatch, tmp_path)
+    real_read = repo.read_active_dashboard_snapshot
+    observations = []
+
+    def read_once(root, legacy_root):
+        active = real_read(root, legacy_root)
+        observations.append(active)
+        return active
+
+    monkeypatch.setattr(repo, "read_active_dashboard_snapshot", read_once)
+    plan = repo.build_approval_plan(
+        root=root,
+        legacy_root=legacy,
+        candidate=candidate,
+        activation_logical_fingerprint=ACTIVATION_LOGICAL,
+        generated_at=AT,
+    )
+
+    assert len(observations) == 1
+    assert plan.rollback == observations[0].reference
+    assert plan.expected_current_state_fingerprint == repo._active_state_fingerprint(
+        observations[0]
+    )
+
+
 def test_plan_2_4_freezes_and_rechecks_strategy_channel_bindings(monkeypatch, tmp_path):
     root, legacy, candidate, _ = _setup(monkeypatch, tmp_path)
     real_validate = repo.validate_snapshot_release

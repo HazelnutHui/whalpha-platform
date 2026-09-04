@@ -212,11 +212,14 @@ separately bounded.
    unchanged. Follow-up profiling assigned 193.525 seconds to the cumulative
    audit writer, including 88.528 seconds across overlapping fingerprint calls;
    finalization was only 1.739 seconds and garbage collection 0.061 seconds.
-   Measure the next complete daily chain and rank MI/Snapshot hotspots before
-   separately deciding whether a segmented Candidate custody design is worth
-   its contract and recovery complexity. Add reuse, vectorization, or safe
-   process parallelism only where measurement justifies it and outputs remain
-   exact.
+   Current-code MI candidate plus plan is bounded at 53.84 seconds. ADR 0129
+   reduced Snapshot candidate plus plan from 135.00 to 121.57 seconds by
+   deriving rollback and CAS from one formal active observation; all 42 output
+   files and all non-path plan bindings matched exactly, while Apply retains a
+   fresh CAS read. Measure the next complete daily chain before separately
+   deciding whether a segmented Candidate custody design is worth its contract
+   and recovery complexity. Add reuse, vectorization, or safe process
+   parallelism only where measurement justifies it and outputs remain exact.
 2. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

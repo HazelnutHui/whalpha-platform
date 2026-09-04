@@ -102,6 +102,12 @@ scripts/admin/rollback-dashboard-snapshot-v2.sh --help
 
 Default publication creates only a review candidate under `/tmp`. An approval package additionally requires an explicit persistent `/tmp` output root. Production apply requires all of `--apply`, `--approved-plan`, `--approved-plan-sha256`, and `--expected-current-state-fingerprint`. Bare apply and partial approval arguments return exit code 2.
 
+Approval-plan construction formally reads the active Snapshot once and binds
+both its rollback reference and expected current-state fingerprint to that
+single observation. Apply and verify-then-link do not reuse that object: they
+perform a fresh current-state comparison, so a change after planning still
+fails closed.
+
 `--verify-then-link` uses the same approvals and only recovers a completed immutable target left inactive after a confirmed crash boundary. Rollback is independently authorized: dry-run reports the active pointer fingerprint and exact prior release; apply requires that fingerprint through `--expected-active-pointer-fingerprint` and rechecks it under lock.
 
 ## Recovery matrix

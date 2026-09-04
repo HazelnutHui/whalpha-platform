@@ -22,21 +22,24 @@ the [changelog](changelog.md) and ADRs.
 
 ## Priority 1 — Daily-chain performance and reliability
 
-The first measured reuse optimizations are complete under ADRs 0125–0128:
+The first measured reuse optimizations are complete under ADRs 0125–0129:
 date-only control paths use the immutable completion index; Entry Geometry and
 ETF Relationships reuse the exact formal panel and finalized current Candidate
 evidence; Strategy Channels reads only its finalized current batches; daily
 Candidate commit uses validated write plus complete physical custody while
-periodic and code-change tiers retain full semantic reread. Consumed inputs and
-explicit full audits retain their deep validation boundaries.
+periodic and code-change tiers retain full semantic reread; Snapshot planning
+derives rollback and CAS from one validated active observation while Apply
+retains a fresh comparison. Consumed inputs and explicit full audits retain
+their deep validation boundaries.
 
 Next:
 
-1. Measure one complete post-ADR-0125–0128 daily chain on Dell.
+1. Measure one complete post-ADR-0125–0129 daily chain on Dell.
 2. Use the completed Candidate attribution: the cumulative writer is the
    remaining hotspot, while finalization and explicit garbage collection are
    negligible.
-3. Rank MI and Snapshot wall time using the same complete-chain evidence.
+3. Retain the completed current-code ranking: MI is bounded at 53.84 seconds;
+   Snapshot is 121.57 seconds after removing its duplicate active read.
 4. Decide separately whether segmented/delta Candidate custody warrants its
    contract, recovery, retention, and compaction complexity.
 5. Remove any remaining repeated evidence reconstruction only where the new

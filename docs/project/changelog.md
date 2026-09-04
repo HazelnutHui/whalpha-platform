@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-04 — Bind Snapshot rollback and CAS to one active observation
+
+- Accepted ADR 0129. Snapshot approval planning now derives its rollback
+  reference and expected current-state fingerprint from the same fully
+  validated active Snapshot. Apply, verify-then-link, rollback, and recovery
+  retain fresh independent current-state reads.
+- On unchanged 2026-09-03 inputs, Snapshot 1.11 / Dashboard 2.8 candidate plus
+  Plan 2.6 fell from 135.00 to 121.57 seconds, saving 13.43 seconds or 9.9%.
+  Peak RSS remained effectively unchanged at 994,052 KiB.
+- All 42 Snapshot files totaling 43,406,568 bytes were byte-identical. Plans
+  differed only in the required temporary candidate path and derived plan
+  fingerprint; rollback, CAS, target pointer, aggregate, manifest, and all
+  business bindings matched exactly.
+- The current MI 1.3 candidate-plus-plan path was separately measured at 53.84
+  seconds and reproduced the active logical and downstream bindings; its older
+  approximately nine-minute journal interval is no longer representative.
+- The focused Snapshot publication suite passed 18 tests, and all 1,992
+  backend tests passed with the two unchanged dependency warnings.
+- All activity was offline and under `/tmp` with `production_writes=0`; no
+  `/data`, Production, scheduler, publication, deployment, formula, parameter,
+  rank, contract, or Universe state changed.
+
 ## 2026-09-04 — Separate daily Candidate commit from semantic audit
 
 - Accepted ADR 0128. Daily verified-prior Candidate completion now combines

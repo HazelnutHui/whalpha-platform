@@ -123,15 +123,25 @@ the unchanged logical fingerprint and Oracle passed a separate 228.285-second
 full semantic reread. These were `/tmp` development replays; Production and
 `/data` did not change.
 
+Current-code attribution also found that MI candidate plus plan now takes
+53.84 seconds, so the older nine-minute journal interval is stale. Snapshot
+candidate plus plan initially took 135.00 seconds. ADR 0129 removed one
+duplicate formal active-Snapshot read while binding rollback and CAS to the
+same observation; the exact replay took 121.57 seconds. All 42 Snapshot files
+were byte-identical and all business, rollback, CAS, pointer, and content
+bindings matched. Apply still performs a fresh CAS read. This replay was also
+`/tmp` only with no Production or `/data` write.
+
 ## Next priority
 
-1. Measure the next complete daily chain on Dell with ADRs 0125–0128 active.
+1. Measure the next complete daily chain on Dell with ADRs 0125–0129 active.
 2. Treat Candidate's cumulative writer as the measured remaining hotspot:
    follow-up instrumentation assigned it 193.525 seconds, including 88.528
    seconds across overlapping fingerprint calls, versus 1.739 seconds for
    finalization and 0.061 seconds for explicit garbage collection.
-3. Rank the remaining MI and Snapshot hotspots before introducing further
-   reuse; Visual Context is currently a bounded 51.11-second stage.
+3. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
+   Snapshot is now 121.57 seconds and its largest remaining input is the
+   necessary formal Activation read rather than duplicate active-state reads.
 4. Decide separately whether segmented/delta Candidate custody justifies its
    contract, recovery, retention, and compaction complexity; do not weaken
    cumulative prefix validation as a micro-optimization.

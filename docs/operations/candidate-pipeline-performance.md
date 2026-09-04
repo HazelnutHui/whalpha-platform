@@ -318,6 +318,42 @@ address that growth, but it requires a separate architecture decision and
 must preserve byte-logical prefix proof, recovery, retention, and periodic
 cold comparison rather than silently weakening those gates.
 
+## 2026-09-04 MI and Snapshot plan attribution
+
+The current 2026-09-03 Market Intelligence candidate plus approval-plan path
+completed in 53.84 seconds and peaked at 2,563,512 KiB. Its publication build
+took 20.327 seconds, approval-plan construction 15.843 seconds, and formal
+input validation the remainder. The resulting MI 1.3 payload reproduced the
+active logical fingerprint
+`8db1d95b97bad6d34ebd3dad9a102a26907f2294bede33025fcf9b114945de74`,
+the exact Candidate analytics binding, and the exact Sector Rotation product
+binding. The older approximately 9-minute journal interval therefore does not
+describe the current code path and is not an optimization target.
+
+The current Snapshot 1.11 / Dashboard 2.8 candidate plus Plan 2.6 path first
+measured 135.00 seconds and 994,996 KiB peak RSS. Its largest independent
+inputs were the formal active Activation read at 48.782 seconds and Snapshot
+product construction at 44.977 seconds. Approval-plan construction took
+30.743 seconds because it fully reread the active Snapshot once for rollback
+and again for the expected current-state fingerprint.
+
+ADR 0129 binds rollback and CAS to the same formal active-state observation;
+Apply retains a new current-state read. The exact replay then completed in
+121.57 seconds with 994,052 KiB peak RSS, saving 13.43 seconds or 9.9%. All 42
+Snapshot files totaling 43,406,568 bytes were byte-identical. The plans differed
+only in their temporary candidate path and derived plan-content fingerprint;
+all business, rollback, CAS, target-pointer, aggregate, and manifest bindings
+matched. Both runs were `/tmp` dry runs with `production_writes=0`; `/data` and
+Production did not change.
+
+After bounded current-code measurement, the largest known daily stages are the
+294.99-second cumulative Candidate path, the approximately 164-second Phase 1a
+pre-write path, and the 121.57-second Snapshot path. MI (53.84 seconds), Visual
+Context (51.11 seconds), Entry (49.67 seconds), Strategy (33.82 seconds), and
+ETF Relationships (15.36 seconds) are bounded and are not immediate
+optimization targets. A complete same-session chain measurement remains
+necessary because isolated times do not capture orchestration overhead.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths
