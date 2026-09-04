@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0133](0133-reuse-bounded-eod-panels-for-membership-shadow-batches.md): reuse one formally validated, memory-bounded EOD panel across adjacent historical membership shadow sessions.
+
 - [ADR 0132](0132-reconstruct-complete-base-historical-universe-membership.md): reconstruct complete same-day Identity bases into source-bound, three-state historical Universe shadows without treating local mapping conflicts as whole-day loss.
 
 - [ADR 0131](0131-expose-family-specific-research-readiness.md): Expose exact acquired-versus-missing historical input families in the authoritative read-only context report without weakening formal Coverage gates.
@@ -59,6 +61,8 @@ Each ADR should include:
 
 ## Records
 
+- [0133: Reuse Bounded EOD Panels for Membership Shadow Batches](0133-reuse-bounded-eod-panels-for-membership-shadow-batches.md)
+- [0132: Reconstruct Complete-Base Historical Universe Membership](0132-reconstruct-complete-base-historical-universe-membership.md)
 - [0131: Expose Family-Specific Research Readiness](0131-expose-family-specific-research-readiness.md)
 - [0130: Prove Segmented Candidate Custody Before Cutover](0130-prove-segmented-candidate-custody-before-cutover.md)
 - [0129: Bind Snapshot Rollback and CAS to One Active Read](0129-bind-snapshot-rollback-and-cas-to-one-active-read.md)

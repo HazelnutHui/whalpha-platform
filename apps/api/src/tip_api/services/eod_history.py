@@ -77,6 +77,47 @@ def plan_eod_history_window(
         else:
             completed.append(session)
             integrity.append(item)
+    return describe_eod_history_window(
+        analysis_session=analysis_session,
+        calendar=calendar,
+        completed_integrity=tuple(integrity),
+        missing_sessions=tuple(missing),
+        corrupt_sessions=tuple(corrupt),
+    )
+
+
+def describe_eod_history_window(
+    *,
+    analysis_session: date,
+    calendar: MarketSessionCalendar,
+    completed_integrity: tuple[EodSessionIntegrityV1, ...],
+    missing_sessions: tuple[date, ...] = (),
+    corrupt_sessions: tuple[date, ...] = (),
+) -> tuple[EodHistoryWindowDescriptorV1, tuple[EodSessionIntegrityV1, ...]]:
+    """Describe one window from already validated, explicitly bounded facts."""
+
+    expected = calendar.sessions_before(analysis_session, HISTORY_SESSION_COUNT)
+    integrity_by_session = {
+        item.session_date: item for item in completed_integrity
+    }
+    if len(integrity_by_session) != len(completed_integrity):
+        raise ValueError("completed EOD integrity contains duplicate sessions")
+    completed_set = set(integrity_by_session)
+    missing_set = set(missing_sessions)
+    corrupt_set = set(corrupt_sessions)
+    if (
+        len(missing_set) != len(missing_sessions)
+        or len(corrupt_set) != len(corrupt_sessions)
+        or completed_set & missing_set
+        or completed_set & corrupt_set
+        or missing_set & corrupt_set
+        or completed_set | missing_set | corrupt_set != set(expected)
+    ):
+        raise ValueError("EOD window evidence does not exactly partition expected sessions")
+    completed = tuple(item for item in expected if item in completed_set)
+    missing = tuple(item for item in expected if item in missing_set)
+    corrupt = tuple(item for item in expected if item in corrupt_set)
+    integrity = tuple(integrity_by_session[item] for item in completed)
     status = (
         EodHistoryReadinessStatus.CORRUPT_OR_UNAVAILABLE if corrupt
         else EodHistoryReadinessStatus.INSUFFICIENT_HISTORY if missing
@@ -102,14 +143,14 @@ def plan_eod_history_window(
             window_end=expected[-1],
             expected_session_count=HISTORY_SESSION_COUNT,
             expected_sessions=expected,
-            completed_sessions=tuple(completed),
-            missing_sessions=tuple(missing),
-            corrupt_or_unavailable_sessions=tuple(corrupt),
+            completed_sessions=completed,
+            missing_sessions=missing,
+            corrupt_or_unavailable_sessions=corrupt,
             readiness_status=status,
             methodology_mode=METHODOLOGY_MODE,
             fingerprint=_fingerprint(payload),
         ),
-        tuple(integrity),
+        integrity,
     )
 
 

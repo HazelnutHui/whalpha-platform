@@ -13,12 +13,16 @@ from tip_api.contracts.security_classification.v1 import (
     UniverseDisposition,
 )
 from tip_api.providers.massive.config import MassiveProviderConfig
-from tip_api.providers.massive.instrument_master_snapshot import FixedIntervalRateLimiter
+from tip_api.providers.massive.instrument_master_snapshot import (
+    FixedIntervalRateLimiter,
+    build_snapshot_from_payloads,
+)
 from tip_api.providers.massive.security_type_evidence import (
     IdentityIndexes,
     IdentityReference,
     CountingMassiveTransport,
     build_failed_diagnostic,
+    build_identity_indexes,
     build_runtime_failed_diagnostic,
     build_instrument_evidence,
     fetch_security_evidence,
@@ -76,6 +80,32 @@ def test_catalog_parsing_and_duplicate_code_rejected() -> None:
     assert [item.provider_type_code for item in records] == ["CS", "ETF"]
     with pytest.raises(RuntimeError, match="duplicate"):
         parse_ticker_type_catalog(catalog_response(("CS", "One"), ("CS", "Two")), observed_at=NOW)
+
+
+def test_validated_snapshot_records_build_the_same_identity_join_indexes() -> None:
+    snapshot = build_snapshot_from_payloads(
+        payloads=(
+            payload(
+                active=True,
+                currency_name="usd",
+                last_updated_utc="2026-08-14T20:00:00Z",
+            ),
+        ),
+        as_of_date=AS_OF,
+        ingested_at=NOW,
+        request_count=1,
+        pagination_complete=True,
+    )
+
+    result = build_identity_indexes(
+        identities=snapshot.identities,
+        resolvers=snapshot.resolvers,
+    )
+
+    instrument_id = snapshot.instruments[0].instrument_id
+    assert result.ticker_resolver == {"TEST": instrument_id}
+    assert result.share_class_figi["SHARE1"][0].canonical_instrument_id == instrument_id
+    assert result.composite_figi["COMP1"][0].provider_ticker == "TEST"
 
 
 def test_resolved_and_excluded_shared_ticker_reconcile_without_ambiguity() -> None:

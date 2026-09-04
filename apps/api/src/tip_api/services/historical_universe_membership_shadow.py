@@ -13,6 +13,7 @@ from uuid import UUID
 
 from tip_api.contracts.common import normalize_utc_datetime
 from tip_api.contracts.market_data.v1 import (
+    EodHistoryWindowDescriptorV1,
     EodSessionIntegrityV1,
     FullBaseDecisionV1,
     FullBaseDisposition,
@@ -22,6 +23,7 @@ from tip_api.contracts.market_data.v1 import (
 from tip_api.contracts.security_classification.v1 import (
     ProviderInstrumentSecurityEvidenceV1,
 )
+from tip_api.persistence.eod_read import EodHistorySessionRead
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     ParquetInstrumentMasterSnapshotRepository,
@@ -32,6 +34,7 @@ from tip_api.persistence.parquet.instrument_master_snapshot import (
 from tip_api.persistence.parquet.security_evidence import (
     read_completed_security_evidence_snapshot,
 )
+from tip_api.persistence.security_evidence import CompletedSecurityEvidenceSnapshot
 from tip_api.providers.massive.same_day_catchup import (
     read_identity_reference_package,
 )
@@ -40,17 +43,18 @@ from tip_api.providers.massive.instrument_master_snapshot import (
 )
 from tip_api.providers.massive.security_type_evidence import (
     EvidenceBuildResult,
+    build_identity_indexes,
     build_instrument_evidence,
-    load_identity_indexes,
 )
 from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.eod_history import (
     CANONICAL_DECIMAL_SCALE,
+    HISTORY_SESSION_COUNT,
     MATERIAL_QUALITY_FLAGS,
     PREVIOUS_CLOSE_THRESHOLD,
     audit_trailing_liquidity,
+    describe_eod_history_window,
     fixed_scale_coefficient,
-    plan_eod_history_window,
 )
 from tip_api.services.full_base_liquidity import FULL_BASE_A_ID, FULL_BASE_B_ID
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
@@ -62,6 +66,7 @@ from tip_api.services.universe_membership_reconstruction import (
 )
 
 HISTORICAL_METHODOLOGY_VERSION = "provider-form-complete-base-point-in-time-v2"
+MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS = 5
 _LOCALIZABLE_EVIDENCE_FAILURES = frozenset(
     {
         "ambiguous_mapping_nonzero",
@@ -73,6 +78,22 @@ _LOCALIZABLE_EVIDENCE_FAILURES = frozenset(
 
 class HistoricalUniverseMembershipShadowError(RuntimeError):
     """Fail-closed error at the offline reconstruction boundary."""
+
+
+class HistoricalUniverseMembershipIdentityMismatchError(
+    HistoricalUniverseMembershipShadowError
+):
+    """The retained package is valid but not equal to accepted same-day Identity."""
+
+
+@dataclass(frozen=True, slots=True)
+class HistoricalUniverseMembershipEodPanel:
+    """Bounded formal EOD reads shared across adjacent analysis sessions."""
+
+    data_root: Path
+    analysis_sessions: tuple[date, ...]
+    canonical_session_index: tuple[date, ...]
+    session_reads: tuple[EodHistorySessionRead, ...]
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,6 +114,62 @@ class HistoricalUniverseMembershipShadow:
     evidence_quality_gate_failures: tuple[str, ...]
 
 
+def prepare_historical_universe_membership_eod_panel(
+    *,
+    data_root: Path,
+    analysis_sessions: tuple[date, ...],
+    calendar: MarketSessionCalendar | None = None,
+) -> HistoricalUniverseMembershipEodPanel:
+    """Read every EOD partition needed by a bounded adjacent batch once."""
+
+    root = data_root.resolve(strict=True)
+    if (
+        not analysis_sessions
+        or len(analysis_sessions) != len(set(analysis_sessions))
+        or len(analysis_sessions) > MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "shared EOD panel requires one to five unique analysis sessions"
+        )
+    ordered_sessions = tuple(sorted(analysis_sessions))
+    session_calendar = calendar or ExchangeCalendar()
+    if any(
+        session_calendar.next_session(left) != right
+        for left, right in zip(ordered_sessions, ordered_sessions[1:])
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "shared EOD panel analysis sessions must be adjacent XNYS sessions"
+        )
+    repository = CanonicalEodReadRepository(root)
+    canonical_session_index = repository.list_session_index()
+    canonical_session_set = set(canonical_session_index)
+    missing_analysis = set(ordered_sessions) - canonical_session_set
+    if missing_analysis:
+        raise HistoricalUniverseMembershipShadowError(
+            "analysis session is absent from the canonical EOD completion index"
+        )
+    required_sessions = set(ordered_sessions)
+    for session in ordered_sessions:
+        required_sessions.update(
+            item
+            for item in session_calendar.sessions_before(session, HISTORY_SESSION_COUNT)
+            if item in canonical_session_set
+        )
+    reads = repository.read_history_sessions(tuple(sorted(required_sessions)))
+    if tuple(item.integrity.session_date for item in reads) != tuple(
+        sorted(required_sessions)
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "formal shared EOD reads do not match the required session set"
+        )
+    return HistoricalUniverseMembershipEodPanel(
+        data_root=root,
+        analysis_sessions=ordered_sessions,
+        canonical_session_index=canonical_session_index,
+        session_reads=reads,
+    )
+
+
 def build_historical_universe_membership_shadow(
     *,
     data_root: Path,
@@ -101,33 +178,22 @@ def build_historical_universe_membership_shadow(
     catalog_as_of_date: date,
     evaluated_at: datetime,
     calendar: MarketSessionCalendar | None = None,
+    eod_panel: HistoricalUniverseMembershipEodPanel | None = None,
+    security_snapshot: CompletedSecurityEvidenceSnapshot | None = None,
 ) -> HistoricalUniverseMembershipShadow:
     """Build one complete, tmp-ready daily ledger without network or data writes."""
 
     evaluated_at = normalize_utc_datetime(evaluated_at)
     calendar = calendar or ExchangeCalendar()
+    data_root = data_root.resolve(strict=True)
     eod_repository = CanonicalEodReadRepository(data_root)
 
     identity = ParquetInstrumentMasterSnapshotRepository(data_root).inspect_snapshot(
         session_date
     )
-    indexes = load_identity_indexes(data_root, as_of_date=session_date)
-    evaluated_base_ids = frozenset(indexes.ticker_resolver.values())
-    if (
-        len(indexes.ticker_resolver) != identity.resolver_count
-        or len(evaluated_base_ids) != identity.instrument_count
-    ):
-        raise HistoricalUniverseMembershipShadowError(
-            "Identity resolver does not exactly cover the canonical Instrument Master"
-        )
-
     package = read_identity_reference_package(
         package_path=package_path,
         expected_session=session_date,
-    )
-    security_snapshot = read_completed_security_evidence_snapshot(
-        data_root,
-        as_of_date=catalog_as_of_date,
     )
     payloads = _flatten_reference_pages(package.pages)
     rebuilt_identity = build_snapshot_from_payloads(
@@ -145,8 +211,32 @@ def build_historical_universe_membership_shadow(
         or resolver_content_fingerprint(rebuilt_identity.resolvers)
         != identity.resolver_content_sha256
     ):
-        raise HistoricalUniverseMembershipShadowError(
+        raise HistoricalUniverseMembershipIdentityMismatchError(
             "Identity package does not exactly reconstruct the accepted snapshot"
+        )
+    indexes = build_identity_indexes(
+        identities=rebuilt_identity.identities,
+        resolvers=rebuilt_identity.resolvers,
+    )
+    evaluated_base_ids = frozenset(
+        item.instrument_id for item in rebuilt_identity.instruments
+    )
+    if (
+        len(indexes.ticker_resolver) != identity.resolver_count
+        or len(evaluated_base_ids) != identity.instrument_count
+        or frozenset(indexes.ticker_resolver.values()) != evaluated_base_ids
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "Identity resolver does not exactly cover the canonical Instrument Master"
+        )
+    if security_snapshot is None:
+        security_snapshot = read_completed_security_evidence_snapshot(
+            data_root,
+            as_of_date=catalog_as_of_date,
+        )
+    elif security_snapshot.manifest.as_of_date != catalog_as_of_date:
+        raise HistoricalUniverseMembershipShadowError(
+            "shared security catalog as-of date mismatch"
         )
     evidence_result = build_instrument_evidence(
         catalog=security_snapshot.catalog,
@@ -166,19 +256,18 @@ def build_historical_universe_membership_shadow(
             + ",".join(sorted(blocking_failures))
         )
 
-    descriptor, history_integrity = plan_eod_history_window(
-        analysis_session=session_date,
-        calendar=calendar,
-        repository=eod_repository,
-    )
-    history_reads = eod_repository.read_history_sessions(
-        descriptor.completed_sessions
-    )
-    if tuple(item.integrity for item in history_reads) != history_integrity:
-        raise HistoricalUniverseMembershipShadowError(
-            "history changed between descriptor planning and formal panel read"
+    if eod_panel is None:
+        eod_panel = prepare_historical_universe_membership_eod_panel(
+            data_root=data_root,
+            analysis_sessions=(session_date,),
+            calendar=calendar,
         )
-    current_read = eod_repository.read_history_sessions((session_date,))[0]
+    descriptor, history_integrity, history_reads, current_read = _panel_window(
+        panel=eod_panel,
+        data_root=data_root,
+        session_date=session_date,
+        calendar=calendar,
+    )
     current_integrity = current_read.integrity
     if (
         current_integrity.identity_snapshot_date != session_date
@@ -279,6 +368,52 @@ def build_historical_universe_membership_shadow(
         ),
         evidence_quality_gate_failures=evidence_result.quality_gate_failures,
     )
+
+
+def _panel_window(
+    *,
+    panel: HistoricalUniverseMembershipEodPanel,
+    data_root: Path,
+    session_date: date,
+    calendar: MarketSessionCalendar,
+) -> tuple[
+    EodHistoryWindowDescriptorV1,
+    tuple[EodSessionIntegrityV1, ...],
+    tuple[EodHistorySessionRead, ...],
+    EodHistorySessionRead,
+]:
+    if panel.data_root != data_root or session_date not in panel.analysis_sessions:
+        raise HistoricalUniverseMembershipShadowError(
+            "shared EOD panel is outside the requested source/session boundary"
+        )
+    read_by_session = {
+        item.integrity.session_date: item for item in panel.session_reads
+    }
+    if len(read_by_session) != len(panel.session_reads):
+        raise HistoricalUniverseMembershipShadowError(
+            "shared EOD panel contains duplicate sessions"
+        )
+    current_read = read_by_session.get(session_date)
+    if current_read is None:
+        raise HistoricalUniverseMembershipShadowError(
+            "shared EOD panel is missing the analysis session"
+        )
+    expected = calendar.sessions_before(session_date, HISTORY_SESSION_COUNT)
+    canonical_sessions = set(panel.canonical_session_index)
+    completed_sessions = tuple(item for item in expected if item in canonical_sessions)
+    missing_sessions = tuple(item for item in expected if item not in canonical_sessions)
+    if any(item not in read_by_session for item in completed_sessions):
+        raise HistoricalUniverseMembershipShadowError(
+            "completion-index history is absent from the formal shared EOD panel"
+        )
+    history_reads = tuple(read_by_session[item] for item in completed_sessions)
+    descriptor, history_integrity = describe_eod_history_window(
+        analysis_session=session_date,
+        calendar=calendar,
+        completed_integrity=tuple(item.integrity for item in history_reads),
+        missing_sessions=missing_sessions,
+    )
+    return descriptor, history_integrity, history_reads, current_read
 
 
 def build_complete_point_in_time_source_decisions(

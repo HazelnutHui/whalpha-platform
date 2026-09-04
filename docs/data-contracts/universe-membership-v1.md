@@ -165,6 +165,21 @@ liquidity failures are explicit exclusions. Missing/conflicting form evidence,
 missing bars, insufficient history, material data-quality flags, and material
 one-session return outliers are quarantined.
 
+Custody validity is necessary but not sufficient for reconstruction. A package
+must also exactly reproduce the accepted same-day Instrument Master, provider
+Identity, and ticker Resolver fingerprints. The bounded shared-panel audit
+proved 2026-09-01 through 2026-09-03 and rejected the retained 2026-08-28 and
+2026-08-31 packages on that exact-equivalence gate. Therefore 279 is a package
+custody count, not a proven reconstructable-session count; the complete exact-
+equivalence census remains pending.
+
+Offline batch execution is limited to five adjacent XNYS analysis sessions.
+The completion index discovers dates, but every current/trailing EOD partition
+that feeds a decision is fully read and validated once. Every successful daily
+partition keeps its own base, source envelope, cutoff, and formal reread. A
+package-specific mismatch cannot become an exclusion and cannot contaminate a
+different session.
+
 ## Deferred Fields
 
 - exact S&P 500/index constituent source

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-04 — Bound and accelerate historical membership shadows
+
+- Accepted ADR 0133 and replaced the single-session duplicate EOD inspection /
+  reread path with one fully validated panel shared across at most five adjacent
+  XNYS sessions. The completion index selects dates only; all consumed
+  partitions remain deeply validated.
+- Reused exact package-rebuilt Identity records for provider join indexes only
+  after their Instrument, Identity, and Resolver fingerprints match the
+  canonical snapshot. One completed provider type catalog is also shared per
+  batch.
+- The exact 2026-09-03 replay remained byte-identical and fell from 149.72 to
+  111.18 seconds, a 25.7% reduction. The exact 9/2–9/3 batch read 22 EOD
+  partitions, matched independent logical/physical fingerprints, and took
+  139.71 seconds instead of 222.47 seconds for the two optimized single runs.
+- The five-session boundary read 25 partitions in 195.04 seconds and peaked at
+  1,296,388 KiB. It completed 9/1–9/3 while isolating 8/28 and 8/31 as exact
+  Identity-snapshot mismatches. This proves that 279 custody-valid retained
+  packages are not equivalent to 279 reconstructable sessions; a complete
+  exact-equivalence census is now the next gate.
+- All outputs remained under `/tmp`, with zero network requests and zero
+  canonical writes. Production, `/data`, formulas, Universes, scheduling,
+  publication, deployment, and research-readiness state did not change.
+- Source compilation, 77 expanded focused checks, and all 2,014 backend tests
+  passed with the two unchanged dependency warnings.
+
 ## 2026-09-04 — Prove complete-base historical Universe reconstruction
 
 - Accepted ADR 0132 and added a network-disabled, `/tmp`-only adapter from a

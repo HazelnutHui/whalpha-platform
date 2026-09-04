@@ -98,6 +98,15 @@ both Universes and isolated one source collision while formally rereading all
 membership partition exists in `/data`, this does not change research
 readiness.
 
+The bounded batch adapter now shares one fully validated EOD panel across at
+most five adjacent sessions. Independent 9/2 and 9/3 results match their batch
+outputs exactly; the two-session batch took 139.71 seconds versus 222.47
+seconds for the measured independent optimized paths. A five-session audit
+completed 9/1–9/3 but correctly rejected the custody-valid 8/28 and 8/31
+packages because they did not exactly reproduce accepted same-day Identity
+fingerprints. The 279-package count must therefore not be represented as 279
+reconstructable sessions. The exact-equivalence census remains pending.
+
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
 price history. The first intended registered study remains Strong-Leader

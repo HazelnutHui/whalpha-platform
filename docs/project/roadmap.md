@@ -77,12 +77,16 @@ Current membership implementation sequence:
 
 1. Complete-base single-session shadow is proven on 2026-09-03 with 9,979
    stable IDs, two full three-state ledgers, and localized conflict quarantine.
-2. Replace repeated single-day reads with one formally validated shared EOD
-   panel and deterministic rolling 20-session calculations.
-3. Define durable, minimal source custody without copying raw provider bodies.
-4. Acquire or independently resolve only the exact 24 missing reference
-   sessions; never project current Activation backward.
-5. Run all available sessions into a disconnected `/tmp` batch, reconcile
+2. The bounded shared-panel runner is proven for one, two, and five adjacent
+   sessions. It preserves exact daily outputs while removing duplicate EOD,
+   Identity-index, and catalog reads.
+3. Run a complete read-only exact-equivalence census. The prior 279/303 figure
+   counts custody-valid retained packages; 2026-08-28 and 2026-08-31 already
+   prove that this is not the same as reconstructable source coverage.
+4. Define durable, minimal source custody without copying raw provider bodies,
+   then resolve every physically missing or exact-mismatched session; never
+   project current Activation backward.
+5. Run all exact-equivalent sessions into disconnected `/tmp` batches, reconcile
    completeness and timing, then separately review canonical publication.
 
 ## Priority 3 — First real strategy research

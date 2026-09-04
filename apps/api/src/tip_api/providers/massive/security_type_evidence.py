@@ -28,7 +28,11 @@ from tip_api.contracts.security_classification.v1 import (
     SecurityForm,
     UniverseDisposition,
 )
-from tip_api.contracts.market_data.v1 import ResolutionStatus
+from tip_api.contracts.market_data.v1 import (
+    ProviderInstrumentIdentityV1,
+    ProviderTickerResolverV1,
+    ResolutionStatus,
+)
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     PROVIDER_IDENTITY_ARROW_SCHEMA,
     PROVIDER_TICKER_RESOLVER_ARROW_SCHEMA,
@@ -796,20 +800,67 @@ def load_identity_indexes(root: Path, *, as_of_date: date) -> IdentityIndexes:
         str(snapshot["resolver_content_sha256"]),
         _resolver_table_to_rows,
     )
+    references = []
+    for row in identity_table.to_pylist():
+        canonical = row.get("canonical_instrument_id")
+        references.append(
+            IdentityReference(
+                provider_ticker=str(row["provider_ticker"]).upper(),
+                canonical_instrument_id=(
+                    UUID(str(canonical)) if canonical is not None else None
+                ),
+                resolution_status=ResolutionStatus(str(row["resolution_status"])),
+                share_class_figi=_optional_upper(row.get("share_class_figi")),
+                composite_figi=_optional_upper(row.get("composite_figi")),
+                provider_instrument_id=_optional_upper(
+                    row.get("provider_instrument_id")
+                ),
+            )
+        )
+    resolver_pairs = tuple(
+        (
+            str(row["provider_ticker"]).upper(),
+            UUID(str(row["canonical_instrument_id"])),
+        )
+        for row in resolver_table.to_pylist()
+    )
+    return _assemble_identity_indexes(tuple(references), resolver_pairs)
+
+
+def build_identity_indexes(
+    *,
+    identities: tuple[ProviderInstrumentIdentityV1, ...],
+    resolvers: tuple[ProviderTickerResolverV1, ...],
+) -> IdentityIndexes:
+    """Build indexes from an already validated, equivalent Identity snapshot."""
+
+    references = tuple(
+        IdentityReference(
+            provider_ticker=item.provider_ticker.upper(),
+            canonical_instrument_id=item.canonical_instrument_id,
+            resolution_status=item.resolution_status,
+            share_class_figi=_optional_upper(item.share_class_figi),
+            composite_figi=_optional_upper(item.composite_figi),
+            provider_instrument_id=_optional_upper(item.provider_instrument_id),
+        )
+        for item in identities
+    )
+    resolver_pairs = tuple(
+        (item.provider_ticker.upper(), item.canonical_instrument_id)
+        for item in resolvers
+    )
+    return _assemble_identity_indexes(references, resolver_pairs)
+
+
+def _assemble_identity_indexes(
+    references: tuple[IdentityReference, ...],
+    resolver_pairs: tuple[tuple[str, UUID], ...],
+) -> IdentityIndexes:
     share_class_figi: dict[str, list[IdentityReference]] = defaultdict(list)
     composite_figi: dict[str, list[IdentityReference]] = defaultdict(list)
     provider_instrument_id: dict[str, list[IdentityReference]] = defaultdict(list)
     ticker_observations: dict[str, list[IdentityReference]] = defaultdict(list)
-    for row in identity_table.to_pylist():
-        canonical = row.get("canonical_instrument_id")
-        reference = IdentityReference(
-            provider_ticker=str(row["provider_ticker"]).upper(),
-            canonical_instrument_id=UUID(str(canonical)) if canonical is not None else None,
-            resolution_status=ResolutionStatus(str(row["resolution_status"])),
-            share_class_figi=_optional_upper(row.get("share_class_figi")),
-            composite_figi=_optional_upper(row.get("composite_figi")),
-            provider_instrument_id=_optional_upper(row.get("provider_instrument_id")),
-        )
+    for reference in references:
         ticker_observations[reference.provider_ticker].append(reference)
         for value, index in (
             (reference.share_class_figi, share_class_figi),
@@ -818,10 +869,11 @@ def load_identity_indexes(root: Path, *, as_of_date: date) -> IdentityIndexes:
         ):
             if value:
                 index[value].append(reference)
-    ticker_resolver = {
-        str(row["provider_ticker"]).upper(): UUID(str(row["canonical_instrument_id"]))
-        for row in resolver_table.to_pylist()
-    }
+    ticker_resolver: dict[str, UUID] = {}
+    for ticker, instrument_id in resolver_pairs:
+        if ticker in ticker_resolver:
+            raise RuntimeError("accepted ticker resolver contains duplicate tickers")
+        ticker_resolver[ticker] = instrument_id
     sort_key = lambda item: (
         item.provider_ticker,
         item.resolution_status.value,

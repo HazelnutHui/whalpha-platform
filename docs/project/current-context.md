@@ -127,6 +127,15 @@ cutoff is after the evaluated session and its output is `/tmp`-only, so it is a
 mechanics proof—not canonical membership, Historical Coverage, or research
 authority.
 
+ADR 0133 now reuses a bounded formal EOD panel for up to five adjacent shadow
+sessions. The exact 9/3 single replay fell from 149.72 to 111.18 seconds; the
+9/2–9/3 batch completed in 139.71 seconds and both dates matched independent
+logical and physical fingerprints. A five-session audit peaked at about 1.24
+GiB and isolated two source failures: the custody-valid 8/28 and 8/31 packages
+do not exactly rebuild their accepted same-day Identity families. Thus 279 is
+only retained-package custody coverage. Exact-equivalent source coverage is
+not yet known and must be censused before a broad reconstruction run.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:

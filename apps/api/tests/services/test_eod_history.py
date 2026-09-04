@@ -21,6 +21,7 @@ from tip_api.read_models.eod import EodMarketBarReadModel
 from tip_api.services.eod_history import (
     audit_trailing_liquidity,
     build_historical_backfill_plan,
+    describe_eod_history_window,
     exact_dollar_volume_proxy,
     exact_even_median,
     plan_eod_history_window,
@@ -99,6 +100,39 @@ def test_current_window_has_two_completed_and_eighteen_missing(calendar: Exchang
     assert len(descriptor.missing_sessions) == 18
     assert descriptor.readiness_status is EodHistoryReadinessStatus.INSUFFICIENT_HISTORY
     assert len(session_integrity) == 2
+
+
+def test_preloaded_descriptor_exactly_matches_repository_planning(
+    calendar: ExchangeCalendar,
+) -> None:
+    sessions = calendar.sessions_before(ANALYSIS, 20)
+    repository = FakeRepository({item: () for item in sessions})
+    planned, planned_integrity = plan_eod_history_window(
+        analysis_session=ANALYSIS,
+        calendar=calendar,
+        repository=repository,
+    )
+
+    described, described_integrity = describe_eod_history_window(
+        analysis_session=ANALYSIS,
+        calendar=calendar,
+        completed_integrity=tuple(reversed(planned_integrity)),
+    )
+
+    assert described == planned
+    assert described_integrity == planned_integrity
+
+
+def test_preloaded_descriptor_rejects_incomplete_evidence_partition(
+    calendar: ExchangeCalendar,
+) -> None:
+    sessions = calendar.sessions_before(ANALYSIS, 20)
+    with pytest.raises(ValueError, match="exactly partition"):
+        describe_eod_history_window(
+            analysis_session=ANALYSIS,
+            calendar=calendar,
+            completed_integrity=tuple(integrity(item) for item in sessions[:-1]),
+        )
 
 
 def test_present_corrupt_partition_is_distinct_and_blocks_audit(calendar: ExchangeCalendar) -> None:
