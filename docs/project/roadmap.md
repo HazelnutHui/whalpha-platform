@@ -96,8 +96,9 @@ Current membership implementation sequence:
    and published as 558 immutable canonical files. The ordinary Apply and an
    independent zero-write recovery postflight formally reread all 279 sessions
    with no overwrite or deletion.
-7. The 24-session acquisition attempt recovered 22 exact sources under the
-   legacy profile. Keep the two provider-revised dates explicitly unbound;
+7. The 24-session acquisition attempt recovered and canonically appended 22
+   exact sources under the legacy profile. Keep the two provider-revised dates
+   explicitly unbound;
    never force approximate source equivalence, project current Activation
    backward, or silently fill historical source.
 8. Run all accepted-profile-bound sessions into disconnected `/tmp` batches,

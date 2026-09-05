@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-04
+Status date: 2026-09-05
 
 This is the concise project-state summary. Exact IDs, fingerprints, evidence
 scope, authorization boundaries, and cross-device recovery are maintained in
@@ -41,9 +41,11 @@ health; it does not alter unrelated services.
 - Latest EOD has 9,956 rows and is aligned to the 2026-09-03 Identity snapshot.
 - Latest Identity contains 9,979 Instruments, 13,153 provider identities, and
   9,979 Resolvers.
-- Canonical normalized historical Identity source custody now contains 279
-  partitions / 3,399,877 rows; the 24-session source gap remains explicit.
-- `/data` contains 3,914 files / 1,855,938,896 bytes, with zero symlinks and
+- Canonical normalized historical Identity source custody now contains 301
+  partitions / 3,687,175 rows. The two absent dates, 2026-08-13 and
+  2026-08-19, have reacquired but non-equivalent provider packages and remain
+  explicitly unbound.
+- `/data` contains 3,958 files / 1,877,724,006 bytes, with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -91,9 +93,9 @@ Historical Coverage evidence/final roots are absent. Real cost/liquidity,
 complete revision lineage, chronological evaluation, and sealed-holdout inputs
 also remain absent or fixture-only.
 
-The report now projects normalized Identity source observations as a separate
-record layer: 279 canonical partitions, 3,399,877 records, 3,536 source-page
-artifacts, and the exact 24 missing EOD sessions. It explicitly remains
+The report projects normalized Identity source observations as a separate
+record layer: 301 canonical partitions, 3,687,175 records, 3,844 source-page
+artifacts, and the exact two missing EOD sessions. It explicitly remains
 `canonical_partitions_observed_not_coverage_validated`, so source custody is
 visible without being promoted to Historical Coverage or research readiness.
 
@@ -167,6 +169,17 @@ post-state fingerprint
 `27dccc3039aed87dce903f41b55f488bd0b07a67c47885449b957c98b4ad49f5`.
 This changes source custody only; research readiness remains blocked.
 
+ADR 0143 then separated actual reacquisition observation time from the one
+row-level replay timestamp shared by each accepted canonical Identity family.
+The corrected full census finds 301/303 sessions exact under exactly one
+profile: 58 current and 243 legacy. The 2026-08-13 and 2026-08-19 packages
+mismatch both profiles because provider records and stable-identity fields
+were revised, so profile-map 1.1 keeps them discovered but unbound. The 22
+other reacquired packages were normalized and appended by exact plan; ordinary
+Apply and a separate zero-write recovery passed with no overwrite or deletion.
+Post-state fingerprint is
+`12b35440e876f8f61fa0bccef8cc06b4c1721c0dc751ebdaa6c572c2df166345`.
+
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
 price history. The first intended registered study remains Strong-Leader
@@ -238,9 +251,10 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. **Canonical source custody complete for retained packages:** ADR 0139's
-   exact 279-session Apply and independent zero-write recovery postflight both
-   passed. Resolve the 24 physical gaps separately.
+6. **Canonical source custody complete for exact packages:** 301 sessions are
+   canonical after the original and append-only Apply/recovery passes. Keep
+   2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
+   proven; do not approximate them.
 7. Run and reconcile the broad disconnected membership batches before
    canonical membership review.
 8. Connect the complete point-in-time foundation to a governed historical

@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-04T20:47:35Z
+Operational state verified at: 2026-09-05T00:11:09Z
 
-Repository context updated at: 2026-09-04 UTC
+Repository context updated at: 2026-09-05 UTC
 
 This is the compact source of truth for a new Codex task or device. Historical
 execution detail belongs in the [changelog](changelog.md), dated audits, and
@@ -42,9 +42,9 @@ also completed successfully during the ADR 0125 validation.
 | Latest Identity | 2026-09-03; 9,979 Instruments / 13,153 provider identities / 9,979 Resolvers |
 | Latest Identity fingerprint | `5c8e377e22ef15b6a5dfd91a9548327d148e26a47c002690117dcd009d966855` |
 | Identity/EOD alignment | aligned on 2026-09-03 |
-| Canonical historical Identity source | 279 immutable source-observation partitions / 3,399,877 rows; 24 source sessions absent |
-| `/data` inventory | 3,914 files / 1,855,938,896 bytes |
-| `/data` inventory fingerprint | `27dccc3039aed87dce903f41b55f488bd0b07a67c47885449b957c98b4ad49f5` |
+| Canonical historical Identity source | 301 immutable source-observation partitions / 3,687,175 rows; 2 source sessions absent because reacquisition is non-equivalent |
+| `/data` inventory | 3,958 files / 1,877,724,006 bytes |
+| `/data` inventory fingerprint | `12b35440e876f8f61fa0bccef8cc06b4c1721c0dc751ebdaa6c572c2df166345` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -118,18 +118,17 @@ The report status is therefore `data_blocked`, with
 change those results; future partitions remain unvalidated until the existing
 transitive formal Coverage reader proves them.
 
-ADR 0140 now exposes the normalized source-observation layer separately from
-resolved Identity snapshots. Its routine typed custody read reports 279
-canonical partitions, 279 manifests, 279 Parquet files, 3,399,877 rows, 3,536
-source-page artifacts, no source-only sessions, and the exact 24 missing EOD
-sessions. Its state is
+ADR 0140 exposes the normalized source-observation layer separately from
+resolved Identity snapshots. Its latest routine typed custody read reports 301
+canonical partitions, 301 manifests, 301 Parquet files, 3,687,175 rows, 3,844
+source-page artifacts, no source-only sessions, and two missing EOD sessions:
+2026-08-13 and 2026-08-19. Its state is
 `canonical_partitions_observed_not_coverage_validated`; the explicit
 incompleteness blocker remains and no readiness gate changes.
 
-An offline source census and complete-base shadow now narrow the membership
-gap without changing that status. Normalized Identity source observations are
-canonical for 279/303 sessions; the exact 24-session physical gap is
-2026-07-17 through 2026-08-19. The real 2026-09-03 shadow
+An offline source census and complete-base shadow narrow the membership gap
+without changing that status. Normalized Identity source observations are now
+canonical for 301/303 sessions. The real 2026-09-03 shadow
 evaluated all 9,979 same-day stable IDs for both Universes, localized one
 source collision, and formally reread 19,958 three-state decisions. Its source
 cutoff is after the evaluated session and its output is `/tmp`-only, so it is a
@@ -209,6 +208,16 @@ a second `verify_then_complete` pass reused all 279 partitions, wrote zero
 bytes, and repeated the same post-state fingerprint. This completes durable
 custody for the retained sources only; it does not fill the 24 gaps or create
 Membership or Historical Coverage.
+
+ADR 0143 subsequently separated actual package observation time from the
+accepted canonical replay timestamp. The full 303-package dual-profile census
+now binds 301 sessions exactly: 58 current and 243 legacy. Twenty-two of the 24
+reacquired packages were normalized and atomically appended to `/data`; the
+ordinary Apply and independent zero-write recovery both passed. The
+2026-08-13 and 2026-08-19 reacquisitions contain later provider record and
+stable-identity revisions, remain explicitly unbound, and are not
+canonicalized. They are source revision evidence, not exact replacements for
+the accepted historical snapshots.
 
 ## OCI production proof
 
@@ -342,12 +351,12 @@ separately bounded.
    identity. Measure the next complete daily chain and add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
-2. **Historical Universe foundation:** the shared-panel batch, two-profile
-   Identity equivalence proof, 279-session fingerprint-bound routing map,
-   normalized source-custody candidate, inventory-bound plan, atomic canonical
-   Apply, and zero-write recovery postflight are complete. Next resolve the 24
-   physically missing reference sessions separately and only then
-   run/reconcile broad disconnected membership batches before canonical
+2. **Historical Universe foundation:** the shared-panel batch and exact
+   two-profile Identity routing now cover 301 sessions, and all 301 exact source
+   partitions are canonical after append-only Apply and zero-write recovery.
+   Keep the two provider-revised dates explicitly unbound, decide whether an
+   alternative exact source exists, and run/reconcile broad disconnected
+   membership batches without approximating those sessions before canonical
    membership review.
 3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;

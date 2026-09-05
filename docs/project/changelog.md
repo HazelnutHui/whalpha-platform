@@ -19,11 +19,19 @@
   their provider record sets and stable-identity fields differ from the
   accepted snapshots under both profiles.
 - A `/tmp`-only 22-session normalized candidate completed 287,298 rows in 44
-  read-only files / 21,785,110 bytes. Its no-write append plan binds the exact
-  files and unchanged `/data` pre-state with SHA-256
-  `f8f733aca792dc46279af937a8cb9c0165732eca10cbefa17f64a7ffd2fa1497`.
-  At this checkpoint no canonical write, membership, Historical Coverage,
-  research, publication, deployment, or scheduler state changed.
+  read-only files / 21,785,110 bytes. Its exact append plan has SHA-256
+  `f8f733aca792dc46279af937a8cb9c0165732eca10cbefa17f64a7ffd2fa1497`
+  and binds pre-state
+  `27dccc3039aed87dce903f41b55f488bd0b07a67c47885449b957c98b4ad49f5`.
+- The ordinary Apply published and formally reread all 22 absent partitions
+  with zero overwrite/delete/request. An independent `verify_then_complete`
+  pass reused all 22 and wrote zero bytes. Canonical source custody is now
+  301 partitions / 3,687,175 rows; whole `/data` is 3,958 files /
+  1,877,724,006 bytes with fingerprint
+  `12b35440e876f8f61fa0bccef8cc06b4c1721c0dc751ebdaa6c572c2df166345`,
+  zero symlinks, and zero publication residue. The two revised source dates
+  remain absent; membership, Historical Coverage, research, Production,
+  publication, deployment, and scheduler state did not change.
 
 ## 2026-09-04 — Support explicit append-only Identity source plans
 

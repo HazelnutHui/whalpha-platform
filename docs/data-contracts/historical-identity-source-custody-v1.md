@@ -12,7 +12,7 @@ authority.
 ## Row contract
 
 `historical-identity-reference-observation/1.0` preserves every result field
-present in the 279 audited packages:
+present in the 303-package audited acquisition inventory:
 
 - `active`, `cik`, `composite_figi`, `currency_name`;
 - `last_updated_utc`, `locale`, `market`, `name`;
