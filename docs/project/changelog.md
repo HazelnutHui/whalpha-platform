@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-05 — Bounded inactive lifecycle completion census
+
+- Accepted ADR 0146 after the 301-session active-source census proved that
+  disappearances and ticker changes are review candidates, not governed
+  lifecycle conclusions.
+- Added and ran a no-write, aggregate-only Massive inactive-security census
+  with 20-page and 25,000-record ceilings, strict pagination scope checks,
+  serial pacing, no retries, and no identifier or response retention.
+- The real 2026-07-16 anchor filled all 20 pages (20,000 rows) and still had a
+  next page. `delisted_utc` was present on 19,565 rows; the exact state remains
+  `truncated_at_ceiling`, so no lifecycle completeness is claimed.
+- Replaced stale fixed 279/303 Identity source counts in the historical
+  architecture document with the authoritative current-context reference.
+- No `/data`, canonical dataset, analytics, publication, deployment, or
+  scheduler state changed.
+
 ## 2026-09-05 — Remove false exact-duplicate Identity collisions
 
 - Accepted ADR 0145. Provider Identity indexes now collapse only structurally
@@ -4036,15 +4052,3 @@
 - Kept the embedded Dashboard overview on its defined 2.1 response contract;
   unknown snapshot versions, Dashboard contracts, and data-status values remain
   rejected instead of being converted to empty or synthetic data.
-# 2026-09-05 — Bounded inactive lifecycle completion census
-
-- Accepted ADR 0146 after the 301-session active-source census proved that
-  disappearances and ticker changes are review candidates, not governed
-  lifecycle conclusions.
-- Added a no-write, aggregate-only Massive inactive-security completion census
-  with 20-page and 25,000-record ceilings, strict pagination scope checks,
-  serial pacing, no retries, and no identifier or response retention.
-- Replaced stale fixed 279/303 Identity source counts in the historical
-  architecture document with the authoritative current-context reference.
-- No `/data`, canonical dataset, analytics, publication, deployment, or
-  scheduler state changed.

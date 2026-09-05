@@ -49,3 +49,14 @@ readiness.
 - A completed census permits design work only. Source custody, stable-ID
   resolution, canonical Apply, Historical Coverage and model use remain
   separate transitions.
+
+## Execution evidence
+
+Clean main revision `d582c5817e44ee3dc4d9fa4ad3ece5e90d046673`
+executed the aggregate-only census for `2026-07-16`. All 20 pages were full:
+20,000/20,000 observations had `active=false`, 19,565 had `delisted_utc`, all
+20,000 had `last_updated_utc`, and 124 ticker values were duplicated. Another
+page remained, so the exact result is `truncated_at_ceiling`, not completed.
+No response body or row identifier was retained and the operation wrote no
+data. The next step is a separately reviewed streaming source-custody boundary,
+not another arbitrary increase to an aggregate probe ceiling.

@@ -93,6 +93,12 @@ Historical Coverage evidence/final roots are absent. Real cost/liquidity,
 complete revision lineage, chronological evaluation, and sealed-holdout inputs
 also remain absent or fixture-only.
 
+The 2026-09-05 aggregate inactive-security census reached 20 full pages and
+20,000 rows with another page still available. It found `delisted_utc` on
+19,565 rows, but retained no row data and grants no lifecycle-completeness
+claim. This sizes the next source-custody task; it does not clear lifecycle or
+terminal-outcome readiness.
+
 The report projects normalized Identity source observations as a separate
 record layer: 301 canonical partitions, 3,687,175 records, 3,844 source-page
 artifacts, and the exact two missing EOD sessions. It explicitly remains
