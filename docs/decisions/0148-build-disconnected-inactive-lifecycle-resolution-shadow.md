@@ -67,3 +67,21 @@ publication, deployment, or scheduler write.
 - Later canonical lifecycle work can select reviewed candidates and add
   corroborating terminal evidence without rebuilding or silently changing the
   provider observation layer.
+
+## Validation evidence
+
+Clean implementation revision
+`62be872aa8c5a8518803204c224cc29312078fa1` passed all 2,088 backend tests.
+The two real source anchors then built and independently reread from owner-only
+`/tmp` custody:
+
+- 2026-07-16: 23,260 one-to-one rows, 471 review candidates and 22,789
+  quarantined, using 268 canonical Instrument sessions no later than the
+  anchor; and
+- 2026-09-03: 23,469 one-to-one rows, 547 review candidates and 22,922
+  quarantined, using all 303 canonical Instrument sessions.
+
+The later source adds 262 exact rows, of which 76 pass the same review gates,
+and omits or revises 53 older rows, none of which was a review candidate. No
+shared exact source row changes disposition. The formal current-context report
+after both builds proves the canonical `/data` inventory unchanged.

@@ -112,6 +112,15 @@ new-window delisting-date observations, but only 135 have a stable FIGI that
 matches canonical Instrument history. Provider revision and missing stable-ID
 counts remain explicit blockers; ticker is not used as a fallback key.
 
+ADR 0148 has now normalized and resolved both packages into a disconnected
+one-to-one shadow. The 2026-07-16 result has 471 review candidates and 22,789
+quarantined rows using only the 268 canonical Instrument sessions through that
+anchor. The 2026-09-03 result has 547 review candidates and 22,922 quarantined
+rows across all 303 sessions. The later source adds 76 review candidates and
+186 quarantined rows; no shared exact row changes disposition. These temporary
+results remain outcome-reconciliation evidence, not canonical lifecycle facts
+or research-ready labels.
+
 The report projects normalized Identity source observations as a separate
 record layer: 301 canonical partitions, 3,687,175 records, 3,844 source-page
 artifacts, and the exact two missing EOD sessions. It explicitly remains
@@ -233,9 +242,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    the 301-session V3 evidence temporary. Separately resolve the two exact
    source gaps and historical knowledge-time before any canonical Membership
    decision.
-8. Complete lifecycle, corporate-action, adjustment, cost, availability, and
-   revision families; then publish transitive Historical Coverage and reconcile
-   the 26-session analytics limitation.
+8. Design corroboration and source-availability evidence for the 547 inactive
+   lifecycle review candidates; then complete canonical lifecycle,
+   corporate-action, adjustment, cost, availability, and revision families,
+   publish transitive Historical Coverage, and reconcile the 26-session
+   analytics limitation.
 9. Only after those gates begin real preregistered chronological strategy
    research.
 10. Continue decision-useful visualization in parallel where it does not change

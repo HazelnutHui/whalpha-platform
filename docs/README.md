@@ -10,6 +10,8 @@
 - [2026-09-05 Inactive Lifecycle Completion Census Audit](audits/inactive-lifecycle-completion-census-2026-09-05.md): 20-page truncated result, field coverage, and the source-custody consequence.
 - [Historical Inactive Lifecycle Source Package V1](data-contracts/historical-inactive-lifecycle-source-package-v1.md): resumable owner-only temporary source custody with formal reread and no canonical write.
 - [2026-09-05 Inactive Lifecycle Source Package Audit](audits/inactive-lifecycle-source-package-2026-09-05.md): complete 24-page source custody, formal reread, and unchanged canonical-state proof.
+- [ADR 0148: Disconnected Inactive Lifecycle Resolution Shadow](decisions/0148-build-disconnected-inactive-lifecycle-resolution-shadow.md): lossless one-to-one normalization, stable-ID gates, quarantine, and no canonical authority.
+- [2026-09-05 Inactive Lifecycle Resolution Shadow Audit](audits/inactive-lifecycle-resolution-shadow-2026-09-05.md): real dual-anchor decisions, temporal boundary proof, physical custody, and unchanged canonical state.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-05T00:11:09Z
+Operational state verified at: 2026-09-05T22:00:06Z
 
 Repository context updated at: 2026-09-05 UTC
 
@@ -184,6 +184,16 @@ latest-anchor records, including 135 in that new window, have a selected stable
 FIGI matching the 303-session canonical Instrument history. The remaining
 records are unresolved, not ticker-joined.
 
+ADR 0148 now materializes both anchors into a disconnected, one-to-one
+source-observation and resolution-decision shadow. The 7/16 result uses only
+268 canonical Instrument sessions through its anchor and classifies 471 of
+23,260 rows as review candidates; the 9/3 result uses 303 sessions and
+classifies 547 of 23,469. The remaining 22,789 and 22,922 rows are explicitly
+quarantined. Of the 262 later-anchor additions, 76 are review candidates and
+186 are quarantined; no shared exact source row changes disposition. These are
+still review candidates rather than lifecycle facts, remain owner-only in
+`/tmp`, and grant no Historical Coverage or performance authority.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -326,12 +336,12 @@ separately bounded.
 3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
-4. **Research foundation:** normalize the completed 23,260-row inactive source
-   package into a disconnected stable-identity resolution shadow. Quarantine
-   missing/colliding identifiers and unsupported terminal facts; do not join
-   by ticker. Then complete lifecycle resolution, membership, actions,
-   adjustments, costs, and sealed chronological evaluation before interpreting
-   strategy performance.
+4. **Research foundation:** the disconnected inactive lifecycle normalization
+   and stable-identity resolution shadow is complete for both anchors. Next
+   design corroboration and source-availability evidence for the 547 latest
+   review candidates without promoting them by ticker or provider status
+   alone. Then complete canonical lifecycle, actions, adjustments, costs, and
+   sealed chronological evaluation before interpreting strategy performance.
 5. **Strategy research:** validate one preregistered strategy family at a time,
    beginning with Strong-Leader Pullback; compare against same-opportunity-set
    controls and preserve holdout discipline.

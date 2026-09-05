@@ -231,3 +231,6 @@ Each ADR should include:
 - [0143: Separate Identity Observation and Replay Time](0143-separate-identity-observation-and-replay-time.md)
 - [0144: Consume Canonical Identity Source for Membership Shadows](0144-consume-canonical-identity-source-for-membership-shadows.md)
 - [0145: Collapse Exact-Duplicate Identity Index References](0145-collapse-exact-duplicate-identity-index-references.md)
+- [0146: Complete Bounded Inactive Lifecycle Pagination Census](0146-complete-bounded-inactive-lifecycle-pagination-census.md)
+- [0147: Stage Inactive Lifecycle Source with Resumable Custody](0147-stage-inactive-lifecycle-source-with-resumable-custody.md)
+- [0148: Build a Disconnected Inactive Lifecycle Resolution Shadow](0148-build-disconnected-inactive-lifecycle-resolution-shadow.md)

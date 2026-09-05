@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-05 — Disconnected inactive lifecycle resolution shadow
+
+- Accepted ADR 0148 and added one-to-one source-observation and
+  resolution-decision contracts plus an immutable owner-only `/tmp` builder
+  and formal reader. Stable identity uses share-class then composite FIGI;
+  ticker and CIK never create positive identity.
+- Every missing, colliding, absent, malformed, future, ticker-conflicting, or
+  temporally contradictory row is retained with explicit quarantine reasons.
+  Passing rows remain review candidates with explicit missing terminal facts,
+  not canonical delistings.
+- All 2,088 backend tests passed with the same two dependency warnings; package
+  integrity, contract, tamper, one-to-one, and reuse tests passed, and
+  dependency inspection found no broken requirements.
+- Real disconnected builds classified 471/23,260 rows at the 7/16 anchor and
+  547/23,469 at the 9/3 anchor as review candidates. The later source adds 76
+  candidates and 186 quarantined rows; no shared exact row changes disposition.
+- The six-file temporary shadow is 8,892,156 bytes, owner-only, symlink-free,
+  and residue-free. The network-prohibited postflight proved `/data` unchanged
+  at 3,958 files / 1,877,724,006 bytes with the same inventory fingerprint.
+  No analytics, publication, Production deployment, or scheduler change
+  occurred.
+
 ## 2026-09-05 — Resumable inactive lifecycle source custody
 
 - Accepted ADR 0147 and added a distinct owner-only `/tmp` source package for
