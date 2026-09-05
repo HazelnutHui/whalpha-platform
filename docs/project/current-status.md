@@ -99,11 +99,12 @@ The 2026-09-05 aggregate inactive-security census reached 20 full pages and
 claim. This sizes the next source-custody task; it does not clear lifecycle or
 terminal-outcome readiness.
 
-ADR 0147 now implements the next temporary source boundary: owner-only `/tmp`
-custody, per-page immutable hashes, atomic checkpoints, interruption recovery,
-strict request-chain validation, and complete formal reread. It remains
-fixture-validated only until a clean-revision real package completes; it has no
-canonical Apply path and cannot produce lifecycle conclusions.
+ADR 0147 now implements and has executed the next temporary source boundary:
+owner-only `/tmp` custody, per-page immutable hashes, atomic checkpoints,
+interruption recovery, strict request-chain validation, and complete formal
+reread. The exact 2026-07-16 package completed naturally in 24 pages / 23,260
+rows / 6,644,157 physical bytes. It remains outcome-reconciliation-only, has
+no canonical Apply path, and cannot produce lifecycle conclusions.
 
 The report projects normalized Identity source observations as a separate
 record layer: 301 canonical partitions, 3,687,175 records, 3,844 source-page

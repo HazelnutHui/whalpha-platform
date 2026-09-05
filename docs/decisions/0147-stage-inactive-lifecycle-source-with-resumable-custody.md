@@ -56,3 +56,13 @@ session, reason, successor, or terminal consideration.
   conflicts, and unsupported terminal facts.
 - The 100-page/100,000-row limits are safety ceilings, not expected counts. A
   hit stops the operation and requires a new evidence-based review.
+
+## Execution evidence
+
+Clean main revision `0c957d72d599179af425be6a59a225071947dabb`
+completed the `2026-07-16` anchor naturally in 24 requests / 23,260 rows. The
+last page contained 260 rows. Formal reread passed for all 26 package files,
+6,644,157 physical bytes, owner-only modes, zero symlinks, exact request chain,
+and logical fingerprint
+`5b298512378f80fc5e72eb90bf05b588feb91c1ea1caedd802c8d54ac8cee7fb`.
+The package remains under `/tmp`; `/data` and Production were unchanged.

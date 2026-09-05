@@ -167,6 +167,14 @@ terminal reason, successor identity, and point-in-time availability remain
 unverified. No response rows were retained and no data was written. Active-page
 disappearance therefore remains a review flag rather than a lifecycle fact.
 
+ADR 0147 then completed the exact inactive source in resumable owner-only
+temporary custody: 24 pages / 23,260 rows / 6,644,157 physical bytes, with
+formal reread, zero symlinks, logical fingerprint
+`5b298512378f80fc5e72eb90bf05b588feb91c1ea1caedd802c8d54ac8cee7fb`.
+It contains 22,754 `delisted_utc` observations and 132 duplicate ticker values.
+The package is not under `/data`, remains `outcome_reconciliation_only`, and
+has no canonical lifecycle or Historical Coverage authority.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -309,11 +317,12 @@ separately bounded.
 3. **Historical analytics consumption:** connect the 303-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
-4. **Research foundation:** the inactive lifecycle source exceeds 20,000 rows
-   and the aggregate census remains truncated. Build a separately bounded,
-   resumable source-observation custody path before lifecycle resolution; then
-   complete membership, actions, adjustments, costs, and sealed chronological
-   evaluation before interpreting strategy performance.
+4. **Research foundation:** normalize the completed 23,260-row inactive source
+   package into a disconnected stable-identity resolution shadow. Quarantine
+   missing/colliding identifiers and unsupported terminal facts; do not join
+   by ticker. Then complete lifecycle resolution, membership, actions,
+   adjustments, costs, and sealed chronological evaluation before interpreting
+   strategy performance.
 5. **Strategy research:** validate one preregistered strategy family at a time,
    beginning with Strong-Leader Pullback; compare against same-opportunity-set
    controls and preserve holdout discipline.

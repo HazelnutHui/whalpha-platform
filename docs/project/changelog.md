@@ -15,9 +15,13 @@
 - Twelve focused tests cover normal completion, network resume, checkpoint
   crash recovery, immutable reuse, pagination loops, scope violations,
   coexistence, tampering, safe CLI output, and the `/tmp`-only boundary.
-- No live source package, `/data` write, lifecycle conclusion, analytics,
-  publication, deployment, or scheduler change has yet been made under this
-  contract.
+- The clean-revision real package completed naturally at 24 pages / 23,260
+  rows, passed independent formal reread across 26 owner-only files, and found
+  22,754 `delisted_utc` observations plus 132 duplicate ticker values.
+- A post-acquisition current-context report proved `/data` unchanged at 3,958
+  files / 1,877,724,006 bytes with the same inventory fingerprint. No lifecycle
+  conclusion, analytics, publication, deployment, or scheduler change was
+  made.
 
 ## 2026-09-05 — Bounded inactive lifecycle completion census
 
