@@ -8,6 +8,7 @@
 
 - [Massive Historical Lifecycle Completion Census V1](data-contracts/massive-historical-lifecycle-completion-census-v1.md): bounded natural-pagination census used to size the future lifecycle source boundary.
 - [2026-09-05 Inactive Lifecycle Completion Census Audit](audits/inactive-lifecycle-completion-census-2026-09-05.md): 20-page truncated result, field coverage, and the source-custody consequence.
+- [Historical Inactive Lifecycle Source Package V1](data-contracts/historical-inactive-lifecycle-source-package-v1.md): resumable owner-only temporary source custody with formal reread and no canonical write.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

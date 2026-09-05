@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-05 — Resumable inactive lifecycle source custody
+
+- Accepted ADR 0147 and added a distinct owner-only `/tmp` source package for
+  one historical Massive `active=false` anchor rather than weakening the
+  existing active Identity or six-page Pilot contracts.
+- The package streams and fsyncs each sanitized page, atomically checkpoints
+  progress, resumes only after complete custody reread, adopts only an exact
+  crash-window orphan page, detects cursor loops, and formally rereads the
+  completed request chain, aggregates, file set, modes, sizes, and hashes.
+- Hard ceilings are 100 pages, 100,000 rows, 8 MiB per page, and 512 MiB of
+  sanitized page content. Provider request IDs, pagination URLs, credentials,
+  and Authorization material are not retained.
+- Twelve focused tests cover normal completion, network resume, checkpoint
+  crash recovery, immutable reuse, pagination loops, scope violations,
+  coexistence, tampering, safe CLI output, and the `/tmp`-only boundary.
+- No live source package, `/data` write, lifecycle conclusion, analytics,
+  publication, deployment, or scheduler change has yet been made under this
+  contract.
+
 ## 2026-09-05 — Bounded inactive lifecycle completion census
 
 - Accepted ADR 0146 after the 301-session active-source census proved that
