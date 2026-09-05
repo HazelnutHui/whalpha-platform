@@ -47,13 +47,13 @@ Exact current price-session depth belongs in
 for stronger Regime review remains a future depth target, not a prerequisite
 that can replace the missing point-in-time families.
 
-ADRs 0137–0139 now provide canonical normalized source observations for 279
-profile-bound Identity sessions. One inventory-bound plan, atomic Apply, full
-canonical reader pass, physical census, and independent zero-write recovery
-postflight all reconciled. These observations remain eligible only for outcome
-reconciliation because Dell observed the backfilled packages after their
-historical sessions. The 24 missing sessions and all later research families
-remain explicit, so canonical source presence does not change readiness.
+ADRs 0137–0145 now provide canonical normalized source observations for 301
+profile-bound Identity sessions. The exact current partition count and missing
+dates belong in [current context](../project/current-context.md). These
+observations remain eligible only for outcome reconciliation because Dell
+observed the backfilled packages after their historical sessions. Missing or
+provider-revised sources and all later research families remain explicit, so
+canonical source presence does not change readiness.
 
 The formal state therefore remains
 `NOT_READY_FOR_PERFORMANCE_EVALUATION`.
@@ -82,7 +82,7 @@ The formal state therefore remains
 | Family | Grain | Authority | Required role |
 | --- | --- | --- | --- |
 | Canonical EOD Price Bar | instrument, session, source, revision | Implemented canonical fact | Raw OHLCV and outcome path |
-| Point-in-time Identity | source observation and resolved instrument as of date | Implemented resolved snapshots; normalized source observations are canonical for 279/303 sessions with 24 explicit gaps | Stable-ID/ticker/exchange/status evidence |
+| Point-in-time Identity | source observation and resolved instrument as of date | Implemented resolved snapshots; normalized source observations are canonical for the exact sessions reported by current context | Stable-ID/ticker/exchange/status evidence |
 | Daily Universe Membership | universe, instrument, session, methodology | Derived canonical decision | Performance-eligible historical population |
 | Corporate Action | instrument, action, source, revision | Canonical event fact | Splits, distributions, reorganizations, symbol changes, delistings |
 | Instrument Lifecycle | instrument validity interval or lineage event, source, revision | Canonical identity fact | Active/inactive/delisted state, ticker history, predecessor/successor evidence |

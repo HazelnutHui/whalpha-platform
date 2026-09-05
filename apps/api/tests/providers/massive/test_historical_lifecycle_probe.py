@@ -4,8 +4,11 @@ from datetime import date
 
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.historical_lifecycle_probe import (
+    COMPLETION_CENSUS_CONTRACT_VERSION,
+    COMPLETION_CENSUS_MAXIMUM_REQUEST_COUNT,
     CENSUS_CONTRACT_VERSION,
     LifecycleProbeStatus,
+    census_complete_massive_historical_lifecycle_pagination,
     census_massive_historical_lifecycle_pagination,
     probe_massive_historical_lifecycle_coverage,
     required_lifecycle_census_acknowledgement,
@@ -196,3 +199,74 @@ def test_census_acknowledgement_differs_from_two_page_probe() -> None:
     )
     assert census.startswith("I_AUTHORIZE_MASSIVE_LIFECYCLE_CENSUS_")
     assert census != probe
+
+
+def test_completion_census_reaches_natural_end_beyond_old_six_page_ceiling() -> None:
+    pages = [
+        {
+            "results": [{"ticker": f"OLD{index}", "active": False}],
+            "next_url": (
+                "https://api.massive.com/v3/reference/tickers?"
+                f"cursor={index + 1}"
+            ),
+        }
+        for index in range(8)
+    ]
+    pages.append({"results": [{"ticker": "OLD8", "active": False}]})
+
+    result = census_complete_massive_historical_lifecycle_pagination(
+        config=_config(),
+        transport=FakeTransport(pages),  # type: ignore[arg-type]
+        anchor_date=date(2026, 7, 16),
+    )
+
+    assert result.contract_version == COMPLETION_CENSUS_CONTRACT_VERSION
+    assert result.status is LifecycleProbeStatus.COMPLETED
+    assert result.request_count == 9
+    assert result.pagination_complete
+
+
+def test_completion_census_remains_bounded_at_twenty_pages() -> None:
+    pages = [
+        {
+            "results": [{"ticker": f"OLD{index}", "active": False}],
+            "next_url": (
+                "https://api.massive.com/v3/reference/tickers?"
+                f"cursor={index + 1}"
+            ),
+        }
+        for index in range(COMPLETION_CENSUS_MAXIMUM_REQUEST_COUNT)
+    ]
+
+    result = census_complete_massive_historical_lifecycle_pagination(
+        config=_config(),
+        transport=FakeTransport(pages),  # type: ignore[arg-type]
+        anchor_date=date(2026, 7, 16),
+    )
+
+    assert result.status is LifecycleProbeStatus.TRUNCATED_AT_CEILING
+    assert result.request_count == COMPLETION_CENSUS_MAXIMUM_REQUEST_COUNT
+    assert not result.pagination_complete
+
+
+def test_completion_census_stops_if_record_ceiling_is_exceeded(monkeypatch) -> None:
+    monkeypatch.setattr(
+        "tip_api.providers.massive.historical_lifecycle_probe."
+        "COMPLETION_CENSUS_MAXIMUM_RESULT_COUNT",
+        1,
+    )
+    page = {
+        "results": [
+            {"ticker": "OLD1", "active": False},
+            {"ticker": "OLD2", "active": False},
+        ]
+    }
+
+    result = census_complete_massive_historical_lifecycle_pagination(
+        config=_config(),
+        transport=FakeTransport([page]),  # type: ignore[arg-type]
+        anchor_date=date(2026, 7, 16),
+    )
+
+    assert result.status is LifecycleProbeStatus.RECORD_CEILING_EXCEEDED
+    assert not result.pagination_complete

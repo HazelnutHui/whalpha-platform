@@ -3,6 +3,7 @@
 - [Daily EOD Scheduler Runtime Plan V1](daily-eod-scheduler-runtime-plan-v1.md)
 
 - [Massive Historical Lifecycle Pagination Census V1](massive-historical-lifecycle-pagination-census-v1.md)
+- [Massive Historical Lifecycle Completion Census V1](massive-historical-lifecycle-completion-census-v1.md)
 
 - [Massive Historical Lifecycle Coverage Probe V1](massive-historical-lifecycle-coverage-probe-v1.md)
 

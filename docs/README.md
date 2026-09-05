@@ -6,6 +6,8 @@
 
 - [Massive Historical Lifecycle Pagination Census V1](data-contracts/massive-historical-lifecycle-pagination-census-v1.md): six-page aggregate-only census within the Historical Pilot ceiling.
 
+- [Massive Historical Lifecycle Completion Census V1](data-contracts/massive-historical-lifecycle-completion-census-v1.md): bounded natural-pagination census used to size the future lifecycle source boundary.
+
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 
 - [Massive Historical Entitlement Probe V1](data-contracts/massive-historical-entitlement-probe-v1.md): exact-revision, four-request technical account capability review with no response retention or acquisition authority.

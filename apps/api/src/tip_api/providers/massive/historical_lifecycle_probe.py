@@ -22,10 +22,15 @@ from tip_api.providers.massive.transport import (
 
 CONTRACT_VERSION = "massive-historical-lifecycle-coverage-probe/1.0"
 CENSUS_CONTRACT_VERSION = "massive-historical-lifecycle-pagination-census/1.0"
+COMPLETION_CENSUS_CONTRACT_VERSION = (
+    "massive-historical-lifecycle-completion-census/1.0"
+)
 ALL_TICKERS_PATH = "/v3/reference/tickers"
 PAGE_LIMIT = 1_000
 MAXIMUM_REQUEST_COUNT = 2
 CENSUS_MAXIMUM_REQUEST_COUNT = 6
+COMPLETION_CENSUS_MAXIMUM_REQUEST_COUNT = 20
+COMPLETION_CENSUS_MAXIMUM_RESULT_COUNT = 25_000
 _LIFECYCLE_FIELDS = (
     "delisted_utc",
     "last_updated_utc",
@@ -44,6 +49,7 @@ class LifecycleProbeStatus(StrEnum):
     UNAVAILABLE = "unavailable"
     MALFORMED_RESPONSE = "malformed_response"
     HTTP_ERROR = "http_error"
+    RECORD_CEILING_EXCEEDED = "record_ceiling_exceeded"
 
 
 @dataclass(frozen=True)
@@ -149,6 +155,26 @@ def census_massive_historical_lifecycle_pagination(
     )
 
 
+def census_complete_massive_historical_lifecycle_pagination(
+    *,
+    config: MassiveProviderConfig,
+    transport: MassiveHttpTransport,
+    anchor_date: date,
+    before_request: Callable[[int], None] | None = None,
+) -> MassiveHistoricalLifecycleProbeV1:
+    """Follow bounded inactive-Ticker pagination to natural completion."""
+
+    return _probe(
+        config=config,
+        transport=transport,
+        anchor_date=anchor_date,
+        before_request=before_request,
+        contract_version=COMPLETION_CENSUS_CONTRACT_VERSION,
+        maximum_request_count=COMPLETION_CENSUS_MAXIMUM_REQUEST_COUNT,
+        maximum_result_count=COMPLETION_CENSUS_MAXIMUM_RESULT_COUNT,
+    )
+
+
 def _probe(
     *,
     config: MassiveProviderConfig,
@@ -157,6 +183,7 @@ def _probe(
     before_request: Callable[[int], None] | None,
     contract_version: str,
     maximum_request_count: int,
+    maximum_result_count: int | None = None,
 ) -> MassiveHistoricalLifecycleProbeV1:
 
     path = ALL_TICKERS_PATH
@@ -196,6 +223,9 @@ def _probe(
             page_rows = _results(page)
             rows.extend(page_rows)
             page_count += 1
+            if maximum_result_count is not None and len(rows) > maximum_result_count:
+                status = LifecycleProbeStatus.RECORD_CEILING_EXCEEDED
+                break
             next_url = page.get("next_url")
             if next_url is None:
                 pagination_complete = True
