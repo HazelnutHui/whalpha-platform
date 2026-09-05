@@ -79,6 +79,12 @@ claims.
   batches with 5,571,154 formally reread decisions and no new failure. This is
   a mechanics result; post-session source cutoffs still prevent a historical
   knowledge-time or performance claim.
+- ADR 0145 subsequently proved that eight of the ten 2026-08-31 collision
+  groups were exact-duplicate Identity rows being counted twice by the
+  downstream index. Its narrowly scoped correction admits that session under
+  the unchanged gate while retaining the two genuinely distinct unresolved
+  collisions. ADR 0145 and the dated audit are authoritative for the corrected
+  301-session boundary.
 
 ## Alternatives Considered
 

@@ -46,7 +46,7 @@ and
 The five-session boundary completed in 135.53 seconds with a 1,373,124 KiB
 peak, versus the prior V2 boundary's 195.04 seconds.
 
-## All-session source preflight
+## Initial all-session source preflight
 
 A network-disabled four-process preflight evaluated all 303 canonical EOD
 sessions before broad Membership work:
@@ -61,7 +61,7 @@ The absent dates are exactly 2026-08-13 and 2026-08-19. Their later provider
 packages remain non-equivalent to the accepted same-day Identity and were not
 silently substituted.
 
-The only evidence-gate failure is 2026-08-31. Its normalized source exactly
+The initial evidence-gate failure was 2026-08-31. Its normalized source exactly
 rebuilds accepted Identity, but 10 stable-identifier collisions leave 9,957 of
 9,967 join-eligible observations mapped. The resulting linkage ratio is
 0.998996689074, below the unchanged 0.999 whole-session gate. The batch now
@@ -87,7 +87,8 @@ completed within 36 minutes 52 seconds.
 
 The physical census found 300 manifests and 300 Parquet files totaling
 129,736,636 bytes. Dates are unique and span 2025-06-23 through 2026-09-03;
-none of the three blocked sessions is present. Inventory fingerprint is
+none of the three initially blocked sessions is present. Inventory fingerprint
+is
 `8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`.
 The owner-only root is mode 0700; internal repository paths retain the project
 defaults behind that boundary. Symlink and staging/partial residue counts are
@@ -99,9 +100,42 @@ profile boundary, both sides of the two absent-source dates, 2026-08-28,
 same evaluation timestamp returned five `already_present` results with the
 same logical and physical fingerprints.
 
+## Exact-duplicate correction and final source boundary
+
+ADR 0145 traced the 2026-08-31 result to the boundary between two existing
+semantics. Instrument Master retains exact provider duplicate rows for audit
+while creating only one Instrument and Resolver, but the downstream evidence
+index had counted each identical `IdentityReference` as a separate candidate.
+Eight of the ten unique collision observations were such exact duplicates.
+The remaining AREN and PAAI observations are distinct unresolved references
+sharing stable identifiers and remain genuine collisions.
+
+The correction collapses only structurally identical references. It does not
+merge rows that merely share a canonical instrument, change the localizable
+collision policy, or lower the 0.999 gate. On 2026-08-31 it changes evidence
+counts from 9,957 mapped / 10 collisions to 9,965 mapped / 2 collisions and
+raises linkage from 0.998996689074 to 0.999799337815. The full V3 session then
+published 19,930 temporary decisions with zero external request or canonical
+write.
+
+A scan of all 303 accepted Identity partitions found exact-duplicate rows only
+on 2026-08-31 (eight) and 2026-09-03 (one). A corrected 8/28–9/3 five-session
+batch completed 5/5. The 8/28, 9/1, and 9/2 business decisions are unchanged.
+On 9/3, only FAN changes in the two Universe rows, from false-collision
+quarantine to explicit ETF exclusion. Independent corrected 8/31 and 9/3
+single-session outputs are byte-identical to their batch outputs.
+
+The corrected boundary root contains 10 files / 2,306,097 bytes, has no
+symlink, and has inventory fingerprint
+`ad8d2d28dd533106a87ca0ac386a7e88b2c239d54fc73a0df90fceb469a29535`.
+All 2,067 backend tests pass with the same two dependency warnings. Combining
+the 299 unaffected original sessions with the two corrected sessions yields
+301/303 source-available sessions and 5,591,084 formally reread decisions.
+The two unavailable sources remain 2026-08-13 and 2026-08-19.
+
 ## Remaining boundary
 
-This completes the disconnected mechanics shadow for every currently eligible
+This completes disconnected mechanics evidence for every source-available
 session; it does not complete canonical daily Membership. Sampled records all
 correctly report a source cutoff after their represented session. The source
 layer is therefore retrospective outcome-reconciliation evidence, not proof of
@@ -111,8 +145,6 @@ Research readiness remains `data_blocked`. Before any canonical Membership or
 Historical Coverage publication, a separate decision must address:
 
 - the two exact source gaps without projecting present facts backward;
-- the 2026-08-31 linkage-gate result without changing a threshold to fit one
-  observed date;
 - historical knowledge-time and revision semantics;
 - lifecycle, corporate actions, adjustments, costs, chronological evaluation,
   and sealed holdout evidence.

@@ -230,3 +230,4 @@ Each ADR should include:
 - [0142: Plan Explicit Append-Only Identity Source Custody](0142-plan-explicit-append-only-identity-source-custody.md)
 - [0143: Separate Identity Observation and Replay Time](0143-separate-identity-observation-and-replay-time.md)
 - [0144: Consume Canonical Identity Source for Membership Shadows](0144-consume-canonical-identity-source-for-membership-shadows.md)
+- [0145: Collapse Exact-Duplicate Identity Index References](0145-collapse-exact-duplicate-identity-index-references.md)

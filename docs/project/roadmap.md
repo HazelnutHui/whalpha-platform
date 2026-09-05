@@ -101,10 +101,11 @@ Current membership implementation sequence:
    same-day Identity. Never force approximate equivalence, project current
    Activation backward, or silently fill historical source.
 8. **Disconnected Membership mechanics complete for eligible sessions:** V3
-   formally reread 5,571,154 decisions for all 300 source/evidence-eligible
-   dates. Separately review the two source gaps, the 2026-08-31 linkage gate,
-   and historical knowledge-time before considering canonical Membership or
-   Historical Coverage publication.
+   evidence now covers 5,591,084 decisions for all 301 source-available dates.
+   ADR 0145 removed only structurally identical duplicate Identity references;
+   genuine conflicts and the 0.999 linkage gate remain unchanged. Separately
+   resolve the two source gaps and historical knowledge-time before considering
+   canonical Membership or Historical Coverage publication.
 
 ## Priority 3 — First real strategy research
 

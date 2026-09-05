@@ -139,17 +139,23 @@ compatibility review. The 2026-09-03 V3 result contains 19,958 decisions over
 runtime dependency reduced the measured single-day path to 59.53 seconds and a
 five-session boundary to 135.53 seconds without changing output hashes.
 
-A full four-process preflight found 300/303 source/evidence-eligible sessions.
-The two absent sources remain 2026-08-13 and 2026-08-19; their later provider
-packages are non-equivalent and remain unbound. The only other blocker is
-2026-08-31, where ten stable-identifier collisions produce a
-0.998996689074 linkage ratio below the unchanged 0.999 session gate.
+The initial preflight found 300/303 source/evidence-eligible sessions. ADR 0145
+then localized the 2026-08-31 gate failure: eight of ten unique collisions were
+structurally identical Identity references already marked as exact provider
+duplicates. Deduplicating only those identical references raises linkage to
+0.999799337815 under the unchanged 0.999 gate; the two genuinely distinct
+unresolved AREN/PAAI references remain collisions. The only unavailable
+sources remain 2026-08-13 and 2026-08-19, whose later packages are
+non-equivalent and unbound.
 
-All 300 eligible sessions then completed as disconnected `/tmp` V3 shadows in
-62 bounded batches, producing 5,571,154 formally reread decisions with zero
-session failure. The 600-file / 129,736,636-byte inventory fingerprint is
-`8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`;
-symlink and staging-residue counts are zero. Every sampled source cutoff is
+Combined disconnected V3 evidence now covers all 301 source-available dates
+and 5,591,084 formally reread decisions. The original 300-session root and its
+600-file / 129,736,636-byte inventory fingerprint
+`8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`
+remain preserved as pre-correction evidence. A separate five-session corrected
+boundary passed 5/5: three dates are business-decision-identical, 2026-09-03
+changes only FAN from false-collision quarantine to explicit ETF exclusion in
+both Universes, and 2026-08-31 adds 19,930 decisions. Every source cutoff is
 after its represented session, so the result remains retrospective mechanics
 evidence—not canonical Membership, Historical Coverage, point-in-time research
 authority, or a performance claim.

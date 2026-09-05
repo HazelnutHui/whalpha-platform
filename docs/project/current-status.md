@@ -114,20 +114,26 @@ PyArrow timezone dependency reduced measured single-session time to 59.53
 seconds and the five-session boundary to 135.53 seconds without changing the
 output fingerprint.
 
-A four-process preflight classified 300/303 sessions as source/evidence
-eligible. The two exact source gaps remain 2026-08-13 and 2026-08-19. The only
-additional blocker is 2026-08-31: ten stable-identifier collisions yield a
-0.998996689074 linkage ratio, below the unchanged 0.999 whole-session gate.
+The initial preflight classified 300/303 sessions as source/evidence eligible.
+ADR 0145 then proved that eight of the ten unique 2026-08-31 collision
+observations were exact-duplicate Identity rows incorrectly retained as two
+downstream join candidates. Collapsing only structurally identical references
+raises that session's linkage ratio from 0.998996689074 to 0.999799337815 under
+the unchanged 0.999 gate. The two distinct unresolved AREN/PAAI references
+remain collisions. The only source gaps are still 2026-08-13 and 2026-08-19.
 
-The full disconnected V3 run completed all 300 eligible sessions in 62 bounded
-batches with zero failures and 5,571,154 formally reread decisions. Its
-`/tmp` inventory contains 300 manifests plus 300 Parquet files / 129,736,636
-bytes with fingerprint
-`8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`;
-symlink and staging-residue counts are zero. All sampled rows correctly retain
-a source cutoff after their represented session. No Membership partition was
-published to `/data`, so this remains retrospective mechanics evidence rather
-than historical knowledge-time or research authority.
+Disconnected V3 evidence now covers all 301 source-available sessions and
+5,591,084 formally reread decisions. The original 300-session root remains a
+record of the pre-correction run: 600 files / 129,736,636 bytes with fingerprint
+`8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`.
+An independent corrected five-session boundary completed 5/5 with zero
+external request or canonical write. The three unaffected dates have zero
+business-decision difference; 2026-09-03 changes only FAN in both Universes
+from false-collision quarantine to explicit ETF exclusion, and 2026-08-31 now
+adds 19,930 valid decisions. No Membership partition was published to `/data`,
+and every source cutoff remains after its represented session, so the combined
+evidence is retrospective mechanics—not historical knowledge-time or research
+authority.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
@@ -204,10 +210,10 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    canonical after the original and append-only Apply/recovery passes. Keep
    2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
    proven; do not approximate them.
-7. **Disconnected Membership mechanics complete for eligible dates:** keep the
-   300-session V3 shadow temporary. Separately review the two source gaps, the
-   2026-08-31 evidence gate, and historical knowledge-time before any
-   canonical Membership decision.
+7. **Disconnected Membership mechanics complete for available sources:** keep
+   the 301-session V3 evidence temporary. Separately resolve the two exact
+   source gaps and historical knowledge-time before any canonical Membership
+   decision.
 8. Complete lifecycle, corporate-action, adjustment, cost, availability, and
    revision families; then publish transitive Historical Coverage and reconcile
    the 26-session analytics limitation.

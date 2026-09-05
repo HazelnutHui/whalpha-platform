@@ -108,6 +108,39 @@ def test_validated_snapshot_records_build_the_same_identity_join_indexes() -> No
     assert result.composite_figi["COMP1"][0].provider_ticker == "TEST"
 
 
+def test_exact_duplicate_identity_rows_are_one_evidence_join_candidate() -> None:
+    repeated = payload(
+        active=True,
+        currency_name="usd",
+        last_updated_utc="2026-08-14T20:00:00Z",
+    )
+    snapshot = build_snapshot_from_payloads(
+        payloads=(repeated, repeated.copy()),
+        as_of_date=AS_OF,
+        ingested_at=NOW,
+        request_count=1,
+        pagination_complete=True,
+    )
+
+    assert len(snapshot.identities) == 2
+    assert sum(
+        "exact_duplicate" in item.quality_flags for item in snapshot.identities
+    ) == 1
+
+    identity_indexes = build_identity_indexes(
+        identities=snapshot.identities,
+        resolvers=snapshot.resolvers,
+    )
+    assert len(identity_indexes.share_class_figi["SHARE1"]) == 1
+    assert len(identity_indexes.composite_figi["COMP1"]) == 1
+    assert len(identity_indexes.ticker_observations["TEST"]) == 1
+
+    result = build([repeated], identity_indexes=identity_indexes)
+    assert result.canonical_mapped_count == 1
+    assert result.collision_count == 0
+    assert result.evidence[0].instrument_id == snapshot.instruments[0].instrument_id
+
+
 def test_resolved_and_excluded_shared_ticker_reconcile_without_ambiguity() -> None:
     resolved = reference("DUP", ID1, share="DUPSHARE", composite="DUPCOMP")
     excluded = reference("DUP", None, ResolutionStatus.EXCLUDED, share=None, composite=None)

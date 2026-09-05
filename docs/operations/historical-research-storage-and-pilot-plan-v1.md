@@ -146,9 +146,10 @@ original targets, and whole-`/data` pre-state. The atomic executor published
 all 279 partitions and formally reread them; an independent
 `verify_then_complete` postflight reused all 279 and wrote zero bytes. ADR 0143
 later appended 22 more exact sources and kept the two provider-revised dates
-explicitly unbound. ADR 0144 completed disconnected Membership shadows for the
-300 source/evidence-eligible sessions; 8/13, 8/19, and the separate 8/31
-evidence gate remain explicit. Research readiness is still blocked.
+explicitly unbound. ADRs 0144–0145 provide disconnected Membership evidence
+for all 301 source-available sessions. Only the 8/13 and 8/19 source gaps
+remain at this layer. Research readiness is still blocked because the evidence
+is retrospective and later required families remain incomplete.
 
 The current `/data` root has no `market-data/historical-coverage` directory.
 Strategy readiness therefore remains `data_blocked`; fixture-only publication

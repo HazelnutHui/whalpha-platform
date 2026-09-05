@@ -882,11 +882,20 @@ def _assemble_identity_indexes(
         item.composite_figi or "",
         item.provider_instrument_id or "",
     )
+    # Instrument Master retains every provider observation for audit, including
+    # exact duplicate rows, while creating only one Instrument and Resolver.
+    # The evidence index must preserve that same semantic boundary: identical
+    # references are one join candidate, but any field difference remains a
+    # separate reference and therefore follows the conservative collision path.
+    def unique_sorted(
+        values: list[IdentityReference],
+    ) -> tuple[IdentityReference, ...]:
+        return tuple(sorted(set(values), key=sort_key))
     return IdentityIndexes(
-        {key: tuple(sorted(value, key=sort_key)) for key, value in share_class_figi.items()},
-        {key: tuple(sorted(value, key=sort_key)) for key, value in composite_figi.items()},
-        {key: tuple(sorted(value, key=sort_key)) for key, value in provider_instrument_id.items()},
-        {key: tuple(sorted(value, key=sort_key)) for key, value in ticker_observations.items()},
+        {key: unique_sorted(value) for key, value in share_class_figi.items()},
+        {key: unique_sorted(value) for key, value in composite_figi.items()},
+        {key: unique_sorted(value) for key, value in provider_instrument_id.items()},
+        {key: unique_sorted(value) for key, value in ticker_observations.items()},
         ticker_resolver,
     )
 

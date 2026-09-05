@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-05 — Remove false exact-duplicate Identity collisions
+
+- Accepted ADR 0145. Provider Identity indexes now collapse only structurally
+  identical references already retained as exact source duplicates. Any
+  difference in ticker, status, canonical instrument, or stable identifiers
+  remains a distinct conservative collision candidate.
+- Localized the prior 2026-08-31 failure: eight of ten unique collision
+  observations were exact duplicates, while the distinct unresolved AREN/PAAI
+  pair remains a genuine collision. The corrected session maps 9,965/9,967
+  join-eligible observations, passes the unchanged 0.999 gate at
+  0.999799337815, and produces 19,930 temporary Membership decisions.
+- All 303 Identity partitions contain exact duplicate rows on only 8/31 and
+  9/3. A corrected five-session boundary passed 5/5; 8/28, 9/1, and 9/2 have
+  zero business-decision change. On 9/3 only FAN changes in both Universes from
+  false-collision quarantine to explicit ETF exclusion. Corrected single and
+  batch outputs are byte-identical.
+- Disconnected evidence now covers all 301 source-available sessions and
+  5,591,084 decisions. The only source gaps remain 8/13 and 8/19. All 2,067
+  backend tests passed with the same two warnings; no network request, `/data`
+  or Production write, publication, deployment, or scheduler change occurred.
+
 ## 2026-09-05 — Consume canonical Identity source in Membership shadows
 
 - Accepted ADR 0144 and added a V3 historical Membership path that formally
