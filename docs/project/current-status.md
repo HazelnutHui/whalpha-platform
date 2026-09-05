@@ -99,10 +99,11 @@ artifacts, and the exact two missing EOD sessions. It explicitly remains
 `canonical_partitions_observed_not_coverage_validated`, so source custody is
 visible without being promoted to Historical Coverage or research readiness.
 
-The first complete-base daily membership adapter is now proven only in
-`/tmp`. A read-only census found 279/303 custody-valid retained Identity
+The first complete-base daily membership adapter was initially proven only in
+`/tmp`. Its read-only census found 279/303 custody-valid retained Identity
 reference packages, with an exact 24-session gap from 2026-07-17 through
-2026-08-19. The 2026-09-03 shadow evaluated all 9,979 same-day stable IDs for
+2026-08-19; the later recovery state is recorded below. The 2026-09-03 shadow
+evaluated all 9,979 same-day stable IDs for
 both Universes and isolated one source collision while formally rereading all
 19,958 decisions. Because its source was observed after the session and no
 membership partition exists in `/data`, this does not change research
@@ -131,8 +132,9 @@ retained packages; both identify the same 24 physical gaps. Every retained
 package therefore has one fingerprint-proven accepted profile. This is still
 `/tmp` source readiness—not daily membership or Historical Coverage.
 
-ADR 0136 now binds all 279 retained sessions in a formally reread owner-only
-map; 58 use `current_v1`, 221 use `pre_etv_governance_v1`, and the same 24
+The initial ADR 0136 map bound all 279 then-retained sessions in a formally
+reread owner-only map; 58 used `current_v1`, 221 used
+`pre_etv_governance_v1`, and the same 24
 physical gaps remain unbound. Single and bounded membership paths require this
 map and revalidate package locator/custody/time plus accepted Identity-family
 fingerprints. A repeated real 2025-09-09/10 boundary batch produced identical
@@ -140,7 +142,7 @@ manifests and Parquet bytes under the two correct profiles. Durable canonical
 source custody is complete for those 279 packages; the 24 gaps, broad daily
 membership, and Historical Coverage remain open.
 
-ADRs 0137 and 0138 now preserve those 279 bound sources in one complete
+ADRs 0137 and 0138 preserved those initial 279 bound sources in one complete
 normalized `/tmp` candidate and bind them into one no-write prospective Apply
 plan. The candidate contains 3,399,877 complete result rows in 279 Parquet plus
 279 manifest files, totaling 258,394,518 bytes versus 1,006,791,465 represented
