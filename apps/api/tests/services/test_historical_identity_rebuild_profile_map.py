@@ -167,6 +167,8 @@ def test_profile_map_is_exact_complete_and_formally_reread(tmp_path: Path) -> No
     assert profile_map.canonical_session_count == 3
     assert profile_map.bound_session_count == 2
     assert profile_map.missing_session_dates == (MISSING_SESSION,)
+    assert profile_map.unbound_identity_mismatch_session_dates == ()
+    assert profile_map.contract_version == "historical-identity-rebuild-profile-map/1.1"
     assert dict(profile_map.profile_counts) == {
         "current_v1": 1,
         "pre_etv_governance_v1": 1,
@@ -190,7 +192,7 @@ def test_profile_map_is_exact_complete_and_formally_reread(tmp_path: Path) -> No
     assert read_historical_identity_rebuild_profile_map(output) == profile_map
 
 
-def test_profile_map_rejects_a_retained_session_without_one_exact_profile(
+def test_profile_map_keeps_dual_mismatch_session_explicitly_unbound(
     tmp_path: Path,
 ) -> None:
     current_path = _write_report(tmp_path / "current.json", _report(profile="current_v1"))
@@ -199,15 +201,17 @@ def test_profile_map_rejects_a_retained_session_without_one_exact_profile(
         _report(profile="pre_etv_governance_v1", second_exact=False),
     )
 
-    with pytest.raises(
-        HistoricalIdentityRebuildProfileMapError,
-        match="exactly one matching",
-    ):
-        build_historical_identity_rebuild_profile_map(
-            current_census_report_path=current_path,
-            legacy_census_report_path=legacy_path,
-            generated_at=NOW,
-        )
+    profile_map = build_historical_identity_rebuild_profile_map(
+        current_census_report_path=current_path,
+        legacy_census_report_path=legacy_path,
+        generated_at=NOW,
+    )
+
+    assert profile_map.bound_session_count == 1
+    assert profile_map.missing_session_dates == (MISSING_SESSION,)
+    assert profile_map.unbound_identity_mismatch_session_dates == (LEGACY_SESSION,)
+    with pytest.raises(HistoricalIdentityRebuildProfileMapError, match="not bound"):
+        profile_binding_for_session(profile_map, LEGACY_SESSION)
 
 
 def test_profile_map_rejects_group_readable_census_evidence(tmp_path: Path) -> None:

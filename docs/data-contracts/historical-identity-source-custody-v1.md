@@ -39,11 +39,13 @@ logical content fingerprint, Parquet hash, package-artifact row reconciliation,
 and manifest self-fingerprint. Symlinks and extra files are rejected.
 
 The offline runner accepts a finite maximum of 303 explicitly profile-bound
-sessions and at most four worker processes. Each session publishes atomically
-and independently, so completed partitions—not an external progress counter—
-are the resume authority. Worker processes disable socket creation. A failed
-session stops the invocation without deleting or relabelling prior completed
-partitions.
+sessions and at most four worker processes. A profile-map 1.1 inventory may
+also contain explicitly unbound dual-profile mismatches; they must be present
+exactly once in discovery but cannot be selected or normalized. Each selected
+session publishes atomically and independently, so completed partitions—not
+an external progress counter—are the resume authority. Worker processes
+disable socket creation. A failed session stops the invocation without
+deleting or relabelling prior completed partitions.
 
 Response URLs, request identifiers, response-wrapper bodies, credentials, and
 Authorization values are not retained. Page status, reported count,
@@ -52,11 +54,19 @@ custody evidence.
 
 ## Time and governance
 
-The session is source effective/as-of time. `package_fetched_at` is the Dell
-observation and ingestion time. It is later than the historical session for
-backfilled packages, so point-in-time eligibility is explicitly
+The session is source effective/as-of time. `package_fetched_at` and each
+row's `source_observed_at` preserve the actual Dell package observation time.
+They are later than the historical session for backfilled or reacquired
+packages, so point-in-time eligibility is explicitly
 `outcome_reconciliation_only` until a separate availability policy proves a
 stronger claim.
+
+Exact reconstruction separately reads the accepted canonical Identity
+families' row-level `ingested_at`. Instrument Master, Provider Identity, and
+Resolver must each contain one non-null timestamp and all three values must be
+equal. That accepted replay timestamp reproduces canonical build provenance;
+it never replaces or backdates the source observation timestamp. All three
+content fingerprints must still match exactly.
 
 The data family is `point_in_time_identity`, layer `source_observation`, scope
 `internal_only`, and retention `canonical_no_auto_expiry`. Durable publication

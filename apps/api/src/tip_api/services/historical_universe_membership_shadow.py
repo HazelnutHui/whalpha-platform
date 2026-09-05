@@ -11,6 +11,8 @@ from pathlib import Path
 from typing import Mapping
 from uuid import UUID
 
+import pyarrow.parquet as pq
+
 from tip_api.contracts.common import QualityStatus, normalize_utc_datetime
 from tip_api.contracts.market_data.v1 import (
     EodHistoryWindowDescriptorV1,
@@ -116,6 +118,7 @@ class HistoricalIdentityPackageEquivalence:
     package: ValidatedIdentityReferencePackage
     rebuilt_identity: ReferenceSnapshotBuildResult
     rebuild_profile: HistoricalIdentityRebuildProfile
+    identity_replay_ingested_at: datetime
     rebuilt_instrument_fingerprint: str
     rebuilt_identity_fingerprint: str
     rebuilt_resolver_fingerprint: str
@@ -170,10 +173,11 @@ def inspect_historical_identity_package_equivalence(
         package_path=package_path,
         expected_session=session_date,
     )
+    identity_replay_ingested_at = read_identity_replay_ingested_at(accepted)
     rebuilt = build_snapshot_from_payloads(
         payloads=_flatten_reference_pages(package.pages),
         as_of_date=session_date,
-        ingested_at=package.manifest.fetched_at,
+        ingested_at=identity_replay_ingested_at,
         request_count=package.manifest.request_count,
         pagination_complete=package.manifest.pagination_complete,
     )
@@ -195,6 +199,7 @@ def inspect_historical_identity_package_equivalence(
         package=package,
         rebuilt_identity=rebuilt,
         rebuild_profile=rebuild_profile,
+        identity_replay_ingested_at=identity_replay_ingested_at,
         rebuilt_instrument_fingerprint=rebuilt_instrument_fingerprint,
         rebuilt_identity_fingerprint=rebuilt_identity_fingerprint,
         rebuilt_resolver_fingerprint=rebuilt_resolver_fingerprint,
@@ -208,6 +213,67 @@ def inspect_historical_identity_package_equivalence(
             rebuilt_resolver_fingerprint == accepted.resolver_content_sha256
         ),
     )
+
+
+def read_identity_replay_ingested_at(
+    identity: InstrumentMasterSnapshotReadResult,
+) -> datetime:
+    """Read the one canonical build timestamp shared by all Identity families."""
+
+    families = (
+        (
+            "Instrument Master",
+            identity.instrument_partition_path,
+            identity.instrument_count,
+        ),
+        (
+            "Provider Identity",
+            identity.identity_partition_path,
+            identity.identity_count,
+        ),
+        (
+            "Ticker Resolver",
+            identity.resolver_partition_path,
+            identity.resolver_count,
+        ),
+    )
+    family_times: list[datetime] = []
+    for label, partition, expected_count in families:
+        parquet_path = partition / "part-00000.parquet"
+        if (
+            partition.is_symlink()
+            or parquet_path.is_symlink()
+            or not parquet_path.is_file()
+        ):
+            raise HistoricalUniverseMembershipShadowError(
+                f"accepted {label} replay source is invalid"
+            )
+        try:
+            table = pq.ParquetFile(parquet_path).read(columns=["ingested_at"])
+        except Exception as exc:
+            raise HistoricalUniverseMembershipShadowError(
+                f"accepted {label} replay timestamp is unreadable"
+            ) from exc
+        if table.num_rows != expected_count:
+            raise HistoricalUniverseMembershipShadowError(
+                f"accepted {label} replay row count differs"
+            )
+        raw_values = [row.get("ingested_at") for row in table.to_pylist()]
+        if any(value is None for value in raw_values):
+            raise HistoricalUniverseMembershipShadowError(
+                f"accepted {label} replay timestamp is null"
+            )
+        values = {normalize_utc_datetime(value) for value in raw_values}
+        if len(values) != 1:
+            raise HistoricalUniverseMembershipShadowError(
+                f"accepted {label} replay timestamp is not unique"
+            )
+        family_times.append(next(iter(values)))
+    if len(set(family_times)) != 1:
+        raise HistoricalUniverseMembershipShadowError(
+            "accepted Identity families do not share one replay timestamp"
+        )
+    return family_times[0]
 
 
 def apply_historical_identity_rebuild_profile(

@@ -9,6 +9,8 @@ from types import SimpleNamespace
 from uuid import UUID
 
 import pytest
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 from tip_api.contracts.common import QualityStatus
 from tip_api.contracts.market_data.v1 import (
@@ -26,6 +28,7 @@ from tip_api.contracts.security_classification.v1 import (
     UniverseDisposition,
 )
 from tip_api.read_models.eod import EodMarketBarReadModel
+from tip_api.persistence.instrument_master import InstrumentMasterSnapshotReadResult
 from tip_api.providers.massive.instrument_master_snapshot import (
     build_snapshot_from_payloads,
 )
@@ -41,6 +44,7 @@ from tip_api.services.historical_universe_membership_shadow import (
     _validate_identity_profile_binding,
     _validate_policy_relationship,
     build_complete_point_in_time_source_decisions,
+    read_identity_replay_ingested_at,
 )
 from tip_api.services.historical_universe_membership_shadow_cli import (
     _network_disabled,
@@ -51,6 +55,82 @@ SESSION = date(2026, 9, 3)
 PREVIOUS = date(2026, 9, 2)
 NOW = datetime(2026, 9, 4, tzinfo=UTC)
 SHA = "a" * 64
+
+
+def _identity_read_with_replay_times(
+    tmp_path: Path,
+    *,
+    instrument_time: datetime,
+    identity_time: datetime,
+    resolver_time: datetime,
+) -> InstrumentMasterSnapshotReadResult:
+    partitions = []
+    for family, replay_time in (
+        ("instrument", instrument_time),
+        ("identity", identity_time),
+        ("resolver", resolver_time),
+    ):
+        partition = tmp_path / family
+        partition.mkdir()
+        table = pa.table(
+            {
+                "ingested_at": pa.array(
+                    [replay_time],
+                    type=pa.timestamp("us", tz="UTC"),
+                )
+            }
+        )
+        pq.write_table(table, partition / "part-00000.parquet")
+        partitions.append(partition)
+    return InstrumentMasterSnapshotReadResult(
+        schema_version="1",
+        as_of_date=SESSION,
+        provider_id="massive_stocks_basic",
+        instrument_count=1,
+        identity_count=1,
+        resolver_count=1,
+        instrument_partition_path=partitions[0],
+        identity_partition_path=partitions[1],
+        resolver_partition_path=partitions[2],
+        snapshot_manifest_path=tmp_path / "manifest.json",
+        instrument_content_sha256="1" * 64,
+        identity_content_sha256="2" * 64,
+        resolver_content_sha256="3" * 64,
+        snapshot_content_sha256="4" * 64,
+        created_at=NOW,
+    )
+
+
+def test_identity_replay_time_reads_one_shared_canonical_row_timestamp(
+    tmp_path: Path,
+) -> None:
+    replay_time = datetime(2026, 8, 16, 13, 35, tzinfo=UTC)
+    identity = _identity_read_with_replay_times(
+        tmp_path,
+        instrument_time=replay_time,
+        identity_time=replay_time,
+        resolver_time=replay_time,
+    )
+
+    assert read_identity_replay_ingested_at(identity) == replay_time
+
+
+def test_identity_replay_time_rejects_family_timestamp_disagreement(
+    tmp_path: Path,
+) -> None:
+    replay_time = datetime(2026, 8, 16, 13, 35, tzinfo=UTC)
+    identity = _identity_read_with_replay_times(
+        tmp_path,
+        instrument_time=replay_time,
+        identity_time=replay_time,
+        resolver_time=datetime(2026, 8, 16, 13, 36, tzinfo=UTC),
+    )
+
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowError,
+        match="do not share one replay timestamp",
+    ):
+        read_identity_replay_ingested_at(identity)
 
 
 def test_legacy_etv_profile_changes_only_the_versioned_noninstrument_identity() -> None:

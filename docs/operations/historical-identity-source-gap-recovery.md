@@ -35,8 +35,12 @@ and reused.
 ## Required next gates
 
 1. Run exact reconstruction comparison under both governed profiles.
-2. Require exactly one all-family match per session.
-3. Bind each selected profile to package and canonical fingerprints.
+2. Require exactly one all-family match before a session can be canonicalized.
+   A package that mismatches every governed profile remains explicitly
+   unbound; do not relabel it as physically missing or force a closest match.
+3. Bind each selected profile to package and canonical fingerprints while
+   keeping actual package observation time distinct from accepted Identity
+   replay provenance.
 4. Normalize into a separate `/tmp` candidate and formally reread it.
 5. Build an incremental no-write Apply plan against the then-current canonical
    inventory.

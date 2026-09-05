@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-05 — Separate Identity observation and replay provenance
+
+- Accepted ADR 0143. Historical package and normalized-source equivalence now
+  preserve actual package observation time while replaying the one non-null
+  row-level ingestion timestamp shared by the accepted Instrument, Provider
+  Identity, and Resolver families. Any missing, non-unique, family-divergent,
+  unreadable, or wrong-count replay provenance fails closed; no content
+  fingerprint gate was weakened.
+- Advanced the profile map to backward-compatible contract 1.1 with an
+  explicit unbound dual-profile-mismatch class. Such packages remain in the
+  complete inventory fingerprint, receive no profile binding, cannot be
+  normalized, and are distinct from physically missing source.
+- The 303-session, 13-root, four-process real census found 58 current-profile
+  exact sessions and 243 legacy-profile exact sessions. All 303 packages pass
+  custody with no missing, duplicate, or unavailable snapshot; 301 are covered
+  exactly once. Reacquired 2026-08-13 and 2026-08-19 remain unbound because
+  their provider record sets and stable-identity fields differ from the
+  accepted snapshots under both profiles.
+- A `/tmp`-only 22-session normalized candidate completed 287,298 rows in 44
+  read-only files / 21,785,110 bytes. Its no-write append plan binds the exact
+  files and unchanged `/data` pre-state with SHA-256
+  `f8f733aca792dc46279af937a8cb9c0165732eca10cbefa17f64a7ffd2fa1497`.
+  At this checkpoint no canonical write, membership, Historical Coverage,
+  research, publication, deployment, or scheduler state changed.
+
 ## 2026-09-04 — Support explicit append-only Identity source plans
 
 - Accepted ADR 0142 and extended the existing no-write source Apply planner

@@ -51,6 +51,7 @@ from tip_api.services.historical_universe_membership_shadow import (
     HistoricalUniverseMembershipShadowError,
     apply_historical_identity_rebuild_profile,
     inspect_historical_identity_package_equivalence,
+    read_identity_replay_ingested_at,
 )
 
 
@@ -112,6 +113,7 @@ class HistoricalIdentitySourceCustodyWriteResult:
 class HistoricalIdentitySourceCustodyEquivalence:
     session_date: date
     rebuild_profile: str
+    identity_replay_ingested_at: datetime
     instrument_fingerprint: str
     identity_fingerprint: str
     resolver_fingerprint: str
@@ -704,10 +706,11 @@ def inspect_historical_identity_source_custody_equivalence(
         raise HistoricalIdentitySourceCustodyError(
             "normalized source manifest differs from accepted canonical Identity"
         )
+    identity_replay_ingested_at = read_identity_replay_ingested_at(accepted)
     rebuilt = build_snapshot_from_payloads(
         payloads=tuple(item.source_payload() for item in custody.records),
         as_of_date=manifest.as_of_date,
-        ingested_at=manifest.source_package_fetched_at,
+        ingested_at=identity_replay_ingested_at,
         request_count=manifest.source_request_count,
         pagination_complete=True,
     )
@@ -725,6 +728,7 @@ def inspect_historical_identity_source_custody_equivalence(
     return HistoricalIdentitySourceCustodyEquivalence(
         session_date=manifest.as_of_date,
         rebuild_profile=manifest.identity_rebuild_profile,
+        identity_replay_ingested_at=identity_replay_ingested_at,
         instrument_fingerprint=instrument_fingerprint,
         identity_fingerprint=identity_fingerprint,
         resolver_fingerprint=resolver_fingerprint,
@@ -882,7 +886,9 @@ def _discover_profile_bound_packages(
         for item in discovered
     ]
     if (
-        len(discovered) != profile_map.bound_session_count
+        len(discovered)
+        != profile_map.bound_session_count
+        + len(profile_map.unbound_identity_mismatch_session_dates)
         or historical_identity_source_fingerprint(inventory)
         != profile_map.discovered_package_inventory_fingerprint
     ):
@@ -890,13 +896,21 @@ def _discover_profile_bound_packages(
             "discovered package inventory differs from the profile map"
         )
     bindings = {item.session_date: item for item in profile_map.bindings}
+    unbound_sessions = set(profile_map.unbound_identity_mismatch_session_dates)
+    discovered_unbound_sessions: set[date] = set()
     result: dict[date, Path] = {}
     for session, package_path, locator, manifest_sha, content_sha in discovered:
         binding = bindings.get(session)
         if binding is None:
-            raise HistoricalIdentitySourceCustodyError(
-                "discovered package session is not profile-bound"
-            )
+            if (
+                session not in unbound_sessions
+                or session in discovered_unbound_sessions
+            ):
+                raise HistoricalIdentitySourceCustodyError(
+                    "discovered package session is not uniquely declared unbound"
+                )
+            discovered_unbound_sessions.add(session)
+            continue
         if session in result:
             raise HistoricalIdentitySourceCustodyError(
                 "multiple source packages exist for one session"
@@ -913,6 +927,10 @@ def _discover_profile_bound_packages(
     if set(result) != set(bindings):
         raise HistoricalIdentitySourceCustodyError(
             "profile-bound package set is incomplete"
+        )
+    if discovered_unbound_sessions != unbound_sessions:
+        raise HistoricalIdentitySourceCustodyError(
+            "profile-map unbound package set is incomplete"
         )
     return result
 

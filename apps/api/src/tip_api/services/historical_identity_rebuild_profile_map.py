@@ -16,7 +16,8 @@ from tip_api.contracts.common import normalize_utc_datetime
 
 CURRENT_IDENTITY_REBUILD_PROFILE = "current_v1"
 PRE_ETV_IDENTITY_REBUILD_PROFILE = "pre_etv_governance_v1"
-PROFILE_MAP_CONTRACT_VERSION = "historical-identity-rebuild-profile-map/1.0"
+PROFILE_MAP_CONTRACT_VERSION = "historical-identity-rebuild-profile-map/1.1"
+LEGACY_PROFILE_MAP_CONTRACT_VERSION = "historical-identity-rebuild-profile-map/1.0"
 HistoricalIdentityRebuildProfile: TypeAlias = Literal[
     "current_v1",
     "pre_etv_governance_v1",
@@ -228,9 +229,10 @@ class HistoricalIdentityRebuildProfileBindingV1(_FrozenModel):
 
 
 class HistoricalIdentityRebuildProfileMapV1(_FrozenModel):
-    contract_version: Literal["historical-identity-rebuild-profile-map/1.0"] = (
-        PROFILE_MAP_CONTRACT_VERSION
-    )
+    contract_version: Literal[
+        "historical-identity-rebuild-profile-map/1.0",
+        "historical-identity-rebuild-profile-map/1.1",
+    ] = PROFILE_MAP_CONTRACT_VERSION
     generated_at: datetime
     current_census_contract_version: Literal["1.0", "1.1"]
     current_census_report_sha256: str = Field(pattern=_SHA256_PATTERN)
@@ -239,6 +241,7 @@ class HistoricalIdentityRebuildProfileMapV1(_FrozenModel):
     canonical_session_count: int = Field(ge=1)
     bound_session_count: int = Field(ge=0)
     missing_session_dates: tuple[date, ...]
+    unbound_identity_mismatch_session_dates: tuple[date, ...] = ()
     profile_counts: tuple[tuple[HistoricalIdentityRebuildProfile, int], ...]
     canonical_session_index_fingerprint: str = Field(pattern=_SHA256_PATTERN)
     discovered_package_inventory_fingerprint: str = Field(pattern=_SHA256_PATTERN)
@@ -257,12 +260,28 @@ class HistoricalIdentityRebuildProfileMapV1(_FrozenModel):
             raise ValueError("profile-map missing sessions are not ordered")
         if len(self.missing_session_dates) != len(set(self.missing_session_dates)):
             raise ValueError("profile-map missing sessions are not unique")
-        if set(sessions) & set(self.missing_session_dates):
-            raise ValueError("profile-map bound and missing sessions overlap")
+        if self.unbound_identity_mismatch_session_dates != tuple(
+            sorted(self.unbound_identity_mismatch_session_dates)
+        ) or len(self.unbound_identity_mismatch_session_dates) != len(
+            set(self.unbound_identity_mismatch_session_dates)
+        ):
+            raise ValueError("profile-map mismatch sessions are not unique and ordered")
+        if (
+            self.contract_version == LEGACY_PROFILE_MAP_CONTRACT_VERSION
+            and self.unbound_identity_mismatch_session_dates
+        ):
+            raise ValueError("profile-map 1.0 cannot carry mismatch sessions")
+        bound = set(sessions)
+        missing = set(self.missing_session_dates)
+        mismatched = set(self.unbound_identity_mismatch_session_dates)
+        if bound & missing or bound & mismatched or missing & mismatched:
+            raise ValueError("profile-map session classes overlap")
         if (
             self.bound_session_count != len(self.bindings)
             or self.canonical_session_count
-            != self.bound_session_count + len(self.missing_session_dates)
+            != self.bound_session_count
+            + len(self.missing_session_dates)
+            + len(self.unbound_identity_mismatch_session_dates)
         ):
             raise ValueError("profile-map coverage counts differ")
         calculated_counts = tuple(
@@ -274,8 +293,11 @@ class HistoricalIdentityRebuildProfileMapV1(_FrozenModel):
         )
         if self.profile_counts != calculated_counts:
             raise ValueError("profile-map profile counts differ from bindings")
+        fingerprint_exclusions = {"logical_fingerprint"}
+        if self.contract_version == LEGACY_PROFILE_MAP_CONTRACT_VERSION:
+            fingerprint_exclusions.add("unbound_identity_mismatch_session_dates")
         expected = historical_identity_profile_fingerprint(
-            self.model_dump(mode="json", exclude={"logical_fingerprint"})
+            self.model_dump(mode="json", exclude=fingerprint_exclusions)
         )
         if self.logical_fingerprint != expected:
             raise ValueError("historical Identity profile-map fingerprint mismatch")
@@ -298,11 +320,20 @@ def build_historical_identity_rebuild_profile_map(
 
     bindings: list[HistoricalIdentityRebuildProfileBindingV1] = []
     missing_sessions: list[date] = []
+    mismatch_sessions: list[date] = []
     for current_session, legacy_session in zip(current.sessions, legacy.sessions):
         _validate_shared_session(current=current_session, legacy=legacy_session)
         if current_session.status == legacy_session.status == "missing_source":
             _validate_missing_pair(current_session, legacy_session)
             missing_sessions.append(current_session.session_date)
+            continue
+        if (
+            current_session.status
+            == legacy_session.status
+            == "identity_snapshot_mismatch"
+        ):
+            _validate_unbound_mismatch_pair(current_session, legacy_session)
+            mismatch_sessions.append(current_session.session_date)
             continue
         profile, exact_session, mismatch_session = _select_exact_profile(
             current=current_session,
@@ -361,6 +392,7 @@ def build_historical_identity_rebuild_profile_map(
         "canonical_session_count": current.canonical_session_count,
         "bound_session_count": len(bindings),
         "missing_session_dates": tuple(missing_sessions),
+        "unbound_identity_mismatch_session_dates": tuple(mismatch_sessions),
         "profile_counts": profile_counts,
         "canonical_session_index_fingerprint": (
             current.canonical_session_index_fingerprint
@@ -616,6 +648,59 @@ def _validate_missing_pair(
     ):
         raise HistoricalIdentityRebuildProfileMapError(
             "missing census sessions carry candidate evidence"
+        )
+
+
+def _validate_unbound_mismatch_pair(
+    current: _CensusSessionV1,
+    legacy: _CensusSessionV1,
+) -> None:
+    if (
+        current.candidate_count != 1
+        or current.custody_valid_candidate_count != 1
+        or current.exact_equivalent_candidate_count != 0
+        or legacy.candidate_count != 1
+        or legacy.custody_valid_candidate_count != 1
+        or legacy.exact_equivalent_candidate_count != 0
+        or len(current.candidates) != 1
+        or len(legacy.candidates) != 1
+    ):
+        raise HistoricalIdentityRebuildProfileMapError(
+            "unbound mismatch session does not have one custody-valid candidate pair"
+        )
+    current_candidate = current.candidates[0]
+    legacy_candidate = legacy.candidates[0]
+    common_fields = (
+        "source_locator_sha256",
+        "package_manifest_sha256",
+        "package_content_sha256",
+        "fetched_at",
+    )
+    if any(
+        getattr(current_candidate, name) != getattr(legacy_candidate, name)
+        for name in common_fields
+    ):
+        raise HistoricalIdentityRebuildProfileMapError(
+            "unbound profile candidates do not identify the same source package"
+        )
+    if (
+        current_candidate.status != "identity_snapshot_mismatch"
+        or legacy_candidate.status != "identity_snapshot_mismatch"
+        or (
+            current_candidate.instrument_match,
+            current_candidate.identity_match,
+            current_candidate.resolver_match,
+        )
+        == (True, True, True)
+        or (
+            legacy_candidate.instrument_match,
+            legacy_candidate.identity_match,
+            legacy_candidate.resolver_match,
+        )
+        == (True, True, True)
+    ):
+        raise HistoricalIdentityRebuildProfileMapError(
+            "unbound profile candidate unexpectedly claims exact equivalence"
         )
 
 

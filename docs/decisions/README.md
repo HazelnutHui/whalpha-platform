@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0143](0143-separate-identity-observation-and-replay-time.md): separate later source observation from canonical Identity replay provenance and keep dual-profile mismatches explicitly unbound.
+
 - [ADR 0142](0142-plan-explicit-append-only-identity-source-custody.md): plan an exact profile-bound candidate subset for immutable append without replaying existing canonical source partitions.
 
 - [ADR 0141](0141-fetch-historical-identity-source-gaps-without-canonical-writes.md): recover exact missing historical Identity reference packages through one serial, checkpointed, `/tmp`-only operation before independent dual-profile proof.
@@ -73,6 +75,7 @@ Each ADR should include:
 
 ## Records
 
+- [0143: Separate Identity Observation and Replay Time](0143-separate-identity-observation-and-replay-time.md)
 - [0142: Plan Explicit Append-Only Identity Source Custody](0142-plan-explicit-append-only-identity-source-custody.md)
 - [0141: Fetch Historical Identity Source Gaps Without Canonical Writes](0141-fetch-historical-identity-source-gaps-without-canonical-writes.md)
 - [0133: Reuse Bounded EOD Panels for Membership Shadow Batches](0133-reuse-bounded-eod-panels-for-membership-shadow-batches.md)

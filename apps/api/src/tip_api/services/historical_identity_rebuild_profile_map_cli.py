@@ -49,6 +49,9 @@ def main(argv: list[str] | None = None) -> int:
                 "canonical_session_count": profile_map.canonical_session_count,
                 "bound_session_count": profile_map.bound_session_count,
                 "missing_session_count": len(profile_map.missing_session_dates),
+                "unbound_identity_mismatch_session_count": len(
+                    profile_map.unbound_identity_mismatch_session_dates
+                ),
                 "profile_counts": dict(profile_map.profile_counts),
                 "logical_fingerprint": profile_map.logical_fingerprint,
                 "external_request_count": profile_map.external_request_count,

@@ -33,6 +33,7 @@ from tip_api.services import historical_identity_source_apply_cli as source_appl
 
 
 SESSION = date(2026, 9, 3)
+UNBOUND_SESSION = date(2026, 9, 2)
 FETCHED_AT = datetime(2026, 9, 4, 1, tzinfo=UTC)
 MATERIALIZED_AT = datetime(2026, 9, 4, 2, tzinfo=UTC)
 
@@ -442,6 +443,103 @@ def test_bounded_batch_discovers_exact_profile_inventory_and_resumes(
     assert resumed.selected_session_count == 0
     assert resumed.completed_after_count == 1
     assert resumed.status == "complete"
+
+
+def test_package_discovery_keeps_declared_mismatch_unbound(
+    tmp_path: Path,
+) -> None:
+    source_root = tmp_path / "source"
+    bound_package = source_root / "bound" / "identity-package"
+    unbound_package = source_root / "unbound" / "identity-package"
+    bound_package.mkdir(parents=True)
+    unbound_package.mkdir(parents=True)
+    bound_manifest = _equivalence().package.manifest
+    unbound_manifest = _equivalence(session_date=UNBOUND_SESSION).package.manifest
+    bound_manifest_path = bound_package / "package.json"
+    unbound_manifest_path = unbound_package / "package.json"
+    bound_manifest_path.write_text(
+        json.dumps(bound_manifest.model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    unbound_manifest_path.write_text(
+        json.dumps(unbound_manifest.model_dump(mode="json")),
+        encoding="utf-8",
+    )
+    bound_manifest_sha = hashlib.sha256(bound_manifest_path.read_bytes()).hexdigest()
+    unbound_manifest_sha = hashlib.sha256(
+        unbound_manifest_path.read_bytes()
+    ).hexdigest()
+    profile_map = _profile_map(
+        bound_package,
+        package_manifest_sha256=bound_manifest_sha,
+    )
+    map_values = profile_map.model_dump(mode="json", exclude={"logical_fingerprint"})
+    map_values.update(
+        {
+            "contract_version": "historical-identity-rebuild-profile-map/1.1",
+            "canonical_session_count": 2,
+            "unbound_identity_mismatch_session_dates": [
+                UNBOUND_SESSION.isoformat()
+            ],
+            "discovered_package_inventory_fingerprint": (
+                historical_identity_profile_fingerprint(
+                    sorted(
+                        (
+                            {
+                                "session_date": SESSION.isoformat(),
+                                "package_manifest_sha256": bound_manifest_sha,
+                                "package_content_sha256": "2" * 64,
+                                "source_locator_sha256": hashlib.sha256(
+                                    str(bound_package.resolve()).encode("utf-8")
+                                ).hexdigest(),
+                            },
+                            {
+                                "session_date": UNBOUND_SESSION.isoformat(),
+                                "package_manifest_sha256": unbound_manifest_sha,
+                                "package_content_sha256": "2" * 64,
+                                "source_locator_sha256": hashlib.sha256(
+                                    str(unbound_package.resolve()).encode("utf-8")
+                                ).hexdigest(),
+                            },
+                        ),
+                        key=lambda item: (
+                            item["session_date"],
+                            item["package_manifest_sha256"],
+                            item["package_content_sha256"],
+                            item["source_locator_sha256"],
+                        ),
+                    )
+                )
+            ),
+        }
+    )
+    profile_map = HistoricalIdentityRebuildProfileMapV1.model_validate(
+        {
+            **map_values,
+            "logical_fingerprint": historical_identity_profile_fingerprint(
+                map_values
+            ),
+        }
+    )
+    output_root = tmp_path / "candidate"
+    output_root.mkdir(mode=0o700)
+
+    discovered = custody._discover_profile_bound_packages(
+        package_roots=(source_root,),
+        output_root=output_root,
+        profile_map=profile_map,
+    )
+
+    assert discovered == {SESSION: bound_package.resolve()}
+    with pytest.raises(
+        custody.HistoricalIdentitySourceCustodyError,
+        match="inventory differs",
+    ):
+        custody._discover_profile_bound_packages(
+            package_roots=(bound_package,),
+            output_root=output_root,
+            profile_map=profile_map,
+        )
 
 
 def test_apply_plan_is_complete_inventory_bound_and_no_write(
