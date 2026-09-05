@@ -12,6 +12,8 @@ import pytest
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from tip_api.services import historical_identity_source_custody as source_custody
+from tip_api.services import historical_universe_membership_shadow as module
 from tip_api.contracts.common import QualityStatus
 from tip_api.contracts.market_data.v1 import (
     EodHistoryMethodologyMode,
@@ -44,6 +46,7 @@ from tip_api.services.historical_universe_membership_shadow import (
     _validate_identity_profile_binding,
     _validate_policy_relationship,
     build_complete_point_in_time_source_decisions,
+    build_historical_universe_membership_shadow_from_canonical_source,
     read_identity_replay_ingested_at,
 )
 from tip_api.services.historical_universe_membership_shadow_cli import (
@@ -214,6 +217,117 @@ def test_membership_rejects_package_that_differs_from_profile_binding(
             package_path=package_path,
             equivalence=equivalence,
             session_date=SESSION,
+        )
+
+
+def test_canonical_source_loader_preserves_formal_custody_provenance(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    record = SimpleNamespace(
+        source_observed_at=NOW,
+        source_payload=lambda: {"ticker": "AAA", "type": "CS"},
+    )
+    manifest = SimpleNamespace(
+        as_of_date=SESSION,
+        provider="massive_stocks_basic",
+        source_package_fetched_at=NOW,
+        identity_rebuild_profile="current_v1",
+        identity_profile_binding_fingerprint="1" * 64,
+        source_request_count=2,
+        source_package_manifest_sha256="2" * 64,
+        source_package_content_sha256="3" * 64,
+        logical_fingerprint="4" * 64,
+    )
+    custody = SimpleNamespace(manifest=manifest, records=(record,))
+    identity = object()
+    rebuilt = object()
+    equivalence = SimpleNamespace(
+        exact_match=True,
+        session_date=SESSION,
+        rebuild_profile="current_v1",
+        identity=identity,
+        rebuilt_identity=rebuilt,
+    )
+    monkeypatch.setattr(
+        source_custody,
+        "read_historical_identity_source_custody",
+        lambda **_: custody,
+    )
+    monkeypatch.setattr(
+        source_custody,
+        "inspect_historical_identity_source_custody_equivalence",
+        lambda **_: equivalence,
+    )
+    captured = {}
+
+    def capture(**kwargs):
+        captured.update(kwargs)
+        return "shadow"
+
+    monkeypatch.setattr(
+        module,
+        "_build_historical_universe_membership_shadow_from_source",
+        capture,
+    )
+
+    result = build_historical_universe_membership_shadow_from_canonical_source(
+        data_root=data_root,
+        session_date=SESSION,
+        catalog_as_of_date=SESSION,
+        evaluated_at=NOW,
+    )
+
+    source = captured["source"]
+    assert result == "shadow"
+    assert source.identity is identity
+    assert source.rebuilt_identity is rebuilt
+    assert source.payloads == ({"ticker": "AAA", "type": "CS"},)
+    assert source.identity_source_mode == "canonical_source_custody"
+    assert source.profile_binding_fingerprint == "1" * 64
+    assert source.package_manifest_fingerprint == "2" * 64
+    assert source.package_content_fingerprint == "3" * 64
+    assert source.source_custody_fingerprint == "4" * 64
+    assert source.methodology_version.endswith("v3")
+
+
+def test_canonical_source_loader_rejects_mixed_observation_times(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    manifest = SimpleNamespace(
+        as_of_date=SESSION,
+        provider="massive_stocks_basic",
+        source_package_fetched_at=NOW,
+    )
+    custody = SimpleNamespace(
+        manifest=manifest,
+        records=(
+            SimpleNamespace(source_observed_at=NOW),
+            SimpleNamespace(
+                source_observed_at=datetime(2026, 9, 4, 1, tzinfo=UTC)
+            ),
+        ),
+    )
+    monkeypatch.setattr(
+        source_custody,
+        "read_historical_identity_source_custody",
+        lambda **_: custody,
+    )
+
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowError,
+        match="observation boundary differs",
+    ):
+        build_historical_universe_membership_shadow_from_canonical_source(
+            data_root=data_root,
+            session_date=SESSION,
+            catalog_as_of_date=SESSION,
+            evaluated_at=NOW,
         )
 
 

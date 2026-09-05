@@ -35,8 +35,10 @@ from tip_api.contracts.market_data.v1.historical_identity_source_custody import 
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.same_day_catchup import FetchPackageManifestV1
 from tip_api.providers.massive.instrument_master_snapshot import (
+    ReferenceSnapshotBuildResult,
     build_snapshot_from_payloads,
 )
+from tip_api.persistence.instrument_master import InstrumentMasterSnapshotReadResult
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     ParquetInstrumentMasterSnapshotRepository,
     identity_content_fingerprint,
@@ -44,6 +46,7 @@ from tip_api.persistence.parquet.instrument_master_snapshot import (
     resolver_content_fingerprint,
 )
 from tip_api.services.historical_identity_rebuild_profile_map import (
+    HistoricalIdentityRebuildProfile,
     HistoricalIdentityRebuildProfileMapV1,
     profile_binding_for_session,
 )
@@ -112,8 +115,10 @@ class HistoricalIdentitySourceCustodyWriteResult:
 @dataclass(frozen=True, slots=True)
 class HistoricalIdentitySourceCustodyEquivalence:
     session_date: date
-    rebuild_profile: str
+    rebuild_profile: HistoricalIdentityRebuildProfile
     identity_replay_ingested_at: datetime
+    identity: InstrumentMasterSnapshotReadResult
+    rebuilt_identity: ReferenceSnapshotBuildResult
     instrument_fingerprint: str
     identity_fingerprint: str
     resolver_fingerprint: str
@@ -729,6 +734,8 @@ def inspect_historical_identity_source_custody_equivalence(
         session_date=manifest.as_of_date,
         rebuild_profile=manifest.identity_rebuild_profile,
         identity_replay_ingested_at=identity_replay_ingested_at,
+        identity=accepted,
+        rebuilt_identity=rebuilt,
         instrument_fingerprint=instrument_fingerprint,
         identity_fingerprint=identity_fingerprint,
         resolver_fingerprint=resolver_fingerprint,

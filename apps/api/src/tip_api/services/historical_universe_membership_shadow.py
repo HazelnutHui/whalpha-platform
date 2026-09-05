@@ -8,7 +8,7 @@ from collections import defaultdict
 from dataclasses import dataclass, replace
 from datetime import date, datetime
 from pathlib import Path
-from typing import Mapping
+from typing import Literal, Mapping
 from uuid import UUID
 
 import pyarrow.parquet as pq
@@ -45,6 +45,7 @@ from tip_api.providers.massive.same_day_catchup import (
     ValidatedIdentityReferencePackage,
     read_identity_reference_package,
 )
+from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.instrument_master_snapshot import (
     ReferenceSnapshotBuildResult,
     build_snapshot_from_payloads,
@@ -80,6 +81,9 @@ from tip_api.services.universe_membership_reconstruction import (
 )
 
 HISTORICAL_METHODOLOGY_VERSION = "provider-form-complete-base-point-in-time-v2"
+CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION = (
+    "provider-form-complete-base-point-in-time-v3"
+)
 MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS = 5
 _LOCALIZABLE_EVIDENCE_FAILURES = frozenset(
     {
@@ -98,6 +102,19 @@ class HistoricalUniverseMembershipIdentityMismatchError(
     HistoricalUniverseMembershipShadowError
 ):
     """The retained package is valid but not equal to accepted same-day Identity."""
+
+
+class HistoricalUniverseMembershipEvidenceQualityError(
+    HistoricalUniverseMembershipShadowError
+):
+    """Provider evidence failed one or more non-localizable session gates."""
+
+    def __init__(self, failure_codes: tuple[str, ...]) -> None:
+        self.failure_codes = failure_codes
+        super().__init__(
+            "provider security evidence has non-localizable quality failures: "
+            + ",".join(failure_codes)
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -135,8 +152,10 @@ class HistoricalIdentityPackageEquivalence:
 class HistoricalUniverseMembershipShadow:
     reconstruction: UniverseMembershipReconstruction
     source_decisions: tuple[FullBaseDecisionV1, ...]
+    identity_source_mode: Literal["retained_package", "canonical_source_custody"]
     identity_rebuild_profile: HistoricalIdentityRebuildProfile
     identity_profile_binding_fingerprint: str
+    identity_source_custody_fingerprint: str | None
     history_descriptor_fingerprint: str
     identity_snapshot_fingerprint: str
     package_manifest_fingerprint: str
@@ -149,6 +168,22 @@ class HistoricalUniverseMembershipShadow:
     canonical_evidence_count: int
     source_quarantined_instrument_count: int
     evidence_quality_gate_failures: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class _HistoricalIdentityReconstructionSource:
+    identity: InstrumentMasterSnapshotReadResult
+    rebuilt_identity: ReferenceSnapshotBuildResult
+    payloads: tuple[Mapping[str, object], ...]
+    identity_source_mode: Literal["retained_package", "canonical_source_custody"]
+    rebuild_profile: HistoricalIdentityRebuildProfile
+    profile_binding_fingerprint: str
+    observed_at: datetime
+    request_count: int
+    package_manifest_fingerprint: str
+    package_content_fingerprint: str
+    source_custody_fingerprint: str | None
+    methodology_version: str
 
 
 def inspect_historical_identity_package_equivalence(
@@ -448,7 +483,7 @@ def build_historical_universe_membership_shadow(
     eod_panel: HistoricalUniverseMembershipEodPanel | None = None,
     security_snapshot: CompletedSecurityEvidenceSnapshot | None = None,
 ) -> HistoricalUniverseMembershipShadow:
-    """Build one complete, tmp-ready daily ledger without network or data writes."""
+    """Build one ledger from a retained package for compatibility review."""
 
     if not isinstance(
         identity_profile_binding,
@@ -457,11 +492,7 @@ def build_historical_universe_membership_shadow(
         raise HistoricalUniverseMembershipShadowError(
             "historical membership requires a validated Identity profile binding"
         )
-    evaluated_at = normalize_utc_datetime(evaluated_at)
-    calendar = calendar or ExchangeCalendar()
     data_root = data_root.resolve(strict=True)
-    eod_repository = CanonicalEodReadRepository(data_root)
-
     equivalence = inspect_historical_identity_package_equivalence(
         data_root=data_root,
         package_path=package_path,
@@ -472,16 +503,140 @@ def build_historical_universe_membership_shadow(
         raise HistoricalUniverseMembershipIdentityMismatchError(
             "Identity package does not exactly reconstruct the accepted snapshot"
         )
-    identity = equivalence.identity
     package = equivalence.package
-    rebuilt_identity = equivalence.rebuilt_identity
     _validate_identity_profile_binding(
         binding=identity_profile_binding,
         package_path=package_path,
         equivalence=equivalence,
         session_date=session_date,
     )
-    payloads = _flatten_reference_pages(package.pages)
+    source = _HistoricalIdentityReconstructionSource(
+        identity=equivalence.identity,
+        rebuilt_identity=equivalence.rebuilt_identity,
+        payloads=_flatten_reference_pages(package.pages),
+        identity_source_mode="retained_package",
+        rebuild_profile=identity_profile_binding.rebuild_profile,
+        profile_binding_fingerprint=identity_profile_binding.logical_fingerprint,
+        observed_at=normalize_utc_datetime(package.manifest.fetched_at),
+        request_count=package.manifest.request_count,
+        package_manifest_fingerprint=package.package_manifest_sha256,
+        package_content_fingerprint=package.manifest.package_content_sha256,
+        source_custody_fingerprint=None,
+        methodology_version=HISTORICAL_METHODOLOGY_VERSION,
+    )
+    return _build_historical_universe_membership_shadow_from_source(
+        data_root=data_root,
+        source=source,
+        session_date=session_date,
+        catalog_as_of_date=catalog_as_of_date,
+        evaluated_at=evaluated_at,
+        calendar=calendar,
+        eod_panel=eod_panel,
+        security_snapshot=security_snapshot,
+    )
+
+
+def build_historical_universe_membership_shadow_from_canonical_source(
+    *,
+    data_root: Path,
+    session_date: date,
+    catalog_as_of_date: date,
+    evaluated_at: datetime,
+    calendar: MarketSessionCalendar | None = None,
+    eod_panel: HistoricalUniverseMembershipEodPanel | None = None,
+    security_snapshot: CompletedSecurityEvidenceSnapshot | None = None,
+) -> HistoricalUniverseMembershipShadow:
+    """Build one ledger from formally reread canonical normalized source rows."""
+
+    # Local imports avoid a module cycle while the custody writer continues to
+    # use the retained-package equivalence implementation above.
+    from tip_api.services.historical_identity_source_custody import (
+        inspect_historical_identity_source_custody_equivalence,
+        read_historical_identity_source_custody,
+    )
+
+    data_root = data_root.resolve(strict=True)
+    custody = read_historical_identity_source_custody(
+        data_root=data_root,
+        provider=MASSIVE_PROVIDER_ID,
+        session_date=session_date,
+    )
+    manifest = custody.manifest
+    observed_times = {
+        normalize_utc_datetime(item.source_observed_at) for item in custody.records
+    }
+    if (
+        manifest.as_of_date != session_date
+        or manifest.provider != MASSIVE_PROVIDER_ID
+        or len(observed_times) != 1
+        or observed_times
+        != {normalize_utc_datetime(manifest.source_package_fetched_at)}
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "canonical historical Identity source observation boundary differs"
+        )
+    equivalence = inspect_historical_identity_source_custody_equivalence(
+        data_root=data_root,
+        custody=custody,
+    )
+    if not equivalence.exact_match:
+        raise HistoricalUniverseMembershipIdentityMismatchError(
+            "canonical historical Identity source does not exactly reconstruct "
+            "the accepted snapshot"
+        )
+    if (
+        equivalence.session_date != session_date
+        or equivalence.rebuild_profile != manifest.identity_rebuild_profile
+    ):
+        raise HistoricalUniverseMembershipShadowError(
+            "canonical historical Identity source rebuild boundary differs"
+        )
+    source = _HistoricalIdentityReconstructionSource(
+        identity=equivalence.identity,
+        rebuilt_identity=equivalence.rebuilt_identity,
+        payloads=tuple(item.source_payload() for item in custody.records),
+        identity_source_mode="canonical_source_custody",
+        rebuild_profile=manifest.identity_rebuild_profile,
+        profile_binding_fingerprint=(
+            manifest.identity_profile_binding_fingerprint
+        ),
+        observed_at=normalize_utc_datetime(manifest.source_package_fetched_at),
+        request_count=manifest.source_request_count,
+        package_manifest_fingerprint=manifest.source_package_manifest_sha256,
+        package_content_fingerprint=manifest.source_package_content_sha256,
+        source_custody_fingerprint=manifest.logical_fingerprint,
+        methodology_version=CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+    )
+    return _build_historical_universe_membership_shadow_from_source(
+        data_root=data_root,
+        source=source,
+        session_date=session_date,
+        catalog_as_of_date=catalog_as_of_date,
+        evaluated_at=evaluated_at,
+        calendar=calendar,
+        eod_panel=eod_panel,
+        security_snapshot=security_snapshot,
+    )
+
+
+def _build_historical_universe_membership_shadow_from_source(
+    *,
+    data_root: Path,
+    source: _HistoricalIdentityReconstructionSource,
+    session_date: date,
+    catalog_as_of_date: date,
+    evaluated_at: datetime,
+    calendar: MarketSessionCalendar | None,
+    eod_panel: HistoricalUniverseMembershipEodPanel | None,
+    security_snapshot: CompletedSecurityEvidenceSnapshot | None,
+) -> HistoricalUniverseMembershipShadow:
+    evaluated_at = normalize_utc_datetime(evaluated_at)
+    calendar = calendar or ExchangeCalendar()
+    data_root = data_root.resolve(strict=True)
+    eod_repository = CanonicalEodReadRepository(data_root)
+    identity = source.identity
+    rebuilt_identity = source.rebuilt_identity
+    payloads = source.payloads
     indexes = build_identity_indexes(
         identities=rebuilt_identity.identities,
         resolvers=rebuilt_identity.resolvers,
@@ -511,17 +666,16 @@ def build_historical_universe_membership_shadow(
         payloads=payloads,
         indexes=indexes,
         as_of_date=session_date,
-        observed_at=package.manifest.fetched_at,
-        request_count=package.manifest.request_count + 1,
-        all_tickers_request_count=package.manifest.request_count,
+        observed_at=source.observed_at,
+        request_count=source.request_count + 1,
+        all_tickers_request_count=source.request_count,
     )
     blocking_failures = set(evidence_result.quality_gate_failures) - set(
         _LOCALIZABLE_EVIDENCE_FAILURES
     )
     if blocking_failures:
-        raise HistoricalUniverseMembershipShadowError(
-            "provider security evidence has non-localizable quality failures: "
-            + ",".join(sorted(blocking_failures))
+        raise HistoricalUniverseMembershipEvidenceQualityError(
+            tuple(sorted(blocking_failures))
         )
 
     if eod_panel is None:
@@ -576,21 +730,20 @@ def build_historical_universe_membership_shadow(
         current=current_integrity,
         history=history_integrity,
     )
-    source_fingerprints = tuple(
-        sorted(
-            {
-                package.package_manifest_sha256,
-                package.manifest.package_content_sha256,
-                identity.snapshot_content_sha256,
-                security_snapshot.manifest.catalog_content_sha256,
-                security_snapshot.manifest.catalog_parquet_sha256,
-                descriptor.fingerprint,
-                evidence_fingerprint,
-                eod_source_fingerprint,
-                identity_profile_binding.logical_fingerprint,
-            }
-        )
-    )
+    source_fingerprint_values = {
+        source.package_manifest_fingerprint,
+        source.package_content_fingerprint,
+        identity.snapshot_content_sha256,
+        security_snapshot.manifest.catalog_content_sha256,
+        security_snapshot.manifest.catalog_parquet_sha256,
+        descriptor.fingerprint,
+        evidence_fingerprint,
+        eod_source_fingerprint,
+        source.profile_binding_fingerprint,
+    }
+    if source.source_custody_fingerprint is not None:
+        source_fingerprint_values.add(source.source_custody_fingerprint)
+    source_fingerprints = tuple(sorted(source_fingerprint_values))
     eod_available_at = tuple(
         item.available_at for item in (current_read,) + history_reads
     )
@@ -599,7 +752,7 @@ def build_historical_universe_membership_shadow(
             "canonical EOD source availability time is unavailable"
         )
     source_data_cutoff = max(
-        normalize_utc_datetime(package.manifest.fetched_at),
+        source.observed_at,
         normalize_utc_datetime(identity.created_at),
         normalize_utc_datetime(security_snapshot.manifest.created_at),
         *(item for item in eod_available_at if item is not None),
@@ -617,19 +770,19 @@ def build_historical_universe_membership_shadow(
         source_fingerprints=source_fingerprints,
         source_data_cutoff=source_data_cutoff,
         evaluated_at=evaluated_at,
-        methodology_version=HISTORICAL_METHODOLOGY_VERSION,
+        methodology_version=source.methodology_version,
     )
     return HistoricalUniverseMembershipShadow(
         reconstruction=reconstruction,
         source_decisions=source_decisions,
-        identity_rebuild_profile=identity_profile_binding.rebuild_profile,
-        identity_profile_binding_fingerprint=(
-            identity_profile_binding.logical_fingerprint
-        ),
+        identity_source_mode=source.identity_source_mode,
+        identity_rebuild_profile=source.rebuild_profile,
+        identity_profile_binding_fingerprint=source.profile_binding_fingerprint,
+        identity_source_custody_fingerprint=source.source_custody_fingerprint,
         history_descriptor_fingerprint=descriptor.fingerprint,
         identity_snapshot_fingerprint=identity.snapshot_content_sha256,
-        package_manifest_fingerprint=package.package_manifest_sha256,
-        package_content_fingerprint=package.manifest.package_content_sha256,
+        package_manifest_fingerprint=source.package_manifest_fingerprint,
+        package_content_fingerprint=source.package_content_fingerprint,
         catalog_snapshot_fingerprint=security_snapshot.manifest.logical_content_sha256,
         derived_security_evidence_fingerprint=evidence_fingerprint,
         eod_source_fingerprint=eod_source_fingerprint,

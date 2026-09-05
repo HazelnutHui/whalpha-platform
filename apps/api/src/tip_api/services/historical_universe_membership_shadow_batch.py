@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
 from pathlib import Path
@@ -16,8 +18,16 @@ from tip_api.persistence.parquet.historical_research import (
 from tip_api.persistence.parquet.security_evidence import (
     read_completed_security_evidence_snapshot,
 )
-from tip_api.persistence.security_evidence import SecurityEvidenceCorruptionError
+from tip_api.persistence.security_evidence import (
+    CompletedSecurityEvidenceSnapshot,
+    SecurityEvidenceCorruptionError,
+)
+from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.same_day_catchup import SameDayCatchupError
+from tip_api.services.historical_identity_source_custody import (
+    HistoricalIdentitySourceCustodyError,
+    read_historical_identity_source_custody,
+)
 from tip_api.services.historical_identity_rebuild_profile_map import (
     HistoricalIdentityRebuildProfile,
     HistoricalIdentityRebuildProfileMapV1,
@@ -25,9 +35,11 @@ from tip_api.services.historical_identity_rebuild_profile_map import (
 )
 from tip_api.services.historical_universe_membership_shadow import (
     MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS,
+    HistoricalUniverseMembershipEvidenceQualityError,
     HistoricalUniverseMembershipShadowError,
     HistoricalUniverseMembershipIdentityMismatchError,
     build_historical_universe_membership_shadow,
+    build_historical_universe_membership_shadow_from_canonical_source,
     prepare_historical_universe_membership_eod_panel,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
@@ -46,8 +58,8 @@ class HistoricalUniverseMembershipShadowBatchError(RuntimeError):
 @dataclass(frozen=True, slots=True)
 class HistoricalUniverseMembershipShadowBatchSession:
     session_date: str
-    identity_rebuild_profile: HistoricalIdentityRebuildProfile
-    identity_profile_binding_fingerprint: str
+    identity_rebuild_profile: HistoricalIdentityRebuildProfile | None
+    identity_profile_binding_fingerprint: str | None
     status: BatchSessionStatus
     failure_code: str | None
     evaluated_base_count: int | None
@@ -57,11 +69,32 @@ class HistoricalUniverseMembershipShadowBatchSession:
     quarantined_counts: tuple[tuple[str, int], ...]
     logical_fingerprint: str | None
     physical_sha256: str | None
+    identity_source_mode: Literal[
+        "retained_package", "canonical_source_custody"
+    ] | None = None
+    identity_source_custody_fingerprint: str | None = None
+    methodology_version: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
 class HistoricalUniverseMembershipShadowBatchResult:
     identity_profile_map_fingerprint: str
+    requested_session_count: int
+    completed_session_count: int
+    failed_session_count: int
+    shared_eod_partition_read_count: int
+    status: Literal["completed", "completed_with_source_failures"]
+    sessions: tuple[HistoricalUniverseMembershipShadowBatchSession, ...]
+    external_request_count: int = 0
+    canonical_data_write_count: int = 0
+
+    def as_dict(self) -> dict[str, object]:
+        return asdict(self)
+
+
+@dataclass(frozen=True, slots=True)
+class HistoricalUniverseMembershipCanonicalSourceBatchResult:
+    identity_source_result_fingerprint: str
     requested_session_count: int
     completed_session_count: int
     failed_session_count: int
@@ -154,6 +187,7 @@ def run_historical_universe_membership_shadow_batch(
                     quarantined_counts=(),
                     logical_fingerprint=None,
                     physical_sha256=None,
+                    identity_source_mode="retained_package",
                 )
             )
             continue
@@ -185,6 +219,8 @@ def run_historical_universe_membership_shadow_batch(
                 quarantined_counts=reconstruction.quarantined_counts,
                 logical_fingerprint=published.logical_fingerprint,
                 physical_sha256=published.physical_sha256,
+                identity_source_mode="retained_package",
+                methodology_version=reconstruction.methodology_version,
             )
         )
 
@@ -196,6 +232,151 @@ def run_historical_universe_membership_shadow_batch(
         identity_profile_map_fingerprint=identity_profile_map.logical_fingerprint,
         requested_session_count=len(sessions),
         completed_session_count=len(sessions) - failed_count,
+        failed_session_count=failed_count,
+        shared_eod_partition_read_count=len(panel.session_reads),
+        status=(
+            "completed_with_source_failures" if failed_count else "completed"
+        ),
+        sessions=output,
+    )
+
+
+def run_historical_universe_membership_canonical_source_batch(
+    *,
+    data_root: Path,
+    sessions: tuple[date, ...],
+    catalog_as_of_date: date,
+    evaluated_at: datetime,
+    output_root: Path,
+    calendar: MarketSessionCalendar | None = None,
+    security_snapshot: CompletedSecurityEvidenceSnapshot | None = None,
+) -> HistoricalUniverseMembershipCanonicalSourceBatchResult:
+    """Build one to five adjacent shadows from canonical normalized sources."""
+
+    session_calendar = calendar or ExchangeCalendar()
+    source_root, target_root, ordered_sessions = _validate_canonical_batch_paths(
+        data_root=data_root,
+        output_root=output_root,
+        sessions=sessions,
+    )
+    panel = prepare_historical_universe_membership_eod_panel(
+        data_root=source_root,
+        analysis_sessions=ordered_sessions,
+        calendar=session_calendar,
+    )
+    if security_snapshot is None:
+        security_snapshot = read_completed_security_evidence_snapshot(
+            source_root,
+            as_of_date=catalog_as_of_date,
+        )
+    elif security_snapshot.manifest.as_of_date != catalog_as_of_date:
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "shared security catalog as-of date mismatch"
+        )
+    repository = ParquetHistoricalResearchRepository(
+        target_root,
+        created_at=evaluated_at,
+    )
+
+    results = []
+    for session in ordered_sessions:
+        try:
+            shadow = build_historical_universe_membership_shadow_from_canonical_source(
+                data_root=source_root,
+                session_date=session,
+                catalog_as_of_date=catalog_as_of_date,
+                evaluated_at=evaluated_at,
+                calendar=session_calendar,
+                eod_panel=panel,
+                security_snapshot=security_snapshot,
+            )
+        except (
+            HistoricalIdentitySourceCustodyError,
+            HistoricalUniverseMembershipShadowError,
+            InstrumentMasterSnapshotCorruptionError,
+            SecurityEvidenceCorruptionError,
+        ) as exc:
+            source_profile: HistoricalIdentityRebuildProfile | None = None
+            source_binding_fingerprint: str | None = None
+            source_custody_fingerprint: str | None = None
+            if isinstance(exc, HistoricalUniverseMembershipEvidenceQualityError):
+                custody = read_historical_identity_source_custody(
+                    data_root=source_root,
+                    provider=MASSIVE_PROVIDER_ID,
+                    session_date=session,
+                )
+                source_profile = custody.manifest.identity_rebuild_profile
+                source_binding_fingerprint = (
+                    custody.manifest.identity_profile_binding_fingerprint
+                )
+                source_custody_fingerprint = custody.manifest.logical_fingerprint
+            results.append(
+                HistoricalUniverseMembershipShadowBatchSession(
+                    session_date=session.isoformat(),
+                    identity_rebuild_profile=source_profile,
+                    identity_profile_binding_fingerprint=(
+                        source_binding_fingerprint
+                    ),
+                    status="source_validation_failed",
+                    failure_code=_source_failure_code(exc),
+                    evaluated_base_count=None,
+                    record_count=None,
+                    included_counts=(),
+                    excluded_counts=(),
+                    quarantined_counts=(),
+                    logical_fingerprint=None,
+                    physical_sha256=None,
+                    identity_source_mode="canonical_source_custody",
+                    identity_source_custody_fingerprint=(
+                        source_custody_fingerprint
+                    ),
+                )
+            )
+            continue
+
+        reconstruction = shadow.reconstruction
+        published = repository.publish_universe_membership(
+            reconstruction.records,
+            methodology_version=reconstruction.methodology_version,
+            session_date=session,
+        )
+        reread = repository.read_universe_membership(published.partition_path)
+        if reread != reconstruction.records:
+            raise HistoricalUniverseMembershipShadowBatchError(
+                "formal membership reread differs from the canonical-source shadow"
+            )
+        results.append(
+            HistoricalUniverseMembershipShadowBatchSession(
+                session_date=session.isoformat(),
+                identity_rebuild_profile=shadow.identity_rebuild_profile,
+                identity_profile_binding_fingerprint=(
+                    shadow.identity_profile_binding_fingerprint
+                ),
+                status=published.status,
+                failure_code=None,
+                evaluated_base_count=reconstruction.evaluated_base_count,
+                record_count=published.record_count,
+                included_counts=reconstruction.included_counts,
+                excluded_counts=reconstruction.excluded_counts,
+                quarantined_counts=reconstruction.quarantined_counts,
+                logical_fingerprint=published.logical_fingerprint,
+                physical_sha256=published.physical_sha256,
+                identity_source_mode=shadow.identity_source_mode,
+                identity_source_custody_fingerprint=(
+                    shadow.identity_source_custody_fingerprint
+                ),
+                methodology_version=reconstruction.methodology_version,
+            )
+        )
+
+    output = tuple(results)
+    failed_count = sum(
+        item.status == "source_validation_failed" for item in output
+    )
+    return HistoricalUniverseMembershipCanonicalSourceBatchResult(
+        identity_source_result_fingerprint=_batch_source_result_fingerprint(output),
+        requested_session_count=len(ordered_sessions),
+        completed_session_count=len(ordered_sessions) - failed_count,
         failed_session_count=failed_count,
         shared_eod_partition_read_count=len(panel.session_reads),
         status=(
@@ -234,6 +415,33 @@ def _validate_batch_paths(
     return source_root, target_root, resolved_packages
 
 
+def _validate_canonical_batch_paths(
+    *,
+    data_root: Path,
+    output_root: Path,
+    sessions: tuple[date, ...],
+) -> tuple[Path, Path, tuple[date, ...]]:
+    if (
+        not 1 <= len(sessions) <= MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS
+        or len(set(sessions)) != len(sessions)
+    ):
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "canonical-source batch requires one to five unique sessions"
+        )
+    source_root = data_root.resolve(strict=True)
+    target_root = output_root.resolve(strict=False)
+    temporary_root = Path("/tmp").resolve(strict=True)
+    if temporary_root not in target_root.parents:
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "batch output root must be a child of /tmp"
+        )
+    if _paths_overlap(target_root, source_root):
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "batch source and output paths must be disjoint"
+        )
+    return source_root, target_root, tuple(sorted(sessions))
+
+
 def _paths_overlap(left: Path, right: Path) -> bool:
     return left == right or left in right.parents or right in left.parents
 
@@ -241,10 +449,46 @@ def _paths_overlap(left: Path, right: Path) -> bool:
 def _source_failure_code(exc: Exception) -> str:
     if isinstance(exc, HistoricalUniverseMembershipIdentityMismatchError):
         return "identity_snapshot_mismatch"
+    if isinstance(exc, HistoricalUniverseMembershipEvidenceQualityError):
+        return ",".join(exc.failure_codes)
     if isinstance(exc, SameDayCatchupError):
         return "package_custody_failed"
+    if isinstance(exc, HistoricalIdentitySourceCustodyError):
+        return "canonical_identity_source_unavailable"
     if isinstance(exc, InstrumentMasterSnapshotCorruptionError):
         return "canonical_identity_unavailable"
     if isinstance(exc, SecurityEvidenceCorruptionError):
         return "security_catalog_unavailable"
     return "membership_source_validation_failed"
+
+
+def _batch_source_result_fingerprint(
+    sessions: tuple[HistoricalUniverseMembershipShadowBatchSession, ...],
+) -> str:
+    values = [
+        {
+            "session_date": item.session_date,
+            "source_status": (
+                "source_validation_failed"
+                if item.failure_code is not None
+                else "validated"
+            ),
+            "failure_code": item.failure_code,
+            "identity_profile_binding_fingerprint": (
+                item.identity_profile_binding_fingerprint
+            ),
+            "identity_source_custody_fingerprint": (
+                item.identity_source_custody_fingerprint
+            ),
+            "methodology_version": item.methodology_version,
+        }
+        for item in sessions
+    ]
+    return hashlib.sha256(
+        json.dumps(
+            values,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+        ).encode("utf-8")
+    ).hexdigest()

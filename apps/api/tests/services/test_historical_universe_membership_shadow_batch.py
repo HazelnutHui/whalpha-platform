@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -10,11 +11,19 @@ from tip_api.services import historical_universe_membership_shadow_batch as modu
 from tip_api.services.historical_identity_rebuild_profile_map import (
     HistoricalIdentityRebuildProfileMapV1,
 )
+from tip_api.services.historical_identity_source_custody import (
+    HistoricalIdentitySourceCustodyError,
+)
 from tip_api.services.historical_universe_membership_shadow import (
+    HistoricalUniverseMembershipEvidenceQualityError,
     HistoricalUniverseMembershipIdentityMismatchError,
 )
 from tip_api.services.historical_universe_membership_shadow_batch import (
     HistoricalUniverseMembershipShadowBatchError,
+    _batch_source_result_fingerprint,
+    _validate_canonical_batch_paths,
+    _source_failure_code,
+    run_historical_universe_membership_canonical_source_batch,
     _validate_batch_paths,
     run_historical_universe_membership_shadow_batch,
 )
@@ -197,3 +206,123 @@ def test_batch_reuses_shared_inputs_and_localizes_package_failure(
     assert result.sessions[1].logical_fingerprint == "a" * 64
     assert [item[0] for item in calls].count("panel") == 1
     assert [item[0] for item in calls].count("catalog") == 1
+def test_canonical_source_batch_reuses_shared_inputs_and_localizes_gap(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    output_root = Path("/tmp") / f"canonical-membership-batch-{tmp_path.name}"
+    panel = SimpleNamespace(session_reads=(1, 2, 3))
+    snapshot = object()
+    calls: list[tuple[str, object]] = []
+    monkeypatch.setattr(
+        module,
+        "prepare_historical_universe_membership_eod_panel",
+        lambda **kwargs: calls.append(("panel", kwargs["analysis_sessions"]))
+        or panel,
+    )
+    monkeypatch.setattr(
+        module,
+        "read_completed_security_evidence_snapshot",
+        lambda *args, **kwargs: calls.append(("catalog", kwargs["as_of_date"]))
+        or snapshot,
+    )
+    records = ("row",)
+    reconstruction = SimpleNamespace(
+        records=records,
+        methodology_version="method-v3",
+        evaluated_base_count=10,
+        included_counts=(("primary", 2),),
+        excluded_counts=(("primary", 7),),
+        quarantined_counts=(("primary", 1),),
+    )
+
+    def build_shadow(**kwargs):
+        session = kwargs["session_date"]
+        calls.append(("build", session))
+        assert kwargs["eod_panel"] is panel
+        assert kwargs["security_snapshot"] is snapshot
+        if session == FIRST:
+            raise HistoricalIdentitySourceCustodyError("fixture gap")
+        return SimpleNamespace(
+            reconstruction=reconstruction,
+            identity_source_mode="canonical_source_custody",
+            identity_rebuild_profile="current_v1",
+            identity_profile_binding_fingerprint="c" * 64,
+            identity_source_custody_fingerprint="d" * 64,
+        )
+
+    monkeypatch.setattr(
+        module,
+        "build_historical_universe_membership_shadow_from_canonical_source",
+        build_shadow,
+    )
+
+    class FakeRepository:
+        def __init__(self, root, created_at):
+            assert root == output_root.resolve()
+            assert created_at == NOW
+
+        def publish_universe_membership(self, values, **kwargs):
+            assert values == records
+            assert kwargs["methodology_version"] == "method-v3"
+            return SimpleNamespace(
+                status="published",
+                partition_path=output_root / "partition",
+                record_count=1,
+                logical_fingerprint="a" * 64,
+                physical_sha256="b" * 64,
+            )
+
+        def read_universe_membership(self, _path):
+            return records
+
+    monkeypatch.setattr(module, "ParquetHistoricalResearchRepository", FakeRepository)
+
+    result = run_historical_universe_membership_canonical_source_batch(
+        data_root=data_root,
+        sessions=(SECOND, FIRST),
+        catalog_as_of_date=FIRST,
+        evaluated_at=NOW,
+        output_root=output_root,
+        calendar=object(),
+    )
+
+    assert result.status == "completed_with_source_failures"
+    assert result.requested_session_count == 2
+    assert result.completed_session_count == 1
+    assert result.failed_session_count == 1
+    assert len(result.identity_source_result_fingerprint) == 64
+    assert result.sessions[0].failure_code == "canonical_identity_source_unavailable"
+    assert result.sessions[0].identity_rebuild_profile is None
+    assert result.sessions[1].identity_source_custody_fingerprint == "d" * 64
+    assert result.sessions[1].methodology_version == "method-v3"
+    assert [item[0] for item in calls].count("panel") == 1
+    assert [item[0] for item in calls].count("catalog") == 1
+    repeated_sessions = (
+        result.sessions[0],
+        replace(result.sessions[1], status="already_present"),
+    )
+    assert _batch_source_result_fingerprint(repeated_sessions) == (
+        result.identity_source_result_fingerprint
+    )
+
+
+def test_canonical_source_batch_rejects_duplicate_sessions(tmp_path: Path) -> None:
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowBatchError,
+        match="unique sessions",
+    ):
+        _validate_canonical_batch_paths(
+            data_root=tmp_path,
+            output_root=Path("/tmp") / "canonical-membership-duplicate",
+            sessions=(FIRST, FIRST),
+        )
+
+
+def test_batch_reports_nonlocalizable_evidence_gate_exactly() -> None:
+    error = HistoricalUniverseMembershipEvidenceQualityError(
+        ("identity_join_ratio_below_gate",)
+    )
+    assert _source_failure_code(error) == "identity_join_ratio_below_gate"

@@ -226,3 +226,7 @@ Each ADR should include:
 - [0138: Bind Historical Identity Source Apply Planning](0138-bind-historical-identity-source-apply-plan.md)
 - [0139: Apply Historical Identity Source Custody Atomically](0139-apply-historical-identity-source-custody-atomically.md)
 - [0140: Expose Canonical Identity Source Custody in Current Context](0140-expose-canonical-identity-source-custody-in-current-context.md)
+- [0141: Fetch Historical Identity Source Gaps Without Canonical Writes](0141-fetch-historical-identity-source-gaps-without-canonical-writes.md)
+- [0142: Plan Explicit Append-Only Identity Source Custody](0142-plan-explicit-append-only-identity-source-custody.md)
+- [0143: Separate Identity Observation and Replay Time](0143-separate-identity-observation-and-replay-time.md)
+- [0144: Consume Canonical Identity Source for Membership Shadows](0144-consume-canonical-identity-source-for-membership-shadows.md)
