@@ -73,6 +73,12 @@ claims.
   Membership shadow execution. It does not delete the old audit path, fill the
   two missing sources, publish Membership into `/data`, change active
   Universes, or alter Production.
+- A full source/evidence preflight found 300 eligible sessions, the two known
+  source gaps, and one unchanged evidence-gate failure on 2026-08-31. All 300
+  eligible sessions subsequently completed in 62 disconnected four-process
+  batches with 5,571,154 formally reread decisions and no new failure. This is
+  a mechanics result; post-session source cutoffs still prevent a historical
+  knowledge-time or performance claim.
 
 ## Alternatives Considered
 

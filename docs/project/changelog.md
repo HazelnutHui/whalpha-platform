@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-05 — Consume canonical Identity source in Membership shadows
+
+- Accepted ADR 0144 and added a V3 historical Membership path that formally
+  rereads canonical normalized Identity source observations, rebuilds all
+  accepted Identity families under the manifest-bound profile, and carries the
+  canonical custody fingerprint into downstream lineage. The retained-package
+  V2 path remains for compatibility review.
+- Proved 2026-09-03 V2/V3 business-decision equality across 19,958 rows. Added
+  exact non-localizable evidence failure reporting and kept the 0.999 linkage
+  gate unchanged.
+- Declared the missing PyArrow timezone runtime dependency. The same 9/3 output
+  fell to 59.53 seconds without changing logical or physical hashes; the
+  five-session boundary completed in 135.53 seconds.
+- A network-disabled four-process preflight classified 300/303 sessions as
+  eligible. The known 8/13 and 8/19 sources remain absent; 8/31 alone fails
+  `identity_join_ratio_below_gate` because ten stable-ID collisions yield a
+  0.998996689074 ratio.
+- Ran all 300 eligible sessions into 62 disconnected `/tmp` batches using four
+  Dell-local workers. All 5,571,154 decisions were formally reread with zero
+  failure. The 600-file / 129,736,636-byte inventory fingerprint is
+  `8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`;
+  symlinks and staging residue are zero, and a repeated first batch reused all
+  five partitions.
+- All 2,066 backend tests passed with the same two dependency warnings. No
+  provider request, `/data` or Production write, active-pointer change,
+  Historical Coverage publication, OCI deployment, or scheduler change
+  occurred. Research readiness remains `data_blocked` because the shadows are
+  retrospective and three sessions remain blocked.
+
 ## 2026-09-05 — Separate Identity observation and replay provenance
 
 - Accepted ADR 0143. Historical package and normalized-source equivalence now

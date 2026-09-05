@@ -138,15 +138,17 @@ Steps 1–11 were repository mechanics. Step 12 was the separately governed
 historical EOD/Identity transition and is retained as execution history, not a
 pending authorization instruction.
 
-ADRs 0137–0139 add a later custody step for the 279 retained
-historical Identity reference packages. The complete typed `/tmp` candidate
+ADRs 0137–0139 added a custody step for the 279 packages retained at that
+checkpoint. The complete typed `/tmp` candidate
 contains 3,399,877 result rows in 558 files totaling 258,394,518 bytes. Its
 combined census and prospective Apply plan binds the candidate bytes, all
 original targets, and whole-`/data` pre-state. The atomic executor published
 all 279 partitions and formally reread them; an independent
-`verify_then_complete` postflight reused all 279 and wrote zero bytes. The
-blocked readiness state is unchanged, and the 24 missing source sessions
-remain a separate gate.
+`verify_then_complete` postflight reused all 279 and wrote zero bytes. ADR 0143
+later appended 22 more exact sources and kept the two provider-revised dates
+explicitly unbound. ADR 0144 completed disconnected Membership shadows for the
+300 source/evidence-eligible sessions; 8/13, 8/19, and the separate 8/31
+evidence gate remain explicit. Research readiness is still blocked.
 
 The current `/data` root has no `market-data/historical-coverage` directory.
 Strategy readiness therefore remains `data_blocked`; fixture-only publication

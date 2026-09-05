@@ -91,19 +91,20 @@ Current membership implementation sequence:
    package and accepted-family fingerprints. A repeated real boundary batch
    crossed current/legacy profiles with byte-identical outputs; no date or
    operator profile selection remains.
-6. **Canonical source custody complete for retained packages:** 279
-   profile-bound packages were normalized, bound by one exact inventory plan,
-   and published as 558 immutable canonical files. The ordinary Apply and an
-   independent zero-write recovery postflight formally reread all 279 sessions
-   with no overwrite or deletion.
-7. The 24-session acquisition attempt recovered and canonically appended 22
-   exact sources under the legacy profile. Keep the two provider-revised dates
-   explicitly unbound;
-   never force approximate source equivalence, project current Activation
-   backward, or silently fill historical source.
-8. Run all accepted-profile-bound sessions into disconnected `/tmp` batches,
-   reconcile completeness and timing, then separately review canonical
-   publication.
+6. **Canonical source custody complete for exact packages:** 301 sessions are
+   normalized and immutable after the original 279-session Apply plus the
+   22-session append-only recovery. Both Apply paths and their zero-write
+   postflights formally reread all selected sessions without overwrite or
+   deletion.
+7. **Source exceptions precisely bounded:** keep 2026-08-13 and 2026-08-19
+   unbound because the reacquired provider revisions are not equal to accepted
+   same-day Identity. Never force approximate equivalence, project current
+   Activation backward, or silently fill historical source.
+8. **Disconnected Membership mechanics complete for eligible sessions:** V3
+   formally reread 5,571,154 decisions for all 300 source/evidence-eligible
+   dates. Separately review the two source gaps, the 2026-08-31 linkage gate,
+   and historical knowledge-time before considering canonical Membership or
+   Historical Coverage publication.
 
 ## Priority 3 — First real strategy research
 

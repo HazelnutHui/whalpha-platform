@@ -99,88 +99,35 @@ artifacts, and the exact two missing EOD sessions. It explicitly remains
 `canonical_partitions_observed_not_coverage_validated`, so source custody is
 visible without being promoted to Historical Coverage or research readiness.
 
-The first complete-base daily membership adapter was initially proven only in
-`/tmp`. Its read-only census found 279/303 custody-valid retained Identity
-reference packages, with an exact 24-session gap from 2026-07-17 through
-2026-08-19; the later recovery state is recorded below. The 2026-09-03 shadow
-evaluated all 9,979 same-day stable IDs for
-both Universes and isolated one source collision while formally rereading all
-19,958 decisions. Because its source was observed after the session and no
-membership partition exists in `/data`, this does not change research
-readiness.
+ADRs 0132–0143 record the package census, versioned ETV compatibility,
+fingerprint-bound profile map, normalized source custody, atomic Apply, and
+22-session append-only recovery. Their current result is the 301 canonical
+source partitions above; historical intermediate package counts and plans are
+kept in the linked audits rather than repeated here.
 
-The bounded batch adapter now shares one fully validated EOD panel across at
-most five adjacent sessions. Independent 9/2 and 9/3 results match their batch
-outputs exactly; the two-session batch took 139.71 seconds versus 222.47
-seconds for the measured independent optimized paths. A five-session audit
-completed 9/1–9/3 but correctly rejected the custody-valid 8/28 and 8/31
-packages because they did not exactly reproduce accepted same-day Identity
-fingerprints. The 279-package count must therefore not be represented as 279
-reconstructable sessions under the current builder.
+ADR 0144 now makes those canonical normalized rows the normal Membership
+shadow input. The retained-package V2 path remains only for compatibility
+review. A real 2026-09-03 V3 replay produced 19,958 rows over 9,979 stable IDs
+and matched V2 on every business decision after excluding the intentionally
+changed methodology, lineage, and execution timestamp fields. Declaring the
+PyArrow timezone dependency reduced measured single-session time to 59.53
+seconds and the five-session boundary to 135.53 seconds without changing the
+output fingerprint.
 
-The full ADR 0134 census is now complete: 58/303 sessions are exactly
-reconstructable under current code, 221 have exact Instrument/Resolver but a
-Provider Identity mismatch, and 24 are physically missing. All 279 discovered
-packages passed custody; duplicate, unroutable, outside-index, and canonical-
-snapshot failures are zero. Four representative row-level comparisons found
-only the governed ETV change from unknown/rejected to excluded, matching the
-ETV row count exactly.
+A four-process preflight classified 300/303 sessions as source/evidence
+eligible. The two exact source gaps remain 2026-08-13 and 2026-08-19. The only
+additional blocker is 2026-08-31: ten stable-identifier collisions yield a
+0.998996689074 linkage ratio, below the unchanged 0.999 whole-session gate.
 
-ADR 0135's explicit legacy profile now reconstructs all 221 and mismatches the
-58 current-profile sessions. The two exact sets are disjoint and cover all 279
-retained packages; both identify the same 24 physical gaps. Every retained
-package therefore has one fingerprint-proven accepted profile. This is still
-`/tmp` source readiness—not daily membership or Historical Coverage.
-
-The initial ADR 0136 map bound all 279 then-retained sessions in a formally
-reread owner-only map; 58 used `current_v1`, 221 used
-`pre_etv_governance_v1`, and the same 24
-physical gaps remain unbound. Single and bounded membership paths require this
-map and revalidate package locator/custody/time plus accepted Identity-family
-fingerprints. A repeated real 2025-09-09/10 boundary batch produced identical
-manifests and Parquet bytes under the two correct profiles. Durable canonical
-source custody is complete for those 279 packages; the 24 gaps, broad daily
-membership, and Historical Coverage remain open.
-
-ADRs 0137 and 0138 preserved those initial 279 bound sources in one complete
-normalized `/tmp` candidate and bind them into one no-write prospective Apply
-plan. The candidate contains 3,399,877 complete result rows in 279 Parquet plus
-279 manifest files, totaling 258,394,518 bytes versus 1,006,791,465 represented
-source-response bytes. All hashes, modes, schemas, page/row counts, record
-fingerprints, profile bindings, and accepted Identity reconstructions passed;
-zero symlinks or staging residue remain. The plan binds all 558 files, all 279
-absent target partitions, candidate inventory, and current `/data` inventory.
-Its SHA-256 is
-`97e22c62bc8554f1229a41925970a365d189a5ad05bbf802e984fc9f3885c1a0`.
-Its immutable self-status remains `ready_for_separate_review` with
-`apply_authorized=false`; the separate user-directed execution is now complete.
-Parallel plan construction was byte-identical to serial and reduced measured
-wall time from 5:17.38 to 1:30.46.
-
-ADR 0139 now implements the exact-plan atomic Apply boundary and its explicit
-`verify_then_complete` recovery mode. Disposable `/tmp` canonical-root tests
-prove ordinary publication, canonical modes and typed reread, refusal to
-replay an existing target, pre-state drift rejection, interruption after an
-atomic rename, reuse of exact completed partitions, continuation of absent
-partitions, and fail-closed handling of partial targets and staging residue.
-The CLI requires the plan SHA-256, logical fingerprint, expected pre-state,
-and exact root. The real ordinary Apply subsequently published all 279
-partitions and formally reread every session with zero overwrites/deletions. A
-separate recovery postflight reused all 279, wrote zero bytes, and repeated
-post-state fingerprint
-`27dccc3039aed87dce903f41b55f488bd0b07a67c47885449b957c98b4ad49f5`.
-This changes source custody only; research readiness remains blocked.
-
-ADR 0143 then separated actual reacquisition observation time from the one
-row-level replay timestamp shared by each accepted canonical Identity family.
-The corrected full census finds 301/303 sessions exact under exactly one
-profile: 58 current and 243 legacy. The 2026-08-13 and 2026-08-19 packages
-mismatch both profiles because provider records and stable-identity fields
-were revised, so profile-map 1.1 keeps them discovered but unbound. The 22
-other reacquired packages were normalized and appended by exact plan; ordinary
-Apply and a separate zero-write recovery passed with no overwrite or deletion.
-Post-state fingerprint is
-`12b35440e876f8f61fa0bccef8cc06b4c1721c0dc751ebdaa6c572c2df166345`.
+The full disconnected V3 run completed all 300 eligible sessions in 62 bounded
+batches with zero failures and 5,571,154 formally reread decisions. Its
+`/tmp` inventory contains 300 manifests plus 300 Parquet files / 129,736,636
+bytes with fingerprint
+`8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`;
+symlink and staging-residue counts are zero. All sampled rows correctly retain
+a source cutoff after their represented session. No Membership partition was
+published to `/data`, so this remains retrospective mechanics evidence rather
+than historical knowledge-time or research authority.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
@@ -257,11 +204,15 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    canonical after the original and append-only Apply/recovery passes. Keep
    2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
    proven; do not approximate them.
-7. Run and reconcile the broad disconnected membership batches before
-   canonical membership review.
-8. Connect the complete point-in-time foundation to a governed historical
-   research dataset and reconcile the 26-session analytics limitation.
-9. Only then begin real preregistered chronological strategy research.
+7. **Disconnected Membership mechanics complete for eligible dates:** keep the
+   300-session V3 shadow temporary. Separately review the two source gaps, the
+   2026-08-31 evidence gate, and historical knowledge-time before any
+   canonical Membership decision.
+8. Complete lifecycle, corporate-action, adjustment, cost, availability, and
+   revision families; then publish transitive Historical Coverage and reconcile
+   the 26-session analytics limitation.
+9. Only after those gates begin real preregistered chronological strategy
+   research.
 10. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
 11. Add options expression, fundamentals/valuation, events, and later

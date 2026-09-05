@@ -126,98 +126,33 @@ source-page artifacts, no source-only sessions, and two missing EOD sessions:
 `canonical_partitions_observed_not_coverage_validated`; the explicit
 incompleteness blocker remains and no readiness gate changes.
 
-An offline source census and complete-base shadow narrow the membership gap
-without changing that status. Normalized Identity source observations are now
-canonical for 301/303 sessions. The real 2026-09-03 shadow
-evaluated all 9,979 same-day stable IDs for both Universes, localized one
-source collision, and formally reread 19,958 three-state decisions. Its source
-cutoff is after the evaluated session and its output is `/tmp`-only, so it is a
-mechanics proof—not canonical membership, Historical Coverage, or research
-authority.
+ADRs 0132–0143 record the complete-base Membership mechanics, exact package
+census, versioned ETV compatibility, fingerprint-bound profile routing,
+normalized source custody, atomic Apply/recovery, and source-gap attempt. Their
+current result is already represented by the 301-partition source inventory
+above; intermediate counts and fingerprints remain in the dated audits.
 
-ADR 0133 now reuses a bounded formal EOD panel for up to five adjacent shadow
-sessions. The exact 9/3 single replay fell from 149.72 to 111.18 seconds; the
-9/2–9/3 batch completed in 139.71 seconds and both dates matched independent
-logical and physical fingerprints. A five-session audit peaked at about 1.24
-GiB and isolated two source failures: the custody-valid 8/28 and 8/31 packages
-do not exactly rebuild their accepted same-day Identity families.
+ADR 0144 makes the canonical normalized source the normal input to V3
+Membership shadows while preserving the retained-package V2 path for
+compatibility review. The 2026-09-03 V3 result contains 19,958 decisions over
+9,979 stable IDs and is business-decision-identical to V2. A corrected timezone
+runtime dependency reduced the measured single-day path to 59.53 seconds and a
+five-session boundary to 135.53 seconds without changing output hashes.
 
-ADR 0134 then completed the full 303-session exact-equivalence census in 12
-minutes 25.56 seconds with four local workers and zero requests/writes. Under
-the current builder, 58 sessions are exact, 221 mismatch only the Provider
-Identity family, and 24 are missing; package custody, duplicate-source, and
-canonical-Identity failures are all zero. Every mismatch retains exact
-Instrument Master and Resolver fingerprints. Four representative row-level
-checks attribute every changed row to the 2026-09-03 governed ETV transition
-from unknown/rejected to exchange-traded-vehicle/excluded.
+A full four-process preflight found 300/303 source/evidence-eligible sessions.
+The two absent sources remain 2026-08-13 and 2026-08-19; their later provider
+packages are non-equivalent and remain unbound. The only other blocker is
+2026-08-31, where ten stable-identifier collisions produce a
+0.998996689074 linkage ratio below the unchanged 0.999 session gate.
 
-ADR 0135 now completes the all-session proof without changing current rules.
-The explicit `pre_etv_governance_v1` profile exactly reconstructs those same
-221 sessions and mismatches the 58 current-profile sessions. The two exact sets
-are disjoint and their union is all 279 retained packages; their 24-session
-missing sets are identical. Thus every retained source has exactly one
-accepted profile and none of the 221 requires reacquisition. Profile choice
-must be fingerprint-bound per session—not inferred from date—because the
-historical backfill ran in descending order across the policy change.
-
-ADR 0136 materializes that proof as an owner-only, formally reread profile map.
-It binds all 279 retained sessions to profile, package locator/custody/time, and
-accepted Identity-family fingerprints; 24 missing sessions remain explicitly
-unbound. A real adjacent 2025-09-09/10 batch crossed from `current_v1` to
-`pre_etv_governance_v1`, produced 17,728 and 17,764 membership records, and was
-byte-identical on repeat. Single and batch tools now require the map and expose
-its binding provenance; no operator profile override or date inference exists.
-
-ADRs 0137 and 0138 produced the reviewed source-custody transition. All 279
-bound packages were normalized into typed source-observation Parquet,
-preserving 3,399,877 complete provider result rows and 3,536 per-page evidence
-records without response envelopes, URLs, request IDs, or credentials. The
-candidate contains 279 Parquet and 279 manifest files totaling 258,394,518
-bytes; every directory/file mode, hash, schema, row fingerprint, aggregate,
-and accepted Identity reconstruction passed. A separate full formal-reader
-pass and two current/legacy boundary repeats agreed exactly.
-
-The combined candidate census and no-write Apply plan is 639,375 bytes with
-SHA-256 `97e22c62bc8554f1229a41925970a365d189a5ad05bbf802e984fc9f3885c1a0`
-and logical fingerprint
-`6310b845d83ead27e949d66bae158c021be010ccd7565b724f55e5a20d20f87d`.
-It binds 558 source/target files, 279 absent target partitions, candidate
-inventory `a75a421ce8daf3b4170dfa06e61b86c2200ce3d371de9e37f36a89a19cd69881`,
-and unchanged `/data` inventory
-`2928d804ea48cf076b0a589d09b0e150cf07810dc4dd0cef503121d53d95d794`.
-Four-process planning reduced wall time from 5:17.38 to 1:30.46 with
-byte-identical output. The immutable plan remains
-`ready_for_separate_review` with `apply_authorized=false` because it cannot
-authorize itself; its separately directed canonical transition is now
-complete, while the 24 gaps remain separate.
-
-ADR 0139 implements the pinned-plan executor and recovery boundary. It
-uses the same Dell publication lock as the daily writer, immutable same-parent
-partition renames, exact canonical modes and hashes, full typed canonical
-reread, and a separately selected non-destructive `verify_then_complete`
-recovery path. Disposable `/tmp` simulations passed ordinary Apply, an injected
-post-rename interruption, exact-partition reuse, continued publication of the
-remaining absent partition, inventory drift rejection, ordinary replay
-refusal, partial-target rejection, staging-residue rejection, parallel formal
-reread, and CLI binding.
-
-The real Apply then published all 279 partitions / 558 files / 258,394,518
-bytes in 2:01.79, formally reread every session, and reported zero external
-requests, overwrites, or deletions. An independent physical census passed, and
-a second `verify_then_complete` pass reused all 279 partitions, wrote zero
-bytes, and repeated the same post-state fingerprint. This completes durable
-custody for the retained sources only; it does not fill the 24 gaps or create
-Membership or Historical Coverage.
-
-ADR 0143 subsequently separated actual package observation time from the
-accepted canonical replay timestamp. The full 303-package dual-profile census
-now binds 301 sessions exactly: 58 current and 243 legacy. Twenty-two of the 24
-reacquired packages were normalized and atomically appended to `/data`; the
-ordinary Apply and independent zero-write recovery both passed. The
-2026-08-13 and 2026-08-19 reacquisitions contain later provider record and
-stable-identity revisions, remain explicitly unbound, and are not
-canonicalized. They are source revision evidence, not exact replacements for
-the accepted historical snapshots.
+All 300 eligible sessions then completed as disconnected `/tmp` V3 shadows in
+62 bounded batches, producing 5,571,154 formally reread decisions with zero
+session failure. The 600-file / 129,736,636-byte inventory fingerprint is
+`8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`;
+symlink and staging-residue counts are zero. Every sampled source cutoff is
+after its represented session, so the result remains retrospective mechanics
+evidence—not canonical Membership, Historical Coverage, point-in-time research
+authority, or a performance claim.
 
 ## OCI production proof
 
