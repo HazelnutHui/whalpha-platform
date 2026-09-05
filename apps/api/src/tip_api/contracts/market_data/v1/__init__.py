@@ -93,6 +93,16 @@ from tip_api.contracts.market_data.v1.historical_identity_source_custody import 
     historical_identity_source_content_fingerprint,
     historical_identity_source_fingerprint,
 )
+from tip_api.contracts.market_data.v1.historical_inactive_lifecycle import (
+    HistoricalInactiveLifecycleResolutionDecisionV1,
+    HistoricalInactiveLifecycleResolutionShadowManifestV1,
+    HistoricalInactiveLifecycleSourceObservationV1,
+    InactiveLifecycleDisposition,
+    InactiveLifecycleIdentityType,
+    InactiveLifecycleShadowArtifactV1,
+    inactive_lifecycle_fingerprint,
+    inactive_lifecycle_rows_fingerprint,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -168,4 +178,12 @@ __all__ = [
     "build_historical_identity_reference_observation",
     "historical_identity_source_content_fingerprint",
     "historical_identity_source_fingerprint",
+    "HistoricalInactiveLifecycleResolutionDecisionV1",
+    "HistoricalInactiveLifecycleResolutionShadowManifestV1",
+    "HistoricalInactiveLifecycleSourceObservationV1",
+    "InactiveLifecycleDisposition",
+    "InactiveLifecycleIdentityType",
+    "InactiveLifecycleShadowArtifactV1",
+    "inactive_lifecycle_fingerprint",
+    "inactive_lifecycle_rows_fingerprint",
 ]

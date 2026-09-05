@@ -57,6 +57,16 @@ class HistoricalInactiveLifecycleSourceError(RuntimeError):
     """Raised when inactive lifecycle source custody cannot proceed safely."""
 
 
+@dataclass(frozen=True, slots=True)
+class ValidatedInactiveLifecycleSourcePackage:
+    """Formally reread manifest and source pages for downstream normalization."""
+
+    package_path: Path
+    manifest: InactiveLifecycleSourcePackageManifestV1
+    pages: tuple[InactiveLifecycleSourcePageV1, ...]
+    manifest_sha256: str
+
+
 class FrozenModel(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -426,6 +436,36 @@ def read_historical_inactive_lifecycle_source_package(
                 "inactive lifecycle package aggregate differs"
             )
     return manifest
+
+
+def read_historical_inactive_lifecycle_source_payloads(
+    *,
+    package_path: Path,
+    expected_anchor_date: date,
+) -> ValidatedInactiveLifecycleSourcePackage:
+    """Return source pages only after the complete package passes formal reread."""
+
+    manifest = read_historical_inactive_lifecycle_source_package(
+        package_path=package_path,
+        expected_anchor_date=expected_anchor_date,
+    )
+    package = _validate_completed_package_path(package_path, expected_anchor_date)
+    _, pages = _reread_artifacts(
+        package,
+        manifest.artifacts,
+        expected_anchor_date,
+    )
+    return ValidatedInactiveLifecycleSourcePackage(
+        package_path=package,
+        manifest=manifest,
+        pages=pages,
+        manifest_sha256=_sha256(
+            _read_regular_file(
+                package / _MANIFEST_FILE,
+                maximum_bytes=MAXIMUM_PAGE_BYTES,
+            )
+        ),
+    )
 
 
 def _load_or_create_checkpoint(
