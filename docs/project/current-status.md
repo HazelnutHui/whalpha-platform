@@ -106,6 +106,12 @@ reread. The exact 2026-07-16 package completed naturally in 24 pages / 23,260
 rows / 6,644,157 physical bytes. It remains outcome-reconciliation-only, has
 no canonical Apply path, and cannot produce lifecycle conclusions.
 
+The matching latest-EOD anchor `2026-09-03` also completed in 24 pages / 23,469
+rows / 6,714,161 physical bytes. Its exact comparison with 7/16 identifies 262
+new-window delisting-date observations, but only 135 have a stable FIGI that
+matches canonical Instrument history. Provider revision and missing stable-ID
+counts remain explicit blockers; ticker is not used as a fallback key.
+
 The report projects normalized Identity source observations as a separate
 record layer: 301 canonical partitions, 3,687,175 records, 3,844 source-page
 artifacts, and the exact two missing EOD sessions. It explicitly remains

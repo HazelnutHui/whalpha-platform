@@ -175,6 +175,15 @@ It contains 22,754 `delisted_utc` observations and 132 duplicate ticker values.
 The package is not under `/data`, remains `outcome_reconciliation_only`, and
 has no canonical lifecycle or Historical Coverage authority.
 
+The latest-EOD `2026-09-03` anchor also completed naturally: 24 pages / 23,469
+rows / 6,714,161 physical bytes, logical fingerprint
+`8ae15be74aa8c554ab83075346f93c3d966cec72811d47375f53a91a8734ff98`.
+Compared with 7/16 it has 262 added and 53 absent-or-revised exact source rows;
+262 observations carry delisting dates inside 7/17–9/3. Only 1,631 of all
+latest-anchor records, including 135 in that new window, have a selected stable
+FIGI matching the 303-session canonical Instrument history. The remaining
+records are unresolved, not ticker-joined.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:

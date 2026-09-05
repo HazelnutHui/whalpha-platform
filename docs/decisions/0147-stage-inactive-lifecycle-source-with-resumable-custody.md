@@ -65,4 +65,9 @@ last page contained 260 rows. Formal reread passed for all 26 package files,
 6,644,157 physical bytes, owner-only modes, zero symlinks, exact request chain,
 and logical fingerprint
 `5b298512378f80fc5e72eb90bf05b588feb91c1ea1caedd802c8d54ac8cee7fb`.
-The package remains under `/tmp`; `/data` and Production were unchanged.
+The package remains under `/tmp`; `/data` and Production were unchanged. A
+second exact package at the latest canonical EOD anchor `2026-09-03` then
+completed in 24 requests / 23,469 rows with logical fingerprint
+`8ae15be74aa8c554ab83075346f93c3d966cec72811d47375f53a91a8734ff98`.
+It closes the source observation window through the current price-history end
+without changing either package's research eligibility.

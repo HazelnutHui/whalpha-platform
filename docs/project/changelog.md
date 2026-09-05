@@ -22,6 +22,13 @@
   files / 1,877,724,006 bytes with the same inventory fingerprint. No lifecycle
   conclusion, analytics, publication, deployment, or scheduler change was
   made.
+- Completed the separate latest-EOD 2026-09-03 anchor in 24 pages / 23,469
+  rows. An offline comparison found 262 added and 53 absent-or-revised source
+  rows; all 262 additions have delisting dates in the 7/17–9/3 window, but only
+  135 have a stable FIGI matching canonical Instrument history.
+- A second post-acquisition report again proved the identical `/data`
+  inventory, zero symlinks, and zero publication residue. Both source packages
+  remain owner-only `/tmp` evidence and outcome-reconciliation-only.
 
 ## 2026-09-05 — Bounded inactive lifecycle completion census
 
