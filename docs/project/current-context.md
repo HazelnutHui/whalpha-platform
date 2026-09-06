@@ -156,10 +156,11 @@ source gaps remain 2026-08-13 and 2026-08-19. Routine 2026-09-04 normalized
 source custody is now exact and directly bound; neither revised gap may be
 approximated.
 
-Existing disconnected V3 evidence covers the 301 source-available dates that
-preceded the 2026-09-04 daily repair and 5,591,084 formally reread decisions;
-the new 2026-09-04 source is not silently counted as a completed Membership
-shadow. The original 300-session root and its
+Combined disconnected V3 evidence now covers all 302 source-available dates
+and 5,611,048 formally reread decisions. The new 2026-09-04 partition adds
+19,964 decisions under the same V3 methodology and binds the direct daily
+source fingerprint; it remains a separate owner-only temporary root. The
+original 300-session root and its
 600-file / 129,736,636-byte inventory fingerprint
 `8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`
 remain preserved as pre-correction evidence. A separate five-session corrected
@@ -339,9 +340,10 @@ separately bounded.
    and outputs remain exact.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
-   Keep the two provider-revised dates explicitly unbound, extend disconnected
-   Membership mechanics to 9/4 only as retrospective evidence, and never
-   approximate any absent session before canonical membership review.
+   Disconnected Membership mechanics also cover all 302 available dates. Keep
+   the two provider-revised dates explicitly unbound, preserve every source
+   cutoff as retrospective evidence, and never approximate an absent session
+   before canonical membership review.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

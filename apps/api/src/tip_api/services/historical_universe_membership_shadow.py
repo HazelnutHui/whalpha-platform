@@ -24,6 +24,7 @@ from tip_api.contracts.market_data.v1 import (
     ResolutionStatus,
     TrailingLiquidityEligibilityStatus,
     TrailingLiquidityResultV1,
+    identity_source_binding_fingerprint,
 )
 from tip_api.contracts.security_classification.v1 import (
     ProviderInstrumentSecurityEvidenceV1,
@@ -597,9 +598,7 @@ def build_historical_universe_membership_shadow_from_canonical_source(
         payloads=tuple(item.source_payload() for item in custody.records),
         identity_source_mode="canonical_source_custody",
         rebuild_profile=manifest.identity_rebuild_profile,
-        profile_binding_fingerprint=(
-            manifest.identity_profile_binding_fingerprint
-        ),
+        profile_binding_fingerprint=identity_source_binding_fingerprint(manifest),
         observed_at=normalize_utc_datetime(manifest.source_package_fetched_at),
         request_count=manifest.source_request_count,
         package_manifest_fingerprint=manifest.source_package_manifest_sha256,

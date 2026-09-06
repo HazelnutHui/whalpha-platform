@@ -235,7 +235,7 @@ def test_canonical_source_loader_preserves_formal_custody_provenance(
         provider="massive_stocks_basic",
         source_package_fetched_at=NOW,
         identity_rebuild_profile="current_v1",
-        identity_profile_binding_fingerprint="1" * 64,
+        source_binding_fingerprint="1" * 64,
         source_request_count=2,
         source_package_manifest_sha256="2" * 64,
         source_package_content_sha256="3" * 64,

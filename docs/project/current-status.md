@@ -158,10 +158,10 @@ the unchanged 0.999 gate. The two distinct unresolved AREN/PAAI references
 remain collisions. Those two revised-source gaps remain. Routine 2026-09-04
 normalized source custody is now exact and directly bound.
 
-Disconnected V3 evidence covers the 301 source-available sessions that
-preceded the 9/4 repair and 5,591,084 formally reread decisions. The new 9/4
-source is not yet counted as a completed Membership shadow. The original
-300-session root remains a
+Combined disconnected V3 evidence covers all 302 source-available sessions and
+5,611,048 formally reread decisions. The 9/4 direct-source shadow adds 19,964
+decisions in a separate owner-only temporary root. The original 300-session
+root remains a
 record of the pre-correction run: 600 files / 129,736,636 bytes with fingerprint
 `8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`.
 An independent corrected five-session boundary completed 5/5 with zero
@@ -247,9 +247,9 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    sessions are canonical after historical and direct-daily Apply/recovery.
    Keep 2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
    proven; do not approximate either gap.
-7. **Disconnected Membership mechanics remain temporary:** existing V3
-   evidence covers 301 sessions. Add 9/4 only as retrospective mechanics, then
-   resolve historical knowledge-time before any canonical Membership decision.
+7. **Disconnected Membership mechanics remain temporary:** V3 evidence now
+   covers all 302 available-source sessions. Resolve historical knowledge-time
+   before any canonical Membership decision.
 8. Design corroboration and source-availability evidence for the 547 inactive
    lifecycle review candidates; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,

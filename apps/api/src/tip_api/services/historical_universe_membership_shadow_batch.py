@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+import stat
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
 from pathlib import Path
@@ -415,6 +417,7 @@ def _validate_batch_paths(
         raise HistoricalUniverseMembershipShadowBatchError(
             "batch source and output paths must be disjoint"
         )
+    target_root = _prepare_owner_only_output_root(output_root)
     return source_root, target_root, resolved_packages
 
 
@@ -442,7 +445,48 @@ def _validate_canonical_batch_paths(
         raise HistoricalUniverseMembershipShadowBatchError(
             "batch source and output paths must be disjoint"
         )
+    target_root = _prepare_owner_only_output_root(output_root)
     return source_root, target_root, tuple(sorted(sessions))
+
+
+def _prepare_owner_only_output_root(output_root: Path) -> Path:
+    temporary_root = Path("/tmp").resolve(strict=True)
+    if not output_root.is_absolute():
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "batch output root must be absolute"
+        )
+    current = output_root
+    while current != temporary_root:
+        if current.exists() and current.is_symlink():
+            raise HistoricalUniverseMembershipShadowBatchError(
+                "batch output path contains a symlink"
+            )
+        if temporary_root not in current.parents:
+            raise HistoricalUniverseMembershipShadowBatchError(
+                "batch output root must be a child of /tmp"
+            )
+        current = current.parent
+    if output_root.exists():
+        if output_root.is_symlink() or not output_root.is_dir():
+            raise HistoricalUniverseMembershipShadowBatchError(
+                "batch output root is not a directory"
+            )
+    else:
+        if output_root.parent.is_symlink() or not output_root.parent.is_dir():
+            raise HistoricalUniverseMembershipShadowBatchError(
+                "batch output parent is unavailable"
+            )
+        output_root.mkdir(mode=0o700)
+    resolved = output_root.resolve(strict=True)
+    if (
+        resolved != output_root
+        or stat.S_IMODE(resolved.stat().st_mode) != 0o700
+        or resolved.stat().st_uid != os.geteuid()
+    ):
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "batch output root must be owner-only"
+        )
+    return resolved
 
 
 def _paths_overlap(left: Path, right: Path) -> bool:

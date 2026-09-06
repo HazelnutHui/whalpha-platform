@@ -27,6 +27,20 @@
   zero symlinks, and zero publication residue. Research correctly remains
   `data_blocked`; no Membership, Historical Coverage, model, analytics,
   Production, deployment, or scheduler state changed.
+- The first disconnected 9/4 Membership attempt exposed one legacy-only
+  binding-field access before output publication. The shared accessor now
+  resolves historical profile-map and daily direct bindings explicitly. A
+  second physical audit found the new temporary root was initially `0775`;
+  batch validation now creates or requires an owner-owned `0700` root and
+  rejects symlinked or group-writable roots.
+- The corrected 9/4 V3 shadow contains 19,964 decisions over a 9,982-Instrument
+  evaluated base, with logical fingerprint
+  `ea95ca155b1666392dc2a596d4ffa97c9edc9b4313501ed253f59419ad132130`
+  and physical SHA-256
+  `94411a02fff000eb2f6ea2288964ce22097cc4539433000ea665e0a9dd847532`.
+  A repeat returned `already_present` with the full tree unchanged. Combined
+  disconnected V3 evidence now covers all 302 available-source sessions and
+  5,611,048 decisions; it remains temporary retrospective evidence.
 
 ## 2026-09-06 — Complete 9/4 daily chain and clarify freshness
 

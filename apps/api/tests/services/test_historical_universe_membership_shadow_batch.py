@@ -52,7 +52,7 @@ def test_batch_paths_must_be_tmp_disjoint_and_bounded(tmp_path: Path) -> None:
     package = tmp_path / "package"
     data_root.mkdir()
     package.mkdir()
-    output = Path("/tmp") / f"membership-batch-{tmp_path.name}"
+    output = tmp_path / "membership-batch-output"
 
     source, target, packages = _validate_batch_paths(
         data_root=data_root,
@@ -61,11 +61,37 @@ def test_batch_paths_must_be_tmp_disjoint_and_bounded(tmp_path: Path) -> None:
     )
     assert source == data_root.resolve()
     assert target == output.resolve()
+    assert target.stat().st_mode & 0o777 == 0o700
     assert packages[FIRST] == package.resolve()
     with pytest.raises(HistoricalUniverseMembershipShadowBatchError, match="disjoint"):
         _validate_batch_paths(
             data_root=data_root,
             output_root=data_root / "output",
+            package_paths={FIRST: package},
+        )
+    shared_output = tmp_path / "shared-output"
+    shared_output.mkdir(mode=0o700)
+    shared_output.chmod(0o775)
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowBatchError,
+        match="owner-only",
+    ):
+        _validate_batch_paths(
+            data_root=data_root,
+            output_root=shared_output,
+            package_paths={FIRST: package},
+        )
+    real_output = tmp_path / "real-output"
+    real_output.mkdir(mode=0o700)
+    linked_output = tmp_path / "linked-output"
+    linked_output.symlink_to(real_output, target_is_directory=True)
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowBatchError,
+        match="symlink",
+    ):
+        _validate_batch_paths(
+            data_root=data_root,
+            output_root=linked_output,
             package_paths={FIRST: package},
         )
 
@@ -94,7 +120,7 @@ def test_batch_reuses_shared_inputs_and_localizes_package_failure(
     second_package = tmp_path / "second-package"
     for path in (data_root, first_package, second_package):
         path.mkdir()
-    output_root = Path("/tmp") / f"membership-batch-test-{tmp_path.name}"
+    output_root = tmp_path / "membership-batch-output"
     panel = SimpleNamespace(session_reads=(1, 2, 3))
     snapshot = object()
     first_binding = SimpleNamespace(
@@ -212,7 +238,7 @@ def test_canonical_source_batch_reuses_shared_inputs_and_localizes_gap(
 ) -> None:
     data_root = tmp_path / "data"
     data_root.mkdir()
-    output_root = Path("/tmp") / f"canonical-membership-batch-{tmp_path.name}"
+    output_root = tmp_path / "canonical-membership-output"
     panel = SimpleNamespace(session_reads=(1, 2, 3))
     snapshot = object()
     calls: list[tuple[str, object]] = []

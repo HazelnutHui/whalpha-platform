@@ -63,4 +63,37 @@ The new source is knowledge-time eligible only at its actual observation time.
 It is not evidence that the provider record was known at the 2026-09-04 close.
 No Membership or Historical Coverage partition was produced, and the existing
 301-session disconnected Membership evidence was not relabelled as 302-session
-evidence.
+evidence by the source Apply.
+
+## Subsequent disconnected Membership proof
+
+The first 2026-09-04 V3 attempt failed before output publication because its
+success path still read the historical-only profile-binding field. The common
+binding accessor was applied to that path and a focused 20-test regression
+passed. The corrected run then produced:
+
+| Evidence | Value |
+| --- | --- |
+| Evaluated Instrument base | 9,982 |
+| Membership decisions | 19,964 |
+| Primary included / excluded / quarantined | 1,680 / 8,242 / 60 |
+| Secondary included / excluded / quarantined | 1,796 / 8,113 / 73 |
+| Shared EOD partitions read | 21 |
+| Logical fingerprint | `ea95ca155b1666392dc2a596d4ffa97c9edc9b4313501ed253f59419ad132130` |
+| Physical SHA-256 | `94411a02fff000eb2f6ea2288964ce22097cc4539433000ea665e0a9dd847532` |
+| External requests / canonical writes | 0 / 0 |
+
+Physical audit found the newly created direct `/tmp` output root at `0775`.
+No symlink, residue, external request, or canonical write occurred, but the
+mode was weaker than the established owner-only custody standard. Batch path
+validation now atomically creates an absent root as owner-owned `0700`,
+requires that exact mode for reuse, and rejects symlinked or group-writable
+roots. The existing exact root was tightened to `0700`; a full rerun returned
+`already_present` with all tree metadata unchanged. Its two files total
+461,208 bytes.
+
+Combining the prior 301-session evidence with this separately retained session
+yields 302 available-source sessions and 5,611,048 decisions. This is still
+retrospective, disconnected mechanics. It does not create canonical Membership
+or Historical Coverage authority. Final full backend regression remained
+2,091 passed with the same two dependency warnings.
