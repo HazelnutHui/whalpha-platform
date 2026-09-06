@@ -50,10 +50,12 @@ that can replace the missing point-in-time families.
 ADRs 0137–0145 now provide canonical normalized source observations for 301
 profile-bound Identity sessions. The exact current partition count and missing
 dates belong in [current context](../project/current-context.md). These
-observations remain eligible only for outcome reconciliation because Dell
-observed the backfilled packages after their historical sessions. Missing or
-provider-revised sources and all later research families remain explicit, so
-canonical source presence does not change readiness.
+historical observations remain eligible only for outcome reconciliation
+because Dell observed the backfilled packages after their historical sessions.
+ADR 0150 adds a directly bound daily variant that is eligible no earlier than
+its actual observation time. Missing or provider-revised sources and all later
+research families remain explicit, so canonical source presence does not
+change readiness.
 
 The formal state therefore remains
 `NOT_READY_FOR_PERFORMANCE_EVALUATION`.

@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-06T12:34:15Z
+Operational state verified at: 2026-09-06T13:10:51Z
 
 Repository context updated at: 2026-09-06 UTC
 
@@ -47,9 +47,9 @@ publication-time assertion as a third, explicitly named view.
 | Latest Identity | 2026-09-04; 9,982 Instruments / 13,155 provider identities / 9,982 Resolvers |
 | Latest Identity fingerprint | `5eed9166d609cea7693aed324908427f113ab72c221921690bcbdc29f71727f7` |
 | Identity/EOD alignment | aligned on 2026-09-04 |
-| Canonical historical Identity source | 301 immutable source-observation partitions / 3,687,175 rows; 3 source sessions absent |
-| `/data` inventory | 4,053 files / 2,007,562,365 bytes |
-| `/data` inventory fingerprint | `81b2eaaa15efb82c27b6adbeeb3dc3861606f0359d3db1157e10fac37fd03056` |
+| Canonical historical Identity source | 302 immutable source-observation partitions / 3,700,330 rows; 2 source sessions absent |
+| `/data` inventory | 4,055 files / 2,008,560,616 bytes |
+| `/data` inventory fingerprint | `a49348fc48219771d96ddc8bafed4fc3d5b32774ac61e45f102eef4fc0bb4f56` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -124,18 +124,20 @@ change those results; future partitions remain unvalidated until the existing
 transitive formal Coverage reader proves them.
 
 ADR 0140 exposes the normalized source-observation layer separately from
-resolved Identity snapshots. Its latest routine typed custody read reports 301
-canonical partitions, 301 manifests, 301 Parquet files, 3,687,175 rows, 3,844
-source-page artifacts, no source-only sessions, and three missing EOD sessions:
-2026-08-13, 2026-08-19, and the new routine daily session 2026-09-04. Its state is
+resolved Identity snapshots. ADR 0150 adds direct daily binding and append-only
+exact repair without altering the historical profile-map partitions. The
+current typed read reports 302 partitions, 302 manifests, 302 Parquet files,
+3,700,330 rows, 3,858 source-page artifacts, no source-only sessions, and only
+the two provider-revised dates 2026-08-13 and 2026-08-19 as missing. Its state is
 `canonical_partitions_observed_not_coverage_validated`; the explicit
 incompleteness blocker remains and no readiness gate changes.
 
 ADRs 0132–0143 record the complete-base Membership mechanics, exact package
 census, versioned ETV compatibility, fingerprint-bound profile routing,
 normalized source custody, atomic Apply/recovery, and source-gap attempt. Their
-current result is already represented by the 301-partition source inventory
-above; intermediate counts and fingerprints remain in the dated audits.
+historical result is represented by the original 301 profile-bound partitions;
+the directly bound 2026-09-04 daily partition is recorded separately by ADR
+0150 and its dated audit. Intermediate counts and fingerprints remain there.
 
 ADR 0144 makes the canonical normalized source the normal input to V3
 Membership shadows while preserving the retained-package V2 path for
@@ -150,11 +152,14 @@ structurally identical Identity references already marked as exact provider
 duplicates. Deduplicating only those identical references raises linkage to
 0.999799337815 under the unchanged 0.999 gate; the two genuinely distinct
 unresolved AREN/PAAI references remain collisions. The two historical revised-
-source gaps remain 2026-08-13 and 2026-08-19; routine 2026-09-04 normalized
-source custody is additionally absent. None may be approximated.
+source gaps remain 2026-08-13 and 2026-08-19. Routine 2026-09-04 normalized
+source custody is now exact and directly bound; neither revised gap may be
+approximated.
 
-Combined disconnected V3 evidence now covers all 301 source-available dates
-and 5,591,084 formally reread decisions. The original 300-session root and its
+Existing disconnected V3 evidence covers the 301 source-available dates that
+preceded the 2026-09-04 daily repair and 5,591,084 formally reread decisions;
+the new 2026-09-04 source is not silently counted as a completed Membership
+shadow. The original 300-session root and its
 600-file / 129,736,636-byte inventory fingerprint
 `8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`
 remain preserved as pre-correction evidence. A separate five-session corrected
@@ -332,13 +337,11 @@ separately bounded.
    identity. Continue the segmented Candidate proof and add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
-2. **Historical Universe foundation:** the shared-panel batch and exact
-   two-profile Identity routing now cover 301 sessions, and all 301 exact source
-   partitions are canonical after append-only Apply and zero-write recovery.
-   Keep the two provider-revised dates explicitly unbound, restore the missing
-   routine 9/4 normalized-source custody through a separately reviewed exact
-   path, and never approximate any absent session before canonical membership
-   review.
+2. **Historical Universe foundation:** 302 exact source partitions are now
+   canonical after historical append-only and direct-daily Apply/recovery.
+   Keep the two provider-revised dates explicitly unbound, extend disconnected
+   Membership mechanics to 9/4 only as retrospective evidence, and never
+   approximate any absent session before canonical membership review.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

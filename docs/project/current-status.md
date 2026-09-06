@@ -46,11 +46,11 @@ unrelated services.
 - Latest EOD has 9,962 rows and is aligned to the 2026-09-04 Identity snapshot.
 - Latest Identity contains 9,982 Instruments, 13,155 provider identities, and
   9,982 Resolvers.
-- Canonical normalized historical Identity source custody now contains 301
-  partitions / 3,687,175 rows. The two revised dates, 2026-08-13 and
-  2026-08-19, remain explicitly unbound; routine 2026-09-04 normalized source
-  custody is also absent.
-- `/data` contains 4,053 files / 2,007,562,365 bytes, with zero symlinks and
+- Canonical normalized Identity source custody now contains 302 partitions /
+  3,700,330 rows. The two revised dates, 2026-08-13 and 2026-08-19, remain
+  explicitly unbound. The 2026-09-04 daily source is exact, directly bound,
+  and retained at its actual observation time.
+- `/data` contains 4,055 files / 2,008,560,616 bytes, with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -127,17 +127,18 @@ results remain outcome-reconciliation evidence, not canonical lifecycle facts
 or research-ready labels.
 
 The report projects normalized Identity source observations as a separate
-record layer: 301 canonical partitions, 3,687,175 records, 3,844 source-page
-artifacts, and the exact three missing EOD sessions: 8/13, 8/19, and 9/4. It
+record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
+artifacts, and the exact two missing EOD sessions: 8/13 and 8/19. It
 explicitly remains
 `canonical_partitions_observed_not_coverage_validated`, so source custody is
 visible without being promoted to Historical Coverage or research readiness.
 
 ADRs 0132–0143 record the package census, versioned ETV compatibility,
 fingerprint-bound profile map, normalized source custody, atomic Apply, and
-22-session append-only recovery. Their current result is the 301 canonical
-source partitions above; historical intermediate package counts and plans are
-kept in the linked audits rather than repeated here.
+22-session append-only recovery. Their historical result is the 301 profile-
+bound partitions; ADR 0150 adds the directly bound 9/4 daily partition without
+modifying that evidence. Detailed package counts and plans remain in the linked
+audits.
 
 ADR 0144 now makes those canonical normalized rows the normal Membership
 shadow input. The retained-package V2 path remains only for compatibility
@@ -154,11 +155,13 @@ observations were exact-duplicate Identity rows incorrectly retained as two
 downstream join candidates. Collapsing only structurally identical references
 raises that session's linkage ratio from 0.998996689074 to 0.999799337815 under
 the unchanged 0.999 gate. The two distinct unresolved AREN/PAAI references
-remain collisions. Those two revised-source gaps remain, and routine 2026-09-04
-normalized source custody is additionally absent.
+remain collisions. Those two revised-source gaps remain. Routine 2026-09-04
+normalized source custody is now exact and directly bound.
 
-Disconnected V3 evidence now covers all 301 source-available sessions and
-5,591,084 formally reread decisions. The original 300-session root remains a
+Disconnected V3 evidence covers the 301 source-available sessions that
+preceded the 9/4 repair and 5,591,084 formally reread decisions. The new 9/4
+source is not yet counted as a completed Membership shadow. The original
+300-session root remains a
 record of the pre-correction run: 600 files / 129,736,636 bytes with fingerprint
 `8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`.
 An independent corrected five-session boundary completed 5/5 with zero
@@ -240,14 +243,13 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    necessary formal Activation read rather than duplicate active-state reads.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. **Canonical source custody complete for exact historical packages:** 301
-   sessions are canonical after the original and append-only Apply/recovery
-   passes. Keep 2026-08-13 and 2026-08-19 unbound unless an alternative exact
-   source is proven, and separately restore exact 2026-09-04 routine custody;
-   do not approximate any gap.
-7. **Disconnected Membership mechanics complete for available sources:** keep
-   the 301-session V3 evidence temporary. Resolve all exact source gaps and
-   historical knowledge-time before any canonical Membership decision.
+6. **Canonical source custody complete for exact available packages:** 302
+   sessions are canonical after historical and direct-daily Apply/recovery.
+   Keep 2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
+   proven; do not approximate either gap.
+7. **Disconnected Membership mechanics remain temporary:** existing V3
+   evidence covers 301 sessions. Add 9/4 only as retrospective mechanics, then
+   resolve historical knowledge-time before any canonical Membership decision.
 8. Design corroboration and source-availability evidence for the 547 inactive
    lifecycle review candidates; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,

@@ -17,7 +17,16 @@
   exact 13,155-row / 14-page reconstruction and bound two prospective files to
   `/data` inventory fingerprint
   `81b2eaaa15efb82c27b6adbeeb3dc3861606f0359d3db1157e10fac37fd03056`.
-  Canonical Apply remained pending at this checkpoint.
+  Exact Apply added only those 998,251 bytes; a verify-then-complete replay
+  preserved file content and metadata unchanged. Formal reread reconstructed
+  all three canonical Identity families exactly.
+- Canonical source custody now has 302 partitions / 3,700,330 rows / 3,858
+  page artifacts. Only the revised 8/13 and 8/19 dates remain absent. `/data`
+  is 4,055 files / 2,008,560,616 bytes with fingerprint
+  `a49348fc48219771d96ddc8bafed4fc3d5b32774ac61e45f102eef4fc0bb4f56`,
+  zero symlinks, and zero publication residue. Research correctly remains
+  `data_blocked`; no Membership, Historical Coverage, model, analytics,
+  Production, deployment, or scheduler state changed.
 
 ## 2026-09-06 — Complete 9/4 daily chain and clarify freshness
 
