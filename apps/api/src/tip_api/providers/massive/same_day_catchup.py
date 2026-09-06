@@ -52,7 +52,7 @@ from tip_api.providers.massive.transport import MassiveHttpTransport, MassiveUrl
 
 APPROVED_PRODUCTION_ROOT = Path("/data/trading-intelligence-platform")
 PACKAGE_SCHEMA_VERSION = "1.0"
-PLAN_SCHEMA_VERSION = "1.0"
+PLAN_SCHEMA_VERSION = "1.1"
 LOCK_ROOT = Path("/tmp")
 
 
@@ -94,8 +94,8 @@ class PlannedArtifactV1(FrozenModel):
 
 
 class CatchupApprovalPlanV1(FrozenModel):
-    schema_version: Literal["1.0"] = PLAN_SCHEMA_VERSION
-    operation: Literal["identity", "eod"]
+    schema_version: Literal["1.0", "1.1"] = PLAN_SCHEMA_VERSION
+    operation: Literal["identity", "identity_source", "eod"]
     provider_id: Literal["massive_stocks_basic"] = MASSIVE_PROVIDER_ID
     session_date: date
     created_at: datetime
@@ -117,7 +117,7 @@ class CatchupApprovalPlanV1(FrozenModel):
 
 
 class FetchPackageEvidenceV1(FrozenModel):
-    operation: Literal["identity", "eod"]
+    operation: Literal["identity", "identity_source", "eod"]
     session_date: date
     package_path: str
     package_type: Literal["identity_reference", "grouped_daily"]
@@ -137,7 +137,7 @@ class ValidatedIdentityReferencePackage:
 
 
 class CatchupApprovalPlanEvidenceV1(FrozenModel):
-    operation: Literal["identity", "eod"]
+    operation: Literal["identity", "identity_source", "eod"]
     session_date: date
     plan_path: str
     plan_file_sha256: str
@@ -282,13 +282,15 @@ def fetch_eod_package(
 def read_fetch_package_evidence(
     *,
     package_path: Path,
-    operation: Literal["identity", "eod"],
+    operation: Literal["identity", "identity_source", "eod"],
     expected_session: date,
 ) -> FetchPackageEvidenceV1:
     """Formally reread a frozen package and expose only non-sensitive custody."""
 
     expected_type: Literal["identity_reference", "grouped_daily"] = (
-        "identity_reference" if operation == "identity" else "grouped_daily"
+        "identity_reference"
+        if operation in {"identity", "identity_source"}
+        else "grouped_daily"
     )
     manifest, _ = _read_fetch_package(package_path, expected_type=expected_type)
     if manifest.session_date != expected_session:
@@ -333,7 +335,7 @@ def read_catchup_approval_plan_evidence(
     *,
     plan_path: Path,
     approved_plan_sha256: str,
-    expected_operation: Literal["identity", "eod"],
+    expected_operation: Literal["identity", "identity_source", "eod"],
     expected_session: date,
     expected_data_root: Path,
 ) -> CatchupApprovalPlanEvidenceV1:
@@ -416,13 +418,37 @@ def build_identity_plan(*, package_path: Path, plan_path: Path, data_root: Path)
         payload[field] = str(data_root / value.relative_to(artifact_root))
     logical.write_bytes(_pretty_json_bytes(payload))
     _fsync_file(logical)
-    order = _identity_target_directories(data_root, package.session_date)
+    artifact_root.chmod(0o700)
+    (artifact_root / "market-data").chmod(0o700)
+    from tip_api.services.historical_identity_source_custody import (
+        build_same_day_identity_source_custody_candidate,
+    )
+
+    source = build_same_day_identity_source_custody_candidate(
+        package=ValidatedIdentityReferencePackage(
+            manifest=package,
+            pages=pages,
+            package_manifest_sha256=file_sha256(package_path / "package.json"),
+        ),
+        package_path=package_path,
+        output_root=artifact_root,
+        canonical_snapshot_fingerprint=result.snapshot_content_sha256 or "",
+        canonical_instrument_fingerprint=result.instrument_content_sha256 or "",
+        canonical_identity_fingerprint=result.identity_content_sha256 or "",
+        canonical_resolver_fingerprint=result.resolver_content_sha256 or "",
+    )
+    order = _identity_target_directories(
+        data_root,
+        package.session_date,
+        include_source=True,
+    )
     artifacts = _collect_planned_artifacts(artifact_root, data_root, order)
     counts = {
         "raw_records": result.raw_record_count,
         "instrument_rows": result.canonical_instrument_count,
         "identity_rows": len(build.identities),
         "resolver_rows": result.resolver_entry_count,
+        "source_observation_rows": source.manifest.record_count,
         "requests": result.request_count,
     }
     fingerprints = {
@@ -430,6 +456,8 @@ def build_identity_plan(*, package_path: Path, plan_path: Path, data_root: Path)
         "identity": result.identity_content_sha256 or "",
         "resolver": result.resolver_content_sha256 or "",
         "logical": result.snapshot_content_sha256 or "",
+        "source_observation": source.manifest.content_fingerprint,
+        "source_custody": source.manifest.logical_fingerprint,
     }
     return _write_plan(
         plan_path=plan_path,
@@ -442,6 +470,81 @@ def build_identity_plan(*, package_path: Path, plan_path: Path, data_root: Path)
         counts=counts,
         fingerprints=fingerprints,
         same_day_identity=None,
+    )
+
+
+def build_identity_source_plan(
+    *,
+    package_path: Path,
+    plan_path: Path,
+    data_root: Path,
+) -> CatchupApprovalPlanV1:
+    """Plan an append-only source repair for an already completed Identity."""
+
+    package, pages = _read_fetch_package(
+        package_path,
+        expected_type="identity_reference",
+    )
+    data_root = _validate_data_root(data_root)
+    plan_path, artifact_root = _new_plan_paths(plan_path)
+    try:
+        identity = load_identity_snapshot(
+            data_root,
+            provider_id=MASSIVE_PROVIDER_ID,
+            as_of_date=package.session_date,
+        )
+    except Exception as exc:
+        raise SameDayCatchupError(
+            "completed Identity is unavailable for source repair"
+        ) from exc
+    artifact_root.mkdir(mode=0o700)
+    from tip_api.services.historical_identity_source_custody import (
+        build_same_day_identity_source_custody_candidate,
+    )
+
+    source = build_same_day_identity_source_custody_candidate(
+        package=ValidatedIdentityReferencePackage(
+            manifest=package,
+            pages=pages,
+            package_manifest_sha256=file_sha256(package_path / "package.json"),
+        ),
+        package_path=package_path,
+        output_root=artifact_root,
+        canonical_snapshot_fingerprint=str(
+            identity.manifest["snapshot_content_sha256"]
+        ),
+        canonical_instrument_fingerprint=str(
+            identity.manifest["instrument_content_sha256"]
+        ),
+        canonical_identity_fingerprint=str(
+            identity.manifest["identity_content_sha256"]
+        ),
+        canonical_resolver_fingerprint=str(
+            identity.manifest["resolver_content_sha256"]
+        ),
+    )
+    order = (_identity_source_target_directory(data_root, package.session_date),)
+    artifacts = _collect_planned_artifacts(artifact_root, data_root, order)
+    return _write_plan(
+        plan_path=plan_path,
+        operation="identity_source",
+        package=package,
+        package_path=package_path,
+        data_root=data_root,
+        publication_order=order,
+        artifacts=artifacts,
+        counts={
+            "source_observation_rows": source.manifest.record_count,
+            "requests": source.manifest.source_request_count,
+        },
+        fingerprints={
+            "identity_logical": str(
+                identity.manifest["snapshot_content_sha256"]
+            ),
+            "source_observation": source.manifest.content_fingerprint,
+            "source_custody": source.manifest.logical_fingerprint,
+        },
+        same_day_identity=str(identity.manifest["snapshot_content_sha256"]),
     )
 
 
@@ -504,7 +607,7 @@ def apply_approved_plan(
     data_root: Path,
     verify_then_complete: bool = False,
     fail_after_target_count: int | None = None,
-    expected_operation: Literal["identity", "eod"] | None = None,
+    expected_operation: Literal["identity", "identity_source", "eod"] | None = None,
     expected_session: date | None = None,
 ) -> CatchupApprovalPlanV1:
     plan = _read_plan(plan_path, approved_plan_sha256)
@@ -532,9 +635,14 @@ def apply_approved_plan(
             raise SameDayCatchupError("approved plan changed before lock validation")
         _verify_package_custody(plan)
         if verify_then_complete:
-            if plan.operation != "identity":
-                raise SameDayCatchupError("verify-then-complete is only valid for Identity bundles")
-            _validate_recovery_state(plan, data_root)
+            if plan.operation == "identity":
+                _validate_recovery_state(plan, data_root)
+            elif plan.operation == "identity_source":
+                _validate_atomic_target_recovery_state(plan, data_root)
+            else:
+                raise SameDayCatchupError(
+                    "verify-then-complete is not valid for EOD"
+                )
         elif inventory_fingerprint(data_root) != expected_current_state_fingerprint:
             raise SameDayCatchupError("approved current state changed")
         else:
@@ -695,7 +803,7 @@ def _read_fetch_package(
 def _write_plan(
     *,
     plan_path: Path,
-    operation: Literal["identity", "eod"],
+    operation: Literal["identity", "identity_source", "eod"],
     package: FetchPackageManifestV1,
     package_path: Path,
     data_root: Path,
@@ -727,7 +835,11 @@ def _write_plan(
         "recovery_boundary": (
             "verify_matching_completed_components_then_publish_missing_components_and_logical_marker"
             if operation == "identity"
-            else "formal_reread_completed_target_without_replay"
+            else (
+                "verify_matching_atomic_source_target_without_overwrite"
+                if operation == "identity_source"
+                else "formal_reread_completed_target_without_replay"
+            )
         ),
         "rollback_boundary": "immutable_completed_datasets_are_never_deleted_or_overwritten",
     }
@@ -763,11 +875,36 @@ def _read_plan(path: Path, approved_sha: str) -> CatchupApprovalPlanV1:
 def _validate_plan_contract(plan: CatchupApprovalPlanV1) -> None:
     root = _validate_data_root(Path(plan.data_root))
     order = tuple(Path(item) for item in plan.publication_order)
-    expected_order = (
-        _identity_target_directories(root, plan.session_date)
-        if plan.operation == "identity"
-        else (_eod_target_directory(root, plan.session_date),)
-    )
+    if plan.schema_version == "1.0":
+        if plan.operation == "identity_source":
+            raise SameDayCatchupError(
+                "source-only operation requires approval-plan schema 1.1"
+            )
+        expected_order = (
+            _identity_target_directories(
+                root,
+                plan.session_date,
+                include_source=False,
+            )
+            if plan.operation == "identity"
+            else (_eod_target_directory(root, plan.session_date),)
+        )
+        expected_files = 7 if plan.operation == "identity" else 2
+    elif plan.operation == "identity":
+        expected_order = _identity_target_directories(
+            root,
+            plan.session_date,
+            include_source=True,
+        )
+        expected_files = 9
+    elif plan.operation == "identity_source":
+        expected_order = (
+            _identity_source_target_directory(root, plan.session_date),
+        )
+        expected_files = 2
+    else:
+        expected_order = (_eod_target_directory(root, plan.session_date),)
+        expected_files = 2
     if order != expected_order:
         raise SameDayCatchupError("approved publication order mismatch")
     targets = set(order)
@@ -782,7 +919,6 @@ def _validate_plan_contract(plan: CatchupApprovalPlanV1) -> None:
         }:
             raise SameDayCatchupError("approved artifact target is invalid")
         _reject_symlink_chain(root, target)
-    expected_files = 7 if plan.operation == "identity" else 2
     if len(plan.artifacts) != expected_files:
         raise SameDayCatchupError("approved artifact cardinality mismatch")
 
@@ -792,7 +928,11 @@ def _verify_package_custody(plan: CatchupApprovalPlanV1) -> None:
         raise SameDayCatchupError("fetch package manifest changed after approval")
     package, _ = _read_fetch_package(
         package_path,
-        expected_type="identity_reference" if plan.operation == "identity" else "grouped_daily",
+        expected_type=(
+            "identity_reference"
+            if plan.operation in {"identity", "identity_source"}
+            else "grouped_daily"
+        ),
     )
     if (
         package.package_content_sha256 != plan.fetch_package_content_sha256
@@ -852,6 +992,29 @@ def _validate_recovery_state(plan: CatchupApprovalPlanV1, data_root: Path) -> No
         raise SameDayCatchupError("approved recovery base state changed")
 
 
+def _validate_atomic_target_recovery_state(
+    plan: CatchupApprovalPlanV1,
+    data_root: Path,
+) -> None:
+    if len(plan.publication_order) != 1:
+        raise SameDayCatchupError("atomic recovery target count differs")
+    target = Path(plan.publication_order[0])
+    _reject_symlink_chain(data_root, target)
+    refs = tuple(
+        item for item in plan.artifacts if Path(item.target_path).parent == target
+    )
+    if target.exists():
+        _verify_target_files(target, refs)
+    elif target.is_symlink():
+        raise SameDayCatchupError("atomic recovery target is a symlink")
+    recovery_base = inventory_fingerprint(
+        data_root,
+        exclude_prefixes=(target,),
+    )
+    if recovery_base != plan.expected_current_state_fingerprint:
+        raise SameDayCatchupError("approved recovery base state changed")
+
+
 def _publish_target_directory(
     target: Path, refs: tuple[PlannedArtifactV1, ...], plan_fingerprint: str
 ) -> None:
@@ -906,6 +1069,22 @@ def _formal_reread(plan: CatchupApprovalPlanV1, data_root: Path) -> None:
             or len(value.resolver) != plan.counts["resolver_rows"]
         ):
             raise SameDayCatchupError("formal Identity reread mismatch")
+        if plan.schema_version == "1.1":
+            _formal_source_reread(plan, data_root)
+    elif plan.operation == "identity_source":
+        identity = load_identity_snapshot(
+            data_root,
+            provider_id=MASSIVE_PROVIDER_ID,
+            as_of_date=plan.session_date,
+        )
+        if (
+            identity.manifest.get("snapshot_content_sha256")
+            != plan.same_day_identity_snapshot_fingerprint
+        ):
+            raise SameDayCatchupError(
+                "source repair canonical Identity fingerprint mismatch"
+            )
+        _formal_source_reread(plan, data_root)
     else:
         value = CanonicalEodReadRepository(data_root).inspect_session(plan.session_date)
         if (
@@ -917,9 +1096,40 @@ def _formal_reread(plan: CatchupApprovalPlanV1, data_root: Path) -> None:
             raise SameDayCatchupError("formal EOD reread mismatch")
 
 
-def _identity_target_directories(root: Path, session: date) -> tuple[Path, ...]:
+def _formal_source_reread(plan: CatchupApprovalPlanV1, data_root: Path) -> None:
+    from tip_api.services.historical_identity_source_custody import (
+        HistoricalIdentitySourceCustodyError,
+        read_identity_source_custody_at_data_root,
+    )
+
+    try:
+        value = read_identity_source_custody_at_data_root(
+            data_root=data_root,
+            provider=MASSIVE_PROVIDER_ID,
+            session_date=plan.session_date,
+        )
+    except HistoricalIdentitySourceCustodyError as exc:
+        raise SameDayCatchupError(
+            "formal Identity source-custody reread failed"
+        ) from exc
+    if (
+        value.manifest.record_count != plan.counts["source_observation_rows"]
+        or value.manifest.content_fingerprint
+        != plan.content_fingerprints["source_observation"]
+        or value.manifest.logical_fingerprint
+        != plan.content_fingerprints["source_custody"]
+    ):
+        raise SameDayCatchupError("formal Identity source-custody reread mismatch")
+
+
+def _identity_target_directories(
+    root: Path,
+    session: date,
+    *,
+    include_source: bool,
+) -> tuple[Path, ...]:
     day = session.isoformat()
-    return (
+    physical = (
         root / "market-data" / "instrument-master" / "schema_version=1" / f"as_of_date={day}",
         root
         / "market-data"
@@ -933,7 +1143,23 @@ def _identity_target_directories(root: Path, session: date) -> tuple[Path, ...]:
         / "schema_version=1"
         / f"provider={MASSIVE_PROVIDER_ID}"
         / f"as_of_date={day}",
-        root / "market-data" / "snapshots" / "instrument-master" / f"as_of_date={day}",
+    )
+    logical = (
+        root / "market-data" / "snapshots" / "instrument-master" / f"as_of_date={day}"
+    )
+    if include_source:
+        return (*physical, _identity_source_target_directory(root, session), logical)
+    return (*physical, logical)
+
+
+def _identity_source_target_directory(root: Path, session: date) -> Path:
+    return (
+        root
+        / "market-data"
+        / "provider-identity-reference-observation"
+        / "schema_version=1"
+        / f"provider={MASSIVE_PROVIDER_ID}"
+        / f"as_of_date={session.isoformat()}"
     )
 
 
@@ -1184,14 +1410,21 @@ def _network_prohibited():
         socket.create_connection = original_create
 
 
-def _parser(operation: Literal["identity", "eod"]) -> argparse.ArgumentParser:
-    label = "instrument-master" if operation == "identity" else "grouped-daily"
+def _parser(
+    operation: Literal["identity", "identity_source", "eod"],
+) -> argparse.ArgumentParser:
+    label = {
+        "identity": "instrument-master",
+        "identity_source": "identity-source-repair",
+        "eod": "grouped-daily",
+    }[operation]
     parser = argparse.ArgumentParser(prog=f"ingest-massive-{label}.sh")
     modes = parser.add_mutually_exclusive_group(required=True)
-    modes.add_argument("--fetch-only", action="store_true")
+    if operation != "identity_source":
+        modes.add_argument("--fetch-only", action="store_true")
     modes.add_argument("--plan", action="store_true")
     modes.add_argument("--apply", action="store_true")
-    if operation == "identity":
+    if operation in {"identity", "identity_source"}:
         modes.add_argument("--verify-then-complete", action="store_true")
     parser.add_argument("--session-date", required=True)
     parser.add_argument("--package", type=Path)
@@ -1203,12 +1436,15 @@ def _parser(operation: Literal["identity", "eod"]) -> argparse.ArgumentParser:
     return parser
 
 
-def cli_main(operation: Literal["identity", "eod"], argv: list[str] | None = None) -> int:
+def cli_main(
+    operation: Literal["identity", "identity_source", "eod"],
+    argv: list[str] | None = None,
+) -> int:
     parser = _parser(operation)
     args = parser.parse_args(argv)
     try:
         session = date.fromisoformat(args.session_date)
-        if args.fetch_only:
+        if getattr(args, "fetch_only", False):
             if args.package is None or any(
                 (args.approval_plan, args.approved_plan, args.approved_plan_sha256,
                  args.expected_current_state_fingerprint, args.data_root)
@@ -1218,7 +1454,7 @@ def cli_main(operation: Literal["identity", "eod"], argv: list[str] | None = Non
             value = (
                 fetch_identity_package(config=config, transport=MassiveUrllibTransport(),
                                        session_date=session, package_path=args.package)
-                if operation == "identity"
+                if operation in {"identity", "identity_source"}
                 else fetch_eod_package(config=config, transport=MassiveUrllibTransport(),
                                        session_date=session, package_path=args.package)
             )
@@ -1229,11 +1465,24 @@ def cli_main(operation: Literal["identity", "eod"], argv: list[str] | None = Non
                 (args.approved_plan, args.approved_plan_sha256, args.expected_current_state_fingerprint)
             ):
                 parser.error("plan requires package, approval-plan, and data-root")
-            value = (
-                build_identity_plan(package_path=args.package, plan_path=args.approval_plan, data_root=args.data_root)
-                if operation == "identity"
-                else build_eod_plan(package_path=args.package, plan_path=args.approval_plan, data_root=args.data_root)
-            )
+            if operation == "identity":
+                value = build_identity_plan(
+                    package_path=args.package,
+                    plan_path=args.approval_plan,
+                    data_root=args.data_root,
+                )
+            elif operation == "identity_source":
+                value = build_identity_source_plan(
+                    package_path=args.package,
+                    plan_path=args.approval_plan,
+                    data_root=args.data_root,
+                )
+            else:
+                value = build_eod_plan(
+                    package_path=args.package,
+                    plan_path=args.approval_plan,
+                    data_root=args.data_root,
+                )
             if value.session_date != session:
                 raise SameDayCatchupError("fetch package session disagrees with CLI")
             print(json.dumps({
@@ -1271,6 +1520,10 @@ def cli_main(operation: Literal["identity", "eod"], argv: list[str] | None = Non
 
 def identity_main(argv: list[str] | None = None) -> int:
     return cli_main("identity", argv)
+
+
+def identity_source_main(argv: list[str] | None = None) -> int:
+    return cli_main("identity_source", argv)
 
 
 def eod_main(argv: list[str] | None = None) -> int:

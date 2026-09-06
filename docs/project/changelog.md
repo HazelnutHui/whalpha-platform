@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-06 — Bind daily Identity to normalized source custody
+
+- Accepted ADR 0150 and advanced new same-day Identity approval plans to 1.1.
+  They retain the existing three canonical Identity families, add the typed
+  provider source-observation partition, and keep the logical completion
+  marker last in one inventory-bound, network-prohibited Apply/recovery chain.
+- Added Source Custody 1.1 with an explicit `same_day_identity_plan` origin,
+  self-validating direct binding, actual observation-time eligibility, and no
+  synthetic historical profile-map fields. Existing historical 1.0 manifests
+  and legacy daily Plan 1.0 remain readable under their original contracts.
+- Added an append-only source-repair plan and administrator entry point for an
+  exact completed Identity. It has no fetch mode and cannot overwrite Identity,
+  EOD, or an existing source partition.
+- All 2,091 backend tests passed. The real 2026-09-04 no-write plan proved an
+  exact 13,155-row / 14-page reconstruction and bound two prospective files to
+  `/data` inventory fingerprint
+  `81b2eaaa15efb82c27b6adbeeb3dc3861606f0359d3db1157e10fac37fd03056`.
+  Canonical Apply remained pending at this checkpoint.
+
 ## 2026-09-06 — Complete 9/4 daily chain and clarify freshness
 
 - Completed guarded 2026-09-04 Identity and EOD acquisition/Apply, all nine

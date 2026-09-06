@@ -355,16 +355,14 @@ def test_identity_source_observation_inventory_is_layered_and_gap_explicit(
     parquet_path.chmod(0o644)
     monkeypatch.setattr(
         report,
-        "HistoricalIdentitySourceCustodyManifestV1",
-        SimpleNamespace(
-            model_validate_json=lambda _: SimpleNamespace(
-                as_of_date=first,
-                provider="massive_stocks_basic",
-                dataset_name="provider-identity-reference-observation",
-                parquet_file="part-00000.parquet",
-                record_count=11,
-                source_artifacts=(object(), object()),
-            )
+        "parse_identity_source_custody_manifest",
+        lambda _: SimpleNamespace(
+            as_of_date=first,
+            provider="massive_stocks_basic",
+            dataset_name="provider-identity-reference-observation",
+            parquet_file="part-00000.parquet",
+            record_count=11,
+            source_artifacts=(object(), object()),
         ),
     )
 

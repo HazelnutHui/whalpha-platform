@@ -21,10 +21,12 @@ from tip_api.providers.massive.instrument_master_snapshot import (
 )
 from tip_api.providers.massive.same_day_catchup import (
     SameDayCatchupError,
+    _plan_content_fingerprint,
     _read_fetch_package,
     apply_approved_plan,
     build_eod_plan,
     build_identity_plan,
+    build_identity_source_plan,
     eod_main,
     fetch_eod_package,
     fetch_identity_package,
@@ -34,6 +36,9 @@ from tip_api.providers.massive.same_day_catchup import (
     read_catchup_approval_plan_evidence,
     read_fetch_package_evidence,
     read_identity_reference_package,
+)
+from tip_api.services.historical_identity_source_custody import (
+    read_identity_source_custody_at_data_root,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
 
@@ -211,8 +216,107 @@ def test_public_approval_plan_evidence_formally_rereads_without_artifacts(
     assert evidence.plan_content_sha256 == plan.plan_content_sha256
     assert evidence.fetch_package_path == str(package)
     assert evidence.publication_order == plan.publication_order
+    assert plan.schema_version == "1.1"
+    assert len(plan.publication_order) == 5
+    assert len(plan.artifacts) == 9
+    assert "provider-identity-reference-observation" in plan.publication_order[-2]
+    assert plan.counts["source_observation_rows"] == 5001
     assert "artifacts" not in evidence.model_dump()
     assert "responses" not in evidence.model_dump()
+
+
+def test_legacy_identity_plan_remains_readable_and_source_only_repair_is_append_only(
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 8, 20)
+    root = tmp_path / "legacy-data"
+    root.mkdir()
+    package, _ = fetch_identity(tmp_path, session)
+    current_path = tmp_path / "current.plan.json"
+    current = build_identity_plan(
+        package_path=package,
+        plan_path=current_path,
+        data_root=root,
+    )
+    source_target = current.publication_order[-2]
+    values = current.model_dump(mode="json")
+    values["schema_version"] = "1.0"
+    values["publication_order"] = [
+        item for item in values["publication_order"] if item != source_target
+    ]
+    values["artifacts"] = [
+        item
+        for item in values["artifacts"]
+        if str(Path(item["target_path"]).parent) != source_target
+    ]
+    values["counts"].pop("source_observation_rows")
+    values["content_fingerprints"].pop("source_observation")
+    values["content_fingerprints"].pop("source_custody")
+    values["inventory_change_file_count"] = len(values["artifacts"])
+    values["inventory_change_bytes"] = sum(
+        item["size"] for item in values["artifacts"]
+    )
+    values["recovery_boundary"] = (
+        "verify_matching_completed_components_then_publish_missing_components_and_logical_marker"
+    )
+    values["plan_content_sha256"] = _plan_content_fingerprint(
+        {
+            key: value
+            for key, value in values.items()
+            if key != "plan_content_sha256"
+        }
+    )
+    legacy_path = tmp_path / "legacy.plan.json"
+    legacy_path.write_text(json.dumps(values), encoding="utf-8")
+    legacy_path.chmod(0o444)
+    apply_approved_plan(
+        plan_path=legacy_path,
+        approved_plan_sha256=file_sha256(legacy_path),
+        expected_current_state_fingerprint=current.expected_current_state_fingerprint,
+        data_root=root,
+        expected_operation="identity",
+        expected_session=session,
+    )
+    assert not Path(source_target).exists()
+
+    repair_path = tmp_path / "source-repair.plan.json"
+    repair = build_identity_source_plan(
+        package_path=package,
+        plan_path=repair_path,
+        data_root=root,
+    )
+    assert repair.operation == "identity_source"
+    assert len(repair.publication_order) == 1
+    assert len(repair.artifacts) == 2
+    apply_approved_plan(
+        plan_path=repair_path,
+        approved_plan_sha256=file_sha256(repair_path),
+        expected_current_state_fingerprint=repair.expected_current_state_fingerprint,
+        data_root=root,
+        expected_operation="identity_source",
+        expected_session=session,
+    )
+    source = read_identity_source_custody_at_data_root(
+        data_root=root.resolve(),
+        provider="massive_stocks_basic",
+        session_date=session,
+    )
+    assert source.manifest.contract_version == (
+        "historical-identity-source-custody/1.1"
+    )
+    assert source.manifest.point_in_time_eligibility == (
+        "eligible_at_source_observed_at"
+    )
+    assert source.manifest.record_count == 5001
+    apply_approved_plan(
+        plan_path=repair_path,
+        approved_plan_sha256=file_sha256(repair_path),
+        expected_current_state_fingerprint=repair.expected_current_state_fingerprint,
+        data_root=root,
+        verify_then_complete=True,
+        expected_operation="identity_source",
+        expected_session=session,
+    )
 
 
 def fetch_plan_apply_eod(tmp_path: Path, root: Path, session: date):

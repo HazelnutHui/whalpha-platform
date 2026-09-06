@@ -237,3 +237,4 @@ Each ADR should include:
 - [0147: Stage Inactive Lifecycle Source with Resumable Custody](0147-stage-inactive-lifecycle-source-with-resumable-custody.md)
 - [0148: Build a Disconnected Inactive Lifecycle Resolution Shadow](0148-build-disconnected-inactive-lifecycle-resolution-shadow.md)
 - [0149: Separate Sealed and Operational Freshness](0149-separate-sealed-and-operational-freshness.md)
+- [0150: Retain Daily Identity Source Observations Atomically](0150-retain-daily-identity-source-observations-atomically.md)

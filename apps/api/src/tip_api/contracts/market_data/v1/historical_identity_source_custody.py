@@ -14,6 +14,7 @@ from tip_api.contracts.common import normalize_utc_datetime
 
 
 CONTRACT_VERSION = "historical-identity-source-custody/1.0"
+DAILY_CONTRACT_VERSION = "historical-identity-source-custody/1.1"
 ROW_CONTRACT_VERSION = "historical-identity-reference-observation/1.0"
 DATASET_NAME = "provider-identity-reference-observation"
 SOURCE_FIELD_NAMES = (
@@ -201,6 +202,145 @@ class HistoricalIdentitySourceCustodyManifestV1(FrozenModel):
         if self.logical_fingerprint != expected:
             raise ValueError("historical Identity source-custody fingerprint mismatch")
         return self
+
+
+class SameDayIdentitySourceCustodyManifestV1(FrozenModel):
+    """Directly bound daily source custody without a historical profile map."""
+
+    contract_version: Literal["historical-identity-source-custody/1.1"] = (
+        DAILY_CONTRACT_VERSION
+    )
+    completion_status: Literal["completed"] = "completed"
+    dataset_name: Literal["provider-identity-reference-observation"] = DATASET_NAME
+    data_family_id: Literal["point_in_time_identity"] = "point_in_time_identity"
+    data_layer: Literal["source_observation"] = "source_observation"
+    content_scope: Literal["internal_only"] = "internal_only"
+    retention_class: Literal["canonical_no_auto_expiry"] = (
+        "canonical_no_auto_expiry"
+    )
+    point_in_time_eligibility: Literal["eligible_at_source_observed_at"] = (
+        "eligible_at_source_observed_at"
+    )
+    binding_origin: Literal["same_day_identity_plan"] = "same_day_identity_plan"
+    provider: str
+    as_of_date: date
+    materialized_at: datetime
+    source_package_fetched_at: datetime
+    source_locator_sha256: str = Field(pattern=_SHA256)
+    source_package_manifest_sha256: str = Field(pattern=_SHA256)
+    source_package_content_sha256: str = Field(pattern=_SHA256)
+    source_request_count: int = Field(ge=1)
+    source_artifacts: tuple[HistoricalIdentitySourceArtifactV1, ...]
+    source_field_names: tuple[str, ...]
+    identity_rebuild_profile: Literal["current_v1"] = "current_v1"
+    source_binding_fingerprint: str = Field(pattern=_SHA256)
+    canonical_snapshot_fingerprint: str = Field(pattern=_SHA256)
+    canonical_instrument_fingerprint: str = Field(pattern=_SHA256)
+    canonical_identity_fingerprint: str = Field(pattern=_SHA256)
+    canonical_resolver_fingerprint: str = Field(pattern=_SHA256)
+    parquet_file: Literal["part-00000.parquet"] = "part-00000.parquet"
+    record_count: int = Field(ge=1)
+    content_fingerprint: str = Field(pattern=_SHA256)
+    parquet_sha256: str = Field(pattern=_SHA256)
+    raw_response_retained: Literal[False] = False
+    response_url_retained: Literal[False] = False
+    request_identifier_retained: Literal[False] = False
+    credential_material_retained: Literal[False] = False
+    external_request_count: Literal[0] = 0
+    canonical_data_write_count: Literal[0] = 0
+    universe_membership_write_count: Literal[0] = 0
+    historical_coverage_authorized: Literal[False] = False
+    research_performance_authorized: Literal[False] = False
+    logical_fingerprint: str = Field(pattern=_SHA256)
+
+    @field_validator("provider")
+    @classmethod
+    def provider_is_present(cls, value: str) -> str:
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("provider is required")
+        return value.strip()
+
+    @field_validator("materialized_at", "source_package_fetched_at")
+    @classmethod
+    def times_are_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @model_validator(mode="after")
+    def manifest_reconciles(self) -> "SameDayIdentitySourceCustodyManifestV1":
+        sequences = tuple(item.sequence for item in self.source_artifacts)
+        if sequences != tuple(range(1, len(self.source_artifacts) + 1)):
+            raise ValueError("source artifact sequence is not contiguous")
+        if self.source_request_count != len(self.source_artifacts):
+            raise ValueError("source request count differs from artifacts")
+        if sum(item.row_count for item in self.source_artifacts) != self.record_count:
+            raise ValueError("source artifact rows differ from record count")
+        if self.source_field_names != SOURCE_FIELD_NAMES:
+            raise ValueError("daily Identity retained field contract differs")
+        expected_binding = historical_identity_source_fingerprint(
+            self.model_dump(
+                mode="json",
+                include={
+                    "binding_origin",
+                    "provider",
+                    "as_of_date",
+                    "source_package_fetched_at",
+                    "source_locator_sha256",
+                    "source_package_manifest_sha256",
+                    "source_package_content_sha256",
+                    "identity_rebuild_profile",
+                    "canonical_snapshot_fingerprint",
+                    "canonical_instrument_fingerprint",
+                    "canonical_identity_fingerprint",
+                    "canonical_resolver_fingerprint",
+                },
+            )
+        )
+        if self.source_binding_fingerprint != expected_binding:
+            raise ValueError("daily Identity direct-binding fingerprint mismatch")
+        expected = historical_identity_source_fingerprint(
+            self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        )
+        if self.logical_fingerprint != expected:
+            raise ValueError("daily Identity source-custody fingerprint mismatch")
+        return self
+
+
+IdentitySourceCustodyManifest = (
+    HistoricalIdentitySourceCustodyManifestV1
+    | SameDayIdentitySourceCustodyManifestV1
+)
+
+
+def parse_identity_source_custody_manifest(
+    value: bytes | str | dict[str, object],
+) -> IdentitySourceCustodyManifest:
+    """Parse either immutable manifest variant by its explicit version."""
+
+    raw: object
+    if isinstance(value, bytes):
+        raw = json.loads(value)
+    elif isinstance(value, str):
+        raw = json.loads(value)
+    else:
+        raw = value
+    if not isinstance(raw, dict):
+        raise ValueError("Identity source-custody manifest must be an object")
+    version = raw.get("contract_version")
+    if version == CONTRACT_VERSION:
+        return HistoricalIdentitySourceCustodyManifestV1.model_validate(raw)
+    if version == DAILY_CONTRACT_VERSION:
+        return SameDayIdentitySourceCustodyManifestV1.model_validate(raw)
+    raise ValueError("unsupported Identity source-custody contract version")
+
+
+def identity_source_binding_fingerprint(
+    manifest: IdentitySourceCustodyManifest,
+) -> str:
+    """Return the origin-appropriate immutable binding fingerprint."""
+
+    if isinstance(manifest, HistoricalIdentitySourceCustodyManifestV1):
+        return manifest.identity_profile_binding_fingerprint
+    return manifest.source_binding_fingerprint
 
 
 def build_historical_identity_reference_observation(

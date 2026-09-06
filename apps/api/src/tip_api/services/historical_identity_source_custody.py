@@ -28,12 +28,18 @@ from tip_api.contracts.market_data.v1.historical_identity_source_custody import 
     HistoricalIdentityReferenceObservationV1,
     HistoricalIdentitySourceArtifactV1,
     HistoricalIdentitySourceCustodyManifestV1,
+    IdentitySourceCustodyManifest,
+    SameDayIdentitySourceCustodyManifestV1,
     build_historical_identity_reference_observation,
     historical_identity_source_content_fingerprint,
     historical_identity_source_fingerprint,
+    parse_identity_source_custody_manifest,
 )
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
-from tip_api.providers.massive.same_day_catchup import FetchPackageManifestV1
+from tip_api.providers.massive.same_day_catchup import (
+    FetchPackageManifestV1,
+    ValidatedIdentityReferencePackage,
+)
 from tip_api.providers.massive.instrument_master_snapshot import (
     ReferenceSnapshotBuildResult,
     build_snapshot_from_payloads,
@@ -99,7 +105,7 @@ class HistoricalIdentitySourceCustodyError(RuntimeError):
 @dataclass(frozen=True, slots=True)
 class HistoricalIdentitySourceCustodyReadResult:
     partition_path: Path
-    manifest: HistoricalIdentitySourceCustodyManifestV1
+    manifest: IdentitySourceCustodyManifest
     records: tuple[HistoricalIdentityReferenceObservationV1, ...]
     manifest_sha256: str
 
@@ -107,7 +113,7 @@ class HistoricalIdentitySourceCustodyReadResult:
 @dataclass(frozen=True, slots=True)
 class HistoricalIdentitySourceCustodyWriteResult:
     partition_path: Path
-    manifest: HistoricalIdentitySourceCustodyManifestV1
+    manifest: IdentitySourceCustodyManifest
     manifest_sha256: str
     status: str
 
@@ -362,6 +368,181 @@ def build_historical_identity_source_custody_candidate(
     )
 
 
+def build_same_day_identity_source_custody_candidate(
+    *,
+    package: ValidatedIdentityReferencePackage,
+    package_path: Path,
+    output_root: Path,
+    canonical_snapshot_fingerprint: str,
+    canonical_instrument_fingerprint: str,
+    canonical_identity_fingerprint: str,
+    canonical_resolver_fingerprint: str,
+) -> HistoricalIdentitySourceCustodyWriteResult:
+    """Build a direct-bound daily source partition below an owner-only /tmp root."""
+
+    candidate_root = _validated_tmp_output_root(output_root)
+    resolved_package = package_path.resolve(strict=True)
+    if (
+        not package_path.is_absolute()
+        or resolved_package != package_path
+        or package_path.is_symlink()
+        or Path("/tmp").resolve(strict=True) not in resolved_package.parents
+    ):
+        raise HistoricalIdentitySourceCustodyError(
+            "daily Identity source package must be below /tmp"
+        )
+    _reject_symlink_chain(resolved_package, Path("/tmp").resolve(strict=True))
+    manifest = package.manifest
+    records, artifacts = _normalize_package_pages(
+        pages=package.pages,
+        package_artifacts=manifest.artifacts,
+        provider=manifest.provider_id,
+        session_date=manifest.session_date,
+        observed_at=manifest.fetched_at,
+    )
+    rebuilt = build_snapshot_from_payloads(
+        payloads=tuple(item.source_payload() for item in records),
+        as_of_date=manifest.session_date,
+        ingested_at=manifest.fetched_at,
+        request_count=manifest.request_count,
+        pagination_complete=True,
+    )
+    rebuilt_fingerprints = (
+        instrument_content_fingerprint(rebuilt.instruments),
+        identity_content_fingerprint(rebuilt.identities),
+        resolver_content_fingerprint(rebuilt.resolvers),
+    )
+    canonical_fingerprints = (
+        canonical_instrument_fingerprint,
+        canonical_identity_fingerprint,
+        canonical_resolver_fingerprint,
+    )
+    if rebuilt_fingerprints != canonical_fingerprints:
+        raise HistoricalIdentitySourceCustodyError(
+            "daily Identity source does not reconstruct planned canonical Identity"
+        )
+    partition = _partition_path(
+        candidate_root,
+        provider=manifest.provider_id,
+        session_date=manifest.session_date,
+    )
+    _mkdirs_owner_only(partition.parent, candidate_root)
+    if partition.exists() or partition.is_symlink():
+        raise HistoricalIdentitySourceCustodyError(
+            "daily Identity source-custody candidate already exists"
+        )
+    staging = partition.parent / f".{partition.name}.staging.{os.getpid()}"
+    if staging.exists() or staging.is_symlink():
+        raise HistoricalIdentitySourceCustodyError(
+            "daily Identity source-custody staging path already exists"
+        )
+    staging.mkdir(mode=0o700)
+    try:
+        parquet_path = staging / PARQUET_FILE
+        table = pa.Table.from_pylist(
+            [item.model_dump(mode="python") for item in records],
+            schema=ARROW_SCHEMA,
+        )
+        pq.write_table(
+            table,
+            parquet_path,
+            compression="zstd",
+            compression_level=6,
+            use_dictionary=True,
+            write_statistics=True,
+        )
+        parquet_path.chmod(0o400)
+        _fsync_file(parquet_path)
+        parquet_sha256 = _file_sha256(parquet_path)
+        content_fingerprint = historical_identity_source_content_fingerprint(records)
+        source_locator_sha256 = hashlib.sha256(
+            str(resolved_package).encode("utf-8")
+        ).hexdigest()
+        binding_values = {
+            "binding_origin": "same_day_identity_plan",
+            "provider": manifest.provider_id,
+            "as_of_date": manifest.session_date,
+            "source_package_fetched_at": manifest.fetched_at,
+            "source_locator_sha256": source_locator_sha256,
+            "source_package_manifest_sha256": package.package_manifest_sha256,
+            "source_package_content_sha256": manifest.package_content_sha256,
+            "identity_rebuild_profile": "current_v1",
+            "canonical_snapshot_fingerprint": canonical_snapshot_fingerprint,
+            "canonical_instrument_fingerprint": canonical_instrument_fingerprint,
+            "canonical_identity_fingerprint": canonical_identity_fingerprint,
+            "canonical_resolver_fingerprint": canonical_resolver_fingerprint,
+        }
+        source_binding_fingerprint = historical_identity_source_fingerprint(
+            _json_ready(binding_values)
+        )
+        base = {
+            "contract_version": "historical-identity-source-custody/1.1",
+            "completion_status": "completed",
+            "dataset_name": DATASET_NAME,
+            "data_family_id": "point_in_time_identity",
+            "data_layer": "source_observation",
+            "content_scope": "internal_only",
+            "retention_class": "canonical_no_auto_expiry",
+            "point_in_time_eligibility": "eligible_at_source_observed_at",
+            **binding_values,
+            "materialized_at": manifest.fetched_at,
+            "source_request_count": manifest.request_count,
+            "source_artifacts": artifacts,
+            "source_field_names": SOURCE_FIELD_NAMES,
+            "source_binding_fingerprint": source_binding_fingerprint,
+            "parquet_file": PARQUET_FILE,
+            "record_count": len(records),
+            "content_fingerprint": content_fingerprint,
+            "parquet_sha256": parquet_sha256,
+            "raw_response_retained": False,
+            "response_url_retained": False,
+            "request_identifier_retained": False,
+            "credential_material_retained": False,
+            "external_request_count": 0,
+            "canonical_data_write_count": 0,
+            "universe_membership_write_count": 0,
+            "historical_coverage_authorized": False,
+            "research_performance_authorized": False,
+        }
+        source_manifest = SameDayIdentitySourceCustodyManifestV1.model_validate(
+            {
+                **base,
+                "logical_fingerprint": historical_identity_source_fingerprint(
+                    _json_ready(base)
+                ),
+            }
+        )
+        manifest_path = staging / MANIFEST_FILE
+        manifest_path.write_bytes(
+            _pretty_json_bytes(source_manifest.model_dump(mode="json"))
+        )
+        manifest_path.chmod(0o400)
+        _fsync_file(manifest_path)
+        _fsync_directory(staging)
+        staging.replace(partition)
+        _fsync_directory(partition.parent)
+    except Exception:
+        if staging.exists() and not staging.is_symlink():
+            shutil.rmtree(staging)
+            _fsync_directory(staging.parent)
+        raise
+    reread = read_historical_identity_source_custody_candidate(
+        root=candidate_root,
+        provider=manifest.provider_id,
+        session_date=manifest.session_date,
+    )
+    if reread.records != records or reread.manifest != source_manifest:
+        raise HistoricalIdentitySourceCustodyError(
+            "daily Identity source-custody formal reread differs"
+        )
+    return HistoricalIdentitySourceCustodyWriteResult(
+        partition_path=partition,
+        manifest=source_manifest,
+        manifest_sha256=reread.manifest_sha256,
+        status="published",
+    )
+
+
 def run_historical_identity_source_custody_batch(
     *,
     data_root: Path,
@@ -590,6 +771,48 @@ def read_historical_identity_source_custody(
     )
 
 
+def read_identity_source_custody_at_data_root(
+    *,
+    data_root: Path,
+    provider: str,
+    session_date: date,
+) -> HistoricalIdentitySourceCustodyReadResult:
+    """Read a published partition from production or an isolated /tmp data root."""
+
+    if not data_root.is_absolute() or data_root.is_symlink() or not data_root.is_dir():
+        raise HistoricalIdentitySourceCustodyError(
+            "Identity source data root is unavailable"
+        )
+    resolved = data_root.resolve(strict=True)
+    temporary_root = Path("/tmp").resolve(strict=True)
+    if resolved != data_root or (
+        resolved != APPROVED_DATA_ROOT and temporary_root not in resolved.parents
+    ):
+        raise HistoricalIdentitySourceCustodyError(
+            "Identity source data root is outside approved boundaries"
+        )
+    partition = _partition_path(
+        resolved,
+        provider=provider,
+        session_date=session_date,
+    )
+    _reject_symlink_chain(partition, resolved)
+    if (
+        partition.is_symlink()
+        or not partition.is_dir()
+        or stat.S_IMODE(partition.stat().st_mode) != 0o755
+    ):
+        raise HistoricalIdentitySourceCustodyError(
+            "published Identity source partition is unavailable"
+        )
+    return _read_historical_identity_source_custody_partition(
+        partition=partition,
+        provider=provider,
+        session_date=session_date,
+        expected_file_mode=0o644,
+    )
+
+
 def _read_historical_identity_source_custody_partition(
     *,
     partition: Path,
@@ -607,9 +830,7 @@ def _read_historical_identity_source_custody_partition(
     for path in (manifest_path, parquet_path):
         _regular_file_with_mode(path, expected_file_mode)
     try:
-        manifest = HistoricalIdentitySourceCustodyManifestV1.model_validate_json(
-            manifest_path.read_bytes()
-        )
+        manifest = parse_identity_source_custody_manifest(manifest_path.read_bytes())
     except Exception as exc:
         raise HistoricalIdentitySourceCustodyError(
             "historical Identity source-custody manifest is invalid"
@@ -1066,6 +1287,10 @@ def _validate_existing_source_identity(
     package_manifest_sha256: str,
 ) -> None:
     manifest = existing.manifest
+    if not isinstance(manifest, HistoricalIdentitySourceCustodyManifestV1):
+        raise HistoricalIdentitySourceCustodyError(
+            "existing Identity source custody has a different binding origin"
+        )
     if existing.records != records or (
         manifest.source_artifacts != artifacts
         or manifest.identity_profile_map_fingerprint

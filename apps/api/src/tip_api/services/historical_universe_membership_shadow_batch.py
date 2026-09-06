@@ -24,6 +24,9 @@ from tip_api.persistence.security_evidence import (
 )
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.same_day_catchup import SameDayCatchupError
+from tip_api.contracts.market_data.v1.historical_identity_source_custody import (
+    identity_source_binding_fingerprint,
+)
 from tip_api.services.historical_identity_source_custody import (
     HistoricalIdentitySourceCustodyError,
     read_historical_identity_source_custody,
@@ -306,8 +309,8 @@ def run_historical_universe_membership_canonical_source_batch(
                     session_date=session,
                 )
                 source_profile = custody.manifest.identity_rebuild_profile
-                source_binding_fingerprint = (
-                    custody.manifest.identity_profile_binding_fingerprint
+                source_binding_fingerprint = identity_source_binding_fingerprint(
+                    custody.manifest
                 )
                 source_custody_fingerprint = custody.manifest.logical_fingerprint
             results.append(

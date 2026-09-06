@@ -13,6 +13,7 @@
 - [ADR 0148: Disconnected Inactive Lifecycle Resolution Shadow](decisions/0148-build-disconnected-inactive-lifecycle-resolution-shadow.md): lossless one-to-one normalization, stable-ID gates, quarantine, and no canonical authority.
 - [2026-09-05 Inactive Lifecycle Resolution Shadow Audit](audits/inactive-lifecycle-resolution-shadow-2026-09-05.md): real dual-anchor decisions, temporal boundary proof, physical custody, and unchanged canonical state.
 - [ADR 0149: Sealed and Operational Freshness](decisions/0149-separate-sealed-and-operational-freshness.md): separates immutable Snapshot publication evidence from current canonical and serving-state evaluation.
+- [ADR 0150: Atomic Daily Identity Source Custody](decisions/0150-retain-daily-identity-source-observations-atomically.md): adds direct daily source binding, Plan 1.1 atomic publication, legacy-plan compatibility, and append-only exact repair.
 - [2026-09-06 Daily EOD Publication and Deployment Audit](audits/daily-eod-publication-deployment-2026-09-06.md): exact 2026-09-04 acquisition, analytics, publication, deployment, and postflight evidence.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.

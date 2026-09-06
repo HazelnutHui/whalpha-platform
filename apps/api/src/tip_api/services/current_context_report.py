@@ -17,7 +17,7 @@ from typing import Any, Iterator
 
 from tip_api.contracts.market_data.v1.historical_identity_source_custody import (
     DATASET_NAME as HISTORICAL_IDENTITY_SOURCE_DATASET,
-    HistoricalIdentitySourceCustodyManifestV1,
+    parse_identity_source_custody_manifest,
 )
 from tip_api.persistence.parquet.dashboard_snapshot_active import (
     read_active_dashboard_snapshot,
@@ -685,7 +685,7 @@ def _identity_source_observation_inventory(
                     "historical Identity source artifact is unsafe"
                 )
         try:
-            manifest = HistoricalIdentitySourceCustodyManifestV1.model_validate_json(
+            manifest = parse_identity_source_custody_manifest(
                 manifest_path.read_bytes()
             )
         except Exception as exc:

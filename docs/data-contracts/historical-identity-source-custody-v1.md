@@ -2,12 +2,12 @@
 
 ## Purpose and status
 
-This contract converts a fingerprint-bound, custody-valid temporary Identity
-reference package into a typed, credential-free source-observation partition.
-The implementation boundary is `/tmp` candidate construction and formal
-reread only. It does not write `/data` or grant acquisition, membership,
-Historical Coverage, research, publication, deployment, or scheduler
-authority.
+This contract converts a custody-valid temporary Identity reference package
+into a typed, credential-free source-observation partition. Historical
+backfill uses a complete fingerprint-bound profile map. Daily Identity uses a
+direct binding to the exact package and canonical Identity produced by the
+same approval plan. It does not grant acquisition, membership, Historical
+Coverage, research, publication, deployment, or scheduler authority.
 
 ## Row contract
 
@@ -38,6 +38,17 @@ Arrow schema, deterministic source order, per-row fingerprints, record count,
 logical content fingerprint, Parquet hash, package-artifact row reconciliation,
 and manifest self-fingerprint. Symlinks and extra files are rejected.
 
+Two explicit manifest variants share the same row contract and physical
+partition layout:
+
+- `historical-identity-source-custody/1.0` binds a historical rebuild profile,
+  the complete profile-map fingerprint, and its exact per-session binding;
+- `historical-identity-source-custody/1.1` identifies
+  `same_day_identity_plan`, fixes reconstruction to `current_v1`, and binds the
+  package, observation time, and four accepted canonical Identity fingerprints
+  through a self-validating direct-binding fingerprint. It contains no
+  synthetic profile-map fields.
+
 The offline runner accepts a finite maximum of 303 explicitly profile-bound
 sessions and at most four worker processes. A profile-map 1.1 inventory may
 also contain explicitly unbound dual-profile mismatches; they must be present
@@ -57,9 +68,11 @@ custody evidence.
 The session is source effective/as-of time. `package_fetched_at` and each
 row's `source_observed_at` preserve the actual Dell package observation time.
 They are later than the historical session for backfilled or reacquired
-packages, so point-in-time eligibility is explicitly
+packages, so historical 1.0 eligibility is explicitly
 `outcome_reconciliation_only` until a separate availability policy proves a
-stronger claim.
+stronger claim. Daily 1.1 observations are eligible only at or after their
+actual `source_observed_at`; a delayed fetch never backdates knowledge to the
+represented session.
 
 Exact reconstruction separately reads the accepted canonical Identity
 families' row-level `ingested_at`. Instrument Master, Provider Identity, and
@@ -69,6 +82,9 @@ it never replaces or backdates the source observation timestamp. All three
 content fingerprints must still match exactly.
 
 The data family is `point_in_time_identity`, layer `source_observation`, scope
-`internal_only`, and retention `canonical_no_auto_expiry`. Durable publication
-requires the separate inventory-bound plan and atomic Apply/recovery boundary;
-this contract alone creates no canonical presence claim.
+`internal_only`, and retention `canonical_no_auto_expiry`. Historical durable
+publication uses its separate inventory-bound plan. Daily durable publication
+is part of Identity Plan 1.1, with the source target immediately before the
+logical completion marker. An append-only source-repair plan exists only for
+an exact already-completed Identity. This contract alone creates no canonical
+presence claim.

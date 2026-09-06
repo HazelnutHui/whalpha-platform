@@ -1175,3 +1175,11 @@ daily run. Candidate remained the largest single analytics stage at roughly
 bounded below that level. These observations justify continuing the segmented
 Candidate custody work, not weakening any validation gate. The installed timer
 remains read-only; no unattended write-capable chain was installed.
+
+ADR 0150 closes the routine Identity source-observation omission discovered by
+that run. New same-day Identity Plan 1.1 publishes the normalized, directly
+bound provider source partition before its logical completion marker and
+formally rereads it in the same network-prohibited Apply. Legacy Plan 1.0
+remains readable without silently changing its target set. A separate
+source-only plan can repair an exact completed Identity date without
+overwriting Identity, EOD, or any existing source partition.
