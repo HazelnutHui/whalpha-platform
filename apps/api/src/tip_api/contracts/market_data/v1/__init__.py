@@ -107,6 +107,12 @@ from tip_api.contracts.market_data.v1.historical_inactive_lifecycle import (
     inactive_lifecycle_fingerprint,
     inactive_lifecycle_rows_fingerprint,
 )
+from tip_api.contracts.market_data.v1.universe_membership_knowledge_time import (
+    KNOWLEDGE_TIME_POLICY_VERSION,
+    UniverseMembershipKnowledgeTimeAssessmentV1,
+    build_universe_membership_knowledge_time_assessment,
+    universe_membership_knowledge_time_fingerprint,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -194,4 +200,8 @@ __all__ = [
     "InactiveLifecycleShadowArtifactV1",
     "inactive_lifecycle_fingerprint",
     "inactive_lifecycle_rows_fingerprint",
+    "KNOWLEDGE_TIME_POLICY_VERSION",
+    "UniverseMembershipKnowledgeTimeAssessmentV1",
+    "build_universe_membership_knowledge_time_assessment",
+    "universe_membership_knowledge_time_fingerprint",
 ]

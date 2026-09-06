@@ -160,7 +160,10 @@ normalized source custody is now exact and directly bound.
 
 Combined disconnected V3 evidence covers all 302 source-available sessions and
 5,611,048 formally reread decisions. The 9/4 direct-source shadow adds 19,964
-decisions in a separate owner-only temporary root. The original 300-session
+decisions in a separate owner-only temporary root. ADR 0151 now proves that
+this exact 9/4 partition is next-open `signal_eligible`: source and evaluation
+both completed before the 9/8 XNYS open. The corrected 9/3 historical
+partition remains `outcome_reconciliation_only`. The original 300-session
 root remains a
 record of the pre-correction run: 600 files / 129,736,636 bytes with fingerprint
 `8afa4e188d006e5ac732447d0ca1042b6797b2af51bd3a3547a87a5167e886cf`.
@@ -169,9 +172,9 @@ external request or canonical write. The three unaffected dates have zero
 business-decision difference; 2026-09-03 changes only FAN in both Universes
 from false-collision quarantine to explicit ETF exclusion, and 2026-08-31 now
 adds 19,930 valid decisions. No Membership partition was published to `/data`,
-and every source cutoff remains after its represented session, so the combined
-evidence is retrospective mechanics—not historical knowledge-time or research
-authority.
+and the 301 historical-source sessions remain retrospective mechanics—not
+historical knowledge-time or research authority. The one separately assessed
+9/4 forward-usable partition does not turn that historical set into Coverage.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical

@@ -25,6 +25,9 @@ def test_known_august_2026_sessions_and_weekend(calendar: ExchangeCalendar) -> N
     assert calendar.session_close(date(2026, 8, 14)) == datetime(
         2026, 8, 14, 20, tzinfo=UTC
     )
+    assert calendar.session_open(date(2026, 8, 17)) == datetime(
+        2026, 8, 17, 13, 30, tzinfo=UTC
+    )
 
 
 def test_weekend_latest_completed_session_is_friday(calendar: ExchangeCalendar) -> None:

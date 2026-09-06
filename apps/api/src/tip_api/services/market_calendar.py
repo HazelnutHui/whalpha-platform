@@ -37,6 +37,8 @@ class MarketSessionCalendar(Protocol):
 
     def next_session(self, session_date: date) -> date: ...
 
+    def session_open(self, session_date: date) -> datetime: ...
+
     def session_close(self, session_date: date) -> datetime: ...
 
     def latest_completed_session(self, as_of_datetime: datetime) -> date: ...
@@ -114,6 +116,22 @@ class ExchangeCalendar:
             raise
         except Exception as exc:
             raise MarketCalendarError("market calendar could not determine session close") from exc
+
+    def session_open(self, session_date: date) -> datetime:
+        try:
+            if not self.is_session(session_date):
+                raise MarketCalendarError("open date must be a market session")
+            return (
+                self.calendar.session_open(pd.Timestamp(session_date))
+                .to_pydatetime()
+                .astimezone(UTC)
+            )
+        except MarketCalendarError:
+            raise
+        except Exception as exc:
+            raise MarketCalendarError(
+                "market calendar could not determine session open"
+            ) from exc
 
     def latest_completed_session(self, as_of_datetime: datetime) -> date:
         checked_at = _require_aware_utc(as_of_datetime)

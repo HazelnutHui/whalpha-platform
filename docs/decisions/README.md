@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0151](0151-gate-membership-by-next-open-knowledge-time.md): separate close-bounded market information from next-open source/evaluation timing, and keep retrospective Membership out of signal-eligible coverage.
+
 - [ADR 0149](0149-separate-sealed-and-operational-freshness.md): preserve immutable publication-time Snapshot freshness while separately reporting current canonical and active-Snapshot operational freshness.
 
 - [ADR 0143](0143-separate-identity-observation-and-replay-time.md): separate later source observation from canonical Identity replay provenance and keep dual-profile mismatches explicitly unbound.

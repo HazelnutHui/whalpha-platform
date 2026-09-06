@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-06 — Gate Membership by next-open knowledge time
+
+- Accepted ADR 0151 and implemented an immutable offline timing assessment
+  that separates market information through session close from actual source
+  availability, Membership completion, and next-session-open execution.
+- The gate formally rereads Membership and canonical Identity source custody,
+  proves their fingerprint binding, binds manifest/Parquet hashes and the
+  offline XNYS calendar version, and performs no network request or canonical
+  write. Temporary input roots must be owner-owned mode `0700`.
+- The 2026-09-04 V3 partition is `signal_eligible`: its source cutoff
+  `2026-09-06T11:14:35.992620Z` and evaluation
+  `2026-09-06T13:15:00Z` both precede the next XNYS open on 9/8 at 13:30 UTC.
+  Assessment fingerprint is
+  `586cde811b9c26496584f56a89f489d6314dbc00e9ed7c112829238dfebdfedf`.
+- The corrected 2026-09-03 partition is explicitly
+  `outcome_reconciliation_only`: its Identity source retains the historical
+  source policy and its Membership evaluation occurred after the 9/4 open.
+  Assessment fingerprint is
+  `be8b100a0bf595d31032220d62325a909fe9488ef060b313a83d8813279463ce`.
+- The exact 9/3 temporary root was tightened from mode `0775` to `0700` after
+  verifying owner, path, and zero symlinks; evidence bytes were unchanged.
+  All 2,097 backend tests pass with the same two dependency warnings. No
+  `/data`, analytics, Historical Coverage, Production, deployment, or scheduler
+  state changed.
+
 ## 2026-09-06 — Bind daily Identity to normalized source custody
 
 - Accepted ADR 0150 and advanced new same-day Identity approval plans to 1.1.

@@ -100,12 +100,14 @@ Current membership implementation sequence:
    unbound because the reacquired provider revisions are not equal to accepted
    same-day Identity. Never force approximate equivalence, project current
    Activation backward, or silently fill historical source.
-8. **Disconnected Membership mechanics complete for eligible sessions:** V3
-   evidence now covers 5,591,084 decisions for all 301 source-available dates.
-   ADR 0145 removed only structurally identical duplicate Identity references;
-   genuine conflicts and the 0.999 linkage gate remain unchanged. Separately
-   resolve the two source gaps and historical knowledge-time before considering
-   canonical Membership or Historical Coverage publication.
+8. **Disconnected Membership mechanics and timing boundary complete:** V3
+   evidence covers 5,611,048 decisions for all 302 source-available dates.
+   ADR 0151 admits the direct 9/4 partition for next-open signal use while
+   retaining all 301 historical-source partitions as outcome-only. Next design
+   an inventory-bound, formally reread daily Membership publication plan that
+   cannot admit outcome-only evidence. Keep the two source gaps explicit and
+   do not publish Historical Coverage until every admitted session has a
+   transitive eligibility assessment.
 
 ## Priority 3 — First real strategy research
 

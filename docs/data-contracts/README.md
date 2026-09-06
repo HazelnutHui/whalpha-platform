@@ -1,5 +1,7 @@
 # Data Contracts
 
+- [Universe Membership Knowledge Time V1](universe-membership-knowledge-time-v1.md)
+
 - [Daily EOD Scheduler Runtime Plan V1](daily-eod-scheduler-runtime-plan-v1.md)
 
 - [Massive Historical Lifecycle Pagination Census V1](massive-historical-lifecycle-pagination-census-v1.md)
@@ -33,6 +35,7 @@
 - [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
 - [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
 - [Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
+- [Universe Membership Knowledge Time V1](universe-membership-knowledge-time-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
 
@@ -76,8 +79,11 @@ provider adapters. The historical foundation now has provider-neutral
 Pydantic row/manifest contracts, explicit PyArrow schemas, temporary-root
 Parquet repository validation, and an applied atomic source-custody executor.
 Normalized Identity source observations are canonical for 302/304 sessions;
-the two provider-revised dates remain explicitly unbound and the entire
-Membership dataset is absent.
+the two provider-revised dates remain explicitly unbound and the canonical
+Membership dataset is absent. The disconnected Membership timing gate proves
+that the 9/4 partition is next-open signal eligible while the corrected 9/3
+historical reconstruction remains outcome-only; neither result is a Coverage
+publication.
 EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
 The initial blocked live attempts remain historical audit evidence; corrected

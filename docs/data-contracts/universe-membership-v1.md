@@ -6,7 +6,8 @@ Universe Membership V1 records universe definitions and point-in-time daily memb
 
 ## Status
 
-Partially Implemented — Daily Physical Contract and Complete-Base Shadow Pilot
+Partially Implemented — Daily Physical Contract, Complete-Base V3 Mechanics,
+and Knowledge-Time Gate
 
 The provider-neutral historical daily-decision record implements explicit
 included/excluded/quarantined disposition, methodology and origin, exact
@@ -18,16 +19,19 @@ every Universe in the partition. A formal adapter reconstructs the reviewed
 `reconstructed_point_in_time`; the real Dell read-only pilot writes only to
 `/tmp`.
 
-Methodology `provider-form-complete-base-point-in-time-v2` additionally
-reconstructs every stable ID in an exact same-day Identity snapshot from a
-custody-validated, sanitized reference package. Its real 2026-09-03 Dell
-shadow covered 9,979 IDs in both Universes and formally reread all 19,958 rows.
-Primary produced 1,682 included / 8,235 excluded / 62 quarantined; Secondary
-produced 1,797 / 8,107 / 75. One source collision was localized to one stable
-ID instead of invalidating unrelated decisions. This remains `/tmp` evidence:
-Universe Definition, durable source custody, multi-session canonical
-publication, and a source for every retained historical date remain
-unimplemented.
+Methodology `provider-form-complete-base-point-in-time-v3` additionally rereads
+canonical normalized Identity source custody, exactly rebuilds all three
+Identity families, and reconstructs every stable ID in the accepted same-day
+snapshot. Disconnected mechanics cover 302 source-available sessions and
+5,611,048 formally reread decisions. The source-revised 2026-08-13 and
+2026-08-19 dates remain absent rather than approximated.
+
+ADR 0151 adds a separate offline knowledge-time assessment. A partition is
+signal-eligible for a next-session-open strategy only when its bound Identity
+source is contemporaneous and the full source cutoff and Membership evaluation
+both precede that exact XNYS open. The 2026-09-04 temporary partition passes;
+the corrected 2026-09-03 historical partition remains outcome-only. Neither
+assessment publishes canonical Membership or Historical Coverage.
 
 ## Grain
 
@@ -121,7 +125,11 @@ Missing critical inputs do not default to eligible.
 
 ## Temporal Semantics
 
-`session_date` represents the exchange trading session being evaluated. `evaluated_at` uses UTC. `source_data_as_of` records the source-data cutoff used for membership evaluation.
+`session_date` represents the exchange trading session being evaluated.
+`evaluated_at` and `source_data_cutoff` use UTC. For next-open research, the
+session close is the market-information boundary while the immediate next XNYS
+open is the strict latest permissible source/evaluation boundary. These are
+different clocks and both remain explicit.
 
 ## Revision Semantics
 
@@ -151,27 +159,21 @@ insufficient history, invalid input, outlier quarantine, or reviewed quarantine
 maps to `quarantined`; explicit type, exchange, price, liquidity, or reviewed
 exclusion maps to `excluded`.
 
-When the retained source cutoff follows the evaluated session, every otherwise
-valid reconstructed row is quality `warning` and carries
-`reconstruction_source_cutoff_after_session`. Such a partition proves mechanics
-but is not eligible as a no-look-ahead signal population.
+When the retained source cutoff follows the evaluated session date, every
+otherwise valid reconstructed row is quality `warning` and carries
+`reconstruction_source_cutoff_after_session`. ADR 0151 then makes the actual
+research-use decision separately: a later calendar date can still be eligible
+when a direct daily source and the completed evaluation both precede the next
+XNYS open; a historical/outcome-only source cannot.
 
-The current offline census found validated retained reference packages for 279
-of 303 canonical sessions. The exact 24-session gap spans the XNYS sessions
-from 2026-07-17 through 2026-08-19. Retained `/tmp` packages are not canonical
-source custody and are never copied into `/data` by the shadow. Known
-non-target security forms, unsupported exchanges, price failures, and
-liquidity failures are explicit exclusions. Missing/conflicting form evidence,
-missing bars, insufficient history, material data-quality flags, and material
-one-session return outliers are quarantined.
-
-Custody validity is necessary but not sufficient for reconstruction. A package
-must also exactly reproduce the accepted same-day Instrument Master, provider
-Identity, and ticker Resolver fingerprints. The bounded shared-panel audit
-proved 2026-09-01 through 2026-09-03 and rejected the retained 2026-08-28 and
-2026-08-31 packages on that exact-equivalence gate. Therefore 279 is a package
-custody count, not a proven reconstructable-session count; the complete exact-
-equivalence census remains pending.
+Canonical normalized source custody now covers 302 of 304 EOD/Identity
+sessions. Custody validity is necessary but not sufficient: each source must
+exactly reproduce the accepted Instrument Master, provider Identity, and
+ticker Resolver fingerprints, then remain bound into Membership lineage.
+Known non-target forms, unsupported exchanges, price failures, and liquidity
+failures are explicit exclusions. Missing/conflicting form evidence, missing
+bars, insufficient history, material quality flags, and material return
+outliers are quarantined.
 
 Offline batch execution is limited to five adjacent XNYS analysis sessions.
 The completion index discovers dates, but every current/trailing EOD partition

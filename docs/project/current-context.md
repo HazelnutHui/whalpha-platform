@@ -167,9 +167,19 @@ remain preserved as pre-correction evidence. A separate five-session corrected
 boundary passed 5/5: three dates are business-decision-identical, 2026-09-03
 changes only FAN from false-collision quarantine to explicit ETF exclusion in
 both Universes, and 2026-08-31 adds 19,930 decisions. Every source cutoff is
-after its represented session, so the result remains retrospective mechanics
-evidence—not canonical Membership, Historical Coverage, point-in-time research
-authority, or a performance claim.
+after its represented session.
+
+ADR 0151 now separates market-information and execution clocks. Formal
+read-only assessment classifies the exact 9/4 partition as next-open
+`signal_eligible` because its direct daily source and completed evaluation
+precede the 9/8 XNYS open; assessment fingerprint is
+`586cde811b9c26496584f56a89f489d6314dbc00e9ed7c112829238dfebdfedf`.
+The corrected 9/3 historical partition is `outcome_reconciliation_only`, with
+assessment fingerprint
+`be8b100a0bf595d31032220d62325a909fe9488ef060b313a83d8813279463ce`.
+The other historical-source sessions remain outcome-only by source policy. No
+result is canonical Membership, Historical Coverage, a performance claim, or
+permission to fill 8/13 and 8/19.
 
 The aggregate-only inactive lifecycle census for 2026-07-16 reached its hard
 20-page / 20,000-result boundary with another page still present. All rows had
@@ -340,10 +350,11 @@ separately bounded.
    and outputs remain exact.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
-   Disconnected Membership mechanics also cover all 302 available dates. Keep
-   the two provider-revised dates explicitly unbound, preserve every source
-   cutoff as retrospective evidence, and never approximate an absent session
-   before canonical membership review.
+   Disconnected Membership mechanics also cover all 302 available dates. The
+   timing gate admits only the direct 9/4 result for next-open use and keeps the
+   historical-source sessions outcome-only. Design an inventory-bound
+   canonical Membership plan around that gate; keep 8/13 and 8/19 unbound and
+   never approximate an absent session.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
