@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0149](0149-separate-sealed-and-operational-freshness.md): preserve immutable publication-time Snapshot freshness while separately reporting current canonical and active-Snapshot operational freshness.
+
 - [ADR 0143](0143-separate-identity-observation-and-replay-time.md): separate later source observation from canonical Identity replay provenance and keep dual-profile mismatches explicitly unbound.
 
 - [ADR 0142](0142-plan-explicit-append-only-identity-source-custody.md): plan an exact profile-bound candidate subset for immutable append without replaying existing canonical source partitions.
@@ -234,3 +236,4 @@ Each ADR should include:
 - [0146: Complete Bounded Inactive Lifecycle Pagination Census](0146-complete-bounded-inactive-lifecycle-pagination-census.md)
 - [0147: Stage Inactive Lifecycle Source with Resumable Custody](0147-stage-inactive-lifecycle-source-with-resumable-custody.md)
 - [0148: Build a Disconnected Inactive Lifecycle Resolution Shadow](0148-build-disconnected-inactive-lifecycle-resolution-shadow.md)
+- [0149: Separate Sealed and Operational Freshness](0149-separate-sealed-and-operational-freshness.md)

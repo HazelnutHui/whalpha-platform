@@ -1159,3 +1159,19 @@ canonical target, downstream audit, or run-journal directory. No current-HEAD
 external control was supplied or preflighted. The next possible boundary is
 one separately authorized Identity fetch followed by its own Apply review;
 EOD and every downstream stage remain out of scope until Identity completes.
+
+## 2026-09-04 complete-chain validation
+
+The guarded chain subsequently completed for 2026-09-04 under the standing
+daily workflow direction: Identity and EOD fetch/Apply, all nine offline
+analytics actions, fresh MI/Snapshot publication, serving-bundle construction,
+OCI deployment, and independent postflight. The dated
+[audit](../audits/daily-eod-publication-deployment-2026-09-06.md) holds exact
+counts and fingerprints.
+
+This closes the prior requirement to measure one complete post-optimization
+daily run. Candidate remained the largest single analytics stage at roughly
+4.5 minutes; all other measured offline stages and publication plans were
+bounded below that level. These observations justify continuing the segmented
+Candidate custody work, not weakening any validation gate. The installed timer
+remains read-only; no unattended write-capable chain was installed.

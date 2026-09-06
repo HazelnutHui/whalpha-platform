@@ -11,7 +11,7 @@ import socket
 import stat
 import subprocess
 from contextlib import contextmanager
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -32,6 +32,11 @@ from tip_api.persistence.parquet.market_intelligence_active import (
 )
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.same_day_catchup import inventory_fingerprint
+from tip_api.services.market_calendar import (
+    ExchangeCalendar,
+    MarketDataFreshness,
+    evaluate_market_data_freshness,
+)
 from tip_api.services.private_dashboard_snapshot import validate_snapshot_release
 
 
@@ -172,6 +177,11 @@ def build_report(
         data, validate_sources=full_source_validation
     )
     snapshot = read_active_dashboard_snapshot(data, repo / "build/private-dashboard")
+    freshness = _freshness_state(
+        latest_canonical_session=latest_session,
+        snapshot_manifest=snapshot.manifest,
+        checked_at=datetime.now(UTC),
+    )
 
     inventory = _inventory_state(data, include_fingerprint=include_inventory)
     publication_residue = _publication_residue(data)
@@ -190,7 +200,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.4",
+        "report_contract": "tip-current-context-report/1.5",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -218,6 +228,7 @@ def build_report(
         "repository": repository,
         "inventory": inventory,
         "publication_residue": publication_residue,
+        "freshness": freshness,
         "eod": {
             "session_count": len(session_dates),
             "first_session": session_dates[0].isoformat(),
@@ -336,6 +347,72 @@ def build_report(
         market_intelligence_publication=market_intelligence.manifest.publication_id,
     )
     return report
+
+
+def _freshness_state(
+    *,
+    latest_canonical_session: date,
+    snapshot_manifest: Any,
+    checked_at: datetime,
+) -> dict[str, Any]:
+    """Separate live clock evaluation from the immutable Snapshot assertion."""
+
+    calendar = ExchangeCalendar()
+    canonical = evaluate_market_data_freshness(
+        calendar=calendar,
+        actual_latest_completed_session=latest_canonical_session,
+        checked_at=checked_at,
+    )
+    try:
+        snapshot_session = date.fromisoformat(snapshot_manifest.current_session_date)
+    except (TypeError, ValueError) as exc:
+        raise CurrentContextReportError(
+            "active Snapshot current session is malformed"
+        ) from exc
+    active_snapshot = evaluate_market_data_freshness(
+        calendar=calendar,
+        actual_latest_completed_session=snapshot_session,
+        checked_at=checked_at,
+    )
+    return {
+        "canonical_operational": _runtime_freshness(canonical),
+        "active_snapshot_operational": {
+            **_runtime_freshness(active_snapshot),
+            "release_id": snapshot_manifest.release_id,
+        },
+        "snapshot_publication_sealed": {
+            "actual_latest_completed_session": (
+                snapshot_manifest.actual_latest_completed_session
+            ),
+            "expected_latest_completed_session": (
+                snapshot_manifest.expected_latest_completed_session
+            ),
+            "session_lag": snapshot_manifest.session_lag,
+            "freshness_status": snapshot_manifest.freshness_status,
+            "calendar_id": snapshot_manifest.calendar_id,
+            "checked_at": snapshot_manifest.freshness_checked_at,
+            "release_id": snapshot_manifest.release_id,
+        },
+    }
+
+
+def _runtime_freshness(value: MarketDataFreshness) -> dict[str, Any]:
+    return {
+        "actual_latest_completed_session": (
+            value.actual_latest_completed_session.isoformat()
+            if value.actual_latest_completed_session is not None
+            else None
+        ),
+        "expected_latest_completed_session": (
+            value.expected_latest_completed_session.isoformat()
+            if value.expected_latest_completed_session is not None
+            else None
+        ),
+        "session_lag": value.session_lag,
+        "freshness_status": value.freshness_status.value,
+        "calendar_id": value.calendar_id,
+        "checked_at": value.checked_at.isoformat().replace("+00:00", "Z"),
+    }
 
 
 def _completed_session_dates(

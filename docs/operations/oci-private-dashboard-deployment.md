@@ -10,16 +10,16 @@ project changelog, not in this current runbook.
 ## Live-verified state
 
 The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-09-04 post-deployment
+[current-context](../project/current-context.md). Its 2026-09-06 post-deployment
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-09-03T090150Z-a4f10a02b6ae`;
+  to release `2026-09-04T113333Z-717cb82c5369`;
 - the release is built from source commit
-  `a4f10a02b6ae8bc5dea64fda7ea90267cfca305b` and binds Market
+  `717cb82c536909f9084fdfd5946215fb2a403977` and binds Market
   Intelligence
-  `2026-09-03T070700Z-f506e025475e`;
-- it serves ordinary-fresh, lag-zero 2026-09-03 analytics through Snapshot
+  `2026-09-04T112916Z-717cb82c5369`;
+- it serves ordinary-fresh, lag-zero 2026-09-04 analytics through Snapshot
   1.11 / Dashboard 2.8, Candidate publication 1.1, the strategy-channel and
   Candidate Visual Context products,
   `en` and `zh`, with English as the first-visit default;
@@ -34,7 +34,7 @@ reconciliation records, without reading credentials:
   Rotation payloads are readable, logs out, and removes the local cookie jar
   without printing it;
 - no staging, failed, or partial release residue exists; and
-- one unrelated pre-existing failed `fwupd-refresh.service` remains untouched.
+- the final inspector reports zero failed system units.
 
 The deployed React workspaces share the public entry's deep-navy/cyan visual
 identity and persistent WH product mark. This is a presentation-only change:

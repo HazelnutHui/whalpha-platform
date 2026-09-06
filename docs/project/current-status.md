@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-05
+Status date: 2026-09-06
 
 This is the concise project-state summary. Exact IDs, fingerprints, evidence
 scope, authorization boundaries, and cross-device recovery are maintained in
@@ -11,17 +11,22 @@ detail belongs in the [changelog](changelog.md), ADRs, and dated audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity market-
 intelligence and research platform. The current OCI release is
-`2026-09-03T090150Z-a4f10a02b6ae`, built from clean main commit
-`a4f10a02b6ae8bc5dea64fda7ea90267cfca305b`.
+`2026-09-04T113333Z-717cb82c5369`, built from clean main commit
+`717cb82c536909f9084fdfd5946215fb2a403977`.
 
 The deployed product uses:
 
-- Market Intelligence 1.3 for analysis session 2026-09-03;
+- Market Intelligence 1.3 for analysis session 2026-09-04;
 - Snapshot 1.11 / Dashboard 2.8, fresh with zero session lag;
 - English as the first-visit default and Simplified Chinese as an equal view;
 - identical data and capability for guest and credential Sessions;
 - a public data-free WH landing page and favicon;
 - fail-closed private Snapshot/API behavior with no synthetic Production data.
+
+The static browser view now explicitly labels freshness as a publication-time
+check. Current-context report 1.5 separately evaluates current canonical and
+active-Snapshot operational freshness while preserving the immutable Snapshot
+assertion.
 
 Nginx and the localhost-only Auth Service are healthy. Independent postflight
 matched the local and remote manifest/checksum identities and verified public
@@ -30,22 +35,22 @@ summary/detail, Strategy Channels, Sector ETF Rotation, logout, and renewed
 protection. No staging or failed-release residue remains. Password login and
 final visual appearance remain manual checks.
 
-OCI has one unrelated pre-existing failed `fwupd-refresh.service`. The
-deployer now rejects newly failed units while separately requiring Nginx/Auth
-health; it does not alter unrelated services.
+The final postflight reported zero failed system units. The deployer rejects a
+new failed unit while separately requiring Nginx/Auth health; it does not alter
+unrelated services.
 
 ## Data
 
-- Canonical EOD contains 303 contiguous XNYS sessions from 2025-06-23 through
-  2026-09-03. The original 300-session historical target is complete.
-- Latest EOD has 9,956 rows and is aligned to the 2026-09-03 Identity snapshot.
-- Latest Identity contains 9,979 Instruments, 13,153 provider identities, and
-  9,979 Resolvers.
+- Canonical EOD contains 304 contiguous XNYS sessions from 2025-06-23 through
+  2026-09-04. The original 300-session historical target is complete.
+- Latest EOD has 9,962 rows and is aligned to the 2026-09-04 Identity snapshot.
+- Latest Identity contains 9,982 Instruments, 13,155 provider identities, and
+  9,982 Resolvers.
 - Canonical normalized historical Identity source custody now contains 301
-  partitions / 3,687,175 rows. The two absent dates, 2026-08-13 and
-  2026-08-19, have reacquired but non-equivalent provider packages and remain
-  explicitly unbound.
-- `/data` contains 3,958 files / 1,877,724,006 bytes, with zero symlinks and
+  partitions / 3,687,175 rows. The two revised dates, 2026-08-13 and
+  2026-08-19, remain explicitly unbound; routine 2026-09-04 normalized source
+  custody is also absent.
+- `/data` contains 4,011 files / 1,963,053,417 bytes, with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -85,8 +90,8 @@ is not. Active Market Intelligence still reports
 point-in-time membership, corporate actions, adjustments, costs, and sealed
 evaluation datasets are not yet fully wired.
 
-Current-context contract 1.4 now makes this family-specific: the 303-session
-price floor and all 303 same-date Identity completion manifests are present,
+Current-context contract 1.5 makes this family-specific: the 304-session price
+floor and all 304 same-date Identity completion manifests are present,
 but neither has a published Historical Coverage claim. The provider-action,
 canonical-action, daily-membership, lifecycle, adjustment-ledger, and
 Historical Coverage evidence/final roots are absent. Real cost/liquidity,
@@ -123,7 +128,8 @@ or research-ready labels.
 
 The report projects normalized Identity source observations as a separate
 record layer: 301 canonical partitions, 3,687,175 records, 3,844 source-page
-artifacts, and the exact two missing EOD sessions. It explicitly remains
+artifacts, and the exact three missing EOD sessions: 8/13, 8/19, and 9/4. It
+explicitly remains
 `canonical_partitions_observed_not_coverage_validated`, so source custody is
 visible without being promoted to Historical Coverage or research readiness.
 
@@ -142,13 +148,14 @@ PyArrow timezone dependency reduced measured single-session time to 59.53
 seconds and the five-session boundary to 135.53 seconds without changing the
 output fingerprint.
 
-The initial preflight classified 300/303 sessions as source/evidence eligible.
+The historical preflight classified 300/303 sessions as source/evidence eligible.
 ADR 0145 then proved that eight of the ten unique 2026-08-31 collision
 observations were exact-duplicate Identity rows incorrectly retained as two
 downstream join candidates. Collapsing only structurally identical references
 raises that session's linkage ratio from 0.998996689074 to 0.999799337815 under
 the unchanged 0.999 gate. The two distinct unresolved AREN/PAAI references
-remain collisions. The only source gaps are still 2026-08-13 and 2026-08-19.
+remain collisions. Those two revised-source gaps remain, and routine 2026-09-04
+normalized source custody is additionally absent.
 
 Disconnected V3 evidence now covers all 301 source-available sessions and
 5,591,084 formally reread decisions. The original 300-session root remains a
@@ -185,7 +192,7 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 -> serving bundle -> OCI deploy/postflight
 ```
 
-The 9/1-9/3 catch-up proved correctness but also showed material performance
+The 9/1-9/4 catch-up proved correctness but also showed material performance
 debt. ADR 0125 separates date-only discovery from deep partition validation;
 the normal current-context report fell from roughly 7–8 minutes to 27.65
 seconds. ADR 0126 now reuses the exact formal panel and finalized current
@@ -216,32 +223,31 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
 
 ## Next priority
 
-1. Measure the next complete daily chain on Dell with ADRs 0125–0129 active.
-2. Treat Candidate's cumulative writer as the measured remaining hotspot:
-   follow-up instrumentation assigned it 193.525 seconds, including 88.528
-   seconds across overlapping fingerprint calls, versus 1.739 seconds for
-   finalization and 0.061 seconds for explicit garbage collection.
-3. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
+1. Continue ADR 0130's segmented Candidate custody proof. The complete 9/4
+   chain passed with ADRs 0125–0129 active, and Candidate remained the largest
+   analytics stage at roughly 4.5 minutes.
+2. Design the versioned chain identity, recovery, periodic cold equivalence,
+   and downstream compatibility before considering segmented cutover. The real
+   ten-session shadow already reconstructs all eight V1 business projections,
+   and its bounded current read takes 16.53 seconds versus 228.285 seconds for
+   V1 full semantics.
+3. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
+   writer used 193.525 seconds, including 88.528 seconds across overlapping
+   fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds
+   for explicit garbage collection.
+4. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
    Snapshot is now 121.57 seconds and its largest remaining input is the
    necessary formal Activation read rather than duplicate active-state reads.
-4. Continue ADR 0130's default-disconnected segmented Candidate proof. The real
-   ten-session shadow reconstructed all eight V1 business projections exactly;
-   its bounded current read took 16.53 seconds versus 228.285 seconds for V1
-   full semantics. Current panel, batches, states, risks, and all 1,718/1,831
-   prior-state support rows are exact; only the cumulative V1 history
-   fingerprint requires a new versioned chain identity. Next design that
-   identity, recovery, and periodic cold equivalence before considering
-   cutover.
 5. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. **Canonical source custody complete for exact packages:** 301 sessions are
-   canonical after the original and append-only Apply/recovery passes. Keep
-   2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
-   proven; do not approximate them.
+6. **Canonical source custody complete for exact historical packages:** 301
+   sessions are canonical after the original and append-only Apply/recovery
+   passes. Keep 2026-08-13 and 2026-08-19 unbound unless an alternative exact
+   source is proven, and separately restore exact 2026-09-04 routine custody;
+   do not approximate any gap.
 7. **Disconnected Membership mechanics complete for available sources:** keep
-   the 301-session V3 evidence temporary. Separately resolve the two exact
-   source gaps and historical knowledge-time before any canonical Membership
-   decision.
+   the 301-session V3 evidence temporary. Resolve all exact source gaps and
+   historical knowledge-time before any canonical Membership decision.
 8. Design corroboration and source-availability evidence for the 547 inactive
    lifecycle review candidates; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,

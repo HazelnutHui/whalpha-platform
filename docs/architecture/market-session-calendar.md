@@ -29,3 +29,10 @@ Dashboard Overview and static snapshot manifests separate:
 `fresh` means lag zero. `stale` means one or more completed XNYS sessions are missing. `unavailable` is a safe degradation when calendar evaluation cannot be completed. File/schema consistency wording is deliberately narrower than price correctness, corporate-action verification, or freshness.
 
 The browser presents generated and checked timestamps in a human-readable named timezone while retaining exact UTC strings in the machine contract.
+
+Static Snapshot freshness is a sealed publication-time assertion, not a live
+clock. The browser labels it accordingly and treats `Data as of` as the durable
+reference. The network-free current-context report separately evaluates the
+latest canonical session and the active Snapshot session at report time while
+preserving the immutable publication-time fields. See
+[ADR 0149](../decisions/0149-separate-sealed-and-operational-freshness.md).

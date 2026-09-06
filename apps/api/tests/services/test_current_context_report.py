@@ -2,13 +2,66 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import date
+from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
 from tip_api.services import current_context_report as report
+
+
+def test_freshness_state_separates_sealed_and_current_operational_views() -> None:
+    state = report._freshness_state(
+        latest_canonical_session=date(2026, 9, 4),
+        snapshot_manifest=SimpleNamespace(
+            current_session_date="2026-09-03",
+            actual_latest_completed_session="2026-09-03",
+            expected_latest_completed_session="2026-09-03",
+            session_lag=0,
+            freshness_status="fresh",
+            calendar_id="XNYS",
+            freshness_checked_at="2026-09-03T22:00:00Z",
+            release_id="2026-09-03T220000Z-abcdef0",
+        ),
+        checked_at=datetime(2026, 9, 5, 22, tzinfo=UTC),
+    )
+
+    assert state["canonical_operational"] == {
+        "actual_latest_completed_session": "2026-09-04",
+        "expected_latest_completed_session": "2026-09-04",
+        "session_lag": 0,
+        "freshness_status": "fresh",
+        "calendar_id": "XNYS",
+        "checked_at": "2026-09-05T22:00:00Z",
+    }
+    assert state["active_snapshot_operational"] == {
+        "actual_latest_completed_session": "2026-09-03",
+        "expected_latest_completed_session": "2026-09-04",
+        "session_lag": 1,
+        "freshness_status": "stale",
+        "calendar_id": "XNYS",
+        "checked_at": "2026-09-05T22:00:00Z",
+        "release_id": "2026-09-03T220000Z-abcdef0",
+    }
+    assert state["snapshot_publication_sealed"] == {
+        "actual_latest_completed_session": "2026-09-03",
+        "expected_latest_completed_session": "2026-09-03",
+        "session_lag": 0,
+        "freshness_status": "fresh",
+        "calendar_id": "XNYS",
+        "checked_at": "2026-09-03T22:00:00Z",
+        "release_id": "2026-09-03T220000Z-abcdef0",
+    }
+
+
+def test_freshness_state_rejects_malformed_snapshot_session() -> None:
+    with pytest.raises(report.CurrentContextReportError, match="malformed"):
+        report._freshness_state(
+            latest_canonical_session=date(2026, 9, 4),
+            snapshot_manifest=SimpleNamespace(current_session_date="latest"),
+            checked_at=datetime(2026, 9, 5, 22, tzinfo=UTC),
+        )
 
 
 def test_identity_state_accepts_exact_completed_same_day_manifest(tmp_path: Path) -> None:

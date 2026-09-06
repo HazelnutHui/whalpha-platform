@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-06 — Complete 9/4 daily chain and clarify freshness
+
+- Completed guarded 2026-09-04 Identity and EOD acquisition/Apply, all nine
+  offline analytics stages, fresh MI/Snapshot publication, exact serving-bundle
+  build, OCI deployment, and independent postflight. No stale-review exception
+  was required.
+- Canonical EOD now has 304 sessions and the latest 9,962-row partition is
+  aligned with a 9,982-Instrument Identity snapshot. `/data` has 4,011 files /
+  1,963,053,417 bytes with zero symlinks and publication residue.
+- Published MI 1.3 and Snapshot 1.11 / Dashboard 2.8 for 9/4. Both Universes
+  remain Balanced; Candidate display counts are 880 Primary and 951 Secondary.
+- Independent OCI proof matched the exact 51-file bundle and verified service,
+  route, guest Session, protected-resource, logout, and capability-parity
+  boundaries. Failed system units and deployment residue are zero.
+- Accepted ADR 0149. Current-context report 1.5 now separates live operational
+  freshness for canonical data and the active Snapshot from the immutable
+  Snapshot publication assertion. The bilingual UI explicitly labels the
+  static value as a publication-time check.
+- The daily Identity path did not add normalized historical source custody, so
+  its explicit gaps are now 8/13, 8/19, and 9/4. Research remains data-blocked;
+  no model, Universe, scheduler, or research-authority gate changed.
+
 ## 2026-09-05 — Disconnected inactive lifecycle resolution shadow
 
 - Accepted ADR 0148 and added one-to-one source-observation and

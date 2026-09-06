@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-05T22:00:06Z
+Operational state verified at: 2026-09-06T11:56:05Z
 
-Repository context updated at: 2026-09-05 UTC
+Repository context updated at: 2026-09-06 UTC
 
 This is the compact source of truth for a new Codex task or device. Historical
 execution detail belongs in the [changelog](changelog.md), dated audits, and
@@ -17,8 +17,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Branch | `main`; verify current HEAD and cleanliness with the report rather than freezing them here |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Deployed OCI release | `2026-09-03T090150Z-a4f10a02b6ae` |
-| Deployed source commit | `a4f10a02b6ae8bc5dea64fda7ea90267cfca305b` |
+| Deployed OCI release | `2026-09-04T113333Z-717cb82c5369` |
+| Deployed source commit | `717cb82c536909f9084fdfd5946215fb2a403977` |
 
 Dell is the authority for code, data, development, and heavy computation. OCI
 is only the static web-serving, localhost Auth Service, and public Session
@@ -28,28 +28,33 @@ older immutable deployed bundle; compare both identities explicitly.
 
 ## Formal Dell data state
 
-The network-free current-context reader uses report contract 1.4. Normal
+The network-free current-context reader uses report contract 1.5. Normal
 recovery completed at validation level `active_custody_and_contracts` with
-`completion_index_plus_latest_partition`; the explicit all-303-partition mode
+`completion_index_plus_latest_partition`; the explicit all-partition mode
 also completed successfully during the ADR 0125 validation.
+
+ADR 0149 separates current-clock operational freshness from immutable
+publication evidence. The report evaluates canonical EOD and the active
+Snapshot against XNYS at report time, while retaining the Snapshot's sealed
+publication-time assertion as a third, explicitly named view.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | 303 contiguous XNYS sessions, 2025-06-23 through 2026-09-03 |
-| Latest EOD | 2026-09-03; 9,956 rows |
-| Latest EOD fingerprint | `9eb9c445d8032c151af009d7dc342d70ad567b473d9a51f8f72b2c80e7436e69` |
-| Latest EOD Parquet SHA-256 | `ead984bbb60478c5d2bbe388f9886ebf764458b6d0e03bf2c2e8108544fc0bbd` |
-| Latest Identity | 2026-09-03; 9,979 Instruments / 13,153 provider identities / 9,979 Resolvers |
-| Latest Identity fingerprint | `5c8e377e22ef15b6a5dfd91a9548327d148e26a47c002690117dcd009d966855` |
-| Identity/EOD alignment | aligned on 2026-09-03 |
-| Canonical historical Identity source | 301 immutable source-observation partitions / 3,687,175 rows; 2 source sessions absent because reacquisition is non-equivalent |
-| `/data` inventory | 3,958 files / 1,877,724,006 bytes |
-| `/data` inventory fingerprint | `12b35440e876f8f61fa0bccef8cc06b4c1721c0dc751ebdaa6c572c2df166345` |
+| Canonical EOD | 304 contiguous XNYS sessions, 2025-06-23 through 2026-09-04 |
+| Latest EOD | 2026-09-04; 9,962 rows |
+| Latest EOD fingerprint | `3266c411a556ee1813a73beae19a71dc14e855b476770b3b82f81a5151e4abc4` |
+| Latest EOD Parquet SHA-256 | `853d6fa9837891419f633aed8401a6ab52a503976d6607888c9def6de64b8577` |
+| Latest Identity | 2026-09-04; 9,982 Instruments / 13,155 provider identities / 9,982 Resolvers |
+| Latest Identity fingerprint | `5eed9166d609cea7693aed324908427f113ab72c221921690bcbdc29f71727f7` |
+| Identity/EOD alignment | aligned on 2026-09-04 |
+| Canonical historical Identity source | 301 immutable source-observation partitions / 3,687,175 rows; 3 source sessions absent |
+| `/data` inventory | 4,011 files / 1,963,053,417 bytes |
+| `/data` inventory fingerprint | `2a4535a92f7b4224509b33677fca1cb4ff11e7b863f74e0bd92b6a22ea2dce45` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
 The exact 300-session historical target through 2026-08-31 is complete. The
-three following daily sessions, 2026-09-01 through 2026-09-03, are also
+four following daily sessions, 2026-09-01 through 2026-09-04, are also
 canonical. No historical-backfill transient service or computation process is
 running.
 
@@ -73,23 +78,23 @@ after authoritative issuer-structure evidence passes the documented gates.
 
 | Boundary | Verified value |
 | --- | --- |
-| Market Intelligence | `2026-09-03T070700Z-f506e025475e`; contract 1.3 |
-| MI payload SHA-256 | `fbb0309e02d2798b558f05720d3eeb4c3f92060b0455b590feaee45d494a00e7` |
-| MI logical fingerprint | `8db1d95b97bad6d34ebd3dad9a102a26907f2294bede33025fcf9b114945de74` |
-| Dashboard Snapshot | `2026-09-03T090150Z-a4f10a02b6ae` |
-| Snapshot pointer fingerprint | `e8548194c8b16e73f793507fb23927e2789fcbf2f7cccb1a6e09913c738a33f9` |
+| Market Intelligence | `2026-09-04T112916Z-717cb82c5369`; contract 1.3 |
+| MI payload SHA-256 | `34f9ae867d44aae4fda77ed47d2921570a52aade1147869f1c7835439f2439c8` |
+| MI logical fingerprint | `2d8957011113e944304c8609ed4ff771f7ad8e3b9e0d59a6823a6ec2b827ac5e` |
+| Dashboard Snapshot | `2026-09-04T113333Z-717cb82c5369` |
+| Snapshot pointer fingerprint | `e6b23d40e52f14e3b77c564061531c7b339540ebf07c0fb8a1be18b9ea113cc7` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
-| Freshness | expected 2026-09-03; actual 2026-09-03; lag zero; review mode false |
-| Immediate local Snapshot rollback | `2026-09-03T083901Z-f506e025475e` |
+| Freshness | operational and publication-sealed views expected 2026-09-04; actual 2026-09-04; lag zero; review mode false |
+| Immediate local Snapshot rollback | `2026-09-03T090150Z-a4f10a02b6ae` |
 
-Market Regime is Balanced in both Universes: Primary 59.7744 and Secondary
-60.5223. Market Intelligence contains 16 preregistered ETF relationships, 336
+Market Regime is Balanced in both Universes: Primary 56.7472 and Secondary
+57.3733. Market Intelligence contains 16 preregistered ETF relationships, 336
 bounded relationship-history rows, 30 ETF observations, and 5/10/20-session
-views. Candidate publication 1.1 exposes 857 Primary and 928 Secondary display
+views. Candidate publication 1.1 exposes 880 Primary and 951 Secondary display
 records. These are eligible bounded Candidate records, not Universe sizes.
 
 The active analytics status remains `degraded_short_history`: the published MI
-path currently consumes 26 sessions even though canonical EOD now contains 303.
+path currently consumes 26 sessions even though canonical EOD now contains 304.
 The Quant Research Lab must therefore remain research-only/data-blocked until
 historical analytics inputs and the missing point-in-time lifecycle,
 membership, corporate-action, adjustment, and evaluation families are wired
@@ -97,12 +102,12 @@ and validated. Canonical price history alone is not backtest readiness.
 
 ### Historical research readiness
 
-The 2026-09-04 contract-1.4 current-context run now exposes family-specific
+The 2026-09-06 contract-1.5 current-context run exposes family-specific
 progress rather than treating all historical inputs as one missing block:
 
-- the 252-session price-depth floor is satisfied by 303 contiguous EOD
+- the 252-session price-depth floor is satisfied by 304 contiguous EOD
   partitions;
-- all 303 EOD dates have exact same-date completed Identity manifests;
+- all 304 EOD dates have exact same-date completed Identity manifests;
 - both families are canonical and acquired but have not been promoted through
   a formal Historical Coverage publication;
 - provider corporate-action observations, canonical corporate actions, daily
@@ -121,8 +126,8 @@ transitive formal Coverage reader proves them.
 ADR 0140 exposes the normalized source-observation layer separately from
 resolved Identity snapshots. Its latest routine typed custody read reports 301
 canonical partitions, 301 manifests, 301 Parquet files, 3,687,175 rows, 3,844
-source-page artifacts, no source-only sessions, and two missing EOD sessions:
-2026-08-13 and 2026-08-19. Its state is
+source-page artifacts, no source-only sessions, and three missing EOD sessions:
+2026-08-13, 2026-08-19, and the new routine daily session 2026-09-04. Its state is
 `canonical_partitions_observed_not_coverage_validated`; the explicit
 incompleteness blocker remains and no readiness gate changes.
 
@@ -139,14 +144,14 @@ compatibility review. The 2026-09-03 V3 result contains 19,958 decisions over
 runtime dependency reduced the measured single-day path to 59.53 seconds and a
 five-session boundary to 135.53 seconds without changing output hashes.
 
-The initial preflight found 300/303 source/evidence-eligible sessions. ADR 0145
+The historical preflight found 300/303 source/evidence-eligible sessions. ADR 0145
 then localized the 2026-08-31 gate failure: eight of ten unique collisions were
 structurally identical Identity references already marked as exact provider
 duplicates. Deduplicating only those identical references raises linkage to
 0.999799337815 under the unchanged 0.999 gate; the two genuinely distinct
-unresolved AREN/PAAI references remain collisions. The only unavailable
-sources remain 2026-08-13 and 2026-08-19, whose later packages are
-non-equivalent and unbound.
+unresolved AREN/PAAI references remain collisions. The two historical revised-
+source gaps remain 2026-08-13 and 2026-08-19; routine 2026-09-04 normalized
+source custody is additionally absent. None may be approximated.
 
 Combined disconnected V3 evidence now covers all 301 source-available dates
 and 5,591,084 formally reread decisions. The original 300-session root and its
@@ -200,10 +205,10 @@ The final independent remote inspector matched the exact Dell bundle:
 
 | Evidence | Verified value |
 | --- | --- |
-| Bundle logical fingerprint | `b4d7ab72481d07d5b8add31669c558ea6459794346fea3954906b4ef056f5c61` |
-| Manifest SHA-256 | `953f56f1a98da84fc661ea2303da8714a6d145c0e54cfc6b918bfb6e36831d51` |
-| Checksums file SHA-256 | `82a086ac395cb552e327f38490b2069b684c53a408b65ecebdc2f770f5244629` |
-| Remote-state fingerprint | `70753f36342d441767c0c262625c6f65c329498bb8f7e9ffef38067f5399d3db` |
+| Bundle logical fingerprint | `d2b0c66cb246e0bf7af6d48ebe59ef8a4c95f9ef259a32b7013f06e72ee54616` |
+| Manifest SHA-256 | `20e56e74f66bbf60d1b8bfa5839934ca240a66d9a49abd3bbad7d1038943334b` |
+| Checksums file SHA-256 | `82065c12658eb9c75597a2073920c2f866db07c676fedb86d2b733de5a21fd7b` |
+| Remote-state fingerprint | `a9c66f0f636aa03dea559540ba25abb88feda40e97f7a63feecf3f800c9d7278` |
 | Bundle files | 51; checksum validation passed |
 | Locales | English default; English and Simplified Chinese supported |
 | Access capability | guest and credential Sessions are identical |
@@ -217,12 +222,10 @@ Rotation, logout, and renewed protection all passed postflight. There is no
 staging or failed-release residue. Password-based login and final visual
 inspection remain manual user checks.
 
-OCI has one pre-existing unrelated failed unit, `fwupd-refresh.service`. It was
-not changed. Deployment now records the failed-unit baseline and rejects only a
-new failed unit while separately requiring Nginx and WH Alpha Auth health. The
-first 9/3 deployment attempt exposed the prior inconsistent global-zero gate,
-rolled back to the 9/1 release, and left one marked failed release; that exact
-non-current residue was verified and deleted before the successful deployment.
+The final 9/4 postflight reported zero failed system units. Deployment records
+the preflight baseline and rejects a newly failed unit while separately
+requiring Nginx and WH Alpha Auth health. No staging or failed-release residue
+remains.
 
 ## Current product boundary
 
@@ -299,7 +302,10 @@ separately bounded.
 
 ## Immediate risks and next work
 
-1. **Daily-chain performance:** ADR 0125 removed full-history reconstruction
+1. **Daily-chain performance:** the complete 9/4 chain has now passed with
+   ADRs 0125–0129 active. Candidate remained the largest analytics stage at
+   roughly 4.5 minutes; the other offline stages and publication plans were
+   bounded below it. ADR 0125 removed full-history reconstruction
    from date-only control paths. ADR 0126 reuses the same exact formal panel
    and finalized current Candidate evidence in downstream Entry/ETF stages. On
    unchanged 9/3 inputs, Entry completed in 49.67 seconds and ETF in 15.36
@@ -323,17 +329,17 @@ separately bounded.
    periodic cold comparison, and downstream compatibility pass. The current
    checkpoint reproduces all 1,718/1,831 prior-state support rows exactly; only
    the cumulative V1 history fingerprint needs an explicitly versioned chain
-   identity. Measure the next complete daily chain and add reuse,
+   identity. Continue the segmented Candidate proof and add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
 2. **Historical Universe foundation:** the shared-panel batch and exact
    two-profile Identity routing now cover 301 sessions, and all 301 exact source
    partitions are canonical after append-only Apply and zero-write recovery.
-   Keep the two provider-revised dates explicitly unbound, decide whether an
-   alternative exact source exists, and run/reconcile broad disconnected
-   membership batches without approximating those sessions before canonical
-   membership review.
-3. **Historical analytics consumption:** connect the 303-session canonical
+   Keep the two provider-revised dates explicitly unbound, restore the missing
+   routine 9/4 normalized-source custody through a separately reviewed exact
+   path, and never approximate any absent session before canonical membership
+   review.
+3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
 4. **Research foundation:** the disconnected inactive lifecycle normalization

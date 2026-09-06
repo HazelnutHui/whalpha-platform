@@ -82,7 +82,7 @@ describe('MarketDashboardPage', () => {
     expect(screen.getAllByText('+0.64%').length).toBeGreaterThan(0);
     expect(screen.getAllByText('1.40×').length).toBeGreaterThan(0);
     expect(screen.getByText('Advancers / Decliners')).toBeInTheDocument();
-    expect(screen.getAllByText('1 session stale').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Published 1 session stale').length).toBeGreaterThan(0);
     expect(screen.getByText('Breadth and share-volume participation leaned positive.')).toBeInTheDocument();
     expect(screen.getByText('136 advanced / 91 declined · 56.67% positive')).toBeInTheDocument();
   });
@@ -97,7 +97,7 @@ describe('MarketDashboardPage', () => {
     };
     vi.mocked(fetch).mockResolvedValue(okResponse(fresh));
     render(<MarketDashboardPage />);
-    await waitFor(() => expect(screen.getAllByText('Fresh').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByText('Fresh when published').length).toBeGreaterThan(0));
   });
 
   it('shows the exact review-deployment banner in both languages', async () => {
@@ -204,7 +204,9 @@ describe('MarketDashboardPage', () => {
     expect(screen.getAllByText('Provisional classification').length).toBeGreaterThan(0);
     expect(screen.getByText(/issuer domicile and structure remain provisional/)).toBeInTheDocument();
     expect(screen.queryByText(/No material warnings/)).not.toBeInTheDocument();
-    expect(screen.getByText(/EOD market structure; not real-time/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Freshness above is sealed when this static Snapshot is published/),
+    ).toBeInTheDocument();
     expect(screen.queryByText(/1,876 warnings/)).not.toBeInTheDocument();
   });
 
