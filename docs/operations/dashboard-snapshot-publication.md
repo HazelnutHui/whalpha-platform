@@ -55,7 +55,7 @@ and Visual Context requirement. The builder writes one dedicated checksum-
 bound `sector-etf-rotation.json`; strict reread and Apply validation reject
 lineage, record-order, window, Oracle, Theme-unavailable, or proxy-disclosure
 drift. The browser retrieves this file only when the Sector Rotation workspace
-opens. The active 2026-09-03 Snapshot and OCI release use this exact pair.
+opens. The active release uses this exact pair for analysis session 2026-09-04.
 
 ## Daily control-plane custody
 
@@ -86,7 +86,8 @@ contracts, aggregate, manifest, session, target, and planned pointer formally
 reread. Recovery never applies or links: exact active state reconciles success;
 absent target/staging with unchanged Snapshot and Activation state proves no
 write; everything partial, changed, or ambiguous blocks. The custody boundary
-reserved and formally recorded the active 2026-09-03 Snapshot Apply.
+most recently reserved and formally recorded the source-bound
+`2026-09-06T121300Z-ab1abf1afaaf` Snapshot Apply.
 
 ## Safety boundary
 

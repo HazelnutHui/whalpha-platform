@@ -7,8 +7,9 @@
   build, OCI deployment, and independent postflight. No stale-review exception
   was required.
 - Canonical EOD now has 304 sessions and the latest 9,962-row partition is
-  aligned with a 9,982-Instrument Identity snapshot. `/data` has 4,011 files /
-  1,963,053,417 bytes with zero symlinks and publication residue.
+  aligned with a 9,982-Instrument Identity snapshot. After the final source-
+  bound Snapshot, `/data` has 4,053 files / 2,007,562,365 bytes with zero
+  symlinks and publication residue.
 - Published MI 1.3 and Snapshot 1.11 / Dashboard 2.8 for 9/4. Both Universes
   remain Balanced; Candidate display counts are 880 Primary and 951 Secondary.
 - Independent OCI proof matched the exact 51-file bundle and verified service,
@@ -18,6 +19,10 @@
   freshness for canonical data and the active Snapshot from the immutable
   Snapshot publication assertion. The bilingual UI explicitly labels the
   static value as a publication-time check.
+- Re-published the unchanged 9/4 MI and analytics through exact source-bound
+  Snapshot/OCI release `2026-09-06T121300Z-ab1abf1afaaf`. Independent
+  postflight matched the new bundle and passed services, protected routes,
+  guest capability parity, zero failed units, and zero deployment residue.
 - The daily Identity path did not add normalized historical source custody, so
   its explicit gaps are now 8/13, 8/19, and 9/4. Research remains data-blocked;
   no model, Universe, scheduler, or research-authority gate changed.

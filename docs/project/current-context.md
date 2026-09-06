@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-06T11:56:05Z
+Operational state verified at: 2026-09-06T12:34:15Z
 
 Repository context updated at: 2026-09-06 UTC
 
@@ -17,8 +17,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Branch | `main`; verify current HEAD and cleanliness with the report rather than freezing them here |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Deployed OCI release | `2026-09-04T113333Z-717cb82c5369` |
-| Deployed source commit | `717cb82c536909f9084fdfd5946215fb2a403977` |
+| Deployed OCI release | `2026-09-06T121300Z-ab1abf1afaaf` |
+| Deployed source commit | `ab1abf1afaaf87648dfde24f2a584fcc32e360d8` |
 
 Dell is the authority for code, data, development, and heavy computation. OCI
 is only the static web-serving, localhost Auth Service, and public Session
@@ -48,8 +48,8 @@ publication-time assertion as a third, explicitly named view.
 | Latest Identity fingerprint | `5eed9166d609cea7693aed324908427f113ab72c221921690bcbdc29f71727f7` |
 | Identity/EOD alignment | aligned on 2026-09-04 |
 | Canonical historical Identity source | 301 immutable source-observation partitions / 3,687,175 rows; 3 source sessions absent |
-| `/data` inventory | 4,011 files / 1,963,053,417 bytes |
-| `/data` inventory fingerprint | `2a4535a92f7b4224509b33677fca1cb4ff11e7b863f74e0bd92b6a22ea2dce45` |
+| `/data` inventory | 4,053 files / 2,007,562,365 bytes |
+| `/data` inventory fingerprint | `81b2eaaa15efb82c27b6adbeeb3dc3861606f0359d3db1157e10fac37fd03056` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -81,11 +81,11 @@ after authoritative issuer-structure evidence passes the documented gates.
 | Market Intelligence | `2026-09-04T112916Z-717cb82c5369`; contract 1.3 |
 | MI payload SHA-256 | `34f9ae867d44aae4fda77ed47d2921570a52aade1147869f1c7835439f2439c8` |
 | MI logical fingerprint | `2d8957011113e944304c8609ed4ff771f7ad8e3b9e0d59a6823a6ec2b827ac5e` |
-| Dashboard Snapshot | `2026-09-04T113333Z-717cb82c5369` |
-| Snapshot pointer fingerprint | `e6b23d40e52f14e3b77c564061531c7b339540ebf07c0fb8a1be18b9ea113cc7` |
+| Dashboard Snapshot | `2026-09-06T121300Z-ab1abf1afaaf` |
+| Snapshot pointer fingerprint | `de5beb3aa326660b806284848ec22ee1172aa0f92e64421a48a94556db7c8125` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
 | Freshness | operational and publication-sealed views expected 2026-09-04; actual 2026-09-04; lag zero; review mode false |
-| Immediate local Snapshot rollback | `2026-09-03T090150Z-a4f10a02b6ae` |
+| Immediate local Snapshot rollback | `2026-09-04T113333Z-717cb82c5369` |
 
 Market Regime is Balanced in both Universes: Primary 56.7472 and Secondary
 57.3733. Market Intelligence contains 16 preregistered ETF relationships, 336
@@ -205,10 +205,10 @@ The final independent remote inspector matched the exact Dell bundle:
 
 | Evidence | Verified value |
 | --- | --- |
-| Bundle logical fingerprint | `d2b0c66cb246e0bf7af6d48ebe59ef8a4c95f9ef259a32b7013f06e72ee54616` |
-| Manifest SHA-256 | `20e56e74f66bbf60d1b8bfa5839934ca240a66d9a49abd3bbad7d1038943334b` |
-| Checksums file SHA-256 | `82065c12658eb9c75597a2073920c2f866db07c676fedb86d2b733de5a21fd7b` |
-| Remote-state fingerprint | `a9c66f0f636aa03dea559540ba25abb88feda40e97f7a63feecf3f800c9d7278` |
+| Bundle logical fingerprint | `385152eb5e145916e5641f2e65828f87948bb452cd633a093c9b84b65ae918cf` |
+| Manifest SHA-256 | `2bac8520a9f66f8b6c13a904d87f9951da5e230ef68b2ee7ecb0e2bd23ec91e6` |
+| Checksums file SHA-256 | `a649e751cf2ba357655b7c45086d900773cd95bd4521677a410d3adea7aa77da` |
+| Remote-state fingerprint | `d25b6e24dd37580be5538af7567b805b25b65ee73f40473f0c714a7ce5ae8012` |
 | Bundle files | 51; checksum validation passed |
 | Locales | English default; English and Simplified Chinese supported |
 | Access capability | guest and credential Sessions are identical |

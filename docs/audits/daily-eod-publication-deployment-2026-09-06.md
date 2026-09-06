@@ -46,6 +46,18 @@ The fresh Snapshot 1.11 / Dashboard 2.8 release is
 `e6b23d40e52f14e3b77c564061531c7b339540ebf07c0fb8a1be18b9ea113cc7`.
 Both were lag-zero and required no stale-review exception.
 
+After ADR 0149 and the bilingual presentation change were committed, the same
+9/4 MI and analytics were re-published without recomputation as exact source-
+bound Snapshot `2026-09-06T121300Z-ab1abf1afaaf`. Its Plan 2.6 whole-file
+SHA-256 is
+`648908ee7933828b1d4e09f94a992fa2d97c92ba1054c9e73fc674050ff4b0c8`,
+and its active-pointer fingerprint is
+`de5beb3aa326660b806284848ec22ee1172aa0f92e64421a48a94556db7c8125`.
+The first one-shot Apply invocation rejected before reservation or write
+because its host config carried an obsolete readiness-policy fingerprint. A
+new exact-revision config was independently verified; the subsequent guarded
+Apply completed and formally proved all 43 writes.
+
 The published Market Regime is Balanced: Primary 56.7472 and Secondary
 57.3733. Candidate display counts are 880 and 951 respectively. Market
 Intelligence still consumes only 26 sessions and correctly remains
@@ -53,12 +65,12 @@ Intelligence still consumes only 26 sessions and correctly remains
 
 ## Serving bundle and OCI proof
 
-The exact 51-file serving bundle has logical fingerprint
-`d2b0c66cb246e0bf7af6d48ebe59ef8a4c95f9ef259a32b7013f06e72ee54616`,
+The final exact 51-file serving bundle has logical fingerprint
+`385152eb5e145916e5641f2e65828f87948bb452cd633a093c9b84b65ae918cf`,
 manifest SHA-256
-`20e56e74f66bbf60d1b8bfa5839934ca240a66d9a49abd3bbad7d1038943334b`,
+`2bac8520a9f66f8b6c13a904d87f9951da5e230ef68b2ee7ecb0e2bd23ec91e6`,
 and checksum-file SHA-256
-`82065c12658eb9c75597a2073920c2f866db07c676fedb86d2b733de5a21fd7b`.
+`a649e751cf2ba357655b7c45086d900773cd95bd4521677a410d3adea7aa77da`.
 
 Deployment completed through the reviewed one-shot capability. Independent
 postflight matched the exact release, source revision, bundle fingerprint,
@@ -68,12 +80,14 @@ Snapshot, Candidate summary/detail, Strategy Channels, Sector ETF Rotation,
 logout, and guest/credential capability parity passed. Failed system units,
 staging releases, partial releases, and failed-release residue were all zero.
 Password-based login and final human visual inspection were not exercised.
+The final remote-state fingerprint is
+`d25b6e24dd37580be5538af7567b805b25b65ee73f40473f0c714a7ce5ae8012`.
 
 ## Final Dell state
 
-- `/data`: 4,011 files / 1,963,053,417 bytes;
+- `/data`: 4,053 files / 2,007,562,365 bytes;
 - inventory fingerprint:
-  `2a4535a92f7b4224509b33677fca1cb4ff11e7b863f74e0bd92b6a22ea2dce45`;
+  `81b2eaaa15efb82c27b6adbeeb3dc3861606f0359d3db1157e10fac37fd03056`;
 - symlinks and publication residue: zero;
 - research readiness: `data_blocked`;
 - no historical backfill or transient computation service is running.

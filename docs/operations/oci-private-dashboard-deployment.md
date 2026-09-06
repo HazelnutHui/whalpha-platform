@@ -14,9 +14,9 @@ The authoritative operational state is maintained in
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-09-04T113333Z-717cb82c5369`;
+  to release `2026-09-06T121300Z-ab1abf1afaaf`;
 - the release is built from source commit
-  `717cb82c536909f9084fdfd5946215fb2a403977` and binds Market
+  `ab1abf1afaaf87648dfde24f2a584fcc32e360d8` and binds Market
   Intelligence
   `2026-09-04T112916Z-717cb82c5369`;
 - it serves ordinary-fresh, lag-zero 2026-09-04 analytics through Snapshot

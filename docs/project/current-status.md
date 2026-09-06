@@ -11,8 +11,8 @@ detail belongs in the [changelog](changelog.md), ADRs, and dated audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity market-
 intelligence and research platform. The current OCI release is
-`2026-09-04T113333Z-717cb82c5369`, built from clean main commit
-`717cb82c536909f9084fdfd5946215fb2a403977`.
+`2026-09-06T121300Z-ab1abf1afaaf`, built from clean main commit
+`ab1abf1afaaf87648dfde24f2a584fcc32e360d8`.
 
 The deployed product uses:
 
@@ -50,7 +50,7 @@ unrelated services.
   partitions / 3,687,175 rows. The two revised dates, 2026-08-13 and
   2026-08-19, remain explicitly unbound; routine 2026-09-04 normalized source
   custody is also absent.
-- `/data` contains 4,011 files / 1,963,053,417 bytes, with zero symlinks and
+- `/data` contains 4,053 files / 2,007,562,365 bytes, with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
