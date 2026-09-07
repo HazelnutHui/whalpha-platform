@@ -457,7 +457,12 @@ RSS. Reading both 1.0 and 1.1 and comparing their decoded current fields took
 80.82 seconds / 2,431,656 KiB. All eight projections and fingerprints matched,
 the direct and composed payload bytes matched, and the prior chain matched.
 These are one-generation `/tmp` proofs, not active daily-chain timing or a
-cutover. Repeated 1.1 parent/append reading is the next scaling boundary.
+cutover. ADR 0159 subsequently proves two ordered 1.1 generations in fixture
+data. Its cold reader validates the base and every append, making immutable
+chain-head/checkpoint custody plus periodic full-lineage verification the next
+scaling boundary. The real base-plus-one-append reader took 39.79 seconds and
+2,078,752 KiB peak RSS, returned the exact 11-session ADR 0158 head, and made no
+external request or Production write. No constant-time claim is made yet.
 
 ## 2026-09-04 session-discovery validation tiers
 

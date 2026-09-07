@@ -7,7 +7,7 @@ import os
 import stat
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 from tip_api.services import opportunity_candidate_audit as v1
 from tip_api.services import opportunity_candidate_segmented_shadow as shadow
@@ -50,6 +50,24 @@ class CandidateSegmentedAppendEvidence:
 
 
 @dataclass(frozen=True, slots=True)
+class CandidateSegmentedParentEvidence:
+    base_shadow_path: Path
+    root_shadow_contract_version: str
+    manifest: Mapping[str, Any]
+    manifest_sha256: str
+    as_of_session: str
+    session_count: int
+    source_contract_fingerprint: str
+    final_chain_fingerprint: str
+    source_audit_logical_fingerprint: str
+    universe_ids: tuple[str, ...]
+    append_count: int
+    external_request_count: int = 0
+    production_write_count: int = 0
+    publication_authorized: bool = False
+
+
+@dataclass(frozen=True, slots=True)
 class CandidateSegmentedAppendColdEquivalence:
     parent_session_count: int
     appended_session_count: int
@@ -84,7 +102,7 @@ class _PreparedAppend:
 class _PreparedComposedAppend:
     parent_manifest: Mapping[str, Any]
     parent_manifest_sha256: str
-    parent_chain: shadow.CandidateSegmentedChainIdentity
+    parent_chain: CandidateSegmentedParentEvidence
     source_manifest: Mapping[str, Any]
     source_manifest_sha256: str
     direct_evidence: direct.CandidateSegmentedSessionCandidateEvidence
@@ -176,6 +194,7 @@ def write_candidate_segmented_append_from_session_candidate(
     source_audit: Path,
     session_candidate: Path,
     output_dir: Path,
+    parent_appends: Sequence[Path] = (),
 ) -> dict[str, Any]:
     """Compose one successor append without cumulative V1 semantic parsing."""
 
@@ -184,11 +203,13 @@ def write_candidate_segmented_append_from_session_candidate(
         parent_shadow=parent_shadow,
         source_audit=source_audit,
         session_candidate=session_candidate,
+        parent_appends=parent_appends,
     )
     if target.exists():
         evidence = read_candidate_segmented_append(
             parent_shadow=parent_shadow,
             output_dir=target,
+            parent_appends=parent_appends,
         )
         _require_expected_composed_append(evidence.manifest, prepared)
         return dict(evidence.manifest)
@@ -196,7 +217,7 @@ def write_candidate_segmented_append_from_session_candidate(
     stage = target.with_name(f".{target.name}.staging")
     if stage.exists() or stage.is_symlink():
         evidence = _read_candidate_segmented_append_at(
-            parent_shadow=parent_shadow,
+            parent=prepared.parent_chain,
             output_dir=stage,
             allow_staging=True,
         )
@@ -207,6 +228,7 @@ def write_candidate_segmented_append_from_session_candidate(
             read_candidate_segmented_append(
                 parent_shadow=parent_shadow,
                 output_dir=target,
+                parent_appends=parent_appends,
             ).manifest
         )
 
@@ -264,13 +286,75 @@ def read_candidate_segmented_append(
     *,
     parent_shadow: Path,
     output_dir: Path,
+    parent_appends: Sequence[Path] = (),
 ) -> CandidateSegmentedAppendEvidence:
     """Formally read a completed append package and its exact parent chain."""
 
+    parent = read_candidate_segmented_parent(
+        base_shadow=parent_shadow,
+        parent_appends=parent_appends,
+    )
     return _read_candidate_segmented_append_at(
-        parent_shadow=parent_shadow,
+        parent=parent,
         output_dir=output_dir,
         allow_staging=False,
+    )
+
+
+def read_candidate_segmented_parent(
+    *,
+    base_shadow: Path,
+    parent_appends: Sequence[Path] = (),
+) -> CandidateSegmentedParentEvidence:
+    """Read an exact base plus ordered append lineage as one parent identity."""
+
+    current = shadow.read_candidate_segmented_shadow_current(base_shadow)
+    chain = shadow._chain_identity_from_validated_manifest(current.manifest)
+    parent = CandidateSegmentedParentEvidence(
+        base_shadow_path=base_shadow.resolve(strict=True),
+        root_shadow_contract_version=str(current.manifest["contract_version"]),
+        manifest=current.manifest,
+        manifest_sha256=current.manifest_sha256,
+        as_of_session=str(current.manifest["as_of_session"]),
+        session_count=chain.session_count,
+        source_contract_fingerprint=chain.source_contract_fingerprint,
+        final_chain_fingerprint=chain.final_chain_fingerprint,
+        source_audit_logical_fingerprint=str(
+            current.manifest["source_audit_logical_fingerprint"]
+        ),
+        universe_ids=tuple(current.manifest["universe_ids"]),
+        append_count=0,
+    )
+    for append_path in parent_appends:
+        evidence = _read_candidate_segmented_append_at(
+            parent=parent,
+            output_dir=append_path,
+            allow_staging=False,
+        )
+        parent = _parent_evidence_from_append(parent=parent, evidence=evidence)
+    return parent
+
+
+def _parent_evidence_from_append(
+    *,
+    parent: CandidateSegmentedParentEvidence,
+    evidence: CandidateSegmentedAppendEvidence,
+) -> CandidateSegmentedParentEvidence:
+    manifest = evidence.manifest
+    return CandidateSegmentedParentEvidence(
+        base_shadow_path=parent.base_shadow_path,
+        root_shadow_contract_version=parent.root_shadow_contract_version,
+        manifest=manifest,
+        manifest_sha256=evidence.manifest_sha256,
+        as_of_session=str(manifest["as_of_session"]),
+        session_count=int(manifest["session_ordinal"]) + 1,
+        source_contract_fingerprint=parent.source_contract_fingerprint,
+        final_chain_fingerprint=str(manifest["chain_node"]["chain_fingerprint"]),
+        source_audit_logical_fingerprint=str(
+            manifest["source_audit"]["logical_content_fingerprint"]
+        ),
+        universe_ids=tuple(manifest["universe_ids"]),
+        append_count=parent.append_count + 1,
     )
 
 
@@ -327,30 +411,50 @@ def _prepare_composed_append(
     parent_shadow: Path,
     source_audit: Path,
     session_candidate: Path,
+    parent_appends: Sequence[Path],
 ) -> _PreparedComposedAppend:
     try:
-        direct_evidence = direct.read_candidate_segmented_session_candidate(
+        parent_chain = read_candidate_segmented_parent(
+            base_shadow=parent_shadow,
+            parent_appends=parent_appends,
+        )
+        direct_evidence = direct._read_candidate_segmented_session_candidate_at(
             parent_shadow=parent_shadow,
             output_dir=session_candidate,
+            allow_staging=False,
+            validated_parent=direct._CandidateSegmentedParentContext(
+                manifest=parent_chain.manifest,
+                manifest_sha256=parent_chain.manifest_sha256,
+                root_shadow_contract_version=(
+                    parent_chain.root_shadow_contract_version
+                ),
+                session_count=parent_chain.session_count,
+                source_contract_fingerprint=(
+                    parent_chain.source_contract_fingerprint
+                ),
+                final_chain_fingerprint=parent_chain.final_chain_fingerprint,
+                source_audit_logical_fingerprint=(
+                    parent_chain.source_audit_logical_fingerprint
+                ),
+                universe_ids=parent_chain.universe_ids,
+            ),
         )
         source_evidence = v1.read_opportunity_candidate_planning_evidence(source_audit)
-        _, parent_manifest, parent_manifest_sha256 = shadow._read_shadow_manifest(
-            parent_shadow
-        )
-        parent_chain = shadow._chain_identity_from_validated_manifest(
-            parent_manifest
-        )
     except Exception as exc:
         raise CandidateSegmentedAppendError(
             f"composed append input validation failed: {type(exc).__name__}"
         ) from exc
 
+    parent_manifest = parent_chain.manifest
+    parent_manifest_sha256 = parent_chain.manifest_sha256
     source_manifest = source_evidence.manifest
     candidate_manifest = direct_evidence.manifest
     candidate_parent = candidate_manifest["parent"]
     intended_source = candidate_manifest["intended_source_audit"]
     if (
-        candidate_parent.get("manifest_sha256") != parent_manifest_sha256
+        candidate_parent.get("shadow_contract_version")
+        != parent_chain.root_shadow_contract_version
+        or candidate_parent.get("manifest_sha256") != parent_manifest_sha256
         or candidate_parent.get("logical_content_fingerprint")
         != parent_manifest.get("logical_content_fingerprint")
         or candidate_parent.get("final_chain_fingerprint")
@@ -362,7 +466,7 @@ def _prepare_composed_append(
         or intended_source.get("as_of_session")
         != source_manifest.get("as_of_session")
         or source_manifest.get("prior_as_of_session")
-        != parent_manifest.get("as_of_session")
+        != parent_chain.as_of_session
         or tuple(source_manifest.get("universe_ids", ()))
         != tuple(parent_manifest.get("universe_ids", ()))
         or candidate_manifest.get("session_ordinal") != parent_chain.session_count
@@ -390,7 +494,10 @@ def _prepare_composed_append(
         incremental_validation=source_evidence.validation_ledger,
         source_manifest=source_manifest,
         candidate_manifest=candidate_manifest,
-        parent_manifest=parent_manifest,
+        parent_source_audit_logical_fingerprint=(
+            parent_chain.source_audit_logical_fingerprint
+        ),
+        parent_as_of_session=parent_chain.as_of_session,
     )
     descriptor = {
         **candidate_manifest["payload"],
@@ -423,7 +530,8 @@ def _validate_composed_incremental_binding(
     incremental_validation: Mapping[str, Any] | None,
     source_manifest: Mapping[str, Any],
     candidate_manifest: Mapping[str, Any],
-    parent_manifest: Mapping[str, Any],
+    parent_source_audit_logical_fingerprint: str,
+    parent_as_of_session: str,
 ) -> None:
     record = incremental_validation
     reuse_checks = record.get("reuse_checks") if isinstance(record, Mapping) else None
@@ -432,9 +540,8 @@ def _validate_composed_incremental_binding(
         or v1._fingerprint(record)
         != candidate_manifest.get("incremental_validation_fingerprint")
         or record.get("prior_audit_logical_fingerprint")
-        != parent_manifest.get("source_audit_logical_fingerprint")
-        or record.get("prior_as_of_session")
-        != parent_manifest.get("as_of_session")
+        != parent_source_audit_logical_fingerprint
+        or record.get("prior_as_of_session") != parent_as_of_session
         or record.get("current_as_of_session")
         != source_manifest.get("as_of_session")
         or not isinstance(reuse_checks, Mapping)
@@ -456,7 +563,9 @@ def _composed_append_manifest_logical(
         "contract_version": COMPOSED_APPEND_CONTRACT,
         "completion_status": "completed",
         "parent": {
-            "shadow_contract_version": prepared.parent_manifest["contract_version"],
+            "shadow_contract_version": (
+                prepared.parent_chain.root_shadow_contract_version
+            ),
             "manifest_sha256": prepared.parent_manifest_sha256,
             "logical_content_fingerprint": prepared.parent_manifest[
                 "logical_content_fingerprint"
@@ -763,10 +872,17 @@ def _append_manifest_logical(
 
 def _read_candidate_segmented_append_at(
     *,
-    parent_shadow: Path,
     output_dir: Path,
     allow_staging: bool,
+    parent_shadow: Path | None = None,
+    parent: CandidateSegmentedParentEvidence | None = None,
 ) -> CandidateSegmentedAppendEvidence:
+    if (parent_shadow is None) == (parent is None):
+        raise CandidateSegmentedAppendError(
+            "append reader requires exactly one validated parent input"
+        )
+    if parent is None:
+        parent = read_candidate_segmented_parent(base_shadow=parent_shadow)
     target = _completed_output_target(output_dir, allow_staging=allow_staging)
     manifest_path = target / APPEND_MANIFEST
     if not manifest_path.is_file() or manifest_path.is_symlink():
@@ -790,21 +906,20 @@ def _read_candidate_segmented_append_at(
             "append package file set is incomplete or contains extras"
         )
 
-    parent_current = shadow.read_candidate_segmented_shadow_current(parent_shadow)
-    parent_chain = shadow._chain_identity_from_validated_manifest(
-        parent_current.manifest
-    )
-    parent = manifest["parent"]
+    parent_record = manifest["parent"]
     if (
-        parent.get("manifest_sha256") != parent_current.manifest_sha256
-        or parent.get("logical_content_fingerprint")
-        != parent_current.manifest.get("logical_content_fingerprint")
-        or parent.get("as_of_session") != parent_current.manifest.get("as_of_session")
-        or parent.get("session_count") != parent_chain.session_count
-        or parent.get("source_contract_fingerprint")
-        != parent_chain.source_contract_fingerprint
-        or parent.get("final_chain_fingerprint")
-        != parent_chain.final_chain_fingerprint
+        parent_record.get("shadow_contract_version")
+        != parent.root_shadow_contract_version
+        or parent_record.get("manifest_sha256") != parent.manifest_sha256
+        or parent_record.get("logical_content_fingerprint")
+        != parent.manifest.get("logical_content_fingerprint")
+        or parent_record.get("as_of_session") != parent.as_of_session
+        or parent_record.get("session_count") != parent.session_count
+        or parent_record.get("source_contract_fingerprint")
+        != parent.source_contract_fingerprint
+        or parent_record.get("final_chain_fingerprint")
+        != parent.final_chain_fingerprint
+        or tuple(manifest.get("universe_ids", ())) != parent.universe_ids
     ):
         raise CandidateSegmentedAppendError("append parent chain identity differs")
 
@@ -885,7 +1000,9 @@ def _read_candidate_segmented_append_at(
         prior_chain_fingerprint=str(
             manifest["chain_node"]["prior_chain_fingerprint"]
         ),
-        source_contract_fingerprint=str(parent["source_contract_fingerprint"]),
+        source_contract_fingerprint=str(
+            parent_record["source_contract_fingerprint"]
+        ),
         source_audit_logical_fingerprint=str(
             manifest["source_audit"]["logical_content_fingerprint"]
         ),

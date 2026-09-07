@@ -393,10 +393,15 @@ separately bounded.
    replay. Its separate reader took 40.36 seconds, and a cold 1.0/1.1 comparison
    found all eight current fields exact. The chain tips intentionally differ
    because 1.1 names session-local rather than V1-global raw-fact ordinals.
-   Next prove repeated 1.1 generations, generalized parent reading, downstream
-   compatibility, retention, and periodic cold-audit policy. Add reuse,
-   vectorization, or safe process parallelism only where evidence justifies it
-   and outputs remain exact.
+   ADR 0159 now proves two ordered 1.1 generations with an explicit base-plus-
+   append parent reader; append-2 binds append-1's exact manifest and chain tip,
+   while missing or reordered lineage fails closed. That cold reader validates
+   every append and remains linear; its real one-append read took 39.79 seconds
+   and reproduced the exact 11-session ADR 0158 head. Next define a governed
+   immutable chain head with CAS/recovery and periodic full-lineage audit before
+   downstream, retention, or cutover work. Add reuse, vectorization, or safe
+   process parallelism only where evidence justifies it and outputs remain
+   exact.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The

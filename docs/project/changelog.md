@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-09-07 — Validate ordered multi-generation Candidate lineage
+
+- Accepted ADR 0159 and added one generalized parent-evidence reader over an
+  exact base shadow plus an explicitly ordered append sequence. Each generation
+  checks the immediate parent manifest SHA/logical identity, session count,
+  source contract, Universe, V1 source identity, and forward-chain tip.
+- Extended the direct-session writer/reader and ADR 0158 composer with an
+  optional parent-append sequence. The empty default preserves existing one-
+  generation behavior and identities; later generations bind the exact prior
+  append without adding filesystem paths to logical identity.
+- A three-session fixture produced base → append-1 → append-2 from consecutive
+  verified-prior V1 audits. Append-2 preserved all eight direct projections,
+  advanced one ordinal, bound append-1's exact manifest and chain tip, and
+  passed idempotent rereads. Missing and reordered ancestry failed closed.
+- The real base-plus-ADR-0158 append reader returned the exact 11-session head,
+  manifest SHA, and final chain tip in 39.79 seconds with 2,078,752 KiB peak
+  RSS and zero external request or Production write.
+- This is a cold correctness reader, not an O(current-session) performance
+  claim: it validates the base and every supplied append. An immutable governed
+  chain head/checkpoint with CAS, recovery, and periodic full-lineage audit is
+  the next prerequisite before daily or downstream cutover.
+- No real second-generation artifact, network, `/data`, Production, Candidate
+  formula, parameter, score, rank, state, executor, coordinator, scheduler,
+  publication, Snapshot, bundle, or deployment changed.
+- Candidate/CLI focused coverage finished at `57 passed`; the complete API
+  regression finished at `2135 passed, 2 warnings`. Both warnings are the
+  unchanged Python `crypt` and Starlette/httpx deprecations.
+
 ## 2026-09-07 — Compose direct Candidate session into successor append
 
 - Accepted ADR 0158 and added

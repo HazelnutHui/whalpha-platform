@@ -22,6 +22,11 @@ The writer requires:
   state rows, six risk-mode results, zero-mismatch Oracle, raw facts, and
   normalization records.
 
+For the second or later segmented generation, the parent is the exact base plus
+an explicitly ordered append sequence. The candidate binds the immediate prior
+append manifest and chain tip while retaining the base shadow contract identity.
+The default empty sequence preserves the original one-generation behavior.
+
 The parent/source calculation versions, parameter fingerprints, Universe
 order, prior audit identity, prior session, current session, and every reuse
 gate must match. A caller cannot substitute a fabricated validation record
@@ -81,6 +86,11 @@ intended V1 audit before placing these exact bytes in a versioned 1.1 successor
 append. V1 remains the authoritative Candidate source until repeated append,
 downstream, retention, periodic-cold, and cutover gates are separately
 accepted.
+
+ADR 0159 proves that the same contract can bind a second direct session to the
+exact first append and that omission or reordering of the parent append fails
+closed. The cold parent reader remains linear in the supplied lineage; this is
+not yet the governed daily chain-head optimization.
 
 ## Real Dell proof
 

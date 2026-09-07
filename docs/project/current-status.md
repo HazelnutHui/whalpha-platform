@@ -286,12 +286,16 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    found all eight business fields exact. Candidate remains the largest active
    analytics stage at roughly 4.5 minutes because these optional `/tmp`
    artifacts have not replaced V1 or entered the daily executor.
-4. Prove repeated 1.1 append generations and a generalized parent reader, then
-   downstream compatibility, retention, and periodic cold-audit policy before
-   considering cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
-   ordinals explicitly distinct; their final chain fingerprints must not be
-   equated. The bounded parent current read remains 16.53 seconds versus
-   228.285 seconds for V1 full semantics.
+4. ADR 0159 now proves repeated 1.1 append generations through two ordered
+   successors in a three-session fixture and rejects omitted or reordered
+   ancestors. Its generalized cold parent reader deliberately validates the
+   base and every append; the real one-append parent read took 39.79 seconds
+   and reproduced the exact 11-session ADR 0158 head. Next design an immutable
+   exact chain-head/checkpoint with CAS and periodic full-lineage audit rather
+   than calling this linear reader the daily hot path, then address downstream
+   compatibility and retention before considering cutover. Keep 1.0 global
+   raw-fact ordinals and 1.1 session-local ordinals explicitly distinct; their
+   final chain fingerprints must not be equated.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

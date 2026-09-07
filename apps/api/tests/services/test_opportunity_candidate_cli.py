@@ -29,6 +29,7 @@ from tip_api.services.opportunity_candidate_segmented_append import (
     COMPOSED_APPEND_CONTRACT,
     CandidateSegmentedAppendError,
     read_candidate_segmented_append,
+    read_candidate_segmented_parent,
     write_candidate_segmented_append,
     write_candidate_segmented_append_from_session_candidate,
 )
@@ -57,8 +58,11 @@ def _id(label):
     return uuid5(NS, label)
 
 
-def _panels():
-    sessions = tuple(date(2026, 7, 1) + timedelta(days=index) for index in range(27))
+def _panels(ends=(25, 26)):
+    sessions = tuple(
+        date(2026, 7, 1) + timedelta(days=index)
+        for index in range(max(ends) + 1)
+    )
     primary = tuple(_id(f"stock-{index}") for index in range(8))
     adrs = tuple(_id(f"adr-{index}") for index in range(2))
     etfs = {ticker: _id(f"etf-{ticker}") for ticker in ("SPY", "QQQ", "IWM", "DIA", "XLK", "SMH")}
@@ -76,7 +80,7 @@ def _panels():
         MarketRegimeUniverseSource(SECONDARY, "Secondary", False, 1, frozenset((*primary, *adrs)), "b" * 64),
     )
     output = []
-    for end in (25, 26):
+    for end in ends:
         selected = sessions[end - 25 : end + 1]
         sources = tuple(MarketRegimeSourceSession(
             session_date=session, dataset_path=f"eod/{session}", record_count=16,
@@ -1284,3 +1288,290 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
             session_dir.with_name(f"{session_dir.name}-wrong-universe"),
             ignore_errors=True,
         )
+
+
+def test_segmented_candidate_chain_accepts_two_ordered_appends(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    panels = _panels((25, 26, 27))
+    regimes = _regime_records(panels)
+    by_session = {item.as_of_session: item for item in panels}
+    monkeypatch.setattr(
+        cli,
+        "load_formal_market_regime_panels",
+        lambda *, data_root, as_of_sessions: tuple(
+            by_session[item] for item in as_of_sessions
+        ),
+    )
+    directories = {
+        name: Path(tempfile.mkdtemp(prefix=f"candidate-chain-{name}-", dir="/tmp"))
+        for name in (
+            "base-v1",
+            "first-v1",
+            "second-v1",
+            "base-shadow",
+            "first-direct",
+            "first-append",
+            "second-direct",
+            "second-append",
+        )
+    }
+    for name in (
+        "base-shadow",
+        "first-direct",
+        "first-append",
+        "second-direct",
+        "second-append",
+    ):
+        shutil.rmtree(directories[name])
+
+    def all_batches(run):
+        return tuple(
+            batch
+            for universe_id in (PRIMARY, SECONDARY)
+            for batch in run.score_history[universe_id]
+        )
+
+    def all_states(run):
+        return tuple(
+            row
+            for universe_id in (PRIMARY, SECONDARY)
+            for row in run.state_history[universe_id]
+        )
+
+    def current_direct_kwargs(*, run, manifest, validation, panel):
+        return {
+            "source_audit_manifest": manifest,
+            "incremental_validation": validation,
+            "panel": panel,
+            "candidate_batches": tuple(
+                batch
+                for universe_id in (PRIMARY, SECONDARY)
+                for batch in run.current_score_history[universe_id]
+            ),
+            "state_records": tuple(
+                row
+                for row in all_states(run)
+                if row.as_of_session == panel.as_of_session
+            ),
+            "risk_results": run.current_risk_results,
+            "oracle_comparison": run.oracle_report,
+            "raw_facts": cli._raw_fact_records(run.current_score_history),
+            "normalization_records": cli._normalization_records(
+                run.current_score_history
+            ),
+        }
+
+    def append_incremental(*, prior, selected_panels, output_dir):
+        run = cli._calculate_incremental(
+            data_root=tmp_path,
+            candidate_sessions=tuple(
+                item.as_of_session for item in selected_panels
+            ),
+            regime_records=regimes,
+            prior_audit=prior,
+            max_workers=2,
+        )
+        validation = cli._incremental_validation_ledger(
+            prior_audit=prior,
+            run=run,
+        )
+        manifest = write_opportunity_candidate_audit(
+            output_dir=output_dir,
+            panels=run.panels,
+            prior_source_panels=prior.source_panels,
+            candidate_batches=all_batches(run),
+            state_history=all_states(run),
+            risk_results=run.current_risk_results,
+            oracle_comparison=run.oracle_report,
+            equivalence_flags=run.equivalence_flags,
+            raw_facts=(
+                *prior.raw_facts,
+                *cli._raw_fact_records(run.current_score_history),
+            ),
+            normalization_ledger=(
+                *prior.normalization_ledger,
+                *cli._normalization_records(run.current_score_history),
+            ),
+            incremental_validation=validation,
+            generated_at=datetime.now(UTC),
+            timings={},
+            peak_memory_kib=1,
+        )
+        return run, validation, manifest
+
+    try:
+        base_run = cli._calculate_offline(
+            data_root=tmp_path,
+            candidate_sessions=(panels[0].as_of_session,),
+            regime_records=regimes,
+        )
+        write_opportunity_candidate_audit(
+            output_dir=directories["base-v1"],
+            panels=base_run.panels,
+            candidate_batches=all_batches(base_run),
+            state_history=all_states(base_run),
+            risk_results=base_run.current_risk_results,
+            oracle_comparison=base_run.oracle_report,
+            equivalence_flags=base_run.equivalence_flags,
+            raw_facts=cli._raw_fact_records(base_run.score_history),
+            normalization_ledger=cli._normalization_records(
+                base_run.score_history
+            ),
+            generated_at=datetime.now(UTC),
+            timings={},
+            peak_memory_kib=1,
+        )
+        base = read_opportunity_candidate_audit_contents(directories["base-v1"])
+        first_run, first_validation, first_v1_manifest = append_incremental(
+            prior=base,
+            selected_panels=panels[:2],
+            output_dir=directories["first-v1"],
+        )
+        first = read_opportunity_candidate_audit_contents(
+            directories["first-v1"]
+        )
+        second_run, second_validation, second_v1_manifest = append_incremental(
+            prior=first,
+            selected_panels=panels,
+            output_dir=directories["second-v1"],
+        )
+
+        base_shadow_manifest = write_candidate_segmented_shadow(
+            source_audit=directories["base-v1"],
+            output_dir=directories["base-shadow"],
+        )
+        first_direct_manifest = write_candidate_segmented_session_candidate(
+            parent_shadow=directories["base-shadow"],
+            **current_direct_kwargs(
+                run=first_run,
+                manifest=first_v1_manifest,
+                validation=first_validation,
+                panel=panels[1],
+            ),
+            output_dir=directories["first-direct"],
+        )
+        first_append_manifest = (
+            write_candidate_segmented_append_from_session_candidate(
+                parent_shadow=directories["base-shadow"],
+                source_audit=directories["first-v1"],
+                session_candidate=directories["first-direct"],
+                output_dir=directories["first-append"],
+            )
+        )
+        first_append = read_candidate_segmented_append(
+            parent_shadow=directories["base-shadow"],
+            output_dir=directories["first-append"],
+        )
+
+        second_direct_manifest = write_candidate_segmented_session_candidate(
+            parent_shadow=directories["base-shadow"],
+            parent_appends=(directories["first-append"],),
+            **current_direct_kwargs(
+                run=second_run,
+                manifest=second_v1_manifest,
+                validation=second_validation,
+                panel=panels[2],
+            ),
+            output_dir=directories["second-direct"],
+        )
+        second_append_manifest = (
+            write_candidate_segmented_append_from_session_candidate(
+                parent_shadow=directories["base-shadow"],
+                parent_appends=(directories["first-append"],),
+                source_audit=directories["second-v1"],
+                session_candidate=directories["second-direct"],
+                output_dir=directories["second-append"],
+            )
+        )
+        second_append = read_candidate_segmented_append(
+            parent_shadow=directories["base-shadow"],
+            parent_appends=(directories["first-append"],),
+            output_dir=directories["second-append"],
+        )
+        second_direct = read_candidate_segmented_session_candidate(
+            parent_shadow=directories["base-shadow"],
+            parent_appends=(directories["first-append"],),
+            output_dir=directories["second-direct"],
+        )
+        complete_parent = read_candidate_segmented_parent(
+            base_shadow=directories["base-shadow"],
+            parent_appends=(
+                directories["first-append"],
+                directories["second-append"],
+            ),
+        )
+
+        assert first_append.manifest == first_append_manifest
+        assert second_append.manifest == second_append_manifest
+        assert second_direct_manifest["parent"]["manifest_sha256"] == (
+            first_append.manifest_sha256
+        )
+        assert second_append_manifest["parent"]["manifest_sha256"] == (
+            first_append.manifest_sha256
+        )
+        assert second_append_manifest["chain_node"][
+            "prior_chain_fingerprint"
+        ] == first_append_manifest["chain_node"]["chain_fingerprint"]
+        assert second_append_manifest["session_ordinal"] == (
+            first_append_manifest["session_ordinal"] + 1
+        )
+        assert second_append_manifest["current_projection_fingerprints"] == (
+            second_direct_manifest["current_projection_fingerprints"]
+        )
+        for field in second_direct_manifest["current_projection_fingerprints"]:
+            assert second_append.segment[field] == second_direct.payload[field]
+        assert complete_parent.append_count == 2
+        assert complete_parent.session_count == 3
+        assert complete_parent.as_of_session == panels[2].as_of_session.isoformat()
+        assert complete_parent.manifest == second_append_manifest
+        assert complete_parent.manifest_sha256 == second_append.manifest_sha256
+        assert complete_parent.final_chain_fingerprint == (
+            second_append_manifest["chain_node"]["chain_fingerprint"]
+        )
+        assert complete_parent.source_audit_logical_fingerprint == (
+            second_v1_manifest["logical_content_fingerprint"]
+        )
+        assert complete_parent.production_write_count == 0
+        assert complete_parent.publication_authorized is False
+        assert write_candidate_segmented_session_candidate(
+            parent_shadow=directories["base-shadow"],
+            parent_appends=(directories["first-append"],),
+            **current_direct_kwargs(
+                run=second_run,
+                manifest=second_v1_manifest,
+                validation=second_validation,
+                panel=panels[2],
+            ),
+            output_dir=directories["second-direct"],
+        ) == second_direct_manifest
+        assert write_candidate_segmented_append_from_session_candidate(
+            parent_shadow=directories["base-shadow"],
+            parent_appends=(directories["first-append"],),
+            source_audit=directories["second-v1"],
+            session_candidate=directories["second-direct"],
+            output_dir=directories["second-append"],
+        ) == second_append_manifest
+        assert read_candidate_segmented_parent(
+            base_shadow=directories["base-shadow"],
+        ).manifest["logical_content_fingerprint"] == base_shadow_manifest[
+            "logical_content_fingerprint"
+        ]
+
+        with pytest.raises(CandidateSegmentedAppendError, match="parent chain"):
+            read_candidate_segmented_append(
+                parent_shadow=directories["base-shadow"],
+                output_dir=directories["second-append"],
+            )
+        with pytest.raises(CandidateSegmentedAppendError, match="parent chain"):
+            read_candidate_segmented_parent(
+                base_shadow=directories["base-shadow"],
+                parent_appends=(
+                    directories["second-append"],
+                    directories["first-append"],
+                ),
+            )
+    finally:
+        for path in directories.values():
+            shutil.rmtree(path, ignore_errors=True)

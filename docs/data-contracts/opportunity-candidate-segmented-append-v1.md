@@ -20,6 +20,12 @@ Version 1.1 additionally requires the exact
 objects and a physically completed incremental V1 audit whose validation
 ledger binds that candidate and the parent.
 
+For a later generation, the parent is supplied as one base shadow plus an
+explicitly ordered sequence of already completed append packages. Every append
+is validated against the immediately preceding manifest and chain tip before
+the new direct candidate or successor may be accepted. Absolute paths are not
+part of logical identity.
+
 Candidate/state calculation versions, parameter identities, and Universe
 order must match. When the source is V1 incremental, its validation ledger
 must bind the exact parent V1 audit and session.
@@ -60,6 +66,9 @@ Version 1.1 also binds the direct-candidate manifest/payload identity, exact
 physical completion of the intended V1 audit, and the manifest-committed
 incremental validation record. Its final chain is intentionally distinct from
 1.0 because segment contract and ordinal semantics are part of chain identity.
+`parent.shadow_contract_version` identifies the base shadow contract across the
+lineage; the adjacent parent manifest SHA/logical fingerprint always identifies
+the immediate parent package.
 
 The output is a new owner-only direct child of `/tmp`; directory mode is
 `0700` and completed files are `0400`. A deterministic completed staging
@@ -71,8 +80,8 @@ interruption. Partial or ambiguous evidence fails closed and is not deleted.
 The package performs no network or canonical write and grants no publication,
 scheduler, research-performance, or Production authority. Candidate V1 remains
 authoritative. ADR 0158 composes the ADR 0157 sidecar only after verifying its
-exact V1 physical completion. Repeated append generations, retention,
-downstream compatibility, and cutover require later decisions.
+exact V1 physical completion. Governed chain-head custody, retention,
+downstream compatibility, periodic audit, and cutover require later decisions.
 
 ## Real Dell proof
 
@@ -103,3 +112,9 @@ and the new chain tip is
 An independent read took 40.36 seconds; a two-package comparison found all
 eight current fields exact and confirmed the direct/composed payload bytes are
 identical.
+
+ADR 0159 separately proves two ordered append generations with fixture data.
+The general cold reader validates the base and every supplied append, so this
+is a correctness boundary rather than a constant-time hot-path claim. A
+governed exact chain-head/checkpoint and periodic full-lineage policy remain
+required before cutover.

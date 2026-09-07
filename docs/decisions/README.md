@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0159](0159-validate-ordered-multigeneration-candidate-append-lineage.md): validate an explicit base-plus-appends lineage and bind each direct session and successor to the immediate prior manifest and chain tip.
+
 - [ADR 0158](0158-compose-direct-candidate-session-into-successor-append.md): compose an exact direct Candidate session with its physically completed intended V1 audit into a versioned successor append without cumulative semantic replay.
 
 - [ADR 0157](0157-emit-candidate-session-segment-from-current-objects.md): emit one non-authoritative Candidate session directly from already validated current objects, with exact parent/source binding and separate semantic audit.
@@ -262,3 +264,4 @@ Each ADR should include:
 - [0156: Prove One-Session Candidate Append and Recovery](0156-prove-one-session-candidate-append-and-recovery.md)
 - [0157: Emit the Candidate Session Segment from Current Objects](0157-emit-candidate-session-segment-from-current-objects.md)
 - [0158: Compose the Direct Candidate Session into a Successor Append](0158-compose-direct-candidate-session-into-successor-append.md)
+- [0159: Validate Ordered Multi-Generation Candidate Append Lineage](0159-validate-ordered-multigeneration-candidate-append-lineage.md)

@@ -52,6 +52,50 @@ class CandidateSegmentedSessionCandidateEvidence:
     publication_authorized: bool = False
 
 
+@dataclass(frozen=True, slots=True)
+class _CandidateSegmentedParentContext:
+    manifest: Mapping[str, Any]
+    manifest_sha256: str
+    root_shadow_contract_version: str
+    session_count: int
+    source_contract_fingerprint: str
+    final_chain_fingerprint: str
+    source_audit_logical_fingerprint: str
+    universe_ids: tuple[str, ...]
+
+
+def _read_parent_context(
+    *,
+    parent_shadow: Path,
+    parent_appends: Sequence[Path],
+) -> _CandidateSegmentedParentContext:
+    # The local import avoids a module cycle: the append reader reuses this
+    # module's typed session-payload validator.
+    from tip_api.services import opportunity_candidate_segmented_append as append
+
+    try:
+        evidence = append.read_candidate_segmented_parent(
+            base_shadow=parent_shadow,
+            parent_appends=parent_appends,
+        )
+    except Exception as exc:
+        raise CandidateSegmentedSessionCandidateError(
+            f"direct session parent validation failed: {type(exc).__name__}"
+        ) from exc
+    return _CandidateSegmentedParentContext(
+        manifest=evidence.manifest,
+        manifest_sha256=evidence.manifest_sha256,
+        root_shadow_contract_version=evidence.root_shadow_contract_version,
+        session_count=evidence.session_count,
+        source_contract_fingerprint=evidence.source_contract_fingerprint,
+        final_chain_fingerprint=evidence.final_chain_fingerprint,
+        source_audit_logical_fingerprint=(
+            evidence.source_audit_logical_fingerprint
+        ),
+        universe_ids=evidence.universe_ids,
+    )
+
+
 def write_candidate_segmented_session_candidate(
     *,
     parent_shadow: Path,
@@ -65,20 +109,24 @@ def write_candidate_segmented_session_candidate(
     raw_facts: Sequence[Mapping[str, Any]],
     normalization_records: Sequence[Mapping[str, Any]],
     output_dir: Path,
+    parent_appends: Sequence[Path] = (),
 ) -> dict[str, Any]:
     """Persist one segment directly from the already-calculated daily objects."""
 
     target = _new_output_target(output_dir)
-    parent_current = shadow.read_candidate_segmented_shadow_current(parent_shadow)
-    parent_chain = shadow._chain_identity_from_validated_manifest(
-        parent_current.manifest
+    parent = _read_parent_context(
+        parent_shadow=parent_shadow,
+        parent_appends=parent_appends,
     )
     source_panel = _source_panel_row(panel)
     _validate_source_binding(
         source_audit_manifest=source_audit_manifest,
         incremental_validation=incremental_validation,
-        parent_manifest=parent_current.manifest,
-        parent_chain=parent_chain,
+        parent_manifest=parent.manifest,
+        parent_chain=parent,
+        parent_source_audit_logical_fingerprint=(
+            parent.source_audit_logical_fingerprint
+        ),
         source_panel=source_panel,
     )
     payload = _session_payload(
@@ -102,11 +150,13 @@ def write_candidate_segmented_session_candidate(
         evidence = read_candidate_segmented_session_candidate(
             parent_shadow=parent_shadow,
             output_dir=target,
+            parent_appends=parent_appends,
         )
         manifest = _candidate_manifest(
-            parent_manifest=parent_current.manifest,
-            parent_manifest_sha256=parent_current.manifest_sha256,
-            parent_chain=parent_chain,
+            parent_manifest=parent.manifest,
+            parent_manifest_sha256=parent.manifest_sha256,
+            parent_chain=parent,
+            root_shadow_contract_version=parent.root_shadow_contract_version,
             source_audit_manifest=source_audit_manifest,
             incremental_validation=incremental_validation,
             payload_descriptor=evidence.manifest["payload"],
@@ -124,11 +174,13 @@ def write_candidate_segmented_session_candidate(
             parent_shadow=parent_shadow,
             output_dir=stage,
             allow_staging=True,
+            parent_appends=parent_appends,
         )
         manifest = _candidate_manifest(
-            parent_manifest=parent_current.manifest,
-            parent_manifest_sha256=parent_current.manifest_sha256,
-            parent_chain=parent_chain,
+            parent_manifest=parent.manifest,
+            parent_manifest_sha256=parent.manifest_sha256,
+            parent_chain=parent,
+            root_shadow_contract_version=parent.root_shadow_contract_version,
             source_audit_manifest=source_audit_manifest,
             incremental_validation=incremental_validation,
             payload_descriptor=evidence.manifest["payload"],
@@ -144,6 +196,7 @@ def write_candidate_segmented_session_candidate(
             read_candidate_segmented_session_candidate(
                 parent_shadow=parent_shadow,
                 output_dir=target,
+                parent_appends=parent_appends,
             ).manifest
         )
 
@@ -158,9 +211,10 @@ def write_candidate_segmented_session_candidate(
         physical_sha256=physical_sha256,
     )
     manifest = _candidate_manifest(
-        parent_manifest=parent_current.manifest,
-        parent_manifest_sha256=parent_current.manifest_sha256,
-        parent_chain=parent_chain,
+        parent_manifest=parent.manifest,
+        parent_manifest_sha256=parent.manifest_sha256,
+        parent_chain=parent,
+        root_shadow_contract_version=parent.root_shadow_contract_version,
         source_audit_manifest=source_audit_manifest,
         incremental_validation=incremental_validation,
         payload_descriptor=descriptor,
@@ -187,6 +241,7 @@ def read_candidate_segmented_session_candidate(
     *,
     parent_shadow: Path,
     output_dir: Path,
+    parent_appends: Sequence[Path] = (),
 ) -> CandidateSegmentedSessionCandidateEvidence:
     """Read the direct session candidate and rebind it to the exact parent."""
 
@@ -194,6 +249,7 @@ def read_candidate_segmented_session_candidate(
         parent_shadow=parent_shadow,
         output_dir=output_dir,
         allow_staging=False,
+        parent_appends=parent_appends,
     )
 
 
@@ -263,7 +319,8 @@ def _validate_source_binding(
     source_audit_manifest: Mapping[str, Any],
     incremental_validation: Mapping[str, Any],
     parent_manifest: Mapping[str, Any],
-    parent_chain: shadow.CandidateSegmentedChainIdentity,
+    parent_chain: _CandidateSegmentedParentContext,
+    parent_source_audit_logical_fingerprint: str,
     source_panel: Mapping[str, Any],
 ) -> None:
     session = source_panel.get("as_of_session")
@@ -306,7 +363,7 @@ def _validate_source_binding(
         incremental_validation.get("validation_scope")
         != "verified_prior_plus_current_session_oracle"
         or incremental_validation.get("prior_audit_logical_fingerprint")
-        != parent_manifest.get("source_audit_logical_fingerprint")
+        != parent_source_audit_logical_fingerprint
         or incremental_validation.get("prior_as_of_session")
         != parent_manifest.get("as_of_session")
         or incremental_validation.get("current_as_of_session")
@@ -506,7 +563,8 @@ def _candidate_manifest(
     *,
     parent_manifest: Mapping[str, Any],
     parent_manifest_sha256: str,
-    parent_chain: shadow.CandidateSegmentedChainIdentity,
+    parent_chain: _CandidateSegmentedParentContext,
+    root_shadow_contract_version: str,
     source_audit_manifest: Mapping[str, Any],
     incremental_validation: Mapping[str, Any],
     payload_descriptor: Mapping[str, Any],
@@ -516,7 +574,7 @@ def _candidate_manifest(
         "contract_version": SESSION_CANDIDATE_CONTRACT,
         "completion_status": "completed",
         "parent": {
-            "shadow_contract_version": parent_manifest["contract_version"],
+            "shadow_contract_version": root_shadow_contract_version,
             "manifest_sha256": parent_manifest_sha256,
             "logical_content_fingerprint": parent_manifest[
                 "logical_content_fingerprint"
@@ -557,6 +615,8 @@ def _read_candidate_segmented_session_candidate_at(
     parent_shadow: Path,
     output_dir: Path,
     allow_staging: bool,
+    parent_appends: Sequence[Path] = (),
+    validated_parent: _CandidateSegmentedParentContext | None = None,
 ) -> CandidateSegmentedSessionCandidateEvidence:
     target = _completed_output_target(output_dir, allow_staging=allow_staging)
     manifest_path = target / SESSION_CANDIDATE_MANIFEST
@@ -590,21 +650,24 @@ def _read_candidate_segmented_session_candidate_at(
     manifest["logical_content_fingerprint"] = manifest_fingerprint
     _validate_manifest_shape(manifest)
 
-    parent_current = shadow.read_candidate_segmented_shadow_current(parent_shadow)
-    parent_chain = shadow._chain_identity_from_validated_manifest(
-        parent_current.manifest
+    parent_context = validated_parent or _read_parent_context(
+        parent_shadow=parent_shadow,
+        parent_appends=parent_appends,
     )
     parent = manifest["parent"]
     if (
-        parent.get("manifest_sha256") != parent_current.manifest_sha256
+        parent.get("shadow_contract_version")
+        != parent_context.root_shadow_contract_version
+        or parent.get("manifest_sha256") != parent_context.manifest_sha256
         or parent.get("logical_content_fingerprint")
-        != parent_current.manifest.get("logical_content_fingerprint")
-        or parent.get("as_of_session") != parent_current.manifest.get("as_of_session")
-        or parent.get("session_count") != parent_chain.session_count
+        != parent_context.manifest.get("logical_content_fingerprint")
+        or parent.get("as_of_session") != parent_context.manifest.get("as_of_session")
+        or parent.get("session_count") != parent_context.session_count
         or parent.get("source_contract_fingerprint")
-        != parent_chain.source_contract_fingerprint
+        != parent_context.source_contract_fingerprint
         or parent.get("final_chain_fingerprint")
-        != parent_chain.final_chain_fingerprint
+        != parent_context.final_chain_fingerprint
+        or tuple(manifest.get("universe_ids", ())) != parent_context.universe_ids
     ):
         raise CandidateSegmentedSessionCandidateError(
             "session candidate parent chain differs"

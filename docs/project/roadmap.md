@@ -46,8 +46,10 @@ Next:
    current-session candidate production from already validated calculation
    objects. ADR 0158 completes composition with the exact physically completed
    V1 audit into a 1.1 successor without cumulative semantic reconstruction.
-   Next prove repeated 1.1 generations and generalized parent reading, then
-   downstream compatibility, retention, and a periodic cold-audit policy. Do
+   ADR 0159 proves two ordered 1.1 generations and generalized cold parent
+   reading. Next define an immutable exact chain-head/checkpoint with CAS,
+   recovery, and periodic full-lineage verification so daily work need not
+   replay every append; then prove downstream compatibility and retention. Do
    not relabel its different history fingerprint as V1 or cut over the
    daily/publication path until all gates pass.
 5. Remove any remaining repeated evidence reconstruction only where the new
