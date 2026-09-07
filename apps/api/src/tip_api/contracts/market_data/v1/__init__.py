@@ -113,6 +113,18 @@ from tip_api.contracts.market_data.v1.universe_membership_knowledge_time import 
     build_universe_membership_knowledge_time_assessment,
     universe_membership_knowledge_time_fingerprint,
 )
+from tip_api.contracts.market_data.v1.universe_membership_publication import (
+    APPLY_PLAN_VERSION as UNIVERSE_MEMBERSHIP_APPLY_PLAN_VERSION,
+    PUBLICATION_VERSION as UNIVERSE_MEMBERSHIP_PUBLICATION_VERSION,
+    UniverseMembershipApplyPlanV1,
+    UniverseMembershipCanonicalPublicationV1,
+    UniverseMembershipPlanArtifactV1,
+    build_universe_membership_apply_plan,
+    build_universe_membership_canonical_publication,
+    universe_membership_apply_plan_fingerprint,
+    universe_membership_candidate_inventory_fingerprint,
+    universe_membership_publication_fingerprint,
+)
 
 __all__ = [
     "EodPriceBarV1",
@@ -204,4 +216,14 @@ __all__ = [
     "UniverseMembershipKnowledgeTimeAssessmentV1",
     "build_universe_membership_knowledge_time_assessment",
     "universe_membership_knowledge_time_fingerprint",
+    "UNIVERSE_MEMBERSHIP_APPLY_PLAN_VERSION",
+    "UNIVERSE_MEMBERSHIP_PUBLICATION_VERSION",
+    "UniverseMembershipApplyPlanV1",
+    "UniverseMembershipCanonicalPublicationV1",
+    "UniverseMembershipPlanArtifactV1",
+    "build_universe_membership_apply_plan",
+    "build_universe_membership_canonical_publication",
+    "universe_membership_apply_plan_fingerprint",
+    "universe_membership_candidate_inventory_fingerprint",
+    "universe_membership_publication_fingerprint",
 ]

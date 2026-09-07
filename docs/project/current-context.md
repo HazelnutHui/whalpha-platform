@@ -181,6 +181,17 @@ The other historical-source sessions remain outcome-only by source policy. No
 result is canonical Membership, Historical Coverage, a performance claim, or
 permission to fill 8/13 and 8/19.
 
+ADR 0152 adds the next no-write boundary. The owner-only 9/4 plan binds the
+exact two Membership files, the prospective logical completion marker, both
+absent targets, and `/data` fingerprint
+`a49348fc48219771d96ddc8bafed4fc3d5b32774ac61e45f102eef4fc0bb4f56`.
+It proposes 3 files / 463,460 bytes; plan SHA-256 is
+`67cf92606ddc5a314a30df304d568f93c7c051d09925d89b81f3b20a964833c8`
+and logical fingerprint is
+`57a59eaf9bfe0b44ba3cf2257e710a59c8f90b6a93b7c34d34dd064bf77c30c4`.
+`apply_authorized=false`; canonical Membership and its last marker are still
+absent. A real 9/3 attempt was rejected before plan creation.
+
 The aggregate-only inactive lifecycle census for 2026-07-16 reached its hard
 20-page / 20,000-result boundary with another page still present. All rows had
 `active=false`; 19,565 exposed `delisted_utc`, but last tradable session,
@@ -352,9 +363,10 @@ separately bounded.
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The
    timing gate admits only the direct 9/4 result for next-open use and keeps the
-   historical-source sessions outcome-only. Design an inventory-bound
-   canonical Membership plan around that gate; keep 8/13 and 8/19 unbound and
-   never approximate an absent session.
+   historical-source sessions outcome-only. The inventory-bound 9/4 canonical
+   plan is proven but not applied. Next implement its recoverable physical-
+   first/marker-last executor and formal canonical reader; keep 8/13 and 8/19
+   unbound and never approximate an absent session.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

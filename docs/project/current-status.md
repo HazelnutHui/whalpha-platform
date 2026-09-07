@@ -176,6 +176,14 @@ and the 301 historical-source sessions remain retrospective mechanics—not
 historical knowledge-time or research authority. The one separately assessed
 9/4 forward-usable partition does not turn that historical set into Coverage.
 
+ADR 0152 now binds the eligible 9/4 partition into a no-write canonical Apply
+plan. It proposes the two exact Membership files plus one logical publication
+marker written last: 3 files / 463,460 bytes, plan SHA-256
+`67cf92606ddc5a314a30df304d568f93c7c051d09925d89b81f3b20a964833c8`,
+and plan logical fingerprint
+`57a59eaf9bfe0b44ba3cf2257e710a59c8f90b6a93b7c34d34dd064bf77c30c4`.
+The plan is not authorized or applied; both canonical targets remain absent.
+
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
 price history. The first intended registered study remains Strong-Leader

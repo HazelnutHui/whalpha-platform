@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0152](0152-plan-membership-with-a-last-publication-marker.md): bind signal-eligible Membership bytes, timing evidence, target absence, and `/data` CAS in a no-write plan whose future logical marker must be published last.
+
 - [ADR 0151](0151-gate-membership-by-next-open-knowledge-time.md): separate close-bounded market information from next-open source/evaluation timing, and keep retrospective Membership out of signal-eligible coverage.
 
 - [ADR 0149](0149-separate-sealed-and-operational-freshness.md): preserve immutable publication-time Snapshot freshness while separately reporting current canonical and active-Snapshot operational freshness.

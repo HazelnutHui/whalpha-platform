@@ -103,11 +103,12 @@ Current membership implementation sequence:
 8. **Disconnected Membership mechanics and timing boundary complete:** V3
    evidence covers 5,611,048 decisions for all 302 source-available dates.
    ADR 0151 admits the direct 9/4 partition for next-open signal use while
-   retaining all 301 historical-source partitions as outcome-only. Next design
-   an inventory-bound, formally reread daily Membership publication plan that
-   cannot admit outcome-only evidence. Keep the two source gaps explicit and
-   do not publish Historical Coverage until every admitted session has a
-   transitive eligibility assessment.
+   retaining all 301 historical-source partitions as outcome-only. ADR 0152's
+   inventory-bound 9/4 publication plan is now proven and cannot admit
+   outcome-only evidence. Next implement and test its recoverable physical-
+   first/marker-last Apply and governed canonical reader. Keep the two source
+   gaps explicit and do not publish Historical Coverage until every admitted
+   session has a transitive eligibility assessment.
 
 ## Priority 3 — First real strategy research
 

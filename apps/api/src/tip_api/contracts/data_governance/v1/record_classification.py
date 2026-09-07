@@ -494,6 +494,14 @@ STANDARD_DATA_FAMILY_REGISTRY_V1 = tuple(
                 "Explicit included, excluded, or quarantined daily decision.",
                 RetentionClass.CANONICAL_NO_AUTO_EXPIRY,
             ),
+            _family(
+                "universe_membership_publication",
+                DataLayer.COVERAGE_MANIFEST,
+                StableKeyKind.DATASET_SCOPE,
+                "methodology, session, next-open timing policy",
+                "Logical completion marker for signal-eligible daily Membership.",
+                RetentionClass.CANONICAL_NO_AUTO_EXPIRY,
+            ),
         ),
         key=lambda item: item.data_family_id,
     )

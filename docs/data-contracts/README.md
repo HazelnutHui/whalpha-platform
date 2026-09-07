@@ -1,6 +1,7 @@
 # Data Contracts
 
 - [Universe Membership Knowledge Time V1](universe-membership-knowledge-time-v1.md)
+- [Universe Membership Canonical Publication V1](universe-membership-canonical-publication-v1.md)
 
 - [Daily EOD Scheduler Runtime Plan V1](daily-eod-scheduler-runtime-plan-v1.md)
 
@@ -36,6 +37,7 @@
 - [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
 - [Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
 - [Universe Membership Knowledge Time V1](universe-membership-knowledge-time-v1.md)
+- [Universe Membership Canonical Publication V1](universe-membership-canonical-publication-v1.md)
 
 - [Security Classification V1](security-classification-v1.md)
 

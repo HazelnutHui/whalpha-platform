@@ -87,6 +87,7 @@ def test_standard_registry_is_unique_ordered_and_covers_core_data_families() -> 
         "eod_price_bar",
         "point_in_time_identity",
         "universe_membership",
+        "universe_membership_publication",
         "corporate_action",
         "instrument_lifecycle",
         "adjustment_ledger",

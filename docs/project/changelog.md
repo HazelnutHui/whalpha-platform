@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-06 — Plan signal-eligible canonical Membership
+
+- Accepted ADR 0152 and added immutable canonical Membership completion-marker
+  and no-write Apply-plan contracts. Raw Membership directory presence is not
+  canonical completion; a future Apply must publish physical bytes first and
+  the source/timing-bound logical marker last.
+- Planning reruns the formal Membership and Identity reads, requires ADR-0151
+  `signal_eligible` status, binds both candidate files, the prospective marker,
+  both absent targets, and the exact `/data` inventory. Outcome-only evidence
+  is rejected before a plan file is written.
+- The real 9/4 plan is 5,184 bytes at
+  `/tmp/whalpha-membership-20260904-signal-eligible.plan.json`, mode `0600`,
+  SHA-256
+  `67cf92606ddc5a314a30df304d568f93c7c051d09925d89b81f3b20a964833c8`,
+  and logical fingerprint
+  `57a59eaf9bfe0b44ba3cf2257e710a59c8f90b6a93b7c34d34dd064bf77c30c4`.
+  It proposes 3 files / 463,460 bytes against unchanged `/data` fingerprint
+  `a49348fc48219771d96ddc8bafed4fc3d5b32774ac61e45f102eef4fc0bb4f56`.
+- A real corrected-9/3 planning attempt was rejected because the partition is
+  outcome-only; its requested plan path remains absent. The 9/4 plan keeps
+  `apply_authorized=false`, and no canonical Membership, Historical Coverage,
+  analytics, Production, deployment, or scheduler state changed.
+- Verification completed with `2104 passed, 2 warnings` across the full API
+  suite; the warnings are the pre-existing Python `crypt` and Starlette/httpx
+  deprecations.
+
 ## 2026-09-06 — Gate Membership by next-open knowledge time
 
 - Accepted ADR 0151 and implemented an immutable offline timing assessment
