@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-09-07 — Prove one-session Candidate append and recovery
+
+- Accepted ADR 0156 and added non-authoritative segmented append and append-
+  session contracts. One later V1 audit may extend the exact parent ledger by
+  one session only; calculation, parameter, Universe, parent-chain, source-
+  audit, physical, logical, count, Oracle, and per-session projection bindings
+  fail closed.
+- Added owner-only atomic staging, idempotent reuse, exact completed-stage
+  recovery, and tests for unchanged parent bytes, non-successor rejection,
+  tampering, and simulated final-delivery interruption. Ambiguous partial
+  evidence is preserved rather than deleted.
+- The real ten-session 9/3 parent extended through 9/4 with one
+  86,610,428-byte segment and a 3,248-byte manifest. The append logical
+  fingerprint is
+  `dd3563f48370c81242f87f376f7156ed67a06e16a6dafdd82ffe786902cae630`;
+  the new chain tip is
+  `f68d55c17160ab4db98d26f4da0a0742568143e79e2910c804d9c04e306a793d`.
+  The parent manifest stayed at
+  `798fd208401fde9d85a5914dcb1dbe61c7cf491941b4add71cc5efbbcc7eb89f`,
+  and no staging residue remains.
+- Initial construction took 8 minutes 37 seconds / 13,073,092 KiB peak RSS.
+  Independent cold equivalence took 8 minutes 30 seconds / 13,073,164 KiB,
+  found zero mismatches, and produced fingerprint
+  `0416ec637c00812e5d99d29e5e2745277d32bb3460db2c035bed836b5d64a202`.
+  These intentionally heavy V1 rereads are correctness evidence, not a hot-
+  append performance claim.
+- No network, `/data`, Production, Candidate formula, parameter, score, rank,
+  state, MI, Snapshot, publication, scheduler, bundle, or deployment changed.
+- Focused segmented append/shadow tests passed, and the complete API regression
+  finished at `2131 passed, 2 warnings`; both warnings are the unchanged Python
+  `crypt` and Starlette/httpx deprecations.
+
 ## 2026-09-07 — Version segmented Candidate chain identity
 
 - Accepted ADR 0155 and added

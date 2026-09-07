@@ -77,6 +77,12 @@ cumulative `state_history_fingerprint` and must never be written into that
 field. The identity has no calculation, publication, scheduler, or Production
 authority; append and cutover require later proofs and decisions.
 
+ADR 0156 adds a separate one-session append-package contract. It leaves this
+parent shadow byte-unchanged, extends the chain tip, and compares prior data by
+exact per-session projections rather than rewriting old raw-fact ordinals.
+The append remains non-authoritative and does not change this V1 shadow
+contract.
+
 ## Explicit non-authority
 
 The shadow cannot feed daily planning, MI, Snapshot, bundle, deployment, UI,

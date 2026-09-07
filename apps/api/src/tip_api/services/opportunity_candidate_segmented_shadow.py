@@ -397,57 +397,33 @@ def build_candidate_segmented_chain_identity(
     """Assign a versioned hash-chain identity without reusing V1 history hashes."""
 
     current = read_candidate_segmented_shadow_current(output_dir)
-    manifest = current.manifest
-    source_contract = {
-        key: manifest["source_contract"].get(key)
-        for key in (
-            "candidate_contract_version",
-            "candidate_calculation_version",
-            "candidate_parameter_set_id",
-            "candidate_parameter_fingerprint",
-            "candidate_state_contract_version",
-            "candidate_state_calculation_version",
-            "candidate_state_parameter_set_id",
-            "candidate_state_parameter_fingerprint",
-            "universe_ids",
-        )
-    }
-    if source_contract["universe_ids"] != manifest.get("universe_ids"):
-        raise CandidateSegmentedShadowError(
-            "segmented chain source Universe identity differs"
-        )
-    source_contract_fingerprint = v1._fingerprint(source_contract)
+    return _chain_identity_from_validated_manifest(current.manifest)
+
+
+def _chain_identity_from_validated_manifest(
+    manifest: Mapping[str, Any],
+) -> CandidateSegmentedChainIdentity:
+    """Build the chain after a caller has formally validated shadow custody."""
+
+    source_contract_fingerprint = candidate_segmented_source_contract_fingerprint(
+        manifest
+    )
     prior: str | None = None
     nodes: list[CandidateSegmentedChainNodeIdentity] = []
     for ordinal, descriptor in enumerate(manifest["segments"]):
         session = str(descriptor["as_of_session"])
         segment_logical = str(descriptor["logical_content_fingerprint"])
         segment_physical = str(descriptor["sha256"])
-        node_logical = {
-            "contract_version": CHAIN_IDENTITY_CONTRACT,
-            "session_ordinal": ordinal,
-            "as_of_session": session,
-            "prior_chain_fingerprint": prior,
-            "source_contract_fingerprint": source_contract_fingerprint,
-            "source_audit_logical_fingerprint": manifest[
-                "source_audit_logical_fingerprint"
-            ],
-            "segment": {
-                key: descriptor[key]
-                for key in (
-                    "logical_content_fingerprint",
-                    "sha256",
-                    "candidate_batch_count",
-                    "state_record_count",
-                    "transition_record_count",
-                    "raw_fact_count",
-                    "normalization_record_count",
-                    "risk_result_count",
-                    "oracle_present",
-                )
-            },
-        }
-        chain_fingerprint = v1._fingerprint(node_logical)
+        chain_fingerprint = candidate_segmented_chain_node_fingerprint(
+            session_ordinal=ordinal,
+            as_of_session=session,
+            prior_chain_fingerprint=prior,
+            source_contract_fingerprint=source_contract_fingerprint,
+            source_audit_logical_fingerprint=str(
+                manifest["source_audit_logical_fingerprint"]
+            ),
+            segment_descriptor=descriptor,
+        )
         nodes.append(
             CandidateSegmentedChainNodeIdentity(
                 as_of_session=session,
@@ -500,6 +476,96 @@ def build_candidate_segmented_chain_identity(
         nodes=tuple(nodes),
         final_chain_fingerprint=prior,
         logical_content_fingerprint=v1._fingerprint(logical),
+    )
+
+
+def candidate_segmented_source_contract_fingerprint(
+    manifest: Mapping[str, Any],
+) -> str:
+    """Fingerprint the calculation contract shared by every chain node."""
+
+    source = manifest.get("source_contract")
+    if not isinstance(source, Mapping):
+        raise CandidateSegmentedShadowError(
+            "segmented chain source contract is malformed"
+        )
+    source_contract = {
+        key: source.get(key)
+        for key in (
+            "candidate_contract_version",
+            "candidate_calculation_version",
+            "candidate_parameter_set_id",
+            "candidate_parameter_fingerprint",
+            "candidate_state_contract_version",
+            "candidate_state_calculation_version",
+            "candidate_state_parameter_set_id",
+            "candidate_state_parameter_fingerprint",
+            "universe_ids",
+        )
+    }
+    if source_contract["universe_ids"] != manifest.get("universe_ids"):
+        raise CandidateSegmentedShadowError(
+            "segmented chain source Universe identity differs"
+        )
+    required = tuple(key for key in source_contract if key != "universe_ids")
+    if (
+        not isinstance(source_contract["universe_ids"], list)
+        or not source_contract["universe_ids"]
+        or any(not isinstance(source_contract[key], str) or not source_contract[key] for key in required)
+    ):
+        raise CandidateSegmentedShadowError(
+            "segmented chain source contract is incomplete"
+        )
+    return v1._fingerprint(source_contract)
+
+
+def candidate_segmented_chain_node_fingerprint(
+    *,
+    session_ordinal: int,
+    as_of_session: str,
+    prior_chain_fingerprint: str | None,
+    source_contract_fingerprint: str,
+    source_audit_logical_fingerprint: str,
+    segment_descriptor: Mapping[str, Any],
+) -> str:
+    """Bind one immutable segment to the prior chain identity."""
+
+    if (
+        type(session_ordinal) is not int
+        or session_ordinal < 0
+        or not as_of_session
+        or (prior_chain_fingerprint is not None and not _is_sha256(prior_chain_fingerprint))
+        or not _is_sha256(source_contract_fingerprint)
+        or not _is_sha256(source_audit_logical_fingerprint)
+    ):
+        raise CandidateSegmentedShadowError(
+            "segmented chain node identity is malformed"
+        )
+    descriptor_keys = (
+        "logical_content_fingerprint",
+        "sha256",
+        "candidate_batch_count",
+        "state_record_count",
+        "transition_record_count",
+        "raw_fact_count",
+        "normalization_record_count",
+        "risk_result_count",
+        "oracle_present",
+    )
+    if any(key not in segment_descriptor for key in descriptor_keys):
+        raise CandidateSegmentedShadowError(
+            "segmented chain segment descriptor is incomplete"
+        )
+    return v1._fingerprint(
+        {
+            "contract_version": CHAIN_IDENTITY_CONTRACT,
+            "session_ordinal": session_ordinal,
+            "as_of_session": as_of_session,
+            "prior_chain_fingerprint": prior_chain_fingerprint,
+            "source_contract_fingerprint": source_contract_fingerprint,
+            "source_audit_logical_fingerprint": source_audit_logical_fingerprint,
+            "segment": {key: segment_descriptor[key] for key in descriptor_keys},
+        }
     )
 
 
@@ -659,13 +725,14 @@ def _validate_segment_records(
     oracle_fingerprint: str,
     source_audit_logical_fingerprint: str,
     universe_ids: tuple[str, ...],
+    expected_contract: str = SHADOW_CONTRACT,
 ) -> tuple[
     tuple[OpportunityCandidateBatchV1, ...],
     tuple[OpportunityCandidateStateRecordV1, ...],
     tuple[CandidateRiskModeResultV1, ...],
 ]:
     if (
-        payload.get("contract_version") != SHADOW_CONTRACT
+        payload.get("contract_version") != expected_contract
         or payload.get("source_audit_logical_fingerprint")
         != source_audit_logical_fingerprint
         or tuple(payload.get("universe_ids", ())) != universe_ids

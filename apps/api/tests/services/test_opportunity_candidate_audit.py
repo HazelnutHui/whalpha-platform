@@ -13,6 +13,7 @@ from uuid import UUID, uuid5
 
 import pytest
 import tip_api.services.opportunity_candidate_audit as candidate_audit
+import tip_api.services.opportunity_candidate_segmented_append as candidate_append
 
 from tip_api.services.opportunity_candidate_audit import (
     CANDIDATE_ARTIFACT_FILES,
@@ -57,6 +58,14 @@ from tip_api.services.opportunity_candidate_segmented_shadow import (
     read_candidate_segmented_shadow,
     read_candidate_segmented_shadow_current,
     write_candidate_segmented_shadow,
+)
+from tip_api.services.opportunity_candidate_segmented_append import (
+    APPEND_MANIFEST,
+    APPEND_SEGMENT,
+    CandidateSegmentedAppendError,
+    read_candidate_segmented_append,
+    verify_candidate_segmented_append_cold_equivalence,
+    write_candidate_segmented_append,
 )
 
 
@@ -314,6 +323,64 @@ def _write_segmentable_source(target: Path) -> dict[str, object]:
     )
 
 
+def _write_segmentable_successor(target: Path) -> dict[str, object]:
+    previous, previous_batches, previous_states, _, _, _, previous_normalization = (
+        _inputs()
+    )
+    current = _shift_panel(previous, 1)
+    current_batches, current_risks, current_contexts = _actuals(current)
+    current_state_case = _state_case(current, current_batches[0])
+    current_oracle = compare_with_independent_candidate_oracle(
+        panel=current,
+        batches=current_batches,
+        regime_context_by_universe=current_contexts,
+        risk_results=current_risks,
+        state_cases=(current_state_case,),
+    )
+    previous_candidate = previous_batches[0].candidates[0]
+    current_candidate = current_batches[0].candidates[0]
+    current_normalization = [
+        {
+            "universe_id": batch.universe_id,
+            "as_of_session": batch.as_of_session,
+            "method": "inclusive_linear_type7_decimal",
+        }
+        for batch in reversed(current_batches)
+    ]
+    return write_opportunity_candidate_audit(
+        output_dir=target,
+        panels=(previous, current),
+        candidate_batches=(*previous_batches, *current_batches),
+        state_history=(*previous_states, *current_state_case.actual_records),
+        risk_results=current_risks,
+        oracle_comparison=current_oracle,
+        equivalence_flags={
+            "append_full_replay_match": True,
+            "restart_replay_match": True,
+            "future_prefix_stable": True,
+            "input_permutation_match": True,
+        },
+        raw_facts=(
+            {
+                "as_of_session": previous.as_of_session.isoformat(),
+                "universe_id": previous_batches[0].universe_id,
+                "instrument_id": str(previous_candidate.instrument_id),
+                "latest_price": previous_candidate.latest_price,
+            },
+            {
+                "as_of_session": current.as_of_session.isoformat(),
+                "universe_id": current_batches[0].universe_id,
+                "instrument_id": str(current_candidate.instrument_id),
+                "latest_price": current_candidate.latest_price,
+            },
+        ),
+        normalization_ledger=(*previous_normalization, *current_normalization),
+        generated_at=datetime(2026, 9, 5, tzinfo=UTC),
+        timings={"total": "0.2"},
+        peak_memory_kib=512,
+    )
+
+
 def test_segmented_shadow_round_trip_reconstructs_v1_business() -> None:
     source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
     target = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
@@ -443,6 +510,181 @@ def test_segmented_shadow_assigns_distinct_versioned_chain_identity() -> None:
     finally:
         shutil.rmtree(source, ignore_errors=True)
         shutil.rmtree(target, ignore_errors=True)
+
+
+def test_segmented_append_extends_one_session_without_mutating_parent() -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    successor = Path(
+        tempfile.mkdtemp(prefix="whalpha-segment-successor-", dir="/tmp")
+    )
+    parent = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    output = Path(tempfile.mkdtemp(prefix="whalpha-segment-append-", dir="/tmp"))
+    for path in (source, successor, parent, output):
+        shutil.rmtree(path)
+    try:
+        _write_segmentable_source(source)
+        successor_manifest = _write_segmentable_successor(successor)
+        parent_manifest = write_candidate_segmented_shadow(
+            source_audit=source,
+            output_dir=parent,
+        )
+        parent_bytes = {
+            path.relative_to(parent).as_posix(): path.read_bytes()
+            for path in parent.rglob("*")
+            if path.is_file()
+        }
+        parent_chain = build_candidate_segmented_chain_identity(parent)
+
+        manifest = write_candidate_segmented_append(
+            parent_shadow=parent,
+            source_audit=successor,
+            output_dir=output,
+        )
+        evidence = read_candidate_segmented_append(
+            parent_shadow=parent,
+            output_dir=output,
+        )
+        cold = verify_candidate_segmented_append_cold_equivalence(
+            parent_shadow=parent,
+            source_audit=successor,
+            output_dir=output,
+        )
+
+        assert manifest == evidence.manifest
+        assert manifest["parent"]["logical_content_fingerprint"] == parent_manifest[
+            "logical_content_fingerprint"
+        ]
+        assert manifest["source_audit"]["logical_content_fingerprint"] == (
+            successor_manifest["logical_content_fingerprint"]
+        )
+        assert manifest["session_ordinal"] == 1
+        assert manifest["chain_node"]["prior_chain_fingerprint"] == (
+            parent_chain.final_chain_fingerprint
+        )
+        assert manifest["chain_node"]["chain_fingerprint"] != (
+            parent_chain.final_chain_fingerprint
+        )
+        assert cold.parent_session_count == 1
+        assert cold.appended_session_count == 2
+        assert cold.mismatch_count == 0
+        assert cold.production_write_count == 0
+        assert cold.publication_authorized is False
+        assert {
+            path.relative_to(parent).as_posix(): path.read_bytes()
+            for path in parent.rglob("*")
+            if path.is_file()
+        } == parent_bytes
+        assert stat.S_IMODE(output.stat().st_mode) == 0o700
+        assert {path.name for path in output.iterdir()} == {
+            APPEND_MANIFEST,
+            APPEND_SEGMENT,
+        }
+        assert all(
+            stat.S_IMODE(path.stat().st_mode) == 0o400
+            for path in output.iterdir()
+        )
+        assert write_candidate_segmented_append(
+            parent_shadow=parent,
+            source_audit=successor,
+            output_dir=output,
+        ) == manifest
+    finally:
+        for path in (source, successor, parent, output):
+            shutil.rmtree(path, ignore_errors=True)
+        shutil.rmtree(
+            output.with_name(f".{output.name}.staging"),
+            ignore_errors=True,
+        )
+
+
+def test_segmented_append_recovers_completed_stage_after_delivery_interruption(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    successor = Path(
+        tempfile.mkdtemp(prefix="whalpha-segment-successor-", dir="/tmp")
+    )
+    parent = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    output = Path(tempfile.mkdtemp(prefix="whalpha-segment-append-", dir="/tmp"))
+    for path in (source, successor, parent, output):
+        shutil.rmtree(path)
+    stage = output.with_name(f".{output.name}.staging")
+    original_rename = candidate_append.os.rename
+
+    def interrupt_delivery(source_path, target_path):
+        if Path(source_path) == stage and Path(target_path) == output:
+            raise RuntimeError("simulated append delivery interruption")
+        return original_rename(source_path, target_path)
+
+    try:
+        _write_segmentable_source(source)
+        _write_segmentable_successor(successor)
+        write_candidate_segmented_shadow(source_audit=source, output_dir=parent)
+        monkeypatch.setattr(candidate_append.os, "rename", interrupt_delivery)
+        with pytest.raises(RuntimeError, match="delivery interruption"):
+            write_candidate_segmented_append(
+                parent_shadow=parent,
+                source_audit=successor,
+                output_dir=output,
+            )
+        assert stage.is_dir()
+        assert not output.exists()
+
+        monkeypatch.setattr(candidate_append.os, "rename", original_rename)
+        manifest = write_candidate_segmented_append(
+            parent_shadow=parent,
+            source_audit=successor,
+            output_dir=output,
+        )
+        assert manifest["completion_status"] == "completed"
+        assert output.is_dir()
+        assert not stage.exists()
+    finally:
+        for path in (source, successor, parent, output, stage):
+            shutil.rmtree(path, ignore_errors=True)
+
+
+def test_segmented_append_rejects_non_successor_and_tampering() -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    successor = Path(
+        tempfile.mkdtemp(prefix="whalpha-segment-successor-", dir="/tmp")
+    )
+    parent = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    output = Path(tempfile.mkdtemp(prefix="whalpha-segment-append-", dir="/tmp"))
+    for path in (source, successor, parent, output):
+        shutil.rmtree(path)
+    try:
+        _write_segmentable_source(source)
+        _write_segmentable_successor(successor)
+        write_candidate_segmented_shadow(source_audit=source, output_dir=parent)
+        with pytest.raises(CandidateSegmentedAppendError, match="exactly one"):
+            write_candidate_segmented_append(
+                parent_shadow=parent,
+                source_audit=source,
+                output_dir=output,
+            )
+
+        write_candidate_segmented_append(
+            parent_shadow=parent,
+            source_audit=successor,
+            output_dir=output,
+        )
+        segment = output / APPEND_SEGMENT
+        segment.chmod(0o600)
+        segment.write_bytes(segment.read_bytes() + b" ")
+        segment.chmod(0o400)
+        with pytest.raises(CandidateSegmentedAppendError, match="physical"):
+            read_candidate_segmented_append(
+                parent_shadow=parent,
+                output_dir=output,
+            )
+    finally:
+        for path in (source, successor, parent, output):
+            shutil.rmtree(path, ignore_errors=True)
+        shutil.rmtree(
+            output.with_name(f".{output.name}.staging"),
+            ignore_errors=True,
+        )
 
 
 def test_segmented_shadow_rejects_extra_file_and_non_tmp_output() -> None:
