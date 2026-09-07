@@ -50,7 +50,11 @@ unrelated services.
   3,700,330 rows. The two revised dates, 2026-08-13 and 2026-08-19, remain
   explicitly unbound. The 2026-09-04 daily source is exact, directly bound,
   and retained at its actual observation time.
-- `/data` contains 4,055 files / 2,008,560,616 bytes, with zero symlinks and
+- Canonical signal-eligible Membership now contains the 2026-09-04 partition:
+  19,964 decisions, eligible for the 2026-09-08 open.
+- `/data` contains 4,058 files / 2,009,024,076 bytes, with fingerprint
+  `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`,
+  zero symlinks, and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -171,10 +175,11 @@ An independent corrected five-session boundary completed 5/5 with zero
 external request or canonical write. The three unaffected dates have zero
 business-decision difference; 2026-09-03 changes only FAN in both Universes
 from false-collision quarantine to explicit ETF exclusion, and 2026-08-31 now
-adds 19,930 valid decisions. No Membership partition was published to `/data`,
-and the 301 historical-source sessions remain retrospective mechanics—not
-historical knowledge-time or research authority. The one separately assessed
-9/4 forward-usable partition does not turn that historical set into Coverage.
+adds 19,930 valid decisions. That corrected-boundary run did not publish its
+partitions to `/data`, and the 301 historical-source sessions remain
+retrospective mechanics—not historical knowledge-time or research authority.
+The separately assessed and now-published 9/4 forward-usable partition does not
+turn that historical set into Coverage.
 
 ADR 0152 now binds the eligible 9/4 partition into a no-write canonical Apply
 plan. It proposes the two exact Membership files plus one logical publication
@@ -182,12 +187,14 @@ marker written last: 3 files / 463,460 bytes, plan SHA-256
 `67cf92606ddc5a314a30df304d568f93c7c051d09925d89b81f3b20a964833c8`,
 and plan logical fingerprint
 `57a59eaf9bfe0b44ba3cf2257e710a59c8f90b6a93b7c34d34dd064bf77c30c4`.
-The plan is not authorized or applied; both canonical targets remain absent.
-ADR 0153 implements the separate exact-plan executor and canonical reader.
-Fixture fault injection proves physical-only non-completion, marker-last
-ordering, exact reuse, zero-write completed-state verification, and rejection
-of drift, corruption, marker-before-physical state, and staging residue. No
-real canonical Membership write has yet occurred.
+ADR 0153's separate exact-plan executor published the two physical files first
+and the one logical marker last: 3 files / 463,460 bytes, 19,964 formally read
+decisions, no overwrite/delete/network request, publication fingerprint
+`3f71cd40edd2ed6d7e215a95e0cb89c08c7e96dcb9a8fb543a4de34286c15518`,
+and post-state fingerprint
+`d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`.
+The separate postflight reused both exact targets and wrote zero files/bytes.
+Historical Coverage and research performance remain unauthorized.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical

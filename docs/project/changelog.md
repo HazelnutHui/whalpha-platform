@@ -10,8 +10,20 @@
   unrelated inventory drift, and staging residue fail closed without deleting
   ambiguous evidence.
 - Added the administrator Apply entry point and fixture fault-injection tests.
-  This implementation has not yet written the real 9/4 targets and does not
-  authorize Historical Coverage, strategy results, OCI, or deployment.
+  Exact real preflight then confirmed the unchanged plan, current-state
+  fingerprint, target absence, and zero staging residue.
+- Applied the exact 9/4 plan physical-first and marker-last: 3 files / 463,460
+  bytes, 19,964 formally reread decisions, publication fingerprint
+  `3f71cd40edd2ed6d7e215a95e0cb89c08c7e96dcb9a8fb543a4de34286c15518`,
+  marker SHA-256
+  `1aabc12560a0e7d0ed058c7a82aaa842e983bfd06e04595f8b1d560d94a4af09`,
+  and post-state `/data` fingerprint
+  `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`.
+  No network request, overwrite, or deletion occurred.
+- The separate recovery postflight reused both completed targets, wrote zero
+  files/bytes, and preserved the post-state fingerprint. Independent canonical
+  read and residue census passed. Historical Coverage, strategy results, OCI,
+  and deployment remain unchanged and unauthorized by this publication.
 - Verification completed with 36 focused checks and `2115 passed, 2 warnings`
   across the full API suite. The warnings remain the pre-existing Python
   `crypt` and Starlette/httpx deprecations.

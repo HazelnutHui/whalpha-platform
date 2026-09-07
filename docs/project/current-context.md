@@ -48,8 +48,9 @@ publication-time assertion as a third, explicitly named view.
 | Latest Identity fingerprint | `5eed9166d609cea7693aed324908427f113ab72c221921690bcbdc29f71727f7` |
 | Identity/EOD alignment | aligned on 2026-09-04 |
 | Canonical historical Identity source | 302 immutable source-observation partitions / 3,700,330 rows; 2 source sessions absent |
-| `/data` inventory | 4,055 files / 2,008,560,616 bytes |
-| `/data` inventory fingerprint | `a49348fc48219771d96ddc8bafed4fc3d5b32774ac61e45f102eef4fc0bb4f56` |
+| Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for 2026-09-08 open |
+| `/data` inventory | 4,058 files / 2,009,024,076 bytes |
+| `/data` inventory fingerprint | `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -177,9 +178,9 @@ precede the 9/8 XNYS open; assessment fingerprint is
 The corrected 9/3 historical partition is `outcome_reconciliation_only`, with
 assessment fingerprint
 `be8b100a0bf595d31032220d62325a909fe9488ef060b313a83d8813279463ce`.
-The other historical-source sessions remain outcome-only by source policy. No
-result is canonical Membership, Historical Coverage, a performance claim, or
-permission to fill 8/13 and 8/19.
+The other historical-source sessions remain outcome-only by source policy.
+Only the direct 9/4 result is now canonical Membership; it is not Historical
+Coverage, a performance claim, or permission to fill 8/13 and 8/19.
 
 ADR 0152 adds the next no-write boundary. The owner-only 9/4 plan binds the
 exact two Membership files, the prospective logical completion marker, both
@@ -189,10 +190,17 @@ It proposes 3 files / 463,460 bytes; plan SHA-256 is
 `67cf92606ddc5a314a30df304d568f93c7c051d09925d89b81f3b20a964833c8`
 and logical fingerprint is
 `57a59eaf9bfe0b44ba3cf2257e710a59c8f90b6a93b7c34d34dd064bf77c30c4`.
-`apply_authorized=false`; canonical Membership and its last marker are still
-absent. A real 9/3 attempt was rejected before plan creation. ADR 0153 now
-implements the exact-plan executor, physical-first/marker-last recovery, and
-the governed canonical reader; only fixture targets have been exercised.
+`apply_authorized=false` records that the plan was evidence rather than its own
+authorization. Under the separate exact execution boundary in ADR 0153, the
+physical partition and last marker were published and formally reread: 19,964
+decisions, publication fingerprint
+`3f71cd40edd2ed6d7e215a95e0cb89c08c7e96dcb9a8fb543a4de34286c15518`,
+marker SHA-256
+`1aabc12560a0e7d0ed058c7a82aaa842e983bfd06e04595f8b1d560d94a4af09`,
+and post-state fingerprint
+`d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`.
+The zero-write postflight reused both targets and wrote zero files/bytes. A real
+9/3 attempt remains rejected before plan creation.
 
 The aggregate-only inactive lifecycle census for 2026-07-16 reached its hard
 20-page / 20,000-result boundary with another page still present. All rows had
@@ -366,10 +374,10 @@ separately bounded.
    Disconnected Membership mechanics also cover all 302 available dates. The
    timing gate admits only the direct 9/4 result for next-open use and keeps the
    historical-source sessions outcome-only. The inventory-bound 9/4 canonical
-   plan is proven but not applied. Its recoverable executor and governed reader
-   are implemented and fixture-tested; next complete review and exact real
-   Apply/postflight. Keep 8/13 and 8/19 unbound and never approximate an absent
-   session.
+   Membership and its final marker are now published, independently read, and
+   zero-write postflight verified. Next define the governed daily Membership
+   continuation without promoting retrospective sessions. Keep 8/13 and 8/19
+   unbound and never approximate an absent session.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

@@ -57,8 +57,13 @@ It never deletes ambiguous residue.
 - An interruption while a staging directory exists remains fail-closed and
   requires explicit operator diagnosis; recovery does not silently delete it.
 - Publication authorizes neither Historical Coverage nor performance claims.
-- Implementation and fixture fault-injection do not themselves authorize or
-  perform the real 2026-09-04 `/data` transition.
+- The separately reviewed 2026-09-04 plan was applied exactly: 3 files /
+  463,460 bytes and 19,964 formally reread decisions. The post-state inventory
+  fingerprint is
+  `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`.
+- A separate `verify_then_complete` postflight reused both targets and wrote
+  zero files/bytes. Publication fingerprint is
+  `3f71cd40edd2ed6d7e215a95e0cb89c08c7e96dcb9a8fb543a4de34286c15518`.
 
 ## Alternatives Considered
 

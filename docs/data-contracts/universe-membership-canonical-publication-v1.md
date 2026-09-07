@@ -3,7 +3,9 @@
 ## Status
 
 Apply plan, physical-first/marker-last executor, recovery, and canonical reader
-are implemented. The real 2026-09-04 Apply has not yet been executed.
+are implemented. The real 2026-09-04 partition and marker are published and
+zero-write postflight verified. This is one signal-eligible session, not
+Historical Coverage or research-performance authorization.
 
 ## Completion Rule
 

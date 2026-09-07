@@ -100,16 +100,16 @@ Current membership implementation sequence:
    unbound because the reacquired provider revisions are not equal to accepted
    same-day Identity. Never force approximate equivalence, project current
    Activation backward, or silently fill historical source.
-8. **Disconnected Membership mechanics and timing boundary complete:** V3
+8. **First canonical signal-eligible Membership complete:** V3
    evidence covers 5,611,048 decisions for all 302 source-available dates.
    ADR 0151 admits the direct 9/4 partition for next-open signal use while
    retaining all 301 historical-source partitions as outcome-only. ADR 0152's
    inventory-bound 9/4 publication plan is now proven and cannot admit
-   outcome-only evidence. Its recoverable physical-first/marker-last Apply and
-   governed canonical reader are implemented and fixture-tested. Next complete
-   review, exact 9/4 Apply, and zero-write postflight. Keep the two source gaps
-   explicit and do not publish Historical Coverage until every admitted
-   session has a transitive eligibility assessment.
+   outcome-only evidence. ADR 0153's recoverable physical-first/marker-last
+   Apply published the exact 9/4 partition; governed read and zero-write
+   postflight passed. Next define the daily continuation path. Keep the two
+   source gaps explicit and do not publish Historical Coverage until every
+   admitted session has a transitive eligibility assessment.
 
 ## Priority 3 — First real strategy research
 
