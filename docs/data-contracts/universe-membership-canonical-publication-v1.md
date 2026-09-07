@@ -2,8 +2,8 @@
 
 ## Status
 
-Apply plan implemented and proven on real 2026-09-04 candidate evidence. Apply
-and canonical publication are not yet implemented or executed.
+Apply plan, physical-first/marker-last executor, recovery, and canonical reader
+are implemented. The real 2026-09-04 Apply has not yet been executed.
 
 ## Completion Rule
 
@@ -36,11 +36,13 @@ inventory, target absence, prospective publication-marker bytes, total file
 and byte change, and the complete timing assessment. It rejects
 `outcome_reconciliation_only` input before any plan file is created.
 
-The plan is no-write with respect to canonical data. A future Apply requires
-its own exact plan-file hash, logical fingerprint, current-state fingerprint,
-shared lock, network prohibition, recoverable physical-first/marker-last
-ordering, full formal reread, and post-state inventory proof.
+The plan is no-write with respect to canonical data. Apply requires its own
+exact plan-file hash, logical fingerprint, current-state fingerprint, shared
+lock, network prohibition, recoverable physical-first/marker-last ordering,
+full formal reread, and post-state inventory proof.
 
 ## Administrator Entry Point
 
 `scripts/admin/plan-universe-membership-apply.sh`
+
+`scripts/admin/apply-universe-membership-plan.sh`

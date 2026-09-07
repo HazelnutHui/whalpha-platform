@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0153](0153-publish-membership-physical-first-marker-last.md): publish exact Membership physical bytes first and the eligibility marker last, with fail-closed recovery and a governed canonical reader.
+
 - [ADR 0152](0152-plan-membership-with-a-last-publication-marker.md): bind signal-eligible Membership bytes, timing evidence, target absence, and `/data` CAS in a no-write plan whose future logical marker must be published last.
 
 - [ADR 0151](0151-gate-membership-by-next-open-knowledge-time.md): separate close-bounded market information from next-open source/evaluation timing, and keep retrospective Membership out of signal-eligible coverage.

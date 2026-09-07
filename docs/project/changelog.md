@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-07 — Implement recoverable canonical Membership publication
+
+- Accepted ADR 0153 and implemented exact-plan-bound, network-prohibited
+  physical-first/marker-last Apply plus a canonical reader that refuses raw
+  Membership without its completion marker.
+- Added explicit `verify_then_complete` recovery for exact physical-only and
+  already-complete states. Corruption, marker-before-physical state,
+  unrelated inventory drift, and staging residue fail closed without deleting
+  ambiguous evidence.
+- Added the administrator Apply entry point and fixture fault-injection tests.
+  This implementation has not yet written the real 9/4 targets and does not
+  authorize Historical Coverage, strategy results, OCI, or deployment.
+- Verification completed with 36 focused checks and `2115 passed, 2 warnings`
+  across the full API suite. The warnings remain the pre-existing Python
+  `crypt` and Starlette/httpx deprecations.
+
 ## 2026-09-06 — Plan signal-eligible canonical Membership
 
 - Accepted ADR 0152 and added immutable canonical Membership completion-marker

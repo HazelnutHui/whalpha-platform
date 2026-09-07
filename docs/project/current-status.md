@@ -183,6 +183,11 @@ marker written last: 3 files / 463,460 bytes, plan SHA-256
 and plan logical fingerprint
 `57a59eaf9bfe0b44ba3cf2257e710a59c8f90b6a93b7c34d34dd064bf77c30c4`.
 The plan is not authorized or applied; both canonical targets remain absent.
+ADR 0153 implements the separate exact-plan executor and canonical reader.
+Fixture fault injection proves physical-only non-completion, marker-last
+ordering, exact reuse, zero-write completed-state verification, and rejection
+of drift, corruption, marker-before-physical state, and staging residue. No
+real canonical Membership write has yet occurred.
 
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical

@@ -105,9 +105,10 @@ Current membership implementation sequence:
    ADR 0151 admits the direct 9/4 partition for next-open signal use while
    retaining all 301 historical-source partitions as outcome-only. ADR 0152's
    inventory-bound 9/4 publication plan is now proven and cannot admit
-   outcome-only evidence. Next implement and test its recoverable physical-
-   first/marker-last Apply and governed canonical reader. Keep the two source
-   gaps explicit and do not publish Historical Coverage until every admitted
+   outcome-only evidence. Its recoverable physical-first/marker-last Apply and
+   governed canonical reader are implemented and fixture-tested. Next complete
+   review, exact 9/4 Apply, and zero-write postflight. Keep the two source gaps
+   explicit and do not publish Historical Coverage until every admitted
    session has a transitive eligibility assessment.
 
 ## Priority 3 — First real strategy research

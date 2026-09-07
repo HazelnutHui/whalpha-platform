@@ -49,6 +49,7 @@ class UniverseMembershipApplyPlanEvidence:
 
 
 InventoryReader = Callable[[Path], str]
+RecoveryInventoryReader = Callable[[Path, tuple[Path, ...]], str]
 
 
 def build_universe_membership_apply_plan(
@@ -167,7 +168,9 @@ def read_universe_membership_apply_plan(
     *,
     plan_path: Path,
     approved_plan_sha256: str | None = None,
+    verify_then_complete: bool = False,
     inventory_reader: InventoryReader = inventory_fingerprint,
+    recovery_inventory_reader: RecoveryInventoryReader | None = None,
 ) -> UniverseMembershipApplyPlanEvidence:
     """Revalidate the plan, source bytes, timing gate, targets, and CAS state."""
 
@@ -243,9 +246,26 @@ def read_universe_membership_apply_plan(
         raise UniverseMembershipApplyPlanError(
             "Membership publication marker changed after planning"
         )
-    _require_absent_target(canonical_root, target_membership)
-    _require_absent_target(canonical_root, target_publication)
-    if inventory_reader(canonical_root) != plan.expected_current_state_fingerprint:
+    if verify_then_complete:
+        _require_recoverable_targets(
+            canonical_root,
+            target_membership,
+            target_publication,
+        )
+        recovery_reader = (
+            recovery_inventory_reader
+            if recovery_inventory_reader is not None
+            else _recovery_inventory_fingerprint
+        )
+        current_inventory = recovery_reader(
+            canonical_root,
+            _recovery_excluded_paths(plan),
+        )
+    else:
+        _require_absent_target(canonical_root, target_membership)
+        _require_absent_target(canonical_root, target_publication)
+        current_inventory = inventory_reader(canonical_root)
+    if current_inventory != plan.expected_current_state_fingerprint:
         raise UniverseMembershipApplyPlanError(
             "canonical inventory changed after Membership planning"
         )
@@ -302,6 +322,46 @@ def _require_absent_target(root: Path, target: Path) -> None:
         raise UniverseMembershipApplyPlanError(
             "Membership Apply target is no longer absent"
         )
+
+
+def _require_recoverable_targets(
+    root: Path,
+    membership: Path,
+    publication: Path,
+) -> None:
+    for target in (membership, publication):
+        _reject_symlink_chain(root, target)
+        if os.path.lexists(target) and (
+            target.is_symlink() or not target.is_dir()
+        ):
+            raise UniverseMembershipApplyPlanError(
+                "Membership recovery target is unsafe"
+            )
+    if os.path.lexists(publication) and not os.path.lexists(membership):
+        raise UniverseMembershipApplyPlanError(
+            "Membership publication marker exists without physical Membership"
+        )
+
+
+def _recovery_excluded_paths(
+    plan: UniverseMembershipApplyPlanV1,
+) -> tuple[Path, ...]:
+    membership = Path(plan.target_membership_partition)
+    publication = Path(plan.target_publication_partition)
+    suffix = plan.logical_fingerprint[:16]
+    return (
+        membership,
+        publication,
+        membership.parent / f".{membership.name}.staging.{suffix}",
+        publication.parent / f".{publication.name}.staging.{suffix}",
+    )
+
+
+def _recovery_inventory_fingerprint(
+    root: Path,
+    targets: tuple[Path, ...],
+) -> str:
+    return inventory_fingerprint(root, exclude_prefixes=targets)
 
 
 def _reject_symlink_chain(root: Path, target: Path) -> None:

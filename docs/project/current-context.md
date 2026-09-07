@@ -190,7 +190,9 @@ It proposes 3 files / 463,460 bytes; plan SHA-256 is
 and logical fingerprint is
 `57a59eaf9bfe0b44ba3cf2257e710a59c8f90b6a93b7c34d34dd064bf77c30c4`.
 `apply_authorized=false`; canonical Membership and its last marker are still
-absent. A real 9/3 attempt was rejected before plan creation.
+absent. A real 9/3 attempt was rejected before plan creation. ADR 0153 now
+implements the exact-plan executor, physical-first/marker-last recovery, and
+the governed canonical reader; only fixture targets have been exercised.
 
 The aggregate-only inactive lifecycle census for 2026-07-16 reached its hard
 20-page / 20,000-result boundary with another page still present. All rows had
@@ -364,9 +366,10 @@ separately bounded.
    Disconnected Membership mechanics also cover all 302 available dates. The
    timing gate admits only the direct 9/4 result for next-open use and keeps the
    historical-source sessions outcome-only. The inventory-bound 9/4 canonical
-   plan is proven but not applied. Next implement its recoverable physical-
-   first/marker-last executor and formal canonical reader; keep 8/13 and 8/19
-   unbound and never approximate an absent session.
+   plan is proven but not applied. Its recoverable executor and governed reader
+   are implemented and fixture-tested; next complete review and exact real
+   Apply/postflight. Keep 8/13 and 8/19 unbound and never approximate an absent
+   session.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
