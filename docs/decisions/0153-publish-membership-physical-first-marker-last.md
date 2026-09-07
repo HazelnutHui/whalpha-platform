@@ -64,6 +64,8 @@ It never deletes ambiguous residue.
 - A separate `verify_then_complete` postflight reused both targets and wrote
   zero files/bytes. Publication fingerprint is
   `3f71cd40edd2ed6d7e215a95e0cb89c08c7e96dcb9a8fb543a4de34286c15518`.
+- Current-context report 1.6 consumes the governed reader rather than raw
+  directory presence and therefore reports the exact 1/304 canonical state.
 
 ## Alternatives Considered
 

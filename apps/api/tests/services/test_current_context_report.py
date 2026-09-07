@@ -456,17 +456,99 @@ def test_historical_research_readiness_does_not_promote_observed_partition(
     )
     families = {item["family"]: item for item in state["families"]}
 
-    assert families["universe_membership"] == {
-        "family": "universe_membership",
-        "custody_state": "partitions_observed_not_coverage_validated",
-        "partition_count": 1,
-        "manifest_count": 1,
-        "research_ready": False,
-    }
+    assert families["universe_membership"]["custody_state"] == (
+        "physical_partitions_without_canonical_publication"
+    )
+    assert families["universe_membership"]["partition_count"] == 0
+    assert families["universe_membership"]["physical_partition_count"] == 1
     assert (
-        "universe_membership_not_formally_coverage_validated"
+        families["universe_membership"][
+            "unpublished_physical_partition_count"
+        ]
+        == 1
+    )
+    assert (
+        "daily_point_in_time_membership_absent"
         in state["blocker_codes"]
     )
+
+
+def test_canonical_membership_inventory_requires_and_formally_reads_marker(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "data"
+    session = date(2026, 8, 28)
+    physical = (
+        root
+        / "market-data/universe-membership/schema_version=1"
+        / "methodology_version=test/session_date=2026-08-28"
+    )
+    publication = (
+        root
+        / "market-data/universe-membership-publications/schema_version=1"
+        / "policy_id=next-open-v1/methodology_version=test"
+        / "session_date=2026-08-28"
+    )
+    physical.mkdir(parents=True)
+    publication.mkdir(parents=True)
+    monkeypatch.setattr(
+        report,
+        "read_canonical_universe_membership",
+        lambda **_: SimpleNamespace(
+            publication_partition_path=publication,
+            membership_partition_path=physical,
+            publication=SimpleNamespace(
+                session_date=session,
+                methodology_version="test",
+                logical_fingerprint="a" * 64,
+            ),
+            records=(object(), object()),
+        ),
+    )
+
+    state = report._canonical_membership_inventory(
+        root,
+        session_dates=(date(2026, 8, 27), session),
+    )
+
+    assert state["custody_state"] == (
+        "canonical_signal_eligible_partitions_observed_not_coverage_validated"
+    )
+    assert state["partition_count"] == 1
+    assert state["physical_partition_count"] == 1
+    assert state["publication_marker_count"] == 1
+    assert state["unpublished_physical_partition_count"] == 0
+    assert state["covered_session_count"] == 1
+    assert state["missing_eod_session_count"] == 1
+    assert state["record_count"] == 2
+    assert state["missing_eod_session_dates"] == ("2026-08-27",)
+    assert state["missing_eod_session_range"] == {
+        "first": "2026-08-27",
+        "last": "2026-08-27",
+    }
+    assert state["publication_fingerprints"] == ("a" * 64,)
+
+
+def test_canonical_membership_inventory_bounds_large_missing_date_output(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "data"
+    sessions = tuple(
+        date(2026, 1, day) for day in range(1, 32)
+    ) + (date(2026, 2, 1), date(2026, 2, 2))
+
+    state = report._canonical_membership_inventory(
+        root,
+        session_dates=sessions,
+    )
+
+    assert state["missing_eod_session_count"] == 33
+    assert state["missing_eod_session_dates"] == ()
+    assert state["missing_eod_session_range"] == {
+        "first": "2026-01-01",
+        "last": "2026-02-02",
+    }
 
 
 def test_historical_research_readiness_reports_missing_same_day_identity(

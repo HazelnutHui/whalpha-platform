@@ -24,9 +24,10 @@ The deployed product uses:
 - fail-closed private Snapshot/API behavior with no synthetic Production data.
 
 The static browser view now explicitly labels freshness as a publication-time
-check. Current-context report 1.5 separately evaluates current canonical and
-active-Snapshot operational freshness while preserving the immutable Snapshot
-assertion.
+check. Current-context report 1.6 separately evaluates current canonical and
+active-Snapshot operational freshness, preserves the immutable Snapshot
+assertion, and counts Membership only through its governed publication marker
+and transitive formal read.
 
 Nginx and the localhost-only Auth Service are healthy. Independent postflight
 matched the local and remote manifest/checksum identities and verified public

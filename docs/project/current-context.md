@@ -200,7 +200,9 @@ marker SHA-256
 and post-state fingerprint
 `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`.
 The zero-write postflight reused both targets and wrote zero files/bytes. A real
-9/3 attempt remains rejected before plan creation.
+9/3 attempt remains rejected before plan creation. Current-context report 1.6
+now exposes exactly 1/304 canonical Membership sessions and will not count an
+unmarked physical partition as canonical.
 
 The aggregate-only inactive lifecycle census for 2026-07-16 reached its hard
 20-page / 20,000-result boundary with another page still present. All rows had

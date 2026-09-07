@@ -24,9 +24,13 @@
   files/bytes, and preserved the post-state fingerprint. Independent canonical
   read and residue census passed. Historical Coverage, strategy results, OCI,
   and deployment remain unchanged and unauthorized by this publication.
-- Verification completed with 36 focused checks and `2115 passed, 2 warnings`
-  across the full API suite. The warnings remain the pre-existing Python
-  `crypt` and Starlette/httpx deprecations.
+- Advanced the network-prohibited current-context report to 1.6. Membership
+  progress now requires each publication marker and transitive canonical read,
+  reports the exact 1/304 coverage state, keeps raw physical-only partitions
+  non-canonical, and bounds large missing-date output by count and range.
+- Final verification completed with `2117 passed, 2 warnings` across the full
+  API suite. The warnings remain the pre-existing Python `crypt` and
+  Starlette/httpx deprecations.
 
 ## 2026-09-06 — Plan signal-eligible canonical Membership
 

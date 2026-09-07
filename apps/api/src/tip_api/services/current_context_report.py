@@ -38,6 +38,10 @@ from tip_api.services.market_calendar import (
     evaluate_market_data_freshness,
 )
 from tip_api.services.private_dashboard_snapshot import validate_snapshot_release
+from tip_api.services.universe_membership_canonical import (
+    CanonicalUniverseMembershipError,
+    read_canonical_universe_membership,
+)
 
 
 DATA_ROOT = Path("/data/trading-intelligence-platform")
@@ -56,11 +60,6 @@ _RESEARCH_PHYSICAL_FAMILIES = (
         "corporate_action",
         "corporate-actions",
         "schema_version=1/event_year=*",
-    ),
-    (
-        "universe_membership",
-        "universe-membership",
-        "schema_version=1/methodology_version=*/session_date=*",
     ),
     (
         "instrument_lifecycle",
@@ -200,7 +199,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.5",
+        "report_contract": "tip-current-context-report/1.6",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -465,10 +464,15 @@ def _historical_research_readiness(
         session_dates=session_dates,
     )
 
-    physical = tuple(
+    generic_physical = tuple(
         _research_family_inventory(root, family, directory, pattern)
         for family, directory, pattern in _RESEARCH_PHYSICAL_FAMILIES
     )
+    membership = _canonical_membership_inventory(
+        root,
+        session_dates=session_dates,
+    )
+    physical = (*generic_physical, membership)
     by_family = {item["family"]: item for item in physical}
     blocker_codes = []
     if len(session_dates) < RESEARCH_SESSION_FLOOR:
@@ -497,7 +501,6 @@ def _historical_research_readiness(
             "corporate_action_source_observation_absent"
         ),
         "corporate_action": "canonical_corporate_action_coverage_absent",
-        "universe_membership": "daily_point_in_time_membership_absent",
         "instrument_lifecycle": "instrument_lifecycle_coverage_absent",
         "adjustment_ledger": "adjustment_ledger_reconciliation_absent",
         "historical_coverage_evidence": (
@@ -510,6 +513,17 @@ def _historical_research_readiness(
             blocker_codes.append(blocker)
         else:
             blocker_codes.append(f"{family}_not_formally_coverage_validated")
+    if membership["partition_count"] == 0:
+        blocker_codes.append("daily_point_in_time_membership_absent")
+    elif (
+        membership["covered_session_count"] != len(session_dates)
+        or membership["unpublished_physical_partition_count"] != 0
+    ):
+        blocker_codes.append("daily_point_in_time_membership_incomplete")
+    else:
+        blocker_codes.append(
+            "universe_membership_not_formally_coverage_validated"
+        )
     blocker_codes.extend(
         (
             "research_cost_and_liquidity_model_absent",
@@ -805,6 +819,171 @@ def _research_family_inventory(
         "custody_state": state,
         "partition_count": len(partitions),
         "manifest_count": len(manifests),
+        "research_ready": False,
+    }
+
+
+def _canonical_membership_inventory(
+    root: Path,
+    *,
+    session_dates: tuple[date, ...],
+) -> dict[str, Any]:
+    physical_root = root / "market-data" / "universe-membership"
+    publication_root = (
+        root / "market-data" / "universe-membership-publications"
+    )
+    physical_pattern = (
+        "schema_version=1/methodology_version=*/session_date=*"
+    )
+    publication_pattern = (
+        "schema_version=1/policy_id=next-open-v1/"
+        "methodology_version=*/session_date=*"
+    )
+    for path, label in (
+        (physical_root, "universe_membership research"),
+        (publication_root, "universe_membership publication"),
+    ):
+        if path.is_symlink():
+            raise CurrentContextReportError(f"{label} root is unsafe")
+        if path.exists() and (
+            not path.is_dir() or path.resolve(strict=True) != path
+        ):
+            raise CurrentContextReportError(f"{label} root is unsafe")
+        if path.exists() and any(item.is_symlink() for item in path.rglob("*")):
+            raise CurrentContextReportError(f"{label} inventory is unsafe")
+
+    physical_partitions = (
+        tuple(sorted(physical_root.glob(physical_pattern)))
+        if physical_root.exists()
+        else ()
+    )
+    publication_partitions = (
+        tuple(sorted(publication_root.glob(publication_pattern)))
+        if publication_root.exists()
+        else ()
+    )
+    if any(not item.is_dir() for item in physical_partitions):
+        raise CurrentContextReportError(
+            "Membership physical partition is unsafe"
+        )
+    if any(not item.is_dir() for item in publication_partitions):
+        raise CurrentContextReportError(
+            "Membership publication partition is unsafe"
+        )
+
+    canonical = []
+    canonical_physical_paths = set()
+    for partition in publication_partitions:
+        methodology_part = partition.parent.name
+        session_part = partition.name
+        if not methodology_part.startswith("methodology_version="):
+            raise CurrentContextReportError(
+                "Membership publication methodology is malformed"
+            )
+        methodology = methodology_part.removeprefix("methodology_version=")
+        try:
+            session = date.fromisoformat(
+                session_part.removeprefix("session_date=")
+            )
+        except ValueError as exc:
+            raise CurrentContextReportError(
+                "Membership publication session is malformed"
+            ) from exc
+        try:
+            value = read_canonical_universe_membership(
+                data_root=root,
+                methodology_version=methodology,
+                session_date=session,
+            )
+        except CanonicalUniverseMembershipError as exc:
+            raise CurrentContextReportError(
+                "canonical Membership formal read failed"
+            ) from exc
+        if value.publication_partition_path != partition:
+            raise CurrentContextReportError(
+                "Membership publication inventory path differs"
+            )
+        canonical.append(value)
+        canonical_physical_paths.add(value.membership_partition_path)
+
+    ordered_canonical = tuple(
+        sorted(
+            canonical,
+            key=lambda item: (
+                item.publication.session_date,
+                item.publication.methodology_version,
+            ),
+        )
+    )
+    canonical_dates = tuple(
+        sorted({item.publication.session_date for item in ordered_canonical})
+    )
+    eod_dates = set(session_dates)
+    canonical_date_set = set(canonical_dates)
+    missing_eod_sessions = tuple(
+        session for session in session_dates if session not in canonical_date_set
+    )
+    unpublished_physical = tuple(
+        path
+        for path in physical_partitions
+        if path not in canonical_physical_paths
+    )
+    if not canonical and not physical_partitions:
+        custody_state = "absent"
+    elif not canonical:
+        custody_state = "physical_partitions_without_canonical_publication"
+    elif unpublished_physical:
+        custody_state = (
+            "canonical_and_unpublished_physical_partitions_observed"
+        )
+    else:
+        custody_state = (
+            "canonical_signal_eligible_partitions_observed_not_coverage_validated"
+        )
+    return {
+        "family": "universe_membership",
+        "custody_state": custody_state,
+        "partition_count": len(canonical),
+        "physical_partition_count": len(physical_partitions),
+        "publication_marker_count": len(publication_partitions),
+        "unpublished_physical_partition_count": len(unpublished_physical),
+        "covered_session_count": len(eod_dates & canonical_date_set),
+        "missing_eod_session_count": len(missing_eod_sessions),
+        "record_count": sum(len(item.records) for item in canonical),
+        "first_session": (
+            canonical_dates[0].isoformat() if canonical_dates else None
+        ),
+        "last_session": (
+            canonical_dates[-1].isoformat() if canonical_dates else None
+        ),
+        "missing_eod_session_dates": tuple(
+            session.isoformat()
+            for session in (
+                missing_eod_sessions
+                if len(missing_eod_sessions) <= 32
+                else ()
+            )
+        ),
+        "missing_eod_session_range": (
+            {
+                "first": missing_eod_sessions[0].isoformat(),
+                "last": missing_eod_sessions[-1].isoformat(),
+            }
+            if missing_eod_sessions
+            else None
+        ),
+        "source_only_session_dates": tuple(
+            session.isoformat()
+            for session in canonical_dates
+            if session not in eod_dates
+        ),
+        "publication_fingerprints": tuple(
+            item.publication.logical_fingerprint
+            for item in ordered_canonical
+        ),
+        "validation_scope": (
+            "publication_marker_and_transitive_canonical_formal_read"
+        ),
         "research_ready": False,
     }
 
