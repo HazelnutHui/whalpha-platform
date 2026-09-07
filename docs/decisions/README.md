@@ -1,5 +1,9 @@
 # Architecture Decision Records
 
+- [ADR 0155](0155-version-segmented-candidate-chain-identity.md): assign the segmented Candidate shadow a distinct forward hash-chain identity without relabeling it as V1 whole-history evidence.
+
+- [ADR 0154](0154-prepare-daily-membership-outside-the-serving-gate.md): prepare or reuse a prospective daily Membership candidate and next-open timing assessment outside the website serving gate and without canonical writes.
+
 - [ADR 0153](0153-publish-membership-physical-first-marker-last.md): publish exact Membership physical bytes first and the eligibility marker last, with fail-closed recovery and a governed canonical reader.
 
 - [ADR 0152](0152-plan-membership-with-a-last-publication-marker.md): bind signal-eligible Membership bytes, timing evidence, target absence, and `/data` CAS in a no-write plan whose future logical marker must be published last.
@@ -248,3 +252,4 @@ Each ADR should include:
 - [0152: Plan Membership with a Last Publication Marker](0152-plan-membership-with-a-last-publication-marker.md)
 - [0153: Publish Membership Physical First and Marker Last](0153-publish-membership-physical-first-marker-last.md)
 - [0154: Prepare Daily Membership Outside the Serving Gate](0154-prepare-daily-membership-outside-the-serving-gate.md)
+- [0155: Version the Segmented Candidate Chain Identity](0155-version-segmented-candidate-chain-identity.md)

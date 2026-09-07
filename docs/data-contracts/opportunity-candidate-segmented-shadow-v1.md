@@ -64,6 +64,19 @@ checks the complete file set, but parses typed business records only from the
 latest segment. It is future append-input evidence, not a substitute for the
 periodic full semantic reconstruction.
 
+## Versioned forward-chain identity
+
+`opportunity-candidate-segmented-chain-identity/1.0` assigns the validated
+ordered segments a distinct forward hash chain. Each node binds its session
+ordinal and date, prior node fingerprint, exact segment logical and physical
+identities, record/scope counts, source V1 audit identity, and the frozen
+Candidate/state calculation, parameter, Universe-order contract fingerprint.
+
+The final node is the segmented chain tip. It is deliberately not V1's
+cumulative `state_history_fingerprint` and must never be written into that
+field. The identity has no calculation, publication, scheduler, or Production
+authority; append and cutover require later proofs and decisions.
+
 ## Explicit non-authority
 
 The shadow cannot feed daily planning, MI, Snapshot, bundle, deployment, UI,
@@ -89,3 +102,12 @@ whole-history canonical fingerprint cannot be reproduced from only the latest
 checkpoint. A future append contract must name and version a segmented chain
 fingerprint; the shadow must not place that value into the V1 field while
 claiming unchanged identity.
+
+ADR 0155 now supplies that separate identity. On the same real ten-session
+shadow it produced source-contract fingerprint
+`903eb2c7bb16a673e6313825a5f978ca4176081470c789f0ed749312affcce37`,
+final chain fingerprint
+`bababd41348f3ab0a15f6ce7af5e5868fd3ef32a3c91734d19e142be8f1518e0`,
+and assessment fingerprint
+`5b495eb37a0dca9dbaf17c037218122ce62276cda8e43793f0f240bcb75e19ab`.
+The read took 16.4 seconds with zero external request or canonical write.

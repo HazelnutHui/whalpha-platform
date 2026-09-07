@@ -376,7 +376,9 @@ separately bounded.
    periodic cold comparison, and downstream compatibility pass. The current
    checkpoint reproduces all 1,718/1,831 prior-state support rows exactly; only
    the cumulative V1 history fingerprint needs an explicitly versioned chain
-   identity. Continue the segmented Candidate proof and add reuse,
+   identity. ADR 0155 now supplies a distinct forward hash chain and explicitly
+   does not relabel it as V1 evidence. Immutable append, interruption recovery,
+   periodic cold equivalence, and downstream compatibility remain next. Add reuse,
    vectorization, or safe process parallelism only where evidence justifies it
    and outputs remain exact.
 2. **Historical Universe foundation:** 302 exact source partitions are now

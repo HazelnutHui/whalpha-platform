@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-07 — Version segmented Candidate chain identity
+
+- Accepted ADR 0155 and added
+  `opportunity-candidate-segmented-chain-identity/1.0`, a distinct forward hash
+  chain over the validated immutable session segments.
+- Bound every node to prior identity, session order, exact segment logical and
+  physical identity, record/scope counts, source audit identity, and frozen
+  Candidate/state calculation, parameter, and Universe contract identity.
+- Kept V1's cumulative `state_history_fingerprint` separate. No Candidate
+  formula, score, rank, state, active contract, publication, scheduler, or
+  Production behavior changed.
+- The real ten-session 2026-09-03 shadow produced source-contract fingerprint
+  `903eb2c7bb16a673e6313825a5f978ca4176081470c789f0ed749312affcce37`,
+  final chain fingerprint
+  `bababd41348f3ab0a15f6ce7af5e5868fd3ef32a3c91734d19e142be8f1518e0`,
+  and assessment fingerprint
+  `5b495eb37a0dca9dbaf17c037218122ce62276cda8e43793f0f240bcb75e19ab`
+  in 16.4 seconds with zero external request, canonical write, or publication
+  authority.
+- Append construction, crash recovery, cold equivalence, downstream
+  compatibility, retention, and cutover remain unproven.
+- Focused segmented-shadow tests passed, and the complete API regression
+  finished at `2128 passed, 2 warnings`; both warnings are the unchanged
+  Python `crypt` and Starlette/httpx deprecations.
+
 ## 2026-09-07 — Prepare prospective daily Membership continuation
 
 - Accepted ADR 0154 and added a network-prohibited daily preparation entry

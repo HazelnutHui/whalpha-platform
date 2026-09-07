@@ -50,8 +50,10 @@ from tip_api.services.opportunity_candidate_oracle import (
 from tip_api.services.opportunity_candidate_state import replay_opportunity_candidate_state_history
 from tip_api.services.opportunity_candidates import calculate_opportunity_candidate_scores, rank_opportunity_candidates
 from tip_api.services.opportunity_candidate_segmented_shadow import (
+    CHAIN_IDENTITY_CONTRACT,
     SHADOW_MANIFEST,
     CandidateSegmentedShadowError,
+    build_candidate_segmented_chain_identity,
     read_candidate_segmented_shadow,
     read_candidate_segmented_shadow_current,
     write_candidate_segmented_shadow,
@@ -410,6 +412,34 @@ def test_segmented_shadow_current_reader_avoids_full_semantic_reconstruction(
         )
         assert current.state_records
         assert len(current.risk_results) == 6
+    finally:
+        shutil.rmtree(source, ignore_errors=True)
+        shutil.rmtree(target, ignore_errors=True)
+
+
+def test_segmented_shadow_assigns_distinct_versioned_chain_identity() -> None:
+    source = Path(tempfile.mkdtemp(prefix="whalpha-segment-source-", dir="/tmp"))
+    target = Path(tempfile.mkdtemp(prefix="whalpha-segment-shadow-", dir="/tmp"))
+    shutil.rmtree(source)
+    shutil.rmtree(target)
+    try:
+        _write_segmentable_source(source)
+        manifest = write_candidate_segmented_shadow(
+            source_audit=source,
+            output_dir=target,
+        )
+
+        identity = build_candidate_segmented_chain_identity(target)
+
+        assert identity.contract_version == CHAIN_IDENTITY_CONTRACT
+        assert identity.session_count == 1
+        assert identity.nodes[0].prior_chain_fingerprint is None
+        assert identity.final_chain_fingerprint == identity.nodes[0].chain_fingerprint
+        assert identity.final_chain_fingerprint != manifest[
+            "source_business_projection_fingerprints"
+        ]["candidate-state-history.json"]
+        assert identity.production_write_count == 0
+        assert identity.publication_authorized is False
     finally:
         shutil.rmtree(source, ignore_errors=True)
         shutil.rmtree(target, ignore_errors=True)

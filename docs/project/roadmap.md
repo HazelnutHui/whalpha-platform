@@ -41,11 +41,11 @@ Next:
 3. Retain the completed current-code ranking: MI is bounded at 53.84 seconds;
    Snapshot is 121.57 seconds after removing its duplicate active read.
 4. Advance ADR 0130's disconnected segmented Candidate shadow from exact V1
-   reconstruction to an explicitly versioned state-chain identity, append,
-   interruption recovery, and periodic cold equivalence. The checkpoint already
-   reproduces every numerical/state support row; do not relabel its different
-   history fingerprint as V1 or cut over the daily/publication path until all
-   gates pass.
+   reconstruction and ADR 0155's distinct versioned state-chain identity to
+   immutable append, interruption recovery, and periodic cold equivalence. The
+   checkpoint already reproduces every numerical/state support row; do not
+   relabel its different history fingerprint as V1 or cut over the
+   daily/publication path until all gates pass.
 5. Remove any remaining repeated evidence reconstruction only where the new
    complete-chain measurement justifies it.
 6. Vectorize or process-parallelize only independent CPU-heavy work after exact

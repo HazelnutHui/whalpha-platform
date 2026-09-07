@@ -273,10 +273,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
 2. After candidate reuse, outcome-only classification, canonical reuse, and
    partial-publication rejection pass on a new session, review one-action
    coordinator integration. Do not enable the write-capable scheduler.
-3. Continue ADR 0130's segmented Candidate custody proof. The complete 9/4
-   chain passed with ADRs 0125–0129 active, and Candidate remained the largest
-   analytics stage at roughly 4.5 minutes.
-4. Design the versioned chain identity, recovery, periodic cold equivalence,
+3. Continue ADR 0130's segmented Candidate custody proof. ADR 0155 now gives
+   the shadow a distinct versioned forward-chain identity without reusing V1's
+   cumulative history fingerprint. Candidate remains the largest analytics
+   stage at roughly 4.5 minutes.
+4. Prove immutable append, interruption recovery, periodic cold equivalence,
    and downstream compatibility before considering segmented cutover. The real
    ten-session shadow already reconstructs all eight V1 business projections,
    and its bounded current read takes 16.53 seconds versus 228.285 seconds for

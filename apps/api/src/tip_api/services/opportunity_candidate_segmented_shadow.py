@@ -20,6 +20,7 @@ from tip_api.services import opportunity_candidate_audit as v1
 
 
 SHADOW_CONTRACT = "opportunity-candidate-segmented-shadow/1.0"
+CHAIN_IDENTITY_CONTRACT = "opportunity-candidate-segmented-chain-identity/1.0"
 SHADOW_MANIFEST = "candidate-segmented-shadow-manifest.json"
 SHADOW_SEGMENT_DIR = "segments"
 BUSINESS_PROJECTIONS = v1.CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS
@@ -57,6 +58,31 @@ class CandidateSegmentedShadowCurrentEvidence:
     candidate_batches: tuple[OpportunityCandidateBatchV1, ...]
     state_records: tuple[OpportunityCandidateStateRecordV1, ...]
     risk_results: tuple[CandidateRiskModeResultV1, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class CandidateSegmentedChainNodeIdentity:
+    as_of_session: str
+    session_ordinal: int
+    prior_chain_fingerprint: str | None
+    segment_logical_fingerprint: str
+    segment_physical_sha256: str
+    source_audit_logical_fingerprint: str
+    chain_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
+class CandidateSegmentedChainIdentity:
+    contract_version: str
+    source_shadow_logical_fingerprint: str
+    source_contract_fingerprint: str
+    session_count: int
+    nodes: tuple[CandidateSegmentedChainNodeIdentity, ...]
+    final_chain_fingerprint: str
+    logical_content_fingerprint: str
+    external_request_count: int = 0
+    production_write_count: int = 0
+    publication_authorized: bool = False
 
 
 def write_candidate_segmented_shadow(
@@ -362,6 +388,118 @@ def read_candidate_segmented_shadow_current(
         candidate_batches=batches,
         state_records=states,
         risk_results=risks,
+    )
+
+
+def build_candidate_segmented_chain_identity(
+    output_dir: Path,
+) -> CandidateSegmentedChainIdentity:
+    """Assign a versioned hash-chain identity without reusing V1 history hashes."""
+
+    current = read_candidate_segmented_shadow_current(output_dir)
+    manifest = current.manifest
+    source_contract = {
+        key: manifest["source_contract"].get(key)
+        for key in (
+            "candidate_contract_version",
+            "candidate_calculation_version",
+            "candidate_parameter_set_id",
+            "candidate_parameter_fingerprint",
+            "candidate_state_contract_version",
+            "candidate_state_calculation_version",
+            "candidate_state_parameter_set_id",
+            "candidate_state_parameter_fingerprint",
+            "universe_ids",
+        )
+    }
+    if source_contract["universe_ids"] != manifest.get("universe_ids"):
+        raise CandidateSegmentedShadowError(
+            "segmented chain source Universe identity differs"
+        )
+    source_contract_fingerprint = v1._fingerprint(source_contract)
+    prior: str | None = None
+    nodes: list[CandidateSegmentedChainNodeIdentity] = []
+    for ordinal, descriptor in enumerate(manifest["segments"]):
+        session = str(descriptor["as_of_session"])
+        segment_logical = str(descriptor["logical_content_fingerprint"])
+        segment_physical = str(descriptor["sha256"])
+        node_logical = {
+            "contract_version": CHAIN_IDENTITY_CONTRACT,
+            "session_ordinal": ordinal,
+            "as_of_session": session,
+            "prior_chain_fingerprint": prior,
+            "source_contract_fingerprint": source_contract_fingerprint,
+            "source_audit_logical_fingerprint": manifest[
+                "source_audit_logical_fingerprint"
+            ],
+            "segment": {
+                key: descriptor[key]
+                for key in (
+                    "logical_content_fingerprint",
+                    "sha256",
+                    "candidate_batch_count",
+                    "state_record_count",
+                    "transition_record_count",
+                    "raw_fact_count",
+                    "normalization_record_count",
+                    "risk_result_count",
+                    "oracle_present",
+                )
+            },
+        }
+        chain_fingerprint = v1._fingerprint(node_logical)
+        nodes.append(
+            CandidateSegmentedChainNodeIdentity(
+                as_of_session=session,
+                session_ordinal=ordinal,
+                prior_chain_fingerprint=prior,
+                segment_logical_fingerprint=segment_logical,
+                segment_physical_sha256=segment_physical,
+                source_audit_logical_fingerprint=str(
+                    manifest["source_audit_logical_fingerprint"]
+                ),
+                chain_fingerprint=chain_fingerprint,
+            )
+        )
+        prior = chain_fingerprint
+    if prior is None:
+        raise CandidateSegmentedShadowError("segmented chain contains no sessions")
+    logical = {
+        "contract_version": CHAIN_IDENTITY_CONTRACT,
+        "source_shadow_logical_fingerprint": manifest[
+            "logical_content_fingerprint"
+        ],
+        "source_contract_fingerprint": source_contract_fingerprint,
+        "session_count": len(nodes),
+        "nodes": [
+            {
+                "as_of_session": item.as_of_session,
+                "session_ordinal": item.session_ordinal,
+                "prior_chain_fingerprint": item.prior_chain_fingerprint,
+                "segment_logical_fingerprint": item.segment_logical_fingerprint,
+                "segment_physical_sha256": item.segment_physical_sha256,
+                "source_audit_logical_fingerprint": (
+                    item.source_audit_logical_fingerprint
+                ),
+                "chain_fingerprint": item.chain_fingerprint,
+            }
+            for item in nodes
+        ],
+        "final_chain_fingerprint": prior,
+        "external_request_count": 0,
+        "production_write_count": 0,
+        "publication_authorized": False,
+    }
+    return CandidateSegmentedChainIdentity(
+        contract_version=CHAIN_IDENTITY_CONTRACT,
+        source_shadow_logical_fingerprint=str(
+            manifest["logical_content_fingerprint"]
+        ),
+        source_contract_fingerprint=source_contract_fingerprint,
+        session_count=len(nodes),
+        nodes=tuple(nodes),
+        final_chain_fingerprint=prior,
+        logical_content_fingerprint=v1._fingerprint(logical),
     )
 
 
