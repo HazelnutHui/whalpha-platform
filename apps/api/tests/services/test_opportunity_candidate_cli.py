@@ -15,6 +15,7 @@ import pytest
 from tip_api.parameters.market_regime.candidate_v1_1_1 import CANDIDATE_STATE_PARAMETER_FINGERPRINT
 from tip_api.parameters.market_regime.state_v1_0_1 import STATE_CALCULATION_VERSION, STATE_PARAMETER_FINGERPRINT
 from tip_api.services import opportunity_candidate_cli as cli
+from tip_api.services import opportunity_candidate_segmented_append as candidate_append
 from tip_api.services import opportunity_candidate_segmented_session_candidate as session_candidate
 from tip_api.services.opportunity_candidate_audit import (
     CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS,
@@ -25,8 +26,11 @@ from tip_api.services.opportunity_candidate_audit import (
     write_opportunity_candidate_audit,
 )
 from tip_api.services.opportunity_candidate_segmented_append import (
+    COMPOSED_APPEND_CONTRACT,
+    CandidateSegmentedAppendError,
     read_candidate_segmented_append,
     write_candidate_segmented_append,
+    write_candidate_segmented_append_from_session_candidate,
 )
 from tip_api.services.opportunity_candidate_segmented_session_candidate import (
     CandidateSegmentedSessionCandidateError,
@@ -859,7 +863,8 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
     parent_shadow = Path(tempfile.mkdtemp(prefix="candidate-parent-shadow-", dir="/tmp"))
     append_dir = Path(tempfile.mkdtemp(prefix="candidate-segment-append-", dir="/tmp"))
     session_dir = Path(tempfile.mkdtemp(prefix="candidate-session-direct-", dir="/tmp"))
-    for path in (parent_shadow, append_dir, session_dir):
+    composed_dir = Path(tempfile.mkdtemp(prefix="candidate-segment-composed-", dir="/tmp"))
+    for path in (parent_shadow, append_dir, session_dir, composed_dir):
         shutil.rmtree(path)
     try:
         write_opportunity_candidate_audit(
@@ -1019,6 +1024,112 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
             **direct_kwargs,
             output_dir=session_dir,
         ) == direct_manifest
+        with monkeypatch.context() as isolated:
+            def reject_cumulative_history(*args, **kwargs):
+                raise AssertionError("cumulative Candidate history was parsed")
+
+            isolated.setattr(
+                candidate_append.v1,
+                "_read_opportunity_candidate_audit",
+                reject_cumulative_history,
+            )
+            composed_manifest = (
+                write_candidate_segmented_append_from_session_candidate(
+                    parent_shadow=parent_shadow,
+                    source_audit=incremental_dir,
+                    session_candidate=session_dir,
+                    output_dir=composed_dir,
+                )
+            )
+        composed = read_candidate_segmented_append(
+            parent_shadow=parent_shadow,
+            output_dir=composed_dir,
+        )
+        assert composed.manifest == composed_manifest
+        assert composed_manifest["contract_version"] == COMPOSED_APPEND_CONTRACT
+        assert composed_manifest["parent"] == append_manifest["parent"]
+        assert composed_manifest["source_audit"]["manifest_sha256"] == (
+            append_manifest["source_audit"]["manifest_sha256"]
+        )
+        assert composed_manifest["source_audit"][
+            "logical_content_fingerprint"
+        ] == append_manifest["source_audit"]["logical_content_fingerprint"]
+        assert composed_manifest["source_audit"][
+            "physical_completion_verified"
+        ] is True
+        assert composed_manifest["prefix_binding"] == "exact_parent_versioned_chain"
+        assert composed_manifest["current_projection_fingerprints"] == (
+            append_manifest["current_projection_fingerprints"]
+        )
+        assert composed_manifest["segment"] == {
+            **direct_manifest["payload"],
+            "relative_path": candidate_append.APPEND_SEGMENT,
+        }
+        for field in composed_manifest["current_projection_fingerprints"]:
+            assert composed.segment[field] == appended.segment[field]
+        assert composed.segment["raw_fact_session_ordinals"] == list(
+            range(len(composed.segment["raw_facts"]))
+        )
+        assert "raw_fact_source_ordinals" not in composed.segment
+        assert composed_manifest["chain_node"]["prior_chain_fingerprint"] == (
+            append_manifest["chain_node"]["prior_chain_fingerprint"]
+        )
+        assert composed_manifest["chain_node"]["chain_fingerprint"] != (
+            append_manifest["chain_node"]["chain_fingerprint"]
+        )
+        assert write_candidate_segmented_append_from_session_candidate(
+            parent_shadow=parent_shadow,
+            source_audit=incremental_dir,
+            session_candidate=session_dir,
+            output_dir=composed_dir,
+        ) == composed_manifest
+
+        composed_recovery = composed_dir.with_name(f"{composed_dir.name}-recovery")
+        real_composed_rename = candidate_append.os.rename
+
+        def interrupt_composed_delivery(source, destination):
+            if Path(destination) == composed_recovery:
+                raise OSError("simulated composed-append delivery interruption")
+            return real_composed_rename(source, destination)
+
+        monkeypatch.setattr(
+            candidate_append.os,
+            "rename",
+            interrupt_composed_delivery,
+        )
+        with pytest.raises(OSError, match="simulated composed-append"):
+            write_candidate_segmented_append_from_session_candidate(
+                parent_shadow=parent_shadow,
+                source_audit=incremental_dir,
+                session_candidate=session_dir,
+                output_dir=composed_recovery,
+            )
+        composed_stage = composed_recovery.with_name(
+            f".{composed_recovery.name}.staging"
+        )
+        assert composed_stage.is_dir()
+        monkeypatch.setattr(candidate_append.os, "rename", real_composed_rename)
+        assert write_candidate_segmented_append_from_session_candidate(
+            parent_shadow=parent_shadow,
+            source_audit=incremental_dir,
+            session_candidate=session_dir,
+            output_dir=composed_recovery,
+        ) == composed_manifest
+        assert composed_recovery.is_dir()
+        assert not composed_stage.exists()
+
+        wrong_source = composed_dir.with_name(f"{composed_dir.name}-wrong-source")
+        with pytest.raises(
+            CandidateSegmentedAppendError,
+            match="parent, direct candidate, and completed V1 differ",
+        ):
+            write_candidate_segmented_append_from_session_candidate(
+                parent_shadow=parent_shadow,
+                source_audit=prior_dir,
+                session_candidate=session_dir,
+                output_dir=wrong_source,
+            )
+        assert not wrong_source.exists()
 
         recovery_dir = session_dir.with_name(f"{session_dir.name}-recovery")
         real_rename = session_candidate.os.rename
@@ -1144,6 +1255,19 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
         shutil.rmtree(parent_shadow, ignore_errors=True)
         shutil.rmtree(append_dir, ignore_errors=True)
         shutil.rmtree(session_dir, ignore_errors=True)
+        shutil.rmtree(composed_dir, ignore_errors=True)
+        shutil.rmtree(
+            composed_dir.with_name(f"{composed_dir.name}-recovery"),
+            ignore_errors=True,
+        )
+        shutil.rmtree(
+            composed_dir.with_name(f".{composed_dir.name}-recovery.staging"),
+            ignore_errors=True,
+        )
+        shutil.rmtree(
+            composed_dir.with_name(f"{composed_dir.name}-wrong-source"),
+            ignore_errors=True,
+        )
         shutil.rmtree(
             session_dir.with_name(f"{session_dir.name}-recovery"),
             ignore_errors=True,

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0158](0158-compose-direct-candidate-session-into-successor-append.md): compose an exact direct Candidate session with its physically completed intended V1 audit into a versioned successor append without cumulative semantic replay.
+
 - [ADR 0157](0157-emit-candidate-session-segment-from-current-objects.md): emit one non-authoritative Candidate session directly from already validated current objects, with exact parent/source binding and separate semantic audit.
 
 - [ADR 0156](0156-prove-one-session-candidate-append-and-recovery.md): prove one immutable Candidate session append, exact per-session cold equivalence, and completed-stage recovery without modifying the parent shadow.
@@ -259,3 +261,4 @@ Each ADR should include:
 - [0155: Version the Segmented Candidate Chain Identity](0155-version-segmented-candidate-chain-identity.md)
 - [0156: Prove One-Session Candidate Append and Recovery](0156-prove-one-session-candidate-append-and-recovery.md)
 - [0157: Emit the Candidate Session Segment from Current Objects](0157-emit-candidate-session-segment-from-current-objects.md)
+- [0158: Compose the Direct Candidate Session into a Successor Append](0158-compose-direct-candidate-session-into-successor-append.md)

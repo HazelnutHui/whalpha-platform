@@ -75,11 +75,12 @@ bind that completed V1 fingerprint.
 ## Explicit non-authority
 
 The contract performs zero network requests and zero canonical or Production
-writes, and grants no publication or scheduler authority. A later append
-composer must formally verify physical completion of the exact intended V1
-audit before promoting the payload into an ADR 0156 append. V1 remains the
-authoritative Candidate source until repeated append, downstream, retention,
-periodic-cold, and cutover gates are separately accepted.
+writes, and grants no publication or scheduler authority. ADR 0158 now provides
+the append composer, which formally verifies physical completion of the exact
+intended V1 audit before placing these exact bytes in a versioned 1.1 successor
+append. V1 remains the authoritative Candidate source until repeated append,
+downstream, retention, periodic-cold, and cutover gates are separately
+accepted.
 
 ## Real Dell proof
 

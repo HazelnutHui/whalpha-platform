@@ -279,15 +279,19 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    independent zero-mismatch cold equivalence. ADR 0157 now produces the 9/4
    segment directly from already validated current-session objects in 38.907
    seconds. Its 86,608,577-byte payload matched all eight cold projections and
-   passed a separate 32.831-second semantic read. Candidate remains the largest
-   active analytics stage at roughly 4.5 minutes because this optional sidecar
-   has not replaced V1 or entered the daily executor.
-4. Compose the ADR 0157 direct candidate with the exact physically completed
-   intended V1 audit into an ADR 0156 append without rereading cumulative V1
-   semantics. Then prove repeated append generations, downstream compatibility,
-   retention, and periodic cold-audit policy before considering cutover. The
-   bounded parent current read remains 16.53 seconds versus 228.285 seconds for
-   V1 full semantics.
+   passed a separate 32.831-second semantic read. ADR 0158 now verifies the
+   exact physically completed intended V1 audit and composes those same payload
+   bytes into a versioned 1.1 successor in 36.70 seconds without cumulative V1
+   semantic replay. A separate 40.36-second read and two-package comparison
+   found all eight business fields exact. Candidate remains the largest active
+   analytics stage at roughly 4.5 minutes because these optional `/tmp`
+   artifacts have not replaced V1 or entered the daily executor.
+4. Prove repeated 1.1 append generations and a generalized parent reader, then
+   downstream compatibility, retention, and periodic cold-audit policy before
+   considering cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
+   ordinals explicitly distinct; their final chain fingerprints must not be
+   equated. The bounded parent current read remains 16.53 seconds versus
+   228.285 seconds for V1 full semantics.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

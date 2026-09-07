@@ -423,10 +423,41 @@ current projection fingerprints matched the independently constructed ADR
 mismatches.
 
 This is a direct-emission measurement, not a new complete daily-chain time.
-The next step is to verify physical completion of the exact intended V1 audit
-and compose the direct candidate into the successor append without cumulative
-V1 semantic reconstruction. Repeated append, downstream, retention, periodic-
+ADR 0158 now verifies physical completion of the exact intended V1 audit and
+composes the direct candidate into the successor append without cumulative V1
+semantic reconstruction. Repeated append, downstream, retention, periodic-
 cold, and cutover gates remain open.
+
+## 2026-09-07 direct Candidate append-composition result
+
+ADR 0158 adds `opportunity-candidate-segmented-append/1.1`. The composer first
+fully validates the direct session and parent, verifies every completed V1
+artifact's custody and physical hash, and checks the small manifest-bound
+incremental validation ledger. It does not parse or project cumulative V1
+business rows. It copies the exact direct payload bytes, verifies copy custody,
+and atomically delivers a chain-bound completion manifest.
+
+The version is explicit because ADR 0156's 1.0 payload stores raw-fact ordinals
+in V1's globally sorted cumulative list. ADR 0157/0158 instead stores canonical
+session-local ordinals. Reconstructing global positions would reintroduce the
+cumulative work. The current business data are exact, but segment identities
+and final chain tips must remain version-distinct.
+
+On the real 2026-09-03 parent and 2026-09-04 direct payload, composition took
+36.70 seconds and 1,203,960 KiB peak RSS. The output copied 86,608,577 bytes
+with exact source SHA-256
+`9c9af6fa03357f6135e83568d48c5c6f4355df7e9a903d5db8547e2a9642f967`.
+The append manifest logical fingerprint is
+`e7b0efce9a0e24d4ac242d10ec6c944c793f621c5bf568177b49d8b545bce7d6`
+and the final 1.1 chain fingerprint is
+`b0a43cd1affa3241562f424b67b32bb306ebc1be8c0213636ece27dfedf79ea1`.
+
+A temporally separate full reader took 40.36 seconds and 2,078,136 KiB peak
+RSS. Reading both 1.0 and 1.1 and comparing their decoded current fields took
+80.82 seconds / 2,431,656 KiB. All eight projections and fingerprints matched,
+the direct and composed payload bytes matched, and the prior chain matched.
+These are one-generation `/tmp` proofs, not active daily-chain timing or a
+cutover. Repeated 1.1 parent/append reading is the next scaling boundary.
 
 ## 2026-09-04 session-discovery validation tiers
 

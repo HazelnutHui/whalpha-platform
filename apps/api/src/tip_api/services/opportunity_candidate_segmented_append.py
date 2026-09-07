@@ -11,10 +11,12 @@ from typing import Any, Mapping
 
 from tip_api.services import opportunity_candidate_audit as v1
 from tip_api.services import opportunity_candidate_segmented_shadow as shadow
+from tip_api.services import opportunity_candidate_segmented_session_candidate as direct
 
 
 APPEND_CONTRACT = "opportunity-candidate-segmented-append/1.0"
 APPEND_SESSION_CONTRACT = "opportunity-candidate-segmented-append-session/1.0"
+COMPOSED_APPEND_CONTRACT = "opportunity-candidate-segmented-append/1.1"
 APPEND_MANIFEST = "candidate-segmented-append-manifest.json"
 APPEND_SEGMENT = "candidate-session-segment.json"
 PREFIX_FIELDS = (
@@ -75,6 +77,18 @@ class _PreparedAppend:
     prefix_projection_fingerprints: Mapping[str, str]
     current_projection_fingerprints: Mapping[str, str]
     incremental_prior_binding: str
+    final_chain_fingerprint: str
+
+
+@dataclass(frozen=True, slots=True)
+class _PreparedComposedAppend:
+    parent_manifest: Mapping[str, Any]
+    parent_manifest_sha256: str
+    parent_chain: shadow.CandidateSegmentedChainIdentity
+    source_manifest: Mapping[str, Any]
+    source_manifest_sha256: str
+    direct_evidence: direct.CandidateSegmentedSessionCandidateEvidence
+    segment_descriptor: Mapping[str, Any]
     final_chain_fingerprint: str
 
 
@@ -156,6 +170,96 @@ def write_candidate_segmented_append(
     )
 
 
+def write_candidate_segmented_append_from_session_candidate(
+    *,
+    parent_shadow: Path,
+    source_audit: Path,
+    session_candidate: Path,
+    output_dir: Path,
+) -> dict[str, Any]:
+    """Compose one successor append without cumulative V1 semantic parsing."""
+
+    target = _new_output_target(output_dir)
+    prepared = _prepare_composed_append(
+        parent_shadow=parent_shadow,
+        source_audit=source_audit,
+        session_candidate=session_candidate,
+    )
+    if target.exists():
+        evidence = read_candidate_segmented_append(
+            parent_shadow=parent_shadow,
+            output_dir=target,
+        )
+        _require_expected_composed_append(evidence.manifest, prepared)
+        return dict(evidence.manifest)
+
+    stage = target.with_name(f".{target.name}.staging")
+    if stage.exists() or stage.is_symlink():
+        evidence = _read_candidate_segmented_append_at(
+            parent_shadow=parent_shadow,
+            output_dir=stage,
+            allow_staging=True,
+        )
+        _require_expected_composed_append(evidence.manifest, prepared)
+        os.rename(stage, target)
+        _fsync_directory(target.parent)
+        return dict(
+            read_candidate_segmented_append(
+                parent_shadow=parent_shadow,
+                output_dir=target,
+            ).manifest
+        )
+
+    stage.mkdir(mode=0o700, parents=False, exist_ok=False)
+    segment_bytes, segment_sha256 = _copy_new(
+        prepared.direct_evidence.path / direct.SESSION_PAYLOAD,
+        stage / APPEND_SEGMENT,
+    )
+    descriptor = dict(prepared.segment_descriptor)
+    descriptor.update(bytes=segment_bytes, sha256=segment_sha256)
+    if descriptor != prepared.segment_descriptor:
+        raise CandidateSegmentedAppendError(
+            "composed append segment copy differs from the direct candidate"
+        )
+    expected_chain = shadow.candidate_segmented_chain_node_fingerprint(
+        session_ordinal=prepared.parent_chain.session_count,
+        as_of_session=str(prepared.source_manifest["as_of_session"]),
+        prior_chain_fingerprint=prepared.parent_chain.final_chain_fingerprint,
+        source_contract_fingerprint=prepared.parent_chain.source_contract_fingerprint,
+        source_audit_logical_fingerprint=str(
+            prepared.source_manifest["logical_content_fingerprint"]
+        ),
+        segment_descriptor=descriptor,
+    )
+    if expected_chain != prepared.final_chain_fingerprint:
+        raise CandidateSegmentedAppendError(
+            "composed append chain differs after the exact segment copy"
+        )
+    logical = _composed_append_manifest_logical(
+        prepared,
+        descriptor=descriptor,
+    )
+    manifest = {
+        **logical,
+        "logical_content_fingerprint": v1._fingerprint(logical),
+    }
+    manifest_bytes, manifest_sha256 = v1._write_canonical_new(
+        stage / APPEND_MANIFEST,
+        manifest,
+    )
+    _fsync_directory(stage)
+    _validate_composed_physical_custody(
+        output_dir=stage,
+        manifest_bytes=manifest_bytes,
+        manifest_sha256=manifest_sha256,
+        segment_bytes=segment_bytes,
+        segment_sha256=segment_sha256,
+    )
+    os.rename(stage, target)
+    _fsync_directory(target.parent)
+    return dict(manifest)
+
+
 def read_candidate_segmented_append(
     *,
     parent_shadow: Path,
@@ -216,6 +320,194 @@ def verify_candidate_segmented_append_cold_equivalence(
         current_projection_fingerprints=prepared.current_projection_fingerprints,
         logical_content_fingerprint=v1._fingerprint(logical),
     )
+
+
+def _prepare_composed_append(
+    *,
+    parent_shadow: Path,
+    source_audit: Path,
+    session_candidate: Path,
+) -> _PreparedComposedAppend:
+    try:
+        direct_evidence = direct.read_candidate_segmented_session_candidate(
+            parent_shadow=parent_shadow,
+            output_dir=session_candidate,
+        )
+        source_evidence = v1.read_opportunity_candidate_planning_evidence(source_audit)
+        _, parent_manifest, parent_manifest_sha256 = shadow._read_shadow_manifest(
+            parent_shadow
+        )
+        parent_chain = shadow._chain_identity_from_validated_manifest(
+            parent_manifest
+        )
+    except Exception as exc:
+        raise CandidateSegmentedAppendError(
+            f"composed append input validation failed: {type(exc).__name__}"
+        ) from exc
+
+    source_manifest = source_evidence.manifest
+    candidate_manifest = direct_evidence.manifest
+    candidate_parent = candidate_manifest["parent"]
+    intended_source = candidate_manifest["intended_source_audit"]
+    if (
+        candidate_parent.get("manifest_sha256") != parent_manifest_sha256
+        or candidate_parent.get("logical_content_fingerprint")
+        != parent_manifest.get("logical_content_fingerprint")
+        or candidate_parent.get("final_chain_fingerprint")
+        != parent_chain.final_chain_fingerprint
+        or candidate_parent.get("source_contract_fingerprint")
+        != parent_chain.source_contract_fingerprint
+        or intended_source.get("logical_content_fingerprint")
+        != source_manifest.get("logical_content_fingerprint")
+        or intended_source.get("as_of_session")
+        != source_manifest.get("as_of_session")
+        or source_manifest.get("prior_as_of_session")
+        != parent_manifest.get("as_of_session")
+        or tuple(source_manifest.get("universe_ids", ()))
+        != tuple(parent_manifest.get("universe_ids", ()))
+        or candidate_manifest.get("session_ordinal") != parent_chain.session_count
+    ):
+        raise CandidateSegmentedAppendError(
+            "composed append parent, direct candidate, and completed V1 differ"
+        )
+    source_contract = {
+        key: source_manifest.get(key) for key in shadow.SOURCE_BASE_KEYS
+    }
+    source_contract["execution_mode"] = source_manifest.get("execution_mode")
+    if (
+        shadow.candidate_segmented_source_contract_fingerprint(
+            {
+                "source_contract": source_contract,
+                "universe_ids": source_manifest.get("universe_ids"),
+            }
+        )
+        != parent_chain.source_contract_fingerprint
+    ):
+        raise CandidateSegmentedAppendError(
+            "composed append completed V1 calculation contract differs"
+        )
+    _validate_composed_incremental_binding(
+        incremental_validation=source_evidence.validation_ledger,
+        source_manifest=source_manifest,
+        candidate_manifest=candidate_manifest,
+        parent_manifest=parent_manifest,
+    )
+    descriptor = {
+        **candidate_manifest["payload"],
+        "relative_path": APPEND_SEGMENT,
+    }
+    final_chain_fingerprint = shadow.candidate_segmented_chain_node_fingerprint(
+        session_ordinal=parent_chain.session_count,
+        as_of_session=str(source_manifest["as_of_session"]),
+        prior_chain_fingerprint=parent_chain.final_chain_fingerprint,
+        source_contract_fingerprint=parent_chain.source_contract_fingerprint,
+        source_audit_logical_fingerprint=str(
+            source_manifest["logical_content_fingerprint"]
+        ),
+        segment_descriptor=descriptor,
+    )
+    return _PreparedComposedAppend(
+        parent_manifest=parent_manifest,
+        parent_manifest_sha256=parent_manifest_sha256,
+        parent_chain=parent_chain,
+        source_manifest=source_manifest,
+        source_manifest_sha256=source_evidence.manifest_sha256,
+        direct_evidence=direct_evidence,
+        segment_descriptor=descriptor,
+        final_chain_fingerprint=final_chain_fingerprint,
+    )
+
+
+def _validate_composed_incremental_binding(
+    *,
+    incremental_validation: Mapping[str, Any] | None,
+    source_manifest: Mapping[str, Any],
+    candidate_manifest: Mapping[str, Any],
+    parent_manifest: Mapping[str, Any],
+) -> None:
+    record = incremental_validation
+    reuse_checks = record.get("reuse_checks") if isinstance(record, Mapping) else None
+    if (
+        not isinstance(record, Mapping)
+        or v1._fingerprint(record)
+        != candidate_manifest.get("incremental_validation_fingerprint")
+        or record.get("prior_audit_logical_fingerprint")
+        != parent_manifest.get("source_audit_logical_fingerprint")
+        or record.get("prior_as_of_session")
+        != parent_manifest.get("as_of_session")
+        or record.get("current_as_of_session")
+        != source_manifest.get("as_of_session")
+        or not isinstance(reuse_checks, Mapping)
+        or not reuse_checks
+        or any(value is not True for value in reuse_checks.values())
+    ):
+        raise CandidateSegmentedAppendError(
+            "composed append incremental validation differs"
+        )
+
+
+def _composed_append_manifest_logical(
+    prepared: _PreparedComposedAppend,
+    *,
+    descriptor: Mapping[str, Any],
+) -> dict[str, Any]:
+    direct_manifest = prepared.direct_evidence.manifest
+    return {
+        "contract_version": COMPOSED_APPEND_CONTRACT,
+        "completion_status": "completed",
+        "parent": {
+            "shadow_contract_version": prepared.parent_manifest["contract_version"],
+            "manifest_sha256": prepared.parent_manifest_sha256,
+            "logical_content_fingerprint": prepared.parent_manifest[
+                "logical_content_fingerprint"
+            ],
+            "as_of_session": prepared.parent_manifest["as_of_session"],
+            "session_count": prepared.parent_chain.session_count,
+            "source_contract_fingerprint": (
+                prepared.parent_chain.source_contract_fingerprint
+            ),
+            "final_chain_fingerprint": prepared.parent_chain.final_chain_fingerprint,
+        },
+        "source_audit": {
+            "manifest_sha256": prepared.source_manifest_sha256,
+            "logical_content_fingerprint": prepared.source_manifest[
+                "logical_content_fingerprint"
+            ],
+            "as_of_session": prepared.source_manifest["as_of_session"],
+            "incremental_prior_binding": "exact_prior_audit_and_validation_ledger",
+            "physical_completion_verified": True,
+        },
+        "session_candidate": {
+            "contract_version": direct_manifest["contract_version"],
+            "manifest_sha256": prepared.direct_evidence.manifest_sha256,
+            "logical_content_fingerprint": direct_manifest[
+                "logical_content_fingerprint"
+            ],
+            "payload_logical_content_fingerprint": direct_manifest["payload"][
+                "logical_content_fingerprint"
+            ],
+        },
+        "as_of_session": prepared.source_manifest["as_of_session"],
+        "session_ordinal": prepared.parent_chain.session_count,
+        "universe_ids": list(prepared.source_manifest["universe_ids"]),
+        "segment": dict(descriptor),
+        "chain_node": {
+            "contract_version": shadow.CHAIN_IDENTITY_CONTRACT,
+            "prior_chain_fingerprint": prepared.parent_chain.final_chain_fingerprint,
+            "chain_fingerprint": prepared.final_chain_fingerprint,
+        },
+        "prefix_binding": "exact_parent_versioned_chain",
+        "parent_chain_verified": True,
+        "current_projection_fingerprints": dict(
+            direct_manifest["current_projection_fingerprints"]
+        ),
+        "current_segment_match": True,
+        "raw_fact_order": "session_local_canonical",
+        "finalization_scope": "validated_copy_plus_physical_custody",
+        "external_request_count": 0,
+        "production_write_count": 0,
+        "publication_authorized": False,
+    }
 
 
 def _prepare_append(*, parent_shadow: Path, source_audit: Path) -> _PreparedAppend:
@@ -546,17 +838,47 @@ def _read_candidate_segmented_append_at(
         if key not in {"bytes", "sha256"}
     ):
         raise CandidateSegmentedAppendError("append segment counts differ")
-    shadow._validate_segment_records(
-        segment,
-        session=str(manifest["as_of_session"]),
-        is_current=True,
-        oracle_fingerprint=str(segment["oracle_record"]["oracle_fingerprint"]),
-        source_audit_logical_fingerprint=str(
-            manifest["source_audit"]["logical_content_fingerprint"]
-        ),
-        universe_ids=tuple(manifest["universe_ids"]),
-        expected_contract=APPEND_SESSION_CONTRACT,
-    )
+    if manifest["contract_version"] == APPEND_CONTRACT:
+        shadow._validate_segment_records(
+            segment,
+            session=str(manifest["as_of_session"]),
+            is_current=True,
+            oracle_fingerprint=str(
+                segment["oracle_record"]["oracle_fingerprint"]
+            ),
+            source_audit_logical_fingerprint=str(
+                manifest["source_audit"]["logical_content_fingerprint"]
+            ),
+            universe_ids=tuple(manifest["universe_ids"]),
+            expected_contract=APPEND_SESSION_CONTRACT,
+        )
+    else:
+        try:
+            direct._validate_session_payload(segment)
+        except Exception as exc:
+            raise CandidateSegmentedAppendError(
+                f"composed append session validation failed: {type(exc).__name__}"
+            ) from exc
+        if (
+            segment.get("source_audit_logical_fingerprint")
+            != manifest["source_audit"].get("logical_content_fingerprint")
+            or segment.get("as_of_session") != manifest.get("as_of_session")
+            or segment.get("universe_ids") != manifest.get("universe_ids")
+            or segment.get("logical_content_fingerprint")
+            != manifest["session_candidate"].get(
+                "payload_logical_content_fingerprint"
+            )
+        ):
+            raise CandidateSegmentedAppendError(
+                "composed append session identity differs"
+            )
+    current_fingerprints = {
+        field: v1._fingerprint(segment[field]) for field in CURRENT_FIELDS
+    }
+    if current_fingerprints != manifest.get("current_projection_fingerprints"):
+        raise CandidateSegmentedAppendError(
+            "append current projection fingerprints differ"
+        )
     expected_chain = shadow.candidate_segmented_chain_node_fingerprint(
         session_ordinal=int(manifest["session_ordinal"]),
         as_of_session=str(manifest["as_of_session"]),
@@ -580,14 +902,14 @@ def _read_candidate_segmented_append_at(
 
 
 def _validate_append_manifest_shape(manifest: Mapping[str, Any]) -> None:
+    contract = manifest.get("contract_version")
     parent = manifest.get("parent")
     source = manifest.get("source_audit")
     segment = manifest.get("segment")
     chain = manifest.get("chain_node")
     if (
-        manifest.get("contract_version") != APPEND_CONTRACT
+        contract not in {APPEND_CONTRACT, COMPOSED_APPEND_CONTRACT}
         or manifest.get("completion_status") != "completed"
-        or manifest.get("prefix_semantic_match") is not True
         or manifest.get("current_segment_match") is not True
         or manifest.get("external_request_count") != 0
         or manifest.get("production_write_count") != 0
@@ -604,13 +926,36 @@ def _validate_append_manifest_shape(manifest: Mapping[str, Any]) -> None:
         or manifest.get("as_of_session") != source.get("as_of_session")
         or not isinstance(manifest.get("universe_ids"), list)
         or not manifest["universe_ids"]
-        or source.get("incremental_prior_binding")
-        not in {
-            "exact_prior_audit_and_semantic_prefix",
-            "not_present_full_semantic_prefix_exact",
-        }
     ):
         raise CandidateSegmentedAppendError("append manifest is malformed")
+    if contract == APPEND_CONTRACT:
+        if (
+            manifest.get("prefix_semantic_match") is not True
+            or source.get("incremental_prior_binding")
+            not in {
+                "exact_prior_audit_and_semantic_prefix",
+                "not_present_full_semantic_prefix_exact",
+            }
+        ):
+            raise CandidateSegmentedAppendError("append manifest is malformed")
+    else:
+        session_candidate = manifest.get("session_candidate")
+        if (
+            source.get("incremental_prior_binding")
+            != "exact_prior_audit_and_validation_ledger"
+            or source.get("physical_completion_verified") is not True
+            or not isinstance(session_candidate, Mapping)
+            or session_candidate.get("contract_version")
+            != direct.SESSION_CANDIDATE_CONTRACT
+            or manifest.get("prefix_binding") != "exact_parent_versioned_chain"
+            or manifest.get("parent_chain_verified") is not True
+            or manifest.get("raw_fact_order") != "session_local_canonical"
+            or manifest.get("finalization_scope")
+            != "validated_copy_plus_physical_custody"
+        ):
+            raise CandidateSegmentedAppendError(
+                "composed append manifest is malformed"
+            )
     fingerprints = (
         parent.get("manifest_sha256"),
         parent.get("logical_content_fingerprint"),
@@ -623,14 +968,21 @@ def _validate_append_manifest_shape(manifest: Mapping[str, Any]) -> None:
         chain.get("prior_chain_fingerprint"),
         chain.get("chain_fingerprint"),
     )
+    if contract == COMPOSED_APPEND_CONTRACT:
+        session_candidate = manifest["session_candidate"]
+        fingerprints += (
+            session_candidate.get("manifest_sha256"),
+            session_candidate.get("logical_content_fingerprint"),
+            session_candidate.get("payload_logical_content_fingerprint"),
+        )
     if any(not shadow._is_sha256(value) for value in fingerprints):
         raise CandidateSegmentedAppendError(
             "append manifest fingerprints are malformed"
         )
-    for name, fields in (
-        ("prefix", PREFIX_FIELDS),
-        ("current", CURRENT_FIELDS),
-    ):
+    projection_sets = [("current", CURRENT_FIELDS)]
+    if contract == APPEND_CONTRACT:
+        projection_sets.insert(0, ("prefix", PREFIX_FIELDS))
+    for name, fields in projection_sets:
         values = manifest.get(f"{name}_projection_fingerprints")
         if (
             not isinstance(values, Mapping)
@@ -655,6 +1007,76 @@ def _require_expected_append(
     ):
         raise CandidateSegmentedAppendError(
             "completed append does not match the requested parent and source"
+        )
+
+
+def _require_expected_composed_append(
+    manifest: Mapping[str, Any],
+    prepared: _PreparedComposedAppend,
+) -> None:
+    descriptor = manifest.get("segment")
+    if not isinstance(descriptor, Mapping):
+        raise CandidateSegmentedAppendError("composed append descriptor is missing")
+    if descriptor != prepared.segment_descriptor:
+        raise CandidateSegmentedAppendError(
+            "completed composed append segment differs from the direct candidate"
+        )
+    expected_logical = _composed_append_manifest_logical(
+        prepared,
+        descriptor=descriptor,
+    )
+    if any(manifest.get(key) != value for key, value in expected_logical.items()):
+        raise CandidateSegmentedAppendError(
+            "completed composed append differs from the requested inputs"
+        )
+
+
+def _copy_new(source: Path, destination: Path) -> tuple[int, str]:
+    """Copy already-validated immutable bytes into a newly-created file."""
+
+    digest = hashlib.sha256()
+    byte_count = 0
+    with source.open("rb") as source_handle, destination.open("xb") as output_handle:
+        while chunk := source_handle.read(1024 * 1024):
+            output_handle.write(chunk)
+            digest.update(chunk)
+            byte_count += len(chunk)
+        output_handle.flush()
+        os.fsync(output_handle.fileno())
+    destination.chmod(0o400)
+    return byte_count, digest.hexdigest()
+
+
+def _validate_composed_physical_custody(
+    *,
+    output_dir: Path,
+    manifest_bytes: int,
+    manifest_sha256: str,
+    segment_bytes: int,
+    segment_sha256: str,
+) -> None:
+    target = _completed_output_target(output_dir, allow_staging=True)
+    manifest_path = target / APPEND_MANIFEST
+    segment_path = target / APPEND_SEGMENT
+    entries = tuple(target.iterdir())
+    if (
+        {item.name for item in entries if item.is_file()}
+        != {APPEND_MANIFEST, APPEND_SEGMENT}
+        or any(item.is_dir() for item in entries)
+    ):
+        raise CandidateSegmentedAppendError(
+            "composed append physical file set differs"
+        )
+    for path in (manifest_path, segment_path):
+        shadow._validate_file_custody(path)
+    if (
+        manifest_path.stat().st_size != manifest_bytes
+        or v1._file_sha256(manifest_path) != manifest_sha256
+        or segment_path.stat().st_size != segment_bytes
+        or v1._file_sha256(segment_path) != segment_sha256
+    ):
+        raise CandidateSegmentedAppendError(
+            "composed append physical completion differs"
         )
 
 

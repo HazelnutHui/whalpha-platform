@@ -1,5 +1,44 @@
 # Changelog
 
+## 2026-09-07 — Compose direct Candidate session into successor append
+
+- Accepted ADR 0158 and added
+  `opportunity-candidate-segmented-append/1.1`. The composer binds the exact
+  ADR 0155 parent, ADR 0157 direct session, physically completed intended
+  incremental V1 audit, and its manifest-committed validation ledger without
+  reparsing cumulative V1 business rows.
+- Version 1.1 preserves the exact direct payload bytes, names raw-fact order as
+  session-local canonical, and binds its prefix through the exact parent chain.
+  It does not claim the 1.0 global V1 raw ordinals or reuse the 1.0 chain tip.
+- Added the shared 1.0/1.1 reader, recomputed current-projection validation,
+  exact physical-copy custody, idempotency, completed-stage recovery, incorrect-
+  source rejection, and a fixture guard that fails if composition invokes the
+  cumulative V1 semantic reader.
+- Real 9/3→9/4 composition completed in 36.70 seconds with 1,203,960 KiB peak
+  RSS. The 86,608,577-byte payload is byte-identical to ADR 0157 and retains
+  logical fingerprint
+  `a62455909c0436ad07e4024c329c961dfec8e8cd85b9aa507f0b1144037cb515`
+  and SHA-256
+  `9c9af6fa03357f6135e83568d48c5c6f4355df7e9a903d5db8547e2a9642f967`.
+- The 3,276-byte manifest has logical fingerprint
+  `e7b0efce9a0e24d4ac242d10ec6c944c793f621c5bf568177b49d8b545bce7d6`,
+  SHA-256
+  `57895b6fd22fbe9f44ce2041c05c7e4c11a0a76f72adec5f8add4227ad90fbf8`,
+  and final chain fingerprint
+  `b0a43cd1affa3241562f424b67b32bb306ebc1be8c0213636ece27dfedf79ea1`.
+- A separate full read took 40.36 seconds / 2,078,136 KiB. An 80.82-second
+  1.0/1.1 comparison found all eight current fields and their fingerprints
+  exact, the prior chain exact, and the final chain intentionally version-
+  distinct.
+- No network, `/data`, Production, V1 authority, Candidate formula, parameter,
+  score, rank, state, executor, coordinator, scheduler, publication, Snapshot,
+  bundle, or deployment changed. Repeated generations, generalized parent
+  reading, downstream compatibility, retention, periodic cold audit, and
+  cutover remain open.
+- Candidate/CLI focused coverage passed, and the complete API regression
+  finished at `2134 passed, 2 warnings`; both warnings are the unchanged Python
+  `crypt` and Starlette/httpx deprecations.
+
 ## 2026-09-07 — Emit Candidate session directly from current objects
 
 - Accepted ADR 0157 and added the non-authoritative Candidate segmented-session

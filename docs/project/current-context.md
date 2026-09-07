@@ -387,11 +387,16 @@ separately bounded.
    payload, matched all eight cold-append projections, and passed a separate
    32.831-second semantic read. It remains an optional `/tmp`-only candidate;
    V1, the executor, coordinator, scheduler, publication, and Production are
-   unchanged. Next compose it with the physically completed intended V1 audit
-   into an exact append, then prove repeated append, downstream compatibility,
-   retention, and periodic cold-audit policy. Add reuse, vectorization, or safe
-   process parallelism only where evidence justifies it and outputs remain
-   exact.
+   unchanged. ADR 0158 now verifies the exact completed intended V1 artifact
+   set and incremental ledger, then copies the same direct bytes into a
+   versioned 1.1 successor append in 36.70 seconds without cumulative semantic
+   replay. Its separate reader took 40.36 seconds, and a cold 1.0/1.1 comparison
+   found all eight current fields exact. The chain tips intentionally differ
+   because 1.1 names session-local rather than V1-global raw-fact ordinals.
+   Next prove repeated 1.1 generations, generalized parent reading, downstream
+   compatibility, retention, and periodic cold-audit policy. Add reuse,
+   vectorization, or safe process parallelism only where evidence justifies it
+   and outputs remain exact.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The
