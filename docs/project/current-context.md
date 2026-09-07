@@ -397,11 +397,13 @@ separately bounded.
    append parent reader; append-2 binds append-1's exact manifest and chain tip,
    while missing or reordered lineage fails closed. That cold reader validates
    every append and remains linear; its real one-append read took 39.79 seconds
-   and reproduced the exact 11-session ADR 0158 head. Next define a governed
-   immutable chain head with CAS/recovery and periodic full-lineage audit before
-   downstream, retention, or cutover work. Add reuse, vectorization, or safe
-   process parallelism only where evidence justifies it and outputs remain
-   exact.
+   and reproduced the exact 11-session ADR 0158 head. ADR 0160 now proves a
+   4,962-byte expected-identity chain head: incremental advancement and full
+   cold construction produced identical bytes, the head read took 1.08 seconds,
+   and real composer time fell from 36.70 to 21.18 seconds with byte-identical
+   output. No governed canonical head pointer exists yet. Next define its
+   immutable publication, CAS/recovery/rollback, retention, and periodic full-
+   lineage audit before CLI, executor, downstream, or cutover work.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The

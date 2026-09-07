@@ -17,6 +17,7 @@ from tip_api.services import opportunity_candidate_segmented_session_candidate a
 APPEND_CONTRACT = "opportunity-candidate-segmented-append/1.0"
 APPEND_SESSION_CONTRACT = "opportunity-candidate-segmented-append-session/1.0"
 COMPOSED_APPEND_CONTRACT = "opportunity-candidate-segmented-append/1.1"
+LINEAGE_IDENTITY_CONTRACT = "opportunity-candidate-segmented-lineage-identity/1.0"
 APPEND_MANIFEST = "candidate-segmented-append-manifest.json"
 APPEND_SEGMENT = "candidate-session-segment.json"
 PREFIX_FIELDS = (
@@ -62,6 +63,12 @@ class CandidateSegmentedParentEvidence:
     source_audit_logical_fingerprint: str
     universe_ids: tuple[str, ...]
     append_count: int
+    base_manifest_sha256: str
+    base_manifest_logical_fingerprint: str
+    base_as_of_session: str
+    base_session_count: int
+    base_final_chain_fingerprint: str
+    lineage_fingerprint: str
     external_request_count: int = 0
     production_write_count: int = 0
     publication_authorized: bool = False
@@ -195,6 +202,8 @@ def write_candidate_segmented_append_from_session_candidate(
     session_candidate: Path,
     output_dir: Path,
     parent_appends: Sequence[Path] = (),
+    parent_chain_head: Path | None = None,
+    expected_parent_chain_head_logical_fingerprint: str | None = None,
 ) -> dict[str, Any]:
     """Compose one successor append without cumulative V1 semantic parsing."""
 
@@ -204,12 +213,20 @@ def write_candidate_segmented_append_from_session_candidate(
         source_audit=source_audit,
         session_candidate=session_candidate,
         parent_appends=parent_appends,
+        parent_chain_head=parent_chain_head,
+        expected_parent_chain_head_logical_fingerprint=(
+            expected_parent_chain_head_logical_fingerprint
+        ),
     )
     if target.exists():
         evidence = read_candidate_segmented_append(
             parent_shadow=parent_shadow,
             output_dir=target,
             parent_appends=parent_appends,
+            parent_chain_head=parent_chain_head,
+            expected_parent_chain_head_logical_fingerprint=(
+                expected_parent_chain_head_logical_fingerprint
+            ),
         )
         _require_expected_composed_append(evidence.manifest, prepared)
         return dict(evidence.manifest)
@@ -229,6 +246,10 @@ def write_candidate_segmented_append_from_session_candidate(
                 parent_shadow=parent_shadow,
                 output_dir=target,
                 parent_appends=parent_appends,
+                parent_chain_head=parent_chain_head,
+                expected_parent_chain_head_logical_fingerprint=(
+                    expected_parent_chain_head_logical_fingerprint
+                ),
             ).manifest
         )
 
@@ -287,12 +308,18 @@ def read_candidate_segmented_append(
     parent_shadow: Path,
     output_dir: Path,
     parent_appends: Sequence[Path] = (),
+    parent_chain_head: Path | None = None,
+    expected_parent_chain_head_logical_fingerprint: str | None = None,
 ) -> CandidateSegmentedAppendEvidence:
     """Formally read a completed append package and its exact parent chain."""
 
     parent = read_candidate_segmented_parent(
         base_shadow=parent_shadow,
         parent_appends=parent_appends,
+        parent_chain_head=parent_chain_head,
+        expected_parent_chain_head_logical_fingerprint=(
+            expected_parent_chain_head_logical_fingerprint
+        ),
     )
     return _read_candidate_segmented_append_at(
         parent=parent,
@@ -305,11 +332,45 @@ def read_candidate_segmented_parent(
     *,
     base_shadow: Path,
     parent_appends: Sequence[Path] = (),
+    parent_chain_head: Path | None = None,
+    expected_parent_chain_head_logical_fingerprint: str | None = None,
 ) -> CandidateSegmentedParentEvidence:
     """Read an exact base plus ordered append lineage as one parent identity."""
 
+    has_chain_head = parent_chain_head is not None
+    has_expected_head = expected_parent_chain_head_logical_fingerprint is not None
+    if has_chain_head != has_expected_head or (has_chain_head and parent_appends):
+        raise CandidateSegmentedAppendError(
+            "parent append lineage and expected chain head are mutually exclusive"
+        )
+    if parent_chain_head is not None:
+        # Local import avoids the chain-head module's dependency on append
+        # validation while keeping this public parent boundary unified.
+        from tip_api.services import opportunity_candidate_segmented_chain_head as head
+
+        return head.read_candidate_segmented_chain_head(
+            base_shadow=base_shadow,
+            output_dir=parent_chain_head,
+            expected_logical_fingerprint=str(
+                expected_parent_chain_head_logical_fingerprint
+            ),
+        ).parent
+
     current = shadow.read_candidate_segmented_shadow_current(base_shadow)
     chain = shadow._chain_identity_from_validated_manifest(current.manifest)
+    base_logical_fingerprint = str(
+        current.manifest["logical_content_fingerprint"]
+    )
+    lineage_fingerprint = candidate_segmented_lineage_base_fingerprint(
+        root_shadow_contract_version=str(current.manifest["contract_version"]),
+        base_manifest_sha256=current.manifest_sha256,
+        base_manifest_logical_fingerprint=base_logical_fingerprint,
+        base_as_of_session=str(current.manifest["as_of_session"]),
+        base_session_count=chain.session_count,
+        source_contract_fingerprint=chain.source_contract_fingerprint,
+        base_final_chain_fingerprint=chain.final_chain_fingerprint,
+        universe_ids=tuple(current.manifest["universe_ids"]),
+    )
     parent = CandidateSegmentedParentEvidence(
         base_shadow_path=base_shadow.resolve(strict=True),
         root_shadow_contract_version=str(current.manifest["contract_version"]),
@@ -324,6 +385,12 @@ def read_candidate_segmented_parent(
         ),
         universe_ids=tuple(current.manifest["universe_ids"]),
         append_count=0,
+        base_manifest_sha256=current.manifest_sha256,
+        base_manifest_logical_fingerprint=base_logical_fingerprint,
+        base_as_of_session=str(current.manifest["as_of_session"]),
+        base_session_count=chain.session_count,
+        base_final_chain_fingerprint=chain.final_chain_fingerprint,
+        lineage_fingerprint=lineage_fingerprint,
     )
     for append_path in parent_appends:
         evidence = _read_candidate_segmented_append_at(
@@ -341,6 +408,11 @@ def _parent_evidence_from_append(
     evidence: CandidateSegmentedAppendEvidence,
 ) -> CandidateSegmentedParentEvidence:
     manifest = evidence.manifest
+    lineage_fingerprint = candidate_segmented_lineage_append_fingerprint(
+        prior_lineage_fingerprint=parent.lineage_fingerprint,
+        append_manifest=evidence.manifest,
+        append_manifest_sha256=evidence.manifest_sha256,
+    )
     return CandidateSegmentedParentEvidence(
         base_shadow_path=parent.base_shadow_path,
         root_shadow_contract_version=parent.root_shadow_contract_version,
@@ -355,6 +427,75 @@ def _parent_evidence_from_append(
         ),
         universe_ids=tuple(manifest["universe_ids"]),
         append_count=parent.append_count + 1,
+        base_manifest_sha256=parent.base_manifest_sha256,
+        base_manifest_logical_fingerprint=(
+            parent.base_manifest_logical_fingerprint
+        ),
+        base_as_of_session=parent.base_as_of_session,
+        base_session_count=parent.base_session_count,
+        base_final_chain_fingerprint=parent.base_final_chain_fingerprint,
+        lineage_fingerprint=lineage_fingerprint,
+    )
+
+
+def candidate_segmented_lineage_base_fingerprint(
+    *,
+    root_shadow_contract_version: str,
+    base_manifest_sha256: str,
+    base_manifest_logical_fingerprint: str,
+    base_as_of_session: str,
+    base_session_count: int,
+    source_contract_fingerprint: str,
+    base_final_chain_fingerprint: str,
+    universe_ids: tuple[str, ...],
+) -> str:
+    """Create the location-independent identity seed for one exact base."""
+
+    return v1._fingerprint(
+        {
+            "contract_version": LINEAGE_IDENTITY_CONTRACT,
+            "node_type": "base",
+            "root_shadow_contract_version": root_shadow_contract_version,
+            "base_manifest_sha256": base_manifest_sha256,
+            "base_manifest_logical_fingerprint": (
+                base_manifest_logical_fingerprint
+            ),
+            "base_as_of_session": base_as_of_session,
+            "base_session_count": base_session_count,
+            "source_contract_fingerprint": source_contract_fingerprint,
+            "base_final_chain_fingerprint": base_final_chain_fingerprint,
+            "universe_ids": list(universe_ids),
+        }
+    )
+
+
+def candidate_segmented_lineage_append_fingerprint(
+    *,
+    prior_lineage_fingerprint: str,
+    append_manifest: Mapping[str, Any],
+    append_manifest_sha256: str,
+) -> str:
+    """Advance the lineage identity by one fully validated append manifest."""
+
+    return v1._fingerprint(
+        {
+            "contract_version": LINEAGE_IDENTITY_CONTRACT,
+            "node_type": "append",
+            "prior_lineage_fingerprint": prior_lineage_fingerprint,
+            "append_contract_version": append_manifest["contract_version"],
+            "append_manifest_sha256": append_manifest_sha256,
+            "append_manifest_logical_fingerprint": append_manifest[
+                "logical_content_fingerprint"
+            ],
+            "as_of_session": append_manifest["as_of_session"],
+            "session_ordinal": append_manifest["session_ordinal"],
+            "source_audit_logical_fingerprint": append_manifest["source_audit"][
+                "logical_content_fingerprint"
+            ],
+            "final_chain_fingerprint": append_manifest["chain_node"][
+                "chain_fingerprint"
+            ],
+        }
     )
 
 
@@ -412,11 +553,17 @@ def _prepare_composed_append(
     source_audit: Path,
     session_candidate: Path,
     parent_appends: Sequence[Path],
+    parent_chain_head: Path | None,
+    expected_parent_chain_head_logical_fingerprint: str | None,
 ) -> _PreparedComposedAppend:
     try:
         parent_chain = read_candidate_segmented_parent(
             base_shadow=parent_shadow,
             parent_appends=parent_appends,
+            parent_chain_head=parent_chain_head,
+            expected_parent_chain_head_logical_fingerprint=(
+                expected_parent_chain_head_logical_fingerprint
+            ),
         )
         direct_evidence = direct._read_candidate_segmented_session_candidate_at(
             parent_shadow=parent_shadow,

@@ -16,6 +16,7 @@ from tip_api.parameters.market_regime.candidate_v1_1_1 import CANDIDATE_STATE_PA
 from tip_api.parameters.market_regime.state_v1_0_1 import STATE_CALCULATION_VERSION, STATE_PARAMETER_FINGERPRINT
 from tip_api.services import opportunity_candidate_cli as cli
 from tip_api.services import opportunity_candidate_segmented_append as candidate_append
+from tip_api.services import opportunity_candidate_segmented_chain_head as chain_head
 from tip_api.services import opportunity_candidate_segmented_session_candidate as session_candidate
 from tip_api.services.opportunity_candidate_audit import (
     CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS,
@@ -32,6 +33,12 @@ from tip_api.services.opportunity_candidate_segmented_append import (
     read_candidate_segmented_parent,
     write_candidate_segmented_append,
     write_candidate_segmented_append_from_session_candidate,
+)
+from tip_api.services.opportunity_candidate_segmented_chain_head import (
+    CandidateSegmentedChainHeadError,
+    advance_candidate_segmented_chain_head,
+    read_candidate_segmented_chain_head,
+    write_candidate_segmented_chain_head,
 )
 from tip_api.services.opportunity_candidate_segmented_session_candidate import (
     CandidateSegmentedSessionCandidateError,
@@ -1315,6 +1322,15 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
             "first-append",
             "second-direct",
             "second-append",
+            "base-head",
+            "first-head",
+            "second-head",
+            "fast-second-head",
+            "fast-second-direct",
+            "fast-second-append",
+            "cold-head",
+            "wrong-head",
+            "recovery-head",
         )
     }
     for name in (
@@ -1323,6 +1339,15 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
         "first-append",
         "second-direct",
         "second-append",
+        "base-head",
+        "first-head",
+        "second-head",
+        "fast-second-head",
+        "fast-second-direct",
+        "fast-second-append",
+        "cold-head",
+        "wrong-head",
+        "recovery-head",
     ):
         shutil.rmtree(directories[name])
 
@@ -1559,6 +1584,204 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
             "logical_content_fingerprint"
         ]
 
+        cold_head_manifest = write_candidate_segmented_chain_head(
+            base_shadow=directories["base-shadow"],
+            parent_appends=(
+                directories["first-append"],
+                directories["second-append"],
+            ),
+            output_dir=directories["cold-head"],
+        )
+        base_head_manifest = write_candidate_segmented_chain_head(
+            base_shadow=directories["base-shadow"],
+            output_dir=directories["base-head"],
+        )
+        first_head_manifest = advance_candidate_segmented_chain_head(
+            base_shadow=directories["base-shadow"],
+            prior_chain_head=directories["base-head"],
+            expected_prior_logical_fingerprint=base_head_manifest[
+                "logical_content_fingerprint"
+            ],
+            append_package=directories["first-append"],
+            output_dir=directories["first-head"],
+        )
+        with monkeypatch.context() as isolated:
+            def reject_parent_storage_replay(*args, **kwargs):
+                raise AssertionError("Candidate parent storage was replayed")
+
+            isolated.setattr(
+                chain_head.shadow,
+                "read_candidate_segmented_shadow_current",
+                reject_parent_storage_replay,
+            )
+            isolated.setattr(
+                candidate_append,
+                "_read_candidate_segmented_append_at",
+                reject_parent_storage_replay,
+            )
+            fast_second_direct_manifest = (
+                write_candidate_segmented_session_candidate(
+                    parent_shadow=directories["base-shadow"],
+                    parent_chain_head=directories["first-head"],
+                    expected_parent_chain_head_logical_fingerprint=(
+                        first_head_manifest["logical_content_fingerprint"]
+                    ),
+                    **current_direct_kwargs(
+                        run=second_run,
+                        manifest=second_v1_manifest,
+                        validation=second_validation,
+                        panel=panels[2],
+                    ),
+                    output_dir=directories["fast-second-direct"],
+                )
+            )
+            fast_second_append_manifest = (
+                write_candidate_segmented_append_from_session_candidate(
+                    parent_shadow=directories["base-shadow"],
+                    parent_chain_head=directories["first-head"],
+                    expected_parent_chain_head_logical_fingerprint=(
+                        first_head_manifest["logical_content_fingerprint"]
+                    ),
+                    source_audit=directories["second-v1"],
+                    session_candidate=directories["fast-second-direct"],
+                    output_dir=directories["fast-second-append"],
+                )
+            )
+        assert fast_second_direct_manifest == second_direct_manifest
+        assert fast_second_append_manifest == second_append_manifest
+        second_head_manifest = advance_candidate_segmented_chain_head(
+            base_shadow=directories["base-shadow"],
+            prior_chain_head=directories["first-head"],
+            expected_prior_logical_fingerprint=first_head_manifest[
+                "logical_content_fingerprint"
+            ],
+            append_package=directories["second-append"],
+            output_dir=directories["second-head"],
+        )
+        second_head = read_candidate_segmented_chain_head(
+            base_shadow=directories["base-shadow"],
+            output_dir=directories["second-head"],
+            expected_logical_fingerprint=second_head_manifest[
+                "logical_content_fingerprint"
+            ],
+        )
+        assert second_head_manifest == cold_head_manifest
+        assert second_head.parent.manifest == second_append_manifest
+        assert second_head.parent.manifest_sha256 == second_append.manifest_sha256
+        assert second_head.parent.session_count == complete_parent.session_count
+        assert second_head.parent.append_count == complete_parent.append_count
+        assert second_head.parent.lineage_fingerprint == (
+            complete_parent.lineage_fingerprint
+        )
+        assert second_head.production_write_count == 0
+        assert second_head.publication_authorized is False
+        with monkeypatch.context() as isolated:
+            def reject_lineage_replay(*args, **kwargs):
+                raise AssertionError("underlying Candidate lineage was replayed")
+
+            isolated.setattr(
+                candidate_append,
+                "read_candidate_segmented_parent",
+                reject_lineage_replay,
+            )
+            isolated.setattr(
+                chain_head.shadow,
+                "read_candidate_segmented_shadow_current",
+                reject_lineage_replay,
+            )
+            fast_second_head_manifest = advance_candidate_segmented_chain_head(
+                base_shadow=directories["base-shadow"],
+                prior_chain_head=directories["first-head"],
+                expected_prior_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                append_package=directories["second-append"],
+                output_dir=directories["fast-second-head"],
+            )
+        assert fast_second_head_manifest == cold_head_manifest
+        assert write_candidate_segmented_chain_head(
+            base_shadow=directories["base-shadow"],
+            parent_appends=(
+                directories["first-append"],
+                directories["second-append"],
+            ),
+            output_dir=directories["cold-head"],
+        ) == cold_head_manifest
+
+        recovery_head = directories["recovery-head"]
+        real_head_rename = chain_head.os.rename
+
+        def interrupt_head_delivery(source, destination):
+            if Path(destination) == recovery_head:
+                raise OSError("simulated chain-head delivery interruption")
+            return real_head_rename(source, destination)
+
+        monkeypatch.setattr(
+            chain_head.os,
+            "rename",
+            interrupt_head_delivery,
+        )
+        with pytest.raises(OSError, match="simulated chain-head"):
+            write_candidate_segmented_chain_head(
+                base_shadow=directories["base-shadow"],
+                parent_appends=(
+                    directories["first-append"],
+                    directories["second-append"],
+                ),
+                output_dir=recovery_head,
+            )
+        recovery_stage = recovery_head.with_name(
+            f".{recovery_head.name}.staging"
+        )
+        assert recovery_stage.is_dir()
+        monkeypatch.setattr(chain_head.os, "rename", real_head_rename)
+        assert write_candidate_segmented_chain_head(
+            base_shadow=directories["base-shadow"],
+            parent_appends=(
+                directories["first-append"],
+                directories["second-append"],
+            ),
+            output_dir=recovery_head,
+        ) == cold_head_manifest
+        assert recovery_head.is_dir()
+        assert not recovery_stage.exists()
+
+        with pytest.raises(
+            CandidateSegmentedChainHeadError,
+            match="expected checkpoint",
+        ):
+            read_candidate_segmented_chain_head(
+                base_shadow=directories["base-shadow"],
+                output_dir=directories["second-head"],
+                expected_logical_fingerprint="0" * 64,
+            )
+        with pytest.raises(
+            CandidateSegmentedAppendError,
+            match="mutually exclusive",
+        ):
+            read_candidate_segmented_parent(
+                base_shadow=directories["base-shadow"],
+                parent_appends=(directories["first-append"],),
+                parent_chain_head=directories["first-head"],
+                expected_parent_chain_head_logical_fingerprint=(
+                    first_head_manifest["logical_content_fingerprint"]
+                ),
+            )
+        with pytest.raises(
+            CandidateSegmentedChainHeadError,
+            match="successor validation failed",
+        ):
+            advance_candidate_segmented_chain_head(
+                base_shadow=directories["base-shadow"],
+                prior_chain_head=directories["base-head"],
+                expected_prior_logical_fingerprint=base_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                append_package=directories["second-append"],
+                output_dir=directories["wrong-head"],
+            )
+        assert not directories["wrong-head"].exists()
+
         with pytest.raises(CandidateSegmentedAppendError, match="parent chain"):
             read_candidate_segmented_append(
                 parent_shadow=directories["base-shadow"],
@@ -1575,3 +1798,8 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
     finally:
         for path in directories.values():
             shutil.rmtree(path, ignore_errors=True)
+        recovery_head = directories["recovery-head"]
+        shutil.rmtree(
+            recovery_head.with_name(f".{recovery_head.name}.staging"),
+            ignore_errors=True,
+        )

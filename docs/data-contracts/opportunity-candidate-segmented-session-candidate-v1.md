@@ -90,7 +90,10 @@ accepted.
 ADR 0159 proves that the same contract can bind a second direct session to the
 exact first append and that omission or reordering of the parent append fails
 closed. The cold parent reader remains linear in the supplied lineage; this is
-not yet the governed daily chain-head optimization.
+not itself the governed daily chain-head optimization. ADR 0160 adds an
+alternative expected-fingerprint chain-head input that produces the exact same
+direct manifest without reading the base or prior append storage. The CLI and
+canonical current-state boundary do not yet expose it.
 
 ## Real Dell proof
 

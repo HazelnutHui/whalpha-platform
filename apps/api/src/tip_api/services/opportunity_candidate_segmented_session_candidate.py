@@ -68,6 +68,8 @@ def _read_parent_context(
     *,
     parent_shadow: Path,
     parent_appends: Sequence[Path],
+    parent_chain_head: Path | None,
+    expected_parent_chain_head_logical_fingerprint: str | None,
 ) -> _CandidateSegmentedParentContext:
     # The local import avoids a module cycle: the append reader reuses this
     # module's typed session-payload validator.
@@ -77,6 +79,10 @@ def _read_parent_context(
         evidence = append.read_candidate_segmented_parent(
             base_shadow=parent_shadow,
             parent_appends=parent_appends,
+            parent_chain_head=parent_chain_head,
+            expected_parent_chain_head_logical_fingerprint=(
+                expected_parent_chain_head_logical_fingerprint
+            ),
         )
     except Exception as exc:
         raise CandidateSegmentedSessionCandidateError(
@@ -110,6 +116,8 @@ def write_candidate_segmented_session_candidate(
     normalization_records: Sequence[Mapping[str, Any]],
     output_dir: Path,
     parent_appends: Sequence[Path] = (),
+    parent_chain_head: Path | None = None,
+    expected_parent_chain_head_logical_fingerprint: str | None = None,
 ) -> dict[str, Any]:
     """Persist one segment directly from the already-calculated daily objects."""
 
@@ -117,6 +125,10 @@ def write_candidate_segmented_session_candidate(
     parent = _read_parent_context(
         parent_shadow=parent_shadow,
         parent_appends=parent_appends,
+        parent_chain_head=parent_chain_head,
+        expected_parent_chain_head_logical_fingerprint=(
+            expected_parent_chain_head_logical_fingerprint
+        ),
     )
     source_panel = _source_panel_row(panel)
     _validate_source_binding(
@@ -151,6 +163,10 @@ def write_candidate_segmented_session_candidate(
             parent_shadow=parent_shadow,
             output_dir=target,
             parent_appends=parent_appends,
+            parent_chain_head=parent_chain_head,
+            expected_parent_chain_head_logical_fingerprint=(
+                expected_parent_chain_head_logical_fingerprint
+            ),
         )
         manifest = _candidate_manifest(
             parent_manifest=parent.manifest,
@@ -175,6 +191,10 @@ def write_candidate_segmented_session_candidate(
             output_dir=stage,
             allow_staging=True,
             parent_appends=parent_appends,
+            parent_chain_head=parent_chain_head,
+            expected_parent_chain_head_logical_fingerprint=(
+                expected_parent_chain_head_logical_fingerprint
+            ),
         )
         manifest = _candidate_manifest(
             parent_manifest=parent.manifest,
@@ -197,6 +217,10 @@ def write_candidate_segmented_session_candidate(
                 parent_shadow=parent_shadow,
                 output_dir=target,
                 parent_appends=parent_appends,
+                parent_chain_head=parent_chain_head,
+                expected_parent_chain_head_logical_fingerprint=(
+                    expected_parent_chain_head_logical_fingerprint
+                ),
             ).manifest
         )
 
@@ -242,6 +266,8 @@ def read_candidate_segmented_session_candidate(
     parent_shadow: Path,
     output_dir: Path,
     parent_appends: Sequence[Path] = (),
+    parent_chain_head: Path | None = None,
+    expected_parent_chain_head_logical_fingerprint: str | None = None,
 ) -> CandidateSegmentedSessionCandidateEvidence:
     """Read the direct session candidate and rebind it to the exact parent."""
 
@@ -250,6 +276,10 @@ def read_candidate_segmented_session_candidate(
         output_dir=output_dir,
         allow_staging=False,
         parent_appends=parent_appends,
+        parent_chain_head=parent_chain_head,
+        expected_parent_chain_head_logical_fingerprint=(
+            expected_parent_chain_head_logical_fingerprint
+        ),
     )
 
 
@@ -617,6 +647,8 @@ def _read_candidate_segmented_session_candidate_at(
     allow_staging: bool,
     parent_appends: Sequence[Path] = (),
     validated_parent: _CandidateSegmentedParentContext | None = None,
+    parent_chain_head: Path | None = None,
+    expected_parent_chain_head_logical_fingerprint: str | None = None,
 ) -> CandidateSegmentedSessionCandidateEvidence:
     target = _completed_output_target(output_dir, allow_staging=allow_staging)
     manifest_path = target / SESSION_CANDIDATE_MANIFEST
@@ -653,6 +685,10 @@ def _read_candidate_segmented_session_candidate_at(
     parent_context = validated_parent or _read_parent_context(
         parent_shadow=parent_shadow,
         parent_appends=parent_appends,
+        parent_chain_head=parent_chain_head,
+        expected_parent_chain_head_logical_fingerprint=(
+            expected_parent_chain_head_logical_fingerprint
+        ),
     )
     parent = manifest["parent"]
     if (

@@ -464,6 +464,33 @@ scaling boundary. The real base-plus-one-append reader took 39.79 seconds and
 2,078,752 KiB peak RSS, returned the exact 11-session ADR 0158 head, and made no
 external request or Production write. No constant-time claim is made yet.
 
+## 2026-09-07 segmented Candidate chain-head result
+
+ADR 0160 adds a 4,962-byte immutable chain-head checkpoint. Its versioned
+lineage fingerprint starts from the exact base identity and advances through
+each append manifest and chain tip without storing operational paths. A fast
+read is valid only when the caller already supplies the exact expected head
+logical fingerprint; this expected value has no canonical current pointer yet.
+
+On the real 2026-09-03 base and ADR 0158 2026-09-04 append, full-lineage cold
+head construction took 39.82 seconds / 2,078,196 KiB. Building the base head
+took 16.53 seconds / 858,796 KiB, then validating only that expected head and
+the new append took 24.78 seconds / 1,733,656 KiB. Both final head files were
+byte-identical, with logical fingerprint
+`653f6f3a47066094a32fbf5481e563eebb4a2c290344be7d5c6d20264c0400bc`,
+physical SHA-256
+`47c8636305f3f89f9fa03855e705b9063763313603b95ee7dc404a720d8e4ee0`,
+and lineage fingerprint
+`33971a2e205afec07aeadfbdcf4d00161bb555dfbb8dc2557f1654c4d3ca55a2`.
+Expected-fingerprint head reading alone took 1.08 seconds / 152,104 KiB.
+
+Using the expected 9/3 base head for the real 9/4 composer reduced that isolated
+path from 36.70 seconds / 1,203,960 KiB to 21.18 seconds / 859,204 KiB. The
+append manifest and 86,608,577-byte segment were both byte-identical. This does
+not change the Candidate calculation itself or establish a complete daily-chain
+time. CLI/executor use, canonical pointer/CAS, recovery, retention, and periodic
+cold verification remain future gates.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

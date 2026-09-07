@@ -47,11 +47,13 @@ Next:
    objects. ADR 0158 completes composition with the exact physically completed
    V1 audit into a 1.1 successor without cumulative semantic reconstruction.
    ADR 0159 proves two ordered 1.1 generations and generalized cold parent
-   reading. Next define an immutable exact chain-head/checkpoint with CAS,
-   recovery, and periodic full-lineage verification so daily work need not
-   replay every append; then prove downstream compatibility and retention. Do
-   not relabel its different history fingerprint as V1 or cut over the
-   daily/publication path until all gates pass.
+   reading. ADR 0160 proves the disconnected expected-identity chain head,
+   incremental advance, and exact cold equivalence. Next define its canonical
+   immutable publication/current pointer with CAS, rollback, recovery,
+   retention, and periodic full-lineage verification; then expose the reviewed
+   boundary to CLI/executor and prove downstream compatibility. Do not relabel
+   its different history fingerprint as V1 or cut over the daily/publication
+   path until all gates pass.
 5. Remove any remaining repeated evidence reconstruction only where the new
    complete-chain measurement justifies it.
 6. Vectorize or process-parallelize only independent CPU-heavy work after exact

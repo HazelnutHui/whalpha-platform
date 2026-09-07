@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-09-07 — Checkpoint segmented Candidate chain head
+
+- Accepted ADR 0160 and added immutable, non-authoritative segmented lineage
+  identity and chain-head contracts. The head embeds the exact current parent
+  manifest and binds base/current identities, counts, source/Universe, chain
+  tips, and a location-independent incremental lineage fingerprint.
+- Added full-lineage cold construction, expected-prior-head plus one-append
+  advancement, mandatory expected-fingerprint reads, exact custody,
+  idempotency, completed-stage recovery, and fail-closed parent-mode pairing.
+- The three-session fixture proved cold head and base → head-1 → head-2 produce
+  identical output. With base/history readers disabled, head-1 produced the
+  exact same second direct session and append as explicit lineage validation.
+- Real cold head construction took 39.82 seconds / 2,078,196 KiB; base-head
+  incremental advancement took 24.78 seconds / 1,733,656 KiB and produced the
+  same final bytes. The final 4,962-byte head reads in 1.08 seconds and has
+  logical fingerprint
+  `653f6f3a47066094a32fbf5481e563eebb4a2c290344be7d5c6d20264c0400bc`,
+  SHA-256
+  `47c8636305f3f89f9fa03855e705b9063763313603b95ee7dc404a720d8e4ee0`,
+  and lineage fingerprint
+  `33971a2e205afec07aeadfbdcf4d00161bb555dfbb8dc2557f1654c4d3ca55a2`.
+- The real head-backed composer took 21.18 seconds / 859,204 KiB versus 36.70
+  seconds / 1,203,960 KiB for full parent validation; both append files were
+  byte-identical.
+- No canonical expected-head pointer, CLI/executor integration, network,
+  `/data`, Production, Candidate formula/parameter/rank/state, coordinator,
+  scheduler, publication, Snapshot, bundle, or deployment changed. Pointer
+  CAS/recovery/rollback, retention, and periodic full-lineage policy remain
+  open.
+- Candidate/CLI focused coverage finished at `57 passed`; the complete API
+  regression finished at `2135 passed, 2 warnings`. Both warnings are the
+  unchanged Python `crypt` and Starlette/httpx deprecations.
+
 ## 2026-09-07 — Validate ordered multi-generation Candidate lineage
 
 - Accepted ADR 0159 and added one generalized parent-evidence reader over an

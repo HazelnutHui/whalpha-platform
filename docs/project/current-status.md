@@ -290,12 +290,15 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    successors in a three-session fixture and rejects omitted or reordered
    ancestors. Its generalized cold parent reader deliberately validates the
    base and every append; the real one-append parent read took 39.79 seconds
-   and reproduced the exact 11-session ADR 0158 head. Next design an immutable
-   exact chain-head/checkpoint with CAS and periodic full-lineage audit rather
-   than calling this linear reader the daily hot path, then address downstream
-   compatibility and retention before considering cutover. Keep 1.0 global
-   raw-fact ordinals and 1.1 session-local ordinals explicitly distinct; their
-   final chain fingerprints must not be equated.
+   and reproduced the exact 11-session ADR 0158 head. ADR 0160 now provides an
+   immutable expected-fingerprint checkpoint: the real 4,962-byte head read in
+   1.08 seconds; advancing base head plus the new append took 24.78 seconds
+   versus 39.82 seconds cold and produced identical bytes; composer time fell
+   from 36.70 to 21.18 seconds with byte-identical append output. Next design
+   the governed immutable publication/current pointer with CAS, rollback,
+   recovery, retention, and periodic full-lineage audit before CLI/executor or
+   downstream cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
+   ordinals explicitly distinct.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds
