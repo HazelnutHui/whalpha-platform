@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-09-07 — Emit Candidate session directly from current objects
+
+- Accepted ADR 0157 and added the non-authoritative Candidate segmented-session
+  candidate/payload contracts. A daily verified-prior calculation may
+  optionally emit its current panel, batches, states/transitions, raw and
+  normalization records, risks, and Oracle without reconstructing them from
+  the cumulative V1 audit.
+- Bound the direct payload to the exact ADR 0155 parent chain, prepared V1
+  manifest, and manifest-committed incremental validation. Raw-fact order is
+  explicitly session-local and is not relabeled as V1's whole-history ordinal
+  identity.
+- Added owner-only deterministic staging, physical custody finalization,
+  full semantic recovery/idempotency reads, paired daily-only CLI arguments,
+  and resumed V1/sidecar consistency. Physical completion of the intended V1
+  audit remains mandatory before any later append composition.
+- The real 9/3→9/4 direct writer took 38.907 seconds and produced an
+  86,608,577-byte payload while matching all eight ADR 0156 cold-append
+  projections. The full proof process, including reconstruction of runtime
+  objects from retained evidence, took 76.95 seconds and peaked at 2,079,760
+  KiB. A final direct semantic read took 32.831 seconds and field-by-field
+  comparison found zero mismatches.
+- Payload logical fingerprint is
+  `a62455909c0436ad07e4024c329c961dfec8e8cd85b9aa507f0b1144037cb515`;
+  physical SHA-256 is
+  `9c9af6fa03357f6135e83568d48c5c6f4355df7e9a903d5db8547e2a9642f967`;
+  final manifest logical fingerprint is
+  `232ecb6de9fcf412e6c532b8bb70127eac5330e87a57f9e812137dcb4b2b0359`.
+- No network, `/data`, Production, Candidate formula, parameter, score, rank,
+  state, MI, Snapshot, publication, scheduler, coordinator, executor, bundle,
+  or deployment changed. V1 remains authoritative; append composition,
+  repeated generations, downstream compatibility, retention, periodic cold
+  audit, and cutover remain open.
+- Direct-session/CLI focused tests passed, and the complete API regression
+  finished at `2134 passed, 2 warnings`; both warnings are the unchanged Python
+  `crypt` and Starlette/httpx deprecations.
+
 ## 2026-09-07 — Prove one-session Candidate append and recovery
 
 - Accepted ADR 0156 and added non-authoritative segmented append and append-

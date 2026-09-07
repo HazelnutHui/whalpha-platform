@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0157](0157-emit-candidate-session-segment-from-current-objects.md): emit one non-authoritative Candidate session directly from already validated current objects, with exact parent/source binding and separate semantic audit.
+
 - [ADR 0156](0156-prove-one-session-candidate-append-and-recovery.md): prove one immutable Candidate session append, exact per-session cold equivalence, and completed-stage recovery without modifying the parent shadow.
 
 - [ADR 0155](0155-version-segmented-candidate-chain-identity.md): assign the segmented Candidate shadow a distinct forward hash-chain identity without relabeling it as V1 whole-history evidence.
@@ -256,3 +258,4 @@ Each ADR should include:
 - [0154: Prepare Daily Membership Outside the Serving Gate](0154-prepare-daily-membership-outside-the-serving-gate.md)
 - [0155: Version the Segmented Candidate Chain Identity](0155-version-segmented-candidate-chain-identity.md)
 - [0156: Prove One-Session Candidate Append and Recovery](0156-prove-one-session-candidate-append-and-recovery.md)
+- [0157: Emit the Candidate Session Segment from Current Objects](0157-emit-candidate-session-segment-from-current-objects.md)

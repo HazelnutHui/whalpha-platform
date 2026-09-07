@@ -75,7 +75,9 @@ Candidate/state calculation, parameter, Universe-order contract fingerprint.
 The final node is the segmented chain tip. It is deliberately not V1's
 cumulative `state_history_fingerprint` and must never be written into that
 field. The identity has no calculation, publication, scheduler, or Production
-authority; append and cutover require later proofs and decisions.
+authority. ADR 0156 proves one disconnected successor append and ADR 0157
+proves direct current-session candidate emission; repeated operation,
+downstream compatibility, and cutover still require later proofs and decisions.
 
 ADR 0156 adds a separate one-session append-package contract. It leaves this
 parent shadow byte-unchanged, extends the chain tip, and compares prior data by
@@ -98,14 +100,15 @@ business projection fingerprints exactly. The complete one-time conversion
 and reread took 548.57 seconds and 11,008,352 KiB peak RSS. The bounded current
 reader rehashed every segment while parsing only the latest one in 16.53
 seconds and 855,712 KiB peak RSS. It returned two Candidate batches, 3,549
-current state rows, and six current risk results. These measurements establish
-the storage/read boundary only; no daily append or cutover claim follows.
+current state rows, and six current risk results. These measurements established
+the initial storage/read boundary; later append and direct-emission proofs are
+separately governed by ADRs 0156 and 0157 and make no cutover claim.
 
 An independent comparison against the complete V1 state ledger showed that
 the latest segment reproduces both Universe support sets, prior stages,
 confirmation counts, and source state-record fingerprints exactly. V1's
 whole-history canonical fingerprint cannot be reproduced from only the latest
-checkpoint. A future append contract must name and version a segmented chain
+checkpoint. ADR 0155 therefore names and versions a separate segmented chain
 fingerprint; the shadow must not place that value into the V1 field while
 claiming unchanged identity.
 

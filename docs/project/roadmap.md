@@ -42,11 +42,14 @@ Next:
    Snapshot is 121.57 seconds after removing its duplicate active read.
 4. Advance ADR 0130's disconnected segmented Candidate shadow from exact V1
    reconstruction, ADR 0155's distinct state-chain identity, and ADR 0156's
-   one-session append/recovery/cold-equivalence proof to direct current-session
-   segment production. Then prove repeated append generations, downstream
-   compatibility, retention, and a periodic cold-audit policy. Do not relabel
-   its different history fingerprint as V1 or cut over the daily/publication
-   path until all gates pass.
+   one-session append/recovery/cold-equivalence proof. ADR 0157 completes direct
+   current-session candidate production from already validated calculation
+   objects. Next compose that candidate with the exact physically completed V1
+   audit into a successor append without cumulative V1 semantic reconstruction,
+   then prove repeated append generations, downstream compatibility, retention,
+   and a periodic cold-audit policy. Do not relabel its different history
+   fingerprint as V1 or cut over the daily/publication path until all gates
+   pass.
 5. Remove any remaining repeated evidence reconstruction only where the new
    complete-chain measurement justifies it.
 6. Vectorize or process-parallelize only independent CPU-heavy work after exact

@@ -181,6 +181,16 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_CANDIDATE_MAX_WORKERS,
         help="Bounded Dell-local process workers for independent cold-replay session Oracles (1-8).",
     )
+    parser.add_argument(
+        "--segmented-parent-shadow",
+        type=Path,
+        help="Optional exact parent segmented shadow for a non-authoritative direct daily session candidate.",
+    )
+    parser.add_argument(
+        "--segmented-session-output",
+        type=Path,
+        help="Optional new /tmp output for the direct daily session candidate.",
+    )
     args = parser.parse_args(argv)
     for name in (
         "data_root",
@@ -190,12 +200,26 @@ def main(argv: list[str] | None = None) -> int:
         "panel_cache_root",
         "audit_work_dir",
         "reference_audit",
+        "segmented_parent_shadow",
+        "segmented_session_output",
     ):
         value = getattr(args, name)
         if value is not None and not value.is_absolute():
             parser.error(f"--{name.replace('_', '-')} must be absolute")
 
     validation_tier = _resolve_validation_tier(parser, args)
+    if bool(args.segmented_parent_shadow) != bool(args.segmented_session_output):
+        parser.error(
+            "--segmented-parent-shadow and --segmented-session-output are required together"
+        )
+    if args.segmented_parent_shadow is not None and (
+        args.verify_output
+        or args.prior_candidate_audit is None
+        or validation_tier != "daily"
+    ):
+        parser.error(
+            "direct segmented session output requires a calculated daily incremental run"
+        )
 
     read_audit, write_audit, validate_output = _audit_api()
     if args.verify_output:
@@ -241,14 +265,35 @@ def main(argv: list[str] | None = None) -> int:
         )
         if completed is not None:
             tier_evidence = _validate_calculated_tier(validation_tier, completed)
+            summary = _summary(
+                completed,
+                args.output_dir,
+                validation_tier=validation_tier,
+                tier_evidence=tier_evidence,
+            )
+            if args.segmented_parent_shadow is not None:
+                segmented = _read_segmented_session_candidate(
+                    parent_shadow=args.segmented_parent_shadow,
+                    output_dir=args.segmented_session_output,
+                )
+                if (
+                    segmented.manifest["intended_source_audit"][
+                        "logical_content_fingerprint"
+                    ]
+                    != completed.get("logical_content_fingerprint")
+                ):
+                    raise RuntimeError(
+                        "completed Candidate audit and direct session candidate differ"
+                    )
+                summary["segmented_session_candidate"] = (
+                    _segmented_session_summary(
+                        segmented.manifest,
+                        args.segmented_session_output,
+                    )
+                )
             print(
                 json.dumps(
-                    _summary(
-                        completed,
-                        args.output_dir,
-                        validation_tier=validation_tier,
-                        tier_evidence=tier_evidence,
-                    ),
+                    summary,
                     sort_keys=True,
                     separators=(",", ":"),
                 )
@@ -350,13 +395,15 @@ def main(argv: list[str] | None = None) -> int:
             ),
         }
         incremental_kwargs = {}
+        incremental_validation = None
         if prior_audit is not None:
+            incremental_validation = _incremental_validation_ledger(
+                prior_audit=prior_audit,
+                run=run,
+            )
             incremental_kwargs = {
                 "prior_source_panels": prior_audit.source_panels,
-                "incremental_validation": _incremental_validation_ledger(
-                    prior_audit=prior_audit,
-                    run=run,
-                ),
+                "incremental_validation": incremental_validation,
             }
         manifest = write_audit(
             output_dir=args.output_dir,
@@ -387,6 +434,36 @@ def main(argv: list[str] | None = None) -> int:
             ),
             **incremental_kwargs,
         )
+        segmented_session_manifest = None
+        if args.segmented_parent_shadow is not None:
+            if incremental_validation is None:
+                raise RuntimeError(
+                    "direct segmented session output requires incremental validation"
+                )
+            segmented_session_manifest = _write_segmented_session_candidate(
+                parent_shadow=args.segmented_parent_shadow,
+                source_audit_manifest=manifest,
+                incremental_validation=incremental_validation,
+                panel=run.panels[-1],
+                candidate_batches=tuple(
+                    batch
+                    for universe_id in PUBLIC_UNIVERSE_ORDER
+                    for batch in run.current_score_history[universe_id]
+                ),
+                state_records=tuple(
+                    row
+                    for universe_id in PUBLIC_UNIVERSE_ORDER
+                    for row in run.state_history[universe_id]
+                    if row.as_of_session == args.as_of_session
+                ),
+                risk_results=run.current_risk_results,
+                oracle_comparison=run.oracle_report,
+                raw_facts=_raw_fact_records(run.current_score_history),
+                normalization_records=_normalization_records(
+                    run.current_score_history
+                ),
+                output_dir=args.segmented_session_output,
+            )
         if args.audit_work_dir is not None:
             prepared_fingerprint = manifest["logical_content_fingerprint"]
             del run, prior_audit, raw_facts, normalization_ledger, incremental_kwargs
@@ -400,14 +477,20 @@ def main(argv: list[str] | None = None) -> int:
                 raise RuntimeError("resumable Candidate audit did not complete its formal finalization")
             manifest = completed
     tier_evidence = _validate_calculated_tier(validation_tier, manifest)
+    summary = _summary(
+        manifest,
+        args.output_dir,
+        validation_tier=validation_tier,
+        tier_evidence=tier_evidence,
+    )
+    if segmented_session_manifest is not None:
+        summary["segmented_session_candidate"] = _segmented_session_summary(
+            segmented_session_manifest,
+            args.segmented_session_output,
+        )
     print(
         json.dumps(
-            _summary(
-                manifest,
-                args.output_dir,
-                validation_tier=validation_tier,
-                tier_evidence=tier_evidence,
-            ),
+            summary,
             sort_keys=True,
             separators=(",", ":"),
         )
@@ -440,6 +523,36 @@ def _read_candidate_business_fingerprints(path: Path):
     )
 
     return read_opportunity_candidate_business_fingerprints(path)
+
+
+def _write_segmented_session_candidate(**kwargs):
+    from tip_api.services.opportunity_candidate_segmented_session_candidate import (
+        write_candidate_segmented_session_candidate,
+    )
+
+    return write_candidate_segmented_session_candidate(**kwargs)
+
+
+def _read_segmented_session_candidate(**kwargs):
+    from tip_api.services.opportunity_candidate_segmented_session_candidate import (
+        read_candidate_segmented_session_candidate,
+    )
+
+    return read_candidate_segmented_session_candidate(**kwargs)
+
+
+def _segmented_session_summary(
+    manifest: Mapping[str, Any],
+    output_dir: Path,
+) -> dict[str, Any]:
+    return {
+        "output_dir": str(output_dir),
+        "as_of_session": manifest["as_of_session"],
+        "logical_content_fingerprint": manifest[
+            "logical_content_fingerprint"
+        ],
+        "publication_authorized": False,
+    }
 
 
 def _finalize_resumable_audit(

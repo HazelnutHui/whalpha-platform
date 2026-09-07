@@ -276,14 +276,18 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
 3. Continue ADR 0130's segmented Candidate custody proof. ADR 0155 gives the
    shadow a distinct versioned forward-chain identity, and ADR 0156 proves one
    exact 9/3→9/4 append, unchanged parent bytes, completed-stage recovery, and
-   independent zero-mismatch cold equivalence. Candidate remains the largest
-   analytics stage at roughly 4.5 minutes.
-4. Produce the new segment directly from already calculated current-session
-   objects; the current append proof still rereads complete V1 and therefore
-   took 8.5 minutes and about 13.1 GiB. Then prove repeated append generations,
-   downstream compatibility, retention, and periodic cold-audit policy before
-   considering cutover. The bounded parent current read remains 16.53 seconds
-   versus 228.285 seconds for V1 full semantics.
+   independent zero-mismatch cold equivalence. ADR 0157 now produces the 9/4
+   segment directly from already validated current-session objects in 38.907
+   seconds. Its 86,608,577-byte payload matched all eight cold projections and
+   passed a separate 32.831-second semantic read. Candidate remains the largest
+   active analytics stage at roughly 4.5 minutes because this optional sidecar
+   has not replaced V1 or entered the daily executor.
+4. Compose the ADR 0157 direct candidate with the exact physically completed
+   intended V1 audit into an ADR 0156 append without rereading cumulative V1
+   semantics. Then prove repeated append generations, downstream compatibility,
+   retention, and periodic cold-audit policy before considering cutover. The
+   bounded parent current read remains 16.53 seconds versus 228.285 seconds for
+   V1 full semantics.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

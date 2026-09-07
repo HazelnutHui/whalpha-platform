@@ -381,11 +381,17 @@ separately bounded.
    parent through 9/4 with one immutable 86,610,428-byte segment, unchanged
    parent bytes, recoverable atomic delivery, and independent zero-mismatch
    cold equivalence. Its two 8.5-minute / 13.1-GiB passes deliberately reread
-   complete V1 and are not a hot-path performance result. Next emit the daily
-   segment directly from current-session objects, then prove repeated append,
-   downstream compatibility, retention, and periodic cold-audit policy. Add
-   reuse, vectorization, or safe process parallelism only where evidence
-   justifies it and outputs remain exact.
+   complete V1 and are not a hot-path performance result. ADR 0157 now emits
+   the same current session directly from the already validated calculation
+   objects: the final write took 38.907 seconds, produced an 86,608,577-byte
+   payload, matched all eight cold-append projections, and passed a separate
+   32.831-second semantic read. It remains an optional `/tmp`-only candidate;
+   V1, the executor, coordinator, scheduler, publication, and Production are
+   unchanged. Next compose it with the physically completed intended V1 audit
+   into an exact append, then prove repeated append, downstream compatibility,
+   retention, and periodic cold-audit policy. Add reuse, vectorization, or safe
+   process parallelism only where evidence justifies it and outputs remain
+   exact.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The

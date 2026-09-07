@@ -15,6 +15,7 @@ import pytest
 from tip_api.parameters.market_regime.candidate_v1_1_1 import CANDIDATE_STATE_PARAMETER_FINGERPRINT
 from tip_api.parameters.market_regime.state_v1_0_1 import STATE_CALCULATION_VERSION, STATE_PARAMETER_FINGERPRINT
 from tip_api.services import opportunity_candidate_cli as cli
+from tip_api.services import opportunity_candidate_segmented_session_candidate as session_candidate
 from tip_api.services.opportunity_candidate_audit import (
     CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS,
     OpportunityCandidateAuditError,
@@ -22,6 +23,18 @@ from tip_api.services.opportunity_candidate_audit import (
     read_opportunity_candidate_audit_contents,
     read_opportunity_candidate_incremental_source,
     write_opportunity_candidate_audit,
+)
+from tip_api.services.opportunity_candidate_segmented_append import (
+    read_candidate_segmented_append,
+    write_candidate_segmented_append,
+)
+from tip_api.services.opportunity_candidate_segmented_session_candidate import (
+    CandidateSegmentedSessionCandidateError,
+    read_candidate_segmented_session_candidate,
+    write_candidate_segmented_session_candidate,
+)
+from tip_api.services.opportunity_candidate_segmented_shadow import (
+    write_candidate_segmented_shadow,
 )
 from tip_api.services.market_regime_sources import (
     MarketRegimeBar,
@@ -120,6 +133,19 @@ def test_relative_paths_are_rejected_before_any_reader(monkeypatch) -> None:
         cli.main([
             "--as-of-session", "2026-08-24", "--data-root", "relative",
             "--phase1b-audit", "/tmp/phase1b", "--output-dir", "/tmp/candidates",
+        ])
+
+
+def test_segmented_session_cli_options_are_paired(monkeypatch, tmp_path) -> None:
+    monkeypatch.setattr(cli, "_audit_api", lambda: pytest.fail("audit API must not load"))
+    with pytest.raises(SystemExit):
+        cli.main([
+            "--as-of-session", "2026-08-24",
+            "--data-root", str(tmp_path),
+            "--phase1b-audit", str(tmp_path / "phase1b"),
+            "--prior-candidate-audit", str(tmp_path / "prior"),
+            "--output-dir", str(tmp_path / "candidate-audit"),
+            "--segmented-parent-shadow", str(tmp_path / "shadow"),
         ])
 
 
@@ -275,6 +301,81 @@ def test_completed_resumable_work_finalizes_before_source_reads(monkeypatch, tmp
         ("finalize", work, output, "code_change"),
     ]
     assert '"status":"completed"' in capsys.readouterr().out
+
+
+def test_completed_resumable_daily_run_requires_its_direct_session_candidate(
+    monkeypatch,
+    tmp_path,
+    capsys,
+) -> None:
+    output = tmp_path / "candidate-audit"
+    work = tmp_path / "candidate-work"
+    parent = tmp_path / "candidate-parent"
+    session = tmp_path / "candidate-session"
+    logical_fingerprint = "a" * 64
+    completed = {
+        "schema_version": "1.1",
+        "execution_mode": "verified_prior_incremental",
+        "as_of_session": "2026-08-24",
+        "logical_content_fingerprint": logical_fingerprint,
+        "oracle_mismatch_count": 0,
+    }
+    calls = []
+    monkeypatch.setattr(
+        cli,
+        "_audit_api",
+        lambda: (
+            lambda path: pytest.fail("completed output reader must not run"),
+            lambda **kwargs: pytest.fail("candidate writer must not run"),
+            lambda path: calls.append(("validate", path)) or path,
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "_finalize_resumable_audit",
+        lambda work_dir, output_dir, *, validation_tier: completed,
+    )
+    monkeypatch.setattr(
+        cli,
+        "_read_segmented_session_candidate",
+        lambda **kwargs: calls.append(("read_segmented", kwargs))
+        or SimpleNamespace(
+            manifest={
+                "as_of_session": "2026-08-24",
+                "logical_content_fingerprint": "b" * 64,
+                "intended_source_audit": {
+                    "logical_content_fingerprint": logical_fingerprint,
+                },
+            }
+        ),
+    )
+    monkeypatch.setattr(
+        cli,
+        "read_market_regime_state_audit",
+        lambda path: pytest.fail("Phase1b must not be read"),
+    )
+
+    assert cli.main([
+        "--as-of-session", "2026-08-24",
+        "--data-root", str(tmp_path),
+        "--phase1b-audit", str(tmp_path / "phase1b"),
+        "--prior-candidate-audit", str(tmp_path / "prior"),
+        "--output-dir", str(output),
+        "--audit-work-dir", str(work),
+        "--validation-tier", "daily",
+        "--segmented-parent-shadow", str(parent),
+        "--segmented-session-output", str(session),
+    ]) == 0
+    assert calls == [
+        ("validate", output),
+        (
+            "read_segmented",
+            {"parent_shadow": parent, "output_dir": session},
+        ),
+    ]
+    rendered = capsys.readouterr().out
+    assert '"segmented_session_candidate"' in rendered
+    assert '"logical_content_fingerprint":"' + "b" * 64 + '"' in rendered
 
 
 @pytest.mark.parametrize(
@@ -576,6 +677,133 @@ def test_formal_main_passes_all_panels_and_equivalence_flags_to_audit(
     assert '"status":"completed"' in capsys.readouterr().out
 
 
+def test_daily_main_emits_direct_segment_from_current_objects(
+    monkeypatch,
+    tmp_path,
+    capsys,
+) -> None:
+    panels = _panels()
+    by_session = {item.as_of_session: item for item in panels}
+    monkeypatch.setattr(
+        cli,
+        "load_formal_market_regime_panels",
+        lambda *, data_root, as_of_sessions: tuple(
+            by_session[item] for item in as_of_sessions
+        ),
+    )
+    full = cli._calculate_offline(
+        data_root=tmp_path,
+        candidate_sessions=tuple(item.as_of_session for item in panels),
+        regime_records=_regime_records(panels),
+    )
+    current_score_history = {
+        universe_id: (full.score_history[universe_id][-1],)
+        for universe_id in (PRIMARY, SECONDARY)
+    }
+    run = cli.CandidateIncrementalRun(
+        panels=full.panels,
+        score_history=full.score_history,
+        state_history=full.state_history,
+        current_risk_results=full.current_risk_results,
+        oracle_report=full.oracle_report,
+        equivalence_flags={
+            **full.equivalence_flags,
+            "prior_prefix_preserved": True,
+            "future_prefix_stable": True,
+        },
+        candidate_sessions=full.candidate_sessions,
+        timings=full.timings,
+        runtime_metrics=full.runtime_metrics,
+        current_score_history=current_score_history,
+    )
+    prior = SimpleNamespace(
+        source_panels=({"as_of_session": panels[0].as_of_session.isoformat()},),
+        manifest={
+            "as_of_session": panels[0].as_of_session.isoformat(),
+            "logical_content_fingerprint": "1" * 64,
+            "oracle_fingerprint": "2" * 64,
+            "candidate_history_fingerprint": "3" * 64,
+            "candidate_state_history_fingerprint": "4" * 64,
+        },
+        validation_ledger=None,
+        raw_facts=(),
+        normalization_ledger=(),
+    )
+    source_logical = "5" * 64
+    captured_audit = {}
+    captured_segment = {}
+
+    def write_audit(**kwargs):
+        captured_audit.update(kwargs)
+        return {
+            "schema_version": "1.1",
+            "execution_mode": "verified_prior_incremental",
+            "as_of_session": panels[-1].as_of_session.isoformat(),
+            "universe_ids": [PRIMARY, SECONDARY],
+            "logical_content_fingerprint": source_logical,
+            "oracle_mismatch_count": 0,
+        }
+
+    monkeypatch.setattr(
+        cli,
+        "_audit_api",
+        lambda: (
+            lambda path: pytest.fail("completed audit reader must not run"),
+            write_audit,
+            lambda path: path,
+        ),
+    )
+    monkeypatch.setattr(cli, "read_market_regime_state_audit", lambda path: {})
+    monkeypatch.setattr(cli, "_read_phase1b_payloads", lambda path: ((), {}, {}))
+    monkeypatch.setattr(cli, "_validate_phase1b", lambda **kwargs: None)
+    monkeypatch.setattr(cli, "_read_prior_candidate_audit", lambda path: prior)
+    monkeypatch.setattr(cli, "_calculate_incremental", lambda **kwargs: run)
+    monkeypatch.setattr(
+        cli,
+        "ExchangeCalendar",
+        lambda: SimpleNamespace(previous_session=lambda value: panels[0].as_of_session),
+    )
+
+    def write_segment(**kwargs):
+        captured_segment.update(kwargs)
+        return {
+            "as_of_session": panels[-1].as_of_session.isoformat(),
+            "logical_content_fingerprint": "6" * 64,
+        }
+
+    monkeypatch.setattr(cli, "_write_segmented_session_candidate", write_segment)
+    parent = tmp_path / "parent-shadow"
+    session = tmp_path / "session-candidate"
+    assert cli.main([
+        "--as-of-session", panels[-1].as_of_session.isoformat(),
+        "--data-root", str(tmp_path),
+        "--phase1b-audit", str(tmp_path / "phase1b"),
+        "--prior-candidate-audit", str(tmp_path / "prior"),
+        "--validation-tier", "daily",
+        "--output-dir", str(tmp_path / "candidate-audit"),
+        "--segmented-parent-shadow", str(parent),
+        "--segmented-session-output", str(session),
+    ]) == 0
+    assert captured_segment["parent_shadow"] == parent
+    assert captured_segment["source_audit_manifest"][
+        "logical_content_fingerprint"
+    ] == source_logical
+    assert captured_segment["incremental_validation"] == captured_audit[
+        "incremental_validation"
+    ]
+    assert captured_segment["panel"] == panels[-1]
+    assert captured_segment["candidate_batches"] == tuple(
+        current_score_history[universe_id][0]
+        for universe_id in (PRIMARY, SECONDARY)
+    )
+    assert all(
+        row.as_of_session == panels[-1].as_of_session
+        for row in captured_segment["state_records"]
+    )
+    assert captured_segment["output_dir"] == session
+    assert '"segmented_session_candidate"' in capsys.readouterr().out
+
+
 def test_as_of_missing_member_uses_history_identity_and_emits_missing_state(monkeypatch, tmp_path) -> None:
     first, second = _panels()
     missing_id = next(iter(second.select_universe(PRIMARY).member_ids))
@@ -628,6 +856,11 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
     incremental_dir = Path(tempfile.mkdtemp(prefix="candidate-incremental-", dir="/tmp"))
     cold_dir = Path(tempfile.mkdtemp(prefix="candidate-cold-", dir="/tmp"))
     tampered_dir = Path(tempfile.mkdtemp(prefix="candidate-incremental-tampered-", dir="/tmp"))
+    parent_shadow = Path(tempfile.mkdtemp(prefix="candidate-parent-shadow-", dir="/tmp"))
+    append_dir = Path(tempfile.mkdtemp(prefix="candidate-segment-append-", dir="/tmp"))
+    session_dir = Path(tempfile.mkdtemp(prefix="candidate-session-direct-", dir="/tmp"))
+    for path in (parent_shadow, append_dir, session_dir):
+        shutil.rmtree(path)
     try:
         write_opportunity_candidate_audit(
             output_dir=prior_dir,
@@ -692,6 +925,10 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
         assert all(incremental.equivalence_flags.values())
         assert incremental.runtime_metrics["candidate_oracle_effective_max_workers"] == 1
 
+        incremental_validation = cli._incremental_validation_ledger(
+            prior_audit=prior,
+            run=incremental,
+        )
         manifest = write_opportunity_candidate_audit(
             output_dir=incremental_dir,
             panels=incremental.panels,
@@ -710,10 +947,7 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
                 *prior.normalization_ledger,
                 *cli._normalization_records(incremental.current_score_history),
             ),
-            incremental_validation=cli._incremental_validation_ledger(
-                prior_audit=prior,
-                run=incremental,
-            ),
+            incremental_validation=incremental_validation,
             generated_at=datetime.now(UTC),
             timings={},
             peak_memory_kib=1,
@@ -725,6 +959,127 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
             "logical_content_fingerprint"
         ]
         assert tuple(item.logical_fingerprint for item in reread.candidate_batches) == batch_fingerprints(cold_run)
+        write_candidate_segmented_shadow(
+            source_audit=prior_dir,
+            output_dir=parent_shadow,
+        )
+        append_manifest = write_candidate_segmented_append(
+            parent_shadow=parent_shadow,
+            source_audit=incremental_dir,
+            output_dir=append_dir,
+        )
+        direct_kwargs = {
+            "parent_shadow": parent_shadow,
+            "source_audit_manifest": manifest,
+            "incremental_validation": incremental_validation,
+            "panel": incremental.panels[-1],
+            "candidate_batches": tuple(
+                batch
+                for universe_id in (PRIMARY, SECONDARY)
+                for batch in incremental.current_score_history[universe_id]
+            ),
+            "state_records": tuple(
+                row
+                for universe_id in (PRIMARY, SECONDARY)
+                for row in incremental.state_history[universe_id]
+                if row.as_of_session == panels[-1].as_of_session
+            ),
+            "risk_results": incremental.current_risk_results,
+            "oracle_comparison": incremental.oracle_report,
+            "raw_facts": cli._raw_fact_records(incremental.current_score_history),
+            "normalization_records": cli._normalization_records(
+                incremental.current_score_history
+            ),
+        }
+        direct_manifest = write_candidate_segmented_session_candidate(
+            **direct_kwargs,
+            output_dir=session_dir,
+        )
+        direct = read_candidate_segmented_session_candidate(
+            parent_shadow=parent_shadow,
+            output_dir=session_dir,
+        )
+        appended = read_candidate_segmented_append(
+            parent_shadow=parent_shadow,
+            output_dir=append_dir,
+        )
+        assert direct.manifest == direct_manifest
+        assert direct_manifest["current_projection_fingerprints"] == append_manifest[
+            "current_projection_fingerprints"
+        ]
+        for field in direct_manifest["current_projection_fingerprints"]:
+            assert direct.payload[field] == appended.segment[field]
+        assert direct.payload["raw_fact_session_ordinals"] == list(
+            range(len(direct.payload["raw_facts"]))
+        )
+        assert "raw_fact_source_ordinals" not in direct.payload
+        assert direct_manifest["publication_authorized"] is False
+        assert direct_manifest["production_write_count"] == 0
+        assert write_candidate_segmented_session_candidate(
+            **direct_kwargs,
+            output_dir=session_dir,
+        ) == direct_manifest
+
+        recovery_dir = session_dir.with_name(f"{session_dir.name}-recovery")
+        real_rename = session_candidate.os.rename
+
+        def interrupt_delivery(source, destination):
+            if Path(destination) == recovery_dir:
+                raise OSError("simulated direct-session delivery interruption")
+            return real_rename(source, destination)
+
+        monkeypatch.setattr(session_candidate.os, "rename", interrupt_delivery)
+        with pytest.raises(OSError, match="simulated direct-session"):
+            write_candidate_segmented_session_candidate(
+                **direct_kwargs,
+                output_dir=recovery_dir,
+            )
+        recovery_stage = recovery_dir.with_name(f".{recovery_dir.name}.staging")
+        assert recovery_stage.is_dir()
+        monkeypatch.setattr(session_candidate.os, "rename", real_rename)
+        assert write_candidate_segmented_session_candidate(
+            **direct_kwargs,
+            output_dir=recovery_dir,
+        ) == direct_manifest
+        assert recovery_dir.is_dir()
+        assert not recovery_stage.exists()
+
+        changed_validation = {
+            **incremental_validation,
+            "prior_audit_logical_fingerprint": "0" * 64,
+        }
+        rejected_dir = session_dir.with_name(f"{session_dir.name}-rejected")
+        with pytest.raises(
+            CandidateSegmentedSessionCandidateError,
+            match="exact parent audit",
+        ):
+            write_candidate_segmented_session_candidate(
+                **{
+                    **direct_kwargs,
+                    "incremental_validation": changed_validation,
+                },
+                output_dir=rejected_dir,
+            )
+        assert not rejected_dir.exists()
+
+        wrong_universe_dir = session_dir.with_name(
+            f"{session_dir.name}-wrong-universe"
+        )
+        with pytest.raises(
+            CandidateSegmentedSessionCandidateError,
+            match="source audit identity",
+        ):
+            write_candidate_segmented_session_candidate(
+                **{
+                    **direct_kwargs,
+                    "source_audit_manifest": {
+                        **manifest,
+                        "universe_ids": [SECONDARY, PRIMARY],
+                    },
+                },
+                output_dir=wrong_universe_dir,
+            )
+        assert not wrong_universe_dir.exists()
         write_opportunity_candidate_audit(
             output_dir=cold_dir,
             panels=cold_run.panels,
@@ -786,3 +1141,22 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
         shutil.rmtree(incremental_dir, ignore_errors=True)
         shutil.rmtree(cold_dir, ignore_errors=True)
         shutil.rmtree(tampered_dir, ignore_errors=True)
+        shutil.rmtree(parent_shadow, ignore_errors=True)
+        shutil.rmtree(append_dir, ignore_errors=True)
+        shutil.rmtree(session_dir, ignore_errors=True)
+        shutil.rmtree(
+            session_dir.with_name(f"{session_dir.name}-recovery"),
+            ignore_errors=True,
+        )
+        shutil.rmtree(
+            session_dir.with_name(f".{session_dir.name}-recovery.staging"),
+            ignore_errors=True,
+        )
+        shutil.rmtree(
+            session_dir.with_name(f"{session_dir.name}-rejected"),
+            ignore_errors=True,
+        )
+        shutil.rmtree(
+            session_dir.with_name(f"{session_dir.name}-wrong-universe"),
+            ignore_errors=True,
+        )

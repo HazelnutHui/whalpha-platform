@@ -52,8 +52,11 @@ interruption. Partial or ambiguous evidence fails closed and is not deleted.
 
 The package performs no network or canonical write and grants no publication,
 scheduler, research-performance, or Production authority. Candidate V1 remains
-authoritative. Direct current-session production, repeated append generations,
-retention, downstream compatibility, and cutover require later decisions.
+authoritative. ADR 0157 separately proves a direct current-session candidate,
+but that sidecar is not an append until a later composer verifies its exact V1
+physical completion and creates this contract's successor identity. Repeated
+append generations, retention, downstream compatibility, and cutover require
+later decisions.
 
 ## Real Dell proof
 
@@ -68,5 +71,7 @@ Independent cold equivalence found zero mismatches and produced fingerprint
 
 The two heavy passes took 8 minutes 37 seconds and 8 minutes 30 seconds with
 about 13.1 GiB peak RSS because they intentionally reread the cumulative V1
-audit. They prove correctness and expose the remaining hot-path work; they are
-not the expected cost of a future direct daily segment append.
+audit. They prove correctness rather than hot-path performance. ADR 0157 later
+reduced direct session emission to 38.907 seconds without changing this append
+package or granting it authority; exact composition into a successor append is
+the next open boundary.

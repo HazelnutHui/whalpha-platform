@@ -396,6 +396,38 @@ runtime, but it is part of the Candidate batch's logical evidence. A fast
 append therefore requires an explicit versioned state-chain identity; changing
 the V1 meaning in place is prohibited.
 
+## 2026-09-07 direct Candidate session result
+
+ADR 0157 adds an optional daily-only output to the Candidate CLI. The paired
+`--segmented-parent-shadow` and `--segmented-session-output` arguments emit the
+current session from the calculation's already validated objects before those
+objects are released for deferred V1 finalization. The output is a
+non-authoritative `/tmp` sidecar; the executor, coordinator, scheduler, V1
+publication path, `/data`, and Production are unchanged.
+
+The direct writer binds the exact ADR 0155 parent chain, prepared V1 manifest,
+and incremental-validation artifact, then validates typed batches, states,
+risks, current Oracle, source scope, exact files, custody, sizes, and hashes.
+Its normal new-write path uses validated write plus physical custody instead
+of immediately parsing the same payload again. Existing-output idempotency,
+interrupted-stage recovery, periodic validation, and code/model-change review
+retain the independent semantic reader.
+
+On the real 2026-09-03 parent and 2026-09-04 current session, source and runtime
+object reconstruction from retained evidence took 36.511 seconds. The direct
+writer then took 38.907 seconds and produced an 86,608,577-byte payload. The
+overall proof process took 76.95 seconds and peaked at 2,079,760 KiB. All eight
+current projection fingerprints matched the independently constructed ADR
+0156 cold append. A final semantic read with the completed validation set took
+32.831 seconds; field-by-field comparison against that cold append found zero
+mismatches.
+
+This is a direct-emission measurement, not a new complete daily-chain time.
+The next step is to verify physical completion of the exact intended V1 audit
+and compose the direct candidate into the successor append without cumulative
+V1 semantic reconstruction. Repeated append, downstream, retention, periodic-
+cold, and cutover gates remain open.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths
