@@ -30,6 +30,10 @@ from tip_api.providers.massive.same_day_catchup import inventory_fingerprint
 from tip_api.services.universe_membership_knowledge_time import (
     assess_universe_membership_knowledge_time,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
@@ -426,27 +430,57 @@ def _artifact(
 
 
 def _write_plan(plan: UniverseMembershipApplyPlanV1, path: Path) -> Path:
-    if not _is_safe_tmp_plan_path(path) or os.path.lexists(path):
+    _validate_plan_location(path)
+    if os.path.lexists(path):
         raise UniverseMembershipApplyPlanError(
-            "Membership Apply plan must be a new safe path below /tmp"
+            "Membership Apply plan must be a new governed path"
         )
     payload = _canonical_json_bytes(plan.model_dump(mode="json"))
-    descriptor = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+    staging = path.with_name(f".{path.name}.staging")
+    if os.path.lexists(staging):
+        raise UniverseMembershipApplyPlanError(
+            "Membership Apply-plan staging residue requires diagnosis"
+        )
+    descriptor = os.open(
+        staging,
+        os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW,
+        0o600,
+    )
     try:
-        os.write(descriptor, payload)
+        remaining = memoryview(payload)
+        while remaining:
+            written = os.write(descriptor, remaining)
+            if written <= 0:
+                raise UniverseMembershipApplyPlanError(
+                    "Membership Apply-plan staging write did not progress"
+                )
+            remaining = remaining[written:]
         os.fsync(descriptor)
     finally:
         os.close(descriptor)
-    path.chmod(0o600)
+    staging.chmod(0o600)
+    try:
+        os.link(staging, path, follow_symlinks=False)
+    except FileExistsError as exc:
+        raise UniverseMembershipApplyPlanError(
+            "Membership Apply plan appeared during atomic publication"
+        ) from exc
+    os.unlink(staging)
+    descriptor = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
     return path
 
 
 def _validated_plan_file(path: Path) -> Path:
-    if (
-        not _is_safe_tmp_plan_path(path)
-        or path.is_symlink()
-        or not path.is_file()
-    ):
+    _validate_plan_location(path)
+    if os.path.lexists(path.with_name(f".{path.name}.staging")):
+        raise UniverseMembershipApplyPlanError(
+            "Membership Apply-plan staging residue requires diagnosis"
+        )
+    if path.is_symlink() or not path.is_file():
         raise UniverseMembershipApplyPlanError("Membership Apply plan is unsafe")
     metadata = path.stat()
     if metadata.st_uid != os.getuid() or stat.S_IMODE(metadata.st_mode) != 0o600:
@@ -456,19 +490,17 @@ def _validated_plan_file(path: Path) -> Path:
     return path
 
 
-def _is_safe_tmp_plan_path(path: Path) -> bool:
-    temporary_root = Path("/tmp").resolve(strict=True)
-    if not path.is_absolute() or temporary_root not in path.parents:
-        return False
-    parent = path.parent
-    if parent.is_symlink() or not parent.is_dir() or parent.resolve(strict=True) != parent:
-        return False
-    current = parent
-    while current != temporary_root:
-        if current.is_symlink():
-            return False
-        current = current.parent
-    return True
+def _validate_plan_location(path: Path) -> None:
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"universe-membership-plan.json"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise UniverseMembershipApplyPlanError(
+            "Membership Apply plan is outside governed offline custody"
+        ) from exc
 
 
 def _safe_segment(value: str) -> str:

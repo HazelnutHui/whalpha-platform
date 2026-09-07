@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import shutil
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 
@@ -94,6 +96,34 @@ def test_batch_paths_must_be_tmp_disjoint_and_bounded(tmp_path: Path) -> None:
             output_root=linked_output,
             package_paths={FIRST: package},
         )
+
+
+def test_canonical_batch_accepts_exact_persistent_daily_candidate_root(
+    tmp_path: Path,
+) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    owner = Path.home() / ".local/state" / f"whalpha-batch-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session = sessions / f"session_date={FIRST.isoformat()}"
+    for path in (owner, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    try:
+        candidate = session / "universe-membership-candidate"
+        source, target, dates = _validate_canonical_batch_paths(
+            data_root=data_root,
+            output_root=candidate,
+            sessions=(FIRST,),
+        )
+
+        assert source == data_root.resolve()
+        assert target == candidate
+        assert target.stat().st_mode & 0o777 == 0o700
+        assert dates == (FIRST,)
+    finally:
+        shutil.rmtree(owner)
 
 
 def test_batch_requires_a_formally_validated_profile_map(tmp_path: Path) -> None:

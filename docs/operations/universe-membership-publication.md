@@ -11,6 +11,32 @@ both the two-file physical partition and its one-file publication marker. The
 marker is written last. Historical Coverage and research performance remain
 separate later gates.
 
+## Daily candidate preparation
+
+After the same-session Daily Identity Plan 1.1 source custody and canonical EOD
+are complete, prepare one prospective candidate with:
+
+```bash
+scripts/admin/prepare-daily-universe-membership.sh \
+  --data-root /data/trading-intelligence-platform \
+  --session-date YYYY-MM-DD \
+  --catalog-as-of-date YYYY-MM-DD \
+  --evaluated-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --assessed-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --candidate-root DAILY_SESSION_ROOT/universe-membership-candidate
+```
+
+The daily workspace and every parent through `daily-eod/sessions` must be an
+exact owner-only `0700` directory outside `/data`, `/tmp`, and the Git
+repository. The command is network-prohibited, performs no canonical write,
+and reports either a signal-eligible candidate, an outcome-only candidate, or
+an already completed canonical publication. A partial canonical target is not
+recreated; use the exact-plan recovery below.
+
+Create the inventory-bound Apply plan only when other expected `/data` writes
+for the run are complete and Apply review can follow promptly. Do not retain a
+known-stale plan across MI, Snapshot, Identity, EOD, or other canonical writes.
+
 ## Before Apply
 
 Confirm all of the following from one unchanged plan:
@@ -65,4 +91,5 @@ Record:
 - zero external requests, overwrites, and deletions.
 
 Then run `verify_then_complete` once as a zero-write postflight. Do not call the
-result Historical Coverage or strategy readiness.
+result Historical Coverage or strategy readiness. Daily preparation is not yet
+a coordinator or scheduler action and does not gate the public website.

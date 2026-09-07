@@ -107,9 +107,12 @@ Current membership implementation sequence:
    inventory-bound 9/4 publication plan is now proven and cannot admit
    outcome-only evidence. ADR 0153's recoverable physical-first/marker-last
    Apply published the exact 9/4 partition; governed read and zero-write
-   postflight passed. Next define the daily continuation path. Keep the two
-   source gaps explicit and do not publish Historical Coverage until every
-   admitted session has a transitive eligibility assessment.
+   postflight passed. ADR 0154 adds the daily, persistent-workspace candidate
+   preparation boundary without gating the website or enabling the scheduler.
+   Next exercise it on a new live session, plan only near Apply after other
+   canonical writes, and review coordinator integration. Keep the two source
+   gaps explicit and do not publish Historical Coverage until every admitted
+   session has a transitive eligibility assessment.
 
 ## Priority 3 — First real strategy research
 

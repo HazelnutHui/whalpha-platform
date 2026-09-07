@@ -78,14 +78,14 @@ historical typed boundary:
 
 These documents are not JSON Schema, SQL DDL, sample production data, or
 provider adapters. The historical foundation now has provider-neutral
-Pydantic row/manifest contracts, explicit PyArrow schemas, temporary-root
-Parquet repository validation, and an applied atomic source-custody executor.
+Pydantic row/manifest contracts, explicit PyArrow schemas, governed
+temporary/persistent Parquet custody, and an applied atomic source-custody
+executor.
 Normalized Identity source observations are canonical for 302/304 sessions;
-the two provider-revised dates remain explicitly unbound and the canonical
-Membership dataset is absent. The disconnected Membership timing gate proves
-that the 9/4 partition is next-open signal eligible while the corrected 9/3
-historical reconstruction remains outcome-only; neither result is a Coverage
-publication.
+the two provider-revised dates remain explicitly unbound. Canonical Membership
+contains one signal-eligible 2026-09-04 partition and is not a historical
+series. The Membership timing gate keeps the corrected 9/3 historical
+reconstruction outcome-only; neither result is a Coverage publication.
 EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
 The initial blocked live attempts remain historical audit evidence; corrected
@@ -97,9 +97,9 @@ canonical sequence recorded in
 [current context](../project/current-context.md). The 300-session historical
 price target is complete, but that does not complete a research-ready
 Historical Coverage publication.
-Universe Membership V1 and Corporate Action V1 now have partial
-provider-neutral historical row contracts but no physical dataset, complete
-partition manifest, or adapter. Their required historical composition is
+Universe Membership V1 now has one physical canonical partition plus a
+marker-backed reader and a prospective daily preparation boundary. Corporate
+Action V1 remains contract-only. Their required historical composition is
 defined in [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
 
 ## Public Python Import Path

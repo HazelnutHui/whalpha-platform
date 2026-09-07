@@ -131,9 +131,9 @@ future activation capability.
 
 The experiment remains `preregistered_data_blocked`. The original 31-session
 assessment is historical; canonical price depth has since advanced, while
-canonical daily membership, complete corporate actions, lifecycle, a
-research-ready adjustment ledger, and an immutable Historical Coverage
-publication remain absent. No signal writer, outcome
+canonical daily Membership covers only 1 of 304 sessions and complete
+corporate actions, lifecycle, a research-ready adjustment ledger, and an
+immutable Historical Coverage publication remain absent. No signal writer, outcome
 maturer, real evaluator, Production consumer, result publication, or deployment
 is created by this product definition. ADR 0106 adds a bilingual first-level
 page that exposes this blocked state and the registered method while leaving

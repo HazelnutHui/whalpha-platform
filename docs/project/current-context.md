@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-06T13:10:51Z
 
-Repository context updated at: 2026-09-06 UTC
+Repository context updated at: 2026-09-07 UTC
 
 This is the compact source of truth for a new Codex task or device. Historical
 execution detail belongs in the [changelog](changelog.md), dated audits, and
@@ -28,7 +28,7 @@ older immutable deployed bundle; compare both identities explicitly.
 
 ## Formal Dell data state
 
-The network-free current-context reader uses report contract 1.5. Normal
+The network-free current-context reader uses report contract 1.6. Normal
 recovery completed at validation level `active_custody_and_contracts` with
 `completion_index_plus_latest_partition`; the explicit all-partition mode
 also completed successfully during the ADR 0125 validation.
@@ -103,7 +103,7 @@ and validated. Canonical price history alone is not backtest readiness.
 
 ### Historical research readiness
 
-The 2026-09-06 contract-1.5 current-context run exposes family-specific
+The 2026-09-07 contract-1.6 current-context run exposes family-specific
 progress rather than treating all historical inputs as one missing block:
 
 - the 252-session price-depth floor is satisfied by 304 contiguous EOD
@@ -203,6 +203,14 @@ The zero-write postflight reused both targets and wrote zero files/bytes. A real
 9/3 attempt remains rejected before plan creation. Current-context report 1.6
 now exposes exactly 1/304 canonical Membership sessions and will not count an
 unmarked physical partition as canonical.
+
+ADR 0154 now provides a repeatable, network-prohibited prospective candidate
+entry point in the exact persistent daily workspace. It reuses canonical or
+candidate completion, assesses next-open eligibility, rejects partial
+canonical publication, and performs zero canonical writes. Its real 9/4
+read-only replay returned the existing 19,964-row canonical publication and
+unchanged assessment/publication fingerprints. It remains outside the serving
+coordinator and scheduler until a new live-session observation passes.
 
 The aggregate-only inactive lifecycle census for 2026-07-16 reached its hard
 20-page / 20,000-result boundary with another page still present. All rows had
@@ -377,9 +385,11 @@ separately bounded.
    timing gate admits only the direct 9/4 result for next-open use and keeps the
    historical-source sessions outcome-only. The inventory-bound 9/4 canonical
    Membership and its final marker are now published, independently read, and
-   zero-write postflight verified. Next define the governed daily Membership
-   continuation without promoting retrospective sessions. Keep 8/13 and 8/19
-   unbound and never approximate an absent session.
+   zero-write postflight verified. ADR 0154 now provides a governed,
+   network-prohibited daily candidate preparation boundary in persistent
+   session custody. Next observe it on a new session, create the inventory-bound
+   plan only near Apply, and then review coordinator integration. Keep 8/13 and
+   8/19 unbound and never approximate an absent session.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.

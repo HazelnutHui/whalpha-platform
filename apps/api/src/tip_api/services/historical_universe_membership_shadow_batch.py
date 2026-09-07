@@ -48,6 +48,10 @@ from tip_api.services.historical_universe_membership_shadow import (
     prepare_historical_universe_membership_eod_panel,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 BatchSessionStatus = Literal[
     "published",
@@ -436,11 +440,6 @@ def _validate_canonical_batch_paths(
         )
     source_root = data_root.resolve(strict=True)
     target_root = output_root.resolve(strict=False)
-    temporary_root = Path("/tmp").resolve(strict=True)
-    if temporary_root not in target_root.parents:
-        raise HistoricalUniverseMembershipShadowBatchError(
-            "batch output root must be a child of /tmp"
-        )
     if _paths_overlap(target_root, source_root):
         raise HistoricalUniverseMembershipShadowBatchError(
             "batch source and output paths must be disjoint"
@@ -450,22 +449,20 @@ def _validate_canonical_batch_paths(
 
 
 def _prepare_owner_only_output_root(output_root: Path) -> Path:
-    temporary_root = Path("/tmp").resolve(strict=True)
-    if not output_root.is_absolute():
-        raise HistoricalUniverseMembershipShadowBatchError(
-            "batch output root must be absolute"
+    try:
+        validate_offline_artifact_location(
+            output_root,
+            persistent_names={"universe-membership-candidate"},
+            allow_tmp_descendants=True,
         )
-    current = output_root
-    while current != temporary_root:
-        if current.exists() and current.is_symlink():
+    except OfflineArtifactCustodyError as exc:
+        if "symlink" in str(exc):
             raise HistoricalUniverseMembershipShadowBatchError(
                 "batch output path contains a symlink"
-            )
-        if temporary_root not in current.parents:
-            raise HistoricalUniverseMembershipShadowBatchError(
-                "batch output root must be a child of /tmp"
-            )
-        current = current.parent
+            ) from exc
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "batch output root is outside governed offline custody"
+        ) from exc
     if output_root.exists():
         if output_root.is_symlink() or not output_root.is_dir():
             raise HistoricalUniverseMembershipShadowBatchError(

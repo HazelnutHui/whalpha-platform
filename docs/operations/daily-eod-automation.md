@@ -54,6 +54,14 @@ authorization boundaries. Snapshot planning and bundle construction are
 offline and review-only. OCI deployment is a separate default-off coordinator
 capability; scheduler activation remains outside the coordinator.
 
+ADR 0154 adds a separate, network-prohibited daily Universe Membership
+candidate preparation boundary after same-session Identity/EOD completion. It
+uses the persistent daily workspace but is not one of the coordinator's eleven
+actions yet and does not gate the serving chain. Its inventory-bound canonical
+plan must be created only near the separate Membership Apply, after other
+expected `/data` writes are complete. See
+[Canonical Universe Membership Publication](universe-membership-publication.md).
+
 ADR 0076 now adds a read-only scheduler-wake plan before any host timer. It
 uses a small completion-manifest index plus a full formal reread of the latest
 EOD partition, selects only the oldest missing XNYS session, and returns the
@@ -665,8 +673,10 @@ stage from MI, Snapshot, or deployment review. An enabled candidate may only
 propose one data or offline transition; every manual review and blocked state
 stops.
 
-The companion `daily-eod-workspace-layout/1.0` derives stable session paths
+The companion `daily-eod-workspace-layout/1.1` derives stable session paths
 outside `/tmp`, canonical `/data`, and the repository. It creates nothing.
+Version 1.1 adds only the exact Membership candidate and later Apply-plan
+paths accepted by ADR 0154; existing analytics paths are unchanged.
 Existing direct `/tmp` children remain accepted only for historical and
 controlled one-shot compatibility. No persistent root, repeated cadence,
 coordinator capability, or new systemd unit is installed by ADR 0081.

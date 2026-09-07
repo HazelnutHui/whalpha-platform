@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-06
+Status date: 2026-09-07
 
 This is the concise project-state summary. Exact IDs, fingerprints, evidence
 scope, authorization boundaries, and cross-device recovery are maintained in
@@ -95,7 +95,7 @@ is not. Active Market Intelligence still reports
 point-in-time membership, corporate actions, adjustments, costs, and sealed
 evaluation datasets are not yet fully wired.
 
-Current-context contract 1.5 makes this family-specific: the 304-session price
+Current-context contract 1.6 makes this family-specific: the 304-session price
 floor and all 304 same-date Identity completion manifests are present,
 but neither has a published Historical Coverage claim. The provider-action,
 canonical-action, daily-membership, lifecycle, adjustment-ledger, and
@@ -197,6 +197,17 @@ and post-state fingerprint
 The separate postflight reused both exact targets and wrote zero files/bytes.
 Historical Coverage and research performance remain unauthorized.
 
+ADR 0154 converts the prospective portion of that one-off workflow into a
+network-prohibited daily preparation entry point. It builds or reuses the V3
+candidate in deterministic owner-only session custody, immediately applies the
+same next-open timing assessment, reuses a completed canonical publication,
+and refuses a physical-only or marker-only target. It writes neither `/data`
+nor OCI and does not gate the website. The persistent Apply-plan path is now
+supported with fsynced atomic publication, but the inventory-bound plan remains
+a separate near-Apply action after other expected canonical writes. The new
+boundary is fixture-tested and passed a real zero-write 9/4 canonical replay;
+it has not yet been exercised on a new session or connected to the coordinator.
+
 The Quant Research Lab therefore remains data-blocked/research-only. It must not
 show synthetic performance or promote a method based only on the new canonical
 price history. The first intended registered study remains Strong-Leader
@@ -218,6 +229,10 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 -> Candidate Visual Context -> MI Plan/Apply -> Snapshot Plan/Apply
 -> serving bundle -> OCI deploy/postflight
 ```
+
+The ADR 0154 Membership candidate preparation is a separate research sidecar
+after Identity/EOD. It is not yet an action in that serving chain or the
+installed read-only timer.
 
 The 9/1-9/4 catch-up proved correctness but also showed material performance
 debt. ADR 0125 separates date-only discovery from deep partition validation;
@@ -250,40 +265,51 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
 
 ## Next priority
 
-1. Continue ADR 0130's segmented Candidate custody proof. The complete 9/4
+1. Observe ADR 0154's prospective daily Membership preparation on the next
+   eligible session. It must consume the direct Daily Identity Plan 1.1 source,
+   finish before the next XNYS open, and remain outside the website serving
+   gate. Create its inventory-bound plan only near the separately reviewed
+   Apply after other expected `/data` writes are complete.
+2. After candidate reuse, outcome-only classification, canonical reuse, and
+   partial-publication rejection pass on a new session, review one-action
+   coordinator integration. Do not enable the write-capable scheduler.
+3. Continue ADR 0130's segmented Candidate custody proof. The complete 9/4
    chain passed with ADRs 0125–0129 active, and Candidate remained the largest
    analytics stage at roughly 4.5 minutes.
-2. Design the versioned chain identity, recovery, periodic cold equivalence,
+4. Design the versioned chain identity, recovery, periodic cold equivalence,
    and downstream compatibility before considering segmented cutover. The real
    ten-session shadow already reconstructs all eight V1 business projections,
    and its bounded current read takes 16.53 seconds versus 228.285 seconds for
    V1 full semantics.
-3. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
+5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds
    for explicit garbage collection.
-4. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
+6. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
    Snapshot is now 121.57 seconds and its largest remaining input is the
    necessary formal Activation read rather than duplicate active-state reads.
-5. Vectorize or safely parallelize only independently measurable CPU-heavy
+7. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-6. **Canonical source custody complete for exact available packages:** 302
+8. **Canonical source custody complete for exact available packages:** 302
    sessions are canonical after historical and direct-daily Apply/recovery.
    Keep 2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
    proven; do not approximate either gap.
-7. **Disconnected Membership mechanics remain temporary:** V3 evidence now
-   covers all 302 available-source sessions. Resolve historical knowledge-time
-   before any canonical Membership decision.
-8. Design corroboration and source-availability evidence for the 547 inactive
+9. **Canonical Membership remains incomplete:** V3 evidence covers all 302
+   available-source sessions, but only the directly observed 2026-09-04
+   partition is canonical and signal-eligible. ADR 0154 implements the
+   prospective candidate boundary but has not yet been exercised on a new
+   session or connected to the coordinator. Keep the 301 retrospective
+   partitions outcome-only.
+10. Design corroboration and source-availability evidence for the 547 inactive
    lifecycle review candidates; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,
    publish transitive Historical Coverage, and reconcile the 26-session
    analytics limitation.
-9. Only after those gates begin real preregistered chronological strategy
+11. Only after those gates begin real preregistered chronological strategy
    research.
-10. Continue decision-useful visualization in parallel where it does not change
+12. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
-11. Add options expression, fundamentals/valuation, events, and later
+13. Add options expression, fundamentals/valuation, events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune new formulas or claim backtest results before the governed research

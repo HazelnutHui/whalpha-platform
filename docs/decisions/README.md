@@ -244,3 +244,7 @@ Each ADR should include:
 - [0148: Build a Disconnected Inactive Lifecycle Resolution Shadow](0148-build-disconnected-inactive-lifecycle-resolution-shadow.md)
 - [0149: Separate Sealed and Operational Freshness](0149-separate-sealed-and-operational-freshness.md)
 - [0150: Retain Daily Identity Source Observations Atomically](0150-retain-daily-identity-source-observations-atomically.md)
+- [0151: Gate Membership by Next-Open Knowledge Time](0151-gate-membership-by-next-open-knowledge-time.md)
+- [0152: Plan Membership with a Last Publication Marker](0152-plan-membership-with-a-last-publication-marker.md)
+- [0153: Publish Membership Physical First and Marker Last](0153-publish-membership-physical-first-marker-last.md)
+- [0154: Prepare Daily Membership Outside the Serving Gate](0154-prepare-daily-membership-outside-the-serving-gate.md)

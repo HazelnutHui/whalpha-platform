@@ -14,6 +14,9 @@ def test_daily_pipeline_administrator_scripts_use_worktree_safe_runner() -> None
             "tip_api.providers.massive.identity_source_repair"
         ),
         "plan-daily-eod-automation.sh": "tip_api.services.daily_eod_automation_cli",
+        "prepare-daily-universe-membership.sh": (
+            "tip_api.services.daily_universe_membership_continuation_cli"
+        ),
         "calculate-candidate-entry-geometry-offline.sh": (
             "tip_api.services.candidate_entry_geometry_cli"
         ),

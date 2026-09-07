@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
 from datetime import UTC, date, datetime
 from pathlib import Path
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 
@@ -262,3 +263,59 @@ def test_plan_reread_rejects_candidate_byte_drift(tmp_path, monkeypatch) -> None
             approved_plan_sha256=evidence.plan_sha256,
             inventory_reader=lambda _: "a" * 64,
         )
+
+
+def test_plan_reread_rejects_atomic_staging_residue(tmp_path, monkeypatch) -> None:
+    data_root, candidate_root, partition, _ = _fixture(tmp_path, monkeypatch)
+    plan_path = tmp_path / "membership-apply-plan.json"
+    evidence = build_universe_membership_apply_plan(
+        data_root=data_root,
+        candidate_root=candidate_root,
+        candidate_membership_partition=partition,
+        assessed_at=ASSESSED,
+        created_at=CREATED,
+        plan_path=plan_path,
+        inventory_reader=lambda _: "a" * 64,
+    )
+    plan_path.with_name(f".{plan_path.name}.staging").write_text("residue")
+
+    with pytest.raises(
+        UniverseMembershipApplyPlanError,
+        match="staging residue",
+    ):
+        read_universe_membership_apply_plan(
+            plan_path=plan_path,
+            approved_plan_sha256=evidence.plan_sha256,
+            inventory_reader=lambda _: "a" * 64,
+        )
+
+
+def test_plan_accepts_exact_persistent_daily_workspace_path(
+    tmp_path,
+    monkeypatch,
+) -> None:
+    data_root, candidate_root, partition, _ = _fixture(tmp_path, monkeypatch)
+    owner = Path.home() / ".local/state" / f"whalpha-plan-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session = sessions / f"session_date={SESSION.isoformat()}"
+    for path in (owner, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    try:
+        plan_path = session / "universe-membership-plan.json"
+        evidence = build_universe_membership_apply_plan(
+            data_root=data_root,
+            candidate_root=candidate_root,
+            candidate_membership_partition=partition,
+            assessed_at=ASSESSED,
+            created_at=CREATED,
+            plan_path=plan_path,
+            inventory_reader=lambda _: "a" * 64,
+        )
+
+        assert evidence.plan_path == plan_path
+        assert plan_path.stat().st_mode & 0o777 == 0o600
+        assert not plan_path.with_name(f".{plan_path.name}.staging").exists()
+    finally:
+        shutil.rmtree(owner)

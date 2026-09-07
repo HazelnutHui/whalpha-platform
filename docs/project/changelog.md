@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-07 — Prepare prospective daily Membership continuation
+
+- Accepted ADR 0154 and added a network-prohibited daily preparation entry
+  point that builds or reuses one V3 Membership candidate from the exact
+  same-session canonical Identity source and EOD evidence.
+- The preparation classifies next-open eligibility immediately, reuses an
+  already canonical publication, refuses physical-only or marker-only
+  canonical state, and grants no `/data`, Historical Coverage, research,
+  website, deployment, or scheduler authority.
+- Added deterministic persistent daily workspace paths for the candidate and
+  its later Apply plan. Membership candidate and plan readers now accept only
+  those exact owner-only session names in addition to governed temporary
+  custody; persistent plan creation is fsynced and atomically renamed.
+- Kept the inventory-bound Apply plan separate from early daily preparation so
+  later MI or Snapshot writes cannot knowingly stale its pre-state. Membership
+  remains an additive research sidecar until a new live session and
+  coordinator-integration review pass.
+- Corrected stale documentation that still called Membership absent or the
+  current-context report contract 1.5. The true state remains one canonical
+  signal-eligible Membership session out of 304.
+- Focused preparation, custody, publication-plan, recovery, workspace, CLI,
+  and administrator-script tests passed. The full API regression completed at
+  `2127 passed, 2 warnings`; both warnings are the unchanged Python `crypt` and
+  Starlette/httpx deprecations.
+
 ## 2026-09-07 — Implement recoverable canonical Membership publication
 
 - Accepted ADR 0153 and implemented exact-plan-bound, network-prohibited

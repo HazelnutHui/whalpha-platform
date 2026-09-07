@@ -25,6 +25,10 @@ from tip_api.services.historical_identity_source_custody import (
     read_historical_identity_source_custody,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 class UniverseMembershipKnowledgeTimeError(RuntimeError):
@@ -161,11 +165,16 @@ def _validated_membership_root(path: Path) -> Path:
         )
     if resolved == APPROVED_DATA_ROOT:
         return resolved
-    temporary_root = Path("/tmp").resolve(strict=True)
-    if temporary_root not in resolved.parents:
+    try:
+        validate_offline_artifact_location(
+            resolved,
+            persistent_names={"universe-membership-candidate"},
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
         raise UniverseMembershipKnowledgeTimeError(
             "membership root is outside approved boundaries"
-        )
+        ) from exc
     root_stat = resolved.stat()
     if root_stat.st_uid != os.getuid() or stat.S_IMODE(root_stat.st_mode) != 0o700:
         raise UniverseMembershipKnowledgeTimeError(

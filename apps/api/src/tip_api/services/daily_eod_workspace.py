@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from tip_api.services.daily_eod_automation import DailyEodAutomationPaths
 
 
-CONTRACT_VERSION = "daily-eod-workspace-layout/1.0"
+CONTRACT_VERSION = "daily-eod-workspace-layout/1.1"
 
 
 class DailyEodWorkspaceError(RuntimeError):
@@ -36,6 +36,8 @@ class DailyEodWorkspaceLayout:
     panel_cache_root: Path
     package_path: Path
     canonical_apply_plan: Path
+    universe_membership_candidate_root: Path
+    universe_membership_apply_plan: Path
     candidate_work_dir: Path
     phase1a_audit: Path
     prior_phase1b_audit: Path
@@ -116,6 +118,12 @@ def derive_daily_eod_workspace_layout(
         "panel_cache_root": workspace_root / "cache" / "panels",
         "package_path": session_root / "acquisition-package",
         "canonical_apply_plan": session_root / "canonical-apply-plan.json",
+        "universe_membership_candidate_root": (
+            session_root / "universe-membership-candidate"
+        ),
+        "universe_membership_apply_plan": (
+            session_root / "universe-membership-plan.json"
+        ),
         "candidate_work_dir": session_root / "candidate-work",
         "phase1a_audit": session_root / "market-regime-phase1a",
         "prior_phase1b_audit": prior_root / "market-regime-phase1b",
