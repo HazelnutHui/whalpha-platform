@@ -298,9 +298,13 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    adds the no-write governed publication plan: content-addressed immutable
    release, bounded-family CAS, pointer-last selection, exact successor gate,
    prior-active rollback reference, recovery states, and retain-all policy.
-   Its real proof is `/tmp`-only and no canonical pointer exists. Next implement
-   disconnected exact-plan Apply/recovery and periodic full-lineage audit
-   before CLI/executor or downstream cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
+   ADR 0162 now proves its exact release-first/pointer-last Apply and recovery
+   only in `/tmp`, including release-only completion, staging-residue refusal,
+   and a zero-write completed postflight. The real simulation wrote 6,674
+   bytes; its post-family and pointer-state fingerprints are recorded in the
+   current context. The executor refuses the Production root, and no canonical
+   pointer exists. Next add periodic full-lineage audit before CLI/executor or
+   downstream cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
    ordinals explicitly distinct.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping

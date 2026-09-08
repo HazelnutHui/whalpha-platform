@@ -215,10 +215,24 @@ def read_candidate_segmented_chain_head_current_state(
 ) -> CandidateSegmentedChainHeadCurrentState:
     """Read the bounded family inventory and exact active/rollback references."""
 
+    return _read_candidate_segmented_chain_head_current_state(
+        canonical_root=canonical_root,
+        excluded_release_relative_path=None,
+    )
+
+
+def _read_candidate_segmented_chain_head_current_state(
+    *,
+    canonical_root: Path,
+    excluded_release_relative_path: str | None,
+) -> CandidateSegmentedChainHeadCurrentState:
+    """Read current state, optionally excluding one separately verified target."""
+
     root = _validated_canonical_root(canonical_root)
     family_root = root.joinpath(*FAMILY_RELATIVE_PATH.parts)
     inventory_fingerprint = _family_inventory_fingerprint(
         canonical_root=root,
+        excluded_release_relative_path=excluded_release_relative_path,
     )
     pointer_path = family_root / CURRENT_POINTER_FILE
     if not os.path.lexists(pointer_path):
@@ -244,6 +258,7 @@ def read_candidate_segmented_chain_head_current_state(
     releases = _read_release_sequence(
         canonical_root=root,
         family_root=family_root,
+        excluded_release_relative_path=excluded_release_relative_path,
     )
     expected_active_reference, active_manifest = releases[-1]
     expected_rollback_reference = (
@@ -564,8 +579,24 @@ def _require_immediate_successor(
         )
 
 
-def _family_inventory_fingerprint(*, canonical_root: Path) -> str:
+def _family_inventory_fingerprint(
+    *,
+    canonical_root: Path,
+    excluded_release_relative_path: str | None = None,
+) -> str:
     family_root = canonical_root.joinpath(*FAMILY_RELATIVE_PATH.parts)
+    excluded_family_path: PurePosixPath | None = None
+    if excluded_release_relative_path is not None:
+        excluded = PurePosixPath(excluded_release_relative_path)
+        if (
+            excluded.parent
+            != FAMILY_RELATIVE_PATH / RELEASES_DIRECTORY
+            or not shadow._is_sha256(excluded.name)
+        ):
+            raise CandidateSegmentedChainHeadPublicationError(
+                "excluded chain-head release path is malformed"
+            )
+        excluded_family_path = excluded.relative_to(FAMILY_RELATIVE_PATH)
     if not os.path.lexists(family_root):
         entries: list[dict[str, Any]] = []
     else:
@@ -577,6 +608,12 @@ def _family_inventory_fingerprint(*, canonical_root: Path) -> str:
                     "chain-head family contains a symlink"
                 )
             relative = path.relative_to(family_root).as_posix()
+            pure_relative = PurePosixPath(relative)
+            if excluded_family_path is not None and (
+                pure_relative == excluded_family_path
+                or excluded_family_path in pure_relative.parents
+            ):
+                continue
             metadata = path.stat()
             if path.is_dir():
                 _validate_directory(path)
@@ -615,10 +652,18 @@ def _read_release_sequence(
     *,
     canonical_root: Path,
     family_root: Path,
+    excluded_release_relative_path: str | None = None,
 ) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     releases_root = family_root / RELEASES_DIRECTORY
+    excluded_name = (
+        None
+        if excluded_release_relative_path is None
+        else PurePosixPath(excluded_release_relative_path).name
+    )
     result: list[tuple[dict[str, Any], dict[str, Any]]] = []
     for release in sorted(releases_root.iterdir()):
+        if release.name == excluded_name:
+            continue
         path = release / head.CHAIN_HEAD_MANIFEST
         physical_sha256 = v1._file_sha256(path)
         manifest = _read_canonical_mapping(

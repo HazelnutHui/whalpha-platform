@@ -22,6 +22,7 @@
 - [Opportunity Candidate Segmented Session Candidate V1](opportunity-candidate-segmented-session-candidate-v1.md)
 - [Opportunity Candidate Segmented Chain Head V1](opportunity-candidate-segmented-chain-head-v1.md)
 - [Opportunity Candidate Segmented Chain-Head Publication V1](opportunity-candidate-segmented-chain-head-publication-v1.md)
+- [Opportunity Candidate Segmented Chain-Head Apply V1](opportunity-candidate-segmented-chain-head-apply-v1.md)
 - [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)

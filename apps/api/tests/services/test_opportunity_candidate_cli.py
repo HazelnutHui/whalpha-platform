@@ -19,6 +19,9 @@ from tip_api.services import opportunity_candidate_cli as cli
 from tip_api.services import opportunity_candidate_segmented_append as candidate_append
 from tip_api.services import opportunity_candidate_segmented_chain_head as chain_head
 from tip_api.services import (
+    opportunity_candidate_segmented_chain_head_apply as head_apply,
+)
+from tip_api.services import (
     opportunity_candidate_segmented_chain_head_publication as head_publication,
 )
 from tip_api.services import opportunity_candidate_segmented_session_candidate as session_candidate
@@ -1399,6 +1402,26 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
         )
         pointer.chmod(0o400)
 
+    def apply_bindings(*, publication_plan, canonical_root: Path) -> dict:
+        expected = publication_plan.plan["expected_current_state"]
+        return {
+            "plan_path": publication_plan.path,
+            "approved_plan_sha256": publication_plan.plan_sha256,
+            "expected_plan_logical_fingerprint": publication_plan.plan[
+                "logical_content_fingerprint"
+            ],
+            "expected_source_logical_fingerprint": publication_plan.plan[
+                "source"
+            ]["logical_content_fingerprint"],
+            "expected_current_family_inventory_fingerprint": expected[
+                "family_inventory_fingerprint"
+            ],
+            "expected_current_pointer_state_fingerprint": expected[
+                "current_pointer_state_fingerprint"
+            ],
+            "canonical_root": canonical_root,
+        }
+
     def all_batches(run):
         return tuple(
             batch
@@ -1723,6 +1746,273 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
         )
         assert second_head.production_write_count == 0
         assert second_head.publication_authorized is False
+
+        apply_root = tmp_path / "segmented-chain-head-apply"
+        apply_root.mkdir(mode=0o700)
+        apply_root.chmod(0o700)
+        apply_bootstrap_plan = (
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=apply_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["first-head"],
+                expected_source_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 11, 0, tzinfo=UTC),
+                plan_path=new_plan_path("apply-bootstrap-plan"),
+            )
+        )
+        apply_bootstrap_bindings = apply_bindings(
+            publication_plan=apply_bootstrap_plan,
+            canonical_root=apply_root,
+        )
+        before_apply = (
+            head_apply.review_candidate_segmented_chain_head_recovery(
+                **apply_bootstrap_bindings
+            )
+        )
+        assert before_apply.status == "not_started"
+        assert before_apply.release_present is False
+        assert before_apply.pointer_matches_plan is False
+        assert before_apply.filesystem_write_count == 0
+        assert before_apply.canonical_write_count == 0
+        assert before_apply.production_write_count == 0
+        applied_bootstrap = (
+            head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                **apply_bootstrap_bindings
+            )
+        )
+        assert applied_bootstrap.status == "applied"
+        assert applied_bootstrap.release_published is True
+        assert applied_bootstrap.release_reused is False
+        assert applied_bootstrap.pointer_published is True
+        assert applied_bootstrap.pointer_reused is False
+        assert applied_bootstrap.simulated_write_count == 2
+        assert applied_bootstrap.simulated_written_bytes == (
+            apply_bootstrap_plan.plan["source"]["manifest_bytes"]
+            + apply_bootstrap_plan.plan["planned_pointer_bytes"]
+        )
+        assert applied_bootstrap.external_request_count == 0
+        assert applied_bootstrap.canonical_write_count == 0
+        assert applied_bootstrap.production_write_count == 0
+        after_apply = (
+            head_apply.review_candidate_segmented_chain_head_recovery(
+                **apply_bootstrap_bindings
+            )
+        )
+        assert after_apply.status == "complete"
+        assert after_apply.release_present is True
+        assert after_apply.pointer_matches_plan is True
+        with pytest.raises(
+            head_apply.CandidateSegmentedChainHeadApplyError,
+            match="already complete",
+        ):
+            head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                **apply_bootstrap_bindings
+            )
+        reapplied_bootstrap = (
+            head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                **apply_bootstrap_bindings,
+                verify_then_complete=True,
+            )
+        )
+        assert reapplied_bootstrap.status == "already_complete"
+        assert reapplied_bootstrap.release_reused is True
+        assert reapplied_bootstrap.pointer_reused is True
+        assert reapplied_bootstrap.simulated_write_count == 0
+        assert reapplied_bootstrap.simulated_written_bytes == 0
+
+        apply_successor_plan = (
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=apply_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["second-head"],
+                expected_source_logical_fingerprint=second_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 11, 1, tzinfo=UTC),
+                plan_path=new_plan_path("apply-successor-plan"),
+            )
+        )
+        applied_successor = (
+            head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                **apply_bindings(
+                    publication_plan=apply_successor_plan,
+                    canonical_root=apply_root,
+                )
+            )
+        )
+        assert applied_successor.status == "applied"
+        assert applied_successor.release_published is True
+        assert applied_successor.pointer_published is True
+        apply_state = (
+            head_publication.read_candidate_segmented_chain_head_current_state(
+                canonical_root=apply_root,
+            )
+        )
+        assert apply_state.pointer is not None
+        assert apply_state.pointer["active"] == apply_successor_plan.plan[
+            "planned_pointer"
+        ]["active"]
+        assert apply_state.pointer["rollback"] == apply_bootstrap_plan.plan[
+            "planned_pointer"
+        ]["active"]
+
+        recovery_root = tmp_path / "segmented-chain-head-recovery"
+        recovery_root.mkdir(mode=0o700)
+        recovery_root.chmod(0o700)
+        recovery_plan = (
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=recovery_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["first-head"],
+                expected_source_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 11, 2, tzinfo=UTC),
+                plan_path=new_plan_path("recovery-plan"),
+            )
+        )
+        recovery_bindings = apply_bindings(
+            publication_plan=recovery_plan,
+            canonical_root=recovery_root,
+        )
+        with monkeypatch.context() as fault:
+            def interrupt_pointer(_validated) -> None:
+                raise OSError("simulated pointer interruption")
+
+            fault.setattr(head_apply, "_publish_pointer", interrupt_pointer)
+            with pytest.raises(OSError, match="simulated pointer"):
+                head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                    **recovery_bindings
+                )
+        interrupted = (
+            head_apply.review_candidate_segmented_chain_head_recovery(
+                **recovery_bindings
+            )
+        )
+        assert interrupted.status == "release_published_pointer_pending"
+        assert interrupted.release_present is True
+        assert interrupted.pointer_matches_plan is False
+        with pytest.raises(
+            head_apply.CandidateSegmentedChainHeadApplyError,
+            match="requires verify-then-complete",
+        ):
+            head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                **recovery_bindings
+            )
+        recovered = (
+            head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                **recovery_bindings,
+                verify_then_complete=True,
+            )
+        )
+        assert recovered.status == "verified_then_completed"
+        assert recovered.release_published is False
+        assert recovered.release_reused is True
+        assert recovered.pointer_published is True
+        assert recovered.simulated_write_count == 1
+        assert recovered.simulated_written_bytes == recovery_plan.plan[
+            "planned_pointer_bytes"
+        ]
+
+        residue_root = tmp_path / "segmented-chain-head-residue"
+        residue_root.mkdir(mode=0o700)
+        residue_root.chmod(0o700)
+        residue_plan = (
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=residue_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["first-head"],
+                expected_source_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 11, 3, tzinfo=UTC),
+                plan_path=new_plan_path("residue-plan"),
+            )
+        )
+        residue_bindings = apply_bindings(
+            publication_plan=residue_plan,
+            canonical_root=residue_root,
+        )
+        pointer_path = (
+            residue_root
+            / head_publication.FAMILY_RELATIVE_PATH
+            / head_publication.CURRENT_POINTER_FILE
+        )
+        real_replace = head_apply.os.replace
+        with monkeypatch.context() as fault:
+            def interrupt_pointer_replace(source, destination) -> None:
+                if Path(destination) == pointer_path:
+                    raise OSError("simulated pointer replace interruption")
+                real_replace(source, destination)
+
+            fault.setattr(head_apply.os, "replace", interrupt_pointer_replace)
+            with pytest.raises(OSError, match="simulated pointer replace"):
+                head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                    **residue_bindings
+                )
+        pointer_staging = pointer_path.with_name(
+            f".{pointer_path.name}.staging."
+            f"{residue_plan.plan['logical_content_fingerprint'][:16]}"
+        )
+        assert pointer_staging.is_file()
+        with pytest.raises(
+            head_apply.CandidateSegmentedChainHeadApplyError,
+            match="staging residue requires diagnosis",
+        ):
+            head_apply.review_candidate_segmented_chain_head_recovery(
+                **residue_bindings
+            )
+        assert pointer_staging.is_file()
+
+        corrupt_root = tmp_path / "segmented-chain-head-corrupt"
+        corrupt_root.mkdir(mode=0o700)
+        corrupt_root.chmod(0o700)
+        corrupt_plan = (
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=corrupt_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["first-head"],
+                expected_source_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 11, 4, tzinfo=UTC),
+                plan_path=new_plan_path("corrupt-plan"),
+            )
+        )
+        corrupt_bindings = apply_bindings(
+            publication_plan=corrupt_plan,
+            canonical_root=corrupt_root,
+        )
+        with monkeypatch.context() as fault:
+            def interrupt_corrupt_pointer(_validated) -> None:
+                raise OSError("simulated corrupt-target interruption")
+
+            fault.setattr(
+                head_apply,
+                "_publish_pointer",
+                interrupt_corrupt_pointer,
+            )
+            with pytest.raises(OSError, match="corrupt-target"):
+                head_apply.apply_candidate_segmented_chain_head_plan_disconnected(
+                    **corrupt_bindings
+                )
+        corrupt_manifest = (
+            corrupt_root
+            / corrupt_plan.plan["target"]["manifest_relative_path"]
+        )
+        corrupt_manifest.chmod(0o600)
+        corrupt_manifest.write_bytes(corrupt_manifest.read_bytes() + b"\n")
+        corrupt_manifest.chmod(0o400)
+        with pytest.raises(
+            head_apply.CandidateSegmentedChainHeadApplyError,
+            match="release manifest differs",
+        ):
+            head_apply.review_candidate_segmented_chain_head_recovery(
+                **corrupt_bindings
+            )
+        assert corrupt_manifest.read_bytes().endswith(b"\n\n")
 
         canonical_root = tmp_path / "segmented-chain-head-canonical"
         canonical_root.mkdir(mode=0o700)
@@ -2050,4 +2340,30 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
         shutil.rmtree(
             recovery_head.with_name(f".{recovery_head.name}.staging"),
             ignore_errors=True,
+        )
+
+
+def test_disconnected_chain_head_apply_refuses_production_root_before_io(
+    monkeypatch,
+) -> None:
+    def reject_root_io(_path):
+        raise AssertionError("production root must not be inspected")
+
+    monkeypatch.setattr(
+        head_publication,
+        "_validated_canonical_root",
+        reject_root_io,
+    )
+    with pytest.raises(
+        head_apply.CandidateSegmentedChainHeadApplyError,
+        match="refuses the production data root",
+    ):
+        head_apply.review_candidate_segmented_chain_head_recovery(
+            plan_path=Path("/tmp/plan-must-not-be-read.json"),
+            approved_plan_sha256="0" * 64,
+            expected_plan_logical_fingerprint="1" * 64,
+            expected_source_logical_fingerprint="2" * 64,
+            expected_current_family_inventory_fingerprint="3" * 64,
+            expected_current_pointer_state_fingerprint="4" * 64,
+            canonical_root=head_publication.APPROVED_DATA_ROOT,
         )

@@ -69,7 +69,9 @@ fingerprint must all bind the current active reference.
 - All tiny immutable head releases are retained; automatic pruning is not
   authorized. Only the pointer keeps one immediate rollback reference.
 
-These are plan semantics, not an implemented Apply or recovery command.
+The plan itself grants no Apply authority. ADR 0162 implements these mechanics
+only for a disconnected `/tmp` simulation; it explicitly refuses the
+Production root and does not authorize canonical publication.
 
 ## Custody
 

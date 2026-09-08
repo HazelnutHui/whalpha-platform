@@ -506,6 +506,31 @@ left `/data` unchanged. Fixture tests cover initial and existing state, exact
 replay, target collision, non-successor lineage, family drift, and changed
 pointer CAS. This is governance proof, not a daily-path timing or cutover.
 
+## 2026-09-08 disconnected chain-head Apply/recovery result
+
+ADR 0162 executes one frozen ADR 0161 plan only beneath an owner-controlled
+`/tmp` simulation root and refuses the Production `/data` root before plan I/O.
+It rereads all externally supplied plan, source, family, and pointer identities,
+repeats recovery classification under a root-specific lock, publishes the
+immutable release first, freshly verifies the outside-target CAS, and publishes
+the exact pointer last.
+
+Fixture evidence covers bootstrap, exact successor with prior-active rollback,
+zero-write completed replay, interruption after immutable release, explicit
+verify-then-complete recovery, corrupt-release preservation, and preserved
+pointer-staging residue that blocks for diagnosis. No cleanup, overwrite,
+deletion, rollback, network request, or Production authority is introduced.
+
+The retained real plan published its 4,962-byte head and 1,712-byte pointer to
+the ADR 0161 simulation root: 2 simulated writes / 6,674 bytes. The completed
+family fingerprint is
+`ab5ccd10017c7f14087c50f455a3212d3278e55d2efef1e8b7a4c2da92f30dac`
+and pointer-state fingerprint is
+`02dfb715872bec8cb11c1b51f7791b95fe24ede244f1d7d28da9f12dcab9a476`.
+An immediate postflight reused both objects and wrote zero files/bytes. This is
+still disconnected evidence: `/data`, V1 Candidate, daily execution, and
+Production did not change. Periodic full-lineage verification is the next gate.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

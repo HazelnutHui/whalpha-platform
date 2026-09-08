@@ -115,10 +115,10 @@ identical.
 
 ADR 0159 separately proves two ordered append generations with fixture data.
 The general cold reader validates the base and every supplied append, so this
-is a correctness boundary rather than a constant-time hot-path claim. A
-governed exact chain-head/checkpoint and periodic full-lineage policy remain
-required before cutover. ADR 0160 implements the disconnected `/tmp` chain-head
-proof: an expected prior head plus one validated append produces the same next
-head as a cold full-lineage build, and the composer can use the expected head
-without replaying its parent storage. Canonical publication/pointer authority
-is still absent.
+is a correctness boundary rather than a constant-time hot-path claim. ADR 0160
+implements the disconnected `/tmp` chain-head proof: an expected prior head
+plus one validated append produces the same next head as a cold full-lineage
+build, and the composer can use the expected head without replaying its parent
+storage. ADRs 0161–0162 add a governed plan and simulation-only exact Apply and
+recovery. Periodic full-lineage policy remains required before cutover, and
+canonical publication/pointer authority is still absent.

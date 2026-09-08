@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-08 — Prove disconnected Candidate chain-head Apply/recovery
+
+- Accepted ADR 0162 and added a simulation-only exact-plan executor that
+  explicitly refuses the Production root, repeats recovery state under a
+  root-specific lock, publishes an immutable release first and the exact
+  pointer last, then formally rereads the bounded family.
+- Recovery recognizes only not-started, exact-release/pointer-pending, and
+  complete states. Explicit verify-then-complete may finish only an exact
+  release-only state or prove completion with zero writes; staging residue,
+  corruption, conflicts, or CAS drift remain untouched and block diagnosis.
+- Fixture coverage proves bootstrap, exact successor/rollback, interruption
+  recovery, zero-write idempotency, corrupt-release and staging-residue
+  preservation, and Production-root refusal before plan I/O.
+- Corrected the repository-aware Python runner to include the API test-package
+  root as well as application source, so the documented root-level full-test
+  command resolves shared `tests.services` fixtures in a clean environment.
+- The retained real ADR 0161 plan published 4,962 + 1,712 bytes only to its
+  `/tmp` simulation root. Post-family fingerprint is
+  `ab5ccd10017c7f14087c50f455a3212d3278e55d2efef1e8b7a4c2da92f30dac`;
+  pointer-state fingerprint is
+  `02dfb715872bec8cb11c1b51f7791b95fe24ede244f1d7d28da9f12dcab9a476`.
+  Immediate postflight reused both exact objects and wrote zero files/bytes.
+- No network, `/data`, authoritative V1 Candidate, formula/parameter/rank/state,
+  publication, MI, Snapshot, bundle, OCI, executor, coordinator, scheduler, or
+  deployment changed. Periodic full-lineage audit is the next gate.
+- Candidate-focused coverage passed, and the complete API regression finished
+  at `2136 passed, 2 warnings`; both warnings are unchanged dependency
+  deprecations.
+
 ## 2026-09-08 — Plan segmented Candidate chain-head publication
 
 - Accepted ADR 0161 and added a no-write publication plan for one

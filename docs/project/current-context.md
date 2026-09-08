@@ -404,10 +404,17 @@ separately bounded.
    output. ADR 0161 now adds a no-write immutable-release/current-pointer plan
    with bounded-family CAS, exact one-successor enforcement, prior-active
    rollback reference, fail-closed recovery states, and retain-all immutable
-   heads. Its real 9/4 bootstrap proof used only `/tmp`, proposed 4,962 + 1,712
-   bytes, and wrote neither `/data` nor Production. No canonical pointer exists
-   yet. Exact-plan Apply/recovery and periodic full-lineage audit remain
-   required before CLI, executor, downstream, or cutover work.
+   heads. Its real 9/4 bootstrap proof used only `/tmp` and proposed 4,962 +
+   1,712 bytes. ADR 0162 now proves the exact plan's release-first/pointer-last
+   Apply, release-only interruption recovery, staging-residue refusal, and
+   zero-write completed postflight in disconnected simulation. The retained
+   real plan wrote 6,674 bytes only to its `/tmp` root; post-family fingerprint
+   is `ab5ccd10017c7f14087c50f455a3212d3278e55d2efef1e8b7a4c2da92f30dac`
+   and pointer-state fingerprint is
+   `02dfb715872bec8cb11c1b51f7791b95fe24ede244f1d7d28da9f12dcab9a476`.
+   The executor refuses the Production root by code. No `/data` canonical
+   pointer exists; periodic full-lineage audit remains required before CLI,
+   executor, downstream, or cutover work.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The

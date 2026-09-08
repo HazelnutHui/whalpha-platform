@@ -16,6 +16,7 @@ if [[ ! -x "${python_bin}" ]]; then
 fi
 
 export PYTHONDONTWRITEBYTECODE=1
-export PYTHONPATH="${repo_root}/apps/api/src${PYTHONPATH:+:${PYTHONPATH}}"
+tip_pythonpath="${repo_root}/apps/api/src:${repo_root}/apps/api"
+export PYTHONPATH="${tip_pythonpath}${PYTHONPATH:+:${PYTHONPATH}}"
 cd "${repo_root}"
 exec "${python_bin}" "$@"

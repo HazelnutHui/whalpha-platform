@@ -48,10 +48,12 @@ and passing it back is not a valid trust boundary.
 
 ADR 0161 now defines and repository-tests a no-write immutable publication and
 current-pointer plan with bounded-family CAS, rollback reference, recovery
-states, and retain-all immutable-head policy. No Apply or canonical pointer has
-been created. The CLI, daily executor, coordinator, scheduler, MI, Snapshot,
-and Production do not consume the head. Exact-plan Apply/recovery and periodic
-full-lineage verification remain required.
+states, and retain-all immutable-head policy. ADR 0162 proves the exact-plan
+Apply/recovery mechanics only beneath a disconnected `/tmp` simulation root
+and refuses the Production root by code. No `/data` canonical pointer has been
+created. The CLI, daily executor, coordinator, scheduler, MI, Snapshot, and
+Production do not consume the head. Periodic full-lineage verification remains
+required.
 
 ## Real Dell evidence
 

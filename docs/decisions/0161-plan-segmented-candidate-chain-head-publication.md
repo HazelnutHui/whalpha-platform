@@ -72,9 +72,10 @@ scheduler, or downstream consumer is added by this decision.
   empty `/tmp` simulation root. It made zero external requests and zero
   canonical or Production writes; `/data`, V1 Candidate authority, analytics,
   publication, Snapshot, bundle, OCI, scheduler, and formulas are unchanged.
-- A separate exact-plan Apply/recovery implementation plus periodic cold-
-  lineage verification remains required before daily CLI/executor integration
-  or cutover.
+- ADR 0162 subsequently implements and proves the exact-plan Apply/recovery
+  mechanics only in a disconnected `/tmp` simulation. Periodic cold-lineage
+  verification still remains required before daily CLI/executor integration or
+  cutover.
 - Candidate-focused coverage passed, and the complete API regression finished
   at `2135 passed, 2 warnings`. Both warnings are the unchanged Python `crypt`
   and Starlette/httpx deprecations.
