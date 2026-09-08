@@ -39,6 +39,7 @@
 - [ADR 0176: Canonical Split Action Publication](decisions/0176-publish-canonical-split-actions-before-adjustment-ledger.md): publishes sparse provider-neutral split facts before any basis-specific ledger, preserving multi-event and unresolved-impact quarantine.
 - [Canonical Split Action Publication V1](data-contracts/canonical-split-action-publication-v1.md): immutable two-file custody, exact Plan/Apply/recovery binding, and incomplete-coverage boundary.
 - [Canonical Split Action Publication Operations](operations/canonical-split-action-publication.md): Dell-only plan, exact Apply, recovery, and postflight procedure.
+- [2026-09-08 Canonical Split Action Publication Audit](audits/canonical-split-action-publication-2026-09-08.md): exact source/candidate derivation, two-file Apply, zero-write recovery, and unchanged research gate.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

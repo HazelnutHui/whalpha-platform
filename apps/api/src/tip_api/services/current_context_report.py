@@ -197,7 +197,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.7",
+        "report_contract": "tip-current-context-report/1.8",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (

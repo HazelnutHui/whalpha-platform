@@ -49,10 +49,12 @@ appearance remain manual checks.
   observations in two immutable event-year partitions: 42,056 exact-date
   stable-ID resolutions and 28,043 quarantined rows. Its coverage is a bounded
   query snapshot and remains outcome-only, not canonical Corporate Actions.
-- ADR 0176 code and contracts are ready to publish the 709 resolved split
-  observations as 707 active and two quarantined canonical fact rows. No real
-  canonical split-action Apply has occurred yet.
-- `/data` contains 4,200 files / 2,151,480,413 bytes with zero symlinks and
+- Canonical split-only fact custody contains 709 resolved action rows: 707
+  active single-action rows and two quarantined rows in one multiple-action
+  group. It also exposes 43 possible-impact stable IDs without assigning any
+  of the 1,240 unresolved source observations. Full Corporate Action coverage,
+  neutral factors, and Adjustment Ledger authority remain false.
+- `/data` contains 4,202 files / 2,151,599,005 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -122,16 +124,16 @@ What is complete:
   date resolution;
 - a source-marker-bound 708-group split candidate with 707 clear candidates,
   one multiple-event quarantine, and 43 possible-impact stable IDs;
-- an implementation- and test-complete canonical split-action Plan/Apply
-  boundary, pending one exact real Dell plan and Apply;
+- canonical split-only fact publication with exact Plan/Apply and zero-write
+  recovery evidence;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 
 What remains incomplete:
 
 - governed historical point-in-time Membership eligibility;
-- canonical corporate actions and lifecycle; the source-observation snapshot
-  does not satisfy this gate;
+- complete canonical corporate-action type/availability/revision coverage and
+  canonical lifecycle; the split-only bounded publication is not sufficient;
 - canonical split-adjustment and later total-return ledgers;
 - source revision and availability evidence;
 - a real cost/liquidity model;
@@ -179,8 +181,8 @@ Visual Context's cumulative-state requirement.
    integration and a controlled unattended-scheduler rehearsal.
 4. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-5. Publish the exact canonical split-action fact set, then build a bounded
-   split-adjustment ledger.
+5. Build and reconcile a bounded split-adjustment ledger from the exact
+   canonical action publication.
 6. Complete historical Membership, lifecycle, costs, availability/revision,
    final Coverage, chronological evaluation, and sealed holdout evidence.
 7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,

@@ -56,6 +56,23 @@ not prove an authoritative neutral event.
   Adjustment Ledger reconciliation, lifecycle, Membership, costs, and final
   Historical Coverage are complete.
 
+## Execution evidence
+
+The first real Dell publication was planned from clean main
+`cccbec4850736da90e24fc5277b4c8e61bffb3ab`. Plan SHA-256 is
+`48dacad33ece6e855bf2f787086b763f6ce5cee6b0b877e419961e958ababe0c`
+and plan logical fingerprint is
+`d5b8633da94536817c1681fec192c580f154d695930017d7a5678c09ad1c0055`.
+
+The locked Apply published 709 canonical rows: 707 active single-action rows
+and two quarantined rows in one multiple-action group. It retained 1,240
+unresolved source actions and 43 possible-impact stable IDs in manifest
+quarantine evidence. Publication fingerprint is
+`76f017a1547e20b997e40cd1e61497b71c749a94e88a8632a3898fe84c106218`.
+Exactly two files / 118,592 bytes were added with no overwrite, deletion, or
+outside-target inventory change. An exact second Apply was zero-write and
+returned `verified_existing`.
+
 ## Rejected alternatives
 
 - **Publish composed adjustment factors as canonical actions:** confuses facts

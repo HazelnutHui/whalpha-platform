@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-08 — Publish canonical split-action facts
+
+- Built and independently reread the exact ADR 0176 plan from clean main
+  `cccbec4850736da90e24fc5277b4c8e61bffb3ab`. It bound source publication
+  `7b13691e...`, candidate `026e9087...`, whole-data pre-state `f3117cea...`,
+  two absent target files, and every false authority field.
+- The locked, network-prohibited Apply published 709 provider-neutral rows:
+  707 active single-action rows and two quarantined rows in one multi-action
+  group. It retained 1,240 unresolved source rows and 43 possible-impact stable
+  IDs without assigning them.
+- Exactly two files / 118,592 bytes were added with zero overwrite, deletion,
+  external request, or outside-target inventory change. Publication fingerprint
+  is `76f017a1547e20b997e40cd1e61497b71c749a94e88a8632a3898fe84c106218`.
+- An exact second Apply was zero-write and returned `verified_existing`. The
+  network-free postflight reported 4,202 files / 2,151,599,005 bytes, fingerprint
+  `6d6ef7c214087130290ae151a53b7f8b7be018ffcd1cb42c9912bbcf4c843915`,
+  zero symlinks, zero residue, incomplete Corporate Action coverage, absent
+  ledger, and unchanged `data_blocked` status.
+- No raw EOD, analytics, Snapshot, bundle, OCI, scheduler, or Production state
+  changed.
+
 ## 2026-09-08 — Implement canonical split-action publication
 
 - Accepted ADR 0176 and separated provider-neutral split facts from the later
