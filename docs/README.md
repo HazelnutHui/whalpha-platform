@@ -27,6 +27,8 @@
 - [ADR 0170: Exact-Event-Date Corporate-Action Resolution](decisions/0170-resolve-corporate-actions-by-exact-event-date.md): forbids latest/nearest ticker fallback and requires evidence-bound same-date stable-ID mapping.
 - [Historical Corporate Action Resolution Shadow V1](data-contracts/historical-corporate-action-resolution-shadow-v1.md): disconnected one-to-one source mapping with quarantine and zero canonical authority.
 - [2026-09-08 Corporate-Action Resolution Shadow Audit](audits/corporate-action-resolution-shadow-2026-09-08.md): exact-event-date real mapping counts, bound evidence, pre-census reconciliation, and unchanged canonical-state proof.
+- [ADR 0171: Corporate-Action Repeat Observation](decisions/0171-observe-corporate-action-source-revisions-before-canonicalization.md): compares later identical-scope source snapshots without inventing provider revision history.
+- [Historical Corporate Action Source Repeat Diff V1](data-contracts/historical-corporate-action-source-repeat-diff-v1.md): owner-only added/removed/changed metadata with strict observation order and zero canonical authority.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

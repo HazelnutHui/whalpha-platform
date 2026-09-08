@@ -205,6 +205,13 @@ nearest-session, name, and Universe fallbacks remain zero. Its local
 observation revision `1` is not provider revision evidence and cannot support
 canonical action, adjustment, or historical signal eligibility.
 
+ADR 0171 implements an owner-only, network-prohibited repeat-diff over two
+complete identical-scope source packages. It requires strict observation order
+and unique provider action IDs and classifies only observed unchanged,
+same-ID changed, added, and removed rows. It does not infer correction,
+cancellation, provider revision number, or source availability. Real repeat
+acquisition and diff execution remain pending.
+
 The report projects normalized Identity source observations as a separate
 record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
 artifacts, and the exact two missing EOD sessions: 8/13 and 8/19. It
@@ -360,10 +367,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    Coverage or research readiness. ADR 0169 now provides the temporary
    split/dividend source boundary, and both exact real packages have completed
    and passed formal reread. ADR 0170's real exact-event-date stable-ID shadow
-   has also passed formal reread. Next design append-only repeat-observation/
-   revision handling plus semantic conflict review before any canonical action
-   or Adjustment Ledger work. Lifecycle, cost, availability, and evaluation
-   evidence also remain incomplete.
+   has also passed formal reread. ADR 0171 implements the repeat-diff boundary;
+   acquire one later identical-scope observation and execute it, then review
+   semantic conflicts before any canonical action or Adjustment Ledger work.
+   Lifecycle, cost, availability, and evaluation evidence also remain
+   incomplete.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

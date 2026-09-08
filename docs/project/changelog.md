@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-08 — Implement corporate-action repeat-observation diff
+
+- Accepted ADR 0171 and added a disconnected, owner-only source repeat-diff
+  for two complete Massive packages with identical kind and date scope.
+- The comparator requires strict observation order and a unique nonempty
+  provider action ID for every row. It compares page/order-independent payload
+  fingerprints and classifies only unchanged, same-ID changed, added, or
+  removed records; ticker/date heuristics are prohibited.
+- The two-file output binds both package identities, content fingerprints,
+  field-level delta counts, and exact physical/logical change metadata. It
+  copies no raw source payload and assigns no provider revision, correction,
+  cancellation, or availability meaning.
+- Nine focused tests cover split and dividend deltas, no-change observations,
+  idempotency, missing IDs, inverted observation order, tamper detection, and
+  safe CLI output. The complete API regression passed 2,202 tests with only
+  two existing dependency deprecation warnings. No real repeat acquisition/diff, canonical write,
+  Adjustment Ledger, analytics, publication, deployment, or scheduler change
+  occurred in this implementation step.
+
 ## 2026-09-08 — Complete real corporate-action resolution shadow
 
 - On clean Dell main `51dd39405fe2576d8eacc553b9fe0f99f788646a`, mapped

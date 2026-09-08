@@ -294,3 +294,4 @@ Each ADR should include:
 - [0168: Gate Lifecycle Adapter on a Cross-Venue Source Sample](0168-gate-lifecycle-adapter-on-a-cross-venue-source-sample.md)
 - [0169: Stage Corporate-Action Source Before Adjustment](0169-stage-corporate-action-source-before-adjustment.md)
 - [0170: Resolve Corporate Actions by Exact Event Date](0170-resolve-corporate-actions-by-exact-event-date.md)
+- [0171: Observe Corporate-Action Source Revisions Before Canonicalization](0171-observe-corporate-action-source-revisions-before-canonicalization.md)
