@@ -67,8 +67,10 @@ the future canonical Corporate Action family.
 
 ADR 0174 implements the separate no-write plan, physical-first/marker-last
 Apply, exact-prefix recovery, and canonical formal reader for the bounded
-source-observation family. Until an exact plan is separately applied, this is
-implemented mechanics rather than canonical data state.
+source-observation family. The first exact 2025-06-23 through 2026-09-04 plan
+was applied and passed a zero-write recovery postflight. Its bounded V1
+event-year partitions are immutable; a future extension must use an explicit
+append/revision layout rather than overwriting them.
 
 ## Layer ownership
 

@@ -63,6 +63,9 @@ canonical **source-observation** dataset, not as canonical Corporate Actions.
 - The same rows are not duplicated into an invented canonical-event schema.
 - Research readiness remains blocked on canonical action/lifecycle scope,
   Membership, costs, complete adjustments, and sealed evaluation.
+- The first V1 event-year partitions are an immutable historical baseline;
+  later same-year observations require a separately versioned append/revision
+  layout and cannot overwrite this publication.
 - Temporary raw source packages and repeat observations remain acquisition
   evidence; the durable normalized observations and publication marker become
   the operational source boundary.
@@ -78,4 +81,3 @@ canonical **source-observation** dataset, not as canonical Corporate Actions.
 - **Retain a second permanent copy of all sanitized provider pages:** adds
   roughly 24 MB of duplicate private payload custody without improving the
   normalized operational contract.
-

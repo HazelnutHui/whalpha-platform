@@ -42,6 +42,92 @@ class CanonicalCorporateActionSource:
     records: tuple[CorporateActionSourceObservationV1, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class CanonicalCorporateActionSourceSummary:
+    publication: CorporateActionSourcePublicationV1
+    publication_path: Path
+    publication_sha256: str
+
+
+def read_canonical_corporate_action_source_summary(
+    *, data_root: Path, publication_path: Path
+) -> CanonicalCorporateActionSourceSummary:
+    """Validate the marker and exact partition bytes without reconstructing rows."""
+
+    root = _validated_data_root(data_root)
+    path = publication_path if publication_path.is_absolute() else root / publication_path
+    _regular_file(root, path, expected_mode=0o644)
+    if {item.name for item in path.parent.iterdir()} != {PUBLICATION_FILE_NAME}:
+        raise CanonicalCorporateActionSourceError(
+            "corporate-action publication file set differs"
+        )
+    raw = path.read_bytes()
+    if len(raw) > MAXIMUM_PUBLICATION_BYTES:
+        raise CanonicalCorporateActionSourceError(
+            "corporate-action publication exceeds its byte ceiling"
+        )
+    try:
+        publication = CorporateActionSourcePublicationV1.model_validate_json(raw)
+    except Exception as exc:
+        raise CanonicalCorporateActionSourceError(
+            "corporate-action publication contract is invalid"
+        ) from exc
+    expected_path = (
+        root
+        / "market-data"
+        / PUBLICATION_DIRECTORY
+        / "schema_version=1"
+        / f"provider_id={publication.provider_id}"
+        / f"coverage_id={publication.logical_fingerprint}"
+        / PUBLICATION_FILE_NAME
+    )
+    if (
+        raw != corporate_action_source_publication_bytes(publication)
+        or path != expected_path
+    ):
+        raise CanonicalCorporateActionSourceError(
+            "corporate-action publication identity differs"
+        )
+    for artifact in publication.artifacts:
+        partition = root / PurePosixPath(artifact.partition_path)
+        _directory(root, partition, expected_mode=0o755)
+        if {item.name for item in partition.iterdir()} != {
+            MANIFEST_FILE_NAME,
+            PARQUET_FILE_NAME,
+        }:
+            raise CanonicalCorporateActionSourceError(
+                "corporate-action partition file set differs"
+            )
+        manifest_path = partition / MANIFEST_FILE_NAME
+        parquet_path = partition / PARQUET_FILE_NAME
+        _regular_file(root, manifest_path, expected_mode=0o644)
+        _regular_file(root, parquet_path, expected_mode=0o644)
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError) as exc:
+            raise CanonicalCorporateActionSourceError(
+                "corporate-action partition manifest is invalid"
+            ) from exc
+        if (
+            not isinstance(manifest, dict)
+            or _file_sha256(manifest_path) != artifact.manifest_sha256
+            or manifest_path.stat().st_size != artifact.manifest_bytes
+            or _file_sha256(parquet_path) != artifact.parquet_sha256
+            or parquet_path.stat().st_size != artifact.parquet_bytes
+            or manifest.get("logical_fingerprint") != artifact.logical_fingerprint
+            or manifest.get("record_count") != artifact.record_count
+            or manifest.get("physical_sha256") != artifact.parquet_sha256
+        ):
+            raise CanonicalCorporateActionSourceError(
+                "corporate-action partition binding differs"
+            )
+    return CanonicalCorporateActionSourceSummary(
+        publication=publication,
+        publication_path=path,
+        publication_sha256=_bytes_sha256(raw),
+    )
+
+
 def read_canonical_corporate_action_source(
     *, data_root: Path, publication_path: Path
 ) -> CanonicalCorporateActionSource:

@@ -37,6 +37,10 @@ from tip_api.services.market_calendar import (
     MarketDataFreshness,
     evaluate_market_data_freshness,
 )
+from tip_api.services.corporate_action_source_canonical import (
+    CanonicalCorporateActionSourceError,
+    read_canonical_corporate_action_source_summary,
+)
 from tip_api.services.private_dashboard_snapshot import validate_snapshot_release
 from tip_api.services.universe_membership_canonical import (
     CanonicalUniverseMembershipError,
@@ -51,11 +55,6 @@ EXPECTED_USER = "hui"
 RESEARCH_SESSION_FLOOR = 252
 
 _RESEARCH_PHYSICAL_FAMILIES = (
-    (
-        "corporate_action_source_observation",
-        "provider-corporate-action-observation",
-        "schema_version=1/provider_id=*/event_year=*",
-    ),
     (
         "corporate_action",
         "corporate-actions",
@@ -199,7 +198,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.6",
+        "report_contract": "tip-current-context-report/1.7",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -468,11 +467,12 @@ def _historical_research_readiness(
         _research_family_inventory(root, family, directory, pattern)
         for family, directory, pattern in _RESEARCH_PHYSICAL_FAMILIES
     )
+    corporate_action_source = _canonical_corporate_action_source_inventory(root)
     membership = _canonical_membership_inventory(
         root,
         session_dates=session_dates,
     )
-    physical = (*generic_physical, membership)
+    physical = (corporate_action_source, *generic_physical, membership)
     by_family = {item["family"]: item for item in physical}
     blocker_codes = []
     if len(session_dates) < RESEARCH_SESSION_FLOOR:
@@ -496,10 +496,13 @@ def _historical_research_readiness(
         blocker_codes.append(
             "point_in_time_identity_source_observation_not_formally_coverage_validated"
         )
+    if corporate_action_source["partition_count"] == 0:
+        blocker_codes.append("corporate_action_source_observation_absent")
+    elif corporate_action_source["publication_marker_count"] == 0:
+        blocker_codes.append(
+            "corporate_action_source_observation_not_formally_coverage_validated"
+        )
     blocker_by_family = {
-        "corporate_action_source_observation": (
-            "corporate_action_source_observation_absent"
-        ),
         "corporate_action": "canonical_corporate_action_coverage_absent",
         "instrument_lifecycle": "instrument_lifecycle_coverage_absent",
         "adjustment_ledger": "adjustment_ledger_reconciliation_absent",
@@ -782,6 +785,135 @@ def _identity_completion_dates(root: Path) -> tuple[date, ...]:
     if ordered != tuple(sorted(set(ordered))):
         raise CurrentContextReportError("Identity snapshot dates are duplicated")
     return ordered
+
+
+def _canonical_corporate_action_source_inventory(root: Path) -> dict[str, Any]:
+    physical_root = (
+        root / "market-data" / "provider-corporate-action-observation"
+    )
+    publication_root = (
+        root
+        / "market-data"
+        / "provider-corporate-action-observation-publications"
+    )
+    physical_pattern = "schema_version=1/provider_id=*/event_year=*"
+    publication_pattern = (
+        "schema_version=1/provider_id=*/coverage_id=*"
+    )
+    for path, label in (
+        (physical_root, "corporate-action source"),
+        (publication_root, "corporate-action source publication"),
+    ):
+        if path.is_symlink():
+            raise CurrentContextReportError(f"{label} root is unsafe")
+        if path.exists() and (
+            not path.is_dir() or path.resolve(strict=True) != path
+        ):
+            raise CurrentContextReportError(f"{label} root is unsafe")
+        if path.exists() and any(item.is_symlink() for item in path.rglob("*")):
+            raise CurrentContextReportError(f"{label} inventory is unsafe")
+
+    physical_partitions = (
+        tuple(sorted(physical_root.glob(physical_pattern)))
+        if physical_root.exists()
+        else ()
+    )
+    publication_partitions = (
+        tuple(sorted(publication_root.glob(publication_pattern)))
+        if publication_root.exists()
+        else ()
+    )
+    if any(not item.is_dir() for item in physical_partitions):
+        raise CurrentContextReportError(
+            "corporate-action source partition is unsafe"
+        )
+    if any(not item.is_dir() for item in publication_partitions):
+        raise CurrentContextReportError(
+            "corporate-action source publication is unsafe"
+        )
+    if not publication_partitions:
+        generic = _research_family_inventory(
+            root,
+            "corporate_action_source_observation",
+            "provider-corporate-action-observation",
+            physical_pattern,
+        )
+        return {
+            **generic,
+            "publication_marker_count": 0,
+            "unpublished_physical_partition_count": len(physical_partitions),
+        }
+
+    canonical = []
+    referenced_partitions: set[Path] = set()
+    for partition in publication_partitions:
+        marker = partition / "manifest.json"
+        try:
+            value = read_canonical_corporate_action_source_summary(
+                data_root=root,
+                publication_path=marker,
+            )
+        except CanonicalCorporateActionSourceError as exc:
+            raise CurrentContextReportError(
+                "canonical corporate-action source formal read failed"
+            ) from exc
+        if value.publication_path != marker:
+            raise CurrentContextReportError(
+                "corporate-action source publication path differs"
+            )
+        canonical.append(value)
+        referenced_partitions.update(
+            root / item.partition_path for item in value.publication.artifacts
+        )
+    if len({item.publication.logical_fingerprint for item in canonical}) != len(
+        canonical
+    ):
+        raise CurrentContextReportError(
+            "corporate-action source publication identity is duplicated"
+        )
+    if len(canonical) != 1:
+        raise CurrentContextReportError(
+            "corporate-action source V1 requires one bounded publication"
+        )
+    unpublished = tuple(
+        item for item in physical_partitions if item not in referenced_partitions
+    )
+    if unpublished:
+        custody_state = "canonical_and_unpublished_physical_partitions_observed"
+    else:
+        custody_state = "canonical_bounded_query_snapshot"
+    publications = tuple(
+        sorted(canonical, key=lambda item: item.publication.logical_fingerprint)
+    )
+    first_date = min(item.publication.start_date for item in publications)
+    last_date = max(item.publication.end_date for item in publications)
+    return {
+        "family": "corporate_action_source_observation",
+        "custody_state": custody_state,
+        "partition_count": len(referenced_partitions),
+        "physical_partition_count": len(physical_partitions),
+        "manifest_count": len(referenced_partitions),
+        "publication_marker_count": len(publications),
+        "unpublished_physical_partition_count": len(unpublished),
+        "record_count": publications[0].publication.source_record_count,
+        "resolved_record_count": (
+            publications[0].publication.resolved_record_count
+        ),
+        "quarantined_record_count": (
+            publications[0].publication.quarantined_record_count
+        ),
+        "first_session": first_date.isoformat(),
+        "last_session": last_date.isoformat(),
+        "publication_fingerprints": tuple(
+            item.publication.logical_fingerprint for item in publications
+        ),
+        "query_scope_completion": "complete_as_observed",
+        "point_in_time_eligibility": "outcome_reconciliation_only",
+        "validation_scope": (
+            "publication_marker_and_exact_partition_bytes"
+        ),
+        "research_ready": False,
+    }
 
 
 def _research_family_inventory(

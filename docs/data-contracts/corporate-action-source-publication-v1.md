@@ -65,3 +65,7 @@ must pass the independent canonical reader.
 The plan itself never authorizes Apply, canonical Corporate Actions, an
 Adjustment Ledger, final Historical Coverage, or performance claims.
 
+The first V1 publication is one immutable historical baseline through
+2026-09-04. Because its physical key is event year, later 2026 observations
+must not rewrite that partition. Incremental observations and observed source
+revisions require a separately versioned append layout.

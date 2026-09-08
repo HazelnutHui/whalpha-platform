@@ -417,6 +417,57 @@ def test_identity_source_observation_inventory_rejects_inexact_file_custody(
         )
 
 
+def test_corporate_action_source_inventory_uses_canonical_publication(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "data"
+    relative_partition = (
+        "market-data/provider-corporate-action-observation/"
+        "schema_version=1/provider_id=massive_stocks_basic/event_year=2026"
+    )
+    physical = root / relative_partition
+    physical.mkdir(parents=True)
+    publication_partition = (
+        root
+        / "market-data/provider-corporate-action-observation-publications"
+        / "schema_version=1/provider_id=massive_stocks_basic"
+        / f"coverage_id={'a' * 64}"
+    )
+    publication_partition.mkdir(parents=True)
+    marker = publication_partition / "manifest.json"
+    marker.write_text("{}", encoding="utf-8")
+    publication = SimpleNamespace(
+        logical_fingerprint="a" * 64,
+        start_date=date(2026, 8, 20),
+        end_date=date(2026, 8, 22),
+        source_record_count=2,
+        resolved_record_count=1,
+        quarantined_record_count=1,
+        artifacts=(SimpleNamespace(partition_path=relative_partition),),
+    )
+    monkeypatch.setattr(
+        report,
+        "read_canonical_corporate_action_source_summary",
+        lambda **_kwargs: SimpleNamespace(
+            publication=publication,
+            publication_path=marker,
+        ),
+    )
+
+    state = report._canonical_corporate_action_source_inventory(root)
+
+    assert state["custody_state"] == "canonical_bounded_query_snapshot"
+    assert state["publication_marker_count"] == 1
+    assert state["partition_count"] == 1
+    assert state["record_count"] == 2
+    assert state["resolved_record_count"] == 1
+    assert state["quarantined_record_count"] == 1
+    assert state["validation_scope"] == (
+        "publication_marker_and_exact_partition_bytes"
+    )
+
+
 def test_historical_research_readiness_does_not_promote_observed_partition(
     tmp_path: Path,
 ) -> None:

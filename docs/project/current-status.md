@@ -45,7 +45,11 @@ appearance remain manual checks.
   19,964 decisions eligible for the 2026-09-08 open.
 - Immutable EOD and point-in-time Identity family evidence is canonical. Final
   Historical Coverage remains absent.
-- `/data` contains 4,195 files / 2,146,472,927 bytes with zero symlinks and
+- Canonical corporate-action source custody contains 70,099 split/dividend
+  observations in two immutable event-year partitions: 42,056 exact-date
+  stable-ID resolutions and 28,043 quarantined rows. Its coverage is a bounded
+  query snapshot and remains outcome-only, not canonical Corporate Actions.
+- `/data` contains 4,200 files / 2,151,480,413 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -109,9 +113,10 @@ What is complete:
 
 - 304-session canonical EOD and resolved Identity depth;
 - immutable EOD and Identity family-evidence manifests;
-- 302 canonical Identity source-observation partitions;
+- 303 canonical Identity source-observation partitions;
 - one prospective signal-eligible Membership partition;
-- temporary split/dividend source custody and exact-event-date resolution;
+- canonical bounded split/dividend source-observation custody and exact-event-
+  date resolution;
 - a temporary 708-group split-adjustment candidate;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
@@ -119,7 +124,8 @@ What is complete:
 What remains incomplete:
 
 - governed historical point-in-time Membership eligibility;
-- canonical corporate actions and lifecycle;
+- canonical corporate actions and lifecycle; the source-observation snapshot
+  does not satisfy this gate;
 - canonical split-adjustment and later total-return ledgers;
 - source revision and availability evidence;
 - a real cost/liquidity model;

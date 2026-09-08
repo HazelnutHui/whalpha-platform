@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-08 — Publish bounded corporate-action source observations
+
+- Built and independently reread the clean-revision ADR 0174 plan on Dell main
+  `310593bd5a549dbcc95932410104ca03ad961699`. It bound the complete current
+  `/data` fingerprint, two absent event-year partitions, one absent marker,
+  both repeat diffs, exact Identity evidence, and 5,007,486 planned bytes.
+- The locked, network-prohibited Apply published 70,099 rows: 42,056 resolved
+  and 28,043 quarantined. It added exactly five files, overwrote/deleted
+  nothing, and kept the outside-target inventory fingerprint unchanged.
+- Publication fingerprint is
+  `7b13691e22b7e815a773ed1d575ed580bbee897eb0dbf10c41e4e0862a95b1d1`;
+  plan SHA-256 is
+  `2e5c0a3915133e821dc8796d5329a55fa1fc0a9f742b0dbd00abfe04d0ee4b96`.
+  A separate zero-write postflight reused both partitions and the marker and
+  formally reread all 70,099 rows.
+- The current-context reader now recognizes the bounded query-snapshot marker
+  and reports exact partition bytes without reconstructing all rows on every
+  routine status request. `/data` is 4,200 files / 2,151,480,413 bytes with
+  fingerprint
+  `f3117ceaab4ea25ea60c23886d171373ae15dfcee30cff6ac784af02b7e1670b`,
+  zero symlinks, and zero publication residue.
+- The data remains `first_observed_only` and
+  `outcome_reconciliation_only`. Canonical Corporate Actions, Adjustment
+  Ledger, final Historical Coverage, research performance, Snapshot, bundle,
+  deployment, and scheduler state remain unchanged.
+
 ## 2026-09-08 — Implement bounded corporate-action source publication
 
 - Accepted ADR 0174 and reused the existing Corporate Action Source

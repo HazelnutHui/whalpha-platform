@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T21:12:33Z
+Operational state verified at: 2026-09-08T22:10:57Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -33,7 +33,7 @@ detail belongs in the changelog rather than a frozen HEAD field here.
 
 ## Formal Dell data state
 
-The network-free reader uses report contract 1.6. The 2026-09-08 verification
+The network-free reader uses report contract 1.7. The 2026-09-08 verification
 completed at validation level `active_custody_and_contracts` with
 `completion_index_plus_latest_partition`. The explicit all-partition mode also
 passed during ADR 0125 validation.
@@ -54,8 +54,10 @@ sealed publication assertion are reported separately.
 | Canonical historical Identity source | 303 immutable source-observation partitions / 3,713,485 rows; 2 EOD sessions remain without source evidence and 2026-09-08 is source-only pending EOD |
 | Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for the 2026-09-08 open |
 | Canonical EOD/Identity family evidence | 2 immutable manifests; final Historical Coverage absent |
-| `/data` inventory | 4,195 files / 2,146,472,927 bytes |
-| `/data` inventory fingerprint | `7ea6a71e497c23781f207c614746f39aaf7cd0736bef668a03238e2129b542cf` |
+| Canonical corporate-action source observations | 70,099 rows in 2 event-year partitions; 42,056 resolved / 28,043 quarantined; bounded query-snapshot coverage only |
+| Corporate-action source publication | `7b13691e22b7e815a773ed1d575ed580bbee897eb0dbf10c41e4e0862a95b1d1` |
+| `/data` inventory | 4,200 files / 2,151,480,413 bytes |
+| `/data` inventory fingerprint | `f3117ceaab4ea25ea60c23886d171373ae15dfcee30cff6ac784af02b7e1670b` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -117,7 +119,8 @@ The formal status is `data_blocked`, with
 | Point-in-time Identity | 305 canonical completed snapshots, including one Identity-only 2026-09-08 date; immutable family evidence remains scoped through 2026-09-04 | EOD alignment and final transitive Historical Coverage |
 | Identity source observations | 303 canonical partitions / 3,713,485 rows | 2026-08-13 and 2026-08-19 remain unbound; 2026-09-08 awaits EOD |
 | Daily Universe Membership | 1 canonical signal-eligible session; disconnected mechanics cover 302 source-available sessions | governed historical point-in-time eligibility and complete publication |
-| Corporate actions | temporary split/dividend custody and exact-event-date resolution shadow complete | canonical action family, revision/availability evidence, unresolved quarantine |
+| Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
+| Canonical corporate actions | source observations only | provider-neutral canonical event family and complete action-type scope |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
 | Adjustment ledger | 708 resolved split-event groups and 43 possible-impact stable IDs in a temporary candidate | canonical split actions, bounded price-adjustment ledger, reconciliation; dividends later |
 | Costs and liquidity | fixed fixture scenarios only | real executable cost/liquidity model |
@@ -139,6 +142,11 @@ projected backward. Canonical price history alone is not backtest readiness.
 - A later identical-scope observation was unchanged over an approximately
   69–73 minute interval. This proves short-interval stability only, not
   historical immutability or provider revision semantics.
+- ADR 0174 published the exact 70,099 normalized source observations in two
+  immutable event-year partitions plus a marker-last bounded coverage record.
+  A zero-write postflight reused both partitions and the marker. This is
+  canonical source custody, not canonical Corporate Actions or point-in-time
+  signal evidence.
 - The split-adjustment candidate contains 708 resolved stable-ID/date groups.
   Forty-three possible-impact stable IDs remain conservatively non-clear; only
   two enter the active Universes. Total return and the canonical ledger remain
@@ -147,7 +155,7 @@ projected backward. Canonical price history alone is not backtest readiness.
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0172 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0174 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof
