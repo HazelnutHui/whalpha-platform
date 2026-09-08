@@ -413,8 +413,16 @@ separately bounded.
    and pointer-state fingerprint is
    `02dfb715872bec8cb11c1b51f7791b95fe24ede244f1d7d28da9f12dcab9a476`.
    The executor refuses the Production root by code. No `/data` canonical
-   pointer exists; periodic full-lineage audit remains required before CLI,
-   executor, downstream, or cutover work.
+   pointer exists. ADR 0163 now cold-audits the retained base plus every
+   ordered append against that exact simulated active head, binds the current
+   state before and after the replay, and returns zero mismatches and writes.
+   The real run took 39.79 seconds / 2,079,080 KiB peak RSS; its audit logical
+   fingerprint is
+   `8adc21deec2bda549f1bb142e482376d6c07183c997050fb008689affb761ca3`.
+   It defines daily, periodic, and code-change validation levels but adds no
+   CLI, executor, journal, scheduler, or Production authority. The next gate is
+   reviewed CLI/executor exposure and downstream compatibility; cutover remains
+   unauthorized.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The

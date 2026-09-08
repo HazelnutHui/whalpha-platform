@@ -52,9 +52,10 @@ Next:
    no-write immutable publication/current-pointer plan, bounded-family CAS,
    rollback reference, recovery states, and retain-all policy. ADR 0162 proves
    exact-plan Apply/recovery only in disconnected simulation and explicitly
-   refuses the Production root. Next add periodic full-lineage verification;
-   then expose the reviewed boundary to CLI/executor and prove downstream
-   compatibility. Do not relabel
+   refuses the Production root. ADR 0163 now proves periodic cold
+   full-lineage verification with a before/after current-state binding and
+   zero writes. Next expose the reviewed boundary to CLI/executor and prove
+   downstream compatibility. Do not relabel
    its different history fingerprint as V1 or cut over the daily/publication
    path until all gates pass.
 5. Remove any remaining repeated evidence reconstruction only where the new

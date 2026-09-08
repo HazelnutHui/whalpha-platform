@@ -303,9 +303,15 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    and a zero-write completed postflight. The real simulation wrote 6,674
    bytes; its post-family and pointer-state fingerprints are recorded in the
    current context. The executor refuses the Production root, and no canonical
-   pointer exists. Next add periodic full-lineage audit before CLI/executor or
-   downstream cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
-   ordinals explicitly distinct.
+   pointer exists. ADR 0163 now completes the disconnected periodic
+   full-lineage audit: it replays the retained base plus every ordered append,
+   matches the exact active head, rereads the bound current state, and writes
+   nothing. Its real run took 39.79 seconds / 2,079,080 KiB peak RSS and
+   produced audit fingerprint
+   `8adc21deec2bda549f1bb142e482376d6c07183c997050fb008689affb761ca3`.
+   Next expose the boundary to CLI/executor under review and prove downstream
+   compatibility; neither step nor cutover is yet authorized. Keep 1.0 global
+   raw-fact ordinals and 1.1 session-local ordinals explicitly distinct.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

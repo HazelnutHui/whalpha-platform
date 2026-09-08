@@ -80,8 +80,10 @@ interruption. Partial or ambiguous evidence fails closed and is not deleted.
 The package performs no network or canonical write and grants no publication,
 scheduler, research-performance, or Production authority. Candidate V1 remains
 authoritative. ADR 0158 composes the ADR 0157 sidecar only after verifying its
-exact V1 physical completion. Governed chain-head custody, retention,
-downstream compatibility, periodic audit, and cutover require later decisions.
+exact V1 physical completion. ADRs 0160–0163 subsequently add disconnected
+chain-head custody, retain-all policy, exact Apply/recovery, and periodic
+full-lineage audit. CLI/executor exposure, downstream compatibility, and
+cutover require later decisions.
 
 ## Real Dell proof
 
@@ -120,5 +122,6 @@ implements the disconnected `/tmp` chain-head proof: an expected prior head
 plus one validated append produces the same next head as a cold full-lineage
 build, and the composer can use the expected head without replaying its parent
 storage. ADRs 0161–0162 add a governed plan and simulation-only exact Apply and
-recovery. Periodic full-lineage policy remains required before cutover, and
-canonical publication/pointer authority is still absent.
+recovery. ADR 0163 proves the periodic full-lineage policy against that
+simulated current state. Canonical publication/pointer authority, reviewed
+CLI/executor exposure, downstream compatibility, and cutover remain absent.

@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-08 — Audit Candidate chain head against full lineage
+
+- Accepted ADR 0163 and added a deterministic, zero-write periodic audit that
+  reconstructs the active segmented Candidate head from the retained base and
+  every ordered append, then requires exact parent, manifest, logical, and
+  physical identity.
+- The audit binds externally known family, pointer, active logical, and active
+  physical fingerprints; it fully rereads the current state after the cold
+  replay and fails on missing/reordered lineage, binding drift, or a mid-audit
+  current change.
+- Validation policy is now explicit: the daily fast path does not claim full
+  lineage; periodic audit is required every five accepted append sessions or
+  seven calendar days and after recovery; code changes additionally require V1
+  semantic reconstruction, the independent Oracle, and affected tests.
+- The retained real `/tmp` proof matched the exact simulated 11-session head in
+  39.79 seconds / 2,079,080 KiB peak RSS with zero output files, requests,
+  mismatches, canonical writes, and Production writes. Audit fingerprint is
+  `8adc21deec2bda549f1bb142e482376d6c07183c997050fb008689affb761ca3`.
+- `/data`, V1 Candidate, formulas, parameters, ranks, states, publication, MI,
+  Snapshot, bundle, OCI, executor, coordinator, scheduler, and Production did
+  not change. No canonical pointer exists; reviewed CLI/executor exposure and
+  downstream compatibility are the next gates, not an authorized cutover.
+- Candidate-focused coverage passed, and the complete API regression finished
+  at `2136 passed, 2 warnings`; both warnings are unchanged dependency
+  deprecations.
+
 ## 2026-09-08 — Prove disconnected Candidate chain-head Apply/recovery
 
 - Accepted ADR 0162 and added a simulation-only exact-plan executor that

@@ -82,8 +82,9 @@ added.
 - `/data`, the authoritative V1 Candidate, formulas, parameters, ranks,
   states, publication, MI, Snapshot, bundle, OCI, executor, coordinator, and
   scheduler remain unchanged. No canonical Candidate chain-head pointer exists.
-- Periodic full-lineage audit remains the next prerequisite before exposing a
-  reviewed boundary to CLI/executor or proving downstream compatibility.
+- ADR 0163 subsequently satisfies the periodic full-lineage prerequisite in
+  the same disconnected boundary. Reviewed CLI/executor exposure and
+  downstream compatibility remain later gates.
 - Candidate-focused coverage passed, and the complete API regression finished
   at `2136 passed, 2 warnings`. Both warnings are the unchanged Python `crypt`
   and Starlette/httpx deprecations.

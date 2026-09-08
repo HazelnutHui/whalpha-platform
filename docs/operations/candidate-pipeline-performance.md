@@ -529,7 +529,30 @@ and pointer-state fingerprint is
 `02dfb715872bec8cb11c1b51f7791b95fe24ede244f1d7d28da9f12dcab9a476`.
 An immediate postflight reused both objects and wrote zero files/bytes. This is
 still disconnected evidence: `/data`, V1 Candidate, daily execution, and
-Production did not change. Periodic full-lineage verification is the next gate.
+Production did not change. ADR 0163 subsequently completes the disconnected
+periodic full-lineage gate.
+
+## 2026-09-08 periodic full-lineage audit result
+
+ADR 0163 cold-reads the retained 2026-09-03 base plus the complete ordered
+2026-09-04 append lineage and reconstructs the exact currently selected
+simulated 11-session head. It binds the family inventory, pointer state, active
+logical identity, and active manifest SHA-256, then rereads the complete
+current state after reconstruction to reject a mixed-state result.
+
+The real run took 39.79 seconds and 2,079,080 KiB peak RSS. It performed two
+current-state reads and one full-lineage read, produced zero filesystem output,
+made zero external requests, and reported zero canonical or Production writes.
+The audit logical fingerprint is
+`8adc21deec2bda549f1bb142e482376d6c07183c997050fb008689affb761ca3`.
+
+This cost belongs to the periodic correctness tier, not the daily hot path.
+Policy requires it at least every five accepted Candidate append sessions or
+seven calendar days, whichever occurs first, and after verify-then-complete
+recovery before another head. Code changes additionally require the existing
+V1 full semantic reconstruction, independent Oracle, and affected contract
+tests. No CLI, executor, scheduler, `/data`, cutover, or Production authority
+is introduced.
 
 ## 2026-09-04 session-discovery validation tiers
 

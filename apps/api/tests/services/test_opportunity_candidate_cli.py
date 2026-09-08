@@ -4,7 +4,7 @@ import os
 import socket
 import shutil
 import tempfile
-from dataclasses import replace
+from dataclasses import asdict, replace
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -18,6 +18,9 @@ from tip_api.parameters.market_regime.state_v1_0_1 import STATE_CALCULATION_VERS
 from tip_api.services import opportunity_candidate_cli as cli
 from tip_api.services import opportunity_candidate_segmented_append as candidate_append
 from tip_api.services import opportunity_candidate_segmented_chain_head as chain_head
+from tip_api.services import (
+    opportunity_candidate_segmented_chain_head_audit as head_audit,
+)
 from tip_api.services import (
     opportunity_candidate_segmented_chain_head_apply as head_apply,
 )
@@ -1857,6 +1860,164 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
         assert apply_state.pointer["rollback"] == apply_bootstrap_plan.plan[
             "planned_pointer"
         ]["active"]
+        periodic_audit = (
+            head_audit.audit_candidate_segmented_chain_head_full_lineage(
+                canonical_root=apply_root,
+                base_shadow=directories["base-shadow"],
+                parent_appends=(
+                    directories["first-append"],
+                    directories["second-append"],
+                ),
+                expected_current_family_inventory_fingerprint=(
+                    apply_state.family_inventory_fingerprint
+                ),
+                expected_current_pointer_state_fingerprint=(
+                    apply_state.current_pointer_state_fingerprint
+                ),
+                expected_active_chain_head_logical_fingerprint=(
+                    second_head_manifest["logical_content_fingerprint"]
+                ),
+                expected_active_chain_head_manifest_sha256=(
+                    second_head.manifest_sha256
+                ),
+            )
+        )
+        assert periodic_audit.status == "exact_match"
+        assert periodic_audit.validation_tier == "periodic"
+        assert periodic_audit.session_count == 3
+        assert periodic_audit.append_count == 2
+        assert periodic_audit.current_state_reread_count == 2
+        assert periodic_audit.full_lineage_reread_count == 1
+        assert periodic_audit.manifest_byte_match is True
+        assert periodic_audit.parent_identity_match is True
+        assert periodic_audit.mismatch_count == 0
+        assert periodic_audit.external_request_count == 0
+        assert periodic_audit.filesystem_write_count == 0
+        assert periodic_audit.canonical_write_count == 0
+        assert periodic_audit.production_write_count == 0
+        assert periodic_audit.publication_authorized is False
+        assert periodic_audit.cutover_authorized is False
+        assert periodic_audit.code_change_validation_complete is False
+        audit_logical = asdict(periodic_audit)
+        audit_fingerprint = audit_logical.pop("logical_content_fingerprint")
+        assert head_audit.v1._fingerprint(audit_logical) == audit_fingerprint
+        assert (
+            head_publication.read_candidate_segmented_chain_head_current_state(
+                canonical_root=apply_root,
+            )
+            == apply_state
+        )
+        with pytest.raises(
+            head_audit.CandidateSegmentedChainHeadAuditError,
+            match="cold reconstructed chain head differs",
+        ):
+            head_audit.audit_candidate_segmented_chain_head_full_lineage(
+                canonical_root=apply_root,
+                base_shadow=directories["base-shadow"],
+                parent_appends=(directories["first-append"],),
+                expected_current_family_inventory_fingerprint=(
+                    apply_state.family_inventory_fingerprint
+                ),
+                expected_current_pointer_state_fingerprint=(
+                    apply_state.current_pointer_state_fingerprint
+                ),
+                expected_active_chain_head_logical_fingerprint=(
+                    second_head_manifest["logical_content_fingerprint"]
+                ),
+                expected_active_chain_head_manifest_sha256=(
+                    second_head.manifest_sha256
+                ),
+            )
+        with pytest.raises(
+            head_audit.CandidateSegmentedChainHeadAuditError,
+            match="full Candidate lineage validation failed",
+        ):
+            head_audit.audit_candidate_segmented_chain_head_full_lineage(
+                canonical_root=apply_root,
+                base_shadow=directories["base-shadow"],
+                parent_appends=(
+                    directories["second-append"],
+                    directories["first-append"],
+                ),
+                expected_current_family_inventory_fingerprint=(
+                    apply_state.family_inventory_fingerprint
+                ),
+                expected_current_pointer_state_fingerprint=(
+                    apply_state.current_pointer_state_fingerprint
+                ),
+                expected_active_chain_head_logical_fingerprint=(
+                    second_head_manifest["logical_content_fingerprint"]
+                ),
+                expected_active_chain_head_manifest_sha256=(
+                    second_head.manifest_sha256
+                ),
+            )
+        with pytest.raises(
+            head_audit.CandidateSegmentedChainHeadAuditError,
+            match="current state differs",
+        ):
+            head_audit.audit_candidate_segmented_chain_head_full_lineage(
+                canonical_root=apply_root,
+                base_shadow=directories["base-shadow"],
+                parent_appends=(
+                    directories["first-append"],
+                    directories["second-append"],
+                ),
+                expected_current_family_inventory_fingerprint="0" * 64,
+                expected_current_pointer_state_fingerprint=(
+                    apply_state.current_pointer_state_fingerprint
+                ),
+                expected_active_chain_head_logical_fingerprint=(
+                    second_head_manifest["logical_content_fingerprint"]
+                ),
+                expected_active_chain_head_manifest_sha256=(
+                    second_head.manifest_sha256
+                ),
+            )
+        real_current_read = head_audit._read_expected_current_state
+        current_read_count = 0
+
+        def change_second_current_read(**kwargs):
+            nonlocal current_read_count
+            current_read_count += 1
+            current = real_current_read(**kwargs)
+            if current_read_count == 2:
+                return replace(
+                    current,
+                    current_pointer_state_fingerprint="f" * 64,
+                )
+            return current
+
+        with monkeypatch.context() as changed:
+            changed.setattr(
+                head_audit,
+                "_read_expected_current_state",
+                change_second_current_read,
+            )
+            with pytest.raises(
+                head_audit.CandidateSegmentedChainHeadAuditError,
+                match="changed during full-lineage audit",
+            ):
+                head_audit.audit_candidate_segmented_chain_head_full_lineage(
+                    canonical_root=apply_root,
+                    base_shadow=directories["base-shadow"],
+                    parent_appends=(
+                        directories["first-append"],
+                        directories["second-append"],
+                    ),
+                    expected_current_family_inventory_fingerprint=(
+                        apply_state.family_inventory_fingerprint
+                    ),
+                    expected_current_pointer_state_fingerprint=(
+                        apply_state.current_pointer_state_fingerprint
+                    ),
+                    expected_active_chain_head_logical_fingerprint=(
+                        second_head_manifest["logical_content_fingerprint"]
+                    ),
+                    expected_active_chain_head_manifest_sha256=(
+                        second_head.manifest_sha256
+                    ),
+                )
 
         recovery_root = tmp_path / "segmented-chain-head-recovery"
         recovery_root.mkdir(mode=0o700)
@@ -2343,7 +2504,7 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
         )
 
 
-def test_disconnected_chain_head_apply_refuses_production_root_before_io(
+def test_disconnected_chain_head_operations_refuse_production_root_before_io(
     monkeypatch,
 ) -> None:
     def reject_root_io(_path):
@@ -2366,4 +2527,17 @@ def test_disconnected_chain_head_apply_refuses_production_root_before_io(
             expected_current_family_inventory_fingerprint="3" * 64,
             expected_current_pointer_state_fingerprint="4" * 64,
             canonical_root=head_publication.APPROVED_DATA_ROOT,
+        )
+    with pytest.raises(
+        head_audit.CandidateSegmentedChainHeadAuditError,
+        match="refuses the production data root",
+    ):
+        head_audit.audit_candidate_segmented_chain_head_full_lineage(
+            canonical_root=head_publication.APPROVED_DATA_ROOT,
+            base_shadow=Path("/tmp/base-must-not-be-read"),
+            parent_appends=(),
+            expected_current_family_inventory_fingerprint="0" * 64,
+            expected_current_pointer_state_fingerprint="1" * 64,
+            expected_active_chain_head_logical_fingerprint="2" * 64,
+            expected_active_chain_head_manifest_sha256="3" * 64,
         )

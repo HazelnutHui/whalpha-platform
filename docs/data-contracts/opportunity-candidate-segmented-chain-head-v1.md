@@ -52,8 +52,10 @@ states, and retain-all immutable-head policy. ADR 0162 proves the exact-plan
 Apply/recovery mechanics only beneath a disconnected `/tmp` simulation root
 and refuses the Production root by code. No `/data` canonical pointer has been
 created. The CLI, daily executor, coordinator, scheduler, MI, Snapshot, and
-Production do not consume the head. Periodic full-lineage verification remains
-required.
+Production do not consume the head. ADR 0163 now proves periodic full-lineage
+verification against the simulated current state, with two bound current-state
+reads and zero writes. Reviewed CLI/executor exposure and downstream
+compatibility remain unproven; no cutover is authorized.
 
 ## Real Dell evidence
 
