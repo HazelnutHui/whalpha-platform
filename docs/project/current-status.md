@@ -122,6 +122,15 @@ confirmed the same 4,058-file `/data` inventory, zero residue, and no published
 family evidence. Apply, final Coverage, research development, and performance
 claims remain unauthorized.
 
+ADR 0166 now implements that exact two-file Apply boundary. It requires the
+reviewed plan SHA-256, plan logical fingerprint, family-set fingerprint, and
+approved Dell root; shares the global canonical-data lock; publishes EOD before
+Identity by atomic directory rename; permits only exact-prefix or completed
+zero-write recovery; and detects outside-target inventory drift. Disconnected
+fault injection and adjacent Apply regression passed. A new read-only exact-SHA
+check of the real plan also passed, but no real Apply was run: both family
+evidence targets and final Historical Coverage remain absent.
+
 The 2026-09-05 aggregate inactive-security census reached 20 full pages and
 20,000 rows with another page still available. It found `delisted_utc` on
 19,565 rows, but retained no row data and grants no lifecycle-completeness
@@ -299,10 +308,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cumulative state history in the append projection. Keep V1 authoritative;
    do not expose the segmented path to CLI/executor or create canonical custody
    until one bounded design resolves both gaps.
-4. ADR 0165 has completed the deterministic no-write plan for the two validated
-   EOD/Identity evidence manifests. Keep both `/data` targets absent until a
-   separately reviewed, recoverable two-file Apply exists. Do not combine that
-   Apply with final Historical Coverage or use it to claim research readiness.
+4. ADRs 0165–0166 have completed the deterministic plan and disconnected,
+   recoverable two-file executor for the validated EOD/Identity evidence
+   manifests. The next bounded transition is an exact production Apply followed
+   by zero-write postflight and the read-only context report. Do not combine it
+   with final Historical Coverage or use it to claim research readiness.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

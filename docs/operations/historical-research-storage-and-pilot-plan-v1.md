@@ -138,6 +138,12 @@ queried only for a small set of unresolved stable IDs, never the entire base.
    and two absent immutable targets in one deterministic direct-`/tmp` plan,
    then independently reread it by exact SHA-256. This did not publish either
    manifest and did not implement Apply or final Historical Coverage.
+14. **Complete as disconnected Apply mechanics under ADR 0166:** require the
+   reviewed plan SHA-256, logical fingerprint, family-set fingerprint, and Dell
+   root; publish EOD before Identity through atomic directory renames; permit
+   recovery only from an exact completed prefix; and compare outside-target
+   inventory before and after the locked critical section. This has not been
+   invoked against `/data` and does not publish final Historical Coverage.
 
 Steps 1–11 were repository mechanics. Step 12 was the separately governed
 historical EOD/Identity transition and is retained as execution history, not a
@@ -177,9 +183,26 @@ scripts/admin/plan-current-historical-family-evidence.sh verify \
 `build` requires a new visible direct child of `/tmp`, validates both entire
 source families, and writes one mode-0400 plan only after validation. `verify`
 requires the exact reviewed file SHA, revalidates every referenced source file,
-and requires both targets to remain absent. Neither subcommand has an Apply
-path, credential access, network capability, final Coverage transition, or
-Production side effect.
+and requires both targets to remain absent.
+
+ADR 0166 adds a separate administrator entry point. Do not infer authorization
+from the existence of this command; an invocation must use the exact reviewed
+bindings and must be handled as its own bounded canonical mutation:
+
+```bash
+scripts/admin/apply-current-historical-family-evidence.sh \
+  --plan-path /tmp/<existing-plan-name>.json \
+  --approved-plan-sha256 <exact-plan-file-sha256> \
+  --expected-plan-logical-fingerprint <exact-plan-logical-fingerprint> \
+  --expected-family-set-fingerprint <exact-family-set-fingerprint> \
+  --data-root /data/trading-intelligence-platform
+```
+
+Only an interruption that left a formally exact EOD prefix, or a fully
+completed pair requiring zero-write proof, may add `--verify-then-complete`.
+Identity-first, corrupt, partial, staging-residue, or no-prefix recovery states
+are rejected without deletion. The command has no credential or network path
+and cannot publish final Coverage or grant research/performance authority.
 
 ADR 0100's 2026-08-30 real read-only pass validated 31 current EOD artifacts
 (306,539 rows) and 31 EOD-bound Identity artifacts (307,466 canonical

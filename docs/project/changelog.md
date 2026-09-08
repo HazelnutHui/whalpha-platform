@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-08 — Prove recoverable EOD/Identity family-evidence Apply
+
+- Accepted ADR 0166 and added one explicit executor for ADR 0165's exact two
+  manifests. It requires the plan SHA-256, plan logical fingerprint, family-set
+  fingerprint, and approved Dell root; shares the canonical-data lock; blocks
+  network access; publishes EOD before Identity through atomic one-file
+  directory renames; and compares outside-target inventory before and after.
+- Recovery accepts only an exact completed EOD prefix or a completed pair. It
+  rejects no-prefix, Identity-first, corrupt, partial, and staging-residue
+  states without overwriting or deleting canonical partitions. A completed
+  pair is a formal zero-write postflight.
+- Disconnected temporary-root fault injection passed for ordered publication,
+  interruption, zero-write replay, binding mismatch, corruption, staging,
+  outside drift, formal reread, and socket/DNS prohibition. Adjacent historical
+  Coverage, Membership Apply, and same-day catch-up regression also passed.
+- The focused suite passed 24 tests, the adjacent suite passed 34 tests, and
+  complete API regression passed `2160 passed, 2 warnings`; both warnings are
+  unchanged dependency deprecations.
+- The retained real 304-session plan passed another exact-SHA read-only reread
+  with both targets absent. No `/data` Apply, final Historical Coverage,
+  research result, analytics, Snapshot, bundle, OCI, scheduler, deployment, or
+  Production state changed.
+
 ## 2026-09-08 — Plan current EOD and Identity evidence publication without writes
 
 - Accepted ADR 0165 and added a typed deterministic plan for exactly the

@@ -64,6 +64,10 @@ def build_current_historical_family_evidence_publication_plan(
         for item in validations
     )
     for family, validation in zip(families, validations, strict=True):
+        _require_no_target_staging(
+            root=root,
+            target_path=root / family.target_path,
+        )
         if (
             validation.proposed_evidence_path != root / family.target_path
             or validation.physical_sha256 != family.evidence_manifest_sha256
@@ -119,8 +123,9 @@ def read_current_historical_family_evidence_publication_plan(
     *,
     plan_path: Path,
     approved_plan_sha256: str | None = None,
+    verify_then_complete: bool = False,
 ) -> HistoricalFamilyEvidencePublicationPlanEvidence:
-    """Reread the plan, every source byte, and both absent targets."""
+    """Reread the plan, every source byte, and its allowed target state."""
 
     plan, plan_sha = _read_plan_file(plan_path)
     if approved_plan_sha256 is not None:
@@ -130,12 +135,20 @@ def read_current_historical_family_evidence_publication_plan(
                 "family-evidence publication plan SHA-256 differs"
             )
     root = _validated_data_root(Path(plan.data_root))
+    for item in plan.families:
+        _require_no_target_staging(
+            root=root,
+            target_path=root / item.target_path,
+        )
     repository = ParquetHistoricalCoverageRepository(root)
     validations = tuple(
         repository.validate_dataset_evidence(item.evidence)
         for item in plan.families
     )
-    validations = _ordered_unpublished_validations(validations)
+    validations = _ordered_validations(
+        validations,
+        verify_then_complete=verify_then_complete,
+    )
     for item, validation in zip(plan.families, validations, strict=True):
         if (
             validation.evidence != item.evidence
@@ -155,6 +168,14 @@ def read_current_historical_family_evidence_publication_plan(
 def _ordered_unpublished_validations(
     validations: tuple[HistoricalDatasetEvidenceValidationResult, ...],
 ) -> tuple[HistoricalDatasetEvidenceValidationResult, ...]:
+    return _ordered_validations(validations, verify_then_complete=False)
+
+
+def _ordered_validations(
+    validations: tuple[HistoricalDatasetEvidenceValidationResult, ...],
+    *,
+    verify_then_complete: bool,
+) -> tuple[HistoricalDatasetEvidenceValidationResult, ...]:
     ordered = tuple(
         sorted(validations, key=lambda item: item.evidence.family.value)
     )
@@ -169,14 +190,49 @@ def _ordered_unpublished_validations(
         raise HistoricalFamilyEvidencePublicationPlanError(
             "current family-evidence session coverage differs"
         )
+    present = tuple(item.publication_exists for item in ordered)
     if any(
-        item.publication_exists or item.status != "validated_not_published"
-        for item in ordered
+        item.status
+        != ("already_present" if exists else "validated_not_published")
+        for item, exists in zip(ordered, present, strict=True)
     ):
+        raise HistoricalFamilyEvidencePublicationPlanError(
+            "family-evidence repository state is invalid"
+        )
+    if not verify_then_complete and any(present):
         raise HistoricalFamilyEvidencePublicationPlanError(
             "family-evidence publication target is no longer absent"
         )
+    if verify_then_complete:
+        if not any(present):
+            raise HistoricalFamilyEvidencePublicationPlanError(
+                "family-evidence recovery found no completed target"
+            )
+        if present not in ((True, False), (True, True)):
+            raise HistoricalFamilyEvidencePublicationPlanError(
+                "family-evidence recovery targets are not an ordered prefix"
+            )
     return ordered
+
+
+def _require_no_target_staging(*, root: Path, target_path: Path) -> None:
+    target_directory = target_path.parent
+    if root != target_directory and root not in target_directory.parents:
+        raise HistoricalFamilyEvidencePublicationPlanError(
+            "family-evidence target escaped the approved root"
+        )
+    parent = target_directory.parent
+    if not parent.exists():
+        return
+    if parent.is_symlink() or not parent.is_dir():
+        raise HistoricalFamilyEvidencePublicationPlanError(
+            "family-evidence target parent is unsafe"
+        )
+    prefix = f".{target_directory.name}.staging."
+    if any(candidate.name.startswith(prefix) for candidate in parent.iterdir()):
+        raise HistoricalFamilyEvidencePublicationPlanError(
+            "family-evidence target staging residue requires diagnosis"
+        )
 
 
 def _validated_data_root(path: Path) -> Path:

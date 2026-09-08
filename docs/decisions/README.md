@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0166](0166-apply-current-family-evidence-as-an-ordered-prefix.md): apply the exact ADR 0165 EOD/Identity manifests in one locked, network-prohibited ordered-prefix workflow with fail-closed recovery and outside-target drift detection.
+
 - [ADR 0165](0165-plan-current-eod-and-identity-family-evidence-publication.md): bind the exact 304-session EOD and point-in-time Identity evidence bytes plus two absent immutable targets in a deterministic `/tmp` plan, without Apply or Historical Coverage authority.
 
 - [ADR 0164](0164-gate-segmented-candidate-downstream-cutover.md): prove exact V1/current-input and Entry/Strategy result equivalence, while keeping V1 cutover blocked by base rehash cost and missing cumulative-state input for Visual Context.
@@ -279,3 +281,8 @@ Each ADR should include:
 - [0159: Validate Ordered Multi-Generation Candidate Append Lineage](0159-validate-ordered-multigeneration-candidate-append-lineage.md)
 - [0160: Checkpoint the Segmented Candidate Chain Head](0160-checkpoint-segmented-candidate-chain-head.md)
 - [0161: Plan Segmented Candidate Chain-Head Publication](0161-plan-segmented-candidate-chain-head-publication.md)
+- [0162: Prove Disconnected Candidate Chain-Head Apply/Recovery](0162-prove-disconnected-candidate-chain-head-apply-recovery.md)
+- [0163: Audit Candidate Chain Head Against Full Lineage](0163-audit-candidate-chain-head-against-full-lineage.md)
+- [0164: Gate Segmented Candidate Downstream Cutover](0164-gate-segmented-candidate-downstream-cutover.md)
+- [0165: Plan Current EOD and Identity Family-Evidence Publication](0165-plan-current-eod-and-identity-family-evidence-publication.md)
+- [0166: Apply Current Family Evidence as an Ordered Prefix](0166-apply-current-family-evidence-as-an-ordered-prefix.md)

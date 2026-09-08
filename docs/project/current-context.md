@@ -156,6 +156,16 @@ above with zero publication residue; `historical-coverage-evidence` and final
 `historical-coverage` remain absent. The plan grants no Apply, research,
 performance, deployment, or final Coverage authority.
 
+ADR 0166 now supplies the separately bounded executor and recovery mechanics.
+It uses the shared canonical-data lock, requires the exact plan SHA, logical
+fingerprint, family-set fingerprint, and Dell root, publishes EOD before
+Identity as two atomic one-file directories, and accepts recovery only from an
+exact ordered prefix. Disconnected fault injection proves interruption and
+zero-write recovery, corruption/order/staging refusal, outside-target drift
+detection, and network prohibition. A fresh read-only exact-SHA check of the
+real plan passed on 2026-09-08, but the executor has not been invoked against
+`/data`; both targets and final `historical-coverage` remain absent.
+
 ADR 0140 exposes the normalized source-observation layer separately from
 resolved Identity snapshots. ADR 0150 adds direct daily binding and append-only
 exact repair without altering the historical profile-map partitions. The
@@ -478,11 +488,12 @@ separately bounded.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
-4. **Research foundation:** ADR 0165 has completed the no-write plan for the
-   exact 304-session EOD and point-in-time Identity family evidence. Both
-   targets remain absent. A future two-file Apply requires its own bounded
-   executor/recovery review; it must not be combined with final Historical
-   Coverage or treated as research readiness. The disconnected inactive
+4. **Research foundation:** ADRs 0165–0166 have completed the exact no-write
+   plan and disconnected two-file Apply/recovery mechanics for the 304-session
+   EOD and point-in-time Identity evidence. Both `/data` targets remain absent.
+   Next perform a separately bounded exact production Apply and zero-write
+   postflight; do not combine it with final Historical Coverage or treat it as
+   research readiness. The disconnected inactive
    lifecycle normalization and stable-identity resolution shadow is complete
    for both anchors. Next
    design corroboration and source-availability evidence for the 547 latest

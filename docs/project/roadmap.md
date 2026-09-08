@@ -79,8 +79,10 @@ backward. Required families are:
 The full-content ADR 0100 adapter has now validated all 304 canonical EOD and
 point-in-time Identity sessions with zero gaps. Both family evidence candidates
 remain unpublished. ADR 0165 has converted them into one deterministic,
-exact-SHA, no-write `/tmp` publication plan bound to both absent targets. Its
-next transition is a separately reviewed two-file Apply/recovery boundary; it
+exact-SHA, no-write `/tmp` publication plan bound to both absent targets. ADR
+0166 adds the locked, network-prohibited, ordered-prefix Apply/recovery executor
+and proves it only under disconnected temporary roots. Its next transition is
+the separately bounded exact production Apply and zero-write postflight; it
 must not be combined with final Historical Coverage or mistaken for completion
 of the missing families below.
 
