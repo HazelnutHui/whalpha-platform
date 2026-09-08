@@ -64,9 +64,12 @@ sealed publication assertion are reported separately.
 The exact 300-session historical target through 2026-08-31 is complete. The
 four following EOD sessions, 2026-09-01 through 2026-09-04, are also canonical.
 The guarded 2026-09-08 Identity catch-up completed, including Plan 1.1 source
-observation; the same-session EOD fetch returned provider HTTP 403 before a
-package or staging path existed. No historical-backfill transient service or
-computation process is running.
+observation. The same-session EOD fetch returned provider HTTP 403 both on its
+first attempt and on one bounded 22:52 UTC post-close retry; neither created a
+package or staging path. Ordinary immediate-post-close delay is now a weaker
+explanation, while same-day account/endpoint entitlement remains unresolved.
+No retry loop, historical-backfill transient service, or computation process
+is running.
 
 ### Active Universe
 
@@ -271,9 +274,9 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 
 ADR 0154 Membership preparation remains a research sidecar after Identity/EOD;
 it has passed a zero-write 9/4 replay. The 9/8 Identity leg completed, but the
-provider rejected the EOD request before package creation, so Membership
-correctly remains unavailable for that session and coordinator integration is
-still pending.
+provider rejected both the initial and one bounded post-close EOD request
+before package creation, so Membership correctly remains unavailable for that
+session and coordinator integration is still pending.
 
 Measured isolated/current-code stages include Candidate about 295 seconds,
 Entry 49.67 seconds, ETF Relationships 15.36 seconds, Strategy Channels 33.82

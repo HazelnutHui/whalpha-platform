@@ -147,9 +147,11 @@ installed. SMTP remains unconfigured.
 
 The timer correctly identified 2026-09-08 as the oldest missing session. The
 guarded Identity fetch/plan/Apply completed with 14 requests and no overwrite;
-the EOD request returned provider HTTP 403 before any package, staging, or
-canonical EOD write. The chain remains paused at EOD availability rather than
-publishing an inferred or stale new session.
+the initial EOD request and one bounded 22:52 UTC post-close retry both returned
+provider HTTP 403 before any package, staging, or canonical EOD write. The
+later result weakens an immediate-post-close timing explanation and leaves
+same-day account/endpoint entitlement unresolved. The chain remains paused
+rather than publishing an inferred or stale new session.
 
 The guarded manual chain works end to end. Reuse optimizations materially
 reduced control-path and downstream stages, but Candidate remains the largest

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-09-08 — Recheck same-session EOD after the close
+
+- Made one bounded 2026-09-08 Grouped Daily fetch-only request at 22:52 UTC,
+  roughly 2 hours 52 minutes after the regular XNYS close. The provider again
+  returned HTTP 403 before package or staging creation.
+- This later observation makes ordinary immediate-post-close delay a weaker
+  explanation and leaves account/endpoint same-day entitlement as the leading
+  unresolved boundary. No further retry was made.
+- No package, staging path, approval plan, canonical EOD write, analytics,
+  Snapshot, bundle, deployment, or scheduler change occurred. Identity remains
+  2026-09-08 and EOD remains 2026-09-04.
+
 ## 2026-09-08 — Bind split candidates to canonical source custody
 
 - Accepted ADR 0175 and added an owner-only candidate that transitively reads
