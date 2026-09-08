@@ -86,6 +86,9 @@ provisional technical mechanics. Technical Reversal, Fundamental Value
 Reversal, and Defensive Rotation remain unavailable. Channel distinctness is
 unvalidated, and no formal security-level Sector/Industry taxonomy currently
 exists. The overlap display must not be presented as sector concentration.
+Classification V1.1 contract, offline persistence, explicit coverage ledger,
+and formal reader are fixture-validated, but no real source, adapter, canonical
+partition, or product consumer exists.
 
 Quant Research Lab is explicitly research-only and data-blocked. It exposes
 family-specific readiness rather than a misleading aggregate progress score.
@@ -144,12 +147,11 @@ Visual Context's cumulative-state requirement.
 
 1. Exercise the complete guarded daily chain and ADR 0154 Membership
    preparation on the next eligible session; record consolidated timings.
-2. Implement the ADR 0173 provider-neutral Classification V1 observation,
-   mapping, persistence, and fail-closed reader boundary against fixtures.
+2. Obtain and review a GICS History specification/sample against ADR 0173.
 3. After the new-session Membership/recovery gates pass, review coordinator
    integration and a controlled unattended-scheduler rehearsal.
-4. Review a GICS History specification/sample; only then implement its adapter
-   and Candidate sector/industry concentration. Keep unknown mappings visible.
+4. Only after the sample passes, implement its adapter and a Dell-only current
+   snapshot, then Candidate sector/industry concentration. Keep unknown visible.
 5. Build canonical split actions and a bounded split-adjustment ledger.
 6. Complete historical Membership, lifecycle, costs, availability/revision,
    final Coverage, chronological evaluation, and sealed holdout evidence.

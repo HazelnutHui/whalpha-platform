@@ -19,8 +19,12 @@ current status. The historical boundary now has a provider-neutral corporate-
 action source-observation repository and a daily Universe-decision repository;
 the source observation does not substitute for canonical Corporate Action V1.
 Neither family has a provider adapter or completed canonical dataset.
-Classification V1 has its separately
-documented security-evidence implementation state. The bounded 300-session EOD
+Classification V1 now has provider-neutral source observations, canonical
+definitions/memberships, explicit coverage decisions, immutable offline
+Parquet persistence, and a formal reader. It has no real source, `/data`
+partition, analytics consumer, or Production use. This Sector/Industry
+classification remains separate from Security Classification V1. The bounded
+300-session EOD
 and point-in-time Identity acquisition is complete; this does not supply the
 missing historical membership, lifecycle, corporate-action, adjustment or
 coverage families. No SQL database exists. Exact volatile state belongs in
@@ -74,12 +78,18 @@ The accepted direction is EOD-first, Parquet-first storage under the project dat
 
 ## Implementation Status
 
-Partially implemented. Instrument Master V1 and EOD Price Bar V1 have Python/Pydantic validation models. A mocked-only Massive adapter skeleton maps local fixture responses into those two contracts. The remaining V1 contracts are documentation-level decisions only. No physical schema, production HTTP transport, real provider request, ingestion job, or persistence writer exists yet.
+Partially implemented. Instrument Master V1, EOD Price Bar V1, and
+Classification V1 have Python/Pydantic validation models and explicit PyArrow
+persistence/read boundaries. Classification V1 remains fixture-only and
+source-disabled. Other implementation state is recorded in the data-contract
+index and current context; a completed contract does not imply real source
+data, Production use, or research eligibility.
 
 ## Deferred Decisions
 
 - Python/Pydantic model implementation for remaining logical contracts
-- physical Parquet layout for contracts beyond EOD Price Bar V1
+- physical Parquet layout for contracts beyond implemented EOD,
+  Classification, Membership, and historical-foundation boundaries
 - source-specific provider mapping details
 - source revision reconciliation policy
 - validation test implementation

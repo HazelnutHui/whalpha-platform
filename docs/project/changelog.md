@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-08 — Implement provider-neutral Classification V1.1 custody
+
+- Implemented frozen provider source observations, canonical definitions and
+  memberships, explicit per-instrument coverage decisions, current-display
+  versus historical-research eligibility, knowledge time, revision state,
+  stable identity evidence, and issuer-projection basis.
+- Added one atomic immutable snapshot containing definitions, source
+  observations, coverage, memberships, and a marker-last manifest with exact
+  logical/physical hashes, counts, provider and permission identities, and
+  explicit authorization state.
+- The formal reader rejects wrong schemas, counts, hashes, file sets,
+  hierarchy, parent coverage, overlapping traditional intervals, unresolved
+  links, eligibility escalation, and denominator drift. Unknown source coverage
+  remains visible rather than being dropped.
+- The full API regression passed 2,237 tests, including 28 focused new
+  classification tests. All new physical tests used temporary roots only.
+- No provider, credential, sample, `/data`, Candidate score/rank, Snapshot,
+  timer, scheduler, bundle, OCI release, Production route, or guest/credential
+  capability changed.
+
 ## 2026-09-08 — Separate current and historical classification evidence
 
 - Audited canonical Identity, the implemented Massive adapter, Classification

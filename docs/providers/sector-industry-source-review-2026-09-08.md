@@ -113,3 +113,12 @@ No current taxonomy, Massive SIC response, ETF proxy, or manually inferred
 label is authorized for historical backfill, Candidate reranking, Defensive
 Rotation activation, strategy tuning, Snapshot publication, or deployment by
 this review.
+
+## Subsequent same-day implementation status
+
+The provider-neutral Classification V1.1 contracts, explicit coverage ledger,
+immutable four-Parquet snapshot, completion manifest, and formal reader were
+subsequently implemented and exercised only with fixtures under temporary test
+roots. The source-selection result above is unchanged: no real source, sample,
+license, adapter, `/data` partition, analytics integration, or deployment
+exists.

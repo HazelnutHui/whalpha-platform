@@ -147,16 +147,17 @@ Candidate concentration or activating Defensive Rotation.
 2. Keep current-display classification separate from historical point-in-time
    research classification. A current taxonomy may improve today's dashboard
    without becoming historical backtest evidence.
-3. Implement Classification V1 source observations and canonical membership by
-   stable `instrument_id`, canonical internal
-   classification IDs, effective dates, source/methodology versions, and
-   explicit resolved/quarantined status. Preserve source availability and
-   issuer-to-security projection evidence.
-4. Map external taxonomies through a versioned adapter. Never infer positive
-   membership from ticker, company name, or a price-correlated ETF proxy.
-5. Add Candidate sector/industry distribution, cross-channel repeated exposure,
-   and concentration diagnostics only after the formal reader passes. Preserve
-   raw counts and make missing classification visible.
+3. Classification V1 source observations, definitions, coverage decisions,
+   memberships, immutable offline persistence, and formal reader are
+   implemented and fixture-validated. No real source or canonical partition
+   exists.
+4. Review a GICS History specification/sample, then map a passing source through
+   a versioned adapter. Never infer positive membership from ticker, company
+   name, or a price-correlated ETF proxy.
+5. Publish a Dell-only current classification snapshot after real-source gates
+   pass; then add Candidate sector/industry distribution, cross-channel repeated
+   exposure, and concentration diagnostics only after the formal reader passes.
+   Preserve raw counts and make missing classification visible.
 6. Use the same governed classification later for sector-stratified strategy
    evaluation and Defensive Rotation, without projecting current membership
    backward.

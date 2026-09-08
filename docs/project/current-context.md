@@ -206,7 +206,10 @@ ADR 0173 completed the source boundary audit. GICS History is the first
 specification/sample candidate, TRBC is second, RBICS is complementary, and
 Massive SIC is current-diagnostic only. No taxonomy source has been selected,
 sampled, licensed, acquired, implemented, published, or deployed. Classification
-V1 may proceed against fixtures while live source access remains gated.
+V1.1 contracts, immutable offline Parquet persistence, explicit coverage
+decisions, and a fail-closed reader are now fixture-validated. No adapter or
+physical classification dataset exists, so the product limitation is
+unchanged.
 
 Guest and credential Sessions must remain identical in data, features,
 language, Universe, and analysis until the user explicitly changes that policy.
@@ -274,14 +277,13 @@ design addresses both gaps.
 1. On the next eligible session, run the guarded daily chain, exercise ADR
    0154 Membership preparation against direct Daily Identity Plan 1.1 evidence,
    and record consolidated timings.
-2. Implement the ADR 0173 provider-neutral Classification V1 source-observation,
-   mapping, persistence, and fail-closed reader boundary against fixtures.
+2. Obtain and review a GICS History specification/sample against ADR 0173.
 3. After the new-session Membership and recovery gates pass, review one-action
    coordinator integration and a controlled scheduler rehearsal. Do not enable
    unattended writes merely because the timer is active.
-4. Request and review a GICS History specification/sample before live adapter
-   work. Integrate Candidate sector/industry concentration only after current
-   source coverage, mapping, permission, and quarantine behavior pass.
+4. Implement a live adapter and Dell-only current snapshot only after that
+   review passes. Integrate Candidate sector/industry concentration only after
+   current source coverage, mapping, permission, and quarantine behavior pass.
 5. Build canonical split-action candidates and a bounded split-adjustment
    ledger. Keep unresolved events quarantined and dividend total return later.
 6. Complete lifecycle, historical Membership eligibility, costs, availability,

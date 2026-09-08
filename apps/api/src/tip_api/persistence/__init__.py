@@ -20,8 +20,20 @@ from tip_api.persistence.instrument_master import (
     InstrumentMasterSnapshotRepository,
     InstrumentMasterSnapshotWriteResult,
 )
+from tip_api.persistence.classification import (
+    ClassificationConflictError,
+    ClassificationCorruptionError,
+    ClassificationPersistenceError,
+    ClassificationSnapshotWriteResult,
+    CompletedClassificationSnapshot,
+)
 
 __all__ = [
+    "ClassificationConflictError",
+    "ClassificationCorruptionError",
+    "ClassificationPersistenceError",
+    "ClassificationSnapshotWriteResult",
+    "CompletedClassificationSnapshot",
     "EodPriceBarConflictError",
     "EodPriceBarCorruptionError",
     "EodPriceBarPersistenceError",

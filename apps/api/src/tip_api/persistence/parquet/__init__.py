@@ -10,8 +10,10 @@ from tip_api.persistence.parquet.historical_coverage import (
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     ParquetInstrumentMasterSnapshotRepository,
 )
+from tip_api.persistence.parquet.classification import ParquetClassificationRepository
 
 __all__ = [
+    "ParquetClassificationRepository",
     "ParquetEodPriceBarRepository",
     "ParquetHistoricalResearchRepository",
     "ParquetHistoricalCoverageRepository",

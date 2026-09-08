@@ -6,7 +6,9 @@ This document defines the accepted classification boundary for Trading Intellige
 
 ## Status
 
-Accepted Boundary — Not Yet Implemented
+Accepted boundary with provider-neutral contract, immutable offline Parquet
+persistence, and fail-closed reader implemented. No real source, canonical
+classification dataset, analytics consumer, or Production publication exists.
 
 ## Sector / Industry Classification
 

@@ -6,7 +6,9 @@ Classification V1 records canonical classification definitions and effective-dat
 
 ## Status
 
-Accepted Logical Contract 1.1 — Not Yet Implemented
+Contract 1.1 and offline Parquet persistence implemented. No real source,
+canonical dataset, Candidate integration, research activation, or Production
+publication exists.
 
 ## Grain
 
@@ -26,11 +28,12 @@ Classification Membership grain: one instrument-to-classification membership for
 
 - source_observation_id
 - source
+- as_of_date
 - source_entity_id
 - source_security_id
 - instrument_id
 - identity_resolution_status
-- identity_resolution_evidence
+- identity_evidence
 - assignment_basis
 - external_taxonomy
 - external_taxonomy_version
@@ -39,17 +42,23 @@ Classification Membership grain: one instrument-to-classification membership for
 - valid_from
 - valid_to
 - source_available_at
+- knowledge_time_status
 - provider_updated_at
 - observed_at
 - revision_id
+- supersedes_source_observation_id
 - correction_status
 - permission_review_fingerprint
+- eligibility_scope
+- quality_status
+- quality_flags
 - schema_version
 
 `instrument_id`, `source_security_id`, `valid_to`, `source_available_at`,
-`provider_updated_at`, and `revision_id` may be null when the source does not
-supply enough evidence. A null required-for-research field lowers eligibility;
-it is never imputed from the business-valid date.
+`provider_updated_at`, `revision_id`, and `supersedes_source_observation_id` may
+be null when the source does not supply enough evidence. A null
+required-for-research field lowers eligibility; it is never imputed from the
+business-valid date.
 
 ## Definition Fields
 
@@ -82,6 +91,9 @@ it is never imputed from the business-valid date.
 - eligibility_scope
 - assigned_at
 - review_status
+- methodology_version
+- quality_status
+- quality_flags
 - schema_version
 
 ## Nullable Fields
@@ -99,6 +111,23 @@ Membership:
 - confidence
 - source_reference
 - source_available_at
+
+## Coverage Decision Fields
+
+- instrument_id
+- as_of_date
+- status
+- source_observation_ids
+- classification_ids
+- eligibility_scope
+- reason_codes
+- evaluated_at
+- quality_status
+
+Every expected instrument receives exactly one `classified`, `not_covered`,
+`ambiguous`, `excluded`, or `quarantined` decision. Non-classified decisions
+cannot carry canonical classification IDs and remain ineligible. The unknown
+bucket is part of the denominator rather than being silently dropped.
 
 ## Enumerations
 
@@ -130,6 +159,9 @@ Membership:
   `assignment_basis=issuer_projected` and retains the reviewed crosswalk.
 - Missing or ambiguous identity, taxonomy mapping, validity, or permission
   evidence remains quarantined.
+- Corrected or cancelled observations must reference an earlier observation
+  from the same provider entity and taxonomy. A superseded observation cannot
+  back a current canonical membership.
 
 ## Temporal Semantics
 
@@ -155,6 +187,27 @@ A current completed observation may support a current product view without
 becoming research evidence. Historical eligibility additionally requires
 knowledge-time, historical interval, revision, and inactive-coverage gates.
 
+## Physical Snapshot Boundary
+
+The implemented offline repository publishes one immutable, marker-last
+snapshot containing:
+
+- `definitions.parquet`
+- `source-observations.parquet`
+- `coverage.parquet`
+- `memberships.parquet`
+- `manifest.json`
+
+The manifest binds logical and physical hashes, row counts, all coverage-status
+counts, current-display and historical-research eligible counts, provider and
+permission-review identities, request/access state, and explicit Production
+and research authorization flags. Formal reread validates the exact file set,
+schemas, hashes, row contracts, stable ordering, hierarchy, intervals, source
+links, coverage reconciliation, and authorization counts.
+
+The implementation has only been exercised under test-controlled temporary
+roots. It has not written `/data` or consumed a provider response.
+
 ## Deferred Fields
 
 - final canonical traditional taxonomy source
@@ -167,5 +220,6 @@ knowledge-time, historical interval, revision, and inactive-coverage gates.
 
 - investment recommendations
 - automatic classification inference in V1
-- provider adapter implementation
+- provider adapter implementation or source selection
+- Candidate, Snapshot, or Production integration
 - replacing formal industry identity with Theme labels

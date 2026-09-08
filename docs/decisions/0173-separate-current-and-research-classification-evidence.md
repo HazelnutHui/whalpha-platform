@@ -84,3 +84,18 @@ eligibility to current display and historical research.
   company classification answer different questions.
 - **Wait to design until a vendor is purchased:** would let vendor field names
   define the canonical model and make replacement unnecessarily disruptive.
+
+## Implementation evidence
+
+The provider-neutral contract and offline physical boundary were implemented on
+Dell without provider or Production access. Four typed Parquet files plus one
+completion manifest form one immutable snapshot. Formal reread verifies exact
+file set, schemas, physical and logical hashes, deterministic ordering,
+hierarchy, interval containment, stable-ID/source links, coverage denominator,
+eligibility scope, and authorization counts.
+
+The full API regression passed 2,237 tests, including 28 focused new
+classification tests. Fixtures prove explicit `not_covered` retention,
+idempotent reread, conflict rejection, parent-path requirements, same-level
+interval overlap rejection, eligibility non-escalation, and file/manifest drift
+failure. No `/data`, provider, Snapshot, OCI, or Production state changed.

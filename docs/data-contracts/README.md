@@ -32,6 +32,7 @@
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
+- [Classification V1](classification-v1.md)
 - [Candidate Strategy Holdout Custody V1](candidate-strategy-holdout-custody-v1.md)
 - [Strategy Research Readiness V1](strategy-research-readiness-v1.md)
 - [Strategy Research Development Activation Review V1](strategy-research-development-activation-review-v1.md)
@@ -83,7 +84,6 @@ historical typed boundary:
 
 - [Market Regime & Opportunity Map V1](market-regime-opportunity-map-v1.md)
 - [Corporate Action V1](corporate-action-v1.md)
-- [Classification V1](classification-v1.md)
 - [Universe Membership V1](universe-membership-v1.md)
 
 These documents are not JSON Schema, SQL DDL, sample production data, or
@@ -100,7 +100,10 @@ EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
 The initial blocked live attempts remain historical audit evidence; corrected
 bounded operations subsequently published the current canonical sequence. The
-remaining logical or partial contracts have no physical storage.
+Classification V1 contract, explicit coverage ledger, immutable offline
+Parquet snapshot, and formal reader are fixture-validated; no taxonomy source
+or canonical classification partition exists. Other remaining logical or
+partial contracts have no physical storage.
 
 The EOD and point-in-time Identity persistence boundaries hold the completed
 canonical sequence recorded in
@@ -116,6 +119,8 @@ defined in [Historical Research Data Foundation V1](../architecture/historical-r
 
 ```python
 from tip_api.contracts.market_data.v1 import (
+    ClassificationMembershipV1,
+    ClassificationSourceObservationV1,
     EodPriceBarV1,
     InstrumentMasterV1,
     InstrumentStatus,
