@@ -11,8 +11,8 @@ detail belongs in the [changelog](changelog.md), ADRs, and dated audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity market-
 intelligence and research platform. The current OCI release is
-`2026-09-08T160420Z-14a8bec70cff`, built from clean main commit
-`14a8bec70cff37080673e679f05c8ed6eb34d95b`.
+`2026-09-08T171914Z-ca2d34d50692`, built from clean main commit
+`ca2d34d506922f75699c376391dd6a9191ef0ae9`.
 
 The deployed product uses:
 
@@ -56,8 +56,8 @@ unrelated services.
 - Canonical EOD and point-in-time Identity family evidence now contains two
   immutable, transitively source-bound manifests. Final Historical Coverage
   remains absent.
-- `/data` contains 4,102 files / 2,054,208,593 bytes, with fingerprint
-  `b2f45c0dcee3a915aba8e7c932a747ac6698022cfb7f90b3f82b4bd828dca128`,
+- `/data` contains 4,186 files / 2,143,226,489 bytes, with fingerprint
+  `3f4a5780a69a8d60688ce34b64f8df06fc0dd12070801f265b46f3f7a1f6ac49`,
   zero symlinks, and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
@@ -86,13 +86,16 @@ counterevidence, entry position, risk, invalidation, parameters, raw facts, and
 lineage. Strategy-channel ranks are meaningful within a channel and must not be
 treated as one comparable cross-strategy score.
 
-Strategy Channels now begins with a cross-channel decision desk that places the
-first published record from each available channel side by side in fixed
-channel order. It shows channel-local rank, stage, score, extension risk,
-support, and rejection risk. Opening a record performs a fail-closed stable-ID
-join to the same-Snapshot Candidate detail, exposing the complete market-to-
-entry chain, price/level context, chase risk, and contribution ledger without
-inventing a combined score or preferred strategy. The Quant Research Lab now
+Strategy Channels now begins with a stable-ID decision-integrity summary and a
+cross-channel decision desk. It shows displayed slots versus unique securities,
+cross-channel repeats, all-risk-mode rejection, missing bounded entry setups,
+and elevated extension without presenting those facts as formal sector
+concentration. Each card and row separately answers why the security ranks in
+that channel and whether linked Candidate evidence currently permits technical
+trade review. Opening a record exposes explicit 3/5-session return, support,
+volatility, maximum-gap, risk-rejection, event-manual-check, price/level,
+contribution, and invalidation facts without changing the source status, score,
+rank, or thresholds. The Quant Research Lab now
 reports readiness by data family rather than showing the stale 31/252 aggregate:
 price-history length is met, while Membership, actions/adjustment, lifecycle,
 costs, and sealed evaluation remain incomplete or locked.

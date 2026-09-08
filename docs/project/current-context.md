@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T16:16:29Z
+Operational state verified at: 2026-09-08T17:24:54Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -17,8 +17,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Branch | `main`; verify current HEAD and cleanliness with the report rather than freezing them here |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Deployed OCI release | `2026-09-08T160420Z-14a8bec70cff` |
-| Deployed source commit | `14a8bec70cff37080673e679f05c8ed6eb34d95b` |
+| Deployed OCI release | `2026-09-08T171914Z-ca2d34d50692` |
+| Deployed source commit | `ca2d34d506922f75699c376391dd6a9191ef0ae9` |
 
 Dell is the authority for code, data, development, and heavy computation. OCI
 is only the static web-serving, localhost Auth Service, and public Session
@@ -50,8 +50,8 @@ publication-time assertion as a third, explicitly named view.
 | Canonical historical Identity source | 302 immutable source-observation partitions / 3,700,330 rows; 2 source sessions absent |
 | Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for 2026-09-08 open |
 | Canonical EOD/Identity family evidence | 2 immutable manifests; final Historical Coverage absent |
-| `/data` inventory | 4,102 files / 2,054,208,593 bytes |
-| `/data` inventory fingerprint | `b2f45c0dcee3a915aba8e7c932a747ac6698022cfb7f90b3f82b4bd828dca128` |
+| `/data` inventory | 4,186 files / 2,143,226,489 bytes |
+| `/data` inventory fingerprint | `3f4a5780a69a8d60688ce34b64f8df06fc0dd12070801f265b46f3f7a1f6ac49` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -83,17 +83,28 @@ after authoritative issuer-structure evidence passes the documented gates.
 | Market Intelligence | `2026-09-04T112916Z-717cb82c5369`; contract 1.3 |
 | MI payload SHA-256 | `34f9ae867d44aae4fda77ed47d2921570a52aade1147869f1c7835439f2439c8` |
 | MI logical fingerprint | `2d8957011113e944304c8609ed4ff771f7ad8e3b9e0d59a6823a6ec2b827ac5e` |
-| Dashboard Snapshot | `2026-09-08T160420Z-14a8bec70cff` |
-| Snapshot pointer fingerprint | `056d4fd15819411c398ba9f36956d478b4fd5a19787e9d9e040b16af60f4b356` |
+| Dashboard Snapshot | `2026-09-08T171914Z-ca2d34d50692` |
+| Snapshot pointer fingerprint | `c1469a1dbde97fc5212b57d039e60b585be5ba0488ae4626c2e0d393fe387ea5` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
 | Freshness | operational and publication-sealed views expected 2026-09-04; actual 2026-09-04; lag zero; review mode false |
-| Immediate local Snapshot rollback | `2026-09-06T121300Z-ab1abf1afaaf` |
+| Immediate local Snapshot rollback | `2026-09-08T171250Z-8c3dc878d6ab` |
 
 Market Regime is Balanced in both Universes: Primary 56.7472 and Secondary
 57.3733. Market Intelligence contains 16 preregistered ETF relationships, 336
 bounded relationship-history rows, 30 ETF observations, and 5/10/20-session
 views. Candidate publication 1.1 exposes 880 Primary and 951 Secondary display
 records. These are eligible bounded Candidate records, not Universe sizes.
+
+The Strategy Channels browser now separates the unchanged channel-local
+research priority from trade-review readiness derived from the linked
+same-Snapshot Candidate facts. It visibly flags all-risk-mode rejection,
+non-reviewable/no-bounded entry structure, gap/realized-volatility review,
+moderate-or-higher extension, and stable-ID cross-channel repetition. The
+display diagnostic is not formal sector concentration: the technical channels
+share price/volume, relative-strength, and trend inputs, and point-in-time
+sector taxonomy remains absent. Event timing remains an explicit manual check.
+No score, status, rank, threshold, analytics contract, or guest/credential
+capability changed.
 
 The active analytics status remains `degraded_short_history`: the published MI
 path currently consumes 26 sessions even though canonical EOD now contains 304.

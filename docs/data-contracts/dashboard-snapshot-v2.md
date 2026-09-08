@@ -3,7 +3,7 @@
 ## Status
 
 Implemented. Active Production Snapshot
-`2026-09-08T160420Z-14a8bec70cff` uses Snapshot 1.11 / Dashboard 2.8 and binds
+`2026-09-08T171914Z-ca2d34d50692` uses Snapshot 1.11 / Dashboard 2.8 and binds
 Market Intelligence `2026-09-04T112916Z-717cb82c5369`. It was published under
 ordinary lag-zero freshness. It includes the split Candidate consumer, lazy
 strategy-channel and Visual Context products, and the lazy Sector Rotation

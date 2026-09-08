@@ -14,9 +14,9 @@ The authoritative operational state is maintained in
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-09-08T160420Z-14a8bec70cff`;
+  to release `2026-09-08T171914Z-ca2d34d50692`;
 - the release is built from source commit
-  `14a8bec70cff37080673e679f05c8ed6eb34d95b` and binds Market
+  `ca2d34d506922f75699c376391dd6a9191ef0ae9` and binds Market
   Intelligence
   `2026-09-04T112916Z-717cb82c5369`;
 - it serves ordinary-fresh, lag-zero 2026-09-04 analytics through Snapshot
@@ -38,10 +38,13 @@ reconciliation records, without reading credentials:
 
 The deployed React workspaces share the public entry's deep-navy/cyan visual
 identity and persistent WH product mark. Strategy Channels includes the
-cross-channel decision desk and stable-ID joined complete review; Quant
-Research Lab exposes family-specific readiness gates. These are presentation
-and navigation changes: guest/credential parity, analytics, scoring,
-contracts, and fail-closed API behavior are unchanged.
+cross-channel decision desk, stable-ID joined complete review, explicit
+research-priority versus trade-readiness labels, and a stable-ID overlap and
+readiness diagnostic. The diagnostic is not formal sector concentration and
+does not treat the technical channels as independent diversification sleeves.
+Quant Research Lab exposes family-specific readiness gates. These are
+presentation and navigation changes: guest/credential parity, analytics,
+scoring, contracts, and fail-closed API behavior are unchanged.
 
 The release additionally serves relationship persistence/acceleration evidence
 and the bounded ten-point relationship state timeline. Independent postflight

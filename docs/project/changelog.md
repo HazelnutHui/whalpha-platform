@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-09-08 — Add Strategy Channel decision-integrity presentation
+## 2026-09-08 — Deploy Strategy Channel decision-integrity presentation
 
 - Kept every published strategy-channel status, score, rank, parameter, and
   threshold unchanged while separating channel-local research priority from
@@ -16,10 +16,19 @@
 - Strategy cards, rows, and detail now show cross-channel repetition and the
   research/readiness conflict without recomputing or silently reranking the
   source results. Guest and credential Sessions retain identical capability.
-- The complete frontend regression passed 117 tests and a Production build;
-  the complete API regression passed 2,209 tests with only the two existing
-  dependency deprecation warnings. This entry records repository source only;
-  deployment is a separate checkpoint.
+- The complete frontend regression passed 117 tests and both ordinary and
+  isolated Production builds; the complete API regression passed 2,209 tests
+  with only the two existing dependency deprecation warnings.
+- Published fresh Snapshot 1.11 / Dashboard 2.8 release
+  `2026-09-08T171914Z-ca2d34d50692` and deployed its 53-file immutable bundle
+  from clean main `ca2d34d506922f75699c376391dd6a9191ef0ae9`. Independent
+  inspection matched bundle, manifest, checksums, source revision, protected
+  routes, temporary guest Session, and guest/credential route policy with zero
+  staging, failed release, unexpected listener, or failed system unit.
+- Final active-source reread kept canonical EOD and active Snapshot fresh at
+  2026-09-04 with lag zero, zero publication residue, and `/data` at 4,186
+  files / 2,143,226,489 bytes with fingerprint
+  `3f4a5780a69a8d60688ce34b64f8df06fc0dd12070801f265b46f3f7a1f6ac49`.
 
 ## 2026-09-08 — Deploy cross-strategy decision desk and current readiness gates
 
