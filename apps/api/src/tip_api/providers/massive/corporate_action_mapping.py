@@ -71,6 +71,7 @@ def map_massive_corporate_action_payloads(
     first_observed_at: datetime,
     ingested_at: datetime,
     source_revision: int = 1,
+    unresolved_ticker_reason_code: str = "unresolved_ticker",
 ) -> MassiveCorporateActionMappingBatch:
     """Map already-loaded synthetic/provider-shaped rows without transport access."""
 
@@ -80,6 +81,7 @@ def map_massive_corporate_action_payloads(
         raise ValueError("ingested_at must not precede first_observed_at")
     if source_revision < 1:
         raise ValueError("source_revision must be positive")
+    unresolved_reason = _reason_code(unresolved_ticker_reason_code)
     resolutions = _normalize_resolutions(ticker_resolutions)
     records: list[CorporateActionSourceObservationV1] = []
     issues: list[MassiveCorporateActionMappingIssue] = []
@@ -111,6 +113,7 @@ def map_massive_corporate_action_payloads(
                         first_observed_at=first_observed_at,
                         ingested_at=ingested_at,
                         source_revision=source_revision,
+                        unresolved_ticker_reason_code=unresolved_reason,
                     )
                     if kind is MassiveCorporateActionPayloadKind.SPLIT
                     else _map_dividend(
@@ -119,6 +122,7 @@ def map_massive_corporate_action_payloads(
                         first_observed_at=first_observed_at,
                         ingested_at=ingested_at,
                         source_revision=source_revision,
+                        unresolved_ticker_reason_code=unresolved_reason,
                     )
                 )
             except _PayloadCannotBeRepresented as exc:
@@ -166,6 +170,7 @@ def _map_split(
     first_observed_at: datetime,
     ingested_at: datetime,
     source_revision: int,
+    unresolved_ticker_reason_code: str,
 ) -> CorporateActionSourceObservationV1:
     ticker = _required_ticker(payload)
     effective_date = _required_date(payload.get("execution_date"), "missing_or_invalid_execution_date")
@@ -208,6 +213,7 @@ def _map_split(
     resolution_status, instrument_id, resolution_flags = _resolve_ticker(
         ticker,
         resolutions,
+        unresolved_ticker_reason_code=unresolved_ticker_reason_code,
     )
     flags.extend(resolution_flags)
     return _build_record(
@@ -234,6 +240,7 @@ def _map_dividend(
     first_observed_at: datetime,
     ingested_at: datetime,
     source_revision: int,
+    unresolved_ticker_reason_code: str,
 ) -> CorporateActionSourceObservationV1:
     ticker = _required_ticker(payload)
     ex_date = _required_date(payload.get("ex_dividend_date"), "missing_or_invalid_ex_dividend_date")
@@ -270,6 +277,7 @@ def _map_dividend(
     resolution_status, instrument_id, resolution_flags = _resolve_ticker(
         ticker,
         resolutions,
+        unresolved_ticker_reason_code=unresolved_ticker_reason_code,
     )
     flags.extend(resolution_flags)
     return _build_record(
@@ -346,13 +354,25 @@ def _normalize_resolutions(
 def _resolve_ticker(
     ticker: str,
     resolutions: Mapping[str, tuple[UUID, ...]],
+    *,
+    unresolved_ticker_reason_code: str,
 ) -> tuple[ResolutionStatus, UUID | None, tuple[str, ...]]:
     candidates = resolutions.get(ticker, ())
     if len(candidates) == 1:
         return ResolutionStatus.RESOLVED, candidates[0], ()
     if len(candidates) > 1:
         return ResolutionStatus.AMBIGUOUS, None, ("ambiguous_ticker_resolution",)
-    return ResolutionStatus.UNRESOLVED, None, ("unresolved_ticker",)
+    return ResolutionStatus.UNRESOLVED, None, (unresolved_ticker_reason_code,)
+
+
+def _reason_code(value: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError("unresolved ticker reason code must be text")
+    normalized = value.strip().lower()
+    allowed = set("abcdefghijklmnopqrstuvwxyz0123456789_")
+    if not normalized or any(character not in allowed for character in normalized):
+        raise ValueError("unresolved ticker reason code is invalid")
+    return normalized
 
 
 def _required_ticker(payload: Mapping[str, object]) -> str:

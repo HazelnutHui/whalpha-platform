@@ -17,6 +17,11 @@ remain unimplemented. ADR 0169 adds resumable temporary source custody for
 Massive V1 split and dividend pages, but it deliberately performs no stable-ID
 mapping or canonical write.
 
+ADR 0170 adds the next disconnected mapping boundary: every retained source
+row is resolved only through the exact event-date canonical Resolver, or
+remains quarantined. Its temporary source-observation Parquet is still not the
+canonical Corporate Action dataset and is not signal eligible.
+
 ## Grain
 
 One record represents one corporate action event for an instrument, source, and revision.

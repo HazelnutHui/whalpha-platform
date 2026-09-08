@@ -330,6 +330,15 @@ reread. These `/tmp` packages prove current technical access and source
 custody—not stable identity, canonical events, revision history, provider
 availability time, adjustment reconciliation, or Historical Coverage.
 
+ADR 0170 now implements the next disconnected step without weakening those
+limits. It binds both source packages and the published point-in-time Identity
+family evidence, verifies only exact event-date Resolver bytes, and keeps
+missing dates or tickers quarantined without latest/nearest/Universe fallback.
+The output is an owner-only `/tmp` Parquet shadow with one-to-one source rows,
+local observation revision `1`, and `outcome_reconciliation_only` status. It
+has not yet been executed on the real packages and grants no canonical action,
+adjustment, Coverage, or research authority.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -540,8 +549,9 @@ separately bounded.
    sample plus the deterministic 30-item diagnostic before lifecycle adapter
    work. ADR 0169 independently provides the no-canonical-write Massive V1
    split/dividend source boundary, and both exact real packages have completed
-   and passed formal reread. Next design and validate event-date stable-ID
-   mapping without writing canonical Corporate Action or adjustments.
+   and passed formal reread. ADR 0170 now implements the event-date stable-ID
+   mapping shadow; execute and audit it before designing repeat-observation
+   revision handling or any canonical Corporate Action/adjustment transition.
    Request exact price/sample/permission terms from the user before any vendor
    contact, trial, purchase, or access; do not promote candidates by ticker or
    provider status alone.

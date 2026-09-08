@@ -196,6 +196,14 @@ pass separate formal reread. The temporary evidence proves V1 technical access
 and custody only; event-date stable-ID mapping, revisions, source availability,
 canonical events, adjustments, and Coverage remain unverified.
 
+ADR 0170 implements the disconnected exact-event-date resolution shadow. It
+binds the two source packages and the published Identity family evidence,
+validates each used same-date Resolver, preserves every source row, and
+quarantines missing dates/tickers without latest, nearest-session, name, or
+Universe fallback. The real shadow has not yet been executed. Its local
+observation revision `1` is not provider revision evidence and cannot support
+canonical action, adjustment, or historical signal eligibility.
+
 The report projects normalized Identity source observations as a separate
 record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
 artifacts, and the exact two missing EOD sessions: 8/13 and 8/19. It
@@ -350,10 +358,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    EOD/Identity evidence manifests. This does not authorize final Historical
    Coverage or research readiness. ADR 0169 now provides the temporary
    split/dividend source boundary, and both exact real packages have completed
-   and passed formal reread. Next design event-date stable-ID mapping and an
-   append-only observation/revision result before any canonical action or
-   Adjustment Ledger work. Lifecycle, cost, availability, and evaluation
-   evidence also remain incomplete.
+   and passed formal reread. ADR 0170 now implements the exact-event-date
+   stable-ID shadow; execute and audit it, then design append-only repeat-
+   observation/revision handling before any canonical action or Adjustment
+   Ledger work. Lifecycle, cost, availability, and evaluation evidence also
+   remain incomplete.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

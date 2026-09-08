@@ -10,6 +10,7 @@
 - [Historical Inactive Lifecycle Source Package V1](historical-inactive-lifecycle-source-package-v1.md)
 - [Historical Inactive Lifecycle Corroboration Plan V1](historical-inactive-lifecycle-corroboration-plan-v1.md)
 - [Historical Corporate Action Source Package V1](historical-corporate-action-source-package-v1.md)
+- [Historical Corporate Action Resolution Shadow V1](historical-corporate-action-resolution-shadow-v1.md)
 
 - [Massive Historical Lifecycle Coverage Probe V1](massive-historical-lifecycle-coverage-probe-v1.md)
 

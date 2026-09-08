@@ -180,6 +180,36 @@ def test_resolution_is_point_in_time_and_ambiguity_is_quarantined() -> None:
     assert batch.quarantined_record_count == 2
 
 
+def test_missing_identity_date_can_use_an_explicit_quarantine_reason() -> None:
+    batch = map_massive_corporate_action_payloads(
+        split_payloads=[split_payload(id="missing-date-identity")],
+        dividend_payloads=[],
+        ticker_resolutions={},
+        first_observed_at=OBSERVED_AT,
+        ingested_at=INGESTED_AT,
+        unresolved_ticker_reason_code="event_date_identity_unavailable",
+    )
+
+    record = batch.records[0]
+    assert record.instrument_resolution_status is ResolutionStatus.UNRESOLVED
+    assert record.instrument_id is None
+    assert "event_date_identity_unavailable" in record.quality_flags
+    assert "unresolved_ticker" not in record.quality_flags
+
+
+@pytest.mark.parametrize("reason", ("", "bad reason", "BAD-DASH"))
+def test_unresolved_reason_code_must_be_machine_safe(reason: str) -> None:
+    with pytest.raises(ValueError, match="reason code"):
+        map_massive_corporate_action_payloads(
+            split_payloads=[],
+            dividend_payloads=[],
+            ticker_resolutions={},
+            first_observed_at=OBSERVED_AT,
+            ingested_at=INGESTED_AT,
+            unresolved_ticker_reason_code=reason,
+        )
+
+
 def test_missing_provider_id_uses_deterministic_quarantined_identifier() -> None:
     first = map_batch(splits=[split_payload(id=None, ignored_secret="do-not-retain")])
     second = map_batch(splits=[split_payload(id=None, ignored_secret="different")])

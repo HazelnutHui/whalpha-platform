@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-08 — Implement exact-event-date corporate-action resolution shadow
+
+- Accepted ADR 0170 and added a network-prohibited, owner-only `/tmp` shadow
+  that formally rereads both corporate-action source packages and one
+  published point-in-time Identity family-evidence manifest.
+- Each used Resolver is selected only for the exact event date and checked
+  against its evidence-bound snapshot manifest, Resolver manifest, Parquet
+  physical hash, schema, content fingerprint, provider, date, count, unique
+  ticker, and stable-ID types. Latest/nearest/name/Universe fallbacks remain
+  exactly zero.
+- Missing exact Identity sessions and missing same-date tickers receive
+  separate quarantine reasons. The builder stops rather than dropping an
+  unrepresentable source row and requires one-to-one output business keys.
+- Reused the existing provider-neutral Corporate Action Source Observation 1.1
+  Parquet partitions by event year and added one manifest binding every input,
+  output, aggregate count, and used-Resolver fingerprint. Local revision `1`
+  remains an isolated observation baseline, not provider revision evidence.
+- Focused disconnected mapping, persistence, idempotency, tamper, source-loss,
+  all-quarantined, safe CLI, and fixture-mapper coverage passed 31 tests. The
+  complete API regression passed 2,193 tests with only two existing dependency
+  deprecation warnings. No real shadow
+  execution, network request, `/data` write, canonical action, Adjustment
+  Ledger, analytics, publication, deployment, or scheduler change occurred in
+  this implementation step.
+
 ## 2026-09-08 — Complete real Massive V1 corporate-action source custody
 
 - On clean Dell main `08eb33c60896be783547aae55704b57caafca49c`, completed
