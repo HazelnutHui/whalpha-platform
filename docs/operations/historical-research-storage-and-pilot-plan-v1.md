@@ -133,6 +133,11 @@ queried only for a small set of unresolved stable IDs, never the entire base.
    bind user-directed Dell-local scope, prove the representative Pilot, and
    finish the resumable 300-session target. This did not complete or authorize
    the remaining research families.
+13. **Complete as a no-write boundary under ADR 0165:** reconstruct the current
+   EOD and point-in-time Identity evidence, bind their canonical manifest bytes
+   and two absent immutable targets in one deterministic direct-`/tmp` plan,
+   then independently reread it by exact SHA-256. This did not publish either
+   manifest and did not implement Apply or final Historical Coverage.
 
 Steps 1–11 were repository mechanics. Step 12 was the separately governed
 historical EOD/Identity transition and is retained as execution history, not a
@@ -151,9 +156,30 @@ for all 301 source-available sessions. Only the 8/13 and 8/19 source gaps
 remain at this layer. Research readiness is still blocked because the evidence
 is retrospective and later required families remain incomplete.
 
-The current `/data` root has no `market-data/historical-coverage` directory.
-Strategy readiness therefore remains `data_blocked`; fixture-only publication
-mechanics do not supply missing canonical facts.
+The current `/data` root has neither a
+`market-data/historical-coverage-evidence` nor
+`market-data/historical-coverage` directory. Strategy readiness therefore
+remains `data_blocked`; fixture-only publication mechanics do not supply
+missing canonical facts.
+
+The network-prohibited ADR 0165 operator entry point is:
+
+```bash
+scripts/admin/plan-current-historical-family-evidence.sh build \
+  --data-root /data/trading-intelligence-platform \
+  --plan-path /tmp/<new-plan-name>.json
+
+scripts/admin/plan-current-historical-family-evidence.sh verify \
+  --plan-path /tmp/<existing-plan-name>.json \
+  --approved-plan-sha256 <exact-build-output-sha256>
+```
+
+`build` requires a new visible direct child of `/tmp`, validates both entire
+source families, and writes one mode-0400 plan only after validation. `verify`
+requires the exact reviewed file SHA, revalidates every referenced source file,
+and requires both targets to remain absent. Neither subcommand has an Apply
+path, credential access, network capability, final Coverage transition, or
+Production side effect.
 
 ADR 0100's 2026-08-30 real read-only pass validated 31 current EOD artifacts
 (306,539 rows) and 31 EOD-bound Identity artifacts (307,466 canonical

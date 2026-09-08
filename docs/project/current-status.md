@@ -111,6 +111,17 @@ state remains `mechanics_only`. This admits a later separate family-evidence
 publication review, not Historical Coverage, research readiness, or a
 performance claim.
 
+ADR 0165 now supplies that reviewable no-write intent as one deterministic
+`/tmp` plan. It embeds both exact evidence contracts, binds two absent targets,
+and proposes only two manifests / 675,569 bytes. Plan logical fingerprint is
+`6ae6738181012b6f9364d5b624d7edaa81d992b7be623e6bd6b58c2854d5e663`;
+plan SHA-256 is
+`dced91a98cf4a71fe28748c241f83aa31dcdb588a9f322245a9b14de6d4511ae`.
+An independent exact-SHA formal reread passed. The follow-up context report
+confirmed the same 4,058-file `/data` inventory, zero residue, and no published
+family evidence. Apply, final Coverage, research development, and performance
+claims remain unauthorized.
+
 The 2026-09-05 aggregate inactive-security census reached 20 full pages and
 20,000 rows with another page still available. It found `delisted_utc` on
 19,565 rows, but retained no row data and grants no lifecycle-completeness
@@ -288,35 +299,39 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cumulative state history in the append projection. Keep V1 authoritative;
    do not expose the segmented path to CLI/executor or create canonical custody
    until one bounded design resolves both gaps.
-4. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
+4. ADR 0165 has completed the deterministic no-write plan for the two validated
+   EOD/Identity evidence manifests. Keep both `/data` targets absent until a
+   separately reviewed, recoverable two-file Apply exists. Do not combine that
+   Apply with final Historical Coverage or use it to claim research readiness.
+5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds
    for explicit garbage collection.
-5. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
+6. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
    Snapshot is now 121.57 seconds and its largest remaining input is the
    necessary formal Activation read rather than duplicate active-state reads.
-6. Vectorize or safely parallelize only independently measurable CPU-heavy
+7. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-7. **Canonical source custody complete for exact available packages:** 302
+8. **Canonical source custody complete for exact available packages:** 302
    sessions are canonical after historical and direct-daily Apply/recovery.
    Keep 2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
    proven; do not approximate either gap.
-8. **Canonical Membership remains incomplete:** V3 evidence covers all 302
+9. **Canonical Membership remains incomplete:** V3 evidence covers all 302
    available-source sessions, but only the directly observed 2026-09-04
    partition is canonical and signal-eligible. ADR 0154 implements the
    prospective candidate boundary but has not yet been exercised on a new
    session or connected to the coordinator. Keep the 301 retrospective
    partitions outcome-only.
-9. Design corroboration and source-availability evidence for the 547 inactive
+10. Design corroboration and source-availability evidence for the 547 inactive
    lifecycle review candidates; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,
    publish transitive Historical Coverage, and reconcile the 26-session
    analytics limitation.
-10. Only after those gates begin real preregistered chronological strategy
+11. Only after those gates begin real preregistered chronological strategy
    research.
-11. Continue decision-useful visualization in parallel where it does not change
+12. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
-12. Add options expression, fundamentals/valuation, events, and later
+13. Add options expression, fundamentals/valuation, events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune new formulas or claim backtest results before the governed research

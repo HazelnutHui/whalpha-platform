@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-09-08 — Plan current EOD and Identity evidence publication without writes
+
+- Accepted ADR 0165 and added a typed deterministic plan for exactly the
+  current `eod_price_bar` and `point_in_time_identity` evidence candidates.
+  It embeds both evidence contracts, their canonical byte hashes, exact
+  immutable targets, and explicit absent-target state while leaving every
+  Apply, final Coverage, research, and performance authority false.
+- Added network-prohibited `build` and exact-SHA `verify` commands. Plans are
+  owner-read-only, canonical JSON direct children of `/tmp`; source drift,
+  target collision, plan tampering, staging residue, and custody violations
+  fail closed. No Apply executor was added.
+- The real plan covers 304 sessions from 2025-06-23 through 2026-09-04. It
+  proposes two manifests / 675,569 bytes, with family-set fingerprint
+  `be67c6ec924809eca63dacf1130ec19d9df0d673f65b403a416de1f2be812377`,
+  plan logical fingerprint
+  `6ae6738181012b6f9364d5b624d7edaa81d992b7be623e6bd6b58c2854d5e663`,
+  and plan SHA-256
+  `dced91a98cf4a71fe28748c241f83aa31dcdb588a9f322245a9b14de6d4511ae`.
+  A separate exact-SHA formal reread passed.
+- Post-run context verification kept `/data` unchanged at 4,058 files /
+  2,009,024,076 bytes with fingerprint
+  `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`,
+  zero symlinks, zero residue, and zero published Historical Coverage evidence.
+- Thirteen focused tests and compilation checks passed. The complete API
+  regression finished at `2147 passed, 2 warnings`; both warnings are unchanged
+  dependency deprecations. No network, `/data`, formulas, analytics, Snapshot,
+  bundle, OCI, scheduler, deployment, or Production state changed.
+
 ## 2026-09-08 — Validate complete EOD and Identity family evidence candidates
 
 - Reran the existing ADR 0100 network-prohibited full-content adapter over all

@@ -142,6 +142,173 @@ class HistoricalDatasetCoverageEvidenceV1(FrozenContract):
         return self
 
 
+CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION = (
+    "current-historical-family-evidence-publication-plan/1.0"
+)
+CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES = (
+    HistoricalDatasetFamily.EOD_PRICE_BAR,
+    HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
+)
+
+
+class CurrentHistoricalFamilyEvidencePlanItemV1(FrozenContract):
+    """One exact unpublished family-evidence target and its source-bound bytes."""
+
+    family: HistoricalDatasetFamily
+    target_path: str
+    expected_target_state: Literal["absent"] = "absent"
+    expected_target_state_fingerprint: str
+    evidence: HistoricalDatasetCoverageEvidenceV1
+    evidence_manifest_bytes: int = Field(ge=1)
+    evidence_manifest_sha256: str
+    source_artifact_count: int = Field(ge=1)
+    source_file_count: int = Field(ge=1)
+    record_count: int = Field(ge=0)
+
+    @field_validator("target_path", mode="before")
+    @classmethod
+    def normalized_target_path(cls, value: str) -> str:
+        normalized = normalize_required_string(value, field_name="target_path")
+        path = PurePosixPath(normalized)
+        if path.is_absolute() or ".." in path.parts or path.as_posix() != normalized:
+            raise ValueError("target_path must be normalized and relative")
+        return normalized
+
+    @field_validator("expected_target_state_fingerprint", "evidence_manifest_sha256")
+    @classmethod
+    def hashes_are_valid(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @model_validator(mode="after")
+    def item_reconciles(self) -> "CurrentHistoricalFamilyEvidencePlanItemV1":
+        expected_target = historical_dataset_coverage_evidence_target_path(
+            self.evidence
+        )
+        manifest_bytes = historical_dataset_coverage_evidence_bytes(self.evidence)
+        if self.family is not self.evidence.family:
+            raise ValueError("planned family differs from embedded evidence")
+        if self.target_path != expected_target:
+            raise ValueError("family-evidence target path differs")
+        if self.expected_target_state_fingerprint != _fingerprint(
+            {"path": self.target_path, "state": "absent"}
+        ):
+            raise ValueError("family-evidence target-state fingerprint differs")
+        if self.evidence_manifest_bytes != len(manifest_bytes):
+            raise ValueError("family-evidence manifest byte count differs")
+        if self.evidence_manifest_sha256 != hashlib.sha256(manifest_bytes).hexdigest():
+            raise ValueError("family-evidence manifest SHA-256 differs")
+        if self.source_artifact_count != len(self.evidence.artifacts):
+            raise ValueError("family-evidence source artifact count differs")
+        expected_file_count = sum(
+            1 + len(artifact.payload_files) for artifact in self.evidence.artifacts
+        )
+        if self.source_file_count != expected_file_count:
+            raise ValueError("family-evidence source file count differs")
+        if self.record_count != self.evidence.record_count:
+            raise ValueError("family-evidence record count differs")
+        return self
+
+
+class CurrentHistoricalFamilyEvidencePublicationPlanV1(FrozenContract):
+    """Deterministic no-write plan for the current EOD and Identity evidence."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    contract_version: Literal[
+        "current-historical-family-evidence-publication-plan/1.0"
+    ] = CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION
+    operation: Literal["publish_current_historical_family_evidence"] = (
+        "publish_current_historical_family_evidence"
+    )
+    status: Literal["ready_for_separate_review"] = "ready_for_separate_review"
+    planned_from_evidence_at: datetime
+    data_root: str
+    first_session: date
+    last_session: date
+    session_count: int = Field(ge=1)
+    families: tuple[CurrentHistoricalFamilyEvidencePlanItemV1, ...] = Field(
+        min_length=2,
+        max_length=2,
+    )
+    family_set_fingerprint: str
+    inventory_change_file_count: Literal[2] = 2
+    inventory_change_bytes: int = Field(ge=1)
+    target_absent_count: Literal[2] = 2
+    source_formal_read_complete: Literal[True] = True
+    target_absence_verified: Literal[True] = True
+    recovery_policy: Literal["verify_exact_then_complete"] = (
+        "verify_exact_then_complete"
+    )
+    external_request_count: Literal[0] = 0
+    canonical_data_write_count: Literal[0] = 0
+    apply_authorized: Literal[False] = False
+    historical_coverage_authorized: Literal[False] = False
+    research_development_authorized: Literal[False] = False
+    research_performance_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator("planned_from_evidence_at")
+    @classmethod
+    def utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("data_root", mode="before")
+    @classmethod
+    def normalized_absolute_root(cls, value: str) -> str:
+        normalized = normalize_required_string(value, field_name="data_root")
+        path = PurePosixPath(normalized)
+        if not path.is_absolute() or ".." in path.parts or path.as_posix() != normalized:
+            raise ValueError("data_root must be normalized and absolute")
+        return normalized
+
+    @field_validator("first_session", "last_session", mode="before")
+    @classmethod
+    def reject_datetime_sessions(cls, value: Any) -> Any:
+        if isinstance(value, datetime):
+            raise ValueError("session fields must contain dates")
+        return value
+
+    @field_validator("family_set_fingerprint", "logical_fingerprint")
+    @classmethod
+    def hashes_are_valid(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @model_validator(mode="after")
+    def plan_reconciles(self) -> "CurrentHistoricalFamilyEvidencePublicationPlanV1":
+        if tuple(item.family for item in self.families) != (
+            CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES
+        ):
+            raise ValueError("publication plan family set is incomplete or unordered")
+        sessions = self.families[0].evidence.sessions
+        if any(item.evidence.sessions != sessions for item in self.families[1:]):
+            raise ValueError("publication plan family session coverage differs")
+        if (
+            self.first_session != sessions[0]
+            or self.last_session != sessions[-1]
+            or self.session_count != len(sessions)
+        ):
+            raise ValueError("publication plan session summary differs")
+        if self.planned_from_evidence_at != max(
+            item.evidence.created_at for item in self.families
+        ):
+            raise ValueError("publication plan evidence time differs")
+        if self.family_set_fingerprint != (
+            current_historical_family_evidence_plan_family_set_fingerprint(
+                self.families
+            )
+        ):
+            raise ValueError("publication plan family-set fingerprint differs")
+        if self.inventory_change_bytes != sum(
+            item.evidence_manifest_bytes for item in self.families
+        ):
+            raise ValueError("publication plan inventory byte count differs")
+        if (
+            current_historical_family_evidence_publication_plan_fingerprint(self)
+            != self.logical_fingerprint
+        ):
+            raise ValueError("publication plan logical fingerprint differs")
+        return self
+
+
 def build_historical_dataset_coverage_evidence(
     *,
     family: HistoricalDatasetFamily,
@@ -174,6 +341,100 @@ def build_historical_dataset_coverage_evidence(
             ),
         }
     )
+
+
+def build_current_historical_family_evidence_plan_item(
+    evidence: HistoricalDatasetCoverageEvidenceV1,
+) -> CurrentHistoricalFamilyEvidencePlanItemV1:
+    target_path = historical_dataset_coverage_evidence_target_path(evidence)
+    manifest_bytes = historical_dataset_coverage_evidence_bytes(evidence)
+    return CurrentHistoricalFamilyEvidencePlanItemV1(
+        family=evidence.family,
+        target_path=target_path,
+        expected_target_state="absent",
+        expected_target_state_fingerprint=_fingerprint(
+            {"path": target_path, "state": "absent"}
+        ),
+        evidence=evidence,
+        evidence_manifest_bytes=len(manifest_bytes),
+        evidence_manifest_sha256=hashlib.sha256(manifest_bytes).hexdigest(),
+        source_artifact_count=len(evidence.artifacts),
+        source_file_count=sum(
+            1 + len(artifact.payload_files) for artifact in evidence.artifacts
+        ),
+        record_count=evidence.record_count,
+    )
+
+
+def build_current_historical_family_evidence_publication_plan(
+    **values: object,
+) -> CurrentHistoricalFamilyEvidencePublicationPlanV1:
+    provisional = CurrentHistoricalFamilyEvidencePublicationPlanV1.model_construct(
+        **values,
+        logical_fingerprint="0" * 64,
+    )
+    return CurrentHistoricalFamilyEvidencePublicationPlanV1.model_validate(
+        {
+            **values,
+            "logical_fingerprint": (
+                current_historical_family_evidence_publication_plan_fingerprint(
+                    provisional
+                )
+            ),
+        }
+    )
+
+
+def current_historical_family_evidence_plan_family_set_fingerprint(
+    families: tuple[CurrentHistoricalFamilyEvidencePlanItemV1, ...],
+) -> str:
+    return _fingerprint(
+        [
+            {
+                "family": item.family,
+                "target_path": item.target_path,
+                "expected_target_state_fingerprint": (
+                    item.expected_target_state_fingerprint
+                ),
+                "evidence_logical_fingerprint": item.evidence.logical_fingerprint,
+                "evidence_manifest_sha256": item.evidence_manifest_sha256,
+            }
+            for item in families
+        ]
+    )
+
+
+def current_historical_family_evidence_publication_plan_fingerprint(
+    plan: CurrentHistoricalFamilyEvidencePublicationPlanV1,
+) -> str:
+    return _fingerprint(plan.model_dump(mode="json", exclude={"logical_fingerprint"}))
+
+
+def historical_dataset_coverage_evidence_target_path(
+    evidence: HistoricalDatasetCoverageEvidenceV1,
+) -> str:
+    return (
+        PurePosixPath("market-data")
+        / "historical-coverage-evidence"
+        / "schema_version=1"
+        / f"family={evidence.family.value}"
+        / f"evidence_id={evidence.logical_fingerprint}"
+        / "manifest.json"
+    ).as_posix()
+
+
+def historical_dataset_coverage_evidence_bytes(
+    evidence: HistoricalDatasetCoverageEvidenceV1,
+) -> bytes:
+    return (
+        json.dumps(
+            evidence.model_dump(mode="json"),
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+        )
+        + "\n"
+    ).encode("utf-8")
 
 
 def historical_dataset_coverage_evidence_fingerprint(

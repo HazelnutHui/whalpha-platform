@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T04:09:41Z
+Operational state verified at: 2026-09-08T05:12:37Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -143,6 +143,18 @@ This is a GO only for later separate family-evidence publication review. No
 evidence was published, and the five blockers remain daily historical
 Membership, canonical corporate actions, lifecycle, adjustment reconciliation,
 and final Historical Coverage publication.
+
+ADR 0165 now turns those same two validated objects into one deterministic,
+owner-read-only `/tmp` publication plan. It binds exactly two absent immutable
+targets and 675,569 proposed bytes; plan logical fingerprint is
+`6ae6738181012b6f9364d5b624d7edaa81d992b7be623e6bd6b58c2854d5e663`
+and plan SHA-256 is
+`dced91a98cf4a71fe28748c241f83aa31dcdb588a9f322245a9b14de6d4511ae`.
+An independent exact-SHA reread revalidated every source byte and both absent
+targets. The subsequent context report kept `/data` at the exact inventory
+above with zero publication residue; `historical-coverage-evidence` and final
+`historical-coverage` remain absent. The plan grants no Apply, research,
+performance, deployment, or final Coverage authority.
 
 ADR 0140 exposes the normalized source-observation layer separately from
 resolved Identity snapshots. ADR 0150 adds direct daily binding and append-only
@@ -466,8 +478,13 @@ separately bounded.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
-4. **Research foundation:** the disconnected inactive lifecycle normalization
-   and stable-identity resolution shadow is complete for both anchors. Next
+4. **Research foundation:** ADR 0165 has completed the no-write plan for the
+   exact 304-session EOD and point-in-time Identity family evidence. Both
+   targets remain absent. A future two-file Apply requires its own bounded
+   executor/recovery review; it must not be combined with final Historical
+   Coverage or treated as research readiness. The disconnected inactive
+   lifecycle normalization and stable-identity resolution shadow is complete
+   for both anchors. Next
    design corroboration and source-availability evidence for the 547 latest
    review candidates without promoting them by ticker or provider status
    alone. Then complete canonical lifecycle, actions, adjustments, costs, and

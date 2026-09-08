@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0165](0165-plan-current-eod-and-identity-family-evidence-publication.md): bind the exact 304-session EOD and point-in-time Identity evidence bytes plus two absent immutable targets in a deterministic `/tmp` plan, without Apply or Historical Coverage authority.
+
 - [ADR 0164](0164-gate-segmented-candidate-downstream-cutover.md): prove exact V1/current-input and Entry/Strategy result equivalence, while keeping V1 cutover blocked by base rehash cost and missing cumulative-state input for Visual Context.
 
 - [ADR 0163](0163-audit-candidate-chain-head-against-full-lineage.md): cold-read the complete base-plus-append lineage and prove it exactly reproduces the expected active head under before/after pointer CAS, with distinct daily, periodic, and code-change tiers.

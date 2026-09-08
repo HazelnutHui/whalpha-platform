@@ -78,9 +78,11 @@ backward. Required families are:
 
 The full-content ADR 0100 adapter has now validated all 304 canonical EOD and
 point-in-time Identity sessions with zero gaps. Both family evidence candidates
-remain unpublished. Their next transition is one separate publication review;
-it must not be combined with or mistaken for completion of the missing
-families below.
+remain unpublished. ADR 0165 has converted them into one deterministic,
+exact-SHA, no-write `/tmp` publication plan bound to both absent targets. Its
+next transition is a separately reviewed two-file Apply/recovery boundary; it
+must not be combined with final Historical Coverage or mistaken for completion
+of the missing families below.
 
 - point-in-time Identity and daily Universe membership;
 - lifecycle, inactive, terminal, and successor evidence;

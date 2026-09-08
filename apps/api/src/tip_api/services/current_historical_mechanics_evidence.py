@@ -81,28 +81,12 @@ def assess_current_historical_mechanics_evidence(
 ) -> CurrentHistoricalMechanicsEvidenceReport:
     """Formally validate current bytes and propose, but never publish, evidence."""
 
-    descriptors = CanonicalEodReadRepository(data_root).list_sessions()
-    if not descriptors:
+    validated = validate_current_historical_family_evidence(data_root)
+    sessions = validated[0].evidence.sessions
+    if any(item.evidence.sessions != sessions for item in validated[1:]):
         raise CurrentHistoricalMechanicsEvidenceError(
-            "canonical EOD contains no completed sessions"
+            "current historical family session coverage differs"
         )
-    sessions = tuple(item.session_date for item in descriptors)
-    if sessions != tuple(sorted(set(sessions))):
-        raise CurrentHistoricalMechanicsEvidenceError(
-            "canonical EOD sessions are not unique and ordered"
-        )
-    identity_repository = ParquetInstrumentMasterSnapshotRepository(data_root)
-    snapshots = {
-        as_of_date: identity_repository.inspect_snapshot(as_of_date)
-        for as_of_date in sorted({item.identity_as_of_date for item in descriptors})
-    }
-    eod_evidence = _build_eod_evidence(data_root, descriptors)
-    identity_evidence = _build_identity_evidence(data_root, descriptors, snapshots)
-    coverage_repository = ParquetHistoricalCoverageRepository(data_root)
-    validated = (
-        coverage_repository.validate_dataset_evidence(eod_evidence),
-        coverage_repository.validate_dataset_evidence(identity_evidence),
-    )
     observations = tuple(
         _observation(data_root, item)
         for item in sorted(validated, key=lambda value: value.evidence.family.value)
@@ -160,6 +144,35 @@ def assess_current_historical_mechanics_evidence(
         external_request_count=0,
         production_write_count=0,
         logical_content_fingerprint=_fingerprint(payload),
+    )
+
+
+def validate_current_historical_family_evidence(
+    data_root: Path,
+) -> tuple[HistoricalDatasetEvidenceValidationResult, ...]:
+    """Return exact, transitively validated EOD and Identity evidence candidates."""
+
+    descriptors = CanonicalEodReadRepository(data_root).list_sessions()
+    if not descriptors:
+        raise CurrentHistoricalMechanicsEvidenceError(
+            "canonical EOD contains no completed sessions"
+        )
+    sessions = tuple(item.session_date for item in descriptors)
+    if sessions != tuple(sorted(set(sessions))):
+        raise CurrentHistoricalMechanicsEvidenceError(
+            "canonical EOD sessions are not unique and ordered"
+        )
+    identity_repository = ParquetInstrumentMasterSnapshotRepository(data_root)
+    snapshots = {
+        as_of_date: identity_repository.inspect_snapshot(as_of_date)
+        for as_of_date in sorted({item.identity_as_of_date for item in descriptors})
+    }
+    eod_evidence = _build_eod_evidence(data_root, descriptors)
+    identity_evidence = _build_identity_evidence(data_root, descriptors, snapshots)
+    coverage_repository = ParquetHistoricalCoverageRepository(data_root)
+    return (
+        coverage_repository.validate_dataset_evidence(eod_evidence),
+        coverage_repository.validate_dataset_evidence(identity_evidence),
     )
 
 
