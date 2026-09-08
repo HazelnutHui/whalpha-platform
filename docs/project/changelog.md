@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-08 — Implement canonical split-action publication
+
+- Accepted ADR 0176 and separated provider-neutral split facts from the later
+  basis-specific Adjustment Ledger. The immutable fact set preserves one row
+  per resolved source action rather than collapsing multiple same-date rows.
+- Added canonical row, publication, and exact Apply-plan contracts plus
+  deterministic Parquet custody. Decimal logical hashing is invariant to the
+  fixed physical Parquet scale.
+- Added a clean-revision `/tmp` planner and a network-prohibited, inventory-
+  bound atomic-directory Apply using the shared Dell data lock. Exact completed
+  targets are formally verified as zero-write recovery; conflicting, partial,
+  symlinked, or drifted states fail closed.
+- The current-context reader now distinguishes absent canonical actions from a
+  split-only bounded publication and retains incomplete-coverage and research-
+  blocked status.
+- Focused tests cover clear versus multi-action quarantine, source/candidate
+  derivation, tamper detection, inventory drift, atomic publication, and exact
+  rerun recovery. The complete API regression passed 2,250 tests with only the
+  two existing dependency deprecation warnings. This implementation entry does
+  not record or imply a real
+  `/data` Apply, Adjustment Ledger, research run, analytics, Snapshot, bundle,
+  deployment, or scheduler change.
+
 ## 2026-09-08 — Recheck same-session EOD after the close
 
 - Made one bounded 2026-09-08 Grouped Daily fetch-only request at 22:52 UTC,

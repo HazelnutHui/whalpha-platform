@@ -468,6 +468,53 @@ def test_corporate_action_source_inventory_uses_canonical_publication(
     )
 
 
+def test_canonical_split_action_inventory_remains_partial(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "data"
+    publication_partition = (
+        root
+        / "market-data/canonical-corporate-actions/schema_version=1"
+        / "action_scope=split"
+        / f"coverage_id={'a' * 64}"
+    )
+    publication_partition.mkdir(parents=True)
+    publication = SimpleNamespace(
+        logical_fingerprint="a" * 64,
+        created_at=datetime(2026, 9, 8, tzinfo=UTC),
+        start_date=date(2026, 8, 20),
+        end_date=date(2026, 8, 22),
+        action_record_count=3,
+        active_action_record_count=1,
+        quarantined_action_record_count=2,
+        event_group_count=2,
+        clear_event_group_count=1,
+        quarantined_event_group_count=1,
+        unresolved_source_action_count=4,
+        possible_impact_instrument_count=2,
+        source_coverage_status="bounded_query_snapshot_only",
+        point_in_time_eligibility="outcome_reconciliation_only",
+    )
+    monkeypatch.setattr(
+        report,
+        "read_canonical_split_action_publication",
+        lambda **_kwargs: SimpleNamespace(publication=publication),
+    )
+
+    state = report._canonical_split_action_inventory(root)
+
+    assert state["custody_state"] == (
+        "canonical_split_only_bounded_query_snapshot"
+    )
+    assert state["record_count"] == 3
+    assert state["active_record_count"] == 1
+    assert state["quarantined_record_count"] == 2
+    assert state["full_corporate_action_coverage_authorized"] is False
+    assert state["adjustment_ledger_authorized"] is False
+    assert state["research_ready"] is False
+
+
 def test_historical_research_readiness_does_not_promote_observed_partition(
     tmp_path: Path,
 ) -> None:

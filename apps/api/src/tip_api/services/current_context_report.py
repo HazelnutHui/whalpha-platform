@@ -30,6 +30,10 @@ from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.market_intelligence_active import (
     read_active_market_intelligence,
 )
+from tip_api.persistence.parquet.canonical_corporate_action import (
+    CanonicalSplitActionPersistenceError,
+    read_canonical_split_action_publication,
+)
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.same_day_catchup import inventory_fingerprint
 from tip_api.services.market_calendar import (
@@ -55,11 +59,6 @@ EXPECTED_USER = "hui"
 RESEARCH_SESSION_FLOOR = 252
 
 _RESEARCH_PHYSICAL_FAMILIES = (
-    (
-        "corporate_action",
-        "corporate-actions",
-        "schema_version=1/event_year=*",
-    ),
     (
         "instrument_lifecycle",
         "instrument-lifecycle",
@@ -468,11 +467,17 @@ def _historical_research_readiness(
         for family, directory, pattern in _RESEARCH_PHYSICAL_FAMILIES
     )
     corporate_action_source = _canonical_corporate_action_source_inventory(root)
+    corporate_action = _canonical_split_action_inventory(root)
     membership = _canonical_membership_inventory(
         root,
         session_dates=session_dates,
     )
-    physical = (corporate_action_source, *generic_physical, membership)
+    physical = (
+        corporate_action_source,
+        corporate_action,
+        *generic_physical,
+        membership,
+    )
     by_family = {item["family"]: item for item in physical}
     blocker_codes = []
     if len(session_dates) < RESEARCH_SESSION_FLOOR:
@@ -502,8 +507,11 @@ def _historical_research_readiness(
         blocker_codes.append(
             "corporate_action_source_observation_not_formally_coverage_validated"
         )
+    if corporate_action["partition_count"] == 0:
+        blocker_codes.append("canonical_corporate_action_coverage_absent")
+    else:
+        blocker_codes.append("canonical_corporate_action_coverage_incomplete")
     blocker_by_family = {
-        "corporate_action": "canonical_corporate_action_coverage_absent",
         "instrument_lifecycle": "instrument_lifecycle_coverage_absent",
         "adjustment_ledger": "adjustment_ledger_reconciliation_absent",
         "historical_coverage_evidence": (
@@ -912,6 +920,105 @@ def _canonical_corporate_action_source_inventory(root: Path) -> dict[str, Any]:
         "validation_scope": (
             "publication_marker_and_exact_partition_bytes"
         ),
+        "research_ready": False,
+    }
+
+
+def _canonical_split_action_inventory(root: Path) -> dict[str, Any]:
+    base = (
+        root
+        / "market-data"
+        / "canonical-corporate-actions"
+        / "schema_version=1"
+        / "action_scope=split"
+    )
+    if base.is_symlink():
+        raise CurrentContextReportError(
+            "canonical split-action publication root is unsafe"
+        )
+    if not base.exists():
+        return {
+            "family": "corporate_action",
+            "custody_state": "absent",
+            "partition_count": 0,
+            "manifest_count": 0,
+            "parquet_count": 0,
+            "record_count": 0,
+            "active_record_count": 0,
+            "quarantined_record_count": 0,
+            "validation_scope": "inventory_only",
+            "research_ready": False,
+        }
+    if not base.is_dir() or base.resolve(strict=True) != base:
+        raise CurrentContextReportError(
+            "canonical split-action publication root is unsafe"
+        )
+    if any(item.is_symlink() for item in base.rglob("*")):
+        raise CurrentContextReportError(
+            "canonical split-action publication inventory is unsafe"
+        )
+    partitions = tuple(sorted(base.glob("coverage_id=*")))
+    if any(not item.is_dir() for item in partitions):
+        raise CurrentContextReportError(
+            "canonical split-action publication partition is unsafe"
+        )
+    publications = []
+    for partition in partitions:
+        try:
+            publications.append(
+                read_canonical_split_action_publication(
+                    data_root=root,
+                    publication_root=partition,
+                )
+            )
+        except CanonicalSplitActionPersistenceError as exc:
+            raise CurrentContextReportError(
+                "canonical split-action publication formal read failed"
+            ) from exc
+    if len(
+        {item.publication.logical_fingerprint for item in publications}
+    ) != len(publications):
+        raise CurrentContextReportError(
+            "canonical split-action publication identity is duplicated"
+        )
+    latest = max(
+        publications,
+        key=lambda item: (
+            item.publication.created_at,
+            item.publication.logical_fingerprint,
+        ),
+    )
+    publication = latest.publication
+    return {
+        "family": "corporate_action",
+        "custody_state": "canonical_split_only_bounded_query_snapshot",
+        "partition_count": len(publications),
+        "manifest_count": len(publications),
+        "parquet_count": len(publications),
+        "record_count": publication.action_record_count,
+        "active_record_count": publication.active_action_record_count,
+        "quarantined_record_count": (
+            publication.quarantined_action_record_count
+        ),
+        "event_group_count": publication.event_group_count,
+        "clear_event_group_count": publication.clear_event_group_count,
+        "quarantined_event_group_count": (
+            publication.quarantined_event_group_count
+        ),
+        "unresolved_source_action_count": (
+            publication.unresolved_source_action_count
+        ),
+        "possible_impact_instrument_count": (
+            publication.possible_impact_instrument_count
+        ),
+        "first_session": publication.start_date.isoformat(),
+        "last_session": publication.end_date.isoformat(),
+        "publication_fingerprint": publication.logical_fingerprint,
+        "source_coverage_status": publication.source_coverage_status,
+        "point_in_time_eligibility": publication.point_in_time_eligibility,
+        "full_corporate_action_coverage_authorized": False,
+        "adjustment_ledger_authorized": False,
+        "validation_scope": "full_publication_and_parquet_formal_read",
         "research_ready": False,
     }
 

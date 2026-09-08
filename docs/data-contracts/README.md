@@ -14,6 +14,7 @@
 - [Historical Corporate Action Source Repeat Diff V1](historical-corporate-action-source-repeat-diff-v1.md)
 - [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)
 - [Canonical-Source Split Action Candidate V1](canonical-source-split-action-candidate-v1.md)
+- [Canonical Split Action Publication V1](canonical-split-action-publication-v1.md)
 
 - [Massive Historical Lifecycle Coverage Probe V1](massive-historical-lifecycle-coverage-probe-v1.md)
 
@@ -77,6 +78,7 @@ Implemented as Python/Pydantic contracts:
 - [Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
 - [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)
 - [Canonical-Source Split Action Candidate V1](canonical-source-split-action-candidate-v1.md)
+- [Canonical Split Action Publication V1](canonical-split-action-publication-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 

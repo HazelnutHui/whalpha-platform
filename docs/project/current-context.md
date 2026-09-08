@@ -123,7 +123,7 @@ The formal status is `data_blocked`, with
 | Identity source observations | 303 canonical partitions / 3,713,485 rows | 2026-08-13 and 2026-08-19 remain unbound; 2026-09-08 awaits EOD |
 | Daily Universe Membership | 1 canonical signal-eligible session; disconnected mechanics cover 302 source-available sessions | governed historical point-in-time eligibility and complete publication |
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
-| Canonical corporate actions | source observations only | provider-neutral canonical event family and complete action-type scope |
+| Canonical corporate actions | ADR 0176 split-only publication code and exact Plan/Apply boundary complete; real Apply pending | publish the exact split facts, then complete action-type, availability, and revision scope |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
 | Adjustment ledger | 708 source-marker-bound split-event groups: 707 clear candidates, 1 multiple-event quarantine; 43 possible-impact stable IDs | canonical split actions, bounded price-adjustment ledger, reconciliation; dividends later |
 | Costs and liquidity | fixed fixture scenarios only | real executable cost/liquidity model |
@@ -160,7 +160,7 @@ projected backward. Canonical price history alone is not backtest readiness.
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0175 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0176 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof
@@ -304,8 +304,9 @@ design addresses both gaps.
 4. Implement a live adapter and Dell-only current snapshot only after that
    review passes. Integrate Candidate sector/industry concentration only after
    current source coverage, mapping, permission, and quarantine behavior pass.
-5. Build canonical split-action candidates and a bounded split-adjustment
-   ledger. Keep unresolved events quarantined and dividend total return later.
+5. Publish the exact ADR 0176 canonical split-action fact set, then build a
+   bounded split-adjustment ledger. Keep unresolved events quarantined and
+   dividend total return later.
 6. Complete lifecycle, historical Membership eligibility, costs, availability,
    revision, final Historical Coverage, and sealed evaluation evidence.
 7. Begin real preregistered chronological research with Strong-Leader Pullback,

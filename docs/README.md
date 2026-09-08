@@ -36,6 +36,9 @@
 - [Historical Split Adjustment Candidate V1](data-contracts/historical-split-adjustment-candidate-v1.md): owner-only grouped split-ratio math, unresolved-impact quarantine, formal reread, and zero canonical authority.
 - [Canonical-Source Split Action Candidate V1](data-contracts/canonical-source-split-action-candidate-v1.md): direct formal-source binding, explicit multiple-event admission quarantine, sparse custody, and zero canonical authority.
 - [2026-09-08 Canonical-Source Split Action Candidate Audit](audits/canonical-source-split-action-candidate-2026-09-08.md): clean-revision Dell execution, old/new semantic equivalence, explicit 707/1 admission split, and unchanged canonical state.
+- [ADR 0176: Canonical Split Action Publication](decisions/0176-publish-canonical-split-actions-before-adjustment-ledger.md): publishes sparse provider-neutral split facts before any basis-specific ledger, preserving multi-event and unresolved-impact quarantine.
+- [Canonical Split Action Publication V1](data-contracts/canonical-split-action-publication-v1.md): immutable two-file custody, exact Plan/Apply/recovery binding, and incomplete-coverage boundary.
+- [Canonical Split Action Publication Operations](operations/canonical-split-action-publication.md): Dell-only plan, exact Apply, recovery, and postflight procedure.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

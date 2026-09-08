@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0176](0176-publish-canonical-split-actions-before-adjustment-ledger.md): publish provider-neutral split facts as a sparse content-addressed family while keeping multiple actions, unresolved impacts, absent-event neutrality, and all adjustment/research authority gated.
+
 - [ADR 0174](0174-publish-bounded-corporate-action-source-observations.md): publish the exact resolved split/dividend source-observation snapshot and its bounded coverage marker without promoting it to canonical events or signal eligibility.
 
 - [ADR 0173](0173-separate-current-and-research-classification-evidence.md): preserve provider taxonomy observations, stable-ID projection, business validity, and knowledge time separately; evaluate GICS History first without selecting or acquiring a source.
@@ -311,3 +313,4 @@ Each ADR should include:
 - [0173: Separate Current and Research Classification Evidence](0173-separate-current-and-research-classification-evidence.md)
 - [0174: Publish Bounded Corporate-Action Source Observations](0174-publish-bounded-corporate-action-source-observations.md)
 - [0175: Bind Split-Action Candidates to Canonical Source Custody](0175-bind-split-action-candidates-to-canonical-source.md)
+- [0176: Publish Canonical Split Actions Before the Adjustment Ledger](0176-publish-canonical-split-actions-before-adjustment-ledger.md)

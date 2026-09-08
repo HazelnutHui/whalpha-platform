@@ -49,6 +49,9 @@ appearance remain manual checks.
   observations in two immutable event-year partitions: 42,056 exact-date
   stable-ID resolutions and 28,043 quarantined rows. Its coverage is a bounded
   query snapshot and remains outcome-only, not canonical Corporate Actions.
+- ADR 0176 code and contracts are ready to publish the 709 resolved split
+  observations as 707 active and two quarantined canonical fact rows. No real
+  canonical split-action Apply has occurred yet.
 - `/data` contains 4,200 files / 2,151,480,413 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
@@ -119,6 +122,8 @@ What is complete:
   date resolution;
 - a source-marker-bound 708-group split candidate with 707 clear candidates,
   one multiple-event quarantine, and 43 possible-impact stable IDs;
+- an implementation- and test-complete canonical split-action Plan/Apply
+  boundary, pending one exact real Dell plan and Apply;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 
@@ -174,7 +179,8 @@ Visual Context's cumulative-state requirement.
    integration and a controlled unattended-scheduler rehearsal.
 4. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-5. Build canonical split actions and a bounded split-adjustment ledger.
+5. Publish the exact canonical split-action fact set, then build a bounded
+   split-adjustment ledger.
 6. Complete historical Membership, lifecycle, costs, availability/revision,
    final Coverage, chronological evaluation, and sealed holdout evidence.
 7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
