@@ -68,3 +68,19 @@ performance evaluation.
   and applied through a separately reviewed path.
 - The next transition is source review and bounded pilot design, not bulk
   acquisition or candidate promotion.
+
+## Validation evidence
+
+Clean implementation revision
+`773df9819e35d282e8cb401b04d8fd54ef13fc57` passed all 2,168 API tests. The
+real 2026-09-03 plan then formally reread the exact ADR 0148 shadow and emitted
+547 unique stable-ID work items: 271 XNAS rows require a Nasdaq Daily List
+pilot and 276 other-venue rows remain blocked on all-exchange source
+selection. All 547 remain `first_observed_only` and point-in-time ineligible.
+
+The owner-read-only 687,382-byte plan has SHA-256
+`cb22c677df6fc220d00ead1326c19a3ec41fcd5de207c1b8797cf76a96a31ed3`
+and logical fingerprint
+`7d6ae3fa41aacba3ae03cf6e1a9485dd8b7eaaf9678317831240f8b122523736`.
+An independent exact-SHA reread passed. The canonical `/data` inventory and
+research-readiness state remained unchanged.

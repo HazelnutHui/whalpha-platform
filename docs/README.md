@@ -17,6 +17,8 @@
 - [2026-09-06 Daily EOD Publication and Deployment Audit](audits/daily-eod-publication-deployment-2026-09-06.md): exact 2026-09-04 acquisition, analytics, publication, deployment, and postflight evidence.
 - [ADR 0166: Ordered-prefix current family-evidence Apply](decisions/0166-apply-current-family-evidence-as-an-ordered-prefix.md): exact-plan EOD-first/Identity-second canonical publication with fail-closed recovery and outside-target drift detection.
 - [2026-09-08 Current Historical Family-Evidence Canonical Apply Audit](audits/current-historical-family-evidence-canonical-apply-2026-09-08.md): exact two-manifest Apply, zero-write postflight, authoritative post-state, and unchanged research-readiness boundary.
+- [ADR 0167: Inactive Lifecycle Corroboration Plan](decisions/0167-plan-inactive-lifecycle-corroboration-without-promotion.md): exact stable-ID review queue, explicit evidence gaps, and zero promotion authority.
+- [2026-09-08 Inactive Lifecycle Corroboration Plan Audit](audits/inactive-lifecycle-corroboration-plan-2026-09-08.md): real 547-item routing census, exact plan identity, knowledge-time boundary, and unchanged canonical state.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

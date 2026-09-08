@@ -84,6 +84,13 @@ the separately reviewed exact production Apply and zero-write postflight are
 now complete. These two immutable evidence objects must not be mistaken for
 final Historical Coverage or completion of the missing families below.
 
+ADR 0167 now supplies an exact 547-item inactive-lifecycle corroboration queue.
+It routes 271 XNAS candidates to a required documented-source pilot and leaves
+276 other-venue candidates blocked on all-exchange source selection. Every
+item remains point-in-time ineligible. The next lifecycle step is bounded
+source review and pilot design from this queue, not another planning layer and
+not candidate promotion.
+
 - point-in-time Identity and daily Universe membership;
 - lifecycle, inactive, terminal, and successor evidence;
 - splits, dividends, and other corporate actions;

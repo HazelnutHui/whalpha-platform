@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-08 — Plan lifecycle corroboration without promoting candidates
+
+- Accepted ADR 0167 and added a typed, network-prohibited planner that formally
+  rereads the complete inactive-lifecycle shadow and emits one immutable
+  stable-ID work item per review candidate. Ticker and name are not copied;
+  provider exchange is locator-only.
+- The real 2026-09-03 plan contains 547 unique source occurrences and 547
+  unique canonical instruments. Its routing census is ARCX 92, BATS 86, XASE
+  11, XNAS 271, and XNYS 87: XNAS requires a bounded Nasdaq Daily List pilot,
+  while the other 276 rows remain blocked on all-exchange source selection.
+- All work items retain five explicit evidence gaps and remain
+  `first_observed_only`. Although provider last-updated is present for all 547,
+  it is explicitly not treated as source availability. Point-in-time eligible
+  count and ticker-locator retention are zero.
+- The 687,382-byte owner-read-only plan has SHA-256
+  `cb22c677df6fc220d00ead1326c19a3ec41fcd5de207c1b8797cf76a96a31ed3`
+  and logical fingerprint
+  `7d6ae3fa41aacba3ae03cf6e1a9485dd8b7eaaf9678317831240f8b122523736`;
+  a separate exact-SHA reread passed.
+- Complete API regression passed `2168 passed, 2 warnings`. The post-run
+  network-free report kept `/data` at 4,060 files / 2,009,699,645 bytes,
+  fingerprint
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
+  zero symlinks and zero residue. No acquisition, canonical lifecycle,
+  Historical Coverage, research, Snapshot, bundle, OCI, scheduler, or
+  deployment transition occurred.
+
 ## 2026-09-08 — Publish current EOD and Identity family evidence canonically
 
 - Revalidated clean Dell main, the owner-read-only ADR 0165 plan, its physical

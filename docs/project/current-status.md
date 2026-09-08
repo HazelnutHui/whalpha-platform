@@ -165,6 +165,15 @@ rows across all 303 sessions. The later source adds 76 review candidates and
 results remain outcome-reconciliation evidence, not canonical lifecycle facts
 or research-ready labels.
 
+ADR 0167 adds a formally reread, owner-only `/tmp` corroboration plan for all
+547 latest-anchor review candidates. It binds 547 unique canonical instruments
+without copying ticker/name locators. The 271 XNAS work items require a bounded
+Nasdaq Daily List pilot; 276 ARCX/BATS/XASE/XNYS work items remain blocked on
+all-exchange source selection. All rows remain `first_observed_only`, with
+source availability unknown and point-in-time eligibility zero. The plan made
+no external request or `/data` write and authorizes no canonical lifecycle,
+Historical Coverage, or performance transition.
+
 The report projects normalized Identity source observations as a separate
 record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
 artifacts, and the exact two missing EOD sessions: 8/13 and 8/19. It
@@ -338,8 +347,9 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    prospective candidate boundary but has not yet been exercised on a new
    session or connected to the coordinator. Keep the 301 retrospective
    partitions outcome-only.
-10. Design corroboration and source-availability evidence for the 547 inactive
-   lifecycle review candidates; then complete canonical lifecycle,
+10. Use the exact ADR 0167 queue to review sources and design bounded Nasdaq
+   and all-exchange corroboration pilots for the 547 inactive lifecycle review
+   candidates; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,
    publish transitive Historical Coverage, and reconcile the 26-session
    analytics limitation.

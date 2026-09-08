@@ -61,6 +61,14 @@ change readiness.
 The formal state therefore remains
 `NOT_READY_FOR_PERFORMANCE_EVALUATION`.
 
+ADR 0167 adds a temporary, no-authority corroboration queue for the 547
+latest-anchor inactive-lifecycle review candidates. It makes the missing
+effective-date, last-tradable-session, terminal, successor/consideration, and
+knowledge-time evidence executable without creating a lifecycle fact. The 271
+XNAS rows have only a documented-source pilot route; the remaining 276 rows
+still lack an all-exchange source selection. This planning evidence does not
+change readiness.
+
 ## Governing principles
 
 - Dell is the only compute, historical-storage, and data-governance authority.

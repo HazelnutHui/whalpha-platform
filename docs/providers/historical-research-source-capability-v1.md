@@ -6,11 +6,12 @@ This matrix separates repository-verified capability, publicly documented
 potential, live entitlement, and missing implementation for the historical
 research foundation.
 
-Repository evidence through 2026-08-27 was reconciled with official public
-Massive pricing, endpoint, flat-file, and Market Data Terms pages on
-2026-08-28. No account endpoint, credential, or provider data was accessed.
-Externally controlled plan, endpoint, price, rate-limit, history, and licensing
-facts must still be rechecked before acquisition.
+Repository-verified operational evidence is current through 2026-09-08. The
+last official-public-page reconciliation remains dated 2026-08-28. Later
+bounded account operations established technical access and retained source
+custody without changing the dated public permission conclusion. Externally
+controlled plan, endpoint, price, rate-limit, history, and licensing facts must
+still be rechecked before a new source-family acquisition.
 
 The broader official-source comparison is recorded in the dated
 [Equal-Capability Historical Source Review](equal-capability-historical-source-review-2026-08-28.md).
@@ -31,15 +32,15 @@ composition under Source Permission Governance V1.
 
 | Required family | Repository evidence | Massive potential recorded in repository | Live/physical state | Current conclusion |
 | --- | --- | --- | --- | --- |
-| Broad-market daily unadjusted OHLCV | Grouped Daily `adjusted=false` published 29 sessions | Official page shows Basic access, two-year history, one date per request, and unadjusted option | Grouped Daily current-session path verified; broad historical account entitlement unverified | `verified_current` for bounded daily sessions; `documented_unverified` for 252/504 backfill |
-| Point-in-time reference Identity | All Tickers pagination produced 30 dated snapshots | Official page shows Basic/two-year access, date query, active/inactive filter, identifiers, max 1,000/page | Historical `active=false` access is verified for six pages/6,000 rows at 2026-07-16, but the collection remained truncated | `verified_current` for active mechanics and bounded inactive access; existing six-request Pilot allocation is insufficient |
-| Daily Universe Membership | One active Activation and one full-base decision session | No provider response can replace WH Alpha methodology | No physical daily dataset | `derived_required` and a hard blocker |
+| Broad-market daily unadjusted OHLCV | Canonical Grouped Daily `adjusted=false` history contains 304 sessions | Official page showed Basic access, two-year history, one date per request, and unadjusted option at the dated review | Exact 304-session range acquired and family evidence published; 504-session depth not established | `verified_current` for the acquired 304-session scope |
+| Point-in-time reference Identity | 304 resolved snapshots plus 302 canonical source-observation partitions | Official page showed Basic/two-year access, date query, active/inactive filter, identifiers, max 1,000/page | Active historical acquisition completed with two exact source-observation gaps; inactive source completed at two 24-page anchors | `verified_current` only for exact acquired scopes; not complete lifecycle coverage |
+| Daily Universe Membership | Complete retrospective shadows plus one canonical signal-eligible 2026-09-04 partition | No provider response can replace WH Alpha methodology | One physical canonical daily partition and marker | `derived_required`; historical series remains incomplete |
 | Historical security-form evidence | One provider evidence date | Point-in-time reference/type endpoints may supply observations | Historical coverage and revision semantics unverified | `documented_unverified`; cannot backcast current evidence |
-| Splits/reverse splits | Corporate actions listed in Basic | Official current endpoint shows all-plan access, two-year Basic history, max 5,000/page, ratios and adjustment fields | No adapter, authenticated request, or dataset | `documented_unverified` |
-| Cash/stock dividends | Corporate actions listed in Basic | Official current endpoint shows all-plan access, two-year Basic history, max 5,000/page, event dates/cash/adjustment fields | No adapter, authenticated request, or dataset | `documented_unverified` |
+| Splits/reverse splits | Corporate actions listed in Basic | Official dated endpoint review showed all-plan access, two-year Basic history, max 5,000/page, ratios and adjustment fields | One limit-one entitlement probe succeeded; fixture mapper exists, but no acquisition adapter or dataset | `documented_unverified` beyond the probe |
+| Cash/stock dividends | Corporate actions listed in Basic | Official dated endpoint review showed all-plan access, two-year Basic history, max 5,000/page, event dates/cash/adjustment fields | One limit-one entitlement probe succeeded; fixture mapper exists, but no acquisition adapter or dataset | `documented_unverified` beyond the probe |
 | Ticker events/symbol continuity | Ticker Events documentation recorded as experimental | May support symbol changes | No request, mapping, or reliability review | `documented_unverified`; cannot be sole lineage source |
 | Merger/spinoff/successor lineage | Corporate Action V1 permits relationships | No complete source established | No canonical source or dataset | `missing` |
-| Delisting and terminal outcome | Current snapshots retain no inactive rows; the latest bounded live census found `delisted_utc` on 19,565/20,000 inactive observations | All Tickers exposes substantial delisting metadata | Census was still truncated after 20 full pages; last tradable session, reason, consideration and successor coverage remain unverified | `documented_unverified` observations; still missing as an evaluation-ready lifecycle source |
+| Delisting and terminal outcome | Two complete inactive anchors are retained in temporary custody and resolved one-to-one into a shadow | All Tickers exposes substantial delisting metadata | Latest anchor has 547 stable-ID review candidates and 22,922 quarantined rows; ADR 0167 creates an exact corroboration queue, but last tradable session, reason, consideration, successor, and source availability remain unverified | `verified_current` source observation for exact anchors; still missing as evaluation-ready lifecycle |
 | Split adjustment | Aggregate defaults and `adjusted=false` behavior are documented | Provider-adjusted history may assist reconciliation | Canonical factors are unverified all-one; no action ledger | `documented_unverified`; raw bars remain authoritative inputs |
 | Dividend/total-return adjustment | Repository notes aggregate history is not dividend-adjusted while newer dividend docs mention factors | Dividends may support derived factors | Exact semantics and independent reconciliation absent | `missing` as a governed factor series |
 | Point-in-time sector/industry | Current repository explicitly lacks it | No accepted source selected | No dataset | `missing`; defensive/fundamental stratification cannot claim taxonomy support |
@@ -50,11 +51,14 @@ composition under Source Permission Governance V1.
 
 Massive remains the accepted first private EOD development adapter, not a
 permanent exclusive source. Repository evidence supports bounded Identity and
-Grouped Daily mechanics. It does not yet prove:
+Grouped Daily acquisition plus complete inactive-source observation at two
+anchors. It does not yet prove:
 
-- that the current account can retrieve every required historical date;
-- that 252 or 504 sessions can be acquired through an efficient endpoint;
-- that corporate-action endpoints are included in the current live account;
+- that every required historical Identity source date is retrievable; two
+  exact source-observation gaps remain;
+- that 504 sessions fit the account's exact history boundary;
+- complete Splits or Dividends pagination beyond the successful limit-one
+  probes;
 - that inactive/delisted and successor coverage is complete;
 - that provider adjustment factors meet WH Alpha price/total-return semantics;
 - that stored history may be retained or displayed beyond the existing private

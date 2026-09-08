@@ -292,6 +292,18 @@ quarantined. Of the 262 later-anchor additions, 76 are review candidates and
 still review candidates rather than lifecycle facts, remain owner-only in
 `/tmp`, and grant no Historical Coverage or performance authority.
 
+ADR 0167 now converts the complete latest-anchor review subset into one exact
+corroboration work plan without promoting it. The owner-read-only plan contains
+547 unique source-occurrence / canonical-instrument work items: 271 XNAS rows
+route only to a required Nasdaq Daily List pilot, while 276 ARCX/BATS/XASE/XNYS
+rows remain blocked on all-exchange source selection. Every row still requires
+effective-date, last-tradable-session, terminal-classification,
+successor/consideration-applicability, and source-availability evidence. All
+remain `first_observed_only`; the provider last-updated field is not treated as
+historical availability and point-in-time eligible count is zero. The plan is
+temporary, made no request or `/data` write, and grants no canonical lifecycle
+or research authority.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -497,10 +509,10 @@ separately bounded.
    and point-in-time Identity evidence. Final Historical Coverage remains
    absent and research remains data-blocked. The disconnected inactive
    lifecycle normalization and stable-identity resolution shadow is complete
-   for both anchors. Next
-   design corroboration and source-availability evidence for the 547 latest
-   review candidates without promoting them by ticker or provider status
-   alone. Then complete canonical lifecycle, actions, adjustments, costs, and
+   for both anchors. ADR 0167 provides the exact 547-item work queue. Next use
+   it to review source capability and design bounded Nasdaq and all-exchange
+   pilots without promoting candidates by ticker or provider status alone.
+   Then complete canonical lifecycle, actions, adjustments, costs, and
    sealed chronological evaluation before interpreting strategy performance.
 5. **Strategy research:** validate one preregistered strategy family at a time,
    beginning with Strong-Leader Pullback; compare against same-opportunity-set

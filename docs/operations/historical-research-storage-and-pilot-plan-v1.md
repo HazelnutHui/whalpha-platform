@@ -413,7 +413,11 @@ gaps require an additional source or a formally accepted quarantine boundary.
   Dell-local acquisition allowed by ADR 0120.
 - Grouped Daily and active point-in-time Tickers access has been demonstrated
   by the Pilot. Small exact probes also reached Splits and Dividends. Inactive
-  Tickers pagination exceeded the six-page census ceiling and is incomplete.
+  Tickers source custody later completed at both exact anchors in 24 pages,
+  but the 547 latest stable-ID review candidates still lack corroborated
+  terminal and source-availability evidence. ADR 0167 now scopes 271 XNAS
+  pilot candidates and leaves 276 other-venue candidates blocked on source
+  selection; it does not authorize requests or canonical promotion.
 - Merger/spinoff/successor and terminal-outcome source remains missing.
 - The completed 300-session batch acquired only EOD and active Identity. It did
   not complete membership, corporate-action, lifecycle, adjustment, terminal
