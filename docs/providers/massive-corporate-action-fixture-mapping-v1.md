@@ -2,12 +2,11 @@
 
 ## Status
 
-The mapper remains validated against saved synthetic response fixtures only.
-ADR 0169 separately implements a resumable, temporary Massive V1 split and
-dividend source-custody boundary. The first real range completed and matched
-the documented mapper fields, but it has not been passed through an event-date
-stable-ID adapter. No source-to-canonical adapter, canonical Corporate Action
-dataset, or `/data` write exists.
+The mapper was first validated against saved synthetic response fixtures. ADR
+0169 then used the same allowlisted field boundary for complete real Massive V1
+split and dividend source packages. ADR 0170 has passed that real range through
+the exact-event-date stable-ID adapter. No canonical Corporate Action dataset
+or `/data` corporate-action write exists.
 
 ADR 0170 now implements and has executed the disconnected event-date adapter
 boundary. It uses the mapper on formally reread source pages only after an
@@ -62,8 +61,11 @@ facts and cannot satisfy the canonical research-readiness family.
 
 Provider-reported `historical_adjustment_factor` and
 `split_adjusted_cash_amount` are preserved as source evidence, never copied
-directly into the WH Alpha Adjustment Ledger. The public documentation defines
-the historical factor relative to a later basis and it may be cumulative.
+directly into the WH Alpha Adjustment Ledger. The official documentation
+reviewed on 2026-09-08 defines the historical factor as cumulative relative to
+a later/current basis and split-adjusted cash on the share basis after later
+splits. See the dated
+[adjustment-readiness audit](../audits/corporate-action-adjustment-readiness-2026-09-08.md).
 
 The independent fixture math therefore requires an explicit comparison basis:
 
@@ -83,10 +85,13 @@ a return forecast, alpha, option return, or permission to create a real ledger.
 - The earlier account probe reached deprecated V3 endpoints only. ADR 0169 now
   separately proves current V1 access and complete real page chains for the
   exact 2025-06-23 through 2026-09-04 range.
-- The first real event-date Identity shadow has completed and passed formal
-  reread. Append-only repeat-observation/revision handling remains absent.
+- The first real event-date Identity shadow and the first identical-scope
+  repeat observation/diff have completed and passed formal reread. Append-only
+  handling exists at the observation-diff boundary; provider revision numbers
+  and historical availability remain unknown.
 - No provider observation has been promoted into canonical Corporate Action.
 - Merger, spinoff, symbol-change, delisting, successor, and terminal-outcome
   sources remain absent.
-- General multi-event basis ordering and a canonical adjustment-ledger builder
-  remain future work after source governance.
+- ADR 0172 permits only a split-first temporary candidate. Dividend currency,
+  special distributions, same-date ordering, canonical Corporate Action, and a
+  canonical Adjustment Ledger remain future work.

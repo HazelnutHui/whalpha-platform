@@ -30,6 +30,8 @@
 - [ADR 0171: Corporate-Action Repeat Observation](decisions/0171-observe-corporate-action-source-revisions-before-canonicalization.md): compares later identical-scope source snapshots without inventing provider revision history.
 - [Historical Corporate Action Source Repeat Diff V1](data-contracts/historical-corporate-action-source-repeat-diff-v1.md): owner-only added/removed/changed metadata with strict observation order and zero canonical authority.
 - [2026-09-08 Corporate-Action Repeat-Diff Audit](audits/corporate-action-repeat-diff-2026-09-08.md): later real source observation, zero content delta, physical evidence, and bounded interpretation.
+- [ADR 0172: Split-First Adjustment Staging](decisions/0172-stage-split-adjustments-before-dividend-total-return.md): derives explicit-basis split factors from event ratios while quarantining unresolved impact and deferring dividend total return.
+- [2026-09-08 Corporate-Action Adjustment Readiness Audit](audits/corporate-action-adjustment-readiness-2026-09-08.md): official provider semantics, real split/dividend conflict census, active-Universe relevance, and the bounded split-first decision.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

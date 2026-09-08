@@ -350,6 +350,16 @@ only short-interval stability, not historical immutability, provider revision
 numbers, or point-in-time availability. Future changes must remain append-only
 observed deltas until separately interpreted.
 
+ADR 0172 records the completed adjustment-semantics review. A 2026-09-04-basis
+split factor must be derived from resolved event ratios and dates; the
+provider's cumulative current-basis factor is audit evidence only. The 709
+resolved split rows form 708 stable-ID/date groups. Forty-one unresolved rows
+have some historical ticker presence and expose 43 stable IDs to conservative
+non-clear treatment; only two are in the active Universes. Dividend total
+return remains deferred because 160 CAD rows, 34 USD split-cash mismatches, 145
+multi-event groups, and 13 same-date split/dividend groups require separate
+semantics. No temporary adjustment candidate or canonical family exists yet.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -562,9 +572,11 @@ separately bounded.
    split/dividend source boundary, and both exact real packages have completed
    and passed formal reread. ADR 0170's real event-date stable-ID mapping shadow
    has also passed formal reread. ADR 0171's later identical-scope observation
-   and two zero-delta diffs have completed. Next define append-only revision
-   policy and perform semantic/cross-event conflict review before any canonical
-   Corporate Action/adjustment transition.
+   and two zero-delta diffs have completed. ADR 0172 has completed the semantic
+   and cross-event readiness review and narrows the next implementation to an
+   owner-only split-adjustment candidate. Build and formally reread that
+   candidate before any canonical Corporate Action or Adjustment Ledger
+   transition; keep dividend total return unavailable.
    Request exact price/sample/permission terms from the user before any vendor
    contact, trial, purchase, or access; do not promote candidates by ticker or
    provider status alone.

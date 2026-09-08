@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-08 — Complete corporate-action adjustment-readiness review
+
+- Confirmed from current official provider semantics that historical split
+  factors are cumulative to a later/current basis and split-adjusted dividend
+  cash reflects subsequent splits. Neither may be copied into a ledger with a
+  2026-09-04 basis.
+- The real semantic census found 708 resolved split event groups, one reciprocal
+  same-day pair, and 43 stable IDs conservatively exposed to unresolved split
+  rows; only two of those IDs enter the active Universes. The historical ticker
+  scan created quarantine candidates only and assigned no unresolved event.
+- Dividend review found 160 CAD rows, 34 USD split-cash mismatches, 145 multi-
+  event ex-date groups, and 13 same-date split/dividend groups. ADR 0172
+  therefore stages split-only outcome reconciliation before dividend total
+  return.
+- Corrected the provider mapping status that still said the real range had not
+  passed event-date stable-ID resolution. `/data`, analytics, Production, and
+  the website were unchanged.
+
 ## 2026-09-08 — Complete first corporate-action repeat observation
 
 - On clean Dell main `1f07c53893aa31366f057fd440ed82f9ed49ef87`, acquired
