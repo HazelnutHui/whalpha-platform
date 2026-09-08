@@ -124,9 +124,11 @@ describe('strategy-channel workspace', () => {
     expect(new URL(window.location.href).searchParams.get('candidateView')).toBe('strategy');
     expect(screen.queryByRole('button', { name: 'Balanced' })).not.toBeInTheDocument();
     expect(screen.getByText('Advance + Watch pool')).toBeInTheDocument();
-    expect((await screen.findAllByText('ABCD')).length).toBe(2);
+    expect((await screen.findAllByText('ABCD')).length).toBeGreaterThanOrEqual(2);
     expect(screen.getByRole('heading', { name: "Today's cross-channel decision desk" })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Overlap and trade-readiness check' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Research priority versus chase risk' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'ABCD, rank 1, score 85.0, extension risk Low' })).toBeInTheDocument();
     expect(screen.getByText('1 / 6')).toBeInTheDocument();
     expect(screen.getAllByText('Technical review may proceed').length).toBeGreaterThan(0);
     expect(screen.getByText('Open the complete price-and-evidence review →')).toBeInTheDocument();
@@ -174,6 +176,7 @@ describe('strategy-channel workspace', () => {
     render(<I18nProvider><OpportunityCandidatesPage /></I18nProvider>);
     fireEvent.click(await screen.findByRole('button', { name: '策略通道' }));
     expect(await screen.findByRole('heading', { name: '今日跨策略决策台' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: '研究优先级与追高风险图' })).toBeInTheDocument();
     expect(screen.getByText('通道内第 1 名')).toBeInTheDocument();
     expect(screen.getByText(/不会计算跨策略总分/)).toBeInTheDocument();
   });
@@ -186,6 +189,7 @@ describe('strategy-channel workspace', () => {
     expect(screen.getByText('Repeated display tickers: ABCD')).toBeInTheDocument();
     expect(screen.getByText(/not formal sector concentration/)).toBeInTheDocument();
     expect(screen.getAllByText(/Also appears in:/).length).toBeGreaterThan(0);
+    expect(document.querySelector('.strategy-map-point-repeated')).toBeInTheDocument();
   });
 
   it('keeps research rank visible while all Candidate risk modes reject the trade review', async () => {

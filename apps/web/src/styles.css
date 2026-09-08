@@ -286,6 +286,36 @@
 .strategy-integrity-grid strong { display: block; margin-top: 7px; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
 .strategy-overlap-note { margin: 13px 0 0; color: var(--accent); font-size: .78rem; line-height: 1.5; }
 .strategy-integrity-boundary { margin: 9px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.55; }
+.strategy-decision-map { padding: 20px; overflow: hidden; border-color: color-mix(in srgb, var(--accent) 38%, var(--border)); }
+.strategy-decision-map > header { display: grid; grid-template-columns: minmax(0, .8fr) minmax(300px, 1fr); gap: 24px; align-items: end; }
+.strategy-decision-map > header h2 { margin: 4px 0 0; }
+.strategy-decision-map > header > p { margin: 0; color: var(--muted); line-height: 1.55; }
+.strategy-decision-map-summary { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 2px; }
+.strategy-decision-map-summary span { padding: 7px 10px; border: 1px solid var(--border); border-radius: 999px; color: var(--muted); background: var(--surface-2); font-size: .72rem; }
+.strategy-decision-map-summary strong { margin-left: 5px; color: var(--text); font-variant-numeric: tabular-nums; }
+.strategy-decision-map-frame { position: relative; margin-top: 4px; padding: 18px 8px 29px 24px; }
+.strategy-decision-map-frame svg { display: block; width: 100%; min-width: 620px; height: auto; overflow: visible; }
+.strategy-decision-map-y-label { position: absolute; top: 50%; left: -88px; width: 225px; color: var(--muted); font-size: .65rem; text-align: center; transform: rotate(-90deg); }
+.strategy-decision-map-x-label { position: absolute; right: 8px; bottom: 2px; left: 24px; color: var(--muted); font-size: .65rem; text-align: center; }
+.strategy-map-grid line { stroke: color-mix(in srgb, var(--border) 75%, transparent); stroke-width: 1; stroke-dasharray: 4 6; }
+.strategy-map-grid text, .strategy-map-axis text { fill: var(--muted); font-size: 11px; }
+.strategy-map-axis line { stroke: color-mix(in srgb, var(--border) 42%, transparent); stroke-width: 1; }
+.strategy-map-point { cursor: pointer; outline: none; }
+.strategy-map-point circle { fill: var(--muted); stroke: var(--surface); stroke-width: 3; transition: r .16s ease, filter .16s ease; }
+.strategy-map-point text { fill: var(--text); font-size: 12px; font-weight: 800; paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+.strategy-map-point .strategy-map-rank { fill: var(--muted); font-size: 10px; font-weight: 700; }
+.strategy-map-point-technical_review_ready circle { fill: var(--positive); }
+.strategy-map-point-wait_for_setup circle { fill: var(--warning); }
+.strategy-map-point-risk_gates_reject circle { fill: var(--negative); }
+.strategy-map-point:hover circle:not(.strategy-map-repeat-ring), .strategy-map-point:focus-visible circle:not(.strategy-map-repeat-ring) { r: 10px; filter: drop-shadow(0 0 7px color-mix(in srgb, var(--accent) 65%, transparent)); }
+.strategy-map-point .strategy-map-repeat-ring { fill: none; stroke: var(--accent); stroke-width: 2; stroke-dasharray: 3 2; }
+.strategy-decision-map-legend { display: flex; flex-wrap: wrap; gap: 10px 16px; padding-top: 12px; border-top: 1px solid var(--border); color: var(--muted); font-size: .7rem; }
+.strategy-decision-map-legend span::before { display: inline-block; width: 9px; height: 9px; margin-right: 6px; border-radius: 50%; background: var(--muted); content: ''; }
+.strategy-decision-map-legend .strategy-map-legend-ready::before { background: var(--positive); }
+.strategy-decision-map-legend .strategy-map-legend-wait::before { background: var(--warning); }
+.strategy-decision-map-legend .strategy-map-legend-reject::before { background: var(--negative); }
+.strategy-decision-map-legend .strategy-map-legend-repeat::before { border: 2px dashed var(--accent); background: transparent; }
+.strategy-decision-map-boundary { margin: 12px 0 0; color: var(--muted); font-size: .74rem; line-height: 1.55; }
 .strategy-leader-desk { padding: 20px; }
 .strategy-leader-desk > header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .8fr); gap: 24px; align-items: end; margin-bottom: 16px; }
 .strategy-leader-desk > header h2 { margin: 4px 0 0; }
@@ -386,6 +416,9 @@
   .strategy-channel-grid { grid-template-columns: 1fr 1fr; margin-inline: 12px; }
   .strategy-integrity > header { grid-template-columns: 1fr; gap: 8px; }
   .strategy-integrity-grid { grid-template-columns: 1fr 1fr; }
+  .strategy-decision-map > header { grid-template-columns: 1fr; gap: 8px; }
+  .strategy-decision-map-frame { overflow-x: auto; padding-left: 14px; }
+  .strategy-decision-map-y-label { display: none; }
   .strategy-leader-desk > header { grid-template-columns: 1fr; gap: 8px; }
   .strategy-leader-desk > div { grid-template-columns: 1fr; }
   .strategy-leader-card { min-height: 0; }

@@ -36,16 +36,16 @@ appearance remain manual checks.
 
 - Canonical EOD contains 304 contiguous XNYS sessions from 2025-06-23 through
   2026-09-04. Latest EOD has 9,962 rows.
-- Latest Identity is aligned to 2026-09-04 and contains 9,982 Instruments,
-  13,155 provider identities, and 9,982 Resolvers.
-- Canonical normalized Identity source custody contains 302 partitions /
-  3,700,330 rows. Provider-revised dates 2026-08-13 and 2026-08-19 remain
-  explicitly unbound.
+- Latest Identity is 2026-09-08 and contains 9,982 Instruments, 13,155 provider
+  identities, and 9,982 Resolvers. It is one session ahead of canonical EOD.
+- Canonical normalized Identity source custody contains 303 partitions /
+  3,713,485 rows. Provider-revised dates 2026-08-13 and 2026-08-19 remain
+  explicitly unbound; 2026-09-08 is source-only until same-session EOD exists.
 - Canonical signal-eligible Membership contains one session, 2026-09-04, with
   19,964 decisions eligible for the 2026-09-08 open.
 - Immutable EOD and point-in-time Identity family evidence is canonical. Final
   Historical Coverage remains absent.
-- `/data` contains 4,186 files / 2,143,226,489 bytes with zero symlinks and
+- `/data` contains 4,195 files / 2,146,472,927 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -80,6 +80,11 @@ The decision-integrity presentation separately shows channel research priority
 and linked Candidate trade-review readiness, plus stable-ID overlap,
 all-risk-mode rejection, missing bounded setup, gap/volatility review, and
 extension risk.
+
+Repository source additionally contains a bilingual selected-channel decision
+map that places published within-channel score against current extension risk
+and colours the linked Candidate trade-review state. It does not recompute or
+compare strategy scores and is not part of the active OCI release yet.
 
 Momentum Breakout, Strong-Stock Pullback, and Trend Continuation have
 provisional technical mechanics. Technical Reversal, Fundamental Value
@@ -133,6 +138,12 @@ performs no fetch, Apply, calculation, publication, deployment, retry, alert
 delivery, or credential access. No unattended write-capable scheduler is
 installed. SMTP remains unconfigured.
 
+The timer correctly identified 2026-09-08 as the oldest missing session. The
+guarded Identity fetch/plan/Apply completed with 14 requests and no overwrite;
+the EOD request returned provider HTTP 403 before any package, staging, or
+canonical EOD write. The chain remains paused at EOD availability rather than
+publishing an inferred or stale new session.
+
 The guarded manual chain works end to end. Reuse optimizations materially
 reduced control-path and downstream stages, but Candidate remains the largest
 measured analytics stage at about five minutes. Separate stage benchmarks must
@@ -146,8 +157,9 @@ Visual Context's cumulative-state requirement.
 
 ## Next priority
 
-1. Exercise the complete guarded daily chain and ADR 0154 Membership
-   preparation on the next eligible session; record consolidated timings.
+1. Resume the guarded 2026-09-08 chain when same-session EOD becomes available,
+   then exercise ADR 0154 Membership preparation and record consolidated
+   timings.
 2. Obtain and review a GICS History specification/sample against ADR 0173.
 3. After the new-session Membership/recovery gates pass, review coordinator
    integration and a controlled unattended-scheduler rehearsal.

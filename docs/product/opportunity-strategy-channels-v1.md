@@ -158,6 +158,15 @@ price/volume, relative-strength, and trend inputs, while point-in-time sector
 taxonomy remains a separate future data requirement. Ticker is display
 metadata only.
 
+The repository UI also projects each selected channel's displayed records onto
+one decision-position chart: vertical position is the already published
+within-channel research score, horizontal position is the separately published
+extension-risk category, point colour is the linked Candidate trade-review
+state, and an outer ring marks stable-ID repetition in another displayed
+channel. The chart opens the existing detail review, never calculates a new
+score, never compares scores across channels, and makes no expected-return or
+probability claim.
+
 ## Planned implementation sequence
 
 1. Add continuation-specific trend-efficiency, consolidation/contraction,

@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-08 — Add strategy priority-versus-chase-risk visualization
+
+- Added a bilingual selected-channel decision map that places each displayed
+  security by its published within-channel research score and published
+  extension-risk category, colours the linked Candidate trade-review state,
+  and marks stable-ID repetition across displayed channels.
+- Kept strategy score, status, rank, thresholds, Candidate risk disposition,
+  and data contracts unchanged. The view explicitly prohibits cross-channel
+  score comparison, expected-return/probability interpretation, and treating
+  extension as a forecast.
+- The complete frontend regression passed 117 tests and the Production build
+  passed. Deployment remains a separate exact Snapshot/bundle boundary.
+- Completed the guarded 2026-09-08 Identity fetch, Plan 1.1, and canonical
+  Apply: 14 bounded requests produced 13,155 provider identities and source
+  observations plus 9,982 Instruments and Resolvers. Formal daily planning
+  advanced to EOD.
+- The same-session EOD request returned provider HTTP 403 before package or
+  staging creation and made zero canonical EOD writes. Dell therefore remains
+  at EOD 2026-09-04 with Identity/source custody ahead at 2026-09-08; no stale
+  new Snapshot or deployment was produced.
+
 ## 2026-09-08 — Bound the GICS sample and permission dependency
 
 - Confirmed from current official public material that GICS company sample

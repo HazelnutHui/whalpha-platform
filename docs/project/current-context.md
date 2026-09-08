@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T18:20:26Z
+Operational state verified at: 2026-09-08T21:12:33Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -48,20 +48,23 @@ sealed publication assertion are reported separately.
 | Latest EOD | 2026-09-04; 9,962 rows |
 | Latest EOD fingerprint | `3266c411a556ee1813a73beae19a71dc14e855b476770b3b82f81a5151e4abc4` |
 | Latest EOD Parquet SHA-256 | `853d6fa9837891419f633aed8401a6ab52a503976d6607888c9def6de64b8577` |
-| Latest Identity | 2026-09-04; 9,982 Instruments / 13,155 provider identities / 9,982 Resolvers |
-| Latest Identity fingerprint | `5eed9166d609cea7693aed324908427f113ab72c221921690bcbdc29f71727f7` |
-| Identity/EOD alignment | aligned on 2026-09-04 |
-| Canonical historical Identity source | 302 immutable source-observation partitions / 3,700,330 rows; 2 source sessions absent |
+| Latest Identity | 2026-09-08; 9,982 Instruments / 13,155 provider identities / 9,982 Resolvers |
+| Latest Identity fingerprint | `ccada891e47725796142b08381e4a24026ee074d8d5dc4cf1d33b9fbc7e422a5` |
+| Identity/EOD alignment | Identity ahead of EOD: Identity 2026-09-08; EOD remains 2026-09-04 |
+| Canonical historical Identity source | 303 immutable source-observation partitions / 3,713,485 rows; 2 EOD sessions remain without source evidence and 2026-09-08 is source-only pending EOD |
 | Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for the 2026-09-08 open |
 | Canonical EOD/Identity family evidence | 2 immutable manifests; final Historical Coverage absent |
-| `/data` inventory | 4,186 files / 2,143,226,489 bytes |
-| `/data` inventory fingerprint | `3f4a5780a69a8d60688ce34b64f8df06fc0dd12070801f265b46f3f7a1f6ac49` |
+| `/data` inventory | 4,195 files / 2,146,472,927 bytes |
+| `/data` inventory fingerprint | `7ea6a71e497c23781f207c614746f39aaf7cd0736bef668a03238e2129b542cf` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
 The exact 300-session historical target through 2026-08-31 is complete. The
-four following sessions, 2026-09-01 through 2026-09-04, are also canonical. No
-historical-backfill transient service or computation process is running.
+four following EOD sessions, 2026-09-01 through 2026-09-04, are also canonical.
+The guarded 2026-09-08 Identity catch-up completed, including Plan 1.1 source
+observation; the same-session EOD fetch returned provider HTTP 403 before a
+package or staging path existed. No historical-backfill transient service or
+computation process is running.
 
 ### Active Universe
 
@@ -89,7 +92,7 @@ after authoritative issuer-structure evidence passes the documented gates.
 | Dashboard Snapshot | `2026-09-08T171914Z-ca2d34d50692` |
 | Snapshot pointer fingerprint | `c1469a1dbde97fc5212b57d039e60b585be5ba0488ae4626c2e0d393fe387ea5` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
-| Freshness | operational and publication-sealed views expected 2026-09-04; actual 2026-09-04; lag zero; review mode false |
+| Freshness | current-clock operational view expects 2026-09-08 and is one session stale at 2026-09-04; the immutable Snapshot publication assertion remains sealed lag-zero for its 2026-09-04 expectation; review mode false |
 | Immediate local Snapshot rollback | `2026-09-08T171250Z-8c3dc878d6ab` |
 
 Market Regime is Balanced in both Universes: Primary 56.7472 and Secondary
@@ -111,8 +114,8 @@ The formal status is `data_blocked`, with
 | Family | Current evidence | Remaining boundary |
 | --- | --- | --- |
 | EOD Price Bar | 304 canonical sessions; immutable family evidence published | final transitive Historical Coverage |
-| Point-in-time Identity | 304 canonical completed snapshots; immutable family evidence published | final transitive Historical Coverage |
-| Identity source observations | 302 canonical partitions / 3,700,330 rows | 2026-08-13 and 2026-08-19 remain unbound |
+| Point-in-time Identity | 305 canonical completed snapshots, including one Identity-only 2026-09-08 date; immutable family evidence remains scoped through 2026-09-04 | EOD alignment and final transitive Historical Coverage |
+| Identity source observations | 303 canonical partitions / 3,713,485 rows | 2026-08-13 and 2026-08-19 remain unbound; 2026-09-08 awaits EOD |
 | Daily Universe Membership | 1 canonical signal-eligible session; disconnected mechanics cover 302 source-available sessions | governed historical point-in-time eligibility and complete publication |
 | Corporate actions | temporary split/dividend custody and exact-event-date resolution shadow complete | canonical action family, revision/availability evidence, unresolved quarantine |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
@@ -257,8 +260,10 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 ```
 
 ADR 0154 Membership preparation remains a research sidecar after Identity/EOD;
-it has passed a zero-write 9/4 replay but not yet a new live session or
-coordinator integration.
+it has passed a zero-write 9/4 replay. The 9/8 Identity leg completed, but the
+provider rejected the EOD request before package creation, so Membership
+correctly remains unavailable for that session and coordinator integration is
+still pending.
 
 Measured isolated/current-code stages include Candidate about 295 seconds,
 Entry 49.67 seconds, ETF Relationships 15.36 seconds, Strategy Channels 33.82
@@ -276,9 +281,9 @@ design addresses both gaps.
 
 ## Immediate next work
 
-1. On the next eligible session, run the guarded daily chain, exercise ADR
-   0154 Membership preparation against direct Daily Identity Plan 1.1 evidence,
-   and record consolidated timings.
+1. Resume the guarded 2026-09-08 chain only when the provider makes its EOD
+   package available; then exercise ADR 0154 Membership preparation against
+   direct Daily Identity Plan 1.1 evidence and record consolidated timings.
 2. Obtain and review a GICS History specification/sample against ADR 0173.
 3. After the new-session Membership and recovery gates pass, review one-action
    coordinator integration and a controlled scheduler rehearsal. Do not enable
