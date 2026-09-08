@@ -243,6 +243,92 @@ class CorporateActionResolutionShadowWriteResult:
     status: Literal["published", "already_present"]
 
 
+def read_historical_ticker_candidates_bound_to_resolution_shadow(
+    *,
+    data_root: Path,
+    resolution_shadow_output_root: Path,
+    provider_tickers: frozenset[str],
+) -> dict[str, frozenset[UUID]]:
+    """Return conservative historical stable-ID candidates for selected tickers.
+
+    This is a quarantine aid only. It scans every evidence-bound historical
+    Resolver and never assigns an unresolved action to any returned ID.
+    """
+
+    with _network_prohibited():
+        root = _validated_data_root(data_root)
+        shadow = read_historical_corporate_action_resolution_shadow(
+            output_root=resolution_shadow_output_root
+        )
+        requested = frozenset(
+            normalized
+            for value in provider_tickers
+            if (normalized := value.strip().upper())
+        )
+        if len(requested) != len(provider_tickers):
+            raise HistoricalCorporateActionResolutionShadowError(
+                "historical ticker candidate input is empty or non-normalized"
+            )
+        identity = _read_identity_evidence(
+            root,
+            root / PurePosixPath(shadow.manifest.identity_evidence_path),
+        )
+        expected_identity = {
+            "physical_sha256": shadow.manifest.identity_evidence_sha256,
+            "logical_fingerprint": (
+                shadow.manifest.identity_evidence_logical_fingerprint
+            ),
+            "session_count": shadow.manifest.identity_session_count,
+            "first_session": shadow.manifest.start_date,
+            "last_session": shadow.manifest.end_date,
+        }
+        actual_identity = {
+            "physical_sha256": identity.physical_sha256,
+            "logical_fingerprint": identity.logical_fingerprint,
+            "session_count": len(identity.sessions),
+            "first_session": identity.sessions[0],
+            "last_session": identity.sessions[-1],
+        }
+        if actual_identity != expected_identity:
+            raise HistoricalCorporateActionResolutionShadowError(
+                "resolution shadow Identity evidence binding differs"
+            )
+
+        used_dates = {
+            item.effective_date
+            for item in shadow.records
+            if item.effective_date in identity.artifacts_by_session
+        }
+        candidates: dict[str, set[UUID]] = {
+            ticker: set() for ticker in requested
+        }
+        used_bindings: list[dict[str, object]] = []
+        for session in identity.sessions:
+            resolver, binding = _read_exact_resolver(
+                root,
+                identity.artifacts_by_session[session],
+                session,
+            )
+            if session in used_dates:
+                used_bindings.append(binding)
+            for ticker in requested:
+                instrument_id = resolver.get(ticker)
+                if instrument_id is not None:
+                    candidates[ticker].add(instrument_id)
+        if (
+            len(used_bindings) != shadow.manifest.used_identity_session_count
+            or _fingerprint(tuple(used_bindings))
+            != shadow.manifest.identity_binding_fingerprint
+        ):
+            raise HistoricalCorporateActionResolutionShadowError(
+                "resolution shadow used-Resolver binding differs"
+            )
+        return {
+            ticker: frozenset(sorted(ids, key=str))
+            for ticker, ids in sorted(candidates.items())
+        }
+
+
 @dataclass(frozen=True, slots=True)
 class _IdentityEvidence:
     relative_path: str

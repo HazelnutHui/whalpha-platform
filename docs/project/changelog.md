@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-08 — Implement split-adjustment candidate boundary
+
+- Added an owner-only, network-prohibited split-adjustment candidate that
+  formally rereads the exact-event-date resolution shadow and its historical
+  Identity bindings. Historical ticker presence creates quarantine candidates
+  only; unresolved events are never assigned.
+- Resolved split-like actions are grouped by stable ID/effective date. Exact
+  ratio numerators and denominators are composed before one final
+  quantization, preventing reciprocal same-day actions from drifting away from
+  a factor of one.
+- The single-file contract binds source/Identity evidence, resolved groups,
+  possible-impact stable IDs, source-action fingerprints, total-return
+  unavailability, and the not-yet-built ledger projection. It is idempotent and
+  formally reread with owner-only custody.
+- Focused tests cover factor direction, reciprocal cancellation, resolution-
+  bound historical ticker scanning, grouping, quarantine, idempotency, basis
+  refusal, future-event refusal, and tamper detection. No real candidate,
+  `/data`, analytics, publication, deployment, or website change occurred in
+  this implementation step.
+
 ## 2026-09-08 — Complete corporate-action adjustment-readiness review
 
 - Confirmed from current official provider semantics that historical split

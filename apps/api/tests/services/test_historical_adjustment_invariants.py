@@ -7,6 +7,7 @@ from tip_api.services.historical_adjustment_invariants import (
     ProviderFactorBasis,
     apply_multiplier,
     calculate_cash_dividend_backward_factor,
+    calculate_composed_split_adjustment_multipliers,
     calculate_split_adjustment_multipliers,
     compose_price_multipliers,
     reconcile_provider_factor,
@@ -74,6 +75,27 @@ def test_split_fixture_adjustment_reverses_to_exact_raw_values(
         adjusted_volume,
         factors.volume_multiplier_to_post_event_basis,
     ) == volume
+
+
+def test_same_day_reciprocal_split_ratios_cancel_before_quantization() -> None:
+    result = calculate_composed_split_adjustment_multipliers(
+        (
+            (Decimal("3000"), Decimal("1")),
+            (Decimal("1"), Decimal("3000")),
+        )
+    )
+
+    assert result.price_multiplier_to_post_event_basis == Decimal(
+        "1.000000000000000000"
+    )
+    assert result.volume_multiplier_to_post_event_basis == Decimal(
+        "1.000000000000000000"
+    )
+
+
+def test_composed_split_requires_at_least_one_event() -> None:
+    with pytest.raises(ValueError, match="at least one"):
+        calculate_composed_split_adjustment_multipliers(())
 
 
 def test_cash_dividend_factor_removes_the_same_basis_price_gap() -> None:

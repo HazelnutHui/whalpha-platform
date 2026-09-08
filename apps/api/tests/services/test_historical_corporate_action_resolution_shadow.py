@@ -36,6 +36,7 @@ from tip_api.services.historical_corporate_action_resolution_shadow import (
     HistoricalCorporateActionResolutionShadowError,
     build_historical_corporate_action_resolution_shadow,
     read_historical_corporate_action_resolution_shadow,
+    read_historical_ticker_candidates_bound_to_resolution_shadow,
 )
 from tip_api.services.historical_corporate_action_source import (
     CorporateActionSourceKind,
@@ -311,6 +312,13 @@ def test_builds_exact_event_date_one_to_one_owner_only_shadow(
     )
     assert reread.manifest == result.manifest
     assert reread.records == result.records
+
+    candidates = read_historical_ticker_candidates_bound_to_resolution_shadow(
+        data_root=inputs["data_root"],  # type: ignore[arg-type]
+        resolution_shadow_output_root=result.output_root,
+        provider_tickers=frozenset({"AAA", "BBB"}),
+    )
+    assert candidates == {"AAA": frozenset({AAA_ID}), "BBB": frozenset()}
 
 
 def test_all_rows_can_remain_quarantined_when_no_event_date_has_identity(

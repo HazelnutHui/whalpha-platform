@@ -60,6 +60,36 @@ def calculate_split_adjustment_multipliers(
     )
 
 
+def calculate_composed_split_adjustment_multipliers(
+    ratios: Iterable[tuple[Decimal, Decimal]],
+) -> SplitAdjustmentMultipliers:
+    """Compose same-basis split ratios before the single final quantization.
+
+    Multiplying already-quantized per-event factors can turn reciprocal same-day
+    events into a value merely close to one. Combining the exact ratio
+    numerators and denominators first preserves that cancellation.
+    """
+
+    product_from = Decimal("1")
+    product_to = Decimal("1")
+    count = 0
+    with localcontext() as context:
+        context.prec = 56
+        context.rounding = ROUND_HALF_EVEN
+        for index, (raw_from, raw_to) in enumerate(ratios):
+            product_from *= _positive_decimal(raw_from, f"ratios[{index}].from")
+            product_to *= _positive_decimal(raw_to, f"ratios[{index}].to")
+            count += 1
+    if count == 0:
+        raise ValueError("at least one split ratio is required")
+    return SplitAdjustmentMultipliers(
+        split_ratio_from=product_from,
+        split_ratio_to=product_to,
+        price_multiplier_to_post_event_basis=_divide(product_from, product_to),
+        volume_multiplier_to_post_event_basis=_divide(product_to, product_from),
+    )
+
+
 def calculate_cash_dividend_backward_factor(
     *,
     cash_amount_on_reference_share_basis: Decimal,
