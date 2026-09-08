@@ -316,6 +316,16 @@ price/sample/permission offer; only a provisioned sample can define the real
 request ceiling and test stable-ID, revision, knowledge-time, last-tradable,
 terminal, successor, consideration, and usage-permission gates.
 
+ADR 0169 separately implements a resumable Massive V1 source-custody boundary
+for split and dividend observations over one exact historical range. The two
+package kinds share one implementation but remain independently recoverable
+and formally readable below `/tmp`. The boundary preserves source fields,
+measures schema additions and malformed dates, and performs no identity
+resolution, `/data` write, canonical Corporate Action, Adjustment Ledger,
+analytics, publication, deployment, or scheduler change. A real V1 package has
+not yet been completed; the earlier deprecated-V3 limit-one probe is not
+treated as current V1 proof.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -523,7 +533,10 @@ separately bounded.
    lifecycle normalization and stable-identity resolution shadow is complete
    for both anchors. ADR 0167 provides the exact 547-item work queue. ADR 0168
    completes public source review and requires a real licensed cross-venue
-   sample plus the deterministic 30-item diagnostic before adapter work.
+   sample plus the deterministic 30-item diagnostic before lifecycle adapter
+   work. ADR 0169 independently provides the no-canonical-write Massive V1
+   split/dividend source boundary; next complete and audit one real temporary
+   package of each kind before designing event-date stable-ID mapping.
    Request exact price/sample/permission terms from the user before any vendor
    contact, trial, purchase, or access; do not promote candidates by ticker or
    provider status alone.

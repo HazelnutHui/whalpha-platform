@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-08 — Stage corporate-action source before adjustment
+
+- Accepted ADR 0169 and added one resumable temporary source-custody boundary
+  shared by separate Massive V1 split and dividend packages. Each exact
+  historical range is owner-only below `/tmp`, serially rate-limited, bounded,
+  checkpointed per page, and fully reread before success or resume.
+- Bound current V1 endpoints, date filters, ascending order, pagination host
+  and scope, page/record/byte ceilings, valid-date range, physical hashes,
+  request-chain hashes, modes, and file set. Provider request IDs, pagination
+  URLs, credentials, and Authorization material are not retained.
+- Preserved provider result fields as source evidence while reporting known-
+  field presence and unexpected-field counts. Empty natural completion is
+  representable; malformed dates remain measurable rather than coerced.
+- Added a clean-revision CLI and disconnected tests for split/dividend shapes,
+  recovery, exact orphan adoption, zero rows, schema additions, scope and host
+  rejection, secret rejection, tamper detection, and safe failure output.
+  Focused corporate-action/adjustment coverage passed 38 tests; complete API
+  regression passed `2181 passed, 2 warnings`, with the two unchanged
+  dependency deprecations.
+- No real Massive V1 request, `/data` write, stable-ID resolution, canonical
+  Corporate Action, Adjustment Ledger, analytics, publication, deployment, or
+  scheduler change occurred in this implementation step.
+
 ## 2026-09-08 — Gate lifecycle adapter work on a real cross-venue sample
 
 - Accepted ADR 0168 and completed a dated official-public-material comparison

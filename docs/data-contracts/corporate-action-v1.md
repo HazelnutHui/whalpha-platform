@@ -12,7 +12,10 @@ The provider-neutral historical source-observation record implements the
 action scope, source revision/correction state, three clocks, stable-ID
 resolution, evidence quality, action-specific validation, and fixture-only
 PyArrow persistence. Canonical event IDs, canonical Corporate Action
-persistence, completed coverage, and provider adapters remain unimplemented.
+persistence, completed coverage, and a source-to-canonical provider adapter
+remain unimplemented. ADR 0169 adds resumable temporary source custody for
+Massive V1 split and dividend pages, but it deliberately performs no stable-ID
+mapping or canonical write.
 
 ## Grain
 
@@ -116,5 +119,5 @@ coverage is complete.
 
 - adjustment factor calculation
 - legal-document storage
-- provider adapter implementation
+- source-to-canonical provider adapter implementation
 - deletion of instrument history

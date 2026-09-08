@@ -292,3 +292,4 @@ Each ADR should include:
 - [0166: Apply Current Family Evidence as an Ordered Prefix](0166-apply-current-family-evidence-as-an-ordered-prefix.md)
 - [0167: Plan Inactive Lifecycle Corroboration Without Promotion](0167-plan-inactive-lifecycle-corroboration-without-promotion.md)
 - [0168: Gate Lifecycle Adapter on a Cross-Venue Source Sample](0168-gate-lifecycle-adapter-on-a-cross-venue-source-sample.md)
+- [0169: Stage Corporate-Action Source Before Adjustment](0169-stage-corporate-action-source-before-adjustment.md)

@@ -2,9 +2,11 @@
 
 ## Status
 
-Implemented and validated against saved synthetic response fixtures only. No
-Massive account/API request, credential access, provider adapter capability,
-canonical Corporate Action dataset, or `/data` write exists.
+The mapper remains validated against saved synthetic response fixtures only.
+ADR 0169 separately implements a resumable, temporary Massive V1 split and
+dividend source-custody boundary. No real V1 source package has yet been
+completed, and no source-to-canonical adapter, canonical Corporate Action
+dataset, or `/data` write exists.
 
 ## Public shape review
 
@@ -71,8 +73,10 @@ a return forecast, alpha, option return, or permission to create a real ledger.
 
 ## Remaining boundary
 
-- No current endpoint entitlement has been tested.
-- No pagination, fetch package, response audit, or adapter integration exists.
+- The earlier account probe reached deprecated V3 endpoints only; current V1
+  access and a complete real page chain remain unverified.
+- The V1 fetch package and formal reader are implemented but have not yet been
+  exercised against a real response. Adapter integration remains absent.
 - No provider observation has been promoted into canonical Corporate Action.
 - Merger, spinoff, symbol-change, delisting, successor, and terminal-outcome
   sources remain absent.

@@ -21,6 +21,8 @@
 - [2026-09-08 Inactive Lifecycle Corroboration Plan Audit](audits/inactive-lifecycle-corroboration-plan-2026-09-08.md): real 547-item routing census, exact plan identity, knowledge-time boundary, and unchanged canonical state.
 - [ADR 0168: Lifecycle Adapter Sample Gate](decisions/0168-gate-lifecycle-adapter-on-a-cross-venue-source-sample.md): require a real cross-venue sample and stable-ID semantic proof before adapter implementation.
 - [2026-09-08 Lifecycle Corroboration Source Review](providers/lifecycle-corroboration-source-review-2026-09-08.md): official source roles, deterministic 30-item diagnostic, and paid-sample decision boundary.
+- [ADR 0169: Corporate-Action Source Custody](decisions/0169-stage-corporate-action-source-before-adjustment.md): separates resumable split/dividend source evidence from stable-ID mapping, canonical events, and adjustment math.
+- [Historical Corporate Action Source Package V1](data-contracts/historical-corporate-action-source-package-v1.md): owner-only temporary V1 endpoint custody, formal reread, and explicit zero canonical authority.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 
