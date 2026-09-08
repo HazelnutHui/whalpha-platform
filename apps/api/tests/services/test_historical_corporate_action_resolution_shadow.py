@@ -32,6 +32,17 @@ from tip_api.persistence.parquet.instrument_master_snapshot import (
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.services import historical_corporate_action_resolution_shadow as module
+from tip_api.services import corporate_action_source_canonical as canonical_module
+from tip_api.services import historical_corporate_action_source_apply as apply_module
+from tip_api.services import (
+    historical_corporate_action_source_publication_plan as plan_module,
+)
+from tip_api.services.corporate_action_source_canonical import (
+    read_canonical_corporate_action_source,
+)
+from tip_api.services.historical_corporate_action_repeat_diff import (
+    build_historical_corporate_action_repeat_diff,
+)
 from tip_api.services.historical_corporate_action_resolution_shadow import (
     HistoricalCorporateActionResolutionShadowError,
     build_historical_corporate_action_resolution_shadow,
@@ -42,6 +53,13 @@ from tip_api.services.historical_corporate_action_source import (
     CorporateActionSourceKind,
     fetch_historical_corporate_action_source_package,
 )
+from tip_api.services.historical_corporate_action_source_apply import (
+    CorporateActionSourceApplyError,
+    apply_approved_corporate_action_source_plan,
+)
+from tip_api.services.historical_corporate_action_source_publication_plan import (
+    build_corporate_action_source_publication_plan,
+)
 
 
 START = date(2026, 8, 20)
@@ -49,6 +67,9 @@ MISSING = date(2026, 8, 21)
 END = date(2026, 8, 22)
 OBSERVED_AT = datetime(2026, 9, 1, tzinfo=UTC)
 MATERIALIZED_AT = datetime(2026, 9, 2, tzinfo=UTC)
+REPEAT_AT = datetime(2026, 9, 3, tzinfo=UTC)
+COMPARED_AT = datetime(2026, 9, 4, tzinfo=UTC)
+PUBLISHED_AT = datetime(2026, 9, 5, tzinfo=UTC)
 AAA_ID = UUID("11111111-1111-4111-8111-111111111111")
 
 
@@ -230,6 +251,8 @@ def _source_package(
     tmp_path: Path,
     kind: CorporateActionSourceKind,
     rows: list[dict[str, object]],
+    *,
+    observed_at: datetime = OBSERVED_AT,
 ) -> Path:
     target = tmp_path / "sources" / f"{kind.value}={START}_{END}"
     fetch_historical_corporate_action_source_package(
@@ -240,7 +263,7 @@ def _source_package(
         end_date=END,
         package_path=target,
         rate_limiter=NoWait(),  # type: ignore[arg-type]
-        clock=lambda: OBSERVED_AT,
+        clock=lambda: observed_at,
     )
     return target
 
@@ -428,3 +451,110 @@ def test_formal_reader_rejects_partition_tampering(
         read_historical_corporate_action_resolution_shadow(
             output_root=result.output_root
         )
+
+
+def test_source_publication_plan_recovers_physical_prefix_then_formally_reads(
+    monkeypatch, tmp_path: Path
+) -> None:
+    inputs = _inputs(monkeypatch, tmp_path)
+    data_root = Path(inputs["data_root"])
+    shadow = build_historical_corporate_action_resolution_shadow(**inputs)  # type: ignore[arg-type]
+    (tmp_path / "repeat").mkdir()
+    repeat_split = _source_package(
+        tmp_path / "repeat",
+        CorporateActionSourceKind.SPLIT,
+        _split_payloads(),
+        observed_at=REPEAT_AT,
+    )
+    repeat_dividend = _source_package(
+        tmp_path / "repeat",
+        CorporateActionSourceKind.DIVIDEND,
+        _dividend_payloads(),
+        observed_at=REPEAT_AT,
+    )
+    split_diff = build_historical_corporate_action_repeat_diff(
+        baseline_package_path=Path(inputs["split_source_package_path"]),
+        repeat_package_path=repeat_split,
+        output_root=tmp_path / "split-diff",
+        action_kind=CorporateActionSourceKind.SPLIT,
+        start_date=START,
+        end_date=END,
+        compared_at=COMPARED_AT,
+    )
+    dividend_diff = build_historical_corporate_action_repeat_diff(
+        baseline_package_path=Path(inputs["dividend_source_package_path"]),
+        repeat_package_path=repeat_dividend,
+        output_root=tmp_path / "dividend-diff",
+        action_kind=CorporateActionSourceKind.DIVIDEND,
+        start_date=START,
+        end_date=END,
+        compared_at=COMPARED_AT,
+    )
+    for target in (plan_module, apply_module, canonical_module):
+        monkeypatch.setattr(target, "APPROVED_DATA_ROOT", data_root)
+    monkeypatch.setattr(
+        plan_module,
+        "validate_offline_artifact_location",
+        lambda path, **_kwargs: path,
+    )
+    inventory = "a" * 64
+    monkeypatch.setattr(
+        apply_module,
+        "inventory_fingerprint",
+        lambda _root, **_kwargs: inventory,
+    )
+    plan = build_corporate_action_source_publication_plan(
+        data_root=data_root,
+        resolution_shadow_root=shadow.output_root,
+        split_repeat_diff_root=split_diff.output_root,
+        dividend_repeat_diff_root=dividend_diff.output_root,
+        source_revision="1" * 40,
+        created_at=PUBLISHED_AT,
+        plan_path=tmp_path / "apply-plan.json",
+        inventory_reader=lambda _root: inventory,
+    )
+    assert plan.plan.publication.source_record_count == 4
+    assert plan.plan.publication.resolved_record_count == 2
+    assert plan.plan.publication.quarantined_record_count == 2
+
+    publish_marker = apply_module._publish_marker
+    monkeypatch.setattr(
+        apply_module,
+        "_publish_marker",
+        lambda **_kwargs: (_ for _ in ()).throw(RuntimeError("injected marker stop")),
+    )
+    with pytest.raises(RuntimeError, match="injected marker stop"):
+        apply_approved_corporate_action_source_plan(
+            plan_path=plan.plan_path,
+            approved_plan_sha256=plan.plan_sha256,
+            expected_plan_logical_fingerprint=plan.plan.logical_fingerprint,
+            expected_current_state_fingerprint=inventory,
+            data_root=data_root,
+            inventory_reader=lambda _root: inventory,
+        )
+    assert all(Path(path).is_dir() for path in plan.plan.target_partition_paths)
+    assert not Path(plan.plan.target_publication_partition).exists()
+
+    monkeypatch.setattr(apply_module, "_publish_marker", publish_marker)
+    result = apply_approved_corporate_action_source_plan(
+        plan_path=plan.plan_path,
+        approved_plan_sha256=plan.plan_sha256,
+        expected_plan_logical_fingerprint=plan.plan.logical_fingerprint,
+        expected_current_state_fingerprint=inventory,
+        data_root=data_root,
+        verify_then_complete=True,
+        inventory_reader=lambda _root: inventory,
+        recovery_inventory_reader=lambda _root, _targets: inventory,
+    )
+    assert result.status == "verified_then_completed"
+    assert result.reused_partition_count == 1
+    assert result.publication_marker_published is True
+    assert result.formal_reread_record_count == 4
+    canonical = read_canonical_corporate_action_source(
+        data_root=data_root,
+        publication_path=(
+            Path(plan.plan.target_publication_partition) / "manifest.json"
+        ),
+    )
+    assert canonical.publication == plan.plan.publication
+    assert len(canonical.records) == 4

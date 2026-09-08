@@ -12,6 +12,7 @@
 - [Historical Corporate Action Source Package V1](historical-corporate-action-source-package-v1.md)
 - [Historical Corporate Action Resolution Shadow V1](historical-corporate-action-resolution-shadow-v1.md)
 - [Historical Corporate Action Source Repeat Diff V1](historical-corporate-action-source-repeat-diff-v1.md)
+- [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)
 
 - [Massive Historical Lifecycle Coverage Probe V1](massive-historical-lifecycle-coverage-probe-v1.md)
 
@@ -47,9 +48,6 @@
 - [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
 - [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
 - [Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
-- [Universe Membership Knowledge Time V1](universe-membership-knowledge-time-v1.md)
-- [Universe Membership Canonical Publication V1](universe-membership-canonical-publication-v1.md)
-
 - [Security Classification V1](security-classification-v1.md)
 
 Security Classification V1 now includes offline-tested SEC issuer evidence observation, canonical evidence, and completion-manifest contracts. No production SEC evidence partition exists.
@@ -76,6 +74,7 @@ Implemented as Python/Pydantic contracts:
 - [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
 - [Historical Identity Source Apply Plan V1](historical-identity-source-apply-plan-v1.md)
 - [Historical Identity Source Apply V1](historical-identity-source-apply-v1.md)
+- [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 
@@ -111,8 +110,10 @@ canonical sequence recorded in
 price target is complete, but that does not complete a research-ready
 Historical Coverage publication.
 Universe Membership V1 now has one physical canonical partition plus a
-marker-backed reader and a prospective daily preparation boundary. Corporate
-Action V1 remains contract-only. Their required historical composition is
+marker-backed reader and a prospective daily preparation boundary. The
+bounded corporate-action source publication mechanics are implemented, while
+canonical Corporate Action V1 remains contract-only. Their required historical
+composition is
 defined in [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
 
 ## Public Python Import Path

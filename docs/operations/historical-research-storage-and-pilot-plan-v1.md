@@ -65,6 +65,11 @@ Completed partitions are immutable, symlinks are rejected, and conflicting
 reruns fail closed. Provider corporate-action observations remain distinct from
 the future canonical Corporate Action family.
 
+ADR 0174 implements the separate no-write plan, physical-first/marker-last
+Apply, exact-prefix recovery, and canonical formal reader for the bounded
+source-observation family. Until an exact plan is separately applied, this is
+implemented mechanics rather than canonical data state.
+
 ## Layer ownership
 
 - Provider observations preserve normalized source facts and source revision;
@@ -146,6 +151,12 @@ queried only for a small set of unresolved stable IDs, never the entire base.
    inventory before and after the locked critical section. Disconnected fault
    injection passed before the exact real two-file Apply and zero-write
    postflight. This does not publish final Historical Coverage.
+15. **Complete as publication mechanics under ADR 0174:** bind the exact
+   split/dividend source-observation shadow, zero-delta repeat evidence,
+   Identity evidence, clean code revision, absent targets, and full `/data`
+   inventory; then provide physical-first/marker-last Apply, exact-prefix
+   recovery, and a transitive canonical reader. A real Apply remains a
+   separately recorded state transition.
 
 Steps 1–11 were repository mechanics. Step 12 was the separately governed
 historical EOD/Identity transition and is retained as execution history, not a

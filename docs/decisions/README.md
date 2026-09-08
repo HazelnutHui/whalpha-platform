@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0174](0174-publish-bounded-corporate-action-source-observations.md): publish the exact resolved split/dividend source-observation snapshot and its bounded coverage marker without promoting it to canonical events or signal eligibility.
+
 - [ADR 0173](0173-separate-current-and-research-classification-evidence.md): preserve provider taxonomy observations, stable-ID projection, business validity, and knowledge time separately; evaluate GICS History first without selecting or acquiring a source.
 
 - [ADR 0172](0172-stage-split-adjustments-before-dividend-total-return.md): derive a bounded split-only current-basis candidate from exact event ratios before attempting dividend total return.
@@ -305,3 +307,6 @@ Each ADR should include:
 - [0169: Stage Corporate-Action Source Before Adjustment](0169-stage-corporate-action-source-before-adjustment.md)
 - [0170: Resolve Corporate Actions by Exact Event Date](0170-resolve-corporate-actions-by-exact-event-date.md)
 - [0171: Observe Corporate-Action Source Revisions Before Canonicalization](0171-observe-corporate-action-source-revisions-before-canonicalization.md)
+- [0172: Stage Split Adjustments Before Dividend Total Return](0172-stage-split-adjustments-before-dividend-total-return.md)
+- [0173: Separate Current and Research Classification Evidence](0173-separate-current-and-research-classification-evidence.md)
+- [0174: Publish Bounded Corporate-Action Source Observations](0174-publish-bounded-corporate-action-source-observations.md)

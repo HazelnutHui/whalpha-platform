@@ -22,6 +22,12 @@ row is resolved only through the exact event-date canonical Resolver, or
 remains quarantined. Its temporary source-observation Parquet is still not the
 canonical Corporate Action dataset and is not signal eligible.
 
+ADR 0174 adds an inventory-bound, marker-last path that can publish those exact
+source-observation partitions and their bounded query-scope evidence to Dell
+canonical storage. This changes custody, not authority: the rows remain
+`first_observed_only`, `outcome_reconciliation_only`, and distinct from the
+still-unimplemented canonical Corporate Action dataset.
+
 ## Grain
 
 One record represents one corporate action event for an instrument, source, and revision.

@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-08 — Implement bounded corporate-action source publication
+
+- Accepted ADR 0174 and reused the existing Corporate Action Source
+  Observation 1.1 partitions instead of creating a duplicate event family.
+- Added a clean-revision, inventory-bound no-write plan that formally rereads
+  the exact resolution shadow, both zero-delta repeat reports, and canonical
+  Identity evidence. The publication marker preserves query-snapshot,
+  observation-revision, and outcome-only semantics.
+- Added a network-prohibited, physical-first/marker-last Apply with the shared
+  Dell lock, exact-prefix recovery, outside-target drift detection, and an
+  independent canonical reader. Fault injection proved recovery after all
+  physical partitions but before the marker.
+- Focused corporate-action, repeat-diff, persistence, and contract coverage
+  passed 53 tests. The complete API regression passed 2,238 tests with only the
+  two existing dependency deprecation warnings.
+- No `/data` Apply, canonical Corporate Action, Adjustment Ledger, Historical
+  Coverage publication, analytics run, Snapshot, bundle, or deployment is part
+  of this implementation commit.
+
 ## 2026-09-08 — Add strategy priority-versus-chase-risk visualization
 
 - Added a bilingual selected-channel decision map that places each displayed
