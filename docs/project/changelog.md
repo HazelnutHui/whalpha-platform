@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-08 — Add Strategy Channel decision-integrity presentation
+
+- Kept every published strategy-channel status, score, rank, parameter, and
+  threshold unchanged while separating channel-local research priority from
+  linked Candidate trade-review readiness.
+- Added explicit technical-review, wait-for-setup, all-risk-mode rejection,
+  gap/realized-volatility review, and unavailable labels from existing typed
+  Candidate summary/detail facts. Event timing remains a manual check rather
+  than an inferred fact.
+- Added a stable-ID display diagnostic for live channels, displayed slots,
+  unique securities, cross-channel repeats, all-risk-mode rejection, missing
+  bounded setup, and elevated extension. It explicitly does not present this
+  as formal sector concentration or independent diversification.
+- Strategy cards, rows, and detail now show cross-channel repetition and the
+  research/readiness conflict without recomputing or silently reranking the
+  source results. Guest and credential Sessions retain identical capability.
+- The complete frontend regression passed 117 tests and a Production build;
+  the complete API regression passed 2,209 tests with only the two existing
+  dependency deprecation warnings. This entry records repository source only;
+  deployment is a separate checkpoint.
+
 ## 2026-09-08 — Deploy cross-strategy decision desk and current readiness gates
 
 - Added a bilingual cross-channel decision desk to Strategy Channels. It shows

@@ -140,6 +140,24 @@ the [2026-08-28 offline review](../audits/candidate-strategy-channel-preview-202
 the [product/Snapshot review](../audits/candidate-strategy-product-snapshot-review-2026-08-28.md),
 and the [channel-overlap review](../audits/candidate-strategy-channel-overlap-2026-08-28.md).
 
+The repository UI now adds a decision-integrity presentation over the unchanged
+published facts. It keeps channel status, score, and rank intact while showing
+a second, explicitly separate trade-review readiness result from the linked
+same-Snapshot Candidate record. A security rejected by all three Candidate risk
+modes is labelled `risk_gates_reject`; a non-reviewable posture or
+`no_viable_setup` is labelled `wait_for_setup`; only a
+`technical_review_ready` posture with at least one eligible risk mode is
+labelled `technical_review_ready`. These are browser presentation labels, not
+a new model, rank, threshold, recommendation, or publication contract.
+
+The same view counts displayed channel slots and unique securities by stable
+`instrument_id`, lists cross-channel repeats, and summarizes unavailable setup,
+risk-rejected, and elevated-extension facts. It explicitly does not call that
+formal sector concentration: the current technical channels reuse overlapping
+price/volume, relative-strength, and trend inputs, while point-in-time sector
+taxonomy remains a separate future data requirement. Ticker is display
+metadata only.
+
 ## Planned implementation sequence
 
 1. Add continuation-specific trend-efficiency, consolidation/contraction,

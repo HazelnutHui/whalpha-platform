@@ -276,6 +276,16 @@
 .strategy-channel-card > span { font-weight: 750; }
 .strategy-channel-card > strong { font-size: 1.55rem; }
 .strategy-channel-card > small { color: var(--muted); }
+.strategy-integrity { padding: 20px; border-color: color-mix(in srgb, var(--accent) 34%, var(--border)); }
+.strategy-integrity > header { display: grid; grid-template-columns: minmax(0, .75fr) minmax(300px, 1fr); gap: 24px; align-items: end; margin-bottom: 16px; }
+.strategy-integrity > header h2 { margin: 4px 0 0; }
+.strategy-integrity > header > p { margin: 0; color: var(--muted); line-height: 1.55; }
+.strategy-integrity-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.strategy-integrity-grid > div { padding: 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-2); }
+.strategy-integrity-grid span { display: block; min-height: 30px; color: var(--muted); font-size: .67rem; line-height: 1.35; }
+.strategy-integrity-grid strong { display: block; margin-top: 7px; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.strategy-overlap-note { margin: 13px 0 0; color: var(--accent); font-size: .78rem; line-height: 1.5; }
+.strategy-integrity-boundary { margin: 9px 0 0; color: var(--muted); font-size: .76rem; line-height: 1.55; }
 .strategy-leader-desk { padding: 20px; }
 .strategy-leader-desk > header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, .8fr); gap: 24px; align-items: end; margin-bottom: 16px; }
 .strategy-leader-desk > header h2 { margin: 4px 0 0; }
@@ -303,6 +313,9 @@
 .strategy-result-row:hover, .strategy-result-row:focus-visible { background: var(--surface-2); }
 .strategy-result-row small { display: block; color: var(--muted); }
 .strategy-result-row > span:nth-last-child(-n+2) { color: var(--muted); font-size: .8rem; line-height: 1.4; }
+.strategy-overlap-label { margin-top: 5px; color: var(--accent) !important; line-height: 1.35; }
+.strategy-result-decision { display: grid; justify-items: start; gap: 5px; }
+.strategy-result-decision > small { color: var(--warning); font-size: .68rem; line-height: 1.35; }
 .strategy-status { width: fit-content; padding: 5px 8px; border-radius: 999px; font-size: .75rem; font-weight: 750; }
 .strategy-status-advance_to_research { color: var(--positive); background: color-mix(in srgb, var(--positive) 14%, transparent); }
 .strategy-status-watch_for_trigger { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); }
@@ -310,6 +323,27 @@
 .strategy-decision-grid > div { padding: 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-2); }
 .strategy-decision-grid h3 { margin-top: 0; }
 .strategy-decision-grid p { color: var(--muted); }
+.strategy-readiness-pill { display: inline-block; width: fit-content; padding: 5px 8px; border-radius: 999px; font-size: .7rem; font-weight: 800; }
+.strategy-readiness-pill-technical_review_ready { color: var(--positive); background: color-mix(in srgb, var(--positive) 14%, transparent); }
+.strategy-readiness-pill-wait_for_setup { color: var(--warning); background: color-mix(in srgb, var(--warning) 14%, transparent); }
+.strategy-readiness-pill-risk_gates_reject { color: var(--negative-strong); background: color-mix(in srgb, var(--negative) 15%, transparent); }
+.strategy-readiness-pill-unavailable { color: var(--muted); background: color-mix(in srgb, var(--muted) 13%, transparent); }
+.strategy-leader-card.strategy-readiness-risk_gates_reject::after { background: var(--negative); }
+.strategy-leader-card.strategy-readiness-wait_for_setup::after { background: var(--warning); }
+.strategy-readiness-banner { padding: 17px; border: 1px solid var(--border); border-left: 3px solid var(--positive); border-radius: 10px; background: var(--surface-2); }
+.strategy-readiness-banner.strategy-readiness-wait_for_setup { border-left-color: var(--warning); }
+.strategy-readiness-banner.strategy-readiness-risk_gates_reject { border-left-color: var(--negative); }
+.strategy-readiness-banner.strategy-readiness-unavailable { border-left-color: var(--muted); }
+.strategy-readiness-banner h3 { margin: 4px 0 0; }
+.strategy-readiness-answers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+.strategy-readiness-answers > div { padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: color-mix(in srgb, var(--surface) 86%, transparent); }
+.strategy-readiness-answers span, .strategy-readiness-answers small { display: block; color: var(--muted); }
+.strategy-readiness-answers strong { display: block; margin: 5px 0; }
+.strategy-readiness-answers small { line-height: 1.45; }
+.strategy-readiness-banner details { margin-top: 10px; color: var(--muted); font-size: .76rem; }
+.strategy-readiness-banner details summary { cursor: pointer; color: var(--text); }
+.strategy-readiness-banner details ul { margin-bottom: 0; padding-left: 18px; }
+.strategy-risk-focus { margin: 10px 0 0; color: var(--warning); font-size: .78rem; font-weight: 750; }
 .candidate-strategy-control-note { padding-left: 12px; border-left: 3px solid var(--warning); }
 .strategy-methodology > p, .strategy-methodology > small { color: var(--muted); }
 .strategy-methodology > code { display: block; margin-top: 8px; overflow-wrap: anywhere; font-size: .67rem; color: var(--muted); }
@@ -350,10 +384,13 @@
   .candidate-row > *:nth-child(n+4) { display: none; }
   .candidate-detail-summary { grid-template-columns: 1fr 1fr; }
   .strategy-channel-grid { grid-template-columns: 1fr 1fr; margin-inline: 12px; }
+  .strategy-integrity > header { grid-template-columns: 1fr; gap: 8px; }
+  .strategy-integrity-grid { grid-template-columns: 1fr 1fr; }
   .strategy-leader-desk > header { grid-template-columns: 1fr; gap: 8px; }
   .strategy-leader-desk > div { grid-template-columns: 1fr; }
   .strategy-leader-card { min-height: 0; }
   .strategy-decision-grid { grid-template-columns: 1fr; }
+  .strategy-readiness-answers { grid-template-columns: 1fr; }
   .strategy-formula-grid { grid-template-columns: 1fr 1fr; }
   .strategy-geometry-grid { grid-template-columns: 1fr 1fr; }
   .strategy-contribution-table > div { grid-template-columns: minmax(125px, 1fr) 62px 52px 78px; font-size: .72rem; }

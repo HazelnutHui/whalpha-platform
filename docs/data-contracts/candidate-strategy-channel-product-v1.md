@@ -31,6 +31,32 @@ baseline is not chronologically validated. Research priority is not a trade
 recommendation, price/volume is not fund flow, and underlying-stock results are
 not option returns. Guest and credential Sessions receive identical content.
 
+## Decision-integrity browser projection
+
+The browser may join a displayed strategy assessment to the Candidate summary
+and detail from the same active Snapshot only by stable `instrument_id`. Missing
+or mismatched identity fails closed. Without changing any source status, score,
+rank, or threshold, the interface may derive these presentation facts:
+
+- `risk_gates_reject` when all three published Candidate risk dispositions are
+  ineligible;
+- `wait_for_setup` when the linked Entry Geometry posture is not
+  `technical_review_ready` or its setup is `no_viable_setup`;
+- `technical_review_ready` only when at least one Candidate risk mode is
+  eligible and the Entry Geometry posture is `technical_review_ready`;
+- `unavailable` when the required Candidate summary is absent;
+- visible-slot, unique-security, repeated-security, risk-rejected,
+  no-viable-setup, and moderate-or-higher extension counts over the bounded
+  displayed records.
+
+Risk rejection reason codes and underlying 3/5-session return, support-distance,
+realized-volatility, and maximum-gap facts remain verbatim typed source facts.
+Event timing remains an explicit manual check because it is not in this
+governed payload. Cross-channel repetition is keyed by stable ID and must not be
+described as formal sector concentration, independence, diversification, or
+performance evidence. No new analytics or payload contract is created by this
+projection.
+
 ## Delivery boundary
 
 Snapshot 1.9 / Dashboard 2.6 adds exactly
