@@ -12,12 +12,14 @@ tickers, including securities outside current active listings and the product
 Universes.
 
 A read-only pre-mapping census found 39 observations on dates without an exact
-canonical Identity session: one split and 38 dividends. On dates with exact
-Identity, direct provider-ticker lookup resolves 708 split rows and 41,341
-dividend rows; 1,240 split and 26,771 dividend rows have no same-day resolver
-match. Using the latest resolver, a prior/later trading session, ticker name,
-or current Universe to raise those ratios would introduce survivorship and
-identity leakage.
+canonical Identity session: one split and 38 dividends. Its raw case-sensitive
+lookup estimated 708 resolved split rows and 41,341 resolved dividend rows.
+The completed formal execution resolves 709 and 41,347 respectively because
+the existing provider mapper trims and uppercases both source and Resolver
+tickers; seven rows required this documented normalization. The final
+formally-reread counts supersede the diagnostic. Using the latest resolver, a
+prior/later trading session, ticker name, or current Universe to raise those
+ratios would introduce survivorship and identity leakage.
 
 The source endpoint does not expose a defensible historical publication time
 or revision number. The first package is one observation baseline, not proof
@@ -68,6 +70,21 @@ row proves a same-date technical identity link only. It is still
   package revisions before proposing canonical Corporate Action.
 - No Adjustment Ledger work begins until source observations, identity,
   revisions, and event ordering are separately reconciled.
+
+## Execution evidence
+
+The first real shadow completed on clean Dell main
+`51dd39405fe2576d8eacc553b9fe0f99f788646a`. All 70,099 source rows were
+preserved: 42,056 resolved and 28,043 quarantined. Thirty-nine rows lack an
+exact Identity session and 28,004 lack a same-date ticker. All 304 published
+Identity sessions used by the source range passed their evidence-bound
+Resolver checks. The owner-only output passed an independent formal reread;
+its manifest SHA-256 is
+`547218cf639bf4e06daa216868bd669cd73e4b69a55f7da4fad072077ffcacb8`
+and logical fingerprint is
+`d45b405b5d595755d3ed7342747701d83796ca895c022f2c19aef2af4ae5acb1`.
+The dated audit contains the full safe aggregate record. No canonical or
+Production state changed.
 
 ## Rejected alternatives
 

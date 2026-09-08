@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-08 — Complete real corporate-action resolution shadow
+
+- On clean Dell main `51dd39405fe2576d8eacc553b9fe0f99f788646a`, mapped
+  all 70,099 retained Massive split/dividend rows only through exact event-date
+  Identity. The result resolves 42,056 rows and quarantines 28,043; 39 rows
+  lack an exact Identity session and 28,004 lack a same-date ticker.
+- All 304 used Resolver snapshots passed their published evidence bindings.
+  Latest/nearest/name/Universe fallbacks remained zero. The formal mapper's
+  trim-and-uppercase normalization resolved seven rows omitted by the earlier
+  raw case-sensitive diagnostic; this difference is explicitly reconciled in
+  ADR 0170 and the dated audit.
+- The independent formal reread passed on two event-year artifacts and an
+  owner-only five-file / 5,006,834-byte tree with zero symlinks. Shadow
+  manifest SHA-256 is
+  `547218cf639bf4e06daa216868bd669cd73e4b69a55f7da4fad072077ffcacb8`.
+- The post-run network-prohibited current-context report kept `/data` exactly
+  unchanged at 4,060 files / 2,009,699,645 bytes and fingerprint
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`.
+  No canonical action, Adjustment Ledger, analytics, publication, deployment,
+  scheduler, or Production transition occurred.
+
 ## 2026-09-08 — Implement exact-event-date corporate-action resolution shadow
 
 - Accepted ADR 0170 and added a network-prohibited, owner-only `/tmp` shadow

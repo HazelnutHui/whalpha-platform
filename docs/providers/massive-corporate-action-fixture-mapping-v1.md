@@ -9,10 +9,11 @@ the documented mapper fields, but it has not been passed through an event-date
 stable-ID adapter. No source-to-canonical adapter, canonical Corporate Action
 dataset, or `/data` write exists.
 
-ADR 0170 now implements the disconnected event-date adapter boundary. It uses
-the mapper on formally reread source pages only after an exact-date Resolver
-passes the published Identity evidence binding. Real execution remains pending
-in this implementation revision.
+ADR 0170 now implements and has executed the disconnected event-date adapter
+boundary. It uses the mapper on formally reread source pages only after an
+exact-date Resolver passes the published Identity evidence binding. The first
+real shadow preserved all 70,099 rows, resolving 42,056 and quarantining
+28,043; it remains temporary and outcome-only.
 
 ## Public shape review
 
@@ -82,9 +83,8 @@ a return forecast, alpha, option return, or permission to create a real ledger.
 - The earlier account probe reached deprecated V3 endpoints only. ADR 0169 now
   separately proves current V1 access and complete real page chains for the
   exact 2025-06-23 through 2026-09-04 range.
-- The real source rows have not yet been mapped against event-date Identity;
-  the disconnected adapter is implemented but not yet executed. Append-only
-  repeat-observation/revision handling remains absent.
+- The first real event-date Identity shadow has completed and passed formal
+  reread. Append-only repeat-observation/revision handling remains absent.
 - No provider observation has been promoted into canonical Corporate Action.
 - Merger, spinoff, symbol-change, delisting, successor, and terminal-outcome
   sources remain absent.

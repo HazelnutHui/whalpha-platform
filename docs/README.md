@@ -26,6 +26,7 @@
 - [2026-09-08 Corporate-Action Source Audit](audits/corporate-action-source-2026-09-08.md): first complete real V1 split/dividend packages, field census, custody proof, and unchanged canonical state.
 - [ADR 0170: Exact-Event-Date Corporate-Action Resolution](decisions/0170-resolve-corporate-actions-by-exact-event-date.md): forbids latest/nearest ticker fallback and requires evidence-bound same-date stable-ID mapping.
 - [Historical Corporate Action Resolution Shadow V1](data-contracts/historical-corporate-action-resolution-shadow-v1.md): disconnected one-to-one source mapping with quarantine and zero canonical authority.
+- [2026-09-08 Corporate-Action Resolution Shadow Audit](audits/corporate-action-resolution-shadow-2026-09-08.md): exact-event-date real mapping counts, bound evidence, pre-census reconciliation, and unchanged canonical-state proof.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 
