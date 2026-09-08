@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-08 — Gate lifecycle adapter work on a real cross-venue sample
+
+- Accepted ADR 0168 and completed a dated official-public-material comparison
+  of LSEG, Nasdaq, NYSE, Cboe, ICE, and S&P lifecycle/corporate-action roles.
+  LSEG is first in the inquiry/sample order; no source is selected, purchased,
+  contacted, accessed, entitled, permission-cleared, or implemented.
+- Fixed a deterministic 30-item diagnostic over the exact ADR 0167 queue: two
+  date-edge items from each of 15 non-empty exchange/year/Identity-observation-
+  gap strata, yielding six items per exchange, ten from 2025, and twenty from
+  2026. It is a semantic diagnostic, not a population coverage estimate.
+- Sole-primary qualification requires every item to pass stable-ID identity,
+  explicit coverage disposition, revision, availability-clock, last-tradable,
+  terminal, successor/consideration, and permitted-use gates. Partially useful
+  sources remain corroborators; false identity, silent omission, fabricated
+  knowledge time, destructive revision, or permission incompatibility stops
+  the proposed role.
+- Deliberately added no speculative adapter, request runner, vendor sample,
+  credential, `/data` write, lifecycle promotion, Historical Coverage,
+  research, Snapshot, bundle, OCI, scheduler, deployment, or Production
+  transition.
+
 ## 2026-09-08 — Plan lifecycle corroboration without promoting candidates
 
 - Accepted ADR 0167 and added a typed, network-prohibited planner that formally

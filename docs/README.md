@@ -19,6 +19,8 @@
 - [2026-09-08 Current Historical Family-Evidence Canonical Apply Audit](audits/current-historical-family-evidence-canonical-apply-2026-09-08.md): exact two-manifest Apply, zero-write postflight, authoritative post-state, and unchanged research-readiness boundary.
 - [ADR 0167: Inactive Lifecycle Corroboration Plan](decisions/0167-plan-inactive-lifecycle-corroboration-without-promotion.md): exact stable-ID review queue, explicit evidence gaps, and zero promotion authority.
 - [2026-09-08 Inactive Lifecycle Corroboration Plan Audit](audits/inactive-lifecycle-corroboration-plan-2026-09-08.md): real 547-item routing census, exact plan identity, knowledge-time boundary, and unchanged canonical state.
+- [ADR 0168: Lifecycle Adapter Sample Gate](decisions/0168-gate-lifecycle-adapter-on-a-cross-venue-source-sample.md): require a real cross-venue sample and stable-ID semantic proof before adapter implementation.
+- [2026-09-08 Lifecycle Corroboration Source Review](providers/lifecycle-corroboration-source-review-2026-09-08.md): official source roles, deterministic 30-item diagnostic, and paid-sample decision boundary.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 
@@ -119,6 +121,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Historical Research Source Capability V1](providers/historical-research-source-capability-v1.md): Repository-evidenced source, entitlement, implementation, and gap matrix for 252/504-session history.
 - [2026-08-28 Massive Historical Research Review](providers/massive-historical-research-review-2026-08-28.md): Current official plan, endpoint, licensing, guest-compatibility, and entitlement gates.
 - [2026-08-28 Equal-Capability Historical Source Review](providers/equal-capability-historical-source-review-2026-08-28.md): Official-source role, permission, coverage, and hybrid-composition decision.
+- [2026-09-08 Lifecycle Corroboration Source Review](providers/lifecycle-corroboration-source-review-2026-09-08.md): Cross-venue first-inquiry direction, exchange benchmarks, sample gates, and unresolved commercial permissions.
 - [Source Selection and Permission Inquiry Packet V1](providers/source-selection-permission-inquiry-packet-v1.md): Prepared, unsent questions for exact shared-product permission, retention, coverage, and pricing.
 - [Massive Corporate Action Fixture Mapping V1](providers/massive-corporate-action-fixture-mapping-v1.md): Network-free split/dividend source mapping, quarantine rules, and adjustment-factor invariants.
 

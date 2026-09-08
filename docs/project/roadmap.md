@@ -87,9 +87,12 @@ final Historical Coverage or completion of the missing families below.
 ADR 0167 now supplies an exact 547-item inactive-lifecycle corroboration queue.
 It routes 271 XNAS candidates to a required documented-source pilot and leaves
 276 other-venue candidates blocked on all-exchange source selection. Every
-item remains point-in-time ineligible. The next lifecycle step is bounded
-source review and pilot design from this queue, not another planning layer and
-not candidate promotion.
+item remains point-in-time ineligible. ADR 0168 completes the bounded official-
+source review and fixes the next lifecycle boundary: obtain and permission-
+review one real cross-venue sample, then run the deterministic 30-item semantic
+diagnostic before implementing any adapter. LSEG is first in the inquiry order;
+Nasdaq, NYSE, and Cboe are official benchmarks. No source is selected and no
+paid access, trial, or contact is authorized by the roadmap.
 
 - point-in-time Identity and daily Universe membership;
 - lifecycle, inactive, terminal, and successor evidence;

@@ -18,6 +18,14 @@ The broader official-source comparison is recorded in the dated
 It found no single cleared source and recommends provider-neutral source
 composition under Source Permission Governance V1.
 
+The narrower 2026-09-08
+[Lifecycle Corroboration Source Review](lifecycle-corroboration-source-review-2026-09-08.md)
+compares current official cross-venue and exchange documentation against the
+exact 547-item inactive queue. LSEG is the preferred first inquiry/sample
+candidate, while Nasdaq, NYSE, and Cboe remain official venue benchmarks. No
+source has been selected, purchased, accessed, permission-cleared, or
+implemented.
+
 ## Status meanings
 
 - `verified_current`: exercised by the bounded current pipeline.
@@ -92,6 +100,13 @@ now binds precedence, evidence roles, permission-review fingerprints,
 corroboration thresholds, and fail-closed conflict handling per family and fact
 scope. No real source policy is selected or activated.
 
+For lifecycle corroboration, do not implement an adapter until a real licensed
+sample proves its identifiers, revisions, availability clocks, terminal terms,
+delivery mechanics, and permitted uses. Start the commercial/sample comparison
+with a cross-venue source to minimize fragmentation, then use exchange sources
+as authoritative benchmarks or bounded corroborators. This ordering does not
+weaken stable-ID or family-specific resolution gates.
+
 Free sources should be evaluated before paid expansion, but this document does
 not guess which free source is complete enough. A paid source should later plug
 into the same provider-neutral observations and must expand coverage rather
@@ -114,5 +129,7 @@ covering the commercial and open-source questions below. It remains
 - canonical mapping, contradiction, quarantine, and completion gates;
 - explicit list of gaps that remain after the pilot.
 
-The packet is a review artifact, not standing authority. Provider access and
-canonical Apply remain separately authorized transitions.
+The packet is a review artifact, not standing authority. For lifecycle, the
+next external input is a price/sample/permission response for the preferred
+cross-venue candidate and alternatives. Provider contact, purchase, access,
+pilot execution, and canonical Apply remain separately authorized transitions.

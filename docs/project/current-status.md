@@ -174,6 +174,17 @@ source availability unknown and point-in-time eligibility zero. The plan made
 no external request or `/data` write and authorizes no canonical lifecycle,
 Historical Coverage, or performance transition.
 
+ADR 0168 and the dated official-source review now set the next external gate.
+The preferred first inquiry is a real cross-venue corporate-action/trading-
+status sample, with LSEG first in the evaluation order and Nasdaq/NYSE/Cboe
+retained as official exchange benchmarks. A deterministic 30-item diagnostic
+covers all 15 non-empty exchange/year/observation-gap strata. No vendor is
+selected, purchased, contacted, accessed, or permission-cleared, and no
+adapter has been implemented. Lifecycle research remains blocked until the
+user reviews exact price/sample/license terms and a provisioned sample passes
+stable-ID, revision, knowledge-time, last-tradable, terminal, successor,
+consideration, and equal-capability-use gates.
+
 The report projects normalized Identity source observations as a separate
 record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
 artifacts, and the exact two missing EOD sessions: 8/13 and 8/19. It
@@ -347,9 +358,10 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    prospective candidate boundary but has not yet been exercised on a new
    session or connected to the coordinator. Keep the 301 retrospective
    partitions outcome-only.
-10. Use the exact ADR 0167 queue to review sources and design bounded Nasdaq
-   and all-exchange corroboration pilots for the 547 inactive lifecycle review
-   candidates; then complete canonical lifecycle,
+10. Use the exact ADR 0167 queue and ADR 0168 sample gate to obtain one reviewed
+   cross-venue sample, execute the deterministic 30-item diagnostic, and only
+   then decide whether to implement a primary adapter or compose explicit
+   exchange corroborators; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,
    publish transitive Historical Coverage, and reconcile the 26-session
    analytics limitation.

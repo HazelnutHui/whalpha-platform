@@ -69,6 +69,15 @@ XNAS rows have only a documented-source pilot route; the remaining 276 rows
 still lack an all-exchange source selection. This planning evidence does not
 change readiness.
 
+ADR 0168 records the subsequent official-source review. A cross-venue
+corporate-action/trading-status product is the preferred first inquiry and
+sample route, with Nasdaq, NYSE, and Cboe evidence retained as venue-specific
+benchmarks. No adapter is implemented before a real licensed sample passes the
+deterministic 30-item stable-ID and semantic diagnostic. A partially useful
+source may be a corroborator, but it cannot silently become the primary
+lifecycle authority. This source-selection gate also does not change
+readiness.
+
 ## Governing principles
 
 - Dell is the only compute, historical-storage, and data-governance authority.

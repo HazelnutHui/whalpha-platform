@@ -304,6 +304,18 @@ historical availability and point-in-time eligible count is zero. The plan is
 temporary, made no request or `/data` write, and grants no canonical lifecycle
 or research authority.
 
+ADR 0168 now closes the public-document source review without pretending that
+documentation is a payload. A cross-venue corporate-action/trading-status
+sample is the preferred first external input, with LSEG first in the inquiry
+order and Nasdaq/NYSE/Cboe retained as official exchange benchmarks. The fixed
+diagnostic selects 30 earliest/latest candidates across all 15 non-empty
+exchange/year/observation-gap strata: six per exchange, ten from 2025, and
+twenty from 2026. No source is selected or accessed, and no adapter exists.
+The next lifecycle transition requires the user to review an exact
+price/sample/permission offer; only a provisioned sample can define the real
+request ceiling and test stable-ID, revision, knowledge-time, last-tradable,
+terminal, successor, consideration, and usage-permission gates.
+
 ## OCI production proof
 
 The final independent remote inspector matched the exact Dell bundle:
@@ -509,9 +521,12 @@ separately bounded.
    and point-in-time Identity evidence. Final Historical Coverage remains
    absent and research remains data-blocked. The disconnected inactive
    lifecycle normalization and stable-identity resolution shadow is complete
-   for both anchors. ADR 0167 provides the exact 547-item work queue. Next use
-   it to review source capability and design bounded Nasdaq and all-exchange
-   pilots without promoting candidates by ticker or provider status alone.
+   for both anchors. ADR 0167 provides the exact 547-item work queue. ADR 0168
+   completes public source review and requires a real licensed cross-venue
+   sample plus the deterministic 30-item diagnostic before adapter work.
+   Request exact price/sample/permission terms from the user before any vendor
+   contact, trial, purchase, or access; do not promote candidates by ticker or
+   provider status alone.
    Then complete canonical lifecycle, actions, adjustments, costs, and
    sealed chronological evaluation before interpreting strategy performance.
 5. **Strategy research:** validate one preregistered strategy family at a time,

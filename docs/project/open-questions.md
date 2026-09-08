@@ -34,9 +34,11 @@ operations document.
   deletion obligation remains after termination? Use the prepared, unsent
   `Source Selection and Permission Inquiry Packet V1`; do not infer answers
   from marketing pages.
-- Which all-exchange lifecycle composition supplements Nasdaq Daily List for
-  non-Nasdaq delistings, merger consideration, successor identity, spinoffs,
-  and last-tradable-session evidence?
+- Will a provisioned cross-venue corporate-action/trading-status sample pass
+  the ADR 0168 stable-ID, revision, availability-clock, terminal-terms,
+  last-tradable, permission, and 30-item diagnostic gates? If not, which exact
+  Nasdaq/NYSE/Cboe source composition closes the remaining fact scopes without
+  first-non-null resolution or ticker-only identity?
 - What account-specific permission supports owner non-display calculations,
   derived strategy research, retained history, and required deletion on
   provider termination?
