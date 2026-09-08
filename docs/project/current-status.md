@@ -205,12 +205,12 @@ nearest-session, name, and Universe fallbacks remain zero. Its local
 observation revision `1` is not provider revision evidence and cannot support
 canonical action, adjustment, or historical signal eligibility.
 
-ADR 0171 implements an owner-only, network-prohibited repeat-diff over two
-complete identical-scope source packages. It requires strict observation order
-and unique provider action IDs and classifies only observed unchanged,
-same-ID changed, added, and removed rows. It does not infer correction,
-cancellation, provider revision number, or source availability. Real repeat
-acquisition and diff execution remain pending.
+ADR 0171's later identical-scope source observation and both owner-only diffs
+have completed and passed formal reread. All 1,949 split and 68,150 dividend
+payloads were unchanged; same-ID changed, added, removed, event-date, ticker,
+and pagination-shape deltas were zero. The approximately 69–73 minute interval
+does not prove historical immutability and does not infer correction,
+cancellation, provider revision number, or source availability.
 
 The report projects normalized Identity source observations as a separate
 record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
@@ -367,11 +367,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    Coverage or research readiness. ADR 0169 now provides the temporary
    split/dividend source boundary, and both exact real packages have completed
    and passed formal reread. ADR 0170's real exact-event-date stable-ID shadow
-   has also passed formal reread. ADR 0171 implements the repeat-diff boundary;
-   acquire one later identical-scope observation and execute it, then review
-   semantic conflicts before any canonical action or Adjustment Ledger work.
-   Lifecycle, cost, availability, and evaluation evidence also remain
-   incomplete.
+   has also passed formal reread. ADR 0171's real repeat acquisition and two
+   zero-delta diffs have completed. Next define append-only revision policy and
+   review semantic/cross-event conflicts before any canonical action or
+   Adjustment Ledger work. Lifecycle, cost, availability, and evaluation
+   evidence also remain incomplete.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-08 — Complete first corporate-action repeat observation
+
+- On clean Dell main `1f07c53893aa31366f057fd440ed82f9ed49ef87`, acquired
+  one later identical-scope split package and dividend package. Both again had
+  complete pagination, 1,949 / 68,150 rows, and zero invalid dates, duplicate
+  provider IDs, or unexpected fields.
+- The two ADR 0171 diffs found every payload unchanged. Same-ID changed, added,
+  removed, event-date, ticker, and pagination-shape deltas were all zero.
+  Independent formal rereads passed for both source packages and both diffs.
+- This approximately 69–73 minute result is recorded only as short-interval
+  stability; it does not claim historical immutability, provider revision
+  numbers, correction/cancellation semantics, or point-in-time availability.
+- The post-run network-prohibited report kept `/data` at 4,060 files /
+  2,009,699,645 bytes, fingerprint
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
+  zero symlinks, and zero residue. No canonical, adjustment, analytics,
+  publication, deployment, scheduler, or Production transition occurred.
+
 ## 2026-09-08 — Implement corporate-action repeat-observation diff
 
 - Accepted ADR 0171 and added a disconnected, owner-only source repeat-diff

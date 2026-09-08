@@ -341,13 +341,14 @@ zero. The local observation revision `1` and
 Coverage, or research authority. The shadow manifest SHA-256 is
 `547218cf639bf4e06daa216868bd669cd73e4b69a55f7da4fad072077ffcacb8`.
 
-ADR 0171 now implements the next bounded gate: a disconnected repeat-diff for
-two complete, identical-scope source packages. It requires unique provider
-action IDs and strict observation order, then reports unchanged, same-ID
-changed, added, and removed records without copying raw payloads or assigning
-provider revision meaning. Real repeat acquisition and diff execution remain
-pending. One no-change result would prove only short-interval stability; it
-would not establish historical immutability or point-in-time availability.
+ADR 0171's first real repeat observation and both disconnected diffs have now
+completed. All 1,949 split and 68,150 dividend provider IDs and payloads were
+unchanged over the approximately 69–73 minute observation intervals; changed,
+added, removed, effective-date, ticker, and pagination-shape deltas were all
+zero. Both source packages and diff outputs passed formal reread. This proves
+only short-interval stability, not historical immutability, provider revision
+numbers, or point-in-time availability. Future changes must remain append-only
+observed deltas until separately interpreted.
 
 ## OCI production proof
 
@@ -560,10 +561,10 @@ separately bounded.
    work. ADR 0169 independently provides the no-canonical-write Massive V1
    split/dividend source boundary, and both exact real packages have completed
    and passed formal reread. ADR 0170's real event-date stable-ID mapping shadow
-   has also passed formal reread. ADR 0171 implements the isolated repeat-diff;
-   acquire one later identical-scope observation and execute it, then perform
-   semantic conflict review before any canonical Corporate Action/adjustment
-   transition.
+   has also passed formal reread. ADR 0171's later identical-scope observation
+   and two zero-delta diffs have completed. Next define append-only revision
+   policy and perform semantic/cross-event conflict review before any canonical
+   Corporate Action/adjustment transition.
    Request exact price/sample/permission terms from the user before any vendor
    contact, trial, purchase, or access; do not promote candidates by ticker or
    provider status alone.

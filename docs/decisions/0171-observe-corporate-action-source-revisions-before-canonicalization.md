@@ -65,3 +65,14 @@ changes. Source acquisition remains a separate explicit operation.
   revisions and violates the no-heuristic identity boundary.
 - **Interpret a missing repeat row as cancellation:** overstates what an
   endpoint snapshot alone proves.
+
+## Execution evidence
+
+The first real repeat observation and both split/dividend diffs completed on
+clean Dell main `1f07c53893aa31366f057fd440ed82f9ed49ef87`. All 1,949 split
+and 68,150 dividend payloads were unchanged; same-ID changes, added IDs,
+removed IDs, effective-date changes, ticker changes, and pagination-shape
+changes were all zero. Both later source packages and diff reports passed
+independent formal reread. This approximately 69–73 minute stability interval
+does not expand the interpretation beyond `observed_snapshot_delta_only` and
+does not authorize canonical or Production state.
