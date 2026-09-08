@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-08 — Plan segmented Candidate chain-head publication
+
+- Accepted ADR 0161 and added a no-write publication plan for one
+  content-addressed immutable chain head plus a pointer-last current-state
+  switch. The plan binds exact source, target absence, bounded family
+  inventory, current pointer, successor lineage, prospective pointer bytes,
+  rollback reference, recovery states, and retention policy.
+- First publication has no rollback; a later plan requires exactly one new
+  session/append and moves the old active reference into rollback. All tiny
+  immutable heads are retained, while automatic pruning and rollback remain
+  prohibited.
+- Fixture coverage proves bootstrap, successor, exact reread, target collision,
+  non-successor rejection, family drift, and valid-but-changed pointer CAS.
+- The real 9/4 11-session head produced a disconnected `/tmp` plan with SHA-256
+  `d4785ff7526f65c4b91bc96d2e217f6b11ec21d4c6b86cbf99de4acb27f536c2`
+  and logical fingerprint
+  `fc155109b92a5b5e00f54ae9e2121f0330639866af3c26753534488d94c9797c`.
+  It proposes a 4,962-byte release and 1,712-byte pointer.
+- No `/data`, network, Production, Candidate formula/parameter/rank/state, V1
+  authority, executor, coordinator, scheduler, downstream input, publication,
+  Snapshot, bundle, OCI, or deployment changed. Apply/recovery and periodic
+  cold-lineage verification remain separate prerequisites.
+- Candidate-focused coverage passed, and the complete API regression finished
+  at `2135 passed, 2 warnings`; both warnings are unchanged dependency
+  deprecations.
+
 ## 2026-09-07 — Checkpoint segmented Candidate chain head
 
 - Accepted ADR 0160 and added immutable, non-authoritative segmented lineage

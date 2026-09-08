@@ -48,10 +48,12 @@ Next:
    V1 audit into a 1.1 successor without cumulative semantic reconstruction.
    ADR 0159 proves two ordered 1.1 generations and generalized cold parent
    reading. ADR 0160 proves the disconnected expected-identity chain head,
-   incremental advance, and exact cold equivalence. Next define its canonical
-   immutable publication/current pointer with CAS, rollback, recovery,
-   retention, and periodic full-lineage verification; then expose the reviewed
-   boundary to CLI/executor and prove downstream compatibility. Do not relabel
+   incremental advance, and exact cold equivalence. ADR 0161 now defines its
+   no-write immutable publication/current-pointer plan, bounded-family CAS,
+   rollback reference, recovery states, and retain-all policy. Next implement
+   exact-plan Apply/recovery in disconnected simulation and add periodic full-
+   lineage verification; then expose the reviewed boundary to CLI/executor and
+   prove downstream compatibility. Do not relabel
    its different history fingerprint as V1 or cut over the daily/publication
    path until all gates pass.
 5. Remove any remaining repeated evidence reconstruction only where the new

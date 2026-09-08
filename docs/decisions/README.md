@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0161](0161-plan-segmented-candidate-chain-head-publication.md): bind one exact chain head to an absent immutable target, bounded-family CAS, pointer-last switch, rollback reference, recovery states, and retain-all policy without canonical writes.
+
 - [ADR 0160](0160-checkpoint-segmented-candidate-chain-head.md): checkpoint an exact segmented Candidate lineage so an expected prior head plus one new append advances to the same bytes as full cold reconstruction.
 
 - [ADR 0159](0159-validate-ordered-multigeneration-candidate-append-lineage.md): validate an explicit base-plus-appends lineage and bind each direct session and successor to the immediate prior manifest and chain tip.
@@ -268,3 +270,4 @@ Each ADR should include:
 - [0158: Compose the Direct Candidate Session into a Successor Append](0158-compose-direct-candidate-session-into-successor-append.md)
 - [0159: Validate Ordered Multi-Generation Candidate Append Lineage](0159-validate-ordered-multigeneration-candidate-append-lineage.md)
 - [0160: Checkpoint the Segmented Candidate Chain Head](0160-checkpoint-segmented-candidate-chain-head.md)
+- [0161: Plan Segmented Candidate Chain-Head Publication](0161-plan-segmented-candidate-chain-head-publication.md)

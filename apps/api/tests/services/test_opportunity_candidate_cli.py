@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import socket
 import shutil
 import tempfile
@@ -17,6 +18,9 @@ from tip_api.parameters.market_regime.state_v1_0_1 import STATE_CALCULATION_VERS
 from tip_api.services import opportunity_candidate_cli as cli
 from tip_api.services import opportunity_candidate_segmented_append as candidate_append
 from tip_api.services import opportunity_candidate_segmented_chain_head as chain_head
+from tip_api.services import (
+    opportunity_candidate_segmented_chain_head_publication as head_publication,
+)
 from tip_api.services import opportunity_candidate_segmented_session_candidate as session_candidate
 from tip_api.services.opportunity_candidate_audit import (
     CANDIDATE_PERIODIC_BUSINESS_PROJECTIONS,
@@ -1351,6 +1355,50 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
     ):
         shutil.rmtree(directories[name])
 
+    plan_paths: list[Path] = []
+
+    def new_plan_path(label: str) -> Path:
+        descriptor, name = tempfile.mkstemp(
+            prefix=f"candidate-chain-{label}-",
+            suffix=".json",
+            dir="/tmp",
+        )
+        os.close(descriptor)
+        path = Path(name)
+        path.unlink()
+        plan_paths.append(path)
+        return path
+
+    def install_planned_state(
+        *,
+        canonical_root: Path,
+        plan: dict,
+        source_head: Path,
+    ) -> None:
+        release = canonical_root / plan["target"]["release_relative_path"]
+        release.mkdir(mode=0o700, parents=True)
+        family = canonical_root / head_publication.FAMILY_RELATIVE_PATH
+        family.chmod(0o700)
+        family.joinpath(head_publication.RELEASES_DIRECTORY).chmod(0o700)
+        release.chmod(0o700)
+        manifest = release / chain_head.CHAIN_HEAD_MANIFEST
+        shutil.copyfile(
+            source_head / chain_head.CHAIN_HEAD_MANIFEST,
+            manifest,
+        )
+        manifest.chmod(0o400)
+        pointer = (
+            canonical_root
+            / head_publication.FAMILY_RELATIVE_PATH
+            / head_publication.CURRENT_POINTER_FILE
+        )
+        if pointer.exists():
+            pointer.chmod(0o600)
+        pointer.write_bytes(
+            head_publication.v1._canonical_bytes(plan["planned_pointer"])
+        )
+        pointer.chmod(0o400)
+
     def all_batches(run):
         return tuple(
             batch
@@ -1675,6 +1723,203 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
         )
         assert second_head.production_write_count == 0
         assert second_head.publication_authorized is False
+
+        canonical_root = tmp_path / "segmented-chain-head-canonical"
+        canonical_root.mkdir(mode=0o700)
+        bootstrap_plan = (
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=canonical_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["first-head"],
+                expected_source_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 10, 0, tzinfo=UTC),
+                plan_path=new_plan_path("bootstrap-plan"),
+            )
+        )
+        assert bootstrap_plan.plan["status"] == "review_ready"
+        assert bootstrap_plan.plan["expected_current_state"]["active"] is None
+        assert bootstrap_plan.plan["planned_pointer"]["rollback"] is None
+        assert bootstrap_plan.plan["inventory_change"]["new_files"] == 2
+        assert bootstrap_plan.plan["inventory_change"]["modified_files"] == 0
+        assert bootstrap_plan.plan["apply_authorized"] is False
+        assert bootstrap_plan.canonical_write_count == 0
+        assert not (
+            canonical_root
+            / bootstrap_plan.plan["target"]["release_relative_path"]
+        ).exists()
+        assert head_publication.read_candidate_segmented_chain_head_publication_plan(
+            plan_path=bootstrap_plan.path,
+            expected_plan_sha256=bootstrap_plan.plan_sha256,
+            expected_plan_logical_fingerprint=bootstrap_plan.plan[
+                "logical_content_fingerprint"
+            ],
+            expected_source_logical_fingerprint=first_head_manifest[
+                "logical_content_fingerprint"
+            ],
+        ).plan == bootstrap_plan.plan
+
+        family_root = (
+            canonical_root / head_publication.FAMILY_RELATIVE_PATH
+        )
+        family_root.mkdir(mode=0o700, parents=True)
+        family_root.joinpath(
+            head_publication.RELEASES_DIRECTORY
+        ).mkdir(mode=0o700)
+        with pytest.raises(
+            head_publication.CandidateSegmentedChainHeadPublicationError,
+            match="current state changed",
+        ):
+            head_publication.read_candidate_segmented_chain_head_publication_plan(
+                plan_path=bootstrap_plan.path,
+                expected_plan_sha256=bootstrap_plan.plan_sha256,
+                expected_plan_logical_fingerprint=bootstrap_plan.plan[
+                    "logical_content_fingerprint"
+                ],
+                expected_source_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+            )
+        shutil.rmtree(family_root)
+
+        collision_release = (
+            canonical_root
+            / bootstrap_plan.plan["target"]["release_relative_path"]
+        )
+        collision_release.mkdir(mode=0o700, parents=True)
+        with pytest.raises(
+            head_publication.CandidateSegmentedChainHeadPublicationError,
+            match="release target is no longer absent",
+        ):
+            head_publication.read_candidate_segmented_chain_head_publication_plan(
+                plan_path=bootstrap_plan.path,
+                expected_plan_sha256=bootstrap_plan.plan_sha256,
+                expected_plan_logical_fingerprint=bootstrap_plan.plan[
+                    "logical_content_fingerprint"
+                ],
+                expected_source_logical_fingerprint=first_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+            )
+        shutil.rmtree(family_root)
+
+        install_planned_state(
+            canonical_root=canonical_root,
+            plan=dict(bootstrap_plan.plan),
+            source_head=directories["first-head"],
+        )
+        installed = (
+            head_publication.read_candidate_segmented_chain_head_current_state(
+                canonical_root=canonical_root,
+            )
+        )
+        assert installed.pointer is not None
+        assert installed.pointer["active"] == bootstrap_plan.plan[
+            "planned_pointer"
+        ]["active"]
+        assert installed.pointer["rollback"] is None
+
+        successor_plan = (
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=canonical_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["second-head"],
+                expected_source_logical_fingerprint=second_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 10, 1, tzinfo=UTC),
+                plan_path=new_plan_path("successor-plan"),
+            )
+        )
+        assert successor_plan.plan["planned_pointer"]["rollback"] == (
+            installed.pointer["active"]
+        )
+        assert successor_plan.plan["inventory_change"]["new_files"] == 1
+        assert successor_plan.plan["inventory_change"]["modified_files"] == 1
+        assert successor_plan.plan["rollback_authorized"] is False
+        assert successor_plan.plan["retention_policy"] == {
+            "immutable_releases": "retain_all",
+            "automatic_pruning_authorized": False,
+            "rationale": "bounded_chain_head_evidence",
+        }
+        assert head_publication.read_candidate_segmented_chain_head_publication_plan(
+            plan_path=successor_plan.path,
+            expected_plan_sha256=successor_plan.plan_sha256,
+            expected_plan_logical_fingerprint=successor_plan.plan[
+                "logical_content_fingerprint"
+            ],
+            expected_source_logical_fingerprint=second_head_manifest[
+                "logical_content_fingerprint"
+            ],
+        ).plan == successor_plan.plan
+
+        with pytest.raises(
+            head_publication.CandidateSegmentedChainHeadPublicationError,
+            match="immediate current successor",
+        ):
+            head_publication.build_candidate_segmented_chain_head_publication_plan(
+                canonical_root=canonical_root,
+                base_shadow=directories["base-shadow"],
+                source_chain_head=directories["base-head"],
+                expected_source_logical_fingerprint=base_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+                created_at=datetime(2026, 9, 7, 10, 2, tzinfo=UTC),
+                plan_path=new_plan_path("wrong-successor-plan"),
+            )
+
+        pointer_path = (
+            canonical_root
+            / head_publication.FAMILY_RELATIVE_PATH
+            / head_publication.CURRENT_POINTER_FILE
+        )
+        original_pointer_bytes = pointer_path.read_bytes()
+        changed_pointer = dict(installed.pointer)
+        changed_pointer["prior_pointer_state_fingerprint"] = "1" * 64
+        changed_pointer.pop("logical_content_fingerprint")
+        changed_pointer["logical_content_fingerprint"] = (
+            head_publication.v1._fingerprint(changed_pointer)
+        )
+        pointer_path.chmod(0o600)
+        pointer_path.write_bytes(
+            head_publication.v1._canonical_bytes(changed_pointer)
+        )
+        pointer_path.chmod(0o400)
+        with pytest.raises(
+            head_publication.CandidateSegmentedChainHeadPublicationError,
+            match="current state changed",
+        ):
+            head_publication.read_candidate_segmented_chain_head_publication_plan(
+                plan_path=successor_plan.path,
+                expected_plan_sha256=successor_plan.plan_sha256,
+                expected_plan_logical_fingerprint=successor_plan.plan[
+                    "logical_content_fingerprint"
+                ],
+                expected_source_logical_fingerprint=second_head_manifest[
+                    "logical_content_fingerprint"
+                ],
+            )
+        pointer_path.chmod(0o600)
+        pointer_path.write_bytes(original_pointer_bytes)
+        pointer_path.chmod(0o400)
+        install_planned_state(
+            canonical_root=canonical_root,
+            plan=dict(successor_plan.plan),
+            source_head=directories["second-head"],
+        )
+        advanced = (
+            head_publication.read_candidate_segmented_chain_head_current_state(
+                canonical_root=canonical_root,
+            )
+        )
+        assert advanced.pointer is not None
+        assert advanced.pointer["active"] == successor_plan.plan[
+            "planned_pointer"
+        ]["active"]
+        assert advanced.pointer["rollback"] == bootstrap_plan.plan[
+            "planned_pointer"
+        ]["active"]
         with monkeypatch.context() as isolated:
             def reject_lineage_replay(*args, **kwargs):
                 raise AssertionError("underlying Candidate lineage was replayed")
@@ -1796,6 +2041,9 @@ def test_segmented_candidate_chain_accepts_two_ordered_appends(
                 ),
             )
     finally:
+        for path in plan_paths:
+            path.unlink(missing_ok=True)
+            path.with_name(f".{path.name}.staging").unlink(missing_ok=True)
         for path in directories.values():
             shutil.rmtree(path, ignore_errors=True)
         recovery_head = directories["recovery-head"]

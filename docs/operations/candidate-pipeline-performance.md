@@ -491,6 +491,21 @@ not change the Candidate calculation itself or establish a complete daily-chain
 time. CLI/executor use, canonical pointer/CAS, recovery, retention, and periodic
 cold verification remain future gates.
 
+## 2026-09-07 segmented chain-head publication-plan result
+
+ADR 0161 gives the expected fingerprint a prospective governed home without
+performing an Apply. The plan uses a content-addressed immutable release, a
+pointer-last switch, and a bounded family inventory fingerprint instead of a
+whole-`/data` scan. A successor must advance the active lineage by exactly one
+session/append and retains the prior active reference as rollback.
+
+The real 2026-09-04 11-session head was planned against a new simulated
+owner-only `/tmp` root. The plan proposes a 4,962-byte immutable file and a
+1,712-byte pointer, made zero external requests and zero canonical writes, and
+left `/data` unchanged. Fixture tests cover initial and existing state, exact
+replay, target collision, non-successor lineage, family drift, and changed
+pointer CAS. This is governance proof, not a daily-path timing or cutover.
+
 ## 2026-09-04 session-discovery validation tiers
 
 ADR 0125 extends ADR 0118's completion-index boundary to operational paths

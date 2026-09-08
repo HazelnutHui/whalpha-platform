@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-07
+Status date: 2026-09-08
 
 This is the concise project-state summary. Exact IDs, fingerprints, evidence
 scope, authorization boundaries, and cross-device recovery are maintained in
@@ -294,10 +294,13 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    immutable expected-fingerprint checkpoint: the real 4,962-byte head read in
    1.08 seconds; advancing base head plus the new append took 24.78 seconds
    versus 39.82 seconds cold and produced identical bytes; composer time fell
-   from 36.70 to 21.18 seconds with byte-identical append output. Next design
-   the governed immutable publication/current pointer with CAS, rollback,
-   recovery, retention, and periodic full-lineage audit before CLI/executor or
-   downstream cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
+   from 36.70 to 21.18 seconds with byte-identical append output. ADR 0161 now
+   adds the no-write governed publication plan: content-addressed immutable
+   release, bounded-family CAS, pointer-last selection, exact successor gate,
+   prior-active rollback reference, recovery states, and retain-all policy.
+   Its real proof is `/tmp`-only and no canonical pointer exists. Next implement
+   disconnected exact-plan Apply/recovery and periodic full-lineage audit
+   before CLI/executor or downstream cutover. Keep 1.0 global raw-fact ordinals and 1.1 session-local
    ordinals explicitly distinct.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping

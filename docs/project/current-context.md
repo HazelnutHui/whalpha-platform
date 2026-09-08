@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-06T13:10:51Z
 
-Repository context updated at: 2026-09-07 UTC
+Repository context updated at: 2026-09-08 UTC
 
 This is the compact source of truth for a new Codex task or device. Historical
 execution detail belongs in the [changelog](changelog.md), dated audits, and
@@ -401,9 +401,13 @@ separately bounded.
    4,962-byte expected-identity chain head: incremental advancement and full
    cold construction produced identical bytes, the head read took 1.08 seconds,
    and real composer time fell from 36.70 to 21.18 seconds with byte-identical
-   output. No governed canonical head pointer exists yet. Next define its
-   immutable publication, CAS/recovery/rollback, retention, and periodic full-
-   lineage audit before CLI, executor, downstream, or cutover work.
+   output. ADR 0161 now adds a no-write immutable-release/current-pointer plan
+   with bounded-family CAS, exact one-successor enforcement, prior-active
+   rollback reference, fail-closed recovery states, and retain-all immutable
+   heads. Its real 9/4 bootstrap proof used only `/tmp`, proposed 4,962 + 1,712
+   bytes, and wrote neither `/data` nor Production. No canonical pointer exists
+   yet. Exact-plan Apply/recovery and periodic full-lineage audit remain
+   required before CLI, executor, downstream, or cutover work.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The

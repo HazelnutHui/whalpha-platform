@@ -46,10 +46,12 @@ and passing it back is not a valid trust boundary.
 
 ## Current limits
 
-The repository has no canonical chain-head publication or current pointer/CAS.
-The CLI, daily executor, coordinator, scheduler, MI, Snapshot, and Production
-do not consume the head. A reviewed publication/pointer, recovery and rollback
-plan, retention policy, and periodic full-lineage verification remain required.
+ADR 0161 now defines and repository-tests a no-write immutable publication and
+current-pointer plan with bounded-family CAS, rollback reference, recovery
+states, and retain-all immutable-head policy. No Apply or canonical pointer has
+been created. The CLI, daily executor, coordinator, scheduler, MI, Snapshot,
+and Production do not consume the head. Exact-plan Apply/recovery and periodic
+full-lineage verification remain required.
 
 ## Real Dell evidence
 
