@@ -103,6 +103,14 @@ Historical Coverage evidence/final roots are absent. Real cost/liquidity,
 complete revision lineage, chronological evaluation, and sealed-holdout inputs
 also remain absent or fixture-only.
 
+The 2026-09-08 full-content ADR 0100 assessment now confirms both acquired
+families across the entire 304-session interval with zero missing sessions:
+EOD contains 2,816,903 rows and point-in-time Identity contains 2,825,403
+canonical Instrument rows. Both are `validated_not_published`; the combined
+state remains `mechanics_only`. This admits a later separate family-evidence
+publication review, not Historical Coverage, research readiness, or a
+performance claim.
+
 The 2026-09-05 aggregate inactive-security census reached 20 full pages and
 20,000 rows with another page still available. It found `delisted_utc` on
 19,565 rows, but retained no row data and grants no lifecycle-completeness

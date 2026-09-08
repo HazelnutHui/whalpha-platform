@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-08 — Validate complete EOD and Identity family evidence candidates
+
+- Reran the existing ADR 0100 network-prohibited full-content adapter over all
+  304 canonical sessions from 2025-06-23 through 2026-09-04. It completed with
+  zero missing sessions, requests, evidence publications, Historical Coverage
+  publications, or Production writes.
+- EOD returned `validated_not_published` over 304 artifacts / 2,816,903 rows;
+  point-in-time Identity returned `validated_not_published` over 304 artifacts
+  / 2,825,403 canonical Instrument rows. Exact fingerprints are recorded in
+  the authoritative current context.
+- The combined result remains `mechanics_only`. A later family-evidence
+  publication review is supported, but historical Membership, canonical
+  corporate actions, lifecycle, adjustment reconciliation, and final
+  Historical Coverage publication remain blockers. No research or performance
+  claim is authorized.
+- This was a read-only evidence run. Repository code, `/data`, Production,
+  formulas, scheduler, website, and deployment state did not change.
+
 ## 2026-09-08 — Gate segmented Candidate downstream cutover
 
 - Accepted ADR 0164 and added one read-only, exact-identity current consumer

@@ -124,6 +124,26 @@ The report status is therefore `data_blocked`, with
 change those results; future partitions remain unvalidated until the existing
 transitive formal Coverage reader proves them.
 
+The separate ADR 0100 full-content mechanics adapter was rerun against all 304
+canonical sessions on 2026-09-08. It returned `mechanics_only`, zero missing
+sessions, zero requests, and zero writes. EOD evidence is
+`validated_not_published` over 304 artifacts / 2,816,903 rows with logical
+fingerprint
+`923f27a8fa4e85c6d20b5c8ac0804f17dbab7437b350f02d54fea2ed5293aeb1`
+and proposed evidence SHA-256
+`ba652cb4ed21a0bfce1ce0cbd690c933cb8ae98de3f39231e282ea8f22789593`;
+point-in-time Identity evidence is `validated_not_published` over 304 artifacts
+/ 2,825,403 canonical Instrument rows with logical fingerprint
+`d2225da8d4ffd2b7e83ff98b72f75647503690a2aff2c87731c00b115b65fefb`
+and proposed evidence SHA-256
+`5046dd6b3b1f8dd028528636a9caf989bcbb53040082ca0060016b07a49d67a2`.
+The report fingerprint is
+`85ea7384c8ff546fcbd2506d1f86c6ae16add458044248cbb1e8971af1f3497f`.
+This is a GO only for later separate family-evidence publication review. No
+evidence was published, and the five blockers remain daily historical
+Membership, canonical corporate actions, lifecycle, adjustment reconciliation,
+and final Historical Coverage publication.
+
 ADR 0140 exposes the normalized source-observation layer separately from
 resolved Identity snapshots. ADR 0150 adds direct daily binding and append-only
 exact repair without altering the historical profile-map partitions. The

@@ -76,6 +76,12 @@ installed timer remains read-only until automation receives its own review.
 Connect canonical history to research without projecting current membership
 backward. Required families are:
 
+The full-content ADR 0100 adapter has now validated all 304 canonical EOD and
+point-in-time Identity sessions with zero gaps. Both family evidence candidates
+remain unpublished. Their next transition is one separate publication review;
+it must not be combined with or mistaken for completion of the missing
+families below.
+
 - point-in-time Identity and daily Universe membership;
 - lifecycle, inactive, terminal, and successor evidence;
 - splits, dividends, and other corporate actions;
