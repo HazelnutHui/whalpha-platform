@@ -29,6 +29,7 @@ access request, credential request, pilot authorization, or standing authority.
 | Corporate action and listing lifecycle | Nasdaq Daily List without CUSIP plus equivalent non-Nasdaq coverage | Splits, dividends, listings, delistings, symbol/name changes, merger/successor and last-tradable evidence | Composition incomplete and unlicensed |
 | Open filing/event evidence | SEC EDGAR | Effective-dated filing, XBRL fundamental, and issuer-event evidence | Permission direction open; security identity and completeness remain separate |
 | Identifier crosswalk | GLEIF and OpenFIGI | Legal-entity/instrument linkage evidence only | Candidate crosswalks; never canonical fact authority by default |
+| Point-in-time Sector / Industry | S&P GICS History first; LSEG TRBC second | Stable company/security linkage, taxonomy hierarchy and versions, from/thru dates, availability/revision history, current display, and historical research | Public capability documented; sample, dictionary, price, and exact permission remain credential-gated and unresolved |
 
 Alpha Vantage and standard Alpaca customer data are not inquiry priorities for
 the equal-capability shared product under the reviewed standard terms.
@@ -69,6 +70,16 @@ the equal-capability shared product under the reviewed standard terms.
     available?
 17. What one-time and recurring fees apply to the exact use, including
     redistribution/display add-ons and exchange pass-through fees?
+18. For classification data, which stable company and security identifiers are
+    delivered, and what licensed crosswalk resolves them to each listed share
+    class without relying on ticker or name?
+19. Which fields separately represent business-effective dates, first
+    availability, provider observation/update time, revision, cancellation,
+    and taxonomy-version changes? Does a historical extract reproduce what was
+    knowable then or apply later corrections backward?
+20. May classification codes/names and derived sector or industry counts,
+    concentration diagnostics, charts, filters, and explanations be displayed
+    identically to guest and credential Sessions through browser JSON?
 
 ## Required response record
 

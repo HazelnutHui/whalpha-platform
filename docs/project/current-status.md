@@ -88,7 +88,8 @@ unvalidated, and no formal security-level Sector/Industry taxonomy currently
 exists. The overlap display must not be presented as sector concentration.
 Classification V1.1 contract, offline persistence, explicit coverage ledger,
 and formal reader are fixture-validated, but no real source, adapter, canonical
-partition, or product consumer exists.
+partition, or product consumer exists. The GICS sample and data dictionary are
+credential-gated; a public taxonomy map alone is insufficient.
 
 Quant Research Lab is explicitly research-only and data-blocked. It exposes
 family-specific readiness rather than a misleading aggregate progress score.

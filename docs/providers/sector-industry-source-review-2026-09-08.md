@@ -16,15 +16,16 @@ This review used repository evidence and official public product material. It
 did not access an account, credential, endpoint, sample, quote, licensed data,
 Git remote, OCI, or Production website.
 
-## Repository facts
+## Repository facts at audit start
 
 - Canonical Identity contains active status, CIK, FIGIs, currency, locale,
   market, name, exchange, ticker, provider type, and update time. It contains
   no formal Sector, Industry, SIC, market-cap, or taxonomy-history field.
 - The implemented Massive adapter supports Instrument Master and EOD bars.
   The bulk All Tickers response used by Instrument Master has no SIC hierarchy.
-- Classification V1 is an accepted logical contract and has no Python model,
-  persistence layer, formal reader, canonical partition, or Production use.
+- Classification V1 was then an accepted logical contract without a Python
+  model, persistence layer, formal reader, canonical partition, or Production
+  use. The later same-day implementation status is recorded below.
 - Sector ETF Rotation is a fixed price-proxy relationship layer. It is not
   security-level Sector/Industry membership.
 
@@ -37,6 +38,15 @@ Git remote, OCI, or Production website.
 | [S&P Global GICS dataset](https://www.marketplace.spglobal.com/en/datasets/gics-(90)) | Four-level company taxonomy matching Sector -> Industry Group -> Industry -> Sub-industry. GICS History advertises active/inactive classifications, history from 1985, significant coverage from 1999, daily delivery, and point-in-time from/thru dates | Licensed commercial data; public material does not establish the exact security/entity identifiers, knowledge-time fields, revisions, WH Alpha display rights, price, or account delivery | Preferred first specification/sample inquiry because the hierarchy matches the accepted canonical path and historical from/thru dates are explicit |
 | [LSEG Industry Classifications](https://www.lseg.com/en/data-catalogue/entity/legal-entity-data/industry-classifications) and [quant-research brochure](https://www.lseg.com/content/dam/data-analytics/en_us/documents/brochures/lseg-data-for-quant-research-brochure.pdf) | TRBC has a five-level global hierarchy, history from 1999, daily/intraday refresh, and bulk/API delivery; LSEG also supports GICS and other frameworks | Public material does not fully establish classification knowledge-time, restatement/revision behavior, exact listed-security crosswalk, or licensed shared-display terms | Strong second sample candidate, especially if one delivery can also close later fundamentals/lifecycle gaps |
 | [FactSet RBICS](https://insight.factset.com/resources/factset-revere-business-industry-classifications-datafeed) | Six-level operating-footprint taxonomy; Focus is single-sector, Revenue supplies multi-sector revenue exposure, and U.S.-major revenue history is documented from 2012 | Public material reviewed here does not prove that the primary classification history is strict point-in-time knowledge-time data. Company/product exposure is not the same as one formal traditional identity path | Defer as a complementary peer, theme, and revenue-exposure source; do not make it the first traditional taxonomy dependency |
+
+The 2026-09-08 public follow-up confirmed that S&P Marketplace gates both the
+GICS sample data and data dictionary behind credentialed sign-in. The public
+GICS structure workbook and methodology define the taxonomy but are not a
+company-membership sample. The current public methodology also says a license
+is required to display, create derivative works from, or distribute a product
+or service using GICS or index data. Therefore the next evidence must be a
+credentialed sample/specification and written use terms; public hierarchy files
+cannot satisfy the sample or permission gate.
 
 GICS, TRBC, RBICS, and SIC are not interchangeable labels. Their hierarchy,
 assignment subject, methodology, revision behavior, and history must remain

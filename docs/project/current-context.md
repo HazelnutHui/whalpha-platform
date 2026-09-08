@@ -209,7 +209,9 @@ sampled, licensed, acquired, implemented, published, or deployed. Classification
 V1.1 contracts, immutable offline Parquet persistence, explicit coverage
 decisions, and a fail-closed reader are now fixture-validated. No adapter or
 physical classification dataset exists, so the product limitation is
-unchanged.
+unchanged. S&P's public Marketplace gates the GICS sample and data dictionary
+behind sign-in, and public methodology requires licensing for display and
+derived-product use. Public hierarchy files do not satisfy the sample gate.
 
 Guest and credential Sessions must remain identical in data, features,
 language, Universe, and analysis until the user explicitly changes that policy.

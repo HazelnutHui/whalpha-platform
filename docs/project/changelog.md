@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-08 — Bound the GICS sample and permission dependency
+
+- Confirmed from current official public material that GICS company sample
+  data and its data dictionary require credentialed sign-in; the public
+  taxonomy structure and methodology are not membership evidence.
+- Recorded that display, derived-product, and distribution use require an
+  explicit license rather than inference from public access.
+- Added point-in-time classification and its identity, temporal, revision, and
+  equal-capability display questions to the prepared, unsent provider inquiry
+  packet.
+- No account, credential, sample, contact, purchase, provider request, `/data`,
+  analytics, Snapshot, bundle, OCI, or Production state changed.
+
 ## 2026-09-08 — Implement provider-neutral Classification V1.1 custody
 
 - Implemented frozen provider source observations, canonical definitions and
