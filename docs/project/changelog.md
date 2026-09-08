@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-08 — Gate segmented Candidate downstream cutover
+
+- Accepted ADR 0164 and added one read-only, exact-identity current consumer
+  for an explicit segmented base plus append. It requires complete typed
+  Candidate/state coverage and fails closed on incomplete legacy append input.
+- The retained 9/4 proof returned two ordered Universe batches and 3,549 state
+  rows. Exact V1 input comparison completed with zero mismatches. Entry Geometry
+  and Strategy Channels then reproduced all four retained batch fingerprints
+  with zero independent-Oracle mismatches.
+- The segmented read took 43.43 seconds because it still rehashes the roughly
+  840 MB base. Visual Context also requires cumulative state history absent from
+  the current append. Entry/Strategy correctness is GO; whole-V1 replacement,
+  CLI/executor exposure, and cutover are NO-GO.
+- This phase is closed rather than extended into another incremental contract.
+  Any resumed segmented work must use one bounded design for expected-head
+  payload resolution and Visual state input.
+- No network, `/data`, authoritative Candidate, formulas, parameters, ranks,
+  MI, Snapshot, bundle, OCI, executor, coordinator, scheduler, deployment, or
+  Production state changed.
+- Targeted coverage passed, and the complete API regression finished at
+  `2136 passed, 2 warnings`; both warnings are unchanged dependency
+  deprecations.
+
 ## 2026-09-08 — Audit Candidate chain head against full lineage
 
 - Accepted ADR 0163 and added a deterministic, zero-write periodic audit that

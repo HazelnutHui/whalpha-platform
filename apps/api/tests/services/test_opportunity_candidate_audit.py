@@ -67,6 +67,10 @@ from tip_api.services.opportunity_candidate_segmented_append import (
     verify_candidate_segmented_append_cold_equivalence,
     write_candidate_segmented_append,
 )
+from tip_api.services.opportunity_candidate_segmented_consumer import (
+    CandidateSegmentedConsumerError,
+    read_candidate_segmented_current_consumer,
+)
 
 
 PRIMARY = "provider_classified_common_shares_v1"
@@ -569,6 +573,34 @@ def test_segmented_append_extends_one_session_without_mutating_parent() -> None:
         assert cold.mismatch_count == 0
         assert cold.production_write_count == 0
         assert cold.publication_authorized is False
+        with pytest.raises(
+            CandidateSegmentedConsumerError,
+            match="batch, panel, and state coverage differs",
+        ):
+            read_candidate_segmented_current_consumer(
+                base_shadow=parent,
+                append_package=output,
+                as_of_session=date.fromisoformat(str(manifest["as_of_session"])),
+                expected_append_logical_fingerprint=str(
+                    manifest["logical_content_fingerprint"]
+                ),
+                expected_source_audit_logical_fingerprint=str(
+                    successor_manifest["logical_content_fingerprint"]
+                ),
+            )
+        with pytest.raises(
+            CandidateSegmentedConsumerError,
+            match="identity or safety boundary differs",
+        ):
+            read_candidate_segmented_current_consumer(
+                base_shadow=parent,
+                append_package=output,
+                as_of_session=date.fromisoformat(str(manifest["as_of_session"])),
+                expected_append_logical_fingerprint="0" * 64,
+                expected_source_audit_logical_fingerprint=str(
+                    successor_manifest["logical_content_fingerprint"]
+                ),
+            )
         assert {
             path.relative_to(parent).as_posix(): path.read_bytes()
             for path in parent.rglob("*")

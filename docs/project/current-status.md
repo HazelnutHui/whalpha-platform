@@ -273,74 +273,42 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
 2. After candidate reuse, outcome-only classification, canonical reuse, and
    partial-publication rejection pass on a new session, review one-action
    coordinator integration. Do not enable the write-capable scheduler.
-3. Continue ADR 0130's segmented Candidate custody proof. ADR 0155 gives the
-   shadow a distinct versioned forward-chain identity, and ADR 0156 proves one
-   exact 9/3→9/4 append, unchanged parent bytes, completed-stage recovery, and
-   independent zero-mismatch cold equivalence. ADR 0157 now produces the 9/4
-   segment directly from already validated current-session objects in 38.907
-   seconds. Its 86,608,577-byte payload matched all eight cold projections and
-   passed a separate 32.831-second semantic read. ADR 0158 now verifies the
-   exact physically completed intended V1 audit and composes those same payload
-   bytes into a versioned 1.1 successor in 36.70 seconds without cumulative V1
-   semantic replay. A separate 40.36-second read and two-package comparison
-   found all eight business fields exact. Candidate remains the largest active
-   analytics stage at roughly 4.5 minutes because these optional `/tmp`
-   artifacts have not replaced V1 or entered the daily executor.
-4. ADR 0159 now proves repeated 1.1 append generations through two ordered
-   successors in a three-session fixture and rejects omitted or reordered
-   ancestors. Its generalized cold parent reader deliberately validates the
-   base and every append; the real one-append parent read took 39.79 seconds
-   and reproduced the exact 11-session ADR 0158 head. ADR 0160 now provides an
-   immutable expected-fingerprint checkpoint: the real 4,962-byte head read in
-   1.08 seconds; advancing base head plus the new append took 24.78 seconds
-   versus 39.82 seconds cold and produced identical bytes; composer time fell
-   from 36.70 to 21.18 seconds with byte-identical append output. ADR 0161 now
-   adds the no-write governed publication plan: content-addressed immutable
-   release, bounded-family CAS, pointer-last selection, exact successor gate,
-   prior-active rollback reference, recovery states, and retain-all policy.
-   ADR 0162 now proves its exact release-first/pointer-last Apply and recovery
-   only in `/tmp`, including release-only completion, staging-residue refusal,
-   and a zero-write completed postflight. The real simulation wrote 6,674
-   bytes; its post-family and pointer-state fingerprints are recorded in the
-   current context. The executor refuses the Production root, and no canonical
-   pointer exists. ADR 0163 now completes the disconnected periodic
-   full-lineage audit: it replays the retained base plus every ordered append,
-   matches the exact active head, rereads the bound current state, and writes
-   nothing. Its real run took 39.79 seconds / 2,079,080 KiB peak RSS and
-   produced audit fingerprint
-   `8adc21deec2bda549f1bb142e482376d6c07183c997050fb008689affb761ca3`.
-   Next expose the boundary to CLI/executor under review and prove downstream
-   compatibility; neither step nor cutover is yet authorized. Keep 1.0 global
-   raw-fact ordinals and 1.1 session-local ordinals explicitly distinct.
-5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
+3. ADR 0164 has completed the bounded downstream decision for ADR 0130's
+   segmented Candidate proof. Exact 9/4 V1/current-input comparison and
+   Entry/Strategy recalculation passed, but whole-V1 replacement is not ready:
+   the current reader still rehashes the large base and Visual Context lacks
+   cumulative state history in the append projection. Keep V1 authoritative;
+   do not expose the segmented path to CLI/executor or create canonical custody
+   until one bounded design resolves both gaps.
+4. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds
    for explicit garbage collection.
-6. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
+5. Treat MI, Visual Context, Entry, Strategy, and ETF Relationships as bounded;
    Snapshot is now 121.57 seconds and its largest remaining input is the
    necessary formal Activation read rather than duplicate active-state reads.
-7. Vectorize or safely parallelize only independently measurable CPU-heavy
+6. Vectorize or safely parallelize only independently measurable CPU-heavy
    work after exact serial output equivalence is proven.
-8. **Canonical source custody complete for exact available packages:** 302
+7. **Canonical source custody complete for exact available packages:** 302
    sessions are canonical after historical and direct-daily Apply/recovery.
    Keep 2026-08-13 and 2026-08-19 unbound unless an alternative exact source is
    proven; do not approximate either gap.
-9. **Canonical Membership remains incomplete:** V3 evidence covers all 302
+8. **Canonical Membership remains incomplete:** V3 evidence covers all 302
    available-source sessions, but only the directly observed 2026-09-04
    partition is canonical and signal-eligible. ADR 0154 implements the
    prospective candidate boundary but has not yet been exercised on a new
    session or connected to the coordinator. Keep the 301 retrospective
    partitions outcome-only.
-10. Design corroboration and source-availability evidence for the 547 inactive
+9. Design corroboration and source-availability evidence for the 547 inactive
    lifecycle review candidates; then complete canonical lifecycle,
    corporate-action, adjustment, cost, availability, and revision families,
    publish transitive Historical Coverage, and reconcile the 26-session
    analytics limitation.
-11. Only after those gates begin real preregistered chronological strategy
+10. Only after those gates begin real preregistered chronological strategy
    research.
-12. Continue decision-useful visualization in parallel where it does not change
+11. Continue decision-useful visualization in parallel where it does not change
    models or delay the data/performance foundation.
-13. Add options expression, fundamentals/valuation, events, and later
+12. Add options expression, fundamentals/valuation, events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune new formulas or claim backtest results before the governed research

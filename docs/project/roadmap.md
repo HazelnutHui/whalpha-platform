@@ -54,8 +54,11 @@ Next:
    exact-plan Apply/recovery only in disconnected simulation and explicitly
    refuses the Production root. ADR 0163 now proves periodic cold
    full-lineage verification with a before/after current-state binding and
-   zero writes. Next expose the reviewed boundary to CLI/executor and prove
-   downstream compatibility. Do not relabel
+   zero writes. ADR 0164 proves exact current V1 input and Entry/Strategy
+   output equivalence, but records a no-go for cutover: current reading still
+   rehashes the large base and Visual Context requires cumulative state history
+   absent from the append. Do not expose the path to CLI/executor until one
+   bounded design resolves both gaps. Do not relabel
    its different history fingerprint as V1 or cut over the daily/publication
    path until all gates pass.
 5. Remove any remaining repeated evidence reconstruction only where the new

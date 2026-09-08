@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-06T13:10:51Z
+Operational state verified at: 2026-09-08T04:09:41Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -372,13 +372,14 @@ separately bounded.
    fresh CAS read. ADR 0130 then proved a disconnected ten-session Candidate
    shadow: all eight V1 business projections reconstructed exactly, and its
    current-checkpoint reader took 16.53 seconds versus 228.285 seconds for V1
-   full semantics. V1 remains authoritative until append-input, recovery,
-   periodic cold comparison, and downstream compatibility pass. The current
-   checkpoint reproduces all 1,718/1,831 prior-state support rows exactly; only
-   the cumulative V1 history fingerprint needs an explicitly versioned chain
-   identity. ADR 0155 now supplies a distinct forward hash chain and explicitly
-   does not relabel it as V1 evidence. ADR 0156 extends the real ten-session
-   parent through 9/4 with one immutable 86,610,428-byte segment, unchanged
+   full semantics. Append-input, recovery, periodic cold comparison, and
+   bounded downstream compatibility were then evaluated through ADR 0164; V1
+   remains authoritative because the resulting cutover decision is NO-GO. The
+   current checkpoint reproduces all 1,718/1,831 prior-state support rows
+   exactly; only the cumulative V1 history fingerprint needs an explicitly
+   versioned chain identity. ADR 0155 now supplies a distinct forward hash chain
+   and explicitly does not relabel it as V1 evidence. ADR 0156 extends the real
+   ten-session parent through 9/4 with one immutable 86,610,428-byte segment, unchanged
    parent bytes, recoverable atomic delivery, and independent zero-mismatch
    cold equivalence. Its two 8.5-minute / 13.1-GiB passes deliberately reread
    complete V1 and are not a hot-path performance result. ADR 0157 now emits
@@ -420,9 +421,17 @@ separately bounded.
    fingerprint is
    `8adc21deec2bda549f1bb142e482376d6c07183c997050fb008689affb761ca3`.
    It defines daily, periodic, and code-change validation levels but adds no
-   CLI, executor, journal, scheduler, or Production authority. The next gate is
-   reviewed CLI/executor exposure and downstream compatibility; cutover remains
-   unauthorized.
+   CLI, executor, journal, scheduler, or Production authority. ADR 0164 now
+   closes the downstream-compatibility gate without authorizing cutover. The
+   real 9/4 current consumer returned two ordered Universe batches and 3,549
+   state rows; exact V1 comparison had zero mismatches, and Entry plus Strategy
+   recalculation matched all four retained batch fingerprints with zero Oracle
+   mismatches. The current segmented read still took 43.43 seconds because it
+   rehashes the roughly 840 MB base, and Visual Context still requires
+   cumulative state history absent from the current append. Entry/Strategy
+   correctness is therefore GO, but whole-V1 replacement and CLI/executor
+   exposure are NO-GO. Further segmented work should resume only under one
+   bounded design for expected-head payload resolution and Visual state input.
 2. **Historical Universe foundation:** 302 exact source partitions are now
    canonical after historical append-only and direct-daily Apply/recovery.
    Disconnected Membership mechanics also cover all 302 available dates. The

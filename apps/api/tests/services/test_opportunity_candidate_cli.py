@@ -55,6 +55,12 @@ from tip_api.services.opportunity_candidate_segmented_session_candidate import (
     read_candidate_segmented_session_candidate,
     write_candidate_segmented_session_candidate,
 )
+from tip_api.services.opportunity_candidate_segmented_consumer import (
+    CandidateSegmentedConsumerError,
+    read_candidate_segmented_current_consumer,
+    validate_candidate_segmented_current_downstream,
+    verify_candidate_segmented_current_equivalence,
+)
 from tip_api.services.opportunity_candidate_segmented_shadow import (
     write_candidate_segmented_shadow,
 )
@@ -1098,6 +1104,49 @@ def test_verified_prior_increment_matches_cold_business_outputs(monkeypatch, tmp
         assert composed_manifest["chain_node"]["chain_fingerprint"] != (
             append_manifest["chain_node"]["chain_fingerprint"]
         )
+        consumer = read_candidate_segmented_current_consumer(
+            base_shadow=parent_shadow,
+            append_package=composed_dir,
+            as_of_session=panels[-1].as_of_session,
+            expected_append_logical_fingerprint=str(
+                composed_manifest["logical_content_fingerprint"]
+            ),
+            expected_source_audit_logical_fingerprint=str(
+                manifest["logical_content_fingerprint"]
+            ),
+        )
+        consumer_equivalence = verify_candidate_segmented_current_equivalence(
+            base_shadow=parent_shadow,
+            append_package=composed_dir,
+            source_v1_audit=incremental_dir,
+            as_of_session=panels[-1].as_of_session,
+            expected_append_logical_fingerprint=str(
+                composed_manifest["logical_content_fingerprint"]
+            ),
+            expected_source_audit_logical_fingerprint=str(
+                manifest["logical_content_fingerprint"]
+            ),
+        )
+        downstream = validate_candidate_segmented_current_downstream(
+            evidence=consumer,
+            panel=incremental.panels[-1],
+        )
+        assert downstream.current_session_entry_strategy_ready is True
+        assert consumer_equivalence.mismatch_count == 0
+        assert downstream.entry_oracle_mismatch_count == 0
+        assert downstream.strategy_oracle_mismatch_count == 0
+        assert downstream.visual_context_ready is False
+        assert downstream.v1_replacement_ready is False
+        assert downstream.production_write_count == 0
+        with pytest.raises(
+            CandidateSegmentedConsumerError,
+            match="Entry or Strategy result differs",
+        ):
+            validate_candidate_segmented_current_downstream(
+                evidence=consumer,
+                panel=incremental.panels[-1],
+                expected_entry_batch_fingerprints=("0" * 64, "1" * 64),
+            )
         assert write_candidate_segmented_append_from_session_candidate(
             parent_shadow=parent_shadow,
             source_audit=incremental_dir,
