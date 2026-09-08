@@ -2,9 +2,10 @@
 
 ## Status
 
-Fixture-only research-family repositories and Coverage publication mechanics
-are implemented. The representative Pilot and 300-session EOD/Identity
-acquisition are complete; the remaining research families are not.
+Research-family repositories and Coverage publication mechanics are
+implemented. The representative Pilot, 300-session EOD/Identity acquisition,
+and current EOD/Identity family-evidence publication are complete; final
+Historical Coverage and the remaining research families are not.
 
 This plan turns ADR 0051 into a bounded Dell physical direction and retains the
 historical acquisition design. Reading it does not authorize another provider
@@ -138,12 +139,13 @@ queried only for a small set of unresolved stable IDs, never the entire base.
    and two absent immutable targets in one deterministic direct-`/tmp` plan,
    then independently reread it by exact SHA-256. This did not publish either
    manifest and did not implement Apply or final Historical Coverage.
-14. **Complete as disconnected Apply mechanics under ADR 0166:** require the
+14. **Complete under ADR 0166:** require the
    reviewed plan SHA-256, logical fingerprint, family-set fingerprint, and Dell
    root; publish EOD before Identity through atomic directory renames; permit
    recovery only from an exact completed prefix; and compare outside-target
-   inventory before and after the locked critical section. This has not been
-   invoked against `/data` and does not publish final Historical Coverage.
+   inventory before and after the locked critical section. Disconnected fault
+   injection passed before the exact real two-file Apply and zero-write
+   postflight. This does not publish final Historical Coverage.
 
 Steps 1–11 were repository mechanics. Step 12 was the separately governed
 historical EOD/Identity transition and is retained as execution history, not a
@@ -162,11 +164,12 @@ for all 301 source-available sessions. Only the 8/13 and 8/19 source gaps
 remain at this layer. Research readiness is still blocked because the evidence
 is retrospective and later required families remain incomplete.
 
-The current `/data` root has neither a
-`market-data/historical-coverage-evidence` nor
-`market-data/historical-coverage` directory. Strategy readiness therefore
-remains `data_blocked`; fixture-only publication mechanics do not supply
-missing canonical facts.
+The current `/data` root has two immutable
+`market-data/historical-coverage-evidence` partitions for EOD and point-in-time
+Identity. It has no `market-data/historical-coverage` publication. Strategy
+readiness therefore remains `data_blocked`; two published family-evidence
+objects do not supply the missing canonical families or a final Coverage
+decision.
 
 The network-prohibited ADR 0165 operator entry point is:
 

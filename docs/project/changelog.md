@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-08 — Publish current EOD and Identity family evidence canonically
+
+- Revalidated clean Dell main, the owner-read-only ADR 0165 plan, its physical
+  SHA-256, all 304 sessions of bound source bytes, both absent targets, and zero
+  residue before mutation.
+- The ADR 0166 exact executor published EOD first and Identity second: two
+  immutable manifests / 675,569 bytes, two formal family rereads, zero network
+  requests, zero overwrites, and zero deletions. The outside-target fingerprint
+  remained unchanged throughout the locked critical section.
+- A separate completed-state `verify_then_complete` postflight reused both
+  targets and wrote zero files/bytes. The authoritative read-only report now
+  records 4,060 files / 2,009,699,645 bytes, inventory fingerprint
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
+  zero symlinks, and zero staging/partial residue.
+- Current-context report 1.6 sees exactly two historical family-evidence
+  partitions while final Historical Coverage remains absent. Research stays
+  `data_blocked`; no model, analytics, Snapshot, bundle, OCI, scheduler,
+  deployment, or Production web-serving state changed.
+
 ## 2026-09-08 — Prove recoverable EOD/Identity family-evidence Apply
 
 - Accepted ADR 0166 and added one explicit executor for ADR 0165's exact two

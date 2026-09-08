@@ -76,15 +76,13 @@ installed timer remains read-only until automation receives its own review.
 Connect canonical history to research without projecting current membership
 backward. Required families are:
 
-The full-content ADR 0100 adapter has now validated all 304 canonical EOD and
-point-in-time Identity sessions with zero gaps. Both family evidence candidates
-remain unpublished. ADR 0165 has converted them into one deterministic,
-exact-SHA, no-write `/tmp` publication plan bound to both absent targets. ADR
-0166 adds the locked, network-prohibited, ordered-prefix Apply/recovery executor
-and proves it only under disconnected temporary roots. Its next transition is
-the separately bounded exact production Apply and zero-write postflight; it
-must not be combined with final Historical Coverage or mistaken for completion
-of the missing families below.
+The full-content ADR 0100 adapter has validated all 304 canonical EOD and
+point-in-time Identity sessions with zero gaps. ADR 0165 bound both family
+evidence candidates into one deterministic exact-SHA plan. ADR 0166 added and
+disconnected-tested the locked, network-prohibited, ordered-prefix executor;
+the separately reviewed exact production Apply and zero-write postflight are
+now complete. These two immutable evidence objects must not be mistaken for
+final Historical Coverage or completion of the missing families below.
 
 - point-in-time Identity and daily Universe membership;
 - lifecycle, inactive, terminal, and successor evidence;

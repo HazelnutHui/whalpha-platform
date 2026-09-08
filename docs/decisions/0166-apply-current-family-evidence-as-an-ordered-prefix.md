@@ -82,10 +82,15 @@ research/performance authority.
   `6ae6738181012b6f9364d5b624d7edaa81d992b7be623e6bd6b58c2854d5e663`,
   and family-set fingerprint
   `be67c6ec924809eca63dacf1130ec19d9df0d673f65b403a416de1f2be812377`.
-- No real `/data` Apply was performed by this decision. Both evidence targets
-  remain absent. Final Historical Coverage, research development, performance
-  interpretation, analytics, Snapshot, bundle, OCI, scheduler, and deployment
-  remain outside this boundary.
+- The separately reviewed real Apply subsequently published the exact two
+  manifests / 675,569 bytes. Its outside-target fingerprint was unchanged,
+  full post-state fingerprint is
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
+  and a separate completed-state postflight reused both targets while writing
+  zero files/bytes. The dated audit records the complete evidence.
+- Final Historical Coverage, research development, performance interpretation,
+  analytics, Snapshot, bundle, OCI, scheduler, and deployment remain outside
+  this boundary.
 - The complete API regression passed `2160 passed, 2 warnings`; both warnings
   are unchanged dependency deprecations.
 

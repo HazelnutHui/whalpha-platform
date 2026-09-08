@@ -15,6 +15,8 @@
 - [ADR 0149: Sealed and Operational Freshness](decisions/0149-separate-sealed-and-operational-freshness.md): separates immutable Snapshot publication evidence from current canonical and serving-state evaluation.
 - [ADR 0150: Atomic Daily Identity Source Custody](decisions/0150-retain-daily-identity-source-observations-atomically.md): adds direct daily source binding, Plan 1.1 atomic publication, legacy-plan compatibility, and append-only exact repair.
 - [2026-09-06 Daily EOD Publication and Deployment Audit](audits/daily-eod-publication-deployment-2026-09-06.md): exact 2026-09-04 acquisition, analytics, publication, deployment, and postflight evidence.
+- [ADR 0166: Ordered-prefix current family-evidence Apply](decisions/0166-apply-current-family-evidence-as-an-ordered-prefix.md): exact-plan EOD-first/Identity-second canonical publication with fail-closed recovery and outside-target drift detection.
+- [2026-09-08 Current Historical Family-Evidence Canonical Apply Audit](audits/current-historical-family-evidence-canonical-apply-2026-09-08.md): exact two-manifest Apply, zero-write postflight, authoritative post-state, and unchanged research-readiness boundary.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

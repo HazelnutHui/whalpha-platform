@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T05:12:37Z
+Operational state verified at: 2026-09-08T06:38:22Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -49,8 +49,9 @@ publication-time assertion as a third, explicitly named view.
 | Identity/EOD alignment | aligned on 2026-09-04 |
 | Canonical historical Identity source | 302 immutable source-observation partitions / 3,700,330 rows; 2 source sessions absent |
 | Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for 2026-09-08 open |
-| `/data` inventory | 4,058 files / 2,009,024,076 bytes |
-| `/data` inventory fingerprint | `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4` |
+| Canonical EOD/Identity family evidence | 2 immutable manifests; final Historical Coverage absent |
+| `/data` inventory | 4,060 files / 2,009,699,645 bytes |
+| `/data` inventory fingerprint | `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -109,11 +110,11 @@ progress rather than treating all historical inputs as one missing block:
 - the 252-session price-depth floor is satisfied by 304 contiguous EOD
   partitions;
 - all 304 EOD dates have exact same-date completed Identity manifests;
-- both families are canonical and acquired but have not been promoted through
-  a formal Historical Coverage publication;
+- both families are canonical and acquired, and now have immutable transitive
+  family-evidence manifests, but no final Historical Coverage publication;
 - provider corporate-action observations, canonical corporate actions, daily
-  point-in-time membership, lifecycle, adjustment ledger, and Historical
-  Coverage evidence/final roots are absent from `/data`;
+  point-in-time membership, lifecycle, adjustment ledger, and final Historical
+  Coverage remain absent or incomplete in `/data`;
 - a real cost/liquidity model, complete availability/revision lineage, real
   chronological evaluation dataset, and sealed real holdout are also absent or
   fixture-only.
@@ -151,20 +152,23 @@ targets and 675,569 proposed bytes; plan logical fingerprint is
 and plan SHA-256 is
 `dced91a98cf4a71fe28748c241f83aa31dcdb588a9f322245a9b14de6d4511ae`.
 An independent exact-SHA reread revalidated every source byte and both absent
-targets. The subsequent context report kept `/data` at the exact inventory
-above with zero publication residue; `historical-coverage-evidence` and final
-`historical-coverage` remain absent. The plan grants no Apply, research,
+targets. At that planning checkpoint, the context report kept `/data` at 4,058
+files / 2,009,024,076 bytes with inventory fingerprint
+`d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`
+and zero publication residue. The plan itself granted no Apply, research,
 performance, deployment, or final Coverage authority.
 
-ADR 0166 now supplies the separately bounded executor and recovery mechanics.
+ADR 0166 supplies the separately bounded executor and recovery mechanics.
 It uses the shared canonical-data lock, requires the exact plan SHA, logical
 fingerprint, family-set fingerprint, and Dell root, publishes EOD before
 Identity as two atomic one-file directories, and accepts recovery only from an
 exact ordered prefix. Disconnected fault injection proves interruption and
 zero-write recovery, corruption/order/staging refusal, outside-target drift
-detection, and network prohibition. A fresh read-only exact-SHA check of the
-real plan passed on 2026-09-08, but the executor has not been invoked against
-`/data`; both targets and final `historical-coverage` remain absent.
+detection, and network prohibition. The separately reviewed real Apply then
+published both exact manifests / 675,569 bytes; its completed-state postflight
+reused both targets and wrote zero files/bytes. `/data` now has the inventory
+shown above with zero residue. Final `historical-coverage` remains absent, and
+the formal status remains `data_blocked`.
 
 ADR 0140 exposes the normalized source-observation layer separately from
 resolved Identity snapshots. ADR 0150 adds direct daily binding and append-only
@@ -488,12 +492,10 @@ separately bounded.
 3. **Historical analytics consumption:** connect the 304-session canonical
    foundation to research/analytics through point-in-time governed inputs;
    reconcile the current 26-session MI history and research-readiness display.
-4. **Research foundation:** ADRs 0165–0166 have completed the exact no-write
-   plan and disconnected two-file Apply/recovery mechanics for the 304-session
-   EOD and point-in-time Identity evidence. Both `/data` targets remain absent.
-   Next perform a separately bounded exact production Apply and zero-write
-   postflight; do not combine it with final Historical Coverage or treat it as
-   research readiness. The disconnected inactive
+4. **Research foundation:** ADRs 0165–0166 have completed the exact plan,
+   canonical two-file Apply, and zero-write postflight for the 304-session EOD
+   and point-in-time Identity evidence. Final Historical Coverage remains
+   absent and research remains data-blocked. The disconnected inactive
    lifecycle normalization and stable-identity resolution shadow is complete
    for both anchors. Next
    design corroboration and source-availability evidence for the 547 latest

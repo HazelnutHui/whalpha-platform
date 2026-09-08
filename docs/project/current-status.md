@@ -53,8 +53,11 @@ unrelated services.
   and retained at its actual observation time.
 - Canonical signal-eligible Membership now contains the 2026-09-04 partition:
   19,964 decisions, eligible for the 2026-09-08 open.
-- `/data` contains 4,058 files / 2,009,024,076 bytes, with fingerprint
-  `d7ddbace6669c1870e86d79fd48aa86ff99d276699d23b84939983f950b236b4`,
+- Canonical EOD and point-in-time Identity family evidence now contains two
+  immutable, transitively source-bound manifests. Final Historical Coverage
+  remains absent.
+- `/data` contains 4,060 files / 2,009,699,645 bytes, with fingerprint
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
   zero symlinks, and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
@@ -97,9 +100,10 @@ evaluation datasets are not yet fully wired.
 
 Current-context contract 1.6 makes this family-specific: the 304-session price
 floor and all 304 same-date Identity completion manifests are present,
-but neither has a published Historical Coverage claim. The provider-action,
+and both now have published immutable family evidence, but neither has a final
+Historical Coverage claim. The provider-action,
 canonical-action, daily-membership, lifecycle, adjustment-ledger, and
-Historical Coverage evidence/final roots are absent. Real cost/liquidity,
+final Historical Coverage roots are absent. Real cost/liquidity,
 complete revision lineage, chronological evaluation, and sealed-holdout inputs
 also remain absent or fixture-only.
 
@@ -122,14 +126,16 @@ confirmed the same 4,058-file `/data` inventory, zero residue, and no published
 family evidence. Apply, final Coverage, research development, and performance
 claims remain unauthorized.
 
-ADR 0166 now implements that exact two-file Apply boundary. It requires the
+ADR 0166 implements that exact two-file Apply boundary. It requires the
 reviewed plan SHA-256, plan logical fingerprint, family-set fingerprint, and
 approved Dell root; shares the global canonical-data lock; publishes EOD before
 Identity by atomic directory rename; permits only exact-prefix or completed
 zero-write recovery; and detects outside-target inventory drift. Disconnected
-fault injection and adjacent Apply regression passed. A new read-only exact-SHA
-check of the real plan also passed, but no real Apply was run: both family
-evidence targets and final Historical Coverage remain absent.
+fault injection and adjacent Apply regression passed. The separately reviewed
+real Apply published both exact manifests / 675,569 bytes with zero requests,
+overwrites, or deletions. A completed-state postflight reused both and wrote
+zero files/bytes. Final Historical Coverage remains absent and research remains
+`data_blocked`.
 
 The 2026-09-05 aggregate inactive-security census reached 20 full pages and
 20,000 rows with another page still available. It found `delisted_utc` on
@@ -308,11 +314,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    cumulative state history in the append projection. Keep V1 authoritative;
    do not expose the segmented path to CLI/executor or create canonical custody
    until one bounded design resolves both gaps.
-4. ADRs 0165–0166 have completed the deterministic plan and disconnected,
-   recoverable two-file executor for the validated EOD/Identity evidence
-   manifests. The next bounded transition is an exact production Apply followed
-   by zero-write postflight and the read-only context report. Do not combine it
-   with final Historical Coverage or use it to claim research readiness.
+4. ADRs 0165–0166 have completed the deterministic plan, canonical two-file
+   Apply, zero-write postflight, and read-only report for the validated
+   EOD/Identity evidence manifests. This does not authorize final Historical
+   Coverage or research readiness. Continue with the missing lifecycle,
+   corporate-action, adjustment, cost, availability, and evaluation evidence.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds
