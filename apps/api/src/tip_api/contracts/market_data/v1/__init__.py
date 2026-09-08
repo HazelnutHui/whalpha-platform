@@ -117,6 +117,16 @@ from tip_api.contracts.market_data.v1.historical_inactive_lifecycle import (
     inactive_lifecycle_fingerprint,
     inactive_lifecycle_rows_fingerprint,
 )
+from tip_api.contracts.market_data.v1.historical_inactive_lifecycle_corroboration import (
+    PLAN_CONTRACT_VERSION as INACTIVE_LIFECYCLE_CORROBORATION_PLAN_VERSION,
+    REQUIRED_LIFECYCLE_EVIDENCE,
+    WORK_ITEM_CONTRACT_VERSION as INACTIVE_LIFECYCLE_CORROBORATION_WORK_ITEM_VERSION,
+    HistoricalInactiveLifecycleCorroborationPlanV1,
+    HistoricalInactiveLifecycleCorroborationWorkItemV1,
+    LifecycleCorroborationRoute,
+    LifecycleCorroborationStatus,
+    LifecycleEvidenceRequirement,
+)
 from tip_api.contracts.market_data.v1.universe_membership_knowledge_time import (
     KNOWLEDGE_TIME_POLICY_VERSION,
     UniverseMembershipKnowledgeTimeAssessmentV1,
@@ -232,6 +242,14 @@ __all__ = [
     "InactiveLifecycleShadowArtifactV1",
     "inactive_lifecycle_fingerprint",
     "inactive_lifecycle_rows_fingerprint",
+    "INACTIVE_LIFECYCLE_CORROBORATION_PLAN_VERSION",
+    "INACTIVE_LIFECYCLE_CORROBORATION_WORK_ITEM_VERSION",
+    "REQUIRED_LIFECYCLE_EVIDENCE",
+    "HistoricalInactiveLifecycleCorroborationPlanV1",
+    "HistoricalInactiveLifecycleCorroborationWorkItemV1",
+    "LifecycleCorroborationRoute",
+    "LifecycleCorroborationStatus",
+    "LifecycleEvidenceRequirement",
     "KNOWLEDGE_TIME_POLICY_VERSION",
     "UniverseMembershipKnowledgeTimeAssessmentV1",
     "build_universe_membership_knowledge_time_assessment",

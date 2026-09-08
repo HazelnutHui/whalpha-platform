@@ -96,6 +96,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Classification V1](data-contracts/classification-v1.md)
 - [Universe Membership V1](data-contracts/universe-membership-v1.md)
 - [Historical Research Foundation Contracts V1](data-contracts/historical-research-foundation-v1.md)
+- [Historical Inactive Lifecycle Corroboration Plan V1](data-contracts/historical-inactive-lifecycle-corroboration-plan-v1.md): immutable stable-ID review queue for unresolved terminal evidence and knowledge time, with no acquisition or canonical authority.
 - [Candidate Strategy Research Experiment V1](data-contracts/candidate-strategy-research-experiment-v1.md)
 - [Strategy Research Readiness V1](data-contracts/strategy-research-readiness-v1.md)
 - [Strategy Research Development Activation Review V1](data-contracts/strategy-research-development-activation-review-v1.md): Separates complete data evidence from exact user authorization and any later real-evaluation capability.

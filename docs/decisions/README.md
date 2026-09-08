@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0167](0167-plan-inactive-lifecycle-corroboration-without-promotion.md): convert the complete 547-row inactive-lifecycle review subset into an immutable stable-ID corroboration queue while preserving unknown source availability and zero canonical authority.
+
 - [ADR 0166](0166-apply-current-family-evidence-as-an-ordered-prefix.md): apply the exact ADR 0165 EOD/Identity manifests in one locked, network-prohibited ordered-prefix workflow with fail-closed recovery and outside-target drift detection.
 
 - [ADR 0165](0165-plan-current-eod-and-identity-family-evidence-publication.md): bind the exact 304-session EOD and point-in-time Identity evidence bytes plus two absent immutable targets in a deterministic `/tmp` plan, without Apply or Historical Coverage authority.
@@ -286,3 +288,4 @@ Each ADR should include:
 - [0164: Gate Segmented Candidate Downstream Cutover](0164-gate-segmented-candidate-downstream-cutover.md)
 - [0165: Plan Current EOD and Identity Family-Evidence Publication](0165-plan-current-eod-and-identity-family-evidence-publication.md)
 - [0166: Apply Current Family Evidence as an Ordered Prefix](0166-apply-current-family-evidence-as-an-ordered-prefix.md)
+- [0167: Plan Inactive Lifecycle Corroboration Without Promotion](0167-plan-inactive-lifecycle-corroboration-without-promotion.md)
