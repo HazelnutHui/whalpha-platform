@@ -4,8 +4,9 @@
 
 The mapper remains validated against saved synthetic response fixtures only.
 ADR 0169 separately implements a resumable, temporary Massive V1 split and
-dividend source-custody boundary. No real V1 source package has yet been
-completed, and no source-to-canonical adapter, canonical Corporate Action
+dividend source-custody boundary. The first real range completed and matched
+the documented mapper fields, but it has not been passed through an event-date
+stable-ID adapter. No source-to-canonical adapter, canonical Corporate Action
 dataset, or `/data` write exists.
 
 ## Public shape review
@@ -73,10 +74,11 @@ a return forecast, alpha, option return, or permission to create a real ledger.
 
 ## Remaining boundary
 
-- The earlier account probe reached deprecated V3 endpoints only; current V1
-  access and a complete real page chain remain unverified.
-- The V1 fetch package and formal reader are implemented but have not yet been
-  exercised against a real response. Adapter integration remains absent.
+- The earlier account probe reached deprecated V3 endpoints only. ADR 0169 now
+  separately proves current V1 access and complete real page chains for the
+  exact 2025-06-23 through 2026-09-04 range.
+- The real source rows have not yet been mapped against event-date Identity;
+  adapter integration and append-only revision handling remain absent.
 - No provider observation has been promoted into canonical Corporate Action.
 - Merger, spinoff, symbol-change, delisting, successor, and terminal-outcome
   sources remain absent.

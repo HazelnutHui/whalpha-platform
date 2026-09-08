@@ -87,3 +87,18 @@ event until separate range/source completeness and revision policy pass.
   accepted for a different bounded purpose.
 - **Treat the old V3 limit-one probe as V1 proof:** confuses endpoint generation,
   full pagination, and body-shape evidence.
+
+## Execution evidence
+
+Clean main revision `08eb33c60896be783547aae55704b57caafca49c`
+completed the exact 2025-06-23 through 2026-09-04 range. Split custody
+completed naturally in 1 request / 1,949 rows; dividend custody completed in
+14 requests / 68,150 rows with a 3,150-row final page. Both had zero invalid or
+out-of-range dates, duplicate provider IDs, and unexpected fields. Separate
+formal reread passed. The owner-only temporary tree contains 19 files /
+24,489,297 bytes and no symlink.
+
+The post-run read-only context report kept `/data` unchanged at 4,060 files /
+2,009,699,645 bytes and fingerprint
+`16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`.
+Exact package identities and field census are recorded in the dated audit.

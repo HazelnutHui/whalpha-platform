@@ -189,9 +189,12 @@ ADR 0169 separately adds the resumable temporary source boundary for Massive
 V1 split and dividend observations. Each kind has its own bounded, owner-only
 `/tmp` package, atomic per-page recovery, exact request-chain and physical
 reread, source-field preservation, and explicit zero canonical/adjustment
-authority. No real V1 package has yet completed, so current endpoint access,
-real schema and page counts remain unverified; the deprecated-V3 limit-one
-probe does not close that gate.
+authority. The complete real 2025-06-23 through 2026-09-04 source now contains
+1,949 split rows in one page and 68,150 dividend rows in 14 pages. Both have
+zero invalid/out-of-range dates, duplicate source IDs, or unexpected fields and
+pass separate formal reread. The temporary evidence proves V1 technical access
+and custody only; event-date stable-ID mapping, revisions, source availability,
+canonical events, adjustments, and Coverage remain unverified.
 
 The report projects normalized Identity source observations as a separate
 record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
@@ -346,8 +349,9 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    Apply, zero-write postflight, and read-only report for the validated
    EOD/Identity evidence manifests. This does not authorize final Historical
    Coverage or research readiness. ADR 0169 now provides the temporary
-   split/dividend source boundary; complete and audit its two real V1 packages,
-   then design event-date stable-ID mapping before any canonical action or
+   split/dividend source boundary, and both exact real packages have completed
+   and passed formal reread. Next design event-date stable-ID mapping and an
+   append-only observation/revision result before any canonical action or
    Adjustment Ledger work. Lifecycle, cost, availability, and evaluation
    evidence also remain incomplete.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative

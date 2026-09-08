@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T06:38:22Z
+Operational state verified at: 2026-09-08T08:31:11Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -322,9 +322,13 @@ package kinds share one implementation but remain independently recoverable
 and formally readable below `/tmp`. The boundary preserves source fields,
 measures schema additions and malformed dates, and performs no identity
 resolution, `/data` write, canonical Corporate Action, Adjustment Ledger,
-analytics, publication, deployment, or scheduler change. A real V1 package has
-not yet been completed; the earlier deprecated-V3 limit-one probe is not
-treated as current V1 proof.
+analytics, publication, deployment, or scheduler change. The first real range,
+2025-06-23 through 2026-09-04, has now completed: 1,949 split rows in one page
+and 68,150 dividend rows in 14 pages. Both had zero invalid/out-of-range dates,
+duplicate provider IDs, or unexpected fields, and passed a separate formal
+reread. These `/tmp` packages prove current technical access and source
+custody—not stable identity, canonical events, revision history, provider
+availability time, adjustment reconciliation, or Historical Coverage.
 
 ## OCI production proof
 
@@ -535,8 +539,9 @@ separately bounded.
    completes public source review and requires a real licensed cross-venue
    sample plus the deterministic 30-item diagnostic before lifecycle adapter
    work. ADR 0169 independently provides the no-canonical-write Massive V1
-   split/dividend source boundary; next complete and audit one real temporary
-   package of each kind before designing event-date stable-ID mapping.
+   split/dividend source boundary, and both exact real packages have completed
+   and passed formal reread. Next design and validate event-date stable-ID
+   mapping without writing canonical Corporate Action or adjustments.
    Request exact price/sample/permission terms from the user before any vendor
    contact, trial, purchase, or access; do not promote candidates by ticker or
    provider status alone.

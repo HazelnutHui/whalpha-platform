@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-08 — Complete real Massive V1 corporate-action source custody
+
+- On clean Dell main `08eb33c60896be783547aae55704b57caafca49c`, completed
+  the exact 2025-06-23 through 2026-09-04 Massive V1 source range: 1 split
+  page / 1,949 rows / 440,130 sanitized bytes and 14 dividend pages / 68,150
+  rows / 24,033,055 sanitized bytes. Natural pagination ended below every
+  safety ceiling.
+- Both sources had zero invalid/out-of-range dates, duplicate nonempty source
+  IDs, and unexpected fields. A separate formal reread passed. The temporary
+  owner-only tree has 19 files / 24,489,297 bytes, mode `0700` directories,
+  mode `0400` completed files, and zero symlinks.
+- Split events comprise 337 forward splits, 1,384 reverse splits, and 228 stock
+  dividends. Dividend events span 13,759 provider tickers; the broad scope is
+  retained for event-date stable-ID resolution rather than being filtered by
+  current ticker or current active Universe.
+- The post-run network-prohibited report kept `/data` unchanged at 4,060 files
+  / 2,009,699,645 bytes, fingerprint
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
+  zero symlinks, and zero residue. No canonical action, adjustment, analytics,
+  publication, deployment, scheduler, or Production transition occurred.
+
 ## 2026-09-08 — Stage corporate-action source before adjustment
 
 - Accepted ADR 0169 and added one resumable temporary source-custody boundary

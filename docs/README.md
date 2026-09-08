@@ -23,6 +23,7 @@
 - [2026-09-08 Lifecycle Corroboration Source Review](providers/lifecycle-corroboration-source-review-2026-09-08.md): official source roles, deterministic 30-item diagnostic, and paid-sample decision boundary.
 - [ADR 0169: Corporate-Action Source Custody](decisions/0169-stage-corporate-action-source-before-adjustment.md): separates resumable split/dividend source evidence from stable-ID mapping, canonical events, and adjustment math.
 - [Historical Corporate Action Source Package V1](data-contracts/historical-corporate-action-source-package-v1.md): owner-only temporary V1 endpoint custody, formal reread, and explicit zero canonical authority.
+- [2026-09-08 Corporate-Action Source Audit](audits/corporate-action-source-2026-09-08.md): first complete real V1 split/dividend packages, field census, custody proof, and unchanged canonical state.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 
