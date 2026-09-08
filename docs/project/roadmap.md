@@ -34,33 +34,21 @@ their deep validation boundaries.
 
 Next:
 
-1. Measure one complete post-ADR-0125–0129 daily chain on Dell.
+1. Observe the next eligible live session end to end on Dell and record one
+   consolidated timeline. The 9/4 chain passed functionally, while current
+   stage timings come from separate controlled runs and must not be summed.
 2. Use the completed Candidate attribution: the cumulative writer is the
    remaining hotspot, while finalization and explicit garbage collection are
    negligible.
 3. Retain the completed current-code ranking: MI is bounded at 53.84 seconds;
    Snapshot is 121.57 seconds after removing its duplicate active read.
-4. Advance ADR 0130's disconnected segmented Candidate shadow from exact V1
-   reconstruction, ADR 0155's distinct state-chain identity, and ADR 0156's
-   one-session append/recovery/cold-equivalence proof. ADR 0157 completes direct
-   current-session candidate production from already validated calculation
-   objects. ADR 0158 completes composition with the exact physically completed
-   V1 audit into a 1.1 successor without cumulative semantic reconstruction.
-   ADR 0159 proves two ordered 1.1 generations and generalized cold parent
-   reading. ADR 0160 proves the disconnected expected-identity chain head,
-   incremental advance, and exact cold equivalence. ADR 0161 now defines its
-   no-write immutable publication/current-pointer plan, bounded-family CAS,
-   rollback reference, recovery states, and retain-all policy. ADR 0162 proves
-   exact-plan Apply/recovery only in disconnected simulation and explicitly
-   refuses the Production root. ADR 0163 now proves periodic cold
-   full-lineage verification with a before/after current-state binding and
-   zero writes. ADR 0164 proves exact current V1 input and Entry/Strategy
-   output equivalence, but records a no-go for cutover: current reading still
+4. Keep ADR 0130 and ADRs 0155–0164 as completed disconnected evidence. ADR
+   0164 records a Production cutover NO-GO because current reading still
    rehashes the large base and Visual Context requires cumulative state history
-   absent from the append. Do not expose the path to CLI/executor until one
-   bounded design resolves both gaps. Do not relabel
-   its different history fingerprint as V1 or cut over the daily/publication
-   path until all gates pass.
+   absent from the append. Resume this path only if a new live-chain
+   measurement breaches an agreed budget and one bounded design addresses both
+   gaps. Do not expose it to CLI/executor or relabel its different history
+   fingerprint as V1.
 5. Remove any remaining repeated evidence reconstruction only where the new
    complete-chain measurement justifies it.
 6. Vectorize or process-parallelize only independent CPU-heavy work after exact
@@ -147,7 +135,34 @@ Current membership implementation sequence:
    gaps explicit and do not publish Historical Coverage until every admitted
    session has a transitive eligibility assessment.
 
-## Priority 3 — First real strategy research
+## Priority 3 — Security classification and concentration diagnostics
+
+Establish formal security-level Sector/Industry evidence before interpreting
+Candidate concentration or activating Defensive Rotation.
+
+1. Audit currently implemented providers and canonical Identity custody for
+   usable taxonomy fields, effective dates, revision semantics, coverage, and
+   permitted uses. Current canonical Identity does not contain formal
+   Sector/Industry membership.
+2. Keep current-display classification separate from historical point-in-time
+   research classification. A current taxonomy may improve today's dashboard
+   without becoming historical backtest evidence.
+3. Implement Classification V1 by stable `instrument_id`, canonical internal
+   classification IDs, effective dates, source/methodology versions, and
+   explicit resolved/quarantined status.
+4. Map external taxonomies through a versioned adapter. Never infer positive
+   membership from ticker, company name, or a price-correlated ETF proxy.
+5. Add Candidate sector/industry distribution, cross-channel repeated exposure,
+   and concentration diagnostics only after the formal reader passes. Preserve
+   raw counts and make missing classification visible.
+6. Use the same governed classification later for sector-stratified strategy
+   evaluation and Defensive Rotation, without projecting current membership
+   backward.
+
+This product/data work may proceed while waiting for a new market session or a
+lifecycle vendor sample, but it must not tune Candidate formulas.
+
+## Priority 4 — First real strategy research
 
 Begin with the preregistered Strong-Leader Pullback study after formal data
 readiness. Compare candidates only against the same eligible opportunity set,
@@ -166,7 +181,7 @@ than a single universal score. Earnings, macro, and news initially serve as
 risk and interpretation inputs rather than claims of first-information
 advantage.
 
-## Priority 4 — Decision-useful visualization
+## Priority 5 — Decision-useful visualization
 
 Visualization may proceed alongside research foundations when it does not
 change model logic or delay critical data work. Each chart must answer a
@@ -181,7 +196,7 @@ decision question, such as:
 Default views should emphasize the most important five to eight items. Raw
 values, parameters, sources, and hashes remain available but folded.
 
-## Priority 5 — Options expression
+## Priority 6 — Options expression
 
 Options are a separate expression layer over a stock thesis, not a relabeling
 of stock forward returns. Required data include bid/ask, spread, volume, open
@@ -192,7 +207,7 @@ The layer may compare long Calls/Puts, debit spreads, covered calls, moneyness,
 and DTE with explicit payoff, volatility, liquidity, and time-decay risks.
 Naked short-option strategies remain outside intended scope.
 
-## Priority 6 — Fundamentals, valuation, and events
+## Priority 7 — Fundamentals, valuation, and events
 
 Proposed order:
 
@@ -207,7 +222,7 @@ Without historical consensus data, actual results and price response may be
 analyzed, but they must not be presented as a complete expectations-surprise
 model.
 
-## Priority 7 — Portfolio and broker integration
+## Priority 8 — Portfolio and broker integration
 
 Position management, account-level risk, and broker connectivity follow the
 research and options foundations. The first intended broker is IBKR. Initial

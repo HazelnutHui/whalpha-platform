@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-09-08 — Reconcile and compact authoritative project context
+
+- Recovered this task from the source-of-truth Dell `main`; the previously
+  opened historical-backfill worktree had no unique commit and was 79 commits
+  behind the clean main baseline.
+- Re-ran the network-free current-context reader and the independent read-only
+  OCI inspector. Repository, EOD, Identity, Activation, Market Intelligence,
+  Snapshot, `/data`, services, protected routes, temporary guest Session, and
+  guest/credential route parity matched the active release with zero residue.
+- Corrected `current-context` OCI fingerprints that still described the prior
+  release and reconciled historical-foundation text with the already published
+  EOD/Identity family evidence and one canonical Membership partition.
+- Removed long execution narratives from `current-context` and
+  `current-status`; retained volatile facts, active risks, research-family
+  boundaries, recovery steps, and links to the immutable ADR/audit history.
+- Froze further segmented-Candidate optimization behind a new live-chain budget
+  breach and one bounded design for both remaining gaps. Added formal
+  security-level classification and Candidate concentration as the next
+  decision-useful product/data objective, separate from ETF proxies and
+  historical point-in-time research taxonomy.
+- This documentation reconciliation changes no application code, canonical
+  data, active pointer, analytics, timer, scheduler, bundle, OCI release, or
+  guest/credential capability.
+
 ## 2026-09-08 — Deploy Strategy Channel decision-integrity presentation
 
 - Kept every published strategy-channel status, score, rank, parameter, and

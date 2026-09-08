@@ -16,15 +16,14 @@ absent. The completed EOD/Identity price-history acquisition supplies only two
 of the six required families. Data Record Governance V1 supplies the
 cross-family state vocabulary without replacing these domain contracts.
 
-ADR 0099 also implements the physical Historical Coverage layer, with all
-publication tests limited to fixtures. It stores no duplicate facts: each
-family evidence manifest transitively binds
-the original completion manifest and payload hashes, and the final Coverage
-reader refuses to return a typed claim if any referenced byte or boundary has
-drifted. ADR 0100 adds a no-write adapter that formally rereads current
-canonical EOD and all three Identity payload families, then transitively
-validates proposed in-memory family evidence. No such evidence or coverage
-publication exists under `/data` yet.
+ADR 0099 implements the physical Historical Coverage layer. It stores no
+duplicate facts: each family evidence manifest transitively binds the original
+completion manifest and payload hashes, and the final Coverage reader refuses
+to return a typed claim if any referenced byte or boundary has drifted. ADR
+0100 added the formal no-write EOD/Identity adapter. ADRs 0165–0166 subsequently
+published the exact EOD and point-in-time Identity family-evidence manifests
+under `/data` and passed a completed-state zero-write postflight. Final
+Historical Coverage across every required family remains absent.
 
 The immediate objective is not “more bars.” It is a history that can answer,
 for each signal session, which instrument existed, which Universe decision was
@@ -293,10 +292,11 @@ evaluation reproducibility through a separately reviewed deletion procedure.
 V1 remains Parquet-first under the approved Dell data root, with one explicit
 schema-version directory, bounded partitions, deterministic ordering,
 content fingerprints, physical file hashes, manifests, and atomic completion.
-EOD/Identity paths are canonical. Fixture-tested paths for membership,
-source-action, lifecycle, adjustment, and Coverage are frozen by their current
-repositories but have not been populated under `/data`; the canonical
-Corporate Action projection still requires a physical implementation.
+EOD/Identity paths and their family-evidence manifests are canonical. One
+signal-eligible Membership partition is also canonical and governed by its
+physical-first, marker-last publication boundary. Corporate Action, lifecycle,
+adjustment, and final Historical Coverage remain fixture-only or temporary and
+have not been populated as canonical families under `/data`.
 
 The design should prefer:
 
