@@ -144,12 +144,12 @@ Visual Context's cumulative-state requirement.
 
 1. Exercise the complete guarded daily chain and ADR 0154 Membership
    preparation on the next eligible session; record consolidated timings.
-2. Audit a real security-level Sector/Industry source. Separate current display
-   classification from historical point-in-time classification.
+2. Implement the ADR 0173 provider-neutral Classification V1 observation,
+   mapping, persistence, and fail-closed reader boundary against fixtures.
 3. After the new-session Membership/recovery gates pass, review coordinator
    integration and a controlled unattended-scheduler rehearsal.
-4. Implement effective-dated stable-ID classification and Candidate
-   sector/industry concentration; quarantine missing or ambiguous mappings.
+4. Review a GICS History specification/sample; only then implement its adapter
+   and Candidate sector/industry concentration. Keep unknown mappings visible.
 5. Build canonical split actions and a bounded split-adjustment ledger.
 6. Complete historical Membership, lifecycle, costs, availability/revision,
    final Coverage, chronological evaluation, and sealed holdout evidence.

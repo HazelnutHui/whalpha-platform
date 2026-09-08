@@ -140,16 +140,18 @@ Current membership implementation sequence:
 Establish formal security-level Sector/Industry evidence before interpreting
 Candidate concentration or activating Defensive Rotation.
 
-1. Audit currently implemented providers and canonical Identity custody for
-   usable taxonomy fields, effective dates, revision semantics, coverage, and
-   permitted uses. Current canonical Identity does not contain formal
-   Sector/Industry membership.
+1. The repository and official-source audit is complete under ADR 0173. GICS
+   History is the first specification/sample candidate, TRBC is second, RBICS
+   is complementary, and Massive SIC is current-diagnostic only. No source has
+   been selected, sampled, licensed, acquired, or implemented.
 2. Keep current-display classification separate from historical point-in-time
    research classification. A current taxonomy may improve today's dashboard
    without becoming historical backtest evidence.
-3. Implement Classification V1 by stable `instrument_id`, canonical internal
+3. Implement Classification V1 source observations and canonical membership by
+   stable `instrument_id`, canonical internal
    classification IDs, effective dates, source/methodology versions, and
-   explicit resolved/quarantined status.
+   explicit resolved/quarantined status. Preserve source availability and
+   issuer-to-security projection evidence.
 4. Map external taxonomies through a versioned adapter. Never infer positive
    membership from ticker, company name, or a price-correlated ETF proxy.
 5. Add Candidate sector/industry distribution, cross-channel repeated exposure,

@@ -1,5 +1,15 @@
 # Architecture Decision Records
 
+- [ADR 0173](0173-separate-current-and-research-classification-evidence.md): preserve provider taxonomy observations, stable-ID projection, business validity, and knowledge time separately; evaluate GICS History first without selecting or acquiring a source.
+
+- [ADR 0172](0172-stage-split-adjustments-before-dividend-total-return.md): derive a bounded split-only current-basis candidate from exact event ratios before attempting dividend total return.
+
+- [ADR 0171](0171-observe-corporate-action-source-revisions-before-canonicalization.md): retain and compare a second same-scope corporate-action source observation before canonical promotion.
+
+- [ADR 0170](0170-resolve-corporate-actions-by-exact-event-date.md): resolve corporate actions through exact event-date Identity and keep ambiguous or missing mappings quarantined.
+
+- [ADR 0169](0169-stage-corporate-action-source-before-adjustment.md): stage one bounded owner-only corporate-action source package before adjustment work.
+
 - [ADR 0168](0168-gate-lifecycle-adapter-on-a-cross-venue-source-sample.md): require a real licensed cross-venue sample and a deterministic 30-item semantic diagnostic before implementing or selecting a lifecycle adapter.
 
 - [ADR 0167](0167-plan-inactive-lifecycle-corroboration-without-promotion.md): convert the complete 547-row inactive-lifecycle review subset into an immutable stable-ID corroboration queue while preserving unknown source availability and zero canonical authority.

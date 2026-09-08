@@ -73,9 +73,14 @@ operations document.
 
 ## Product inputs
 
-- Traditional Market-Cap Sector Heatmap sources: market cap, canonical sector
-  taxonomy, point-in-time classification, constituents, and licensing boundary
-- Point-in-time sector taxonomy and constituent breadth/rotation policy for both activated universes
+- Will a GICS History specification/sample pass ADR 0173 identity, knowledge-
+  time, revision, inactive-coverage, delivery, price, retention, and equal
+  guest/credential derived-display gates? If not, can TRBC close those scopes?
+- Market-cap source and weighting policy for a future traditional Sector
+  Heatmap; Classification V1 does not by itself supply market cap.
+- Required classified-coverage and unknown-bucket acceptance thresholds for
+  current Candidate concentration and later historical sector research, to be
+  set from observed source missingness rather than guessed in advance.
 - Explicit ADR/common-stock distinction if Instrument Master can support it
 - Whether Trading Activity Map should later use a documented display transform for concentrated activity weights while preserving raw close-times-volume tooltip values
 - Corporate-action verification source and adjustment reconciliation workflow for high-price or high-activity names such as SNDK

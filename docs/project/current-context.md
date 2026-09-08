@@ -202,6 +202,12 @@ share price/volume, relative-strength, and trend inputs; their distinctness is
 not validated. Security-level point-in-time sector taxonomy is absent, so the
 current overlap display is not formal sector concentration.
 
+ADR 0173 completed the source boundary audit. GICS History is the first
+specification/sample candidate, TRBC is second, RBICS is complementary, and
+Massive SIC is current-diagnostic only. No taxonomy source has been selected,
+sampled, licensed, acquired, implemented, published, or deployed. Classification
+V1 may proceed against fixtures while live source access remains gated.
+
 Guest and credential Sessions must remain identical in data, features,
 language, Universe, and analysis until the user explicitly changes that policy.
 Engineering, governance, validation, security, and research standards remain
@@ -268,15 +274,14 @@ design addresses both gaps.
 1. On the next eligible session, run the guarded daily chain, exercise ADR
    0154 Membership preparation against direct Daily Identity Plan 1.1 evidence,
    and record consolidated timings.
-2. Audit a real security-level Sector/Industry source boundary. Keep current
-   display taxonomy separate from historical point-in-time taxonomy; never use
-   ticker/name or ETF price proxies as formal classification.
+2. Implement the ADR 0173 provider-neutral Classification V1 source-observation,
+   mapping, persistence, and fail-closed reader boundary against fixtures.
 3. After the new-session Membership and recovery gates pass, review one-action
    coordinator integration and a controlled scheduler rehearsal. Do not enable
    unattended writes merely because the timer is active.
-4. Implement effective-dated stable-ID classification and Candidate
-   sector/industry concentration only after source coverage, mapping, revision,
-   permission, and quarantine behavior are explicit.
+4. Request and review a GICS History specification/sample before live adapter
+   work. Integrate Candidate sector/industry concentration only after current
+   source coverage, mapping, permission, and quarantine behavior pass.
 5. Build canonical split-action candidates and a bounded split-adjustment
    ledger. Keep unresolved events quarantined and dividend total return later.
 6. Complete lifecycle, historical Membership eligibility, costs, availability,

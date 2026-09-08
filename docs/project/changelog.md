@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-08 — Separate current and historical classification evidence
+
+- Audited canonical Identity, the implemented Massive adapter, Classification
+  V1, and official public material for Massive SIC, SEC SIC, S&P GICS, LSEG
+  TRBC, and FactSet RBICS without accessing credentials, provider endpoints,
+  samples, `/data`, OCI, or Production.
+- Accepted ADR 0173. GICS History is the first specification/sample candidate,
+  TRBC is second, RBICS is complementary business-exposure data, and Massive
+  SIC is at most a current coarse diagnostic. No source was selected, licensed,
+  purchased, sampled, acquired, implemented, published, or deployed.
+- Advanced Classification V1 to logical contract 1.1 with provider source
+  observations, distinct business-valid and knowledge-time fields, revision
+  lineage, stable-ID resolution, and explicit issuer-to-security projection.
+- Kept current-display eligibility separate from historical-research
+  eligibility. Current classification may never be projected backward, and
+  unknown mappings remain visible and quarantined.
+- This design-only change modifies no application behavior, Candidate score or
+  rank, canonical data, active pointer, timer, scheduler, Snapshot, bundle, OCI
+  release, or guest/credential parity.
+
 ## 2026-09-08 — Reconcile and compact authoritative project context
 
 - Recovered this task from the source-of-truth Dell `main`; the previously
