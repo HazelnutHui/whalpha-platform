@@ -721,6 +721,31 @@ reversal forecast, and no posture is an order instruction. Exact fields and
 thresholds are authoritative in the
 [Candidate Entry Geometry V1 contract](../data-contracts/candidate-entry-geometry-v1.md).
 
+## Cross-channel decision desk and complete candidate review
+
+The Strategy Channels view may summarize the first displayed record from each
+currently available channel in one decision desk. This is a navigation and
+review aid, not a new cross-channel ranking:
+
+- each card remains explicitly labelled as that channel's own rank, score,
+  status, extension risk, first supporting reason, and first rejection risk;
+- cards retain the published channel order and are never sorted by score across
+  strategies;
+- unavailable channels remain visibly unavailable in the channel selector and
+  are not filled with proxy candidates; and
+- the desk does not calculate a combined score, preferred strategy, return
+  estimate, or trade instruction in the browser.
+
+Opening a strategy candidate must join the exact strategy assessment to the
+same-instrument Candidate detail from the same active Snapshot. The combined
+review shows the channel score ledger first, then the existing market-to-entry
+decision chain, price path, descriptive support/breakout levels, chase risk,
+base-score contribution ledger, counterevidence, and invalidation. If the
+stable `instrument_id` is absent from the Candidate summary, or its bound detail
+cannot be read and validated, the combined review fails closed rather than
+showing a partial or inferred match. Ticker is presentation only and is never
+used for the join.
+
 ## Evaluation and anti-overfitting contract
 
 The current 26-session history is sufficient for a deterministic development

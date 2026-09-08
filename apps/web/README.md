@@ -32,10 +32,11 @@ versioned static publication.
 API and Snapshot modes do not fall back to demo data on failure. Production
 builds reject known synthetic fixture markers.
 
-The deployed production Snapshot uses 2026-08-24 as current and 2026-08-21 as
-previous, with expected session 2026-08-25, lag one, and explicit
-`stale_review`. Snapshot 1.6 / Dashboard 2.3 is active and serves the bounded
-Candidate consumer from MI 1.1 without browser-side score recomputation.
+The deployed production Snapshot uses 2026-09-04 as current and 2026-09-03 as
+previous, with zero session lag. Snapshot 1.11 / Dashboard 2.8 serves bounded
+Candidate summary/detail shards, Entry Geometry, Strategy Channels, Candidate
+Visual Context, and Sector ETF Rotation without browser-side score or rank
+recomputation.
 
 ## Implemented Views
 
@@ -51,9 +52,13 @@ Candidate consumer from MI 1.1 without browser-side score recomputation.
 - Categorized Data Details
 - Market Regime five-dimension evidence and six highlighted ETF relationships
 - Complete 16-pair relationship table and detail drawer
-- Language-neutral, risk-mode-specific Stock Candidate ranking and evidence drawer
+- Language-neutral, risk-mode-specific Stock Candidate ranking, entry-location
+  review, strategy channels, cross-channel decision desk, price-path/level
+  context, contribution ledgers, and evidence drawer
 - Bilingual Quant Research Lab readiness and preregistered-method workspace;
-  real result areas remain locked while the experiment is 31/252 data-blocked
+  price depth has passed the length floor while the page keeps point-in-time
+  membership, lifecycle, actions/adjustment, costs, and evaluation gates
+  separately blocked and all real result areas locked
 - Logout in snapshot mode
 - loading, error, empty, and retry states
 
@@ -79,7 +84,8 @@ npm run build
 
 ## Current Non-Goals
 
-- No public real-data display
+- No real data on the public data-free landing page; guest and credential
+  Sessions intentionally receive identical protected product capability
 - No frontend access to credentials or password hashes
 - No formal multi-user authentication or authorization
 - No market-cap heatmap

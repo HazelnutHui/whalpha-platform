@@ -141,6 +141,13 @@ every performance area unavailable and never projecting fixture results. There
 is still no canonical research input adapter, persistence, CLI, real strategy
 evaluator, or result report.
 
+The page no longer presents the dated 31/252 result as current readiness.
+Instead it shows family-specific gates: the minimum price-history length is
+met, while point-in-time Membership, canonical corporate actions and
+adjustment, cross-venue lifecycle, realistic costs, and sealed evaluation
+remain incomplete or locked. These states must not be averaged into a progress
+percentage because they are not interchangeable observations.
+
 ADR 0098 now makes that boundary executable without starting a backtest. The
 socket-guarded Dell-local assessment rereads canonical EOD and its bound
 Identity evidence and reports every research prerequisite separately. On

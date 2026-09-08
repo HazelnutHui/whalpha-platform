@@ -4,8 +4,15 @@ const COPY = {
   en: {
     eyebrow: 'Personal model research · preregistered', title: 'Quant Research Lab',
     subtitle: 'A governed workspace for turning a personal trading hypothesis into a reproducible, falsifiable experiment—not a catalogue of polished backtests.',
-    status: 'DATA BLOCKED', statusNote: 'Research design is registered. Real performance is not available.',
-    coverage: 'History readiness', coverageNote: '31 of 252 required completed sessions', coverageBoundary: 'Data coverage—not confidence, win rate, or model progress.',
+    status: 'DATA BLOCKED', statusValue: 'INPUT GATES', statusNote: 'Price depth now clears the minimum length floor. The complete point-in-time research panel does not.',
+    coverage: 'Family-specific readiness', coverageNote: 'Do not collapse unlike data families into one percentage.', coverageBoundary: 'Readiness is not confidence, win rate, model progress, or evidence that the hypothesis works.',
+    readiness: 'Research input gates', readinessItems: [
+      ['Price history length', 'LENGTH MET', 'At least 252 contiguous completed sessions are present. Adjusted research returns are not yet released.', 'met'],
+      ['Point-in-time membership', 'INCOMPLETE', 'The full historical interval is not published as signal-eligible daily membership.', 'blocked'],
+      ['Corporate actions & adjustment', 'INCOMPLETE', 'Source observations exist, but canonical action and adjustment ledgers are absent.', 'blocked'],
+      ['Security lifecycle', 'INCOMPLETE', 'Cross-venue inactive, terminal and successor evidence is not complete.', 'blocked'],
+      ['Costs & sealed evaluation', 'LOCKED', 'Realistic costs and one-use holdout evaluation remain unavailable until upstream inputs pass.', 'locked'],
+    ],
     owner: 'Research ownership', ownerValue: 'WH Alpha personal quantitative research',
     boundary: 'Research-stage model', boundaryBody: 'Parameters and conclusions are personal research. They may decay or fail in a different market. Nothing here is investment advice, an order instruction, or an option-return forecast.',
     lifecycle: 'Research lifecycle', stages: ['Hypothesis registered', 'Data qualification', 'Validation', 'Sealed holdout', 'Research release'],
@@ -30,9 +37,9 @@ const COPY = {
       ['Sealed confirmation', 'Selected holdout confidence-interval lower bound is above zero.'],
     ],
     blockers: 'Why results are unavailable', blockerItems: [
-      '221 additional completed sessions are required for the preregistered minimum.',
-      'Daily point-in-time membership must exist across the research interval.',
-      'Corporate actions, security lifecycle and adjustment decisions need auditable ledgers.',
+      'Price length alone is insufficient; the complete point-in-time research panel is not published.',
+      'Daily signal-eligible membership must exist across the research interval.',
+      'Canonical corporate-action, lifecycle and adjustment decisions need auditable ledgers.',
       'Single-use holdout custody must be durable before holdout evaluation.',
     ],
     future: 'Results workspace', futureNote: 'Reserved structure—no synthetic substitute',
@@ -43,8 +50,15 @@ const COPY = {
   zh: {
     eyebrow: '个人模型研究 · 预登记', title: '量化研究实验室',
     subtitle: '把个人交易假设转化为可复现、可证伪实验的受控工作区，而不是陈列看似漂亮的回测结果。',
-    status: '数据尚未达标', statusNote: '研究设计已经登记，真实表现尚不可用。',
-    coverage: '历史数据准备度', coverageNote: '最低需要252个完整交易日，当前31个', coverageBoundary: '这里只表示数据覆盖，不代表信心、胜率或模型完成度。',
+    status: '数据尚未达标', statusValue: '输入门槛', statusNote: '价格历史长度现已达到最低门槛，但完整的时点正确研究面板仍未就绪。',
+    coverage: '按数据族分别判断', coverageNote: '不同数据族不能压缩成一个百分比。', coverageBoundary: '准备度不代表信心、胜率、模型进度，也不证明研究假设有效。',
+    readiness: '研究输入门槛', readinessItems: [
+      ['价格历史长度', '长度已满足', '已有至少252个连续完成交易日；经过完整复权治理的研究收益尚未发布。', 'met'],
+      ['逐日时点成员资格', '不完整', '完整历史区间尚未发布为可用于信号的逐日成员资格。', 'blocked'],
+      ['公司行动与复权', '不完整', '已有来源观察，但规范公司行动账本和复权账本仍不存在。', 'blocked'],
+      ['证券生命周期', '不完整', '跨交易所的失活、终止和继承关系证据尚不完整。', 'blocked'],
+      ['成本与封存评估', '锁定', '真实成本和单次样本外评估要等上游输入全部通过后才可启用。', 'locked'],
+    ],
     owner: '研究归属', ownerValue: 'WH Alpha 个人量化研究',
     boundary: '研究阶段模型', boundaryBody: '参数与结论属于个人研究，可能随市场变化而衰减或失效。这里不是投资建议、下单指令，也不预测期权收益。',
     lifecycle: '研究生命周期', stages: ['假设已登记', '数据资格审查', '验证', '封存样本外检验', '研究发布'],
@@ -69,9 +83,9 @@ const COPY = {
       ['封存确认', '入选方案在样本外的置信区间下界必须高于零。'],
     ],
     blockers: '为什么现在没有结果', blockerItems: [
-      '距离预登记最低门槛还缺221个完整交易日。',
-      '研究区间内必须具有逐日、点时有效的股票池成员记录。',
-      '公司行动、证券生命周期与复权决策必须有可审计账本。',
+      '仅有足够长的价格历史还不够；完整的时点正确研究面板尚未发布。',
+      '研究区间内必须具有逐日、可用于信号的时点成员记录。',
+      '规范公司行动、证券生命周期与复权决策必须有可审计账本。',
       '在评估样本外结果前，必须建立可持久执行的单次解封机制。',
     ],
     future: '结果工作区', futureNote: '仅预留结构，不使用合成替代数据',
@@ -87,10 +101,11 @@ export function QuantResearchLabPage(): JSX.Element {
   return <main className="research-page">
     <section className="research-hero">
       <div className="research-hero-copy"><span className="eyebrow">{c.eyebrow}</span><h1>{c.title}</h1><p>{c.subtitle}</p></div>
-      <div className="research-status"><span>{c.status}</span><strong>31 / 252</strong><p>{c.statusNote}</p></div>
-      <div className="research-progress" aria-label={`${c.coverage}: 31 / 252`}><i style={{ width: `${31 / 252 * 100}%` }} /></div>
+      <div className="research-status"><span>{c.status}</span><strong>{c.statusValue}</strong><p>{c.statusNote}</p></div>
       <div className="research-progress-copy"><strong>{c.coverage}</strong><span>{c.coverageNote}</span><small>{c.coverageBoundary}</small></div>
     </section>
+
+    <section className="research-readiness" aria-labelledby="research-readiness-title"><header><span>00</span><h2 id="research-readiness-title">{c.readiness}</h2></header><div>{c.readinessItems.map(([name, state, body, tone]) => <article className={`research-readiness-${tone}`} key={name}><span>{state}</span><strong>{name}</strong><p>{body}</p></article>)}</div></section>
 
     <section className="research-boundary-grid">
       <article><span>{c.owner}</span><strong>{c.ownerValue}</strong></article>
