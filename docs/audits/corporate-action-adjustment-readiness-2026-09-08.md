@@ -84,16 +84,21 @@ separate treatment.
 
 ## Decision and unchanged state
 
-ADR 0172 adopts a split-first candidate. It will derive target-basis factors
-only from resolved event ratios, compose same-date events, mark the 43 possible-
-impact IDs non-clear, and keep total return unavailable. The initial artifact
-must remain owner-only below `/tmp` and cannot satisfy canonical Corporate
-Action, Adjustment Ledger, or Historical Coverage.
+ADR 0172 adopts a split-first candidate. The first real run has now completed
+below `/tmp/whalpha-split-adjustment-candidate-20260908T103326Z`. It derives
+target-basis factors only from resolved event ratios, composes same-date events,
+marks the 43 possible-impact IDs non-clear, and keeps total return unavailable.
+It contains one 564,826-byte owner-read-only file. File SHA-256 is
+`83e8a3722132bd2172e0546e3d8fb84a5a5cece6e289a2b1c3744e1e8d175618`;
+logical fingerprint is
+`b3efa16da5570cddf41f7fc741d71a29e73e6a1f696f68828b2f5e67b596d226`.
+A separate formal reread passed. This temporary candidate cannot satisfy
+canonical Corporate Action, Adjustment Ledger, or Historical Coverage.
 
-At this audit checkpoint, Dell `/data` remains 4,060 files / 2,009,699,645
+At the post-run audit checkpoint, Dell `/data` remains 4,060 files / 2,009,699,645
 bytes with inventory fingerprint
 `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
 zero symlinks, and zero publication residue. Production remains release
 `2026-09-06T121300Z-ab1abf1afaaf`. No analytics, Snapshot, bundle, scheduler,
-deployment, or website state changed.
-
+deployment, or website state changed. Repository implementation tests passed
+2,209 tests with only the two pre-existing dependency deprecation warnings.

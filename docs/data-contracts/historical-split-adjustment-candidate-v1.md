@@ -69,3 +69,12 @@ Snapshot, deployment, or scheduling. All source observations remain
 price-floor, volume, or liquidity features until their leakage semantics are
 reviewed.
 
+## Recorded Dell execution
+
+The 2026-09-08 run on clean main
+`2e4e1f21f09c357180f3ac6f67ef82f709ed6b32` produced 708 resolved event
+groups and 43 possible-impact stable IDs. The output is 564,826 bytes, SHA-256
+`83e8a3722132bd2172e0546e3d8fb84a5a5cece6e289a2b1c3744e1e8d175618`,
+with logical fingerprint
+`b3efa16da5570cddf41f7fc741d71a29e73e6a1f696f68828b2f5e67b596d226`.
+It passed separate formal reread and changed no canonical or Production state.

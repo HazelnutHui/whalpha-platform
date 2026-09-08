@@ -220,6 +220,12 @@ IDs remain conservatively non-clear because of unresolved split rows, although
 only two enter the active Universes. Dividend total return remains deferred for
 currency, split-cash mismatch, multi-event, and same-date ordering review.
 
+The first real split-adjustment candidate now contains 708 resolved event
+groups and 43 possible-impact stable IDs in one owner-only 564,826-byte file.
+It passed formal reread, composes exact ratios before final quantization, assigns
+zero unresolved events, and keeps total return unavailable and ledger
+projection not built. It is temporary outcome-reconciliation evidence only.
+
 The report projects normalized Identity source observations as a separate
 record layer: 302 canonical partitions, 3,700,330 records, 3,858 source-page
 artifacts, and the exact two missing EOD sessions: 8/13 and 8/19. It
@@ -377,10 +383,11 @@ bindings matched. Apply still performs a fresh CAS read. This replay was also
    and passed formal reread. ADR 0170's real exact-event-date stable-ID shadow
    has also passed formal reread. ADR 0171's real repeat acquisition and two
    zero-delta diffs have completed. ADR 0172 has completed the semantic and
-   cross-event review and authorizes only the next owner-only split-adjustment
-   candidate. Canonical action, Adjustment Ledger publication, and dividend
-   total return remain later reviews. Lifecycle, cost, availability, and
-   evaluation evidence also remain incomplete.
+   cross-event review. The owner-only split-adjustment candidate is now complete
+   and formally reread. Next design the canonical split-action candidate and a
+   bounded ledger projection; canonical publication and dividend total return
+   remain later reviews. Lifecycle, cost, availability, and evaluation evidence
+   also remain incomplete.
 5. Keep the earlier hotspot evidence explicit: the V1 Candidate cumulative
    writer used 193.525 seconds, including 88.528 seconds across overlapping
    fingerprint calls, versus 1.739 seconds for finalization and 0.061 seconds

@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T08:31:11Z
+Operational state verified at: 2026-09-08T10:38:37Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -358,7 +358,17 @@ have some historical ticker presence and expose 43 stable IDs to conservative
 non-clear treatment; only two are in the active Universes. Dividend total
 return remains deferred because 160 CAD rows, 34 USD split-cash mismatches, 145
 multi-event groups, and 13 same-date split/dividend groups require separate
-semantics. No temporary adjustment candidate or canonical family exists yet.
+semantics.
+
+The first ADR 0172 owner-only candidate has now completed on Dell main
+`2e4e1f21f09c357180f3ac6f67ef82f709ed6b32`. It contains 708 resolved
+stable-ID/date event groups, preserves the one multiple-action date through
+pre-quantization ratio composition, and lists 43 possible-impact stable IDs
+without assigning any unresolved event. Its 564,826-byte file SHA-256 is
+`83e8a3722132bd2172e0546e3d8fb84a5a5cece6e289a2b1c3744e1e8d175618`;
+logical fingerprint is
+`b3efa16da5570cddf41f7fc741d71a29e73e6a1f696f68828b2f5e67b596d226`.
+Total return remains unavailable and ledger projection remains not built.
 
 ## OCI production proof
 
@@ -574,9 +584,10 @@ separately bounded.
    has also passed formal reread. ADR 0171's later identical-scope observation
    and two zero-delta diffs have completed. ADR 0172 has completed the semantic
    and cross-event readiness review and narrows the next implementation to an
-   owner-only split-adjustment candidate. Build and formally reread that
-   candidate before any canonical Corporate Action or Adjustment Ledger
-   transition; keep dividend total return unavailable.
+   owner-only split-adjustment candidate. That candidate has now completed and
+   passed formal reread. Next design the canonical split-action candidate and
+   bounded ledger projection without promoting unresolved rows; keep dividend
+   total return unavailable.
    Request exact price/sample/permission terms from the user before any vendor
    contact, trial, purchase, or access; do not promote candidates by ticker or
    provider status alone.

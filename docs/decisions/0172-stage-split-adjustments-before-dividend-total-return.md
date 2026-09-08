@@ -66,6 +66,24 @@ or Production change.
 - Canonical Corporate Action, lifecycle, historical Membership, costs, final
   Coverage, and chronological evaluation remain separate gates.
 
+## Execution evidence
+
+The first real candidate completed on clean Dell main
+`2e4e1f21f09c357180f3ac6f67ef82f709ed6b32`. It formally reread all 1,949
+split-like observations and all 304 evidence-bound historical Resolvers. The
+result contains 708 resolved stable-ID/date groups from 709 source rows, one
+multiple-action date, and 43 possible-impact stable IDs derived from 41
+unresolved rows with historical ticker presence. Another 1,199 unresolved rows
+have no historical Identity presence; two rows have multiple historical stable-
+ID candidates.
+
+The owner-only output is one 564,826-byte file with SHA-256
+`83e8a3722132bd2172e0546e3d8fb84a5a5cece6e289a2b1c3744e1e8d175618`
+and logical fingerprint
+`b3efa16da5570cddf41f7fc741d71a29e73e6a1f696f68828b2f5e67b596d226`.
+A separate formal reread passed. The post-run context report kept `/data` and
+Production unchanged, and research readiness remains `data_blocked`.
+
 ## Rejected alternatives
 
 - **Copy the provider historical factor:** its cumulative basis can extend
@@ -78,4 +96,3 @@ or Production change.
   audit.
 - **Overwrite EOD with adjusted values:** destroys the received raw series and
   its provenance.
-

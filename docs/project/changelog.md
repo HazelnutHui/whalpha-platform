@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-08 — Complete real split-adjustment candidate
+
+- On clean Dell main `2e4e1f21f09c357180f3ac6f67ef82f709ed6b32`, formally
+  reread 1,949 split-like source observations and all 304 evidence-bound
+  historical Resolvers. The owner-only result contains 708 resolved event
+  groups, one multiple-action date, and 43 possible-impact stable IDs without
+  assigning an unresolved action.
+- Forty-one unresolved rows have historical ticker presence, 1,199 have none,
+  and two have multiple historical candidates. Total-return adjustment remains
+  unavailable and ledger projection remains not built.
+- The one 564,826-byte file has SHA-256
+  `83e8a3722132bd2172e0546e3d8fb84a5a5cece6e289a2b1c3744e1e8d175618`
+  and logical fingerprint
+  `b3efa16da5570cddf41f7fc741d71a29e73e6a1f696f68828b2f5e67b596d226`;
+  a separate formal reread passed.
+- The post-run context report kept `/data` at 4,060 files / 2,009,699,645
+  bytes, fingerprint
+  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
+  zero symlinks and zero residue. Production and the website were unchanged;
+  research readiness remains `data_blocked`.
+
 ## 2026-09-08 — Implement split-adjustment candidate boundary
 
 - Added an owner-only, network-prohibited split-adjustment candidate that
