@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-08 — Bind split candidates to canonical source custody
+
+- Accepted ADR 0175 and added an owner-only candidate that transitively reads
+  the canonical ADR 0174 source marker instead of depending on the temporary
+  resolution-shadow path.
+- Preserved exact stable-ID/date ratio composition and unresolved historical-
+  ticker quarantine while making ledger admission explicit. Single-action
+  groups are only candidates for clear admission; multiple same-date actions
+  remain quarantined even when their diagnostic ratios cancel to one.
+- Kept the candidate sparse and deferred any session expansion to an exact
+  future research panel. Bounded source observation still does not authorize
+  neutral factors for absent events.
+- Added a clean-revision CLI, owner-only atomic output, formal reread, and
+  network prohibition. This implementation stage performs no `/data` write,
+  canonical Corporate Action or Adjustment Ledger publication, analytics,
+  Snapshot, bundle, deployment, or scheduler change.
+
 ## 2026-09-08 — Publish bounded corporate-action source observations
 
 - Built and independently reread the clean-revision ADR 0174 plan on Dell main

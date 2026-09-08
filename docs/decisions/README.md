@@ -310,3 +310,4 @@ Each ADR should include:
 - [0172: Stage Split Adjustments Before Dividend Total Return](0172-stage-split-adjustments-before-dividend-total-return.md)
 - [0173: Separate Current and Research Classification Evidence](0173-separate-current-and-research-classification-evidence.md)
 - [0174: Publish Bounded Corporate-Action Source Observations](0174-publish-bounded-corporate-action-source-observations.md)
+- [0175: Bind Split-Action Candidates to Canonical Source Custody](0175-bind-split-action-candidates-to-canonical-source.md)

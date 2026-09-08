@@ -374,7 +374,7 @@ def build_historical_split_adjustment_candidate(
             for item in split_records
             if item.instrument_resolution_status is not ResolutionStatus.RESOLVED
         )
-        events = _build_events(resolved, basis_session)
+        events = build_split_event_candidates(resolved, basis_session)
         requested_tickers = frozenset(item.provider_ticker for item in unresolved)
         try:
             historical_candidates = (
@@ -390,7 +390,7 @@ def build_historical_split_adjustment_candidate(
             raise HistoricalSplitAdjustmentCandidateError(
                 "historical unresolved-impact scan failed"
             ) from exc
-        impacts, with_history, without_history, ambiguous = _build_impacts(
+        impacts, with_history, without_history, ambiguous = build_unresolved_split_impacts(
             unresolved,
             historical_candidates,
         )
@@ -520,7 +520,7 @@ def read_historical_split_adjustment_candidate(
     )
 
 
-def _build_events(
+def build_split_event_candidates(
     records: tuple[CorporateActionSourceObservationV1, ...],
     basis_session: date,
 ) -> tuple[SplitAdjustmentEventCandidateV1, ...]:
@@ -588,7 +588,7 @@ def _build_events(
     return tuple(events)
 
 
-def _build_impacts(
+def build_unresolved_split_impacts(
     unresolved: tuple[CorporateActionSourceObservationV1, ...],
     historical_candidates: dict[str, frozenset[UUID]],
 ) -> tuple[tuple[UnresolvedSplitImpactCandidateV1, ...], int, int, int]:

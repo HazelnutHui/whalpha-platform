@@ -47,6 +47,7 @@ from tip_api.services.historical_corporate_action_resolution_shadow import (
     HistoricalCorporateActionResolutionShadowError,
     build_historical_corporate_action_resolution_shadow,
     read_historical_corporate_action_resolution_shadow,
+    read_historical_ticker_candidates_bound_to_identity_evidence,
     read_historical_ticker_candidates_bound_to_resolution_shadow,
 )
 from tip_api.services.historical_corporate_action_source import (
@@ -342,6 +343,22 @@ def test_builds_exact_event_date_one_to_one_owner_only_shadow(
         provider_tickers=frozenset({"AAA", "BBB"}),
     )
     assert candidates == {"AAA": frozenset({AAA_ID}), "BBB": frozenset()}
+
+    direct_candidates = read_historical_ticker_candidates_bound_to_identity_evidence(
+        data_root=inputs["data_root"],  # type: ignore[arg-type]
+        identity_evidence_path=(
+            Path(inputs["data_root"]) / result.manifest.identity_evidence_path
+        ),
+        identity_evidence_sha256=result.manifest.identity_evidence_sha256,
+        identity_evidence_logical_fingerprint=(
+            result.manifest.identity_evidence_logical_fingerprint
+        ),
+        identity_session_count=result.manifest.identity_session_count,
+        first_session=result.manifest.start_date,
+        last_session=result.manifest.end_date,
+        provider_tickers=frozenset({"AAA", "BBB"}),
+    )
+    assert direct_candidates == candidates
 
 
 def test_all_rows_can_remain_quarantined_when_no_event_date_has_identity(

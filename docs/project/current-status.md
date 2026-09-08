@@ -118,6 +118,8 @@ What is complete:
 - canonical bounded split/dividend source-observation custody and exact-event-
   date resolution;
 - a temporary 708-group split-adjustment candidate;
+- a canonical-source-bound split candidate implementation with explicit
+  multiple-event quarantine, pending its clean-revision Dell execution;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 

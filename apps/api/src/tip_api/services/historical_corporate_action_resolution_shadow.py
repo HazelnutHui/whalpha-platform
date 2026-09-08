@@ -329,6 +329,75 @@ def read_historical_ticker_candidates_bound_to_resolution_shadow(
         }
 
 
+def read_historical_ticker_candidates_bound_to_identity_evidence(
+    *,
+    data_root: Path,
+    identity_evidence_path: Path,
+    identity_evidence_sha256: str,
+    identity_evidence_logical_fingerprint: str,
+    identity_session_count: int,
+    first_session: date,
+    last_session: date,
+    provider_tickers: frozenset[str],
+) -> dict[str, frozenset[UUID]]:
+    """Return quarantine-only ticker candidates from one exact Identity evidence set.
+
+    The result never resolves an action.  It is intentionally exposed separately
+    from the resolution-shadow wrapper so later stages can bind the canonical
+    source publication directly instead of depending on its retired `/tmp`
+    precursor.
+    """
+
+    with _network_prohibited():
+        root = _validated_data_root(data_root)
+        requested = frozenset(
+            normalized
+            for value in provider_tickers
+            if (normalized := value.strip().upper())
+        )
+        if len(requested) != len(provider_tickers):
+            raise HistoricalCorporateActionResolutionShadowError(
+                "historical ticker candidate input is empty or non-normalized"
+            )
+        identity = _read_identity_evidence(root, identity_evidence_path)
+        expected_identity = {
+            "physical_sha256": identity_evidence_sha256,
+            "logical_fingerprint": identity_evidence_logical_fingerprint,
+            "session_count": identity_session_count,
+            "first_session": first_session,
+            "last_session": last_session,
+        }
+        actual_identity = {
+            "physical_sha256": identity.physical_sha256,
+            "logical_fingerprint": identity.logical_fingerprint,
+            "session_count": len(identity.sessions),
+            "first_session": identity.sessions[0],
+            "last_session": identity.sessions[-1],
+        }
+        if actual_identity != expected_identity:
+            raise HistoricalCorporateActionResolutionShadowError(
+                "ticker scan Identity evidence binding differs"
+            )
+
+        candidates: dict[str, set[UUID]] = {
+            ticker: set() for ticker in requested
+        }
+        for session in identity.sessions:
+            resolver, _ = _read_exact_resolver(
+                root,
+                identity.artifacts_by_session[session],
+                session,
+            )
+            for ticker in requested:
+                instrument_id = resolver.get(ticker)
+                if instrument_id is not None:
+                    candidates[ticker].add(instrument_id)
+        return {
+            ticker: frozenset(sorted(ids, key=str))
+            for ticker, ids in sorted(candidates.items())
+        }
+
+
 @dataclass(frozen=True, slots=True)
 class _IdentityEvidence:
     relative_path: str

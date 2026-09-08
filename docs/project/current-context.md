@@ -151,6 +151,10 @@ projected backward. Canonical price history alone is not backtest readiness.
   Forty-three possible-impact stable IDs remain conservatively non-clear; only
   two enter the active Universes. Total return and the canonical ledger remain
   unavailable.
+- ADR 0175 replaces the temporary resolution-shadow path as the next active
+  input: a source-marker-bound sparse candidate now explicitly keeps every
+  multiple-action date out of clear ledger admission. Its real clean-revision
+  Dell execution is pending.
 - The lifecycle queue contains 547 stable-ID review candidates. A real licensed
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
