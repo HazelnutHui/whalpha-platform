@@ -66,3 +66,14 @@ signal input, performance result, Snapshot, or website payload. It remains
 `bounded_query_snapshot_only` and `outcome_reconciliation_only`. A later
 inventory-bound publication decision must preserve unresolved-impact and
 multiple-event quarantine.
+
+## Recorded Dell execution
+
+The clean-revision 2026-09-08 run on
+`c46cc3f4ee883ed7ef4c850ca146b6e3807f87bb` produced 708 event groups,
+including 707 clear candidates and one multiple-event quarantine, plus 43
+possible-impact stable IDs. The 602,491-byte file has SHA-256
+`8ef0f95dce94a041be7e5c18d69bb959ae037e52e6f22d41c2401ab92f160c83`
+and logical fingerprint
+`026e9087ad4ef7ec891036cbe84ee4b3bde47cb1b1349fa858fc2e090b74f132`.
+Formal reread passed and canonical state remained unchanged.

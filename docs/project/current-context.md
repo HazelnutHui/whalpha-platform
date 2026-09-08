@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T22:10:57Z
+Operational state verified at: 2026-09-08T22:47:46Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -122,7 +122,7 @@ The formal status is `data_blocked`, with
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
 | Canonical corporate actions | source observations only | provider-neutral canonical event family and complete action-type scope |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
-| Adjustment ledger | 708 resolved split-event groups and 43 possible-impact stable IDs in a temporary candidate | canonical split actions, bounded price-adjustment ledger, reconciliation; dividends later |
+| Adjustment ledger | 708 source-marker-bound split-event groups: 707 clear candidates, 1 multiple-event quarantine; 43 possible-impact stable IDs | canonical split actions, bounded price-adjustment ledger, reconciliation; dividends later |
 | Costs and liquidity | fixed fixture scenarios only | real executable cost/liquidity model |
 | Evaluation and holdout | fixture mechanics and custody seam only | real chronological dataset and sealed real holdout |
 | Historical Coverage | reader and fixture mechanics exist; two family-evidence manifests are canonical | final publication across every required admitted family |
@@ -147,19 +147,17 @@ projected backward. Canonical price history alone is not backtest readiness.
   A zero-write postflight reused both partitions and the marker. This is
   canonical source custody, not canonical Corporate Actions or point-in-time
   signal evidence.
-- The split-adjustment candidate contains 708 resolved stable-ID/date groups.
-  Forty-three possible-impact stable IDs remain conservatively non-clear; only
-  two enter the active Universes. Total return and the canonical ledger remain
-  unavailable.
-- ADR 0175 replaces the temporary resolution-shadow path as the next active
-  input: a source-marker-bound sparse candidate now explicitly keeps every
-  multiple-action date out of clear ledger admission. Its real clean-revision
-  Dell execution is pending.
+- The source-marker-bound split candidate contains 708 resolved stable-ID/date
+  groups: 707 single-action clear candidates and one multiple-action
+  quarantine. Forty-three possible-impact stable IDs remain conservatively
+  non-clear; only two enter the active Universes. Its event math and unresolved
+  impact set exactly match the prior shadow candidate. Total return and the
+  canonical ledger remain unavailable.
 - The lifecycle queue contains 547 stable-ID review candidates. A real licensed
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0174 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0175 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof

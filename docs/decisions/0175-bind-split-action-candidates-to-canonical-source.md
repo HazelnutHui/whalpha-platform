@@ -58,6 +58,25 @@ complete historical action availability or revision coverage.
   coverage/revision evidence, the ledger, lifecycle, Membership, costs, and
   final Historical Coverage.
 
+## Execution evidence
+
+The first real run completed on clean Dell main
+`c46cc3f4ee883ed7ef4c850ca146b6e3807f87bb`. It formally reread source
+publication
+`7b13691e22b7e815a773ed1d575ed580bbee897eb0dbf10c41e4e0862a95b1d1`
+and produced 708 event groups from 709 resolved active split observations:
+707 single-action clear candidates and one multiple-action quarantined group.
+The 1,240 quarantined source rows still produce 43 possible-impact stable IDs.
+
+The 602,491-byte candidate has SHA-256
+`8ef0f95dce94a041be7e5c18d69bb959ae037e52e6f22d41c2401ab92f160c83`
+and logical fingerprint
+`026e9087ad4ef7ec891036cbe84ee4b3bde47cb1b1349fa858fc2e090b74f132`.
+Its event and unresolved-impact projections exactly match the earlier
+resolution-shadow candidate after excluding the new admission-status field.
+The postflight report found unchanged `/data`, zero residue, absent canonical
+actions/ledger, and unchanged `data_blocked` research status.
+
 ## Rejected alternatives
 
 - **Keep reading the old resolution shadow:** leaves a temporary precursor in

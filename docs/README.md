@@ -35,6 +35,7 @@
 - [2026-09-08 Corporate-Action Adjustment Readiness Audit](audits/corporate-action-adjustment-readiness-2026-09-08.md): official provider semantics, real split/dividend conflict census, active-Universe relevance, and the bounded split-first decision.
 - [Historical Split Adjustment Candidate V1](data-contracts/historical-split-adjustment-candidate-v1.md): owner-only grouped split-ratio math, unresolved-impact quarantine, formal reread, and zero canonical authority.
 - [Canonical-Source Split Action Candidate V1](data-contracts/canonical-source-split-action-candidate-v1.md): direct formal-source binding, explicit multiple-event admission quarantine, sparse custody, and zero canonical authority.
+- [2026-09-08 Canonical-Source Split Action Candidate Audit](audits/canonical-source-split-action-candidate-2026-09-08.md): clean-revision Dell execution, old/new semantic equivalence, explicit 707/1 admission split, and unchanged canonical state.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

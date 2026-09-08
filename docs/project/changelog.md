@@ -16,6 +16,15 @@
   network prohibition. This implementation stage performs no `/data` write,
   canonical Corporate Action or Adjustment Ledger publication, analytics,
   Snapshot, bundle, deployment, or scheduler change.
+- The clean-revision Dell run on `c46cc3f4ee883ed7ef4c850ca146b6e3807f87bb`
+  produced 707 clear event candidates, one multiple-event quarantine, and 43
+  possible-impact stable IDs. Event math and unresolved-impact membership
+  exactly matched the prior temporary candidate.
+- The output is 602,491 bytes with SHA-256
+  `8ef0f95dce94a041be7e5c18d69bb959ae037e52e6f22d41c2401ab92f160c83`
+  and logical fingerprint
+  `026e9087ad4ef7ec891036cbe84ee4b3bde47cb1b1349fa858fc2e090b74f132`.
+  Postflight kept `/data` and Production unchanged and research `data_blocked`.
 
 ## 2026-09-08 — Publish bounded corporate-action source observations
 

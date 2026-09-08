@@ -117,9 +117,8 @@ What is complete:
 - one prospective signal-eligible Membership partition;
 - canonical bounded split/dividend source-observation custody and exact-event-
   date resolution;
-- a temporary 708-group split-adjustment candidate;
-- a canonical-source-bound split candidate implementation with explicit
-  multiple-event quarantine, pending its clean-revision Dell execution;
+- a source-marker-bound 708-group split candidate with 707 clear candidates,
+  one multiple-event quarantine, and 43 possible-impact stable IDs;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 
