@@ -305,10 +305,9 @@ boundary. Production consumers do not scan its `/tmp` files, recompute ranks,
 or expose the full rejected population. A single bounded language-neutral
 projection is built only after the audit reader, Oracle, equivalence, session,
 Universe, EOD, Identity, and Activation gates pass. Active Market Intelligence
-1.2 is the immutable aggregate owner; active Snapshot 1.7 / Dashboard 2.4
-exports the same projection as protected static JSON. Repository-only Snapshot
-1.8 / Dashboard 2.5 changes delivery to a compact summary and on-demand detail
-shards without changing Candidate publication 1.1.
+1.3 is the immutable aggregate owner; active Snapshot 1.11 / Dashboard 2.8
+exports the same Candidate publication 1.1 as protected compact summary and
+on-demand stable-ID detail shards.
 
 The React Candidate workspace selects server-calculated risk ranks and
 localizes stable codes. It never treats ticker as identity, confidence as win
@@ -323,8 +322,9 @@ independent assessments and within-channel ranks; there is no cross-channel
 score. Market fit, event context, and future option expression remain separate
 axes. ADR 0057 now supplies the bounded lazy product and bilingual React
 consumer; ADR 0058 carries its exact identity through Approval Plan 2.4 and OCI
-bundle/postflight validation. These remain unpublished and do not make the
-fixed baseline chronologically validated.
+bundle/postflight validation. The product is now published through later
+compatible contracts, but that does not make the fixed baseline
+chronologically validated.
 
 ADR 0050 separates future evaluation into sealed, outcome-free signal records
 and later-maturing forward-outcome records. Only point-in-time membership may

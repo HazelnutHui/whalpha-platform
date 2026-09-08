@@ -392,9 +392,10 @@ Disable the Phase 4 calculation version; Phase 1/2 V1A remains valid.
 ### Phase 5 — Candidate States and Risk Modes
 
 **Implementation status: score/risk core, chronological candidate-state replay,
-independent Oracle, canonical `/tmp` audit/reread, bounded publication, MI 1.1,
-Snapshot 1.6 / Dashboard 2.3, bilingual frontend, and OCI deployment are
-implemented.**
+independent Oracle, canonical `/tmp` audit/reread, bounded publication,
+bilingual frontend, and OCI deployment are implemented. The Candidate
+publication introduced through MI 1.1 / Snapshot 1.6 / Dashboard 2.3 remains
+active under MI 1.3 / Snapshot 1.11 / Dashboard 2.8.**
 
 **Inputs**
 

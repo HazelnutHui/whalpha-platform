@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T10:38:37Z
+Operational state verified at: 2026-09-08T16:16:29Z
 
 Repository context updated at: 2026-09-08 UTC
 
@@ -17,8 +17,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Branch | `main`; verify current HEAD and cleanliness with the report rather than freezing them here |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Deployed OCI release | `2026-09-06T121300Z-ab1abf1afaaf` |
-| Deployed source commit | `ab1abf1afaaf87648dfde24f2a584fcc32e360d8` |
+| Deployed OCI release | `2026-09-08T160420Z-14a8bec70cff` |
+| Deployed source commit | `14a8bec70cff37080673e679f05c8ed6eb34d95b` |
 
 Dell is the authority for code, data, development, and heavy computation. OCI
 is only the static web-serving, localhost Auth Service, and public Session
@@ -28,9 +28,9 @@ older immutable deployed bundle; compare both identities explicitly.
 
 ## Formal Dell data state
 
-The network-free current-context reader uses report contract 1.6. Normal
-recovery completed at validation level `active_custody_and_contracts` with
-`completion_index_plus_latest_partition`; the explicit all-partition mode
+The network-free current-context reader uses report contract 1.6. The final
+post-deployment report completed at validation level `active_sources_reread`
+with `completion_index_plus_latest_partition`; the explicit all-partition mode
 also completed successfully during the ADR 0125 validation.
 
 ADR 0149 separates current-clock operational freshness from immutable
@@ -50,8 +50,8 @@ publication-time assertion as a third, explicitly named view.
 | Canonical historical Identity source | 302 immutable source-observation partitions / 3,700,330 rows; 2 source sessions absent |
 | Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for 2026-09-08 open |
 | Canonical EOD/Identity family evidence | 2 immutable manifests; final Historical Coverage absent |
-| `/data` inventory | 4,060 files / 2,009,699,645 bytes |
-| `/data` inventory fingerprint | `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e` |
+| `/data` inventory | 4,102 files / 2,054,208,593 bytes |
+| `/data` inventory fingerprint | `b2f45c0dcee3a915aba8e7c932a747ac6698022cfb7f90b3f82b4bd828dca128` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -83,11 +83,11 @@ after authoritative issuer-structure evidence passes the documented gates.
 | Market Intelligence | `2026-09-04T112916Z-717cb82c5369`; contract 1.3 |
 | MI payload SHA-256 | `34f9ae867d44aae4fda77ed47d2921570a52aade1147869f1c7835439f2439c8` |
 | MI logical fingerprint | `2d8957011113e944304c8609ed4ff771f7ad8e3b9e0d59a6823a6ec2b827ac5e` |
-| Dashboard Snapshot | `2026-09-06T121300Z-ab1abf1afaaf` |
-| Snapshot pointer fingerprint | `de5beb3aa326660b806284848ec22ee1172aa0f92e64421a48a94556db7c8125` |
+| Dashboard Snapshot | `2026-09-08T160420Z-14a8bec70cff` |
+| Snapshot pointer fingerprint | `056d4fd15819411c398ba9f36956d478b4fd5a19787e9d9e040b16af60f4b356` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
 | Freshness | operational and publication-sealed views expected 2026-09-04; actual 2026-09-04; lag zero; review mode false |
-| Immediate local Snapshot rollback | `2026-09-04T113333Z-717cb82c5369` |
+| Immediate local Snapshot rollback | `2026-09-06T121300Z-ab1abf1afaaf` |
 
 Market Regime is Balanced in both Universes: Primary 56.7472 and Secondary
 57.3733. Market Intelligence contains 16 preregistered ETF relationships, 336
@@ -376,10 +376,10 @@ The final independent remote inspector matched the exact Dell bundle:
 
 | Evidence | Verified value |
 | --- | --- |
-| Bundle logical fingerprint | `385152eb5e145916e5641f2e65828f87948bb452cd633a093c9b84b65ae918cf` |
-| Manifest SHA-256 | `2bac8520a9f66f8b6c13a904d87f9951da5e230ef68b2ee7ecb0e2bd23ec91e6` |
-| Checksums file SHA-256 | `a649e751cf2ba357655b7c45086d900773cd95bd4521677a410d3adea7aa77da` |
-| Remote-state fingerprint | `d25b6e24dd37580be5538af7567b805b25b65ee73f40473f0c714a7ce5ae8012` |
+| Bundle logical fingerprint | `09d3afc53612e296bde062220a51fdb2437d5136f8da6bf3eab01560ab8117ce` |
+| Manifest SHA-256 | `94ca6bbd585a982a518572e4b4c856074da2a3f7973bd0c388d08288d19a1684` |
+| Checksums file SHA-256 | `a27698cd7407e793da9699ec9695b7b22e8528619c41717e74ef02567dcc8173` |
+| Remote-state fingerprint | `3ea4e2e58d2bf3b6f93c8b1a39907440b761a4254ed8506b82ffa965424edeb6` |
 | Bundle files | 51; checksum validation passed |
 | Locales | English default; English and Simplified Chinese supported |
 | Access capability | guest and credential Sessions are identical |
@@ -393,7 +393,7 @@ Rotation, logout, and renewed protection all passed postflight. There is no
 staging or failed-release residue. Password-based login and final visual
 inspection remain manual user checks.
 
-The final 9/4 postflight reported zero failed system units. Deployment records
+The final 9/8 postflight reported zero failed system units. Deployment records
 the preflight baseline and rejects a newly failed unit while separately
 requiring Nginx and WH Alpha Auth health. No staging or failed-release residue
 remains.
@@ -420,6 +420,16 @@ channels are not compared by one cross-strategy score; leadership, entry
 position, risk, evidence, counterevidence, invalidation, parameters, raw facts,
 and lineage remain inspectable. Candidate stock outcomes are never represented
 as option returns.
+
+Strategy Channels now opens with a cross-channel decision desk containing only
+the first published record from each available channel in fixed channel order.
+Each card retains its own channel rank, score, stage, extension risk, supporting
+reason, and rejection risk. Opening it joins by stable `instrument_id` to the
+same-Snapshot Candidate detail and fails closed on any missing or mismatched
+identity; no cross-channel score, preferred strategy, or return inference is
+created. The Quant Research Lab now shows family-specific readiness gates: the
+304-session price-length floor is met, while Membership, corporate actions,
+lifecycle, costs, and sealed evaluation remain visibly incomplete or locked.
 
 Guest and credential Sessions must remain identical in data, features,
 language, Universe, and analysis until the user explicitly changes that policy.

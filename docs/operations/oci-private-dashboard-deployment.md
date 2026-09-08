@@ -10,13 +10,13 @@ project changelog, not in this current runbook.
 ## Live-verified state
 
 The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-09-06 post-deployment
+[current-context](../project/current-context.md). Its 2026-09-08 post-deployment
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-09-06T121300Z-ab1abf1afaaf`;
+  to release `2026-09-08T160420Z-14a8bec70cff`;
 - the release is built from source commit
-  `ab1abf1afaaf87648dfde24f2a584fcc32e360d8` and binds Market
+  `14a8bec70cff37080673e679f05c8ed6eb34d95b` and binds Market
   Intelligence
   `2026-09-04T112916Z-717cb82c5369`;
 - it serves ordinary-fresh, lag-zero 2026-09-04 analytics through Snapshot
@@ -37,9 +37,11 @@ reconciliation records, without reading credentials:
 - the final inspector reports zero failed system units.
 
 The deployed React workspaces share the public entry's deep-navy/cyan visual
-identity and persistent WH product mark. This is a presentation-only change:
-guest/credential parity, analytics, scoring, contracts, and fail-closed API
-behavior are unchanged.
+identity and persistent WH product mark. Strategy Channels includes the
+cross-channel decision desk and stable-ID joined complete review; Quant
+Research Lab exposes family-specific readiness gates. These are presentation
+and navigation changes: guest/credential parity, analytics, scoring,
+contracts, and fail-closed API behavior are unchanged.
 
 The release additionally serves relationship persistence/acceleration evidence
 and the bounded ten-point relationship state timeline. Independent postflight

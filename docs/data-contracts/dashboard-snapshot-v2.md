@@ -3,8 +3,8 @@
 ## Status
 
 Implemented. Active Production Snapshot
-`2026-08-28T141747Z-83f9b629279c` uses Snapshot 1.11 / Dashboard 2.8 and binds
-Market Intelligence `2026-08-28T135850Z-f483d6999a3e`. It was published under
+`2026-09-08T160420Z-14a8bec70cff` uses Snapshot 1.11 / Dashboard 2.8 and binds
+Market Intelligence `2026-09-04T112916Z-717cb82c5369`. It was published under
 ordinary lag-zero freshness. It includes the split Candidate consumer, lazy
 strategy-channel and Visual Context products, and the lazy Sector Rotation
 resource. Earlier releases remain immutable, readable historical/rollback
@@ -76,7 +76,7 @@ version 1.0 remains rollback-readable.
 
 ## Contract 1.6 Candidate extension
 
-The active Snapshot 1.6 / Dashboard 2.3 is an additive
+Snapshot 1.6 / Dashboard 2.3 was the additive
 consumer of Market Intelligence 1.1. It retains the 1.5 files and adds exactly
 `opportunity-candidates.json`, whose bounded language-neutral payload is
 described in the [Candidate publication contract](opportunity-candidate-publication-v1.md).
@@ -85,7 +85,8 @@ parameter, state-parameter, displayed-count, Market Intelligence, and file-hash
 bindings. Snapshot 1.5 / Dashboard 2.2 remains formally readable and cannot
 silently acquire Candidate data.
 
-The OCI builder accepts only the exact 1.5/2.2 or 1.6/2.3 pair. For 1.6 it
+At introduction, the OCI builder accepted the exact 1.5/2.2 and 1.6/2.3 pairs;
+the current supported matrix extends through 1.11/2.8. For 1.6 it
 requires the Candidate file and cross-checks its Market Intelligence and audit
 lineage; deployment postflight gives a temporary guest Session the same
 Candidate resource as a credential Session, then logs out and reconfirms the

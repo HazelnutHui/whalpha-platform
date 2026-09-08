@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-09-08 — Deploy cross-strategy decision desk and current readiness gates
+
+- Added a bilingual cross-channel decision desk to Strategy Channels. It shows
+  the first published record from each currently available channel in fixed
+  channel order with channel-local rank, stage, score, extension risk,
+  supporting reason, and rejection risk; it creates no cross-channel score or
+  preferred-strategy inference.
+- Opening a strategy record now joins by stable `instrument_id` to the exact
+  same-Snapshot Candidate detail and fails closed on missing or mismatched
+  identity. The combined review exposes the channel ledger, market-to-entry
+  chain, price/level context, chase risk, contribution ledger, contrary
+  evidence, and invalidation.
+- Replaced Quant Research Lab's stale aggregate readiness display with separate
+  family gates. The 304-session price-length floor is visibly met while
+  Membership, corporate actions/adjustment, lifecycle, costs, and sealed
+  evaluation remain incomplete or locked.
+- The complete frontend regression passed 115 tests and the Production build;
+  the complete API regression passed 2,209 tests with only the two existing
+  dependency deprecation warnings.
+- Published and deployed fresh Snapshot 1.11 / Dashboard 2.8 release
+  `2026-09-08T160420Z-14a8bec70cff` from clean main
+  `14a8bec70cff37080673e679f05c8ed6eb34d95b`. Independent OCI inspection
+  matched release, source revision, bundle, manifest, and checksums; Nginx,
+  localhost-only Auth, protected routes, temporary guest Session, and
+  guest/credential capability parity passed with zero staging or failed-release
+  residue.
+- Final active-source reread kept 304 canonical sessions through 2026-09-04,
+  lag zero, research status `data_blocked`, and `/data` at 4,102 files /
+  2,054,208,593 bytes with fingerprint
+  `b2f45c0dcee3a915aba8e7c932a747ac6698022cfb7f90b3f82b4bd828dca128`,
+  zero symlinks, and zero publication residue.
+
 ## 2026-09-08 — Complete real split-adjustment candidate
 
 - On clean Dell main `2e4e1f21f09c357180f3ac6f67ef82f709ed6b32`, formally

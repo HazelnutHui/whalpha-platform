@@ -11,8 +11,8 @@ detail belongs in the [changelog](changelog.md), ADRs, and dated audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity market-
 intelligence and research platform. The current OCI release is
-`2026-09-06T121300Z-ab1abf1afaaf`, built from clean main commit
-`ab1abf1afaaf87648dfde24f2a584fcc32e360d8`.
+`2026-09-08T160420Z-14a8bec70cff`, built from clean main commit
+`14a8bec70cff37080673e679f05c8ed6eb34d95b`.
 
 The deployed product uses:
 
@@ -56,8 +56,8 @@ unrelated services.
 - Canonical EOD and point-in-time Identity family evidence now contains two
   immutable, transitively source-bound manifests. Final Historical Coverage
   remains absent.
-- `/data` contains 4,060 files / 2,009,699,645 bytes, with fingerprint
-  `16033737d18cd8d34de3e8401ee0f3e5d195a49470a2cda384a604ed6f29db1e`,
+- `/data` contains 4,102 files / 2,054,208,593 bytes, with fingerprint
+  `b2f45c0dcee3a915aba8e7c932a747ac6698022cfb7f90b3f82b4bd828dca128`,
   zero symlinks, and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
@@ -85,6 +85,17 @@ views. Stock Candidate explanations expose component contributions, evidence,
 counterevidence, entry position, risk, invalidation, parameters, raw facts, and
 lineage. Strategy-channel ranks are meaningful within a channel and must not be
 treated as one comparable cross-strategy score.
+
+Strategy Channels now begins with a cross-channel decision desk that places the
+first published record from each available channel side by side in fixed
+channel order. It shows channel-local rank, stage, score, extension risk,
+support, and rejection risk. Opening a record performs a fail-closed stable-ID
+join to the same-Snapshot Candidate detail, exposing the complete market-to-
+entry chain, price/level context, chase risk, and contribution ledger without
+inventing a combined score or preferred strategy. The Quant Research Lab now
+reports readiness by data family rather than showing the stale 31/252 aggregate:
+price-history length is met, while Membership, actions/adjustment, lifecycle,
+costs, and sealed evaluation remain incomplete or locked.
 
 The interface supports discretionary decisions. It does not place orders,
 claim price/volume proxies are fund flow, or represent underlying-stock forward

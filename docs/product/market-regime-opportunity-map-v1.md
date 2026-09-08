@@ -6,8 +6,8 @@ filenames retain `market-regime-opportunity-map` for compatibility.
 ## Status and decision boundary
 
 Status: **Implemented and production-published through the separate immutable
-Market Intelligence boundary; the active 2026-08-24 publication is an exact
-`stale_review`, not fresh data**.
+Market Intelligence boundary; active Production uses analysis session
+2026-09-04 with ordinary fresh, lag-zero status**.
 
 Phase 1a now implements the fixed five-dimension raw-metric, normalization,
 Composite, missingness, contribution, and explanation ledger for explicit
@@ -19,7 +19,8 @@ version-compatible Phase 1a Composites without changing their formulas or
 fingerprints, and emits a separate candidate/confirmed state history under
 `/tmp`. The immutable Market Intelligence publisher now validates these audit
 sources, promotes a language-neutral payload to `/data`, and exposes it through
-Snapshot 1.6 / Dashboard 2.3. The audit artifacts remain immutable sources;
+the versioned Snapshot consumer (currently Snapshot 1.11 / Dashboard 2.8). The
+audit artifacts remain immutable sources;
 they are not themselves Production pointers.
 
 Phase 2 consumes the same once-loaded 26-session panel and the completed Phase
@@ -33,20 +34,21 @@ bound bar coverage, price-derived registered-ETF proxy selection, missing-
 component reweighting, anomaly quarantine, deterministic Conservative/
 Balanced/Aggressive ranking, Watch/Prepare/Enter/invalidated replay, an
 independent raw-panel Oracle, and canonical `/tmp` audit/reread. Phase 6 adds
-the bounded, language-neutral MI 1.1 / Snapshot 1.6 / Dashboard 2.3 consumer
-and bilingual Stock Candidate workspace. That consumer is active Production
-state; later publications still require separate approval.
+the bounded, language-neutral Candidate publication and bilingual Stock
+Candidate workspace. It was introduced with MI 1.1 / Snapshot 1.6 / Dashboard
+2.3 and remains active through the current MI 1.3 / Snapshot 1.11 / Dashboard
+2.8 consumer; later publications still require separate approval.
 
-Phase 7 adds an offline, additive entry-geometry shadow layer. It does not
-change the deployed Candidate score or rank. It separates “which stocks show
-leadership” from “whether current price location merits technical review” and
-classifies bounded breakout, breakout watch, orderly pullback, strong but
-extended, or no viable setup. Publication and frontend integration remain
-pending a new consumer contract.
+Phase 7 adds the additive entry-geometry layer without changing the deployed
+Candidate score or rank. It separates “which stocks show leadership” from
+“whether current price location merits technical review” and classifies
+bounded breakout, breakout watch, orderly pullback, strong but extended, or no
+viable setup. Candidate publication 1.1 and later Snapshot consumers now carry
+this layer into the frontend.
 
-The initial design baseline remains `as_of_session=2026-08-21`; the active
-publication rolls the same versioned formulas and registered relationships to
-2026-08-24 with its matching same-day Identity and EOD source. Baselines and
+The initial design baseline remains `as_of_session=2026-08-21`; active
+Production rolls the same versioned formulas and registered relationships to
+2026-09-04 with its matching same-day Identity and EOD source. Baselines and
 active publications must never mix Identity dates.
 
 This specification defines a transparent decision-support page for short-horizon

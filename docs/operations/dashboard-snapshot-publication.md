@@ -87,7 +87,7 @@ reread. Recovery never applies or links: exact active state reconciles success;
 absent target/staging with unchanged Snapshot and Activation state proves no
 write; everything partial, changed, or ambiguous blocks. The custody boundary
 most recently reserved and formally recorded the source-bound
-`2026-09-06T121300Z-ab1abf1afaaf` Snapshot Apply.
+`2026-09-08T160420Z-14a8bec70cff` Snapshot Apply.
 
 ## Safety boundary
 
