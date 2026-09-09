@@ -68,6 +68,29 @@ improve a preferred chart is permitted under V1. Development chooses at most
 one specification; that specification is locked before validation. Any changed
 grid or definition requires a new research version and a new untouched holdout.
 
+The exact V1 grid is:
+
+| Dimension | Frozen candidates |
+| --- | --- |
+| Prior leadership | 20-session relative-strength percentile at least 0.80 and trend-quality score at least 70; or percentile at least 0.90 and trend quality at least 75 |
+| Pullback depth | Current distance below the prior 20-session high is 0.50–1.50, 0.75–2.00, or 1.00–2.50 ATR units |
+| Close-based recovery | Close above the prior close; or close above the prior high |
+| Pullback volume | Current pullback-volume ratio to the prior 20-session median is at most 0.80 or 1.00 |
+
+For each combination, one same-session, point-in-time Primary member is a
+signal only when it passes that combination's leadership, depth, recovery, and
+volume rules. A member that passes the leadership gate but not every setup rule
+is an eligible-leader control. A non-member, non-leader, chronologically
+excluded row, or row without same-session point-in-time membership is neither a
+signal nor a control. This is a cohort rule, not a weighted score or a claim
+that every signal is ready to trade.
+
+The implementation input currently contains a relative-strength percentile and
+a trend-quality score rather than raw feature columns. A future real adapter
+must bind those values to the exact source formula/version and source sessions;
+it may not silently inherit whichever current Candidate formula happens to be
+active at evaluation time.
+
 ## Evaluation requirements
 
 - Minimum 252 contiguous sessions; 504 preferred for Regime review.
@@ -87,6 +110,64 @@ grid or definition requires a new research version and a new untouched holdout.
 Passing research gates does not activate a Production signal. Activation needs
 a separate review covering economic plausibility, stability, capacity and
 costs, user interpretation, monitoring, decay triggers, and rollback.
+
+## Minimum data admission baseline
+
+The following matrix is the single product-level acceptance checklist for the
+first real study. Contract-level validation remains authoritative; this table
+explains what the evidence means and prevents price depth from being mistaken
+for research readiness.
+
+| Evidence family | Minimum admission condition | Current Dell evidence | Decision |
+| --- | --- | --- | --- |
+| EOD Price Bars | At least 252 contiguous XNYS sessions, exact session completion, stable-ID linkage, and transitive hashes | 305 contiguous canonical sessions through 2026-09-08 | Length met; final coverage binding remains open |
+| Point-in-time Identity | Completed Identity for every admitted session, aligned to EOD and keyed by stable `instrument_id` | 305 canonical completed snapshots; 303 normalized source-observation partitions, with 2026-08-13 and 2026-08-19 unbound | Snapshot depth met; source lineage incomplete |
+| Daily Universe Membership | A same-session, methodology-bound decision for every instrument and every admitted session; no current-constituent replay | 2 signal-eligible sessions / 39,928 decisions; disconnected mechanics cover 302 source-available dates | Blocking |
+| Corporate Actions | Canonical, availability-aware action coverage for the full interval, including explicit no-event semantics and quarantine | Bounded source custody and split-only outcome evidence exist; dividend/total-return and absent-row neutrality do not | Blocking |
+| Instrument Lifecycle | Effective-dated active, delisted, successor, and terminal evidence across venues | A 547-item temporary corroboration queue exists; no canonical cross-venue family | Blocking |
+| Adjustment Ledger | Raw-to-basis split price/volume and total-return treatment reconciled for the full admitted interval; null when unknown rather than assumed factor one | Sparse split adjustment is outcome-only; 387 severe discontinuities remain unexplained; total return unavailable | Blocking |
+| Feature construction | Exact as-of formulas, windows, source fingerprints, and no-forward-data proof for every frozen observation field | Fixture mechanics exist; no canonical real input adapter | Blocking after the physical families pass |
+| Outcome labels | Exact next-open to 1/3/5-session-close paths; affected or incomplete paths quarantined; validation and holdout signal/control coverage equals 1.0000 | Fixture-only scheduler and maturer | Blocking for real evaluation |
+| Costs and liquidity | Gross result plus 0/10/25/50 bps-per-side sensitivity; realistic quote/impact evidence before economic or Production interpretation | Scenario-only equity mechanics; no observed spread or calibrated impact | Development sensitivity available; economic interpretation blocked |
+| Classification and events | Point-in-time sector/industry for governed stratification; earnings/events retained as risk context when available | No canonical historical classification or governed earnings-event family | Not a V1 primary-test gate; unavailable context must remain explicit |
+| Historical Coverage | One immutable manifest transitively binding every admitted required family and exact payload hash | Family evidence exists for EOD and Identity only; final publication absent | Blocking |
+
+The minimum formal readiness result is therefore still `data_blocked`. No
+backtest, parameter choice, win rate, or performance chart may be inferred from
+the 305-session price panel alone. A mechanics-only dry run over synthetic or
+quarantined inputs may test software behavior but is never investment evidence.
+
+## V1 falsification focus
+
+The frozen name “Strong-Leader Pullback” is a hypothesis label, not proof that
+the four rules capture an orderly pullback. Before any activation review, the
+evidence must explicitly examine these failure modes:
+
+- **Static geometry versus path:** distance from a prior 20-session high does
+  not by itself prove a recent, orderly retracement or a recovery sequence.
+- **Stale or composite leadership:** the exact construction and stability of
+  the relative-strength percentile and trend-quality score must be reproduced,
+  not treated as unexplained inputs.
+- **Control comparability:** same-session non-triggering leaders may differ in
+  liquidity, volatility, industry, prior extension, and pullback depth. The
+  frozen primary contrast stays unchanged, while matched/reweighted
+  sensitivity analysis may diagnose this imbalance without replacing it.
+- **Next-open gap risk:** a close-based signal can become overextended or
+  invalid before the modeled next-open entry; gap and fill sensitivity must be
+  visible.
+- **Crowding and concentration:** many cross-sectional signals on one session
+  may represent one market or industry event rather than independent evidence.
+- **Event contamination:** unavailable point-in-time earnings or material-event
+  context must be disclosed; later versions may add a preregistered exclusion
+  or stratification, but V1 cannot be edited after seeing outcomes.
+- **Regime and parameter instability:** an aggregate result cannot hide a
+  reversal across time, Regime, liquidity, volatility, or concentration cells.
+
+A V2 research version is justified only by a pre-outcome defect review or by a
+formally recorded V1 failure. Candidate V2 additions may include explicit
+pullback recency/duration, path smoothness, support integrity, next-open gap,
+and point-in-time event risk. They are not part of V1 and must not be introduced
+opportunistically during evaluation.
 
 ## Current state
 
@@ -130,16 +211,17 @@ first produce an exact review, followed by separate user authorization and a
 future activation capability.
 
 The experiment remains `preregistered_data_blocked`. The original 31-session
-assessment is historical; canonical price depth has since advanced, while
-canonical daily Membership covers only 1 of 304 sessions and complete
-corporate actions, lifecycle, a research-ready adjustment ledger, and an
-immutable Historical Coverage publication remain absent. No signal writer, outcome
-maturer, real evaluator, Production consumer, result publication, or deployment
-is created by this product definition. ADR 0106 adds a bilingual first-level
-page that exposes this blocked state and the registered method while leaving
-every performance area unavailable and never projecting fixture results. There
-is still no canonical research input adapter, persistence, CLI, real strategy
-evaluator, or result report.
+assessment is historical; canonical price depth now covers 305 sessions through
+2026-09-08, while canonical signal-eligible daily Membership covers only 2 of
+those 305 sessions. Complete corporate actions, lifecycle, a research-ready
+adjustment ledger, and an immutable Historical Coverage publication remain
+absent. No signal writer, outcome maturer, real evaluator, Production consumer,
+result publication, or deployment is created by this product definition. ADR
+0106 adds a bilingual first-level page that exposes this blocked state and the
+registered method while leaving every performance area unavailable and never
+projecting fixture results. There is still no canonical research input adapter,
+real-strategy result persistence, CLI, real strategy evaluator, or result
+report.
 
 The page no longer presents the dated 31/252 result as current readiness.
 Instead it shows family-specific gates: the minimum price-history length is

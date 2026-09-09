@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-09 — Consolidate the first research-model admission baseline
+
+- Expanded the existing Quant Research Lab product definition rather than
+  creating another parallel status document. It now records the exact frozen
+  24-combination Strong-Leader Pullback grid, signal/control cohort rule, and
+  requirement to bind composite input features to exact historical formulas.
+- Added one family-by-family minimum data admission matrix. It separates the
+  met 305-session price-length floor from still-blocking Membership, corporate
+  action, lifecycle, adjustment, real feature-adapter, label, and transitive
+  Historical Coverage evidence; costs and optional context remain separately
+  classified.
+- Recorded the main falsification risks without changing V1: static geometry
+  may not represent an orderly path, leader controls may be imbalanced,
+  next-open gaps and clustered concentration matter, and missing event context
+  must remain visible. Possible V2 features are explicitly outside the frozen
+  experiment.
+- Corrected the stale product narrative from 1 of 304 to 2 of 305 canonical
+  signal-eligible Membership sessions, aligned the current roadmap, and removed
+  obsolete contract prose that denied already-published partial canonical
+  families. Historical ADRs and audits retain their original dated facts. No
+  formula, schema, code, `/data`, research stage, performance claim, Production
+  bundle, scheduler, or OCI state changed.
+
 ## 2026-09-09 — Expose daily Membership as a read-only research sidecar
 
 - Accepted ADR 0185 and added

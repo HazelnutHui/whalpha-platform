@@ -173,19 +173,18 @@ Current membership implementation sequence:
    unbound because the reacquired provider revisions are not equal to accepted
    same-day Identity. Never force approximate equivalence, project current
    Activation backward, or silently fill historical source.
-8. **First canonical signal-eligible Membership complete:** V3
-   evidence covers 5,611,048 decisions for all 302 source-available dates.
-   ADR 0151 admits the direct 9/4 partition for next-open signal use while
-   retaining all 301 historical-source partitions as outcome-only. ADR 0152's
-   inventory-bound 9/4 publication plan is now proven and cannot admit
-   outcome-only evidence. ADR 0153's recoverable physical-first/marker-last
-   Apply published the exact 9/4 partition; governed read and zero-write
-   postflight passed. ADR 0154 adds the daily, persistent-workspace candidate
-   preparation boundary without gating the website or enabling the scheduler.
-   Next exercise it on a new live session, plan only near Apply after other
-   canonical writes, and review coordinator integration. Keep the two source
-   gaps explicit and do not publish Historical Coverage until every admitted
-   session has a transitive eligibility assessment.
+8. **Prospective canonical signal-eligible Membership started:** V3 mechanics
+   cover 5,611,048 decisions for all 302 source-available dates, while retaining
+   the 301 historical-source partitions as outcome-only. ADRs 0151–0153 admit
+   and publish the direct 9/4 partition for next-open signal use with exact
+   Plan/Apply and zero-write postflight. The same governed daily path published
+   9/8, bringing canonical signal-eligible Membership to 2 sessions / 39,928
+   decisions out of 305 EOD sessions. ADR 0154 adds the persistent-workspace
+   candidate preparation boundary, and ADR 0185 adds a read-only sidecar plan;
+   neither gates the website nor enables unattended writes. Exercise the
+   sidecar on a new live session and keep both source gaps explicit. Do not
+   publish Historical Coverage until every admitted session has a transitive
+   eligibility assessment.
 
 ## Priority 3 — Security classification and concentration diagnostics
 

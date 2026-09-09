@@ -6,8 +6,12 @@ Implemented as provider-neutral, immutable Python/Pydantic row and manifest
 contracts plus explicit PyArrow schemas and temporary-root Parquet repositories
 with synthetic tests. ADR 0100 also adapts the existing canonical Dell EOD and
 Identity families into deterministic, read-only, unpublished family evidence.
-No canonical membership, corporate-action, lifecycle, adjustment, or
-Historical Coverage publication exists, and no research result exists.
+Canonical Dell now also contains two prospective signal-eligible Membership
+partitions, bounded corporate-action source custody and split-only facts, and a
+sparse split-adjustment publication for outcome reconciliation. These are
+partial families, not complete research-ready evidence. No canonical lifecycle
+family or final Historical Coverage publication exists, and no research result
+exists.
 
 ## Purpose
 
@@ -131,9 +135,10 @@ credential-free planner and the bounded EOD/Identity Pilot mechanics are also
 complete. Cross-family state is governed by Data Record Governance V1 without
 replacing the domain statuses in this contract.
 
-No physical required-family evidence or Historical Coverage publication
-currently exists under `/data`. The publication boundary remains fixture-only.
-The 2026-08-30 assessment proved transitive in-memory validation for its then
-31 EOD/Identity sessions; current canonical price depth is recorded separately
-in [current context](../project/current-context.md) and does not replace the
-missing families.
+Physical EOD/Identity family evidence and partial Membership, corporate-action,
+and adjustment publications now exist under `/data`, as recorded in
+[current context](../project/current-context.md). No transitive Historical
+Coverage publication yet binds all six required families; that final
+publication boundary remains fixture-only. The 2026-08-30 assessment proved
+transitive in-memory validation for its then 31 EOD/Identity sessions; current
+canonical price depth does not replace the missing families.
