@@ -42,6 +42,7 @@
 - [2026-09-08 Canonical Split Action Publication Audit](audits/canonical-split-action-publication-2026-09-08.md): exact source/candidate derivation, two-file Apply, zero-write recovery, and unchanged research gate.
 - [ADR 0177: Sparse Affected-Path Split Adjustments](decisions/0177-project-sparse-split-adjustments-only-for-affected-eod-rows.md): projects real EOD rows only when clear or quarantine split evidence can affect the path to an explicit basis.
 - [Canonical Split Adjustment Publication V1](data-contracts/canonical-split-adjustment-publication-v1.md): source-bound sparse ledger candidate, factor math, quarantine precedence, and absent-row non-neutrality.
+- [2026-09-09 Canonical Split Adjustment Candidate Audit](audits/canonical-split-adjustment-candidate-2026-09-09.md): clean-revision real derivation, factor-extreme reconciliation, idempotency, and unchanged canonical-state proof.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

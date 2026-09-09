@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-08T23:38:30Z
+Operational state verified at: 2026-09-09T00:21:52Z
 
 Repository context updated at: 2026-09-09 UTC
 
@@ -33,7 +33,7 @@ detail belongs in the changelog rather than a frozen HEAD field here.
 
 ## Formal Dell data state
 
-The network-free reader uses report contract 1.8. The 2026-09-08 verification
+The network-free reader uses report contract 1.8. The 2026-09-09 verification
 completed at validation level `active_custody_and_contracts` with
 `completion_index_plus_latest_partition`. The explicit all-partition mode also
 passed during ADR 0125 validation.
@@ -127,7 +127,7 @@ The formal status is `data_blocked`, with
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
 | Canonical corporate actions | 709 canonical split-only fact rows: 707 active / 2 quarantined; bounded query snapshot and outcome-only | complete action-type, availability, and revision scope; keep 1,240 unresolved rows unassigned |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
-| Adjustment ledger | ADR 0177 sparse affected-path code and fixture tests complete; real census projects 98,291 clear / 3,030 quarantined rows from 175,033 selected EOD rows | clean-revision real candidate, independent reconciliation, exact publication; absent-row neutrality and dividends later |
+| Adjustment ledger | Real owner-only ADR 0177 candidate contains 98,291 clear / 3,030 quarantined rows from 175,033 selected EOD rows; exact rerun and factor audit passed | inventory-bound canonical publication; absent-row neutrality and dividends later |
 | Costs and liquidity | fixed fixture scenarios only | real executable cost/liquidity model |
 | Evaluation and holdout | fixture mechanics and custody seam only | real chronological dataset and sealed real holdout |
 | Historical Coverage | reader and fixture mechanics exist; two family-evidence manifests are canonical | final publication across every required admitted family |
@@ -167,7 +167,7 @@ projected backward. Canonical price history alone is not backtest readiness.
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0176 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0177 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof
@@ -311,9 +311,9 @@ design addresses both gaps.
 4. Implement a live adapter and Dell-only current snapshot only after that
    review passes. Integrate Candidate sector/industry concentration only after
    current source coverage, mapping, permission, and quarantine behavior pass.
-5. Build and independently reconcile the exact ADR 0177 sparse split-
-   adjustment candidate, then add its inventory-bound publication boundary.
-   Keep absent-row neutrality unauthorized and dividend total return later.
+5. Implement and verify the exact inventory-bound publication boundary for the
+   independently reconciled ADR 0177 sparse split-adjustment candidate. Keep
+   absent-row neutrality unauthorized and dividend total return later.
 6. Complete lifecycle, historical Membership eligibility, costs, availability,
    revision, final Historical Coverage, and sealed evaluation evidence.
 7. Begin real preregistered chronological research with Strong-Leader Pullback,

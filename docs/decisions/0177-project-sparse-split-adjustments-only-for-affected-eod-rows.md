@@ -62,6 +62,17 @@ IDs and 3,030 quarantined rows across 31 IDs. The other selected rows cross no
 known or possible split event and are intentionally omitted, not filled with
 one.
 
+## Dell execution evidence
+
+The clean-revision 2026-09-09 build reproduced the sizing result exactly:
+101,321 rows, including 98,291 clear and 3,030 quarantined. The immutable
+candidate has publication fingerprint
+`7e08b8a8ee364cf215c1459645f76240368b50cc3d2cb4bc77db86d3ca7c3c2a`.
+An independent formal reread and exact second derivation returned identical
+rows and hashes. Factor extremes, reciprocal cancellation, Decimal precision,
+quarantine reasons, file permissions, and unchanged canonical state are
+recorded in the dated audit. Canonical publication remains separately gated.
+
 ## Rejected alternatives
 
 - **Dense factor-one ledger:** current bounded source coverage cannot prove

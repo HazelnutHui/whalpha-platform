@@ -130,8 +130,8 @@ What is complete:
   one multiple-event quarantine, and 43 possible-impact stable IDs;
 - canonical split-only fact publication with exact Plan/Apply and zero-write
   recovery evidence;
-- an implementation-ready sparse split-adjustment candidate boundary, pending
-  one clean-revision real Dell build;
+- a real, independently reconciled sparse split-adjustment candidate with
+  98,291 clear and 3,030 quarantined affected-path rows;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 
@@ -187,8 +187,8 @@ Visual Context's cumulative-state requirement.
    integration and a controlled unattended-scheduler rehearsal.
 4. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-5. Build the exact sparse split-adjustment candidate, independently reconcile
-   it, then add its separate inventory-bound publication boundary.
+5. Add and verify the sparse split-adjustment candidate's separate inventory-
+   bound canonical Plan/Apply boundary; absent-row neutrality remains false.
 6. Complete historical Membership, lifecycle, costs, availability/revision,
    final Coverage, chronological evaluation, and sealed holdout evidence.
 7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,

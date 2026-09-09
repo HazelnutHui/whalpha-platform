@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-09 — Reconcile real sparse split adjustment candidate
+
+- Built the clean-revision ADR 0177 candidate on Dell against exact canonical
+  split-action and EOD family evidence. It contains 101,321 affected-path rows:
+  98,291 clear across 575 stable IDs and 3,030 quarantined across 31 IDs.
+- Independently reconciled the 0.04–62,500 factor range, 285 exact reciprocal-
+  cancellation rows, 18-decimal price/volume reciprocity, and both quarantine
+  reason classes against canonical actions. No neutral placeholder was added.
+- An exact second full derivation returned `already_present` with identical row,
+  Parquet, manifest, and publication fingerprints. Candidate custody remains
+  owner-only below `/tmp`.
+- The network-prohibited postflight kept `/data` exactly unchanged at 4,202
+  files / 2,151,599,005 bytes with fingerprint `6d6ef7c2...`, zero symlinks,
+  zero residue, unchanged Production, absent canonical ledger, and research
+  `data_blocked`. A separate inventory-bound Plan/Apply remains required.
+
 ## 2026-09-09 — Implement sparse affected-path split adjustment candidate
 
 - Accepted ADR 0177 and refused a dense factor-one ledger while canonical
