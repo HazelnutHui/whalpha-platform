@@ -80,6 +80,36 @@ sample should prioritize the 14 current Secondary IDs, then lifecycle overlap
 and the most extreme/repeated cases, while retaining representative ordinary
 threshold cases.
 
+### Frozen current-Secondary locator sample
+
+The exact current-Secondary intersection was recomputed on clean revision
+`642179eb1795d809fa29966a87469927ed869323`. The read is bound to Activation
+pointer `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168`
+and 2026-09-08 Identity snapshot
+`ccada891e47725796142b08381e4a24026ee074d8d5dc4cf1d33b9fbc7e422a5`.
+The ticker and exchange values below are current review locators only.
+
+| Stable `instrument_id` | Current locator | Exchange | Flagged transition(s), open / prior close |
+| --- | --- | --- | --- |
+| `00217daa-6715-58e4-b2ce-803cdd61da8d` | NKTR | XNAS | 2025-06-24, 2.088050314465 |
+| `05b2b2c9-62a7-5809-b728-529559223ba3` | PRAX | XNAS | 2025-10-16, 2.760069747167 |
+| `2350e2c7-2abd-5991-8a05-24491ed171b7` | MBX | XNAS | 2025-09-22, 2.240000000000 |
+| `25c11c01-1a8a-5410-96f8-e12709b9f286` | ABVX | XNAS | 2025-07-23, 6.310000000000 |
+| `2e1122b6-ec37-5862-837b-4080372facb0` | KD | XNYS | 2026-02-09, 0.461472967220 |
+| `35fecc90-d036-537f-b3ca-ae95d6992316` | DFNS | XNAS | 2026-07-31, 0.435396563897 |
+| `3db26832-ec26-5c19-8f27-895a3271c2c5` | BMNR | XNYS | 2025-06-30, 3.516998827667 |
+| `4aac80aa-8249-5a34-b30b-4829814f00af` | CELC | XNAS | 2025-07-28, 3.337690631808 |
+| `7a3fbf7a-d8ff-55d4-afa8-b22b5e9d45a6` | ALMS | XNAS | 2026-01-06, 2.671480144404; 2026-09-01, 0.455295735901 |
+| `92d3373f-d5de-5a25-86e5-a336826a1bda` | SION | XNAS | 2026-08-10, 0.095023510972 |
+| `b558c3ee-71dd-5799-8eb8-e69069a4983b` | GRAL | XNAS | 2026-02-20, 0.489116517286 |
+| `d3c6132c-c802-52ca-a172-d8c87c3266b0` | VISN | XNAS | 2026-04-28, 0.493599590374 |
+| `dad83406-1370-5c94-a7c9-a506b0b72717` | EYPT | XNAS | 2026-08-17, 0.275254237288 |
+| `fa0991af-f9df-5c86-99f5-9758bd155068` | COGT | XNAS | 2025-11-10, 2.210526315789 |
+
+This freezes 14 stable IDs and 15 discontinuity flags. It does not assert that
+the current ticker existed on the flagged date, that the security was then in
+either Universe, or that any listed transition was caused by a split.
+
 ## Safety and verification
 
 - Six focused diagnostic/CLI tests passed after a test caught and corrected a
