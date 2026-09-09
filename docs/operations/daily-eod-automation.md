@@ -1289,3 +1289,23 @@ recency. A user plan change does not automatically change scheduler policy;
 one controlled paid-session timing/completeness observation must first pass
 the existing custody and quality gates. See the dated
 [access audit](../audits/massive-current-session-access-probe-2026-09-09.md).
+
+The same Basic account subsequently returned the exact 2026-09-08 Grouped
+Daily session at 2026-09-09T06:59 UTC. One guarded request retained 12,534 raw
+records; formal planning produced 9,964 canonical rows with zero duplicate
+business keys or orphan Identity references, and exact-plan Apply completed.
+The persistent runner then completed nine analytics/MI-plan actions in about
+14.6 minutes, stopped at publication review, and continued only through the
+separate MI and Snapshot review/Apply boundaries. Snapshot planning took about
+2.3 minutes and persistent Serving Bundle construction about 1.4 minutes.
+
+The first persistent-bundle deployment exposed a remaining legacy `/tmp`
+check in the reviewed shell entrypoint. Read-only recovery proved the old OCI
+release unchanged and target absent, then formally closed the reservation with
+one remote read and zero writes. ADR 0184 now shares one persistent-path
+validator across capability, custody, and shell entrypoint. Exact release
+`2026-09-09T075821Z-32321f0dadd5` subsequently deployed and passed independent
+postflight. This is a complete guarded-chain proof, not an installed unattended
+write scheduler or proof that 06:59 UTC is the provider's fixed release time.
+See the dated
+[publication and deployment audit](../audits/daily-eod-publication-deployment-2026-09-09.md).

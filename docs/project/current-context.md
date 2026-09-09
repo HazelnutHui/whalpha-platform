@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-09T02:09:00Z
+Operational state verified at: 2026-09-09T08:17:05Z
 
 Repository context updated at: 2026-09-09 UTC
 
@@ -17,8 +17,8 @@ ADRs. Proposed sequencing belongs in the [roadmap](roadmap.md).
 | Branch | `main`; verify HEAD and cleanliness with the report rather than freezing them here |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Deployed OCI release | `2026-09-09T020802Z-d53e98832ef5` |
-| Deployed source commit | `d53e98832ef57f22e018f9f9b863f009eb355544` |
+| Deployed OCI release | `2026-09-09T075821Z-32321f0dadd5` |
+| Deployed source commit | `32321f0dadd5c8f605ee11c8188d3ed90df0814d` |
 
 Dell is the authority for code, data, development, and heavy computation. OCI
 is only the static web-serving, localhost Auth Service, and public Session
@@ -44,14 +44,14 @@ sealed publication assertion are reported separately.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | 304 contiguous XNYS sessions, 2025-06-23 through 2026-09-04 |
-| Latest EOD | 2026-09-04; 9,962 rows |
-| Latest EOD fingerprint | `3266c411a556ee1813a73beae19a71dc14e855b476770b3b82f81a5151e4abc4` |
-| Latest EOD Parquet SHA-256 | `853d6fa9837891419f633aed8401a6ab52a503976d6607888c9def6de64b8577` |
+| Canonical EOD | 305 contiguous XNYS sessions, 2025-06-23 through 2026-09-08 |
+| Latest EOD | 2026-09-08; 9,964 rows |
+| Latest EOD fingerprint | `3942c205efc681d789ee4e7c1dc8051c801a21304fa112e936be51e52b4c42ac` |
+| Latest EOD Parquet SHA-256 | `aa2b3e43e5c07fd43cbe111267142dc493483a4eac024e08d74da4c4c7164e9f` |
 | Latest Identity | 2026-09-08; 9,982 Instruments / 13,155 provider identities / 9,982 Resolvers |
 | Latest Identity fingerprint | `ccada891e47725796142b08381e4a24026ee074d8d5dc4cf1d33b9fbc7e422a5` |
-| Identity/EOD alignment | Identity ahead of EOD: Identity 2026-09-08; EOD remains 2026-09-04 |
-| Canonical historical Identity source | 303 immutable source-observation partitions / 3,713,485 rows; 2 EOD sessions remain without source evidence and 2026-09-08 is source-only pending EOD |
+| Identity/EOD alignment | Aligned at 2026-09-08 |
+| Canonical historical Identity source | 303 immutable source-observation partitions / 3,713,485 rows; 2026-08-13 and 2026-08-19 remain without source evidence; no source-only date remains |
 | Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for the 2026-09-08 open |
 | Canonical EOD/Identity family evidence | 2 immutable manifests; final Historical Coverage absent |
 | Canonical corporate-action source observations | 70,099 rows in 2 event-year partitions; 42,056 resolved / 28,043 quarantined; bounded query-snapshot coverage only |
@@ -60,23 +60,19 @@ sealed publication assertion are reported separately.
 | Canonical split-action publication | `76f017a1547e20b997e40cd1e61497b71c749a94e88a8632a3898fe84c106218` |
 | Canonical sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; basis 2026-09-04; outcome-reconciliation only |
 | Split-adjustment publication | `7e08b8a8ee364cf215c1459645f76240368b50cc3d2cb4bc77db86d3ca7c3c2a` |
-| `/data` inventory | 4,204 files / 2,151,679,313 bytes |
-| `/data` inventory fingerprint | `af06b692cf1f9708e75cf44defd198cb25317b65403a2adbc503d9e03e1fa71f` |
+| `/data` inventory | 4,250 files / 2,236,379,948 bytes |
+| `/data` inventory fingerprint | `fbe9e916d6b1d68fb5cf10509ad6556a2e70a3087226ea36e4b3e7280b62b640` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
-The exact 300-session historical target through 2026-08-31 is complete. The
-four following EOD sessions, 2026-09-01 through 2026-09-04, are also canonical.
-The guarded 2026-09-08 Identity catch-up completed, including Plan 1.1 source
-observation. The same-session EOD fetch returned provider HTTP 403 on its first
-attempt, a bounded 22:52 UTC post-close retry, and one final bounded 2026-09-09
-01:48 UTC retry; none created a package or staging path. At 02:27 UTC, a
-credential-safe same-process comparison returned 12,510 Grouped Daily results
-for 2026-09-04 and HTTP 403 for 2026-09-08. The credential and endpoint are
-therefore globally usable; the unresolved boundary is current-session recency
-under the current account. Basic is officially described as end-of-day while
-Starter is 15-minute delayed, but Basic's exact release minute remains
-unproven. No retry loop, historical-backfill transient service, or computation
+The exact 300-session historical target through 2026-08-31 is complete, and all
+five later sessions through 2026-09-08 are also canonical. After the earlier
+bounded 403 observations, one guarded Grouped Daily request succeeded at
+06:59 UTC on 2026-09-09 and froze 12,534 raw records. Exact-plan Apply produced
+9,964 canonical rows with zero duplicate business keys or orphan Identity
+references. This one observation proves availability by 06:59 UTC for this
+session only; Basic's earliest or guaranteed release minute remains unproven.
+No blind retry loop, historical-backfill transient service, or computation
 process is running.
 
 ### Active Universe
@@ -99,23 +95,24 @@ after authoritative issuer-structure evidence passes the documented gates.
 
 | Boundary | Verified value |
 | --- | --- |
-| Market Intelligence | `2026-09-04T112916Z-717cb82c5369`; contract 1.3 |
-| MI payload SHA-256 | `34f9ae867d44aae4fda77ed47d2921570a52aade1147869f1c7835439f2439c8` |
-| MI logical fingerprint | `2d8957011113e944304c8609ed4ff771f7ad8e3b9e0d59a6823a6ec2b827ac5e` |
-| Dashboard Snapshot | `2026-09-08T171914Z-ca2d34d50692` |
-| Snapshot pointer fingerprint | `c1469a1dbde97fc5212b57d039e60b585be5ba0488ae4626c2e0d393fe387ea5` |
+| Market Intelligence | `2026-09-08T071528Z-d6cc4ee57917`; contract 1.3 |
+| MI payload SHA-256 | `78cc31f056f224092aeebb250a30929cae777f1731f7c4365c0758665d7d3c8e` |
+| MI logical fingerprint | `a7d063cc560df7851c7ace4ca0d766dff9e3ccfb6e1be6f573d5f04792d55976` |
+| Dashboard Snapshot | `2026-09-08T072146Z-d6cc4ee57917` |
+| Snapshot pointer fingerprint | `3bbb7286d9747b9072b2d778d7c08310438f7c0e8baf8464a799a33f78eee857` |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
-| Freshness | current-clock operational view expects 2026-09-08 and is one session stale at 2026-09-04; the immutable Snapshot publication assertion remains sealed lag-zero for its 2026-09-04 expectation; review mode false |
-| Immediate local Snapshot rollback | `2026-09-08T171250Z-8c3dc878d6ab` |
+| Freshness | current-clock operational and immutable publication views are fresh at 2026-09-08 with zero session lag; review mode false |
+| Immediate local Snapshot rollback | `2026-09-08T171914Z-ca2d34d50692` |
 
-Market Regime is Balanced in both Universes: Primary 56.7472 and Secondary
-57.3733. Market Intelligence contains 16 preregistered ETF relationships, 336
-bounded relationship-history rows, 30 ETF observations, and 5/10/20-session
-views. Candidate publication 1.1 exposes 880 Primary and 951 Secondary display
+Market Regime is confirmed Balanced in both Universes while both candidate
+states are Defensive: Primary 44.9243 and Secondary 45.4356. Market
+Intelligence contains 16 preregistered ETF relationships, 336 bounded
+relationship-history rows, 30 ETF observations, and 5/10/20-session views.
+Candidate publication 1.1 exposes 904 Primary and 966 Secondary display
 records. These are eligible bounded Candidate records, not Universe sizes.
 
 The active analytics status is `degraded_short_history`: Market Intelligence
-currently consumes 26 sessions even though canonical EOD contains 304. This is
+currently consumes 26 sessions even though canonical EOD contains 305. This is
 a consumer-integration limitation, not missing price acquisition.
 
 ## Historical research readiness
@@ -126,9 +123,9 @@ The formal status is `data_blocked`, with
 
 | Family | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| EOD Price Bar | 304 canonical sessions; immutable family evidence published | final transitive Historical Coverage |
-| Point-in-time Identity | 305 canonical completed snapshots, including one Identity-only 2026-09-08 date; immutable family evidence remains scoped through 2026-09-04 | EOD alignment and final transitive Historical Coverage |
-| Identity source observations | 303 canonical partitions / 3,713,485 rows | 2026-08-13 and 2026-08-19 remain unbound; 2026-09-08 awaits EOD |
+| EOD Price Bar | 305 canonical sessions; immutable family evidence remains coverage-scoped | final transitive Historical Coverage |
+| Point-in-time Identity | 305 canonical completed snapshots aligned through 2026-09-08; immutable family evidence remains coverage-scoped | final transitive Historical Coverage |
+| Identity source observations | 303 canonical partitions / 3,713,485 rows | 2026-08-13 and 2026-08-19 remain unbound |
 | Daily Universe Membership | 1 canonical signal-eligible session; disconnected mechanics cover 302 source-available sessions | governed historical point-in-time eligibility and complete publication |
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
 | Canonical corporate actions | 709 canonical split-only fact rows: 707 active / 2 quarantined; bounded query snapshot and outcome-only | complete action-type, availability, and revision scope; keep 1,240 unresolved rows unassigned |
@@ -188,7 +185,7 @@ projected backward. Canonical price history alone is not backtest readiness.
   split or omitted-row neutrality; the VISN evidence reinforces the separate
   total-return requirement.
 - ADR 0183 scanned all 68,150 cash-dividend source observations against the
-  exact 304-session EOD evidence. It retained 26,803 unresolved source rows,
+  exact 304-session EOD evidence through 2026-09-04. It retained 26,803 unresolved source rows,
   classified 40,454 resolved groups as bounded arithmetic candidates only, and
   retained 746 resolved groups for one or more review reasons. The VISN USD 5
   row automatically failed the large-distribution date-order gate: issuer
@@ -199,23 +196,23 @@ projected backward. Canonical price history alone is not backtest readiness.
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0183 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0184 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof
 
-The 2026-09-09T02:09:00Z independent remote inspector matched the active
+The 2026-09-09T08:17:05Z independent remote inspector matched the active
 release and exact Dell deployment audit:
 
 | Evidence | Verified value |
 | --- | --- |
-| Release | `2026-09-09T020802Z-d53e98832ef5` |
-| Source revision | `d53e98832ef57f22e018f9f9b863f009eb355544` |
-| Bundle logical fingerprint | `28b936259a59b38deeeaeeca7c89d6a908c9885c18b8e501574b40bc2d9e8023` |
-| Manifest SHA-256 | `df2e01816596efdf28e0a3a3e48b69ae8ee013b6e43f755fb72586ffa913cde9` |
-| Checksums file SHA-256 | `02bf93dd85cfa51e60336172aab10c4bfb2401cf8657f69848c156cbbc2dfbe2` |
-| Remote-state fingerprint | `1a43b9b798b83dbafe0d0102eea3e46a7e4c960972993e00e8906c9653589a81` |
-| Bundle files | 53; checksum validation passed |
+| Release | `2026-09-09T075821Z-32321f0dadd5` |
+| Source revision | `32321f0dadd5c8f605ee11c8188d3ed90df0814d` |
+| Bundle logical fingerprint | `57afdf0052521e7daf631bed5995c7abc9f714a8bf962983180d49b6a4cc2979` |
+| Manifest SHA-256 | `85a37e213a14f0e48a34f7c167b4ee81ebcb4872a2eda78f8b5567d6b33ced8c` |
+| Checksums file SHA-256 | `107b887382b88c71ce6d67c5369407021290751fa020db217a3f2bc77b836edb` |
+| Remote-state fingerprint | `97edc9097ff81bb73c93b2ac5744b0cb95fe67b94f7792b486c75a6fd8b323a1` |
+| Bundle files | 52; checksum validation passed |
 | Locales | English default; English and Simplified Chinese supported |
 | Access capability | guest and credential Sessions are identical |
 | Sensitive/provider payload | no credentials, raw provider data, or Parquet |
@@ -312,26 +309,32 @@ ADR 0180 and `daily-eod-bounded-offline-run/1.0` now provide a finite Dell-local
 runner for consecutive successful offline stages. It preserves the existing
 single-action journal and postcondition boundary, defaults to review-only, and
 stops before every data, publication, Snapshot, deployment, failure, recovery,
-or budget boundary. It is repository capability only: it is not installed in
-the timer, and no real multi-action execution has yet been recorded.
+or budget boundary. It is repository capability only and is not installed in
+the timer. The real 2026-09-08 invocation completed nine analytics/MI-plan
+actions in about 14.6 minutes of recorded action time and stopped at
+`review_publication` as designed.
 
 The stable owner-only runtime workspace is now active at
 `/home/hui/.local/state/trading-intelligence-platform/automation/daily-eod`.
 Its bootstrap retains an exact 192-event journal copy plus formally reread
-2026-09-04 Phase 1b and Candidate priors. All directories are `0700`, immutable
-files are `0400`, the journal lock is `0600`, and there are zero symlinks or
-staging residues. An execute-enabled 2026-09-08 preflight passed custody and
-stopped at `eod_required` with zero actions. The legacy sources remain
-unchanged; the new root is the forward runtime candidate, not an installed
-scheduler binding.
+2026-09-04 Phase 1b and Candidate priors, followed by the real 2026-09-08
+package, plans, analytics, Snapshot, and Serving Bundle. All directories are
+`0700`, immutable files are `0400`, the journal lock is `0600`, and there are
+zero symlinks or staging residues. The 27-event 2026-09-08 journal has no
+unresolved action or cadence reservation. The legacy sources remain unchanged;
+the runtime root is still not an installed scheduler binding.
 
 ADR 0181 closes the code-level package/plan custody mismatch: future live data
 transitions may use only the exact `acquisition-package` and
 `canonical-apply-plan.json` pair in their owner-only session directory, while
 legacy `/tmp` evidence remains readable. All provider, Identity-source,
 acquisition, Apply, coordinator, capability, and standing-authorization
-boundaries enforce the same session and custody mode. No real persistent
-package/plan has yet been created, and no timer authority changed.
+boundaries enforce the same session and custody mode. The 2026-09-08
+acquisition package and canonical plan now provide real persistent-custody
+lineage proof. ADR 0184 likewise permits
+the exact same-session persistent Serving Bundle and shares its validator
+across the deployment capability, custody, and reviewed shell entrypoint. No
+timer authority changed.
 
 The manual guarded chain works end to end:
 
@@ -343,17 +346,18 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 ```
 
 ADR 0154 Membership preparation remains a research sidecar after Identity/EOD;
-it has passed a zero-write 9/4 replay. The 9/8 Identity leg completed, but the
-provider rejected the initial and both bounded post-close EOD retries before
-package creation, so Membership correctly remains unavailable for that session
-and coordinator integration is still pending.
+it has passed a zero-write 9/4 replay. The aligned 9/8 Identity and EOD now make
+same-session Membership preparation possible. It has not yet been prepared or
+applied for 9/8 and coordinator integration remains pending.
 
-Measured isolated/current-code stages include Candidate about 295 seconds,
-Entry 49.67 seconds, ETF Relationships 15.36 seconds, Strategy Channels 33.82
-seconds, Visual Context 51.11 seconds, MI candidate plus plan 53.84 seconds,
-and Snapshot candidate plus plan 121.57 seconds. These measurements come from
-separate controlled runs and must not be summed into a claimed end-to-end
-runtime. The next live session must supply one consolidated timing record.
+The 2026-09-08 real persistent run records Phase 1a about 96 seconds, Phase 1b
+4 seconds, Candidate 346 seconds, Entry Geometry 62 seconds, ETF Relationships
+21 seconds, Market Preview 7 seconds, Strategy Channels 47 seconds, Visual
+Context 72 seconds, and MI planning 87 seconds. These nine actions total about
+14.6 minutes. Snapshot planning took about 137 seconds and Serving Bundle
+construction about 87 seconds after their separate gates. Engineering time for
+the deployment-path defect is exceptional and not a normal daily-runtime
+measurement.
 
 Candidate's cumulative writer remains the main measured hotspot. The segmented
 Candidate path proved several equivalence boundaries but remains a cutover
@@ -364,19 +368,15 @@ design addresses both gaps.
 
 ## Immediate next work
 
-1. Resume the guarded 2026-09-08 chain only when the current account makes its
-   EOD package available. If same-evening operation is required, the lowest
-   currently documented 15-minute-delayed tier is Stocks Starter; after any
-   user purchase, record one controlled timing/completeness observation before
-   changing readiness policy. Then exercise ADR 0154 Membership preparation
-   against direct Daily Identity Plan 1.1 evidence and record consolidated
-   timings.
-2. After a new canonical session exists, use the activated owner-only runtime
-   workspace for one controlled ADR 0180 multi-action execution and record its
-   consolidated timing and stop state.
-3. After the new-session Membership and recovery gates pass, review the
-   one-action coordinator integration and a controlled scheduler rehearsal.
-   Do not enable unattended writes merely because the timer is active.
+1. Prepare and review the ADR 0154 signal-eligible Membership candidate for
+   2026-09-08 against direct Daily Identity Plan 1.1 evidence. Do not project
+   current Membership backward, and keep Apply separately governed.
+2. Reconcile the planner and journal after this successful chain, then perform
+   one controlled next-session unattended-scheduler rehearsal. Do not enable
+   recurring writes merely because the read-only timer is active.
+3. Record one clean-path acquisition-to-deployment elapsed time on the next
+   live session, excluding engineering/debugging time, and set a finite runtime
+   budget before any further optimization.
 4. Obtain and review a GICS History specification/sample against ADR 0173 and
    the field-to-contract and role gates already frozen in the source review.
 5. Implement a live adapter and Dell-only current snapshot only after that

@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-09 — Publish and deploy the 2026-09-08 daily state
+
+- Acquired one exact 2026-09-08 Grouped Daily package at 06:59 UTC, mapped
+  9,964 canonical rows with zero duplicate business keys or orphan Identity
+  references, and completed exact-plan EOD Apply. EOD and Identity now align at
+  2026-09-08 across 305 contiguous sessions.
+- Executed the first real bounded multi-action chain in the persistent Dell
+  runtime workspace. Nine analytics/MI-plan actions completed in about 14.6
+  minutes; Snapshot planning and Serving Bundle construction then completed
+  under their separate review gates.
+- Published fresh, lag-zero Market Intelligence
+  `2026-09-08T071528Z-d6cc4ee57917` and Snapshot
+  `2026-09-08T072146Z-d6cc4ee57917` with contracts 1.3 and 1.11/2.8.
+- Recovered one persistent-bundle deployment reservation without replay after
+  proving the old OCI release unchanged and the target absent. After the ADR
+  0184 shell-boundary correction, deployed exact release
+  `2026-09-09T075821Z-32321f0dadd5`; independent postflight passed release,
+  source, checksums, access, listener, service, and residue checks.
+- `/data` now contains 4,250 files / 2,236,379,948 bytes with zero symlinks or
+  publication residue. Research readiness remains `data_blocked`; the
+  installed timer remains read-only and no unattended write chain was enabled.
+- See the dated
+  [audit](../audits/daily-eod-publication-deployment-2026-09-09.md) for exact
+  fingerprints, timings, recovery evidence, and remaining authority limits.
+
 ## 2026-09-09 — Retain Serving Bundle custody through OCI deployment
 
 - Accepted ADR 0184 and aligned OCI deployment approval/custody with the exact
@@ -11,7 +36,10 @@
   historical direct `/tmp` layout remains compatible.
 - The change preserves the existing bundle reader, remote-state CAS, durable
   reservation, no-replay recovery, one-shot runtime binding, and postflight.
-- The focused deployment and path-custody suites passed 14 tests. No OCI write
+- The initial focused deployment and path-custody suites passed 14 tests; after
+  the reviewed shell entrypoint was aligned, the final focused suite and shell
+  syntax check passed 30 tests, and the full API suite passed 2,310 tests with
+  only two existing dependency deprecation warnings. No OCI write
   occurred before this correction; read-only recovery inspection proved the
   old release unchanged, the new release absent, and zero staging or failed
   residue.
