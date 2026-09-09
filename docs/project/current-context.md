@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-09T00:57:26Z
+Operational state verified at: 2026-09-09T01:44:02Z
 
 Repository context updated at: 2026-09-09 UTC
 
@@ -17,8 +17,8 @@ ADRs. Proposed sequencing belongs in the [roadmap](roadmap.md).
 | Branch | `main`; verify HEAD and cleanliness with the report rather than freezing them here |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Deployed OCI release | `2026-09-08T171914Z-ca2d34d50692` |
-| Deployed source commit | `ca2d34d506922f75699c376391dd6a9191ef0ae9` |
+| Deployed OCI release | `2026-09-09T013946Z-dc939a9d0dbb` |
+| Deployed source commit | `dc939a9d0dbb41ffa332ac9c427ff5f6e8806c17` |
 
 Dell is the authority for code, data, development, and heavy computation. OCI
 is only the static web-serving, localhost Auth Service, and public Session

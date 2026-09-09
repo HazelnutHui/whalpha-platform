@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Deploy the strategy-channel decision map
+
+- Built the clean-source bundle
+  `2026-09-09T013946Z-dc939a9d0dbb` from commit `dc939a9d0dbb...`, reusing the
+  exact active Snapshot 1.11 / Dashboard 2.8 and MI 1.3 evidence without
+  recalculation or `/data` writes.
+- Dry-run and preflight proved the expected prior release, absent target,
+  healthy Nginx/Auth, protected routes, equal guest capability, and zero
+  staging/failed residue. Apply completed and independently verified the new
+  checksums, services, temporary guest Session, protected routes, and equal
+  guest/credential policy. Password login and final human visual review remain
+  manual.
+- The first independent inspection exposed a control bug: it compared the UI
+  bundle ID with the reused data Snapshot ID. The guest flow itself returned
+  all expected statuses. The inspector now binds the served private manifest
+  to `snapshot_manifest_sha256`, correctly supporting immutable Snapshot reuse
+  in UI-only releases; focused regression and shell syntax checks passed.
+
 ## 2026-09-09 — Separate equity execution-cost mechanics from evidence
 
 - Accepted ADR 0179 and implemented deterministic one-side equity execution-

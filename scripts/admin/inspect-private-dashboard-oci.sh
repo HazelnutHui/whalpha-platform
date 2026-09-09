@@ -53,6 +53,7 @@ manifest_sha=""
 checksums_sha=""
 bundle_fingerprint=""
 source_revision=""
+snapshot_manifest_sha=""
 if [[ -L "${remote_base}/current" ]]; then
   current_path=$(readlink -f "${remote_base}/current")
   expected_prefix="${remote_base}/releases/"
@@ -67,10 +68,12 @@ import json,sys
 value=json.load(open(sys.argv[1],encoding="utf-8"))
 print(value["bundle_logical_fingerprint"])
 print(value["git_commit"])
+print(value["snapshot_manifest_sha256"])
 PY
 )
   bundle_fingerprint="${manifest_values[0]}"
   source_revision="${manifest_values[1]}"
+  snapshot_manifest_sha="${manifest_values[2]}"
 elif [[ -e "${remote_base}/current" ]]; then
   echo "current is not a symlink" >&2
   exit 1
@@ -126,15 +129,8 @@ guest_code=$(curl -k -sS --resolve whalpha.com:443:127.0.0.1 -c "${guest_jar}" -
 guest_dashboard_code=$(curl -k -sS --resolve whalpha.com:443:127.0.0.1 -b "${guest_jar}" -o "${guest_dashboard}" -w '%{http_code}' https://whalpha.com/dashboard/ || true)
 guest_private_code=$(curl -k -sS --resolve whalpha.com:443:127.0.0.1 -b "${guest_jar}" -o "${guest_private}" -w '%{http_code}' https://whalpha.com/private-data/v1/manifest.json || true)
 guest_logout_code=$(curl -k -sS --resolve whalpha.com:443:127.0.0.1 -b "${guest_jar}" -o /dev/null -w '%{http_code}' -X POST https://whalpha.com/auth/logout || true)
-guest_release=$(python3 - "${guest_private}" <<'PY'
-import json,sys
-try:
-  print(json.load(open(sys.argv[1],encoding="utf-8")).get("release_id", ""))
-except Exception:
-  print("")
-PY
-)
-if [[ "${guest_code}" == "200" && "${guest_dashboard_code}" == "200" && "${guest_private_code}" == "200" && "${guest_logout_code}" == "303" && "${guest_release}" == "${current_release}" ]] && grep -q '"authenticated":true' "${guest_body}" && grep -q '<div id="root"></div>' "${guest_dashboard}"; then
+guest_private_sha=$(sha256sum "${guest_private}" | awk '{print $1}')
+if [[ "${guest_code}" == "200" && "${guest_dashboard_code}" == "200" && "${guest_private_code}" == "200" && "${guest_logout_code}" == "303" && "${guest_private_sha}" == "${snapshot_manifest_sha}" ]] && grep -q '"authenticated":true' "${guest_body}" && grep -q '<div id="root"></div>' "${guest_dashboard}"; then
   guest_verified=true
 fi
 manifest_parity=$(python3 - "${remote_base}/current/deployment-manifest.json" <<'PY'

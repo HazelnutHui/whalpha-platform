@@ -10,13 +10,13 @@ project changelog, not in this current runbook.
 ## Live-verified state
 
 The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-09-08 post-deployment
+[current-context](../project/current-context.md). Its 2026-09-09 post-deployment
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-09-08T171914Z-ca2d34d50692`;
+  to release `2026-09-09T013946Z-dc939a9d0dbb`;
 - the release is built from source commit
-  `ca2d34d506922f75699c376391dd6a9191ef0ae9` and binds Market
+  `dc939a9d0dbb41ffa332ac9c427ff5f6e8806c17` and binds Market
   Intelligence
   `2026-09-04T112916Z-717cb82c5369`;
 - it serves ordinary-fresh, lag-zero 2026-09-04 analytics through Snapshot
@@ -40,8 +40,10 @@ The deployed React workspaces share the public entry's deep-navy/cyan visual
 identity and persistent WH product mark. Strategy Channels includes the
 cross-channel decision desk, stable-ID joined complete review, explicit
 research-priority versus trade-readiness labels, and a stable-ID overlap and
-readiness diagnostic. The diagnostic is not formal sector concentration and
-does not treat the technical channels as independent diversification sleeves.
+readiness diagnostic. It also includes the selected-channel decision map that
+plots within-channel score against extension risk and colours independent
+trade-review readiness. The diagnostics are not formal sector concentration
+and do not treat the technical channels as independent diversification sleeves.
 Quant Research Lab exposes family-specific readiness gates. These are
 presentation and navigation changes: guest/credential parity, analytics,
 scoring, contracts, and fail-closed API behavior are unchanged.
@@ -53,6 +55,11 @@ uses `datetime.timezone.utc` for compatibility with the remote Python runtime.
 
 Authenticated browser behavior was not tested because the verification did not
 read or use the user's password.
+
+For a UI-only bundle, `deployment-manifest.json.release_id` may differ from the
+immutable source Snapshot's internal `release_id`. The independent inspector
+validates the served private manifest against `snapshot_manifest_sha256`; it
+must not require the Snapshot ID to equal the static bundle ID.
 
 ## Immutable bundle boundary
 

@@ -12,8 +12,8 @@ and dated audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity market-
 intelligence and research platform. The active OCI release is
-`2026-09-08T171914Z-ca2d34d50692`, built from clean source commit
-`ca2d34d506922f75699c376391dd6a9191ef0ae9`.
+`2026-09-09T013946Z-dc939a9d0dbb`, built from clean source commit
+`dc939a9d0dbb41ffa332ac9c427ff5f6e8806c17`.
 
 The deployed product uses:
 
@@ -24,7 +24,7 @@ The deployed product uses:
 - a public data-free WH landing page and favicon; and
 - fail-closed private Snapshot/API behavior with no synthetic Production data.
 
-The 2026-09-08 remote inspection matched the exact active release, source,
+The 2026-09-09 remote inspection matched the exact active release, source,
 bundle, manifest, and checksums. Nginx and the localhost-only Auth Service are
 healthy. Public entry, protected routes, guest entry, Dashboard, Candidate
 summary/detail, Strategy Channels, Sector ETF Rotation, logout, and renewed
@@ -95,10 +95,10 @@ and linked Candidate trade-review readiness, plus stable-ID overlap,
 all-risk-mode rejection, missing bounded setup, gap/volatility review, and
 extension risk.
 
-Repository source additionally contains a bilingual selected-channel decision
-map that places published within-channel score against current extension risk
-and colours the linked Candidate trade-review state. It does not recompute or
-compare strategy scores and is not part of the active OCI release yet.
+Production includes a bilingual selected-channel decision map that places
+published within-channel score against current extension risk and colours the
+linked Candidate trade-review state. It does not recompute or compare strategy
+scores across strategies.
 
 Momentum Breakout, Strong-Stock Pullback, and Trend Continuation have
 provisional technical mechanics. Technical Reversal, Fundamental Value
