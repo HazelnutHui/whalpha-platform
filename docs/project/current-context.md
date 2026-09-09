@@ -133,7 +133,7 @@ The formal status is `data_blocked`, with
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
 | Canonical corporate actions | 709 canonical split-only fact rows: 707 active / 2 quarantined; bounded query snapshot and outcome-only | complete action-type, availability, and revision scope; keep 1,240 unresolved rows unassigned |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
-| Adjustment ledger | Canonical ADR 0177 publication contains 98,291 clear / 3,030 quarantined affected-path rows; Plan/Apply and exact-existing recovery passed; ADR 0182 found 387 unexplained severe price discontinuities across 321 stable IDs | independently resolve flagged discontinuities; complete coverage and absent-row neutrality evidence; dividend total return later |
+| Adjustment ledger | Canonical ADR 0177 publication contains 98,291 clear / 3,030 quarantined affected-path rows; Plan/Apply and exact-existing recovery passed; ADR 0182 found 387 unexplained severe price discontinuities across 321 stable IDs; ADR 0183 retained 746 of 41,200 resolved dividend groups for review and kept the other 40,454 arithmetic-only | independently resolve flagged discontinuities; complete coverage and absent-row neutrality evidence; independently authoritative dividend dates, currency/order handling, and total-return publication |
 | Costs and liquidity | deterministic one-side equity scenario mechanics; no observed quote or calibrated-impact evidence | governed point-in-time spread evidence, impact calibration/stress validation, and actual-execution comparison |
 | Evaluation and holdout | fixture mechanics and custody seam only | real chronological dataset and sealed real holdout |
 | Historical Coverage | reader and fixture mechanics exist; two family-evidence manifests are canonical | final publication across every required admitted family |
@@ -187,11 +187,19 @@ projected backward. Canonical price history alone is not backtest readiness.
   special cash distribution, and one unresolved DFNS case. None establishes a
   split or omitted-row neutrality; the VISN evidence reinforces the separate
   total-return requirement.
+- ADR 0183 scanned all 68,150 cash-dividend source observations against the
+  exact 304-session EOD evidence. It retained 26,803 unresolved source rows,
+  classified 40,454 resolved groups as bounded arithmetic candidates only, and
+  retained 746 resolved groups for one or more review reasons. The VISN USD 5
+  row automatically failed the large-distribution date-order gate: issuer
+  evidence calls August 17 the record date and August 28 the ex-date, while the
+  provider row reports August 17 as effective/ex-date. No dividend was
+  canonicalized and no total-return authority changed.
 - The lifecycle queue contains 547 stable-ID review candidates. A real licensed
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0182 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0183 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-09 — Quarantine ambiguous cash dividends before total return
+
+- Accepted ADR 0183 and added a network-prohibited, write-free diagnostic over
+  the exact canonical source-observation marker and 304-session EOD evidence.
+- The clean-revision real run preserved all 68,150 dividend rows: 41,347 were
+  resolved into 41,200 stable-ID/reported-date groups and 26,803 remained
+  unresolved. It classified 40,454 groups as bounded arithmetic candidates
+  only and retained 746 for review.
+- Review reasons include 31 large distributions, 17 large-distribution date-
+  order cases, 145 multiple-dividend dates, 13 same-date split/dividend groups,
+  160 non-USD groups, and 399 groups without both adjacent EOD bars. Counts
+  overlap and are not action classifications.
+- Both VISN rows were isolated. The USD 10 row reconciles on the independently
+  confirmed April 28 ex-date; the provider's USD 5 row reports August 17 while
+  issuer evidence and the EOD cash discontinuity place ex-date on August 28.
+  Provider cumulative factors remain audit-only.
+- The new and related suites passed 30 tests. No `/data`, canonical action,
+  Adjustment Ledger, analytics, Snapshot, deployment, timer, scheduler, or
+  Production state changed.
+
 ## 2026-09-09 — Falsify split coverage with canonical price discontinuities
 
 - Accepted ADR 0182 and added a network-prohibited, write-free diagnostic that

@@ -71,6 +71,15 @@ appearance remain manual checks.
   current-Secondary flags then produced 13 date-aligned first-party event
   contexts, one explicit VISN special cash distribution, and one unresolved
   DFNS case. No split was inferred or canonicalized.
+- ADR 0183 formally reread all 68,150 cash-dividend observations and 304 EOD
+  evidence partitions. Of 41,200 resolved stable-ID/reported-date groups,
+  40,454 passed bounded arithmetic checks only and 746 retained review reasons,
+  including 31 large-distribution groups, 17 date-order risks, 145 multi-event
+  groups, 13 same-date split/dividend groups, 160 non-USD groups, and 399
+  groups without both adjacent EOD bars. The VISN USD 5 case proves a provider
+  record date can be represented as the ex-date for a large distribution;
+  canonical dividend facts and total-return adjustment therefore remain
+  blocked on independent date semantics and the other explicit quarantines.
 - `/data` contains 4,204 files / 2,151,679,313 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
@@ -79,7 +88,8 @@ appearance remain manual checks.
 - No historical backfill process or transient service is active.
 
 Canonical price depth now exceeds the research minimum. Missing price history
-is no longer the main blocker.
+is no longer the main blocker; dividend date authority and total-return
+semantics remain material research-input blockers.
 
 ## Product
 

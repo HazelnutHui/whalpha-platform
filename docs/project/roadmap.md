@@ -137,6 +137,15 @@ causality/no-split, but it removes any basis for treating the current sample as
 14 probable missing splits. Scale the next review through a provider sample,
 not hundreds of bespoke web lookups.
 
+ADR 0183 now makes the dividend boundary reproducible rather than implicit.
+The exact source/EOD scan leaves 40,454 resolved groups as arithmetic-only and
+retains 746 groups for review. VISN proves that a large-distribution record date
+can appear in the provider ex-date field, so no resolved dividend row may be
+promoted solely because its identity and arithmetic reconcile. The next
+dividend step is a real independent corporate-action sample with authoritative
+actual ex-date semantics and revision/availability evidence. Until that sample
+passes, do not publish canonical dividend facts or a total-return ledger.
+
 Current membership implementation sequence:
 
 1. Complete-base single-session shadow is proven on 2026-09-03 with 9,979

@@ -57,6 +57,25 @@ an Adjustment Ledger without independent semantic validation.
 - The existing split-only Adjustment Ledger remains unchanged and total return
   remains unavailable.
 
+## Execution evidence
+
+The first clean-revision run completed on Dell source
+`518b1cb20462890f544ef6709e0ab57477e07457`. It formally reread all 68,150
+cash-dividend source rows and 304 EOD evidence partitions. Of 41,200 resolved
+stable-ID/reported-date groups, 40,454 passed bounded arithmetic checks and 746
+retained review reasons. The review set contains 31 large-distribution groups,
+17 large-distribution date-order cases, 145 multiple-dividend dates, 13
+same-date split/dividend groups, 160 non-USD groups, and 399 groups lacking
+both adjacent EOD bars; reason counts overlap.
+
+Both VISN rows were automatically isolated. The 2026-04-28 USD 10 row requires
+independent large-distribution evidence even though its price reconciliation is
+bounded. The reported 2026-08-17 USD 5 row also received the date-order flag;
+issuer evidence and EOD place its actual ex-date on 2026-08-28. Diagnostic
+fingerprint is
+`e648c4c6497c1cea8ed201617751e42781af4da578e5499d8b9060cb991bfbe1`.
+No source, canonical, ledger, analytics, or Production file was written.
+
 ## Rejected alternatives
 
 - **Copy the provider ex-date and factor:** the VISN counterexample proves both
