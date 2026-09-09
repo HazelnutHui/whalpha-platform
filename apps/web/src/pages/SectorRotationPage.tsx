@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 
+import { getMarketRegimePreview, type MarketRegimePreviewResponse } from '../api/marketRegime';
+import { getOpportunityCandidates, type CandidateExtensionRisk, type CandidateStage, type OpportunityCandidateResponse } from '../api/opportunityCandidates';
 import {
   getSectorRotation,
   type SectorRotationPosture,
   type SectorRotationRecord,
   type SectorRotationResponse,
 } from '../api/sectorRotation';
+import { buildMarketDecisionChain } from '../features/marketDecisionChain';
 import { useI18n, type Translate } from '../i18n/I18nProvider';
-import { localizeClientError } from '../i18n/domain';
+import { localizeClientError, sectorName, stateName, universeName } from '../i18n/domain';
 
 type LoadState =
   | { kind: 'loading' }
@@ -16,6 +19,11 @@ type LoadState =
 type WindowSize = 5 | 10 | 20;
 
 const WINDOWS: WindowSize[] = [5, 10, 20];
+
+type ChainState =
+  | { kind: 'loading' }
+  | { kind: 'error'; message: string }
+  | { kind: 'ready'; regime: MarketRegimePreviewResponse; candidates: OpportunityCandidateResponse };
 
 function percent(t: Translate, value: string | null): string {
   if (value === null) return t('common.unavailable');
@@ -34,6 +42,98 @@ function postureSummary(t: Translate, item: SectorRotationRecord): string {
     relative: percent(t, relative20),
     acceleration: percent(t, item.five_day_relative_acceleration),
   });
+}
+
+function stageName(t: Translate, stage: CandidateStage | null): string {
+  if (stage === 'watch') return t('candidate.stage.watch');
+  if (stage === 'prepare') return t('candidate.stage.prepare');
+  if (stage === 'enter') return t('candidate.stage.enter');
+  if (stage === 'invalidated') return t('candidate.stage.invalidated');
+  return t('candidate.stage.unavailable');
+}
+
+function extensionName(t: Translate, risk: CandidateExtensionRisk | undefined): string {
+  return risk ? t(`candidate.entry.extension.${risk}` as never) : t('common.unavailable');
+}
+
+function navigateToCandidates(): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set('view', 'candidates');
+  url.searchParams.set('candidateView', 'entry');
+  url.searchParams.set('candidateRisk', 'balanced');
+  window.history.pushState(window.history.state, '', url);
+  window.dispatchEvent(new PopStateEvent('popstate'));
+}
+
+function MarketToCandidateChain({ rotation, universeId, windowSize }: {
+  rotation: SectorRotationResponse;
+  universeId: string;
+  windowSize: WindowSize;
+}): JSX.Element {
+  const { t } = useI18n();
+  const [state, setState] = useState<ChainState>({ kind: 'loading' });
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setState({ kind: 'loading' });
+    void Promise.all([
+      getMarketRegimePreview(universeId, controller.signal),
+      getOpportunityCandidates(universeId, controller.signal),
+    ]).then(([regime, candidates]) => {
+      buildMarketDecisionChain(regime, rotation, candidates, 20);
+      setState({ kind: 'ready', regime, candidates });
+    }).catch((error: unknown) => {
+      if (!controller.signal.aborted) setState({ kind: 'error', message: localizeClientError(t, error instanceof Error ? error.message : String(error)) });
+    });
+    return () => controller.abort();
+  }, [rotation, t, universeId]);
+
+  const data = state.kind === 'ready'
+    ? buildMarketDecisionChain(state.regime, rotation, state.candidates, windowSize)
+    : null;
+
+  return (
+    <section className="sector-chain-card">
+      <div className="sector-section-heading">
+        <div><span>{t('sector.chainEyebrow')}</span><h2>{t('sector.chainTitle')}</h2></div>
+        <p>{t('sector.chainNote')}</p>
+      </div>
+      {state.kind === 'loading' ? <p className="sector-chain-message">{t('sector.chainLoading')}</p> : null}
+      {state.kind === 'error' ? <div className="sector-chain-message sector-chain-error"><strong>{t('sector.chainUnavailable')}</strong><p>{state.message}</p></div> : null}
+      {data ? <>
+        <div className="sector-chain-flow">
+          <article className="sector-chain-market">
+            <span>{t('sector.chainMarket')}</span>
+            <strong>{stateName(t, data.confirmed_market_state)}</strong>
+            <p>{t('sector.chainRegimeScore')} <b>{data.regime_score ?? t('common.unavailable')}</b></p>
+            <small>{universeName(t, data.universe_id)}</small>
+          </article>
+          <span className="sector-chain-arrow" aria-hidden="true">→</span>
+          <article className="sector-chain-direction">
+            <span>{t('sector.chainDirection')}</span>
+            <strong>{t('sector.chainTopProxies', { count: data.sector_proxies.length, window: windowSize })}</strong>
+            <div className="sector-chain-proxies">{data.sector_proxies.map((item) => {
+              const window = item.windows[WINDOWS.indexOf(windowSize)];
+              return <div key={item.ticker}><b>{item.ticker}</b><span>{sectorName(t, item.sector)}</span><em>{percent(t, window.relative_return)}</em><small>{postureName(t, item.posture)}</small></div>;
+            })}</div>
+          </article>
+          <span className="sector-chain-arrow sector-chain-arrow-qualified" aria-hidden="true">→</span>
+          <article className="sector-chain-candidates">
+            <span>{t('sector.chainCandidates')}</span>
+            <strong>{t('sector.chainCandidateCount', { shown: data.candidates.length, total: data.balanced_display_count })}</strong>
+            <div className="sector-chain-candidate-list">{data.candidates.map(({ item, balanced_rank }) => <div key={item.instrument_id}>
+              <b><i>{balanced_rank}</i>{item.ticker}</b>
+              <span>{stageName(t, item.state.final_stage)}</span>
+              <em>{t('sector.chainBaseScore')} {item.base_score ?? '—'}</em>
+              <small>{t('sector.chainExtension')} · {extensionName(t, item.entry_summary?.extension_risk)}</small>
+            </div>)}</div>
+            <button type="button" onClick={navigateToCandidates}>{t('sector.chainOpenCandidates')}</button>
+          </article>
+        </div>
+        <p className="sector-chain-boundary"><strong>{t('sector.chainSeparate')}</strong> {t('sector.chainBoundary')}</p>
+      </> : null}
+    </section>
+  );
 }
 
 function QuadrantMap({ records }: { records: SectorRotationRecord[] }): JSX.Element {
@@ -67,7 +167,7 @@ function QuadrantMap({ records }: { records: SectorRotationRecord[] }): JSX.Elem
   );
 }
 
-function SectorRotationContent({ data }: { data: SectorRotationResponse }): JSX.Element {
+function SectorRotationContent({ data, universeId }: { data: SectorRotationResponse; universeId: string }): JSX.Element {
   const { t } = useI18n();
   const [windowSize, setWindowSize] = useState<WindowSize>(20);
   const windowIndex = WINDOWS.indexOf(windowSize);
@@ -92,6 +192,7 @@ function SectorRotationContent({ data }: { data: SectorRotationResponse }): JSX.
         <article><span>{t('sector.improving')}</span><strong>{improving} / 11</strong><p>{t('sector.improvingNote')}</p></article>
         <article className="sector-boundary-card"><span>{t('sector.interpretation')}</span><strong>{t('sector.proxyOnly')}</strong><p>{t('sector.proxyBoundary')}</p></article>
       </section>
+      <MarketToCandidateChain rotation={data} universeId={universeId} windowSize={windowSize} />
       <QuadrantMap records={data.records} />
       <section className="sector-ranking-card">
         <div className="sector-section-heading">
@@ -109,7 +210,7 @@ function SectorRotationContent({ data }: { data: SectorRotationResponse }): JSX.
   );
 }
 
-export function SectorRotationPage(): JSX.Element {
+export function SectorRotationPage({ universeId }: { universeId: string }): JSX.Element {
   const { t } = useI18n();
   const [state, setState] = useState<LoadState>({ kind: 'loading' });
   useEffect(() => {
@@ -121,5 +222,5 @@ export function SectorRotationPage(): JSX.Element {
   }, [t]);
   if (state.kind === 'loading') return <main className="sector-page sector-message"><p>{t('sector.loading')}</p></main>;
   if (state.kind === 'error') return <main className="sector-page sector-message"><h1>{t('sector.unavailable')}</h1><p>{state.message}</p><small>{t('sector.failClosed')}</small></main>;
-  return <SectorRotationContent data={state.data} />;
+  return <SectorRotationContent data={state.data} universeId={universeId} />;
 }

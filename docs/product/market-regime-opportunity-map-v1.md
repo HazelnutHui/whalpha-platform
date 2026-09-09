@@ -723,6 +723,27 @@ reversal forecast, and no posture is an order instruction. Exact fields and
 thresholds are authoritative in the
 [Candidate Entry Geometry V1 contract](../data-contracts/candidate-entry-geometry-v1.md).
 
+## Cross-workspace market-to-candidate decision chain
+
+The Sector Rotation workspace may join three already published, same-session
+views into one concise decision aid: the selected Universe's confirmed Market
+Regime and score, the top five fixed-registry sector ETF price proxies for the
+selected 5/10/20-session window, and the first eight published Balanced-risk
+Candidate priorities. The browser must fail this joined view closed when the
+session, Market Intelligence publication, or Universe bindings differ. The
+underlying Sector Rotation workspace remains available when only the joined
+view fails.
+
+This is an information-flow visualization, not a new analytics product. It
+does not calculate a combined score, reorder source Candidate ranks, infer
+formal sector membership, or draw a security-level causal link from an ETF to
+a Candidate. The ETF column is market-wide price evidence; the Candidate
+column is an independent Universe-specific research rank. Exact registered
+ETF proxy correlation, evidence, counterevidence, entry geometry, and
+invalidation remain in the full Candidate review. The Candidate summary is
+loaded after the small Sector Rotation resource, and no detail shard is read
+to populate the concise view.
+
 ## Cross-channel decision desk and complete candidate review
 
 The Strategy Channels view may summarize the first displayed record from each

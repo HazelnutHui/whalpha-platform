@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-09 — Implement the cross-workspace market-to-candidate decision chain
+
+- Added a bilingual Sector Rotation decision view that aligns the selected
+  Universe's confirmed Market Regime, five leading fixed-registry sector ETF
+  price proxies, and eight Balanced-risk Candidate priorities to the same
+  completed session.
+- The join fails closed on session, publication, or Universe drift. It preserves
+  the source 5/10/20-session ETF ranks and Candidate ranks, performs no score
+  recomputation, and explicitly prohibits interpreting the hand-off as formal
+  sector membership, fund flow, causality, or a trade instruction.
+- The small Sector Rotation payload renders first; the Market Regime and
+  Candidate summaries load asynchronously. No Candidate detail shard, model,
+  parameter, analytics publication, `/data`, scheduler, bundle, OCI, or
+  Production state changed in this implementation step. All 121 frontend tests
+  and the Production build pass.
+
 ## 2026-09-09 — Deploy the strategy-channel decision map
 
 - Built the clean-source bundle

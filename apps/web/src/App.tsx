@@ -129,7 +129,7 @@ export default function App(): JSX.Element {
             {snapshotMode ? <button type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
           </div>
         </header>
-        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
+        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
       </div>
     </div>
   );
