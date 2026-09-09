@@ -199,6 +199,15 @@ decision question, such as:
 Default views should emphasize the most important five to eight items. Raw
 values, parameters, sources, and hashes remain available but folded.
 
+The current product now covers all five listed questions: Candidate price path
+and labelled levels, threshold distance and source-bound observed state age,
+component contribution/counterevidence, the same-session market-to-sector-ETF-
+proxy-to-Candidate hand-off, and relationship persistence/change timelines.
+Treat this priority as complete unless a concrete user decision question
+reveals a missing view. Do not add charts merely to increase visual density,
+and do not substitute registered ETF price-proxy concentration for the formal
+Sector/Industry concentration work gated in Priority 3.
+
 ## Priority 6 — Options expression
 
 Options are a separate expression layer over a stock thesis, not a relabeling
