@@ -45,6 +45,7 @@
 - [2026-09-09 Canonical Split Adjustment Candidate Audit](audits/canonical-split-adjustment-candidate-2026-09-09.md): clean-revision real derivation, factor-extreme reconciliation, idempotency, and unchanged canonical-state proof.
 - [ADR 0178: Exact Sparse Split Adjustment Plan/Apply](decisions/0178-publish-sparse-split-adjustments-with-exact-plan-apply.md): immutable byte-preserving publication, full source rederivation, atomic Apply, and zero-write recovery.
 - [Canonical Split Adjustment Publication Operations](operations/canonical-split-adjustment-publication.md): Dell-only planning, exact Apply, recovery, and postflight procedure.
+- [2026-09-09 Canonical Split Adjustment Publication Audit](audits/canonical-split-adjustment-publication-2026-09-09.md): exact Plan, two-file Apply, zero-write recovery, and unchanged research/Production boundary.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

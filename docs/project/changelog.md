@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Publish canonical sparse split adjustments
+
+- Built and independently reread the exact ADR 0178 plan from clean main
+  `bdb027a293a167962c24f4a8ec0bb28746e53b8e`. It preserved candidate revision
+  `0c57560...`, rebound canonical action/EOD sources, and bound whole-data pre-
+  state `6d6ef7c2...`, two absent target files, and all false authorities.
+- The locked, network-prohibited Apply published 101,321 affected-path rows:
+  98,291 clear and 3,030 quarantined. Exactly two files / 80,308 bytes were
+  added with zero overwrite, deletion, external request, or outside-target
+  change. Publication fingerprint is `7e08b8a8...`.
+- An exact second Apply was zero-write and returned `verified_existing`.
+  Current-context 1.9 formally reread the full publication and kept adjustment
+  reconciliation incomplete, Historical Coverage absent, research
+  `data_blocked`, and performance claims unauthorized.
+- Postflight recorded 4,204 files / 2,151,679,313 bytes, fingerprint
+  `af06b692cf1f9708e75cf44defd198cb25317b65403a2adbc503d9e03e1fa71f`,
+  zero symlinks, zero residue, clean main, and unchanged Production.
+
 ## 2026-09-09 — Implement canonical sparse split adjustment publication
 
 - Accepted ADR 0178 and added the exact Apply-plan contract, network-prohibited

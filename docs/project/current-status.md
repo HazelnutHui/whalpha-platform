@@ -54,11 +54,11 @@ appearance remain manual checks.
   group. It also exposes 43 possible-impact stable IDs without assigning any
   of the 1,240 unresolved source observations. Full Corporate Action coverage,
   neutral factors, and Adjustment Ledger authority remain false.
-- ADR 0177 sparse-ledger code is fixture-validated. A formal read-only census
-  projects 101,321 affected-path rows from 175,033 selected EOD rows: 98,291
-  clear and 3,030 quarantined. No real ledger candidate or `/data` publication
-  has occurred yet.
-- `/data` contains 4,202 files / 2,151,599,005 bytes with zero symlinks and
+- Canonical sparse split-adjustment custody contains 101,321 affected-path rows
+  from 175,033 selected EOD rows: 98,291 clear and 3,030 quarantined. It is
+  outcome-reconciliation only; omitted-row neutrality and total return remain
+  false.
+- `/data` contains 4,204 files / 2,151,679,313 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -132,6 +132,8 @@ What is complete:
   recovery evidence;
 - a real, independently reconciled sparse split-adjustment candidate with
   98,291 clear and 3,030 quarantined affected-path rows;
+- exact canonical split-adjustment Plan/Apply publication and zero-write
+  recovery evidence;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 
@@ -140,7 +142,8 @@ What remains incomplete:
 - governed historical point-in-time Membership eligibility;
 - complete canonical corporate-action type/availability/revision coverage and
   canonical lifecycle; the split-only bounded publication is not sufficient;
-- canonical split-adjustment and later total-return ledgers;
+- complete adjustment coverage, absent-row neutrality evidence, and a later
+  total-return ledger;
 - source revision and availability evidence;
 - a real cost/liquidity model;
 - final transitive Historical Coverage;
@@ -187,13 +190,11 @@ Visual Context's cumulative-state requirement.
    integration and a controlled unattended-scheduler rehearsal.
 4. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-5. Add and verify the sparse split-adjustment candidate's separate inventory-
-   bound canonical Plan/Apply boundary; absent-row neutrality remains false.
-6. Complete historical Membership, lifecycle, costs, availability/revision,
+5. Complete historical Membership, lifecycle, costs, availability/revision,
    final Coverage, chronological evaluation, and sealed holdout evidence.
-7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
+6. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
    Trend Continuation, Technical Reversal, and Fundamental Value Reversal.
-8. Add options expression, fundamentals/valuation/events, and later
+7. Add options expression, fundamentals/valuation/events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune formulas, thresholds, or rankings before governed chronological

@@ -50,6 +50,23 @@ revisions must remain distinct rather than rewriting the audited candidate.
 - The new family is useful for adjustment reconciliation but remains
   insufficient for research signals or performance claims.
 
+## Execution evidence
+
+The first Dell plan was built from clean planner revision
+`bdb027a293a167962c24f4a8ec0bb28746e53b8e` while preserving candidate
+revision `0c57560d44489c4170675cee086527d25e6daef4`. Plan SHA-256 is
+`fef31be98d8ae6ebbae2a55e043a2eb7f210770acae1204a0972141fefdbaf06`
+and plan logical fingerprint is
+`99d657c78694db98659a6d4537f2a3192a308f774994279fba7234d3a8ce132c`.
+
+The locked Apply added exactly two files / 80,308 bytes and published 101,321
+rows with fingerprint
+`7e08b8a8ee364cf215c1459645f76240368b50cc3d2cb4bc77db86d3ca7c3c2a`.
+There was no overwrite, deletion, external request, or outside-target change.
+An exact second Apply returned `verified_existing` with zero files and zero
+bytes. Current-context contract 1.9 formally reread the publication while
+retaining incomplete adjustment reconciliation and `data_blocked`.
+
 ## Rejected alternatives
 
 - **Rewrite the candidate with the planner revision:** changes already audited

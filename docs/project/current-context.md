@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-09T00:21:52Z
+Operational state verified at: 2026-09-09T00:57:26Z
 
 Repository context updated at: 2026-09-09 UTC
 
@@ -33,7 +33,7 @@ detail belongs in the changelog rather than a frozen HEAD field here.
 
 ## Formal Dell data state
 
-The network-free reader uses report contract 1.8. The 2026-09-09 verification
+The network-free reader uses report contract 1.9. The 2026-09-09 verification
 completed at validation level `active_custody_and_contracts` with
 `completion_index_plus_latest_partition`. The explicit all-partition mode also
 passed during ADR 0125 validation.
@@ -58,8 +58,10 @@ sealed publication assertion are reported separately.
 | Corporate-action source publication | `7b13691e22b7e815a773ed1d575ed580bbee897eb0dbf10c41e4e0862a95b1d1` |
 | Canonical split-only action facts | 709 rows: 707 active / 2 quarantined; 708 groups; 43 possible-impact stable IDs; full coverage and ledger authority false |
 | Canonical split-action publication | `76f017a1547e20b997e40cd1e61497b71c749a94e88a8632a3898fe84c106218` |
-| `/data` inventory | 4,202 files / 2,151,599,005 bytes |
-| `/data` inventory fingerprint | `6d6ef7c214087130290ae151a53b7f8b7be018ffcd1cb42c9912bbcf4c843915` |
+| Canonical sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; basis 2026-09-04; outcome-reconciliation only |
+| Split-adjustment publication | `7e08b8a8ee364cf215c1459645f76240368b50cc3d2cb4bc77db86d3ca7c3c2a` |
+| `/data` inventory | 4,204 files / 2,151,679,313 bytes |
+| `/data` inventory fingerprint | `af06b692cf1f9708e75cf44defd198cb25317b65403a2adbc503d9e03e1fa71f` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -127,7 +129,7 @@ The formal status is `data_blocked`, with
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
 | Canonical corporate actions | 709 canonical split-only fact rows: 707 active / 2 quarantined; bounded query snapshot and outcome-only | complete action-type, availability, and revision scope; keep 1,240 unresolved rows unassigned |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
-| Adjustment ledger | Real owner-only ADR 0177 candidate contains 98,291 clear / 3,030 quarantined rows from 175,033 selected EOD rows; exact rerun and factor audit passed | inventory-bound canonical publication; absent-row neutrality and dividends later |
+| Adjustment ledger | Canonical ADR 0177 publication contains 98,291 clear / 3,030 quarantined affected-path rows; Plan/Apply and exact-existing recovery passed | complete coverage and absent-row neutrality evidence; dividend total return later |
 | Costs and liquidity | fixed fixture scenarios only | real executable cost/liquidity model |
 | Evaluation and holdout | fixture mechanics and custody seam only | real chronological dataset and sealed real holdout |
 | Historical Coverage | reader and fixture mechanics exist; two family-evidence manifests are canonical | final publication across every required admitted family |
@@ -156,18 +158,22 @@ projected backward. Canonical price history alone is not backtest readiness.
   groups: 707 single-action clear candidates and one multiple-action
   quarantine. Forty-three possible-impact stable IDs remain conservatively
   non-clear; only two enter the active Universes. Its event math and unresolved
-  impact set exactly match the prior shadow candidate. Total return and the
-  canonical ledger remain unavailable.
+  impact set exactly match the prior shadow candidate. Total return remains
+  unavailable.
 - ADR 0176 published the 709 resolved source actions as a sparse canonical
   split-only fact family. The one two-action group remains quarantined, 1,240
   unresolved rows remain unassigned, and the 43 possible-impact stable IDs
   remain explicit. The exact second Apply was zero-write. This does not prove
   absent-event neutrality or complete Corporate Action coverage.
+- ADR 0178 published the exact 101,321-row sparse split-adjustment candidate as
+  canonical outcome-reconciliation evidence. The exact second Apply was zero-
+  write. Omitted rows still do not authorize factor one, total return remains
+  unavailable, and research readiness remains blocked.
 - The lifecycle queue contains 547 stable-ID review candidates. A real licensed
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0177 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0178 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof
@@ -311,15 +317,12 @@ design addresses both gaps.
 4. Implement a live adapter and Dell-only current snapshot only after that
    review passes. Integrate Candidate sector/industry concentration only after
    current source coverage, mapping, permission, and quarantine behavior pass.
-5. Implement and verify the exact inventory-bound publication boundary for the
-   independently reconciled ADR 0177 sparse split-adjustment candidate. Keep
-   absent-row neutrality unauthorized and dividend total return later.
-6. Complete lifecycle, historical Membership eligibility, costs, availability,
+5. Complete lifecycle, historical Membership eligibility, costs, availability,
    revision, final Historical Coverage, and sealed evaluation evidence.
-7. Begin real preregistered chronological research with Strong-Leader Pullback,
+6. Begin real preregistered chronological research with Strong-Leader Pullback,
    then Momentum Breakout, Trend Continuation, Technical Reversal, and
    Fundamental Value Reversal.
-8. Add options expression, fundamentals/valuation/events, and later
+7. Add options expression, fundamentals/valuation/events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune formulas, thresholds, or paid-data scope merely because price
