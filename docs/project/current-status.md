@@ -179,9 +179,16 @@ publication, deployment, retry, recovery, or scheduler-install authority. Its
 A retained 2026-08-28 default review took about 28 seconds, executed zero
 actions, stopped at publication review, changed no workspace path, and left
 `/data` at 4,204 files / 2,151,679,313 bytes with zero symlinks. This proves the
-review boundary only. The runner is not installed, no real multi-action run has
-been recorded, and the separate retained artifact and legacy journal roots do
-not yet satisfy its unified owner-only execution preflight.
+review boundary only. The runner is not installed and no real multi-action run
+has been recorded.
+
+The forward runtime workspace is now activated under the owner-only Dell state
+root. It contains an exact 192-event legacy-journal copy and formally verified
+2026-09-04 Phase 1b/Candidate priors. Its 17 directories and 213 files /
+927,439,505 logical bytes have the required custody, zero symlinks, and zero
+staging residue. An execute-enabled 2026-09-08 preflight passed and stopped at
+`eod_required` with zero actions, requests, or Production writes. The old
+sources remain retained; no timer or coordinator has been rebound.
 
 The timer correctly identified 2026-09-08 as the oldest missing session. The
 guarded Identity fetch/plan/Apply completed with 14 requests and no overwrite;
@@ -215,10 +222,9 @@ Visual Context's cumulative-state requirement.
    perform one controlled timing/completeness observation before changing
    scheduler policy. Then exercise ADR 0154 Membership preparation and record
    consolidated timings.
-2. Compose and review one explicit owner-only persistent runtime layout for the
-   bounded offline runner without implicitly migrating the legacy journal or
-   retained artifacts. After a new canonical session exists, execute one
-   controlled multi-action rehearsal and record its consolidated timeline.
+2. After a new canonical session exists, execute one controlled bounded
+   multi-action rehearsal in the activated runtime workspace and record its
+   consolidated timeline.
 3. After the new-session Membership/recovery gates pass, review coordinator
    integration and a controlled unattended-scheduler rehearsal.
 4. Obtain and review a GICS History specification/sample against ADR 0173 and

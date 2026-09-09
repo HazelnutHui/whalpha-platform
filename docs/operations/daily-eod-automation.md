@@ -786,6 +786,15 @@ seconds. The workspace had no changed path and `/data` remained exactly 4,204
 files / 2,151,679,313 bytes with zero symlinks. This proves the review boundary,
 not multi-action execution or unattended operation.
 
+The same day, the forward owner-only runtime workspace was activated at
+`/home/hui/.local/state/trading-intelligence-platform/automation/daily-eod`.
+It contains an exact 192-event legacy-journal copy and formally reread
+2026-09-04 Phase 1b/Candidate priors. An execute-enabled 2026-09-08 invocation
+passed workspace preflight, attempted zero offline actions, and stopped at the
+existing `eod_required` boundary. See the dated
+[activation audit](../audits/daily-eod-runtime-workspace-activation-2026-09-09.md).
+This does not install the runner or rebind the timer/coordinator.
+
 ## Default-off one-transition wake bridge
 
 ADR 0077 composes one exact unchanged enabled-candidate wake plan with one

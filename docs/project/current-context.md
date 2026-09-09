@@ -291,11 +291,17 @@ runner for consecutive successful offline stages. It preserves the existing
 single-action journal and postcondition boundary, defaults to review-only, and
 stops before every data, publication, Snapshot, deployment, failure, recovery,
 or budget boundary. It is repository capability only: it is not installed in
-the timer, and no real multi-action execution has yet been recorded. The
-retained artifact workspace and durable legacy journal currently use separate
-roots; neither may be silently treated as the runner's required unified
-owner-only workspace. Runtime layout composition remains the next integration
-gate.
+the timer, and no real multi-action execution has yet been recorded.
+
+The stable owner-only runtime workspace is now active at
+`/home/hui/.local/state/trading-intelligence-platform/automation/daily-eod`.
+Its bootstrap retains an exact 192-event journal copy plus formally reread
+2026-09-04 Phase 1b and Candidate priors. All directories are `0700`, immutable
+files are `0400`, the journal lock is `0600`, and there are zero symlinks or
+staging residues. An execute-enabled 2026-09-08 preflight passed custody and
+stopped at `eod_required` with zero actions. The legacy sources remain
+unchanged; the new root is the forward runtime candidate, not an installed
+scheduler binding.
 
 The manual guarded chain works end to end:
 
@@ -335,10 +341,9 @@ design addresses both gaps.
    changing readiness policy. Then exercise ADR 0154 Membership preparation
    against direct Daily Identity Plan 1.1 evidence and record consolidated
    timings.
-2. Compose one explicit owner-only persistent runtime layout for ADR 0180;
-   preserve the existing journal and retained artifacts without implicit
-   migration. After a new canonical session exists, run one controlled
-   multi-action execution and record its consolidated timing and stop state.
+2. After a new canonical session exists, use the activated owner-only runtime
+   workspace for one controlled ADR 0180 multi-action execution and record its
+   consolidated timing and stop state.
 3. After the new-session Membership and recovery gates pass, review the
    one-action coordinator integration and a controlled scheduler rehearsal.
    Do not enable unattended writes merely because the timer is active.

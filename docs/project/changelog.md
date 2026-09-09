@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-09 — Activate the persistent daily runtime workspace
+
+- Activated one stable owner-only Dell workspace outside Git, `/tmp`, and
+  `/data`. It retains an exact 192-event copy of the legacy journal and
+  formally verified 2026-09-04 Phase 1b/Candidate priors for the next session.
+- The copied prior fingerprints match their sources; the journal hash chain
+  has no unresolved action or cadence reservation. The completed workspace has
+  17 owner-only directories, 213 files / 927,439,505 logical bytes, zero
+  symlinks, and zero staging residue.
+- An execute-enabled runner preflight for 2026-09-08 performed zero actions and
+  stopped at `eod_required`. `/data` remained exactly 4,204 files /
+  2,151,679,313 bytes with zero symlinks. No provider, publication, deployment,
+  service, timer, or credential action occurred.
+
 ## 2026-09-09 — Add a finite continuous runner for governed offline daily stages
 
 - Accepted ADR 0180 and added a default-review, socket-guarded Dell command

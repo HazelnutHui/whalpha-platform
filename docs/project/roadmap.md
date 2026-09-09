@@ -64,9 +64,12 @@ formally successful offline stages. The finite runner retains every existing
 per-action journal and postcondition, defaults to review-only, and stops before
 all data, publication, Snapshot, deployment, failure, and recovery boundaries.
 Its focused and related fixture regressions pass, and a real historical
-workspace review proved zero action/write behavior. Next, after a new canonical
-session exists, run one controlled multi-action execution rehearsal and record
-one consolidated timeline. Then compose dynamic data and external serving
+workspace review proved zero action/write behavior. The stable owner-only
+runtime workspace is now activated with exact prior-session and journal
+bootstrap evidence, and an execute-enabled current-session preflight stopped
+at missing EOD with zero actions. Next, after a new canonical session exists,
+run one controlled multi-action execution and record one consolidated
+timeline. Then compose dynamic data and external serving
 capabilities separately; do not mislabel the offline runner as full unattended
 publication.
 
