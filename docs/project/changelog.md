@@ -16,9 +16,10 @@
   confirmed April 28 ex-date; the provider's USD 5 row reports August 17 while
   issuer evidence and the EOD cash discontinuity place ex-date on August 28.
   Provider cumulative factors remain audit-only.
-- The new and related suites passed 30 tests. No `/data`, canonical action,
-  Adjustment Ledger, analytics, Snapshot, deployment, timer, scheduler, or
-  Production state changed.
+- The focused and related suites passed 30 tests, followed by all 2,308 API
+  tests with only the two existing dependency deprecation warnings. No
+  `/data`, canonical action, Adjustment Ledger, analytics, Snapshot,
+  deployment, timer, scheduler, or Production state changed.
 
 ## 2026-09-09 — Falsify split coverage with canonical price discontinuities
 

@@ -88,3 +88,5 @@ provider factors therefore remain audit evidence only.
 The real diagnostic recorded zero external requests, filesystem writes,
 canonical-data writes, and Adjustment Ledger writes. It changed no `/data`,
 analytics, Snapshot, bundle, deployment, timer, scheduler, or Production state.
+The full API regression then passed 2,308 tests with only the two existing
+dependency deprecation warnings.
