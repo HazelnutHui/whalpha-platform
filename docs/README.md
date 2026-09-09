@@ -55,6 +55,8 @@
 - [2026-09-09 Canonical Split Adjustment Publication Audit](audits/canonical-split-adjustment-publication-2026-09-09.md): exact Plan, two-file Apply, zero-write recovery, and unchanged research/Production boundary.
 - [ADR 0179: Equity Cost Mechanics vs. Evidence](decisions/0179-separate-equity-cost-mechanics-from-execution-evidence.md): adds transparent one-side equity cost and capacity mechanics while preserving absent quote/calibration evidence and false research authority.
 - [Equity Execution Cost Scenario V1](data-contracts/equity-execution-cost-scenario-v1.md): component formula, evidence states, capacity gate, Decimal/fingerprint rules, and explicit non-authority boundary.
+- [ADR 0186: Strong-Leader Pullback Research Inputs](decisions/0186-seal-strong-leader-pullback-research-inputs.md): freezes real-input formulas, complete-cross-section admission, and outcome separation before any real study.
+- [Strong-Leader Pullback Research Input V1](data-contracts/strong-leader-pullback-research-input-v1.md): exact 21-session inputs, formula semantics, evidence bindings, and fail-closed batch contract.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

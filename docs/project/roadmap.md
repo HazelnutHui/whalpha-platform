@@ -223,6 +223,13 @@ readiness. Compare candidates only against the same eligible opportunity set,
 using chronological development/validation/holdout splits, purge/embargo,
 session-balanced inference, cost sensitivity, and adversarial falsification.
 
+ADR 0186 completes the dormant input-construction seam: exact formulas and
+source sessions are fingerprinted, every signal session requires the complete
+point-in-time Primary cross-section plus SPY and clear adjustments, and no
+outcome field is admitted. The next implementation step is real filesystem
+orchestration only after every historical family and final transitive Coverage
+are formally ready; do not bypass that gate with the current partial families.
+
 Subsequent strategy families:
 
 1. Momentum Breakout.

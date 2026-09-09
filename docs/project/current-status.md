@@ -173,7 +173,7 @@ What is complete:
 - deterministic one-side equity cost/capacity scenario mechanics with separate
   commission, spread, delay, and square-root impact components;
 - a 547-item lifecycle corroboration queue; and
-- fixture-tested chronological, statistics, and holdout mechanics.
+- fixture-tested exact-input, chronological, statistics, and holdout mechanics.
 
 What remains incomplete:
 
@@ -193,6 +193,13 @@ What remains incomplete:
 Historical facts observed after their represented sessions remain outcome-only
 unless their source availability is independently defensible. Current
 membership and classification must never be projected backward.
+
+ADR 0186 now freezes the first experiment's outcome-free input translation:
+exact 21-session split-adjusted formulas, complete same-session point-in-time
+Primary membership, stable-ID SPY, same-session confirmed Regime, and whole-
+batch rejection for any missing member/session/adjustment. This is a pure
+fixture-tested seam only. No real batch, signal, return, parameter result,
+performance claim, `/data` write, or Production change exists.
 
 ## Automation and performance
 

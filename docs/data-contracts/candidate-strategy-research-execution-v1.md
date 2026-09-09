@@ -16,10 +16,11 @@ exclusions, usability, and latest possible five-session outcome date.
 
 ### Source-dated observation
 
-`StrongLeaderPullbackObservationV1` contains only information available no
+`StrongLeaderPullbackObservationV1` 1.1 contains only information available no
 later than its as-of session: point-in-time membership evidence, leadership
 facts, pullback depth, recovery facts, volume ratio, and Regime. It contains no
-future label.
+future label. The 1.1 widening preserves Stress and permits negative pullback
+depth for leaders above their prior high; positive signal bands are unchanged.
 
 ### Parameter and cohort assignment
 
@@ -47,7 +48,9 @@ with no numeric result.
 ## Current implementation boundary
 
 Python/Pydantic contracts and pure services are covered by synthetic tests.
-There is no real input adapter, canonical persistence, CLI, development
-selection, validation statistic, report, UI, publication, or deployment. The
-real experiment remains `preregistered_data_blocked`; this contract grants no
-authority to use incomplete current history.
+ADR 0186 adds an outcome-free, fail-closed input-construction adapter with exact
+feature semantics and complete-cross-section admission. There is no real
+filesystem orchestration, canonical persistence, CLI, development selection,
+real report, result publication, or deployment. The real experiment remains
+`preregistered_data_blocked`; this contract grants no authority to use
+incomplete current history.

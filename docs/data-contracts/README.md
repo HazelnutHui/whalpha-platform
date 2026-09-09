@@ -38,6 +38,7 @@
 - [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
+- [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 - [Classification V1](classification-v1.md)
 - [Candidate Strategy Holdout Custody V1](candidate-strategy-holdout-custody-v1.md)
@@ -85,6 +86,7 @@ Implemented as Python/Pydantic contracts:
 - [Canonical Split Action Publication V1](canonical-split-action-publication-v1.md)
 - [Canonical Split Adjustment Publication V1](canonical-split-adjustment-publication-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
+- [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 - [Equity Execution Cost Scenario V1](equity-execution-cost-scenario-v1.md)
 

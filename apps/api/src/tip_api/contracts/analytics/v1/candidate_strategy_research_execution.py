@@ -23,9 +23,9 @@ from .candidate_strategy_research import (
 )
 
 
-RESEARCH_EXECUTION_CONTRACT_VERSION = "candidate-strategy-research-execution/1.0"
+RESEARCH_EXECUTION_CONTRACT_VERSION = "candidate-strategy-research-execution/1.1"
 STRONG_LEADER_PULLBACK_OBSERVATION_VERSION = (
-    "strong-leader-pullback-observation/1.0"
+    "strong-leader-pullback-observation/1.1"
 )
 
 
@@ -162,7 +162,7 @@ class StrongLeaderPullbackObservationV1(FrozenModel):
     close_above_prior_close: bool
     close_above_prior_high: bool
     pullback_volume_ratio: str
-    market_regime: Literal["Defensive", "Balanced", "Risk-on"]
+    market_regime: Literal["Defensive", "Balanced", "Risk-on", "Stress"]
     source_max_session: date
     source_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
@@ -198,7 +198,7 @@ class StrongLeaderPullbackObservationV1(FrozenModel):
         _bounded_decimal(
             self.pullback_depth_atr,
             "pullback_depth_atr",
-            Decimal("0"),
+            Decimal("-20"),
             Decimal("20"),
         )
         _bounded_decimal(

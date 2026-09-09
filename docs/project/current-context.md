@@ -140,6 +140,13 @@ outcome-reconciliation evidence unless a selected source supplies defensible
 point-in-time availability semantics. Current Membership must never be
 projected backward. Canonical price history alone is not backtest readiness.
 
+ADR 0186 adds the dormant, pure Strong-Leader Pullback input seam. It binds
+exact 21-session feature semantics to complete signal-eligible Membership,
+stable-ID SPY, clear adjustments, confirmed Regime, readiness, and Historical
+Coverage, and rejects a whole cross-section on any missing required evidence.
+Fixture validation only is complete; no real input batch or performance output
+exists and the formal state remains `data_blocked`.
+
 ### Corporate-action and lifecycle evidence already completed
 
 - Massive V1 temporary source custody covers 1,949 split rows and 68,150

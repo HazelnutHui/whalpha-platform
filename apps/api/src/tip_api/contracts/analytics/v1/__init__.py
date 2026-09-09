@@ -275,6 +275,15 @@ from .candidate_strategy_research_execution import (
     StrongLeaderPullbackParameterCombinationV1,
     research_execution_fingerprint,
 )
+from .candidate_strategy_research_input import (
+    STRONG_LEADER_PULLBACK_INPUT_CALCULATION_VERSION,
+    STRONG_LEADER_PULLBACK_INPUT_CONTRACT_VERSION,
+    STRONG_LEADER_PULLBACK_INPUT_FEATURE_FINGERPRINT,
+    STRONG_LEADER_PULLBACK_REQUIRED_DATASET_FAMILIES,
+    StrongLeaderPullbackDatasetBindingV1,
+    StrongLeaderPullbackResearchInputBatchV1,
+    research_input_fingerprint,
+)
 from .candidate_strategy_research_statistics import (
     MINIMUM_COMPARABLE_SESSIONS,
     MINIMUM_SIGNAL_OBSERVATIONS,
@@ -504,6 +513,13 @@ __all__ = [
     "StrongLeaderPullbackObservationV1",
     "StrongLeaderPullbackParameterCombinationV1",
     "research_execution_fingerprint",
+    "STRONG_LEADER_PULLBACK_INPUT_CALCULATION_VERSION",
+    "STRONG_LEADER_PULLBACK_INPUT_CONTRACT_VERSION",
+    "STRONG_LEADER_PULLBACK_INPUT_FEATURE_FINGERPRINT",
+    "STRONG_LEADER_PULLBACK_REQUIRED_DATASET_FAMILIES",
+    "StrongLeaderPullbackDatasetBindingV1",
+    "StrongLeaderPullbackResearchInputBatchV1",
+    "research_input_fingerprint",
     "MINIMUM_COMPARABLE_SESSIONS",
     "MINIMUM_SIGNAL_OBSERVATIONS",
     "RESEARCH_BLOCK_LENGTH_SESSIONS",

@@ -126,7 +126,7 @@ for research readiness.
 | Corporate Actions | Canonical, availability-aware action coverage for the full interval, including explicit no-event semantics and quarantine | Bounded source custody and split-only outcome evidence exist; dividend/total-return and absent-row neutrality do not | Blocking |
 | Instrument Lifecycle | Effective-dated active, delisted, successor, and terminal evidence across venues | A 547-item temporary corroboration queue exists; no canonical cross-venue family | Blocking |
 | Adjustment Ledger | Raw-to-basis split price/volume and total-return treatment reconciled for the full admitted interval; null when unknown rather than assumed factor one | Sparse split adjustment is outcome-only; 387 severe discontinuities remain unexplained; total return unavailable | Blocking |
-| Feature construction | Exact as-of formulas, windows, source fingerprints, and no-forward-data proof for every frozen observation field | Fixture mechanics exist; no canonical real input adapter | Blocking after the physical families pass |
+| Feature construction | Exact as-of formulas, windows, source fingerprints, and no-forward-data proof for every frozen observation field | ADR 0186 adds a pure, fixture-tested complete-cross-section adapter; no real batch or filesystem orchestration exists | Mechanics ready; real construction remains blocked by the physical families and final Coverage |
 | Outcome labels | Exact next-open to 1/3/5-session-close paths; affected or incomplete paths quarantined; validation and holdout signal/control coverage equals 1.0000 | Fixture-only scheduler and maturer | Blocking for real evaluation |
 | Costs and liquidity | Gross result plus 0/10/25/50 bps-per-side sensitivity; realistic quote/impact evidence before economic or Production interpretation | Scenario-only equity mechanics; no observed spread or calibrated impact | Development sensitivity available; economic interpretation blocked |
 | Classification and events | Point-in-time sector/industry for governed stratification; earnings/events retained as risk context when available | No canonical historical classification or governed earnings-event family | Not a V1 primary-test gate; unavailable context must remain explicit |
@@ -172,7 +172,11 @@ opportunistically during evaluation.
 ## Current state
 
 Repository source contains the immutable first preregistration, readiness gate,
-and fixture-only chronological execution mechanics. The mechanics
+fixture-only chronological execution mechanics, and the ADR 0186 pure input
+adapter. The adapter freezes the exact 21-session feature formulas, requires a
+complete point-in-time Primary cross-section plus stable-ID SPY, and rejects an
+entire session when any required bar or adjustment is missing. It preserves
+Stress and new-high non-trigger controls but has not been run on real data. The mechanics
 deterministically assign the 50/25/25 split, warm-up, purge/embargo and label-
 maturity exclusions; enumerate all 24 registered combinations; separate same-
 session leader signals from eligible-leader controls before outcomes; and

@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-09 — Seal the first experiment's outcome-free input boundary
+
+- Accepted ADR 0186 and added a pure, I/O-free Strong-Leader Pullback input
+  adapter. It requires a matching research-ready assessment/Coverage manifest,
+  signal-eligible point-in-time Membership, the complete Primary cross-section,
+  stable-ID SPY, exact 21-session EOD, clear adjustments, and a same-session
+  confirmed Regime; any missing required item rejects the entire session.
+- Froze the actual feature definitions and fingerprint: same-session relative-
+  return percentile, Candidate 1.1.1 trend-quality formula, simple ATR14,
+  distance from the prior 20-session close high, prior-close/prior-high
+  recovery, and signal-volume versus prior-20-session median.
+- Widened the pre-real-data execution/observation contract to 1.1 so Stress is
+  not relabeled and leaders above their prior high remain valid non-trigger
+  controls through negative pullback depth. The registered positive signal
+  bands and 24-combination experiment did not change.
+- Added four deterministic/fail-closed fixtures; all 2,329 API tests passed
+  with only the two existing dependency deprecation warnings. No real data was
+  evaluated; no signal, forward return, parameter result, performance claim,
+  `/data`, scheduler, Snapshot, bundle, deployment, or OCI state changed.
+  Formal readiness remains `data_blocked`.
+
 ## 2026-09-09 — Consolidate the first research-model admission baseline
 
 - Expanded the existing Quant Research Lab product definition rather than
