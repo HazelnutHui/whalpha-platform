@@ -41,8 +41,9 @@ appearance remain manual checks.
 - Canonical normalized Identity source custody contains 303 partitions /
   3,713,485 rows. Provider-revised dates 2026-08-13 and 2026-08-19 remain
   explicitly unbound; there is no longer an Identity-only session.
-- Canonical signal-eligible Membership contains one session, 2026-09-04, with
-  19,964 decisions eligible for the 2026-09-08 open.
+- Canonical signal-eligible Membership contains two sessions, 2026-09-04 and
+  2026-09-08, with 39,928 decisions. The later 19,964-row partition was
+  evaluated before the 2026-09-09 open.
 - Immutable EOD and point-in-time Identity family evidence is canonical. Final
   Historical Coverage remains absent.
 - Canonical corporate-action source custody contains 70,099 split/dividend
@@ -80,7 +81,7 @@ appearance remain manual checks.
   record date can be represented as the ex-date for a large distribution;
   canonical dividend facts and total-return adjustment therefore remain
   blocked on independent date semantics and the other explicit quarantines.
-- `/data` contains 4,250 files / 2,236,379,948 bytes with zero symlinks and
+- `/data` contains 4,253 files / 2,236,844,204 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -156,7 +157,7 @@ What is complete:
 - 305-session canonical EOD and resolved Identity depth;
 - immutable EOD and Identity family-evidence manifests;
 - 303 canonical Identity source-observation partitions;
-- one prospective signal-eligible Membership partition;
+- two prospective signal-eligible Membership partitions;
 - canonical bounded split/dividend source-observation custody and exact-event-
   date resolution;
 - a source-marker-bound 708-group split candidate with 707 clear candidates,
@@ -235,10 +236,13 @@ availability by 06:59 UTC for that session only; the Basic plan's earliest or
 guaranteed release minute remains unproven and no blind retry loop is running.
 
 The guarded chain now works end to end from acquisition through OCI deployment
-and has one consolidated real-session offline timeline. Reuse optimizations
-materially reduce the control path, but Candidate remains the largest stage.
-The deployment-path correction was exceptional engineering work and must not
-be included in the normal daily runtime estimate.
+and has one consolidated real-session offline timeline. Post-publication review
+executed zero actions and stopped at the expected deployment-review boundary;
+the scheduler wake reports 9/8 current, zero missing sessions, and waits for
+the 9/9 stabilization review. Reuse optimizations materially reduce the control
+path, but Candidate remains the largest stage. The deployment-path correction
+was exceptional engineering work and must not be included in the normal daily
+runtime estimate.
 
 The segmented Candidate experiment remains a Production cutover NO-GO. It
 should not receive more work unless a new live measurement breaches an agreed
@@ -247,11 +251,10 @@ Visual Context's cumulative-state requirement.
 
 ## Next priority
 
-1. Prepare and review the ADR 0154 signal-eligible Membership candidate for
-   2026-09-08 without projecting current membership backward; keep its Apply a
-   separate governed boundary.
-2. Reconcile the daily planner and journal after this successful chain, then
-   run one controlled next-session unattended-scheduler rehearsal. Do not
+1. Review and implement ADR 0154 Membership preparation as a non-serving daily
+   coordinator sidecar while preserving its separate near-Apply inventory plan
+   and fail-open website boundary.
+2. Run one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes until acquisition timing, recovery, publication,
    deployment, and final status reporting all pass together.
 3. Record the next live session's clean-path acquisition-to-deployment elapsed

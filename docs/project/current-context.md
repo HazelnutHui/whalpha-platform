@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-09T08:17:05Z
+Operational state verified at: 2026-09-09T08:29:13Z
 
 Repository context updated at: 2026-09-09 UTC
 
@@ -52,7 +52,7 @@ sealed publication assertion are reported separately.
 | Latest Identity fingerprint | `ccada891e47725796142b08381e4a24026ee074d8d5dc4cf1d33b9fbc7e422a5` |
 | Identity/EOD alignment | Aligned at 2026-09-08 |
 | Canonical historical Identity source | 303 immutable source-observation partitions / 3,713,485 rows; 2026-08-13 and 2026-08-19 remain without source evidence; no source-only date remains |
-| Canonical signal-eligible Membership | 2026-09-04; 19,964 decisions; eligible for the 2026-09-08 open |
+| Canonical signal-eligible Membership | 2 sessions / 39,928 decisions: 2026-09-04 and 2026-09-08; publication fingerprints `3f71cd40edd2ed6d7e215a95e0cb89c08c7e96dcb9a8fb543a4de34286c15518` and `f02a67923d60ea4293a87b0884f3fadb109e9cfc3956b3617a4c678648789bb8` |
 | Canonical EOD/Identity family evidence | 2 immutable manifests; final Historical Coverage absent |
 | Canonical corporate-action source observations | 70,099 rows in 2 event-year partitions; 42,056 resolved / 28,043 quarantined; bounded query-snapshot coverage only |
 | Corporate-action source publication | `7b13691e22b7e815a773ed1d575ed580bbee897eb0dbf10c41e4e0862a95b1d1` |
@@ -60,8 +60,8 @@ sealed publication assertion are reported separately.
 | Canonical split-action publication | `76f017a1547e20b997e40cd1e61497b71c749a94e88a8632a3898fe84c106218` |
 | Canonical sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; basis 2026-09-04; outcome-reconciliation only |
 | Split-adjustment publication | `7e08b8a8ee364cf215c1459645f76240368b50cc3d2cb4bc77db86d3ca7c3c2a` |
-| `/data` inventory | 4,250 files / 2,236,379,948 bytes |
-| `/data` inventory fingerprint | `fbe9e916d6b1d68fb5cf10509ad6556a2e70a3087226ea36e4b3e7280b62b640` |
+| `/data` inventory | 4,253 files / 2,236,844,204 bytes |
+| `/data` inventory fingerprint | `aad4f05da35422280160956192c3c431880751792002a08b602d321d7c5701b9` |
 | `/data` symlinks | zero |
 | Publication staging/partial residue | zero |
 
@@ -126,7 +126,7 @@ The formal status is `data_blocked`, with
 | EOD Price Bar | 305 canonical sessions; immutable family evidence remains coverage-scoped | final transitive Historical Coverage |
 | Point-in-time Identity | 305 canonical completed snapshots aligned through 2026-09-08; immutable family evidence remains coverage-scoped | final transitive Historical Coverage |
 | Identity source observations | 303 canonical partitions / 3,713,485 rows | 2026-08-13 and 2026-08-19 remain unbound |
-| Daily Universe Membership | 1 canonical signal-eligible session; disconnected mechanics cover 302 source-available sessions | governed historical point-in-time eligibility and complete publication |
+| Daily Universe Membership | 2 canonical signal-eligible sessions / 39,928 decisions; disconnected mechanics cover 302 source-available sessions | 303 missing EOD sessions; governed historical point-in-time eligibility and complete publication |
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
 | Canonical corporate actions | 709 canonical split-only fact rows: 707 active / 2 quarantined; bounded query snapshot and outcome-only | complete action-type, availability, and revision scope; keep 1,240 unresolved rows unassigned |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
@@ -345,10 +345,12 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 -> serving bundle -> OCI deploy/postflight
 ```
 
-ADR 0154 Membership preparation remains a research sidecar after Identity/EOD;
-it has passed a zero-write 9/4 replay. The aligned 9/8 Identity and EOD now make
-same-session Membership preparation possible. It has not yet been prepared or
-applied for 9/8 and coordinator integration remains pending.
+ADR 0154 Membership preparation remains a research sidecar after Identity/EOD.
+The 9/8 candidate used aligned same-session EOD, Identity, and normalized
+Identity source evidence, retained the canonical 8/14 provider type-code
+catalog, and was evaluated before the next open. Exact Plan/Apply published
+19,964 decisions; zero-write postflight reused both targets. Coordinator
+integration remains pending and the website did not change.
 
 The 2026-09-08 real persistent run records Phase 1a about 96 seconds, Phase 1b
 4 seconds, Candidate 346 seconds, Entry Geometry 62 seconds, ETF Relationships
@@ -359,6 +361,14 @@ construction about 87 seconds after their separate gates. Engineering time for
 the deployment-path defect is exceptional and not a normal daily-runtime
 measurement.
 
+The post-publication default-review run executed zero actions and stopped at
+the expected `review_bundle_deployment` boundary: the final successful OCI
+deployment came through the separately audited one-shot path, so the earlier
+zero-write coordinator recovery event was not rewritten. The scheduler wake
+independently reports 9/8 current, zero missing sessions, target 9/9, and
+`wait` until the 20:30 UTC stabilization review. No fetch, write, or scheduler
+enablement occurred.
+
 Candidate's cumulative writer remains the main measured hotspot. The segmented
 Candidate path proved several equivalence boundaries but remains a cutover
 NO-GO because the current reader rehashes the large base and Visual Context
@@ -368,12 +378,11 @@ design addresses both gaps.
 
 ## Immediate next work
 
-1. Prepare and review the ADR 0154 signal-eligible Membership candidate for
-   2026-09-08 against direct Daily Identity Plan 1.1 evidence. Do not project
-   current Membership backward, and keep Apply separately governed.
-2. Reconcile the planner and journal after this successful chain, then perform
-   one controlled next-session unattended-scheduler rehearsal. Do not enable
-   recurring writes merely because the read-only timer is active.
+1. Review and implement ADR 0154 Membership preparation as a non-serving daily
+   coordinator sidecar while preserving its separate near-Apply inventory plan
+   and fail-open website boundary.
+2. Perform one controlled next-session unattended-scheduler rehearsal. Do not
+   enable recurring writes merely because the read-only timer is active.
 3. Record one clean-path acquisition-to-deployment elapsed time on the next
    live session, excluding engineering/debugging time, and set a finite runtime
    budget before any further optimization.

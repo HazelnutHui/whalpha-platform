@@ -37,6 +37,16 @@ Create the inventory-bound Apply plan only when other expected `/data` writes
 for the run are complete and Apply review can follow promptly. Do not retain a
 known-stale plan across MI, Snapshot, Identity, EOD, or other canonical writes.
 
+The first real prospective continuation completed for 2026-09-08 on
+2026-09-09. Same-session EOD, Identity, and normalized Identity source evidence
+were combined with the existing completed 2026-08-14 provider type-code
+catalog; an attempted nonexistent 2026-09-08 catalog binding correctly failed
+before writes. The corrected candidate was signal eligible, exact Plan/Apply
+published 19,964 decisions, and `verify_then_complete` reused both targets with
+zero writes. This proves the manual sidecar path only; coordinator integration
+and unattended execution remain pending. See the dated
+[audit](../audits/daily-universe-membership-publication-2026-09-09.md).
+
 ## Before Apply
 
 Confirm all of the following from one unchanged plan:

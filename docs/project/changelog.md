@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-09 — Publish prospective 2026-09-08 Membership
+
+- Prepared one network-prohibited 19,964-row 2026-09-08 Membership candidate
+  from aligned same-session EOD, Identity, and normalized Identity source
+  evidence. It is signal eligible for the next open and retains the canonical
+  2026-08-14 provider type-code catalog used by the existing methodology.
+- The initial wrong 2026-09-08 catalog-date invocation failed before candidate
+  or canonical writes. Formal source-fingerprint comparison proved the 8/14
+  catalog binding before the corrected run; exact repeat returned
+  `already_present` with no residue.
+- The 27 directly related tests passed. Exact-plan Apply published 3 files /
+  464,256 bytes, formally reread 19,964 decisions, and produced publication
+  fingerprint
+  `f02a67923d60ea4293a87b0884f3fadb109e9cfc3956b3617a4c678648789bb8`.
+  Zero-write postflight reused both targets without overwrite or deletion.
+- Canonical Membership now covers 2 sessions / 39,928 decisions; 303 EOD
+  sessions remain missing. `/data` contains 4,253 files / 2,236,844,204 bytes
+  with fingerprint
+  `aad4f05da35422280160956192c3c431880751792002a08b602d321d7c5701b9`.
+  Research readiness remains `data_blocked`; no website or scheduler changed.
+- See the dated
+  [audit](../audits/daily-universe-membership-publication-2026-09-09.md).
+
 ## 2026-09-09 — Publish and deploy the 2026-09-08 daily state
 
 - Acquired one exact 2026-09-08 Grouped Daily package at 06:59 UTC, mapped
