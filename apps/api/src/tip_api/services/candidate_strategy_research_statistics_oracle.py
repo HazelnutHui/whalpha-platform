@@ -369,7 +369,7 @@ def _one_summary(
         Decimal(outcome.maximum_adverse_excursion or "0")
         for _, outcome in signal_available
     )
-    regimes = {"Balanced": 0, "Defensive": 0, "Risk-on": 0}
+    regimes = {"Balanced": 0, "Defensive": 0, "Risk-on": 0, "Stress": 0}
     for assignment, _ in signal_available:
         regime = observations[assignment.observation_fingerprint].market_regime
         regimes[regime] += 1

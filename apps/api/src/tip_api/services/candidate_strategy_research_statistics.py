@@ -37,7 +37,7 @@ RETURN_QUANTUM = Decimal("0.0000000001")
 PROBABILITY_QUANTUM = Decimal("0.000001")
 COVERAGE_QUANTUM = Decimal("0.0001")
 COST_SCENARIOS_BPS = (0, 10, 25, 50)
-REPORTED_REGIMES = ("Balanced", "Defensive", "Risk-on")
+REPORTED_REGIMES = ("Balanced", "Defensive", "Risk-on", "Stress")
 
 
 class CandidateStrategyResearchStatisticsError(ValueError):

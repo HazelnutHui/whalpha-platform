@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-09 — Preserve Stress in strategy research statistics
+
+- Accepted ADR 0189 and advanced the fixture-only research-statistics contract
+  to 1.1. Risk-on, Balanced, Defensive, and Stress now remain distinct through
+  the evaluator, typed summaries, and independent Oracle.
+- Added an end-to-end Stress fixture covering all 24 parameter combinations and
+  corrected the product description to distinguish the existing pure input
+  builder from the still-absent canonical filesystem orchestration.
+- Recorded two interpretation limits without changing V1: leadership is
+  measured through the signal close, and the volume cap describes only the
+  signal session rather than a complete pullback path.
+- The registered hypothesis, 24-combination grid, thresholds, chronological
+  boundaries, data-readiness block, `/data`, Production, scheduler, and website
+  behavior are unchanged. No real outcome or performance claim was created.
+
 ## 2026-09-09 — Bind Stocks Starter recency through the daily chain
 
 - Accepted ADR 0188 after the owner supplied a successful Massive Stocks

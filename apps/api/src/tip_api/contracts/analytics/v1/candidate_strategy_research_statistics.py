@@ -18,7 +18,7 @@ from .candidate_strategy_research import STRONG_STOCK_PULLBACK_RESEARCH_FINGERPR
 from .candidate_strategy_research_execution import StrongLeaderPullbackCohortRole
 
 
-RESEARCH_STATISTICS_CONTRACT_VERSION = "candidate-strategy-research-statistics/1.0"
+RESEARCH_STATISTICS_CONTRACT_VERSION = "candidate-strategy-research-statistics/1.1"
 RESEARCH_BOOTSTRAP_REPLICATES = 2_000
 RESEARCH_BLOCK_LENGTH_SESSIONS = 5
 MINIMUM_COMPARABLE_SESSIONS = 20
@@ -190,6 +190,7 @@ class ResearchParameterSummaryV1(FrozenModel):
             "Balanced",
             "Defensive",
             "Risk-on",
+            "Stress",
         } or any(value < 0 for value in self.signal_market_regime_counts.values()):
             raise ValueError("research Regime counts have invalid keys or values")
         if sum(self.signal_market_regime_counts.values()) != self.signal_available_count:

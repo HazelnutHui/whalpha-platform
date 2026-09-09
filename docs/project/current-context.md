@@ -154,6 +154,8 @@ ADR 0186 adds the dormant, pure Strong-Leader Pullback input seam. It binds
 exact 21-session feature semantics to complete signal-eligible Membership,
 stable-ID SPY, clear adjustments, confirmed Regime, readiness, and Historical
 Coverage, and rejects a whole cross-section on any missing required evidence.
+The statistics and independent Oracle contracts now preserve Stress as a
+fourth distinct Regime rather than failing when the input seam emits it.
 Fixture validation only is complete; no real input batch or performance output
 exists and the formal state remains `data_blocked`.
 

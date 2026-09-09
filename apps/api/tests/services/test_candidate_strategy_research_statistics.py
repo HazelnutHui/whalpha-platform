@@ -239,6 +239,7 @@ def test_validation_applies_all_24_holm_family_and_registered_gates(
         "Balanced": 106,
         "Defensive": 0,
         "Risk-on": 0,
+        "Stress": 0,
     }
     assert {item.status for item in validation.gate_evaluations} == {
         ResearchGateStatus.PASS
@@ -628,6 +629,62 @@ def test_independent_oracle_reproduces_every_descriptive_development_value(
         assert actual.contrast_upper_90pct == expected.contrast_upper_90pct
         assert actual.one_sided_raw_p_value == expected.one_sided_raw_p_value
         assert actual.bootstrap_replicates == expected.bootstrap_replicates
+
+
+def test_statistics_and_oracle_preserve_stress_as_a_distinct_regime(
+    research_fixture,
+) -> None:
+    plan, observations, _ = research_fixture
+    stress_observations = []
+    for observation in observations:
+        payload = observation.model_dump(mode="python")
+        payload.pop("logical_fingerprint")
+        payload["market_regime"] = "Stress"
+        stress_observations.append(
+            build_strong_leader_pullback_observation(**payload)
+        )
+    stress_observations = tuple(stress_observations)
+    mechanics = build_strong_leader_pullback_mechanics(
+        plan=plan,
+        observations=stress_observations,
+    )
+    outcomes = _outcomes(
+        mechanics,
+        split=StrategyEvaluationSplit.DEVELOPMENT,
+    )
+
+    report = evaluate_development_statistics_fixture(
+        mechanics=mechanics,
+        observations=stress_observations,
+        outcomes=outcomes,
+    )
+    oracle = calculate_research_statistics_oracle(
+        mechanics=mechanics,
+        observations=stress_observations,
+        outcomes=outcomes,
+        split=StrategyEvaluationSplit.DEVELOPMENT,
+    )
+
+    report_primary = {
+        item.parameter_combination_id: item
+        for item in report.summaries
+        if item.horizon_sessions == 3
+    }
+    oracle_primary = {
+        item.parameter_combination_id: item
+        for item in oracle
+        if item.horizon_sessions == 3
+    }
+    assert len(report_primary) == len(oracle_primary) == 24
+    for combination_id, actual in report_primary.items():
+        expected = oracle_primary[combination_id]
+        assert actual.signal_market_regime_counts == {
+            "Balanced": 0,
+            "Defensive": 0,
+            "Risk-on": 0,
+            "Stress": actual.signal_available_count,
+        }
+        assert actual.signal_market_regime_counts == expected.signal_market_regime_counts
 
 
 @pytest.mark.parametrize("count", [1, 2, 5, 20, 37, 53])

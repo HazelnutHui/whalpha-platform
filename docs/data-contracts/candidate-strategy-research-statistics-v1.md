@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`candidate-strategy-research-statistics/1.0` fixes the synthetic-only
+`candidate-strategy-research-statistics/1.1` fixes the synthetic-only
 statistical evaluation boundary for the first Strong-Leader Pullback research
 program. It does not read canonical history and cannot create a performance
 claim.
@@ -27,6 +27,12 @@ Every summary exposes:
   probability when the evidence floor is met;
 - validation-only Holm-adjusted probability; and
 - signal SPY-relative median after 0/10/25/50 basis points per side.
+
+Risk-on, Balanced, Defensive, and Stress remain separate in every summary and
+in the independent Oracle. Version 1.1 closes the pre-real-data mismatch in
+which the input and execution contracts preserved Stress but the statistics
+schema still accepted only the other three states. It does not change the
+registered hypothesis, parameter grid, thresholds, or stage gates.
 
 Inference remains `inconclusive` below 60 signal observations, 60 control
 observations or 20 comparable sessions. Descriptive coverage is not discarded.

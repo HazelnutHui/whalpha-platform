@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0189](0189-preserve-stress-in-strategy-research-statistics.md): preserve Stress as a distinct fourth Regime through both fixture statistics paths before any real evaluation.
+
 - [ADR 0188](0188-bind-paid-provider-recency-through-the-daily-chain.md): carry the explicit provider-recency profile through readiness, custody, host verification, and immutable timer bytes while retaining Basic fallback and every completeness gate.
 
 - [ADR 0187](0187-run-daily-membership-as-a-bounded-research-sidecar.md): compose only Membership candidate and near-Apply-plan workspace actions in a finite research sidecar that never invokes the website pipeline or canonical Apply.
@@ -345,3 +347,5 @@ Each ADR should include:
 - [0185: Plan Daily Membership as an Independent Research Sidecar](0185-plan-daily-membership-as-an-independent-research-sidecar.md)
 - [0186: Seal Strong-Leader Pullback Research Inputs](0186-seal-strong-leader-pullback-research-inputs.md)
 - [0187: Run Daily Membership as a Bounded Research Sidecar](0187-run-daily-membership-as-a-bounded-research-sidecar.md)
+- [0188: Bind Paid Provider Recency Through the Daily Chain](0188-bind-paid-provider-recency-through-the-daily-chain.md)
+- [0189: Preserve Stress in Strategy Research Statistics](0189-preserve-stress-in-strategy-research-statistics.md)

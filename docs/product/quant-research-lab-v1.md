@@ -148,6 +148,14 @@ evidence must explicitly examine these failure modes:
 - **Stale or composite leadership:** the exact construction and stability of
   the relative-strength percentile and trend-quality score must be reproduced,
   not treated as unexplained inputs.
+- **Leadership timing:** V1 leadership is measured through the signal close.
+  It establishes that the security is still a same-session leader, not that it
+  was already a leader before an observed multi-session pullback began. Any
+  claim about pre-pullback leadership requires an explicitly dated V2 path.
+- **Volume-window semantics:** the V1 volume cap compares only signal-session
+  volume with the prior-20-session median. It does not establish contraction
+  throughout a multi-session pullback, which would require a separately
+  registered path feature.
 - **Control comparability:** same-session non-triggering leaders may differ in
   liquidity, volatility, industry, prior extension, and pullback depth. The
   frozen primary contrast stays unchanged, while matched/reweighted
@@ -183,8 +191,10 @@ session leader signals from eligible-leader controls before outcomes; and
 mature exact 1/3/5-session underlying-stock labels only after the future path
 is known. They create no performance statistic or claim.
 
-ADR 0104 adds a fixture-only statistics layer before any real labels exist. It
-uses session-balanced signal-versus-control differences, a deterministic five-
+ADR 0104 adds a fixture-only statistics layer before any real labels exist. Its
+1.1 pre-real-data correction preserves Stress as a fourth distinct Regime in
+both the evaluator and independent Oracle. The layer uses session-balanced
+signal-versus-control differences, a deterministic five-
 session block bootstrap, 90% intervals, 24-family Holm correction, fixed cost
 scenarios, explicit coverage/quarantine counts and one immutable development
 parameter lock. Validation cannot change the lock, and holdout exposes only the
@@ -223,9 +233,9 @@ absent. No signal writer, outcome maturer, real evaluator, Production consumer,
 result publication, or deployment is created by this product definition. ADR
 0106 adds a bilingual first-level page that exposes this blocked state and the
 registered method while leaving every performance area unavailable and never
-projecting fixture results. There is still no canonical research input adapter,
-real-strategy result persistence, CLI, real strategy evaluator, or result
-report.
+projecting fixture results. There is still no canonical filesystem reader or
+orchestrator for the pure research-input builder, real-strategy result
+persistence, CLI, real strategy evaluator, or result report.
 
 The page no longer presents the dated 31/252 result as current readiness.
 Instead it shows family-specific gates: the minimum price-history length is
