@@ -327,3 +327,4 @@ Each ADR should include:
 - [0179: Separate Equity Cost Mechanics from Execution Evidence](0179-separate-equity-cost-mechanics-from-execution-evidence.md)
 - [0180: Chain Successful Offline Transitions in One Bounded Run](0180-chain-successful-offline-transitions-in-one-bounded-run.md)
 - [0181: Retain Daily Data Custody in the Session Workspace](0181-retain-daily-data-custody-in-the-session-workspace.md)
+- [0182: Falsify Split Coverage with Price Discontinuities](0182-falsify-split-coverage-with-price-discontinuities.md)
