@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0183](0183-quarantine-large-cash-distributions-before-total-return.md): classify resolved cash distributions in a read-only arithmetic diagnostic while quarantining large, date-ambiguous, non-USD, multi-action, and price-incomplete cases before any canonical dividend or total-return work.
+
 - [ADR 0180](0180-chain-successful-offline-transitions-in-one-bounded-run.md): chain formally successful offline daily actions in one finite Dell run while retaining single-action journal/recovery custody and stopping at every data, publication, deployment, failure, or budget boundary.
 
 - [ADR 0179](0179-separate-equity-cost-mechanics-from-execution-evidence.md): implement transparent one-side equity execution-cost mechanics while keeping quote, calibration, research, performance, and options authority separate.
@@ -328,3 +330,4 @@ Each ADR should include:
 - [0180: Chain Successful Offline Transitions in One Bounded Run](0180-chain-successful-offline-transitions-in-one-bounded-run.md)
 - [0181: Retain Daily Data Custody in the Session Workspace](0181-retain-daily-data-custody-in-the-session-workspace.md)
 - [0182: Falsify Split Coverage with Price Discontinuities](0182-falsify-split-coverage-with-price-discontinuities.md)
+- [0183: Quarantine Large Cash Distributions Before Total Return](0183-quarantine-large-cash-distributions-before-total-return.md)
