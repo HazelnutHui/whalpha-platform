@@ -36,8 +36,8 @@ The 2026-08-27 and 2026-08-30 audits retained the earlier 29- and 31-session
 mechanics evidence. Canonical EOD/Identity depth has since exceeded the
 252-session observation minimum, but the research foundation still has:
 
-- only two canonical, signal-eligible daily Universe Membership partitions
-  (2026-09-04 and 2026-09-08), not a research-ready historical series;
+- only a small prospective canonical signal-eligible daily Universe
+  Membership series, not research-ready historical coverage;
 - one canonical split-only, outcome-reconciliation Corporate Action
   publication, but no complete action-type/revision/availability or lifecycle
   dataset;
@@ -50,9 +50,10 @@ Exact current price-session depth belongs in
 for stronger Regime review remains a future depth target, not a prerequisite
 that can replace the missing point-in-time families.
 
-ADRs 0137–0145 now provide canonical normalized source observations for 301
-profile-bound Identity sessions. The exact current partition count and missing
-dates belong in [current context](../project/current-context.md). These
+ADRs 0137–0145 established canonical normalized source observations for the
+initial profile-bound Identity sessions, followed by append-only daily
+custody. Exact current partition count and missing dates belong in
+[current context](../project/current-context.md). These
 historical observations remain eligible only for outcome reconciliation
 because Dell observed the backfilled packages after their historical sessions.
 ADR 0150 adds a directly bound daily variant that is eligible no earlier than
@@ -296,13 +297,14 @@ evaluation reproducibility through a separately reviewed deletion procedure.
 V1 remains Parquet-first under the approved Dell data root, with one explicit
 schema-version directory, bounded partitions, deterministic ordering,
 content fingerprints, physical file hashes, manifests, and atomic completion.
-EOD/Identity paths and their family-evidence manifests are canonical. One
-signal-eligible Membership partition is also canonical and governed by its
-physical-first, marker-last publication boundary. ADR 0176 adds a sparse
-canonical split-only action publication without claiming full Corporate Action
-coverage. Lifecycle, adjustment, and final Historical Coverage remain absent
-or temporary and have not been populated as complete canonical families under
-`/data`.
+EOD/Identity paths and their family-evidence manifests are canonical. A small
+prospective set of signal-eligible Membership partitions is canonical and
+governed by its physical-first, marker-last publication boundary. ADR 0176
+adds a sparse canonical split-only action publication, and ADR 0178 adds sparse
+affected-path split adjustments, without claiming full Corporate Action or
+Adjustment coverage. Lifecycle and final Historical Coverage remain absent;
+no missing family has been populated as complete merely because partial
+canonical evidence exists under `/data`.
 
 The design should prefer:
 

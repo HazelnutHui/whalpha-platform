@@ -1,5 +1,13 @@
 # Market Regime & Opportunities V1
 
+> **Current contract and historical implementation record.** Sections that
+> describe the deployed Candidate score, Entry Geometry, or Strategy Channels
+> remain authoritative for **Baseline V1** behavior only. Future model research
+> and Candidate promotion are governed by
+> [Quant Research Lab](quant-research-lab-v1.md) and
+> [ADR 0191](../decisions/0191-promote-validated-research-models-into-stock-candidates.md);
+> this document does not authorize direct tuning of the baseline formulas.
+
 User-facing Chinese name: **市场风向与机会**. Existing machine-contract IDs and
 filenames retain `market-regime-opportunity-map` for compatibility.
 
@@ -771,8 +779,11 @@ used for the join.
 
 ## Evaluation and anti-overfitting contract
 
-The current 26-session history is sufficient for a deterministic development
-preview, not for performance claims. Production research evaluation begins
+The original 26-session implementation history was sufficient for a
+deterministic development preview, not for performance claims. Exact current
+price depth belongs in
+[current context](../project/current-context.md), and price depth alone does
+not establish research readiness. Production research evaluation begins
 only after at least 252 completed sessions; a stronger regime-stratified review
 targets at least 504 sessions and at least 60 observations in each reported
 regime, or labels that regime inconclusive.

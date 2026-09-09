@@ -28,9 +28,14 @@ Every new AI/Codex session must read these files before making material changes:
 
 ## 2. Project Mission
 
-Trading Intelligence Platform is a personal, practical U.S. equity market intelligence dashboard. It helps the user understand current market structure quickly and supports discretionary research and trading decisions.
+Trading Intelligence Platform is a personal, practical U.S. equity market
+intelligence and professional quantitative-research platform. It helps the
+user understand current market structure, develop transparent personal
+models, and support discretionary research and trading decisions.
 
-It is not an automated trading system. It is not currently a complex quantitative research platform.
+It is not an automated trading or order-execution system. Quantitative
+research must remain governed, reproducible, falsifiable, and explainable; a
+personal model is not permission for a black box.
 
 ## 3. Working Principles
 
@@ -53,9 +58,9 @@ Do not independently expand this project into:
 - automated trading
 - order execution
 - HFT
-- complex ML
+- ungoverned or opaque ML
 - deep neural networks
-- prediction engines
+- ungoverned prediction engines
 - large microservice systems
 - Kubernetes
 - distributed systems
@@ -79,10 +84,17 @@ Do not independently expand this project into:
 - Confirmed decisions go into the relevant document.
 - Material architecture decisions require an ADR.
 - [docs/project/current-status.md](docs/project/current-status.md) must reflect actual current state.
+- [docs/project/current-context.md](docs/project/current-context.md) must stay
+  compact enough for task/device recovery; move dated execution narrative to
+  audits or the changelog.
 - [docs/project/roadmap.md](docs/project/roadmap.md) is not a commitment.
 - [docs/project/changelog.md](docs/project/changelog.md) records meaningful project-level changes.
 - Avoid duplicating the same authoritative fact across many files.
 - Link to the authoritative document instead.
+- Keep documentation indexes curated by authority and topic; do not append a
+  second chronological catalog of every ADR or audit.
+- Preserve historical evidence, but label superseded direction and remove it
+  from the default recovery path.
 
 ## 7. Documentation Checkpoints
 

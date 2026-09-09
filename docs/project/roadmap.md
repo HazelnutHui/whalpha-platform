@@ -1,321 +1,186 @@
 # Roadmap
 
-This document records proposed sequencing, not authorization or current
-Production identity. Exact sessions, releases, fingerprints, runtime state,
-and active risks belong only in the [authoritative current context](current-context.md)
-and [current status](current-status.md). Completed execution history belongs in
-the [changelog](changelog.md) and ADRs.
+This is proposed sequencing, not operational authorization. Volatile Production
+facts belong in [current context](current-context.md); actual state belongs in
+[current status](current-status.md); completed history belongs in the
+[changelog](changelog.md), ADRs, and audits.
 
-## Delivery principles
+## Direction
 
-- Preserve the chain from market state through position management.
-- Improve data and runtime foundations before tuning formulas.
-- Develop one falsifiable strategy family at a time.
-- Keep broad research baselines separate from WH Alpha personal proprietary
-  models.
-- Expose inputs, parameters, evidence, counterevidence, market fit, and
-  invalidation; personal ownership is not permission for a black box.
-- Keep research, validation, shadow, Production, monitoring, and retirement
-  states distinct.
-- Prefer bounded reuse of existing immutable evidence over new services,
-  databases, caches, or duplicated status documents.
+The three established market workspaces remain supported:
 
-## Priority 1 — Daily-chain performance and reliability
+1. Market Regime & Opportunities;
+2. Sector ETF Rotation; and
+3. Market Structure & Activity.
 
-The first measured reuse optimizations are complete under ADRs 0125–0129:
-date-only control paths use the immutable completion index; Entry Geometry and
-ETF Relationships reuse the exact formal panel and finalized current Candidate
-evidence; Strategy Channels reads only its finalized current batches; daily
-Candidate commit uses validated write plus complete physical custody while
-periodic and code-change tiers retain full semantic reread; Snapshot planning
-derives rollback and CAS from one validated active observation while Apply
-retains a fresh comparison. Consumed inputs and explicit full audits retain
-their deep validation boundaries.
+The next product-development center is Quant Research Lab. Stock Candidates is
+temporarily a deployed **Baseline V1** consumer, not a formula-tuning target.
+Its future rankings will come only from one to three validated and explicitly
+activated Lab models.
 
-Next:
+~~~text
+Lab research and validation
+-> explicit model activation
+-> Stock Candidates
+-> entry/invalidation review
+-> later position management
+~~~
 
-1. Observe the first eligible live Stocks Starter session end to end on Dell
-   with the explicit 15-minute-delayed profile and record one consolidated
-   timeline. The 9/8 chain passed functionally under the prior profile, while
-   current stage timings come from separate controlled runs and must not be
-   summed.
-2. Use the completed Candidate attribution: the cumulative writer is the
-   remaining hotspot, while finalization and explicit garbage collection are
-   negligible.
-3. Retain the completed current-code ranking: MI is bounded at 53.84 seconds;
-   Snapshot is 121.57 seconds after removing its duplicate active read.
-4. Keep ADR 0130 and ADRs 0155–0164 as completed disconnected evidence. ADR
-   0164 records a Production cutover NO-GO because current reading still
-   rehashes the large base and Visual Context requires cumulative state history
-   absent from the append. Resume this path only if a new live-chain
-   measurement breaches an agreed budget and one bounded design addresses both
-   gaps. Do not expose it to CLI/executor or relabel its different history
-   fingerprint as V1.
-5. Remove any remaining repeated evidence reconstruction only where the new
-   complete-chain measurement justifies it.
-6. Vectorize or process-parallelize only independent CPU-heavy work after exact
-   serial equivalence is proven.
-7. Preserve every custody, freshness, source, CAS, Oracle, residue, and
-   postflight gate.
+## Working rules
 
-Do not reconnect the write-capable scheduler as part of performance work. The
-installed timer remains read-only until automation receives its own review.
+- Research one falsifiable strategy family at a time.
+- Add or buy data only for a named feature, label, bias control, or decision.
+- Use the simplest defensible baseline before increasing model complexity.
+- Keep point-in-time data, features, labels, costs, and holdout custody
+  reproducible.
+- Show formulas, parameters, evidence, counterevidence, uncertainty, failure,
+  and decay; personal ownership never permits a black box.
+- Separate event studies from portfolio backtests and stock outcomes from
+  option outcomes.
+- Keep experiment, validation, shadow, active, rejected, and retired states
+  explicit.
+- Stop an optimization line when it meets its acceptance criterion; do not
+  continue because another improvement is merely possible.
 
-ADR 0180 removes the artificial five-minute/process break only between
-formally successful offline stages. The finite runner retains every existing
-per-action journal and postcondition, defaults to review-only, and stops before
-all data, publication, Snapshot, deployment, failure, and recovery boundaries.
-Its focused and related fixture regressions pass, and a real historical
-workspace review proved zero action/write behavior. The stable owner-only
-runtime workspace is activated with exact prior-session and journal bootstrap
-evidence. The 9/8 real offline run completed all nine planned actions in one
-bounded invocation. Retain that finite budget and use the next live chain to
-capture one consolidated acquisition-through-serving timeline. Then compose
-dynamic data and external serving
-capabilities separately; do not mislabel the offline runner as full unattended
-publication.
+## Priority 1 — Unify product and research authority
 
-ADR 0181 closes the restartability gap before the offline chain: the exact
-per-session acquisition package and canonical Apply plan are now accepted
-across every data-transition boundary, with strict same-session containment and
-legacy `/tmp` compatibility. Persistent paths have passed controlled real use;
-the next live session should retain them and confirm recovery remains possible.
-No separate path redesign is required.
+1. Make Product Vision, Scope, Roadmap, current context, and Quant Research Lab
+   agree with ADR 0191.
+2. Mark current Candidate/Strategy Channels as frozen, unvalidated
+   **Baseline V1**; preserve their deployed contract and historical evidence.
+3. Make the Lab the single model registry and Candidate promotion authority.
+4. Reduce default documentation to a short recovery path; keep detailed ADRs
+   and audits outside it.
 
-ADR 0188 binds the explicitly selected provider-recency profile through every
-daily planning, custody, runtime, rehearsal, and immutable timer boundary. The
-owner-confirmed Stocks Starter tier should use
-`massive_stocks_delayed_15_minutes`; Basic remains a deliberate fallback, not
-an implicit operational profile. First prove live entitlement and same-evening
-quality on one completed session before changing installed runtime artifacts or
-claiming reliable availability.
+Exit criterion: a new task can identify current Production, future product
+direction, first research program, and prohibited shortcuts without reading a
+chronological document dump.
 
-## Priority 2 — Governed historical research inputs
+## Priority 2 — Design the Lab model record and research substrate
 
-Connect canonical history to research without projecting current membership
-backward. Required families are:
+1. Define the typed model registry, lifecycle, version, and result-publication
+   contracts from the product record in
+   [Quant Research Lab](../product/quant-research-lab-v1.md).
+2. Separate signal/event-study metrics from portfolio-simulation metrics.
+3. Bind exact model inputs, features, labels, parameters, search budget,
+   chronological splits, costs, results, and reproduction evidence.
+4. Provide compact catalog summaries and fully transparent expanded records.
+5. Keep real performance panels unavailable until a real result publication
+   passes formal reread.
 
-The full-content ADR 0100 adapter has validated all 304 canonical EOD and
-point-in-time Identity sessions with zero gaps. ADR 0165 bound both family
-evidence candidates into one deterministic exact-SHA plan. ADR 0166 added and
-disconnected-tested the locked, network-prohibited, ordered-prefix executor;
-the separately reviewed exact production Apply and zero-write postflight are
-now complete. These two immutable evidence objects must not be mistaken for
-final Historical Coverage or completion of the missing families below.
+Exit criterion: one synthetic/fixture model record can be rendered and audited
+end to end without implying real performance or Candidate authority.
 
-ADR 0167 now supplies an exact 547-item inactive-lifecycle corroboration queue.
-It routes 271 XNAS candidates to a required documented-source pilot and leaves
-276 other-venue candidates blocked on all-exchange source selection. Every
-item remains point-in-time ineligible. ADR 0168 completes the bounded official-
-source review and fixes the next lifecycle boundary: obtain and permission-
-review one real cross-venue sample, then run the deterministic 30-item semantic
-diagnostic before implementing any adapter. LSEG is first in the inquiry order;
-Nasdaq, NYSE, and Cboe are official benchmarks. No source is selected and no
-paid access, trial, or contact is authorized by the roadmap.
+## Priority 3 — Close only the first experiment's data blockers
 
-- point-in-time Identity and daily Universe membership;
-- lifecycle, inactive, terminal, and successor evidence;
-- splits, dividends, and other corporate actions;
-- explicit price/return adjustment reconciliation;
-- realistic costs and liquidity constraints;
-- source availability timestamps and revision lineage;
-- sealed chronological evaluation and holdout datasets.
+Strong-Leader Pullback remains first. Price depth is sufficient, but its exact
+point-in-time research panel is not.
 
-Canonical price coverage can satisfy a time-length requirement while research
-remains blocked by these missing families. Coverage claims must stay
-family-specific.
+Required work:
 
-ADR 0182 now quantifies the split negative-space boundary without inferring
-facts: 645 comparable active split groups have bounded adjusted residuals and
-zero extreme residuals, while 387 severe gaps across 321 stable IDs lack
-same-date canonical split evidence. Resolve a bounded sample through an
-independent corporate-action/lifecycle source before any broader neutrality or
-Historical Coverage claim. Do not build a dense factor-one ledger from the
-absence of a row in the current bounded source snapshot.
+- historical point-in-time Membership eligibility;
+- lifecycle and terminal-outcome evidence;
+- complete action/adjustment handling for the selected price-return basis;
+- final transitive Historical Coverage for the declared admitted cohort;
+- outcome labels, realistic cost sensitivity, and sealed evaluation custody.
 
-The sample order is now evidence-based: inspect all 14 current Secondary
-overlaps first, then the 31 lifecycle-queue overlaps and the 44 IDs with a
-fourfold/quarter-scale gap, while retaining representative threshold cases.
-These are prioritization sets, not inferred actions or historical membership;
-overlaps must be deduplicated when the actual sample is frozen.
+Before real outcomes are opened, review whether V1's whole-cross-section
+rejection is necessary or whether a new preregistered version should use a
+fixed admitted cohort plus explicit coverage thresholds. Never silently drop
+missing securities or retroactively project current membership.
 
-The frozen 14-ID current-Secondary sample has now received a public first-party
-review. Thirteen of its 15 flags have date-aligned issuer event context, VISN
-has explicit non-split special-distribution evidence, and DFNS remains
-unresolved. This does not replace a licensed corporate-action source or prove
-causality/no-split, but it removes any basis for treating the current sample as
-14 probable missing splits. Scale the next review through a provider sample,
-not hundreds of bespoke web lookups.
+Sector/industry data is not a blocker for the V1 primary test, but becomes
+important for concentration and stability diagnosis. GICS History remains the
+first sample candidate; no source is selected until its actual fields, clocks,
+retention, and identity mapping pass the existing review.
 
-ADR 0183 now makes the dividend boundary reproducible rather than implicit.
-The exact source/EOD scan leaves 40,454 resolved groups as arithmetic-only and
-retains 746 groups for review. VISN proves that a large-distribution record date
-can appear in the provider ex-date field, so no resolved dividend row may be
-promoted solely because its identity and arithmetic reconcile. The next
-dividend step is a real independent corporate-action sample with authoritative
-actual ex-date semantics and revision/availability evidence. Until that sample
-passes, do not publish canonical dividend facts or a total-return ledger.
+Exit criterion: one immutable readiness report says exactly which sessions and
+securities are admitted, with no unresolved mandatory family hidden by an
+aggregate completion percentage.
 
-Current membership implementation sequence:
+## Priority 4 — Execute Strong-Leader Pullback research
 
-1. Complete-base single-session shadow is proven on 2026-09-03 with 9,979
-   stable IDs, two full three-state ledgers, and localized conflict quarantine.
-2. The bounded shared-panel runner is proven for one, two, and five adjacent
-   sessions. It preserves exact daily outputs while removing duplicate EOD,
-   Identity-index, and catalog reads.
-3. The complete read-only current-builder census is done: 58 sessions are
-   exact, 221 retain exact Instrument/Resolver but differ in Provider Identity,
-   and 24 are physically missing. All retained-package custody passed.
-4. The narrowly versioned legacy ETV profile is proven across all 221
-   current-builder mismatches. Together with the 58 current-profile sessions it
-   forms a disjoint exact cover of all 279 retained packages; none should be
-   reacquired as corrupt.
-5. The owner-only profile map now binds all 279 retained sessions to exact
-   package and accepted-family fingerprints. A repeated real boundary batch
-   crossed current/legacy profiles with byte-identical outputs; no date or
-   operator profile selection remains.
-6. **Canonical source custody complete for exact packages:** 301 sessions are
-   normalized and immutable after the original 279-session Apply plus the
-   22-session append-only recovery. Both Apply paths and their zero-write
-   postflights formally reread all selected sessions without overwrite or
-   deletion.
-7. **Source exceptions precisely bounded:** keep 2026-08-13 and 2026-08-19
-   unbound because the reacquired provider revisions are not equal to accepted
-   same-day Identity. Never force approximate equivalence, project current
-   Activation backward, or silently fill historical source.
-8. **Prospective canonical signal-eligible Membership started:** V3 mechanics
-   cover 5,611,048 decisions for all 302 source-available dates, while retaining
-   the 301 historical-source partitions as outcome-only. ADRs 0151–0153 admit
-   and publish the direct 9/4 partition for next-open signal use with exact
-   Plan/Apply and zero-write postflight. The same governed daily path published
-   9/8, bringing canonical signal-eligible Membership to 2 sessions / 39,928
-   decisions out of 305 EOD sessions. ADR 0154 adds the persistent-workspace
-   candidate preparation boundary, and ADR 0185 adds a read-only sidecar plan;
-   ADR 0187 adds the separate default-review runner for candidate and near-
-   Apply-plan workspace actions only. None gates the website, performs
-   Membership Apply, or enables unattended writes. Exercise the bounded sidecar
-   on a new live session and keep both source gaps explicit. Do not publish
-   Historical Coverage until every admitted session has a transitive eligibility
-   assessment.
+1. Run the preregistered development stage on Dell.
+2. Lock at most one specification under the registered search budget.
+3. Evaluate chronological validation with purge/embargo, session-balanced
+   inference, multiplicity control, and costs.
+4. Consume the sealed holdout once only if validation gates pass.
+5. Record rejection without retuning V1, or mark the passing version
+   validated research.
+6. If appropriate, run a prospective shadow before any activation review.
 
-## Priority 3 — Security classification and concentration diagnostics
+Headline evidence initially belongs to a signal/event study: net expectancy,
+signal-control contrast, uncertainty, sample/coverage, MFE/MAE, win/payoff/PF,
+cost sensitivity, and stability. Portfolio AR, Sharpe, and MDD require a
+separately frozen portfolio construction.
 
-Establish formal security-level Sector/Industry evidence before interpreting
-Candidate concentration or activating Defensive Rotation.
+Exit criterion: a reproducible real result or recorded failure exists; neither
+automatically changes Stock Candidates.
 
-1. The repository and official-source audit is complete under ADR 0173. GICS
-   History is the first specification/sample candidate, TRBC is second, RBICS
-   is complementary, and Massive SIC is current-diagnostic only. No source has
-   been selected, sampled, licensed, acquired, or implemented.
-2. Keep current-display classification separate from historical point-in-time
-   research classification. A current taxonomy may improve today's dashboard
-   without becoming historical backtest evidence.
-3. Classification V1 source observations, definitions, coverage decisions,
-   memberships, immutable offline persistence, and formal reader are
-   implemented and fixture-validated. No real source or canonical partition
-   exists.
-4. Review a GICS History specification/sample, then map a passing source through
-   a versioned adapter. Never infer positive membership from ticker, company
-   name, or a price-correlated ETF proxy.
-5. Publish a Dell-only current classification snapshot after real-source gates
-   pass; then add Candidate sector/industry distribution, cross-channel repeated
-   exposure, and concentration diagnostics only after the formal reader passes.
-   Preserve raw counts and make missing classification visible.
-6. Use the same governed classification later for sector-stratified strategy
-   evaluation and Defensive Rotation, without projecting current membership
-   backward.
+## Priority 5 — Activate and redesign Stock Candidates
 
-This product/data work may proceed while waiting for a new market session or a
-lifecycle vendor sample, but it must not tune Candidate formulas.
+Only after a model passes research and operational review:
 
-## Priority 4 — First real strategy research
+1. approve exact model/version, Universe, market-applicability rule, monitoring,
+   decay, and rollback;
+2. publish one bounded active-model result;
+3. show model identity, why it fits the current market, within-model rank,
+   evidence, counterevidence, entry readiness, chase risk, and invalidation;
+4. link every Candidate to the complete Lab record; and
+5. keep model ranks separate unless an ensemble is separately registered and
+   validated.
 
-Begin with the preregistered Strong-Leader Pullback study after formal data
-readiness. Compare candidates only against the same eligible opportunity set,
-using chronological development/validation/holdout splits, purge/embargo,
-session-balanced inference, cost sensitivity, and adversarial falsification.
+The page may remain sparse or explicitly unavailable before this criterion.
+Daily updates of the old provisional rank are not a product-development
+priority.
 
-ADR 0186 completes the dormant input-construction seam: exact formulas and
-source sessions are fingerprinted, every signal session requires the complete
-point-in-time Primary cross-section plus SPY and clear adjustments, and no
-outcome field is admitted. The next implementation step is real filesystem
-orchestration only after every historical family and final transitive Coverage
-are formally ready; do not bypass that gate with the current partial families.
+## Priority 6 — Additional strategy families
 
-Subsequent strategy families:
+After the first pipeline proves reusable:
 
-1. Momentum Breakout.
-2. Trend Continuation.
-3. Oversold Technical Reversal.
-4. Fundamental Value Reversal.
+1. Momentum Breakout;
+2. Trend Continuation, only with distinct features and incremental value;
+3. Oversold Technical Reversal;
+4. Fundamental Value Reversal; and
+5. Regime-conditioned defensive/resilience opportunity.
 
-Defensive or anti-market opportunities are regime-conditioned context rather
-than a single universal score. Earnings, macro, and news initially serve as
-risk and interpretation inputs rather than claims of first-information
-advantage.
+Cross-asset macro relationships may later condition or stratify these models.
+They should not be the first complex model because their calendars, timestamps,
+causal interpretations, and small number of independent regimes make
+overfitting easier.
 
-## Priority 5 — Decision-useful visualization
+## Priority 7 — Fundamentals, valuation, events, and options
 
-Visualization may proceed alongside research foundations when it does not
-change model logic or delay critical data work. Each chart must answer a
-decision question, such as:
+Add point-in-time statements and earnings dates first, then business quality,
+growth/margins/cash flow/balance sheet, relative valuation, transparent value
+ranges, consensus/guidance where available, and macro/news context. Event data
+initially changes risk/context rather than claiming first-information speed.
 
-- where price sits relative to breakout, pullback, support, and invalidation;
-- how far a signal is from a threshold and how old it is;
-- which inputs contribute to or contradict a conclusion;
-- how market regime, sector direction, and the candidate connect;
-- whether a relationship is new, persistent, strengthening, or weakening.
-
-Default views should emphasize the most important five to eight items. Raw
-values, parameters, sources, and hashes remain available but folded.
-
-The current product now covers all five listed questions: Candidate price path
-and labelled levels, threshold distance and source-bound observed state age,
-component contribution/counterevidence, the same-session market-to-sector-ETF-
-proxy-to-Candidate hand-off, and relationship persistence/change timelines.
-Treat this priority as complete unless a concrete user decision question
-reveals a missing view. Do not add charts merely to increase visual density,
-and do not substitute registered ETF price-proxy concentration for the formal
-Sector/Industry concentration work gated in Priority 3.
-
-## Priority 6 — Options expression
-
-Options are a separate expression layer over a stock thesis, not a relabeling
-of stock forward returns. Required data include bid/ask, spread, volume, open
-interest, implied volatility, term structure, skew, Greeks, earnings/dividend
-dates, adjustments, and historical chains.
-
-The layer may compare long Calls/Puts, debit spreads, covered calls, moneyness,
-and DTE with explicit payoff, volatility, liquidity, and time-decay risks.
-Naked short-option strategies remain outside intended scope.
-
-## Priority 7 — Fundamentals, valuation, and events
-
-Proposed order:
-
-1. Point-in-time statements and earnings dates.
-2. Growth, margins, earnings quality, cash flow, and balance-sheet change.
-3. Relative valuation.
-4. Transparent valuation ranges and scenario assumptions.
-5. Earnings/guidance and macro-event state.
-6. Fundamental Value Reversal research.
-
-Without historical consensus data, actual results and price response may be
-analyzed, but they must not be presented as a complete expectations-surprise
-model.
+Options remain a separate expression layer over a stock thesis. Historical
+chain quotes, bid/ask, spread, volume, open interest, IV/term/skew, Greeks,
+earnings/dividend dates, adjustments, and payoff/cost modeling are prerequisites
+to comparing Calls/Puts, debit spreads, covered calls, moneyness, and DTE.
 
 ## Priority 8 — Portfolio and broker integration
 
-Position management, account-level risk, and broker connectivity follow the
-research and options foundations. The first intended broker is IBKR. Initial
-work may define inactive navigation and contracts, but no order execution or
-automated trading is authorized.
+Position management, account-level risk, and IBKR integration follow reliable
+stock research and options expression. An inactive navigation/framework may be
+prepared earlier, but automated order execution remains unauthorized.
+
+## Parallel operational maintenance
+
+Daily EOD reliability and one bounded next-session automation rehearsal may run
+in parallel when a completed market session exists. It must not block Lab
+design or become another indefinite optimization program. Current Candidate
+segmentation remains a cutover NO-GO; reopen it only after a measured clean-path
+runtime breaches an agreed budget and one design solves both known gaps.
 
 ## Explicitly deferred
 
-- intraday/HFT architecture;
-- ungoverned complex ML or deep learning;
-- automated order execution;
-- broad role differentiation between guest and credential Sessions;
-- large microservice, distributed-system, or Event Knowledge Base designs;
-- new paid-data integration before a concrete missing fact family requires it.
+- automated trading, order routing, and HFT;
+- broad intraday architecture without a defined strategy requirement;
+- opaque ML/deep learning or unbounded factor search;
+- guest/credential capability differentiation;
+- new database, microservices, Kubernetes, or distributed systems without a
+  measured need; and
+- paid datasets without a concrete fact-family and acceptance test.

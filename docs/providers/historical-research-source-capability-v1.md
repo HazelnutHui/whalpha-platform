@@ -17,9 +17,10 @@ still be rechecked before a new source-family acquisition.
 
 On 2026-09-09 the owner supplied a Massive dashboard payment confirmation for
 Stocks Starter. This establishes the intended subscription tier from
-owner-provided account evidence. It does not yet establish live API entitlement,
-five-year endpoint completeness, same-evening aggregate availability, or data
-finality; those remain pending controlled credential-safe observations.
+owner-provided account evidence. A later controlled run verified live API
+access, removal of the old Basic request-rate limit, and same-evening Grouped
+Daily availability for 2026-09-09. Five-year endpoint completeness and a
+guaranteed finality minute remain unverified.
 
 The broader official-source comparison is recorded in the dated
 [Equal-Capability Historical Source Review](equal-capability-historical-source-review-2026-08-28.md).
@@ -48,16 +49,16 @@ implemented.
 
 | Required family | Repository evidence | Massive potential recorded in repository | Live/physical state | Current conclusion |
 | --- | --- | --- | --- | --- |
-| Broad-market daily unadjusted OHLCV | Canonical Grouped Daily `adjusted=false` history contains 305 sessions | Current official pages list Grouped Daily across Stocks plans, Basic as end-of-day, and Starter as 15-minute delayed with five years of history | Exact 305-session range acquired and family evidence published; Basic returned the 2026-09-08 session only in a later observation; owner-provided purchase evidence now identifies Starter, but no post-upgrade live request or five-year coverage test has run | `verified_current` for acquired history; paid same-evening recency and expanded depth remain unverified |
-| Point-in-time reference Identity | 305 resolved snapshots plus 303 canonical source-observation partitions | Official page showed date query, active/inactive filter, identifiers, and max 1,000/page; Starter marketing describes five years of stock history | Active historical acquisition completed with two exact source-observation gaps; inactive source completed at two 24-page anchors; no post-upgrade depth probe has run | `verified_current` only for exact acquired scopes; not complete lifecycle coverage |
-| Daily Universe Membership | Complete retrospective shadows plus canonical signal-eligible 2026-09-04 and 2026-09-08 partitions | No provider response can replace WH Alpha methodology | Two physical canonical daily partitions and markers | `derived_required`; historical series remains incomplete |
+| Broad-market daily unadjusted OHLCV | Canonical Grouped Daily `adjusted=false` history contains 306 sessions | Recorded plan descriptions list Basic as end-of-day and Starter as 15-minute delayed with five years of history | Exact 306-session range acquired; a post-upgrade 9/9 request succeeded same evening; five-year depth is untested | `verified_current` for acquired history and one Starter session; expanded depth/finality remain unverified |
+| Point-in-time reference Identity | 306 resolved snapshots plus 304 canonical source-observation partitions | Recorded endpoint evidence includes date query, active/inactive filter, identifiers, and pagination | Active acquisition completed with two exact source-observation gaps; inactive source has two retained anchors; post-upgrade daily access succeeded | `verified_current` only for exact acquired scopes; not complete lifecycle coverage |
+| Daily Universe Membership | Retrospective mechanics plus three prospective canonical signal-eligible partitions | No provider response can replace WH Alpha methodology | Three physical daily partitions and markers | `derived_required`; historical series remains incomplete |
 | Historical security-form evidence | One provider evidence date | Point-in-time reference/type endpoints may supply observations | Historical coverage and revision semantics unverified | `documented_unverified`; cannot backcast current evidence |
-| Splits/reverse splits | Corporate actions listed in Basic | Official dated endpoint review showed all-plan access, two-year Basic history, max 5,000/page, ratios and adjustment fields | One limit-one entitlement probe succeeded; fixture mapper exists, but no acquisition adapter or dataset | `documented_unverified` beyond the probe |
-| Cash/stock dividends | Corporate actions listed in Basic | Official dated endpoint review showed all-plan access, two-year Basic history, max 5,000/page, event dates/cash/adjustment fields | One limit-one entitlement probe succeeded; fixture mapper exists, but no acquisition adapter or dataset | `documented_unverified` beyond the probe |
+| Splits/reverse splits | Bounded source custody and sparse canonical split facts exist | Dated endpoint review recorded ratios and adjustment fields | Source observations, exact-date resolution, 709 split-only fact rows, and sparse affected-path adjustments exist; complete/neutral coverage does not | `verified_current` for the bounded acquired scope; incomplete for research |
+| Cash/stock dividends | Bounded source custody and a read-only date/arithmetic diagnostic exist | Dated endpoint review recorded event dates, cash, and adjustment fields | Source observations exist, but date semantics, multi-events, currency, revisions, and total-return authority remain unresolved | `verified_current` source custody; missing as canonical total-return evidence |
 | Ticker events/symbol continuity | Ticker Events documentation recorded as experimental | May support symbol changes | No request, mapping, or reliability review | `documented_unverified`; cannot be sole lineage source |
 | Merger/spinoff/successor lineage | Corporate Action V1 permits relationships | No complete source established | No canonical source or dataset | `missing` |
 | Delisting and terminal outcome | Two complete inactive anchors are retained in temporary custody and resolved one-to-one into a shadow | All Tickers exposes substantial delisting metadata | Latest anchor has 547 stable-ID review candidates and 22,922 quarantined rows; ADR 0167 creates an exact corroboration queue, but last tradable session, reason, consideration, successor, and source availability remain unverified | `verified_current` source observation for exact anchors; still missing as evaluation-ready lifecycle |
-| Split adjustment | Aggregate defaults and `adjusted=false` behavior are documented | Provider-adjusted history may assist reconciliation | Canonical factors are unverified all-one; no action ledger | `documented_unverified`; raw bars remain authoritative inputs |
+| Split adjustment | Aggregate defaults and `adjusted=false` behavior are documented | Provider-adjusted history may assist reconciliation | Canonical sparse affected-path ledger exists for outcome reconciliation; omitted-row neutrality is unproven | `verified_current` partial evidence; raw bars remain authoritative inputs |
 | Dividend/total-return adjustment | Repository notes aggregate history is not dividend-adjusted while newer dividend docs mention factors | Dividends may support derived factors | Exact semantics and independent reconciliation absent | `missing` as a governed factor series |
 | Point-in-time sector/industry | Current repository explicitly lacks it; ADR 0173 and the 2026-09-08 source review define temporal/identity gates | GICS History is the first specification/sample candidate; TRBC second; Massive SIC current-diagnostic only | No source selected, licensed, sampled, acquired, or implemented | `documented_unverified` source potential and `missing` physical data; defensive/fundamental stratification cannot claim taxonomy support |
 | Fundamentals and valuation | Explicitly absent | Not evaluated in this slice | No dataset | `not_applicable` to the first technical-history pilot |
@@ -74,8 +75,8 @@ anchors. It does not yet prove:
   exact source-observation gaps remain;
 - that the newly purchased Starter entitlement supplies complete five-year
   coverage across each required endpoint;
-- complete Splits or Dividends pagination beyond the successful limit-one
-  probes;
+- complete, revision-aware Splits or Dividends coverage beyond the bounded
+  acquired query snapshot;
 - that inactive/delisted and successor coverage is complete;
 - that provider adjustment factors meet WH Alpha price/total-return semantics;
 - that stored history may be retained or displayed beyond the existing private
@@ -89,16 +90,12 @@ proof until exercised. Five years can support longer chronological studies but
 does not fill the separate membership, lifecycle, corporate-action, adjustment,
 cost, or availability families.
 
-The bounded 2026-09-09 current-session comparison proves that the existing
-credential and Grouped Daily endpoint remain globally usable while 2026-09-08
-was date-scoped HTTP 403 at 22:27 EDT. See the
-[current-session access audit](../audits/massive-current-session-access-probe-2026-09-09.md).
-This is consistent with Basic end-of-day recency and Starter's documented
-15-minute delay, but it does not prove either tier's exact aggregate-release
-minute. No
-credential rotation or adapter rewrite is indicated. Same-evening operation
-now has owner-confirmed plan evidence but still requires a controlled live
-timing and completeness observation.
+The first 2026-09-09 comparison isolated the former date-scoped recency
+boundary. The later controlled Starter daily run then proved 14 Identity
+requests and one same-evening Grouped Daily request without the Basic pacing
+limit. This is a one-session operational observation, not proof of an exact
+aggregate-release minute or five-year completeness. No credential rotation or
+adapter rewrite is indicated.
 
 The current Market Data Terms add a separate hard product gate: individual-use
 data is described as owner-only, third-party Market Data/Derived Works display

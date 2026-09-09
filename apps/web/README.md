@@ -32,11 +32,12 @@ versioned static publication.
 API and Snapshot modes do not fall back to demo data on failure. Production
 builds reject known synthetic fixture markers.
 
-The deployed production Snapshot uses 2026-09-04 as current and 2026-09-03 as
-previous, with zero session lag. Snapshot 1.11 / Dashboard 2.8 serves bounded
-Candidate summary/detail shards, Entry Geometry, Strategy Channels, Candidate
-Visual Context, and Sector ETF Rotation without browser-side score or rank
-recomputation.
+Snapshot 1.11 / Dashboard 2.8 serves bounded Candidate summary/detail shards,
+Entry Geometry, Strategy Channels, Candidate Visual Context, and Sector ETF
+Rotation without browser-side score or rank recomputation. Exact active
+sessions and release identity belong in
+[current context](../../docs/project/current-context.md), not this application
+guide.
 
 ## Implemented Views
 
@@ -93,6 +94,11 @@ npm run build
 - No theme rotation
 - No intraday or real-time data
 - No real Quant Research Lab performance or research-stage activation
+
+The deployed Candidate score and technical Strategy Channels are frozen,
+unvalidated Baseline V1. Future Stock Candidate rankings will come only from
+separately validated and activated Quant Research Lab models; this frontend
+guide does not authorize direct baseline tuning.
 
 ## Dashboard V1.1
 

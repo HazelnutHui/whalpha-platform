@@ -1,21 +1,38 @@
 # Product Vision
 
-## Confirmed
+WH Alpha is a personal U.S. equity market-intelligence and professional
+quantitative-research platform. It helps a human move through one decision
+chain:
 
-Trading Intelligence Platform is a tool-oriented Trading Intelligence Dashboard. It should be conclusion-first and evidence-supported: the interface should quickly show what matters, then let the user inspect the supporting data.
+```text
+market state -> strength direction -> sector/theme -> validated stock candidate
+-> trade preparation -> entry/invalidation -> position management
+```
 
-The product supports human decision-making. It focuses on market structure rather than prediction. It should communicate clearly with professional terminology and avoid casual labels such as "seesaw" in the UI.
+The product is conclusion-first and evidence-supported. It should show what is
+happening and why it matters, then allow every material source value, feature,
+formula, parameter, contribution, counterargument, market condition, and
+invalidation rule to be inspected.
 
-Price-derived metrics must not be mislabeled as actual capital flows. Relative performance, dollar volume, volume pressure, and price behavior can support useful estimates, but actual fund-flow claims require an appropriate source and methodology.
+The stable market workspaces are:
 
-## Proposed
+1. Market Regime & Opportunities (`市场风向与机会`);
+2. Sector ETF Rotation (`行业轮动`); and
+3. Market Structure & Activity (`市场结构与活跃度`).
 
-The first usable product should favor a clean dashboard with clear visual hierarchy, concise risk-regime language, and drill-down detail where useful.
+Quant Research Lab (`量化研究实验室`) is the model-development and evidence
+authority. Stock Candidates (`个股候选`) is the decision-facing consumer of a
+small number of explicitly activated Lab models. Experimental models do not
+become daily Candidate rankings merely because they exist.
 
-## Deferred
+Models are personal, style-specific research and may decay or fail. Historical
+performance is evidence, not certainty. Research, validation, shadow,
+Production, monitoring, retirement, and rejection remain distinct states.
 
-Narrative explanation, richer event workflows, and AI-assisted interpretation are deferred until core data and dashboard behavior are reliable.
+Price/volume must not be called fund flow. Correlation must not be called
+causality. Underlying-stock outcomes must not be called option returns. The
+platform supports discretionary decisions; automated execution and HFT remain
+outside scope.
 
-## Accepted Direction
-
-The application stack is documented in [ADR 0005](../decisions/0005-application-technology-stack.md). React, TypeScript, Vite, and Apache ECharts are the accepted frontend and visualization direction. Production interaction details remain to be refined during scaffold and dashboard implementation.
+React, TypeScript, Vite, and Apache ECharts remain the accepted frontend and
+visualization direction under [ADR 0005](../decisions/0005-application-technology-stack.md).

@@ -1,88 +1,69 @@
 # Open Questions
 
-Only unresolved decisions belong here. Resolved rationale and implementation
-history remain in ADRs, the changelog, and the relevant architecture or
-operations document.
+Only unresolved decisions that can change implementation belong here. Resolved
+history stays in ADRs, the changelog, and audits.
 
-## Security Type Governance
+## First research program
 
-- Should `material_return_outlier_review` remain an overlapping display/analytics review signal, or become a future versioned Universe quarantine policy after corporate-action evidence exists?
+- Before real outcomes are opened, should Strong-Leader Pullback keep V1's
+  whole-cross-section rejection, or should a new preregistered version define a
+  fixed admitted cohort and minimum coverage while preserving every exclusion?
+- What exact evidence and threshold make current-market applicability
+  supportive, neutral, adverse, or unavailable without selecting the recent
+  winner?
+- Which prospective-shadow duration and decay thresholds are required before
+  an otherwise validated model may become active?
+- What portfolio-construction rule, if any, should follow the event study so
+  AR, Sharpe, MDD, turnover, and capacity become meaningful rather than
+  decorative?
 
-- What authoritative issuer/domicile evidence coverage threshold should eventually gate Core/Broad production activation after Phase B2B evidence is reviewed?
-- Which non-content landing-page structural fields are sufficient to diagnose official table-shape changes while preserving the no-raw-HTML boundary?
-- Which bounded SEC bulk sources and quality gates should be authorized for Phase B2B after private User-Agent provisioning?
-- What authoritative evidence will close remaining domicile, REIT subtype, SPAC, partnership, and security-to-filer gaps without ticker-only joins?
+## Missing point-in-time evidence
 
-- Core is selected as the future default and Broad as the secondary view; when can evidence coverage safely activate them?
-- Which point-in-time source will provide issuer structure, domicile/incorporation, ADR status, REIT subtype, BDC/CEF/SPAC status, and security form at sufficient coverage?
-- How should reviewed overrides be approved, versioned, and retired without backfilling current facts into history?
-- What approval and retirement workflow should govern future rows in the now-completed Reviewed Eligibility Override V1 dataset?
-- What operational cadence should create a new activation after membership evidence, EOD session, or reviewed overrides advance?
-- What reviewed evidence would permit a historical session to use an identity snapshot other than the same date without introducing latest-resolver or survivorship bias?
+- Which cross-venue licensed source can provide effective-dated lifecycle,
+  terminal outcome, successor/consideration, revision, and availability clocks
+  and pass the frozen sample diagnostic?
+- Which independent source resolves corporate-action date semantics, dividend
+  currency/order handling, unexplained discontinuities, and total-return
+  adjustments?
+- Can earlier Membership be reconstructed with defensible historical
+  availability, or must formal research begin only with prospective canonical
+  Membership?
+- Will a GICS History sample pass the existing identity, knowledge-time,
+  inactive coverage, revision, retention, and equal-session-display gates?
+  If not, can TRBC close the exact gaps?
+- Which point-in-time quote source and calibration method can support realistic
+  spread, impact, and capacity evidence?
+
+## Product and model governance
+
+- What quantitative activation scorecard is required in addition to the
+  registered research gates?
+- How many active models may appear simultaneously before Candidate usefulness
+  is reduced by signal overload? The current design ceiling is three.
+- When is a model retired versus temporarily marked adverse for the current
+  market?
+- What evidence is required before a separately validated ensemble may combine
+  model ranks?
+- What coverage threshold permits formal sector/industry concentration while
+  preserving an explicit unknown bucket?
 
 ## Data and operations
 
-- Final credential rotation and service-injection mechanism beyond the protected local credential file
-- Provider-wide rate limiter beyond the bounded historical runner
-- Exact current provider entitlement and permitted endpoint/use scope for
-  retained history, future repairs, and new datasets
-- Which written permission, license, or alternate source will support the
-  confirmed equal-capability guest/credential shared product? Owner-only
-  market-analysis serving is not a permitted fallback.
-- Which exact raw EOD plan clears all six Source Permission Governance uses,
-  including indefinite canonical retention and browser/API delivery, and what
-  deletion obligation remains after termination? Use the prepared, unsent
-  `Source Selection and Permission Inquiry Packet V1`; do not infer answers
-  from marketing pages.
-- Will a provisioned cross-venue corporate-action/trading-status sample pass
-  the ADR 0168 stable-ID, revision, availability-clock, terminal-terms,
-  last-tradable, permission, and 30-item diagnostic gates? If not, which exact
-  Nasdaq/NYSE/Cboe source composition closes the remaining fact scopes without
-  first-non-null resolution or ticker-only identity?
-- What account-specific permission supports owner non-display calculations,
-  derived strategy research, retained history, and required deletion on
-  provider termination?
-- Exact adjustment formulas, basis convention, and independent split/dividend
-  reconciliation fixtures before Adjustment Ledger implementation
-- Rejected Massive reference type mapping policy
-- Duplicate ticker handling policy for point-in-time reference snapshots
-- Whether the owner-confirmed Massive Stocks Starter subscription passes the
-  first controlled same-evening completeness check and a separate bounded
-  five-year historical-depth check on the exact endpoints used by the project
-- Business/display/redistribution license threshold
-- Candidate Discovery thresholds after real coverage evaluation
-- Exact S&P 500/index constituent source
-- Initial curated Theme list and membership methodology
-- Initial Analytical Group basket definitions
-- Options data source
-- Database introduction threshold
-- Cloudflare proxy state
-- Cleanup of obsolete OCI port rules
-- OCI swap strategy
-- Backup and recovery policy for no-expiry canonical history; rebuildable panel
-  caches have a 90-day minimum direction but no deletion job is authorized
-- Automatic relationship discovery methodology
-- Parquet compaction strategy
-- Source/provider revision reconciliation policy
-- Issuer Master introduction threshold
-- Whether public contract identifiers remain UUID-based across persistence
-- Physical Decimal representation in Parquet for future datasets beyond EOD Price Bar V1
-- Operational ownership and update cadence for the accepted offline XNYS calendar dependency
-- Whether any future source requires bounded raw-response retention; the
-  accepted default is no raw provider response-body retention
-- Production data-root publish review process for future datasets
-- Formal multi-user authentication and authorization mechanism beyond the personal-prototype session login
+- What is the guaranteed or empirically stable same-evening Grouped Daily
+  finality window under Stocks Starter?
+- Does the exact Stocks Starter endpoint provide the expected five-year depth?
+- What backup/recovery and source-termination policy governs no-expiry
+  canonical history and sealed research evidence?
+- When do real query/concurrency needs justify a database rather than current
+  Parquet/manifests?
+- Which options-chain source is suitable when the options-expression layer
+  receives an approved data requirement?
 
-## Product inputs
+## Later product decisions
 
-- Will a GICS History specification/sample pass ADR 0173 identity, knowledge-
-  time, revision, inactive-coverage, delivery, price, retention, and equal
-  guest/credential derived-display gates? If not, can TRBC close those scopes?
-- Market-cap source and weighting policy for a future traditional Sector
-  Heatmap; Classification V1 does not by itself supply market cap.
-- Required classified-coverage and unknown-bucket acceptance thresholds for
-  current Candidate concentration and later historical sector research, to be
-  set from observed source missingness rather than guessed in advance.
-- Explicit ADR/common-stock distinction if Instrument Master can support it
-- Whether Trading Activity Map should later use a documented display transform for concentrated activity weights while preserving raw close-times-volume tooltip values
-- Corporate-action verification source and adjustment reconciliation workflow for high-price or high-activity names such as SNDK
+- Which point-in-time fundamentals, estimates, guidance, and event sources are
+  required for Fundamental Value Reversal?
+- Which broker capabilities beyond IBKR are worth supporting?
+- What explicit product need would justify guest/credential role differences?
+- What strategy and latency requirement would justify intraday data and
+  infrastructure?

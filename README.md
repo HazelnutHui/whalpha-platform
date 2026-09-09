@@ -19,6 +19,13 @@ Structure & Activity, Sector ETF Rotation, Stock Candidates, and an explicitly
 research-only Quant Research Lab. Guest and credential Sessions intentionally
 receive identical data and capabilities.
 
+The first three are stable market-context workspaces. Quant Research Lab is
+the model registry and validation authority. Stock Candidates will eventually
+consume only one to three validated and explicitly activated Lab models. The
+currently deployed Candidate score, Entry Geometry, and technical Strategy
+Channels remain transparent but unvalidated **Baseline V1**, not a direct
+parameter-tuning target.
+
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The
 guarded daily chain has been exercised end to end, but the installed timer is
@@ -80,12 +87,18 @@ Candidate stock outcomes must never be described as option returns. Price and
 volume proxies must never be described as actual fund flow. Research,
 validation, shadow, Production, and retired states remain visibly distinct.
 
+~~~text
+registered Lab experiment -> chronological validation -> sealed holdout
+-> prospective shadow -> explicit activation -> Stock Candidates
+~~~
+
 See:
 
 - [Professional Quantitative Research Action Framework](docs/research/professional-quantitative-research-action-framework-v1.md)
 - [Historical Research Data Foundation](docs/architecture/historical-research-data-foundation-v1.md)
 - [Quant Research Lab V1](docs/product/quant-research-lab-v1.md)
 - [Candidate Strategy Evaluation V1](docs/data-contracts/candidate-strategy-evaluation-v1.md)
+- [ADR 0191: validated model promotion](docs/decisions/0191-promote-validated-research-models-into-stock-candidates.md)
 
 ## Application entry points
 

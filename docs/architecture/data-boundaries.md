@@ -28,9 +28,11 @@ The Initial EOD data boundary is now documented as accepted logical contracts:
 Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic
 validation models with point-in-time/per-session PyArrow persistence, formal
 manifests, and canonical readers. Provider Identity and ticker resolution are
-also physically implemented. Universe Membership V1, Corporate Action V1, and
-the other listed logical-only contracts are not implemented as physical
-Parquet datasets, provider adapters, or database tables.
+also physically implemented. Universe Membership has a small prospective
+canonical series, and bounded corporate-action source, split-only fact, and
+sparse adjustment publications exist. They remain incomplete research
+families; exact current coverage belongs in
+[current context](../project/current-context.md).
 
 
 ## Implemented Provider Boundary
@@ -57,7 +59,10 @@ before a historical panel can be declared research ready.
 
 ## Provider Selection Status
 
-Massive Stocks Basic is accepted as the first private EOD development provider. This is an adapter candidate and private development source, not a permanent exclusive provider, public display authorization, redistribution authorization, or options provider decision.
+Massive is accepted as the first private EOD development provider, with Stocks
+Starter as the current owner-confirmed tier and Basic retained as a fallback
+profile. This is not a permanent exclusive provider, public-display
+authorization, redistribution authorization, or options-provider decision.
 
 - Massive: first broad-market EOD development provider candidate for private use.
 - IBKR: portfolio, positions, selected instruments, and selected options.

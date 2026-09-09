@@ -2,7 +2,10 @@
 
 ## Purpose
 
-This document records the approved target application architecture for Trading Intelligence Platform. It describes how the first application scaffold should be organized conceptually; it is not evidence that the full runtime already exists.
+This document records the approved application boundaries for Trading
+Intelligence Platform. Historical scaffold sections remain implementation
+context; current volatile runtime evidence belongs in
+[current context](../project/current-context.md).
 
 ## Current Status
 
@@ -26,7 +29,8 @@ Confirmed current state:
 - Initial EOD Universe, classification boundary, and normalized EOD logical contracts are accepted and documented.
 - Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests.
 - Minimal synchronous MarketDataProvider boundary, query models, capability declarations, provider errors, and deterministic in-memory contract tests are implemented.
-- Massive Stocks Basic is accepted as the first private EOD development provider.
+- Massive remains the first private EOD adapter. Stocks Starter is the current
+  owner-confirmed tier; Basic remains the historical baseline/fallback profile.
 - Massive configuration, credential redaction, transport Protocol, and mocked adapter mapping skeleton are implemented.
 - Mocked-fixture and bounded live EOD ingestion paths are implemented with Parquet persistence and logical manifests.
 - Massive credential provisioning, production HTTPS transport, reference smoke test, bounded All Tickers ingestion, and bounded Grouped Daily publication are complete.
@@ -92,7 +96,13 @@ React Dashboard
 Published through OCI
 ```
 
-The repository implements the FastAPI contract, React dashboard, canonical data contracts, provider Protocol, Massive adapter, bounded normalization/persistence workflows, EOD analytics, private snapshot export, and static deployment tooling. Broader historical ingestion, sector/theme analytics, options, and event generation remain future work.
+The repository implements the FastAPI contract, React dashboard, canonical
+data contracts, provider Protocol, Massive adapter, bounded
+normalization/persistence workflows, EOD analytics, private snapshot export,
+and static deployment tooling. The next product boundary is the Quant Research
+Lab model registry and result-publication architecture. Options, fundamentals,
+valuation, richer events, portfolio state, and broker integration remain later
+work.
 
 ## Data Flow
 
@@ -103,6 +113,22 @@ The repository implements the FastAPI contract, React dashboard, canonical data 
 5. FastAPI exposes typed contracts for the dashboard when a backend is needed.
 6. React renders the dashboard using typed data contracts and Apache ECharts.
 7. The accepted static deployment mechanism publishes only reviewed Dashboard-ready private assets to OCI.
+
+Quantitative model flow is separately governed:
+
+~~~text
+point-in-time governed data
+-> registered Lab experiment
+-> chronological development/validation/holdout
+-> prospective shadow
+-> explicit model activation
+-> Stock Candidate publication
+~~~
+
+Quant Research Lab owns model identity, parameters, evidence, metrics, and
+lifecycle. Stock Candidates consumes only activated results and does not become
+an independent formula laboratory. Current Candidate and Strategy Channels are
+deployed unvalidated Baseline V1 mechanics.
 
 The Health API, default-disabled private market-data APIs, EOD return analytics APIs, and local React Market Dashboard V1 exist for local/private development.
 
@@ -179,7 +205,9 @@ The application must not let vendor response schemas leak into domain calculatio
 
 Provider direction:
 
-- Massive Stocks Basic is accepted as the first broad-market EOD provider for private, personal development.
+- Massive is the first broad-market EOD provider for private personal
+  development. Stocks Starter is the current owner-confirmed tier; provider
+  choice remains replaceable.
 - The Massive adapter runs on the workstation boundary and maps responses into canonical contracts before analysis.
 - Provider credentials must remain server-side and outside Git.
 - Provider-backed outputs remain private unless public-display or redistribution authorization is separately documented.
@@ -196,7 +224,7 @@ implemented. The guarded daily chain is agent-runnable and has a read-only wake
 timer; unattended write-capable execution, unrestricted public
 provider-backed display, and a production API service are not implemented.
 
-## Dashboard V1 Functional Areas
+## Historical Dashboard V1 functional areas
 
 The first dashboard architecture should support these functional areas without requiring all calculations to be complete on day one:
 
@@ -266,7 +294,7 @@ Before closing material work, check whether these documents need updates:
 
 - API route structure and versioning beyond the Health API
 - database introduction threshold and database choice
-- Candidate Discovery threshold calibration
+- active-model applicability, activation, decay, and retirement thresholds
 - exact canonical traditional taxonomy source or mapping methodology
 - broader Massive entitlement verification beyond the already exercised endpoints
 - formal multi-user access control beyond the personal-prototype session boundary
@@ -283,8 +311,8 @@ Before closing material work, check whether these documents need updates:
 - order execution
 - HFT
 - deep neural networks
-- complex prediction engine
-- large ML pipeline
+- opaque or ungoverned prediction engine
+- ungoverned large ML pipeline
 - large Event Knowledge Base
 - microservices
 - Kubernetes
@@ -330,3 +358,9 @@ ADR 0050 separates future evaluation into sealed, outcome-free signal records
 and later-maturing forward-outcome records. Only point-in-time membership may
 be performance-eligible. The contracts are repository-only: no evaluation
 writer, historical dataset, formula, or consumer is connected to the runtime.
+
+ADR 0191 supersedes only the prior future direction that extended or tuned
+these V1 mechanics in place. Quant Research Lab now owns future strategy
+research, and one to three separately validated and activated models may later
+drive Stock Candidates. Existing contracts and publications remain truthful
+historical and Production evidence until a separately reviewed replacement.

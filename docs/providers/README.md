@@ -4,7 +4,10 @@ Provider evaluations record official-source review, technical fit, entitlement a
 
 ## Records
 
-- [Massive Stocks Basic Evaluation](massive-stocks-basic-evaluation.md): Accepted first private EOD development provider.
+- [Massive Stocks Basic Evaluation](massive-stocks-basic-evaluation.md):
+  historical acceptance of the first private EOD tier; Stocks Starter is now
+  owner-confirmed and current evidence belongs in
+  [current context](../project/current-context.md).
 - [Massive Adapter Boundary](massive-adapter-boundary.md): Adapter configuration, credential loader, HTTPS transport, smoke-test, and mocked mapping boundary.
 - [Historical Research Source Capability V1](historical-research-source-capability-v1.md): Evidence-scoped capability and gap matrix for the future point-in-time research foundation.
 - [2026-08-28 Massive Historical Research Review](massive-historical-research-review-2026-08-28.md): Official public plan/endpoint/terms review and provider-pilot blockers.

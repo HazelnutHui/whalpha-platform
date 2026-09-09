@@ -1,22 +1,30 @@
 # Opportunity Strategy Channels V1
 
+> **Lifecycle: deployed legacy baseline; frozen and unvalidated.** This
+> document remains authoritative for the mechanics currently served in
+> Production. It is not the future Stock Candidate model architecture. Do not
+> tune these formulas in place. New strategy research belongs in
+> [Quant Research Lab](quant-research-lab-v1.md), and only separately validated
+> and activated Lab models may later drive Stock Candidates under
+> [ADR 0191](../decisions/0191-promote-validated-research-models-into-stock-candidates.md).
+
 ## Purpose
 
 The Candidate workspace must compare like with like. Momentum breakout,
 pullback, continuation, reversal, value, and defensive rotation answer
 different research questions and must not be collapsed into one score.
 
-This document defines the product taxonomy and evidence boundary before any
-channel formula or threshold is selected. It does not authorize Production
-publication, deployment, or a trading recommendation.
+This document preserves the product taxonomy, evidence boundary, and deployed
+V1 behavior. It does not authorize a formula change, new model, Production
+publication, deployment, or trading recommendation.
 
 ## Fixed channel order
 
 | Channel | Research question | Minimum primary evidence | Current readiness |
 | --- | --- | --- | --- |
-| Momentum breakout | Is established relative leadership crossing a bounded resistance structure with credible participation and acceptable extension? | Price/volume, Candidate leadership, entry geometry | Formula research can begin from existing governed inputs |
-| Strong-stock pullback | Is a proven leader retracing in an orderly way toward labelled support without breaking its trend? | Price/volume, Candidate leadership, entry geometry | Formula research can begin from existing governed inputs |
-| Trend continuation | Is an established trend persisting with healthy breadth/participation and without requiring a fresh breakout or pullback? | Price/volume, relative strength, trend quality | Formula research can begin from existing governed inputs |
+| Momentum breakout | Is established relative leadership crossing a bounded resistance structure with credible participation and acceptable extension? | Price/volume, Candidate leadership, entry geometry | Deployed provisional baseline; future research requires a new Lab version |
+| Strong-stock pullback | Is a proven leader retracing in an orderly way toward labelled support without breaking its trend? | Price/volume, Candidate leadership, entry geometry | Deployed provisional baseline; distinct Lab V1 remains data-blocked |
+| Trend continuation | Is an established trend persisting with healthy breadth/participation and without requiring a fresh breakout or pullback? | Price/volume, relative strength, trend quality | Deployed broad filter; distinctness is unvalidated |
 | Technical reversal | Is an oversold or damaged stock showing observable stabilization/reclaim evidence rather than only a large decline? | Price/volume, downside stretch, stabilization and reclaim facts | Requires additional reversal-specific facts and chronological evaluation |
 | Fundamental value reversal | Is valuation dislocated while business/earnings quality is adequate or improving and price has begun to stabilize? | Fundamentals, valuation, and price/volume | Must remain unavailable until governed fundamental and valuation inputs exist |
 | Defensive rotation | When broad or high-beta leadership weakens, is a defensive industry/security showing independently supported relative strength? | Market Regime, price-derived relationship proxy, and stock price/volume | Partially supported; security taxonomy and channel formula remain to be defined |
@@ -167,17 +175,17 @@ channel. The chart opens the existing detail review, never calculates a new
 score, never compares scores across channels, and makes no expected-return or
 probability claim.
 
-## Planned implementation sequence
+## Transition boundary
 
-1. Add continuation-specific trend-efficiency, consolidation/contraction,
-   pullback-depth, and recovery facts; keep the existing baseline provisional.
-2. Evaluate the three formulas chronologically after the point-in-time panel
-   and outcome ledger are physically ready; revise parameters only through a
-   new version.
-3. Add reversal-specific stabilization facts and evaluate technical reversal.
-4. Complete security taxonomy/defensive mapping and evaluate defensive
-   rotation across Regimes.
-5. Ingest governed fundamentals and valuation data before implementing
-   fundamental value reversal.
-6. Publish only channels that pass audit, temporal validation, and separate
-   activation review.
+This V1 implementation receives correctness and compatibility maintenance
+only. Future development does not extend its heuristic scoring family in
+place. The transition is:
+
+1. preserve V1 as a transparent, reproducible Production baseline;
+2. conduct new, versioned strategy research in Quant Research Lab;
+3. retain failed, rejected, and retired experiments as evidence;
+4. activate no more than one to three validated models through a separate
+   reviewed decision; and
+5. redesign Stock Candidates to identify the exact active model/version and
+   present model rank, current-market applicability, entry readiness,
+   counterevidence, and invalidation without inventing a cross-model total.

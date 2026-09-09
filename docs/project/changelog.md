@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Unify Product and Quant Research authority
+
+- Accepted ADR 0191. Quant Research Lab is now the model registry, validation,
+  result-evidence, and lifecycle authority; only one to three separately
+  validated and activated models may later drive Stock Candidates.
+- Froze the deployed Candidate score, Entry Geometry, and technical Strategy
+  Channels as transparent, unvalidated Baseline V1. Their contracts remain
+  truthful Production evidence, but direct parameter tuning and further
+  heuristic extension are no longer the development path.
+- Rewrote Product Vision, Scope, Roadmap, Lab specification, current context,
+  current status, and architecture language around one promotion chain.
+- Reduced the default documentation path by replacing duplicated chronological
+  ADR/audit catalogs with curated authority maps, removing stale resolved
+  questions and dated application-guide state, and moving historical detail
+  behind dedicated records.
+- No application code, formula, data, provider request, canonical Apply,
+  publication, deployment, scheduler, or Production state changed.
+
 ## 2026-09-09 — Complete the first live Stocks Starter daily chain
 
 - Verified the delayed provider profile after the 20:30 UTC stabilization

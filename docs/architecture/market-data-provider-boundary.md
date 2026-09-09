@@ -8,7 +8,15 @@ This document records the implemented minimal provider-neutral market-data provi
 
 Implemented Provider-Neutral Boundary — Massive Bounded Workflows Published
 
-The synchronous V1 Protocol, capabilities, query objects, provider error taxonomy, and deterministic in-memory contract test fake are implemented. Massive Stocks Basic is the first private EOD development provider. Its adapter boundary includes secure credential-file loading, standard-library HTTPS transport, bounded All Tickers and Grouped Daily workflows, canonical mapping, and atomic Parquet persistence outside the Protocol itself. Completed Identity/EOD datasets, the bounded 300-session acquisition, and default-disabled private Dashboard APIs exist. A read-only wake timer is installed; unattended write-capable scheduling and unrestricted provider-backed serving authorization do not exist.
+The synchronous V1 Protocol, capabilities, query objects, provider error
+taxonomy, and deterministic in-memory contract test fake are implemented.
+Massive is the first private EOD development provider; Stocks Starter is the
+current owner-confirmed tier and Basic is the fallback profile. Its adapter
+boundary includes protected credential loading, bounded All Tickers and Grouped
+Daily workflows, canonical mapping, and atomic Parquet persistence outside the
+Protocol itself. Completed Identity/EOD datasets, the bounded historical
+acquisition, and default-disabled private Dashboard APIs exist. A read-only
+wake timer is installed; unattended write-capable scheduling does not.
 
 ## Synchronous V1 Boundary
 

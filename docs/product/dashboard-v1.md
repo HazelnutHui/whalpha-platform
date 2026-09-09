@@ -1,5 +1,10 @@
 # Dashboard V1
 
+> Historical design record. This document preserves the original dashboard
+> proposal and is not the current product roadmap or workspace authority. Read
+> [Product Vision](vision.md), [Product Scope](scope.md), and the
+> [Roadmap](../project/roadmap.md) for current direction.
+
 ## Confirmed Homepage Structure
 
 Implementation note: the first local Market Dashboard V1 implements the EOD-supported subset only: Market Pulse, breadth, up/down share volume, liquidity-screened movers, Liquidity Map V1, and data-quality/session metadata. Traditional market-cap sector heatmap, sector rotation, relationship monitor, and events remain deferred.
