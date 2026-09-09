@@ -53,7 +53,8 @@ appearance remain manual checks.
   active single-action rows and two quarantined rows in one multiple-action
   group. It also exposes 43 possible-impact stable IDs without assigning any
   of the 1,240 unresolved source observations. Full Corporate Action coverage,
-  neutral factors, and Adjustment Ledger authority remain false.
+  neutral factors, and Adjustment Ledger authority remain false for that fact
+  publication; the separate sparse ledger below has its own ADR 0178 custody.
 - Canonical sparse split-adjustment custody contains 101,321 affected-path rows
   from 175,033 selected EOD rows: 98,291 clear and 3,030 quarantined. It is
   outcome-reconciliation only; omitted-row neutrality and total return remain

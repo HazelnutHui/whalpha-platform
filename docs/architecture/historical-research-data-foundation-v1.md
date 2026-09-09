@@ -41,7 +41,8 @@ mechanics evidence. Canonical EOD/Identity depth has since exceeded the
 - one canonical split-only, outcome-reconciliation Corporate Action
   publication, but no complete action-type/revision/availability or lifecycle
   dataset;
-- no governed adjustment ledger or terminal-outcome coverage; and
+- one governed sparse split-only outcome-reconciliation ledger, but no
+  complete adjustment or terminal-outcome coverage; and
 - no immutable Historical Coverage publication binding all required families.
 
 Exact current price-session depth belongs in
@@ -107,7 +108,7 @@ readiness.
 | Daily Universe Membership | universe, instrument, session, methodology | Derived canonical decision | Performance-eligible historical population |
 | Corporate Action | instrument, action, source, revision | Canonical event fact | Splits, distributions, reorganizations, symbol changes, delistings |
 | Instrument Lifecycle | instrument validity interval or lineage event, source, revision | Canonical identity fact | Active/inactive/delisted state, ticker history, predecessor/successor evidence |
-| Adjustment Ledger | instrument, source session, basis session, method revision | Derived canonical fact | Explicit price/share/total-return transformations |
+| Adjustment Ledger | instrument, source session, basis session, method revision | Sparse split-only outcome reconciliation is canonical; complete coverage remains absent | Explicit price/share/total-return transformations |
 | Historical Coverage Manifest | dataset family, bounded session/range, revision | Manifest only | Counts, fingerprints, source bounds, completeness and quarantine state |
 
 The coverage manifest references the six families. It does not duplicate their
@@ -207,8 +208,8 @@ dropped and is not assigned zero without a documented terminal-outcome rule.
 
 ## Adjustment-ledger requirements
 
-EOD Price Bar V1 raw fields remain unchanged. The future ledger is derived
-from canonical actions and binds:
+EOD Price Bar V1 raw fields remain unchanged. The canonical sparse split-only
+ledger is derived from canonical actions and binds:
 
 - `instrument_id`;
 - source session and explicit basis session;
@@ -225,12 +226,13 @@ The exact multiplier direction must appear in field names and contract tests.
 Price return and total return remain different series. Cash dividends do not
 modify raw OHLC, and split-adjusted price must not be labelled total return.
 
-The first implementation must independently reconcile known split and dividend
-fixtures, identity transitions, provider adjusted/unadjusted behavior, and
-reverse application back to raw prices. A neutral factor of one is usable only
-when the action-coverage manifest proves that it was derived from complete
-coverage; a default one with `adjustment_factors_unverified` is not evidence of
-no action.
+ADR 0178 publishes only affected or quarantined EOD paths to one explicit
+basis. Its split ratios, reciprocal factors, extremes, quarantine reasons, and
+reverse application invariants are independently reconciled. Dividend and
+complete-coverage reconciliation remain future work. A neutral factor of one
+is usable only when the action-coverage manifest proves that it was derived
+from complete coverage; an omitted row or a default one with
+`adjustment_factors_unverified` is not evidence of no action.
 
 ## Coverage and readiness states
 
