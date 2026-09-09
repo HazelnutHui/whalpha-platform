@@ -328,6 +328,21 @@ def test_historical_research_readiness_separates_acquired_from_ready(
         "point_in_time_identity_source_observation_absent"
         in state["blocker_codes"]
     )
+    costs = next(
+        item
+        for item in state["supporting_requirements"]
+        if item["requirement"] == "costs_and_liquidity"
+    )
+    assert costs == {
+        "requirement": "costs_and_liquidity",
+        "state": "scenario_mechanics_only",
+        "note": (
+            "transparent_equity_cost_scenario_has_no_quote_or_impact_"
+            "calibration_evidence"
+        ),
+    }
+    assert "research_cost_and_liquidity_evidence_absent" in state["blocker_codes"]
+    assert "research_cost_and_liquidity_model_absent" not in state["blocker_codes"]
     assert state["ready_for_strategy_development_review"] is False
     assert state["performance_claims_authorized"] is False
 

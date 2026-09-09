@@ -16,9 +16,12 @@ Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral
 Python/Pydantic contracts with PyArrow persistence and formal readers. The
 bounded Massive workflows have published the canonical sequence recorded in
 current status. The historical boundary now has a provider-neutral corporate-
-action source-observation repository and a daily Universe-decision repository;
-the source observation does not substitute for canonical Corporate Action V1.
-Neither family has a provider adapter or completed canonical dataset.
+action source-observation repository, a sparse provider-neutral split-only fact
+publication, a sparse affected-path split adjustment publication, and a daily
+Universe-decision repository. The source observation does not substitute for
+canonical action facts, and the split-only publications do not establish full
+action coverage, absent-event neutrality, or total return. Neither family has
+a general provider adapter or completed historical coverage.
 Classification V1 now has provider-neutral source observations, canonical
 definitions/memberships, explicit coverage decisions, immutable offline
 Parquet persistence, and a formal reader. It has no real source, `/data`

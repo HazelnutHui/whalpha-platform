@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-09 — Separate equity execution-cost mechanics from evidence
+
+- Accepted ADR 0179 and implemented deterministic one-side equity execution-
+  cost mechanics: commission, half spread, delay slippage, square-root impact,
+  order participation, and an explicit capacity gate.
+- Added immutable Decimal/fingerprint contracts that distinguish scenario-only,
+  observed-spread, and observed-spread-plus-calibrated-impact evidence. Every
+  result remains estimated, equity-only, and unauthorized for research,
+  options, or performance claims.
+- Current-context 1.10 now reports scenario mechanics as present while retaining
+  absent quote/calibration evidence as a research blocker. No `/data`,
+  analytics, Snapshot, bundle, Production, deployment, or scheduler state was
+  changed.
+
 ## 2026-09-09 — Publish canonical sparse split adjustments
 
 - Built and independently reread the exact ADR 0178 plan from clean main

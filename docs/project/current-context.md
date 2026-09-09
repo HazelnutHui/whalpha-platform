@@ -33,7 +33,7 @@ detail belongs in the changelog rather than a frozen HEAD field here.
 
 ## Formal Dell data state
 
-The network-free reader uses report contract 1.9. The 2026-09-09 verification
+The network-free reader uses report contract 1.10. The 2026-09-09 verification
 completed at validation level `active_custody_and_contracts` with
 `completion_index_plus_latest_partition`. The explicit all-partition mode also
 passed during ADR 0125 validation.
@@ -130,7 +130,7 @@ The formal status is `data_blocked`, with
 | Canonical corporate actions | 709 canonical split-only fact rows: 707 active / 2 quarantined; bounded query snapshot and outcome-only | complete action-type, availability, and revision scope; keep 1,240 unresolved rows unassigned |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
 | Adjustment ledger | Canonical ADR 0177 publication contains 98,291 clear / 3,030 quarantined affected-path rows; Plan/Apply and exact-existing recovery passed | complete coverage and absent-row neutrality evidence; dividend total return later |
-| Costs and liquidity | fixed fixture scenarios only | real executable cost/liquidity model |
+| Costs and liquidity | deterministic one-side equity scenario mechanics; no observed quote or calibrated-impact evidence | governed point-in-time spread evidence, impact calibration/stress validation, and actual-execution comparison |
 | Evaluation and holdout | fixture mechanics and custody seam only | real chronological dataset and sealed real holdout |
 | Historical Coverage | reader and fixture mechanics exist; two family-evidence manifests are canonical | final publication across every required admitted family |
 

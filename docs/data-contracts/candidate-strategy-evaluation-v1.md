@@ -77,8 +77,10 @@ strictly later than the signal.
 
 These are underlying-stock price outcomes, not total return, alpha, or option
 returns. Dividends, splits, mergers, delistings, and other corporate actions
-require explicit governed treatment; affected results stay quarantined while
-Corporate Action V1 has no completed canonical dataset.
+require explicit governed treatment. The canonical split-only fact and sparse
+affected-path adjustment publications remain outcome-reconciliation evidence;
+affected or uncovered results stay quarantined until full action coverage,
+absent-row neutrality, and total-return treatment are proven.
 
 ## Required evaluation reports
 
@@ -96,8 +98,10 @@ publish only an average return or only favorable regimes.
   point-in-time families.
 - Existing analytics replay current-as-of membership; implemented daily
   point-in-time Universe history is still absent.
-- Corporate Action V1 has a typed source-observation boundary but no completed
-  canonical dataset or adjustment reconciliation.
+- Canonical source observations, split-only facts, and a sparse affected-path
+  adjustment publication exist, but complete action coverage, omitted-row
+  neutrality, dividends/total return, and signal-time availability remain
+  unresolved.
 - Fundamental, valuation, point-in-time sector/industry, and option-chain data
   remain absent.
 - The preregistered Strong-Leader Pullback formula and synthetic-only mechanics

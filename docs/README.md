@@ -46,6 +46,8 @@
 - [ADR 0178: Exact Sparse Split Adjustment Plan/Apply](decisions/0178-publish-sparse-split-adjustments-with-exact-plan-apply.md): immutable byte-preserving publication, full source rederivation, atomic Apply, and zero-write recovery.
 - [Canonical Split Adjustment Publication Operations](operations/canonical-split-adjustment-publication.md): Dell-only planning, exact Apply, recovery, and postflight procedure.
 - [2026-09-09 Canonical Split Adjustment Publication Audit](audits/canonical-split-adjustment-publication-2026-09-09.md): exact Plan, two-file Apply, zero-write recovery, and unchanged research/Production boundary.
+- [ADR 0179: Equity Cost Mechanics vs. Evidence](decisions/0179-separate-equity-cost-mechanics-from-execution-evidence.md): adds transparent one-side equity cost and capacity mechanics while preserving absent quote/calibration evidence and false research authority.
+- [Equity Execution Cost Scenario V1](data-contracts/equity-execution-cost-scenario-v1.md): component formula, evidence states, capacity gate, Decimal/fingerprint rules, and explicit non-authority boundary.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 
@@ -239,6 +241,7 @@ This directory is the project knowledge base. It separates confirmed facts from 
 - [Historical Identity Source Apply V1](data-contracts/historical-identity-source-apply-v1.md): exact-plan atomic executor, canonical reader, shared publication lock, non-destructive recovery, and explicit non-authority boundary.
 - [Candidate Strategy Research Execution V1](data-contracts/candidate-strategy-research-execution-v1.md): fixture-only chronological splits, purge/embargo, leader controls, and later-matured underlying-stock labels without performance authority.
 - [Candidate Strategy Research Statistics V1](data-contracts/candidate-strategy-research-statistics-v1.md): fixture-only session-balanced contrast, block bootstrap, Holm correction, cost scenarios, and locked stage sequence.
+- [Equity Execution Cost Scenario V1](data-contracts/equity-execution-cost-scenario-v1.md): transparent size-, liquidity-, and volatility-aware equity cost mechanics that remain scenario-only without governed execution evidence.
 - [Candidate Strategy Holdout Custody V1](data-contracts/candidate-strategy-holdout-custody-v1.md): reserve-before-evaluation, immutable event-chain, and no-replay semantics for a future single-use holdout.
 - [Massive Permission and Entitlement Inquiry V1](providers/massive-permission-entitlement-inquiry-v1.md): concise send-ready account, retention, derived-use, equal-capability display, browser-delivery, coverage, and pricing questions; prepared but not sent.
 - [Daily EOD Automation Control Plane](operations/daily-eod-automation.md): XNYS/provider readiness, bounded retry, provider-attempt custody, exact-session planning, single-action offline execution, interruption recovery, and remaining unattended-operation gates.

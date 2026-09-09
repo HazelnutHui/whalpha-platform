@@ -52,7 +52,8 @@ Apply again as a zero-write recovery check; it must report
 
 ## Postflight
 
-Run the authoritative current-context report. Contract 1.9 must show
+Run the authoritative current-context report. Contract 1.10 or a reviewed
+successor must show
 `canonical_sparse_split_only_outcome_reconciliation`, exact rows and
 fingerprint, incomplete adjustment reconciliation, `data_blocked`, and false
 Historical Coverage/research authority. Confirm the `/data` file, byte, and

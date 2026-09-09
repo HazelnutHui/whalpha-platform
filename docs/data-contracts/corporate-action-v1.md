@@ -6,16 +6,15 @@ Corporate Action V1 records source facts about actions that affect instrument id
 
 ## Status
 
-Partially Implemented — Typed Source Observation Only
+Partially Implemented — Canonical Split-Only Facts
 
 The provider-neutral historical source-observation record implements the
 action scope, source revision/correction state, three clocks, stable-ID
-resolution, evidence quality, action-specific validation, and fixture-only
-PyArrow persistence. Canonical event IDs, canonical Corporate Action
-persistence, completed coverage, and a source-to-canonical provider adapter
-remain unimplemented. ADR 0169 adds resumable temporary source custody for
-Massive V1 split and dividend pages, but it deliberately performs no stable-ID
-mapping or canonical write.
+resolution, evidence quality, action-specific validation, and PyArrow
+persistence. Full multi-action Corporate Action coverage, completed revision
+semantics, dividend/total-return treatment, and a general source-to-canonical
+provider adapter remain unimplemented. ADR 0169 adds resumable temporary source
+custody for Massive V1 split and dividend pages.
 
 ADR 0170 adds the next disconnected mapping boundary: every retained source
 row is resolved only through the exact event-date canonical Resolver, or
@@ -27,6 +26,13 @@ source-observation partitions and their bounded query-scope evidence to Dell
 canonical storage. This changes custody, not authority: the rows remain
 `first_observed_only`, `outcome_reconciliation_only`, and distinct from the
 still-unimplemented canonical Corporate Action dataset.
+
+ADRs 0175–0176 add a provider-neutral canonical split-only fact publication.
+It contains only exact-event-date stable-ID resolutions, quarantines the
+multiple-action group, and leaves unresolved possible impacts unassigned.
+ADRs 0177–0178 separately publish sparse split adjustment rows only for
+affected or quarantined EOD paths. Neither publication proves full Corporate
+Action coverage, absent-event neutrality, total return, or signal eligibility.
 
 ## Grain
 

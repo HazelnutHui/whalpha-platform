@@ -135,6 +135,8 @@ What is complete:
   98,291 clear and 3,030 quarantined affected-path rows;
 - exact canonical split-adjustment Plan/Apply publication and zero-write
   recovery evidence;
+- deterministic one-side equity cost/capacity scenario mechanics with separate
+  commission, spread, delay, and square-root impact components;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 
@@ -146,7 +148,8 @@ What remains incomplete:
 - complete adjustment coverage, absent-row neutrality evidence, and a later
   total-return ledger;
 - source revision and availability evidence;
-- a real cost/liquidity model;
+- governed quote evidence, impact calibration, and actual-execution validation
+  for the current scenario-only equity cost mechanics;
 - final transitive Historical Coverage;
 - a real chronological evaluation dataset; and
 - a sealed real holdout.
@@ -191,8 +194,9 @@ Visual Context's cumulative-state requirement.
    integration and a controlled unattended-scheduler rehearsal.
 4. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-5. Complete historical Membership, lifecycle, costs, availability/revision,
-   final Coverage, chronological evaluation, and sealed holdout evidence.
+5. Complete historical Membership, lifecycle, cost evidence/calibration,
+   availability/revision, final Coverage, chronological evaluation, and sealed
+   holdout evidence.
 6. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
    Trend Continuation, Technical Reversal, and Fundamental Value Reversal.
 7. Add options expression, fundamentals/valuation/events, and later

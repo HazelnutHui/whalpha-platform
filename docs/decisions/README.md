@@ -1,5 +1,9 @@
 # Architecture Decision Records
 
+- [ADR 0179](0179-separate-equity-cost-mechanics-from-execution-evidence.md): implement transparent one-side equity execution-cost mechanics while keeping quote, calibration, research, performance, and options authority separate.
+
+- [ADR 0178](0178-publish-sparse-split-adjustments-with-exact-plan-apply.md): publish the exact sparse split-adjustment candidate through source rederivation, atomic Plan/Apply, and zero-write recovery without upgrading research authority.
+
 - [ADR 0177](0177-project-sparse-split-adjustments-only-for-affected-eod-rows.md): project only action-affected or quarantined EOD paths to an explicit basis, without inventing neutral rows or total return.
 
 - [ADR 0176](0176-publish-canonical-split-actions-before-adjustment-ledger.md): publish provider-neutral split facts as a sparse content-addressed family while keeping multiple actions, unresolved impacts, absent-event neutrality, and all adjustment/research authority gated.
@@ -317,3 +321,5 @@ Each ADR should include:
 - [0175: Bind Split-Action Candidates to Canonical Source Custody](0175-bind-split-action-candidates-to-canonical-source.md)
 - [0176: Publish Canonical Split Actions Before the Adjustment Ledger](0176-publish-canonical-split-actions-before-adjustment-ledger.md)
 - [0177: Project Sparse Split Adjustments Only for Affected EOD Rows](0177-project-sparse-split-adjustments-only-for-affected-eod-rows.md)
+- [0178: Publish Sparse Split Adjustments with Exact Plan/Apply](0178-publish-sparse-split-adjustments-with-exact-plan-apply.md)
+- [0179: Separate Equity Cost Mechanics from Execution Evidence](0179-separate-equity-cost-mechanics-from-execution-evidence.md)

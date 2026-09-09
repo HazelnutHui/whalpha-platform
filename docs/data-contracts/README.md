@@ -16,6 +16,7 @@
 - [Canonical-Source Split Action Candidate V1](canonical-source-split-action-candidate-v1.md)
 - [Canonical Split Action Publication V1](canonical-split-action-publication-v1.md)
 - [Canonical Split Adjustment Publication V1](canonical-split-adjustment-publication-v1.md)
+- [Equity Execution Cost Scenario V1](equity-execution-cost-scenario-v1.md)
 
 - [Massive Historical Lifecycle Coverage Probe V1](massive-historical-lifecycle-coverage-probe-v1.md)
 
@@ -83,6 +84,7 @@ Implemented as Python/Pydantic contracts:
 - [Canonical Split Adjustment Publication V1](canonical-split-adjustment-publication-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
+- [Equity Execution Cost Scenario V1](equity-execution-cost-scenario-v1.md)
 
 Accepted logical contracts only or only partially represented by the
 historical typed boundary:
@@ -116,10 +118,11 @@ canonical sequence recorded in
 price target is complete, but that does not complete a research-ready
 Historical Coverage publication.
 Universe Membership V1 now has one physical canonical partition plus a
-marker-backed reader and a prospective daily preparation boundary. The
-bounded corporate-action source publication mechanics are implemented, while
-canonical Corporate Action V1 remains contract-only. Their required historical
-composition is
+marker-backed reader and a prospective daily preparation boundary. The bounded
+corporate-action source publication, split-only canonical fact, and sparse
+affected-path adjustment mechanics are implemented. Full Corporate Action V1
+coverage, absent-event neutrality, and total return remain incomplete. Their
+required historical composition is
 defined in [Historical Research Data Foundation V1](../architecture/historical-research-data-foundation-v1.md).
 
 ## Public Python Import Path

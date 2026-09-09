@@ -196,7 +196,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.9",
+        "report_contract": "tip-current-context-report/1.10",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -541,7 +541,7 @@ def _historical_research_readiness(
         )
     blocker_codes.extend(
         (
-            "research_cost_and_liquidity_model_absent",
+            "research_cost_and_liquidity_evidence_absent",
             "complete_source_availability_and_revision_lineage_absent",
             "real_chronological_evaluation_dataset_absent",
             "sealed_real_holdout_absent",
@@ -587,8 +587,11 @@ def _historical_research_readiness(
         "supporting_requirements": (
             {
                 "requirement": "costs_and_liquidity",
-                "state": "not_implemented",
-                "note": "price_volume_proxies_do_not_establish_execution_costs",
+                "state": "scenario_mechanics_only",
+                "note": (
+                    "transparent_equity_cost_scenario_has_no_quote_or_impact_"
+                    "calibration_evidence"
+                ),
             },
             {
                 "requirement": "source_availability_and_revision_lineage",
