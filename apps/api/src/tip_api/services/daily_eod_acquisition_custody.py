@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Callable
@@ -26,6 +26,7 @@ from tip_api.services.daily_eod_readiness import (
     AcquisitionAttempt,
     AcquisitionOperatorReview,
     AttemptOutcome,
+    DailyEodReadinessPolicy,
     DailyEodReadinessPlan,
     OperatorReviewDisposition,
     OperatorReviewEvidenceCode,
@@ -45,7 +46,7 @@ from tip_api.services.daily_eod_run_journal import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-acquisition-custody/1.2"
+CONTRACT_VERSION = "daily-eod-acquisition-custody/1.3"
 MAXIMUM_PLAN_AGE = timedelta(minutes=5)
 OUTCOME_EVENT = {
     AttemptOutcome.NOT_READY: "acquisition_not_ready",
@@ -74,6 +75,9 @@ class DailyEodAcquisitionConfig:
     acquisition_action: NextAction
     package_path: Path
     run_root: Path
+    readiness_policy: DailyEodReadinessPolicy = field(
+        default_factory=DailyEodReadinessPolicy
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -165,6 +169,7 @@ def reserve_acquisition_attempt(
                 target_session=config.target_session,
                 acquisition_action=config.acquisition_action,
             ),
+            policy=config.readiness_policy,
         )
         if (
             readiness.logical_content_fingerprint != expected_readiness_fingerprint
@@ -473,6 +478,7 @@ def _readiness_from_events(
             target_session=config.target_session,
             acquisition_action=config.acquisition_action,
         ),
+        policy=config.readiness_policy,
     )
 
 
@@ -566,6 +572,8 @@ def _validate_package_evidence(
 def _validate_config(
     config: DailyEodAcquisitionConfig, *, require_new_package: bool
 ) -> None:
+    if not isinstance(config.readiness_policy, DailyEodReadinessPolicy):
+        raise DailyEodAcquisitionCustodyError("readiness policy is invalid")
     if config.acquisition_action not in ACQUISITION_ACTIONS:
         raise DailyEodAcquisitionCustodyError("custody accepts only acquisition actions")
     if not config.run_root.is_absolute():
@@ -669,6 +677,9 @@ def _execution_input_fingerprint(config: DailyEodAcquisitionConfig) -> str:
             "acquisition_action": config.acquisition_action.value,
             "package_path": str(config.package_path),
             "run_root": str(config.run_root),
+            "readiness_policy_fingerprint": (
+                config.readiness_policy.logical_fingerprint
+            ),
         }
     )
 

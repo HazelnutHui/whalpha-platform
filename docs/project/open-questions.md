@@ -46,7 +46,9 @@ operations document.
   reconciliation fixtures before Adjustment Ledger implementation
 - Rejected Massive reference type mapping policy
 - Duplicate ticker handling policy for point-in-time reference snapshots
-- Massive plan upgrade threshold
+- Whether the owner-confirmed Massive Stocks Starter subscription passes the
+  first controlled same-evening completeness check and a separate bounded
+  five-year historical-depth check on the exact endpoints used by the project
 - Business/display/redistribution license threshold
 - Candidate Discovery thresholds after real coverage evaluation
 - Exact S&P 500/index constituent source

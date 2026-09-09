@@ -13,10 +13,13 @@ from tip_api.services.daily_eod_coordinator import (
     daily_eod_coordinator_result_fingerprint,
 )
 from tip_api.services.daily_eod_scheduled_wake import run_one_scheduled_wake
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+)
 from tip_api.services.daily_eod_scheduler import plan_daily_eod_scheduler_wake
 
 
-CONTRACT_VERSION = "daily-eod-scheduler-rehearsal/1.1"
+CONTRACT_VERSION = "daily-eod-scheduler-rehearsal/1.2"
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,6 +38,8 @@ class SchedulerRehearsalScenario:
 @dataclass(frozen=True, slots=True)
 class DailyEodSchedulerRehearsalReport:
     contract_version: str
+    provider_recency_profile: str
+    readiness_policy_fingerprint: str
     scenarios: tuple[SchedulerRehearsalScenario, ...]
     scenario_count: int
     total_coordinator_invocation_count: int
@@ -53,12 +58,17 @@ class DailyEodSchedulerRehearsalReport:
         return asdict(self)
 
 
-def review_daily_eod_scheduler_rehearsal() -> DailyEodSchedulerRehearsalReport:
+def review_daily_eod_scheduler_rehearsal(
+    *,
+    policy: DailyEodReadinessPolicy | None = None,
+) -> DailyEodSchedulerRehearsalReport:
     """Run five independent in-memory wakes with synthetic coordinator results."""
 
+    selected_policy = policy or DailyEodReadinessPolicy()
     current_plan = plan_daily_eod_scheduler_wake(
         checked_at=datetime(2026, 8, 29, 12, tzinfo=UTC),
         completed_sessions=(date(2026, 8, 27), date(2026, 8, 28)),
+        policy=selected_policy,
     )
     current = run_one_scheduled_wake(
         plan=current_plan,
@@ -68,6 +78,7 @@ def review_daily_eod_scheduler_rehearsal() -> DailyEodSchedulerRehearsalReport:
         checked_at=datetime(2026, 8, 28, 21, tzinfo=UTC),
         completed_sessions=(date(2026, 8, 27),),
         review_enabled_candidate=True,
+        policy=selected_policy,
     )
     cases = (
         (
@@ -128,6 +139,10 @@ def review_daily_eod_scheduler_rehearsal() -> DailyEodSchedulerRehearsalReport:
         )
     logical = {
         "contract_version": CONTRACT_VERSION,
+        "provider_recency_profile": (
+            selected_policy.provider_recency_profile.value
+        ),
+        "readiness_policy_fingerprint": selected_policy.logical_fingerprint,
         "scenarios": [asdict(item) for item in scenarios],
         "scenario_count": len(scenarios),
         "total_coordinator_invocation_count": sum(
@@ -147,6 +162,10 @@ def review_daily_eod_scheduler_rehearsal() -> DailyEodSchedulerRehearsalReport:
     }
     return DailyEodSchedulerRehearsalReport(
         contract_version=CONTRACT_VERSION,
+        provider_recency_profile=(
+            selected_policy.provider_recency_profile.value
+        ),
+        readiness_policy_fingerprint=selected_policy.logical_fingerprint,
         scenarios=tuple(scenarios),
         scenario_count=len(scenarios),
         total_coordinator_invocation_count=int(

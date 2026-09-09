@@ -22,10 +22,11 @@ from tip_api.services.daily_eod_scheduler_runtime_plan import (
     APPROVED_PYTHON_LAUNCHER,
     APPROVED_RUNTIME_PARENT,
 )
+from tip_api.services.daily_eod_readiness import ProviderRecencyProfile
 
 
-CONTRACT_VERSION = "daily-eod-scheduler-systemd-candidate/1.1"
-REVIEW_CONTRACT_VERSION = "daily-eod-scheduler-systemd-review/1.1"
+CONTRACT_VERSION = "daily-eod-scheduler-systemd-candidate/1.2"
+REVIEW_CONTRACT_VERSION = "daily-eod-scheduler-systemd-review/1.2"
 SERVICE_UNIT_NAME = "whalpha-daily-eod-wake-review.service"
 TIMER_UNIT_NAME = "whalpha-daily-eod-wake-review.timer"
 CALENDAR_EXPRESSIONS = (
@@ -44,7 +45,7 @@ class DailyEodSchedulerSystemdCandidateV1(BaseModel):
 
     model_config = ConfigDict(frozen=True, extra="forbid")
 
-    contract_version: Literal["daily-eod-scheduler-systemd-candidate/1.1"] = (
+    contract_version: Literal["daily-eod-scheduler-systemd-candidate/1.2"] = (
         CONTRACT_VERSION
     )
     config_id: str = Field(
@@ -58,6 +59,7 @@ class DailyEodSchedulerSystemdCandidateV1(BaseModel):
     branch: Literal["main", "detached"]
     implementation_revision: str
     data_root: str
+    provider_recency_profile: ProviderRecencyProfile
     entrypoint: str
     python_launcher: str
     python_executable: str
@@ -168,6 +170,9 @@ def build_scheduler_systemd_candidate(
     implementation_revision: str,
     python_executable: Path,
     checkout_mode: Literal["main", "detached"] = "main",
+    provider_recency_profile: ProviderRecencyProfile = (
+        ProviderRecencyProfile.MASSIVE_STOCKS_BASIC_END_OF_DAY
+    ),
     activation_candidate_enabled: bool = False,
 ) -> DailyEodSchedulerSystemdCandidateV1:
     base: dict[str, object] = {
@@ -179,6 +184,7 @@ def build_scheduler_systemd_candidate(
         "branch": checkout_mode,
         "implementation_revision": implementation_revision,
         "data_root": str(APPROVED_CANONICAL_DATA_ROOT),
+        "provider_recency_profile": provider_recency_profile.value,
         "entrypoint": str(
             repository_root / "scripts/admin/plan-daily-eod-scheduler.sh"
         ),
@@ -229,6 +235,9 @@ def review_scheduler_systemd_candidate(
     *,
     config_id: str,
     repository_root: Path,
+    provider_recency_profile: ProviderRecencyProfile = (
+        ProviderRecencyProfile.MASSIVE_STOCKS_BASIC_END_OF_DAY
+    ),
     activation_candidate_enabled: bool = False,
     hostname_reader: Callable[[], str] = socket.gethostname,
     user_reader: Callable[[], str] = lambda: pwd.getpwuid(os.geteuid()).pw_name,
@@ -307,6 +316,7 @@ def review_scheduler_systemd_candidate(
         implementation_revision=revision,
         python_executable=python_executable,
         checkout_mode=checkout_mode,
+        provider_recency_profile=provider_recency_profile,
         activation_candidate_enabled=activation_candidate_enabled,
     )
     service = render_service_unit(candidate)
@@ -436,6 +446,8 @@ def _service_unit(values: dict[str, object]) -> str:
             f"Environment=TIP_PYTHON_BIN={values['python_launcher']}",
             "ExecStart="
             f"{values['entrypoint']} --data-root {values['data_root']} "
+            "--provider-recency-profile "
+            f"{values['provider_recency_profile']} "
             "--verify-dell-runtime "
             f"--expected-revision {values['implementation_revision']} "
             f"--expected-python-executable {values['python_executable']} "

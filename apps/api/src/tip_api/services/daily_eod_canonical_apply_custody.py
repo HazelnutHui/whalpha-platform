@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Callable
@@ -29,6 +29,7 @@ from tip_api.services.daily_eod_automation import (
     plan_daily_eod_automation,
 )
 from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
     ReadinessNextAction,
     plan_daily_eod_readiness,
 )
@@ -46,7 +47,7 @@ from tip_api.services.offline_artifact_custody import (
 )
 
 
-CONTRACT_VERSION = "daily-eod-canonical-apply-custody/1.0"
+CONTRACT_VERSION = "daily-eod-canonical-apply-custody/1.1"
 MAXIMUM_PLAN_AGE = timedelta(minutes=5)
 
 
@@ -66,6 +67,9 @@ class DailyEodCanonicalApplyConfig:
     data_root: Path
     run_root: Path
     automation_paths: DailyEodAutomationPaths
+    readiness_policy: DailyEodReadinessPolicy = field(
+        default_factory=DailyEodReadinessPolicy
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -157,6 +161,7 @@ def reserve_canonical_apply(
                 target_session=config.target_session,
                 acquisition_action=config.acquisition_action,
             ),
+            policy=config.readiness_policy,
         )
         if (
             readiness.logical_content_fingerprint != expected_readiness_fingerprint
@@ -477,6 +482,8 @@ def _validate_automation_plan(
 
 
 def _validate_config(config: DailyEodCanonicalApplyConfig) -> None:
+    if not isinstance(config.readiness_policy, DailyEodReadinessPolicy):
+        raise DailyEodCanonicalApplyCustodyError("readiness policy is invalid")
     if config.acquisition_action not in {
         NextAction.PREPARE_IDENTITY_CATCHUP,
         NextAction.PREPARE_EOD_CATCHUP,
@@ -537,6 +544,9 @@ def _execution_input_fingerprint(config: DailyEodCanonicalApplyConfig) -> str:
                 key: str(value)
                 for key, value in asdict(config.automation_paths).items()
             },
+            "readiness_policy_fingerprint": (
+                config.readiness_policy.logical_fingerprint
+            ),
         }
     )
 

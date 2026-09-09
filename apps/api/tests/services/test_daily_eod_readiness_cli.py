@@ -111,6 +111,24 @@ def test_cli_operator_review_gate_exits_nonzero(capsys) -> None:
     assert payload["external_request_count"] == 0
 
 
+def test_cli_delayed_profile_removes_only_the_basic_release_review(capsys) -> None:
+    argv = _argv()
+    argv[-1] = "prepare_eod_catchup"
+
+    assert cli.main([
+        *argv,
+        "--provider-recency-profile",
+        "massive_stocks_delayed_15_minutes",
+    ]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["status"] == "ready_for_fetch_review"
+    assert payload["operator_review_required"] is False
+    assert payload["provider_recency_profile"] == (
+        "massive_stocks_delayed_15_minutes"
+    )
+    assert payload["provider_completeness_asserted"] is False
+
+
 def test_readiness_socket_guard_blocks_and_restores() -> None:
     original = socket.socket
     with cli._offline_socket_guard():

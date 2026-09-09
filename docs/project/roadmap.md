@@ -34,9 +34,11 @@ their deep validation boundaries.
 
 Next:
 
-1. Observe the next eligible live session end to end on Dell and record one
-   consolidated timeline. The 9/4 chain passed functionally, while current
-   stage timings come from separate controlled runs and must not be summed.
+1. Observe the first eligible live Stocks Starter session end to end on Dell
+   with the explicit 15-minute-delayed profile and record one consolidated
+   timeline. The 9/8 chain passed functionally under the prior profile, while
+   current stage timings come from separate controlled runs and must not be
+   summed.
 2. Use the completed Candidate attribution: the cumulative writer is the
    remaining hotspot, while finalization and explicit garbage collection are
    negligible.
@@ -59,26 +61,34 @@ Next:
 Do not reconnect the write-capable scheduler as part of performance work. The
 installed timer remains read-only until automation receives its own review.
 
-ADR 0180 now removes the artificial five-minute/process break only between
+ADR 0180 removes the artificial five-minute/process break only between
 formally successful offline stages. The finite runner retains every existing
 per-action journal and postcondition, defaults to review-only, and stops before
 all data, publication, Snapshot, deployment, failure, and recovery boundaries.
 Its focused and related fixture regressions pass, and a real historical
 workspace review proved zero action/write behavior. The stable owner-only
-runtime workspace is now activated with exact prior-session and journal
-bootstrap evidence, and an execute-enabled current-session preflight stopped
-at missing EOD with zero actions. Next, after a new canonical session exists,
-run one controlled multi-action execution and record one consolidated
-timeline. Then compose dynamic data and external serving
+runtime workspace is activated with exact prior-session and journal bootstrap
+evidence. The 9/8 real offline run completed all nine planned actions in one
+bounded invocation. Retain that finite budget and use the next live chain to
+capture one consolidated acquisition-through-serving timeline. Then compose
+dynamic data and external serving
 capabilities separately; do not mislabel the offline runner as full unattended
 publication.
 
-ADR 0181 also closes the restartability gap before the offline chain: the exact
+ADR 0181 closes the restartability gap before the offline chain: the exact
 per-session acquisition package and canonical Apply plan are now accepted
 across every data-transition boundary, with strict same-session containment and
-legacy `/tmp` compatibility. The next live-session rehearsal should use these
-persistent paths and prove package/plan recovery; no separate path redesign is
-still required.
+legacy `/tmp` compatibility. Persistent paths have passed controlled real use;
+the next live session should retain them and confirm recovery remains possible.
+No separate path redesign is required.
+
+ADR 0188 binds the explicitly selected provider-recency profile through every
+daily planning, custody, runtime, rehearsal, and immutable timer boundary. The
+owner-confirmed Stocks Starter tier should use
+`massive_stocks_delayed_15_minutes`; Basic remains a deliberate fallback, not
+an implicit operational profile. First prove live entitlement and same-evening
+quality on one completed session before changing installed runtime artifacts or
+claiming reliable availability.
 
 ## Priority 2 — Governed historical research inputs
 

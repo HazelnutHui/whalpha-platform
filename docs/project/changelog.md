@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-09 — Bind Stocks Starter recency through the daily chain
+
+- Accepted ADR 0188 after the owner supplied a successful Massive Stocks
+  Starter purchase confirmation. The repository now carries an explicit
+  Basic, 15-minute-delayed, or realtime profile through readiness, the
+  coordinator, acquisition and canonical Apply custody, host verification,
+  external preflight, scheduler planning/rehearsal, and immutable systemd
+  candidate bytes.
+- Basic remains the safe default and rollback profile. Starter uses
+  `massive_stocks_delayed_15_minutes`, which removes only the Basic-specific
+  initial availability review after the existing 30-minute stabilization
+  window; it does not assert data completeness or weaken request, quality,
+  custody, Apply, publication, or deployment gates.
+- Advanced acquisition custody to 1.3, canonical Apply custody to 1.1,
+  scheduler rehearsal to 1.2, and systemd Candidate/Review to 1.2. Reservation
+  and recovery inputs now bind the readiness-policy fingerprint, and the
+  systemd service renders the selected profile explicitly.
+- All 2,348 API tests passed with the two existing dependency deprecation
+  warnings. No credential, provider request, `/data`, installed timer,
+  external authorization, Snapshot, bundle, deployment, or Production state
+  changed. Live Starter entitlement, five-year endpoint depth, and same-evening
+  completeness remain pending controlled observations.
+
 ## 2026-09-09 — Bound daily Membership workspace execution
 
 - Accepted ADR 0187 and added

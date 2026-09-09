@@ -8,6 +8,10 @@ from tip_api.services import daily_eod_scheduler_rehearsal_cli as cli
 from tip_api.services.daily_eod_scheduler_rehearsal import (
     review_daily_eod_scheduler_rehearsal,
 )
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 
 
 def test_rehearsal_covers_five_separate_bounded_wakes() -> None:
@@ -44,11 +48,38 @@ def test_rehearsal_covers_five_separate_bounded_wakes() -> None:
 def test_rehearsal_cli_emits_canonical_report(capsys) -> None:
     assert cli.main([]) == 0
     payload = json.loads(capsys.readouterr().out)
-    assert payload["contract_version"] == "daily-eod-scheduler-rehearsal/1.1"
+    assert payload["contract_version"] == "daily-eod-scheduler-rehearsal/1.2"
+    assert (
+        payload["provider_recency_profile"]
+        == "massive_stocks_basic_end_of_day"
+    )
     assert payload["scenario_count"] == 5
     assert payload["maximum_coordinator_invocations_per_wake"] == 1
     assert payload["scheduler_installation_performed"] is False
     assert "scheduler_installed" not in payload
+
+
+def test_rehearsal_cli_binds_delayed_provider_profile(capsys) -> None:
+    assert (
+        cli.main(
+            [
+                "--provider-recency-profile",
+                "massive_stocks_delayed_15_minutes",
+            ]
+        )
+        == 0
+    )
+    payload = json.loads(capsys.readouterr().out)
+    policy = DailyEodReadinessPolicy(
+        provider_recency_profile=(
+            ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+        )
+    )
+    assert (
+        payload["provider_recency_profile"]
+        == "massive_stocks_delayed_15_minutes"
+    )
+    assert payload["readiness_policy_fingerprint"] == policy.logical_fingerprint
 
 
 def test_rehearsal_cli_rejects_arguments() -> None:

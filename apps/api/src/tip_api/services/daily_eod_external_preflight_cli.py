@@ -23,6 +23,10 @@ from tip_api.services.daily_eod_host_runtime import (
     read_host_runtime_config,
     verify_dell_runtime,
 )
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 from tip_api.services.daily_eod_standing_authorization import (
     DailyEodStandingAuthorizationError,
     read_standing_authorization,
@@ -45,6 +49,11 @@ def main(argv: list[str] | None = None) -> int:
             verified_runtime = verify_dell_runtime(
                 config=host_config,
                 source_repository_root=source_root,
+                readiness_policy=DailyEodReadinessPolicy(
+                    provider_recency_profile=ProviderRecencyProfile(
+                        args.provider_recency_profile
+                    )
+                ),
             )
             authorization = read_standing_authorization(
                 authorization_path=args.authorization,
@@ -115,6 +124,11 @@ def _parser() -> argparse.ArgumentParser:
         )
     )
     parser.add_argument("--checked-at", required=True, type=datetime.fromisoformat)
+    parser.add_argument(
+        "--provider-recency-profile",
+        choices=tuple(item.value for item in ProviderRecencyProfile),
+        default=ProviderRecencyProfile.MASSIVE_STOCKS_BASIC_END_OF_DAY.value,
+    )
     parser.add_argument("--host-config", required=True, type=Path)
     parser.add_argument("--host-config-sha256", required=True)
     parser.add_argument("--authorization", required=True, type=Path)

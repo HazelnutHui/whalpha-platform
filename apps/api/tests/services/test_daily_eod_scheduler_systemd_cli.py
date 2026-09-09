@@ -18,7 +18,7 @@ def test_cli_is_network_and_write_free(monkeypatch, capsys, tmp_path) -> None:
             socket.create_connection(("example.invalid", 443))
         return SimpleNamespace(
             as_dict=lambda: {
-                "contract_version": "daily-eod-scheduler-systemd-review/1.1",
+                "contract_version": "daily-eod-scheduler-systemd-review/1.2",
                 "status": "review_ready_prerequisite_missing",
                 "installation_performed": False,
             }
@@ -32,12 +32,17 @@ def test_cli_is_network_and_write_free(monkeypatch, capsys, tmp_path) -> None:
             "--config-id",
             "dell-systemd-cli-review-1",
             "--review-enabled-candidate",
+            "--provider-recency-profile",
+            "massive_stocks_delayed_15_minutes",
         ]
     ) == 0
     payload = json.loads(capsys.readouterr().out)
     assert payload["installation_performed"] is False
     assert "scheduler_installed" not in payload
     assert captured[0]["activation_candidate_enabled"] is True
+    assert captured[0]["provider_recency_profile"].value == (
+        "massive_stocks_delayed_15_minutes"
+    )
 
 
 def test_cli_rejects_unexpected_arguments() -> None:

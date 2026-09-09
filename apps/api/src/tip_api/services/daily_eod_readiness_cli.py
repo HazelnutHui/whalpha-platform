@@ -13,7 +13,9 @@ from tip_api.services.daily_eod_readiness import (
     ACQUISITION_ACTIONS,
     AcquisitionAttempt,
     AttemptOutcome,
+    DailyEodReadinessPolicy,
     DailyEodReadinessError,
+    ProviderRecencyProfile,
     ReadinessNextAction,
     plan_daily_eod_readiness,
 )
@@ -40,6 +42,11 @@ def main(argv: list[str] | None = None) -> int:
         default=[],
         metavar="SEQUENCE|OBSERVED_AT|OUTCOME[|RETRY_AFTER_SECONDS]",
     )
+    parser.add_argument(
+        "--provider-recency-profile",
+        choices=tuple(item.value for item in ProviderRecencyProfile),
+        default=ProviderRecencyProfile.MASSIVE_STOCKS_BASIC_END_OF_DAY.value,
+    )
     args = parser.parse_args(argv)
     try:
         attempts = tuple(_parse_attempt(value) for value in args.attempt)
@@ -50,6 +57,11 @@ def main(argv: list[str] | None = None) -> int:
                 latest_canonical_session=args.latest_canonical_session,
                 acquisition_action=NextAction(args.acquisition_action),
                 attempts=attempts,
+                policy=DailyEodReadinessPolicy(
+                    provider_recency_profile=ProviderRecencyProfile(
+                        args.provider_recency_profile
+                    )
+                ),
             )
     except (DailyEodReadinessError, MarketCalendarError, OSError, ValueError) as exc:
         print(

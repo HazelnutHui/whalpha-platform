@@ -20,6 +20,10 @@ from tip_api.services.daily_eod_scheduler import (
     DailyEodSchedulerError,
     plan_daily_eod_scheduler_wake,
 )
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 from tip_api.services.daily_eod_scheduler_runtime_plan import (
     APPROVED_RUNTIME_PARENT,
 )
@@ -33,6 +37,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--checked-at", type=datetime.fromisoformat)
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--review-enabled-candidate", action="store_true")
+    parser.add_argument(
+        "--provider-recency-profile",
+        choices=tuple(item.value for item in ProviderRecencyProfile),
+        default=ProviderRecencyProfile.MASSIVE_STOCKS_BASIC_END_OF_DAY.value,
+    )
     parser.add_argument("--verify-dell-runtime", action="store_true")
     parser.add_argument("--expected-revision")
     parser.add_argument("--expected-python-executable", type=Path)
@@ -84,6 +93,11 @@ def main(argv: list[str] | None = None) -> int:
                 checked_at=checked_at,
                 completed_sessions=sessions,
                 review_enabled_candidate=args.review_enabled_candidate,
+                policy=DailyEodReadinessPolicy(
+                    provider_recency_profile=ProviderRecencyProfile(
+                        args.provider_recency_profile
+                    )
+                ),
             )
     except (
         DailyEodSchedulerError,

@@ -1,5 +1,13 @@
 # Architecture Decision Records
 
+- [ADR 0188](0188-bind-paid-provider-recency-through-the-daily-chain.md): carry the explicit provider-recency profile through readiness, custody, host verification, and immutable timer bytes while retaining Basic fallback and every completeness gate.
+
+- [ADR 0187](0187-run-daily-membership-as-a-bounded-research-sidecar.md): compose only Membership candidate and near-Apply-plan workspace actions in a finite research sidecar that never invokes the website pipeline or canonical Apply.
+
+- [ADR 0186](0186-seal-strong-leader-pullback-research-inputs.md): freeze the first Strong-Leader Pullback outcome-free feature inputs and reject incomplete real cross-sections before any evaluation.
+
+- [ADR 0185](0185-plan-daily-membership-as-an-independent-research-sidecar.md): expose prospective daily Membership readiness beside the primary pipeline without letting research state block website delivery.
+
 - [ADR 0184](0184-deploy-serving-bundles-from-the-persistent-daily-workspace.md): allow the one-shot OCI deployment boundary to consume the exact owner-only persistent daily Serving Bundle while preserving legacy `/tmp` compatibility, remote-state CAS, and no-replay custody.
 
 - [ADR 0183](0183-quarantine-large-cash-distributions-before-total-return.md): classify resolved cash distributions in a read-only arithmetic diagnostic while quarantining large, date-ambiguous, non-USD, multi-action, and price-incomplete cases before any canonical dividend or total-return work.

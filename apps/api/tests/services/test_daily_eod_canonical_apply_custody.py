@@ -200,6 +200,7 @@ def readiness_fingerprint(cfg: DailyEodCanonicalApplyConfig) -> str:
             target_session=TARGET,
             acquisition_action=cfg.acquisition_action,
         ),
+        policy=cfg.readiness_policy,
     ).logical_content_fingerprint
 
 

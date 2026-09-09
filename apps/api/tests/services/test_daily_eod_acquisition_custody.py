@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import shutil
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from uuid import uuid4
@@ -13,6 +14,8 @@ from tip_api.services.daily_eod_automation import NextAction
 from tip_api.services.daily_eod_readiness import (
     AcquisitionAttempt,
     AttemptOutcome,
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
     plan_daily_eod_readiness,
 )
 from tip_api.services.daily_eod_run_journal import locked_daily_eod_run_journal
@@ -377,6 +380,16 @@ def test_outcome_and_recovery_require_exact_reserved_inputs(tmp_path) -> None:
     )
     with pytest.raises(custody.DailyEodAcquisitionCustodyError, match="differ"):
         custody.recover_acquisition_attempt(config=changed)
+    changed_policy = replace(
+        config,
+        readiness_policy=DailyEodReadinessPolicy(
+            provider_recency_profile=(
+                ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+            )
+        ),
+    )
+    with pytest.raises(custody.DailyEodAcquisitionCustodyError, match="differ"):
+        custody.recover_acquisition_attempt(config=changed_policy)
 
 
 def test_reservation_rejects_old_plan_unsafe_package_and_offline_action(tmp_path) -> None:

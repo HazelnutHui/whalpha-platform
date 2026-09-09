@@ -81,12 +81,22 @@ guarantee a precise stable-publication minute. Daily aggregates may also be
 updated for late or corrected trades. Identity's first fetch review begins 30
 minutes after the actual XNYS close as a provisional operational choice, not
 as a completeness claim. Readiness 1.1 also records an explicit provider-
-recency profile. Under the active `massive_stocks_basic_end_of_day` profile, a
+recency profile. Under `massive_stocks_basic_end_of_day`, a
 first current-session EOD request does not become reviewable from the 30-minute
 clock alone. It requires one immutable operator availability review with an
 explicit `not_before` time. Older missing sessions retain oldest-first recovery
 without inventing a current-session release gate. The exact Basic current-
 session availability time remains unproven.
+
+ADR 0188 carries an explicitly selected profile through the readiness CLI,
+coordinator, acquisition and Apply custody, host-runtime verification,
+external-control preflight, scheduler planning, and immutable systemd service
+bytes. Commands remain Basic by default for backward compatibility. For the
+owner-confirmed Stocks Starter subscription, pass
+`--provider-recency-profile massive_stocks_delayed_15_minutes`. That profile
+removes only the Basic-specific initial availability review after the existing
+30-minute stabilization window; it does not assert provider completeness or
+weaken any request, quality, custody, Apply, publication, or deployment gate.
 
 The network-free readiness command is:
 
@@ -95,7 +105,8 @@ scripts/admin/plan-daily-eod-readiness.sh \
   --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
   --target-session YYYY-MM-DD \
   --latest-canonical-session YYYY-MM-DD \
-  --acquisition-action prepare_identity_catchup
+  --acquisition-action prepare_identity_catchup \
+  --provider-recency-profile massive_stocks_delayed_15_minutes
 ```
 
 The action must be the acquisition action reported by the exact-session daily
@@ -257,7 +268,9 @@ The artifact must be a canonical owner-only `0400` JSON file directly under a
 pre-provisioned owner-only `0700` authorization directory outside Git and
 `/data`. The repository exposes an in-memory candidate builder and strict
 reader/verifier; it does not provision the directory, write an active artifact,
-or configure the external SHA pin. No active artifact currently exists.
+or configure the external SHA pin. At ADR 0033 introduction no active artifact
+existed. Later controlled activations are revision- and policy-pinned; their
+current validity belongs in `current-status.md`, not this operating contract.
 
 Fetch authorization requires an unresolved custody reservation and permits at
 most one request. Apply authorization requires completed package custody,
@@ -297,7 +310,7 @@ or canonical write was created by the coordinator implementation.
 
 ## Canonical Apply custody
 
-ADR 0035 adds `daily-eod-canonical-apply-custody/1.0` and the third disjoint
+ADR 0035 introduced `daily-eod-canonical-apply-custody/1.0` and the third disjoint
 `daily-eod-run-journal/1.2` event family. Before an external Identity/EOD Apply,
 reservation proves the latest exact acquisition package, current apply-review
 readiness, frozen plan and whole-file SHA, package hashes, expected canonical
@@ -313,8 +326,16 @@ unchanged, or blocked for partial/changed/ambiguous state. Partial Identity
 publication may use the existing `verify-then-complete` boundary only after
 separate diagnosis and authorization.
 
-No Apply adapter is installed and there is no standalone Apply/recovery CLI for
-this custody layer; no real journal root or Apply was created.
+At ADR 0035 introduction there was no standalone Apply/recovery CLI and no real
+journal or Apply. Later authorized-capability and coordinator decisions added
+the controlled executable boundary; current real state belongs in
+`current-status.md` and completed uses remain in the changelog.
+
+ADR 0188 advances acquisition custody to 1.3 and canonical Apply custody to
+1.1. Both now retain the selected readiness-policy fingerprint in their
+execution identity and reconstruct readiness with the same policy, preventing
+a Basic reservation from being completed or recovered as Starter, or the
+reverse.
 
 ## Authorized capability adapters
 
@@ -333,9 +354,10 @@ replayed. The authorized canonical root is
 `/data/trading-intelligence-platform`, not `/data`.
 
 Construction performs no I/O, and the coordinator receives no capability
-unless one is explicitly supplied. No real adapter was installed or invoked;
-no authorization artifact, host SHA pin, credential read, request, Apply,
-notification, or scheduler state exists.
+unless one is explicitly supplied. At ADR 0036 introduction no real adapter
+had been installed or invoked. Subsequent controlled uses and current external
+pin state are recorded in the changelog and `current-status.md`; the adapter is
+still never enabled implicitly.
 
 ## Host-gated one-transition CLI
 
@@ -549,9 +571,9 @@ does not load SMTP credentials or touch the alert root. Known email failure is
 reported and exits nonzero. An exception after `delivery_started` has unknown
 delivery outcome and must not be replayed; the rejected envelope still retains
 the already-known coordinator status and data request/write counts. The command
-remains uninstalled in real operations: first review all external paths and the
-exact revision, run the ADR 0042 no-network preflight, then separately authorize
-a controlled fake/local or real rehearsal.
+is not a persistent service. Every real invocation must first review all
+external paths and the exact revision and pass the ADR 0042 network-free
+preflight; completed controlled uses remain recorded in the changelog.
 
 ## Joint external-control preflight
 
@@ -648,7 +670,8 @@ Review the next scheduler wake without installing a service or timer:
 ```bash
 scripts/admin/plan-daily-eod-scheduler.sh \
   --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
-  --data-root /data/trading-intelligence-platform
+  --data-root /data/trading-intelligence-platform \
+  --provider-recency-profile massive_stocks_delayed_15_minutes
 ```
 
 The default reports `scheduler_candidate_enabled=false`. The explicit
@@ -667,6 +690,11 @@ the XNYS calendar plus the current readiness stabilization delay. It does not
 assert provider completeness. Retry, interruption recovery, publication,
 deployment, and alert behavior remain inside their existing coordinator/
 custody boundaries and cannot be replayed by this planner.
+
+Systemd Candidate/Review 1.2 stores the selected profile in the candidate and
+renders it into `ExecStart`. The installed timer does not inherit an account
+upgrade silently; its immutable runtime and service unit must be rebuilt and
+reviewed after the repository revision is committed.
 
 ### Repository-only pipeline-aware wake
 
@@ -829,7 +857,8 @@ deployment authority are rejected.
 Run the credential-free synthetic five-wake rehearsal:
 
 ```bash
-scripts/admin/review-daily-eod-scheduler-rehearsal.sh
+scripts/admin/review-daily-eod-scheduler-rehearsal.sh \
+  --provider-recency-profile massive_stocks_delayed_15_minutes
 ```
 
 The scenarios are current/up-to-date, oldest missing, retry waiting,
@@ -837,7 +866,8 @@ unresolved interruption, and alert required. Coordinator results are synthetic
 and make no provider or Production claim. The report must show five scenarios,
 four total fake coordinator calls, no more than one call per wake, no automatic
 retry/recovery or alert delivery, and zero credential, network, filesystem, or
-Production activity.
+Production activity. Rehearsal contract 1.2 also records the selected provider
+profile and readiness-policy fingerprint.
 
 ## Non-installed read-only systemd candidate
 
@@ -846,7 +876,8 @@ them:
 
 ```bash
 scripts/admin/review-daily-eod-scheduler-systemd.sh \
-  --config-id dell-read-only-wake-v1
+  --config-id dell-read-only-wake-v1 \
+  --provider-recency-profile massive_stocks_delayed_15_minutes
 ```
 
 The default candidate is disabled. Adding `--review-enabled-candidate` changes
@@ -890,10 +921,10 @@ or Production writes. The next checkpoint is a real calendar-triggered wake.
 Do not add `--review-enabled-candidate` or any coordinator/capability arguments
 to the installed unit.
 
-ADR 0080 defines the reporting boundary after installation. Planner and
-rehearsal contract 1.1 use `scheduler_installation_performed=false`; this means
+ADR 0080 defines the reporting boundary after installation. Planner 1.1 and
+rehearsal 1.2 use `scheduler_installation_performed=false`; this means
 the invocation did not install or alter a unit. It is not host-state evidence.
-The systemd review 1.1 reports only whether that review performed installation
+Systemd review 1.2 reports only whether that review performed installation
 or activation, while the commands below remain authoritative for current host
 state.
 
@@ -1100,9 +1131,9 @@ the already completed and deployed 2026-08-26 publication chain.
 1. The complete deployment path has now passed a controlled real invocation
    and independent postflight. Later source revisions still require a fresh
    exact deployment-config review and separate deployment authorization.
-2. Conduct a later controlled timing rehearsal to calibrate a defensible Basic
-   EOD review time from non-sensitive evidence; do not treat the 30-minute
-   Identity point as EOD availability.
+2. Observe the first controlled Stocks Starter same-evening session after the
+   30-minute stabilization window; do not treat plan marketing or the clock as
+   evidence of aggregate completeness.
 3. The read-only timer installation, synthetic distinct-wake rehearsal,
    owner-only cadence custody, and non-installed one-invocation runtime bridge
    are complete. Next observe a natural calendar trigger, then separately
@@ -1289,7 +1320,7 @@ delayed, while the Grouped Daily endpoint is listed across Stocks plans. The
 exact Basic release minute remains unverified; a 403 cannot be relabeled as
 provider completeness or as an empty market session.
 
-The Basic operating policy remains fail-closed and bounded: no blind polling,
+The historical Basic operating policy remains fail-closed and bounded: no blind polling,
 no stale substitution, and no downstream calculation before the exact session
 is canonical. If same-evening publication becomes required, Starter is the
 lowest currently documented individual stock plan with explicit same-evening
@@ -1297,6 +1328,14 @@ recency. A user plan change does not automatically change scheduler policy;
 one controlled paid-session timing/completeness observation must first pass
 the existing custody and quality gates. See the dated
 [access audit](../audits/massive-current-session-access-probe-2026-09-09.md).
+
+Later on 2026-09-09, the owner supplied a Massive dashboard payment
+confirmation for Stocks Starter. This is account-level purchase evidence, not
+yet a credential-safe live API entitlement or completeness observation. ADR
+0188 makes the delayed profile selectable across the full daily chain; the
+first completed-session invocation must still prove actual access, request
+count, package quality, canonical consistency, and elapsed time before the
+installed runtime policy changes.
 
 The same Basic account subsequently returned the exact 2026-09-08 Grouped
 Daily session at 2026-09-09T06:59 UTC. One guarded request retained 12,534 raw

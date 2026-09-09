@@ -18,7 +18,10 @@ from tip_api.services.daily_eod_host_runtime import (
     build_host_runtime_config_candidate,
     canonical_host_runtime_config_bytes,
 )
-from tip_api.services.daily_eod_readiness import DailyEodReadinessPolicy
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 from tip_api.services.daily_eod_standing_authorization import (
     StandingOperation,
     build_standing_authorization_candidate,
@@ -39,7 +42,7 @@ def install_config(path: Path, raw: bytes) -> str:
     return hashlib.sha256(raw).hexdigest()
 
 
-def installed_controls(tmp_path: Path):
+def installed_controls(tmp_path: Path, *, policy_fingerprint: str = POLICY):
     repository = tmp_path / "repository"
     repository.mkdir()
     run_root = tmp_path / "daily-run"
@@ -58,7 +61,7 @@ def installed_controls(tmp_path: Path):
         data_root=DATA_ROOT,
         run_root=run_root,
         implementation_revision=REVISION,
-        readiness_policy_fingerprint=POLICY,
+        readiness_policy_fingerprint=policy_fingerprint,
         allowed_operations=tuple(StandingOperation),
     )
     authorization_sha = install_config(
@@ -76,7 +79,7 @@ def installed_controls(tmp_path: Path):
         authorization_path=authorization_path,
         authorization_file_sha256=authorization_sha,
         credential_path=massive_credential,
-        readiness_policy_fingerprint=POLICY,
+        readiness_policy_fingerprint=policy_fingerprint,
         capabilities_enabled=True,
     )
     host_sha = install_config(
@@ -121,12 +124,16 @@ def installed_controls(tmp_path: Path):
     return repository, arguments, massive_credential, smtp_credential
 
 
-def verified(repository: Path) -> VerifiedDellRuntime:
+def verified(
+    repository: Path,
+    *,
+    policy_fingerprint: str = POLICY,
+) -> VerifiedDellRuntime:
     return VerifiedDellRuntime(
         host="dell5820",
         repository_root=str(repository),
         implementation_revision=REVISION,
-        readiness_policy_fingerprint=POLICY,
+        readiness_policy_fingerprint=policy_fingerprint,
         worktree_clean=True,
     )
 
@@ -198,6 +205,50 @@ def test_cli_data_only_mode_never_reads_email_config(
     assert payload["credential_file_access_count"] == 0
     assert not massive_credential.exists()
     assert not smtp_credential.exists()
+
+
+def test_cli_passes_delayed_profile_to_host_verification(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    delayed = DailyEodReadinessPolicy(
+        provider_recency_profile=(
+            ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+        )
+    )
+    repository, arguments, _, _ = installed_controls(
+        tmp_path,
+        policy_fingerprint=delayed.logical_fingerprint,
+    )
+    captured: dict[str, object] = {}
+
+    def verify(**kwargs):
+        captured.update(kwargs)
+        return verified(
+            repository,
+            policy_fingerprint=delayed.logical_fingerprint,
+        )
+
+    monkeypatch.setattr(cli, "_source_repository_root", lambda: repository)
+    monkeypatch.setattr(cli, "verify_dell_runtime", verify)
+
+    assert (
+        cli.main(
+            [
+                *arguments,
+                "--provider-recency-profile",
+                "massive_stocks_delayed_15_minutes",
+            ]
+        )
+        == 0
+    )
+    payload = json.loads(capsys.readouterr().out)
+
+    assert payload["status"] == "configuration_consistent"
+    selected = captured["readiness_policy"]
+    assert isinstance(selected, DailyEodReadinessPolicy)
+    assert selected.logical_fingerprint == delayed.logical_fingerprint
 
 
 def test_cli_socket_guard_rejects_network_before_any_result(

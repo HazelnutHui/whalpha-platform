@@ -16,7 +16,10 @@ from tip_api.services.daily_eod_host_runtime import (
     VerifiedDellRuntime,
     build_host_runtime_config_candidate,
 )
-from tip_api.services.daily_eod_readiness import DailyEodReadinessPolicy
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 from tip_api.services.daily_eod_standing_authorization import (
     APPROVED_CANONICAL_DATA_ROOT,
 )
@@ -141,6 +144,29 @@ def test_default_invocation_does_not_read_host_config_or_install_capabilities(
     assert captured[0]["publication_capability"] is None
     assert captured[0]["apply_dashboard_snapshot"] is False
     assert captured[0]["snapshot_publication_capability"] is None
+
+
+def test_cli_passes_explicit_paid_recency_profile_to_coordinator(
+    monkeypatch,
+    capsys,
+) -> None:
+    captured = []
+
+    def coordinate(**kwargs):
+        captured.append(kwargs)
+        return result()
+
+    monkeypatch.setattr(cli, "coordinate_daily_eod_transition", coordinate)
+
+    assert cli.main([
+        *arguments(),
+        "--provider-recency-profile",
+        "massive_stocks_delayed_15_minutes",
+    ]) == 0
+    capsys.readouterr()
+    assert captured[0]["config"].readiness_policy.provider_recency_profile is (
+        ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+    )
 
 
 def test_capability_enablement_requires_external_config_and_sha() -> None:

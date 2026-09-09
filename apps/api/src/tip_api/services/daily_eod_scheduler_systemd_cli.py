@@ -13,6 +13,7 @@ from tip_api.services.daily_eod_scheduler_systemd import (
     DailyEodSchedulerSystemdError,
     review_scheduler_systemd_candidate,
 )
+from tip_api.services.daily_eod_readiness import ProviderRecencyProfile
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -24,12 +25,20 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--config-id", required=True)
     parser.add_argument("--review-enabled-candidate", action="store_true")
+    parser.add_argument(
+        "--provider-recency-profile",
+        choices=tuple(item.value for item in ProviderRecencyProfile),
+        default=ProviderRecencyProfile.MASSIVE_STOCKS_BASIC_END_OF_DAY.value,
+    )
     args = parser.parse_args(argv)
     try:
         with _offline_socket_guard():
             review = review_scheduler_systemd_candidate(
                 config_id=args.config_id,
                 repository_root=_source_repository_root(),
+                provider_recency_profile=ProviderRecencyProfile(
+                    args.provider_recency_profile
+                ),
                 activation_candidate_enabled=args.review_enabled_candidate,
             )
     except (DailyEodSchedulerSystemdError, OSError, RuntimeError, ValueError) as exc:

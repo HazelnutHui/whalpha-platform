@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import UTC, date, datetime
 from enum import StrEnum
 from pathlib import Path
@@ -35,6 +35,7 @@ from tip_api.services.daily_eod_executor import (
     execute_daily_eod_action,
 )
 from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
     DailyEodReadinessPlan,
     ReadinessNextAction,
     ReadinessStatus,
@@ -89,6 +90,9 @@ class DailyEodCoordinatorConfig:
     publication_expected_current_state_fingerprint: str | None = None
     snapshot_generated_at: datetime | None = None
     bundle_built_at: datetime | None = None
+    readiness_policy: DailyEodReadinessPolicy = field(
+        default_factory=DailyEodReadinessPolicy
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -460,6 +464,7 @@ def coordinate_daily_eod_transition(
         acquisition_action=plan.next_action,
         package_path=config.package_path,
         run_root=config.run_root,
+        readiness_policy=config.readiness_policy,
     )
     attempts = acquisition_attempts_from_events(
         events,
@@ -477,6 +482,7 @@ def coordinate_daily_eod_transition(
             target_session=config.target_session,
             acquisition_action=plan.next_action,
         ),
+        policy=config.readiness_policy,
     )
     if readiness.next_action is ReadinessNextAction.WAIT:
         return _result(
@@ -977,7 +983,8 @@ def verify_daily_eod_coordinator_result(
 
 def _validate_config(config: DailyEodCoordinatorConfig) -> None:
     if (
-        not config.run_root.is_absolute()
+        not isinstance(config.readiness_policy, DailyEodReadinessPolicy)
+        or not config.run_root.is_absolute()
         or _is_within(config.run_root, Path("/data"))
         or _is_within(config.run_root, config.paths.data_root)
     ):

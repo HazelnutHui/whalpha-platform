@@ -14,7 +14,10 @@ from tip_api.services.daily_eod_host_runtime import (
     read_host_runtime_config,
     verify_dell_runtime,
 )
-from tip_api.services.daily_eod_readiness import DailyEodReadinessPolicy
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 from tip_api.services.daily_eod_standing_authorization import (
     APPROVED_CANONICAL_DATA_ROOT,
 )
@@ -132,6 +135,39 @@ def test_runtime_verifies_actual_host_clean_revision_and_current_policy(
     assert verified.host == "dell5820"
     assert verified.implementation_revision == REVISION
     assert verified.worktree_clean is True
+
+
+def test_runtime_verifies_an_explicit_paid_recency_profile(tmp_path: Path) -> None:
+    repository = tmp_path / "repository"
+    repository.mkdir()
+    delayed_policy = DailyEodReadinessPolicy(
+        provider_recency_profile=(
+            ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+        )
+    )
+    config = candidate(
+        repository_root=repository,
+        readiness_policy_fingerprint=delayed_policy.logical_fingerprint,
+    )
+
+    verified = verify_dell_runtime(
+        config=config,
+        source_repository_root=repository,
+        readiness_policy=delayed_policy,
+        hostname_reader=lambda: "dell5820",
+        command_runner=runner(),
+    )
+
+    assert verified.readiness_policy_fingerprint == (
+        delayed_policy.logical_fingerprint
+    )
+    with pytest.raises(DailyEodHostRuntimeError, match="policy differs"):
+        verify_dell_runtime(
+            config=config,
+            source_repository_root=repository,
+            hostname_reader=lambda: "dell5820",
+            command_runner=runner(),
+        )
 
 
 @pytest.mark.parametrize(

@@ -92,6 +92,12 @@ Canonical price depth now exceeds the research minimum. Missing price history
 is no longer the main blocker; dividend date authority and total-return
 semantics remain material research-input blockers.
 
+The owner supplied a 2026-09-09 Massive dashboard confirmation of a successful
+Stocks Starter purchase. The account upgrade has not yet been verified through
+a post-purchase provider request. Five-year endpoint depth, same-evening
+completed-session availability, and aggregate finality therefore remain
+unproven.
+
 ## Product
 
 The decision chain remains:
@@ -227,6 +233,14 @@ repository execution capability; the real 9/8 default-review entrypoint also
 returned canonical completion with zero actions or writes. No timer, live
 candidate, plan, or `/data` state was changed by its implementation.
 
+ADR 0188 now carries an explicit provider-recency profile through readiness,
+acquisition and Apply custody, coordinator entry points, host verification,
+external preflight, and read-only scheduler candidates. Basic remains the safe
+default and rollback profile; the owner-confirmed Starter tier uses
+`massive_stocks_delayed_15_minutes`. Repository support alone does not alter the
+installed detached timer or external authorization pins, and no post-upgrade
+live API observation has yet passed.
+
 The forward runtime workspace is active under the owner-only Dell state root.
 It retains the verified 2026-09-04 priors and the complete 2026-09-08 package,
 plans, analytics, Snapshot, Serving Bundle, and 27-event journal. The journal's
@@ -269,25 +283,28 @@ Visual Context's cumulative-state requirement.
 
 ## Next priority
 
-1. Observe ADR 0187's bounded Membership sidecar on the next live session
+1. Exercise the complete guarded daily chain under the explicit Starter
+   delayed profile after the 2026-09-09 close stabilization window, and record
+   one controlled post-upgrade access/completeness observation.
+2. Observe ADR 0187's bounded Membership sidecar on the same live session
    before considering unattended execution; prove candidate timing, primary-
    pipeline waiting, near-Apply inventory binding, and fail-open website behavior.
-2. Run one controlled next-session unattended-scheduler rehearsal. Do not
+3. Run one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes until acquisition timing, recovery, publication,
    deployment, and final status reporting all pass together.
-3. Record the next live session's clean-path acquisition-to-deployment elapsed
+4. Record the next live session's clean-path acquisition-to-deployment elapsed
    time without including engineering/debugging time, and set a finite runtime
    budget before any further performance optimization.
-4. Obtain and review a GICS History specification/sample against ADR 0173 and
+5. Obtain and review a GICS History specification/sample against ADR 0173 and
    the exact field/role gates in the 2026-09-08 source review.
-5. Only after the sample passes, implement its adapter and a Dell-only current
+6. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-6. Complete historical Membership, lifecycle, cost evidence/calibration,
+7. Complete historical Membership, lifecycle, cost evidence/calibration,
    availability/revision, final Coverage, chronological evaluation, and sealed
    holdout evidence.
-7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
+8. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
    Trend Continuation, Technical Reversal, and Fundamental Value Reversal.
-8. Add options expression, fundamentals/valuation/events, and later
+9. Add options expression, fundamentals/valuation/events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune formulas, thresholds, or rankings before governed chronological

@@ -15,6 +15,12 @@ custody without changing the dated public permission conclusion. Externally
 controlled plan, endpoint, price, rate-limit, history, and licensing facts must
 still be rechecked before a new source-family acquisition.
 
+On 2026-09-09 the owner supplied a Massive dashboard payment confirmation for
+Stocks Starter. This establishes the intended subscription tier from
+owner-provided account evidence. It does not yet establish live API entitlement,
+five-year endpoint completeness, same-evening aggregate availability, or data
+finality; those remain pending controlled credential-safe observations.
+
 The broader official-source comparison is recorded in the dated
 [Equal-Capability Historical Source Review](equal-capability-historical-source-review-2026-08-28.md).
 It found no single cleared source and recommends provider-neutral source
@@ -42,8 +48,8 @@ implemented.
 
 | Required family | Repository evidence | Massive potential recorded in repository | Live/physical state | Current conclusion |
 | --- | --- | --- | --- | --- |
-| Broad-market daily unadjusted OHLCV | Canonical Grouped Daily `adjusted=false` history contains 304 sessions | Current official pages list Grouped Daily across Stocks plans, Basic as end-of-day, and Starter as 15-minute delayed | Exact 304-session range acquired and family evidence published; a same-process 2026-09-09 probe returned 12,510 rows for 2026-09-04 and HTTP 403 for current session 2026-09-08; 504-session depth is not established | `verified_current` for acquired history; current-account same-evening recency is blocked/unverified |
-| Point-in-time reference Identity | 304 resolved snapshots plus 302 canonical source-observation partitions | Official page showed Basic/two-year access, date query, active/inactive filter, identifiers, max 1,000/page | Active historical acquisition completed with two exact source-observation gaps; inactive source completed at two 24-page anchors | `verified_current` only for exact acquired scopes; not complete lifecycle coverage |
+| Broad-market daily unadjusted OHLCV | Canonical Grouped Daily `adjusted=false` history contains 305 sessions | Current official pages list Grouped Daily across Stocks plans, Basic as end-of-day, and Starter as 15-minute delayed with five years of history | Exact 305-session range acquired and family evidence published; Basic returned the 2026-09-08 session only in a later observation; owner-provided purchase evidence now identifies Starter, but no post-upgrade live request or five-year coverage test has run | `verified_current` for acquired history; paid same-evening recency and expanded depth remain unverified |
+| Point-in-time reference Identity | 305 resolved snapshots plus 303 canonical source-observation partitions | Official page showed date query, active/inactive filter, identifiers, and max 1,000/page; Starter marketing describes five years of stock history | Active historical acquisition completed with two exact source-observation gaps; inactive source completed at two 24-page anchors; no post-upgrade depth probe has run | `verified_current` only for exact acquired scopes; not complete lifecycle coverage |
 | Daily Universe Membership | Complete retrospective shadows plus canonical signal-eligible 2026-09-04 and 2026-09-08 partitions | No provider response can replace WH Alpha methodology | Two physical canonical daily partitions and markers | `derived_required`; historical series remains incomplete |
 | Historical security-form evidence | One provider evidence date | Point-in-time reference/type endpoints may supply observations | Historical coverage and revision semantics unverified | `documented_unverified`; cannot backcast current evidence |
 | Splits/reverse splits | Corporate actions listed in Basic | Official dated endpoint review showed all-plan access, two-year Basic history, max 5,000/page, ratios and adjustment fields | One limit-one entitlement probe succeeded; fixture mapper exists, but no acquisition adapter or dataset | `documented_unverified` beyond the probe |
@@ -66,7 +72,8 @@ anchors. It does not yet prove:
 
 - that every required historical Identity source date is retrievable; two
   exact source-observation gaps remain;
-- that 504 sessions fit the account's exact history boundary;
+- that the newly purchased Starter entitlement supplies complete five-year
+  coverage across each required endpoint;
 - complete Splits or Dividends pagination beyond the successful limit-one
   probes;
 - that inactive/delisted and successor coverage is complete;
@@ -74,21 +81,24 @@ anchors. It does not yet prove:
 - that stored history may be retained or displayed beyond the existing private
   personal-use boundary.
 
-The current public Basic-plan history claim remained two years on 2026-08-28. That
-could cover the 252-session floor and approach the 504-session target if the
-exact date boundary, entitlement, endpoint behavior, retention, and
-completeness are verified. It is not enough for long-cycle research and is not
-a current account-entitlement assertion.
+The public Basic-plan history claim remained two years on 2026-08-28. Current
+official marketing describes Starter as five years, and the owner supplied a
+successful Starter purchase confirmation on 2026-09-09. Exact date boundaries,
+endpoint behavior, and completeness are still not current account-entitlement
+proof until exercised. Five years can support longer chronological studies but
+does not fill the separate membership, lifecycle, corporate-action, adjustment,
+cost, or availability families.
 
 The bounded 2026-09-09 current-session comparison proves that the existing
 credential and Grouped Daily endpoint remain globally usable while 2026-09-08
 was date-scoped HTTP 403 at 22:27 EDT. See the
 [current-session access audit](../audits/massive-current-session-access-probe-2026-09-09.md).
 This is consistent with Basic end-of-day recency and Starter's documented
-15-minute delay, but it does not prove Basic's exact release minute. No
+15-minute delay, but it does not prove either tier's exact aggregate-release
+minute. No
 credential rotation or adapter rewrite is indicated. Same-evening operation
-requires a plan with documented same-evening recency plus a controlled live
-timing observation.
+now has owner-confirmed plan evidence but still requires a controlled live
+timing and completeness observation.
 
 The current Market Data Terms add a separate hard product gate: individual-use
 data is described as owner-only, third-party Market Data/Derived Works display

@@ -34,9 +34,11 @@ from tip_api.services.daily_eod_executor import (
 )
 from tip_api.services.daily_eod_readiness import (
     AcquisitionOperatorReview,
+    DailyEodReadinessPolicy,
     OperatorReviewDisposition,
     OperatorReviewEvidenceCode,
     OperatorReviewPurpose,
+    ProviderRecencyProfile,
 )
 from tip_api.services.daily_eod_run_journal import DailyEodRunEvent
 
@@ -1023,6 +1025,30 @@ def test_elapsed_daily_deadline_propagates_alert_requirement() -> None:
     )
     assert result.alert_required is True
     assert result.readiness_plan_fingerprint is not None
+
+
+def test_delayed_profile_reaches_fetch_review_without_basic_operator_gate() -> None:
+    delayed = replace(
+        config(),
+        readiness_policy=DailyEodReadinessPolicy(
+            provider_recency_profile=(
+                ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+            )
+        ),
+    )
+
+    result = coordinate_daily_eod_transition(
+        config=delayed,
+        checked_at=AFTER_STABILIZATION,
+        planner=planner(plan(NextAction.PREPARE_EOD_CATCHUP)),
+        journal_reader=journal(),
+    )
+
+    assert result.status is CoordinatorStatus.MANUAL_AUTHORIZATION_REQUIRED
+    assert result.next_action == "review_fetch_authorization"
+    assert result.reason_codes == ("authorized_fetch_capability_not_installed",)
+    assert result.readiness_plan_fingerprint is not None
+    assert result.alert_required is False
 
 
 def test_coordinator_rejects_unsafe_custody_paths() -> None:

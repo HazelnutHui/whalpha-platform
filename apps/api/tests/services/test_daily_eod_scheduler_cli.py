@@ -10,6 +10,10 @@ from types import SimpleNamespace
 import pytest
 
 from tip_api.services import daily_eod_scheduler_cli as cli
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 
 
 CHECKED_AT = "2026-08-29T12:00:00+00:00"
@@ -103,6 +107,38 @@ def test_enabled_review_changes_candidate_only(monkeypatch, capsys) -> None:
     assert payload["scheduler_candidate_enabled"] is True
     assert payload["scheduler_installation_performed"] is False
     assert payload["coordinator_invocation_count"] == 0
+
+
+def test_cli_binds_explicit_provider_recency_profile(monkeypatch, capsys) -> None:
+    class Repository:
+        def __init__(self, _root: Path):
+            pass
+
+        def list_session_index(self):
+            return (date(2026, 8, 27), date(2026, 8, 28))
+
+        def inspect_session(self, session_date: date):
+            return SimpleNamespace(session_date=session_date)
+
+    monkeypatch.setattr(cli, "CanonicalEodReadRepository", Repository)
+
+    assert cli.main([
+        "--checked-at",
+        CHECKED_AT,
+        "--data-root",
+        str(DATA_ROOT),
+        "--provider-recency-profile",
+        "massive_stocks_delayed_15_minutes",
+    ]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    expected = DailyEodReadinessPolicy(
+        provider_recency_profile=(
+            ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+        )
+    )
+    assert payload["readiness_policy_fingerprint"] == (
+        expected.logical_fingerprint
+    )
 
 
 def test_cli_fails_closed_on_unavailable_canonical_state(monkeypatch, capsys) -> None:

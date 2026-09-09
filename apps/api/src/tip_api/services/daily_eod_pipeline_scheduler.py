@@ -20,6 +20,7 @@ from tip_api.services.daily_eod_scheduler import (
     plan_daily_eod_scheduler_wake,
     verify_daily_eod_scheduler_wake_plan,
 )
+from tip_api.services.daily_eod_readiness import DailyEodReadinessPolicy
 from tip_api.services.daily_universe_membership_sidecar import (
     DailyUniverseMembershipSidecarPlan,
     MembershipSidecarAction,
@@ -110,6 +111,7 @@ def plan_daily_eod_pipeline_wake(
     latest_pipeline_plan: DailyEodAutomationPlan | None = None,
     membership_sidecar_plan: DailyUniverseMembershipSidecarPlan | None = None,
     review_enabled_candidate: bool = False,
+    policy: DailyEodReadinessPolicy | None = None,
 ) -> DailyEodPipelineWakePlan:
     """Plan data or offline progress while stopping at every manual boundary."""
 
@@ -117,6 +119,7 @@ def plan_daily_eod_pipeline_wake(
         checked_at=checked_at,
         completed_sessions=completed_sessions,
         review_enabled_candidate=False,
+        policy=policy,
     )
     verify_daily_eod_scheduler_wake_plan(scheduler_plan)
     canonical_current = scheduler_plan.missing_session_count == 0

@@ -75,6 +75,14 @@ session only; Basic's earliest or guaranteed release minute remains unproven.
 No blind retry loop, historical-backfill transient service, or computation
 process is running.
 
+On 2026-09-09 the owner supplied a Massive dashboard confirmation that Stocks
+Starter was successfully purchased. No credential-safe request has run after
+the upgrade, so five-year endpoint depth and same-evening completed-session
+availability remain unverified. ADR 0188 makes the delayed profile explicit
+across repository readiness, custody, host verification, and timer candidates;
+the installed runtime remains unchanged pending a committed revision, exact
+external rebind, and one controlled live-session observation.
+
 ### Active Universe
 
 The active Activation V2 remains provisional provider-form evidence from
@@ -394,25 +402,29 @@ design addresses both gaps.
 
 ## Immediate next work
 
-1. Observe the ADR 0187 bounded Membership sidecar on the next live session,
+1. After the 2026-09-09 close stabilization window, verify the owner-confirmed
+   Stocks Starter tier through one controlled exact-session daily chain using
+   `massive_stocks_delayed_15_minutes`; record access, completeness, request
+   count, and elapsed time without asserting provider finality.
+2. Observe the ADR 0187 bounded Membership sidecar on the same next live session,
    including candidate readiness, primary-pipeline waiting, near-Apply planning,
    and a research-only fault, before considering any unattended execution.
-2. Perform one controlled next-session unattended-scheduler rehearsal. Do not
+3. Perform one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes merely because the read-only timer is active.
-3. Record one clean-path acquisition-to-deployment elapsed time on the next
+4. Record one clean-path acquisition-to-deployment elapsed time on the next
    live session, excluding engineering/debugging time, and set a finite runtime
    budget before any further optimization.
-4. Obtain and review a GICS History specification/sample against ADR 0173 and
+5. Obtain and review a GICS History specification/sample against ADR 0173 and
    the field-to-contract and role gates already frozen in the source review.
-5. Implement a live adapter and Dell-only current snapshot only after that
+6. Implement a live adapter and Dell-only current snapshot only after that
    review passes. Integrate Candidate sector/industry concentration only after
    current source coverage, mapping, permission, and quarantine behavior pass.
-6. Complete lifecycle, historical Membership eligibility, costs, availability,
+7. Complete lifecycle, historical Membership eligibility, costs, availability,
    revision, final Historical Coverage, and sealed evaluation evidence.
-7. Begin real preregistered chronological research with Strong-Leader Pullback,
+8. Begin real preregistered chronological research with Strong-Leader Pullback,
    then Momentum Breakout, Trend Continuation, Technical Reversal, and
    Fundamental Value Reversal.
-8. Add options expression, fundamentals/valuation/events, and later
+9. Add options expression, fundamentals/valuation/events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune formulas, thresholds, or paid-data scope merely because price

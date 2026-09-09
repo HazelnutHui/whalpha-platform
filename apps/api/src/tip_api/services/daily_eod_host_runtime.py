@@ -220,6 +220,7 @@ def verify_dell_runtime(
     *,
     config: DailyEodHostRuntimeConfigV1,
     source_repository_root: Path,
+    readiness_policy: DailyEodReadinessPolicy | None = None,
     hostname_reader: HostnameReader = socket.gethostname,
     command_runner: CommandRunner = subprocess.run,
 ) -> VerifiedDellRuntime:
@@ -272,7 +273,10 @@ def verify_dell_runtime(
         raise DailyEodHostRuntimeError("repository revision differs from host runtime config")
     if status_result.stdout:
         raise DailyEodHostRuntimeError("repository worktree is not clean")
-    policy = DailyEodReadinessPolicy().logical_fingerprint
+    selected_policy = readiness_policy or DailyEodReadinessPolicy()
+    if not isinstance(selected_policy, DailyEodReadinessPolicy):
+        raise DailyEodHostRuntimeError("readiness policy is invalid")
+    policy = selected_policy.logical_fingerprint
     if policy != config.readiness_policy_fingerprint:
         raise DailyEodHostRuntimeError("readiness policy differs from host runtime config")
     return VerifiedDellRuntime(

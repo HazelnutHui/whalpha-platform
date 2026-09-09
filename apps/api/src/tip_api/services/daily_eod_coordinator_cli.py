@@ -78,6 +78,10 @@ from tip_api.services.daily_eod_recovery_router import (
     DailyEodRecoveryRouterError,
     recover_one_daily_eod_transition,
 )
+from tip_api.services.daily_eod_readiness import (
+    DailyEodReadinessPolicy,
+    ProviderRecencyProfile,
+)
 from tip_api.services.daily_eod_run_journal import DailyEodRunJournalError
 
 
@@ -85,6 +89,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = _parser()
     args = parser.parse_args(argv)
     _validate_arguments(parser, args)
+    readiness_policy = DailyEodReadinessPolicy(
+        provider_recency_profile=ProviderRecencyProfile(
+            args.provider_recency_profile
+        )
+    )
     automation_paths = DailyEodAutomationPaths(
         data_root=args.data_root,
         phase1a_audit=args.phase1a_audit,
@@ -117,21 +126,28 @@ def main(argv: list[str] | None = None) -> int:
         ),
         snapshot_generated_at=args.snapshot_generated_at,
         bundle_built_at=args.bundle_built_at,
+        readiness_policy=readiness_policy,
     )
     result = None
     try:
         capabilities = (
-            _load_authorized_capabilities(args, automation_paths)
+            _load_authorized_capabilities(
+                args, automation_paths, readiness_policy
+            )
             if args.enable_authorized_capabilities
             else None
         )
         publication_capability = (
-            _load_market_intelligence_apply_capability(args, automation_paths)
+            _load_market_intelligence_apply_capability(
+                args, automation_paths, readiness_policy
+            )
             if args.apply_market_intelligence
             else None
         )
         snapshot_publication_capability = (
-            _load_dashboard_snapshot_apply_capability(args, automation_paths)
+            _load_dashboard_snapshot_apply_capability(
+                args, automation_paths, readiness_policy
+            )
             if args.apply_dashboard_snapshot
             else None
         )
@@ -146,7 +162,9 @@ def main(argv: list[str] | None = None) -> int:
             else None
         )
         email_delivery = (
-            _load_email_delivery(args) if args.deliver_alert_email else None
+            _load_email_delivery(args, readiness_policy)
+            if args.deliver_alert_email
+            else None
         )
         with _network_boundary(
             enabled=(
@@ -280,6 +298,7 @@ def main(argv: list[str] | None = None) -> int:
 def _load_authorized_capabilities(
     args: argparse.Namespace,
     automation_paths: DailyEodAutomationPaths,
+    readiness_policy: DailyEodReadinessPolicy,
 ) -> DailyEodAuthorizedCapabilities:
     source_root = _source_repository_root()
     host_config = read_host_runtime_config(
@@ -295,6 +314,7 @@ def _load_authorized_capabilities(
     verified = verify_dell_runtime(
         config=host_config,
         source_repository_root=source_root,
+        readiness_policy=readiness_policy,
     )
     if (
         Path(host_config.data_root) != args.data_root
@@ -328,6 +348,7 @@ def _load_authorized_capabilities(
 
 def _load_email_delivery(
     args: argparse.Namespace,
+    readiness_policy: DailyEodReadinessPolicy,
 ) -> tuple[DailyEodAlertCustodyConfig, DailyEodEmailDeliveryCapability]:
     source_root = _source_repository_root()
     host_config = read_host_runtime_config(
@@ -339,6 +360,7 @@ def _load_email_delivery(
     verified = verify_dell_runtime(
         config=host_config,
         source_repository_root=source_root,
+        readiness_policy=readiness_policy,
     )
     if (
         Path(host_config.data_root) != args.data_root
@@ -379,6 +401,7 @@ def _load_email_delivery(
 def _load_market_intelligence_apply_capability(
     args: argparse.Namespace,
     automation_paths: DailyEodAutomationPaths,
+    readiness_policy: DailyEodReadinessPolicy,
 ) -> DailyEodMarketIntelligenceApplyCapability:
     source_root = _source_repository_root()
     host_config = read_host_runtime_config(
@@ -394,6 +417,7 @@ def _load_market_intelligence_apply_capability(
     verify_dell_runtime(
         config=host_config,
         source_repository_root=source_root,
+        readiness_policy=readiness_policy,
     )
     if (
         Path(host_config.data_root) != args.data_root
@@ -424,6 +448,7 @@ def _load_market_intelligence_apply_capability(
 def _load_dashboard_snapshot_apply_capability(
     args: argparse.Namespace,
     automation_paths: DailyEodAutomationPaths,
+    readiness_policy: DailyEodReadinessPolicy,
 ) -> DailyEodDashboardSnapshotApplyCapability:
     source_root = _source_repository_root()
     host_config = read_host_runtime_config(
@@ -439,6 +464,7 @@ def _load_dashboard_snapshot_apply_capability(
     verify_dell_runtime(
         config=host_config,
         source_repository_root=source_root,
+        readiness_policy=readiness_policy,
     )
     if (
         Path(host_config.data_root) != args.data_root
@@ -525,6 +551,11 @@ def _parser() -> argparse.ArgumentParser:
         "--latest-canonical-session", required=True, type=date.fromisoformat
     )
     parser.add_argument("--checked-at", required=True, type=datetime.fromisoformat)
+    parser.add_argument(
+        "--provider-recency-profile",
+        choices=tuple(item.value for item in ProviderRecencyProfile),
+        default=ProviderRecencyProfile.MASSIVE_STOCKS_BASIC_END_OF_DAY.value,
+    )
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--run-root", required=True, type=Path)
     parser.add_argument("--package", required=True, type=Path)

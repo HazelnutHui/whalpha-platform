@@ -178,6 +178,7 @@ def record_acquisition_operator_review(
             acquisition_action=config.acquisition_action,
             attempts=attempts,
             operator_reviews=(*prior_reviews, review),
+            policy=config.readiness_policy,
         )
         if (
             purpose is OperatorReviewPurpose.INITIAL_EOD_AVAILABILITY

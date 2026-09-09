@@ -11,6 +11,7 @@ from types import SimpleNamespace
 import pytest
 
 from tip_api.services import daily_eod_scheduler_systemd as systemd
+from tip_api.services.daily_eod_readiness import ProviderRecencyProfile
 
 
 REVISION = "a" * 40
@@ -81,6 +82,9 @@ def test_candidate_is_exact_read_only_and_default_disabled(tmp_path) -> None:
         f"--expected-python-executable {Path(sys.executable).resolve()}" in service
     )
     assert "--expected-checkout-mode main" in service
+    assert (
+        "--provider-recency-profile massive_stocks_basic_end_of_day" in service
+    )
     assert "--review-enabled-candidate" not in service
     assert "NoNewPrivileges=true" in service
     assert "ProtectSystem=strict" in service
@@ -92,6 +96,27 @@ def test_candidate_is_exact_read_only_and_default_disabled(tmp_path) -> None:
     assert "OnCalendar=Mon..Fri *-*-* 13:30:00 America/New_York" in timer
     assert "OnCalendar=Mon..Fri *-*-* 16:30:00 America/New_York" in timer
     assert "Persistent=true" in timer
+
+
+def test_candidate_binds_paid_recency_profile_into_read_only_unit(tmp_path) -> None:
+    candidate = systemd.build_scheduler_systemd_candidate(
+        config_id="dell-systemd-starter-profile",
+        repository_root=repository(tmp_path),
+        implementation_revision=REVISION,
+        python_executable=Path(sys.executable).resolve(),
+        provider_recency_profile=(
+            ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+        ),
+    )
+
+    service = systemd.render_service_unit(candidate)
+    assert candidate.provider_recency_profile is (
+        ProviderRecencyProfile.MASSIVE_STOCKS_DELAYED_15_MINUTES
+    )
+    assert (
+        "--provider-recency-profile massive_stocks_delayed_15_minutes"
+        in service
+    )
 
 
 @pytest.mark.skipif(

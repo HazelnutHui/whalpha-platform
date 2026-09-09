@@ -1,5 +1,7 @@
 # Documentation Index
 
+- [Paid Provider Recency ADR](decisions/0188-bind-paid-provider-recency-through-the-daily-chain.md): carries an explicit Basic/delayed/realtime policy through readiness, custody, host verification, and the read-only timer without treating plan recency as data finality.
+
 - [Bounded Daily Offline Run ADR](decisions/0180-chain-successful-offline-transitions-in-one-bounded-run.md): chains only formally successful Dell-local offline actions under finite action/time budgets while preserving per-stage custody and every external boundary.
 - [Daily EOD Bounded Offline Run V1](data-contracts/daily-eod-bounded-offline-run-v1.md): exact progress, stop, evidence, CLI, and zero-external-authority contract.
 

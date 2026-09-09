@@ -264,6 +264,7 @@ class DailyEodAuthorizedCapabilities:
             data_root=self._config.data_root,
             run_root=self._config.run_root,
             automation_paths=self._config.automation_paths,
+            readiness_policy=context.acquisition.readiness_policy,
         )
         reservation = self._apply_reserver(
             config=apply_config,
