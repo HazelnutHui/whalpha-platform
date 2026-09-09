@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Callable
 
 from tip_api.services.daily_eod_acquisition_custody import (
@@ -29,6 +28,11 @@ from tip_api.services.daily_eod_run_journal import (
     locked_daily_eod_run_journal,
     new_attempt_id,
     unresolved_started_event,
+)
+from tip_api.services.offline_artifact_custody import (
+    DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+    OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_location,
 )
 
 
@@ -95,13 +99,20 @@ def record_acquisition_operator_review(
         or not isinstance(purpose, OperatorReviewPurpose)
         or not isinstance(disposition, OperatorReviewDisposition)
         or not isinstance(evidence_code, OperatorReviewEvidenceCode)
-        or not config.package_path.is_absolute()
-        or config.package_path.parent != Path("/tmp")
-        or config.package_path.name.startswith(".")
     ):
         raise DailyEodAcquisitionOperatorReviewError(
             "operator review inputs are invalid"
         )
+    try:
+        validate_daily_eod_data_artifact_location(
+            config.package_path,
+            persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+            expected_session=config.target_session,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise DailyEodAcquisitionOperatorReviewError(
+            "operator review package custody is invalid"
+        ) from exc
     if (
         purpose is OperatorReviewPurpose.INITIAL_EOD_AVAILABILITY
         and disposition is OperatorReviewDisposition.AUTHORIZE_ONE_FETCH_AFTER

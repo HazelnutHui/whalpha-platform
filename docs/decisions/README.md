@@ -325,3 +325,5 @@ Each ADR should include:
 - [0177: Project Sparse Split Adjustments Only for Affected EOD Rows](0177-project-sparse-split-adjustments-only-for-affected-eod-rows.md)
 - [0178: Publish Sparse Split Adjustments with Exact Plan/Apply](0178-publish-sparse-split-adjustments-with-exact-plan-apply.md)
 - [0179: Separate Equity Cost Mechanics from Execution Evidence](0179-separate-equity-cost-mechanics-from-execution-evidence.md)
+- [0180: Chain Successful Offline Transitions in One Bounded Run](0180-chain-successful-offline-transitions-in-one-bounded-run.md)
+- [0181: Retain Daily Data Custody in the Session Workspace](0181-retain-daily-data-custody-in-the-session-workspace.md)

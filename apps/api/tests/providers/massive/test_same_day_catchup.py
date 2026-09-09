@@ -5,6 +5,7 @@ import shutil
 import socket
 from datetime import UTC, date, datetime
 from pathlib import Path
+from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -160,6 +161,50 @@ def test_public_fetch_package_evidence_formally_rereads_without_payload(tmp_path
     assert len(evidence.package_manifest_sha256) == 64
     assert len(evidence.package_content_sha256) == 64
     assert "results" not in evidence.model_dump()
+
+
+def test_exact_persistent_session_custody_supports_fetch_and_plan_reread(
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 8, 21)
+    owner = Path("/var/tmp") / f"whalpha-daily-custody-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session_root = sessions / f"session_date={session.isoformat()}"
+    for path in (owner, workspace, sessions, session_root):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    package = session_root / "acquisition-package"
+    plan_path = session_root / "canonical-apply-plan.json"
+    data_root = tmp_path / "persistent-custody-data"
+    data_root.mkdir()
+    try:
+        fetch_identity_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=FakeTransport(reference_pages(session)),
+            session_date=session,
+            package_path=package,
+            fetched_at=FETCHED_AT,
+            rate_limiter=no_wait_limiter(),
+        )
+        plan = build_identity_plan(
+            package_path=package,
+            plan_path=plan_path,
+            data_root=data_root,
+        )
+        evidence = read_catchup_approval_plan_evidence(
+            plan_path=plan_path,
+            approved_plan_sha256=file_sha256(plan_path),
+            expected_operation="identity",
+            expected_session=session,
+            expected_data_root=data_root,
+        )
+        assert evidence.fetch_package_path == str(package)
+        assert plan_path.is_file()
+        assert plan_path.with_suffix(".artifacts").is_dir()
+        assert plan.plan_content_sha256 == evidence.plan_content_sha256
+    finally:
+        shutil.rmtree(owner)
 
 
 def test_validated_identity_reference_package_exposes_only_sanitized_pages(tmp_path) -> None:

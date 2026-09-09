@@ -40,6 +40,10 @@ from tip_api.services.daily_eod_run_journal import (
     new_attempt_id,
     unresolved_started_event,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_pair,
+)
 
 
 CONTRACT_VERSION = "daily-eod-canonical-apply-custody/1.0"
@@ -485,19 +489,16 @@ def _validate_config(config: DailyEodCanonicalApplyConfig) -> None:
         or _is_within(config.run_root, Path("/data"))
     ):
         raise DailyEodCanonicalApplyCustodyError("canonical apply roots are invalid")
-    for path in (config.package_path, config.approval_plan_path):
-        if (
-            not path.is_absolute()
-            or path.parent != Path("/tmp")
-            or path.name.startswith(".")
-        ):
-            raise DailyEodCanonicalApplyCustodyError(
-                "canonical apply custody path is invalid"
-            )
-    if config.package_path == config.approval_plan_path:
-        raise DailyEodCanonicalApplyCustodyError(
-            "canonical package and plan paths must differ"
+    try:
+        validate_daily_eod_data_artifact_pair(
+            package_path=config.package_path,
+            plan_path=config.approval_plan_path,
+            expected_session=config.target_session,
         )
+    except OfflineArtifactCustodyError as exc:
+        raise DailyEodCanonicalApplyCustodyError(
+            "canonical apply custody path is invalid"
+        ) from exc
     if not _is_fingerprint(config.approved_plan_sha256) or not _is_fingerprint(
         config.expected_current_state_fingerprint
     ):

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import shutil
 from dataclasses import replace
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 
+from tip_api.services import daily_eod_authorized_capabilities as capabilities_module
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.same_day_catchup import (
     CatchupApprovalPlanEvidenceV1,
@@ -185,6 +188,34 @@ def context(*, action: NextAction, apply: bool) -> AuthorizedTransitionContext:
         readiness_plan=readiness,
         operation=f"{'apply' if apply else 'fetch'}_{subject}",
     )
+
+
+def test_context_accepts_exact_persistent_package_plan_pair() -> None:
+    owner = Path("/var/tmp") / f"whalpha-capability-custody-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session = sessions / f"session_date={TARGET.isoformat()}"
+    for path in (owner, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    base = context(action=NextAction.PREPARE_EOD_CATCHUP, apply=True)
+    persistent = replace(
+        base,
+        acquisition=replace(
+            base.acquisition,
+            package_path=session / "acquisition-package",
+        ),
+        approval_plan_path=session / "canonical-apply-plan.json",
+    )
+    try:
+        operation = capabilities_module._validate_context(
+            capability_config(),
+            persistent,
+            apply=True,
+        )
+        assert operation is StandingOperation.APPLY_EOD
+    finally:
+        shutil.rmtree(owner)
 
 
 def event(event_type: str, *, fingerprint: str = "f" * 64) -> DailyEodRunEvent:

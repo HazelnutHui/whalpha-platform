@@ -16,6 +16,11 @@ from tip_api.providers.massive.same_day_catchup import (
     read_fetch_package_evidence,
 )
 from tip_api.services.daily_eod_automation import NextAction
+from tip_api.services.offline_artifact_custody import (
+    DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+    OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_location,
+)
 from tip_api.services.daily_eod_readiness import (
     ACQUISITION_ACTIONS,
     AcquisitionAttempt,
@@ -567,12 +572,16 @@ def _validate_config(
         raise DailyEodAcquisitionCustodyError("run root must be absolute")
     if _is_within(config.run_root, Path("/data")):
         raise DailyEodAcquisitionCustodyError("run root must remain outside /data")
-    if (
-        not config.package_path.is_absolute()
-        or config.package_path.parent != Path("/tmp")
-        or config.package_path.name.startswith(".")
-    ):
-        raise DailyEodAcquisitionCustodyError("fetch package must be a direct non-hidden child of /tmp")
+    try:
+        validate_daily_eod_data_artifact_location(
+            config.package_path,
+            persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+            expected_session=config.target_session,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise DailyEodAcquisitionCustodyError(
+            "fetch package custody path is invalid"
+        ) from exc
     if require_new_package and (
         os.path.lexists(config.package_path)
         or os.path.lexists(_staging_path(config.package_path))

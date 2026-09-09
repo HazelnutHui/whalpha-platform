@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Make daily data custody restart-safe
+
+- Accepted ADR 0181 and connected the exact persistent-session
+  `acquisition-package` / `canonical-apply-plan.json` pair through fetch/plan,
+  same-day Identity source custody, acquisition and operator review, canonical
+  Apply custody, coordinator, authorized capabilities, and standing
+  authorization.
+- Persistent pairs must share the requested owner-only session, use exact
+  governed names, avoid symlinks/Git/`/tmp`/`/data`, and keep prepared files
+  inside `canonical-apply-plan.artifacts`. Mixed or cross-session custody fails
+  closed.
+- Legacy `/tmp` package and plan evidence remains readable, including renamed
+  historical plans. No provider request, `/data` write, runtime migration,
+  publication, deployment, credential access, or timer change was performed.
+- All 176 focused and related regressions passed. The activated 2026-09-08
+  session layout passed the new validator without creating a package or plan;
+  `/data` remained 4,204 files / 2,151,679,313 bytes with zero symlinks.
+
 ## 2026-09-09 — Activate the persistent daily runtime workspace
 
 - Activated one stable owner-only Dell workspace outside Git, `/tmp`, and

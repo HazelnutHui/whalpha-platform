@@ -681,6 +681,17 @@ Existing direct `/tmp` children remain accepted only for historical and
 controlled one-shot compatibility. No persistent root, repeated cadence,
 coordinator capability, or new systemd unit is installed by ADR 0081.
 
+ADR 0181 completes the forward data-artifact path boundary. The only persistent
+same-session data paths are `acquisition-package` and
+`canonical-apply-plan.json`; the latter owns the exact
+`canonical-apply-plan.artifacts` preparation directory. Provider construction,
+same-day Identity source normalization, acquisition/review custody, canonical
+Apply custody, coordinator, authorized capabilities, and standing
+authorization all enforce the same pair. A temporary path cannot be paired
+with a persistent path, and persistent names or sessions cannot vary. Legacy
+`/tmp` evidence remains readable. This repository change neither creates a
+live package nor installs/rebinds the scheduler.
+
 Repository source now emits Automation Plan 1.6. It retains Plan 1.5's
 distinct Sector Rotation audit derived beside Phase 1a, validates its exact session,
 Phase 1a fingerprint, and history source, and requires MI Approval Plan 1.3 to

@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import shutil
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 
+from tip_api.services import daily_eod_coordinator as coordinator_module
 from tip_api.services.daily_eod_automation import (
     ArtifactObservation,
     ArtifactStatus,
@@ -73,6 +76,25 @@ def config(*, latest: date = LATEST) -> DailyEodCoordinatorConfig:
         package_path=Path("/tmp/daily-package"),
         approval_plan_path=Path("/tmp/daily-plan.json"),
     )
+
+
+def test_config_accepts_exact_persistent_package_plan_pair() -> None:
+    owner = Path("/var/tmp") / f"whalpha-coordinator-custody-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session = sessions / f"session_date={TARGET.isoformat()}"
+    for path in (owner, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    persistent = replace(
+        config(),
+        package_path=session / "acquisition-package",
+        approval_plan_path=session / "canonical-apply-plan.json",
+    )
+    try:
+        coordinator_module._validate_config(persistent)
+    finally:
+        shutil.rmtree(owner)
 
 
 def plan(

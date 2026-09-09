@@ -1,4 +1,4 @@
-"""Tmp-only normalized custody for profile-bound historical Identity sources."""
+"""Governed normalized custody for profile-bound historical Identity sources."""
 
 from __future__ import annotations
 
@@ -61,6 +61,12 @@ from tip_api.services.historical_universe_membership_shadow import (
     apply_historical_identity_rebuild_profile,
     inspect_historical_identity_package_equivalence,
     read_identity_replay_ingested_at,
+)
+from tip_api.services.offline_artifact_custody import (
+    DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+    OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_location,
+    validate_offline_artifact_location,
 )
 
 
@@ -378,21 +384,30 @@ def build_same_day_identity_source_custody_candidate(
     canonical_identity_fingerprint: str,
     canonical_resolver_fingerprint: str,
 ) -> HistoricalIdentitySourceCustodyWriteResult:
-    """Build a direct-bound daily source partition below an owner-only /tmp root."""
+    """Build a direct-bound daily source partition in governed offline custody."""
 
-    candidate_root = _validated_tmp_output_root(output_root)
+    manifest = package.manifest
+    candidate_root = _validated_same_day_output_root(output_root)
+    try:
+        validate_daily_eod_data_artifact_location(
+            package_path,
+            persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+            expected_session=manifest.session_date,
+            allow_tmp_descendants=True,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise HistoricalIdentitySourceCustodyError(
+            "daily Identity source package custody is invalid"
+        ) from exc
     resolved_package = package_path.resolve(strict=True)
     if (
-        not package_path.is_absolute()
+        package_path.is_symlink()
+        or not package_path.is_dir()
         or resolved_package != package_path
-        or package_path.is_symlink()
-        or Path("/tmp").resolve(strict=True) not in resolved_package.parents
     ):
         raise HistoricalIdentitySourceCustodyError(
-            "daily Identity source package must be below /tmp"
+            "daily Identity source package is unavailable"
         )
-    _reject_symlink_chain(resolved_package, Path("/tmp").resolve(strict=True))
-    manifest = package.manifest
     records, artifacts = _normalize_package_pages(
         pages=package.pages,
         package_artifacts=manifest.artifacts,
@@ -719,9 +734,9 @@ def read_historical_identity_source_custody_candidate(
     provider: str,
     session_date: date,
 ) -> HistoricalIdentitySourceCustodyReadResult:
-    """Formally reread one owner-only tmp candidate partition."""
+    """Formally reread one owner-only governed candidate partition."""
 
-    candidate_root = _validated_tmp_output_root(root)
+    candidate_root = _validated_same_day_output_root(root)
     partition = _partition_path(
         candidate_root,
         provider=provider,
@@ -1348,6 +1363,30 @@ def _validated_tmp_output_root(path: Path) -> Path:
             "source-custody output root must be owner-only"
         )
     return resolved
+
+
+def _validated_same_day_output_root(path: Path) -> Path:
+    if path.is_relative_to(Path("/tmp")):
+        return _validated_tmp_output_root(path)
+    try:
+        validate_offline_artifact_location(
+            path,
+            persistent_names={"canonical-apply-plan.artifacts"},
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise HistoricalIdentitySourceCustodyError(
+            "same-day source-custody output root is invalid"
+        ) from exc
+    if (
+        path.is_symlink()
+        or not path.is_dir()
+        or path.resolve(strict=True) != path
+        or stat.S_IMODE(path.stat().st_mode) != 0o700
+    ):
+        raise HistoricalIdentitySourceCustodyError(
+            "same-day source-custody output root is unavailable"
+        )
+    return path
 
 
 def _validated_canonical_data_root(path: Path) -> Path:

@@ -18,6 +18,12 @@ from pydantic_core import to_jsonable_python
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.services.daily_eod_automation import NextAction
 from tip_api.services.market_calendar import ExchangeCalendar
+from tip_api.services.offline_artifact_custody import (
+    DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+    OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_location,
+    validate_daily_eod_data_artifact_pair,
+)
 
 
 CONTRACT_VERSION = "daily-eod-standing-authorization/1.0"
@@ -187,8 +193,16 @@ class DailyEodAuthorizedTransitionRequestV1(BaseModel):
         ):
             raise ValueError("authorized transition custody binding is malformed")
         package = Path(self.package_path)
-        if not _is_direct_tmp_path(package):
-            raise ValueError("authorized transition package path is invalid")
+        try:
+            validate_daily_eod_data_artifact_location(
+                package,
+                persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+                expected_session=self.target_session,
+            )
+        except OfflineArtifactCustodyError as exc:
+            raise ValueError(
+                "authorized transition package path is invalid"
+            ) from exc
         package_fields = (
             self.package_manifest_sha256,
             self.package_content_sha256,
@@ -208,12 +222,18 @@ class DailyEodAuthorizedTransitionRequestV1(BaseModel):
                 raise ValueError("apply authorization requires an unresolved apply reservation")
             if not all(_is_fingerprint(value) for value in package_fields):
                 raise ValueError("apply authorization package hashes are malformed")
-            if self.approval_plan_path is None or not _is_direct_tmp_path(
-                Path(self.approval_plan_path)
-            ):
+            if self.approval_plan_path is None:
                 raise ValueError("apply authorization plan path is invalid")
-            if self.approval_plan_path == self.package_path:
-                raise ValueError("apply plan and fetch package paths must differ")
+            try:
+                validate_daily_eod_data_artifact_pair(
+                    package_path=package,
+                    plan_path=Path(self.approval_plan_path),
+                    expected_session=self.target_session,
+                )
+            except OfflineArtifactCustodyError as exc:
+                raise ValueError(
+                    "apply authorization plan path is invalid"
+                ) from exc
             if not all(_is_fingerprint(value) for value in plan_fields[1:]):
                 raise ValueError("apply authorization plan binding is malformed")
         return self
@@ -455,14 +475,6 @@ def _aware_utc(value: datetime) -> datetime:
     if value.tzinfo is None or value.utcoffset() is None:
         raise ValueError("standing authorization timestamps must be timezone-aware")
     return value.astimezone(UTC)
-
-
-def _is_direct_tmp_path(path: Path) -> bool:
-    return (
-        path.is_absolute()
-        and path.parent == Path("/tmp")
-        and not path.name.startswith(".")
-    )
 
 
 def _is_within(path: Path, root: Path) -> bool:

@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import shutil
 from datetime import UTC, date, datetime
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
@@ -88,6 +90,32 @@ def test_reserves_without_executing_provider_request(tmp_path) -> None:
     assert events[0].details["attempt_number"] == 1
     assert events[0].details["authorization_file_sha256"] == "c" * 64
     assert events[0].details["authorization_content_sha256"] == "d" * 64
+
+
+def test_reservation_accepts_exact_persistent_session_package(tmp_path) -> None:
+    owner = Path("/var/tmp") / f"whalpha-acquisition-custody-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session = sessions / f"session_date={TARGET.isoformat()}"
+    for path in (owner, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    base = _config(tmp_path)
+    persistent = custody.DailyEodAcquisitionConfig(
+        target_session=base.target_session,
+        latest_canonical_session=base.latest_canonical_session,
+        acquisition_action=base.acquisition_action,
+        package_path=session / "acquisition-package",
+        run_root=base.run_root,
+    )
+    try:
+        result = _reserve(persistent)
+        assert result.outcome == "reserved"
+        assert result.event.details["package_path"] == str(
+            session / "acquisition-package"
+        )
+    finally:
+        shutil.rmtree(owner)
 
 
 def test_stale_readiness_or_unresolved_attempt_rejects_duplicate(tmp_path) -> None:
@@ -368,7 +396,7 @@ def test_reservation_rejects_old_plan_unsafe_package_and_offline_action(tmp_path
         package_path=tmp_path / "not-tmp-direct",
         run_root=config.run_root,
     )
-    with pytest.raises(custody.DailyEodAcquisitionCustodyError, match="/tmp"):
+    with pytest.raises(custody.DailyEodAcquisitionCustodyError, match="custody"):
         _reserve(unsafe)
     offline = custody.DailyEodAcquisitionConfig(
         target_session=TARGET,

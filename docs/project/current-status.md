@@ -190,6 +190,17 @@ staging residue. An execute-enabled 2026-09-08 preflight passed and stopped at
 `eod_required` with zero actions, requests, or Production writes. The old
 sources remain retained; no timer or coordinator has been rebound.
 
+ADR 0181 now permits the exact per-session `acquisition-package` and
+`canonical-apply-plan.json` paths to cross every data-transition boundary,
+including same-day Identity source normalization, acquisition/operator review,
+canonical Apply, coordinator, authorized capabilities, and standing
+authorization. The pair is same-session, owner-only, non-symlinked, and cannot
+mix persistent and legacy `/tmp` custody. This closes the repository path
+inconsistency but has not fetched, planned, applied, or migrated a real runtime
+package. The 176 focused and related regressions pass, and the activated
+2026-09-08 session directory passes the new path validator without creating
+either artifact.
+
 The timer correctly identified 2026-09-08 as the oldest missing session. The
 guarded Identity fetch/plan/Apply completed with 14 requests and no overwrite;
 the initial EOD request, a bounded 22:52 UTC post-close retry, and one final

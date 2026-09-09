@@ -1,13 +1,18 @@
 from __future__ import annotations
 
 import shutil
+from datetime import date
 from pathlib import Path
 from uuid import uuid4
 
 import pytest
 
 from tip_api.services.offline_artifact_custody import (
+    DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+    DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
     OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_location,
+    validate_daily_eod_data_artifact_pair,
     validate_offline_artifact_child,
     validate_offline_artifact_location,
 )
@@ -102,3 +107,64 @@ def test_accepts_exact_persistent_child_but_rejects_wrong_child() -> None:
             )
     finally:
         shutil.rmtree(owner)
+
+
+def test_accepts_exact_persistent_daily_data_pair_bound_to_session() -> None:
+    owner, session = _persistent_session()
+    try:
+        package = session / DAILY_EOD_ACQUISITION_PACKAGE_NAME
+        plan = session / DAILY_EOD_CANONICAL_APPLY_PLAN_NAME
+        expected = date(2026, 8, 28)
+        assert validate_daily_eod_data_artifact_pair(
+            package_path=package,
+            plan_path=plan,
+            expected_session=expected,
+        ) == (package, plan)
+        assert validate_daily_eod_data_artifact_location(
+            package,
+            persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+            expected_session=expected,
+        ) == package
+    finally:
+        shutil.rmtree(owner)
+
+
+def test_rejects_mixed_hidden_or_wrong_session_daily_data_custody() -> None:
+    owner, session = _persistent_session()
+    try:
+        package = session / DAILY_EOD_ACQUISITION_PACKAGE_NAME
+        plan = session / DAILY_EOD_CANONICAL_APPLY_PLAN_NAME
+        with pytest.raises(OfflineArtifactCustodyError, match="cannot mix"):
+            validate_daily_eod_data_artifact_pair(
+                package_path=package,
+                plan_path=Path("/tmp/legacy-plan.json"),
+                expected_session=date(2026, 8, 28),
+            )
+        with pytest.raises(OfflineArtifactCustodyError, match="session differs"):
+            validate_daily_eod_data_artifact_location(
+                plan,
+                persistent_name=DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+                expected_session=date(2026, 8, 27),
+            )
+        with pytest.raises(OfflineArtifactCustodyError, match="hidden"):
+            validate_daily_eod_data_artifact_location(
+                session / ".canonical-apply-plan.json",
+                persistent_name=DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+            )
+    finally:
+        shutil.rmtree(owner)
+
+
+def test_rejects_persistent_daily_data_custody_below_data() -> None:
+    path = (
+        Path("/data")
+        / "daily-eod"
+        / "sessions"
+        / "session_date=2026-08-28"
+        / DAILY_EOD_ACQUISITION_PACKAGE_NAME
+    )
+    with pytest.raises(OfflineArtifactCustodyError, match="below /data"):
+        validate_daily_eod_data_artifact_location(
+            path,
+            persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+        )

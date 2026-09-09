@@ -303,6 +303,14 @@ stopped at `eod_required` with zero actions. The legacy sources remain
 unchanged; the new root is the forward runtime candidate, not an installed
 scheduler binding.
 
+ADR 0181 closes the code-level package/plan custody mismatch: future live data
+transitions may use only the exact `acquisition-package` and
+`canonical-apply-plan.json` pair in their owner-only session directory, while
+legacy `/tmp` evidence remains readable. All provider, Identity-source,
+acquisition, Apply, coordinator, capability, and standing-authorization
+boundaries enforce the same session and custody mode. No real persistent
+package/plan has yet been created, and no timer authority changed.
+
 The manual guarded chain works end to end:
 
 ```text

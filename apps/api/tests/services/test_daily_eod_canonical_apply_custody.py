@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import shutil
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
+from tip_api.services import daily_eod_canonical_apply_custody as custody_module
 from tip_api.providers.massive.same_day_catchup import (
     CatchupApprovalPlanEvidenceV1,
 )
@@ -95,6 +98,27 @@ def config(tmp_path: Path, root: Path) -> DailyEodCanonicalApplyConfig:
         run_root=root,
         automation_paths=paths,
     )
+
+
+def test_config_accepts_exact_persistent_package_plan_pair(tmp_path: Path) -> None:
+    owner = Path("/var/tmp") / f"whalpha-canonical-custody-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session = sessions / f"session_date={TARGET.isoformat()}"
+    for path in (owner, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    root = run_root(tmp_path)
+    base = config(tmp_path, root)
+    persistent = replace(
+        base,
+        package_path=session / "acquisition-package",
+        approval_plan_path=session / "canonical-apply-plan.json",
+    )
+    try:
+        custody_module._validate_config(persistent)
+    finally:
+        shutil.rmtree(owner)
 
 
 def plan_evidence(

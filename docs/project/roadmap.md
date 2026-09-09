@@ -73,6 +73,13 @@ timeline. Then compose dynamic data and external serving
 capabilities separately; do not mislabel the offline runner as full unattended
 publication.
 
+ADR 0181 also closes the restartability gap before the offline chain: the exact
+per-session acquisition package and canonical Apply plan are now accepted
+across every data-transition boundary, with strict same-session containment and
+legacy `/tmp` compatibility. The next live-session rehearsal should use these
+persistent paths and prove package/plan recovery; no separate path redesign is
+still required.
+
 ## Priority 2 — Governed historical research inputs
 
 Connect canonical history to research without projecting current membership

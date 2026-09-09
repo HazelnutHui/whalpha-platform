@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 from pydantic import ValidationError
@@ -99,6 +101,27 @@ def authorize(operation: StandingOperation, **overrides):
     }
     values.update(overrides)
     return authorize_standing_transition(**values)
+
+
+def test_transition_request_accepts_exact_persistent_session_custody() -> None:
+    owner = Path("/var/tmp") / f"whalpha-standing-request-test-{uuid4().hex}"
+    workspace = owner / "daily-eod"
+    sessions = workspace / "sessions"
+    session = sessions / "session_date=2026-08-27"
+    for path in (owner, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    try:
+        result = request(
+            StandingOperation.APPLY_EOD,
+            package_path=str(session / "acquisition-package"),
+            approval_plan_path=str(session / "canonical-apply-plan.json"),
+        )
+        assert result.package_path.endswith("/acquisition-package")
+        assert result.approval_plan_path is not None
+        assert result.approval_plan_path.endswith("/canonical-apply-plan.json")
+    finally:
+        shutil.rmtree(owner)
 
 
 @pytest.mark.parametrize(

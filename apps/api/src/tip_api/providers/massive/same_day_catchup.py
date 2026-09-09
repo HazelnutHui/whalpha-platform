@@ -1,8 +1,9 @@
 """Approval-bound same-day Massive Identity and canonical EOD publication.
 
-Only fetch mode can use a provider transport.  Planning and approved apply are
-strictly offline.  Provider JSON is held in a caller-selected private /tmp
-package; production receives only the existing canonical Parquet contracts.
+Only fetch mode can use a provider transport. Planning and approved apply are
+strictly offline. Provider JSON is held in legacy temporary custody or the
+exact private daily workspace; production receives only the existing canonical
+Parquet contracts.
 """
 
 from __future__ import annotations
@@ -49,6 +50,13 @@ from tip_api.providers.massive.instrument_master_snapshot import (
 )
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.transport import MassiveHttpTransport, MassiveUrllibTransport
+from tip_api.services.offline_artifact_custody import (
+    DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+    DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+    OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_location,
+    validate_daily_eod_data_artifact_pair,
+)
 
 APPROVED_PRODUCTION_ROOT = Path("/data/trading-intelligence-platform")
 PACKAGE_SCHEMA_VERSION = "1.0"
@@ -219,7 +227,7 @@ def fetch_identity_package(
     rate_limiter: FixedIntervalRateLimiter | None = None,
 ) -> FetchPackageManifestV1:
     _validate_fetch_config(config)
-    package_path = _new_tmp_directory_path(package_path)
+    package_path = _new_fetch_package_path(package_path, session_date=session_date)
     pages, request_count, complete = _fetch_reference_pages(
         config=config,
         transport=transport,
@@ -256,7 +264,7 @@ def fetch_eod_package(
     fetched_at: datetime | None = None,
 ) -> FetchPackageManifestV1:
     _validate_fetch_config(config)
-    package_path = _new_tmp_directory_path(package_path)
+    package_path = _new_fetch_package_path(package_path, session_date=session_date)
     endpoint = ENDPOINT_TEMPLATE.format(session_date=session_date.isoformat())
     payload = transport.get_json(
         endpoint,
@@ -370,7 +378,11 @@ def read_catchup_approval_plan_evidence(
 def build_identity_plan(*, package_path: Path, plan_path: Path, data_root: Path) -> CatchupApprovalPlanV1:
     package, pages = _read_fetch_package(package_path, expected_type="identity_reference")
     data_root = _validate_data_root(data_root)
-    plan_path, artifact_root = _new_plan_paths(plan_path)
+    plan_path, artifact_root = _new_plan_paths(
+        plan_path,
+        package_path=package_path,
+        session_date=package.session_date,
+    )
     raw_records: list[Mapping[str, object]] = []
     for page in pages:
         raw_records.extend(_results(page))
@@ -486,7 +498,11 @@ def build_identity_source_plan(
         expected_type="identity_reference",
     )
     data_root = _validate_data_root(data_root)
-    plan_path, artifact_root = _new_plan_paths(plan_path)
+    plan_path, artifact_root = _new_plan_paths(
+        plan_path,
+        package_path=package_path,
+        session_date=package.session_date,
+    )
     try:
         identity = load_identity_snapshot(
             data_root,
@@ -551,7 +567,11 @@ def build_identity_source_plan(
 def build_eod_plan(*, package_path: Path, plan_path: Path, data_root: Path) -> CatchupApprovalPlanV1:
     package, pages = _read_fetch_package(package_path, expected_type="grouped_daily")
     data_root = _validate_data_root(data_root)
-    plan_path, artifact_root = _new_plan_paths(plan_path)
+    plan_path, artifact_root = _new_plan_paths(
+        plan_path,
+        package_path=package_path,
+        session_date=package.session_date,
+    )
     try:
         identity = load_identity_snapshot(
             data_root, provider_id=MASSIVE_PROVIDER_ID, as_of_date=package.session_date
@@ -667,7 +687,12 @@ def apply_approved_plan(
                         raise SameDayCatchupError("completed target already exists")
                     _verify_target_files(target, refs)
                     continue
-                _publish_target_directory(target, refs, plan.plan_content_sha256)
+                _publish_target_directory(
+                    target,
+                    refs,
+                    plan.plan_content_sha256,
+                    artifact_root=plan_path.with_suffix(".artifacts"),
+                )
                 published += 1
                 if fail_after_target_count is not None and published == fail_after_target_count:
                     raise SameDayCatchupError("injected failure after completed target")
@@ -749,7 +774,7 @@ def _publish_fetch_package(
 def _read_fetch_package(
     path: Path, *, expected_type: Literal["identity_reference", "grouped_daily"]
 ) -> tuple[FetchPackageManifestV1, tuple[Mapping[str, object], ...]]:
-    path = _existing_tmp_directory(path)
+    path = _existing_fetch_package(path)
     manifest_path = path / "package.json"
     _regular_nonsymlink(manifest_path)
     try:
@@ -761,6 +786,12 @@ def _read_fetch_package(
         raise SameDayCatchupError("fetch package content fingerprint mismatch")
     if manifest.package_type != expected_type:
         raise SameDayCatchupError("fetch package type mismatch")
+    _validate_daily_data_artifact(
+        path,
+        persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+        expected_session=manifest.session_date,
+        allow_tmp_descendants=True,
+    )
     expected_endpoint = (
         REFERENCE_TICKERS_PATH
         if expected_type == "identity_reference"
@@ -853,7 +884,7 @@ def _write_plan(
 
 
 def _read_plan(path: Path, approved_sha: str) -> CatchupApprovalPlanV1:
-    path = _existing_tmp_file(path)
+    path = _existing_apply_plan(path)
     if file_sha256(path) != approved_sha:
         raise SameDayCatchupError("approved plan SHA-256 mismatch")
     try:
@@ -863,9 +894,19 @@ def _read_plan(path: Path, approved_sha: str) -> CatchupApprovalPlanV1:
     values = plan.model_dump(mode="json", exclude={"plan_content_sha256"})
     if _plan_content_fingerprint(values) != plan.plan_content_sha256:
         raise SameDayCatchupError("approved plan content fingerprint mismatch")
+    _validate_daily_data_pair(
+        package_path=Path(plan.fetch_package_path),
+        plan_path=path,
+        expected_session=plan.session_date,
+        allow_tmp_descendants=True,
+    )
     _validate_plan_contract(plan)
+    artifact_root = path.with_suffix(".artifacts")
     for artifact in plan.artifacts:
-        source = _existing_tmp_file(Path(artifact.source_path))
+        source = _existing_plan_artifact_file(
+            Path(artifact.source_path),
+            artifact_root=artifact_root,
+        )
         if file_sha256(source) != artifact.sha256 or source.stat().st_size != artifact.size:
             raise SameDayCatchupError("planned artifact custody mismatch")
     return plan
@@ -923,7 +964,10 @@ def _validate_plan_contract(plan: CatchupApprovalPlanV1) -> None:
         raise SameDayCatchupError("approved artifact cardinality mismatch")
 
 def _verify_package_custody(plan: CatchupApprovalPlanV1) -> None:
-    package_path = _existing_tmp_directory(Path(plan.fetch_package_path))
+    package_path = _existing_fetch_package(
+        Path(plan.fetch_package_path),
+        expected_session=plan.session_date,
+    )
     if file_sha256(package_path / "package.json") != plan.fetch_package_manifest_sha256:
         raise SameDayCatchupError("fetch package manifest changed after approval")
     package, _ = _read_fetch_package(
@@ -1016,7 +1060,11 @@ def _validate_atomic_target_recovery_state(
 
 
 def _publish_target_directory(
-    target: Path, refs: tuple[PlannedArtifactV1, ...], plan_fingerprint: str
+    target: Path,
+    refs: tuple[PlannedArtifactV1, ...],
+    plan_fingerprint: str,
+    *,
+    artifact_root: Path,
 ) -> None:
     if not refs:
         raise SameDayCatchupError("approved target has no artifacts")
@@ -1027,7 +1075,10 @@ def _publish_target_directory(
     staging.mkdir(mode=0o755)
     try:
         for ref in refs:
-            source = _existing_tmp_file(Path(ref.source_path))
+            source = _existing_plan_artifact_file(
+                Path(ref.source_path),
+                artifact_root=artifact_root,
+            )
             destination = staging / Path(ref.target_path).name
             shutil.copyfile(source, destination)
             destination.chmod(0o644)
@@ -1272,10 +1323,18 @@ def _plan_content_fingerprint(values: Mapping[str, object]) -> str:
     return sha256_bytes(canonical_json_bytes(normalized))
 
 
-def _new_plan_paths(plan_path: Path) -> tuple[Path, Path]:
-    if not plan_path.is_absolute() or not plan_path.resolve(strict=False).is_relative_to(Path("/tmp")):
-        raise SameDayCatchupError("approval plan must be under /tmp")
-    _reject_tmp_symlink_chain(plan_path)
+def _new_plan_paths(
+    plan_path: Path,
+    *,
+    package_path: Path,
+    session_date: date,
+) -> tuple[Path, Path]:
+    _validate_daily_data_pair(
+        package_path=package_path,
+        plan_path=plan_path,
+        expected_session=session_date,
+        allow_tmp_descendants=True,
+    )
     if plan_path.exists() or plan_path.is_symlink():
         raise SameDayCatchupError("approval plan already exists")
     if not plan_path.parent.is_dir() or plan_path.parent.is_symlink():
@@ -1286,10 +1345,13 @@ def _new_plan_paths(plan_path: Path) -> tuple[Path, Path]:
     return plan_path, artifact_root
 
 
-def _new_tmp_directory_path(path: Path) -> Path:
-    if not path.is_absolute() or not path.resolve(strict=False).is_relative_to(Path("/tmp")):
-        raise SameDayCatchupError("fetch package must be under /tmp")
-    _reject_tmp_symlink_chain(path)
+def _new_fetch_package_path(path: Path, *, session_date: date) -> Path:
+    _validate_daily_data_artifact(
+        path,
+        persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+        expected_session=session_date,
+        allow_tmp_descendants=True,
+    )
     if path.exists() or path.is_symlink():
         raise SameDayCatchupError("fetch package target already exists")
     if not path.parent.is_dir() or path.parent.is_symlink():
@@ -1297,36 +1359,101 @@ def _new_tmp_directory_path(path: Path) -> Path:
     return path
 
 
-def _existing_tmp_directory(path: Path) -> Path:
-    if (
-        not path.is_absolute()
-        or not path.resolve(strict=True).is_relative_to(Path("/tmp"))
-        or path.is_symlink()
-        or not path.is_dir()
-    ):
+def _existing_fetch_package(
+    path: Path,
+    *,
+    expected_session: date | None = None,
+) -> Path:
+    _validate_daily_data_artifact(
+        path,
+        persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+        expected_session=expected_session,
+        allow_tmp_descendants=True,
+    )
+    if path.is_symlink() or not path.is_dir():
         raise SameDayCatchupError("package directory is invalid")
-    _reject_tmp_symlink_chain(path)
     return path
 
 
-def _existing_tmp_file(path: Path) -> Path:
+def _existing_apply_plan(
+    path: Path,
+    *,
+    expected_session: date | None = None,
+) -> Path:
+    _validate_daily_data_artifact(
+        path,
+        persistent_name=DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+        expected_session=expected_session,
+        allow_tmp_descendants=True,
+    )
+    if path.is_symlink() or not path.is_file():
+        raise SameDayCatchupError("approved plan file is invalid")
+    return path
+
+
+def _existing_plan_artifact_file(path: Path, *, artifact_root: Path) -> Path:
+    if artifact_root.is_relative_to(Path("/tmp")):
+        if (
+            not path.is_absolute()
+            or not path.resolve(strict=True).is_relative_to(Path("/tmp"))
+            or path.is_symlink()
+            or not path.is_file()
+        ):
+            raise SameDayCatchupError("approved temporary file is invalid")
+        _reject_symlink_chain(Path("/tmp"), path)
+        return path
     if (
         not path.is_absolute()
-        or not path.resolve(strict=True).is_relative_to(Path("/tmp"))
+        or path == artifact_root
+        or not path.is_relative_to(artifact_root)
+        or artifact_root.is_symlink()
+        or not artifact_root.is_dir()
         or path.is_symlink()
         or not path.is_file()
     ):
-        raise SameDayCatchupError("approved temporary file is invalid")
-    _reject_tmp_symlink_chain(path)
+        raise SameDayCatchupError("planned artifact file is outside custody")
+    _reject_symlink_chain(artifact_root, path)
     return path
 
 
-def _reject_tmp_symlink_chain(path: Path) -> None:
-    current = path
-    while current != Path("/tmp"):
-        if current.exists() and current.is_symlink():
-            raise SameDayCatchupError("symlink in temporary custody path")
-        current = current.parent
+def _validate_daily_data_artifact(
+    path: Path,
+    *,
+    persistent_name: str,
+    expected_session: date | None,
+    allow_tmp_descendants: bool,
+) -> Path:
+    try:
+        return validate_daily_eod_data_artifact_location(
+            path,
+            persistent_name=persistent_name,
+            expected_session=expected_session,
+            allow_tmp_descendants=allow_tmp_descendants,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise SameDayCatchupError(
+            f"daily data artifact custody is invalid: {exc}"
+        ) from exc
+
+
+def _validate_daily_data_pair(
+    *,
+    package_path: Path,
+    plan_path: Path,
+    expected_session: date | None,
+    allow_tmp_descendants: bool,
+) -> tuple[Path, Path]:
+    try:
+        return validate_daily_eod_data_artifact_pair(
+            package_path=package_path,
+            plan_path=plan_path,
+            expected_session=expected_session,
+            allow_tmp_descendants=allow_tmp_descendants,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise SameDayCatchupError(
+            f"daily data package/plan custody is invalid: {exc}"
+        ) from exc
 
 
 def _regular_nonsymlink(path: Path) -> None:

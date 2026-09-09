@@ -9,6 +9,10 @@ from pathlib import Path
 from typing import Collection
 
 
+DAILY_EOD_ACQUISITION_PACKAGE_NAME = "acquisition-package"
+DAILY_EOD_CANONICAL_APPLY_PLAN_NAME = "canonical-apply-plan.json"
+
+
 class OfflineArtifactCustodyError(RuntimeError):
     """Raised when an offline artifact path is outside governed custody."""
 
@@ -95,6 +99,91 @@ def validate_offline_artifact_child(
         allow_tmp_descendants=True,
     )
     return path
+
+
+def validate_daily_eod_data_artifact_location(
+    path: Path,
+    *,
+    persistent_name: str,
+    expected_session: date | None = None,
+    allow_tmp_descendants: bool = False,
+) -> Path:
+    """Accept legacy temporary custody or one exact persistent data path."""
+
+    if persistent_name not in {
+        DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+        DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+    }:
+        raise OfflineArtifactCustodyError(
+            "daily EOD data artifact role is not governed"
+        )
+    if path.name.startswith("."):
+        raise OfflineArtifactCustodyError(
+            "daily EOD data artifact cannot be hidden"
+        )
+    temporary = path.parent == Path("/tmp") or (
+        allow_tmp_descendants and path.is_relative_to(Path("/tmp"))
+    )
+    if not temporary and path.is_relative_to(Path("/data")):
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD data artifact cannot be below /data"
+        )
+    target = validate_offline_artifact_location(
+        path,
+        persistent_names={persistent_name},
+        allow_tmp_descendants=allow_tmp_descendants,
+    )
+    if temporary:
+        return target
+    if expected_session is not None and path.parent.name != (
+        f"session_date={expected_session.isoformat()}"
+    ):
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD data artifact session differs"
+        )
+    return target
+
+
+def validate_daily_eod_data_artifact_pair(
+    *,
+    package_path: Path,
+    plan_path: Path,
+    expected_session: date | None = None,
+    allow_tmp_descendants: bool = False,
+) -> tuple[Path, Path]:
+    """Validate one package/plan pair without mixing custody modes or sessions."""
+
+    package = validate_daily_eod_data_artifact_location(
+        package_path,
+        persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+        expected_session=expected_session,
+        allow_tmp_descendants=allow_tmp_descendants,
+    )
+    plan = validate_daily_eod_data_artifact_location(
+        plan_path,
+        persistent_name=DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+        expected_session=expected_session,
+        allow_tmp_descendants=allow_tmp_descendants,
+    )
+    package_temporary = package.parent == Path("/tmp") or (
+        allow_tmp_descendants and package.is_relative_to(Path("/tmp"))
+    )
+    plan_temporary = plan.parent == Path("/tmp") or (
+        allow_tmp_descendants and plan.is_relative_to(Path("/tmp"))
+    )
+    if package_temporary != plan_temporary:
+        raise OfflineArtifactCustodyError(
+            "daily EOD package and plan cannot mix custody modes"
+        )
+    if not package_temporary and package.parent != plan.parent:
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD package and plan sessions differ"
+        )
+    if package == plan:
+        raise OfflineArtifactCustodyError(
+            "daily EOD package and plan paths must differ"
+        )
+    return package, plan
 
 
 def _reject_existing_symlink_components(path: Path) -> None:

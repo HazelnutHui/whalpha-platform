@@ -64,6 +64,10 @@ from tip_api.services.daily_eod_standing_authorization import (
     read_standing_authorization,
     validate_standing_authorization_runtime,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_daily_eod_data_artifact_pair,
+)
 
 
 CONTRACT_VERSION = "daily-eod-authorized-capabilities/1.0"
@@ -544,14 +548,20 @@ def _validate_context(
         not operation.value.startswith(expected_prefix)
         or acquisition.acquisition_action is not expected_action
         or acquisition.run_root != config.run_root
-        or not context.approval_plan_path.is_absolute()
-        or context.approval_plan_path.parent != Path("/tmp")
-        or context.approval_plan_path.name.startswith(".")
-        or context.approval_plan_path == acquisition.package_path
     ):
         raise DailyEodAuthorizedCapabilityError(
             "authorized capability context differs from runtime configuration"
         )
+    try:
+        validate_daily_eod_data_artifact_pair(
+            package_path=acquisition.package_path,
+            plan_path=context.approval_plan_path,
+            expected_session=acquisition.target_session,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise DailyEodAuthorizedCapabilityError(
+            "authorized capability context differs from runtime configuration"
+        ) from exc
     if (
         context.readiness_plan.next_action is not expected_readiness
         or context.readiness_plan.target_session
