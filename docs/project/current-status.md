@@ -175,11 +175,14 @@ The timer correctly identified 2026-09-08 as the oldest missing session. The
 guarded Identity fetch/plan/Apply completed with 14 requests and no overwrite;
 the initial EOD request, a bounded 22:52 UTC post-close retry, and one final
 bounded 2026-09-09 01:48 UTC retry all returned provider HTTP 403 before any
-package, staging, or canonical EOD write. The repeated result rules out a
-short immediate-post-close delay as the working explanation and leaves
-same-day account/endpoint entitlement unresolved. No blind retry loop is
-running; the chain remains paused rather than publishing an inferred or stale
-new session.
+package, staging, or canonical EOD write. A later credential-safe comparison
+at 02:27 UTC used the same Grouped Daily request and returned 12,510 results
+for 2026-09-04 while 2026-09-08 remained HTTP 403. This proves global
+credential/endpoint access and narrows the failure to current-session account
+recency. Current official plan material describes Basic as end-of-day and
+Starter as 15-minute delayed; the exact Basic release minute remains unproven.
+No blind retry loop is running; the chain remains paused rather than publishing
+an inferred or stale new session.
 
 The guarded manual chain works end to end. Reuse optimizations materially
 reduced control-path and downstream stages, but Candidate remains the largest
@@ -194,10 +197,14 @@ Visual Context's cumulative-state requirement.
 
 ## Next priority
 
-1. Resume the guarded 2026-09-08 chain when same-session EOD becomes available,
-   then exercise ADR 0154 Membership preparation and record consolidated
-   timings.
-2. Obtain and review a GICS History specification/sample against ADR 0173.
+1. Resume the guarded 2026-09-08 chain when the current account exposes the EOD
+   session. If same-evening operation is required, Stocks Starter is the
+   lowest currently documented 15-minute-delayed tier; after any user purchase,
+   perform one controlled timing/completeness observation before changing
+   scheduler policy. Then exercise ADR 0154 Membership preparation and record
+   consolidated timings.
+2. Obtain and review a GICS History specification/sample against ADR 0173 and
+   the exact field/role gates in the 2026-09-08 source review.
 3. After the new-session Membership/recovery gates pass, review coordinator
    integration and a controlled unattended-scheduler rehearsal.
 4. Only after the sample passes, implement its adapter and a Dell-only current

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Isolate current-session EOD recency and freeze classification sample gates
+
+- Ran a two-request, credential-safe Grouped Daily comparison at 02:27 UTC.
+  The same credential, endpoint, transport, and `adjusted=false` parameter
+  returned 12,510 results for canonical session 2026-09-04 and HTTP 403 for
+  current completed session 2026-09-08. No response body was printed or
+  retained and no package, `/data` write, calculation, publication, deployment,
+  or scheduler mutation followed.
+- Reconciled current official plan material: Grouped Daily is listed across
+  Stocks plans, Basic is end-of-day, Starter is 15-minute delayed, and paid
+  flat-file Day Aggregates are approximately next-day 11:00 ET. The evidence
+  rules out a global credential/adapter failure and isolates current-account
+  current-session recency; Basic's exact release minute remains unverified.
+- Expanded the existing GICS/TRBC sample gate with an exact field-to-contract
+  matrix, representative temporal/identity cases, and four explicit outcomes:
+  historical-research primary, current-display only, corroborator only, or
+  rejected. No vendor was contacted, selected, purchased, accessed, or adapted.
+
 ## 2026-09-09 — Deploy the market-to-candidate decision chain
 
 - Built immutable bundle `2026-09-09T020802Z-d53e98832ef5` from clean source

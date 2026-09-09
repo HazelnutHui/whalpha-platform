@@ -70,10 +70,14 @@ four following EOD sessions, 2026-09-01 through 2026-09-04, are also canonical.
 The guarded 2026-09-08 Identity catch-up completed, including Plan 1.1 source
 observation. The same-session EOD fetch returned provider HTTP 403 on its first
 attempt, a bounded 22:52 UTC post-close retry, and one final bounded 2026-09-09
-01:48 UTC retry; none created a package or staging path. A short immediate-post-
-close delay is no longer the working explanation, while same-day account/
-endpoint entitlement remains unresolved. No retry loop, historical-backfill
-transient service, or computation process is running.
+01:48 UTC retry; none created a package or staging path. At 02:27 UTC, a
+credential-safe same-process comparison returned 12,510 Grouped Daily results
+for 2026-09-04 and HTTP 403 for 2026-09-08. The credential and endpoint are
+therefore globally usable; the unresolved boundary is current-session recency
+under the current account. Basic is officially described as end-of-day while
+Starter is 15-minute delayed, but Basic's exact release minute remains
+unproven. No retry loop, historical-backfill transient service, or computation
+process is running.
 
 ### Active Universe
 
@@ -313,10 +317,15 @@ design addresses both gaps.
 
 ## Immediate next work
 
-1. Resume the guarded 2026-09-08 chain only when the provider makes its EOD
-   package available; then exercise ADR 0154 Membership preparation against
-   direct Daily Identity Plan 1.1 evidence and record consolidated timings.
-2. Obtain and review a GICS History specification/sample against ADR 0173.
+1. Resume the guarded 2026-09-08 chain only when the current account makes its
+   EOD package available. If same-evening operation is required, the lowest
+   currently documented 15-minute-delayed tier is Stocks Starter; after any
+   user purchase, record one controlled timing/completeness observation before
+   changing readiness policy. Then exercise ADR 0154 Membership preparation
+   against direct Daily Identity Plan 1.1 evidence and record consolidated
+   timings.
+2. Obtain and review a GICS History specification/sample against ADR 0173 and
+   the field-to-contract and role gates already frozen in the source review.
 3. After the new-session Membership and recovery gates pass, review one-action
    coordinator integration and a controlled scheduler rehearsal. Do not enable
    unattended writes merely because the timer is active.

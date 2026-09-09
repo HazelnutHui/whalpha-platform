@@ -106,6 +106,51 @@ missingness and where it occurs. Product activation must expose its denominator
 and unknown bucket; research activation must fail closed for an ineligible
 instrument-session.
 
+### Required field-to-contract evidence
+
+The specification and sample review must map provider fields to Classification
+V1 before an adapter is designed. A vendor field name is not accepted as a
+canonical definition by itself.
+
+| Evidence family | Minimum sample evidence | Classification V1 destination or decision |
+| --- | --- | --- |
+| Provider identity | Stable entity ID, security ID when supplied, identifier type, and explicit company-versus-security grain | `source_entity_id`, `source_security_id`, `identity_evidence`, `assignment_basis`; ticker/name-only rows fail positive resolution |
+| Taxonomy | Taxonomy name, methodology/version, code, name, and complete Sector -> Industry Group -> Industry -> Sub-industry path | external taxonomy fields plus versioned canonical definitions and parent links |
+| Business validity | Inclusive/exclusive semantics for from/thru dates and examples spanning a reclassification | `valid_from` / half-open `valid_to`; ambiguous boundary conversion is quarantined |
+| Knowledge time | Provider publication/availability timestamp or a reproducible dated delivery snapshot proving when the row was knowable | `source_available_at` and `knowledge_time_status`; business-effective dates never substitute |
+| Revisions | Update/revision identifier, correction/cancellation behavior, and whether earlier deliveries remain reproducible | `provider_updated_at`, `revision_id`, `correction_status`, and supersession links |
+| Inactive coverage | Inactive/delisted companies, terminal classification behavior, and retained historical identifiers | explicit coverage decisions; omission is not interpreted as exclusion |
+| Security projection | Reviewed crosswalk for multiple share classes, ADRs, and issuer-to-security projection | stable `instrument_id` resolution plus visible `issuer_projected` basis |
+| Permission | Dell storage/backup, historical research, derived metrics, identical guest/credential display, attribution, termination, and deletion terms | one effective-dated permission-review fingerprint; unknown use remains denied |
+| Delivery | Full and delta mechanics, effective cutoff, pagination/file completeness, correction cadence, and reproducible version identity | immutable source custody and exact request/file manifest before canonical Apply |
+
+The sample must contain or be supplemented with documented examples for an
+unchanged active company, a reclassification, a methodology-version change,
+an inactive company, a ticker/identifier change, multiple listed securities
+for one issuer, and an ADR or other issuer-projected case. A sample that cannot
+exercise a category leaves that category unverified; it is not silently marked
+passed.
+
+### Role outcomes
+
+- `historical_research_primary`: every mandatory identity, hierarchy,
+  interval, knowledge-time, revision, inactive-coverage, delivery, and
+  permission gate passes for the reviewed scope.
+- `current_display_only`: current identity, taxonomy, coverage, delivery, and
+  equal-display permission pass, but defensible historical knowledge time or
+  revision evidence is absent.
+- `corroborator_only`: useful facts are supplied, but scope or semantics are
+  incomplete and require another governed source.
+- `rejected`: positive matching depends on ticker/name, revisions are silently
+  overwritten, business validity is presented as knowledge time, omissions
+  are hidden, or intended retention/use is not permitted.
+
+GICS History remains first in the sample order, not selected. Public material
+supports taxonomy depth and from/thru history but does not close knowledge-time,
+revision, identifier, delivery-entitlement, permission, or price gates. TRBC
+remains the second comparison. No live adapter should be started until one real
+sample is assigned one of the roles above.
+
 ## Implementation order
 
 1. Implement the provider-neutral Classification V1 source-observation,

@@ -6,8 +6,10 @@ This matrix separates repository-verified capability, publicly documented
 potential, live entitlement, and missing implementation for the historical
 research foundation.
 
-Repository-verified operational evidence is current through 2026-09-08. The
-last official-public-page reconciliation remains dated 2026-08-28. Later
+Repository-verified operational evidence is current through 2026-09-09. The
+latest narrow official-public-page reconciliation covers current-session EOD
+access on 2026-09-09; the broader source and permission comparison remains
+dated 2026-08-28. Later
 bounded account operations established technical access and retained source
 custody without changing the dated public permission conclusion. Externally
 controlled plan, endpoint, price, rate-limit, history, and licensing facts must
@@ -40,7 +42,7 @@ implemented.
 
 | Required family | Repository evidence | Massive potential recorded in repository | Live/physical state | Current conclusion |
 | --- | --- | --- | --- | --- |
-| Broad-market daily unadjusted OHLCV | Canonical Grouped Daily `adjusted=false` history contains 304 sessions | Official page showed Basic access, two-year history, one date per request, and unadjusted option at the dated review | Exact 304-session range acquired and family evidence published; 504-session depth not established | `verified_current` for the acquired 304-session scope |
+| Broad-market daily unadjusted OHLCV | Canonical Grouped Daily `adjusted=false` history contains 304 sessions | Current official pages list Grouped Daily across Stocks plans, Basic as end-of-day, and Starter as 15-minute delayed | Exact 304-session range acquired and family evidence published; a same-process 2026-09-09 probe returned 12,510 rows for 2026-09-04 and HTTP 403 for current session 2026-09-08; 504-session depth is not established | `verified_current` for acquired history; current-account same-evening recency is blocked/unverified |
 | Point-in-time reference Identity | 304 resolved snapshots plus 302 canonical source-observation partitions | Official page showed Basic/two-year access, date query, active/inactive filter, identifiers, max 1,000/page | Active historical acquisition completed with two exact source-observation gaps; inactive source completed at two 24-page anchors | `verified_current` only for exact acquired scopes; not complete lifecycle coverage |
 | Daily Universe Membership | Complete retrospective shadows plus one canonical signal-eligible 2026-09-04 partition | No provider response can replace WH Alpha methodology | One physical canonical daily partition and marker | `derived_required`; historical series remains incomplete |
 | Historical security-form evidence | One provider evidence date | Point-in-time reference/type endpoints may supply observations | Historical coverage and revision semantics unverified | `documented_unverified`; cannot backcast current evidence |
@@ -77,6 +79,16 @@ could cover the 252-session floor and approach the 504-session target if the
 exact date boundary, entitlement, endpoint behavior, retention, and
 completeness are verified. It is not enough for long-cycle research and is not
 a current account-entitlement assertion.
+
+The bounded 2026-09-09 current-session comparison proves that the existing
+credential and Grouped Daily endpoint remain globally usable while 2026-09-08
+was date-scoped HTTP 403 at 22:27 EDT. See the
+[current-session access audit](../audits/massive-current-session-access-probe-2026-09-09.md).
+This is consistent with Basic end-of-day recency and Starter's documented
+15-minute delay, but it does not prove Basic's exact release minute. No
+credential rotation or adapter rewrite is indicated. Same-evening operation
+requires a plan with documented same-evening recency plus a controlled live
+timing observation.
 
 The current Market Data Terms add a separate hard product gate: individual-use
 data is described as owner-only, third-party Market Data/Derived Works display

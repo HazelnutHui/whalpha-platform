@@ -1193,3 +1193,28 @@ formally rereads it in the same network-prohibited Apply. Legacy Plan 1.0
 remains readable without silently changing its target set. A separate
 source-only plan can repair an exact completed Identity date without
 overwriting Identity, EOD, or any existing source partition.
+
+## 2026-09-08 current-session recency evidence
+
+The natural 2026-09-08 wake selected the correct oldest missing session and
+completed same-session Identity through Plan 1.1. The initial Grouped Daily
+request and two bounded post-close retries returned HTTP 403 before package
+creation. A later 2026-09-09T02:27:34Z credential-safe comparison used the same
+process, credential, endpoint class, transport, and `adjusted=false` parameter:
+2026-09-04 returned 12,510 results while 2026-09-08 returned HTTP 403.
+
+This establishes a current-account, current-session recency boundary rather
+than a global credential, DNS, transport, endpoint, or adapter failure. Current
+official plan material describes Basic as end-of-day and Starter as 15-minute
+delayed, while the Grouped Daily endpoint is listed across Stocks plans. The
+exact Basic release minute remains unverified; a 403 cannot be relabeled as
+provider completeness or as an empty market session.
+
+The Basic operating policy remains fail-closed and bounded: no blind polling,
+no stale substitution, and no downstream calculation before the exact session
+is canonical. If same-evening publication becomes required, Starter is the
+lowest currently documented individual stock plan with explicit same-evening
+recency. A user plan change does not automatically change scheduler policy;
+one controlled paid-session timing/completeness observation must first pass
+the existing custody and quality gates. See the dated
+[access audit](../audits/massive-current-session-access-probe-2026-09-09.md).
