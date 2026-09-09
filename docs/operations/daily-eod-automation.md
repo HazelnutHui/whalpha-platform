@@ -582,6 +582,7 @@ ADR 0042 provides the config-only, network-prohibited entry point:
 ```bash
 scripts/admin/preflight-daily-eod-external-controls.sh \
   --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --provider-recency-profile massive_stocks_delayed_15_minutes \
   --host-config /absolute/external/runtime/host.json \
   --host-config-sha256 <64-hex-whole-file-sha> \
   --authorization /absolute/external/authorization/daily.json \

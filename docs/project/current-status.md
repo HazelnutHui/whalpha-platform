@@ -237,9 +237,12 @@ ADR 0188 now carries an explicit provider-recency profile through readiness,
 acquisition and Apply custody, coordinator entry points, host verification,
 external preflight, and read-only scheduler candidates. Basic remains the safe
 default and rollback profile; the owner-confirmed Starter tier uses
-`massive_stocks_delayed_15_minutes`. Repository support alone does not alter the
-installed detached timer or external authorization pins, and no post-upgrade
-live API observation has yet passed.
+`massive_stocks_delayed_15_minutes`. A new owner-only, exact-revision external
+data-control pair is provisioned under the existing four-operation standing
+scope and has passed the data-only, zero-network preflight. It grants no
+publication, deployment, scheduler, or trading authority. The installed
+detached read-only timer remains unchanged, and no post-upgrade live API
+observation has yet passed.
 
 The forward runtime workspace is active under the owner-only Dell state root.
 It retains the verified 2026-09-04 priors and the complete 2026-09-08 package,

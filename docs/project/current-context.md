@@ -79,9 +79,11 @@ On 2026-09-09 the owner supplied a Massive dashboard confirmation that Stocks
 Starter was successfully purchased. No credential-safe request has run after
 the upgrade, so five-year endpoint depth and same-evening completed-session
 availability remain unverified. ADR 0188 makes the delayed profile explicit
-across repository readiness, custody, host verification, and timer candidates;
-the installed runtime remains unchanged pending a committed revision, exact
-external rebind, and one controlled live-session observation.
+across repository readiness, custody, host verification, and timer candidates.
+An owner-only data-control pair for the final committed revision and delayed
+policy is now provisioned through the existing four-operation standing scope,
+and its data-only, zero-network preflight passes. The installed read-only timer
+remains unchanged pending one controlled live-session observation.
 
 ### Active Universe
 

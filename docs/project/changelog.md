@@ -18,10 +18,13 @@
   and recovery inputs now bind the readiness-policy fingerprint, and the
   systemd service renders the selected profile explicitly.
 - All 2,348 API tests passed with the two existing dependency deprecation
-  warnings. No credential, provider request, `/data`, installed timer,
-  external authorization, Snapshot, bundle, deployment, or Production state
-  changed. Live Starter entitlement, five-year endpoint depth, and same-evening
-  completeness remain pending controlled observations.
+  warnings. After the repository commit, a new owner-only exact-revision
+  Starter data-control pair was provisioned for the same four standing
+  Identity/EOD fetch/Apply operations and passed the data-only, zero-network
+  preflight. No credential, provider request, `/data`, installed timer,
+  Snapshot, bundle, deployment, or Production state changed. Live Starter
+  entitlement, five-year endpoint depth, and same-evening completeness remain
+  pending controlled observations.
 
 ## 2026-09-09 — Bound daily Membership workspace execution
 
