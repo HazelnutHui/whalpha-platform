@@ -159,7 +159,8 @@ What is complete:
 - 303 canonical Identity source-observation partitions;
 - two prospective signal-eligible Membership partitions;
 - a read-only Membership sidecar planner and optional non-blocking Pipeline
-  Wake 2.1 projection; no unattended sidecar action is enabled;
+  Wake 2.1 projection, plus a default-review two-action workspace runner that
+  always stops before canonical Apply; no unattended sidecar action is enabled;
 - canonical bounded split/dividend source-observation custody and exact-event-
   date resolution;
 - a source-marker-bound 708-group split candidate with 707 clear candidates,
@@ -218,6 +219,14 @@ designed. Snapshot planning and Serving Bundle construction completed only
 after their separate review/Apply boundaries. Candidate remained the largest
 stage at about 5.8 minutes.
 
+ADR 0187 separately composes only the Membership candidate and near-Apply-plan
+workspace actions. It replans around each action, holds an owner-only session
+lock, stops at waiting/blocked/Apply-review boundaries, and invokes neither the
+primary pipeline nor canonical Membership Apply. This is fixture-tested
+repository execution capability; the real 9/8 default-review entrypoint also
+returned canonical completion with zero actions or writes. No timer, live
+candidate, plan, or `/data` state was changed by its implementation.
+
 The forward runtime workspace is active under the owner-only Dell state root.
 It retains the verified 2026-09-04 priors and the complete 2026-09-08 package,
 plans, analytics, Snapshot, Serving Bundle, and 27-event journal. The journal's
@@ -260,9 +269,9 @@ Visual Context's cumulative-state requirement.
 
 ## Next priority
 
-1. Observe ADR 0185's read-only Membership sidecar on the next live session
-   before considering unattended candidate or Apply-plan execution; preserve
-   the separate near-Apply inventory plan and fail-open website boundary.
+1. Observe ADR 0187's bounded Membership sidecar on the next live session
+   before considering unattended execution; prove candidate timing, primary-
+   pipeline waiting, near-Apply inventory binding, and fail-open website behavior.
 2. Run one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes until acquisition timing, recovery, publication,
    deployment, and final status reporting all pass together.

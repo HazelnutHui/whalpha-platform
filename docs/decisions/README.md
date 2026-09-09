@@ -335,3 +335,5 @@ Each ADR should include:
 - [0183: Quarantine Large Cash Distributions Before Total Return](0183-quarantine-large-cash-distributions-before-total-return.md)
 - [0184: Deploy Serving Bundles from the Persistent Daily Workspace](0184-deploy-serving-bundles-from-the-persistent-daily-workspace.md)
 - [0185: Plan Daily Membership as an Independent Research Sidecar](0185-plan-daily-membership-as-an-independent-research-sidecar.md)
+- [0186: Seal Strong-Leader Pullback Research Inputs](0186-seal-strong-leader-pullback-research-inputs.md)
+- [0187: Run Daily Membership as a Bounded Research Sidecar](0187-run-daily-membership-as-a-bounded-research-sidecar.md)

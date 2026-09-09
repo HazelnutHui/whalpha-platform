@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-09T08:29:13Z
+Operational state verified at: 2026-09-09T16:58:03Z
 
 Repository context updated at: 2026-09-09 UTC
 
@@ -360,7 +360,13 @@ catalog, and was evaluated before the next open. Exact Plan/Apply published
 a pure read-only sidecar planner and optional Pipeline Wake 2.1 projection.
 The real 9/8 read returned `complete` / `none`, the exact publication
 fingerprint, and zero network/write/authority; no installed timer or
-coordinator execution changed and the website did not change.
+coordinator execution changed and the website did not change. ADR 0187 adds a
+separate, default-review bounded runner for only candidate and near-Apply-plan
+workspace actions. It holds one session lock, permits at most two actions, and
+always stops before canonical Membership Apply. The real 9/8 default-review
+entrypoint returned `complete` / `none` with zero actions or writes in about 60
+seconds; workspace-action execution remains fixture-only and the runner is not
+installed in the timer.
 
 The 2026-09-08 real persistent run records Phase 1a about 96 seconds, Phase 1b
 4 seconds, Candidate 346 seconds, Entry Geometry 62 seconds, ETF Relationships
@@ -388,9 +394,9 @@ design addresses both gaps.
 
 ## Immediate next work
 
-1. Observe the ADR 0185 read-only Membership sidecar on the next live session,
-   including candidate readiness and a research-only fault, before considering
-   any unattended sidecar execution.
+1. Observe the ADR 0187 bounded Membership sidecar on the next live session,
+   including candidate readiness, primary-pipeline waiting, near-Apply planning,
+   and a research-only fault, before considering any unattended execution.
 2. Perform one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes merely because the read-only timer is active.
 3. Record one clean-path acquisition-to-deployment elapsed time on the next

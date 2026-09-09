@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-09 — Bound daily Membership workspace execution
+
+- Accepted ADR 0187 and added
+  `daily-universe-membership-bounded-run/1.0`, a separate Dell-local runner over
+  the existing sidecar planner, candidate builder, and Apply-plan builder.
+- The runner is review-only by default, permits at most the candidate and near-
+  Apply-plan workspace actions, replans around each action, holds an owner-only
+  session lock, and stops on waiting, blocked, failure, budget, completion, or
+  Apply-review state.
+- Added a network-prohibited administrator entry point and fail-closed tests for
+  default review, one- and two-action progress, primary-pipeline waiting, Apply
+  separation, budget exhaustion, no retry/recovery, and fingerprint tampering.
+- The real 2026-09-08 default-review entrypoint returned `complete` / `none` in
+  about 60 seconds with zero actions, requests, or writes. The 27-test focused
+  suite and all 2,340 API tests passed with the two existing dependency
+  deprecation warnings.
+- Workspace-action execution remains fixture-only. The runner does not invoke
+  or block the website pipeline, perform Membership Apply, write `/data`,
+  access a provider, publish/deploy, or install/change a timer. The next live-
+  session action observation remains pending.
+
 ## 2026-09-09 — Seal the first experiment's outcome-free input boundary
 
 - Accepted ADR 0186 and added a pure, I/O-free Strong-Leader Pullback input

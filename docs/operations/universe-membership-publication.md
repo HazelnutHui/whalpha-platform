@@ -30,6 +30,22 @@ Membership evidence. It performs no sidecar action. `prepare_candidate` and
 `prepare_apply_plan` are reviewable instructions, not authority. A `blocked`
 sidecar always retains `website_pipeline_blocked=false`.
 
+The two non-canonical workspace actions may instead be reviewed or executed as
+one finite sidecar run:
+
+```bash
+scripts/admin/run-bounded-daily-universe-membership.sh \
+  --as-of-session YYYY-MM-DD \
+  --catalog-as-of-date YYYY-MM-DD \
+  --data-root /data/trading-intelligence-platform \
+  --workspace-root /home/hui/.local/state/trading-intelligence-platform/automation/daily-eod
+```
+
+The command is review-only by default. Explicit `--execute` permits at most
+candidate preparation and near-Apply plan creation under one session lock. It
+does not invoke the primary pipeline, perform Membership Apply, retry, recover,
+or install a scheduler. A normal successful run stops at `review_apply`.
+
 After the same-session Daily Identity Plan 1.1 source custody and canonical EOD
 are complete, prepare one prospective candidate with:
 
@@ -61,8 +77,8 @@ catalog; an attempted nonexistent 2026-09-08 catalog binding correctly failed
 before writes. The corrected candidate was signal eligible, exact Plan/Apply
 published 19,964 decisions, and `verify_then_complete` reused both targets with
 zero writes. This proves the manual publication path. The separate read-only
-sidecar planner is now implemented; coordinator execution and unattended
-writes remain pending. See the dated
+sidecar planner and bounded workspace runner are now implemented; a new-session
+live observation and unattended execution remain pending. See the dated
 [audit](../audits/daily-universe-membership-publication-2026-09-09.md).
 
 ## Before Apply

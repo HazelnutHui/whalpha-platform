@@ -181,10 +181,12 @@ Current membership implementation sequence:
    9/8, bringing canonical signal-eligible Membership to 2 sessions / 39,928
    decisions out of 305 EOD sessions. ADR 0154 adds the persistent-workspace
    candidate preparation boundary, and ADR 0185 adds a read-only sidecar plan;
-   neither gates the website nor enables unattended writes. Exercise the
-   sidecar on a new live session and keep both source gaps explicit. Do not
-   publish Historical Coverage until every admitted session has a transitive
-   eligibility assessment.
+   ADR 0187 adds the separate default-review runner for candidate and near-
+   Apply-plan workspace actions only. None gates the website, performs
+   Membership Apply, or enables unattended writes. Exercise the bounded sidecar
+   on a new live session and keep both source gaps explicit. Do not publish
+   Historical Coverage until every admitted session has a transitive eligibility
+   assessment.
 
 ## Priority 3 — Security classification and concentration diagnostics
 

@@ -57,6 +57,8 @@
 - [Equity Execution Cost Scenario V1](data-contracts/equity-execution-cost-scenario-v1.md): component formula, evidence states, capacity gate, Decimal/fingerprint rules, and explicit non-authority boundary.
 - [ADR 0186: Strong-Leader Pullback Research Inputs](decisions/0186-seal-strong-leader-pullback-research-inputs.md): freezes real-input formulas, complete-cross-section admission, and outcome separation before any real study.
 - [Strong-Leader Pullback Research Input V1](data-contracts/strong-leader-pullback-research-input-v1.md): exact 21-session inputs, formula semantics, evidence bindings, and fail-closed batch contract.
+- [ADR 0187: Bounded Daily Membership Sidecar](decisions/0187-run-daily-membership-as-a-bounded-research-sidecar.md): composes only candidate and near-Apply-plan workspace actions while preserving the non-blocking website and separate canonical Apply boundaries.
+- [Daily Universe Membership Bounded Run V1](data-contracts/daily-universe-membership-bounded-run-v1.md): finite action/time limits, process locking, stop states, evidence, and zero-external-authority contract.
 
 - [Massive Historical Lifecycle Coverage Probe V1](data-contracts/massive-historical-lifecycle-coverage-probe-v1.md): two-page inactive-security and lifecycle-field aggregate review.
 

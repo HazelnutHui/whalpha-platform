@@ -17,6 +17,9 @@ def test_daily_pipeline_administrator_scripts_use_worktree_safe_runner() -> None
         "prepare-daily-universe-membership.sh": (
             "tip_api.services.daily_universe_membership_continuation_cli"
         ),
+        "run-bounded-daily-universe-membership.sh": (
+            "tip_api.services.daily_universe_membership_runner_cli"
+        ),
         "calculate-candidate-entry-geometry-offline.sh": (
             "tip_api.services.candidate_entry_geometry_cli"
         ),

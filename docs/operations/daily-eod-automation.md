@@ -62,6 +62,10 @@ planner that exposes its independent status and next action without executing
 them. Its inventory-bound canonical plan must be created only near the separate
 Membership Apply, after other expected `/data` writes are complete. See
 [Canonical Universe Membership Publication](universe-membership-publication.md).
+ADR 0187 adds a separate bounded runner for only the candidate and near-Apply
+plan workspace actions. It defaults to review-only, never invokes the primary
+pipeline, and always stops before Membership Apply. It is repository capability
+only; no timer or unattended sidecar execution is installed.
 
 ADR 0076 now adds a read-only scheduler-wake plan before any host timer. It
 uses a small completion-manifest index plus a full formal reread of the latest
