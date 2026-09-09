@@ -12,12 +12,12 @@ and dated audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity market-
 intelligence and research platform. The active OCI release is
-`2026-09-09T075821Z-32321f0dadd5`, built from clean source commit
-`32321f0dadd5c8f605ee11c8188d3ed90df0814d`.
+`2026-09-09T211131Z-e06bd62ecab3`, built from clean source commit
+`e06bd62ecab3cbf65867c9ddd9853a909379af9a`.
 
 The deployed product uses:
 
-- Market Intelligence 1.3 for analysis session 2026-09-08;
+- Market Intelligence 1.3 for analysis session 2026-09-09;
 - Snapshot 1.11 / Dashboard 2.8 with zero completed-session lag;
 - English as the first-visit default and Simplified Chinese as an equal view;
 - identical data and capability for guest and credential Sessions;
@@ -34,16 +34,15 @@ appearance remain manual checks.
 
 ## Data
 
-- Canonical EOD contains 305 contiguous XNYS sessions from 2025-06-23 through
-  2026-09-08. Latest EOD has 9,964 rows.
-- Latest Identity is 2026-09-08 and contains 9,982 Instruments, 13,155 provider
+- Canonical EOD contains 306 contiguous XNYS sessions from 2025-06-23 through
+  2026-09-09. Latest EOD has 9,916 rows.
+- Latest Identity is 2026-09-09 and contains 9,982 Instruments, 13,158 provider
   identities, and 9,982 Resolvers. Identity and EOD are aligned.
-- Canonical normalized Identity source custody contains 303 partitions /
-  3,713,485 rows. Provider-revised dates 2026-08-13 and 2026-08-19 remain
+- Canonical normalized Identity source custody contains 304 partitions /
+  3,726,643 rows. Provider-revised dates 2026-08-13 and 2026-08-19 remain
   explicitly unbound; there is no longer an Identity-only session.
-- Canonical signal-eligible Membership contains two sessions, 2026-09-04 and
-  2026-09-08, with 39,928 decisions. The later 19,964-row partition was
-  evaluated before the 2026-09-09 open.
+- Canonical signal-eligible Membership contains three sessions: 2026-09-04,
+  2026-09-08, and 2026-09-09, with 59,892 decisions.
 - Immutable EOD and point-in-time Identity family evidence is canonical. Final
   Historical Coverage remains absent.
 - Canonical corporate-action source custody contains 70,099 split/dividend
@@ -81,7 +80,7 @@ appearance remain manual checks.
   record date can be represented as the ex-date for a large distribution;
   canonical dividend facts and total-return adjustment therefore remain
   blocked on independent date semantics and the other explicit quarantines.
-- `/data` contains 4,253 files / 2,236,844,204 bytes with zero symlinks and
+- `/data` contains 4,311 files / 2,321,416,033 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
 - The active provider-form Activation remains provisional and does not prove
@@ -92,11 +91,11 @@ Canonical price depth now exceeds the research minimum. Missing price history
 is no longer the main blocker; dividend date authority and total-return
 semantics remain material research-input blockers.
 
-The owner supplied a 2026-09-09 Massive dashboard confirmation of a successful
-Stocks Starter purchase. The account upgrade has not yet been verified through
-a post-purchase provider request. Five-year endpoint depth, same-evening
-completed-session availability, and aggregate finality therefore remain
-unproven.
+The owner supplied a 2026-09-09 Massive Stocks Starter purchase confirmation.
+The controlled 9/9 run then completed 14 Identity requests and one same-evening
+Grouped Daily request under the delayed profile without the old Basic rate
+limit. Five-year endpoint depth and a guaranteed aggregate-finality minute
+remain unproven.
 
 ## Product
 
@@ -112,7 +111,7 @@ Live first-level workspaces cover Market Regime & Opportunities
 Candidates (`个股候选`), and Quant Research Lab (`量化研究实验室`).
 
 Market Regime is confirmed Balanced in both active Universes, while the
-candidate state is Defensive: Primary 44.9243 and Secondary 45.4356. The
+candidate state is Defensive: Primary 46.7798 and Secondary 46.8524. The
 product includes 16 preregistered ETF relationships and 5/10/20-session
 relationship/rotation views. ETF relationships remain price-derived proxies,
 not fund flow, formal security classification, or causality.
@@ -130,7 +129,7 @@ published within-channel score against current extension risk and colours the
 linked Candidate trade-review state. It does not recompute or compare strategy
 scores across strategies.
 
-Current Candidate display counts are 904 Primary and 966 Secondary. These are
+Current Candidate display counts are 862 Primary and 922 Secondary. These are
 eligible bounded Candidate records, not Universe sizes.
 
 Sector Rotation also includes a bilingual, same-session decision chain that
@@ -160,10 +159,10 @@ claims are not authorized.
 
 What is complete:
 
-- 305-session canonical EOD and resolved Identity depth;
+- 306-session canonical EOD and resolved Identity depth;
 - immutable EOD and Identity family-evidence manifests;
-- 303 canonical Identity source-observation partitions;
-- two prospective signal-eligible Membership partitions;
+- 304 canonical Identity source-observation partitions;
+- three prospective signal-eligible Membership partitions;
 - a read-only Membership sidecar planner and optional non-blocking Pipeline
   Wake 2.1 projection, plus a default-review two-action workspace runner that
   always stops before canonical Apply; no unattended sidecar action is enabled;
@@ -219,19 +218,20 @@ ADR 0180 provides a finite runner for consecutive, formally successful
 Dell-local offline actions. It keeps every existing single-action journal and
 postcondition, defaults to review-only, and has zero provider, canonical Apply,
 publication Apply, deployment, retry, recovery, or scheduler-install authority.
-The real 2026-09-08 run completed nine analytics/MI-plan actions in about 14.6
-minutes of recorded action time, then stopped at publication review as
-designed. Snapshot planning and Serving Bundle construction completed only
-after their separate review/Apply boundaries. Candidate remained the largest
-stage at about 5.8 minutes.
+The real 2026-09-09 run completed nine offline actions in about 15.7 minutes,
+then stopped at publication review as designed. Snapshot planning took about
+3.8 minutes, Serving Bundle construction about 2.1 minutes, and OCI deployment
+about 2.4 minutes. Candidate remained the largest stage at about 6.3 minutes,
+peaked near 8.2 GiB, and used one CPU core.
 
 ADR 0187 separately composes only the Membership candidate and near-Apply-plan
 workspace actions. It replans around each action, holds an owner-only session
 lock, stops at waiting/blocked/Apply-review boundaries, and invokes neither the
 primary pipeline nor canonical Membership Apply. This is fixture-tested
-repository execution capability; the real 9/8 default-review entrypoint also
-returned canonical completion with zero actions or writes. No timer, live
-candidate, plan, or `/data` state was changed by its implementation.
+repository execution capability. The 9/9 live candidate exposed a post-action
+clock defect; ADR 0190 corrects it. Exact Plan/Apply and zero-write recovery
+published the third 19,964-row Membership partition. The website pipeline was
+never blocked by this sidecar.
 
 ADR 0188 now carries an explicit provider-recency profile through readiness,
 acquisition and Apply custody, coordinator entry points, host verification,
@@ -241,43 +241,21 @@ default and rollback profile; the owner-confirmed Starter tier uses
 data-control pair is provisioned under the existing four-operation standing
 scope and has passed the data-only, zero-network preflight. It grants no
 publication, deployment, scheduler, or trading authority. The installed
-detached read-only timer remains unchanged, and no post-upgrade live API
-observation has yet passed.
+detached read-only timer remains unchanged. The controlled live chain verified
+14 Identity requests and one same-evening EOD request under this profile.
 
-The forward runtime workspace is active under the owner-only Dell state root.
-It retains the verified 2026-09-04 priors and the complete 2026-09-08 package,
-plans, analytics, Snapshot, Serving Bundle, and 27-event journal. The journal's
-last event formally closes the unsuccessful persistent-bundle deployment
-reservation without replay: one remote read, zero remote writes, old release
-unchanged, and target absent. No unresolved action or cadence reservation
-remains; no timer has been rebound.
+The forward runtime workspace retains the complete 2026-09-09 package, plans,
+analytics, Snapshot, Serving Bundle, Membership evidence, and journals. ADR
+0190 gives Identity and EOD separate persistent artifact pairs, admits exact
+persistent MI/Snapshot plans to coordinator custody, and uses action completion
+time for Membership replanning. Compatibility paths remain readable, while
+mixed role/session/custody inputs remain rejected.
 
-ADR 0181 now permits the exact per-session `acquisition-package` and
-`canonical-apply-plan.json` paths to cross every data-transition boundary,
-including same-day Identity source normalization, acquisition/operator review,
-canonical Apply, coordinator, authorized capabilities, and standing
-authorization. The pair is same-session, owner-only, non-symlinked, and cannot
-mix persistent and legacy `/tmp` custody. This path is now proven with the real
-2026-09-08 persistent acquisition package and canonical plan. ADR 0184 extends
-the same principle to the persistent Serving Bundle and shares one validator
-across deployment capability, custody, and the reviewed shell entrypoint.
-
-The timer correctly identified 2026-09-08 as the oldest missing session. After
-the earlier bounded 403 observations, one guarded Grouped Daily request became
-available at 06:59 UTC on 2026-09-09 and produced a 12,534-record immutable
-package. Exact-plan Apply published 9,964 canonical rows with zero duplicate
-business keys or orphan Identity references. This single observation proves
-availability by 06:59 UTC for that session only; the Basic plan's earliest or
-guaranteed release minute remains unproven and no blind retry loop is running.
-
-The guarded chain now works end to end from acquisition through OCI deployment
-and has one consolidated real-session offline timeline. Post-publication review
-executed zero actions and stopped at the expected deployment-review boundary;
-the scheduler wake reports 9/8 current, zero missing sessions, and waits for
-the 9/9 stabilization review. Reuse optimizations materially reduce the control
-path, but Candidate remains the largest stage. The deployment-path correction
-was exceptional engineering work and must not be included in the normal daily
-runtime estimate.
+The guarded chain now works end to end for 9/9. Exact-plan Apply published
+9,916 EOD rows with zero duplicate business keys or orphan Identity references.
+The active OCI release, clean source revision, bundle and manifest hashes,
+services, protected routes, and guest parity all passed independent postflight.
+No blind retry, staging residue, failed release, or write-capable timer exists.
 
 The segmented Candidate experiment remains a Production cutover NO-GO. It
 should not receive more work unless a new live measurement breaches an agreed
@@ -286,28 +264,23 @@ Visual Context's cumulative-state requirement.
 
 ## Next priority
 
-1. Exercise the complete guarded daily chain under the explicit Starter
-   delayed profile after the 2026-09-09 close stabilization window, and record
-   one controlled post-upgrade access/completeness observation.
-2. Observe ADR 0187's bounded Membership sidecar on the same live session
-   before considering unattended execution; prove candidate timing, primary-
-   pipeline waiting, near-Apply inventory binding, and fail-open website behavior.
-3. Run one controlled next-session unattended-scheduler rehearsal. Do not
+1. Merge and revalidate ADR 0190, then provision an exact-revision host runtime
+   whose journal root matches the persistent workspace.
+2. Run one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes until acquisition timing, recovery, publication,
    deployment, and final status reporting all pass together.
-4. Record the next live session's clean-path acquisition-to-deployment elapsed
-   time without including engineering/debugging time, and set a finite runtime
-   budget before any further performance optimization.
-5. Obtain and review a GICS History specification/sample against ADR 0173 and
+3. Set a finite runtime budget from the 9/9 clean-path measurements and profile
+   Candidate before changing it; preserve all validation/equivalence gates.
+4. Obtain and review a GICS History specification/sample against ADR 0173 and
    the exact field/role gates in the 2026-09-08 source review.
-6. Only after the sample passes, implement its adapter and a Dell-only current
+5. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-7. Complete historical Membership, lifecycle, cost evidence/calibration,
+6. Complete historical Membership, lifecycle, cost evidence/calibration,
    availability/revision, final Coverage, chronological evaluation, and sealed
    holdout evidence.
-8. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
+7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
    Trend Continuation, Technical Reversal, and Fundamental Value Reversal.
-9. Add options expression, fundamentals/valuation/events, and later
+8. Add options expression, fundamentals/valuation/events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune formulas, thresholds, or rankings before governed chronological

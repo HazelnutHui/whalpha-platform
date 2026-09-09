@@ -11,7 +11,35 @@ from typing import Collection
 
 DAILY_EOD_ACQUISITION_PACKAGE_NAME = "acquisition-package"
 DAILY_EOD_CANONICAL_APPLY_PLAN_NAME = "canonical-apply-plan.json"
+DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME = "identity-acquisition-package"
+DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME = (
+    "identity-canonical-apply-plan.json"
+)
+DAILY_PRICE_ACQUISITION_PACKAGE_NAME = "eod-acquisition-package"
+DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME = "eod-canonical-apply-plan.json"
 DAILY_EOD_SERVING_BUNDLE_ROOT_NAME = "serving-bundle"
+
+_DAILY_DATA_PACKAGE_NAMES = frozenset(
+    {
+        DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+        DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME,
+        DAILY_PRICE_ACQUISITION_PACKAGE_NAME,
+    }
+)
+_DAILY_DATA_PLAN_NAMES = frozenset(
+    {
+        DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+        DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME,
+        DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME,
+    }
+)
+_DAILY_DATA_PERSISTENT_PAIRS = {
+    DAILY_EOD_ACQUISITION_PACKAGE_NAME: DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+    DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME: (
+        DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME
+    ),
+    DAILY_PRICE_ACQUISITION_PACKAGE_NAME: DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME,
+}
 
 
 class OfflineArtifactCustodyError(RuntimeError):
@@ -111,10 +139,11 @@ def validate_daily_eod_data_artifact_location(
 ) -> Path:
     """Accept legacy temporary custody or one exact persistent data path."""
 
-    if persistent_name not in {
-        DAILY_EOD_ACQUISITION_PACKAGE_NAME,
-        DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
-    }:
+    if persistent_name in _DAILY_DATA_PACKAGE_NAMES:
+        governed_names = _DAILY_DATA_PACKAGE_NAMES
+    elif persistent_name in _DAILY_DATA_PLAN_NAMES:
+        governed_names = _DAILY_DATA_PLAN_NAMES
+    else:
         raise OfflineArtifactCustodyError(
             "daily EOD data artifact role is not governed"
         )
@@ -131,7 +160,7 @@ def validate_daily_eod_data_artifact_location(
         )
     target = validate_offline_artifact_location(
         path,
-        persistent_names={persistent_name},
+        persistent_names=governed_names,
         allow_tmp_descendants=allow_tmp_descendants,
     )
     if temporary:
@@ -179,6 +208,13 @@ def validate_daily_eod_data_artifact_pair(
     if not package_temporary and package.parent != plan.parent:
         raise OfflineArtifactCustodyError(
             "persistent daily EOD package and plan sessions differ"
+        )
+    if (
+        not package_temporary
+        and _DAILY_DATA_PERSISTENT_PAIRS.get(package.name) != plan.name
+    ):
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD package and plan roles differ"
         )
     if package == plan:
         raise OfflineArtifactCustodyError(

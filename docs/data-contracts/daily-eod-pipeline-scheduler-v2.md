@@ -49,8 +49,10 @@ The planner itself still performs zero coordinator calls.
       dashboard-snapshot/
       dashboard-snapshot-plan.json
       serving-bundle/
-      acquisition-package/
-      canonical-apply-plan.json
+      identity-acquisition-package/
+      identity-canonical-apply-plan.json
+      eod-acquisition-package/
+      eod-canonical-apply-plan.json
       candidate-work/
   journal/
   cache/panels/

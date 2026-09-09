@@ -349,3 +349,4 @@ Each ADR should include:
 - [0187: Run Daily Membership as a Bounded Research Sidecar](0187-run-daily-membership-as-a-bounded-research-sidecar.md)
 - [0188: Bind Paid Provider Recency Through the Daily Chain](0188-bind-paid-provider-recency-through-the-daily-chain.md)
 - [0189: Preserve Stress in Strategy Research Statistics](0189-preserve-stress-in-strategy-research-statistics.md)
+- [0190: Complete Persistent Daily Workspace Integration](0190-complete-persistent-daily-workspace-integration.md)

@@ -250,7 +250,7 @@ def _run(
             post_plan = _fresh_plan(
                 planner,
                 config=config,
-                checked_at=started_at,
+                checked_at=completed_at,
             )
         except Exception as exc:
             raise DailyUniverseMembershipRunnerError(

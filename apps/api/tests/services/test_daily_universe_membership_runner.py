@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, replace
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -229,6 +229,45 @@ def test_executes_candidate_then_stops_for_primary_pipeline(tmp_path: Path) -> N
     assert result.final_next_action == "wait_for_primary_pipeline"
     assert result.website_pipeline_blocked is False
     assert result.canonical_membership_apply_performed is False
+
+
+def test_post_action_plan_uses_action_completion_time(tmp_path: Path) -> None:
+    config = _config(tmp_path)
+    ready = _plan(
+        config,
+        status=sidecar.MembershipSidecarStatus.READY,
+        action=sidecar.MembershipSidecarAction.PREPARE_CANDIDATE,
+    )
+    waiting = _plan(
+        config,
+        status=sidecar.MembershipSidecarStatus.WAITING,
+        action=sidecar.MembershipSidecarAction.WAIT_FOR_PRIMARY_PIPELINE,
+    )
+    plans = iter((ready, waiting))
+    checked_at: list[datetime] = []
+
+    def planner(**kwargs: object) -> sidecar.DailyUniverseMembershipSidecarPlan:
+        checked_at.append(kwargs["checked_at"])  # type: ignore[arg-type]
+        return next(plans)
+
+    times = iter(
+        (
+            STARTED + timedelta(seconds=1),
+            STARTED + timedelta(seconds=2),
+            STARTED + timedelta(seconds=3),
+        )
+    )
+    result = runner.run_bounded_daily_universe_membership(
+        config=config,
+        started_at=STARTED,
+        execute=True,
+        planner=planner,
+        candidate_preparer=lambda **_: _candidate(config),
+        clock=lambda: next(times),
+    )
+
+    assert result.status is runner.MembershipRunStatus.BOUNDARY_REACHED
+    assert checked_at == [STARTED, STARTED + timedelta(seconds=2)]
 
 
 def test_executes_apply_plan_then_stops_before_apply(tmp_path: Path) -> None:

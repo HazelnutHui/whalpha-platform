@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from tip_api.services.daily_eod_automation import DailyEodAutomationPaths
 
 
-CONTRACT_VERSION = "daily-eod-workspace-layout/1.1"
+CONTRACT_VERSION = "daily-eod-workspace-layout/1.2"
 
 
 class DailyEodWorkspaceError(RuntimeError):
@@ -34,8 +34,10 @@ class DailyEodWorkspaceLayout:
     prior_session_root: Path
     run_root: Path
     panel_cache_root: Path
-    package_path: Path
-    canonical_apply_plan: Path
+    identity_package_path: Path
+    identity_canonical_apply_plan: Path
+    eod_package_path: Path
+    eod_canonical_apply_plan: Path
     universe_membership_candidate_root: Path
     universe_membership_apply_plan: Path
     candidate_work_dir: Path
@@ -116,8 +118,14 @@ def derive_daily_eod_workspace_layout(
         "prior_session_root": prior_root,
         "run_root": workspace_root / "journal",
         "panel_cache_root": workspace_root / "cache" / "panels",
-        "package_path": session_root / "acquisition-package",
-        "canonical_apply_plan": session_root / "canonical-apply-plan.json",
+        "identity_package_path": session_root / "identity-acquisition-package",
+        "identity_canonical_apply_plan": (
+            session_root / "identity-canonical-apply-plan.json"
+        ),
+        "eod_package_path": session_root / "eod-acquisition-package",
+        "eod_canonical_apply_plan": (
+            session_root / "eod-canonical-apply-plan.json"
+        ),
         "universe_membership_candidate_root": (
             session_root / "universe-membership-candidate"
         ),

@@ -53,6 +53,18 @@ def test_layout_is_deterministic_session_partitioned_and_write_free(tmp_path) ->
     assert layout.prior_phase1b_audit.parent == layout.prior_session_root
     assert layout.run_root == layout.workspace_root / "journal"
     assert layout.panel_cache_root == layout.workspace_root / "cache" / "panels"
+    assert layout.identity_package_path == (
+        layout.session_root / "identity-acquisition-package"
+    )
+    assert layout.identity_canonical_apply_plan == (
+        layout.session_root / "identity-canonical-apply-plan.json"
+    )
+    assert layout.eod_package_path == (
+        layout.session_root / "eod-acquisition-package"
+    )
+    assert layout.eod_canonical_apply_plan == (
+        layout.session_root / "eod-canonical-apply-plan.json"
+    )
     assert layout.universe_membership_candidate_root == (
         layout.session_root / "universe-membership-candidate"
     )

@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
+from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 
@@ -23,6 +26,7 @@ from tip_api.services.daily_eod_automation import (
 from tip_api.services.daily_eod_market_intelligence_apply_custody import (
     DailyEodMarketIntelligenceApplyConfig,
     DailyEodMarketIntelligenceApplyCustodyError,
+    _validate_config,
     record_market_intelligence_apply_success,
     recover_market_intelligence_apply,
     reserve_market_intelligence_apply,
@@ -274,3 +278,31 @@ def test_recovery_never_writes_and_classifies_untouched_or_partial_state(
         consumer_reader=lambda _root: CONSUMER_STATE,
     )
     assert blocked.outcome == "recovery_blocked"
+
+
+def test_config_accepts_exact_persistent_session_plan(tmp_path: Path) -> None:
+    config, _approval, _automation = _fixture(tmp_path)
+    owner_root = Path("/var/tmp") / f"whalpha-mi-plan-{uuid4().hex}"
+    workspace = owner_root / "daily-eod"
+    session = workspace / "sessions" / f"session_date={TARGET.isoformat()}"
+    try:
+        session.mkdir(parents=True, mode=0o700)
+        for directory in (workspace, workspace / "sessions", session):
+            directory.chmod(0o700)
+        plan_path = session / "market-intelligence-plan.json"
+        plan_path.write_bytes(b"{}")
+        plan_path.chmod(0o444)
+
+        _validate_config(replace(config, approval_plan_path=plan_path))
+
+        wrong_session = session.parent / "session_date=2026-08-27"
+        wrong_session.mkdir(mode=0o700)
+        wrong_session.chmod(0o700)
+        wrong_plan = wrong_session / "market-intelligence-plan.json"
+        with pytest.raises(
+            DailyEodMarketIntelligenceApplyCustodyError,
+            match="session differs",
+        ):
+            _validate_config(replace(config, approval_plan_path=wrong_plan))
+    finally:
+        shutil.rmtree(owner_root)

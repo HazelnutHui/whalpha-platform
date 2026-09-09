@@ -710,24 +710,27 @@ stage from MI, Snapshot, or deployment review. An enabled candidate may only
 propose one data or offline transition; every manual review and blocked state
 stops.
 
-The companion `daily-eod-workspace-layout/1.1` derives stable session paths
+The companion `daily-eod-workspace-layout/1.2` derives stable session paths
 outside `/tmp`, canonical `/data`, and the repository. It creates nothing.
-Version 1.1 adds only the exact Membership candidate and later Apply-plan
-paths accepted by ADR 0154; existing analytics paths are unchanged.
+Version 1.2 retains the Membership paths from 1.1 and gives Identity and EOD
+separate data-artifact pairs; existing analytics paths are unchanged.
 Existing direct `/tmp` children remain accepted only for historical and
 controlled one-shot compatibility. No persistent root, repeated cadence,
 coordinator capability, or new systemd unit is installed by ADR 0081.
 
-ADR 0181 completes the forward data-artifact path boundary. The only persistent
-same-session data paths are `acquisition-package` and
-`canonical-apply-plan.json`; the latter owns the exact
-`canonical-apply-plan.artifacts` preparation directory. Provider construction,
+ADR 0181 established the forward data-artifact path boundary. ADR 0190 amends
+the persistent same-session layout to use
+`identity-acquisition-package` / `identity-canonical-apply-plan.json` and
+`eod-acquisition-package` / `eod-canonical-apply-plan.json`; each plan owns its
+same-named `.artifacts` preparation directory. Provider construction,
 same-day Identity source normalization, acquisition/review custody, canonical
 Apply custody, coordinator, authorized capabilities, and standing
-authorization all enforce the same pair. A temporary path cannot be paired
-with a persistent path, and persistent names or sessions cannot vary. Legacy
-`/tmp` evidence remains readable. This repository change neither creates a
-live package nor installs/rebinds the scheduler.
+authorization all enforce matching role pairs. A temporary path cannot be
+paired with a persistent path, and persistent roles or sessions cannot vary.
+The original generic persistent pair and legacy `/tmp` evidence remain
+readable for compatibility. The same ADR admits exact persistent
+`market-intelligence-plan.json` and `dashboard-snapshot-plan.json` files to
+their existing coordinator Apply custody. No publication gate is weakened.
 
 Repository source now emits Automation Plan 1.6. It retains Plan 1.5's
 distinct Sector Rotation audit derived beside Phase 1a, validates its exact session,

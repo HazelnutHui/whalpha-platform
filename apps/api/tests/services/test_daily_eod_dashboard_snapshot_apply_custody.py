@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
 from dataclasses import replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import uuid4
 
 import pytest
 
@@ -301,3 +303,33 @@ def test_recovery_never_writes_and_blocks_partial_state(
     )
 
     assert blocked.outcome == "recovery_blocked"
+
+
+def test_config_accepts_exact_persistent_session_plan(setup) -> None:
+    config, _approval, _automation = setup
+    owner_root = Path("/var/tmp") / f"whalpha-snapshot-plan-{uuid4().hex}"
+    workspace = owner_root / "daily-eod"
+    session = workspace / "sessions" / f"session_date={TARGET.isoformat()}"
+    try:
+        session.mkdir(parents=True, mode=0o700)
+        for directory in (workspace, workspace / "sessions", session):
+            directory.chmod(0o700)
+        plan_path = session / "dashboard-snapshot-plan.json"
+        plan_path.write_bytes(b"{}")
+        plan_path.chmod(0o444)
+
+        custody._validate_config(replace(config, approval_plan_path=plan_path))
+
+        wrong_session = session.parent / "session_date=2026-08-27"
+        wrong_session.mkdir(mode=0o700)
+        wrong_session.chmod(0o700)
+        wrong_plan = wrong_session / "dashboard-snapshot-plan.json"
+        with pytest.raises(
+            custody.DailyEodDashboardSnapshotApplyCustodyError,
+            match="session differs",
+        ):
+            custody._validate_config(
+                replace(config, approval_plan_path=wrong_plan)
+            )
+    finally:
+        shutil.rmtree(owner_root)

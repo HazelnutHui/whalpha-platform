@@ -40,6 +40,10 @@ from tip_api.services.market_calendar import (
     ExchangeCalendar,
     evaluate_market_data_freshness,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_offline_artifact_location,
+)
 
 
 CONTRACT_VERSION = "daily-eod-market-intelligence-apply-custody/1.0"
@@ -512,13 +516,22 @@ def _validate_config(config: DailyEodMarketIntelligenceApplyConfig) -> None:
         raise DailyEodMarketIntelligenceApplyCustodyError(
             "MI Apply roots are invalid"
         )
-    if (
-        not config.approval_plan_path.is_absolute()
-        or config.approval_plan_path.parent != Path("/tmp")
-        or config.approval_plan_path.name.startswith(".")
-    ):
+    try:
+        validate_offline_artifact_location(
+            config.approval_plan_path,
+            persistent_names={"market-intelligence-plan.json"},
+        )
+    except OfflineArtifactCustodyError as exc:
         raise DailyEodMarketIntelligenceApplyCustodyError(
             "MI Apply approval path is invalid"
+        ) from exc
+    if (
+        config.approval_plan_path.parent != Path("/tmp")
+        and config.approval_plan_path.parent.name
+        != f"session_date={config.target_session.isoformat()}"
+    ):
+        raise DailyEodMarketIntelligenceApplyCustodyError(
+            "MI Apply approval path session differs"
         )
     if (
         not _is_fingerprint(config.approved_plan_sha256)

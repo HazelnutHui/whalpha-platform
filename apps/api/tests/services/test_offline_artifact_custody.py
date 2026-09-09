@@ -10,6 +10,10 @@ import pytest
 from tip_api.services.offline_artifact_custody import (
     DAILY_EOD_ACQUISITION_PACKAGE_NAME,
     DAILY_EOD_CANONICAL_APPLY_PLAN_NAME,
+    DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME,
+    DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME,
+    DAILY_PRICE_ACQUISITION_PACKAGE_NAME,
+    DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME,
     OfflineArtifactCustodyError,
     validate_daily_eod_data_artifact_location,
     validate_daily_eod_data_artifact_pair,
@@ -126,6 +130,49 @@ def test_accepts_exact_persistent_daily_data_pair_bound_to_session() -> None:
             persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
             expected_session=expected,
         ) == package
+    finally:
+        shutil.rmtree(owner)
+
+
+@pytest.mark.parametrize(
+    ("package_name", "plan_name"),
+    (
+        (
+            DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME,
+            DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME,
+        ),
+        (
+            DAILY_PRICE_ACQUISITION_PACKAGE_NAME,
+            DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME,
+        ),
+    ),
+)
+def test_accepts_distinct_persistent_identity_and_eod_pairs(
+    package_name: str,
+    plan_name: str,
+) -> None:
+    owner, session = _persistent_session()
+    try:
+        package = session / package_name
+        plan = session / plan_name
+        assert validate_daily_eod_data_artifact_pair(
+            package_path=package,
+            plan_path=plan,
+            expected_session=date(2026, 8, 28),
+        ) == (package, plan)
+    finally:
+        shutil.rmtree(owner)
+
+
+def test_rejects_cross_role_persistent_daily_data_pair() -> None:
+    owner, session = _persistent_session()
+    try:
+        with pytest.raises(OfflineArtifactCustodyError, match="roles differ"):
+            validate_daily_eod_data_artifact_pair(
+                package_path=session / DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME,
+                plan_path=session / DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME,
+                expected_session=date(2026, 8, 28),
+            )
     finally:
         shutil.rmtree(owner)
 

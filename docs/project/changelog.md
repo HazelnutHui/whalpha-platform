@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-09-09 — Complete the first live Stocks Starter daily chain
+
+- Verified the delayed provider profile after the 20:30 UTC stabilization
+  boundary: 14 Identity requests and one Grouped Daily request completed, then
+  exact-plan Apply published aligned 2026-09-09 Identity and 9,916 EOD rows.
+- Completed the Dell-local analytics chain, Market Intelligence
+  `2026-09-09T205635Z-e06bd62ecab3`, Snapshot/Serving Bundle
+  `2026-09-09T211131Z-e06bd62ecab3`, and exact one-shot OCI deployment.
+- Independent remote postflight matched source `e06bd62`, bundle and manifest
+  hashes, services, routes, guest parity, and zero staging/failed releases.
+- Published the third signal-eligible daily Membership partition with 19,964
+  rows and proved exact-existing recovery with zero writes.
+- The final full-source current-context report found 306 EOD sessions, aligned
+  Identity, 4,311 `/data` files / 2,321,416,033 bytes, zero symlinks, and zero
+  publication residue. Formal research readiness remains `data_blocked`.
+
+## 2026-09-09 — Complete persistent daily workspace integration
+
+- Accepted ADR 0190. Identity and EOD now have distinct governed persistent
+  package/plan pairs while legacy generic and direct `/tmp` evidence remains
+  compatible; mixed roles, sessions, or custody modes fail closed.
+- Coordinator custody now accepts the exact same-session persistent Market
+  Intelligence and Snapshot plans produced by the bounded offline runner.
+- Membership post-action planning now uses action completion time, preventing
+  a false knowledge-time inversion without changing candidate timestamps.
+- Added focused regression coverage. No formula, Universe, provider request,
+  canonical data, website content, scheduler authority, or research claim was
+  changed by these repairs.
+
 ## 2026-09-09 — Preserve Stress in strategy research statistics
 
 - Accepted ADR 0189 and advanced the fixture-only research-statistics contract

@@ -15,8 +15,9 @@ Those are separate bounded operations.
 
 1. **Fetch-only** may call one approved endpoint class and writes only a
    governed non-symlink custody directory. Legacy one-shot runs may use `/tmp`;
-   persistent daily runs use only the exact same-session
-   `acquisition-package` path. Reference pagination is
+   persistent daily runs use the exact same-session role path:
+   `identity-acquisition-package` for reference data and
+   `eod-acquisition-package` for Grouped Daily. Reference pagination is
    capped at 20 requests and 25,000 records, remains on HTTPS
    `api.massive.com/v3/reference/tickers`, and retains the requested date.
    Grouped Daily makes one `adjusted=false` request for the exact session.
@@ -24,8 +25,10 @@ Those are separate bounded operations.
    frozen package manifest. Authorization material and credential-bearing URLs
    are rejected or stripped in memory and never persisted.
 2. **Offline plan** accepts only a frozen package in the same custody mode. A
-   persistent plan must be the exact sibling `canonical-apply-plan.json`; mixed
-   temporary/persistent or cross-session pairs fail closed. It runs the
+   persistent plan must be the matching sibling
+   `identity-canonical-apply-plan.json` or
+   `eod-canonical-apply-plan.json`; mixed roles, temporary/persistent custody,
+   or sessions fail closed. It runs the
    existing mapping, quality, schema, and persistence code against governed
    offline artifacts. The immutable plan binds the operation/session, package
    custody, production root, expected inventory fingerprint, same-day identity
@@ -121,18 +124,21 @@ or other repository caller can retain the network-to-production path.
 ## Persistent daily custody
 
 ADR 0181 adds the restart-safe path option without changing the payload or
-approval contracts. The only persistent pair is:
+approval contracts. ADR 0190 separates the two persistent roles:
 
 ```text
-<owner-root>/daily-eod/sessions/session_date=YYYY-MM-DD/acquisition-package
-<owner-root>/daily-eod/sessions/session_date=YYYY-MM-DD/canonical-apply-plan.json
+<owner-root>/daily-eod/sessions/session_date=YYYY-MM-DD/identity-acquisition-package
+<owner-root>/daily-eod/sessions/session_date=YYYY-MM-DD/identity-canonical-apply-plan.json
+<owner-root>/daily-eod/sessions/session_date=YYYY-MM-DD/eod-acquisition-package
+<owner-root>/daily-eod/sessions/session_date=YYYY-MM-DD/eod-canonical-apply-plan.json
 ```
 
 The workspace, `sessions`, and exact session directories must already exist,
 be owner-controlled `0700` directories, and remain outside Git, `/tmp`, and
-`/data`. The plan's prepared files are confined to the exact derived
-`canonical-apply-plan.artifacts` directory. Legacy `/tmp` package/plan evidence
-remains compatible, but a pair may never mix custody modes. This path option
+`/data`. Each plan's prepared files are confined to its exact derived
+`.artifacts` directory. The original generic persistent pair and legacy
+`/tmp` package/plan evidence remain compatible, but a pair may never mix roles,
+custody modes, or sessions. This path option
 does not authorize a request, Apply, publication, deployment, or scheduler.
 
 ## Recovery and rollback
