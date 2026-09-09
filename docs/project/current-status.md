@@ -59,6 +59,12 @@ appearance remain manual checks.
   from 175,033 selected EOD rows: 98,291 clear and 3,030 quarantined. It is
   outcome-reconciliation only; omitted-row neutrality and total return remain
   false.
+- The ADR 0182 read-only coverage diagnostic scanned 2,802,728 adjacent
+  stable-ID EOD transitions. All 645 comparable active split groups had bounded
+  adjusted residuals and none was extreme, but 387 severe discontinuities
+  across 321 stable IDs lacked same-date canonical split evidence. These are
+  review flags, not inferred actions; they keep omitted-row neutrality and
+  complete split coverage unproven.
 - `/data` contains 4,204 files / 2,151,679,313 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
@@ -152,7 +158,8 @@ What remains incomplete:
 - complete canonical corporate-action type/availability/revision coverage and
   canonical lifecycle; the split-only bounded publication is not sufficient;
 - complete adjustment coverage, absent-row neutrality evidence, and a later
-  total-return ledger;
+  total-return ledger; the 387 unexplained severe price-discontinuity flags
+  require independent corporate-action/lifecycle evidence;
 - source revision and availability evidence;
 - governed quote evidence, impact calibration, and actual-execution validation
   for the current scenario-only equity cost mechanics;

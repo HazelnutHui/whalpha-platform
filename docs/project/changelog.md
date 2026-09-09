@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Falsify split coverage with canonical price discontinuities
+
+- Accepted ADR 0182 and added a network-prohibited, write-free diagnostic that
+  compares adjacent XNYS-session open/prior-close ratios by stable
+  `instrument_id`, cross-checks canonical active/quarantined/unresolved split
+  evidence, and never promotes price behavior into a corporate-action fact.
+- The clean-revision real scan covered 304 sessions, 2,816,903 EOD rows, and
+  2,802,728 adjacent transitions in about 24 seconds. All 645 comparable active
+  split groups had bounded adjusted residuals with zero extremes.
+- It retained 387 unexplained severe discontinuities across 321 stable IDs, 20
+  comparable quarantine flags, and 80 known event/date keys without comparable
+  two-sided EOD. These remain review evidence; full action coverage, omitted-
+  row neutrality, total return, Historical Coverage, and performance authority
+  remain false.
+- The expanded related suite passed 35 tests. `/data` remained 4,204 files /
+  2,151,679,313 bytes with zero symlinks; no external request, canonical write,
+  Snapshot, deployment, timer, or scheduler action occurred.
+
 ## 2026-09-09 — Make daily data custody restart-safe
 
 - Accepted ADR 0181 and connected the exact persistent-session

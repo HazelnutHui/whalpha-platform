@@ -133,7 +133,7 @@ The formal status is `data_blocked`, with
 | Corporate-action source observations | canonical bounded 2025-06-23 through 2026-09-04 query snapshot; 42,056 resolved / 28,043 quarantined | not signal eligible; future incremental/revision layout and stronger availability evidence |
 | Canonical corporate actions | 709 canonical split-only fact rows: 707 active / 2 quarantined; bounded query snapshot and outcome-only | complete action-type, availability, and revision scope; keep 1,240 unresolved rows unassigned |
 | Instrument lifecycle | temporary 547-item corroboration queue complete | licensed cross-venue sample, terminal/successor/availability evidence, canonical family |
-| Adjustment ledger | Canonical ADR 0177 publication contains 98,291 clear / 3,030 quarantined affected-path rows; Plan/Apply and exact-existing recovery passed | complete coverage and absent-row neutrality evidence; dividend total return later |
+| Adjustment ledger | Canonical ADR 0177 publication contains 98,291 clear / 3,030 quarantined affected-path rows; Plan/Apply and exact-existing recovery passed; ADR 0182 found 387 unexplained severe price discontinuities across 321 stable IDs | independently resolve flagged discontinuities; complete coverage and absent-row neutrality evidence; dividend total return later |
 | Costs and liquidity | deterministic one-side equity scenario mechanics; no observed quote or calibrated-impact evidence | governed point-in-time spread evidence, impact calibration/stress validation, and actual-execution comparison |
 | Evaluation and holdout | fixture mechanics and custody seam only | real chronological dataset and sealed real holdout |
 | Historical Coverage | reader and fixture mechanics exist; two family-evidence manifests are canonical | final publication across every required admitted family |
@@ -173,11 +173,18 @@ projected backward. Canonical price history alone is not backtest readiness.
   canonical outcome-reconciliation evidence. The exact second Apply was zero-
   write. Omitted rows still do not authorize factor one, total return remains
   unavailable, and research readiness remains blocked.
+- ADR 0182 scanned 2,802,728 adjacent stable-ID transitions without network or
+  writes. All 645 comparable active split groups were bounded after exact ratio
+  adjustment with zero extreme residuals. The scan also retained one canonical
+  multiple-action quarantine, 19 unresolved-impact quarantines, 80 known keys
+  without a comparable two-sided transition, and 387 unexplained severe gaps
+  across 321 stable IDs. Price gaps remain review flags only and cannot assign
+  actions or authorize omitted-row neutrality.
 - The lifecycle queue contains 547 stable-ID review candidates. A real licensed
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
 
-Detailed execution evidence belongs in ADRs 0147–0178 and their dated audits,
+Detailed execution evidence belongs in ADRs 0147–0182 and their dated audits,
 not in this recovery document.
 
 ## OCI production proof

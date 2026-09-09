@@ -115,6 +115,14 @@ Canonical price coverage can satisfy a time-length requirement while research
 remains blocked by these missing families. Coverage claims must stay
 family-specific.
 
+ADR 0182 now quantifies the split negative-space boundary without inferring
+facts: 645 comparable active split groups have bounded adjusted residuals and
+zero extreme residuals, while 387 severe gaps across 321 stable IDs lack
+same-date canonical split evidence. Resolve a bounded sample through an
+independent corporate-action/lifecycle source before any broader neutrality or
+Historical Coverage claim. Do not build a dense factor-one ledger from the
+absence of a row in the current bounded source snapshot.
+
 Current membership implementation sequence:
 
 1. Complete-base single-session shadow is proven on 2026-09-03 with 9,979

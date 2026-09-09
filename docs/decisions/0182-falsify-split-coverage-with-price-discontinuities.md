@@ -82,3 +82,9 @@ action evidence.
 
 Rejected because it would duplicate millions of rows without resolving the
 underlying evidence gap.
+
+## Execution Evidence
+
+The first clean-revision real scan and its non-authorizing interpretation are
+recorded in the
+[2026-09-09 canonical split coverage diagnostic audit](../audits/canonical-split-coverage-diagnostic-2026-09-09.md).
