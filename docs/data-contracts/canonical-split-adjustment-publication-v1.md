@@ -1,6 +1,9 @@
 # Canonical Split Adjustment Publication V1
 
-Contract: `canonical-split-adjustment-publication/1.0`.
+Contracts:
+
+- `canonical-split-adjustment-publication/1.0`
+- `canonical-split-adjustment-apply-plan/1.0`
 
 Methodology: `canonical-split-ratio-to-basis-v1`.
 
@@ -60,10 +63,9 @@ reread validates schema, order, business-key uniqueness, counts, provenance,
 statuses, flags, and date boundaries. Exact reruns are idempotent; conflicting
 or tampered bytes fail closed.
 
-## Future canonical path
+## Canonical path
 
-After a separate Plan/Apply decision, the immutable target will be content-
-addressed below:
+ADR 0178 publishes the immutable target below:
 
 ```text
 market-data/adjustment-ledger/schema_version=1/
@@ -73,3 +75,18 @@ market-data/adjustment-ledger/schema_version=1/
 
 Publication does not authorize factor one for absent rows, total return,
 Historical Coverage, research performance, analytics, Snapshot, or deployment.
+
+## Plan and Apply
+
+The plan preserves the candidate's original derivation revision and separately
+binds the clean planner revision. It fully rederives the candidate from its
+exact canonical action and EOD evidence, then binds the two owner-only source
+files, absent content-addressed target, whole `/data` pre-state, bytes, hashes,
+and every non-authority field.
+
+Apply rechecks the plan and derivation, takes the shared Dell data lock,
+requires the exact inventory pre-state, copies both files into a deterministic
+staging directory, fsyncs them, and atomically renames the complete directory.
+It formally rereads canonical custody and proves the outside-target inventory
+unchanged. Exact completed targets are zero-write verified recovery; partial,
+symlinked, conflicting, tampered, or drifted states fail closed.

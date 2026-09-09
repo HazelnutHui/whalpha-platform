@@ -15,6 +15,7 @@ from tip_api.contracts.common import normalize_utc_datetime
 
 
 PUBLICATION_VERSION = "canonical-split-adjustment-publication/1.0"
+APPLY_PLAN_VERSION = "canonical-split-adjustment-apply-plan/1.0"
 METHODOLOGY_VERSION = "canonical-split-ratio-to-basis-v1"
 _SHA256 = r"^[0-9a-f]{64}$"
 _GIT_REVISION = r"^[0-9a-f]{40}$"
@@ -134,6 +135,106 @@ class CanonicalSplitAdjustmentPublicationV1(FrozenContract):
         return self
 
 
+class CanonicalSplitAdjustmentPlanArtifactV1(FrozenContract):
+    file_name: Literal["part-00000.parquet", "manifest.json"]
+    source_path: str
+    target_path: str
+    size: int = Field(ge=1)
+    sha256: str = Field(pattern=_SHA256)
+
+    @field_validator("source_path", "target_path")
+    @classmethod
+    def paths_are_absolute(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if not path.is_absolute() or ".." in path.parts or path.as_posix() != value:
+            raise ValueError("canonical split-adjustment plan path is invalid")
+        return value
+
+
+class CanonicalSplitAdjustmentApplyPlanV1(FrozenContract):
+    contract_version: Literal[
+        "canonical-split-adjustment-apply-plan/1.0"
+    ] = APPLY_PLAN_VERSION
+    operation: Literal["publish_canonical_split_adjustment"] = (
+        "publish_canonical_split_adjustment"
+    )
+    status: Literal["ready_for_separate_review"] = "ready_for_separate_review"
+    planner_source_revision: str = Field(pattern=_GIT_REVISION)
+    created_at: datetime
+    data_root: str
+    candidate_root: str
+    target_publication_root: str
+    expected_current_state_fingerprint: str = Field(pattern=_SHA256)
+    artifacts: tuple[CanonicalSplitAdjustmentPlanArtifactV1, ...]
+    publication: CanonicalSplitAdjustmentPublicationV1
+    inventory_change_file_count: Literal[2] = 2
+    inventory_change_bytes: int = Field(ge=1)
+    target_absent_count: Literal[1] = 1
+    external_request_count: Literal[0] = 0
+    overwritten_file_count: Literal[0] = 0
+    deleted_file_count: Literal[0] = 0
+    apply_authorized: Literal[False] = False
+    absent_row_neutrality_authorized: Literal[False] = False
+    total_return_adjustment_authorized: Literal[False] = False
+    full_adjustment_coverage_authorized: Literal[False] = False
+    historical_coverage_authorized: Literal[False] = False
+    research_performance_authorized: Literal[False] = False
+    logical_fingerprint: str = Field(pattern=_SHA256)
+
+    @field_validator("created_at")
+    @classmethod
+    def created_at_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("data_root", "candidate_root", "target_publication_root")
+    @classmethod
+    def roots_are_absolute(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if not path.is_absolute() or ".." in path.parts or path.as_posix() != value:
+            raise ValueError("canonical split-adjustment plan root is invalid")
+        return value
+
+    @model_validator(mode="after")
+    def plan_reconciles(self) -> "CanonicalSplitAdjustmentApplyPlanV1":
+        if self.created_at < self.publication.calculated_at:
+            raise ValueError("split-adjustment plan precedes candidate calculation")
+        if tuple(item.file_name for item in self.artifacts) != (
+            "part-00000.parquet",
+            "manifest.json",
+        ):
+            raise ValueError("split-adjustment plan artifact set differs")
+        expected_sources = tuple(
+            str(PurePosixPath(self.candidate_root) / item.file_name)
+            for item in self.artifacts
+        )
+        expected_targets = tuple(
+            str(PurePosixPath(self.target_publication_root) / item.file_name)
+            for item in self.artifacts
+        )
+        if (
+            tuple(item.source_path for item in self.artifacts) != expected_sources
+            or tuple(item.target_path for item in self.artifacts) != expected_targets
+            or self.inventory_change_bytes != sum(item.size for item in self.artifacts)
+        ):
+            raise ValueError("split-adjustment plan artifact binding differs")
+        expected_target = (
+            PurePosixPath(self.data_root)
+            / "market-data"
+            / "adjustment-ledger"
+            / "schema_version=1"
+            / f"methodology_version={self.publication.methodology_version}"
+            / f"basis_session={self.publication.basis_session.isoformat()}"
+            / f"coverage_id={self.publication.logical_fingerprint}"
+        )
+        if PurePosixPath(self.target_publication_root) != expected_target:
+            raise ValueError("split-adjustment target publication path differs")
+        if canonical_split_adjustment_apply_plan_fingerprint(self) != (
+            self.logical_fingerprint
+        ):
+            raise ValueError("canonical split-adjustment Apply-plan fingerprint differs")
+        return self
+
+
 def build_canonical_split_adjustment_publication(
     **values: object,
 ) -> CanonicalSplitAdjustmentPublicationV1:
@@ -146,6 +247,23 @@ def build_canonical_split_adjustment_publication(
             **values,
             "logical_fingerprint": (
                 canonical_split_adjustment_publication_fingerprint(provisional)
+            ),
+        }
+    )
+
+
+def build_canonical_split_adjustment_apply_plan(
+    **values: object,
+) -> CanonicalSplitAdjustmentApplyPlanV1:
+    provisional = CanonicalSplitAdjustmentApplyPlanV1.model_construct(
+        **values,
+        logical_fingerprint="0" * 64,
+    )
+    return CanonicalSplitAdjustmentApplyPlanV1.model_validate(
+        {
+            **values,
+            "logical_fingerprint": canonical_split_adjustment_apply_plan_fingerprint(
+                provisional
             ),
         }
     )
@@ -166,6 +284,20 @@ def canonical_split_adjustment_publication_fingerprint(
     payload = json.dumps(
         to_jsonable_python(
             publication.model_dump(mode="json", exclude={"logical_fingerprint"})
+        ),
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=True,
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def canonical_split_adjustment_apply_plan_fingerprint(
+    plan: CanonicalSplitAdjustmentApplyPlanV1,
+) -> str:
+    payload = json.dumps(
+        to_jsonable_python(
+            plan.model_dump(mode="json", exclude={"logical_fingerprint"})
         ),
         sort_keys=True,
         separators=(",", ":"),

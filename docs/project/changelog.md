@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Implement canonical sparse split adjustment publication
+
+- Accepted ADR 0178 and added the exact Apply-plan contract, network-prohibited
+  planner, shared-lock atomic Apply, formal canonical reader integration, and
+  zero-write recovery for the ADR 0177 publication-exact candidate.
+- The plan separates candidate derivation revision from planner revision and
+  fully rederives all candidate rows from exact canonical split-action and EOD
+  evidence before trusting the two source artifacts.
+- Current-context contract 1.9 now formally distinguishes canonical sparse
+  split-only outcome reconciliation from absent Adjustment Ledger custody while
+  retaining incomplete reconciliation, `data_blocked`, and false research
+  authority.
+- Focused tests cover exact source rebinding, false authorities, inventory
+  drift, atomic Apply, interruption cleanup, tamper failure, and exact-existing
+  recovery. This implementation entry does not record a real `/data` Apply,
+  Historical Coverage, research run, analytics, Snapshot, bundle, deployment,
+  or scheduler change.
+
 ## 2026-09-09 — Reconcile real sparse split adjustment candidate
 
 - Built the clean-revision ADR 0177 candidate on Dell against exact canonical

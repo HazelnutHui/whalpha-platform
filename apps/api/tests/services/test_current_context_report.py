@@ -515,6 +515,55 @@ def test_canonical_split_action_inventory_remains_partial(
     assert state["research_ready"] is False
 
 
+def test_canonical_split_adjustment_inventory_remains_partial(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    root = tmp_path / "data"
+    publication_partition = (
+        root
+        / "market-data/adjustment-ledger/schema_version=1"
+        / "methodology_version=canonical-split-ratio-to-basis-v1"
+        / "basis_session=2026-08-22"
+        / f"coverage_id={'a' * 64}"
+    )
+    publication_partition.mkdir(parents=True)
+    publication = SimpleNamespace(
+        logical_fingerprint="a" * 64,
+        calculated_at=datetime(2026, 9, 8, tzinfo=UTC),
+        first_source_session=date(2026, 8, 20),
+        last_source_session=date(2026, 8, 22),
+        basis_session=date(2026, 8, 22),
+        record_count=6,
+        clear_record_count=2,
+        quarantined_record_count=4,
+        clear_instrument_count=1,
+        quarantined_instrument_count=2,
+        methodology_version="canonical-split-ratio-to-basis-v1",
+        row_scope="affected_or_quarantined_eod_rows_only",
+        point_in_time_eligibility="outcome_reconciliation_only",
+    )
+    monkeypatch.setattr(
+        report,
+        "read_canonical_split_adjustment_publication",
+        lambda **_kwargs: SimpleNamespace(publication=publication),
+    )
+
+    state = report._canonical_split_adjustment_inventory(root)
+
+    assert state["custody_state"] == (
+        "canonical_sparse_split_only_outcome_reconciliation"
+    )
+    assert state["record_count"] == 6
+    assert state["clear_record_count"] == 2
+    assert state["quarantined_record_count"] == 4
+    assert state["absent_row_neutrality_authorized"] is False
+    assert state["full_adjustment_coverage_authorized"] is False
+    assert state["historical_coverage_authorized"] is False
+    assert state["research_performance_authorized"] is False
+    assert state["research_ready"] is False
+
+
 def test_historical_research_readiness_does_not_promote_observed_partition(
     tmp_path: Path,
 ) -> None:

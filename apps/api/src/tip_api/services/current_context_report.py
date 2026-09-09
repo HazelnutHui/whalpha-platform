@@ -34,6 +34,10 @@ from tip_api.persistence.parquet.canonical_corporate_action import (
     CanonicalSplitActionPersistenceError,
     read_canonical_split_action_publication,
 )
+from tip_api.persistence.parquet.canonical_split_adjustment import (
+    CanonicalSplitAdjustmentPersistenceError,
+    read_canonical_split_adjustment_publication,
+)
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.providers.massive.same_day_catchup import inventory_fingerprint
 from tip_api.services.market_calendar import (
@@ -63,11 +67,6 @@ _RESEARCH_PHYSICAL_FAMILIES = (
         "instrument_lifecycle",
         "instrument-lifecycle",
         "schema_version=1/as_of_date=*",
-    ),
-    (
-        "adjustment_ledger",
-        "adjustment-ledger",
-        "schema_version=1/methodology_version=*/basis_session=*",
     ),
     (
         "historical_coverage_evidence",
@@ -197,7 +196,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.8",
+        "report_contract": "tip-current-context-report/1.9",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (
@@ -468,6 +467,7 @@ def _historical_research_readiness(
     )
     corporate_action_source = _canonical_corporate_action_source_inventory(root)
     corporate_action = _canonical_split_action_inventory(root)
+    adjustment_ledger = _canonical_split_adjustment_inventory(root)
     membership = _canonical_membership_inventory(
         root,
         session_dates=session_dates,
@@ -475,6 +475,7 @@ def _historical_research_readiness(
     physical = (
         corporate_action_source,
         corporate_action,
+        adjustment_ledger,
         *generic_physical,
         membership,
     )
@@ -511,9 +512,12 @@ def _historical_research_readiness(
         blocker_codes.append("canonical_corporate_action_coverage_absent")
     else:
         blocker_codes.append("canonical_corporate_action_coverage_incomplete")
+    if adjustment_ledger["partition_count"] == 0:
+        blocker_codes.append("adjustment_ledger_reconciliation_absent")
+    else:
+        blocker_codes.append("adjustment_ledger_reconciliation_incomplete")
     blocker_by_family = {
         "instrument_lifecycle": "instrument_lifecycle_coverage_absent",
-        "adjustment_ledger": "adjustment_ledger_reconciliation_absent",
         "historical_coverage_evidence": (
             "historical_coverage_evidence_publication_absent"
         ),
@@ -1018,6 +1022,104 @@ def _canonical_split_action_inventory(root: Path) -> dict[str, Any]:
         "point_in_time_eligibility": publication.point_in_time_eligibility,
         "full_corporate_action_coverage_authorized": False,
         "adjustment_ledger_authorized": False,
+        "validation_scope": "full_publication_and_parquet_formal_read",
+        "research_ready": False,
+    }
+
+
+def _canonical_split_adjustment_inventory(root: Path) -> dict[str, Any]:
+    base = root / "market-data" / "adjustment-ledger" / "schema_version=1"
+    if base.is_symlink():
+        raise CurrentContextReportError(
+            "canonical split-adjustment publication root is unsafe"
+        )
+    if not base.exists():
+        return {
+            "family": "adjustment_ledger",
+            "custody_state": "absent",
+            "partition_count": 0,
+            "manifest_count": 0,
+            "parquet_count": 0,
+            "record_count": 0,
+            "clear_record_count": 0,
+            "quarantined_record_count": 0,
+            "validation_scope": "inventory_only",
+            "research_ready": False,
+        }
+    if not base.is_dir() or base.resolve(strict=True) != base:
+        raise CurrentContextReportError(
+            "canonical split-adjustment publication root is unsafe"
+        )
+    if any(item.is_symlink() for item in base.rglob("*")):
+        raise CurrentContextReportError(
+            "canonical split-adjustment publication inventory is unsafe"
+        )
+    partitions = tuple(
+        sorted(
+            base.glob(
+                "methodology_version=*/basis_session=*/coverage_id=*"
+            )
+        )
+    )
+    if any(not item.is_dir() for item in partitions):
+        raise CurrentContextReportError(
+            "canonical split-adjustment publication partition is unsafe"
+        )
+    publications = []
+    for partition in partitions:
+        try:
+            publications.append(
+                read_canonical_split_adjustment_publication(
+                    data_root=root,
+                    publication_root=partition,
+                )
+            )
+        except CanonicalSplitAdjustmentPersistenceError as exc:
+            raise CurrentContextReportError(
+                "canonical split-adjustment publication formal read failed"
+            ) from exc
+    if not publications:
+        raise CurrentContextReportError(
+            "canonical split-adjustment root has no publication"
+        )
+    if len(
+        {item.publication.logical_fingerprint for item in publications}
+    ) != len(publications):
+        raise CurrentContextReportError(
+            "canonical split-adjustment publication identity is duplicated"
+        )
+    latest = max(
+        publications,
+        key=lambda item: (
+            item.publication.basis_session,
+            item.publication.calculated_at,
+            item.publication.logical_fingerprint,
+        ),
+    )
+    publication = latest.publication
+    return {
+        "family": "adjustment_ledger",
+        "custody_state": "canonical_sparse_split_only_outcome_reconciliation",
+        "partition_count": len(publications),
+        "manifest_count": len(publications),
+        "parquet_count": len(publications),
+        "record_count": publication.record_count,
+        "clear_record_count": publication.clear_record_count,
+        "quarantined_record_count": publication.quarantined_record_count,
+        "clear_instrument_count": publication.clear_instrument_count,
+        "quarantined_instrument_count": publication.quarantined_instrument_count,
+        "first_session": publication.first_source_session.isoformat(),
+        "last_session": publication.last_source_session.isoformat(),
+        "basis_session": publication.basis_session.isoformat(),
+        "publication_fingerprint": publication.logical_fingerprint,
+        "methodology_version": publication.methodology_version,
+        "row_scope": publication.row_scope,
+        "point_in_time_eligibility": publication.point_in_time_eligibility,
+        "absent_row_neutrality_authorized": False,
+        "total_return_adjustment_authorized": False,
+        "full_adjustment_coverage_authorized": False,
+        "historical_coverage_authorized": False,
+        "research_performance_authorized": False,
         "validation_scope": "full_publication_and_parquet_formal_read",
         "research_ready": False,
     }
