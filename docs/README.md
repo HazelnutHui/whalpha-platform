@@ -1,5 +1,8 @@
 # Documentation Index
 
+- [Bounded Daily Offline Run ADR](decisions/0180-chain-successful-offline-transitions-in-one-bounded-run.md): chains only formally successful Dell-local offline actions under finite action/time budgets while preserving per-stage custody and every external boundary.
+- [Daily EOD Bounded Offline Run V1](data-contracts/daily-eod-bounded-offline-run-v1.md): exact progress, stop, evidence, CLI, and zero-external-authority contract.
+
 - [Historical Research Backfill Plan ADR](decisions/0119-plan-a-resumable-300-session-historical-foundation.md): exact 300-session target, resumable batching, request/time/storage projections, and non-authorizing Pilot boundary.
 - [Dell-local Massive history decision](decisions/0120-allow-dell-local-massive-history-without-written-permission.md): user-directed acquisition posture without a false permission or public-serving claim.
 - [Historical Backfill Batch Runner ADR](decisions/0121-run-history-newest-to-oldest-with-canonical-resume.md): newest-to-oldest execution, canonical resume, shared pacing, and fail-stop behavior.

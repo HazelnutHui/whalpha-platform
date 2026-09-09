@@ -286,6 +286,17 @@ reports: no fetch, Apply, calculation, publication, deployment, retry, or alert
 delivery occurs. No unattended write-capable scheduler is installed. SMTP is
 unconfigured.
 
+ADR 0180 and `daily-eod-bounded-offline-run/1.0` now provide a finite Dell-local
+runner for consecutive successful offline stages. It preserves the existing
+single-action journal and postcondition boundary, defaults to review-only, and
+stops before every data, publication, Snapshot, deployment, failure, recovery,
+or budget boundary. It is repository capability only: it is not installed in
+the timer, and no real multi-action execution has yet been recorded. The
+retained artifact workspace and durable legacy journal currently use separate
+roots; neither may be silently treated as the runner's required unified
+owner-only workspace. Runtime layout composition remains the next integration
+gate.
+
 The manual guarded chain works end to end:
 
 ```text
@@ -324,20 +335,24 @@ design addresses both gaps.
    changing readiness policy. Then exercise ADR 0154 Membership preparation
    against direct Daily Identity Plan 1.1 evidence and record consolidated
    timings.
-2. Obtain and review a GICS History specification/sample against ADR 0173 and
+2. Compose one explicit owner-only persistent runtime layout for ADR 0180;
+   preserve the existing journal and retained artifacts without implicit
+   migration. After a new canonical session exists, run one controlled
+   multi-action execution and record its consolidated timing and stop state.
+3. After the new-session Membership and recovery gates pass, review the
+   one-action coordinator integration and a controlled scheduler rehearsal.
+   Do not enable unattended writes merely because the timer is active.
+4. Obtain and review a GICS History specification/sample against ADR 0173 and
    the field-to-contract and role gates already frozen in the source review.
-3. After the new-session Membership and recovery gates pass, review one-action
-   coordinator integration and a controlled scheduler rehearsal. Do not enable
-   unattended writes merely because the timer is active.
-4. Implement a live adapter and Dell-only current snapshot only after that
+5. Implement a live adapter and Dell-only current snapshot only after that
    review passes. Integrate Candidate sector/industry concentration only after
    current source coverage, mapping, permission, and quarantine behavior pass.
-5. Complete lifecycle, historical Membership eligibility, costs, availability,
+6. Complete lifecycle, historical Membership eligibility, costs, availability,
    revision, final Historical Coverage, and sealed evaluation evidence.
-6. Begin real preregistered chronological research with Strong-Leader Pullback,
+7. Begin real preregistered chronological research with Strong-Leader Pullback,
    then Momentum Breakout, Trend Continuation, Technical Reversal, and
    Fundamental Value Reversal.
-7. Add options expression, fundamentals/valuation/events, and later
+8. Add options expression, fundamentals/valuation/events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune formulas, thresholds, or paid-data scope merely because price

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-09 — Add a finite continuous runner for governed offline daily stages
+
+- Accepted ADR 0180 and added a default-review, socket-guarded Dell command
+  that can chain only formally successful offline actions under eleven-action
+  and two-hour default budgets. Every action still uses the existing exact-plan
+  executor, immutable journal reservation/result, postcondition reread, and
+  no-replay recovery boundary.
+- The runner stops at data, MI/Snapshot publication, deployment, blocked,
+  failure, unknown-outcome, missing-current-state, and budget boundaries. It
+  performs no provider request, canonical Apply, publication Apply, deployment,
+  retry, recovery, polling, sleep, service installation, or timer change.
+- The 17 focused tests passed; the expanded related automation suite passed
+  165 tests in total. A real default-review replay against the retained
+  2026-08-28 persistent workspace
+  took about 28 seconds, executed zero actions, and correctly stopped at its MI
+  publication-plan review. `/data` remained 4,204 files / 2,151,679,313 bytes
+  with zero symlinks; the replay workspace had zero changed paths.
+
 ## 2026-09-09 — Isolate current-session EOD recency and freeze classification sample gates
 
 - Ran a two-request, credential-safe Grouped Daily comparison at 02:27 UTC.

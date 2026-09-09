@@ -741,6 +741,51 @@ diagnostic never invents a coordinator result or provider retry boundary. It
 performs zero reads outside its supplied event tuple and zero writes, requests,
 replays, retries, recoveries, or resolutions. No CLI or timer binding exists.
 
+### Finite consecutive offline execution
+
+ADR 0180 supersedes the distinct-process/five-minute delay only for formally
+successful offline stages. `daily-eod-bounded-offline-run/1.0` obtains a fresh
+Automation Plan before each action and delegates the exact fingerprint to the
+unchanged single-action executor. Each action therefore keeps its own journal
+reservation, terminal event, postcondition reread, and recovery identity.
+
+The command is review-only by default:
+
+```bash
+scripts/admin/run-bounded-daily-eod-offline.sh \
+  --as-of-session YYYY-MM-DD \
+  --data-root /data/trading-intelligence-platform \
+  --workspace-root /absolute/owner-root/daily-eod
+```
+
+Add `--execute` only for a controlled offline run. The default budget is all
+eleven admitted offline actions and two hours; neither value may exceed eleven
+actions or four hours. If the run can reach Market Intelligence plan
+preparation, also provide the exact current-state fingerprint:
+
+```bash
+--publication-expected-current-state-fingerprint <64-hex-inventory-state>
+```
+
+The runner derives timestamps for MI plan, Snapshot plan, and serving-bundle
+preparation from its UTC clock only when each action is reached. It stops at
+Identity/EOD input, MI Apply, Snapshot Apply, deployment review, blocked state,
+known failure, unknown exception, missing MI state binding, or either budget.
+It never requests data, applies `/data`, retries, recovers, publishes, deploys,
+polls, sleeps, or changes a service/timer.
+
+Execution requires the persistent workspace, `sessions`, exact target/prior
+session, `journal`, and `cache/panels` directories to be pre-provisioned as
+owner-only `0700`. The CLI creates none of them and keeps the offline socket
+guard active. The existing action journal, not the invocation summary, remains
+the durable resume and recovery truth.
+
+A 2026-09-09 default-review replay against the retained 2026-08-28 persistent
+workspace executed zero actions and stopped at `review_publication` in about 28
+seconds. The workspace had no changed path and `/data` remained exactly 4,204
+files / 2,151,679,313 bytes with zero symlinks. This proves the review boundary,
+not multi-action execution or unattended operation.
+
 ## Default-off one-transition wake bridge
 
 ADR 0077 composes one exact unchanged enabled-candidate wake plan with one

@@ -1,5 +1,6 @@
 # Data Contracts
 
+- [Daily EOD Bounded Offline Run V1](daily-eod-bounded-offline-run-v1.md)
 - [Universe Membership Knowledge Time V1](universe-membership-knowledge-time-v1.md)
 - [Universe Membership Canonical Publication V1](universe-membership-canonical-publication-v1.md)
 

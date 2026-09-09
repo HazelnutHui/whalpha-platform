@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0180](0180-chain-successful-offline-transitions-in-one-bounded-run.md): chain formally successful offline daily actions in one finite Dell run while retaining single-action journal/recovery custody and stopping at every data, publication, deployment, failure, or budget boundary.
+
 - [ADR 0179](0179-separate-equity-cost-mechanics-from-execution-evidence.md): implement transparent one-side equity execution-cost mechanics while keeping quote, calibration, research, performance, and options authority separate.
 
 - [ADR 0178](0178-publish-sparse-split-adjustments-with-exact-plan-apply.md): publish the exact sparse split-adjustment candidate through source rederivation, atomic Plan/Apply, and zero-write recovery without upgrading research authority.

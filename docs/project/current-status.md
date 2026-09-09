@@ -171,6 +171,18 @@ performs no fetch, Apply, calculation, publication, deployment, retry, alert
 delivery, or credential access. No unattended write-capable scheduler is
 installed. SMTP remains unconfigured.
 
+ADR 0180 adds a finite repository runner for consecutive, formally successful
+Dell-local offline actions. It keeps every existing single-action journal and
+postcondition, defaults to review-only, and has zero provider, canonical Apply,
+publication, deployment, retry, recovery, or scheduler-install authority. Its
+17 focused tests pass and the expanded related suite passes 165 tests in total.
+A retained 2026-08-28 default review took about 28 seconds, executed zero
+actions, stopped at publication review, changed no workspace path, and left
+`/data` at 4,204 files / 2,151,679,313 bytes with zero symlinks. This proves the
+review boundary only. The runner is not installed, no real multi-action run has
+been recorded, and the separate retained artifact and legacy journal roots do
+not yet satisfy its unified owner-only execution preflight.
+
 The timer correctly identified 2026-09-08 as the oldest missing session. The
 guarded Identity fetch/plan/Apply completed with 14 requests and no overwrite;
 the initial EOD request, a bounded 22:52 UTC post-close retry, and one final
@@ -203,18 +215,22 @@ Visual Context's cumulative-state requirement.
    perform one controlled timing/completeness observation before changing
    scheduler policy. Then exercise ADR 0154 Membership preparation and record
    consolidated timings.
-2. Obtain and review a GICS History specification/sample against ADR 0173 and
-   the exact field/role gates in the 2026-09-08 source review.
+2. Compose and review one explicit owner-only persistent runtime layout for the
+   bounded offline runner without implicitly migrating the legacy journal or
+   retained artifacts. After a new canonical session exists, execute one
+   controlled multi-action rehearsal and record its consolidated timeline.
 3. After the new-session Membership/recovery gates pass, review coordinator
    integration and a controlled unattended-scheduler rehearsal.
-4. Only after the sample passes, implement its adapter and a Dell-only current
+4. Obtain and review a GICS History specification/sample against ADR 0173 and
+   the exact field/role gates in the 2026-09-08 source review.
+5. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-5. Complete historical Membership, lifecycle, cost evidence/calibration,
+6. Complete historical Membership, lifecycle, cost evidence/calibration,
    availability/revision, final Coverage, chronological evaluation, and sealed
    holdout evidence.
-6. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
+7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,
    Trend Continuation, Technical Reversal, and Fundamental Value Reversal.
-7. Add options expression, fundamentals/valuation/events, and later
+8. Add options expression, fundamentals/valuation/events, and later
    portfolio/IBKR integration after their required datasets exist.
 
 Do not tune formulas, thresholds, or rankings before governed chronological

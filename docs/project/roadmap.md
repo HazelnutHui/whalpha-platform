@@ -59,6 +59,17 @@ Next:
 Do not reconnect the write-capable scheduler as part of performance work. The
 installed timer remains read-only until automation receives its own review.
 
+ADR 0180 now removes the artificial five-minute/process break only between
+formally successful offline stages. The finite runner retains every existing
+per-action journal and postcondition, defaults to review-only, and stops before
+all data, publication, Snapshot, deployment, failure, and recovery boundaries.
+Its focused and related fixture regressions pass, and a real historical
+workspace review proved zero action/write behavior. Next, after a new canonical
+session exists, run one controlled multi-action execution rehearsal and record
+one consolidated timeline. Then compose dynamic data and external serving
+capabilities separately; do not mislabel the offline runner as full unattended
+publication.
+
 ## Priority 2 — Governed historical research inputs
 
 Connect canonical history to research without projecting current membership
