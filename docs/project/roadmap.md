@@ -123,6 +123,12 @@ independent corporate-action/lifecycle source before any broader neutrality or
 Historical Coverage claim. Do not build a dense factor-one ledger from the
 absence of a row in the current bounded source snapshot.
 
+The sample order is now evidence-based: inspect all 14 current Secondary
+overlaps first, then the 31 lifecycle-queue overlaps and the 44 IDs with a
+fourfold/quarter-scale gap, while retaining representative threshold cases.
+These are prioritization sets, not inferred actions or historical membership;
+overlaps must be deduplicated when the actual sample is frozen.
+
 Current membership implementation sequence:
 
 1. Complete-base single-session shadow is proven on 2026-09-03 with 9,979

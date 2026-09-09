@@ -64,7 +64,10 @@ appearance remain manual checks.
   adjusted residuals and none was extreme, but 387 severe discontinuities
   across 321 stable IDs lacked same-date canonical split evidence. These are
   review flags, not inferred actions; they keep omitted-row neutrality and
-  complete split coverage unproven.
+  complete split coverage unproven. A prioritization-only cross-check found 13
+  current Primary / 14 current Secondary IDs, 31 lifecycle-queue IDs with no
+  current-Universe overlap, and 44 IDs with at least one fourfold or
+  quarter-scale gap; current membership was not projected backward.
 - `/data` contains 4,204 files / 2,151,679,313 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.

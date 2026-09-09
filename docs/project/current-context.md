@@ -179,7 +179,10 @@ projected backward. Canonical price history alone is not backtest readiness.
   multiple-action quarantine, 19 unresolved-impact quarantines, 80 known keys
   without a comparable two-sided transition, and 387 unexplained severe gaps
   across 321 stable IDs. Price gaps remain review flags only and cannot assign
-  actions or authorize omitted-row neutrality.
+  actions or authorize omitted-row neutrality. Current-state prioritization
+  finds 13 Primary / 14 Secondary affected IDs and 31 lifecycle-queue overlaps
+  with no overlap between those two sets; this locator does not create
+  historical Membership evidence.
 - The lifecycle queue contains 547 stable-ID review candidates. A real licensed
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.

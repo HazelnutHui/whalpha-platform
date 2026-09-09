@@ -56,6 +56,30 @@ include missing corporate actions, stale or erroneous bars, distress moves,
 listing/lifecycle transitions, or other market events. Price behavior alone
 cannot choose among those explanations or create a canonical action.
 
+## Prioritization-only cross-check
+
+A second clean-revision read recomputed the same 387 flags / 321 stable IDs and
+crossed only their stable IDs against current Activation and the exact
+owner-only lifecycle corroboration plan:
+
+| Review locator | Stable IDs |
+| --- | ---: |
+| Current Primary overlap | 13 |
+| Current Secondary overlap | 14 |
+| Existing 547-item lifecycle queue overlap | 31 |
+| Current Secondary and lifecycle overlap | 0 |
+| Ratio at or beyond one-quarter / fourfold | 44 IDs / 45 flags |
+| IDs with repeated unexplained flags | 57 |
+| Maximum flags on one ID | 5 |
+
+The unexplained range is 2025-06-24 through 2026-09-02. Current Activation is
+only a review-priority locator: it is not projected backward and does not make
+those instruments historically eligible. Lifecycle overlap similarly does not
+prove that a lifecycle event caused a price gap. The first independent-source
+sample should prioritize the 14 current Secondary IDs, then lifecycle overlap
+and the most extreme/repeated cases, while retaining representative ordinary
+threshold cases.
+
 ## Safety and verification
 
 - Six focused diagnostic/CLI tests passed after a test caught and corrected a

@@ -14,6 +14,10 @@
   two-sided EOD. These remain review evidence; full action coverage, omitted-
   row neutrality, total return, Historical Coverage, and performance authority
   remain false.
+- A stable-ID-only prioritization cross-check found 13 current Primary / 14
+  current Secondary overlaps, 31 lifecycle-queue overlaps with no current-
+  Universe intersection, 44 IDs with a fourfold/quarter-scale gap, and 57 IDs
+  with repeated flags. Current Activation was not projected backward.
 - The expanded related suite passed 35 tests. `/data` remained 4,204 files /
   2,151,679,313 bytes with zero symlinks; no external request, canonical write,
   Snapshot, deployment, timer, or scheduler action occurred.
