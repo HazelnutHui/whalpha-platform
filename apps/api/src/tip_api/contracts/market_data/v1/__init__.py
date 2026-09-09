@@ -119,6 +119,14 @@ from tip_api.contracts.market_data.v1.canonical_corporate_action import (
     canonical_split_action_publication_bytes,
     canonical_split_action_publication_fingerprint,
 )
+from tip_api.contracts.market_data.v1.canonical_split_adjustment import (
+    METHODOLOGY_VERSION as CANONICAL_SPLIT_ADJUSTMENT_METHODOLOGY_VERSION,
+    PUBLICATION_VERSION as CANONICAL_SPLIT_ADJUSTMENT_PUBLICATION_VERSION,
+    CanonicalSplitAdjustmentPublicationV1,
+    build_canonical_split_adjustment_publication,
+    canonical_split_adjustment_publication_bytes,
+    canonical_split_adjustment_publication_fingerprint,
+)
 from tip_api.contracts.market_data.v1.historical_identity_source_apply_plan import (
     HistoricalIdentitySourceApplyPlanV1,
     HistoricalIdentitySourcePlanArtifactV1,
@@ -275,6 +283,12 @@ __all__ = [
     "canonical_split_action_apply_plan_fingerprint",
     "canonical_split_action_publication_bytes",
     "canonical_split_action_publication_fingerprint",
+    "CANONICAL_SPLIT_ADJUSTMENT_METHODOLOGY_VERSION",
+    "CANONICAL_SPLIT_ADJUSTMENT_PUBLICATION_VERSION",
+    "CanonicalSplitAdjustmentPublicationV1",
+    "build_canonical_split_adjustment_publication",
+    "canonical_split_adjustment_publication_bytes",
+    "canonical_split_adjustment_publication_fingerprint",
     "HistoricalCoverageManifestV1",
     "HistoricalDatasetCoverageReferenceV1",
     "HistoricalDatasetFamily",

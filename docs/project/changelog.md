@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-09 — Implement sparse affected-path split adjustment candidate
+
+- Accepted ADR 0177 and refused a dense factor-one ledger while canonical
+  action coverage remains bounded. Rows are emitted only when an observed EOD
+  path crosses an active split fact, the quarantined multi-action group, or an
+  unresolved possible-impact event.
+- Added a source-bound publication manifest and deterministic Parquet custody
+  over existing `AdjustmentLedgerEntryV1` rows. Exact canonical action and EOD
+  family evidence, basis, methodology, source cutoff, counts, hashes, and all
+  non-authority fields are preserved.
+- Clear price/volume factors use exact event ratios and the strict
+  `source_session < effective_date <= basis_session` rule. Quarantine takes
+  precedence and carries no factors. Total return stays unavailable and absent
+  rows do not imply neutral factors.
+- A formal real-data sizing pass selected 622 stable IDs, scanned 175,033 EOD
+  rows, and projected 101,321 rows: 98,291 clear across 575 IDs and 3,030
+  quarantined across 31 IDs. All selected IDs had EOD observations.
+- Fixture tests cover clear and quarantine math, basis-day exclusion,
+  idempotency, source-range rejection, and tamper failure. This implementation
+  passed as part of the complete 2,254-test API regression with only the two
+  existing dependency deprecation warnings. This implementation stage writes
+  only a future candidate below `/tmp`; no canonical ledger,
+  Historical Coverage, research, analytics, Snapshot, bundle, deployment, or
+  scheduler change is recorded here.
+
 ## 2026-09-08 — Publish canonical split-action facts
 
 - Built and independently reread the exact ADR 0176 plan from clean main

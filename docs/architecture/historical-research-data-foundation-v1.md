@@ -38,7 +38,9 @@ mechanics evidence. Canonical EOD/Identity depth has since exceeded the
 
 - only one canonical, signal-eligible daily Universe Membership partition
   (2026-09-04), not a research-ready historical series;
-- no complete canonical corporate-action or lifecycle dataset;
+- one canonical split-only, outcome-reconciliation Corporate Action
+  publication, but no complete action-type/revision/availability or lifecycle
+  dataset;
 - no governed adjustment ledger or terminal-outcome coverage; and
 - no immutable Historical Coverage publication binding all required families.
 
@@ -294,9 +296,11 @@ schema-version directory, bounded partitions, deterministic ordering,
 content fingerprints, physical file hashes, manifests, and atomic completion.
 EOD/Identity paths and their family-evidence manifests are canonical. One
 signal-eligible Membership partition is also canonical and governed by its
-physical-first, marker-last publication boundary. Corporate Action, lifecycle,
-adjustment, and final Historical Coverage remain fixture-only or temporary and
-have not been populated as canonical families under `/data`.
+physical-first, marker-last publication boundary. ADR 0176 adds a sparse
+canonical split-only action publication without claiming full Corporate Action
+coverage. Lifecycle, adjustment, and final Historical Coverage remain absent
+or temporary and have not been populated as complete canonical families under
+`/data`.
 
 The design should prefer:
 
@@ -331,8 +335,8 @@ with its own bounded representative Pilot rather than a bulk run.
 
 - Exact provider selection and live entitlement verification
 - Corporate-action and lifecycle adapters
-- Canonical multi-event adjustment construction beyond the completed isolated
-  split/dividend fixture invariants
+- Canonical adjustment coverage beyond the ADR 0177 sparse affected-path split
+  candidate, including neutral-row proof and dividend total return
 - Historical membership builder
 - Canonical membership, action, lifecycle, adjustment, cost, and evaluation
   acquisition/build orchestration

@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0177](0177-project-sparse-split-adjustments-only-for-affected-eod-rows.md): project only action-affected or quarantined EOD paths to an explicit basis, without inventing neutral rows or total return.
+
 - [ADR 0176](0176-publish-canonical-split-actions-before-adjustment-ledger.md): publish provider-neutral split facts as a sparse content-addressed family while keeping multiple actions, unresolved impacts, absent-event neutrality, and all adjustment/research authority gated.
 
 - [ADR 0174](0174-publish-bounded-corporate-action-source-observations.md): publish the exact resolved split/dividend source-observation snapshot and its bounded coverage marker without promoting it to canonical events or signal eligibility.
@@ -314,3 +316,4 @@ Each ADR should include:
 - [0174: Publish Bounded Corporate-Action Source Observations](0174-publish-bounded-corporate-action-source-observations.md)
 - [0175: Bind Split-Action Candidates to Canonical Source Custody](0175-bind-split-action-candidates-to-canonical-source.md)
 - [0176: Publish Canonical Split Actions Before the Adjustment Ledger](0176-publish-canonical-split-actions-before-adjustment-ledger.md)
+- [0177: Project Sparse Split Adjustments Only for Affected EOD Rows](0177-project-sparse-split-adjustments-only-for-affected-eod-rows.md)

@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-08
+Status date: 2026-09-09
 
 This is the concise project-state summary. Exact volatile identities,
 fingerprints, evidence scope, authorization boundaries, and cross-device
@@ -54,6 +54,10 @@ appearance remain manual checks.
   group. It also exposes 43 possible-impact stable IDs without assigning any
   of the 1,240 unresolved source observations. Full Corporate Action coverage,
   neutral factors, and Adjustment Ledger authority remain false.
+- ADR 0177 sparse-ledger code is fixture-validated. A formal read-only census
+  projects 101,321 affected-path rows from 175,033 selected EOD rows: 98,291
+  clear and 3,030 quarantined. No real ledger candidate or `/data` publication
+  has occurred yet.
 - `/data` contains 4,202 files / 2,151,599,005 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.
@@ -126,6 +130,8 @@ What is complete:
   one multiple-event quarantine, and 43 possible-impact stable IDs;
 - canonical split-only fact publication with exact Plan/Apply and zero-write
   recovery evidence;
+- an implementation-ready sparse split-adjustment candidate boundary, pending
+  one clean-revision real Dell build;
 - a 547-item lifecycle corroboration queue; and
 - fixture-tested chronological, statistics, and holdout mechanics.
 
@@ -181,8 +187,8 @@ Visual Context's cumulative-state requirement.
    integration and a controlled unattended-scheduler rehearsal.
 4. Only after the sample passes, implement its adapter and a Dell-only current
    snapshot, then Candidate sector/industry concentration. Keep unknown visible.
-5. Build and reconcile a bounded split-adjustment ledger from the exact
-   canonical action publication.
+5. Build the exact sparse split-adjustment candidate, independently reconcile
+   it, then add its separate inventory-bound publication boundary.
 6. Complete historical Membership, lifecycle, costs, availability/revision,
    final Coverage, chronological evaluation, and sealed holdout evidence.
 7. Begin real research with Strong-Leader Pullback, then Momentum Breakout,

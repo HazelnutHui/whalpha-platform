@@ -15,6 +15,7 @@
 - [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)
 - [Canonical-Source Split Action Candidate V1](canonical-source-split-action-candidate-v1.md)
 - [Canonical Split Action Publication V1](canonical-split-action-publication-v1.md)
+- [Canonical Split Adjustment Publication V1](canonical-split-adjustment-publication-v1.md)
 
 - [Massive Historical Lifecycle Coverage Probe V1](massive-historical-lifecycle-coverage-probe-v1.md)
 
@@ -79,6 +80,7 @@ Implemented as Python/Pydantic contracts:
 - [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)
 - [Canonical-Source Split Action Candidate V1](canonical-source-split-action-candidate-v1.md)
 - [Canonical Split Action Publication V1](canonical-split-action-publication-v1.md)
+- [Canonical Split Adjustment Publication V1](canonical-split-adjustment-publication-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 
