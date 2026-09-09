@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-09T01:44:02Z
+Operational state verified at: 2026-09-09T02:09:00Z
 
 Repository context updated at: 2026-09-09 UTC
 
@@ -17,8 +17,8 @@ ADRs. Proposed sequencing belongs in the [roadmap](roadmap.md).
 | Branch | `main`; verify HEAD and cleanliness with the report rather than freezing them here |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Deployed OCI release | `2026-09-09T013946Z-dc939a9d0dbb` |
-| Deployed source commit | `dc939a9d0dbb41ffa332ac9c427ff5f6e8806c17` |
+| Deployed OCI release | `2026-09-09T020802Z-d53e98832ef5` |
+| Deployed source commit | `d53e98832ef57f22e018f9f9b863f009eb355544` |
 
 Dell is the authority for code, data, development, and heavy computation. OCI
 is only the static web-serving, localhost Auth Service, and public Session
@@ -68,12 +68,12 @@ sealed publication assertion are reported separately.
 The exact 300-session historical target through 2026-08-31 is complete. The
 four following EOD sessions, 2026-09-01 through 2026-09-04, are also canonical.
 The guarded 2026-09-08 Identity catch-up completed, including Plan 1.1 source
-observation. The same-session EOD fetch returned provider HTTP 403 both on its
-first attempt and on one bounded 22:52 UTC post-close retry; neither created a
-package or staging path. Ordinary immediate-post-close delay is now a weaker
-explanation, while same-day account/endpoint entitlement remains unresolved.
-No retry loop, historical-backfill transient service, or computation process
-is running.
+observation. The same-session EOD fetch returned provider HTTP 403 on its first
+attempt, a bounded 22:52 UTC post-close retry, and one final bounded 2026-09-09
+01:48 UTC retry; none created a package or staging path. A short immediate-post-
+close delay is no longer the working explanation, while same-day account/
+endpoint entitlement remains unresolved. No retry loop, historical-backfill
+transient service, or computation process is running.
 
 ### Active Universe
 
@@ -178,17 +178,17 @@ not in this recovery document.
 
 ## OCI production proof
 
-The 2026-09-08T18:20:26Z independent remote inspector matched the active
+The 2026-09-09T02:09:00Z independent remote inspector matched the active
 release and exact Dell deployment audit:
 
 | Evidence | Verified value |
 | --- | --- |
-| Release | `2026-09-08T171914Z-ca2d34d50692` |
-| Source revision | `ca2d34d506922f75699c376391dd6a9191ef0ae9` |
-| Bundle logical fingerprint | `1bf4843b5988a43e125ac5cb48d68c779f0782070c869a7298345ca13396f8fe` |
-| Manifest SHA-256 | `d97ef555c19d1f3ec4c90ee7177be1935487c0f1519d02be61d625f97c40048f` |
-| Checksums file SHA-256 | `837c5924572b9ac2206c7eab742d5542e28f5850cc1ec9238cb43709049f4d06` |
-| Remote-state fingerprint | `98ba9f7126f019957e5502fabe591bc0781c0b2b9bd02b6ab90f2e230b5ae837` |
+| Release | `2026-09-09T020802Z-d53e98832ef5` |
+| Source revision | `d53e98832ef57f22e018f9f9b863f009eb355544` |
+| Bundle logical fingerprint | `28b936259a59b38deeeaeeca7c89d6a908c9885c18b8e501574b40bc2d9e8023` |
+| Manifest SHA-256 | `df2e01816596efdf28e0a3a3e48b69ae8ee013b6e43f755fb72586ffa913cde9` |
+| Checksums file SHA-256 | `02bf93dd85cfa51e60336172aab10c4bfb2401cf8657f69848c156cbbc2dfbe2` |
+| Remote-state fingerprint | `1a43b9b798b83dbafe0d0102eea3e46a7e4c960972993e00e8906c9653589a81` |
 | Bundle files | 53; checksum validation passed |
 | Locales | English default; English and Simplified Chinese supported |
 | Access capability | guest and credential Sessions are identical |
@@ -216,6 +216,12 @@ Live first-level workspaces are Market Regime & Opportunities
 Candidates (`个股候选`), and Quant Research Lab (`量化研究实验室`). The landing
 page and in-app shell share the dark navy/cyan WH identity and favicon. Planned
 capabilities remain labelled as planned.
+
+Sector Rotation now includes a same-session market-to-candidate decision chain:
+the selected Universe's confirmed Regime, five leading fixed-registry ETF price
+proxies for the selected window, and eight Balanced-risk Candidate priorities.
+The columns preserve separate source ranks and are explicitly not formal sector
+membership, fund flow, causality, a combined score, or a trade instruction.
 
 Stock Candidates expose component contributions, evidence, counterevidence,
 entry position, risk, invalidation, parameters, raw facts, and lineage. Strategy
@@ -287,9 +293,9 @@ Identity -> EOD -> Phase 1a -> Phase 1b -> Candidate -> Entry Geometry
 
 ADR 0154 Membership preparation remains a research sidecar after Identity/EOD;
 it has passed a zero-write 9/4 replay. The 9/8 Identity leg completed, but the
-provider rejected both the initial and one bounded post-close EOD request
-before package creation, so Membership correctly remains unavailable for that
-session and coordinator integration is still pending.
+provider rejected the initial and both bounded post-close EOD retries before
+package creation, so Membership correctly remains unavailable for that session
+and coordinator integration is still pending.
 
 Measured isolated/current-code stages include Candidate about 295 seconds,
 Entry 49.67 seconds, ETF Relationships 15.36 seconds, Strategy Channels 33.82

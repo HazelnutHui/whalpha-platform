@@ -14,9 +14,9 @@ The authoritative operational state is maintained in
 reconciliation records, without reading credentials:
 
 - `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-09-09T013946Z-dc939a9d0dbb`;
+  to release `2026-09-09T020802Z-d53e98832ef5`;
 - the release is built from source commit
-  `dc939a9d0dbb41ffa332ac9c427ff5f6e8806c17` and binds Market
+  `d53e98832ef57f22e018f9f9b863f009eb355544` and binds Market
   Intelligence
   `2026-09-04T112916Z-717cb82c5369`;
 - it serves ordinary-fresh, lag-zero 2026-09-04 analytics through Snapshot
@@ -44,6 +44,10 @@ readiness diagnostic. It also includes the selected-channel decision map that
 plots within-channel score against extension risk and colours independent
 trade-review readiness. The diagnostics are not formal sector concentration
 and do not treat the technical channels as independent diversification sleeves.
+Sector Rotation adds a same-session visual hand-off from confirmed Market
+Regime through five leading ETF price proxies to eight Balanced-risk Candidate
+priorities, while explicitly preserving independent ranks and prohibiting a
+membership or causal interpretation.
 Quant Research Lab exposes family-specific readiness gates. These are
 presentation and navigation changes: guest/credential parity, analytics,
 scoring, contracts, and fail-closed API behavior are unchanged.

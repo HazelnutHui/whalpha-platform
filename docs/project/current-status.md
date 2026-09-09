@@ -12,8 +12,8 @@ and dated audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity market-
 intelligence and research platform. The active OCI release is
-`2026-09-09T013946Z-dc939a9d0dbb`, built from clean source commit
-`dc939a9d0dbb41ffa332ac9c427ff5f6e8806c17`.
+`2026-09-09T020802Z-d53e98832ef5`, built from clean source commit
+`d53e98832ef57f22e018f9f9b863f009eb355544`.
 
 The deployed product uses:
 
@@ -100,6 +100,12 @@ published within-channel score against current extension risk and colours the
 linked Candidate trade-review state. It does not recompute or compare strategy
 scores across strategies.
 
+Sector Rotation also includes a bilingual, same-session decision chain that
+places the selected Universe's confirmed Market Regime beside five leading ETF
+price proxies and eight Balanced-risk Candidate priorities. It preserves each
+source rank and explicitly separates the columns: this is not formal sector
+membership, fund flow, causality, a combined score, or a trade instruction.
+
 Momentum Breakout, Strong-Stock Pullback, and Trend Continuation have
 provisional technical mechanics. Technical Reversal, Fundamental Value
 Reversal, and Defensive Rotation remain unavailable. Channel distinctness is
@@ -167,11 +173,13 @@ installed. SMTP remains unconfigured.
 
 The timer correctly identified 2026-09-08 as the oldest missing session. The
 guarded Identity fetch/plan/Apply completed with 14 requests and no overwrite;
-the initial EOD request and one bounded 22:52 UTC post-close retry both returned
-provider HTTP 403 before any package, staging, or canonical EOD write. The
-later result weakens an immediate-post-close timing explanation and leaves
-same-day account/endpoint entitlement unresolved. The chain remains paused
-rather than publishing an inferred or stale new session.
+the initial EOD request, a bounded 22:52 UTC post-close retry, and one final
+bounded 2026-09-09 01:48 UTC retry all returned provider HTTP 403 before any
+package, staging, or canonical EOD write. The repeated result rules out a
+short immediate-post-close delay as the working explanation and leaves
+same-day account/endpoint entitlement unresolved. No blind retry loop is
+running; the chain remains paused rather than publishing an inferred or stale
+new session.
 
 The guarded manual chain works end to end. Reuse optimizations materially
 reduced control-path and downstream stages, but Candidate remains the largest

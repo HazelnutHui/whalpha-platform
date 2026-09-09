@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-09 — Deploy the market-to-candidate decision chain
+
+- Built immutable bundle `2026-09-09T020802Z-d53e98832ef5` from clean source
+  `d53e98832ef57f22e018f9f9b863f009eb355544`, reusing the exact active
+  Snapshot 1.11 / Dashboard 2.8 and MI 1.3 bytes without recalculation or
+  `/data` writes.
+- Dry-run proved the expected prior release, absent target, healthy services,
+  valid Nginx configuration, and safe promotion boundary. Apply completed in
+  about 22 seconds.
+- Independent inspection at 02:09 UTC matched release, source, bundle,
+  manifest, and checksums; protected routes, temporary guest Session,
+  guest/credential route parity, Nginx/Auth, localhost-only listener, and zero
+  staging/failed-release/system-unit residue all passed. Password login and
+  final human visual review remain manual.
+
+## 2026-09-09 — Confirm the 2026-09-08 EOD entitlement blocker
+
+- Performed one final bounded 01:48 UTC Grouped Daily fetch-only retry after the
+  initial request and 22:52 UTC retry. It again returned provider HTTP 403
+  before a package or staging path existed.
+- No retry loop, package residue, `/data` write, canonical EOD change,
+  calculation, publication, Snapshot, bundle, deployment, or scheduler change
+  resulted from this fetch attempt. A short post-close delay is no longer the
+  working explanation; same-day endpoint/account entitlement remains unresolved.
+
 ## 2026-09-09 — Implement the cross-workspace market-to-candidate decision chain
 
 - Added a bilingual Sector Rotation decision view that aligns the selected
