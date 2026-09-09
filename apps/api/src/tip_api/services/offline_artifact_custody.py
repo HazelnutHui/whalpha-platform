@@ -11,6 +11,7 @@ from typing import Collection
 
 DAILY_EOD_ACQUISITION_PACKAGE_NAME = "acquisition-package"
 DAILY_EOD_CANONICAL_APPLY_PLAN_NAME = "canonical-apply-plan.json"
+DAILY_EOD_SERVING_BUNDLE_ROOT_NAME = "serving-bundle"
 
 
 class OfflineArtifactCustodyError(RuntimeError):
@@ -184,6 +185,50 @@ def validate_daily_eod_data_artifact_pair(
             "daily EOD package and plan paths must differ"
         )
     return package, plan
+
+
+def validate_daily_eod_serving_bundle_location(
+    path: Path,
+    *,
+    expected_session: date | None = None,
+) -> Path:
+    """Accept a legacy tmp bundle release or one exact persistent session release."""
+
+    if not path.is_absolute() or path.name in {"", ".", ".."}:
+        raise OfflineArtifactCustodyError(
+            "daily EOD serving bundle path must be absolute"
+        )
+    _reject_existing_symlink_components(path)
+    if path.parent.parent == Path("/tmp"):
+        return path
+    if path.is_relative_to(Path("/data")):
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD serving bundle cannot be below /data"
+        )
+    bundle_root = path.parent
+    validate_offline_artifact_location(
+        bundle_root,
+        persistent_names={DAILY_EOD_SERVING_BUNDLE_ROOT_NAME},
+    )
+    if bundle_root.is_symlink() or not bundle_root.is_dir():
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD serving bundle root is unavailable"
+        )
+    metadata = bundle_root.stat()
+    if (
+        metadata.st_uid != os.geteuid()
+        or stat.S_IMODE(metadata.st_mode) != 0o700
+    ):
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD serving bundle root custody differs"
+        )
+    if expected_session is not None and bundle_root.parent.name != (
+        f"session_date={expected_session.isoformat()}"
+    ):
+        raise OfflineArtifactCustodyError(
+            "persistent daily EOD serving bundle session differs"
+        )
+    return path
 
 
 def _reject_existing_symlink_components(path: Path) -> None:

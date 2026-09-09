@@ -346,6 +346,8 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "Access-Control-Allow-Origin" not in text
     assert "Content-Security-Policy" in text
     deploy_text = deploy_script.read_text()
+    assert "validate_daily_eod_serving_bundle_location" in deploy_text
+    assert "explicit bundle path must use a direct-child /tmp root" not in deploy_text
     assert "candidate-strategy-channels.json" in deploy_text
     assert "guest Candidate strategy-channel binding is invalid" in deploy_text
     assert 'snapshot_contract_version\":\"1\\.(5|6|7|8|9|10|11)' in deploy_text

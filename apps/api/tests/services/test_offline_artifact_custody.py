@@ -13,6 +13,7 @@ from tip_api.services.offline_artifact_custody import (
     OfflineArtifactCustodyError,
     validate_daily_eod_data_artifact_location,
     validate_daily_eod_data_artifact_pair,
+    validate_daily_eod_serving_bundle_location,
     validate_offline_artifact_child,
     validate_offline_artifact_location,
 )
@@ -168,3 +169,42 @@ def test_rejects_persistent_daily_data_custody_below_data() -> None:
             path,
             persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
         )
+
+
+def test_accepts_exact_persistent_serving_bundle_release() -> None:
+    owner, session = _persistent_session()
+    try:
+        bundle_root = session / "serving-bundle"
+        bundle_root.mkdir(mode=0o700)
+        bundle_root.chmod(0o700)
+        release = bundle_root / "2026-08-29T120000Z-aaaaaaaaaaaa"
+        release.mkdir(mode=0o700)
+        assert validate_daily_eod_serving_bundle_location(
+            release,
+            expected_session=date(2026, 8, 28),
+        ) == release
+    finally:
+        shutil.rmtree(owner)
+
+
+def test_rejects_persistent_serving_bundle_session_or_root_custody_drift() -> None:
+    owner, session = _persistent_session()
+    try:
+        bundle_root = session / "serving-bundle"
+        bundle_root.mkdir(mode=0o700)
+        bundle_root.chmod(0o700)
+        release = bundle_root / "2026-08-29T120000Z-aaaaaaaaaaaa"
+        release.mkdir(mode=0o700)
+        with pytest.raises(OfflineArtifactCustodyError, match="session differs"):
+            validate_daily_eod_serving_bundle_location(
+                release,
+                expected_session=date(2026, 8, 27),
+            )
+        bundle_root.chmod(0o755)
+        with pytest.raises(OfflineArtifactCustodyError, match="root custody"):
+            validate_daily_eod_serving_bundle_location(
+                release,
+                expected_session=date(2026, 8, 28),
+            )
+    finally:
+        shutil.rmtree(owner)

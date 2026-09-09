@@ -34,6 +34,10 @@ from tip_api.services.oci_dashboard_deployment_state import (
     validate_remote_postcondition,
     validate_remote_precondition,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_daily_eod_serving_bundle_location,
+)
 
 
 CONTRACT_VERSION = "daily-eod-oci-deployment-custody/1.0"
@@ -309,10 +313,17 @@ def _pending(
 
 
 def _validate_config(config: DailyEodOciDeploymentConfig) -> None:
+    try:
+        validate_daily_eod_serving_bundle_location(
+            config.bundle_path,
+            expected_session=config.target_session,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise DailyEodOciDeploymentCustodyError(
+            "OCI deployment config is invalid"
+        ) from exc
     if (
-        not config.bundle_path.is_absolute()
-        or config.bundle_path.parent.parent != Path("/tmp")
-        or not config.run_root.is_absolute()
+        not config.run_root.is_absolute()
         or not all(
             _is_fingerprint(value)
             for value in (

@@ -99,8 +99,16 @@ if [[ -n "${bundle_path}" ]]; then
   bundle_dir="${bundle_path}"
   [[ "$(basename -- "${bundle_dir}")" == "${bundle_release}" ]] || { echo "bundle path and release differ" >&2; exit 1; }
   bundle_parent=$(dirname -- "${bundle_dir}")
-  [[ "${bundle_parent}" == /tmp/* && "$(dirname -- "${bundle_parent}")" == "/tmp" ]] || { echo "explicit bundle path must use a direct-child /tmp root" >&2; exit 1; }
-  [[ ! -L "${bundle_parent}" && ! -L "${bundle_dir}" ]] || { echo "bundle path symlink is rejected" >&2; exit 1; }
+  PYTHONPATH="${repo_root}/apps/api/src" "${repo_root}/.venv/bin/python" - "${bundle_dir}" <<'PY'
+import sys
+from pathlib import Path
+
+from tip_api.services.offline_artifact_custody import (
+    validate_daily_eod_serving_bundle_location,
+)
+
+validate_daily_eod_serving_bundle_location(Path(sys.argv[1]))
+PY
   [[ "$(realpath -- "${bundle_dir}")" == "${bundle_dir}" ]] || { echo "bundle path must already be canonical" >&2; exit 1; }
 else
   bundle_dir="${bundle_root}/${bundle_release}"

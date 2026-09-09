@@ -1004,6 +1004,12 @@ The Serving Bundle action additionally requires:
 
 For direct `/tmp` custody, the bundle-root basename must begin with `tip-`;
 the lower-level OCI builder rejects other `/tmp` names before frontend build.
+The persistent workspace instead retains the exact release below
+`sessions/session_date=YYYY-MM-DD/serving-bundle`. ADR 0184 allows the OCI
+deployment approval and custody layers to consume that exact same-session
+release after owner, mode, symlink, Git, `/tmp`, `/data`, manifest, checksum,
+logical-fingerprint, and source-revision validation. Arbitrary persistent and
+cross-session bundle paths remain rejected.
 
 It is selectable only after the exact pointer from Snapshot Plan 2.4 is active.
 It invokes the Dell-local builder with the exact immutable V2 Snapshot path and

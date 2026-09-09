@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-09 — Retain Serving Bundle custody through OCI deployment
+
+- Accepted ADR 0184 and aligned OCI deployment approval/custody with the exact
+  persistent `daily-eod/sessions/session_date=YYYY-MM-DD/serving-bundle/<release>`
+  layout already used by the bounded runner.
+- Persistent deployment paths now share one validator across the capability,
+  custody, and reviewed shell entrypoint for target-session, owner-only `0700`
+  roots, no symlinks, and exclusion from Git, `/tmp`, and `/data`; the
+  historical direct `/tmp` layout remains compatible.
+- The change preserves the existing bundle reader, remote-state CAS, durable
+  reservation, no-replay recovery, one-shot runtime binding, and postflight.
+- The focused deployment and path-custody suites passed 14 tests. No OCI write
+  occurred before this correction; read-only recovery inspection proved the
+  old release unchanged, the new release absent, and zero staging or failed
+  residue.
+
 ## 2026-09-09 — Quarantine ambiguous cash dividends before total return
 
 - Accepted ADR 0183 and added a network-prohibited, write-free diagnostic over

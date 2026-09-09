@@ -1,5 +1,7 @@
 # Architecture Decision Records
 
+- [ADR 0184](0184-deploy-serving-bundles-from-the-persistent-daily-workspace.md): allow the one-shot OCI deployment boundary to consume the exact owner-only persistent daily Serving Bundle while preserving legacy `/tmp` compatibility, remote-state CAS, and no-replay custody.
+
 - [ADR 0183](0183-quarantine-large-cash-distributions-before-total-return.md): classify resolved cash distributions in a read-only arithmetic diagnostic while quarantining large, date-ambiguous, non-USD, multi-action, and price-incomplete cases before any canonical dividend or total-return work.
 
 - [ADR 0180](0180-chain-successful-offline-transitions-in-one-bounded-run.md): chain formally successful offline daily actions in one finite Dell run while retaining single-action journal/recovery custody and stopping at every data, publication, deployment, failure, or budget boundary.
@@ -331,3 +333,4 @@ Each ADR should include:
 - [0181: Retain Daily Data Custody in the Session Workspace](0181-retain-daily-data-custody-in-the-session-workspace.md)
 - [0182: Falsify Split Coverage with Price Discontinuities](0182-falsify-split-coverage-with-price-discontinuities.md)
 - [0183: Quarantine Large Cash Distributions Before Total Return](0183-quarantine-large-cash-distributions-before-total-return.md)
+- [0184: Deploy Serving Bundles from the Persistent Daily Workspace](0184-deploy-serving-bundles-from-the-persistent-daily-workspace.md)

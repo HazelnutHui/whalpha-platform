@@ -30,6 +30,10 @@ from tip_api.services.oci_dashboard_deployment_state import (
     parse_remote_state_json,
     read_deployment_binding,
 )
+from tip_api.services.offline_artifact_custody import (
+    OfflineArtifactCustodyError,
+    validate_daily_eod_serving_bundle_location,
+)
 
 
 CONTRACT_VERSION = "daily-eod-oci-deployment-capability/1.0"
@@ -246,10 +250,17 @@ def _validate_local_approval(
     config: DailyEodOciDeploymentCapabilityConfig,
     context: DeploymentTransitionContext,
 ) -> None:
+    try:
+        validate_daily_eod_serving_bundle_location(
+            config.bundle_path,
+            expected_session=context.coordinator.target_session,
+        )
+    except OfflineArtifactCustodyError as exc:
+        raise DailyEodOciDeploymentCapabilityError(
+            "local OCI deployment approval binding is invalid"
+        ) from exc
     if (
-        not config.bundle_path.is_absolute()
-        or config.bundle_path.parent.parent != Path("/tmp")
-        or config.bundle_path.name != context.release_id
+        config.bundle_path.name != context.release_id
         or not config.run_root.is_absolute()
         or not all(
             _is_fingerprint(value)
