@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-09 — Expose daily Membership as a read-only research sidecar
+
+- Accepted ADR 0185 and added
+  `daily-universe-membership-sidecar-plan/1.0`, a deterministic state machine
+  for candidate readiness, primary-pipeline waiting, near-Apply planning,
+  Apply review, formal completion, and research-only blocked states.
+- Added an existing-candidate-only formal reader so sidecar inspection has no
+  path that can create evidence. Daily EOD Pipeline Wake Plan 2.1 optionally
+  projects the sidecar status/action/fingerprint while preserving the exact
+  primary decision and `website_pipeline_blocked=false`.
+- The real Dell read-only command formally returned `complete` / `none` for
+  2026-09-08 with 19,964 decisions and publication fingerprint
+  `f02a67923d60ea4293a87b0884f3fadb109e9cfc3956b3617a4c678648789bb8`.
+  It made zero requests or writes and granted no Apply, scheduler, Historical
+  Coverage, or performance authority.
+- Thirty-one focused tests passed, followed by all 2,325 API tests with the two
+  unchanged dependency deprecation warnings. No `/data`, OCI, website, timer,
+  scheduler, candidate, plan, or canonical publication was changed.
+- See the dated
+  [audit](../audits/daily-universe-membership-sidecar-2026-09-09.md).
+
 ## 2026-09-09 — Publish prospective 2026-09-08 Membership
 
 - Prepared one network-prohibited 19,964-row 2026-09-08 Membership candidate

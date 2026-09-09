@@ -20,9 +20,15 @@ from tip_api.services.daily_eod_scheduler import (
     plan_daily_eod_scheduler_wake,
     verify_daily_eod_scheduler_wake_plan,
 )
+from tip_api.services.daily_universe_membership_sidecar import (
+    DailyUniverseMembershipSidecarPlan,
+    MembershipSidecarAction,
+    MembershipSidecarStatus,
+    verify_daily_universe_membership_sidecar_plan,
+)
 
 
-CONTRACT_VERSION = "daily-eod-pipeline-wake-plan/2.0"
+CONTRACT_VERSION = "daily-eod-pipeline-wake-plan/2.1"
 MANUAL_REVIEW_ACTIONS = {
     NextAction.REVIEW_PUBLICATION,
     NextAction.REVIEW_SNAPSHOT_PUBLICATION,
@@ -74,6 +80,10 @@ class DailyEodPipelineWakePlan:
     reason_codes: tuple[str, ...]
     scheduler_wake_plan_fingerprint: str
     automation_plan_fingerprint: str | None
+    research_sidecar_status: str | None
+    research_sidecar_next_action: str | None
+    research_sidecar_plan_fingerprint: str | None
+    research_sidecar_website_pipeline_blocked: bool
     scheduler_candidate_enabled: bool
     scheduler_installation_performed: bool
     coordinator_invocation_scope: str
@@ -98,6 +108,7 @@ def plan_daily_eod_pipeline_wake(
     checked_at: datetime,
     completed_sessions: tuple[date, ...],
     latest_pipeline_plan: DailyEodAutomationPlan | None = None,
+    membership_sidecar_plan: DailyUniverseMembershipSidecarPlan | None = None,
     review_enabled_candidate: bool = False,
 ) -> DailyEodPipelineWakePlan:
     """Plan data or offline progress while stopping at every manual boundary."""
@@ -137,6 +148,7 @@ def plan_daily_eod_pipeline_wake(
             pipeline_next_action=None,
             reasons=scheduler_plan.reason_codes,
             automation_plan_fingerprint=None,
+            membership_sidecar_plan=membership_sidecar_plan,
             review_enabled_candidate=review_enabled_candidate,
             coordinator_scope="data" if ready else "none",
         )
@@ -170,6 +182,7 @@ def plan_daily_eod_pipeline_wake(
             automation_plan_fingerprint=(
                 latest_pipeline_plan.logical_content_fingerprint
             ),
+            membership_sidecar_plan=membership_sidecar_plan,
             review_enabled_candidate=review_enabled_candidate,
             coordinator_scope="offline",
         )
@@ -190,6 +203,7 @@ def plan_daily_eod_pipeline_wake(
             automation_plan_fingerprint=(
                 latest_pipeline_plan.logical_content_fingerprint
             ),
+            membership_sidecar_plan=membership_sidecar_plan,
             review_enabled_candidate=review_enabled_candidate,
             coordinator_scope="none",
         )
@@ -212,6 +226,7 @@ def plan_daily_eod_pipeline_wake(
             automation_plan_fingerprint=(
                 latest_pipeline_plan.logical_content_fingerprint
             ),
+            membership_sidecar_plan=membership_sidecar_plan,
             review_enabled_candidate=review_enabled_candidate,
             coordinator_scope="none",
         )
@@ -283,6 +298,27 @@ def _verify_plan_semantics(plan: DailyEodPipelineWakePlan) -> None:
         raise DailyEodPipelineSchedulerError(
             "pipeline wake plan status and action conflict"
         )
+    sidecar_values = (
+        plan.research_sidecar_status,
+        plan.research_sidecar_next_action,
+        plan.research_sidecar_plan_fingerprint,
+    )
+    if any(value is not None for value in sidecar_values):
+        if any(value is None for value in sidecar_values):
+            raise DailyEodPipelineSchedulerError(
+                "Membership sidecar projection is incomplete"
+            )
+        try:
+            MembershipSidecarStatus(str(plan.research_sidecar_status))
+            MembershipSidecarAction(str(plan.research_sidecar_next_action))
+        except ValueError as exc:
+            raise DailyEodPipelineSchedulerError(
+                "Membership sidecar projection is invalid"
+            ) from exc
+        if not _is_fingerprint(plan.research_sidecar_plan_fingerprint):
+            raise DailyEodPipelineSchedulerError(
+                "Membership sidecar projection fingerprint is invalid"
+            )
     invoke_actions = {
         PipelineWakeAction.INVOKE_ONE_DATA_TRANSITION,
         PipelineWakeAction.INVOKE_ONE_OFFLINE_TRANSITION,
@@ -309,6 +345,7 @@ def _verify_plan_semantics(plan: DailyEodPipelineWakePlan) -> None:
         or plan.automatic_recovery_enabled
         or plan.publication_authorized
         or plan.deployment_authorized
+        or plan.research_sidecar_website_pipeline_blocked
         or plan.credential_access_count != 0
         or plan.external_request_count != 0
         or plan.filesystem_write_count != 0
@@ -354,9 +391,32 @@ def _build_plan(
     pipeline_next_action: str | None,
     reasons: tuple[str, ...],
     automation_plan_fingerprint: str | None,
+    membership_sidecar_plan: DailyUniverseMembershipSidecarPlan | None,
     review_enabled_candidate: bool,
     coordinator_scope: str,
 ) -> DailyEodPipelineWakePlan:
+    sidecar_status = None
+    sidecar_action = None
+    sidecar_fingerprint = None
+    sidecar_website_blocked = False
+    if membership_sidecar_plan is not None:
+        verify_daily_universe_membership_sidecar_plan(membership_sidecar_plan)
+        if (
+            membership_sidecar_plan.target_session != target_session
+            or membership_sidecar_plan.primary_automation_plan_fingerprint
+            != automation_plan_fingerprint
+        ):
+            raise DailyEodPipelineSchedulerError(
+                "Membership sidecar differs from the primary pipeline plan"
+            )
+        sidecar_status = membership_sidecar_plan.status.value
+        sidecar_action = membership_sidecar_plan.next_action.value
+        sidecar_fingerprint = (
+            membership_sidecar_plan.logical_content_fingerprint
+        )
+        sidecar_website_blocked = (
+            membership_sidecar_plan.website_pipeline_blocked
+        )
     logical = {
         "contract_version": CONTRACT_VERSION,
         "checked_at": scheduler_plan.checked_at,
@@ -376,6 +436,10 @@ def _build_plan(
             scheduler_plan.logical_content_fingerprint
         ),
         "automation_plan_fingerprint": automation_plan_fingerprint,
+        "research_sidecar_status": sidecar_status,
+        "research_sidecar_next_action": sidecar_action,
+        "research_sidecar_plan_fingerprint": sidecar_fingerprint,
+        "research_sidecar_website_pipeline_blocked": sidecar_website_blocked,
         "scheduler_candidate_enabled": review_enabled_candidate,
         "scheduler_installation_performed": False,
         "coordinator_invocation_scope": coordinator_scope,
@@ -409,6 +473,10 @@ def _build_plan(
             scheduler_plan.logical_content_fingerprint
         ),
         automation_plan_fingerprint=automation_plan_fingerprint,
+        research_sidecar_status=sidecar_status,
+        research_sidecar_next_action=sidecar_action,
+        research_sidecar_plan_fingerprint=sidecar_fingerprint,
+        research_sidecar_website_pipeline_blocked=sidecar_website_blocked,
         scheduler_candidate_enabled=review_enabled_candidate,
         scheduler_installation_performed=False,
         coordinator_invocation_scope=coordinator_scope,
@@ -446,3 +514,11 @@ def _fingerprint(value: object) -> str:
         ensure_ascii=True,
     ).encode("utf-8")
     return hashlib.sha256(encoded).hexdigest()
+
+
+def _is_fingerprint(value: str | None) -> bool:
+    return (
+        isinstance(value, str)
+        and len(value) == 64
+        and all(character in "0123456789abcdef" for character in value)
+    )

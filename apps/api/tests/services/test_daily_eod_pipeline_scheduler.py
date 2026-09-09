@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, replace
 from datetime import UTC, date, datetime
+from pathlib import Path
 
 import pytest
 
@@ -12,6 +13,7 @@ from tip_api.services.daily_eod_automation import (
     PlanStatus,
 )
 from tip_api.services import daily_eod_pipeline_scheduler as scheduler
+from tip_api.services import daily_universe_membership_sidecar as sidecar
 
 
 CHECKED_AT = datetime(2026, 8, 29, 12, tzinfo=UTC)
@@ -45,6 +47,29 @@ def _automation_plan(
         logical_content_fingerprint=scheduler._fingerprint(
             scheduler._jsonable(logical)
         ),
+    )
+
+
+def _sidecar_plan(primary: DailyEodAutomationPlan):
+    return sidecar._build_plan(
+        checked_at=CHECKED_AT,
+        target_session=date(2026, 8, 28),
+        primary=primary,
+        catalog_as_of_date=date(2026, 8, 14),
+        candidate_partition=(
+            Path("/tmp/universe-membership-candidate")
+            / "market-data/universe-membership/schema_version=1"
+            / f"methodology_version={sidecar.METHODOLOGY_VERSION}"
+            / "session_date=2026-08-28"
+        ),
+        status=sidecar.MembershipSidecarStatus.WAITING,
+        next_action=sidecar.MembershipSidecarAction.WAIT_FOR_PRIMARY_PIPELINE,
+        reasons=("primary_canonical_writes_may_remain",),
+        catalog_fingerprint="c" * 64,
+        candidate_status="already_present",
+        record_count=100,
+        membership_fingerprint="a" * 64,
+        point_in_time_eligibility="signal_eligible",
     )
 
 
@@ -188,3 +213,79 @@ def test_pipeline_plan_fingerprint_tamper_is_rejected() -> None:
         scheduler.verify_daily_eod_pipeline_wake_plan(
             replace(plan, target_session="2026-08-27")
         )
+
+
+def test_membership_sidecar_is_projected_without_changing_primary_decision() -> None:
+    primary = _automation_plan(
+        PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+        NextAction.CALCULATE_PHASE1A,
+    )
+    without_sidecar = scheduler.plan_daily_eod_pipeline_wake(
+        checked_at=CHECKED_AT,
+        completed_sessions=(date(2026, 8, 27), date(2026, 8, 28)),
+        latest_pipeline_plan=primary,
+    )
+    membership = _sidecar_plan(primary)
+    with_sidecar = scheduler.plan_daily_eod_pipeline_wake(
+        checked_at=CHECKED_AT,
+        completed_sessions=(date(2026, 8, 27), date(2026, 8, 28)),
+        latest_pipeline_plan=primary,
+        membership_sidecar_plan=membership,
+    )
+
+    assert with_sidecar.status is without_sidecar.status
+    assert with_sidecar.phase is without_sidecar.phase
+    assert with_sidecar.next_action is without_sidecar.next_action
+    assert with_sidecar.coordinator_invocation_scope == (
+        without_sidecar.coordinator_invocation_scope
+    )
+    assert with_sidecar.research_sidecar_status == "waiting"
+    assert with_sidecar.research_sidecar_next_action == "wait_for_primary_pipeline"
+    assert with_sidecar.research_sidecar_plan_fingerprint == (
+        membership.logical_content_fingerprint
+    )
+    assert with_sidecar.research_sidecar_website_pipeline_blocked is False
+
+
+def test_membership_sidecar_must_bind_exact_primary_plan() -> None:
+    primary = _automation_plan(
+        PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+        NextAction.CALCULATE_PHASE1A,
+    )
+    different_primary = _automation_plan(
+        PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+        NextAction.CALCULATE_PHASE1B_INCREMENTAL,
+    )
+
+    with pytest.raises(scheduler.DailyEodPipelineSchedulerError, match="differs"):
+        scheduler.plan_daily_eod_pipeline_wake(
+            checked_at=CHECKED_AT,
+            completed_sessions=(date(2026, 8, 27), date(2026, 8, 28)),
+            latest_pipeline_plan=primary,
+            membership_sidecar_plan=_sidecar_plan(different_primary),
+        )
+
+
+def test_recomputed_website_blocking_projection_is_rejected() -> None:
+    primary = _automation_plan(
+        PlanStatus.READY_FOR_OFFLINE_CALCULATION,
+        NextAction.CALCULATE_PHASE1A,
+    )
+    plan = scheduler.plan_daily_eod_pipeline_wake(
+        checked_at=CHECKED_AT,
+        completed_sessions=(date(2026, 8, 27), date(2026, 8, 28)),
+        latest_pipeline_plan=primary,
+        membership_sidecar_plan=_sidecar_plan(primary),
+    )
+    tampered = replace(plan, research_sidecar_website_pipeline_blocked=True)
+    logical = asdict(tampered)
+    logical.pop("logical_content_fingerprint")
+    tampered = replace(
+        tampered,
+        logical_content_fingerprint=scheduler._fingerprint(
+            scheduler._jsonable(logical)
+        ),
+    )
+
+    with pytest.raises(scheduler.DailyEodPipelineSchedulerError, match="authority"):
+        scheduler.verify_daily_eod_pipeline_wake_plan(tampered)

@@ -36,8 +36,8 @@ The 2026-08-27 and 2026-08-30 audits retained the earlier 29- and 31-session
 mechanics evidence. Canonical EOD/Identity depth has since exceeded the
 252-session observation minimum, but the research foundation still has:
 
-- only one canonical, signal-eligible daily Universe Membership partition
-  (2026-09-04), not a research-ready historical series;
+- only two canonical, signal-eligible daily Universe Membership partitions
+  (2026-09-04 and 2026-09-08), not a research-ready historical series;
 - one canonical split-only, outcome-reconciliation Corporate Action
   publication, but no complete action-type/revision/availability or lifecycle
   dataset;

@@ -57,9 +57,10 @@ capability; scheduler activation remains outside the coordinator.
 ADR 0154 adds a separate, network-prohibited daily Universe Membership
 candidate preparation boundary after same-session Identity/EOD completion. It
 uses the persistent daily workspace but is not one of the coordinator's eleven
-actions yet and does not gate the serving chain. Its inventory-bound canonical
-plan must be created only near the separate Membership Apply, after other
-expected `/data` writes are complete. See
+actions and does not gate the serving chain. ADR 0185 adds a read-only sidecar
+planner that exposes its independent status and next action without executing
+them. Its inventory-bound canonical plan must be created only near the separate
+Membership Apply, after other expected `/data` writes are complete. See
 [Canonical Universe Membership Publication](universe-membership-publication.md).
 
 ADR 0076 now adds a read-only scheduler-wake plan before any host timer. It
@@ -665,7 +666,10 @@ custody boundaries and cannot be replayed by this planner.
 
 ### Repository-only pipeline-aware wake
 
-ADR 0081 adds `daily-eod-pipeline-wake-plan/2.0` above the installed planner.
+ADR 0081 adds the pipeline-aware wake contract above the installed planner;
+ADR 0185 advances the repository contract to
+`daily-eod-pipeline-wake-plan/2.1` with an optional non-blocking Membership
+sidecar projection.
 When canonical EOD is missing it preserves the existing stabilization and
 oldest-gap behavior. When canonical EOD is current it requires the exact
 same-session Automation Plan 1.4 and can distinguish an unfinished offline
@@ -704,7 +708,7 @@ remain historical evidence.
 ### Repository-only bounded cadence candidate
 
 ADR 0082 adds `daily-eod-bounded-cadence-plan/1.0`. It consumes one freshly
-verified Pipeline Wake Plan 2.0 and a contiguous chain of prior distinct-wake
+verified Pipeline Wake Plan 2.1 and a contiguous chain of prior distinct-wake
 evidence. The default and widest candidate allows at most 16 transition wakes
 over four hours, with five minutes from one completion to the next start. Each
 planner process still invokes nothing. Both the cadence and pipeline candidate

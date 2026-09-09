@@ -3,6 +3,7 @@
 - [Daily EOD Bounded Offline Run V1](daily-eod-bounded-offline-run-v1.md)
 - [Universe Membership Knowledge Time V1](universe-membership-knowledge-time-v1.md)
 - [Universe Membership Canonical Publication V1](universe-membership-canonical-publication-v1.md)
+- [Daily Universe Membership Sidecar Plan V1](daily-universe-membership-sidecar-plan-v1.md)
 
 - [Daily EOD Scheduler Runtime Plan V1](daily-eod-scheduler-runtime-plan-v1.md)
 
@@ -99,10 +100,10 @@ provider adapters. The historical foundation now has provider-neutral
 Pydantic row/manifest contracts, explicit PyArrow schemas, governed
 temporary/persistent Parquet custody, and an applied atomic source-custody
 executor.
-Normalized Identity source observations are canonical for 302/304 sessions;
+Normalized Identity source observations are canonical for 303/305 sessions;
 the two provider-revised dates remain explicitly unbound. Canonical Membership
-contains one signal-eligible 2026-09-04 partition and is not a historical
-series. The Membership timing gate keeps the corrected 9/3 historical
+contains two signal-eligible partitions, 2026-09-04 and 2026-09-08, and is not
+a historical series. The Membership timing gate keeps the corrected 9/3 historical
 reconstruction outcome-only; neither result is a Coverage publication.
 EOD Price Bar V1 and the point-in-time Instrument/Provider
 Identity contracts have implemented PyArrow persistence and formal readers.
@@ -118,8 +119,9 @@ canonical sequence recorded in
 [current context](../project/current-context.md). The 300-session historical
 price target is complete, but that does not complete a research-ready
 Historical Coverage publication.
-Universe Membership V1 now has one physical canonical partition plus a
-marker-backed reader and a prospective daily preparation boundary. The bounded
+Universe Membership V1 now has two physical canonical partitions plus a
+marker-backed reader, prospective daily preparation boundary, and independent
+read-only sidecar planner. The bounded
 corporate-action source publication, split-only canonical fact, and sparse
 affected-path adjustment mechanics are implemented. Full Corporate Action V1
 coverage, absent-event neutrality, and total return remain incomplete. Their

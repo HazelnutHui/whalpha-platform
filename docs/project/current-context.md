@@ -349,8 +349,11 @@ ADR 0154 Membership preparation remains a research sidecar after Identity/EOD.
 The 9/8 candidate used aligned same-session EOD, Identity, and normalized
 Identity source evidence, retained the canonical 8/14 provider type-code
 catalog, and was evaluated before the next open. Exact Plan/Apply published
-19,964 decisions; zero-write postflight reused both targets. Coordinator
-integration remains pending and the website did not change.
+19,964 decisions; zero-write postflight reused both targets. ADR 0185 now adds
+a pure read-only sidecar planner and optional Pipeline Wake 2.1 projection.
+The real 9/8 read returned `complete` / `none`, the exact publication
+fingerprint, and zero network/write/authority; no installed timer or
+coordinator execution changed and the website did not change.
 
 The 2026-09-08 real persistent run records Phase 1a about 96 seconds, Phase 1b
 4 seconds, Candidate 346 seconds, Entry Geometry 62 seconds, ETF Relationships
@@ -378,9 +381,9 @@ design addresses both gaps.
 
 ## Immediate next work
 
-1. Review and implement ADR 0154 Membership preparation as a non-serving daily
-   coordinator sidecar while preserving its separate near-Apply inventory plan
-   and fail-open website boundary.
+1. Observe the ADR 0185 read-only Membership sidecar on the next live session,
+   including candidate readiness and a research-only fault, before considering
+   any unattended sidecar execution.
 2. Perform one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes merely because the read-only timer is active.
 3. Record one clean-path acquisition-to-deployment elapsed time on the next

@@ -334,3 +334,4 @@ Each ADR should include:
 - [0182: Falsify Split Coverage with Price Discontinuities](0182-falsify-split-coverage-with-price-discontinuities.md)
 - [0183: Quarantine Large Cash Distributions Before Total Return](0183-quarantine-large-cash-distributions-before-total-return.md)
 - [0184: Deploy Serving Bundles from the Persistent Daily Workspace](0184-deploy-serving-bundles-from-the-persistent-daily-workspace.md)
+- [0185: Plan Daily Membership as an Independent Research Sidecar](0185-plan-daily-membership-as-an-independent-research-sidecar.md)

@@ -204,6 +204,63 @@ def prepare_daily_universe_membership_candidate(
     )
 
 
+def read_daily_universe_membership_candidate(
+    *,
+    data_root: Path,
+    session_date: date,
+    assessed_at: datetime,
+    candidate_root: Path,
+    provider: str = MASSIVE_PROVIDER_ID,
+) -> DailyUniverseMembershipContinuationResult:
+    """Formally reread one existing candidate without any write path."""
+
+    if provider != MASSIVE_PROVIDER_ID:
+        raise DailyUniverseMembershipContinuationError(
+            "daily Membership requires the canonical provider"
+        )
+    assessed_at = normalize_utc_datetime(assessed_at)
+    candidate_partition = _candidate_partition(
+        candidate_root=candidate_root,
+        session_date=session_date,
+    )
+    if not os.path.lexists(candidate_partition):
+        raise DailyUniverseMembershipContinuationError(
+            "daily Membership candidate is unavailable"
+        )
+    records, manifest = _read_candidate(
+        candidate_root=candidate_root,
+        candidate_partition=candidate_partition,
+        session_date=session_date,
+    )
+    assessment = assess_universe_membership_knowledge_time(
+        data_root=data_root,
+        membership_root=candidate_root,
+        membership_partition_path=candidate_partition,
+        provider=provider,
+        assessed_at=assessed_at,
+    )
+    signal_eligible = (
+        assessment.point_in_time_eligibility
+        is PointInTimeEligibility.SIGNAL_ELIGIBLE
+    )
+    return DailyUniverseMembershipContinuationResult(
+        status=(
+            "candidate_ready_for_publication_plan"
+            if signal_eligible
+            else "outcome_only_candidate"
+        ),
+        session_date=session_date.isoformat(),
+        methodology_version=METHODOLOGY_VERSION,
+        candidate_partition_path=str(candidate_partition),
+        candidate_status="already_present",
+        record_count=len(records),
+        membership_logical_fingerprint=manifest.logical_fingerprint,
+        point_in_time_eligibility=assessment.point_in_time_eligibility.value,
+        knowledge_time_assessment_fingerprint=assessment.logical_fingerprint,
+        canonical_publication_fingerprint=None,
+    )
+
+
 def _candidate_partition(*, candidate_root: Path, session_date: date) -> Path:
     return (
         candidate_root

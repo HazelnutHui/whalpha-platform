@@ -158,6 +158,8 @@ What is complete:
 - immutable EOD and Identity family-evidence manifests;
 - 303 canonical Identity source-observation partitions;
 - two prospective signal-eligible Membership partitions;
+- a read-only Membership sidecar planner and optional non-blocking Pipeline
+  Wake 2.1 projection; no unattended sidecar action is enabled;
 - canonical bounded split/dividend source-observation custody and exact-event-
   date resolution;
 - a source-marker-bound 708-group split candidate with 707 clear candidates,
@@ -251,9 +253,9 @@ Visual Context's cumulative-state requirement.
 
 ## Next priority
 
-1. Review and implement ADR 0154 Membership preparation as a non-serving daily
-   coordinator sidecar while preserving its separate near-Apply inventory plan
-   and fail-open website boundary.
+1. Observe ADR 0185's read-only Membership sidecar on the next live session
+   before considering unattended candidate or Apply-plan execution; preserve
+   the separate near-Apply inventory plan and fail-open website boundary.
 2. Run one controlled next-session unattended-scheduler rehearsal. Do not
    enable recurring writes until acquisition timing, recovery, publication,
    deployment, and final status reporting all pass together.

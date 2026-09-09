@@ -13,6 +13,23 @@ separate later gates.
 
 ## Daily candidate preparation
 
+First obtain the independent read-only sidecar decision:
+
+```bash
+scripts/admin/plan-daily-universe-membership-sidecar.sh \
+  --checked-at YYYY-MM-DDTHH:MM:SS+00:00 \
+  --as-of-session YYYY-MM-DD \
+  --catalog-as-of-date YYYY-MM-DD \
+  --data-root /data/trading-intelligence-platform \
+  --workspace-root /home/hui/.local/state/trading-intelligence-platform/automation/daily-eod \
+  --repository-root /home/hui/projects/trading-intelligence-platform
+```
+
+This command formally rereads the current primary automation plan and existing
+Membership evidence. It performs no sidecar action. `prepare_candidate` and
+`prepare_apply_plan` are reviewable instructions, not authority. A `blocked`
+sidecar always retains `website_pipeline_blocked=false`.
+
 After the same-session Daily Identity Plan 1.1 source custody and canonical EOD
 are complete, prepare one prospective candidate with:
 
@@ -43,8 +60,9 @@ were combined with the existing completed 2026-08-14 provider type-code
 catalog; an attempted nonexistent 2026-09-08 catalog binding correctly failed
 before writes. The corrected candidate was signal eligible, exact Plan/Apply
 published 19,964 decisions, and `verify_then_complete` reused both targets with
-zero writes. This proves the manual sidecar path only; coordinator integration
-and unattended execution remain pending. See the dated
+zero writes. This proves the manual publication path. The separate read-only
+sidecar planner is now implemented; coordinator execution and unattended
+writes remain pending. See the dated
 [audit](../audits/daily-universe-membership-publication-2026-09-09.md).
 
 ## Before Apply
@@ -101,5 +119,5 @@ Record:
 - zero external requests, overwrites, and deletions.
 
 Then run `verify_then_complete` once as a zero-write postflight. Do not call the
-result Historical Coverage or strategy readiness. Daily preparation is not yet
-a coordinator or scheduler action and does not gate the public website.
+result Historical Coverage or strategy readiness. Daily preparation is not a
+coordinator or scheduler action and does not gate the public website.

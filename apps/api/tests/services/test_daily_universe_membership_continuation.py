@@ -11,6 +11,7 @@ from tip_api.services import daily_universe_membership_continuation as service
 from tip_api.services.daily_universe_membership_continuation import (
     DailyUniverseMembershipContinuationError,
     prepare_daily_universe_membership_candidate,
+    read_daily_universe_membership_candidate,
 )
 
 
@@ -217,3 +218,44 @@ def test_assessment_cannot_precede_evaluation(tmp_path: Path) -> None:
             assessed_at=EVALUATED,
             candidate_root=tmp_path / "candidate",
         )
+
+
+def test_read_existing_candidate_has_no_build_path(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    data_root = tmp_path / "canonical"
+    data_root.mkdir()
+    candidate_root = tmp_path / "candidate"
+    partition = service._candidate_partition(
+        candidate_root=candidate_root,
+        session_date=SESSION,
+    )
+    partition.mkdir(parents=True)
+    monkeypatch.setattr(
+        service,
+        "run_historical_universe_membership_canonical_source_batch",
+        lambda **_: pytest.fail("read-only candidate path cannot build"),
+    )
+    monkeypatch.setattr(
+        service,
+        "_read_candidate",
+        lambda **_: ((object(), object()), _manifest()),
+    )
+    monkeypatch.setattr(
+        service,
+        "assess_universe_membership_knowledge_time",
+        lambda **_: _assessment(),
+    )
+
+    result = read_daily_universe_membership_candidate(
+        data_root=data_root,
+        session_date=SESSION,
+        assessed_at=ASSESSED,
+        candidate_root=candidate_root,
+    )
+
+    assert result.status == "candidate_ready_for_publication_plan"
+    assert result.candidate_status == "already_present"
+    assert result.record_count == 2
+    assert result.canonical_data_write_count == 0

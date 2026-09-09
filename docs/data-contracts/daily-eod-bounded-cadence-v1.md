@@ -10,7 +10,7 @@ an offline action.
 ## Required inputs
 
 - timezone-aware UTC observation and explicit cadence-start times;
-- one complete, semantically verified Pipeline Wake Plan 2.0 observed at the
+- one complete, semantically verified Pipeline Wake Plan 2.1 observed at the
   exact same time;
 - zero or more contiguous `daily-eod-cadence-wake-evidence/1.2` records for the
   same target session; and
