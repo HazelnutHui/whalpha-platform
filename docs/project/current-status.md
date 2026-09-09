@@ -67,7 +67,10 @@ appearance remain manual checks.
   complete split coverage unproven. A prioritization-only cross-check found 13
   current Primary / 14 current Secondary IDs, 31 lifecycle-queue IDs with no
   current-Universe overlap, and 44 IDs with at least one fourfold or
-  quarter-scale gap; current membership was not projected backward.
+  quarter-scale gap; current membership was not projected backward. The 15
+  current-Secondary flags then produced 13 date-aligned first-party event
+  contexts, one explicit VISN special cash distribution, and one unresolved
+  DFNS case. No split was inferred or canonicalized.
 - `/data` contains 4,204 files / 2,151,679,313 bytes with zero symlinks and
   zero publication residue.
 - Active Primary is 1,718 CS. Secondary is 1,831 = 1,718 CS + 113 ADRC.

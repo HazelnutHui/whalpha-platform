@@ -129,6 +129,14 @@ fourfold/quarter-scale gap, while retaining representative threshold cases.
 These are prioritization sets, not inferred actions or historical membership;
 overlaps must be deduplicated when the actual sample is frozen.
 
+The frozen 14-ID current-Secondary sample has now received a public first-party
+review. Thirteen of its 15 flags have date-aligned issuer event context, VISN
+has explicit non-split special-distribution evidence, and DFNS remains
+unresolved. This does not replace a licensed corporate-action source or prove
+causality/no-split, but it removes any basis for treating the current sample as
+14 probable missing splits. Scale the next review through a provider sample,
+not hundreds of bespoke web lookups.
+
 Current membership implementation sequence:
 
 1. Complete-base single-session shadow is proven on 2026-09-03 with 9,979

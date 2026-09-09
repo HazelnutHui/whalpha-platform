@@ -18,6 +18,11 @@
   current Secondary overlaps, 31 lifecycle-queue overlaps with no current-
   Universe intersection, 44 IDs with a fourfold/quarter-scale gap, and 57 IDs
   with repeated flags. Current Activation was not projected backward.
+- Public first-party review of the 15 current-Secondary flags found 13 date-
+  aligned issuer event contexts, one explicit VISN $10 special cash
+  distribution with the exact ex-date, and one unresolved DFNS case. No split,
+  causal label, historical identity, Membership, factor, or canonical data was
+  inferred or changed.
 - The expanded related suite passed 35 tests. `/data` remained 4,204 files /
   2,151,679,313 bytes with zero symlinks; no external request, canonical write,
   Snapshot, deployment, timer, or scheduler action occurred.

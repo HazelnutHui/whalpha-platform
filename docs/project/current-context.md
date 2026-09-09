@@ -182,7 +182,11 @@ projected backward. Canonical price history alone is not backtest readiness.
   actions or authorize omitted-row neutrality. Current-state prioritization
   finds 13 Primary / 14 Secondary affected IDs and 31 lifecycle-queue overlaps
   with no overlap between those two sets; this locator does not create
-  historical Membership evidence.
+  historical Membership evidence. Public first-party review of the 15 current-
+  Secondary flags found 13 date-aligned event contexts, one explicit VISN
+  special cash distribution, and one unresolved DFNS case. None establishes a
+  split or omitted-row neutrality; the VISN evidence reinforces the separate
+  total-return requirement.
 - The lifecycle queue contains 547 stable-ID review candidates. A real licensed
   cross-venue sample and the fixed 30-item diagnostic are required before an
   adapter can become authoritative.
