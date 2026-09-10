@@ -11,8 +11,8 @@ the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity
 market-intelligence and research platform. Active OCI release
-2026-09-10T185300Z-4c0719b9b4a4 was built from clean source
-4c0719b9b4a469d1f85d1371dff5a6797d0010aa.
+2026-09-10T190406Z-05ea9f79a4a9 was built from clean source
+05ea9f79a4a99c416ba8c882ef96a464676c1b8c.
 
 Production uses Market Intelligence 1.3 for 2026-09-09 and Snapshot 1.11 /
 Dashboard 2.8. English is default and Simplified Chinese is equal. Guest and
@@ -30,7 +30,10 @@ are presented as free supporting tools. The Strong-Leader Pullback dossier
 shows data construction, unpublished out-of-sample evidence, inactive
 Candidate authority, and no performance claim. Conventional account sign-in
 is the first-viewport entry, equal-capability guest access follows immediately,
-and a visible continuation rail leads into the supporting narrative.
+and a visible continuation rail leads into the supporting narrative. The
+visual language uses layered rounded surfaces, asymmetric research modules,
+and a restrained animated signal path while preserving explicit research
+status and limitations.
 
 ## Data
 

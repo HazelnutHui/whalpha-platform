@@ -33,10 +33,11 @@
   the otherwise valid new page.
 - Initially deployed the research-first entry as immutable OCI release
   `2026-09-10T184018Z-03c277579502`, then deployed the login-first refinement
-  as `2026-09-10T185300Z-4c0719b9b4a4`. Independent postflight matched the
-  latest exact source, bundle, checksums, protected routes, equal-capability
-  guest Session, services, listeners, and zero active staging/failed-release
-  residue.
+  as `2026-09-10T185300Z-4c0719b9b4a4`, and the visually softened,
+  copy-tightened refinement as `2026-09-10T190406Z-05ea9f79a4a9`.
+  Independent postflight matched the latest exact source, bundle, checksums,
+  protected routes, equal-capability guest Session, services, listeners, and
+  zero active staging/failed-release residue.
 
 ## 2026-09-10 — Localize a historical Identity alias-revision stop
 
