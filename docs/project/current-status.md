@@ -217,9 +217,9 @@ absent; status remains `quarantined`.
 
 1. Let the unique bounded `20260910f` EOD/Identity continuation complete or
    stop at its next explicit resumable boundary; do not start a competing
-   writer. Existing affected EOD V1 history must be rebuilt
-   into a new immutable version or explicit correction family and formally
-   reconciled before research admission. ADR 0202 resolved the 2022-12-05 VWAP
+   writer. Existing affected EOD V1 history must be rebuilt as ADR 0204's
+   complete immutable Reconciled EOD Edition and formally reconciled before
+   research admission. ADR 0202 resolved the 2022-12-05 VWAP
    case with explicit normalization and audit
    evidence while preserving strict repository rejection. The
    completed REST probe found 2021-09-09/10 Grouped Daily denied and

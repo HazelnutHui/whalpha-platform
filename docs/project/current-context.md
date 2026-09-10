@@ -308,8 +308,8 @@ fundamentals, and complete Historical Coverage are absent. The census is
    stop at its next explicit resumable boundary; do not start a competing
    writer. Completing acquisition does not authorize
    research use of the affected V1 EOD history. Design and execute a new
-   immutable corrected EOD version or append-only correction family, then
-   formally reconcile the full interval before research admission. ADR 0202
+   complete immutable Reconciled EOD Edition under ADR 0204, then formally
+   reconcile the full interval before research admission. ADR 0202
    resolved the exact 2022-12-05 VWAP precision case without rewriting source
    custody or weakening the provider-neutral repository. The 2026-09-10
    REST pilot found Grouped Daily denied for

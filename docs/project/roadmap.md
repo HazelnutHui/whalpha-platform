@@ -108,6 +108,10 @@ Required work:
   preserving exact source custody; exact-interval execution is implemented,
   while the preferred Flat File EOD route still awaits its separate S3
   credential and REST-authorized dates may proceed independently;
+- build ADR 0204's complete immutable Reconciled EOD Edition after acquisition
+  quiesces; prefer retained original packages, retain later reacquisitions as a
+  distinct provenance class, and reject unexplained removals or economic-value
+  changes rather than hiding the ADR 0203 defect behind a sparse overlay;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward; ADR 0197 requires its
   durable latest-vintage output to live in a research-only family, separate

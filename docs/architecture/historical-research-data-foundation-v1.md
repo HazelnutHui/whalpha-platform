@@ -104,7 +104,8 @@ readiness.
 
 | Family | Grain | Authority | Required role |
 | --- | --- | --- | --- |
-| Canonical EOD Price Bar | instrument, session, source, revision | Implemented canonical fact | Raw OHLCV and outcome path |
+| Canonical EOD Price Bar | instrument, session, source, revision | Implemented canonical fact; affected V1 history is quarantined under ADR 0203 | Raw OHLCV and current Production outcome path |
+| Reconciled EOD Edition | edition, instrument, session, source, revision | ADR 0204 design accepted; implementation pending | Complete immutable research price candidate after interval reconciliation |
 | Point-in-time Identity | source observation and resolved instrument as of date | Implemented resolved snapshots; normalized source observations are canonical for the exact sessions reported by current context | Stable-ID/ticker/exchange/status evidence |
 | Daily Universe Membership | universe, instrument, session, methodology | Derived canonical decision | Performance-eligible historical population |
 | Corporate Action | instrument, action, source, revision | Canonical event fact | Splits, distributions, reorganizations, symbol changes, delistings |
@@ -311,6 +312,12 @@ affected-path split adjustments, without claiming full Corporate Action or
 Adjustment coverage. Lifecycle and final Historical Coverage remain absent;
 no missing family has been populated as complete merely because partial
 canonical evidence exists under `/data`.
+
+ADR 0204 adds a separate full-session Reconciled EOD Edition direction for
+research. It reuses the EOD Price Bar V1 row schema but is keyed by an explicit
+edition and final interval fingerprint. Existing EOD V1 is not overwritten,
+partial edition sessions have no reader authority, and unexplained removals or
+economic-value changes remain quarantined.
 
 The design should prefer:
 

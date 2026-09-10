@@ -14,6 +14,7 @@ directory remain the full contract archive; this page is the curated map.
 - [Provider Instrument Identity V1](provider-instrument-identity-v1.md)
 - [Provider Ticker Resolver V1](provider-ticker-resolver-v1.md)
 - [EOD Price Bar V1](eod-price-bar-v1.md)
+- [Reconciled EOD Price Bar Edition V1](reconciled-eod-price-bar-edition-v1.md)
 - [Data Record Governance V1](data-record-governance-v1.md)
 - [Source Permission Governance V1](source-permission-governance-v1.md)
 - [Security Classification V1](security-classification-v1.md)

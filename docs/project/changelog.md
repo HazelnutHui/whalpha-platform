@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-09-10 — Choose a complete immutable corrected EOD research edition
+
+- Accepted ADR 0204: repair the affected historical price family beside EOD V1
+  as a complete, explicitly selected edition rather than overwriting immutable
+  partitions or imposing a permanent sparse overlay on every research reader.
+- Required per-session bindings to exact EOD source custody, canonical and
+  source Identity fingerprints, mapper revision, base V1 comparison, and typed
+  diff counts. Reacquired packages remain visibly later provenance.
+- A final interval manifest is the only completion marker. Partial sessions,
+  missing source, unexplained removals, and changed economic values carry no
+  research authority.
+
 ## 2026-09-10 — Preserve Massive case-sensitive provider symbols
 
 - Accepted ADR 0203 after the five-year continuation stopped on six false

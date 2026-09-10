@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0204](0204-rebuild-affected-eod-as-a-complete-immutable-research-edition.md):
+  rebuilds the affected price family as a full, explicitly selected immutable
+  research edition rather than overwriting V1 or imposing a permanent sparse
+  overlay on every reader.
 - [ADR 0203](0203-bind-massive-case-sensitive-symbols-at-the-eod-mapping-boundary.md):
   preserves exact Massive provider-symbol case at the EOD mapping boundary,
   binds it to same-session Identity source evidence, and quarantines existing
@@ -107,13 +111,14 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0203 separate durable research Membership custody from
+- ADRs 0197–0204 separate durable research Membership custody from
   signal-eligible Membership, scale source-only corporate-action custody to
   the five-year boundary, and retain exact corporate-action and inactive-
   lifecycle source vintages privately without promoting them to canonical
   facts, localize bounded historical alias-revision collisions without
   relaxing prospective Identity rules, and normalize only audited provider
-  VWAP float tails and preserve provider-symbol case at the mapping boundary.
+  VWAP float tails, preserve provider-symbol case, and govern a complete
+  immutable corrected EOD research edition.
 
 ## Runtime and publication decisions
 
