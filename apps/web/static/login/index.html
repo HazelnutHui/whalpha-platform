@@ -35,11 +35,16 @@
       <section class="hero-section" aria-labelledby="brand-title">
         <div class="hero-grid" aria-hidden="true"></div>
         <div class="hero-orbit" aria-hidden="true"></div>
+        <svg class="hero-signal" viewBox="0 0 1600 280" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="signal-gradient" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#18c7d9" stop-opacity="0"/><stop offset=".25" stop-color="#18c7d9"/><stop offset=".72" stop-color="#4c9fff"/><stop offset="1" stop-color="#4c9fff" stop-opacity="0"/></linearGradient></defs>
+          <path class="hero-signal__glow" d="M0 210 C170 210 225 118 370 150 S585 248 735 136 S935 64 1060 137 S1305 212 1600 48" />
+          <path class="hero-signal__line" d="M0 210 C170 210 225 118 370 150 S585 248 735 136 S935 64 1060 137 S1305 212 1600 48" />
+        </svg>
         <div class="hero-copy">
           <div class="hero-mark"><img src="/favicon.png" alt="WH Alpha" width="112" height="112" /></div>
           <p class="eyebrow" data-i18n="heroEyebrow">Systematic U.S. equity research</p>
           <h1 id="brand-title" data-i18n="heroTitle">Quantitative research that stands up to scrutiny.</h1>
-          <p class="hero-description" data-i18n="heroDescription">A professional research system for transparent models, reproducible evidence, and model-driven U.S. equity selection. Every conclusion remains open to inspection.</p>
+          <p class="hero-description" data-i18n="heroDescription">A governed research system for testable hypotheses, point-in-time data, reproducible evaluation, and model-driven U.S. equity selection. Methods, evidence, and limits remain visible.</p>
           <div class="trust-line" aria-label="Research principles" data-i18n-aria="trustAria">
             <span data-i18n="trustPointTime">Point-in-time data</span>
             <span data-i18n="trustOutSample">Out-of-sample first</span>
@@ -49,7 +54,8 @@
         </div>
 
         <form class="login-panel login-panel--hero" id="access" method="post" action="/auth/login" autocomplete="on" aria-labelledby="login-title">
-          <div class="panel-kicker"><span class="status-dot" aria-hidden="true"></span><span data-i18n="workspaceReady">Workspace ready</span></div>
+          <div class="login-panel__glow" aria-hidden="true"></div>
+          <div class="panel-kicker"><span class="status-dot" aria-hidden="true"></span><span data-i18n="workspaceReady">Research workspace available</span></div>
           <h2 id="login-title" data-i18n="signIn">Account sign in</h2>
           <p data-i18n="continue">Enter the research workspace with an existing account.</p>
           <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
@@ -84,21 +90,21 @@
               <div><small data-i18n="modelFamily">MODEL FAMILY</small><h2>Strong-Leader Pullback</h2></div>
               <span>V1</span>
             </div>
-            <div class="dossier-state"><i aria-hidden="true"></i><span data-i18n="researchState">Preregistered · data foundation in progress</span></div>
+            <div class="dossier-state"><i aria-hidden="true"></i><span data-i18n="researchState">Preregistered · evidence gate not yet passed</span></div>
             <dl class="dossier-ledger">
-              <div><dt data-i18n="ledgerData">Point-in-time data</dt><dd data-state="building" data-i18n="stateBuilding">Building</dd></div>
+              <div><dt data-i18n="ledgerData">Point-in-time data</dt><dd data-state="building" data-i18n="stateBuilding">In progress</dd></div>
               <div><dt data-i18n="ledgerModel">Model specification</dt><dd data-state="locked" data-i18n="stateLocked">V1 locked</dd></div>
-              <div><dt data-i18n="ledgerValidation">Out-of-sample evidence</dt><dd data-state="pending" data-i18n="statePending">Not published</dd></div>
-              <div><dt data-i18n="ledgerAuthority">Candidate authority</dt><dd data-state="locked" data-i18n="stateInactive">Not activated</dd></div>
+              <div><dt data-i18n="ledgerValidation">Out-of-sample evidence</dt><dd data-state="pending" data-i18n="statePending">Not yet available</dd></div>
+              <div><dt data-i18n="ledgerAuthority">Candidate authority</dt><dd data-state="locked" data-i18n="stateInactive">Inactive</dd></div>
             </dl>
-            <div class="dossier-foot"><span data-i18n="dossierFoot">Research status is shown before performance.</span><strong data-i18n="notClaim">NO PERFORMANCE CLAIM</strong></div>
+            <div class="dossier-foot"><span data-i18n="dossierFoot">No result is shown before valid evidence exists.</span><strong data-i18n="notClaim">NO VALIDATED PERFORMANCE YET</strong></div>
           </aside>
 
           <article class="feature-card feature-card--lab">
             <div class="feature-index"><span>01</span><em data-i18n="researchCore">RESEARCH CORE</em></div>
             <p class="card-kicker" data-i18n="labKicker">Quant Research Lab</p>
-            <h3 data-i18n="labTitle">The complete record behind every model.</h3>
-            <p data-i18n="labText">Economic logic, point-in-time inputs, feature formulas, fixed parameters, costs, chronological splits, results, counterevidence, failure cases, and lifecycle decisions remain attached to the exact model version.</p>
+            <h3 data-i18n="labTitle">One version. One complete evidence trail.</h3>
+            <p data-i18n="labText">Each record binds the hypothesis, point-in-time inputs, formulas, fixed parameters, costs, chronological tests, counterevidence, failures, and lifecycle decision to the exact model version.</p>
             <div class="research-flow" aria-label="Research lifecycle" data-i18n-aria="flowAria">
               <span data-i18n="flowHypothesis">Hypothesis</span><i>→</i>
               <span data-i18n="flowData">Data admission</span><i>→</i>
@@ -114,8 +120,8 @@
           <article class="feature-card">
             <div class="feature-index"><span>02</span><em data-i18n="decisionOutput">DECISION OUTPUT</em></div>
             <p class="card-kicker" data-i18n="selectionKicker">Model-driven equity selection</p>
-            <h3 data-i18n="selectionTitle">Rankings with an accountable source.</h3>
-            <p data-i18n="selectionText">Future candidate rankings will identify the exact activated model, its current-market applicability, the evidence that raised or lowered each stock, entry readiness, chase risk, and invalidation.</p>
+            <h3 data-i18n="selectionTitle">A ranking must name the model behind it.</h3>
+            <p data-i18n="selectionText">Future rankings may use only explicitly activated models. Each stock will show market applicability, rank drivers, entry readiness, chase risk, and invalidation.</p>
             <div class="authority-chain">
               <span data-i18n="chainLab">Validated Lab model</span><b>→</b><span data-i18n="chainReview">Human activation</span><b>→</b><span data-i18n="chainCandidates">Candidate ranking</span>
             </div>
@@ -125,8 +131,8 @@
           <article class="feature-card feature-card--automation">
             <div class="feature-index"><span>03</span><em data-i18n="researchExtension">RESEARCH EXTENSION</em></div>
             <p class="card-kicker" data-i18n="automationKicker">Governed research automation</p>
-            <h3 data-i18n="automationTitle">Scale exploration without weakening the standard.</h3>
-            <p data-i18n="automationText">Built on traditional quantitative discipline, the planned AI research layer expands hypothesis exploration, implementation, and adversarial review while finite budgets, isolated data stages, deterministic gates, and retained failures control the search.</p>
+            <h3 data-i18n="automationTitle">More hypotheses. The same evidence threshold.</h3>
+            <p data-i18n="automationText">The planned AI research layer extends traditional quantitative research through bounded hypothesis generation and adversarial review. Isolated data stages, finite budgets, deterministic gates, and retained failures constrain the search.</p>
             <ul class="automation-list">
               <li data-i18n="automationPoint1">Parallel, deduplicated hypotheses</li>
               <li data-i18n="automationPoint2">Automated robustness and leakage attacks</li>
@@ -138,8 +144,8 @@
 
       <section class="standards-section" id="standards" aria-labelledby="standards-title">
         <div class="section-heading section-heading--split">
-          <div><p class="section-kicker" data-i18n="standardsKicker">Research standard</p><h2 id="standards-title" data-i18n="standardsTitle">The evidence is part of the product.</h2></div>
-          <p data-i18n="standardsIntro">Professional packaging should not conceal uncertainty. A WH Alpha model is useful only when its data clock, assumptions, costs, weaknesses, and current authority are visible.</p>
+          <div><p class="section-kicker" data-i18n="standardsKicker">Research standard</p><h2 id="standards-title" data-i18n="standardsTitle">Rigor should be visible, not merely claimed.</h2></div>
+          <p data-i18n="standardsIntro">Every model exposes its data clock, assumptions, costs, weaknesses, and current authority. Uncertainty is a reported state—not hidden polish.</p>
         </div>
         <div class="standard-grid">
           <article><span>01</span><h3 data-i18n="standardDataTitle">Point-in-time foundation</h3><p data-i18n="standardDataText">Stable instrument identity, historical membership, lifecycle evidence, corporate actions, and filing availability are governed without projecting today backward.</p></article>
@@ -151,8 +157,8 @@
 
       <section class="free-tools-section" id="free-tools" aria-labelledby="tools-title">
         <div class="section-heading section-heading--split">
-          <div><p class="section-kicker" data-i18n="toolsKicker">Free market intelligence</p><h2 id="tools-title" data-i18n="toolsTitle">Professional context, available without a subscription.</h2></div>
-          <p data-i18n="toolsIntro">Three established workspaces remain the fast way to understand the current market before examining any stock-level idea.</p>
+          <div><p class="section-kicker" data-i18n="toolsKicker">Free market intelligence</p><h2 id="tools-title" data-i18n="toolsTitle">Market context stays open.</h2></div>
+          <p data-i18n="toolsIntro">Three free workspaces provide a disciplined view of the market before any stock-level idea is considered.</p>
         </div>
         <div class="tool-grid">
           <article><div><span class="free-badge" data-i18n="freeBadge">FREE</span><em>01</em></div><h3 data-i18n="toolRegimeTitle">Market Regime &amp; Opportunities</h3><p data-i18n="toolRegimeText">Read risk support, internal quality, directional strength, ETF relationships, and counterevidence across independent horizons.</p></article>

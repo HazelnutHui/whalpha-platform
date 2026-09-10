@@ -2,6 +2,12 @@
 
 ## 2026-09-10 — Reframe the public entry around transparent quantitative research
 
+- Reworked the landing visual language from rigid bordered grids to a softer
+  premium research surface: floating rounded navigation and access panel,
+  layered light and depth, an animated non-representational signal path,
+  asymmetric research cards, and responsive continuation cues. Tightened copy
+  to distinguish preregistration, unavailable evidence, inactive authority,
+  and the planned AI layer without adding claims or changing product behavior.
 - Refined the first-viewport hierarchy after visual review: the conventional
   username/password login is primary, equal-capability guest access follows
   directly below it, and a visible animated continuation rail leads into the
