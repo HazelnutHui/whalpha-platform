@@ -16,6 +16,20 @@
   2026-09-09: 2 pages / 6,491 records, natural pagination complete, zero
   invalid dates, duplicate source IDs, and unexpected fields. It remains
   source-observation-only and no canonical or Production state changed.
+- Completed the matching five-year dividend package in 48 pages / 235,751
+  rows. Six annual observations sum to the same count and match all unique IDs
+  and payloads exactly; the 400,000-row and 512-MiB finite limits were not
+  approached dangerously.
+- Repeated both complete ranges. All dividend rows were unchanged. Five split
+  source IDs were replaced while every non-ID payload field remained identical;
+  annual split observations match the repeat IDs. Preserved this as an
+  append-only source-revision requirement rather than five economic additions
+  and deletions or an arbitrary first-non-null choice.
+- Formally recovered the 2025-04-23 EOD continuation after the prior whole-root
+  CAS stop by preserving the stale plan/artifacts under explicit failed-attempt
+  names, rebuilding against current inventory, reusing the verified package,
+  and applying with zero external requests. The unique continuous unit then
+  completed its first 20-session checkpoint through 2025-03-25 without retry.
 
 ## 2026-09-10 — Separate historical research Membership custody
 

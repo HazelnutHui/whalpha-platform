@@ -25,10 +25,11 @@ login and final visual appearance remain manual checks.
 
 ## Data
 
-- EOD has 346 contiguous sessions from 2025-04-24 through 2026-09-09. Identity
-  has 347 partitions from 2025-04-23; that earliest date is the one retained
-  Identity-only continuation point. Latest EOD has 9,916 rows; latest Identity
-  has 9,982 instruments.
+- At the 2026-09-10 10:30:47 UTC checkpoint, EOD had at least 386 contiguous
+  sessions from 2025-02-26 through 2026-09-09 and Identity had at least 387
+  partitions from 2025-02-25. The one-partition Identity lead is the expected
+  transaction ordering while the bounded backfill remains active. Latest EOD
+  has 9,916 rows; latest Identity has 9,982 instruments.
 - Historical Identity source custody has 345 partitions; 2026-08-13 and
   2026-08-19 remain explicitly unbound.
 - Signal-eligible Membership has three prospective sessions and 59,892
@@ -36,25 +37,32 @@ login and final visual appearance remain manual checks.
 - Research-only latest-vintage Membership has 300 sessions and 5,571,154
   decisions. It is physically separate and has no signal, performance,
   Candidate, Production, or web authority.
-- Corporate-action source custody has 70,099 bounded observations. Canonical
-  split-only facts and a sparse affected-path adjustment ledger exist, but
-  neither proves complete coverage, neutral omitted rows, or total return.
+- Canonical corporate-action source custody still has 70,099 bounded recent
+  observations. Separately, exact five-year owner-only source packages now
+  contain 6,491 split and 235,751 dividend rows with complete natural
+  pagination and a full repeat. Five split provider IDs changed without an
+  economic-payload change and remain explicit revision evidence. These source
+  packages are not yet stable-ID-resolved or canonical; the split-only facts
+  and sparse affected-path adjustment ledger still do not prove neutral
+  omitted rows or total return.
 - A fixed 30-item Massive Starter lifecycle diagnostic matched Ticker Events
   for only six instruments; 24 returned HTTP 404 and all nine returned events
   were ticker changes. Massive is useful partial evidence but is rejected as
   the sole-primary lifecycle source.
-- Data inventory is 5,660 files / 2,603,087,394 bytes with zero symlinks and
-  zero publication residue.
+- The last quiescent data inventory before the continuation was 5,660 files /
+  2,603,087,394 bytes with zero symlinks and zero publication residue. Exact
+  inventory counts are intentionally deferred until the writer is quiescent.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
 - Stocks Starter removed the old Basic rate limit and provided the tested 9/9
   same-evening EOD. Guaranteed finality time and five-year endpoint depth are
   not yet proven.
-- The finite `whalpha-five-year-backfill-20260910.service` began the frozen
-  EOD/Identity interval at 2026-09-10 08:54:25 UTC. It is bounded to 24 hours,
-  2 GiB and serial provider access; completed sessions remain canonical if a
-  later session fails. Exact progress belongs in the dated audit and current
-  context rather than this status summary.
+- The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
+  a concurrent research-Membership inventory change. The unique continuation
+  `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only
+  edge and began at 09:56:09 UTC. It is bounded to 24 hours, 2 GiB and serial
+  provider access; completed sessions remain canonical if a later session
+  fails. Exact progress belongs in the dated audit and current context.
 
 Price depth is no longer the main research blocker.
 
@@ -103,7 +111,8 @@ unauthorized.
 
 Complete:
 
-- 346-session EOD depth, 347 Identity partitions, and their family evidence;
+- an active finite EOD/Identity continuation with at least 386 / 387 durable
+  partitions at its recorded checkpoint;
 - 345 Identity source partitions, 300 research-only Membership sessions, and
   three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
@@ -149,15 +158,14 @@ that fixes both known gaps.
 ## Next priority
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
-2021-09-09 through 2026-09-09. Current exact aligned coverage is EOD and
-Identity 346/1,255, normalized Identity source 344/1,255, and Membership
-303/1,255. Required lifecycle, PIT classification, PIT fundamentals, and
-Historical Coverage are absent; status remains `quarantined`.
+2021-09-09 through 2026-09-09. Its initial coverage counts are now superseded
+by the active finite EOD/Identity continuation; final aligned and normalized
+counts wait for a quiescent reread. Membership remains 303/1,255. Required
+lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
+absent; status remains `quarantined`.
 
-1. Implement and pilot the Massive Starter Day Aggregates Flat File source,
-   then continue the exact EOD/Identity acquisition plan. A safe concurrent-
-   writer stop left 2025-04-23 as an Identity-only continuation point; 909 EOD
-   sessions remain. The
+1. Let the already-running exact EOD/Identity continuation finish or stop at
+   its next explicit resumable boundary; do not start a competing writer. The
    completed REST probe found 2021-09-09/10 Grouped Daily denied and
    2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
    Implement the documented Starter Day Aggregates Flat File route for bulk

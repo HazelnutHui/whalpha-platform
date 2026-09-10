@@ -63,3 +63,15 @@ The change is complete when focused tests prove more than 16 pages, exact
 interval persistence and resume refusal, a real 1.0 package rereads with its
 original fingerprint, and the exact five-year 1.1 split/dividend packages
 complete natural pagination below all finite ceilings.
+
+## Execution evidence
+
+The exact-range run completed with 6,491 split rows in two pages and 235,751
+dividend rows in 48 pages.  Six independently acquired annual ranges summed to
+the same row counts and exact dividend content.  A complete repeat retained all
+dividend rows unchanged.  Five split source IDs changed while their entire
+non-ID economic payload stayed identical; annual observations match the repeat
+IDs.  The discrepancy is preserved as source-ID revision evidence and blocks
+ID-only event identity, but does not invalidate the complete range packages.
+Exact counts, fingerprints, and remaining promotion gates are recorded in the
+[five-year corporate-action source audit](../audits/five-year-corporate-action-source-2026-09-10.md).

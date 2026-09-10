@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-10T09:38:58Z
+Operational state verified at: 2026-09-10T10:30:47Z
 
 Repository context updated at: 2026-09-10 UTC
 
@@ -38,21 +38,21 @@ explicit all-partition validation both passed in their recorded audits.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | 346 contiguous XNYS sessions, 2025-04-24 through 2026-09-09 |
+| Canonical EOD | At least 386 contiguous XNYS sessions, 2025-02-26 through 2026-09-09; bounded backfill active |
 | Latest EOD | 2026-09-09; 9,916 rows |
 | Latest EOD fingerprint | 1ecd85558ca0fdf36e2460021b2da80a41ef5f17424aae33a9e94de5e70f1d1f |
 | Latest Identity | 2026-09-09; 9,982 instruments / 13,158 provider identities / 9,982 resolvers |
 | Latest Identity fingerprint | f29de23284b163955fc542b2c48ed3ebd60b618493366511935164e574694707 |
-| Point-in-time Identity | 347 partitions, 2025-04-23 through 2026-09-09; 2025-04-23 is the one Identity-only continuation point |
+| Point-in-time Identity | At least 387 partitions, 2025-02-25 through 2026-09-09; current one-partition lead is transactional |
 | Identity source custody | 345 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound within the acquired interval |
 | Signal-eligible Membership | 3 sessions / 59,892 decisions: 2026-09-04, 2026-09-08, 2026-09-09 |
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
-| Corporate-action observations | 70,099 bounded split/dividend source rows; 42,056 resolved / 28,043 quarantined |
+| Corporate-action observations | Canonical recent custody: 70,099 rows, 42,056 resolved / 28,043 quarantined; separate complete five-year owner-only packages: 6,491 splits / 235,751 dividends, not canonical |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |
-| Data inventory | 5,660 files / 2,603,087,394 bytes |
-| Inventory fingerprint | 641fa52e8936956456f9259afc32cfd419e0b1d15238e44fb3fb6952e0600dc6 |
+| Last quiescent data inventory | 5,660 files / 2,603,087,394 bytes before the active continuation |
+| Last quiescent inventory fingerprint | 641fa52e8936956456f9259afc32cfd419e0b1d15238e44fb3fb6952e0600dc6 |
 | Symlinks / publication residue | zero / zero |
 
 The 300-session historical target and six later sessions are canonical. The
@@ -65,7 +65,12 @@ five-year endpoint depth. The finite exact-interval unit started at
 continued to 346 EOD / 347 Identity partitions. It stopped safely when the
 whole-data compare-and-swap guard observed a concurrent research-Membership
 write. No overwrite or residue occurred; 2025-04-23 remains the exact reusable
-Identity-only continuation point.
+Identity-only continuation point. A unique continuation unit recovered that
+EOD partition without another provider request and resumed from clean source
+revision `d9d77c124f1b9300613d97923493a1e696e1262c`. At the operational timestamp
+above it had reached at least 386 EOD / 387 Identity partitions with no
+reported retry; exact progress and any terminal state belong in the
+[dated execution audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md).
 
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
 FIGI locators and provider delisting dates for every item, but Ticker Events
@@ -106,7 +111,7 @@ and 5/10/20-session views. Candidate publication 1.1 contains 862 Primary and
 922 Secondary eligible display records; these are not Universe sizes.
 
 Analytics remains degraded-short-history because Market Intelligence consumes
-26 sessions although canonical EOD has 346. This is a consumer-integration
+26 sessions although canonical EOD has substantially more. This is a consumer-integration
 limit, not missing acquisition.
 
 The independent OCI postflight matched release, source, manifest, checksums,
@@ -173,7 +178,7 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| 346 EOD sessions / 347 Identity partitions | Final transitive Historical Coverage |
+| Active EOD/Identity backfill, at least 386 / 387 partitions | Final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
 | 345 Identity source partitions | Two source-unbound dates plus the current Identity-only edge |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
@@ -248,18 +253,20 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-The ADR 0196 baseline census now fixes 2021-09-09 through 2026-09-09 as 1,255
-XNYS sessions. EOD and aligned Identity cover 346 sessions and miss 909;
-normalized Identity source custody covers 344 aligned sessions and misses 911.
+The ADR 0196 baseline census fixes 2021-09-09 through 2026-09-09 as 1,255
+XNYS sessions. Its original counts are superseded by an active finite
+EOD/Identity continuation; at the operational timestamp, at least 386 EOD and
+387 Identity partitions existed. Final counts, normalized Identity custody,
+and remaining gaps must be recomputed from a quiescent inventory after the run.
 Membership covers 303 sessions and misses 952: 300 reconstructed research-only
 sessions plus three signal-eligible sessions. Lifecycle, point-in-time classification, point-in-time
 fundamentals, and complete Historical Coverage are absent. The census is
 `quarantined`, fingerprint
 `c193895b7cb795fb5054c5e8493bb7c5e438e646c37e03d336a82d52f3a903e7`.
 
-1. Implement and pilot the Massive Starter Day Aggregates Flat File source,
-   then continue the frozen exact EOD/Identity backfill plan from the exact
-   2025-04-23 continuation point; 909 EOD sessions remain. The 2026-09-10
+1. Let the already-running frozen exact EOD/Identity continuation finish or
+   stop at its next explicit resumable boundary. Do not start a competing
+   writer. The 2026-09-10
    REST pilot found Grouped Daily denied for
    2021-09-09/10 but accessible with 11,063 rows for 2022-09-09; PIT Tickers,
    splits, and dividends were accessible on all three dates. Use the documented
@@ -267,9 +274,9 @@ fundamentals, and complete Historical Coverage are absent. The census is
    retain REST as a bounded fallback/cross-check. The fetch-only adapter and
    transitive raw-gzip custody are fixture-tested; a live pilot awaits the
    separate dashboard S3 credential, not another REST API-key retry.
-   The first live attempt verified fail-closed behavior and made zero requests
-   because that separate credential is not configured. Exact-interval
-   execution now freezes both 2021-09-09 and 2026-09-09 and permits an explicit
+   The first Flat File attempt verified fail-closed behavior and made zero requests
+   because that separate credential is not configured. Exact-interval REST
+   execution freezes both 2021-09-09 and 2026-09-09 and permits an explicit
    bounded paid-plan serial interval; it does not alter the older 300-session
    planning contract.
    After the nominal interval, acquire the separately declared 20-session
