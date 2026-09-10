@@ -61,7 +61,7 @@ The command is deliberately explicit and requires a clean repository:
 ```bash
 scripts/admin/run-historical-research-backfill-continuous.sh \
   --data-root /data/trading-intelligence-platform \
-  --package-root /tmp/<owner-only-persistent-package-root> \
+  --package-root /home/hui/.local/state/trading-intelligence-platform/historical-backfill/five-year-2021-09-09--2026-09-09 \
   --target-first-session 2021-09-09 \
   --target-last-session 2026-09-09 \
   --request-interval-seconds 0.25 \
@@ -70,9 +70,10 @@ scripts/admin/run-historical-research-backfill-continuous.sh \
 ```
 
 The package root must be a new or already formally reusable owner-controlled
-directory. `/tmp` is acceptable for a bounded pilot but not for unattended or
-reboot-dependent custody. Long execution should use the existing owner-only
-persistent runtime boundary recorded in current operations evidence.
+directory. `/tmp` is accepted only for a bounded pilot. Persistent execution
+accepts exactly one direct child of the fixed owner-only historical-backfill
+base shown above; arbitrary home paths, nested targets, symlinks, foreign
+ownership, and non-0700 directories fail closed.
 
 ## Completion check
 
@@ -87,4 +88,3 @@ EOD/Identity acquisition is complete only when:
    preserved in a dated audit.
 
 This milestone does not change research readiness or publish anything to OCI.
-

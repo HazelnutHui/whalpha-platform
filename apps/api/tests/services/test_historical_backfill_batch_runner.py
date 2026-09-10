@@ -166,6 +166,35 @@ def test_runner_rejects_unbounded_session_count(tmp_path: Path) -> None:
         raise AssertionError("unbounded batch was accepted")
 
 
+def test_package_root_accepts_one_owner_only_persistent_child(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    parent = tmp_path / "state"
+    parent.mkdir(mode=0o700)
+    base = parent / "historical-backfill"
+    monkeypatch.setattr(module, "APPROVED_PERSISTENT_PACKAGE_BASE", base)
+
+    prepared = module._prepare_package_root(base / "five-year-fixture")
+
+    assert prepared == (base / "five-year-fixture").resolve()
+    assert base.stat().st_mode & 0o777 == 0o700
+    assert prepared.stat().st_mode & 0o777 == 0o700
+
+
+def test_package_root_rejects_nested_persistent_scope(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    parent = tmp_path / "state"
+    parent.mkdir(mode=0o700)
+    base = parent / "historical-backfill"
+    monkeypatch.setattr(module, "APPROVED_PERSISTENT_PACKAGE_BASE", base)
+
+    with pytest.raises(HistoricalBackfillBatchRunnerError, match="direct child"):
+        module._prepare_package_root(base / "outer" / "nested")
+
+
 @pytest.mark.parametrize(
     ("transient_error", "expected_code"),
     (

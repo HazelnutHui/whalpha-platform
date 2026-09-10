@@ -47,6 +47,9 @@ from tip_api.services.historical_backfill_planner import (
 
 
 CONTRACT_VERSION = "historical-research-backfill-batch-result/1.1"
+APPROVED_PERSISTENT_PACKAGE_BASE = Path(
+    "/home/hui/.local/state/trading-intelligence-platform/historical-backfill"
+)
 MAXIMUM_SESSIONS_PER_INVOCATION = 20
 DEFAULT_TRANSIENT_RETRY_DELAYS_SECONDS = (30, 90)
 MAXIMUM_TRANSIENT_RETRIES_PER_SESSION = 2
@@ -563,16 +566,61 @@ def _validate_data_root(path: Path) -> Path:
 
 
 def _prepare_package_root(path: Path) -> Path:
-    if not path.is_absolute() or not path.resolve(strict=False).is_relative_to(Path("/tmp")):
-        raise HistoricalBackfillBatchRunnerError("package root must be below /tmp")
+    if not path.is_absolute():
+        raise HistoricalBackfillBatchRunnerError("package root must be absolute")
+    resolved = path.resolve(strict=False)
+    within_persistent_base = resolved.is_relative_to(
+        APPROVED_PERSISTENT_PACKAGE_BASE
+    )
+    persistent = resolved.parent == APPROVED_PERSISTENT_PACKAGE_BASE
+    if within_persistent_base and not persistent:
+        raise HistoricalBackfillBatchRunnerError(
+            "persistent package root must be one direct child of the approved base"
+        )
+    temporary = resolved.is_relative_to(Path("/tmp"))
+    if not temporary and not persistent:
+        raise HistoricalBackfillBatchRunnerError(
+            "package root must be below /tmp or one direct child of the approved persistent base"
+        )
+    if persistent:
+        _prepare_persistent_package_base()
     if path.exists():
-        if path.is_symlink() or not path.is_dir():
+        if path.is_symlink() or not path.is_dir() or path.stat().st_uid != os.getuid():
             raise HistoricalBackfillBatchRunnerError("package root is unsafe")
     else:
         path.mkdir(mode=0o700)
     if stat.S_IMODE(path.stat().st_mode) != 0o700:
         raise HistoricalBackfillBatchRunnerError("package root must be owner-only")
     return path.resolve()
+
+
+def _prepare_persistent_package_base() -> None:
+    base = APPROVED_PERSISTENT_PACKAGE_BASE
+    parent = base.parent
+    if (
+        parent.is_symlink()
+        or not parent.is_dir()
+        or parent.stat().st_uid != os.getuid()
+    ):
+        raise HistoricalBackfillBatchRunnerError(
+            "persistent package parent is unsafe"
+        )
+    if base.exists():
+        if base.is_symlink() or not base.is_dir() or base.stat().st_uid != os.getuid():
+            raise HistoricalBackfillBatchRunnerError(
+                "persistent package base is unsafe"
+            )
+    else:
+        base.mkdir(mode=0o700)
+        descriptor = os.open(parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+    if stat.S_IMODE(base.stat().st_mode) != 0o700:
+        raise HistoricalBackfillBatchRunnerError(
+            "persistent package base must be owner-only"
+        )
 
 
 def _prepare_session_root(root: Path, session_date: date) -> Path:

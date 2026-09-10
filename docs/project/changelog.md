@@ -52,6 +52,9 @@
   refuses boundary drift. Added an explicit 0.25-to-15-second serial interval
   for paid unlimited-call plans; provider concurrency remains disabled and the
   historical 300-session planning contract remains intact.
+- Replaced the historical executor's reboot-sensitive `/tmp`-only limitation
+  with one fixed owner-only Dell state boundary. Only a direct 0700 child of
+  that base is accepted; `/tmp` remains available for bounded pilots.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 
