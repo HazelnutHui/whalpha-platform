@@ -25,6 +25,10 @@
   annual split observations match the repeat IDs. Preserved this as an
   append-only source-revision requirement rather than five economic additions
   and deletions or an arbitrary first-non-null choice.
+- Copied all 193 corporate-action baseline, annual, repeat, and diff files into
+  Dell owner-only persistent historical-source state. Byte counts and recursive
+  content match exactly; this is recovery custody, not canonical `/data` or
+  research authority.
 - Formally recovered the 2025-04-23 EOD continuation after the prior whole-root
   CAS stop by preserving the stale plan/artifacts under explicit failed-attempt
   names, rebuilding against current inventory, reusing the verified package,

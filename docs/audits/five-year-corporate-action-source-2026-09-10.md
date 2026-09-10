@@ -62,6 +62,21 @@ all rows is
 `d29f83efe8d045b188f43340c7b6a249e861f5a8bd407f155dfea32623078c7a`;
 the annual-package composition produced the same value.
 
+## Persistent private custody
+
+All 193 files from the baseline, annual cross-check, repeat, and repeat-diff
+trees were copied byte-for-byte from the temporary acquisition roots into the
+owner-only Dell historical-source state area.  The source and retained trees
+both contain 252,132,705 bytes.  Recursive content comparison was empty, every
+retained directory is mode 0700, every retained file is mode 0400, and the
+relative-path/file-hash list fingerprint is
+`4da1a226d7a47aa78871cd4295495839af043e4d94fa89b214893d9e5fad156b`.
+
+This is private recovery custody, not a canonical `/data` publication.  The
+original temporary packages remain the formally readable inputs until the
+persistent-source reader boundary is separately implemented and tested; the
+copy does not grant action, adjustment, signal, or performance authority.
+
 ## Remaining boundary
 
 Source acquisition is complete for the declared range.  Corporate Actions are
