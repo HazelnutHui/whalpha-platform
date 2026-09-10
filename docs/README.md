@@ -68,6 +68,8 @@ Stock Candidates.
   outcome-free input semantics.
 - [Strong-Leader Pullback Development Coverage Census V1](data-contracts/strong-leader-pullback-development-coverage-census-v1.md):
   fixed latest-vintage, outcome-blind development-admission census.
+- [Strong-Leader Pullback Development Admission Decision V1](data-contracts/strong-leader-pullback-development-admission-decision-v1.md):
+  complete-session missingness rule and current evidence rejection.
 - [Candidate Strategy Research Statistics V1](data-contracts/candidate-strategy-research-statistics-v1.md):
   session-balanced inference and registered gates.
 - [Candidate Strategy Holdout Custody V1](data-contracts/candidate-strategy-holdout-custody-v1.md):
@@ -86,7 +88,8 @@ Pivotal research ADRs include
 [0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md),
 [0192](decisions/0192-publish-lab-model-records-without-candidate-authority.md),
 [0193](decisions/0193-admit-latest-vintage-reconstruction-for-development-only.md),
-and [0194](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md).
+[0194](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md),
+and [0195](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md).
 
 ## Architecture and data
 

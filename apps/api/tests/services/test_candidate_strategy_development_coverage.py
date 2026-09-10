@@ -13,6 +13,10 @@ from tip_api.contracts.analytics.v1.candidate_strategy_development_coverage impo
     STRONG_LEADER_PULLBACK_CENSUS_SESSION_COUNT,
     StrongLeaderPullbackDevelopmentCoverageCensusV1,
 )
+from tip_api.contracts.analytics.v1.candidate_strategy_development_admission import (
+    DevelopmentAdmissionDecisionStatus,
+    StrongLeaderPullbackDevelopmentAdmissionDecisionV1,
+)
 from tip_api.contracts.common import QualityStatus
 from tip_api.contracts.market_data.v1 import (
     AdjustmentAvailabilityStatus,
@@ -31,6 +35,14 @@ from tip_api.persistence.development_coverage_census import (
     REPORT_FILE,
     read_development_coverage_census,
     write_development_coverage_census,
+)
+from tip_api.persistence.development_admission_decision import (
+    DECISION_FILE,
+    read_development_admission_decision,
+    write_development_admission_decision,
+)
+from tip_api.services.candidate_strategy_development_admission import (
+    decide_strong_leader_pullback_development_admission,
 )
 from tip_api.services.candidate_strategy_development_coverage import (
     ReconstructedMembershipSessionEvidence,
@@ -365,6 +377,133 @@ def test_owner_only_report_round_trip(
         assert path.stat().st_mode & 0o777 == 0o400
     finally:
         path = output_root / REPORT_FILE
+        if path.exists() and not path.is_symlink():
+            path.unlink()
+        if output_root.exists() and not output_root.is_symlink():
+            output_root.rmdir()
+
+
+def test_admission_decision_freezes_full_session_rule_and_rejects_current_evidence(
+    calendar: ExchangeCalendar,
+    session_dates: tuple[date, ...],
+) -> None:
+    census = _build(calendar=calendar, session_dates=session_dates)
+    decision = decide_strong_leader_pullback_development_admission(
+        census=census,
+        census_physical_sha256="2" * 64,
+        decision_revision="3" * 40,
+        decided_at=NOW,
+    )
+
+    assert (
+        decision.decision_status
+        is DevelopmentAdmissionDecisionStatus.REJECTED_CURRENT_EVIDENCE
+    )
+    assert decision.completeness_threshold_bps == 10_000
+    assert decision.minimum_admitted_session_count == 252
+    assert decision.raw_candidate_session_count == 287
+    assert decision.complete_cross_section_session_count == 0
+    assert decision.incomplete_cross_section_session_count == 287
+    assert decision.absent_row_neutrality_unproven_path_count == 287
+    assert decision.lifecycle_unavailable_path_count == 287
+    assert decision.incomplete_required_dataset_families == (
+        "adjustment_ledger",
+        "corporate_action",
+        "instrument_lifecycle",
+    )
+    assert decision.coverage_threshold_selected is True
+    assert decision.admitted_cohort_selected is False
+    assert decision.development_authorized is False
+    assert "minimum_complete_session_count_not_met" in decision.blocker_codes
+    assert "absent_row_neutrality_unproven" in decision.blocker_codes
+    assert "instrument_lifecycle_unavailable" in decision.blocker_codes
+    assert "outcomes" not in type(decision).model_fields
+    assert "signals" not in type(decision).model_fields
+
+
+def test_admission_decision_rejects_tampered_session_totals(
+    calendar: ExchangeCalendar,
+    session_dates: tuple[date, ...],
+) -> None:
+    census = _build(calendar=calendar, session_dates=session_dates)
+    decision = decide_strong_leader_pullback_development_admission(
+        census=census,
+        census_physical_sha256="2" * 64,
+        decision_revision="3" * 40,
+        decided_at=NOW,
+    )
+    payload = decision.model_dump(mode="json")
+    payload["raw_candidate_session_count"] -= 1
+
+    with pytest.raises(ValidationError, match="observed sessions differ"):
+        StrongLeaderPullbackDevelopmentAdmissionDecisionV1.model_validate(payload)
+
+
+def test_admission_decision_rejects_tampered_blocker_evidence(
+    calendar: ExchangeCalendar,
+    session_dates: tuple[date, ...],
+) -> None:
+    census = _build(calendar=calendar, session_dates=session_dates)
+    decision = decide_strong_leader_pullback_development_admission(
+        census=census,
+        census_physical_sha256="2" * 64,
+        decision_revision="3" * 40,
+        decided_at=NOW,
+    )
+    payload = decision.model_dump(mode="json")
+    payload["blocker_codes"].remove("instrument_lifecycle_unavailable")
+
+    with pytest.raises(ValidationError, match="blocker evidence differs"):
+        StrongLeaderPullbackDevelopmentAdmissionDecisionV1.model_validate(payload)
+
+
+def test_admission_decision_cannot_predate_census(
+    calendar: ExchangeCalendar,
+    session_dates: tuple[date, ...],
+) -> None:
+    census = _build(calendar=calendar, session_dates=session_dates)
+
+    with pytest.raises(
+        RuntimeError,
+        match="cannot predate its census",
+    ):
+        decide_strong_leader_pullback_development_admission(
+            census=census,
+            census_physical_sha256="2" * 64,
+            decision_revision="3" * 40,
+            decided_at=NOW - timedelta(seconds=1),
+        )
+
+
+def test_owner_only_admission_decision_round_trip(
+    calendar: ExchangeCalendar,
+    session_dates: tuple[date, ...],
+) -> None:
+    census = _build(calendar=calendar, session_dates=session_dates)
+    decision = decide_strong_leader_pullback_development_admission(
+        census=census,
+        census_physical_sha256="2" * 64,
+        decision_revision="3" * 40,
+        decided_at=NOW,
+    )
+    output_root = Path(
+        "/tmp/whalpha-strong-leader-pullback-development-admission-"
+        f"pytest-{uuid4().hex}"
+    )
+    try:
+        path = write_development_admission_decision(
+            output_root=output_root,
+            decision=decision,
+        )
+        assert path == output_root / DECISION_FILE
+        assert (
+            read_development_admission_decision(output_root=output_root)
+            == decision
+        )
+        assert output_root.stat().st_mode & 0o777 == 0o700
+        assert path.stat().st_mode & 0o777 == 0o400
+    finally:
+        path = output_root / DECISION_FILE
         if path.exists() and not path.is_symlink():
             path.unlink()
         if output_root.exists() and not output_root.is_symlink():

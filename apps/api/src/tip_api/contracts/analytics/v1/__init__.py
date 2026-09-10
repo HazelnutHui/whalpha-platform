@@ -301,6 +301,15 @@ from .candidate_strategy_development_coverage import (
     StrongLeaderPullbackDevelopmentSessionCoverageV1,
     coverage_census_fingerprint,
 )
+from .candidate_strategy_development_admission import (
+    STRONG_LEADER_PULLBACK_DEVELOPMENT_ADMISSION_CONTRACT_VERSION,
+    STRONG_LEADER_PULLBACK_DEVELOPMENT_ADMISSION_POLICY_VERSION,
+    STRONG_LEADER_PULLBACK_DEVELOPMENT_COMPLETENESS_THRESHOLD_BPS,
+    STRONG_LEADER_PULLBACK_DEVELOPMENT_MINIMUM_SESSIONS,
+    DevelopmentAdmissionDecisionStatus,
+    StrongLeaderPullbackDevelopmentAdmissionDecisionV1,
+    development_admission_fingerprint,
+)
 from .candidate_strategy_research_statistics import (
     MINIMUM_COMPARABLE_SESSIONS,
     MINIMUM_SIGNAL_OBSERVATIONS,
@@ -575,6 +584,13 @@ __all__ = [
     "StrongLeaderPullbackDevelopmentInstrumentCoverageV1",
     "StrongLeaderPullbackDevelopmentSessionCoverageV1",
     "coverage_census_fingerprint",
+    "STRONG_LEADER_PULLBACK_DEVELOPMENT_ADMISSION_CONTRACT_VERSION",
+    "STRONG_LEADER_PULLBACK_DEVELOPMENT_ADMISSION_POLICY_VERSION",
+    "STRONG_LEADER_PULLBACK_DEVELOPMENT_COMPLETENESS_THRESHOLD_BPS",
+    "STRONG_LEADER_PULLBACK_DEVELOPMENT_MINIMUM_SESSIONS",
+    "DevelopmentAdmissionDecisionStatus",
+    "StrongLeaderPullbackDevelopmentAdmissionDecisionV1",
+    "development_admission_fingerprint",
     "MINIMUM_COMPARABLE_SESSIONS",
     "MINIMUM_SIGNAL_OBSERVATIONS",
     "RESEARCH_BLOCK_LENGTH_SESSIONS",

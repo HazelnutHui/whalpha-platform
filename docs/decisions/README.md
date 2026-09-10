@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0195](0195-require-complete-session-cross-sections-for-reconstructed-development.md):
+  requires 100%-complete Primary session cross-sections and at least 252
+  sessions before latest-vintage development can be admitted.
 - [ADR 0194](0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md):
   defines high-throughput AI hypothesis work as a bounded, stage-isolated Lab
   backend rather than ungoverned search or automatic activation.
