@@ -11,8 +11,8 @@ the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
 
 WH Alpha is live as a Session-protected trilingual U.S. equity
 market-intelligence and research platform. Active OCI release
-2026-09-10T210130Z-5da0c2293ac6 was built from clean source
-5da0c2293ac6b221ffa041ada78f8b965829cc5c.
+2026-09-10T211413Z-030f75578668 was built from clean source
+030f75578668b34cf67c82264284e31362ced235.
 
 Production uses Market Intelligence 1.3 for 2026-09-09 and Snapshot 1.11 /
 Dashboard 2.8. English is default; Simplified Chinese and neutral professional

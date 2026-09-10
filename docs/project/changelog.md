@@ -29,8 +29,8 @@
 - Aligned serving-bundle locale evidence and the default for future Market
   Intelligence publications with the implemented `en`, `zh`, and `es`
   interface. The active immutable analytics publication was not rewritten.
-- Deployed immutable OCI release `2026-09-10T210130Z-5da0c2293ac6` from source
-  `5da0c2293ac6`. Independent postflight matched release, source, bundle,
+- Deployed immutable OCI release `2026-09-10T211413Z-030f75578668` from source
+  `030f75578668`. Independent postflight matched release, source, bundle,
   manifest, checksums, protected routes, guest access, identical guest and
   credential policy, services, listeners, and zero staging/failed residue.
   Password login and final human visual review remain manual checks.
