@@ -76,10 +76,13 @@ This tier has the following boundaries:
 
 The typed outcome-blind census contract, pure aggregator, network-disabled
 reader, and owner-only `/tmp` report custody were implemented on 2026-09-10.
-Implementation alone does not prove a real census result. This decision still
-grants no cohort admission, development execution, validation, holdout access,
-performance claim, model activation, Candidate authority, provider request,
-`/data` write, publication, deployment, or scheduler action.
+The fixed real census then completed and is recorded in the
+[dated audit](../audits/strong-leader-pullback-development-coverage-census-2026-09-10.md).
+It found zero all-required-evidence-complete paths because neutral sparse-row
+adjustment evidence and lifecycle evidence remain unavailable. This decision
+still grants no cohort admission, development execution, validation, holdout
+access, performance claim, model activation, Candidate authority, provider
+request, `/data` write, publication, deployment, or scheduler action.
 
 ## Consequences
 

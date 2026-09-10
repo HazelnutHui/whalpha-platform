@@ -94,9 +94,9 @@ defensible point-in-time evidence.
 
 Required work:
 
-- formally execute the implemented fixed 287-session latest-vintage
-  reconstruction coverage census without calculating triggers, returns,
-  metrics, or parameter results;
+- completed 2026-09-10: the fixed census reconciled 437,402 raw-complete
+  included paths but zero all-required-evidence-complete paths, without
+  calculating triggers, returns, metrics, or parameter results;
 - freeze one explicit admitted cohort and threshold decision from missingness
   evidence alone, or reject the reconstructed development path;
 - lifecycle and terminal-outcome evidence;

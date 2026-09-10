@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-10 — Complete the fixed outcome-blind development census
+
+- Formally reread all 287 fixed historical Membership partitions, their same-
+  session normalized Identity source custody, the canonical split-only facts,
+  and the sparse adjustment ledger from exact source revision `1f64471`.
+- Reconciled 2,656,006 Primary decisions and 437,402 raw-complete included
+  feature paths across 10,702 stable IDs. Counted 722 clear split exposures and
+  retained 12 paths for one unresolved possible split impact in quarantine.
+- Proved that every included path still lacks sparse-row neutrality and
+  canonical lifecycle evidence. All-required completeness is zero; no
+  threshold, cohort, outcome, backtest, or development authority was created.
+- Wrote one atomically reread, owner-only `/tmp` report with logical
+  fingerprint `09ffe4edc38aeaccb3f101f5b1b784eb0769af0de9fde0c28fafbc18fe32388f`.
+  `/data` inventory, Production, provider, deployment, and scheduler state did
+  not change.
+
 ## 2026-09-10 — Implement the outcome-blind development coverage census
 
 - Added the fixed 287-session Strong-Leader Pullback V2 coverage contract,

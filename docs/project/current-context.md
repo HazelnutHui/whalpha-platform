@@ -179,6 +179,14 @@ blind coverage census and, only after another immutable admitted-cohort
 decision, development. It remains latest-vintage reconstruction, not
 `as_operated` evidence.
 
+That census completed from source revision `1f6447110142` with fingerprint
+`09ffe4edc38aeaccb3f101f5b1b784eb0769af0de9fde0c28fafbc18fe32388f`.
+It reconciled 2,656,006 Primary decisions and 437,402 raw-complete included
+feature paths, including 722 clear split exposures and 12 quarantined paths.
+All 437,402 still lack proven sparse-row neutrality and canonical lifecycle
+evidence, so all-required-evidence-complete remains zero and no cohort,
+threshold, outcome, or development authority exists.
+
 ADR 0186 freezes the dormant V1 complete-cross-section Strong-Leader Pullback
 input adapter with exact 21-session feature semantics, point-in-time
 Membership, stable-ID SPY, clear adjustments, and no outcome fields. It has
@@ -223,10 +231,11 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-1. Run the ADR 0193 outcome-blind coverage census over its fixed historical
-   source interval; do not calculate strategy outcomes or select thresholds.
-2. Publish one immutable admitted-cohort decision from evidence completeness
-   alone, or reject the reconstructed development path.
+1. Publish one immutable missingness-only decision that rejects the currently
+   incomplete evidence or precisely freezes the additional admission gates;
+   do not open strategy outcomes.
+2. Close only the lifecycle and adjustment-neutrality evidence required by
+   that decision, then admit an exact cohort or reject the reconstructed path.
 3. Run Strong-Leader Pullback development, locked point-in-time validation,
    sealed holdout, and prospective shadow under their exact evidence tiers.
 4. Retain either validated evidence or recorded failure without editing V1.

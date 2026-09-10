@@ -113,10 +113,12 @@ holdout, and Production claims unless source availability at signal time is
 defensible. Current membership or taxonomy must not be projected backward.
 ADR 0193 permits the fixed 287-session interval through 2026-08-12 only for an
 outcome-blind coverage census and possible later development cohort. No
-coverage threshold or cohort is admitted yet. The repository now implements
-the typed census and network-disabled Dell reader; a real report has not yet
-been recorded. The Strong-Leader Pullback V1 input adapter has fixture evidence
-only and has never produced a real backtest.
+coverage threshold or cohort is admitted yet. The typed Dell-local census has
+now formally reconciled 2,656,006 Primary decisions and 437,402 raw-complete
+included feature paths. All included paths still lack proven sparse-row
+neutrality and canonical lifecycle evidence, so all-required completeness is
+zero and development remains unauthorized. The Strong-Leader Pullback V1 input
+adapter has fixture evidence only and has never produced a real backtest.
 
 ## Automation and performance
 
@@ -132,11 +134,12 @@ that fixes both known gaps.
 
 ## Next priority
 
-1. Complete ADR 0193's outcome-blind evidence census without opening strategy
-   outcomes or choosing parameters.
-2. Freeze one admitted cohort and formal readiness decision from missingness
-   evidence alone, or reject that development path.
-3. Execute the registered chronological research and retain success or failure.
+1. Freeze a missingness-only decision that rejects the current incomplete
+   evidence or defines the exact lifecycle and adjustment-neutrality gates.
+2. Close only those data gates, then admit an exact cohort or reject the
+   reconstructed development path without opening outcomes.
+3. Execute the registered chronological research only after admission, and
+   retain success or failure.
 4. Generalize only the proven path into a bounded multi-agent research pilot.
 5. Activate and connect a model to Stock Candidates only after separate
    operational review.
