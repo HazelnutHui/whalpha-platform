@@ -94,8 +94,9 @@ defensible point-in-time evidence.
 
 Required work:
 
-- run the fixed 287-session latest-vintage reconstruction coverage census
-  without calculating triggers, returns, metrics, or parameter results;
+- formally execute the implemented fixed 287-session latest-vintage
+  reconstruction coverage census without calculating triggers, returns,
+  metrics, or parameter results;
 - freeze one explicit admitted cohort and threshold decision from missingness
   evidence alone, or reject the reconstructed development path;
 - lifecycle and terminal-outcome evidence;

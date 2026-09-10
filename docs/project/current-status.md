@@ -113,8 +113,10 @@ holdout, and Production claims unless source availability at signal time is
 defensible. Current membership or taxonomy must not be projected backward.
 ADR 0193 permits the fixed 287-session interval through 2026-08-12 only for an
 outcome-blind coverage census and possible later development cohort. No
-coverage threshold or cohort is admitted yet. The Strong-Leader Pullback V1
-input adapter has fixture evidence only and has never produced a real backtest.
+coverage threshold or cohort is admitted yet. The repository now implements
+the typed census and network-disabled Dell reader; a real report has not yet
+been recorded. The Strong-Leader Pullback V1 input adapter has fixture evidence
+only and has never produced a real backtest.
 
 ## Automation and performance
 

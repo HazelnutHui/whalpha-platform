@@ -66,6 +66,8 @@ Stock Candidates.
   boundary.
 - [Strong-Leader Pullback Research Input V1](data-contracts/strong-leader-pullback-research-input-v1.md):
   outcome-free input semantics.
+- [Strong-Leader Pullback Development Coverage Census V1](data-contracts/strong-leader-pullback-development-coverage-census-v1.md):
+  fixed latest-vintage, outcome-blind development-admission census.
 - [Candidate Strategy Research Statistics V1](data-contracts/candidate-strategy-research-statistics-v1.md):
   session-balanced inference and registered gates.
 - [Candidate Strategy Holdout Custody V1](data-contracts/candidate-strategy-holdout-custody-v1.md):

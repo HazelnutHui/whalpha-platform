@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-10 — Implement the outcome-blind development coverage census
+
+- Added the fixed 287-session Strong-Leader Pullback V2 coverage contract,
+  pure aggregator, formal Dell evidence reader, and atomic owner-only `/tmp`
+  report custody required by ADR 0193.
+- Bound complete three-state historical Membership to same-session normalized
+  Identity source evidence and retained per-session and per-stable-ID coverage,
+  missingness, quarantine, and reason counts.
+- Kept split actions and the sparse adjustment ledger explicitly partial and
+  outcome-only. Later split events cannot contaminate earlier feature windows;
+  omitted adjustment rows never prove neutrality, and unavailable lifecycle
+  evidence remains explicit.
+- The census contains no strategy trigger, forward outcome, performance
+  metric, threshold, cohort, parameter choice, or development authority. It
+  performs no external request, `/data` write, Production write, publication,
+  deployment, or scheduler action.
+- This entry records the implementation boundary; real census execution and
+  its evidence are recorded separately after exact-revision formal reread.
+
 ## 2026-09-10 — Reconcile the research-factory direction and documentation authority
 
 - Accepted ADR 0193. Latest-vintage reconstructed Membership may support an

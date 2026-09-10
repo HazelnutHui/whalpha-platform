@@ -74,11 +74,12 @@ This tier has the following boundaries:
    quarantined. No zero return, neutral factor, successor join, or terminal
    value may be inferred by convenience.
 
-This decision records the policy but does not yet implement a typed census or
-admission contract. It grants no cohort admission, development execution,
-validation, holdout access, performance claim, model activation, Candidate
-authority, provider request, `/data` write, publication, deployment, or
-scheduler action.
+The typed outcome-blind census contract, pure aggregator, network-disabled
+reader, and owner-only `/tmp` report custody were implemented on 2026-09-10.
+Implementation alone does not prove a real census result. This decision still
+grants no cohort admission, development execution, validation, holdout access,
+performance claim, model activation, Candidate authority, provider request,
+`/data` write, publication, deployment, or scheduler action.
 
 ## Consequences
 
