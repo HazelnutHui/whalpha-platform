@@ -394,7 +394,7 @@ grep -q 'data-whalpha-entry-contract="quant-research-v1"' "${public_body}" || { 
 grep -q 'name="username"' "${public_body}" || { echo "root login missing username field" >&2; exit 1; }
 grep -q 'name="password"' "${public_body}" || { echo "root login missing password field" >&2; exit 1; }
 grep -q 'class="guest-submit"' "${public_body}" || { echo "root login missing guest entry" >&2; exit 1; }
-grep -q 'Sign In' "${public_body}" || { echo "root login missing sign-in button" >&2; exit 1; }
+grep -q 'class="login-submit"' "${public_body}" || { echo "root login missing sign-in control" >&2; exit 1; }
 grep -q 'rel="icon" type="image/png" href="/favicon.png"' "${public_body}" || { echo "root login missing favicon declaration" >&2; exit 1; }
 if grep -q 'New platform under development' "${public_body}"; then
   echo "root route returned placeholder body" >&2

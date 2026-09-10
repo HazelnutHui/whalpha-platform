@@ -143,9 +143,11 @@ change the shared Session capability or expose protected analytics publicly.
 ## Login Route Verification
 
 The deployment gate is content-aware: public `/` must contain the stable
-`quant-research-v1` entry-contract marker, username/password fields, `Sign In`,
-and the guest control, and must not contain the retired placeholder marker.
-The gate binds page identity rather than one mutable marketing sentence.
+`quant-research-v1` entry-contract marker, username/password fields, the
+sign-in control, and the guest control, and must not contain the retired
+placeholder marker.
+The gate binds page identity and structural controls rather than mutable
+marketing copy.
 `/login/` must redirect to `/`. HTTP 200 alone is not accepted as proof of
 correct routing.
 
