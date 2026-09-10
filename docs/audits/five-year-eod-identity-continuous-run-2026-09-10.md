@@ -88,3 +88,18 @@ rejected a provider VWAP whose decimal scale exceeds the canonical limit of
 lead is the exact safe restart boundary. The failed unit remains stopped; its
 precision policy requires an explicit decision and regression fixture before
 one unique continuation is started.
+
+## VWAP precision resolution
+
+Offline inspection of the retained 2022-12-05 Grouped Daily package found
+11,084 source rows and exactly 314 non-null VWAP values above canonical scale
+10. Their scales range from 16 through 20. Quantizing them with the ADR 0202
+round-half-even rule changes no value by more than `1E-16`; OHLC and volume
+have zero precision/scale violations in the same package.
+
+A zero-write replay against the formally read same-day Identity produced 8,156
+canonical candidate rows, counted all 314 normalizations, and passed every EOD
+quality gate. Focused provider/persistence regression passed 87 tests; the
+complete API suite passed 2,413 tests. The provider-neutral repository still
+rejects over-scale VWAP, proving that normalization is confined to the Massive
+mapping boundary. No canonical data was written during diagnosis or testing.

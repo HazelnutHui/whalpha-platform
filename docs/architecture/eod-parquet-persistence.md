@@ -56,7 +56,11 @@ The repository uses an explicit PyArrow schema:
 - `quality_flags`: deterministic list of strings
 - source, revision, latest flag, quality status, and schema version fields are preserved
 
-Decimal values exceeding precision 38 or scale 10 are rejected before write. Values are not converted to binary float.
+Decimal values exceeding precision 38 or scale 10 are rejected before write.
+Values are not converted to binary float. The repository does not round.
+ADR 0202 permits only the Massive Grouped Daily adapter to normalize
+over-scale VWAP before this provider-neutral boundary, with immutable raw
+custody and explicit row/session audit evidence.
 
 ## Determinism
 

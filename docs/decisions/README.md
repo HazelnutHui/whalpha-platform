@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0202](0202-normalize-provider-vwap-float-tails-at-the-mapping-boundary.md):
+  normalizes only sub-resolution Massive VWAP serialization tails at the
+  provider mapping boundary while preserving raw custody, row-level flags,
+  session counts, and the strict provider-neutral persistence contract.
 - [ADR 0201](0201-admit-bounded-quarantined-historical-identity-alias-collisions.md):
   admits bounded later-vintage ticker-alias collisions only in historical
   reconstruction while keeping every affected row quarantined and current
@@ -99,12 +103,13 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0201 separate durable research Membership custody from
+- ADRs 0197–0202 separate durable research Membership custody from
   signal-eligible Membership, scale source-only corporate-action custody to
   the five-year boundary, and retain exact corporate-action and inactive-
   lifecycle source vintages privately without promoting them to canonical
-  facts, then localize bounded historical alias-revision collisions without
-  relaxing prospective Identity rules.
+  facts, localize bounded historical alias-revision collisions without
+  relaxing prospective Identity rules, and normalize only audited provider
+  VWAP float tails at the mapping boundary.
 
 ## Runtime and publication decisions
 

@@ -320,6 +320,12 @@ def test_decimal_scale_overflow_rejected(tmp_path: Path) -> None:
         repository(tmp_path).publish_session((record,), session_date=SESSION, provider_id="mocked_provider")
 
 
+def test_vwap_scale_overflow_still_rejected_by_provider_neutral_repository(tmp_path: Path) -> None:
+    record = make_bar(vwap="10.12345678901")
+    with pytest.raises(EodPriceBarPersistenceError, match="scale"):
+        repository(tmp_path).publish_session((record,), session_date=SESSION, provider_id="mocked_provider")
+
+
 def test_repository_does_not_import_massive_package() -> None:
     source = Path("apps/api/src/tip_api/persistence/parquet/eod_bars.py").read_text()
     assert "providers.massive" not in source

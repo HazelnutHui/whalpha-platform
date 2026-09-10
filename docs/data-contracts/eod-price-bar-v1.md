@@ -71,6 +71,11 @@ Missing VWAP or trade count remains null.
 - Missing values are not silently converted to zero.
 - Volume is an exact non-negative Decimal because provider aggregate volume is a numeric field and may be fractional.
 - Direct binary-float input to the canonical model is rejected; provider adapters must convert JSON numbers at the mapping boundary.
+- A provider adapter may map VWAP to the canonical scale of 10 only through an
+  explicitly documented deterministic rule. Massive Grouped Daily uses
+  round-half-even, retains the exact immutable source response, and marks both
+  the affected row and session-level normalization count. The provider-neutral
+  repository never performs this transformation.
 - Volume adjustment semantics must be explicit.
 - V1 retains provider raw volume and allows normalized comparable volume separately.
 
@@ -93,7 +98,7 @@ Provider corrections create traceable revisions. `is_latest_revision` identifies
 
 ## Provider Mapping Boundary
 
-Provider bar records map into this contract. Analytics should consume canonical fields and explicit adjustment factors, not provider-specific adjustment assumptions.
+Provider bar records map into this contract. Analytics should consume canonical fields and explicit adjustment factors, not provider-specific adjustment assumptions. See [ADR 0202](../decisions/0202-normalize-provider-vwap-float-tails-at-the-mapping-boundary.md) for the bounded Massive VWAP mapping rule.
 
 ## Storage Direction
 

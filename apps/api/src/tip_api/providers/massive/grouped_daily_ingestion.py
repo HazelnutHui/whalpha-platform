@@ -7,7 +7,7 @@ import json
 import sys
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import ROUND_HALF_EVEN, Decimal, localcontext
 from pathlib import Path
 from typing import Any, Literal, Mapping
 from uuid import UUID
@@ -54,6 +54,8 @@ CONFLICTING_DUPLICATE_RATIO_GATE = 0.001
 NUMERIC_FAILURE_RATIO_GATE = 0.001
 REQUIRED_MISSING_RATIO_GATE = 0.001
 IDENTITY_COVERAGE_GATE = 0.80
+CANONICAL_VWAP_SCALE = 10
+CANONICAL_VWAP_QUANTUM = Decimal("0.0000000001")
 
 IdentityCategory = Literal["resolved_eligible", "unresolved_eligible", "expected_exclusion", "ambiguous", "rejected", "missing"]
 
@@ -77,6 +79,7 @@ class NumericBar:
     close: Decimal
     volume: Decimal
     vwap: Decimal | None
+    vwap_scale_normalized: bool
     trade_count: int | None
     timestamp_session_date: date | None
 
@@ -125,6 +128,7 @@ class GroupedDailyIngestionResult:
     close_numeric_failure_count: int
     volume_numeric_failure_count: int
     vwap_numeric_failure_count: int
+    vwap_scale_normalized_count: int
     trade_count_numeric_failure_count: int
     timestamp_numeric_failure_count: int
     fractional_volume_record_count: int
@@ -191,6 +195,7 @@ class GroupedDailyIngestionResult:
             ("close_numeric_failure_count", self.close_numeric_failure_count),
             ("volume_numeric_failure_count", self.volume_numeric_failure_count),
             ("vwap_numeric_failure_count", self.vwap_numeric_failure_count),
+            ("vwap_scale_normalized_count", self.vwap_scale_normalized_count),
             ("trade_count_numeric_failure_count", self.trade_count_numeric_failure_count),
             ("timestamp_numeric_failure_count", self.timestamp_numeric_failure_count),
             ("fractional_volume_record_count", self.fractional_volume_record_count),
@@ -398,6 +403,7 @@ def process_grouped_daily_payload(
         close_numeric_failure_count=counters.close_numeric_failure_count,
         volume_numeric_failure_count=counters.volume_numeric_failure_count,
         vwap_numeric_failure_count=counters.vwap_numeric_failure_count,
+        vwap_scale_normalized_count=counters.vwap_scale_normalized_count,
         trade_count_numeric_failure_count=counters.trade_count_numeric_failure_count,
         timestamp_numeric_failure_count=counters.timestamp_numeric_failure_count,
         fractional_volume_record_count=counters.fractional_volume_record_count,
@@ -447,6 +453,7 @@ class _Counters:
     close_numeric_failure_count: int = 0
     volume_numeric_failure_count: int = 0
     vwap_numeric_failure_count: int = 0
+    vwap_scale_normalized_count: int = 0
     trade_count_numeric_failure_count: int = 0
     timestamp_numeric_failure_count: int = 0
     fractional_volume_record_count: int = 0
@@ -619,6 +626,8 @@ def _process_numeric_and_canonical(
     flags = ["adjustment_factors_unverified"]
     if numeric.vwap is None:
         flags.append("missing_vwap")
+    if numeric.vwap_scale_normalized:
+        flags.append("vwap_scale_normalized")
     if numeric.trade_count is None:
         flags.append("missing_trade_count")
     if numeric.volume == 0:
@@ -672,6 +681,11 @@ def _validate_numeric_bar(item: Mapping[str, object], *, counters: _Counters, se
     field_failures += failed; missing_required = missing_required or missing
     vwap, failed = _parse_optional_decimal_field(item.get("vw"), "vwap_numeric_failure_count", counters)
     field_failures += failed
+    vwap_scale_normalized = False
+    if not failed and vwap is not None:
+        vwap, vwap_scale_normalized = _normalize_vwap_scale(vwap)
+        if vwap_scale_normalized:
+            counters.vwap_scale_normalized_count += 1
     trade_count, failed = _parse_optional_integral_field(item.get("n"), "trade_count_numeric_failure_count", counters)
     field_failures += failed
     if missing_required:
@@ -712,6 +726,7 @@ def _validate_numeric_bar(item: Mapping[str, object], *, counters: _Counters, se
         close=close,
         volume=volume,
         vwap=vwap,
+        vwap_scale_normalized=vwap_scale_normalized,
         trade_count=trade_count,
         timestamp_session_date=timestamp_date,
     )
@@ -759,6 +774,8 @@ def _quality_warnings(c: _Counters) -> tuple[str, ...]:
         warnings.append("exact_duplicates_deduplicated")
     if c.optional_vwap_missing_count:
         warnings.append("missing_optional_vwap")
+    if c.vwap_scale_normalized_count:
+        warnings.append("vwap_scale_normalized")
     if c.optional_trade_count_missing_count:
         warnings.append("missing_optional_trade_count")
     if c.zero_volume_count:
@@ -797,12 +814,33 @@ def _bar_signature(item: Mapping[str, object]) -> tuple[object, ...]:
             decimal_signature(item.get("l"), required=True),
             decimal_signature(item.get("c"), required=True),
             decimal_signature(item.get("v"), required=True),
-            decimal_signature(item.get("vw"), required=False),
+            _canonical_vwap_signature(item.get("vw")),
             _parse_massive_integral(item.get("n"), required=False, allow_negative=False),
             _parse_massive_integral(item.get("t"), required=True, allow_negative=False),
         )
     except (RuntimeError, MissingMassiveNumericValue, InvalidMassiveNumericValue):
         return tuple(item.get(key) for key in ("T", "ticker", "o", "h", "l", "c", "v", "vw", "n", "t"))
+
+
+def _canonical_vwap_signature(value: object) -> str | None:
+    parsed = _parse_massive_decimal(value, required=False)
+    if parsed is None:
+        return None
+    normalized, _ = _normalize_vwap_scale(parsed)
+    return decimal_signature(normalized, required=False)
+
+
+def _normalize_vwap_scale(value: Decimal) -> tuple[Decimal, bool]:
+    """Map provider VWAP to the canonical scale while retaining audit evidence."""
+
+    scale = max(-value.as_tuple().exponent, 0)
+    if scale <= CANONICAL_VWAP_SCALE:
+        return value, False
+    with localcontext() as context:
+        context.prec = max(50, len(value.as_tuple().digits) + scale + 2)
+        context.rounding = ROUND_HALF_EVEN
+        normalized = value.quantize(CANONICAL_VWAP_QUANTUM)
+    return normalized, True
 
 
 class _MissingRequired(MissingMassiveNumericValue):

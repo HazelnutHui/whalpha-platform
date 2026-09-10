@@ -74,6 +74,12 @@ unbounded retries.
 Offline validation and later family construction may use Dell CPU parallelism
 after immutable source custody exists. Provider acquisition remains serial.
 
+Massive Grouped Daily VWAP is normalized under ADR 0202 only when its source
+scale exceeds the canonical scale of 10. The exact source package is retained;
+the canonical row receives `vwap_scale_normalized`, and the session quality
+summary records `vwap_scale_normalized_count`. OHLC and volume remain exact,
+and the provider-neutral repository continues to reject over-scale input.
+
 ## Operator command
 
 The command is deliberately explicit and requires a clean repository:

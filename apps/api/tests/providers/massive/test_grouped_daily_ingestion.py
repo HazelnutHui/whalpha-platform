@@ -1,8 +1,10 @@
+import json
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 from uuid import UUID, uuid5
 
+import pyarrow.parquet as pq
 import pytest
 
 from tip_api.contracts.common import QualityStatus
@@ -278,6 +280,31 @@ def test_duplicate_numeric_equivalence_uses_decimal_value_semantics(tmp_path):
     assert result.canonical_bar_count == 2
 
 
+def test_duplicate_vwap_float_tail_is_equivalent_at_canonical_scale(tmp_path):
+    snapshot = publish_identity_snapshot(tmp_path)
+    result = process_grouped_daily_payload(
+        {
+            "results": [
+                bar("TESTA", vw="0.8151999999999999"),
+                bar("TESTA", vw="0.8152"),
+                bar("TESTB"),
+            ]
+        },
+        identity=snapshot,
+        session_date=AS_OF,
+        endpoint="x",
+        data_root=tmp_path,
+        ingested_at=INGESTED_AT,
+        publish=False,
+    )
+
+    assert result.exact_duplicate_ticker_count == 1
+    assert result.exact_duplicate_record_count == 1
+    assert result.conflicting_duplicate_record_count == 0
+    assert result.vwap_scale_normalized_count == 1
+    assert result.canonical_bar_count == 2
+
+
 def test_conflicting_duplicates_are_isolated_below_gate(tmp_path):
     snapshot = publish_identity_snapshot(tmp_path, resolved_count=6002)
     records = [bar(f"T{i:05d}") for i in range(6002)]
@@ -324,16 +351,29 @@ def test_successful_atomic_publication_manifest_contains_quality_warnings(tmp_pa
     snapshot = publish_identity_snapshot(tmp_path, resolved_count=6001)
     records = [bar(f"T{i:05d}") for i in range(6001)]
     records[5] = bar("T00005", vw=None)
+    records[6] = bar("T00006", vw="0.010369999999999999")
     result = process_grouped_daily_payload({"results": records}, identity=snapshot, session_date=AS_OF, endpoint="x", data_root=tmp_path, ingested_at=INGESTED_AT, publish=True)
     assert result.quality_gate_passed is True
     assert result.written_record_count == 6001
     assert result.content_sha256
+    assert result.vwap_scale_normalized_count == 1
     assert "missing_optional_vwap" in result.quality_warnings
+    assert "vwap_scale_normalized" in result.quality_warnings
     partition = tmp_path / "market-data" / "eod-price-bars" / "schema_version=1" / f"session_date={AS_OF.isoformat()}"
-    manifest = (partition / "manifest.json").read_text(encoding="utf-8")
+    manifest_text = (partition / "manifest.json").read_text(encoding="utf-8")
+    manifest = json.loads(manifest_text)
     assert "identity_snapshot" in manifest
-    assert "missing_optional_vwap" in manifest
-    assert "TIP_MASSIVE_API_KEY" not in manifest
+    assert "missing_optional_vwap" in manifest_text
+    assert manifest["quality_summary"]["vwap_scale_normalized_count"] == 1
+    assert "TIP_MASSIVE_API_KEY" not in manifest_text
+    rows = pq.ParquetFile(partition / PARQUET_FILE_NAME).read(
+        columns=("instrument_id", "vwap", "quality_flags")
+    ).to_pylist()
+    normalized = next(
+        row for row in rows if row["instrument_id"] == str(uuid5(BASE_UUID, "T00006"))
+    )
+    assert normalized["vwap"] == Decimal("0.0103700000")
+    assert "vwap_scale_normalized" in normalized["quality_flags"]
 
 
 def test_no_raw_persistence_on_gate_failure(tmp_path):

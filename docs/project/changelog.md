@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-10 — Govern Massive VWAP float-tail normalization
+
+- Accepted ADR 0202 after the retained 2022-12-05 package showed 314 VWAP
+  values with provider-serialized scales 16–20 and a maximum scale-10
+  round-half-even change of only `1E-16`.
+- Normalize only over-scale Grouped Daily VWAP at the provider mapping
+  boundary. Every affected canonical row is flagged, the session manifest and
+  safe output retain the normalization count, and duplicate comparison uses
+  the same canonical resolution.
+- Preserved the exact immutable source package and the strict provider-neutral
+  Decimal128 repository. OHLC, volume, missing values, quality gates, and
+  persistence rejection semantics are unchanged.
+- The real package passed a zero-write quality replay with 11,084 raw rows,
+  8,156 canonical rows, and all 314 normalizations accounted for. Focused
+  tests passed 87 cases and the complete API suite passed 2,413 cases.
+
 ## 2026-09-10 — Retain the five-year backfill VWAP precision stop
 
 - The bounded `20260910d` continuation advanced to 942 contiguous EOD and 943
