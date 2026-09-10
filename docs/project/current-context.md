@@ -76,7 +76,10 @@ The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
 FIGI locators and provider delisting dates for every item, but Ticker Events
 matched only six; 24 returned HTTP 404 and all nine returned events were ticker
 changes. Massive remains a partial lifecycle input and is rejected as the
-sole-primary lifecycle source.
+sole-primary lifecycle source. The complete 2026-07-16 and 2026-09-03
+inactive-listing source anchors are now retained in owner-only persistent Dell
+custody and formally reread; their 23,260 / 23,469 rows remain discovery and
+reconciliation evidence rather than canonical lifecycle or terminal outcomes.
 
 ## Active Universe
 

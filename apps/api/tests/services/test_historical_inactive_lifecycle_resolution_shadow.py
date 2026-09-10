@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
+import shutil
 
 import pytest
 from pydantic import SecretStr, ValidationError
@@ -256,6 +257,28 @@ def test_existing_exact_shadow_is_reused(monkeypatch, tmp_path: Path) -> None:
     assert first.status == "published"
     assert second.status == "already_present"
     assert first.manifest_sha256 == second.manifest_sha256
+
+
+def test_shadow_accepts_explicit_persistent_source_custody(
+    monkeypatch, tmp_path: Path
+) -> None:
+    data_root, source, output = _fixture(monkeypatch, tmp_path)
+    custody_root = tmp_path / "persistent-source"
+    custody_root.mkdir(mode=0o700)
+    retained = custody_root / source.name
+    shutil.copytree(source, retained, copy_function=shutil.copy2)
+
+    result = build_historical_inactive_lifecycle_resolution_shadow(
+        data_root=data_root,
+        source_package_path=retained,
+        source_custody_root=custody_root,
+        output_root=output,
+        anchor_date=ANCHOR,
+        materialized_at=MATERIALIZED,
+    )
+
+    assert result.manifest.source_package_record_count == 8
+    assert dict(result.manifest.disposition_counts)["review_candidate"] == 1
 
 
 def test_tampered_shadow_fails_formal_reread(monkeypatch, tmp_path: Path) -> None:

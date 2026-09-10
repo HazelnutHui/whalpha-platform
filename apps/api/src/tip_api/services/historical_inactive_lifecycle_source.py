@@ -1,4 +1,4 @@
-"""Resumable tmp-only custody for inactive historical lifecycle source pages."""
+"""Resumable temporary acquisition and private reread of inactive listings."""
 
 from __future__ import annotations
 
@@ -397,10 +397,15 @@ def read_historical_inactive_lifecycle_source_package(
     *,
     package_path: Path,
     expected_anchor_date: date,
+    approved_custody_root: Path | None = None,
 ) -> InactiveLifecycleSourcePackageManifestV1:
     """Reread every package byte and validate pagination plus aggregate facts."""
 
-    package = _validate_completed_package_path(package_path, expected_anchor_date)
+    package = _validate_completed_package_path(
+        package_path,
+        expected_anchor_date,
+        approved_custody_root=approved_custody_root,
+    )
     manifest_path = package / _MANIFEST_FILE
     manifest = _read_model(manifest_path, InactiveLifecycleSourcePackageManifestV1)
     if manifest.anchor_date != expected_anchor_date:
@@ -442,14 +447,20 @@ def read_historical_inactive_lifecycle_source_payloads(
     *,
     package_path: Path,
     expected_anchor_date: date,
+    approved_custody_root: Path | None = None,
 ) -> ValidatedInactiveLifecycleSourcePackage:
     """Return source pages only after the complete package passes formal reread."""
 
     manifest = read_historical_inactive_lifecycle_source_package(
         package_path=package_path,
         expected_anchor_date=expected_anchor_date,
+        approved_custody_root=approved_custody_root,
     )
-    package = _validate_completed_package_path(package_path, expected_anchor_date)
+    package = _validate_completed_package_path(
+        package_path,
+        expected_anchor_date,
+        approved_custody_root=approved_custody_root,
+    )
     _, pages = _reread_artifacts(
         package,
         manifest.artifacts,
@@ -983,8 +994,36 @@ def _validate_package_target(path: Path, anchor_date: date) -> Path:
     return target
 
 
-def _validate_completed_package_path(path: Path, anchor_date: date) -> Path:
+def _validate_completed_package_path(
+    path: Path,
+    anchor_date: date,
+    *,
+    approved_custody_root: Path | None = None,
+) -> Path:
     package = path.absolute()
+    if approved_custody_root is not None:
+        root = approved_custody_root.absolute()
+        if (
+            root.is_symlink()
+            or not root.is_dir()
+            or root.resolve(strict=True) != root
+            or package.parent != root
+            or package.name != f"anchor={anchor_date.isoformat()}"
+        ):
+            raise HistoricalInactiveLifecycleSourceError(
+                "persistent inactive lifecycle custody boundary differs"
+            )
+        _require_mode(root, 0o700)
+        if (
+            package.is_symlink()
+            or not package.is_dir()
+            or package.resolve(strict=True) != package
+        ):
+            raise HistoricalInactiveLifecycleSourceError(
+                "persistent inactive lifecycle package is unavailable"
+            )
+        _require_mode(package, 0o700)
+        return package
     if (
         Path("/tmp") not in package.parents
         or package.name != f"anchor={anchor_date.isoformat()}"
@@ -1131,9 +1170,10 @@ def _sha256(value: bytes) -> str:
 
 
 def _require_mode(path: Path, expected: int) -> None:
-    if stat.S_IMODE(path.stat().st_mode) != expected:
+    metadata = path.stat()
+    if metadata.st_uid != os.getuid() or stat.S_IMODE(metadata.st_mode) != expected:
         raise HistoricalInactiveLifecycleSourceError(
-            "inactive lifecycle custody mode differs"
+            "inactive lifecycle custody ownership or mode differs"
         )
 
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
@@ -224,6 +225,41 @@ def test_existing_complete_package_is_reused_without_provider_call(
 
     assert result.status == "already_present"
     assert reused_transport.calls == []
+
+
+def test_formal_reader_accepts_only_exact_explicit_persistent_custody(
+    tmp_path: Path,
+) -> None:
+    source = tmp_path / "inactive-lifecycle" / f"anchor={ANCHOR.isoformat()}"
+    fetch_historical_inactive_lifecycle_source_package(
+        config=_config(),
+        transport=FixtureTransport([_page(1, final=True)]),  # type: ignore[arg-type]
+        anchor_date=ANCHOR,
+        package_path=source,
+        rate_limiter=FixtureLimiter(),  # type: ignore[arg-type]
+        clock=_clock(),
+    )
+    custody_root = tmp_path / "persistent-custody"
+    custody_root.mkdir(mode=0o700)
+    retained = custody_root / source.name
+    shutil.copytree(source, retained, copy_function=shutil.copy2)
+
+    reread = read_historical_inactive_lifecycle_source_package(
+        package_path=retained,
+        expected_anchor_date=ANCHOR,
+        approved_custody_root=custody_root,
+    )
+    assert reread.record_count == 1
+
+    with pytest.raises(
+        HistoricalInactiveLifecycleSourceError,
+        match="persistent inactive lifecycle custody boundary differs",
+    ):
+        read_historical_inactive_lifecycle_source_package(
+            package_path=retained,
+            expected_anchor_date=ANCHOR,
+            approved_custody_root=tmp_path,
+        )
 
 
 def test_completed_and_partial_package_coexistence_fails_closed(

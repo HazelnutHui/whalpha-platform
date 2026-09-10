@@ -140,6 +140,7 @@ def build_historical_inactive_lifecycle_resolution_shadow(
     output_root: Path,
     anchor_date: date,
     materialized_at: datetime,
+    source_custody_root: Path | None = None,
 ) -> HistoricalInactiveLifecycleResolutionShadowWriteResult:
     """Build one immutable owner-only shadow without network or canonical writes."""
 
@@ -150,6 +151,7 @@ def build_historical_inactive_lifecycle_resolution_shadow(
             output_root=output_root,
             anchor_date=anchor_date,
             materialized_at=materialized_at,
+            source_custody_root=source_custody_root,
         )
 
 
@@ -160,6 +162,7 @@ def _build_shadow(
     output_root: Path,
     anchor_date: date,
     materialized_at: datetime,
+    source_custody_root: Path | None,
 ) -> HistoricalInactiveLifecycleResolutionShadowWriteResult:
     canonical_root = _validated_canonical_root(data_root)
     candidate_root = _validated_tmp_root(output_root)
@@ -168,6 +171,7 @@ def _build_shadow(
         package = read_historical_inactive_lifecycle_source_payloads(
             package_path=source_package_path,
             expected_anchor_date=anchor_date,
+            approved_custody_root=source_custody_root,
         )
     except HistoricalInactiveLifecycleSourceError as exc:
         raise HistoricalInactiveLifecycleResolutionShadowError(

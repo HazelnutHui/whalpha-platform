@@ -49,6 +49,10 @@ login and final visual appearance remain manual checks.
   for only six instruments; 24 returned HTTP 404 and all nine returned events
   were ticker changes. Massive is useful partial evidence but is rejected as
   the sole-primary lifecycle source.
+- The complete 2026-07-16 and 2026-09-03 inactive-listing source anchors are
+  retained in owner-only persistent Dell custody and formally reread. Their
+  23,260 / 23,469 rows remain discovery and reconciliation evidence, not
+  canonical lifecycle or terminal outcomes.
 - The last quiescent data inventory before the continuation was 5,660 files /
   2,603,087,394 bytes with zero symlinks and zero publication residue. Exact
   inventory counts are intentionally deferred until the writer is quiescent.

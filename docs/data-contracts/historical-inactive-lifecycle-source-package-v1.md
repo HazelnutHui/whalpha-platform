@@ -8,7 +8,11 @@ Instrument Lifecycle dataset.
 
 ## Physical boundary
 
-- exact `anchor=YYYY-MM-DD` package below an owner-only `/tmp` parent;
+- acquisition uses an exact `anchor=YYYY-MM-DD` package below an owner-only
+  `/tmp` parent;
+- a completed package may be copied byte-for-byte into an explicitly supplied
+  owner-only persistent source root and formally reread there; only an exact
+  direct child is accepted, and persistent custody remains noncanonical;
 - up to 100 immutable pages, 100,000 rows, 8 MiB per page, and 512 MiB of
   sanitized page content;
 - 1,000 rows per request, at least 15 seconds between requests, no automatic

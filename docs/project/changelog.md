@@ -33,6 +33,10 @@
   All 16 retained packages passed full reread; acquisition remains `/tmp`-only,
   arbitrary paths fail closed, and the resolution shadow can consume only an
   explicitly supplied owner-only custody root.
+- Accepted ADR 0200 and retained both complete inactive-listing source anchors
+  in owner-only Dell state. The exact-root reader formally reproduced all
+  46,729 overlapping source rows and their original fingerprints without
+  promoting a lifecycle or terminal fact.
 - Formally recovered the 2025-04-23 EOD continuation after the prior whole-root
   CAS stop by preserving the stale plan/artifacts under explicit failed-attempt
   names, rebuilding against current inventory, reusing the verified package,

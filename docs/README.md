@@ -95,7 +95,8 @@ Pivotal research ADRs include
 [0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md),
 [0197](decisions/0197-separate-reconstructed-research-membership-from-signal-eligible-membership.md),
 [0198](decisions/0198-scale-corporate-action-custody-to-the-five-year-range.md),
-and [0199](decisions/0199-retain-complete-corporate-action-source-packages-privately.md).
+[0199](decisions/0199-retain-complete-corporate-action-source-packages-privately.md),
+and [0200](decisions/0200-retain-inactive-lifecycle-source-anchors-privately.md).
 
 ## Architecture and data
 
@@ -113,6 +114,7 @@ and [0199](decisions/0199-retain-complete-corporate-action-source-packages-priva
 - [Five-Year Foundation Baseline](audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-Year EOD/Identity Continuous Run](audits/five-year-eod-identity-continuous-run-2026-09-10.md)
 - [Five-Year Corporate-Action Source Audit](audits/five-year-corporate-action-source-2026-09-10.md)
+- [Five-Year Lifecycle Source Custody Audit](audits/five-year-lifecycle-source-custody-2026-09-10.md)
 
 Dell owns code, data, governance, and heavy computation. OCI receives only
 separately approved bounded serving artifacts.

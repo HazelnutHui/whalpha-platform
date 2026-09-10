@@ -24,6 +24,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--source-package", required=True, type=Path)
+    parser.add_argument("--source-custody-root", type=Path)
     parser.add_argument("--output-root", required=True, type=Path)
     parser.add_argument("--anchor-date", required=True, type=date.fromisoformat)
     parser.add_argument("--materialized-at", required=True, type=datetime.fromisoformat)
@@ -41,6 +42,7 @@ def main(argv: list[str] | None = None) -> int:
             output_root=args.output_root,
             anchor_date=args.anchor_date,
             materialized_at=args.materialized_at,
+            source_custody_root=args.source_custody_root,
         )
     except (HistoricalInactiveLifecycleResolutionShadowError, OSError, ValueError) as exc:
         print(
