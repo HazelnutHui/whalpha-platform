@@ -33,11 +33,14 @@ STRONG_STOCK_PULLBACK_RESEARCH_FINGERPRINT = (
 
 
 class StrategyResearchStage(StrEnum):
+    IDEA = "idea"
     PREREGISTERED_DATA_BLOCKED = "preregistered_data_blocked"
     DEVELOPMENT = "development"
     VALIDATION = "validation"
     HOLDOUT_REVIEW = "holdout_review"
     VALIDATED_RESEARCH = "validated_research"
+    SHADOW = "shadow"
+    ACTIVE = "active"
     REJECTED = "rejected"
     RETIRED = "retired"
 

@@ -60,6 +60,9 @@ Stock Candidates.
   signals, labels, chronology, and stock-outcome boundary.
 - [Candidate Strategy Research Experiment V1](data-contracts/candidate-strategy-research-experiment-v1.md):
   frozen first preregistration.
+- [Quant Research Lab Model Record V1](data-contracts/quant-research-lab-model-record-v1.md):
+  transparent model registry, result semantics, and Candidate activation
+  boundary.
 - [Strong-Leader Pullback Research Input V1](data-contracts/strong-leader-pullback-research-input-v1.md):
   outcome-free input semantics.
 - [Candidate Strategy Research Statistics V1](data-contracts/candidate-strategy-research-statistics-v1.md):
@@ -76,8 +79,9 @@ Pivotal research ADRs include
 [0097](decisions/0097-preregister-personal-strategy-research-before-backtesting.md),
 [0104](decisions/0104-freeze-session-balanced-research-statistics.md),
 [0109](decisions/0109-separate-research-readiness-from-development-authorization.md),
-[0186](decisions/0186-seal-strong-leader-pullback-research-inputs.md), and
-[0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md).
+[0186](decisions/0186-seal-strong-leader-pullback-research-inputs.md),
+[0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md),
+and [0192](decisions/0192-publish-lab-model-records-without-candidate-authority.md).
 
 ## Architecture and data
 

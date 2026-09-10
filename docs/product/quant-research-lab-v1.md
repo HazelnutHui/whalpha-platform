@@ -18,6 +18,12 @@ experiment. It must publish enough method and evidence for a reviewer to
 reproduce the claim, find its weaknesses, and understand whether it currently
 has any Product authority.
 
+ADR 0192 and the Quant Research Lab Model Record V1 contract now implement
+this separation in the repository. The first browser record is method-only,
+data-blocked, Candidate-ineligible, and bound to the same canonical Python
+projection that validates its checked-in JSON. No real result publication or
+active Candidate model exists.
+
 ## Non-black-box contract
 
 Every model version must disclose:

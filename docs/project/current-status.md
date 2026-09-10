@@ -70,7 +70,13 @@ logic remains transparent, but they are not expected-return models and will
 not be tuned in place. Technical Reversal, Fundamental Value Reversal, and
 Defensive Rotation remain unavailable.
 
-The Lab has no real performance result. All real result areas remain locked.
+The repository now has a typed Lab model registry, result-publication
+semantics, catalog activation guard, and one browser-rendered
+Strong-Leader-Pullback method record under ADR 0192. The record is
+contract-validated against its canonical Python builder. It has no real
+performance result, no out-of-sample observation, and no Candidate authority;
+all real result areas remain locked. This interface is not in the active OCI
+release.
 
 ## Research readiness
 
@@ -115,12 +121,10 @@ that fixes both known gaps.
 
 ## Next priority
 
-1. Finish the product/document authority unification.
-2. Build the Lab model registry and real-result publication boundary with
-   fixture-only proof first.
-3. Close only Strong-Leader Pullback's exact point-in-time data blockers.
-4. Execute its registered chronological research and retain success or failure.
-5. Activate and connect a model to Stock Candidates only after separate
+1. Close only Strong-Leader Pullback's exact point-in-time data blockers.
+2. Freeze one admitted cohort and formal readiness decision before outcomes.
+3. Execute its registered chronological research and retain success or failure.
+4. Activate and connect a model to Stock Candidates only after separate
    operational review.
 
 Daily reliability and one bounded next-session automation rehearsal may proceed

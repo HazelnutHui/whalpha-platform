@@ -58,6 +58,10 @@ chronological document dump.
 
 ## Priority 2 — Design the Lab model record and research substrate
 
+Repository status: implemented on 2026-09-10 under ADR 0192; Production is
+unchanged. The first checked-in Strong-Leader Pullback record is method-only
+and Candidate-ineligible.
+
 1. Define the typed model registry, lifecycle, version, and result-publication
    contracts from the product record in
    [Quant Research Lab](../product/quant-research-lab-v1.md).
@@ -68,8 +72,9 @@ chronological document dump.
 5. Keep real performance panels unavailable until a real result publication
    passes formal reread.
 
-Exit criterion: one synthetic/fixture model record can be rendered and audited
-end to end without implying real performance or Candidate authority.
+Exit criterion met: one contract-validated method record renders and audits
+end to end without synthetic performance or Candidate authority. Fixture and
+real result scopes remain separately guarded.
 
 ## Priority 3 — Close only the first experiment's data blockers
 

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-10 — Add the transparent Lab model registry boundary
+
+- Accepted ADR 0192 and added typed model-record, result-publication, and
+  catalog contracts that keep method disclosure, fixture evidence, real signal
+  studies, portfolio simulations, and Candidate activation separate.
+- Added the canonical Strong-Leader-Pullback method projection with complete
+  input/feature formulas, registered parameters, evaluation design, decision
+  gates, counterevidence, blockers, and reproduction fingerprints.
+- Rebuilt the Quant Research Lab page around the contract-validated record.
+  Its compact view says method-only, not market-assessed, and not
+  Candidate-eligible; the expanded view discloses all material fields.
+- Corrected the page's stale company-action description: canonical split-only
+  and sparse adjustment evidence exists, while availability, neutrality,
+  revision, and total-return coverage remains incomplete.
+- Added fail-closed tests preventing method/fixture performance claims,
+  event-study portfolio metrics, portfolio results without frozen construction,
+  and Candidate catalog entry without separate activation.
+- No provider request, `/data` write, real backtest, Candidate formula change,
+  Snapshot, deployment, scheduler, or active Production release changed.
+
 ## 2026-09-09 — Unify Product and Quant Research authority
 
 - Accepted ADR 0191. Quant Research Lab is now the model registry, validation,

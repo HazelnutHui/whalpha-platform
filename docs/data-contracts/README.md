@@ -43,6 +43,7 @@ adjustment evidence remains explicit.
 
 ## Quant Research Lab
 
+- [Quant Research Lab Model Record V1](quant-research-lab-model-record-v1.md)
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
 - [Strategy Research Readiness V1](strategy-research-readiness-v1.md)
 - [Strategy Research Development Activation Review V1](strategy-research-development-activation-review-v1.md)
@@ -53,10 +54,10 @@ adjustment evidence remains explicit.
 - [Candidate Strategy Evaluation V1](candidate-strategy-evaluation-v1.md)
 - [Equity Execution Cost Scenario V1](equity-execution-cost-scenario-v1.md)
 
-These contracts separate input construction, signals, future labels,
-statistics, costs, readiness, and holdout custody. Fixture-tested mechanics are
-not real model performance. Future Lab model registry and result-publication
-contracts follow ADR 0191 and must preserve this separation.
+These contracts separate the model registry, result publication, Product
+activation, input construction, signals, future labels, statistics, costs,
+readiness, and holdout custody. Fixture-tested mechanics are not real model
+performance. A Lab result never grants Candidate authority.
 
 ## Deployed Candidate baseline and product publication
 

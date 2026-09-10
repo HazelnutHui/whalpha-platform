@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0192](0192-publish-lab-model-records-without-candidate-authority.md):
+  separates transparent Lab methods, fixture evidence, real signal/portfolio
+  results, and the independent Candidate activation boundary.
 - [ADR 0191](0191-promote-validated-research-models-into-stock-candidates.md):
   Quant Research Lab is the model/evidence authority; only validated and
   separately activated models may later drive Stock Candidates. Current

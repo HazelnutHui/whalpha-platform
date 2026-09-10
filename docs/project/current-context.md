@@ -125,6 +125,13 @@ models. Every active Candidate must identify the model/version, current-market
 applicability, within-model rank, evidence, counterevidence, entry readiness,
 and invalidation, with a link to the complete Lab record.
 
+Repository main includes the ADR 0192 Lab model-record, result-publication, and
+catalog boundaries plus one contract-validated Strong-Leader Pullback method
+projection for the browser. It is `method_only`,
+`preregistered_data_blocked`, has zero out-of-sample observations, and grants
+no Candidate authority. This repository interface has not been deployed; the
+active OCI release remains the one recorded above.
+
 The currently deployed Candidate score, Entry Geometry, and three technical
 Strategy Channels are transparent but unvalidated **Baseline V1**. They remain
 Production facts and receive compatibility/correctness maintenance, but are
@@ -203,11 +210,10 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-1. Complete this documentation/product-authority unification.
-2. Define and fixture-validate the Lab model registry and result-publication
-   contracts without showing synthetic performance as real.
-3. Close only the exact data blockers for Strong-Leader Pullback.
-4. Run development, locked validation, sealed holdout, and prospective shadow.
+1. Close only the exact data blockers for Strong-Leader Pullback.
+2. Publish one immutable admitted-cohort/readiness decision before outcomes.
+3. Run development, locked validation, sealed holdout, and prospective shadow.
+4. Retain either validated evidence or recorded failure without editing V1.
 5. Activate a model only through separate review; then redesign Candidate.
 
 One bounded next-session automation rehearsal and normal daily reliability work
