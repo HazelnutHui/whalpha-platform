@@ -5,9 +5,6 @@ history stays in ADRs, the changelog, and audits.
 
 ## First research program
 
-- What exact coverage threshold should follow ADR 0193's outcome-blind census,
-  and does the measured missingness permit any development cohort without
-  weakening the stable-ID, action, lifecycle, and quarantine rules?
 - What exact evidence and threshold make current-market applicability
   supportive, neutral, adverse, or unavailable without selecting the recent
   winner?
