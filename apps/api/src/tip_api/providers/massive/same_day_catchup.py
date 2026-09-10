@@ -62,6 +62,10 @@ APPROVED_PRODUCTION_ROOT = Path("/data/trading-intelligence-platform")
 PACKAGE_SCHEMA_VERSION = "1.0"
 PLAN_SCHEMA_VERSION = "1.1"
 LOCK_ROOT = Path("/tmp")
+FLAT_FILE_DAY_AGGREGATES_ENDPOINT_CLASS = (
+    "s3://flatfiles/us_stocks_sip/day_aggs_v1/"
+    "{year}/{month}/{session_date}.csv.gz"
+)
 
 
 class SameDayCatchupError(RuntimeError):
@@ -584,7 +588,7 @@ def build_eod_plan(*, package_path: Path, plan_path: Path, data_root: Path) -> C
         payload,
         identity=identity,
         session_date=package.session_date,
-        endpoint=ENDPOINT_TEMPLATE.format(session_date=package.session_date.isoformat()),
+        endpoint=_resolved_eod_source_endpoint(package, payload),
         data_root=artifact_root,
         ingested_at=package.fetched_at,
         publish=True,
@@ -717,6 +721,7 @@ def _publish_fetch_package(
     request_count: int,
     pagination_complete: bool,
     fetched_at: datetime,
+    source_files: tuple[tuple[str, bytes], ...] = (),
 ) -> FetchPackageManifestV1:
     fetched_at = _aware_utc(fetched_at)
     staging = package_path.with_name("." + package_path.name + ".staging")
@@ -725,6 +730,21 @@ def _publish_fetch_package(
     staging.mkdir(mode=0o700)
     artifacts: list[FetchArtifactV1] = []
     try:
+        for file_name, raw in source_files:
+            if (
+                not file_name
+                or Path(file_name).name != file_name
+                or "/" in file_name
+                or "\\" in file_name
+                or not raw
+            ):
+                raise SameDayCatchupError("source artifact is invalid")
+            path = staging / file_name
+            if path.exists() or path.is_symlink():
+                raise SameDayCatchupError("source artifact name is duplicated")
+            path.write_bytes(raw)
+            path.chmod(0o400)
+            _fsync_file(path)
         for index, response in enumerate(responses, 1):
             _assert_no_secret_material(response)
             raw = canonical_json_bytes(response)
@@ -792,13 +812,21 @@ def _read_fetch_package(
         expected_session=manifest.session_date,
         allow_tmp_descendants=True,
     )
-    expected_endpoint = (
-        REFERENCE_TICKERS_PATH
+    expected_endpoints = (
+        {REFERENCE_TICKERS_PATH}
         if expected_type == "identity_reference"
-        else "/v2/aggs/grouped/locale/us/market/stocks/{session_date}"
+        else {
+            "/v2/aggs/grouped/locale/us/market/stocks/{session_date}",
+            FLAT_FILE_DAY_AGGREGATES_ENDPOINT_CLASS,
+        }
     )
-    if manifest.endpoint_class != expected_endpoint:
+    if manifest.endpoint_class not in expected_endpoints:
         raise SameDayCatchupError("fetch package endpoint class mismatch")
+    expected_files = {"package.json", *(item.file_name for item in manifest.artifacts)}
+    if manifest.endpoint_class == FLAT_FILE_DAY_AGGREGATES_ENDPOINT_CLASS:
+        expected_files.add("source.csv.gz")
+    if {item.name for item in path.iterdir()} != expected_files:
+        raise SameDayCatchupError("fetch package file inventory differs")
     if tuple(item.sequence for item in manifest.artifacts) != tuple(range(1, len(manifest.artifacts) + 1)):
         raise SameDayCatchupError("fetch package page order is invalid")
     if manifest.request_count != len(manifest.artifacts):
@@ -826,9 +854,33 @@ def _read_fetch_package(
         if manifest.adjusted is not False or len(pages) != 1:
             raise SameDayCatchupError("Grouped Daily package contract mismatch")
         _validate_grouped_session(pages[0], manifest.session_date)
+        if manifest.endpoint_class == FLAT_FILE_DAY_AGGREGATES_ENDPOINT_CLASS:
+            from tip_api.providers.massive.flat_file_day_aggregates import (
+                validate_flat_file_grouped_payload,
+            )
+
+            validate_flat_file_grouped_payload(
+                payload=pages[0],
+                package_path=path,
+                session_date=manifest.session_date,
+            )
     elif manifest.adjusted is not None or not manifest.pagination_complete:
         raise SameDayCatchupError("reference package contract mismatch")
     return manifest, tuple(pages)
+
+
+def _resolved_eod_source_endpoint(
+    package: FetchPackageManifestV1,
+    payload: Mapping[str, object],
+) -> str:
+    if package.endpoint_class != FLAT_FILE_DAY_AGGREGATES_ENDPOINT_CLASS:
+        return ENDPOINT_TEMPLATE.format(session_date=package.session_date.isoformat())
+    source = payload.get("source_artifact")
+    if not isinstance(source, Mapping) or not isinstance(
+        source.get("object_key"), str
+    ):
+        raise SameDayCatchupError("Flat File source object key is absent")
+    return f"s3://flatfiles/{source['object_key']}"
 
 
 def _write_plan(

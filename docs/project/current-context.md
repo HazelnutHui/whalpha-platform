@@ -255,7 +255,9 @@ fundamentals, and complete Historical Coverage are absent. The census is
    2021-09-09/10 but accessible with 11,063 rows for 2022-09-09; PIT Tickers,
    splits, and dividends were accessible on all three dates. Use the documented
    five-year Day Aggregates Flat Files as the preferred bulk-price route and
-   retain REST as a bounded fallback/cross-check.
+   retain REST as a bounded fallback/cross-check. The fetch-only adapter and
+   transitive raw-gzip custody are fixture-tested; a live pilot awaits the
+   separate dashboard S3 credential, not another REST API-key retry.
 2. Use Massive as the primary price/reference source and evaluate official
    free evidence through bounded source-specific pilots. Preserve every
    conflict, missing semantic, and permission limit; no first-non-null merge.

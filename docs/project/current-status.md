@@ -150,7 +150,9 @@ Historical Coverage are absent; status remains `quarantined`.
    completed REST probe found 2021-09-09/10 Grouped Daily denied and
    2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
    Implement the documented Starter Day Aggregates Flat File route for bulk
-   five-year prices rather than treating REST retries as progress.
+   five-year prices rather than treating REST retries as progress. Fetch-only
+   code and raw-source readback are fixture-tested; live schema/entitlement
+   remains unverified until the separate dashboard S3 credential exists.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later

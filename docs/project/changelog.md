@@ -36,6 +36,13 @@
   on every tested date. Selected the documented five-year Day Aggregates Flat
   File route for bulk price history, while preserving REST as fallback and
   reconciliation evidence. No response body or data write was retained.
+- Implemented the Dell-only Massive Day Aggregates Flat File fetch boundary.
+  It retains the raw gzip and object evidence, normalizes the fixed CSV schema
+  into the existing EOD package shape, and formally reparses/reconciles raw
+  bytes before the existing offline plan may use them. Separate owner-only S3
+  credentials and an optional boto3 dependency keep OCI and the REST secret
+  boundary unchanged. The adapter is fixture-tested; no live S3 request or
+  `/data` write occurred.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 
