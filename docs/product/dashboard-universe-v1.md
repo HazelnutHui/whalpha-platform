@@ -1,69 +1,67 @@
-# Dashboard Universe V1
+# Dashboard Universe
 
-## Activation V2 and formal Funnel boundary
+## Current product boundary
 
-Production Activation V2 resolves 1,718 Common Shares and 1,831 Common Shares + ADRs (1,718 CS plus 113 ADRC); Primary remains first/default and Legacy remains hidden with rollback retained. The active Snapshot carries this catalog and the [formal source-backed Funnel](dashboard-universe-funnel.md). Exact pointer and release evidence belongs in [current context](../project/current-context.md).
+Production uses an immutable Dashboard Universe Activation and a separately
+stored active pointer. The first/default view is `Common Shares`; the
+secondary view is `Common Shares + ADRs`. Exact active counts, session,
+revision, and fingerprints belong in
+[Current Context](../project/current-context.md).
 
-## Reviewed HSAI correction
+The active provider-form classification is provisional:
 
-The authoritative revision is the active Universe source: HSAI has been an ADS since its 2023-02-09 Nasdaq listing and is excluded from Common Shares while retained in Common Shares + ADRs after the same quantitative gates. AKR, UNIT, and DFNS manual warnings remain accepted as non-blocking.
+- stable `instrument_id`, not ticker, is the identity key;
+- security form, issuer structure, listing scope, evidence, and eligibility
+  remain separate;
+- provider security form does not prove issuer domicile or operating-company
+  structure;
+- Common Shares never silently include ADRCs;
+- Legacy remains hidden compatibility/rollback state; and
+- future Core/Broad issuer-structure activation remains deferred.
 
-## Historical Activation V1
-
-Dashboard Universe Activation V1 made the 1,641-member Provider-Classified Common Shares (Provisional) set the default and the 1,747-member CS+ADRC set the optional secondary view for analysis session 2026-08-19. It is retained as readable rollback history and has been superseded by Activation V2. Provider security form does not prove issuer domicile or operating-company structure.
-
-The authenticated desktop selector was manually verified after deployment: the two options, counts, URL persistence, refresh behavior, browser history, and Universe-dependent module switching worked as expected. Mobile, tablet, and keyboard acceptance remain unverified.
-
-## Phase A Security Classification Audit
-
-Phase A proved the prior legacy binary common-stock/ETF rule insufficient:
-non-ETF records were treated as operating equities, allowing the closed-end
-fund VCX into the default set. Security Classification V1 separates legal
-form, issuer structure, listing scope, evidence, and eligibility. The current
-provider-form Activation remains provisional; Core/Broad issuer-structure
-activation is still deferred. The [2026-08-14 audit](../audits/security-type-classification-2026-08-14.md) documents non-production Core and Broad candidates.
-
-## Accepted Product Policy
-
-`Common Shares` is the first/default label; `Common Shares + ADRs` is the
-secondary view. Activation V2 currently contains 1,718 CS and adds 113 ADRCs
-for 1,831 total. These are activation-session facts, not permanent constants.
-Exact fingerprints belong in [current context](../project/current-context.md),
-and Legacy remains compatibility/rollback only.
+The active Snapshot carries the two-row catalog and the
+[source-backed Universe Funnel](dashboard-universe-funnel.md). A new
+Activation requires its own reviewed publication and pointer update. A
+Snapshot, model, or browser view cannot modify membership.
 
 ## Purpose
 
-Dashboard Universe V1 defines which completed EOD instruments drive the private Market Dashboard V1.1 overview.
+The Universe selector defines which eligible instruments feed each Dashboard
+calculation. It is a product input, not a claim that excluded securities are
+uninvestable or included securities are recommendations.
 
-## Default Universe
+Both guest and authenticated sessions receive the same Universe choices,
+counts, data, and analysis. The selection is URL-addressable and must remain
+stable across refresh and browser history.
 
-Canonical name: `Tradable U.S.-Listed Equities V1`.
+## Eligibility and evidence rules
 
-UI label: `Tradable U.S. Equities`.
+An activated member must retain:
 
-Rules:
+1. a stable canonical `instrument_id`;
+2. recognized security-form evidence;
+3. supported listing/exchange evidence;
+4. the exact effective session and source lineage;
+5. the accepted trailing-liquidity decision; and
+6. an explicit Universe disposition.
 
-1. Stable canonical `instrument_id` exists.
-2. Current and previous completed sessions both have valid canonical EOD bars.
-3. Existing Instrument Master type is recognized as operating common equity by V1.
-4. Instrument Master primary exchange is one of the supported major U.S. exchange codes.
-5. Previous close is at least USD 5.
-6. Previous close x previous volume is at least USD 20,000,000.
+Unknown, ambiguous, malformed, heuristic-only, or insufficient-evidence
+records remain quarantined. Names and ticker patterns may create review flags
+but may not establish positive eligibility.
 
-The price and liquidity gates use previous-session data only. This avoids same-day selection bias. The USD 20M threshold is a provisional one-day close-times-volume gate, not 20-day ADV.
+The trailing-liquidity policy uses only the 20 XNYS sessions before analysis
+date `D`; `D` never selects itself. It is
+`current_as_of_constituent_liquidity`, not a survivorship-free historical
+panel. See [20-Session Trailing Liquidity](20-session-trailing-liquidity.md).
 
-## Auxiliary Universes
+## Market overview boundary
 
-- `All Operating Equities`: operating common equity on supported exchanges without the price and liquidity gates.
-- `All Eligible Instruments`: broad comparable research/data-quality view; it may include ETFs and other supported products and is not the default trading overview.
+Stock breadth, movers, Candidate views, and the Trading Activity Map use the
+selected activated equity Universe. Fixed benchmark ETFs are context and do
+not enter stock membership.
 
-## ETF Boundary
-
-ETFs are excluded from the default stock breadth, movers, and Trading Activity Map. They are shown separately as Sector Benchmark ETFs when present in completed canonical EOD data.
-
-The Market Benchmark Strip separately shows SPY, QQQ, IWM, DIA, and the selected universe equal-weight return. These benchmarks are market context only and do not change stock-universe membership.
-
-The fixed Sector Benchmark ETF list is:
+The benchmark strip may show SPY, QQQ, IWM, DIA, and a selected-Universe
+equal-weight return. Sector benchmark ETFs are:
 
 - XLC — Communication Services
 - XLY — Consumer Discretionary
@@ -77,83 +75,55 @@ The fixed Sector Benchmark ETF list is:
 - XLK — Information Technology
 - XLU — Utilities
 
-These are S&P 500 Select Sector SPDR benchmark returns. They are not sector breadth, fund flow, money flow, or official sector membership.
-
-Dashboard V1.1 also reports each Sector SPDR return relative to SPY:
+ETF relative performance remains:
 
 ```text
 relative_to_spy_return = sector_etf_1d_return - SPY_1d_return
 ```
 
-This is an arithmetic return difference, not alpha, factor attribution, or risk-adjusted excess return. If SPY is unavailable, the relative value is unavailable.
+This is a price-return difference, not alpha, causal sector leadership, fund
+flow, or money flow.
 
 ## Trading Activity Map
 
-Trading Activity Map replaces the UI label Liquidity Map V1 for the Dashboard. It uses:
+The current map uses:
 
-- size: current close x current volume
-- color: close-to-close return
-- default display: top 50 by activity proxy
-- user choices: top 50, 75, or 100
+- size: latest close × latest volume;
+- color: close-to-close return;
+- default population: top 50 by the activity proxy; and
+- optional population sizes: 75 or 100.
 
-It is not market-cap weighted and is not sector grouped.
+It is not market-cap weighted. The size measure is a close-times-volume proxy,
+not traded notional, capital flow, ownership change, or market capitalization.
+Sector grouping, when shown elsewhere, must come from its separately governed
+taxonomy and cannot be inferred from this proxy.
 
-The current display intentionally keeps the raw close-times-volume proxy as the size metric. No logarithmic, square-root, or winsorized display transform has been accepted yet.
+Records with `current_close / previous_close >= 2` or `<= 0.5` are flagged
+as `unverified_price_discontinuity`. They remain auditable but are excluded
+from default movers and the activity map until adjustment evidence resolves the
+discontinuity.
 
-## Price Discontinuity Review
+## Historical V1 compatibility
 
-Records with current close / previous close >= 2 or <= 0.5 are flagged as `unverified_price_discontinuity`. They remain counted for audit, but default movers and the Trading Activity Map exclude them until corporate-action reconciliation is implemented.
+The original Dashboard Universe V1 dynamically derived a provisional
+`Tradable U.S. Equities` view from common-equity/exchange recognition,
+previous close of at least USD 5, and previous close × volume of at least USD
+20 million. It also exposed broader diagnostic views.
 
-## Current Production Audit
+That path is retained only as historical and compatibility context. It was
+superseded by immutable Activation publications and must not be read as the
+current member count or current eligibility authority. Dated counts, HSAI/SNDK
+reviews, Activation V1, and full-base correction evidence remain in the
+relevant audits, ADRs, changelog, and Git history.
 
-For current session 2026-08-13 versus previous session 2026-08-12:
+## Deferred work
 
-- raw comparable instruments: 9,888
-- common-stock classified instruments: 4,528
-- ADR count: not separately supported by the current Instrument Type contract
-- ETF/ETP classified instruments: 5,360
-- other instrument types: 0
-- major-exchange records: 9,686
-- records passing the USD 5 previous-close gate after operating-equity and exchange gates: 3,274
-- final Tradable U.S. Equities count after the previous-session USD 20M gate: 1,876
+- issuer-structure-aware Core/Broad activation;
+- complete point-in-time sector/industry taxonomy;
+- governed market-capitalization data;
+- survivorship-safe research membership history; and
+- a traditional market-cap sector heatmap if its data and display rights are
+  accepted.
 
-Exclusion counts are overlapping diagnostic counts, not a mutually exclusive sum:
-
-- excluded instrument type: 5,360
-- non-major exchange: 202
-- previous close below USD 5: 1,223
-- previous close x volume below USD 20M: 7,308
-
-## SNDK Review
-
-SNDK was reviewed because it appears as a large Trading Activity Map node for 2026-08-13. The completed canonical records show a resolved stable identity, common-stock Instrument Master metadata, internally consistent 2026-08-12 and 2026-08-13 OHLC values, and a 2026-08-13 close-to-close return of about +13.67%.
-
-External market-material review subsequently corroborated the displayed 2026-08-13 SNDK close and approximately +13.67% return. No identity, OHLC, Decimal, or provider-mapping defect was found. Current conclusion:
-
-`verified_consistent_with_current_canonical_data`
-
-The canonical Parquet data was not modified and no ticker-specific exception exists. The pipeline still lacks independent corporate-action and adjustment-factor reconciliation; external manual corroboration must not be represented as automated pipeline verification.
-
-## Freshness
-
-Dashboard V1.1 displays the completed current session and a human-readable snapshot generation timestamp. The accepted offline XNYS calendar compares expected and actual completed sessions; the deployed 2026-08-14 snapshot has lag zero and freshness `fresh`. File/schema consistency remains a separate validation state.
-
-## Deferred Improvements
-
-- separately authorized activation of the published 20-session median dollar-volume policy
-- explicit ADR/common-stock separation if Instrument Master can support it
-- point-in-time sector/industry taxonomy
-- market capitalization source
-- traditional market-cap sector heatmap
-
-## Provider-Classified Shadow Status
-
-The [offline provider-classified audit](provider-classified-common-shares-v1.md) reports 1,751 CS-only requested members and a 1,864-member CS+ADRC requested comparison for 2026-08-14. Trailing-liquidity and reviewed eligibility reduce the activated views to 1,641 and 1,747 respectively. ADRC is never folded into the CS-only view.
-
-The completed pre-activation review applies the published 20-session decisions and reviewed stable-ID overlay. Its two proposals are now the activated Dashboard catalog, while remaining provisional and not claiming verified U.S. domicile or issuer structure.
-
-## Trailing-Liquidity Readiness
-
-The published shadow method is the [20-Session Median Dollar-Volume Proxy](20-session-trailing-liquidity.md), using only the 20 XNYS sessions before analysis date `D`. `D` never selects itself. This is `current_as_of_constituent_liquidity`, not a survivorship-free historical panel. For 2026-08-19 the 07-22 through 08-18 window is complete. Activation V1 currently serves 1,641/1,747 members.
-
-An offline scope audit proved those counts were conservatively anchored to the old one-session dollar-volume candidate range. The full-base corrected shadow starts from all 4,193 provider-classified CS and all 4,565 CS/ADRC evidence records, and produces 1,719/1,831 shadow members. These corrected results are not activated and are not present in the production Dashboard or snapshot. A separately authorized review/activation/deployment is required.
+None of these items may be approximated by ticker, company name, current
+membership, or price/volume proxies.

@@ -6,7 +6,9 @@ This document records the first provider-neutral EOD return analytics boundary b
 
 ## Status
 
-Implemented for completed session pairs; the deployed latest pair is 2026-08-13 and 2026-08-14.
+Implemented for completed canonical session pairs. Exact latest sessions and
+deployed release state belong in
+[Current Context](../project/current-context.md), not this architecture note.
 
 ## Close-to-Close Returns
 
@@ -93,13 +95,11 @@ A traditional Market-Cap Sector Heatmap remains blocked pending accepted sources
 - point-in-time classification membership
 - licensing and public-display boundary
 
-## Non-Goals
+## Boundary and Non-Goals
 
-- frontend Dashboard implementation
 - market-cap weighting
 - sector/theme grouping
 - fund-flow or money-flow calculations
-- prior-period history beyond the completed pair
-- database/catalog integration
+- treating one pair as historical strategy evidence
 - Massive API calls
 - OCI deployment

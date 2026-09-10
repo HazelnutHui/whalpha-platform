@@ -1,115 +1,93 @@
 # Trading Intelligence API
 
-Dashboard Universe Activation V1 is the formal production membership boundary for private market analytics. Omitted Universe selection uses `provider_classified_common_shares_v1`; the ADR-inclusive alternative is explicitly allowlisted. Unknown IDs fail closed and never silently select Legacy.
-
-## Security Classification V1
-
-`tip_api.contracts.security_classification.v1` exposes the immutable point-in-time classification contract. `tip_api.services.security_classification` provides override validation, classification reconciliation, and Core/Broad candidate funnel auditing. Phase A does not wire these candidates into private APIs or production snapshots.
-
-Phase B1 adds immutable provider type catalog, normalized observation, canonical instrument evidence, and logical completion contracts with bounded Massive ingestion and atomic Parquet persistence. The corrected 2026-08-14 run published 25 catalog records, 13,110 observations, and 9,939 canonical evidence records. `CS` remains quarantine because security form alone does not resolve issuer structure or domicile. Evidence partitions are independent of canonical Instrument Master and EOD datasets.
-
-Phase B2A added offline-tested SEC issuer evidence contracts, point-in-time identity and filing interpretation, deterministic Core/Broad decisions, a private User-Agent loader, and atomic Parquet persistence. Phase B2B added a bounded streaming live transport, source cache, ingestion CLI, safe ZIP handling, observation/canonical evidence repositories, and a logical completion marker. Three authorized runs failed closed during Series/Class landing discovery and published no completed SEC evidence. Diagnostic schema `2.0` is implemented; production Core/Broad activation remains deferred.
-
-FastAPI backend scaffold for Trading Intelligence Platform.
-
 ## Purpose
 
-The API package provides typed contracts, canonical market-data read services, and default-disabled private EOD routes for the future dashboard boundary. The default HTTP scaffold exposes only the Health endpoint; private market-data routes are registered only when explicitly enabled for local/private development.
+`apps/api` contains the provider-neutral contracts, canonical readers,
+analytics and research services, guarded provider workflows, persistence
+boundaries, and the default-disabled private FastAPI surface.
 
-## Current Endpoints
+Exact sessions, row counts, fingerprints, subscriptions, and Production
+releases belong in
+[current context](../../docs/project/current-context.md), not this package
+guide.
 
-Default route:
+## Runtime boundary
+
+The default HTTP application exposes only:
 
 - `GET /api/v1/health`
 
-Explicitly enabled private routes (`TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`):
+Local/private market-data routes are registered only when
+`TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`, including bounded EOD session,
+bar, summary, mover, return, liquidity-map, and overview reads. This flag is a
+development switch, not authentication or deployment permission.
 
-- `GET /api/v1/private/market-data/eod/sessions`
-- `GET /api/v1/private/market-data/eod/sessions/latest`
-- `GET /api/v1/private/market-data/eod/sessions/{session_date}/summary`
-- `GET /api/v1/private/market-data/eod/sessions/{session_date}/bars`
-- `GET /api/v1/private/market/summary/latest`
-- `GET /api/v1/private/market/movers/latest`
-- `GET /api/v1/private/market/liquidity-map/latest`
-- `GET /api/v1/private/market/returns/latest`
-- `GET /api/v1/private/market/overview/latest`
+Production currently serves immutable static Snapshots through OCI; no
+production FastAPI service reads canonical Dell data remotely.
 
-Expected response:
+## Implemented domains
 
-```json
-{
-  "status": "ok",
-  "service": "trading-intelligence-api",
-  "version": "0.1.0"
-}
+- stable-ID Instrument Master, provider Identity, ticker Resolver, and
+  effective-dated security evidence;
+- canonical EOD bars, offline XNYS session logic, Parquet manifests, formal
+  readers, and bounded query services;
+- provisional provider-form Primary/Secondary Universe activation and
+  prospective daily Membership custody;
+- Market Regime, ETF relationships, sector ETF rotation, Candidate Baseline
+  V1, Entry Geometry, Strategy Channels, and visual-context analytics;
+- immutable Market Intelligence and Dashboard Snapshot publication contracts;
+- partial corporate-action, split-only fact, sparse adjustment, lifecycle-
+  review, and Historical Coverage mechanics;
+- Quant Research Lab model records, result semantics, chronological research,
+  statistics, cost scenarios, holdout custody, and Strong-Leader Pullback
+  fixture-only input mechanics; and
+- guarded daily planning, acquisition, Apply, analytics, publication, bundle,
+  deployment-custody, recovery, and read-only scheduler contracts.
+
+Implemented mechanics do not imply complete research data, a real backtest,
+model activation, or an unattended write-capable scheduler. Consult
+[current status](../../docs/project/current-status.md).
+
+## Provider boundary
+
+Provider-neutral interfaces live under `tip_api.providers.market_data`.
+Massive-specific configuration, protected credential loading, transport,
+mapping, request custody, Identity, and Grouped Daily workflows remain inside
+`tip_api.providers.massive`. Provider schemas are normalized before domain
+calculation.
+
+Credentials, Authorization values, request secrets, and raw provider bodies
+must never be committed, printed, or copied into browser/OCI artifacts. Live
+requests and canonical Apply remain guarded operational actions.
+
+## Quantitative research boundary
+
+Quant Research Lab separates method records, fixture evidence, real event
+studies, portfolio simulations, lifecycle, and independent Candidate
+activation. Strong-Leader Pullback is the first program; no real performance
+result or Candidate authority exists.
+
+ADR 0194 defines a future bounded AI Quant Research Factory. Specialized
+agents may assist hypothesis, data, implementation, statistics, cost,
+red-team, reproduction, and shadow stages only through finite experiment
+budgets and stage-isolated data. Dell deterministic code remains the numerical
+authority. No agent orchestration service is implemented yet.
+
+## Local setup and tests
+
+Use the repository-level
+[Local Development](../../docs/development/local-development.md) instructions
+and runner so linked worktrees resolve the project environment correctly:
+
+```bash
+scripts/dev/run-project-python.sh -m pytest apps/api/tests
 ```
 
+## Non-goals
 
-## Implemented Python Contracts
-
-Provider-neutral market-data contracts are available from:
-
-```python
-from tip_api.contracts.market_data.v1 import (
-    EodPriceBarV1,
-    InstrumentMasterV1,
-    InstrumentStatus,
-    InstrumentType,
-    QualityStatus,
-)
-```
-
-Implemented contracts:
-
-- Instrument Master V1
-- EOD Price Bar V1
-
-These are validation models. EOD Price Bar V1 now has a bounded Parquet persistence path and one-session ingestion slice. The authorized 2026-08-13 Grouped Daily ingestion passed quality gates after Decimal volume correction and published the first production canonical EOD bar partition. A default-disabled private read/query API now serves completed canonical EOD sessions from Parquet. Market Summary V1, movers, returns, Liquidity Map V1, and Dashboard Overview private responses are implemented from completed canonical sessions. Dashboard Overview adds market benchmarks, Sector ETF relative performance, XNYS calendar freshness, and universe-filtered Trading Activity Map data.
-
-The provider-neutral Market Session Calendar uses offline `exchange-calendars` XNYS schedules and an injectable clock. It keeps expected-session freshness separate from completed-dataset availability and file/schema consistency validation.
-
-The one authorized 2026-08-14 Grouped Daily request passed all hard gates and published 9,912 canonical bars against the accepted point-in-time 2026-08-14 identity snapshot. Completed EOD sessions now span 2026-08-12 through 2026-08-14.
-
-Provider Instrument Identity V1 is also implemented for point-in-time provider identity mapping. The first live Massive Instrument Master snapshot attempt completed pagination but did not publish because quality gates failed.
-
-Provider Ticker Resolver V1 is implemented for point-in-time ticker resolution. After refined quality gates, the 2026-08-13 Massive Instrument Master snapshot published 9,932 canonical instruments and 9,932 resolver entries under the project data root.
-
-
-## Implemented Provider Boundary
-
-Provider-neutral market-data provider types are available from:
-
-```python
-from tip_api.providers.market_data import (
-    EodBarQuery,
-    InstrumentQuery,
-    MarketDataProvider,
-    ProviderCapability,
-    RevisionSelection,
-)
-```
-
-The boundary is synchronous and supports Instrument Master and EOD Price Bar retrieval. It has deterministic in-memory tests, a Massive adapter with injected transport, a secure credential-file loader, and a standard-library HTTPS transport. Bounded Massive workflows published point-in-time Instrument Master, provider identity, ticker resolver, and canonical EOD datasets for the completed dates. Default-disabled private Dashboard/EOD APIs read completed Parquet sessions locally. No unrestricted public provider-backed API or automated daily workflow exists.
-
-
-## Massive Mocked Adapter Boundary
-
-The Massive package is available from:
-
-```python
-from tip_api.providers.massive import MassiveMarketDataProvider, MassiveProviderConfig
-```
-
-It implements configuration validation, credential redaction, injected transport, mocked response mapping, deterministic tests, and a standard-library HTTPS transport for controlled operations. Approved live operations so far are the one-request Stocks reference smoke test, the one-request Grouped Daily inspection for 2026-08-13, the bounded All Tickers snapshot publications for completed snapshot dates, and the one-request Grouped Daily publications that created canonical EOD bars. The Massive adapter must not be used for backfill, dashboard data, or additional live requests without a separate authorization.
-
-## Local Setup
-
-Use the repository-level instructions in [Local Development](../../docs/development/local-development.md).
-
-## Current Non-Goals
-
-- No unrestricted public Dashboard or API serving directly from production `/data`
-- No formal multi-user authentication or authorization for private API routes
-- No database or ORM
-- No order execution
-- No deployed production FastAPI service; the recorded private deployment is static snapshot based
+- unrestricted public APIs over canonical data;
+- a production API service on OCI;
+- automated trading or order execution;
+- opaque or ungoverned model search;
+- a database/ORM without measured need; and
+- distributed research infrastructure before the workstation path requires it.

@@ -11,6 +11,13 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0194](0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md):
+  defines high-throughput AI hypothesis work as a bounded, stage-isolated Lab
+  backend rather than ungoverned search or automatic activation.
+- [ADR 0193](0193-admit-latest-vintage-reconstruction-for-development-only.md):
+  permits a fixed latest-vintage reconstruction first for an outcome-blind
+  census and possible development, while preserving strict validation and
+  holdout knowledge-time gates.
 - [ADR 0192](0192-publish-lab-model-records-without-candidate-authority.md):
   separates transparent Lab methods, fixture evidence, real signal/portfolio
   results, and the independent Candidate activation boundary.

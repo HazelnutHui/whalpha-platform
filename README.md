@@ -20,11 +20,13 @@ research-only Quant Research Lab. Guest and credential Sessions intentionally
 receive identical data and capabilities.
 
 The first three are stable market-context workspaces. Quant Research Lab is
-the model registry and validation authority. Stock Candidates will eventually
-consume only one to three validated and explicitly activated Lab models. The
-currently deployed Candidate score, Entry Geometry, and technical Strategy
-Channels remain transparent but unvalidated **Baseline V1**, not a direct
-parameter-tuning target.
+the model registry and validation authority. Its future AI Quant Research
+Factory may generate hypotheses at high throughput, but every real experiment
+remains deduplicated, budgeted, data-isolated, deterministic, and falsifiable.
+Stock Candidates will eventually consume only one to three validated and
+explicitly activated Lab models. The currently deployed Candidate score,
+Entry Geometry, and technical Strategy Channels remain transparent but
+unvalidated **Baseline V1**, not a direct parameter-tuning target.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The
@@ -88,8 +90,9 @@ volume proxies must never be described as actual fund flow. Research,
 validation, shadow, Production, and retired states remain visibly distinct.
 
 ~~~text
-registered Lab experiment -> chronological validation -> sealed holdout
--> prospective shadow -> explicit activation -> Stock Candidates
+registered Lab experiment -> bounded development -> locked validation
+-> sealed holdout -> prospective shadow -> explicit activation
+-> Stock Candidates
 ~~~
 
 See:
@@ -99,6 +102,7 @@ See:
 - [Quant Research Lab V1](docs/product/quant-research-lab-v1.md)
 - [Candidate Strategy Evaluation V1](docs/data-contracts/candidate-strategy-evaluation-v1.md)
 - [ADR 0191: validated model promotion](docs/decisions/0191-promote-validated-research-models-into-stock-candidates.md)
+- [ADR 0194: bounded AI-assisted research](docs/decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)
 
 ## Application entry points
 

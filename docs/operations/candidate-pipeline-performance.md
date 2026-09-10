@@ -1,5 +1,12 @@
 # Candidate Pipeline Performance and Execution Boundary
 
+> **Lifecycle: retained Baseline V1 engineering record.** The commands and
+> custody rules remain valid for compatibility, diagnosis, and measured daily
+> operations. The dated benchmarks and former next-step list are historical.
+> Baseline V1 is frozen under ADR 0191; do not resume formula work or
+> performance optimization unless a current measured operational bottleneck
+> justifies a separately scoped change.
+
 ## Authority and scope
 
 Candidate calculation, historical replay, Oracle validation, audit generation,
@@ -209,16 +216,13 @@ all four equivalence gates were true, Oracle mismatch was zero, and external
 request and Production-write counts were zero. These are Dell `/tmp`
 development results; `/data` and Production were unchanged.
 
-## Next performance sequence
+## Superseded performance sequence
 
-1. Measure the next complete daily run with ADRs 0125 and 0126 active. Do not
-   infer the full end-to-end saving from isolated stage replays.
-2. Attribute the remaining time separately across Candidate, Strategy
-   Channels, Candidate Visual Context, MI plan/Apply, and Snapshot
-   source-product construction before changing another calculation or
-   contract.
-3. Keep the daily inner Oracle serial unless a new workload measurement proves
-   deterministic process parallelism is faster.
+The original measurement sequence below was completed by later guarded-chain
+audits. It is not a current work queue. Future optimization must begin from a
+new end-to-end measurement, preserve the serial daily Oracle unless evidence
+supports a change, and must not displace the Quant Research Lab validation
+priority recorded in [Current Status](../project/current-status.md).
 
 ## 2026-09-04 downstream finalized-evidence reuse
 

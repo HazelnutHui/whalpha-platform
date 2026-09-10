@@ -25,6 +25,13 @@ authority. Stock Candidates (`个股候选`) is the decision-facing consumer of 
 small number of explicitly activated Lab models. Experimental models do not
 become daily Candidate rankings merely because they exist.
 
+The Lab's future AI Quant Research Factory is a governed backend, not another
+product workspace. Specialized agents may broaden hypothesis generation,
+implementation, and adversarial review, while a central deterministic system
+limits experiments, isolates data stages, retains every failure, and controls
+promotion. High agent count is not independent evidence and never bypasses
+sealed validation, holdout custody, prospective observation, or human review.
+
 Models are personal, style-specific research and may decay or fail. Historical
 performance is evidence, not certainty. Research, validation, shadow,
 Production, monitoring, retirement, and rejection remain distinct states.

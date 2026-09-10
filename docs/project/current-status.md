@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-09
+Status date: 2026-09-10
 
 This is the concise actual-state summary. Exact volatile identities and
 cross-device recovery belong in
@@ -78,6 +78,12 @@ performance result, no out-of-sample observation, and no Candidate authority;
 all real result areas remain locked. This interface is not in the active OCI
 release.
 
+ADR 0194 records a future bounded AI Quant Research Factory inside the Lab.
+No agent orchestrator or autonomous research service exists yet. The first
+implementation gate is still one complete Strong-Leader Pullback path; only
+after it proves reproducible rejection and stage isolation may a small multi-
+role agent pilot begin.
+
 ## Research readiness
 
 Formal state is data-blocked; real evaluation and performance claims remain
@@ -102,10 +108,13 @@ Incomplete:
 - observed spread/impact and calibrated execution costs;
 - a real chronological evaluation dataset and sealed real holdout.
 
-Historical backfills observed later remain outcome-only unless source
-availability at signal time is defensible. Current membership or taxonomy must
-not be projected backward. The Strong-Leader Pullback input adapter has
-fixture evidence only and has never produced a real backtest.
+Historical backfills observed later remain ineligible for formal validation,
+holdout, and Production claims unless source availability at signal time is
+defensible. Current membership or taxonomy must not be projected backward.
+ADR 0193 permits the fixed 287-session interval through 2026-08-12 only for an
+outcome-blind coverage census and possible later development cohort. No
+coverage threshold or cohort is admitted yet. The Strong-Leader Pullback V1
+input adapter has fixture evidence only and has never produced a real backtest.
 
 ## Automation and performance
 
@@ -121,10 +130,13 @@ that fixes both known gaps.
 
 ## Next priority
 
-1. Close only Strong-Leader Pullback's exact point-in-time data blockers.
-2. Freeze one admitted cohort and formal readiness decision before outcomes.
-3. Execute its registered chronological research and retain success or failure.
-4. Activate and connect a model to Stock Candidates only after separate
+1. Complete ADR 0193's outcome-blind evidence census without opening strategy
+   outcomes or choosing parameters.
+2. Freeze one admitted cohort and formal readiness decision from missingness
+   evidence alone, or reject that development path.
+3. Execute the registered chronological research and retain success or failure.
+4. Generalize only the proven path into a bounded multi-agent research pilot.
+5. Activate and connect a model to Stock Candidates only after separate
    operational review.
 
 Daily reliability and one bounded next-session automation rehearsal may proceed

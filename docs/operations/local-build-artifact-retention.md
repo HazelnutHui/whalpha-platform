@@ -11,7 +11,12 @@ Canonical EOD, Identity, Activation, Market Intelligence, and active Dashboard
 Snapshot data under `/data/trading-intelligence-platform` are outside this
 policy and must never be deleted through local build cleanup.
 
-## Current local retained set
+The inventories below are dated execution evidence, not current-state
+authority. Always obtain the active release, rollback, local inventory, and
+residue state from [current context](../project/current-context.md) and a fresh
+read-only inspection before proposing deletion.
+
+## 2026-09-01 recorded local set
 
 The 2026-09-01 read-only inventory found one legacy private-Dashboard fallback
 and 14 historical directories beneath `build/oci-dashboard`. None is the
@@ -44,7 +49,7 @@ Historical bundles must validate against their own checksum inventories. Do
 not assume any historical local directory still exists remotely or is a valid
 rollback solely from its name.
 
-## OCI retained set
+## 2026-09-01 recorded OCI set
 
 The 2026-09-01 independent read-only OCI inspection verified
 `/srv/whalpha/releases/2026-09-01T123500Z-579a26759a9e` as the active release

@@ -57,6 +57,13 @@ It requires point-in-time daily membership, corporate actions, lifecycle and
 terminal evidence, explicit adjustment ledgers, and bounded coverage manifests
 before a historical panel can be declared research ready.
 
+ADR 0193 adds a narrower evidence tier for Strong-Leader Pullback development:
+later-retrieved historical-date snapshots may first support an outcome-blind
+coverage census and a separately frozen development cohort, but never strict
+validation, holdout, or Production claims. ADR 0194 applies the same data
+boundary to every future AI research role; agent access does not weaken source,
+knowledge-time, stage-isolation, or holdout custody rules.
+
 ## Provider Selection Status
 
 Massive is accepted as the first private EOD development provider, with Stocks

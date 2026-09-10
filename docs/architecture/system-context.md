@@ -6,6 +6,7 @@
 Market Data
 -> Data Processing
 -> Market Structure Analysis
+-> Quantitative Research and Falsification
 -> Web Presentation
 ```
 
@@ -19,6 +20,7 @@ The workstation is responsible for:
 - calculations
 - historical storage
 - scheduled/background computation
+- bounded AI-assisted research orchestration
 
 ## OCI Responsibility
 
@@ -29,7 +31,8 @@ OCI is responsible for:
 - Nginx
 - lightweight Web/API serving
 
-OCI should not become the primary heavy-compute or historical-data node.
+OCI must not become the primary heavy-compute, research-orchestration, or
+historical-data node.
 
 ## Browser Responsibility
 
@@ -43,6 +46,8 @@ The current architecture is not a microservice architecture.
 
 The accepted application stack is documented in [ADR 0005](../decisions/0005-application-technology-stack.md) and [Application Architecture](application-architecture.md). The backend and frontend frameworks are selected for the target scaffold.
 
-## Unknown
+## Open architecture threshold
 
-The exact database introduction threshold and deployment mechanism are not yet selected.
+The static OCI deployment mechanism is selected and operational. A database
+introduction threshold remains open and must be justified by measured query,
+concurrency, state, or recovery requirements rather than scale expectations.

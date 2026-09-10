@@ -11,11 +11,13 @@
 
 ## Active development scope
 
-- redesign Quant Research Lab as the transparent model registry, methodology,
-  validation, and lifecycle authority;
+- use the implemented Quant Research Lab registry as the transparent
+  methodology, validation, failure, and lifecycle authority;
 - complete only the data families required by a named research question;
 - research one falsifiable strategy family at a time, beginning with
   Strong-Leader Pullback;
+- prove one complete, rejection-capable research path before generalizing it
+  into a bounded AI Quant Research Factory;
 - publish professional research metrics on a slower reviewed cadence;
 - activate at most a small number of validated models into Stock Candidates;
   and
@@ -28,6 +30,8 @@ They are not the target model architecture and must not be tuned directly.
 
 ## Later scope
 
+- specialized hypothesis, data, implementation, statistics, cost, red-team,
+  reproduction, and shadow-monitor agents under finite experiment budgets;
 - Momentum Breakout, distinct Trend Continuation, Technical Reversal, and
   Fundamental Value Reversal research;
 - governed sector/industry classification and concentration diagnostics;

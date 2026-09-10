@@ -9,32 +9,22 @@ project changelog, not in this current runbook.
 
 ## Live-verified state
 
-The authoritative operational state is maintained in
-[current-context](../project/current-context.md). Its 2026-09-09 post-deployment
-reconciliation records, without reading credentials:
+The only authority for the active release, source revision, Snapshot,
+analytics session, services, listeners, checksums, and residue is
+[current context](../project/current-context.md). This runbook intentionally
+does not duplicate those volatile values.
 
-- `/srv/whalpha/current` and the matching verified Dell immutable bundle resolve
-  to release `2026-09-09T020802Z-d53e98832ef5`;
-- the release is built from source commit
-  `d53e98832ef57f22e018f9f9b863f009eb355544` and binds Market
-  Intelligence
-  `2026-09-04T112916Z-717cb82c5369`;
-- it serves ordinary-fresh, lag-zero 2026-09-04 analytics through Snapshot
-  1.11 / Dashboard 2.8, Candidate publication 1.1, the strategy-channel and
-  Candidate Visual Context products,
-  `en` and `zh`, with English as the first-visit default;
-- the deployment manifest declares no credentials, raw payload, or Parquet;
-- Nginx and `whalpha-dashboard-auth.service` are active and enabled;
-- the Auth Service listens only on `127.0.0.1:8010`;
-- an unauthenticated loopback HTTPS check returns 200 for `/`, redirects
-  `/dashboard/` to `/?next=/dashboard/`, returns 401 for private data and
-  `/auth/status`, and returns 404 for external `/auth/internal-verify`;
-- deployment postflight creates a temporary guest Session, verifies the same
-  Dashboard, Snapshot 1.11 Candidate summary/detail, strategy, and Sector ETF
-  Rotation payloads are readable, logs out, and removes the local cookie jar
-  without printing it;
-- no staging, failed, or partial release residue exists; and
-- the final inspector reports zero failed system units.
+A valid postflight must prove, without reading credentials:
+
+- the remote current pointer and exact Dell bundle resolve to the same release;
+- source revision, Snapshot, Market Intelligence, manifest, and every served
+  checksum reconcile;
+- Nginx and the localhost-only Auth Service are healthy;
+- unauthenticated, guest, credential, private-data, logout, and internal-auth
+  route boundaries behave as specified;
+- guest and credential Sessions receive identical product capability;
+- no credential, raw provider body, or Parquet exists in the bundle; and
+- no staging, failed, partial, listener, or service residue remains.
 
 The deployed React workspaces share the public entry's deep-navy/cyan visual
 identity and persistent WH product mark. Strategy Channels includes the
@@ -52,7 +42,7 @@ Quant Research Lab exposes family-specific readiness gates. These are
 presentation and navigation changes: guest/credential parity, analytics,
 scoring, contracts, and fail-closed API behavior are unchanged.
 
-The release additionally serves relationship persistence/acceleration evidence
+The current contract line additionally supports relationship persistence/acceleration evidence
 and the bounded ten-point relationship state timeline. Independent postflight
 matched the exact local/remote manifest and checksum identities. The inspector
 uses `datetime.timezone.utc` for compatibility with the remote Python runtime.

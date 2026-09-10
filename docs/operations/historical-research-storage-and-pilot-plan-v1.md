@@ -87,10 +87,13 @@ append/revision layout rather than overwriting them.
 
 ## Request model
 
-The current Basic public limit is five calls/minute. Existing controlled
-workflows use a conservative fixed 15-second serial interval. Provider calls
-remain serial; Dell CPU parallelism applies only after immutable packages are
-available offline.
+At this plan's 2026-08-28 design boundary, Stocks Basic allowed five calls per
+minute and controlled workflows used a conservative fixed 15-second serial
+interval. That estimate is historical; the owner later confirmed Stocks
+Starter and current entitlement/runtime evidence belongs in
+[Current Context](../project/current-context.md). Provider calls still follow
+the selected profile and custody limits; Dell CPU parallelism applies only
+after immutable packages are available offline.
 
 For a history ending at the existing 2026-08-26 EOD session:
 

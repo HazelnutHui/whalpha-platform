@@ -96,9 +96,10 @@ publish only an average return or only favorable regimes.
 - Canonical EOD price history exceeds the 252-session observation minimum, but
   no research-ready Historical Coverage publication binds all required
   point-in-time families.
-- Existing historical analytics may replay current-as-of membership. Only two
-  prospective daily point-in-time Membership sessions are signal eligible;
-  governed historical Membership remains incomplete.
+- Existing historical analytics may replay current-as-of membership. Only a
+  small prospective daily point-in-time Membership series is signal eligible;
+  governed historical Membership remains incomplete. Exact counts belong in
+  [current context](../project/current-context.md).
 - Canonical source observations, split-only facts, and a sparse affected-path
   adjustment publication exist, but complete action coverage, omitted-row
   neutrality, dividends/total return, and signal-time availability remain

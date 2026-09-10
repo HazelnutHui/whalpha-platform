@@ -18,6 +18,11 @@ temporarily a deployed **Baseline V1** consumer, not a formula-tuning target.
 Its future rankings will come only from one to three validated and explicitly
 activated Lab models.
 
+The longer-term AI Quant Research Factory is a governed Lab backend. It may
+increase hypothesis and adversarial-review throughput only after one complete
+strategy path proves the reusable controls. It is not an unbounded factor
+search and does not create another product workspace.
+
 ~~~text
 Lab research and validation
 -> explicit model activation
@@ -81,18 +86,28 @@ real result scopes remain separately guarded.
 Strong-Leader Pullback remains first. Price depth is sufficient, but its exact
 point-in-time research panel is not.
 
+ADR 0193 resolves the first admission-policy question without weakening final
+evidence. The later-retrieved, historical-date Identity interval may first be
+used only for an outcome-blind coverage census and, after a separate immutable
+cohort decision, development. Validation and holdout still require source-time-
+defensible point-in-time evidence.
+
 Required work:
 
-- historical point-in-time Membership eligibility;
+- run the fixed 287-session latest-vintage reconstruction coverage census
+  without calculating triggers, returns, metrics, or parameter results;
+- freeze one explicit admitted cohort and threshold decision from missingness
+  evidence alone, or reject the reconstructed development path;
 - lifecycle and terminal-outcome evidence;
-- complete action/adjustment handling for the selected price-return basis;
+- complete split/action handling for the declared underlying-stock price-
+  return basis, with dividends retained as event context rather than silently
+  changing the label to total return;
 - final transitive Historical Coverage for the declared admitted cohort;
 - outcome labels, realistic cost sensitivity, and sealed evaluation custody.
 
-Before real outcomes are opened, review whether V1's whole-cross-section
-rejection is necessary or whether a new preregistered version should use a
-fixed admitted cohort plus explicit coverage thresholds. Never silently drop
-missing securities or retroactively project current membership.
+V1 remains immutable and strict. Missing securities, unresolved actions, and
+terminal events stay in denominators and quarantine; no source gap is imputed
+and no current membership is projected backward.
 
 Sector/industry data is not a blocker for the V1 primary test, but becomes
 important for concentration and stability diagnosis. GICS History remains the
@@ -122,7 +137,28 @@ separately frozen portfolio construction.
 Exit criterion: a reproducible real result or recorded failure exists; neither
 automatically changes Stock Candidates.
 
-## Priority 5 — Activate and redesign Stock Candidates
+## Priority 5 — Generalize the bounded AI research factory
+
+Only after Priority 4 proves one complete and rejection-capable path:
+
+1. extract reusable hypothesis, data-admission, feature, label, experiment,
+   result, and failure registries;
+2. record every attempted experiment and group materially equivalent ideas so
+   agent volume cannot hide the true search count;
+3. enforce role-based data visibility for development, validation, holdout,
+   red-team, reproduction, and shadow stages;
+4. pilot a small set of specialized agents on one strategy family while Dell
+   remains the deterministic calculation authority;
+5. measure reproducibility, unique-hypothesis yield, rejection quality,
+   leakage detection, compute cost, and holdout integrity before scaling; and
+6. keep long-running services, distributed infrastructure, and automated model
+   activation out of scope until a measured need exists.
+
+Exit criterion: the same registered experiment produces the same decision
+under independent replay; failed attempts remain visible; no agent can inspect
+or promote evidence outside its stage.
+
+## Priority 6 — Activate and redesign Stock Candidates
 
 Only after a model passes research and operational review:
 
@@ -139,7 +175,7 @@ The page may remain sparse or explicitly unavailable before this criterion.
 Daily updates of the old provisional rank are not a product-development
 priority.
 
-## Priority 6 — Additional strategy families
+## Priority 7 — Additional strategy families
 
 After the first pipeline proves reusable:
 
@@ -154,7 +190,7 @@ They should not be the first complex model because their calendars, timestamps,
 causal interpretations, and small number of independent regimes make
 overfitting easier.
 
-## Priority 7 — Fundamentals, valuation, events, and options
+## Priority 8 — Fundamentals, valuation, events, and options
 
 Add point-in-time statements and earnings dates first, then business quality,
 growth/margins/cash flow/balance sheet, relative valuation, transparent value
@@ -166,7 +202,7 @@ chain quotes, bid/ask, spread, volume, open interest, IV/term/skew, Greeks,
 earnings/dividend dates, adjustments, and payoff/cost modeling are prerequisites
 to comparing Calls/Puts, debit spreads, covered calls, moneyness, and DTE.
 
-## Priority 8 — Portfolio and broker integration
+## Priority 9 — Portfolio and broker integration
 
 Position management, account-level risk, and IBKR integration follow reliable
 stock research and options expression. An inactive navigation/framework may be

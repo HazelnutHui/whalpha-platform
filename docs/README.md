@@ -35,7 +35,8 @@ audit into current work.
 - [Product Vision](product/vision.md): decision chain and durable product role.
 - [Product Scope](product/scope.md): current, active, later, and excluded scope.
 - [Quant Research Lab](product/quant-research-lab-v1.md): model registry,
-  transparency, evaluation, lifecycle, metrics, and Candidate promotion.
+  transparency, bounded AI-assisted research, evaluation, lifecycle, metrics,
+  and Candidate promotion.
 - [Opportunity Strategy Channels V1](product/opportunity-strategy-channels-v1.md):
   deployed, frozen, unvalidated Baseline V1 mechanics.
 - [Market Regime & Opportunities V1](product/market-regime-opportunity-map-v1.md):
@@ -81,7 +82,9 @@ Pivotal research ADRs include
 [0109](decisions/0109-separate-research-readiness-from-development-authorization.md),
 [0186](decisions/0186-seal-strong-leader-pullback-research-inputs.md),
 [0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md),
-and [0192](decisions/0192-publish-lab-model-records-without-candidate-authority.md).
+[0192](decisions/0192-publish-lab-model-records-without-candidate-authority.md),
+[0193](decisions/0193-admit-latest-vintage-reconstruction-for-development-only.md),
+and [0194](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md).
 
 ## Architecture and data
 
@@ -105,7 +108,6 @@ separately approved bounded serving artifacts.
 - [Infrastructure](operations/infrastructure.md)
 - [Storage Provisioning](operations/storage-provisioning.md)
 - [Daily EOD Automation](operations/daily-eod-automation.md)
-- [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
 - [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md)
@@ -128,6 +130,9 @@ themselves.
 - [Changelog](project/changelog.md): meaningful completed changes.
 - [Open Questions](project/open-questions.md): unresolved decisions only.
 - [Audits](audits/): dated execution and verification evidence.
+- [Candidate Pipeline Performance](operations/candidate-pipeline-performance.md):
+  retained Baseline V1 optimization and measurement history; not an active
+  model-research plan.
 
 Historical records are retained for reproducibility. They are not part of the
 default recovery path and must not override a later accepted decision or the

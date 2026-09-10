@@ -37,6 +37,13 @@ It is not an automated trading or order-execution system. Quantitative
 research must remain governed, reproducible, falsifiable, and explainable; a
 personal model is not permission for a black box.
 
+The future AI Quant Research Factory is a bounded backend of Quant Research
+Lab, not an ungoverned search engine. High-throughput ideas still require
+deduplication, finite registered experiment budgets, stage-isolated data,
+deterministic evaluation, retained failures, sealed holdout custody, and human
+activation. See
+[ADR 0194](docs/decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md).
+
 ## 3. Working Principles
 
 - Work on one clearly scoped objective at a time.

@@ -2,8 +2,9 @@
 
 ## Market Intelligence consumer binding
 
-The active release is Snapshot 1.11 / Dashboard 2.8. Repository source also
-supports older readable pairs, including Snapshot 1.8 / Dashboard 2.5 for
+The current active contract pair belongs in
+[current context](../project/current-context.md). Repository source supports
+Snapshot 1.11 / Dashboard 2.8 and older readable pairs, including Snapshot 1.8 / Dashboard 2.5 for
 split Candidate delivery. Its
 dry-run receives an explicit `--market-intelligence-publication-id`, formally
 reads the active immutable publication, and freezes that reference in candidate
@@ -22,7 +23,7 @@ compact summary plus deterministic stable-ID detail shards. The reader validates
 every file, reconstructs the original full Candidate publication, and fails
 closed on any missing shard or summary/detail drift. Approval plan 2.3 freezes
 the ordered shard list and summary identity. Snapshot 1.8 remains a readable
-compatibility boundary; active Production uses the additive 1.11/2.8 pair.
+compatibility boundary; current Production identity is not duplicated here.
 
 Repository source now also supports Snapshot 1.9 / Dashboard 2.6 through
 Approval Plan 2.4. It extends every 1.8 binding and additionally freezes the
@@ -55,7 +56,7 @@ and Visual Context requirement. The builder writes one dedicated checksum-
 bound `sector-etf-rotation.json`; strict reread and Apply validation reject
 lineage, record-order, window, Oracle, Theme-unavailable, or proxy-disclosure
 drift. The browser retrieves this file only when the Sector Rotation workspace
-opens. The active release uses this exact pair for analysis session 2026-09-04.
+opens. Exact active analysis and release identities belong in current context.
 
 ## Daily control-plane custody
 

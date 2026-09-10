@@ -175,9 +175,40 @@ Data readiness is scoped to the exact experiment rather than an endless claim
 that every possible dataset must be complete. Before outcomes are opened, each
 version declares an admitted interval/cohort, mandatory evidence, acceptable
 coverage, and rejection policy. Missing evidence may never be silently filled
-or selectively dropped. The registered Strong-Leader Pullback V1 retains its
-stricter complete-cross-section rule unless a new pre-outcome versioned
-decision replaces it.
+or selectively dropped. Strong-Leader Pullback V1 retains its strict complete-
+cross-section rule. ADR 0193 separately permits a later-retrieved, latest-
+vintage historical reconstruction for an outcome-blind coverage census and,
+only after another frozen cohort decision, development use. It cannot support
+locked validation, sealed holdout, performance-grade claims, or Candidate
+activation.
+
+## AI Quant Research Factory
+
+ADR 0194 defines the future factory as a governed Lab backend. It is not an
+unbounded agent search system and is not a sixth product answer. Its purpose is
+to increase research throughput while strengthening rejection discipline.
+
+Logical roles may include hypothesis, data, factor, implementation,
+statistics, cost, red-team, independent reproduction, and shadow monitoring.
+They share the same registry but not unrestricted data access. Every
+experiment is deduplicated, preregistered, assigned a finite search budget,
+and retained whether it passes or fails. Development agents cannot read sealed
+validation or holdout outcomes, and an agent consensus cannot override a
+deterministic gate.
+
+The implementation order is deliberately incremental:
+
+```text
+one complete Strong-Leader Pullback research path
+-> reusable experiment/data/evaluation interfaces
+-> small multi-role agent pilot
+-> automated falsification and independent reproduction
+-> additional strategy families
+```
+
+The first success criterion is not a high-return result. It is a reproducible
+system that can reject a weak strategy, preserve the failed attempt, and prove
+that no hidden data or parameter search changed the decision.
 
 ## First program: Strong-Leader Pullback
 
@@ -206,6 +237,13 @@ lifecycle/terminal evidence, complete corporate-action and adjustment
 coverage, final transitive Historical Coverage, calibrated execution evidence,
 and a real sealed evaluation dataset are incomplete. Exact current counts
 belong only in [current context](../project/current-context.md).
+
+ADR 0193 freezes the next admissibility step without changing this V1 record:
+use the 287-session historical source interval ending before the first known
+Identity-source gap for an outcome-blind coverage census. The source is
+explicitly `reconstructed_point_in_time_latest_vintage`, not `as_operated`.
+No coverage threshold, cohort, trigger, return, or parameter may be selected
+until that census is complete and a separate immutable decision is recorded.
 
 ADR 0186 fixes an outcome-free, complete-cross-section input adapter and exact
 21-session feature semantics. It has fixture evidence only and has never run a

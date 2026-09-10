@@ -14,8 +14,9 @@ filenames retain `market-regime-opportunity-map` for compatibility.
 ## Status and decision boundary
 
 Status: **Implemented and production-published through the separate immutable
-Market Intelligence boundary; active Production uses analysis session
-2026-09-04 with ordinary fresh, lag-zero status**.
+Market Intelligence boundary.** Exact active session, freshness, publication,
+and release identity belong in
+[current context](../project/current-context.md).
 
 Phase 1a now implements the fixed five-dimension raw-metric, normalization,
 Composite, missingness, contribution, and explanation ledger for explicit
@@ -54,10 +55,10 @@ bounded breakout, breakout watch, orderly pullback, strong but extended, or no
 viable setup. Candidate publication 1.1 and later Snapshot consumers now carry
 this layer into the frontend.
 
-The initial design baseline remains `as_of_session=2026-08-21`; active
-Production rolls the same versioned formulas and registered relationships to
-2026-09-04 with its matching same-day Identity and EOD source. Baselines and
-active publications must never mix Identity dates.
+The initial design baseline remains `as_of_session=2026-08-21`; Production
+rolls the same versioned formulas and registered relationships with matching
+same-day Identity and EOD sources. Baselines and active publications must never
+mix Identity dates.
 
 This specification defines a transparent decision-support page for short-horizon
 equity research. It does not issue trading instructions, estimate certain

@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-09T21:34:54Z
 
-Repository context updated at: 2026-09-09 UTC
+Repository context updated at: 2026-09-10 UTC
 
 This is the compact recovery source for a new task or device. It records
 verified current identities and boundaries, not full execution history.
@@ -132,6 +132,13 @@ projection for the browser. It is `method_only`,
 no Candidate authority. This repository interface has not been deployed; the
 active OCI release remains the one recorded above.
 
+ADR 0194 now records the future AI Quant Research Factory as a governed Lab
+backend: high-throughput ideas are permitted, but real experiments remain
+deduplicated, finitely budgeted, stage-isolated, deterministic, and fully
+retained whether they pass or fail. The factory is a direction, not an
+implemented long-running agent system, and it cannot activate Candidate models
+or trade.
+
 The currently deployed Candidate score, Entry Geometry, and three technical
 Strategy Channels are transparent but unvalidated **Baseline V1**. They remain
 Production facts and receive compatibility/correctness maintenance, but are
@@ -163,16 +170,22 @@ claims are false.
 | Fixture-only input, chronology, statistics, and holdout mechanics | Real chronological dataset and sealed real holdout |
 | Scenario-only equity costs | Observed spread/impact calibration and execution comparison |
 
-Historical backfills observed later remain outcome-reconciliation evidence
-unless source availability at the signal time is defensible. Current
-membership or classification must never be projected backward.
+Historical backfills observed later remain ineligible for formal validation,
+holdout, or Production claims unless source availability at the signal time is
+defensible. Current membership or classification must never be projected
+backward. ADR 0193 creates one narrower development path: the exact 287-session
+historical source interval through 2026-08-12 may first support an outcome-
+blind coverage census and, only after another immutable admitted-cohort
+decision, development. It remains latest-vintage reconstruction, not
+`as_operated` evidence.
 
-ADR 0186 freezes a dormant complete-cross-section Strong-Leader Pullback input
-adapter with exact 21-session feature semantics, point-in-time Membership,
-stable-ID SPY, clear adjustments, and no outcome fields. It has fixture
-evidence only; no real input batch or performance result exists. Its
-whole-session rejection rule remains authoritative until a new preregistered,
-pre-outcome decision changes it.
+ADR 0186 freezes the dormant V1 complete-cross-section Strong-Leader Pullback
+input adapter with exact 21-session feature semantics, point-in-time
+Membership, stable-ID SPY, clear adjustments, and no outcome fields. It has
+fixture evidence only; no real input batch or performance result exists. ADR
+0193 does not rewrite V1: a future V2 development input may use only the
+separately frozen admitted cohort and split-adjusted underlying-price-return
+basis. Validation and holdout keep the stronger next-open knowledge-time gate.
 
 The sparse split evidence does not prove neutral omitted rows. A read-only
 diagnostic retained 387 severe unexplained discontinuities across 321 stable
@@ -210,11 +223,16 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-1. Close only the exact data blockers for Strong-Leader Pullback.
-2. Publish one immutable admitted-cohort/readiness decision before outcomes.
-3. Run development, locked validation, sealed holdout, and prospective shadow.
+1. Run the ADR 0193 outcome-blind coverage census over its fixed historical
+   source interval; do not calculate strategy outcomes or select thresholds.
+2. Publish one immutable admitted-cohort decision from evidence completeness
+   alone, or reject the reconstructed development path.
+3. Run Strong-Leader Pullback development, locked point-in-time validation,
+   sealed holdout, and prospective shadow under their exact evidence tiers.
 4. Retain either validated evidence or recorded failure without editing V1.
-5. Activate a model only through separate review; then redesign Candidate.
+5. Generalize the proven path into a small, bounded multi-agent pilot under ADR
+   0194; scale only after measured benefit and holdout integrity.
+6. Activate a model only through separate review; then redesign Candidate.
 
 One bounded next-session automation rehearsal and normal daily reliability work
 may proceed in parallel when an eligible session exists. They must not block

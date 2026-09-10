@@ -6,12 +6,13 @@ Implemented as provider-neutral, immutable Python/Pydantic row and manifest
 contracts plus explicit PyArrow schemas and temporary-root Parquet repositories
 with synthetic tests. ADR 0100 also adapts the existing canonical Dell EOD and
 Identity families into deterministic, read-only, unpublished family evidence.
-Canonical Dell now also contains two prospective signal-eligible Membership
-partitions, bounded corporate-action source custody and split-only facts, and a
-sparse split-adjustment publication for outcome reconciliation. These are
-partial families, not complete research-ready evidence. No canonical lifecycle
-family or final Historical Coverage publication exists, and no research result
-exists.
+Canonical Dell now also contains a small prospective signal-eligible
+Membership series, bounded corporate-action source custody and split-only
+facts, and a sparse split-adjustment publication for outcome reconciliation.
+Exact current coverage belongs in
+[current context](../project/current-context.md). These are partial families,
+not complete research-ready evidence. No canonical lifecycle family or final
+Historical Coverage publication exists, and no research result exists.
 
 ## Purpose
 

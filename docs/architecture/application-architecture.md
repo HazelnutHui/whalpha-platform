@@ -2,365 +2,185 @@
 
 ## Purpose
 
-This document records the approved application boundaries for Trading
-Intelligence Platform. Historical scaffold sections remain implementation
-context; current volatile runtime evidence belongs in
-[current context](../project/current-context.md).
+This document defines durable application boundaries. Exact sessions,
+releases, fingerprints, counts, and runtime health belong in
+[current context](../project/current-context.md). Historical implementation
+steps belong in ADRs, audits, and the changelog.
 
-## Current Status
-
-Dashboard update: the React Market Dashboard supports API, demo, and production snapshot modes. Git records private authenticated static OCI deployments; current OCI runtime state requires a separate authorized verification.
-Publication update: the workstation generates validated dashboard-ready JSON snapshots and versioned OCI bundles; the recorded deployment architecture keeps OCI as a lightweight authenticated static serving plane.
-
-Freshness update: a provider-neutral offline XNYS calendar now determines the expected latest completed session at an injected timezone-aware instant. Dataset availability, file/schema consistency, and market-calendar freshness are separate states.
-
-
-
-Instrument identity update: Provider Instrument Identity V1 and deterministic UUIDv5 identity resolution are implemented. The 2026-08-14 logical identity snapshot passed content-integrity review and is accepted as `accepted_with_provenance_exception`; it may be used point-in-time but may not be requested again or overwritten.
-
-Confirmed current state:
-
-- Minimal backend scaffold exists under `apps/api`.
-- Minimal frontend scaffold exists under `apps/web`.
-- Target frontend/backend boundaries are represented in the repository structure.
-- Versioned Health API contract exists at `GET /api/v1/health`.
-- Local development scripts exist under `scripts/dev`.
-- Local backend tests, direct Health API, frontend production build, Vite server, and Vite-to-FastAPI proxy have been verified.
-- Initial EOD Universe, classification boundary, and normalized EOD logical contracts are accepted and documented.
-- Instrument Master V1 and EOD Price Bar V1 are implemented as provider-neutral Python/Pydantic contracts with validation tests.
-- Minimal synchronous MarketDataProvider boundary, query models, capability declarations, provider errors, and deterministic in-memory contract tests are implemented.
-- Massive remains the first private EOD adapter. Stocks Starter is the current
-  owner-confirmed tier; Basic remains the historical baseline/fallback profile.
-- Massive configuration, credential redaction, transport Protocol, and mocked adapter mapping skeleton are implemented.
-- Mocked-fixture and bounded live EOD ingestion paths are implemented with Parquet persistence and logical manifests.
-- Massive credential provisioning, production HTTPS transport, reference smoke test, bounded All Tickers ingestion, and bounded Grouped Daily publication are complete.
-- Default-disabled canonical EOD query APIs, close-to-close analytics, Dashboard Overview, snapshot export, and bundle publication paths are implemented.
-- The bounded 300-session EOD and point-in-time Identity acquisition is
-  complete. The guarded daily chain is implemented for agent-run operation; a
-  read-only wake timer is installed, but unattended write-capable execution is
-  not.
-- No production API is deployed.
-- No database exists.
-- A session-protected static Dashboard with a branded root login is deployed;
-  exact current release and health evidence belong in
-  [current context](../project/current-context.md).
-
-## System Responsibilities
-
-Workstation responsibility:
+## System boundary
 
 ```text
-Market Data
--> Data Processing
--> Analytics
--> Derived Results
--> Published Website Artifacts / API Payloads
+Data providers
+-> provider adapters
+-> normalized and canonical facts
+-> market analytics / quantitative research
+-> immutable product publications
+-> OCI static serving and Session boundary
+-> browser
 ```
 
-OCI responsibility:
+Dell is the authority for source code, credentials, ingestion, canonical data,
+heavy computation, research orchestration, publication construction, and
+reproducibility evidence. OCI serves bounded static artifacts and the
+localhost authentication service. The browser renders typed payloads and never
+holds provider, server, or broker credentials.
+
+The current architecture is intentionally a workstation-centered modular
+application, not a microservice or distributed system.
+
+## Application components
+
+- `apps/api`: Python contracts, canonical readers, analytics, research
+  services, provider adapters, and default-disabled private APIs.
+- `apps/web`: React/TypeScript/Vite product shell and visual workspaces.
+- `scripts/dev`: repository-aware local development commands.
+- `scripts/admin`: guarded planning, validation, publication, deployment, and
+  recovery entry points.
+- `/data/trading-intelligence-platform`: Dell canonical facts and immutable
+  publications; never committed to Git.
+- OCI release directories: checksum-bound static serving artifacts only.
+
+The accepted stack remains FastAPI/Pydantic, Pandas/NumPy where appropriate,
+Parquet/Arrow storage, React/TypeScript/Vite, and Apache ECharts. A database is
+not selected because current manifests and bounded files satisfy the measured
+requirements.
+
+## Product flow
+
+The durable decision chain is:
 
 ```text
-Nginx
--> Static Frontend and/or Lightweight API
--> Browser
+market state
+-> strength direction
+-> sector/theme
+-> validated stock candidate
+-> trade preparation
+-> entry/invalidation
+-> position management
 ```
 
-The workstation is the source of truth for code, data processing, historical storage, analytics, and derived outputs. OCI is the lightweight public serving boundary and should not run heavy analytics or store complete large market-data history.
+Market Regime & Opportunities, Sector ETF Rotation, and Market Structure &
+Activity are stable context workspaces. Quant Research Lab owns model identity,
+method, evidence, lifecycle, failure, and activation history. Stock Candidates
+is a downstream consumer of at most a small number of separately validated and
+activated Lab models.
 
-## Logical Components
+The deployed Candidate score, Entry Geometry, and technical Strategy Channels
+remain transparent but unvalidated Baseline V1. They are maintained for
+compatibility and correctness, not tuned as the future model architecture.
 
-Approved target component flow:
+## Quantitative research flow
 
 ```text
-Market Data Providers
-        |
-        v
-Provider Adapters
-        |
-        v
-Normalization
-        |
-        v
-Analytics / Market Structure
-        |
-        v
-Derived Datasets / Events
-        |
-        v
-FastAPI Contracts
-        |
-        v
-React Dashboard
-        |
-        v
-Published through OCI
+research question and mechanism
+-> point-in-time admitted data
+-> leakage-safe features and labels
+-> bounded development
+-> locked validation
+-> single sealed holdout
+-> prospective shadow / paper evidence
+-> separate activation
+-> Stock Candidates
+-> monitoring, decay, retirement, or rollback
 ```
 
-The repository implements the FastAPI contract, React dashboard, canonical
-data contracts, provider Protocol, Massive adapter, bounded
-normalization/persistence workflows, EOD analytics, private snapshot export,
-and static deployment tooling. The next product boundary is the Quant Research
-Lab model registry and result-publication architecture. Options, fundamentals,
-valuation, richer events, portfolio state, and broker integration remain later
-work.
-
-## Data Flow
-
-1. Provider adapters retrieve source data through explicit provider boundaries.
-2. Raw vendor data is kept conceptually distinct from normalized data.
-3. Normalized datasets feed market structure, breadth, rotation, stock strength, options structure, and relationship calculations.
-4. Derived datasets and lightweight event findings become API payloads or published artifacts.
-5. FastAPI exposes typed contracts for the dashboard when a backend is needed.
-6. React renders the dashboard using typed data contracts and Apache ECharts.
-7. The accepted static deployment mechanism publishes only reviewed Dashboard-ready private assets to OCI.
-
-Quantitative model flow is separately governed:
-
-~~~text
-point-in-time governed data
--> registered Lab experiment
--> chronological development/validation/holdout
--> prospective shadow
--> explicit model activation
--> Stock Candidate publication
-~~~
-
-Quant Research Lab owns model identity, parameters, evidence, metrics, and
-lifecycle. Stock Candidates consumes only activated results and does not become
-an independent formula laboratory. Current Candidate and Strategy Channels are
-deployed unvalidated Baseline V1 mechanics.
-
-The Health API, default-disabled private market-data APIs, EOD return analytics APIs, and local React Market Dashboard V1 exist for local/private development.
-
-## Repository / Application Boundaries
-
-The code repository remains under `/home/hui/projects/trading-intelligence-platform`.
-
-Application data belongs under `/data/trading-intelligence-platform` and must not be committed to Git. Secrets, provider credentials, account credentials, and private configuration must stay outside the repository.
-
-Current scaffold boundaries:
-
-- `apps/api`: FastAPI backend and API contract tests
-- `apps/web`: React/Vite Market Dashboard V1 local frontend
-- `scripts/dev`: local development launch scripts
-- `docs/development`: local development instructions
-
-Future implementation should keep these responsibilities distinct:
-
-- frontend dashboard
-- backend API contracts
-- analytics calculations
-- provider adapters
-- normalized and derived data boundaries
-- operational documentation
-
-## Runtime Boundaries
-
-Confirmed runtime boundary:
-
-- The workstation handles compute and data processing.
-- OCI handles public serving.
-- The browser renders the visual dashboard and must not hold provider or brokerage credentials.
-
-Current runtime choice:
-
-- Phase 1 private deployment is static snapshot based.
-- Versioned artifacts are built on the workstation and promoted with an atomic OCI release switch.
-- FastAPI private routes remain a default-disabled local/private development boundary; no production FastAPI service is deployed.
-
-## Data Storage Boundary
-
-Initial storage approach:
-
-- EOD-first development path
-- Parquet files for early raw, normalized, and derived datasets where appropriate
-- project data root at `/data/trading-intelligence-platform`
-
-Accepted logical data-contract boundary:
-
-- [Initial EOD Universe](../product/initial-eod-universe.md)
-- [Classification Boundary](classification-boundary.md)
-- [Normalized Market Data Contracts](normalized-market-data-contracts.md)
-- [Data Contracts](../data-contracts/README.md)
-
-Instrument Master V1 and EOD Price Bar V1 are implemented as Python/Pydantic
-validation models. Bounded Parquet repositories exist for Instrument Master,
-provider identity, ticker resolver, EOD bars, provider security evidence, and
-the not-yet-published SEC evidence boundary. Corporate Action V1 and broader
-issuer classification remain incomplete. The production data root contains
-the completed point-in-time Identity and canonical EOD sequence, active
-provider-form Universe memberships, immutable Market Intelligence, and an
-active Dashboard Snapshot. Exact volatile release, contract, session and
-inventory evidence belongs in
-[current context](../project/current-context.md). Version evolution belongs in
-ADRs and the changelog. Default-disabled read/query APIs, EOD analytics,
-Dashboard Overview, and private Snapshot export consume these completed
-datasets.
-
-A database is not selected yet. Database introduction should be driven by real requirements such as query patterns, persistence needs, API concurrency, relational event records, portfolio state, or settings.
-
-## Provider Boundary
-
-The application must not let vendor response schemas leak into domain calculations. Use the implemented [Market Data Provider Boundary](market-data-provider-boundary.md) and future provider adapters to return canonical contracts before analysis.
-
-Provider direction:
-
-- Massive is the first broad-market EOD provider for private personal
-  development. Stocks Starter is the current owner-confirmed tier; provider
-  choice remains replaceable.
-- The Massive adapter runs on the workstation boundary and maps responses into canonical contracts before analysis.
-- Provider credentials must remain server-side and outside Git.
-- Provider-backed outputs remain private unless public-display or redistribution authorization is separately documented.
-- OCI public login content remains data-free; provider-backed Dashboard and
-  static JSON remain behind the shared Session boundary.
-- IBKR is best positioned for portfolio, account-aware information, selected instrument checks, and brokerage-related integration.
-- Options data source remains an open question.
-
-Bounded Grouped Daily publications produced the completed canonical sequence
-recorded in [current context](../project/current-context.md). Close-to-close
-analytics, default-disabled private Dashboard APIs, immutable Market
-Intelligence, private Snapshots, and versioned deployment tooling are
-implemented. The guarded daily chain is agent-runnable and has a read-only wake
-timer; unattended write-capable execution, unrestricted public
-provider-backed display, and a production API service are not implemented.
-
-## Historical Dashboard V1 functional areas
-
-The first dashboard architecture should support these functional areas without requiring all calculations to be complete on day one:
-
-1. Market Summary / Risk Regime
-2. Traditional Market Treemap
-3. Breadth and Participation
-4. Index / Style Strength
-5. Sector / Theme Rotation
-6. Dynamic Relationship & Rotation Monitor
-7. Key Market Developments
-
-### Market Summary / Risk Regime
-
-The dashboard should quickly show major index performance, volatility context, breadth, risk-on / neutral / risk-off context, and a key market condition summary.
-
-### Traditional Market Treemap
-
-The dashboard must include a traditional market heatmap/treemap:
-
-- sector or industry areas sized by market weight
-- major stocks nested inside sectors or industries
-- stock tiles sized by market capitalization or weight
-- color expressing return
-- ticker and return shown inside tiles
-- quick identification of market contribution and internal sector structure
-
-### Breadth and Participation
-
-Breadth should support advancing versus declining, above-moving-average views, new highs versus new lows, equal-weight versus cap-weight context, and participation quality. Exact formulas remain to be confirmed before implementation.
-
-### Index / Style Strength
-
-The dashboard should compare index and style relationships such as SPY, QQQ, IWM, DIA, equal weight, growth versus value, and large cap versus small cap.
-
-### Sector / Theme Rotation
-
-Rotation views should identify strengthening, weakening, improving, deteriorating, relative strength, momentum, and leadership persistence.
-
-### Dynamic Relationship & Rotation Monitor
-
-This feature is the professional expression of cross-group rotation and relationship shifts. UI terminology should use language such as Relative Leadership, Rotation, Divergence, Rolling Correlation, Relative Performance Spread, Regime Shift, and Cross-Group Relationship.
-
-Initial relationships can be curated pairs such as software versus semiconductors, mega-cap technology versus semiconductors, growth versus value, large cap versus small cap, and defensive versus cyclical. Automatic discovery is deferred.
-
-The monitor should evolve toward rolling correlation, relative performance spread, standardized spread / z-score, rolling beta, divergence, leadership change, persistence, and relationship regime change.
-
-### Key Market Developments
-
-The lightweight Event Layer should surface about 3-5 important market changes, such as breadth thrust or deterioration, leadership rotation, volatility regime change, relationship regime shift, and unusual options or volume structure.
-
-This is an internal organization layer for important findings, not a large Event Knowledge Base.
-
-## Documentation Checkpoints
-
-Before closing material work, check whether these documents need updates:
-
-- ADRs for accepted architecture decisions
-- architecture documents for system boundaries and data contracts
-- operations documents for real infrastructure or deployment state
-- current-status for actual project state
-- roadmap for sequencing changes
-- open-questions for resolved or newly discovered decisions
-- changelog for meaningful project-level changes
-- README and docs index for navigation changes
-
-## Deferred Decisions
-
-- API route structure and versioning beyond the Health API
-- database introduction threshold and database choice
-- active-model applicability, activation, decay, and retirement thresholds
-- exact canonical traditional taxonomy source or mapping methodology
-- broader Massive entitlement verification beyond the already exercised endpoints
-- formal multi-user access control beyond the personal-prototype session boundary
-- options data source
-- Cloudflare proxy state
-- obsolete OCI port rule cleanup
-- OCI swap strategy
-- long-term data backup and retention policy
-- automatic relationship discovery methodology
-
-## Non-Goals
-
-- automated trading
-- order execution
-- HFT
-- deep neural networks
-- opaque or ungoverned prediction engine
-- ungoverned large ML pipeline
-- large Event Knowledge Base
-- microservices
-- Kubernetes
-- distributed system architecture
-
-## Canonical EOD Query Boundary
-
-A private read/query boundary reads completed canonical EOD Parquet sessions and exposes default-disabled FastAPI routes only when `TIP_ENABLE_PRIVATE_MARKET_DATA_ROUTES=true`. This is a local/private development switch, not authentication or public deployment approval. The React Dashboard consumes the versioned overview payload in API mode and equivalent protected JSON in snapshot mode.
-
-## Market Summary Analytics Boundary
-
-The backend exposes default-disabled private Market Summary V1, movers, returns, Liquidity Map V1, and Dashboard Overview routes from completed canonical EOD sessions. The frontend renders these results in API or snapshot mode. Liquidity Map V1 uses close-times-volume as a liquidity proxy; it is not market-cap weighted and is not sector grouped. A traditional market-cap sector heatmap remains deferred pending market-cap, taxonomy, and point-in-time classification sources.
-
-## Opportunity Candidate Consumer Boundary
-
-The canonical Candidate audit remains an offline computation and replay
-boundary. Production consumers do not scan its `/tmp` files, recompute ranks,
-or expose the full rejected population. A single bounded language-neutral
-projection is built only after the audit reader, Oracle, equivalence, session,
-Universe, EOD, Identity, and Activation gates pass. Active Market Intelligence
-1.3 is the immutable aggregate owner; active Snapshot 1.11 / Dashboard 2.8
-exports the same Candidate publication 1.1 as protected compact summary and
-on-demand stable-ID detail shards.
-
-The React Candidate workspace selects server-calculated risk ranks and
-localizes stable codes. It never treats ticker as identity, confidence as win
-probability, ETF price proxies as formal sector membership, price/volume as
-fund flow, invalidation as a position exit, or the underlying-stock result as
-an option return. Guest and credential Sessions consume the identical file;
-role never enters the analytics, cache, or filtering boundary.
-
-ADR 0049 adds a repository-only strategy-channel shadow boundary above the
-existing Candidate and entry-geometry facts. Six fixed archetypes produce
-independent assessments and within-channel ranks; there is no cross-channel
-score. Market fit, event context, and future option expression remain separate
-axes. ADR 0057 now supplies the bounded lazy product and bilingual React
-consumer; ADR 0058 carries its exact identity through Approval Plan 2.4 and OCI
-bundle/postflight validation. The product is now published through later
-compatible contracts, but that does not make the fixed baseline
-chronologically validated.
-
-ADR 0050 separates future evaluation into sealed, outcome-free signal records
-and later-maturing forward-outcome records. Only point-in-time membership may
-be performance-eligible. The contracts are repository-only: no evaluation
-writer, historical dataset, formula, or consumer is connected to the runtime.
-
-ADR 0191 supersedes only the prior future direction that extended or tuned
-these V1 mechanics in place. Quant Research Lab now owns future strategy
-research, and one to three separately validated and activated models may later
-drive Stock Candidates. Existing contracts and publications remain truthful
-historical and Production evidence until a separately reviewed replacement.
+Quant Research Lab is the human-readable authority. Under ADR 0194, a future
+AI Quant Research Factory may support it with specialized hypothesis, data,
+implementation, statistics, cost, red-team, reproduction, and shadow-monitor
+roles. Agent work remains subject to one append-only experiment registry,
+finite search budgets, stage-specific data access, deterministic calculation,
+and human activation authority.
+
+The factory begins only after Strong-Leader Pullback proves one complete,
+rejection-capable path. Initial orchestration stays local and bounded on Dell;
+no long-running agent platform, service mesh, cluster, or automatic trading
+path is implied.
+
+## Data boundaries
+
+Provider response schemas do not enter analytics directly. The layers remain
+separate:
+
+1. source observations and transport custody;
+2. normalized provider-neutral records;
+3. canonical facts keyed by stable `instrument_id` and effective time;
+4. derived analytics and research evidence;
+5. bounded product publications; and
+6. static serving artifacts.
+
+Ticker is display metadata, not a permanent join key. Current membership,
+classification, revised facts, or successor mappings may not be projected
+backward. Unknown, ambiguous, malformed, and insufficient evidence remains
+quarantined.
+
+Raw EOD bars are retained under their documented semantics. Corporate actions,
+adjustment ledgers, lifecycle facts, labels, and model outputs remain separate
+versioned families. Price return, shareholder total return, and option return
+must never be conflated.
+
+See [Data Boundaries](data-boundaries.md),
+[Historical Research Data Foundation](historical-research-data-foundation-v1.md),
+and the [Data Contract index](../data-contracts/README.md).
+
+## Provider and credential boundary
+
+Massive is the current replaceable U.S. equity EOD/reference provider for
+private research. Provider adapters run only on Dell and return canonical
+contracts before analysis. Credentials remain outside Git, logs, browser
+bundles, and OCI artifacts. Every live request, entitlement-dependent feature,
+new source family, and canonical Apply follows its reviewed operational
+boundary.
+
+IBKR is the preferred later account/portfolio integration. Options,
+fundamentals, taxonomy, estimates, news, and lifecycle sources remain separate
+selections driven by explicit data requirements and acceptance tests.
+
+## Runtime and publication boundary
+
+The active product is a Session-protected static Snapshot deployment. Dell
+constructs immutable Market Intelligence, Dashboard Snapshot, and serving
+bundles. OCI validates and atomically selects an approved release; it does not
+run market analytics or store canonical history.
+
+Guest and credential Sessions intentionally receive identical product data and
+capability until the policy changes. Snapshot/API failures fail closed and
+never substitute synthetic Production data. Demo fixtures are development-only
+and explicitly labelled.
+
+The guarded daily chain can be run by an agent. The installed timer is read-
+only; no unattended write-capable scheduler is active. Exact current runtime
+state belongs in [current context](../project/current-context.md).
+
+## Security and operational invariants
+
+- No secret, credential, Session material, raw provider body, or private key is
+  committed or served.
+- Canonical data and completed revisions are immutable; corrections append a
+  governed version.
+- Apply, publication, deployment, rollback, scheduler mutation, and destructive
+  cleanup remain distinct reviewed operations.
+- OCI receives only bounded serving artifacts, never complete Parquet history.
+- Research code does not default to Production writes.
+- Validation and holdout custody cannot be opened by a development agent.
+- Model evidence never automatically activates Candidate output or creates an
+  order.
+
+## Deferred decisions
+
+- database introduction after measured query/concurrency need;
+- unattended write-capable daily automation;
+- exact active-model applicability, decay, and retirement thresholds;
+- complete point-in-time taxonomy, lifecycle, corporate-action, and execution-
+  cost sources;
+- options-expression, fundamentals/valuation, portfolio, and IBKR layers; and
+- any guest/credential capability difference.
+
+## Non-goals
+
+- automated trading or order execution;
+- HFT;
+- opaque or ungoverned ML/prediction engines;
+- unbounded AI factor search;
+- large microservice, Kubernetes, or distributed architectures without a
+  demonstrated requirement; and
+- a large event knowledge base.

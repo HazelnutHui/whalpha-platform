@@ -5,9 +5,9 @@ history stays in ADRs, the changelog, and audits.
 
 ## First research program
 
-- Before real outcomes are opened, should Strong-Leader Pullback keep V1's
-  whole-cross-section rejection, or should a new preregistered version define a
-  fixed admitted cohort and minimum coverage while preserving every exclusion?
+- What exact coverage threshold should follow ADR 0193's outcome-blind census,
+  and does the measured missingness permit any development cohort without
+  weakening the stable-ID, action, lifecycle, and quarantine rules?
 - What exact evidence and threshold make current-market applicability
   supportive, neutral, adverse, or unavailable without selecting the recent
   winner?
@@ -46,6 +46,12 @@ history stays in ADRs, the changelog, and audits.
   model ranks?
 - What coverage threshold permits formal sector/industry concentration while
   preserving an explicit unknown bucket?
+- What measured improvement in unique hypotheses, reproducibility, rejection
+  quality, or research time justifies expanding the first small multi-agent
+  pilot?
+- Which agent roles require technical isolation versus an independent
+  deterministic replay, and what minimum evidence shows that apparently
+  different agents are not merely repeating the same hypothesis?
 
 ## Data and operations
 

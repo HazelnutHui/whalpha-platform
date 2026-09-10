@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-10 — Reconcile the research-factory direction and documentation authority
+
+- Accepted ADR 0193. Latest-vintage reconstructed Membership may support an
+  outcome-blind Strong-Leader Pullback coverage census and, only after a
+  separate missingness-based admission decision, development work. It cannot
+  support validation, holdout, Candidate activation, or Production claims.
+- Accepted ADR 0194. AI-assisted quantitative research is a bounded backend
+  within Quant Research Lab: registered hypotheses, isolated data stages,
+  append-only attempts, deterministic evaluation, adversarial falsification,
+  and paper/shadow observation. Agent count or agreement is never evidence.
+- Aligned Product Vision, Scope, Roadmap, Lab specification, research
+  framework, open questions, architecture, application package guides, and
+  data-boundary documents with one promotion lifecycle and one authority map.
+- Replaced the 1,362-line daily EOD mixed runbook/history with a compact
+  durable control-plane runbook. Dated execution evidence remains in audits,
+  ADRs, the changelog, and Git history.
+- Removed duplicated volatile Production identifiers and superseded current-
+  state wording from default-path contracts and runbooks; Current Context and
+  Current Status remain the authoritative recovery entry points.
+- Documentation only: no model implementation, parameter search, backtest,
+  provider request, `/data` write, publication, deployment, scheduler, or
+  active Production state changed.
+
 ## 2026-09-10 — Add the transparent Lab model registry boundary
 
 - Accepted ADR 0192 and added typed model-record, result-publication, and
