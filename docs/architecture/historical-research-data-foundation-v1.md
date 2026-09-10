@@ -281,6 +281,9 @@ evaluation reproducibility through a separately reviewed deletion procedure.
 
 ## History depth
 
+- ADR 0196 sets a rolling five-calendar-year point-in-time history as the
+  first complete research-foundation target. It is the active construction
+  scope, while six- or twelve-month windows remain model calibration choices.
 - 252 contiguous completed sessions is the minimum acquisition floor in the
   current evaluation policy.
 - 504 sessions is the preferred first target for Regime-stratified review.
@@ -291,6 +294,9 @@ evaluation reproducibility through a separately reviewed deletion procedure.
 - The original 29-session sequence was mechanics-only. Canonical EOD/Identity
   now exceeds the 252-session floor, but the full research foundation remains
   blocked by the other required families and Coverage publication.
+- Stable identity, lifecycle, corporate actions, terminal outcomes,
+  superseded revisions, and research evidence remain append-only while source
+  permission permits; the rolling window is not a deletion instruction.
 
 ## Physical storage direction
 

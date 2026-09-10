@@ -31,6 +31,7 @@ panels, and product publications remain separate.
 - [Universe Membership Canonical Publication V1](universe-membership-canonical-publication-v1.md)
 - [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
 - [Historical Research Foundation V1](historical-research-foundation-v1.md)
+- [Five-Year Research Foundation Census V1](five-year-research-foundation-census-v1.md)
 - [Historical Source Package V1](historical-source-package-v1.md)
 - [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
 - [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)

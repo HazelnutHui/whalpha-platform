@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0196](0196-build-a-five-year-point-in-time-research-foundation-on-dell.md):
+  makes a Dell-owned five-year point-in-time foundation the data-program
+  authority, composes Massive with reviewed official/free evidence, and
+  defers paid expansion until a measured residual gap requires it.
 - [ADR 0195](0195-require-complete-session-cross-sections-for-reconstructed-development.md):
   requires 100%-complete Primary session cross-sections and at least 252
   sessions before latest-vintage development can be admitted.
@@ -50,6 +54,8 @@ accepted ADR was deployed unless current operational evidence says so.
   outcome-free signals from later labels.
 - [ADR 0051](0051-require-point-in-time-historical-research-foundation.md):
   require point-in-time population, actions, lifecycle, and adjustments.
+- [ADR 0196](0196-build-a-five-year-point-in-time-research-foundation-on-dell.md):
+  set the first complete history boundary and source-composition program.
 - [ADR 0056](0056-prototype-explainable-strategy-channels-offline.md): build the
   provisional technical channel baseline.
 - [ADR 0097](0097-preregister-personal-strategy-research-before-backtesting.md):

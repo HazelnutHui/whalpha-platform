@@ -57,6 +57,8 @@ Stock Candidates.
   standalone end-to-end research method.
 - [Historical Research Data Foundation V1](architecture/historical-research-data-foundation-v1.md):
   point-in-time data and readiness requirements.
+- [Five-Year Research Foundation Census V1](data-contracts/five-year-research-foundation-census-v1.md):
+  exact rolling target and family-by-family coverage diagnostic.
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md):
   signals, labels, chronology, and stock-outcome boundary.
 - [Candidate Strategy Research Experiment V1](data-contracts/candidate-strategy-research-experiment-v1.md):
@@ -89,7 +91,8 @@ Pivotal research ADRs include
 [0192](decisions/0192-publish-lab-model-records-without-candidate-authority.md),
 [0193](decisions/0193-admit-latest-vintage-reconstruction-for-development-only.md),
 [0194](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md),
-and [0195](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md).
+[0195](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md),
+and [0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md).
 
 ## Architecture and data
 
@@ -104,6 +107,7 @@ and [0195](decisions/0195-require-complete-session-cross-sections-for-reconstruc
 - [Private Dashboard Publication](architecture/private-dashboard-publication.md)
 - [Data Contract Index](data-contracts/README.md)
 - [Provider Review Index](providers/README.md)
+- [Five-Year Foundation Baseline](audits/five-year-research-foundation-baseline-2026-09-10.md)
 
 Dell owns code, data, governance, and heavy computation. OCI receives only
 separately approved bounded serving artifacts.

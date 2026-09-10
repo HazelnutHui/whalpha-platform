@@ -206,6 +206,19 @@ from tip_api.contracts.market_data.v1.classification import (
     ExternalClassificationPathNodeV1,
     classification_fingerprint,
 )
+from tip_api.contracts.market_data.v1.five_year_research_foundation import (
+    FIVE_YEAR_FOUNDATION_FAMILY_ORDER,
+    FIVE_YEAR_PRICE_STRATEGY_REQUIRED_FAMILIES,
+    FIVE_YEAR_PROGRAM_REQUIRED_FAMILIES,
+    FiveYearFoundationCensusStatus,
+    FiveYearFoundationCoverageStatus,
+    FiveYearFoundationEvidenceTier,
+    FiveYearFoundationFamily,
+    FiveYearFoundationFamilyCensusV1,
+    FiveYearResearchFoundationCensusV1,
+    build_five_year_research_foundation_census,
+    five_year_foundation_census_fingerprint,
+)
 
 __all__ = [
     "ClassificationAssignmentBasis",
@@ -378,4 +391,15 @@ __all__ = [
     "universe_membership_apply_plan_fingerprint",
     "universe_membership_candidate_inventory_fingerprint",
     "universe_membership_publication_fingerprint",
+    "FIVE_YEAR_FOUNDATION_FAMILY_ORDER",
+    "FIVE_YEAR_PRICE_STRATEGY_REQUIRED_FAMILIES",
+    "FIVE_YEAR_PROGRAM_REQUIRED_FAMILIES",
+    "FiveYearFoundationCensusStatus",
+    "FiveYearFoundationCoverageStatus",
+    "FiveYearFoundationEvidenceTier",
+    "FiveYearFoundationFamily",
+    "FiveYearFoundationFamilyCensusV1",
+    "FiveYearResearchFoundationCensusV1",
+    "build_five_year_research_foundation_census",
+    "five_year_foundation_census_fingerprint",
 ]

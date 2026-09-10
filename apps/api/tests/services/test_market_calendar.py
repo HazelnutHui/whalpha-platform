@@ -92,3 +92,15 @@ def test_calendar_failure_is_safe_unavailable() -> None:
 def test_naive_datetime_is_rejected(calendar: ExchangeCalendar) -> None:
     with pytest.raises(ValueError, match="timezone-aware"):
         calendar.latest_completed_session(datetime(2026, 8, 15, 12))
+
+
+def test_sessions_in_range_is_inclusive_and_rejects_reversed_range(
+    calendar: ExchangeCalendar,
+) -> None:
+    assert calendar.sessions_in_range(date(2026, 8, 14), date(2026, 8, 18)) == (
+        date(2026, 8, 14),
+        date(2026, 8, 17),
+        date(2026, 8, 18),
+    )
+    with pytest.raises(MarketCalendarError, match="must not precede"):
+        calendar.sessions_in_range(date(2026, 8, 18), date(2026, 8, 14))

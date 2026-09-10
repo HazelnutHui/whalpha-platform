@@ -241,19 +241,31 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-1. Obtain and review the prepared LSEG DataScope Select lifecycle/action
-   sample and quote against the same mandatory gates; Massive Starter has now
-   failed the sole-primary diagnostic. Do not implement an adapter from
-   marketing fields or open strategy outcomes.
-2. Repeat the versioned outcome-blind census and admission decision; either
+The ADR 0196 baseline census now fixes 2021-09-09 through 2026-09-09 as 1,255
+XNYS sessions. EOD and Identity cover 306 sessions and miss 949; normalized
+Identity source custody covers 304 and misses 951; Membership covers three and
+misses 1,252. Lifecycle, point-in-time classification, point-in-time
+fundamentals, and complete Historical Coverage are absent. The census is
+`quarantined`, fingerprint
+`c19c520f202aacef0dada46cf82e984ccba6b77078d667363eccfcc152a81bfb`.
+
+1. Prove Massive Starter's oldest required EOD and dated-reference depth and
+   pagination through one bounded pilot, then freeze the 949-session backfill
+   plan if it passes.
+2. Use Massive as the primary price/reference source and evaluate official
+   free evidence through bounded source-specific pilots. Preserve every
+   conflict, missing semantic, and permission limit; no first-non-null merge.
+3. Repair historical Membership, identity/lifecycle, actions, terminal
+   outcomes, adjustments, and transitive Historical Coverage in independent
+   stages. Re-run ADR 0195 after mandatory-family evidence changes and either
    admit at least 252 complete session cross-sections or retain rejection.
-3. Only after admission, run Strong-Leader Pullback development; locked
+4. Only after admission, run Strong-Leader Pullback development; locked
    point-in-time validation,
    sealed holdout, and prospective shadow under their exact evidence tiers.
-4. Retain either validated evidence or recorded failure without editing V1.
-5. Generalize the proven path into a small, bounded multi-agent pilot under ADR
+5. Retain either validated evidence or recorded failure without editing V1.
+6. Generalize the proven path into a small, bounded multi-agent pilot under ADR
    0194; scale only after measured benefit and holdout integrity.
-6. Activate a model only through separate review; then redesign Candidate.
+7. Activate a model only through separate review; then redesign Candidate.
 
 One bounded next-session automation rehearsal and normal daily reliability work
 may proceed in parallel when an eligible session exists. They must not block

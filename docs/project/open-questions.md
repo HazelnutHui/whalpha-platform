@@ -16,9 +16,9 @@ history stays in ADRs, the changelog, and audits.
 
 ## Missing point-in-time evidence
 
-- Which cross-venue licensed source can provide effective-dated lifecycle,
-  terminal outcome, successor/consideration, revision, and availability clocks
-  and pass the frozen sample diagnostic?
+- After the ADR 0196 Massive/official-free composition is measured across the
+  five-year target, which exact lifecycle or terminal facts remain materially
+  unresolved, and do they justify a paid cross-venue source?
 - Which independent source resolves corporate-action date semantics, dividend
   currency/order handling, unexplained discontinuities, and total-return
   adjustments?
@@ -54,7 +54,8 @@ history stays in ADRs, the changelog, and audits.
 
 - What is the guaranteed or empirically stable same-evening Grouped Daily
   finality window under Stocks Starter?
-- Does the exact Stocks Starter endpoint provide the expected five-year depth?
+- Does the exact Stocks Starter endpoint provide the expected rolling
+  five-calendar-year EOD and dated-reference depth with complete pagination?
 - What backup/recovery and source-termination policy governs no-expiry
   canonical history and sealed research evidence?
 - When do real query/concurrency needs justify a database rather than current

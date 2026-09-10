@@ -139,15 +139,24 @@ that fixes both known gaps.
 
 ## Next priority
 
-1. Request and evaluate the prepared LSEG DataScope Select lifecycle/action
-   sample and quote against the gates Massive Starter failed; do not implement
-   an adapter before real fields arrive.
-2. Repeat the outcome-blind census and decision, then admit at least 252
+The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
+2021-09-09 through 2026-09-09. Current exact coverage is EOD 306/1,255,
+Identity 306/1,255, normalized Identity source 304/1,255, and Membership
+3/1,255. Required lifecycle, PIT classification, PIT fundamentals, and
+Historical Coverage are absent; status remains `quarantined`.
+
+1. Run a bounded oldest-date Massive Starter entitlement/semantic pilot and,
+   if accepted, freeze the exact 949-session EOD/Identity acquisition plan.
+2. Continue independent construction using Massive plus bounded official/free
+   source pilots for identity, listing status, lifecycle, corporate actions,
+   terminal outcomes, and point-in-time fundamentals. LSEG is a later
+   measured-gap option rather than the mandatory next dependency.
+3. Repeat the outcome-blind census and decision, then admit at least 252
    complete session cross-sections or retain rejection without opening outcomes.
-3. Execute the registered chronological research only after admission, and
+4. Execute the registered chronological research only after admission, and
    retain success or failure.
-4. Generalize only the proven path into a bounded multi-agent research pilot.
-5. Activate and connect a model to Stock Candidates only after separate
+5. Generalize only the proven path into a bounded multi-agent research pilot.
+6. Activate and connect a model to Stock Candidates only after separate
    operational review.
 
 Daily reliability and one bounded next-session automation rehearsal may proceed

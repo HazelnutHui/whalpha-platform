@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-10 — Adopt a Dell-owned five-year point-in-time foundation
+
+- Accepted ADR 0196 and made a rolling five-calendar-year point-in-time
+  foundation the first complete research-data target. Six- or twelve-month
+  model windows remain calibration choices rather than database-retention
+  limits.
+- Kept Massive Stocks Starter as the primary price/reference input while
+  assigning bounded corroboration roles to SEC EDGAR, FINRA OTC evidence,
+  OpenFIGI, Alpha Vantage Listing Status, prospective Nasdaq Trader directories,
+  and named official issuer/venue records.
+- Superseded the mandatory LSEG-first implementation order without weakening
+  the existing stable-ID, source-time, sample, permission, conflict,
+  completeness, or quarantine gates. Paid expansion now follows a measured
+  residual-gap census.
+- Preserved the current 100%-complete session-cross-section admission rule and
+  all research/holdout/activation boundaries. This entry records the decision
+  only.
+- Implemented the typed, fingerprinted, network-disabled five-year coverage
+  census and ran it against Dell. The exact target is 1,255 XNYS sessions from
+  2021-09-09 through 2026-09-09. EOD/Identity cover 306 sessions, normalized
+  Identity source custody covers 304, and Membership covers three; lifecycle,
+  PIT classification, PIT fundamentals, and complete Historical Coverage are
+  absent. The result is `quarantined`, fingerprint
+  `c19c520f202aacef0dada46cf82e984ccba6b77078d667363eccfcc152a81bfb`.
+- The census made no provider request, `/data` write, performance result,
+  publication, deployment, scheduler, or Production change.
+
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 
 - Reused the frozen ADR 0168 30-item diagnostic across ARCX, BATS, XASE, XNAS,

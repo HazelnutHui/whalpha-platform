@@ -6,8 +6,10 @@ This matrix separates repository-verified capability, publicly documented
 potential, live entitlement, and missing implementation for the historical
 research foundation.
 
-Repository-verified operational evidence is current through 2026-09-09. The
-latest narrow official-public-page reconciliation covers current-session EOD
+Repository-verified operational evidence is current through 2026-09-09. ADR
+0196 makes the Dell-owned rolling five-year foundation and reviewed
+Massive/official-free composition the active construction program. The latest
+narrow official-public-page reconciliation covers current-session EOD
 access on 2026-09-09; the broader source and permission comparison remains
 dated 2026-08-28. Later
 bounded account operations established technical access and retained source
@@ -30,8 +32,10 @@ composition under Source Permission Governance V1.
 The narrower 2026-09-08
 [Lifecycle Corroboration Source Review](lifecycle-corroboration-source-review-2026-09-08.md)
 compares current official cross-venue and exchange documentation against the
-exact 547-item inactive queue. LSEG is the preferred first inquiry/sample
-candidate, while Nasdaq, NYSE, and Cboe remain official venue benchmarks. No
+exact 547-item inactive queue. LSEG was the preferred first inquiry/sample
+candidate under ADR 0168, while Nasdaq, NYSE, and Cboe remain official venue
+benchmarks. ADR 0196 supersedes that mandatory ordering: LSEG is now a later
+measured-gap option. No
 additional cross-venue lifecycle source has been selected, purchased, accessed,
 permission-cleared, or implemented.
 
@@ -131,10 +135,14 @@ with a cross-venue source to minimize fragmentation, then use exchange sources
 as authoritative benchmarks or bounded corroborators. This ordering does not
 weaken stable-ID or family-specific resolution gates.
 
-Free sources should be evaluated before paid expansion, but this document does
-not guess which free source is complete enough. A paid source should later plug
-into the same provider-neutral observations and must expand coverage rather
-than replace canonical identities or rewrite history.
+Free sources should be evaluated before paid expansion, but no one free source
+is promoted to sole authority. ADR 0196 assigns initial bounded roles to SEC
+EDGAR, FINRA OTC Daily List/notices, OpenFIGI, Alpha Vantage Listing Status,
+Nasdaq Trader current Symbol Directory, and named issuer/venue evidence. Each
+role remains narrower than the source's marketing description and must pass a
+fixture-first pilot. A paid source should later plug into the same provider-
+neutral observations and must expand measured coverage rather than replace
+canonical identities or rewrite history.
 
 ## Prepared next review packet
 
@@ -154,6 +162,7 @@ covering the commercial and open-source questions below. It remains
 - explicit list of gaps that remain after the pilot.
 
 The packet is a review artifact, not standing authority. For lifecycle, the
-next external input is a price/sample/permission response for the preferred
-cross-venue candidate and alternatives. Provider contact, purchase, access,
-pilot execution, and canonical Apply remain separately authorized transitions.
+next external work is the ADR 0196 family census and bounded official/free
+source pilots. A commercial sample/price comparison follows only if that
+evidence leaves a measured material gap. Provider contact, purchase, access,
+pilot execution, and canonical Apply remain separately governed transitions.

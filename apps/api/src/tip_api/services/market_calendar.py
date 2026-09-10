@@ -47,6 +47,10 @@ class MarketSessionCalendar(Protocol):
 
     def sessions_before(self, session_date: date, count: int) -> tuple[date, ...]: ...
 
+    def sessions_in_range(
+        self, start_date: date, end_date: date
+    ) -> tuple[date, ...]: ...
+
 
 @dataclass(frozen=True, slots=True)
 class MarketDataFreshness:
@@ -176,6 +180,26 @@ class ExchangeCalendar:
             raise
         except Exception as exc:
             raise MarketCalendarError("market calendar could not build history window") from exc
+
+    def sessions_in_range(
+        self, start_date: date, end_date: date
+    ) -> tuple[date, ...]:
+        if end_date < start_date:
+            raise MarketCalendarError("session range end must not precede start")
+        try:
+            labels = self.calendar.sessions_in_range(
+                pd.Timestamp(start_date), pd.Timestamp(end_date)
+            )
+            result = tuple(label.date() for label in labels)
+            if not result:
+                raise MarketCalendarError("session range contains no market sessions")
+            return result
+        except MarketCalendarError:
+            raise
+        except Exception as exc:
+            raise MarketCalendarError(
+                "market calendar could not build session range"
+            ) from exc
 
 
 def evaluate_market_data_freshness(

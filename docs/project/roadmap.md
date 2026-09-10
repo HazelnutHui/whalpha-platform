@@ -86,6 +86,13 @@ real result scopes remain separately guarded.
 Strong-Leader Pullback remains first. Price depth is sufficient, but its exact
 point-in-time research panel is not.
 
+ADR 0196 now makes the Dell-owned rolling five-year foundation the active data
+program. Construction proceeds family by family with Massive as the primary
+price/reference source and bounded official/free corroboration. A paid
+cross-venue source is reconsidered only after the residual-gap census proves a
+named blocking fact cannot be established professionally by the composed
+sources.
+
 ADR 0193 resolves the first admission-policy question without weakening final
 evidence. The later-retrieved, historical-date Identity interval may first be
 used only for an outcome-blind coverage census. ADR 0195 requires complete
@@ -95,6 +102,12 @@ point-in-time evidence.
 
 Required work:
 
+- define and census the exact rolling five-year XNYS target, including
+  explicitly separate experiment warm-up and outcome-tail sessions;
+- expand EOD/Identity from the current acquired interval to that target while
+  preserving exact source custody;
+- reconstruct daily historical Membership without projecting current
+  constituents or current classifications backward;
 - completed 2026-09-10: the fixed census reconciled 437,402 raw-complete
   included paths but zero all-required-evidence-complete paths, without
   calculating triggers, returns, metrics, or parameter results;
