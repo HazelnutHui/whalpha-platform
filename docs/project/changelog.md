@@ -26,6 +26,10 @@
   `c19c520f202aacef0dada46cf82e984ccba6b77078d667363eccfcc152a81bfb`.
 - The census made no provider request, `/data` write, performance result,
   publication, deployment, scheduler, or Production change.
+- Made the existing Massive historical entitlement probe work from a saved
+  Codex worktree by resolving the shared project Python runtime through the
+  repository launcher; request limits and exact-authorization behavior are
+  unchanged.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 
