@@ -13,6 +13,13 @@ The authoritative first interval is 2021-09-09 through 2026-09-09, exactly
 shortcut must not be used for this run because a later daily append would move
 the left boundary.
 
+The first evaluation session's trailing-liquidity Membership calculation needs
+20 earlier XNYS support sessions: 2021-08-11 through 2021-09-08. They are a
+separate warm-up extension, not part of the 1,255-session evaluation count.
+The current exact-interval run intentionally stops at 2021-09-09; support
+acquisition follows as a separately measured route after the nominal interval
+and must not be hidden by moving the evaluation boundary.
+
 ## Source routes
 
 - Massive Day Aggregates Flat Files are the preferred bulk EOD source. They
@@ -94,5 +101,10 @@ EOD/Identity acquisition is complete only when:
 5. a fresh five-year foundation census reports the exact family counts; and
 6. conflicts, endpoint-denied dates, and source-route substitutions are
    preserved in a dated audit.
+
+The later Membership stage additionally requires formal readback of the 20
+support sessions. A missing support session blocks only the earliest dependent
+Membership sessions; it does not relabel the rest of the acquired five-year
+EOD/Identity interval incomplete.
 
 This milestone does not change research readiness or publish anything to OCI.

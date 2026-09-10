@@ -17,6 +17,7 @@ DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME = (
 )
 DAILY_PRICE_ACQUISITION_PACKAGE_NAME = "eod-acquisition-package"
 DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME = "eod-canonical-apply-plan.json"
+RESEARCH_MEMBERSHIP_APPLY_PLAN_NAME = "research-membership-apply-plan.json"
 DAILY_EOD_SERVING_BUNDLE_ROOT_NAME = "serving-bundle"
 
 _DAILY_DATA_PACKAGE_NAMES = frozenset(

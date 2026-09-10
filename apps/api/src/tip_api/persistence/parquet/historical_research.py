@@ -56,6 +56,20 @@ HistoricalRecord: TypeAlias = (
 )
 RecordT = TypeVar("RecordT", bound=HistoricalRecord)
 
+
+def read_universe_membership_partition_content(
+    partition_path: Path,
+) -> tuple[UniverseMembershipDecisionV1, ...]:
+    """Formally validate Membership bytes when namespace is governed elsewhere."""
+
+    spec = _SPECS[HistoricalDatasetFamily.UNIVERSE_MEMBERSHIP]
+    records, _ = _read_partition(partition_path, spec)
+    if any(not isinstance(record, UniverseMembershipDecisionV1) for record in records):
+        raise HistoricalResearchCorruptionError(
+            "partition returned an unexpected Membership record type"
+        )
+    return records  # type: ignore[return-value]
+
 CORPORATE_ACTION_OBSERVATION_ARROW_SCHEMA = pa.schema(
     [
         pa.field("schema_version", pa.string(), nullable=False),

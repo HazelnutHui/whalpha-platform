@@ -11,6 +11,7 @@ from tip_api.contracts.market_data.v1 import (
 from tip_api.services.five_year_research_foundation_census import (
     FiveYearResearchFoundationCensusError,
     _build_family_census,
+    _combined_membership_inventory,
     _membership_publication_dates,
 )
 
@@ -157,3 +158,32 @@ def test_membership_dates_are_deduplicated_across_methodologies(
         )
 
     assert _membership_publication_dates(tmp_path) == (date(2026, 1, 2),)
+
+
+def test_membership_inventory_keeps_reconstructed_and_signal_tiers_separate() -> None:
+    signal = _inventory(
+        FiveYearFoundationFamily.UNIVERSE_MEMBERSHIP,
+        partition_count=2,
+        record_count=40,
+        quarantined_record_count=1,
+    )
+    combined = _combined_membership_inventory(
+        signal,
+        signal_membership_dates=(date(2026, 1, 5), date(2026, 1, 6)),
+        research_membership={
+            "partition_count": 2,
+            "record_count": 30,
+            "quarantined_record_count": 3,
+            "session_dates": (date(2026, 1, 2), date(2026, 1, 5)),
+        },
+    )
+
+    assert combined["partition_count"] == 4
+    assert combined["record_count"] == 70
+    assert combined["quarantined_record_count"] == 4
+    assert combined["covered_session_count"] == 3
+    assert combined["five_year_evidence_tier"] == "mixed"
+    assert combined["research_ready"] is False
+    assert "reconstructed_membership_not_signal_eligible" in combined[
+        "five_year_reason_codes"
+    ]

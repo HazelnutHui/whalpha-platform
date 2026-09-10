@@ -109,7 +109,12 @@ Required work:
   while the preferred Flat File EOD route still awaits its separate S3
   credential and REST-authorized dates may proceed independently;
 - reconstruct daily historical Membership without projecting current
-  constituents or current classifications backward;
+  constituents or current classifications backward; ADR 0197 requires its
+  durable latest-vintage output to live in a research-only family, separate
+  from signal-eligible Membership; the first 300 sessions through 2026-09-03
+  are now durably archived and formally reread;
+- acquire 20 explicit trailing-liquidity support sessions from 2021-08-11
+  through 2021-09-08 without moving the five-year evaluation boundary;
 - completed 2026-09-10: the fixed census reconciled 437,402 raw-complete
   included paths but zero all-required-evidence-complete paths, without
   calculating triggers, returns, metrics, or parameter results;

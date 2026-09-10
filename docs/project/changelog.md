@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-09-10 — Separate historical research Membership custody
+
+- Accepted ADR 0197. Latest-vintage reconstructed historical Membership will
+  use a durable research-only `/data` family and marker; the existing
+  signal-eligible Membership and next-open publication reader remain unchanged.
+- Bound the research marker to exact manifest/Parquet bytes and denied signal,
+  validation, holdout, performance, Candidate, Production, and web authority.
+- Identified the exact 20-session trailing-liquidity support interval required
+  before the first five-year evaluation session: 2021-08-11 through
+  2021-09-08. These sessions are warm-up custody, not part of the 1,255-session
+  evaluation count.
+- Started the finite Dell exact-interval EOD/Identity unit at 2026-09-10
+  08:54:25 UTC. It has 24-hour, 2-GiB, serial-request limits and retains each
+  completed session independently; no Production or OCI state changed.
+- Implemented typed research-custody and exact Apply-plan contracts, a formal
+  marker/Parquet reader, atomic no-overwrite Apply, resumable bulk archive, and
+  census integration. Related fixture and regression tests pass.
+- Applied and formally reread all 300 candidate sessions / 5,571,154 decisions
+  from 2025-06-23 through 2026-09-03 with zero failures, overwrites, deletions,
+  or external requests. Signal-eligible Membership paths remained untouched.
+- The postflight five-year census reports 303/1,255 Membership sessions,
+  including the three prospective sessions, at mixed evidence tier. It remains
+  quarantined with fingerprint
+  `c193895b7cb795fb5054c5e8493bb7c5e438e646c37e03d336a82d52f3a903e7`.
+- The concurrent EOD/Identity unit correctly stopped on whole-data CAS drift
+  after the research-family write. EOD reached 346 sessions; Identity reached
+  347 with 2025-04-23 retained as the one Identity-only continuation point.
+  No overwrite or staging residue occurred. Canonical writers will resume
+  serially.
+
 ## 2026-09-10 — Adopt a Dell-owned five-year point-in-time foundation
 
 - Accepted ADR 0196 and made a rolling five-calendar-year point-in-time

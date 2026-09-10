@@ -20,6 +20,15 @@ from tip_api.contracts.market_data.v1 import (
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.services.current_context_report import _historical_research_readiness
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
+from tip_api.services.research_universe_membership_canonical import (
+    FAMILY_DIRECTORY as RESEARCH_MEMBERSHIP_FAMILY_DIRECTORY,
+    read_canonical_research_universe_membership,
+)
+
+
+RESEARCH_MEMBERSHIP_METHODOLOGY = (
+    "provider-form-complete-base-point-in-time-v3"
+)
 
 
 class FiveYearResearchFoundationCensusError(RuntimeError):
@@ -57,10 +66,24 @@ def assess_five_year_research_foundation(
         history_validation_scope="completion_index_plus_family_formal_reads",
     )
     inventories = {item["family"]: item for item in readiness["families"]}
+    signal_membership_dates = _membership_publication_dates(data_root)
+    research_membership = _research_membership_inventory(data_root)
+    inventories[FiveYearFoundationFamily.UNIVERSE_MEMBERSHIP.value] = (
+        _combined_membership_inventory(
+            inventories[FiveYearFoundationFamily.UNIVERSE_MEMBERSHIP.value],
+            signal_membership_dates=signal_membership_dates,
+            research_membership=research_membership,
+        )
+    )
     families = _build_family_census(
         target_sessions=target_sessions,
         eod_sessions=eod_sessions,
-        membership_session_dates=_membership_publication_dates(data_root),
+        membership_session_dates=tuple(
+            sorted(
+                set(signal_membership_dates)
+                | set(research_membership["session_dates"])
+            )
+        ),
         inventories=inventories,
     )
     return build_five_year_research_foundation_census(
@@ -150,13 +173,21 @@ def _build_family_census(
                 item for item in membership_session_dates if item in target_set
             ),
             inventory=membership,
-            evidence_tier=(
-                FiveYearFoundationEvidenceTier.AS_OPERATED
-                if membership.get("partition_count", 0)
-                else FiveYearFoundationEvidenceTier.MISSING
+            evidence_tier=FiveYearFoundationEvidenceTier(
+                membership.get(
+                    "five_year_evidence_tier",
+                    FiveYearFoundationEvidenceTier.AS_OPERATED
+                    if membership.get("partition_count", 0)
+                    else FiveYearFoundationEvidenceTier.MISSING,
+                )
             ),
-            source_ids=("whalpha",) if membership.get("partition_count", 0) else (),
+            source_ids=tuple(membership.get("five_year_source_ids", ("whalpha",)))
+            if membership.get("partition_count", 0)
+            else (),
             partial_reason="five_year_membership_sessions_missing",
+            additional_reason_codes=tuple(
+                membership.get("five_year_reason_codes", ())
+            ),
         ),
         _sparse_family(
             family=FiveYearFoundationFamily.CORPORATE_ACTION_SOURCE,
@@ -257,6 +288,7 @@ def _session_family(
     evidence_tier: FiveYearFoundationEvidenceTier,
     source_ids: tuple[str, ...],
     partial_reason: str,
+    additional_reason_codes: tuple[str, ...] = (),
 ) -> FiveYearFoundationFamilyCensusV1:
     covered_count = len(covered_sessions)
     target_count = len(target_sessions)
@@ -269,13 +301,14 @@ def _session_family(
         if covered_count == target_count
         else FiveYearFoundationCoverageStatus.PARTIAL
     )
-    reasons = (
+    status_reasons = (
         ("formal_family_coverage_unpublished",)
         if status is FiveYearFoundationCoverageStatus.COVERAGE_UNPUBLISHED
         else (partial_reason,)
         if status is FiveYearFoundationCoverageStatus.PARTIAL
         else (f"{family.value}_absent",)
     )
+    reasons = tuple(sorted(set(status_reasons) | set(additional_reason_codes)))
     return FiveYearFoundationFamilyCensusV1(
         family=family,
         program_required=family in FIVE_YEAR_PROGRAM_REQUIRED_FAMILIES,
@@ -433,6 +466,137 @@ def _membership_publication_dates(data_root: Path) -> tuple[date, ...]:
             )
         dates.append(parsed)
     return tuple(sorted(set(dates)))
+
+
+def _research_membership_inventory(data_root: Path) -> dict[str, Any]:
+    root = (
+        data_root
+        / "market-data"
+        / RESEARCH_MEMBERSHIP_FAMILY_DIRECTORY
+        / "schema_version=1"
+        / "evidence_tier=reconstructed-latest-vintage-v1"
+        / f"methodology_version={RESEARCH_MEMBERSHIP_METHODOLOGY}"
+    )
+    if not root.exists():
+        return {
+            "partition_count": 0,
+            "record_count": 0,
+            "quarantined_record_count": 0,
+            "session_dates": (),
+        }
+    if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
+        raise FiveYearResearchFoundationCensusError(
+            "research Membership root is unsafe"
+        )
+    dates: list[date] = []
+    records = 0
+    quarantined = 0
+    for partition in sorted(root.glob("session_date=*")):
+        if partition.is_symlink() or not partition.is_dir():
+            raise FiveYearResearchFoundationCensusError(
+                "research Membership partition is unsafe"
+            )
+        session = _date_or_none(partition.name.removeprefix("session_date="))
+        if session is None:
+            raise FiveYearResearchFoundationCensusError(
+                "research Membership session is absent"
+            )
+        try:
+            evidence = read_canonical_research_universe_membership(
+                data_root=data_root,
+                methodology_version=RESEARCH_MEMBERSHIP_METHODOLOGY,
+                session_date=session,
+                read_records=False,
+            )
+        except Exception as exc:
+            raise FiveYearResearchFoundationCensusError(
+                "research Membership formal metadata read failed"
+            ) from exc
+        dates.append(session)
+        records += evidence.membership_manifest.record_count
+        quarantined += sum(
+            item.quarantined_count
+            for item in evidence.membership_manifest.disposition_summaries
+        )
+    if len(dates) != len(set(dates)):
+        raise FiveYearResearchFoundationCensusError(
+            "research Membership sessions are duplicated"
+        )
+    return {
+        "partition_count": len(dates),
+        "record_count": records,
+        "quarantined_record_count": quarantined,
+        "session_dates": tuple(dates),
+        "first_session": dates[0].isoformat() if dates else None,
+        "last_session": dates[-1].isoformat() if dates else None,
+    }
+
+
+def _combined_membership_inventory(
+    signal_inventory: dict[str, Any],
+    *,
+    signal_membership_dates: tuple[date, ...],
+    research_membership: dict[str, Any],
+) -> dict[str, Any]:
+    research_dates = tuple(research_membership.get("session_dates", ()))
+    combined_dates = tuple(sorted(set(signal_membership_dates) | set(research_dates)))
+    signal_present = bool(signal_membership_dates)
+    research_present = bool(research_dates)
+    evidence_tier = (
+        FiveYearFoundationEvidenceTier.MIXED
+        if signal_present and research_present
+        else FiveYearFoundationEvidenceTier.RECONSTRUCTED_LATEST_VINTAGE
+        if research_present
+        else FiveYearFoundationEvidenceTier.AS_OPERATED
+        if signal_present
+        else FiveYearFoundationEvidenceTier.MISSING
+    )
+    result = dict(signal_inventory)
+    result.update(
+        {
+            "custody_state": (
+                "research_and_signal_membership_separated"
+                if signal_present and research_present
+                else "research_membership_custody"
+                if research_present
+                else result.get("custody_state", "absent")
+            ),
+            "partition_count": int(signal_inventory.get("partition_count", 0))
+            + int(research_membership.get("partition_count", 0)),
+            "record_count": int(signal_inventory.get("record_count", 0))
+            + int(research_membership.get("record_count", 0)),
+            "quarantined_record_count": int(
+                signal_inventory.get("quarantined_record_count", 0)
+            )
+            + int(research_membership.get("quarantined_record_count", 0)),
+            "covered_session_count": len(combined_dates),
+            "first_session": combined_dates[0].isoformat()
+            if combined_dates
+            else None,
+            "last_session": combined_dates[-1].isoformat()
+            if combined_dates
+            else None,
+            "research_ready": False,
+            "five_year_evidence_tier": evidence_tier.value,
+            "five_year_source_ids": tuple(
+                sorted(
+                    {"whalpha"}
+                    | ({"massive"} if research_present else set())
+                )
+            )
+            if combined_dates
+            else (),
+            "five_year_reason_codes": (
+                (
+                    "reconstructed_membership_not_signal_eligible",
+                    "research_and_signal_membership_physically_separated",
+                )
+                if research_present
+                else ()
+            ),
+        }
+    )
+    return result
 
 
 def _optional_non_negative_int(value: Any) -> int | None:

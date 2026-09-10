@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0197](0197-separate-reconstructed-research-membership-from-signal-eligible-membership.md):
+  stores latest-vintage historical Membership in a research-only family and
+  keeps it physically and semantically separate from next-open signal-eligible
+  Membership.
 - [ADR 0196](0196-build-a-five-year-point-in-time-research-foundation-on-dell.md):
   makes a Dell-owned five-year point-in-time foundation the data-program
   authority, composes Massive with reviewed official/free evidence, and
@@ -88,6 +92,8 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
+- ADR 0197 separates durable research Membership custody from signal-eligible
+  Membership publication.
 
 ## Runtime and publication decisions
 

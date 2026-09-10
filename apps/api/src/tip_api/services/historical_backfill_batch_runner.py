@@ -618,6 +618,12 @@ def _prepare_package_root(path: Path) -> Path:
     return path.resolve()
 
 
+def prepare_historical_backfill_workspace(path: Path) -> Path:
+    """Prepare the governed persistent or temporary multi-family workspace."""
+
+    return _prepare_package_root(path)
+
+
 def _prepare_persistent_package_base() -> None:
     base = APPROVED_PERSISTENT_PACKAGE_BASE
     parent = base.parent
@@ -664,3 +670,12 @@ def _prepare_session_root(root: Path, session_date: date) -> Path:
             "session package root must be owner-only"
         )
     return path
+
+
+def prepare_historical_backfill_session_workspace(
+    root: Path,
+    session_date: date,
+) -> Path:
+    """Prepare one owner-only session below a validated workspace root."""
+
+    return _prepare_session_root(root, session_date)

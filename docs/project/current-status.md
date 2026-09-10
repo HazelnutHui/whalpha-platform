@@ -25,12 +25,17 @@ login and final visual appearance remain manual checks.
 
 ## Data
 
-- EOD and Identity are aligned through 2026-09-09 with 313 contiguous sessions.
-  Latest EOD has 9,916 rows; latest Identity has 9,982 instruments.
-- Historical Identity source custody has 311 partitions; 2026-08-13 and
+- EOD has 346 contiguous sessions from 2025-04-24 through 2026-09-09. Identity
+  has 347 partitions from 2025-04-23; that earliest date is the one retained
+  Identity-only continuation point. Latest EOD has 9,916 rows; latest Identity
+  has 9,982 instruments.
+- Historical Identity source custody has 345 partitions; 2026-08-13 and
   2026-08-19 remain explicitly unbound.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
+- Research-only latest-vintage Membership has 300 sessions and 5,571,154
+  decisions. It is physically separate and has no signal, performance,
+  Candidate, Production, or web authority.
 - Corporate-action source custody has 70,099 bounded observations. Canonical
   split-only facts and a sparse affected-path adjustment ledger exist, but
   neither proves complete coverage, neutral omitted rows, or total return.
@@ -38,15 +43,18 @@ login and final visual appearance remain manual checks.
   for only six instruments; 24 returned HTTP 404 and all nine returned events
   were ticker changes. Massive is useful partial evidence but is rejected as
   the sole-primary lifecycle source.
-- Data inventory is 4,311 files / 2,321,416,033 bytes with zero symlinks and
+- Data inventory is 5,660 files / 2,603,087,394 bytes with zero symlinks and
   zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
 - Stocks Starter removed the old Basic rate limit and provided the tested 9/9
   same-evening EOD. Guaranteed finality time and five-year endpoint depth are
   not yet proven.
-- No historical backfill or transient compute service was active at
-  verification.
+- The finite `whalpha-five-year-backfill-20260910.service` began the frozen
+  EOD/Identity interval at 2026-09-10 08:54:25 UTC. It is bounded to 24 hours,
+  2 GiB and serial provider access; completed sessions remain canonical if a
+  later session fails. Exact progress belongs in the dated audit and current
+  context rather than this status summary.
 
 Price depth is no longer the main research blocker.
 
@@ -95,8 +103,9 @@ unauthorized.
 
 Complete:
 
-- 313-session EOD/Identity depth and their family evidence;
-- 311 Identity source partitions and three prospective Membership sessions;
+- 346-session EOD depth, 347 Identity partitions, and their family evidence;
+- 345 Identity source partitions, 300 research-only Membership sessions, and
+  three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
@@ -140,14 +149,15 @@ that fixes both known gaps.
 ## Next priority
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
-2021-09-09 through 2026-09-09. Current exact coverage is EOD 313/1,255,
-Identity 313/1,255, normalized Identity source 311/1,255, and Membership
-3/1,255. Required lifecycle, PIT classification, PIT fundamentals, and
+2021-09-09 through 2026-09-09. Current exact aligned coverage is EOD and
+Identity 346/1,255, normalized Identity source 344/1,255, and Membership
+303/1,255. Required lifecycle, PIT classification, PIT fundamentals, and
 Historical Coverage are absent; status remains `quarantined`.
 
 1. Implement and pilot the Massive Starter Day Aggregates Flat File source,
-   then continue the exact EOD/Identity acquisition plan. Four pilot sessions
-   are complete and 942 remain. The
+   then continue the exact EOD/Identity acquisition plan. A safe concurrent-
+   writer stop left 2025-04-23 as an Identity-only continuation point; 909 EOD
+   sessions remain. The
    completed REST probe found 2021-09-09/10 Grouped Daily denied and
    2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
    Implement the documented Starter Day Aggregates Flat File route for bulk
@@ -158,16 +168,22 @@ Historical Coverage are absent; status remains `quarantined`.
    credential was absent. The backfill executor now supports a frozen exact
    1,255-session interval plus an explicit 0.25-to-15-second serial paid-plan
    interval, while retaining the older count-based mode unchanged.
+   The nominal interval is not enough for the first Membership calculation:
+   retain a separate 20-session warm-up extension from 2021-08-11 through
+   2021-09-08 after the exact interval run.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later
    measured-gap option rather than the mandatory next dependency.
-3. Repeat the outcome-blind census and decision, then admit at least 252
+3. Persist reconstructed historical Membership only in the ADR 0197
+   research-only family. Keep the three signal-eligible sessions and their
+   Production reader physically separate.
+4. Repeat the outcome-blind census and decision, then admit at least 252
    complete session cross-sections or retain rejection without opening outcomes.
-4. Execute the registered chronological research only after admission, and
+5. Execute the registered chronological research only after admission, and
    retain success or failure.
-5. Generalize only the proven path into a bounded multi-agent research pilot.
-6. Activate and connect a model to Stock Candidates only after separate
+6. Generalize only the proven path into a bounded multi-agent research pilot.
+7. Activate and connect a model to Stock Candidates only after separate
    operational review.
 
 Daily reliability and one bounded next-session automation rehearsal may proceed

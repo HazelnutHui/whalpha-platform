@@ -92,7 +92,8 @@ Pivotal research ADRs include
 [0193](decisions/0193-admit-latest-vintage-reconstruction-for-development-only.md),
 [0194](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md),
 [0195](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md),
-and [0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md).
+[0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md),
+and [0197](decisions/0197-separate-reconstructed-research-membership-from-signal-eligible-membership.md).
 
 ## Architecture and data
 
@@ -119,6 +120,7 @@ separately approved bounded serving artifacts.
 - [Daily EOD Automation](operations/daily-eod-automation.md)
 - [Massive Day Aggregates Flat File Ingestion](operations/massive-day-aggregates-flat-file-ingestion.md)
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
+- [Research Universe Membership Custody](operations/research-universe-membership-custody.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
 - [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md)
