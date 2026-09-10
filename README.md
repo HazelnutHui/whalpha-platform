@@ -103,6 +103,7 @@ See:
 - [Candidate Strategy Evaluation V1](docs/data-contracts/candidate-strategy-evaluation-v1.md)
 - [ADR 0191: validated model promotion](docs/decisions/0191-promote-validated-research-models-into-stock-candidates.md)
 - [ADR 0194: bounded AI-assisted research](docs/decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)
+- [ADR 0195: reconstructed development admission](docs/decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md)
 
 ## Application entry points
 

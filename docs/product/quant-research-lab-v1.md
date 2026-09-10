@@ -177,10 +177,10 @@ version declares an admitted interval/cohort, mandatory evidence, acceptable
 coverage, and rejection policy. Missing evidence may never be silently filled
 or selectively dropped. Strong-Leader Pullback V1 retains its strict complete-
 cross-section rule. ADR 0193 separately permits a later-retrieved, latest-
-vintage historical reconstruction for an outcome-blind coverage census and,
-only after another frozen cohort decision, development use. It cannot support
-locked validation, sealed holdout, performance-grade claims, or Candidate
-activation.
+vintage historical reconstruction for an outcome-blind coverage census. ADR
+0195 requires 100%-complete Primary session cross-sections and at least 252
+admitted sessions for development use. It cannot support locked validation,
+sealed holdout, performance-grade claims, or Candidate activation.
 
 ## AI Quant Research Factory
 
@@ -242,8 +242,9 @@ ADR 0193 freezes the next admissibility step without changing this V1 record:
 use the 287-session historical source interval ending before the first known
 Identity-source gap for an outcome-blind coverage census. The source is
 explicitly `reconstructed_point_in_time_latest_vintage`, not `as_operated`.
-No coverage threshold, cohort, trigger, return, or parameter may be selected
-until that census is complete and a separate immutable decision is recorded.
+ADR 0195 now freezes the coverage threshold and rejects current evidence: zero
+of 267 candidate sessions have complete mandatory evidence. No cohort,
+trigger, return, parameter, or development authority exists.
 
 ADR 0186 fixes an outcome-free, complete-cross-section input adapter and exact
 21-session feature semantics. It has fixture evidence only and has never run a

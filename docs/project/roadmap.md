@@ -88,17 +88,19 @@ point-in-time research panel is not.
 
 ADR 0193 resolves the first admission-policy question without weakening final
 evidence. The later-retrieved, historical-date Identity interval may first be
-used only for an outcome-blind coverage census and, after a separate immutable
-cohort decision, development. Validation and holdout still require source-time-
-defensible point-in-time evidence.
+used only for an outcome-blind coverage census. ADR 0195 requires complete
+Primary session cross-sections and at least 252 admitted sessions before any
+development. Validation and holdout still require source-time-defensible
+point-in-time evidence.
 
 Required work:
 
 - completed 2026-09-10: the fixed census reconciled 437,402 raw-complete
   included paths but zero all-required-evidence-complete paths, without
   calculating triggers, returns, metrics, or parameter results;
-- freeze one explicit admitted cohort and threshold decision from missingness
-  evidence alone, or reject the reconstructed development path;
+- completed 2026-09-10: the missingness-only decision froze a 100% complete-
+  session threshold, retained the 252-session floor, and rejected current
+  evidence with zero admitted sessions;
 - lifecycle and terminal-outcome evidence;
 - complete split/action handling for the declared underlying-stock price-
   return basis, with dividends retained as event context rather than silently

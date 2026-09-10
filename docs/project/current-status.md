@@ -112,13 +112,14 @@ Historical backfills observed later remain ineligible for formal validation,
 holdout, and Production claims unless source availability at signal time is
 defensible. Current membership or taxonomy must not be projected backward.
 ADR 0193 permits the fixed 287-session interval through 2026-08-12 only for an
-outcome-blind coverage census and possible later development cohort. No
-coverage threshold or cohort is admitted yet. The typed Dell-local census has
-now formally reconciled 2,656,006 Primary decisions and 437,402 raw-complete
-included feature paths. All included paths still lack proven sparse-row
-neutrality and canonical lifecycle evidence, so all-required completeness is
-zero and development remains unauthorized. The Strong-Leader Pullback V1 input
-adapter has fixture evidence only and has never produced a real backtest.
+outcome-blind coverage census and possible later development cohort. ADR 0195
+has now frozen a 100%-complete Primary session-cross-section rule and the
+existing 252-session minimum. The typed decision rejected current evidence:
+zero of 267 candidate sessions passed, 20 were zero-included warmup sessions,
+and all 437,402 raw-complete paths still lack proven sparse-row neutrality and
+canonical lifecycle evidence. No cohort is admitted and development remains
+unauthorized. The Strong-Leader Pullback V1 input adapter has fixture evidence
+only and has never produced a real backtest.
 
 ## Automation and performance
 
@@ -134,10 +135,10 @@ that fixes both known gaps.
 
 ## Next priority
 
-1. Freeze a missingness-only decision that rejects the current incomplete
-   evidence or defines the exact lifecycle and adjustment-neutrality gates.
-2. Close only those data gates, then admit an exact cohort or reject the
-   reconstructed development path without opening outcomes.
+1. Close only the lifecycle, action-availability, and adjustment-neutrality
+   evidence named by the rejected ADR 0195 decision.
+2. Repeat the outcome-blind census and decision, then admit at least 252
+   complete session cross-sections or retain rejection without opening outcomes.
 3. Execute the registered chronological research only after admission, and
    retain success or failure.
 4. Generalize only the proven path into a bounded multi-agent research pilot.

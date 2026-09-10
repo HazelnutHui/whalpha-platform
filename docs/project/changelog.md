@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-10 — Reject reconstructed development evidence under a frozen rule
+
+- Accepted ADR 0195 and froze the admission unit as one 100%-complete Primary
+  session cross-section, with the preregistered 252-session minimum and no
+  coverage-based stable-ID selection.
+- Added a typed missingness-only decision, pure builder, network-disabled
+  command, owner-only atomic custody, and tamper/time-order tests.
+- Bound the real 287-session census and rejected current evidence: zero of 267
+  candidate sessions passed, 20 were zero-included warmup sessions, and no
+  session, path, instrument, cohort, or development authority was admitted.
+- The decision logical fingerprint is
+  `543fdd10e6c7df087d077754674f49660fd558a9f2dafcd4fe9dfa2131af36e8`.
+  It contains no trigger, outcome, performance metric, or parameter selection;
+  no provider, `/data`, Production, publication, deployment, or scheduler
+  action occurred.
+
 ## 2026-09-10 — Complete the fixed outcome-blind development census
 
 - Formally reread all 287 fixed historical Membership partitions, their same-

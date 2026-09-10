@@ -175,17 +175,21 @@ holdout, or Production claims unless source availability at the signal time is
 defensible. Current membership or classification must never be projected
 backward. ADR 0193 creates one narrower development path: the exact 287-session
 historical source interval through 2026-08-12 may first support an outcome-
-blind coverage census and, only after another immutable admitted-cohort
-decision, development. It remains latest-vintage reconstruction, not
-`as_operated` evidence.
+blind coverage census. ADR 0195 now requires 100%-complete Primary session
+cross-sections and at least 252 admitted sessions before development. It
+remains latest-vintage reconstruction, not `as_operated` evidence.
 
 That census completed from source revision `1f6447110142` with fingerprint
 `09ffe4edc38aeaccb3f101f5b1b784eb0769af0de9fde0c28fafbc18fe32388f`.
 It reconciled 2,656,006 Primary decisions and 437,402 raw-complete included
 feature paths, including 722 clear split exposures and 12 quarantined paths.
 All 437,402 still lack proven sparse-row neutrality and canonical lifecycle
-evidence, so all-required-evidence-complete remains zero and no cohort,
-threshold, outcome, or development authority exists.
+evidence, so all-required-evidence-complete remains zero. The bound ADR 0195
+decision has fingerprint
+`543fdd10e6c7df087d077754674f49660fd558a9f2dafcd4fe9dfa2131af36e8`:
+267 candidate sessions were incomplete, 20 sessions contained no included path
+during warmup, zero sessions passed, and no cohort, outcome, or development
+authority exists.
 
 ADR 0186 freezes the dormant V1 complete-cross-section Strong-Leader Pullback
 input adapter with exact 21-session feature semantics, point-in-time
@@ -231,12 +235,12 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-1. Publish one immutable missingness-only decision that rejects the currently
-   incomplete evidence or precisely freezes the additional admission gates;
-   do not open strategy outcomes.
-2. Close only the lifecycle and adjustment-neutrality evidence required by
-   that decision, then admit an exact cohort or reject the reconstructed path.
-3. Run Strong-Leader Pullback development, locked point-in-time validation,
+1. Close only the lifecycle, corporate-action, and adjustment-neutrality
+   evidence required by ADR 0195; do not open strategy outcomes.
+2. Repeat the versioned outcome-blind census and admission decision; either
+   admit at least 252 complete session cross-sections or retain rejection.
+3. Only after admission, run Strong-Leader Pullback development; locked
+   point-in-time validation,
    sealed holdout, and prospective shadow under their exact evidence tiers.
 4. Retain either validated evidence or recorded failure without editing V1.
 5. Generalize the proven path into a small, bounded multi-agent pilot under ADR
