@@ -4,7 +4,7 @@
 
 `SAMPLE_REQUIRED_BEFORE_ADAPTER`
 
-`LSEG_FIRST_INQUIRY_CANDIDATE_NOT_SELECTED`
+`LSEG_FREE_TRIAL_REQUEST_READY_NOT_SUBMITTED`
 
 This is an official-public-material capability review, not a legal opinion,
 license approval, purchase, account-entitlement test, or data acquisition. No
@@ -50,6 +50,22 @@ LSEG is first in the inquiry order because its public materials describe the
 broadest combination of venue coverage, history, corporate actions, trading
 status, and machine delivery relevant to the current gaps. The evidence does
 not prove it is more accurate, licensed for WH Alpha, affordable, or complete.
+
+## 2026-09-10 public-material recheck
+
+LSEG's current official catalogue explicitly lists Equity Trading Status
+events for admission, removal, suspension, and resumption, plus 50+ years of
+Corporate Actions history across 200+ venues. The Corporate Actions product
+page describes 15-minute update cycles and Web, FTP, REST, and SOAP delivery;
+the [DataScope Select developer page](https://developers.lseg.com/en/api-catalog/datascope-select/datascope-select-rest-api)
+exposes a free-trial request path and supports on-demand and scheduled
+extraction.
+
+No public page provides an exact subscription price or proves last-tradable,
+successor/consideration, historical-vintage, revision/cancellation, stable-
+security crosswalk, or production-sample semantics. The next step is therefore
+the narrow free-trial/sample request in the existing inquiry packet, not a
+purchase or adapter implementation.
 
 ## Deterministic diagnostic sample
 
@@ -120,13 +136,12 @@ the next governed cutoff.
 
 ## Next authorized boundary
 
-Prepare a price/sample/permission comparison for the LSEG candidate and, if
-needed, the ICE and S&P alternatives. Show the user the exact cost, licensed
-uses, delivery, identifiers, and remaining gaps before any commitment. After a
-sample is explicitly provisioned, formalize the 30-item pilot request ceiling
-from its actual delivery mechanics and only then implement a fixture-first
-adapter.
+Submit the prepared LSEG DataScope Select free-trial/sample request only after
+the owner supplies the truthful contact and affiliation fields required by the
+form. If LSEG cannot provide the mandatory sample semantics or a viable quote,
+compare ICE and then S&P. After a sample is explicitly provisioned, formalize
+the 30-item pilot request ceiling from its actual delivery mechanics and only
+then implement a fixture-first adapter.
 
 No contact, purchase, trial activation, account access, acquisition, canonical
 Apply, or lifecycle promotion is authorized by this review.
-

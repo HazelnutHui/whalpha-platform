@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-10 — Prepare the exact LSEG lifecycle sample request
+
+- Rechecked current official LSEG material: DataScope Select exposes a free-
+  trial path, REST/SFTP extraction, Equity Corporate Actions, Equity Trading
+  Status, active/delisted reference coverage, and deep history.
+- Updated the existing provider inquiry packet rather than creating a parallel
+  request document. The request now names the exact sample, data dictionary,
+  identity, lifecycle, revision, delivery, retention, and itemized pricing
+  evidence required before implementation or purchase.
+- Public material still provides no exact price and does not prove mandatory
+  last-tradable, successor/consideration, historical-vintage, or stable-ID
+  mapping semantics. No form was submitted, account accessed, sample acquired,
+  adapter implemented, or data/Production state changed.
+
 ## 2026-09-10 — Reject reconstructed development evidence under a frozen rule
 
 - Accepted ADR 0195 and froze the admission unit as one 100%-complete Primary

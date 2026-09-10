@@ -235,8 +235,9 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-1. Close only the lifecycle, corporate-action, and adjustment-neutrality
-   evidence required by ADR 0195; do not open strategy outcomes.
+1. Obtain and review the prepared LSEG DataScope Select lifecycle/action
+   sample and quote; do not implement an adapter from marketing fields or open
+   strategy outcomes.
 2. Repeat the versioned outcome-blind census and admission decision; either
    admit at least 252 complete session cross-sections or retain rejection.
 3. Only after admission, run Strong-Leader Pullback development; locked

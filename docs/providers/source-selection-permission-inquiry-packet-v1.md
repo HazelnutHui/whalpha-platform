@@ -26,13 +26,50 @@ access request, credential request, pilot authorization, or standing authority.
 | Lane | Candidate inquiry | Required contribution | Current state |
 | --- | --- | --- | --- |
 | Raw EOD | Current Massive account/licensing clarification; Twelve Data Redistribution Rights Add-On pricing and terms | Unadjusted OHLCV, corrections, inactive/delisted coverage, equal-capability raw/derived/browser use | No source cleared |
-| Corporate action and listing lifecycle | Nasdaq Daily List without CUSIP plus equivalent non-Nasdaq coverage | Splits, dividends, listings, delistings, symbol/name changes, merger/successor and last-tradable evidence | Composition incomplete and unlicensed |
+| Corporate action and listing lifecycle | LSEG DataScope Select Equity Corporate Actions and Equity Trading Status first; ICE Corporate Actions second; exchange feeds as corroborators | Splits, dividends, listings, removals, suspensions/resumptions, symbol/name changes, merger/successor, consideration, and last-tradable evidence | LSEG free-trial/sample request ready; price, exact fields, licensed scope, and sample remain unavailable |
 | Open filing/event evidence | SEC EDGAR | Effective-dated filing, XBRL fundamental, and issuer-event evidence | Permission direction open; security identity and completeness remain separate |
 | Identifier crosswalk | GLEIF and OpenFIGI | Legal-entity/instrument linkage evidence only | Candidate crosswalks; never canonical fact authority by default |
 | Point-in-time Sector / Industry | S&P GICS History first; LSEG TRBC second | Stable company/security linkage, taxonomy hierarchy and versions, from/thru dates, availability/revision history, current display, and historical research | Public capability documented; sample, dictionary, price, and exact permission remain credential-gated and unresolved |
 
 Alpha Vantage and standard Alpaca customer data are not inquiry priorities for
 the equal-capability shared product under the reviewed standard terms.
+
+## Current next request: LSEG DataScope Select
+
+Request a free trial or production-representative sample for **Equity Corporate
+Actions** and **Equity Trading Status** through
+[DataScope Select REST](https://developers.lseg.com/en/api-catalog/datascope-select/datascope-select-rest-api).
+Do not request a broad terminal bundle or purchase before the following are
+answered.
+
+The response must include:
+
+- a current field dictionary and a small production-representative U.S. equity
+  sample containing active, removed/delisted, suspended/resumed, merger,
+  identifier-change, split, and dividend cases;
+- exact U.S. venue coverage, inactive/delisted history, history depth, and any
+  excluded action or security types;
+- security identifiers and cross-reference fields suitable for a stable
+  security-level mapping, not ticker/name-only matching;
+- event identity, venue, type/status, announcement and source-availability
+  timestamps, effective date, revision/cancellation history, and whether a
+  historical extract reproduces the then-known vintage or today's corrected
+  state;
+- last-tradable-session or the authoritative trading-status events needed to
+  derive it; predecessor/successor identity; cash/stock consideration and
+  exchange ratio; and explicit not-applicable representation;
+- REST/CSV extraction mechanics, pagination and batch ceilings, update
+  cadence, trial restrictions, and whether the sample is production-
+  representative; and
+- an itemized quote for one-person, non-commercial research: content, API,
+  platform, user, display/derived-use, exchange pass-through, setup, monthly,
+  and annual charges plus termination and retention obligations.
+
+Public product material confirms that DataScope Select supports REST/SFTP,
+Corporate Actions, Equity Trading Status, active and delisted security
+reference data, and a free-trial request path. It does not publish the exact
+price or prove the mandatory field semantics above. Those remain unresolved
+until a real response and sample are reviewed.
 
 ## Questions every commercial candidate must answer in writing
 

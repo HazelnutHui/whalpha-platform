@@ -135,8 +135,8 @@ that fixes both known gaps.
 
 ## Next priority
 
-1. Close only the lifecycle, action-availability, and adjustment-neutrality
-   evidence named by the rejected ADR 0195 decision.
+1. Request and evaluate the prepared LSEG DataScope Select lifecycle/action
+   sample and quote; do not implement an adapter before real fields arrive.
 2. Repeat the outcome-blind census and decision, then admit at least 252
    complete session cross-sections or retain rejection without opening outcomes.
 3. Execute the registered chronological research only after admission, and
