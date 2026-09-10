@@ -2,6 +2,8 @@
 
 Operational state verified at: 2026-09-10T10:30:47Z
 
+Deployment state additionally verified at: 2026-09-10T18:41:10Z
+
 Repository context updated at: 2026-09-10 UTC
 
 This is the compact recovery source for a new task or device. It records
@@ -18,8 +20,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Source branch | main; verify current HEAD and cleanliness with the report |
 | Public site | https://whalpha.com/ |
 | OCI alias | whalpha-oci |
-| Active OCI release | 2026-09-09T211131Z-e06bd62ecab3 |
-| Deployed source | e06bd62ecab3cbf65867c9ddd9853a909379af9a |
+| Active OCI release | 2026-09-10T184018Z-03c277579502 |
+| Deployed source | 03c277579502cd1dd14c5f6108f337932a8e9c95 |
 
 Dell is the authority for code, data, development, governance, and heavy
 computation. OCI is limited to static web serving, localhost Auth Service, and
@@ -27,7 +29,7 @@ the public Session boundary. Windows and future Mac systems are remote entry
 points. A newer clean repository commit does not invalidate an older immutable
 deployed release; compare both identities.
 
-The source main was clean during the verified operational report. An old
+The source main was clean during the deployment postflight. An old
 historical-backfill worktree had no unique commit and was far behind main; do
 not use it as a development base.
 
@@ -38,12 +40,12 @@ explicit all-partition validation both passed in their recorded audits.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | At least 386 contiguous XNYS sessions, 2025-02-26 through 2026-09-09; bounded backfill active |
+| Canonical EOD | At least 809 aligned contiguous XNYS sessions, 2023-06-20 through 2026-09-09; bounded backfill active |
 | Latest EOD | 2026-09-09; 9,916 rows |
 | Latest EOD fingerprint | 1ecd85558ca0fdf36e2460021b2da80a41ef5f17424aae33a9e94de5e70f1d1f |
 | Latest Identity | 2026-09-09; 9,982 instruments / 13,158 provider identities / 9,982 resolvers |
 | Latest Identity fingerprint | f29de23284b163955fc542b2c48ed3ebd60b618493366511935164e574694707 |
-| Point-in-time Identity | At least 387 partitions, 2025-02-25 through 2026-09-09; current one-partition lead is transactional |
+| Point-in-time Identity | At least 809 aligned partitions, 2023-06-20 through 2026-09-09; a newer in-flight one-partition lead may be transactional |
 | Identity source custody | 345 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound within the acquired interval |
 | Signal-eligible Membership | 3 sessions / 59,892 decisions: 2026-09-04, 2026-09-08, 2026-09-09 |
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
@@ -69,7 +71,10 @@ Identity-only continuation point. A unique continuation unit recovered that
 EOD partition without another provider request and resumed from clean source
 revision `d9d77c124f1b9300613d97923493a1e696e1262c`. At the operational timestamp
 above it had reached at least 386 EOD / 387 Identity partitions with no
-reported retry; exact progress and any terminal state belong in the
+reported retry. The succeeding `20260910d` continuation reached an exact
+checkpoint of 809 aligned sessions through 2023-06-20 at 18:12:02 UTC and was
+still active during the deployment postflight; exact later progress and any
+terminal state belong in the
 [dated execution audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md).
 
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
@@ -117,7 +122,8 @@ Analytics remains degraded-short-history because Market Intelligence consumes
 26 sessions although canonical EOD has substantially more. This is a consumer-integration
 limit, not missing acquisition.
 
-The independent OCI postflight matched release, source, manifest, checksums,
+The 2026-09-10 18:41:10 UTC independent OCI postflight matched release,
+source, manifest, checksums,
 services, protected routes, guest Session, Candidate summary/detail, Strategy
 Channels, Sector ETF Rotation, logout, and residue state. Nginx and the
 localhost-only Auth Service are active. English is default; English and
@@ -149,8 +155,8 @@ Repository main includes the ADR 0192 Lab model-record, result-publication, and
 catalog boundaries plus one contract-validated Strong-Leader Pullback method
 projection for the browser. It is `method_only`,
 `preregistered_data_blocked`, has zero out-of-sample observations, and grants
-no Candidate authority. This repository interface has not been deployed; the
-active OCI release remains the one recorded above.
+no Candidate authority. The active OCI release now carries this truthful Lab
+interface and the research-first public entry recorded above.
 
 ADR 0194 now records the future AI Quant Research Factory as a governed Lab
 backend: high-throughput ideas are permitted, but real experiments remain

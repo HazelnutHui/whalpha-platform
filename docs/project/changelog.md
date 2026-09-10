@@ -20,6 +20,10 @@
   capitalization with the stable `quant-research-v1` entry contract and
   structural controls after those stale gates safely rejected and rolled back
   the otherwise valid new page.
+- Built and deployed immutable OCI release
+  `2026-09-10T184018Z-03c277579502`. Independent postflight matched the exact
+  source, bundle, checksums, protected routes, equal-capability guest Session,
+  services, listeners, and zero active staging/failed-release residue.
 
 ## 2026-09-10 — Localize a historical Identity alias-revision stop
 

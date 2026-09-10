@@ -11,8 +11,8 @@ the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity
 market-intelligence and research platform. Active OCI release
-2026-09-09T211131Z-e06bd62ecab3 was built from clean source
-e06bd62ecab3cbf65867c9ddd9853a909379af9a.
+2026-09-10T184018Z-03c277579502 was built from clean source
+03c277579502cd1dd14c5f6108f337932a8e9c95.
 
 Production uses Market Intelligence 1.3 for 2026-09-09 and Snapshot 1.11 /
 Dashboard 2.8. English is default and Simplified Chinese is equal. Guest and
@@ -23,12 +23,19 @@ Independent postflight matched release, source, bundle, manifest, checksums,
 services, protected routes, guest access, logout, and residue state. Password
 login and final visual appearance remain manual checks.
 
+The public entry is now research-first: Quant Research Lab and future
+model-driven equity selection lead the narrative; governed AI research
+automation is explicitly planned; the three stable market-context workspaces
+are presented as free supporting tools. The Strong-Leader Pullback dossier
+shows data construction, unpublished out-of-sample evidence, inactive
+Candidate authority, and no performance claim.
+
 ## Data
 
-- At the 2026-09-10 10:30:47 UTC checkpoint, EOD had at least 386 contiguous
-  sessions from 2025-02-26 through 2026-09-09 and Identity had at least 387
-  partitions from 2025-02-25. The one-partition Identity lead is the expected
-  transaction ordering while the bounded backfill remains active. Latest EOD
+- At the 2026-09-10 18:12:02 UTC checkpoint, EOD and Identity had at least 809
+  aligned contiguous sessions from 2023-06-20 through 2026-09-09. A newer
+  in-flight one-partition Identity lead may appear as the expected transaction
+  ordering while the bounded backfill remains active. Latest EOD
   has 9,916 rows; latest Identity has 9,982 instruments.
 - Historical Identity source custody has 345 partitions; 2026-08-13 and
   2026-08-19 remain explicitly unbound.
@@ -64,9 +71,12 @@ login and final visual appearance remain manual checks.
 - The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only
-  edge and began at 09:56:09 UTC. It is bounded to 24 hours, 2 GiB and serial
-  provider access; completed sessions remain canonical if a later session
-  fails. Exact progress belongs in the dated audit and current context.
+  edge but later stopped at a bounded historical alias gate. The successor
+  `whalpha-five-year-backfill-20260910d.service` kept those collisions
+  quarantined and was still active at the deployment postflight. It is bounded
+  to 24 hours, 2 GiB and serial provider access; completed sessions remain
+  canonical if a later session fails. Exact later progress belongs in the
+  dated audit and current context.
 
 Price depth is no longer the main research blocker.
 
@@ -99,8 +109,8 @@ semantics, catalog activation guard, and one browser-rendered
 Strong-Leader-Pullback method record under ADR 0192. The record is
 contract-validated against its canonical Python builder. It has no real
 performance result, no out-of-sample observation, and no Candidate authority;
-all real result areas remain locked. This interface is not in the active OCI
-release.
+all real result areas remain locked. This interface is now present in the
+active OCI release.
 
 ADR 0194 records a future bounded AI Quant Research Factory inside the Lab.
 No agent orchestrator or autonomous research service exists yet. The first
