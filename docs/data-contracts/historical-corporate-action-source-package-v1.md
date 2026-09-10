@@ -1,6 +1,7 @@
 # Historical Corporate Action Source Package V1
 
-Contract: `historical-corporate-action-source-package/1.0`.
+Contracts: `historical-corporate-action-source-package/1.0` and backward-
+compatible `historical-corporate-action-source-package/1.1`.
 
 This contract governs temporary source custody for one Massive split or
 dividend observation range. It is neither canonical Corporate Action nor the
@@ -23,9 +24,14 @@ they are not coerced into a different date.
 ## Physical custody
 
 - Exact `kind=START_END` target beneath an owner-only `/tmp` parent.
-- Up to 16 immutable pages, 80,000 rows, 32 MiB per page, and 512 MiB of page
-  content per package.
-- At least 15 seconds between requests and zero automatic retries.
+- Contract 1.0 retains its original 16 immutable pages, 80,000 rows, and
+  15-second request interval.
+- Contract 1.1 permits up to 80 immutable pages and 400,000 rows for the exact
+  five-year range. It retains the 32 MiB per-page and 512 MiB per-package
+  limits.
+- Contract 1.1 records one exact serial interval from 0.25 through 15 seconds
+  in every checkpoint and the completed manifest. Resume with a different
+  interval fails closed. Both versions retain zero automatic retries.
 - Atomic checkpoint after every page and complete formal reread before resume
   or success.
 - Exact request chain, page sequence, file set, mode, byte size, physical hash,
@@ -72,3 +78,6 @@ Every completed manifest records zero:
 
 The package remains `source_observation_only` and cannot satisfy Historical
 Coverage or research readiness.
+
+The larger 1.1 ceiling is not a completeness claim. Natural pagination must
+still end below every bound, and a ceiling hit requires a separate review.

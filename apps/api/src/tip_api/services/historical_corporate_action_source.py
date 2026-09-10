@@ -10,6 +10,7 @@ import stat
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
+from decimal import Decimal, InvalidOperation
 from enum import StrEnum
 from pathlib import Path
 from typing import Callable, Iterator, Literal, Mapping
@@ -28,15 +29,20 @@ from tip_api.providers.massive.transport import (
 )
 
 
-CONTRACT_VERSION = "historical-corporate-action-source-package/1.0"
+LEGACY_CONTRACT_VERSION = "historical-corporate-action-source-package/1.0"
+CONTRACT_VERSION = "historical-corporate-action-source-package/1.1"
 PAGE_CONTRACT_VERSION = "historical-corporate-action-source-page/1.0"
 CHECKPOINT_CONTRACT_VERSION = "historical-corporate-action-source-checkpoint/1.0"
 PAGE_LIMIT = 5_000
-MAXIMUM_PAGE_COUNT = 16
-MAXIMUM_RECORD_COUNT = 80_000
+LEGACY_MAXIMUM_PAGE_COUNT = 16
+LEGACY_MAXIMUM_RECORD_COUNT = 80_000
+LEGACY_REQUEST_INTERVAL_SECONDS = 15
+MAXIMUM_PAGE_COUNT = 80
+MAXIMUM_RECORD_COUNT = 400_000
 MAXIMUM_PAGE_BYTES = 32 * 1024 * 1024
 MAXIMUM_PACKAGE_BYTES = 512 * 1024 * 1024
-MINIMUM_REQUEST_INTERVAL_SECONDS = 15
+MINIMUM_REQUEST_INTERVAL_SECONDS = Decimal("0.25")
+MAXIMUM_REQUEST_INTERVAL_SECONDS = Decimal("15")
 _PAGE_FILE_PREFIX = "response-"
 _PAGE_FILE_SUFFIX = ".json"
 _CHECKPOINT_FILE = "checkpoint.json"
@@ -173,6 +179,7 @@ class CorporateActionSourceCheckpointV1(FrozenModel):
     end_date: date
     started_at: datetime
     last_observed_at: datetime | None = None
+    request_interval_seconds: str | None = None
     artifacts: tuple[CorporateActionSourceArtifactV1, ...] = ()
     next_request_path: str | None
     next_request_params: tuple[tuple[str, str], ...]
@@ -184,6 +191,13 @@ class CorporateActionSourceCheckpointV1(FrozenModel):
     @classmethod
     def times_are_utc(cls, value: datetime | None) -> datetime | None:
         return None if value is None else normalize_utc_datetime(value)
+
+    @field_validator("request_interval_seconds")
+    @classmethod
+    def request_interval_is_canonical(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        return _canonical_request_interval(value)
 
     @model_validator(mode="after")
     def checkpoint_reconciles(self) -> "CorporateActionSourceCheckpointV1":
@@ -208,9 +222,12 @@ class CorporateActionSourceCheckpointV1(FrozenModel):
                 raise ValueError("checkpoint last-observed time differs")
         elif self.last_observed_at is not None:
             raise ValueError("empty checkpoint has a last-observed time")
-        expected = _fingerprint(
-            self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        fingerprint_values = self.model_dump(
+            mode="json", exclude={"logical_fingerprint"}
         )
+        if self.request_interval_seconds is None:
+            fingerprint_values.pop("request_interval_seconds")
+        expected = _fingerprint(fingerprint_values)
         if self.logical_fingerprint != expected:
             raise ValueError("checkpoint fingerprint differs")
         return self
@@ -218,7 +235,8 @@ class CorporateActionSourceCheckpointV1(FrozenModel):
 
 class CorporateActionSourcePackageManifestV1(FrozenModel):
     contract_version: Literal[
-        "historical-corporate-action-source-package/1.0"
+        "historical-corporate-action-source-package/1.0",
+        "historical-corporate-action-source-package/1.1",
     ] = CONTRACT_VERSION
     completion_status: Literal["completed"] = "completed"
     provider_id: Literal["massive_stocks_basic"] = MASSIVE_PROVIDER_ID
@@ -228,9 +246,9 @@ class CorporateActionSourcePackageManifestV1(FrozenModel):
     endpoint: str
     date_field: str
     page_limit: Literal[5000] = PAGE_LIMIT
-    maximum_page_count: Literal[16] = MAXIMUM_PAGE_COUNT
-    maximum_record_count: Literal[80000] = MAXIMUM_RECORD_COUNT
-    minimum_request_interval_seconds: Literal[15] = (
+    maximum_page_count: Literal[16, 80] = MAXIMUM_PAGE_COUNT
+    maximum_record_count: Literal[80000, 400000] = MAXIMUM_RECORD_COUNT
+    minimum_request_interval_seconds: int | str = str(
         MINIMUM_REQUEST_INTERVAL_SECONDS
     )
     zero_automatic_retry: Literal[True] = True
@@ -272,6 +290,29 @@ class CorporateActionSourcePackageManifestV1(FrozenModel):
 
     @model_validator(mode="after")
     def manifest_reconciles(self) -> "CorporateActionSourcePackageManifestV1":
+        if self.contract_version == LEGACY_CONTRACT_VERSION:
+            if (
+                self.maximum_page_count != LEGACY_MAXIMUM_PAGE_COUNT
+                or self.maximum_record_count != LEGACY_MAXIMUM_RECORD_COUNT
+                or self.minimum_request_interval_seconds
+                != LEGACY_REQUEST_INTERVAL_SECONDS
+            ):
+                raise ValueError("legacy corporate-action source bounds differ")
+        else:
+            if (
+                self.maximum_page_count != MAXIMUM_PAGE_COUNT
+                or self.maximum_record_count != MAXIMUM_RECORD_COUNT
+                or not isinstance(self.minimum_request_interval_seconds, str)
+                or self.minimum_request_interval_seconds
+                != _canonical_request_interval(
+                    self.minimum_request_interval_seconds
+                )
+            ):
+                raise ValueError("five-year corporate-action source bounds differ")
+        if self.request_count > self.maximum_page_count:
+            raise ValueError("manifest request count exceeds its declared ceiling")
+        if self.record_count > self.maximum_record_count:
+            raise ValueError("manifest record count exceeds its declared ceiling")
         if self.end_date < self.start_date:
             raise ValueError("corporate-action range is reversed")
         if self.completed_at < self.started_at:
@@ -362,6 +403,7 @@ def fetch_historical_corporate_action_source_package(
     target = _validate_package_target(package_path, kind, start_date, end_date)
     now = clock or (lambda: datetime.now(UTC))
     limiter = rate_limiter or FixedIntervalRateLimiter()
+    request_interval = _rate_limiter_request_interval(limiter)
     with _package_lock(target):
         partial = target.parent / f".{target.name}.partial"
         if target.exists():
@@ -383,6 +425,7 @@ def fetch_historical_corporate_action_source_package(
             action_kind=kind,
             start_date=start_date,
             end_date=end_date,
+            request_interval_seconds=request_interval,
             now=now,
         )
         checkpoint = _adopt_exact_orphan_if_present(partial, checkpoint)
@@ -529,6 +572,7 @@ def _load_or_create_checkpoint(
     action_kind: CorporateActionSourceKind,
     start_date: date,
     end_date: date,
+    request_interval_seconds: str,
     now: Callable[[], datetime],
 ) -> CorporateActionSourceCheckpointV1:
     if partial.exists():
@@ -549,6 +593,15 @@ def _load_or_create_checkpoint(
             raise HistoricalCorporateActionSourceError(
                 "corporate-action checkpoint scope differs"
             )
+        if checkpoint.request_interval_seconds is None:
+            if request_interval_seconds != str(LEGACY_REQUEST_INTERVAL_SECONDS):
+                raise HistoricalCorporateActionSourceError(
+                    "legacy corporate-action checkpoint requires its 15-second interval"
+                )
+        elif checkpoint.request_interval_seconds != request_interval_seconds:
+            raise HistoricalCorporateActionSourceError(
+                "corporate-action checkpoint request interval differs"
+            )
         _reread_artifacts(
             partial, checkpoint.artifacts, action_kind, start_date, end_date
         )
@@ -564,6 +617,7 @@ def _load_or_create_checkpoint(
         end_date=end_date,
         started_at=started_at,
         last_observed_at=None,
+        request_interval_seconds=request_interval_seconds,
         artifacts=(),
         next_request_path=path,
         next_request_params=tuple(sorted(params.items())),
@@ -627,6 +681,7 @@ def _advance_checkpoint(
         end_date=checkpoint.end_date,
         started_at=checkpoint.started_at,
         last_observed_at=page.source_observed_at,
+        request_interval_seconds=checkpoint.request_interval_seconds,
         artifacts=checkpoint.artifacts + (artifact,),
         next_request_path=page.next_request_path,
         next_request_params=page.next_request_params,
@@ -641,6 +696,7 @@ def _make_checkpoint(
     end_date: date,
     started_at: datetime,
     last_observed_at: datetime | None,
+    request_interval_seconds: str | None,
     artifacts: tuple[CorporateActionSourceArtifactV1, ...],
     next_request_path: str | None,
     next_request_params: tuple[tuple[str, str], ...],
@@ -654,6 +710,11 @@ def _make_checkpoint(
         "end_date": end_date,
         "started_at": started_at,
         "last_observed_at": last_observed_at,
+        **(
+            {"request_interval_seconds": request_interval_seconds}
+            if request_interval_seconds is not None
+            else {}
+        ),
         "artifacts": artifacts,
         "next_request_path": next_request_path,
         "next_request_params": next_request_params,
@@ -835,7 +896,11 @@ def _finalize_partial(
             "corporate-action source pagination is incomplete"
         )
     values = {
-        "contract_version": CONTRACT_VERSION,
+        "contract_version": (
+            CONTRACT_VERSION
+            if checkpoint.request_interval_seconds is not None
+            else LEGACY_CONTRACT_VERSION
+        ),
         "completion_status": "completed",
         "provider_id": MASSIVE_PROVIDER_ID,
         "action_kind": checkpoint.action_kind,
@@ -844,9 +909,21 @@ def _finalize_partial(
         "endpoint": _ENDPOINTS[checkpoint.action_kind],
         "date_field": _DATE_FIELDS[checkpoint.action_kind],
         "page_limit": PAGE_LIMIT,
-        "maximum_page_count": MAXIMUM_PAGE_COUNT,
-        "maximum_record_count": MAXIMUM_RECORD_COUNT,
-        "minimum_request_interval_seconds": MINIMUM_REQUEST_INTERVAL_SECONDS,
+        "maximum_page_count": (
+            MAXIMUM_PAGE_COUNT
+            if checkpoint.request_interval_seconds is not None
+            else LEGACY_MAXIMUM_PAGE_COUNT
+        ),
+        "maximum_record_count": (
+            MAXIMUM_RECORD_COUNT
+            if checkpoint.request_interval_seconds is not None
+            else LEGACY_MAXIMUM_RECORD_COUNT
+        ),
+        "minimum_request_interval_seconds": (
+            checkpoint.request_interval_seconds
+            if checkpoint.request_interval_seconds is not None
+            else LEGACY_REQUEST_INTERVAL_SECONDS
+        ),
         "zero_automatic_retry": True,
         "started_at": checkpoint.started_at,
         "completed_at": checkpoint.last_observed_at,
@@ -1138,6 +1215,28 @@ def _validate_range(start_date: date, end_date: date) -> None:
         raise HistoricalCorporateActionSourceError(
             "corporate-action range end must be historical"
         )
+
+
+def _rate_limiter_request_interval(limiter: object) -> str:
+    return _canonical_request_interval(
+        getattr(limiter, "interval_seconds", LEGACY_REQUEST_INTERVAL_SECONDS)
+    )
+
+
+def _canonical_request_interval(value: object) -> str:
+    try:
+        interval = Decimal(str(value))
+    except (InvalidOperation, ValueError, TypeError) as exc:
+        raise ValueError("corporate-action request interval is invalid") from exc
+    if (
+        not interval.is_finite()
+        or interval < MINIMUM_REQUEST_INTERVAL_SECONDS
+        or interval > MAXIMUM_REQUEST_INTERVAL_SECONDS
+    ):
+        raise ValueError(
+            "corporate-action request interval must be between 0.25 and 15 seconds"
+        )
+    return format(interval.normalize(), "f")
 
 
 def _expected_target_name(

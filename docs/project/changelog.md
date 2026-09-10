@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-10 — Scale corporate-action source custody to five years
+
+- Accepted ADR 0198 after the real 15-month dividend package used 14 of the
+  original 16 pages, proving that the Basic-plan ceiling could not represent
+  the selected five-year range.
+- Added backward-compatible source-package 1.1 with finite 80-page / 400,000-
+  row ceilings and an exact persisted 0.25-to-15-second serial interval. Zero
+  automatic retry, immutable pages, formal resume reread, request-chain
+  validation, secret stripping, 32-MiB page limits, and the 512-MiB package
+  limit remain unchanged.
+- Preserved formal read compatibility for real 1.0 custody and added tests for
+  more than 16 pages, interval persistence, and interval-drift refusal.
+- Acquired an initial five-year split source package for 2021-08-11 through
+  2026-09-09: 2 pages / 6,491 records, natural pagination complete, zero
+  invalid dates, duplicate source IDs, and unexpected fields. It remains
+  source-observation-only and no canonical or Production state changed.
+
 ## 2026-09-10 — Separate historical research Membership custody
 
 - Accepted ADR 0197. Latest-vintage reconstructed historical Membership will

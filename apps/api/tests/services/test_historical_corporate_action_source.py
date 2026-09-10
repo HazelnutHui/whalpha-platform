@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import UTC, date, datetime, timedelta
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -37,8 +38,10 @@ class FixtureTransport:
 
 
 class FixtureLimiter:
-    def __init__(self) -> None:
+    def __init__(self, interval_seconds: Decimal | None = None) -> None:
         self.wait_count = 0
+        if interval_seconds is not None:
+            self.interval_seconds = interval_seconds
 
     def wait_before_request(self) -> None:
         self.wait_count += 1
@@ -169,6 +172,121 @@ def test_dividend_source_preserves_and_counts_schema_additions(tmp_path: Path) -
     source = (target / "response-00001.json").read_text(encoding="utf-8")
     assert "new_provider_field" in source
     assert "preserved" in source
+
+
+def test_paid_interval_and_five_year_page_ceiling_are_recorded(
+    tmp_path: Path,
+) -> None:
+    target = _target(tmp_path, CorporateActionSourceKind.SPLIT)
+    pages: list[dict[str, object]] = []
+    for sequence in range(1, 18):
+        page = _split_page(1, final=sequence == 17)
+        row = page["results"][0]  # type: ignore[index]
+        row["id"] = f"split-{sequence}"  # type: ignore[index]
+        if sequence != 17:
+            page["next_url"] = (
+                "https://api.massive.com/stocks/v1/splits?"
+                f"cursor=cursor-{sequence}&apiKey=must-not-be-retained"
+            )
+        pages.append(page)
+
+    result = fetch_historical_corporate_action_source_package(
+        config=_config(),
+        transport=FixtureTransport(pages),  # type: ignore[arg-type]
+        action_kind=CorporateActionSourceKind.SPLIT,
+        start_date=START,
+        end_date=END,
+        package_path=target,
+        rate_limiter=FixtureLimiter(Decimal("0.25")),  # type: ignore[arg-type]
+        clock=_clock(count=40),
+    )
+
+    assert result.manifest.contract_version.endswith("/1.1")
+    assert result.manifest.request_count == 17
+    assert result.manifest.maximum_page_count == 80
+    assert result.manifest.maximum_record_count == 400_000
+    assert result.manifest.minimum_request_interval_seconds == "0.25"
+
+
+def test_resume_rejects_request_interval_drift(tmp_path: Path) -> None:
+    target = _target(tmp_path, CorporateActionSourceKind.SPLIT)
+    with pytest.raises(MassiveTransportUnavailableError):
+        fetch_historical_corporate_action_source_package(
+            config=_config(),
+            transport=FixtureTransport(
+                [_split_page(1), MassiveTransportUnavailableError("stopped")]
+            ),  # type: ignore[arg-type]
+            action_kind=CorporateActionSourceKind.SPLIT,
+            start_date=START,
+            end_date=END,
+            package_path=target,
+            rate_limiter=FixtureLimiter(Decimal("0.25")),  # type: ignore[arg-type]
+            clock=_clock(),
+        )
+
+    with pytest.raises(HistoricalCorporateActionSourceError, match="interval differs"):
+        fetch_historical_corporate_action_source_package(
+            config=_config(),
+            transport=FixtureTransport([]),  # type: ignore[arg-type]
+            action_kind=CorporateActionSourceKind.SPLIT,
+            start_date=START,
+            end_date=END,
+            package_path=target,
+            rate_limiter=FixtureLimiter(Decimal("1")),  # type: ignore[arg-type]
+            clock=_clock(start_seconds=100),
+        )
+
+
+def test_formal_reader_remains_compatible_with_legacy_manifest(
+    tmp_path: Path,
+) -> None:
+    target = _target(tmp_path, CorporateActionSourceKind.DIVIDEND)
+    fetch_historical_corporate_action_source_package(
+        config=_config(),
+        transport=FixtureTransport([_dividend_page()]),  # type: ignore[arg-type]
+        action_kind=CorporateActionSourceKind.DIVIDEND,
+        start_date=START,
+        end_date=END,
+        package_path=target,
+        rate_limiter=FixtureLimiter(),  # type: ignore[arg-type]
+        clock=_clock(),
+    )
+    checkpoint_path = target / "checkpoint.json"
+    manifest_path = target / "package.json"
+    checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+    checkpoint.pop("request_interval_seconds")
+    checkpoint["logical_fingerprint"] = module._fingerprint(
+        {key: value for key, value in checkpoint.items() if key != "logical_fingerprint"}
+    )
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest.update(
+        {
+            "contract_version": module.LEGACY_CONTRACT_VERSION,
+            "maximum_page_count": module.LEGACY_MAXIMUM_PAGE_COUNT,
+            "maximum_record_count": module.LEGACY_MAXIMUM_RECORD_COUNT,
+            "minimum_request_interval_seconds": (
+                module.LEGACY_REQUEST_INTERVAL_SECONDS
+            ),
+        }
+    )
+    manifest["logical_fingerprint"] = module._fingerprint(
+        {key: value for key, value in manifest.items() if key != "logical_fingerprint"}
+    )
+    for path, payload in ((checkpoint_path, checkpoint), (manifest_path, manifest)):
+        path.chmod(0o600)
+        path.write_text(
+            json.dumps(payload, sort_keys=True, separators=(",", ":")),
+            encoding="utf-8",
+        )
+        path.chmod(0o400)
+
+    reread = read_historical_corporate_action_source_package(
+        package_path=target,
+        expected_action_kind=CorporateActionSourceKind.DIVIDEND,
+        expected_start_date=START,
+        expected_end_date=END,
+    )
+    assert reread.manifest.contract_version == module.LEGACY_CONTRACT_VERSION
 
 
 def test_empty_result_is_a_complete_observation(tmp_path: Path) -> None:

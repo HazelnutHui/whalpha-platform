@@ -7,6 +7,7 @@ import json
 import subprocess
 import sys
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
 
 from tip_api.providers.massive.credential import (
@@ -27,6 +28,9 @@ from tip_api.services.historical_corporate_action_source import (
     HistoricalCorporateActionSourceError,
     fetch_historical_corporate_action_source_package,
 )
+from tip_api.providers.massive.instrument_master_snapshot import (
+    FixedIntervalRateLimiter,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -39,6 +43,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--start-date", required=True, type=date.fromisoformat)
     parser.add_argument("--end-date", required=True, type=date.fromisoformat)
     parser.add_argument("--package", required=True, type=Path)
+    parser.add_argument(
+        "--request-interval-seconds", type=Decimal, default=Decimal("0.25")
+    )
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args(argv)
     if not args.execute:
@@ -81,6 +88,9 @@ def main(argv: list[str] | None = None) -> int:
             start_date=args.start_date,
             end_date=args.end_date,
             package_path=args.package,
+            rate_limiter=FixedIntervalRateLimiter(
+                interval_seconds=args.request_interval_seconds
+            ),
             progress=progress,
         )
     except (

@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0198](0198-scale-corporate-action-custody-to-the-five-year-range.md):
+  keeps legacy source packages readable while allowing one finite,
+  interval-bound five-year split or dividend package under Stocks Starter.
 - [ADR 0197](0197-separate-reconstructed-research-membership-from-signal-eligible-membership.md):
   stores latest-vintage historical Membership in a research-only family and
   keeps it physically and semantically separate from next-open signal-eligible
@@ -92,8 +95,9 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADR 0197 separates durable research Membership custody from signal-eligible
-  Membership publication.
+- ADRs 0197–0198 separate durable research Membership custody from
+  signal-eligible Membership and scale source-only corporate-action custody to
+  the five-year boundary without weakening its finite limits.
 
 ## Runtime and publication decisions
 
