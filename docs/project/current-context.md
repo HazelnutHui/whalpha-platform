@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-10T10:30:47Z
 
-Deployment state additionally verified at: 2026-09-10T18:41:10Z
+Deployment state additionally verified at: 2026-09-10T18:54:06Z
 
 Repository context updated at: 2026-09-10 UTC
 
@@ -20,8 +20,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Source branch | main; verify current HEAD and cleanliness with the report |
 | Public site | https://whalpha.com/ |
 | OCI alias | whalpha-oci |
-| Active OCI release | 2026-09-10T184018Z-03c277579502 |
-| Deployed source | 03c277579502cd1dd14c5f6108f337932a8e9c95 |
+| Active OCI release | 2026-09-10T185300Z-4c0719b9b4a4 |
+| Deployed source | 4c0719b9b4a469d1f85d1371dff5a6797d0010aa |
 
 Dell is the authority for code, data, development, governance, and heavy
 computation. OCI is limited to static web serving, localhost Auth Service, and
@@ -122,7 +122,7 @@ Analytics remains degraded-short-history because Market Intelligence consumes
 26 sessions although canonical EOD has substantially more. This is a consumer-integration
 limit, not missing acquisition.
 
-The 2026-09-10 18:41:10 UTC independent OCI postflight matched release,
+The 2026-09-10 18:54:06 UTC independent OCI postflight matched release,
 source, manifest, checksums,
 services, protected routes, guest Session, Candidate summary/detail, Strategy
 Channels, Sector ETF Rotation, logout, and residue state. Nginx and the
