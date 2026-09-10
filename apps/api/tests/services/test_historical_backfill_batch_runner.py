@@ -114,6 +114,43 @@ def test_runner_selects_each_adjacent_left_session_and_reports_no_product_work(
     assert package_root.is_dir()
 
 
+def test_runner_uses_frozen_interval_without_legacy_count_ceiling(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    state = {"sessions": _sessions_ending(date(2026, 9, 9), 306)}
+
+    class FakeRepository:
+        def __init__(self, root: Path) -> None:
+            del root
+
+        def list_session_index(self) -> tuple[date, ...]:
+            return state["sessions"]
+
+    def fake_process_session(**kwargs) -> HistoricalBackfillSessionResultV1:
+        session = kwargs["session_date"]
+        state["sessions"] = (session,) + state["sessions"]
+        return _session_result(session, len(state["sessions"]))
+
+    monkeypatch.setattr(module, "CanonicalEodReadRepository", FakeRepository)
+    monkeypatch.setattr(module, "_process_session", fake_process_session)
+    monkeypatch.setattr(module, "_validate_data_root", lambda path: path)
+
+    result = run_historical_backfill_batch(
+        config=MassiveProviderConfig(api_key=SecretStr("fixture-key")),
+        transport=object(),
+        data_root=tmp_path / "data",
+        package_root=tmp_path / "packages",
+        maximum_sessions=1,
+        target_first_session=date(2021, 9, 9),
+        target_last_session=date(2026, 9, 9),
+        request_interval_seconds=Decimal("0.25"),
+    )
+
+    assert result.target_session_count == 1_255
+    assert result.completed_sessions[0].session_date == "2025-06-20"
+
+
 def test_runner_rejects_unbounded_session_count(tmp_path: Path) -> None:
     try:
         run_historical_backfill_batch(

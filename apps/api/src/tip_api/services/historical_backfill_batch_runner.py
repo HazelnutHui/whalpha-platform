@@ -40,7 +40,9 @@ from tip_api.providers.massive.transport import (
 )
 from tip_api.services.historical_backfill_planner import (
     DEFAULT_TARGET_SESSIONS,
+    historical_session_count_in_interval,
     select_next_historical_backfill_session,
+    select_next_historical_backfill_session_in_interval,
 )
 
 
@@ -49,6 +51,8 @@ MAXIMUM_SESSIONS_PER_INVOCATION = 20
 DEFAULT_TRANSIENT_RETRY_DELAYS_SECONDS = (30, 90)
 MAXIMUM_TRANSIENT_RETRIES_PER_SESSION = 2
 MAXIMUM_TRANSIENT_RETRY_DELAY_SECONDS = 5 * 60
+MINIMUM_PAID_REQUEST_INTERVAL_SECONDS = Decimal("0.25")
+MAXIMUM_REQUEST_INTERVAL_SECONDS = Decimal("15")
 
 TransientFailureCode = Literal["transport_timeout", "transport_unavailable"]
 
@@ -129,7 +133,10 @@ def run_historical_backfill_batch(
     package_root: Path,
     maximum_sessions: int,
     target_session_count: int = DEFAULT_TARGET_SESSIONS,
+    target_first_session: date | None = None,
+    target_last_session: date | None = None,
     rate_limiter: FixedIntervalRateLimiter | None = None,
+    request_interval_seconds: Decimal | None = None,
     transient_retry_delays_seconds: tuple[
         int, ...
     ] = DEFAULT_TRANSIENT_RETRY_DELAYS_SECONDS,
@@ -146,14 +153,24 @@ def run_historical_backfill_batch(
     )
     root = _validate_data_root(data_root)
     packages = _prepare_package_root(package_root)
-    limiter = rate_limiter or FixedIntervalRateLimiter()
+    resolved_target_count = _resolve_target_session_count(
+        target_session_count=target_session_count,
+        target_first_session=target_first_session,
+        target_last_session=target_last_session,
+    )
+    limiter = _resolve_rate_limiter(
+        rate_limiter=rate_limiter,
+        request_interval_seconds=request_interval_seconds,
+    )
     counting_transport = _RequestCountingTransport(transport)
     completed: list[HistoricalBackfillSessionResultV1] = []
     for _ in range(maximum_sessions):
         current = CanonicalEodReadRepository(root).list_session_index()
-        target = select_next_historical_backfill_session(
+        target = _select_next_session(
             completed_sessions=current,
-            target_session_count=target_session_count,
+            target_session_count=resolved_target_count,
+            target_first_session=target_first_session,
+            target_last_session=target_last_session,
         )
         if target is None:
             break
@@ -213,13 +230,15 @@ def run_historical_backfill_batch(
             )
         )
     final_sessions = CanonicalEodReadRepository(root).list_session_index()
-    next_session = select_next_historical_backfill_session(
+    next_session = _select_next_session(
         completed_sessions=final_sessions,
-        target_session_count=target_session_count,
+        target_session_count=resolved_target_count,
+        target_first_session=target_first_session,
+        target_last_session=target_last_session,
     )
     return HistoricalBackfillBatchResultV1(
         contract_version=CONTRACT_VERSION,
-        target_session_count=target_session_count,
+        target_session_count=resolved_target_count,
         maximum_sessions=maximum_sessions,
         completed_sessions=tuple(completed),
         status="target_complete" if next_session is None else "batch_complete",
@@ -236,6 +255,65 @@ def run_historical_backfill_batch(
         publication_count=0,
         deployment_count=0,
     )
+
+
+def _resolve_target_session_count(
+    *,
+    target_session_count: int,
+    target_first_session: date | None,
+    target_last_session: date | None,
+) -> int:
+    if (target_first_session is None) != (target_last_session is None):
+        raise HistoricalBackfillBatchRunnerError(
+            "frozen target first and last sessions must be provided together"
+        )
+    if target_first_session is None or target_last_session is None:
+        return target_session_count
+    return historical_session_count_in_interval(
+        target_first_session=target_first_session,
+        target_last_session=target_last_session,
+    )
+
+
+def _select_next_session(
+    *,
+    completed_sessions: tuple[date, ...],
+    target_session_count: int,
+    target_first_session: date | None,
+    target_last_session: date | None,
+) -> date | None:
+    if target_first_session is not None and target_last_session is not None:
+        return select_next_historical_backfill_session_in_interval(
+            completed_sessions=completed_sessions,
+            target_first_session=target_first_session,
+            target_last_session=target_last_session,
+        )
+    return select_next_historical_backfill_session(
+        completed_sessions=completed_sessions,
+        target_session_count=target_session_count,
+    )
+
+
+def _resolve_rate_limiter(
+    *,
+    rate_limiter: FixedIntervalRateLimiter | None,
+    request_interval_seconds: Decimal | None,
+) -> FixedIntervalRateLimiter:
+    if rate_limiter is not None and request_interval_seconds is not None:
+        raise HistoricalBackfillBatchRunnerError(
+            "provide either a rate limiter or a request interval, not both"
+        )
+    if request_interval_seconds is None:
+        return rate_limiter or FixedIntervalRateLimiter()
+    if not (
+        MINIMUM_PAID_REQUEST_INTERVAL_SECONDS
+        <= request_interval_seconds
+        <= MAXIMUM_REQUEST_INTERVAL_SECONDS
+    ):
+        raise HistoricalBackfillBatchRunnerError(
+            "request interval must be between 0.25 and 15 seconds"
+        )
+    return FixedIntervalRateLimiter(interval_seconds=request_interval_seconds)
 
 
 def _process_session(

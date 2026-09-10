@@ -12,7 +12,9 @@ from tip_api.services.historical_backfill_planner import (
     HistoricalBackfillRequestV1,
     HistoricalBackfillStatus,
     plan_historical_research_backfill,
+    historical_session_count_in_interval,
     select_next_historical_backfill_session,
+    select_next_historical_backfill_session_in_interval,
 )
 from tip_api.services.market_calendar import ExchangeCalendar
 
@@ -158,3 +160,22 @@ def test_next_session_selector_extends_the_left_boundary_one_day_at_a_time() -> 
     assert select_next_historical_backfill_session(
         completed_sessions=extended
     ) == date(2026, 7, 10)
+
+
+def test_frozen_interval_selector_reaches_exact_five_year_boundary() -> None:
+    current = _sessions_ending(date(2026, 9, 9), 306)
+
+    assert historical_session_count_in_interval(
+        target_first_session=date(2021, 9, 9),
+        target_last_session=date(2026, 9, 9),
+    ) == 1_255
+    assert select_next_historical_backfill_session_in_interval(
+        completed_sessions=current,
+        target_first_session=date(2021, 9, 9),
+        target_last_session=date(2026, 9, 9),
+    ) == date(2025, 6, 20)
+    assert select_next_historical_backfill_session_in_interval(
+        completed_sessions=_sessions_ending(date(2026, 9, 9), 1_255),
+        target_first_session=date(2021, 9, 9),
+        target_last_session=date(2026, 9, 9),
+    ) is None

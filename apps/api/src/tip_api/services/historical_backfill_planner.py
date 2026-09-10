@@ -306,6 +306,77 @@ def select_next_historical_backfill_session(
     return missing[-1]
 
 
+def select_next_historical_backfill_session_in_interval(
+    *,
+    completed_sessions: tuple[date, ...],
+    target_first_session: date,
+    target_last_session: date,
+    calendar: MarketSessionCalendar | None = None,
+) -> date | None:
+    """Select the next adjacent prefix session inside one frozen interval.
+
+    This is the ADR 0196 execution selector.  Unlike the legacy count-based
+    selector, its boundary cannot drift when a newer canonical session is
+    acquired by the daily pipeline.
+    """
+
+    session_calendar = calendar or ExchangeCalendar()
+    _validate_contiguous_sessions(
+        completed_sessions, "completed sessions", session_calendar
+    )
+    if (
+        not session_calendar.is_session(target_first_session)
+        or not session_calendar.is_session(target_last_session)
+    ):
+        raise HistoricalBackfillPlannerError(
+            "frozen interval boundaries must be XNYS sessions"
+        )
+    if target_first_session > target_last_session:
+        raise HistoricalBackfillPlannerError(
+            "frozen interval first session must not follow its last session"
+        )
+    if completed_sessions[-1] != target_last_session:
+        raise HistoricalBackfillPlannerError(
+            "completed inventory last session must match the frozen interval"
+        )
+    if completed_sessions[0] < target_first_session:
+        raise HistoricalBackfillPlannerError(
+            "completed inventory extends before the frozen interval"
+        )
+    if completed_sessions[0] == target_first_session:
+        return None
+    candidate = session_calendar.previous_session(completed_sessions[0])
+    if candidate < target_first_session:
+        raise HistoricalBackfillPlannerError(
+            "completed inventory is not adjacent to the frozen interval boundary"
+        )
+    return candidate
+
+
+def historical_session_count_in_interval(
+    *,
+    target_first_session: date,
+    target_last_session: date,
+    calendar: MarketSessionCalendar | None = None,
+) -> int:
+    """Return the exact XNYS session count for one frozen interval."""
+
+    session_calendar = calendar or ExchangeCalendar()
+    if (
+        not session_calendar.is_session(target_first_session)
+        or not session_calendar.is_session(target_last_session)
+        or target_first_session > target_last_session
+    ):
+        raise HistoricalBackfillPlannerError(
+            "frozen interval must have ordered XNYS session boundaries"
+        )
+    return len(
+        session_calendar.sessions_in_range(
+            target_first_session, target_last_session
+        )
+    )
+
+
 def _target_sessions(
     *, end_session: date, count: int, calendar: MarketSessionCalendar
 ) -> tuple[date, ...]:

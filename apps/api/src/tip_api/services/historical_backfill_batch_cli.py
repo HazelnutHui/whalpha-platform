@@ -7,6 +7,8 @@ import json
 import subprocess
 import sys
 from dataclasses import asdict
+from datetime import date
+from decimal import Decimal
 from pathlib import Path
 
 from tip_api.providers.massive.credential import (
@@ -31,6 +33,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--target-session-count", type=int, default=DEFAULT_TARGET_SESSIONS
     )
+    parser.add_argument("--target-first-session", type=date.fromisoformat)
+    parser.add_argument("--target-last-session", type=date.fromisoformat)
+    parser.add_argument("--request-interval-seconds", type=Decimal)
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args(argv)
     if not args.execute:
@@ -44,6 +49,9 @@ def main(argv: list[str] | None = None) -> int:
             package_root=args.package_root,
             maximum_sessions=args.maximum_sessions,
             target_session_count=args.target_session_count,
+            target_first_session=args.target_first_session,
+            target_last_session=args.target_last_session,
+            request_interval_seconds=args.request_interval_seconds,
         )
     except HistoricalBackfillBatchStoppedError as exc:
         print(

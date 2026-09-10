@@ -258,6 +258,11 @@ fundamentals, and complete Historical Coverage are absent. The census is
    retain REST as a bounded fallback/cross-check. The fetch-only adapter and
    transitive raw-gzip custody are fixture-tested; a live pilot awaits the
    separate dashboard S3 credential, not another REST API-key retry.
+   The first live attempt verified fail-closed behavior and made zero requests
+   because that separate credential is not configured. Exact-interval
+   execution now freezes both 2021-09-09 and 2026-09-09 and permits an explicit
+   bounded paid-plan serial interval; it does not alter the older 300-session
+   planning contract.
 2. Use Massive as the primary price/reference source and evaluate official
    free evidence through bounded source-specific pilots. Preserve every
    conflict, missing semantic, and permission limit; no first-non-null merge.

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import date
+from decimal import Decimal
 from pathlib import Path
 from typing import Callable
 
@@ -22,6 +24,7 @@ from tip_api.services.historical_backfill_planner import (
     DEFAULT_TARGET_SESSIONS,
     MAXIMUM_TARGET_SESSIONS,
     MINIMUM_TARGET_SESSIONS,
+    historical_session_count_in_interval,
 )
 
 
@@ -97,8 +100,11 @@ def run_historical_backfill_continuous(
     data_root: Path,
     package_root: Path,
     target_session_count: int = DEFAULT_TARGET_SESSIONS,
+    target_first_session: date | None = None,
+    target_last_session: date | None = None,
     batch_size: int = DEFAULT_BATCH_SIZE,
     rate_limiter: FixedIntervalRateLimiter | None = None,
+    request_interval_seconds: Decimal | None = None,
     batch_runner: BatchRunner = run_historical_backfill_batch,
     on_batch_complete: BatchCheckpoint | None = None,
 ) -> HistoricalBackfillContinuousResultV1:
@@ -108,15 +114,30 @@ def run_historical_backfill_continuous(
         raise HistoricalBackfillContinuousRunnerError(
             "batch size must be between one and twenty"
         )
-    if not (
-        MINIMUM_TARGET_SESSIONS
-        <= target_session_count
-        <= MAXIMUM_TARGET_SESSIONS
-    ):
+    if (target_first_session is None) != (target_last_session is None):
         raise HistoricalBackfillContinuousRunnerError(
-            "target session count must be between 252 and 504"
+            "frozen target first and last sessions must be provided together"
         )
-    limiter = rate_limiter or FixedIntervalRateLimiter()
+    if target_first_session is not None and target_last_session is not None:
+        resolved_target_count = historical_session_count_in_interval(
+            target_first_session=target_first_session,
+            target_last_session=target_last_session,
+        )
+    else:
+        resolved_target_count = target_session_count
+        if not (
+            MINIMUM_TARGET_SESSIONS
+            <= resolved_target_count
+            <= MAXIMUM_TARGET_SESSIONS
+        ):
+            raise HistoricalBackfillContinuousRunnerError(
+                "target session count must be between 252 and 504"
+            )
+    if rate_limiter is not None and request_interval_seconds is not None:
+        raise HistoricalBackfillContinuousRunnerError(
+            "provide either a rate limiter or a request interval, not both"
+        )
+    limiter = rate_limiter
     completed_batches = 0
     completed_sessions = 0
     first_completed_session: str | None = None
@@ -124,7 +145,7 @@ def run_historical_backfill_continuous(
     external_requests = 0
     transient_retries = 0
 
-    for _ in range(target_session_count + 1):
+    for _ in range(resolved_target_count + 1):
         try:
             batch = batch_runner(
                 config=config,
@@ -132,8 +153,13 @@ def run_historical_backfill_continuous(
                 data_root=data_root,
                 package_root=package_root,
                 maximum_sessions=batch_size,
-                target_session_count=target_session_count,
+                target_session_count=resolved_target_count,
+                target_first_session=target_first_session,
+                target_last_session=target_last_session,
                 rate_limiter=limiter,
+                request_interval_seconds=(
+                    request_interval_seconds if limiter is None else None
+                ),
             )
         except HistoricalBackfillBatchStoppedError as exc:
             raise HistoricalBackfillContinuousStoppedError(
@@ -157,7 +183,7 @@ def run_historical_backfill_continuous(
 
         _validate_batch_result(
             batch,
-            expected_target_session_count=target_session_count,
+            expected_target_session_count=resolved_target_count,
             expected_batch_size=batch_size,
         )
         batch_session_count = len(batch.completed_sessions)
@@ -167,7 +193,7 @@ def run_historical_backfill_continuous(
                     "bounded batch returned no progress before target completion"
                 )
             return _result(
-                target_session_count=target_session_count,
+                target_session_count=resolved_target_count,
                 batch_size=batch_size,
                 completed_batch_count=completed_batches,
                 completed_session_count=completed_sessions,
@@ -188,7 +214,7 @@ def run_historical_backfill_continuous(
             on_batch_complete(completed_batches, batch)
         if batch.status == "target_complete":
             return _result(
-                target_session_count=target_session_count,
+                target_session_count=resolved_target_count,
                 batch_size=batch_size,
                 completed_batch_count=completed_batches,
                 completed_session_count=completed_sessions,

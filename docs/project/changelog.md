@@ -43,6 +43,15 @@
   credentials and an optional boto3 dependency keep OCI and the REST secret
   boundary unchanged. The adapter is fixture-tested; no live S3 request or
   `/data` write occurred.
+- Ran its first exact live attempt for the 2021-09-09 Day Aggregates object.
+  The separate S3 credential was not configured, so the adapter stopped before
+  transport with zero requests and zero writes. Retained this as a
+  source-specific blocker rather than retrying REST or stopping other families.
+- Extended the resumable EOD/Identity executor with a frozen-interval mode for
+  2021-09-09 through 2026-09-09. It validates the exact 1,255 XNYS sessions and
+  refuses boundary drift. Added an explicit 0.25-to-15-second serial interval
+  for paid unlimited-call plans; provider concurrency remains disabled and the
+  historical 300-session planning contract remains intact.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 

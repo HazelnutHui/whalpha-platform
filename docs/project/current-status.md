@@ -152,7 +152,11 @@ Historical Coverage are absent; status remains `quarantined`.
    Implement the documented Starter Day Aggregates Flat File route for bulk
    five-year prices rather than treating REST retries as progress. Fetch-only
    code and raw-source readback are fixture-tested; live schema/entitlement
-   remains unverified until the separate dashboard S3 credential exists.
+   remains unverified until the separate dashboard S3 credential exists. The
+   first live attempt stopped before any request or write because that
+   credential was absent. The backfill executor now supports a frozen exact
+   1,255-session interval plus an explicit 0.25-to-15-second serial paid-plan
+   interval, while retaining the older count-based mode unchanged.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later

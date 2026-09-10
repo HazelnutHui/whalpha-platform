@@ -105,7 +105,9 @@ Required work:
 - define and census the exact rolling five-year XNYS target, including
   explicitly separate experiment warm-up and outcome-tail sessions;
 - expand EOD/Identity from the current acquired interval to that target while
-  preserving exact source custody;
+  preserving exact source custody; exact-interval execution is implemented,
+  while the preferred Flat File EOD route still awaits its separate S3
+  credential and REST-authorized dates may proceed independently;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward;
 - completed 2026-09-10: the fixed census reconciled 437,402 raw-complete

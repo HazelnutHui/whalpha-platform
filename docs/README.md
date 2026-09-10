@@ -118,6 +118,7 @@ separately approved bounded serving artifacts.
 - [Storage Provisioning](operations/storage-provisioning.md)
 - [Daily EOD Automation](operations/daily-eod-automation.md)
 - [Massive Day Aggregates Flat File Ingestion](operations/massive-day-aggregates-flat-file-ingestion.md)
+- [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
 - [OCI Private Dashboard Deployment](operations/oci-private-dashboard-deployment.md)
