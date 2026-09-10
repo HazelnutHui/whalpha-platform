@@ -2,6 +2,11 @@
 
 ## 2026-09-10 — Reframe the public entry around transparent quantitative research
 
+- Replaced the second-screen loose four-card mosaic with one dominant Quant
+  Research Lab core and a connected vertical rail for the current research
+  record, downstream model-driven selection, and planned research automation.
+  Deployed the responsive hierarchy as immutable OCI release
+  `2026-09-10T193258Z-ef702eb26d24`; independent postflight passed.
 - Reworked the landing visual language from rigid bordered grids to a softer
   premium research surface: floating rounded navigation and access panel,
   layered light and depth, an animated non-representational signal path,
