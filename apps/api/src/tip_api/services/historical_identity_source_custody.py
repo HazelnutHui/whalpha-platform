@@ -1371,7 +1371,11 @@ def _validated_same_day_output_root(path: Path) -> Path:
     try:
         validate_offline_artifact_location(
             path,
-            persistent_names={"canonical-apply-plan.artifacts"},
+            persistent_names={
+                "canonical-apply-plan.artifacts",
+                "identity-canonical-apply-plan.artifacts",
+                "eod-canonical-apply-plan.artifacts",
+            },
         )
     except OfflineArtifactCustodyError as exc:
         raise HistoricalIdentitySourceCustodyError(

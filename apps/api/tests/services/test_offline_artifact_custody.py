@@ -156,6 +156,11 @@ def test_accepts_exact_persistent_historical_data_pair_bound_to_session() -> Non
             plan_path=plan,
             expected_session=date(2026, 8, 28),
         ) == (package, plan)
+        artifact_root = session / "identity-canonical-apply-plan.artifacts"
+        assert validate_offline_artifact_location(
+            artifact_root,
+            persistent_names={"identity-canonical-apply-plan.artifacts"},
+        ) == artifact_root
     finally:
         shutil.rmtree(owner)
 

@@ -55,6 +55,10 @@
 - Replaced the historical executor's reboot-sensitive `/tmp`-only limitation
   with one fixed owner-only Dell state boundary. Only a direct 0700 child of
   that base is accepted; `/tmp` remains available for bounded pilots.
+- Unified historical session package, Apply-plan, and plan-artifact names with
+  the existing persistent daily custody roles. A first real attempt exposed
+  and then closed the nested source-custody validation gap before any
+  canonical partition was written.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 
