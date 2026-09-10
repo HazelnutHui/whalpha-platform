@@ -7,6 +7,13 @@ record, validation evidence center, and model-lifecycle authority. It is the
 place where a personal quantitative idea becomes falsifiable evidence—or a
 recorded failure.
 
+It is also the default authenticated/guest workspace and the sole core module
+in first-level product navigation. Model-Driven Equity Selection sits directly
+below it as a downstream application. Market Regime & Opportunities, Sector
+ETF Rotation, and Market Structure & Activity are grouped separately as free
+market tools; they are useful context, not peer model authorities. Navigation
+does not number these five surfaces as equivalent modules.
+
 Stock Candidates is a downstream consumer, not a second research system. Only
 one to three separately validated and explicitly activated Lab models may
 eventually feed its rankings. The deployed heuristic Candidate score and

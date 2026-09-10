@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-10 — Make Quant Research Lab the default core workspace
+
+- Replaced the five-item numbered peer navigation with two explicit groups:
+  `Research system` and `Free market tools`.
+- Made Quant Research Lab the default workspace, placed Model-Driven Equity
+  Selection directly beneath it as the reserved consumer of activated models, and moved the
+  three stable market-context workspaces into a visually secondary free-tools
+  group.
+- Preserved explicit deep links, Universe selection, bilingual state,
+  Session behavior, equal guest/credential capability, and all existing page
+  implementations. Baseline V1 Candidate data remains present and explicitly
+  unvalidated; no model or ranking authority changed.
+
 ## 2026-09-10 — Reframe the public entry around transparent quantitative research
 
 - Replaced the second-screen loose four-card mosaic with one dominant Quant

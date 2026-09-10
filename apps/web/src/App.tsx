@@ -18,7 +18,7 @@ type UniverseId = (typeof UNIVERSES)[number];
 
 function requestedWorkspace(): Workspace {
   const value = new URLSearchParams(window.location.search).get('view');
-  return value === 'market' || value === 'sector' || value === 'candidates' || value === 'research' ? value : 'regime';
+  return value === 'market' || value === 'regime' || value === 'sector' || value === 'candidates' || value === 'research' ? value : 'research';
 }
 
 function isUniverse(value: string | null): value is UniverseId {
@@ -86,31 +86,39 @@ export default function App(): JSX.Element {
           </div>
         </div>
         <nav className="workspace-navigation" aria-label={t('app.navAria')}>
-          <button type="button" className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onClick={() => navigate('regime')}>
-            <span className="workspace-index">01</span>
-            <strong>{t('app.regimeMap')}</strong>
-            <small>{t('app.regimeMapDescription')}</small>
-          </button>
-          <button type="button" className={workspace === 'sector' ? 'active' : ''} aria-current={workspace === 'sector' ? 'page' : undefined} onClick={() => navigate('sector')}>
-            <span className="workspace-index">02</span>
-            <strong>{t('app.sectorRotation')}</strong>
-            <small>{t('app.sectorRotationDescription')}</small>
-          </button>
-          <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onClick={() => navigate('market')}>
-            <span className="workspace-index">03</span>
-            <strong>{t('app.marketDashboard')}</strong>
-            <small>{t('app.marketDashboardDescription')}</small>
-          </button>
-          <button type="button" className={workspace === 'candidates' ? 'active' : ''} aria-current={workspace === 'candidates' ? 'page' : undefined} onClick={() => navigate('candidates')}>
-            <span className="workspace-index">04</span>
-            <strong>{t('app.stockCandidates')}</strong>
-            <small>{t('app.stockCandidatesDescription')}</small>
-          </button>
-          <button type="button" className={workspace === 'research' ? 'active' : ''} aria-current={workspace === 'research' ? 'page' : undefined} onClick={() => navigate('research')}>
-            <span className="workspace-index">05</span>
-            <strong>{t('app.quantResearch')}</strong>
-            <small>{t('app.quantResearchDescription')}</small>
-          </button>
+          <div className="workspace-nav-group workspace-nav-group--research" role="group" aria-labelledby="research-navigation-label">
+            <div className="workspace-nav-heading"><span id="research-navigation-label">{t('app.researchGroup')}</span><b>{t('app.coreBadge')}</b></div>
+            <button type="button" className={`workspace-nav-primary ${workspace === 'research' ? 'active' : ''}`} aria-current={workspace === 'research' ? 'page' : undefined} onClick={() => navigate('research')}>
+              <span className="workspace-nav-mark workspace-nav-mark--core" aria-hidden="true">LAB</span>
+              <strong>{t('app.quantResearch')}</strong>
+              <small>{t('app.quantResearchDescription')}</small>
+            </button>
+            <button type="button" className={`workspace-nav-secondary ${workspace === 'candidates' ? 'active' : ''}`} aria-current={workspace === 'candidates' ? 'page' : undefined} onClick={() => navigate('candidates')}>
+              <span className="workspace-nav-mark" aria-hidden="true">MODEL</span>
+              <strong>{t('app.stockCandidates')}</strong>
+              <small>{t('app.stockCandidatesDescription')}</small>
+            </button>
+          </div>
+
+          <div className="workspace-nav-divider" aria-hidden="true"><span>{t('app.freeToolsGroup')}</span><b>{t('app.freeBadge')}</b></div>
+
+          <div className="workspace-nav-group workspace-nav-group--tools" role="group" aria-label={t('app.freeToolsGroup')}>
+            <button type="button" className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onClick={() => navigate('regime')}>
+              <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
+              <strong>{t('app.regimeMap')}</strong>
+              <small>{t('app.regimeMapDescription')}</small>
+            </button>
+            <button type="button" className={workspace === 'sector' ? 'active' : ''} aria-current={workspace === 'sector' ? 'page' : undefined} onClick={() => navigate('sector')}>
+              <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
+              <strong>{t('app.sectorRotation')}</strong>
+              <small>{t('app.sectorRotationDescription')}</small>
+            </button>
+            <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onClick={() => navigate('market')}>
+              <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
+              <strong>{t('app.marketDashboard')}</strong>
+              <small>{t('app.marketDashboardDescription')}</small>
+            </button>
+          </div>
         </nav>
         <p className="workspace-boundary">{t('app.researchBoundary')}</p>
       </aside>

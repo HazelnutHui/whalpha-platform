@@ -33,20 +33,25 @@ describe('primary workspace shell', () => {
 
   it('presents persistent first-level workspaces and shared utility controls', () => {
     render(<I18nProvider><App /></I18nProvider>);
-    expect(screen.getByRole('navigation', { name: 'Primary workspaces' })).toBeInTheDocument();
-    const workspaceButtons = screen.getByRole('navigation', { name: 'Primary workspaces' }).querySelectorAll('button');
-    expect(workspaceButtons[0]).toHaveTextContent('Regime & Opportunities');
-    expect(screen.getByRole('button', { name: /Regime & Opportunities/ })).toHaveAttribute('aria-current', 'page');
-    expect(workspaceButtons[1]).toHaveTextContent('Sector Rotation');
-    expect(workspaceButtons[3]).toHaveTextContent('Stock Candidates');
-    expect(workspaceButtons[4]).toHaveTextContent('Quant Research Lab');
-    expect(screen.getByTestId('regime-workspace')).toHaveTextContent('regime:true');
+    expect(screen.getByRole('navigation', { name: 'Research and market tools' })).toBeInTheDocument();
+    const workspaceButtons = screen.getByRole('navigation', { name: 'Research and market tools' }).querySelectorAll('button');
+    expect(workspaceButtons).toHaveLength(5);
+    expect(workspaceButtons[0]).toHaveTextContent('Quant Research Lab');
+    expect(workspaceButtons[1]).toHaveTextContent('Model-Driven Equity Selection');
+    expect(workspaceButtons[2]).toHaveTextContent('Regime & Opportunities');
+    expect(workspaceButtons[3]).toHaveTextContent('Sector Rotation');
+    expect(workspaceButtons[4]).toHaveTextContent('Market Structure & Activity');
+    expect(screen.getByRole('button', { name: /Quant Research Lab/ })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByTestId('research-workspace')).toHaveTextContent('research');
+    expect(screen.getByText('Research system')).toBeInTheDocument();
+    expect(screen.getByText('Free market tools')).toBeInTheDocument();
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
     expect(screen.getByText('Protected Session')).toBeInTheDocument();
     expect(document.querySelector('.workspace-brand img')).toHaveAttribute('src', '/favicon.png');
   });
 
   it('opens the research workspace through the same shell without an account-role branch', () => {
+    window.history.replaceState({}, '', '/dashboard/?view=regime&lang=en&universe=provider_classified_common_shares_v1');
     render(<I18nProvider><App /></I18nProvider>);
     fireEvent.click(screen.getByRole('button', { name: /Quant Research Lab/ }));
     expect(screen.getByTestId('research-workspace')).toBeInTheDocument();
@@ -71,7 +76,7 @@ describe('primary workspace shell', () => {
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
   });
 
-  it('opens Sector Rotation as the second market-wide workspace', () => {
+  it('keeps Sector Rotation in the free market-tool group', () => {
     render(<I18nProvider><App /></I18nProvider>);
     fireEvent.click(screen.getByRole('button', { name: /Sector Rotation/ }));
     expect(screen.getByTestId('sector-workspace')).toBeInTheDocument();
@@ -83,6 +88,8 @@ describe('primary workspace shell', () => {
     fireEvent.click(screen.getByRole('button', { name: '中文' }));
     expect(screen.getByRole('button', { name: /市场风向与机会/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /量化研究实验室/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /模型驱动美股筛选/ })).toBeInTheDocument();
+    expect(screen.getByText('免费市场工具')).toBeInTheDocument();
     expect(screen.getByLabelText('当前股票池')).toHaveValue('provider_classified_common_shares_v1');
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh');
   });

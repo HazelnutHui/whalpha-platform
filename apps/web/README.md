@@ -1,11 +1,12 @@
 # Trading Intelligence Web
 
-The React application has five first-level workspaces: Market Regime &
-Opportunities (`市场风向与机会`), Sector Rotation, Market Dashboard, Stock
-Candidates (`个股候选`), and Quant Research Lab (`量化研究实验室`). Desktop navigation uses a
-persistent left rail, with Market Regime & Opportunities first and selected by
-default; Universe, language, and private Session controls share an
-opaque sticky utility header. The Universe selector exposes only `Common
+The React application is no longer presented as five equal numbered modules.
+Its persistent left rail has one `Research system` group led by Quant Research
+Lab (`量化研究实验室`) as the default workspace, followed by Model-Driven
+Equity Selection as its downstream consumer. A separate `Free market tools`
+group contains Market Regime & Opportunities (`市场风向与机会`), Sector
+Rotation, and Market Structure & Activity. Universe, language, and private
+Session controls share an opaque sticky utility header. The Universe selector exposes only `Common
 Shares` and `Common Shares + ADRs`, with CS-only as default. A validated stable
 ID is persisted in the URL; Legacy remains an internal rollback boundary.
 
@@ -53,7 +54,7 @@ guide.
 
 ## Implemented Views
 
-- Persistent first-level workspace navigation and shared utility controls
+- Research-first grouped workspace navigation and shared utility controls
 - Factual first-screen market summary and Universe/comparable explanation
 - Market Pulse
 - Market Breadth
