@@ -68,6 +68,10 @@
   already-computed pre-state into the plan builder. Generic daily calls remain
   backward compatible, and every Apply still recomputes the full-content
   fingerprint under lock before writing.
+- The post-change three-session measurement completed without retry in 158.52
+  seconds versus 179.47 seconds before the change, an 11.7% reduction. Closed
+  the bounded optimization at that point; EOD/Identity now contain 313
+  sessions and normalized Identity source contains 311.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 

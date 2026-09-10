@@ -55,3 +55,13 @@ locked recheck, but eliminate duplicate scans within each Identity/EOD plan and
 record a measured post-change pilot. This is an execution-efficiency change,
 not a relaxation of canonical readback or conflict rules.
 
+The bounded change then passed its focused compatibility suite and a second
+three-session real batch. That batch completed 2025-06-13, 2025-06-12, and
+2025-06-11 with 39 requests, no retry or failure, in 158.52 seconds at 436,088
+KiB peak RSS. This is 20.95 seconds (11.7%) faster than the original
+three-session batch while retaining every locked full-content recheck. The
+bounded optimization is closed; additional performance work is deferred unless
+the finite long run breaches its explicit operational bound.
+
+After the measurement, EOD and Identity contain 313 sessions and miss 942;
+normalized Identity source contains 311 sessions and misses 944.
