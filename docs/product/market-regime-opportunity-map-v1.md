@@ -43,7 +43,7 @@ bound bar coverage, price-derived registered-ETF proxy selection, missing-
 component reweighting, anomaly quarantine, deterministic Conservative/
 Balanced/Aggressive ranking, Watch/Prepare/Enter/invalidated replay, an
 independent raw-panel Oracle, and canonical `/tmp` audit/reread. Phase 6 adds
-the bounded, language-neutral Candidate publication and bilingual Stock
+the bounded, language-neutral Candidate publication and multilingual Stock
 Candidate workspace. It was introduced with MI 1.1 / Snapshot 1.6 / Dashboard
 2.3 and remains active through the current MI 1.3 / Snapshot 1.11 / Dashboard
 2.8 consumer; later publications still require separate approval.

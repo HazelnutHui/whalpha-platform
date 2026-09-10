@@ -105,7 +105,7 @@ Snapshot publication path.
    corporate-action/lifecycle-safe outcomes.
 2. Review by Regime, industry, liquidity, volatility, turnover, chase, false
    positives, and missed opportunities.
-3. Additive product payload and bilingual UI review. **Completed and deployed
+3. Additive product payload and multilingual UI review. **Completed and deployed
    for the current provisional mechanics.**
 4. Separate publication and deployment authorization for any future formula
    version that passes chronological validation.

@@ -14,7 +14,7 @@ and contrary evidence, market context, and invalidation conditions.
 
 ## Current state
 
-The live product includes bilingual Market Regime & Opportunities, Market
+The live product includes trilingual Market Regime & Opportunities, Market
 Structure & Activity, Sector ETF Rotation, Stock Candidates, and an explicitly
 research-only Quant Research Lab. Guest and credential Sessions intentionally
 receive identical data and capabilities.

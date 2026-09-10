@@ -20,7 +20,7 @@ Phase A does not change the Dashboard. A future Phase B must make Market Pulse, 
 The V1.3 response labels unchanged legacy calculations as provisional and carries `universe_definition_id`, `universe_version`, `governance_status`, `classification_as_of_date`, and `evidence_coverage_status`. The UI displays an amber `Provisional classification` state and a material evidence warning. Published provider security-form evidence does not connect Core/Broad candidates to metrics or remove the issuer-structure limitation.
 
 The deployed product includes the activated Primary/Secondary Universes,
-Market Intelligence, bilingual interface, and equal-capability guest and
+Market Intelligence, trilingual interface, and equal-capability guest and
 credential Sessions. Exact active release, Snapshot, session, freshness and
 postflight evidence belong in
 [current context](../project/current-context.md). Password-based visual

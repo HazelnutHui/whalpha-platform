@@ -10,8 +10,10 @@ evidence of an explicitly approved 2026-08-26 `stale_review`; its exception
 does not authorize reuse for another session or release.
 
 The publication contains one language-neutral Market Regime & Opportunity Map
-payload shared by the English and Simplified Chinese interfaces. Locale never
-enters this contract or its fingerprints.
+payload shared by the English, Simplified Chinese, and Spanish interfaces.
+Locale never enters analytics calculations or fingerprints. Historical
+publications declaring only `en`/`zh` remain readable; new publications default
+to `en`/`zh`/`es`.
 
 ## Immutable layout
 
@@ -40,7 +42,7 @@ Contract `market-intelligence-publication/1.0` binds:
 - Phase 1a, Phase 1b, Phase 2, and preview aggregate logical fingerprints;
 - both Universe regime ledgers, state history, five dimensions, missingness,
   30 ETFs, all 16 pairs, 5/10/20 metrics, and 336 relationship-history rows;
-- `language_neutral=true`, locales `en`/`zh`, zero external requests, no
+- `language_neutral=true`, supported locale values `en`/`zh`/`es`, zero external requests, no
   credentials, and no raw provider payload.
 
 `generated_at` and `publication_id` do not alter payload logical content, but
@@ -73,7 +75,7 @@ reference, pointer, and approval plan, so a changed date, lag, source, plan,
 or current state fails closed.
 
 Review responses use `data_status=stale_review`; they never claim `fresh`.
-English and Chinese render the same authorization and analytics payload. This
+English, Chinese, and Spanish render the same authorization and analytics payload. This
 sub-contract is not an `allow-stale` switch and cannot authorize any other
 session or future release.
 

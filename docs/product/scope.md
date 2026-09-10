@@ -5,7 +5,7 @@
 - Market Regime & Opportunities;
 - Sector ETF Rotation;
 - Market Structure & Activity;
-- bilingual guest and credential Sessions with identical capability;
+- trilingual guest and credential Sessions with identical capability;
 - a deployed but unvalidated Candidate/Strategy Channels baseline; and
 - a research-only Quant Research Lab with no performance claim.
 

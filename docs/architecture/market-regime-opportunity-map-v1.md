@@ -4,8 +4,9 @@
 
 The Production chain is formal EOD/Identity/Activation to immutable Market
 Intelligence, formal active reader, Snapshot 1.7, explicit OCI bundle, and the
-existing read-only API cache/bilingual Frontend. One language-neutral object
-serves English and Chinese; locale never affects analytics identity.
+existing read-only API cache and multilingual Frontend. One language-neutral
+object serves English, Chinese, and Spanish; locale never affects analytics
+identity.
 
 No layer selects `latest`, reads Dell `/tmp` in Production, or recalculates the
 26-session panel on a request/startup path. Publisher, Snapshot, and OCI are
@@ -14,7 +15,7 @@ independent approval and rollback domains.
 ## Status
 
 Status: **Implemented through MI 1.3 and the additive Snapshot 1.11 /
-Dashboard 2.8 consumer boundary, including the bilingual Candidate, Strategy
+Dashboard 2.8 consumer boundary, including the multilingual Candidate, Strategy
 Channel, Visual Context, and Sector ETF Rotation workspaces. Exact active
 publication, release and freshness evidence belongs in
 [current context](../project/current-context.md).**
@@ -393,7 +394,7 @@ Disable the Phase 4 calculation version; Phase 1/2 V1A remains valid.
 
 **Implementation status: score/risk core, chronological candidate-state replay,
 independent Oracle, canonical `/tmp` audit/reread, bounded publication,
-bilingual frontend, and OCI deployment are implemented. The Candidate
+multilingual frontend, and OCI deployment are implemented. The Candidate
 publication introduced through MI 1.1 / Snapshot 1.6 / Dashboard 2.3 remains
 active under MI 1.3 / Snapshot 1.11 / Dashboard 2.8.**
 

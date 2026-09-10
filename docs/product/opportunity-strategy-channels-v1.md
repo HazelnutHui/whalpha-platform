@@ -122,7 +122,7 @@ permutation equivalence.
 The fixed weights are transparent provisional mechanics, not chronologically
 validated parameters. Market/sector fit remains separate and unvalidated. ADR
 0057 now projects the formal audit into one bounded Snapshot 1.9 payload and a
-bilingual lazy Strategy Channels workspace. It does not recalculate in the
+multilingual lazy Strategy Channels workspace. It does not recalculate in the
 browser. Candidate view/channel state is URL-addressable and restores on
 refresh or browser history navigation. Strategy mode removes the unrelated
 risk-mode control, uses Advance + Watch as its headline population, and marks

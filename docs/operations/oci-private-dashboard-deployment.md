@@ -63,8 +63,9 @@ Intelligence publication. It accepts only the exact Snapshot 1.5 / Dashboard
 mismatch,
 missing analytics, or fewer than 16 registered relationships. For 1.6 it also
 freezes and validates Candidate audit/parameter/display bindings and the
-underlying-stock/price-proxy disclosure boundaries. It freezes locales `en`
-and `zh`, default locale `en`, and the analytics checksum and logical identity.
+underlying-stock/price-proxy disclosure boundaries. It freezes locales `en`,
+`zh`, and `es`, default locale `en`, and the analytics checksum and logical
+identity.
 For 1.7 it additionally validates Candidate publication 1.1, embedded entry
 geometry, fixed lane order/counts, entry audit/parameter lineage, preserved
 leadership rank, and the reference-support-not-stop-price boundary.
@@ -79,7 +80,7 @@ retrieves and validates the same protected strategy resource through a
 temporary guest Session; password-based login remains a manual check.
 For 1.10 it additionally binds Candidate Visual Context audit lineage and
 detail-shard 1.1 rows to the exact Candidate score and Entry Geometry
-fingerprints. Public entry HTML, CSS, bilingual copy, and the shared favicon
+fingerprints. Public entry HTML, CSS, trilingual copy, and the shared favicon
 are checksum-bound bundle assets; they contain no provider payload.
 For 1.11 it additionally requires MI 1.3, validates the dedicated Sector ETF
 Rotation file, exact audit/product fingerprints, fixed proxy and window sets,

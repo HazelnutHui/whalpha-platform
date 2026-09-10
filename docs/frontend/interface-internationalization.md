@@ -2,26 +2,28 @@
 
 ## Status and scope
 
-The React Dashboard and the static Session login surface support the same two
+The React Dashboard and the static Session login surface support the same three
 interface locales in local and production bundles:
 
 - `en` renders HTML language `en` and is the authoritative default;
 - `zh` renders HTML language `zh-CN` and provides professional Simplified
-  Chinese copy.
+  Chinese copy; and
+- `es` renders HTML language `es` and provides neutral professional Spanish
+  copy.
 
 This is presentation-only. Locale never enters analytics requests, source
 payloads, calculation parameters, fingerprints, numeric formatting, dates,
 session handling, authorization, or data freshness. The Market Dashboard and
 Market Regime & Opportunities workspaces expose the same rows, fields, precision,
-warnings, and interactions in both languages. The user-facing workspace name
-is `Market Regime & Opportunities` / `市场风向与机会`; the formal API and contract
-identifiers remain unchanged.
+warnings, and interactions in all three languages. The user-facing workspace name
+is `Market Regime & Opportunities` / `市场风向与机会` / `Régimen y oportunidades`;
+the formal API and contract identifiers remain unchanged.
 
 ## Locale state contract
 
 The deterministic resolution order is:
 
-1. a legal URL value, `lang=en` or `lang=zh`;
+1. a legal URL value, `lang=en`, `lang=zh`, or `lang=es`;
 2. the user's prior explicit choice in localStorage key
    `whalpha.interface.locale`;
 3. English.
@@ -48,8 +50,8 @@ Dashboard payload; identity never selects a catalog or analytics response.
 The React catalog is centralized in `apps/web/src/i18n/catalog.ts`:
 
 - the English object is the compile-time source of `MessageKey`;
-- the Chinese object must satisfy `Record<MessageKey, string>`;
-- tests compare both runtime key sets and reject empty values;
+- the Chinese and Spanish objects must satisfy `Record<MessageKey, string>`;
+- tests compare all runtime key sets and reject empty values;
 - `I18nProvider` owns URL/storage resolution and supplies the typed `t`
   function;
 - `domain.ts` maps stable analytics identifiers, reason codes, states,
@@ -57,7 +59,8 @@ The React catalog is centralized in `apps/web/src/i18n/catalog.ts`:
   human-readable keys without altering the source identifiers.
 
 The login asset is intentionally independent of the React bundle, but its
-small English and Chinese dictionaries also have identical tested key sets.
+small English, Chinese, and Spanish dictionaries also have identical tested key
+sets.
 Neither surface uses machine translation, an external service, a CDN, or a
 downloaded font. System-font fallbacks include `Noto Sans SC`, `PingFang SC`,
 and `Microsoft YaHei`.
@@ -71,27 +74,27 @@ than being invented or hidden.
 
 ## Terminology baseline
 
-| English | Simplified Chinese |
-|---|---|
-| Market Structure & Activity | 市场结构与活跃度 |
-| Market Regime & Opportunities | 市场风向与机会 |
-| Risk-on / Balanced / Defensive / Stress | 风险偏好 / 均衡 / 防御 / 压力 |
-| Candidate / Confirmed | 候选状态 / 确认状态 |
-| Composite | 综合评分 |
-| Trend | 趋势 |
-| Market Breadth | 市场广度 |
-| Volatility | 波动环境 |
-| Liquidity / Participation | 流动性 / 参与度 |
-| Leadership / Dispersion | 领涨结构 / 离散度 |
-| Support / Neutral / Drag | 支持 / 中性 / 拖累 |
-| Relative Strength / Relative Spread | 相对强弱 / 相对收益差 |
-| Correlation / Correlation Change | 相关系数 / 相关性变化 |
-| Supporting Evidence / Counterevidence | 支持证据 / 反面证据 |
-| Reliability | 可靠度 |
-| Common Shares | 普通股 |
-| Common Shares + ADRs | 普通股 + 美国存托凭证 |
+| English | Simplified Chinese | Spanish |
+|---|---|---|
+| Market Structure & Activity | 市场结构与活跃度 | Estructura y actividad del mercado |
+| Market Regime & Opportunities | 市场风向与机会 | Régimen y oportunidades |
+| Risk-on / Balanced / Defensive / Stress | 风险偏好 / 均衡 / 防御 / 压力 | Risk-on / Equilibrado / Defensivo / Tensión |
+| Candidate / Confirmed | 候选状态 / 确认状态 | Candidato / Confirmado |
+| Composite | 综合评分 | Compuesto |
+| Trend | 趋势 | Tendencia |
+| Market Breadth | 市场广度 | Amplitud del mercado |
+| Volatility | 波动环境 | Volatilidad |
+| Liquidity / Participation | 流动性 / 参与度 | Liquidez / Participación |
+| Leadership / Dispersion | 领涨结构 / 离散度 | Liderazgo / Dispersión |
+| Support / Neutral / Drag | 支持 / 中性 / 拖累 | Apoyo / Neutral / Lastre |
+| Relative Strength / Relative Spread | 相对强弱 / 相对收益差 | Fortaleza relativa / Diferencial relativo |
+| Correlation / Correlation Change | 相关系数 / 相关性变化 | Correlación / Cambio de correlación |
+| Supporting Evidence / Counterevidence | 支持证据 / 反面证据 | Evidencia favorable / Evidencia contraria |
+| Reliability | 可靠度 | Fiabilidad |
+| Common Shares | 普通股 | Acciones ordinarias |
+| Common Shares + ADRs | 普通股 + 美国存托凭证 | Acciones ordinarias + ADR |
 
-Safety language remains equally prominent in both languages: research context
+Safety language remains equally prominent in all three languages: research context
 is not a trade recommendation, statistical relationships are not causation,
 price relationships are not fund flow, and reliability is not forecast
 probability.
@@ -114,7 +117,7 @@ functionality, or language availability.
 
 ## Publication boundary
 
-The bilingual implementation uses one language-neutral Market Intelligence
-payload for both locales, and locale remains excluded from analytics identity.
+The trilingual implementation uses one language-neutral Market Intelligence
+payload for all three locales, and locale remains excluded from analytics identity.
 Guest and credential Sessions consume that same payload. No role-dependent
 content is authorized.
