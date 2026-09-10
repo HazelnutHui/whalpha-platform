@@ -83,24 +83,8 @@
           <p data-i18n="researchIntro">WH Alpha separates research evidence from product authority. The Lab records what a model is, how it was tested, where it fails, and whether it is allowed to affect a daily ranking.</p>
         </div>
 
-        <div class="research-lead">
-          <aside class="research-dossier" aria-label="Current research record" data-i18n-aria="dossierAria">
-            <div class="dossier-topline"><span data-i18n="dossierLabel">Current research record</span><em>WH / 001</em></div>
-            <div class="dossier-title">
-              <div><small data-i18n="modelFamily">MODEL FAMILY</small><h2>Strong-Leader Pullback</h2></div>
-              <span>V1</span>
-            </div>
-            <div class="dossier-state"><i aria-hidden="true"></i><span data-i18n="researchState">Preregistered · evidence gate not yet passed</span></div>
-            <dl class="dossier-ledger">
-              <div><dt data-i18n="ledgerData">Point-in-time data</dt><dd data-state="building" data-i18n="stateBuilding">In progress</dd></div>
-              <div><dt data-i18n="ledgerModel">Model specification</dt><dd data-state="locked" data-i18n="stateLocked">V1 locked</dd></div>
-              <div><dt data-i18n="ledgerValidation">Out-of-sample evidence</dt><dd data-state="pending" data-i18n="statePending">Not yet available</dd></div>
-              <div><dt data-i18n="ledgerAuthority">Candidate authority</dt><dd data-state="locked" data-i18n="stateInactive">Inactive</dd></div>
-            </dl>
-            <div class="dossier-foot"><span data-i18n="dossierFoot">No result is shown before valid evidence exists.</span><strong data-i18n="notClaim">NO VALIDATED PERFORMANCE YET</strong></div>
-          </aside>
-
-          <article class="feature-card feature-card--lab">
+        <div class="research-system" data-research-layout="core-plus-rail">
+          <article class="feature-card feature-card--lab research-system__core">
             <div class="feature-index"><span>01</span><em data-i18n="researchCore">RESEARCH CORE</em></div>
             <p class="card-kicker" data-i18n="labKicker">Quant Research Lab</p>
             <h3 data-i18n="labTitle">One version. One complete evidence trail.</h3>
@@ -114,31 +98,47 @@
               <span data-i18n="flowActivation">Activation</span>
             </div>
           </article>
-        </div>
 
-        <div class="research-grid">
-          <article class="feature-card">
-            <div class="feature-index"><span>02</span><em data-i18n="decisionOutput">DECISION OUTPUT</em></div>
-            <p class="card-kicker" data-i18n="selectionKicker">Model-driven equity selection</p>
-            <h3 data-i18n="selectionTitle">A ranking must name the model behind it.</h3>
-            <p data-i18n="selectionText">Future rankings may use only explicitly activated models. Each stock will show market applicability, rank drivers, entry readiness, chase risk, and invalidation.</p>
-            <div class="authority-chain">
-              <span data-i18n="chainLab">Validated Lab model</span><b>→</b><span data-i18n="chainReview">Human activation</span><b>→</b><span data-i18n="chainCandidates">Candidate ranking</span>
-            </div>
-            <p class="truth-note" data-i18n="baselineNote">The current Candidate Baseline V1 remains visible and transparent, but is explicitly unvalidated and is not presented as an expected-return model.</p>
-          </article>
+          <div class="research-system__rail">
+            <aside class="research-dossier" aria-label="Current research record" data-i18n-aria="dossierAria">
+              <div class="dossier-topline"><span data-i18n="dossierLabel">Current research record</span><em>WH / 001</em></div>
+              <div class="dossier-title">
+                <div><small data-i18n="modelFamily">MODEL FAMILY</small><h2>Strong-Leader Pullback</h2></div>
+                <span>V1</span>
+              </div>
+              <div class="dossier-state"><i aria-hidden="true"></i><span data-i18n="researchState">Preregistered · evidence gate not yet passed</span></div>
+              <dl class="dossier-ledger">
+                <div><dt data-i18n="ledgerData">Point-in-time data</dt><dd data-state="building" data-i18n="stateBuilding">In progress</dd></div>
+                <div><dt data-i18n="ledgerModel">Model specification</dt><dd data-state="locked" data-i18n="stateLocked">V1 locked</dd></div>
+                <div><dt data-i18n="ledgerValidation">Out-of-sample evidence</dt><dd data-state="pending" data-i18n="statePending">Not yet available</dd></div>
+                <div><dt data-i18n="ledgerAuthority">Candidate authority</dt><dd data-state="locked" data-i18n="stateInactive">Inactive</dd></div>
+              </dl>
+              <div class="dossier-foot"><span data-i18n="dossierFoot">No result is shown before valid evidence exists.</span><strong data-i18n="notClaim">NO VALIDATED PERFORMANCE YET</strong></div>
+            </aside>
 
-          <article class="feature-card feature-card--automation">
-            <div class="feature-index"><span>03</span><em data-i18n="researchExtension">RESEARCH EXTENSION</em></div>
-            <p class="card-kicker" data-i18n="automationKicker">Governed research automation</p>
-            <h3 data-i18n="automationTitle">More hypotheses. The same evidence threshold.</h3>
-            <p data-i18n="automationText">The planned AI research layer extends traditional quantitative research through bounded hypothesis generation and adversarial review. Isolated data stages, finite budgets, deterministic gates, and retained failures constrain the search.</p>
-            <ul class="automation-list">
-              <li data-i18n="automationPoint1">Parallel, deduplicated hypotheses</li>
-              <li data-i18n="automationPoint2">Automated robustness and leakage attacks</li>
-              <li data-i18n="automationPoint3">No model promotion without human review</li>
-            </ul>
-          </article>
+            <article class="feature-card feature-card--selection research-system__satellite">
+              <div class="feature-index"><span>02</span><em data-i18n="decisionOutput">DECISION OUTPUT</em></div>
+              <p class="card-kicker" data-i18n="selectionKicker">Model-driven equity selection</p>
+              <h3 data-i18n="selectionTitle">A ranking must name the model behind it.</h3>
+              <p data-i18n="selectionText">Future rankings may use only explicitly activated models. Each stock will show market applicability, rank drivers, entry readiness, chase risk, and invalidation.</p>
+              <div class="authority-chain">
+                <span data-i18n="chainLab">Validated Lab model</span><b>→</b><span data-i18n="chainReview">Human activation</span><b>→</b><span data-i18n="chainCandidates">Candidate ranking</span>
+              </div>
+              <p class="truth-note" data-i18n="baselineNote">The current Candidate Baseline V1 remains visible and transparent, but is explicitly unvalidated and is not presented as an expected-return model.</p>
+            </article>
+
+            <article class="feature-card feature-card--automation research-system__satellite">
+              <div class="feature-index"><span>03</span><em data-i18n="researchExtension">RESEARCH EXTENSION</em></div>
+              <p class="card-kicker" data-i18n="automationKicker">Governed research automation</p>
+              <h3 data-i18n="automationTitle">More hypotheses. The same evidence threshold.</h3>
+              <p data-i18n="automationText">The planned AI research layer extends traditional quantitative research through bounded hypothesis generation and adversarial review. Isolated data stages, finite budgets, deterministic gates, and retained failures constrain the search.</p>
+              <ul class="automation-list">
+                <li data-i18n="automationPoint1">Parallel, deduplicated hypotheses</li>
+                <li data-i18n="automationPoint2">Automated robustness and leakage attacks</li>
+                <li data-i18n="automationPoint3">No model promotion without human review</li>
+              </ul>
+            </article>
+          </div>
         </div>
       </section>
 
