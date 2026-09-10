@@ -103,3 +103,19 @@ quality gate. Focused provider/persistence regression passed 87 tests; the
 complete API suite passed 2,413 tests. The provider-neutral repository still
 rejects over-scale VWAP, proving that normalization is confined to the Massive
 mapping boundary. No canonical data was written during diagnosis or testing.
+
+## Recovery and resumed continuation
+
+After clean source commit `1f56f3ff7d0bb5319e40ae817ac75241391bfe7b`, one
+foreground recovery session reused both 2022-12-05 canonical Identity and its
+immutable EOD package. It made zero external requests, published and formally
+reread 8,156 EOD rows, and aligned EOD/Identity at 943 sessions with
+2022-12-05 as the common left edge.
+
+The exact empty plan-artifact directory left by the failed builder contained
+no file or symlink and was removed with non-recursive empty-directory checks.
+The unique user unit `whalpha-five-year-backfill-20260910e.service` then
+started with the frozen 1,255-session interval, 20-session batches, serial
+0.25-second request spacing, a 24-hour runtime limit, and a 2 GiB memory limit.
+At 21:36:11 UTC it was active, and 2022-12-02 Identity and EOD had both
+completed, establishing an at-least-944-session aligned live checkpoint.

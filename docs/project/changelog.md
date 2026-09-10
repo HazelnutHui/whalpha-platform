@@ -15,6 +15,10 @@
 - The real package passed a zero-write quality replay with 11,084 raw rows,
   8,156 canonical rows, and all 314 normalizations accounted for. Focused
   tests passed 87 cases and the complete API suite passed 2,413 cases.
+- Reused the retained 2022-12-05 package in a zero-request recovery, formally
+  published and reread that EOD partition, then started one bounded unique
+  continuation from clean source. The live aligned checkpoint advanced to at
+  least 944 EOD/Identity sessions through 2022-12-02.
 
 ## 2026-09-10 — Retain the five-year backfill VWAP precision stop
 

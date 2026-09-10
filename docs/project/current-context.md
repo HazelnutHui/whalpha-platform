@@ -4,6 +4,8 @@ Operational state verified at: 2026-09-10T21:03:41Z
 
 Deployment state additionally verified at: 2026-09-10T21:15:01Z
 
+Backfill activity additionally verified at: 2026-09-10T21:36:11Z
+
 Repository context updated at: 2026-09-10 UTC
 
 This is the compact recovery source for a new task or device. It records
@@ -40,20 +42,20 @@ explicit all-partition validation both passed in their recorded audits.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | 942 contiguous XNYS sessions, 2022-12-06 through 2026-09-09; continuation stopped fail-closed |
+| Canonical EOD | At least 944 contiguous XNYS sessions, 2022-12-02 through 2026-09-09; bounded continuation active |
 | Latest EOD | 2026-09-09; 9,916 rows |
 | Latest EOD fingerprint | 1ecd85558ca0fdf36e2460021b2da80a41ef5f17424aae33a9e94de5e70f1d1f |
 | Latest Identity | 2026-09-09; 9,982 instruments / 13,158 provider identities / 9,982 resolvers |
 | Latest Identity fingerprint | f29de23284b163955fc542b2c48ed3ebd60b618493366511935164e574694707 |
-| Point-in-time Identity | 943 partitions, 2022-12-05 through 2026-09-09; 2022-12-05 is the retained Identity-only transaction edge |
-| Identity source custody | 941 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound within the acquired interval; 2022-12-05 is source-only relative to EOD |
+| Point-in-time Identity | At least 944 partitions, 2022-12-02 through 2026-09-09; aligned with EOD at the recorded live checkpoint |
+| Identity source custody | At least 942 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound within the acquired interval |
 | Signal-eligible Membership | 3 sessions / 59,892 decisions: 2026-09-04, 2026-09-08, 2026-09-09 |
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
 | Corporate-action observations | Canonical recent custody: 70,099 rows, 42,056 resolved / 28,043 quarantined; separate complete five-year owner-only packages: 6,491 splits / 235,751 dividends, not canonical |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |
-| Last quiescent data inventory | 12,216 files / 4,732,957,086 bytes after the stopped continuation |
+| Last quiescent data inventory | 12,216 files / 4,732,957,086 bytes before the resumed continuation |
 | Last quiescent inventory fingerprint | f89a02ad0625b8391dc46e383e8056567c64c94b682e29ab0395f63008501559 |
 | Symlinks / publication residue | zero / zero |
 
@@ -75,8 +77,13 @@ and 943 Identity partitions, then failed closed at 20:51:39 UTC while
 constructing 2022-12-05 EOD. One provider VWAP exceeds the canonical decimal
 scale of 10. The 2022-12-05 Identity partition remains the exact safe
 transaction edge; no partial EOD partition or silent rounding was accepted.
-The unit is stopped. Review and fixture-test the precision policy before any
-restart. See the
+ADR 0202 now confines round-half-even scale normalization to Massive VWAP at
+the provider mapping boundary, with exact raw custody and row/session audit
+evidence. A one-session recovery reused the retained package, made zero
+external requests, and formally published and reread 2022-12-05 EOD. The
+unique bounded `20260910e` continuation then started from clean source
+`1f56f3ff7d0bb5319e40ae817ac75241391bfe7b`; 2022-12-02 EOD completed while
+the unit remained active at the backfill timestamp above. See the
 [dated execution audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md).
 
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
@@ -199,9 +206,9 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| 942 EOD / 943 Identity partitions at a fail-closed precision boundary | Final transitive Historical Coverage |
+| At least 944 aligned EOD / Identity partitions under an active bounded continuation | Final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
-| 941 Identity source partitions | Two source-unbound dates plus the current Identity-only edge |
+| At least 942 Identity source partitions | Two source-unbound dates |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
 | Bounded corporate-action source custody | Complete action availability/revision and absent-event coverage |
@@ -275,17 +282,19 @@ breaches an agreed budget and one bounded design solves both gaps.
 ## Immediate direction
 
 The ADR 0196 baseline census fixes 2021-09-09 through 2026-09-09 as 1,255
-XNYS sessions. Its original counts are superseded by the quiescent 942 EOD /
-943 Identity boundary above. The continuation is stopped at a precision gate.
+XNYS sessions. Its original counts are superseded by the active, at-least-944
+aligned EOD/Identity checkpoint above. The former precision gate is resolved
+under ADR 0202.
 Membership covers 303 sessions and misses 952: 300 reconstructed research-only
 sessions plus three signal-eligible sessions. Lifecycle, point-in-time classification, point-in-time
 fundamentals, and complete Historical Coverage are absent. The census is
 `quarantined`, fingerprint
 `c193895b7cb795fb5054c5e8493bb7c5e438e646c37e03d336a82d52f3a903e7`.
 
-1. Keep the stopped exact EOD/Identity continuation quiescent. Define and
-   fixture-test the canonical handling of the exact 2022-12-05 VWAP precision
-   case before one unique restart; do not silently round or skip it. The 2026-09-10
+1. Let the unique bounded EOD/Identity continuation complete or stop at its
+   next explicit resumable boundary; do not start a competing writer. ADR 0202
+   resolved the exact 2022-12-05 VWAP precision case without rewriting source
+   custody or weakening the provider-neutral repository. The 2026-09-10
    REST pilot found Grouped Daily denied for
    2021-09-09/10 but accessible with 11,063 rows for 2022-09-09; PIT Tickers,
    splits, and dividends were accessible on all three dates. Use the documented
