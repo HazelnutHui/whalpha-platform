@@ -803,7 +803,7 @@ def test_matching_bundle_binds_publication_and_snapshot_but_not_current_head(
                 "git_commit": "a" * 40,
                 "market_intelligence_publication_id": "publication",
                 "default_locale": "en",
-                "supported_locales": ["en", "zh"],
+                "supported_locales": ["en", "zh", "es"],
                 "contains_credentials": False,
                 "contains_raw_provider_data": False,
                 "contains_parquet": False,
@@ -826,6 +826,6 @@ def test_matching_bundle_binds_publication_and_snapshot_but_not_current_head(
 
     assert len(matches) == 1
     assert matches[0]["checksum_file_count"] == 13
-    assert matches[0]["supported_locales"] == ["en", "zh"]
+    assert matches[0]["supported_locales"] == ["en", "zh", "es"]
     assert matches[0]["bundle_source_commit"] == "a" * 40
     assert matches[0]["matches_current_repository_head"] is False

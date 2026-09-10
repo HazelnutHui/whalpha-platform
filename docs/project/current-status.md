@@ -11,8 +11,8 @@ the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
 
 WH Alpha is live as a Session-protected trilingual U.S. equity
 market-intelligence and research platform. Active OCI release
-2026-09-10T204516Z-d8c05139cdfd was built from clean source
-d8c05139cdfdb3d522e2111d7eb5cb6b5cca1dee.
+2026-09-10T210130Z-5da0c2293ac6 was built from clean source
+5da0c2293ac6b221ffa041ada78f8b965829cc5c.
 
 Production uses Market Intelligence 1.3 for 2026-09-09 and Snapshot 1.11 /
 Dashboard 2.8. English is default; Simplified Chinese and neutral professional
@@ -44,6 +44,12 @@ stable market workspaces are grouped separately as free tools rather than
 numbered as equivalent modules. Deep links, multilingual state, Universe choice,
 and identical guest/credential capability remain unchanged.
 
+The authenticated and guest application now uses a separate institutional
+research-terminal visual system: a compact workspace context bar, quieter
+navigation, flat analytical surfaces, table-like information groups,
+restrained status color, and reduced rounding, gradients, glow, and motion.
+The public entry is unchanged. No data, model, or access behavior changed.
+
 All five application workspaces are route-level chunks with intent
 preloading, while the Spanish catalog is fetched only when selected or linked.
 The default Quant Research Lab path fell from about 297.6 KiB to 106.3 KiB
@@ -52,13 +58,14 @@ budgets now guard this boundary.
 
 ## Data
 
-- At the 2026-09-10 18:12:02 UTC checkpoint, EOD and Identity had at least 809
-  aligned contiguous sessions from 2023-06-20 through 2026-09-09. A newer
-  in-flight one-partition Identity lead may appear as the expected transaction
-  ordering while the bounded backfill remains active. Latest EOD
-  has 9,916 rows; latest Identity has 9,982 instruments.
-- Historical Identity source custody has 345 partitions; 2026-08-13 and
-  2026-08-19 remain explicitly unbound.
+- The quiescent 2026-09-10 21:03:41 UTC report found 942 contiguous EOD
+  sessions from 2022-12-06 through 2026-09-09 and 943 Identity partitions
+  from 2022-12-05 through 2026-09-09. The 2022-12-05 Identity-only edge is the
+  retained safe transaction boundary. Latest EOD has 9,916 rows; latest
+  Identity has 9,982 instruments.
+- Historical Identity source custody has 941 partitions; 2026-08-13 and
+  2026-08-19 remain explicitly unbound, and 2022-12-05 is source-only relative
+  to EOD.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
 - Research-only latest-vintage Membership has 300 sessions and 5,571,154
@@ -80,9 +87,8 @@ budgets now guard this boundary.
   retained in owner-only persistent Dell custody and formally reread. Their
   23,260 / 23,469 rows remain discovery and reconciliation evidence, not
   canonical lifecycle or terminal outcomes.
-- The last quiescent data inventory before the continuation was 5,660 files /
-  2,603,087,394 bytes with zero symlinks and zero publication residue. Exact
-  inventory counts are intentionally deferred until the writer is quiescent.
+- The quiescent data inventory is 12,216 files / 4,732,957,086 bytes with zero
+  symlinks and zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
 - Stocks Starter removed the old Basic rate limit and provided the tested 9/9
@@ -92,11 +98,12 @@ budgets now guard this boundary.
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only
   edge but later stopped at a bounded historical alias gate. The successor
-  `whalpha-five-year-backfill-20260910d.service` kept those collisions
-  quarantined and was still active at the deployment postflight. It is bounded
-  to 24 hours, 2 GiB and serial provider access; completed sessions remain
-  canonical if a later session fails. Exact later progress belongs in the
-  dated audit and current context.
+  `whalpha-five-year-backfill-20260910d.service` preserved those conflicts and
+  advanced to the exact counts above before failing closed at 20:51:39 UTC.
+  The 2022-12-05 grouped payload contains a VWAP value beyond the canonical
+  decimal scale of 10; no silent rounding or partial EOD publication occurred.
+  Completed sessions remain canonical. The service is stopped and must not be
+  restarted until that precision policy is reviewed and fixture-tested.
 
 Price depth is no longer the main research blocker.
 
@@ -145,9 +152,8 @@ unauthorized.
 
 Complete:
 
-- an active finite EOD/Identity continuation with at least 386 / 387 durable
-  partitions at its recorded checkpoint;
-- 345 Identity source partitions, 300 research-only Membership sessions, and
+- 942 EOD / 943 Identity durable partitions at the fail-closed boundary;
+- 941 Identity source partitions, 300 research-only Membership sessions, and
   three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
@@ -192,14 +198,15 @@ that fixes both known gaps.
 ## Next priority
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
-2021-09-09 through 2026-09-09. Its initial coverage counts are now superseded
-by the active finite EOD/Identity continuation; final aligned and normalized
-counts wait for a quiescent reread. Membership remains 303/1,255. Required
-lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
+2021-09-09 through 2026-09-09. Its initial coverage counts are superseded by
+the exact quiescent 942 EOD / 943 Identity boundary above. Membership remains
+303/1,255. Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
-1. Let the already-running exact EOD/Identity continuation finish or stop at
-   its next explicit resumable boundary; do not start a competing writer. The
+1. Keep the stopped EOD/Identity continuation quiescent. Resolve the exact
+   2022-12-05 VWAP precision case through an explicit canonical policy and
+   regression fixture before starting one unique continuation; do not round,
+   skip, or restart around the record. The
    completed REST probe found 2021-09-09/10 Grouped Daily denied and
    2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
    Implement the documented Starter Day Aggregates Flat File route for bulk

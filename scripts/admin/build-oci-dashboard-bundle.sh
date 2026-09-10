@@ -400,7 +400,7 @@ payload={
   'frontend_mode': 'snapshot',
   'dashboard_base': '/dashboard/',
   'default_locale': 'en',
-  'supported_locales': ['en','zh'],
+  'supported_locales': ['en','zh','es'],
   'guest_and_credential_capability_identical': True,
   'market_intelligence_publication_id': sys.argv[6],
   'market_intelligence_payload_sha256': manifest['market_intelligence_payload_sha256'],

@@ -68,3 +68,23 @@ Resolver output. ADR 0201 permits this bounded later-vintage reconstruction
 under a 1.0% ceiling while leaving the prospective 0.1% gate unchanged. This
 does not resolve ticker history or upgrade the reconstructed family to
 `as_operated` evidence.
+
+## Fail-closed VWAP precision stop
+
+The successor `whalpha-five-year-backfill-20260910d.service` continued from
+the alias gate and stopped at 2026-09-10 20:51:39 UTC after 9 hours 32 minutes.
+A 21:03:41 UTC network-free quiescent report found 942 contiguous EOD sessions
+from 2022-12-06 through 2026-09-09 and 943 Identity partitions from 2022-12-05
+through 2026-09-09. Identity source custody has 941 partitions; 2026-08-13 and
+2026-08-19 remain source-unbound. The exact inventory is 12,216 files and
+4,732,957,086 bytes with fingerprint
+`f89a02ad0625b8391dc46e383e8056567c64c94b682e29ab0395f63008501559`,
+zero symlinks, and zero publication residue.
+
+The 2022-12-05 Identity transaction completed. EOD plan construction then
+rejected a provider VWAP whose decimal scale exceeds the canonical limit of
+10. The typed persistence exception prevented silent rounding and no
+2022-12-05 EOD partition was published. The retained one-partition Identity
+lead is the exact safe restart boundary. The failed unit remains stopped; its
+precision policy requires an explicit decision and regression fixture before
+one unique continuation is started.

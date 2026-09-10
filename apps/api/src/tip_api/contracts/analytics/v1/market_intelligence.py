@@ -127,7 +127,11 @@ class MarketIntelligencePayloadV1(FrozenModel):
     source: MarketIntelligenceSourceBindingV1
     analytics: MarketRegimePreviewPayloadV1
     language_neutral: Literal[True] = True
-    supported_interface_locales: tuple[Literal["en", "zh"], ...] = ("en", "zh")
+    supported_interface_locales: tuple[Literal["en", "zh", "es"], ...] = (
+        "en",
+        "zh",
+        "es",
+    )
     review_deployment: ReviewDeploymentAuthorization | None = None
     logical_fingerprint: str
 

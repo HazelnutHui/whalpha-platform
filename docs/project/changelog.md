@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-09-10 — Retain the five-year backfill VWAP precision stop
+
+- The bounded `20260910d` continuation advanced to 942 contiguous EOD and 943
+  Identity partitions before failing closed on 2022-12-05 EOD. The retained
+  Identity-only edge is 2022-12-05; one provider VWAP exceeds the canonical
+  decimal scale of 10 and was not silently rounded or skipped.
+- A network-free quiescent report verified 12,216 files / 4,732,957,086 bytes,
+  zero symlinks, zero publication residue, and inventory fingerprint
+  `f89a02ad0625b8391dc46e383e8056567c64c94b682e29ab0395f63008501559`.
+  The failed service remains stopped pending an explicit precision policy and
+  regression fixture.
+
 ## 2026-09-10 — Recast the product workspace as an institutional research terminal
 
 - Reworked the authenticated and equal-capability guest application without
@@ -14,6 +26,14 @@
 - Kept route-level code splitting and three-language behavior unchanged. The
   complete stylesheet remains below the build-failing size budget; no image,
   font, package, data, or runtime dependency was added.
+- Aligned serving-bundle locale evidence and the default for future Market
+  Intelligence publications with the implemented `en`, `zh`, and `es`
+  interface. The active immutable analytics publication was not rewritten.
+- Deployed immutable OCI release `2026-09-10T210130Z-5da0c2293ac6` from source
+  `5da0c2293ac6`. Independent postflight matched release, source, bundle,
+  manifest, checksums, protected routes, guest access, identical guest and
+  credential policy, services, listeners, and zero staging/failed residue.
+  Password login and final human visual review remain manual checks.
 
 ## 2026-09-10 — Bound frontend weight and add governed Spanish localization
 

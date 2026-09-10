@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-10T10:30:47Z
+Operational state verified at: 2026-09-10T21:03:41Z
 
-Deployment state additionally verified at: 2026-09-10T20:46:05Z
+Deployment state additionally verified at: 2026-09-10T21:02:19Z
 
 Repository context updated at: 2026-09-10 UTC
 
@@ -20,8 +20,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Source branch | main; verify current HEAD and cleanliness with the report |
 | Public site | https://whalpha.com/ |
 | OCI alias | whalpha-oci |
-| Active OCI release | 2026-09-10T204516Z-d8c05139cdfd |
-| Deployed source | d8c05139cdfdb3d522e2111d7eb5cb6b5cca1dee |
+| Active OCI release | 2026-09-10T210130Z-5da0c2293ac6 |
+| Deployed source | 5da0c2293ac6b221ffa041ada78f8b965829cc5c |
 
 Dell is the authority for code, data, development, governance, and heavy
 computation. OCI is limited to static web serving, localhost Auth Service, and
@@ -40,21 +40,21 @@ explicit all-partition validation both passed in their recorded audits.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | At least 809 aligned contiguous XNYS sessions, 2023-06-20 through 2026-09-09; bounded backfill active |
+| Canonical EOD | 942 contiguous XNYS sessions, 2022-12-06 through 2026-09-09; continuation stopped fail-closed |
 | Latest EOD | 2026-09-09; 9,916 rows |
 | Latest EOD fingerprint | 1ecd85558ca0fdf36e2460021b2da80a41ef5f17424aae33a9e94de5e70f1d1f |
 | Latest Identity | 2026-09-09; 9,982 instruments / 13,158 provider identities / 9,982 resolvers |
 | Latest Identity fingerprint | f29de23284b163955fc542b2c48ed3ebd60b618493366511935164e574694707 |
-| Point-in-time Identity | At least 809 aligned partitions, 2023-06-20 through 2026-09-09; a newer in-flight one-partition lead may be transactional |
-| Identity source custody | 345 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound within the acquired interval |
+| Point-in-time Identity | 943 partitions, 2022-12-05 through 2026-09-09; 2022-12-05 is the retained Identity-only transaction edge |
+| Identity source custody | 941 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound within the acquired interval; 2022-12-05 is source-only relative to EOD |
 | Signal-eligible Membership | 3 sessions / 59,892 decisions: 2026-09-04, 2026-09-08, 2026-09-09 |
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
 | Corporate-action observations | Canonical recent custody: 70,099 rows, 42,056 resolved / 28,043 quarantined; separate complete five-year owner-only packages: 6,491 splits / 235,751 dividends, not canonical |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |
-| Last quiescent data inventory | 5,660 files / 2,603,087,394 bytes before the active continuation |
-| Last quiescent inventory fingerprint | 641fa52e8936956456f9259afc32cfd419e0b1d15238e44fb3fb6952e0600dc6 |
+| Last quiescent data inventory | 12,216 files / 4,732,957,086 bytes after the stopped continuation |
+| Last quiescent inventory fingerprint | f89a02ad0625b8391dc46e383e8056567c64c94b682e29ab0395f63008501559 |
 | Symlinks / publication residue | zero / zero |
 
 The 300-session historical target and six later sessions are canonical. The
@@ -69,12 +69,14 @@ whole-data compare-and-swap guard observed a concurrent research-Membership
 write. No overwrite or residue occurred; 2025-04-23 remains the exact reusable
 Identity-only continuation point. A unique continuation unit recovered that
 EOD partition without another provider request and resumed from clean source
-revision `d9d77c124f1b9300613d97923493a1e696e1262c`. At the operational timestamp
-above it had reached at least 386 EOD / 387 Identity partitions with no
-reported retry. The succeeding `20260910d` continuation reached an exact
-checkpoint of 809 aligned sessions through 2023-06-20 at 18:12:02 UTC and was
-still active during the deployment postflight; exact later progress and any
-terminal state belong in the
+revision `d9d77c124f1b9300613d97923493a1e696e1262c`. The succeeding `20260910d`
+continuation advanced to 942 EOD
+and 943 Identity partitions, then failed closed at 20:51:39 UTC while
+constructing 2022-12-05 EOD. One provider VWAP exceeds the canonical decimal
+scale of 10. The 2022-12-05 Identity partition remains the exact safe
+transaction edge; no partial EOD partition or silent rounding was accepted.
+The unit is stopped. Review and fixture-test the precision policy before any
+restart. See the
 [dated execution audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md).
 
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
@@ -122,7 +124,7 @@ Analytics remains degraded-short-history because Market Intelligence consumes
 26 sessions although canonical EOD has substantially more. This is a consumer-integration
 limit, not missing acquisition.
 
-The 2026-09-10 20:46:05 UTC independent OCI postflight matched release,
+The 2026-09-10 21:02:19 UTC independent OCI postflight matched release,
 source, manifest, checksums,
 services, protected routes, guest Session, Candidate summary/detail, Strategy
 Channels, Sector ETF Rotation, logout, and residue state. Nginx and the
@@ -132,6 +134,11 @@ on-demand catalog; all five workspaces are route-level chunks with build-time
 size budgets. Guest and credential Sessions have identical capability. No
 credentials, raw provider responses, or Parquet are served. Password login
 and final visual appearance remain manual checks.
+
+The public entry remains unchanged. Inside the product, guest and credential
+Sessions share the same compact institutional research-terminal layout across
+the Lab, downstream Candidate surface, and three market tools. This is a
+presentation-only change; model authority, data, and access remain unchanged.
 
 ## Product authority
 
@@ -192,9 +199,9 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| Active EOD/Identity backfill, at least 386 / 387 partitions | Final transitive Historical Coverage |
+| 942 EOD / 943 Identity partitions at a fail-closed precision boundary | Final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
-| 345 Identity source partitions | Two source-unbound dates plus the current Identity-only edge |
+| 941 Identity source partitions | Two source-unbound dates plus the current Identity-only edge |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
 | Bounded corporate-action source custody | Complete action availability/revision and absent-event coverage |
@@ -268,19 +275,17 @@ breaches an agreed budget and one bounded design solves both gaps.
 ## Immediate direction
 
 The ADR 0196 baseline census fixes 2021-09-09 through 2026-09-09 as 1,255
-XNYS sessions. Its original counts are superseded by an active finite
-EOD/Identity continuation; at the operational timestamp, at least 386 EOD and
-387 Identity partitions existed. Final counts, normalized Identity custody,
-and remaining gaps must be recomputed from a quiescent inventory after the run.
+XNYS sessions. Its original counts are superseded by the quiescent 942 EOD /
+943 Identity boundary above. The continuation is stopped at a precision gate.
 Membership covers 303 sessions and misses 952: 300 reconstructed research-only
 sessions plus three signal-eligible sessions. Lifecycle, point-in-time classification, point-in-time
 fundamentals, and complete Historical Coverage are absent. The census is
 `quarantined`, fingerprint
 `c193895b7cb795fb5054c5e8493bb7c5e438e646c37e03d336a82d52f3a903e7`.
 
-1. Let the already-running frozen exact EOD/Identity continuation finish or
-   stop at its next explicit resumable boundary. Do not start a competing
-   writer. The 2026-09-10
+1. Keep the stopped exact EOD/Identity continuation quiescent. Define and
+   fixture-test the canonical handling of the exact 2022-12-05 VWAP precision
+   case before one unique restart; do not silently round or skip it. The 2026-09-10
    REST pilot found Grouped Daily denied for
    2021-09-09/10 but accessible with 11,063 rows for 2022-09-09; PIT Tickers,
    splits, and dividends were accessible on all three dates. Use the documented

@@ -137,7 +137,7 @@ class OciDashboardDeploymentManifest(BaseModel):
             or self.frontend_mode != "snapshot"
             or self.dashboard_base != "/dashboard/"
             or self.default_locale != "en"
-            or self.supported_locales != ("en", "zh")
+            or self.supported_locales != ("en", "zh", "es")
             or not self.source_tree_clean
             or not self.guest_and_credential_capability_identical
             or self.contains_credentials

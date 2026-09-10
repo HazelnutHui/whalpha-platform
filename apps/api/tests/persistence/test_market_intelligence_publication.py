@@ -321,7 +321,7 @@ def _setup(monkeypatch, tmp_path):
 def test_candidate_reader_is_language_neutral_deterministic_and_strict(monkeypatch, tmp_path):
     root, candidate, plan = _setup(monkeypatch, tmp_path)
     assert candidate.payload.language_neutral is True
-    assert candidate.payload.supported_interface_locales == ("en", "zh")
+    assert candidate.payload.supported_interface_locales == ("en", "zh", "es")
     assert tuple(item.definition.universe_id for item in candidate.payload.analytics.universes) == (
         PRIMARY,
         SECONDARY,

@@ -64,7 +64,7 @@ def _fixture(tmp_path: Path, monkeypatch):
         "frontend_mode": "snapshot",
         "dashboard_base": "/dashboard/",
         "default_locale": "en",
-        "supported_locales": ["en", "zh"],
+        "supported_locales": ["en", "zh", "es"],
         "guest_and_credential_capability_identical": True,
         "market_intelligence_publication_id": RELEASE,
         "market_intelligence_payload_sha256": SHA,
