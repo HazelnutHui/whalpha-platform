@@ -57,6 +57,7 @@ describe('static login client', () => {
     expect(loginHtml).toContain('id="research"');
     expect(loginHtml).toContain('id="standards"');
     expect(loginHtml).toContain('id="free-tools"');
+    expect(loginHtml).toContain('data-whalpha-entry-contract="quant-research-v1"');
     expect(loginHtml).toContain('data-i18n="notClaim"');
     expect(loginHtml).toContain('data-i18n="baselineNote"');
     expect(loginHtml.match(/data-i18n="freeBadge"/g)).toHaveLength(3);

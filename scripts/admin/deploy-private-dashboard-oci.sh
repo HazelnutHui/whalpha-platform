@@ -366,13 +366,13 @@ local_root_body=$(mktemp)
 local_root_code=""
 for _ in 1 2 3 4 5 6 7 8 9 10; do
   local_root_code=$(curl -k -sS --resolve whalpha.com:443:127.0.0.1 -o "${local_root_body}" -w '%{http_code}' https://whalpha.com/)
-  if [[ "${local_root_code}" == "200" ]] && grep -q 'Quantitative Market Structure' "${local_root_body}"; then
+  if [[ "${local_root_code}" == "200" ]] && grep -q 'data-whalpha-entry-contract="quant-research-v1"' "${local_root_body}"; then
     break
   fi
   sleep 1
 done
 [[ "${local_root_code}" == "200" ]] || { echo "local root login failed" >&2; exit 1; }
-grep -q 'Quantitative Market Structure' "${local_root_body}" || { echo "local root login missing branded marker" >&2; exit 1; }
+grep -q 'data-whalpha-entry-contract="quant-research-v1"' "${local_root_body}" || { echo "local root login missing entry contract marker" >&2; exit 1; }
 grep -q 'name="username"' "${local_root_body}" || { echo "local root login missing username field" >&2; exit 1; }
 grep -q 'name="password"' "${local_root_body}" || { echo "local root login missing password field" >&2; exit 1; }
 grep -q 'class="guest-submit"' "${local_root_body}" || { echo "local root login missing guest entry" >&2; exit 1; }
@@ -383,14 +383,14 @@ fi
 public_code=""
 for _ in 1 2 3 4 5 6 7 8 9 10; do
   public_code=$(curl -sS -H 'Cache-Control: no-cache' -o "${public_body}" -w '%{http_code}' https://whalpha.com/)
-  if [[ "${public_code}" == "200" ]] && grep -q 'Quantitative Market Structure' "${public_body}"; then
+  if [[ "${public_code}" == "200" ]] && grep -q 'data-whalpha-entry-contract="quant-research-v1"' "${public_body}"; then
     break
   fi
   sleep 1
 done
 [[ "${public_code}" == "200" ]] || { echo "public https failed" >&2; exit 1; }
 grep -q 'WH Alpha' "${public_body}" || { echo "root login missing WH Alpha" >&2; exit 1; }
-grep -q 'Quantitative Market Structure' "${public_body}" || { echo "root login missing branded marker" >&2; exit 1; }
+grep -q 'data-whalpha-entry-contract="quant-research-v1"' "${public_body}" || { echo "root login missing entry contract marker" >&2; exit 1; }
 grep -q 'name="username"' "${public_body}" || { echo "root login missing username field" >&2; exit 1; }
 grep -q 'name="password"' "${public_body}" || { echo "root login missing password field" >&2; exit 1; }
 grep -q 'class="guest-submit"' "${public_body}" || { echo "root login missing guest entry" >&2; exit 1; }

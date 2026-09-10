@@ -16,6 +16,9 @@
   Session behavior, equal capability, data-free public entry, and the shared
   WH Alpha favicon. No model, data, ranking, access, or authentication behavior
   changed.
+- Replaced the deployment gate's retired marketing-sentence match with the
+  stable `quant-research-v1` entry contract after the first publish attempt
+  rejected and rolled back the otherwise valid new page.
 
 ## 2026-09-10 — Localize a historical Identity alias-revision stop
 
