@@ -9,7 +9,7 @@ import {
   resolveLocale,
   useI18n,
 } from './I18nProvider';
-import { catalogs, englishMessages } from './catalog';
+import { catalogs, englishMessages, loadCatalog } from './catalog';
 
 function Probe(): JSX.Element {
   const { locale, htmlLang, t } = useI18n();
@@ -28,16 +28,25 @@ describe('typed interface locale state', () => {
   });
   afterEach(cleanup);
 
-  it('keeps the English and Chinese dictionary key sets exactly aligned', () => {
+  it('keeps the English, Chinese, and Spanish dictionary key sets exactly aligned', async () => {
+    const spanish = await loadCatalog('es');
     expect(Object.keys(catalogs.en).sort()).toEqual(Object.keys(catalogs.zh).sort());
+    expect(Object.keys(catalogs.en).sort()).toEqual(Object.keys(spanish).sort());
     expect(Object.keys(catalogs.en)).toHaveLength(Object.keys(englishMessages).length);
     expect(Object.values(catalogs.en).every(Boolean)).toBe(true);
     expect(Object.values(catalogs.zh).every(Boolean)).toBe(true);
+    expect(Object.values(spanish).every(Boolean)).toBe(true);
+    const placeholders = (value: string) => Array.from(value.matchAll(/\{([A-Za-z0-9_]+)\}/g), (match) => match[1]).sort();
+    for (const key of Object.keys(englishMessages) as Array<keyof typeof englishMessages>) {
+      expect(placeholders(spanish[key]), `Spanish placeholders for ${key}`).toEqual(placeholders(englishMessages[key]));
+    }
+    expect(Object.keys(englishMessages).filter((key) => spanish[key as keyof typeof englishMessages] === englishMessages[key as keyof typeof englishMessages]).length).toBeLessThan(40);
   });
 
   it('uses legal URL locale, then explicit storage, then English', () => {
     expect(resolveLocale('?lang=en', 'zh')).toBe('en');
     expect(resolveLocale('?lang=zh', 'en')).toBe('zh');
+    expect(resolveLocale('?lang=es', 'zh')).toBe('es');
     expect(resolveLocale('?view=regime', 'zh')).toBe('zh');
     expect(resolveLocale('?view=regime', null)).toBe('en');
     expect(resolveLocale('?lang=javascript%3Aalert(1)', 'zh')).toBe('en');
@@ -77,6 +86,17 @@ describe('typed interface locale state', () => {
     await waitFor(() => expect(screen.getByTestId('locale')).toHaveTextContent('en'));
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_plus_adrs_v1');
     expect(screen.getByText('Market Regime & Opportunities')).toBeInTheDocument();
+  });
+
+  it('loads professional Spanish on demand without losing query state', async () => {
+    mount('/dashboard/?view=regime&universe=provider_classified_common_shares_v1&lang=en');
+    fireEvent.click(screen.getByRole('button', { name: 'Español' }));
+    await waitFor(() => expect(screen.getByTestId('locale')).toHaveTextContent('es'));
+    await waitFor(() => expect(screen.getByText('Régimen de mercado y oportunidades')).toBeInTheDocument());
+    expect(document.documentElement.lang).toBe('es');
+    expect(window.localStorage.getItem(LOCALE_STORAGE_KEY)).toBe('es');
+    expect(new URLSearchParams(window.location.search).get('view')).toBe('regime');
+    expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_v1');
   });
 
   it('safely canonicalizes an illegal URL locale to English even with stored Chinese', async () => {

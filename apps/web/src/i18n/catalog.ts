@@ -5,6 +5,7 @@ export const englishMessages = {
   'language.selectorAria': 'Interface language',
   'language.en': 'English',
   'language.zh': '中文',
+  'language.es': 'Español',
   'common.unavailable': 'Unavailable',
   'common.retry': 'Retry',
   'common.close': 'Close',
@@ -2051,10 +2052,34 @@ export const chineseMessages: Record<MessageKey, string> = {
   'pair.credit_duration.forbidden': '这不是资金流指标，也不是完整的利率模型。',
 };
 
-export type Locale = 'en' | 'zh';
+export type Locale = 'en' | 'zh' | 'es';
 export type MessageValues = Record<string, string | number>;
+export type MessageCatalog = Record<MessageKey, string>;
+type BuiltInLocale = Exclude<Locale, 'es'>;
 
-export const catalogs: Record<Locale, Record<MessageKey, string>> = {
+export const catalogs: Record<BuiltInLocale, MessageCatalog> = {
   en: englishMessages,
   zh: chineseMessages,
 };
+
+export function immediateCatalog(locale: Locale): MessageCatalog | null {
+  return locale === 'es' ? null : catalogs[locale];
+}
+
+let spanishCatalogPromise: Promise<MessageCatalog> | null = null;
+
+export function loadCatalog(locale: Locale): Promise<MessageCatalog> {
+  const immediate = immediateCatalog(locale);
+  if (immediate) return Promise.resolve(immediate);
+  spanishCatalogPromise ??= import('./spanishMessages')
+    .then((module) => module.spanishMessages)
+    .catch((error: unknown) => {
+      spanishCatalogPromise = null;
+      throw error;
+    });
+  return spanishCatalogPromise;
+}
+
+export function preloadCatalog(locale: Locale): void {
+  void loadCatalog(locale).catch(() => undefined);
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { catalogs, type MessageKey } from './catalog';
+import { catalogs, loadCatalog, type MessageCatalog, type MessageKey } from './catalog';
 import {
   dimensionName,
   familyName,
@@ -14,6 +14,10 @@ import type { Translate } from './I18nProvider';
 
 const translate = (locale: 'en' | 'zh'): Translate => (key: MessageKey, values = {}) =>
   catalogs[locale][key].replace(/\{([A-Za-z0-9_]+)\}/g, (match, value: string) =>
+    Object.prototype.hasOwnProperty.call(values, value) ? String(values[value]) : match,
+  );
+const translateCatalog = (catalog: MessageCatalog): Translate => (key: MessageKey, values = {}) =>
+  catalog[key].replace(/\{([A-Za-z0-9_]+)\}/g, (match, value: string) =>
     Object.prototype.hasOwnProperty.call(values, value) ? String(values[value]) : match,
   );
 
@@ -55,5 +59,15 @@ describe('localized analytics domain mappings', () => {
         expect(pairText(translate('zh'), pairId, field, fallback)).not.toBe(fallback);
       }
     }
+  });
+
+  it('provides Spanish domain terms for governed market concepts', async () => {
+    const spanish = await loadCatalog('es');
+    const es = translateCatalog(spanish);
+    expect(universeName(es, 'provider_classified_common_shares_v1')).toBe('Acciones ordinarias');
+    expect(stateName(es, 'defensive')).toBe('Defensivo');
+    expect(dimensionName(es, 'leadership_dispersion')).toBe('Liderazgo / Dispersión');
+    expect(relationshipName(es, 'rotation_candidate')).toBe('Candidato de rotación');
+    expect(familyName(es, 'credit_vs_duration')).toBe('Crédito frente a duración');
   });
 });

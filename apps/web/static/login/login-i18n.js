@@ -3,7 +3,7 @@
   const messages = {
     en: {
       title: 'WH Alpha Quantitative Research',
-      languageLabel: 'Language', languageAria: 'Interface language', english: 'English', chinese: '中文',
+      languageLabel: 'Language', languageAria: 'Interface language', english: 'English', chinese: '中文', spanish: 'Español',
       brandDescriptor: 'Quantitative Research', navigationAria: 'Page navigation', navResearch: 'Research', navStandards: 'Standards', navTools: 'Free tools', navAccess: 'Sign in',
       heroEyebrow: 'Systematic U.S. equity research', heroTitle: 'Quantitative research that stands up to scrutiny.',
       heroDescription: 'A governed research system for testable hypotheses, point-in-time data, reproducible evaluation, and model-driven U.S. equity selection. Methods, evidence, and limits remain visible.',
@@ -40,7 +40,7 @@
     },
     zh: {
       title: 'WH Alpha 量化研究',
-      languageLabel: '语言', languageAria: '界面语言', english: 'English', chinese: '中文',
+      languageLabel: '语言', languageAria: '界面语言', english: 'English', chinese: '中文', spanish: 'Español',
       brandDescriptor: '量化研究', navigationAria: '页面导航', navResearch: '研究体系', navStandards: '研究标准', navTools: '免费工具', navAccess: '登录',
       heroEyebrow: '系统化美股量化研究', heroTitle: '让每一个美股模型，都经得起追问。',
       heroDescription: '一套用于可检验假设、点时数据、可复现评估与模型驱动美股筛选的研究系统。方法、证据与边界始终可查。',
@@ -75,9 +75,46 @@
       username: '用户名', password: '密码', submit: '登录', submitting: '正在登录', guestNote: '游客与登录用户目前获得完全相同的产品能力。',
       footerText: '透明、可验证的美股量化研究。',
     },
+    es: {
+      title: 'WH Alpha Investigación Cuantitativa',
+      languageLabel: 'Idioma', languageAria: 'Idioma de la interfaz', english: 'English', chinese: '中文', spanish: 'Español',
+      brandDescriptor: 'Investigación cuantitativa', navigationAria: 'Navegación de la página', navResearch: 'Investigación', navStandards: 'Estándares', navTools: 'Herramientas gratuitas', navAccess: 'Acceder',
+      heroEyebrow: 'Investigación sistemática de acciones estadounidenses', heroTitle: 'Investigación cuantitativa que resiste un examen riguroso.',
+      heroDescription: 'Un sistema gobernado para hipótesis comprobables, datos point-in-time, evaluación reproducible y selección de acciones estadounidenses basada en modelos. Los métodos, la evidencia y los límites permanecen visibles.',
+      guestSubmit: 'Continuar como invitado', guestSubmitting: 'Abriendo el acceso de invitado', guestError: 'El acceso de invitado no está disponible temporalmente.', orGuest: 'o continuar sin una cuenta',
+      trustAria: 'Principios de investigación', trustPointTime: 'Datos point-in-time', trustOutSample: 'Prioridad fuera de muestra', trustCost: 'Costes incorporados', trustTransparent: 'Transparente desde el diseño',
+      dossierAria: 'Registro de investigación actual', dossierLabel: 'Registro de investigación actual', modelFamily: 'FAMILIA DE MODELOS', researchState: 'Preinscrito · criterio de evidencia aún no superado',
+      ledgerData: 'Datos point-in-time', ledgerModel: 'Especificación del modelo', ledgerValidation: 'Evidencia fuera de muestra', ledgerAuthority: 'Autoridad sobre Candidatos',
+      stateBuilding: 'En construcción', stateLocked: 'V1 bloqueada', statePending: 'Aún no disponible', stateInactive: 'Inactiva', dossierFoot: 'No se muestra ningún resultado antes de que exista evidencia válida.', notClaim: 'AÚN NO HAY RENDIMIENTO VALIDADO',
+      exploreResearch: 'Continuar al sistema de investigación', scrollPreview: 'Evidencia de modelos · estándares de investigación · herramientas de mercado gratuitas', researchKicker: 'Investigar antes de clasificar', researchTitle: 'Un modelo debe ganarse su lugar antes de influir en una lista de candidatos.',
+      researchIntro: 'WH Alpha separa la evidencia de investigación de la autoridad del producto. El Laboratorio registra qué es un modelo, cómo se probó, dónde falla y si está autorizado para influir en una clasificación diaria.',
+      researchCore: 'NÚCLEO DE INVESTIGACIÓN', labKicker: 'Laboratorio de investigación cuantitativa', labTitle: 'Una versión. Una trazabilidad completa de la evidencia.',
+      labText: 'Cada registro vincula la hipótesis, las entradas point-in-time, las fórmulas, los parámetros fijos, los costes, las pruebas cronológicas, la evidencia contraria, los fallos y la decisión de ciclo de vida con la versión exacta del modelo.',
+      flowAria: 'Ciclo de vida de la investigación', flowHypothesis: 'Hipótesis', flowData: 'Admisión de datos', flowValidation: 'Validación', flowFalsification: 'Refutación', flowShadow: 'Sombra', flowActivation: 'Activación',
+      decisionOutput: 'SALIDA DE DECISIÓN', selectionKicker: 'Selección de acciones basada en modelos', selectionTitle: 'Toda clasificación debe identificar el modelo que la sustenta.',
+      selectionText: 'Las clasificaciones futuras solo podrán utilizar modelos activados explícitamente. Cada acción mostrará adecuación al mercado, factores de clasificación, preparación de entrada, riesgo de perseguir el precio e invalidación.',
+      chainLab: 'Modelo validado del Laboratorio', chainReview: 'Activación humana', chainCandidates: 'Clasificación de candidatos',
+      baselineNote: 'Candidate Baseline V1 permanece visible y transparente, pero se identifica explícitamente como no validada y no se presenta como un modelo de rentabilidad esperada.',
+      researchExtension: 'AMPLIACIÓN DE LA INVESTIGACIÓN', automationKicker: 'Automatización gobernada de la investigación', automationTitle: 'Más hipótesis. El mismo umbral de evidencia.',
+      automationText: 'La capa de investigación con IA prevista amplía la investigación cuantitativa tradicional mediante generación acotada de hipótesis y revisión adversarial. Etapas de datos aisladas, presupuestos finitos, filtros deterministas y conservación de los fallos limitan la búsqueda.',
+      automationPoint1: 'Hipótesis paralelas y deduplicadas', automationPoint2: 'Ataques automatizados de robustez y fuga de información', automationPoint3: 'Ningún modelo se promueve sin revisión humana',
+      standardsKicker: 'Estándar de investigación', standardsTitle: 'El rigor debe poder examinarse, no limitarse a una afirmación.',
+      standardsIntro: 'Cada modelo expone su reloj de datos, supuestos, costes, debilidades y autoridad actual. La incertidumbre se informa como un estado; no se oculta tras una presentación pulida.',
+      standardDataTitle: 'Base point-in-time', standardDataText: 'La identidad estable del instrumento, la composición histórica, la evidencia de ciclo de vida, las acciones corporativas y la disponibilidad de las comunicaciones se gobiernan sin proyectar el presente hacia el pasado.',
+      standardValidationTitle: 'Evidencia cronológica', standardValidationText: 'Desarrollo, validación, holdout sellado y observación prospectiva permanecen separados. Un resultado atractivo dentro de muestra no se convierte en prueba.',
+      standardCostsTitle: 'Supuestos negociables', standardCostsText: 'Momento de entrada, rotación, diferencial, impacto, capacidad y riesgo específico del instrumento pertenecen a la evaluación, no a una nota al pie posterior al resultado.',
+      standardOpenTitle: 'Completamente examinable', standardOpenText: 'La lógica, los campos de origen, las fórmulas, los parámetros, las exclusiones, la evidencia, la evidencia contraria, las huellas y la invalidación permanecen abiertos a revisión.',
+      toolsKicker: 'Inteligencia de mercado gratuita', toolsTitle: 'El contexto de mercado permanece abierto.', toolsIntro: 'Tres espacios de trabajo gratuitos ofrecen una lectura disciplinada del mercado antes de considerar cualquier idea sobre una acción.', freeBadge: 'GRATIS',
+      toolRegimeTitle: 'Régimen de mercado y oportunidades', toolRegimeText: 'Examine el respaldo al riesgo, la calidad interna, la fortaleza direccional, las relaciones entre ETF y la evidencia contraria en horizontes independientes.',
+      toolSectorTitle: 'Rotación de ETF sectoriales', toolSectorText: 'Compare proxies sectoriales con SPY en 5, 10 y 20 sesiones para observar liderazgo, persistencia, aceleración y deterioro.',
+      toolStructureTitle: 'Estructura y actividad del mercado', toolStructureText: 'Examine amplitud, participación alcista y bajista, estructura de referencias, líderes, rezagados y actividad negociadora.',
+      workspaceReady: 'Espacio de investigación disponible', signIn: 'Acceso a la cuenta', continue: 'Acceda al espacio de investigación con una cuenta existente.', invalid: 'Usuario o contraseña incorrectos.',
+      username: 'Usuario', password: 'Contraseña', submit: 'Acceder', submitting: 'Accediendo', guestNote: 'Las sesiones de invitado y con cuenta reciben actualmente las mismas funciones del producto.',
+      footerText: 'Investigación cuantitativa transparente para acciones estadounidenses.',
+    },
   };
 
-  function valid(value) { return value === 'en' || value === 'zh'; }
+  function valid(value) { return value === 'en' || value === 'zh' || value === 'es'; }
   function stored() { try { return window.localStorage.getItem(STORAGE_KEY); } catch { return null; } }
   function resolve() {
     const fromUrl = new URLSearchParams(window.location.search).get('lang');
@@ -89,7 +126,7 @@
   function t(key) { return messages[locale][key]; }
   function canonicalUrl(nextLocale) { const url = new URL(window.location.href); url.searchParams.set('lang', nextLocale); return url; }
   function apply() {
-    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : 'en';
+    document.documentElement.lang = locale === 'zh' ? 'zh-CN' : locale;
     document.title = t('title');
     document.querySelectorAll('[data-i18n]').forEach((node) => { const key = node.getAttribute('data-i18n'); if (key && messages[locale][key]) node.textContent = t(key); });
     document.querySelectorAll('[data-i18n-aria]').forEach((node) => { const key = node.getAttribute('data-i18n-aria'); if (key && messages[locale][key]) node.setAttribute('aria-label', t(key)); });

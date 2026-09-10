@@ -45,6 +45,18 @@ backend capability and does not create another navigation item.
 API and Snapshot modes do not fall back to demo data on failure. Production
 builds reject known synthetic fixture markers.
 
+English remains the default interface language. Simplified Chinese is bundled
+with the shared shell, while the complete neutral-Spanish catalog is loaded
+only after an explicit Spanish selection or Spanish deep link. All three
+locales preserve the same route, Universe, Session, data, and capability.
+
+All five workspaces are route-level lazy chunks. The Quant Research Lab default
+path no longer downloads the Candidate and ECharts-heavy Market Structure code
+before it is needed. Hover/focus preloading reduces the first intentional
+workspace switch, and production builds enforce raw-size ceilings of 350 KiB
+for the entry JavaScript, 550 KiB for any asynchronous JavaScript chunk, and
+130 KiB for the stylesheet.
+
 Snapshot 1.11 / Dashboard 2.8 serves bounded Candidate summary/detail shards,
 Entry Geometry, Strategy Channels, Candidate Visual Context, and Sector ETF
 Rotation without browser-side score or rank recomputation. Exact active

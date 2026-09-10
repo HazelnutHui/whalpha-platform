@@ -46,4 +46,16 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('不可进入个股候选')).toBeInTheDocument();
     expect(screen.getByText(/股票证据不等于期权表现/)).toBeInTheDocument();
   });
+
+  it('renders natural quantitative-research terminology in Spanish', () => {
+    window.history.replaceState({}, '', '/dashboard/?lang=es&view=research');
+    render(<I18nProvider><QuantResearchLabPage /></I18nProvider>);
+    expect(screen.getByRole('heading', { name: 'Laboratorio de investigación cuantitativa' })).toBeInTheDocument();
+    expect(screen.getByText('DATOS INSUFICIENTES')).toBeInTheDocument();
+    expect(screen.getByText('SOLO MÉTODO')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Criterios de admisión de datos' })).toBeInTheDocument();
+    expect(screen.getByText('Composición point-in-time').parentElement).toHaveTextContent('INCOMPLETA');
+    expect(screen.getByText('No apto para Candidatos')).toBeInTheDocument();
+    expect(screen.getByText(/La evidencia de una acción no es rendimiento de opciones/)).toBeInTheDocument();
+  });
 });

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-10 — Bound frontend weight and add governed Spanish localization
+
+- Split all five application workspaces into on-demand chunks and added
+  intent preloading. The default Quant Research Lab path no longer downloads
+  Candidate or ECharts-heavy Market Structure code before it is needed.
+- Added build-failing raw-size budgets for entry JavaScript, asynchronous
+  JavaScript chunks, and the shared stylesheet.
+- Added a complete neutral-Spanish interface catalog, including the public
+  entry and Quant Research Lab, with exact key and placeholder parity checks.
+  The Spanish dashboard catalog loads only after explicit selection or a
+  Spanish deep link; no English/Chinese user downloads it on first entry.
+- Preserved English as default, exact query/Universe state, Session behavior,
+  equal guest/credential capability, fail-closed data behavior, and all model
+  and Candidate authority boundaries.
+
 ## 2026-09-10 — Make Quant Research Lab the default core workspace
 
 - Replaced the five-item numbered peer navigation with two explicit groups:

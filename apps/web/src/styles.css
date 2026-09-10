@@ -553,6 +553,7 @@ body {
 .workspace-nav-group--tools button.active .workspace-tool-mark i { border-color: var(--accent); background: var(--accent); box-shadow: 0 0 0 5px rgba(84, 215, 229, .08), 0 0 16px rgba(84, 215, 229, .4); }
 .workspace-boundary { margin: 0; padding: 10px; border-top: 1px solid var(--border); color: var(--muted-2); font-size: .68rem; line-height: 1.45; }
 .workspace-stage { min-width: 0; }
+.workspace-route-loading { min-height: calc(100vh - 66px); display: grid; place-items: center; color: var(--muted); font-size: .82rem; letter-spacing: .04em; }
 .workspace-utility {
   position: sticky;
   top: 0;

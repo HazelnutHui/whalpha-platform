@@ -18,7 +18,8 @@
 
   function withLocale(path) {
     const url = new URL(safeNext(path), window.location.origin);
-    url.searchParams.set('lang', i18n?.locale === 'zh' ? 'zh' : 'en');
+    const locale = i18n?.locale;
+    url.searchParams.set('lang', locale === 'zh' || locale === 'es' ? locale : 'en');
     return `${url.pathname}${url.search}${url.hash}`;
   }
   const params = new URLSearchParams(window.location.search);

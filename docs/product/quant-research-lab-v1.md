@@ -60,6 +60,12 @@ material parameter or silently substitute a narrative summary for the formula.
 Guest and credential Sessions receive the same Lab evidence and capability
 until the product policy is explicitly changed.
 
+The interface is available in English, Simplified Chinese, and neutral
+professional Spanish. Locale changes never alter model identity, evidence,
+parameters, lifecycle state, Candidate authority, or access policy. Exact
+formulae, identifiers, reason codes, and canonical source-record values remain
+source-faithful rather than being rewritten as localized model evidence.
+
 ## Model lifecycle
 
 | State | Meaning | Candidate authority |

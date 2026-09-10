@@ -1,13 +1,21 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 
-import { catalogs, type Locale, type MessageKey, type MessageValues } from './catalog';
+import {
+  catalogs,
+  immediateCatalog,
+  loadCatalog,
+  type Locale,
+  type MessageCatalog,
+  type MessageKey,
+  type MessageValues,
+} from './catalog';
 
 export const LOCALE_STORAGE_KEY = 'whalpha.interface.locale';
-const HTML_LANG: Record<Locale, string> = { en: 'en', zh: 'zh-CN' };
+const HTML_LANG: Record<Locale, string> = { en: 'en', zh: 'zh-CN', es: 'es' };
 
 export function isLocale(value: string | null): value is Locale {
-  return value === 'en' || value === 'zh';
+  return value === 'en' || value === 'zh' || value === 'es';
 }
 
 export function resolveLocale(search: string, storedLocale: string | null): Locale {
@@ -53,15 +61,16 @@ function readStoredLocale(): string | null {
   }
 }
 
-function applyDocumentLocale(locale: Locale): void {
+function applyDocumentLocale(locale: Locale, messages: MessageCatalog): void {
   document.documentElement.lang = HTML_LANG[locale];
-  document.title = catalogs[locale]['meta.title'];
+  document.title = messages['meta.title'];
   const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-  if (description) description.content = catalogs[locale]['meta.description'];
+  if (description) description.content = messages['meta.description'];
 }
 
 export function I18nProvider({ children }: { children: ReactNode }): JSX.Element {
   const [locale, updateLocale] = useState<Locale>(() => resolveLocale(window.location.search, readStoredLocale()));
+  const [messages, updateMessages] = useState<MessageCatalog>(() => immediateCatalog(locale) ?? catalogs.en);
 
   const canonicalize = useCallback((nextLocale: Locale) => {
     const raw = new URLSearchParams(window.location.search).get('lang');
@@ -72,7 +81,31 @@ export function I18nProvider({ children }: { children: ReactNode }): JSX.Element
 
   useEffect(() => {
     canonicalize(locale);
-    applyDocumentLocale(locale);
+  }, [canonicalize, locale]);
+
+  useEffect(() => {
+    const immediate = immediateCatalog(locale);
+    if (immediate) {
+      updateMessages(immediate);
+      applyDocumentLocale(locale, immediate);
+      return undefined;
+    }
+    let current = true;
+    void loadCatalog(locale)
+      .then((loaded) => {
+        if (!current) return;
+        updateMessages(loaded);
+        applyDocumentLocale(locale, loaded);
+      })
+      .catch(() => {
+        if (!current) return;
+        try { window.localStorage.setItem(LOCALE_STORAGE_KEY, 'en'); } catch { /* Preserve a working in-session fallback. */ }
+        updateMessages(catalogs.en);
+        updateLocale('en');
+        canonicalize('en');
+        applyDocumentLocale('en', catalogs.en);
+      });
+    return () => { current = false; };
   }, [canonicalize, locale]);
 
   useEffect(() => {
@@ -80,7 +113,6 @@ export function I18nProvider({ children }: { children: ReactNode }): JSX.Element
       const nextLocale = resolveLocale(window.location.search, readStoredLocale());
       updateLocale(nextLocale);
       canonicalize(nextLocale);
-      applyDocumentLocale(nextLocale);
     };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
@@ -94,15 +126,14 @@ export function I18nProvider({ children }: { children: ReactNode }): JSX.Element
     }
     window.history.pushState(window.history.state, '', canonicalLocaleUrl(window.location.href, nextLocale));
     updateLocale(nextLocale);
-    applyDocumentLocale(nextLocale);
   }, []);
 
   const value = useMemo<I18nContextValue>(() => ({
     locale,
     htmlLang: HTML_LANG[locale],
-    t: (key, values) => interpolate(catalogs[locale][key], values),
+    t: (key, values) => interpolate(messages[key], values),
     setLocale,
-  }), [locale, setLocale]);
+  }), [locale, messages, setLocale]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

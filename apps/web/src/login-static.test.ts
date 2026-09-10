@@ -11,6 +11,7 @@ function renderLogin(url = '/') {
       <span data-i18n="languageLabel">Language</span>
       <button type="button" data-locale="en">English</button>
       <button type="button" data-locale="zh">中文</button>
+      <button type="button" data-locale="es">ES</button>
     </div>
     <form method="post" action="/auth/login" autocomplete="on">
       <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
@@ -219,13 +220,14 @@ describe('static login client', () => {
     expect(JSON.parse(fetchMock.mock.calls[1][1].body).next).toBe('/dashboard/research?lang=en');
   });
 
-  it('keeps authentication behavior while applying explicit bilingual locale state', async () => {
+  it('keeps authentication behavior while applying explicit multilingual locale state', async () => {
     Object.defineProperty(window.navigator, 'language', { configurable: true, value: 'zh-CN' });
     renderLogin('/?next=%2Fdashboard%2F%3Fview%3Dregime%26universe%3Dprimary');
     runLoginI18nScript();
-    const loginI18n = (window as unknown as { __whalphaLoginI18n: { locale: string; messages: Record<'en' | 'zh', Record<string, string>> } }).__whalphaLoginI18n;
+    const loginI18n = (window as unknown as { __whalphaLoginI18n: { locale: string; messages: Record<'en' | 'zh' | 'es', Record<string, string>> } }).__whalphaLoginI18n;
     expect(loginI18n.locale).toBe('en');
     expect(Object.keys(loginI18n.messages.en).sort()).toEqual(Object.keys(loginI18n.messages.zh).sort());
+    expect(Object.keys(loginI18n.messages.en).sort()).toEqual(Object.keys(loginI18n.messages.es).sort());
     expect(document.documentElement.lang).toBe('en');
     expect(window.location.search).toContain('lang=en');
 
@@ -243,6 +245,13 @@ describe('static login client', () => {
     expect((document.getElementById('next') as HTMLInputElement).value).toContain('lang=zh');
     expect((document.getElementById('next') as HTMLInputElement).value).toContain('view=regime');
     expect((document.getElementById('next') as HTMLInputElement).value).toContain('universe=primary');
+
+    (document.querySelector('[data-locale="es"]') as HTMLButtonElement).click();
+    expect(window.localStorage.getItem('whalpha.interface.locale')).toBe('es');
+    expect(window.location.search).toContain('lang=es');
+    expect(document.documentElement.lang).toBe('es');
+    expect(document.getElementById('login-error')).toHaveTextContent('Usuario o contraseña incorrectos.');
+    expect((document.getElementById('next') as HTMLInputElement).value).toContain('lang=es');
   });
 
   it('lets URL locale override storage and safely canonicalizes invalid locale', () => {

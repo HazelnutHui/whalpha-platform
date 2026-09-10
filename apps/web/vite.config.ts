@@ -31,9 +31,42 @@ function rejectBundledDashboardDemoData(): Plugin {
   };
 }
 
+const bundleBudgets = {
+  entryJavaScriptBytes: 350 * 1024,
+  asyncJavaScriptBytes: 550 * 1024,
+  stylesheetBytes: 130 * 1024,
+} as const;
+
+function enforceFrontendBundleBudgets(): Plugin {
+  return {
+    name: 'enforce-frontend-bundle-budgets',
+    apply: 'build',
+    generateBundle(_options, bundle) {
+      for (const fileName in bundle) {
+        const output = bundle[fileName];
+        if (output.type === 'chunk') {
+          const byteLength = new TextEncoder().encode(output.code).byteLength;
+          const budget = output.isEntry
+            ? bundleBudgets.entryJavaScriptBytes
+            : bundleBudgets.asyncJavaScriptBytes;
+          if (byteLength > budget) {
+            this.error(`Bundle ${output.fileName} is ${byteLength} bytes; budget is ${budget}`);
+          }
+          continue;
+        }
+        if (output.fileName.slice(-4) !== '.css') continue;
+        const byteLength = typeof output.source === 'string' ? new TextEncoder().encode(output.source).byteLength : output.source.byteLength;
+        if (byteLength > bundleBudgets.stylesheetBytes) {
+          this.error(`Stylesheet ${output.fileName} is ${byteLength} bytes; budget is ${bundleBudgets.stylesheetBytes}`);
+        }
+      }
+    },
+  };
+}
+
 export default defineConfig({
   base: runtime.process?.env?.VITE_DASHBOARD_BASE ?? '/',
-  plugins: [react(), rejectBundledDashboardDemoData()],
+  plugins: [react(), rejectBundledDashboardDemoData(), enforceFrontendBundleBudgets()],
   server: {
     host: '127.0.0.1',
     port: 5173,

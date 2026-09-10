@@ -1,15 +1,30 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
-import { MarketDashboardPage } from './pages/MarketDashboardPage';
-import { MarketRegimeOpportunityMapPage } from './pages/MarketRegimeOpportunityMapPage';
-import { OpportunityCandidatesPage } from './pages/OpportunityCandidatesPage';
-import { SectorRotationPage } from './pages/SectorRotationPage';
-import { QuantResearchLabPage } from './pages/QuantResearchLabPage';
 import { LanguageSelector } from './i18n/LanguageSelector';
 import { useI18n } from './i18n/I18nProvider';
 import { universeName } from './i18n/domain';
 
+const loadMarketDashboard = () => import('./pages/MarketDashboardPage');
+const loadMarketRegime = () => import('./pages/MarketRegimeOpportunityMapPage');
+const loadOpportunityCandidates = () => import('./pages/OpportunityCandidatesPage');
+const loadSectorRotation = () => import('./pages/SectorRotationPage');
+const loadQuantResearchLab = () => import('./pages/QuantResearchLabPage');
+
+const MarketDashboardPage = lazy(() => loadMarketDashboard().then((module) => ({ default: module.MarketDashboardPage })));
+const MarketRegimeOpportunityMapPage = lazy(() => loadMarketRegime().then((module) => ({ default: module.MarketRegimeOpportunityMapPage })));
+const OpportunityCandidatesPage = lazy(() => loadOpportunityCandidates().then((module) => ({ default: module.OpportunityCandidatesPage })));
+const SectorRotationPage = lazy(() => loadSectorRotation().then((module) => ({ default: module.SectorRotationPage })));
+const QuantResearchLabPage = lazy(() => loadQuantResearchLab().then((module) => ({ default: module.QuantResearchLabPage })));
+
 type Workspace = 'market' | 'regime' | 'sector' | 'candidates' | 'research';
+
+const WORKSPACE_PRELOADERS: Record<Workspace, () => Promise<unknown>> = {
+  market: loadMarketDashboard,
+  regime: loadMarketRegime,
+  sector: loadSectorRotation,
+  candidates: loadOpportunityCandidates,
+  research: loadQuantResearchLab,
+};
 
 const PRIMARY_UNIVERSE = 'provider_classified_common_shares_v1';
 const SECONDARY_UNIVERSE = 'provider_classified_common_shares_plus_adrs_v1';
@@ -68,6 +83,9 @@ export default function App(): JSX.Element {
     writeQuery({ view: next });
     setWorkspace(next);
   };
+  const preloadWorkspace = (next: Workspace) => {
+    void WORKSPACE_PRELOADERS[next]();
+  };
   const selectUniverse = (next: string) => {
     if (!isUniverse(next)) return;
     writeQuery({ universe: next });
@@ -88,12 +106,12 @@ export default function App(): JSX.Element {
         <nav className="workspace-navigation" aria-label={t('app.navAria')}>
           <div className="workspace-nav-group workspace-nav-group--research" role="group" aria-labelledby="research-navigation-label">
             <div className="workspace-nav-heading"><span id="research-navigation-label">{t('app.researchGroup')}</span><b>{t('app.coreBadge')}</b></div>
-            <button type="button" className={`workspace-nav-primary ${workspace === 'research' ? 'active' : ''}`} aria-current={workspace === 'research' ? 'page' : undefined} onClick={() => navigate('research')}>
+            <button type="button" className={`workspace-nav-primary ${workspace === 'research' ? 'active' : ''}`} aria-current={workspace === 'research' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('research')} onFocus={() => preloadWorkspace('research')} onClick={() => navigate('research')}>
               <span className="workspace-nav-mark workspace-nav-mark--core" aria-hidden="true">LAB</span>
               <strong>{t('app.quantResearch')}</strong>
               <small>{t('app.quantResearchDescription')}</small>
             </button>
-            <button type="button" className={`workspace-nav-secondary ${workspace === 'candidates' ? 'active' : ''}`} aria-current={workspace === 'candidates' ? 'page' : undefined} onClick={() => navigate('candidates')}>
+            <button type="button" className={`workspace-nav-secondary ${workspace === 'candidates' ? 'active' : ''}`} aria-current={workspace === 'candidates' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('candidates')} onFocus={() => preloadWorkspace('candidates')} onClick={() => navigate('candidates')}>
               <span className="workspace-nav-mark" aria-hidden="true">MODEL</span>
               <strong>{t('app.stockCandidates')}</strong>
               <small>{t('app.stockCandidatesDescription')}</small>
@@ -103,17 +121,17 @@ export default function App(): JSX.Element {
           <div className="workspace-nav-divider" aria-hidden="true"><span>{t('app.freeToolsGroup')}</span><b>{t('app.freeBadge')}</b></div>
 
           <div className="workspace-nav-group workspace-nav-group--tools" role="group" aria-label={t('app.freeToolsGroup')}>
-            <button type="button" className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onClick={() => navigate('regime')}>
+            <button type="button" className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('regime')} onFocus={() => preloadWorkspace('regime')} onClick={() => navigate('regime')}>
               <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
               <strong>{t('app.regimeMap')}</strong>
               <small>{t('app.regimeMapDescription')}</small>
             </button>
-            <button type="button" className={workspace === 'sector' ? 'active' : ''} aria-current={workspace === 'sector' ? 'page' : undefined} onClick={() => navigate('sector')}>
+            <button type="button" className={workspace === 'sector' ? 'active' : ''} aria-current={workspace === 'sector' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('sector')} onFocus={() => preloadWorkspace('sector')} onClick={() => navigate('sector')}>
               <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
               <strong>{t('app.sectorRotation')}</strong>
               <small>{t('app.sectorRotationDescription')}</small>
             </button>
-            <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onClick={() => navigate('market')}>
+            <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('market')} onFocus={() => preloadWorkspace('market')} onClick={() => navigate('market')}>
               <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
               <strong>{t('app.marketDashboard')}</strong>
               <small>{t('app.marketDashboardDescription')}</small>
@@ -137,7 +155,9 @@ export default function App(): JSX.Element {
             {snapshotMode ? <button type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
           </div>
         </header>
-        {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
+        <Suspense fallback={<div className="workspace-route-loading" role="status">{t('common.loading')}</div>}>
+          {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
+        </Suspense>
       </div>
     </div>
   );
