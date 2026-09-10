@@ -59,6 +59,11 @@
   the existing persistent daily custody roles. A first real attempt exposed
   and then closed the nested source-custody validation gap before any
   canonical partition was written.
+- Completed a four-session real EOD/Identity pilot through 2025-06-16. The
+  postflight census now reports EOD/Identity 310/1,255 and normalized Identity
+  source 308/1,255, with overall state still correctly quarantined. The
+  three-session measured batch took 179.47 seconds and exposed repeated
+  whole-root hashing as the dominant bounded optimization before scaling.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 

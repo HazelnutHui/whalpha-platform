@@ -25,9 +25,9 @@ login and final visual appearance remain manual checks.
 
 ## Data
 
-- EOD and Identity are aligned through 2026-09-09 with 306 contiguous sessions.
+- EOD and Identity are aligned through 2026-09-09 with 310 contiguous sessions.
   Latest EOD has 9,916 rows; latest Identity has 9,982 instruments.
-- Historical Identity source custody has 304 partitions; 2026-08-13 and
+- Historical Identity source custody has 308 partitions; 2026-08-13 and
   2026-08-19 remain explicitly unbound.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
@@ -95,8 +95,8 @@ unauthorized.
 
 Complete:
 
-- 306-session EOD/Identity depth and their family evidence;
-- 304 Identity source partitions and three prospective Membership sessions;
+- 310-session EOD/Identity depth and their family evidence;
+- 308 Identity source partitions and three prospective Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
@@ -140,13 +140,14 @@ that fixes both known gaps.
 ## Next priority
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
-2021-09-09 through 2026-09-09. Current exact coverage is EOD 306/1,255,
-Identity 306/1,255, normalized Identity source 304/1,255, and Membership
+2021-09-09 through 2026-09-09. Current exact coverage is EOD 310/1,255,
+Identity 310/1,255, normalized Identity source 308/1,255, and Membership
 3/1,255. Required lifecycle, PIT classification, PIT fundamentals, and
 Historical Coverage are absent; status remains `quarantined`.
 
 1. Implement and pilot the Massive Starter Day Aggregates Flat File source,
-   then freeze the exact 949-session EOD/Identity acquisition plan. The
+   then continue the exact EOD/Identity acquisition plan. Four pilot sessions
+   are complete and 945 remain. The
    completed REST probe found 2021-09-09/10 Grouped Daily denied and
    2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
    Implement the documented Starter Day Aggregates Flat File route for bulk
