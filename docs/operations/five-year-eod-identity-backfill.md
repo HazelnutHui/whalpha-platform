@@ -44,6 +44,12 @@ then EOD package, exact plan, Apply, and formal readback. A bounded invocation
 contains at most 20 sessions. Existing complete packages and canonical
 partitions are reused only after formal validation.
 
+The historical runner supplies each already-computed pre-state fingerprint to
+its plan builder. The generic daily builder still computes its own value when
+one is not supplied. Apply always recomputes the full-content fingerprint
+under the publication lock; no cached or metadata-only value can authorize a
+write.
+
 Stocks Starter officially states unlimited API calls. The executor therefore
 accepts an explicit serial interval from 0.25 through 15 seconds. It never
 introduces concurrent provider requests. The first live pilot must use a small

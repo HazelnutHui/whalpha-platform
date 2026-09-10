@@ -64,6 +64,10 @@
   source 308/1,255, with overall state still correctly quarantined. The
   three-session measured batch took 179.47 seconds and exposed repeated
   whole-root hashing as the dominant bounded optimization before scaling.
+- Removed two duplicate whole-root scans per historical session by passing the
+  already-computed pre-state into the plan builder. Generic daily calls remain
+  backward compatible, and every Apply still recomputes the full-content
+  fingerprint under lock before writing.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 

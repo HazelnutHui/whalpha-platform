@@ -379,7 +379,13 @@ def read_catchup_approval_plan_evidence(
     )
 
 
-def build_identity_plan(*, package_path: Path, plan_path: Path, data_root: Path) -> CatchupApprovalPlanV1:
+def build_identity_plan(
+    *,
+    package_path: Path,
+    plan_path: Path,
+    data_root: Path,
+    expected_current_state_fingerprint: str | None = None,
+) -> CatchupApprovalPlanV1:
     package, pages = _read_fetch_package(package_path, expected_type="identity_reference")
     data_root = _validate_data_root(data_root)
     plan_path, artifact_root = _new_plan_paths(
@@ -486,6 +492,7 @@ def build_identity_plan(*, package_path: Path, plan_path: Path, data_root: Path)
         counts=counts,
         fingerprints=fingerprints,
         same_day_identity=None,
+        expected_current_state_fingerprint=expected_current_state_fingerprint,
     )
 
 
@@ -568,7 +575,13 @@ def build_identity_source_plan(
     )
 
 
-def build_eod_plan(*, package_path: Path, plan_path: Path, data_root: Path) -> CatchupApprovalPlanV1:
+def build_eod_plan(
+    *,
+    package_path: Path,
+    plan_path: Path,
+    data_root: Path,
+    expected_current_state_fingerprint: str | None = None,
+) -> CatchupApprovalPlanV1:
     package, pages = _read_fetch_package(package_path, expected_type="grouped_daily")
     data_root = _validate_data_root(data_root)
     plan_path, artifact_root = _new_plan_paths(
@@ -620,6 +633,7 @@ def build_eod_plan(*, package_path: Path, plan_path: Path, data_root: Path) -> C
         counts=counts,
         fingerprints=fingerprints,
         same_day_identity=str(identity.manifest["snapshot_content_sha256"]),
+        expected_current_state_fingerprint=expected_current_state_fingerprint,
     )
 
 
@@ -895,8 +909,18 @@ def _write_plan(
     counts: dict[str, int],
     fingerprints: dict[str, str],
     same_day_identity: str | None,
+    expected_current_state_fingerprint: str | None = None,
 ) -> CatchupApprovalPlanV1:
     package_manifest_sha = file_sha256(package_path / "package.json")
+    current_state = (
+        expected_current_state_fingerprint
+        if expected_current_state_fingerprint is not None
+        else inventory_fingerprint(data_root)
+    )
+    if len(current_state) != 64 or any(
+        character not in "0123456789abcdef" for character in current_state
+    ):
+        raise SameDayCatchupError("expected current-state fingerprint is invalid")
     values: dict[str, Any] = {
         "schema_version": PLAN_SCHEMA_VERSION,
         "operation": operation,
@@ -907,7 +931,7 @@ def _write_plan(
         "fetch_package_path": str(package_path),
         "fetch_package_manifest_sha256": package_manifest_sha,
         "fetch_package_content_sha256": package.package_content_sha256,
-        "expected_current_state_fingerprint": inventory_fingerprint(data_root),
+        "expected_current_state_fingerprint": current_state,
         "same_day_identity_snapshot_fingerprint": same_day_identity,
         "publication_order": tuple(str(item) for item in publication_order),
         "artifacts": artifacts,

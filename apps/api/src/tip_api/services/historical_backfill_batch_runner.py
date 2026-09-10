@@ -526,12 +526,14 @@ def _ensure_plan(
                 package_path=package_path,
                 plan_path=plan_path,
                 data_root=data_root,
+                expected_current_state_fingerprint=expected_state,
             )
         else:
             build_eod_plan(
                 package_path=package_path,
                 plan_path=plan_path,
                 data_root=data_root,
+                expected_current_state_fingerprint=expected_state,
             )
     plan_sha = file_sha256(plan_path)
     evidence = read_catchup_approval_plan_evidence(

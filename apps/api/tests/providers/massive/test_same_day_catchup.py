@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
+from tip_api.providers.massive import same_day_catchup as module
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.grouped_daily_ingestion import (
@@ -219,6 +220,30 @@ def test_validated_identity_reference_package_exposes_only_sanitized_pages(tmp_p
     assert len(validated.pages) == validated.manifest.request_count == 2
     assert len(validated.package_manifest_sha256) == 64
     assert all("apiKey" not in str(page) for page in validated.pages)
+
+
+def test_plan_builder_reuses_a_validated_caller_state_without_rescanning(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 8, 21)
+    root = tmp_path / "prevalidated-state-data"
+    root.mkdir()
+    package, _ = fetch_identity(tmp_path, session)
+    expected_state = inventory_fingerprint(root)
+
+    def unexpected_rescan(_root: Path) -> str:
+        raise AssertionError("caller-supplied state was recomputed")
+
+    monkeypatch.setattr(module, "inventory_fingerprint", unexpected_rescan)
+    plan = build_identity_plan(
+        package_path=package,
+        plan_path=tmp_path / "prevalidated-state.plan.json",
+        data_root=root,
+        expected_current_state_fingerprint=expected_state,
+    )
+
+    assert plan.expected_current_state_fingerprint == expected_state
 
 
 def plan_and_apply_identity(tmp_path: Path, root: Path, session: date):
