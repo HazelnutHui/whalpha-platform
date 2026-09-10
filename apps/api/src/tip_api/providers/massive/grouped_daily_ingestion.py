@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime
 from decimal import ROUND_HALF_EVEN, Decimal, localcontext
 from pathlib import Path
@@ -31,6 +31,9 @@ from tip_api.persistence.parquet.instrument_master_snapshot import (
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.credential import MassiveCredentialFileError, load_massive_provider_config_from_file
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
+from tip_api.providers.massive.instrument_master_snapshot import (
+    build_case_sensitive_provider_ticker_resolution,
+)
 from tip_api.providers.massive.numeric import (
     InvalidMassiveNumericValue,
     MissingMassiveNumericValue,
@@ -69,6 +72,9 @@ class IdentitySnapshot:
     identity_flags: dict[str, tuple[str, ...]]
     instrument_ids: frozenset[UUID]
     manifest: dict[str, object]
+    case_sensitive_resolver: dict[str, UUID] | None = None
+    case_sensitive_status: dict[str, str] | None = None
+    case_sensitive_source_fingerprint: str | None = None
 
 
 @dataclass(frozen=True)
@@ -82,6 +88,56 @@ class NumericBar:
     vwap_scale_normalized: bool
     trade_count: int | None
     timestamp_session_date: date | None
+
+
+def bind_case_sensitive_provider_ticker_source(
+    identity: IdentitySnapshot,
+    *,
+    source_payloads: tuple[Mapping[str, object], ...],
+    source_fingerprint: str,
+) -> IdentitySnapshot:
+    """Bind exact Massive symbols from retained same-session source custody."""
+
+    if (
+        not source_payloads
+        or len(source_fingerprint) != 64
+        or any(char not in "0123456789abcdef" for char in source_fingerprint)
+    ):
+        raise RuntimeError("case-sensitive Identity source evidence is invalid")
+    resolution = build_case_sensitive_provider_ticker_resolution(
+        payloads=source_payloads,
+        as_of_date=identity.as_of_date,
+        ingested_at=_identity_snapshot_ingested_at(identity),
+        canonical_instrument_ids=identity.instrument_ids,
+        canonical_resolver=identity.resolver,
+    )
+    exact_by_normalized: dict[str, set[UUID]] = {}
+    for ticker, instrument_id in resolution.resolver.items():
+        exact_by_normalized.setdefault(ticker.upper(), set()).add(instrument_id)
+    for ticker, instrument_id in identity.resolver.items():
+        if exact_by_normalized.get(ticker) != {instrument_id}:
+            raise RuntimeError(
+                "case-sensitive Identity source does not reproduce canonical Resolver"
+            )
+    return replace(
+        identity,
+        case_sensitive_resolver=resolution.resolver,
+        case_sensitive_status=resolution.status,
+        case_sensitive_source_fingerprint=source_fingerprint,
+    )
+
+
+def _identity_snapshot_ingested_at(identity: IdentitySnapshot) -> datetime:
+    value = identity.manifest.get("created_at")
+    if not isinstance(value, str):
+        raise RuntimeError("identity snapshot creation time is unavailable")
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError as exc:
+        raise RuntimeError("identity snapshot creation time is invalid") from exc
+    if parsed.tzinfo is None:
+        raise RuntimeError("identity snapshot creation time must be timezone-aware")
+    return parsed
 
 
 @dataclass(frozen=True)
@@ -114,6 +170,11 @@ class GroupedDailyIngestionResult:
     expected_exclusion_bar_count: int
     ambiguous_bar_count: int
     rejected_identity_bar_count: int
+    case_sensitive_provider_ticker_count: int
+    case_sensitive_provider_ticker_resolved_count: int
+    case_sensitive_provider_ticker_excluded_count: int
+    case_sensitive_provider_ticker_quarantine_count: int
+    case_sensitive_identity_source_fingerprint: str | None
     missing_identity_bar_count: int
     identity_classified_count: int
     identity_eligible_denominator: int
@@ -181,6 +242,26 @@ class GroupedDailyIngestionResult:
             ("expected_exclusion_bar_count", self.expected_exclusion_bar_count),
             ("ambiguous_bar_count", self.ambiguous_bar_count),
             ("rejected_identity_bar_count", self.rejected_identity_bar_count),
+            (
+                "case_sensitive_provider_ticker_count",
+                self.case_sensitive_provider_ticker_count,
+            ),
+            (
+                "case_sensitive_provider_ticker_resolved_count",
+                self.case_sensitive_provider_ticker_resolved_count,
+            ),
+            (
+                "case_sensitive_provider_ticker_excluded_count",
+                self.case_sensitive_provider_ticker_excluded_count,
+            ),
+            (
+                "case_sensitive_provider_ticker_quarantine_count",
+                self.case_sensitive_provider_ticker_quarantine_count,
+            ),
+            (
+                "case_sensitive_identity_source_fingerprint",
+                self.case_sensitive_identity_source_fingerprint or "",
+            ),
             ("missing_identity_bar_count", self.missing_identity_bar_count),
             ("identity_classified_count", self.identity_classified_count),
             ("identity_eligible_denominator", self.identity_eligible_denominator),
@@ -343,6 +424,14 @@ def process_grouped_daily_payload(
     for item in raw_records:
         category, instrument_id = _classify_identity(item, identity=identity)
         counters.record_identity(category)
+        if _has_case_sensitive_provider_ticker(item):
+            counters.case_sensitive_provider_ticker_count += 1
+            if category == "resolved_eligible":
+                counters.case_sensitive_provider_ticker_resolved_count += 1
+            elif category == "expected_exclusion":
+                counters.case_sensitive_provider_ticker_excluded_count += 1
+            else:
+                counters.case_sensitive_provider_ticker_quarantine_count += 1
     for item in duplicate_analysis.records:
         _process_numeric_and_canonical(
             item,
@@ -368,6 +457,9 @@ def process_grouped_daily_payload(
                 "provider_id": identity.provider_id,
                 "snapshot_content_sha256": identity.manifest.get("snapshot_content_sha256"),
                 "resolver_count": len(identity.resolver),
+                "case_sensitive_source_fingerprint": (
+                    identity.case_sensitive_source_fingerprint
+                ),
             },
         )
     return GroupedDailyIngestionResult(
@@ -389,6 +481,21 @@ def process_grouped_daily_payload(
         expected_exclusion_bar_count=counters.expected_exclusion_bar_count,
         ambiguous_bar_count=counters.ambiguous_bar_count,
         rejected_identity_bar_count=counters.rejected_identity_bar_count,
+        case_sensitive_provider_ticker_count=(
+            counters.case_sensitive_provider_ticker_count
+        ),
+        case_sensitive_provider_ticker_resolved_count=(
+            counters.case_sensitive_provider_ticker_resolved_count
+        ),
+        case_sensitive_provider_ticker_excluded_count=(
+            counters.case_sensitive_provider_ticker_excluded_count
+        ),
+        case_sensitive_provider_ticker_quarantine_count=(
+            counters.case_sensitive_provider_ticker_quarantine_count
+        ),
+        case_sensitive_identity_source_fingerprint=(
+            identity.case_sensitive_source_fingerprint
+        ),
         missing_identity_bar_count=counters.missing_identity_bar_count,
         identity_classified_count=counters.identity_classified_count,
         identity_eligible_denominator=counters.identity_eligible_denominator,
@@ -443,6 +550,10 @@ class _Counters:
     expected_exclusion_bar_count: int = 0
     ambiguous_bar_count: int = 0
     rejected_identity_bar_count: int = 0
+    case_sensitive_provider_ticker_count: int = 0
+    case_sensitive_provider_ticker_resolved_count: int = 0
+    case_sensitive_provider_ticker_excluded_count: int = 0
+    case_sensitive_provider_ticker_quarantine_count: int = 0
     missing_identity_bar_count: int = 0
     numeric_classified_count: int = 0
     numeric_valid_count: int = 0
@@ -543,7 +654,7 @@ def _ticker_groups(records: tuple[Mapping[str, object], ...]) -> dict[str, list[
     groups: dict[str, list[Mapping[str, object]]] = {}
     for item in records:
         try:
-            ticker = _ticker(item.get("T") or item.get("ticker"))
+            ticker = _provider_ticker(item.get("T") or item.get("ticker"))
         except RuntimeError:
             ticker = "<missing>"
         groups.setdefault(ticker, []).append(item)
@@ -582,9 +693,20 @@ def _deduplicate_records(records: tuple[Mapping[str, object], ...]) -> Duplicate
 
 def _classify_identity(item: Mapping[str, object], *, identity: IdentitySnapshot) -> tuple[IdentityCategory, UUID | None]:
     try:
-        ticker = _ticker(item.get("T") or item.get("ticker"))
+        provider_ticker = _provider_ticker(item.get("T") or item.get("ticker"))
     except RuntimeError:
         return "missing", None
+    if identity.case_sensitive_resolver is not None:
+        instrument_id = identity.case_sensitive_resolver.get(provider_ticker)
+        if instrument_id is not None:
+            return "resolved_eligible", instrument_id
+        status = (identity.case_sensitive_status or {}).get(provider_ticker)
+        return _identity_category_for_status(status), None
+    # Never project a case-sensitive Massive symbol through V1's upper-case
+    # Resolver without exact retained source evidence.
+    if provider_ticker != provider_ticker.upper():
+        return "rejected", None
+    ticker = provider_ticker
     instrument_id = identity.resolver.get(ticker)
     if instrument_id is not None:
         return "resolved_eligible", instrument_id
@@ -600,6 +722,18 @@ def _classify_identity(item: Mapping[str, object], *, identity: IdentitySnapshot
     return "missing", None
 
 
+def _identity_category_for_status(status: str | None) -> IdentityCategory:
+    if status == "unresolved":
+        return "unresolved_eligible"
+    if status == "excluded":
+        return "expected_exclusion"
+    if status == "ambiguous":
+        return "ambiguous"
+    if status == "rejected":
+        return "rejected"
+    return "missing"
+
+
 def _process_numeric_and_canonical(
     item: Mapping[str, object],
     *,
@@ -612,7 +746,7 @@ def _process_numeric_and_canonical(
 ) -> None:
     category, instrument_id = _classify_identity(item, identity=identity)
     try:
-        ticker = _ticker(item.get("T") or item.get("ticker"))
+        ticker = _provider_ticker(item.get("T") or item.get("ticker"))
     except RuntimeError:
         ticker = "<missing>"
     if ticker in conflicted:
@@ -784,6 +918,10 @@ def _quality_warnings(c: _Counters) -> tuple[str, ...]:
         warnings.append("fractional_volume_records_present")
     if c.expected_exclusion_bar_count:
         warnings.append("expected_exclusions_present")
+    if c.case_sensitive_provider_ticker_count:
+        warnings.append("case_sensitive_provider_tickers_present")
+    if c.case_sensitive_provider_ticker_quarantine_count:
+        warnings.append("case_sensitive_provider_tickers_quarantined")
     if c.unresolved_eligible_bar_count:
         warnings.append("unresolved_eligible_identities_present")
     return tuple(warnings)
@@ -798,15 +936,27 @@ def _verify_table(table: Any, *, expected_schema: Any, expected_count: object, e
         raise RuntimeError("identity snapshot fingerprint mismatch")
 
 
-def _ticker(value: object) -> str:
+def _provider_ticker(value: object) -> str:
     if not isinstance(value, str) or not value.strip():
         raise RuntimeError("missing ticker")
-    return value.strip().upper()
+    return value.strip()
+
+
+def _ticker(value: object) -> str:
+    return _provider_ticker(value).upper()
+
+
+def _has_case_sensitive_provider_ticker(item: Mapping[str, object]) -> bool:
+    try:
+        ticker = _provider_ticker(item.get("T") or item.get("ticker"))
+    except RuntimeError:
+        return False
+    return ticker != ticker.upper()
 
 
 def _bar_signature(item: Mapping[str, object]) -> tuple[object, ...]:
     try:
-        ticker = _ticker(item.get("T") or item.get("ticker"))
+        ticker = _provider_ticker(item.get("T") or item.get("ticker"))
         return (
             ticker,
             decimal_signature(item.get("o"), required=True),

@@ -14,6 +14,7 @@ from tip_api.persistence.parquet.instrument_master_snapshot import ParquetInstru
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.instrument_master_snapshot import (
     FixedIntervalRateLimiter,
+    build_case_sensitive_provider_ticker_resolution,
     build_snapshot_from_payloads,
     fetch_and_build_snapshot,
     main,
@@ -88,6 +89,41 @@ def test_unsupported_type_is_rejected_and_collision_is_ambiguous():
     assert result.stable_identifier_collision_count == 2
     assert result.expected_exclusion_count == 1
     assert result.resolved_eligible_count == 0
+
+
+def test_case_sensitive_source_projection_separates_security_forms():
+    source = (
+        payload("TPC", share="TPC-COMMON", composite="TPC-COMPOSITE"),
+        payload("TpC", share=None, composite=None, type="PFD"),
+        payload("ECGw", share="ECGW-COMMON", composite="ECGW-COMPOSITE"),
+    )
+    canonical = build_snapshot_from_payloads(
+        payloads=source,
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        request_count=1,
+        pagination_complete=True,
+    )
+    canonical_resolver = {
+        item.provider_ticker: item.canonical_instrument_id
+        for item in canonical.resolvers
+    }
+
+    exact = build_case_sensitive_provider_ticker_resolution(
+        payloads=source,
+        as_of_date=AS_OF,
+        ingested_at=INGESTED_AT,
+        canonical_instrument_ids=frozenset(
+            item.instrument_id for item in canonical.instruments
+        ),
+        canonical_resolver=canonical_resolver,
+    )
+
+    assert exact.resolver["TPC"] == canonical_resolver["TPC"]
+    assert exact.status["TpC"] == "excluded"
+    assert "TpC" not in exact.resolver
+    assert exact.resolver["ECGw"] == canonical_resolver["ECGW"]
+    assert exact.status["ECGw"] == "resolved"
 
 
 def test_pagination_success_and_rate_limiter_uses_fake_clock():

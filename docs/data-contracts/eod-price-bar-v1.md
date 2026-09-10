@@ -100,6 +100,12 @@ Provider corrections create traceable revisions. `is_latest_revision` identifies
 
 Provider bar records map into this contract. Analytics should consume canonical fields and explicit adjustment factors, not provider-specific adjustment assumptions. See [ADR 0202](../decisions/0202-normalize-provider-vwap-float-tails-at-the-mapping-boundary.md) for the bounded Massive VWAP mapping rule.
 
+Massive symbols remain case-sensitive at this boundary. Exact Grouped Daily
+symbols are joined through retained same-session Identity source evidence and
+may resolve only to an instrument already present in the canonical snapshot;
+mixed-case symbols are never projected through the upper-case V1 Resolver
+alone. See [ADR 0203](../decisions/0203-bind-massive-case-sensitive-symbols-at-the-eod-mapping-boundary.md).
+
 ## Storage Direction
 
 Parquet-first. EOD Price Bar V1 has an explicit PyArrow schema and a bounded

@@ -62,6 +62,12 @@ ADR 0202 permits only the Massive Grouped Daily adapter to normalize
 over-scale VWAP before this provider-neutral boundary, with immutable raw
 custody and explicit row/session audit evidence.
 
+ADR 0203 permits the same adapter to preserve Massive's exact case-sensitive
+provider symbol as its source join key. Resolution requires same-session
+Identity source custody and agreement with an already-published canonical
+instrument and normalized Resolver. This does not change the provider-neutral
+EOD key or infer security form from ticker spelling.
+
 ## Determinism
 
 Records are sorted by:
@@ -113,6 +119,11 @@ The implementation rejects symlink roots and symlink partition paths. It does no
 - Identical rerun: returns `already_present` and writes no rows.
 - Conflicting rerun: raises a conflict error.
 - Incomplete or corrupted existing partition: raises a corruption error.
+
+Published partitions are not rewritten to apply a later provider-mapping
+correction. A historical mapping defect requires a new immutable physical
+version or append-only correction family plus formal reconciliation before
+research admission.
 - Empty session: rejected.
 
 ## Ingestion Service

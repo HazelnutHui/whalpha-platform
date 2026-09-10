@@ -119,3 +119,44 @@ started with the frozen 1,255-session interval, 20-session batches, serial
 0.25-second request spacing, a 24-hour runtime limit, and a 2 GiB memory limit.
 At 21:36:11 UTC it was active, and 2022-12-02 Identity and EOD had both
 completed, establishing an at-least-944-session aligned live checkpoint.
+
+## Case-sensitive provider-symbol stop
+
+The `20260910e` unit continued to 982 EOD sessions from 2022-10-10 through
+2026-09-09 and 983 Identity sessions from 2022-10-07 through 2026-09-09. It
+then stopped before publishing 2022-10-07 EOD. The retained EOD package has
+10,914 rows. The old upper-case grouping collapsed six pairs of distinct
+Massive symbols, including `TPC`/`TpC`, `BCPC`/`BCpC`, and `CPK`/`CpK`, into
+12 conflicting rows. Their 0.10995% ratio correctly breached the unchanged
+0.1% conflict gate under the old mapping.
+
+Massive documents symbol case as meaningful and uses lower-case characters for
+some security forms. Same-session Identity source custody confirms that the
+case-distinct rows include preferred shares, rights, and structured products,
+while their upper-case counterparts can be common stocks or funds. The
+canonical V1 Resolver had erased this provider join-key distinction.
+
+A direct bounded census of all 677 retained affected Grouped Daily packages
+found case-normalized collisions on every package date from 2022-10-07 through
+2025-06-20. Among the 676 already-published dates, at least 1,862 resolved
+upper-case bars are confirmed absent; 175 additional collision groups lacked
+a resolver. A latest-session spot check also found missing `TPC` and `BCPC`
+bars. These figures are a lower bound because the census was limited to
+retained packages, not a completed corrected-history rebuild.
+
+ADR 0203 preserves exact provider-symbol case, binds it to the retained
+same-session Identity source, and refuses mixed-case projection when that
+evidence is absent. A real zero-write replay of 2022-10-07 produced 8,136
+canonical rows, classified all 426 mixed-case bars as evidence-backed
+exclusions, reported zero false conflicts, and passed every quality gate. No
+canonical partition was written during diagnosis or replay.
+
+Focused provider, plan, batch-runner, and continuous-runner regression passed
+92 tests. The complete API suite passed 2,417 tests with only the two
+pre-existing dependency deprecation warnings.
+
+Existing canonical partitions remain immutable. The affected EOD V1 history
+is explicitly quarantined from model admission pending a new immutable
+corrected physical version or append-only correction family and a full formal
+reconciliation. Completing acquisition under the corrected mapper does not by
+itself remove that quarantine.

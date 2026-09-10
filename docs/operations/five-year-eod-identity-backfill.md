@@ -80,6 +80,19 @@ the canonical row receives `vwap_scale_normalized`, and the session quality
 summary records `vwap_scale_normalized_count`. OHLC and volume remain exact,
 and the provider-neutral repository continues to reject over-scale input.
 
+Massive provider symbols are case-sensitive. Under ADR 0203, EOD planning
+binds the exact Grouped Daily symbol to the retained same-session Identity
+source before resolution. Exact-symbol eligibility still comes from source
+security-form evidence and the existing stable-ID policy; spelling patterns do
+not establish eligibility. A mixed-case EOD symbol without exact same-session
+source custody fails closed. The duplicate gate is never raised to merge
+case-distinct securities.
+
+Partitions published before ADR 0203 are not overwritten. The retained-package
+census confirmed at least 1,862 missing resolved bars across 676 published
+sessions, and current EOD V1 history therefore remains research-quarantined
+until a separately versioned immutable correction or rebuild is complete.
+
 ## Operator command
 
 The command is deliberately explicit and requires a clean repository:

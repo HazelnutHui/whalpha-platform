@@ -40,6 +40,7 @@ from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.credential import load_massive_provider_config_from_file
 from tip_api.providers.massive.grouped_daily_ingestion import (
     ENDPOINT_TEMPLATE,
+    bind_case_sensitive_provider_ticker_source,
     load_identity_snapshot,
     process_grouped_daily_payload,
 )
@@ -608,6 +609,42 @@ def build_eod_plan(
         raise SameDayCatchupError("same-day completed Identity is unavailable") from exc
     payload = pages[0]
     _validate_grouped_session(payload, package.session_date)
+    from tip_api.services.historical_identity_source_custody import (
+        HistoricalIdentitySourceCustodyError,
+        read_identity_source_custody_at_data_root,
+    )
+
+    try:
+        identity_source = read_identity_source_custody_at_data_root(
+            data_root=data_root,
+            provider=MASSIVE_PROVIDER_ID,
+            session_date=package.session_date,
+        )
+    except HistoricalIdentitySourceCustodyError as exc:
+        if _payload_contains_case_sensitive_provider_ticker(payload):
+            raise SameDayCatchupError(
+                "case-sensitive Identity source evidence is unavailable"
+            ) from exc
+    else:
+        if (
+            identity_source.manifest.canonical_snapshot_fingerprint
+            != identity.manifest.get("snapshot_content_sha256")
+        ):
+            raise SameDayCatchupError(
+                "case-sensitive Identity source binding differs"
+            )
+        try:
+            identity = bind_case_sensitive_provider_ticker_source(
+                identity,
+                source_payloads=tuple(
+                    item.source_payload() for item in identity_source.records
+                ),
+                source_fingerprint=identity_source.manifest.logical_fingerprint,
+            )
+        except RuntimeError as exc:
+            raise SameDayCatchupError(
+                "case-sensitive Identity source projection failed"
+            ) from exc
     result = process_grouped_daily_payload(
         payload,
         identity=identity,
@@ -628,11 +665,27 @@ def build_eod_plan(
         "requests": result.request_count,
         "duplicate_business_keys": 0,
         "orphan_references": 0,
+        "case_sensitive_provider_ticker_rows": (
+            result.case_sensitive_provider_ticker_count
+        ),
+        "case_sensitive_provider_ticker_resolved_rows": (
+            result.case_sensitive_provider_ticker_resolved_count
+        ),
+        "case_sensitive_provider_ticker_excluded_rows": (
+            result.case_sensitive_provider_ticker_excluded_count
+        ),
+        "case_sensitive_provider_ticker_quarantined_rows": (
+            result.case_sensitive_provider_ticker_quarantine_count
+        ),
     }
     fingerprints = {
         "eod": result.content_sha256 or "",
         "identity_logical": str(identity.manifest["snapshot_content_sha256"]),
     }
+    if result.case_sensitive_identity_source_fingerprint is not None:
+        fingerprints["identity_source"] = (
+            result.case_sensitive_identity_source_fingerprint
+        )
     return _write_plan(
         plan_path=plan_path,
         operation="eod",
@@ -1389,6 +1442,18 @@ def _results(page: Mapping[str, object]) -> tuple[Mapping[str, object], ...]:
     if not all(isinstance(item, Mapping) for item in results):
         raise SameDayCatchupError("reference page contains a non-object result")
     return tuple(results)
+
+
+def _payload_contains_case_sensitive_provider_ticker(
+    payload: Mapping[str, object],
+) -> bool:
+    for item in _results(payload):
+        value = item.get("T") or item.get("ticker")
+        if isinstance(value, str):
+            ticker = value.strip()
+            if ticker and ticker != ticker.upper():
+                return True
+    return False
 
 
 def _plan_content_fingerprint(values: Mapping[str, object]) -> str:

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-10 — Preserve Massive case-sensitive provider symbols
+
+- Accepted ADR 0203 after the five-year continuation stopped on six false
+  duplicate pairs in the retained 2022-10-07 Grouped Daily package. Massive
+  symbol case is now preserved as an exact provider join key and bound to
+  same-session Identity source evidence before EOD resolution.
+- Kept the duplicate gate unchanged and prohibited mixed-case projection
+  through the upper-case V1 Resolver when exact source evidence is absent.
+  Exact provider spelling never establishes security eligibility by itself.
+- A real zero-write replay passed all gates with 10,914 raw rows, 8,136
+  canonical rows, 426 evidence-backed mixed-case exclusions, and zero false
+  conflicts. Focused regression passed 92 tests and the complete API suite
+  passed 2,417 tests.
+- Confirmed a pre-existing historical defect: at least 1,862 resolved bars are
+  missing across 676 published sessions whose retained packages were audited.
+  Existing partitions remain immutable and research-quarantined pending a new
+  corrected physical version or append-only correction family.
+
 ## 2026-09-10 — Govern Massive VWAP float-tail normalization
 
 - Accepted ADR 0202 after the retained 2022-12-05 package showed 314 VWAP

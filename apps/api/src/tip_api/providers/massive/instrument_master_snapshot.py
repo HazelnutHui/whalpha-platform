@@ -11,6 +11,7 @@ from decimal import Decimal
 from pathlib import Path
 from typing import Callable, Mapping
 from urllib.parse import parse_qsl, urlparse
+from uuid import UUID
 
 from pydantic import ValidationError
 
@@ -94,6 +95,18 @@ class ReferenceSnapshotBuildResult:
     ambiguous_ticker_samples: tuple[str, ...]
     unknown_type_counts: tuple[tuple[str, int], ...]
     pagination_complete: bool
+
+
+@dataclass(frozen=True)
+class CaseSensitiveProviderTickerResolution:
+    """Exact provider-symbol projection bound to one canonical snapshot."""
+
+    resolver: dict[str, UUID]
+    status: dict[str, str]
+    source_record_count: int
+    unique_provider_ticker_count: int
+    missing_provider_ticker_count: int
+    ambiguous_provider_ticker_count: int
 
 
 def ingest_massive_instrument_master_snapshot(
@@ -235,6 +248,90 @@ def build_snapshot_from_payloads(
         ambiguous_ticker_samples=tuple(sorted(ticker_ambiguous)[:5]),
         unknown_type_counts=tuple(sorted(unknown_type_counter.items())),
         pagination_complete=pagination_complete,
+    )
+
+
+def build_case_sensitive_provider_ticker_resolution(
+    *,
+    payloads: tuple[Mapping[str, object], ...],
+    as_of_date: date,
+    ingested_at: datetime,
+    canonical_instrument_ids: frozenset[UUID],
+    canonical_resolver: Mapping[str, UUID],
+) -> CaseSensitiveProviderTickerResolution:
+    """Recover Massive's case-sensitive symbol semantics without minting IDs.
+
+    The V1 canonical Resolver normalizes symbols to upper case. Massive does
+    not: lower-case characters carry security-form meaning. This projection
+    uses the exact retained source symbol, the existing type/stable-ID policy,
+    and an already-published canonical Resolver. It can only select a canonical
+    instrument already present in that same snapshot.
+    """
+
+    groups: dict[str, list[_PreliminaryIdentity]] = {}
+    missing_ticker_count = 0
+    for payload in payloads:
+        try:
+            provider_ticker = _required_string(payload.get("ticker"), "ticker")
+        except RuntimeError:
+            missing_ticker_count += 1
+            continue
+        groups.setdefault(provider_ticker, []).append(
+            _preliminary_identity(
+                payload,
+                as_of_date=as_of_date,
+                ingested_at=ingested_at,
+            )
+        )
+
+    resolver: dict[str, UUID] = {}
+    statuses: dict[str, str] = {}
+    for provider_ticker, items in groups.items():
+        categories = {item.category for item in items}
+        if categories == {"excluded"}:
+            statuses[provider_ticker] = ResolutionStatus.EXCLUDED.value
+            continue
+        if categories == {"malformed"}:
+            statuses[provider_ticker] = ResolutionStatus.REJECTED.value
+            continue
+        if categories != {"eligible"}:
+            statuses[provider_ticker] = ResolutionStatus.AMBIGUOUS.value
+            continue
+
+        stable_identities = {
+            item.stable_identity.key: item.stable_identity
+            for item in items
+            if item.stable_identity is not None
+        }
+        if not stable_identities:
+            statuses[provider_ticker] = ResolutionStatus.UNRESOLVED.value
+            continue
+        if len(stable_identities) != 1 or any(
+            item.stable_identity is None for item in items
+        ):
+            statuses[provider_ticker] = ResolutionStatus.AMBIGUOUS.value
+            continue
+        stable_identity = next(iter(stable_identities.values()))
+        instrument_id = canonical_instrument_id_for_identity(stable_identity)
+        if (
+            instrument_id not in canonical_instrument_ids
+            or canonical_resolver.get(provider_ticker.upper()) != instrument_id
+        ):
+            statuses[provider_ticker] = ResolutionStatus.AMBIGUOUS.value
+            continue
+        resolver[provider_ticker] = instrument_id
+        statuses[provider_ticker] = ResolutionStatus.RESOLVED.value
+
+    return CaseSensitiveProviderTickerResolution(
+        resolver=resolver,
+        status=statuses,
+        source_record_count=len(payloads),
+        unique_provider_ticker_count=len(groups),
+        missing_provider_ticker_count=missing_ticker_count,
+        ambiguous_provider_ticker_count=sum(
+            value == ResolutionStatus.AMBIGUOUS.value
+            for value in statuses.values()
+        ),
     )
 
 def _fetch_reference_pages(*, config: MassiveProviderConfig, transport: MassiveHttpTransport, as_of_date: date, rate_limiter: FixedIntervalRateLimiter) -> tuple[tuple[Mapping[str, object], ...], int, bool]:

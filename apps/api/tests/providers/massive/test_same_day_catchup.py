@@ -397,6 +397,24 @@ def test_legacy_identity_plan_remains_readable_and_source_only_repair_is_append_
     )
     assert not Path(source_target).exists()
 
+    mixed_case_package = tmp_path / "legacy-mixed-case-eod"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped_payload(session, T="T00000w")]),
+        session_date=session,
+        package_path=mixed_case_package,
+        fetched_at=FETCHED_AT,
+    )
+    with pytest.raises(
+        SameDayCatchupError,
+        match="case-sensitive Identity source evidence is unavailable",
+    ):
+        build_eod_plan(
+            package_path=mixed_case_package,
+            plan_path=tmp_path / "legacy-mixed-case-eod.plan.json",
+            data_root=root,
+        )
+
     repair_path = tmp_path / "source-repair.plan.json"
     repair = build_identity_source_plan(
         package_path=package,
@@ -435,6 +453,67 @@ def test_legacy_identity_plan_remains_readable_and_source_only_repair_is_append_
         expected_operation="identity_source",
         expected_session=session,
     )
+
+
+def test_eod_plan_binds_exact_provider_symbol_to_identity_source(
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 8, 20)
+    root = tmp_path / "case-sensitive-data"
+    root.mkdir()
+    pages = reference_pages(session, count=5002)
+    rows = pages[0]["results"] + pages[1]["results"]
+    rows[0]["ticker"] = "TPC"
+    rows[1]["ticker"] = "TpC"
+    rows[1]["type"] = "PFD"
+
+    identity_package = tmp_path / "case-sensitive-identity"
+    fetch_identity_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport(pages),
+        session_date=session,
+        package_path=identity_package,
+        fetched_at=FETCHED_AT,
+        rate_limiter=no_wait_limiter(),
+    )
+    identity_plan_path = tmp_path / "case-sensitive-identity.plan.json"
+    identity_plan = build_identity_plan(
+        package_path=identity_package,
+        plan_path=identity_plan_path,
+        data_root=root,
+    )
+    apply_approved_plan(
+        plan_path=identity_plan_path,
+        approved_plan_sha256=file_sha256(identity_plan_path),
+        expected_current_state_fingerprint=(
+            identity_plan.expected_current_state_fingerprint
+        ),
+        data_root=root,
+        expected_operation="identity",
+        expected_session=session,
+    )
+
+    grouped = grouped_payload(session, count=5002)
+    grouped["results"][0]["T"] = "TPC"
+    grouped["results"][1]["T"] = "TpC"
+    eod_package = tmp_path / "case-sensitive-eod"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped]),
+        session_date=session,
+        package_path=eod_package,
+        fetched_at=FETCHED_AT,
+    )
+    eod_plan = build_eod_plan(
+        package_path=eod_package,
+        plan_path=tmp_path / "case-sensitive-eod.plan.json",
+        data_root=root,
+    )
+
+    assert eod_plan.counts["case_sensitive_provider_ticker_rows"] == 1
+    assert eod_plan.counts["case_sensitive_provider_ticker_excluded_rows"] == 1
+    assert eod_plan.counts["case_sensitive_provider_ticker_quarantined_rows"] == 0
+    assert len(eod_plan.content_fingerprints["identity_source"]) == 64
 
 
 def fetch_plan_apply_eod(tmp_path: Path, root: Path, session: date):

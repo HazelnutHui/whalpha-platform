@@ -17,12 +17,17 @@ from tip_api.contracts.market_data.v1 import (
     ResolutionMethod,
     ResolutionStatus,
 )
+from tip_api.ingestion.instrument_identity import (
+    canonical_instrument_id_for_identity,
+    select_stable_identity,
+)
 from tip_api.persistence.parquet.eod_bars import PARQUET_FILE_NAME
 from tip_api.persistence.parquet.instrument_master_snapshot import ParquetInstrumentMasterSnapshotRepository
 from tip_api.providers.massive.grouped_daily_ingestion import (
     ENDPOINT_TEMPLATE,
     _MissingRequired,
     _NumericFailure,
+    bind_case_sensitive_provider_ticker_source,
     load_identity_snapshot,
     parse_date,
     parse_massive_decimal,
@@ -327,6 +332,118 @@ def test_conflicting_duplicates_above_gate_fail(tmp_path):
     result = process_grouped_daily_payload({"results": records}, identity=snapshot, session_date=AS_OF, endpoint="x", data_root=tmp_path, ingested_at=INGESTED_AT, publish=False)
     assert result.conflicting_duplicate_ratio > 0.001
     assert "conflicting_duplicate_ratio_above_gate" in result.quality_gate_failures
+    assert result.canonical_bar_count == 1
+
+
+def test_case_sensitive_provider_symbols_do_not_collide_with_common_tickers(tmp_path):
+    common_id = ID1
+    repo = ParquetInstrumentMasterSnapshotRepository(tmp_path / "case-sensitive", created_at=INGESTED_AT)
+    repo.publish_snapshot(
+        instruments=(instrument(common_id, "TPC"),),
+        identities=(identity(ticker="TPC", instrument_id=common_id),),
+        resolvers=(resolver(common_id, "TPC"),),
+        as_of_date=AS_OF,
+        provider_id=MASSIVE_PROVIDER_ID,
+        quality_summary={"resolved": 1},
+    )
+    snapshot = load_identity_snapshot(
+        tmp_path / "case-sensitive",
+        provider_id=MASSIVE_PROVIDER_ID,
+        as_of_date=AS_OF,
+    )
+
+    result = process_grouped_daily_payload(
+        {"results": [bar("TPC"), bar("TpC", c=18, h=19, l=17, o=18)]},
+        identity=snapshot,
+        session_date=AS_OF,
+        endpoint="x",
+        data_root=tmp_path,
+        ingested_at=INGESTED_AT,
+        publish=False,
+    )
+
+    assert result.unique_raw_ticker_count == 2
+    assert result.conflicting_duplicate_ticker_count == 0
+    assert result.conflicting_duplicate_record_count == 0
+    assert result.resolved_eligible_bar_count == 1
+    assert result.rejected_identity_bar_count == 1
+    assert result.case_sensitive_provider_ticker_count == 1
+    assert result.case_sensitive_provider_ticker_resolved_count == 0
+    assert result.case_sensitive_provider_ticker_excluded_count == 0
+    assert result.case_sensitive_provider_ticker_quarantine_count == 1
+    assert result.canonical_bar_count == 1
+    assert "case_sensitive_provider_tickers_present" in result.quality_warnings
+    assert "case_sensitive_provider_tickers_quarantined" in result.quality_warnings
+
+
+def test_bound_case_sensitive_source_resolves_common_and_excludes_preferred(tmp_path):
+    common_id = canonical_instrument_id_for_identity(
+        select_stable_identity(
+            share_class_figi="FIGITPC",
+            composite_figi=None,
+            provider_instrument_id=None,
+        )
+    )
+    repo = ParquetInstrumentMasterSnapshotRepository(tmp_path / "bound-source", created_at=INGESTED_AT)
+    repo.publish_snapshot(
+        instruments=(instrument(common_id, "TPC"),),
+        identities=(identity(ticker="TPC", instrument_id=common_id),),
+        resolvers=(resolver(common_id, "TPC"),),
+        as_of_date=AS_OF,
+        provider_id=MASSIVE_PROVIDER_ID,
+        quality_summary={"resolved": 1},
+    )
+    snapshot = load_identity_snapshot(
+        tmp_path / "bound-source",
+        provider_id=MASSIVE_PROVIDER_ID,
+        as_of_date=AS_OF,
+    )
+    snapshot = bind_case_sensitive_provider_ticker_source(
+        snapshot,
+        source_payloads=(
+            {
+                "ticker": "TPC",
+                "name": "Tutor Perini Corporation",
+                "market": "stocks",
+                "locale": "us",
+                "primary_exchange": "XNYS",
+                "type": "CS",
+                "active": True,
+                "currency_name": "usd",
+                "share_class_figi": "FIGITPC",
+            },
+            {
+                "ticker": "TpC",
+                "name": "AT&T Preferred Series C",
+                "market": "stocks",
+                "locale": "us",
+                "primary_exchange": "XNYS",
+                "type": "PFD",
+                "active": True,
+                "currency_name": "usd",
+            },
+        ),
+        source_fingerprint="a" * 64,
+    )
+
+    result = process_grouped_daily_payload(
+        {"results": [bar("TPC"), bar("TpC", c=18, h=19, l=17, o=18)]},
+        identity=snapshot,
+        session_date=AS_OF,
+        endpoint="x",
+        data_root=tmp_path,
+        ingested_at=INGESTED_AT,
+        publish=False,
+    )
+
+    assert result.conflicting_duplicate_record_count == 0
+    assert result.resolved_eligible_bar_count == 1
+    assert result.expected_exclusion_bar_count == 1
+    assert result.rejected_identity_bar_count == 0
+    assert result.case_sensitive_provider_ticker_count == 1
+    assert result.case_sensitive_provider_ticker_excluded_count == 1
+    assert result.case_sensitive_provider_ticker_quarantine_count == 0
+    assert result.case_sensitive_identity_source_fingerprint == "a" * 64
     assert result.canonical_bar_count == 1
 
 
