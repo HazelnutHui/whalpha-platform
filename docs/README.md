@@ -97,6 +97,9 @@ Pivotal research ADRs include
 [0198](decisions/0198-scale-corporate-action-custody-to-the-five-year-range.md),
 [0199](decisions/0199-retain-complete-corporate-action-source-packages-privately.md),
 and [0200](decisions/0200-retain-inactive-lifecycle-source-anchors-privately.md).
+ADR [0201](decisions/0201-admit-bounded-quarantined-historical-identity-alias-collisions.md)
+keeps later-vintage historical alias conflicts quarantined while allowing the
+unrelated resolved cross-section to advance under a separate bounded profile.
 
 ## Architecture and data
 

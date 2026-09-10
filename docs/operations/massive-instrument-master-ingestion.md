@@ -60,8 +60,11 @@ Expected exclusions are not counted as malformed records and are not included in
 
 Stable-identifier collisions are included in the eligible identity denominator
 but remain quarantined from Instrument and Resolver outputs. ADR 0116 permits
-only an observation ratio no greater than 0.1%; it never selects a conflicting
-ticker or infers lifecycle facts.
+only an observation ratio no greater than 0.1% for prospective/current
+snapshots. ADR 0201 permits a separate maximum of 1.0% only for explicitly
+later-observed historical reconstruction. Both profiles preserve the applied
+ceiling with the result and never select a conflicting ticker or infer
+lifecycle facts.
 
 ## Live Execution Result
 

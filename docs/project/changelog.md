@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-10 — Localize a historical Identity alias-revision stop
+
+- The finite EOD/Identity continuation completed through 2025-01-23 and
+  stopped aligned at 409 sessions before publishing 2025-01-22 Identity.
+- Formally reread the retained package and isolated 58 collision observations
+  in 29 two-ticker Share Class FIGI groups: 0.6199% of 9,356 eligible rows.
+  The other 8,467 observations resolve independently at 90.4981% coverage.
+- Accepted ADR 0201. Historical reconstruction now has an explicit 1.0%
+  catastrophic collision ceiling; current/prospective snapshots retain 0.1%.
+  Every conflicting row remains ambiguous and absent from Instrument and
+  Resolver output, and the applied gate is persisted with the plan/manifest.
+- No conflicting ticker was chosen, no lifecycle fact inferred, and no
+  Production or OCI state changed.
+
 ## 2026-09-10 — Scale corporate-action source custody to five years
 
 - Accepted ADR 0198 after the real 15-month dividend package used 14 of the

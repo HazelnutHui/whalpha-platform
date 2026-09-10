@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0201](0201-admit-bounded-quarantined-historical-identity-alias-collisions.md):
+  admits bounded later-vintage ticker-alias collisions only in historical
+  reconstruction while keeping every affected row quarantined and current
+  Identity gates unchanged.
 - [ADR 0198](0198-scale-corporate-action-custody-to-the-five-year-range.md):
   keeps legacy source packages readable while allowing one finite,
   interval-bound five-year split or dividend package under Stocks Starter.
@@ -95,11 +99,12 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0200 separate durable research Membership custody from
+- ADRs 0197–0201 separate durable research Membership custody from
   signal-eligible Membership, scale source-only corporate-action custody to
   the five-year boundary, and retain exact corporate-action and inactive-
   lifecycle source vintages privately without promoting them to canonical
-  facts.
+  facts, then localize bounded historical alias-revision collisions without
+  relaxing prospective Identity rules.
 
 ## Runtime and publication decisions
 

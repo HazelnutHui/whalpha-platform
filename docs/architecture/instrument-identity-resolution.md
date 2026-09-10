@@ -31,7 +31,17 @@ The namespace is defined in code as `CANONICAL_INSTRUMENT_NAMESPACE`. Python ran
 
 ## Collision and Ambiguity
 
-If the same stable identifier maps to incompatible provider records in the same snapshot, the affected records are marked ambiguous and are excluded from canonical Instrument Master publication. Ambiguity is a hard quality-gate failure for V1.
+If the same stable identifier maps to incompatible provider records in the
+same snapshot, the affected records are marked ambiguous and are excluded from
+canonical Instrument Master and Resolver publication. The records remain in
+the eligible denominator; no ticker winner or lifecycle interval is inferred.
+
+ADR 0116 permits a collision-observation ratio no greater than 0.1% for
+prospective/current snapshots. ADR 0201 adds a separate 1.0% catastrophic
+ceiling for later-observed historical reconstruction, where provider alias
+revisions can be materially denser. The applied ceiling and actual count/ratio
+remain in immutable evidence. Crossing the applicable ceiling still blocks
+the complete snapshot.
 
 ## Current Live Result
 
@@ -59,4 +69,3 @@ No raw payload, Parquet partition, or completed snapshot marker was published.
 - merger and spinoff lineage
 - Issuer Master introduction
 - historical identity backfill
-

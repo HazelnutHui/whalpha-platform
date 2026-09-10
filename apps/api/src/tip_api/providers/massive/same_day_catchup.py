@@ -26,7 +26,10 @@ from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
-from tip_api.ingestion.instrument_master_snapshot import InstrumentMasterSnapshotIngestionService
+from tip_api.ingestion.instrument_master_snapshot import (
+    InstrumentMasterSnapshotIngestionService,
+    InstrumentMasterSnapshotQualityGates,
+)
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     MANIFEST_FILE_NAME as IDENTITY_MANIFEST_FILE,
@@ -385,6 +388,7 @@ def build_identity_plan(
     plan_path: Path,
     data_root: Path,
     expected_current_state_fingerprint: str | None = None,
+    quality_gates: InstrumentMasterSnapshotQualityGates | None = None,
 ) -> CatchupApprovalPlanV1:
     package, pages = _read_fetch_package(package_path, expected_type="identity_reference")
     data_root = _validate_data_root(data_root)
@@ -403,8 +407,10 @@ def build_identity_plan(
         request_count=package.request_count,
         pagination_complete=package.pagination_complete,
     )
+    resolved_quality_gates = quality_gates or InstrumentMasterSnapshotQualityGates()
     service = InstrumentMasterSnapshotIngestionService(
-        repository=ParquetInstrumentMasterSnapshotRepository(root=artifact_root, created_at=package.fetched_at)
+        repository=ParquetInstrumentMasterSnapshotRepository(root=artifact_root, created_at=package.fetched_at),
+        gates=resolved_quality_gates,
     )
     result = service.publish_snapshot(
         as_of_date=package.session_date,
@@ -472,6 +478,11 @@ def build_identity_plan(
         "resolver_rows": result.resolver_entry_count,
         "source_observation_rows": source.manifest.record_count,
         "requests": result.request_count,
+        "stable_identifier_collision_rows": result.stable_identifier_collision_count,
+        "stable_identifier_collision_gate_ppm": int(
+            resolved_quality_gates.maximum_stable_identifier_collision_ratio
+            * 1_000_000
+        ),
     }
     fingerprints = {
         "instrument": result.instrument_content_sha256 or "",

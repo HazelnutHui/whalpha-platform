@@ -46,3 +46,25 @@ retry or source failure.
 This audit remains the execution record until the finite run completes or
 stops at another explicit resumable boundary.  Volatile progress is not a
 completeness claim.
+
+## Bounded historical alias stop
+
+The continuation completed three more 20-session checkpoints through
+2025-01-27, then completed 2025-01-24 and 2025-01-23 inside the next batch. It
+stopped before publishing 2025-01-22 Identity. At the stop, EOD and Identity
+were aligned at 409 sessions with 2025-01-23 as the common left boundary. The
+2025-01-22 Identity acquisition package was complete and immutable; no plan,
+canonical Identity, or EOD package for that date existed.
+
+An offline reread reproduced the only failing gate. The package contains
+11,166 raw rows, 9,356 eligible observations, 8,467 resolved observations, 831
+unresolved observations, and 58 stable-identifier collision observations in
+29 two-ticker groups. Collision ratio is 0.6199%; eligible identity coverage
+after preserving all conflicts in the denominator is 90.4981%. Adjacent
+2025-01-23 and 2025-01-24 packages each contained zero collision observations.
+
+Every conflict remains ambiguous and absent from canonical Instrument and
+Resolver output. ADR 0201 permits this bounded later-vintage reconstruction
+under a 1.0% ceiling while leaving the prospective 0.1% gate unchanged. This
+does not resolve ticker history or upgrade the reconstructed family to
+`as_operated` evidence.

@@ -10,6 +10,9 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
+from tip_api.ingestion.instrument_master_snapshot import (
+    InstrumentMasterSnapshotQualityGates,
+)
 from tip_api.providers.massive import same_day_catchup as module
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.providers.massive.config import MassiveProviderConfig
@@ -140,6 +143,51 @@ def fetch_identity(tmp_path: Path, session: date) -> tuple[Path, FakeTransport]:
     )
     assert result.request_count == 2
     return package, transport
+
+
+def test_historical_identity_plan_can_admit_bounded_quarantined_aliases(
+    tmp_path: Path,
+) -> None:
+    session = date(2025, 1, 22)
+    pages = reference_pages(session)
+    rows = pages[0]["results"] + pages[1]["results"]
+    for pair_number in range(6):
+        first = rows[pair_number * 2]
+        second = rows[pair_number * 2 + 1]
+        second["share_class_figi"] = first["share_class_figi"]
+        second["composite_figi"] = first["composite_figi"]
+    package = tmp_path / "historical-alias-identity"
+    fetch_identity_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport(pages),
+        session_date=session,
+        package_path=package,
+        fetched_at=FETCHED_AT,
+        rate_limiter=no_wait_limiter(),
+    )
+    plan_path = tmp_path / "historical-alias-plan.json"
+    data_root = tmp_path / "historical-alias-data"
+    data_root.mkdir()
+
+    with pytest.raises(SameDayCatchupError, match="quality gates"):
+        build_identity_plan(
+            package_path=package,
+            plan_path=plan_path,
+            data_root=data_root,
+        )
+
+    plan = build_identity_plan(
+        package_path=package,
+        plan_path=plan_path,
+        data_root=data_root,
+        quality_gates=InstrumentMasterSnapshotQualityGates(
+            maximum_stable_identifier_collision_ratio=0.01,
+        ),
+    )
+
+    assert plan.counts["stable_identifier_collision_rows"] == 12
+    assert plan.counts["stable_identifier_collision_gate_ppm"] == 10_000
+    assert plan.counts["instrument_rows"] == 4_989
 
 
 def test_public_fetch_package_evidence_formally_rereads_without_payload(tmp_path) -> None:

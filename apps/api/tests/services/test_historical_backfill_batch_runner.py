@@ -15,6 +15,7 @@ from tip_api.providers.massive.transport import (
 )
 from tip_api.services import historical_backfill_batch_runner as module
 from tip_api.services.historical_backfill_batch_runner import (
+    HISTORICAL_RECONSTRUCTION_IDENTITY_QUALITY_GATES,
     HistoricalBackfillBatchRunnerError,
     HistoricalBackfillBatchStoppedError,
     HistoricalBackfillSessionResultV1,
@@ -64,6 +65,13 @@ def _provider_get(transport: object) -> object:
         api_key=SecretStr("fixture-key"),
         timeout_seconds=Decimal("1"),
         base_url="https://api.massive.com",
+    )
+
+
+def test_historical_identity_collision_gate_is_distinct_and_bounded() -> None:
+    assert (
+        HISTORICAL_RECONSTRUCTION_IDENTITY_QUALITY_GATES.maximum_stable_identifier_collision_ratio
+        == 0.01
     )
 
 

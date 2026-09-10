@@ -51,6 +51,13 @@ then EOD package, exact plan, Apply, and formal readback. A bounded invocation
 contains at most 20 sessions. Existing complete packages and canonical
 partitions are reused only after formal validation.
 
+Historical reference packages use ADR 0201's explicit reconstruction profile:
+up to 1.0% stable-identifier collision observations may be retained as
+ambiguous while remaining absent from Instrument and Resolver output. The
+prospective/current 0.1% ceiling is unchanged. A session above the historical
+ceiling still stops, and no conflicting alias may be selected merely to keep
+the run moving.
+
 The historical runner supplies each already-computed pre-state fingerprint to
 its plan builder. The generic daily builder still computes its own value when
 one is not supplied. Apply always recomputes the full-content fingerprint

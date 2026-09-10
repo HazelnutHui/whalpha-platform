@@ -14,6 +14,9 @@ from typing import Callable, Literal
 
 from pydantic import SecretStr
 
+from tip_api.ingestion.instrument_master_snapshot import (
+    InstrumentMasterSnapshotQualityGates,
+)
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.instrument_master_snapshot import (
     ParquetInstrumentMasterSnapshotRepository,
@@ -62,6 +65,11 @@ MAXIMUM_TRANSIENT_RETRIES_PER_SESSION = 2
 MAXIMUM_TRANSIENT_RETRY_DELAY_SECONDS = 5 * 60
 MINIMUM_PAID_REQUEST_INTERVAL_SECONDS = Decimal("0.25")
 MAXIMUM_REQUEST_INTERVAL_SECONDS = Decimal("15")
+HISTORICAL_RECONSTRUCTION_IDENTITY_QUALITY_GATES = (
+    InstrumentMasterSnapshotQualityGates(
+        maximum_stable_identifier_collision_ratio=0.01,
+    )
+)
 
 TransientFailureCode = Literal["transport_timeout", "transport_unavailable"]
 
@@ -372,6 +380,9 @@ def _process_session(
             plan_path=identity_plan,
             data_root=data_root,
             expected_state=state,
+            identity_quality_gates=(
+                HISTORICAL_RECONSTRUCTION_IDENTITY_QUALITY_GATES
+            ),
         )
         apply_approved_plan(
             plan_path=identity_plan,
@@ -519,6 +530,7 @@ def _ensure_plan(
     plan_path: Path,
     data_root: Path,
     expected_state: str,
+    identity_quality_gates: InstrumentMasterSnapshotQualityGates | None = None,
 ) -> str:
     if not plan_path.exists():
         if operation == "identity":
@@ -527,6 +539,7 @@ def _ensure_plan(
                 plan_path=plan_path,
                 data_root=data_root,
                 expected_current_state_fingerprint=expected_state,
+                quality_gates=identity_quality_gates,
             )
         else:
             build_eod_plan(
