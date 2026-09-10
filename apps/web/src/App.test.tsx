@@ -43,7 +43,7 @@ describe('primary workspace shell', () => {
     expect(workspaceButtons[4]).toHaveTextContent('Market Structure & Activity');
     expect(screen.getByRole('button', { name: /Quant Research Lab/ })).toHaveAttribute('aria-current', 'page');
     expect(await screen.findByTestId('research-workspace')).toHaveTextContent('research');
-    expect(screen.getByText('Research system')).toBeInTheDocument();
+    expect(screen.getAllByText('Research system')).toHaveLength(2);
     expect(screen.getByText('Free market tools')).toBeInTheDocument();
     expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
     expect(screen.getByText('Protected Session')).toBeInTheDocument();

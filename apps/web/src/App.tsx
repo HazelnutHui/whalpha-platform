@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 
 import { LanguageSelector } from './i18n/LanguageSelector';
 import { useI18n } from './i18n/I18nProvider';
+import type { MessageKey } from './i18n/catalog';
 import { universeName } from './i18n/domain';
 
 const loadMarketDashboard = () => import('./pages/MarketDashboardPage');
@@ -24,6 +25,14 @@ const WORKSPACE_PRELOADERS: Record<Workspace, () => Promise<unknown>> = {
   sector: loadSectorRotation,
   candidates: loadOpportunityCandidates,
   research: loadQuantResearchLab,
+};
+
+const WORKSPACE_LABELS: Record<Workspace, MessageKey> = {
+  market: 'app.marketDashboard',
+  regime: 'app.regimeMap',
+  sector: 'app.sectorRotation',
+  candidates: 'app.stockCandidates',
+  research: 'app.quantResearch',
 };
 
 const PRIMARY_UNIVERSE = 'provider_classified_common_shares_v1';
@@ -142,6 +151,10 @@ export default function App(): JSX.Element {
       </aside>
       <div className="workspace-stage">
         <header className="workspace-utility" aria-label={t('app.utilityAria')}>
+          <div className="workspace-context" aria-live="polite">
+            <span>{t(workspace === 'research' || workspace === 'candidates' ? 'app.researchGroup' : 'app.freeToolsGroup')}</span>
+            <strong>{t(WORKSPACE_LABELS[workspace])}</strong>
+          </div>
           <label className="workspace-universe">
             <span>{t('common.universe')}</span>
             <select aria-label={t('app.universeAria')} value={universe} onChange={(event) => selectUniverse(event.target.value)}>
@@ -155,9 +168,11 @@ export default function App(): JSX.Element {
             {snapshotMode ? <button type="button" onClick={() => void logout(locale)}>{t('dashboard.logout')}</button> : null}
           </div>
         </header>
-        <Suspense fallback={<div className="workspace-route-loading" role="status">{t('common.loading')}</div>}>
-          {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
-        </Suspense>
+        <div className="workspace-view" data-workspace={workspace}>
+          <Suspense fallback={<div className="workspace-route-loading" role="status">{t('common.loading')}</div>}>
+            {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
+          </Suspense>
+        </div>
       </div>
     </div>
   );

@@ -29,10 +29,18 @@ React/TypeScript/Vite frontend for Trading Intelligence Platform.
 
 ## Purpose
 
-The frontend implements the five product workspaces and shared bilingual shell
+The frontend implements the five product workspaces and shared multilingual shell
 for local/private development and versioned static publication. Quant Research
 Lab is the model/evidence view; a future AI Quant Research Factory is its
 backend capability and does not create another navigation item.
+
+The authenticated and guest application uses a restrained institutional
+research-workspace layer that is intentionally separate from the public
+entry's marketing treatment. Navigation, utility controls, analytical panels,
+tables, model records, drawers, and responsive states share flat surfaces,
+compact geometry, restrained status color, and data-first typography. The
+design avoids decorative imagery, glow-heavy cards, and motion as substitutes
+for information hierarchy.
 
 ## Data Modes
 `VITE_MARKET_DATA_MODE=snapshot` is the production static-dashboard target. It reads `/private-data/v1/manifest.json`, `market-summary.json`, `movers.json`, and `liquidity-map.json` from the authenticated static release. It does not call FastAPI and does not fall back to demo data. The deployed OCI release uses `/` as the public WH Alpha login entry, keeps `/login/` as a compatibility redirect, and protects Dashboard/private JSON with server-side session cookies; the frontend never stores usernames or passwords.

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-10 — Recast the product workspace as an institutional research terminal
+
+- Reworked the authenticated and equal-capability guest application without
+  changing the public entry, data contracts, model authority, or analytics.
+  The shell now exposes the current workspace in a compact utility bar and
+  uses a quieter, denser navigation hierarchy.
+- Introduced one bounded application-only visual system across Quant Research
+  Lab, Model-Driven Equity Selection, and all three market tools. It replaces
+  glow-heavy gradients, floating cards, oversized headings, pill overuse, and
+  decorative motion with flat analytical surfaces, table-like groups,
+  restrained status color, compact controls, and consistent responsive rules.
+- Kept route-level code splitting and three-language behavior unchanged. The
+  complete stylesheet remains below the build-failing size budget; no image,
+  font, package, data, or runtime dependency was added.
+
 ## 2026-09-10 — Bound frontend weight and add governed Spanish localization
 
 - Split all five application workspaces into on-demand chunks and added
