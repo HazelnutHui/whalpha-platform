@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-10T10:30:47Z
 
-Deployment state additionally verified at: 2026-09-10T19:33:54Z
+Deployment state additionally verified at: 2026-09-10T19:59:59Z
 
 Repository context updated at: 2026-09-10 UTC
 
@@ -20,8 +20,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Source branch | main; verify current HEAD and cleanliness with the report |
 | Public site | https://whalpha.com/ |
 | OCI alias | whalpha-oci |
-| Active OCI release | 2026-09-10T193258Z-ef702eb26d24 |
-| Deployed source | ef702eb26d249f829701a7ba17cd8e1d5b388114 |
+| Active OCI release | 2026-09-10T195907Z-059a8cc3133d |
+| Deployed source | 059a8cc3133d406cc23e504ba038d7ae98d67361 |
 
 Dell is the authority for code, data, development, governance, and heavy
 computation. OCI is limited to static web serving, localhost Auth Service, and
@@ -122,7 +122,7 @@ Analytics remains degraded-short-history because Market Intelligence consumes
 26 sessions although canonical EOD has substantially more. This is a consumer-integration
 limit, not missing acquisition.
 
-The 2026-09-10 19:33:54 UTC independent OCI postflight matched release,
+The 2026-09-10 19:59:59 UTC independent OCI postflight matched release,
 source, manifest, checksums,
 services, protected routes, guest Session, Candidate summary/detail, Strategy
 Channels, Sector ETF Rotation, logout, and residue state. Nginx and the
@@ -145,9 +145,12 @@ The three stable market workspaces are Market Regime & Opportunities
 Activity (市场结构与活跃度).
 
 Quant Research Lab (量化研究实验室) is now the model registry, research
-evidence, and lifecycle authority. Stock Candidates (个股候选) will later
-consume only one to three separately validated and explicitly activated Lab
-models. Every active Candidate must identify the model/version, current-market
+evidence, and lifecycle authority. It is the default guest/credential
+workspace and the sole core item in first-level navigation. Model-Driven
+Equity Selection is its downstream product surface and will later consume only
+one to three separately validated and explicitly activated Lab models. The
+three stable market workspaces are grouped separately as free tools rather
+than numbered peers. Every active Candidate must identify the model/version, current-market
 applicability, within-model rank, evidence, counterevidence, entry readiness,
 and invalidation, with a link to the complete Lab record.
 

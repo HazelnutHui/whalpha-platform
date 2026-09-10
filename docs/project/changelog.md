@@ -12,6 +12,11 @@
   Session behavior, equal guest/credential capability, and all existing page
   implementations. Baseline V1 Candidate data remains present and explicitly
   unvalidated; no model or ranking authority changed.
+- Deployed the hierarchy as immutable OCI release
+  `2026-09-10T195907Z-059a8cc3133d` from source `059a8cc3133d`; independent
+  postflight matched release identity, source, manifest, checksums, protected
+  routes, equal guest/credential policy, services, listeners, and zero
+  staging/failed-release residue.
 
 ## 2026-09-10 — Reframe the public entry around transparent quantitative research
 

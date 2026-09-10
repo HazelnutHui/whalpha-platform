@@ -11,8 +11,8 @@ the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
 
 WH Alpha is live as a Session-protected bilingual U.S. equity
 market-intelligence and research platform. Active OCI release
-2026-09-10T193258Z-ef702eb26d24 was built from clean source
-ef702eb26d249f829701a7ba17cd8e1d5b388114.
+2026-09-10T195907Z-059a8cc3133d was built from clean source
+059a8cc3133d406cc23e504ba038d7ae98d67361.
 
 Production uses Market Intelligence 1.3 for 2026-09-09 and Snapshot 1.11 /
 Dashboard 2.8. English is default and Simplified Chinese is equal. Guest and
@@ -36,6 +36,12 @@ and a restrained animated signal path while preserving explicit research
 status and limitations. The second-screen research hierarchy presents Quant
 Research Lab as the single core and places the current record, downstream
 selection, and planned automation on one explicit vertical evidence rail.
+Inside the authenticated/guest application, Quant Research Lab is also the
+default and sole core workspace. Model-Driven Equity Selection is immediately
+beneath it as the reserved downstream consumer of activated models. The three
+stable market workspaces are grouped separately as free tools rather than
+numbered as equivalent modules. Deep links, bilingual state, Universe choice,
+and identical guest/credential capability remain unchanged.
 
 ## Data
 
