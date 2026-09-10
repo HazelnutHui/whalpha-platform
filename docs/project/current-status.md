@@ -58,12 +58,12 @@ budgets now guard this boundary.
 
 ## Data
 
-- The bounded continuation reached 982 contiguous EOD sessions from 2022-10-10
-  through 2026-09-09 and 983 Identity sessions from 2022-10-07 through
-  2026-09-09. The one-partition Identity lead is the exact safe stop. Latest
-  EOD has 9,916 rows; latest Identity has 9,982 instruments.
-- Historical Identity source custody has 981 partitions across the acquired
-  interval; 2026-08-13 and 2026-08-19 remain explicitly unbound.
+- After the bounded case-sensitive-symbol recovery, the unique continuation
+  has at least 984 aligned contiguous EOD and Identity sessions from
+  2022-10-06 through 2026-09-09. Latest EOD has 9,916 rows; latest Identity
+  has 9,982 instruments.
+- Historical Identity source custody has at least 982 partitions across the
+  acquired interval; 2026-08-13 and 2026-08-19 remain explicitly unbound.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
 - Research-only latest-vintage Membership has 300 sessions and 5,571,154
@@ -110,6 +110,9 @@ budgets now guard this boundary.
   passes. A retained-package census found at least 1,862 resolved bars missing
   across 676 published sessions. Existing EOD V1 partitions remain immutable
   and research-quarantined pending a corrected version or correction family.
+  Clean source `2da13b200cbe506332c05baa47f08de328170d70` recovered
+  2022-10-07 with zero requests, and the unique bounded `20260910f`
+  continuation is active.
 
 Price depth is no longer the main research blocker.
 
@@ -158,8 +161,9 @@ unauthorized.
 
 Complete:
 
-- 982 EOD and 983 Identity durable partitions at one safe Identity-only stop;
-- 981 Identity source partitions, 300 research-only Membership sessions, and
+- at least 984 aligned EOD and Identity durable partitions under one bounded
+  continuation;
+- at least 982 Identity source partitions, 300 research-only Membership sessions, and
   three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
@@ -207,13 +211,13 @@ that fixes both known gaps.
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
 2021-09-09 through 2026-09-09. Its initial coverage counts are superseded by
-the 982 EOD / 983 Identity safe stop above. Membership remains 303/1,255.
+the at-least-984 aligned checkpoint above. Membership remains 303/1,255.
 Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
-1. Commit ADR 0203's tested exact-symbol mapper, recover 2022-10-07 from
-   retained custody, and resume one bounded EOD/Identity continuation; do not
-   start a competing writer. Existing affected EOD V1 history must be rebuilt
+1. Let the unique bounded `20260910f` EOD/Identity continuation complete or
+   stop at its next explicit resumable boundary; do not start a competing
+   writer. Existing affected EOD V1 history must be rebuilt
    into a new immutable version or explicit correction family and formally
    reconciled before research admission. ADR 0202 resolved the 2022-12-05 VWAP
    case with explicit normalization and audit

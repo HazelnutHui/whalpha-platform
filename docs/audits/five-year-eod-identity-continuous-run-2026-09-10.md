@@ -160,3 +160,17 @@ is explicitly quarantined from model admission pending a new immutable
 corrected physical version or append-only correction family and a full formal
 reconciliation. Completing acquisition under the corrected mapper does not by
 itself remove that quarantine.
+
+## Exact-session recovery and second continuation
+
+Clean source commit `2da13b200cbe506332c05baa47f08de328170d70` ran one
+bounded 2022-10-07 recovery. It reused canonical Identity and the retained EOD
+package, made zero provider requests, published and formally reread 8,136 EOD
+rows, and aligned both families at 983 sessions.
+
+The unique `whalpha-five-year-backfill-20260910f.service` then started at
+23:09:35 UTC with the unchanged exact interval, serial request spacing,
+20-session batch size, 24-hour runtime ceiling, 2 GiB memory ceiling, and no
+restart. At 23:11:02 UTC, 2022-10-06 Identity and EOD had both completed,
+establishing an at-least-984-session aligned live checkpoint. The unit was
+active and no competing historical writer was present.

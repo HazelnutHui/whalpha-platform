@@ -17,6 +17,10 @@
   missing across 676 published sessions whose retained packages were audited.
   Existing partitions remain immutable and research-quarantined pending a new
   corrected physical version or append-only correction family.
+- Reused the retained 2022-10-07 EOD package with zero external requests,
+  formally published and reread 8,136 rows, and started one unique bounded
+  continuation. Its first live checkpoint aligned EOD and Identity at 984
+  sessions through 2022-10-06.
 
 ## 2026-09-10 — Govern Massive VWAP float-tail normalization
 
