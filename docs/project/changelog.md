@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-10 — Reframe the public entry around transparent quantitative research
+
+- Replaced the equal-weight nine-capability landing narrative with a compact
+  research-first entry centered on Quant Research Lab, model-driven equity
+  selection, and a governed research-automation extension.
+- Added a truthful Strong-Leader Pullback V1 research dossier that shows the
+  point-in-time foundation still building, the model specification locked,
+  out-of-sample evidence unpublished, Candidate authority inactive, and no
+  performance claim.
+- Kept Market Regime & Opportunities, Sector ETF Rotation, and Market
+  Structure & Activity visible as free supporting tools rather than the main
+  product identity.
+- Preserved English-default bilingual copy, the existing credential and guest
+  Session behavior, equal capability, data-free public entry, and the shared
+  WH Alpha favicon. No model, data, ranking, access, or authentication behavior
+  changed.
+
 ## 2026-09-10 — Localize a historical Identity alias-revision stop
 
 - The finite EOD/Identity continuation completed through 2025-01-23 and

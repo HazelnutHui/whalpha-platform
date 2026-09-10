@@ -132,6 +132,14 @@ the local cookie jar without printing the token. Password-based visual
 verification remains a user browser check; Codex does not know or handle the
 password.
 
+The public entry's product narrative is research-first. Quant Research Lab is
+shown as the model/evidence authority, model-driven Candidate ranking as a
+downstream activation, governed research automation as planned, and the three
+stable market-context workspaces as free supporting tools. Research status is
+shown before performance: an unfinished data foundation, unpublished result,
+or inactive model authority must remain explicit. This presentation does not
+change the shared Session capability or expose protected analytics publicly.
+
 ## Login Route Verification
 
 The deployment gate is content-aware: public `/` must contain branded entry markers, username/password fields, `Sign In`, and the guest control, and must not contain the retired placeholder marker. `/login/` must redirect to `/`. HTTP 200 alone is not accepted as proof of correct routing.

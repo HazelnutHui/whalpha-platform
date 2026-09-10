@@ -47,19 +47,21 @@ describe('static login client', () => {
       expect(html).toContain('rel="icon" type="image/png" href="/favicon.png"');
       expect(html).toContain('rel="apple-touch-icon" href="/favicon.png"');
       expect(html).toContain('name="theme-color" content="#061b33"');
-      expect(html).toContain('WH Alpha is a practical U.S. equity market structure');
     }
+    expect(dashboardHtml).toContain('WH Alpha is a transparent U.S. equity quantitative research');
+    expect(loginHtml).toContain('WH Alpha is a transparent U.S. equity quantitative research');
   });
 
-  it('presents the public platform story without blurring live and planned capabilities', () => {
+  it('presents research authority before free market tools without inventing performance', () => {
     expect(loginHtml).toContain('<img src="/favicon.png" alt="WH Alpha"');
-    expect(loginHtml).toContain('id="platform-roadmap"');
-    expect(loginHtml).toContain('class="capability-roadmap"');
-    expect(loginHtml.match(/data-state="live"/g)).toHaveLength(5);
-    expect(loginHtml.match(/data-state="planned"/g)).toHaveLength(3);
-    expect(loginHtml.match(/data-state="later"/g)).toHaveLength(1);
+    expect(loginHtml).toContain('id="research"');
+    expect(loginHtml).toContain('id="standards"');
+    expect(loginHtml).toContain('id="free-tools"');
+    expect(loginHtml).toContain('data-i18n="notClaim"');
+    expect(loginHtml).toContain('data-i18n="baselineNote"');
+    expect(loginHtml.match(/data-i18n="freeBadge"/g)).toHaveLength(3);
     expect(loginHtml).toContain('data-i18n="guestNote"');
-    expect(loginHtml).toContain('data-i18n="principleHonestyText"');
+    expect(loginHtml.indexOf('id="research"')).toBeLessThan(loginHtml.indexOf('id="free-tools"'));
   });
 
   it('defines both locales for every public-page translation key', () => {

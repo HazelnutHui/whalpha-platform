@@ -9,6 +9,15 @@ opaque sticky utility header. The Universe selector exposes only `Common
 Shares` and `Common Shares + ADRs`, with CS-only as default. A validated stable
 ID is persisted in the URL; Legacy remains an internal rollback boundary.
 
+The public entry is research-first rather than a catalog of equally weighted
+features. It presents Quant Research Lab as model/evidence authority,
+model-driven Candidate ranking as a downstream activation, governed research
+automation as a planned extension of traditional quantitative discipline, and
+the three established market-context workspaces as free supporting tools. Its
+current Strong-Leader Pullback record explicitly shows data construction,
+unpublished out-of-sample evidence, and inactive Candidate authority before
+any performance claim.
+
 The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
 security form remains provisional and does not establish issuer structure or
 domicile.
