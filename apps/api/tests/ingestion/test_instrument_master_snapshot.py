@@ -124,6 +124,10 @@ def test_case_sensitive_source_projection_separates_security_forms():
     assert "TpC" not in exact.resolver
     assert exact.resolver["ECGw"] == canonical_resolver["ECGW"]
     assert exact.status["ECGw"] == "resolved"
+    assert exact.case_colliding_normalized_tickers == frozenset({"TPC"})
+    assert exact.case_colliding_resolved_instrument_ids == frozenset(
+        {canonical_resolver["TPC"]}
+    )
 
 
 def test_pagination_success_and_rate_limiter_uses_fake_clock():

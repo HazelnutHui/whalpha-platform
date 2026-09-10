@@ -33,6 +33,11 @@ def test_lists_completed_sessions_and_reads_joined_bars(tmp_path: Path) -> None:
     assert bars[1].vwap is None
     assert bars[1].trade_count is None
 
+    canonical = repository.read_canonical_records(SESSION_DATE)
+    assert len(canonical) == 3
+    assert all(item.session_date == SESSION_DATE for item in canonical)
+    assert canonical[0].schema_version == "1.0"
+
 
 def test_unknown_session_raises_not_found(tmp_path: Path) -> None:
     publish_completed_eod_dataset(tmp_path)

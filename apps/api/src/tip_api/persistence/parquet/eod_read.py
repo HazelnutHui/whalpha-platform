@@ -13,7 +13,12 @@ from uuid import UUID
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from tip_api.contracts.market_data.v1 import EodSessionIntegrityV1, InstrumentType, QualityStatus
+from tip_api.contracts.market_data.v1 import (
+    EodPriceBarV1,
+    EodSessionIntegrityV1,
+    InstrumentType,
+    QualityStatus,
+)
 from tip_api.persistence.eod_read import EodDatasetUnavailableError, EodHistorySessionRead, EodSessionNotFoundError
 from tip_api.persistence.parquet.eod_bars import EOD_PRICE_BAR_ARROW_SCHEMA, SCHEMA_VERSION, SCHEMA_VERSION_PARTITION
 from tip_api.persistence.parquet.eod_bars import _table_to_fingerprint_rows as eod_table_to_rows
@@ -146,6 +151,34 @@ class CanonicalEodReadRepository:
         root = self._validated_root()
         manifest, table = self._read_valid_eod_partition(root, session_date=session_date)
         return self._integrity(root, session_date, manifest, table)
+
+    def read_canonical_records(
+        self,
+        session_date: date,
+    ) -> tuple[EodPriceBarV1, ...]:
+        """Formally reread the provider-neutral canonical row contract."""
+
+        root = self._validated_root()
+        _, table = self._read_valid_eod_partition(root, session_date=session_date)
+        try:
+            records = tuple(
+                EodPriceBarV1.model_validate(row) for row in table.to_pylist()
+            )
+        except Exception as exc:
+            raise EodDatasetUnavailableError(
+                "EOD canonical records did not satisfy their logical contract"
+            ) from exc
+        return tuple(
+            sorted(
+                records,
+                key=lambda item: (
+                    str(item.instrument_id),
+                    item.session_date,
+                    item.source,
+                    item.revision,
+                ),
+            )
+        )
 
     def read_history_sessions(self, session_dates: tuple[date, ...]) -> tuple[EodHistorySessionRead, ...]:
         """Read only requested partitions; never use a current/latest ticker resolver."""

@@ -107,6 +107,8 @@ class CaseSensitiveProviderTickerResolution:
     unique_provider_ticker_count: int
     missing_provider_ticker_count: int
     ambiguous_provider_ticker_count: int
+    case_colliding_normalized_tickers: frozenset[str]
+    case_colliding_resolved_instrument_ids: frozenset[UUID]
 
 
 def ingest_massive_instrument_master_snapshot(
@@ -322,6 +324,22 @@ def build_case_sensitive_provider_ticker_resolution(
         resolver[provider_ticker] = instrument_id
         statuses[provider_ticker] = ResolutionStatus.RESOLVED.value
 
+    normalized_groups: dict[str, set[str]] = {}
+    for provider_ticker in groups:
+        normalized_groups.setdefault(provider_ticker.upper(), set()).add(
+            provider_ticker
+        )
+    case_colliding_normalized_tickers = frozenset(
+        normalized
+        for normalized, exact_tickers in normalized_groups.items()
+        if len(exact_tickers) > 1
+    )
+    case_colliding_resolved_instrument_ids = frozenset(
+        instrument_id
+        for provider_ticker, instrument_id in resolver.items()
+        if provider_ticker.upper() in case_colliding_normalized_tickers
+    )
+
     return CaseSensitiveProviderTickerResolution(
         resolver=resolver,
         status=statuses,
@@ -331,6 +349,10 @@ def build_case_sensitive_provider_ticker_resolution(
         ambiguous_provider_ticker_count=sum(
             value == ResolutionStatus.AMBIGUOUS.value
             for value in statuses.values()
+        ),
+        case_colliding_normalized_tickers=case_colliding_normalized_tickers,
+        case_colliding_resolved_instrument_ids=(
+            case_colliding_resolved_instrument_ids
         ),
     )
 

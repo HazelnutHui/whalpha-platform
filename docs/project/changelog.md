@@ -11,6 +11,12 @@
 - A final interval manifest is the only completion marker. Partial sessions,
   missing source, unexplained removals, and changed economic values carry no
   research authority.
+- Implemented the sealed session/interval contracts, typed full-session diff,
+  exact case-collision addition set, formal canonical-record reread, validated
+  Grouped Daily package reader, and isolated one-session candidate builder.
+  A fixture reproduces the historical defect and proves that only the expected
+  missing common-stock bar is admitted. Focused regression passed 118 tests;
+  the complete API suite passed 2,430 tests.
 
 ## 2026-09-10 — Preserve Massive case-sensitive provider symbols
 

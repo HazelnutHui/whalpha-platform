@@ -152,6 +152,15 @@ class ValidatedIdentityReferencePackage:
     package_manifest_sha256: str
 
 
+@dataclass(frozen=True, slots=True)
+class ValidatedGroupedDailyPackage:
+    """In-memory view of one fully custody-validated Grouped Daily package."""
+
+    manifest: FetchPackageManifestV1
+    payload: Mapping[str, object]
+    package_manifest_sha256: str
+
+
 class CatchupApprovalPlanEvidenceV1(FrozenModel):
     operation: Literal["identity", "identity_source", "eod"]
     session_date: date
@@ -343,6 +352,29 @@ def read_identity_reference_package(
     return ValidatedIdentityReferencePackage(
         manifest=manifest,
         pages=pages,
+        package_manifest_sha256=file_sha256(package_path / "package.json"),
+    )
+
+
+def read_grouped_daily_package(
+    *,
+    package_path: Path,
+    expected_session: date,
+) -> ValidatedGroupedDailyPackage:
+    """Read one sanitized Grouped Daily payload after full custody validation."""
+
+    manifest, pages = _read_fetch_package(
+        package_path,
+        expected_type="grouped_daily",
+    )
+    if manifest.session_date != expected_session:
+        raise SameDayCatchupError("fetch package session mismatch")
+    if len(pages) != 1:
+        raise SameDayCatchupError("Grouped Daily package must contain one response")
+    _validate_grouped_session(pages[0], expected_session)
+    return ValidatedGroupedDailyPackage(
+        manifest=manifest,
+        payload=pages[0],
         package_manifest_sha256=file_sha256(package_path / "package.json"),
     )
 

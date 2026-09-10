@@ -13,12 +13,18 @@ import pytest
 from tip_api.ingestion.instrument_master_snapshot import (
     InstrumentMasterSnapshotQualityGates,
 )
+from tip_api.contracts.market_data.v1.reconciled_eod_edition import (
+    ReconciledEodDiffDisposition,
+    ReconciledEodSourceProvenance,
+)
 from tip_api.providers.massive import same_day_catchup as module
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.grouped_daily_ingestion import (
+    bind_case_sensitive_provider_ticker_source,
     ingest_grouped_daily,
     load_identity_snapshot,
+    process_grouped_daily_payload,
 )
 from tip_api.providers.massive.instrument_master_snapshot import (
     FixedIntervalRateLimiter,
@@ -40,12 +46,16 @@ from tip_api.providers.massive.same_day_catchup import (
     inventory_fingerprint,
     read_catchup_approval_plan_evidence,
     read_fetch_package_evidence,
+    read_grouped_daily_package,
     read_identity_reference_package,
 )
 from tip_api.services.historical_identity_source_custody import (
     read_identity_source_custody_at_data_root,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, evaluate_market_data_freshness
+from tip_api.services.reconciled_eod_edition import (
+    build_reconciled_eod_session_candidate,
+)
 
 FETCHED_AT = datetime(2026, 8, 23, 12, tzinfo=UTC)
 
@@ -210,6 +220,14 @@ def test_public_fetch_package_evidence_formally_rereads_without_payload(tmp_path
     assert len(evidence.package_manifest_sha256) == 64
     assert len(evidence.package_content_sha256) == 64
     assert "results" not in evidence.model_dump()
+
+    grouped = read_grouped_daily_package(
+        package_path=package,
+        expected_session=session,
+    )
+    assert grouped.manifest.session_date == session
+    assert len(grouped.payload["results"]) == 1
+    assert len(grouped.package_manifest_sha256) == 64
 
 
 def test_exact_persistent_session_custody_supports_fetch_and_plan_reread(
@@ -514,6 +532,97 @@ def test_eod_plan_binds_exact_provider_symbol_to_identity_source(
     assert eod_plan.counts["case_sensitive_provider_ticker_excluded_rows"] == 1
     assert eod_plan.counts["case_sensitive_provider_ticker_quarantined_rows"] == 0
     assert len(eod_plan.content_fingerprints["identity_source"]) == 64
+
+
+def test_reconciled_eod_candidate_recovers_only_expected_missing_common(
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 8, 20)
+    root = tmp_path / "reconciled-data"
+    root.mkdir()
+    pages = reference_pages(session, count=5003)
+    rows = pages[0]["results"] + pages[1]["results"]
+    rows[0]["ticker"] = "TPC"
+    rows[1]["ticker"] = "TpC"
+    rows[1]["type"] = "PFD"
+
+    identity_package = tmp_path / "reconciled-identity"
+    fetch_identity_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport(pages),
+        session_date=session,
+        package_path=identity_package,
+        fetched_at=FETCHED_AT,
+        rate_limiter=no_wait_limiter(),
+    )
+    identity_plan_path = tmp_path / "reconciled-identity.plan.json"
+    identity_plan = build_identity_plan(
+        package_path=identity_package,
+        plan_path=identity_plan_path,
+        data_root=root,
+    )
+    apply_approved_plan(
+        plan_path=identity_plan_path,
+        approved_plan_sha256=file_sha256(identity_plan_path),
+        expected_current_state_fingerprint=(
+            identity_plan.expected_current_state_fingerprint
+        ),
+        data_root=root,
+        expected_operation="identity",
+        expected_session=session,
+    )
+
+    source = read_identity_source_custody_at_data_root(
+        data_root=root.resolve(),
+        provider="massive_stocks_basic",
+        session_date=session,
+    )
+    identity = bind_case_sensitive_provider_ticker_source(
+        load_identity_snapshot(
+            root,
+            provider_id="massive_stocks_basic",
+            as_of_date=session,
+        ),
+        source_payloads=tuple(item.source_payload() for item in source.records),
+        source_fingerprint=source.manifest.logical_fingerprint,
+    )
+    grouped = grouped_payload(session, count=5003)
+    grouped["results"][0]["T"] = "TPC"
+    grouped["results"][1]["T"] = "TpC"
+    base = process_grouped_daily_payload(
+        {"results": grouped["results"][2:]},
+        identity=identity,
+        session_date=session,
+        endpoint="fixture",
+        data_root=root,
+        ingested_at=FETCHED_AT,
+        publish=True,
+    )
+    assert base.status == "published"
+    assert base.canonical_bar_count == 5001
+
+    eod_package = tmp_path / "reconciled-eod"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped]),
+        session_date=session,
+        package_path=eod_package,
+        fetched_at=FETCHED_AT,
+    )
+    candidate = build_reconciled_eod_session_candidate(
+        data_root=root.resolve(),
+        package_path=eod_package,
+        working_root=tmp_path / "reconciled-working",
+        session_date=session,
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+    )
+
+    assert candidate.diff.disposition == (
+        ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_ADDITIONS_ONLY
+    )
+    assert candidate.diff.added_record_count == 1
+    assert candidate.diff.unexpected_added_record_count == 0
+    assert len(candidate.rebuilt_records) == 5002
 
 
 def fetch_plan_apply_eod(tmp_path: Path, root: Path, session: date):

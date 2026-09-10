@@ -8,7 +8,10 @@ does not overwrite or implicitly supersede canonical EOD Price Bar V1.
 
 ## Status
 
-Design accepted; persistence and reader implementation pending.
+Contract, deterministic sealing, fail-closed diff classification, formal base
+record reread, and one-session isolated candidate reconstruction are
+implemented. Edition persistence, interval-marker publication, and the
+edition-only research reader remain pending.
 
 ## Identity
 

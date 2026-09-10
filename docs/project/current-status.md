@@ -174,7 +174,9 @@ Complete:
 Incomplete:
 
 - immutable corrected EOD history for the ADR 0203 case-sensitive-symbol
-  defect and full-interval reconciliation;
+  defect and full-interval reconciliation; ADR 0204's contracts, diff
+  classifier, and isolated one-session candidate builder are implemented, but
+  edition persistence and interval completion are not;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
