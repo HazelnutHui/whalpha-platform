@@ -29,6 +29,14 @@ The broader official-source comparison is recorded in the dated
 It found no single cleared source and recommends provider-neutral source
 composition under Source Permission Governance V1.
 
+The 2026-09-10 Stocks Starter depth probe adds a narrower current result:
+Grouped Daily REST denied 2021-09-09 and 2021-09-10 but returned 11,063 rows
+for 2022-09-09, while PIT Tickers, splits, and dividends were accessible on all
+three dates. Massive's official Day Aggregates Flat Files documentation lists
+five-year Starter history and recommends Flat Files for bulk download, so that
+becomes the preferred price-backfill route. It requires separate dashboard S3
+credentials and has not yet been accessed.
+
 The narrower 2026-09-08
 [Lifecycle Corroboration Source Review](lifecycle-corroboration-source-review-2026-09-08.md)
 compares current official cross-venue and exchange documentation against the

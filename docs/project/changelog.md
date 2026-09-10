@@ -30,6 +30,12 @@
   Codex worktree by resolving the shared project Python runtime through the
   repository launcher; request limits and exact-authorization behavior are
   unchanged.
+- Ran exact non-retaining Stocks Starter probes for 2021-09-09, 2021-09-10,
+  and 2022-09-09. Grouped Daily REST denied the two 2021 sessions and returned
+  11,063 rows for 2022-09-09; PIT Tickers, splits, and dividends were accessible
+  on every tested date. Selected the documented five-year Day Aggregates Flat
+  File route for bulk price history, while preserving REST as fallback and
+  reconciliation evidence. No response body or data write was retained.
 
 ## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
 

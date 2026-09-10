@@ -249,9 +249,13 @@ fundamentals, and complete Historical Coverage are absent. The census is
 `quarantined`, fingerprint
 `c19c520f202aacef0dada46cf82e984ccba6b77078d667363eccfcc152a81bfb`.
 
-1. Prove Massive Starter's oldest required EOD and dated-reference depth and
-   pagination through one bounded pilot, then freeze the 949-session backfill
-   plan if it passes.
+1. Implement and pilot the Massive Starter Day Aggregates Flat File source,
+   then freeze the exact 949-session EOD/Identity backfill plan. The 2026-09-10
+   REST pilot found Grouped Daily denied for
+   2021-09-09/10 but accessible with 11,063 rows for 2022-09-09; PIT Tickers,
+   splits, and dividends were accessible on all three dates. Use the documented
+   five-year Day Aggregates Flat Files as the preferred bulk-price route and
+   retain REST as a bounded fallback/cross-check.
 2. Use Massive as the primary price/reference source and evaluate official
    free evidence through bounded source-specific pilots. Preserve every
    conflict, missing semantic, and permission limit; no first-non-null merge.
