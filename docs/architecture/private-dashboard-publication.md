@@ -130,7 +130,9 @@ The deployment verifies that public `/` remains data-free, public
 the same Dashboard and private Snapshot through it, logs it out, and removes
 the local cookie jar without printing the token. Password-based visual
 verification remains a user browser check; Codex does not know or handle the
-password.
+password. The entry hierarchy presents credential sign-in before guest access
+in the first viewport; the guest route remains immediately available and has
+identical capability.
 
 The public entry's product narrative is research-first. Quant Research Lab is
 shown as the model/evidence authority, model-driven Candidate ranking as a

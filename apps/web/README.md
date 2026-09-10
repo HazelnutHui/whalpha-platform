@@ -16,7 +16,9 @@ automation as a planned extension of traditional quantitative discipline, and
 the three established market-context workspaces as free supporting tools. Its
 current Strong-Leader Pullback record explicitly shows data construction,
 unpublished out-of-sample evidence, and inactive Candidate authority before
-any performance claim.
+any performance claim. The first viewport keeps account/password sign-in as
+the primary entry, places equal-capability guest access immediately below it,
+and uses a persistent continuation cue to expose the research narrative below.
 
 The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
 security form remains provisional and does not establish issuer structure or

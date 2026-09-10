@@ -65,6 +65,15 @@ describe('static login client', () => {
     expect(loginHtml.indexOf('id="research"')).toBeLessThan(loginHtml.indexOf('id="free-tools"'));
   });
 
+  it('keeps account sign-in first, guest access second, and a visible continuation into the landing narrative', () => {
+    expect(loginHtml).toContain('class="login-panel login-panel--hero"');
+    expect(loginHtml).toContain('class="scroll-cue"');
+    expect(loginHtml).toContain('data-i18n="scrollPreview"');
+    expect(loginHtml.indexOf('class="login-submit"')).toBeLessThan(loginHtml.indexOf('class="guest-submit"'));
+    expect(loginHtml.indexOf('class="login-panel login-panel--hero"')).toBeLessThan(loginHtml.indexOf('id="research"'));
+    expect(loginHtml.match(/<form /g)).toHaveLength(1);
+  });
+
   it('defines both locales for every public-page translation key', () => {
     runLoginI18nScript();
     const loginI18n = (window as unknown as { __whalphaLoginI18n: { messages: Record<'en' | 'zh', Record<string, string>> } }).__whalphaLoginI18n;

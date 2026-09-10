@@ -19,10 +19,10 @@
         <span><strong>WH Alpha</strong><small data-i18n="brandDescriptor">Quantitative Research</small></span>
       </a>
       <nav class="site-nav" aria-label="Page navigation" data-i18n-aria="navigationAria">
+        <a class="nav-access" href="#top" data-i18n="navAccess">Sign in</a>
         <a href="#research" data-i18n="navResearch">Research</a>
         <a href="#standards" data-i18n="navStandards">Standards</a>
         <a href="#free-tools" data-i18n="navTools">Free tools</a>
-        <a class="nav-access" href="#access" data-i18n="navAccess">Private sign in</a>
       </nav>
       <div class="login-language" role="group" aria-label="Interface language" data-i18n-aria="languageAria">
         <span data-i18n="languageLabel">Language</span>
@@ -40,11 +40,6 @@
           <p class="eyebrow" data-i18n="heroEyebrow">Systematic U.S. equity research</p>
           <h1 id="brand-title" data-i18n="heroTitle">Quantitative research that stands up to scrutiny.</h1>
           <p class="hero-description" data-i18n="heroDescription">A professional research system for transparent models, reproducible evidence, and model-driven U.S. equity selection. Every conclusion remains open to inspection.</p>
-          <div class="hero-actions">
-            <button class="guest-submit" type="button"><span data-i18n="guestSubmit">Open the workspace</span><span aria-hidden="true">↗</span></button>
-            <a href="#access" data-i18n="privateAccess">Private sign in</a>
-          </div>
-          <p id="guest-error" class="login-error hero-error" role="alert" data-i18n="guestError">Guest access is temporarily unavailable.</p>
           <div class="trust-line" aria-label="Research principles" data-i18n-aria="trustAria">
             <span data-i18n="trustPointTime">Point-in-time data</span>
             <span data-i18n="trustOutSample">Out-of-sample first</span>
@@ -53,23 +48,26 @@
           </div>
         </div>
 
-        <aside class="research-dossier" aria-label="Current research record" data-i18n-aria="dossierAria">
-          <div class="dossier-topline"><span data-i18n="dossierLabel">Current research record</span><em>WH / 001</em></div>
-          <div class="dossier-title">
-            <div><small data-i18n="modelFamily">MODEL FAMILY</small><h2>Strong-Leader Pullback</h2></div>
-            <span>V1</span>
-          </div>
-          <div class="dossier-state"><i aria-hidden="true"></i><span data-i18n="researchState">Preregistered · data foundation in progress</span></div>
-          <dl class="dossier-ledger">
-            <div><dt data-i18n="ledgerData">Point-in-time data</dt><dd data-state="building" data-i18n="stateBuilding">Building</dd></div>
-            <div><dt data-i18n="ledgerModel">Model specification</dt><dd data-state="locked" data-i18n="stateLocked">V1 locked</dd></div>
-            <div><dt data-i18n="ledgerValidation">Out-of-sample evidence</dt><dd data-state="pending" data-i18n="statePending">Not published</dd></div>
-            <div><dt data-i18n="ledgerAuthority">Candidate authority</dt><dd data-state="locked" data-i18n="stateInactive">Not activated</dd></div>
-          </dl>
-          <div class="dossier-foot"><span data-i18n="dossierFoot">Research status is shown before performance.</span><strong data-i18n="notClaim">NO PERFORMANCE CLAIM</strong></div>
-        </aside>
+        <form class="login-panel login-panel--hero" id="access" method="post" action="/auth/login" autocomplete="on" aria-labelledby="login-title">
+          <div class="panel-kicker"><span class="status-dot" aria-hidden="true"></span><span data-i18n="workspaceReady">Workspace ready</span></div>
+          <h2 id="login-title" data-i18n="signIn">Account sign in</h2>
+          <p data-i18n="continue">Enter the research workspace with an existing account.</p>
+          <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
+          <input id="next" name="next" type="hidden" value="/dashboard/" />
+          <div class="login-field"><label for="username" data-i18n="username">Username</label><input id="username" name="username" type="text" autocomplete="username" inputmode="text" required /></div>
+          <div class="login-field"><label for="password" data-i18n="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required /></div>
+          <button class="login-submit" type="submit"><span data-i18n="submit">Sign in</span><span aria-hidden="true">↗</span></button>
+          <div class="access-divider"><span data-i18n="orGuest">or continue without an account</span></div>
+          <button class="guest-submit" type="button"><span data-i18n="guestSubmit">Continue as guest</span><span aria-hidden="true">→</span></button>
+          <p id="guest-error" class="login-error" role="alert" data-i18n="guestError">Guest access is temporarily unavailable.</p>
+          <p class="guest-note" data-i18n="guestNote">Guest and signed-in sessions currently receive identical product capability.</p>
+        </form>
 
-        <a class="scroll-cue" href="#research"><span data-i18n="exploreResearch">Explore the research system</span><i aria-hidden="true"></i></a>
+        <a class="scroll-cue" href="#research">
+          <span class="scroll-cue__label" data-i18n="exploreResearch">Continue to the research system</span>
+          <span class="scroll-cue__track" aria-hidden="true"><i></i><i></i><i></i></span>
+          <small data-i18n="scrollPreview">Model evidence · research standards · free market tools</small>
+        </a>
       </section>
 
       <section class="research-section" id="research" aria-labelledby="research-title">
@@ -79,7 +77,23 @@
           <p data-i18n="researchIntro">WH Alpha separates research evidence from product authority. The Lab records what a model is, how it was tested, where it fails, and whether it is allowed to affect a daily ranking.</p>
         </div>
 
-        <div class="research-grid">
+        <div class="research-lead">
+          <aside class="research-dossier" aria-label="Current research record" data-i18n-aria="dossierAria">
+            <div class="dossier-topline"><span data-i18n="dossierLabel">Current research record</span><em>WH / 001</em></div>
+            <div class="dossier-title">
+              <div><small data-i18n="modelFamily">MODEL FAMILY</small><h2>Strong-Leader Pullback</h2></div>
+              <span>V1</span>
+            </div>
+            <div class="dossier-state"><i aria-hidden="true"></i><span data-i18n="researchState">Preregistered · data foundation in progress</span></div>
+            <dl class="dossier-ledger">
+              <div><dt data-i18n="ledgerData">Point-in-time data</dt><dd data-state="building" data-i18n="stateBuilding">Building</dd></div>
+              <div><dt data-i18n="ledgerModel">Model specification</dt><dd data-state="locked" data-i18n="stateLocked">V1 locked</dd></div>
+              <div><dt data-i18n="ledgerValidation">Out-of-sample evidence</dt><dd data-state="pending" data-i18n="statePending">Not published</dd></div>
+              <div><dt data-i18n="ledgerAuthority">Candidate authority</dt><dd data-state="locked" data-i18n="stateInactive">Not activated</dd></div>
+            </dl>
+            <div class="dossier-foot"><span data-i18n="dossierFoot">Research status is shown before performance.</span><strong data-i18n="notClaim">NO PERFORMANCE CLAIM</strong></div>
+          </aside>
+
           <article class="feature-card feature-card--lab">
             <div class="feature-index"><span>01</span><em data-i18n="researchCore">RESEARCH CORE</em></div>
             <p class="card-kicker" data-i18n="labKicker">Quant Research Lab</p>
@@ -94,7 +108,9 @@
               <span data-i18n="flowActivation">Activation</span>
             </div>
           </article>
+        </div>
 
+        <div class="research-grid">
           <article class="feature-card">
             <div class="feature-index"><span>02</span><em data-i18n="decisionOutput">DECISION OUTPUT</em></div>
             <p class="card-kicker" data-i18n="selectionKicker">Model-driven equity selection</p>
@@ -145,25 +161,6 @@
         </div>
       </section>
 
-      <section class="access-section" id="access" aria-labelledby="login-title">
-        <div class="access-copy">
-          <p class="section-kicker" data-i18n="accessKicker">Enter WH Alpha</p>
-          <h2 data-i18n="accessTitle">Inspect the work. Keep the judgment.</h2>
-          <p data-i18n="accessText">Open the full current workspace as a guest, or use private credentials. Both entry paths currently receive the same data, tools, language options, Universe choices, and analysis.</p>
-          <a href="#top" data-i18n="guestReturn">Open guest access above ↑</a>
-        </div>
-        <form class="login-panel" method="post" action="/auth/login" autocomplete="on">
-          <div class="panel-kicker"><span class="status-dot" aria-hidden="true"></span><span data-i18n="workspaceReady">Workspace ready</span></div>
-          <h2 id="login-title" data-i18n="signIn">Private sign in</h2>
-          <p data-i18n="continue">Use the existing private credential to enter the same research workspace.</p>
-          <p id="login-error" class="login-error" role="alert" data-i18n="invalid">Invalid username or password.</p>
-          <input id="next" name="next" type="hidden" value="/dashboard/" />
-          <div class="login-field"><label for="username" data-i18n="username">Username</label><input id="username" name="username" type="text" autocomplete="username" inputmode="text" required /></div>
-          <div class="login-field"><label for="password" data-i18n="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required /></div>
-          <button class="login-submit" type="submit"><span data-i18n="submit">Sign in</span><span aria-hidden="true">↗</span></button>
-          <p class="guest-note" data-i18n="guestNote">Guest and signed-in sessions currently receive identical product capability.</p>
-        </form>
-      </section>
     </main>
 
     <footer class="site-footer"><span>WH Alpha</span><span data-i18n="footerText">Transparent quantitative research for U.S. equities.</span></footer>

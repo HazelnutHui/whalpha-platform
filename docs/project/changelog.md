@@ -2,6 +2,11 @@
 
 ## 2026-09-10 — Reframe the public entry around transparent quantitative research
 
+- Refined the first-viewport hierarchy after visual review: the conventional
+  username/password login is primary, equal-capability guest access follows
+  directly below it, and a visible animated continuation rail leads into the
+  research narrative on desktop and mobile. The research dossier moved below
+  the entry surface; authentication and authorization behavior did not change.
 - Replaced the equal-weight nine-capability landing narrative with a compact
   research-first entry centered on Quant Research Lab, model-driven equity
   selection, and a governed research-automation extension.
