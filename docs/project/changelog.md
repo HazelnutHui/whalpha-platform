@@ -14,6 +14,14 @@
 - Preserved English as default, exact query/Universe state, Session behavior,
   equal guest/credential capability, fail-closed data behavior, and all model
   and Candidate authority boundaries.
+- Reduced the default Quant Research Lab path from about 297.6 KiB to 106.3
+  KiB gzip JavaScript. The separately loaded Spanish catalog is about 23.3
+  KiB gzip; the ECharts-heavy Market Structure chunk is deferred until use.
+- Deployed immutable OCI release `2026-09-10T204516Z-d8c05139cdfd` from source
+  `d8c05139cdfd`. Independent postflight matched release, source, bundle,
+  manifest, checksums, protected routes, guest access, identical guest and
+  credential policy, services, listeners, and zero staging/failed residue.
+  Password login and final human visual review remain manual checks.
 
 ## 2026-09-10 — Make Quant Research Lab the default core workspace
 

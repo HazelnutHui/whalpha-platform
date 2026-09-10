@@ -9,14 +9,15 @@ the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
 
 ## Production
 
-WH Alpha is live as a Session-protected bilingual U.S. equity
+WH Alpha is live as a Session-protected trilingual U.S. equity
 market-intelligence and research platform. Active OCI release
-2026-09-10T195907Z-059a8cc3133d was built from clean source
-059a8cc3133d406cc23e504ba038d7ae98d67361.
+2026-09-10T204516Z-d8c05139cdfd was built from clean source
+d8c05139cdfdb3d522e2111d7eb5cb6b5cca1dee.
 
 Production uses Market Intelligence 1.3 for 2026-09-09 and Snapshot 1.11 /
-Dashboard 2.8. English is default and Simplified Chinese is equal. Guest and
-credential Sessions intentionally receive identical data and capability.
+Dashboard 2.8. English is default; Simplified Chinese and neutral professional
+Spanish are equal presentation layers. Guest and credential Sessions
+intentionally receive identical data and capability.
 Snapshot/API failures close without synthetic Production data.
 
 Independent postflight matched release, source, bundle, manifest, checksums,
@@ -40,8 +41,14 @@ Inside the authenticated/guest application, Quant Research Lab is also the
 default and sole core workspace. Model-Driven Equity Selection is immediately
 beneath it as the reserved downstream consumer of activated models. The three
 stable market workspaces are grouped separately as free tools rather than
-numbered as equivalent modules. Deep links, bilingual state, Universe choice,
+numbered as equivalent modules. Deep links, multilingual state, Universe choice,
 and identical guest/credential capability remain unchanged.
+
+All five application workspaces are route-level chunks with intent
+preloading, while the Spanish catalog is fetched only when selected or linked.
+The default Quant Research Lab path fell from about 297.6 KiB to 106.3 KiB
+gzip JavaScript. Build-failing entry, asynchronous-chunk, and stylesheet size
+budgets now guard this boundary.
 
 ## Data
 

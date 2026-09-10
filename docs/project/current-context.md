@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-10T10:30:47Z
 
-Deployment state additionally verified at: 2026-09-10T19:59:59Z
+Deployment state additionally verified at: 2026-09-10T20:46:05Z
 
 Repository context updated at: 2026-09-10 UTC
 
@@ -20,8 +20,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Source branch | main; verify current HEAD and cleanliness with the report |
 | Public site | https://whalpha.com/ |
 | OCI alias | whalpha-oci |
-| Active OCI release | 2026-09-10T195907Z-059a8cc3133d |
-| Deployed source | 059a8cc3133d406cc23e504ba038d7ae98d67361 |
+| Active OCI release | 2026-09-10T204516Z-d8c05139cdfd |
+| Deployed source | d8c05139cdfdb3d522e2111d7eb5cb6b5cca1dee |
 
 Dell is the authority for code, data, development, governance, and heavy
 computation. OCI is limited to static web serving, localhost Auth Service, and
@@ -122,14 +122,16 @@ Analytics remains degraded-short-history because Market Intelligence consumes
 26 sessions although canonical EOD has substantially more. This is a consumer-integration
 limit, not missing acquisition.
 
-The 2026-09-10 19:59:59 UTC independent OCI postflight matched release,
+The 2026-09-10 20:46:05 UTC independent OCI postflight matched release,
 source, manifest, checksums,
 services, protected routes, guest Session, Candidate summary/detail, Strategy
 Channels, Sector ETF Rotation, logout, and residue state. Nginx and the
-localhost-only Auth Service are active. English is default; English and
-Simplified Chinese are equal. Guest and credential Sessions have identical
-capability. No credentials, raw provider responses, or Parquet are served.
-Password login and final visual appearance remain manual checks.
+localhost-only Auth Service are active. English is default; Simplified Chinese
+and neutral professional Spanish are equal presentation layers. Spanish is an
+on-demand catalog; all five workspaces are route-level chunks with build-time
+size budgets. Guest and credential Sessions have identical capability. No
+credentials, raw provider responses, or Parquet are served. Password login
+and final visual appearance remain manual checks.
 
 ## Product authority
 
