@@ -61,6 +61,12 @@ rate limit; it did not prove a guaranteed finality minute or the advertised
 five-year endpoint depth. No backfill, transient service, or heavy computation
 process was active at verification.
 
+The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
+FIGI locators and provider delisting dates for every item, but Ticker Events
+matched only six; 24 returned HTTP 404 and all nine returned events were ticker
+changes. Massive remains a partial lifecycle input and is rejected as the
+sole-primary lifecycle source.
+
 ## Active Universe
 
 The provider-form Activation remains provisional and was derived from analysis
@@ -236,8 +242,9 @@ breaches an agreed budget and one bounded design solves both gaps.
 ## Immediate direction
 
 1. Obtain and review the prepared LSEG DataScope Select lifecycle/action
-   sample and quote; do not implement an adapter from marketing fields or open
-   strategy outcomes.
+   sample and quote against the same mandatory gates; Massive Starter has now
+   failed the sole-primary diagnostic. Do not implement an adapter from
+   marketing fields or open strategy outcomes.
 2. Repeat the versioned outcome-blind census and admission decision; either
    admit at least 252 complete session cross-sections or retain rejection.
 3. Only after admission, run Strong-Leader Pullback development; locked

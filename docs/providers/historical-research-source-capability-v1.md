@@ -32,8 +32,8 @@ The narrower 2026-09-08
 compares current official cross-venue and exchange documentation against the
 exact 547-item inactive queue. LSEG is the preferred first inquiry/sample
 candidate, while Nasdaq, NYSE, and Cboe remain official venue benchmarks. No
-source has been selected, purchased, accessed, permission-cleared, or
-implemented.
+additional cross-venue lifecycle source has been selected, purchased, accessed,
+permission-cleared, or implemented.
 
 ## Status meanings
 
@@ -55,7 +55,7 @@ implemented.
 | Historical security-form evidence | One provider evidence date | Point-in-time reference/type endpoints may supply observations | Historical coverage and revision semantics unverified | `documented_unverified`; cannot backcast current evidence |
 | Splits/reverse splits | Bounded source custody and sparse canonical split facts exist | Dated endpoint review recorded ratios and adjustment fields | Source observations, exact-date resolution, 709 split-only fact rows, and sparse affected-path adjustments exist; complete/neutral coverage does not | `verified_current` for the bounded acquired scope; incomplete for research |
 | Cash/stock dividends | Bounded source custody and a read-only date/arithmetic diagnostic exist | Dated endpoint review recorded event dates, cash, and adjustment fields | Source observations exist, but date semantics, multi-events, currency, revisions, and total-return authority remain unresolved | `verified_current` source custody; missing as canonical total-return evidence |
-| Ticker events/symbol continuity | Ticker Events documentation recorded as experimental | May support symbol changes | No request, mapping, or reliability review | `documented_unverified`; cannot be sole lineage source |
+| Ticker events/symbol continuity | Ticker Events is documented as experimental and symbol-change-only | May support symbol changes | The fixed 30-item Composite FIGI diagnostic matched 6 instruments, returned 9 `ticker_change` events, and returned HTTP 404 for 24 instruments | `verified_current` as a sparse symbol-change corroborator; rejected as sole lineage source |
 | Merger/spinoff/successor lineage | Corporate Action V1 permits relationships | No complete source established | No canonical source or dataset | `missing` |
 | Delisting and terminal outcome | Two complete inactive anchors are retained in temporary custody and resolved one-to-one into a shadow | All Tickers exposes substantial delisting metadata | Latest anchor has 547 stable-ID review candidates and 22,922 quarantined rows; ADR 0167 creates an exact corroboration queue, but last tradable session, reason, consideration, successor, and source availability remain unverified | `verified_current` source observation for exact anchors; still missing as evaluation-ready lifecycle |
 | Split adjustment | Aggregate defaults and `adjusted=false` behavior are documented | Provider-adjusted history may assist reconciliation | Canonical sparse affected-path ledger exists for outcome reconciliation; omitted-row neutrality is unproven | `verified_current` partial evidence; raw bars remain authoritative inputs |
@@ -69,7 +69,10 @@ implemented.
 Massive remains the accepted first private EOD development adapter, not a
 permanent exclusive source. Repository evidence supports bounded Identity and
 Grouped Daily acquisition plus complete inactive-source observation at two
-anchors. It does not yet prove:
+anchors. A 2026-09-10 fixed 30-item Composite FIGI diagnostic also proved that
+Ticker Events is only a sparse symbol-change source: six instruments matched,
+24 returned HTTP 404, and all nine returned events were `ticker_change`. It
+does not yet prove:
 
 - that every required historical Identity source date is retrievable; two
   exact source-observation gaps remain;
@@ -78,6 +81,8 @@ anchors. It does not yet prove:
 - complete, revision-aware Splits or Dividends coverage beyond the bounded
   acquired query snapshot;
 - that inactive/delisted and successor coverage is complete;
+- terminal reasons, suspension/resumption history, successor/consideration,
+  event revisions, or a source-availability clock;
 - that provider adjustment factors meet WH Alpha price/total-return semantics;
 - that stored history may be retained or displayed beyond the existing private
   personal-use boundary.

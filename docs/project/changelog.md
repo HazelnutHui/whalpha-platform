@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-10 — Reject Massive Starter as the sole lifecycle source
+
+- Reused the frozen ADR 0168 30-item diagnostic across ARCX, BATS, XASE, XNAS,
+  and XNYS; every item had stable Composite and Share Class FIGIs plus a
+  provider delisting date.
+- Issued 30 serial, no-retry Ticker Events requests by Composite FIGI. Six
+  instruments matched, 24 returned HTTP 404, and all nine returned events were
+  `ticker_change` with no terminal, trading-status, successor, consideration,
+  revision, or source-availability semantics.
+- Retained Massive as the EOD, Identity, inactive-candidate, split, dividend,
+  and sparse symbol-change source, but rejected it as the sole-primary
+  lifecycle source under the already frozen gates. LSEG free-trial/sample
+  evaluation remains the next external dependency.
+- No raw response or provider identifier was retained. No canonical data,
+  research outcome, publication, deployment, or scheduler state changed.
+
 ## 2026-09-10 — Prepare the exact LSEG lifecycle sample request
 
 - Rechecked current official LSEG material: DataScope Select exposes a free-

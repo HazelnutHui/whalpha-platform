@@ -6,10 +6,13 @@
 
 `LSEG_FREE_TRIAL_REQUEST_READY_NOT_SUBMITTED`
 
-This is an official-public-material capability review, not a legal opinion,
-license approval, purchase, account-entitlement test, or data acquisition. No
-provider account, credential, API, SFTP service, vendor contact form, Git
-remote, OCI host, Production website, or canonical `/data` path was accessed.
+`MASSIVE_STARTER_REJECTED_AS_SOLE_PRIMARY_LIFECYCLE_SOURCE`
+
+This began as an official-public-material capability review, not a legal
+opinion, license approval, or purchase decision. The 2026-09-10 update used the
+current paid Massive account for the bounded diagnostic recorded below. No
+LSEG account, SFTP service, vendor contact form, Git remote, OCI host,
+Production website, or canonical `/data` path was accessed.
 
 ## Evidence to close
 
@@ -66,6 +69,23 @@ successor/consideration, historical-vintage, revision/cancellation, stable-
 security crosswalk, or production-sample semantics. The next step is therefore
 the narrow free-trial/sample request in the existing inquiry packet, not a
 purchase or adapter implementation.
+
+## 2026-09-10 Massive Starter diagnostic
+
+The current paid Massive account was evaluated before seeking another source.
+The deterministic ADR 0168 set supplied 30 Composite FIGI locators across all
+five exchange strata. Thirty serial Ticker Events requests returned six
+matched instruments and 24 HTTP 404 responses. The six matches contained nine
+events, all `ticker_change`, with only `date`, `ticker_change`, and `type`
+fields.
+
+Massive therefore remains useful for inactive candidate discovery, reference
+identity, EOD, splits, dividends, and limited symbol continuity, but it fails
+the sole-primary lifecycle gates. It did not supply an explicit no-event versus
+not-covered distinction, terminal reason, trading-status chain, last-tradable
+evidence, successor/consideration applicability, revision history, or source-
+availability clock. The exact execution record is the
+[Massive Stocks Starter Lifecycle Capability Audit](../audits/massive-starter-lifecycle-capability-2026-09-10.md).
 
 ## Deterministic diagnostic sample
 

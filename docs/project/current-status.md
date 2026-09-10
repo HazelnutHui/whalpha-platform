@@ -34,6 +34,10 @@ login and final visual appearance remain manual checks.
 - Corporate-action source custody has 70,099 bounded observations. Canonical
   split-only facts and a sparse affected-path adjustment ledger exist, but
   neither proves complete coverage, neutral omitted rows, or total return.
+- A fixed 30-item Massive Starter lifecycle diagnostic matched Ticker Events
+  for only six instruments; 24 returned HTTP 404 and all nine returned events
+  were ticker changes. Massive is useful partial evidence but is rejected as
+  the sole-primary lifecycle source.
 - Data inventory is 4,311 files / 2,321,416,033 bytes with zero symlinks and
   zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
@@ -136,7 +140,8 @@ that fixes both known gaps.
 ## Next priority
 
 1. Request and evaluate the prepared LSEG DataScope Select lifecycle/action
-   sample and quote; do not implement an adapter before real fields arrive.
+   sample and quote against the gates Massive Starter failed; do not implement
+   an adapter before real fields arrive.
 2. Repeat the outcome-blind census and decision, then admit at least 252
    complete session cross-sections or retain rejection without opening outcomes.
 3. Execute the registered chronological research only after admission, and
