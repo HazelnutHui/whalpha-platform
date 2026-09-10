@@ -95,9 +95,10 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0198 separate durable research Membership custody from
-  signal-eligible Membership and scale source-only corporate-action custody to
-  the five-year boundary without weakening its finite limits.
+- ADRs 0197–0199 separate durable research Membership custody from
+  signal-eligible Membership, scale source-only corporate-action custody to
+  the five-year boundary, and retain exact source vintages privately without
+  promoting them to canonical facts.
 
 ## Runtime and publication decisions
 

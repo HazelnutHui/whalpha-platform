@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -287,6 +288,47 @@ def test_formal_reader_remains_compatible_with_legacy_manifest(
         expected_end_date=END,
     )
     assert reread.manifest.contract_version == module.LEGACY_CONTRACT_VERSION
+
+
+def test_formal_reader_accepts_only_exact_explicit_persistent_custody(
+    tmp_path: Path,
+) -> None:
+    source = _target(tmp_path, CorporateActionSourceKind.DIVIDEND)
+    fetch_historical_corporate_action_source_package(
+        config=_config(),
+        transport=FixtureTransport([_dividend_page()]),  # type: ignore[arg-type]
+        action_kind=CorporateActionSourceKind.DIVIDEND,
+        start_date=START,
+        end_date=END,
+        package_path=source,
+        rate_limiter=FixtureLimiter(),  # type: ignore[arg-type]
+        clock=_clock(),
+    )
+    custody_root = tmp_path / "persistent-custody"
+    custody_root.mkdir(mode=0o700)
+    retained = custody_root / source.name
+    shutil.copytree(source, retained, copy_function=shutil.copy2)
+
+    reread = read_historical_corporate_action_source_package(
+        package_path=retained,
+        expected_action_kind=CorporateActionSourceKind.DIVIDEND,
+        expected_start_date=START,
+        expected_end_date=END,
+        approved_custody_root=custody_root,
+    )
+    assert reread.manifest.record_count == 1
+
+    with pytest.raises(
+        HistoricalCorporateActionSourceError,
+        match="persistent corporate-action custody boundary differs",
+    ):
+        read_historical_corporate_action_source_package(
+            package_path=retained,
+            expected_action_kind=CorporateActionSourceKind.DIVIDEND,
+            expected_start_date=START,
+            expected_end_date=END,
+            approved_custody_root=tmp_path,
+        )
 
 
 def test_empty_result_is_a_complete_observation(tmp_path: Path) -> None:

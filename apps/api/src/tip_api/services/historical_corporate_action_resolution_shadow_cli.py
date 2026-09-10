@@ -25,6 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--dividend-source-package", required=True, type=Path)
     parser.add_argument("--identity-evidence", required=True, type=Path)
     parser.add_argument("--output-root", required=True, type=Path)
+    parser.add_argument("--source-custody-root", type=Path)
     parser.add_argument(
         "--materialized-at",
         required=True,
@@ -46,6 +47,7 @@ def main(argv: list[str] | None = None) -> int:
             start_date=args.start_date,
             end_date=args.end_date,
             materialized_at=args.materialized_at,
+            source_custody_root=args.source_custody_root,
         )
     except (
         HistoricalCorporateActionResolutionShadowError,

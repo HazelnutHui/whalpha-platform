@@ -94,7 +94,8 @@ Pivotal research ADRs include
 [0195](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md),
 [0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md),
 [0197](decisions/0197-separate-reconstructed-research-membership-from-signal-eligible-membership.md),
-and [0198](decisions/0198-scale-corporate-action-custody-to-the-five-year-range.md).
+[0198](decisions/0198-scale-corporate-action-custody-to-the-five-year-range.md),
+and [0199](decisions/0199-retain-complete-corporate-action-source-packages-privately.md).
 
 ## Architecture and data
 

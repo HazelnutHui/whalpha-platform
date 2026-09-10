@@ -417,6 +417,7 @@ def build_historical_corporate_action_resolution_shadow(
     start_date: date,
     end_date: date,
     materialized_at: datetime,
+    source_custody_root: Path | None = None,
 ) -> CorporateActionResolutionShadowWriteResult:
     """Build a disconnected exact-event-date resolution shadow."""
 
@@ -430,6 +431,7 @@ def build_historical_corporate_action_resolution_shadow(
             start_date=start_date,
             end_date=end_date,
             materialized_at=materialized_at,
+            source_custody_root=source_custody_root,
         )
 
 
@@ -443,6 +445,7 @@ def _build_shadow(
     start_date: date,
     end_date: date,
     materialized_at: datetime,
+    source_custody_root: Path | None,
 ) -> CorporateActionResolutionShadowWriteResult:
     canonical_root = _validated_data_root(data_root)
     target = _validated_output_target(output_root)
@@ -452,12 +455,14 @@ def _build_shadow(
         CorporateActionSourceKind.SPLIT,
         start_date,
         end_date,
+        approved_custody_root=source_custody_root,
     )
     dividend = _read_source(
         dividend_source_package_path,
         CorporateActionSourceKind.DIVIDEND,
         start_date,
         end_date,
+        approved_custody_root=source_custody_root,
     )
     if materialized_at < max(
         split.manifest.completed_at, dividend.manifest.completed_at
@@ -755,6 +760,8 @@ def _read_source(
     kind: CorporateActionSourceKind,
     start_date: date,
     end_date: date,
+    *,
+    approved_custody_root: Path | None = None,
 ) -> ValidatedCorporateActionSourcePackage:
     try:
         return read_historical_corporate_action_source_package(
@@ -762,6 +769,7 @@ def _read_source(
             expected_action_kind=kind,
             expected_start_date=start_date,
             expected_end_date=end_date,
+            approved_custody_root=approved_custody_root,
         )
     except HistoricalCorporateActionSourceError as exc:
         raise HistoricalCorporateActionResolutionShadowError(

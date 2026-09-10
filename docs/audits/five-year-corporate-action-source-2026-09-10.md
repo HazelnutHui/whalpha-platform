@@ -73,9 +73,11 @@ relative-path/file-hash list fingerprint is
 `4da1a226d7a47aa78871cd4295495839af043e4d94fa89b214893d9e5fad156b`.
 
 This is private recovery custody, not a canonical `/data` publication.  The
-original temporary packages remain the formally readable inputs until the
-persistent-source reader boundary is separately implemented and tested; the
-copy does not grant action, adjustment, signal, or performance authority.
+explicit persistent-source reader subsequently reread all 16 baseline,
+annual, and repeat packages and rejected a broader parent boundary in focused
+tests.  The 16 overlapping observations contain 726,726 rows; each complete
+five-year vintage contains 242,242 rows.  The copy does not grant action,
+adjustment, signal, or performance authority.
 
 ## Remaining boundary
 

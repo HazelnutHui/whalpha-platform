@@ -1,4 +1,4 @@
-"""Resumable tmp-only custody for Massive split and dividend source pages."""
+"""Resumable temporary acquisition and private reread of action source pages."""
 
 from __future__ import annotations
 
@@ -503,12 +503,22 @@ def read_historical_corporate_action_source_package(
     expected_action_kind: CorporateActionSourceKind,
     expected_start_date: date,
     expected_end_date: date,
+    approved_custody_root: Path | None = None,
 ) -> ValidatedCorporateActionSourcePackage:
-    """Reread every package byte and validate pagination and aggregate facts."""
+    """Reread every package byte and validate pagination and aggregate facts.
+
+    Acquisition remains restricted to ``/tmp``.  A completed package may also
+    be reread from one explicitly supplied owner-only persistent directory;
+    this does not make that directory canonical or authorize downstream use.
+    """
 
     kind = CorporateActionSourceKind(expected_action_kind)
     package = _validate_completed_package_path(
-        package_path, kind, expected_start_date, expected_end_date
+        package_path,
+        kind,
+        expected_start_date,
+        expected_end_date,
+        approved_custody_root=approved_custody_root,
     )
     manifest_path = package / _MANIFEST_FILE
     manifest = _read_model(manifest_path, CorporateActionSourcePackageManifestV1)
@@ -1292,7 +1302,34 @@ def _validate_completed_package_path(
     action_kind: CorporateActionSourceKind,
     start_date: date,
     end_date: date,
+    *,
+    approved_custody_root: Path | None = None,
 ) -> Path:
+    if approved_custody_root is not None:
+        root = approved_custody_root.absolute()
+        target = path.absolute()
+        if (
+            root.is_symlink()
+            or not root.is_dir()
+            or root.resolve(strict=True) != root
+            or target.parent != root
+            or target.name
+            != _expected_target_name(action_kind, start_date, end_date)
+        ):
+            raise HistoricalCorporateActionSourceError(
+                "persistent corporate-action custody boundary differs"
+            )
+        _require_mode(root, 0o700)
+        if (
+            target.is_symlink()
+            or not target.is_dir()
+            or target.resolve(strict=True) != target
+        ):
+            raise HistoricalCorporateActionSourceError(
+                "persistent corporate-action package is unavailable"
+            )
+        _require_mode(target, 0o700)
+        return target
     target = _validate_package_target(path, action_kind, start_date, end_date)
     if target.is_symlink() or not target.is_dir():
         raise HistoricalCorporateActionSourceError(
@@ -1433,10 +1470,11 @@ def _page_file_name(sequence: int) -> str:
 
 
 def _require_mode(path: Path, expected: int) -> None:
-    actual = stat.S_IMODE(path.lstat().st_mode)
-    if actual != expected:
+    metadata = path.lstat()
+    actual = stat.S_IMODE(metadata.st_mode)
+    if metadata.st_uid != os.getuid() or actual != expected:
         raise HistoricalCorporateActionSourceError(
-            "corporate-action package permissions differ"
+            "corporate-action package ownership or permissions differ"
         )
 
 

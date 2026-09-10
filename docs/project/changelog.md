@@ -29,6 +29,10 @@
   Dell owner-only persistent historical-source state. Byte counts and recursive
   content match exactly; this is recovery custody, not canonical `/data` or
   research authority.
+- Accepted ADR 0199 and added an exact-root persistent source-package reader.
+  All 16 retained packages passed full reread; acquisition remains `/tmp`-only,
+  arbitrary paths fail closed, and the resolution shadow can consume only an
+  explicitly supplied owner-only custody root.
 - Formally recovered the 2025-04-23 EOD continuation after the prior whole-root
   CAS stop by preserving the stale plan/artifacts under explicit failed-attempt
   names, rebuilding against current inventory, reusing the verified package,

@@ -23,7 +23,13 @@ they are not coerced into a different date.
 
 ## Physical custody
 
-- Exact `kind=START_END` target beneath an owner-only `/tmp` parent.
+- Acquisition uses an exact `kind=START_END` target beneath an owner-only
+  `/tmp` parent.
+- A completed package may be copied byte-for-byte into a separately approved,
+  owner-only persistent source directory and formally reread there. The caller
+  must supply the exact direct parent; the reader rejects broader, nested,
+  symlinked, non-owner, or non-0700 custody roots. Persistent private reread is
+  recovery custody only and does not make the package canonical.
 - Contract 1.0 retains its original 16 immutable pages, 80,000 rows, and
   15-second request interval.
 - Contract 1.1 permits up to 80 immutable pages and 400,000 rows for the exact
