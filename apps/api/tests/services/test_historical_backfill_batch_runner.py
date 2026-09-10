@@ -180,6 +180,7 @@ def test_package_root_accepts_one_owner_only_persistent_child(
     assert prepared == (base / "five-year-fixture").resolve()
     assert base.stat().st_mode & 0o777 == 0o700
     assert prepared.stat().st_mode & 0o777 == 0o700
+    assert (prepared / "sessions").stat().st_mode & 0o777 == 0o700
 
 
 def test_package_root_rejects_nested_persistent_scope(

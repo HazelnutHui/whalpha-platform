@@ -44,6 +44,12 @@ from tip_api.services.historical_backfill_planner import (
     select_next_historical_backfill_session,
     select_next_historical_backfill_session_in_interval,
 )
+from tip_api.services.offline_artifact_custody import (
+    DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME,
+    DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME,
+    DAILY_PRICE_ACQUISITION_PACKAGE_NAME,
+    DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME,
+)
 
 
 CONTRACT_VERSION = "historical-research-backfill-batch-result/1.1"
@@ -334,7 +340,7 @@ def _process_session(
     identity_package_reused = False
     identity_plan_sha: str | None = None
     if not identity_exists:
-        identity_package = session_root / "identity-package"
+        identity_package = session_root / DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME
         if identity_package.exists():
             identity_package_reused = True
             identity_evidence = read_fetch_package_evidence(
@@ -358,7 +364,7 @@ def _process_session(
         if not identity_package_reused:
             identity_requests = identity_evidence.request_count
         state = inventory_fingerprint(data_root)
-        identity_plan = session_root / f"identity-plan-state={state}.json"
+        identity_plan = session_root / DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME
         identity_plan_sha = _ensure_plan(
             operation="identity",
             session_date=session_date,
@@ -387,7 +393,7 @@ def _process_session(
     eod_package_reused = False
     eod_plan_sha: str | None = None
     if not eod_exists:
-        eod_package = session_root / "eod-package"
+        eod_package = session_root / DAILY_PRICE_ACQUISITION_PACKAGE_NAME
         if eod_package.exists():
             eod_package_reused = True
             eod_evidence = read_fetch_package_evidence(
@@ -411,7 +417,7 @@ def _process_session(
         if not eod_package_reused:
             eod_requests = eod_evidence.request_count
         state = inventory_fingerprint(data_root)
-        eod_plan = session_root / f"eod-plan-state={state}.json"
+        eod_plan = session_root / DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME
         eod_plan_sha = _ensure_plan(
             operation="eod",
             session_date=session_date,
@@ -591,6 +597,22 @@ def _prepare_package_root(path: Path) -> Path:
         path.mkdir(mode=0o700)
     if stat.S_IMODE(path.stat().st_mode) != 0o700:
         raise HistoricalBackfillBatchRunnerError("package root must be owner-only")
+    sessions = path / "sessions"
+    if sessions.exists():
+        if (
+            sessions.is_symlink()
+            or not sessions.is_dir()
+            or sessions.stat().st_uid != os.getuid()
+        ):
+            raise HistoricalBackfillBatchRunnerError(
+                "package sessions root is unsafe"
+            )
+    else:
+        sessions.mkdir(mode=0o700)
+    if stat.S_IMODE(sessions.stat().st_mode) != 0o700:
+        raise HistoricalBackfillBatchRunnerError(
+            "package sessions root must be owner-only"
+        )
     return path.resolve()
 
 
@@ -624,7 +646,7 @@ def _prepare_persistent_package_base() -> None:
 
 
 def _prepare_session_root(root: Path, session_date: date) -> Path:
-    path = root / f"session={session_date.isoformat()}"
+    path = root / "sessions" / f"session_date={session_date.isoformat()}"
     if path.exists():
         if path.is_symlink() or not path.is_dir():
             raise HistoricalBackfillBatchRunnerError("session package root is unsafe")

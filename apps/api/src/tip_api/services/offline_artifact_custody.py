@@ -68,14 +68,22 @@ def validate_offline_artifact_location(
     session_root = path.parent
     sessions_root = session_root.parent
     workspace_root = sessions_root.parent
-    if (
-        sessions_root.name != "sessions"
-        or workspace_root.name != "daily-eod"
-        or workspace_root == Path("/")
-        or workspace_root == Path("/tmp")
-        or Path("/tmp") in workspace_root.parents
-        or _inside_git_repository(workspace_root)
-    ):
+    daily_layout = (
+        sessions_root.name == "sessions"
+        and workspace_root.name == "daily-eod"
+        and workspace_root not in {Path("/"), Path("/tmp")}
+        and Path("/tmp") not in workspace_root.parents
+        and not _inside_git_repository(workspace_root)
+    )
+    historical_base = workspace_root.parent
+    historical_layout = (
+        sessions_root.name == "sessions"
+        and historical_base.name == "historical-backfill"
+        and workspace_root not in {Path("/"), Path("/tmp")}
+        and Path("/tmp") not in workspace_root.parents
+        and not _inside_git_repository(workspace_root)
+    )
+    if not daily_layout and not historical_layout:
         raise OfflineArtifactCustodyError(
             "persistent offline artifact layout differs"
         )
@@ -89,7 +97,10 @@ def validate_offline_artifact_location(
         raise OfflineArtifactCustodyError(
             "persistent offline artifact session is malformed"
         )
-    for directory in (workspace_root, sessions_root, session_root):
+    governed_directories = (workspace_root, sessions_root, session_root)
+    if historical_layout:
+        governed_directories = (historical_base, *governed_directories)
+    for directory in governed_directories:
         if directory.is_symlink() or not directory.is_dir():
             raise OfflineArtifactCustodyError(
                 "persistent offline artifact parent is unavailable"

@@ -34,6 +34,18 @@ def _persistent_session() -> tuple[Path, Path]:
     return owner, session
 
 
+def _persistent_historical_session() -> tuple[Path, Path]:
+    owner = Path.home() / ".local/state" / f"whalpha-custody-test-{uuid4().hex}"
+    historical_base = owner / "historical-backfill"
+    workspace = historical_base / "five-year-fixture"
+    sessions = workspace / "sessions"
+    session = sessions / "session_date=2026-08-28"
+    for path in (owner, historical_base, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    return owner, session
+
+
 def test_accepts_direct_tmp_and_exact_persistent_session_child() -> None:
     direct = Path("/tmp/arbitrary-reviewed-audit")
     assert validate_offline_artifact_location(
@@ -130,6 +142,20 @@ def test_accepts_exact_persistent_daily_data_pair_bound_to_session() -> None:
             persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
             expected_session=expected,
         ) == package
+    finally:
+        shutil.rmtree(owner)
+
+
+def test_accepts_exact_persistent_historical_data_pair_bound_to_session() -> None:
+    owner, session = _persistent_historical_session()
+    try:
+        package = session / DAILY_IDENTITY_ACQUISITION_PACKAGE_NAME
+        plan = session / DAILY_IDENTITY_CANONICAL_APPLY_PLAN_NAME
+        assert validate_daily_eod_data_artifact_pair(
+            package_path=package,
+            plan_path=plan,
+            expected_session=date(2026, 8, 28),
+        ) == (package, plan)
     finally:
         shutil.rmtree(owner)
 

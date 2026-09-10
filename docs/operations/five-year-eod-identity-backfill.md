@@ -73,7 +73,9 @@ The package root must be a new or already formally reusable owner-controlled
 directory. `/tmp` is accepted only for a bounded pilot. Persistent execution
 accepts exactly one direct child of the fixed owner-only historical-backfill
 base shown above; arbitrary home paths, nested targets, symlinks, foreign
-ownership, and non-0700 directories fail closed.
+ownership, and non-0700 directories fail closed. Each session uses the shared
+governed `sessions/session_date=YYYY-MM-DD` acquisition-package and Apply-plan
+roles, so the historical executor does not create a second custody convention.
 
 ## Completion check
 
