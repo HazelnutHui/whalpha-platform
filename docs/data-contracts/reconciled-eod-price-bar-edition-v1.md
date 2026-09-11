@@ -11,9 +11,10 @@ does not overwrite or implicitly supersede canonical EOD Price Bar V1.
 Contract, deterministic sealing, fail-closed diff classification, formal base
 record reread, one-session isolated candidate reconstruction, owner-only
 candidate persistence, immutable rerun checks, completed-session formal
-reread, final interval-marker sealing/reread, exact whole-edition Apply
-planning, and atomic Apply execution are implemented. Real batch construction,
-full source-package coverage, an executed complete edition, and the
+reread, bounded/resumable process-parallel session construction, final
+interval-marker sealing/reread, exact whole-edition Apply planning, and atomic
+Apply execution are implemented. A formal complete source-package selection,
+the real full-interval construction, an executed complete edition, and the
 edition-only research input adapter remain pending.
 
 ## Identity
@@ -91,6 +92,14 @@ owner-only candidate base. Bounded tests may use an owner-only directory below
 `/tmp`. Candidate directories are mode 0700 and files are mode 0600. The
 candidate never lives below `/data` and never gains research or Production
 authority.
+
+One construction batch contains 1–40 explicitly ordered sessions and uses no
+more than four spawned worker processes. It makes zero external requests and
+zero canonical writes. Exact completed sessions are resumable only after
+formal reread and source-package fingerprint/provenance equivalence. Per-
+session failures remain visible and prevent interval completion; successful
+partitions are retained for a later bounded rerun. Source selection is a
+separate evidence contract and must never use an implicit first match.
 
 The sealed Apply plan binds:
 

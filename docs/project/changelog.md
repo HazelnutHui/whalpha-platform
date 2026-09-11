@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-11 — Bound and resume corrected EOD session construction
+
+- Added explicit preparation of one incomplete owner-only edition and a
+  network-disabled batch primitive limited to 1–40 ordered sessions and 1–4
+  spawned workers.
+- Exact completed sessions are formally reread and reused only when the
+  selected package fingerprints and provenance match. A failed session remains
+  visible without discarding other completed partitions; no batch writes the
+  interval marker or canonical `/data`.
+- Kept source selection out of the builder. A formal post-acquisition coverage
+  and selection plan remains required because current retained Grouped Daily
+  custody does not yet cover every canonical session. No real candidate build,
+  provider request, Apply, research admission, publication, or deployment ran.
+- Focused Reconciled EOD regression passed 47 tests and the complete API suite
+  passed 2,465 tests with only the two existing dependency deprecation warnings.
+
 ## 2026-09-11 — Implement whole-edition corrected EOD Apply custody
 
 - Extended Reconciled EOD candidate custody from bounded `/tmp` tests to one

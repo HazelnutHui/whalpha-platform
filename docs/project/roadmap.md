@@ -112,9 +112,10 @@ Required work:
   quiesces; prefer retained original packages, retain later reacquisitions as a
   distinct provenance class, and reject unexplained removals or economic-value
   changes rather than hiding the ADR 0203 defect behind a sparse overlay;
-  persistent owner-only custody, memory-bounded validation, exact Apply
-  planning, and atomic whole-edition Apply are implemented, while real batch
-  construction and execution remain pending;
+  persistent owner-only custody, memory-bounded validation, bounded resumable
+  1–40-session/1–4-worker construction, exact Apply planning, and atomic whole-
+  edition Apply are implemented; formal source-package selection, real full-
+  interval construction, and execution remain pending;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward; ADR 0197 requires its
   durable latest-vintage output to live in a research-only family, separate

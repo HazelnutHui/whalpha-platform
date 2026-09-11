@@ -24,6 +24,19 @@ Candidate construction is resumable per session. The persistent base,
 candidate root, and all candidate subdirectories are 0700; candidate artifacts
 are 0600. A completed candidate is still non-authoritative.
 
+The internal batch builder accepts only an explicitly ordered source list,
+processes 1–40 sessions with 1–4 spawned workers, disables network access, and
+publishes only immutable candidate session partitions. An exact completed
+session is formally reread and reused only when all selected source bindings
+match. A failed session is reported without discarding other completed
+partitions, and the batch never writes the interval marker or `/data`.
+
+Do not construct the real edition until acquisition is quiescent and a formal
+source-coverage plan has selected exactly one retained-original or visibly
+later-reacquired package for every declared session. The batch service is an
+implementation primitive, not permission to infer sources from directory
+order or to build from an incomplete interval.
+
 ## Completion and review
 
 Publish the interval manifest only after the exact ordered evaluation and

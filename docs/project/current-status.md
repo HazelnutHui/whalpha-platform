@@ -61,11 +61,11 @@ budgets now guard this boundary.
 - After the bounded case-sensitive-symbol recovery, the unique continuation
   and one exact-session recovery first advanced to 1,017 aligned contiguous EOD
   and Identity sessions. The unique `20260911g` continuation then remained
-  active and advanced both families to an observed 1,033-session checkpoint
-  from 2022-07-28 through 2026-09-09 at 00:41:27 UTC. Latest EOD has 9,916
+  active and advanced both families to an observed 1,062-session checkpoint
+  from 2022-06-15 through 2026-09-09 at 01:19:43 UTC. Latest EOD has 9,916
   rows; latest Identity
   has 9,982 instruments.
-- Historical Identity source custody had 1,031 partitions at that checkpoint;
+- Historical Identity source custody had 1,060 partitions at that checkpoint;
   the difference from the aligned count is still exactly the two explicitly
   unbound sessions 2026-08-13 and 2026-08-19.
 - Signal-eligible Membership has three prospective sessions and 59,892
@@ -126,11 +126,11 @@ budgets now guard this boundary.
   and formally aligned both families at 1,017 sessions. The next exact session
   was 2022-08-18. Clean source `6851d005bd9808d970e49988000223ff4898dd16`
   started the sole `whalpha-five-year-backfill-20260911g.service` at
-  00:20:35 UTC. At 00:41:27 UTC it was active under the unchanged 24-hour,
+  00:20:35 UTC. At 01:19:43 UTC it was active under the unchanged 24-hour,
   2 GiB, 64-task, serial-acquisition bounds; EOD and Identity were aligned at
-  1,033 sessions through 2022-07-28, Identity source custody was 1,031, and
+  1,062 sessions through 2022-06-15, Identity source custody was 1,060, and
   no symlink or publication residue was observed. The next exact session was
-  2022-07-27 at that live checkpoint.
+  2022-06-14 at that live checkpoint.
 
 Price depth is no longer the main research blocker.
 
@@ -179,9 +179,9 @@ unauthorized.
 
 Complete:
 
-- 1,033 aligned EOD and Identity durable partitions through the live
+- 1,062 aligned EOD and Identity durable partitions through the live
   continuation boundary;
-- 1,031 Identity source partitions, 300 research-only Membership sessions, and
+- 1,060 Identity source partitions, 300 research-only Membership sessions, and
   three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
@@ -234,12 +234,12 @@ that fixes both known gaps.
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
 2021-09-09 through 2026-09-09. Its initial coverage counts are superseded by
-the 1,033-session live checkpoint above. Membership remains 303/1,255.
+the 1,062-session live checkpoint above. Membership remains 303/1,255.
 Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
 1. Let the sole bounded `20260911g` EOD/Identity continuation proceed from the
-   observed 1,033-session boundary; do not start a competing writer. Existing
+   observed 1,062-session boundary; do not start a competing writer. Existing
    affected EOD V1 history
    must be rebuilt as ADR 0204's
    complete immutable Reconciled EOD Edition and formally reconciled before
@@ -259,6 +259,11 @@ absent; status remains `quarantined`.
    The nominal interval is not enough for the first Membership calculation:
    retain a separate 20-session warm-up extension from 2021-08-11 through
    2021-09-08 after the exact interval run.
+   Corrected-edition construction now has a network-disabled, resumable
+   1–40-session batch primitive with at most four spawned workers. It has run
+   only in temporary tests. After the writer stops, census and select one exact
+   source package per declared session before any real candidate build; do not
+   infer source precedence from directory order.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later

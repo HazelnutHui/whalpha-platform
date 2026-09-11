@@ -107,6 +107,19 @@ class ParquetReconciledEodEditionCandidateRepository:
     implementation_revision: str
     created_at: datetime | None = None
 
+    def prepare(self) -> Path:
+        """Prepare one incomplete owner-only edition for resumable batches."""
+
+        root = _candidate_root(self.root)
+        edition_path = _edition_path(root, edition_id=self.edition_id)
+        _mkdirs_owner_only(edition_path, root)
+        marker = edition_path / INTERVAL_MANIFEST_FILE_NAME
+        if marker.exists() or marker.is_symlink():
+            raise ReconciledEodEditionConflictError(
+                "completed EOD edition cannot accept another batch"
+            )
+        return edition_path
+
     def publish_session(
         self,
         candidate: ReconciledEodSessionCandidate,

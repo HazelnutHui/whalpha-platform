@@ -122,6 +122,27 @@ def test_publishes_formally_rereads_and_reuses_identical_candidate(
     ]
 
 
+def test_prepare_creates_owner_only_incomplete_edition(tmp_path: Path) -> None:
+    root = tmp_path / "edition-candidate"
+    edition_path = repository(root).prepare()
+
+    assert edition_path.is_dir()
+    current = edition_path
+    while current != root.parent:
+        assert current.stat().st_mode & 0o777 == 0o700
+        current = current.parent
+    assert not (edition_path / "interval-manifest.json").exists()
+
+
+def test_prepare_rejects_completed_edition(tmp_path: Path) -> None:
+    root = tmp_path / "edition-candidate"
+    edition_path = repository(root).prepare()
+    (edition_path / "interval-manifest.json").write_text("completed")
+
+    with pytest.raises(ReconciledEodEditionConflictError, match="completed"):
+        repository(root).prepare()
+
+
 def test_interval_manifest_is_the_only_complete_edition_boundary(
     tmp_path: Path,
 ) -> None:
