@@ -107,10 +107,16 @@ formally aligned both families at 1,017 sessions through 2022-08-19. See the
 [dated execution audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md).
 Clean source `6851d005bd9808d970e49988000223ff4898dd16` then started the
 sole bounded `whalpha-five-year-backfill-20260911g.service` at 00:20:35 UTC.
-At 01:19:43 UTC it remained active with one process, 33 tasks, about 453 MiB
-memory, a 2 GiB ceiling, and no restart policy. Direct read-only counts showed
-1,062 aligned EOD/Identity sessions through 2022-06-15 and 1,060 Identity-source
-partitions. Zero symlinks and zero staging/partial directories were observed.
+It completed eleven full batches with zero transient retries and most of the
+final batch before failing closed at 05:35:28 UTC when Grouped Daily REST
+denied 2021-09-10. Quiescent canonical EOD is 1,253 sessions from 2021-09-13;
+Identity is 1,254 physical sessions from 2021-09-10, of which 1,253 align to
+EOD. The exact remaining gaps are EOD 2021-09-09/10 and Identity 2021-09-09.
+The post-stop census fingerprint is
+`c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`.
+Zero symlinks, zero staging/partial directories, and no writer were observed.
+See the
+[terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md).
 
 ADR 0204's repository path now includes persistent owner-only candidate
 custody, memory-bounded full-edition validation, a sealed inventory-bound Apply
@@ -356,18 +362,18 @@ breaches an agreed budget and one bounded design solves both gaps.
 ## Immediate direction
 
 The ADR 0196 baseline census fixes 2021-09-09 through 2026-09-09 as 1,255
-XNYS sessions. Its original counts are superseded by the 1,062-session live
-checkpoint above. The former precision gate is resolved under
+XNYS sessions. Its original counts are superseded by the quiescent 1,253 EOD,
+1,254 physical Identity, and 1,253 aligned-session state above. The former precision gate is resolved under
 ADR 0202; ADR 0203 resolves the forward exact-symbol mapping but not the
 already-published missing-bar history.
 Membership covers 303 sessions and misses 952: 300 reconstructed research-only
 sessions plus three signal-eligible sessions. Lifecycle, point-in-time classification, point-in-time
 fundamentals, and complete Historical Coverage are absent. The census is
 `quarantined`, fingerprint
-`c193895b7cb795fb5054c5e8493bb7c5e438e646c37e03d336a82d52f3a903e7`.
+`c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`.
 
-1. Let the sole bounded `20260911g` EOD/Identity continuation proceed from the
-   observed 1,062-session boundary; do not start a competing writer. Completing
+1. Do not restart the stopped `20260911g` Grouped Daily continuation. Close
+   only the EOD 2021-09-09/10 and Identity 2021-09-09 gaps; completing
    acquisition does not authorize
    research use of the affected V1 EOD history. Design and execute a new
    complete immutable Reconciled EOD Edition under ADR 0204, then formally

@@ -141,6 +141,11 @@ evidence are not rewritten or made misleading.
 
 ## Completion check
 
+The legacy count-based planning CLI accepts at most 504 sessions. It is not a
+post-run verifier for the frozen ADR 0196 1,255-session interval; use the
+network-disabled five-year census and the exact-interval executor/readback
+path for this scope.
+
 EOD/Identity acquisition is complete only when:
 
 1. the executor reports the frozen interval complete;

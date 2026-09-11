@@ -59,15 +59,17 @@ budgets now guard this boundary.
 ## Data
 
 - After the bounded case-sensitive-symbol recovery, the unique continuation
-  and one exact-session recovery first advanced to 1,017 aligned contiguous EOD
-  and Identity sessions. The unique `20260911g` continuation then remained
-  active and advanced both families to an observed 1,062-session checkpoint
-  from 2022-06-15 through 2026-09-09 at 01:19:43 UTC. Latest EOD has 9,916
-  rows; latest Identity
-  has 9,982 instruments.
-- Historical Identity source custody had 1,060 partitions at that checkpoint;
-  the difference from the aligned count is still exactly the two explicitly
-  unbound sessions 2026-08-13 and 2026-08-19.
+  and one exact-session recovery first advanced to 1,017 aligned EOD and
+  Identity sessions. The sole `20260911g` continuation completed eleven full
+  batches and most of its final batch before failing closed on the known
+  Grouped Daily REST entitlement boundary at 05:35:28 UTC. Quiescent canonical
+  EOD now has 1,253 sessions from 2021-09-13 through 2026-09-09; only
+  2021-09-09 and 2021-09-10 are missing. Canonical Identity has 1,254 physical
+  sessions from 2021-09-10 through 2026-09-09; 1,253 align to EOD and only
+  2021-09-09 is missing.
+- Historical Identity source custody aligns to 1,251 evaluation sessions; the
+  difference from aligned EOD remains exactly the two explicitly unbound
+  sessions 2026-08-13 and 2026-08-19.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
 - Research-only latest-vintage Membership has 300 sessions and 5,571,154
@@ -126,8 +128,9 @@ budgets now guard this boundary.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. Those 20 sessions
   will be included in source and edition custody without changing the
-  2021-09-09 through 2026-09-09 evaluation boundary. The active run covers the
-  1,255 evaluation sessions; warm-up acquisition remains pending afterward.
+  2021-09-09 through 2026-09-09 evaluation boundary. The stopped evaluation
+  run left two EOD and one Identity session missing; warm-up acquisition
+  remains pending after those gaps close.
 - Warm-up source custody has a separate fixed historical workspace named
   `warmup-2021-08-11--2021-09-08`. The existing evaluation workspace remains
   immutable and date-truthful. Source Coverage recognizes evaluation and
@@ -161,11 +164,15 @@ budgets now guard this boundary.
   and formally aligned both families at 1,017 sessions. The next exact session
   was 2022-08-18. Clean source `6851d005bd9808d970e49988000223ff4898dd16`
   started the sole `whalpha-five-year-backfill-20260911g.service` at
-  00:20:35 UTC. At 01:19:43 UTC it was active under the unchanged 24-hour,
-  2 GiB, 64-task, serial-acquisition bounds; EOD and Identity were aligned at
-  1,062 sessions through 2022-06-15, Identity source custody was 1,060, and
-  no symlink or publication residue was observed. The next exact session was
-  2022-06-14 at that live checkpoint.
+  00:20:35 UTC. It completed eleven full batches with zero transient retries,
+  safely retained partial final-batch progress, and stopped at 05:35:28 UTC
+  when 2021-09-10 Grouped Daily returned HTTP 403. The independent exact-date
+  probe had already shown the same denial for 2021-09-09 and 2021-09-10. A
+  post-stop census fingerprinted the resulting state as
+  `c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`;
+  zero symlinks, zero staging/partial directories, and no remaining writer were
+  observed. See the
+  [terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md).
 
 Price depth is no longer the main research blocker.
 
@@ -268,13 +275,15 @@ that fixes both known gaps.
 ## Next priority
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
-2021-09-09 through 2026-09-09. Its initial coverage counts are superseded by
-the 1,062-session live checkpoint above. Membership remains 303/1,255.
+2021-09-09 through 2026-09-09. The quiescent post-run state is 1,253 EOD,
+1,254 physical Identity sessions, and 1,253 EOD-aligned Identity sessions.
+Membership remains 303/1,255.
 Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
-1. Let the sole bounded `20260911g` EOD/Identity continuation proceed from the
-   observed 1,062-session boundary; do not start a competing writer. Existing
+1. Do not restart the stopped `20260911g` Grouped Daily continuation. Preserve
+   its 1,253 EOD and 1,254 Identity sessions and close only the exact
+   2021-09-09/10 EOD and 2021-09-09 Identity gaps. Existing
    affected EOD V1 history
    must be rebuilt as ADR 0204's
    complete immutable Reconciled EOD Edition and formally reconciled before
@@ -283,9 +292,9 @@ absent; status remains `quarantined`.
    evidence while preserving strict repository rejection. The
    completed REST probe found 2021-09-09/10 Grouped Daily denied and
    2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
-   Implement the documented Starter Day Aggregates Flat File route for bulk
-   five-year prices rather than treating REST retries as progress. Fetch-only
-   code and raw-source readback are fixture-tested; live schema/entitlement
+   Use the documented Starter Day Aggregates Flat File route for the two
+   entitlement-denied EOD dates rather than treating REST retries as progress.
+   Fetch-only code and raw-source readback are fixture-tested; live schema/entitlement
    remains unverified until the separate dashboard S3 credential exists. The
    first live attempt stopped before any request or write because that
    credential was absent. The backfill executor now supports a frozen exact

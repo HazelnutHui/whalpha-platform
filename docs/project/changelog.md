@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-11 — Preserve the terminal five-year EOD/Identity boundary
+
+- The sole bounded `20260911g` continuation completed eleven full batches and
+  most of its final batch before failing closed when Grouped Daily REST denied
+  2021-09-10. All complete batches reported zero transient retries.
+- A network-disabled post-stop census found 1,253 canonical EOD sessions,
+  1,254 physical Identity sessions, and 1,253 EOD-aligned Identity sessions.
+  The exact remaining gaps are EOD 2021-09-09/10 and Identity 2021-09-09.
+- Direct quiescent checks found zero symlinks, zero staging/partial directories,
+  and no remaining historical writer. The retained 2021-09-10 Identity package
+  and Apply plan remain available for reuse; no 2021-09-10 EOD package and no
+  2021-09-09 workspace were created.
+- Grouped Daily REST retry is rejected because the independent exact-date probe
+  already established the same denial. The next price route is the existing
+  fixture-tested Day Aggregates Flat File adapter after separate S3 credential
+  provisioning and a bounded live pilot.
+- Added a dated terminal audit and clarified that the legacy 504-session
+  planning CLI is not the verifier for the frozen 1,255-session interval. No
+  provider request, canonical write, research run, publication, or deployment
+  was performed by this documentation-only reconciliation.
+
 ## 2026-09-11 — Separate warm-up source custody from evaluation custody
 
 - Reserved a distinct owner-only historical source workspace for the 20
