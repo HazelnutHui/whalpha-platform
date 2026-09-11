@@ -115,8 +115,10 @@ Required work:
   persistent owner-only custody, memory-bounded validation, bounded resumable
   1–40-session/1–4-worker construction, exact Apply planning, and atomic whole-
   edition Apply and a sealed per-session source-coverage/selection contract are
-  implemented; the real post-acquisition coverage census, any required later
-  reacquisition, full-interval construction, and execution remain pending;
+  implemented; a coverage-bound bounded/resumable later-source reacquisition
+  runner is also implemented but has made no real request; the real post-
+  acquisition coverage census, any confirmed later reacquisition, full-
+  interval construction, and execution remain pending;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward; ADR 0197 requires its
   durable latest-vintage output to live in a research-only family, separate

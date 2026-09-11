@@ -19,6 +19,8 @@ DAILY_PRICE_ACQUISITION_PACKAGE_NAME = "eod-acquisition-package"
 DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME = "eod-canonical-apply-plan.json"
 RESEARCH_MEMBERSHIP_APPLY_PLAN_NAME = "research-membership-apply-plan.json"
 DAILY_EOD_SERVING_BUNDLE_ROOT_NAME = "serving-bundle"
+RECONCILED_EOD_SOURCE_WORKSPACE_NAME = "reconciled-eod-source-reacquisition"
+RECONCILED_EOD_SOURCE_PACKAGE_NAME = "eod-acquisition-package"
 
 _DAILY_DATA_PACKAGE_NAMES = frozenset(
     {
@@ -233,6 +235,53 @@ def validate_daily_eod_data_artifact_pair(
             "daily EOD package and plan paths must differ"
         )
     return package, plan
+
+
+def validate_reconciled_eod_source_package_location(
+    path: Path,
+    *,
+    expected_session: date,
+) -> Path:
+    """Accept one exact later-reacquisition Grouped Daily package path."""
+
+    if (
+        not path.is_absolute()
+        or path.name != RECONCILED_EOD_SOURCE_PACKAGE_NAME
+        or path.is_relative_to(Path("/tmp"))
+        or path.is_relative_to(Path("/data"))
+    ):
+        raise OfflineArtifactCustodyError(
+            "reconciled EOD source package path is not governed"
+        )
+    _reject_existing_symlink_components(path)
+    session_root = path.parent
+    sessions_root = session_root.parent
+    workspace_root = sessions_root.parent
+    if (
+        session_root.name != f"session_date={expected_session.isoformat()}"
+        or sessions_root.name != "sessions"
+        or workspace_root.name != RECONCILED_EOD_SOURCE_WORKSPACE_NAME
+        or workspace_root in {Path("/"), Path("/tmp")}
+        or Path("/tmp") in workspace_root.parents
+        or _inside_git_repository(workspace_root)
+    ):
+        raise OfflineArtifactCustodyError(
+            "reconciled EOD source package layout differs"
+        )
+    for directory in (workspace_root, sessions_root, session_root):
+        if directory.is_symlink() or not directory.is_dir():
+            raise OfflineArtifactCustodyError(
+                "reconciled EOD source package parent is unavailable"
+            )
+        metadata = directory.stat()
+        if (
+            metadata.st_uid != os.geteuid()
+            or stat.S_IMODE(metadata.st_mode) != 0o700
+        ):
+            raise OfflineArtifactCustodyError(
+                "reconciled EOD source package parent custody differs"
+            )
+    return path
 
 
 def validate_daily_eod_serving_bundle_location(

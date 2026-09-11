@@ -136,6 +136,12 @@ uses the project Python wrapper, which prepends the canonical checkout source.
 Use `scripts/dev/run-project-python.sh` for operator modules; defer environment
 rebinding until the active writer stops.
 
+The repository also has a coverage-hash-bound, resumable later-source
+reacquisition runner ready for any source-only gaps confirmed by the final
+quiescent census. It accepts only explicit 1–40-session batches, writes only
+owner-only Dell source packages, and grants no canonical or research authority.
+It is fixture-tested only; no real reacquisition request has run.
+
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
 FIGI locators and provider delisting dates for every item, but Ticker Events
 matched only six; 24 returned HTTP 404 and all nine returned events were ticker

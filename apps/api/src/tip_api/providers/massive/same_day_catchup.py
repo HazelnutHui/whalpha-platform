@@ -60,6 +60,7 @@ from tip_api.services.offline_artifact_custody import (
     OfflineArtifactCustodyError,
     validate_daily_eod_data_artifact_location,
     validate_daily_eod_data_artifact_pair,
+    validate_reconciled_eod_source_package_location,
 )
 
 APPROVED_PRODUCTION_ROOT = Path("/data/trading-intelligence-platform")
@@ -281,7 +282,10 @@ def fetch_eod_package(
     fetched_at: datetime | None = None,
 ) -> FetchPackageManifestV1:
     _validate_fetch_config(config)
-    package_path = _new_fetch_package_path(package_path, session_date=session_date)
+    package_path = _new_eod_fetch_package_path(
+        package_path,
+        session_date=session_date,
+    )
     endpoint = ENDPOINT_TEMPLATE.format(session_date=session_date.isoformat())
     payload = transport.get_json(
         endpoint,
@@ -928,7 +932,11 @@ def _publish_fetch_package(
 def _read_fetch_package(
     path: Path, *, expected_type: Literal["identity_reference", "grouped_daily"]
 ) -> tuple[FetchPackageManifestV1, tuple[Mapping[str, object], ...]]:
-    path = _existing_fetch_package(path)
+    path = (
+        _existing_eod_fetch_package(path)
+        if expected_type == "grouped_daily"
+        else _existing_fetch_package(path)
+    )
     manifest_path = path / "package.json"
     _regular_nonsymlink(manifest_path)
     try:
@@ -940,12 +948,18 @@ def _read_fetch_package(
         raise SameDayCatchupError("fetch package content fingerprint mismatch")
     if manifest.package_type != expected_type:
         raise SameDayCatchupError("fetch package type mismatch")
-    _validate_daily_data_artifact(
-        path,
-        persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
-        expected_session=manifest.session_date,
-        allow_tmp_descendants=True,
-    )
+    if expected_type == "grouped_daily":
+        _existing_eod_fetch_package(
+            path,
+            expected_session=manifest.session_date,
+        )
+    else:
+        _validate_daily_data_artifact(
+            path,
+            persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
+            expected_session=manifest.session_date,
+            allow_tmp_descendants=True,
+        )
     expected_endpoints = (
         {REFERENCE_TICKERS_PATH}
         if expected_type == "identity_reference"
@@ -1567,6 +1581,22 @@ def _new_fetch_package_path(path: Path, *, session_date: date) -> Path:
     return path
 
 
+def _new_eod_fetch_package_path(path: Path, *, session_date: date) -> Path:
+    try:
+        return _new_fetch_package_path(path, session_date=session_date)
+    except SameDayCatchupError as daily_error:
+        try:
+            validate_reconciled_eod_source_package_location(
+                path,
+                expected_session=session_date,
+            )
+        except OfflineArtifactCustodyError:
+            raise daily_error
+    if path.exists() or path.is_symlink():
+        raise SameDayCatchupError("fetch package target already exists")
+    return path
+
+
 def _existing_fetch_package(
     path: Path,
     *,
@@ -1578,6 +1608,38 @@ def _existing_fetch_package(
         expected_session=expected_session,
         allow_tmp_descendants=True,
     )
+    if path.is_symlink() or not path.is_dir():
+        raise SameDayCatchupError("package directory is invalid")
+    return path
+
+
+def _existing_eod_fetch_package(
+    path: Path,
+    *,
+    expected_session: date | None = None,
+) -> Path:
+    try:
+        return _existing_fetch_package(
+            path,
+            expected_session=expected_session,
+        )
+    except SameDayCatchupError as daily_error:
+        session = expected_session
+        if session is None:
+            component = path.parent.name
+            if not component.startswith("session_date="):
+                raise daily_error
+            try:
+                session = date.fromisoformat(component.removeprefix("session_date="))
+            except ValueError:
+                raise daily_error
+        try:
+            validate_reconciled_eod_source_package_location(
+                path,
+                expected_session=session,
+            )
+        except OfflineArtifactCustodyError:
+            raise daily_error
     if path.is_symlink() or not path.is_dir():
         raise SameDayCatchupError("package directory is invalid")
     return path

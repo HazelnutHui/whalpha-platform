@@ -111,6 +111,12 @@ budgets now guard this boundary.
   Reconciled EOD runbook commands now use that same wrapper. Do not invoke new
   operator modules through bare `.venv/bin/python -m`; reconcile the editable
   install only after the active writer stops.
+- A coverage-hash-bound later-source reacquisition runner is implemented for
+  source-only gaps confirmed by the final quiescent census. It accepts only
+  explicit ordered batches of at most 40 dates, serially rate-limits requests,
+  uses bounded transport retries, resumes from formally verified owner-only
+  packages, writes zero canonical files, and emits no credential or response
+  body. It is fixture-tested only; no real reacquisition request has run.
 - The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only

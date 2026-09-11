@@ -15,11 +15,13 @@ from tip_api.services.offline_artifact_custody import (
     DAILY_PRICE_ACQUISITION_PACKAGE_NAME,
     DAILY_PRICE_CANONICAL_APPLY_PLAN_NAME,
     OfflineArtifactCustodyError,
+    RECONCILED_EOD_SOURCE_PACKAGE_NAME,
     validate_daily_eod_data_artifact_location,
     validate_daily_eod_data_artifact_pair,
     validate_daily_eod_serving_bundle_location,
     validate_offline_artifact_child,
     validate_offline_artifact_location,
+    validate_reconciled_eod_source_package_location,
 )
 
 
@@ -41,6 +43,17 @@ def _persistent_historical_session() -> tuple[Path, Path]:
     sessions = workspace / "sessions"
     session = sessions / "session_date=2026-08-28"
     for path in (owner, historical_base, workspace, sessions, session):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    return owner, session
+
+
+def _persistent_reconciled_source_session() -> tuple[Path, Path]:
+    owner = Path.home() / ".local/state" / f"whalpha-custody-test-{uuid4().hex}"
+    workspace = owner / "reconciled-eod-source-reacquisition"
+    sessions = workspace / "sessions"
+    session = sessions / "session_date=2026-08-28"
+    for path in (owner, workspace, sessions, session):
         path.mkdir(mode=0o700)
         path.chmod(0o700)
     return owner, session
@@ -247,6 +260,28 @@ def test_rejects_persistent_daily_data_custody_below_data() -> None:
             path,
             persistent_name=DAILY_EOD_ACQUISITION_PACKAGE_NAME,
         )
+
+
+def test_accepts_only_exact_reconciled_eod_source_package_location() -> None:
+    owner, session = _persistent_reconciled_source_session()
+    try:
+        package = session / RECONCILED_EOD_SOURCE_PACKAGE_NAME
+        assert validate_reconciled_eod_source_package_location(
+            package,
+            expected_session=date(2026, 8, 28),
+        ) == package
+        with pytest.raises(OfflineArtifactCustodyError, match="governed"):
+            validate_reconciled_eod_source_package_location(
+                session / "identity-acquisition-package",
+                expected_session=date(2026, 8, 28),
+            )
+        with pytest.raises(OfflineArtifactCustodyError, match="layout"):
+            validate_reconciled_eod_source_package_location(
+                package,
+                expected_session=date(2026, 8, 27),
+            )
+    finally:
+        shutil.rmtree(owner)
 
 
 def test_accepts_exact_persistent_serving_bundle_release() -> None:

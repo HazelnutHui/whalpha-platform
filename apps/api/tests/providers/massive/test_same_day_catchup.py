@@ -155,6 +155,37 @@ def fetch_identity(tmp_path: Path, session: date) -> tuple[Path, FakeTransport]:
     return package, transport
 
 
+def test_fetch_eod_accepts_exact_later_reacquisition_custody() -> None:
+    session = date(2026, 8, 20)
+    owner = (
+        Path.home()
+        / ".local/state"
+        / f"whalpha-reconciled-source-test-{uuid4().hex}"
+    )
+    workspace = owner / "reconciled-eod-source-reacquisition"
+    sessions = workspace / "sessions"
+    session_root = sessions / f"session_date={session.isoformat()}"
+    for path in (owner, workspace, sessions, session_root):
+        path.mkdir(mode=0o700)
+        path.chmod(0o700)
+    package = session_root / "eod-acquisition-package"
+    try:
+        result = fetch_eod_package(
+            config=MassiveProviderConfig(api_key="fixture-only"),
+            transport=FakeTransport([grouped_payload(session, count=1)]),
+            session_date=session,
+            package_path=package,
+            fetched_at=FETCHED_AT,
+        )
+        assert result.package_type == "grouped_daily"
+        assert read_grouped_daily_package(
+            package_path=package,
+            expected_session=session,
+        ).manifest.fetched_at == FETCHED_AT
+    finally:
+        shutil.rmtree(owner)
+
+
 def test_historical_identity_plan_can_admit_bounded_quarantined_aliases(
     tmp_path: Path,
 ) -> None:

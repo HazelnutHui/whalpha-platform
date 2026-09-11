@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-11 — Prepare coverage-bound EOD source reacquisition
+
+- Added exact owner-only custody for later-observed Grouped Daily packages and
+  extended formal Grouped Daily package reread to accept that custody without
+  broadening Identity-source paths.
+- Added a source-reacquisition runner and CLI that require the exact sealed
+  coverage file hash, accept only explicit 1–40-session source-only gaps,
+  revalidate canonical EOD/Identity/source bindings, serialize provider
+  requests, bound transient retries, and resume only from formally valid
+  immutable packages.
+- The result exposes dates, counts, hashes, provenance, and bounded failure
+  codes while keeping credentials and provider response bodies out of output.
+  It writes no `/data`, research result, publication, deployment, or authority.
+- Focused custody, package, runner, and CLI regression passed 39 tests; the
+  complete API suite passed 2,496 tests with only the two existing dependency
+  deprecation warnings. No real provider request or source reacquisition ran;
+  the active historical writer remained the sole `/data` writer.
+
 ## 2026-09-11 — Bind corrected EOD construction to exact source coverage
 
 - Added a sealed Source Coverage 1.0 contract for every declared XNYS session:
