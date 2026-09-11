@@ -117,6 +117,12 @@ budgets now guard this boundary.
   uses bounded transport retries, resumes from formally verified owner-only
   packages, writes zero canonical files, and emits no credential or response
   body. It is fixture-tested only; no real reacquisition request has run.
+- A complete-interval Reconciled EOD candidate controller is implemented. It
+  consumes only build-ready sealed coverage, automatically divides the exact
+  interval into 1–40-session batches, uses at most four workers, reuses only
+  partitions with the same source/revision/fixed-time binding, retains safe
+  progress on failure, and publishes the sole interval marker last. It is
+  fixture-tested only; no real candidate edition has been built.
 - The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only
@@ -285,8 +291,9 @@ absent; status remains `quarantined`.
    formal retained-original Apply binding, gap/conflict classification,
    owner-read-only persistence, and hash-bound batch CLI are implemented and
    fixture-tested. After the writer stops, execute that census and select one
-   exact source package per declared session before any real candidate build;
-   do not infer source precedence from directory order.
+   exact source package per declared session before any real candidate build.
+   The complete-interval controller is ready, but do not infer source
+   precedence from directory order.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later

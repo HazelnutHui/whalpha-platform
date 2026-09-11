@@ -142,6 +142,12 @@ quiescent census. It accepts only explicit 1–40-session batches, writes only
 owner-only Dell source packages, and grants no canonical or research authority.
 It is fixture-tested only; no real reacquisition request has run.
 
+A complete-interval candidate controller now converts one build-ready coverage
+artifact into bounded 1–40-session batches with at most four workers, retains
+successful work on a typed stop, and writes the interval marker only after a
+full formal reread. It has run only in fixtures; no real corrected edition has
+been built.
+
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
 FIGI locators and provider delisting dates for every item, but Ticker Events
 matched only six; 24 returned HTTP 404 and all nine returned events were ticker

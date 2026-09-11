@@ -85,6 +85,30 @@ construction. `--execute` writes only owner-only candidate partitions; it
 makes zero external requests, writes zero canonical files, and never writes
 the interval completion marker.
 
+For the complete reviewed interval, prefer the resumable controller instead
+of manually issuing more than thirty batches. Use one fixed creation time for
+the entire candidate:
+
+```bash
+scripts/dev/run-project-python.sh -m tip_api.services.reconciled_eod_edition_build_cli \
+  --data-root /data/trading-intelligence-platform \
+  --coverage-path <exact-coverage-path> \
+  --coverage-file-sha256 <coverage-file-sha256> \
+  --candidate-root /home/hui/.local/state/trading-intelligence-platform/reconciled-eod-editions/<candidate> \
+  --edition-id <edition-id> \
+  --created-at <fixed-UTC-timestamp> \
+  --workers 4 \
+  --batch-size 40 \
+  --execute
+```
+
+The controller derives the exact clean 40-character source revision, resolves
+and revalidates each bounded source batch, reuses only sessions with the same
+source binding, revision, and fixed creation time, and emits one checkpoint per
+batch. A failed batch leaves successful partitions resumable and writes no
+interval marker. Only after every declared session succeeds does it formally
+reread the complete edition and write the sole completion marker.
+
 ## Completion and review
 
 Publish the interval manifest only after the exact ordered evaluation and

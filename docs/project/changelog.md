@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-11 — Automate resumable full Reconciled EOD candidate build
+
+- Added a complete-interval controller and CLI that consume only one exact
+  build-ready coverage artifact, bind its file hash and the clean 40-character
+  source revision, and divide the declared sessions into bounded 1–40-session
+  batches with at most four workers.
+- Each batch revalidates selected sources, emits a safe checkpoint, and retains
+  successful immutable partitions if another session fails. Reuse now also
+  requires the same fixed candidate creation time, preventing one logical
+  edition from silently mixing invocations.
+- The controller publishes the sole interval completion marker only after
+  every exact session succeeds and a full memory-bounded formal reread matches
+  session, provenance, addition, and implementation bindings.
+- Focused build, batch, source-coverage, and persistence regression passed 47
+  tests; the complete API suite passed 2,506 tests with only the two existing
+  dependency deprecation warnings. No real candidate build, `/data` write,
+  provider request, Apply, research run, publication, or deployment occurred.
+
 ## 2026-09-11 — Prepare coverage-bound EOD source reacquisition
 
 - Added exact owner-only custody for later-observed Grouped Daily packages and

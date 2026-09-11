@@ -274,6 +274,10 @@ def _reuse_existing_session(
     manifest = completed.manifest
     if (
         manifest.implementation_revision != repository.implementation_revision
+        or (
+            repository.created_at is not None
+            and manifest.created_at != repository.created_at
+        )
         or manifest.source_provenance != source.source_provenance
         or manifest.source_observed_at != package.manifest.fetched_at
         or manifest.source_package_manifest_sha256
