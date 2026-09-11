@@ -9,10 +9,14 @@ import pytest
 from tip_api.providers.massive.flat_file_day_aggregates import (
     ACCESS_KEY_ENV,
     SECRET_KEY_ENV,
+    Boto3MassiveFlatFileTransport,
+    MassiveFlatFileAccessDeniedError,
     MassiveFlatFileConfig,
     MassiveFlatFileCredentialError,
     MassiveFlatFileError,
     MassiveFlatFileObject,
+    MassiveFlatFileObjectNotFoundError,
+    MassiveFlatFileTransportError,
     day_aggregate_object_key,
     fetch_flat_file_day_aggregate_package,
     load_massive_flat_file_config_from_file,
@@ -52,6 +56,57 @@ class FakeTransport:
             etag="fixture-etag",
             last_modified=datetime(2022, 1, 4, 16, tzinfo=UTC),
         )
+
+
+class FakeS3Failure(Exception):
+    def __init__(self, *, code: str, status: int) -> None:
+        self.response = {
+            "Error": {"Code": code, "Message": "must-not-enter-output"},
+            "ResponseMetadata": {
+                "HTTPStatusCode": status,
+                "RequestId": "must-not-enter-output",
+            },
+        }
+
+
+class FailingS3Client:
+    def __init__(self, exc: Exception) -> None:
+        self.exc = exc
+
+    def get_object(self, **kwargs):  # type: ignore[no-untyped-def]
+        raise self.exc
+
+
+@pytest.mark.parametrize(
+    ("code", "status", "expected"),
+    (
+        ("AccessDenied", 403, MassiveFlatFileAccessDeniedError),
+        ("NoSuchKey", 404, MassiveFlatFileObjectNotFoundError),
+        ("SlowDown", 503, MassiveFlatFileTransportError),
+    ),
+)
+def test_s3_failures_have_non_sensitive_stable_classes(
+    code: str,
+    status: int,
+    expected: type[MassiveFlatFileError],
+) -> None:
+    transport = object.__new__(Boto3MassiveFlatFileTransport)
+    transport._client = FailingS3Client(FakeS3Failure(code=code, status=status))
+
+    with pytest.raises(expected) as captured:
+        transport.get_object(bucket="flatfiles", object_key="allowlisted-key")
+
+    assert "must-not-enter-output" not in str(captured.value)
+
+
+def test_non_provider_transport_failure_has_stable_class() -> None:
+    transport = object.__new__(Boto3MassiveFlatFileTransport)
+    transport._client = FailingS3Client(TimeoutError("private transport detail"))
+
+    with pytest.raises(MassiveFlatFileTransportError) as captured:
+        transport.get_object(bucket="flatfiles", object_key="allowlisted-key")
+
+    assert "private transport detail" not in str(captured.value)
 
 
 def test_object_key_and_csv_conversion_are_exact() -> None:

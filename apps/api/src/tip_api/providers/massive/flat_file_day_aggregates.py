@@ -55,6 +55,18 @@ class MassiveFlatFileError(RuntimeError):
     """Raised when Flat File access or source custody cannot be validated."""
 
 
+class MassiveFlatFileAccessDeniedError(MassiveFlatFileError):
+    """Raised when S3 rejects authentication or object entitlement."""
+
+
+class MassiveFlatFileObjectNotFoundError(MassiveFlatFileError):
+    """Raised when the exact allowlisted S3 object is unavailable."""
+
+
+class MassiveFlatFileTransportError(MassiveFlatFileError):
+    """Raised when S3 transport fails without a classified provider response."""
+
+
 class MassiveFlatFileCredentialError(ValueError):
     """Raised when the private S3 credential boundary is unavailable."""
 
@@ -149,8 +161,8 @@ class Boto3MassiveFlatFileTransport:
             stream = response["Body"]
             body = stream.read(MAXIMUM_COMPRESSED_BYTES + 1)
             stream.close()
-        except Exception as exc:  # pragma: no cover - live transport classification
-            raise MassiveFlatFileError("Massive Flat File request failed") from exc
+        except Exception as exc:  # pragma: no cover - exercised with fake S3 errors
+            raise _classify_s3_failure(exc) from exc
         if len(body) > MAXIMUM_COMPRESSED_BYTES:
             raise MassiveFlatFileError("Massive Flat File exceeds byte ceiling")
         last_modified = response.get("LastModified")
@@ -166,6 +178,36 @@ class Boto3MassiveFlatFileTransport:
             etag=str(etag).strip('"') if etag is not None else None,
             last_modified=last_modified,
         )
+
+
+def _classify_s3_failure(exc: Exception) -> MassiveFlatFileError:
+    """Map only non-sensitive S3 code/status fields to stable local errors."""
+
+    response = getattr(exc, "response", None)
+    if not isinstance(response, Mapping):
+        return MassiveFlatFileTransportError("Massive Flat File transport failed")
+    error = response.get("Error")
+    metadata = response.get("ResponseMetadata")
+    code = error.get("Code") if isinstance(error, Mapping) else None
+    status = (
+        metadata.get("HTTPStatusCode") if isinstance(metadata, Mapping) else None
+    )
+    normalized_code = str(code).strip() if code is not None else ""
+    if status in {401, 403} or normalized_code in {
+        "AccessDenied",
+        "ExpiredToken",
+        "InvalidAccessKeyId",
+        "InvalidToken",
+        "SignatureDoesNotMatch",
+    }:
+        return MassiveFlatFileAccessDeniedError(
+            "Massive Flat File authentication or entitlement was denied"
+        )
+    if status == 404 or normalized_code in {"NoSuchKey", "NotFound"}:
+        return MassiveFlatFileObjectNotFoundError(
+            "Massive Flat File object was not found"
+        )
+    return MassiveFlatFileTransportError("Massive Flat File transport failed")
 
 
 def load_massive_flat_file_config_from_file(

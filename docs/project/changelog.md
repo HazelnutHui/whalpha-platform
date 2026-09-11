@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-09-11 — Classify Flat File transport stops safely
+
+- Split the former generic S3 Flat File transport error into stable
+  access-denied, object-not-found, and unclassified-transport error classes.
+- Classification uses only the standard S3 error code and HTTP status. It does
+  not retain or emit provider messages, request identifiers, response bodies,
+  or credentials.
+- Added fixture regression for 403, 404, 503, and non-provider transport
+  failures. The focused suite passed 10 tests and the complete API suite passed
+  2,514 tests with only the two existing dependency deprecation warnings. No
+  provider request, data write, publication, or deployment was performed by
+  this code change.
+
 ## 2026-09-11 — Preserve the terminal five-year EOD/Identity boundary
 
 - The sole bounded `20260911g` continuation completed eleven full batches and

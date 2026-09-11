@@ -58,3 +58,7 @@ ticker, source hash mismatch, normalized-row mismatch, or EOD quality-gate
 failure. Record the exact non-sensitive failure class. Do not delete accepted
 source evidence or block independent Identity/lifecycle/fundamental work.
 
+The transport reports stable local classes for access denial, missing object,
+and unclassified transport failure. Classification consumes only the standard
+S3 error code and HTTP status; provider messages, request identifiers, response
+bodies, and credentials never enter CLI output or retained evidence.
