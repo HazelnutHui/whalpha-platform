@@ -154,6 +154,12 @@ Source Coverage and the full-build controller now preserve the separate
 evaluation interval; its separate 20-session warm-up acquisition is still
 pending.
 
+The warm-up will use the distinct fixed historical workspace
+`warmup-2021-08-11--2021-09-08`; the existing evaluation source workspace will
+not be renamed or populated outside its stated dates. Source Coverage treats
+the two workspaces as different origins with the same possible retained-
+original provenance.
+
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
 FIGI locators and provider delisting dates for every item, but Ticker Events
 matched only six; 24 returned HTTP 404 and all nine returned events were ticker

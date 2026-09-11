@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-11 — Separate warm-up source custody from evaluation custody
+
+- Reserved a distinct owner-only historical source workspace for the 20
+  warm-up sessions instead of placing them beneath the legacy evaluation
+  workspace whose name begins at 2021-09-09.
+- Source Coverage now models `historical_warmup` as a distinct source origin,
+  binds its exact retained Apply/package evidence, and can resolve it without
+  ambiguous same-origin directory precedence. Retained-original provenance
+  semantics remain unchanged.
+- The existing bounded historical executor already accepts the separate direct
+  child workspace; the runbook now records its exact warm-up invocation. No
+  workspace, package, canonical partition, provider request, or candidate was
+  created by this change.
+- Focused coverage, build, and reacquisition regression passed 37 tests; the
+  complete API suite passed 2,510 tests with only the two existing dependency
+  deprecation warnings.
+
 ## 2026-09-11 — Preserve warm-up outside the five-year evaluation interval
 
 - Extended Reconciled EOD Source Coverage to declare optional paired warm-up

@@ -59,6 +59,9 @@ selected package by origin, provenance, observation time, package hashes,
 canonical EOD/Identity fingerprints, and—when retained from canonical
 construction—the original Apply-plan hash. It classifies missing, invalid,
 unproven, or multiple sources rather than choosing the first directory match.
+Evaluation backfill and warm-up backfill are distinct observed source origins
+with separate fixed workspaces; both retain original provenance when their
+Apply/package/canonical bindings pass.
 The daily workspace's generic acquisition directory is ignored when its
 manifest declares an Identity package rather than Grouped Daily.
 The census is limited to four spawned processes; this uses Dell parallelism

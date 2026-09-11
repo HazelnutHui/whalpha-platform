@@ -119,6 +119,26 @@ ownership, and non-0700 directories fail closed. Each session uses the shared
 governed `sessions/session_date=YYYY-MM-DD` acquisition-package and Apply-plan
 roles, so the historical executor does not create a second custody convention.
 
+After the exact 1,255-session evaluation run stops and its aligned checkpoint
+passes, acquire the separate 20-session warm-up into a distinct, truthfully
+named source workspace:
+
+```bash
+scripts/admin/run-historical-research-backfill-continuous.sh \
+  --data-root /data/trading-intelligence-platform \
+  --package-root /home/hui/.local/state/trading-intelligence-platform/historical-backfill/warmup-2021-08-11--2021-09-08 \
+  --target-first-session 2021-08-11 \
+  --target-last-session 2021-09-08 \
+  --request-interval-seconds 0.25 \
+  --batch-size 20 \
+  --execute
+```
+
+Do not run this concurrently with the evaluation writer. Its canonical
+EOD/Identity partitions use the same contracts, while its retained source
+packages remain physically separate so the evaluation workspace name and
+evidence are not rewritten or made misleading.
+
 ## Completion check
 
 EOD/Identity acquisition is complete only when:

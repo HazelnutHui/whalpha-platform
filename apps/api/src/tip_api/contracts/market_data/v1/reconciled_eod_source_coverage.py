@@ -26,6 +26,7 @@ class FrozenModel(BaseModel):
 class ReconciledEodSourceOrigin(StrEnum):
     DAILY_AUTOMATION = "daily_automation"
     HISTORICAL_BACKFILL = "historical_backfill"
+    HISTORICAL_WARMUP = "historical_warmup"
     LATER_REACQUISITION = "later_reacquisition"
 
 
@@ -40,7 +41,7 @@ class ReconciledEodSourceCoverageDisposition(StrEnum):
 class ReconciledEodSourceCoverageSessionV1(FrozenModel):
     session_date: date
     disposition: ReconciledEodSourceCoverageDisposition
-    observed_candidate_count: int = Field(ge=0, le=3)
+    observed_candidate_count: int = Field(ge=0, le=4)
     observed_candidate_origins: tuple[ReconciledEodSourceOrigin, ...] = ()
     canonical_eod_fingerprint: str | None = Field(default=None, pattern=_SHA256)
     canonical_identity_fingerprint: str | None = Field(default=None, pattern=_SHA256)

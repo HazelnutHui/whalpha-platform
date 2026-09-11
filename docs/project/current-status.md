@@ -128,6 +128,10 @@ budgets now guard this boundary.
   will be included in source and edition custody without changing the
   2021-09-09 through 2026-09-09 evaluation boundary. The active run covers the
   1,255 evaluation sessions; warm-up acquisition remains pending afterward.
+- Warm-up source custody has a separate fixed historical workspace named
+  `warmup-2021-08-11--2021-09-08`. The existing evaluation workspace remains
+  immutable and date-truthful. Source Coverage recognizes evaluation and
+  warm-up backfills as distinct origins; no warm-up package exists yet.
 - The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only

@@ -110,6 +110,10 @@ reacquisition keeps distinct provenance and cannot claim an original Apply
 binding. Multiple otherwise eligible original packages are a conflict, not an
 automatic precedence choice.
 
+The evaluation backfill and separate warm-up backfill are distinct source
+origins even though both can prove retained-original provenance. This keeps the
+legacy evaluation workspace immutable and makes source resolution unambiguous.
+
 Coverage keeps the five-year evaluation interval separate from the optional
 contiguous warm-up interval. The session inventory begins at the declared
 warm-up boundary when present, still requires the evaluation-first session to

@@ -51,6 +51,10 @@ HISTORICAL_SESSIONS_ROOT = Path(
     "/home/hui/.local/state/trading-intelligence-platform/historical-backfill/"
     "five-year-2021-09-09--2026-09-09/sessions"
 )
+HISTORICAL_WARMUP_SESSIONS_ROOT = Path(
+    "/home/hui/.local/state/trading-intelligence-platform/historical-backfill/"
+    "warmup-2021-08-11--2021-09-08/sessions"
+)
 DAILY_SESSIONS_ROOT = Path(
     "/home/hui/.local/state/trading-intelligence-platform/automation/daily-eod/"
     "sessions"
@@ -558,6 +562,20 @@ def _candidate_specs(session_date: date) -> tuple[_SourceCandidateSpec, ...]:
             provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
         ),
         _SourceCandidateSpec(
+            origin=ReconciledEodSourceOrigin.HISTORICAL_WARMUP,
+            package_path=(
+                HISTORICAL_WARMUP_SESSIONS_ROOT
+                / session_component
+                / "eod-acquisition-package"
+            ),
+            plan_path=(
+                HISTORICAL_WARMUP_SESSIONS_ROOT
+                / session_component
+                / "eod-canonical-apply-plan.json"
+            ),
+            provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+        ),
+        _SourceCandidateSpec(
             origin=ReconciledEodSourceOrigin.DAILY_AUTOMATION,
             package_path=(
                 DAILY_SESSIONS_ROOT / session_component / "acquisition-package"
@@ -714,6 +732,7 @@ def _validated_data_root(path: Path) -> Path:
 def _validate_source_roots() -> None:
     for root in (
         HISTORICAL_SESSIONS_ROOT,
+        HISTORICAL_WARMUP_SESSIONS_ROOT,
         DAILY_SESSIONS_ROOT,
         LATER_REACQUISITION_SESSIONS_ROOT,
     ):

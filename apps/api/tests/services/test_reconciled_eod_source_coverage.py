@@ -264,11 +264,13 @@ def test_daily_identity_package_is_not_misclassified_as_grouped_daily_source(
     tmp_path: Path,
 ) -> None:
     historical = tmp_path / "historical"
+    warmup = tmp_path / "warmup"
     daily = tmp_path / "daily"
     later = tmp_path / "later"
-    for root in (historical, daily, later):
+    for root in (historical, warmup, daily, later):
         root.mkdir()
     monkeypatch.setattr(module, "HISTORICAL_SESSIONS_ROOT", historical)
+    monkeypatch.setattr(module, "HISTORICAL_WARMUP_SESSIONS_ROOT", warmup)
     monkeypatch.setattr(module, "DAILY_SESSIONS_ROOT", daily)
     monkeypatch.setattr(module, "LATER_REACQUISITION_SESSIONS_ROOT", later)
     package = daily / f"session_date={SESSION.isoformat()}" / "acquisition-package"
@@ -284,6 +286,30 @@ def test_daily_identity_package_is_not_misclassified_as_grouped_daily_source(
     assert reasons == ()
 
 
+def test_warmup_backfill_has_one_distinct_retained_source_origin(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    warmup = tmp_path / "warmup"
+    monkeypatch.setattr(module, "HISTORICAL_WARMUP_SESSIONS_ROOT", warmup)
+
+    selected = next(
+        item
+        for item in module._candidate_specs(SESSION)
+        if item.origin == ReconciledEodSourceOrigin.HISTORICAL_WARMUP
+    )
+
+    assert selected.package_path == (
+        warmup / f"session_date={SESSION.isoformat()}" / "eod-acquisition-package"
+    )
+    assert selected.plan_path == (
+        warmup
+        / f"session_date={SESSION.isoformat()}"
+        / "eod-canonical-apply-plan.json"
+    )
+    assert selected.provenance == ReconciledEodSourceProvenance.RETAINED_ORIGINAL
+
+
 def test_whole_census_seals_incomplete_counts_without_writes(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
@@ -293,6 +319,7 @@ def test_whole_census_seals_incomplete_counts_without_writes(
     monkeypatch.setattr(module, "APPROVED_DATA_ROOT", data_root.resolve())
     for name in (
         "HISTORICAL_SESSIONS_ROOT",
+        "HISTORICAL_WARMUP_SESSIONS_ROOT",
         "DAILY_SESSIONS_ROOT",
         "LATER_REACQUISITION_SESSIONS_ROOT",
     ):
@@ -332,6 +359,7 @@ def test_whole_census_rejects_unbounded_worker_count(
     monkeypatch.setattr(module, "APPROVED_DATA_ROOT", data_root.resolve())
     for name in (
         "HISTORICAL_SESSIONS_ROOT",
+        "HISTORICAL_WARMUP_SESSIONS_ROOT",
         "DAILY_SESSIONS_ROOT",
         "LATER_REACQUISITION_SESSIONS_ROOT",
     ):
@@ -357,6 +385,7 @@ def test_whole_census_includes_declared_warmup_without_moving_evaluation(
     monkeypatch.setattr(module, "APPROVED_DATA_ROOT", data_root.resolve())
     for name in (
         "HISTORICAL_SESSIONS_ROOT",
+        "HISTORICAL_WARMUP_SESSIONS_ROOT",
         "DAILY_SESSIONS_ROOT",
         "LATER_REACQUISITION_SESSIONS_ROOT",
     ):
@@ -522,11 +551,13 @@ def test_resolves_only_sealed_selected_source_for_bounded_batch(
     data_root.mkdir()
     monkeypatch.setattr(module, "APPROVED_DATA_ROOT", data_root.resolve())
     historical = tmp_path / "historical"
+    warmup = tmp_path / "warmup"
     daily = tmp_path / "daily"
     later = tmp_path / "later"
-    for root in (historical, daily, later):
+    for root in (historical, warmup, daily, later):
         root.mkdir(mode=0o700)
     monkeypatch.setattr(module, "HISTORICAL_SESSIONS_ROOT", historical)
+    monkeypatch.setattr(module, "HISTORICAL_WARMUP_SESSIONS_ROOT", warmup)
     monkeypatch.setattr(module, "DAILY_SESSIONS_ROOT", daily)
     monkeypatch.setattr(module, "LATER_REACQUISITION_SESSIONS_ROOT", later)
     monkeypatch.setattr(
@@ -559,6 +590,7 @@ def test_incomplete_coverage_cannot_feed_candidate_batch(
     monkeypatch.setattr(module, "APPROVED_DATA_ROOT", data_root.resolve())
     for name in (
         "HISTORICAL_SESSIONS_ROOT",
+        "HISTORICAL_WARMUP_SESSIONS_ROOT",
         "DAILY_SESSIONS_ROOT",
         "LATER_REACQUISITION_SESSIONS_ROOT",
     ):

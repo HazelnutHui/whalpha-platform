@@ -123,7 +123,8 @@ Required work:
 - preserve the separately declared 20-session warm-up interval in source
   coverage and the corrected edition without moving the five-year evaluation
   boundary; contract and controller support are implemented, while real
-  warm-up acquisition remains pending after the exact interval run;
+  warm-up acquisition remains pending after the exact interval run and will
+  use its separate fixed source workspace;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward; ADR 0197 requires its
   durable latest-vintage output to live in a research-only family, separate
