@@ -511,6 +511,10 @@ def build_identity_plan(
         "resolver_rows": result.resolver_entry_count,
         "source_observation_rows": source.manifest.record_count,
         "requests": result.request_count,
+        "malformed_rows": result.malformed_rejected_count,
+        "malformed_ratio_gate_ppm": int(
+            resolved_quality_gates.maximum_malformed_ratio * 1_000_000
+        ),
         "stable_identifier_collision_rows": result.stable_identifier_collision_count,
         "stable_identifier_collision_gate_ppm": int(
             resolved_quality_gates.maximum_stable_identifier_collision_ratio

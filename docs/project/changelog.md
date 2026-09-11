@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-11 — Bound missing-type rows in historical Identity reconstruction
+
+- Accepted ADR 0205 after the five-year continuation stopped before
+  2022-08-19 Identity with 168 missing-security-type rows among 12,172 source
+  observations. All 168 remain rejected and absent from Instrument, Resolver,
+  Universe, Membership, signal, and performance populations.
+- Kept the prospective/current malformed ceiling at 1.0% and set only the
+  explicit historical-reconstruction ceiling to 2.0%. All other quality gates
+  remain unchanged.
+- Confirmed from retained adjacent source that 94 rows were still untyped on
+  2022-08-22, while 73 then carried `SP` and one `FUND`; none of those later
+  labels is projected backward.
+- A zero-request isolated replay produced 8,373 Instrument/Resolver rows and
+  all five expected Identity targets. Focused regression passed 68 tests.
+  After the added gate-evidence and immutable-edition boundary tests, the
+  complete API suite passed 2,438 tests. Canonical recovery remains pending.
+
 ## 2026-09-10 — Choose a complete immutable corrected EOD research edition
 
 - Accepted ADR 0204: repair the affected historical price family beside EOD V1
@@ -17,6 +34,11 @@
   A fixture reproduces the historical defect and proves that only the expected
   missing common-stock bar is admitted. Focused regression passed 118 tests;
   the complete API suite passed 2,430 tests.
+- Added owner-only isolated candidate persistence, atomic per-session writes,
+  immutable rerun conflict checks, Parquet/schema/hash/fingerprint reread, and
+  a final interval manifest as the sole completed-edition boundary. Partial,
+  symlinked, tampered, or residue-bearing editions fail closed. The complete
+  API suite passed 2,436 tests before the later ADR 0205 gate change.
 
 ## 2026-09-10 — Preserve Massive case-sensitive provider symbols
 

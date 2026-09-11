@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-10
+Status date: 2026-09-11
 
 This is the concise actual-state summary. Exact volatile identities and
 cross-device recovery belong in
@@ -59,10 +59,10 @@ budgets now guard this boundary.
 ## Data
 
 - After the bounded case-sensitive-symbol recovery, the unique continuation
-  has at least 984 aligned contiguous EOD and Identity sessions from
-  2022-10-06 through 2026-09-09. Latest EOD has 9,916 rows; latest Identity
+  advanced to 1,016 aligned contiguous EOD and Identity sessions from
+  2022-08-22 through 2026-09-09. Latest EOD has 9,916 rows; latest Identity
   has 9,982 instruments.
-- Historical Identity source custody has at least 982 partitions across the
+- Historical Identity source custody has 1,014 partitions across the
   acquired interval; 2026-08-13 and 2026-08-19 remain explicitly unbound.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
@@ -112,7 +112,12 @@ budgets now guard this boundary.
   and research-quarantined pending a corrected version or correction family.
   Clean source `2da13b200cbe506332c05baa47f08de328170d70` recovered
   2022-10-07 with zero requests, and the unique bounded `20260910f`
-  continuation is active.
+  continuation advanced through 2022-08-22 before stopping at 23:54:38 UTC
+  ahead of 2022-08-19 Identity. Its retained package has 168 missing-type rows
+  out of 12,172. ADR 0205 keeps those rows rejected and permits only the
+  explicit historical-reconstruction profile a 2.0% malformed ceiling; the
+  prospective ceiling remains 1.0%. A zero-request candidate replay passes,
+  but canonical 2022-08-19 recovery has not yet run.
 
 Price depth is no longer the main research blocker.
 
@@ -161,9 +166,9 @@ unauthorized.
 
 Complete:
 
-- at least 984 aligned EOD and Identity durable partitions under one bounded
-  continuation;
-- at least 982 Identity source partitions, 300 research-only Membership sessions, and
+- 1,016 aligned EOD and Identity durable partitions through the latest safe
+  continuation boundary;
+- 1,014 Identity source partitions, 300 research-only Membership sessions, and
   three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
@@ -175,8 +180,10 @@ Incomplete:
 
 - immutable corrected EOD history for the ADR 0203 case-sensitive-symbol
   defect and full-interval reconciliation; ADR 0204's contracts, diff
-  classifier, and isolated one-session candidate builder are implemented, but
-  edition persistence and interval completion are not;
+  classifier, isolated one-session candidate builder, owner-only candidate
+  persistence, formal reader, and final interval completion marker are
+  implemented, but canonical Apply/batch execution and a complete edition are
+  not;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
@@ -213,13 +220,14 @@ that fixes both known gaps.
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
 2021-09-09 through 2026-09-09. Its initial coverage counts are superseded by
-the at-least-984 aligned checkpoint above. Membership remains 303/1,255.
+the 1,016-session aligned checkpoint above. Membership remains 303/1,255.
 Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
-1. Let the unique bounded `20260910f` EOD/Identity continuation complete or
-   stop at its next explicit resumable boundary; do not start a competing
-   writer. Existing affected EOD V1 history must be rebuilt as ADR 0204's
+1. Recover 2022-08-19 from its retained zero-request package under ADR 0205,
+   formally reread the aligned EOD/Identity boundary, and start only one new
+   bounded continuation. Existing affected EOD V1 history must be rebuilt as
+   ADR 0204's
    complete immutable Reconciled EOD Edition and formally reconciled before
    research admission. ADR 0202 resolved the 2022-12-05 VWAP
    case with explicit normalization and audit

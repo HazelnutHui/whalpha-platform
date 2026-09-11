@@ -174,3 +174,27 @@ The unique `whalpha-five-year-backfill-20260910f.service` then started at
 restart. At 23:11:02 UTC, 2022-10-06 Identity and EOD had both completed,
 establishing an at-least-984-session aligned live checkpoint. The unit was
 active and no competing historical writer was present.
+
+## Missing security-type stop
+
+The `20260910f` continuation advanced to 1,016 aligned EOD and Identity
+sessions from 2022-08-22 through 2026-09-09, then stopped at 23:54:38 UTC
+before publishing 2022-08-19 Identity. No partial canonical partition or
+unmatched Identity edge remained.
+
+The immutable 13-page package for 2022-08-19 contains 12,172 observations.
+Exactly 168 active U.S. stocks-market rows across recognized exchanges lack
+provider security type; all have tickers and all remain rejected before
+Instrument or Resolver construction. The malformed ratio is 1.3802%, above
+the prospective 1.0% ceiling. The remaining evidence resolves 8,373 of 9,173
+eligible observations for 91.2788% coverage, with zero ticker ambiguity and
+zero stable-identifier collision.
+
+The next retained package, 2022-08-22, shows 94 of those tickers still missing
+type, 73 labeled `SP`, and one labeled `FUND`. This later evidence supports a
+provider revision explanation but is not valid point-in-time classification
+for 2022-08-19. ADR 0205 therefore leaves every missing-type row rejected,
+keeps the prospective gate unchanged, and sets only the explicit historical-
+reconstruction malformed ceiling to 2.0%. A zero-request isolated replay built
+the five expected Identity publication targets with 8,373 Instrument and
+Resolver rows. Canonical recovery had not run at this checkpoint.

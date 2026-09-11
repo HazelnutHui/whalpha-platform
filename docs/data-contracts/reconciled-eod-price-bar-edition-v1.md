@@ -9,9 +9,11 @@ does not overwrite or implicitly supersede canonical EOD Price Bar V1.
 ## Status
 
 Contract, deterministic sealing, fail-closed diff classification, formal base
-record reread, and one-session isolated candidate reconstruction are
-implemented. Edition persistence, interval-marker publication, and the
-edition-only research reader remain pending.
+record reread, one-session isolated candidate reconstruction, owner-only
+candidate persistence, immutable rerun checks, completed-session formal
+reread, and final interval-marker sealing/reread are implemented. Canonical
+Apply planning, batch execution, full source-package coverage, and the
+edition-only research input adapter remain pending.
 
 ## Identity
 

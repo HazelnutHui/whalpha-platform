@@ -54,9 +54,12 @@ partitions are reused only after formal validation.
 Historical reference packages use ADR 0201's explicit reconstruction profile:
 up to 1.0% stable-identifier collision observations may be retained as
 ambiguous while remaining absent from Instrument and Resolver output. The
-prospective/current 0.1% ceiling is unchanged. A session above the historical
-ceiling still stops, and no conflicting alias may be selected merely to keep
-the run moving.
+same profile uses ADR 0205's 2.0% malformed-row ceiling only for bounded
+missing-type history; every such row remains rejected and later security type
+is never projected backward. The prospective/current 0.1% collision and 1.0%
+malformed ceilings are unchanged. A session above either historical ceiling
+still stops, and no conflicting alias or later type may be selected merely to
+keep the run moving.
 
 The historical runner supplies each already-computed pre-state fingerprint to
 its plan builder. The generic daily builder still computes its own value when

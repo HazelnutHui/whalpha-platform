@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0205](0205-admit-bounded-missing-type-rows-in-historical-identity-reconstruction.md):
+  permits a bounded missing-security-type ratio only in later-vintage
+  historical Identity reconstruction while every affected row remains
+  rejected and prospective gates remain unchanged.
 - [ADR 0204](0204-rebuild-affected-eod-as-a-complete-immutable-research-edition.md):
   rebuilds the affected price family as a full, explicitly selected immutable
   research edition rather than overwriting V1 or imposing a permanent sparse
@@ -111,14 +115,15 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0204 separate durable research Membership custody from
+- ADRs 0197–0205 separate durable research Membership custody from
   signal-eligible Membership, scale source-only corporate-action custody to
   the five-year boundary, and retain exact corporate-action and inactive-
   lifecycle source vintages privately without promoting them to canonical
   facts, localize bounded historical alias-revision collisions without
   relaxing prospective Identity rules, and normalize only audited provider
-  VWAP float tails, preserve provider-symbol case, and govern a complete
-  immutable corrected EOD research edition.
+  VWAP float tails, preserve provider-symbol case, govern a complete immutable
+  corrected EOD research edition, and contain missing-type historical rows
+  without projecting later classifications backward.
 
 ## Runtime and publication decisions
 

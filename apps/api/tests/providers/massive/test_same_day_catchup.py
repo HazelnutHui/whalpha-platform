@@ -191,10 +191,13 @@ def test_historical_identity_plan_can_admit_bounded_quarantined_aliases(
         plan_path=plan_path,
         data_root=data_root,
         quality_gates=InstrumentMasterSnapshotQualityGates(
+            maximum_malformed_ratio=0.02,
             maximum_stable_identifier_collision_ratio=0.01,
         ),
     )
 
+    assert plan.counts["malformed_rows"] == 0
+    assert plan.counts["malformed_ratio_gate_ppm"] == 20_000
     assert plan.counts["stable_identifier_collision_rows"] == 12
     assert plan.counts["stable_identifier_collision_gate_ppm"] == 10_000
     assert plan.counts["instrument_rows"] == 4_989

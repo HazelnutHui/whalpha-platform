@@ -7,6 +7,9 @@ from pathlib import Path
 import pytest
 from pydantic import SecretStr
 
+from tip_api.ingestion.instrument_master_snapshot import (
+    InstrumentMasterSnapshotQualityGates,
+)
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.transport import (
     MassiveTransportResponseError,
@@ -68,10 +71,15 @@ def _provider_get(transport: object) -> object:
     )
 
 
-def test_historical_identity_collision_gate_is_distinct_and_bounded() -> None:
+def test_historical_identity_quality_gates_are_distinct_and_bounded() -> None:
+    current = InstrumentMasterSnapshotQualityGates()
+    historical = HISTORICAL_RECONSTRUCTION_IDENTITY_QUALITY_GATES
+
+    assert current.maximum_malformed_ratio == 0.01
+    assert historical.maximum_malformed_ratio == 0.02
+    assert current.maximum_stable_identifier_collision_ratio == 0.001
     assert (
-        HISTORICAL_RECONSTRUCTION_IDENTITY_QUALITY_GATES.maximum_stable_identifier_collision_ratio
-        == 0.01
+        historical.maximum_stable_identifier_collision_ratio == 0.01
     )
 
 

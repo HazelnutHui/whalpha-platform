@@ -27,7 +27,6 @@ from tip_api.persistence.parquet.manifest import (
     record_business_key,
 )
 from tip_api.providers.massive.grouped_daily_ingestion import (
-    GroupedDailyIngestionResult,
     bind_case_sensitive_provider_ticker_source,
     load_identity_snapshot,
     process_grouped_daily_payload,
@@ -61,7 +60,6 @@ class ReconciledEodSessionCandidate:
     rebuilt_eod_fingerprint: str
     quality_summary_fingerprint: str
     quality_warnings: tuple[str, ...]
-    mapping_result: GroupedDailyIngestionResult
 
 
 def build_reconciled_eod_session_candidate(
@@ -176,7 +174,6 @@ def build_reconciled_eod_session_candidate(
             mapping.safe_lines()
         ),
         quality_warnings=tuple(sorted(mapping.quality_warnings)),
-        mapping_result=mapping,
     )
 
 

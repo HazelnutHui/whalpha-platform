@@ -67,6 +67,7 @@ MINIMUM_PAID_REQUEST_INTERVAL_SECONDS = Decimal("0.25")
 MAXIMUM_REQUEST_INTERVAL_SECONDS = Decimal("15")
 HISTORICAL_RECONSTRUCTION_IDENTITY_QUALITY_GATES = (
     InstrumentMasterSnapshotQualityGates(
+        maximum_malformed_ratio=0.02,
         maximum_stable_identifier_collision_ratio=0.01,
     )
 )
