@@ -101,6 +101,21 @@ session failures remain visible and prevent interval completion; successful
 partitions are retained for a later bounded rerun. Source selection is a
 separate evidence contract and must never use an implicit first match.
 
+Source Coverage 1.0 is that evidence contract. For every exact XNYS session it
+records the observed package origins and one of: selected retained original,
+selected later reacquisition, missing, invalid, or conflict. A retained
+original must bind its formally reread canonical Apply plan, package hashes,
+canonical EOD fingerprint, and same-session Identity fingerprint. A later
+reacquisition keeps distinct provenance and cannot claim an original Apply
+binding. Multiple otherwise eligible original packages are a conflict, not an
+automatic precedence choice.
+
+The complete coverage artifact is immutable, owner-read-only, byte-hashed, and
+contains no filesystem paths or response bodies. It is build-ready only when
+every declared session has exactly one valid selection. Candidate batches
+reread both the artifact byte hash and every selected source binding before
+use. The coverage artifact is evidence, not research or Production authority.
+
 The sealed Apply plan binds:
 
 - the plan's exact candidate custody and non-revealing location fingerprint,

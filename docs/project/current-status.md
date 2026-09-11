@@ -97,6 +97,20 @@ budgets now guard this boundary.
 - Stocks Starter removed the old Basic rate limit and provided the tested 9/9
   same-evening EOD. Guaranteed finality time and five-year endpoint depth are
   not yet proven.
+- A lightweight read-only custody intersection at 2026-09-11 01:45:42 UTC
+  found 777 unique retained Grouped Daily package dates among 1,082 then-
+  canonical EOD sessions. All 777 matched a canonical date; 305 canonical dates
+  within 2025-06-23 through 2026-09-09 lacked a retained Grouped Daily package.
+  This is a source-reacquisition sizing diagnostic, not the formal coverage
+  result; the new post-acquisition census must still reread every package,
+  original Apply binding, EOD partition, and same-session Identity source.
+- The shared `.venv` editable-install metadata currently points at the older
+  Codex worktree rather than the canonical checkout. The active backfill is not
+  affected: its admin entry point delegates to `scripts/dev/run-project-python.sh`,
+  which prepends the canonical repository source path before Python starts.
+  Reconciled EOD runbook commands now use that same wrapper. Do not invoke new
+  operator modules through bare `.venv/bin/python -m`; reconcile the editable
+  install only after the active writer stops.
 - The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only
@@ -261,9 +275,12 @@ absent; status remains `quarantined`.
    2021-09-08 after the exact interval run.
    Corrected-edition construction now has a network-disabled, resumable
    1–40-session batch primitive with at most four spawned workers. It has run
-   only in temporary tests. After the writer stops, census and select one exact
-   source package per declared session before any real candidate build; do not
-   infer source precedence from directory order.
+   only in temporary tests. The matching immutable source-coverage contract,
+   formal retained-original Apply binding, gap/conflict classification,
+   owner-read-only persistence, and hash-bound batch CLI are implemented and
+   fixture-tested. After the writer stops, execute that census and select one
+   exact source package per declared session before any real candidate build;
+   do not infer source precedence from directory order.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later

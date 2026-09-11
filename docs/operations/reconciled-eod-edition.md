@@ -37,6 +37,54 @@ later-reacquired package for every declared session. The batch service is an
 implementation primitive, not permission to infer sources from directory
 order or to build from an incomplete interval.
 
+## Build and review source coverage
+
+After the unique acquisition writer stops, build one immutable network-free
+coverage artifact for the exact XNYS evaluation interval:
+
+```bash
+scripts/dev/run-project-python.sh -m tip_api.services.reconciled_eod_source_coverage_cli \
+  --data-root /data/trading-intelligence-platform \
+  --first-session 2021-09-09 \
+  --last-session 2026-09-09 \
+  --created-at <UTC-timestamp> \
+  --coverage-path /home/hui/.local/state/trading-intelligence-platform/reconciled-eod-source-coverage/<coverage-id>.json \
+  --workers 4
+```
+
+The artifact contains no home path or response body. It formally binds each
+selected package by origin, provenance, observation time, package hashes,
+canonical EOD/Identity fingerprints, and—when retained from canonical
+construction—the original Apply-plan hash. It classifies missing, invalid,
+unproven, or multiple sources rather than choosing the first directory match.
+The daily workspace's generic acquisition directory is ignored when its
+manifest declares an Identity package rather than Grouped Daily.
+The census is limited to four spawned processes; this uses Dell parallelism
+without turning source validation into an unbounded I/O workload.
+
+Do not build candidate sessions unless status is
+`ready_for_candidate_build`. Preserve the coverage file SHA-256. For a reviewed
+ordered batch of at most 40 sessions, use no more than four workers:
+
+```bash
+scripts/dev/run-project-python.sh -m tip_api.services.reconciled_eod_edition_batch_cli \
+  --data-root /data/trading-intelligence-platform \
+  --coverage-path <exact-coverage-path> \
+  --coverage-file-sha256 <coverage-file-sha256> \
+  --candidate-root /home/hui/.local/state/trading-intelligence-platform/reconciled-eod-editions/<candidate> \
+  --edition-id <edition-id> \
+  --implementation-revision <clean-source-revision> \
+  --created-at <UTC-timestamp> \
+  --session <YYYY-MM-DD> \
+  --workers <1-4> \
+  --execute
+```
+
+The batch rereads the coverage hash and selected package bindings before
+construction. `--execute` writes only owner-only candidate partitions; it
+makes zero external requests, writes zero canonical files, and never writes
+the interval completion marker.
+
 ## Completion and review
 
 Publish the interval manifest only after the exact ordered evaluation and
@@ -55,7 +103,7 @@ candidate path, UTC completion time, and exact 40-character clean source
 revision.
 
 ```bash
-.venv/bin/python -m tip_api.services.reconciled_eod_edition_apply_cli plan \
+scripts/dev/run-project-python.sh -m tip_api.services.reconciled_eod_edition_apply_cli plan \
   --data-root /data/trading-intelligence-platform \
   --candidate-root /home/hui/.local/state/trading-intelligence-platform/reconciled-eod-editions/<candidate> \
   --plan-path /home/hui/.local/state/trading-intelligence-platform/reconciled-eod-editions/<candidate>/apply-plan.json \
@@ -76,7 +124,7 @@ Apply requires the three exact values emitted by planning and an explicit
 `--execute`. Do not run while any other canonical writer is active.
 
 ```bash
-.venv/bin/python -m tip_api.services.reconciled_eod_edition_apply_cli apply \
+scripts/dev/run-project-python.sh -m tip_api.services.reconciled_eod_edition_apply_cli apply \
   --data-root /data/trading-intelligence-platform \
   --plan-path <exact-plan-path> \
   --approved-plan-sha256 <plan-file-sha256> \

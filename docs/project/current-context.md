@@ -115,10 +115,26 @@ partitions. Zero symlinks and zero staging/partial directories were observed.
 ADR 0204's repository path now includes persistent owner-only candidate
 custody, memory-bounded full-edition validation, a sealed inventory-bound Apply
 plan, shared-lock atomic whole-edition Apply with exact recovery, and bounded
-resumable 1–40-session construction with at most four spawned workers. These
-mechanics passed temporary-root tests only. No real corrected edition has been
-built or applied, and no research, Candidate, Production, or website authority
-changed.
+resumable 1–40-session construction with at most four spawned workers. The
+matching source-coverage contract now records exact original-plan/package/
+canonical bindings, gaps, invalid evidence, conflicts, and later provenance in
+an immutable path-free artifact. These mechanics passed temporary-root tests,
+and a network-free real 2026-09-08 single-session coverage pilot selected the
+daily retained original without gaps or conflict. No full-interval coverage
+artifact or corrected edition has been built or applied, and no research,
+Candidate, Production, or website authority changed.
+
+A lightweight 01:45:42 UTC custody intersection found 777 retained Grouped
+Daily dates among 1,082 then-canonical EOD sessions, with no source-only orphan
+date and 305 canonical dates lacking a retained package. Those 305 dates fall
+within 2025-06-23 through 2026-09-09 and size the likely later-reacquisition
+work only; they are not a formal coverage result while the writer is active.
+
+The shared virtual environment's editable metadata points at an older Codex
+worktree. The active backfill remains source-correct because its admin script
+uses the project Python wrapper, which prepends the canonical checkout source.
+Use `scripts/dev/run-project-python.sh` for operator modules; defer environment
+rebinding until the active writer stops.
 
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
 FIGI locators and provider delisting dates for every item, but Ticker Events

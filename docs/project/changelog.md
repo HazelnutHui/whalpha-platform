@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-09-11 — Bind corrected EOD construction to exact source coverage
+
+- Added a sealed Source Coverage 1.0 contract for every declared XNYS session:
+  retained original, later reacquisition, missing, invalid, or conflict. The
+  artifact contains package/canonical fingerprints and provenance but no home
+  paths or response bodies.
+- A retained original now requires a formal reread of its exact historical
+  canonical Apply plan and matching package, EOD, and same-session Identity
+  fingerprints. Multiple eligible originals fail as conflict; the daily
+  workspace's Identity package is not mistaken for Grouped Daily.
+- Added immutable 0400 coverage persistence, byte-hash reread, a network-free
+  census CLI, and a candidate-batch CLI that requires the exact coverage hash,
+  explicit 1–40 ordered sessions, and `--execute`. Incomplete coverage cannot
+  feed construction, and each package is formally rebound before use.
+- Implementation and batch-execution tests ran against temporary fixtures. One
+  network-free real single-session coverage pilot ran, but no full-interval
+  coverage census, source reacquisition, candidate build, `/data` write,
+  provider request, interval completion, Apply, research admission,
+  publication, or deployment ran.
+- A separate lightweight read-only intersection found 777 retained Grouped
+  Daily dates among 1,082 then-canonical EOD sessions and 305 canonical dates
+  without a retained package. It found no package-only orphan and remains only
+  a reacquisition-sizing diagnostic until the writer stops and formal census
+  runs.
+- Focused source-coverage and batch regression passed 32 tests; the complete
+  API suite passed 2,486 tests with only the two existing dependency
+  deprecation warnings.
+- A real network-free 2026-09-08 pilot formally selected the daily-automation
+  retained original with zero gaps/conflicts, external requests, or canonical
+  writes. It also exposed stale editable-install metadata pointing at an older
+  worktree. The active backfill was verified safe because its admin entry point
+  already uses the canonical-source project Python wrapper; all Reconciled EOD
+  runbook commands now use that wrapper as well.
+
 ## 2026-09-11 — Bound and resume corrected EOD session construction
 
 - Added explicit preparation of one incomplete owner-only edition and a

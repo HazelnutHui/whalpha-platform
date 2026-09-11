@@ -18,6 +18,13 @@ from tip_api.contracts.market_data.v1.reconciled_eod_edition import (
     seal_reconciled_eod_interval_manifest,
     seal_reconciled_eod_session_manifest,
 )
+from tip_api.contracts.market_data.v1.reconciled_eod_source_coverage import (
+    ReconciledEodSourceCoverageDisposition,
+    ReconciledEodSourceCoverageSessionV1,
+    ReconciledEodSourceCoverageV1,
+    ReconciledEodSourceOrigin,
+    seal_reconciled_eod_source_coverage,
+)
 from tip_api.contracts.market_data.v1.eod_history import (
     EodHistoryMethodologyMode,
     EodHistoryReadinessStatus,
@@ -283,6 +290,11 @@ __all__ = [
     "seal_reconciled_eod_apply_plan",
     "seal_reconciled_eod_interval_manifest",
     "seal_reconciled_eod_session_manifest",
+    "ReconciledEodSourceCoverageDisposition",
+    "ReconciledEodSourceCoverageSessionV1",
+    "ReconciledEodSourceCoverageV1",
+    "ReconciledEodSourceOrigin",
+    "seal_reconciled_eod_source_coverage",
     "EodHistoryMethodologyMode",
     "EodHistoryReadinessStatus",
     "EodHistoryWindowDescriptorV1",

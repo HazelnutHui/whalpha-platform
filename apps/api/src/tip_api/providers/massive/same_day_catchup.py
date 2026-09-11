@@ -389,15 +389,13 @@ def read_catchup_approval_plan_evidence(
 ) -> CatchupApprovalPlanEvidenceV1:
     """Formally reread a frozen apply plan and expose bounded custody evidence."""
 
-    plan = _read_plan(plan_path, approved_plan_sha256)
-    data_root = _validate_data_root(expected_data_root)
-    if (
-        plan.operation != expected_operation
-        or plan.session_date != expected_session
-        or plan.data_root != str(data_root)
-    ):
-        raise SameDayCatchupError("approval plan identity mismatch")
-    _verify_package_custody(plan)
+    plan = read_catchup_approval_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=approved_plan_sha256,
+        expected_operation=expected_operation,
+        expected_session=expected_session,
+        expected_data_root=expected_data_root,
+    )
     return CatchupApprovalPlanEvidenceV1(
         operation=plan.operation,
         session_date=plan.session_date,
@@ -413,6 +411,28 @@ def read_catchup_approval_plan_evidence(
         inventory_change_file_count=plan.inventory_change_file_count,
         inventory_change_bytes=plan.inventory_change_bytes,
     )
+
+
+def read_catchup_approval_plan(
+    *,
+    plan_path: Path,
+    approved_plan_sha256: str,
+    expected_operation: Literal["identity", "identity_source", "eod"],
+    expected_session: date,
+    expected_data_root: Path,
+) -> CatchupApprovalPlanV1:
+    """Formally reread one frozen plan including its package and artifacts."""
+
+    plan = _read_plan(plan_path, approved_plan_sha256)
+    data_root = _validate_data_root(expected_data_root)
+    if (
+        plan.operation != expected_operation
+        or plan.session_date != expected_session
+        or plan.data_root != str(data_root)
+    ):
+        raise SameDayCatchupError("approval plan identity mismatch")
+    _verify_package_custody(plan)
+    return plan
 
 
 def build_identity_plan(

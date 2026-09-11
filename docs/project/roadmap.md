@@ -114,8 +114,9 @@ Required work:
   changes rather than hiding the ADR 0203 defect behind a sparse overlay;
   persistent owner-only custody, memory-bounded validation, bounded resumable
   1–40-session/1–4-worker construction, exact Apply planning, and atomic whole-
-  edition Apply are implemented; formal source-package selection, real full-
-  interval construction, and execution remain pending;
+  edition Apply and a sealed per-session source-coverage/selection contract are
+  implemented; the real post-acquisition coverage census, any required later
+  reacquisition, full-interval construction, and execution remain pending;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward; ADR 0197 requires its
   durable latest-vintage output to live in a research-only family, separate
