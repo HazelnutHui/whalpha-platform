@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-11 — Qualify the live Flat File OHLCV boundary
+
+- Strict owner-only S3 credential loading passed. A 2026-09-09 Day Aggregates
+  Flat File succeeded in one request, while 2021-09-09 returned the newly
+  classified access-denied stop. This proves current Flat Files access but not
+  Starter depth beyond its rolling boundary.
+- A newly fetched 2026-09-09 Grouped Daily REST control and the Flat File were
+  rebuilt through the same case-sensitive Identity-bound path. All 9,945
+  shared records matched exactly on OHLCV, trade count, currency, and
+  adjustment fields. REST had 13 additional zero-volume records; Flat File had
+  no VWAP values.
+- The comparison explains the earlier same-evening canonical differences as
+  source finalization rather than Flat File OHLCV disagreement. Flat Files
+  remain an independent cross-check, not a silent field-equivalent substitute.
+- Added a dated cross-source audit and updated the preferred remaining-gap
+  route to temporary 10-year entitlement plus the existing REST schema, or a
+  separately qualified alternative source. No `/data`, research, Production,
+  publication, or deployment write occurred.
+
 ## 2026-09-11 — Classify Flat File transport stops safely
 
 - Split the former generic S3 Flat File transport error into stable

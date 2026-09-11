@@ -97,8 +97,11 @@ budgets now guard this boundary.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
 - Stocks Starter removed the old Basic rate limit and provided the tested 9/9
-  same-evening EOD. Guaranteed finality time and five-year endpoint depth are
-  not yet proven.
+  same-evening EOD. The separate S3 credential is now valid: a 2026-09-09 Day
+  Aggregates Flat File succeeded, while 2021-09-09 returned access denied.
+  Current REST and Flat File controls matched exactly on shared OHLCV and trade
+  count; Flat Files omit VWAP and 13 REST zero-volume records. Starter cannot
+  close the two oldest evaluation days or the earlier 20-session warm-up.
 - A lightweight read-only custody intersection at 2026-09-11 01:45:42 UTC
   found 777 unique retained Grouped Daily package dates among 1,082 then-
   canonical EOD sessions. All 777 matched a canonical date; 305 canonical dates
@@ -292,12 +295,13 @@ absent; status remains `quarantined`.
    evidence while preserving strict repository rejection. The
    completed REST probe found 2021-09-09/10 Grouped Daily denied and
    2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
-   Use the documented Starter Day Aggregates Flat File route for the two
-   entitlement-denied EOD dates rather than treating REST retries as progress.
-   Fetch-only code and raw-source readback are fixture-tested; live schema/entitlement
-   remains unverified until the separate dashboard S3 credential exists. The
-   first live attempt stopped before any request or write because that
-   credential was absent. The backfill executor now supports a frozen exact
+   Do not retry the entitlement-denied EOD dates under Starter. The live Flat
+   File control proves current access and shared OHLCV compatibility, but the
+   old object is also denied and Flat Files omit VWAP/REST zero-volume rows.
+   Prefer a temporary 10-year Massive entitlement and the existing Grouped
+   Daily REST schema for the remaining evaluation and warm-up dates; otherwise
+   qualify a second source through explicit field and identity reconciliation.
+   The backfill executor supports a frozen exact
    1,255-session interval plus an explicit 0.25-to-15-second serial paid-plan
    interval, while retaining the older count-based mode unchanged.
    The nominal interval is not enough for the first Membership calculation:

@@ -50,9 +50,10 @@ historical backfill writer.
 ## Disposition
 
 1. Do not restart Grouped Daily REST for 2021-09-09 or 2021-09-10.
-2. Use the fixture-tested Massive Day Aggregates Flat File path for those two
-   EOD dates after the separate dashboard S3 credential is provisioned and one
-   non-retaining entitlement/schema pilot passes.
+2. Do not treat Starter Flat Files as a fallback for those dates: a current-
+   date control succeeded but 2021-09-09 returned access denied. Prefer a
+   temporary 10-year entitlement and the existing Grouped Daily REST schema,
+   or qualify another source through separate reconciliation.
 3. Reuse the retained 2021-09-10 Identity evidence; acquire only 2021-09-09
    Identity when its matching EOD source route is ready.
 4. Keep the evaluation interval incomplete until both canonical families

@@ -105,9 +105,11 @@ Required work:
 - define and census the exact rolling five-year XNYS target, including
   explicitly separate experiment warm-up and outcome-tail sessions;
 - expand EOD/Identity from the current acquired interval to that target while
-  preserving exact source custody; exact-interval execution is implemented,
-  while the preferred Flat File EOD route still awaits its separate S3
-  credential and REST-authorized dates may proceed independently;
+  preserving exact source custody; exact-interval execution is implemented.
+  Starter S3 access is verified for a current Day Aggregates object but denied
+  for 2021-09-09, and Flat Files are not field-equivalent to REST because they
+  omit VWAP and its zero-volume path. Close the remaining evaluation and
+  warm-up dates through a consistent qualified source route;
 - build ADR 0204's complete immutable Reconciled EOD Edition after acquisition
   quiesces; prefer retained original packages, retain later reacquisitions as a
   distinct provenance class, and reject unexplained removals or economic-value

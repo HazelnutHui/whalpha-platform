@@ -4,7 +4,9 @@
 
 The fetch-only adapter, raw-source custody, strict CSV normalization, exact
 authorization, and offline compatibility with the existing EOD package reader
-are implemented and fixture-tested. A live object has not been fetched.
+are implemented and fixture-tested. The 2026-09-11 live control fetched the
+2026-09-09 object successfully; 2021-09-09 returned access denied under the
+current Starter depth.
 
 Massive Flat Files use credentials distinct from the REST API key. Obtain the
 S3 Access Key ID and Secret Key from the Massive dashboard and place them in an
@@ -29,10 +31,9 @@ python -m pip install -e 'apps/api[dev,flat-files]'
 
 ## One-session pilot
 
-Use 2021-09-09 because Grouped Daily REST denied that required session and the
-official Starter Flat File history is expected to cover it. Select an unused
-owner-only acquisition-package path in the governed daily workspace or one
-direct `/tmp` child.
+Use a current accessible session to verify the S3 credential and schema before
+testing an entitlement boundary. Select an unused owner-only acquisition-
+package path in the governed daily workspace or one direct `/tmp` child.
 
 First run `--review`; copy its exact revision-bound acknowledgement into a
 second invocation. The execution may make exactly one S3 request and writes
@@ -46,9 +47,12 @@ scripts/admin/fetch-massive-day-aggregate-flat-file.sh \
 ```
 
 After successful fetch, formally reread the package and compare its normalized
-bars with a date where Grouped Daily REST is also accessible. Validate exact
-header, row count, ticker set, OHLCV, transaction count, time semantics, and
-unadjusted split behavior before enabling multi-session acquisition.
+bars with a date where Grouped Daily REST is also accessible. The 2026-09-09
+control matched current REST on all shared OHLCV, trade-count, currency, and
+adjustment fields. Flat Files omit VWAP and omitted 13 REST zero-volume records,
+so they remain an independent source requiring explicit reconciliation rather
+than a silent canonical substitute. See the
+[cross-source pilot](../audits/massive-flat-file-cross-source-pilot-2026-09-11.md).
 
 ## Stop rules
 

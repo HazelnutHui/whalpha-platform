@@ -383,12 +383,13 @@ fundamentals, and complete Historical Coverage are absent. The census is
    REST pilot found Grouped Daily denied for
    2021-09-09/10 but accessible with 11,063 rows for 2022-09-09; PIT Tickers,
    splits, and dividends were accessible on all three dates. Use the documented
-   five-year Day Aggregates Flat Files as the preferred bulk-price route and
-   retain REST as a bounded fallback/cross-check. The fetch-only adapter and
-   transitive raw-gzip custody are fixture-tested; a live pilot awaits the
-   separate dashboard S3 credential, not another REST API-key retry.
-   The first Flat File attempt verified fail-closed behavior and made zero requests
-   because that separate credential is not configured. Exact-interval REST
+   Day Aggregates Flat Files as an independent OHLCV cross-check, not a silent
+   canonical substitute. The separate S3 credential now works: 2026-09-09
+   fetched successfully and matched current REST on shared OHLCV/trade count,
+   while 2021-09-09 returned access denied. Flat Files omit VWAP and the 13
+   REST-only zero-volume records on that control. Prefer temporary 10-year
+   entitlement plus the existing Grouped Daily REST schema for the remaining
+   evaluation and warm-up dates, or qualify another source explicitly. Exact-interval REST
    execution freezes both 2021-09-09 and 2026-09-09 and permits an explicit
    bounded paid-plan serial interval; it does not alter the older 300-session
    planning contract.
