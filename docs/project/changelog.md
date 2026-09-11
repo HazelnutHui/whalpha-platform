@@ -15,7 +15,11 @@
 - A zero-request isolated replay produced 8,373 Instrument/Resolver rows and
   all five expected Identity targets. Focused regression passed 68 tests.
   After the added gate-evidence and immutable-edition boundary tests, the
-  complete API suite passed 2,438 tests. Canonical recovery remains pending.
+  complete API suite passed 2,438 tests.
+- Clean source `49ef83a4bc5ee70914eabb9930a8c9f7c6d78f3b` reused the
+  2022-08-19 Identity package with zero requests, acquired EOD in one request,
+  formally published and reread both families, and aligned 1,017 sessions
+  through 2022-08-19. No analytics, publication, or deployment ran.
 
 ## 2026-09-10 — Choose a complete immutable corrected EOD research edition
 

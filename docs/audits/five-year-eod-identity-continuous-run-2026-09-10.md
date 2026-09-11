@@ -198,3 +198,16 @@ keeps the prospective gate unchanged, and sets only the explicit historical-
 reconstruction malformed ceiling to 2.0%. A zero-request isolated replay built
 the five expected Identity publication targets with 8,373 Instrument and
 Resolver rows. Canonical recovery had not run at this checkpoint.
+
+## Exact-session missing-type recovery
+
+After focused regression passed 68 tests and the complete API suite passed
+2,438 tests, clean source commit
+`49ef83a4bc5ee70914eabb9930a8c9f7c6d78f3b` ran one bounded 2022-08-19
+recovery. It formally reused the retained Identity package with zero external
+requests, published and reread all five Identity targets with 8,373 Instrument
+and Resolver rows, acquired Grouped Daily in one request, and published and
+reread EOD. At 00:19:34 UTC, EOD and Identity were aligned at 1,017 sessions
+from 2022-08-19 through 2026-09-09. Identity source custody contained 1,015
+sessions; only 2026-08-13 and 2026-08-19 remained source-unbound. The next
+frozen-interval session was 2022-08-18.

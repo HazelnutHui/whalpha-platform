@@ -59,10 +59,11 @@ budgets now guard this boundary.
 ## Data
 
 - After the bounded case-sensitive-symbol recovery, the unique continuation
-  advanced to 1,016 aligned contiguous EOD and Identity sessions from
-  2022-08-22 through 2026-09-09. Latest EOD has 9,916 rows; latest Identity
+  and one exact-session recovery advanced to 1,017 aligned contiguous EOD and
+  Identity sessions from 2022-08-19 through 2026-09-09. Latest EOD has 9,916
+  rows; latest Identity
   has 9,982 instruments.
-- Historical Identity source custody has 1,014 partitions across the
+- Historical Identity source custody has 1,015 partitions across the
   acquired interval; 2026-08-13 and 2026-08-19 remain explicitly unbound.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
@@ -117,7 +118,10 @@ budgets now guard this boundary.
   out of 12,172. ADR 0205 keeps those rows rejected and permits only the
   explicit historical-reconstruction profile a 2.0% malformed ceiling; the
   prospective ceiling remains 1.0%. A zero-request candidate replay passes,
-  but canonical 2022-08-19 recovery has not yet run.
+  then clean source `49ef83a4bc5ee70914eabb9930a8c9f7c6d78f3b`
+  reused the Identity package with zero requests, acquired EOD in one request,
+  and formally aligned both families at 1,017 sessions. The next exact session
+  is 2022-08-18.
 
 Price depth is no longer the main research blocker.
 
@@ -166,9 +170,9 @@ unauthorized.
 
 Complete:
 
-- 1,016 aligned EOD and Identity durable partitions through the latest safe
+- 1,017 aligned EOD and Identity durable partitions through the latest safe
   continuation boundary;
-- 1,014 Identity source partitions, 300 research-only Membership sessions, and
+- 1,015 Identity source partitions, 300 research-only Membership sessions, and
   three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
@@ -220,14 +224,13 @@ that fixes both known gaps.
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
 2021-09-09 through 2026-09-09. Its initial coverage counts are superseded by
-the 1,016-session aligned checkpoint above. Membership remains 303/1,255.
+the 1,017-session aligned checkpoint above. Membership remains 303/1,255.
 Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
-1. Recover 2022-08-19 from its retained zero-request package under ADR 0205,
-   formally reread the aligned EOD/Identity boundary, and start only one new
-   bounded continuation. Existing affected EOD V1 history must be rebuilt as
-   ADR 0204's
+1. Start only one new bounded EOD/Identity continuation at 2022-08-18 from the
+   formally aligned 1,017-session boundary. Existing affected EOD V1 history
+   must be rebuilt as ADR 0204's
    complete immutable Reconciled EOD Edition and formally reconciled before
    research admission. ADR 0202 resolved the 2022-12-05 VWAP
    case with explicit normalization and audit

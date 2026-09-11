@@ -4,7 +4,7 @@ Operational state verified at: 2026-09-10T21:03:41Z
 
 Deployment state additionally verified at: 2026-09-10T21:15:01Z
 
-Backfill activity additionally verified at: 2026-09-10T23:54:38Z
+Backfill activity additionally verified at: 2026-09-11T00:19:34Z
 
 Repository context updated at: 2026-09-11 UTC
 
@@ -42,13 +42,13 @@ explicit all-partition validation both passed in their recorded audits.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | 1,016 contiguous XNYS sessions, 2022-08-22 through 2026-09-09; next safe boundary is 2022-08-19 |
+| Canonical EOD | 1,017 contiguous XNYS sessions, 2022-08-19 through 2026-09-09; next session is 2022-08-18 |
 | Latest EOD | 2026-09-09; 9,916 rows |
 | Latest EOD fingerprint | 1ecd85558ca0fdf36e2460021b2da80a41ef5f17424aae33a9e94de5e70f1d1f |
 | Latest Identity | 2026-09-09; 9,982 instruments / 13,158 provider identities / 9,982 resolvers |
 | Latest Identity fingerprint | f29de23284b163955fc542b2c48ed3ebd60b618493366511935164e574694707 |
-| Point-in-time Identity | 1,016 partitions, 2022-08-22 through 2026-09-09; aligned with EOD at the recorded checkpoint |
-| Identity source custody | 1,014 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound |
+| Point-in-time Identity | 1,017 partitions, 2022-08-19 through 2026-09-09; aligned with EOD at the recorded checkpoint |
+| Identity source custody | 1,015 immutable partitions; 2026-08-13 and 2026-08-19 remain unbound |
 | Signal-eligible Membership | 3 sessions / 59,892 decisions: 2026-09-04, 2026-09-08, 2026-09-09 |
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
@@ -101,7 +101,9 @@ and 91.2788% eligible-identity coverage. Later 2022-08-22 source evidence
 labels 73 of those rows `SP` and one `FUND`, but ADR 0205 forbids projecting
 that later type backward: all 168 remain rejected while only the historical
 malformed-row ceiling becomes 2.0%. A zero-request candidate replay passed;
-canonical recovery remains pending. See the
+clean source `49ef83a4bc5ee70914eabb9930a8c9f7c6d78f3b` then reused
+the Identity package with zero requests, acquired EOD in one request, and
+formally aligned both families at 1,017 sessions through 2022-08-19. See the
 [dated execution audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md).
 
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
@@ -224,9 +226,9 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| 1,016 aligned EOD / Identity partitions through 2022-08-22 | Corrected and reconciled EOD history plus final transitive Historical Coverage |
+| 1,017 aligned EOD / Identity partitions through 2022-08-19 | Corrected and reconciled EOD history plus final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
-| 1,014 Identity source partitions | Two source-unbound dates |
+| 1,015 Identity source partitions | Two source-unbound dates |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
 | Bounded corporate-action source custody | Complete action availability/revision and absent-event coverage |
@@ -300,7 +302,7 @@ breaches an agreed budget and one bounded design solves both gaps.
 ## Immediate direction
 
 The ADR 0196 baseline census fixes 2021-09-09 through 2026-09-09 as 1,255
-XNYS sessions. Its original counts are superseded by the 1,016-session aligned
+XNYS sessions. Its original counts are superseded by the 1,017-session aligned
 checkpoint above. The former precision gate is resolved under
 ADR 0202; ADR 0203 resolves the forward exact-symbol mapping but not the
 already-published missing-bar history.
@@ -310,9 +312,8 @@ fundamentals, and complete Historical Coverage are absent. The census is
 `quarantined`, fingerprint
 `c193895b7cb795fb5054c5e8493bb7c5e438e646c37e03d336a82d52f3a903e7`.
 
-1. Recover 2022-08-19 from its retained package under ADR 0205, formally reread
-   the aligned boundary, and start only one new bounded continuation.
-   Completing acquisition does not authorize
+1. Start only one new bounded EOD/Identity continuation at 2022-08-18 from the
+   formally aligned 1,017-session boundary. Completing acquisition does not authorize
    research use of the affected V1 EOD history. Design and execute a new
    complete immutable Reconciled EOD Edition under ADR 0204, then formally
    reconcile the full interval before research admission. ADR 0202
