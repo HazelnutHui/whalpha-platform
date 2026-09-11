@@ -14,7 +14,9 @@ def test_cli_writes_bounded_coverage_summary(monkeypatch, capsys) -> None:
         logical_fingerprint="a" * 64,
         evaluation_first_session=date(2021, 9, 9),
         evaluation_last_session=date(2026, 9, 9),
-        target_session_count=1255,
+        warmup_first_session=date(2021, 8, 11),
+        warmup_last_session=date(2021, 9, 8),
+        target_session_count=1275,
         retained_original_session_count=900,
         later_reacquisition_session_count=0,
         missing_session_count=353,
@@ -50,6 +52,10 @@ def test_cli_writes_bounded_coverage_summary(monkeypatch, capsys) -> None:
                 "2021-09-09",
                 "--last-session",
                 "2026-09-09",
+                "--warmup-first-session",
+                "2021-08-11",
+                "--warmup-last-session",
+                "2021-09-08",
                 "--created-at",
                 "2026-09-11T01:00:00+00:00",
                 "--coverage-path",
@@ -60,6 +66,8 @@ def test_cli_writes_bounded_coverage_summary(monkeypatch, capsys) -> None:
     )
     output = capsys.readouterr().out
     assert observed["evaluation_first_session"] == date(2021, 9, 9)
+    assert observed["warmup_first_session"] == date(2021, 8, 11)
+    assert observed["warmup_last_session"] == date(2021, 9, 8)
     assert observed["workers"] == 4
     assert '"missing_session_count": 353' in output
     assert '"canonical_data_write_count": 0' in output

@@ -148,6 +148,12 @@ successful work on a typed stop, and writes the interval marker only after a
 full formal reread. It has run only in fixtures; no real corrected edition has
 been built.
 
+Source Coverage and the full-build controller now preserve the separate
+2021-08-11 through 2021-09-08 warm-up declaration instead of moving the
+2021-09-09 evaluation boundary. The active 1,255-session run remains the exact
+evaluation interval; its separate 20-session warm-up acquisition is still
+pending.
+
 The fixed 30-item Massive Starter lifecycle diagnostic had stable Composite
 FIGI locators and provider delisting dates for every item, but Ticker Events
 matched only six; 24 returned HTTP 404 and all nine returned events were ticker

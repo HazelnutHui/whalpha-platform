@@ -138,6 +138,8 @@ class ReconciledEodSourceCoverageV1(FrozenModel):
     calendar_id: Literal["XNYS"] = "XNYS"
     evaluation_first_session: date
     evaluation_last_session: date
+    warmup_first_session: date | None = None
+    warmup_last_session: date | None = None
     sessions: tuple[ReconciledEodSourceCoverageSessionV1, ...]
     target_session_count: int = Field(ge=1)
     retained_original_session_count: int = Field(ge=0)
@@ -167,10 +169,23 @@ class ReconciledEodSourceCoverageV1(FrozenModel):
         dates = tuple(item.session_date for item in self.sessions)
         if not dates or dates != tuple(sorted(set(dates))):
             raise ValueError("source coverage sessions must be unique and ordered")
+        if self.evaluation_first_session > self.evaluation_last_session:
+            raise ValueError("source coverage evaluation interval is reversed")
+        if (self.warmup_first_session is None) != (
+            self.warmup_last_session is None
+        ):
+            raise ValueError("source coverage warmup bounds must both be present")
+        if self.warmup_first_session is not None and not (
+            self.warmup_first_session
+            <= self.warmup_last_session
+            < self.evaluation_first_session
+        ):
+            raise ValueError("source coverage warmup interval is invalid")
+        expected_first = self.warmup_first_session or self.evaluation_first_session
         if (
-            dates[0] != self.evaluation_first_session
+            dates[0] != expected_first
             or dates[-1] != self.evaluation_last_session
-            or self.evaluation_first_session > self.evaluation_last_session
+            or self.evaluation_first_session not in dates
             or self.target_session_count != len(dates)
         ):
             raise ValueError("source coverage evaluation interval differs")

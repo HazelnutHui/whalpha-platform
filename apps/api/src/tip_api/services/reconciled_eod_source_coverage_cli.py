@@ -21,6 +21,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--data-root", type=Path, required=True)
     parser.add_argument("--first-session", type=date.fromisoformat, required=True)
     parser.add_argument("--last-session", type=date.fromisoformat, required=True)
+    parser.add_argument("--warmup-first-session", type=date.fromisoformat)
+    parser.add_argument("--warmup-last-session", type=date.fromisoformat)
     parser.add_argument("--created-at", type=datetime.fromisoformat, required=True)
     parser.add_argument("--coverage-path", type=Path, required=True)
     parser.add_argument("--workers", type=int, default=4)
@@ -33,6 +35,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         data_root=args.data_root,
         evaluation_first_session=args.first_session,
         evaluation_last_session=args.last_session,
+        warmup_first_session=args.warmup_first_session,
+        warmup_last_session=args.warmup_last_session,
         created_at=args.created_at,
         workers=args.workers,
     )
@@ -49,6 +53,16 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "logical_fingerprint": coverage.logical_fingerprint,
                 "first_session": coverage.evaluation_first_session.isoformat(),
                 "last_session": coverage.evaluation_last_session.isoformat(),
+                "warmup_first_session": (
+                    coverage.warmup_first_session.isoformat()
+                    if coverage.warmup_first_session is not None
+                    else None
+                ),
+                "warmup_last_session": (
+                    coverage.warmup_last_session.isoformat()
+                    if coverage.warmup_last_session is not None
+                    else None
+                ),
                 "target_session_count": coverage.target_session_count,
                 "retained_original_session_count": (
                     coverage.retained_original_session_count

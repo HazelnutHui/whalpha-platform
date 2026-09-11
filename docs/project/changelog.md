@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-11 — Preserve warm-up outside the five-year evaluation interval
+
+- Extended Reconciled EOD Source Coverage to declare optional paired warm-up
+  bounds separately from the evaluation bounds. Coverage now requires the
+  complete ordered warm-up-plus-evaluation session inventory while retaining
+  the exact evaluation-first session.
+- The full-edition controller now carries those bounds into the final interval
+  manifest and verifies them on formal completion. The coverage CLI exposes
+  explicit warm-up arguments.
+- The intended real scope remains 1,255 evaluation sessions from 2021-09-09
+  through 2026-09-09 plus 20 warm-up sessions from 2021-08-11 through
+  2021-09-08. The active service still covers only the exact evaluation run;
+  no warm-up acquisition, coverage census, candidate build, or `/data` write
+  was performed by this change.
+- Focused coverage/complete-build regression passed 32 tests; the complete API
+  suite passed 2,509 tests with only the two existing dependency deprecation
+  warnings.
+
 ## 2026-09-11 — Automate resumable full Reconciled EOD candidate build
 
 - Added a complete-interval controller and CLI that consume only one exact

@@ -36,6 +36,15 @@ class OneSessionCalendar:
         return (SESSION,)
 
 
+class WarmupCalendar:
+    calendar_id = "XNYS"
+
+    def sessions_in_range(self, first: date, last: date) -> tuple[date, ...]:
+        assert first == date(2026, 9, 8)
+        assert last == SESSION
+        return (date(2026, 9, 8), SESSION)
+
+
 class FakeRepository:
     def inspect_session(self, session_date: date):
         assert session_date == SESSION
@@ -337,6 +346,47 @@ def test_whole_census_rejects_unbounded_worker_count(
             calendar=OneSessionCalendar(),
             workers=5,
         )
+
+
+def test_whole_census_includes_declared_warmup_without_moving_evaluation(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    monkeypatch.setattr(module, "APPROVED_DATA_ROOT", data_root.resolve())
+    for name in (
+        "HISTORICAL_SESSIONS_ROOT",
+        "DAILY_SESSIONS_ROOT",
+        "LATER_REACQUISITION_SESSIONS_ROOT",
+    ):
+        root = tmp_path / f"warmup-{name.lower()}"
+        root.mkdir(mode=0o700)
+        monkeypatch.setattr(module, name, root)
+
+    def missing(**values):
+        return ReconciledEodSourceCoverageSessionV1(
+            session_date=values["session_date"],
+            disposition=ReconciledEodSourceCoverageDisposition.MISSING,
+            observed_candidate_count=0,
+            reason_codes=("grouped_daily_source_package_missing",),
+        )
+
+    monkeypatch.setattr(module, "_assess_session", missing)
+
+    evidence = module.assess_reconciled_eod_source_coverage(
+        data_root=data_root.resolve(),
+        evaluation_first_session=SESSION,
+        evaluation_last_session=SESSION,
+        warmup_first_session=date(2026, 9, 8),
+        warmup_last_session=date(2026, 9, 8),
+        created_at=NOW,
+        calendar=WarmupCalendar(),
+    )
+
+    assert evidence.target_session_count == 2
+    assert evidence.warmup_first_session == date(2026, 9, 8)
+    assert evidence.evaluation_first_session == SESSION
 
 
 def missing_coverage() -> ReconciledEodSourceCoverageV1:

@@ -106,6 +106,8 @@ def assess_reconciled_eod_source_coverage(
     data_root: Path,
     evaluation_first_session: date,
     evaluation_last_session: date,
+    warmup_first_session: date | None = None,
+    warmup_last_session: date | None = None,
     created_at: datetime,
     calendar: MarketSessionCalendar | None = None,
     workers: int = 1,
@@ -123,14 +125,30 @@ def assess_reconciled_eod_source_coverage(
         raise ReconciledEodSourceCoverageError(
             "reconciled EOD source coverage requires XNYS"
         )
+    if (warmup_first_session is None) != (warmup_last_session is None):
+        raise ReconciledEodSourceCoverageError(
+            "reconciled EOD source warmup bounds must both be present"
+        )
+    if warmup_first_session is not None and not (
+        warmup_first_session <= warmup_last_session < evaluation_first_session
+    ):
+        raise ReconciledEodSourceCoverageError(
+            "reconciled EOD source warmup interval is invalid"
+        )
+    coverage_first_session = warmup_first_session or evaluation_first_session
     sessions = session_calendar.sessions_in_range(
-        evaluation_first_session,
+        coverage_first_session,
         evaluation_last_session,
     )
     if (
         not sessions
-        or sessions[0] != evaluation_first_session
+        or sessions[0] != coverage_first_session
         or sessions[-1] != evaluation_last_session
+        or evaluation_first_session not in sessions
+        or (
+            warmup_last_session is not None
+            and warmup_last_session not in sessions
+        )
     ):
         raise ReconciledEodSourceCoverageError(
             "reconciled EOD source interval is not an exact XNYS boundary"
@@ -178,6 +196,8 @@ def assess_reconciled_eod_source_coverage(
             ),
             "evaluation_first_session": evaluation_first_session,
             "evaluation_last_session": evaluation_last_session,
+            "warmup_first_session": warmup_first_session,
+            "warmup_last_session": warmup_last_session,
             "sessions": evidence,
             "target_session_count": len(sessions),
             "retained_original_session_count": retained,

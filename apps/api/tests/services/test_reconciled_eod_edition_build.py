@@ -27,8 +27,10 @@ def _coverage(*, status: str = "ready_for_candidate_build") -> object:
         status=status,
         sessions=tuple(SimpleNamespace(session_date=item) for item in SESSIONS),
         target_session_count=3,
-        evaluation_first_session=SESSIONS[0],
+        evaluation_first_session=SESSIONS[1],
         evaluation_last_session=SESSIONS[-1],
+        warmup_first_session=SESSIONS[0],
+        warmup_last_session=SESSIONS[0],
         retained_original_session_count=3,
         later_reacquisition_session_count=0,
     )
@@ -90,6 +92,8 @@ class _FakeRepository:
         return SimpleNamespace(
             manifest=SimpleNamespace(
                 implementation_revision=REVISION,
+                warmup_first_session=values["warmup_first_session"],
+                warmup_last_session=values["warmup_last_session"],
                 sessions=tuple(range(3)),
                 retained_original_session_count=3,
                 later_reacquisition_session_count=0,

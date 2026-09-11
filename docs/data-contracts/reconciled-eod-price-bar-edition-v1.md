@@ -110,6 +110,12 @@ reacquisition keeps distinct provenance and cannot claim an original Apply
 binding. Multiple otherwise eligible original packages are a conflict, not an
 automatic precedence choice.
 
+Coverage keeps the five-year evaluation interval separate from the optional
+contiguous warm-up interval. The session inventory begins at the declared
+warm-up boundary when present, still requires the evaluation-first session to
+be present, and ends at the evaluation-last session. Warm-up rows therefore
+support feature construction without being mislabeled as evaluation history.
+
 The complete coverage artifact is immutable, owner-read-only, byte-hashed, and
 contains no filesystem paths or response bodies. It is build-ready only when
 every declared session has exactly one valid selection. Candidate batches

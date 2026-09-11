@@ -120,6 +120,10 @@ Required work:
   implemented but have made no real request/build; the real post-acquisition
   coverage census, any confirmed later reacquisition, full-interval
   construction, and execution remain pending;
+- preserve the separately declared 20-session warm-up interval in source
+  coverage and the corrected edition without moving the five-year evaluation
+  boundary; contract and controller support are implemented, while real
+  warm-up acquisition remains pending after the exact interval run;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward; ADR 0197 requires its
   durable latest-vintage output to live in a research-only family, separate

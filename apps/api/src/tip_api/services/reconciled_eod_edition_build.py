@@ -73,6 +73,8 @@ class ReconciledEodEditionBuildResultV1:
     implementation_revision: str
     evaluation_first_session: str
     evaluation_last_session: str
+    warmup_first_session: str | None
+    warmup_last_session: str | None
     target_session_count: int
     batch_count: int
     batch_size: int
@@ -173,10 +175,14 @@ def run_reconciled_eod_edition_build(
         session_dates=sessions,
         evaluation_first_session=coverage.evaluation_first_session,
         evaluation_last_session=coverage.evaluation_last_session,
+        warmup_first_session=coverage.warmup_first_session,
+        warmup_last_session=coverage.warmup_last_session,
     )
     manifest = completed.manifest
     if (
         manifest.implementation_revision != implementation_revision
+        or manifest.warmup_first_session != coverage.warmup_first_session
+        or manifest.warmup_last_session != coverage.warmup_last_session
         or len(manifest.sessions) != coverage.target_session_count
         or manifest.retained_original_session_count
         != coverage.retained_original_session_count
@@ -194,6 +200,16 @@ def run_reconciled_eod_edition_build(
         implementation_revision=implementation_revision,
         evaluation_first_session=coverage.evaluation_first_session.isoformat(),
         evaluation_last_session=coverage.evaluation_last_session.isoformat(),
+        warmup_first_session=(
+            coverage.warmup_first_session.isoformat()
+            if coverage.warmup_first_session is not None
+            else None
+        ),
+        warmup_last_session=(
+            coverage.warmup_last_session.isoformat()
+            if coverage.warmup_last_session is not None
+            else None
+        ),
         target_session_count=coverage.target_session_count,
         batch_count=len(checkpoints),
         batch_size=batch_size,

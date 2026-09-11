@@ -123,6 +123,11 @@ budgets now guard this boundary.
   partitions with the same source/revision/fixed-time binding, retains safe
   progress on failure, and publishes the sole interval marker last. It is
   fixture-tested only; no real candidate edition has been built.
+- Source Coverage and full-edition construction now model the separate
+  2021-08-11 through 2021-09-08 warm-up interval explicitly. Those 20 sessions
+  will be included in source and edition custody without changing the
+  2021-09-09 through 2026-09-09 evaluation boundary. The active run covers the
+  1,255 evaluation sessions; warm-up acquisition remains pending afterward.
 - The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only

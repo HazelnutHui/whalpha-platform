@@ -124,3 +124,43 @@ def test_coverage_rejects_incorrect_disposition_counts() -> None:
 
     with pytest.raises(ValidationError, match="counts differ"):
         ReconciledEodSourceCoverageV1.model_validate(values)
+
+
+def test_coverage_keeps_warmup_separate_from_evaluation_interval() -> None:
+    warmup_session = selected_original().model_copy(
+        update={"session_date": date(2026, 9, 8)}
+    )
+    evaluation_session = selected_original()
+    sealed = seal_reconciled_eod_source_coverage(
+        {
+            "status": "ready_for_candidate_build",
+            "evaluation_first_session": SESSION,
+            "evaluation_last_session": SESSION,
+            "warmup_first_session": date(2026, 9, 8),
+            "warmup_last_session": date(2026, 9, 8),
+            "sessions": (warmup_session, evaluation_session),
+            "target_session_count": 2,
+            "retained_original_session_count": 2,
+            "later_reacquisition_session_count": 0,
+            "missing_session_count": 0,
+            "invalid_session_count": 0,
+            "conflict_session_count": 0,
+            "created_at": NOW,
+        }
+    )
+
+    assert sealed.warmup_first_session == date(2026, 9, 8)
+    assert sealed.evaluation_first_session == SESSION
+    assert tuple(item.session_date for item in sealed.sessions) == (
+        date(2026, 9, 8),
+        SESSION,
+    )
+
+
+def test_coverage_rejects_partial_warmup_bounds() -> None:
+    sealed = coverage(selected_original())
+    values = sealed.model_dump()
+    values["warmup_first_session"] = date(2026, 9, 8)
+
+    with pytest.raises(ValidationError, match="both"):
+        ReconciledEodSourceCoverageV1.model_validate(values)
