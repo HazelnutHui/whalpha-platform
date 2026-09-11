@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-11 — Align initial warm-up with the rolling Starter window
+
+- Accepted ADR 0206 after the owner declined a deeper subscription solely for
+  two fixed-run boundary dates and an external warm-up. The stopped 1,255-day
+  run remains preserved as historical evidence and is not restarted.
+- Normal daily updates, rather than an ad hoc deletion, will move the rolling
+  five-calendar-year source target. Once latest canonical EOD reaches
+  2026-09-11, the expected first XNYS target session is 2021-09-13; a fresh
+  network-disabled census must verify that state.
+- The first 20 available target sessions become explicit outcome-free feature
+  warm-up. Signals and performance begin only afterward, so the product may
+  claim five-year source scope but not a full five-year performance interval.
+- Retained the optional external-warm-up contracts for future deeper data but
+  removed that acquisition and the expired dates from the current action path.
+  No provider request, `/data` write, research run, publication, Production
+  change, or deployment occurred.
+
 ## 2026-09-11 — Qualify the live Flat File OHLCV boundary
 
 - Strict owner-only S3 credential loading passed. A 2026-09-09 Day Aggregates

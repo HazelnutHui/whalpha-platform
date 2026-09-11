@@ -1,5 +1,13 @@
 # Five-Year EOD and Identity Backfill
 
+> **Current disposition:** the fixed 2021-09-09 through 2026-09-09 run is
+> terminal historical evidence and must not be restarted. Under ADR 0206,
+> normal daily updates will roll the source target to an interval beginning
+> 2021-09-13. The first 20 available sessions become disclosed feature warm-up;
+> the reserved external warm-up workspace is not populated under Starter.
+> Commands below document the completed fixed-interval procedure, not the next
+> operator action.
+
 ## Purpose
 
 This runbook implements the first acquisition stage of ADR 0196. It extends
@@ -13,16 +21,14 @@ The authoritative first interval is 2021-09-09 through 2026-09-09, exactly
 shortcut must not be used for this run because a later daily append would move
 the left boundary.
 
-The first evaluation session's trailing-liquidity Membership calculation needs
-20 earlier XNYS support sessions: 2021-08-11 through 2021-09-08. They are a
-separate warm-up extension, not part of the 1,255-session evaluation count.
-The current exact-interval run intentionally stops at 2021-09-09; support
-acquisition follows as a separately measured route after the nominal interval
-and must not be hidden by moving the evaluation boundary.
+The original fixed-run design declared 20 earlier XNYS support sessions,
+2021-08-11 through 2021-09-08, outside its 1,255-session evaluation count.
+ADR 0206 supersedes that acquisition for the first Starter-backed program: the
+first 20 available in-window sessions are feature warm-up instead.
 
 ## Source routes
 
-- Massive Day Aggregates Flat Files are the preferred bulk EOD source. They
+- Massive Day Aggregates Flat Files are an independent bulk OHLCV cross-check. They
   require the separate S3 Access Key and Secret Key available in the Massive
   dashboard. The REST API key is not substituted.
 - Grouped Daily REST is a bounded fallback and cross-check only for dates that
@@ -31,9 +37,10 @@ and must not be hidden by moving the evaluation boundary.
   is retained in a sanitized immutable acquisition package before canonical
   Apply.
 
-The 2026-09-10 live Flat File pilot stopped before its first S3 request because
-the separate credential file was absent. This is a route-specific missing
-configuration, not evidence that the Starter entitlement is unavailable.
+The later live control proved that the separate credential and current object
+access work. The older 2021-09-09 object was denied under Starter. Flat Files
+omit REST VWAP and its zero-volume path, so they are not silently substituted
+for canonical REST packages.
 
 ## Execution boundaries
 
@@ -96,7 +103,7 @@ census confirmed at least 1,862 missing resolved bars across 676 published
 sessions, and current EOD V1 history therefore remains research-quarantined
 until a separately versioned immutable correction or rebuild is complete.
 
-## Operator command
+## Historical operator command — do not run
 
 The command is deliberately explicit and requires a clean repository:
 
@@ -119,9 +126,9 @@ ownership, and non-0700 directories fail closed. Each session uses the shared
 governed `sessions/session_date=YYYY-MM-DD` acquisition-package and Apply-plan
 roles, so the historical executor does not create a second custody convention.
 
-After the exact 1,255-session evaluation run stops and its aligned checkpoint
-passes, acquire the separate 20-session warm-up into a distinct, truthfully
-named source workspace:
+The following external warm-up command is retained only for a future approved
+deeper-history source program. ADR 0206 prohibits running it under the current
+Starter program:
 
 ```bash
 scripts/admin/run-historical-research-backfill-continuous.sh \
@@ -139,7 +146,7 @@ EOD/Identity partitions use the same contracts, while its retained source
 packages remain physically separate so the evaluation workspace name and
 evidence are not rewritten or made misleading.
 
-## Completion check
+## Fixed-run completion check — historical
 
 The legacy count-based planning CLI accepts at most 504 sessions. It is not a
 post-run verifier for the frozen ADR 0196 1,255-session interval; use the
@@ -156,9 +163,13 @@ EOD/Identity acquisition is complete only when:
 6. conflicts, endpoint-denied dates, and source-route substitutions are
    preserved in a dated audit.
 
-The later Membership stage additionally requires formal readback of the 20
-support sessions. A missing support session blocks only the earliest dependent
-Membership sessions; it does not relabel the rest of the acquired five-year
-EOD/Identity interval incomplete.
+The stopped fixed run did not meet this checklist and will not be retried under
+Starter. Active rolling-source completion is determined only by the ordinary
+daily append followed by a fresh network-disabled ADR 0196 census.
+
+Under ADR 0206, the first 20 available in-window sessions are formally excluded
+from signals and performance as feature warm-up. A future deeper-history
+program may instead activate the external support interval after separate
+authorization and readback.
 
 This milestone does not change research readiness or publish anything to OCI.

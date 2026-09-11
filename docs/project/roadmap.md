@@ -108,8 +108,9 @@ Required work:
   preserving exact source custody; exact-interval execution is implemented.
   Starter S3 access is verified for a current Day Aggregates object but denied
   for 2021-09-09, and Flat Files are not field-equivalent to REST because they
-  omit VWAP and its zero-volume path. Close the remaining evaluation and
-  warm-up dates through a consistent qualified source route;
+  omit VWAP and its zero-volume path. ADR 0206 ends retries or a purchase for
+  the two expired boundary sessions: allow normal daily updates to roll the
+  active source target to 2021-09-13, then verify it offline;
 - build ADR 0204's complete immutable Reconciled EOD Edition after acquisition
   quiesces; prefer retained original packages, retain later reacquisitions as a
   distinct provenance class, and reject unexplained removals or economic-value
@@ -122,18 +123,15 @@ Required work:
   implemented but have made no real request/build; the real post-acquisition
   coverage census, any confirmed later reacquisition, full-interval
   construction, and execution remain pending;
-- preserve the separately declared 20-session warm-up interval in source
-  coverage and the corrected edition without moving the five-year evaluation
-  boundary; contract and controller support are implemented, while real
-  warm-up acquisition remains pending after the exact interval run and will
-  use its separate fixed source workspace;
+- use the first 20 available target sessions as explicit outcome-free feature
+  warm-up and begin performance eligibility only afterward. Preserve the
+  separate external-warm-up contract for a future deeper dataset, but do not
+  populate it under Starter;
 - reconstruct daily historical Membership without projecting current
   constituents or current classifications backward; ADR 0197 requires its
   durable latest-vintage output to live in a research-only family, separate
   from signal-eligible Membership; the first 300 sessions through 2026-09-03
   are now durably archived and formally reread;
-- acquire 20 explicit trailing-liquidity support sessions from 2021-08-11
-  through 2021-09-08 without moving the five-year evaluation boundary;
 - completed 2026-09-10: the fixed census reconciled 437,402 raw-complete
   included paths but zero all-required-evidence-complete paths, without
   calculating triggers, returns, metrics, or parameter results;

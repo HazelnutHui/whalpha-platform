@@ -41,8 +41,8 @@ only the declared acquisition package. It does not write `/data`.
 
 ```bash
 scripts/admin/fetch-massive-day-aggregate-flat-file.sh \
-  --session-date 2021-09-09 \
-  --package-path /tmp/whalpha-2021-09-09-acquisition-package \
+  --session-date 2026-09-09 \
+  --package-path /tmp/whalpha-2026-09-09-flat-file-control-package \
   --review
 ```
 

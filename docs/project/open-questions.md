@@ -54,8 +54,6 @@ history stays in ADRs, the changelog, and audits.
 
 - What is the guaranteed or empirically stable same-evening Grouped Daily
   finality window under Stocks Starter?
-- Does the exact Stocks Starter endpoint provide the expected rolling
-  five-calendar-year EOD and dated-reference depth with complete pagination?
 - What backup/recovery and source-termination policy governs no-expiry
   canonical history and sealed research evidence?
 - When do real query/concurrency needs justify a database rather than current

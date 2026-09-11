@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0206](0206-roll-the-initial-feature-warmup-inside-starter-source-coverage.md):
+  keeps the rolling five-year source scope, uses its first 20 available
+  sessions as disclosed feature warm-up, and ends retries or a purchase solely
+  for the two expired Starter boundary sessions.
 - [ADR 0205](0205-admit-bounded-missing-type-rows-in-historical-identity-reconstruction.md):
   permits a bounded missing-security-type ratio only in later-vintage
   historical Identity reconstruction while every affected row remains
@@ -115,15 +119,16 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0205 separate durable research Membership custody from
+- ADRs 0197–0206 separate durable research Membership custody from
   signal-eligible Membership, scale source-only corporate-action custody to
   the five-year boundary, and retain exact corporate-action and inactive-
   lifecycle source vintages privately without promoting them to canonical
   facts, localize bounded historical alias-revision collisions without
   relaxing prospective Identity rules, and normalize only audited provider
   VWAP float tails, preserve provider-symbol case, govern a complete immutable
-  corrected EOD research edition, and contain missing-type historical rows
-  without projecting later classifications backward.
+  corrected EOD research edition, contain missing-type historical rows without
+  projecting later classifications backward, and align the first experiment's
+  disclosed feature warm-up with the available rolling Starter source window.
 
 ## Runtime and publication decisions
 

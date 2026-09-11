@@ -111,7 +111,8 @@ It completed eleven full batches with zero transient retries and most of the
 final batch before failing closed at 05:35:28 UTC when Grouped Daily REST
 denied 2021-09-10. Quiescent canonical EOD is 1,253 sessions from 2021-09-13;
 Identity is 1,254 physical sessions from 2021-09-10, of which 1,253 align to
-EOD. The exact remaining gaps are EOD 2021-09-09/10 and Identity 2021-09-09.
+EOD. Relative to the stopped fixed run, the remaining gaps are EOD
+2021-09-09/10 and Identity 2021-09-09.
 The post-stop census fingerprint is
 `c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`.
 Zero symlinks, zero staging/partial directories, and no writer were observed.
@@ -134,13 +135,15 @@ A lightweight 01:45:42 UTC custody intersection found 777 retained Grouped
 Daily dates among 1,082 then-canonical EOD sessions, with no source-only orphan
 date and 305 canonical dates lacking a retained package. Those 305 dates fall
 within 2025-06-23 through 2026-09-09 and size the likely later-reacquisition
-work only; they are not a formal coverage result while the writer is active.
+work only; they are not a formal coverage result until the sealed census
+rereads every required binding.
 
 The shared virtual environment's editable metadata points at an older Codex
-worktree. The active backfill remains source-correct because its admin script
-uses the project Python wrapper, which prepends the canonical checkout source.
-Use `scripts/dev/run-project-python.sh` for operator modules; defer environment
-rebinding until the active writer stops.
+worktree. The completed backfill remained source-correct because its admin
+script used the project Python wrapper, which prepends the canonical checkout
+source. Use `scripts/dev/run-project-python.sh` for operator modules until the
+now-quiescent environment is rebound. A network-disabled rebind attempt stopped
+before mutation because `setuptools` is absent; no dependency was downloaded.
 
 The repository also has a coverage-hash-bound, resumable later-source
 reacquisition runner ready for any source-only gaps confirmed by the final
@@ -154,13 +157,15 @@ successful work on a typed stop, and writes the interval marker only after a
 full formal reread. It has run only in fixtures; no real corrected edition has
 been built.
 
-Source Coverage and the full-build controller now preserve the separate
-2021-08-11 through 2021-09-08 warm-up declaration instead of moving the
-2021-09-09 evaluation boundary. The active 1,255-session run remains the exact
-evaluation interval; its separate 20-session warm-up acquisition is still
-pending.
+Source Coverage and the full-build controller can preserve a separate
+2021-08-11 through 2021-09-08 warm-up declaration. ADR 0206 leaves that
+optional deeper-history path unpopulated under Starter. Normal daily updates
+will roll the active source target to 2021-09-13; the first 20 available
+sessions will be outcome-free feature warm-up and performance eligibility will
+begin afterward. Until that daily append and a fresh offline census occur, the
+existing 1,255-session census remains truthfully incomplete.
 
-The warm-up will use the distinct fixed historical workspace
+Any future external warm-up will use the distinct fixed historical workspace
 `warmup-2021-08-11--2021-09-08`; the existing evaluation source workspace will
 not be renamed or populated outside its stated dates. Source Coverage treats
 the two workspaces as different origins with the same possible retained-
@@ -372,9 +377,12 @@ fundamentals, and complete Historical Coverage are absent. The census is
 `quarantined`, fingerprint
 `c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`.
 
-1. Do not restart the stopped `20260911g` Grouped Daily continuation. Close
-   only the EOD 2021-09-09/10 and Identity 2021-09-09 gaps; completing
-   acquisition does not authorize
+1. Do not restart the stopped `20260911g` Grouped Daily continuation. ADR 0206
+   ends retries or a deeper purchase solely for EOD 2021-09-09/10 and Identity
+   2021-09-09. Let normal daily updates move the rolling target; after the
+   latest canonical session reaches 2026-09-11, rerun the network-disabled
+   census and verify the expected 2021-09-13 first target session. This does
+   not authorize
    research use of the affected V1 EOD history. Design and execute a new
    complete immutable Reconciled EOD Edition under ADR 0204, then formally
    reconcile the full interval before research admission. ADR 0202
@@ -387,15 +395,13 @@ fundamentals, and complete Historical Coverage are absent. The census is
    canonical substitute. The separate S3 credential now works: 2026-09-09
    fetched successfully and matched current REST on shared OHLCV/trade count,
    while 2021-09-09 returned access denied. Flat Files omit VWAP and the 13
-   REST-only zero-volume records on that control. Prefer temporary 10-year
-   entitlement plus the existing Grouped Daily REST schema for the remaining
-   evaluation and warm-up dates, or qualify another source explicitly. Exact-interval REST
+   REST-only zero-volume records on that control. Exact-interval REST
    execution freezes both 2021-09-09 and 2026-09-09 and permits an explicit
    bounded paid-plan serial interval; it does not alter the older 300-session
    planning contract.
-   After the nominal interval, acquire the separately declared 20-session
-   Membership warm-up from 2021-08-11 through 2021-09-08; do not count it in
-   the 1,255-session evaluation interval.
+   Use the first 20 available target sessions as disclosed feature warm-up;
+   exclude them from signals and performance. Keep the external warm-up
+   workspace reserved but empty under Starter.
 2. Use Massive as the primary price/reference source and evaluate official
    free evidence through bounded source-specific pilots. Preserve every
    conflict, missing semantic, and permission limit; no first-non-null merge.

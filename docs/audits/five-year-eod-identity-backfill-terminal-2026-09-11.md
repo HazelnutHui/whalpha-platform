@@ -64,3 +64,12 @@ historical backfill writer.
 The legacy count-based planning CLI is capped at 504 sessions and is not a
 post-run verifier for this frozen 1,255-session interval. Use the five-year
 census and exact-interval execution/readback tools instead.
+
+## Subsequent owner decision
+
+ADR 0206 supersedes disposition items 2–5 as the active next action. The owner
+declined a deeper subscription solely for these expired boundary dates. Normal
+daily updates will roll the active five-calendar-year source target forward;
+its first 20 available sessions will be disclosed feature warm-up rather than
+performance observations. This section changes no execution fact or count
+above.

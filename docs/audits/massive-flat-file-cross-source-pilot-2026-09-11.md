@@ -64,3 +64,10 @@ one source schema and one normalization path across the acquired interval.
 This is a recommendation, not purchase or execution authority. A different
 source would require its own identity, completeness, revision, and field-level
 reconciliation before use.
+
+## Subsequent owner decision
+
+ADR 0206 declines that purchase for the initial program. The rolling source
+target will advance through normal daily updates, and its first 20 available
+sessions will be disclosed as feature warm-up. The pilot's access and field-
+comparison findings remain unchanged.

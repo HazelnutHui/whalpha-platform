@@ -101,7 +101,10 @@ budgets now guard this boundary.
   Aggregates Flat File succeeded, while 2021-09-09 returned access denied.
   Current REST and Flat File controls matched exactly on shared OHLCV and trade
   count; Flat Files omit VWAP and 13 REST zero-volume records. Starter cannot
-  close the two oldest evaluation days or the earlier 20-session warm-up.
+  close the two oldest fixed-run days or the earlier external warm-up. ADR
+  0206 therefore ends those retries and declines a deeper purchase solely for
+  this edge: normal daily updates will roll the active source target to
+  2021-09-13, and its first 20 sessions will be excluded as feature warm-up.
 - A lightweight read-only custody intersection at 2026-09-11 01:45:42 UTC
   found 777 unique retained Grouped Daily package dates among 1,082 then-
   canonical EOD sessions. All 777 matched a canonical date; 305 canonical dates
@@ -110,12 +113,14 @@ budgets now guard this boundary.
   result; the new post-acquisition census must still reread every package,
   original Apply binding, EOD partition, and same-session Identity source.
 - The shared `.venv` editable-install metadata currently points at the older
-  Codex worktree rather than the canonical checkout. The active backfill is not
-  affected: its admin entry point delegates to `scripts/dev/run-project-python.sh`,
+  Codex worktree rather than the canonical checkout. The completed backfill was
+  not affected: its admin entry point delegated to `scripts/dev/run-project-python.sh`,
   which prepends the canonical repository source path before Python starts.
-  Reconciled EOD runbook commands now use that same wrapper. Do not invoke new
-  operator modules through bare `.venv/bin/python -m`; reconcile the editable
-  install only after the active writer stops.
+  Reconciled EOD runbook commands use that same wrapper. Do not invoke operator
+  modules through bare `.venv/bin/python -m` until the now-quiescent environment
+  is rebound. A network-disabled local rebind attempt stopped before mutation
+  because the environment lacks `setuptools`; the wrapper remains the safe
+  path and no dependency was downloaded.
 - A coverage-hash-bound later-source reacquisition runner is implemented for
   source-only gaps confirmed by the final quiescent census. It accepts only
   explicit ordered batches of at most 40 dates, serially rate-limits requests,
@@ -129,15 +134,17 @@ budgets now guard this boundary.
   progress on failure, and publishes the sole interval marker last. It is
   fixture-tested only; no real candidate edition has been built.
 - Source Coverage and full-edition construction now model the separate
-  2021-08-11 through 2021-09-08 warm-up interval explicitly. Those 20 sessions
-  will be included in source and edition custody without changing the
-  2021-09-09 through 2026-09-09 evaluation boundary. The stopped evaluation
-  run left two EOD and one Identity session missing; warm-up acquisition
-  remains pending after those gaps close.
+  2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
+  contract remains available for a future deeper-history source. The stopped
+  fixed run left two EOD and one Identity session missing, but external warm-up
+  acquisition is no longer active for the Starter-backed first program under
+  ADR 0206.
 - Warm-up source custody has a separate fixed historical workspace named
   `warmup-2021-08-11--2021-09-08`. The existing evaluation workspace remains
   immutable and date-truthful. Source Coverage recognizes evaluation and
-  warm-up backfills as distinct origins; no warm-up package exists yet.
+  warm-up backfills as distinct origins; no warm-up package exists, and ADR
+  0206 keeps that reserved workspace unpopulated unless deeper history is
+  separately approved.
 - The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
   a concurrent research-Membership inventory change. The unique continuation
   `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only
@@ -177,7 +184,9 @@ budgets now guard this boundary.
   observed. See the
   [terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md).
 
-Price depth is no longer the main research blocker.
+Price depth is no longer the main research blocker. The fixed-run boundary is
+not yet relabelled complete: the target changes only after a normal daily
+append and a fresh network-disabled census.
 
 ## Product
 
@@ -285,8 +294,11 @@ Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverag
 absent; status remains `quarantined`.
 
 1. Do not restart the stopped `20260911g` Grouped Daily continuation. Preserve
-   its 1,253 EOD and 1,254 Identity sessions and close only the exact
-   2021-09-09/10 EOD and 2021-09-09 Identity gaps. Existing
+   its 1,253 EOD and 1,254 Identity sessions. Under ADR 0206, do not purchase
+   deeper history or retry 2021-09-09/10 solely to complete the expired fixed
+   boundary. Let normal daily updates advance the latest canonical session;
+   once it reaches 2026-09-11, rerun the offline rolling census, whose expected
+   first XNYS session is 2021-09-13. Existing
    affected EOD V1 history
    must be rebuilt as ADR 0204's
    complete immutable Reconciled EOD Edition and formally reconciled before
@@ -298,21 +310,18 @@ absent; status remains `quarantined`.
    Do not retry the entitlement-denied EOD dates under Starter. The live Flat
    File control proves current access and shared OHLCV compatibility, but the
    old object is also denied and Flat Files omit VWAP/REST zero-volume rows.
-   Prefer a temporary 10-year Massive entitlement and the existing Grouped
-   Daily REST schema for the remaining evaluation and warm-up dates; otherwise
-   qualify a second source through explicit field and identity reconciliation.
    The backfill executor supports a frozen exact
    1,255-session interval plus an explicit 0.25-to-15-second serial paid-plan
    interval, while retaining the older count-based mode unchanged.
-   The nominal interval is not enough for the first Membership calculation:
-   retain a separate 20-session warm-up extension from 2021-08-11 through
-   2021-09-08 after the exact interval run.
+   Treat the first 20 available target sessions as feature warm-up and exclude
+   them from signals and performance. Do not populate the reserved external
+   warm-up workspace under the current Starter program.
    Corrected-edition construction now has a network-disabled, resumable
    1–40-session batch primitive with at most four spawned workers. It has run
    only in temporary tests. The matching immutable source-coverage contract,
    formal retained-original Apply binding, gap/conflict classification,
    owner-read-only persistence, and hash-bound batch CLI are implemented and
-   fixture-tested. After the writer stops, execute that census and select one
+   fixture-tested. In the now-quiescent state, execute that census and select one
    exact source package per declared session before any real candidate build.
    The complete-interval controller is ready, but do not infer source
    precedence from directory order.
