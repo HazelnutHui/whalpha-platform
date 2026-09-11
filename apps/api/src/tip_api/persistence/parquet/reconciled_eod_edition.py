@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import shutil
+import stat
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -46,6 +47,9 @@ CONTRACT_VERSION_PARTITION = "1"
 MANIFEST_FILE_NAME = "manifest.json"
 INTERVAL_MANIFEST_FILE_NAME = "interval-manifest.json"
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
+APPROVED_PERSISTENT_CANDIDATE_BASE = Path(
+    "/home/hui/.local/state/trading-intelligence-platform/reconciled-eod-editions"
+)
 
 
 class ReconciledEodEditionPersistenceError(RuntimeError):
@@ -82,6 +86,15 @@ class ReconciledEodSessionWriteResult:
 class CompletedReconciledEodEdition:
     manifest: ReconciledEodIntervalManifestV1
     sessions: tuple[CompletedReconciledEodSession, ...]
+    edition_path: Path
+
+
+@dataclass(frozen=True, slots=True)
+class ValidatedReconciledEodEdition:
+    """A formally validated edition without retaining every row in memory."""
+
+    manifest: ReconciledEodIntervalManifestV1
+    session_manifests: tuple[ReconciledEodSessionManifestV1, ...]
     edition_path: Path
 
 
@@ -219,7 +232,7 @@ class ParquetReconciledEodEditionCandidateRepository:
         evaluation_last_session: date,
         warmup_first_session: date | None = None,
         warmup_last_session: date | None = None,
-    ) -> CompletedReconciledEodEdition:
+    ) -> ValidatedReconciledEodEdition:
         """Publish the sole edition completion marker after formal reread."""
 
         root = _candidate_root(self.root)
@@ -227,51 +240,52 @@ class ParquetReconciledEodEditionCandidateRepository:
             raise ReconciledEodEditionPersistenceError(
                 "edition session dates must be non-empty, unique, and ordered"
             )
-        sessions = tuple(
-            read_reconciled_eod_session(
-                root=root,
-                edition_id=self.edition_id,
-                session_date=session_date,
-            )
-            for session_date in session_dates
-        )
-        edition_path = sessions[0].partition_path.parent
+        edition_path = _edition_path(root, edition_id=self.edition_id)
         marker = edition_path / INTERVAL_MANIFEST_FILE_NAME
         declared_session_names = {
             f"session_date={session_date.isoformat()}"
             for session_date in session_dates
         }
-        completed_before: CompletedReconciledEodEdition | None = None
+        completed_before: ValidatedReconciledEodEdition | None = None
         if marker.exists() or marker.is_symlink():
-            completed_before = read_reconciled_eod_edition(
+            completed_before = validate_reconciled_eod_edition(
                 root=root,
                 edition_id=self.edition_id,
             )
+            session_manifests = list(completed_before.session_manifests)
             manifest_created_at = completed_before.manifest.created_at
         else:
             if {item.name for item in edition_path.iterdir()} != declared_session_names:
                 raise ReconciledEodEditionPersistenceError(
                     "edition file set differs before interval completion"
                 )
+            session_manifests = [
+                read_reconciled_eod_session(
+                    root=root,
+                    edition_id=self.edition_id,
+                    session_date=session_date,
+                ).manifest
+                for session_date in session_dates
+            ]
             manifest_created_at = self.created_at or datetime.now(UTC)
         if any(
-            item.manifest.implementation_revision != self.implementation_revision
-            for item in sessions
+            item.implementation_revision != self.implementation_revision
+            for item in session_manifests
         ):
             raise ReconciledEodEditionPersistenceError(
                 "edition sessions use different implementation revisions"
             )
         references = tuple(
             ReconciledEodIntervalSessionReferenceV1(
-                session_date=item.manifest.session_date,
-                session_manifest_fingerprint=item.manifest.logical_fingerprint,
-                rebuilt_eod_fingerprint=item.manifest.rebuilt_eod_fingerprint,
-                record_count=item.manifest.diff.rebuilt_record_count,
-                added_record_count=item.manifest.diff.added_record_count,
-                source_provenance=item.manifest.source_provenance,
-                disposition=item.manifest.diff.disposition,
+                session_date=item.session_date,
+                session_manifest_fingerprint=item.logical_fingerprint,
+                rebuilt_eod_fingerprint=item.rebuilt_eod_fingerprint,
+                record_count=item.diff.rebuilt_record_count,
+                added_record_count=item.diff.added_record_count,
+                source_provenance=item.source_provenance,
+                disposition=item.diff.disposition,
             )
-            for item in sessions
+            for item in session_manifests
         )
         manifest = seal_reconciled_eod_interval_manifest(
             {
@@ -284,17 +298,17 @@ class ParquetReconciledEodEditionCandidateRepository:
                 "warmup_last_session": warmup_last_session,
                 "sessions": references,
                 "retained_original_session_count": sum(
-                    item.manifest.source_provenance
+                    item.source_provenance
                     == ReconciledEodSourceProvenance.RETAINED_ORIGINAL
-                    for item in sessions
+                    for item in session_manifests
                 ),
                 "later_reacquisition_session_count": sum(
-                    item.manifest.source_provenance
+                    item.source_provenance
                     == ReconciledEodSourceProvenance.LATER_REACQUISITION
-                    for item in sessions
+                    for item in session_manifests
                 ),
                 "added_record_count": sum(
-                    item.manifest.diff.added_record_count for item in sessions
+                    item.diff.added_record_count for item in session_manifests
                 ),
                 "created_at": manifest_created_at,
             }
@@ -322,7 +336,7 @@ class ParquetReconciledEodEditionCandidateRepository:
             if temporary.is_file() and not temporary.is_symlink():
                 temporary.unlink()
             raise
-        return read_reconciled_eod_edition(
+        return validate_reconciled_eod_edition(
             root=root,
             edition_id=self.edition_id,
         )
@@ -448,24 +462,93 @@ def read_reconciled_eod_edition(
         for reference in manifest.sessions
     )
     for reference, completed in zip(manifest.sessions, sessions, strict=True):
-        session = completed.manifest
-        if (
-            session.logical_fingerprint != reference.session_manifest_fingerprint
-            or session.rebuilt_eod_fingerprint != reference.rebuilt_eod_fingerprint
-            or session.diff.rebuilt_record_count != reference.record_count
-            or session.diff.added_record_count != reference.added_record_count
-            or session.source_provenance != reference.source_provenance
-            or session.diff.disposition != reference.disposition
-            or session.implementation_revision != manifest.implementation_revision
-        ):
-            raise ReconciledEodEditionCorruptionError(
-                "reconciled EOD interval session binding differs"
-            )
+        _verify_interval_session_binding(
+            interval=manifest,
+            reference=reference,
+            session=completed.manifest,
+        )
     return CompletedReconciledEodEdition(
         manifest=manifest,
         sessions=sessions,
         edition_path=edition_path,
     )
+
+
+def validate_reconciled_eod_edition(
+    *,
+    root: Path,
+    edition_id: str,
+) -> ValidatedReconciledEodEdition:
+    """Formally validate every session while retaining only manifest evidence."""
+
+    root = _read_root(root)
+    edition_path = _edition_path(root, edition_id=edition_id)
+    _reject_symlink_chain(root, edition_path)
+    marker = edition_path / INTERVAL_MANIFEST_FILE_NAME
+    if marker.is_symlink() or not marker.is_file():
+        raise ReconciledEodEditionCorruptionError(
+            "reconciled EOD interval manifest is unavailable"
+        )
+    try:
+        payload = json.loads(marker.read_text(encoding="utf-8"))
+        manifest = ReconciledEodIntervalManifestV1.model_validate(payload)
+    except (OSError, json.JSONDecodeError, ValidationError) as exc:
+        raise ReconciledEodEditionCorruptionError(
+            "reconciled EOD interval manifest is invalid"
+        ) from exc
+    if manifest.edition_id != edition_id:
+        raise ReconciledEodEditionCorruptionError(
+            "reconciled EOD interval identity differs"
+        )
+    expected_names = {
+        INTERVAL_MANIFEST_FILE_NAME,
+        *(
+            f"session_date={item.session_date.isoformat()}"
+            for item in manifest.sessions
+        ),
+    }
+    if {item.name for item in edition_path.iterdir()} != expected_names:
+        raise ReconciledEodEditionCorruptionError(
+            "reconciled EOD edition file set differs"
+        )
+    session_manifests: list[ReconciledEodSessionManifestV1] = []
+    for reference in manifest.sessions:
+        completed = read_reconciled_eod_session(
+            root=root,
+            edition_id=edition_id,
+            session_date=reference.session_date,
+        )
+        _verify_interval_session_binding(
+            interval=manifest,
+            reference=reference,
+            session=completed.manifest,
+        )
+        session_manifests.append(completed.manifest)
+    return ValidatedReconciledEodEdition(
+        manifest=manifest,
+        session_manifests=tuple(session_manifests),
+        edition_path=edition_path,
+    )
+
+
+def _verify_interval_session_binding(
+    *,
+    interval: ReconciledEodIntervalManifestV1,
+    reference: ReconciledEodIntervalSessionReferenceV1,
+    session: ReconciledEodSessionManifestV1,
+) -> None:
+    if (
+        session.logical_fingerprint != reference.session_manifest_fingerprint
+        or session.rebuilt_eod_fingerprint != reference.rebuilt_eod_fingerprint
+        or session.diff.rebuilt_record_count != reference.record_count
+        or session.diff.added_record_count != reference.added_record_count
+        or session.source_provenance != reference.source_provenance
+        or session.diff.disposition != reference.disposition
+        or session.implementation_revision != interval.implementation_revision
+    ):
+        raise ReconciledEodEditionCorruptionError(
+            "reconciled EOD interval session binding differs"
+        )
 
 
 def _verify_existing_candidate(
@@ -517,19 +600,57 @@ def _write_result(
 
 
 def _candidate_root(root: Path) -> Path:
-    root = _read_root(root, must_exist=False)
+    if not root.is_absolute() or root.is_symlink():
+        raise ReconciledEodEditionPersistenceError("edition root is invalid")
     temporary = Path("/tmp").resolve(strict=True)
-    if temporary not in root.parents:
+    resolved = root.resolve(strict=False)
+    persistent_base = APPROVED_PERSISTENT_CANDIDATE_BASE
+    persistent = False
+    persistent_base_resolved = (
+        persistent_base.resolve(strict=True)
+        if persistent_base.is_dir() and not persistent_base.is_symlink()
+        else None
+    )
+    inside_persistent_base = (
+        persistent_base_resolved is not None
+        and (
+            resolved == persistent_base_resolved
+            or persistent_base_resolved in resolved.parents
+        )
+    )
+    if inside_persistent_base:
+        if resolved.parent != persistent_base_resolved:
+            raise ReconciledEodEditionPersistenceError(
+                "persistent candidate root must be a direct child"
+            )
+        base = _owner_only_directory(
+            persistent_base_resolved,
+            description="persistent candidate base",
+        )
+        if root.parent.resolve(strict=True) != base:
+            raise ReconciledEodEditionPersistenceError(
+                "persistent candidate root parent differs"
+            )
+        persistent = True
+    elif temporary in resolved.parents:
+        pass
+    else:
         raise ReconciledEodEditionPersistenceError(
-            "edition candidate root must be below /tmp"
+            "edition candidate root is outside approved boundaries"
         )
     root.mkdir(parents=True, exist_ok=True, mode=0o700)
-    if root.is_symlink():
+    if root.is_symlink() or root.resolve(strict=True) != resolved:
         raise ReconciledEodEditionPersistenceError(
             "edition candidate root must not be a symlink"
         )
     root.chmod(0o700)
-    return root.resolve(strict=True)
+    resolved = root.resolve(strict=True)
+    _owner_only_directory(resolved, description="edition candidate root")
+    if persistent and resolved.parent != persistent_base.resolve(strict=True):
+        raise ReconciledEodEditionPersistenceError(
+            "persistent candidate root is not a direct child"
+        )
+    return resolved
 
 
 def _read_root(root: Path, *, must_exist: bool = True) -> Path:
@@ -539,10 +660,42 @@ def _read_root(root: Path, *, must_exist: bool = True) -> Path:
         raise ReconciledEodEditionPersistenceError("edition root is unavailable")
     resolved = root.resolve(strict=must_exist)
     temporary = Path("/tmp").resolve(strict=True)
-    if resolved != APPROVED_DATA_ROOT and temporary not in resolved.parents:
+    persistent_base = APPROVED_PERSISTENT_CANDIDATE_BASE
+    persistent_base_resolved = (
+        persistent_base.resolve(strict=True)
+        if persistent_base.is_dir() and not persistent_base.is_symlink()
+        else None
+    )
+    inside_persistent_base = (
+        persistent_base_resolved is not None
+        and (
+            resolved == persistent_base_resolved
+            or persistent_base_resolved in resolved.parents
+        )
+    )
+    if inside_persistent_base and resolved.parent != persistent_base_resolved:
+        raise ReconciledEodEditionPersistenceError(
+            "persistent candidate root must be a direct child"
+        )
+    persistent = inside_persistent_base
+    if (
+        resolved != APPROVED_DATA_ROOT
+        and temporary not in resolved.parents
+        and not persistent
+    ):
         raise ReconciledEodEditionPersistenceError(
             "edition root is outside approved boundaries"
         )
+    if persistent:
+        _owner_only_directory(
+            persistent_base.resolve(strict=True),
+            description="persistent candidate base",
+        )
+        if must_exist:
+            _owner_only_directory(
+                resolved,
+                description="edition candidate root",
+            )
     return resolved
 
 
@@ -566,7 +719,7 @@ def _partition_path(
         / f"session_date={session_date.isoformat()}"
     )
     if create_parents:
-        partition.parent.mkdir(parents=True, exist_ok=True)
+        _mkdirs_owner_only(partition.parent, root)
     if root not in partition.resolve(strict=False).parents:
         raise ReconciledEodEditionPersistenceError("edition path escapes root")
     return partition
@@ -615,3 +768,43 @@ def _fsync_directory(path: Path) -> None:
         os.fsync(descriptor)
     finally:
         os.close(descriptor)
+
+
+def _owner_only_directory(path: Path, *, description: str) -> Path:
+    if path.is_symlink() or not path.is_dir():
+        raise ReconciledEodEditionPersistenceError(f"{description} is unavailable")
+    metadata = path.stat()
+    if (
+        not stat.S_ISDIR(metadata.st_mode)
+        or metadata.st_uid != os.geteuid()
+        or stat.S_IMODE(metadata.st_mode) != 0o700
+    ):
+        raise ReconciledEodEditionPersistenceError(
+            f"{description} must be owner-only"
+        )
+    return path
+
+
+def _mkdirs_owner_only(path: Path, root: Path) -> None:
+    missing: list[Path] = []
+    current = path
+    while not current.exists():
+        if current == root or root not in current.parents:
+            raise ReconciledEodEditionPersistenceError(
+                "edition candidate path escapes root"
+            )
+        missing.append(current)
+        current = current.parent
+    if current.is_symlink() or not current.is_dir():
+        raise ReconciledEodEditionPersistenceError(
+            "edition candidate parent is unsafe"
+        )
+    for item in reversed(missing):
+        item.mkdir(mode=0o700)
+        _fsync_directory(item.parent)
+    current = path
+    while True:
+        _owner_only_directory(current, description="edition candidate directory")
+        if current == root:
+            return
+        current = current.parent

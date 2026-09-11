@@ -15,6 +15,7 @@ from tip_api.contracts.market_data.v1.reconciled_eod_edition import (
     reconciled_eod_fingerprint,
 )
 from tip_api.persistence.parquet.manifest import content_fingerprint
+from tip_api.persistence.parquet import reconciled_eod_edition as module
 from tip_api.persistence.parquet.reconciled_eod_edition import (
     ParquetReconciledEodEditionCandidateRepository,
     ReconciledEodEditionConflictError,
@@ -150,10 +151,11 @@ def test_interval_manifest_is_the_only_complete_edition_boundary(
 
     assert completed.manifest == reread.manifest == reused.manifest
     assert completed.manifest.added_record_count == 1
-    assert len(completed.sessions) == 1
+    assert len(completed.session_manifests) == 1
 
 
 def test_interval_manifest_rerun_without_fixed_clock_is_idempotent(
+    monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,
 ) -> None:
     root = tmp_path / "edition-candidate"
@@ -169,6 +171,15 @@ def test_interval_manifest_rerun_without_fixed_clock_is_idempotent(
         evaluation_first_session=SESSION,
         evaluation_last_session=SESSION,
     )
+    original_read = module.read_reconciled_eod_session
+    calls = 0
+
+    def counted_read(**values):
+        nonlocal calls
+        calls += 1
+        return original_read(**values)
+
+    monkeypatch.setattr(module, "read_reconciled_eod_session", counted_read)
     second = store.publish_interval_manifest(
         session_dates=(SESSION,),
         evaluation_first_session=SESSION,
@@ -176,6 +187,7 @@ def test_interval_manifest_rerun_without_fixed_clock_is_idempotent(
     )
 
     assert second.manifest == first.manifest
+    assert calls == 1
 
 
 def test_interval_manifest_rejects_residue_before_writing_marker(
@@ -245,3 +257,39 @@ def test_formal_reread_rejects_manifest_tampering(tmp_path: Path) -> None:
 def test_candidate_writer_rejects_non_tmp_root() -> None:
     with pytest.raises(ReconciledEodEditionPersistenceError, match="invalid"):
         repository(Path("relative-root")).publish_session(candidate())
+
+
+def test_supports_one_owner_only_persistent_candidate_child(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    base = tmp_path / "persistent-candidates"
+    base.mkdir(mode=0o700)
+    monkeypatch.setattr(module, "APPROVED_PERSISTENT_CANDIDATE_BASE", base)
+    root = base / "massive-exact-symbol-v1"
+
+    result = repository(root).publish_session(candidate())
+    completed = read_reconciled_eod_session(
+        root=root,
+        edition_id="massive-exact-symbol-v1",
+        session_date=SESSION,
+    )
+
+    assert completed.manifest.logical_fingerprint == result.manifest_fingerprint
+    assert root.stat().st_mode & 0o777 == 0o700
+    current = result.partition_path
+    while current != root.parent:
+        assert current.stat().st_mode & 0o777 == 0o700
+        current = current.parent
+
+
+def test_rejects_nested_persistent_candidate_root(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    base = tmp_path / "persistent-candidates"
+    base.mkdir(mode=0o700)
+    monkeypatch.setattr(module, "APPROVED_PERSISTENT_CANDIDATE_BASE", base)
+
+    with pytest.raises(ReconciledEodEditionPersistenceError, match="direct child"):
+        repository(base / "outer" / "nested").publish_session(candidate())

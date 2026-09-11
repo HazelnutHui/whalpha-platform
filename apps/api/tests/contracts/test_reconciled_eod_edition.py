@@ -7,9 +7,13 @@ from tip_api.contracts.market_data.v1.reconciled_eod_edition import (
     MAPPER_POLICY_ID,
     ReconciledEodDiffDisposition,
     ReconciledEodDiffSummaryV1,
+    ReconciledEodEditionApplyArtifactV1,
+    ReconciledEodEditionApplyPlanV1,
     ReconciledEodIntervalSessionReferenceV1,
     ReconciledEodSessionManifestV1,
     ReconciledEodSourceProvenance,
+    reconciled_eod_apply_inventory_fingerprint,
+    seal_reconciled_eod_apply_plan,
     seal_reconciled_eod_interval_manifest,
     seal_reconciled_eod_session_manifest,
 )
@@ -156,3 +160,80 @@ def test_interval_rejects_partial_declared_bounds() -> None:
     }
     with pytest.raises(ValidationError, match="first boundary"):
         seal_reconciled_eod_interval_manifest(values)
+
+
+def apply_artifacts() -> tuple[ReconciledEodEditionApplyArtifactV1, ...]:
+    relative = (
+        f"session_date={SESSION.isoformat()}/manifest.json",
+        f"session_date={SESSION.isoformat()}/part-00000.parquet",
+        "interval-manifest.json",
+    )
+    return tuple(
+        ReconciledEodEditionApplyArtifactV1(
+            relative_path=item,
+            size=index + 1,
+            sha256=str(index + 3) * 64,
+        )
+        for index, item in enumerate(relative)
+    )
+
+
+def apply_plan(**override: object) -> ReconciledEodEditionApplyPlanV1:
+    artifacts = apply_artifacts()
+    values: dict[str, object] = {
+        "created_at": NOW,
+        "planner_revision": REVISION,
+        "candidate_implementation_revision": REVISION,
+        "edition_id": "massive-exact-symbol-v1",
+        "data_root": "/data/trading-intelligence-platform",
+        "candidate_location_fingerprint": "9" * 64,
+        "target_edition_path": (
+            "/data/trading-intelligence-platform/market-data/"
+            "reconciled-eod-price-bar-editions/contract_version=1/"
+            "edition_id=massive-exact-symbol-v1"
+        ),
+        "expected_current_state_fingerprint": SHA,
+        "candidate_interval_manifest_fingerprint": "b" * 64,
+        "candidate_inventory_fingerprint": (
+            reconciled_eod_apply_inventory_fingerprint(artifacts)
+        ),
+        "candidate_session_count": 1,
+        "candidate_record_count": 11,
+        "candidate_added_record_count": 1,
+        "artifacts": artifacts,
+        "inventory_change_file_count": 3,
+        "inventory_change_bytes": 6,
+    }
+    values.update(override)
+    return seal_reconciled_eod_apply_plan(values)
+
+
+def test_apply_plan_binds_exact_inventory_and_denies_authority() -> None:
+    plan = apply_plan()
+
+    assert plan.inventory_change_file_count == 3
+    assert plan.apply_authorized is False
+    assert plan.candidate_authority is False
+    assert plan.production_authority is False
+    assert plan.research_performance_authorized is False
+
+    forged = plan.model_dump(mode="json")
+    forged["candidate_record_count"] = 12
+    with pytest.raises(ValidationError, match="fingerprint mismatch"):
+        ReconciledEodEditionApplyPlanV1.model_validate(forged)
+
+
+def test_apply_plan_rejects_artifact_path_order_and_inventory_tamper() -> None:
+    artifacts = list(apply_artifacts())
+    with pytest.raises(ValidationError, match="unordered"):
+        apply_plan(artifacts=tuple(reversed(artifacts)))
+
+    with pytest.raises(ValidationError, match="root artifact is invalid"):
+        ReconciledEodEditionApplyArtifactV1(
+            relative_path="wrong.json",
+            size=1,
+            sha256=SHA,
+        )
+
+    with pytest.raises(ValidationError, match="candidate inventory differs"):
+        apply_plan(candidate_inventory_fingerprint="0" * 64)

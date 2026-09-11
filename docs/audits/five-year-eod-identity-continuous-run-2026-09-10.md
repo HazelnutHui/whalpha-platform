@@ -211,3 +211,17 @@ reread EOD. At 00:19:34 UTC, EOD and Identity were aligned at 1,017 sessions
 from 2022-08-19 through 2026-09-09. Identity source custody contained 1,015
 sessions; only 2026-08-13 and 2026-08-19 remained source-unbound. The next
 frozen-interval session was 2022-08-18.
+
+## Third continuation after missing-type recovery
+
+Clean source `6851d005bd9808d970e49988000223ff4898dd16` started the unique
+`whalpha-five-year-backfill-20260911g.service` at 00:20:35 UTC with the same
+frozen interval, serial 0.25-second acquisition spacing, 20-session batches,
+24-hour runtime ceiling, 2 GiB memory ceiling, 64-task limit, and no restart.
+
+At 00:41:27 UTC the unit remained active with one process, 33 tasks, and about
+553 MiB memory. Direct read-only partition counts found 1,033 aligned EOD and
+Identity sessions from 2022-07-28 through 2026-09-09 and 1,031 Identity-source
+partitions; the two known source-unbound sessions were unchanged. No symlink,
+staging directory, or partial directory was present. This is a live checkpoint,
+not a completion claim; 2022-07-27 was the next exact session at observation.

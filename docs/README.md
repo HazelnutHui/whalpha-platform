@@ -129,6 +129,7 @@ separately approved bounded serving artifacts.
 - [Daily EOD Automation](operations/daily-eod-automation.md)
 - [Massive Day Aggregates Flat File Ingestion](operations/massive-day-aggregates-flat-file-ingestion.md)
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
+- [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Research Universe Membership Custody](operations/research-universe-membership-custody.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)

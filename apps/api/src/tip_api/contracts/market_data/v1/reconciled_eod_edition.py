@@ -7,6 +7,7 @@ import json
 import re
 from datetime import date, datetime
 from enum import StrEnum
+from pathlib import PurePosixPath
 from typing import Literal, Mapping
 
 from pydantic import (
@@ -24,6 +25,7 @@ from tip_api.contracts.common import normalize_utc_datetime
 
 SESSION_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-session/1.0"
 INTERVAL_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-interval/1.0"
+APPLY_PLAN_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-apply-plan/1.0"
 DATASET_NAME = "reconciled-eod-price-bar-editions"
 MAPPER_POLICY_ID = "massive-exact-provider-symbol-v1"
 _SHA256 = r"^[0-9a-f]{64}$"
@@ -331,6 +333,141 @@ class ReconciledEodIntervalManifestV1(FrozenModel):
         return self
 
 
+class ReconciledEodEditionApplyArtifactV1(FrozenModel):
+    relative_path: str
+    size: int = Field(ge=1)
+    sha256: str = Field(pattern=_SHA256)
+
+    @field_validator("relative_path")
+    @classmethod
+    def relative_path_is_safe(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if (
+            path.is_absolute()
+            or ".." in path.parts
+            or path.as_posix() != value
+            or len(path.parts) not in {1, 2}
+        ):
+            raise ValueError("reconciled EOD artifact relative path is invalid")
+        if len(path.parts) == 1:
+            if value != "interval-manifest.json":
+                raise ValueError("reconciled EOD root artifact is invalid")
+        elif (
+            not path.parts[0].startswith("session_date=")
+            or path.parts[1] not in {"manifest.json", "part-00000.parquet"}
+        ):
+            raise ValueError("reconciled EOD session artifact is invalid")
+        return value
+
+
+class ReconciledEodEditionApplyPlanV1(FrozenModel):
+    contract_version: Literal[
+        "reconciled-eod-price-bar-edition-apply-plan/1.0"
+    ] = APPLY_PLAN_CONTRACT_VERSION
+    operation: Literal["publish_complete_reconciled_eod_edition"] = (
+        "publish_complete_reconciled_eod_edition"
+    )
+    status: Literal["ready_for_separate_apply"] = "ready_for_separate_apply"
+    created_at: datetime
+    planner_revision: str = Field(pattern=_REVISION)
+    candidate_implementation_revision: str = Field(pattern=_REVISION)
+    edition_id: str
+    data_root: str
+    candidate_location_fingerprint: str = Field(pattern=_SHA256)
+    target_edition_path: str
+    expected_current_state_fingerprint: str = Field(pattern=_SHA256)
+    candidate_interval_manifest_fingerprint: str = Field(pattern=_SHA256)
+    candidate_inventory_fingerprint: str = Field(pattern=_SHA256)
+    candidate_session_count: int = Field(ge=1)
+    candidate_record_count: int = Field(ge=1)
+    candidate_added_record_count: int = Field(ge=0)
+    artifacts: tuple[ReconciledEodEditionApplyArtifactV1, ...]
+    inventory_change_file_count: int = Field(ge=3)
+    inventory_change_bytes: int = Field(ge=1)
+    target_absent_partition_count: Literal[1] = 1
+    candidate_formal_read_complete: Literal[True] = True
+    target_absence_verified: Literal[True] = True
+    current_inventory_bound: Literal[True] = True
+    external_request_count: Literal[0] = 0
+    canonical_data_write_count: Literal[0] = 0
+    apply_authorized: Literal[False] = False
+    candidate_authority: Literal[False] = False
+    production_authority: Literal[False] = False
+    research_performance_authorized: Literal[False] = False
+    logical_fingerprint: str = Field(pattern=_SHA256)
+
+    @field_validator("created_at")
+    @classmethod
+    def created_at_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("edition_id")
+    @classmethod
+    def edition_id_is_bounded(cls, value: str) -> str:
+        if not isinstance(value, str) or not _EDITION_ID.fullmatch(value):
+            raise ValueError("edition_id is invalid")
+        return value
+
+    @field_validator("data_root", "target_edition_path")
+    @classmethod
+    def roots_are_absolute(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if not path.is_absolute() or ".." in path.parts or path.as_posix() != value:
+            raise ValueError("reconciled EOD plan root is invalid")
+        return value
+
+    @model_validator(mode="after")
+    def plan_reconciles(self, info: ValidationInfo) -> "ReconciledEodEditionApplyPlanV1":
+        target_edition = (
+            PurePosixPath(self.data_root)
+            / "market-data"
+            / DATASET_NAME
+            / "contract_version=1"
+            / f"edition_id={self.edition_id}"
+        )
+        if PurePosixPath(self.target_edition_path) != target_edition:
+            raise ValueError("reconciled EOD target edition path differs")
+        relative_paths = tuple(item.relative_path for item in self.artifacts)
+        expected_order = tuple(
+            sorted(path for path in relative_paths if path != "interval-manifest.json")
+        ) + ("interval-manifest.json",)
+        if relative_paths != expected_order or len(set(relative_paths)) != len(
+            relative_paths
+        ):
+            raise ValueError("reconciled EOD Apply artifacts are unordered")
+        session_files: dict[str, set[str]] = {}
+        for item in self.artifacts:
+            relative = PurePosixPath(item.relative_path)
+            if len(relative.parts) == 2:
+                session_files.setdefault(relative.parts[0], set()).add(
+                    relative.parts[1]
+                )
+        if (
+            len(session_files) != self.candidate_session_count
+            or any(
+                names != {"manifest.json", "part-00000.parquet"}
+                for names in session_files.values()
+            )
+        ):
+            raise ValueError("reconciled EOD session artifact set differs")
+        if self.inventory_change_file_count != len(self.artifacts):
+            raise ValueError("reconciled EOD inventory file count differs")
+        if self.inventory_change_bytes != sum(item.size for item in self.artifacts):
+            raise ValueError("reconciled EOD inventory bytes differ")
+        if self.candidate_inventory_fingerprint != (
+            reconciled_eod_apply_inventory_fingerprint(self.artifacts)
+        ):
+            raise ValueError("reconciled EOD candidate inventory differs")
+        if info.context and info.context.get("allow_unsealed_manifest"):
+            return self
+        expected = reconciled_eod_fingerprint(
+            self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        )
+        if self.logical_fingerprint != expected:
+            raise ValueError("reconciled EOD Apply-plan fingerprint mismatch")
+        return self
+
+
 def reconciled_eod_fingerprint(value: object) -> str:
     payload = json.dumps(
         to_jsonable_python(value),
@@ -370,3 +507,25 @@ def seal_reconciled_eod_interval_manifest(
     payload = draft.model_dump(mode="json", exclude={"logical_fingerprint"})
     payload["logical_fingerprint"] = reconciled_eod_fingerprint(payload)
     return ReconciledEodIntervalManifestV1.model_validate(payload)
+
+
+def reconciled_eod_apply_inventory_fingerprint(
+    artifacts: tuple[ReconciledEodEditionApplyArtifactV1, ...],
+) -> str:
+    return reconciled_eod_fingerprint(
+        tuple(item.model_dump(mode="json") for item in artifacts)
+    )
+
+
+def seal_reconciled_eod_apply_plan(
+    values: Mapping[str, object],
+) -> ReconciledEodEditionApplyPlanV1:
+    if "logical_fingerprint" in values:
+        raise ValueError("logical_fingerprint is computed, not supplied")
+    draft = ReconciledEodEditionApplyPlanV1.model_validate(
+        {**dict(values), "logical_fingerprint": "0" * 64},
+        context={"allow_unsealed_manifest": True},
+    )
+    payload = draft.model_dump(mode="json", exclude={"logical_fingerprint"})
+    payload["logical_fingerprint"] = reconciled_eod_fingerprint(payload)
+    return ReconciledEodEditionApplyPlanV1.model_validate(payload)

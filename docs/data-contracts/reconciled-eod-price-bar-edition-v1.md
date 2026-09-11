@@ -11,8 +11,9 @@ does not overwrite or implicitly supersede canonical EOD Price Bar V1.
 Contract, deterministic sealing, fail-closed diff classification, formal base
 record reread, one-session isolated candidate reconstruction, owner-only
 candidate persistence, immutable rerun checks, completed-session formal
-reread, and final interval-marker sealing/reread are implemented. Canonical
-Apply planning, batch execution, full source-package coverage, and the
+reread, final interval-marker sealing/reread, exact whole-edition Apply
+planning, and atomic Apply execution are implemented. Real batch construction,
+full source-package coverage, an executed complete edition, and the
 edition-only research input adapter remain pending.
 
 ## Identity
@@ -78,6 +79,43 @@ The interval manifest is written last and includes:
 Readers reject an absent, partial, inconsistent, symlinked, or fingerprint-
 mismatched interval manifest. They never infer completion from the number of
 session directories.
+
+Full-edition validation processes one session at a time and retains only its
+manifest evidence. This preserves complete Parquet/schema/content validation
+without retaining all five years of rows in memory.
+
+## Candidate custody and Apply
+
+Long-running construction may use exactly one direct child of the fixed Dell
+owner-only candidate base. Bounded tests may use an owner-only directory below
+`/tmp`. Candidate directories are mode 0700 and files are mode 0600. The
+candidate never lives below `/data` and never gains research or Production
+authority.
+
+The sealed Apply plan binds:
+
+- the plan's exact candidate custody and non-revealing location fingerprint,
+  plus the exact target edition path;
+- every session manifest and Parquet path, byte count, and SHA-256;
+- the final interval-manifest fingerprint;
+- total session, record, and accepted-addition counts;
+- the candidate implementation and planner revisions; and
+- one full canonical `/data` pre-state fingerprint.
+
+The plan is an owner-read-only file beside the candidate, not an authorization.
+Apply additionally requires its byte SHA-256, logical fingerprint, and expected
+pre-state fingerprint. It acquires the shared Dell data-writer lock, disables
+network access, verifies the complete candidate and inventory binding, copies
+all artifacts to one adjacent staging edition, writes the interval manifest
+last, and atomically renames the complete directory into its absent target.
+The target uses 0755 directories and 0644 files. A formal target reread and an
+outside-target inventory comparison follow before success is reported.
+
+An exact completed target may be reused only through the explicit
+`verify_then_complete` recovery path. Unknown staging residue is never removed.
+Failure cleanup is inode-bound to the staging directory created by that Apply.
+No overwrite, deletion, external request, model admission, or website action is
+part of this contract.
 
 ## Authority
 

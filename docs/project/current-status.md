@@ -59,12 +59,15 @@ budgets now guard this boundary.
 ## Data
 
 - After the bounded case-sensitive-symbol recovery, the unique continuation
-  and one exact-session recovery advanced to 1,017 aligned contiguous EOD and
-  Identity sessions from 2022-08-19 through 2026-09-09. Latest EOD has 9,916
+  and one exact-session recovery first advanced to 1,017 aligned contiguous EOD
+  and Identity sessions. The unique `20260911g` continuation then remained
+  active and advanced both families to an observed 1,033-session checkpoint
+  from 2022-07-28 through 2026-09-09 at 00:41:27 UTC. Latest EOD has 9,916
   rows; latest Identity
   has 9,982 instruments.
-- Historical Identity source custody has 1,015 partitions across the
-  acquired interval; 2026-08-13 and 2026-08-19 remain explicitly unbound.
+- Historical Identity source custody had 1,031 partitions at that checkpoint;
+  the difference from the aligned count is still exactly the two explicitly
+  unbound sessions 2026-08-13 and 2026-08-19.
 - Signal-eligible Membership has three prospective sessions and 59,892
   decisions.
 - Research-only latest-vintage Membership has 300 sessions and 5,571,154
@@ -121,7 +124,13 @@ budgets now guard this boundary.
   then clean source `49ef83a4bc5ee70914eabb9930a8c9f7c6d78f3b`
   reused the Identity package with zero requests, acquired EOD in one request,
   and formally aligned both families at 1,017 sessions. The next exact session
-  is 2022-08-18.
+  was 2022-08-18. Clean source `6851d005bd9808d970e49988000223ff4898dd16`
+  started the sole `whalpha-five-year-backfill-20260911g.service` at
+  00:20:35 UTC. At 00:41:27 UTC it was active under the unchanged 24-hour,
+  2 GiB, 64-task, serial-acquisition bounds; EOD and Identity were aligned at
+  1,033 sessions through 2022-07-28, Identity source custody was 1,031, and
+  no symlink or publication residue was observed. The next exact session was
+  2022-07-27 at that live checkpoint.
 
 Price depth is no longer the main research blocker.
 
@@ -170,9 +179,9 @@ unauthorized.
 
 Complete:
 
-- 1,017 aligned EOD and Identity durable partitions through the latest safe
+- 1,033 aligned EOD and Identity durable partitions through the live
   continuation boundary;
-- 1,015 Identity source partitions, 300 research-only Membership sessions, and
+- 1,031 Identity source partitions, 300 research-only Membership sessions, and
   three prospective signal-eligible Membership sessions;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
@@ -185,9 +194,10 @@ Incomplete:
 - immutable corrected EOD history for the ADR 0203 case-sensitive-symbol
   defect and full-interval reconciliation; ADR 0204's contracts, diff
   classifier, isolated one-session candidate builder, owner-only candidate
-  persistence, formal reader, and final interval completion marker are
-  implemented, but canonical Apply/batch execution and a complete edition are
-  not;
+  persistence, memory-bounded formal reader, final interval completion marker,
+  exact whole-edition Apply planning, and atomic Apply executor are implemented,
+  but real batch construction, an executed canonical edition, and its later
+  research admission are not;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
@@ -224,12 +234,13 @@ that fixes both known gaps.
 
 The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
 2021-09-09 through 2026-09-09. Its initial coverage counts are superseded by
-the 1,017-session aligned checkpoint above. Membership remains 303/1,255.
+the 1,033-session live checkpoint above. Membership remains 303/1,255.
 Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
-1. Start only one new bounded EOD/Identity continuation at 2022-08-18 from the
-   formally aligned 1,017-session boundary. Existing affected EOD V1 history
+1. Let the sole bounded `20260911g` EOD/Identity continuation proceed from the
+   observed 1,033-session boundary; do not start a competing writer. Existing
+   affected EOD V1 history
    must be rebuilt as ADR 0204's
    complete immutable Reconciled EOD Edition and formally reconciled before
    research admission. ADR 0202 resolved the 2022-12-05 VWAP

@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-11 — Implement whole-edition corrected EOD Apply custody
+
+- Extended Reconciled EOD candidate custody from bounded `/tmp` tests to one
+  direct owner-only child of the fixed Dell persistent base. Candidate
+  directories/files remain 0700/0600 and retain no research or Production
+  authority.
+- Changed full-edition validation to process one complete daily cross-section
+  at a time while retaining only manifest evidence, removing the five-year
+  all-rows memory growth without weakening schema, hash, row-contract, content,
+  or interval validation.
+- Added a sealed exact Apply plan that binds every artifact, interval
+  fingerprint, counts, revisions, absent target, and the full canonical
+  pre-state. Added a shared-lock, network-disabled, no-overwrite executor that
+  copies to adjacent staging, verifies bytes, publishes by one atomic directory
+  rename, and formally rereads the completed target. Explicit recovery can only
+  reuse the exact completed target; unknown staging is retained for diagnosis.
+- Added an operator CLI whose Apply path requires the plan byte hash, logical
+  fingerprint, expected pre-state fingerprint, and `--execute`. These mechanics
+  were exercised only against temporary test roots; no real edition Apply,
+  model admission, analytics, OCI publication, or deployment ran.
+- Focused Reconciled EOD regression passed 34 tests and the complete API suite
+  passed 2,452 tests with only the two existing dependency deprecation warnings.
+- Started the sole bounded `20260911g` five-year continuation from clean source
+  `6851d005bd9808d970e49988000223ff4898dd16`. At the 00:41:27 UTC live
+  checkpoint it was active and EOD/Identity were aligned at 1,033 sessions
+  through 2022-07-28; the run was not declared complete.
+
 ## 2026-09-11 — Bound missing-type rows in historical Identity reconstruction
 
 - Accepted ADR 0205 after the five-year continuation stopped before
