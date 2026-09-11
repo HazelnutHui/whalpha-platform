@@ -1,10 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-10T21:03:41Z
+Operational state verified at: 2026-09-11T21:24:38Z
 
-Deployment state additionally verified at: 2026-09-10T21:15:01Z
-
-Backfill activity additionally verified at: 2026-09-11T01:19:43Z
+Deployment state additionally verified at: 2026-09-11T21:23:56Z
 
 Repository context updated at: 2026-09-11 UTC
 
@@ -22,8 +20,8 @@ ADRs. Proposed work belongs in the [roadmap](roadmap.md).
 | Source branch | main; verify current HEAD and cleanliness with the report |
 | Public site | https://whalpha.com/ |
 | OCI alias | whalpha-oci |
-| Active OCI release | 2026-09-10T211413Z-030f75578668 |
-| Deployed source | 030f75578668b34cf67c82264284e31362ced235 |
+| Active OCI release | 2026-09-11T211340Z-26cab64fabda |
+| Deployed source | 26cab64fabdafca710d6471cb09ac8c62ef17c2d |
 
 Dell is the authority for code, data, development, governance, and heavy
 computation. OCI is limited to static web serving, localhost Auth Service, and
@@ -42,82 +40,36 @@ explicit all-partition validation both passed in their recorded audits.
 
 | Boundary | Verified value |
 | --- | --- |
-| Canonical EOD | 1,062 contiguous XNYS sessions, 2022-06-15 through 2026-09-09 at the live checkpoint; next session was 2022-06-14 |
-| Latest EOD | 2026-09-09; 9,916 rows |
-| Latest EOD fingerprint | 1ecd85558ca0fdf36e2460021b2da80a41ef5f17424aae33a9e94de5e70f1d1f |
-| Latest Identity | 2026-09-09; 9,982 instruments / 13,158 provider identities / 9,982 resolvers |
-| Latest Identity fingerprint | f29de23284b163955fc542b2c48ed3ebd60b618493366511935164e574694707 |
-| Point-in-time Identity | 1,062 partitions, 2022-06-15 through 2026-09-09; aligned with EOD at the recorded checkpoint |
-| Identity source custody | 1,060 immutable partitions at the live checkpoint; 2026-08-13 and 2026-08-19 remain unbound |
+| Canonical EOD | 1,255 contiguous XNYS sessions, 2021-09-13 through 2026-09-11 |
+| Latest EOD | 2026-09-11; 9,971 rows |
+| Latest EOD fingerprint | eec1f813851b378f47fbcd810728ed8b33b4748929ba85ff5d77e837bd12c904 |
+| Latest Identity | 2026-09-11; 10,000 instruments / 13,176 provider identities / 10,000 resolvers |
+| Latest Identity fingerprint | 911f35275b341138c8c820e717910e240d06fd2be45db3ebd824d55d83006b05 |
+| Point-in-time Identity | 1,256 physical partitions from 2021-09-10 through 2026-09-11; all 1,255 EOD sessions align, plus one Identity-only partition |
+| Identity source custody | 1,254 physical partitions / 1,253 target sessions; 2026-08-13 and 2026-08-19 remain unbound |
 | Signal-eligible Membership | 3 sessions / 59,892 decisions: 2026-09-04, 2026-09-08, 2026-09-09 |
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
 | Corporate-action observations | Canonical recent custody: 70,099 rows, 42,056 resolved / 28,043 quarantined; separate complete five-year owner-only packages: 6,491 splits / 235,751 dividends, not canonical |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |
-| Last quiescent data inventory | 12,216 files / 4,732,957,086 bytes before the later continuation; not the current post-run total |
-| Last quiescent inventory fingerprint | f89a02ad0625b8391dc46e383e8056567c64c94b682e29ab0395f63008501559 |
+| Current data inventory | 15,703 files / 5,935,786,680 bytes |
+| Current inventory fingerprint | a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e |
 | Symlinks / publication residue | zero / zero |
 
-The 300-session historical target and six later sessions are canonical. The
-2026-09-09 Stocks Starter run fetched Identity in 14 successful requests and
-Grouped Daily in one successful request after the tested 20:30 UTC boundary.
-It proved same-evening access for that session and removal of the old Basic
-rate limit; it did not prove a guaranteed finality minute or the advertised
-five-year endpoint depth. The finite exact-interval unit started at
-2026-09-10 08:54:25 UTC, completed its first 20-session checkpoint, and then
-continued to 346 EOD / 347 Identity partitions. It stopped safely when the
-whole-data compare-and-swap guard observed a concurrent research-Membership
-write. No overwrite or residue occurred; 2025-04-23 remains the exact reusable
-Identity-only continuation point. A unique continuation unit recovered that
-EOD partition without another provider request and resumed from clean source
-revision `d9d77c124f1b9300613d97923493a1e696e1262c`. The succeeding `20260910d`
-continuation advanced to 942 EOD
-and 943 Identity partitions, then failed closed at 20:51:39 UTC while
-constructing 2022-12-05 EOD. One provider VWAP exceeds the canonical decimal
-scale of 10. The 2022-12-05 Identity partition remains the exact safe
-transaction edge; no partial EOD partition or silent rounding was accepted.
-ADR 0202 now confines round-half-even scale normalization to Massive VWAP at
-the provider mapping boundary, with exact raw custody and row/session audit
-evidence. A one-session recovery reused the retained package, made zero
-external requests, and formally published and reread 2022-12-05 EOD. The
-unique bounded `20260910e` continuation then started from clean source
-`1f56f3ff7d0bb5319e40ae817ac75241391bfe7b` and advanced to 982 EOD / 983
-Identity partitions. It stopped before 2022-10-07 EOD because the V1
-upper-case ticker mapping collapsed case-distinct Massive securities into six
-false duplicate pairs. ADR 0203 now binds exact provider-symbol case to
-same-session Identity source evidence. A real zero-write replay passes with
-8,136 canonical rows and zero false conflicts. A retained-package census also
-confirmed at least 1,862 missing resolved bars across 676 already-published
-sessions; all existing EOD V1 history remains research-quarantined pending an
-immutable corrected rebuild or correction family. Clean source commit
-`2da13b200cbe506332c05baa47f08de328170d70` then reused the 2022-10-07
-package with zero external requests, formally published and reread 8,136 rows,
-and started the unique bounded `20260910f` continuation. It advanced EOD and
-Identity to 1,016 aligned sessions through 2022-08-22, then stopped before
-2022-08-19 Identity. The retained package has 168 missing-security-type rows
-among 12,172 observations, zero ticker ambiguity, zero stable-ID collision,
-and 91.2788% eligible-identity coverage. Later 2022-08-22 source evidence
-labels 73 of those rows `SP` and one `FUND`, but ADR 0205 forbids projecting
-that later type backward: all 168 remain rejected while only the historical
-malformed-row ceiling becomes 2.0%. A zero-request candidate replay passed;
-clean source `49ef83a4bc5ee70914eabb9930a8c9f7c6d78f3b` then reused
-the Identity package with zero requests, acquired EOD in one request, and
-formally aligned both families at 1,017 sessions through 2022-08-19. See the
-[dated execution audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md).
-Clean source `6851d005bd9808d970e49988000223ff4898dd16` then started the
-sole bounded `whalpha-five-year-backfill-20260911g.service` at 00:20:35 UTC.
-It completed eleven full batches with zero transient retries and most of the
-final batch before failing closed at 05:35:28 UTC when Grouped Daily REST
-denied 2021-09-10. Quiescent canonical EOD is 1,253 sessions from 2021-09-13;
-Identity is 1,254 physical sessions from 2021-09-10, of which 1,253 align to
-EOD. Relative to the stopped fixed run, the remaining gaps are EOD
-2021-09-09/10 and Identity 2021-09-09.
-The post-stop census fingerprint is
-`c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`.
-Zero symlinks, zero staging/partial directories, and no writer were observed.
-See the
-[terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md).
+The bounded historical run stopped safely at the Starter rolling entitlement
+edge; ADR 0206 rejected retries or a deeper purchase solely for the expired
+2021-09-09/10 boundary. Normal 2026-09-10/11 daily updates then rolled the
+active five-calendar-year target to 2021-09-13 through 2026-09-11. The fresh
+network-disabled census confirms zero EOD and Identity target-session gaps.
+It remains `quarantined`: Membership covers only 303 sessions, source-time
+Identity is unbound for two sessions, lifecycle/classification are absent,
+and corporate-action/adjustment evidence is incomplete. Price depth is
+complete; the anti-survivorship research foundation is not. Historical
+execution detail remains in the
+[continuous-run audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md),
+[terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md),
+and [final daily audit](../audits/daily-eod-publication-deployment-2026-09-11.md).
 
 ADR 0204's repository path now includes persistent owner-only candidate
 custody, memory-bounded full-edition validation, a sealed inventory-bound Apply
@@ -199,24 +151,24 @@ after authoritative issuer evidence passes the documented gates.
 
 | Boundary | Verified value |
 | --- | --- |
-| Market Intelligence | 2026-09-09T205635Z-e06bd62ecab3; contract 1.3 |
-| MI logical fingerprint | 3ec78b40dde6563f81aa3b1aadd8152ee35e6c8344c761a0314117408b6330dd |
-| Dashboard Snapshot | 2026-09-09T211131Z-e06bd62ecab3 |
-| Snapshot pointer | a43487bacc77dc1e28e83018ca4f469296ac0e2dff7b84650870de83fe368897 |
+| Market Intelligence | 2026-09-11T205429Z-26cab64fabda; contract 1.3 |
+| MI logical fingerprint | c03d69c0d46f40b55ca94863701befd970c3038701785d574dd0ada4febf0c11 |
+| Dashboard Snapshot | 2026-09-11T211340Z-26cab64fabda |
+| Snapshot pointer | a57ecbaef4f4ebc8bcda012193d7c07875f2bd7830a9a1eb6775c2819687e460 |
 | Contracts | Snapshot 1.11 / Dashboard 2.8 |
-| Immediate local rollback | 2026-09-08T171914Z-ca2d34d50692 |
+| Immediate local rollback | 2026-09-09T211131Z-e06bd62ecab3 |
 
-Both Universes have confirmed Balanced Market Regime and Defensive candidate
-state: Primary 46.7798, Secondary 46.8524. Market Intelligence contains 16
+Both Universes have confirmed Balanced Market Regime and Balanced candidate
+state: Primary 50.1578, Secondary 50.1501. Market Intelligence contains 16
 preregistered ETF relationships, 336 bounded history rows, 30 ETF observations,
-and 5/10/20-session views. Candidate publication 1.1 contains 862 Primary and
-922 Secondary eligible display records; these are not Universe sizes.
+and 5/10/20-session views. Candidate publication 1.1 contains 870 Primary and
+924 Secondary eligible display records; these are not Universe sizes.
 
 Analytics remains degraded-short-history because Market Intelligence consumes
 26 sessions although canonical EOD has substantially more. This is a consumer-integration
 limit, not missing acquisition.
 
-The 2026-09-10 21:15:01 UTC independent OCI postflight matched release,
+The 2026-09-11 21:23:56 UTC independent OCI postflight matched release,
 source, manifest, checksums,
 services, protected routes, guest Session, Candidate summary/detail, Strategy
 Channels, Sector ETF Rotation, logout, and residue state. Nginx and the
@@ -351,13 +303,14 @@ Identity -> EOD -> Market/Regime -> Candidate -> Entry Geometry
 -> MI -> Snapshot -> serving bundle -> OCI deploy/postflight
 ~~~
 
-The owner-only persistent runtime workspace contains the verified 2026-09-09
-package, plans, analytics, Snapshot, bundle, Membership evidence, and journals.
+The owner-only persistent runtime workspace contains the verified 2026-09-10
+and 2026-09-11 packages, plans, analytics, Snapshot, bundle, Membership
+evidence, and journals.
 ADR 0190 fixed artifact-role, persistent-plan, and Membership-clock integration
 without changing timer authority.
 
-The 2026-09-09 offline run completed nine actions in about 15.7 minutes.
-Candidate was the largest stage at about 6.3 minutes, peaked near 8.2 GiB, and
+The 2026-09-11 offline run completed nine actions in about 17.1 minutes.
+Candidate was the largest stage at about 7.0 minutes, peaked near 11.2 GiB, and
 used one CPU core. Snapshot planning took about 3.8 minutes, bundle construction
 2.1 minutes, and deployment 2.4 minutes. The segmented Candidate experiment
 remains a cutover NO-GO because it rehashes the large base and lacks cumulative
@@ -366,24 +319,19 @@ breaches an agreed budget and one bounded design solves both gaps.
 
 ## Immediate direction
 
-The ADR 0196 baseline census fixes 2021-09-09 through 2026-09-09 as 1,255
-XNYS sessions. Its original counts are superseded by the quiescent 1,253 EOD,
-1,254 physical Identity, and 1,253 aligned-session state above. The former precision gate is resolved under
-ADR 0202; ADR 0203 resolves the forward exact-symbol mapping but not the
-already-published missing-bar history.
+The current rolling census fixes 2021-09-13 through 2026-09-11 as 1,255 XNYS
+sessions. EOD and target-session Identity are complete. The former precision
+gate is resolved under ADR 0202; ADR 0203 resolves the forward exact-symbol
+mapping but not the already-published missing-bar history.
 Membership covers 303 sessions and misses 952: 300 reconstructed research-only
-sessions plus three signal-eligible sessions. Lifecycle, point-in-time classification, point-in-time
-fundamentals, and complete Historical Coverage are absent. The census is
-`quarantined`, fingerprint
-`c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`.
+sessions plus three signal-eligible sessions. Lifecycle, point-in-time
+classification, point-in-time fundamentals, and complete Historical Coverage
+are absent. The census remains `quarantined`; exact results are recorded in
+the 2026-09-11 daily audit.
 
-1. Do not restart the stopped `20260911g` Grouped Daily continuation. ADR 0206
-   ends retries or a deeper purchase solely for EOD 2021-09-09/10 and Identity
-   2021-09-09. Let normal daily updates move the rolling target; after the
-   latest canonical session reaches 2026-09-11, rerun the network-disabled
-   census and verify the expected 2021-09-13 first target session. This does
-   not authorize
-   research use of the affected V1 EOD history. Design and execute a new
+1. Do not restart the stopped `20260911g` continuation or retry its expired
+   boundary. The rolling census is complete for price/Identity but does not
+   authorize research use of affected V1 EOD history. Design and execute a new
    complete immutable Reconciled EOD Edition under ADR 0204, then formally
    reconcile the full interval before research admission. ADR 0202
    resolved the exact 2022-12-05 VWAP precision case without rewriting source

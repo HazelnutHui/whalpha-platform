@@ -102,15 +102,17 @@ point-in-time evidence.
 
 Required work:
 
-- define and census the exact rolling five-year XNYS target, including
-  explicitly separate experiment warm-up and outcome-tail sessions;
-- expand EOD/Identity from the current acquired interval to that target while
+- completed 2026-09-11: define and census the exact rolling five-year XNYS
+  target, including explicitly separate experiment warm-up and outcome-tail
+  sessions; the active target is 1,255 sessions from 2021-09-13 through
+  2026-09-11 with zero EOD/Identity target-session gaps;
+- completed for rolling source depth: expand EOD/Identity to that target while
   preserving exact source custody; exact-interval execution is implemented.
   Starter S3 access is verified for a current Day Aggregates object but denied
   for 2021-09-09, and Flat Files are not field-equivalent to REST because they
   omit VWAP and its zero-volume path. ADR 0206 ends retries or a purchase for
-  the two expired boundary sessions: allow normal daily updates to roll the
-  active source target to 2021-09-13, then verify it offline;
+  the two expired boundary sessions: normal daily updates rolled the active
+  source target to 2021-09-13 and the offline census verified it;
 - build ADR 0204's complete immutable Reconciled EOD Edition after acquisition
   quiesces; prefer retained original packages, retain later reacquisitions as a
   distinct provenance class, and reject unexplained removals or economic-value

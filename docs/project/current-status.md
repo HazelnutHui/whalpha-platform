@@ -11,10 +11,10 @@ the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
 
 WH Alpha is live as a Session-protected trilingual U.S. equity
 market-intelligence and research platform. Active OCI release
-2026-09-10T211413Z-030f75578668 was built from clean source
-030f75578668b34cf67c82264284e31362ced235.
+2026-09-11T211340Z-26cab64fabda was built from clean source
+26cab64fabdafca710d6471cb09ac8c62ef17c2d.
 
-Production uses Market Intelligence 1.3 for 2026-09-09 and Snapshot 1.11 /
+Production uses Market Intelligence 1.3 for 2026-09-11 and Snapshot 1.11 /
 Dashboard 2.8. English is default; Simplified Chinese and neutral professional
 Spanish are equal presentation layers. Guest and credential Sessions
 intentionally receive identical data and capability.
@@ -58,16 +58,12 @@ budgets now guard this boundary.
 
 ## Data
 
-- After the bounded case-sensitive-symbol recovery, the unique continuation
-  and one exact-session recovery first advanced to 1,017 aligned EOD and
-  Identity sessions. The sole `20260911g` continuation completed eleven full
-  batches and most of its final batch before failing closed on the known
-  Grouped Daily REST entitlement boundary at 05:35:28 UTC. Quiescent canonical
-  EOD now has 1,253 sessions from 2021-09-13 through 2026-09-09; only
-  2021-09-09 and 2021-09-10 are missing. Canonical Identity has 1,254 physical
-  sessions from 2021-09-10 through 2026-09-09; 1,253 align to EOD and only
-  2021-09-09 is missing.
-- Historical Identity source custody aligns to 1,251 evaluation sessions; the
+- The rolling five-calendar-year EOD target is complete: 1,255 contiguous XNYS
+  sessions from 2021-09-13 through 2026-09-11. Point-in-time Identity covers
+  all 1,255 EOD sessions and retains one additional Identity-only partition at
+  2021-09-10. Latest EOD has 9,971 rows; latest Identity has 10,000
+  instruments/resolvers and 13,176 provider identities.
+- Historical Identity source custody aligns to 1,253 evaluation sessions; the
   difference from aligned EOD remains exactly the two explicitly unbound
   sessions 2026-08-13 and 2026-08-19.
 - Signal-eligible Membership has three prospective sessions and 59,892
@@ -91,9 +87,8 @@ budgets now guard this boundary.
   retained in owner-only persistent Dell custody and formally reread. Their
   23,260 / 23,469 rows remain discovery and reconciliation evidence, not
   canonical lifecycle or terminal outcomes.
-- The last full quiescent inventory before the later continuation was 12,216
-  files / 4,732,957,086 bytes with zero symlinks and zero publication residue;
-  it is not the current post-run total.
+- The current verified inventory is 15,703 files / 5,935,786,680 bytes with
+  zero symlinks and zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
 - Stocks Starter removed the old Basic rate limit and provided the tested 9/9
@@ -105,13 +100,9 @@ budgets now guard this boundary.
   0206 therefore ends those retries and declines a deeper purchase solely for
   this edge: normal daily updates will roll the active source target to
   2021-09-13, and its first 20 sessions will be excluded as feature warm-up.
-- A lightweight read-only custody intersection at 2026-09-11 01:45:42 UTC
-  found 777 unique retained Grouped Daily package dates among 1,082 then-
-  canonical EOD sessions. All 777 matched a canonical date; 305 canonical dates
-  within 2025-06-23 through 2026-09-09 lacked a retained Grouped Daily package.
-  This is a source-reacquisition sizing diagnostic, not the formal coverage
-  result; the new post-acquisition census must still reread every package,
-  original Apply binding, EOD partition, and same-session Identity source.
+- The final network-disabled rolling census confirms price/Identity depth but
+  remains `quarantined`: Membership covers 303 sessions, lifecycle and PIT
+  classification are absent, and actions/adjustments remain incomplete.
 - The shared `.venv` editable-install metadata currently points at the older
   Codex worktree rather than the canonical checkout. The completed backfill was
   not affected: its admin entry point delegated to `scripts/dev/run-project-python.sh`,
@@ -278,28 +269,23 @@ The installed wake timer is active but read-only. No unattended write-capable
 scheduler is installed and SMTP is unconfigured. The guarded manual chain
 works end to end.
 
-The 2026-09-09 persistent run completed nine offline stages in about 15.7
-minutes. Candidate remained the main hotspot at about 6.3 minutes, 8.2 GiB
+The 2026-09-11 persistent run completed nine offline stages in about 17.1
+minutes. Candidate remained the main hotspot at about 7.0 minutes, 11.2 GiB
 peak, and one CPU core. The segmented Candidate path remains a cutover NO-GO;
 do not continue that optimization without a new budget breach and a design
 that fixes both known gaps.
 
 ## Next priority
 
-The completed network-disabled ADR 0196 baseline fixes 1,255 sessions from
-2021-09-09 through 2026-09-09. The quiescent post-run state is 1,253 EOD,
-1,254 physical Identity sessions, and 1,253 EOD-aligned Identity sessions.
-Membership remains 303/1,255.
+The current rolling census fixes 1,255 sessions from 2021-09-13 through
+2026-09-11. EOD and target-session Identity are complete. Membership remains
+303/1,255.
 Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
 absent; status remains `quarantined`.
 
-1. Do not restart the stopped `20260911g` Grouped Daily continuation. Preserve
-   its 1,253 EOD and 1,254 Identity sessions. Under ADR 0206, do not purchase
-   deeper history or retry 2021-09-09/10 solely to complete the expired fixed
-   boundary. Let normal daily updates advance the latest canonical session;
-   once it reaches 2026-09-11, rerun the offline rolling census, whose expected
-   first XNYS session is 2021-09-13. Existing
-   affected EOD V1 history
+1. Do not restart the stopped `20260911g` continuation or retry its expired
+   boundary. The rolling price/Identity target and final census are complete.
+   Existing affected EOD V1 history
    must be rebuilt as ADR 0204's
    complete immutable Reconciled EOD Edition and formally reconciled before
    research admission. ADR 0202 resolved the 2022-12-05 VWAP

@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-11 — Complete the rolling price foundation and deploy the fresh daily release
+
+- Applied exact 2026-09-10 and 2026-09-11 Identity/EOD plans under the
+  revision-bound data-only control. The 2026-09-10 MI plan was correctly left
+  inactive after becoming stale by one session.
+- The natural 20:30 UTC read-only wake selected 2026-09-11 without making a
+  provider request or write. The guarded manual chain then completed nine
+  offline stages, fresh MI 1.3 and Snapshot 1.11 / Dashboard 2.8 publication,
+  a 61-file Serving Bundle, OCI dry-run, Apply, and independent postflight.
+- Production now serves release `2026-09-11T211340Z-26cab64fabda` from clean
+  source `26cab64fabdafca710d6471cb09ac8c62ef17c2d`. Guest and credential
+  capability remain identical; no staging/failed release or failed service
+  was found.
+- The fresh rolling census confirms zero EOD/Identity gaps across 1,255 XNYS
+  sessions from 2021-09-13 through 2026-09-11. It remains quarantined because
+  Membership, lifecycle, complete actions/adjustments, classification,
+  chronological evaluation, costs, and holdout evidence are incomplete.
+- Candidate remained the daily performance hotspot at about seven minutes and
+  one CPU core, with observed RSS peaking near 11.2 GiB. No performance or
+  model-activation claim was added. See the
+  [dated audit](../audits/daily-eod-publication-deployment-2026-09-11.md).
+
 ## 2026-09-11 — Align initial warm-up with the rolling Starter window
 
 - Accepted ADR 0206 after the owner declined a deeper subscription solely for
