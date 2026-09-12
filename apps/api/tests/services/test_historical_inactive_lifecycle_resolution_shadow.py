@@ -317,6 +317,62 @@ def test_shadow_accepts_explicit_persistent_source_custody(
     assert dict(result.manifest.disposition_counts)["review_candidate"] == 1
 
 
+def test_formal_reread_accepts_exact_persistent_shadow_custody(
+    monkeypatch, tmp_path: Path
+) -> None:
+    data_root, source, output = _fixture(monkeypatch, tmp_path)
+    build_historical_inactive_lifecycle_resolution_shadow(
+        data_root=data_root,
+        source_package_path=source,
+        output_root=output,
+        anchor_date=ANCHOR,
+        materialized_at=MATERIALIZED,
+    )
+    approved = tmp_path / "persistent-shadow"
+    approved.mkdir(mode=0o700)
+    monkeypatch.setattr(module, "APPROVED_PERSISTENT_SHADOW_BASE", approved)
+    retained = approved / "build=five-year-test"
+    shutil.copytree(output, retained, copy_function=shutil.copy2)
+
+    reread = read_historical_inactive_lifecycle_resolution_shadow(
+        root=retained,
+        anchor_date=ANCHOR,
+        approved_custody_root=approved,
+    )
+
+    assert reread.manifest.source_package_record_count == 8
+    assert dict(reread.manifest.disposition_counts)["review_candidate"] == 1
+
+
+def test_persistent_shadow_reread_rejects_broader_or_unapproved_roots(
+    monkeypatch, tmp_path: Path
+) -> None:
+    approved = tmp_path / "persistent-shadow"
+    approved.mkdir(mode=0o700)
+    monkeypatch.setattr(module, "APPROVED_PERSISTENT_SHADOW_BASE", approved)
+    retained = approved / "build=five-year-test"
+    retained.mkdir(mode=0o700)
+
+    with pytest.raises(
+        HistoricalInactiveLifecycleResolutionShadowError,
+        match="root differs",
+    ):
+        read_historical_inactive_lifecycle_resolution_shadow(
+            root=approved,
+            anchor_date=ANCHOR,
+            approved_custody_root=approved,
+        )
+    with pytest.raises(
+        HistoricalInactiveLifecycleResolutionShadowError,
+        match="custody boundary differs",
+    ):
+        read_historical_inactive_lifecycle_resolution_shadow(
+            root=retained,
+            anchor_date=ANCHOR,
+            approved_custody_root=tmp_path,
+        )
+
+
 def test_tampered_shadow_fails_formal_reread(monkeypatch, tmp_path: Path) -> None:
     data_root, source, output = _fixture(monkeypatch, tmp_path)
     result = build_historical_inactive_lifecycle_resolution_shadow(

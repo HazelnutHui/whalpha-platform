@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import shutil
 import socket
 import stat
@@ -55,6 +56,10 @@ from tip_api.services.historical_inactive_lifecycle_source import (
 
 
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
+APPROVED_PERSISTENT_SHADOW_BASE = Path(
+    "/home/hui/.local/state/trading-intelligence-platform/"
+    "historical-evidence/inactive-lifecycle-resolution"
+)
 DEFAULT_HISTORY_WORKERS = min(8, os.cpu_count() or 1)
 MAXIMUM_HISTORY_WORKERS = 32
 SOURCE_FILE = "source-observations.parquet"
@@ -328,10 +333,14 @@ def read_historical_inactive_lifecycle_resolution_shadow(
     *,
     root: Path,
     anchor_date: date,
+    approved_custody_root: Path | None = None,
 ) -> HistoricalInactiveLifecycleResolutionShadowReadResult:
     """Formally reread a completed owner-only shadow and prove one-to-one lineage."""
 
-    candidate_root = _validated_tmp_root(root)
+    candidate_root = _validated_shadow_read_root(
+        root,
+        approved_custody_root=approved_custody_root,
+    )
     partition = _partition_path(candidate_root, anchor_date)
     _owner_only_directory_chain(partition, candidate_root)
     if partition.is_symlink() or not partition.is_dir():
@@ -891,11 +900,64 @@ def _validated_tmp_root(path: Path) -> Path:
         raise HistoricalInactiveLifecycleResolutionShadowError(
             "inactive lifecycle shadow root is unsafe"
         )
-    if stat.S_IMODE(resolved.stat().st_mode) != 0o700:
+    metadata = resolved.stat()
+    if metadata.st_uid != os.getuid() or stat.S_IMODE(metadata.st_mode) != 0o700:
         raise HistoricalInactiveLifecycleResolutionShadowError(
             "inactive lifecycle shadow root must be owner-only"
         )
     return resolved
+
+
+def _validated_shadow_read_root(
+    path: Path,
+    *,
+    approved_custody_root: Path | None,
+) -> Path:
+    if approved_custody_root is None:
+        return _validated_tmp_root(path)
+    approved = approved_custody_root.absolute()
+    expected_approved = APPROVED_PERSISTENT_SHADOW_BASE.absolute()
+    candidate = path.absolute()
+    candidate_name_valid = (
+        re.fullmatch(r"build=[a-z0-9][a-z0-9._-]{0,127}", candidate.name)
+        is not None
+    )
+    if (
+        approved != expected_approved
+        or approved.is_symlink()
+        or not approved.is_dir()
+        or approved.resolve(strict=True) != approved
+    ):
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "persistent inactive lifecycle shadow custody boundary differs"
+        )
+    approved_metadata = approved.stat()
+    if (
+        approved_metadata.st_uid != os.getuid()
+        or stat.S_IMODE(approved_metadata.st_mode) != 0o700
+    ):
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "persistent inactive lifecycle shadow custody is not owner-only"
+        )
+    if (
+        candidate.parent != approved
+        or not candidate_name_valid
+        or candidate.is_symlink()
+        or not candidate.is_dir()
+        or candidate.resolve(strict=True) != candidate
+    ):
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "persistent inactive lifecycle shadow root differs"
+        )
+    candidate_metadata = candidate.stat()
+    if (
+        candidate_metadata.st_uid != os.getuid()
+        or stat.S_IMODE(candidate_metadata.st_mode) != 0o700
+    ):
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "persistent inactive lifecycle shadow root is not owner-only"
+        )
+    return candidate
 
 
 def _reject_symlink_chain(path: Path, stop: Path) -> None:
@@ -919,7 +981,11 @@ def _owner_only_directory_chain(path: Path, root: Path) -> None:
             raise HistoricalInactiveLifecycleResolutionShadowError(
                 "inactive lifecycle shadow directory chain is unsafe"
             )
-        if stat.S_IMODE(current.stat().st_mode) != 0o700:
+        metadata = current.stat()
+        if (
+            metadata.st_uid != os.getuid()
+            or stat.S_IMODE(metadata.st_mode) != 0o700
+        ):
             raise HistoricalInactiveLifecycleResolutionShadowError(
                 "inactive lifecycle shadow directory chain is not owner-only"
             )
@@ -949,7 +1015,7 @@ def _require_regular_file(path: Path, mode: int | None = None) -> None:
             "inactive lifecycle shadow file is unsafe"
         )
     metadata = path.stat()
-    if not stat.S_ISREG(metadata.st_mode) or (
+    if metadata.st_uid != os.getuid() or not stat.S_ISREG(metadata.st_mode) or (
         mode is not None and stat.S_IMODE(metadata.st_mode) != mode
     ):
         raise HistoricalInactiveLifecycleResolutionShadowError(
