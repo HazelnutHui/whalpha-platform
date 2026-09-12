@@ -76,6 +76,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "failed_session_count": result.failed_session_count,
                 "record_count": result.record_count,
                 "added_record_count": result.added_record_count,
+                "absent_record_count": result.absent_record_count,
                 "external_request_count": result.external_request_count,
                 "canonical_data_write_count": result.canonical_data_write_count,
                 "candidate_session_write_count": (
@@ -94,6 +95,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                         "session_date": item.session_date,
                         "status": item.status,
                         "failure_code": item.failure_code,
+                        "absent_record_count": item.absent_record_count,
                         "manifest_fingerprint": item.manifest_fingerprint,
                     }
                     for item in result.sessions

@@ -115,6 +115,10 @@ def build_reconciled_eod_edition_apply_plan(
                     item.diff.added_record_count
                     for item in candidate.session_manifests
                 ),
+                "candidate_absent_record_count": sum(
+                    item.diff.absent_record_count
+                    for item in candidate.session_manifests
+                ),
                 "artifacts": artifacts,
                 "inventory_change_file_count": len(artifacts),
                 "inventory_change_bytes": sum(item.size for item in artifacts),
@@ -190,6 +194,8 @@ def read_reconciled_eod_edition_apply_plan(
         != plan.candidate_record_count
         or sum(item.diff.added_record_count for item in candidate.session_manifests)
         != plan.candidate_added_record_count
+        or sum(item.diff.absent_record_count for item in candidate.session_manifests)
+        != plan.candidate_absent_record_count
     ):
         raise ReconciledEodEditionApplyPlanError(
             "reconciled EOD candidate summary differs"

@@ -36,7 +36,9 @@ The edition has these boundaries:
 - the session reconciliation compares the rebuilt edition with EOD V1 and
   separately counts added, absent, and economically changed business keys;
 - the known ADR 0203 repair may add missing resolved bars, but removal or an
-  economic-value change never auto-passes as the same defect;
+  economic-value change never auto-passes merely as the same defect; ADR 0208
+  admits only a retained-source removal that satisfies its complete typed proof
+  of a legacy case-normalized misbinding;
 - a session with missing exact source, unresolved provenance, failed quality
   gates, or an unexplained diff remains incomplete and quarantined;
 - independent source-family blockers are reported cumulatively; price-source

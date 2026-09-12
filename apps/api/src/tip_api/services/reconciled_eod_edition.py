@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Mapping
 from uuid import UUID
 
 import pyarrow.parquet as pq
@@ -35,6 +35,12 @@ from tip_api.providers.massive.instrument_master_snapshot import (
     build_case_sensitive_provider_ticker_resolution,
 )
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
+from tip_api.providers.massive.numeric import (
+    InvalidMassiveNumericValue,
+    MissingMassiveNumericValue,
+    parse_massive_decimal,
+    parse_massive_integral,
+)
 from tip_api.providers.massive.same_day_catchup import read_grouped_daily_package
 from tip_api.services.historical_identity_source_custody import (
     read_identity_source_custody_at_data_root,
@@ -150,12 +156,24 @@ def build_reconciled_eod_session_candidate(
     base_repository = CanonicalEodReadRepository(data_root)
     base_integrity = base_repository.inspect_session(session_date)
     base_records = base_repository.read_canonical_records(session_date)
+    expected_absent_business_keys = expected_case_sensitive_absences(
+        base_records=base_records,
+        grouped_daily_payload=package.payload,
+        exact_status=resolution.status,
+        case_colliding_normalized_tickers=(
+            resolution.case_colliding_normalized_tickers
+        ),
+        canonical_resolver=identity.resolver,
+        source_provenance=source_provenance,
+        source_observed_at=package.manifest.fetched_at,
+    )
     diff = compare_reconciled_eod_records(
         base_records=base_records,
         rebuilt_records=rebuilt_records,
         expected_added_instrument_ids=(
             resolution.case_colliding_resolved_instrument_ids
         ),
+        expected_absent_business_keys=expected_absent_business_keys,
         source_provenance=source_provenance,
     )
     return ReconciledEodSessionCandidate(
@@ -183,6 +201,9 @@ def compare_reconciled_eod_records(
     rebuilt_records: tuple[EodPriceBarV1, ...],
     expected_added_instrument_ids: frozenset[UUID],
     source_provenance: ReconciledEodSourceProvenance,
+    expected_absent_business_keys: frozenset[
+        tuple[str, str, str, int]
+    ] = frozenset(),
 ) -> ReconciledEodDiffSummaryV1:
     """Classify one complete-session rebuild without hiding unexpected change."""
 
@@ -194,6 +215,8 @@ def compare_reconciled_eod_records(
     rebuilt_keys = set(rebuilt)
     added_keys = rebuilt_keys - base_keys
     absent_keys = base_keys - rebuilt_keys
+    expected_absent_keys = absent_keys & expected_absent_business_keys
+    unexpected_absent_keys = absent_keys - expected_absent_business_keys
     unexpected_added_keys = {
         key
         for key in added_keys
@@ -223,7 +246,7 @@ def compare_reconciled_eod_records(
     reasons: list[str] = []
     if unexpected_added_keys:
         reasons.append("unexpected_added_records")
-    if absent_keys:
+    if unexpected_absent_keys:
         reasons.append("base_records_absent")
     if economic_changes:
         reasons.append("economic_values_changed")
@@ -239,6 +262,10 @@ def compare_reconciled_eod_records(
             disposition = (
                 ReconciledEodDiffDisposition.ACCEPTED_LATER_REACQUISITION
             )
+    elif expected_absent_keys:
+        disposition = (
+            ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION
+        )
     elif added_keys:
         disposition = (
             ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_ADDITIONS_ONLY
@@ -255,6 +282,8 @@ def compare_reconciled_eod_records(
         added_record_count=len(added_keys),
         unexpected_added_record_count=len(unexpected_added_keys),
         absent_record_count=len(absent_keys),
+        expected_absent_record_count=len(expected_absent_keys),
+        unexpected_absent_record_count=len(unexpected_absent_keys),
         economic_change_record_count=economic_changes,
         disposition=disposition,
         quarantine_reasons=tuple(reasons),
@@ -342,6 +371,105 @@ def expected_case_sensitive_additions(
             if instrument_id is not None:
                 result.add(instrument_id)
     return frozenset(result)
+
+
+def expected_case_sensitive_absences(
+    *,
+    base_records: tuple[EodPriceBarV1, ...],
+    grouped_daily_payload: Mapping[str, object],
+    exact_status: Mapping[str, str],
+    case_colliding_normalized_tickers: frozenset[str],
+    canonical_resolver: Mapping[str, UUID],
+    source_provenance: ReconciledEodSourceProvenance,
+    source_observed_at: datetime,
+) -> frozenset[tuple[str, str, str, int]]:
+    """Prove legacy upper-case misbindings that the exact mapper must remove.
+
+    This exception is deliberately narrower than a generic absence allowance.
+    It requires the exact retained price package, one lower-case provider bar,
+    a same-session Identity case collision, an exact exclusion for that bar,
+    and a canonical base record whose normalized source ID, timestamp,
+    observation time, and OHLCV values reproduce the legacy misbinding.
+    """
+
+    if source_provenance != ReconciledEodSourceProvenance.RETAINED_ORIGINAL:
+        return frozenset()
+    results = grouped_daily_payload.get("results")
+    if not isinstance(results, list):
+        return frozenset()
+    normalized_groups: dict[str, list[Mapping[str, object]]] = {}
+    for item in results:
+        if not isinstance(item, Mapping):
+            continue
+        ticker = item.get("T") or item.get("ticker")
+        if not isinstance(ticker, str) or not ticker.strip():
+            continue
+        normalized_groups.setdefault(ticker.strip().upper(), []).append(item)
+
+    base = _records_by_key(base_records, family="base")
+    expected: set[tuple[str, str, str, int]] = set()
+    for normalized, items in normalized_groups.items():
+        if normalized not in case_colliding_normalized_tickers or len(items) != 1:
+            continue
+        item = items[0]
+        raw_ticker = item.get("T") or item.get("ticker")
+        if not isinstance(raw_ticker, str):
+            continue
+        exact_ticker = raw_ticker.strip()
+        if exact_ticker == normalized or exact_status.get(exact_ticker) != "excluded":
+            continue
+        legacy_instrument_id = canonical_resolver.get(normalized)
+        if legacy_instrument_id is None:
+            continue
+        session_date = base_records[0].session_date
+        key = (
+            str(legacy_instrument_id),
+            session_date.isoformat(),
+            MASSIVE_PROVIDER_ID,
+            1,
+        )
+        record = base.get(key)
+        if record is None or not _matches_legacy_case_misbound_bar(
+            record=record,
+            source_row=item,
+            normalized_ticker=normalized,
+            source_observed_at=source_observed_at,
+        ):
+            continue
+        expected.add(key)
+    return frozenset(expected)
+
+
+def _matches_legacy_case_misbound_bar(
+    *,
+    record: EodPriceBarV1,
+    source_row: Mapping[str, object],
+    normalized_ticker: str,
+    source_observed_at: datetime,
+) -> bool:
+    try:
+        timestamp = parse_massive_integral(source_row.get("t"), required=True)
+        open_ = parse_massive_decimal(source_row.get("o"), required=True)
+        high = parse_massive_decimal(source_row.get("h"), required=True)
+        low = parse_massive_decimal(source_row.get("l"), required=True)
+        close = parse_massive_decimal(source_row.get("c"), required=True)
+        volume = parse_massive_decimal(source_row.get("v"), required=True)
+    except (InvalidMassiveNumericValue, MissingMassiveNumericValue):
+        return False
+    return (
+        timestamp is not None
+        and record.source_record_id == f"{normalized_ticker}:{timestamp}"
+        and record.ingested_at == source_observed_at
+        and record.open == open_
+        and record.high == high
+        and record.low == low
+        and record.close == close
+        and record.volume == volume
+        and record.adjusted_close == close
+        and record.split_adjustment_factor == 1
+        and record.dividend_adjustment_factor == 1
+        and record.total_return_adjustment_factor == 1
+    )
 
 
 def _identity_created_at(manifest: dict[str, object]) -> datetime:

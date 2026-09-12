@@ -35,6 +35,8 @@ def diff(**override: object) -> ReconciledEodDiffSummaryV1:
         "added_record_count": 1,
         "unexpected_added_record_count": 0,
         "absent_record_count": 0,
+        "expected_absent_record_count": 0,
+        "unexpected_absent_record_count": 0,
         "economic_change_record_count": 0,
         "disposition": "accepted_case_sensitive_additions_only",
         "quarantine_reasons": (),
@@ -90,6 +92,29 @@ def test_diff_rejects_unexplained_economic_change() -> None:
         )
 
 
+def test_diff_accepts_only_accounted_case_sensitive_absence() -> None:
+    reconciled = diff(
+        base_record_count=10,
+        rebuilt_record_count=9,
+        unchanged_record_count=9,
+        added_record_count=0,
+        absent_record_count=1,
+        expected_absent_record_count=1,
+        disposition="accepted_case_sensitive_reconciliation",
+    )
+
+    assert reconciled.expected_absent_record_count == 1
+    assert reconciled.unexpected_absent_record_count == 0
+
+    with pytest.raises(ValidationError, match="absences do not reconcile"):
+        diff(
+            base_record_count=11,
+            absent_record_count=1,
+            expected_absent_record_count=0,
+            unexpected_absent_record_count=0,
+        )
+
+
 def test_quarantined_diff_requires_typed_reason() -> None:
     quarantined = diff(
         unchanged_record_count=9,
@@ -115,6 +140,7 @@ def test_interval_requires_final_marker_reconciliation() -> None:
         rebuilt_eod_fingerprint=session.rebuilt_eod_fingerprint,
         record_count=session.diff.rebuilt_record_count,
         added_record_count=session.diff.added_record_count,
+        absent_record_count=session.diff.absent_record_count,
         source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
         disposition="accepted_case_sensitive_additions_only",
     )
@@ -128,6 +154,7 @@ def test_interval_requires_final_marker_reconciliation() -> None:
         "retained_original_session_count": 1,
         "later_reacquisition_session_count": 0,
         "added_record_count": 1,
+        "absent_record_count": 0,
         "created_at": NOW,
     }
     interval = seal_reconciled_eod_interval_manifest(values)
@@ -143,6 +170,7 @@ def test_interval_rejects_partial_declared_bounds() -> None:
         rebuilt_eod_fingerprint="b" * 64,
         record_count=10,
         added_record_count=0,
+        absent_record_count=0,
         source_provenance="later_reacquisition",
         disposition="identical",
     )
@@ -156,6 +184,7 @@ def test_interval_rejects_partial_declared_bounds() -> None:
         "retained_original_session_count": 0,
         "later_reacquisition_session_count": 1,
         "added_record_count": 0,
+        "absent_record_count": 0,
         "created_at": NOW,
     }
     with pytest.raises(ValidationError, match="first boundary"):
@@ -200,6 +229,7 @@ def apply_plan(**override: object) -> ReconciledEodEditionApplyPlanV1:
         "candidate_session_count": 1,
         "candidate_record_count": 11,
         "candidate_added_record_count": 1,
+        "candidate_absent_record_count": 0,
         "artifacts": artifacts,
         "inventory_change_file_count": 3,
         "inventory_change_bytes": 6,

@@ -48,6 +48,7 @@ def _batch_result(
             source_provenance="retained_original",
             record_count=0 if session == failure else 10,
             added_record_count=0 if session == failure else 1,
+            absent_record_count=0,
             manifest_fingerprint=None if session == failure else "b" * 64,
             failure_code="unexpected_failure" if session == failure else "none",
         )
@@ -67,6 +68,7 @@ def _batch_result(
         failed_session_count=failed,
         record_count=sum(item.record_count for item in items),
         added_record_count=sum(item.added_record_count for item in items),
+        absent_record_count=sum(item.absent_record_count for item in items),
         external_request_count=0,
         canonical_data_write_count=0,
         candidate_session_write_count=len(items) - failed,
@@ -98,6 +100,7 @@ class _FakeRepository:
                 retained_original_session_count=3,
                 later_reacquisition_session_count=0,
                 added_record_count=3,
+                absent_record_count=0,
                 logical_fingerprint="c" * 64,
             )
         )

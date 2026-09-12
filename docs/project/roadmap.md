@@ -127,7 +127,11 @@ Required work:
   Identity diagnostics omitted canonical business keys, so ADR 0207 preserves
   the no-removal gate and selects the maximal preceding 1,234-session interval
   through 2026-08-12 for the first real candidate. Construct and formally
-  reread that exact edition before planning any canonical Apply;
+  reread that exact edition before planning any canonical Apply. The first
+  1.0 run retained 275 sessions before five proven legacy case-normalized
+  misbindings stopped it. ADR 0208 and manifest contract 1.1 now distinguish
+  source-proven expected removals from every unexpected absence; start a new
+  clean 1.1 candidate rather than mixing the stopped 1.0 partitions;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not

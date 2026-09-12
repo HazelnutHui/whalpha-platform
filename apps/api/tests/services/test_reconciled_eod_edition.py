@@ -14,8 +14,10 @@ from tip_api.contracts.market_data.v1.reconciled_eod_edition import (
 from tip_api.services.reconciled_eod_edition import (
     ReconciledEodEditionError,
     compare_reconciled_eod_records,
+    expected_case_sensitive_absences,
     expected_case_sensitive_additions,
 )
+from tip_api.persistence.parquet.manifest import record_business_key
 
 
 SESSION = date(2022, 10, 7)
@@ -30,6 +32,7 @@ def bar(
     *,
     close: str = "11",
     ingested_at: datetime = INGESTED,
+    source_record_id: str | None = None,
 ) -> EodPriceBarV1:
     return EodPriceBarV1(
         instrument_id=instrument_id,
@@ -48,6 +51,7 @@ def bar(
         total_return_adjustment_factor=Decimal("1"),
         adjusted_close=Decimal(close),
         source="massive_stocks_basic",
+        source_record_id=source_record_id,
         ingested_at=ingested_at,
         revision=1,
         is_latest_revision=True,
@@ -76,6 +80,84 @@ def test_retained_source_accepts_only_expected_added_records() -> None:
         ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_ADDITIONS_ONLY
     )
     assert summary.added_record_count == 1
+
+
+def test_retained_source_accepts_only_fully_proven_legacy_case_misbinding() -> None:
+    timestamp = 1_665_100_800_000
+    misbound = bar(ID1, source_record_id=f"ALPA:{timestamp}")
+    retained = bar(ID2)
+    source_payload = {
+        "results": [
+            {
+                "T": "ALpA",
+                "o": 10,
+                "h": 12,
+                "l": 9,
+                "c": 11,
+                "v": 1000,
+                "t": timestamp,
+            }
+        ]
+    }
+    expected_absences = expected_case_sensitive_absences(
+        base_records=(misbound, retained),
+        grouped_daily_payload=source_payload,
+        exact_status={"ALPA": "resolved", "ALpA": "excluded"},
+        case_colliding_normalized_tickers=frozenset({"ALPA"}),
+        canonical_resolver={"ALPA": ID1},
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+        source_observed_at=INGESTED,
+    )
+
+    assert expected_absences == frozenset({record_business_key(misbound)})
+    summary = compare_reconciled_eod_records(
+        base_records=(misbound, retained),
+        rebuilt_records=(retained,),
+        expected_added_instrument_ids=frozenset(),
+        expected_absent_business_keys=expected_absences,
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+    )
+
+    assert summary.disposition == (
+        ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION
+    )
+    assert summary.absent_record_count == 1
+    assert summary.expected_absent_record_count == 1
+    assert summary.unexpected_absent_record_count == 0
+
+
+def test_case_misbinding_absence_rejects_later_or_economically_different_source() -> None:
+    timestamp = 1_665_100_800_000
+    misbound = bar(ID1, source_record_id=f"ALPA:{timestamp}")
+    values = {
+        "base_records": (misbound, bar(ID2)),
+        "grouped_daily_payload": {
+            "results": [
+                {
+                    "T": "ALpA",
+                    "o": 10,
+                    "h": 12,
+                    "l": 9,
+                    "c": 12,
+                    "v": 1000,
+                    "t": timestamp,
+                }
+            ]
+        },
+        "exact_status": {"ALpA": "excluded"},
+        "case_colliding_normalized_tickers": frozenset({"ALPA"}),
+        "canonical_resolver": {"ALPA": ID1},
+        "source_observed_at": INGESTED,
+    }
+
+    assert expected_case_sensitive_absences(
+        **values,
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+    ) == frozenset()
+    assert expected_case_sensitive_absences(
+        **values,
+        source_provenance=ReconciledEodSourceProvenance.LATER_REACQUISITION,
+    ) == frozenset()
 
 
 def test_unexpected_addition_is_quarantined() -> None:

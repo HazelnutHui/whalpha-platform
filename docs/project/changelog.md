@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-12 — Type source-proven legacy case-misbinding removals
+
+- The first real corrected-edition build validated 275 sessions before its
+  seventh batch stopped on five October 2022 dates. The stop was safe, retained
+  completed work, wrote no interval marker, and made zero `/data` writes.
+- All five absences were the same exact-source defect: a retained `ALpA`
+  preferred-stock bar had been upper-cased and falsely bound to common stock
+  `ALPA` in EOD V1. Each date had no economic change and four or five valid
+  case-sensitive additions.
+- Accepted ADR 0208 and versioned session, interval, and Apply-plan manifests
+  to 1.1. Only a seven-condition retained-source proof may classify an absence
+  as expected; later-reacquired or otherwise unproven removals still fail
+  closed.
+- Added expected/unexpected absence accounting through diff, persistence,
+  batch, full-build, interval, and Apply-plan boundaries. Sixty-two focused
+  focused tests and all 2,519 API tests passed. A temporary real candidate then
+  published and reread all five dates under manifest 1.1 with 21 additions,
+  five expected absences, zero unexpected absence, and zero economic change.
+- The incomplete 1.0 candidate remains non-authoritative evidence and will not
+  be mixed with the new clean 1.1 candidate. See the
+  [dated build audit](../audits/reconciled-eod-edition-first-build-2026-09-12.md).
+
 ## 2026-09-12 — Bound the first corrected EOD edition at fully proven source custody
 
 - Corrected the independent-gap diagnostic, reacquired the two additional

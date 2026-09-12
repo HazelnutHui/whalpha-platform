@@ -32,7 +32,7 @@ from tip_api.services.reconciled_eod_edition import (
 )
 
 
-CONTRACT_VERSION = "reconciled-eod-price-bar-edition-batch-result/1.0"
+CONTRACT_VERSION = "reconciled-eod-price-bar-edition-batch-result/1.1"
 MAXIMUM_SESSIONS_PER_BATCH = 40
 MAXIMUM_WORKERS = 4
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
@@ -56,6 +56,7 @@ class ReconciledEodEditionBatchSessionResultV1:
     source_provenance: str
     record_count: int
     added_record_count: int
+    absent_record_count: int
     manifest_fingerprint: str | None
     failure_code: Literal[
         "none",
@@ -80,6 +81,7 @@ class ReconciledEodEditionBatchResultV1:
     failed_session_count: int
     record_count: int
     added_record_count: int
+    absent_record_count: int
     external_request_count: int
     canonical_data_write_count: int
     candidate_session_write_count: int
@@ -192,6 +194,7 @@ def run_reconciled_eod_edition_batch(
         failed_session_count=failed,
         record_count=sum(item.record_count for item in ordered),
         added_record_count=sum(item.added_record_count for item in ordered),
+        absent_record_count=sum(item.absent_record_count for item in ordered),
         external_request_count=0,
         canonical_data_write_count=0,
         candidate_session_write_count=published,
@@ -294,6 +297,7 @@ def _reuse_existing_session(
         source_provenance=source.source_provenance.value,
         record_count=manifest.diff.rebuilt_record_count,
         added_record_count=manifest.diff.added_record_count,
+        absent_record_count=manifest.diff.absent_record_count,
         manifest_fingerprint=manifest.logical_fingerprint,
         failure_code="none",
     )
@@ -324,6 +328,7 @@ def _build_and_publish(
             source_provenance=source.source_provenance.value,
             record_count=result.record_count,
             added_record_count=candidate.diff.added_record_count,
+            absent_record_count=candidate.diff.absent_record_count,
             manifest_fingerprint=result.manifest_fingerprint,
             failure_code="none",
         )
@@ -352,6 +357,7 @@ def _failed_result(
         source_provenance=source.source_provenance.value,
         record_count=0,
         added_record_count=0,
+        absent_record_count=0,
         manifest_fingerprint=None,
         failure_code=failure_code,
     )

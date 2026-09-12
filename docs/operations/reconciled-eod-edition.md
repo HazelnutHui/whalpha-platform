@@ -17,6 +17,10 @@ Dashboard publication, OCI deployment, or cleanup.
 4. The candidate root is exactly one direct child of the fixed owner-only Dell
    base:
    `/home/hui/.local/state/trading-intelligence-platform/reconciled-eod-editions`.
+   On first use, create only that fixed base after verifying its owner-only
+   parent, then verify the base itself is owned by `hui`, mode `0700`, and not a
+   symlink. The candidate writer does not silently create an absent approved
+   base.
 5. No interval marker exists until every declared session has passed formal
    reconstruction and reconciliation.
 
@@ -126,8 +130,9 @@ at a time, so memory use is bounded by one daily cross-section rather than the
 whole five-year edition.
 
 Before planning, confirm the final interval fingerprint, source-provenance
-counts, accepted additions, zero quarantine/source gaps, exact file set, and
-absence of the canonical edition target.
+counts, accepted additions, source-proven expected absences, zero
+quarantine/source gaps, exact file set, and absence of the canonical edition
+target.
 
 ## Build the exact Apply plan
 

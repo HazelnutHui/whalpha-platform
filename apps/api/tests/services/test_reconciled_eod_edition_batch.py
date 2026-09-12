@@ -43,6 +43,7 @@ def result(
         source_provenance="retained_original",
         record_count=10 if status != "failed" else 0,
         added_record_count=1 if status != "failed" else 0,
+        absent_record_count=0,
         manifest_fingerprint="1" * 64 if status != "failed" else None,
         failure_code="unexpected_failure" if status == "failed" else "none",
     )
@@ -99,6 +100,7 @@ def test_batch_reuses_completed_session_and_builds_only_pending(
     assert completed.failed_session_count == 0
     assert completed.record_count == 20
     assert completed.added_record_count == 2
+    assert completed.absent_record_count == 0
     assert completed.external_request_count == 0
     assert completed.canonical_data_write_count == 0
     assert completed.candidate_session_write_count == 1

@@ -126,12 +126,17 @@ budgets now guard this boundary.
   weakened. ADR 0207 instead fixes the first real candidate interval at the
   preceding 1,234 fully source-bound sessions through 2026-08-12. See the
   [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).
-- A complete-interval Reconciled EOD candidate controller is implemented. It
-  consumes only build-ready sealed coverage, automatically divides the exact
-  interval into 1–40-session batches, uses at most four workers, reuses only
-  partitions with the same source/revision/fixed-time binding, retains safe
-  progress on failure, and publishes the sole interval marker last. It is
-  fixture-tested only; no real candidate edition has been built.
+- A complete-interval Reconciled EOD candidate controller is implemented. The
+  first real 1.0 run retained 275 successful sessions before correctly
+  stopping on five October 2022 absences. All five were proven instances of an
+  `ALpA` preferred-stock bar that legacy normalization had falsely bound to
+  common stock `ALPA`. ADR 0208 and manifest contract 1.1 now admit only this
+  fully source-bound removal class and separately count expected/unexpected
+  absences; 62 focused tests, the complete 2,519-test API suite, and a five-date
+  temporary real candidate publish/reread passed. The
+  stopped 1.0 candidate has no interval marker and will not be reused. A new
+  clean 1.1 complete candidate remains to be built. See the
+  [build audit](../audits/reconciled-eod-edition-first-build-2026-09-12.md).
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
   contract remains available for a future deeper-history source. The stopped

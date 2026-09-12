@@ -295,6 +295,7 @@ class ParquetReconciledEodEditionCandidateRepository:
                 rebuilt_eod_fingerprint=item.rebuilt_eod_fingerprint,
                 record_count=item.diff.rebuilt_record_count,
                 added_record_count=item.diff.added_record_count,
+                absent_record_count=item.diff.absent_record_count,
                 source_provenance=item.source_provenance,
                 disposition=item.diff.disposition,
             )
@@ -322,6 +323,9 @@ class ParquetReconciledEodEditionCandidateRepository:
                 ),
                 "added_record_count": sum(
                     item.diff.added_record_count for item in session_manifests
+                ),
+                "absent_record_count": sum(
+                    item.diff.absent_record_count for item in session_manifests
                 ),
                 "created_at": manifest_created_at,
             }
@@ -555,6 +559,7 @@ def _verify_interval_session_binding(
         or session.rebuilt_eod_fingerprint != reference.rebuilt_eod_fingerprint
         or session.diff.rebuilt_record_count != reference.record_count
         or session.diff.added_record_count != reference.added_record_count
+        or session.diff.absent_record_count != reference.absent_record_count
         or session.source_provenance != reference.source_provenance
         or session.diff.disposition != reference.disposition
         or session.implementation_revision != interval.implementation_revision

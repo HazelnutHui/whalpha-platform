@@ -24,7 +24,7 @@ from tip_api.services.reconciled_eod_source_coverage import (
 )
 
 
-CONTRACT_VERSION = "reconciled-eod-price-bar-edition-build-result/1.0"
+CONTRACT_VERSION = "reconciled-eod-price-bar-edition-build-result/1.1"
 MAXIMUM_INTERVAL_SESSIONS = 1_500
 ProgressCallback = Callable[["ReconciledEodEditionBuildCheckpointV1"], None]
 
@@ -44,6 +44,7 @@ class ReconciledEodEditionBuildCheckpointV1:
     failed_session_count: int
     record_count: int
     added_record_count: int
+    absent_record_count: int
     status: str
 
 
@@ -83,6 +84,7 @@ class ReconciledEodEditionBuildResultV1:
     reused_session_count: int
     record_count: int
     added_record_count: int
+    absent_record_count: int
     retained_original_session_count: int
     later_reacquisition_session_count: int
     interval_manifest_fingerprint: str
@@ -134,6 +136,7 @@ def run_reconciled_eod_edition_build(
     reused = 0
     records = 0
     additions = 0
+    absences = 0
     for offset in range(0, len(sessions), batch_size):
         batch_number = len(checkpoints) + 1
         batch_sessions = sessions[offset : offset + batch_size]
@@ -170,6 +173,7 @@ def run_reconciled_eod_edition_build(
         reused += result.reused_session_count
         records += result.record_count
         additions += result.added_record_count
+        absences += result.absent_record_count
 
     completed = repository.publish_interval_manifest(
         session_dates=sessions,
@@ -189,6 +193,7 @@ def run_reconciled_eod_edition_build(
         or manifest.later_reacquisition_session_count
         != coverage.later_reacquisition_session_count
         or manifest.added_record_count != additions
+        or manifest.absent_record_count != absences
     ):
         raise ReconciledEodEditionBuildError(
             "completed Reconciled EOD interval differs from construction evidence"
@@ -218,6 +223,7 @@ def run_reconciled_eod_edition_build(
         reused_session_count=reused,
         record_count=records,
         added_record_count=additions,
+        absent_record_count=absences,
         retained_original_session_count=manifest.retained_original_session_count,
         later_reacquisition_session_count=(
             manifest.later_reacquisition_session_count
@@ -280,5 +286,6 @@ def _checkpoint(
         failed_session_count=result.failed_session_count,
         record_count=result.record_count,
         added_record_count=result.added_record_count,
+        absent_record_count=result.absent_record_count,
         status=result.status,
     )

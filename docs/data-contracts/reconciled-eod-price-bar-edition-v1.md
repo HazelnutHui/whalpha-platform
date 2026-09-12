@@ -8,14 +8,17 @@ does not overwrite or implicitly supersede canonical EOD Price Bar V1.
 
 ## Status
 
-Contract, deterministic sealing, fail-closed diff classification, formal base
+Session, interval, and Apply-plan manifests are at contract version 1.1.
+Deterministic sealing, fail-closed diff classification, formal base
 record reread, one-session isolated candidate reconstruction, owner-only
 candidate persistence, immutable rerun checks, completed-session formal
 reread, bounded/resumable process-parallel session construction, final
 interval-marker sealing/reread, exact whole-edition Apply planning, and atomic
-Apply execution are implemented. A formal complete source-package selection,
-the real full-interval construction, an executed complete edition, and the
-edition-only research input adapter remain pending.
+Apply execution are implemented. The exact 1,234-session source selection is
+sealed and build-ready. A first real 1.0 build stopped safely after 275
+sessions and exposed the typed legacy-removal requirement now governed by ADR
+0208 and contract 1.1. A new complete 1.1 construction, an executed canonical
+edition, and the edition-only research input adapter remain pending.
 
 ## Identity
 
@@ -43,7 +46,8 @@ Each session manifest records:
 - exact Identity-source logical fingerprint;
 - rebuilt row count and content fingerprint;
 - EOD V1 base row count and fingerprint;
-- added, absent, economically changed, and unchanged key counts;
+- added, total absent, source-proven expected absent, unexpected absent,
+  economically changed, and unchanged key counts;
 - quality counts, warnings, and reconciliation disposition; and
 - Parquet filename/hash and completion status.
 
@@ -61,9 +65,19 @@ The business key is the EOD Price Bar V1 key. Comparison distinguishes:
 5. fully unchanged keys.
 
 ADR 0203 permits the expected repair class to add a previously omitted resolved
-bar. It does not permit silent removals or economic changes. Any other diff
-requires a typed quarantine reason and a separate decision before the session
-can enter a completed edition.
+bar. ADR 0208 separately permits removal of a legacy case-normalized
+misbinding only when the retained original price package, exact same-session
+Identity source, stable-ID mapping, excluded case-distinct symbol, source ID,
+timestamp, observation time, OHLCV values, adjusted close, and neutral
+adjustment factors all reproduce the error. The contract records that removal
+as expected and uses the distinct
+`accepted_case_sensitive_reconciliation` disposition. A later-reacquired
+price package can never use this exception.
+
+Any unexpected removal or addition, economic change, or unexpected
+retained-source provenance change requires a typed quarantine reason and a
+separate decision before the session can enter a completed edition. An
+accepted removal is therefore not a generic tolerance or percentage threshold.
 
 ## Interval completion
 
@@ -72,7 +86,8 @@ The interval manifest is written last and includes:
 - exact evaluation and warm-up bounds;
 - exact ordered session set and count;
 - every session manifest fingerprint;
-- total reconciliation counts by disposition and provenance;
+- total addition and accepted-absence counts, plus reconciliation counts by
+  disposition and provenance;
 - source-gap and quarantine counts, which must be zero for completion;
 - frozen mapper policy and implementation revisions; and
 - one deterministic logical fingerprint.
@@ -138,7 +153,7 @@ The sealed Apply plan binds:
   plus the exact target edition path;
 - every session manifest and Parquet path, byte count, and SHA-256;
 - the final interval-manifest fingerprint;
-- total session, record, and accepted-addition counts;
+- total session, record, accepted-addition, and accepted-absence counts;
 - the candidate implementation and planner revisions; and
 - one full canonical `/data` pre-state fingerprint.
 
