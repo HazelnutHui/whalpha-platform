@@ -130,9 +130,11 @@ at a time, so memory use is bounded by one daily cross-section rather than the
 whole five-year edition.
 
 Before planning, confirm the final interval fingerprint, source-provenance
-counts, accepted additions, source-proven expected absences, zero
-quarantine/source gaps, exact file set, and absence of the canonical edition
-target.
+counts, accepted additions, source-proven expected absences, source-proven
+provider-ticker case repairs, zero quarantine/source gaps, exact file set, and
+absence of the canonical edition target. Contract 1.2 accepts a retained-source
+provenance-only change only under ADR 0209's exact eight-condition proof; any
+other provenance change still stops completion.
 
 ## Build the exact Apply plan
 

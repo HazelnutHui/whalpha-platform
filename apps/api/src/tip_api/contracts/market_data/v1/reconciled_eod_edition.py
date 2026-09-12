@@ -23,9 +23,9 @@ from pydantic_core import to_jsonable_python
 from tip_api.contracts.common import normalize_utc_datetime
 
 
-SESSION_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-session/1.1"
-INTERVAL_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-interval/1.1"
-APPLY_PLAN_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-apply-plan/1.1"
+SESSION_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-session/1.2"
+INTERVAL_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-interval/1.2"
+APPLY_PLAN_CONTRACT_VERSION = "reconciled-eod-price-bar-edition-apply-plan/1.2"
 DATASET_NAME = "reconciled-eod-price-bar-editions"
 MAPPER_POLICY_ID = "massive-exact-provider-symbol-v1"
 _SHA256 = r"^[0-9a-f]{64}$"
@@ -59,6 +59,7 @@ class ReconciledEodDiffSummaryV1(FrozenModel):
     rebuilt_record_count: int = Field(ge=1)
     unchanged_record_count: int = Field(ge=0)
     provenance_only_change_count: int = Field(ge=0)
+    expected_provenance_change_count: int = Field(ge=0)
     unexpected_provenance_change_count: int = Field(ge=0)
     added_record_count: int = Field(ge=0)
     unexpected_added_record_count: int = Field(ge=0)
@@ -88,8 +89,14 @@ class ReconciledEodDiffSummaryV1(FrozenModel):
             != self.absent_record_count
         ):
             raise ValueError("expected and unexpected absences do not reconcile")
-        if self.unexpected_provenance_change_count > self.provenance_only_change_count:
-            raise ValueError("unexpected provenance changes exceed all such changes")
+        if (
+            self.expected_provenance_change_count
+            + self.unexpected_provenance_change_count
+            != self.provenance_only_change_count
+        ):
+            raise ValueError(
+                "expected and unexpected provenance changes do not reconcile"
+            )
         blocking = (
             self.unexpected_added_record_count
             + self.unexpected_provenance_change_count
@@ -115,27 +122,42 @@ class ReconciledEodDiffSummaryV1(FrozenModel):
             and (
                 self.added_record_count == 0
                 or self.expected_absent_record_count != 0
+                or self.expected_provenance_change_count != 0
             )
         ):
             raise ValueError("addition-only disposition differs from its counts")
         elif (
             self.disposition
             == ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION
-            and self.expected_absent_record_count == 0
+            and (
+                self.expected_absent_record_count == 0
+                and self.expected_provenance_change_count == 0
+            )
         ):
-            raise ValueError("case-sensitive reconciliation has no proven absence")
+            raise ValueError("case-sensitive reconciliation has no proven change")
         elif (
             self.expected_absent_record_count
             and self.disposition
             != ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION
         ):
             raise ValueError("proven absence requires case-sensitive reconciliation")
+        elif (
+            self.expected_provenance_change_count
+            and self.disposition
+            not in {
+                ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION,
+                ReconciledEodDiffDisposition.ACCEPTED_LATER_REACQUISITION,
+            }
+        ):
+            raise ValueError(
+                "proven provenance change requires an accepted disposition"
+            )
         return self
 
 
 class ReconciledEodSessionManifestV1(FrozenModel):
     contract_version: Literal[
-        "reconciled-eod-price-bar-edition-session/1.1"
+        "reconciled-eod-price-bar-edition-session/1.2"
     ] = SESSION_CONTRACT_VERSION
     completion_status: Literal["completed"] = "completed"
     dataset_name: Literal[
@@ -247,6 +269,7 @@ class ReconciledEodIntervalSessionReferenceV1(FrozenModel):
     record_count: int = Field(ge=1)
     added_record_count: int = Field(ge=0)
     absent_record_count: int = Field(ge=0)
+    provenance_only_change_count: int = Field(ge=0)
     source_provenance: ReconciledEodSourceProvenance
     disposition: Literal[
         "identical",
@@ -258,7 +281,7 @@ class ReconciledEodIntervalSessionReferenceV1(FrozenModel):
 
 class ReconciledEodIntervalManifestV1(FrozenModel):
     contract_version: Literal[
-        "reconciled-eod-price-bar-edition-interval/1.1"
+        "reconciled-eod-price-bar-edition-interval/1.2"
     ] = INTERVAL_CONTRACT_VERSION
     completion_status: Literal["completed"] = "completed"
     dataset_name: Literal[
@@ -279,6 +302,7 @@ class ReconciledEodIntervalManifestV1(FrozenModel):
     later_reacquisition_session_count: int = Field(ge=0)
     added_record_count: int = Field(ge=0)
     absent_record_count: int = Field(ge=0)
+    provenance_only_change_count: int = Field(ge=0)
     source_gap_count: Literal[0] = 0
     quarantine_count: Literal[0] = 0
     created_at: datetime
@@ -350,24 +374,33 @@ class ReconciledEodIntervalManifestV1(FrozenModel):
             item.absent_record_count for item in self.sessions
         ):
             raise ValueError("edition absent-record count is inconsistent")
+        if self.provenance_only_change_count != sum(
+            item.provenance_only_change_count for item in self.sessions
+        ):
+            raise ValueError("edition provenance-only count is inconsistent")
         if any(
             (
                 item.disposition == ReconciledEodDiffDisposition.IDENTICAL
                 and (
-                    item.added_record_count != 0 or item.absent_record_count != 0
+                    item.added_record_count != 0
+                    or item.absent_record_count != 0
+                    or item.provenance_only_change_count != 0
                 )
             )
             or (
                 item.disposition
                 == ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_ADDITIONS_ONLY
                 and (
-                    item.added_record_count == 0 or item.absent_record_count != 0
+                    item.added_record_count == 0
+                    or item.absent_record_count != 0
+                    or item.provenance_only_change_count != 0
                 )
             )
             or (
                 item.disposition
                 == ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION
                 and item.absent_record_count == 0
+                and item.provenance_only_change_count == 0
             )
             or (
                 item.disposition
@@ -416,7 +449,7 @@ class ReconciledEodEditionApplyArtifactV1(FrozenModel):
 
 class ReconciledEodEditionApplyPlanV1(FrozenModel):
     contract_version: Literal[
-        "reconciled-eod-price-bar-edition-apply-plan/1.1"
+        "reconciled-eod-price-bar-edition-apply-plan/1.2"
     ] = APPLY_PLAN_CONTRACT_VERSION
     operation: Literal["publish_complete_reconciled_eod_edition"] = (
         "publish_complete_reconciled_eod_edition"
@@ -436,6 +469,7 @@ class ReconciledEodEditionApplyPlanV1(FrozenModel):
     candidate_record_count: int = Field(ge=1)
     candidate_added_record_count: int = Field(ge=0)
     candidate_absent_record_count: int = Field(ge=0)
+    candidate_provenance_only_change_count: int = Field(ge=0)
     artifacts: tuple[ReconciledEodEditionApplyArtifactV1, ...]
     inventory_change_file_count: int = Field(ge=3)
     inventory_change_bytes: int = Field(ge=1)

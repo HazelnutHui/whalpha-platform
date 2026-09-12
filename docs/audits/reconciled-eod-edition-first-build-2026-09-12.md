@@ -60,11 +60,42 @@ five expected absences, zero unexpected absences, zero economic changes, and
 no failed session. It made zero external requests and zero `/data` writes; its
 temporary directory was automatically removed after validation.
 
+## Contract 1.1 build and second typed stop
+
+The clean 1.1 implementation revision was
+`b261990d9bfbe76c2dbde97d66c85d4d79ff28d9`. Its first seven batches completed
+280 sessions, including the five dates that stopped contract 1.0. Batch eight
+retained another 20 successful partitions and stopped on 20 dates from
+2022-10-27 through 2022-12-16. The incomplete 1.1 candidate therefore contains
+300 completed sessions and no interval marker. It made no external request and
+no `/data` write.
+
+The 20 failed candidates contained 86 accepted additions, five ADR 0208
+expected absences, zero unexpected additions or absences, and zero economic
+changes. Their only blocker was 30 retained-source provenance-only changes.
+Field-level review showed that every change only restored exact provider ticker
+case inside `source_record_id`: examples include `RXOW` to `RXOw`, `FGW` to
+`FGw`, and `BAMW` to `BAMw`. Stable instrument, source timestamp, observation
+time, OHLCV and adjustment values, revision state, quality state and flags, and
+schema version were unchanged.
+
+Same-session Identity source resolves every exact mixed-case ticker to the same
+stable ID, contains no exact entry for the legacy upper-case spelling, and the
+canonical normalized Resolver reproduces the old binding. ADR 0209 and
+contract 1.2 therefore admit only this eight-condition source-proven repair and
+retain separate expected/unexpected provenance accounting. A network-disabled
+four-worker real-data replay of all 20 failed dates returned 20 accepted
+case-sensitive reconciliations, 86 additions, five expected absences, 30
+expected provenance-only changes, and zero blocking or economic changes.
+Fifty-seven focused tests and the complete 2,521-test API suite passed under
+contract 1.2; the only additional output was two pre-existing dependency
+deprecation warnings.
+
 ## Next action and authority
 
 Run a new candidate from an empty owner-only root, a new edition ID, one clean
-1.1 implementation revision, and one fixed creation time. The stopped 1.0
-candidate is not reused.
+1.2 implementation revision, and one fixed creation time. Neither stopped
+candidate is reused.
 
 No action in this audit changes canonical EOD V1, Historical Coverage,
 research admission, performance claims, Candidate, Production, publication,

@@ -11,6 +11,16 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0209](0209-admit-only-source-proven-provider-ticker-case-repairs.md):
+  admits only exact-source restoration of provider ticker case in an otherwise
+  identical retained-original source record and keeps every other provenance
+  change quarantined.
+- [ADR 0208](0208-admit-only-source-proven-case-sensitive-legacy-removals.md):
+  admits only fully source-proven removal of a legacy case-normalized
+  misbinding while every unrelated absence remains quarantined.
+- [ADR 0207](0207-build-the-first-reconciled-eod-edition-through-the-last-fully-proven-session.md):
+  bounds the first corrected edition at the last session with complete exact
+  price and Identity source custody.
 - [ADR 0206](0206-roll-the-initial-feature-warmup-inside-starter-source-coverage.md):
   keeps the rolling five-year source scope, uses its first 20 available
   sessions as disclosed feature warm-up, and ends retries or a purchase solely
@@ -119,7 +129,7 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0208 separate durable research Membership custody from
+- ADRs 0197–0209 separate durable research Membership custody from
   signal-eligible Membership, scale source-only corporate-action custody to
   the five-year boundary, and retain exact corporate-action and inactive-
   lifecycle source vintages privately without promoting them to canonical
@@ -130,8 +140,10 @@ accepted ADR was deployed unless current operational evidence says so.
   projecting later classifications backward, align the first experiment's
   disclosed feature warm-up with the available rolling Starter source window,
   bound the first corrected edition at the last session with complete exact
-  source custody, and admit only fully source-proven removal of a legacy
-  case-normalized misbinding while keeping all other absences quarantined.
+  source custody, admit only fully source-proven removal of a legacy
+  case-normalized misbinding, and admit only exact-source provider-ticker case
+  restoration while keeping all other absences and provenance changes
+  quarantined.
 
 ## Runtime and publication decisions
 

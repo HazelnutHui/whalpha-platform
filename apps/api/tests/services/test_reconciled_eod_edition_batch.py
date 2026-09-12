@@ -44,6 +44,7 @@ def result(
         record_count=10 if status != "failed" else 0,
         added_record_count=1 if status != "failed" else 0,
         absent_record_count=0,
+        provenance_only_change_count=0,
         manifest_fingerprint="1" * 64 if status != "failed" else None,
         failure_code="unexpected_failure" if status == "failed" else "none",
     )

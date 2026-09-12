@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-12 — Type exact provider-ticker provenance repairs
+
+- The clean 1.1 corrected-edition run completed seven batches and retained 300
+  sessions before batch eight stopped on 20 dates with no interval marker and
+  zero `/data` writes.
+- All 20 dates had zero economic changes and zero unexpected additions or
+  absences. Their only blocker was 30 source IDs whose legacy forced-upper-case
+  ticker was restored to exact provider case while stable ID, timestamp,
+  observation time, economic, quality, revision, and schema fields remained
+  identical.
+- Accepted ADR 0209 and versioned session, interval, Apply-plan, batch-result,
+  and build-result contracts to 1.2. Only an eight-condition retained-source,
+  same-session Identity and stable-ID proof may classify that provenance-only
+  repair as expected.
+- A network-disabled four-worker replay of all 20 dates returned 86 accepted
+  additions, five ADR 0208 expected absences, 30 expected provenance repairs,
+  and zero blocking or economic changes. Fifty-seven focused and all 2,521 API
+  tests passed. A new clean 1.2 candidate must replace, not mix with, both
+  stopped predecessors.
+
 ## 2026-09-12 — Type source-proven legacy case-misbinding removals
 
 - The first real corrected-edition build validated 275 sessions before its
@@ -15,7 +35,7 @@
   closed.
 - Added expected/unexpected absence accounting through diff, persistence,
   batch, full-build, interval, and Apply-plan boundaries. Sixty-two focused
-  focused tests and all 2,519 API tests passed. A temporary real candidate then
+  tests and all 2,519 API tests passed. A temporary real candidate then
   published and reread all five dates under manifest 1.1 with 21 additions,
   five expected absences, zero unexpected absence, and zero economic change.
 - The incomplete 1.0 candidate remains non-authoritative evidence and will not

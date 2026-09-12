@@ -45,6 +45,7 @@ def _checkpoint(*, failed: int = 0) -> ReconciledEodEditionBuildCheckpointV1:
         record_count=20 - failed * 10,
         added_record_count=2 - failed,
         absent_record_count=0,
+        provenance_only_change_count=0,
         status="stopped_with_failures" if failed else "batch_complete",
     )
 

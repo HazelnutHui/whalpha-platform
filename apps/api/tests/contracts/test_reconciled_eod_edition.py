@@ -31,6 +31,7 @@ def diff(**override: object) -> ReconciledEodDiffSummaryV1:
         "rebuilt_record_count": 11,
         "unchanged_record_count": 10,
         "provenance_only_change_count": 0,
+        "expected_provenance_change_count": 0,
         "unexpected_provenance_change_count": 0,
         "added_record_count": 1,
         "unexpected_added_record_count": 0,
@@ -141,6 +142,7 @@ def test_interval_requires_final_marker_reconciliation() -> None:
         record_count=session.diff.rebuilt_record_count,
         added_record_count=session.diff.added_record_count,
         absent_record_count=session.diff.absent_record_count,
+        provenance_only_change_count=session.diff.provenance_only_change_count,
         source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
         disposition="accepted_case_sensitive_additions_only",
     )
@@ -155,6 +157,7 @@ def test_interval_requires_final_marker_reconciliation() -> None:
         "later_reacquisition_session_count": 0,
         "added_record_count": 1,
         "absent_record_count": 0,
+        "provenance_only_change_count": 0,
         "created_at": NOW,
     }
     interval = seal_reconciled_eod_interval_manifest(values)
@@ -171,6 +174,7 @@ def test_interval_rejects_partial_declared_bounds() -> None:
         record_count=10,
         added_record_count=0,
         absent_record_count=0,
+        provenance_only_change_count=0,
         source_provenance="later_reacquisition",
         disposition="identical",
     )
@@ -185,6 +189,7 @@ def test_interval_rejects_partial_declared_bounds() -> None:
         "later_reacquisition_session_count": 1,
         "added_record_count": 0,
         "absent_record_count": 0,
+        "provenance_only_change_count": 0,
         "created_at": NOW,
     }
     with pytest.raises(ValidationError, match="first boundary"):
@@ -230,6 +235,7 @@ def apply_plan(**override: object) -> ReconciledEodEditionApplyPlanV1:
         "candidate_record_count": 11,
         "candidate_added_record_count": 1,
         "candidate_absent_record_count": 0,
+        "candidate_provenance_only_change_count": 0,
         "artifacts": artifacts,
         "inventory_change_file_count": 3,
         "inventory_change_bytes": 6,

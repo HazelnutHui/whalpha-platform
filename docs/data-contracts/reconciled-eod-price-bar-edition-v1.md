@@ -8,7 +8,7 @@ does not overwrite or implicitly supersede canonical EOD Price Bar V1.
 
 ## Status
 
-Session, interval, and Apply-plan manifests are at contract version 1.1.
+Session, interval, and Apply-plan manifests are at contract version 1.2.
 Deterministic sealing, fail-closed diff classification, formal base
 record reread, one-session isolated candidate reconstruction, owner-only
 candidate persistence, immutable rerun checks, completed-session formal
@@ -17,8 +17,11 @@ interval-marker sealing/reread, exact whole-edition Apply planning, and atomic
 Apply execution are implemented. The exact 1,234-session source selection is
 sealed and build-ready. A first real 1.0 build stopped safely after 275
 sessions and exposed the typed legacy-removal requirement now governed by ADR
-0208 and contract 1.1. A new complete 1.1 construction, an executed canonical
-edition, and the edition-only research input adapter remain pending.
+0208. The successor 1.1 build retained 300 sessions before exposing a second
+source-proven class: exact provider-ticker casing restored inside otherwise
+identical source IDs. ADR 0209 and contract 1.2 govern that class. A new
+complete 1.2 construction, an executed canonical edition, and the edition-only
+research input adapter remain pending.
 
 ## Identity
 
@@ -47,7 +50,8 @@ Each session manifest records:
 - rebuilt row count and content fingerprint;
 - EOD V1 base row count and fingerprint;
 - added, total absent, source-proven expected absent, unexpected absent,
-  economically changed, and unchanged key counts;
+  expected and unexpected provenance-only, economically changed, and unchanged
+  key counts;
 - quality counts, warnings, and reconciliation disposition; and
 - Parquet filename/hash and completion status.
 
@@ -74,6 +78,17 @@ as expected and uses the distinct
 `accepted_case_sensitive_reconciliation` disposition. A later-reacquired
 price package can never use this exception.
 
+ADR 0209 permits one additional retained-original repair: restoring the exact
+provider ticker case inside `source_record_id`. It requires the same business
+key and stable ID, complete economic equivalence, identical observation,
+quality, revision, and schema fields, the same source timestamp, an exact
+mixed-case Identity resolution to that stable ID, absence of the old exact
+upper-case ticker, and reproduction of the legacy normalized Resolver binding.
+The contract counts the repair as expected provenance-only change and uses the
+same typed case-sensitive reconciliation disposition. A timestamp, observation
+time, quality, revision, schema, instrument, or economic difference cannot use
+this rule.
+
 Any unexpected removal or addition, economic change, or unexpected
 retained-source provenance change requires a typed quarantine reason and a
 separate decision before the session can enter a completed edition. An
@@ -86,8 +101,8 @@ The interval manifest is written last and includes:
 - exact evaluation and warm-up bounds;
 - exact ordered session set and count;
 - every session manifest fingerprint;
-- total addition and accepted-absence counts, plus reconciliation counts by
-  disposition and provenance;
+- total addition, accepted-absence, and provenance-only counts, plus
+  reconciliation counts by disposition and source provenance;
 - source-gap and quarantine counts, which must be zero for completion;
 - frozen mapper policy and implementation revisions; and
 - one deterministic logical fingerprint.
@@ -153,7 +168,8 @@ The sealed Apply plan binds:
   plus the exact target edition path;
 - every session manifest and Parquet path, byte count, and SHA-256;
 - the final interval-manifest fingerprint;
-- total session, record, accepted-addition, and accepted-absence counts;
+- total session, record, accepted-addition, accepted-absence, and provenance-
+  only change counts;
 - the candidate implementation and planner revisions; and
 - one full canonical `/data` pre-state fingerprint.
 

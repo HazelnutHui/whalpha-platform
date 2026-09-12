@@ -296,6 +296,9 @@ class ParquetReconciledEodEditionCandidateRepository:
                 record_count=item.diff.rebuilt_record_count,
                 added_record_count=item.diff.added_record_count,
                 absent_record_count=item.diff.absent_record_count,
+                provenance_only_change_count=(
+                    item.diff.provenance_only_change_count
+                ),
                 source_provenance=item.source_provenance,
                 disposition=item.diff.disposition,
             )
@@ -326,6 +329,10 @@ class ParquetReconciledEodEditionCandidateRepository:
                 ),
                 "absent_record_count": sum(
                     item.diff.absent_record_count for item in session_manifests
+                ),
+                "provenance_only_change_count": sum(
+                    item.diff.provenance_only_change_count
+                    for item in session_manifests
                 ),
                 "created_at": manifest_created_at,
             }

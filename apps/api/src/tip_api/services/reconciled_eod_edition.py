@@ -167,6 +167,17 @@ def build_reconciled_eod_session_candidate(
         source_provenance=source_provenance,
         source_observed_at=package.manifest.fetched_at,
     )
+    expected_provenance_business_keys = (
+        expected_case_sensitive_source_record_id_changes(
+            base_records=base_records,
+            rebuilt_records=rebuilt_records,
+            exact_status=resolution.status,
+            exact_resolver=resolution.resolver,
+            canonical_resolver=identity.resolver,
+            source_provenance=source_provenance,
+            source_observed_at=package.manifest.fetched_at,
+        )
+    )
     diff = compare_reconciled_eod_records(
         base_records=base_records,
         rebuilt_records=rebuilt_records,
@@ -174,6 +185,7 @@ def build_reconciled_eod_session_candidate(
             resolution.case_colliding_resolved_instrument_ids
         ),
         expected_absent_business_keys=expected_absent_business_keys,
+        expected_provenance_business_keys=expected_provenance_business_keys,
         source_provenance=source_provenance,
     )
     return ReconciledEodSessionCandidate(
@@ -202,6 +214,9 @@ def compare_reconciled_eod_records(
     expected_added_instrument_ids: frozenset[UUID],
     source_provenance: ReconciledEodSourceProvenance,
     expected_absent_business_keys: frozenset[
+        tuple[str, str, str, int]
+    ] = frozenset(),
+    expected_provenance_business_keys: frozenset[
         tuple[str, str, str, int]
     ] = frozenset(),
 ) -> ReconciledEodDiffSummaryV1:
@@ -238,10 +253,21 @@ def compare_reconciled_eod_records(
         else:
             unchanged += 1
 
-    unexpected_provenance = (
-        provenance_only
-        if source_provenance == ReconciledEodSourceProvenance.RETAINED_ORIGINAL
-        else 0
+    changed_provenance_keys = {
+        key
+        for key in base_keys & rebuilt_keys
+        if _economic_signature(base[key]) == _economic_signature(rebuilt[key])
+        and _provenance_signature(base[key])
+        != _provenance_signature(rebuilt[key])
+    }
+    if source_provenance == ReconciledEodSourceProvenance.LATER_REACQUISITION:
+        expected_provenance_keys = changed_provenance_keys
+    else:
+        expected_provenance_keys = (
+            changed_provenance_keys & expected_provenance_business_keys
+        )
+    unexpected_provenance_keys = (
+        changed_provenance_keys - expected_provenance_keys
     )
     reasons: list[str] = []
     if unexpected_added_keys:
@@ -250,7 +276,7 @@ def compare_reconciled_eod_records(
         reasons.append("base_records_absent")
     if economic_changes:
         reasons.append("economic_values_changed")
-    if unexpected_provenance:
+    if unexpected_provenance_keys:
         reasons.append("retained_source_provenance_changed")
 
     if reasons:
@@ -262,7 +288,7 @@ def compare_reconciled_eod_records(
             disposition = (
                 ReconciledEodDiffDisposition.ACCEPTED_LATER_REACQUISITION
             )
-    elif expected_absent_keys:
+    elif expected_absent_keys or expected_provenance_keys:
         disposition = (
             ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION
         )
@@ -278,7 +304,8 @@ def compare_reconciled_eod_records(
         rebuilt_record_count=len(rebuilt),
         unchanged_record_count=unchanged,
         provenance_only_change_count=provenance_only,
-        unexpected_provenance_change_count=unexpected_provenance,
+        expected_provenance_change_count=len(expected_provenance_keys),
+        unexpected_provenance_change_count=len(unexpected_provenance_keys),
         added_record_count=len(added_keys),
         unexpected_added_record_count=len(unexpected_added_keys),
         absent_record_count=len(absent_keys),
@@ -349,6 +376,18 @@ def _provenance_signature(record: EodPriceBarV1) -> tuple[object, ...]:
     )
 
 
+def _provenance_signature_without_source_id(
+    record: EodPriceBarV1,
+) -> tuple[object, ...]:
+    return (
+        record.ingested_at,
+        record.is_latest_revision,
+        record.quality_status,
+        record.quality_flags,
+        record.schema_version,
+    )
+
+
 def expected_case_sensitive_additions(
     *,
     exact_provider_tickers: Iterable[str],
@@ -371,6 +410,55 @@ def expected_case_sensitive_additions(
             if instrument_id is not None:
                 result.add(instrument_id)
     return frozenset(result)
+
+
+def expected_case_sensitive_source_record_id_changes(
+    *,
+    base_records: tuple[EodPriceBarV1, ...],
+    rebuilt_records: tuple[EodPriceBarV1, ...],
+    exact_status: Mapping[str, str],
+    exact_resolver: Mapping[str, UUID],
+    canonical_resolver: Mapping[str, UUID],
+    source_provenance: ReconciledEodSourceProvenance,
+    source_observed_at: datetime,
+) -> frozenset[tuple[str, str, str, int]]:
+    """Prove source IDs whose only correction restores provider ticker case."""
+
+    if source_provenance != ReconciledEodSourceProvenance.RETAINED_ORIGINAL:
+        return frozenset()
+    base = _records_by_key(base_records, family="base")
+    rebuilt = _records_by_key(rebuilt_records, family="rebuilt")
+    expected: set[tuple[str, str, str, int]] = set()
+    for key in set(base) & set(rebuilt):
+        old = base[key]
+        new = rebuilt[key]
+        if (
+            _economic_signature(old) != _economic_signature(new)
+            or old.source_record_id == new.source_record_id
+            or _provenance_signature_without_source_id(old)
+            != _provenance_signature_without_source_id(new)
+            or old.ingested_at != source_observed_at
+            or new.ingested_at != source_observed_at
+        ):
+            continue
+        old_parts = old.source_record_id.rsplit(":", 1)
+        new_parts = new.source_record_id.rsplit(":", 1)
+        if len(old_parts) != 2 or len(new_parts) != 2:
+            continue
+        old_ticker, old_timestamp = old_parts
+        exact_ticker, exact_timestamp = new_parts
+        if (
+            old_timestamp != exact_timestamp
+            or old_ticker == exact_ticker
+            or old_ticker != exact_ticker.upper()
+            or old_ticker in exact_status
+            or exact_status.get(exact_ticker) != "resolved"
+            or exact_resolver.get(exact_ticker) != old.instrument_id
+            or canonical_resolver.get(old_ticker) != old.instrument_id
+        ):
+            continue
+        expected.add(key)
+    return frozenset(expected)
 
 
 def expected_case_sensitive_absences(

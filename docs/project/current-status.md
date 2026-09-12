@@ -127,15 +127,18 @@ budgets now guard this boundary.
   preceding 1,234 fully source-bound sessions through 2026-08-12. See the
   [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).
 - A complete-interval Reconciled EOD candidate controller is implemented. The
-  first real 1.0 run retained 275 successful sessions before correctly
-  stopping on five October 2022 absences. All five were proven instances of an
-  `ALpA` preferred-stock bar that legacy normalization had falsely bound to
-  common stock `ALPA`. ADR 0208 and manifest contract 1.1 now admit only this
-  fully source-bound removal class and separately count expected/unexpected
-  absences; 62 focused tests, the complete 2,519-test API suite, and a five-date
-  temporary real candidate publish/reread passed. The
-  stopped 1.0 candidate has no interval marker and will not be reused. A new
-  clean 1.1 complete candidate remains to be built. See the
+  first real 1.0 run retained 275 successful sessions before exposing five
+  source-proven `ALpA` legacy misbindings; ADR 0208 admits only that removal
+  class. The clean 1.1 successor retained 300 sessions before 20 dates exposed
+  30 provenance-only repairs from forced upper-case source IDs back to exact
+  provider case. All 30 preserve stable ID, timestamp, observation time,
+  economic, quality, revision, and schema fields. ADR 0209 and manifest
+  contract 1.2 admit only that eight-condition exact-source class and count it
+  separately; a four-worker real replay of all 20 dates found 86 additions,
+  five expected absences, 30 expected provenance repairs, and zero blockers or
+  economic changes. Fifty-seven focused tests and all 2,521 API tests pass.
+  Both stopped candidates lack an interval marker and will not be reused. A
+  new clean 1.2 complete candidate remains to be built. See the
   [build audit](../audits/reconciled-eod-edition-first-build-2026-09-12.md).
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional

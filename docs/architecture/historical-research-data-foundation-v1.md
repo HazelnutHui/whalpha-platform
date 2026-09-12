@@ -105,7 +105,7 @@ readiness.
 | Family | Grain | Authority | Required role |
 | --- | --- | --- | --- |
 | Canonical EOD Price Bar | instrument, session, source, revision | Implemented canonical fact; affected V1 history is quarantined under ADR 0203 | Raw OHLCV and current Production outcome path |
-| Reconciled EOD Edition | edition, instrument, session, source, revision | ADR 0204 design accepted; implementation pending | Complete immutable research price candidate after interval reconciliation |
+| Reconciled EOD Edition | edition, instrument, session, source, revision | Construction, persistence, formal reread, source selection, and atomic Apply implemented; first complete real edition pending | Complete immutable research price candidate after interval reconciliation |
 | Point-in-time Identity | source observation and resolved instrument as of date | Implemented resolved snapshots; normalized source observations are canonical for the exact sessions reported by current context | Stable-ID/ticker/exchange/status evidence |
 | Daily Universe Membership | universe, instrument, session, methodology | Derived canonical decision | Performance-eligible historical population |
 | Corporate Action | instrument, action, source, revision | Canonical event fact | Splits, distributions, reorganizations, symbol changes, delistings |
@@ -317,7 +317,11 @@ ADR 0204 adds a separate full-session Reconciled EOD Edition direction for
 research. It reuses the EOD Price Bar V1 row schema but is keyed by an explicit
 edition and final interval fingerprint. Existing EOD V1 is not overwritten,
 partial edition sessions have no reader authority, and unexplained removals or
-economic-value changes remain quarantined.
+economic-value changes remain quarantined. ADR 0208 admits only a fully source-
+proven legacy case-misbinding removal; ADR 0209 admits only a fully source-
+proven restoration of exact provider ticker case in an otherwise identical
+source record. Both remain explicit contract counts rather than generic
+tolerances.
 
 The design should prefer:
 

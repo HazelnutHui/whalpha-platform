@@ -16,6 +16,7 @@ from tip_api.services.reconciled_eod_edition import (
     compare_reconciled_eod_records,
     expected_case_sensitive_absences,
     expected_case_sensitive_additions,
+    expected_case_sensitive_source_record_id_changes,
 )
 from tip_api.persistence.parquet.manifest import record_business_key
 
@@ -160,6 +161,59 @@ def test_case_misbinding_absence_rejects_later_or_economically_different_source(
     ) == frozenset()
 
 
+def test_retained_source_accepts_only_proven_exact_source_id_case_repair() -> None:
+    timestamp = 1_665_100_800_000
+    old = bar(ID1, source_record_id=f"RXOW:{timestamp}")
+    rebuilt = bar(ID1, source_record_id=f"RXOw:{timestamp}")
+    expected = expected_case_sensitive_source_record_id_changes(
+        base_records=(old,),
+        rebuilt_records=(rebuilt,),
+        exact_status={"RXOw": "resolved"},
+        exact_resolver={"RXOw": ID1},
+        canonical_resolver={"RXOW": ID1},
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+        source_observed_at=INGESTED,
+    )
+
+    assert expected == frozenset({record_business_key(old)})
+    summary = compare_reconciled_eod_records(
+        base_records=(old,),
+        rebuilt_records=(rebuilt,),
+        expected_added_instrument_ids=frozenset(),
+        expected_provenance_business_keys=expected,
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+    )
+
+    assert summary.disposition == (
+        ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_RECONCILIATION
+    )
+    assert summary.provenance_only_change_count == 1
+    assert summary.expected_provenance_change_count == 1
+    assert summary.unexpected_provenance_change_count == 0
+
+
+def test_source_id_case_repair_rejects_uppercase_identity_or_later_source() -> None:
+    timestamp = 1_665_100_800_000
+    old = bar(ID1, source_record_id=f"RXOW:{timestamp}")
+    rebuilt = bar(ID1, source_record_id=f"RXOw:{timestamp}")
+    values = {
+        "base_records": (old,),
+        "rebuilt_records": (rebuilt,),
+        "exact_resolver": {"RXOw": ID1},
+        "canonical_resolver": {"RXOW": ID1},
+        "source_observed_at": INGESTED,
+    }
+
+    assert expected_case_sensitive_source_record_id_changes(
+        **values,
+        exact_status={"RXOW": "resolved", "RXOw": "resolved"},
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+    ) == frozenset()
+    assert expected_case_sensitive_source_record_id_changes(
+        **values,
+        exact_status={"RXOw": "resolved"},
+        source_provenance=ReconciledEodSourceProvenance.LATER_REACQUISITION,
+    ) == frozenset()
 def test_unexpected_addition_is_quarantined() -> None:
     summary = compare_reconciled_eod_records(
         base_records=(bar(ID1),),

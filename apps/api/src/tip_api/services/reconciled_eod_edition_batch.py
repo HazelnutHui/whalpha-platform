@@ -32,7 +32,7 @@ from tip_api.services.reconciled_eod_edition import (
 )
 
 
-CONTRACT_VERSION = "reconciled-eod-price-bar-edition-batch-result/1.1"
+CONTRACT_VERSION = "reconciled-eod-price-bar-edition-batch-result/1.2"
 MAXIMUM_SESSIONS_PER_BATCH = 40
 MAXIMUM_WORKERS = 4
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
@@ -57,6 +57,7 @@ class ReconciledEodEditionBatchSessionResultV1:
     record_count: int
     added_record_count: int
     absent_record_count: int
+    provenance_only_change_count: int
     manifest_fingerprint: str | None
     failure_code: Literal[
         "none",
@@ -82,6 +83,7 @@ class ReconciledEodEditionBatchResultV1:
     record_count: int
     added_record_count: int
     absent_record_count: int
+    provenance_only_change_count: int
     external_request_count: int
     canonical_data_write_count: int
     candidate_session_write_count: int
@@ -195,6 +197,9 @@ def run_reconciled_eod_edition_batch(
         record_count=sum(item.record_count for item in ordered),
         added_record_count=sum(item.added_record_count for item in ordered),
         absent_record_count=sum(item.absent_record_count for item in ordered),
+        provenance_only_change_count=sum(
+            item.provenance_only_change_count for item in ordered
+        ),
         external_request_count=0,
         canonical_data_write_count=0,
         candidate_session_write_count=published,
@@ -298,6 +303,9 @@ def _reuse_existing_session(
         record_count=manifest.diff.rebuilt_record_count,
         added_record_count=manifest.diff.added_record_count,
         absent_record_count=manifest.diff.absent_record_count,
+        provenance_only_change_count=(
+            manifest.diff.provenance_only_change_count
+        ),
         manifest_fingerprint=manifest.logical_fingerprint,
         failure_code="none",
     )
@@ -329,6 +337,9 @@ def _build_and_publish(
             record_count=result.record_count,
             added_record_count=candidate.diff.added_record_count,
             absent_record_count=candidate.diff.absent_record_count,
+            provenance_only_change_count=(
+                candidate.diff.provenance_only_change_count
+            ),
             manifest_fingerprint=result.manifest_fingerprint,
             failure_code="none",
         )
@@ -358,6 +369,7 @@ def _failed_result(
         record_count=0,
         added_record_count=0,
         absent_record_count=0,
+        provenance_only_change_count=0,
         manifest_fingerprint=None,
         failure_code=failure_code,
     )

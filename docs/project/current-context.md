@@ -248,7 +248,7 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| 1,255 aligned EOD / Identity partitions through 2026-09-11; corrected-edition contract 1.1 and bounded resumable construction are implemented | Rebuild ADR 0207's exact 1,234-session corrected EOD edition under ADR 0208, then seal final transitive Historical Coverage |
+| 1,255 aligned EOD / Identity partitions through 2026-09-11; corrected-edition contract 1.2 and bounded resumable construction are implemented | Rebuild ADR 0207's exact 1,234-session corrected EOD edition under ADRs 0208–0209, then seal final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
 | 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
@@ -271,7 +271,11 @@ absences stopped completion. Exact retained source proves each was the same
 legacy `ALpA` preferred-stock bar falsely attributed to common stock `ALPA`.
 ADR 0208 and manifest contract 1.1 admit only that seven-condition proven
 misbinding removal and keep every other absence blocked. The incomplete 1.0
-candidate has no interval marker and is not reusable by the new build.
+candidate has no interval marker. The clean 1.1 successor retained 300 sessions
+before 20 dates exposed 30 otherwise-identical source IDs whose exact provider
+ticker case had been restored. ADR 0209 and contract 1.2 admit only that eight-
+condition provenance repair; the real 20-date replay found zero blocking or
+economic changes. Neither incomplete candidate is reusable by the new build.
 
 Historical backfills observed later remain ineligible for formal validation,
 holdout, or Production claims unless source availability at the signal time is

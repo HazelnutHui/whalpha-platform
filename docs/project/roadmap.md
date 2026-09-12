@@ -129,9 +129,12 @@ Required work:
   through 2026-08-12 for the first real candidate. Construct and formally
   reread that exact edition before planning any canonical Apply. The first
   1.0 run retained 275 sessions before five proven legacy case-normalized
-  misbindings stopped it. ADR 0208 and manifest contract 1.1 now distinguish
-  source-proven expected removals from every unexpected absence; start a new
-  clean 1.1 candidate rather than mixing the stopped 1.0 partitions;
+  misbindings stopped it. ADR 0208 distinguishes source-proven expected
+  removals from every unexpected absence. The clean 1.1 successor retained 300
+  sessions before exact provider-case restoration in 30 otherwise-identical
+  source IDs stopped it; ADR 0209 and contract 1.2 admit only that fully proven
+  provenance repair. Start a new clean 1.2 candidate rather than mixing either
+  stopped predecessor;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not
