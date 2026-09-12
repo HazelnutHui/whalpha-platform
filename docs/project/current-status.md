@@ -161,6 +161,15 @@ budgets now guard this boundary.
   The eight-process run took 374.70 seconds and made zero requests or writes.
   Both remain `validated_not_published`; the separate legacy 304-session
   family evidence remains the only published EOD/Identity evidence.
+- ADR 0211's distinct no-write plan now binds those two candidates to the exact
+  corrected edition and two absent targets. Plan SHA-256 is
+  `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`,
+  logical fingerprint is
+  `443d80c7347b794b7f105c2d8b5dc8e57fbc4d4dd67442773983647d69d0fcfc`,
+  and family-set fingerprint is
+  `30722680a6d2f8448db0e895fed7e060ca8a81f2d5faebca3b4d23fbba2b0d8e`.
+  The independent exact-SHA reread passed. Both evidence targets remain absent;
+  no `/data`, Historical Coverage, research, or Production authority changed.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
   contract remains available for a future deeper-history source. The stopped
@@ -237,12 +246,13 @@ Complete:
   mechanics;
 - a preregistered Strong-Leader Pullback V1; and
 - the canonical contract 1.2 corrected EOD edition for 1,234 sessions through
-  2026-08-12, formally reread after atomic Apply.
+  2026-08-12, formally reread after atomic Apply; and
+- the exact edition-specific, no-write two-family evidence publication plan.
 
 Incomplete:
 
-- edition-specific publication planning and canonical publication for the two
-  validated corrected-edition EOD/Identity evidence candidates;
+- canonical publication for the two validated corrected-edition EOD/Identity
+  evidence candidates; planning is complete but Apply remains separate;
 - later Historical Coverage and research admission of the canonical ADR 0207
   corrected EOD edition; construction, reconciliation, Apply, postflight, and
   read-only family-evidence validation are complete;
@@ -283,15 +293,16 @@ that fixes both known gaps.
 The current rolling census fixes 1,255 sessions from 2021-09-13 through
 2026-09-11. EOD and target-session Identity are complete. Membership remains
 303/1,255.
-Required lifecycle, PIT classification, PIT fundamentals, and Historical Coverage are
-absent; status remains `quarantined`.
+Required lifecycle, PIT classification, PIT fundamentals, and Historical
+Coverage are absent; status remains `quarantined`.
 
 1. Do not restart the stopped `20260911g` continuation or retry its expired
    boundary. The rolling price/Identity target and final census are complete.
    The complete corrected edition has now passed exact planning, atomic Apply,
-   canonical postflight, and read-only EOD/Identity family-evidence validation.
-   Next build an edition-specific no-write evidence publication plan; its Apply
-   remains separate. This still does not admit research: the other mandatory
+   canonical postflight, read-only EOD/Identity family-evidence validation, and
+   edition-specific no-write evidence publication planning. Next extend the
+   recoverable Apply reader for that exact distinct contract; execution remains
+   separately approved. This still does not admit research: the other mandatory
    families and final Historical Coverage remain later gates. Treat the first
    20 edition sessions as disclosed feature
    warm-up and exclude them from signals and performance. Do not retry the

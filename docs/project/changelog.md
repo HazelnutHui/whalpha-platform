@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-12 — Seal the corrected-edition family-evidence publication plan
+
+- Accepted ADR 0211 and added a backward-compatible, edition-specific no-write
+  plan contract. It reuses the existing two-family custody and recovery
+  mechanics while binding the exact corrected edition ID and interval
+  fingerprint. The legacy rolling-current plan reader rejects the new source
+  scope, and the existing Apply entry point remains unchanged.
+- The real eight-worker build reread 1,234 EOD and same-session Identity
+  sessions and sealed exactly two absent evidence targets / 2,673,980 bytes.
+  Plan SHA-256 is
+  `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`,
+  logical fingerprint is
+  `443d80c7347b794b7f105c2d8b5dc8e57fbc4d4dd67442773983647d69d0fcfc`,
+  and family-set fingerprint is
+  `30722680a6d2f8448db0e895fed7e060ca8a81f2d5faebca3b4d23fbba2b0d8e`.
+- Independent exact-SHA reread reproduced all plan, source, target, count, and
+  fingerprint bindings. The full API suite passed 2,531 tests with the two
+  existing dependency deprecation warnings. No provider request, `/data`
+  write, evidence publication, Historical Coverage, research authority,
+  Production change, or website deployment occurred. See the
+  [dated audit](../audits/reconciled-eod-family-evidence-publication-plan-2026-09-12.md).
+
 ## 2026-09-12 — Validate corrected-edition EOD and Identity family evidence
 
 - Accepted ADR 0210 and added an edition-scoped, offline adapter rather than

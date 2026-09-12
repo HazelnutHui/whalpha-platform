@@ -145,9 +145,13 @@ Required work:
 - completed 2026-09-12: adapt the named corrected edition and exact matching
   Identity snapshots into read-only Historical Dataset Coverage Evidence
   candidates. Eight-process formal validation completed in 374.70 seconds;
-  both families cover the same 1,234 sessions and remain unpublished. Next
-  create one edition-specific no-write evidence publication plan, then retain
-  canonical Apply as a separate review boundary;
+  both families cover the same 1,234 sessions and remain unpublished;
+- completed 2026-09-12: seal and independently reread one edition-specific
+  no-write evidence publication plan. It binds exactly two absent targets and
+  2,673,980 bytes; plan SHA-256 is
+  `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`.
+  Extend recoverable Apply support next, while retaining execution as a
+  separate exact-plan authorization boundary;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not

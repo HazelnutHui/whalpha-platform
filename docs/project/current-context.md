@@ -58,7 +58,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Symlinks / publication residue | zero / zero |
 | Corrected EOD edition | Canonical contract 1.2 edition: 1,234 sessions / 10,376,263 records / 2,469 files / 1,083,699,732 bytes; interval fingerprint `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3` |
 | Corrected EOD Apply | Applied from approved plan SHA-256 `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`; logical fingerprint `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`; canonical formal reread passed |
-| Corrected EOD family evidence | Exact 1,234-session EOD and same-session Identity candidates formally validate read-only; EOD fingerprint `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`, Identity fingerprint `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`; both unpublished |
+| Corrected EOD family evidence | Exact 1,234-session EOD and same-session Identity candidates formally validate read-only; EOD fingerprint `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`, Identity fingerprint `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`; exact no-write plan SHA `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`; both remain unpublished |
 
 The bounded historical run stopped safely at the Starter rolling entitlement
 edge; ADR 0206 rejected retries or a deeper purchase solely for the expired
@@ -124,6 +124,14 @@ are respectively
 `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`.
 The older published current-EOD/Identity evidence covers only 304 sessions and
 remains separate. No family evidence or Historical Coverage was published.
+
+ADR 0211 then sealed and independently reread the distinct edition-specific
+no-write publication plan. Its logical fingerprint is
+`443d80c7347b794b7f105c2d8b5dc8e57fbc4d4dd67442773983647d69d0fcfc`
+and family-set fingerprint is
+`30722680a6d2f8448db0e895fed7e060ca8a81f2d5faebca3b4d23fbba2b0d8e`.
+It binds exactly two absent targets / 2,673,980 bytes and grants no Apply,
+Historical Coverage, research, or Production authority.
 
 Source Coverage and the full-build controller can preserve a separate
 2021-08-11 through 2021-09-08 warm-up declaration. ADR 0206 leaves that
@@ -258,7 +266,7 @@ claims are false.
 | Complete or present | Still blocking real research |
 | --- | --- |
 | 1,255 aligned EOD / Identity partitions through 2026-09-11; ADR 0207's 1,234-session corrected edition is canonical and formally reread | Seal final transitive Historical Coverage for the admitted price family |
-| Legacy 304-session EOD/Identity evidence is published; exact corrected-edition EOD/Identity candidates validate for 1,234 sessions but remain unpublished | Complete and admitted historical Membership |
+| Legacy 304-session EOD/Identity evidence is published; exact corrected-edition EOD/Identity candidates validate for 1,234 sessions and have an exact no-write plan, but remain unpublished | Complete and admitted historical Membership |
 | 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
@@ -374,11 +382,12 @@ the 2026-09-11 daily audit.
 1. Do not restart the stopped `20260911g` continuation or retry its expired
    boundary. The rolling census is complete for price/Identity but does not
    authorize research use of affected V1 EOD history. The complete corrected
-   edition has passed inventory-bound planning, atomic Apply, and canonical
-   postflight and read-only family-evidence validation. Next create the exact
-   edition-specific evidence publication plan; keep its Apply, final Historical
-   Coverage, and research admission as distinct later decisions. Use the first
-   20 edition sessions as disclosed
+   edition has passed inventory-bound planning, atomic Apply, canonical
+   postflight, read-only family-evidence validation, and exact no-write
+   evidence publication planning. Next extend the recoverable Apply path for
+   the distinct edition contract, but keep execution, final Historical
+   Coverage, and research admission as separately reviewed decisions. Use the
+   first 20 edition sessions as disclosed
    feature warm-up and exclude them from signals and performance. Keep the
    external warm-up workspace reserved but empty under Starter.
 2. Use Massive as the primary price/reference source and evaluate official

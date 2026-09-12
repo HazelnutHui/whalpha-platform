@@ -78,7 +78,9 @@ Daily point-in-time Membership, canonical corporate-action coverage,
 instrument lifecycle/terminal outcomes, complete adjustment-ledger
 reconciliation, and final Historical Coverage remain absent or incomplete.
 
-The next bounded action is an edition-specific, no-write publication plan for
-exactly these two evidence manifests. Any canonical evidence Apply remains a
-separate, explicitly reviewed mutation. Final Historical Coverage and research
-admission cannot proceed merely because the two candidates validate.
+The edition-specific no-write publication plan for exactly these two evidence
+manifests subsequently completed and is recorded in the
+[plan audit](reconciled-eod-family-evidence-publication-plan-2026-09-12.md).
+Canonical evidence Apply remains a separate, explicitly reviewed mutation.
+Final Historical Coverage and research admission cannot proceed merely because
+the two candidates validate or have a sealed publication plan.
