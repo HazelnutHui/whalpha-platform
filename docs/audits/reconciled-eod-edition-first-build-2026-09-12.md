@@ -120,12 +120,37 @@ network-disabled replay then classified all three additions as expected, all
 absent, or economic changes. The complete 2,522-test API suite passed with only
 the same two pre-existing dependency deprecation warnings.
 
+## Completed contract 1.2 successor
+
+The clean successor was built from implementation revision
+`c798e582b0ad3b49ada5fc7fde94125382ef9c06` with fixed creation time
+`2026-09-12T05:04:00Z`. It reused none of the stopped candidates. All 31
+batches completed and the final interval marker passed formal reread:
+
+- edition ID: `reconciled-eod-v12-20210913-20260812-c798e58`;
+- 1,234 sessions / 10,376,263 records;
+- 947 retained-original / 287 later-reacquisition sessions;
+- 2,461 accepted additions / 50 source-proven expected absences /
+  2,648,128 source-proven provenance-only ticker-case repairs;
+- interval fingerprint:
+  `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3`;
+- owner-only custody: 2,469 files / 1,083,699,732 bytes, zero symlinks and
+  zero staging or temporary residue; and
+- zero external requests and zero canonical `/data` writes.
+
+The separately generated no-write Apply plan formally reread the candidate and
+bound every artifact plus canonical pre-state fingerprint
+`a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e`.
+Its file SHA-256 is
+`7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`
+and logical fingerprint is
+`6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`.
+It is `ready_for_separate_apply` with all authority flags false.
+
 ## Next action and authority
 
-Run a new candidate from an empty owner-only root, a new edition ID, one clean
-1.2 implementation revision, and one fixed creation time. None of the stopped
-candidates is reused.
-
-No action in this audit changes canonical EOD V1, Historical Coverage,
+Review the exact plan values, then perform the separately approved atomic
+Apply only while the canonical inventory still matches its bound pre-state.
+No action recorded here changes canonical EOD V1, Historical Coverage,
 research admission, performance claims, Candidate, Production, publication,
 deployment, or the website.

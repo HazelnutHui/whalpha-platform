@@ -113,7 +113,8 @@ Required work:
   omit VWAP and its zero-volume path. ADR 0206 ends retries or a purchase for
   the two expired boundary sessions: normal daily updates rolled the active
   source target to 2021-09-13 and the offline census verified it;
-- build ADR 0204's complete immutable Reconciled EOD Edition after acquisition
+- completed 2026-09-12: build ADR 0204's complete immutable Reconciled EOD
+  Edition after acquisition
   quiesces; prefer retained original packages, retain later reacquisitions as a
   distinct provenance class, and reject unexplained removals or economic-value
   changes rather than hiding the ADR 0203 defect behind a sparse overlay;
@@ -126,8 +127,7 @@ Required work:
   after 307 reacquisitions and leaves only two Identity-source gaps. Later
   Identity diagnostics omitted canonical business keys, so ADR 0207 preserves
   the no-removal gate and selects the maximal preceding 1,234-session interval
-  through 2026-08-12 for the first real candidate. Construct and formally
-  reread that exact edition before planning any canonical Apply. The first
+  through 2026-08-12 for the first real candidate. The first
   1.0 run retained 275 sessions before five proven legacy case-normalized
   misbindings stopped it. ADR 0208 distinguishes source-proven expected
   removals from every unexpected absence. The clean 1.1 successor retained 300
@@ -136,8 +136,11 @@ Required work:
   provenance repair. The first clean 1.2 run retained 1,079 sessions before a
   price-only case collision exposed an incorrect expected-addition input; the
   ADR 0203 classifier now uses exact Grouped Daily collision groups plus exact
-  Identity resolution. Start a new clean 1.2 candidate rather than mixing any
-  stopped predecessor;
+  Identity resolution. The clean successor completed all 1,234 sessions and
+  10,376,263 records, passed formal reread, and produced an exact no-write
+  Apply plan binding all 2,469 artifacts and the current canonical inventory.
+  The plan is ready for a separately approved atomic Apply; no stopped
+  predecessor was reused and no research authority was granted;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not

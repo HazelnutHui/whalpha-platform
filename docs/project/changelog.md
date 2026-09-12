@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-12 — Complete and plan the first corrected EOD edition
+
+- Built the clean contract 1.2 successor from revision
+  `c798e582b0ad3b49ada5fc7fde94125382ef9c06` without reusing any stopped
+  predecessor. All 31 batches and the final formal reread completed: 1,234
+  sessions, 10,376,263 records, 947 retained-original and 287 visibly
+  later-reacquired sessions.
+- The sealed diff contains 2,461 accepted additions, 50 source-proven expected
+  absences, 2,648,128 source-proven ticker-case repairs, and no blocking
+  session. Interval fingerprint is
+  `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3`.
+- Verified owner-only candidate custody of 2,469 files / 1,083,699,732 bytes,
+  with zero symlinks and zero staging or temporary residue.
+- Generated and reread the exact no-write Apply plan. It binds all candidate
+  artifacts and canonical inventory fingerprint
+  `a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e`;
+  its file SHA-256 is
+  `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`
+  and logical fingerprint is
+  `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`.
+  It grants no Apply, research, Production, or website authority. Canonical
+  `/data` and Production remain unchanged.
+
 ## 2026-09-12 — Bind expected EOD additions to price-payload collisions
 
 - The first clean contract 1.2 build completed 26 batches and retained 39

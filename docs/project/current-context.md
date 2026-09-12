@@ -56,6 +56,8 @@ explicit all-partition validation both passed in their recorded audits.
 | Current data inventory | 15,703 files / 5,935,786,680 bytes |
 | Current inventory fingerprint | a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e |
 | Symlinks / publication residue | zero / zero |
+| Corrected EOD candidate | Complete private contract 1.2 edition: 1,234 sessions / 10,376,263 records / 2,469 files / 1,083,699,732 bytes; interval fingerprint `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3` |
+| Corrected EOD Apply plan | `ready_for_separate_apply`; SHA-256 `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`; logical fingerprint `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`; not executed |
 
 The bounded historical run stopped safely at the Starter rolling entitlement
 edge; ADR 0206 rejected retries or a deeper purchase solely for the expired
@@ -71,31 +73,15 @@ execution detail remains in the
 [terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md),
 and [final daily audit](../audits/daily-eod-publication-deployment-2026-09-11.md).
 
-ADR 0204's repository path now includes persistent owner-only candidate
-custody, memory-bounded full-edition validation, a sealed inventory-bound Apply
-plan, shared-lock atomic whole-edition Apply with exact recovery, and bounded
-resumable 1–40-session construction with at most four spawned workers. The
-matching source-coverage contract now records exact original-plan/package/
-canonical bindings, gaps, invalid evidence, conflicts, and later provenance in
-an immutable path-free artifact. These mechanics passed temporary-root tests,
-and a network-free real 2026-09-08 single-session coverage pilot selected the
-daily retained original without gaps or conflict. No full-interval coverage
-artifact or corrected edition has been built or applied, and no research,
-Candidate, Production, or website authority changed.
-
-The sealed 2026-09-12 full-interval Source Coverage census first found 948
-retained-original Grouped Daily packages, 305 missing packages, two invalid
-Identity-source bindings, and zero conflicts across all 1,255 sessions. All
-305 missing packages were reacquired in eight bounded invocations with 305
-requests, zero retries, and zero failures. The final network-disabled census
-selects 948 retained originals plus 305 visibly later reacquisitions and has
-zero Grouped Daily gaps. It remains `incomplete` only for 2026-08-13 and
-2026-08-19 because their original Identity provider responses were not
-retained; later responses contain genuine provider revisions and cannot claim
-original equivalence. Final coverage file SHA-256 is
-`e9d330dec6e002a9dadde88b95ad61d2e1280ac7479194962c430d9ba5a2d3cc`
-and logical fingerprint is
-`44a3cefe9a17059ad43c37954ac1e5056e748571e89ac900204e94b1f6fce749`.
+The final rolling Source Coverage census has zero Grouped Daily gaps but remains
+Identity-source-incomplete for 2026-08-13 and 2026-08-19. ADR 0207 therefore
+bounded the first corrected edition at the preceding 1,234 fully source-proven
+sessions. Its build-ready coverage artifact has SHA-256
+`4dc34a7851a0a2d851d4d75da86cd66a2c6a34508a9f016b08fa5a42d2d34ba9`,
+logical fingerprint
+`9bd386efe1fed7e6c39c5f11bc85dfe82f5f71d039079761ba838fe952e2ac6a`,
+947 retained-original sources, 287 visibly later-reacquired sources, and zero
+missing, invalid, or conflict sessions.
 
 The shared virtual environment's editable metadata points at an older Codex
 worktree. The completed backfill remained source-correct because its admin
@@ -110,11 +96,19 @@ completed its first real full missing-set execution. Its private custody holds
 modes, zero symlinks, and zero staging residue. It grants no canonical or
 research authority.
 
-A complete-interval candidate controller now converts one build-ready coverage
-artifact into bounded 1–40-session batches with at most four workers, retains
-successful work on a typed stop, and writes the interval marker only after a
-full formal reread. It has run only in fixtures; no real corrected edition has
-been built.
+The clean contract 1.2 candidate built all 1,234 sessions in 31 bounded batches
+and passed final formal reread. It contains 10,376,263 records, including 2,461
+accepted additions, 50 source-proven expected absences, and 2,648,128
+source-proven ticker-case repairs. No unexpected absence, economic-value
+change, source gap, or quarantine reached the sealed interval. The owner-only
+candidate has zero symlinks or residue and remains outside `/data`.
+
+The exact Apply plan independently reread the full candidate, bound all 2,469
+artifacts and 1,083,699,732 bytes, and bound canonical pre-state fingerprint
+`a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e`.
+The plan remains a no-authority artifact. The canonical target is absent and no
+Apply, Historical Coverage, research, Production, publication, or website
+change has occurred.
 
 Source Coverage and the full-build controller can preserve a separate
 2021-08-11 through 2021-09-08 warm-up declaration. ADR 0206 leaves that
@@ -248,7 +242,7 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| 1,255 aligned EOD / Identity partitions through 2026-09-11; corrected-edition contract 1.2 and bounded resumable construction are implemented | Rebuild ADR 0207's exact 1,234-session corrected EOD edition under ADRs 0208–0209, then seal final transitive Historical Coverage |
+| 1,255 aligned EOD / Identity partitions through 2026-09-11; ADR 0207's 1,234-session corrected edition and exact Apply plan are complete | Execute the separately approved canonical Apply, then seal final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
 | 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
@@ -280,7 +274,11 @@ price-only `SRVR`/`SRVr` collision exposed one incorrect expected-addition
 input: the builder used Identity collision groups instead of Grouped Daily
 collision groups. The existing ADR 0203 classifier is now wired to exact price
 symbols and the real date replays with zero blockers or economic changes. No
-incomplete candidate is reusable by the new build.
+incomplete candidate was reused. The clean successor bound to
+`c798e582b0ad3b49ada5fc7fde94125382ef9c06` is complete with interval
+fingerprint
+`098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3`;
+its exact no-write Apply plan is ready but has not executed.
 
 Historical backfills observed later remain ineligible for formal validation,
 holdout, or Production claims unless source availability at the signal time is
@@ -360,25 +358,13 @@ the 2026-09-11 daily audit.
 
 1. Do not restart the stopped `20260911g` continuation or retry its expired
    boundary. The rolling census is complete for price/Identity but does not
-   authorize research use of affected V1 EOD history. Design and execute a new
-   complete immutable Reconciled EOD Edition under ADR 0204, then formally
-   reconcile the full interval before research admission. ADR 0202
-   resolved the exact 2022-12-05 VWAP precision case without rewriting source
-   custody or weakening the provider-neutral repository. The 2026-09-10
-   REST pilot found Grouped Daily denied for
-   2021-09-09/10 but accessible with 11,063 rows for 2022-09-09; PIT Tickers,
-   splits, and dividends were accessible on all three dates. Use the documented
-   Day Aggregates Flat Files as an independent OHLCV cross-check, not a silent
-   canonical substitute. The separate S3 credential now works: 2026-09-09
-   fetched successfully and matched current REST on shared OHLCV/trade count,
-   while 2021-09-09 returned access denied. Flat Files omit VWAP and the 13
-   REST-only zero-volume records on that control. Exact-interval REST
-   execution freezes both 2021-09-09 and 2026-09-09 and permits an explicit
-   bounded paid-plan serial interval; it does not alter the older 300-session
-   planning contract.
-   Use the first 20 available target sessions as disclosed feature warm-up;
-   exclude them from signals and performance. Keep the external warm-up
-   workspace reserved but empty under Starter.
+   authorize research use of affected V1 EOD history. The complete corrected
+   edition and exact inventory-bound Apply plan are now sealed. Review and
+   execute the separate atomic Apply while the bound `/data` pre-state remains
+   current, then keep Historical Coverage and research admission as distinct
+   later decisions. Use the first 20 edition sessions as disclosed feature
+   warm-up and exclude them from signals and performance. Keep the external
+   warm-up workspace reserved but empty under Starter.
 2. Use Massive as the primary price/reference source and evaluate official
    free evidence through bounded source-specific pilots. Preserve every
    conflict, missing semantic, and permission limit; no first-non-null merge.

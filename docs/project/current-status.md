@@ -126,27 +126,27 @@ budgets now guard this boundary.
   weakened. ADR 0207 instead fixes the first real candidate interval at the
   preceding 1,234 fully source-bound sessions through 2026-08-12. See the
   [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).
-- A complete-interval Reconciled EOD candidate controller is implemented. The
-  first real 1.0 run retained 275 successful sessions before exposing five
-  source-proven `ALpA` legacy misbindings; ADR 0208 admits only that removal
-  class. The clean 1.1 successor retained 300 sessions before 20 dates exposed
-  30 provenance-only repairs from forced upper-case source IDs back to exact
-  provider case. All 30 preserve stable ID, timestamp, observation time,
-  economic, quality, revision, and schema fields. ADR 0209 and manifest
-  contract 1.2 admit only that eight-condition exact-source class and count it
-  separately; a four-worker real replay of all 20 dates found 86 additions,
-  five expected absences, 30 expected provenance repairs, and zero blockers or
-  economic changes. Fifty-seven focused tests and all 2,521 API tests pass.
-  The first clean 1.2 build then retained 1,079 sessions before 2025-11-18
-  exposed a wiring error: expected additions were derived from Identity
-  collisions rather than exact price-payload collisions. The unrecognized
-  `SRVR` ETF bar is source-proven, all 9,041 shared rows are economically
-  identical, and the existing ADR 0203 price-collision classifier now feeds
-  construction correctly. A fixture, real replay, and all 2,522 API tests pass
-  with zero blockers. All stopped candidates lack an interval marker and will
-  not be reused. A new
-  clean 1.2 complete candidate remains to be built. See the
+- The clean contract 1.2 Reconciled EOD candidate is complete and formally
+  reread: 1,234 sessions from 2021-09-13 through 2026-08-12, 10,376,263
+  records, 2,461 accepted additions, 50 source-proven expected absences, and
+  2,648,128 source-proven ticker-case repairs. Its interval fingerprint is
+  `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3`.
+  Owner-only custody contains 2,469 files / 1,083,699,732 bytes with zero
+  symlinks or staging residue. It is bound to implementation revision
+  `c798e582b0ad3b49ada5fc7fde94125382ef9c06`. All stopped predecessors remain
+  incomplete, have no interval marker, and are not reused. See the
   [build audit](../audits/reconciled-eod-edition-first-build-2026-09-12.md).
+- A separately sealed no-write Apply plan is `ready_for_separate_apply`. Its
+  file SHA-256 is
+  `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`,
+  logical fingerprint is
+  `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`,
+  and expected canonical pre-state fingerprint is
+  `a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e`.
+  Planning formally reread all candidate sessions and bound all 2,469 files.
+  It made no provider request or `/data` write and grants no Apply, research,
+  Candidate, Production, or website authority. The canonical edition target
+  remains absent.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
   contract remains available for a future deeper-history source. The stopped
@@ -225,13 +225,9 @@ Complete:
 
 Incomplete:
 
-- immutable corrected EOD history for the ADR 0203 case-sensitive-symbol
-  defect and full-interval reconciliation; ADR 0204's contracts, diff
-  classifier, isolated one-session candidate builder, owner-only candidate
-  persistence, memory-bounded formal reader, final interval completion marker,
-  exact whole-edition Apply planning, and atomic Apply executor are implemented,
-  but real batch construction, an executed canonical edition, and its later
-  research admission are not;
+- canonical publication and later research admission of the complete ADR 0207
+  corrected EOD edition; construction, formal reconciliation, and exact
+  inventory-bound Apply planning are complete, but Apply has not executed;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
@@ -274,29 +270,14 @@ absent; status remains `quarantined`.
 
 1. Do not restart the stopped `20260911g` continuation or retry its expired
    boundary. The rolling price/Identity target and final census are complete.
-   Existing affected EOD V1 history
-   must be rebuilt as ADR 0204's
-   complete immutable Reconciled EOD Edition and formally reconciled before
-   research admission. ADR 0202 resolved the 2022-12-05 VWAP
-   case with explicit normalization and audit
-   evidence while preserving strict repository rejection. The
-   completed REST probe found 2021-09-09/10 Grouped Daily denied and
-   2022-09-09 accessible; all three PIT Tickers/action probes were accessible.
-   Do not retry the entitlement-denied EOD dates under Starter. The live Flat
-   File control proves current access and shared OHLCV compatibility, but the
-   old object is also denied and Flat Files omit VWAP/REST zero-volume rows.
-   The backfill executor supports a frozen exact
-   1,255-session interval plus an explicit 0.25-to-15-second serial paid-plan
-   interval, while retaining the older count-based mode unchanged.
-   Treat the first 20 available target sessions as feature warm-up and exclude
-   them from signals and performance. Do not populate the reserved external
-   warm-up workspace under the current Starter program.
-   Corrected-edition construction now has a network-disabled, resumable
-   1–40-session batch primitive with at most four spawned workers. The exact
-   source census and the 305-session bounded reacquisition are complete; source
-   precedence is sealed rather than inferred from directory order. Resolve the
-   two typed Identity-source exceptions without manufacturing equivalence,
-   then build the real candidate through the complete-interval controller.
+   The complete corrected edition and its inventory-bound no-write Apply plan
+   are now sealed. Review the exact plan values, then use the separate atomic
+   Apply operation while `/data` remains at the bound pre-state. Applying the
+   edition still does not admit research; final Historical Coverage and the
+   remaining mandatory evidence families stay separate gates. Treat the first
+   20 edition sessions as disclosed feature warm-up and exclude them from
+   signals and performance. Do not retry the expired 2021-09-09/10 price
+   boundary or populate the reserved external warm-up workspace under Starter.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later
