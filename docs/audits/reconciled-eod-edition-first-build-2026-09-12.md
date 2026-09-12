@@ -91,11 +91,40 @@ Fifty-seven focused tests and the complete 2,521-test API suite passed under
 contract 1.2; the only additional output was two pre-existing dependency
 deprecation warnings.
 
+## Contract 1.2 build and price-collision wiring stop
+
+The first clean 1.2 implementation revision was
+`89a4f1bfc14ad71d89769c614a133341b688cd7f`. It completed 26 batches and
+retained 39 successful sessions from batch 27 before stopping on 2025-11-18.
+The incomplete candidate contains 1,079 completed partitions, no interval
+marker, and made zero external requests or `/data` writes.
+
+The failed later-reacquisition session reproduced all 9,041 base records with
+zero economic change or absence and added three records. `BCPC` and `TPC` were
+already recognized as expected additions. `SRVR` was initially unrecognized:
+the price package contains both `SRVR` and `SRVr`, same-session Identity
+resolves only exact `SRVR` as an ETF to the existing stable ID, and legacy
+normalized mapping omitted that valid bar.
+
+ADR 0203 defines the repair in terms of an exact Grouped Daily symbol
+collision plus exact Identity resolution. The edition builder incorrectly fed
+its expected-addition classifier from Identity's collision set rather than the
+price package's collision set, despite the correct price-collision classifier
+already existing. The wiring now derives collision groups from the exact price
+payload and uses Identity only to resolve an already-canonical stable ID. It
+does not mint an instrument or infer eligibility from ticker form.
+
+A dedicated fixture with price-only `SRVR`/`SRVr` collision passed. A real
+network-disabled replay then classified all three additions as expected, all
+9,041 base rows as later-source provenance-only changes, and zero unexpected,
+absent, or economic changes. The complete 2,522-test API suite passed with only
+the same two pre-existing dependency deprecation warnings.
+
 ## Next action and authority
 
 Run a new candidate from an empty owner-only root, a new edition ID, one clean
-1.2 implementation revision, and one fixed creation time. Neither stopped
-candidate is reused.
+1.2 implementation revision, and one fixed creation time. None of the stopped
+candidates is reused.
 
 No action in this audit changes canonical EOD V1, Historical Coverage,
 research admission, performance claims, Candidate, Production, publication,

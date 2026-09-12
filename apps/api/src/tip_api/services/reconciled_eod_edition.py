@@ -181,8 +181,9 @@ def build_reconciled_eod_session_candidate(
     diff = compare_reconciled_eod_records(
         base_records=base_records,
         rebuilt_records=rebuilt_records,
-        expected_added_instrument_ids=(
-            resolution.case_colliding_resolved_instrument_ids
+        expected_added_instrument_ids=expected_case_sensitive_additions(
+            exact_provider_tickers=_grouped_daily_exact_tickers(package.payload),
+            exact_resolver=resolution.resolver,
         ),
         expected_absent_business_keys=expected_absent_business_keys,
         expected_provenance_business_keys=expected_provenance_business_keys,
@@ -410,6 +411,23 @@ def expected_case_sensitive_additions(
             if instrument_id is not None:
                 result.add(instrument_id)
     return frozenset(result)
+
+
+def _grouped_daily_exact_tickers(
+    payload: Mapping[str, object],
+) -> tuple[str, ...]:
+    results = payload.get("results")
+    if not isinstance(results, list):
+        raise ReconciledEodEditionError("Grouped Daily results are unavailable")
+    tickers: list[str] = []
+    for item in results:
+        if not isinstance(item, Mapping):
+            raise ReconciledEodEditionError("Grouped Daily row is invalid")
+        ticker = item.get("T") or item.get("ticker")
+        if not isinstance(ticker, str) or not ticker.strip():
+            raise ReconciledEodEditionError("Grouped Daily ticker is invalid")
+        tickers.append(ticker.strip())
+    return tuple(tickers)
 
 
 def expected_case_sensitive_source_record_id_changes(

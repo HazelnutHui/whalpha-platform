@@ -659,6 +659,96 @@ def test_reconciled_eod_candidate_recovers_only_expected_missing_common(
     assert len(candidate.rebuilt_records) == 5002
 
 
+def test_reconciled_eod_candidate_uses_price_collision_not_identity_collision(
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 8, 20)
+    root = tmp_path / "reconciled-price-collision-data"
+    root.mkdir()
+    pages = reference_pages(session, count=5003)
+    rows = pages[0]["results"] + pages[1]["results"]
+    rows[0]["ticker"] = "SRVR"
+    rows[0]["type"] = "ETF"
+
+    identity_package = tmp_path / "reconciled-price-collision-identity"
+    fetch_identity_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport(pages),
+        session_date=session,
+        package_path=identity_package,
+        fetched_at=FETCHED_AT,
+        rate_limiter=no_wait_limiter(),
+    )
+    identity_plan_path = tmp_path / "reconciled-price-collision-identity.plan.json"
+    identity_plan = build_identity_plan(
+        package_path=identity_package,
+        plan_path=identity_plan_path,
+        data_root=root,
+    )
+    apply_approved_plan(
+        plan_path=identity_plan_path,
+        approved_plan_sha256=file_sha256(identity_plan_path),
+        expected_current_state_fingerprint=(
+            identity_plan.expected_current_state_fingerprint
+        ),
+        data_root=root,
+        expected_operation="identity",
+        expected_session=session,
+    )
+
+    source = read_identity_source_custody_at_data_root(
+        data_root=root.resolve(),
+        provider="massive_stocks_basic",
+        session_date=session,
+    )
+    identity = bind_case_sensitive_provider_ticker_source(
+        load_identity_snapshot(
+            root,
+            provider_id="massive_stocks_basic",
+            as_of_date=session,
+        ),
+        source_payloads=tuple(item.source_payload() for item in source.records),
+        source_fingerprint=source.manifest.logical_fingerprint,
+    )
+    grouped = grouped_payload(session, count=5003)
+    grouped["results"][0]["T"] = "SRVR"
+    grouped["results"][1]["T"] = "SRVr"
+    base = process_grouped_daily_payload(
+        {"results": grouped["results"][2:]},
+        identity=identity,
+        session_date=session,
+        endpoint="fixture",
+        data_root=root,
+        ingested_at=FETCHED_AT,
+        publish=True,
+    )
+    assert base.status == "published"
+    assert base.canonical_bar_count == 5001
+
+    eod_package = tmp_path / "reconciled-price-collision-eod"
+    fetch_eod_package(
+        config=MassiveProviderConfig(api_key="fixture-only"),
+        transport=FakeTransport([grouped]),
+        session_date=session,
+        package_path=eod_package,
+        fetched_at=FETCHED_AT,
+    )
+    candidate = build_reconciled_eod_session_candidate(
+        data_root=root.resolve(),
+        package_path=eod_package,
+        working_root=tmp_path / "reconciled-price-collision-working",
+        session_date=session,
+        source_provenance=ReconciledEodSourceProvenance.RETAINED_ORIGINAL,
+    )
+
+    assert candidate.diff.disposition == (
+        ReconciledEodDiffDisposition.ACCEPTED_CASE_SENSITIVE_ADDITIONS_ONLY
+    )
+    assert candidate.diff.added_record_count == 1
+    assert candidate.diff.unexpected_added_record_count == 0
+    assert len(candidate.rebuilt_records) == 5002
+
+
 def fetch_plan_apply_eod(tmp_path: Path, root: Path, session: date):
     package = tmp_path / f"eod-{session.isoformat()}"
     transport = FakeTransport([grouped_payload(session)])

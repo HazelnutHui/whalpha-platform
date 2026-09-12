@@ -133,7 +133,10 @@ Required work:
   removals from every unexpected absence. The clean 1.1 successor retained 300
   sessions before exact provider-case restoration in 30 otherwise-identical
   source IDs stopped it; ADR 0209 and contract 1.2 admit only that fully proven
-  provenance repair. Start a new clean 1.2 candidate rather than mixing either
+  provenance repair. The first clean 1.2 run retained 1,079 sessions before a
+  price-only case collision exposed an incorrect expected-addition input; the
+  ADR 0203 classifier now uses exact Grouped Daily collision groups plus exact
+  Identity resolution. Start a new clean 1.2 candidate rather than mixing any
   stopped predecessor;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the

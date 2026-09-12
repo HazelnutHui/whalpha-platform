@@ -275,7 +275,12 @@ candidate has no interval marker. The clean 1.1 successor retained 300 sessions
 before 20 dates exposed 30 otherwise-identical source IDs whose exact provider
 ticker case had been restored. ADR 0209 and contract 1.2 admit only that eight-
 condition provenance repair; the real 20-date replay found zero blocking or
-economic changes. Neither incomplete candidate is reusable by the new build.
+economic changes. The first clean 1.2 run then retained 1,079 sessions before a
+price-only `SRVR`/`SRVr` collision exposed one incorrect expected-addition
+input: the builder used Identity collision groups instead of Grouped Daily
+collision groups. The existing ADR 0203 classifier is now wired to exact price
+symbols and the real date replays with zero blockers or economic changes. No
+incomplete candidate is reusable by the new build.
 
 Historical backfills observed later remain ineligible for formal validation,
 holdout, or Production claims unless source availability at the signal time is

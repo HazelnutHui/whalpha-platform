@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-12 — Bind expected EOD additions to price-payload collisions
+
+- The first clean contract 1.2 build completed 26 batches and retained 39
+  successful sessions from batch 27 before stopping on 2025-11-18. The
+  incomplete candidate contains 1,079 partitions, no interval marker, and made
+  zero external requests or `/data` writes.
+- The stopped later-reacquisition day had 9,041 economically identical shared
+  records, no absences, and three additions. `SRVR` was the sole unexpected
+  addition: exact price source contains `SRVR` and `SRVr`, while same-session
+  Identity resolves only `SRVR` as an ETF to its existing stable ID.
+- Corrected the edition builder to feed ADR 0203's existing exact-symbol
+  addition classifier from Grouped Daily price symbols rather than Identity's
+  narrower collision set. Identity remains the security-form and stable-ID
+  authority; no ticker heuristic can establish eligibility.
+- A dedicated price-only collision fixture and the real 2025-11-18 replay pass.
+  The real diff now has three expected additions, 9,041 later-source
+  provenance-only changes, and zero unexpected, absent, or economic changes.
+  All 2,522 API tests passed with two pre-existing dependency deprecation
+  warnings.
+
 ## 2026-09-12 — Type exact provider-ticker provenance repairs
 
 - The clean 1.1 corrected-edition run completed seven batches and retained 300

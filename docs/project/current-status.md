@@ -137,8 +137,15 @@ budgets now guard this boundary.
   separately; a four-worker real replay of all 20 dates found 86 additions,
   five expected absences, 30 expected provenance repairs, and zero blockers or
   economic changes. Fifty-seven focused tests and all 2,521 API tests pass.
-  Both stopped candidates lack an interval marker and will not be reused. A
-  new clean 1.2 complete candidate remains to be built. See the
+  The first clean 1.2 build then retained 1,079 sessions before 2025-11-18
+  exposed a wiring error: expected additions were derived from Identity
+  collisions rather than exact price-payload collisions. The unrecognized
+  `SRVR` ETF bar is source-proven, all 9,041 shared rows are economically
+  identical, and the existing ADR 0203 price-collision classifier now feeds
+  construction correctly. A fixture, real replay, and all 2,522 API tests pass
+  with zero blockers. All stopped candidates lack an interval marker and will
+  not be reused. A new
+  clean 1.2 complete candidate remains to be built. See the
   [build audit](../audits/reconciled-eod-edition-first-build-2026-09-12.md).
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional

@@ -19,9 +19,11 @@ sealed and build-ready. A first real 1.0 build stopped safely after 275
 sessions and exposed the typed legacy-removal requirement now governed by ADR
 0208. The successor 1.1 build retained 300 sessions before exposing a second
 source-proven class: exact provider-ticker casing restored inside otherwise
-identical source IDs. ADR 0209 and contract 1.2 govern that class. A new
-complete 1.2 construction, an executed canonical edition, and the edition-only
-research input adapter remain pending.
+identical source IDs. ADR 0209 and contract 1.2 govern that class. The first
+1.2 run retained 1,079 sessions before exposing an incorrect builder input for
+a price-only case collision; the existing ADR 0203 classifier now consumes
+exact price symbols as designed. A new complete 1.2 construction, an executed
+canonical edition, and the edition-only research input adapter remain pending.
 
 ## Identity
 
@@ -69,9 +71,13 @@ The business key is the EOD Price Bar V1 key. Comparison distinguishes:
 5. fully unchanged keys.
 
 ADR 0203 permits the expected repair class to add a previously omitted resolved
-bar. ADR 0208 separately permits removal of a legacy case-normalized
-misbinding only when the retained original price package, exact same-session
-Identity source, stable-ID mapping, excluded case-distinct symbol, source ID,
+bar when the exact Grouped Daily payload contains a case-distinct symbol group
+and same-session exact Identity resolves that bar to an existing canonical
+stable ID. The price payload, not the Identity payload, defines whether the
+legacy price mapper encountered a collision; Identity remains the eligibility
+and stable-ID authority. ADR 0208 separately permits removal of a legacy case-
+normalized misbinding only when the retained original price package, exact
+same-session Identity source, stable-ID mapping, excluded case-distinct symbol, source ID,
 timestamp, observation time, OHLCV values, adjusted close, and neutral
 adjustment factors all reproduce the error. The contract records that removal
 as expected and uses the distinct
