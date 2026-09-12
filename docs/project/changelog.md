@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-12 — Close Reconciled EOD Grouped Daily source-package gaps
+
+- The first four-worker, network-disabled census formally reread all 1,255
+  rolling target sessions and selected 948 retained-original source packages,
+  with 305 Grouped Daily packages missing, two Identity-source bindings
+  invalid, and zero conflicts.
+- Reacquired all 305 exact missing dates in eight bounded invocations: 305
+  provider attempts, zero transient retries, and zero failures. Owner-only
+  custody contains 610 files / 381,337,205 bytes with zero symlinks or staging
+  residue; `/data` writes remained zero.
+- The final sealed census now selects 948 retained originals plus 305 visibly
+  later reacquisitions and reports zero missing price packages. It remains
+  incomplete only for 2026-08-13 and 2026-08-19 because later-revised Identity
+  responses cannot be relabeled as the unretained originals.
+- Research admission, corrected-edition construction, canonical EOD,
+  Production, publication, and deployment remain unchanged. See the
+  [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).
+
 ## 2026-09-11 — Complete the rolling price foundation and deploy the fresh daily release
 
 - Applied exact 2026-09-10 and 2026-09-11 Identity/EOD plans under the

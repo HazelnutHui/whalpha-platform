@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-11
+Status date: 2026-09-12
 
 This is the concise actual-state summary. Exact volatile identities and
 cross-device recovery belong in
@@ -112,12 +112,17 @@ budgets now guard this boundary.
   is rebound. A network-disabled local rebind attempt stopped before mutation
   because the environment lacks `setuptools`; the wrapper remains the safe
   path and no dependency was downloaded.
-- A coverage-hash-bound later-source reacquisition runner is implemented for
-  source-only gaps confirmed by the final quiescent census. It accepts only
-  explicit ordered batches of at most 40 dates, serially rate-limits requests,
-  uses bounded transport retries, resumes from formally verified owner-only
-  packages, writes zero canonical files, and emits no credential or response
-  body. It is fixture-tested only; no real reacquisition request has run.
+- The sealed 2026-09-12 Reconciled EOD source census found 948 retained-original
+  sessions, 305 missing Grouped Daily packages, two invalid Identity-source
+  bindings, and zero conflicts. All 305 price packages were then reacquired in
+  eight bounded invocations with 305 requests, zero retries, and zero failures.
+  Final private custody is 610 files / 381,337,205 bytes with owner-only modes,
+  zero symlinks, and zero staging residue. The final census now selects 948
+  retained originals plus 305 visibly later reacquisitions and has zero price
+  package gaps. It remains incomplete only for 2026-08-13 and 2026-08-19,
+  whose original Identity responses were not retained and whose later provider
+  revisions cannot be mislabeled as exact source evidence. See the
+  [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).
 - A complete-interval Reconciled EOD candidate controller is implemented. It
   consumes only build-ready sealed coverage, automatically divides the exact
   interval into 1–40-session batches, uses at most four workers, reuses only
@@ -136,48 +141,12 @@ budgets now guard this boundary.
   warm-up backfills as distinct origins; no warm-up package exists, and ADR
   0206 keeps that reserved workspace unpopulated unless deeper history is
   separately approved.
-- The first finite unit began at 2026-09-10 08:54:25 UTC and stopped safely on
-  a concurrent research-Membership inventory change. The unique continuation
-  `whalpha-five-year-backfill-20260910c.service` recovered the Identity-only
-  edge but later stopped at a bounded historical alias gate. The successor
-  `whalpha-five-year-backfill-20260910d.service` preserved those conflicts and
-  advanced to the exact counts above before failing closed at 20:51:39 UTC.
-  The 2022-12-05 grouped payload contains a VWAP value beyond the canonical
-  decimal scale of 10; no silent rounding or partial EOD publication occurred.
-  ADR 0202 now normalizes only audited Massive VWAP float tails at the provider
-  boundary. A zero-request one-session recovery published and reread
-  2022-12-05. The unique bounded `20260910e` continuation later stopped before
-  2022-10-07 EOD because V1 upper-case ticker mapping collapsed six pairs of
-  case-distinct Massive securities. ADR 0203 preserves exact provider-symbol
-  case and binds it to same-session source evidence; its real zero-write replay
-  passes. A retained-package census found at least 1,862 resolved bars missing
-  across 676 published sessions. Existing EOD V1 partitions remain immutable
-  and research-quarantined pending a corrected version or correction family.
-  Clean source `2da13b200cbe506332c05baa47f08de328170d70` recovered
-  2022-10-07 with zero requests, and the unique bounded `20260910f`
-  continuation advanced through 2022-08-22 before stopping at 23:54:38 UTC
-  ahead of 2022-08-19 Identity. Its retained package has 168 missing-type rows
-  out of 12,172. ADR 0205 keeps those rows rejected and permits only the
-  explicit historical-reconstruction profile a 2.0% malformed ceiling; the
-  prospective ceiling remains 1.0%. A zero-request candidate replay passes,
-  then clean source `49ef83a4bc5ee70914eabb9930a8c9f7c6d78f3b`
-  reused the Identity package with zero requests, acquired EOD in one request,
-  and formally aligned both families at 1,017 sessions. The next exact session
-  was 2022-08-18. Clean source `6851d005bd9808d970e49988000223ff4898dd16`
-  started the sole `whalpha-five-year-backfill-20260911g.service` at
-  00:20:35 UTC. It completed eleven full batches with zero transient retries,
-  safely retained partial final-batch progress, and stopped at 05:35:28 UTC
-  when 2021-09-10 Grouped Daily returned HTTP 403. The independent exact-date
-  probe had already shown the same denial for 2021-09-09 and 2021-09-10. A
-  post-stop census fingerprinted the resulting state as
-  `c6a49fa8bbe67acb2134f8223fb65f249aeab1022c805320bb63d522c26303fc`;
-  zero symlinks, zero staging/partial directories, and no remaining writer were
-  observed. See the
-  [terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md).
-
-Price depth is no longer the main research blocker. The fixed-run boundary is
-not yet relabelled complete: the target changes only after a normal daily
-append and a fresh network-disabled census.
+The detailed bounded-backfill execution history, typed stops, and recovery
+evidence remain in the
+[continuous-run audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md)
+and [terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md).
+Price depth and Grouped Daily source-package coverage are no longer the main
+research blockers.
 
 ## Product
 
@@ -224,10 +193,12 @@ unauthorized.
 
 Complete:
 
-- 1,062 aligned EOD and Identity durable partitions through the live
-  continuation boundary;
-- 1,060 Identity source partitions, 300 research-only Membership sessions, and
-  three prospective signal-eligible Membership sessions;
+- 1,255 aligned EOD and Identity durable partitions through 2026-09-11;
+- 1,253 target-session Identity source partitions, 300 research-only
+  Membership sessions, and three prospective signal-eligible Membership
+  sessions;
+- 1,253 formally selected Grouped Daily packages plus two Identity-source
+  exceptions awaiting disposition;
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
@@ -303,14 +274,11 @@ absent; status remains `quarantined`.
    them from signals and performance. Do not populate the reserved external
    warm-up workspace under the current Starter program.
    Corrected-edition construction now has a network-disabled, resumable
-   1–40-session batch primitive with at most four spawned workers. It has run
-   only in temporary tests. The matching immutable source-coverage contract,
-   formal retained-original Apply binding, gap/conflict classification,
-   owner-read-only persistence, and hash-bound batch CLI are implemented and
-   fixture-tested. In the now-quiescent state, execute that census and select one
-   exact source package per declared session before any real candidate build.
-   The complete-interval controller is ready, but do not infer source
-   precedence from directory order.
+   1–40-session batch primitive with at most four spawned workers. The exact
+   source census and the 305-session bounded reacquisition are complete; source
+   precedence is sealed rather than inferred from directory order. Resolve the
+   two typed Identity-source exceptions without manufacturing equivalence,
+   then build the real candidate through the complete-interval controller.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later

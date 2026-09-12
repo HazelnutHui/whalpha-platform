@@ -4,7 +4,7 @@ Operational state verified at: 2026-09-11T21:24:38Z
 
 Deployment state additionally verified at: 2026-09-11T21:23:56Z
 
-Repository context updated at: 2026-09-11 UTC
+Repository context updated at: 2026-09-12 UTC
 
 This is the compact recovery source for a new task or device. It records
 verified current identities and boundaries, not full execution history.
@@ -83,12 +83,19 @@ daily retained original without gaps or conflict. No full-interval coverage
 artifact or corrected edition has been built or applied, and no research,
 Candidate, Production, or website authority changed.
 
-A lightweight 01:45:42 UTC custody intersection found 777 retained Grouped
-Daily dates among 1,082 then-canonical EOD sessions, with no source-only orphan
-date and 305 canonical dates lacking a retained package. Those 305 dates fall
-within 2025-06-23 through 2026-09-09 and size the likely later-reacquisition
-work only; they are not a formal coverage result until the sealed census
-rereads every required binding.
+The sealed 2026-09-12 full-interval Source Coverage census first found 948
+retained-original Grouped Daily packages, 305 missing packages, two invalid
+Identity-source bindings, and zero conflicts across all 1,255 sessions. All
+305 missing packages were reacquired in eight bounded invocations with 305
+requests, zero retries, and zero failures. The final network-disabled census
+selects 948 retained originals plus 305 visibly later reacquisitions and has
+zero Grouped Daily gaps. It remains `incomplete` only for 2026-08-13 and
+2026-08-19 because their original Identity provider responses were not
+retained; later responses contain genuine provider revisions and cannot claim
+original equivalence. Final coverage file SHA-256 is
+`e9d330dec6e002a9dadde88b95ad61d2e1280ac7479194962c430d9ba5a2d3cc`
+and logical fingerprint is
+`44a3cefe9a17059ad43c37954ac1e5056e748571e89ac900204e94b1f6fce749`.
 
 The shared virtual environment's editable metadata points at an older Codex
 worktree. The completed backfill remained source-correct because its admin
@@ -97,11 +104,11 @@ source. Use `scripts/dev/run-project-python.sh` for operator modules until the
 now-quiescent environment is rebound. A network-disabled rebind attempt stopped
 before mutation because `setuptools` is absent; no dependency was downloaded.
 
-The repository also has a coverage-hash-bound, resumable later-source
-reacquisition runner ready for any source-only gaps confirmed by the final
-quiescent census. It accepts only explicit 1–40-session batches, writes only
-owner-only Dell source packages, and grants no canonical or research authority.
-It is fixture-tested only; no real reacquisition request has run.
+The coverage-hash-bound, resumable later-source reacquisition runner has now
+completed its first real full missing-set execution. Its private custody holds
+305 session directories, 610 files, and 381,337,205 bytes with owner-only
+modes, zero symlinks, and zero staging residue. It grants no canonical or
+research authority.
 
 A complete-interval candidate controller now converts one build-ready coverage
 artifact into bounded 1–40-session batches with at most four workers, retains
@@ -111,11 +118,9 @@ been built.
 
 Source Coverage and the full-build controller can preserve a separate
 2021-08-11 through 2021-09-08 warm-up declaration. ADR 0206 leaves that
-optional deeper-history path unpopulated under Starter. Normal daily updates
-will roll the active source target to 2021-09-13; the first 20 available
-sessions will be outcome-free feature warm-up and performance eligibility will
-begin afterward. Until that daily append and a fresh offline census occur, the
-existing 1,255-session census remains truthfully incomplete.
+optional deeper-history path unpopulated under Starter. The active target has
+now rolled to 2021-09-13; its first 20 sessions are outcome-free feature
+warm-up and performance eligibility begins on 2021-10-11.
 
 Any future external warm-up will use the distinct fixed historical workspace
 `warmup-2021-08-11--2021-09-08`; the existing evaluation source workspace will
@@ -243,9 +248,9 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| 1,062 aligned EOD / Identity partitions through 2022-06-15 at the live checkpoint; bounded resumable corrected-edition construction is implemented | Complete source selection, real corrected EOD edition, and final transitive Historical Coverage |
+| 1,255 aligned EOD / Identity partitions through 2026-09-11; bounded resumable corrected-edition construction is implemented | Resolve two typed Identity-source exceptions, build the real corrected EOD edition, and seal final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
-| 1,060 Identity source partitions at the live checkpoint | Two source-unbound dates |
+| 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two source-unbound dates |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
 | Bounded corporate-action source custody | Complete action availability/revision and absent-event coverage |
