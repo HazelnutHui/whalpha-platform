@@ -170,6 +170,11 @@ budgets now guard this boundary.
   `30722680a6d2f8448db0e895fed7e060ca8a81f2d5faebca3b4d23fbba2b0d8e`.
   The independent exact-SHA reread passed. Both evidence targets remain absent;
   no `/data`, Historical Coverage, research, or Production authority changed.
+- ADR 0212 now routes that distinct plan through the already proven
+  ordered-prefix, recoverable family-evidence Apply mechanism. Temporary-root
+  publication and zero-write completed-state recovery passed while the old
+  rolling-current entry continued to reject the edition plan. This is tested
+  capability only; the real Apply was not run and both targets remain absent.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
   contract remains available for a future deeper-history source. The stopped
@@ -246,16 +251,18 @@ Complete:
   mechanics;
 - a preregistered Strong-Leader Pullback V1; and
 - the canonical contract 1.2 corrected EOD edition for 1,234 sessions through
-  2026-08-12, formally reread after atomic Apply; and
-- the exact edition-specific, no-write two-family evidence publication plan.
+  2026-08-12, formally reread after atomic Apply;
+- the exact edition-specific, no-write two-family evidence publication plan;
+  and
+- a tested recoverable Apply entry for that distinct plan, not yet executed.
 
 Incomplete:
 
 - canonical publication for the two validated corrected-edition EOD/Identity
   evidence candidates; planning is complete but Apply remains separate;
 - later Historical Coverage and research admission of the canonical ADR 0207
-  corrected EOD edition; construction, reconciliation, Apply, postflight, and
-  read-only family-evidence validation are complete;
+  corrected EOD edition; edition construction, reconciliation, edition Apply,
+  postflight, read-only family-evidence validation, and planning are complete;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
@@ -300,9 +307,9 @@ Coverage are absent; status remains `quarantined`.
    boundary. The rolling price/Identity target and final census are complete.
    The complete corrected edition has now passed exact planning, atomic Apply,
    canonical postflight, read-only EOD/Identity family-evidence validation, and
-   edition-specific no-write evidence publication planning. Next extend the
-   recoverable Apply reader for that exact distinct contract; execution remains
-   separately approved. This still does not admit research: the other mandatory
+   edition-specific no-write evidence publication planning. Its recoverable
+   Apply entry is implemented and tested; execution remains separately
+   approved. This still does not admit research: the other mandatory
    families and final Historical Coverage remain later gates. Treat the first
    20 edition sessions as disclosed feature
    warm-up and exclude them from signals and performance. Do not retry the

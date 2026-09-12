@@ -102,3 +102,38 @@ def test_cli_rejection_is_fail_closed_and_hides_local_detail(
         "status": "rejected",
     }
     assert "sensitive" not in output
+
+
+def test_cli_selects_reconciled_eod_apply_entry(monkeypatch, capsys) -> None:
+    observed = {}
+
+    def apply(**kwargs):
+        observed.update(kwargs)
+        return _result()
+
+    def wrong_entry(**_kwargs):
+        raise AssertionError("current Apply entry must not be selected")
+
+    monkeypatch.setattr(
+        cli,
+        "apply_approved_reconciled_eod_historical_family_evidence_plan",
+        apply,
+    )
+    monkeypatch.setattr(
+        cli,
+        "apply_approved_current_historical_family_evidence_plan",
+        wrong_entry,
+    )
+
+    exit_code = cli.main(
+        [
+            "--source-scope",
+            "reconciled-eod",
+            *_arguments(),
+        ]
+    )
+    payload = json.loads(capsys.readouterr().out)
+
+    assert exit_code == 0
+    assert payload["published_file_count"] == 2
+    assert observed["approved_plan_sha256"] == "a" * 64

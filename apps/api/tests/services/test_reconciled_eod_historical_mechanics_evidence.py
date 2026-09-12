@@ -36,6 +36,7 @@ from tip_api.services.reconciled_eod_historical_mechanics_evidence import (
     _build_reconciled_eod_evidence,
     assess_reconciled_eod_historical_mechanics_evidence,
 )
+from tip_api.services import historical_family_evidence_apply as apply_service
 from tip_api.services import historical_family_evidence_publication_plan as plan_service
 from tests.support.eod_read_dataset import CREATED_AT, publish_completed_eod_dataset
 
@@ -218,6 +219,86 @@ def test_exact_edition_builds_distinct_no_write_publication_plan(
 
     assert _inventory(tmp_path) == before
     assert not (tmp_path / "market-data" / "historical-coverage-evidence").exists()
+
+
+def test_exact_edition_plan_uses_reconciled_apply_entry_only(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    edition = _publish_edition(tmp_path, monkeypatch)
+    approved = tmp_path.resolve()
+    monkeypatch.setattr(plan_service, "APPROVED_DATA_ROOT", approved)
+    monkeypatch.setattr(apply_service, "APPROVED_DATA_ROOT", approved)
+
+    with _new_plan_path() as plan_path:
+        evidence = (
+            plan_service.build_reconciled_eod_historical_family_evidence_publication_plan(
+                data_root=approved,
+                edition_id=EDITION_ID,
+                expected_interval_manifest_fingerprint=(
+                    edition.manifest.logical_fingerprint
+                ),
+                plan_path=plan_path,
+                max_workers=1,
+            )
+        )
+        arguments = {
+            "plan_path": plan_path,
+            "approved_plan_sha256": evidence.plan_sha256,
+            "expected_plan_logical_fingerprint": (
+                evidence.plan.logical_fingerprint
+            ),
+            "expected_family_set_fingerprint": (
+                evidence.plan.family_set_fingerprint
+            ),
+            "data_root": approved,
+        }
+
+        before = _inventory(tmp_path)
+        with pytest.raises(
+            apply_service.HistoricalFamilyEvidenceApplyError,
+            match="failed formal reread",
+        ):
+            apply_service.apply_approved_current_historical_family_evidence_plan(
+                **arguments
+            )
+        assert _inventory(tmp_path) == before
+
+        applied = (
+            apply_service.apply_approved_reconciled_eod_historical_family_evidence_plan(
+                **arguments
+            )
+        )
+        assert applied.status == "applied"
+        assert applied.published_families == (
+            "eod_price_bar",
+            "point_in_time_identity",
+        )
+        assert applied.published_file_count == 2
+        assert applied.published_bytes == evidence.plan.inventory_change_bytes
+        assert applied.formal_reread_family_count == 2
+
+        target_inodes = tuple(
+            (approved / item.target_path).parent.stat().st_ino
+            for item in evidence.plan.families
+        )
+        recovered = (
+            apply_service.apply_approved_reconciled_eod_historical_family_evidence_plan(
+                **arguments,
+                verify_then_complete=True,
+            )
+        )
+        assert recovered.status == "verified_then_completed"
+        assert recovered.published_file_count == 0
+        assert recovered.published_bytes == 0
+        assert recovered.reused_families == (
+            "eod_price_bar",
+            "point_in_time_identity",
+        )
+        assert tuple(
+            (approved / item.target_path).parent.stat().st_ino
+            for item in evidence.plan.families
+        ) == target_inodes
 
 
 def test_expected_interval_fingerprint_is_mandatory(

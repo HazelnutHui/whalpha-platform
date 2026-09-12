@@ -150,8 +150,11 @@ Required work:
   no-write evidence publication plan. It binds exactly two absent targets and
   2,673,980 bytes; plan SHA-256 is
   `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`.
-  Extend recoverable Apply support next, while retaining execution as a
-  separate exact-plan authorization boundary;
+  Canonical execution remains a separate exact-plan authorization boundary;
+- completed 2026-09-12: extend the existing ADR 0166 recoverable Apply
+  mechanism through an explicit reconciled-edition reader and operation gate.
+  The old current entry still rejects the new plan; temporary-root Apply and
+  zero-write completed recovery pass. The real plan remains unexecuted;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not

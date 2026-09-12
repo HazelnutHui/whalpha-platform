@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-12 — Prepare recoverable corrected-edition evidence Apply
+
+- Accepted ADR 0212 and added an explicit reconciled-edition Apply entry while
+  retaining the older rolling-current entry and its default CLI behavior. Each
+  entry selects its own formal reader and exact operation; neither can accept
+  the other's source scope.
+- Reused ADR 0166's single EOD-first executor, canonical lock, immutable target
+  custody, outside-target drift check, network prohibition, atomic rename,
+  formal reread, and ordered-prefix recovery instead of copying a second
+  mutation path.
+- The 32-test focused family-evidence suite proved temporary-root edition
+  publication, current-entry refusal, and completed zero-write recovery. The
+  complete API suite passed 2,533 tests with the two existing dependency
+  deprecation warnings.
+- No real Apply was run. The two corrected-edition evidence targets remain
+  absent; no `/data`, Historical Coverage, research, Production, or website
+  state changed.
+
 ## 2026-09-12 — Seal the corrected-edition family-evidence publication plan
 
 - Accepted ADR 0211 and added a backward-compatible, edition-specific no-write

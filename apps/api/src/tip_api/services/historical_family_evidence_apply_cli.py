@@ -9,15 +9,21 @@ from pathlib import Path
 
 from tip_api.services.historical_family_evidence_apply import (
     apply_approved_current_historical_family_evidence_plan,
+    apply_approved_reconciled_eod_historical_family_evidence_plan,
 )
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Apply one exact current EOD/Identity family-evidence plan, or "
+            "Apply one exact EOD/Identity family-evidence plan, or "
             "verify and complete its ordered-prefix recovery state."
         )
+    )
+    parser.add_argument(
+        "--source-scope",
+        choices=("current", "reconciled-eod"),
+        default="current",
     )
     parser.add_argument("--plan-path", type=Path, required=True)
     parser.add_argument("--approved-plan-sha256", required=True)
@@ -28,7 +34,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        result = apply_approved_current_historical_family_evidence_plan(
+        apply_plan = (
+            apply_approved_reconciled_eod_historical_family_evidence_plan
+            if args.source_scope == "reconciled-eod"
+            else apply_approved_current_historical_family_evidence_plan
+        )
+        result = apply_plan(
             plan_path=args.plan_path,
             approved_plan_sha256=args.approved_plan_sha256,
             expected_plan_logical_fingerprint=(

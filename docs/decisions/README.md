@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0212](0212-extend-family-evidence-apply-to-reconciled-editions.md):
+  extends the proven recoverable Apply mechanism to the distinct reconciled
+  edition plan without executing it or weakening source-scope isolation.
 - [ADR 0211](0211-plan-reconciled-eod-family-evidence-without-publishing.md):
   adds an edition-bound no-write publication plan while keeping canonical
   evidence Apply and Historical Coverage separately unauthorized.

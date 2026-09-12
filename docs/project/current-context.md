@@ -58,7 +58,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Symlinks / publication residue | zero / zero |
 | Corrected EOD edition | Canonical contract 1.2 edition: 1,234 sessions / 10,376,263 records / 2,469 files / 1,083,699,732 bytes; interval fingerprint `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3` |
 | Corrected EOD Apply | Applied from approved plan SHA-256 `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`; logical fingerprint `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`; canonical formal reread passed |
-| Corrected EOD family evidence | Exact 1,234-session EOD and same-session Identity candidates formally validate read-only; EOD fingerprint `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`, Identity fingerprint `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`; exact no-write plan SHA `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`; both remain unpublished |
+| Corrected EOD family evidence | Exact 1,234-session EOD and same-session Identity candidates formally validate read-only; EOD fingerprint `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`, Identity fingerprint `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`; exact no-write plan SHA `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`; recoverable Apply support is tested but not executed; both remain unpublished |
 
 The bounded historical run stopped safely at the Starter rolling entitlement
 edge; ADR 0206 rejected retries or a deeper purchase solely for the expired
@@ -132,6 +132,9 @@ and family-set fingerprint is
 `30722680a6d2f8448db0e895fed7e060ca8a81f2d5faebca3b4d23fbba2b0d8e`.
 It binds exactly two absent targets / 2,673,980 bytes and grants no Apply,
 Historical Coverage, research, or Production authority.
+ADR 0212 adds an explicit reconciled-edition entry to the existing recoverable
+Apply mechanism; the old rolling-current entry still rejects this plan. The
+complete API regression passed, but the real Apply was not run.
 
 Source Coverage and the full-build controller can preserve a separate
 2021-08-11 through 2021-09-08 warm-up declaration. ADR 0206 leaves that
@@ -384,9 +387,10 @@ the 2026-09-11 daily audit.
    authorize research use of affected V1 EOD history. The complete corrected
    edition has passed inventory-bound planning, atomic Apply, canonical
    postflight, read-only family-evidence validation, and exact no-write
-   evidence publication planning. Next extend the recoverable Apply path for
-   the distinct edition contract, but keep execution, final Historical
-   Coverage, and research admission as separately reviewed decisions. Use the
+   evidence publication planning. Recoverable Apply support for the distinct
+   edition contract is now implemented and tested; execute only after exact
+   plan-bound approval, and keep final Historical Coverage and research
+   admission as separately reviewed decisions. Use the
    first 20 edition sessions as disclosed
    feature warm-up and exclude them from signals and performance. Keep the
    external warm-up workspace reserved but empty under Starter.

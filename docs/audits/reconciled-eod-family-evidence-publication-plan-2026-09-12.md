@@ -56,9 +56,9 @@ The plan remains `ready_for_separate_review` with
 `historical_coverage_authorized=false`, and both research authority fields
 false. No canonical evidence publication occurred.
 
-The next bounded implementation may extend the existing recoverable Apply
-path to recognize this distinct contract and operation. Executing that Apply
-still requires separate approval bound to this exact plan SHA, logical
-fingerprint, and family-set fingerprint. Membership, lifecycle, actions,
-adjustments, final Historical Coverage, research, and Production remain later
-independent gates.
+ADR 0212 subsequently extended the existing recoverable Apply path to recognize
+this distinct contract and operation. Its complete API regression passed, but
+the real plan was not executed. Executing it still requires separate approval
+bound to this exact plan SHA, logical fingerprint, and family-set fingerprint.
+Membership, lifecycle, actions, adjustments, final Historical Coverage,
+research, and Production remain later independent gates.
