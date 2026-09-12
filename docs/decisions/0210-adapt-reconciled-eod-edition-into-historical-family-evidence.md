@@ -35,6 +35,9 @@ Add a read-only, edition-scoped historical-mechanics adapter with these rules:
 4. Point-in-time Identity evidence covers exactly the edition sessions. Every
    snapshot receives its existing formal reread and must equal the Identity
    snapshot fingerprint and provider bound by that edition session.
+   Full edition-session and Identity-snapshot rereads may use a bounded local
+   process pool. Results remain input-ordered and deterministic, and the
+   worker count does not alter any logical fingerprint.
 5. The result remains mechanics-only unpublished evidence. It does not publish
    family evidence or Historical Coverage and does not grant research,
    performance, Candidate, Production, website, or deployment authority.

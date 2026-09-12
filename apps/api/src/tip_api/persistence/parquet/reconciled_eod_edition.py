@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import stat
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from pathlib import Path
@@ -502,9 +503,14 @@ def validate_reconciled_eod_edition(
     *,
     root: Path,
     edition_id: str,
+    max_workers: int = 1,
 ) -> ValidatedReconciledEodEdition:
     """Formally validate every session while retaining only manifest evidence."""
 
+    if isinstance(max_workers, bool) or not 1 <= max_workers <= 32:
+        raise ReconciledEodEditionPersistenceError(
+            "edition validation worker count is invalid"
+        )
     root = _read_root(root)
     edition_path = _edition_path(root, edition_id=edition_id)
     _reject_symlink_chain(root, edition_path)
@@ -535,24 +541,51 @@ def validate_reconciled_eod_edition(
         raise ReconciledEodEditionCorruptionError(
             "reconciled EOD edition file set differs"
         )
-    session_manifests: list[ReconciledEodSessionManifestV1] = []
-    for reference in manifest.sessions:
-        completed = read_reconciled_eod_session(
-            root=root,
-            edition_id=edition_id,
-            session_date=reference.session_date,
+    worker_count = min(max_workers, len(manifest.sessions))
+    arguments = tuple(
+        (root, edition_id, reference.session_date)
+        for reference in manifest.sessions
+    )
+    if worker_count == 1:
+        session_manifests = tuple(
+            _read_validated_reconciled_eod_session_manifest(argument)
+            for argument in arguments
         )
+    else:
+        with ProcessPoolExecutor(max_workers=worker_count) as executor:
+            session_manifests = tuple(
+                executor.map(
+                    _read_validated_reconciled_eod_session_manifest,
+                    arguments,
+                    chunksize=1,
+                )
+            )
+    for reference, session_manifest in zip(
+        manifest.sessions,
+        session_manifests,
+        strict=True,
+    ):
         _verify_interval_session_binding(
             interval=manifest,
             reference=reference,
-            session=completed.manifest,
+            session=session_manifest,
         )
-        session_manifests.append(completed.manifest)
     return ValidatedReconciledEodEdition(
         manifest=manifest,
-        session_manifests=tuple(session_manifests),
+        session_manifests=session_manifests,
         edition_path=edition_path,
     )
+
+
+def _read_validated_reconciled_eod_session_manifest(
+    argument: tuple[Path, str, date],
+) -> ReconciledEodSessionManifestV1:
+    root, edition_id, session_date = argument
+    return read_reconciled_eod_session(
+        root=root,
+        edition_id=edition_id,
+        session_date=session_date,
+    ).manifest
 
 
 def _verify_interval_session_binding(

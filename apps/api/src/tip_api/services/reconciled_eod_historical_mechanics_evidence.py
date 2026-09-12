@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
+from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict, dataclass
 from datetime import date
 from pathlib import Path
@@ -33,6 +35,7 @@ from tip_api.persistence.parquet.reconciled_eod_edition import (
 
 
 CONTRACT_VERSION = "reconciled-eod-historical-mechanics-evidence/1.0"
+DEFAULT_VALIDATION_WORKERS = min(8, os.cpu_count() or 1)
 
 
 class ReconciledEodHistoricalMechanicsEvidenceError(RuntimeError):
@@ -60,6 +63,7 @@ class ReconciledEodHistoricalMechanicsEvidenceReport:
     status: str
     edition_id: str
     interval_manifest_fingerprint: str
+    validation_worker_count: int
     observed_session_count: int
     first_session: str
     last_session: str
@@ -81,6 +85,7 @@ def assess_reconciled_eod_historical_mechanics_evidence(
     data_root: Path,
     edition_id: str,
     expected_interval_manifest_fingerprint: str,
+    max_workers: int = DEFAULT_VALIDATION_WORKERS,
 ) -> ReconciledEodHistoricalMechanicsEvidenceReport:
     """Formally validate exact edition/Identity bytes without publishing them."""
 
@@ -90,6 +95,7 @@ def assess_reconciled_eod_historical_mechanics_evidence(
         expected_interval_manifest_fingerprint=(
             expected_interval_manifest_fingerprint
         ),
+        max_workers=max_workers,
     )
     sessions = validated[0].evidence.sessions
     if any(item.evidence.sessions != sessions for item in validated[1:]):
@@ -117,6 +123,7 @@ def assess_reconciled_eod_historical_mechanics_evidence(
         "status": "price_identity_mechanics_only",
         "edition_id": edition.manifest.edition_id,
         "interval_manifest_fingerprint": edition.manifest.logical_fingerprint,
+        "validation_worker_count": min(max_workers, len(sessions)),
         "observed_session_count": len(sessions),
         "first_session": sessions[0].isoformat(),
         "last_session": sessions[-1].isoformat(),
@@ -133,6 +140,7 @@ def assess_reconciled_eod_historical_mechanics_evidence(
         status="price_identity_mechanics_only",
         edition_id=edition.manifest.edition_id,
         interval_manifest_fingerprint=edition.manifest.logical_fingerprint,
+        validation_worker_count=min(max_workers, len(sessions)),
         observed_session_count=len(sessions),
         first_session=sessions[0].isoformat(),
         last_session=sessions[-1].isoformat(),
@@ -152,6 +160,7 @@ def validate_reconciled_eod_historical_family_evidence(
     data_root: Path,
     edition_id: str,
     expected_interval_manifest_fingerprint: str,
+    max_workers: int = DEFAULT_VALIDATION_WORKERS,
 ) -> tuple[
     ValidatedReconciledEodEdition,
     tuple[HistoricalDatasetEvidenceValidationResult, ...],
@@ -159,9 +168,11 @@ def validate_reconciled_eod_historical_family_evidence(
     """Return exact, transitively validated edition and Identity evidence."""
 
     _require_sha(expected_interval_manifest_fingerprint)
+    _require_worker_count(max_workers)
     edition = validate_reconciled_eod_edition(
         root=data_root,
         edition_id=edition_id,
+        max_workers=max_workers,
     )
     if (
         edition.manifest.logical_fingerprint
@@ -170,10 +181,24 @@ def validate_reconciled_eod_historical_family_evidence(
         raise ReconciledEodHistoricalMechanicsEvidenceError(
             "reconciled EOD interval fingerprint differs from the expected value"
         )
-    identity_repository = ParquetInstrumentMasterSnapshotRepository(data_root)
+    worker_count = min(max_workers, len(edition.session_manifests))
+    arguments = tuple(
+        (data_root, session.identity_as_of_date)
+        for session in edition.session_manifests
+    )
+    if worker_count == 1:
+        inspected = tuple(_inspect_identity_snapshot(item) for item in arguments)
+    else:
+        with ProcessPoolExecutor(max_workers=worker_count) as executor:
+            inspected = tuple(
+                executor.map(_inspect_identity_snapshot, arguments, chunksize=1)
+            )
     snapshots: dict[date, InstrumentMasterSnapshotReadResult] = {}
-    for session in edition.session_manifests:
-        snapshot = identity_repository.inspect_snapshot(session.identity_as_of_date)
+    for session, snapshot in zip(
+        edition.session_manifests,
+        inspected,
+        strict=True,
+    ):
         if (
             snapshot.as_of_date != session.session_date
             or snapshot.provider_id != session.provider
@@ -194,6 +219,15 @@ def validate_reconciled_eod_historical_family_evidence(
     return edition, (
         repository.validate_dataset_evidence(eod_evidence),
         repository.validate_dataset_evidence(identity_evidence),
+    )
+
+
+def _inspect_identity_snapshot(
+    argument: tuple[Path, date],
+) -> InstrumentMasterSnapshotReadResult:
+    root, as_of_date = argument
+    return ParquetInstrumentMasterSnapshotRepository(root).inspect_snapshot(
+        as_of_date
     )
 
 
@@ -351,6 +385,13 @@ def _require_sha(value: str) -> None:
     ):
         raise ReconciledEodHistoricalMechanicsEvidenceError(
             "expected interval fingerprint is invalid"
+        )
+
+
+def _require_worker_count(value: int) -> None:
+    if isinstance(value, bool) or not 1 <= value <= 32:
+        raise ReconciledEodHistoricalMechanicsEvidenceError(
+            "validation worker count is invalid"
         )
 
 

@@ -43,6 +43,7 @@ def test_cli_requires_and_forwards_exact_edition_identity(monkeypatch, capsys) -
     assert observed["data_root"].as_posix() == "/data/example"
     assert observed["edition_id"] == "edition-one"
     assert observed["expected_interval_manifest_fingerprint"] == "a" * 64
+    assert observed["max_workers"] == cli.DEFAULT_VALIDATION_WORKERS
 
 
 def test_cli_rejection_is_sanitized(monkeypatch, capsys) -> None:

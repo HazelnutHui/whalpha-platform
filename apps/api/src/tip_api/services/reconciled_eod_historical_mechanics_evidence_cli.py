@@ -14,6 +14,7 @@ from tip_api.persistence.parquet.reconciled_eod_edition import (
     ReconciledEodEditionPersistenceError,
 )
 from tip_api.services.reconciled_eod_historical_mechanics_evidence import (
+    DEFAULT_VALIDATION_WORKERS,
     ReconciledEodHistoricalMechanicsEvidenceError,
     assess_reconciled_eod_historical_mechanics_evidence,
 )
@@ -29,6 +30,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--data-root", required=True, type=Path)
     parser.add_argument("--edition-id", required=True)
     parser.add_argument("--expected-interval-fingerprint", required=True)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=DEFAULT_VALIDATION_WORKERS,
+        help="Bounded local validation process count (1-32).",
+    )
     args = parser.parse_args(argv)
     try:
         with _offline_socket_guard():
@@ -38,6 +45,7 @@ def main(argv: list[str] | None = None) -> int:
                 expected_interval_manifest_fingerprint=(
                     args.expected_interval_fingerprint
                 ),
+                max_workers=args.workers,
             )
     except (
         ReconciledEodHistoricalMechanicsEvidenceError,
