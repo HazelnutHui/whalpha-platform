@@ -174,6 +174,11 @@ Required work:
 - completed 2026-09-10: the missingness-only decision froze a 100% complete-
   session threshold, retained the 252-session floor, and rejected current
   evidence with zero admitted sessions;
+- completed 2026-09-12: re-resolve both retained inactive-listing anchors
+  against their complete five-year Instrument histories, preserve all 46,729
+  one-to-one source/decision rows, and durably retain 2,283 distinct review-
+  candidate instruments as a bounded corroboration queue; no candidate is a
+  canonical lifecycle or terminal-outcome fact;
 - lifecycle and terminal-outcome evidence;
 - complete split/action handling for the declared underlying-stock price-
   return basis, with dividends retained as event context rather than silently

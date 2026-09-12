@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0214](0214-retain-five-year-inactive-lifecycle-resolution-shadow.md):
+  retains the full-history inactive-listing reconciliation in a strictly
+  bounded private read-only custody without promoting lifecycle facts.
 - [ADR 0213](0213-parallelize-inactive-lifecycle-history-reread.md):
   parallelizes the five-year Instrument-history scan with deterministic
   contiguous blocks and spawned workers while preserving shadow semantics.

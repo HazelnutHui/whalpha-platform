@@ -161,6 +161,10 @@ sole-primary lifecycle source. The complete 2026-07-16 and 2026-09-03
 inactive-listing source anchors are now retained in owner-only persistent Dell
 custody and formally reread; their 23,260 / 23,469 rows remain discovery and
 reconciliation evidence rather than canonical lifecycle or terminal outcomes.
+Their five-year re-resolution is also durably retained as six exact files /
+9,005,301 bytes: 2,206 / 2,278 review candidates and 21,054 / 21,191
+quarantines, or 2,283 unique review-candidate instruments across anchors. It is
+the bounded corroboration queue only; final lifecycle authority remains absent.
 
 ## Active Universe
 

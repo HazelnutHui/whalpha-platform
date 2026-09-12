@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-12 — Retain the full-history inactive-lifecycle resolution shadow
+
+- Re-resolved both persistent inactive-listing source anchors against 1,216 /
+  1,251 canonical Instrument sessions using ADR 0213's deterministic eight-
+  process reread. The 2026-07-16 anchor now has 2,206 review candidates and
+  21,054 quarantines; 2026-09-03 has 2,278 and 21,191 respectively.
+- Across anchors, stable-ID deduplication yields 2,283 distinct review-
+  candidate instruments: 2,201 shared, five earlier-only, and 77 later-only.
+  Every candidate retains five required evidence limitations and remains
+  noncanonical.
+- Accepted ADR 0214 and added an exact private-custody reader while leaving the
+  builder `/tmp`-only. Broader and unapproved persistent roots fail closed;
+  directory and file ownership, modes, symlinks, manifests, hashes, row
+  lineage, and aggregate counts are all checked.
+- Retained the exact six-file / 9,005,301-byte result through an owner-only
+  staging directory and atomic no-overwrite rename. Source/persistent file-hash
+  lists matched fingerprint
+  `10dbda320316af93399f91e707bff615e6800237f99f5ba3d2a82aed9568f004`;
+  both anchors passed formal persistent reread with zero residue.
+- The focused suite passed 12 tests and the complete API suite passed 2,540
+  tests; the two warnings are unchanged dependency deprecations.
+- No request, canonical `/data` write, Historical Coverage, research admission,
+  Production change, or deployment occurred. Lifecycle and terminal outcomes
+  remain blocking. See the
+  [dated audit](../audits/five-year-inactive-lifecycle-resolution-shadow-2026-09-12.md).
+
 ## 2026-09-12 — Publish corrected-edition EOD and Identity family evidence
 
 - Applied the exact ADR 0211 plan only after authorization matched its file

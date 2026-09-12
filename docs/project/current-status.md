@@ -87,6 +87,12 @@ budgets now guard this boundary.
   retained in owner-only persistent Dell custody and formally reread. Their
   23,260 / 23,469 rows remain discovery and reconciliation evidence, not
   canonical lifecycle or terminal outcomes.
+- Those anchors have now been re-resolved against 1,216 / 1,251 canonical
+  Instrument sessions and retained as one exact owner-only six-file shadow.
+  It contains 2,206 / 2,278 review candidates and 21,054 / 21,191 quarantined
+  observations, representing 2,283 distinct review-candidate instruments
+  across both anchors. This is a durable corroboration queue, not canonical
+  lifecycle, last-trade, successor, consideration, or terminal-return evidence.
 - The current verified inventory is 18,174 files / 7,022,160,392 bytes with
   zero symlinks and zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
