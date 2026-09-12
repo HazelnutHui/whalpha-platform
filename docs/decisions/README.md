@@ -119,7 +119,7 @@ accepted ADR was deployed unless current operational evidence says so.
   source gates, canonical split facts, and sparse adjustment custody.
 - ADRs 0182–0183 preserve unresolved price discontinuities and dividend-date
   ambiguity rather than inferring missing facts.
-- ADRs 0197–0206 separate durable research Membership custody from
+- ADRs 0197–0207 separate durable research Membership custody from
   signal-eligible Membership, scale source-only corporate-action custody to
   the five-year boundary, and retain exact corporate-action and inactive-
   lifecycle source vintages privately without promoting them to canonical
@@ -127,8 +127,10 @@ accepted ADR was deployed unless current operational evidence says so.
   relaxing prospective Identity rules, and normalize only audited provider
   VWAP float tails, preserve provider-symbol case, govern a complete immutable
   corrected EOD research edition, contain missing-type historical rows without
-  projecting later classifications backward, and align the first experiment's
-  disclosed feature warm-up with the available rolling Starter source window.
+  projecting later classifications backward, align the first experiment's
+  disclosed feature warm-up with the available rolling Starter source window,
+  and bound the first corrected edition at the last session with complete
+  exact source custody rather than weakening the no-removal gate.
 
 ## Runtime and publication decisions
 

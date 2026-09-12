@@ -112,16 +112,19 @@ budgets now guard this boundary.
   is rebound. A network-disabled local rebind attempt stopped before mutation
   because the environment lacks `setuptools`; the wrapper remains the safe
   path and no dependency was downloaded.
-- The sealed 2026-09-12 Reconciled EOD source census found 948 retained-original
-  sessions, 305 missing Grouped Daily packages, two invalid Identity-source
-  bindings, and zero conflicts. All 305 price packages were then reacquired in
-  eight bounded invocations with 305 requests, zero retries, and zero failures.
-  Final private custody is 610 files / 381,337,205 bytes with owner-only modes,
-  zero symlinks, and zero staging residue. The final census now selects 948
-  retained originals plus 305 visibly later reacquisitions and has zero price
-  package gaps. It remains incomplete only for 2026-08-13 and 2026-08-19,
-  whose original Identity responses were not retained and whose later provider
-  revisions cannot be mislabeled as exact source evidence. See the
+- The sealed 2026-09-12 Reconciled EOD source census initially exposed 305
+  missing Grouped Daily packages and two invalid Identity-source bindings. A
+  reporting correction then showed that those two invalid dates also lacked
+  price packages. All 307 price packages are now reacquired with zero retries
+  or failures. Final private custody is 614 files / 384,055,489 bytes with
+  owner-only modes, zero symlinks, and zero staging residue. The final
+  four-worker census selects 948 retained originals plus 305 visibly later
+  reacquisitions, with zero price gaps and zero conflicts. It remains
+  incomplete only for 2026-08-13 and 2026-08-19, whose original Identity
+  responses were not retained. Isolated later-Identity rebuild diagnostics
+  omitted one and five canonical business keys, so the no-removal gate was not
+  weakened. ADR 0207 instead fixes the first real candidate interval at the
+  preceding 1,234 fully source-bound sessions through 2026-08-12. See the
   [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).
 - A complete-interval Reconciled EOD candidate controller is implemented. It
   consumes only build-ready sealed coverage, automatically divides the exact

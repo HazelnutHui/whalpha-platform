@@ -122,12 +122,12 @@ Required work:
   edition Apply and a sealed per-session source-coverage/selection contract are
   implemented; a coverage-bound bounded/resumable later-source reacquisition
   runner and complete-interval resumable candidate controller are also
-  implemented; the real sealed census selected 948 retained originals, then
-  305 missing Grouped Daily packages were reacquired with zero retries or
-  failures and the post-acquisition census confirmed zero price-package gaps.
-  Two sessions remain invalid because exact Identity source custody is absent;
-  resolve that typed provenance gap without manufacturing equivalence before
-  full-interval construction and execution;
+  implemented; the corrected final census confirms zero price-package gaps
+  after 307 reacquisitions and leaves only two Identity-source gaps. Later
+  Identity diagnostics omitted canonical business keys, so ADR 0207 preserves
+  the no-removal gate and selects the maximal preceding 1,234-session interval
+  through 2026-08-12 for the first real candidate. Construct and formally
+  reread that exact edition before planning any canonical Apply;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not

@@ -1,23 +1,35 @@
 # Changelog
 
-## 2026-09-12 — Close Reconciled EOD Grouped Daily source-package gaps
+## 2026-09-12 — Bound the first corrected EOD edition at fully proven source custody
 
-- Corrected Source Coverage to retain an independent missing-price reason when
-  Identity source custody also fails. The reacquisition runner now accepts
-  only that exact two-reason quarantine to close the price package while
-  leaving Identity and candidate-build readiness blocked.
+- Corrected the independent-gap diagnostic, reacquired the two additional
+  Grouped Daily packages hidden behind Identity-source failures, and confirmed
+  final owner-only custody of 307 sessions / 614 files / 384,055,489 bytes.
+- The final four-worker census formally reread all 1,255 rolling sessions and
+  reports 948 retained-original plus 305 later-reacquired selected sources,
+  zero price gaps, zero conflicts, and only two Identity-source-invalid dates.
+- Isolated later-Identity reconstructions for 2026-08-13 and 2026-08-19 passed
+  price quality gates and had no economic changes, but omitted one and five
+  canonical business keys. The no-removal gate remains unchanged.
+- Accepted ADR 0207: the first real immutable corrected-price candidate is the
+  maximal preceding continuous interval of 1,234 XNYS sessions from
+  2021-09-13 through 2026-08-12. This grants construction scope only, not
+  research, performance, canonical Apply, Production, or deployment authority.
+
+## 2026-09-12 — Run the initial Reconciled EOD source reacquisition
+
 - The first four-worker, network-disabled census formally reread all 1,255
   rolling target sessions and selected 948 retained-original source packages,
   with 305 Grouped Daily packages missing, two Identity-source bindings
   invalid, and zero conflicts.
-- Reacquired all 305 exact missing dates in eight bounded invocations: 305
+- Reacquired the 305 dates explicitly exposed by that first census in eight
+  bounded invocations: 305
   provider attempts, zero transient retries, and zero failures. Owner-only
   custody contains 610 files / 381,337,205 bytes with zero symlinks or staging
   residue; `/data` writes remained zero.
-- The final sealed census now selects 948 retained originals plus 305 visibly
-  later reacquisitions and reports zero missing price packages. It remains
-  incomplete only for 2026-08-13 and 2026-08-19 because later-revised Identity
-  responses cannot be relabeled as the unretained originals.
+- The independent-gap correction and two additional price packages are recorded
+  in the newer 2026-09-12 entry above; that entry is the authoritative final
+  state rather than this initial execution checkpoint.
 - Research admission, corrected-edition construction, canonical EOD,
   Production, publication, and deployment remain unchanged. See the
   [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).

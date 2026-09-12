@@ -248,15 +248,23 @@ claims are false.
 
 | Complete or present | Still blocking real research |
 | --- | --- |
-| 1,255 aligned EOD / Identity partitions through 2026-09-11; bounded resumable corrected-edition construction is implemented | Resolve two typed Identity-source exceptions, build the real corrected EOD edition, and seal final transitive Historical Coverage |
+| 1,255 aligned EOD / Identity partitions through 2026-09-11; bounded resumable corrected-edition construction is implemented | Build ADR 0207's exact 1,234-session corrected EOD edition through 2026-08-12, then seal final transitive Historical Coverage |
 | EOD/Identity family evidence | Complete and admitted historical Membership |
-| 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two source-unbound dates |
+| 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
 | Bounded corporate-action source custody | Complete action availability/revision and absent-event coverage |
 | Canonical split-only facts and sparse affected-path ledger | Complete adjustment/neutrality and total-return semantics |
 | Fixture-only input, chronology, statistics, and holdout mechanics | Real chronological dataset and sealed real holdout |
 | Scenario-only equity costs | Observed spread/impact calibration and execution comparison |
+
+ADR 0207 separately governs the corrected price family. Later Identity
+responses for 2026-08-13 and 2026-08-19 omitted one and five canonical business
+keys in isolated diagnostics, so the ADR 0204 no-removal gate remains intact.
+The first real Reconciled EOD candidate is therefore the maximal preceding
+continuous interval: 1,234 sessions from 2021-09-13 through 2026-08-12. This
+price-edition route does not change the rejected Membership-development census
+or authorize outcomes.
 
 Historical backfills observed later remain ineligible for formal validation,
 holdout, or Production claims unless source availability at the signal time is

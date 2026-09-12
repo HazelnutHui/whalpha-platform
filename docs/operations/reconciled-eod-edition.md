@@ -45,10 +45,8 @@ coverage artifact for the exact XNYS evaluation interval:
 ```bash
 scripts/dev/run-project-python.sh -m tip_api.services.reconciled_eod_source_coverage_cli \
   --data-root /data/trading-intelligence-platform \
-  --first-session 2021-09-09 \
-  --last-session 2026-09-09 \
-  --warmup-first-session 2021-08-11 \
-  --warmup-last-session 2021-09-08 \
+  --first-session 2021-09-13 \
+  --last-session 2026-08-12 \
   --created-at <UTC-timestamp> \
   --coverage-path /home/hui/.local/state/trading-intelligence-platform/reconciled-eod-source-coverage/<coverage-id>.json \
   --workers 4
@@ -66,9 +64,12 @@ The daily workspace's generic acquisition directory is ignored when its
 manifest declares an Identity package rather than Grouped Daily.
 The census is limited to four spawned processes; this uses Dell parallelism
 without turning source validation into an unbounded I/O workload.
-The 1,255-session evaluation interval remains 2021-09-09 through 2026-09-09;
-the 20 earlier sessions are declared separately as warm-up, for 1,275 total
-source/session bindings after the warm-up acquisition completes.
+ADR 0207 bounds the first real edition at the last fully source-proven session:
+1,234 contiguous XNYS sessions from 2021-09-13 through 2026-08-12. Its first 20
+sessions are internal outcome-free feature warm-up under ADR 0206; do not add
+the reserved external warm-up interval to this edition. The rolling canonical
+EOD/Identity source window continues beyond the edition and remains a separate
+scope.
 
 Do not build candidate sessions unless status is
 `ready_for_candidate_build`. Preserve the coverage file SHA-256. For a reviewed
