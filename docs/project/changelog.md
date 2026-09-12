@@ -21,7 +21,17 @@
   and logical fingerprint is
   `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`.
   It grants no Apply, research, Production, or website authority. Canonical
-  `/data` and Production remain unchanged.
+  `/data` and Production remained unchanged at planning time.
+- After explicit approval, atomically published all 2,469 files /
+  1,083,699,732 bytes and formally reread all 1,234 sessions / 10,376,263
+  records. No prior target was reused, no existing partition was overwritten or
+  deleted, and no external request was made.
+- Independent postflight found 18,172 canonical files / 7,019,486,412 bytes,
+  inventory fingerprint
+  `8baec95b3a4e81cc2b4ca05f9f1fb24a8a112237c6c217bf88c09066462aa307`,
+  zero symlinks, and zero publication residue. Existing EOD/Identity alignment,
+  Production release, and freshness remain unchanged; Historical Coverage and
+  all research/Production authority remain false.
 
 ## 2026-09-12 — Bind expected EOD additions to price-payload collisions
 

@@ -145,12 +145,30 @@ Its file SHA-256 is
 `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`
 and logical fingerprint is
 `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`.
-It is `ready_for_separate_apply` with all authority flags false.
+It was emitted as `ready_for_separate_apply` with all authority flags false.
+
+## Canonical Apply and postflight
+
+The exact plan values were explicitly approved. Atomic Apply published all
+2,469 files / 1,083,699,732 bytes without reusing a prior target and formally
+reread all 1,234 sessions / 10,376,263 records. The reported interval
+fingerprint matched the candidate and plan. External requests, overwritten
+partitions, deleted partitions, Production authority, and research-performance
+authority remained zero or false.
+
+Independent postflight found exactly 1,235 directories at mode 0755, all 2,469
+files at mode 0644, zero symlinks, and zero staging residue. The project context
+report remained network-disabled and confirmed:
+
+- 18,172 canonical files / 7,019,486,412 bytes;
+- canonical inventory fingerprint
+  `8baec95b3a4e81cc2b4ca05f9f1fb24a8a112237c6c217bf88c09066462aa307`;
+- existing EOD and Identity aligned through 2026-09-11; and
+- Production release and current-session freshness unchanged.
 
 ## Next action and authority
 
-Review the exact plan values, then perform the separately approved atomic
-Apply only while the canonical inventory still matches its bound pre-state.
-No action recorded here changes canonical EOD V1, Historical Coverage,
-research admission, performance claims, Candidate, Production, publication,
-deployment, or the website.
+Construct the separately versioned final Historical Coverage and research-input
+admission evidence. No action recorded here changes canonical EOD V1,
+Historical Coverage, research admission, performance claims, Candidate,
+Production, publication, deployment, or the website.

@@ -87,7 +87,7 @@ budgets now guard this boundary.
   retained in owner-only persistent Dell custody and formally reread. Their
   23,260 / 23,469 rows remain discovery and reconciliation evidence, not
   canonical lifecycle or terminal outcomes.
-- The current verified inventory is 15,703 files / 5,935,786,680 bytes with
+- The current verified inventory is 18,172 files / 7,019,486,412 bytes with
   zero symlinks and zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
@@ -136,7 +136,8 @@ budgets now guard this boundary.
   `c798e582b0ad3b49ada5fc7fde94125382ef9c06`. All stopped predecessors remain
   incomplete, have no interval marker, and are not reused. See the
   [build audit](../audits/reconciled-eod-edition-first-build-2026-09-12.md).
-- A separately sealed no-write Apply plan is `ready_for_separate_apply`. Its
+- The separately sealed no-write Apply plan was executed exactly once after
+  explicit approval. Its
   file SHA-256 is
   `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`,
   logical fingerprint is
@@ -144,9 +145,11 @@ budgets now guard this boundary.
   and expected canonical pre-state fingerprint is
   `a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e`.
   Planning formally reread all candidate sessions and bound all 2,469 files.
-  It made no provider request or `/data` write and grants no Apply, research,
-  Candidate, Production, or website authority. The canonical edition target
-  remains absent.
+  Atomic Apply published exactly 2,469 files / 1,083,699,732 bytes and formally
+  reread all 1,234 sessions / 10,376,263 records. The canonical postflight has
+  zero symlinks and zero residue. Apply made no provider request, overwrote or
+  deleted no existing partition, and grants no research, Candidate,
+  Production, or website authority.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
   contract remains available for a future deeper-history source. The stopped
@@ -220,14 +223,16 @@ Complete:
 - bounded corporate-action observations, split-only facts, and sparse
   split-adjustment evidence;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
-  mechanics; and
-- a preregistered Strong-Leader Pullback V1.
+  mechanics;
+- a preregistered Strong-Leader Pullback V1; and
+- the canonical contract 1.2 corrected EOD edition for 1,234 sessions through
+  2026-08-12, formally reread after atomic Apply.
 
 Incomplete:
 
-- canonical publication and later research admission of the complete ADR 0207
-  corrected EOD edition; construction, formal reconciliation, and exact
-  inventory-bound Apply planning are complete, but Apply has not executed;
+- later Historical Coverage and research admission of the canonical ADR 0207
+  corrected EOD edition; construction, reconciliation, planning, atomic Apply,
+  and postflight are complete;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
@@ -270,14 +275,13 @@ absent; status remains `quarantined`.
 
 1. Do not restart the stopped `20260911g` continuation or retry its expired
    boundary. The rolling price/Identity target and final census are complete.
-   The complete corrected edition and its inventory-bound no-write Apply plan
-   are now sealed. Review the exact plan values, then use the separate atomic
-   Apply operation while `/data` remains at the bound pre-state. Applying the
-   edition still does not admit research; final Historical Coverage and the
-   remaining mandatory evidence families stay separate gates. Treat the first
-   20 edition sessions as disclosed feature warm-up and exclude them from
-   signals and performance. Do not retry the expired 2021-09-09/10 price
-   boundary or populate the reserved external warm-up workspace under Starter.
+   The complete corrected edition has now passed exact planning, atomic Apply,
+   and canonical postflight. It still does not admit research; final Historical
+   Coverage and the remaining mandatory evidence families are the next
+   separate gates. Treat the first 20 edition sessions as disclosed feature
+   warm-up and exclude them from signals and performance. Do not retry the
+   expired 2021-09-09/10 price boundary or populate the reserved external
+   warm-up workspace under Starter.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later

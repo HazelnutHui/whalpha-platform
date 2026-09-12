@@ -138,8 +138,9 @@ Required work:
   ADR 0203 classifier now uses exact Grouped Daily collision groups plus exact
   Identity resolution. The clean successor completed all 1,234 sessions and
   10,376,263 records, passed formal reread, and produced an exact no-write
-  Apply plan binding all 2,469 artifacts and the current canonical inventory.
-  The plan is ready for a separately approved atomic Apply; no stopped
+  Apply plan binding all 2,469 artifacts and the then-current canonical
+  inventory. The explicitly approved atomic Apply published the exact edition
+  and formally reread all 1,234 sessions / 10,376,263 records. No stopped
   predecessor was reused and no research authority was granted;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
