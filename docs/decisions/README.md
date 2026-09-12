@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0213](0213-parallelize-inactive-lifecycle-history-reread.md):
+  parallelizes the five-year Instrument-history scan with deterministic
+  contiguous blocks and spawned workers while preserving shadow semantics.
 - [ADR 0212](0212-extend-family-evidence-apply-to-reconciled-editions.md):
   extends the proven recoverable Apply mechanism to the distinct reconciled
   edition plan without executing it or weakening source-scope isolation.

@@ -9,9 +9,11 @@ import shutil
 import socket
 import stat
 from collections import Counter, defaultdict
+from concurrent.futures import ProcessPoolExecutor
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import date, datetime
+from multiprocessing import get_context
 from pathlib import Path
 from typing import Iterator, Mapping
 
@@ -53,6 +55,8 @@ from tip_api.services.historical_inactive_lifecycle_source import (
 
 
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
+DEFAULT_HISTORY_WORKERS = min(8, os.cpu_count() or 1)
+MAXIMUM_HISTORY_WORKERS = 32
 SOURCE_FILE = "source-observations.parquet"
 DECISION_FILE = "resolution-decisions.parquet"
 MANIFEST_FILE = "manifest.json"
@@ -133,6 +137,13 @@ class _CanonicalHistory:
     fingerprint: str
 
 
+@dataclass(frozen=True, slots=True)
+class _CanonicalHistoryChunk:
+    record_count: int
+    by_instrument: Mapping[str, tuple[date, date, frozenset[str]]]
+    inventory: tuple[dict[str, object], ...]
+
+
 def build_historical_inactive_lifecycle_resolution_shadow(
     *,
     data_root: Path,
@@ -141,6 +152,7 @@ def build_historical_inactive_lifecycle_resolution_shadow(
     anchor_date: date,
     materialized_at: datetime,
     source_custody_root: Path | None = None,
+    max_workers: int = DEFAULT_HISTORY_WORKERS,
 ) -> HistoricalInactiveLifecycleResolutionShadowWriteResult:
     """Build one immutable owner-only shadow without network or canonical writes."""
 
@@ -152,6 +164,7 @@ def build_historical_inactive_lifecycle_resolution_shadow(
             anchor_date=anchor_date,
             materialized_at=materialized_at,
             source_custody_root=source_custody_root,
+            max_workers=max_workers,
         )
 
 
@@ -163,6 +176,7 @@ def _build_shadow(
     anchor_date: date,
     materialized_at: datetime,
     source_custody_root: Path | None,
+    max_workers: int,
 ) -> HistoricalInactiveLifecycleResolutionShadowWriteResult:
     canonical_root = _validated_canonical_root(data_root)
     candidate_root = _validated_tmp_root(output_root)
@@ -177,7 +191,11 @@ def _build_shadow(
         raise HistoricalInactiveLifecycleResolutionShadowError(
             "inactive lifecycle source package failed formal reread"
         ) from exc
-    canonical = _read_canonical_history(canonical_root, anchor_date)
+    canonical = _read_canonical_history(
+        canonical_root,
+        anchor_date,
+        max_workers=max_workers,
+    )
     observations = _normalize_source(package.pages, anchor_date)
     if len(observations) != package.manifest.record_count:
         raise HistoricalInactiveLifecycleResolutionShadowError(
@@ -536,7 +554,20 @@ def _resolve_observations(
     return tuple(decisions)
 
 
-def _read_canonical_history(root: Path, anchor_date: date) -> _CanonicalHistory:
+def _read_canonical_history(
+    root: Path,
+    anchor_date: date,
+    *,
+    max_workers: int = 1,
+) -> _CanonicalHistory:
+    if not isinstance(max_workers, int) or isinstance(max_workers, bool):
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "canonical Instrument history worker count is invalid"
+        )
+    if max_workers < 1 or max_workers > MAXIMUM_HISTORY_WORKERS:
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "canonical Instrument history worker count is outside bounds"
+        )
     snapshot_root = root / "market-data" / "snapshots" / "instrument-master"
     if snapshot_root.is_symlink() or not snapshot_root.is_dir():
         raise HistoricalInactiveLifecycleResolutionShadowError(
@@ -544,7 +575,11 @@ def _read_canonical_history(root: Path, anchor_date: date) -> _CanonicalHistory:
         )
     sessions: list[date] = []
     for item in snapshot_root.iterdir():
-        if item.is_symlink() or not item.is_dir() or not item.name.startswith("as_of_date="):
+        if (
+            item.is_symlink()
+            or not item.is_dir()
+            or not item.name.startswith("as_of_date=")
+        ):
             raise HistoricalInactiveLifecycleResolutionShadowError(
                 "canonical Instrument snapshot inventory contains an unsafe entry"
             )
@@ -561,6 +596,76 @@ def _read_canonical_history(root: Path, anchor_date: date) -> _CanonicalHistory:
         raise HistoricalInactiveLifecycleResolutionShadowError(
             "canonical Instrument history is empty"
         )
+    worker_count = min(max_workers, len(sessions))
+    chunks = _contiguous_session_chunks(tuple(sessions), worker_count)
+    if worker_count == 1:
+        results = (_read_canonical_history_chunk(str(root), chunks[0]),)
+    else:
+        try:
+            with ProcessPoolExecutor(
+                max_workers=worker_count,
+                mp_context=get_context("spawn"),
+            ) as executor:
+                results = tuple(
+                    executor.map(
+                        _read_canonical_history_chunk_from_arguments,
+                        ((str(root), chunk) for chunk in chunks),
+                    )
+                )
+        except Exception as exc:
+            raise HistoricalInactiveLifecycleResolutionShadowError(
+                "parallel canonical Instrument history reread failed"
+            ) from exc
+
+    mutable: dict[str, list[object]] = {}
+    inventory: list[dict[str, object]] = []
+    record_count = 0
+    for result in results:
+        record_count += result.record_count
+        inventory.extend(result.inventory)
+        for instrument_id, history in result.by_instrument.items():
+            first_date, last_date, tickers = history
+            current = mutable.get(instrument_id)
+            if current is None:
+                mutable[instrument_id] = [
+                    first_date,
+                    last_date,
+                    set(tickers),
+                ]
+            else:
+                current[0] = min(current[0], first_date)
+                current[1] = max(current[1], last_date)
+                current[2].update(tickers)
+    inventory.sort(key=lambda item: item["as_of_date"])
+    if tuple(item["as_of_date"] for item in inventory) != tuple(sessions):
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "canonical Instrument parallel session coverage differs"
+        )
+    by_instrument = {
+        key: (value[0], value[1], frozenset(value[2]))
+        for key, value in mutable.items()
+    }
+    return _CanonicalHistory(
+        first_date=sessions[0],
+        last_date=sessions[-1],
+        session_count=len(sessions),
+        record_count=record_count,
+        by_instrument=by_instrument,
+        fingerprint=inactive_lifecycle_fingerprint(inventory),
+    )
+
+
+def _read_canonical_history_chunk_from_arguments(
+    arguments: tuple[str, tuple[date, ...]],
+) -> _CanonicalHistoryChunk:
+    return _read_canonical_history_chunk(*arguments)
+
+
+def _read_canonical_history_chunk(
+    root_value: str,
+    sessions: tuple[date, ...],
+) -> _CanonicalHistoryChunk:
+    root = Path(root_value)
     repository = ParquetInstrumentMasterSnapshotRepository(root=root)
     mutable: dict[str, list[object]] = {}
     inventory: list[dict[str, object]] = []
@@ -612,18 +717,32 @@ def _read_canonical_history(root: Path, anchor_date: date) -> _CanonicalHistory:
                 "snapshot_content_sha256": snapshot.snapshot_content_sha256,
             }
         )
-    by_instrument = {
-        key: (value[0], value[1], frozenset(value[2]))
-        for key, value in mutable.items()
-    }
-    return _CanonicalHistory(
-        first_date=sessions[0],
-        last_date=sessions[-1],
-        session_count=len(sessions),
+    return _CanonicalHistoryChunk(
         record_count=record_count,
-        by_instrument=by_instrument,
-        fingerprint=inactive_lifecycle_fingerprint(inventory),
+        by_instrument={
+            key: (value[0], value[1], frozenset(value[2]))
+            for key, value in mutable.items()
+        },
+        inventory=tuple(inventory),
     )
+
+
+def _contiguous_session_chunks(
+    sessions: tuple[date, ...],
+    worker_count: int,
+) -> tuple[tuple[date, ...], ...]:
+    chunk_size = (len(sessions) + worker_count - 1) // worker_count
+    chunks = tuple(
+        sessions[index : index + chunk_size]
+        for index in range(0, len(sessions), chunk_size)
+    )
+    if not chunks or len(chunks) > worker_count or tuple(
+        session for chunk in chunks for session in chunk
+    ) != sessions:
+        raise HistoricalInactiveLifecycleResolutionShadowError(
+            "canonical Instrument history chunking differs"
+        )
+    return chunks
 
 
 def _selected_identity(

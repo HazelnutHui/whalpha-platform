@@ -242,6 +242,42 @@ def test_builds_one_to_one_fail_closed_shadow(monkeypatch, tmp_path: Path) -> No
     assert all(path.stat().st_mode & 0o777 == 0o400 for path in result.partition_path.iterdir())
 
 
+def test_parallel_and_serial_canonical_history_are_identical(
+    monkeypatch,
+    tmp_path: Path,
+) -> None:
+    data_root, _, _ = _fixture(monkeypatch, tmp_path)
+
+    serial = module._read_canonical_history(
+        data_root,
+        ANCHOR,
+        max_workers=1,
+    )
+    parallel = module._read_canonical_history(
+        data_root,
+        ANCHOR,
+        max_workers=2,
+    )
+
+    assert parallel == serial
+
+
+@pytest.mark.parametrize("workers", [0, 33, True])
+def test_canonical_history_worker_count_is_bounded(
+    tmp_path: Path,
+    workers,
+) -> None:
+    with pytest.raises(
+        HistoricalInactiveLifecycleResolutionShadowError,
+        match="worker count",
+    ):
+        module._read_canonical_history(
+            tmp_path,
+            ANCHOR,
+            max_workers=workers,
+        )
+
+
 def test_existing_exact_shadow_is_reused(monkeypatch, tmp_path: Path) -> None:
     data_root, source, output = _fixture(monkeypatch, tmp_path)
     kwargs = {

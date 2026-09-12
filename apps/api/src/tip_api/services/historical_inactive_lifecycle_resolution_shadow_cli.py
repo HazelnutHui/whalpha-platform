@@ -13,6 +13,7 @@ from tip_api.contracts.market_data.v1.historical_inactive_lifecycle import (
     MANIFEST_CONTRACT_VERSION,
 )
 from tip_api.services.historical_inactive_lifecycle_resolution_shadow import (
+    DEFAULT_HISTORY_WORKERS,
     HistoricalInactiveLifecycleResolutionShadowError,
     build_historical_inactive_lifecycle_resolution_shadow,
 )
@@ -28,6 +29,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--output-root", required=True, type=Path)
     parser.add_argument("--anchor-date", required=True, type=date.fromisoformat)
     parser.add_argument("--materialized-at", required=True, type=datetime.fromisoformat)
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=DEFAULT_HISTORY_WORKERS,
+    )
     parser.add_argument("--execute", action="store_true")
     args = parser.parse_args(argv)
     if not args.execute:
@@ -43,6 +49,7 @@ def main(argv: list[str] | None = None) -> int:
             anchor_date=args.anchor_date,
             materialized_at=args.materialized_at,
             source_custody_root=args.source_custody_root,
+            max_workers=args.workers,
         )
     except (HistoricalInactiveLifecycleResolutionShadowError, OSError, ValueError) as exc:
         print(
