@@ -150,6 +150,17 @@ budgets now guard this boundary.
   zero symlinks and zero residue. Apply made no provider request, overwrote or
   deleted no existing partition, and grants no research, Candidate,
   Production, or website authority.
+- ADR 0210's offline adapter then formally validated the canonical corrected
+  edition and its exact same-session Identity snapshots as two unpublished
+  family-evidence candidates. EOD covers 1,234 sessions / 10,376,263 records
+  with evidence fingerprint
+  `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`;
+  Identity covers the same 1,234 sessions / 10,472,243 instrument-snapshot
+  records with fingerprint
+  `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`.
+  The eight-process run took 374.70 seconds and made zero requests or writes.
+  Both remain `validated_not_published`; the separate legacy 304-session
+  family evidence remains the only published EOD/Identity evidence.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
   contract remains available for a future deeper-history source. The stopped
@@ -230,9 +241,11 @@ Complete:
 
 Incomplete:
 
+- edition-specific publication planning and canonical publication for the two
+  validated corrected-edition EOD/Identity evidence candidates;
 - later Historical Coverage and research admission of the canonical ADR 0207
-  corrected EOD edition; construction, reconciliation, planning, atomic Apply,
-  and postflight are complete;
+  corrected EOD edition; construction, reconciliation, Apply, postflight, and
+  read-only family-evidence validation are complete;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
@@ -276,9 +289,11 @@ absent; status remains `quarantined`.
 1. Do not restart the stopped `20260911g` continuation or retry its expired
    boundary. The rolling price/Identity target and final census are complete.
    The complete corrected edition has now passed exact planning, atomic Apply,
-   and canonical postflight. It still does not admit research; final Historical
-   Coverage and the remaining mandatory evidence families are the next
-   separate gates. Treat the first 20 edition sessions as disclosed feature
+   canonical postflight, and read-only EOD/Identity family-evidence validation.
+   Next build an edition-specific no-write evidence publication plan; its Apply
+   remains separate. This still does not admit research: the other mandatory
+   families and final Historical Coverage remain later gates. Treat the first
+   20 edition sessions as disclosed feature
    warm-up and exclude them from signals and performance. Do not retry the
    expired 2021-09-09/10 price boundary or populate the reserved external
    warm-up workspace under Starter.

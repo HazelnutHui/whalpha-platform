@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-12 — Validate corrected-edition EOD and Identity family evidence
+
+- Accepted ADR 0210 and added an edition-scoped, offline adapter rather than
+  forcing the immutable corrected EOD edition through the rolling current-EOD
+  evidence semantics. The adapter requires an exact edition ID and interval
+  fingerprint and binds the interval marker plus every session manifest and
+  Parquet file.
+- A bounded eight-process formal validation completed in 374.70 seconds. It
+  validated 1,234 EOD sessions / 10,376,263 rows and the exact 1,234
+  same-session Identity snapshots / 10,472,243 instrument-snapshot records.
+- The proposed EOD and Identity evidence logical fingerprints are respectively
+  `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`
+  and
+  `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`.
+  Both remain `validated_not_published`; the previously published 304-session
+  current evidence was neither reused nor overwritten.
+- The complete 2,529-test API suite passed with the two existing dependency
+  deprecation warnings. No provider request, `/data` write, Historical
+  Coverage, research authority, Production change, or website deployment
+  occurred. Membership, actions, lifecycle, adjustments, and final Coverage
+  remain separate blockers. See the
+  [dated audit](../audits/reconciled-eod-historical-mechanics-evidence-2026-09-12.md).
+
 ## 2026-09-12 — Complete and plan the first corrected EOD edition
 
 - Built the clean contract 1.2 successor from revision

@@ -142,6 +142,12 @@ Required work:
   inventory. The explicitly approved atomic Apply published the exact edition
   and formally reread all 1,234 sessions / 10,376,263 records. No stopped
   predecessor was reused and no research authority was granted;
+- completed 2026-09-12: adapt the named corrected edition and exact matching
+  Identity snapshots into read-only Historical Dataset Coverage Evidence
+  candidates. Eight-process formal validation completed in 374.70 seconds;
+  both families cover the same 1,234 sessions and remain unpublished. Next
+  create one edition-specific no-write evidence publication plan, then retain
+  canonical Apply as a separate review boundary;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not

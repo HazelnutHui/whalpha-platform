@@ -58,6 +58,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Symlinks / publication residue | zero / zero |
 | Corrected EOD edition | Canonical contract 1.2 edition: 1,234 sessions / 10,376,263 records / 2,469 files / 1,083,699,732 bytes; interval fingerprint `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3` |
 | Corrected EOD Apply | Applied from approved plan SHA-256 `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`; logical fingerprint `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`; canonical formal reread passed |
+| Corrected EOD family evidence | Exact 1,234-session EOD and same-session Identity candidates formally validate read-only; EOD fingerprint `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`, Identity fingerprint `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`; both unpublished |
 
 The bounded historical run stopped safely at the Starter rolling entitlement
 edge; ADR 0206 rejected retries or a deeper purchase solely for the expired
@@ -113,6 +114,16 @@ fingerprint
 `8baec95b3a4e81cc2b4ca05f9f1fb24a8a112237c6c217bf88c09066462aa307`.
 Historical Coverage, research, Production, publication, and website authority
 remain unchanged.
+
+ADR 0210's edition-scoped offline adapter subsequently reread the canonical
+edition and all same-session Identity snapshots with eight bounded Dell
+workers. The 374.70-second run validated exact unpublished EOD and Identity
+family-evidence candidates over all 1,234 sessions. Their logical fingerprints
+are respectively
+`b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5` and
+`faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`.
+The older published current-EOD/Identity evidence covers only 304 sessions and
+remains separate. No family evidence or Historical Coverage was published.
 
 Source Coverage and the full-build controller can preserve a separate
 2021-08-11 through 2021-09-08 warm-up declaration. ADR 0206 leaves that
@@ -247,7 +258,7 @@ claims are false.
 | Complete or present | Still blocking real research |
 | --- | --- |
 | 1,255 aligned EOD / Identity partitions through 2026-09-11; ADR 0207's 1,234-session corrected edition is canonical and formally reread | Seal final transitive Historical Coverage for the admitted price family |
-| EOD/Identity family evidence | Complete and admitted historical Membership |
+| Legacy 304-session EOD/Identity evidence is published; exact corrected-edition EOD/Identity candidates validate for 1,234 sessions but remain unpublished | Complete and admitted historical Membership |
 | 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
@@ -364,8 +375,10 @@ the 2026-09-11 daily audit.
    boundary. The rolling census is complete for price/Identity but does not
    authorize research use of affected V1 EOD history. The complete corrected
    edition has passed inventory-bound planning, atomic Apply, and canonical
-   postflight. Build final Historical Coverage and keep research admission as a
-   distinct later decision. Use the first 20 edition sessions as disclosed
+   postflight and read-only family-evidence validation. Next create the exact
+   edition-specific evidence publication plan; keep its Apply, final Historical
+   Coverage, and research admission as distinct later decisions. Use the first
+   20 edition sessions as disclosed
    feature warm-up and exclude them from signals and performance. Keep the
    external warm-up workspace reserved but empty under Starter.
 2. Use Massive as the primary price/reference source and evaluate official
