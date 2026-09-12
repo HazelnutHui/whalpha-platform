@@ -55,3 +55,7 @@ Coverage, authorize research, or change Production.
   warnings.
 - Real execution requires separate approval bound to the exact ADR 0211 plan
   SHA, logical fingerprint, and family-set fingerprint.
+- The separately authorized real Apply subsequently published exactly two
+  manifests / 2,673,980 bytes. Immediate completed-state recovery reused both
+  targets with zero writes, and independent postflight found no symlink,
+  residue, overwrite, deletion, or outside-target inventory drift.

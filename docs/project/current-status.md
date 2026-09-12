@@ -87,7 +87,7 @@ budgets now guard this boundary.
   retained in owner-only persistent Dell custody and formally reread. Their
   23,260 / 23,469 rows remain discovery and reconciliation evidence, not
   canonical lifecycle or terminal outcomes.
-- The current verified inventory is 18,172 files / 7,019,486,412 bytes with
+- The current verified inventory is 18,174 files / 7,022,160,392 bytes with
   zero symlinks and zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
@@ -159,8 +159,8 @@ budgets now guard this boundary.
   records with fingerprint
   `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`.
   The eight-process run took 374.70 seconds and made zero requests or writes.
-  Both remain `validated_not_published`; the separate legacy 304-session
-  family evidence remains the only published EOD/Identity evidence.
+  Both were initially `validated_not_published`; the separate legacy
+  304-session family evidence was not reused or overwritten.
 - ADR 0211's distinct no-write plan now binds those two candidates to the exact
   corrected edition and two absent targets. Plan SHA-256 is
   `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`,
@@ -168,13 +168,20 @@ budgets now guard this boundary.
   `443d80c7347b794b7f105c2d8b5dc8e57fbc4d4dd67442773983647d69d0fcfc`,
   and family-set fingerprint is
   `30722680a6d2f8448db0e895fed7e060ca8a81f2d5faebca3b4d23fbba2b0d8e`.
-  The independent exact-SHA reread passed. Both evidence targets remain absent;
-  no `/data`, Historical Coverage, research, or Production authority changed.
+  The independent exact-SHA reread passed before Apply.
 - ADR 0212 now routes that distinct plan through the already proven
   ordered-prefix, recoverable family-evidence Apply mechanism. Temporary-root
   publication and zero-write completed-state recovery passed while the old
-  rolling-current entry continued to reject the edition plan. This is tested
-  capability only; the real Apply was not run and both targets remain absent.
+  rolling-current entry continued to reject the edition plan. This tested
+  capability was then executed only after exact-plan approval.
+- The authorized Apply published exactly two evidence manifests / 2,673,980
+  bytes. Outside-target inventory remained
+  `8baec95b3a4e81cc2b4ca05f9f1fb24a8a112237c6c217bf88c09066462aa307`
+  before and after. Immediate completed-state recovery reused both targets with
+  zero writes. Independent postflight produced full inventory fingerprint
+  `87a2a573b3350918a90db3cea51faaa1839a4e5fb420e2f20278dfc3cb9aa244`,
+  with zero symlinks and zero residue. Historical Coverage, research,
+  Production, and website state remain unchanged.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
   contract remains available for a future deeper-history source. The stopped
@@ -249,20 +256,19 @@ Complete:
   split-adjustment evidence;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
   mechanics;
-- a preregistered Strong-Leader Pullback V1; and
+- a preregistered Strong-Leader Pullback V1;
 - the canonical contract 1.2 corrected EOD edition for 1,234 sessions through
   2026-08-12, formally reread after atomic Apply;
-- the exact edition-specific, no-write two-family evidence publication plan;
-  and
-- a tested recoverable Apply entry for that distinct plan, not yet executed.
+- the exact edition-specific two-family evidence publication plan; and
+- canonical publication and zero-write recovery of both exact evidence
+  manifests.
 
 Incomplete:
 
-- canonical publication for the two validated corrected-edition EOD/Identity
-  evidence candidates; planning is complete but Apply remains separate;
 - later Historical Coverage and research admission of the canonical ADR 0207
   corrected EOD edition; edition construction, reconciliation, edition Apply,
-  postflight, read-only family-evidence validation, and planning are complete;
+  postflight, family-evidence validation, planning, and publication are
+  complete;
 - historical point-in-time Membership eligibility;
 - canonical cross-venue lifecycle and terminal outcomes;
 - complete action availability/revision and adjustment/total-return evidence;
@@ -307,12 +313,11 @@ Coverage are absent; status remains `quarantined`.
    boundary. The rolling price/Identity target and final census are complete.
    The complete corrected edition has now passed exact planning, atomic Apply,
    canonical postflight, read-only EOD/Identity family-evidence validation, and
-   edition-specific no-write evidence publication planning. Its recoverable
-   Apply entry is implemented and tested; execution remains separately
-   approved. This still does not admit research: the other mandatory
+   edition-specific evidence publication planning, exact Apply, and zero-write
+   recovery. This still does not admit research: the other mandatory
    families and final Historical Coverage remain later gates. Treat the first
-   20 edition sessions as disclosed feature
-   warm-up and exclude them from signals and performance. Do not retry the
+   20 edition sessions as disclosed feature warm-up and exclude them from
+   signals and performance. Do not retry the
    expired 2021-09-09/10 price boundary or populate the reserved external
    warm-up workspace under Starter.
 2. Continue independent construction using Massive plus bounded official/free

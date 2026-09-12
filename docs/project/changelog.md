@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-12 — Publish corrected-edition EOD and Identity family evidence
+
+- Applied the exact ADR 0211 plan only after authorization matched its file
+  SHA-256, logical fingerprint, and family-set fingerprint. The locked,
+  network-prohibited executor published EOD then Identity: exactly two
+  manifests / 2,673,980 bytes, with zero reuse, overwrite, deletion, or
+  external request.
+- The outside-target inventory fingerprint remained
+  `8baec95b3a4e81cc2b4ca05f9f1fb24a8a112237c6c217bf88c09066462aa307`
+  before and after. The complete post-state fingerprint is
+  `87a2a573b3350918a90db3cea51faaa1839a4e5fb420e2f20278dfc3cb9aa244`.
+- Immediate `verify_then_complete` formally reread and reused both targets with
+  zero published files / bytes. Independent current-context postflight found
+  18,174 files / 7,022,160,392 bytes, four family-evidence manifests, zero
+  symlinks, and zero residue.
+- Final Historical Coverage remains absent and research remains data-blocked.
+  Membership, lifecycle, actions, adjustments, availability lineage, costs,
+  real chronological inputs, and holdout custody remain independent gates.
+  Production and website state did not change. See the
+  [dated audit](../audits/reconciled-eod-family-evidence-apply-2026-09-12.md).
+
 ## 2026-09-12 — Prepare recoverable corrected-edition evidence Apply
 
 - Accepted ADR 0212 and added an explicit reconciled-edition Apply entry while

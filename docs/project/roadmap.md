@@ -154,7 +154,11 @@ Required work:
 - completed 2026-09-12: extend the existing ADR 0166 recoverable Apply
   mechanism through an explicit reconciled-edition reader and operation gate.
   The old current entry still rejects the new plan; temporary-root Apply and
-  zero-write completed recovery pass. The real plan remains unexecuted;
+  zero-write completed recovery pass;
+- completed 2026-09-12: execute the separately approved exact plan. It
+  published only the two planned manifests / 2,673,980 bytes; immediate
+  completed-state recovery wrote zero bytes and independent postflight found
+  zero symlinks, residue, overwrite, deletion, or outside-target drift;
 - use the first 20 available target sessions as explicit outcome-free feature
   warm-up and begin performance eligibility only afterward. Preserve the
   separate external-warm-up contract for a future deeper dataset, but do not

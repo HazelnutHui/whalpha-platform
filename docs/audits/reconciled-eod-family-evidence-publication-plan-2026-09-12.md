@@ -57,8 +57,8 @@ The plan remains `ready_for_separate_review` with
 false. No canonical evidence publication occurred.
 
 ADR 0212 subsequently extended the existing recoverable Apply path to recognize
-this distinct contract and operation. Its complete API regression passed, but
-the real plan was not executed. Executing it still requires separate approval
-bound to this exact plan SHA, logical fingerprint, and family-set fingerprint.
-Membership, lifecycle, actions, adjustments, final Historical Coverage,
-research, and Production remain later independent gates.
+this distinct contract and operation. After separate exact-plan approval, the
+real Apply and zero-write completed-state recovery both passed. See the
+[Apply audit](reconciled-eod-family-evidence-apply-2026-09-12.md). Membership,
+lifecycle, actions, adjustments, final Historical Coverage, research, and
+Production remain later independent gates.
