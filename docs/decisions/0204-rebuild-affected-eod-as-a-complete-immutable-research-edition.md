@@ -39,6 +39,10 @@ The edition has these boundaries:
   economic-value change never auto-passes as the same defect;
 - a session with missing exact source, unresolved provenance, failed quality
   gates, or an unexplained diff remains incomplete and quarantined;
+- independent source-family blockers are reported cumulatively; price-source
+  reacquisition may proceed for an exact missing Grouped Daily package even
+  when the session remains separately blocked by absent Identity source
+  custody, without granting build readiness;
 - completed session partitions are immutable and resumable; and
 - one interval manifest is published last only after all required evaluation
   and declared warm-up sessions pass formal reread and reconciliation.

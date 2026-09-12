@@ -259,6 +259,30 @@ def test_missing_identity_source_blocks_otherwise_available_package(
     assert evidence.reason_codes == ("identity_source_custody_unavailable",)
 
 
+def test_missing_identity_source_reports_independent_grouped_daily_gap(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    monkeypatch.setattr(module, "_discover_candidates", lambda _date: ((), ()))
+
+    def fail(**_kwargs):
+        raise HistoricalIdentitySourceCustodyError("missing")
+
+    monkeypatch.setattr(module, "read_identity_source_custody_at_data_root", fail)
+
+    evidence = module._assess_session(
+        data_root=tmp_path,
+        repository=FakeRepository(),
+        session_date=SESSION,
+    )
+
+    assert evidence.disposition == ReconciledEodSourceCoverageDisposition.INVALID
+    assert evidence.reason_codes == (
+        "grouped_daily_source_package_missing",
+        "identity_source_custody_unavailable",
+    )
+
+
 def test_daily_identity_package_is_not_misclassified_as_grouped_daily_source(
     monkeypatch: pytest.MonkeyPatch,
     tmp_path: Path,

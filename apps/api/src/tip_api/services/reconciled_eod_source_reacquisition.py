@@ -288,33 +288,54 @@ def _validate_sessions_against_coverage(
     repository = CanonicalEodReadRepository(data_root)
     for session in session_dates:
         evidence = evidence_by_date.get(session)
+        ordinary_source_gap = (
+            evidence is not None
+            and evidence.disposition
+            == ReconciledEodSourceCoverageDisposition.MISSING
+            and evidence.reason_codes
+            == ("grouped_daily_source_package_missing",)
+        )
+        identity_blocked_source_gap = (
+            evidence is not None
+            and evidence.disposition
+            == ReconciledEodSourceCoverageDisposition.INVALID
+            and evidence.reason_codes
+            == (
+                "grouped_daily_source_package_missing",
+                "identity_source_custody_unavailable",
+            )
+        )
         if (
             evidence is None
-            or evidence.disposition
-            != ReconciledEodSourceCoverageDisposition.MISSING
-            or evidence.reason_codes != ("grouped_daily_source_package_missing",)
+            or not (ordinary_source_gap or identity_blocked_source_gap)
             or evidence.canonical_eod_fingerprint is None
             or evidence.canonical_identity_fingerprint is None
         ):
             raise ReconciledEodSourceReacquisitionError(
-                "session is not one exact source-only gap in sealed coverage"
+                "session is not one exact Grouped Daily gap in sealed coverage"
             )
         current = repository.inspect_session(session)
-        identity_source = read_identity_source_custody_at_data_root(
-            data_root=data_root,
-            provider=MASSIVE_PROVIDER_ID,
-            session_date=session,
-        )
         if (
             current.content_fingerprint != evidence.canonical_eod_fingerprint
             or current.identity_snapshot_fingerprint
-            != evidence.canonical_identity_fingerprint
-            or identity_source.manifest.canonical_snapshot_fingerprint
             != evidence.canonical_identity_fingerprint
         ):
             raise ReconciledEodSourceReacquisitionError(
                 "canonical source-gap binding changed after coverage sealing"
             )
+        if ordinary_source_gap:
+            identity_source = read_identity_source_custody_at_data_root(
+                data_root=data_root,
+                provider=MASSIVE_PROVIDER_ID,
+                session_date=session,
+            )
+            if (
+                identity_source.manifest.canonical_snapshot_fingerprint
+                != evidence.canonical_identity_fingerprint
+            ):
+                raise ReconciledEodSourceReacquisitionError(
+                    "canonical source-gap binding changed after coverage sealing"
+                )
 
 
 def _validate_transient_retry_delays(values: tuple[int, ...]) -> tuple[int, ...]:

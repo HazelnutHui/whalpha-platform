@@ -2,6 +2,10 @@
 
 ## 2026-09-12 — Close Reconciled EOD Grouped Daily source-package gaps
 
+- Corrected Source Coverage to retain an independent missing-price reason when
+  Identity source custody also fails. The reacquisition runner now accepts
+  only that exact two-reason quarantine to close the price package while
+  leaving Identity and candidate-build readiness blocked.
 - The first four-worker, network-disabled census formally reread all 1,255
   rolling target sessions and selected 948 retained-original source packages,
   with 305 Grouped Daily packages missing, two Identity-source bindings

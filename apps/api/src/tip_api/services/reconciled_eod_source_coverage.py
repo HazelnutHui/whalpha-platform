@@ -395,6 +395,9 @@ def _assess_session(
 ) -> ReconciledEodSourceCoverageSessionV1:
     specs, discovery_reasons = _discover_candidates(session_date)
     origins = tuple(sorted({item.origin for item in specs}, key=lambda item: item.value))
+    missing_package_reason = (
+        ("grouped_daily_source_package_missing",) if not specs else ()
+    )
     try:
         integrity = repository.inspect_session(session_date)
     except (OSError, ValueError, EodDatasetUnavailableError):
@@ -402,7 +405,11 @@ def _assess_session(
             session_date=session_date,
             disposition=ReconciledEodSourceCoverageDisposition.INVALID,
             origins=origins,
-            reasons=(*discovery_reasons, "canonical_eod_unavailable"),
+            reasons=(
+                *discovery_reasons,
+                *missing_package_reason,
+                "canonical_eod_unavailable",
+            ),
         )
     try:
         identity_source = read_identity_source_custody_at_data_root(
@@ -415,7 +422,11 @@ def _assess_session(
             session_date=session_date,
             disposition=ReconciledEodSourceCoverageDisposition.INVALID,
             origins=origins,
-            reasons=(*discovery_reasons, "identity_source_custody_unavailable"),
+            reasons=(
+                *discovery_reasons,
+                *missing_package_reason,
+                "identity_source_custody_unavailable",
+            ),
             canonical_eod_fingerprint=integrity.content_fingerprint,
             canonical_identity_fingerprint=integrity.identity_snapshot_fingerprint,
         )
@@ -427,7 +438,11 @@ def _assess_session(
             session_date=session_date,
             disposition=ReconciledEodSourceCoverageDisposition.INVALID,
             origins=origins,
-            reasons=(*discovery_reasons, "identity_source_binding_differs"),
+            reasons=(
+                *discovery_reasons,
+                *missing_package_reason,
+                "identity_source_binding_differs",
+            ),
             canonical_eod_fingerprint=integrity.content_fingerprint,
             canonical_identity_fingerprint=integrity.identity_snapshot_fingerprint,
         )

@@ -29,13 +29,17 @@ def _config() -> MassiveProviderConfig:
     return MassiveProviderConfig(api_key=SecretStr("fixture-key"))
 
 
-def _coverage(*, disposition=ReconciledEodSourceCoverageDisposition.MISSING):
+def _coverage(
+    *,
+    disposition=ReconciledEodSourceCoverageDisposition.MISSING,
+    reason_codes=("grouped_daily_source_package_missing",),
+):
     return SimpleNamespace(
         sessions=(
             SimpleNamespace(
                 session_date=SESSION,
                 disposition=disposition,
-                reason_codes=("grouped_daily_source_package_missing",),
+                reason_codes=reason_codes,
                 canonical_eod_fingerprint="a" * 64,
                 canonical_identity_fingerprint="b" * 64,
             ),
@@ -301,6 +305,46 @@ def test_requires_exact_missing_disposition_and_unchanged_canonical_binding(
             ),
             session_dates=(SESSION,),
         )
+
+
+def test_allows_grouped_daily_fetch_while_identity_source_remains_blocked(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+
+    class FakeRepository:
+        def __init__(self, root: Path) -> None:
+            assert root == data_root
+
+        def inspect_session(self, session: date) -> object:
+            assert session == SESSION
+            return SimpleNamespace(
+                content_fingerprint="a" * 64,
+                identity_snapshot_fingerprint="b" * 64,
+            )
+
+    monkeypatch.setattr(module, "CanonicalEodReadRepository", FakeRepository)
+    monkeypatch.setattr(
+        module,
+        "read_identity_source_custody_at_data_root",
+        lambda **_kwargs: pytest.fail(
+            "independent price-source acquisition read absent Identity source"
+        ),
+    )
+
+    module._validate_sessions_against_coverage(
+        data_root=data_root,
+        coverage=_coverage(
+            disposition=ReconciledEodSourceCoverageDisposition.INVALID,
+            reason_codes=(
+                "grouped_daily_source_package_missing",
+                "identity_source_custody_unavailable",
+            ),
+        ),
+        session_dates=(SESSION,),
+    )
 
 
 def test_rejects_unordered_or_oversized_session_request() -> None:

@@ -15,9 +15,13 @@ Operational instructions alone do not authorize a provider request.
 1. The unique five-year EOD/Identity writer has stopped.
 2. A complete-interval coverage artifact has been built from quiescent
    canonical state and its exact file SHA-256 retained.
-3. Every requested date is disposition `missing` with only reason
-   `grouped_daily_source_package_missing`; invalid and conflict dates require
-   separate diagnosis.
+3. Every requested date has an exact
+   `grouped_daily_source_package_missing` reason. It is either disposition
+   `missing` with no other reason, or the narrowly supported disposition
+   `invalid` with the additional reason
+   `identity_source_custody_unavailable`. The latter closes only the independent
+   price-package gap and remains Identity-blocked. Every other invalid or
+   conflict date requires separate diagnosis.
 4. The repository is clean, and the command uses the project Python wrapper.
 5. The package root is exactly
    `/home/hui/.local/state/trading-intelligence-platform/reconciled-eod-source-reacquisition`.

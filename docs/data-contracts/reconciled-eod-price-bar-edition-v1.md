@@ -110,6 +110,12 @@ reacquisition keeps distinct provenance and cannot claim an original Apply
 binding. Multiple otherwise eligible original packages are a conflict, not an
 automatic precedence choice.
 
+Coverage reports independent blockers cumulatively. In particular, an absent
+Grouped Daily package is not hidden when same-session Identity source custody
+is also unavailable. The bounded price-source reacquisition runner may close
+that exact price-package gap while the session remains Identity-blocked; doing
+so does not relax candidate-build readiness or manufacture Identity evidence.
+
 The evaluation backfill and separate warm-up backfill are distinct source
 origins even though both can prove retained-original provenance. This keeps the
 legacy evaluation workspace immutable and makes source resolution unambiguous.
