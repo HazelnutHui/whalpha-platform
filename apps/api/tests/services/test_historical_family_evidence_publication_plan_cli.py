@@ -9,7 +9,7 @@ import pytest
 from tip_api.services import historical_family_evidence_publication_plan_cli as cli
 
 
-def _evidence():
+def _evidence(*, reconciled: bool = False):
     family = SimpleNamespace(
         value="eod_price_bar",
     )
@@ -24,6 +24,16 @@ def _evidence():
         expected_target_state="absent",
     )
     plan = SimpleNamespace(
+        contract_version=(
+            "reconciled-eod-historical-family-evidence-publication-plan/1.0"
+            if reconciled
+            else "current-historical-family-evidence-publication-plan/1.0"
+        ),
+        operation=(
+            "publish_reconciled_eod_historical_family_evidence"
+            if reconciled
+            else "publish_current_historical_family_evidence"
+        ),
         logical_fingerprint="c" * 64,
         family_set_fingerprint="d" * 64,
         first_session=SimpleNamespace(isoformat=lambda: "2026-09-03"),
@@ -40,6 +50,9 @@ def _evidence():
         research_development_authorized=False,
         research_performance_authorized=False,
     )
+    if reconciled:
+        plan.source_edition_id = "reconciled-edition"
+        plan.source_interval_manifest_fingerprint = "f" * 64
     return SimpleNamespace(
         plan=plan,
         plan_path="/tmp/plan.json",
@@ -106,6 +119,50 @@ def test_verify_cli_requires_and_passes_exact_plan_sha(monkeypatch, capsys) -> N
     assert result == 0
     assert payload["status"] == "plan_revalidated"
     assert observed["approved_plan_sha256"] == "e" * 64
+
+
+def test_reconciled_build_cli_passes_exact_edition_binding(
+    monkeypatch,
+    capsys,
+) -> None:
+    observed = {}
+
+    def build(**kwargs):
+        observed.update(kwargs)
+        return _evidence(reconciled=True)
+
+    monkeypatch.setattr(
+        cli,
+        "build_reconciled_eod_historical_family_evidence_publication_plan",
+        build,
+    )
+
+    result = cli.main(
+        [
+            "build-reconciled",
+            "--data-root",
+            "/data/trading-intelligence-platform",
+            "--edition-id",
+            "reconciled-edition",
+            "--expected-interval-fingerprint",
+            "f" * 64,
+            "--plan-path",
+            "/tmp/plan.json",
+            "--workers",
+            "3",
+        ]
+    )
+
+    payload = json.loads(capsys.readouterr().out)
+    assert result == 0
+    assert payload["operation"] == (
+        "publish_reconciled_eod_historical_family_evidence"
+    )
+    assert payload["source_edition_id"] == "reconciled-edition"
+    assert payload["source_interval_manifest_fingerprint"] == "f" * 64
+    assert observed["edition_id"] == "reconciled-edition"
+    assert observed["expected_interval_manifest_fingerprint"] == "f" * 64
+    assert observed["max_workers"] == 3
 
 
 def test_cli_rejection_hides_failure_detail(monkeypatch, capsys) -> None:

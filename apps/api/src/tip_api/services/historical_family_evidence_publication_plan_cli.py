@@ -1,4 +1,4 @@
-"""Offline CLI for the current two-family evidence publication plan."""
+"""Offline CLI for exact two-family evidence publication plans."""
 
 from __future__ import annotations
 
@@ -17,14 +17,19 @@ from tip_api.services.current_historical_mechanics_evidence import (
 from tip_api.services.historical_family_evidence_publication_plan import (
     HistoricalFamilyEvidencePublicationPlanError,
     build_current_historical_family_evidence_publication_plan,
+    build_reconciled_eod_historical_family_evidence_publication_plan,
     read_current_historical_family_evidence_publication_plan,
+    read_reconciled_eod_historical_family_evidence_publication_plan,
+)
+from tip_api.services.reconciled_eod_historical_mechanics_evidence import (
+    DEFAULT_VALIDATION_WORKERS,
 )
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Build or formally verify the no-write current EOD/Identity "
+            "Build or formally verify a no-write EOD/Identity "
             "family-evidence publication plan."
         )
     )
@@ -35,6 +40,29 @@ def main(argv: list[str] | None = None) -> int:
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("--plan-path", required=True, type=Path)
     verify_parser.add_argument("--approved-plan-sha256", required=True)
+    reconciled_build_parser = subparsers.add_parser("build-reconciled")
+    reconciled_build_parser.add_argument("--data-root", required=True, type=Path)
+    reconciled_build_parser.add_argument("--edition-id", required=True)
+    reconciled_build_parser.add_argument(
+        "--expected-interval-fingerprint",
+        required=True,
+    )
+    reconciled_build_parser.add_argument(
+        "--plan-path",
+        required=True,
+        type=Path,
+    )
+    reconciled_build_parser.add_argument(
+        "--workers",
+        type=int,
+        default=DEFAULT_VALIDATION_WORKERS,
+    )
+    reconciled_verify_parser = subparsers.add_parser("verify-reconciled")
+    reconciled_verify_parser.add_argument("--plan-path", required=True, type=Path)
+    reconciled_verify_parser.add_argument(
+        "--approved-plan-sha256",
+        required=True,
+    )
     args = parser.parse_args(argv)
 
     try:
@@ -45,10 +73,31 @@ def main(argv: list[str] | None = None) -> int:
                     plan_path=args.plan_path,
                 )
                 status = "plan_created"
-            else:
+            elif args.command == "verify":
                 evidence = read_current_historical_family_evidence_publication_plan(
                     plan_path=args.plan_path,
                     approved_plan_sha256=args.approved_plan_sha256,
+                )
+                status = "plan_revalidated"
+            elif args.command == "build-reconciled":
+                evidence = (
+                    build_reconciled_eod_historical_family_evidence_publication_plan(
+                        data_root=args.data_root,
+                        edition_id=args.edition_id,
+                        expected_interval_manifest_fingerprint=(
+                            args.expected_interval_fingerprint
+                        ),
+                        plan_path=args.plan_path,
+                        max_workers=args.workers,
+                    )
+                )
+                status = "plan_created"
+            else:
+                evidence = (
+                    read_reconciled_eod_historical_family_evidence_publication_plan(
+                        plan_path=args.plan_path,
+                        approved_plan_sha256=args.approved_plan_sha256,
+                    )
                 )
                 status = "plan_revalidated"
     except (
@@ -65,9 +114,7 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(
                 {
                     "status": "rejected",
-                    "reason_code": (
-                        "current_historical_family_evidence_plan_rejected"
-                    ),
+                    "reason_code": "historical_family_evidence_plan_rejected",
                     "error_type": type(exc).__name__,
                     "external_request_count": 0,
                     "canonical_data_write_count": 0,
@@ -81,54 +128,52 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     plan = evidence.plan
-    print(
-        json.dumps(
+    payload = {
+        "status": status,
+        "contract_version": plan.contract_version,
+        "operation": plan.operation,
+        "plan_path": str(evidence.plan_path),
+        "plan_sha256": evidence.plan_sha256,
+        "plan_logical_fingerprint": plan.logical_fingerprint,
+        "family_set_fingerprint": plan.family_set_fingerprint,
+        "first_session": plan.first_session.isoformat(),
+        "last_session": plan.last_session.isoformat(),
+        "session_count": plan.session_count,
+        "inventory_change_file_count": plan.inventory_change_file_count,
+        "inventory_change_bytes": plan.inventory_change_bytes,
+        "target_absent_count": plan.target_absent_count,
+        "families": [
             {
-                "status": status,
-                "plan_path": str(evidence.plan_path),
-                "plan_sha256": evidence.plan_sha256,
-                "plan_logical_fingerprint": plan.logical_fingerprint,
-                "family_set_fingerprint": plan.family_set_fingerprint,
-                "first_session": plan.first_session.isoformat(),
-                "last_session": plan.last_session.isoformat(),
-                "session_count": plan.session_count,
-                "inventory_change_file_count": plan.inventory_change_file_count,
-                "inventory_change_bytes": plan.inventory_change_bytes,
-                "target_absent_count": plan.target_absent_count,
-                "families": [
-                    {
-                        "family": item.family.value,
-                        "record_count": item.record_count,
-                        "source_artifact_count": item.source_artifact_count,
-                        "source_file_count": item.source_file_count,
-                        "evidence_logical_fingerprint": (
-                            item.evidence.logical_fingerprint
-                        ),
-                        "evidence_manifest_sha256": (
-                            item.evidence_manifest_sha256
-                        ),
-                        "target_path": item.target_path,
-                        "expected_target_state": item.expected_target_state,
-                    }
-                    for item in plan.families
-                ],
-                "external_request_count": plan.external_request_count,
-                "canonical_data_write_count": plan.canonical_data_write_count,
-                "apply_authorized": plan.apply_authorized,
-                "historical_coverage_authorized": (
-                    plan.historical_coverage_authorized
+                "family": item.family.value,
+                "record_count": item.record_count,
+                "source_artifact_count": item.source_artifact_count,
+                "source_file_count": item.source_file_count,
+                "evidence_logical_fingerprint": (
+                    item.evidence.logical_fingerprint
                 ),
-                "research_development_authorized": (
-                    plan.research_development_authorized
-                ),
-                "research_performance_authorized": (
-                    plan.research_performance_authorized
-                ),
-            },
-            sort_keys=True,
-            separators=(",", ":"),
+                "evidence_manifest_sha256": item.evidence_manifest_sha256,
+                "target_path": item.target_path,
+                "expected_target_state": item.expected_target_state,
+            }
+            for item in plan.families
+        ],
+        "external_request_count": plan.external_request_count,
+        "canonical_data_write_count": plan.canonical_data_write_count,
+        "apply_authorized": plan.apply_authorized,
+        "historical_coverage_authorized": plan.historical_coverage_authorized,
+        "research_development_authorized": (
+            plan.research_development_authorized
+        ),
+        "research_performance_authorized": (
+            plan.research_performance_authorized
+        ),
+    }
+    if hasattr(plan, "source_edition_id"):
+        payload["source_edition_id"] = plan.source_edition_id
+        payload["source_interval_manifest_fingerprint"] = (
+            plan.source_interval_manifest_fingerprint
         )
-    )
+    print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
     return 0
 
 

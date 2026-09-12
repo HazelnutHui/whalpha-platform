@@ -8,12 +8,17 @@ import os
 import stat
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Callable
 
 from tip_api.contracts.market_data.v1 import (
     CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES,
+    CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION,
+    RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION,
     CurrentHistoricalFamilyEvidencePublicationPlanV1,
+    ReconciledEodHistoricalFamilyEvidencePublicationPlanV1,
     build_current_historical_family_evidence_plan_item,
     build_current_historical_family_evidence_publication_plan as build_plan_contract,
+    build_reconciled_eod_historical_family_evidence_publication_plan as build_reconciled_plan_contract,
     current_historical_family_evidence_plan_family_set_fingerprint,
 )
 from tip_api.persistence.parquet.historical_coverage import (
@@ -27,6 +32,10 @@ from tip_api.services.offline_artifact_custody import (
     OfflineArtifactCustodyError,
     validate_offline_artifact_location,
 )
+from tip_api.services.reconciled_eod_historical_mechanics_evidence import (
+    DEFAULT_VALIDATION_WORKERS,
+    validate_reconciled_eod_historical_family_evidence,
+)
 
 
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
@@ -37,9 +46,16 @@ class HistoricalFamilyEvidencePublicationPlanError(RuntimeError):
     """Raised when a two-family no-write plan cannot be proven exactly."""
 
 
+HistoricalFamilyEvidencePlan = (
+    CurrentHistoricalFamilyEvidencePublicationPlanV1
+    | ReconciledEodHistoricalFamilyEvidencePublicationPlanV1
+)
+PlanBuilder = Callable[..., HistoricalFamilyEvidencePlan]
+
+
 @dataclass(frozen=True, slots=True)
 class HistoricalFamilyEvidencePublicationPlanEvidence:
-    plan: CurrentHistoricalFamilyEvidencePublicationPlanV1
+    plan: HistoricalFamilyEvidencePlan
     plan_path: Path
     plan_sha256: str
     external_request_count: int = 0
@@ -59,6 +75,57 @@ def build_current_historical_family_evidence_publication_plan(
     validations = _ordered_unpublished_validations(
         validate_current_historical_family_evidence(root)
     )
+    return _build_historical_family_evidence_publication_plan(
+        root=root,
+        validations=validations,
+        plan_path=plan_path,
+        contract_builder=build_plan_contract,
+        additional_values={},
+    )
+
+
+def build_reconciled_eod_historical_family_evidence_publication_plan(
+    *,
+    data_root: Path,
+    edition_id: str,
+    expected_interval_manifest_fingerprint: str,
+    plan_path: Path,
+    max_workers: int = DEFAULT_VALIDATION_WORKERS,
+) -> HistoricalFamilyEvidencePublicationPlanEvidence:
+    """Build one exact edition-bound plan without publishing its evidence."""
+
+    root = _validated_data_root(data_root)
+    edition, proposed = validate_reconciled_eod_historical_family_evidence(
+        data_root=root,
+        edition_id=edition_id,
+        expected_interval_manifest_fingerprint=(
+            expected_interval_manifest_fingerprint
+        ),
+        max_workers=max_workers,
+    )
+    validations = _ordered_unpublished_validations(proposed)
+    return _build_historical_family_evidence_publication_plan(
+        root=root,
+        validations=validations,
+        plan_path=plan_path,
+        contract_builder=build_reconciled_plan_contract,
+        additional_values={
+            "source_edition_id": edition.manifest.edition_id,
+            "source_interval_manifest_fingerprint": (
+                edition.manifest.logical_fingerprint
+            ),
+        },
+    )
+
+
+def _build_historical_family_evidence_publication_plan(
+    *,
+    root: Path,
+    validations: tuple[HistoricalDatasetEvidenceValidationResult, ...],
+    plan_path: Path,
+    contract_builder: PlanBuilder,
+    additional_values: dict[str, object],
+) -> HistoricalFamilyEvidencePublicationPlanEvidence:
     families = tuple(
         build_current_historical_family_evidence_plan_item(item.evidence)
         for item in validations
@@ -104,8 +171,9 @@ def build_current_historical_family_evidence_publication_plan(
         "historical_coverage_authorized": False,
         "research_development_authorized": False,
         "research_performance_authorized": False,
+        **additional_values,
     }
-    plan = build_plan_contract(**values)
+    plan = contract_builder(**values)
     target = _write_plan(plan=plan, plan_path=plan_path)
     reread, plan_sha = _read_plan_file(target)
     if reread != plan:
@@ -127,7 +195,46 @@ def read_current_historical_family_evidence_publication_plan(
 ) -> HistoricalFamilyEvidencePublicationPlanEvidence:
     """Reread the plan, every source byte, and its allowed target state."""
 
+    return _read_historical_family_evidence_publication_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=approved_plan_sha256,
+        verify_then_complete=verify_then_complete,
+        expected_contract_version=(
+            CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION
+        ),
+    )
+
+
+def read_reconciled_eod_historical_family_evidence_publication_plan(
+    *,
+    plan_path: Path,
+    approved_plan_sha256: str | None = None,
+    verify_then_complete: bool = False,
+) -> HistoricalFamilyEvidencePublicationPlanEvidence:
+    """Reread an exact edition plan, all source bytes, and target state."""
+
+    return _read_historical_family_evidence_publication_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=approved_plan_sha256,
+        verify_then_complete=verify_then_complete,
+        expected_contract_version=(
+            RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION
+        ),
+    )
+
+
+def _read_historical_family_evidence_publication_plan(
+    *,
+    plan_path: Path,
+    approved_plan_sha256: str | None,
+    verify_then_complete: bool,
+    expected_contract_version: str,
+) -> HistoricalFamilyEvidencePublicationPlanEvidence:
     plan, plan_sha = _read_plan_file(plan_path)
+    if plan.contract_version != expected_contract_version:
+        raise HistoricalFamilyEvidencePublicationPlanError(
+            "family-evidence publication-plan source scope differs"
+        )
     if approved_plan_sha256 is not None:
         _validate_sha256(approved_plan_sha256, "approved plan SHA-256")
         if plan_sha != approved_plan_sha256:
@@ -261,7 +368,7 @@ def _validated_data_root(path: Path) -> Path:
 
 def _write_plan(
     *,
-    plan: CurrentHistoricalFamilyEvidencePublicationPlanV1,
+    plan: HistoricalFamilyEvidencePlan,
     plan_path: Path,
 ) -> Path:
     _validate_plan_location(plan_path)
@@ -307,7 +414,7 @@ def _write_plan(
 
 def _read_plan_file(
     path: Path,
-) -> tuple[CurrentHistoricalFamilyEvidencePublicationPlanV1, str]:
+) -> tuple[HistoricalFamilyEvidencePlan, str]:
     _validate_plan_location(path)
     staging = path.with_name(f".{path.name}.staging")
     if os.path.lexists(staging):
@@ -330,9 +437,21 @@ def _read_plan_file(
         )
     raw = path.read_bytes()
     try:
-        plan = CurrentHistoricalFamilyEvidencePublicationPlanV1.model_validate_json(
-            raw
-        )
+        header = json.loads(raw)
+        if not isinstance(header, dict):
+            raise ValueError("plan is not an object")
+        contract_version = header.get("contract_version")
+        model = {
+            CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION: (
+                CurrentHistoricalFamilyEvidencePublicationPlanV1
+            ),
+            RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION: (
+                ReconciledEodHistoricalFamilyEvidencePublicationPlanV1
+            ),
+        }.get(contract_version)
+        if model is None:
+            raise ValueError("plan contract is unsupported")
+        plan = model.model_validate(header)
     except Exception as exc:
         raise HistoricalFamilyEvidencePublicationPlanError(
             "family-evidence publication-plan contract is invalid"

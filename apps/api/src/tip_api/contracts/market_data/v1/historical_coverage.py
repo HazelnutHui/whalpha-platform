@@ -148,6 +148,9 @@ class HistoricalDatasetCoverageEvidenceV1(FrozenContract):
 CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION = (
     "current-historical-family-evidence-publication-plan/1.0"
 )
+RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION = (
+    "reconciled-eod-historical-family-evidence-publication-plan/1.0"
+)
 CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES = (
     HistoricalDatasetFamily.EOD_PRICE_BAR,
     HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
@@ -312,6 +315,63 @@ class CurrentHistoricalFamilyEvidencePublicationPlanV1(FrozenContract):
         return self
 
 
+class ReconciledEodHistoricalFamilyEvidencePublicationPlanV1(
+    CurrentHistoricalFamilyEvidencePublicationPlanV1
+):
+    """Exact no-write plan for one reconciled EOD edition and Identity."""
+
+    contract_version: Literal[
+        "reconciled-eod-historical-family-evidence-publication-plan/1.0"
+    ] = RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION
+    operation: Literal[
+        "publish_reconciled_eod_historical_family_evidence"
+    ] = "publish_reconciled_eod_historical_family_evidence"
+    source_edition_id: str
+    source_interval_manifest_fingerprint: str
+
+    @field_validator("source_edition_id", mode="before")
+    @classmethod
+    def edition_id_is_normalized(cls, value: str) -> str:
+        normalized = normalize_required_string(value, field_name="source_edition_id")
+        allowed = set("abcdefghijklmnopqrstuvwxyz0123456789-")
+        if (
+            len(normalized) > 64
+            or normalized[0] == "-"
+            or normalized[-1] == "-"
+            or any(character not in allowed for character in normalized)
+        ):
+            raise ValueError("source_edition_id is invalid")
+        return normalized
+
+    @field_validator("source_interval_manifest_fingerprint")
+    @classmethod
+    def source_interval_hash_is_valid(cls, value: str) -> str:
+        return _sha(value, "source_interval_manifest_fingerprint")
+
+    @model_validator(mode="after")
+    def edition_binding_reconciles(
+        self,
+    ) -> "ReconciledEodHistoricalFamilyEvidencePublicationPlanV1":
+        eod = self.families[0].evidence
+        if len(eod.artifacts) != 1:
+            raise ValueError("reconciled EOD plan requires one edition artifact")
+        artifact = eod.artifacts[0]
+        expected_completion = (
+            PurePosixPath("market-data")
+            / "reconciled-eod-price-bar-editions"
+            / "contract_version=1"
+            / f"edition_id={self.source_edition_id}"
+            / "interval-manifest.json"
+        ).as_posix()
+        if (
+            artifact.completion_manifest.path != expected_completion
+            or artifact.logical_fingerprint
+            != self.source_interval_manifest_fingerprint
+        ):
+            raise ValueError("reconciled EOD plan edition binding differs")
+        return self
+
+
 def build_historical_dataset_coverage_evidence(
     *,
     family: HistoricalDatasetFamily,
@@ -388,6 +448,27 @@ def build_current_historical_family_evidence_publication_plan(
     )
 
 
+def build_reconciled_eod_historical_family_evidence_publication_plan(
+    **values: object,
+) -> ReconciledEodHistoricalFamilyEvidencePublicationPlanV1:
+    provisional = (
+        ReconciledEodHistoricalFamilyEvidencePublicationPlanV1.model_construct(
+            **values,
+            logical_fingerprint="0" * 64,
+        )
+    )
+    return ReconciledEodHistoricalFamilyEvidencePublicationPlanV1.model_validate(
+        {
+            **values,
+            "logical_fingerprint": (
+                current_historical_family_evidence_publication_plan_fingerprint(
+                    provisional
+                )
+            ),
+        }
+    )
+
+
 def current_historical_family_evidence_plan_family_set_fingerprint(
     families: tuple[CurrentHistoricalFamilyEvidencePlanItemV1, ...],
 ) -> str:
@@ -408,7 +489,10 @@ def current_historical_family_evidence_plan_family_set_fingerprint(
 
 
 def current_historical_family_evidence_publication_plan_fingerprint(
-    plan: CurrentHistoricalFamilyEvidencePublicationPlanV1,
+    plan: (
+        CurrentHistoricalFamilyEvidencePublicationPlanV1
+        | ReconciledEodHistoricalFamilyEvidencePublicationPlanV1
+    ),
 ) -> str:
     return _fingerprint(plan.model_dump(mode="json", exclude={"logical_fingerprint"}))
 

@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0211](0211-plan-reconciled-eod-family-evidence-without-publishing.md):
+  adds an edition-bound no-write publication plan while keeping canonical
+  evidence Apply and Historical Coverage separately unauthorized.
 - [ADR 0210](0210-adapt-reconciled-eod-edition-into-historical-family-evidence.md):
   adapts one explicitly named immutable reconciled EOD edition and its exact
   same-session Identity snapshots into read-only, unpublished family evidence

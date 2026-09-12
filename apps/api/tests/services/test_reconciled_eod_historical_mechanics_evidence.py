@@ -1,6 +1,10 @@
 from __future__ import annotations
 
+import os
+import stat
+from contextlib import contextmanager
 from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
@@ -32,6 +36,7 @@ from tip_api.services.reconciled_eod_historical_mechanics_evidence import (
     _build_reconciled_eod_evidence,
     assess_reconciled_eod_historical_mechanics_evidence,
 )
+from tip_api.services import historical_family_evidence_publication_plan as plan_service
 from tests.support.eod_read_dataset import CREATED_AT, publish_completed_eod_dataset
 
 
@@ -49,6 +54,19 @@ def _inventory(root: Path) -> tuple[tuple[str, int | None], ...]:
             for path in root.rglob("*")
         )
     )
+
+
+@contextmanager
+def _new_plan_path():
+    path = Path("/tmp") / f"whalpha-reconciled-plan-test-{uuid4().hex}.json"
+    staging = path.with_name(f".{path.name}.staging")
+    try:
+        yield path
+    finally:
+        for candidate in (path, staging):
+            if os.path.lexists(candidate) and not candidate.is_dir():
+                candidate.chmod(0o600, follow_symlinks=False)
+                candidate.unlink()
 
 
 def _publish_edition(
@@ -143,6 +161,63 @@ def test_exact_edition_and_identity_become_unpublished_family_evidence(
     assert first.external_request_count == 0
     assert first.production_write_count == 0
     assert _inventory(tmp_path) == before
+
+
+def test_exact_edition_builds_distinct_no_write_publication_plan(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    edition = _publish_edition(tmp_path, monkeypatch)
+    monkeypatch.setattr(plan_service, "APPROVED_DATA_ROOT", tmp_path.resolve())
+    before = _inventory(tmp_path)
+
+    with _new_plan_path() as plan_path:
+        built = (
+            plan_service.build_reconciled_eod_historical_family_evidence_publication_plan(
+                data_root=tmp_path.resolve(),
+                edition_id=EDITION_ID,
+                expected_interval_manifest_fingerprint=(
+                    edition.manifest.logical_fingerprint
+                ),
+                plan_path=plan_path,
+                max_workers=1,
+            )
+        )
+        reread = (
+            plan_service.read_reconciled_eod_historical_family_evidence_publication_plan(
+                plan_path=plan_path,
+                approved_plan_sha256=built.plan_sha256,
+            )
+        )
+
+        assert reread == built
+        assert stat.S_IMODE(plan_path.stat().st_mode) == 0o400
+        assert built.plan.contract_version == (
+            "reconciled-eod-historical-family-evidence-publication-plan/1.0"
+        )
+        assert built.plan.operation == (
+            "publish_reconciled_eod_historical_family_evidence"
+        )
+        assert built.plan.source_edition_id == EDITION_ID
+        assert built.plan.source_interval_manifest_fingerprint == (
+            edition.manifest.logical_fingerprint
+        )
+        assert built.plan.families[0].evidence.artifacts[
+            0
+        ].completion_manifest.path.endswith(
+            f"edition_id={EDITION_ID}/interval-manifest.json"
+        )
+        with pytest.raises(
+            plan_service.HistoricalFamilyEvidencePublicationPlanError,
+            match="source scope differs",
+        ):
+            plan_service.read_current_historical_family_evidence_publication_plan(
+                plan_path=plan_path,
+                approved_plan_sha256=built.plan_sha256,
+            )
+
+    assert _inventory(tmp_path) == before
+    assert not (tmp_path / "market-data" / "historical-coverage-evidence").exists()
 
 
 def test_expected_interval_fingerprint_is_mandatory(
