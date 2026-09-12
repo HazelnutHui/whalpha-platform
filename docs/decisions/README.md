@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0210](0210-adapt-reconciled-eod-edition-into-historical-family-evidence.md):
+  adapts one explicitly named immutable reconciled EOD edition and its exact
+  same-session Identity snapshots into read-only, unpublished family evidence
+  without granting Historical Coverage or research authority.
 - [ADR 0209](0209-admit-only-source-proven-provider-ticker-case-repairs.md):
   admits only exact-source restoration of provider ticker case in an otherwise
   identical retained-original source record and keeps every other provenance

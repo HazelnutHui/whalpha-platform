@@ -65,8 +65,11 @@ class HistoricalCoverageArtifactEvidenceV1(FrozenContract):
 
     @model_validator(mode="after")
     def evidence_reconciles(self) -> "HistoricalCoverageArtifactEvidenceV1":
-        if not self.completion_manifest.path.endswith("/manifest.json"):
-            raise ValueError("completion manifest path must end with manifest.json")
+        completion_name = PurePosixPath(self.completion_manifest.path).name
+        if completion_name not in {"manifest.json", "interval-manifest.json"}:
+            raise ValueError(
+                "completion manifest path must name a supported manifest"
+            )
         if self.last_session < self.first_session:
             raise ValueError("last_session must not precede first_session")
         paths = tuple(item.path for item in self.payload_files)

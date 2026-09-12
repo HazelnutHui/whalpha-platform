@@ -19,6 +19,11 @@ from tip_api.contracts.market_data.v1 import (
     HistoricalDatasetFamily,
     historical_coverage_manifest_fingerprint,
 )
+from tip_api.contracts.market_data.v1.reconciled_eod_edition import (
+    DATASET_NAME as RECONCILED_EOD_DATASET_NAME,
+    ReconciledEodIntervalManifestV1,
+    ReconciledEodSessionManifestV1,
+)
 from tip_api.persistence.historical_research import (
     HistoricalResearchConflictError,
     HistoricalResearchCorruptionError,
@@ -373,6 +378,16 @@ def _validate_source_completion_manifest(
         raise HistoricalResearchCorruptionError(
             "source completion manifest is not completed"
         )
+    if (
+        family is HistoricalDatasetFamily.EOD_PRICE_BAR
+        and manifest.get("dataset_name") == RECONCILED_EOD_DATASET_NAME
+    ):
+        _validate_reconciled_eod_edition_payload_bindings(
+            root,
+            artifact,
+            manifest,
+        )
+        return
     count_field = (
         "instrument_count"
         if family is HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY
@@ -416,6 +431,120 @@ def _validate_source_completion_manifest(
             raise HistoricalResearchCorruptionError(
                 "source completion payload hash differs"
             )
+
+
+def _validate_reconciled_eod_edition_payload_bindings(
+    root: Path,
+    artifact: HistoricalCoverageArtifactEvidenceV1,
+    manifest: dict[str, Any],
+) -> None:
+    try:
+        interval = ReconciledEodIntervalManifestV1.model_validate(manifest)
+    except (ValidationError, ValueError, TypeError) as exc:
+        raise HistoricalResearchCorruptionError(
+            "reconciled EOD interval manifest is invalid"
+        ) from exc
+    if artifact.logical_fingerprint != interval.logical_fingerprint:
+        raise HistoricalResearchCorruptionError(
+            "reconciled EOD interval logical fingerprint differs"
+        )
+    if artifact.record_count != sum(item.record_count for item in interval.sessions):
+        raise HistoricalResearchCorruptionError(
+            "reconciled EOD interval record count differs"
+        )
+    if (
+        artifact.first_session != interval.sessions[0].session_date
+        or artifact.last_session != interval.sessions[-1].session_date
+    ):
+        raise HistoricalResearchCorruptionError(
+            "reconciled EOD interval session bounds differ"
+        )
+    completion = PurePosixPath(artifact.completion_manifest.path)
+    expected_completion = (
+        PurePosixPath("market-data")
+        / RECONCILED_EOD_DATASET_NAME
+        / "contract_version=1"
+        / f"edition_id={interval.edition_id}"
+        / "interval-manifest.json"
+    )
+    if completion != expected_completion:
+        raise HistoricalResearchCorruptionError(
+            "reconciled EOD interval path differs"
+        )
+    edition_path = root / completion.parent
+    expected_children = {
+        "interval-manifest.json",
+        *(
+            f"session_date={item.session_date.isoformat()}"
+            for item in interval.sessions
+        ),
+    }
+    if {item.name for item in edition_path.iterdir()} != expected_children:
+        raise HistoricalResearchCorruptionError(
+            "reconciled EOD edition file set differs"
+        )
+    payload_by_path = {item.path: item for item in artifact.payload_files}
+    expected_payloads: set[str] = set()
+    for reference in interval.sessions:
+        partition = completion.parent / (
+            f"session_date={reference.session_date.isoformat()}"
+        )
+        absolute_partition = root / partition
+        if (
+            absolute_partition.is_symlink()
+            or not absolute_partition.is_dir()
+            or {item.name for item in absolute_partition.iterdir()}
+            != {"manifest.json", "part-00000.parquet"}
+        ):
+            raise HistoricalResearchCorruptionError(
+                "reconciled EOD session file set differs"
+            )
+        manifest_relative = (partition / "manifest.json").as_posix()
+        parquet_relative = (partition / "part-00000.parquet").as_posix()
+        expected_payloads.update({manifest_relative, parquet_relative})
+        if (
+            manifest_relative not in payload_by_path
+            or parquet_relative not in payload_by_path
+        ):
+            raise HistoricalResearchCorruptionError(
+                "reconciled EOD session payload is not evidence-bound"
+            )
+        try:
+            session = ReconciledEodSessionManifestV1.model_validate(
+                _read_json(root / manifest_relative)
+            )
+        except (ValidationError, ValueError, TypeError) as exc:
+            raise HistoricalResearchCorruptionError(
+                "reconciled EOD session manifest is invalid"
+            ) from exc
+        if (
+            session.edition_id != interval.edition_id
+            or session.session_date != reference.session_date
+            or session.implementation_revision != interval.implementation_revision
+            or session.logical_fingerprint != reference.session_manifest_fingerprint
+            or session.rebuilt_eod_fingerprint != reference.rebuilt_eod_fingerprint
+            or session.diff.rebuilt_record_count != reference.record_count
+            or session.diff.added_record_count != reference.added_record_count
+            or session.diff.absent_record_count != reference.absent_record_count
+            or session.diff.provenance_only_change_count
+            != reference.provenance_only_change_count
+            or session.source_provenance != reference.source_provenance
+            or session.diff.disposition != reference.disposition
+        ):
+            raise HistoricalResearchCorruptionError(
+                "reconciled EOD interval session binding differs"
+            )
+        if (
+            payload_by_path[parquet_relative].physical_sha256
+            != session.parquet_sha256
+        ):
+            raise HistoricalResearchCorruptionError(
+                "reconciled EOD session Parquet hash differs"
+            )
+    if set(payload_by_path) != expected_payloads:
+        raise HistoricalResearchCorruptionError(
+            "reconciled EOD edition payload set differs"
+        )
 
 
 def _validate_identity_snapshot_payload_bindings(
