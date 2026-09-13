@@ -269,7 +269,7 @@ class LifecycleExposureV1(_FrozenModel):
         if not (
             self.canonical_first_observed_date
             <= self.canonical_last_observed_date
-            < self.provider_delist_date_candidate
+            <= self.provider_delist_date_candidate
         ):
             raise ValueError("lifecycle candidate dates are invalid")
         if not (

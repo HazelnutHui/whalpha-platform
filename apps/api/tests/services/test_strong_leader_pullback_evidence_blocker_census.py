@@ -155,6 +155,25 @@ def test_primary_membership_projection_validates_only_declared_universe(
     assert records[0].disposition is UniverseMembershipDisposition.INCLUDED
 
 
+def test_lifecycle_candidate_may_equal_last_observed_session() -> None:
+    record = module.LifecycleExposureV1(
+        instrument_id=IID,
+        source_anchor_dates=(date(2026, 9, 3),),
+        canonical_first_observed_date=date(2025, 1, 2),
+        canonical_last_observed_date=date(2026, 1, 5),
+        provider_delist_date_candidate=date(2026, 1, 5),
+        included_path_count=1,
+        feature_window_outside_observed_span_path_count=0,
+        horizon_1_crosses_last_observed_path_count=1,
+        horizon_3_crosses_last_observed_path_count=1,
+        horizon_5_crosses_last_observed_path_count=1,
+        horizon_1_contains_delist_candidate_path_count=0,
+        horizon_3_contains_delist_candidate_path_count=0,
+        horizon_5_contains_delist_candidate_path_count=0,
+    )
+    assert record.provider_delist_date_candidate == record.canonical_last_observed_date
+
+
 def test_build_persists_and_rereads_outcome_blind_package(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
