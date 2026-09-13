@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T14:53:48Z
+Operational state verified at: 2026-09-13T16:07:45Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -133,8 +133,8 @@ Important private Dell evidence includes:
 - a formally bound SEC metadata pilot over all 64 lifecycle cases, retaining
   2,144 official filing locators. All cases have one of 219 candidates on or
   after their last canonical observation, but all eight complete security-
-  lifecycle fields remain unsupported until document content and security
-  identity are proven; and
+  lifecycle fields remain unsupported; document content and security identity
+  require separate adjudication; and
 - an immutable 219-request SEC primary-document plan with 219 unique official
   URLs in 22 fixed batches; and
 - the completed private SEC primary-document source package: 219 / 219
@@ -156,7 +156,14 @@ Important private Dell evidence includes:
   and logical fingerprint
   `acdf61a7438ea494f01f47ec110db6f914fa028b40cdb214602721d09960e505`.
   The two repeated IDs remain separate and every complete field-support count
-  is still zero.
+  is still zero; and
+- the completed field-level Form 15 candidate package: 66 / 66 documents
+  across 62 stable-ID locators, report SHA-256
+  `12a8164025d0aefee9de277b79f1e94f2f371afc84fd1e8c363cb4607de4acca`,
+  and logical fingerprint
+  `b5a953a4e3227ed93eef73bd1c39db7bca0a9c3061611fc1e98e45fb97914e78`.
+  It preserves two multi-file-number records and one certification date before
+  filing without inferring effective or terminal status.
 
 Exact package identities and counts are retained in:
 
@@ -170,6 +177,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC document source audit](../audits/strong-leader-pullback-sec-document-source-2026-09-13.md)
 - [First-strategy SEC content census audit](../audits/strong-leader-pullback-sec-document-content-census-2026-09-13.md)
 - [First-strategy SEC Form 25 candidate audit](../audits/strong-leader-pullback-sec-form25-candidates-2026-09-13.md)
+- [First-strategy SEC Form 15 candidate audit](../audits/strong-leader-pullback-sec-form15-candidates-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -202,12 +210,12 @@ to 2,144 document candidates, including 219 on or after the last canonical
 observation, without promoting a single terminal fact. Those 219 documents are
 now frozen into 22 deterministic batches and all 219 source documents are in
 formally reread private custody. The completed deterministic parse census
-localizes lexical evidence without promoting a fact. The next internal gate is
-form-aware candidate-value extraction and a measured supported/absent/
-ambiguous/conflicting field census. The standardized Form 25 population is now
-complete as candidates; Form 15 and transaction documents remain. A commercial
-sample remains limited to the residual fields after that review. Massive
-Starter is not the sole lifecycle authority.
+localizes lexical evidence without promoting a fact. Form 25 and Form 15
+candidate-value extraction is complete. The next internal gate is bounded
+transaction-document extraction followed by a measured supported/absent/
+unsupported/ambiguous/conflicting field census. A commercial sample remains
+limited to the residual fields after that review. Massive Starter is not the
+sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are

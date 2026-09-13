@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-13 — Preserve all Form 15 fields without effective-status inference
+
+- Accepted ADR 0233 and extracted all 66 Form 15 documents: 63 Form 15-12G and
+  three Form 15-15D across 62 stable-ID locators.
+- Sixty-four records expose one Commission file number and two expose two.
+  Security-class text, one certification date, and selected controls were
+  recovered for every document. Sixty-five certification dates equal filing;
+  one precedes it by one calendar day and remains explicit evidence.
+- Selected counts are 63 Rule 12g-4(a)(1), 66 Rule 12h-3(b)(1)(i), and one Rule
+  15d-6. These codes do not prove security-level effective or terminal status.
+- The 126,752-byte report has SHA-256
+  `12a8164025d0aefee9de277b79f1e94f2f371afc84fd1e8c363cb4607de4acca`
+  and logical fingerprint
+  `b5a953a4e3227ed93eef73bd1c39db7bca0a9c3061611fc1e98e45fb97914e78`.
+  Exact network-disabled reread passed with zero residue.
+- Three focused tests and the full 2,655-test API suite passed with two
+  unchanged warnings. No lifecycle fact, outcome, `/data`, Historical
+  Coverage, research, Candidate, publication, deployment, or scheduler action
+  occurred.
+
 ## 2026-09-13 — Structure all Form 25 candidates without date inference
 
 - Accepted ADR 0232 and extracted all 64 Form 25-NSE documents through their

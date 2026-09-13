@@ -88,12 +88,15 @@ not five-year performance admission.
    marker remains an unresolved lexical candidate rather than a fact.
 6. Preserve the completed Form 25 candidate extraction: 64 / 64 notices across
    62 stable-ID locators, with no last-trade or effective-date inference.
-7. Extract Form 15 and transaction-completion candidates, then record matched,
-   absent, unsupported, ambiguous, and conflicting results; document content
-   still cannot assign security identity by itself.
-8. Test a commercial source only against the residual field gap that remains
+7. Preserve the completed Form 15 candidate extraction: 66 / 66 documents
+   across 62 stable-ID locators, with multi-value and date differences retained
+   and no effective-status inference.
+8. Extract transaction-completion candidates, then record matched, absent,
+   unsupported, ambiguous, and conflicting results; document content still
+   cannot assign security identity by itself.
+9. Test a commercial source only against the residual field gap that remains
    after the SEC document review; do not repeat a global vendor scan.
-9. Resolve missing-event neutrality and terminal outcomes without turning a
+10. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
