@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0233](0233-extract-form15-fields-without-inferring-effective-status.md):
+  preserves field-level Form 15 evidence and template variation without
+  inferring effective registration, reporting, trading, or terminal status.
 - [ADR 0232](0232-extract-form25-structure-without-inferring-terminal-dates.md):
   extracts the complete standardized Form 25 population while leaving last-
   trade, effective-delisting, and terminal facts unresolved.

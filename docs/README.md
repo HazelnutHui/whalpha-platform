@@ -86,6 +86,9 @@ Stock Candidates.
 - [Strong-Leader Pullback SEC Form 25 Candidates V1](data-contracts/strong-leader-pullback-sec-form25-candidates-v1.md):
   complete standardized exchange-notice extraction without terminal-date
   inference.
+- [Strong-Leader Pullback SEC Form 15 Candidates V1](data-contracts/strong-leader-pullback-sec-form15-candidates-v1.md):
+  preserves field-level Form 15 candidates without inferring effective status
+  or terminal outcomes.
 - [Candidate Strategy Research Statistics V1](data-contracts/candidate-strategy-research-statistics-v1.md):
   session-balanced inference and registered gates.
 - [Candidate Strategy Holdout Custody V1](data-contracts/candidate-strategy-holdout-custody-v1.md):
@@ -162,6 +165,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback SEC Document Source Custody](operations/strong-leader-pullback-sec-document-source.md)
 - [Strong-Leader Pullback SEC Document Content Census](operations/strong-leader-pullback-sec-document-content-census.md)
 - [Strong-Leader Pullback SEC Form 25 Candidate Extraction](operations/strong-leader-pullback-sec-form25-candidates.md)
+- [Strong-Leader Pullback SEC Form 15 Candidate Extraction](operations/strong-leader-pullback-sec-form15-candidates.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
