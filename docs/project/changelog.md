@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-13 — Complete source-available research Membership coverage
+
+- Corrected the first V4 pilot's overly strict proof condition before any
+  canonical write by separately counting collisions with and without canonical
+  candidates. The corrected real 2022-08-01 pilot produced 16,682 complete
+  decisions while keeping all uncertain instruments quarantined.
+- Froze a new 37-session / 13-batch plan at revision `4052ccc`, logical
+  fingerprint
+  `c71c9e7cb08c019e4b05fb60531be5319a047b97297245248c79afa2624e38e1`.
+  Four Dell workers completed 37 / 37 candidates / 622,424 decisions with zero
+  failed batch, external request, or canonical write.
+- The exact archive preview passed, then Apply archived and formally reread all
+  37 V4 sessions. Failed, reused, overwritten, deleted, and external-request
+  counts were zero; staging/partial residue, symlinks, and residual processes
+  were also zero.
+- Research Membership now contains 1,213 V3 plus 37 V4 sessions. Combined with
+  three signal-eligible sessions, coverage is 1,253 / 1,255 and 21,323,450
+  decisions. Only 2026-08-13 and 2026-08-19 remain missing because Identity
+  source custody is unavailable.
+- The five-year census remains `quarantined`, performance authority remains
+  false, and its logical fingerprint is
+  `1c75a304056c60f6a7c79f1f74797734aaa13ff87c31d130e05c57cc887557cd`.
+  The canonical inventory is 21,025 files / 7,397,444,417 bytes with fingerprint
+  `b4f1dc83b5b26a6ccde3b5dffd47ac58de465fced41d129ef74c0e2282228ff7`.
+
 ## 2026-09-13 — Localize collision-derived join failures in research Membership
 
 - Accepted ADR 0227 and added the separately versioned

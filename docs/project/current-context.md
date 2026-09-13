@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T12:24:43Z
+Operational state verified at: 2026-09-13T13:11:42Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -69,7 +69,7 @@ deeper.
 | EOD | 1,255 contiguous XNYS sessions, 2021-09-13 through 2026-09-11; latest 9,971 rows; latest fingerprint `eec1f813851b378f47fbcd810728ed8b33b4748929ba85ff5d77e837bd12c904` |
 | Identity | all 1,255 EOD sessions plus one Identity-only 2021-09-10 partition; latest 10,000 instruments / 13,176 provider identities |
 | Identity source | 1,253 target sessions; 2026-08-13 and 2026-08-19 remain explicitly unbound |
-| Membership | three signal-eligible sessions / 59,892 decisions; 1,213 physically separate latest-vintage research-only sessions / 20,641,134 decisions; combined 1,216 / 1,255 sessions |
+| Membership | three signal-eligible sessions / 59,892 decisions; 1,250 physically separate latest-vintage research-only sessions / 21,263,558 decisions; combined 1,253 / 1,255 sessions |
 | Corporate actions | recent canonical observation 70,099 rows; canonical action is bounded split-only; complete five-year split/dividend packages and resolution work remain private evidence, not canonical completion |
 | Adjustment | sparse split-only outcome reconciliation; neutral omitted rows and total-return coverage are not proven |
 | Lifecycle | canonical five-year lifecycle and terminal outcomes absent |
@@ -77,9 +77,9 @@ deeper.
 | Fundamentals | cutoff-aware SEC issuer selection and aggregate security-projection census complete for four registered queries; only four sessions have strict as-operated next-open projection evidence, while reconstructed history remains development-only |
 | Historical Coverage | partial family evidence exists; final transitive publication absent |
 
-The canonical inventory is 20,914 files / 7,382,699,983 bytes with zero
+The canonical inventory is 21,025 files / 7,397,444,417 bytes with zero
 symlinks and zero publication residue. Its last full inventory fingerprint is
-`b7e0789db07fcb69165723fa6b537ba70379ec836085c8f934ce1812fbeb5f9c`.
+`b4f1dc83b5b26a6ccde3b5dffd47ac58de465fced41d129ef74c0e2282228ff7`.
 
 The corrected EOD edition covers 1,234 fully source-bound sessions through
 2026-08-12 and has published EOD/Identity family evidence. This does not make
@@ -108,11 +108,11 @@ formal state remains `data_blocked`.
 
 Important private Dell evidence includes:
 
-- 1,213 physically separate reconstructed latest-vintage Membership sessions;
+- 1,250 physically separate reconstructed latest-vintage Membership sessions;
   together with three signal-eligible sessions, the formal five-year census
-  covers 1,216 / 1,255 sessions and 20,701,026 decisions. Thirty-seven
-  source-available sessions remain rejected by the unchanged Identity join
-  gate and two source sessions are unavailable;
+  covers 1,253 / 1,255 sessions and 21,323,450 decisions. ADR 0227 recovered
+  the 37 collision-derived join-gate gaps under a separate V4 research method;
+  only the two unavailable source sessions remain missing;
 - a complete 1,255-session SEC filer/security link candidate with 10,681,604
   decisions; all issuer projection was initially disabled;
 - ADR 0224's conservative issuer-fact projection class, covering 6,122,451
@@ -140,6 +140,7 @@ Exact package identities and counts are retained in:
 - [First-strategy source sample audit](../audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
+- [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
 
 ## Research and product authority
 
