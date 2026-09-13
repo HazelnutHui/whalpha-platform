@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0232](0232-extract-form25-structure-without-inferring-terminal-dates.md):
+  extracts the complete standardized Form 25 population while leaving last-
+  trade, effective-delisting, and terminal facts unresolved.
 - [ADR 0231](0231-census-sec-document-content-before-lifecycle-adjudication.md):
   parses every frozen SEC document and localizes bounded lexical candidates
   without promoting a keyword hit into a lifecycle fact.
