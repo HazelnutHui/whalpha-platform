@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-13 — Census all frozen SEC document content without fact promotion
+
+- Accepted ADR 0231 and deterministically parsed all 219 retained documents:
+  64 ordinary HTML, 93 SEC SGML-wrapped HTML, and 62 inline-XBRL XHTML files.
+  All decoded as UTF-8 and produced 1,539,034 normalized text characters.
+- The eight fixed lifecycle marker families retain occurrence counts and at
+  most three bounded contexts per document. Every hit is explicitly an
+  unresolved lexical candidate; missing markers are not event absence.
+- The 1,339,529-byte report has SHA-256
+  `a566d966236fb046a88e662dacbcfa35ff93d57f319b86a218ef0f0ddde46869`
+  and logical fingerprint
+  `d22f5436aaeabeee3fe8bee8061594b42f479f25b8ad9f575fab81f3e781e77a`.
+  An identical network-disabled rerun passed with zero residue.
+- Fourteen focused tests and the full 2,649-test API suite passed with two
+  unchanged warnings. Credentials, facts, outcomes, `/data`, Historical
+  Coverage, research, Candidate, publication, deployment, and scheduler state
+  were unchanged.
+
 ## 2026-09-13 — Retain the frozen SEC documents in resumable custody
 
 - Accepted ADR 0230 and added a source-custody runner for exactly the 219

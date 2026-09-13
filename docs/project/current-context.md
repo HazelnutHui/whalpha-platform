@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T14:20:37Z
+Operational state verified at: 2026-09-13T14:36:14Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -143,7 +143,12 @@ Important private Dell evidence includes:
   and logical fingerprint
   `2bf0aa1510902415c0530d2f49630b7b03757d6780805157b03ffbad1c7d1c3e`.
   Every document passed a separate zero-network formal reread, but no content
-  has yet been interpreted into a security-level lifecycle fact.
+  has been interpreted into a security-level lifecycle fact; and
+- the completed document-content census: 219 / 219 parsed, report SHA-256
+  `a566d966236fb046a88e662dacbcfa35ff93d57f319b86a218ef0f0ddde46869`,
+  logical fingerprint
+  `d22f5436aaeabeee3fe8bee8061594b42f479f25b8ad9f575fab81f3e781e77a`.
+  Its bounded contexts are lexical candidates only; fact counts remain zero.
 
 Exact package identities and counts are retained in:
 
@@ -155,6 +160,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC lifecycle pilot audit](../audits/strong-leader-pullback-sec-lifecycle-pilot-2026-09-13.md)
 - [First-strategy SEC document plan audit](../audits/strong-leader-pullback-sec-document-plan-2026-09-13.md)
 - [First-strategy SEC document source audit](../audits/strong-leader-pullback-sec-document-source-2026-09-13.md)
+- [First-strategy SEC content census audit](../audits/strong-leader-pullback-sec-document-content-census-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -186,10 +192,12 @@ The first source-specific lifecycle pilot is now bound to the immutable
 to 2,144 document candidates, including 219 on or after the last canonical
 observation, without promoting a single terminal fact. Those 219 documents are
 now frozen into 22 deterministic batches and all 219 source documents are in
-formally reread private custody. The next internal gate is deterministic
-content extraction and a measured supported/absent/ambiguous/conflicting field
-census; a commercial sample remains limited to the residual fields after that
-review. Massive Starter is not the sole lifecycle authority.
+formally reread private custody. The completed deterministic parse census
+localizes lexical evidence without promoting a fact. The next internal gate is
+form-aware candidate-value extraction and a measured supported/absent/
+ambiguous/conflicting field census; a commercial sample remains limited to the
+residual fields after that review. Massive Starter is not the sole lifecycle
+authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are

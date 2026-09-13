@@ -84,12 +84,14 @@ not five-year performance admission.
    deterministic batches, bounded to the transition-period population.
 4. Preserve the completed resumable private source package: 219 / 219
    documents, exact plan binding, response-level hashes, and formal reread.
-5. Extract only registered lifecycle field candidates, then record matched,
-   absent, unsupported, ambiguous, and conflicting results; document content
-   still cannot assign security identity by itself.
-6. Test a commercial source only against the residual field gap that remains
+5. Preserve the completed content census: all 219 documents parse and every
+   marker remains an unresolved lexical candidate rather than a fact.
+6. Extract only registered, form-aware lifecycle value candidates, then record
+   matched, absent, unsupported, ambiguous, and conflicting results; document
+   content still cannot assign security identity by itself.
+7. Test a commercial source only against the residual field gap that remains
    after the SEC document review; do not repeat a global vendor scan.
-7. Resolve missing-event neutrality and terminal outcomes without turning a
+8. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
