@@ -115,6 +115,9 @@ strategy's fixed reconstructed paths.
 ADR [0222](decisions/0222-use-path-local-split-bases-for-strategy-features-and-labels.md)
 requires path-local split bases for future V2 features and labels and keeps the
 fixed-basis sparse ledger as reconciliation evidence only.
+ADR [0223](decisions/0223-freeze-the-first-strategy-cross-venue-source-sample.md)
+freezes the complete first-strategy action/lifecycle acceptance sample before
+any provider comparison.
 ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
 requires a complete semantic/conflict census before any SEC fundamental
 feature registry or security projection.
@@ -164,6 +167,7 @@ separately approved bounded serving artifacts.
 - [Five-Year Corporate-Action Unresolved Census](operations/five-year-corporate-action-unresolved-census.md)
 - [Five-Year Corporate-Action Residual Evidence Census](operations/five-year-corporate-action-residual-evidence-census.md)
 - [Strong-Leader Pullback Evidence Blocker Census](operations/strong-leader-pullback-evidence-blocker-census.md)
+- [Strong-Leader Pullback Source Acceptance Sample](operations/strong-leader-pullback-source-acceptance-sample.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)

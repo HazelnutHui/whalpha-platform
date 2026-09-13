@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0223](0223-freeze-the-first-strategy-cross-venue-source-sample.md):
+  freezes the complete outcome-blind action/lifecycle case set and field-level
+  gates for comparing cross-venue sources.
 - [ADR 0222](0222-use-path-local-split-bases-for-strategy-features-and-labels.md):
   derives future V2 split factors on signal/label-local bases instead of using
   a later global basis or inferring neutral omitted rows.
