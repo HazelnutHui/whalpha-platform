@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T21:35:42Z
+Operational state verified at: 2026-09-13T21:52:35Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -196,7 +196,15 @@ Important private Dell evidence includes:
   Report SHA-256 is
   `acf4b350e89d56bbb9ac32bfcd906cec08c66721d5d5661994ab5ed68a0fd237`
   and logical fingerprint is
-  `89d4c7388aa7e47d1609fcadee3d388e9d4f342d1ff4da02b76c113528e3d510`.
+  `89d4c7388aa7e47d1609fcadee3d388e9d4f342d1ff4da02b76c113528e3d510`;
+  and
+- the typed termination-reason adjudication: all 61 linked Item 3.01 sections
+  explicitly connect merger/acquisition completion to a listing or trading
+  action. All 61 reasons are matched as `merger_or_acquisition`; effective
+  market-status and terminal dates remain unresolved. Report SHA-256 is
+  `c3ef6f8a0e51def3419b07d7f1303105a00df9e693ec4c6cbb0a2c4c1434224d`
+  and logical fingerprint is
+  `dbc47b9e31bd9043259b6849f8a92816790ad2b088c23e2b87e56e60d7d49fcf`.
 
 Exact package identities and counts are retained in:
 
@@ -215,6 +223,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC case coverage census audit](../audits/strong-leader-pullback-sec-case-coverage-census-2026-09-13.md)
 - [First-strategy SEC case adjudication audit](../audits/strong-leader-pullback-sec-case-adjudication-2026-09-13.md)
 - [First-strategy SEC transaction-event adjudication audit](../audits/strong-leader-pullback-sec-transaction-event-adjudication-2026-09-13.md)
+- [First-strategy SEC termination-reason adjudication audit](../audits/strong-leader-pullback-sec-termination-reason-adjudication-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -254,7 +263,8 @@ case/field results unsupported. Point-in-time inline-XBRL cover adjudication
 then matched the stable security/listing field for 61 structured transaction
 cases without a ticker-only join. Typed transaction completion/date work is
 now complete for all 61, including nine retained cover-date differences. The
-next internal gate is termination-reason, consideration, and party-relation
+termination reason is also now matched for all 61 through bounded Item 3.01
+evidence. The next internal gate is consideration and party-relation
 adjudication. LNW, REVG, and SAND remain quarantined. A commercial sample
 remains limited to the frozen residual fields after that review. Massive
 Starter is not the sole lifecycle authority.

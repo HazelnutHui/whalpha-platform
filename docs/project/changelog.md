@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-13 — Link listing-termination reasons without terminal dates
+
+- Accepted ADR 0238 and parsed one bounded Item 3.01 delisting section for
+  each of the 61 linked transaction events. Cross-item references cannot open
+  a false section.
+- Every section contains transaction/acquisition, completion/causal, and
+  listing/trading-action evidence. All 61 termination reasons are matched as
+  `merger_or_acquisition`; ambiguity and unsupported counts are zero.
+- Observed action words remain source evidence only. Requested, intended,
+  future-effective, Form 25, halt, suspension, and delisting language does not
+  establish an effective or last-trading date.
+- The report has SHA-256
+  `c3ef6f8a0e51def3419b07d7f1303105a00df9e693ec4c6cbb0a2c4c1434224d`
+  and logical fingerprint
+  `dbc47b9e31bd9043259b6849f8a92816790ad2b088c23e2b87e56e60d7d49fcf`.
+  Exact network-disabled reread passed with owner-only modes and zero residue.
+- Five focused tests and the complete 2,677-test API suite passed with two
+  unchanged warnings. Effective delisting, tradability, consideration,
+  parties, lifecycle facts, terminal outcomes, `/data`, Historical Coverage,
+  research, Candidate, publication, deployment, and scheduler state were
+  unchanged.
+
 ## 2026-09-13 — Adjudicate bounded issuer transaction-completion dates
 
 - Accepted ADR 0237 and separated the introduction plus Item 2.01 from

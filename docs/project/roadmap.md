@@ -103,11 +103,14 @@ not five-year performance admission.
 11. Preserve the completed typed transaction-event adjudication: all 61 linked
    Item 2.01 cases have one issuer completion date, with nine cover-date
    differences retained and zero listing-terminal authority.
-12. Adjudicate termination reason, consideration, and party relations for the
-   61 typed events. Keep last tradability and terminal return separate.
-13. Test a commercial source only against the frozen residual field gap that
+12. Preserve the completed termination-reason adjudication: all 61 linked Item
+   3.01 sections connect merger/acquisition completion to listing or trading
+   action without inferring effective or last-trading dates.
+13. Adjudicate exact common-stock consideration and party relations for the 61
+   typed events. Keep last tradability and terminal return separate.
+14. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-14. Resolve missing-event neutrality and terminal outcomes without turning a
+15. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
