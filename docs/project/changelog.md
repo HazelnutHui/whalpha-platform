@@ -1,6 +1,6 @@
 # Changelog
 
-## 2026-09-13 — Implement resumable custody for the frozen SEC documents
+## 2026-09-13 — Retain the frozen SEC documents in resumable custody
 
 - Accepted ADR 0230 and added a source-custody runner for exactly the 219
   requests frozen by ADR 0229. Each document has its own bounded retry budget,
@@ -12,9 +12,18 @@
   coexistence fail closed.
 - Fixture tests proved one-document interruption and 218-document resumption,
   zero-redownload completed-partial adoption, full formal readback, and
-  tamper/unknown-member rejection. Live acquisition remains pending; no SEC
-  request, credential read, `/data`, lifecycle fact, research, Candidate,
-  publication, deployment, or scheduler action occurred in implementation.
+  tamper/unknown-member rejection. The full API suite passed 2,646 tests with
+  two unchanged warnings.
+- The real run retained the first document as a bounded pilot, then formally
+  resumed the remaining 218. All 219 requests succeeded with zero retry and
+  retained 5,430,894 bytes; the independent completed-package invocation made
+  zero requests and formally reread every artifact and physical hash.
+- The final manifest SHA-256 is
+  `38d7cf826769e4f3541ba5e22b4066b3f9a8779e56c770f81e7c2b5fc0833bb5`
+  and the logical fingerprint is
+  `2bf0aa1510902415c0530d2f49630b7b03757d6780805157b03ffbad1c7d1c3e`.
+  No credential material, `/data`, lifecycle fact, research, Candidate,
+  publication, deployment, or scheduler action occurred.
 
 ## 2026-09-13 — Freeze the SEC transition-document acquisition plan
 

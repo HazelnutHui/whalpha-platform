@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, frozen first-strategy sample, and 64-case SEC filing-locator pilot | all eight complete security-level fields remain unsupported; canonical family absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, frozen first-strategy sample, 64-case SEC filing-locator pilot, and all 219 transition documents in private custody | document content remains uninterpreted; all eight complete security-level fields remain unsupported and the canonical family is absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -86,9 +86,9 @@ Current admission remains rejected:
   source-acceptance sample;
 - the SEC metadata pilot found 2,144 official document locators, including 219
   on or after the last canonical observation, but granted no terminal fact;
-- those 219 transition-period documents are frozen into 22 deterministic
-  batches and the resumable custody runner is contract-tested; source content
-  is not yet acquired; and
+- all 219 transition-period documents are retained in 22 deterministic batches
+  with response-level hashes and independent formal reread; content has not
+  been promoted into any security-level fact; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -120,9 +120,10 @@ project.
 1. Keep the completed SEC projection census as a measured data rejection; do
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
-2. Run the implemented resumable source custody for the frozen 219-document /
-   22-batch SEC plan. Keep CIK, accession, form presence, security identity,
-   and terminal facts separate; acquisition alone grants no lifecycle fact.
+2. Build a deterministic field-support census over the completed 219-document
+   package. Keep CIK, accession, form presence, security identity, transaction
+   completion, and terminal facts separate; parsing alone grants no lifecycle
+   fact.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

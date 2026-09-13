@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T13:54:48Z
+Operational state verified at: 2026-09-13T14:20:37Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -136,9 +136,14 @@ Important private Dell evidence includes:
   lifecycle fields remain unsupported until document content and security
   identity are proven; and
 - an immutable 219-request SEC primary-document plan with 219 unique official
-URLs in 22 fixed batches. The contract-tested, resumable source-custody runner
-is implemented; live source-content custody and field interpretation remain
-pending.
+  URLs in 22 fixed batches; and
+- the completed private SEC primary-document source package: 219 / 219
+  documents, 5,430,894 retained bytes, zero retries, manifest SHA-256
+  `38d7cf826769e4f3541ba5e22b4066b3f9a8779e56c770f81e7c2b5fc0833bb5`,
+  and logical fingerprint
+  `2bf0aa1510902415c0530d2f49630b7b03757d6780805157b03ffbad1c7d1c3e`.
+  Every document passed a separate zero-network formal reread, but no content
+  has yet been interpreted into a security-level lifecycle fact.
 
 Exact package identities and counts are retained in:
 
@@ -149,6 +154,7 @@ Exact package identities and counts are retained in:
 - [First-strategy source sample audit](../audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [First-strategy SEC lifecycle pilot audit](../audits/strong-leader-pullback-sec-lifecycle-pilot-2026-09-13.md)
 - [First-strategy SEC document plan audit](../audits/strong-leader-pullback-sec-document-plan-2026-09-13.md)
+- [First-strategy SEC document source audit](../audits/strong-leader-pullback-sec-document-source-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -179,11 +185,11 @@ The first source-specific lifecycle pilot is now bound to the immutable
 20-action / 64-lifecycle sample. SEC metadata narrowed the 64 lifecycle cases
 to 2,144 document candidates, including 219 on or after the last canonical
 observation, without promoting a single terminal fact. Those 219 documents are
-now frozen into 22 deterministic no-request batches. The next internal gate is
-to run the implemented resumable SEC source-content custody and then measure
-the supported fields; a commercial sample remains limited to the exact fields
-still unsupported after document review. Massive Starter is not the sole
-lifecycle authority.
+now frozen into 22 deterministic batches and all 219 source documents are in
+formally reread private custody. The next internal gate is deterministic
+content extraction and a measured supported/absent/ambiguous/conflicting field
+census; a commercial sample remains limited to the residual fields after that
+review. Massive Starter is not the sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are

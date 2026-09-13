@@ -82,12 +82,14 @@ not five-year performance admission.
    security-level lifecycle field still unsupported.
 3. Preserve the completed no-request document plan: 219 unique URLs in 22
    deterministic batches, bounded to the transition-period population.
-4. Run the implemented resumable, rate/size-limited private source custody for
-   those documents, then record matched, absent, unsupported, and conflicting
-   fields; document content still cannot assign security identity by itself.
-5. Test a commercial source only against the residual field gap that remains
+4. Preserve the completed resumable private source package: 219 / 219
+   documents, exact plan binding, response-level hashes, and formal reread.
+5. Extract only registered lifecycle field candidates, then record matched,
+   absent, unsupported, ambiguous, and conflicting results; document content
+   still cannot assign security identity by itself.
+6. Test a commercial source only against the residual field gap that remains
    after the SEC document review; do not repeat a global vendor scan.
-6. Resolve missing-event neutrality and terminal outcomes without turning a
+7. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
