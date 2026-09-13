@@ -192,6 +192,17 @@ Required work:
   24,498,347 exact semantic keys, 519 conservative revision quarantines, and
   common-stock pilot coverage while granting no feature or security-projection
   authority;
+- completed 2026-09-13: account for all 242,242 retained baseline corporate-
+  action rows in a durable private exact-event-date resolution shadow. The two
+  published Identity evidences compose 1,251 unique sessions with 287
+  byte-identical overlaps; 129,086 typed rows resolve, 113,149 remain
+  quarantined, and seven missing/invalid-ticker rows remain in a separate
+  hashed unrepresentable artifact. No row is dropped or given a fabricated
+  ticker, and no canonical or research authority is granted;
+- classify the unresolved corporate-action ticker population across the bound
+  historical Identity set as zero, one, or multiple stable candidates without
+  assigning any event. Use the measured classes to choose the smallest
+  official/free lifecycle and event-date evidence expansion;
 - register a small first set of exact concept/unit/period/form queries from the
   measured census, then build complete effective-dated filer/security links
   and separately decide share-class projection before any security-level

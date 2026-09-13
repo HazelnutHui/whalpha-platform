@@ -288,7 +288,7 @@ claims are false.
 | 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
-| Bounded corporate-action source custody | Complete action availability/revision and absent-event coverage |
+| Five-year corporate-action source plus private complete-accounting exact-date resolution shadow | Resolve 113,149 quarantined typed rows and seven unrepresentable rows; complete availability/revision, lifecycle, absent-event, and adjustment semantics |
 | Canonical split-only facts and sparse affected-path ledger | Complete adjustment/neutrality and total-return semantics |
 | Fixture-only input, chronology, statistics, and holdout mechanics | Real chronological dataset and sealed real holdout |
 | Scenario-only equity costs | Observed spread/impact calibration and execution comparison |

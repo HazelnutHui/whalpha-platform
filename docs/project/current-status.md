@@ -72,13 +72,17 @@ budgets now guard this boundary.
   decisions. It is physically separate and has no signal, performance,
   Candidate, Production, or web authority.
 - Canonical corporate-action source custody still has 70,099 bounded recent
-  observations. Separately, exact five-year owner-only source packages now
-  contain 6,491 split and 235,751 dividend rows with complete natural
-  pagination and a full repeat. Five split provider IDs changed without an
-  economic-payload change and remain explicit revision evidence. These source
-  packages are not yet stable-ID-resolved or canonical; the split-only facts
-  and sparse affected-path adjustment ledger still do not prove neutral
-  omitted rows or total return.
+  observations. Separately, exact five-year owner-only source packages contain
+  6,491 split and 235,751 dividend rows with complete natural pagination and a
+  full repeat. ADR 0217's durable private resolution shadow accounts for all
+  242,242 baseline rows: 242,235 are typed, 129,086 resolve by exact event-date
+  stable ID, 113,149 remain quarantined, and seven missing/invalid-ticker rows
+  are separately hashed as unrepresentable. The two bound Identity evidences
+  compose 1,251 unique sessions with 287 identical overlaps. Five split
+  provider IDs still changed without an economic-payload change and remain
+  explicit revision evidence. This shadow is not canonical; source time,
+  unresolved rows, lifecycle, absent-event neutrality, and complete adjustment
+  and total-return semantics remain open.
 - Official/free FINRA OTC Daily List custody is complete for 2021-08-11 through
   2026-09-09: 62 monthly packages / 68,714 observations. It is OTC
   corroboration only. A sealed FINRA/Massive census found 2,298 split and
@@ -274,8 +278,9 @@ Complete:
   sessions;
 - 1,253 formally selected Grouped Daily packages plus two Identity-source
   exceptions awaiting disposition;
-- bounded corporate-action observations, split-only facts, and sparse
-  split-adjustment evidence;
+- a complete-accounting five-year private corporate-action resolution shadow,
+  bounded canonical source observations, split-only facts, and sparse split-
+  adjustment evidence;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
   mechanics;
 - a preregistered Strong-Leader Pullback V1;

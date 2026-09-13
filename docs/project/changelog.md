@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-13 — Retain the five-year corporate-action resolution shadow
+
+- Accepted ADR 0217 and extended the exact-event-date resolution shadow to
+  compose multiple formally published Identity evidence manifests only when
+  every overlapping artifact is identical. The first real union contains
+  1,251 unique sessions and 287 conflict-free overlaps.
+- The complete baseline contains 242,242 source rows. The durable owner-only
+  result has 242,235 typed rows: 129,086 resolved and 113,149 quarantined.
+  Seven missing/invalid-ticker dividends are retained in a separate hashed
+  unrepresentable artifact, so source accounting remains exactly one-to-one
+  without a fabricated ticker.
+- The 14-file / 17,110,708-byte candidate has logical fingerprint
+  `c71e0e481d83a23161f7130e45a55eac0e4895345108440b15d627232f1dfac1`.
+  Its build completed in 488.33 seconds; an independent formal reread completed
+  in 41.10 seconds. Files are mode 0400, directories mode 0700, with zero
+  symlinks or staging residue.
+- Company-action focused tests passed 76 cases and the complete API suite
+  passed 2,581 tests with two unchanged dependency warnings. No request,
+  canonical `/data` write, Historical Coverage, research input, Candidate,
+  publication, deployment, or scheduler change occurred. See the
+  [dated audit](../audits/five-year-corporate-action-resolution-shadow-2026-09-13.md).
+
 ## 2026-09-13 — Census SEC fundamental semantics before feature registration
 
 - Accepted ADR 0216 and added an eight-process, worker-aligned streaming census
