@@ -33,6 +33,7 @@ from tip_api.read_models.eod import EodSessionDescriptor
 CONTRACT_VERSION = "current-historical-mechanics-evidence/1.0"
 MINIMUM_RESEARCH_HISTORY_SESSIONS = 252
 MAXIMUM_JSON_BYTES = 16 * 1024 * 1024
+MAXIMUM_IDENTITY_EXTENSION_SESSIONS = 16
 
 
 class CurrentHistoricalMechanicsEvidenceError(RuntimeError):
@@ -176,6 +177,35 @@ def validate_current_historical_family_evidence(
     )
 
 
+def validate_identity_extension_historical_family_evidence(
+    data_root: Path,
+    sessions: tuple[date, ...],
+) -> HistoricalDatasetEvidenceValidationResult:
+    """Validate one bounded same-session Identity-only evidence candidate."""
+
+    if (
+        not sessions
+        or len(sessions) > MAXIMUM_IDENTITY_EXTENSION_SESSIONS
+        or sessions != tuple(sorted(set(sessions)))
+    ):
+        raise CurrentHistoricalMechanicsEvidenceError(
+            "identity-extension sessions must be unique, ordered, and bounded"
+        )
+    identity_repository = ParquetInstrumentMasterSnapshotRepository(data_root)
+    snapshots = {
+        session: identity_repository.inspect_snapshot(session)
+        for session in sessions
+    }
+    evidence = _build_identity_evidence_from_bound_sessions(
+        root=data_root,
+        bound_sessions={session: (session,) for session in sessions},
+        snapshots=snapshots,
+    )
+    return ParquetHistoricalCoverageRepository(data_root).validate_dataset_evidence(
+        evidence
+    )
+
+
 def _build_eod_evidence(
     root: Path,
     descriptors: tuple[EodSessionDescriptor, ...],
@@ -233,6 +263,22 @@ def _build_identity_evidence(
         bound_sessions.setdefault(descriptor.identity_as_of_date, []).append(
             descriptor.session_date
         )
+    return _build_identity_evidence_from_bound_sessions(
+        root=root,
+        bound_sessions={
+            as_of_date: tuple(session_dates)
+            for as_of_date, session_dates in bound_sessions.items()
+        },
+        snapshots=snapshots,
+    )
+
+
+def _build_identity_evidence_from_bound_sessions(
+    *,
+    root: Path,
+    bound_sessions: dict[date, tuple[date, ...]],
+    snapshots: dict[date, InstrumentMasterSnapshotReadResult],
+) -> HistoricalDatasetCoverageEvidenceV1:
     artifacts: list[HistoricalCoverageArtifactEvidenceV1] = []
     for as_of_date, sessions in sorted(bound_sessions.items()):
         snapshot = snapshots[as_of_date]
@@ -268,9 +314,16 @@ def _build_identity_evidence(
             )
         )
     artifacts.sort(key=lambda item: item.completion_manifest.path)
+    evidence_sessions = tuple(
+        sorted(
+            session
+            for session_dates in bound_sessions.values()
+            for session in session_dates
+        )
+    )
     return build_historical_dataset_coverage_evidence(
         family=HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
-        sessions=tuple(item.session_date for item in descriptors),
+        sessions=evidence_sessions,
         artifacts=tuple(artifacts),
         record_count=sum(item.record_count for item in artifacts),
         quarantined_record_count=0,

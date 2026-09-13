@@ -151,8 +151,14 @@ CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION = (
 RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION = (
     "reconciled-eod-historical-family-evidence-publication-plan/1.0"
 )
+IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION = (
+    "identity-extension-historical-family-evidence-publication-plan/1.0"
+)
 CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES = (
     HistoricalDatasetFamily.EOD_PRICE_BAR,
+    HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
+)
+IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES = (
     HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
 )
 
@@ -262,7 +268,11 @@ class CurrentHistoricalFamilyEvidencePublicationPlanV1(FrozenContract):
     def normalized_absolute_root(cls, value: str) -> str:
         normalized = normalize_required_string(value, field_name="data_root")
         path = PurePosixPath(normalized)
-        if not path.is_absolute() or ".." in path.parts or path.as_posix() != normalized:
+        if (
+            not path.is_absolute()
+            or ".." in path.parts
+            or path.as_posix() != normalized
+        ):
             raise ValueError("data_root must be normalized and absolute")
         return normalized
 
@@ -372,6 +382,106 @@ class ReconciledEodHistoricalFamilyEvidencePublicationPlanV1(
         return self
 
 
+class IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1(FrozenContract):
+    """Exact no-write plan for bounded Identity-only extension evidence."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    contract_version: Literal[
+        "identity-extension-historical-family-evidence-publication-plan/1.0"
+    ] = IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION
+    operation: Literal[
+        "publish_identity_extension_historical_family_evidence"
+    ] = "publish_identity_extension_historical_family_evidence"
+    purpose: Literal["corporate_action_exact_date_resolution_support"] = (
+        "corporate_action_exact_date_resolution_support"
+    )
+    status: Literal["ready_for_separate_review"] = "ready_for_separate_review"
+    planned_from_evidence_at: datetime
+    data_root: str
+    first_session: date
+    last_session: date
+    session_count: int = Field(ge=1, le=16)
+    families: tuple[CurrentHistoricalFamilyEvidencePlanItemV1, ...] = Field(
+        min_length=1,
+        max_length=1,
+    )
+    family_set_fingerprint: str
+    inventory_change_file_count: Literal[1] = 1
+    inventory_change_bytes: int = Field(ge=1)
+    target_absent_count: Literal[1] = 1
+    source_formal_read_complete: Literal[True] = True
+    target_absence_verified: Literal[True] = True
+    recovery_policy: Literal["verify_exact_then_complete"] = (
+        "verify_exact_then_complete"
+    )
+    external_request_count: Literal[0] = 0
+    canonical_data_write_count: Literal[0] = 0
+    apply_authorized: Literal[False] = False
+    historical_coverage_authorized: Literal[False] = False
+    research_development_authorized: Literal[False] = False
+    research_performance_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator("planned_from_evidence_at")
+    @classmethod
+    def utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("data_root", mode="before")
+    @classmethod
+    def normalized_absolute_root(cls, value: str) -> str:
+        normalized = normalize_required_string(value, field_name="data_root")
+        path = PurePosixPath(normalized)
+        if not path.is_absolute() or ".." in path.parts or path.as_posix() != normalized:
+            raise ValueError("data_root must be normalized and absolute")
+        return normalized
+
+    @field_validator("first_session", "last_session", mode="before")
+    @classmethod
+    def reject_datetime_sessions(cls, value: Any) -> Any:
+        if isinstance(value, datetime):
+            raise ValueError("session fields must contain dates")
+        return value
+
+    @field_validator("family_set_fingerprint", "logical_fingerprint")
+    @classmethod
+    def hashes_are_valid(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @model_validator(mode="after")
+    def plan_reconciles(
+        self,
+    ) -> "IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1":
+        if tuple(item.family for item in self.families) != (
+            IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES
+        ):
+            raise ValueError("identity-extension family set differs")
+        evidence = self.families[0].evidence
+        sessions = evidence.sessions
+        if (
+            self.first_session != sessions[0]
+            or self.last_session != sessions[-1]
+            or self.session_count != len(sessions)
+        ):
+            raise ValueError("identity-extension session summary differs")
+        if self.planned_from_evidence_at != evidence.created_at:
+            raise ValueError("identity-extension evidence time differs")
+        if self.family_set_fingerprint != (
+            current_historical_family_evidence_plan_family_set_fingerprint(
+                self.families
+            )
+        ):
+            raise ValueError("identity-extension family-set fingerprint differs")
+        if self.inventory_change_bytes != self.families[0].evidence_manifest_bytes:
+            raise ValueError("identity-extension inventory byte count differs")
+        if (
+            current_historical_family_evidence_publication_plan_fingerprint(self)
+            != self.logical_fingerprint
+        ):
+            raise ValueError("identity-extension plan logical fingerprint differs")
+        return self
+
+
 def build_historical_dataset_coverage_evidence(
     *,
     family: HistoricalDatasetFamily,
@@ -469,6 +579,29 @@ def build_reconciled_eod_historical_family_evidence_publication_plan(
     )
 
 
+def build_identity_extension_historical_family_evidence_publication_plan(
+    **values: object,
+) -> IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1:
+    provisional = (
+        IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1.model_construct(
+            **values,
+            logical_fingerprint="0" * 64,
+        )
+    )
+    return (
+        IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1.model_validate(
+            {
+                **values,
+                "logical_fingerprint": (
+                    current_historical_family_evidence_publication_plan_fingerprint(
+                        provisional
+                    )
+                ),
+            }
+        )
+    )
+
+
 def current_historical_family_evidence_plan_family_set_fingerprint(
     families: tuple[CurrentHistoricalFamilyEvidencePlanItemV1, ...],
 ) -> str:
@@ -492,6 +625,7 @@ def current_historical_family_evidence_publication_plan_fingerprint(
     plan: (
         CurrentHistoricalFamilyEvidencePublicationPlanV1
         | ReconciledEodHistoricalFamilyEvidencePublicationPlanV1
+        | IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1
     ),
 ) -> str:
     return _fingerprint(plan.model_dump(mode="json", exclude={"logical_fingerprint"}))

@@ -7,17 +7,23 @@ import json
 import os
 import stat
 from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
 from typing import Callable
 
 from tip_api.contracts.market_data.v1 import (
     CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES,
     CURRENT_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION,
+    IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES,
+    IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION,
     RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION,
     CurrentHistoricalFamilyEvidencePublicationPlanV1,
+    HistoricalDatasetFamily,
+    IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1,
     ReconciledEodHistoricalFamilyEvidencePublicationPlanV1,
     build_current_historical_family_evidence_plan_item,
     build_current_historical_family_evidence_publication_plan as build_plan_contract,
+    build_identity_extension_historical_family_evidence_publication_plan as build_identity_extension_plan_contract,
     build_reconciled_eod_historical_family_evidence_publication_plan as build_reconciled_plan_contract,
     current_historical_family_evidence_plan_family_set_fingerprint,
 )
@@ -27,6 +33,7 @@ from tip_api.persistence.parquet.historical_coverage import (
 )
 from tip_api.services.current_historical_mechanics_evidence import (
     validate_current_historical_family_evidence,
+    validate_identity_extension_historical_family_evidence,
 )
 from tip_api.services.offline_artifact_custody import (
     OfflineArtifactCustodyError,
@@ -43,12 +50,13 @@ MAXIMUM_PLAN_BYTES = 16 * 1024 * 1024
 
 
 class HistoricalFamilyEvidencePublicationPlanError(RuntimeError):
-    """Raised when a two-family no-write plan cannot be proven exactly."""
+    """Raised when a historical-family no-write plan cannot be proven exactly."""
 
 
 HistoricalFamilyEvidencePlan = (
     CurrentHistoricalFamilyEvidencePublicationPlanV1
     | ReconciledEodHistoricalFamilyEvidencePublicationPlanV1
+    | IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1
 )
 PlanBuilder = Callable[..., HistoricalFamilyEvidencePlan]
 
@@ -118,6 +126,36 @@ def build_reconciled_eod_historical_family_evidence_publication_plan(
     )
 
 
+def build_identity_extension_historical_family_evidence_publication_plan(
+    *,
+    data_root: Path,
+    sessions: tuple[date, ...],
+    plan_path: Path,
+) -> HistoricalFamilyEvidencePublicationPlanEvidence:
+    """Build one exact bounded Identity-only plan without publication."""
+
+    root = _validated_data_root(data_root)
+    validation = validate_identity_extension_historical_family_evidence(
+        root,
+        sessions,
+    )
+    validations = _ordered_unpublished_validations(
+        (validation,),
+        expected_families=(
+            IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES
+        ),
+    )
+    return _build_historical_family_evidence_publication_plan(
+        root=root,
+        validations=validations,
+        plan_path=plan_path,
+        contract_builder=build_identity_extension_plan_contract,
+        additional_values={
+            "purpose": "corporate_action_exact_date_resolution_support",
+        },
+    )
+
+
 def _build_historical_family_evidence_publication_plan(
     *,
     root: Path,
@@ -157,11 +195,11 @@ def _build_historical_family_evidence_publication_plan(
                 families
             )
         ),
-        "inventory_change_file_count": 2,
+        "inventory_change_file_count": len(families),
         "inventory_change_bytes": sum(
             item.evidence_manifest_bytes for item in families
         ),
-        "target_absent_count": 2,
+        "target_absent_count": len(families),
         "source_formal_read_complete": True,
         "target_absence_verified": True,
         "recovery_policy": "verify_exact_then_complete",
@@ -223,6 +261,24 @@ def read_reconciled_eod_historical_family_evidence_publication_plan(
     )
 
 
+def read_identity_extension_historical_family_evidence_publication_plan(
+    *,
+    plan_path: Path,
+    approved_plan_sha256: str | None = None,
+    verify_then_complete: bool = False,
+) -> HistoricalFamilyEvidencePublicationPlanEvidence:
+    """Reread a bounded Identity-only plan, source bytes, and target state."""
+
+    return _read_historical_family_evidence_publication_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=approved_plan_sha256,
+        verify_then_complete=verify_then_complete,
+        expected_contract_version=(
+            IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION
+        ),
+    )
+
+
 def _read_historical_family_evidence_publication_plan(
     *,
     plan_path: Path,
@@ -255,6 +311,7 @@ def _read_historical_family_evidence_publication_plan(
     validations = _ordered_validations(
         validations,
         verify_then_complete=verify_then_complete,
+        expected_families=tuple(item.family for item in plan.families),
     )
     for item, validation in zip(plan.families, validations, strict=True):
         if (
@@ -274,23 +331,32 @@ def _read_historical_family_evidence_publication_plan(
 
 def _ordered_unpublished_validations(
     validations: tuple[HistoricalDatasetEvidenceValidationResult, ...],
+    *,
+    expected_families: tuple[HistoricalDatasetFamily, ...] = (
+        CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES
+    ),
 ) -> tuple[HistoricalDatasetEvidenceValidationResult, ...]:
-    return _ordered_validations(validations, verify_then_complete=False)
+    return _ordered_validations(
+        validations,
+        verify_then_complete=False,
+        expected_families=expected_families,
+    )
 
 
 def _ordered_validations(
     validations: tuple[HistoricalDatasetEvidenceValidationResult, ...],
     *,
     verify_then_complete: bool,
+    expected_families: tuple[HistoricalDatasetFamily, ...] = (
+        CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES
+    ),
 ) -> tuple[HistoricalDatasetEvidenceValidationResult, ...]:
     ordered = tuple(
         sorted(validations, key=lambda item: item.evidence.family.value)
     )
-    if tuple(item.evidence.family for item in ordered) != (
-        CURRENT_HISTORICAL_FAMILY_EVIDENCE_PLAN_FAMILIES
-    ):
+    if tuple(item.evidence.family for item in ordered) != expected_families:
         raise HistoricalFamilyEvidencePublicationPlanError(
-            "current family-evidence set is incomplete"
+            "family-evidence set is incomplete"
         )
     sessions = ordered[0].evidence.sessions
     if any(item.evidence.sessions != sessions for item in ordered[1:]):
@@ -315,7 +381,11 @@ def _ordered_validations(
             raise HistoricalFamilyEvidencePublicationPlanError(
                 "family-evidence recovery found no completed target"
             )
-        if present not in ((True, False), (True, True)):
+        completed_count = sum(present)
+        expected_state = (True,) * completed_count + (False,) * (
+            len(present) - completed_count
+        )
+        if present != expected_state:
             raise HistoricalFamilyEvidencePublicationPlanError(
                 "family-evidence recovery targets are not an ordered prefix"
             )
@@ -447,6 +517,9 @@ def _read_plan_file(
             ),
             RECONCILED_EOD_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION: (
                 ReconciledEodHistoricalFamilyEvidencePublicationPlanV1
+            ),
+            IDENTITY_EXTENSION_HISTORICAL_FAMILY_EVIDENCE_PUBLICATION_PLAN_VERSION: (
+                IdentityExtensionHistoricalFamilyEvidencePublicationPlanV1
             ),
         }.get(contract_version)
         if model is None:

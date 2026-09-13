@@ -25,6 +25,7 @@ from tip_api.providers.massive.same_day_catchup import inventory_fingerprint
 from tip_api.services.historical_family_evidence_publication_plan import (
     HistoricalFamilyEvidencePublicationPlanEvidence,
     read_current_historical_family_evidence_publication_plan,
+    read_identity_extension_historical_family_evidence_publication_plan,
     read_reconciled_eod_historical_family_evidence_publication_plan,
 )
 
@@ -86,6 +87,7 @@ def apply_approved_current_historical_family_evidence_plan(
         data_root=data_root,
         plan_reader=read_current_historical_family_evidence_publication_plan,
         expected_operation="publish_current_historical_family_evidence",
+        expected_family_count=2,
         verify_then_complete=verify_then_complete,
         inventory_reader=inventory_reader,
         outside_inventory_reader=outside_inventory_reader,
@@ -115,6 +117,39 @@ def apply_approved_reconciled_eod_historical_family_evidence_plan(
             read_reconciled_eod_historical_family_evidence_publication_plan
         ),
         expected_operation="publish_reconciled_eod_historical_family_evidence",
+        expected_family_count=2,
+        verify_then_complete=verify_then_complete,
+        inventory_reader=inventory_reader,
+        outside_inventory_reader=outside_inventory_reader,
+    )
+
+
+def apply_approved_identity_extension_historical_family_evidence_plan(
+    *,
+    plan_path: Path,
+    approved_plan_sha256: str,
+    expected_plan_logical_fingerprint: str,
+    expected_family_set_fingerprint: str,
+    data_root: Path,
+    verify_then_complete: bool = False,
+    inventory_reader: InventoryReader = inventory_fingerprint,
+    outside_inventory_reader: OutsideInventoryReader | None = None,
+) -> HistoricalFamilyEvidenceApplyResult:
+    """Apply, recover, or verify one exact Identity-only extension plan."""
+
+    return _apply_approved_historical_family_evidence_plan(
+        plan_path=plan_path,
+        approved_plan_sha256=approved_plan_sha256,
+        expected_plan_logical_fingerprint=expected_plan_logical_fingerprint,
+        expected_family_set_fingerprint=expected_family_set_fingerprint,
+        data_root=data_root,
+        plan_reader=(
+            read_identity_extension_historical_family_evidence_publication_plan
+        ),
+        expected_operation=(
+            "publish_identity_extension_historical_family_evidence"
+        ),
+        expected_family_count=1,
         verify_then_complete=verify_then_complete,
         inventory_reader=inventory_reader,
         outside_inventory_reader=outside_inventory_reader,
@@ -130,6 +165,7 @@ def _apply_approved_historical_family_evidence_plan(
     data_root: Path,
     plan_reader: PlanReader,
     expected_operation: str,
+    expected_family_count: int,
     verify_then_complete: bool,
     inventory_reader: InventoryReader,
     outside_inventory_reader: OutsideInventoryReader | None,
@@ -156,6 +192,7 @@ def _apply_approved_historical_family_evidence_plan(
         expected_family_set_fingerprint=expected_family_set_fingerprint,
         data_root=root,
         expected_operation=expected_operation,
+        expected_family_count=expected_family_count,
     )
 
     lock_path = LOCK_ROOT / (
@@ -204,6 +241,7 @@ def _apply_approved_historical_family_evidence_plan(
             expected_family_set_fingerprint=expected_family_set_fingerprint,
             data_root=root,
             expected_operation=expected_operation,
+            expected_family_count=expected_family_count,
         )
         exclusions = _inventory_exclusions(root=root, evidence=locked)
         outside_reader = outside_inventory_reader or _outside_inventory_fingerprint
@@ -286,6 +324,7 @@ def _validate_execution_binding(
     expected_family_set_fingerprint: str,
     data_root: Path,
     expected_operation: str,
+    expected_family_count: int,
 ) -> None:
     plan = evidence.plan
     if (
@@ -294,9 +333,9 @@ def _validate_execution_binding(
         or plan.family_set_fingerprint != expected_family_set_fingerprint
         or Path(plan.data_root) != data_root
         or plan.operation != expected_operation
-        or len(plan.families) != 2
-        or plan.inventory_change_file_count != 2
-        or plan.target_absent_count != 2
+        or len(plan.families) != expected_family_count
+        or plan.inventory_change_file_count != expected_family_count
+        or plan.target_absent_count != expected_family_count
         or plan.source_formal_read_complete is not True
         or plan.target_absence_verified is not True
         or plan.recovery_policy != "verify_exact_then_complete"

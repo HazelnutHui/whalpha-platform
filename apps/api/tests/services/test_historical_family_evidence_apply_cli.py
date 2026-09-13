@@ -137,3 +137,30 @@ def test_cli_selects_reconciled_eod_apply_entry(monkeypatch, capsys) -> None:
     assert exit_code == 0
     assert payload["published_file_count"] == 2
     assert observed["approved_plan_sha256"] == "a" * 64
+
+
+def test_cli_selects_identity_extension_apply_entry(monkeypatch, capsys) -> None:
+    observed = {}
+
+    def apply(**kwargs):
+        observed.update(kwargs)
+        return _result()
+
+    monkeypatch.setattr(
+        cli,
+        "apply_approved_identity_extension_historical_family_evidence_plan",
+        apply,
+    )
+
+    exit_code = cli.main(
+        [
+            "--source-scope",
+            "identity-extension",
+            *_arguments(),
+        ]
+    )
+    payload = json.loads(capsys.readouterr().out)
+
+    assert exit_code == 0
+    assert payload["status"] == "applied"
+    assert observed["expected_family_set_fingerprint"] == "c" * 64

@@ -1,4 +1,4 @@
-"""Explicit offline CLI for one approved two-family evidence Apply."""
+"""Explicit offline CLI for one approved historical-family evidence Apply."""
 
 from __future__ import annotations
 
@@ -9,6 +9,7 @@ from pathlib import Path
 
 from tip_api.services.historical_family_evidence_apply import (
     apply_approved_current_historical_family_evidence_plan,
+    apply_approved_identity_extension_historical_family_evidence_plan,
     apply_approved_reconciled_eod_historical_family_evidence_plan,
 )
 
@@ -16,13 +17,13 @@ from tip_api.services.historical_family_evidence_apply import (
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
-            "Apply one exact EOD/Identity family-evidence plan, or "
+            "Apply one exact historical-family evidence plan, or "
             "verify and complete its ordered-prefix recovery state."
         )
     )
     parser.add_argument(
         "--source-scope",
-        choices=("current", "reconciled-eod"),
+        choices=("current", "reconciled-eod", "identity-extension"),
         default="current",
     )
     parser.add_argument("--plan-path", type=Path, required=True)
@@ -34,11 +35,15 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        apply_plan = (
-            apply_approved_reconciled_eod_historical_family_evidence_plan
-            if args.source_scope == "reconciled-eod"
-            else apply_approved_current_historical_family_evidence_plan
-        )
+        apply_plan = {
+            "current": apply_approved_current_historical_family_evidence_plan,
+            "reconciled-eod": (
+                apply_approved_reconciled_eod_historical_family_evidence_plan
+            ),
+            "identity-extension": (
+                apply_approved_identity_extension_historical_family_evidence_plan
+            ),
+        }[args.source_scope]
         result = apply_plan(
             plan_path=args.plan_path,
             approved_plan_sha256=args.approved_plan_sha256,

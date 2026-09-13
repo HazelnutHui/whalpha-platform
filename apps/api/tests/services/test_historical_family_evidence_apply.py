@@ -12,7 +12,7 @@ import pytest
 from tip_api.providers.massive.same_day_catchup import inventory_fingerprint
 from tip_api.services import historical_family_evidence_apply as apply_service
 from tip_api.services import historical_family_evidence_publication_plan as plan_service
-from tests.support.eod_read_dataset import publish_completed_eod_dataset
+from tests.support.eod_read_dataset import SESSION_DATE, publish_completed_eod_dataset
 
 
 @contextmanager
@@ -413,3 +413,55 @@ def test_apply_network_guard_blocks_dns_and_restores() -> None:
         ):
             socket.getaddrinfo("localhost", 80)
     assert socket.getaddrinfo is original
+
+
+def test_identity_extension_apply_publishes_and_recovers_one_target(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    data_root = tmp_path / "canonical"
+    publish_completed_eod_dataset(data_root)
+    approved = data_root.resolve()
+    monkeypatch.setattr(plan_service, "APPROVED_DATA_ROOT", approved)
+    monkeypatch.setattr(apply_service, "APPROVED_DATA_ROOT", approved)
+
+    with _new_plan_path() as plan_path:
+        evidence = (
+            plan_service.build_identity_extension_historical_family_evidence_publication_plan(
+                data_root=approved,
+                sessions=(SESSION_DATE,),
+                plan_path=plan_path,
+            )
+        )
+        arguments = {
+            "plan_path": plan_path,
+            "approved_plan_sha256": evidence.plan_sha256,
+            "expected_plan_logical_fingerprint": (
+                evidence.plan.logical_fingerprint
+            ),
+            "expected_family_set_fingerprint": (
+                evidence.plan.family_set_fingerprint
+            ),
+            "data_root": approved,
+        }
+        result = (
+            apply_service.apply_approved_identity_extension_historical_family_evidence_plan(
+                **arguments
+            )
+        )
+        target = _target(approved, evidence.plan.families[0])
+        inode = target.stat().st_ino
+
+        assert result.published_families == ("point_in_time_identity",)
+        assert result.published_file_count == 1
+        assert result.formal_reread_family_count == 1
+
+        recovered = (
+            apply_service.apply_approved_identity_extension_historical_family_evidence_plan(
+                **arguments,
+                verify_then_complete=True,
+            )
+        )
+        assert recovered.published_families == ()
+        assert recovered.reused_families == ("point_in_time_identity",)
+        assert target.stat().st_ino == inode

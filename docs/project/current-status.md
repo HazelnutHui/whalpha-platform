@@ -90,6 +90,13 @@ budgets now guard this boundary.
   2,540 candidate relations but assigns zero stable IDs. Only 253 one-candidate
   rows fall inside the candidate's observed span; the result therefore guides
   evidence acquisition but does not resolve any action.
+- A read-only exact-date audit of the complete 2026-09-08 and 2026-09-09
+  canonical Identity snapshots found that they can resolve 206 of the 343
+  corporate-action rows after the currently bound evidence range. ADR 0219's
+  bounded Identity-only plan and recoverable Apply path are implemented so
+  those exact sessions can be bound without duplicating EOD evidence. No real
+  plan or `/data` evidence has yet been published through this path, and it
+  grants no Historical Coverage or research authority.
 - Official/free FINRA OTC Daily List custody is complete for 2021-08-11 through
   2026-09-09: 62 monthly packages / 68,714 observations. It is OTC
   corroboration only. A sealed FINRA/Massive census found 2,298 split and

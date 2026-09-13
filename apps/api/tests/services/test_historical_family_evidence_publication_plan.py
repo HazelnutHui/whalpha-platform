@@ -4,6 +4,7 @@ import json
 import os
 import stat
 from contextlib import contextmanager
+from datetime import timedelta
 from pathlib import Path
 from uuid import uuid4
 
@@ -13,8 +14,20 @@ from tip_api.persistence.historical_research import HistoricalResearchCorruption
 from tip_api.persistence.parquet.historical_coverage import (
     ParquetHistoricalCoverageRepository,
 )
+from tip_api.persistence.parquet.instrument_master_snapshot import (
+    ParquetInstrumentMasterSnapshotRepository,
+)
 from tip_api.services import historical_family_evidence_publication_plan as service
-from tests.support.eod_read_dataset import publish_completed_eod_dataset
+from tests.support.eod_read_dataset import (
+    CREATED_AT,
+    PROVIDER_ID,
+    SESSION_DATE,
+    TESTA_ID,
+    identity,
+    instrument,
+    publish_completed_eod_dataset,
+    resolver,
+)
 
 
 def _inventory(root: Path) -> tuple[tuple[str, int | None], ...]:
@@ -45,6 +58,33 @@ def _new_plan_path():
 def _prepare(monkeypatch, tmp_path: Path) -> None:
     publish_completed_eod_dataset(tmp_path)
     monkeypatch.setattr(service, "APPROVED_DATA_ROOT", tmp_path.resolve())
+
+
+def _publish_second_identity_snapshot(root: Path):
+    session = SESSION_DATE + timedelta(days=1)
+    instruments = (
+        instrument(TESTA_ID, "TESTA").model_copy(
+            update={"as_of_date": session}
+        ),
+    )
+    identities = (
+        identity(TESTA_ID, "TESTA").model_copy(update={"as_of_date": session}),
+    )
+    resolvers = (
+        resolver(TESTA_ID, "TESTA").model_copy(update={"as_of_date": session}),
+    )
+    ParquetInstrumentMasterSnapshotRepository(
+        root,
+        created_at=CREATED_AT + timedelta(days=1),
+    ).publish_snapshot(
+        instruments=instruments,
+        identities=identities,
+        resolvers=resolvers,
+        as_of_date=session,
+        provider_id=PROVIDER_ID,
+        quality_summary={"quality_warnings": []},
+    )
+    return session
 
 
 def test_build_and_reread_exact_two_family_plan_without_canonical_writes(
@@ -209,4 +249,98 @@ def test_reread_rejects_noncanonical_plan_bytes(monkeypatch, tmp_path) -> None:
         ):
             service.read_current_historical_family_evidence_publication_plan(
                 plan_path=plan_path,
+            )
+
+
+def test_identity_extension_plan_contains_only_exact_identity_session(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    _prepare(monkeypatch, tmp_path)
+    before = _inventory(tmp_path)
+
+    with _new_plan_path() as plan_path:
+        built = (
+            service.build_identity_extension_historical_family_evidence_publication_plan(
+                data_root=tmp_path.resolve(),
+                sessions=(SESSION_DATE,),
+                plan_path=plan_path,
+            )
+        )
+        reread = (
+            service.read_identity_extension_historical_family_evidence_publication_plan(
+                plan_path=plan_path,
+                approved_plan_sha256=built.plan_sha256,
+            )
+        )
+
+        assert reread == built
+        assert built.plan.purpose == (
+            "corporate_action_exact_date_resolution_support"
+        )
+        assert built.plan.session_count == 1
+        assert built.plan.inventory_change_file_count == 1
+        assert built.plan.target_absent_count == 1
+        assert [item.family.value for item in built.plan.families] == [
+            "point_in_time_identity"
+        ]
+        assert built.plan.families[0].evidence.sessions == (SESSION_DATE,)
+
+    assert _inventory(tmp_path) == before
+
+
+def test_identity_extension_plan_binds_each_explicit_session_snapshot(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    _prepare(monkeypatch, tmp_path)
+    second_session = _publish_second_identity_snapshot(tmp_path)
+
+    with _new_plan_path() as plan_path:
+        built = (
+            service.build_identity_extension_historical_family_evidence_publication_plan(
+                data_root=tmp_path.resolve(),
+                sessions=(SESSION_DATE, second_session),
+                plan_path=plan_path,
+            )
+        )
+
+        identity_evidence = built.plan.families[0].evidence
+        assert identity_evidence.sessions == (SESSION_DATE, second_session)
+        assert len(identity_evidence.artifacts) == 2
+        assert all(
+            len(artifact.payload_files) == 6
+            for artifact in identity_evidence.artifacts
+        )
+        assert identity_evidence.record_count == 4
+
+
+def test_identity_extension_reread_rejects_source_drift(
+    monkeypatch,
+    tmp_path,
+) -> None:
+    _prepare(monkeypatch, tmp_path)
+
+    with _new_plan_path() as plan_path:
+        built = (
+            service.build_identity_extension_historical_family_evidence_publication_plan(
+                data_root=tmp_path.resolve(),
+                sessions=(SESSION_DATE,),
+                plan_path=plan_path,
+            )
+        )
+        reference = built.plan.families[0].evidence.artifacts[0].payload_files[0]
+        source = tmp_path / reference.path
+        original_mode = stat.S_IMODE(source.stat().st_mode)
+        source.chmod(0o600)
+        source.write_bytes(source.read_bytes() + b"drift")
+        source.chmod(original_mode)
+
+        with pytest.raises(
+            HistoricalResearchCorruptionError,
+            match="physical file hash differs",
+        ):
+            service.read_identity_extension_historical_family_evidence_publication_plan(
+                plan_path=plan_path,
+                approved_plan_sha256=built.plan_sha256,
             )

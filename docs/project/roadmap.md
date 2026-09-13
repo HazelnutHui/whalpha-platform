@@ -204,6 +204,11 @@ Required work:
   assignment. The measured classes are 89,074 rows / 11,433 tickers with zero
   candidates, 23,879 / 2,456 with one, and 196 / 42 with multiple; 98.94% of
   one-candidate rows lie outside that candidate's observed span;
+- completed 2026-09-13: add a distinct bounded Identity-only evidence plan and
+  recoverable Apply entry so exact selected sessions can be bound without
+  duplicating EOD evidence. It retains literal false Historical Coverage,
+  research, Candidate, and Production authority; real `/data` publication
+  remains a separately reviewed exact-plan operation;
 - extend exact Identity evidence through the already available 2026-09-08 and
   2026-09-09 sessions and remeasure the 343 tail rows, then use effective-
   dated lifecycle/security evidence for the exact-session ticker-absent and

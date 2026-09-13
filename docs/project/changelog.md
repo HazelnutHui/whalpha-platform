@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-13 — Add bounded Identity-only family-evidence publication path
+
+- Accepted ADR 0219 and added a one-to-16-session Identity-only evidence plan
+  for explicit canonical Instrument/Identity/Resolver snapshots. It binds the
+  snapshot completion markers and all partition manifest/payload bytes without
+  creating redundant EOD evidence.
+- Extended the existing exact-plan Apply engine through a distinct operation,
+  one-family execution binding, ordered one-target recovery, outside-inventory
+  protection, atomic publication and formal reread. Existing current and
+  reconciled-EOD two-family contracts remain unchanged.
+- Added CLI routing and tests for exact multi-session source binding, source
+  drift refusal, one-target Apply and zero-write completed recovery. The full
+  API suite passes 2,592 tests with two unchanged dependency deprecation
+  warnings.
+- A separate read-only audit of canonical 2026-09-08/09 Identity snapshots
+  measured 206 exact ticker/date resolutions among the 343 post-boundary
+  corporate-action rows. This implementation performs no `/data` Apply and
+  grants no Historical Coverage, research, Candidate, Production or website
+  authority; the real exact plan remains a separate step.
+
 ## 2026-09-13 — Classify unresolved corporate-action history without assignment
 
 - Accepted ADR 0218 and added a deterministic eight-process census over every

@@ -103,6 +103,9 @@ and [0200](decisions/0200-retain-inactive-lifecycle-source-anchors-privately.md)
 ADR [0218](decisions/0218-classify-unresolved-corporate-action-history-without-assignment.md)
 governs the assignment-free historical candidate census for unresolved
 corporate-action tickers.
+ADR [0219](decisions/0219-publish-bounded-identity-extension-evidence.md)
+governs an exact-session Identity-only evidence extension without redundant
+EOD evidence or downstream research authority.
 ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
 requires a complete semantic/conflict census before any SEC fundamental
 feature registry or security projection.
@@ -147,6 +150,7 @@ separately approved bounded serving artifacts.
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
 - [Five-Year Corporate-Action Resolution](operations/five-year-corporate-action-resolution.md)
 - [Five-Year Corporate-Action Unresolved Census](operations/five-year-corporate-action-unresolved-census.md)
+- [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
 - [FINRA OTC Daily List Source Custody](operations/finra-otc-daily-list-source-custody.md)

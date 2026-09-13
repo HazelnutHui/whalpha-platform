@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0219](0219-publish-bounded-identity-extension-evidence.md): adds one
+  explicit Identity-only evidence path for bounded exact-session outcome
+  reconciliation without duplicating EOD evidence or granting research authority.
 - [ADR 0218](0218-classify-unresolved-corporate-action-history-without-assignment.md):
   classifies unresolved action tickers across all bound historical Identity
   sessions while retaining zero stable-ID assignments and quarantine authority.

@@ -9,7 +9,7 @@ import pytest
 from tip_api.services import historical_family_evidence_publication_plan_cli as cli
 
 
-def _evidence(*, reconciled: bool = False):
+def _evidence(*, reconciled: bool = False, identity_extension: bool = False):
     family = SimpleNamespace(
         value="eod_price_bar",
     )
@@ -27,11 +27,15 @@ def _evidence(*, reconciled: bool = False):
         contract_version=(
             "reconciled-eod-historical-family-evidence-publication-plan/1.0"
             if reconciled
+            else "identity-extension-historical-family-evidence-publication-plan/1.0"
+            if identity_extension
             else "current-historical-family-evidence-publication-plan/1.0"
         ),
         operation=(
             "publish_reconciled_eod_historical_family_evidence"
             if reconciled
+            else "publish_identity_extension_historical_family_evidence"
+            if identity_extension
             else "publish_current_historical_family_evidence"
         ),
         logical_fingerprint="c" * 64,
@@ -53,6 +57,8 @@ def _evidence(*, reconciled: bool = False):
     if reconciled:
         plan.source_edition_id = "reconciled-edition"
         plan.source_interval_manifest_fingerprint = "f" * 64
+    if identity_extension:
+        plan.purpose = "corporate_action_exact_date_resolution_support"
     return SimpleNamespace(
         plan=plan,
         plan_path="/tmp/plan.json",
@@ -203,3 +209,42 @@ def test_cli_socket_guard_blocks_and_restores() -> None:
             guarded.connect(("127.0.0.1", 9))
         guarded.close()
     assert socket.socket is original
+
+
+def test_identity_extension_build_cli_passes_exact_sessions(
+    monkeypatch,
+    capsys,
+) -> None:
+    observed = {}
+
+    def build(**kwargs):
+        observed.update(kwargs)
+        return _evidence(identity_extension=True)
+
+    monkeypatch.setattr(
+        cli,
+        "build_identity_extension_historical_family_evidence_publication_plan",
+        build,
+    )
+
+    result = cli.main(
+        [
+            "build-identity-extension",
+            "--data-root",
+            "/data/trading-intelligence-platform",
+            "--session",
+            "2026-09-08",
+            "--session",
+            "2026-09-09",
+            "--plan-path",
+            "/tmp/plan.json",
+        ]
+    )
+    payload = json.loads(capsys.readouterr().out)
+
+    assert result == 0
+    assert payload["purpose"] == "corporate_action_exact_date_resolution_support"
+    assert tuple(item.isoformat() for item in observed["sessions"]) == (
+        "2026-09-08",
+        "2026-09-09",
+    )
