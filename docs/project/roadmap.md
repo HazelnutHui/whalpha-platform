@@ -216,10 +216,17 @@ Required work:
   unresolved census as new owner-only v2 objects. The exact two-session
   extension resolves the predicted 206 rows, leaves 112,943 unresolved, and
   preserves zero census assignment;
-- use effective-dated lifecycle/security evidence for the exact-session
-  ticker-absent and
-  outside-candidate-span populations. Never turn a unique history-wide
-  candidate into an event-date assignment;
+- completed 2026-09-13: cross-census all 112,943 residual action rows against
+  retained lifecycle, inactive-security and FINRA evidence. The result keeps
+  assignments at zero, distinguishes 19 observed-span occurrences from 2,386
+  unverified terminal-gap occurrences, and proves that 83,816 rows have no
+  cross-evidence lead;
+- intersect unresolved action evidence with the first strategy's declared
+  reconstructed development cross-sections and price-return semantics, without
+  relabelling latest-vintage Membership as signal-eligible. Use that named
+  blocking subset for paid-source sampling rather than trying to resolve every
+  out-of-scope fund, preferred, OTC, or other action first. Never turn a unique
+  history-wide candidate or ticker match into an event-date assignment;
 - register a small first set of exact concept/unit/period/form queries from the
   measured census, then build complete effective-dated filer/security links
   and separately decide share-class projection before any security-level

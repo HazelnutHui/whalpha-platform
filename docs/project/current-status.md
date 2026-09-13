@@ -91,6 +91,15 @@ budgets now guard this boundary.
   retains 2,387 candidate relations but assigns zero stable IDs. The earlier
   v1 census remains immutable; both guide evidence acquisition but do not
   assign unresolved actions.
+- ADR 0220's owner-only residual-evidence census now accounts for every one of
+  those 112,943 unresolved rows against the two retained inactive-lifecycle
+  anchors and 62-package FINRA range. At least one cross-evidence lead touches
+  29,127 rows, while 83,816 have none. Only 19 row/candidate occurrences are
+  inside a canonical observed span; 2,386 lie only in the unverified terminal
+  gap, 1,449 contradict retained temporal boundaries, and 20,208 have no
+  lifecycle evidence. FINRA contributes 20,679 exact date/symbol and 10,261
+  exact numeric candidates. The result assigns zero stable IDs and is a
+  targeting diagnostic, not canonical action or lifecycle coverage.
 - A read-only exact-date audit of the complete 2026-09-08 and 2026-09-09
   canonical Identity snapshots found that they can resolve 206 of the 343
   corporate-action rows after the currently bound evidence range. ADR 0219's

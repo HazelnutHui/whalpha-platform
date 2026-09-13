@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-13 — Cross-census residual corporate-action evidence
+
+- Accepted ADR 0220 and added a one-to-one, assignment-free residual evidence
+  census over the current Corporate Action Resolution Shadow, unresolved
+  ticker census, both retained inactive-lifecycle anchors, and the complete
+  official FINRA OTC range.
+- The real owner-only run accounted for all 112,943 unresolved typed rows.
+  Only 19 row/candidate occurrences fall inside an observed canonical span;
+  2,386 occupy an unverified terminal gap, 1,449 contradict retained temporal
+  boundaries, and 20,208 have no lifecycle evidence.
+- FINRA supplies 20,679 exact date/symbol and 10,261 exact numeric candidate
+  matches. Inactive-provider evidence touches 9,445 rows. Combined evidence
+  touches 29,127 rows while 83,816 remain without a cross-evidence lead.
+- The two-file / 4,183,894-byte package has logical fingerprint
+  `3fbcf2719047bf753ed4014017a82f6d3a659e2d90be724e2b35a90cbabce525`,
+  passed built-in and separate formal rereads, and left no symlink or staging
+  residue. The full API suite passed 2,596 tests with two unchanged dependency
+  warnings.
+- Stable-ID assignment, source mutation, `/data`, canonical action, Adjustment
+  Ledger, Historical Coverage, analytics, Candidate, publication, deployment,
+  scheduler, and external-request counts remain zero. The next step is a
+  first-strategy cohort intersection, not another global scan.
+
 ## 2026-09-13 — Add bounded Identity-only family-evidence publication path
 
 - Accepted ADR 0219 and added a one-to-16-session Identity-only evidence plan
