@@ -110,6 +110,7 @@ the detailed dependency and supersession chain.
 - [Data Contract Index](data-contracts/README.md)
 - [Provider Review Index](providers/README.md)
 - [Five-Year Foundation Baseline](audits/five-year-research-foundation-baseline-2026-09-10.md)
+- [Five-Year Research Membership Continuation](audits/five-year-research-membership-continuation-2026-09-13.md)
 - [First-Strategy Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)

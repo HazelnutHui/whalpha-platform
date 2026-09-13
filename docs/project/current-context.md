@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T08:37:35Z
+Operational state verified at: 2026-09-13T12:24:43Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -69,7 +69,7 @@ deeper.
 | EOD | 1,255 contiguous XNYS sessions, 2021-09-13 through 2026-09-11; latest 9,971 rows; latest fingerprint `eec1f813851b378f47fbcd810728ed8b33b4748929ba85ff5d77e837bd12c904` |
 | Identity | all 1,255 EOD sessions plus one Identity-only 2021-09-10 partition; latest 10,000 instruments / 13,176 provider identities |
 | Identity source | 1,253 target sessions; 2026-08-13 and 2026-08-19 remain explicitly unbound |
-| Membership | three signal-eligible sessions / 59,892 decisions; 300 physically separate latest-vintage research-only sessions / 5,571,154 decisions |
+| Membership | three signal-eligible sessions / 59,892 decisions; 1,213 physically separate latest-vintage research-only sessions / 20,641,134 decisions; combined 1,216 / 1,255 sessions |
 | Corporate actions | recent canonical observation 70,099 rows; canonical action is bounded split-only; complete five-year split/dividend packages and resolution work remain private evidence, not canonical completion |
 | Adjustment | sparse split-only outcome reconciliation; neutral omitted rows and total-return coverage are not proven |
 | Lifecycle | canonical five-year lifecycle and terminal outcomes absent |
@@ -77,9 +77,9 @@ deeper.
 | Fundamentals | cutoff-aware SEC issuer selection and aggregate security-projection census complete for four registered queries; only four sessions have strict as-operated next-open projection evidence, while reconstructed history remains development-only |
 | Historical Coverage | partial family evidence exists; final transitive publication absent |
 
-The canonical inventory is 18,175 files / 7,022,164,015 bytes with zero
+The canonical inventory is 20,914 files / 7,382,699,983 bytes with zero
 symlinks and zero publication residue. Its last full inventory fingerprint is
-`eda858b1db23dc58f22cdd0faa290f2141691fecf15862dc5bd6d095354834ff`.
+`b7e0789db07fcb69165723fa6b537ba70379ec836085c8f934ce1812fbeb5f9c`.
 
 The corrected EOD edition covers 1,234 fully source-bound sessions through
 2026-08-12 and has published EOD/Identity family evidence. This does not make
@@ -108,6 +108,11 @@ formal state remains `data_blocked`.
 
 Important private Dell evidence includes:
 
+- 1,213 physically separate reconstructed latest-vintage Membership sessions;
+  together with three signal-eligible sessions, the formal five-year census
+  covers 1,216 / 1,255 sessions and 20,701,026 decisions. Thirty-seven
+  source-available sessions remain rejected by the unchanged Identity join
+  gate and two source sessions are unavailable;
 - a complete 1,255-session SEC filer/security link candidate with 10,681,604
   decisions; all issuer projection was initially disabled;
 - ADR 0224's conservative issuer-fact projection class, covering 6,122,451
@@ -134,6 +139,7 @@ Exact package identities and counts are retained in:
 - [SEC fundamental-projection readiness audit](../audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
 - [First-strategy source sample audit](../audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
+- [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 
 ## Research and product authority
 
@@ -162,7 +168,7 @@ to the immutable 20-action / 64-lifecycle sample. Massive Starter has already
 been rejected as the sole lifecycle authority. No adapter should be invented
 before a real second-source sample is available.
 
-Only after Membership, lifecycle/terminal outcomes, action/adjustment
+Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
 admitted may the first real chronological study begin. See the
 [roadmap](roadmap.md).

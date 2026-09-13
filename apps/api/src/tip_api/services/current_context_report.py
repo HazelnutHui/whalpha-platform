@@ -64,6 +64,15 @@ RESEARCH_SESSION_FLOOR = 252
 
 _RESEARCH_PHYSICAL_FAMILIES = (
     (
+        "research_universe_membership",
+        "research-universe-membership",
+        (
+            "schema_version=1/"
+            "evidence_tier=reconstructed-latest-vintage-v1/"
+            "methodology_version=*/session_date=*"
+        ),
+    ),
+    (
         "instrument_lifecycle",
         "instrument-lifecycle",
         "schema_version=1/as_of_date=*",
@@ -196,7 +205,7 @@ def build_report(
         )
 
     report = {
-        "report_contract": "tip-current-context-report/1.10",
+        "report_contract": "tip-current-context-report/1.11",
         "read_only": True,
         "network_allowed": False,
         "validation_level": (

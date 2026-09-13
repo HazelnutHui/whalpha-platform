@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-09-13 — Extend five-year research-only Membership custody
+
+- Executed the immutable 950-session continuation plan at four-process
+  candidate-build concurrency under the unchanged evidence gates. Archived
+  and formally reread 913 completed sessions / 15,069,980 decisions; failed,
+  overwritten, deleted, and external-request counts were zero.
+- Research-only Membership now contains 1,213 sessions / 20,641,134 decisions.
+  Together with three signal-eligible sessions, the formal five-year census
+  covers 1,216 / 1,255 sessions and 20,701,026 decisions. Thirty-seven
+  source-available sessions remain rejected by `identity_join_ratio_below_gate`;
+  2026-08-13 and 2026-08-19 remain unavailable at source.
+- A bounded quality census found that all 37 join-gate failures also have
+  localized stable-ID collisions. The gate was not lowered. The precise
+  research-only complete-session treatment is now an explicit open question;
+  signal and Production semantics remain unchanged.
+- Postflight found zero staging/partial residue, symlinks, or residual archive
+  processes. The fresh five-year census remains `quarantined` with logical
+  fingerprint
+  `71c78262c0e3be33c7f1ba3676ffb35f5301002f846728b0b9f0b45af564a89c`.
+  The full canonical inventory is 20,914 files / 7,382,699,983 bytes with
+  fingerprint
+  `b7e0789db07fcb69165723fa6b537ba70379ec836085c8f934ce1812fbeb5f9c`.
+- Current-context report 1.11 now surfaces the physically separate research
+  Membership family explicitly instead of showing only signal-eligible
+  Membership. It reports observed custody without upgrading research
+  readiness or weakening the signal Membership blocker.
+- Reconstructed Membership still grants no signal, validation, holdout,
+  performance, Candidate, Production, or web authority. Lifecycle, complete
+  action/adjustment semantics, costs, and final Historical Coverage remain
+  blocking.
+
 ## 2026-09-13 — Bound the five-year research Membership continuation
 
 - Added one resumable, network-disabled continuation entrypoint for the

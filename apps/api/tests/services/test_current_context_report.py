@@ -635,6 +635,57 @@ def test_historical_research_readiness_does_not_promote_observed_partition(
     )
 
 
+def test_historical_research_readiness_surfaces_research_membership_separately(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "data"
+    session = date(2026, 8, 28)
+    identity_manifest = (
+        root
+        / "market-data/snapshots/instrument-master"
+        / f"as_of_date={session.isoformat()}"
+        / "manifest.json"
+    )
+    identity_manifest.parent.mkdir(parents=True)
+    identity_manifest.write_text(
+        json.dumps(
+            {
+                "completion_status": "completed",
+                "as_of_date": session.isoformat(),
+                "instrument_count": 10,
+                "identity_count": 12,
+                "resolver_count": 10,
+                "snapshot_content_sha256": "a" * 64,
+            }
+        )
+    )
+    research_membership = (
+        root
+        / "market-data/research-universe-membership/schema_version=1"
+        / "evidence_tier=reconstructed-latest-vintage-v1"
+        / "methodology_version=test/session_date=2026-08-28"
+    )
+    research_membership.mkdir(parents=True)
+    (research_membership / "manifest.json").write_text("{}")
+
+    state = report._historical_research_readiness(
+        root,
+        session_dates=(session,),
+        history_validation_scope="all_completed_partitions",
+    )
+    families = {item["family"]: item for item in state["families"]}
+
+    assert families["research_universe_membership"] == {
+        "family": "research_universe_membership",
+        "custody_state": "partitions_observed_not_coverage_validated",
+        "partition_count": 1,
+        "manifest_count": 1,
+        "research_ready": False,
+    }
+    assert families["universe_membership"]["custody_state"] == "absent"
+    assert "daily_point_in_time_membership_absent" in state["blocker_codes"]
+
+
 def test_canonical_membership_inventory_requires_and_formally_reads_marker(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,

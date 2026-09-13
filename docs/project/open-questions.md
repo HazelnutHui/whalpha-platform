@@ -22,9 +22,13 @@ history stays in ADRs, the changelog, and audits.
 - Which independent source resolves corporate-action date semantics, dividend
   currency/order handling, unexplained discontinuities, and total-return
   adjustments?
-- Can earlier Membership be reconstructed with defensible historical
-  availability, or must formal research begin only with prospective canonical
-  Membership?
+- For the research-only Membership shadow, may a session whose sub-0.999 join
+  ratio is caused entirely by explicitly localized stable-ID collisions remain
+  complete with every affected instrument quarantined, or must the whole
+  session remain absent? This question cannot weaken signal-eligible or
+  Production Membership rules.
+- Can reconstructed Membership ever obtain defensible historical availability,
+  or must formal validation begin only with prospective canonical Membership?
 - Will a GICS History sample pass the existing identity, knowledge-time,
   inactive coverage, revision, retention, and equal-session-display gates?
   If not, can TRBC close the exact gaps?

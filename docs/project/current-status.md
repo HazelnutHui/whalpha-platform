@@ -50,7 +50,7 @@ price-acquisition gap.
 | --- | --- | --- |
 | EOD price | 1,255 contiguous XNYS sessions | depth complete; whole target not finally admitted |
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
-| Universe Membership | 3 signal-eligible + 300 research-only sessions | incomplete; research-only history cannot become formal point-in-time evidence |
+| Universe Membership | 3 signal-eligible + 1,213 research-only sessions; combined 1,216 / 1,255 | 39 sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
 | Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics and a frozen first-strategy sample | canonical family absent |
 | Historical classification | no complete point-in-time family | absent |
@@ -118,8 +118,10 @@ project.
 2. When a real second-source sample is available, test it only against the
    frozen 20-action / 64-lifecycle population and retain matched, absent,
    unsupported, and conflicting fields.
-3. Complete only the Membership, lifecycle/terminal, action/adjustment, cost,
-   and Historical Coverage evidence required by the first strategy.
+3. Resolve the bounded 37-session research Membership join-gate question
+   without weakening signal or Production rules, then complete only the
+   lifecycle/terminal, action/adjustment, cost, and Historical Coverage
+   evidence required by the first strategy.
 4. Rerun research admission only after a mandatory family changes. If the gate
    still fails, retain rejection without opening outcomes.
 5. Run the registered chronological study only after admission; then preserve
