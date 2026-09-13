@@ -59,6 +59,9 @@ Stock Candidates.
   point-in-time data and readiness requirements.
 - [Five-Year Research Foundation Census V1](data-contracts/five-year-research-foundation-census-v1.md):
   exact rolling target and family-by-family coverage diagnostic.
+- [SEC Company Facts Semantic Census V1](data-contracts/sec-companyfacts-semantic-census-v1.md):
+  source-level concept, unit, duplicate, conflict, and revision coverage before
+  fundamental feature registration.
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md):
   signals, labels, chronology, and stock-outcome boundary.
 - [Candidate Strategy Research Experiment V1](data-contracts/candidate-strategy-research-experiment-v1.md):
@@ -97,6 +100,9 @@ Pivotal research ADRs include
 [0198](decisions/0198-scale-corporate-action-custody-to-the-five-year-range.md),
 [0199](decisions/0199-retain-complete-corporate-action-source-packages-privately.md),
 and [0200](decisions/0200-retain-inactive-lifecycle-source-anchors-privately.md).
+ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
+requires a complete semantic/conflict census before any SEC fundamental
+feature registry or security projection.
 ADR [0201](decisions/0201-admit-bounded-quarantined-historical-identity-alias-collisions.md)
 keeps later-vintage historical alias conflicts quarantined while allowing the
 unrelated resolved cross-section to advance under a separate bounded profile.

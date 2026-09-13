@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0216](0216-census-sec-fundamental-semantics-before-feature-registration.md):
+  measures Company Facts semantic coverage, duplicates, conflicts, and clean
+  revisions before any fundamental feature registry or security projection.
 - [ADR 0215](0215-adopt-retained-finra-sec-research-foundation.md): adopts the
   stranded FINRA/SEC five-year source, filing-clock, sparse-fact, and
   filer/security-link work into main while resolving branch-local ADR number
