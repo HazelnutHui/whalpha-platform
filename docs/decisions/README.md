@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0229](0229-freeze-transition-period-sec-primary-document-acquisition.md):
+  freezes every transition-period SEC document candidate into 22 bounded,
+  deterministic no-request batches before any content acquisition.
 - [ADR 0228](0228-use-sec-submissions-as-a-lifecycle-document-locator-not-a-terminal-fact.md):
   uses SEC filing metadata to locate documents for the frozen lifecycle sample
   while keeping CIK, form presence, security identity, and terminal facts

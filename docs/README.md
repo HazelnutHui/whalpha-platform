@@ -144,6 +144,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback Evidence Blocker Census](operations/strong-leader-pullback-evidence-blocker-census.md)
 - [Strong-Leader Pullback Source Acceptance Sample](operations/strong-leader-pullback-source-acceptance-sample.md)
 - [Strong-Leader Pullback SEC Lifecycle Pilot](operations/strong-leader-pullback-sec-lifecycle-pilot.md)
+- [Strong-Leader Pullback SEC Document Plan](operations/strong-leader-pullback-sec-document-plan.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
