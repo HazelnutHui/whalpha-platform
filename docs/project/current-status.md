@@ -2,453 +2,126 @@
 
 Status date: 2026-09-13
 
-This is the concise actual-state summary. Exact volatile identities and
-cross-device recovery belong in
-[authoritative current context](current-context.md). Proposed work belongs in
-the [roadmap](roadmap.md); history belongs in the changelog, ADRs, and audits.
+This is the concise actual-capability summary. Exact volatile identities belong
+in [current context](current-context.md), proposed sequencing in the
+[roadmap](roadmap.md), and completed execution history in the
+[changelog](changelog.md), ADRs, and audits.
 
-## Production
+## Overall verdict
 
-WH Alpha is live as a Session-protected trilingual U.S. equity
-market-intelligence and research platform. Active OCI release
-2026-09-11T211340Z-26cab64fabda was built from clean source
-26cab64fabdafca710d6471cb09ac8c62ef17c2d.
+- **Production:** live, fresh for the latest completed session, and serving
+  verified trilingual guest/credential flows.
+- **Five-year source foundation:** price and stable-identity depth complete.
+- **Five-year professional backtest foundation:** not complete; formal state is
+  `data_blocked`.
+- **Research:** Strong-Leader Pullback is preregistered but has no real
+  performance result or Candidate authority.
+- **Automation:** the guarded manual daily chain works; unattended write-capable
+  operation is not active.
 
-Production uses Market Intelligence 1.3 for 2026-09-11 and Snapshot 1.11 /
-Dashboard 2.8. English is default; Simplified Chinese and neutral professional
-Spanish are equal presentation layers. Guest and credential Sessions
-intentionally receive identical data and capability.
-Snapshot/API failures close without synthetic Production data.
+## Production capability
 
-Independent postflight matched release, source, bundle, manifest, checksums,
-services, protected routes, guest access, logout, and residue state. Password
-login and final visual appearance remain manual checks.
+WH Alpha is a Session-protected U.S. equity market-intelligence and research
+platform. English, Simplified Chinese, and professional neutral Spanish are
+equal presentation layers. Guest and credential Sessions intentionally receive
+the same data and capability. Snapshot/API failures close without synthetic
+Production data.
 
-The public entry is now research-first: Quant Research Lab and future
-model-driven equity selection lead the narrative; governed AI research
-automation is explicitly planned; the three stable market-context workspaces
-are presented as free supporting tools. The Strong-Leader Pullback dossier
-shows data construction, unpublished out-of-sample evidence, inactive
-Candidate authority, and no performance claim. Conventional account sign-in
-is the first-viewport entry, equal-capability guest access follows immediately,
-and a visible continuation rail leads into the supporting narrative. The
-visual language uses layered rounded surfaces, asymmetric research modules,
-and a restrained animated signal path while preserving explicit research
-status and limitations. The second-screen research hierarchy presents Quant
-Research Lab as the single core and places the current record, downstream
-selection, and planned automation on one explicit vertical evidence rail.
-Inside the authenticated/guest application, Quant Research Lab is also the
-default and sole core workspace. Model-Driven Equity Selection is immediately
-beneath it as the reserved downstream consumer of activated models. The three
-stable market workspaces are grouped separately as free tools rather than
-numbered as equivalent modules. Deep links, multilingual state, Universe choice,
-and identical guest/credential capability remain unchanged.
+Quant Research Lab is the default and sole core workspace. Model-Driven Equity
+Selection is the reserved downstream consumer of activated Lab models. Market
+Regime & Opportunities, Sector ETF Rotation, and Market Structure & Activity
+remain stable supporting tools.
 
-The authenticated and guest application now uses a separate institutional
-research-terminal visual system: a compact workspace context bar, quieter
-navigation, flat analytical surfaces, table-like information groups,
-restrained status color, and reduced rounding, gradients, glow, and motion.
-The public entry is unchanged. No data, model, or access behavior changed.
+The current Candidate score, Entry Geometry, and three technical Strategy
+Channels remain visible, transparent, unvalidated **Baseline V1**. They are not
+expected-return models and will not be tuned in place. The latest verified
+Candidate state is Balanced in both Universes, with 870 Primary and 924
+Secondary display records. Those counts are not Universe sizes.
 
-All five application workspaces are route-level chunks with intent
-preloading, while the Spanish catalog is fetched only when selected or linked.
-The default Quant Research Lab path fell from about 297.6 KiB to 106.3 KiB
-gzip JavaScript. Build-failing entry, asynchronous-chunk, and stylesheet size
-budgets now guard this boundary.
+The frontend uses route-level workspace chunks and loads Spanish only on
+demand. The default Lab route remains within the enforced JavaScript size
+budget. Production is `degraded_short_history` because Market Intelligence
+still consumes only 26 sessions; this is a consumer-integration limit, not a
+price-acquisition gap.
 
-## Data
+## Five-year data readiness
 
-- The rolling five-calendar-year EOD target is complete: 1,255 contiguous XNYS
-  sessions from 2021-09-13 through 2026-09-11. Point-in-time Identity covers
-  all 1,255 EOD sessions and retains one additional Identity-only partition at
-  2021-09-10. Latest EOD has 9,971 rows; latest Identity has 10,000
-  instruments/resolvers and 13,176 provider identities.
-- Historical Identity source custody aligns to 1,253 evaluation sessions; the
-  difference from aligned EOD remains exactly the two explicitly unbound
-  sessions 2026-08-13 and 2026-08-19.
-- Signal-eligible Membership has three prospective sessions and 59,892
-  decisions.
-- Research-only latest-vintage Membership has 300 sessions and 5,571,154
-  decisions. It is physically separate and has no signal, performance,
-  Candidate, Production, or web authority.
-- Canonical corporate-action source custody still has 70,099 bounded recent
-  observations. Separately, exact five-year owner-only source packages contain
-  6,491 split and 235,751 dividend rows with complete natural pagination and a
-  full repeat. The current ADR 0217 durable private resolution shadow v2
-  accounts for all 242,242 baseline rows: 242,235 are typed, 129,292 resolve
-  by exact event-date stable ID, 112,943 remain quarantined, and seven
-  missing/invalid-ticker rows are separately hashed as unrepresentable. Three
-  bound Identity evidences compose 1,253 unique sessions with 287 identical
-  overlaps. The earlier v1 shadow remains immutable. Five split
-  provider IDs still changed without an economic-payload change and remain
-  explicit revision evidence. This shadow is not canonical; source time,
-  unresolved rows, lifecycle, absent-event neutrality, and complete adjustment
-  and total-return semantics remain open.
-- ADR 0218's current owner-only unresolved-action census v2 has scanned all
-  1,253 bound Identity Resolvers. It classifies every 112,943 unresolved typed
-  row: 89,074 rows / 11,433 tickers have zero historical candidate, 23,676
-  rows / 2,307 tickers have one, and 193 rows / 40 tickers have multiple. It
-  retains 2,387 candidate relations but assigns zero stable IDs. The earlier
-  v1 census remains immutable; both guide evidence acquisition but do not
-  assign unresolved actions.
-- ADR 0220's owner-only residual-evidence census now accounts for every one of
-  those 112,943 unresolved rows against the two retained inactive-lifecycle
-  anchors and 62-package FINRA range. At least one cross-evidence lead touches
-  29,127 rows, while 83,816 have none. Only 19 row/candidate occurrences are
-  inside a canonical observed span; 2,386 lie only in the unverified terminal
-  gap, 1,449 contradict retained temporal boundaries, and 20,208 have no
-  lifecycle evidence. FINRA contributes 20,679 exact date/symbol and 10,261
-  exact numeric candidates. The result assigns zero stable IDs and is a
-  targeting diagnostic, not canonical action or lifecycle coverage.
-- ADR 0221's owner-only first-strategy blocker census now binds all 437,402
-  fixed Strong-Leader Pullback paths / 2,161 IDs to those retained inputs. It
-  finds 4,643 action/instrument exposures: 4,623 exact event-date resolutions
-  and 20 unassigned history-candidate relations. Eighty-nine lifecycle
-  candidates intersect 8,677 paths; 64 IDs / 252 paths cross the last
-  observation inside the five-session label horizon. The output passed formal
-  reread and leaves outcomes, assignments, admission, canonical writes,
-  Candidate, publication and deployment at zero. It narrows evidence work but
-  does not admit research.
-- ADR 0223's owner-only source acceptance sample now freezes the complete
-  provider-neutral population: 20 unassigned action relations / four action
-  IDs and 64 five-session lifecycle-crossing IDs, backed by 122 exact retained
-  source occurrences. The 68 combined IDs have no overlap. Its one 78,458-byte
-  report passed independent formal reread at logical fingerprint
-  `f29da6a170f873b20a4ee57141cf1dc975f5a8f3a840dc19dc115283828c1a5a`.
-  It makes no provider request and grants no assignment, terminal fact,
-  outcome, admission, canonical, Candidate, publication, or Production
-  authority.
-- A read-only exact-date audit of the complete 2026-09-08 and 2026-09-09
-  canonical Identity snapshots found that they can resolve 206 of the 343
-  corporate-action rows after the currently bound evidence range. ADR 0219's
-  bounded Identity-only plan and recoverable Apply path are implemented so
-  those exact sessions can be bound without duplicating EOD evidence. The
-  exact no-write plan is built and revalidated with SHA-256
-  `f099929d17c07695d3b468910e1c7233bed74bab1714a81ad1189dc9cfb7317a`;
-  its sole 3,623-byte target was exactly authorized, published and formally
-  reread. Zero-write recovery passed; outside inventory did not change. It
-  grants no Historical Coverage or research authority. The downstream v2
-  shadow confirms exactly 206 additional resolutions and leaves the other 137
-  newly inspected event-date tickers unresolved.
-- Official/free FINRA OTC Daily List custody is complete for 2021-08-11 through
-  2026-09-09: 62 monthly packages / 68,714 observations. It is OTC
-  corroboration only. A sealed FINRA/Massive census found 2,298 split and
-  8,205 dividend unique numeric candidates but resolved zero stable IDs.
-- Official SEC Company Facts and Submissions source custody, payload census,
-  and conservative filing-clock normalization are complete for the same
-  five-year support range. The sparse normalized source has 41,619,407 fact
-  occurrences; 41,619,004 inherit admitted clocks and 403 remain quarantined.
-  A one-session filer/security pilot resolved 8,201 stable-ID decisions but
-  intentionally grants no issuer projection. The new complete source-semantic
-  census measures 24,498,347 exact semantic keys: 24,497,828 pass its strict
-  revision chronology and 519 remain quarantined; 886,400 consecutive later
-  states change value. Its 5,019-CIK common-stock diagnostic finds in-range SEC
-  facts for 4,990 and none for 29. The census is discovery-only. Registered
-  concept/unit/period/form queries remain required before model use.
-  The complete owner-only filer/security link candidate now covers all 1,255
-  sessions / 10,681,604 stable-security decisions. It admits 9,456,209
-  unique-CIK links, quarantines 1,205,516 missing-CIK rows, and quarantines all
-  19,879 rows on the two explicitly missing source sessions. Its fingerprint
-  is `a71a6180f86228b7c80062c121da42e46a101d8f012e7f7a537147be0b609c71`.
-  Source-time eligibility remains explicit and issuer/share-class projection
-  remains unauthorized.
-  ADR 0224 now freezes the first projection boundary: only a session-local CIK
-  with one admitted common stock may use the default registered issuer-fact
-  projection. That class covers 6,122,451 / 6,244,758 admitted common-stock
-  row-sessions; 122,307 multi-common-stock rows remain outside it. Only 11
-  sessions pass the retained next-open source-observation gate, so the rest of
-  the reconstructed link history cannot support sealed validation, holdout,
-  headline performance, activation, or Production Candidate authority.
-- A fixed 30-item Massive Starter lifecycle diagnostic matched Ticker Events
-  for only six instruments; 24 returned HTTP 404 and all nine returned events
-  were ticker changes. Massive is useful partial evidence but is rejected as
-  the sole-primary lifecycle source.
-- The complete 2026-07-16 and 2026-09-03 inactive-listing source anchors are
-  retained in owner-only persistent Dell custody and formally reread. Their
-  23,260 / 23,469 rows remain discovery and reconciliation evidence, not
-  canonical lifecycle or terminal outcomes.
-- Those anchors have now been re-resolved against 1,216 / 1,251 canonical
-  Instrument sessions and retained as one exact owner-only six-file shadow.
-  It contains 2,206 / 2,278 review candidates and 21,054 / 21,191 quarantined
-  observations, representing 2,283 distinct review-candidate instruments
-  across both anchors. This is a durable corroboration queue, not canonical
-  lifecycle, last-trade, successor, consideration, or terminal-return evidence.
-- The current verified inventory is 18,175 files / 7,022,164,015 bytes with
-  zero symlinks and zero publication residue.
-- Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
-  provider-form Activation remains provisional.
-- Stocks Starter removed the old Basic rate limit and provided the tested 9/9
-  same-evening EOD. The separate S3 credential is now valid: a 2026-09-09 Day
-  Aggregates Flat File succeeded, while 2021-09-09 returned access denied.
-  Current REST and Flat File controls matched exactly on shared OHLCV and trade
-  count; Flat Files omit VWAP and 13 REST zero-volume records. Starter cannot
-  close the two oldest fixed-run days or the earlier external warm-up. ADR
-  0206 therefore ends those retries and declines a deeper purchase solely for
-  this edge: normal daily updates will roll the active source target to
-  2021-09-13, and its first 20 sessions will be excluded as feature warm-up.
-- The final network-disabled rolling census confirms price/Identity depth but
-  remains `quarantined`: Membership covers 303 sessions, lifecycle and PIT
-  classification are absent, and actions/adjustments remain incomplete.
-- The shared `.venv` editable-install metadata currently points at the older
-  Codex worktree rather than the canonical checkout. The completed backfill was
-  not affected: its admin entry point delegated to `scripts/dev/run-project-python.sh`,
-  which prepends the canonical repository source path before Python starts.
-  Reconciled EOD runbook commands use that same wrapper. Do not invoke operator
-  modules through bare `.venv/bin/python -m` until the now-quiescent environment
-  is rebound. A network-disabled local rebind attempt stopped before mutation
-  because the environment lacks `setuptools`; the wrapper remains the safe
-  path and no dependency was downloaded.
-- The sealed 2026-09-12 Reconciled EOD source census initially exposed 305
-  missing Grouped Daily packages and two invalid Identity-source bindings. A
-  reporting correction then showed that those two invalid dates also lacked
-  price packages. All 307 price packages are now reacquired with zero retries
-  or failures. Final private custody is 614 files / 384,055,489 bytes with
-  owner-only modes, zero symlinks, and zero staging residue. The final
-  four-worker census selects 948 retained originals plus 305 visibly later
-  reacquisitions, with zero price gaps and zero conflicts. It remains
-  incomplete only for 2026-08-13 and 2026-08-19, whose original Identity
-  responses were not retained. Isolated later-Identity rebuild diagnostics
-  omitted one and five canonical business keys, so the no-removal gate was not
-  weakened. ADR 0207 instead fixes the first real candidate interval at the
-  preceding 1,234 fully source-bound sessions through 2026-08-12. See the
-  [dated audit](../audits/reconciled-eod-source-reacquisition-2026-09-12.md).
-- The clean contract 1.2 Reconciled EOD candidate is complete and formally
-  reread: 1,234 sessions from 2021-09-13 through 2026-08-12, 10,376,263
-  records, 2,461 accepted additions, 50 source-proven expected absences, and
-  2,648,128 source-proven ticker-case repairs. Its interval fingerprint is
-  `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3`.
-  Owner-only custody contains 2,469 files / 1,083,699,732 bytes with zero
-  symlinks or staging residue. It is bound to implementation revision
-  `c798e582b0ad3b49ada5fc7fde94125382ef9c06`. All stopped predecessors remain
-  incomplete, have no interval marker, and are not reused. See the
-  [build audit](../audits/reconciled-eod-edition-first-build-2026-09-12.md).
-- The separately sealed no-write Apply plan was executed exactly once after
-  explicit approval. Its
-  file SHA-256 is
-  `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`,
-  logical fingerprint is
-  `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`,
-  and expected canonical pre-state fingerprint is
-  `a83136b65d76371a9932aa58fc142aa815d1303dc89f600d852cc177eea36d5e`.
-  Planning formally reread all candidate sessions and bound all 2,469 files.
-  Atomic Apply published exactly 2,469 files / 1,083,699,732 bytes and formally
-  reread all 1,234 sessions / 10,376,263 records. The canonical postflight has
-  zero symlinks and zero residue. Apply made no provider request, overwrote or
-  deleted no existing partition, and grants no research, Candidate,
-  Production, or website authority.
-- ADR 0210's offline adapter then formally validated the canonical corrected
-  edition and its exact same-session Identity snapshots as two unpublished
-  family-evidence candidates. EOD covers 1,234 sessions / 10,376,263 records
-  with evidence fingerprint
-  `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`;
-  Identity covers the same 1,234 sessions / 10,472,243 instrument-snapshot
-  records with fingerprint
-  `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`.
-  The eight-process run took 374.70 seconds and made zero requests or writes.
-  Both were initially `validated_not_published`; the separate legacy
-  304-session family evidence was not reused or overwritten.
-- ADR 0211's distinct no-write plan now binds those two candidates to the exact
-  corrected edition and two absent targets. Plan SHA-256 is
-  `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`,
-  logical fingerprint is
-  `443d80c7347b794b7f105c2d8b5dc8e57fbc4d4dd67442773983647d69d0fcfc`,
-  and family-set fingerprint is
-  `30722680a6d2f8448db0e895fed7e060ca8a81f2d5faebca3b4d23fbba2b0d8e`.
-  The independent exact-SHA reread passed before Apply.
-- ADR 0212 now routes that distinct plan through the already proven
-  ordered-prefix, recoverable family-evidence Apply mechanism. Temporary-root
-  publication and zero-write completed-state recovery passed while the old
-  rolling-current entry continued to reject the edition plan. This tested
-  capability was then executed only after exact-plan approval.
-- The authorized corrected-edition Apply published exactly two evidence
-  manifests / 2,673,980 bytes. At that earlier checkpoint, outside-target
-  inventory remained
-  `8baec95b3a4e81cc2b4ca05f9f1fb24a8a112237c6c217bf88c09066462aa307`
-  before and after. Immediate completed-state recovery reused both targets with
-  zero writes. Independent postflight produced full inventory fingerprint
-  `87a2a573b3350918a90db3cea51faaa1839a4e5fb420e2f20278dfc3cb9aa244`,
-  with zero symlinks and zero residue. The current inventory is recorded above.
-  Historical Coverage, research,
-  Production, and website state remain unchanged.
-- Source Coverage and full-edition construction now model the separate
-  2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
-  contract remains available for a future deeper-history source. The stopped
-  fixed run left two EOD and one Identity session missing, but external warm-up
-  acquisition is no longer active for the Starter-backed first program under
-  ADR 0206.
-- Warm-up source custody has a separate fixed historical workspace named
-  `warmup-2021-08-11--2021-09-08`. The existing evaluation workspace remains
-  immutable and date-truthful. Source Coverage recognizes evaluation and
-  warm-up backfills as distinct origins; no warm-up package exists, and ADR
-  0206 keeps that reserved workspace unpopulated unless deeper history is
-  separately approved.
-The detailed bounded-backfill execution history, typed stops, and recovery
-evidence remain in the
-[continuous-run audit](../audits/five-year-eod-identity-continuous-run-2026-09-10.md)
-and [terminal audit](../audits/five-year-eod-identity-backfill-terminal-2026-09-11.md).
-Price depth and Grouped Daily source-package coverage are no longer the main
-research blockers.
+| Family | Current capability | Research status |
+| --- | --- | --- |
+| EOD price | 1,255 contiguous XNYS sessions | depth complete; whole target not finally admitted |
+| Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
+| Universe Membership | 3 signal-eligible + 300 research-only sessions | incomplete; research-only history cannot become formal point-in-time evidence |
+| Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics and a frozen first-strategy sample | canonical family absent |
+| Historical classification | no complete point-in-time family | absent |
+| SEC fundamentals | official source custody, filing clocks, sparse facts, semantic census, and security-link candidate | no registered security-level feature query; historical knowledge time mostly reconstruction-only |
+| Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
+| Historical Coverage | several family-evidence manifests | final transitive admission absent |
+| Evaluation/holdout | fixture-tested mechanics | no real chronological dataset or sealed real holdout |
 
-## Product
+The corrected 1,234-session EOD edition and matching Identity evidence are
+canonically published and formally reread. That completes a price-family
+reconciliation milestone; it does not repair Membership, lifecycle, actions,
+adjustments, fundamentals, costs, or final Historical Coverage.
 
-The stable market workspaces are:
+Historical source packages retrieved later may support explicitly labelled
+development sensitivity. Unless their source-available time is defensible at
+the historical signal cutoff, they cannot support locked validation, sealed
+holdout, headline performance, model activation, or Production Candidate use.
 
-1. Market Regime & Opportunities (市场风向与机会);
-2. Sector ETF Rotation (行业轮动); and
-3. Market Structure & Activity (市场结构与活跃度).
+## First research program
 
-Market Regime is confirmed Balanced in both Universes; candidate state is
-Defensive. The product contains 16 preregistered ETF relationships and
-5/10/20-session views. These are price-derived proxies, not fund flow,
-classification, or causality.
+Strong-Leader Pullback V1 asks whether an orderly pullback and close-based
+recovery among existing relative leaders improves the next 1-, 3-, and
+5-session underlying-stock outcome. Its hypothesis, 24-combination search
+budget, chronological split, purge/embargo, controls, costs, statistics, and
+holdout mechanics are preregistered.
 
-Quant Research Lab is the model registry, research evidence, and lifecycle
-authority. Stock Candidates will later consume one to three separately
-validated and activated Lab models under ADR 0191.
+Current admission remains rejected:
 
-The deployed Candidate score, Entry Geometry, and three technical Strategy
-Channels are frozen, unvalidated **Baseline V1**. Current display counts are
-862 Primary and 922 Secondary eligible records, not Universe sizes. Their
-logic remains transparent, but they are not expected-return models and will
-not be tuned in place. Technical Reversal, Fundamental Value Reversal, and
-Defensive Rotation remain unavailable.
+- its fixed reconstructed population contains 437,402 raw-complete paths, but
+  no session has all mandatory evidence;
+- known split-like exposures have a defined future path-local treatment;
+- 20 action relations and 64 lifecycle-crossing IDs form the exact unresolved
+  external-source acceptance sample; and
+- no trigger, outcome, metric, parameter winner, cohort, or real backtest has
+  been authorized.
 
-The repository now has a typed Lab model registry, result-publication
-semantics, catalog activation guard, and one browser-rendered
-Strong-Leader-Pullback method record under ADR 0192. The record is
-contract-validated against its canonical Python builder. It has no real
-performance result, no out-of-sample observation, and no Candidate authority;
-all real result areas remain locked. This interface is now present in the
-active OCI release.
+The SEC fundamental lane is independent of that price-strategy blocker. The
+complete filer/security link candidate exists, but ADR 0224 permits only a
+registered issuer-fact projection. About 98.0% of admitted common-stock
+row-sessions meet the conservative structural class; only 11 sessions meet the
+retained strict next-open knowledge-time tier. Reconstructed history therefore
+remains development-only.
 
-ADR 0194 records a future bounded AI Quant Research Factory inside the Lab.
-No agent orchestrator or autonomous research service exists yet. The first
-implementation gate is still one complete Strong-Leader Pullback path; only
-after it proves reproducible rejection and stage isolation may a small multi-
-role agent pilot begin.
+## Operations and performance
 
-## Research readiness
+The installed wake timer is read-only. No unattended fetch, Apply, analytics,
+publication, deployment, credential access, retry, or email alert delivery is
+active. SMTP is intentionally unconfigured.
 
-Formal state is data-blocked; real evaluation and performance claims remain
-unauthorized.
+The guarded daily chain has completed end to end. The latest measured offline
+run took about 17.1 minutes; Candidate remained the hotspot at about seven
+minutes, about 11.2 GiB peak memory, and one CPU core. The segmented Candidate
+experiment is a cutover NO-GO and must not become an open-ended optimization
+project.
 
-Complete:
+## Immediate gates
 
-- 1,255 aligned EOD and Identity durable partitions through 2026-09-11;
-- 1,253 target-session Identity source partitions, 300 research-only
-  Membership sessions, and three prospective signal-eligible Membership
-  sessions;
-- 1,253 formally selected Grouped Daily packages plus two Identity-source
-  exceptions awaiting disposition;
-- a complete-accounting five-year private corporate-action resolution shadow,
-  its complete assignment-free unresolved-ticker census, bounded canonical
-  source observations, split-only facts, and sparse split-adjustment evidence;
-- an outcome-blind first-strategy action/lifecycle blocker census over all
-  437,402 fixed reconstructed paths;
-- fixture-tested input, chronology, statistics, cost-scenario, and holdout
-  mechanics;
-- a preregistered Strong-Leader Pullback V1;
-- the canonical contract 1.2 corrected EOD edition for 1,234 sessions through
-  2026-08-12, formally reread after atomic Apply;
-- the exact edition-specific two-family evidence publication plan; and
-- canonical publication and zero-write recovery of both exact evidence
-  manifests.
+1. Register a deliberately small issuer-level SEC fundamental query set and
+   produce an outcome-free coverage/readiness report. Do not build a broad
+   daily Cartesian panel.
+2. When a real second-source sample is available, test it only against the
+   frozen 20-action / 64-lifecycle population and retain matched, absent,
+   unsupported, and conflicting fields.
+3. Complete only the Membership, lifecycle/terminal, action/adjustment, cost,
+   and Historical Coverage evidence required by the first strategy.
+4. Rerun research admission only after a mandatory family changes. If the gate
+   still fails, retain rejection without opening outcomes.
+5. Run the registered chronological study only after admission; then preserve
+   either the validated result or the failure.
 
-Incomplete:
-
-- later Historical Coverage and research admission of the canonical ADR 0207
-  corrected EOD edition; edition construction, reconciliation, edition Apply,
-  postflight, family-evidence validation, planning, and publication are
-  complete;
-- historical point-in-time Membership eligibility;
-- canonical cross-venue lifecycle and terminal outcomes;
-- complete action availability/revision and adjustment/total-return evidence;
-- final transitive Historical Coverage;
-- observed spread/impact and calibrated execution costs;
-- a real chronological evaluation dataset and sealed real holdout.
-
-Historical backfills observed later remain ineligible for formal validation,
-holdout, and Production claims unless source availability at signal time is
-defensible. Current membership or taxonomy must not be projected backward.
-ADR 0193 permits the fixed 287-session interval through 2026-08-12 only for an
-outcome-blind coverage census and possible later development cohort. ADR 0195
-has now frozen a 100%-complete Primary session-cross-section rule and the
-existing 252-session minimum. The typed decision rejected current evidence:
-zero of 267 candidate sessions passed, 20 were zero-included warmup sessions,
-and all 437,402 raw-complete paths still lack proven sparse-row neutrality and
-canonical lifecycle evidence. No cohort is admitted and development remains
-unauthorized. The Strong-Leader Pullback V1 input adapter has fixture evidence
-only and has never produced a real backtest.
-
-The completed ADR 0221 intersection reduces the immediately relevant source
-sample to 44 exact-resolved split-like exposures, one unresolved reverse
-split, 20 total unassigned action relations, and 64 lifecycle IDs whose
-five-session labels cross the last observation. It does not prove omitted-row
-neutrality, adjustment factors, or terminal returns, so the admission decision
-must not be rerun until those mandatory inputs change.
-
-ADR 0222's follow-on cross-read proves that all 44 exact-resolved split-like
-events are active canonical facts and reconcile to 6,859 clear existing ledger
-rows with zero quarantine. It freezes signal-local feature and exit-local label
-bases for future V2 construction. The fixed 2026-09-04 ledger remains
-outcome-reconciliation evidence, and the unresolved reverse split plus omitted-
-row neutrality remain blocked.
-
-## Automation and performance
-
-The installed wake timer is active but read-only. No unattended write-capable
-scheduler is installed and SMTP is unconfigured. The guarded manual chain
-works end to end.
-
-The 2026-09-11 persistent run completed nine offline stages in about 17.1
-minutes. Candidate remained the main hotspot at about 7.0 minutes, 11.2 GiB
-peak, and one CPU core. The segmented Candidate path remains a cutover NO-GO;
-do not continue that optimization without a new budget breach and a design
-that fixes both known gaps.
-
-## Next priority
-
-The current rolling census fixes 1,255 sessions from 2021-09-13 through
-2026-09-11. EOD and target-session Identity are complete. Membership remains
-303/1,255.
-Required lifecycle, PIT classification, PIT fundamentals, and Historical
-Coverage are absent; status remains `quarantined`.
-
-1. Do not restart the stopped `20260911g` continuation or retry its expired
-   boundary. The rolling price/Identity target and final census are complete.
-   The complete corrected edition has now passed exact planning, atomic Apply,
-   canonical postflight, read-only EOD/Identity family-evidence validation, and
-   edition-specific evidence publication planning, exact Apply, and zero-write
-   recovery. This still does not admit research: the other mandatory
-   families and final Historical Coverage remain later gates. Treat the first
-   20 edition sessions as disclosed feature warm-up and exclude them from
-   signals and performance. Do not retry the
-   expired 2021-09-09/10 price boundary or populate the reserved external
-   warm-up workspace under Starter.
-2. Continue independent construction using Massive plus bounded official/free
-   source pilots for identity, listing status, lifecycle, corporate actions,
-   terminal outcomes, and point-in-time fundamentals. LSEG is a later
-   measured-gap option rather than the mandatory next dependency. ADR 0223's
-   immutable 20-action / 64-lifecycle sample is now the exact source-test
-   boundary. Bind every provider result to its fingerprint, retain explicit
-   matched/absent/unsupported/conflicting states, and do not resume an
-   undirected global scan.
-3. Persist reconstructed historical Membership only in the ADR 0197
-   research-only family. Keep the three signal-eligible sessions and their
-   Production reader physically separate.
-4. Apply ADR 0222's path-local price-return semantics only after admissible
-   coverage exists; retain dividends as event context and prove missing-event
-   neutrality independently. Do not build another global adjustment ledger.
-5. Repeat ADR 0195 only after mandatory evidence changes, then admit at least
-   252 complete session cross-sections or retain rejection without opening
-   outcomes.
-6. Execute the registered chronological research only after admission, and
-   retain success or failure.
-7. Generalize only the proven path into a bounded multi-agent research pilot.
-8. Activate and connect a model to Stock Candidates only after separate
-   operational review.
-
-Daily reliability and one bounded next-session automation rehearsal may proceed
-in parallel. Do not tune Baseline V1, restart indefinite Candidate
-optimization, add guest restrictions, call stock outcomes option returns, or
-add infrastructure without a demonstrated requirement.
+Do not tune Baseline V1, project current Membership or taxonomy backward,
+infer lifecycle from ticker patterns, call price/volume fund flow, call stock
+returns option returns, or introduce new infrastructure without a measured
+need.

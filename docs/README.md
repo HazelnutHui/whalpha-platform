@@ -82,51 +82,16 @@ Stock Candidates.
 - [Strategy Research Readiness V1](data-contracts/strategy-research-readiness-v1.md):
   readiness without performance authority.
 
-Pivotal research ADRs include
-[0049](decisions/0049-separate-candidate-strategy-channels.md),
-[0050](decisions/0050-seal-strategy-signals-before-forward-outcomes.md),
-[0051](decisions/0051-require-point-in-time-historical-research-foundation.md),
-[0097](decisions/0097-preregister-personal-strategy-research-before-backtesting.md),
-[0104](decisions/0104-freeze-session-balanced-research-statistics.md),
-[0109](decisions/0109-separate-research-readiness-from-development-authorization.md),
-[0186](decisions/0186-seal-strong-leader-pullback-research-inputs.md),
-[0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md),
-[0192](decisions/0192-publish-lab-model-records-without-candidate-authority.md),
-[0193](decisions/0193-admit-latest-vintage-reconstruction-for-development-only.md),
-[0194](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md),
-[0195](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md),
-[0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md),
-[0197](decisions/0197-separate-reconstructed-research-membership-from-signal-eligible-membership.md),
-[0198](decisions/0198-scale-corporate-action-custody-to-the-five-year-range.md),
-[0199](decisions/0199-retain-complete-corporate-action-source-packages-privately.md),
-and [0200](decisions/0200-retain-inactive-lifecycle-source-anchors-privately.md).
-ADR [0218](decisions/0218-classify-unresolved-corporate-action-history-without-assignment.md)
-governs the assignment-free historical candidate census for unresolved
-corporate-action tickers.
-ADR [0219](decisions/0219-publish-bounded-identity-extension-evidence.md)
-governs an exact-session Identity-only evidence extension without redundant
-EOD evidence or downstream research authority.
-ADR [0220](decisions/0220-cross-census-residual-corporate-action-evidence-without-assignment.md)
-governs the assignment-free connection of residual actions to retained
-lifecycle, inactive-security, and FINRA evidence.
-ADR [0221](decisions/0221-scope-action-and-lifecycle-gaps-to-the-first-strategy.md)
-governs the outcome-blind intersection of those facts with the first
-strategy's fixed reconstructed paths.
-ADR [0222](decisions/0222-use-path-local-split-bases-for-strategy-features-and-labels.md)
-requires path-local split bases for future V2 features and labels and keeps the
-fixed-basis sparse ledger as reconciliation evidence only.
-ADR [0223](decisions/0223-freeze-the-first-strategy-cross-venue-source-sample.md)
-freezes the complete first-strategy action/lifecycle acceptance sample before
-any provider comparison.
-ADR [0224](decisions/0224-gate-sec-facts-by-security-projection-class-and-evidence-tier.md)
-gates SEC issuer facts by explicit security-projection class and knowledge-time
-evidence tier.
-ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
-requires a complete semantic/conflict census before any SEC fundamental
-feature registry or security projection.
-ADR [0201](decisions/0201-admit-bounded-quarantined-historical-identity-alias-collisions.md)
-keeps later-vintage historical alias conflicts quarantined while allowing the
-unrelated resolved cross-section to advance under a separate bounded profile.
+The current governing sequence is anchored by
+[ADR 0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md)
+for model promotion,
+[ADR 0194](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)
+for bounded AI research,
+[ADR 0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md)
+for the Dell data program, and
+[ADR 0224](decisions/0224-gate-sec-facts-by-security-projection-class-and-evidence-tier.md)
+for SEC security projection. Use the [ADR index](decisions/README.md) to trace
+the detailed dependency and supersession chain.
 
 ## Architecture and data
 
@@ -142,22 +107,13 @@ unrelated resolved cross-section to advance under a separate bounded profile.
 - [Data Contract Index](data-contracts/README.md)
 - [Provider Review Index](providers/README.md)
 - [Five-Year Foundation Baseline](audits/five-year-research-foundation-baseline-2026-09-10.md)
-- [Five-Year EOD/Identity Continuous Run](audits/five-year-eod-identity-continuous-run-2026-09-10.md)
-- [Five-Year Corporate-Action Source Audit](audits/five-year-corporate-action-source-2026-09-10.md)
-- [Five-Year Corporate-Action Resolution Shadow](audits/five-year-corporate-action-resolution-shadow-2026-09-13.md)
-- [Five-Year Corporate-Action Unresolved Census](audits/five-year-corporate-action-unresolved-census-2026-09-13.md)
-- [Five-Year Corporate-Action Residual Evidence Census](audits/five-year-corporate-action-residual-evidence-census-2026-09-13.md)
-- [Strong-Leader Pullback Evidence Blocker Census](audits/strong-leader-pullback-evidence-blocker-census-2026-09-13.md)
-- [Strong-Leader Pullback Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
-- [Bounded Identity Extension Evidence](audits/bounded-identity-extension-evidence-plan-2026-09-13.md)
-- [Five-Year Lifecycle Source Custody Audit](audits/five-year-lifecycle-source-custody-2026-09-10.md)
-- [Five-Year FINRA OTC Daily List Source](audits/five-year-finra-otc-daily-list-source-2026-09-10.md)
-- [Five-Year FINRA/Massive Action Census](audits/five-year-finra-massive-action-cross-source-census-2026-09-10.md)
-- [SEC Company Facts and Filing-Time Evidence](audits/sec-companyfacts-payload-census-2026-09-10.md)
-- [Retained FINRA/SEC Foundation Integration](audits/retained-finra-sec-foundation-integration-2026-09-12.md)
+- [First-Strategy Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [Five-Year SEC Filer-to-Security Link Candidate](audits/five-year-sec-filer-security-link-candidate-2026-09-13.md)
 - [SEC Filer/Security Projection Readiness](audits/sec-filer-security-projection-readiness-2026-09-13.md)
+
+Other dated runs remain discoverable in [`docs/audits`](audits/). They are
+evidence, not part of the default recovery path.
 
 Dell owns code, data, governance, and heavy computation. OCI receives only
 separately approved bounded serving artifacts.

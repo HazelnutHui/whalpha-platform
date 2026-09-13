@@ -94,7 +94,11 @@ Do not independently expand this project into:
 - [docs/project/current-context.md](docs/project/current-context.md) must stay
   compact enough for task/device recovery; move dated execution narrative to
   audits or the changelog.
+- Update current context and current status by replacing superseded facts;
+  never append a completed run narrative to either file.
 - [docs/project/roadmap.md](docs/project/roadmap.md) is not a commitment.
+- Keep the roadmap future-facing; completed implementation detail belongs in
+  the changelog, its ADR, or a dated audit.
 - [docs/project/changelog.md](docs/project/changelog.md) records meaningful project-level changes.
 - Avoid duplicating the same authoritative fact across many files.
 - Link to the authoritative document instead.

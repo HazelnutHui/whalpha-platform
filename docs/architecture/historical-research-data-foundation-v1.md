@@ -105,7 +105,7 @@ readiness.
 | Family | Grain | Authority | Required role |
 | --- | --- | --- | --- |
 | Canonical EOD Price Bar | instrument, session, source, revision | Implemented canonical fact; affected V1 history is quarantined under ADR 0203 | Raw OHLCV and current Production outcome path |
-| Reconciled EOD Edition | edition, instrument, session, source, revision | Construction, persistence, formal reread, source selection, and atomic Apply implemented; first complete real edition pending | Complete immutable research price candidate after interval reconciliation |
+| Reconciled EOD Edition | edition, instrument, session, source, revision | First complete real edition is canonical and formally reread for its exact bounded interval | Complete immutable research price candidate after interval reconciliation |
 | Point-in-time Identity | source observation and resolved instrument as of date | Implemented resolved snapshots; normalized source observations are canonical for the exact sessions reported by current context | Stable-ID/ticker/exchange/status evidence |
 | Daily Universe Membership | universe, instrument, session, methodology | Derived canonical decision | Performance-eligible historical population |
 | Corporate Action | instrument, action, source, revision | Canonical event fact | Splits, distributions, reorganizations, symbol changes, delistings |
@@ -354,11 +354,13 @@ with its own bounded representative Pilot rather than a bulk run.
 
 ## Deferred work
 
-- Exact provider selection and live entitlement verification
-- Corporate-action and lifecycle adapters
+- Remaining provider selection and bounded entitlement/sample verification for
+  unresolved fact families
+- Canonical lifecycle/terminal resolution and remaining corporate-action
+  adapters
 - Canonical adjustment coverage beyond the ADR 0177 sparse affected-path split
   candidate, including neutral-row proof and dividend total return
-- Historical membership builder
+- Complete admitted historical Membership coverage and formal publication
 - Canonical membership, action, lifecycle, adjustment, cost, and evaluation
   acquisition/build orchestration
 - Backup and deletion policy

@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-09-13 — Reconcile and slim the default project recovery path
+
+- Rebuilt current context, current status, and the roadmap around distinct
+  authority: verified identities, actual capability, and future sequencing.
+  Removed more than 800 lines of duplicated execution narrative while retaining its
+  evidence in the changelog, ADRs, operations, and dated audits.
+- Corrected the stale Candidate summary to the formally reread Production
+  state: both Universes are Balanced and the display contains 870 Primary / 924
+  Secondary records.
+- Made the central boundary explicit: five-year price and Identity depth is
+  complete, while the performance-eligible research foundation remains
+  `data_blocked` by Membership, lifecycle/terminal, action/adjustment,
+  knowledge-time, cost, and Historical Coverage gates.
+- Shortened the documentation index to the current governing ADRs and evidence
+  checkpoints. Historical files remain preserved and discoverable rather than
+  being treated as default recovery material.
+
 ## 2026-09-13 — Gate SEC security projection by class and evidence time
 
 - Accepted ADR 0224 after an outcome-blind selected-column scan of the complete
