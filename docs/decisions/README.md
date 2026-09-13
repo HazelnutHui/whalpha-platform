@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0235](0235-measure-cross-document-case-coverage-before-adjudication.md):
+  measures exact stable-ID/field candidate coverage before any matched,
+  absent, ambiguous, conflicting, or irrelevant result is claimed.
 - [ADR 0234](0234-index-transaction-documents-without-promoting-completion.md):
   separates 8-K, tender, proxy, and referenced-exhibit structures before
   retaining bounded transaction candidates with zero fact authority.
