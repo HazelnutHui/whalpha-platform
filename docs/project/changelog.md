@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-13 — Adjudicate event-time SEC cover identity
+
+- Accepted ADR 0236 and parsed all 62 retained Form 8-K inline-XBRL covers
+  into 70 complete title+ticker+exchange security rows.
+- Sixty-one structured transaction documents uniquely match the active source
+  instrument by CIK, ticker, normalized exchange MIC, and common-equity title.
+  Ticker-only joins remain prohibited.
+- A later IPG debt-exchange filing was rejected outside the source lifecycle
+  window. One TGI Purchase Rights context without a ticker was retained as an
+  incomplete non-target row rather than merged into common stock.
+- The stable-security/listing field is now `matched` for 61 of 64 cases; 451
+  case/field cells remain `unsupported`. LNW, REVG, and SAND remain explicit
+  identity-field residuals.
+- The report has SHA-256
+  `7f868b6f1d4471cd8690d4ff4f0daf2b439f0d51808021ba5aaa30de6cb1eb94`
+  and logical fingerprint
+  `e15db9ddd43efaa489fc1542ca0d42daf7e410bae91440cdf0bcccaee3507bcd`.
+  Exact network-disabled reread passed with owner-only modes and zero residue.
+- Twenty-six focused tests and the complete 2,664-test API suite passed with
+  two unchanged warnings. Canonical identity, lifecycle facts, terminal
+  outcomes, `/data`, Historical Coverage, research, Candidate, publication,
+  deployment, and scheduler state were unchanged.
+
 ## 2026-09-13 — Measure cross-document case coverage before adjudication
 
 - Accepted ADR 0235 and joined all 219 frozen Form 25, Form 15, and transaction

@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidate extraction, and a 64-case stable-ID coverage census | all 512 case/field results remain unsupported; no terminal fact is proven and the canonical family is absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, and first point-in-time cover adjudication | 61 stable-security/listing fields matched; 451 case/field cells remain unsupported, no terminal fact is proven, and the canonical family is absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -106,6 +106,12 @@ Current admission remains rejected:
   cases have structured transaction scopes and three retain explicit exception
   profiles. Candidate presence varies by field, but all 512 complete
   case/field results remain unsupported and unadjudicated; and
+- all 62 Form 8-K covers were parsed into 70 complete security rows. Sixty-one
+  structured cases have a unique in-window CIK+ticker+exchange common-equity
+  match; one later IPG debt-event filing was rejected outside the lifecycle
+  window, and one incomplete non-target TGI Purchase Rights row remains
+  explicit. The stable-security/listing field is matched for 61 cases, while
+  451 total case/field cells remain unsupported; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -137,10 +143,11 @@ project.
 1. Keep the completed SEC projection census as a measured data rejection; do
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
-2. Use the completed stable-ID coverage census to adjudicate typed candidate
-   values. Keep CIK, accession, security identity, transaction completion, and
-   terminal facts separate; preserve matched, absent, referenced-only,
-   unsupported, ambiguous, conflicting, and irrelevant outcomes explicitly.
+2. Preserve the 61 completed point-in-time security links. Adjudicate typed
+   transaction completion, event date, termination reason, consideration, and
+   party relations on those exact cases. Keep last tradability, terminal
+   outcome, and the three unsupported LNW/REVG/SAND cases separate; preserve
+   all result states explicitly.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

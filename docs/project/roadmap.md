@@ -97,12 +97,15 @@ not five-year performance admission.
 9. Preserve the completed stable-ID coverage census: all 219 candidates are
    joined to 64 cases, 61 have structured transaction scopes, and all 512
    complete case/field results remain unsupported.
-10. Adjudicate typed candidate values into matched, absent, referenced-only,
-   unsupported, ambiguous, conflicting, and irrelevant results. Document
-   content still cannot assign security identity by itself.
-11. Test a commercial source only against the frozen residual field gap that
+10. Preserve the first point-in-time cover adjudication: 61 structured cases
+   have an in-window CIK+ticker+exchange common-equity match, one later IPG
+   debt-event filing is excluded, and LNW/REVG/SAND remain unsupported.
+11. Adjudicate typed transaction completion, event date, termination reason,
+   consideration, and party relations for those 61 linked cases. Keep last
+   tradability and terminal return separate.
+12. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-12. Resolve missing-event neutrality and terminal outcomes without turning a
+13. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole

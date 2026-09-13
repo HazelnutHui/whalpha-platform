@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T16:46:26Z
+Operational state verified at: 2026-09-13T21:09:35Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -179,7 +179,16 @@ Important private Dell evidence includes:
   case/field results remain `unsupported`. Report SHA-256 is
   `77b81064c1a494275029a2c667bac7ef2cb99c83d446aa491c2be29a3fe1e09a`
   and logical fingerprint is
-  `98d9c5d3da4d02316c020f0705ce1e8714a8b4086ead1a897a9e3a5511f7c1b9`.
+  `98d9c5d3da4d02316c020f0705ce1e8714a8b4086ead1a897a9e3a5511f7c1b9`;
+  and
+- the first point-in-time case adjudication: all 62 Form 8-K covers parsed into
+  70 complete security rows, with 61 in-window common-equity document matches
+  and one later IPG debt-event document rejected outside the source lifecycle
+  window. Sixty-one stable-security/listing fields are now matched; the other
+  451 case/field cells remain unsupported. Report SHA-256 is
+  `7f868b6f1d4471cd8690d4ff4f0daf2b439f0d51808021ba5aaa30de6cb1eb94`
+  and logical fingerprint is
+  `e15db9ddd43efaa489fc1542ca0d42daf7e410bae91440cdf0bcccaee3507bcd`.
 
 Exact package identities and counts are retained in:
 
@@ -196,6 +205,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC Form 15 candidate audit](../audits/strong-leader-pullback-sec-form15-candidates-2026-09-13.md)
 - [First-strategy SEC transaction candidate audit](../audits/strong-leader-pullback-sec-transaction-candidates-2026-09-13.md)
 - [First-strategy SEC case coverage census audit](../audits/strong-leader-pullback-sec-case-coverage-census-2026-09-13.md)
+- [First-strategy SEC case adjudication audit](../audits/strong-leader-pullback-sec-case-adjudication-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -231,11 +241,13 @@ formally reread private custody. The completed deterministic parse census
 localizes lexical evidence without promoting a fact. Form 25, Form 15, and
 transaction candidate extraction is complete. The stable-ID coverage census
 now measures candidate material across all 64 cases while keeping all 512
-case/field results unsupported. The next internal gate is typed candidate
-adjudication with explicit matched, absent, referenced-only, ambiguous,
-conflicting, irrelevant, and unsupported states. A commercial sample remains
-limited to the frozen residual fields after that review. Massive Starter is
-not the sole lifecycle authority.
+case/field results unsupported. Point-in-time inline-XBRL cover adjudication
+then matched the stable security/listing field for 61 structured transaction
+cases without a ticker-only join. The next internal gate is typed transaction
+event/date/reason/consideration/party adjudication for those 61 cases. LNW,
+REVG, and SAND remain quarantined. A commercial sample remains limited to the
+frozen residual fields after that review. Massive Starter is not the sole
+lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are

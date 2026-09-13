@@ -147,6 +147,7 @@ the detailed dependency and supersession chain.
 - [First-Strategy SEC Form 15 Candidates](audits/strong-leader-pullback-sec-form15-candidates-2026-09-13.md)
 - [First-Strategy SEC Transaction Candidates](audits/strong-leader-pullback-sec-transaction-candidates-2026-09-13.md)
 - [First-Strategy SEC Case Coverage Census](audits/strong-leader-pullback-sec-case-coverage-census-2026-09-13.md)
+- [First-Strategy SEC Case Adjudication](audits/strong-leader-pullback-sec-case-adjudication-2026-09-13.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [SEC Fundamental Projection Readiness Census](audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
