@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, frozen first-strategy sample, all 219 transition documents in private custody, and a complete lexical content census | content is parsed but not adjudicated; all eight complete security-level fields remain unsupported and the canonical family is absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, a complete content census, and 64 / 64 structured Form 25 candidates | Form 25 notices are not terminal facts; all eight complete security-level fields remain unsupported and the canonical family is absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -91,6 +91,9 @@ Current admission remains rejected:
   been promoted into any security-level fact;
 - all 219 documents passed a deterministic content census, but its eight field
   marker families remain lexical candidates rather than facts; and
+- all 64 Form 25 notices passed standardized table extraction across 62 stable-
+  ID locators, with duplicate notices preserved and no last-trade/effective-
+  date inference; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -122,10 +125,11 @@ project.
 1. Keep the completed SEC projection census as a measured data rejection; do
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
-2. Extract form-aware candidate values from the completed 219-document census
-   and reconcile proposed, completed, amended, ambiguous, and conflicting
-   evidence. Keep CIK, accession, security identity, transaction completion,
-   and terminal facts separate; extraction alone grants no lifecycle fact.
+2. Continue form-aware extraction with Form 15 and transaction-completion
+   documents, then reconcile proposed, completed, amended, ambiguous, and
+   conflicting evidence. Keep CIK, accession, security identity, transaction
+   completion, and terminal facts separate; extraction alone grants no
+   lifecycle fact.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

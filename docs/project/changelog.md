@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-09-13 — Structure all Form 25 candidates without date inference
+
+- Accepted ADR 0232 and extracted all 64 Form 25-NSE documents through their
+  fixed HTML fields and real checked controls. The population covers 62 stable-
+  ID locators; two repeated IDs remain separate evidence.
+- Thirty-eight notices name Nasdaq and 26 name NYSE. Selected rule counts are
+  one 12d2-2(a)(2), 62 12d2-2(a)(3), and one 12d2-2(a)(4). These are retained
+  codes, not independently interpreted legal outcomes.
+- The 104,437-byte report has SHA-256
+  `c634eaa46a4d143810f2e24c51d7192a48f83a590b6c8b54b353f48563b2c099`
+  and logical fingerprint
+  `acdf61a7438ea494f01f47ec110db6f914fa028b40cdb214602721d09960e505`.
+  Exact rerun passed with zero residue and all complete-field counts at zero.
+- Nine focused tests and the full 2,652-test API suite passed with two unchanged
+  warnings. No network, lifecycle fact, terminal outcome, `/data`, Historical
+  Coverage, research, Candidate, publication, deployment, or scheduler action
+  occurred.
+
 ## 2026-09-13 — Census all frozen SEC document content without fact promotion
 
 - Accepted ADR 0231 and deterministically parsed all 219 retained documents:

@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T14:36:14Z
+Operational state verified at: 2026-09-13T14:53:48Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -148,7 +148,15 @@ Important private Dell evidence includes:
   `a566d966236fb046a88e662dacbcfa35ff93d57f319b86a218ef0f0ddde46869`,
   logical fingerprint
   `d22f5436aaeabeee3fe8bee8061594b42f479f25b8ad9f575fab81f3e781e77a`.
-  Its bounded contexts are lexical candidates only; fact counts remain zero.
+  Its bounded contexts are lexical candidates only; fact counts remain zero;
+  and
+- the completed structured Form 25 candidate package: 64 / 64 notices across
+  62 stable-ID locators, report SHA-256
+  `c634eaa46a4d143810f2e24c51d7192a48f83a590b6c8b54b353f48563b2c099`,
+  and logical fingerprint
+  `acdf61a7438ea494f01f47ec110db6f914fa028b40cdb214602721d09960e505`.
+  The two repeated IDs remain separate and every complete field-support count
+  is still zero.
 
 Exact package identities and counts are retained in:
 
@@ -161,6 +169,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC document plan audit](../audits/strong-leader-pullback-sec-document-plan-2026-09-13.md)
 - [First-strategy SEC document source audit](../audits/strong-leader-pullback-sec-document-source-2026-09-13.md)
 - [First-strategy SEC content census audit](../audits/strong-leader-pullback-sec-document-content-census-2026-09-13.md)
+- [First-strategy SEC Form 25 candidate audit](../audits/strong-leader-pullback-sec-form25-candidates-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -195,9 +204,10 @@ now frozen into 22 deterministic batches and all 219 source documents are in
 formally reread private custody. The completed deterministic parse census
 localizes lexical evidence without promoting a fact. The next internal gate is
 form-aware candidate-value extraction and a measured supported/absent/
-ambiguous/conflicting field census; a commercial sample remains limited to the
-residual fields after that review. Massive Starter is not the sole lifecycle
-authority.
+ambiguous/conflicting field census. The standardized Form 25 population is now
+complete as candidates; Form 15 and transaction documents remain. A commercial
+sample remains limited to the residual fields after that review. Massive
+Starter is not the sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
