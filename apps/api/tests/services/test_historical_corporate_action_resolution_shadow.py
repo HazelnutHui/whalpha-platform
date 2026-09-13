@@ -32,6 +32,7 @@ from tip_api.persistence.parquet.instrument_master_snapshot import (
 from tip_api.providers.massive.config import MassiveProviderConfig
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.services import historical_corporate_action_resolution_shadow as module
+from tip_api.services import historical_corporate_action_unresolved_census as census_module
 from tip_api.services import corporate_action_source_canonical as canonical_module
 from tip_api.services import historical_corporate_action_source_apply as apply_module
 from tip_api.services import (
@@ -49,6 +50,11 @@ from tip_api.services.historical_corporate_action_resolution_shadow import (
     read_historical_corporate_action_resolution_shadow,
     read_historical_ticker_candidates_bound_to_identity_evidence,
     read_historical_ticker_candidates_bound_to_resolution_shadow,
+)
+from tip_api.services.historical_corporate_action_unresolved_census import (
+    HistoricalCorporateActionUnresolvedCensusError,
+    build_historical_corporate_action_unresolved_census,
+    read_historical_corporate_action_unresolved_census,
 )
 from tip_api.services.historical_corporate_action_source import (
     CorporateActionSourceKind,
@@ -638,6 +644,180 @@ def test_formal_reader_rejects_partition_tampering(
     with pytest.raises(HistoricalCorporateActionResolutionShadowError):
         read_historical_corporate_action_resolution_shadow(
             output_root=result.output_root
+        )
+
+
+def _persistent_resolution_shadow(monkeypatch, tmp_path: Path):
+    inputs = _inputs(monkeypatch, tmp_path)
+    evidence = Path(inputs.pop("identity_evidence_path"))
+    custody = tmp_path / "resolution-custody"
+    custody.mkdir(mode=0o700)
+    inputs.update(
+        identity_evidence_paths=(evidence,),
+        output_root=custody / "build=resolution",
+        output_custody_root=custody,
+    )
+    return build_historical_corporate_action_resolution_shadow(**inputs), inputs, custody
+
+
+def test_unresolved_census_serial_parallel_equivalence_and_no_assignment(
+    monkeypatch, tmp_path: Path
+) -> None:
+    shadow, inputs, shadow_custody = _persistent_resolution_shadow(
+        monkeypatch, tmp_path
+    )
+    data_root = Path(inputs["data_root"])
+    monkeypatch.setattr(census_module, "APPROVED_DATA_ROOT", data_root)
+    identity = module._read_bound_identity_set(data_root, shadow.manifest)
+    unresolved = tuple(
+        item
+        for item in shadow.records
+        if item.instrument_resolution_status is ResolutionStatus.UNRESOLVED
+    )
+    source_stats = census_module._source_stats(unresolved)
+    serial = census_module._scan_identity_history(
+        root=data_root,
+        identity=identity,
+        requested_tickers=frozenset(source_stats),
+        max_workers=1,
+    )
+    parallel = census_module._scan_identity_history(
+        root=data_root,
+        identity=identity,
+        requested_tickers=frozenset(source_stats),
+        max_workers=2,
+    )
+    assert serial.observations == parallel.observations
+    assert serial.resolver_binding_fingerprint == parallel.resolver_binding_fingerprint
+
+    output_custody = tmp_path / "census-custody"
+    output_custody.mkdir(mode=0o700)
+    result = build_historical_corporate_action_unresolved_census(
+        data_root=data_root,
+        resolution_shadow_output_root=shadow.output_root,
+        resolution_shadow_custody_root=shadow_custody,
+        output_root=output_custody / "build=fixture",
+        output_custody_root=output_custody,
+        implementation_revision="a" * 40,
+        evaluated_at=MATERIALIZED_AT,
+        max_workers=2,
+    )
+    serial_result = build_historical_corporate_action_unresolved_census(
+        data_root=data_root,
+        resolution_shadow_output_root=shadow.output_root,
+        resolution_shadow_custody_root=shadow_custody,
+        output_root=output_custody / "build=fixture-serial",
+        output_custody_root=output_custody,
+        implementation_revision="a" * 40,
+        evaluated_at=MATERIALIZED_AT,
+        max_workers=1,
+    )
+    assert result.status == "published"
+    assert serial_result.records == result.records
+    assert serial_result.manifest.logical_fingerprint == result.manifest.logical_fingerprint
+    assert result.manifest.unresolved_typed_record_count == 2
+    assert result.manifest.unresolved_unique_ticker_count == 2
+    assert dict(result.manifest.ticker_classification_counts) == {
+        "multiple_historical_candidates": 0,
+        "one_historical_candidate": 1,
+        "zero_historical_candidates": 1,
+    }
+    by_ticker = {item.provider_ticker: item for item in result.records}
+    assert by_ticker["AAA"].classification == "one_historical_candidate"
+    assert by_ticker["AAA"].candidates[0].instrument_id == AAA_ID
+    assert by_ticker["AAA"].candidates[0].observed_session_count == 2
+    assert by_ticker["BBB"].classification == "zero_historical_candidates"
+    assert result.manifest.stable_identity_assignment_count == 0
+    assert result.output_root.stat().st_mode & 0o777 == 0o700
+    assert all(
+        item.stat().st_mode & 0o777 == 0o400
+        for item in result.output_root.iterdir()
+    )
+    reread = read_historical_corporate_action_unresolved_census(
+        data_root=data_root,
+        resolution_shadow_output_root=shadow.output_root,
+        resolution_shadow_custody_root=shadow_custody,
+        output_root=result.output_root,
+        output_custody_root=output_custody,
+    )
+    assert reread.records == result.records
+    assert reread.manifest == result.manifest
+
+
+def test_unresolved_census_classifies_multiple_candidates() -> None:
+    second_id = UUID("22222222-2222-4222-8222-222222222222")
+    source_stats = {
+        "REUSE": census_module._TickerSourceStats(
+            record_count=3,
+            unavailable_count=1,
+            absent_count=2,
+            action_type_counts=(("cash_dividend", 3),),
+        )
+    }
+    scan = census_module._HistoryScan(
+        session_count=2,
+        process_count=1,
+        resolver_binding_fingerprint="b" * 64,
+        observations={
+            "REUSE": {
+                AAA_ID: (START, START, 1),
+                second_id: (END, END, 1),
+            }
+        },
+    )
+    records = census_module._candidate_records(
+        source_stats=source_stats, scan=scan
+    )
+    assert records[0].classification == "multiple_historical_candidates"
+    assert tuple(item.instrument_id for item in records[0].candidates) == (
+        AAA_ID,
+        second_id,
+    )
+
+
+def test_unresolved_census_rejects_tampering_and_invalid_workers(
+    monkeypatch, tmp_path: Path
+) -> None:
+    shadow, inputs, shadow_custody = _persistent_resolution_shadow(
+        monkeypatch, tmp_path
+    )
+    data_root = Path(inputs["data_root"])
+    monkeypatch.setattr(census_module, "APPROVED_DATA_ROOT", data_root)
+    output_custody = tmp_path / "census-custody"
+    output_custody.mkdir(mode=0o700)
+    common = {
+        "data_root": data_root,
+        "resolution_shadow_output_root": shadow.output_root,
+        "resolution_shadow_custody_root": shadow_custody,
+        "output_custody_root": output_custody,
+        "implementation_revision": "a" * 40,
+        "evaluated_at": MATERIALIZED_AT,
+    }
+    with pytest.raises(
+        HistoricalCorporateActionUnresolvedCensusError,
+        match="worker count",
+    ):
+        build_historical_corporate_action_unresolved_census(
+            **common,
+            output_root=output_custody / "build=invalid",
+            max_workers=0,
+        )
+    result = build_historical_corporate_action_unresolved_census(
+        **common,
+        output_root=output_custody / "build=tamper",
+        max_workers=1,
+    )
+    records_path = result.output_root / census_module.RECORDS_FILE
+    records_path.chmod(0o600)
+    records_path.write_bytes(records_path.read_bytes() + b"tamper")
+    records_path.chmod(0o400)
+    with pytest.raises(HistoricalCorporateActionUnresolvedCensusError):
+        read_historical_corporate_action_unresolved_census(
+            data_root=data_root,
+            resolution_shadow_output_root=shadow.output_root,
+            resolution_shadow_custody_root=shadow_custody,
+            output_root=result.output_root,
+            output_custody_root=output_custody,
         )
 
 

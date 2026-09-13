@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0218](0218-classify-unresolved-corporate-action-history-without-assignment.md):
+  classifies unresolved action tickers across all bound historical Identity
+  sessions while retaining zero stable-ID assignments and quarantine authority.
 - [ADR 0217](0217-compose-identity-evidence-for-five-year-corporate-action-resolution.md):
   composes only byte-identical overlapping Identity evidence for exact-date
   five-year corporate-action resolution and permits durable private candidate

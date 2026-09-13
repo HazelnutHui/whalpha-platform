@@ -50,6 +50,7 @@ panels, and product publications remain separate.
 - [Historical Identity Source Custody V1](historical-identity-source-custody-v1.md)
 - [Historical Corporate Action Source Package V1](historical-corporate-action-source-package-v1.md)
 - [Historical Corporate Action Resolution Shadow V1](historical-corporate-action-resolution-shadow-v1.md)
+- [Historical Corporate Action Unresolved Census V1](historical-corporate-action-unresolved-census-v1.md)
 - [Historical Corporate Action Source Repeat Diff V1](historical-corporate-action-source-repeat-diff-v1.md)
 - [Corporate Action Source Publication V1](corporate-action-source-publication-v1.md)
 - [Canonical Split Action Publication V1](canonical-split-action-publication-v1.md)

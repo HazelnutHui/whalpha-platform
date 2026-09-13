@@ -100,6 +100,9 @@ Pivotal research ADRs include
 [0198](decisions/0198-scale-corporate-action-custody-to-the-five-year-range.md),
 [0199](decisions/0199-retain-complete-corporate-action-source-packages-privately.md),
 and [0200](decisions/0200-retain-inactive-lifecycle-source-anchors-privately.md).
+ADR [0218](decisions/0218-classify-unresolved-corporate-action-history-without-assignment.md)
+governs the assignment-free historical candidate census for unresolved
+corporate-action tickers.
 ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
 requires a complete semantic/conflict census before any SEC fundamental
 feature registry or security projection.
@@ -142,6 +145,7 @@ separately approved bounded serving artifacts.
 - [Massive Day Aggregates Flat File Ingestion](operations/massive-day-aggregates-flat-file-ingestion.md)
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
 - [Five-Year Corporate-Action Resolution](operations/five-year-corporate-action-resolution.md)
+- [Five-Year Corporate-Action Unresolved Census](operations/five-year-corporate-action-unresolved-census.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
 - [FINRA OTC Daily List Source Custody](operations/finra-otc-daily-list-source-custody.md)
