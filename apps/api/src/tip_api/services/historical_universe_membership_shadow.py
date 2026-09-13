@@ -845,9 +845,15 @@ def _join_gate_shortfall_is_collision_localized(
         and result.business_key_conflict_count == 0
         and result.linkage_denominator
         == result.canonical_mapped_count + result.collision_count
+        and result.collision_with_canonical_candidate_count
+        + result.collision_without_canonical_candidate_count
+        == result.collision_count
         and sum(count for _, count in result.category_counts)
         == result.raw_record_count
-        and bool(result.quarantined_instrument_reasons)
+        and (
+            result.collision_with_canonical_candidate_count == 0
+            or bool(result.quarantined_instrument_reasons)
+        )
     )
 
 

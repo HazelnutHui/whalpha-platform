@@ -71,6 +71,8 @@ def test_collision_derived_join_failure_is_localized_only_in_v4() -> None:
         ),
         canonical_mapped_count=990,
         collision_count=10,
+        collision_with_canonical_candidate_count=0,
+        collision_without_canonical_candidate_count=10,
         ambiguous_count=0,
         business_key_conflict_count=0,
         linkage_denominator=1000,
@@ -83,7 +85,7 @@ def test_collision_derived_join_failure_is_localized_only_in_v4() -> None:
             ("malformed", 1),
         ),
         raw_record_count=1006,
-        quarantined_instrument_reasons=((iid(1), ("share_class_figi_collision",)),),
+        quarantined_instrument_reasons=(),
     )
 
     assert _blocking_evidence_failures(
@@ -104,6 +106,7 @@ def test_collision_derived_join_failure_is_localized_only_in_v4() -> None:
         ("ambiguous_count", 1),
         ("business_key_conflict_count", 1),
         ("quarantined_instrument_reasons", ()),
+        ("collision_without_canonical_candidate_count", 1),
         ("linkage_denominator", 1001),
     ),
 )
@@ -118,6 +121,8 @@ def test_v4_does_not_localize_incomplete_collision_proof(
         ),
         "canonical_mapped_count": 990,
         "collision_count": 10,
+        "collision_with_canonical_candidate_count": 10,
+        "collision_without_canonical_candidate_count": 0,
         "ambiguous_count": 0,
         "business_key_conflict_count": 0,
         "linkage_denominator": 1000,

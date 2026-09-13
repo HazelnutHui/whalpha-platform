@@ -133,6 +133,8 @@ class EvidenceBuildResult:
     exact_duplicate_count: int
     ambiguous_count: int
     collision_count: int
+    collision_with_canonical_candidate_count: int
+    collision_without_canonical_candidate_count: int
     malformed_count: int
     linkage_numerator: int
     linkage_denominator: int
@@ -162,6 +164,14 @@ class EvidenceBuildResult:
             ("exact_duplicate_count", self.exact_duplicate_count),
             ("ambiguous_count", self.ambiguous_count),
             ("collision_count", self.collision_count),
+            (
+                "collision_with_canonical_candidate_count",
+                self.collision_with_canonical_candidate_count,
+            ),
+            (
+                "collision_without_canonical_candidate_count",
+                self.collision_without_canonical_candidate_count,
+            ),
             ("malformed_count", self.malformed_count),
             ("linkage_numerator", self.linkage_numerator),
             ("linkage_denominator", self.linkage_denominator),
@@ -297,6 +307,8 @@ def build_instrument_evidence(
 
     observations: list[ProviderSecurityObservationV1] = []
     quarantined_instrument_reasons: dict[UUID, set[str]] = defaultdict(set)
+    collision_with_canonical_candidate_count = 0
+    collision_without_canonical_candidate_count = 0
     exact_duplicate = 0
     for signature in sorted(grouped_payloads, key=lambda value: json.dumps(value, separators=(",", ":"))):
         payload, occurrence_count = grouped_payloads[signature]
@@ -311,6 +323,11 @@ def build_instrument_evidence(
         }:
             for instrument_id in resolution.candidate_instrument_ids:
                 quarantined_instrument_reasons[instrument_id].update(resolution.reasons)
+        if resolution.status is ProviderObservationStatus.COLLISION:
+            if resolution.candidate_instrument_ids:
+                collision_with_canonical_candidate_count += 1
+            else:
+                collision_without_canonical_candidate_count += 1
         observations.append(
             _to_observation(
                 payload,
@@ -426,6 +443,12 @@ def build_instrument_evidence(
         exact_duplicate_count=exact_duplicate,
         ambiguous_count=ambiguous,
         collision_count=collisions,
+        collision_with_canonical_candidate_count=(
+            collision_with_canonical_candidate_count
+        ),
+        collision_without_canonical_candidate_count=(
+            collision_without_canonical_candidate_count
+        ),
         malformed_count=malformed,
         linkage_numerator=canonical_mapped,
         linkage_denominator=linkage_denominator,

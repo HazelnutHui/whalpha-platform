@@ -13,12 +13,14 @@ business-key conflict. Their linkage ratios range from
 0.9922589725545391 through 0.9988058275614998 and collision counts from 10
 through 66.
 
-The Membership path already treats stable-identifier collision as localizable:
-every affected canonical stable ID is passed into the complete-base builder as
-an explicit source quarantine. The builder emits two decisions for every
-same-session Instrument Master ID, and any ID without usable provider form
-evidence becomes `INVALID_INPUT` / quarantined. No affected security can be
-silently included.
+The Membership path can distinguish stable-identifier collisions that involve
+canonical candidates from collisions confined to noncanonical Identity
+references. Every affected canonical stable ID is passed into the complete-base
+builder as an explicit source quarantine. The builder emits two decisions for
+every same-session Instrument Master ID, and any ID without usable provider
+form evidence becomes `INVALID_INPUT` / quarantined. A collision containing no
+canonical candidate is outside that evaluated stable-ID base. No affected
+security can be silently included.
 
 V3 nevertheless treats the ratio failure derived from those same collisions as
 non-localizable and rejects the whole session. That duplicates the collision
@@ -45,8 +47,11 @@ these conditions hold:
 4. the linkage denominator equals canonical mapped rows plus collision rows,
    proving that the ratio shortfall is entirely collision-derived;
 5. all source categories reconcile exactly to the raw record count; and
-6. at least one canonical stable ID has an explicit retained collision
-   quarantine.
+6. collision-with-canonical-candidate plus collision-without-canonical-candidate
+   counts reconcile exactly to the total collision count; and
+7. whenever a collision has a canonical candidate, at least one explicit
+   canonical stable-ID quarantine is retained. A collision with no canonical
+   candidate remains explicitly counted as outside the evaluated base.
 
 Every original quality flag remains in the Membership source lineage and
 logical fingerprint. V4 changes only whether the derived ratio failure blocks

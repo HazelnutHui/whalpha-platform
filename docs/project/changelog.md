@@ -7,7 +7,10 @@
   ratio becomes research-localizable only when the complete failure set is
   exactly stable-ID collision plus its derived join failure, the denominator
   reconciles to mapped plus collided rows, ambiguity and business conflicts
-  are zero, raw categories reconcile, and explicit stable-ID quarantines exist.
+  are zero, raw categories reconcile, and collision candidate-scope counts
+  reconcile. Canonical candidates must retain explicit stable-ID quarantine;
+  collisions confined to noncanonical Identity references remain separately
+  counted outside the evaluated base.
 - V3 remains immutable and the 0.999 threshold is not lowered. Every original
   quality flag remains retained. All other failure combinations still reject
   the whole session, and V4 is unavailable to signal-eligible Membership,
@@ -16,7 +19,7 @@
   V3/V4 research methodology partitions while rejecting unsupported methods or
   duplicate dates. The resumable continuation CLI requires an explicit
   approved method for V4 execution and keeps V3 as its default.
-- All 59 focused Membership/context tests and the complete 2,633-test API
+- All 67 focused Membership/evidence tests and the complete 2,635-test API
   suite pass with two unchanged dependency deprecation warnings. No canonical
   or Production write occurred during implementation verification.
 
@@ -32,9 +35,10 @@
   source-available sessions remain rejected by `identity_join_ratio_below_gate`;
   2026-08-13 and 2026-08-19 remain unavailable at source.
 - A bounded quality census found that all 37 join-gate failures also have
-  localized stable-ID collisions. The gate was not lowered. The precise
-  research-only complete-session treatment is now an explicit open question;
-  signal and Production semantics remain unchanged.
+  stable-ID collision observations. The gate was not lowered. Later ADR 0227
+  distinguishes collisions involving canonical candidates from collisions
+  confined to noncanonical Identity references; signal and Production
+  semantics remain unchanged.
 - Postflight found zero staging/partial residue, symlinks, or residual archive
   processes. The fresh five-year census remains `quarantined` with logical
   fingerprint

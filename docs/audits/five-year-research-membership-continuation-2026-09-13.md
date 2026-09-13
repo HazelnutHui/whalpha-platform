@@ -85,11 +85,12 @@ source-available sessions found:
 
 The quality-census row fingerprint is
 `04bcfb58ed84f9eadc162ebf38d695a95378179b82de0b264b9540948f6025aa`.
-This evidence does not authorize lowering the 0.999 gate. It identifies a
-bounded policy question: whether a research-only complete cross-section may
-retain a session when every join shortfall is explicitly localized and the
-affected instruments remain quarantined. Signal-eligible Membership and
-Production are outside that question.
+This evidence does not authorize lowering the 0.999 gate. It identified the
+bounded question resolved later by ADR 0227: a research-only complete
+cross-section may retain a session only when the entire ratio shortfall is
+proven collision-derived and every collision is classified as involving a
+quarantined canonical candidate or as confined to noncanonical Identity
+references. Signal-eligible Membership and Production are outside that rule.
 
 ## Interruption and recovery
 

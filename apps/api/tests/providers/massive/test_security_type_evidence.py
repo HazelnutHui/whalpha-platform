@@ -179,10 +179,42 @@ def test_composite_figi_requires_unique_match() -> None:
     duplicate = make_indexes(reference(share=None), reference("OTHER", ID2, share=None, composite="COMP1"), resolver={})
     collision = build([payload(share=None)], identity_indexes=duplicate)
     assert collision.collision_count == 1
+    assert collision.collision_with_canonical_candidate_count == 1
+    assert collision.collision_without_canonical_candidate_count == 0
     assert collision.quarantined_instrument_reasons == (
         (ID1, ("composite_figi_collision",)),
         (ID2, ("composite_figi_collision",)),
     )
+
+
+def test_collision_without_canonical_candidate_is_counted_separately() -> None:
+    unresolved = make_indexes(
+        reference(
+            "FIRST",
+            None,
+            ResolutionStatus.UNRESOLVED,
+            share=None,
+            composite="SHARED",
+        ),
+        reference(
+            "SECOND",
+            None,
+            ResolutionStatus.EXCLUDED,
+            share=None,
+            composite="SHARED",
+        ),
+        resolver={},
+    )
+
+    result = build(
+        [payload("FIRST", share=None, composite="SHARED")],
+        identity_indexes=unresolved,
+    )
+
+    assert result.collision_count == 1
+    assert result.collision_with_canonical_candidate_count == 0
+    assert result.collision_without_canonical_candidate_count == 1
+    assert result.quarantined_instrument_reasons == ()
 
 
 def test_provider_stable_id_join() -> None:
