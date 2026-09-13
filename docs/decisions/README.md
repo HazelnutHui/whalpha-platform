@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0239](0239-adjudicate-primary-common-share-consideration-before-normalizing-payoffs.md):
+  classifies only the primary ordinary/common-share consideration clause,
+  separating fractional-share cash, awards, preferred stock, and payoff
+  normalization from the evidence decision.
 - [ADR 0238](0238-link-listing-termination-reason-without-inferring-terminal-date.md):
   requires a bounded Item 3.01 causal link before classifying merger or
   acquisition as the listing-termination reason, with zero terminal-date authority.
