@@ -20,8 +20,17 @@
   at SHA-256
   `f099929d17c07695d3b468910e1c7233bed74bab1714a81ad1189dc9cfb7317a`.
   It binds two sessions / 19,964 instrument records / 14 source files and one
-  absent 3,623-byte target. No `/data` Apply occurred and no Historical
-  Coverage, research, Candidate, Production or website authority was granted.
+  3,623-byte target. Exact user authorization then published only that target;
+  outside-inventory identity remained unchanged and zero-write recovery passed.
+- Rebuilt the private corporate-action resolution shadow and unresolved census
+  as immutable `build=20260913-v2` objects. Exact-date resolution increased by
+  the predicted 206 to 129,292 and unresolved rows fell to 112,943. The census
+  accounts for those residual rows as 89,074 zero, 23,676 one and 193 multiple
+  historical-candidate rows while retaining zero stable-ID assignments.
+- Canonical inventory is now 18,175 files / 7,022,164,015 bytes with fingerprint
+  `eda858b1db23dc58f22cdd0faa290f2141691fecf15862dc5bd6d095354834ff`,
+  zero symlinks and zero residue. No Historical Coverage, research, Candidate,
+  Production, website, deployment or scheduler authority was granted.
 
 ## 2026-09-13 — Classify unresolved corporate-action history without assignment
 

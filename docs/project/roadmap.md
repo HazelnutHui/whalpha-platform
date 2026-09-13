@@ -193,14 +193,16 @@ Required work:
   common-stock pilot coverage while granting no feature or security-projection
   authority;
 - completed 2026-09-13: account for all 242,242 retained baseline corporate-
-  action rows in a durable private exact-event-date resolution shadow. The two
+  action rows in the first durable private exact-event-date resolution shadow.
+  The two
   published Identity evidences compose 1,251 unique sessions with 287
   byte-identical overlaps; 129,086 typed rows resolve, 113,149 remain
   quarantined, and seven missing/invalid-ticker rows remain in a separate
   hashed unrepresentable artifact. No row is dropped or given a fabricated
   ticker, and no canonical or research authority is granted;
 - completed 2026-09-13: classify all 113,149 unresolved corporate-action rows
-  / 13,931 tickers across the 1,251-session bound Identity history without
+  / 13,931 tickers in the first census across the 1,251-session bound Identity
+  history without
   assignment. The measured classes are 89,074 rows / 11,433 tickers with zero
   candidates, 23,879 / 2,456 with one, and 196 / 42 with multiple; 98.94% of
   one-candidate rows lie outside that candidate's observed span;
@@ -208,12 +210,14 @@ Required work:
   recoverable Apply entry so exact selected sessions can be bound without
   duplicating EOD evidence. It retains literal false Historical Coverage,
   research, Candidate, and Production authority; real `/data` publication
-  remains a separately reviewed exact-plan operation. The real 2026-09-08/09
-  no-write plan is now built and revalidated; its one target remains absent;
-- apply the exact reviewed 2026-09-08/09 Identity evidence plan, rebuild a new
-  version of the corporate-action resolution shadow, and remeasure the 343
-  tail rows; then use effective-
-  dated lifecycle/security evidence for the exact-session ticker-absent and
+  was separately reviewed and exactly authorized. Its one 3,623-byte target is
+  now published, formally reread, and zero-write recovery verified;
+- completed 2026-09-13: rebuild the corporate-action resolution shadow and
+  unresolved census as new owner-only v2 objects. The exact two-session
+  extension resolves the predicted 206 rows, leaves 112,943 unresolved, and
+  preserves zero census assignment;
+- use effective-dated lifecycle/security evidence for the exact-session
+  ticker-absent and
   outside-candidate-span populations. Never turn a unique history-wide
   candidate into an event-date assignment;
 - register a small first set of exact concept/unit/period/form queries from the

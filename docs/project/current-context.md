@@ -51,7 +51,8 @@ explicit all-partition validation both passed in their recorded audits.
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
 | Corporate-action observations | Canonical recent custody: 70,099 rows, 42,056 resolved / 28,043 quarantined; separate complete five-year owner-only packages: 6,491 splits / 235,751 dividends, not canonical |
-| Unresolved action census | 113,149 typed rows / 13,931 tickers fully classified: zero candidate 89,074 / 11,433; one candidate 23,879 / 2,456; multiple 196 / 42; 2,540 candidate relations and zero assignments |
+| Corporate-action resolution | Current owner-only shadow `build=20260913-v2`: 242,242 source rows; 129,292 exact-date resolved / 112,943 unresolved / 7 separately unrepresentable; 1,253 Identity sessions; prior v1 retained |
+| Unresolved action census | Current owner-only `build=20260913-v2`: 112,943 typed rows / 13,780 tickers fully classified: zero candidate 89,074 / 11,433; one candidate 23,676 / 2,307; multiple 193 / 40; 2,387 candidate relations and zero assignments |
 | Official FINRA OTC source | 62 monthly packages / 68,714 observations, 2021-08-11 through 2026-09-09; official OTC corroboration only; four repeated IDs retained |
 | FINRA/Massive action census | 2,298 split / 8,205 dividend unique numeric candidates; zero stable-ID resolution; candidate-only fingerprint `0559b1488ced840d786734b3dfa8b054d3c65dd18365d9d77c7a4616b9cd5317` |
 | Official SEC fundamentals sources | Company Facts: 20,343 members / 41,619,407 five-year occurrences; Submissions: 989,553 members / 27,217,476 filing rows; both private source snapshots |
@@ -60,13 +61,13 @@ explicit all-partition validation both passed in their recorded audits.
 | SEC filer/security link | One-session pilot: 8,201 stable-ID decisions and 150 multi-security CIK groups; issuer projection unauthorized |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |
-| Current data inventory | 18,174 files / 7,022,160,392 bytes |
-| Current inventory fingerprint | 87a2a573b3350918a90db3cea51faaa1839a4e5fb420e2f20278dfc3cb9aa244 |
+| Current data inventory | 18,175 files / 7,022,164,015 bytes |
+| Current inventory fingerprint | eda858b1db23dc58f22cdd0faa290f2141691fecf15862dc5bd6d095354834ff |
 | Symlinks / publication residue | zero / zero |
 | Corrected EOD edition | Canonical contract 1.2 edition: 1,234 sessions / 10,376,263 records / 2,469 files / 1,083,699,732 bytes; interval fingerprint `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3` |
 | Corrected EOD Apply | Applied from approved plan SHA-256 `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`; logical fingerprint `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`; canonical formal reread passed |
 | Corrected EOD family evidence | Exact 1,234-session EOD and same-session Identity evidence is canonically published; EOD fingerprint `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`, Identity fingerprint `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`; approved plan SHA `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`; Apply and zero-write recovery passed |
-| Pending Identity extension evidence | Exact 2026-09-08/09 Identity-only no-write plan is built and revalidated; plan SHA `f099929d17c07695d3b468910e1c7233bed74bab1714a81ad1189dc9cfb7317a`; evidence fingerprint `35a45e158ffdedc2cd3f3667495bbb4fdd5841a70c02370e3c0baa80d5fa51d5`; target absent and `/data` Apply not performed |
+| Identity extension evidence | Exact 2026-09-08/09 Identity-only evidence is published and formally reread; plan SHA `f099929d17c07695d3b468910e1c7233bed74bab1714a81ad1189dc9cfb7317a`; evidence fingerprint `35a45e158ffdedc2cd3f3667495bbb4fdd5841a70c02370e3c0baa80d5fa51d5`; one 3,623-byte manifest; zero-write recovery passed |
 
 The bounded historical run stopped safely at the Starter rolling entitlement
 edge; ADR 0206 rejected retries or a deeper purchase solely for the expired
@@ -144,10 +145,12 @@ Historical Coverage, research, or Production authority. ADR 0212 added an
 explicit reconciled-edition entry to the existing recoverable Apply mechanism;
 the old rolling-current entry still rejects this plan. The separately approved
 real Apply published both exact manifests, and immediate completed-state
-recovery reused both with zero writes. Independent postflight found 18,174
+recovery reused both with zero writes. At that earlier checkpoint, independent
+postflight found 18,174
 canonical files / 7,022,160,392 bytes, fingerprint
 `87a2a573b3350918a90db3cea51faaa1839a4e5fb420e2f20278dfc3cb9aa244`,
-zero symlinks, and zero residue.
+zero symlinks, and zero residue. The current inventory is the later value in
+the table above.
 
 Source Coverage and the full-build controller can preserve a separate
 2021-08-11 through 2021-09-08 warm-up declaration. ADR 0206 leaves that
@@ -290,7 +293,7 @@ claims are false.
 | 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
-| Five-year corporate-action source, private complete-accounting exact-date resolution shadow, and assignment-free unresolved census | Bind the two available 2026-09-08/09 exact sessions, then resolve measured lifecycle/security-scope gaps and seven unrepresentable rows; complete availability/revision, absent-event, and adjustment semantics |
+| Five-year corporate-action source, 1,253-session exact-date resolution shadow, and assignment-free unresolved census | Resolve measured lifecycle/security-scope gaps and seven unrepresentable rows; complete availability/revision, absent-event, and adjustment semantics |
 | Canonical split-only facts and sparse affected-path ledger | Complete adjustment/neutrality and total-return semantics |
 | Fixture-only input, chronology, statistics, and holdout mechanics | Real chronological dataset and sealed real holdout |
 | Scenario-only equity costs | Observed spread/impact calibration and execution comparison |

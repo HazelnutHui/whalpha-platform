@@ -1,11 +1,12 @@
-# Bounded Identity Extension Evidence Plan Audit — 2026-09-13
+# Bounded Identity Extension Evidence Audit — 2026-09-13
 
 ## Scope
 
 Build and independently verify one no-write Identity-only family-evidence plan
-for the exact canonical sessions 2026-09-08 and 2026-09-09. No provider,
-network, `/data` Apply, Historical Coverage, research, Candidate, Production,
-website, deployment or scheduler operation was authorized or performed.
+for the exact canonical sessions 2026-09-08 and 2026-09-09, execute its later
+exact authorization, and measure the resulting corporate-action resolution
+delta. No provider, network, Historical Coverage, research, Candidate,
+Production, website, deployment or scheduler operation was performed.
 
 ## Implementation validation
 
@@ -54,13 +55,65 @@ reported zero external requests, zero canonical writes, `apply_authorized`
 false, and false Historical Coverage, research-development and performance
 authority.
 
-## Measured value and remaining boundary
+## Authorized Apply and recovery
+
+The user supplied the exact authorization string containing the approved plan
+SHA-256, logical fingerprint and family-set fingerprint. Apply published only
+the planned `point_in_time_identity` manifest:
+
+- published files / bytes: 1 / 3,623;
+- overwritten / deleted partitions: 0 / 0;
+- external requests: 0;
+- formal reread families: 1;
+- pre/post outside-inventory fingerprint:
+  `87a2a573b3350918a90db3cea51faaa1839a4e5fb420e2f20278dfc3cb9aa244`;
+- complete post-state fingerprint:
+  `eda858b1db23dc58f22cdd0faa290f2141691fecf15862dc5bd6d095354834ff`.
+
+Immediate completed-state recovery reused the same Identity evidence, wrote
+zero files / zero bytes, repeated the formal reread, and reproduced both
+inventory fingerprints. The target directory is mode `0755`, its sole
+manifest is mode `0644`, owner/group `hui:hui`, and canonical postflight found
+18,175 files / 7,022,164,015 bytes, zero symlinks and zero staging/partial
+residue.
+
+## Reconciled corporate-action result
 
 A preceding read-only exact-date join found that these snapshots can resolve
 206 of the 343 post-boundary corporate-action rows: 96 on 2026-09-08 and 110
-on 2026-09-09. The evidence itself assigns no action. After separately
-authorized Apply, a new-version corporate-action resolution shadow must prove
-the actual delta; the existing shadow and census remain immutable.
+on 2026-09-09. A new owner-only `build=20260913-v2` resolution shadow then
+proved exactly that delta while retaining the old version:
 
-No `/data` publication has occurred at this checkpoint. Exact-plan Apply is
-the next and only pending action in this stage.
+- resolved: 129,292, up 206 from 129,086;
+- unresolved: 112,943, down 206 from 113,149;
+- exact-date Identity unavailable: 3,513, down 343 from 3,856;
+- exact-date Identity available: 238,722;
+- unresolved ticker: 109,430, including the 137 newly inspected rows whose
+  ticker truly remains absent on its event date;
+- seven missing/invalid-ticker source rows remain separately unrepresentable;
+- logical fingerprint:
+  `444077fb1ca39ba3ac210f19fc19dae7e94573d42fa3d1c4119216b2641a7c4a`;
+- manifest SHA-256:
+  `b0d3e7438f8a1bd3d643a5fab564634fa203f92f08175dc9ceb5e166b1597c66`.
+
+The 14-file shadow is 17,112,232 bytes, mode `0700` directories / `0400`
+files, with zero symlinks or staging residue. A separate formal reread
+reproduced all counts and fingerprints.
+
+The new assignment-free `build=20260913-v2` unresolved census scanned all
+1,253 evidence-bound Resolver sessions with eight processes. It accounts for
+all 112,943 residual rows as 89,074 zero-candidate, 23,676 one-candidate and
+193 multiple-candidate rows. The 13,780 unique tickers split into 11,433 /
+2,307 / 40 respectively. It retains 2,387 candidate relations across 2,363
+candidate instruments and still assigns zero stable IDs. Its logical
+fingerprint is
+`42a3b34e8354832c6505ac4a4c645145a2800390d0cfb99e12d31408cafe7f98`;
+manifest SHA-256 is
+`f1fbc2f8b76c34b3b44ff80c6292e458126762fe455f6e1953b759a642fd7f48`.
+The two-file census is 3,781,863 bytes with the same owner-only custody and no
+symlink or residue.
+
+The evidence publication and the two private shadows do not establish final
+Historical Coverage or research eligibility. The remaining 112,943 rows,
+particularly 89,074 zero-candidate rows and 23,676 one-candidate rows outside
+proved event-date ownership, remain lifecycle/security-scope evidence work.

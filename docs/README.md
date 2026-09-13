@@ -131,7 +131,7 @@ unrelated resolved cross-section to advance under a separate bounded profile.
 - [Five-Year Corporate-Action Source Audit](audits/five-year-corporate-action-source-2026-09-10.md)
 - [Five-Year Corporate-Action Resolution Shadow](audits/five-year-corporate-action-resolution-shadow-2026-09-13.md)
 - [Five-Year Corporate-Action Unresolved Census](audits/five-year-corporate-action-unresolved-census-2026-09-13.md)
-- [Bounded Identity Extension Evidence Plan](audits/bounded-identity-extension-evidence-plan-2026-09-13.md)
+- [Bounded Identity Extension Evidence](audits/bounded-identity-extension-evidence-plan-2026-09-13.md)
 - [Five-Year Lifecycle Source Custody Audit](audits/five-year-lifecycle-source-custody-2026-09-10.md)
 - [Five-Year FINRA OTC Daily List Source](audits/five-year-finra-otc-daily-list-source-2026-09-10.md)
 - [Five-Year FINRA/Massive Action Census](audits/five-year-finra-massive-action-cross-source-census-2026-09-10.md)

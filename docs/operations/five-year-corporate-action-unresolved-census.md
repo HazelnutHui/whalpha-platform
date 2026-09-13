@@ -22,11 +22,13 @@ Invoke the unresolved-census CLI with `--resolution-shadow`,
 `--output-custody-root`, `--evaluated-at`, `--process-count`, and `--execute`.
 The CLI refuses a dirty repository and prints aggregate counts only.
 
-Require all 113,149 unresolved typed rows to fall into exactly one historical
-candidate class. Keep the seven unrepresentable rows visible but outside this
-classification. Confirm the ticker and source-row class denominators, full
-1,251-session Resolver scan, candidate relation count, owner-only modes, zero
-symlinks, zero partial residue, and formal reread.
+Require every unresolved typed row in the bound resolution shadow to fall into
+exactly one historical candidate class. Keep the shadow's unrepresentable rows
+visible but outside this classification. Confirm the ticker and source-row
+class denominators, the complete evidence-bound Resolver scan, candidate
+relation count, owner-only modes, zero symlinks, zero partial residue, and
+formal reread. Exact counts belong in the dated audit and current status, not
+this runbook.
 
 ## Interpretation
 

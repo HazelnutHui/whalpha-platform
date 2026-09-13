@@ -74,22 +74,23 @@ budgets now guard this boundary.
 - Canonical corporate-action source custody still has 70,099 bounded recent
   observations. Separately, exact five-year owner-only source packages contain
   6,491 split and 235,751 dividend rows with complete natural pagination and a
-  full repeat. ADR 0217's durable private resolution shadow accounts for all
-  242,242 baseline rows: 242,235 are typed, 129,086 resolve by exact event-date
-  stable ID, 113,149 remain quarantined, and seven missing/invalid-ticker rows
-  are separately hashed as unrepresentable. The two bound Identity evidences
-  compose 1,251 unique sessions with 287 identical overlaps. Five split
+  full repeat. The current ADR 0217 durable private resolution shadow v2
+  accounts for all 242,242 baseline rows: 242,235 are typed, 129,292 resolve
+  by exact event-date stable ID, 112,943 remain quarantined, and seven
+  missing/invalid-ticker rows are separately hashed as unrepresentable. Three
+  bound Identity evidences compose 1,253 unique sessions with 287 identical
+  overlaps. The earlier v1 shadow remains immutable. Five split
   provider IDs still changed without an economic-payload change and remain
   explicit revision evidence. This shadow is not canonical; source time,
   unresolved rows, lifecycle, absent-event neutrality, and complete adjustment
   and total-return semantics remain open.
-- ADR 0218's owner-only unresolved-action census has now scanned all 1,251
-  bound Identity Resolvers. It classifies every 113,149 unresolved typed row:
-  89,074 rows / 11,433 tickers have zero historical candidate, 23,879 rows /
-  2,456 tickers have one, and 196 rows / 42 tickers have multiple. It retains
-  2,540 candidate relations but assigns zero stable IDs. Only 253 one-candidate
-  rows fall inside the candidate's observed span; the result therefore guides
-  evidence acquisition but does not resolve any action.
+- ADR 0218's current owner-only unresolved-action census v2 has scanned all
+  1,253 bound Identity Resolvers. It classifies every 112,943 unresolved typed
+  row: 89,074 rows / 11,433 tickers have zero historical candidate, 23,676
+  rows / 2,307 tickers have one, and 193 rows / 40 tickers have multiple. It
+  retains 2,387 candidate relations but assigns zero stable IDs. The earlier
+  v1 census remains immutable; both guide evidence acquisition but do not
+  assign unresolved actions.
 - A read-only exact-date audit of the complete 2026-09-08 and 2026-09-09
   canonical Identity snapshots found that they can resolve 206 of the 343
   corporate-action rows after the currently bound evidence range. ADR 0219's
@@ -97,9 +98,11 @@ budgets now guard this boundary.
   those exact sessions can be bound without duplicating EOD evidence. The
   exact no-write plan is built and revalidated with SHA-256
   `f099929d17c07695d3b468910e1c7233bed74bab1714a81ad1189dc9cfb7317a`;
-  its sole 3,623-byte target remains absent. No `/data` evidence has yet been
-  published through this path, and it grants no Historical Coverage or
-  research authority.
+  its sole 3,623-byte target was exactly authorized, published and formally
+  reread. Zero-write recovery passed; outside inventory did not change. It
+  grants no Historical Coverage or research authority. The downstream v2
+  shadow confirms exactly 206 additional resolutions and leaves the other 137
+  newly inspected event-date tickers unresolved.
 - Official/free FINRA OTC Daily List custody is complete for 2021-08-11 through
   2026-09-09: 62 monthly packages / 68,714 observations. It is OTC
   corroboration only. A sealed FINRA/Massive census found 2,298 split and
@@ -130,7 +133,7 @@ budgets now guard this boundary.
   observations, representing 2,283 distinct review-candidate instruments
   across both anchors. This is a durable corroboration queue, not canonical
   lifecycle, last-trade, successor, consideration, or terminal-return evidence.
-- The current verified inventory is 18,174 files / 7,022,160,392 bytes with
+- The current verified inventory is 18,175 files / 7,022,164,015 bytes with
   zero symlinks and zero publication residue.
 - Primary has 1,718 CS. Secondary has 1,831 = 1,718 CS + 113 ADRC. This
   provider-form Activation remains provisional.
@@ -217,13 +220,15 @@ budgets now guard this boundary.
   publication and zero-write completed-state recovery passed while the old
   rolling-current entry continued to reject the edition plan. This tested
   capability was then executed only after exact-plan approval.
-- The authorized Apply published exactly two evidence manifests / 2,673,980
-  bytes. Outside-target inventory remained
+- The authorized corrected-edition Apply published exactly two evidence
+  manifests / 2,673,980 bytes. At that earlier checkpoint, outside-target
+  inventory remained
   `8baec95b3a4e81cc2b4ca05f9f1fb24a8a112237c6c217bf88c09066462aa307`
   before and after. Immediate completed-state recovery reused both targets with
   zero writes. Independent postflight produced full inventory fingerprint
   `87a2a573b3350918a90db3cea51faaa1839a4e5fb420e2f20278dfc3cb9aa244`,
-  with zero symlinks and zero residue. Historical Coverage, research,
+  with zero symlinks and zero residue. The current inventory is recorded above.
+  Historical Coverage, research,
   Production, and website state remain unchanged.
 - Source Coverage and full-edition construction now model the separate
   2021-08-11 through 2021-09-08 warm-up interval explicitly. That optional
