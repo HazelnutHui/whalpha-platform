@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0220](0220-cross-census-residual-corporate-action-evidence-without-assignment.md):
+  combines retained lifecycle, inactive-security, and FINRA evidence into a
+  one-to-one residual action diagnostic while keeping identity assignments zero.
 - [ADR 0219](0219-publish-bounded-identity-extension-evidence.md): adds one
   explicit Identity-only evidence path for bounded exact-session outcome
   reconciliation without duplicating EOD evidence or granting research authority.
