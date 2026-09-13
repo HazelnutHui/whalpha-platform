@@ -11,6 +11,10 @@ from tip_api.services.five_year_research_membership_continuation import (
     execute_five_year_research_membership_continuation,
     prepare_five_year_research_membership_continuation,
 )
+from tip_api.services.five_year_research_foundation_census import (
+    RESEARCH_MEMBERSHIP_METHODOLOGIES,
+    RESEARCH_MEMBERSHIP_METHODOLOGY,
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -25,6 +29,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--catalog-as-of-date", type=date.fromisoformat, required=True)
     parser.add_argument("--evaluated-at", type=datetime.fromisoformat, required=True)
     parser.add_argument("--code-revision", required=True)
+    parser.add_argument(
+        "--methodology-version",
+        choices=RESEARCH_MEMBERSHIP_METHODOLOGIES,
+        default=RESEARCH_MEMBERSHIP_METHODOLOGY,
+    )
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--batch-limit", type=int)
     parser.add_argument("--execute", action="store_true")
@@ -36,6 +45,7 @@ def main(argv: list[str] | None = None) -> int:
         catalog_as_of_date=args.catalog_as_of_date,
         evaluated_at=args.evaluated_at,
         code_revision=args.code_revision,
+        methodology_version=args.methodology_version,
     )
     print(
         json.dumps(

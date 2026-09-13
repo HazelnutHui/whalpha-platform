@@ -1,8 +1,11 @@
 from __future__ import annotations
 
 from datetime import date
+from types import SimpleNamespace
 
 import pytest
+
+from tip_api.services import five_year_research_foundation_census as module
 
 from tip_api.contracts.market_data.v1 import (
     FiveYearFoundationCoverageStatus,
@@ -13,6 +16,11 @@ from tip_api.services.five_year_research_foundation_census import (
     _build_family_census,
     _combined_membership_inventory,
     _membership_publication_dates,
+    _research_membership_inventory,
+)
+from tip_api.services.historical_universe_membership_shadow import (
+    CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+    CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION,
 )
 
 
@@ -187,3 +195,46 @@ def test_membership_inventory_keeps_reconstructed_and_signal_tiers_separate() ->
     assert "reconstructed_membership_not_signal_eligible" in combined[
         "five_year_reason_codes"
     ]
+
+
+def test_research_membership_inventory_reads_approved_methods_without_overlap(
+    tmp_path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    base = (
+        tmp_path
+        / "market-data/research-universe-membership/schema_version=1"
+        / "evidence_tier=reconstructed-latest-vintage-v1"
+    )
+    sessions = {
+        CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION: date(2026, 1, 2),
+        CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION: date(2026, 1, 5),
+    }
+    for methodology, session in sessions.items():
+        (
+            base
+            / f"methodology_version={methodology}"
+            / f"session_date={session.isoformat()}"
+        ).mkdir(parents=True)
+
+    monkeypatch.setattr(
+        module,
+        "read_canonical_research_universe_membership",
+        lambda **_: SimpleNamespace(
+            membership_manifest=SimpleNamespace(
+                record_count=10,
+                disposition_summaries=(SimpleNamespace(quarantined_count=2),),
+            )
+        ),
+    )
+
+    result = _research_membership_inventory(tmp_path)
+
+    assert result["partition_count"] == 2
+    assert result["record_count"] == 20
+    assert result["quarantined_record_count"] == 4
+    assert result["session_dates"] == tuple(sorted(sessions.values()))
+    assert result["methodology_partition_counts"] == (
+        (CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION, 1),
+        (CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION, 1),
+    )

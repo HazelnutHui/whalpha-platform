@@ -85,6 +85,15 @@ HISTORICAL_METHODOLOGY_VERSION = "provider-form-complete-base-point-in-time-v2"
 CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION = (
     "provider-form-complete-base-point-in-time-v3"
 )
+CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION = (
+    "provider-form-complete-base-localized-collision-v4"
+)
+CANONICAL_SOURCE_RESEARCH_METHODOLOGIES = frozenset(
+    {
+        CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+        CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION,
+    }
+)
 MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS = 5
 _LOCALIZABLE_EVIDENCE_FAILURES = frozenset(
     {
@@ -546,8 +555,14 @@ def build_historical_universe_membership_shadow_from_canonical_source(
     calendar: MarketSessionCalendar | None = None,
     eod_panel: HistoricalUniverseMembershipEodPanel | None = None,
     security_snapshot: CompletedSecurityEvidenceSnapshot | None = None,
+    methodology_version: str = CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
 ) -> HistoricalUniverseMembershipShadow:
     """Build one ledger from formally reread canonical normalized source rows."""
+
+    if methodology_version not in CANONICAL_SOURCE_RESEARCH_METHODOLOGIES:
+        raise HistoricalUniverseMembershipShadowError(
+            "canonical-source research Membership methodology is unsupported"
+        )
 
     # Local imports avoid a module cycle while the custody writer continues to
     # use the retained-package equivalence implementation above.
@@ -604,7 +619,7 @@ def build_historical_universe_membership_shadow_from_canonical_source(
         package_manifest_fingerprint=manifest.source_package_manifest_sha256,
         package_content_fingerprint=manifest.source_package_content_sha256,
         source_custody_fingerprint=manifest.logical_fingerprint,
-        methodology_version=CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+        methodology_version=methodology_version,
     )
     return _build_historical_universe_membership_shadow_from_source(
         data_root=data_root,
@@ -669,8 +684,9 @@ def _build_historical_universe_membership_shadow_from_source(
         request_count=source.request_count + 1,
         all_tickers_request_count=source.request_count,
     )
-    blocking_failures = set(evidence_result.quality_gate_failures) - set(
-        _LOCALIZABLE_EVIDENCE_FAILURES
+    blocking_failures = _blocking_evidence_failures(
+        evidence_result,
+        methodology_version=source.methodology_version,
     )
     if blocking_failures:
         raise HistoricalUniverseMembershipEvidenceQualityError(
@@ -792,6 +808,46 @@ def _build_historical_universe_membership_shadow_from_source(
             evidence_result.quarantined_instrument_reasons
         ),
         evidence_quality_gate_failures=evidence_result.quality_gate_failures,
+    )
+
+
+def _blocking_evidence_failures(
+    result: EvidenceBuildResult,
+    *,
+    methodology_version: str,
+) -> set[str]:
+    failures = set(result.quality_gate_failures)
+    blocking = failures - set(_LOCALIZABLE_EVIDENCE_FAILURES)
+    if (
+        methodology_version
+        == CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION
+        and _join_gate_shortfall_is_collision_localized(result)
+    ):
+        blocking.discard("identity_join_ratio_below_gate")
+    return blocking
+
+
+def _join_gate_shortfall_is_collision_localized(
+    result: EvidenceBuildResult,
+) -> bool:
+    """Accept only a ratio failure derived entirely from explicit collisions."""
+
+    failures = set(result.quality_gate_failures)
+    return (
+        failures
+        == {
+            "stable_identifier_collision_nonzero",
+            "identity_join_ratio_below_gate",
+        }
+        and result.canonical_mapped_count > 0
+        and result.collision_count > 0
+        and result.ambiguous_count == 0
+        and result.business_key_conflict_count == 0
+        and result.linkage_denominator
+        == result.canonical_mapped_count + result.collision_count
+        and sum(count for _, count in result.category_counts)
+        == result.raw_record_count
+        and bool(result.quarantined_instrument_reasons)
     )
 
 

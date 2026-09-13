@@ -74,6 +74,7 @@ scripts/dev/run-project-python.sh \
   --catalog-as-of-date <catalog-date> \
   --evaluated-at <frozen-UTC-timestamp> \
   --code-revision <40-character-commit> \
+  --methodology-version <approved-research-methodology> \
   --workers 4 \
   --batch-limit <optional-positive-count> \
   --execute
@@ -82,6 +83,14 @@ scripts/dev/run-project-python.sh \
 The candidate remains reconstructed latest-vintage evidence. Completing this
 builder or its archive never grants signal, validation, holdout, performance,
 Candidate, Production, or web authority.
+
+V3 remains the default and preserves the original whole-session 0.999 join
+gate. ADR 0227's
+`provider-form-complete-base-localized-collision-v4` is permitted only for the
+bounded research-only recovery of a ratio failure proven to derive entirely
+from explicit stable-ID collisions. It preserves every collision and quality
+flag, quarantines affected instruments, uses a separate methodology directory,
+and cannot be used by the signal-eligible Membership path.
 
 ## Completion and recovery
 

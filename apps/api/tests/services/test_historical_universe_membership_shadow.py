@@ -41,8 +41,11 @@ from tip_api.services.historical_identity_rebuild_profile_map import (
     historical_identity_profile_fingerprint,
 )
 from tip_api.services.historical_universe_membership_shadow import (
+    CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+    CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION,
     HistoricalUniverseMembershipShadowError,
     _apply_historical_identity_rebuild_profile,
+    _blocking_evidence_failures,
     _validate_identity_profile_binding,
     _validate_policy_relationship,
     build_complete_point_in_time_source_decisions,
@@ -58,6 +61,101 @@ SESSION = date(2026, 9, 3)
 PREVIOUS = date(2026, 9, 2)
 NOW = datetime(2026, 9, 4, tzinfo=UTC)
 SHA = "a" * 64
+
+
+def test_collision_derived_join_failure_is_localized_only_in_v4() -> None:
+    result = SimpleNamespace(
+        quality_gate_failures=(
+            "stable_identifier_collision_nonzero",
+            "identity_join_ratio_below_gate",
+        ),
+        canonical_mapped_count=990,
+        collision_count=10,
+        ambiguous_count=0,
+        business_key_conflict_count=0,
+        linkage_denominator=1000,
+        category_counts=(
+            ("ambiguous", 0),
+            ("canonical_mapped", 990),
+            ("collision", 10),
+            ("exact_duplicate", 0),
+            ("expected_unjoined", 5),
+            ("malformed", 1),
+        ),
+        raw_record_count=1006,
+        quarantined_instrument_reasons=((iid(1), ("share_class_figi_collision",)),),
+    )
+
+    assert _blocking_evidence_failures(
+        result,
+        methodology_version=CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+    ) == {"identity_join_ratio_below_gate"}
+    assert _blocking_evidence_failures(
+        result,
+        methodology_version=(
+            CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION
+        ),
+    ) == set()
+
+
+@pytest.mark.parametrize(
+    ("change", "value"),
+    (
+        ("ambiguous_count", 1),
+        ("business_key_conflict_count", 1),
+        ("quarantined_instrument_reasons", ()),
+        ("linkage_denominator", 1001),
+    ),
+)
+def test_v4_does_not_localize_incomplete_collision_proof(
+    change: str,
+    value: object,
+) -> None:
+    values = {
+        "quality_gate_failures": (
+            "stable_identifier_collision_nonzero",
+            "identity_join_ratio_below_gate",
+        ),
+        "canonical_mapped_count": 990,
+        "collision_count": 10,
+        "ambiguous_count": 0,
+        "business_key_conflict_count": 0,
+        "linkage_denominator": 1000,
+        "category_counts": (
+            ("ambiguous", 0),
+            ("canonical_mapped", 990),
+            ("collision", 10),
+        ),
+        "raw_record_count": 1000,
+        "quarantined_instrument_reasons": (
+            (iid(1), ("share_class_figi_collision",)),
+        ),
+    }
+    values[change] = value
+
+    assert _blocking_evidence_failures(
+        SimpleNamespace(**values),
+        methodology_version=(
+            CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION
+        ),
+    ) == {"identity_join_ratio_below_gate"}
+
+
+def test_canonical_source_loader_rejects_unknown_methodology(tmp_path: Path) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+
+    with pytest.raises(
+        HistoricalUniverseMembershipShadowError,
+        match="methodology is unsupported",
+    ):
+        build_historical_universe_membership_shadow_from_canonical_source(
+            data_root=data_root,
+            session_date=SESSION,
+            catalog_as_of_date=SESSION,
+            evaluated_at=NOW,
+            methodology_version="unsupported-v999",
+        )
 
 
 def _identity_read_with_replay_times(

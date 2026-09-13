@@ -39,6 +39,8 @@ from tip_api.services.historical_identity_rebuild_profile_map import (
     profile_binding_for_session,
 )
 from tip_api.services.historical_universe_membership_shadow import (
+    CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+    CANONICAL_SOURCE_RESEARCH_METHODOLOGIES,
     MAXIMUM_SHARED_PANEL_ANALYSIS_SESSIONS,
     HistoricalUniverseMembershipEvidenceQualityError,
     HistoricalUniverseMembershipShadowError,
@@ -259,8 +261,14 @@ def run_historical_universe_membership_canonical_source_batch(
     output_root: Path,
     calendar: MarketSessionCalendar | None = None,
     security_snapshot: CompletedSecurityEvidenceSnapshot | None = None,
+    methodology_version: str = CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
 ) -> HistoricalUniverseMembershipCanonicalSourceBatchResult:
     """Build one to five adjacent shadows from canonical normalized sources."""
+
+    if methodology_version not in CANONICAL_SOURCE_RESEARCH_METHODOLOGIES:
+        raise HistoricalUniverseMembershipShadowBatchError(
+            "canonical-source research Membership methodology is unsupported"
+        )
 
     session_calendar = calendar or ExchangeCalendar()
     source_root, target_root, ordered_sessions = _validate_canonical_batch_paths(
@@ -298,6 +306,7 @@ def run_historical_universe_membership_canonical_source_batch(
                 calendar=session_calendar,
                 eod_panel=panel,
                 security_snapshot=security_snapshot,
+                methodology_version=methodology_version,
             )
         except (
             HistoricalIdentitySourceCustodyError,

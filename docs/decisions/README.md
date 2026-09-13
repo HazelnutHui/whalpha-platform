@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0227](0227-localize-collision-derived-join-failures-only-in-research-membership.md):
+  retains complete research-only Membership sessions when a sub-0.999 join
+  ratio is proven to arise solely from explicitly quarantined stable-ID
+  collisions, without changing signal or Production gates.
 - [ADR 0226](0226-census-cutoff-aware-sec-projection-without-features.md):
   selects issuer facts at an explicit historical cutoff, preserves strict and
   reconstructed link-evidence tiers, and limits the first projection output to

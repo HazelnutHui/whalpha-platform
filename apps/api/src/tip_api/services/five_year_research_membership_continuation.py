@@ -24,6 +24,7 @@ from tip_api.persistence.parquet.security_evidence import (
 )
 from tip_api.providers.massive.mapping import MASSIVE_PROVIDER_ID
 from tip_api.services.five_year_research_foundation_census import (
+    RESEARCH_MEMBERSHIP_METHODOLOGIES,
     RESEARCH_MEMBERSHIP_METHODOLOGY,
     _membership_publication_dates,
     _research_membership_inventory,
@@ -95,6 +96,8 @@ class FiveYearResearchMembershipContinuationPlanV1(FrozenModel):
             raise ValueError("continuation evaluation time must be normalized UTC")
         if self.data_root != str(APPROVED_DATA_ROOT):
             raise ValueError("continuation data root differs")
+        if self.methodology_version not in RESEARCH_MEMBERSHIP_METHODOLOGIES:
+            raise ValueError("continuation methodology is unsupported")
         candidate = Path(self.candidate_root)
         if (
             not candidate.is_absolute()
@@ -158,11 +161,16 @@ def prepare_five_year_research_membership_continuation(
     catalog_as_of_date: date,
     evaluated_at: datetime,
     code_revision: str,
+    methodology_version: str = RESEARCH_MEMBERSHIP_METHODOLOGY,
     calendar: MarketSessionCalendar | None = None,
 ) -> FiveYearResearchMembershipContinuationPlanV1:
     """Create one immutable continuation plan or formally resume the same plan."""
 
     root = _validated_data_root(data_root)
+    if methodology_version not in RESEARCH_MEMBERSHIP_METHODOLOGIES:
+        raise FiveYearResearchMembershipContinuationError(
+            "continuation methodology is unsupported"
+        )
     candidate = _prepare_candidate_root(candidate_root)
     plan_path = candidate / PLAN_FILE_NAME
     normalized_evaluated_at = normalize_utc_datetime(evaluated_at)
@@ -175,6 +183,7 @@ def prepare_five_year_research_membership_continuation(
             catalog_as_of_date=catalog_as_of_date,
             evaluated_at=normalized_evaluated_at,
             code_revision=code_revision,
+            methodology_version=methodology_version,
         )
         return plan
 
@@ -217,7 +226,7 @@ def prepare_five_year_research_membership_continuation(
         "data_root": str(root),
         "candidate_root": str(candidate),
         "code_revision": code_revision,
-        "methodology_version": RESEARCH_MEMBERSHIP_METHODOLOGY,
+        "methodology_version": methodology_version,
         "catalog_as_of_date": catalog_as_of_date,
         "evaluated_at": normalized_evaluated_at,
         "target_first_session": target_sessions[0],
@@ -294,6 +303,7 @@ def execute_five_year_research_membership_continuation(
             batches_root / batch.batch_id,
             plan.catalog_as_of_date,
             plan.evaluated_at,
+            plan.methodology_version,
         )
         for batch in selected
     )
@@ -385,9 +395,17 @@ def _build_batch(
         Path,
         date,
         datetime,
+        str,
     ],
 ) -> HistoricalUniverseMembershipCanonicalSourceBatchResult:
-    batch, data_root, output_root, catalog_as_of_date, evaluated_at = job
+    (
+        batch,
+        data_root,
+        output_root,
+        catalog_as_of_date,
+        evaluated_at,
+        methodology_version,
+    ) = job
     if _WORKER_SECURITY_SNAPSHOT is None:
         raise FiveYearResearchMembershipContinuationError(
             "Membership continuation worker catalog is unavailable"
@@ -399,6 +417,7 @@ def _build_batch(
         evaluated_at=evaluated_at,
         output_root=output_root,
         security_snapshot=_WORKER_SECURITY_SNAPSHOT,
+        methodology_version=methodology_version,
     )
 
 
@@ -659,6 +678,7 @@ def _require_matching_invocation(
     catalog_as_of_date: date,
     evaluated_at: datetime,
     code_revision: str,
+    methodology_version: str,
 ) -> None:
     if (
         plan.data_root != str(data_root)
@@ -666,6 +686,7 @@ def _require_matching_invocation(
         or plan.catalog_as_of_date != catalog_as_of_date
         or plan.evaluated_at != evaluated_at
         or plan.code_revision != code_revision
+        or plan.methodology_version != methodology_version
     ):
         raise FiveYearResearchMembershipContinuationError(
             "continuation invocation differs from the immutable plan"

@@ -93,7 +93,10 @@ for bounded AI research,
 [ADR 0196](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md)
 for the Dell data program, and
 [ADR 0224](decisions/0224-gate-sec-facts-by-security-projection-class-and-evidence-tier.md)
-for SEC security projection. Use the [ADR index](decisions/README.md) to trace
+for SEC security projection, and
+[ADR 0227](decisions/0227-localize-collision-derived-join-failures-only-in-research-membership.md)
+for collision-localized research Membership. Use the
+[ADR index](decisions/README.md) to trace
 the detailed dependency and supersession chain.
 
 ## Architecture and data

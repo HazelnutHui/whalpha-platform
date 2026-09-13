@@ -118,10 +118,9 @@ project.
 2. When a real second-source sample is available, test it only against the
    frozen 20-action / 64-lifecycle population and retain matched, absent,
    unsupported, and conflicting fields.
-3. Resolve the bounded 37-session research Membership join-gate question
-   without weakening signal or Production rules, then complete only the
-   lifecycle/terminal, action/adjustment, cost, and Historical Coverage
-   evidence required by the first strategy.
+3. Execute and verify ADR 0227's bounded 37-session research-only Membership
+   recovery, then complete only the lifecycle/terminal, action/adjustment,
+   cost, and Historical Coverage evidence required by the first strategy.
 4. Rerun research admission only after a mandatory family changes. If the gate
    still fails, retain rejection without opening outcomes.
 5. Run the registered chronological study only after admission; then preserve

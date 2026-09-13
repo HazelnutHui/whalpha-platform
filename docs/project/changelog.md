@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-13 — Localize collision-derived join failures in research Membership
+
+- Accepted ADR 0227 and added the separately versioned
+  `provider-form-complete-base-localized-collision-v4` method. A sub-0.999 join
+  ratio becomes research-localizable only when the complete failure set is
+  exactly stable-ID collision plus its derived join failure, the denominator
+  reconciles to mapped plus collided rows, ambiguity and business conflicts
+  are zero, raw categories reconcile, and explicit stable-ID quarantines exist.
+- V3 remains immutable and the 0.999 threshold is not lowered. Every original
+  quality flag remains retained. All other failure combinations still reject
+  the whole session, and V4 is unavailable to signal-eligible Membership,
+  validation, holdout, performance, Candidate, Production, or web publication.
+- The five-year census now formally reads and unions approved, nonoverlapping
+  V3/V4 research methodology partitions while rejecting unsupported methods or
+  duplicate dates. The resumable continuation CLI requires an explicit
+  approved method for V4 execution and keeps V3 as its default.
+- All 59 focused Membership/context tests and the complete 2,633-test API
+  suite pass with two unchanged dependency deprecation warnings. No canonical
+  or Production write occurred during implementation verification.
+
 ## 2026-09-13 — Extend five-year research-only Membership custody
 
 - Executed the immutable 950-session continuation plan at four-process

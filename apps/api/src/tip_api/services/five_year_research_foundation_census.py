@@ -24,11 +24,17 @@ from tip_api.services.research_universe_membership_canonical import (
     FAMILY_DIRECTORY as RESEARCH_MEMBERSHIP_FAMILY_DIRECTORY,
     read_canonical_research_universe_membership,
 )
-
-
-RESEARCH_MEMBERSHIP_METHODOLOGY = (
-    "provider-form-complete-base-point-in-time-v3"
+from tip_api.services.historical_universe_membership_shadow import (
+    CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+    CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION,
 )
+
+
+RESEARCH_MEMBERSHIP_METHODOLOGIES = (
+    CANONICAL_SOURCE_HISTORICAL_METHODOLOGY_VERSION,
+    CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION,
+)
+RESEARCH_MEMBERSHIP_METHODOLOGY = RESEARCH_MEMBERSHIP_METHODOLOGIES[0]
 
 
 class FiveYearResearchFoundationCensusError(RuntimeError):
@@ -469,66 +475,94 @@ def _membership_publication_dates(data_root: Path) -> tuple[date, ...]:
 
 
 def _research_membership_inventory(data_root: Path) -> dict[str, Any]:
-    root = (
+    base = (
         data_root
         / "market-data"
         / RESEARCH_MEMBERSHIP_FAMILY_DIRECTORY
         / "schema_version=1"
         / "evidence_tier=reconstructed-latest-vintage-v1"
-        / f"methodology_version={RESEARCH_MEMBERSHIP_METHODOLOGY}"
     )
-    if not root.exists():
+    if not base.exists():
         return {
             "partition_count": 0,
             "record_count": 0,
             "quarantined_record_count": 0,
             "session_dates": (),
+            "methodology_partition_counts": (),
         }
-    if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
+    if base.is_symlink() or not base.is_dir() or base.resolve(strict=True) != base:
         raise FiveYearResearchFoundationCensusError(
             "research Membership root is unsafe"
         )
     dates: list[date] = []
     records = 0
     quarantined = 0
-    for partition in sorted(root.glob("session_date=*")):
-        if partition.is_symlink() or not partition.is_dir():
-            raise FiveYearResearchFoundationCensusError(
-                "research Membership partition is unsafe"
-            )
-        session = _date_or_none(partition.name.removeprefix("session_date="))
-        if session is None:
-            raise FiveYearResearchFoundationCensusError(
-                "research Membership session is absent"
-            )
-        try:
-            evidence = read_canonical_research_universe_membership(
-                data_root=data_root,
-                methodology_version=RESEARCH_MEMBERSHIP_METHODOLOGY,
-                session_date=session,
-                read_records=False,
-            )
-        except Exception as exc:
-            raise FiveYearResearchFoundationCensusError(
-                "research Membership formal metadata read failed"
-            ) from exc
-        dates.append(session)
-        records += evidence.membership_manifest.record_count
-        quarantined += sum(
-            item.quarantined_count
-            for item in evidence.membership_manifest.disposition_summaries
+    methodology_counts: list[tuple[str, int]] = []
+    approved_roots = {
+        f"methodology_version={methodology}"
+        for methodology in RESEARCH_MEMBERSHIP_METHODOLOGIES
+    }
+    unexpected_roots = {
+        item.name
+        for item in base.iterdir()
+        if item.name.startswith("methodology_version=")
+        and item.name not in approved_roots
+    }
+    if unexpected_roots:
+        raise FiveYearResearchFoundationCensusError(
+            "research Membership methodology is unsupported"
         )
+    for methodology in RESEARCH_MEMBERSHIP_METHODOLOGIES:
+        root = base / f"methodology_version={methodology}"
+        if not root.exists():
+            methodology_counts.append((methodology, 0))
+            continue
+        if root.is_symlink() or not root.is_dir() or root.resolve(strict=True) != root:
+            raise FiveYearResearchFoundationCensusError(
+                "research Membership methodology root is unsafe"
+            )
+        partitions = tuple(sorted(root.glob("session_date=*")))
+        methodology_counts.append((methodology, len(partitions)))
+        for partition in partitions:
+            if partition.is_symlink() or not partition.is_dir():
+                raise FiveYearResearchFoundationCensusError(
+                    "research Membership partition is unsafe"
+                )
+            session = _date_or_none(partition.name.removeprefix("session_date="))
+            if session is None:
+                raise FiveYearResearchFoundationCensusError(
+                    "research Membership session is absent"
+                )
+            try:
+                evidence = read_canonical_research_universe_membership(
+                    data_root=data_root,
+                    methodology_version=methodology,
+                    session_date=session,
+                    read_records=False,
+                )
+            except Exception as exc:
+                raise FiveYearResearchFoundationCensusError(
+                    "research Membership formal metadata read failed"
+                ) from exc
+            dates.append(session)
+            records += evidence.membership_manifest.record_count
+            quarantined += sum(
+                item.quarantined_count
+                for item in evidence.membership_manifest.disposition_summaries
+            )
     if len(dates) != len(set(dates)):
         raise FiveYearResearchFoundationCensusError(
             "research Membership sessions are duplicated"
         )
+    ordered_dates = tuple(sorted(dates))
     return {
-        "partition_count": len(dates),
+        "partition_count": len(ordered_dates),
         "record_count": records,
         "quarantined_record_count": quarantined,
-        "session_dates": tuple(dates),
-        "first_session": dates[0].isoformat() if dates else None,
-        "last_session": dates[-1].isoformat() if dates else None,
+        "session_dates": ordered_dates,
+        "first_session": ordered_dates[0].isoformat() if ordered_dates else None,
+        "last_session": ordered_dates[-1].isoformat() if ordered_dates else None,
+        "methodology_partition_counts": tuple(methodology_counts),
     }
 
 

@@ -17,6 +17,7 @@ from tip_api.services.historical_identity_source_custody import (
     HistoricalIdentitySourceCustodyError,
 )
 from tip_api.services.historical_universe_membership_shadow import (
+    CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION,
     HistoricalUniverseMembershipEvidenceQualityError,
     HistoricalUniverseMembershipIdentityMismatchError,
 )
@@ -299,6 +300,9 @@ def test_canonical_source_batch_reuses_shared_inputs_and_localizes_gap(
         calls.append(("build", session))
         assert kwargs["eod_panel"] is panel
         assert kwargs["security_snapshot"] is snapshot
+        assert kwargs["methodology_version"] == (
+            CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION
+        )
         if session == FIRST:
             raise HistoricalIdentitySourceCustodyError("fixture gap")
         return SimpleNamespace(
@@ -343,6 +347,9 @@ def test_canonical_source_batch_reuses_shared_inputs_and_localizes_gap(
         evaluated_at=NOW,
         output_root=output_root,
         calendar=object(),
+        methodology_version=(
+            CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION
+        ),
     )
 
     assert result.status == "completed_with_source_failures"

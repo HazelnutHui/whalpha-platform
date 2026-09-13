@@ -22,11 +22,6 @@ history stays in ADRs, the changelog, and audits.
 - Which independent source resolves corporate-action date semantics, dividend
   currency/order handling, unexplained discontinuities, and total-return
   adjustments?
-- For the research-only Membership shadow, may a session whose sub-0.999 join
-  ratio is caused entirely by explicitly localized stable-ID collisions remain
-  complete with every affected instrument quarantined, or must the whole
-  session remain absent? This question cannot weaken signal-eligible or
-  Production Membership rules.
 - Can reconstructed Membership ever obtain defensible historical availability,
   or must formal validation begin only with prospective canonical Membership?
 - Will a GICS History sample pass the existing identity, knowledge-time,

@@ -17,6 +17,9 @@ from tip_api.services.five_year_research_membership_continuation import (
     _read_plan,
     _write_plan,
 )
+from tip_api.services.historical_universe_membership_shadow import (
+    CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION,
+)
 
 
 def test_contiguous_batches_do_not_bridge_missing_or_covered_sessions() -> None:
@@ -54,7 +57,9 @@ def test_plan_round_trip_is_owner_read_only_and_fingerprint_bound(
         "data_root": "/data/trading-intelligence-platform",
         "candidate_root": str(candidate),
         "code_revision": "a" * 40,
-        "methodology_version": "provider-form-complete-base-point-in-time-v3",
+        "methodology_version": (
+            CANONICAL_SOURCE_LOCALIZED_COLLISION_METHODOLOGY_VERSION
+        ),
         "catalog_as_of_date": date(2026, 8, 14),
         "evaluated_at": datetime(2026, 9, 13, 9, tzinfo=UTC),
         "target_first_session": date(2021, 9, 13),

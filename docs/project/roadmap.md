@@ -95,9 +95,9 @@ governed evidence or explicit quarantine with measured admission impact.
 
 1. Preserve the completed 1,213-session latest-vintage reconstructed
    Membership archive in its research-only family; never present it as
-   `as_operated` or signal-eligible. Decide the exact treatment of the 37
-   source-available sessions rejected by the Identity join gate without
-   weakening signal-eligible or Production evidence rules.
+   `as_operated` or signal-eligible. Apply ADR 0227's separately versioned,
+   collision-localized V4 method only to the 37 measured source-available
+   gaps, then formally archive and census the result.
 2. Apply path-local split bases only after admissible coverage exists. Keep
    dividends as event context unless a separately governed total-return basis
    is selected.
