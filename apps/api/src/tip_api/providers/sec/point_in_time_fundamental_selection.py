@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections import defaultdict
+from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Literal
 
@@ -33,6 +34,17 @@ class SecPointInTimeFundamentalSelectionError(RuntimeError):
 
 class _FrozenModel(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+@dataclass(frozen=True, slots=True)
+class _SelectionCore:
+    status: Literal["selected", "not_available", "quarantined"]
+    reasons: tuple[str, ...]
+    selected_rows: tuple[_SelectedRow, ...] = ()
+    start_date: date | None = None
+    end_date: date | None = None
+    source_available_at: datetime | None = None
+    visible_revision_state_count: int = 0
 
 
 class SecIssuerFundamentalSelectionV1(_FrozenModel):
@@ -155,23 +167,100 @@ def select_sec_issuer_fundamental(
         raise SecPointInTimeFundamentalSelectionError(
             "fundamental selection row scope differs"
         )
-    eligible = tuple(
-        row
-        for row in rows
-        if _classify_row(row, query) == "query_eligible"
-        and row.signal_eligible_session is not None
-        and row.signal_eligible_session <= evaluated_session
-        and row.source_available_at is not None
-        and row.source_available_at <= cutoff
-        and row.end_date is not None
-        and row.end_date <= cutoff.date()
+    core = _select_core(
+        rows=rows,
+        query=query,
+        evaluated_session=evaluated_session,
+        cutoff_at=cutoff,
     )
-    if not eligible:
+    if core.status != "selected":
         return _empty_selection(
             query=query,
             companyfacts_cik=companyfacts_cik,
             evaluated_session=evaluated_session,
             cutoff_at=cutoff,
+            status=core.status,
+            reasons=core.reasons,
+        )
+    selected_rows = core.selected_rows
+    selected_values = {(row.value_kind, row.value_text) for row in selected_rows}
+    if len(selected_values) != 1:
+        raise SecPointInTimeFundamentalSelectionError(
+            "fundamental latest state value differs"
+        )
+    value_kind, value_text = next(iter(selected_values))
+    if value_text is None:
+        raise SecPointInTimeFundamentalSelectionError(
+            "fundamental latest state value is missing"
+        )
+    accessions = tuple(sorted({row.accession_number for row in selected_rows}))
+    source_ids = tuple(sorted({row.source_occurrence_id for row in selected_rows}))
+    if len(source_ids) != len(selected_rows):
+        raise SecPointInTimeFundamentalSelectionError(
+            "fundamental source occurrence ID is duplicated"
+        )
+    values = {
+        "contract_version": CONTRACT_VERSION,
+        "query_id": query.query_id,
+        "registry_logical_fingerprint": (
+            build_first_sec_fundamental_query_registry().logical_fingerprint
+        ),
+        "economic_grain": "issuer",
+        "companyfacts_cik": companyfacts_cik,
+        "evaluated_session": evaluated_session,
+        "cutoff_at": cutoff,
+        "selection_status": "selected",
+        "reason_codes": (),
+        "value_kind": value_kind,
+        "value_text": value_text,
+        "start_date": core.start_date,
+        "end_date": core.end_date,
+        "source_available_at": core.source_available_at,
+        "signal_eligible_session": max(
+            row.signal_eligible_session
+            for row in selected_rows
+            if row.signal_eligible_session is not None
+        ),
+        "accession_numbers": accessions,
+        "forms": tuple(sorted({row.form for row in selected_rows})),
+        "filed_dates": tuple(sorted({row.filed_date for row in selected_rows})),
+        "source_occurrence_ids": source_ids,
+        "visible_revision_state_count": core.visible_revision_state_count,
+        "selected_occurrence_count": len(selected_rows),
+        "exact_duplicate_redundant_occurrence_count": (
+            len(selected_rows) - len(accessions)
+        ),
+        "security_projection_authorized": False,
+        "feature_materialization_authorized": False,
+        "strategy_outcome_access_count": 0,
+        "research_performance_authorized": False,
+    }
+    return SecIssuerFundamentalSelectionV1.model_validate(
+        {**values, "logical_fingerprint": _fingerprint(values)}
+    )
+
+
+def _select_core(
+    *,
+    rows: tuple[_SelectedRow, ...],
+    query: SecFundamentalQueryV1,
+    evaluated_session: date,
+    cutoff_at: datetime,
+    rows_are_query_eligible: bool = False,
+) -> _SelectionCore:
+    eligible = tuple(
+        row
+        for row in rows
+        if (rows_are_query_eligible or _classify_row(row, query) == "query_eligible")
+        and row.signal_eligible_session is not None
+        and row.signal_eligible_session <= evaluated_session
+        and row.source_available_at is not None
+        and row.source_available_at <= cutoff_at
+        and row.end_date is not None
+        and row.end_date <= cutoff_at.date()
+    )
+    if not eligible:
+        return _SelectionCore(
             status="not_available",
             reasons=("no_query_eligible_occurrence_at_cutoff",),
         )
@@ -179,11 +268,7 @@ def select_sec_issuer_fundamental(
     latest = tuple(row for row in eligible if row.end_date == latest_end)
     period_starts = {row.start_date for row in latest}
     if len(period_starts) != 1:
-        return _empty_selection(
-            query=query,
-            companyfacts_cik=companyfacts_cik,
-            evaluated_session=evaluated_session,
-            cutoff_at=cutoff,
+        return _SelectionCore(
             status="quarantined",
             reasons=("same_period_end_multiple_starts",),
         )
@@ -196,11 +281,7 @@ def select_sec_issuer_fundamental(
         times = {row.source_available_at for row in accession_rows}
         metadata = {(row.form, row.filed_date) for row in accession_rows}
         if len(values) != 1 or len(times) != 1 or len(metadata) != 1 or None in times:
-            return _empty_selection(
-                query=query,
-                companyfacts_cik=companyfacts_cik,
-                evaluated_session=evaluated_session,
-                cutoff_at=cutoff,
+            return _SelectionCore(
                 status="quarantined",
                 reasons=("within_accession_conflict",),
             )
@@ -225,11 +306,7 @@ def select_sec_issuer_fundamental(
     for available_at, value, accession, accession_rows in clean:
         by_time[available_at].append((value, accession, accession_rows))
     if any(len({item[0] for item in states}) > 1 for states in by_time.values()):
-        return _empty_selection(
-            query=query,
-            companyfacts_cik=companyfacts_cik,
-            evaluated_session=evaluated_session,
-            cutoff_at=cutoff,
+        return _SelectionCore(
             status="quarantined",
             reasons=("same_availability_value_conflict",),
         )
@@ -240,52 +317,17 @@ def select_sec_issuer_fundamental(
         raise SecPointInTimeFundamentalSelectionError(
             "fundamental latest state value differs"
         )
-    value_kind, value_text = next(iter(selected_values))
-    selected_rows = tuple(row for _, _, values in selected_states for row in values)
-    accessions = tuple(sorted({item[1] for item in selected_states}))
-    source_ids = tuple(sorted({row.source_occurrence_id for row in selected_rows}))
-    if len(source_ids) != len(selected_rows):
-        raise SecPointInTimeFundamentalSelectionError(
-            "fundamental source occurrence ID is duplicated"
-        )
-    values = {
-        "contract_version": CONTRACT_VERSION,
-        "query_id": query.query_id,
-        "registry_logical_fingerprint": (
-            build_first_sec_fundamental_query_registry().logical_fingerprint
-        ),
-        "economic_grain": "issuer",
-        "companyfacts_cik": companyfacts_cik,
-        "evaluated_session": evaluated_session,
-        "cutoff_at": cutoff,
-        "selection_status": "selected",
-        "reason_codes": (),
-        "value_kind": value_kind,
-        "value_text": value_text,
-        "start_date": next(iter(period_starts)),
-        "end_date": latest_end,
-        "source_available_at": selected_time,
-        "signal_eligible_session": max(
-            row.signal_eligible_session
-            for row in selected_rows
-            if row.signal_eligible_session is not None
-        ),
-        "accession_numbers": accessions,
-        "forms": tuple(sorted({row.form for row in selected_rows})),
-        "filed_dates": tuple(sorted({row.filed_date for row in selected_rows})),
-        "source_occurrence_ids": source_ids,
-        "visible_revision_state_count": len(by_time),
-        "selected_occurrence_count": len(selected_rows),
-        "exact_duplicate_redundant_occurrence_count": (
-            len(selected_rows) - len(accessions)
-        ),
-        "security_projection_authorized": False,
-        "feature_materialization_authorized": False,
-        "strategy_outcome_access_count": 0,
-        "research_performance_authorized": False,
-    }
-    return SecIssuerFundamentalSelectionV1.model_validate(
-        {**values, "logical_fingerprint": _fingerprint(values)}
+    selected_rows = tuple(
+        row for _, _, accession_rows in selected_states for row in accession_rows
+    )
+    return _SelectionCore(
+        status="selected",
+        reasons=(),
+        selected_rows=selected_rows,
+        start_date=next(iter(period_starts)),
+        end_date=latest_end,
+        source_available_at=selected_time,
+        visible_revision_state_count=len(by_time),
     )
 
 

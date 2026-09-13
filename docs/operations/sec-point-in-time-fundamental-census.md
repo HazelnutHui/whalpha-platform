@@ -79,3 +79,22 @@ dedicated readiness-census state root. Reread the package through
 `read_sec_fundamental_query_readiness_census`; do not treat raw JSON inspection
 as formal verification. A successful result permits only the later design of
 a cutoff-aware issuer query reader and security-projection census.
+
+## Cutoff-aware projection stage
+
+Use the completed query-readiness package and the complete five-year
+filer/security candidate. The CLI requires a clean repository and binds its
+exact revision. Use eight processes for the normalized issuer-timeline build
+and eight explicit formal-read workers for the transitive link verification.
+
+The scan must recompute common-stock CIK cardinality within each session and
+must not use the source package's all-security `cik_instrument_count` as the
+share-class test. Every link row receives one structural/time disposition;
+every structurally projectable row receives one selection state for every
+registered query.
+
+The report retains only query/tier/session aggregates and fact-age buckets.
+No issuer value, security/fact row, signal, label, rank, or outcome may be
+written. After completion, formally reread the report and both transitive input
+chains, verify exact ownership/modes and absence of sibling partial residue,
+and record runtime plus logical fingerprint in a dated audit.
