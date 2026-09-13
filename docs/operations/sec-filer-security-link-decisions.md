@@ -35,3 +35,14 @@ Record exact admitted/missing/conflicting/mismatch counts, one-to-many CIK
 distribution, session coverage, bytes, hashes, logical fingerprint, tests, and
 the unchanged zero-authority boundary in a dated audit. Only then may a
 separate canonical publication decision be considered.
+
+## Current full candidate
+
+The retained 2026-09-13 five-year candidate covers 1,255 sessions from
+2021-09-13 through 2026-09-11. Its two allowed missing source sessions are
+exactly 2026-08-13 and 2026-08-19. The build uses at most eight workers for
+session materialization, but the strict formal reread is single-process and
+took most of the observed 56-minute wall time. Do not start another full
+reread merely for routine recovery; first validate the immutable manifest and
+recorded audit. A future reader optimization must preserve all transitive
+hash, schema, denominator, time-eligibility, and quarantine checks.

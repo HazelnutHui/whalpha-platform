@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-13 — Build the complete SEC filer/security link candidate
+
+- Extended the proven one-session SEC filer/security link path across all
+  1,255 XNYS sessions from 2021-09-13 through 2026-09-11. Every one of the
+  10,681,604 canonical stable-security rows has an explicit decision:
+  9,456,209 unique-CIK admissions, 1,205,516 missing-CIK quarantines, and
+  19,879 quarantines on the two exact missing source sessions 2026-08-13 and
+  2026-08-19. Conflict and identity-mismatch counts are zero.
+- Preserved 952 `eligible_at_source_observed_at`, 301
+  `outcome_reconciliation_only`, and two `source_custody_missing` session
+  states without backdating evidence. All rows retain
+  `issuer_projection_authorized=false`; one-to-many CIKs remain visible rather
+  than selecting a primary share class.
+- The owner-only 1,256-file / 758,604,458-byte package has manifest SHA-256
+  `2a432ff2ca92fdc912ba5712b7487feb905fc24d562e5f84301e3e98f86d3ab0`
+  and logical fingerprint
+  `a71a6180f86228b7c80062c121da42e46a101d8f012e7f7a537147be0b609c71`.
+  The built-in full formal reread and an independent boundary/exception
+  postflight passed; ownership/modes are exact and residue is zero.
+- Added exact failed-build partial cleanup before the run. Eight-worker
+  materialization plus strict single-process full reread completed in 56
+  minutes 16.11 seconds, establishing the formal reader as the performance
+  tail. No network or credential access occurred and canonical, Membership,
+  analytics, research, publication, deployment, and scheduler authority remain
+  unchanged. The complete API suite passes 2,608 tests with two unchanged
+  dependency deprecation warnings.
+
 ## 2026-09-13 — Freeze the first-strategy source acceptance population
 
 - Implemented ADR 0223's network-prohibited, provider-neutral sample builder

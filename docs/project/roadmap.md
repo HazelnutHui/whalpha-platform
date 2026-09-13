@@ -243,10 +243,13 @@ Required work:
   Do not try to resolve every out-of-scope fund, preferred, OTC, or other
   action first, and never turn a unique history-wide candidate or ticker match
   into an event-date assignment;
-- register a small first set of exact concept/unit/period/form queries from the
-  measured census, then build complete effective-dated filer/security links
-  and separately decide share-class projection before any security-level
-  fundamental feature admission;
+- completed 2026-09-13: build the complete owner-only filer/security link
+  candidate for all 1,255 sessions / 10,681,604 stable-security decisions,
+  preserving 1,205,516 missing-CIK quarantines and 19,879 rows on the two
+  missing source sessions without authorizing issuer projection;
+- decide an explicit share-class projection policy, then register a small
+  first set of exact concept/unit/period/form queries from the measured census
+  before any security-level fundamental feature admission;
 - lifecycle and terminal-outcome evidence;
 - complete split/action handling for the declared underlying-stock price-
   return basis, with dividends retained as event context rather than silently

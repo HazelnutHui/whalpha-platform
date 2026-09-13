@@ -61,7 +61,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Official SEC fundamentals sources | Company Facts: 20,343 members / 41,619,407 five-year occurrences; Submissions: 989,553 members / 27,217,476 filing rows; both private source snapshots |
 | SEC filing clocks and sparse facts | 172,265 clocks: 172,262 admitted / 3 quarantined; 41,619,407 normalized fact occurrences: 41,619,004 clock-admitted / 403 quarantined; no security-level feature authority |
 | SEC semantic census | 41,619,407 occurrences / 24,498,347 exact semantic keys; 24,497,828 revision-eligible / 519 quarantined; 886,400 later-state value changes; fingerprint `8899aeb278f50861952d7308a815c62640a2ec274bb1d614ff07f8ba651e3e21`; source-level discovery only |
-| SEC filer/security link | One-session pilot: 8,201 stable-ID decisions and 150 multi-security CIK groups; issuer projection unauthorized |
+| SEC filer/security link | Owner-only five-year candidate `build=five-year-20260913-v1`: 1,255 sessions / 10,681,604 stable-security decisions; 9,456,209 unique-CIK admissions, 1,205,516 missing-CIK quarantines, and 19,879 rows on two missing-source sessions quarantined; issuer projection unauthorized; fingerprint `a71a6180f86228b7c80062c121da42e46a101d8f012e7f7a537147be0b609c71` |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |
 | Current data inventory | 18,175 files / 7,022,164,015 bytes |
