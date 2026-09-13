@@ -54,6 +54,7 @@ _SHA256 = r"^[0-9a-f]{64}$"
 _REVISION = r"^[0-9a-f]{40}$"
 _TARGET_COLUMNS = (
     "contract_version",
+    "source_occurrence_id",
     "source_member_name",
     "companyfacts_cik",
     "namespace",
@@ -67,8 +68,10 @@ _TARGET_COLUMNS = (
     "accession_number",
     "fiscal_period",
     "form",
+    "filed_date",
     "filing_clock_admission_status",
     "source_available_at_utc",
+    "signal_eligible_session",
     "normalization_status",
 )
 _DISPOSITIONS = (
@@ -234,6 +237,7 @@ class SecFundamentalQueryReadinessResult:
 
 
 class _SelectedRow(NamedTuple):
+    source_occurrence_id: str
     source_member_name: str
     companyfacts_cik: str
     namespace: str
@@ -247,8 +251,10 @@ class _SelectedRow(NamedTuple):
     accession_number: str
     fiscal_period: str | None
     form: str
+    filed_date: date
     clock_status: str
     source_available_at: datetime | None
+    signal_eligible_session: date | None
     normalization_status: str
 
 
@@ -537,6 +543,7 @@ def _iter_target_rows(
         selected = batch.filter(mask).to_pydict()
         for index in range(len(selected["companyfacts_cik"])):
             row = _SelectedRow(
+                source_occurrence_id=selected["source_occurrence_id"][index],
                 source_member_name=selected["source_member_name"][index],
                 companyfacts_cik=selected["companyfacts_cik"][index],
                 namespace=selected["namespace"][index],
@@ -550,8 +557,10 @@ def _iter_target_rows(
                 accession_number=selected["accession_number"][index],
                 fiscal_period=selected["fiscal_period"][index],
                 form=selected["form"][index],
+                filed_date=selected["filed_date"][index],
                 clock_status=selected["filing_clock_admission_status"][index],
                 source_available_at=selected["source_available_at_utc"][index],
+                signal_eligible_session=selected["signal_eligible_session"][index],
                 normalization_status=selected["normalization_status"][index],
             )
             if (row.namespace, row.concept_name) not in targets:

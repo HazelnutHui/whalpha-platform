@@ -26,6 +26,11 @@ No field defaults to today's latest value. Namespace/concept aliases, unit
 conversion, cumulative-to-quarter derivation, trailing aggregation, and
 security projection must be explicit parts of the registered method.
 
+For an evaluated session, `source_available_at_utc` must not follow the caller
+cutoff and `signal_eligible_session` must not follow the evaluated session. The
+latter is assigned by the filing-clock ledger as the first XNYS open strictly
+after conservative SEC acceptance. Period end must not follow the cutoff date.
+
 ## Revision selection
 
 1. Exclude quarantined occurrences and any fact whose conservative source
@@ -35,18 +40,25 @@ security projection must be explicit parts of the registered method.
    candidate with retained occurrence count and source-occurrence
    fingerprints. Different values in the same accession/key quarantine the
    selection.
-4. Order candidate accessions by source availability. Select only the latest
-   uniquely valued candidate at the cutoff.
-5. A tie with different values, missing required period fields, unsupported
-   form, or unresolved filer-security projection returns an explicit
-   quarantine result rather than a value.
+4. Determine the latest visible period end. Multiple visible duration starts
+   for that end quarantine the selection instead of guessing a fiscal shape.
+5. Order candidate accessions for the sole latest semantic period by source
+   availability. Select only the latest uniquely valued availability state at
+   the cutoff. Multiple accessions at that time may be retained together only
+   when their value is identical.
+6. A tie with different values, an internally inconsistent accession, missing
+   required period fields, unsupported form, or unresolved filer-security
+   projection returns an explicit quarantine result rather than a value.
 
 ## Result
 
-The result records selected value kind/text, semantic key, accession, form,
-filed/effective period, selected availability, eligible session, revision and
-repeat counts, all source occurrence IDs, query/method fingerprints, and one
-of `selected`, `not_available`, or `quarantined` with deterministic reasons.
+The issuer result records selected value kind/text, semantic key,
+accession-number set, form/filed-date set, effective period, selected
+availability, eligible session, revision and occurrence counts, all selected
+source occurrence IDs, query fingerprint, and one of `selected`,
+`not_available`, or `quarantined` with deterministic reasons. Security
+projection is a separate result and never changes the economic grain of the
+selected issuer fact.
 
 Selection does not authorize model use. A model input must additionally pass
 feature coverage, cross-sectional missingness, revision stability, chronology,

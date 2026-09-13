@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0226](0226-census-cutoff-aware-sec-projection-without-features.md):
+  selects issuer facts at an explicit historical cutoff, preserves strict and
+  reconstructed link-evidence tiers, and limits the first projection output to
+  outcome-free aggregate coverage.
 - [ADR 0225](0225-register-the-first-sec-issuer-fundamental-query-set.md):
   freezes four exact issuer-level SEC source queries and default-deny
   availability, revision, conflict, and security-projection semantics before
