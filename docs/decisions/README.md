@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0237](0237-adjudicate-sec-transaction-completion-from-bounded-narrative.md):
+  selects one issuer completion date only from a bounded introduction and Item
+  2.01 ruleset while retaining cover-date mismatches and zero terminal authority.
 - [ADR 0236](0236-adjudicate-sec-cover-identity-with-point-in-time-tuples.md):
   matches only event-time inline-XBRL CIK+ticker+exchange common-equity rows
   and rejects later same-ticker filings outside the sampled lifecycle window.
