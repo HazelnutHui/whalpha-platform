@@ -24,6 +24,7 @@ Successful output is aggregate-only. Verify 219 requests, 219 unique URLs, 22
 batches, zero authority counters, file modes, hashes, and absence of staging
 residue.
 
-Do not use shell loops or ad hoc downloads from the plan. A later source-
-custody runner must preserve exact request sequence, bounded batches, rate and
-size limits, source response identity, checkpoint recovery, and formal readback.
+Do not use shell loops or ad hoc downloads from the plan. Use the separately
+governed [SEC Document Source Custody](strong-leader-pullback-sec-document-source.md)
+runner, which preserves exact request sequence, bounded batches, rate and size
+limits, source response identity, checkpoint recovery, and formal readback.

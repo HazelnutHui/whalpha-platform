@@ -82,9 +82,9 @@ not five-year performance admission.
    security-level lifecycle field still unsupported.
 3. Preserve the completed no-request document plan: 219 unique URLs in 22
    deterministic batches, bounded to the transition-period population.
-4. Acquire those documents through resumable, rate/size-limited private source
-   custody, then record matched, absent, unsupported, and conflicting fields;
-   document content still cannot assign security identity by itself.
+4. Run the implemented resumable, rate/size-limited private source custody for
+   those documents, then record matched, absent, unsupported, and conflicting
+   fields; document content still cannot assign security identity by itself.
 5. Test a commercial source only against the residual field gap that remains
    after the SEC document review; do not repeat a global vendor scan.
 6. Resolve missing-event neutrality and terminal outcomes without turning a

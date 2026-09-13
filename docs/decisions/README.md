@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0230](0230-retain-transition-period-sec-primary-documents-in-resumable-private-custody.md):
+  retains the exact 219-document SEC plan in resumable, response-level private
+  custody without granting lifecycle or research authority.
 - [ADR 0229](0229-freeze-transition-period-sec-primary-document-acquisition.md):
   freezes every transition-period SEC document candidate into 22 bounded,
   deterministic no-request batches before any content acquisition.

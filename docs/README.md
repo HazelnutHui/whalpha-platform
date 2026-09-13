@@ -78,6 +78,8 @@ Stock Candidates.
   fixed latest-vintage, outcome-blind development-admission census.
 - [Strong-Leader Pullback Development Admission Decision V1](data-contracts/strong-leader-pullback-development-admission-decision-v1.md):
   complete-session missingness rule and current evidence rejection.
+- [Strong-Leader Pullback SEC Document Source V1](data-contracts/strong-leader-pullback-sec-document-source-v1.md):
+  exact resumable private custody for the frozen 219-document plan.
 - [Candidate Strategy Research Statistics V1](data-contracts/candidate-strategy-research-statistics-v1.md):
   session-balanced inference and registered gates.
 - [Candidate Strategy Holdout Custody V1](data-contracts/candidate-strategy-holdout-custody-v1.md):
@@ -97,7 +99,9 @@ for SEC security projection, and
 [ADR 0227](decisions/0227-localize-collision-derived-join-failures-only-in-research-membership.md)
 for collision-localized research Membership, and
 [ADR 0228](decisions/0228-use-sec-submissions-as-a-lifecycle-document-locator-not-a-terminal-fact.md)
-for bounded SEC lifecycle-document discovery. Use the
+for bounded SEC lifecycle-document discovery, and
+[ADR 0230](decisions/0230-retain-transition-period-sec-primary-documents-in-resumable-private-custody.md)
+for resumable private source custody of the frozen documents. Use the
 [ADR index](decisions/README.md) to trace
 the detailed dependency and supersession chain.
 
@@ -146,6 +150,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback Source Acceptance Sample](operations/strong-leader-pullback-source-acceptance-sample.md)
 - [Strong-Leader Pullback SEC Lifecycle Pilot](operations/strong-leader-pullback-sec-lifecycle-pilot.md)
 - [Strong-Leader Pullback SEC Document Plan](operations/strong-leader-pullback-sec-document-plan.md)
+- [Strong-Leader Pullback SEC Document Source Custody](operations/strong-leader-pullback-sec-document-source.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)

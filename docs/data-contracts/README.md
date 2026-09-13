@@ -77,6 +77,7 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback Source Acceptance Sample V1](strong-leader-pullback-source-acceptance-sample-v1.md)
 - [Strong-Leader Pullback SEC Lifecycle Pilot V1](strong-leader-pullback-sec-lifecycle-pilot-v1.md)
 - [Strong-Leader Pullback SEC Document Plan V1](strong-leader-pullback-sec-document-plan-v1.md)
+- [Strong-Leader Pullback SEC Document Source V1](strong-leader-pullback-sec-document-source-v1.md)
 - [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)

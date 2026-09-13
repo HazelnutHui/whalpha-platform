@@ -136,8 +136,9 @@ Important private Dell evidence includes:
   lifecycle fields remain unsupported until document content and security
   identity are proven; and
 - an immutable 219-request SEC primary-document plan with 219 unique official
-  URLs in 22 fixed batches. It is a no-request artifact; source-content custody
-  and field interpretation remain pending.
+URLs in 22 fixed batches. The contract-tested, resumable source-custody runner
+is implemented; live source-content custody and field interpretation remain
+pending.
 
 Exact package identities and counts are retained in:
 
@@ -179,9 +180,10 @@ The first source-specific lifecycle pilot is now bound to the immutable
 to 2,144 document candidates, including 219 on or after the last canonical
 observation, without promoting a single terminal fact. Those 219 documents are
 now frozen into 22 deterministic no-request batches. The next internal gate is
-resumable SEC source-content custody; a commercial sample remains limited to
-the exact fields still unsupported after document review. Massive Starter is
-not the sole lifecycle authority.
+to run the implemented resumable SEC source-content custody and then measure
+the supported fields; a commercial sample remains limited to the exact fields
+still unsupported after document review. Massive Starter is not the sole
+lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
