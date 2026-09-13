@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-13 — Index all transaction documents without fact promotion
+
+- Accepted ADR 0234 and classified all 89 remaining primary documents: 61
+  structured 8-K Item 2.01 scopes, one 8-K without Item 2.01, 24 tender
+  amendments, one referenced-exhibit-only 6-K, and two proxy materials with no
+  registered completion scope.
+- Eighty-six documents contain one of six finite candidate families. Contexts
+  are bounded to three per family, hashed, and explicitly non-factual; absence
+  means only absence from the retained primary document.
+- The 917,859-byte report has SHA-256
+  `fbaf9116fc23e00dcdeeb21075c7bdfb196b6d178b588d76fb549b27d8d790ae`
+  and logical fingerprint
+  `15ecfe9c5e737aa4090ed144de822b916040390a7a513f36b09715ecf25b9d2b`.
+  Exact network-disabled reread passed with zero residue.
+- Three focused tests and the full 2,658-test API suite passed with two
+  unchanged warnings. No transaction/lifecycle fact, outcome, `/data`,
+  Historical Coverage, research, Candidate, publication, deployment, or
+  scheduler action occurred.
+
 ## 2026-09-13 — Preserve all Form 15 fields without effective-status inference
 
 - Accepted ADR 0233 and extracted all 66 Form 15 documents: 63 Form 15-12G and

@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T16:07:45Z
+Operational state verified at: 2026-09-13T16:29:08Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -163,7 +163,15 @@ Important private Dell evidence includes:
   and logical fingerprint
   `b5a953a4e3227ed93eef73bd1c39db7bca0a9c3061611fc1e98e45fb97914e78`.
   It preserves two multi-file-number records and one certification date before
-  filing without inferring effective or terminal status.
+  filing without inferring effective or terminal status; and
+- the completed form-aware transaction candidate package: 89 / 89 documents
+  across 63 stable-ID locators, report SHA-256
+  `fbaf9116fc23e00dcdeeb21075c7bdfb196b6d178b588d76fb549b27d8d790ae`,
+  and logical fingerprint
+  `15ecfe9c5e737aa4090ed144de822b916040390a7a513f36b09715ecf25b9d2b`.
+  It separates 61 structured 8-K completion scopes, one non-Item-2.01 8-K, 24
+  tender amendments, one referenced-exhibit-only 6-K, and two proxy materials;
+  candidate contexts remain non-facts.
 
 Exact package identities and counts are retained in:
 
@@ -178,6 +186,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC content census audit](../audits/strong-leader-pullback-sec-document-content-census-2026-09-13.md)
 - [First-strategy SEC Form 25 candidate audit](../audits/strong-leader-pullback-sec-form25-candidates-2026-09-13.md)
 - [First-strategy SEC Form 15 candidate audit](../audits/strong-leader-pullback-sec-form15-candidates-2026-09-13.md)
+- [First-strategy SEC transaction candidate audit](../audits/strong-leader-pullback-sec-transaction-candidates-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -210,12 +219,12 @@ to 2,144 document candidates, including 219 on or after the last canonical
 observation, without promoting a single terminal fact. Those 219 documents are
 now frozen into 22 deterministic batches and all 219 source documents are in
 formally reread private custody. The completed deterministic parse census
-localizes lexical evidence without promoting a fact. Form 25 and Form 15
-candidate-value extraction is complete. The next internal gate is bounded
-transaction-document extraction followed by a measured supported/absent/
-unsupported/ambiguous/conflicting field census. A commercial sample remains
-limited to the residual fields after that review. Massive Starter is not the
-sole lifecycle authority.
+localizes lexical evidence without promoting a fact. Form 25, Form 15, and
+transaction candidate extraction is complete. The next internal gate is a
+stable-ID case reconciliation measuring matched, absent, referenced-only,
+unsupported, ambiguous, conflicting, and irrelevant evidence. A commercial
+sample remains limited to the residual fields after that review. Massive
+Starter is not the sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
