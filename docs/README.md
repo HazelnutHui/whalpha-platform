@@ -140,6 +140,7 @@ separately approved bounded serving artifacts.
 - [Daily EOD Automation](operations/daily-eod-automation.md)
 - [Massive Day Aggregates Flat File Ingestion](operations/massive-day-aggregates-flat-file-ingestion.md)
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
+- [Five-Year Corporate-Action Resolution](operations/five-year-corporate-action-resolution.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
 - [FINRA OTC Daily List Source Custody](operations/finra-otc-daily-list-source-custody.md)

@@ -202,6 +202,38 @@ def _identity_evidence(root: Path) -> Path:
     ).evidence_path
 
 
+def _derived_identity_evidence(
+    root: Path,
+    source_path: Path,
+    *,
+    sessions: tuple[date, ...],
+    conflicting: bool = False,
+) -> Path:
+    source = ParquetHistoricalCoverageRepository(root).read_dataset_evidence(
+        source_path
+    ).evidence
+    artifacts_by_session = {
+        item.first_session: item for item in source.artifacts
+    }
+    artifacts = tuple(artifacts_by_session[session] for session in sessions)
+    if conflicting:
+        artifacts = (
+            artifacts[0].model_copy(update={"logical_fingerprint": "f" * 64}),
+            *artifacts[1:],
+        )
+    evidence = build_historical_dataset_coverage_evidence(
+        family=HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
+        sessions=sessions,
+        artifacts=artifacts,
+        record_count=sum(item.record_count for item in artifacts),
+        quarantined_record_count=0,
+        created_at=REPEAT_AT,
+    )
+    return ParquetHistoricalCoverageRepository(root).publish_dataset_evidence(
+        evidence
+    ).evidence_path
+
+
 def _split_payloads() -> list[dict[str, object]]:
     return [
         {
@@ -399,6 +431,99 @@ def test_exact_rerun_is_idempotent(monkeypatch, tmp_path: Path) -> None:
 
     assert first.manifest == second.manifest
     assert second.status == "already_present"
+
+
+def test_composes_identical_overlap_and_retains_subset_gaps(
+    monkeypatch, tmp_path: Path
+) -> None:
+    inputs = _inputs(monkeypatch, tmp_path)
+    primary = Path(inputs.pop("identity_evidence_path"))
+    overlap = _derived_identity_evidence(
+        Path(inputs["data_root"]), primary, sessions=(END,)
+    )
+    inputs.update(
+        identity_evidence_paths=(primary, overlap),
+        output_root=tmp_path / "composite-shadow",
+    )
+
+    result = build_historical_corporate_action_resolution_shadow(**inputs)  # type: ignore[arg-type]
+
+    assert result.manifest.contract_version == module.COMPOSITE_CONTRACT_VERSION
+    assert result.manifest.identity_session_count == 2
+    assert result.manifest.identity_overlap_session_count == 1
+    assert result.manifest.identity_overlap_conflict_count == 0
+    assert len(result.manifest.identity_evidences) == 2
+    assert result.manifest.identity_session_unavailable_record_count == 1
+    assert result.manifest.output_storage == "temporary"
+
+
+def test_composite_identity_overlap_conflict_stops(
+    monkeypatch, tmp_path: Path
+) -> None:
+    first = module._IdentityEvidence(
+        relative_path="evidence/first/manifest.json",
+        physical_sha256="a" * 64,
+        logical_fingerprint="b" * 64,
+        sessions=(END,),
+        artifacts_by_session={END: "first-artifact"},
+    )
+    second = module._IdentityEvidence(
+        relative_path="evidence/second/manifest.json",
+        physical_sha256="c" * 64,
+        logical_fingerprint="d" * 64,
+        sessions=(END,),
+        artifacts_by_session={END: "conflicting-artifact"},
+    )
+    evidence_by_path = {
+        Path("first"): first,
+        Path("second"): second,
+    }
+    monkeypatch.setattr(
+        module,
+        "_read_identity_evidence",
+        lambda _root, path: evidence_by_path[path],
+    )
+
+    with pytest.raises(
+        HistoricalCorporateActionResolutionShadowError,
+        match="overlapping Identity evidence conflicts",
+    ):
+        module._read_identity_evidence_set(
+            tmp_path,
+            (Path("first"), Path("second")),
+        )
+
+
+def test_persistent_candidate_requires_exact_owner_only_root(
+    monkeypatch, tmp_path: Path
+) -> None:
+    inputs = _inputs(monkeypatch, tmp_path)
+    evidence = Path(inputs.pop("identity_evidence_path"))
+    custody = tmp_path / "private-custody"
+    custody.mkdir(mode=0o700)
+    target = custody / "five-year-baseline"
+    inputs.update(
+        identity_evidence_paths=(evidence,),
+        output_root=target,
+        output_custody_root=custody,
+    )
+
+    result = build_historical_corporate_action_resolution_shadow(**inputs)  # type: ignore[arg-type]
+
+    assert result.manifest.contract_version == module.COMPOSITE_CONTRACT_VERSION
+    assert result.manifest.output_storage == "persistent_private_candidate"
+    reread = read_historical_corporate_action_resolution_shadow(
+        output_root=target,
+        output_custody_root=custody,
+    )
+    assert reread.manifest == result.manifest
+    with pytest.raises(HistoricalCorporateActionResolutionShadowError):
+        read_historical_corporate_action_resolution_shadow(output_root=target)
+    with pytest.raises(HistoricalCorporateActionResolutionShadowError):
+        read_historical_corporate_action_resolution_shadow(
+            output_root=target,
+            output_custody_root=tmp_path,
+        )
 
 
 def test_unrepresentable_source_row_stops_without_output(

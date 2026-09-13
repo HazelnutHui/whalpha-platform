@@ -55,6 +55,9 @@ from tip_api.services.historical_corporate_action_source import (
 
 
 CONTRACT_VERSION = "historical-corporate-action-resolution-shadow/1.0"
+COMPOSITE_CONTRACT_VERSION = (
+    "historical-corporate-action-resolution-shadow/1.1"
+)
 ARTIFACT_CONTRACT_VERSION = (
     "historical-corporate-action-resolution-shadow-artifact/1.0"
 )
@@ -64,6 +67,14 @@ PARQUET_FILE = "part-00000.parquet"
 PARTITION_MANIFEST_FILE = "manifest.json"
 MAXIMUM_JSON_BYTES = 16 * 1024 * 1024
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
+_COMPOSITE_MANIFEST_FIELDS = (
+    "identity_evidences",
+    "identity_coverage_first_session",
+    "identity_coverage_last_session",
+    "identity_overlap_session_count",
+    "identity_overlap_conflict_count",
+    "output_storage",
+)
 
 
 class HistoricalCorporateActionResolutionShadowError(RuntimeError):
@@ -106,9 +117,41 @@ class CorporateActionResolutionShadowArtifactV1(FrozenModel):
         return self
 
 
+class CorporateActionResolutionIdentityEvidenceV11(FrozenModel):
+    path: str
+    physical_sha256: str = Field(pattern=_SHA256_PATTERN)
+    logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+    session_count: int = Field(ge=1)
+    first_session: date
+    last_session: date
+
+    @field_validator("path")
+    @classmethod
+    def path_is_relative(cls, value: str) -> str:
+        path = PurePosixPath(value)
+        if (
+            not value
+            or path.is_absolute()
+            or ".." in path.parts
+            or path.as_posix() != value
+            or not value.endswith("/manifest.json")
+        ):
+            raise ValueError("Identity evidence path must be normalized and relative")
+        return value
+
+    @model_validator(mode="after")
+    def session_range_reconciles(
+        self,
+    ) -> "CorporateActionResolutionIdentityEvidenceV11":
+        if self.last_session < self.first_session:
+            raise ValueError("Identity evidence session range is reversed")
+        return self
+
+
 class CorporateActionResolutionShadowManifestV1(FrozenModel):
     contract_version: Literal[
-        "historical-corporate-action-resolution-shadow/1.0"
+        "historical-corporate-action-resolution-shadow/1.0",
+        "historical-corporate-action-resolution-shadow/1.1",
     ] = CONTRACT_VERSION
     completion_status: Literal["completed"] = "completed"
     dataset_name: Literal[
@@ -127,9 +170,18 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
     dividend_source_manifest_sha256: str = Field(pattern=_SHA256_PATTERN)
     dividend_source_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
     dividend_source_record_count: int = Field(ge=0)
-    identity_evidence_path: str
-    identity_evidence_sha256: str = Field(pattern=_SHA256_PATTERN)
-    identity_evidence_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+    identity_evidence_path: str | None = None
+    identity_evidence_sha256: str | None = Field(
+        default=None, pattern=_SHA256_PATTERN
+    )
+    identity_evidence_logical_fingerprint: str | None = Field(
+        default=None, pattern=_SHA256_PATTERN
+    )
+    identity_evidences: tuple[CorporateActionResolutionIdentityEvidenceV11, ...] = ()
+    identity_coverage_first_session: date | None = None
+    identity_coverage_last_session: date | None = None
+    identity_overlap_session_count: int = Field(default=0, ge=0)
+    identity_overlap_conflict_count: Literal[0] = 0
     identity_session_count: int = Field(ge=1)
     used_identity_session_count: int = Field(ge=0)
     identity_binding_fingerprint: str = Field(pattern=_SHA256_PATTERN)
@@ -159,6 +211,9 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
     publication_count: Literal[0] = 0
     deployment_count: Literal[0] = 0
     scheduler_change_count: Literal[0] = 0
+    output_storage: Literal["temporary", "persistent_private_candidate"] = (
+        "temporary"
+    )
     logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
 
     @field_validator("materialized_at")
@@ -168,7 +223,9 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
 
     @field_validator("identity_evidence_path")
     @classmethod
-    def evidence_path_is_relative(cls, value: str) -> str:
+    def evidence_path_is_relative(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
         path = PurePosixPath(value)
         if (
             not value
@@ -184,6 +241,49 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
     def manifest_reconciles(self) -> "CorporateActionResolutionShadowManifestV1":
         if self.end_date < self.start_date:
             raise ValueError("shadow date range is reversed")
+        if self.contract_version == CONTRACT_VERSION:
+            if (
+                self.identity_evidence_path is None
+                or self.identity_evidence_sha256 is None
+                or self.identity_evidence_logical_fingerprint is None
+                or self.identity_evidences
+                or self.identity_coverage_first_session is not None
+                or self.identity_coverage_last_session is not None
+                or self.identity_overlap_session_count != 0
+                or self.output_storage != "temporary"
+            ):
+                raise ValueError("legacy shadow Identity shape differs")
+        else:
+            if (
+                self.identity_evidence_path is not None
+                or self.identity_evidence_sha256 is not None
+                or self.identity_evidence_logical_fingerprint is not None
+                or not self.identity_evidences
+                or self.identity_coverage_first_session is None
+                or self.identity_coverage_last_session is None
+            ):
+                raise ValueError("composite shadow Identity shape differs")
+            evidence_keys = tuple(
+                (item.first_session, item.last_session, item.path)
+                for item in self.identity_evidences
+            )
+            if evidence_keys != tuple(sorted(evidence_keys)) or len(
+                {item.path for item in self.identity_evidences}
+            ) != len(self.identity_evidences):
+                raise ValueError(
+                    "composite Identity evidence is not unique and ordered"
+                )
+            if (
+                self.identity_coverage_first_session
+                != min(item.first_session for item in self.identity_evidences)
+                or self.identity_coverage_last_session
+                != max(item.last_session for item in self.identity_evidences)
+                or self.identity_coverage_first_session < self.start_date
+                or self.identity_coverage_last_session > self.end_date
+                or sum(item.session_count for item in self.identity_evidences)
+                != self.identity_session_count + self.identity_overlap_session_count
+            ):
+                raise ValueError("composite Identity coverage differs")
         if self.source_record_count != (
             self.split_source_record_count + self.dividend_source_record_count
         ):
@@ -226,9 +326,11 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
         ):
             if values != tuple(sorted(values)) or any(count < 1 for _, count in values):
                 raise ValueError("shadow aggregate counts are invalid")
-        expected = _fingerprint(
-            self.model_dump(mode="json", exclude={"logical_fingerprint"})
-        )
+        values = self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        if self.contract_version == CONTRACT_VERSION:
+            for field in _COMPOSITE_MANIFEST_FIELDS:
+                values.pop(field)
+        expected = _fingerprint(values)
         if self.logical_fingerprint != expected:
             raise ValueError("shadow logical fingerprint differs")
         return self
@@ -248,6 +350,7 @@ def read_historical_ticker_candidates_bound_to_resolution_shadow(
     data_root: Path,
     resolution_shadow_output_root: Path,
     provider_tickers: frozenset[str],
+    resolution_shadow_custody_root: Path | None = None,
 ) -> dict[str, frozenset[UUID]]:
     """Return conservative historical stable-ID candidates for selected tickers.
 
@@ -258,7 +361,8 @@ def read_historical_ticker_candidates_bound_to_resolution_shadow(
     with _network_prohibited():
         root = _validated_data_root(data_root)
         shadow = read_historical_corporate_action_resolution_shadow(
-            output_root=resolution_shadow_output_root
+            output_root=resolution_shadow_output_root,
+            output_custody_root=resolution_shadow_custody_root,
         )
         requested = frozenset(
             normalized
@@ -269,30 +373,7 @@ def read_historical_ticker_candidates_bound_to_resolution_shadow(
             raise HistoricalCorporateActionResolutionShadowError(
                 "historical ticker candidate input is empty or non-normalized"
             )
-        identity = _read_identity_evidence(
-            root,
-            root / PurePosixPath(shadow.manifest.identity_evidence_path),
-        )
-        expected_identity = {
-            "physical_sha256": shadow.manifest.identity_evidence_sha256,
-            "logical_fingerprint": (
-                shadow.manifest.identity_evidence_logical_fingerprint
-            ),
-            "session_count": shadow.manifest.identity_session_count,
-            "first_session": shadow.manifest.start_date,
-            "last_session": shadow.manifest.end_date,
-        }
-        actual_identity = {
-            "physical_sha256": identity.physical_sha256,
-            "logical_fingerprint": identity.logical_fingerprint,
-            "session_count": len(identity.sessions),
-            "first_session": identity.sessions[0],
-            "last_session": identity.sessions[-1],
-        }
-        if actual_identity != expected_identity:
-            raise HistoricalCorporateActionResolutionShadowError(
-                "resolution shadow Identity evidence binding differs"
-            )
+        identity = _read_bound_identity_set(root, shadow.manifest)
 
         used_dates = {
             item.effective_date
@@ -407,17 +488,27 @@ class _IdentityEvidence:
     artifacts_by_session: Mapping[date, object]
 
 
+@dataclass(frozen=True, slots=True)
+class _IdentityEvidenceSet:
+    evidences: tuple[_IdentityEvidence, ...]
+    sessions: tuple[date, ...]
+    artifacts_by_session: Mapping[date, object]
+    overlap_session_count: int
+
+
 def build_historical_corporate_action_resolution_shadow(
     *,
     data_root: Path,
     split_source_package_path: Path,
     dividend_source_package_path: Path,
-    identity_evidence_path: Path,
+    identity_evidence_path: Path | None = None,
+    identity_evidence_paths: tuple[Path, ...] = (),
     output_root: Path,
     start_date: date,
     end_date: date,
     materialized_at: datetime,
     source_custody_root: Path | None = None,
+    output_custody_root: Path | None = None,
 ) -> CorporateActionResolutionShadowWriteResult:
     """Build a disconnected exact-event-date resolution shadow."""
 
@@ -427,11 +518,13 @@ def build_historical_corporate_action_resolution_shadow(
             split_source_package_path=split_source_package_path,
             dividend_source_package_path=dividend_source_package_path,
             identity_evidence_path=identity_evidence_path,
+            identity_evidence_paths=identity_evidence_paths,
             output_root=output_root,
             start_date=start_date,
             end_date=end_date,
             materialized_at=materialized_at,
             source_custody_root=source_custody_root,
+            output_custody_root=output_custody_root,
         )
 
 
@@ -440,15 +533,19 @@ def _build_shadow(
     data_root: Path,
     split_source_package_path: Path,
     dividend_source_package_path: Path,
-    identity_evidence_path: Path,
+    identity_evidence_path: Path | None,
+    identity_evidence_paths: tuple[Path, ...],
     output_root: Path,
     start_date: date,
     end_date: date,
     materialized_at: datetime,
     source_custody_root: Path | None,
+    output_custody_root: Path | None,
 ) -> CorporateActionResolutionShadowWriteResult:
     canonical_root = _validated_data_root(data_root)
-    target = _validated_output_target(output_root)
+    target = _validated_output_target(
+        output_root, approved_custody_root=output_custody_root
+    )
     materialized_at = normalize_utc_datetime(materialized_at)
     split = _read_source(
         split_source_package_path,
@@ -470,13 +567,25 @@ def _build_shadow(
         raise HistoricalCorporateActionResolutionShadowError(
             "shadow materialization precedes source completion"
         )
-    identity = _read_identity_evidence(canonical_root, identity_evidence_path)
-    if (
-        identity.sessions[0] != start_date
-        or identity.sessions[-1] != end_date
+    evidence_paths = _normalize_identity_evidence_paths(
+        identity_evidence_path=identity_evidence_path,
+        identity_evidence_paths=identity_evidence_paths,
+    )
+    identity = _read_identity_evidence_set(canonical_root, evidence_paths)
+    if any(
+        session < start_date or session > end_date for session in identity.sessions
     ):
         raise HistoricalCorporateActionResolutionShadowError(
-            "Identity evidence does not span the source range"
+            "Identity evidence escapes the source range"
+        )
+    composite_contract = (
+        bool(identity_evidence_paths) or output_custody_root is not None
+    )
+    if not composite_contract and (
+        identity.sessions[0] != start_date or identity.sessions[-1] != end_date
+    ):
+        raise HistoricalCorporateActionResolutionShadowError(
+            "legacy Identity evidence does not span the source range"
         )
 
     records, identity_bindings, available_rows, unavailable_rows = _map_sources(
@@ -492,7 +601,9 @@ def _build_shadow(
         )
     identity_binding_fingerprint = _fingerprint(identity_bindings)
 
-    existing = _read_if_present(target)
+    existing = _read_if_present(
+        target, approved_custody_root=output_custody_root
+    )
     if existing is not None:
         manifest = existing.manifest
         expected_bindings = {
@@ -502,14 +613,25 @@ def _build_shadow(
             "dividend_source_logical_fingerprint": (
                 dividend.manifest.logical_fingerprint
             ),
-            "identity_evidence_sha256": identity.physical_sha256,
-            "identity_evidence_logical_fingerprint": identity.logical_fingerprint,
             "identity_binding_fingerprint": identity_binding_fingerprint,
             "materialized_at": materialized_at,
         }
-        if any(getattr(manifest, key) != value for key, value in expected_bindings.items()) or (
-            existing.records != records
-        ):
+        if composite_contract:
+            expected_bindings["identity_evidences"] = _identity_manifest_bindings(
+                identity
+            )
+        else:
+            expected_bindings.update(
+                identity_evidence_sha256=identity.evidences[0].physical_sha256,
+                identity_evidence_logical_fingerprint=(
+                    identity.evidences[0].logical_fingerprint
+                ),
+            )
+        bindings_differ = any(
+            getattr(manifest, key) != value
+            for key, value in expected_bindings.items()
+        )
+        if bindings_differ or existing.records != records:
             raise HistoricalCorporateActionResolutionShadowError(
                 "existing corporate-action shadow differs"
             )
@@ -555,7 +677,9 @@ def _build_shadow(
                 )
             )
         values = {
-            "contract_version": CONTRACT_VERSION,
+            "contract_version": (
+                COMPOSITE_CONTRACT_VERSION if composite_contract else CONTRACT_VERSION
+            ),
             "completion_status": "completed",
             "dataset_name": "historical-corporate-action-resolution-shadow",
             "provider": MASSIVE_PROVIDER_ID,
@@ -571,9 +695,30 @@ def _build_shadow(
                 dividend.manifest.logical_fingerprint
             ),
             "dividend_source_record_count": dividend.manifest.record_count,
-            "identity_evidence_path": identity.relative_path,
-            "identity_evidence_sha256": identity.physical_sha256,
-            "identity_evidence_logical_fingerprint": identity.logical_fingerprint,
+            "identity_evidence_path": (
+                None if composite_contract else identity.evidences[0].relative_path
+            ),
+            "identity_evidence_sha256": (
+                None if composite_contract else identity.evidences[0].physical_sha256
+            ),
+            "identity_evidence_logical_fingerprint": (
+                None
+                if composite_contract
+                else identity.evidences[0].logical_fingerprint
+            ),
+            "identity_evidences": (
+                _identity_manifest_bindings(identity) if composite_contract else ()
+            ),
+            "identity_coverage_first_session": (
+                identity.sessions[0] if composite_contract else None
+            ),
+            "identity_coverage_last_session": (
+                identity.sessions[-1] if composite_contract else None
+            ),
+            "identity_overlap_session_count": (
+                identity.overlap_session_count if composite_contract else 0
+            ),
+            "identity_overlap_conflict_count": 0,
             "identity_session_count": len(identity.sessions),
             "used_identity_session_count": len(identity_bindings),
             "identity_binding_fingerprint": identity_binding_fingerprint,
@@ -603,12 +748,24 @@ def _build_shadow(
             "publication_count": 0,
             "deployment_count": 0,
             "scheduler_change_count": 0,
+            "output_storage": (
+                "persistent_private_candidate"
+                if output_custody_root is not None
+                else "temporary"
+            ),
         }
+        fingerprint_values = dict(values)
+        if not composite_contract:
+            for field in _COMPOSITE_MANIFEST_FIELDS:
+                fingerprint_values.pop(field)
         manifest = CorporateActionResolutionShadowManifestV1.model_validate(
-            {**values, "logical_fingerprint": _fingerprint(values)}
+            {
+                **values,
+                "logical_fingerprint": _fingerprint(fingerprint_values),
+            }
         )
         manifest_path = staging / MANIFEST_FILE
-        manifest_path.write_bytes(_pretty_json(manifest.model_dump(mode="json")))
+        manifest_path.write_bytes(_pretty_json(_manifest_dump(manifest)))
         _fsync_file(manifest_path)
         _secure_tree(staging)
         _fsync_directory(staging)
@@ -620,7 +777,10 @@ def _build_shadow(
             _fsync_directory(staging.parent)
         raise
 
-    reread = read_historical_corporate_action_resolution_shadow(output_root=target)
+    reread = read_historical_corporate_action_resolution_shadow(
+        output_root=target,
+        output_custody_root=output_custody_root,
+    )
     if reread.records != records:
         raise HistoricalCorporateActionResolutionShadowError(
             "corporate-action shadow formal reread differs"
@@ -637,10 +797,13 @@ def _build_shadow(
 def read_historical_corporate_action_resolution_shadow(
     *,
     output_root: Path,
+    output_custody_root: Path | None = None,
 ) -> CorporateActionResolutionShadowWriteResult:
     """Formally reread a completed shadow without network or external sources."""
 
-    root = _validated_completed_output(output_root)
+    root = _validated_completed_output(
+        output_root, approved_custody_root=output_custody_root
+    )
     manifest_path = root / MANIFEST_FILE
     _require_regular_file(manifest_path, 0o400)
     try:
@@ -651,6 +814,15 @@ def read_historical_corporate_action_resolution_shadow(
         raise HistoricalCorporateActionResolutionShadowError(
             "corporate-action shadow manifest is invalid"
         ) from exc
+    expected_storage = (
+        "persistent_private_candidate"
+        if output_custody_root is not None
+        else "temporary"
+    )
+    if manifest.output_storage != expected_storage:
+        raise HistoricalCorporateActionResolutionShadowError(
+            "corporate-action shadow storage binding differs"
+        )
     expected_files = {MANIFEST_FILE}
     expected_directories: set[str] = set()
     records: list[CorporateActionSourceObservationV1] = []
@@ -820,12 +992,139 @@ def _read_identity_evidence(
     )
 
 
+def _normalize_identity_evidence_paths(
+    *,
+    identity_evidence_path: Path | None,
+    identity_evidence_paths: tuple[Path, ...],
+) -> tuple[Path, ...]:
+    if identity_evidence_path is not None and identity_evidence_paths:
+        raise HistoricalCorporateActionResolutionShadowError(
+            "use either one Identity evidence path or a composite set"
+        )
+    paths = (
+        identity_evidence_paths
+        if identity_evidence_paths
+        else ((identity_evidence_path,) if identity_evidence_path is not None else ())
+    )
+    if not paths or len({path.absolute() for path in paths}) != len(paths):
+        raise HistoricalCorporateActionResolutionShadowError(
+            "Identity evidence paths are empty or duplicated"
+        )
+    return paths
+
+
+def _read_identity_evidence_set(
+    root: Path,
+    paths: tuple[Path, ...],
+) -> _IdentityEvidenceSet:
+    evidences = tuple(
+        sorted(
+            (_read_identity_evidence(root, path) for path in paths),
+            key=lambda item: (
+                item.sessions[0],
+                item.sessions[-1],
+                item.relative_path,
+            ),
+        )
+    )
+    by_session: dict[date, object] = {}
+    overlap_count = 0
+    for evidence in evidences:
+        for session in evidence.sessions:
+            artifact = evidence.artifacts_by_session[session]
+            existing = by_session.get(session)
+            if existing is not None:
+                overlap_count += 1
+                if existing != artifact:
+                    raise HistoricalCorporateActionResolutionShadowError(
+                        "overlapping Identity evidence conflicts"
+                    )
+            else:
+                by_session[session] = artifact
+    return _IdentityEvidenceSet(
+        evidences=evidences,
+        sessions=tuple(sorted(by_session)),
+        artifacts_by_session=by_session,
+        overlap_session_count=overlap_count,
+    )
+
+
+def _identity_manifest_bindings(
+    identity: _IdentityEvidenceSet,
+) -> tuple[CorporateActionResolutionIdentityEvidenceV11, ...]:
+    return tuple(
+        CorporateActionResolutionIdentityEvidenceV11(
+            path=evidence.relative_path,
+            physical_sha256=evidence.physical_sha256,
+            logical_fingerprint=evidence.logical_fingerprint,
+            session_count=len(evidence.sessions),
+            first_session=evidence.sessions[0],
+            last_session=evidence.sessions[-1],
+        )
+        for evidence in identity.evidences
+    )
+
+
+def _read_bound_identity_set(
+    root: Path,
+    manifest: CorporateActionResolutionShadowManifestV1,
+) -> _IdentityEvidenceSet:
+    if manifest.contract_version == CONTRACT_VERSION:
+        if manifest.identity_evidence_path is None:
+            raise HistoricalCorporateActionResolutionShadowError(
+                "legacy Identity evidence binding is absent"
+            )
+        paths = (root / PurePosixPath(manifest.identity_evidence_path),)
+    else:
+        paths = tuple(
+            root / PurePosixPath(item.path)
+            for item in manifest.identity_evidences
+        )
+    identity = _read_identity_evidence_set(root, paths)
+    if manifest.contract_version == CONTRACT_VERSION:
+        evidence = identity.evidences[0]
+        expected = {
+            "physical_sha256": manifest.identity_evidence_sha256,
+            "logical_fingerprint": manifest.identity_evidence_logical_fingerprint,
+            "session_count": manifest.identity_session_count,
+            "first_session": manifest.start_date,
+            "last_session": manifest.end_date,
+        }
+        actual = {
+            "physical_sha256": evidence.physical_sha256,
+            "logical_fingerprint": evidence.logical_fingerprint,
+            "session_count": len(evidence.sessions),
+            "first_session": evidence.sessions[0],
+            "last_session": evidence.sessions[-1],
+        }
+    else:
+        expected = {
+            "bindings": manifest.identity_evidences,
+            "session_count": manifest.identity_session_count,
+            "first_session": manifest.identity_coverage_first_session,
+            "last_session": manifest.identity_coverage_last_session,
+            "overlap_count": manifest.identity_overlap_session_count,
+        }
+        actual = {
+            "bindings": _identity_manifest_bindings(identity),
+            "session_count": len(identity.sessions),
+            "first_session": identity.sessions[0],
+            "last_session": identity.sessions[-1],
+            "overlap_count": identity.overlap_session_count,
+        }
+    if actual != expected:
+        raise HistoricalCorporateActionResolutionShadowError(
+            "resolution shadow Identity evidence binding differs"
+        )
+    return identity
+
+
 def _map_sources(
     *,
     canonical_root: Path,
     split: ValidatedCorporateActionSourcePackage,
     dividend: ValidatedCorporateActionSourcePackage,
-    identity: _IdentityEvidence,
+    identity: _IdentityEvidenceSet,
     materialized_at: datetime,
 ) -> tuple[
     tuple[CorporateActionSourceObservationV1, ...],
@@ -1069,10 +1368,15 @@ def _read_evidence_bound_file(root: Path, path: Path, expected_sha256: str) -> b
 
 def _read_if_present(
     target: Path,
+    *,
+    approved_custody_root: Path | None = None,
 ) -> CorporateActionResolutionShadowWriteResult | None:
     if not target.exists() and not target.is_symlink():
         return None
-    return read_historical_corporate_action_resolution_shadow(output_root=target)
+    return read_historical_corporate_action_resolution_shadow(
+        output_root=target,
+        output_custody_root=approved_custody_root,
+    )
 
 
 def _validated_data_root(path: Path) -> Path:
@@ -1088,8 +1392,34 @@ def _validated_data_root(path: Path) -> Path:
     return resolved
 
 
-def _validated_output_target(path: Path) -> Path:
+def _validated_output_target(
+    path: Path,
+    *,
+    approved_custody_root: Path | None = None,
+) -> Path:
     target = path.absolute()
+    if approved_custody_root is not None:
+        root = approved_custody_root.absolute()
+        if (
+            root.is_symlink()
+            or not root.is_dir()
+            or root.resolve(strict=True) != root
+            or stat.S_IMODE(root.stat().st_mode) != 0o700
+            or target.parent != root
+        ):
+            raise HistoricalCorporateActionResolutionShadowError(
+                "persistent corporate-action shadow custody boundary differs"
+            )
+        if target.exists() or target.is_symlink():
+            if (
+                target.is_symlink()
+                or not target.is_dir()
+                or target.resolve(strict=True) != target
+            ):
+                raise HistoricalCorporateActionResolutionShadowError(
+                    "persistent corporate-action shadow target is unsafe"
+                )
+        return target
     tmp = Path("/tmp").resolve(strict=True)
     if target == tmp or tmp not in target.parents:
         raise HistoricalCorporateActionResolutionShadowError(
@@ -1108,8 +1438,14 @@ def _validated_output_target(path: Path) -> Path:
     return target
 
 
-def _validated_completed_output(path: Path) -> Path:
-    root = _validated_output_target(path)
+def _validated_completed_output(
+    path: Path,
+    *,
+    approved_custody_root: Path | None = None,
+) -> Path:
+    root = _validated_output_target(
+        path, approved_custody_root=approved_custody_root
+    )
     if root.is_symlink() or not root.is_dir() or stat.S_IMODE(root.stat().st_mode) != 0o700:
         raise HistoricalCorporateActionResolutionShadowError(
             "completed corporate-action shadow is unavailable or not owner-only"
@@ -1226,6 +1562,16 @@ def _counts(values: Iterator[str]) -> tuple[tuple[str, int], ...]:
 
 def _pretty_json(value: object) -> bytes:
     return (json.dumps(value, indent=2, sort_keys=True) + "\n").encode("utf-8")
+
+
+def _manifest_dump(
+    manifest: CorporateActionResolutionShadowManifestV1,
+) -> dict[str, object]:
+    values = manifest.model_dump(mode="json")
+    if manifest.contract_version == CONTRACT_VERSION:
+        for field in _COMPOSITE_MANIFEST_FIELDS:
+            values.pop(field)
+    return values
 
 
 def _fingerprint(value: object) -> str:

@@ -23,9 +23,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--end-date", required=True, type=date.fromisoformat)
     parser.add_argument("--split-source-package", required=True, type=Path)
     parser.add_argument("--dividend-source-package", required=True, type=Path)
-    parser.add_argument("--identity-evidence", required=True, type=Path)
+    parser.add_argument(
+        "--identity-evidence", required=True, type=Path, action="append"
+    )
     parser.add_argument("--output-root", required=True, type=Path)
     parser.add_argument("--source-custody-root", type=Path)
+    parser.add_argument("--output-custody-root", type=Path)
     parser.add_argument(
         "--materialized-at",
         required=True,
@@ -42,12 +45,24 @@ def main(argv: list[str] | None = None) -> int:
             data_root=APPROVED_DATA_ROOT,
             split_source_package_path=args.split_source_package,
             dividend_source_package_path=args.dividend_source_package,
-            identity_evidence_path=args.identity_evidence,
+            identity_evidence_path=(
+                args.identity_evidence[0]
+                if len(args.identity_evidence) == 1
+                and args.output_custody_root is None
+                else None
+            ),
+            identity_evidence_paths=(
+                tuple(args.identity_evidence)
+                if len(args.identity_evidence) > 1
+                or args.output_custody_root is not None
+                else ()
+            ),
             output_root=args.output_root,
             start_date=args.start_date,
             end_date=args.end_date,
             materialized_at=args.materialized_at,
             source_custody_root=args.source_custody_root,
+            output_custody_root=args.output_custody_root,
         )
     except (
         HistoricalCorporateActionResolutionShadowError,
@@ -80,7 +95,9 @@ def main(argv: list[str] | None = None) -> int:
     print(
         json.dumps(
             {
-                "contract_version": CONTRACT_VERSION,
+                "contract_version": getattr(
+                    manifest, "contract_version", CONTRACT_VERSION
+                ),
                 "record_type": "corporate_action_resolution_shadow_completion",
                 "status": result.status,
                 "implementation_revision": revision,

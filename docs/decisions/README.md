@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0217](0217-compose-identity-evidence-for-five-year-corporate-action-resolution.md):
+  composes only byte-identical overlapping Identity evidence for exact-date
+  five-year corporate-action resolution and permits durable private candidate
+  custody without granting canonical or research authority.
 - [ADR 0216](0216-census-sec-fundamental-semantics-before-feature-registration.md):
   measures Company Facts semantic coverage, duplicates, conflicts, and clean
   revisions before any fundamental feature registry or security projection.

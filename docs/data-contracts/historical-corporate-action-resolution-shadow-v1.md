@@ -1,6 +1,7 @@
 # Historical Corporate Action Resolution Shadow V1
 
-Contract: `historical-corporate-action-resolution-shadow/1.0`.
+Contracts: `historical-corporate-action-resolution-shadow/1.0` and backward-
+compatible `historical-corporate-action-resolution-shadow/1.1`.
 
 This contract governs a disconnected, owner-only mapping of formally retained
 Massive split/dividend source observations to exact event-date canonical
@@ -14,8 +15,16 @@ The shadow binds:
 - one complete split source package and one complete dividend source package
   for the same inclusive date range;
 - both source manifest physical hashes and logical fingerprints; and
-- one already-published `point_in_time_identity` family-evidence manifest,
-  including its physical and logical identity.
+- one already-published `point_in_time_identity` family-evidence manifest for
+  contract 1.0, or one or more such manifests for contract 1.1, each including
+  its physical and logical identity.
+
+Contract 1.1 permits overlapping evidence only when the complete artifact
+binding for every overlapping session is identical. Every evidence session
+must fall within the source range. The manifest records every evidence
+binding, the combined first/last session, unique session count, overlap count,
+and literal zero overlap conflicts. Source dates outside the combined exact-
+session set remain quarantined; coverage is never filled by inference.
 
 For every source event date present in the Identity evidence, the builder
 verifies the exact snapshot completion manifest and Resolver manifest/Parquet
@@ -42,16 +51,22 @@ append-only revision diff must be designed before canonical promotion.
 
 ## Physical output
 
-The owner-only `/tmp` tree contains:
+The owner-only output tree contains:
 
 - `shadow.json` under contract `1.0`; and
 - one existing provider-neutral Corporate Action Source Observation 1.1
   Parquet partition per nonempty event year, each with its own manifest.
 
+Contract 1.0 retains its original `/tmp` boundary. Contract 1.1 may also use
+one explicitly supplied owner-only persistent Dell candidate root. The output
+must be a direct child of that exact real mode-0700 root; broader, nested,
+symlinked, or mode-drifted paths fail closed. Storage location grants no
+canonical authority.
+
 Every directory is mode `0700`; every completed file is mode `0400`. Formal
-reread requires the exact file/directory set, business-key uniqueness, physical
-hashes, logical fingerprints, record counts, year partitions, observation
-semantics, and aggregate counts.
+reread requires the exact file/directory set, business-key uniqueness,
+physical hashes, logical fingerprints, record counts, year partitions,
+observation semantics, and aggregate counts.
 
 ## Manifest summaries
 
