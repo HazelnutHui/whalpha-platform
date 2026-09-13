@@ -105,6 +105,16 @@ def main(argv: list[str] | None = None) -> int:
                 "end_date": manifest.end_date.isoformat(),
                 "source_record_count": manifest.source_record_count,
                 "mapped_record_count": manifest.mapped_record_count,
+                "unrepresentable_source_record_count": (
+                    manifest.unrepresentable_source_record_count
+                ),
+                "unrepresentable_reason_counts": (
+                    manifest.unrepresentable_reason_counts
+                ),
+                "source_mapping_one_to_one": manifest.source_mapping_one_to_one,
+                "source_accounting_one_to_one": (
+                    manifest.source_accounting_one_to_one
+                ),
                 "identity_session_available_record_count": (
                     manifest.identity_session_available_record_count
                 ),

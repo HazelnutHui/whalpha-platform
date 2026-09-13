@@ -63,6 +63,7 @@ ARTIFACT_CONTRACT_VERSION = (
 )
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
 MANIFEST_FILE = "shadow.json"
+UNREPRESENTABLE_FILE = "unrepresentable.json"
 PARQUET_FILE = "part-00000.parquet"
 PARTITION_MANIFEST_FILE = "manifest.json"
 MAXIMUM_JSON_BYTES = 16 * 1024 * 1024
@@ -73,6 +74,13 @@ _COMPOSITE_MANIFEST_FIELDS = (
     "identity_coverage_last_session",
     "identity_overlap_session_count",
     "identity_overlap_conflict_count",
+    "unrepresentable_source_record_count",
+    "unrepresentable_reason_counts",
+    "unrepresentable_file",
+    "unrepresentable_file_sha256",
+    "unrepresentable_file_bytes",
+    "unrepresentable_logical_fingerprint",
+    "source_accounting_one_to_one",
     "output_storage",
 )
 
@@ -148,6 +156,51 @@ class CorporateActionResolutionIdentityEvidenceV11(FrozenModel):
         return self
 
 
+class CorporateActionResolutionUnrepresentableV11(FrozenModel):
+    action_kind: CorporateActionSourceKind
+    effective_date: date
+    source_observed_at: datetime
+    reason_code: str
+    source_action_id: str | None = None
+    payload_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+
+    @field_validator("source_observed_at")
+    @classmethod
+    def time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("reason_code", "source_action_id")
+    @classmethod
+    def text_is_trimmed(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        if not value.strip() or value != value.strip():
+            raise ValueError("unrepresentable source text is invalid")
+        return value
+
+
+class CorporateActionResolutionUnrepresentableSetV11(FrozenModel):
+    contract_version: Literal[
+        "historical-corporate-action-resolution-shadow-unrepresentable/1.0"
+    ] = "historical-corporate-action-resolution-shadow-unrepresentable/1.0"
+    records: tuple[CorporateActionResolutionUnrepresentableV11, ...]
+    logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+
+    @model_validator(mode="after")
+    def records_reconcile(
+        self,
+    ) -> "CorporateActionResolutionUnrepresentableSetV11":
+        keys = tuple(_unrepresentable_key(item) for item in self.records)
+        if keys != tuple(sorted(keys)) or len(keys) != len(set(keys)):
+            raise ValueError("unrepresentable source records are not unique and ordered")
+        expected = _fingerprint(
+            self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        )
+        if self.logical_fingerprint != expected:
+            raise ValueError("unrepresentable source fingerprint differs")
+        return self
+
+
 class CorporateActionResolutionShadowManifestV1(FrozenModel):
     contract_version: Literal[
         "historical-corporate-action-resolution-shadow/1.0",
@@ -186,17 +239,28 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
     used_identity_session_count: int = Field(ge=0)
     identity_binding_fingerprint: str = Field(pattern=_SHA256_PATTERN)
     source_record_count: int = Field(ge=1)
-    mapped_record_count: int = Field(ge=1)
+    mapped_record_count: int = Field(ge=0)
+    unrepresentable_source_record_count: int = Field(default=0, ge=0)
+    unrepresentable_reason_counts: tuple[tuple[str, int], ...] = ()
+    unrepresentable_file: Literal["unrepresentable.json"] | None = None
+    unrepresentable_file_sha256: str | None = Field(
+        default=None, pattern=_SHA256_PATTERN
+    )
+    unrepresentable_file_bytes: int | None = Field(
+        default=None, ge=1, le=MAXIMUM_JSON_BYTES
+    )
+    unrepresentable_logical_fingerprint: str | None = Field(
+        default=None, pattern=_SHA256_PATTERN
+    )
     identity_session_available_record_count: int = Field(ge=0)
     identity_session_unavailable_record_count: int = Field(ge=0)
     resolution_status_counts: tuple[tuple[str, int], ...]
     record_status_counts: tuple[tuple[str, int], ...]
     action_type_counts: tuple[tuple[str, int], ...]
     quality_flag_counts: tuple[tuple[str, int], ...]
-    artifacts: tuple[CorporateActionResolutionShadowArtifactV1, ...] = Field(
-        min_length=1
-    )
-    source_mapping_one_to_one: Literal[True] = True
+    artifacts: tuple[CorporateActionResolutionShadowArtifactV1, ...] = ()
+    source_mapping_one_to_one: bool = True
+    source_accounting_one_to_one: Literal[True] = True
     exact_event_date_resolution_only: Literal[True] = True
     nearest_session_fallback_count: Literal[0] = 0
     latest_ticker_fallback_count: Literal[0] = 0
@@ -250,6 +314,13 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
                 or self.identity_coverage_first_session is not None
                 or self.identity_coverage_last_session is not None
                 or self.identity_overlap_session_count != 0
+                or self.unrepresentable_source_record_count != 0
+                or self.unrepresentable_reason_counts
+                or self.unrepresentable_file is not None
+                or self.unrepresentable_file_sha256 is not None
+                or self.unrepresentable_file_bytes is not None
+                or self.unrepresentable_logical_fingerprint is not None
+                or not self.source_mapping_one_to_one
                 or self.output_storage != "temporary"
             ):
                 raise ValueError("legacy shadow Identity shape differs")
@@ -261,6 +332,10 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
                 or not self.identity_evidences
                 or self.identity_coverage_first_session is None
                 or self.identity_coverage_last_session is None
+                or self.unrepresentable_file is None
+                or self.unrepresentable_file_sha256 is None
+                or self.unrepresentable_file_bytes is None
+                or self.unrepresentable_logical_fingerprint is None
             ):
                 raise ValueError("composite shadow Identity shape differs")
             evidence_keys = tuple(
@@ -288,12 +363,30 @@ class CorporateActionResolutionShadowManifestV1(FrozenModel):
             self.split_source_record_count + self.dividend_source_record_count
         ):
             raise ValueError("shadow source counts differ")
-        if self.mapped_record_count != self.source_record_count:
-            raise ValueError("shadow is not one-to-one")
+        if self.contract_version == CONTRACT_VERSION:
+            if (
+                self.mapped_record_count < 1
+                or not self.artifacts
+                or self.mapped_record_count != self.source_record_count
+            ):
+                raise ValueError("legacy shadow is not one-to-one")
+        elif (
+            self.mapped_record_count + self.unrepresentable_source_record_count
+            != self.source_record_count
+            or bool(self.artifacts) != (self.mapped_record_count > 0)
+            or self.source_mapping_one_to_one
+            != (self.unrepresentable_source_record_count == 0)
+            or sum(count for _, count in self.unrepresentable_reason_counts)
+            != self.unrepresentable_source_record_count
+            or self.unrepresentable_reason_counts
+            != tuple(sorted(self.unrepresentable_reason_counts))
+            or any(count < 1 for _, count in self.unrepresentable_reason_counts)
+        ):
+            raise ValueError("composite shadow source accounting differs")
         if (
             self.identity_session_available_record_count
             + self.identity_session_unavailable_record_count
-            != self.source_record_count
+            != self.mapped_record_count
         ):
             raise ValueError("shadow Identity-date counts differ")
         if self.used_identity_session_count > self.identity_session_count:
@@ -341,6 +434,9 @@ class CorporateActionResolutionShadowWriteResult:
     output_root: Path
     manifest: CorporateActionResolutionShadowManifestV1
     records: tuple[CorporateActionSourceObservationV1, ...]
+    unrepresentable_records: tuple[
+        CorporateActionResolutionUnrepresentableV11, ...
+    ]
     manifest_sha256: str
     status: Literal["published", "already_present"]
 
@@ -588,18 +684,52 @@ def _build_shadow(
             "legacy Identity evidence does not span the source range"
         )
 
-    records, identity_bindings, available_rows, unavailable_rows = _map_sources(
+    (
+        records,
+        unrepresentable_records,
+        identity_bindings,
+        available_rows,
+        unavailable_rows,
+    ) = _map_sources(
         canonical_root=canonical_root,
         split=split,
         dividend=dividend,
         identity=identity,
         materialized_at=materialized_at,
     )
-    if len(records) != split.manifest.record_count + dividend.manifest.record_count:
+    source_record_count = (
+        split.manifest.record_count + dividend.manifest.record_count
+    )
+    if len(records) + len(unrepresentable_records) != source_record_count:
         raise HistoricalCorporateActionResolutionShadowError(
-            "corporate-action source mapping is not one-to-one"
+            "corporate-action source accounting is not one-to-one"
+        )
+    if not composite_contract and unrepresentable_records:
+        raise HistoricalCorporateActionResolutionShadowError(
+            "legacy corporate-action mapper could not preserve every source row"
         )
     identity_binding_fingerprint = _fingerprint(identity_bindings)
+    unrepresentable_values = {
+        "contract_version": (
+            "historical-corporate-action-resolution-shadow-unrepresentable/1.0"
+        ),
+        "records": unrepresentable_records,
+    }
+    unrepresentable_model = (
+        CorporateActionResolutionUnrepresentableSetV11.model_validate(
+            {
+                **unrepresentable_values,
+                "logical_fingerprint": _fingerprint(unrepresentable_values),
+            }
+        )
+        if composite_contract
+        else None
+    )
+    unrepresentable_bytes = (
+        _pretty_json(unrepresentable_model.model_dump(mode="json"))
+        if unrepresentable_model is not None
+        else b""
+    )
 
     existing = _read_if_present(
         target, approved_custody_root=output_custody_root
@@ -631,7 +761,11 @@ def _build_shadow(
             getattr(manifest, key) != value
             for key, value in expected_bindings.items()
         )
-        if bindings_differ or existing.records != records:
+        if (
+            bindings_differ
+            or existing.records != records
+            or existing.unrepresentable_records != unrepresentable_records
+        ):
             raise HistoricalCorporateActionResolutionShadowError(
                 "existing corporate-action shadow differs"
             )
@@ -639,6 +773,7 @@ def _build_shadow(
             output_root=target,
             manifest=manifest,
             records=records,
+            unrepresentable_records=unrepresentable_records,
             manifest_sha256=existing.manifest_sha256,
             status="already_present",
         )
@@ -650,6 +785,10 @@ def _build_shadow(
         )
     staging.mkdir(mode=0o700)
     try:
+        if unrepresentable_model is not None:
+            unrepresentable_path = staging / UNREPRESENTABLE_FILE
+            unrepresentable_path.write_bytes(unrepresentable_bytes)
+            _fsync_file(unrepresentable_path)
         repository = ParquetHistoricalResearchRepository(
             staging,
             created_at=materialized_at,
@@ -722,8 +861,30 @@ def _build_shadow(
             "identity_session_count": len(identity.sessions),
             "used_identity_session_count": len(identity_bindings),
             "identity_binding_fingerprint": identity_binding_fingerprint,
-            "source_record_count": len(records),
+            "source_record_count": source_record_count,
             "mapped_record_count": len(records),
+            "unrepresentable_source_record_count": len(
+                unrepresentable_records
+            ),
+            "unrepresentable_reason_counts": (
+                _counts(item.reason_code for item in unrepresentable_records)
+                if composite_contract
+                else ()
+            ),
+            "unrepresentable_file": (
+                UNREPRESENTABLE_FILE if composite_contract else None
+            ),
+            "unrepresentable_file_sha256": (
+                _sha256(unrepresentable_bytes) if composite_contract else None
+            ),
+            "unrepresentable_file_bytes": (
+                len(unrepresentable_bytes) if composite_contract else None
+            ),
+            "unrepresentable_logical_fingerprint": (
+                unrepresentable_model.logical_fingerprint
+                if unrepresentable_model is not None
+                else None
+            ),
             "identity_session_available_record_count": available_rows,
             "identity_session_unavailable_record_count": unavailable_rows,
             "resolution_status_counts": _counts(
@@ -735,7 +896,8 @@ def _build_shadow(
                 flag for item in records for flag in item.quality_flags
             ),
             "artifacts": tuple(artifacts),
-            "source_mapping_one_to_one": True,
+            "source_mapping_one_to_one": not unrepresentable_records,
+            "source_accounting_one_to_one": True,
             "exact_event_date_resolution_only": True,
             "nearest_session_fallback_count": 0,
             "latest_ticker_fallback_count": 0,
@@ -781,7 +943,10 @@ def _build_shadow(
         output_root=target,
         output_custody_root=output_custody_root,
     )
-    if reread.records != records:
+    if (
+        reread.records != records
+        or reread.unrepresentable_records != unrepresentable_records
+    ):
         raise HistoricalCorporateActionResolutionShadowError(
             "corporate-action shadow formal reread differs"
         )
@@ -789,6 +954,7 @@ def _build_shadow(
         output_root=target,
         manifest=reread.manifest,
         records=reread.records,
+        unrepresentable_records=reread.unrepresentable_records,
         manifest_sha256=reread.manifest_sha256,
         status="published",
     )
@@ -824,6 +990,40 @@ def read_historical_corporate_action_resolution_shadow(
             "corporate-action shadow storage binding differs"
         )
     expected_files = {MANIFEST_FILE}
+    unrepresentable_records: tuple[
+        CorporateActionResolutionUnrepresentableV11, ...
+    ] = ()
+    if manifest.contract_version == COMPOSITE_CONTRACT_VERSION:
+        unrepresentable_path = root / UNREPRESENTABLE_FILE
+        _require_regular_file(unrepresentable_path, 0o400)
+        unrepresentable_bytes = _read_bounded_bytes(
+            unrepresentable_path,
+            maximum_bytes=MAXIMUM_JSON_BYTES,
+        )
+        try:
+            unrepresentable = (
+                CorporateActionResolutionUnrepresentableSetV11.model_validate_json(
+                    unrepresentable_bytes
+                )
+            )
+        except Exception as exc:
+            raise HistoricalCorporateActionResolutionShadowError(
+                "unrepresentable source artifact is invalid"
+            ) from exc
+        if (
+            manifest.unrepresentable_file != UNREPRESENTABLE_FILE
+            or manifest.unrepresentable_file_sha256
+            != _sha256(unrepresentable_bytes)
+            or manifest.unrepresentable_file_bytes
+            != len(unrepresentable_bytes)
+            or manifest.unrepresentable_logical_fingerprint
+            != unrepresentable.logical_fingerprint
+        ):
+            raise HistoricalCorporateActionResolutionShadowError(
+                "unrepresentable source artifact binding differs"
+            )
+        unrepresentable_records = unrepresentable.records
+        expected_files.add(UNREPRESENTABLE_FILE)
     expected_directories: set[str] = set()
     records: list[CorporateActionSourceObservationV1] = []
     repository = ParquetHistoricalResearchRepository(root)
@@ -880,11 +1080,25 @@ def read_historical_corporate_action_resolution_shadow(
         "event_date_identity_unavailable" in item.quality_flags for item in ordered
     )
     split_rows = sum(item.action_type.value != "cash_dividend" for item in ordered)
+    unrepresentable_split_rows = sum(
+        item.action_kind is CorporateActionSourceKind.SPLIT
+        for item in unrepresentable_records
+    )
     expected_counts = {
-        "split_source_record_count": split_rows,
-        "dividend_source_record_count": len(ordered) - split_rows,
-        "source_record_count": len(ordered),
+        "split_source_record_count": split_rows + unrepresentable_split_rows,
+        "dividend_source_record_count": (
+            len(ordered)
+            - split_rows
+            + len(unrepresentable_records)
+            - unrepresentable_split_rows
+        ),
+        "source_record_count": len(ordered) + len(unrepresentable_records),
         "mapped_record_count": len(ordered),
+        "unrepresentable_source_record_count": len(unrepresentable_records),
+        "unrepresentable_reason_counts": _counts(
+            item.reason_code for item in unrepresentable_records
+        ),
+        "source_mapping_one_to_one": not unrepresentable_records,
         "identity_session_available_record_count": len(ordered) - unavailable_rows,
         "identity_session_unavailable_record_count": unavailable_rows,
         "used_identity_session_count": len(
@@ -922,6 +1136,7 @@ def read_historical_corporate_action_resolution_shadow(
         output_root=root,
         manifest=manifest,
         records=ordered,
+        unrepresentable_records=unrepresentable_records,
         manifest_sha256=_file_sha256(manifest_path),
         status="already_present",
     )
@@ -1128,6 +1343,7 @@ def _map_sources(
     materialized_at: datetime,
 ) -> tuple[
     tuple[CorporateActionSourceObservationV1, ...],
+    tuple[CorporateActionResolutionUnrepresentableV11, ...],
     tuple[dict[str, object], ...],
     int,
     int,
@@ -1168,6 +1384,7 @@ def _map_sources(
     resolver_cache: dict[date, dict[str, UUID]] = {}
     binding_cache: dict[date, dict[str, object]] = {}
     mapped: list[CorporateActionSourceObservationV1] = []
+    unrepresentable: list[CorporateActionResolutionUnrepresentableV11] = []
     available_rows = 0
     unavailable_rows = 0
     for (kind, observed_at, event_date), payloads in sorted(
@@ -1184,11 +1401,11 @@ def _map_sources(
                 )
             resolutions = resolver_cache[event_date]
             unresolved_reason = "unresolved_ticker"
-            available_rows += len(payloads)
+            identity_available = True
         else:
             resolutions = {}
             unresolved_reason = "event_date_identity_unavailable"
-            unavailable_rows += len(payloads)
+            identity_available = False
         batch = map_massive_corporate_action_payloads(
             split_payloads=(payloads if kind is CorporateActionSourceKind.SPLIT else ()),
             dividend_payloads=(
@@ -1200,11 +1417,29 @@ def _map_sources(
             source_revision=1,
             unresolved_ticker_reason_code=unresolved_reason,
         )
-        if batch.issues or batch.input_count != len(payloads) or len(batch.records) != len(payloads):
+        if (
+            batch.input_count != len(payloads)
+            or len(batch.records) + len(batch.issues) != len(payloads)
+        ):
             raise HistoricalCorporateActionResolutionShadowError(
-                "corporate-action mapper could not preserve every source row"
+                "corporate-action mapper could not account for every source row"
             )
         mapped.extend(batch.records)
+        if identity_available:
+            available_rows += len(batch.records)
+        else:
+            unavailable_rows += len(batch.records)
+        unrepresentable.extend(
+            CorporateActionResolutionUnrepresentableV11(
+                action_kind=kind,
+                effective_date=event_date,
+                source_observed_at=observed_at,
+                reason_code=issue.reason_code,
+                source_action_id=issue.source_action_id,
+                payload_fingerprint=issue.payload_fingerprint,
+            )
+            for issue in batch.issues
+        )
     ordered = tuple(
         sorted(mapped, key=lambda item: (item.provider, item.source_action_id, item.source_revision))
     )
@@ -1214,7 +1449,27 @@ def _map_sources(
         raise HistoricalCorporateActionResolutionShadowError(
             "corporate-action source IDs collide across packages"
         )
-    return ordered, tuple(binding_cache[key] for key in sorted(binding_cache)), available_rows, unavailable_rows
+    ordered_unrepresentable = tuple(
+        sorted(unrepresentable, key=_unrepresentable_key)
+    )
+    if len({_unrepresentable_key(item) for item in ordered_unrepresentable}) != len(
+        ordered_unrepresentable
+    ):
+        raise HistoricalCorporateActionResolutionShadowError(
+            "unrepresentable corporate-action locators collide"
+        )
+    used_identity_dates = {
+        item.effective_date
+        for item in ordered
+        if item.effective_date in binding_cache
+    }
+    return (
+        ordered,
+        ordered_unrepresentable,
+        tuple(binding_cache[key] for key in sorted(used_identity_dates)),
+        available_rows,
+        unavailable_rows,
+    )
 
 
 def _read_exact_resolver(
@@ -1558,6 +1813,19 @@ def _read_bounded_bytes(path: Path, *, maximum_bytes: int = MAXIMUM_JSON_BYTES) 
 
 def _counts(values: Iterator[str]) -> tuple[tuple[str, int], ...]:
     return tuple(sorted(Counter(values).items()))
+
+
+def _unrepresentable_key(
+    item: CorporateActionResolutionUnrepresentableV11,
+) -> tuple[str, date, datetime, str, str, str]:
+    return (
+        item.action_kind.value,
+        item.effective_date,
+        item.source_observed_at,
+        item.reason_code,
+        item.source_action_id or "",
+        item.payload_fingerprint,
+    )
 
 
 def _pretty_json(value: object) -> bytes:

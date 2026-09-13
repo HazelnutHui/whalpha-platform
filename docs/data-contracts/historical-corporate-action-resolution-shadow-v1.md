@@ -40,10 +40,15 @@ provider, date, count, ticker uniqueness, and stable-ID types must pass.
   `event_date_identity_unavailable`.
 - A ticker absent from an available exact-date Resolver is quarantined with
   `unresolved_ticker`.
-- Any source row that the typed mapper cannot represent stops the build; no row
-  may be silently dropped.
-- Output is one-to-one with source rows and retains each source page's actual WH
-  Alpha observation time.
+- Under contract 1.0, any source row that the typed mapper cannot represent
+  stops the build. Under contract 1.1, representable rows enter the typed
+  partitions while every unrepresentable row enters a separate hashed
+  quarantine artifact with its source kind, event date, observation time,
+  reason, optional source action ID, and payload fingerprint. No row may be
+  silently dropped or assigned a fabricated ticker.
+- Contract 1.1 requires typed rows plus unrepresentable quarantine records to
+  equal source rows exactly. Typed mapping is marked non-one-to-one whenever
+  that quarantine is nonempty, while source accounting remains one-to-one.
 
 The first isolated shadow uses local observation revision `1`. This is not a
 claim about the provider's historical revision number. Repeat acquisition and
@@ -54,6 +59,8 @@ append-only revision diff must be designed before canonical promotion.
 The owner-only output tree contains:
 
 - `shadow.json` under contract `1.0`; and
+- `unrepresentable.json` for contract 1.1, including when its record set is
+  empty; and
 - one existing provider-neutral Corporate Action Source Observation 1.1
   Parquet partition per nonempty event year, each with its own manifest.
 

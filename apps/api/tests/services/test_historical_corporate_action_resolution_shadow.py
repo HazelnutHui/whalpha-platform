@@ -207,7 +207,6 @@ def _derived_identity_evidence(
     source_path: Path,
     *,
     sessions: tuple[date, ...],
-    conflicting: bool = False,
 ) -> Path:
     source = ParquetHistoricalCoverageRepository(root).read_dataset_evidence(
         source_path
@@ -216,11 +215,6 @@ def _derived_identity_evidence(
         item.first_session: item for item in source.artifacts
     }
     artifacts = tuple(artifacts_by_session[session] for session in sessions)
-    if conflicting:
-        artifacts = (
-            artifacts[0].model_copy(update={"logical_fingerprint": "f" * 64}),
-            *artifacts[1:],
-        )
     evidence = build_historical_dataset_coverage_evidence(
         family=HistoricalDatasetFamily.POINT_IN_TIME_IDENTITY,
         sessions=sessions,
@@ -524,6 +518,58 @@ def test_persistent_candidate_requires_exact_owner_only_root(
             output_root=target,
             output_custody_root=tmp_path,
         )
+
+
+def test_composite_shadow_accounts_for_unrepresentable_source_rows(
+    monkeypatch, tmp_path: Path
+) -> None:
+    inputs = _inputs(monkeypatch, tmp_path)
+    evidence = Path(inputs.pop("identity_evidence_path"))
+    malformed_target = tmp_path / "malformed-composite" / f"split={START}_{END}"
+    fetch_historical_corporate_action_source_package(
+        config=_config(),
+        transport=FixtureTransport(
+            {
+                "status": "OK",
+                "results": [
+                    {
+                        "adjustment_type": "unsupported",
+                        "execution_date": START.isoformat(),
+                        "id": "unsupported",
+                        "ticker": "AAA",
+                    }
+                ],
+            }
+        ),  # type: ignore[arg-type]
+        action_kind=CorporateActionSourceKind.SPLIT,
+        start_date=START,
+        end_date=END,
+        package_path=malformed_target,
+        rate_limiter=NoWait(),  # type: ignore[arg-type]
+        clock=lambda: OBSERVED_AT,
+    )
+    inputs.update(
+        split_source_package_path=malformed_target,
+        identity_evidence_paths=(evidence,),
+        output_root=tmp_path / "unrepresentable-composite-shadow",
+    )
+
+    result = build_historical_corporate_action_resolution_shadow(**inputs)  # type: ignore[arg-type]
+
+    assert result.manifest.source_record_count == 3
+    assert result.manifest.mapped_record_count == 2
+    assert result.manifest.unrepresentable_source_record_count == 1
+    assert not result.manifest.source_mapping_one_to_one
+    assert result.manifest.source_accounting_one_to_one
+    assert dict(result.manifest.unrepresentable_reason_counts) == {
+        "missing_or_unsupported_adjustment_type": 1,
+    }
+    assert len(result.unrepresentable_records) == 1
+    assert result.unrepresentable_records[0].source_action_id == "unsupported"
+    reread = read_historical_corporate_action_resolution_shadow(
+        output_root=result.output_root
+    )
+    assert reread.unrepresentable_records == result.unrepresentable_records
 
 
 def test_unrepresentable_source_row_stops_without_output(

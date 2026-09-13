@@ -24,10 +24,12 @@ evidence path as a separate `--identity-evidence` argument, the source custody
 root, output custody root, absent output child, a fixed UTC materialization
 time, and `--execute`.
 
-Review only aggregate output: source and mapped counts must match exactly;
+Review only aggregate output: mapped plus unrepresentable counts must match
+source rows exactly; typed mapping may be false only when the explicit
+unrepresentable quarantine is nonempty;
 overlap conflict count must be zero; resolved and quarantined totals must sum
-to source rows; missing exact-date Identity and unresolved ticker counts stay
-separate. The CLI does not print provider payloads.
+to mapped rows; missing exact-date Identity, unresolved ticker, and typed-
+mapping failures stay separate. The CLI does not print provider payloads.
 
 ## Reread and failure handling
 

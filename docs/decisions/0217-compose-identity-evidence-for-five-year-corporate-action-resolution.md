@@ -46,7 +46,14 @@ authority:
    Dell candidate directory. The target must be a direct child of that exact
    real mode-0700 directory; symlinks, broader roots, nested targets, and mode
    drift fail closed. Legacy 1.0 `/tmp` behavior remains unchanged.
-6. The first five-year build uses the retained baseline split and dividend
+6. Contract 1.1 must account for every source row. Rows representable by the
+   provider-neutral observation schema enter year-partitioned Parquet. A row
+   lacking required typed identity, such as provider ticker, is retained in a
+   separately hashed `unrepresentable.json` quarantine record containing its
+   source kind, event date, observation time, reason, optional provider action
+   ID, and payload fingerprint. It is neither dropped nor repaired with a
+   sentinel ticker. Typed rows plus quarantine records must equal source rows.
+7. The first five-year build uses the retained baseline split and dividend
    packages. The separate repeat diffs remain required revision evidence. In
    particular, the five removed and five added split IDs are not collapsed
    into revisions or resolved by economic-payload similarity at this stage.
@@ -64,12 +71,14 @@ authority:
   Identity evidence exists.
 - Provider action-ID instability remains a named promotion gate rather than a
   reason to discard otherwise useful baseline-resolution evidence.
+- A nonzero unrepresentable count makes typed mapping one-to-one false while
+  complete source accounting remains true. Such rows stay a promotion blocker.
 
 ## Acceptance boundary
 
 The change is complete when focused tests prove legacy 1.0 compatibility,
 multi-evidence overlap acceptance, overlap-conflict refusal, subset coverage
-quarantine, exact persistent-root enforcement, and formal reread; then a real
-five-year baseline build must complete with one output row per retained source
-row and zero network, `/data`, analytics, publication, deployment, or scheduler
-activity.
+quarantine, explicit accounting of unrepresentable rows, exact persistent-root
+enforcement, and formal reread; then a real five-year baseline build must
+account for every retained source row and complete with zero network, `/data`,
+analytics, publication, deployment, or scheduler activity.
