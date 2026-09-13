@@ -77,16 +77,23 @@ not five-year performance admission.
 
 1. Keep the immutable first-strategy acceptance population fixed at 20 action
    relations and 64 lifecycle-crossing IDs.
-2. When a real second-source sample is available, run one source-specific pilot
-   against that exact fingerprint.
-3. Record matched, absent, unsupported, and conflicting fields separately.
-4. Resolve missing-event neutrality and terminal outcomes without turning a
+2. Preserve the completed SEC metadata pilot: 64 / 64 CIK roots, 2,144 filing
+   locators, and 219 transition-period candidates, with every complete
+   security-level lifecycle field still unsupported.
+3. Freeze one bounded SEC primary-document acquisition/review population from
+   those 219 candidates. Record matched, absent, unsupported, and conflicting
+   fields separately; document content still cannot assign security identity
+   by itself.
+4. Test a commercial source only against the residual field gap that remains
+   after the SEC document review; do not repeat a global vendor scan.
+5. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
-lifecycle authority. LSEG, ICE, S&P, Norgate, or another source is considered
-only against the measured field gap; no speculative adapter or undirected
-global scan should precede a real sample.
+lifecycle authority. SEC is an official document locator and issuer-event
+source, not a consolidated security lifecycle feed. LSEG, ICE, S&P, Norgate,
+or another source is considered only against the post-document measured field
+gap; no undirected global scan is justified.
 
 Exit criterion: the first strategy's exact lifecycle/action cases have
 governed evidence or explicit quarantine with measured admission impact.

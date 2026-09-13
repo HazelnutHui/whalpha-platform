@@ -95,7 +95,9 @@ for the Dell data program, and
 [ADR 0224](decisions/0224-gate-sec-facts-by-security-projection-class-and-evidence-tier.md)
 for SEC security projection, and
 [ADR 0227](decisions/0227-localize-collision-derived-join-failures-only-in-research-membership.md)
-for collision-localized research Membership. Use the
+for collision-localized research Membership, and
+[ADR 0228](decisions/0228-use-sec-submissions-as-a-lifecycle-document-locator-not-a-terminal-fact.md)
+for bounded SEC lifecycle-document discovery. Use the
 [ADR index](decisions/README.md) to trace
 the detailed dependency and supersession chain.
 
@@ -116,6 +118,7 @@ the detailed dependency and supersession chain.
 - [Five-Year Research Membership Continuation](audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-Year Research Membership Collision Recovery](audits/five-year-research-membership-collision-recovery-2026-09-13.md)
 - [First-Strategy Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
+- [First-Strategy SEC Lifecycle Pilot](audits/strong-leader-pullback-sec-lifecycle-pilot-2026-09-13.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [SEC Fundamental Projection Readiness Census](audits/sec-fundamental-projection-readiness-census-2026-09-13.md)

@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics and a frozen first-strategy sample | canonical family absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, frozen first-strategy sample, and 64-case SEC filing-locator pilot | all eight complete security-level fields remain unsupported; canonical family absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -83,7 +83,9 @@ Current admission remains rejected:
   no session has all mandatory evidence;
 - known split-like exposures have a defined future path-local treatment;
 - 20 action relations and 64 lifecycle-crossing IDs form the exact unresolved
-  external-source acceptance sample; and
+  source-acceptance sample;
+- the SEC metadata pilot found 2,144 official document locators, including 219
+  on or after the last canonical observation, but granted no terminal fact; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -115,9 +117,10 @@ project.
 1. Keep the completed SEC projection census as a measured data rejection; do
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
-2. When a real second-source sample is available, test it only against the
-   frozen 20-action / 64-lifecycle population and retain matched, absent,
-   unsupported, and conflicting fields.
+2. Use the completed SEC metadata pilot to freeze a bounded primary-document
+   acquisition/review over the 219 transition-period candidates. Keep CIK,
+   accession, form presence, security identity, and terminal facts separate;
+   retain matched, absent, unsupported, and conflicting fields.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

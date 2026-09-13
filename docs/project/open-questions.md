@@ -16,9 +16,9 @@ history stays in ADRs, the changelog, and audits.
 
 ## Missing point-in-time evidence
 
-- After the ADR 0196 Massive/official-free composition is measured across the
-  five-year target, which exact lifecycle or terminal facts remain materially
-  unresolved, and do they justify a paid cross-venue source?
+- After the 219 transition-period SEC documents are reviewed, which exact
+  security-level lifecycle or terminal fields remain unsupported, and does
+  their measured admission impact justify a paid cross-venue source?
 - Which independent source resolves corporate-action date semantics, dividend
   currency/order handling, unexplained discontinuities, and total-return
   adjustments?

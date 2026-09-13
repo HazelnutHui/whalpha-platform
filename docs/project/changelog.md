@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-13 — Bound SEC lifecycle-document discovery to the first strategy
+
+- Accepted ADR 0228 and implemented a network-prohibited SEC Submissions
+  metadata pilot over ADR 0223's exact 64 lifecycle cases. It formally binds
+  the source sample, immutable Submissions package, and full-payload census;
+  reads every CIK root and referenced historical shard; and retains no
+  security assignment or terminal fact.
+- The real run read 64 roots, 42 shards, and 91,640 filing rows. It retained
+  2,144 official document locators, including 219 on or after the last
+  canonical observation. Sixty-two cases have Form 25 family candidates, 62
+  have Form 15 family candidates, and 61 have structured 8-K candidates.
+- All eight complete security-level lifecycle fields remain `unsupported` at
+  the metadata layer. The pilot grants no document request, credential read,
+  Historical Coverage, research admission, outcome access, Candidate,
+  publication, deployment, or scheduler authority.
+- Real-source diagnostics corrected two assumptions before durable custody:
+  accession prefixes do not have to equal filer CIKs, and primary documents
+  may use safe relative paths. One unreferenced output with a future evaluation
+  time was exactly deleted and rebuilt correctly to avoid conflicting custody.
+- The final 1,204,695-byte report has SHA-256
+  `ba4803207492a00229a0bc1025e17882ece600a8a3f5c97cca5c8645da786059`
+  and logical fingerprint
+  `c68cd6c8b0677091cb467323938c4255525da2106c2c9d859b0bc76497502ad1`.
+  Formal reread passed, focused tests passed, and the complete API suite passed
+  2,639 tests with two unchanged warnings.
+
 ## 2026-09-13 — Complete source-available research Membership coverage
 
 - Corrected the first V4 pilot's overly strict proof condition before any

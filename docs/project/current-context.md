@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T13:11:42Z
+Operational state verified at: 2026-09-13T13:42:15Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -129,7 +129,12 @@ Important private Dell evidence includes:
   diagnostics, still without canonical lifecycle, terminal-return, neutral-row,
   or total-return authority; and
 - the exact first-strategy source acceptance population: 20 unresolved action
-  relations across four IDs plus 64 lifecycle-crossing IDs.
+  relations across four IDs plus 64 lifecycle-crossing IDs; and
+- a formally bound SEC metadata pilot over all 64 lifecycle cases, retaining
+  2,144 official filing locators. All cases have one of 219 candidates on or
+  after their last canonical observation, but all eight complete security-
+  lifecycle fields remain unsupported until document content and security
+  identity are proven.
 
 Exact package identities and counts are retained in:
 
@@ -138,6 +143,7 @@ Exact package identities and counts are retained in:
 - [SEC fundamental-query readiness audit](../audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [SEC fundamental-projection readiness audit](../audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
 - [First-strategy source sample audit](../audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
+- [First-strategy SEC lifecycle pilot audit](../audits/strong-leader-pullback-sec-lifecycle-pilot-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -164,10 +170,13 @@ sessions have strict projection evidence. Do not build a broad fact-by-session
 panel or a security feature. Reopen this lane only for newly admitted
 historical source-time evidence or a separately registered strategy need.
 
-The parallel external gate is a source-specific lifecycle/action pilot bound
-to the immutable 20-action / 64-lifecycle sample. Massive Starter has already
-been rejected as the sole lifecycle authority. No adapter should be invented
-before a real second-source sample is available.
+The first source-specific lifecycle pilot is now bound to the immutable
+20-action / 64-lifecycle sample. SEC metadata narrowed the 64 lifecycle cases
+to 2,144 document candidates, including 219 on or after the last canonical
+observation, without promoting a single terminal fact. The next internal gate
+is bounded SEC primary-document evidence; a commercial sample remains limited
+to the exact fields still unsupported after that review. Massive Starter is
+not the sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
