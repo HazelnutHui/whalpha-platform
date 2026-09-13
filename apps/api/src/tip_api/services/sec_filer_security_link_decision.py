@@ -7,6 +7,7 @@ import json
 import multiprocessing
 import os
 import re
+import shutil
 import stat
 from collections import Counter, defaultdict
 from concurrent.futures import ProcessPoolExecutor
@@ -518,6 +519,13 @@ def build_sec_filer_security_link_package(
         os.rename(partial, target)
         _fsync_directory(target.parent)
     except Exception:
+        if (
+            partial.exists()
+            and not partial.is_symlink()
+            and partial.parent == target.parent
+        ):
+            shutil.rmtree(partial)
+            _fsync_directory(partial.parent)
         raise
     return read_sec_filer_security_link_package(
         package_path=target,

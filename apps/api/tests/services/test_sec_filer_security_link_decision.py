@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import UTC, date, datetime
 from uuid import UUID
 
+import pytest
+
 from tip_api.contracts.common import QualityStatus
 from tip_api.contracts.market_data.v1 import (
     InstrumentMasterV1,
@@ -13,8 +15,11 @@ from tip_api.contracts.market_data.v1 import (
     ResolutionStatus,
 )
 from tip_api.services.sec_filer_security_link_decision import (
+    SecFilerSecurityLinkError,
+    build_sec_filer_security_link_package,
     derive_sec_filer_security_link_decisions,
 )
+from tip_api.services import sec_filer_security_link_decision as module
 
 
 SESSION = date(2025, 8, 1)
@@ -125,3 +130,49 @@ def test_missing_source_custody_never_admits_otherwise_valid_link() -> None:
     assert rows[0].decision_status == "quarantined_source_custody_missing"
     assert rows[0].reason_codes == ("source_custody_missing",)
     assert rows[0].sec_cik is None
+
+
+def test_failed_package_build_removes_only_its_partial_directory(
+    monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    custody = tmp_path / "custody"
+    custody.mkdir(mode=0o700)
+    custody.chmod(0o700)
+    target = custody / "build=fixture"
+    unrelated = custody / "keep"
+    unrelated.write_text("retained")
+
+    class Calendar:
+        calendar_version = "fixture"
+
+        @staticmethod
+        def sessions_in_range(_start: date, _end: date) -> tuple[date, ...]:
+            return (SESSION,)
+
+    monkeypatch.setattr(module, "ExchangeCalendar", Calendar)
+    monkeypatch.setattr(
+        module,
+        "_build_session",
+        lambda _argument: (_ for _ in ()).throw(
+            SecFilerSecurityLinkError("fixture failure")
+        ),
+    )
+
+    with pytest.raises(SecFilerSecurityLinkError, match="fixture failure"):
+        build_sec_filer_security_link_package(
+            data_root=data_root,
+            output_package_path=target,
+            range_start=SESSION,
+            range_end=SESSION,
+            provider="massive_stocks_basic",
+            worker_count=1,
+            allowed_missing_source_sessions=(),
+            implementation_revision="a" * 40,
+            built_at=OBSERVED,
+        )
+
+    assert not target.exists()
+    assert not (custody / ".build=fixture.partial").exists()
+    assert unrelated.read_text() == "retained"
