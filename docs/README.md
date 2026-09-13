@@ -159,6 +159,7 @@ the detailed dependency and supersession chain.
 - [First-Strategy SEC Case Adjudication](audits/strong-leader-pullback-sec-case-adjudication-2026-09-13.md)
 - [First-Strategy SEC Transaction Event Adjudication](audits/strong-leader-pullback-sec-transaction-event-adjudication-2026-09-13.md)
 - [First-Strategy SEC Termination Reason Adjudication](audits/strong-leader-pullback-sec-termination-reason-adjudication-2026-09-13.md)
+- [First-Strategy SEC Consideration Adjudication](audits/strong-leader-pullback-sec-consideration-adjudication-2026-09-13.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [SEC Fundamental Projection Readiness Census](audits/sec-fundamental-projection-readiness-census-2026-09-13.md)

@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-13 — Adjudicate primary common-share consideration
+
+- Accepted ADR 0239 and retained one bounded primary ordinary/common-share
+  consideration clause for each of the 61 linked transaction events.
+- Classified 37 cash-only, 10 stock-only, three fixed cash-and-stock, seven
+  cash-plus-CVR, three cash-or-stock election, and one cash-or-unlisted-unit
+  election cases. Eight fractional-share cash adjustments remain separate.
+- Options, restricted awards, preferred stock, debt, and financing cannot
+  determine the ordinary-share classification. Exact terms remain in evidence;
+  numeric payoff normalization and terminal outcome authority remain zero.
+- The report has SHA-256
+  `834bf44dbc512c70a0722af18fab282c7b885dd881dbf48c126dd01ae0e00120`
+  and logical fingerprint
+  `9c1d68b7391dbfbea105f58edb261827c64928ab134ea756a4f4ce1509f2c5ae`.
+  Exact network-disabled reread passed with owner-only modes and zero residue.
+- Nine focused tests, 22 linked evidence tests, and the complete 2,686-test API
+  suite passed with two unchanged warnings. Parties, tradability, lifecycle
+  facts, terminal outcomes, `/data`, Historical Coverage, research, Candidate,
+  publication, deployment, and scheduler state were unchanged.
+
 ## 2026-09-13 — Link listing-termination reasons without terminal dates
 
 - Accepted ADR 0238 and parsed one bounded Item 3.01 delisting section for

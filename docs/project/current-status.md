@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed transaction events, and termination reasons | 61 stable-security/listing fields and 61 termination reasons are matched; 390 case/field cells remain unsupported, no effective listing-terminal fact is proven, and the canonical family is absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed transaction events, termination reasons, and common-share consideration | 61 stable-security/listing, 61 termination-reason, and 61 consideration fields are matched; 329 case/field cells remain unsupported, no effective listing-terminal fact is proven, and the canonical family is absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -119,8 +119,13 @@ Current admission remains rejected:
 - all 61 linked Item 3.01 sections explicitly connect merger/acquisition
   completion to listing or trading action. Their termination reasons are
   matched while requested/effective exchange dates and terminal pricing remain
-  unresolved. Across 512 required case/field cells, 122 are now matched and
-  390 remain unsupported; and
+  unresolved; and
+- all 61 primary ordinary/common-share clauses are now classified: 37 cash-
+  only, 10 stock-only, three fixed cash-and-stock, seven cash-plus-CVR, three
+  cash-or-stock elections, and one cash-or-unlisted-unit election. Fractional-
+  share cash and numeric payoff normalization remain separate. Across 512
+  required case/field cells, 183 are now matched and 329 remain unsupported;
+  and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -152,8 +157,8 @@ project.
 1. Keep the completed SEC projection census as a measured data rejection; do
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
-2. Preserve the 61 completed point-in-time security links. Adjudicate typed
-   transaction completion, event date, termination reason, consideration, and
+2. Preserve the 61 completed point-in-time security links, transaction dates,
+   termination reasons, and common-share consideration decisions. Adjudicate
    party relations on those exact cases. Keep last tradability, terminal
    outcome, and the three unsupported LNW/REVG/SAND cases separate; preserve
    all result states explicitly.

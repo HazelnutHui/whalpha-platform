@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T21:52:35Z
+Operational state verified at: 2026-09-13T22:16:53Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -204,7 +204,16 @@ Important private Dell evidence includes:
   market-status and terminal dates remain unresolved. Report SHA-256 is
   `c3ef6f8a0e51def3419b07d7f1303105a00df9e693ec4c6cbb0a2c4c1434224d`
   and logical fingerprint is
-  `dbc47b9e31bd9043259b6849f8a92816790ad2b088c23e2b87e56e60d7d49fcf`.
+  `dbc47b9e31bd9043259b6849f8a92816790ad2b088c23e2b87e56e60d7d49fcf`;
+  and
+- the typed common-share consideration adjudication: all 61 primary clauses
+  are matched as 37 cash-only, 10 stock-only, three fixed cash-and-stock,
+  seven cash-plus-CVR, three cash-or-stock elections, and one cash-or-unlisted-
+  unit election. Eight fractional-share cash adjustments remain separate.
+  Report SHA-256 is
+  `834bf44dbc512c70a0722af18fab282c7b885dd881dbf48c126dd01ae0e00120`
+  and logical fingerprint is
+  `9c1d68b7391dbfbea105f58edb261827c64928ab134ea756a4f4ce1509f2c5ae`.
 
 Exact package identities and counts are retained in:
 
@@ -224,6 +233,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC case adjudication audit](../audits/strong-leader-pullback-sec-case-adjudication-2026-09-13.md)
 - [First-strategy SEC transaction-event adjudication audit](../audits/strong-leader-pullback-sec-transaction-event-adjudication-2026-09-13.md)
 - [First-strategy SEC termination-reason adjudication audit](../audits/strong-leader-pullback-sec-termination-reason-adjudication-2026-09-13.md)
+- [First-strategy SEC consideration adjudication audit](../audits/strong-leader-pullback-sec-consideration-adjudication-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -264,8 +274,10 @@ then matched the stable security/listing field for 61 structured transaction
 cases without a ticker-only join. Typed transaction completion/date work is
 now complete for all 61, including nine retained cover-date differences. The
 termination reason is also now matched for all 61 through bounded Item 3.01
-evidence. The next internal gate is consideration and party-relation
-adjudication. LNW, REVG, and SAND remain quarantined. A commercial sample
+evidence. Primary common-share consideration is now matched for all 61 while
+fractional-share cash, elections, CVRs, and unlisted units remain distinct.
+The next internal gate is party-relation adjudication. LNW, REVG, and SAND
+remain quarantined. A commercial sample
 remains limited to the frozen residual fields after that review. Massive
 Starter is not the sole lifecycle authority.
 

@@ -106,11 +106,14 @@ not five-year performance admission.
 12. Preserve the completed termination-reason adjudication: all 61 linked Item
    3.01 sections connect merger/acquisition completion to listing or trading
    action without inferring effective or last-trading dates.
-13. Adjudicate exact common-stock consideration and party relations for the 61
-   typed events. Keep last tradability and terminal return separate.
-14. Test a commercial source only against the frozen residual field gap that
+13. Preserve the completed primary common-share consideration adjudication:
+   61 / 61 clauses are typed while fractional-share cash, numeric payoff
+   normalization, and terminal return remain separate.
+14. Adjudicate predecessor, target, acquirer, and successor relations for the
+   61 typed events without forcing absent role labels.
+15. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-15. Resolve missing-event neutrality and terminal outcomes without turning a
+16. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
