@@ -44,6 +44,8 @@ panels, and product publications remain separate.
 - [SEC Filing-Clock Ledger V1](sec-filing-clock-ledger-v1.md)
 - [SEC Company Facts Normalized Source V1](sec-companyfacts-normalized-source-v1.md)
 - [SEC Company Facts Semantic Census V1](sec-companyfacts-semantic-census-v1.md)
+- [SEC Fundamental Query Registry V1](sec-fundamental-query-registry-v1.md)
+- [SEC Fundamental Query Readiness Census V1](sec-fundamental-query-readiness-census-v1.md)
 - [SEC Filer-to-Security Link Decision V1](sec-filer-security-link-decision-v1.md)
 - [SEC Point-in-Time Fundamental Selection V1](sec-point-in-time-fundamental-selection-v1.md)
 - [Historical Source Package V1](historical-source-package-v1.md)

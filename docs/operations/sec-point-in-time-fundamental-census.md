@@ -2,14 +2,18 @@
 
 ## Purpose
 
-Measure the normalized five-year SEC occurrence ledger before selecting a
-fundamental feature registry. This is network-free and writes only an
-owner-only report/census package outside canonical `/data`.
+Measure the normalized five-year SEC occurrence ledger first at broad semantic
+grain and then against a deliberately small registered query set. Both stages
+are network-free and write only owner-only report/census packages outside
+canonical `/data`.
 
 ADR 0216 and
 [SEC Company Facts Semantic Census V1](../data-contracts/sec-companyfacts-semantic-census-v1.md)
-define the executable first stage. It is a source-semantic census, not a
-feature build.
+define the executable first stage. ADR 0225,
+[SEC Fundamental Query Registry V1](../data-contracts/sec-fundamental-query-registry-v1.md),
+and
+[SEC Fundamental Query Readiness Census V1](../data-contracts/sec-fundamental-query-readiness-census-v1.md)
+define the query-specific second stage. Neither stage is a feature build.
 
 ## Required measures
 
@@ -54,3 +58,24 @@ After completion, formally reread `census.json`, compare all source/link
 bindings and aggregate invariants, record elapsed time and peak memory, and
 retain the exact logical fingerprint in a dated audit. Do not register a
 feature merely because it appears in the top-concept coverage table.
+
+## Query-specific readiness stage
+
+Run the readiness census only after the registry and implementation are
+committed, because the CLI requires a clean repository and binds the exact
+revision. Supply the same normalized package, semantic census, filer/security
+link package, and canonical data root used by the semantic census. Use no more
+processes than normalized source workers.
+
+The stage scans the full occurrence denominator but materializes only the four
+registered concepts in worker memory. It records sequential rejection reasons,
+exact duplicates, value/availability conflicts, period-end shape ambiguity,
+and filers with at least one clean period. It publishes no values and performs
+no projection, outcome access, external request, `/data` write, publication,
+deployment, or scheduler change.
+
+The completed output must use a new owner-only `build=...` directory below the
+dedicated readiness-census state root. Reread the package through
+`read_sec_fundamental_query_readiness_census`; do not treat raw JSON inspection
+as formal verification. A successful result permits only the later design of
+a cutoff-aware issuer query reader and security-projection census.

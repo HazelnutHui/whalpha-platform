@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0225](0225-register-the-first-sec-issuer-fundamental-query-set.md):
+  freezes four exact issuer-level SEC source queries and default-deny
+  availability, revision, conflict, and security-projection semantics before
+  any feature materialization.
 - [ADR 0224](0224-gate-sec-facts-by-security-projection-class-and-evidence-tier.md):
   keeps SEC facts at filer grain and gates security projection by share-class
   cardinality and knowledge-time evidence tier.
