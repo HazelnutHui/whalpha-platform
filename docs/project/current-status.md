@@ -85,7 +85,9 @@ Current admission remains rejected:
 - 20 action relations and 64 lifecycle-crossing IDs form the exact unresolved
   source-acceptance sample;
 - the SEC metadata pilot found 2,144 official document locators, including 219
-  on or after the last canonical observation, but granted no terminal fact; and
+  on or after the last canonical observation, but granted no terminal fact;
+- those 219 transition-period documents are frozen into 22 deterministic
+  no-request batches; source content is not yet acquired; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -117,10 +119,9 @@ project.
 1. Keep the completed SEC projection census as a measured data rejection; do
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
-2. Use the completed SEC metadata pilot to freeze a bounded primary-document
-   acquisition/review over the 219 transition-period candidates. Keep CIK,
-   accession, form presence, security identity, and terminal facts separate;
-   retain matched, absent, unsupported, and conflicting fields.
+2. Implement and run resumable source custody for the frozen 219-document / 22-
+   batch SEC plan. Keep CIK, accession, form presence, security identity, and
+   terminal facts separate; acquisition alone grants no lifecycle fact.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

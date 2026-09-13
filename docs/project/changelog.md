@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-13 — Freeze the SEC transition-document acquisition plan
+
+- Accepted ADR 0229 and converted all 219 on-or-after-last-observation SEC
+  candidates into 219 unique official URLs. No form, case, or accession was
+  hand-selected after coverage inspection.
+- The immutable plan has 22 deterministic batches: 21 batches of ten and a
+  final batch of nine. It caps rate at two requests per second, retries at two,
+  and each document at 64 MiB; only safe HTTPS paths on `www.sec.gov` are
+  permitted.
+- The 174,159-byte plan has SHA-256
+  `bb79ec052e7296b1a7234f83d5c91a11097bdb54f9215e8c806e5159ab0d41f7`
+  and logical fingerprint
+  `fbce15f14b151fc179a5b16d1bdea97a72bf1c57dd025ee91ea56e33fe62c500`.
+  Formal reread passed with zero staging residue.
+- The complete API suite passed 2,643 tests with two unchanged warnings. No
+  request, credential read, document write, security assignment, terminal
+  fact, `/data`, Historical Coverage, research, Candidate, publication,
+  deployment, or scheduler action occurred.
+
 ## 2026-09-13 — Bound SEC lifecycle-document discovery to the first strategy
 
 - Accepted ADR 0228 and implemented a network-prohibited SEC Submissions

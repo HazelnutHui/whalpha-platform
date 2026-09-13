@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T13:42:15Z
+Operational state verified at: 2026-09-13T13:54:48Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -134,7 +134,10 @@ Important private Dell evidence includes:
   2,144 official filing locators. All cases have one of 219 candidates on or
   after their last canonical observation, but all eight complete security-
   lifecycle fields remain unsupported until document content and security
-  identity are proven.
+  identity are proven; and
+- an immutable 219-request SEC primary-document plan with 219 unique official
+  URLs in 22 fixed batches. It is a no-request artifact; source-content custody
+  and field interpretation remain pending.
 
 Exact package identities and counts are retained in:
 
@@ -144,6 +147,7 @@ Exact package identities and counts are retained in:
 - [SEC fundamental-projection readiness audit](../audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
 - [First-strategy source sample audit](../audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [First-strategy SEC lifecycle pilot audit](../audits/strong-leader-pullback-sec-lifecycle-pilot-2026-09-13.md)
+- [First-strategy SEC document plan audit](../audits/strong-leader-pullback-sec-document-plan-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -173,9 +177,10 @@ historical source-time evidence or a separately registered strategy need.
 The first source-specific lifecycle pilot is now bound to the immutable
 20-action / 64-lifecycle sample. SEC metadata narrowed the 64 lifecycle cases
 to 2,144 document candidates, including 219 on or after the last canonical
-observation, without promoting a single terminal fact. The next internal gate
-is bounded SEC primary-document evidence; a commercial sample remains limited
-to the exact fields still unsupported after that review. Massive Starter is
+observation, without promoting a single terminal fact. Those 219 documents are
+now frozen into 22 deterministic no-request batches. The next internal gate is
+resumable SEC source-content custody; a commercial sample remains limited to
+the exact fields still unsupported after document review. Massive Starter is
 not the sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
