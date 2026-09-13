@@ -18,6 +18,7 @@ from tip_api.services.sec_filer_security_link_decision import (
     SecFilerSecurityLinkError,
     build_sec_filer_security_link_package,
     derive_sec_filer_security_link_decisions,
+    read_sec_filer_security_link_package,
 )
 from tip_api.services import sec_filer_security_link_decision as module
 
@@ -130,6 +131,21 @@ def test_missing_source_custody_never_admits_otherwise_valid_link() -> None:
     assert rows[0].decision_status == "quarantined_source_custody_missing"
     assert rows[0].reason_codes == ("source_custody_missing",)
     assert rows[0].sec_cik is None
+
+
+@pytest.mark.parametrize("worker_count", (0, 9))
+def test_formal_reader_rejects_invalid_worker_count(
+    tmp_path, worker_count: int
+) -> None:
+    with pytest.raises(
+        SecFilerSecurityLinkError,
+        match="formal-read worker count is invalid",
+    ):
+        read_sec_filer_security_link_package(
+            package_path=tmp_path / "missing",
+            data_root=tmp_path,
+            formal_read_workers=worker_count,
+        )
 
 
 def test_failed_package_build_removes_only_its_partial_directory(

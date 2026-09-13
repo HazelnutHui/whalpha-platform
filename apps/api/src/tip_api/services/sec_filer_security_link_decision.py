@@ -307,6 +307,13 @@ class _SessionBuild:
     resolution_counts: Counter[str]
 
 
+@dataclass(frozen=True, slots=True)
+class _SessionRead:
+    as_of_date: date
+    status_counts: tuple[tuple[str, int], ...]
+    resolution_counts: tuple[tuple[str, int], ...]
+
+
 def derive_sec_filer_security_link_decisions(
     *,
     as_of_date: date,
@@ -530,14 +537,22 @@ def build_sec_filer_security_link_package(
     return read_sec_filer_security_link_package(
         package_path=target,
         data_root=data_root,
+        formal_read_workers=worker_count,
     )
 
 
 def read_sec_filer_security_link_package(
-    *, package_path: Path, data_root: Path
+    *,
+    package_path: Path,
+    data_root: Path,
+    formal_read_workers: int = 1,
 ) -> SecFilerSecurityLinkResult:
     """Formally reread all outputs and transitively validate present inputs."""
 
+    if formal_read_workers < 1 or formal_read_workers > MAXIMUM_WORKERS:
+        raise SecFilerSecurityLinkError(
+            "link-decision formal-read worker count is invalid"
+        )
     package = _validate_completed_package(package_path)
     data_root = _validate_data_root(data_root)
     manifest_path = package / MANIFEST_FILE
@@ -562,67 +577,122 @@ def read_sec_filer_security_link_package(
     expected_root = {MANIFEST_FILE, *(f"as_of_date={item.isoformat()}" for item in sessions)}
     if {item.name for item in package.iterdir()} != expected_root:
         raise SecFilerSecurityLinkError("link-decision package members differ")
-    status_counts: Counter[str] = Counter()
-    resolution_counts: Counter[str] = Counter()
-    for evidence in manifest.sessions:
-        _validate_input_evidence(data_root, manifest.provider, evidence)
-        session_dir = package / f"as_of_date={evidence.as_of_date.isoformat()}"
-        if session_dir.is_symlink() or not session_dir.is_dir():
-            raise SecFilerSecurityLinkError("link-decision session directory is unavailable")
-        _require_mode(session_dir, 0o700)
-        if {item.name for item in session_dir.iterdir()} != {PARQUET_FILE}:
-            raise SecFilerSecurityLinkError("link-decision session members differ")
-        path = session_dir / PARQUET_FILE
-        _require_regular_mode(path, 0o400)
-        if path.stat().st_size != evidence.byte_size or _sha256_file(path) != evidence.physical_sha256:
-            raise SecFilerSecurityLinkError("link-decision artifact identity differs")
-        table = pq.ParquetFile(path).read()
-        if table.schema != LINK_ARROW_SCHEMA or table.num_rows != evidence.row_count:
-            raise SecFilerSecurityLinkError("link-decision artifact schema or count differs")
-        rows = tuple(SecFilerSecurityLinkDecisionV1.model_validate(row) for row in table.to_pylist())
-        if tuple(item.instrument_id for item in rows) != tuple(
-            sorted(item.instrument_id for item in rows)
-        ) or len({item.instrument_id for item in rows}) != len(rows):
-            raise SecFilerSecurityLinkError("link-decision row order differs")
-        if any(item.as_of_date != evidence.as_of_date for item in rows):
-            raise SecFilerSecurityLinkError("link-decision row session differs")
-        if any(
-            item.point_in_time_eligibility != evidence.point_in_time_eligibility
-            or item.source_observed_at != evidence.source_observed_at
-            for item in rows
-        ):
-            raise SecFilerSecurityLinkError(
-                "link-decision row source-time evidence differs"
-            )
-        if _table_fingerprint(table) != evidence.logical_fingerprint:
-            raise SecFilerSecurityLinkError("link-decision artifact fingerprint differs")
-        observed_status = Counter(item.decision_status for item in rows)
-        if _ordered(observed_status) != evidence.decision_status_counts:
-            raise SecFilerSecurityLinkError("link-decision artifact status counts differ")
-        admitted_cik_counts = Counter(
-            item.sec_cik for item in rows if item.sec_cik is not None
+    arguments = tuple(
+        (
+            str(package),
+            str(data_root),
+            manifest.provider,
+            evidence,
         )
-        if any(
-            item.sec_cik is not None
-            and item.cik_instrument_count != admitted_cik_counts[item.sec_cik]
-            for item in rows
-        ):
-            raise SecFilerSecurityLinkError(
-                "link-decision row CIK cardinality differs"
-            )
-        observed_multi = sum(
-            1 for value in admitted_cik_counts.values() if value > 1
-        )
-        if observed_multi != evidence.multi_security_cik_count:
-            raise SecFilerSecurityLinkError("link-decision CIK cardinality differs")
-        status_counts.update(observed_status)
-        resolution_counts.update(dict(evidence.identity_resolution_counts))
+        for evidence in manifest.sessions
+    )
+    if formal_read_workers == 1:
+        read_results = tuple(_read_session_evidence(item) for item in arguments)
+    else:
+        with ProcessPoolExecutor(
+            max_workers=formal_read_workers,
+            mp_context=multiprocessing.get_context("spawn"),
+        ) as executor:
+            read_results = tuple(executor.map(_read_session_evidence, arguments))
+    read_results = tuple(sorted(read_results, key=lambda item: item.as_of_date))
+    if tuple(item.as_of_date for item in read_results) != sessions:
+        raise SecFilerSecurityLinkError("link-decision read session order differs")
+    status_counts: Counter[str] = sum(
+        (Counter(dict(item.status_counts)) for item in read_results),
+        Counter(),
+    )
+    resolution_counts: Counter[str] = sum(
+        (Counter(dict(item.resolution_counts)) for item in read_results),
+        Counter(),
+    )
     if (
         _ordered(status_counts) != manifest.decision_status_counts
         or _ordered(resolution_counts) != manifest.identity_resolution_counts
     ):
         raise SecFilerSecurityLinkError("link-decision aggregate reread differs")
     return SecFilerSecurityLinkResult(package_path=package, manifest=manifest)
+
+
+def _read_session_evidence(
+    argument: tuple[
+        str,
+        str,
+        str,
+        SecFilerSecurityLinkSessionV1,
+    ],
+) -> _SessionRead:
+    package_raw, data_root_raw, provider, evidence = argument
+    package = Path(package_raw)
+    data_root = Path(data_root_raw)
+    _validate_input_evidence(data_root, provider, evidence)
+    session_dir = package / f"as_of_date={evidence.as_of_date.isoformat()}"
+    if session_dir.is_symlink() or not session_dir.is_dir():
+        raise SecFilerSecurityLinkError(
+            "link-decision session directory is unavailable"
+        )
+    _require_mode(session_dir, 0o700)
+    if {item.name for item in session_dir.iterdir()} != {PARQUET_FILE}:
+        raise SecFilerSecurityLinkError("link-decision session members differ")
+    path = session_dir / PARQUET_FILE
+    _require_regular_mode(path, 0o400)
+    if (
+        path.stat().st_size != evidence.byte_size
+        or _sha256_file(path) != evidence.physical_sha256
+    ):
+        raise SecFilerSecurityLinkError("link-decision artifact identity differs")
+    table = pq.ParquetFile(path).read()
+    if table.schema != LINK_ARROW_SCHEMA or table.num_rows != evidence.row_count:
+        raise SecFilerSecurityLinkError(
+            "link-decision artifact schema or count differs"
+        )
+    rows = tuple(
+        SecFilerSecurityLinkDecisionV1.model_validate(row)
+        for row in table.to_pylist()
+    )
+    if tuple(item.instrument_id for item in rows) != tuple(
+        sorted(item.instrument_id for item in rows)
+    ) or len({item.instrument_id for item in rows}) != len(rows):
+        raise SecFilerSecurityLinkError("link-decision row order differs")
+    if any(item.as_of_date != evidence.as_of_date for item in rows):
+        raise SecFilerSecurityLinkError("link-decision row session differs")
+    if any(
+        item.point_in_time_eligibility != evidence.point_in_time_eligibility
+        or item.source_observed_at != evidence.source_observed_at
+        for item in rows
+    ):
+        raise SecFilerSecurityLinkError(
+            "link-decision row source-time evidence differs"
+        )
+    if _table_fingerprint(table) != evidence.logical_fingerprint:
+        raise SecFilerSecurityLinkError(
+            "link-decision artifact fingerprint differs"
+        )
+    observed_status = Counter(item.decision_status for item in rows)
+    if _ordered(observed_status) != evidence.decision_status_counts:
+        raise SecFilerSecurityLinkError(
+            "link-decision artifact status counts differ"
+        )
+    admitted_cik_counts = Counter(
+        item.sec_cik for item in rows if item.sec_cik is not None
+    )
+    if any(
+        item.sec_cik is not None
+        and item.cik_instrument_count != admitted_cik_counts[item.sec_cik]
+        for item in rows
+    ):
+        raise SecFilerSecurityLinkError(
+            "link-decision row CIK cardinality differs"
+        )
+    observed_multi = sum(1 for value in admitted_cik_counts.values() if value > 1)
+    if observed_multi != evidence.multi_security_cik_count:
+        raise SecFilerSecurityLinkError(
+            "link-decision CIK cardinality differs"
+        )
+    return _SessionRead(
+        as_of_date=evidence.as_of_date,
+        status_counts=_ordered(observed_status),
+        resolution_counts=evidence.identity_resolution_counts,
+    )
 
 
 def _build_session(
