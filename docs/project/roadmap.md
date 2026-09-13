@@ -94,13 +94,15 @@ not five-year performance admission.
 8. Preserve the completed form-aware transaction candidate extraction: 89 / 89
    primary documents, including explicit non-Item-2.01, referenced-exhibit-
    only, and no-registered-scope states.
-9. Reconcile Form 25, Form 15, and transaction candidates into matched, absent,
-   referenced-only, unsupported, ambiguous, conflicting, and irrelevant
-   stable-ID case results. Document content still cannot assign security
-   identity by itself.
-10. Test a commercial source only against the residual field gap that remains
-   after the SEC document review; do not repeat a global vendor scan.
-11. Resolve missing-event neutrality and terminal outcomes without turning a
+9. Preserve the completed stable-ID coverage census: all 219 candidates are
+   joined to 64 cases, 61 have structured transaction scopes, and all 512
+   complete case/field results remain unsupported.
+10. Adjudicate typed candidate values into matched, absent, referenced-only,
+   unsupported, ambiguous, conflicting, and irrelevant results. Document
+   content still cannot assign security identity by itself.
+11. Test a commercial source only against the frozen residual field gap that
+   remains after typed SEC review; do not repeat a global vendor scan.
+12. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole

@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-13 — Measure cross-document case coverage before adjudication
+
+- Accepted ADR 0235 and joined all 219 frozen Form 25, Form 15, and transaction
+  candidates to the exact 64-case first-strategy lifecycle population by
+  stable `instrument_id`.
+- Sixty-one cases have structured transaction scopes; one is notice-only, one
+  references a missing completion-exhibit body, and one has no registered
+  transaction-completion scope.
+- Candidate material exists for 0 to 64 cases depending on the required field,
+  but all 512 case/field results remain `unsupported`. Candidate presence is
+  not a match and document-level absence is not event absence.
+- The report has SHA-256
+  `77b81064c1a494275029a2c667bac7ef2cb99c83d446aa491c2be29a3fe1e09a`
+  and logical fingerprint
+  `98d9c5d3da4d02316c020f0705ce1e8714a8b4086ead1a897a9e3a5511f7c1b9`.
+  Exact network-disabled reread passed with owner-only modes and zero residue.
+- Three focused tests passed after the final readability edit; the complete
+  2,661-test API suite had already passed before that behavior-neutral edit,
+  with two unchanged warnings. Facts, outcomes, `/data`, Historical Coverage,
+  research, Candidate, publication, deployment, and scheduler state were
+  unchanged.
+
 ## 2026-09-13 — Index all transaction documents without fact promotion
 
 - Accepted ADR 0234 and classified all 89 remaining primary documents: 61
