@@ -554,6 +554,57 @@ def read_historical_corporate_action_unresolved_census(
     )
 
 
+def read_historical_corporate_action_unresolved_census_output(
+    *,
+    output_root: Path,
+    output_custody_root: Path,
+) -> HistoricalCorporateActionUnresolvedCensusResult:
+    """Validate one immutable output without repeating its upstream history scan.
+
+    A downstream consumer must separately bind the returned manifest to the
+    formally reread resolution shadow it uses. This reader proves only the
+    completed package's custody, canonical bytes, self-fingerprint, and
+    aggregate reconciliation.
+    """
+
+    root = _validated_completed_output(output_root, output_custody_root)
+    if {item.name for item in root.iterdir()} != {MANIFEST_FILE, RECORDS_FILE}:
+        raise HistoricalCorporateActionUnresolvedCensusError(
+            "unresolved census package members differ"
+        )
+    manifest_path = root / MANIFEST_FILE
+    records_path = root / RECORDS_FILE
+    _require_regular_file(manifest_path, 0o400)
+    _require_regular_file(records_path, 0o400)
+    manifest_bytes = _read_bounded_bytes(manifest_path)
+    records_bytes = _read_bounded_bytes(records_path)
+    try:
+        manifest = HistoricalCorporateActionUnresolvedCensusManifestV1.model_validate_json(
+            manifest_bytes
+        )
+        record_set = UnresolvedTickerCandidateSetV1.model_validate_json(records_bytes)
+    except Exception as exc:
+        raise HistoricalCorporateActionUnresolvedCensusError(
+            "unresolved census output is invalid"
+        ) from exc
+    if (
+        manifest.records_file_sha256 != _sha256(records_bytes)
+        or manifest.records_file_bytes != len(records_bytes)
+        or manifest.records_logical_fingerprint != record_set.logical_fingerprint
+    ):
+        raise HistoricalCorporateActionUnresolvedCensusError(
+            "unresolved census record-set binding differs"
+        )
+    _verify_record_aggregates(manifest, record_set.records)
+    return HistoricalCorporateActionUnresolvedCensusResult(
+        output_root=root,
+        manifest=manifest,
+        records=record_set.records,
+        manifest_sha256=_sha256(manifest_bytes),
+        status="already_present",
+    )
+
+
 def _source_stats(rows: tuple[object, ...]) -> dict[str, _TickerSourceStats]:
     mutable: dict[str, dict[str, object]] = {}
     for raw in rows:

@@ -70,6 +70,7 @@ adjustment evidence remains explicit.
 - [Strategy Research Development Activation Review V1](strategy-research-development-activation-review-v1.md)
 - [Strong-Leader Pullback Development Coverage Census V1](strong-leader-pullback-development-coverage-census-v1.md)
 - [Strong-Leader Pullback Development Admission Decision V1](strong-leader-pullback-development-admission-decision-v1.md)
+- [Strong-Leader Pullback Evidence Blocker Census V1](strong-leader-pullback-evidence-blocker-census-v1.md)
 - [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)

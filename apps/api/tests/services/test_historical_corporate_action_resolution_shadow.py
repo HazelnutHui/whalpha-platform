@@ -55,6 +55,7 @@ from tip_api.services.historical_corporate_action_unresolved_census import (
     HistoricalCorporateActionUnresolvedCensusError,
     build_historical_corporate_action_unresolved_census,
     read_historical_corporate_action_unresolved_census,
+    read_historical_corporate_action_unresolved_census_output,
 )
 from tip_api.services.historical_corporate_action_source import (
     CorporateActionSourceKind,
@@ -742,6 +743,12 @@ def test_unresolved_census_serial_parallel_equivalence_and_no_assignment(
     )
     assert reread.records == result.records
     assert reread.manifest == result.manifest
+    output_only = read_historical_corporate_action_unresolved_census_output(
+        output_root=result.output_root,
+        output_custody_root=output_custody,
+    )
+    assert output_only.records == result.records
+    assert output_only.manifest == result.manifest
 
 
 def test_unresolved_census_classifies_multiple_candidates() -> None:

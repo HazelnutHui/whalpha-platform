@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0221](0221-scope-action-and-lifecycle-gaps-to-the-first-strategy.md):
+  intersects action and lifecycle evidence with the first strategy's fixed,
+  outcome-blind paths before any further global source work.
 - [ADR 0220](0220-cross-census-residual-corporate-action-evidence-without-assignment.md):
   combines retained lifecycle, inactive-security, and FINRA evidence into a
   one-to-one residual action diagnostic while keeping identity assignments zero.

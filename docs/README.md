@@ -109,6 +109,9 @@ EOD evidence or downstream research authority.
 ADR [0220](decisions/0220-cross-census-residual-corporate-action-evidence-without-assignment.md)
 governs the assignment-free connection of residual actions to retained
 lifecycle, inactive-security, and FINRA evidence.
+ADR [0221](decisions/0221-scope-action-and-lifecycle-gaps-to-the-first-strategy.md)
+governs the outcome-blind intersection of those facts with the first
+strategy's fixed reconstructed paths.
 ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
 requires a complete semantic/conflict census before any SEC fundamental
 feature registry or security projection.
@@ -156,6 +159,7 @@ separately approved bounded serving artifacts.
 - [Five-Year Corporate-Action Resolution](operations/five-year-corporate-action-resolution.md)
 - [Five-Year Corporate-Action Unresolved Census](operations/five-year-corporate-action-unresolved-census.md)
 - [Five-Year Corporate-Action Residual Evidence Census](operations/five-year-corporate-action-residual-evidence-census.md)
+- [Strong-Leader Pullback Evidence Blocker Census](operations/strong-leader-pullback-evidence-blocker-census.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
