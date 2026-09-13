@@ -92,6 +92,8 @@ Stock Candidates.
 - [Strong-Leader Pullback SEC Transaction Candidates V1](data-contracts/strong-leader-pullback-sec-transaction-candidates-v1.md):
   indexes form-aware completion evidence without promoting transaction or
   lifecycle facts.
+- [Strong-Leader Pullback SEC Case Adjudication V1](data-contracts/strong-leader-pullback-sec-case-adjudication-v1.md):
+  resolves event-time common-equity cover identity without ticker-only joins.
 - [Strong-Leader Pullback SEC Case Coverage Census V1](data-contracts/strong-leader-pullback-sec-case-coverage-census-v1.md):
   measures stable-ID candidate coverage while leaving all field results
   unadjudicated.
@@ -177,6 +179,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback SEC Form 15 Candidate Extraction](operations/strong-leader-pullback-sec-form15-candidates.md)
 - [Strong-Leader Pullback SEC Transaction Candidate Extraction](operations/strong-leader-pullback-sec-transaction-candidates.md)
 - [Strong-Leader Pullback SEC Case Coverage Census](operations/strong-leader-pullback-sec-case-coverage-census.md)
+- [Strong-Leader Pullback SEC Case Adjudication](operations/strong-leader-pullback-sec-case-adjudication.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)

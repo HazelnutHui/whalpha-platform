@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0236](0236-adjudicate-sec-cover-identity-with-point-in-time-tuples.md):
+  matches only event-time inline-XBRL CIK+ticker+exchange common-equity rows
+  and rejects later same-ticker filings outside the sampled lifecycle window.
 - [ADR 0235](0235-measure-cross-document-case-coverage-before-adjudication.md):
   measures exact stable-ID/field candidate coverage before any matched,
   absent, ambiguous, conflicting, or irrelevant result is claimed.
