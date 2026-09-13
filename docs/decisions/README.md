@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0231](0231-census-sec-document-content-before-lifecycle-adjudication.md):
+  parses every frozen SEC document and localizes bounded lexical candidates
+  without promoting a keyword hit into a lifecycle fact.
 - [ADR 0230](0230-retain-transition-period-sec-primary-documents-in-resumable-private-custody.md):
   retains the exact 219-document SEC plan in resumable, response-level private
   custody without granting lifecycle or research authority.

@@ -80,6 +80,9 @@ Stock Candidates.
   complete-session missingness rule and current evidence rejection.
 - [Strong-Leader Pullback SEC Document Source V1](data-contracts/strong-leader-pullback-sec-document-source-v1.md):
   exact resumable private custody for the frozen 219-document plan.
+- [Strong-Leader Pullback SEC Document Content Census V1](data-contracts/strong-leader-pullback-sec-document-content-census-v1.md):
+  deterministic parse and lexical candidate localization without fact
+  promotion.
 - [Candidate Strategy Research Statistics V1](data-contracts/candidate-strategy-research-statistics-v1.md):
   session-balanced inference and registered gates.
 - [Candidate Strategy Holdout Custody V1](data-contracts/candidate-strategy-holdout-custody-v1.md):
@@ -152,6 +155,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback SEC Lifecycle Pilot](operations/strong-leader-pullback-sec-lifecycle-pilot.md)
 - [Strong-Leader Pullback SEC Document Plan](operations/strong-leader-pullback-sec-document-plan.md)
 - [Strong-Leader Pullback SEC Document Source Custody](operations/strong-leader-pullback-sec-document-source.md)
+- [Strong-Leader Pullback SEC Document Content Census](operations/strong-leader-pullback-sec-document-content-census.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
