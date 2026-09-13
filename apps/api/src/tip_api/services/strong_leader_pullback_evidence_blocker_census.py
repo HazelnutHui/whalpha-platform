@@ -19,6 +19,7 @@ from typing import Iterator, Literal
 from uuid import UUID
 
 import pyarrow as pa
+import pyarrow.compute as pc
 import pyarrow.parquet as pq
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from pydantic_core import to_jsonable_python
@@ -33,6 +34,7 @@ from tip_api.contracts.analytics.v1.candidate_strategy_development_coverage impo
 from tip_api.contracts.common import normalize_utc_datetime
 from tip_api.contracts.market_data.v1 import (
     ResolutionStatus,
+    UniverseMembershipDecisionV1,
     UniverseMembershipDisposition,
 )
 from tip_api.contracts.market_data.v1.historical_inactive_lifecycle import (
@@ -45,6 +47,10 @@ from tip_api.persistence.development_admission_decision import (
 from tip_api.persistence.development_coverage_census import (
     REPORT_FILE,
     read_development_coverage_census,
+)
+from tip_api.persistence.parquet.historical_research import (
+    PARQUET_FILE_NAME,
+    UNIVERSE_MEMBERSHIP_ARROW_SCHEMA,
 )
 from tip_api.services.historical_corporate_action_residual_evidence_census import (
     read_historical_corporate_action_residual_evidence_census,
@@ -841,7 +847,7 @@ def _read_included_paths(
             data_root=root,
             methodology_version=STRONG_LEADER_PULLBACK_CENSUS_MEMBERSHIP_METHODOLOGY,
             session_date=session,
-            read_records=True,
+            read_records=False,
         )
         expected = report_sessions.get(session)
         if (
@@ -856,10 +862,9 @@ def _read_included_paths(
             raise StrongLeaderPullbackEvidenceBlockerCensusError(
                 "Membership evidence differs from development census"
             )
-        primary = tuple(
-            item
-            for item in current.records
-            if item.universe_id == STRONG_LEADER_PULLBACK_CENSUS_PRIMARY_UNIVERSE
+        primary = _read_primary_membership_records(
+            current=current,
+            session=session,
         )
         included = tuple(
             item
@@ -887,6 +892,92 @@ def _read_included_paths(
         _fingerprint(bindings),
         primary_decisions,
     )
+
+
+def _read_primary_membership_records(
+    *, current: object, session: date
+) -> tuple[UniverseMembershipDecisionV1, ...]:
+    """Validate only the strategy Universe rows after a formal physical read."""
+
+    fixture_records = tuple(getattr(current, "records", ()))
+    if fixture_records:
+        return tuple(
+            item
+            for item in fixture_records
+            if item.universe_id == STRONG_LEADER_PULLBACK_CENSUS_PRIMARY_UNIVERSE
+        )
+    try:
+        parquet_path = current.membership_partition_path / PARQUET_FILE_NAME
+        table = pq.ParquetFile(parquet_path).read()
+    except Exception as exc:
+        raise StrongLeaderPullbackEvidenceBlockerCensusError(
+            "Membership Parquet projection cannot be read"
+        ) from exc
+    if (
+        not table.schema.equals(
+            UNIVERSE_MEMBERSHIP_ARROW_SCHEMA, check_metadata=False
+        )
+        or table.num_rows != current.membership_manifest.record_count
+    ):
+        raise StrongLeaderPullbackEvidenceBlockerCensusError(
+            "Membership Parquet projection source differs"
+        )
+    primary_table = table.filter(
+        pc.equal(
+            table.column("universe_id"),
+            pa.scalar(STRONG_LEADER_PULLBACK_CENSUS_PRIMARY_UNIVERSE),
+        )
+    )
+    try:
+        primary = tuple(
+            UniverseMembershipDecisionV1.model_validate(row)
+            for row in primary_table.to_pylist()
+        )
+    except Exception as exc:
+        raise StrongLeaderPullbackEvidenceBlockerCensusError(
+            "Primary Membership projection is invalid"
+        ) from exc
+    if any(
+        item.session_date != session
+        or item.methodology_version
+        != STRONG_LEADER_PULLBACK_CENSUS_MEMBERSHIP_METHODOLOGY
+        or item.universe_id != STRONG_LEADER_PULLBACK_CENSUS_PRIMARY_UNIVERSE
+        for item in primary
+    ):
+        raise StrongLeaderPullbackEvidenceBlockerCensusError(
+            "Primary Membership projection scope differs"
+        )
+    keys = tuple((item.instrument_id, item.session_date) for item in primary)
+    if len(keys) != len(set(keys)):
+        raise StrongLeaderPullbackEvidenceBlockerCensusError(
+            "Primary Membership projection contains duplicate decisions"
+        )
+    expected_summary = next(
+        (
+            item
+            for item in current.membership_manifest.disposition_summaries
+            if item.universe_id
+            == STRONG_LEADER_PULLBACK_CENSUS_PRIMARY_UNIVERSE
+        ),
+        None,
+    )
+    if expected_summary is None or len(primary) != expected_summary.evaluated_count:
+        raise StrongLeaderPullbackEvidenceBlockerCensusError(
+            "Primary Membership projection count differs"
+        )
+    observed = Counter(item.disposition for item in primary)
+    if (
+        observed[UniverseMembershipDisposition.INCLUDED]
+        != expected_summary.included_count
+        or observed[UniverseMembershipDisposition.EXCLUDED]
+        != expected_summary.excluded_count
+        or observed[UniverseMembershipDisposition.QUARANTINED]
+        != expected_summary.quarantined_count
+    ):
+        raise StrongLeaderPullbackEvidenceBlockerCensusError(
+            "Primary Membership projection disposition counts differ"
+        )
+    return primary
 
 
 def _action_exposures(

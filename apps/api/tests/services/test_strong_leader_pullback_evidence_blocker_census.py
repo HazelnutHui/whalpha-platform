@@ -92,6 +92,69 @@ def test_unassigned_action_candidate_preserves_identity_boundary() -> None:
     assert stats["unassigned_action_candidate_exposure_record_count"] == 1
 
 
+def test_primary_membership_projection_validates_only_declared_universe(
+    tmp_path: Path,
+) -> None:
+    session = date(2026, 1, 5)
+    partition = tmp_path / "membership"
+    partition.mkdir()
+    common = {
+        "schema_version": "1.0",
+        "session_date": session,
+        "methodology_version": module.STRONG_LEADER_PULLBACK_CENSUS_MEMBERSHIP_METHODOLOGY,
+        "origin": "reconstructed_point_in_time",
+        "reason_codes": ["fixture"],
+        "evaluated_base_fingerprint": SHA,
+        "source_fingerprints": [SHA],
+        "source_data_cutoff": NOW,
+        "evaluated_at": NOW,
+        "quality_status": "warning",
+    }
+    table = module.pa.Table.from_pylist(
+        [
+            {
+                **common,
+                "universe_id": module.STRONG_LEADER_PULLBACK_CENSUS_PRIMARY_UNIVERSE,
+                "instrument_id": str(IID),
+                "disposition": "included",
+                "is_member": True,
+            },
+            {
+                **common,
+                "universe_id": "provider_classified_common_shares_plus_adrs_v1",
+                "instrument_id": str(OTHER_ID),
+                "disposition": "excluded",
+                "is_member": False,
+            },
+        ],
+        schema=module.UNIVERSE_MEMBERSHIP_ARROW_SCHEMA,
+    )
+    module.pq.write_table(table, partition / module.PARQUET_FILE_NAME)
+    current = SimpleNamespace(
+        membership_partition_path=partition,
+        records=(),
+        membership_manifest=SimpleNamespace(
+            record_count=2,
+            disposition_summaries=(
+                SimpleNamespace(
+                    universe_id=module.STRONG_LEADER_PULLBACK_CENSUS_PRIMARY_UNIVERSE,
+                    included_count=1,
+                    excluded_count=0,
+                    quarantined_count=0,
+                    evaluated_count=1,
+                ),
+            ),
+        ),
+    )
+    records = module._read_primary_membership_records(
+        current=current,
+        session=session,
+    )
+    assert len(records) == 1
+    assert records[0].instrument_id == IID
+    assert records[0].disposition is UniverseMembershipDisposition.INCLUDED
+
+
 def test_build_persists_and_rereads_outcome_blind_package(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
