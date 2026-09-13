@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-09-13 — Register and census the first SEC issuer queries
+
+- Accepted ADR 0225 and froze four exact issuer-level source queries: Assets,
+  Stockholders' Equity, fiscal-year Net Income/Loss, and fiscal-year Operating
+  Income/Loss. Revenue fallbacks, quarterly-flow derivation, per-share facts,
+  IFRS forms, security features, and strategy authority remain excluded.
+- Added a query-specific, worker-aligned readiness census with sequential
+  rejection accounting and conservative duplicate, value, availability, and
+  period-end ambiguity quarantine. It scans every source row but creates no
+  daily Cartesian panel and publishes no fact values.
+- The real eight-process run scanned all 41,619,407 normalized occurrences and
+  targeted 1,569,275 concept occurrences. Filers with at least one clean period
+  are 8,569 Assets, 8,175 equity, 7,634 annual net income, and 6,359 annual
+  operating income. It quarantined 140 and 50 ambiguous annual semantic periods
+  respectively and selected no conflicting duration by row order.
+- The 5,685-byte owner-only report has logical fingerprint
+  `5c803386e37576697fc8652197f932f26b559899cfe6d07c7ce5608d17f06bb8`.
+  Scan plus built-in readback took 28.51 seconds at 543,840 KiB maximum RSS; a
+  separate formal reread took 10.50 seconds. Five implementation tests, all
+  247 SEC provider tests, and the complete 2,613-test API suite pass; the full
+  suite retained two unchanged dependency deprecation warnings.
+- External requests, credentials, `/data` writes, security projection,
+  features, outcomes, performance, Membership, Candidate, publication,
+  deployment, and scheduler changes remain zero. The next fundamental stage is
+  a cutoff-aware issuer reader and exact projection census, not a feature table.
+
 ## 2026-09-13 — Reconcile and slim the default project recovery path
 
 - Rebuilt current context, current status, and the roadmap around distinct

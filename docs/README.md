@@ -62,6 +62,9 @@ Stock Candidates.
 - [SEC Company Facts Semantic Census V1](data-contracts/sec-companyfacts-semantic-census-v1.md):
   source-level concept, unit, duplicate, conflict, and revision coverage before
   fundamental feature registration.
+- [SEC Fundamental Query Registry V1](data-contracts/sec-fundamental-query-registry-v1.md)
+  and [Readiness Census V1](data-contracts/sec-fundamental-query-readiness-census-v1.md):
+  exact first issuer-query semantics and complete source-readiness accounting.
 - [Candidate Strategy Evaluation V1](data-contracts/candidate-strategy-evaluation-v1.md):
   signals, labels, chronology, and stock-outcome boundary.
 - [Candidate Strategy Research Experiment V1](data-contracts/candidate-strategy-research-experiment-v1.md):
@@ -109,6 +112,7 @@ the detailed dependency and supersession chain.
 - [Five-Year Foundation Baseline](audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [First-Strategy Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
+- [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [Five-Year SEC Filer-to-Security Link Candidate](audits/five-year-sec-filer-security-link-candidate-2026-09-13.md)
 - [SEC Filer/Security Projection Readiness](audits/sec-filer-security-projection-readiness-2026-09-13.md)
 

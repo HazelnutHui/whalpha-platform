@@ -74,7 +74,7 @@ deeper.
 | Adjustment | sparse split-only outcome reconciliation; neutral omitted rows and total-return coverage are not proven |
 | Lifecycle | canonical five-year lifecycle and terminal outcomes absent |
 | Classification | historical point-in-time research classification absent |
-| Fundamentals | SEC source custody and normalized sparse facts present; registered point-in-time security-level queries absent |
+| Fundamentals | SEC source custody, normalized sparse facts, semantic census, and four registered issuer queries with measured readiness; cutoff-aware reader and security projection absent |
 | Historical Coverage | partial family evidence exists; final transitive publication absent |
 
 The canonical inventory is 18,175 files / 7,022,164,015 bytes with zero
@@ -113,8 +113,10 @@ Important private Dell evidence includes:
 - ADR 0224's conservative issuer-fact projection class, covering about 98.0%
   of admitted common-stock row-sessions structurally, but only 11 sessions at
   the strict retained next-open knowledge-time tier;
-- 41,619,407 normalized SEC fact occurrences and a complete source-level
-  semantic census, still without a registered feature query;
+- 41,619,407 normalized SEC fact occurrences, a complete semantic census, and
+  four exact issuer-level source queries. The query census scanned the complete
+  denominator and found 8,569 Assets, 8,175 equity, 7,634 annual-net-income,
+  and 6,359 annual-operating-income filers with at least one clean period;
 - a complete five-year corporate-action source package and private resolution
   diagnostics, still without canonical lifecycle, terminal-return, neutral-row,
   or total-return authority; and
@@ -125,6 +127,7 @@ Exact package identities and counts are retained in:
 
 - [Five-year SEC filer/security candidate audit](../audits/five-year-sec-filer-security-link-candidate-2026-09-13.md)
 - [SEC projection-readiness audit](../audits/sec-filer-security-projection-readiness-2026-09-13.md)
+- [SEC fundamental-query readiness audit](../audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [First-strategy source sample audit](../audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 
@@ -143,10 +146,11 @@ validated and explicitly activated models. Strong-Leader Pullback V1 remains
 `preregistered_data_blocked`; it has fixture-tested mechanics, zero real
 out-of-sample observations, and no Candidate authority.
 
-The next non-blocked data gate is a small registered issuer-level SEC query set
-with exact concept, namespace, unit, period, form, availability, revision,
-projection, and missing/conflict semantics. It must first produce a coverage
-and readiness result, not a broad fact-by-session panel or a strategy score.
+The first small SEC issuer-query registry and its complete outcome-free source
+readiness census are finished. The next non-blocked fundamental gate is a
+cutoff-aware issuer reader and outcome-free projection census through ADR
+0224's exact security class and evidence tiers. It must not become a broad
+fact-by-session panel, security feature, or strategy score.
 
 The parallel external gate is a source-specific lifecycle/action pilot bound
 to the immutable 20-action / 64-lifecycle sample. Massive Starter has already

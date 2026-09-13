@@ -50,23 +50,28 @@ in [current context](current-context.md).
 
 ### Lane A — Point-in-time fundamentals
 
-1. Register a small first issuer-level query set from the completed SEC
-   semantic census.
-2. Freeze concept, namespace, unit, period, form, filing-availability,
-   revision, projection, and missing/conflict semantics for every query.
-3. Build only an outcome-free coverage/readiness census.
+The first registry and source-readiness census are complete for Assets,
+Stockholders' Equity, annual Net Income/Loss, and annual Operating Income/Loss.
+They have deterministic semantics, measured clean-period coverage, and typed
+rejection paths without outcome access.
+
+1. Implement one cutoff-aware issuer reader that never selects a period end or
+   source availability after the caller's decision cutoff.
+2. Run an outcome-free security projection census only through ADR 0224's
+   `single_common_security_per_cik_v1` class.
+3. Report query availability, age, ambiguity, and missingness separately for
+   strict next-open and reconstructed-development evidence tiers.
 4. Admit no security-level feature until share-class and knowledge-time gates
    pass.
 
-The first set should prefer unambiguous issuer-level scale/quality facts such
-as assets, equity, net income, and operating income. Revenue taxonomy
-fragmentation, duration-period derivation, per-share facts, share counts, and
-market capitalization require separate decisions. A broad fact-by-session
-Cartesian panel is explicitly unnecessary.
+Revenue taxonomy fragmentation, quarterly-flow derivation, per-share facts,
+share counts, market capitalization, IFRS coverage, and valuation ratios remain
+separate future decisions. A broad fact-by-session Cartesian panel is
+explicitly unnecessary.
 
-Exit criterion: each proposed query has deterministic semantics, measured
-coverage, explicit evidence tier, and a typed rejection path without opening
-strategy outcomes.
+Exit criterion: the cutoff-aware issuer selection and exact permitted
+projection population are reproducible, while every unsupported class, time,
+and ambiguity remains quarantined and no strategy outcomes are opened.
 
 ### Lane B — First-strategy action and lifecycle evidence
 
