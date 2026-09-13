@@ -118,6 +118,9 @@ fixed-basis sparse ledger as reconciliation evidence only.
 ADR [0223](decisions/0223-freeze-the-first-strategy-cross-venue-source-sample.md)
 freezes the complete first-strategy action/lifecycle acceptance sample before
 any provider comparison.
+ADR [0224](decisions/0224-gate-sec-facts-by-security-projection-class-and-evidence-tier.md)
+gates SEC issuer facts by explicit security-projection class and knowledge-time
+evidence tier.
 ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
 requires a complete semantic/conflict census before any SEC fundamental
 feature registry or security projection.
@@ -154,6 +157,7 @@ unrelated resolved cross-section to advance under a separate bounded profile.
 - [Retained FINRA/SEC Foundation Integration](audits/retained-finra-sec-foundation-integration-2026-09-12.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [Five-Year SEC Filer-to-Security Link Candidate](audits/five-year-sec-filer-security-link-candidate-2026-09-13.md)
+- [SEC Filer/Security Projection Readiness](audits/sec-filer-security-projection-readiness-2026-09-13.md)
 
 Dell owns code, data, governance, and heavy computation. OCI receives only
 separately approved bounded serving artifacts.

@@ -247,9 +247,13 @@ Required work:
   candidate for all 1,255 sessions / 10,681,604 stable-security decisions,
   preserving 1,205,516 missing-CIK quarantines and 19,879 rows on the two
   missing source sessions without authorizing issuer projection;
-- decide an explicit share-class projection policy, then register a small
-  first set of exact concept/unit/period/form queries from the measured census
-  before any security-level fundamental feature admission;
+- completed 2026-09-13: freeze ADR 0224's conservative
+  `single_common_security_per_cik_v1` projection and separate next-open
+  as-operated evidence from reconstructed development-only history. About
+  98.0% of admitted common-stock row-sessions meet the structural class, but
+  only 11 sessions meet the retained next-open observation-time gate;
+- register a small first set of exact concept/unit/period/form queries from the
+  measured census before any security-level fundamental feature admission;
 - lifecycle and terminal-outcome evidence;
 - complete split/action handling for the declared underlying-stock price-
   return basis, with dividends retained as event context rather than silently

@@ -144,8 +144,7 @@ budgets now guard this boundary.
   revision chronology and 519 remain quarantined; 886,400 consecutive later
   states change value. Its 5,019-CIK common-stock diagnostic finds in-range SEC
   facts for 4,990 and none for 29. The census is discovery-only. Registered
-  concept/unit/period/form queries, a complete effective-dated link, and an
-  explicit share-class projection policy remain required before model use.
+  concept/unit/period/form queries remain required before model use.
   The complete owner-only filer/security link candidate now covers all 1,255
   sessions / 10,681,604 stable-security decisions. It admits 9,456,209
   unique-CIK links, quarantines 1,205,516 missing-CIK rows, and quarantines all
@@ -153,6 +152,13 @@ budgets now guard this boundary.
   is `a71a6180f86228b7c80062c121da42e46a101d8f012e7f7a537147be0b609c71`.
   Source-time eligibility remains explicit and issuer/share-class projection
   remains unauthorized.
+  ADR 0224 now freezes the first projection boundary: only a session-local CIK
+  with one admitted common stock may use the default registered issuer-fact
+  projection. That class covers 6,122,451 / 6,244,758 admitted common-stock
+  row-sessions; 122,307 multi-common-stock rows remain outside it. Only 11
+  sessions pass the retained next-open source-observation gate, so the rest of
+  the reconstructed link history cannot support sealed validation, holdout,
+  headline performance, activation, or Production Candidate authority.
 - A fixed 30-item Massive Starter lifecycle diagnostic matched Ticker Events
   for only six instruments; 24 returned HTTP 404 and all nine returned events
   were ticker changes. Massive is useful partial evidence but is rejected as

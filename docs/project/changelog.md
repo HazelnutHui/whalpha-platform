@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-13 — Gate SEC security projection by class and evidence time
+
+- Accepted ADR 0224 after an outcome-blind selected-column scan of the complete
+  filer/security candidate. Common stocks account for 6,244,758 admitted link
+  row-sessions, 5,977 missing-CIK quarantines, and 9,129 rows on the two
+  missing source sessions.
+- The conservative session-local single-common-stock CIK class covers
+  6,122,451 admitted rows, about 98.0%. The remaining 122,307 rows belong to
+  59,440 multi-common-stock CIK/session groups, with at most seven common
+  stocks in one group; they are not silently projected.
+- Only 11 / 1,255 sessions have retained source observation no later than the
+  next XNYS open. ADR 0224 therefore keeps `as_operated_next_open` separate
+  from `reconstructed_latest_vintage_development_only`; reconstructed links
+  cannot enter sealed validation, holdout, headline performance, activation,
+  or Production Candidate authority.
+- The corrected session-streaming scan completed in 42.54 seconds at 182,808
+  KiB peak memory and wrote zero bytes. No fact values, prices, outcomes,
+  credentials, canonical data, features, research results, publication,
+  deployment, or scheduler state were accessed or changed.
+
 ## 2026-09-13 — Build the complete SEC filer/security link candidate
 
 - Extended the proven one-session SEC filer/security link path across all

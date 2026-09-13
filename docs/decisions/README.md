@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0224](0224-gate-sec-facts-by-security-projection-class-and-evidence-tier.md):
+  keeps SEC facts at filer grain and gates security projection by share-class
+  cardinality and knowledge-time evidence tier.
 - [ADR 0223](0223-freeze-the-first-strategy-cross-venue-source-sample.md):
   freezes the complete outcome-blind action/lifecycle case set and field-level
   gates for comparing cross-venue sources.
