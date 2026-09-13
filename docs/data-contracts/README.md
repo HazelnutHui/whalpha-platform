@@ -81,6 +81,7 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback SEC Document Content Census V1](strong-leader-pullback-sec-document-content-census-v1.md)
 - [Strong-Leader Pullback SEC Form 25 Candidates V1](strong-leader-pullback-sec-form25-candidates-v1.md)
 - [Strong-Leader Pullback SEC Form 15 Candidates V1](strong-leader-pullback-sec-form15-candidates-v1.md)
+- [Strong-Leader Pullback SEC Transaction Candidates V1](strong-leader-pullback-sec-transaction-candidates-v1.md)
 - [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)

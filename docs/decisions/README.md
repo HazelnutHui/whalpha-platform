@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0234](0234-index-transaction-documents-without-promoting-completion.md):
+  separates 8-K, tender, proxy, and referenced-exhibit structures before
+  retaining bounded transaction candidates with zero fact authority.
 - [ADR 0233](0233-extract-form15-fields-without-inferring-effective-status.md):
   preserves field-level Form 15 evidence and template variation without
   inferring effective registration, reporting, trading, or terminal status.
