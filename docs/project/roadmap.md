@@ -100,12 +100,14 @@ not five-year performance admission.
 10. Preserve the first point-in-time cover adjudication: 61 structured cases
    have an in-window CIK+ticker+exchange common-equity match, one later IPG
    debt-event filing is excluded, and LNW/REVG/SAND remain unsupported.
-11. Adjudicate typed transaction completion, event date, termination reason,
-   consideration, and party relations for those 61 linked cases. Keep last
-   tradability and terminal return separate.
-12. Test a commercial source only against the frozen residual field gap that
+11. Preserve the completed typed transaction-event adjudication: all 61 linked
+   Item 2.01 cases have one issuer completion date, with nine cover-date
+   differences retained and zero listing-terminal authority.
+12. Adjudicate termination reason, consideration, and party relations for the
+   61 typed events. Keep last tradability and terminal return separate.
+13. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-13. Resolve missing-event neutrality and terminal outcomes without turning a
+14. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole

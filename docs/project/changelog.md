@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-13 — Adjudicate bounded issuer transaction-completion dates
+
+- Accepted ADR 0237 and separated the introduction plus Item 2.01 from
+  intervening financing, debt, and other 8-K sections.
+- All 61 common-equity-linked cases produced one unique issuer transaction-
+  completion date: 30 named Closing Dates, 29 dated completion statements,
+  one explicit closing-of-merger date, and one tender-to-merger chain.
+- Fifty-two completion dates equal the cover report date; nine occur one to
+  four days later. The cover date remains comparison-only and no case date is
+  hard-coded.
+- The report has SHA-256
+  `acf4b350e89d56bbb9ac32bfcd906cec08c66721d5d5661994ab5ed68a0fd237`
+  and logical fingerprint
+  `89d4c7388aa7e47d1609fcadee3d388e9d4f342d1ff4da02b76c113528e3d510`.
+  Exact network-disabled reread passed with owner-only modes and zero residue.
+- Eight focused tests and the complete 2,672-test API suite passed with two
+  unchanged warnings. Termination reason, consideration, parties, tradability,
+  lifecycle facts, terminal outcomes, `/data`, Historical Coverage, research,
+  Candidate, publication, deployment, and scheduler state were unchanged.
+
 ## 2026-09-13 — Adjudicate event-time SEC cover identity
 
 - Accepted ADR 0236 and parsed all 62 retained Form 8-K inline-XBRL covers

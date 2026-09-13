@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T21:09:35Z
+Operational state verified at: 2026-09-13T21:35:42Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
@@ -188,7 +188,15 @@ Important private Dell evidence includes:
   451 case/field cells remain unsupported. Report SHA-256 is
   `7f868b6f1d4471cd8690d4ff4f0daf2b439f0d51808021ba5aaa30de6cb1eb94`
   and logical fingerprint is
-  `e15db9ddd43efaa489fc1542ca0d42daf7e410bae91440cdf0bcccaee3507bcd`.
+  `e15db9ddd43efaa489fc1542ca0d42daf7e410bae91440cdf0bcccaee3507bcd`;
+  and
+- the typed transaction-event adjudication: all 61 in-window structured cases
+  have one unique issuer completion date under four bounded rules. Fifty-two
+  dates equal the cover report date and nine occur one to four days later.
+  Report SHA-256 is
+  `acf4b350e89d56bbb9ac32bfcd906cec08c66721d5d5661994ab5ed68a0fd237`
+  and logical fingerprint is
+  `89d4c7388aa7e47d1609fcadee3d388e9d4f342d1ff4da02b76c113528e3d510`.
 
 Exact package identities and counts are retained in:
 
@@ -206,6 +214,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC transaction candidate audit](../audits/strong-leader-pullback-sec-transaction-candidates-2026-09-13.md)
 - [First-strategy SEC case coverage census audit](../audits/strong-leader-pullback-sec-case-coverage-census-2026-09-13.md)
 - [First-strategy SEC case adjudication audit](../audits/strong-leader-pullback-sec-case-adjudication-2026-09-13.md)
+- [First-strategy SEC transaction-event adjudication audit](../audits/strong-leader-pullback-sec-transaction-event-adjudication-2026-09-13.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -243,11 +252,12 @@ transaction candidate extraction is complete. The stable-ID coverage census
 now measures candidate material across all 64 cases while keeping all 512
 case/field results unsupported. Point-in-time inline-XBRL cover adjudication
 then matched the stable security/listing field for 61 structured transaction
-cases without a ticker-only join. The next internal gate is typed transaction
-event/date/reason/consideration/party adjudication for those 61 cases. LNW,
-REVG, and SAND remain quarantined. A commercial sample remains limited to the
-frozen residual fields after that review. Massive Starter is not the sole
-lifecycle authority.
+cases without a ticker-only join. Typed transaction completion/date work is
+now complete for all 61, including nine retained cover-date differences. The
+next internal gate is termination-reason, consideration, and party-relation
+adjudication. LNW, REVG, and SAND remain quarantined. A commercial sample
+remains limited to the frozen residual fields after that review. Massive
+Starter is not the sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are

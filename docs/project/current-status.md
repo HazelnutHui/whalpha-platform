@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, and first point-in-time cover adjudication | 61 stable-security/listing fields matched; 451 case/field cells remain unsupported, no terminal fact is proven, and the canonical family is absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, point-in-time cover identity, and typed transaction-event evidence | 61 stable-security/listing fields and 61 issuer completion dates have source evidence; 451 case/field cells remain unsupported, no listing-terminal fact is proven, and the canonical family is absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -112,6 +112,10 @@ Current admission remains rejected:
   window, and one incomplete non-target TGI Purchase Rights row remains
   explicit. The stable-security/listing field is matched for 61 cases, while
   451 total case/field cells remain unsupported; and
+- all 61 linked Item 2.01 cases now have one typed issuer transaction-
+  completion date from bounded narrative evidence. Fifty-two equal the cover
+  report date and nine occur later; cover date, offer expiry, trading
+  cessation, delisting, and terminal return remain separate; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
