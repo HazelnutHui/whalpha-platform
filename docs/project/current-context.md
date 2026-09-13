@@ -4,7 +4,7 @@ Operational state verified at: 2026-09-12T23:00:36Z
 
 Deployment state additionally verified at: 2026-09-11T21:23:56Z
 
-Repository context updated at: 2026-09-12 UTC
+Repository context updated at: 2026-09-13 UTC
 
 This is the compact recovery source for a new task or device. It records
 verified current identities and boundaries, not full execution history.
@@ -51,6 +51,11 @@ explicit all-partition validation both passed in their recorded audits.
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
 | Corporate-action observations | Canonical recent custody: 70,099 rows, 42,056 resolved / 28,043 quarantined; separate complete five-year owner-only packages: 6,491 splits / 235,751 dividends, not canonical |
+| Official FINRA OTC source | 62 monthly packages / 68,714 observations, 2021-08-11 through 2026-09-09; official OTC corroboration only; four repeated IDs retained |
+| FINRA/Massive action census | 2,298 split / 8,205 dividend unique numeric candidates; zero stable-ID resolution; candidate-only fingerprint `0559b1488ced840d786734b3dfa8b054d3c65dd18365d9d77c7a4616b9cd5317` |
+| Official SEC fundamentals sources | Company Facts: 20,343 members / 41,619,407 five-year occurrences; Submissions: 989,553 members / 27,217,476 filing rows; both private source snapshots |
+| SEC filing clocks and sparse facts | 172,265 clocks: 172,262 admitted / 3 quarantined; 41,619,407 normalized fact occurrences: 41,619,004 clock-admitted / 403 quarantined; no security-level feature authority |
+| SEC filer/security link | One-session pilot: 8,201 stable-ID decisions and 150 multi-security CIK groups; issuer projection unauthorized |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |
 | Current data inventory | 18,174 files / 7,022,160,392 bytes |

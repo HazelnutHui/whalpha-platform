@@ -718,3 +718,42 @@ def test_submissions_zip_rejects_unexpected_members(tmp_path: Path) -> None:
         archive.writestr("README.txt", "not a submission")
     with pytest.raises(SecTransportError):
         validate_submissions_zip(path)
+
+
+def test_submissions_zip_accepts_historical_shards_but_requires_cik_root(
+    tmp_path: Path,
+) -> None:
+    payload = json.dumps(
+        {
+            "cik": "1",
+            "filings": {
+                "recent": {
+                    "accessionNumber": ["0000000001-26-000001"],
+                    "filingDate": ["2026-09-09"],
+                    "acceptanceDateTime": ["20260909163000"],
+                    "form": ["10-K"],
+                },
+                "files": [],
+            },
+        }
+    )
+    shard = json.dumps(
+        {
+            "accessionNumber": ["0000000001-20-000001"],
+            "filingDate": ["2020-03-01"],
+            "acceptanceDateTime": ["20200301163000"],
+            "form": ["10-K"],
+        }
+    )
+    safe = tmp_path / "safe-shard.zip"
+    with zipfile.ZipFile(safe, "w") as archive:
+        archive.writestr("CIK0000000001.json", payload)
+        archive.writestr("CIK0000000001-submissions-001.json", shard)
+        archive.writestr("placeholder.txt", "fixture marker")
+    validate_submissions_zip(safe)
+
+    missing_root = tmp_path / "missing-root.zip"
+    with zipfile.ZipFile(missing_root, "w") as archive:
+        archive.writestr("CIK0000000001-submissions-001.json", shard)
+    with pytest.raises(SecTransportError, match="root coverage is incomplete"):
+        validate_submissions_zip(missing_root)

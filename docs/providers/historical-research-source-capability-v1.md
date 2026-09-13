@@ -152,6 +152,26 @@ fixture-first pilot. A paid source should later plug into the same provider-
 neutral observations and must expand measured coverage rather than replace
 canonical identities or rewrite history.
 
+The retained official FINRA OTC Daily List implementation covers 2021-08-11
+through 2026-09-09 in 62 monthly packages / 68,714 observations. It is
+`official_otc_corroboration_only`: four repeated source identifiers remain
+distinct occurrences, ticker never creates stable identity, and the source
+does not establish complete major-exchange lifecycle, original availability,
+successor, consideration, last trade, or terminal return. The network-free
+FINRA/Massive census found 2,298 unique numeric split candidates and 8,205
+unique numeric dividend candidates; all remain candidate corroboration with
+zero stable-ID resolution.
+
+The official SEC Company Facts and Submissions bulk snapshots are also
+retained and fully payload-censused. The composed source covers 41,619,407
+five-year fact occurrences / 172,265 accessions; 172,262 accessions have
+conservative acceptance-time clocks and three remain quarantined. The sparse
+normalized occurrence ledger preserves amendments and availability rather
+than projecting current values backward. CIK remains a filer key, so a
+complete effective-dated filer/security link and registered concept, unit,
+period, form, and projection methods are still required before security-level
+fundamental features are admitted. ADR 0215 governs this retained foundation.
+
 ## Prepared next review packet
 
 The repository now contains a

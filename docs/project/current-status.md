@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-12
+Status date: 2026-09-13
 
 This is the concise actual-state summary. Exact volatile identities and
 cross-device recovery belong in
@@ -79,6 +79,17 @@ budgets now guard this boundary.
   packages are not yet stable-ID-resolved or canonical; the split-only facts
   and sparse affected-path adjustment ledger still do not prove neutral
   omitted rows or total return.
+- Official/free FINRA OTC Daily List custody is complete for 2021-08-11 through
+  2026-09-09: 62 monthly packages / 68,714 observations. It is OTC
+  corroboration only. A sealed FINRA/Massive census found 2,298 split and
+  8,205 dividend unique numeric candidates but resolved zero stable IDs.
+- Official SEC Company Facts and Submissions source custody, payload census,
+  and conservative filing-clock normalization are complete for the same
+  five-year support range. The sparse normalized source has 41,619,407 fact
+  occurrences; 41,619,004 inherit admitted clocks and 403 remain quarantined.
+  A one-session filer/security pilot resolved 8,201 stable-ID decisions but
+  intentionally grants no issuer projection. Registered fundamental semantics
+  and a complete effective-dated link remain required before model use.
 - A fixed 30-item Massive Starter lifecycle diagnostic matched Ticker Events
   for only six instruments; 24 returned HTTP 404 and all nine returned events
   were ticker changes. Massive is useful partial evidence but is rejected as

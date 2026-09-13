@@ -77,7 +77,9 @@ SOURCE_CACHE_ARTIFACTS = {
     "business_development_company.csv": "selected_csv",
     "submissions.zip": "submissions_zip",
 }
-SUBMISSIONS_MEMBER_PATTERN = re.compile(r"CIK(?P<cik>[0-9]{10})\.json\Z")
+SUBMISSIONS_MEMBER_PATTERN = re.compile(
+    r"CIK(?P<cik>[0-9]{10})(?:-submissions-(?P<shard>[0-9]{3}))?\.json\Z"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -1343,15 +1345,32 @@ def validate_submissions_zip(path: Path) -> None:
                 raise SecTransportError("SEC submissions ZIP member count is invalid")
             total = 0
             normalized_names: set[str] = set()
+            ciks: set[str] = set()
+            root_ciks: set[str] = set()
             for member in members:
                 match = _validate_submissions_member(member, normalized_names)
+                payload = _read_bounded_zip_member(archive, member)
+                if match is None:
+                    _validate_submissions_placeholder(payload)
+                    continue
+                cik = match.group("cik")
+                ciks.add(cik)
+                if match.groupdict().get("shard") is None:
+                    root_ciks.add(cik)
                 if member.file_size > MAX_ZIP_MEMBER_BYTES:
                     raise SecTransportError("SEC submissions ZIP member exceeds size limit")
                 total += member.file_size
                 if total > MAX_ZIP_TOTAL_UNCOMPRESSED:
                     raise SecTransportError("SEC submissions ZIP exceeds expansion limit")
-                payload = _read_bounded_zip_member(archive, member)
-                _validate_submission_payload(payload, match.group("cik"))
+                _validate_submission_payload(
+                    payload,
+                    cik,
+                    historical_shard=match.groupdict().get("shard") is not None,
+                )
+            if root_ciks != ciks:
+                raise SecTransportError(
+                    "SEC submissions ZIP CIK root coverage is incomplete"
+                )
     except SecTransportError:
         raise
     except (zipfile.BadZipFile, zipfile.LargeZipFile, RuntimeError, UnicodeError, ValueError) as exc:
@@ -1361,7 +1380,7 @@ def validate_submissions_zip(path: Path) -> None:
 def _validate_submissions_member(
     member: zipfile.ZipInfo,
     normalized_names: set[str],
-) -> re.Match[str]:
+) -> re.Match[str] | None:
     raw_name = member.filename
     if member.flag_bits & 0x1:
         raise SecTransportError("SEC submissions ZIP contains an encrypted member")
@@ -1393,14 +1412,26 @@ def _validate_submissions_member(
     if len(decoded_path.parts) != 1:
         raise SecTransportError("SEC submissions ZIP member name is invalid")
     match = SUBMISSIONS_MEMBER_PATTERN.fullmatch(decoded_path.name)
-    if match is None or decoded_name != raw_name:
+    is_placeholder = decoded_path.name == "placeholder.txt"
+    if (match is None and not is_placeholder) or decoded_name != raw_name:
         raise SecTransportError("SEC submissions ZIP member name is invalid")
+    if is_placeholder and (member.file_size < 1 or member.file_size > 1024):
+        raise SecTransportError("SEC submissions placeholder size is invalid")
     if member.compress_size == 0:
         if member.file_size != 0:
             raise SecTransportError("SEC submissions ZIP compression metadata is invalid")
     elif member.file_size / member.compress_size > MAX_ZIP_COMPRESSION_RATIO:
         raise SecTransportError("SEC submissions ZIP compression ratio exceeds limit")
     return match
+
+
+def _validate_submissions_placeholder(payload: bytes) -> None:
+    if (
+        not payload
+        or len(payload) > 1024
+        or any(byte == 0 or (byte < 32 and byte not in {9, 10, 13}) for byte in payload)
+    ):
+        raise SecTransportError("SEC submissions placeholder payload is invalid")
 
 
 def _read_bounded_zip_member(archive: zipfile.ZipFile, member: zipfile.ZipInfo) -> bytes:
@@ -1420,13 +1451,18 @@ def _read_bounded_zip_member(archive: zipfile.ZipFile, member: zipfile.ZipInfo) 
     return b"".join(chunks)
 
 
-def _validate_submission_payload(payload: bytes, expected_cik: str) -> None:
+def _validate_submission_payload(
+    payload: bytes, expected_cik: str, *, historical_shard: bool = False
+) -> None:
     try:
         value = json.loads(payload.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise SecTransportError("SEC submissions member JSON is invalid") from exc
     if not isinstance(value, dict):
         raise SecTransportError("SEC submissions member root is invalid")
+    if historical_shard:
+        _validate_submission_columns(value)
+        return
     cik = value.get("cik")
     filings = value.get("filings")
     cik_text = str(cik) if isinstance(cik, (str, int)) and not isinstance(cik, bool) else ""
@@ -1438,6 +1474,26 @@ def _validate_submission_payload(payload: bytes, expected_cik: str) -> None:
         raise SecTransportError("SEC submissions recent filings schema is invalid")
     if files is not None and not isinstance(files, list):
         raise SecTransportError("SEC submissions historical files schema is invalid")
+    if recent is not None:
+        _validate_submission_columns(recent)
+
+
+def _validate_submission_columns(value: dict[str, object]) -> None:
+    if not value:
+        return
+    required = {"accessionNumber", "filingDate", "acceptanceDateTime", "form"}
+    if not required.issubset(value):
+        raise SecTransportError("SEC submissions filing columns are incomplete")
+    lengths = {
+        len(column)
+        for column in value.values()
+        if isinstance(column, list)
+    }
+    if (
+        any(not isinstance(column, list) for column in value.values())
+        or len(lengths) != 1
+    ):
+        raise SecTransportError("SEC submissions filing columns are misaligned")
 
 
 def iter_selected_submissions(path: Path, ciks: set[str]) -> Iterable[tuple[str, Mapping[str, Any]]]:

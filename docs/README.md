@@ -118,6 +118,10 @@ unrelated resolved cross-section to advance under a separate bounded profile.
 - [Five-Year EOD/Identity Continuous Run](audits/five-year-eod-identity-continuous-run-2026-09-10.md)
 - [Five-Year Corporate-Action Source Audit](audits/five-year-corporate-action-source-2026-09-10.md)
 - [Five-Year Lifecycle Source Custody Audit](audits/five-year-lifecycle-source-custody-2026-09-10.md)
+- [Five-Year FINRA OTC Daily List Source](audits/five-year-finra-otc-daily-list-source-2026-09-10.md)
+- [Five-Year FINRA/Massive Action Census](audits/five-year-finra-massive-action-cross-source-census-2026-09-10.md)
+- [SEC Company Facts and Filing-Time Evidence](audits/sec-companyfacts-payload-census-2026-09-10.md)
+- [Retained FINRA/SEC Foundation Integration](audits/retained-finra-sec-foundation-integration-2026-09-12.md)
 
 Dell owns code, data, governance, and heavy computation. OCI receives only
 separately approved bounded serving artifacts.
@@ -131,6 +135,13 @@ separately approved bounded serving artifacts.
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
+- [FINRA OTC Daily List Source Custody](operations/finra-otc-daily-list-source-custody.md)
+- [SEC Company Facts Source Custody](operations/sec-companyfacts-source-custody.md)
+- [SEC Company Facts Normalization](operations/sec-companyfacts-normalization.md)
+- [SEC Submissions Source Custody](operations/sec-submissions-source-custody.md)
+- [SEC Filing-Clock Ledger](operations/sec-filing-clock-ledger.md)
+- [SEC Filer-to-Security Link Decisions](operations/sec-filer-security-link-decisions.md)
+- [SEC Point-in-Time Fundamental Census](operations/sec-point-in-time-fundamental-census.md)
 - [Research Universe Membership Custody](operations/research-universe-membership-custody.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)

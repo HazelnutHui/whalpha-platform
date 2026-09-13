@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-13 — Reconcile retained FINRA and SEC foundation into main
+
+- Recovered a clean 23-commit data sequence stranded on the older
+  `codex/strong-leader-pullback-v2-admission` worktree and adopted its FINRA and
+  SEC implementation, tests, contracts, operations guides, and dated audits.
+  The branch's later UI-only commit and stale authority documents were excluded.
+- Accepted ADR 0215 instead of overwriting main's independently assigned ADR
+  0202–0211 files. It preserves FINRA as OTC/candidate corroboration, Company
+  Facts as sparse filer-level revisions, conservative SEC acceptance clocks,
+  stable-ID-only security links, and explicit no-projection/no-research limits.
+- Main formally reread the sealed FINRA range and action census, Company Facts
+  and Submissions censuses, 172,265 filing-clock rows, and the 8,201-row link
+  pilot with their recorded logical fingerprints. The 41,619,407-row normalized
+  source passed its separate full transitive reread in 2,508.68 seconds. The
+  complete main API suite then passed 2,574 tests with two unchanged dependency
+  deprecation warnings.
+- The retained scope contains 436 files / 6,849,867,479 bytes with zero
+  symlinks or partial/staging residue. It remains private evidence outside
+  canonical `/data` and changes no Historical Coverage, research, Candidate,
+  Production, website, or scheduler state. See the
+  [integration audit](../audits/retained-finra-sec-foundation-integration-2026-09-12.md).
+
 ## 2026-09-12 — Retain the full-history inactive-lifecycle resolution shadow
 
 - Re-resolved both persistent inactive-listing source anchors against 1,216 /

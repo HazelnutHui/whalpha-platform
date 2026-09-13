@@ -179,6 +179,15 @@ Required work:
   one-to-one source/decision rows, and durably retain 2,283 distinct review-
   candidate instruments as a bounded corroboration queue; no candidate is a
   canonical lifecycle or terminal-outcome fact;
+- completed and reconciled 2026-09-12: retain and census the official FINRA OTC
+  Daily List across the five-year support range and measure exact candidate
+  overlap with Massive splits/dividends; stable-ID and event-state resolution
+  remain separate;
+- completed and reconciled 2026-09-12: retain and fully census SEC Company
+  Facts plus Submissions, build 172,265 conservative filing clocks, normalize
+  every one of 41,619,407 in-range fact occurrences as sparse revisions, and
+  prove a one-session stable-ID filer/security link pilot; full link coverage
+  and registered fundamental feature semantics remain pending;
 - lifecycle and terminal-outcome evidence;
 - complete split/action handling for the declared underlying-stock price-
   return basis, with dividends retained as event context rather than silently

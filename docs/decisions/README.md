@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0215](0215-adopt-retained-finra-sec-research-foundation.md): adopts the
+  stranded FINRA/SEC five-year source, filing-clock, sparse-fact, and
+  filer/security-link work into main while resolving branch-local ADR number
+  collisions and preserving all authority limits.
 - [ADR 0214](0214-retain-five-year-inactive-lifecycle-resolution-shadow.md):
   retains the full-history inactive-listing reconciliation in a strictly
   bounded private read-only custody without promoting lifecycle facts.
