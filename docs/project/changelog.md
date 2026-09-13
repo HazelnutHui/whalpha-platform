@@ -16,9 +16,12 @@
   warnings.
 - A separate read-only audit of canonical 2026-09-08/09 Identity snapshots
   measured 206 exact ticker/date resolutions among the 343 post-boundary
-  corporate-action rows. This implementation performs no `/data` Apply and
-  grants no Historical Coverage, research, Candidate, Production or website
-  authority; the real exact plan remains a separate step.
+  corporate-action rows. The real no-write plan was then built and revalidated
+  at SHA-256
+  `f099929d17c07695d3b468910e1c7233bed74bab1714a81ad1189dc9cfb7317a`.
+  It binds two sessions / 19,964 instrument records / 14 source files and one
+  absent 3,623-byte target. No `/data` Apply occurred and no Historical
+  Coverage, research, Candidate, Production or website authority was granted.
 
 ## 2026-09-13 — Classify unresolved corporate-action history without assignment
 

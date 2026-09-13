@@ -208,9 +208,11 @@ Required work:
   recoverable Apply entry so exact selected sessions can be bound without
   duplicating EOD evidence. It retains literal false Historical Coverage,
   research, Candidate, and Production authority; real `/data` publication
-  remains a separately reviewed exact-plan operation;
-- extend exact Identity evidence through the already available 2026-09-08 and
-  2026-09-09 sessions and remeasure the 343 tail rows, then use effective-
+  remains a separately reviewed exact-plan operation. The real 2026-09-08/09
+  no-write plan is now built and revalidated; its one target remains absent;
+- apply the exact reviewed 2026-09-08/09 Identity evidence plan, rebuild a new
+  version of the corporate-action resolution shadow, and remeasure the 343
+  tail rows; then use effective-
   dated lifecycle/security evidence for the exact-session ticker-absent and
   outside-candidate-span populations. Never turn a unique history-wide
   candidate into an event-date assignment;

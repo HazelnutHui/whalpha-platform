@@ -66,6 +66,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Corrected EOD edition | Canonical contract 1.2 edition: 1,234 sessions / 10,376,263 records / 2,469 files / 1,083,699,732 bytes; interval fingerprint `098ff756a463c0bf142d9ce597375e3a0574db02ca641fcdcef9b6e72cb6b5e3` |
 | Corrected EOD Apply | Applied from approved plan SHA-256 `7e9c13b957ad9e2fceb850e9da645356c2e1930800d943f2af3927da31115505`; logical fingerprint `6a09ef14c77c475d46f0ae1d20f89058ea1457e32a1e633179b642edccbcf1d5`; canonical formal reread passed |
 | Corrected EOD family evidence | Exact 1,234-session EOD and same-session Identity evidence is canonically published; EOD fingerprint `b65ee35bb65796dab501d4e59df132bffc566452c713bb18e8659401b632b0a5`, Identity fingerprint `faaa73bceace816d91a5a2483714055d20c48091fe4fc8bfbcde8c27d8b647db`; approved plan SHA `d328f1725dc4a74a6237d30e1ccdad6fa8c64765d45210a8cc7a76d6492f9168`; Apply and zero-write recovery passed |
+| Pending Identity extension evidence | Exact 2026-09-08/09 Identity-only no-write plan is built and revalidated; plan SHA `f099929d17c07695d3b468910e1c7233bed74bab1714a81ad1189dc9cfb7317a`; evidence fingerprint `35a45e158ffdedc2cd3f3667495bbb4fdd5841a70c02370e3c0baa80d5fa51d5`; target absent and `/data` Apply not performed |
 
 The bounded historical run stopped safely at the Starter rolling entitlement
 edge; ADR 0206 rejected retries or a deeper purchase solely for the expired
