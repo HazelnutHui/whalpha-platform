@@ -85,6 +85,7 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback SEC Case Coverage Census V1](strong-leader-pullback-sec-case-coverage-census-v1.md)
 - [Strong-Leader Pullback SEC Case Adjudication V1](strong-leader-pullback-sec-case-adjudication-v1.md)
 - [Strong-Leader Pullback SEC Transaction Event Adjudication V1](strong-leader-pullback-sec-transaction-event-adjudication-v1.md)
+- [Strong-Leader Pullback SEC Termination Reason Adjudication V1](strong-leader-pullback-sec-termination-reason-adjudication-v1.md)
 - [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)

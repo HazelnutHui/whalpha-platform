@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0238](0238-link-listing-termination-reason-without-inferring-terminal-date.md):
+  requires a bounded Item 3.01 causal link before classifying merger or
+  acquisition as the listing-termination reason, with zero terminal-date authority.
 - [ADR 0237](0237-adjudicate-sec-transaction-completion-from-bounded-narrative.md):
   selects one issuer completion date only from a bounded introduction and Item
   2.01 ruleset while retaining cover-date mismatches and zero terminal authority.
