@@ -100,6 +100,15 @@ budgets now guard this boundary.
   lifecycle evidence. FINRA contributes 20,679 exact date/symbol and 10,261
   exact numeric candidates. The result assigns zero stable IDs and is a
   targeting diagnostic, not canonical action or lifecycle coverage.
+- ADR 0221's owner-only first-strategy blocker census now binds all 437,402
+  fixed Strong-Leader Pullback paths / 2,161 IDs to those retained inputs. It
+  finds 4,643 action/instrument exposures: 4,623 exact event-date resolutions
+  and 20 unassigned history-candidate relations. Eighty-nine lifecycle
+  candidates intersect 8,677 paths; 64 IDs / 252 paths cross the last
+  observation inside the five-session label horizon. The output passed formal
+  reread and leaves outcomes, assignments, admission, canonical writes,
+  Candidate, publication and deployment at zero. It narrows evidence work but
+  does not admit research.
 - A read-only exact-date audit of the complete 2026-09-08 and 2026-09-09
   canonical Identity snapshots found that they can resolve 206 of the 343
   corporate-action rows after the currently bound evidence range. ADR 0219's
@@ -312,6 +321,8 @@ Complete:
 - a complete-accounting five-year private corporate-action resolution shadow,
   its complete assignment-free unresolved-ticker census, bounded canonical
   source observations, split-only facts, and sparse split-adjustment evidence;
+- an outcome-blind first-strategy action/lifecycle blocker census over all
+  437,402 fixed reconstructed paths;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
   mechanics;
 - a preregistered Strong-Leader Pullback V1;
@@ -347,6 +358,13 @@ canonical lifecycle evidence. No cohort is admitted and development remains
 unauthorized. The Strong-Leader Pullback V1 input adapter has fixture evidence
 only and has never produced a real backtest.
 
+The completed ADR 0221 intersection reduces the immediately relevant source
+sample to 44 exact-resolved split-like exposures, one unresolved reverse
+split, 20 total unassigned action relations, and 64 lifecycle IDs whose
+five-session labels cross the last observation. It does not prove omitted-row
+neutrality, adjustment factors, or terminal returns, so the admission decision
+must not be rerun until those mandatory inputs change.
+
 ## Automation and performance
 
 The installed wake timer is active but read-only. No unattended write-capable
@@ -381,16 +399,22 @@ Coverage are absent; status remains `quarantined`.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later
-   measured-gap option rather than the mandatory next dependency.
+   measured-gap option rather than the mandatory next dependency. Use ADR
+   0221's 20 unassigned action relations and 64 five-session lifecycle-crossing
+   IDs as the acceptance sample; do not resume an undirected global scan.
 3. Persist reconstructed historical Membership only in the ADR 0197
    research-only family. Keep the three signal-eligible sessions and their
    Production reader physically separate.
-4. Repeat the outcome-blind census and decision, then admit at least 252
-   complete session cross-sections or retain rejection without opening outcomes.
-5. Execute the registered chronological research only after admission, and
+4. Define price-return adjustment semantics for the 44 exact-resolved
+   split-like exposures, retain dividends as event context, and prove
+   missing-event neutrality independently.
+5. Repeat ADR 0195 only after mandatory evidence changes, then admit at least
+   252 complete session cross-sections or retain rejection without opening
+   outcomes.
+6. Execute the registered chronological research only after admission, and
    retain success or failure.
-6. Generalize only the proven path into a bounded multi-agent research pilot.
-7. Activate and connect a model to Stock Candidates only after separate
+7. Generalize only the proven path into a bounded multi-agent research pilot.
+8. Activate and connect a model to Stock Candidates only after separate
    operational review.
 
 Daily reliability and one bounded next-session automation rehearsal may proceed

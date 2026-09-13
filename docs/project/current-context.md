@@ -54,6 +54,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Corporate-action resolution | Current owner-only shadow `build=20260913-v2`: 242,242 source rows; 129,292 exact-date resolved / 112,943 unresolved / 7 separately unrepresentable; 1,253 Identity sessions; prior v1 retained |
 | Unresolved action census | Current owner-only `build=20260913-v2`: 112,943 typed rows / 13,780 tickers fully classified: zero candidate 89,074 / 11,433; one candidate 23,676 / 2,307; multiple 193 / 40; 2,387 candidate relations and zero assignments |
 | Residual action evidence | Owner-only `build=20260913-v1`: all 112,943 unresolved rows joined to retained lifecycle/inactive/FINRA evidence; 29,127 have at least one lead, 83,816 have none; only 19 row/candidate occurrences fall inside a canonical observed span; zero assignments; fingerprint `3fbcf2719047bf753ed4014017a82f6d3a659e2d90be724e2b35a90cbabce525` |
+| First-strategy action/lifecycle blockers | Owner-only `build=20260913-v1`: exact fixed 437,402 Strong-Leader Pullback paths / 2,161 IDs; 4,643 action/instrument exposures, including 4,623 exact event-date resolutions and 20 unassigned history-candidate relations; 89 lifecycle candidates, with 252 five-session crossing paths / 64 IDs; zero outcomes, assignments, admission, or canonical writes; fingerprint `4abebf27774d0da398f029f152ce51b66e925201506365cf7084d8294f75243d` |
 | Official FINRA OTC source | 62 monthly packages / 68,714 observations, 2021-08-11 through 2026-09-09; official OTC corroboration only; four repeated IDs retained |
 | FINRA/Massive action census | 2,298 split / 8,205 dividend unique numeric candidates; zero stable-ID resolution; candidate-only fingerprint `0559b1488ced840d786734b3dfa8b054d3c65dd18365d9d77c7a4616b9cd5317` |
 | Official SEC fundamentals sources | Company Facts: 20,343 members / 41,619,407 five-year occurrences; Submissions: 989,553 members / 27,217,476 filing rows; both private source snapshots |
@@ -348,6 +349,16 @@ decision has fingerprint
 during warmup, zero sessions passed, and no cohort, outcome, or development
 authority exists.
 
+ADR 0221 has now intersected that exact rejected population with retained
+action and lifecycle evidence without opening outcomes. It found 4,623 exact
+event-date action exposures and only 20 still-unassigned history-candidate
+relations across the declared feature and label windows. Eighty-nine lifecycle
+candidates intersect included paths; 64 instruments / 252 paths cross the
+last observation within the five-session label horizon. The package is a
+source-priority diagnostic only. It does not prove sparse-row neutrality,
+terminal outcomes, adjustment completeness, or research admission. See the
+[dated audit](../audits/strong-leader-pullback-evidence-blocker-census-2026-09-13.md).
+
 ADR 0186 freezes the dormant V1 complete-cross-section Strong-Leader Pullback
 input adapter with exact 21-session feature semantics, point-in-time
 Membership, stable-ID SPY, clear adjustments, and no outcome fields. It has
@@ -418,20 +429,24 @@ the 2026-09-11 daily audit.
 2. Use Massive as the primary price/reference source and evaluate official
    free evidence through bounded source-specific pilots. Preserve every
    conflict, missing semantic, and permission limit; no first-non-null merge.
-3. Persist latest-vintage historical Membership under the ADR 0197
-   research-only family; never place it behind the signal-eligible publication
-   marker or expose it through that reader. Then repair identity/lifecycle,
-   actions, terminal
-   outcomes, adjustments, and transitive Historical Coverage in independent
-   stages. Re-run ADR 0195 after mandatory-family evidence changes and either
+3. Keep latest-vintage historical Membership under the ADR 0197 research-only
+   family; never place it behind the signal-eligible publication marker or
+   expose it through that reader. ADR 0221's completed strategy intersection
+   now narrows the next evidence work to 44 exact-resolved split-like
+   exposures, one unresolved reverse split, 20 total unassigned action
+   relations, and 64 lifecycle IDs whose five-session labels cross the last
+   observation. Resolve adjustment semantics, missing-event neutrality, and
+   terminal outcomes independently; use those measured cases for bounded
+   source acceptance rather than another global scan.
+4. Re-run ADR 0195 only after mandatory-family evidence changes and either
    admit at least 252 complete session cross-sections or retain rejection.
-4. Only after admission, run Strong-Leader Pullback development; locked
+5. Only after admission, run Strong-Leader Pullback development; locked
    point-in-time validation,
    sealed holdout, and prospective shadow under their exact evidence tiers.
-5. Retain either validated evidence or recorded failure without editing V1.
-6. Generalize the proven path into a small, bounded multi-agent pilot under ADR
+6. Retain either validated evidence or recorded failure without editing V1.
+7. Generalize the proven path into a small, bounded multi-agent pilot under ADR
    0194; scale only after measured benefit and holdout integrity.
-7. Activate a model only through separate review; then redesign Candidate.
+8. Activate a model only through separate review; then redesign Candidate.
 
 One bounded next-session automation rehearsal and normal daily reliability work
 may proceed in parallel when an eligible session exists. They must not block

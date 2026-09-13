@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-09-13 — Scope first-strategy action and lifecycle blockers
+
+- Accepted ADR 0221 and added an outcome-blind, network-prohibited census that
+  binds the rejected Strong-Leader Pullback development population to retained
+  corporate-action and inactive-lifecycle evidence. It revalidates all 287
+  Membership partitions while materializing only the declared Primary rows,
+  avoiding a redundant 5.7-million-row Python reconstruction.
+- The real owner-only result reconciles all 437,402 included paths / 2,161
+  stable IDs. It contains 4,643 action/instrument exposures: 4,623 exact
+  event-date resolutions and 20 explicitly unassigned history-candidate
+  relations. The latter comprise 19 cash dividends and one reverse split; 12
+  have one history candidate and eight have multiple.
+- Company actions touch 80,568 unique feature paths and 20,626 unique
+  five-session label paths. Eighty-nine lifecycle candidates intersect 8,677
+  included paths; 64 IDs / 252 paths cross the last observation inside the
+  five-session label horizon. No terminal outcome is inferred.
+- The three-file / 231,752-byte package has manifest SHA-256
+  `63fb6694ef0e6284bea3dc9cd5aafe431353e443a4239eff8f598f1d6baecb15`
+  and logical fingerprint
+  `4abebf27774d0da398f029f152ce51b66e925201506365cf7084d8294f75243d`.
+  Built-in and separate formal rereads passed; permissions are `0700/0400`
+  with zero symlink or residue. The final build took 256.59 seconds and 28
+  focused tests pass. The complete API suite passes 2,602 tests with two
+  unchanged dependency deprecation warnings.
+- The canonical `/data` inventory remains exactly 18,175 files /
+  7,022,164,015 bytes at fingerprint
+  `eda858b1db23dc58f22cdd0faa290f2141691fecf15862dc5bd6d095354834ff`.
+  Outcomes, metrics, parameter/cohort selection, identity assignment,
+  canonical writes, Historical Coverage, research admission, Candidate,
+  publication, deployment, scheduler and external requests remain zero. The
+  next work is the measured adjustment/terminal-evidence subset, not another
+  global scan.
+
 ## 2026-09-13 — Cross-census residual corporate-action evidence
 
 - Accepted ADR 0220 and added a one-to-one, assignment-free residual evidence

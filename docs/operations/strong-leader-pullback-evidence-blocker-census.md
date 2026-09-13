@@ -37,6 +37,13 @@ repeating the already sealed 1,253-session Resolver scan in every downstream
 diagnostic; it does not weaken or replace that census's original full-source
 validation.
 
+Each Membership partition is formally bound through its custody marker,
+manifest and Parquet physical hash. The census then validates the full Parquet
+schema and row count but materializes only the declared Primary rows, checking
+their models, identities, dispositions and manifest totals before constructing
+paths. This avoids rebuilding both Universes' roughly 5.7 million daily rows
+without weakening the strategy population binding.
+
 Successful CLI output is aggregate-only. Inspect the manifest for exact source
 bindings, path counts, action identity class, lifecycle crossings, hashes, and
 all-zero authority counters. Individual unassigned candidate rows must not be

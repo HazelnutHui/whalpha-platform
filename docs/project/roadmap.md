@@ -221,10 +221,19 @@ Required work:
   assignments at zero, distinguishes 19 observed-span occurrences from 2,386
   unverified terminal-gap occurrences, and proves that 83,816 rows have no
   cross-evidence lead;
-- intersect unresolved action evidence with the first strategy's declared
-  reconstructed development cross-sections and price-return semantics, without
-  relabelling latest-vintage Membership as signal-eligible. Use that named
-  blocking subset for paid-source sampling rather than trying to resolve every
+- completed 2026-09-13: intersect all retained action and lifecycle evidence
+  with the first strategy's exact 437,402 reconstructed paths, without
+  relabelling latest-vintage Membership as signal-eligible. The outcome-blind
+  result contains 4,623 exact event-date action exposures, 20 unassigned
+  history-candidate relations, and 64 lifecycle IDs / 252 paths that cross the
+  last observation inside a five-session label. Zero identity assignments,
+  outcomes, cohort selection, admission, or canonical writes occurred;
+- define explicit price-return adjustment semantics for the 44 exact-resolved
+  split-like exposures and keep the one unresolved reverse split quarantined;
+  retain cash dividends as event context and prove missing-event neutrality
+  separately;
+- use the 20 unassigned action relations and 64 five-session lifecycle-crossing
+  IDs as bounded source-acceptance samples rather than trying to resolve every
   out-of-scope fund, preferred, OTC, or other action first. Never turn a unique
   history-wide candidate or ticker match into an event-date assignment;
 - register a small first set of exact concept/unit/period/form queries from the

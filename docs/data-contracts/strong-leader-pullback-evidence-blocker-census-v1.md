@@ -55,6 +55,8 @@ label paths that cross the last observation or contain the delisting candidate.
 
 These dates remain corroboration evidence. They are not canonical last-trade,
 successor, consideration, or terminal-return facts.
+A provider delisting-date candidate may equal the last canonical observation;
+the contract preserves that equality rather than inventing a later date.
 
 ## Completeness and non-authority
 
