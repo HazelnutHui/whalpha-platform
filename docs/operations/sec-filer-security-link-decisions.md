@@ -51,3 +51,12 @@ formal reread. Direct readers remain single-process by default so callers must
 choose higher concurrency explicitly. The parallel path preserves all
 transitive hash, schema, denominator, time-eligibility, and quarantine checks;
 it is not a lightweight or manifest-only verification mode.
+
+The first full eight-worker formal reread completed on 2026-09-13 in 6 minutes
+32.49 seconds at 804% aggregate CPU. It reproduced all 1,255 sessions,
+10,681,604 rows, and logical fingerprint
+`a71a6180f86228b7c80062c121da42e46a101d8f012e7f7a537147be0b609c71`
+with zero write. Repeat that expensive transitive check only when an input
+revision changes or a stage requires formal acceptance; downstream scans over
+the same immutable package should bind the verified manifest and validate only
+the columns they consume.

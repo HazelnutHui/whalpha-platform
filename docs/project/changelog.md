@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-09-13 — Parallelize the five-year SEC link formal reader
+
+- Reworked the existing formal reader into one-to-eight session workers while
+  preserving every canonical snapshot, source-custody, physical-hash, Arrow
+  schema, row-order, stable-ID cardinality, knowledge-time, and disposition
+  check. The parent still reproduces the exact ordered session index and global
+  denominators; there is no manifest-only shortcut.
+- The first real eight-worker reread completed in 6 minutes 32.49 seconds at
+  804% aggregate CPU and reproduced all 1,255 sessions, 10,681,604 rows, and
+  logical fingerprint
+  `a71a6180f86228b7c80062c121da42e46a101d8f012e7f7a537147be0b609c71`.
+  It wrote zero bytes and made no external request.
+- Eleven focused tests pass. The optimization is complete; repeated transitive
+  rereads of the same immutable input are not a new optimization program.
+
 ## 2026-09-13 — Register and census the first SEC issuer queries
 
 - Accepted ADR 0225 and froze four exact issuer-level source queries: Assets,
