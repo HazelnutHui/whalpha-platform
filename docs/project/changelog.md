@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-09-13 — Census SEC fundamental semantics before feature registration
+
+- Accepted ADR 0216 and added an eight-process, worker-aligned streaming census
+  for the 41,619,407-row normalized Company Facts ledger. It merges filed-year
+  streams by original occurrence order and never creates a fact-by-session
+  Cartesian panel.
+- The real owner-only Dell run measured 24,498,347 exact semantic keys,
+  24,497,828 clean revision-eligible keys, 519 quarantined keys, 17,117,677
+  later revision states, and 886,400 consecutive value changes. It retained
+  100 bounded hashed samples for 206 same-availability conflict buckets.
+- The bound common-stock pilot has 5,019 distinct CIKs; 4,990 have in-range SEC
+  facts and 29 do not. This remains later-observed diagnostic coverage and
+  grants no issuer-to-security projection.
+- The build and built-in readback completed in 246.18 seconds; a separate
+  formal reread completed in 10.58 seconds. The 288,328-byte report has logical
+  fingerprint
+  `8899aeb278f50861952d7308a815c62640a2ec274bb1d614ff07f8ba651e3e21`
+  and zero partial/staging residue.
+- The implementation-stage SEC suite passed 245 tests and the complete API
+  suite passed 2,577 tests with two unchanged dependency deprecation warnings.
+  No request, `/data` write, feature, analytics, Candidate, performance,
+  publication, deployment, or scheduler change occurred. See the
+  [dated audit](../audits/sec-companyfacts-semantic-census-2026-09-13.md).
+
 ## 2026-09-13 — Reconcile retained FINRA and SEC foundation into main
 
 - Recovered a clean 23-commit data sequence stranded on the older

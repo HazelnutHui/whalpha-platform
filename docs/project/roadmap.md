@@ -186,8 +186,16 @@ Required work:
 - completed and reconciled 2026-09-12: retain and fully census SEC Company
   Facts plus Submissions, build 172,265 conservative filing clocks, normalize
   every one of 41,619,407 in-range fact occurrences as sparse revisions, and
-  prove a one-session stable-ID filer/security link pilot; full link coverage
-  and registered fundamental feature semantics remain pending;
+  prove a one-session stable-ID filer/security link pilot;
+- completed 2026-09-13: stream all 41,619,407 normalized SEC occurrences into
+  a source-level semantic census without a daily Cartesian panel. It measures
+  24,498,347 exact semantic keys, 519 conservative revision quarantines, and
+  common-stock pilot coverage while granting no feature or security-projection
+  authority;
+- register a small first set of exact concept/unit/period/form queries from the
+  measured census, then build complete effective-dated filer/security links
+  and separately decide share-class projection before any security-level
+  fundamental feature admission;
 - lifecycle and terminal-outcome evidence;
 - complete split/action handling for the declared underlying-stock price-
   return basis, with dividends retained as event context rather than silently

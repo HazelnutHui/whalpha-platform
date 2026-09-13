@@ -128,6 +128,7 @@ unrelated resolved cross-section to advance under a separate bounded profile.
 - [Five-Year FINRA/Massive Action Census](audits/five-year-finra-massive-action-cross-source-census-2026-09-10.md)
 - [SEC Company Facts and Filing-Time Evidence](audits/sec-companyfacts-payload-census-2026-09-10.md)
 - [Retained FINRA/SEC Foundation Integration](audits/retained-finra-sec-foundation-integration-2026-09-12.md)
+- [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 
 Dell owns code, data, governance, and heavy computation. OCI receives only
 separately approved bounded serving artifacts.

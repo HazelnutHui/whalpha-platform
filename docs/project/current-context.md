@@ -55,6 +55,7 @@ explicit all-partition validation both passed in their recorded audits.
 | FINRA/Massive action census | 2,298 split / 8,205 dividend unique numeric candidates; zero stable-ID resolution; candidate-only fingerprint `0559b1488ced840d786734b3dfa8b054d3c65dd18365d9d77c7a4616b9cd5317` |
 | Official SEC fundamentals sources | Company Facts: 20,343 members / 41,619,407 five-year occurrences; Submissions: 989,553 members / 27,217,476 filing rows; both private source snapshots |
 | SEC filing clocks and sparse facts | 172,265 clocks: 172,262 admitted / 3 quarantined; 41,619,407 normalized fact occurrences: 41,619,004 clock-admitted / 403 quarantined; no security-level feature authority |
+| SEC semantic census | 41,619,407 occurrences / 24,498,347 exact semantic keys; 24,497,828 revision-eligible / 519 quarantined; 886,400 later-state value changes; fingerprint `8899aeb278f50861952d7308a815c62640a2ec274bb1d614ff07f8ba651e3e21`; source-level discovery only |
 | SEC filer/security link | One-session pilot: 8,201 stable-ID decisions and 150 multi-security CIK groups; issuer projection unauthorized |
 | Canonical split-only facts | 709 rows: 707 active / 2 quarantined; incomplete coverage |
 | Sparse split adjustment | 101,321 affected-path rows: 98,291 clear / 3,030 quarantined; outcome-only |

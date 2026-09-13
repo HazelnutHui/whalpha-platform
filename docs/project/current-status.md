@@ -88,8 +88,13 @@ budgets now guard this boundary.
   five-year support range. The sparse normalized source has 41,619,407 fact
   occurrences; 41,619,004 inherit admitted clocks and 403 remain quarantined.
   A one-session filer/security pilot resolved 8,201 stable-ID decisions but
-  intentionally grants no issuer projection. Registered fundamental semantics
-  and a complete effective-dated link remain required before model use.
+  intentionally grants no issuer projection. The new complete source-semantic
+  census measures 24,498,347 exact semantic keys: 24,497,828 pass its strict
+  revision chronology and 519 remain quarantined; 886,400 consecutive later
+  states change value. Its 5,019-CIK common-stock diagnostic finds in-range SEC
+  facts for 4,990 and none for 29. The census is discovery-only. Registered
+  concept/unit/period/form queries, a complete effective-dated link, and an
+  explicit share-class projection policy remain required before model use.
 - A fixed 30-item Massive Starter lifecycle diagnostic matched Ticker Events
   for only six instruments; 24 returned HTTP 404 and all nine returned events
   were ticker changes. Massive is useful partial evidence but is rejected as
