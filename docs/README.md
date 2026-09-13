@@ -112,6 +112,9 @@ lifecycle, inactive-security, and FINRA evidence.
 ADR [0221](decisions/0221-scope-action-and-lifecycle-gaps-to-the-first-strategy.md)
 governs the outcome-blind intersection of those facts with the first
 strategy's fixed reconstructed paths.
+ADR [0222](decisions/0222-use-path-local-split-bases-for-strategy-features-and-labels.md)
+requires path-local split bases for future V2 features and labels and keeps the
+fixed-basis sparse ledger as reconciliation evidence only.
 ADR [0216](decisions/0216-census-sec-fundamental-semantics-before-feature-registration.md)
 requires a complete semantic/conflict census before any SEC fundamental
 feature registry or security projection.

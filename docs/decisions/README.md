@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0222](0222-use-path-local-split-bases-for-strategy-features-and-labels.md):
+  derives future V2 split factors on signal/label-local bases instead of using
+  a later global basis or inferring neutral omitted rows.
 - [ADR 0221](0221-scope-action-and-lifecycle-gaps-to-the-first-strategy.md):
   intersects action and lifecycle evidence with the first strategy's fixed,
   outcome-blind paths before any further global source work.

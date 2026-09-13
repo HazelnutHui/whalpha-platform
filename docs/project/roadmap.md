@@ -228,10 +228,12 @@ Required work:
   history-candidate relations, and 64 lifecycle IDs / 252 paths that cross the
   last observation inside a five-session label. Zero identity assignments,
   outcomes, cohort selection, admission, or canonical writes occurred;
-- define explicit price-return adjustment semantics for the 44 exact-resolved
-  split-like exposures and keep the one unresolved reverse split quarantined;
-  retain cash dividends as event context and prove missing-event neutrality
-  separately;
+- completed 2026-09-13: formally match all 44 exact-resolved split-like
+  exposures to active canonical facts and 6,859 clear fixed-basis ledger rows,
+  with zero quarantine; retain the one unresolved reverse split in the
+  possible-impact quarantine. ADR 0222 freezes signal-local feature and exit-
+  local label bases, keeps cash dividends as event context, and rejects a
+  duplicate global ledger or neutral omitted rows;
 - use the 20 unassigned action relations and 64 five-session lifecycle-crossing
   IDs as bounded source-acceptance samples rather than trying to resolve every
   out-of-scope fund, preferred, OTC, or other action first. Never turn a unique

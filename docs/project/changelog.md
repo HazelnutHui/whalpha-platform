@@ -16,6 +16,12 @@
   five-session label paths. Eighty-nine lifecycle candidates intersect 8,677
   included paths; 64 IDs / 252 paths cross the last observation inside the
   five-session label horizon. No terminal outcome is inferred.
+- Accepted ADR 0222 after a formal canonical cross-read matched all 44 exact-
+  resolved split-like exposures to active canonical facts and 6,859 clear
+  fixed-basis ledger rows with zero quarantine. The one unresolved reverse
+  split remains in the existing possible-impact quarantine. Future V2 features
+  use a signal-local basis and labels an exit-local basis; no duplicate global
+  ledger or neutral omitted row is authorized.
 - The three-file / 231,752-byte package has manifest SHA-256
   `63fb6694ef0e6284bea3dc9cd5aafe431353e443a4239eff8f598f1d6baecb15`
   and logical fingerprint

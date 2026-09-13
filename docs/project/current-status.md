@@ -365,6 +365,13 @@ five-session labels cross the last observation. It does not prove omitted-row
 neutrality, adjustment factors, or terminal returns, so the admission decision
 must not be rerun until those mandatory inputs change.
 
+ADR 0222's follow-on cross-read proves that all 44 exact-resolved split-like
+events are active canonical facts and reconcile to 6,859 clear existing ledger
+rows with zero quarantine. It freezes signal-local feature and exit-local label
+bases for future V2 construction. The fixed 2026-09-04 ledger remains
+outcome-reconciliation evidence, and the unresolved reverse split plus omitted-
+row neutrality remain blocked.
+
 ## Automation and performance
 
 The installed wake timer is active but read-only. No unattended write-capable
@@ -405,9 +412,9 @@ Coverage are absent; status remains `quarantined`.
 3. Persist reconstructed historical Membership only in the ADR 0197
    research-only family. Keep the three signal-eligible sessions and their
    Production reader physically separate.
-4. Define price-return adjustment semantics for the 44 exact-resolved
-   split-like exposures, retain dividends as event context, and prove
-   missing-event neutrality independently.
+4. Apply ADR 0222's path-local price-return semantics only after admissible
+   coverage exists; retain dividends as event context and prove missing-event
+   neutrality independently. Do not build another global adjustment ledger.
 5. Repeat ADR 0195 only after mandatory evidence changes, then admit at least
    252 complete session cross-sections or retain rejection without opening
    outcomes.

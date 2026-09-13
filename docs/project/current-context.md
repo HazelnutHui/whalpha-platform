@@ -359,6 +359,14 @@ source-priority diagnostic only. It does not prove sparse-row neutrality,
 terminal outcomes, adjustment completeness, or research admission. See the
 [dated audit](../audits/strong-leader-pullback-evidence-blocker-census-2026-09-13.md).
 
+ADR 0222 records the follow-on canonical cross-read: all 44 exact-resolved
+split-like exposures are active canonical facts and have 6,859 clear existing
+fixed-basis ledger rows with zero quarantine; the one unresolved reverse split
+remains a possible-impact quarantine. Known-event arithmetic therefore needs
+no duplicate global ledger. Future V2 features must use a signal-session basis
+and labels an exit-session basis; the 2026-09-04 ledger remains reconciliation
+evidence and omitted rows still do not prove factor-one neutrality.
+
 ADR 0186 freezes the dormant V1 complete-cross-section Strong-Leader Pullback
 input adapter with exact 21-session feature semantics, point-in-time
 Membership, stable-ID SPY, clear adjustments, and no outcome fields. It has
@@ -432,12 +440,12 @@ the 2026-09-11 daily audit.
 3. Keep latest-vintage historical Membership under the ADR 0197 research-only
    family; never place it behind the signal-eligible publication marker or
    expose it through that reader. ADR 0221's completed strategy intersection
-   now narrows the next evidence work to 44 exact-resolved split-like
-   exposures, one unresolved reverse split, 20 total unassigned action
-   relations, and 64 lifecycle IDs whose five-session labels cross the last
-   observation. Resolve adjustment semantics, missing-event neutrality, and
-   terminal outcomes independently; use those measured cases for bounded
-   source acceptance rather than another global scan.
+   and ADR 0222's canonical cross-read close known-event arithmetic without a
+   second ledger. The next evidence work is the one unresolved reverse split,
+   20 total unassigned action relations, and 64 lifecycle IDs whose
+   five-session labels cross the last observation. Resolve missing-event
+   neutrality and terminal outcomes independently; use those measured cases
+   for bounded source acceptance rather than another global scan.
 4. Re-run ADR 0195 only after mandatory-family evidence changes and either
    admit at least 252 complete session cross-sections or retain rejection.
 5. Only after admission, run Strong-Leader Pullback development; locked

@@ -132,14 +132,23 @@ a bound upstream artifact changes. It does not admit development: all 437,402
 paths still lack proven sparse-action neutrality and canonical lifecycle/
 terminal evidence.
 
+The follow-on formal cross-read matched all 44 exact-resolved split-like rows
+to active canonical split facts. Their fixed-basis sparse ledger has 6,859
+clear affected rows and zero quarantined rows. The one unresolved reverse split
+matches the existing possible-impact quarantine. This closes known-event
+arithmetic reconciliation for the scoped feature paths without creating a
+second ledger. ADR 0222 now requires future V2 construction to derive
+signal-local feature factors and exit-local label factors; the later global
+basis remains reconciliation evidence only.
+
 Next work should be restricted to the measured blockers:
 
-1. define and verify adjustment semantics for the 44 exact-resolved split-like
-   exposures, while keeping the one unresolved reverse split quarantined;
-2. use the 20 unassigned action relations and the 64 five-session lifecycle-
+1. use the 20 unassigned action relations and the 64 five-session lifecycle-
    crossing instruments as bounded cross-venue source acceptance samples;
-3. retain cash dividends as event context for price-return research and prove
+2. retain cash dividends as event context for price-return research and prove
    missing-event neutrality separately; and
+3. implement the path-local adapter only after its canonical action/lifecycle
+   coverage inputs become admissible; and
 4. publish no final Historical Coverage and rerun no ADR 0195 admission
    decision until those mandatory evidence families materially change.
 
