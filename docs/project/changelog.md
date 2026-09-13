@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-13 — Classify unresolved corporate-action history without assignment
+
+- Accepted ADR 0218 and added a deterministic eight-process census over every
+  Resolver already bound to the five-year Corporate Action Resolution Shadow.
+  It retains per-ticker source counts and per-candidate first/last/count
+  evidence while fixing stable-ID assignments at zero.
+- The real census classified all 113,149 unresolved typed rows / 13,931
+  tickers: 89,074 / 11,433 have zero historical candidates, 23,879 / 2,456
+  have one, and 196 / 42 have multiple. It records 2,540 ticker/instrument
+  relations across 2,515 distinct candidate instruments.
+- Only 253 one-candidate rows occur inside the candidate's observed span;
+  23,626 occur before or after it. Of 3,856 missing exact Identity dates,
+  3,394 precede the bound range, 343 are the later 2026-09-08/09 sessions, and
+  119 are non-session dates. These remain evidence gates, not fallbacks.
+- The two-file / 3,842,904-byte owner-only package has logical fingerprint
+  `0dd861364c083e0e54b4d3d6a76a0fd5eacb14ae125490ffb111a3ec984b0296`.
+  Build/readback took 183.59 seconds; an exact rerun returned
+  `already_present` in 184.26 seconds with zero inode, size, time, or mode
+  change.
+- Focused regression passed 89 tests and the complete API suite passed 2,586
+  tests with two unchanged dependency warnings. No request, `/data` write,
+  canonical action, Adjustment Ledger, Historical Coverage, analytics,
+  Candidate, publication, deployment, or scheduler change occurred. See the
+  [dated audit](../audits/five-year-corporate-action-unresolved-census-2026-09-13.md).
+
 ## 2026-09-13 — Retain the five-year corporate-action resolution shadow
 
 - Accepted ADR 0217 and extended the exact-event-date resolution shadow to

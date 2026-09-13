@@ -83,6 +83,13 @@ budgets now guard this boundary.
   explicit revision evidence. This shadow is not canonical; source time,
   unresolved rows, lifecycle, absent-event neutrality, and complete adjustment
   and total-return semantics remain open.
+- ADR 0218's owner-only unresolved-action census has now scanned all 1,251
+  bound Identity Resolvers. It classifies every 113,149 unresolved typed row:
+  89,074 rows / 11,433 tickers have zero historical candidate, 23,879 rows /
+  2,456 tickers have one, and 196 rows / 42 tickers have multiple. It retains
+  2,540 candidate relations but assigns zero stable IDs. Only 253 one-candidate
+  rows fall inside the candidate's observed span; the result therefore guides
+  evidence acquisition but does not resolve any action.
 - Official/free FINRA OTC Daily List custody is complete for 2021-08-11 through
   2026-09-09: 62 monthly packages / 68,714 observations. It is OTC
   corroboration only. A sealed FINRA/Massive census found 2,298 split and
@@ -279,8 +286,8 @@ Complete:
 - 1,253 formally selected Grouped Daily packages plus two Identity-source
   exceptions awaiting disposition;
 - a complete-accounting five-year private corporate-action resolution shadow,
-  bounded canonical source observations, split-only facts, and sparse split-
-  adjustment evidence;
+  its complete assignment-free unresolved-ticker census, bounded canonical
+  source observations, split-only facts, and sparse split-adjustment evidence;
 - fixture-tested input, chronology, statistics, cost-scenario, and holdout
   mechanics;
 - a preregistered Strong-Leader Pullback V1;

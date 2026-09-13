@@ -51,6 +51,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Latest Membership fingerprint | a44ca1bb4d707406cab82b3a7ba5d146bc6d0850857b6714c1968cec17994835 |
 | Research-only Membership | 300 sessions / 5,571,154 decisions, 2025-06-23 through 2026-09-03; latest-vintage, not signal eligible |
 | Corporate-action observations | Canonical recent custody: 70,099 rows, 42,056 resolved / 28,043 quarantined; separate complete five-year owner-only packages: 6,491 splits / 235,751 dividends, not canonical |
+| Unresolved action census | 113,149 typed rows / 13,931 tickers fully classified: zero candidate 89,074 / 11,433; one candidate 23,879 / 2,456; multiple 196 / 42; 2,540 candidate relations and zero assignments |
 | Official FINRA OTC source | 62 monthly packages / 68,714 observations, 2021-08-11 through 2026-09-09; official OTC corroboration only; four repeated IDs retained |
 | FINRA/Massive action census | 2,298 split / 8,205 dividend unique numeric candidates; zero stable-ID resolution; candidate-only fingerprint `0559b1488ced840d786734b3dfa8b054d3c65dd18365d9d77c7a4616b9cd5317` |
 | Official SEC fundamentals sources | Company Facts: 20,343 members / 41,619,407 five-year occurrences; Submissions: 989,553 members / 27,217,476 filing rows; both private source snapshots |
@@ -288,7 +289,7 @@ claims are false.
 | 1,253 target-session Identity source partitions and zero Grouped Daily source-package gaps | Two later dates remain Identity-source-unbound and quarantined outside the first edition |
 | 3 prospective Membership sessions | Canonical cross-venue lifecycle/terminal outcomes |
 | 300 research-only Membership sessions | Research tier is not signal eligible and remains outcome-blind |
-| Five-year corporate-action source plus private complete-accounting exact-date resolution shadow | Resolve 113,149 quarantined typed rows and seven unrepresentable rows; complete availability/revision, lifecycle, absent-event, and adjustment semantics |
+| Five-year corporate-action source, private complete-accounting exact-date resolution shadow, and assignment-free unresolved census | Bind the two available 2026-09-08/09 exact sessions, then resolve measured lifecycle/security-scope gaps and seven unrepresentable rows; complete availability/revision, absent-event, and adjustment semantics |
 | Canonical split-only facts and sparse affected-path ledger | Complete adjustment/neutrality and total-return semantics |
 | Fixture-only input, chronology, statistics, and holdout mechanics | Real chronological dataset and sealed real holdout |
 | Scenario-only equity costs | Observed spread/impact calibration and execution comparison |

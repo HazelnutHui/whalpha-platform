@@ -199,10 +199,16 @@ Required work:
   quarantined, and seven missing/invalid-ticker rows remain in a separate
   hashed unrepresentable artifact. No row is dropped or given a fabricated
   ticker, and no canonical or research authority is granted;
-- classify the unresolved corporate-action ticker population across the bound
-  historical Identity set as zero, one, or multiple stable candidates without
-  assigning any event. Use the measured classes to choose the smallest
-  official/free lifecycle and event-date evidence expansion;
+- completed 2026-09-13: classify all 113,149 unresolved corporate-action rows
+  / 13,931 tickers across the 1,251-session bound Identity history without
+  assignment. The measured classes are 89,074 rows / 11,433 tickers with zero
+  candidates, 23,879 / 2,456 with one, and 196 / 42 with multiple; 98.94% of
+  one-candidate rows lie outside that candidate's observed span;
+- extend exact Identity evidence through the already available 2026-09-08 and
+  2026-09-09 sessions and remeasure the 343 tail rows, then use effective-
+  dated lifecycle/security evidence for the exact-session ticker-absent and
+  outside-candidate-span populations. Never turn a unique history-wide
+  candidate into an event-date assignment;
 - register a small first set of exact concept/unit/period/form queries from the
   measured census, then build complete effective-dated filer/security links
   and separately decide share-class projection before any security-level
