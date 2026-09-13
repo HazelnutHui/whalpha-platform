@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0228](0228-use-sec-submissions-as-a-lifecycle-document-locator-not-a-terminal-fact.md):
+  uses SEC filing metadata to locate documents for the frozen lifecycle sample
+  while keeping CIK, form presence, security identity, and terminal facts
+  strictly separate.
 - [ADR 0227](0227-localize-collision-derived-join-failures-only-in-research-membership.md):
   retains complete research-only Membership sessions when a sub-0.999 join
   ratio is proven to arise solely from explicitly quarantined stable-ID
