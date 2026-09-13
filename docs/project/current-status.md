@@ -109,6 +109,15 @@ budgets now guard this boundary.
   reread and leaves outcomes, assignments, admission, canonical writes,
   Candidate, publication and deployment at zero. It narrows evidence work but
   does not admit research.
+- ADR 0223's owner-only source acceptance sample now freezes the complete
+  provider-neutral population: 20 unassigned action relations / four action
+  IDs and 64 five-session lifecycle-crossing IDs, backed by 122 exact retained
+  source occurrences. The 68 combined IDs have no overlap. Its one 78,458-byte
+  report passed independent formal reread at logical fingerprint
+  `f29da6a170f873b20a4ee57141cf1dc975f5a8f3a840dc19dc115283828c1a5a`.
+  It makes no provider request and grants no assignment, terminal fact,
+  outcome, admission, canonical, Candidate, publication, or Production
+  authority.
 - A read-only exact-date audit of the complete 2026-09-08 and 2026-09-09
   canonical Identity snapshots found that they can resolve 206 of the 343
   corporate-action rows after the currently bound evidence range. ADR 0219's
@@ -406,9 +415,11 @@ Coverage are absent; status remains `quarantined`.
 2. Continue independent construction using Massive plus bounded official/free
    source pilots for identity, listing status, lifecycle, corporate actions,
    terminal outcomes, and point-in-time fundamentals. LSEG is a later
-   measured-gap option rather than the mandatory next dependency. Use ADR
-   0221's 20 unassigned action relations and 64 five-session lifecycle-crossing
-   IDs as the acceptance sample; do not resume an undirected global scan.
+   measured-gap option rather than the mandatory next dependency. ADR 0223's
+   immutable 20-action / 64-lifecycle sample is now the exact source-test
+   boundary. Bind every provider result to its fingerprint, retain explicit
+   matched/absent/unsupported/conflicting states, and do not resume an
+   undirected global scan.
 3. Persist reconstructed historical Membership only in the ADR 0197
    research-only family. Keep the three signal-eligible sessions and their
    Production reader physically separate.

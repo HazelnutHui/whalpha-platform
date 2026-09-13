@@ -55,6 +55,7 @@ explicit all-partition validation both passed in their recorded audits.
 | Unresolved action census | Current owner-only `build=20260913-v2`: 112,943 typed rows / 13,780 tickers fully classified: zero candidate 89,074 / 11,433; one candidate 23,676 / 2,307; multiple 193 / 40; 2,387 candidate relations and zero assignments |
 | Residual action evidence | Owner-only `build=20260913-v1`: all 112,943 unresolved rows joined to retained lifecycle/inactive/FINRA evidence; 29,127 have at least one lead, 83,816 have none; only 19 row/candidate occurrences fall inside a canonical observed span; zero assignments; fingerprint `3fbcf2719047bf753ed4014017a82f6d3a659e2d90be724e2b35a90cbabce525` |
 | First-strategy action/lifecycle blockers | Owner-only `build=20260913-v1`: exact fixed 437,402 Strong-Leader Pullback paths / 2,161 IDs; 4,643 action/instrument exposures, including 4,623 exact event-date resolutions and 20 unassigned history-candidate relations; 89 lifecycle candidates, with 252 five-session crossing paths / 64 IDs; zero outcomes, assignments, admission, or canonical writes; fingerprint `4abebf27774d0da398f029f152ce51b66e925201506365cf7084d8294f75243d` |
+| First-strategy source acceptance sample | Owner-only `build=20260913-v1`: all 20 unassigned action relations / 4 action IDs plus all 64 five-session lifecycle-crossing IDs; 122 retained lifecycle source occurrences, zero ID overlap, 68 combined IDs; no ranking, provider request, assignment, terminal fact, outcome, admission, or canonical write; fingerprint `f29da6a170f873b20a4ee57141cf1dc975f5a8f3a840dc19dc115283828c1a5a` |
 | Official FINRA OTC source | 62 monthly packages / 68,714 observations, 2021-08-11 through 2026-09-09; official OTC corroboration only; four repeated IDs retained |
 | FINRA/Massive action census | 2,298 split / 8,205 dividend unique numeric candidates; zero stable-ID resolution; candidate-only fingerprint `0559b1488ced840d786734b3dfa8b054d3c65dd18365d9d77c7a4616b9cd5317` |
 | Official SEC fundamentals sources | Company Facts: 20,343 members / 41,619,407 five-year occurrences; Submissions: 989,553 members / 27,217,476 filing rows; both private source snapshots |
@@ -445,7 +446,9 @@ the 2026-09-11 daily audit.
    20 total unassigned action relations, and 64 lifecycle IDs whose
    five-session labels cross the last observation. Resolve missing-event
    neutrality and terminal outcomes independently; use those measured cases
-   for bounded source acceptance rather than another global scan.
+   through the completed ADR 0223 acceptance sample rather than another global
+   scan. Any source-specific pilot must bind its exact fingerprint and retain
+   matched, absent, unsupported, and conflicting states.
 4. Re-run ADR 0195 only after mandatory-family evidence changes and either
    admit at least 252 complete session cross-sections or retain rejection.
 5. Only after admission, run Strong-Leader Pullback development; locked

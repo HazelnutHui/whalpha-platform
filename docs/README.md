@@ -145,6 +145,7 @@ unrelated resolved cross-section to advance under a separate bounded profile.
 - [Five-Year Corporate-Action Unresolved Census](audits/five-year-corporate-action-unresolved-census-2026-09-13.md)
 - [Five-Year Corporate-Action Residual Evidence Census](audits/five-year-corporate-action-residual-evidence-census-2026-09-13.md)
 - [Strong-Leader Pullback Evidence Blocker Census](audits/strong-leader-pullback-evidence-blocker-census-2026-09-13.md)
+- [Strong-Leader Pullback Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [Bounded Identity Extension Evidence](audits/bounded-identity-extension-evidence-plan-2026-09-13.md)
 - [Five-Year Lifecycle Source Custody Audit](audits/five-year-lifecycle-source-custody-2026-09-10.md)
 - [Five-Year FINRA OTC Daily List Source](audits/five-year-finra-otc-daily-list-source-2026-09-10.md)

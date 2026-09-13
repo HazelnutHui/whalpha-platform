@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-09-13 — Freeze the first-strategy source acceptance population
+
+- Implemented ADR 0223's network-prohibited, provider-neutral sample builder
+  and formal reader. It binds the exact blocker census and both inactive-
+  lifecycle anchors, rejects missing occurrence lineage, and preserves all
+  individual rows privately while its CLI emits aggregate counts only.
+- The owner-only result contains every 20 unassigned action relations / four
+  action IDs and every 64 five-session lifecycle-crossing IDs. It recovers 122
+  exact lifecycle source occurrences, has zero overlapping IDs and 68 combined
+  IDs, without ranking, subsampling, or opening outcomes.
+- The one-file / 78,458-byte package has report SHA-256
+  `17a1c177be65693786a410c1c2107c499e34a88960541a24339644e12ba01416`
+  and logical fingerprint
+  `f29da6a170f873b20a4ee57141cf1dc975f5a8f3a840dc19dc115283828c1a5a`.
+  Built-in and separate formal rereads passed; permissions are `0700/0400`
+  with zero symlink or staging residue. The build took 6.59 seconds and 22
+  directly related tests pass. The complete API suite passes 2,607 tests with
+  two unchanged dependency deprecation warnings.
+- Provider requests, credentials, stable-ID assignments, terminal facts,
+  outcomes, metrics, parameter/cohort selection, canonical writes, Historical
+  Coverage, research admission, Candidate, publication, deployment, and
+  scheduler changes remain zero. The next evidence action is a source-specific
+  pilot and measured field-level gap report bound to this sample, not another
+  global scan.
+
 ## 2026-09-13 — Scope first-strategy action and lifecycle blockers
 
 - Accepted ADR 0221 and added an outcome-blind, network-prohibited census that

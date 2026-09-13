@@ -234,10 +234,15 @@ Required work:
   possible-impact quarantine. ADR 0222 freezes signal-local feature and exit-
   local label bases, keeps cash dividends as event context, and rejects a
   duplicate global ledger or neutral omitted rows;
-- use the 20 unassigned action relations and 64 five-session lifecycle-crossing
-  IDs as bounded source-acceptance samples rather than trying to resolve every
-  out-of-scope fund, preferred, OTC, or other action first. Never turn a unique
-  history-wide candidate or ticker match into an event-date assignment;
+- completed 2026-09-13: freeze all 20 unassigned action relations and all 64
+  five-session lifecycle-crossing IDs as one immutable provider-neutral source
+  acceptance sample. The 68 combined IDs retain 122 exact lifecycle source
+  occurrences, with zero outcome inspection, assignment, or provider request;
+- run later source-specific pilots only against that exact sample fingerprint
+  and produce a field-level matched/absent/unsupported/conflicting gap matrix.
+  Do not try to resolve every out-of-scope fund, preferred, OTC, or other
+  action first, and never turn a unique history-wide candidate or ticker match
+  into an event-date assignment;
 - register a small first set of exact concept/unit/period/form queries from the
   measured census, then build complete effective-dated filer/security links
   and separately decide share-class projection before any security-level
