@@ -59,6 +59,30 @@ Apply currently binds the whole-data inventory, so concurrent family writes
 correctly trigger its compare-and-swap stop even when target paths do not
 overlap.
 
+For a rolling five-year continuation, use the dedicated resumable builder
+before the archive preview. It freezes one owner-read-only plan, separates
+source-unavailable dates, groups only adjacent sessions in batches of at most
+five, and uses at most four Dell worker processes. Every worker has network
+access disabled and writes only a disjoint `/tmp` batch root. `--batch-limit`
+supports a bounded pilot and safe continuation with the same plan:
+
+```bash
+scripts/dev/run-project-python.sh \
+  -m tip_api.services.five_year_research_membership_continuation_cli \
+  --data-root /data/trading-intelligence-platform \
+  --candidate-root <absolute-owner-only-/tmp-root> \
+  --catalog-as-of-date <catalog-date> \
+  --evaluated-at <frozen-UTC-timestamp> \
+  --code-revision <40-character-commit> \
+  --workers 4 \
+  --batch-limit <optional-positive-count> \
+  --execute
+```
+
+The candidate remains reconstructed latest-vintage evidence. Completing this
+builder or its archive never grants signal, validation, holdout, performance,
+Candidate, Production, or web authority.
+
 ## Completion and recovery
 
 A batch completes only when:
@@ -78,7 +102,9 @@ completed sessions, but it remains missing in the five-year census.
 
 ## Warm-up boundary
 
-The five-year evaluation interval begins 2021-09-09. The current Membership
-methodology requires 20 prior EOD sessions for trailing liquidity, so
-2021-08-11 through 2021-09-08 are separate support custody. They never count as
-part of the 1,255-session evaluation interval.
+ADR 0206 supersedes the earlier fixed-window wording. With canonical EOD ending
+2026-09-11, the active rolling source target is 1,255 XNYS sessions from
+2021-09-13 through 2026-09-11. Its first 20 sessions, through 2021-10-08, are
+outcome-free feature warm-up; the earliest eligible signal/performance session
+for a 20-session strategy is 2021-10-11. No unavailable pre-window history is
+silently projected into the target.

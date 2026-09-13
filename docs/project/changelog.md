@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-13 — Bound the five-year research Membership continuation
+
+- Added one resumable, network-disabled continuation entrypoint for the
+  physically separate research-only Membership family. It freezes an
+  owner-read-only plan, excludes existing research and signal sessions,
+  isolates unavailable Identity sources, and groups only adjacent sessions in
+  batches of at most five.
+- Execution is capped at four Dell processes. Workers share one formally read
+  security catalog per process, write disjoint `/tmp` candidate roots, and
+  support bounded pilot runs and exact continuation without granting signal,
+  validation, holdout, performance, Candidate, Production, or web authority.
+- Corrected the custody runbook's superseded warm-up dates to ADR 0206's active
+  target: 1,255 source sessions from 2021-09-13 through 2026-09-11, with the
+  first 20 sessions ending 2021-10-08 and first eligible strategy session
+  2021-10-11.
+- All 28 focused continuation, batch, shadow, and archive tests pass. The full
+  2,625-test API suite also passes with two unchanged dependency deprecation
+  warnings. Real candidate build and canonical research archive remain
+  separate measured execution stages.
+
 ## 2026-09-13 — Census cutoff-aware SEC security projection
 
 - Added the cutoff-aware issuer selector and immutable aggregate projection
