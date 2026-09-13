@@ -98,7 +98,8 @@ source coverage and typed rejection paths.
 It does not make the five-year database performance-eligible. The facts remain
 issuer-grained; no values were published or projected. ADR 0224's
 `single_common_security_per_cik_v1` class and evidence tiers still govern any
-future projection, and only 11 of 1,255 retained link sessions meet strict
-next-open knowledge time. Membership, lifecycle/terminal outcomes,
-action/adjustment semantics, costs, final Historical Coverage, validation, and
-holdout gates remain unresolved.
+future projection. The later complete projection census corrected the earlier
+timestamp-only count of 11 sessions: only four sessions have both timely
+observation and admissible `eligible_at_source_observed_at` provenance.
+Membership, lifecycle/terminal outcomes, action/adjustment semantics, costs,
+final Historical Coverage, validation, and holdout gates remain unresolved.

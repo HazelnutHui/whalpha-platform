@@ -33,10 +33,19 @@ securities. An instrument may appear under different states across history.
 
 ## Knowledge-time result
 
-Only 11 sessions have retained Identity source observation no later than the
-next XNYS open: 2026-08-21, 2026-08-24, 2026-08-26 through 2026-08-28,
-2026-08-31, 2026-09-03 through 2026-09-04, 2026-09-08 through 2026-09-09,
-and 2026-09-11.
+This scan found 11 sessions whose retained Identity source observation was no
+later than the next XNYS open: 2026-08-21, 2026-08-24, 2026-08-26 through
+2026-08-28, 2026-08-31, 2026-09-03 through 2026-09-04, 2026-09-08 through
+2026-09-09, and 2026-09-11.
+
+Correction after the complete projection contract was executed: this was a
+timestamp-only count, not the final strict evidence-tier count. Seven of the
+11 sessions retain `outcome_reconciliation_only` provenance. Requiring both a
+timely timestamp and `eligible_at_source_observed_at` leaves four formal
+`as_operated_next_open` sessions: 2026-09-04, 2026-09-08, 2026-09-09, and
+2026-09-11. The completed aggregate census and authoritative interpretation
+are recorded in
+[SEC Fundamental Projection Readiness Census](sec-fundamental-projection-readiness-census-2026-09-13.md).
 
 The remaining dated link reconstruction is not automatically historical
 knowledge-time evidence. The scan therefore supports ADR 0224's separate

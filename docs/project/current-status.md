@@ -54,7 +54,7 @@ price-acquisition gap.
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
 | Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics and a frozen first-strategy sample | canonical family absent |
 | Historical classification | no complete point-in-time family | absent |
-| SEC fundamentals | official source custody, filing clocks, sparse facts, semantic census, four registered issuer queries, and measured clean-period coverage | cutoff-aware reader and security projection absent; historical link knowledge time mostly reconstruction-only |
+| SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
 | Historical Coverage | several family-evidence manifests | final transitive admission absent |
 | Evaluation/holdout | fixture-tested mechanics | no real chronological dataset or sealed real holdout |
@@ -87,13 +87,16 @@ Current admission remains rejected:
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
-The SEC fundamental lane is independent of that price-strategy blocker. Four
-exact issuer queries now have complete source-readiness counts: 8,569 Assets,
-8,175 equity, 7,634 annual-net-income, and 6,359 annual-operating-income filers
-have at least one clean period. Facts remain issuer-grained. About 98.0% of
-admitted common-stock row-sessions meet ADR 0224's conservative structural
-projection class, but only 11 sessions meet retained strict next-open
-knowledge time. Reconstructed history therefore remains development-only.
+The SEC fundamental lane is independent of that price-strategy blocker. Its
+cutoff-aware selector and complete 24,489,804-evaluation projection census are
+finished without retaining security-level values. Reconstructed selection
+coverage is 84.97% Assets, 81.52% equity, 73.01% annual net income, and 61.98%
+annual operating income. However, only 17,879 projection rows across four
+sessions meet the full strict as-operated next-open evidence gate; 6,104,572
+rows across 1,249 sessions are reconstructed development evidence. The earlier
+11-session figure measured timestamp alone and included seven
+`outcome_reconciliation_only` sessions. Historical performance use remains
+rejected.
 
 ## Operations and performance
 
@@ -109,10 +112,9 @@ project.
 
 ## Immediate gates
 
-1. Implement a cutoff-aware issuer reader for the four registered SEC queries,
-   then measure an outcome-free projection census through ADR 0224's exact
-   class and evidence tiers. Do not build a broad daily Cartesian panel or a
-   security feature.
+1. Keep the completed SEC projection census as a measured data rejection; do
+   not build security features unless newly admitted historical knowledge-time
+   evidence or a registered strategy need changes that gate.
 2. When a real second-source sample is available, test it only against the
    frozen 20-action / 64-lifecycle population and retain matched, absent,
    unsupported, and conflicting fields.

@@ -113,6 +113,7 @@ the detailed dependency and supersession chain.
 - [First-Strategy Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
+- [SEC Fundamental Projection Readiness Census](audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
 - [Five-Year SEC Filer-to-Security Link Candidate](audits/five-year-sec-filer-security-link-candidate-2026-09-13.md)
 - [SEC Filer/Security Projection Readiness](audits/sec-filer-security-projection-readiness-2026-09-13.md)
 

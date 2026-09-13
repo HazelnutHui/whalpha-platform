@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-09-13 — Census cutoff-aware SEC security projection
+
+- Added the cutoff-aware issuer selector and immutable aggregate projection
+  census for the four registered SEC queries. Every fact is bounded by source
+  availability, filing-clock eligibility, period end, following-XNYS-open
+  cutoff, and ADR 0224's session-local single-common-stock CIK class.
+- The real run scanned all 10,681,604 link row-sessions and evaluated all four
+  queries for 6,122,451 structurally projectable rows, producing exactly
+  24,489,804 evaluations. Strict as-operated projection contains only 17,879
+  rows across four sessions; 6,104,572 rows across 1,249 sessions remain
+  reconstructed development evidence.
+- Reconstructed selection coverage is 84.97% Assets, 81.52% equity, 73.01%
+  annual net income, and 61.98% annual operating income. Missingness and 1,834
+  reconstructed plus 12 strict net-income ambiguities remain explicit.
+- Corrected the prior 11-session interpretation: it measured timely source
+  timestamps only and included seven `outcome_reconciliation_only` sessions.
+  The complete contract requires eligible provenance as well and admits four
+  strict sessions.
+- The mode-`0700/0400`, 1,836,393-byte private report has SHA-256
+  `ce7a30931ea71157d7ef4d116c4282eecc9085d7b9105ef312d39361838333f8`
+  and logical fingerprint
+  `4e65cee8d4c1697dcd8e1b589b0a81297dc2722a1dfc5dc39f30b393f01a16bb`.
+  Eight-process build plus full transitive readback took 9 minutes 43.26
+  seconds at 709,820 KiB maximum RSS; 260 SEC-focused tests and all 2,622 API
+  tests passed with two unchanged dependency deprecation warnings.
+- Issuer values, security/fact rows, daily panels, features, outcomes,
+  performance, canonical `/data`, Membership, Candidate, publication,
+  deployment, scheduling, credentials, and external requests remained absent.
+  The engineering lane is complete, but the data gate remains rejected.
+
 ## 2026-09-13 — Parallelize the five-year SEC link formal reader
 
 - Reworked the existing formal reader into one-to-eight session workers while
@@ -68,11 +98,13 @@
   6,122,451 admitted rows, about 98.0%. The remaining 122,307 rows belong to
   59,440 multi-common-stock CIK/session groups, with at most seven common
   stocks in one group; they are not silently projected.
-- Only 11 / 1,255 sessions have retained source observation no later than the
-  next XNYS open. ADR 0224 therefore keeps `as_operated_next_open` separate
-  from `reconstructed_latest_vintage_development_only`; reconstructed links
-  cannot enter sealed validation, holdout, headline performance, activation,
-  or Production Candidate authority.
+- The preliminary timestamp-only scan found 11 / 1,255 sessions with retained
+  source observation no later than the next XNYS open. The later complete
+  projection contract also enforced provenance and admitted only four strict
+  sessions. ADR 0224 therefore keeps `as_operated_next_open` separate from
+  `reconstructed_latest_vintage_development_only`; reconstructed links cannot
+  enter sealed validation, holdout, headline performance, activation, or
+  Production Candidate authority.
 - The corrected session-streaming scan completed in 42.54 seconds at 182,808
   KiB peak memory and wrote zero bytes. No fact values, prices, outcomes,
   credentials, canonical data, features, research results, publication,

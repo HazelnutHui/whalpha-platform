@@ -50,28 +50,28 @@ in [current context](current-context.md).
 
 ### Lane A — Point-in-time fundamentals
 
-The first registry and source-readiness census are complete for Assets,
-Stockholders' Equity, annual Net Income/Loss, and annual Operating Income/Loss.
-They have deterministic semantics, measured clean-period coverage, and typed
-rejection paths without outcome access.
+The first registry, cutoff-aware issuer selector, source-readiness census, and
+aggregate security-projection census are complete for Assets, Stockholders'
+Equity, annual Net Income/Loss, and annual Operating Income/Loss. They have
+deterministic semantics, measured availability/age/ambiguity, and typed
+rejection paths without outcome access or retained security-level values.
 
-1. Implement one cutoff-aware issuer reader that never selects a period end or
-   source availability after the caller's decision cutoff.
-2. Run an outcome-free security projection census only through ADR 0224's
-   `single_common_security_per_cik_v1` class.
-3. Report query availability, age, ambiguity, and missingness separately for
-   strict next-open and reconstructed-development evidence tiers.
-4. Admit no security-level feature until share-class and knowledge-time gates
-   pass.
+The engineering exit criterion is met, but the data-admission result is a
+measured rejection: only four sessions have strict as-operated next-open
+projection evidence. Reconstructed history is development-only. Stop this lane
+here; do not build a broad daily Cartesian panel or security feature. Reopen it
+only when newly admitted historical knowledge-time evidence or a separately
+registered strategy creates a concrete need.
 
 Revenue taxonomy fragmentation, quarterly-flow derivation, per-share facts,
 share counts, market capitalization, IFRS coverage, and valuation ratios remain
 separate future decisions. A broad fact-by-session Cartesian panel is
 explicitly unnecessary.
 
-Exit criterion: the cutoff-aware issuer selection and exact permitted
-projection population are reproducible, while every unsupported class, time,
-and ambiguity remains quarantined and no strategy outcomes are opened.
+Completed exit: cutoff-aware issuer selection and the exact permitted
+projection population are reproducible, every unsupported class, time, and
+ambiguity is explicit, and no strategy outcome was opened. This completion is
+not five-year performance admission.
 
 ### Lane B — First-strategy action and lifecycle evidence
 
