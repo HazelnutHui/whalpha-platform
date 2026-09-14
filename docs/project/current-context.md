@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-14T16:58:59Z
 
-Deployment state verified at: 2026-09-11T21:23:56Z
+Deployment state verified at: 2026-09-14T23:44:48Z
 
 Repository context updated at: 2026-09-14 UTC
 
@@ -22,8 +22,8 @@ future sequencing in the [roadmap](roadmap.md), and execution history in the
 | Working tree | clean at the verified report boundary |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-11T211340Z-26cab64fabda` |
-| Deployed source | `26cab64fabdafca710d6471cb09ac8c62ef17c2d` |
+| Active OCI release | `2026-09-14T234322Z-70438696e33c` |
+| Deployed source | `70438696e33c9d7a3302a272ff13846a5f38b249` |
 
 Dell owns code, data, governance, and heavy computation. OCI is limited to
 bounded public serving and localhost authentication. A newer clean source
@@ -38,7 +38,7 @@ the shared virtual environment retains older editable-worktree metadata.
 
 | Boundary | Verified value |
 | --- | --- |
-| Latest EOD / Snapshot session | 2026-09-11; fresh; zero session lag |
+| Latest EOD / Snapshot session | 2026-09-11; stale by one completed session at the 2026-09-14 deployment review |
 | Market Intelligence | `2026-09-11T205429Z-26cab64fabda`; contract 1.3 |
 | Dashboard Snapshot | `2026-09-11T211340Z-26cab64fabda`; Snapshot 1.11 / Dashboard 2.8 |
 | Market state | Primary 50.1578 Balanced; Secondary 50.1501 Balanced |
@@ -131,11 +131,12 @@ method-only and Candidate-ineligible, and carries no real result. It now binds
 the replayed reconstructed method-engineering disclosure and code revision
 `9879f2e890840487c90a89078eb31f0cbff273c0`; record fingerprint:
 `4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8`.
-The repository Lab now presents the verified five-year research foundation,
+The deployed Lab now presents the verified five-year research foundation,
 its limitations, and the frozen evaluation controls beside the model record;
-it calculates no aggregate readiness score. This V1.2 method/readiness surface
-and foundation snapshot remain repository-only and are not part of the active
-OCI release recorded above.
+it calculates no aggregate readiness score. The V1.2 method/readiness surface
+and foundation snapshot are part of the active UI-only OCI release recorded
+above; the underlying 2026-09-11 Snapshot and Market Intelligence publication
+were reused without mutation.
 The pure mechanics contract is `candidate-strategy-research-execution/1.2`;
 each mechanics batch binds the same method and experiment fingerprints and is
 fixed to zero forward outcomes and zero performance authority.

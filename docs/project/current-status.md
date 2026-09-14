@@ -9,8 +9,9 @@ ADRs, and audits.
 
 ## Overall verdict
 
-- **Production:** live, fresh for the latest completed session, and serving
-  verified trilingual guest/credential flows.
+- **Production:** live and serving the verified trilingual research-foundation
+  UI to equal guest/credential flows; underlying data is stale by one completed
+  session at the 2026-09-14 deployment review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** incomplete; formal state
   `data_blocked`.
@@ -35,12 +36,12 @@ presentation layers. Guest and credential Sessions intentionally receive the
 same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
-The repository Lab now includes a dated research-foundation snapshot that
+The deployed Lab now includes a dated research-foundation snapshot that
 presents five-year source depth, reconstructed evidence, unresolved mandatory
 families, and already frozen evaluation controls together without inventing a
-single completion percentage. The enhanced method/readiness view remains
-repository-only until a separate deployment; the active OCI release is
-unchanged.
+single completion percentage. The 2026-09-14 UI-only OCI release reused the
+immutable 2026-09-11 Snapshot and Market Intelligence publication; it changed
+no analytics, model authority, or research-performance state.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-

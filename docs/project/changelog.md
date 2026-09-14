@@ -17,11 +17,20 @@ and dated [audits](../audits/). Current capability and next work belong in
   heterogeneous evidence into a false completion score.
 - Replaced the model record's stale next step with the actual performance-data
   admission decision and regenerated its deterministic record and catalog
-  fingerprints. No method, result, Candidate, Snapshot, deployment, or
-  Production authority changed.
+  fingerprints. No method, result, Candidate, Snapshot, or Production authority
+  changed.
 - Passed all 2,825 backend tests, all 126 frontend tests, and a clean bounded
   production build; only the two existing dependency deprecation warnings
   remained.
+- Deployed UI-only OCI release `2026-09-14T234322Z-70438696e33c` from clean
+  source `70438696e33c9d7a3302a272ff13846a5f38b249`, reusing the immutable
+  2026-09-11 Snapshot and Market Intelligence publication without mutation.
+  The deployment explicitly retained the one-session stale state.
+- Independent postflight matched the release, source, bundle, checksums,
+  protected routes, services, localhost-only listener, and equal-capability
+  guest Session, with no staging, failed-release, failed-unit, or listener
+  residue. Password login and final human visual review remain manual. See the
+  [deployment audit](../audits/quant-research-lab-foundation-ui-deployment-2026-09-14.md).
 
 ## 2026-09-14 — Exercise the first method over reconstructed Dell evidence
 
