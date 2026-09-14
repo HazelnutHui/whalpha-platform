@@ -199,10 +199,11 @@ class StrongLeaderPullbackTerminalGapCensusV4(_FrozenModel):
     remaining_state_impacts: tuple[tuple[str, int, int, int, int], ...]
     references: tuple[TerminalGapLocalReferenceV1, ...] = Field(min_length=4, max_length=4)
     unresolved_successor_identity_count: Literal[1] = 1
-    unresolved_cvr_or_complex_value_count: Literal[8] = 8
+    unresolved_cvr_count: Literal[6] = 6
+    unresolved_election_or_proration_count: Literal[2] = 2
+    unresolved_unlisted_unit_count: Literal[1] = 1
     unresolved_primary_source_case_count: Literal[3] = 3
     unresolved_cessation_or_eod_conflict_count: Literal[5] = 5
-    unresolved_election_or_proration_count: Literal[1] = 1
     prior_v3_preserved: Literal[True] = True
     outcome_blind: Literal[True] = True
     strategy_trigger_count: Literal[0] = 0
@@ -227,15 +228,16 @@ class StrongLeaderPullbackTerminalGapCensusV4(_FrozenModel):
 
     @model_validator(mode="after")
     def report_reconciles(self) -> "StrongLeaderPullbackTerminalGapCensusV4":
+        state_counts = {item[0]: item[1] for item in self.remaining_state_impacts}
         if (
             tuple(item.request_sequence for item in self.references)
             != tuple(sorted(_EXPECTED_SEQUENCES))
             or self.documented_horizon_1_crossing_path_count
             + self.remaining_horizon_1_crossing_path_count
-            != 65
+            != 63
             or self.documented_horizon_3_crossing_path_count
             + self.remaining_horizon_3_crossing_path_count
-            != 194
+            != 186
             or self.documented_horizon_5_crossing_path_count
             + self.remaining_horizon_5_crossing_path_count
             != 302
@@ -247,11 +249,24 @@ class StrongLeaderPullbackTerminalGapCensusV4(_FrozenModel):
             or sum(item[4] for item in self.remaining_state_impacts)
             != self.remaining_horizon_5_crossing_path_count
             or self.unresolved_successor_identity_count
-            + self.unresolved_cvr_or_complex_value_count
+            + self.unresolved_cvr_count
+            + self.unresolved_election_or_proration_count
+            + self.unresolved_unlisted_unit_count
             + self.unresolved_primary_source_case_count
             + self.unresolved_cessation_or_eod_conflict_count
-            + self.unresolved_election_or_proration_count
             != self.remaining_gap_instrument_count
+            or state_counts.get("listed_successor_identity_unresolved", 0)
+            != self.unresolved_successor_identity_count
+            or state_counts.get("contingent_value_realization_unresolved", 0)
+            != self.unresolved_cvr_count
+            or state_counts.get("holder_election_or_proration_unresolved", 0)
+            != self.unresolved_election_or_proration_count
+            or state_counts.get("unlisted_unit_value_unresolved", 0)
+            != self.unresolved_unlisted_unit_count
+            or state_counts.get("exception_case_primary_source_unadjudicated", 0)
+            != self.unresolved_primary_source_case_count
+            or state_counts.get("cessation_timing_not_matched", 0)
+            != self.unresolved_cessation_or_eod_conflict_count
             or self.ruleset_fingerprint != _ruleset_fingerprint()
             or self.logical_fingerprint
             != base._fingerprint(
