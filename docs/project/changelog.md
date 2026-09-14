@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-14 — Extract corrected-population SEC field candidates
+
+- Accepted ADR 0258 and applied the existing Form 25, Form 15, and transaction-
+  document extractors to the three authoritative SCS files without importing
+  historical case decisions.
+- Form 25 yielded one structured NYSE Class A Common Stock notice candidate;
+  Form 15 yielded one registration/reporting candidate covering the common
+  stock and senior notes; and the 8-K yielded one explanatory-note/Item 2.01
+  transaction scope. All extracted values remain candidates.
+- The report has SHA-256
+  `f64a9df580409e426b31032cce602c1d14ff077f1d7e887736ea8812c09c41fd`
+  and logical fingerprint
+  `c351199c90fb5016900980841a776eb61dbdef7a0d24887c8c0ea78e208ff5a3`.
+  Exact replay returned `already_present`; modes are `0700/0400` and no
+  symlink, partial, or staging residue exists.
+- Fourteen focused/linked tests and the complete 2,763-test API suite passed
+  with two unchanged dependency warnings. No network request, credential
+  read, `/data`, lifecycle fact, outcome, research admission, Candidate,
+  publication, deployment, or scheduler state changed.
+
 ## 2026-09-14 — Census corrected-population SEC content
 
 - Accepted ADR 0257 and reused the original deterministic decoder, markup

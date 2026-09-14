@@ -345,7 +345,14 @@ Important private Dell evidence includes:
   and logical fingerprint is
   `972ef6dd9aa83a7e8d04edfca24bbebff3d9fc70ff209976e1a7369561b39a2d`.
   Marker contexts remain unresolved candidates; lifecycle and outcome fact
-  counts are zero.
+  counts are zero; and
+- the corrected-population SEC field-candidate package: the one Form 25-NSE,
+  one Form 15-12G, and one structured 8-K all pass their established form-aware
+  extractors for the same stable ID. Report SHA-256 is
+  `f64a9df580409e426b31032cce602c1d14ff077f1d7e887736ea8812c09c41fd`
+  and logical fingerprint is
+  `c351199c90fb5016900980841a776eb61dbdef7a0d24887c8c0ea78e208ff5a3`.
+  Every complete lifecycle-field support and authority count remains zero.
 
 Exact package identities and counts are retained in:
 
@@ -383,6 +390,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-population SEC source-plan audit](../audits/strong-leader-pullback-terminal-population-sec-source-plan-2026-09-14.md)
 - [First-strategy terminal-population SEC source-custody audit](../audits/strong-leader-pullback-terminal-population-sec-source-custody-2026-09-14.md)
 - [First-strategy terminal-population SEC content-census audit](../audits/strong-leader-pullback-terminal-population-sec-content-census-2026-09-14.md)
+- [First-strategy terminal-population SEC field-candidate audit](../audits/strong-leader-pullback-terminal-population-sec-field-candidates-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

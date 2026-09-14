@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete original 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, a formal identity/EOD boundary correction, terminal-gap census V2, and complete three-document SEC custody plus deterministic content census for the new case | corrected EOD scope is 65 securities / 302 five-session paths. Forty-two securities / 196 paths have reference evidence; 23 / 106 remain. The new SCS stable-ID case has three parsed primary files but only unresolved lexical candidates, not adjudicated facts. References are not outcomes. The matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete original 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, a formal identity/EOD boundary correction, terminal-gap census V2, and complete three-document SEC custody, content census, and form-aware extraction for the new case | corrected EOD scope is 65 securities / 302 five-session paths. Forty-two securities / 196 paths have reference evidence; 23 / 106 remain. The new SCS stable-ID case has structured Form 25, Form 15, and 8-K candidates but no adjudicated fact. References are not outcomes. The matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -177,6 +177,10 @@ Current admission remains rejected:
   lexical ruleset as the original source population. The bounded contexts are
   candidate locations only; lifecycle facts, terminal outcomes, research
   admission, and authority counts remain zero; and
+- the SCS documents also pass the established form-aware extractors: Form 25
+  and Form 15 structured fields reconcile, while the 8-K has one bounded
+  explanatory-note/Item 2.01 transaction scope. Every extracted field remains
+  a candidate with zero complete-field support; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -217,10 +221,11 @@ project.
    Keep any non-match, complex
    consideration, unresolved timing, and LNW/REVG/SAND quarantined.
 3. Bind all future terminal work to terminal-gap census V2 and preserve the
-   completed three-document SCS content census. Perform form-aware field
-   adjudication, then complete that stable-ID case before the nine timing cases
-   and three legacy exceptional cases. Do not interpret a locator, retained
-   byte, lexical marker, or reference value as an outcome.
+   completed three-document SCS content census and form-aware candidates.
+   Adjudicate fields, then complete that stable-ID case before the nine timing
+   cases and three legacy exceptional cases. Do not interpret a locator,
+   retained byte, candidate field, lexical marker, or reference value as an
+   outcome.
 4. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage
