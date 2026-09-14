@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0242](0242-normalize-terminal-payoff-terms-before-valuing-complex-consideration.md):
+  binds exact cash, exchange-ratio, CVR, and election terms while leaving
+  external values, identity, and terminal outcomes unresolved.
 - [ADR 0241](0241-bind-sec-trading-stop-boundaries-to-formal-eod-observations.md):
   compares finite reviewed SEC stop-time statements with stable-ID canonical
   EOD presence while preserving conflicts and zero legal-delisting authority.
