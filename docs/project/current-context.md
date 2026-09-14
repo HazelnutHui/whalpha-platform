@@ -294,7 +294,17 @@ Important private Dell evidence includes:
   admission is claimed. Report SHA-256 is
   `18e47df490acca529aa3eaebdfaba70c989669ecb83e52a377d6885200913f2c`
   and logical fingerprint is
-  `a7bb1a87258e08ddb71b9add9ab7936dd2005522640bae124eebf665a1fbf9ef`.
+  `a7bb1a87258e08ddb71b9add9ab7936dd2005522640bae124eebf665a1fbf9ef`;
+  and
+- the listed-consideration residual source plan: sequences 158 and 184 need no
+  new file because the retained issuer registration and target completion
+  disclosures form complementary evidence candidates. Sequence 174 has one
+  exact replacement Fifth Third 424B3 row frozen from the retained Submissions
+  archive. The plan makes zero requests and grants no identity or terminal-
+  value authority. Report SHA-256 is
+  `77cdb7cd64ec5ff1156dce6ecdf07a9e989a4e4a7780d7631ab1a0c958aefa37`
+  and logical fingerprint is
+  `f6798760bf690f38a9e6e301d5a6ed0516a46ee02cf6a59c48dbab6b89008839`.
 
 Exact package identities and counts are retained in:
 
@@ -323,6 +333,7 @@ Exact package identities and counts are retained in:
 - [First-strategy listed-consideration source audit](../audits/strong-leader-pullback-listed-consideration-source-2026-09-14.md)
 - [First-strategy listed-consideration adjudication audit](../audits/strong-leader-pullback-listed-consideration-adjudication-2026-09-14.md)
 - [First-strategy listed-consideration terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-terminal-evidence-2026-09-14.md)
+- [First-strategy listed-consideration residual source-plan audit](../audits/strong-leader-pullback-listed-consideration-residual-source-plan-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

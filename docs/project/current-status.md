@@ -166,6 +166,10 @@ Current admission remains rejected:
   rows are valid revision 1 but retain `adjustment_factors_unverified`. These
   are not execution prices, strategy labels, returns, or canonical terminal
   outcomes; the three unassigned cases remain excluded; and
+- the three unassigned cases now have a minimal residual plan: IonQ/SkyWater
+  and Boeing/Spirit reuse complementary retained registration and completion
+  disclosures, while Fifth Third/Comerica requires one exact earlier 424B3.
+  The plan made no network request and assigned no identity; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -203,10 +207,10 @@ project.
    trading-cessation decisions, 81 source-bound payoff terms, and 30 nominal
    fixed-cash terminal observations, 12 retained 424B3 source documents, nine
    strict listed-consideration identity assignments, and nine gross daily
-   listed-stock reference values. Freeze a bounded replacement-source plan for
-   only the two formula-only plus one wrong-scope residual; keep them unassigned
-   unless the exact transaction security and final ratio are proven. Keep
-   complex consideration, unresolved timing, and LNW/REVG/SAND quarantined.
+   listed-stock reference values, and the completed three-case residual source
+   plan. Acquire only its one exact Fifth Third 424B3, then adjudicate all three
+   residuals from their frozen evidence. Keep any non-match, complex
+   consideration, unresolved timing, and LNW/REVG/SAND quarantined.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

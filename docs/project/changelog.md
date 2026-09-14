@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-14 — Freeze the listed-consideration residual source plan
+
+- Accepted ADR 0248 and reduced the three unresolved listed-stock identities
+  to two local composite-evidence reviews and one exact source request.
+- IonQ/SkyWater and Boeing/Spirit can reuse their issuer registration documents
+  with the retained target completion 8-K disclosures that state final ratios.
+- Fifth Third/Comerica requires only the exact 2025-11-25 424B3 row already
+  present in the retained SEC Submissions metadata; the prior 2026-01-26 file
+  was an unrelated senior-notes offering.
+- The report has SHA-256
+  `77cdb7cd64ec5ff1156dce6ecdf07a9e989a4e4a7780d7631ab1a0c958aefa37`
+  and logical fingerprint
+  `f6798760bf690f38a9e6e301d5a6ed0516a46ee02cf6a59c48dbab6b89008839`.
+  Exact network-disabled replay returned `already_present` with owner-only
+  modes and zero residue.
+- Four focused tests, 28 linked tests, and the complete 2,722-test API suite
+  passed with two unchanged dependency deprecation warnings.
+- No source was fetched, no identity was assigned, and no terminal value,
+  `/data`, Historical Coverage, research, Candidate, publication, deployment,
+  or scheduler state changed.
+
 ## 2026-09-14 — Document listed-consideration terminal references
 
 - Accepted ADR 0247 and calculated one gross daily reference value for each of

@@ -126,12 +126,14 @@ not five-year performance admission.
 18. Preserve the completed 12-document 424B3 source package, its nine strict
    identity assignments, and their nine gross daily reference values. These
    are not execution prices, strategy labels, returns, or canonical outcomes.
-19. Freeze a replacement-source plan only for the two formula-only and one
-   wrong-scope listed-stock residual. Keep them quarantined unless exact
-   transaction-security and final-ratio evidence is obtained.
-20. Test a commercial source only against the frozen residual field gap that
+19. Preserve the completed three-case residual plan: reuse the complementary
+   retained registration and completion disclosures for two cases, and request
+   only one exact earlier Fifth Third 424B3 for the third.
+20. Acquire that one file into private resumable custody, then adjudicate all
+   three residual identity chains and keep every non-match quarantined.
+21. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-21. Resolve missing-event neutrality and remaining terminal outcomes without
+22. Resolve missing-event neutrality and remaining terminal outcomes without
    turning a ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole

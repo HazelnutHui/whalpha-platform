@@ -195,6 +195,7 @@ the detailed dependency and supersession chain.
 - [First-Strategy Listed-Consideration Source](audits/strong-leader-pullback-listed-consideration-source-2026-09-14.md)
 - [First-Strategy Listed-Consideration Adjudication](audits/strong-leader-pullback-listed-consideration-adjudication-2026-09-14.md)
 - [First-Strategy Listed-Consideration Terminal Evidence](audits/strong-leader-pullback-listed-consideration-terminal-evidence-2026-09-14.md)
+- [First-Strategy Listed-Consideration Residual Source Plan](audits/strong-leader-pullback-listed-consideration-residual-source-plan-2026-09-14.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [SEC Fundamental Projection Readiness Census](audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
