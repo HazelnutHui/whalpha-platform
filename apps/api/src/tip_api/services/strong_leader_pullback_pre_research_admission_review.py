@@ -355,6 +355,15 @@ def _build_report(
     values = {
         "implementation_revision": implementation_revision,
         "evaluated_at": normalize_utc_datetime(evaluated_at),
+        "first_signal_session": str(development.first_session),
+        "last_signal_session": str(development.last_session),
+        "signal_session_count": development.session_count,
+        "minimum_complete_session_count": prior_admission.minimum_admitted_session_count,
+        "complete_cross_section_session_count": (
+            prior_admission.complete_cross_section_session_count
+        ),
+        "included_path_count": blocker_manifest.included_path_count,
+        "complete_evidence_path_count": development.all_required_evidence_complete_count,
         "development_census_sha256": development_sha256,
         "development_census_logical_fingerprint": development.logical_fingerprint,
         "prior_admission_sha256": prior_admission_sha256,
@@ -362,13 +371,63 @@ def _build_report(
         "blocker_census_manifest_sha256": blocker.manifest_sha256,
         "blocker_census_logical_fingerprint": blocker_manifest.logical_fingerprint,
         "membership_binding_fingerprint": blocker_manifest.membership_binding_fingerprint,
+        "membership_session_count": blocker_manifest.signal_session_count,
+        "membership_as_operated": blocker_manifest.as_operated,
+        "action_exposure_record_count": blocker_manifest.action_exposure_record_count,
+        "resolved_action_exposure_record_count": (
+            blocker_manifest.resolved_action_exposure_record_count
+        ),
+        "unassigned_action_exposure_record_count": (
+            blocker_manifest.unassigned_action_candidate_exposure_record_count
+        ),
         "split_diagnostic_fingerprint": diagnostic.logical_fingerprint,
         "split_diagnostic_source_session_count": diagnostic.source_session_count,
+        "known_split_residual_extreme_count": (
+            diagnostic.active_split_residual_extreme_count
+        ),
+        "unexplained_price_discontinuity_count": (
+            diagnostic.unexplained_price_discontinuity_count
+        ),
+        "unexplained_price_discontinuity_instrument_count": (
+            diagnostic.unexplained_price_discontinuity_instrument_count
+        ),
         "adjustment_publication_sha256": adjustment.manifest_sha256,
         "adjustment_publication_fingerprint": adjustment_report.logical_fingerprint,
+        "adjustment_record_count": adjustment_report.record_count,
+        "adjustment_clear_record_count": adjustment_report.clear_record_count,
+        "adjustment_quarantined_record_count": (
+            adjustment_report.quarantined_record_count
+        ),
+        "absent_adjustment_row_neutrality_authorized": (
+            adjustment_report.absent_row_neutrality_authorized
+        ),
         "unassigned_split_like_exposure_record_count": unassigned_split_like,
+        "lifecycle_exposure_instrument_count": (
+            blocker_manifest.lifecycle_instrument_count
+        ),
+        "lifecycle_horizon_5_crossing_instrument_count": (
+            blocker_manifest.horizon_5_lifecycle_crossing_instrument_count
+        ),
+        "lifecycle_horizon_5_crossing_path_count": (
+            blocker_manifest.horizon_5_lifecycle_crossing_path_count
+        ),
         "terminal_census_report_sha256": terminal.report_sha256,
         "terminal_census_logical_fingerprint": terminal_report.logical_fingerprint,
+        "terminal_population_instrument_count": (
+            terminal_report.population_instrument_count
+        ),
+        "terminal_reference_documented_instrument_count": (
+            terminal_report.reference_documented_instrument_count
+        ),
+        "terminal_reference_gap_instrument_count": (
+            terminal_report.remaining_gap_instrument_count
+        ),
+        "terminal_reference_documented_horizon_5_path_count": (
+            terminal_report.documented_horizon_5_crossing_path_count
+        ),
+        "terminal_reference_gap_horizon_5_path_count": (
+            terminal_report.remaining_horizon_5_crossing_path_count
+        ),
         "family_reviews": _family_reviews(
             development=development,
             blocker_manifest=blocker_manifest,
