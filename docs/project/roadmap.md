@@ -126,18 +126,20 @@ not five-year performance admission.
    non-election identities and gross daily reference values now pass their
    frozen evidence gates. All values retain unverified-adjustment flags and
    remain non-outcomes.
-19. Preserve the completed terminal-gap census: 42 / 64 securities have daily
-   reference evidence and 22 remain unresolved; five-session path impact is
-   162 documented versus 90 unresolved out of 252. References are not outcomes.
-20. Adjudicate the nine cessation-timing cases and three exceptional primary-
-   source cases before complex valuation. Test a commercial source only
-   against a measured field that remains after this review; do not repeat a
-   global vendor scan.
-21. Then address six CVR, three holder-election/proration, and one unlisted-
+19. Preserve the corrected EOD-boundary worklist: terminal-gap census V2 has
+   65 securities / 302 five-session paths. Forty-two securities / 196 paths
+   have daily reference evidence and 23 / 106 remain unresolved. References
+   are not outcomes.
+20. Complete the newly in-scope `SCS` stable-ID primary-source chain before
+   extending any decision from the historical 64-case sample.
+21. Adjudicate the nine cessation-timing cases and three legacy exceptional
+   primary-source cases before complex valuation. Test a commercial source
+   only against a measured remaining field; do not repeat a global vendor scan.
+22. Then address six CVR, three holder-election/proration, and one unlisted-
    unit/election case under separate payoff policies.
-22. Resolve missing-event neutrality and remaining terminal outcomes without
+23. Resolve missing-event neutrality and remaining terminal outcomes without
    turning a ticker match or unique historical candidate into an assignment.
-23. Version and rerun the outcome-blind coverage census before any new research
+24. Version and rerun the outcome-blind coverage census before any new research
    admission decision; do not repeat the unchanged 2026-09-10 rejection.
 
 Massive Starter remains the primary price/reference source but is not the sole

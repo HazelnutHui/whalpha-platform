@@ -4,6 +4,10 @@
 
 Accepted.
 
+ADR 0253 and ADR 0254 supersede this ADR's population and path counts for
+future terminal work. Preserve this decision as the immutable record of the
+prior identity-boundary calculation.
+
 ## Context
 
 The Strong-Leader Pullback development-admission decision remains bound to the

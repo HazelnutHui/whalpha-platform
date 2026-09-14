@@ -1,5 +1,10 @@
 # Strong-Leader Pullback Terminal Gap Census V1
 
+> Historical contract notice: ADR 0253 proved that V1's path counts used an
+> Instrument Master observation boundary rather than canonical EOD presence.
+> Preserve V1 for lineage only. Terminal population and impact authority now
+> belongs to [V2](strong-leader-pullback-terminal-gap-census-v2.md).
+
 ## Purpose
 
 This contract measures the exact terminal-evidence state of all stable

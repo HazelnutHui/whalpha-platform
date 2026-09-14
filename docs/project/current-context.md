@@ -300,14 +300,25 @@ Important private Dell evidence includes:
   respectively; the final residual logical fingerprint is
   `88d4a22d607b45a6c0fbc23a0b318ae568dc35c5cd56393a6a796f113ea54168`;
   and
-- the first-strategy terminal-gap census: all 64 five-session lifecycle-
-  crossing securities are retained. Forty-two have gross daily reference-
-  value evidence and 22 remain unresolved; the corresponding five-session
-  path split is 162 documented versus 90 unresolved out of 252. This is not
-  terminal-outcome or admission authority. Report SHA-256 is
-  `004598ae1d3ee5f93500e2372770ffb82c0c7138230642e37306552e776ad06f`
+- the first-strategy terminal boundary correction: Instrument Master's last
+  observation is now kept separate from the last stable-ID EOD presence in
+  the registered strategy window. Fifty-five of 89 lifecycle rows change at
+  least one 1/3/5-session impact count; corrected five-session scope is 65
+  securities / 302 paths instead of the historical identity-boundary result
+  of 64 / 252. The correction report SHA-256 is
+  `a1fddf42680e65ad90250df2cb94b87058f02e0e157240c375551529606f9013`
   and logical fingerprint is
-  `148d8822d5b304b2aab9a481642a70fd905bcb16af17f67ec051a3d447d65ace`.
+  `cb2aba6d936906d5e4a21f14fea2c9a6ff5337aee7ee3505c2c3977df909f0a7`;
+  and
+- the authoritative first-strategy terminal-gap census V2: 42 of 65
+  securities have gross daily reference-value evidence and 23 remain
+  unresolved. The corresponding five-session split is 196 documented versus
+  106 unresolved out of 302. `SCS` is the one newly in-scope stable-ID case
+  and remains unadjudicated; ticker grants no identity authority. This is not
+  terminal-outcome or admission authority. Report SHA-256 is
+  `1d920f4c44eb20bf312b667eb82a8944a9b63bfe0d3d7081a66e71c6f23e6cff`
+  and logical fingerprint is
+  `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`.
 
 Exact package identities and counts are retained in:
 
@@ -341,6 +352,7 @@ Exact package identities and counts are retained in:
 - [First-strategy listed-consideration residual adjudication audit](../audits/strong-leader-pullback-listed-consideration-residual-adjudication-2026-09-14.md)
 - [First-strategy listed-consideration residual terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-residual-terminal-evidence-2026-09-14.md)
 - [First-strategy terminal-gap census audit](../audits/strong-leader-pullback-terminal-gap-census-2026-09-14.md)
+- [First-strategy terminal-boundary correction audit](../audits/strong-leader-pullback-terminal-boundary-correction-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

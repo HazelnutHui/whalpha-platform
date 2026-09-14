@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-09-14 — Correct terminal scope to canonical EOD presence
+
+- Accepted ADRs 0253 and 0254 after proving that the prior terminal-gap counts
+  reused an Instrument Master observation date as if it were the last EOD
+  presence. The original 64-security report remains immutable historical
+  evidence but no longer governs terminal population or path counts.
+- A complete formal reread of 89 lifecycle rows, 287 Membership partitions,
+  and 292 registered EOD sessions found 55 securities with at least one changed
+  impact count. Corrected 1/3/5-session scope is 63 / 186 / 302 paths across
+  63 / 64 / 65 securities, versus the prior 10 / 135 / 252 paths across
+  10 / 63 / 64 securities.
+- Terminal-gap census V2 preserves all 64 prior evidence states and adds one
+  stable-ID-linked `SCS` case without ticker assignment. Forty-two of 65
+  securities now have reference evidence, covering 196 of 302 five-session
+  paths; 23 securities / 106 paths remain unresolved.
+- The correction report has SHA-256
+  `a1fddf42680e65ad90250df2cb94b87058f02e0e157240c375551529606f9013`
+  and logical fingerprint
+  `cb2aba6d936906d5e4a21f14fea2c9a6ff5337aee7ee3505c2c3977df909f0a`.
+  V2 has SHA-256
+  `1d920f4c44eb20bf312b667eb82a8944a9b63bfe0d3d7081a66e71c6f23e6cff`
+  and logical fingerprint
+  `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`.
+- Both artifacts formally reread with owner-only modes and no symlink,
+  partial, or staging residue. No network request, `/data` write, outcome,
+  research admission, Candidate change, publication, deployment, or scheduler
+  mutation occurred.
+- The complete API regression passed 2,750 tests with two unchanged dependency
+  deprecation warnings.
+
 ## 2026-09-14 — Measure the remaining first-strategy terminal gaps
 
 - Accepted ADR 0252 and added a network-disabled, outcome-blind terminal-gap
