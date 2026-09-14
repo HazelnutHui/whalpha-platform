@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
@@ -23,10 +24,12 @@ from tip_api.contracts.analytics.v1 import (
     StrongLeaderPullbackCohortAssignmentV1,
     StrongLeaderPullbackCohortRole,
     StrongLeaderPullbackMechanicsBatchV1,
+    StrongLeaderPullbackMethodV1,
     StrongLeaderPullbackObservationV1,
     StrongLeaderPullbackParameterCombinationV1,
     research_execution_fingerprint,
     strategy_channel_logical_fingerprint,
+    strong_leader_pullback_method_v1,
     strong_stock_pullback_research_experiment_v1,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
@@ -51,6 +54,14 @@ class ResearchOutcomeBarV1:
     high: Decimal
     low: Decimal
     close: Decimal
+
+
+@dataclass(frozen=True, slots=True)
+class _StrongLeaderPullbackExecutionRules:
+    leadership_gates: dict[str, tuple[Decimal, Decimal]]
+    pullback_bands: dict[str, tuple[Decimal, Decimal]]
+    recovery_triggers: frozenset[str]
+    volume_caps: dict[str, Decimal]
 
 
 def build_candidate_strategy_chronological_plan(
@@ -166,12 +177,22 @@ def build_strong_leader_pullback_observation(
 def enumerate_strong_leader_pullback_parameters(
     *,
     experiment: CandidateStrategyResearchExperimentV1 | None = None,
+    method: StrongLeaderPullbackMethodV1 | None = None,
 ) -> tuple[StrongLeaderPullbackParameterCombinationV1, ...]:
     """Enumerate exactly the preregistered 24 development combinations."""
 
     frozen = experiment or strong_stock_pullback_research_experiment_v1()
+    canonical_method = method or strong_leader_pullback_method_v1()
     _validate_frozen_experiment(frozen)
-    dimensions = {item.parameter_id: item.candidate_values for item in frozen.parameter_grid}
+    _validate_canonical_method(canonical_method)
+    if canonical_method.source_experiment_fingerprint != frozen.logical_fingerprint:
+        raise CandidateStrategyResearchExecutionError(
+            "method and frozen experiment differ"
+        )
+    dimensions = {
+        item.parameter_id: item.canonical_candidate_values
+        for item in canonical_method.parameters
+    }
     required = (
         "leadership_gate",
         "pullback_depth_atr_band",
@@ -205,11 +226,18 @@ def build_strong_leader_pullback_mechanics(
     plan: CandidateStrategyChronologicalPlanV1,
     observations: tuple[StrongLeaderPullbackObservationV1, ...],
     experiment: CandidateStrategyResearchExperimentV1 | None = None,
+    method: StrongLeaderPullbackMethodV1 | None = None,
 ) -> StrongLeaderPullbackMechanicsBatchV1:
     """Assign signal versus same-session eligible-leader control without labels."""
 
     frozen = experiment or strong_stock_pullback_research_experiment_v1()
+    canonical_method = method or strong_leader_pullback_method_v1()
     _validate_frozen_experiment(frozen)
+    _validate_canonical_method(canonical_method)
+    if canonical_method.source_experiment_fingerprint != frozen.logical_fingerprint:
+        raise CandidateStrategyResearchExecutionError(
+            "method and frozen experiment differ"
+        )
     if plan.experiment_fingerprint != frozen.logical_fingerprint:
         raise CandidateStrategyResearchExecutionError(
             "chronological plan and experiment differ"
@@ -227,7 +255,11 @@ def build_strong_leader_pullback_mechanics(
         raise CandidateStrategyResearchExecutionError(
             "research observation is outside the chronological plan"
         )
-    combinations = enumerate_strong_leader_pullback_parameters(experiment=frozen)
+    combinations = enumerate_strong_leader_pullback_parameters(
+        experiment=frozen,
+        method=canonical_method,
+    )
+    execution_rules = _execution_rules(canonical_method)
     assignments: list[StrongLeaderPullbackCohortAssignmentV1] = []
     for combination in combinations:
         for observation in observations:
@@ -236,6 +268,7 @@ def build_strong_leader_pullback_mechanics(
                 observation=observation,
                 combination=combination,
                 session_assignment=session_assignment,
+                execution_rules=execution_rules,
             )
             payload: dict[str, object] = {
                 "as_of_session": observation.as_of_session,
@@ -269,6 +302,8 @@ def build_strong_leader_pullback_mechanics(
         role_counts[item.cohort_role.value] = role_counts.get(item.cohort_role.value, 0) + 1
     payload = {
         "experiment_fingerprint": frozen.logical_fingerprint,
+        "method_version": canonical_method.method_version,
+        "method_fingerprint": canonical_method.logical_fingerprint,
         "chronological_plan_fingerprint": plan.logical_fingerprint,
         "parameter_combinations": combinations,
         "observation_count": len(observations),
@@ -464,6 +499,7 @@ def _cohort_role(
     observation: StrongLeaderPullbackObservationV1,
     combination: StrongLeaderPullbackParameterCombinationV1,
     session_assignment: StrategyResearchSessionAssignmentV1,
+    execution_rules: _StrongLeaderPullbackExecutionRules,
 ) -> tuple[StrongLeaderPullbackCohortRole, bool, bool, tuple[str, ...]]:
     if not session_assignment.usable_for_signal_evaluation:
         return (
@@ -485,7 +521,14 @@ def _cohort_role(
             False,
             ("point_in_time_membership_not_eligible",),
         )
-    rs_min, trend_min = _leadership_thresholds(combination.leadership_gate)
+    try:
+        rs_min, trend_min = execution_rules.leadership_gates[
+            combination.leadership_gate
+        ]
+    except KeyError as exc:
+        raise CandidateStrategyResearchExecutionError(
+            "unknown preregistered leadership gate"
+        ) from exc
     rs = Decimal(observation.relative_strength_20s_percentile)
     trend = Decimal(observation.trend_quality_score)
     leader = rs >= rs_min and trend >= trend_min
@@ -496,16 +539,35 @@ def _cohort_role(
             False,
             ("leadership_gate_not_met",),
         )
-    depth_min, depth_max = _pullback_band(combination.pullback_depth_atr_band)
+    try:
+        depth_min, depth_max = execution_rules.pullback_bands[
+            combination.pullback_depth_atr_band
+        ]
+    except KeyError as exc:
+        raise CandidateStrategyResearchExecutionError(
+            "unknown preregistered pullback band"
+        ) from exc
     depth = Decimal(observation.pullback_depth_atr)
     volume = Decimal(observation.pullback_volume_ratio)
     depth_ok = depth_min <= depth <= depth_max
+    if combination.recovery_trigger not in execution_rules.recovery_triggers:
+        raise CandidateStrategyResearchExecutionError(
+            "unknown preregistered recovery trigger"
+        )
     recovery_ok = (
         observation.close_above_prior_close
         if combination.recovery_trigger == "close_above_prior_close"
         else observation.close_above_prior_high
     )
-    volume_ok = volume <= Decimal(combination.volume_contraction_ratio_max)
+    try:
+        volume_cap = execution_rules.volume_caps[
+            combination.volume_contraction_ratio_max
+        ]
+    except KeyError as exc:
+        raise CandidateStrategyResearchExecutionError(
+            "unknown preregistered volume cap"
+        ) from exc
+    volume_ok = volume <= volume_cap
     if depth_ok and recovery_ok and volume_ok:
         return (
             StrongLeaderPullbackCohortRole.SIGNAL,
@@ -604,37 +666,62 @@ def _assignment_counts(
     return counts
 
 
-def _leadership_thresholds(value: str) -> tuple[Decimal, Decimal]:
-    mapping = {
-        "rs20_percentile_gte_0.80_and_trend_quality_gte_70": (
-            Decimal("0.80"),
-            Decimal("70"),
-        ),
-        "rs20_percentile_gte_0.90_and_trend_quality_gte_75": (
-            Decimal("0.90"),
-            Decimal("75"),
-        ),
+def _execution_rules(
+    method: StrongLeaderPullbackMethodV1,
+) -> _StrongLeaderPullbackExecutionRules:
+    values = {
+        item.parameter_id: item.canonical_candidate_values
+        for item in method.parameters
     }
-    try:
-        return mapping[value]
-    except KeyError as exc:
+    leadership_pattern = re.compile(
+        r"^rs20_percentile_gte_(\d+\.\d+)_and_trend_quality_gte_(\d+)$"
+    )
+    band_pattern = re.compile(r"^(\d+\.\d+)_to_(\d+\.\d+)$")
+    leadership: dict[str, tuple[Decimal, Decimal]] = {}
+    for value in values["leadership_gate"]:
+        match = leadership_pattern.fullmatch(value)
+        if match is None:
+            raise CandidateStrategyResearchExecutionError(
+                "canonical leadership gate is not executable"
+            )
+        leadership[value] = (Decimal(match[1]), Decimal(match[2]))
+    bands: dict[str, tuple[Decimal, Decimal]] = {}
+    for value in values["pullback_depth_atr_band"]:
+        match = band_pattern.fullmatch(value)
+        if match is None:
+            raise CandidateStrategyResearchExecutionError(
+                "canonical pullback band is not executable"
+            )
+        bounds = (Decimal(match[1]), Decimal(match[2]))
+        if bounds[0] > bounds[1]:
+            raise CandidateStrategyResearchExecutionError(
+                "canonical pullback band is reversed"
+            )
+        bands[value] = bounds
+    recoveries = frozenset(values["recovery_trigger"])
+    if recoveries != frozenset(
+        {"close_above_prior_close", "close_above_prior_high"}
+    ):
         raise CandidateStrategyResearchExecutionError(
-            "unknown preregistered leadership gate"
-        ) from exc
+            "canonical recovery triggers are not executable"
+        )
+    volume_caps = {
+        value: Decimal(value)
+        for value in values["volume_contraction_ratio_max"]
+    }
+    return _StrongLeaderPullbackExecutionRules(
+        leadership_gates=leadership,
+        pullback_bands=bands,
+        recovery_triggers=recoveries,
+        volume_caps=volume_caps,
+    )
 
 
-def _pullback_band(value: str) -> tuple[Decimal, Decimal]:
-    mapping = {
-        "0.50_to_1.50": (Decimal("0.50"), Decimal("1.50")),
-        "0.75_to_2.00": (Decimal("0.75"), Decimal("2.00")),
-        "1.00_to_2.50": (Decimal("1.00"), Decimal("2.50")),
-    }
-    try:
-        return mapping[value]
-    except KeyError as exc:
+def _validate_canonical_method(method: StrongLeaderPullbackMethodV1) -> None:
+    if method != strong_leader_pullback_method_v1():
         raise CandidateStrategyResearchExecutionError(
-            "unknown preregistered pullback band"
-        ) from exc
+            "research execution requires the exact canonical first method"
+        )
 
 
 def _return(exit_price: Decimal, entry_price: Decimal) -> Decimal:

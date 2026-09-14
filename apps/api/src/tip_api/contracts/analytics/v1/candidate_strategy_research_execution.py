@@ -21,9 +21,13 @@ from .candidate_strategy_research import (
     STRONG_STOCK_PULLBACK_EXPERIMENT_ID,
     STRONG_STOCK_PULLBACK_RESEARCH_FINGERPRINT,
 )
+from .strong_leader_pullback_method import (
+    STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT,
+    STRONG_LEADER_PULLBACK_METHOD_VERSION,
+)
 
 
-RESEARCH_EXECUTION_CONTRACT_VERSION = "candidate-strategy-research-execution/1.1"
+RESEARCH_EXECUTION_CONTRACT_VERSION = "candidate-strategy-research-execution/1.2"
 STRONG_LEADER_PULLBACK_OBSERVATION_VERSION = (
     "strong-leader-pullback-observation/1.1"
 )
@@ -274,6 +278,12 @@ class StrongLeaderPullbackMechanicsBatchV1(FrozenModel):
     )
     experiment_fingerprint: Literal[STRONG_STOCK_PULLBACK_RESEARCH_FINGERPRINT] = (
         STRONG_STOCK_PULLBACK_RESEARCH_FINGERPRINT
+    )
+    method_version: Literal[STRONG_LEADER_PULLBACK_METHOD_VERSION] = (
+        STRONG_LEADER_PULLBACK_METHOD_VERSION
+    )
+    method_fingerprint: Literal[STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT] = (
+        STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT
     )
     chronological_plan_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     parameter_combinations: tuple[StrongLeaderPullbackParameterCombinationV1, ...]

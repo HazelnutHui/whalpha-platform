@@ -128,6 +128,9 @@ The canonical outcome-blind method contract is
 `ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba`.
 Its derived Lab record is `quant-research-lab-model-record/1.1`, remains
 method-only and Candidate-ineligible, and carries no real result.
+The pure mechanics contract is `candidate-strategy-research-execution/1.2`;
+each mechanics batch binds the same method and experiment fingerprints and is
+fixed to zero forward outcomes and zero performance authority.
 
 The final performance-admission report remains
 `rejected_data_blocked`. Report SHA-256:

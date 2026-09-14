@@ -35,6 +35,9 @@ STRONG_LEADER_PULLBACK_FORMAL_DATA_GATE_STATUS = "rejected_data_blocked"
 STRONG_LEADER_PULLBACK_METHOD_ENGINEERING_LAUNCH_FINGERPRINT = (
     "1abb4ed53d4a4cb5bb6482432db254a0019168aae2712983a9d00aaa4cffef8c"
 )
+STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT = (
+    "ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba"
+)
 
 
 def _fingerprint(value: object) -> str:
@@ -220,7 +223,9 @@ class StrongLeaderPullbackMethodV1(FrozenModel):
     holdout_access_authorized: Literal[False] = False
     performance_claims_authorized: Literal[False] = False
     candidate_activation_authorized: Literal[False] = False
-    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    logical_fingerprint: Literal[STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT] = (
+        STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT
+    )
 
     @model_validator(mode="after")
     def method_reconciles(self) -> "StrongLeaderPullbackMethodV1":

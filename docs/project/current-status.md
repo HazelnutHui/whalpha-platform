@@ -14,9 +14,9 @@ ADRs, and audits.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** incomplete; formal state
   `data_blocked`.
-- **First strategy:** its canonical outcome-blind method and derived Lab record
-  are implemented; signal execution and diagnostics are next. No real result
-  or Candidate authority exists.
+- **First strategy:** its canonical method, derived Lab record, and pure
+  signal/cohort engine are implemented; outcome-blind diagnostics are next.
+  No real result or Candidate authority exists.
 - **External source:** none selected; the owner-reported LSEG inquiry is
   optional for the next engineering phase.
 - **Automation:** guarded manual daily operation works; unattended write-
@@ -105,9 +105,8 @@ measured budget breach.
 
 ## Immediate boundary
 
-1. Implement the pure Strong-Leader Pullback signal/eligibility engine without
-   opening forward outcomes.
-2. Build its private outcome-blind diagnostics and adversarial test suite.
+1. Build the private Strong-Leader Pullback outcome-blind diagnostics.
+2. Complete its adversarial and property-test suite.
 3. Complete the Lab method presentation and independent zero-authority review.
 4. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.

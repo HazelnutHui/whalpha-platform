@@ -46,23 +46,24 @@ Completed on 2026-09-14: the versioned method contract now owns the registered
 features, exact data lineage, formulas, parameter budget, evaluation design,
 and authority flags. The input calculator and Lab projection bind that source.
 
+The pure signal/eligibility implementation is also complete: existing
+chronology and cohort mechanics now derive executable thresholds from that
+method and stamp its immutable identity on zero-outcome batches.
+
 Continue in this order:
 
-1. **Pure implementation:** complete the signal/eligibility calculation using
-   stable-ID joins and explicit session clocks. No forward outcome may be read
-   or emitted.
-2. **Outcome-blind diagnostics:** measure feature coverage, distributions,
+1. **Outcome-blind diagnostics:** measure feature coverage, distributions,
    ties, missingness, concentration, and discontinuity sensitivity from the
    fixed reconstructed method population. Preserve its
    `reconstructed_latest_vintage_method_engineering_only` tier.
-3. **Adversarial verification:** test chronology, warm-up, next-open boundary,
+2. **Adversarial verification:** test chronology, warm-up, next-open boundary,
    rank ties, missing paths, split discontinuities, stable-ID collisions,
    deterministic replay, and zero-label isolation.
-4. **Lab presentation:** show model ownership, hypothesis, mechanism, complete
+3. **Lab presentation:** show model ownership, hypothesis, mechanism, complete
    formulas, fixed 24-combination budget, intended evaluation, readiness,
    blockers, limitations, lifecycle, and reproduction identity. Display no
    empty or invented performance metric.
-5. **Independent completion review:** prove the method and Lab projection bind
+4. **Independent completion review:** prove the method and Lab projection bind
    the same versioned inputs, every real outcome/selection count is zero, and
    the formal performance gate remains rejected.
 

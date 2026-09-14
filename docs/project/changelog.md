@@ -16,6 +16,9 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Upgraded the Lab model record to V1.1 so the browser exposes both method
   identity and actual raw-source lineage while retaining zero real results,
   zero Candidate authority, and the formal `rejected_data_blocked` state.
+- Bound the existing pure cohort engine to the same method, removed its
+  duplicate numeric threshold tables, added inclusive-boundary verification,
+  and stamped method identity on every zero-outcome mechanics batch.
 
 ## 2026-09-14 — Slim the default recovery path before strategy work
 

@@ -5,6 +5,12 @@
 This contract makes the first Quant Research Lab experiment's chronological
 and anti-leakage mechanics executable without starting a real backtest.
 
+The current execution contract is
+`candidate-strategy-research-execution/1.2`. Its Strong-Leader Pullback
+mechanics batch binds both the frozen experiment and
+`strong-leader-pullback-method/1.0.0`; formula and parameter execution cannot
+silently drift from the method displayed by Quant Research Lab.
+
 ## Records
 
 ### Chronological plan
@@ -35,6 +41,7 @@ For each combination and observation, the cohort contract records one of:
 
 The mechanics batch is self-fingerprinted and must state both
 `contains_forward_outcomes=false` and `performance_claim_authorized=false`.
+Its method version and immutable method fingerprint are mandatory fields.
 
 ### Forward outcomes
 
@@ -47,10 +54,12 @@ with no numeric result.
 
 ## Current implementation boundary
 
-Python/Pydantic contracts and pure services are covered by synthetic tests.
-ADR 0186 adds an outcome-free, fail-closed input-construction adapter with exact
-feature semantics and complete-cross-section admission. There is no real
-filesystem orchestration, canonical persistence, CLI, development selection,
-real report, result publication, or deployment. The real experiment remains
-`preregistered_data_blocked`; this contract grants no authority to use
-incomplete current history.
+Python/Pydantic contracts and pure services are covered by synthetic and
+boundary tests. ADR 0186 adds an outcome-free, fail-closed input-construction
+adapter with exact feature semantics and complete-cross-section admission.
+The execution service derives all 24 combinations and executable numeric
+thresholds from the canonical method instead of maintaining a second
+threshold table. There is no real filesystem orchestration, canonical
+persistence, CLI, development selection, real report, result publication, or
+deployment. The real experiment remains `preregistered_data_blocked`; this
+contract grants no authority to use incomplete current history.

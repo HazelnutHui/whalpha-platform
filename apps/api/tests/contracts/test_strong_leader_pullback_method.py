@@ -8,6 +8,7 @@ from pydantic import ValidationError
 from tip_api.contracts.analytics.v1 import (
     STRONG_LEADER_PULLBACK_INPUT_FEATURE_FINGERPRINT,
     STRONG_LEADER_PULLBACK_METHOD_ENGINEERING_LAUNCH_FINGERPRINT,
+    STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT,
     StrongLeaderPullbackMethodV1,
     strong_leader_pullback_method_fingerprint,
     strong_leader_pullback_method_v1,
@@ -32,6 +33,7 @@ def test_method_is_deterministic_and_preserves_registered_identity() -> None:
     assert first.method_engineering_launch_fingerprint == (
         STRONG_LEADER_PULLBACK_METHOD_ENGINEERING_LAUNCH_FINGERPRINT
     )
+    assert first.logical_fingerprint == STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT
     assert first.logical_fingerprint == strong_leader_pullback_method_fingerprint(first)
 
 
@@ -84,12 +86,12 @@ def test_method_rejects_formula_drift_without_new_fingerprint() -> None:
         StrongLeaderPullbackMethodV1.model_validate(payload)
 
 
-def test_method_rejects_unregistered_parameter_even_with_new_fingerprint() -> None:
+def test_method_rejects_unregistered_parameter_even_with_recomputed_fingerprint() -> None:
     payload = _method_payload()
     parameters = deepcopy(payload["parameters"])
     parameters[0]["canonical_candidate_values"][0] = "unregistered_gate"
     payload["parameters"] = parameters
     payload["logical_fingerprint"] = strong_leader_pullback_method_fingerprint(payload)
 
-    with pytest.raises(ValidationError, match="frozen experiment grid"):
+    with pytest.raises(ValidationError, match="Input should be"):
         StrongLeaderPullbackMethodV1.model_validate(payload)

@@ -72,3 +72,9 @@ The checked-in Lab JSON is a derived projection of this contract. Automated
 tests require its formulae, displayed parameter values, method fingerprint,
 feature fingerprint, and experiment fingerprint to match the canonical
 builder exactly.
+
+The pure mechanics service also consumes this contract directly. It parses the
+registered canonical parameter strings into numeric execution rules, emits all
+24 combinations, applies inclusive boundaries, and stamps the method version
+and fingerprint on every mechanics batch. It emits cohort assignments only;
+real outcomes remain outside the authorized method-engineering path.

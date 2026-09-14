@@ -7,6 +7,7 @@ from uuid import UUID
 import pytest
 
 from tip_api.contracts.analytics.v1 import (
+    STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT,
     CandidateStrategySignalV1,
     ResearchSessionExclusionCode,
     StrategyChannel,
@@ -18,6 +19,7 @@ from tip_api.contracts.analytics.v1 import (
     StrongLeaderPullbackCohortRole,
     candidate_strategy_signal_id,
     strategy_channel_logical_fingerprint,
+    strong_leader_pullback_method_v1,
 )
 from tip_api.services.candidate_strategy_research_execution import (
     CandidateStrategyResearchExecutionError,
@@ -235,6 +237,24 @@ def test_all_24_preregistered_parameter_combinations_are_deterministic() -> None
     assert len(first) == 24
     assert len({item.combination_id for item in first}) == 24
 
+    method = strong_leader_pullback_method_v1()
+    for parameter in method.parameters:
+        assert tuple(
+            dict.fromkeys(
+                getattr(combination, parameter.parameter_id)
+                for combination in first
+            )
+        ) == parameter.canonical_candidate_values
+
+
+def test_parameter_enumeration_rejects_noncanonical_method() -> None:
+    method = strong_leader_pullback_method_v1().model_copy(
+        update={"decision_use": "silently changed"}
+    )
+
+    with pytest.raises(CandidateStrategyResearchExecutionError, match="exact canonical"):
+        enumerate_strong_leader_pullback_parameters(method=method)
+
 
 def test_mechanics_match_independent_oracle_and_never_contain_outcomes(
     ordered_sessions: tuple[date, ...],
@@ -291,8 +311,57 @@ def test_mechanics_match_independent_oracle_and_never_contain_outcomes(
         )
         assert assignment.sealed_without_outcomes is True
     assert len(batch.assignments) == 96
+    assert batch.method_fingerprint == STRONG_LEADER_PULLBACK_METHOD_FINGERPRINT
     assert batch.contains_forward_outcomes is False
     assert batch.performance_claim_authorized is False
+
+
+def test_registered_thresholds_are_inclusive_at_exact_boundaries(
+    ordered_sessions: tuple[date, ...],
+) -> None:
+    plan = build_candidate_strategy_chronological_plan(
+        ordered_sessions=ordered_sessions
+    )
+    observation = _observation(
+        session=ordered_sessions[40],
+        instrument_index=0,
+        relative_strength="0.8000",
+        trend_quality="70.0000",
+        pullback_depth="0.5000",
+        close_above_prior_close=True,
+        close_above_prior_high=False,
+        volume_ratio="0.8000",
+    )
+    batch = build_strong_leader_pullback_mechanics(
+        plan=plan,
+        observations=(observation,),
+    )
+    combination_by_id = {
+        item.combination_id: item for item in batch.parameter_combinations
+    }
+    matching = tuple(
+        assignment
+        for assignment in batch.assignments
+        if (
+            combination_by_id[assignment.parameter_combination_id].leadership_gate
+            == "rs20_percentile_gte_0.80_and_trend_quality_gte_70"
+            and combination_by_id[
+                assignment.parameter_combination_id
+            ].pullback_depth_atr_band
+            == "0.50_to_1.50"
+            and combination_by_id[
+                assignment.parameter_combination_id
+            ].recovery_trigger
+            == "close_above_prior_close"
+            and combination_by_id[
+                assignment.parameter_combination_id
+            ].volume_contraction_ratio_max
+            == "0.80"
+        )
+    )
+
+    assert len(matching) == 1
+    assert matching[0].cohort_role is StrongLeaderPullbackCohortRole.SIGNAL
 
 
 def test_boundary_observation_is_excluded_before_setup_evaluation(
