@@ -341,7 +341,7 @@ def build_strong_leader_pullback_sec_lifecycle_pilot(
             range_start=range_start,
             range_end=range_end,
         )
-        _validate_source_binding(
+        validate_sec_lifecycle_submissions_binding(
             submissions_package_path=submissions_package_path,
             source=source,
             census=census,
@@ -396,7 +396,7 @@ def read_strong_leader_pullback_sec_lifecycle_pilot(
     )
 
 
-def _validate_source_binding(
+def validate_sec_lifecycle_submissions_binding(
     *,
     submissions_package_path: Path,
     source: SecSubmissionsSourceManifestV1,
@@ -461,7 +461,7 @@ def _compose_report(
         results = tuple(
             sorted(
                 (
-                    _build_case(
+                    build_sec_lifecycle_case_from_archive(
                         archive=archive,
                         archive_names=name_set,
                         case=item,
@@ -537,7 +537,7 @@ def _compose_report(
     )
 
 
-def _build_case(
+def build_sec_lifecycle_case_from_archive(
     *, archive: zipfile.ZipFile, archive_names: frozenset[str], case: object,
     range_start: date, range_end: date,
 ) -> SecLifecycleCasePilotV1:

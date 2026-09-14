@@ -145,6 +145,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal Gap Census V2](data-contracts/strong-leader-pullback-terminal-gap-census-v2.md):
   preserves prior evidence states while rebuilding the terminal worklist on
   corrected EOD-boundary counts and stable-ID source lineage.
+- [Strong-Leader Pullback Terminal-Population SEC Source Plan V1](data-contracts/strong-leader-pullback-terminal-population-sec-source-plan-v1.md):
+  freezes exact SEC locators for newly in-scope stable-ID cases before any
+  external request or fact adjudication.
 - [Strong-Leader Pullback Terminal Gap Census V1](data-contracts/strong-leader-pullback-terminal-gap-census-v1.md):
   preserves the original identity-boundary result; ADR 0253 requires a
   versioned EOD-boundary successor before its counts are used again.
@@ -268,6 +271,9 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback Listed-Consideration Residual Adjudication](operations/strong-leader-pullback-listed-consideration-residual-adjudication.md)
 - [Strong-Leader Pullback Listed-Consideration Residual Terminal Evidence](operations/strong-leader-pullback-listed-consideration-residual-terminal-evidence.md)
 - [Strong-Leader Pullback Terminal Gap Census](operations/strong-leader-pullback-terminal-gap-census.md)
+- [Strong-Leader Pullback Terminal Boundary Census](operations/strong-leader-pullback-terminal-boundary-census.md)
+- [Strong-Leader Pullback Terminal Gap Census V2](operations/strong-leader-pullback-terminal-gap-census-v2.md)
+- [Strong-Leader Pullback Terminal-Population SEC Source Plan](operations/strong-leader-pullback-terminal-population-sec-source-plan.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)

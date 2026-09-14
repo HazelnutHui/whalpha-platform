@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0255](0255-freeze-new-terminal-population-sec-sources-before-acquisition.md):
+  binds EOD-corrected new cases to stable-ID lifecycle lineage and freezes a
+  finite SEC document plan before any network request.
 - [ADR 0254](0254-rebuild-terminal-gaps-on-the-corrected-eod-population.md):
   preserves all prior evidence decisions while rebuilding terminal impact on
   the corrected EOD population and explicitly admitting newly found cases to
