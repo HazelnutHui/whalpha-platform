@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0252](0252-measure-terminal-evidence-gaps-before-versioning-research-admission.md):
+  binds all 64 lifecycle-crossing securities to their current reference-value
+  or unresolved state before any new coverage or admission contract.
 - [ADR 0251](0251-extend-listed-consideration-reference-values-without-rewriting-prior-evidence.md):
   adds the three residual daily reference values while preserving the original
   nine-value report and its evidence vintage.
