@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-14 — Adjudicate corrected-population SEC core evidence
+
+- Accepted ADR 0259 and independently applied the established point-in-time
+  cover, transaction-completion, Item 3.01 termination-reason, and primary
+  common-share consideration rules to SCS.
+- The stable-ID-bound Class A common-equity cover, 2025-12-10 issuer completion,
+  merger/acquisition listing-termination reason, and holder-election cash-or-
+  listed-stock consideration structure are matched. The Form 25, Form 15, and
+  8-K chains reconcile on CIK, Commission file, security class, and exchange.
+- The report has SHA-256
+  `aa37836aa161ee21f96c5a8920e09ae780fc454455d22c85703c9538377f7321`
+  and logical fingerprint
+  `773ba35192f1d722412c1e1bea2fc98c8988722335f664eb2b5dcf9656054698`.
+  Exact replay returned `already_present`; modes are `0700/0400` and no
+  symlink, partial, or staging residue exists.
+- Twenty-nine focused/linked tests and the complete 2,765-test API suite passed
+  with two unchanged dependency warnings. Cessation, legal delisting,
+  election/proration, normalized payoff, terminal reference, outcome,
+  research admission, `/data`, Candidate, publication, deployment, and
+  scheduler state remain unchanged.
+
 ## 2026-09-14 — Extract corrected-population SEC field candidates
 
 - Accepted ADR 0258 and applied the existing Form 25, Form 15, and transaction-

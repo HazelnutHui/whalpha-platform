@@ -352,7 +352,18 @@ Important private Dell evidence includes:
   `f64a9df580409e426b31032cce602c1d14ff077f1d7e887736ea8812c09c41fd`
   and logical fingerprint is
   `c351199c90fb5016900980841a776eb61dbdef7a0d24887c8c0ea78e208ff5a3`.
-  Every complete lifecycle-field support and authority count remains zero.
+  Every complete lifecycle-field support and authority count remains zero;
+  and
+- the corrected-population SEC core adjudication: SCS has one point-in-time
+  matched XNYS Class A common-equity cover, a uniquely selected 2025-12-10
+  issuer completion date, a bounded Item 3.01 merger/acquisition termination
+  reason, and a primary holder-election cash-or-stock consideration structure.
+  The report has SHA-256
+  `aa37836aa161ee21f96c5a8920e09ae780fc454455d22c85703c9538377f7321`
+  and logical fingerprint
+  `773ba35192f1d722412c1e1bea2fc98c8988722335f664eb2b5dcf9656054698`.
+  Cessation, effective delisting, election/proration, terminal value, outcome,
+  and research authority remain absent.
 
 Exact package identities and counts are retained in:
 
@@ -391,6 +402,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-population SEC source-custody audit](../audits/strong-leader-pullback-terminal-population-sec-source-custody-2026-09-14.md)
 - [First-strategy terminal-population SEC content-census audit](../audits/strong-leader-pullback-terminal-population-sec-content-census-2026-09-14.md)
 - [First-strategy terminal-population SEC field-candidate audit](../audits/strong-leader-pullback-terminal-population-sec-field-candidates-2026-09-14.md)
+- [First-strategy terminal-population SEC core-adjudication audit](../audits/strong-leader-pullback-terminal-population-sec-core-adjudication-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
