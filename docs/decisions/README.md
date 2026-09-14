@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0266](0266-separate-outcome-blind-method-engineering-from-performance-admission.md):
+  permits bounded outcome-blind strategy and Lab engineering while the formal
+  performance gate remains rejected.
 - [ADR 0265](0265-stop-first-strategy-at-a-transitive-data-admission-gate.md):
   binds all first-strategy data evidence into one outcome-blind gate and stops
   case-by-case work when missing source capabilities still block admission.

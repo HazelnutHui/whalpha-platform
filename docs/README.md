@@ -154,6 +154,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Pre-Research Admission Review V1](data-contracts/strong-leader-pullback-pre-research-admission-review-v1.md):
   binds daily Universe, action, adjustment, lifecycle, terminal, and coverage
   evidence into the final outcome-blind gate before first-strategy research.
+- [Strong-Leader Pullback Method-Engineering Launch Review V1](data-contracts/strong-leader-pullback-method-engineering-launch-review-v1.md):
+  permits bounded outcome-blind method and Lab engineering without weakening
+  the rejected performance gate.
 - [Strong-Leader Pullback Terminal-Population SEC Source Plan V1](data-contracts/strong-leader-pullback-terminal-population-sec-source-plan-v1.md):
   freezes exact SEC locators for newly in-scope stable-ID cases before any
   external request or fact adjudication.
@@ -317,6 +320,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback Terminal-Population SEC Core Adjudication](operations/strong-leader-pullback-terminal-population-sec-core-adjudication.md)
 - [Strong-Leader Pullback Terminal-Population Trading Cessation Adjudication](operations/strong-leader-pullback-terminal-population-trading-cessation-adjudication.md)
 - [Strong-Leader Pullback Terminal-Population Payoff Policy](operations/strong-leader-pullback-terminal-population-payoff-policy.md)
+- [Strong-Leader Pullback Method-Engineering Launch Review](operations/strong-leader-pullback-method-engineering-launch-review.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
