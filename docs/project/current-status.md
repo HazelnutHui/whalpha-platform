@@ -16,6 +16,9 @@ in [current context](current-context.md), proposed sequencing in the
   `data_blocked`.
 - **Research:** Strong-Leader Pullback is preregistered but has no real
   performance result or Candidate authority.
+- **External data gate:** LSEG contact is owner-reported submitted, but no
+  sample, field dictionary, quote, entitlement, or permission response has
+  been reviewed.
 - **Automation:** the guarded manual daily chain works; unattended write-capable
   operation is not active.
 
@@ -245,7 +248,10 @@ project.
    development-only status until independently stronger source evidence exists.
 5. Evaluate a targeted source only for the measured point-in-time lifecycle,
    complete corporate-action/adjustment, and terminal-consideration fields.
-   Rerun the versioned gate only after a mandatory input materially changes.
+   Wait for the LSEG sample response first; use ICE and then S&P only if LSEG
+   fails the frozen requirements. Do not build an adapter from marketing
+   pages. Rerun the versioned gate only after a mandatory input materially
+   changes.
 6. Run the registered chronological study only after admission; then preserve
    either the validated result or the failure.
 

@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-14 — Fix the first-strategy external source boundary
+
+- Reconciled the owner-reported LSEG general and student-information contact
+  submissions without treating them as a reviewed field response, trial,
+  entitlement, quote, permission grant, or source selection.
+- Rechecked official product capability and fixed the finite evaluation order
+  for the measured gate: LSEG DataScope Select first, ICE Corporate Actions if
+  LSEG fails, and S&P Managed Corporate Actions third. Venue feeds remain
+  benchmarks; Norgate and hosted backtest platforms are not substitutes for
+  the required source-time, successor, consideration, and trading-status
+  evidence.
+- Preserved the existing frozen 20-action / 64-lifecycle acceptance population
+  as the only valid comparison frame. No adapter, provider request, purchase,
+  credential access, `/data` write, gate rerun, strategy execution,
+  publication, or deployment was performed.
+
 ## 2026-09-14 — Stop the first strategy at the formal data gate
 
 - Added four strictly local terminal references for RNAM, TERN, PLYM, and FL.

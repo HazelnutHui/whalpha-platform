@@ -43,9 +43,11 @@ compares current official cross-venue and exchange documentation against the
 exact 547-item inactive queue. LSEG was the preferred first inquiry/sample
 candidate under ADR 0168, while Nasdaq, NYSE, and Cboe remain official venue
 benchmarks. ADR 0196 supersedes that mandatory ordering: LSEG is now a later
-measured-gap option. No
-additional cross-venue lifecycle source has been selected, purchased, accessed,
-permission-cleared, or implemented.
+measured-gap option. The later first-strategy gate has now measured that gap
+and makes LSEG the first sample candidate for its exact frozen population,
+followed by ICE and then S&P on failure. The owner reported submitting LSEG
+contact forms, but no additional cross-venue lifecycle source has been
+selected, purchased, accessed, permission-cleared, or implemented.
 
 ## Status meanings
 
@@ -172,12 +174,14 @@ complete effective-dated filer/security link and registered concept, unit,
 period, form, and projection methods are still required before security-level
 fundamental features are admitted. ADR 0215 governs this retained foundation.
 
-## Prepared next review packet
+## Pending source-response packet
 
 The repository now contains a
 [Source Selection and Permission Inquiry Packet V1](source-selection-permission-inquiry-packet-v1.md)
-covering the commercial and open-source questions below. It remains
-`PREPARED_NOT_SENT`. Before a pilot, the reviewed response must contain:
+covering the commercial and open-source questions below. LSEG contact is
+owner-reported submitted, but none of the exact questions has a reviewed
+response; other inquiries remain prepared and unsent. Before a pilot, the
+reviewed response must contain:
 
 - official source URLs and review timestamp;
 - current account plan and endpoint entitlement without exposing credentials;
@@ -189,8 +193,8 @@ covering the commercial and open-source questions below. It remains
 - canonical mapping, contradiction, quarantine, and completion gates;
 - explicit list of gaps that remain after the pilot.
 
-The packet is a review artifact, not standing authority. For lifecycle, the
-next external work is the ADR 0196 family census and bounded official/free
-source pilots. A commercial sample/price comparison follows only if that
-evidence leaves a measured material gap. Provider contact, purchase, access,
-pilot execution, and canonical Apply remain separately governed transitions.
+The packet is a review artifact, not standing authority. For the first
+strategy, the measured lifecycle/action gap now requires a production-
+representative LSEG sample, or ICE and then S&P if LSEG fails the same frozen
+gates. Provider response review, purchase, access, pilot execution, and
+canonical Apply remain separately governed transitions.

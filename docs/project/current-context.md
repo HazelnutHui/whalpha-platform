@@ -513,6 +513,11 @@ final transitive gate is `rejected_data_blocked`. Repetitive manual case work
 stops here; the next data action is a targeted evaluation of point-in-time
 lifecycle, complete corporate-action/adjustment, and terminal-consideration
 source capability. Massive Starter is not the sole lifecycle authority.
+The owner reported submitting general and student-information LSEG contact
+forms; no response, sample, quote, entitlement, or permission decision has
+been reviewed. The bounded evaluation order is LSEG, then ICE if LSEG fails,
+then S&P. No provider adapter is justified before a real sample passes the
+frozen 20-action / 64-lifecycle acceptance population.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are

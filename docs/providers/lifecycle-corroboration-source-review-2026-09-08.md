@@ -4,7 +4,7 @@
 
 `SAMPLE_REQUIRED_BEFORE_ADAPTER`
 
-`LSEG_FREE_TRIAL_REQUEST_READY_NOT_SUBMITTED`
+`LSEG_INQUIRIES_OWNER_REPORTED_SUBMITTED_AWAITING_RESPONSE`
 
 `MASSIVE_STARTER_REJECTED_AS_SOLE_PRIMARY_LIFECYCLE_SOURCE`
 
@@ -13,6 +13,40 @@ opinion, license approval, or purchase decision. The 2026-09-10 update used the
 current paid Massive account for the bounded diagnostic recorded below. No
 LSEG account, SFTP service, vendor contact form, Git remote, OCI host,
 Production website, or canonical `/data` path was accessed.
+
+## 2026-09-14 bounded decision checkpoint
+
+The owner reported submitting both a general LSEG contact request and a
+student-information request. This proves only that contact was initiated. No
+field dictionary, production-representative sample, quote, entitlement,
+retention permission, or derived-display permission has been received or
+reviewed in the repository.
+
+A current official-material recheck keeps the exact first-strategy order
+finite:
+
+1. Evaluate an LSEG DataScope Select sample for Equity Corporate Actions and
+   Equity Trading Status against the frozen 20-action / 64-lifecycle sample.
+2. If LSEG cannot provide the mandatory semantics, compatible use terms, or a
+   viable quote, evaluate ICE Corporate Actions against the same sample. ICE
+   publicly documents listing suspension/resumption, delisting, merger,
+   election, split, bankruptcy/liquidation, long history, revisions, and an
+   audit trail, but its exact payload and permission remain unverified.
+3. Use S&P Global Managed Corporate Actions as the third consolidated-source
+   candidate. Its public material documents validated event-level terms,
+   dates, options, and restrictions, but does not itself prove the complete
+   trading-status and last-tradable semantics required here.
+4. Keep Nasdaq, NYSE, and Cboe feeds as venue-specific benchmarks. Norgate and
+   hosted backtest platforms are not the first remedy for this gate because
+   their documented strengths do not establish the required source-time,
+   successor, consideration, and cross-venue trading-status evidence.
+
+This order is a source-evaluation sequence, not a vendor selection. Marketing
+coverage cannot pass the gate. The first response that supplies a usable
+sample must still produce one explicit result for every frozen case and pass
+all identity, revision, availability-clock, terminal, permission, and
+conflict requirements below. Do not implement an adapter while those inputs
+are absent.
 
 ## Evidence to close
 
@@ -156,12 +190,13 @@ the next governed cutoff.
 
 ## Next authorized boundary
 
-Submit the prepared LSEG DataScope Select free-trial/sample request only after
-the owner supplies the truthful contact and affiliation fields required by the
-form. If LSEG cannot provide the mandatory sample semantics or a viable quote,
-compare ICE and then S&P. After a sample is explicitly provisioned, formalize
-the 30-item pilot request ceiling from its actual delivery mechanics and only
-then implement a fixture-first adapter.
+Wait for the owner-reported LSEG inquiries to produce a field dictionary,
+production-representative sample, and itemized quote. If LSEG cannot provide
+the mandatory sample semantics, compatible use terms, or a viable quote,
+compare ICE and then S&P. After a sample is explicitly provisioned, bind the
+provider result to the current frozen 20-action / 64-lifecycle population and
+only then implement a fixture-first adapter.
 
-No contact, purchase, trial activation, account access, acquisition, canonical
-Apply, or lifecycle promotion is authorized by this review.
+No additional contact, purchase, trial activation, account access,
+acquisition, canonical Apply, or lifecycle promotion is authorized by this
+review.

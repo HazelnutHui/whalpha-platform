@@ -2,7 +2,11 @@
 
 ## Status
 
-`PREPARED_NOT_SENT`
+`LSEG_CONTACT_OWNER_REPORTED_SUBMITTED_RESPONSE_NOT_REVIEWED`
+
+The owner reported submitting general and student-information LSEG contact
+forms. The exact questions below have not received a reviewed response. Other
+provider inquiries remain prepared and unsent.
 
 This is the exact information-gathering template for a future provider inquiry.
 It is not a provider choice, legal conclusion, purchase approval, account
@@ -26,7 +30,7 @@ access request, credential request, pilot authorization, or standing authority.
 | Lane | Candidate inquiry | Required contribution | Current state |
 | --- | --- | --- | --- |
 | Raw EOD | Current Massive account/licensing clarification; Twelve Data Redistribution Rights Add-On pricing and terms | Unadjusted OHLCV, corrections, inactive/delisted coverage, equal-capability raw/derived/browser use | No source cleared |
-| Corporate action and listing lifecycle | LSEG DataScope Select Equity Corporate Actions and Equity Trading Status first; ICE Corporate Actions second; exchange feeds as corroborators | Splits, dividends, listings, removals, suspensions/resumptions, symbol/name changes, merger/successor, consideration, and last-tradable evidence | Massive Starter failed the fixed sole-primary diagnostic but remains a partial source; LSEG free-trial/sample request ready; price, exact fields, licensed scope, and sample remain unavailable |
+| Corporate action and listing lifecycle | LSEG DataScope Select Equity Corporate Actions and Equity Trading Status first; ICE Corporate Actions second; S&P Managed Corporate Actions third; exchange feeds as corroborators | Splits, dividends, listings, removals, suspensions/resumptions, symbol/name changes, merger/successor, consideration, and last-tradable evidence | Massive Starter failed the fixed sole-primary diagnostic but remains a partial source; LSEG contact is owner-reported submitted, but price, exact fields, licensed scope, and sample remain unavailable |
 | Open filing/event evidence | SEC EDGAR | Effective-dated filing, XBRL fundamental, and issuer-event evidence | Permission direction open; security identity and completeness remain separate |
 | Identifier crosswalk | GLEIF and OpenFIGI | Legal-entity/instrument linkage evidence only | Candidate crosswalks; never canonical fact authority by default |
 | Point-in-time Sector / Industry | S&P GICS History first; LSEG TRBC second | Stable company/security linkage, taxonomy hierarchy and versions, from/thru dates, availability/revision history, current display, and historical research | Public capability documented; sample, dictionary, price, and exact permission remain credential-gated and unresolved |
@@ -34,10 +38,10 @@ access request, credential request, pilot authorization, or standing authority.
 Alpha Vantage and standard Alpaca customer data are not inquiry priorities for
 the equal-capability shared product under the reviewed standard terms.
 
-## Current next request: LSEG DataScope Select
+## Current pending response: LSEG DataScope Select
 
-Request a free trial or production-representative sample for **Equity Corporate
-Actions** and **Equity Trading Status** through
+The pending inquiry must produce a free trial or production-representative
+sample for **Equity Corporate Actions** and **Equity Trading Status** through
 [DataScope Select REST](https://developers.lseg.com/en/api-catalog/datascope-select/datascope-select-rest-api).
 Do not request a broad terminal bundle or purchase before the following are
 answered.

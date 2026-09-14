@@ -148,9 +148,12 @@ not five-year performance admission.
 
 Massive Starter remains the primary price/reference source but is not the sole
 lifecycle authority. SEC is an official document locator and issuer-event
-source, not a consolidated security lifecycle feed. LSEG, ICE, S&P, Norgate,
-or another source is considered only against the post-document measured field
-gap; no undirected global scan is justified.
+source, not a consolidated security lifecycle feed. The bounded source order
+for the measured first-strategy gap is LSEG, ICE if LSEG fails, and then S&P;
+all must use the same frozen acceptance population. Norgate or another source
+is considered only if it proves the missing field family rather than merely
+offering historical constituents. No undirected global scan or speculative
+adapter is justified.
 
 Exit criterion: the first strategy's exact lifecycle/action cases have
 governed evidence or explicit quarantine with measured admission impact.
