@@ -43,11 +43,11 @@ compares current official cross-venue and exchange documentation against the
 exact 547-item inactive queue. LSEG was the preferred first inquiry/sample
 candidate under ADR 0168, while Nasdaq, NYSE, and Cboe remain official venue
 benchmarks. ADR 0196 supersedes that mandatory ordering: LSEG is now a later
-measured-gap option. The later first-strategy gate has now measured that gap
-and makes LSEG the first sample candidate for its exact frozen population,
-followed by ICE and then S&P on failure. The owner reported submitting LSEG
-contact forms, but no additional cross-venue lifecycle source has been
-selected, purchased, accessed, permission-cleared, or implemented.
+measured-gap option. The later first-strategy gate has now measured that gap;
+LSEG remains an optional first sample candidate for its exact frozen
+population, followed by ICE and then S&P on failure. The owner reported
+submitting LSEG contact forms, but no additional cross-venue lifecycle source
+has been selected, purchased, accessed, permission-cleared, or implemented.
 
 ## Status meanings
 
@@ -174,7 +174,7 @@ complete effective-dated filer/security link and registered concept, unit,
 period, form, and projection methods are still required before security-level
 fundamental features are admitted. ADR 0215 governs this retained foundation.
 
-## Pending source-response packet
+## Optional source-response packet
 
 The repository now contains a
 [Source Selection and Permission Inquiry Packet V1](source-selection-permission-inquiry-packet-v1.md)
@@ -193,8 +193,8 @@ reviewed response must contain:
 - canonical mapping, contradiction, quarantine, and completion gates;
 - explicit list of gaps that remain after the pilot.
 
-The packet is a review artifact, not standing authority. For the first
-strategy, the measured lifecycle/action gap now requires a production-
-representative LSEG sample, or ICE and then S&P if LSEG fails the same frozen
-gates. Provider response review, purchase, access, pilot execution, and
-canonical Apply remain separately governed transitions.
+The packet is a review artifact, not standing authority or a prerequisite for
+outcome-blind method engineering. For eventual performance admission, any
+candidate source must address the measured lifecycle/action gap against the
+same frozen gates. Provider response review, purchase, access, pilot
+execution, and canonical Apply remain separately governed transitions.

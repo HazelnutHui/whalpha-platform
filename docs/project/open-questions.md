@@ -16,9 +16,9 @@ history stays in ADRs, the changelog, and audits.
 
 ## Missing point-in-time evidence
 
-- After the 219 transition-period SEC documents are reviewed, which exact
-  security-level lifecycle or terminal fields remain unsupported, and does
-  their measured admission impact justify a paid cross-venue source?
+- Which future source, if any, can close the measured 18 terminal-reference
+  gaps and missing corporate-action neutrality under the frozen acceptance
+  sample without becoming a prerequisite for outcome-blind method engineering?
 - Which independent source resolves corporate-action date semantics, dividend
   currency/order handling, unexplained discontinuities, and total-return
   adjustments?

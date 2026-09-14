@@ -42,11 +42,13 @@ governed data -> registered research -> validation and holdout
 - Stop when a stage reaches its exit criterion; do not continue optimizing
   merely because another change is possible.
 
-## Current phase — Admit the first research dataset
+## Current phase — Start outcome-blind method engineering
 
 The rolling five-year price and Identity depth is complete. The professional
 backtest foundation is not. Exact current counts and limitations are maintained
-in [current context](current-context.md).
+in [current context](current-context.md). ADR 0266 now permits the first
+strategy and Lab method surface to proceed without treating that incomplete
+foundation as performance-ready.
 
 ### Lane A — Point-in-time fundamentals
 
@@ -141,19 +143,18 @@ not five-year performance admission.
 23. Preserve the four additional exact local references for RNAM, TERN, PLYM,
    and FL. Keep prorated THR and unresolved SNV quarantined.
 24. Stop repetitive manual case adjudication against unchanged source
-   capability. Evaluate a targeted lifecycle/action source against the exact
-   18-case terminal and missing-neutrality fields.
+   capability. A future lifecycle/action source is evaluated only against the
+   exact 18-case terminal and missing-neutrality fields; it is not a dependency
+   for outcome-blind method engineering.
 25. Version and rerun the outcome-blind admission gate only after a mandatory
    evidence input materially changes.
 
 Massive Starter remains the primary price/reference source but is not the sole
 lifecycle authority. SEC is an official document locator and issuer-event
-source, not a consolidated security lifecycle feed. The bounded source order
-for the measured first-strategy gap is LSEG, ICE if LSEG fails, and then S&P;
-all must use the same frozen acceptance population. Norgate or another source
-is considered only if it proves the missing field family rather than merely
-offering historical constituents. No undirected global scan or speculative
-adapter is justified.
+source, not a consolidated security lifecycle feed. LSEG, ICE, S&P, Norgate,
+or another source remains optional future evidence work and must use the same
+frozen acceptance population. No undirected global scan, named-vendor
+dependency, or speculative adapter is justified.
 
 Exit criterion: the first strategy's exact lifecycle/action cases have
 governed evidence or explicit quarantine with measured admission impact.
@@ -175,12 +176,38 @@ governed evidence or explicit quarantine with measured admission impact.
    manifest while any mandatory family is unready.
 5. Rerun the complete-session admission decision only after a mandatory input
    changes.
+6. Preserve the method-engineering launch report as a separate positive
+   engineering decision, not a Historical Coverage or performance decision.
 
 Exit criterion: one immutable readiness report identifies the admitted
 sessions and securities and leaves no unresolved mandatory family hidden by an
 aggregate percentage.
 
-## Next phase — Execute Strong-Leader Pullback
+## Next phase — Implement Strong-Leader Pullback and the Lab method surface
+
+Under the immutable method-engineering launch review:
+
+1. implement the registered feature and signal method without opening forward
+   outcomes;
+2. build private outcome-blind feature-quality and coverage diagnostics while
+   preserving every reconstructed/not-as-operated limitation;
+3. complete synthetic, adversarial, and property tests for leakage, split
+   boundaries, rank ties, missing paths, and stable-ID joins;
+4. prepare provider-neutral future-label and sensitivity interfaces with zero
+   real label rows; and
+5. expose the model logic, formulas, fixed 24-combination budget, data
+   readiness, blockers, ownership, and lifecycle state in Quant Research Lab
+   without performance placeholders.
+
+If feature diagnostics require a formula or parameter-grid change, register a
+new experiment version before any outcome is opened. Engineering observations
+cannot become independent validation or holdout evidence.
+
+Exit criterion: the registered method and Lab record are reproducible from the
+same bound inputs, all real outcome and selection counts remain zero, and the
+formal performance gate remains visibly rejected.
+
+## Gated phase — Execute the real Strong-Leader Pullback study
 
 After dataset admission:
 

@@ -38,10 +38,11 @@ access request, credential request, pilot authorization, or standing authority.
 Alpha Vantage and standard Alpaca customer data are not inquiry priorities for
 the equal-capability shared product under the reviewed standard terms.
 
-## Current pending response: LSEG DataScope Select
+## Optional pending response: LSEG DataScope Select
 
-The pending inquiry must produce a free trial or production-representative
-sample for **Equity Corporate Actions** and **Equity Trading Status** through
+If reviewed later, the pending inquiry must produce a free trial or production-
+representative sample for **Equity Corporate Actions** and **Equity Trading
+Status** through
 [DataScope Select REST](https://developers.lseg.com/en/api-catalog/datascope-select/datascope-select-rest-api).
 Do not request a broad terminal bundle or purchase before the following are
 answered.

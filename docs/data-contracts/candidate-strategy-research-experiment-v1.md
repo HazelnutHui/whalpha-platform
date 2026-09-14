@@ -75,3 +75,9 @@ Moving into an active research stage while retaining any blocker is invalid.
 The contract performs no provider request, `/data` write, formula execution,
 outcome maturation, publication, Snapshot change, frontend change, deployment,
 or scheduler transition.
+
+ADR 0266 adds a separate method-engineering launch review without changing
+this experiment or its lifecycle state. That review may permit outcome-blind
+implementation and Lab method/readiness work, but it cannot open a real label,
+select a parameter, advance this contract to `development`, or support a
+performance claim.

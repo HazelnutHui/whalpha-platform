@@ -28,6 +28,11 @@ explicitly activated Lab models. The currently deployed Candidate score,
 Entry Geometry, and technical Strategy Channels remain transparent but
 unvalidated **Baseline V1**, not a direct parameter-tuning target.
 
+Strong-Leader Pullback remains formally data-blocked for real performance, but
+its outcome-blind method and Lab surface are ready for engineering. This
+permits transparent implementation and data-quality diagnostics without
+opening real labels, selecting parameters, or making a performance claim.
+
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The
 guarded daily chain has been exercised end to end, but the installed timer is

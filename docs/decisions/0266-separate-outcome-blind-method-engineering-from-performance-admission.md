@@ -93,3 +93,11 @@ readiness is not evidence sufficiency.
 
 Rejected because vendor choice is independent of transparent, outcome-blind
 method implementation.
+
+## Supersession scope
+
+This decision supersedes ADR 0265 only where its stop rule made a new external
+source a prerequisite for outcome-blind method and Lab engineering. It does
+not supersede ADR 0195's complete-session rule or ADR 0265's prohibition on
+real outcomes, parameter selection, formal lifecycle advancement, performance
+claims, and Candidate activation before transitive data admission.

@@ -4,7 +4,7 @@
 
 `SAMPLE_REQUIRED_BEFORE_ADAPTER`
 
-`LSEG_INQUIRIES_OWNER_REPORTED_SUBMITTED_AWAITING_RESPONSE`
+`LSEG_INQUIRIES_OWNER_REPORTED_SUBMITTED_OPTIONAL_RESPONSE_PENDING`
 
 `MASSIVE_STARTER_REJECTED_AS_SOLE_PRIMARY_LIFECYCLE_SOURCE`
 
@@ -22,8 +22,7 @@ field dictionary, production-representative sample, quote, entitlement,
 retention permission, or derived-display permission has been received or
 reviewed in the repository.
 
-A current official-material recheck keeps the exact first-strategy order
-finite:
+A current official-material recheck keeps any later source comparison finite:
 
 1. Evaluate an LSEG DataScope Select sample for Equity Corporate Actions and
    Equity Trading Status against the frozen 20-action / 64-lifecycle sample.
@@ -41,10 +40,11 @@ finite:
    their documented strengths do not establish the required source-time,
    successor, consideration, and cross-venue trading-status evidence.
 
-This order is a source-evaluation sequence, not a vendor selection. Marketing
-coverage cannot pass the gate. The first response that supplies a usable
-sample must still produce one explicit result for every frozen case and pass
-all identity, revision, availability-clock, terminal, permission, and
+This order is an optional future source-evaluation sequence, not a vendor
+selection or dependency for outcome-blind method engineering. Marketing
+coverage cannot pass the performance gate. The first response that supplies a
+usable sample must still produce one explicit result for every frozen case and
+pass all identity, revision, availability-clock, terminal, permission, and
 conflict requirements below. Do not implement an adapter while those inputs
 are absent.
 
@@ -190,12 +190,13 @@ the next governed cutoff.
 
 ## Next authorized boundary
 
-Wait for the owner-reported LSEG inquiries to produce a field dictionary,
-production-representative sample, and itemized quote. If LSEG cannot provide
-the mandatory sample semantics, compatible use terms, or a viable quote,
-compare ICE and then S&P. After a sample is explicitly provisioned, bind the
-provider result to the current frozen 20-action / 64-lifecycle population and
-only then implement a fixture-first adapter.
+No near-term method-engineering work waits for an LSEG response. If the
+owner-reported inquiries later produce a field dictionary, production-
+representative sample, and itemized quote, evaluate them against the frozen
+population. If LSEG cannot provide the mandatory semantics, compatible use
+terms, or a viable quote, ICE and then S&P remain alternatives. Only after a
+sample is explicitly provisioned and accepted may a fixture-first adapter be
+implemented.
 
 No additional contact, purchase, trial activation, account access,
 acquisition, canonical Apply, or lifecycle promotion is authorized by this

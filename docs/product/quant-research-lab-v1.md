@@ -259,6 +259,14 @@ ADR 0195 now freezes the coverage threshold and rejects current evidence: zero
 of 267 candidate sessions have complete mandatory evidence. No cohort,
 trigger, return, parameter, or development authority exists.
 
+ADR 0266 now separates that strict performance decision from method
+engineering. The immutable launch review permits the registered feature and
+signal implementation, private outcome-blind diagnostics, synthetic tests,
+future-label interfaces, and Lab method/readiness views. V1 remains
+`preregistered_data_blocked`; real labels, parameter selection, lifecycle
+advancement, validation, holdout access, performance claims, and Candidate
+authority remain prohibited.
+
 ADR 0186 fixes an outcome-free, complete-cross-section input adapter and exact
 21-session feature semantics. It has fixture evidence only and has never run a
 real backtest. Before activation, the study must also challenge whether static

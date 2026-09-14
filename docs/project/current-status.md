@@ -14,11 +14,10 @@ in [current context](current-context.md), proposed sequencing in the
 - **Five-year source foundation:** price and stable-identity depth complete.
 - **Five-year professional backtest foundation:** not complete; formal state is
   `data_blocked`.
-- **Research:** Strong-Leader Pullback is preregistered but has no real
-  performance result or Candidate authority.
-- **External data gate:** LSEG contact is owner-reported submitted, but no
-  sample, field dictionary, quote, entitlement, or permission response has
-  been reviewed.
+- **Research:** Strong-Leader Pullback is ready for outcome-blind method and
+  Lab engineering; it has no real performance result or Candidate authority.
+- **External data:** LSEG contact is owner-reported submitted, but its response
+  is optional for the next engineering phase and no source is selected.
 - **Automation:** the guarded manual daily chain works; unattended write-capable
   operation is not active.
 
@@ -80,6 +79,15 @@ recovery among existing relative leaders improves the next 1-, 3-, and
 5-session underlying-stock outcome. Its hypothesis, 24-combination search
 budget, chronological split, purge/embargo, controls, costs, statistics, and
 holdout mechanics are preregistered.
+
+The method-engineering launch review is
+`ready_for_outcome_blind_method_engineering` over the fixed 287-session,
+437,402-path population. It permits implementation of the registered method,
+private outcome-blind input diagnostics, synthetic tests, provider-neutral
+future-label interfaces, and Lab method/readiness views. It does not advance
+the experiment lifecycle or authorize true labels, parameter selection,
+validation, holdout access, performance claims, Candidate activation, or
+Production use.
 
 Current admission remains rejected:
 
@@ -246,14 +254,14 @@ project.
 4. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Preserve its reconstructed,
    development-only status until independently stronger source evidence exists.
-5. Evaluate a targeted source only for the measured point-in-time lifecycle,
-   complete corporate-action/adjustment, and terminal-consideration fields.
-   Wait for the LSEG sample response first; use ICE and then S&P only if LSEG
-   fails the frozen requirements. Do not build an adapter from marketing
-   pages. Rerun the versioned gate only after a mandatory input materially
-   changes.
-6. Run the registered chronological study only after admission; then preserve
-   either the validated result or the failure.
+5. Begin the registered outcome-blind method implementation and Quant Research
+   Lab method/readiness surface under the immutable launch report. Preserve
+   reconstructed Membership status and keep all real outcomes inaccessible.
+6. Treat LSEG, ICE, S&P, or another lifecycle/action source as optional future
+   evidence work, not a dependency for method engineering. Rerun the versioned
+   performance gate only after a mandatory input materially changes.
+7. Run the real chronological study only after formal performance admission;
+   then preserve either the validated result or the failure.
 
 Do not tune Baseline V1, project current Membership or taxonomy backward,
 infer lifecycle from ticker patterns, call price/volume fund flow, call stock

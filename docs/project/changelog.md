@@ -1,16 +1,38 @@
 # Changelog
 
+## 2026-09-14 — Open outcome-blind method engineering without opening performance
+
+- Accepted ADR 0266 and added one immutable launch review that separates
+  method/Lab engineering readiness from the rejected formal performance gate.
+- The real Dell report binds the unchanged V1 experiment, final pre-research
+  rejection, 287 sessions, 437,402 paths, all three method-input families, and
+  all eight unresolved formal blockers. Its decision is
+  `ready_for_outcome_blind_method_engineering` while the experiment remains
+  `preregistered_data_blocked`.
+- Report SHA-256 is
+  `db242897d66fb61a4f638762e5736b27b3cb788f328431a32636d02d2d9da690`;
+  logical fingerprint is
+  `1abb4ed53d4a4cb5bb6482432db254a0019168aae2712983a9d00aaa4cffef8c`.
+  Exact replay returned `already_present`; modes are `0700/0400` with one
+  regular report and no symlink or partial residue.
+- Fifty-one linked tests passed before construction, and the complete backend
+  regression subsequently passed 2,801 tests with the two unchanged dependency
+  warnings. The launch made zero network requests and zero real labels,
+  parameter selections, canonical `/data` writes, Candidate changes,
+  publications, deployments, or scheduler changes. LSEG and other provider
+  responses are no longer prerequisites for the next outcome-blind engineering
+  phase.
+
 ## 2026-09-14 — Fix the first-strategy external source boundary
 
 - Reconciled the owner-reported LSEG general and student-information contact
   submissions without treating them as a reviewed field response, trial,
   entitlement, quote, permission grant, or source selection.
-- Rechecked official product capability and fixed the finite evaluation order
-  for the measured gate: LSEG DataScope Select first, ICE Corporate Actions if
-  LSEG fails, and S&P Managed Corporate Actions third. Venue feeds remain
-  benchmarks; Norgate and hosted backtest platforms are not substitutes for
-  the required source-time, successor, consideration, and trading-status
-  evidence.
+- Rechecked official product capability and fixed a finite optional comparison
+  order for the measured performance gate: LSEG DataScope Select first, ICE
+  Corporate Actions if LSEG fails, and S&P Managed Corporate Actions third.
+  ADR 0266 subsequently removed any named-provider dependency from the next
+  outcome-blind method-engineering phase.
 - Preserved the existing frozen 20-action / 64-lifecycle acceptance population
   as the only valid comparison frame. No adapter, provider request, purchase,
   credential access, `/data` write, gate rerun, strategy execution,

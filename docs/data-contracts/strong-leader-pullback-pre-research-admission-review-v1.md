@@ -15,3 +15,8 @@ publishes no Historical Coverage manifest, opens no label, selects no cohort or
 parameter, and authorizes no development, Candidate, Production, or scheduler
 action. Output is immutable, owner-only, outside `/data`, and exactly
 replayable.
+
+ADR 0266 does not change this performance decision. Its separate launch review
+may authorize outcome-blind method and Lab engineering while every real label,
+parameter-selection, validation, holdout, performance, and Candidate boundary
+here remains closed.

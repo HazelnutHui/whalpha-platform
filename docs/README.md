@@ -229,6 +229,7 @@ the detailed dependency and supersession chain.
 - [Five-Year Research Membership Continuation](audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-Year Research Membership Collision Recovery](audits/five-year-research-membership-collision-recovery-2026-09-13.md)
 - [First-Strategy Source Acceptance Sample](audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
+- [First-Strategy Method-Engineering Launch Review](audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
 - [First-Strategy SEC Lifecycle Pilot](audits/strong-leader-pullback-sec-lifecycle-pilot-2026-09-13.md)
 - [First-Strategy SEC Document Plan](audits/strong-leader-pullback-sec-document-plan-2026-09-13.md)
 - [First-Strategy SEC Document Source](audits/strong-leader-pullback-sec-document-source-2026-09-13.md)

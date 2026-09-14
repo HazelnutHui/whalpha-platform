@@ -76,6 +76,7 @@ deeper.
 | Classification | historical point-in-time research classification absent |
 | Fundamentals | cutoff-aware SEC issuer selection and aggregate security-projection census complete for four registered queries; only four sessions have strict as-operated next-open projection evidence, while reconstructed history remains development-only |
 | Historical Coverage | final pre-research gate V2 is `rejected_data_blocked`; no research-ready manifest was published |
+| Method engineering | launch review V1 is `ready_for_outcome_blind_method_engineering` over 287 sessions / 437,402 paths; true labels, selection, validation, holdout, performance, and Candidate authority remain false |
 
 The canonical inventory is 21,025 files / 7,397,444,417 bytes with zero
 symlinks and zero publication residue. Its last full inventory fingerprint is
@@ -454,6 +455,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-population payoff-policy audit](../audits/strong-leader-pullback-terminal-population-payoff-policy-2026-09-14.md)
 - [First-strategy corrected listed-reference and gap-V3 audit](../audits/strong-leader-pullback-terminal-population-listed-reference-and-gap-v3-2026-09-14.md)
 - [First-strategy pre-research admission review](../audits/strong-leader-pullback-pre-research-admission-review-2026-09-14.md)
+- [First-strategy method-engineering launch review](../audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -515,9 +517,20 @@ lifecycle, complete corporate-action/adjustment, and terminal-consideration
 source capability. Massive Starter is not the sole lifecycle authority.
 The owner reported submitting general and student-information LSEG contact
 forms; no response, sample, quote, entitlement, or permission decision has
-been reviewed. The bounded evaluation order is LSEG, then ICE if LSEG fails,
-then S&P. No provider adapter is justified before a real sample passes the
-frozen 20-action / 64-lifecycle acceptance population.
+been reviewed. LSEG is not a prerequisite for the next method-engineering
+phase. If any lifecycle/action provider is evaluated later, its sample must
+pass the frozen 20-action / 64-lifecycle acceptance population before an
+adapter is justified.
+
+The method-engineering launch review is now complete in owner-only Dell
+custody at
+`strong-leader-pullback-method-engineering-launch-review/review=20260914-v1`.
+Its report SHA-256 is
+`db242897d66fb61a4f638762e5736b27b3cb788f328431a32636d02d2d9da690`
+and logical fingerprint is
+`1abb4ed53d4a4cb5bb6482432db254a0019168aae2712983a9d00aaa4cffef8c`.
+It authorizes outcome-blind strategy and Lab method engineering only; formal
+data admission remains rejected and no real outcome was opened.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
