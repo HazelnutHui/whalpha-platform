@@ -385,12 +385,14 @@ evidence after their last observed EOD, but this is not a strategy label or
 return. Twelve exact 424B3 files are retained for the non-election listed-stock
 payoffs and nine candidate consideration identities now pass the strict
 four-element evidence gate. Two formula-only and one wrong-scope cases remain
-unassigned. Reference terminal value for the nine matched identities and a
-three-case residual source plan are the next internal gates. LNW, REVG, SAND,
-CVRs, elections,
-unlisted units, and unsupported timing remain quarantined. A commercial sample
-remains limited to a measured residual after that work. Massive Starter is not
-the sole lifecycle authority.
+unassigned. The nine matched identities now have gross daily reference values,
+and the three residuals have a frozen minimal source plan: two reuse retained
+complementary evidence and one needs an exact Fifth Third 424B3. Acquiring that
+one file and adjudicating the three residual identity chains are the next
+internal gates. LNW, REVG, SAND, CVRs, elections, unlisted units, and
+unsupported timing remain quarantined. A commercial sample remains limited to
+a measured residual after that work. Massive Starter is not the sole lifecycle
+authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
