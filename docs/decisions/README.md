@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0258](0258-extract-corrected-terminal-sec-forms-before-adjudication.md):
+  applies the established form-aware extractors to the corrected-population
+  package while keeping every lifecycle conclusion unsupported.
 - [ADR 0257](0257-census-corrected-terminal-sec-content-before-adjudication.md):
   reuses the original deterministic SEC parser and lexical registry for the
   corrected-population source package without promoting a marker to a fact.

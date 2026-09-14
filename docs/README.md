@@ -154,6 +154,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal-Population SEC Content Census V1](data-contracts/strong-leader-pullback-terminal-population-sec-content-census-v1.md):
   reuses the registered parser and bounded lexical markers without promoting
   source text into a lifecycle fact.
+- [Strong-Leader Pullback Terminal-Population SEC Field Candidates V1](data-contracts/strong-leader-pullback-terminal-population-sec-field-candidates-v1.md):
+  applies the established form-aware extractors while keeping all complete
+  lifecycle fields unsupported.
 - [Strong-Leader Pullback Terminal Gap Census V1](data-contracts/strong-leader-pullback-terminal-gap-census-v1.md):
   preserves the original identity-boundary result; ADR 0253 requires a
   versioned EOD-boundary successor before its counts are used again.
@@ -285,6 +288,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback Terminal-Population SEC Source Plan](operations/strong-leader-pullback-terminal-population-sec-source-plan.md)
 - [Strong-Leader Pullback Terminal-Population SEC Source Custody](operations/strong-leader-pullback-terminal-population-sec-source.md)
 - [Strong-Leader Pullback Terminal-Population SEC Content Census](operations/strong-leader-pullback-terminal-population-sec-content-census.md)
+- [Strong-Leader Pullback Terminal-Population SEC Field Candidates](operations/strong-leader-pullback-terminal-population-sec-field-candidates.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
