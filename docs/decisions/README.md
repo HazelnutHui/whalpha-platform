@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0241](0241-bind-sec-trading-stop-boundaries-to-formal-eod-observations.md):
+  compares finite reviewed SEC stop-time statements with stable-ID canonical
+  EOD presence while preserving conflicts and zero legal-delisting authority.
 - [ADR 0240](0240-adjudicate-source-party-relations-before-resolving-global-identities.md):
   preserves filing-local target, acquirer-group, and legal-survivor topology
   while forbidding unproven global counterparty identity assignments.
